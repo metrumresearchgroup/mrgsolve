@@ -81,18 +81,6 @@ The model is parsed, compiled, and dynamically loaded into the `R` session
 mod <- mread(code=code, model="demo")
 ```
 
-```
-. Compiling demo.cpp.cpp ...
-```
-
-```
-. done.
-```
-
-```
-. Loading: demo86b7b8e6bce.so
-```
-
 # Use `mrgsolve` as an interactive simulation tool for model exploration and sensitivity analyses
   * Simulated data are returned as `R` objects
   * Input and output data are kept in memory in the `R` process; writing or reading to disk
@@ -109,7 +97,7 @@ out
 
 ```
 . Model:  demo.cpp 
-. Date:   Fri Feb 12 13:59:51 2016 
+. Date:   Fri Feb 12 14:01:02 2016 
 . Dim:    1202 x 6 
 . Time:   0 to 120 
 . ID:     1 
@@ -232,5 +220,5 @@ out %>%
 ---
 title: "README.R"
 author: "kyleb"
-date: "Fri Feb 12 13:59:50 2016"
+date: "Fri Feb 12 14:01:01 2016"
 ---
