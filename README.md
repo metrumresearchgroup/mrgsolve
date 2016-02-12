@@ -12,12 +12,6 @@
 <center><img src="img/207490_logo_final_color.png", width="30%"/></center>
 
 
-<center>
-<h1> Powerful, efficient simulation<br>from hierarchical ODE-based models in `R`</h1>
-<!--h3><font color="darkgreen">Metrum Research Group, LLC</font></h3-->
-For more information: <font color="darkgreen">mrgsolve \<at\> metrumrg \<dot\> com</font>
- </center>
-<hr>
 
 # `mrgsolve` is open-source software distributed as a package for `R`
   
@@ -97,7 +91,7 @@ out
 
 ```
 . Model:  demo.cpp 
-. Date:   Fri Feb 12 14:02:31 2016 
+. Date:   Fri Feb 12 15:12:06 2016 
 . Dim:    1202 x 6 
 . Time:   0 to 120 
 . ID:     1 
@@ -220,5 +214,5 @@ out %>%
 ---
 title: "README.R"
 author: "kyleb"
-date: "Fri Feb 12 14:02:30 2016"
+date: "Fri Feb 12 15:12:05 2016"
 ---
