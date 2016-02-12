@@ -97,7 +97,7 @@ out
 
 ```
 . Model:  demo.cpp 
-. Date:   Fri Feb 12 14:01:02 2016 
+. Date:   Fri Feb 12 14:02:31 2016 
 . Dim:    1202 x 6 
 . Time:   0 to 120 
 . ID:     1 
@@ -114,7 +114,7 @@ out
 plot(out, CP+RESP~.)
 ```
 
-<img src="README_files/figure-html/unnamed-chunk-7-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-7-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 ```r
 out <- mod %>%
@@ -127,7 +127,7 @@ out <- mod %>%
 plot(out)
 ```
 
-<img src="README_files/figure-html/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 # Also use `mrgsolve` for efficient, large-scale population simulation
 
@@ -177,7 +177,7 @@ out <- mod %>%
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 
-<img src="README_files/figure-html/unnamed-chunk-12-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-12-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 # Pass simulated output to your favorite data summary or visualization routines
 Summarise with `dplyr`
@@ -210,7 +210,7 @@ out %>%
   geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose))) 
 ```
 
-<img src="README_files/figure-html/unnamed-chunk-14-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-14-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 <hr>
 <center><i>Metrum Research Group, LLC 2 Tunxis Rd Suite 112 Tariffville, CT 06081 </i></center>
@@ -220,5 +220,5 @@ out %>%
 ---
 title: "README.R"
 author: "kyleb"
-date: "Fri Feb 12 14:01:01 2016"
+date: "Fri Feb 12 14:02:30 2016"
 ---
