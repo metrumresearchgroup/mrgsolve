@@ -6,14 +6,19 @@
 
 
 
+# Resources
 
-<br>
+  * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
+  * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
+  * [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!categories/mrgsolve)
 
-<center><img src="img/207490_logo_final_color.png", width="30%"/></center>
+
+<hr>
 
 
+# About
 
-# `mrgsolve` is open-source software distributed as a package for `R`
+## `mrgsolve` is open-source software distributed as a package for `R`
   
   * Licensed under: 
   * Installs via `R` package compile and install system
@@ -32,7 +37,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-# The model specification file is similar to other non-linear mixed effects modeling software
+## The model specification file is similar to other non-linear mixed effects modeling software
 
 
 ```r
@@ -91,7 +96,7 @@ out
 
 ```
 . Model:  demo.cpp 
-. Date:   Fri Feb 12 15:12:06 2016 
+. Date:   Mon Feb 15 21:39:54 2016 
 . Dim:    1202 x 6 
 . Time:   0 to 120 
 . ID:     1 
@@ -123,7 +128,7 @@ plot(out)
 
 <img src="img/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
 
-# Also use `mrgsolve` for efficient, large-scale population simulation
+## Also use `mrgsolve` for efficient, large-scale population simulation
 
 
 ```r
@@ -173,7 +178,7 @@ plot(out, RESP~time|factor(dose), scales="same")
 
 <img src="img/unnamed-chunk-12-1.png" title="" alt="" style="display: block; margin: auto;" />
 
-# Pass simulated output to your favorite data summary or visualization routines
+## Pass simulated output to your favorite data summary or visualization routines
 Summarise with `dplyr`
 
 
@@ -214,5 +219,5 @@ out %>%
 ---
 title: "README.R"
 author: "kyleb"
-date: "Fri Feb 12 15:12:05 2016"
+date: "Mon Feb 15 21:39:53 2016"
 ---
