@@ -11,6 +11,7 @@
   * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
   * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
   * [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!categories/mrgsolve)
+  * [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 
 
 <hr>
