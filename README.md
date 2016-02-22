@@ -8,13 +8,12 @@
 
 # Resources
 
-  * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
-  * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
-       * [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/wiki/Upcoming-changes)
-       * [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
-  * [`mrgsolve` discussion](http://metrumresearchgroup.github.io/mrgsolve_group/)
-  * [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
-
+* [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
+* [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
+    * [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/wiki/Upcoming-changes)
+    * [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
+* [`mrgsolve` discussion](http://metrumresearchgroup.github.io/mrgsolve_group/)
+* [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 
 <hr>
 
@@ -99,7 +98,7 @@ out
 
 ```
 . Model:  demo.cpp 
-. Date:   Mon Feb 15 21:39:54 2016 
+. Date:   Sun Feb 21 21:47:14 2016 
 . Dim:    1202 x 6 
 . Time:   0 to 120 
 . ID:     1 
@@ -222,5 +221,5 @@ out %>%
 ---
 title: "README.R"
 author: "kyleb"
-date: "Mon Feb 15 21:39:53 2016"
+date: "Sun Feb 21 21:47:13 2016"
 ---
