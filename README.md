@@ -5,7 +5,6 @@
 
 
 
-
 # Resources
 
 * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
@@ -14,6 +13,10 @@
     * [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
 * [`mrgsolve` discussion](http://metrumresearchgroup.github.io/mrgsolve_group/)
 * [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
+
+# Latest release
+[v0.5.11](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.5.11)
+
 
 <hr>
 
