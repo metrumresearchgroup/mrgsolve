@@ -5,7 +5,7 @@
 
 
 
-# Resources
+# `mrgsolve` Resources
 
 * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
