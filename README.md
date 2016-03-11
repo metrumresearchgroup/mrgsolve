@@ -12,7 +12,7 @@
 * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     * [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/wiki/Upcoming-changes)
     * [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
-* [`mrgsolve` discussion](http://metrumresearchgroup.github.io/mrgsolve_group/)
+* [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
 * [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 
 <hr>
@@ -21,8 +21,8 @@
 # About
 
 ## `mrgsolve` is open-source software distributed as a package for `R`
-  
-  * Licensed under: 
+
+  * Licensed under:
   * Installs via `R` package compile and install system
   * Easy integration with any other relevant `R` functionality
      * Graphics: `lattice`, `ggplot2`
@@ -30,7 +30,7 @@
      * Optimal design: `PFIM`, `PopED`
      * Data summary: `dplyr` and many other functions and packages
      * Interactive model exploration with `shiny`
-     
+
 
 
 ```r
@@ -44,7 +44,7 @@ library(ggplot2)
 
 ```r
 code <- '
-$GLOBAL 
+$GLOBAL
 #define CP (CENT/VC)
 #define INH (CP/(IC50+CP))
 
@@ -89,7 +89,7 @@ mod <- mread(code=code, model="demo")
 
 
 ```r
-out <- mod %>% 
+out <- mod %>%
   ev(amt=100, ii=24, addl=2) %>%
   mrgsim(end=120)
 
@@ -98,7 +98,7 @@ out
 
 ```
 . Model:  demo.cpp 
-. Date:   Sun Feb 21 21:47:14 2016 
+. Date:   Fri Mar 11 12:13:01 2016 
 . Dim:    1202 x 6 
 . Time:   0 to 120 
 . ID:     1 
@@ -138,8 +138,8 @@ mod <- mod %>% omat(cmat(0.1, 0.67, 0.4))
 ```
 
 ## Flexibility with input data sets
-* Data set format that is likely familiar to modeling and simulation scientists 
-* No need to include observation records; `mrgsolve` will automatically insert 
+* Data set format that is likely familiar to modeling and simulation scientists
+* No need to include observation records; `mrgsolve` will automatically insert
 
 
 
@@ -185,7 +185,7 @@ Summarise with `dplyr`
 
 
 ```r
-out %>% 
+out %>%
   as.tbl %>%
   group_by(dose) %>%
   summarise(rmin = min(RESP), tmim=time[which.min(RESP)])
@@ -205,10 +205,10 @@ Plot with `ggplot2`
 
 
 ```r
-out %>% 
+out %>%
   as.tbl %>%
-  ggplot(data=.) + 
-  geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose))) 
+  ggplot(data=.) +
+  geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
 ```
 
 <img src="img/unnamed-chunk-14-1.png" title="" alt="" style="display: block; margin: auto;" />
@@ -221,5 +221,5 @@ out %>%
 ---
 title: "README.R"
 author: "kyleb"
-date: "Sun Feb 21 21:47:13 2016"
+date: "Fri Mar 11 12:13:00 2016"
 ---
