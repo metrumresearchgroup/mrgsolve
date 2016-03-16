@@ -87,7 +87,7 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Tue Mar 15 22:03:19 2016 
+    . Date:   Tue Mar 15 22:04:03 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
@@ -113,7 +113,7 @@ out <- mod %>%
 ```
 
 ``` r
-plot(out)
+plot(out, auto.key=list(columns=3))
 ```
 
 <img src="img/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
