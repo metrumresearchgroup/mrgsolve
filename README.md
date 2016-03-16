@@ -1,3 +1,6 @@
+About
+=====
+
 Resources
 =========
 
@@ -12,10 +15,11 @@ Resources
 About
 =====
 
+`mrgsolve` facilitates simulation in R from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. The modeler creates a model specification file consisting of `R` and `C++` code that is parsed, compiled, and dynamically loaded into the `R` session. Input data are passed in and simulated data are returned as `R` objects, so disk access is never required during the simulation cycle after compiling.
+
 `mrgsolve` is open-source software distributed as a package for `R`
 -------------------------------------------------------------------
 
--   Licensed under:
 -   Installs via `R` package compile and install system
 -   Easy integration with any other relevant `R` functionality
     -   Graphics: `lattice`, `ggplot2`
@@ -86,7 +90,7 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Tue Mar 15 14:32:38 2016 
+    . Date:   Tue Mar 15 21:54:15 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
