@@ -87,7 +87,7 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Tue Mar 15 21:55:45 2016 
+    . Date:   Tue Mar 15 22:02:48 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
@@ -109,7 +109,7 @@ plot(out, CP+RESP~.)
 out <- mod %>%
   ev(amt=100, ii=24, addl=2) %>%
   Req(CP,RESP) %>%
-  knobs(TVVC=c(10,20,40), CL=c(1,2))
+  knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5))
 ```
 
 ``` r
