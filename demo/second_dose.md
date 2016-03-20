@@ -42,7 +42,9 @@ mod %>%
 
 ![](img/unnamed-chunk-6-1.png)<!-- -->
 
-Another way to do it
+Another way to do it: set `end=-1` to get rid of that simulation time grid and the give `mrgsolve` an ad-hoc vector of times (`add`) to output.
+
+You will still have to drop the dosing record to avoid seeing that record in the output.
 
 ``` r
 mod %>% 
