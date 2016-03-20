@@ -48,3 +48,7 @@ mod %>%
   obsonly %>%
   mrgsim(end=-1, add=seq(24,48,0.1)) %>%
   plot
+
+
+##' 
+sessionInfo()
