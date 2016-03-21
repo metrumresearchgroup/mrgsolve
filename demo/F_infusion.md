@@ -10,7 +10,7 @@ A model with infusion
 code <- '
 $SET delta=0.1, end=24
 
-$PARAM CL=1, VC=5, F1 = 1, D1 = 5, R1=10
+$PARAM CL=1, VC=5, F1 = 1, D1 = 5, R1=20
 
 $CMT CENT
 
@@ -29,7 +29,7 @@ dxdt_CENT  = -(CL/VC)*CENT;
 mod <- mread("infusion", tempdir(), code)
 ```
 
-Run with `rate=-1`: `F` and `amt` determine duration
+Run with `rate=-1`: `F` and `amt` determine duration. Only `F1==1` gets the 5 hour infusion.
 
 ``` r
 data <- expand.ev(amt=100,F1=seq(0.1,1,0.1),rate=-1)
@@ -42,7 +42,7 @@ mod %>%
 
 ![](img/F_infusion-unnamed-chunk-5-1.png)<!-- -->
 
-Run with `rate=-2`: duration is set by `D`
+Run with `rate=-2`: duration is set by `D`. Now, `D` is enforced ... everyone gets 5 hour infusion
 
 ``` r
 data <- expand.ev(amt=100,F1=seq(0.1,1,0.1),rate=-2)
@@ -61,6 +61,18 @@ We can't do something like this ...
 data <- expand.ev(amt=100,F1=seq(0.1,1,0.1)) %>% mutate(rate=amt/5)
 ```
 
+``` r
+head(data)
+```
+
+    .   ID amt  F1 evid cmt time rate
+    . 1  1 100 0.1    1   1    0   20
+    . 2  2 100 0.2    1   1    0   20
+    . 3  3 100 0.3    1   1    0   20
+    . 4  4 100 0.4    1   1    0   20
+    . 5  5 100 0.5    1   1    0   20
+    . 6  6 100 0.6    1   1    0   20
+
 ... and expect to get a 5 hour infusion
 
 ``` r
@@ -70,7 +82,7 @@ mod %>%
   plot
 ```
 
-![](img/F_infusion-unnamed-chunk-8-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-9-1.png)<!-- -->
 
 But we **could** do this to ensure duration is 5
 
@@ -102,7 +114,7 @@ mod %>%
   plot
 ```
 
-![](img/F_infusion-unnamed-chunk-11-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-12-1.png)<!-- -->
 
 The key is to make all of the adjustments **either** (1) in the control stream **or** (2) in the data.
 `sessionInfo`
