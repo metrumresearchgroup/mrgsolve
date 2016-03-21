@@ -1,5 +1,5 @@
 ``` r
-library(mrgsolve)
+library(mrgsolve, lib.loc="~/Rlibs/0.5.11")
 library(dplyr)
 library(magrittr)
 ```
@@ -12,6 +12,12 @@ A model with infusion
 ``` r
 code <- '
 $SET delta=0.1, end=24
+
+$GLOBAL
+// In next version, we wont have to do this explicitly to get the nice aliases
+#define F_CENT _F(1)
+#define R_CENT _R(1)
+#define D_CENT _D(1)
 
 $PARAM CL=1, VC=5, F1 = 1, D1 = 5, R1=20
 
@@ -141,8 +147,7 @@ sessionInfo()
     . [1] stats     grDevices utils     datasets  graphics  methods   base     
     . 
     . other attached packages:
-    . [1] knitr_1.12.3         magrittr_1.5         dplyr_0.4.3         
-    . [4] mrgsolve_0.5.11.9005
+    . [1] knitr_1.12.3    magrittr_1.5    dplyr_0.4.3     mrgsolve_0.5.11
     . 
     . loaded via a namespace (and not attached):
     .  [1] Rcpp_0.12.3     lattice_0.20-33 digest_0.6.9    assertthat_0.1 

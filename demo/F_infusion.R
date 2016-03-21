@@ -4,7 +4,7 @@
 ##'     variant: markdown_github
 ##' ---
 #+ message=FALSE
-library(mrgsolve)
+library(mrgsolve, lib.loc="~/Rlibs/0.5.11")
 library(dplyr)
 library(magrittr)
 
@@ -18,6 +18,12 @@ opts_chunk$set(fig.path="img/F_infusion-",comment='.')
 ##' A model with infusion
 code <- '
 $SET delta=0.1, end=24
+
+$GLOBAL
+// In next version, we wont have to do this explicitly to get the nice aliases
+#define F_CENT _F(1)
+#define R_CENT _R(1)
+#define D_CENT _D(1)
 
 $PARAM CL=1, VC=5, F1 = 1, D1 = 5, R1=20
 
