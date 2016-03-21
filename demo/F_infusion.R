@@ -94,6 +94,7 @@ mod %>%
 
 
 ##' `sessionInfo`
+#+echo=FALSE
 sessionInfo()
 
 

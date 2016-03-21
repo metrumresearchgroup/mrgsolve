@@ -133,10 +133,6 @@ The key is to make all of the adjustments **either** (1) in the control stream *
 
 `sessionInfo`
 
-``` r
-sessionInfo()
-```
-
     . R version 3.2.3 (2015-12-10)
     . Platform: x86_64-apple-darwin13.4.0 (64-bit)
     . Running under: OS X 10.9.5 (Mavericks)
