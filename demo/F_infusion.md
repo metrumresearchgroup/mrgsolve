@@ -33,20 +33,9 @@ Run with `rate=-1`: `F` and `amt` determine duration. Only `F1==1` gets the 5 ho
 
 ``` r
 data <- expand.ev(amt=100,F1=seq(0.1,1,0.1),rate=-1)
-
-mod %>%
-  data_set(data) %>%
-  mrgsim %>% 
-  plot
 ```
 
-![](img/F_infusion-unnamed-chunk-5-1.png)<!-- -->
-
-Run with `rate=-2`: duration is set by `D`. Now, `D` is enforced ... everyone gets 5 hour infusion
-
 ``` r
-data <- expand.ev(amt=100,F1=seq(0.1,1,0.1),rate=-2)
-
 mod %>%
   data_set(data) %>%
   mrgsim %>% 
@@ -54,6 +43,21 @@ mod %>%
 ```
 
 ![](img/F_infusion-unnamed-chunk-6-1.png)<!-- -->
+
+Run with `rate=-2`: duration is set by `D`. Now, `D` is enforced ... everyone gets 5 hour infusion
+
+``` r
+data <- expand.ev(amt=100,F1=seq(0.1,1,0.1),rate=-2)
+```
+
+``` r
+mod %>%
+  data_set(data) %>%
+  mrgsim %>% 
+  plot
+```
+
+![](img/F_infusion-unnamed-chunk-8-1.png)<!-- -->
 
 We can't do something like this ...
 
@@ -82,7 +86,7 @@ mod %>%
   plot
 ```
 
-![](img/F_infusion-unnamed-chunk-9-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-11-1.png)<!-- -->
 
 But we **could** do this to ensure duration is 5
 
@@ -114,7 +118,7 @@ mod %>%
   plot
 ```
 
-![](img/F_infusion-unnamed-chunk-12-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-14-1.png)<!-- -->
 
 The key is to make all of the adjustments **either** (1) in the control stream **or** (2) in the data.
 `sessionInfo`
