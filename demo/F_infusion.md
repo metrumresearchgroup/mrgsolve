@@ -40,7 +40,7 @@ mod %>%
   plot
 ```
 
-![](img/unnamed-chunk-5-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-5-1.png)<!-- -->
 
 Run with `rate=-2`: duration is set by `D`
 
@@ -53,7 +53,7 @@ mod %>%
   plot
 ```
 
-![](img/unnamed-chunk-6-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-6-1.png)<!-- -->
 
 We can't do something like this ...
 
@@ -70,7 +70,7 @@ mod %>%
   plot
 ```
 
-![](img/unnamed-chunk-8-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-8-1.png)<!-- -->
 
 But we **could** do this to ensure duration is 5
 
@@ -83,17 +83,17 @@ data %<>% mutate(amt=amt*F1, rate = amt/D1) %>% select(-F1,-D1) %>% mutate(F1=1)
 data
 ```
 
-    ##    ID amt evid cmt time rate F1
-    ## 1   1  10    1   1    0    2  1
-    ## 2   2  20    1   1    0    4  1
-    ## 3   3  30    1   1    0    6  1
-    ## 4   4  40    1   1    0    8  1
-    ## 5   5  50    1   1    0   10  1
-    ## 6   6  60    1   1    0   12  1
-    ## 7   7  70    1   1    0   14  1
-    ## 8   8  80    1   1    0   16  1
-    ## 9   9  90    1   1    0   18  1
-    ## 10 10 100    1   1    0   20  1
+    .    ID amt evid cmt time rate F1
+    . 1   1  10    1   1    0    2  1
+    . 2   2  20    1   1    0    4  1
+    . 3   3  30    1   1    0    6  1
+    . 4   4  40    1   1    0    8  1
+    . 5   5  50    1   1    0   10  1
+    . 6   6  60    1   1    0   12  1
+    . 7   7  70    1   1    0   14  1
+    . 8   8  80    1   1    0   16  1
+    . 9   9  90    1   1    0   18  1
+    . 10 10 100    1   1    0   20  1
 
 ``` r
 mod %>%
@@ -102,7 +102,7 @@ mod %>%
   plot
 ```
 
-![](img/unnamed-chunk-11-1.png)<!-- -->
+![](img/F_infusion-unnamed-chunk-11-1.png)<!-- -->
 
 The key is to make all of the adjustments **either** (1) in the control stream **or** (2) in the data.
 `sessionInfo`
@@ -111,23 +111,23 @@ The key is to make all of the adjustments **either** (1) in the control stream *
 sessionInfo()
 ```
 
-    ## R version 3.2.3 (2015-12-10)
-    ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-    ## Running under: OS X 10.9.5 (Mavericks)
-    ## 
-    ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-    ## 
-    ## attached base packages:
-    ## [1] stats     grDevices utils     datasets  graphics  methods   base     
-    ## 
-    ## other attached packages:
-    ## [1] knitr_1.12.3         magrittr_1.5         dplyr_0.4.3         
-    ## [4] mrgsolve_0.5.11.9005
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.3     lattice_0.20-33 digest_0.6.9    assertthat_0.1 
-    ##  [5] grid_3.2.3      R6_2.1.2        DBI_0.3.1       formatR_1.2.1  
-    ##  [9] evaluate_0.8    stringi_1.0-1   lazyeval_0.1.10 rmarkdown_0.9.2
-    ## [13] tools_3.2.3     stringr_1.0.0   yaml_2.1.13     parallel_3.2.3 
-    ## [17] htmltools_0.3
+    . R version 3.2.3 (2015-12-10)
+    . Platform: x86_64-apple-darwin13.4.0 (64-bit)
+    . Running under: OS X 10.9.5 (Mavericks)
+    . 
+    . locale:
+    . [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    . 
+    . attached base packages:
+    . [1] stats     grDevices utils     datasets  graphics  methods   base     
+    . 
+    . other attached packages:
+    . [1] knitr_1.12.3         magrittr_1.5         dplyr_0.4.3         
+    . [4] mrgsolve_0.5.11.9005
+    . 
+    . loaded via a namespace (and not attached):
+    .  [1] Rcpp_0.12.3     lattice_0.20-33 digest_0.6.9    assertthat_0.1 
+    .  [5] grid_3.2.3      R6_2.1.2        DBI_0.3.1       formatR_1.2.1  
+    .  [9] evaluate_0.8    stringi_1.0-1   lazyeval_0.1.10 rmarkdown_0.9.2
+    . [13] tools_3.2.3     stringr_1.0.0   yaml_2.1.13     parallel_3.2.3 
+    . [17] htmltools_0.3

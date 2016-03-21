@@ -3,10 +3,12 @@
 ##'   md_document:
 ##'     variant: markdown_github
 ##' ---
+#+ message=FALSE
 library(mrgsolve)
+library(dplyr)
 #+ echo=FALSE
 library(knitr)
-opts_chunk$set(fig.path="img/")
+opts_chunk$set(fig.path="img/second_dose-")
 
 
 ##' Use the house model
