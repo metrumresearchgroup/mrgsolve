@@ -25,7 +25,7 @@ $GLOBAL
 #define R_CENT _R(1)
 #define D_CENT _D(1)
 
-$PARAM CL=1, VC=5, F1 = 1, D1 = 5, R1=20
+$PARAM CL = 1, VC = 5, F1 = 1, D1 = 5, R1 = 20
 
 $CMT CENT
 
