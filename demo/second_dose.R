@@ -50,5 +50,22 @@ mod %>%
   plot
 
 
+##' Via data set
+##' 
+##' 
+data <- expand.ev(time=seq(0,48,1), amt=0,evid=0) %>% mutate(ID=1)
+data <- bind_rows(data, data %>% mutate(ID=2))
+doses <- data %>% filter(time==0) %>% mutate(amt=100,evid=1,cmt=1)
+data <- bind_rows(doses,data) %>% arrange(ID,time,evid)
+data <- data %>% filter(ID==1 & time <= 24 | (ID==2 & time >= 24 | evid==1))
+
+#+
+mod %>% 
+  data_set(data) %>%
+  obsonly %>%
+  mrgsim() %>%
+  plot(CP~time|ID)
+
+
 ##' 
 sessionInfo()
