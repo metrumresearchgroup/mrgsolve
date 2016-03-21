@@ -4,6 +4,9 @@ library(dplyr)
 library(magrittr)
 ```
 
+Infusions with varying `F`
+==========================
+
 A model with infusion
 
 ``` r

@@ -13,6 +13,8 @@ library(knitr)
 opts_chunk$set(fig.path="img/F_infusion-",comment='.')
 
 
+##' # Infusions with varying `F`
+
 ##' A model with infusion
 code <- '
 $SET delta=0.1, end=24
