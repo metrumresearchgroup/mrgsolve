@@ -130,6 +130,7 @@ mod %>%
 ![](img/F_infusion-unnamed-chunk-14-1.png)<!-- -->
 
 The key is to make all of the adjustments **either** (1) in the control stream **or** (2) in the data.
+
 `sessionInfo`
 
 ``` r

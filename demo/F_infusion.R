@@ -88,7 +88,9 @@ mod %>%
   mrgsim %>% 
   plot
 
+##' 
 ##' The key is to make all of the adjustments __either__ (1) in the control stream __or__ (2) in the data.  
+##' 
 
 
 ##' `sessionInfo`
