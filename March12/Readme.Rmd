@@ -1,4 +1,4 @@
-Slides from our March 12, 2016 Workshop in San Diego, Ca
+Slides from our March 12, 2016 Workshop in San Diego, CA
 
 * [Introduction](introduction.pdf)
 * [R workfow](R_workflow.pdf)
