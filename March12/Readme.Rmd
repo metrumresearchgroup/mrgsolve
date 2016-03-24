@@ -5,3 +5,7 @@ Slides from our March 12, 2016 Workshop in San Diego, CA
 * [Model specification](model_specification.pdf)
 * [Simulation examples](simulation_examples.pdf)
 * [Closing thoughts](appendix.pdf)
+
+
+
+![](IMG_1591.JPG)
