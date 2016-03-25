@@ -4,7 +4,6 @@ Resources
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [News](NEWS.md)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
-    -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
 -   [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
 -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 -   [Slides from March, 12 2016 Workshop in San Diego, Ca](https://github.com/metrumresearchgroup/mrgsolve/tree/master/March12)
