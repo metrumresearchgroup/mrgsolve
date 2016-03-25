@@ -2,8 +2,8 @@ Resources
 =========
 
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
+-   [News](NEWS.md)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
-    -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/wiki/Upcoming-changes)
     -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
 -   [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
 -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
