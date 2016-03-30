@@ -8,6 +8,7 @@ may come too close to another record.  Usually the solver will fail with the mes
 * `zero.re` didn't properly update the `$SIGMA` list when one matrix was named and another was unnamed.  This has been fixed.  ([issue 16](../issues/16))
 * Fixed a bug where infusions with `ss`=1 caused `mrgsolve`/`R` to crash when the infusion duration was equal to or some multiple of the dosing interval. ([issue 19](../issues/19))
 * Fixed a bug where setting `F_CENT` to zero gave undefined behavior.  `mrgsolve` will issue an error if `F_CMT` is set to zero and the `ss` flag is set to 1. ([issue 22](../issues/16))
+* Fixed bug where dosing records with `evid=4` (reset the system and dose)  and `addl > 0` reset the system for all subsequent doses. Additional doses coming from records with `evid=4` will not do system reset.
 
 
 # New features
