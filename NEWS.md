@@ -11,7 +11,7 @@ may come too close to another record.  Usually the solver will fail with the mes
 * Fixed bug where dosing records with `evid=4` (reset the system and dose)  and `addl > 0` reset the system for all subsequent doses. Additional doses coming from records with `evid=4` will not do system reset. ([issue 23](../../issues/23))
 
 ## New features
-* New aliases available for setting bioavailability, lag time and infusion duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT` (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion duration), and / or `R_DEPOT` (infusion rate).  
+* New aliases available for setting bioavailability, lag time and infusion duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT` (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion duration), and / or `R_DEPOT` (infusion rate). ([issue 13](../../issues/13))  
 * Added *slightly* more informative messages when `DLSODA` fails, including clear identification if the value of `istate`, which is 2 when the solver succeeds and negative when the solver fails. 
 * Added `labels` and `prefix` options to `$OMEGA` and `$SIGMA`.  These allow descriptive aliases for ETAs ... e.g. using `ETA_CL` rather than `ETA(1)`.  ([issue 15](../../issues/15))
 * Added `dplyr::slice` method for `mrgsims` objects ([issue 11](../../issues/11))
