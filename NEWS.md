@@ -14,7 +14,7 @@ may come too close to another record.  Usually the solver will fail with the mes
 * New aliases available for setting bioavailability, lag time and infusion duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT` (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion duration), and / or `R_DEPOT` (infusion rate).  
 * Added *slightly* more informative messages when `DLSODA` fails, including clear identification if the value of `istate`, which is 2 when the solver succeeds and negative when the solver fails. 
 * Added `labels` and `prefix` options to `$OMEGA` and `$SIGMA`.  These allow descriptive aliases for ETAs ... e.g. using `ETA_CL` rather than `ETA(1)`.  ([issue 15](../issues/15))
-* Added `dplyr::slice` method for `mrgsims` objects ([issue 11](../issues/11))
+* Added `dplyr::slice` method for `mrgsims` objects ([issue 11](issues/11))
 
 # Since 0.5.001
 
