@@ -60,7 +60,7 @@ Simulate the response
 mod %>%
   ev(amt=1000) %>%
   idata_set(pars) %>%
-  mrgsim(end=48,delta=0.1) %>%
+  mrgsim(end=72,delta=0.1) %>%
   plot
 ```
 
