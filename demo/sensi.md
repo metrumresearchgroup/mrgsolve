@@ -12,7 +12,11 @@ A model
 mod <- mrgsolve:::house() %>% Req(CP,RESP)
 ```
 
-Sensitivity analysis on random values log Mean
+Sensitivity analysis on random values
+
+-   Get the current parameter values for `CL`, `VC`, `KA`, `IC50`, and `KOUT`
+-   Convert to numeric vector (just a regular `R` object\`)
+-   Log-transform
 
 ``` r
 mu <- log(as.numeric(param(mod))[s(CL,VC,KA,IC50,KOUT)])
@@ -22,7 +26,7 @@ mu
     .        CL        VC        KA      IC50      KOUT 
     . 0.0000000 2.9957323 0.1823216 2.3025851 0.6931472
 
-Variance
+Variance; this gives the same CV for each parameter. But feel free to customize this as you like, for each parameter.
 
 ``` r
 Sigma <- diag(rep(0.1,length(mu)))
@@ -55,6 +59,8 @@ head(pars)
     . 6 0.9883723 23.90201 1.4132088  7.460037 2.0907170
 
 Simulate the response
+
+-   We pass in the parameters as `idata`
 
 ``` r
 mod %>%
