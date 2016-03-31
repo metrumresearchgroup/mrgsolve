@@ -14,7 +14,10 @@ library(MASS)
 library(knitr)
 opts_chunk$set(comment='.',fig.path="img/sensi-")
 
-##' A model
+##' A model PK/PD model.  
+##'  
+##' * Only interested in `CP` and `RESP` (the response from indirect response model) for now.
+##' 
 mod <- mrgsolve:::house() %>% Req(CP,RESP)
 
 
@@ -45,7 +48,7 @@ head(pars)
 ##' 
 ##' Simulate the response
 ##' 
-##' * We pass in the parameters as `idata`
+##' * We pass the parameters in as `idata`
 ##' 
 mod %>%
   ev(amt=1000) %>%

@@ -6,7 +6,9 @@ library(mrgsolve)
 library(MASS)
 ```
 
-A model
+A model PK/PD model.
+
+-   Only interested in `CP` and `RESP` (the response from indirect response model) for now.
 
 ``` r
 mod <- mrgsolve:::house() %>% Req(CP,RESP)
@@ -60,7 +62,7 @@ head(pars)
 
 Simulate the response
 
--   We pass in the parameters as `idata`
+-   We pass the parameters in as `idata`
 
 ``` r
 mod %>%
