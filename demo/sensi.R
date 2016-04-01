@@ -61,8 +61,7 @@ mod %>%
 ##' like this:
 pars <- expand.idata(CL=seq(0.5,1.5,0.1), IC50=seq(0.2,2,0.2), VC=seq(5,50,5))
 head(pars)
-
-##' Or code the exact combinations you want to look at.
+##' You can also code the exact combinations you want to look at.
 
 #+
 sessionInfo()
