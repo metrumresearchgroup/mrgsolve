@@ -19,7 +19,7 @@ may come too close to another record.  Usually the solver will fail with the mes
 * Added *slightly* more informative messages when `DLSODA` fails, including clear identification if the value of `istate`, which is 2 when the solver succeeds and negative when the solver fails. 
 * Added `labels` and `prefix` options to `$OMEGA` and `$SIGMA`.  These allow descriptive aliases for ETAs ... e.g. using `ETA_CL` rather than `ETA(1)`.  ([issue 15](../../issues/15))
 * Added `dplyr::slice` method for `mrgsims` objects ([issue 11](../../issues/11))
-* New argument to `mread`: `quiet`.  Setting `quiet` to `TRUE` will prevent printing messages when `mread` is called.  The default is `getOptions("mrgsolve_mread_quiet",FALSE)` ... so you can call `options("mrgsolve_mread_quiet" = TRUE)` to globally turn off messages from `mread`.  
+* New argument to `mread`: `quiet`.  Setting `quiet` to `TRUE` will prevent printing messages when `mread` is called.  The default is `getOptions("mrgsolve_mread_quiet",FALSE)` ... so you can call `options(mrgsolve_mread_quiet = TRUE)` to globally turn off messages from `mread`.  
 
 # Since 0.5.001
 
