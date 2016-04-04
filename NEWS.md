@@ -10,6 +10,10 @@ may come too close to another record.  Usually the solver will fail with the mes
 * Fixed a bug where setting `F_CENT` to zero gave undefined behavior.  `mrgsolve` will issue an error if `F_CMT` is set to zero and the `ss` flag is set to 1. ([issue 22](../../issues/16))
 * Fixed bug where dosing records with `evid=4` (reset the system and dose)  and `addl > 0` reset the system for all subsequent doses. Additional doses coming from records with `evid=4` will not do system reset. ([issue 23](../../issues/23))
 
+## Important changes
+* New arguments for `$NMXML` (see `?nmxml`) that are easier to understand and consistent with new prefixes and labels for `ETA` and `EPS`.  `name` argument is removed.  Use `tname` (to provide a prefix for `THETAs`), `oname` (to name the `OMEGA` matrix), and `sname` (to name the `SIGMA` matrix) instead.  In general, set `theta` to be `TRUE` to import `THETAs`, set `omega` to be `TRUE` to import `OMEGA`, and set `sigma` to be `TRUE` to import `SIGMA`.  Specifying character names `tname`, `oname`, and `sname` will imply `theta=TRUE`, `omega=TRUE`, and `sigma=TRUE`, respectively.
+
+
 ## New features
 * New aliases available for setting bioavailability, lag time and infusion duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT` (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion duration), and / or `R_DEPOT` (infusion rate). ([issue 13](../../issues/13))  
 * Added *slightly* more informative messages when `DLSODA` fails, including clear identification if the value of `istate`, which is 2 when the solver succeeds and negative when the solver fails. 
