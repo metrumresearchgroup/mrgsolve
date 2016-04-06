@@ -1,8 +1,8 @@
-[![Build Status dev](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=dev)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=dev) [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
+[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
 
 Resources
 =========
--   [Lattest release: 0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.5.12)
+
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/wiki/Upcoming-changes)
@@ -89,7 +89,7 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Wed Apr  6 11:22:35 2016 
+    . Date:   Wed Apr  6 13:40:08 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
