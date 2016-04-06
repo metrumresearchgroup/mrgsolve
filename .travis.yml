@@ -14,5 +14,6 @@ os:
   - linux
   
 script:
+  - cd ../
   - make all
   - make check
