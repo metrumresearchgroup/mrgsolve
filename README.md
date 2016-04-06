@@ -1,6 +1,6 @@
 Resources
 =========
-
+-   [Lattest release: 0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.5.12)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [News](NEWS.md)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
