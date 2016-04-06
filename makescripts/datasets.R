@@ -13,7 +13,7 @@ pars <- signif(exp(mvrnorm(NID, log(TV), OMEGA)),3)
 idata <- as.data.frame(pars)
 idata$FOO <- sample(1:NID)
 idata$ID <- 1:nrow(idata)
-idata <- shuffle(idata, "ID")
+idata <- mrgsolve:::shuffle(idata, "ID")
 #idata
 
 
@@ -23,7 +23,7 @@ doses <- list(data.frame(ID=1,amt=1000, cmt=1, time=0,addl=3,ii=24),
               data.frame(ID=4,amt=2000, rate=100,ii=48, addl=2,cmt=2),
               data.frame(ID=5,amt=c(1000,5000),rate=c(0,60), time=c(0,24), cmt=1))
 
-doses <- rbind.fill(doses)
+doses <- bind_rows(doses) %>% as.data.frame
 doses$evid <- 1
 doses[] <- mapply(doses, FUN=function(x) {x[is.na(x)] <- 0; x})
 #doses
@@ -57,7 +57,7 @@ data <- within(data, {
 data <- rbind(data, doses)
 data <- data[order(data$ID,data$time,1-data$evid),]
 data <- subset(data, ID !=2 | (ID==2 & time <= 60))
-data <- shuffle(data, c("ID", "time", "cmt","evid","amt"))
+data <- mrgsolve:::shuffle(data, c("ID", "time", "cmt","evid","amt"))
 rownames(data) <- NULL
 #head(data)
 
@@ -66,16 +66,16 @@ data2 <- merge(data,idata[,c("ID","CL", "VC", "KA")], by="ID", sort=FALSE, all.x
 #head(data2)
 
 exidata <- idata
-save(exidata,file="~/dev/m4solve/rdev/data/exidata.RData")
+save(exidata,file="rdev/data/exidata.RData")
 
 extran1 <- doses
-save(extran1, file="~/dev/m4solve/rdev/data/extran1.RData")
+save(extran1, file="rdev/data/extran1.RData")
 
 extran2 <- data
-save(extran2, file="~/dev/m4solve/rdev/data/extran2.RData")
+save(extran2, file="rdev/data/extran2.RData")
 
 extran3 <- data2
-save(extran3,file="~/dev/m4solve/rdev/data/extran3.RData")
+save(extran3,file="rdev/data/extran3.RData")
 
 data(Theoph)
 dd <- as.data.frame(Theoph)
@@ -88,7 +88,7 @@ dd$cmt[dd$evid==1] <- 1
 dd$conc[dd$time==0] <- 0
 
 exTheoph <- dd
-save(exTheoph, file="~/dev/m4solve/rdev/data/exTheoph.RData")
+save(exTheoph, file="rdev/data/exTheoph.RData")
 
 
 library(MASS)
@@ -111,7 +111,7 @@ names(pars) <- gsub("SG", "SIGMA", names(pars))
 pars$run <- 1:nrow(pars)
 pars <- shuffle(pars, "run")
 exBoot <- pars
-save(exBoot, file="~/dev/m4solve/rdev/data/exBoot.RData")
+save(exBoot, file="rdev/data/exBoot.RData")
 
 
 
