@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kylebmetrum/mrgsolve.png?branch=master)](https://travis-ci.org/kylebmetrum/mrgsolve)
+[![Build Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
 
 Resources
 =========
@@ -89,7 +89,7 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Wed Apr  6 10:51:25 2016 
+    . Date:   Wed Apr  6 10:55:08 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
