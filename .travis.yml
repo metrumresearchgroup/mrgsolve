@@ -10,6 +10,5 @@ os:
   - osx
   
 script:
-  - cd rdev
   - Make all
   - Make check
