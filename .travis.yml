@@ -18,5 +18,5 @@ os:
   
 script:
   - cd ../
-  - make all
+  - make install
   - make check
