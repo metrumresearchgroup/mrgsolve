@@ -4,10 +4,10 @@ cache: packages
 
 warnings_are_errors: false
 
+pandoc: false
 
 os:
   - linux
-  - osx
   
 script:
   - Make all
