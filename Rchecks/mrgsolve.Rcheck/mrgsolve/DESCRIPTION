@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.5.11.9005
+Version: 0.5.12
 Title: Simulation from ODE-Based Population PK/PD and Systems
         Pharmacology Models
 Author: Kyle T. Baron [cre,aut,cph], Alan C. Hindmarsh [ctb], Linda R. Petzold
@@ -33,5 +33,5 @@ Collate: 'classes.R' 'events.R' 'Ops.R' 'RcppExports.R' 'chain.R'
         'nmxml.R' 'modspec.R' 'mrgsolve.R' 'package.R' 'param.R'
         'print.R' 'simtime.R' 'specdoc.R' 'update.R' 'zchain.R'
 RoxygenNote: 5.0.1
-Packaged: 2016-04-06 02:32:56 UTC; kyleb
-Built: R 3.2.3; x86_64-apple-darwin13.4.0; 2016-04-06 02:32:58 UTC; unix
+Packaged: 2016-04-06 05:12:40 UTC; kyleb
+Built: R 3.2.3; x86_64-apple-darwin13.4.0; 2016-04-06 05:12:44 UTC; unix

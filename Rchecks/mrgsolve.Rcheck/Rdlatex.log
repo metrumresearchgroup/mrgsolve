@@ -203,7 +203,7 @@ exlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
 -dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/font
 s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/ur
 w/times/utmri8a.pfb>
-Output written on Rd2.pdf (69 pages, 187287 bytes).
+Output written on Rd2.pdf (69 pages, 187282 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (359 entries accepted, 2 rejected).
@@ -426,7 +426,7 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (75 pages, 225299 bytes).
+Output written on Rd2.pdf (75 pages, 225293 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (359 entries accepted, 2 rejected).
@@ -644,8 +644,8 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (75 pages, 225495 bytes).
+Output written on Rd2.pdf (75 pages, 225488 bytes).
 Transcript written on Rd2.log.
 Saving output to 'mrgsolve-manual.pdf' ...
 Done
-You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//RtmpWTPGs5/Rd2pdf68963d3975fa'
+You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//RtmpqPSyRw/Rd2pdf751041cd825a'

@@ -38,12 +38,12 @@ install-build:
 check:
 	make doc
 	make build
-	R CMD CHECK ${TARBALL} -o ${CHKDIR}
+	R CMD check ${TARBALL} -o ${CHKDIR}
 
 check-cran:
 	make doc
 	make build
-	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
+	R CMD check --as-cran ${TARBALL} -o ${CHKDIR}
 
 ucheck:
 	R CMD check ${TARBALL} -o ${CHKDIR}

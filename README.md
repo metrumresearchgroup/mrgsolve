@@ -1,12 +1,14 @@
+[![Build Status dev](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=dev)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=dev) [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
+
 Resources
 =========
 -   [Lattest release: 0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.5.12)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
--   [News](NEWS.md)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
+    -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/wiki/Upcoming-changes)
+    -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
 -   [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
 -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
--   [Slides from March, 12 2016 Workshop in San Diego, Ca](https://github.com/metrumresearchgroup/mrgsolve/tree/master/March12)
 
 <hr>
 About
@@ -87,7 +89,7 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Tue Mar 15 22:09:48 2016 
+    . Date:   Wed Apr  6 11:22:35 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
