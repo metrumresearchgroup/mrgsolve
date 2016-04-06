@@ -18,5 +18,5 @@ os:
   
 script:
   - cd ../
-  - make install
+  - make travis_build
   - make check

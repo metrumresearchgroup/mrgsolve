@@ -13,16 +13,19 @@ export R_LIBS=${LIBDIR}
 ec:
 	echo ${VERSION}
 
-install:
-  make doc
-  make build
-  make install
+travis_build:
+	make doc
+	make build
+	make install
+
 
 all:
 	make doc
 	make datasets
 	make build
 	make install
+
+
 
 .PHONY: doc
 doc:
