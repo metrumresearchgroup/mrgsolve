@@ -1,0 +1,40 @@
+* installing *source* package ‘mrgsolve’ ...
+** package ‘mrgsolve’ successfully unpacked and MD5 sums checked
+** libs
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c RcppExports.cpp -o RcppExports.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c Rodeproblem.cpp -o Rodeproblem.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c dataobject.cpp -o dataobject.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c datarecord.cpp -o datarecord.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c devtran.cpp -o devtran.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c housemodel.cpp.cpp -o housemodel.cpp.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c maketran.cpp -o maketran.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c mrgsolve.cpp -o mrgsolve.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c odepack_dlsoda.cpp -o odepack_dlsoda.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c odeproblem.cpp -o odeproblem.o
+gfortran-4.8   -fPIC  -g -O2  -c opk_dlsoda_mrg.f -o opk_dlsoda_mrg.o
+gfortran-4.8   -fPIC  -g -O2  -c opkda1_mrg.f -o opkda1_mrg.o
+gfortran-4.8   -fPIC  -g -O2  -c opkda2_mrg.f -o opkda2_mrg.o
+ccache   /usr/bin/clang++ -Qunused-arguments -O2 -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c pkevent.cpp -o pkevent.o
+clang -I/Library/Frameworks/R.framework/Resources/include -DNDEBUG -I../inst/include  -g -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include -I"/Users/kyleb/Rlibs/lib/Rcpp/include" -I"/Users/kyleb/Rlibs/lib/RcppArmadillo/include" -I"/Users/kyleb/Rlibs/lib/BH/include"   -fPIC  -Wall -mtune=core2 -g -O2  -c tofunptr.c -o tofunptr.o
+ccache /usr/bin/clang++ -Qunused-arguments -O2 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress -L/Library/Frameworks/R.framework/Resources/lib -L/usr/local/lib -o mrgsolve.so RcppExports.o Rodeproblem.o dataobject.o datarecord.o devtran.o housemodel.cpp.o maketran.o mrgsolve.o odepack_dlsoda.o odeproblem.o opk_dlsoda_mrg.o opkda1_mrg.o opkda2_mrg.o pkevent.o tofunptr.o -L/Library/Frameworks/R.framework/Resources/lib -lRlapack -L/Library/Frameworks/R.framework/Resources/lib -lRblas -L/usr/local/lib/gcc/x86_64-apple-darwin13.0.0/4.8.2 -lgfortran -lquadmath -lm -L/usr/local/lib/gcc/x86_64-apple-darwin13.0.0/4.8.2 -lgfortran -lquadmath -lm -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
+installing to /Users/kyleb/git/mrgsolve.git/Rchecks/mrgsolve.Rcheck/mrgsolve/libs
+** R
+** data
+** inst
+** preparing package for lazy loading
+Creating a generic function for ‘as.list’ from package ‘base’ in package ‘mrgsolve’
+Creating a generic function for ‘as.data.frame’ from package ‘base’ in package ‘mrgsolve’
+Creating a generic function for ‘as.matrix’ from package ‘base’ in package ‘mrgsolve’
+Creating a generic function for ‘tail’ from package ‘utils’ in package ‘mrgsolve’
+Creating a generic function for ‘head’ from package ‘utils’ in package ‘mrgsolve’
+Creating a generic function for ‘subset’ from package ‘base’ in package ‘mrgsolve’
+Creating a generic function for ‘summary’ from package ‘base’ in package ‘mrgsolve’
+Creating a generic function for ‘plot’ from package ‘graphics’ in package ‘mrgsolve’
+Creating a generic function for ‘nrow’ from package ‘base’ in package ‘mrgsolve’
+Creating a new generic function for ‘rename’ in package ‘mrgsolve’
+Creating a generic function for ‘update’ from package ‘stats’ in package ‘mrgsolve’
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+* DONE (mrgsolve)

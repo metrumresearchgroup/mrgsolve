@@ -1,0 +1,368 @@
+## This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
+## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+
+Reserved <- c("ID", "amt", "cmt", "ii", "ss",
+              "addl", "rate","time", "TIME",
+              "SOLVERTIME","table","ETA","EPS",
+              "NEWIND", "EVID","DONE","DXDTZERO",
+              "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
+              paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
+              "_SETINIT","report","double", "int", "bool")
+
+null_list <- list()
+names(null_list) <- character(0)
+
+
+single.number <- function(x) length(x)==1 & is.numeric(x)
+
+valid.numericlist <- function(object) {
+    x1 <- all(sapply(object@data,single.number))
+    x2 <- all(names(object@data) !="")
+    x3 <- !any(grepl("=|\\.",names(object),perl=TRUE))
+
+    x <- x1 & x2 & x3
+    if(all(x)) return(TRUE)
+
+    out <- c()
+    if(!x3) {
+        message("Problem with names:")
+        cat(paste(names(object), collapse=","))
+        out <- c(out, "Invalid names")
+    }
+    return(out)
+
+}
+
+valid.matlist <- function(object) {
+
+    labels <- names(object@data)[names(object@data) != "..."]
+
+    x1 <- all(sapply(object@data, is.matrix))
+    x2 <- all(sapply(object@data, is.numeric))
+
+    x3 <- (!any(duplicated(labels))) | length(labels)==0
+
+    x4 <- all(sapply(object@data, det)>=0)
+
+    x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
+        nrow(x) == length(y)
+    }) %>% all
+
+
+    x <- x1 & x2 & x3 & x4 & x5
+
+    if(all(x)) return(TRUE)
+    out <- c()
+    if(!x1) out <- c(out, "Found objects that are not matrix")
+    if(!x2) out <- c(out, "Found matrices that are not numeric")
+    if(!x3) {
+        y <- labels[duplicated(labels)]
+        message("Problem with this/these name(s):")
+        cat(paste(y, collapse=","))
+        out <- c(out, "Found duplicate names")
+    }
+
+    if(!x4) {
+        y <- which(sapply(object@data, det) < 0)
+        message("Problem with this matrix:")
+        print(object@data[y])
+        out <- c(out, "Invalid matrix: determinant is less than 0")
+    }
+    if(!x5) {
+        out <- c(out, "Length of labels does not match the matrix entered.")
+    }
+    return(out)
+}
+
+dim_matlist <- function(x) {
+    if(length(x@data)==0) return(0)
+    unname(sapply(x@data,nrow))
+}
+
+create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
+    x <- x[!sapply(x,nrow)==0]
+    if(is.null(names(x))) names(x) <- rep("...", length(x))
+    names(x)[nchar(names(x))==0] <- "..."
+    if(is.null(unlist(labels))) labels <- lapply(x, function(y) rep('.',nrow(y)))
+    x <- new(class, data=x, labels=labels)
+    x@n <- dim_matlist(x)
+    return(x)
+}
+
+
+##' S4 class matlist.
+##'
+##' @rdname matlist-class
+setClass("matlist", slots=c(data="list",n="numeric", labels="list"),
+                    prototype=list(data=list(), labels=list()),validity=valid.matlist)
+##' @export
+##' @rdname matlist-class
+setClass("omegalist", contains="matlist")
+##' @export
+##' @rdname matlist-class
+setClass("sigmalist", contains="matlist")
+
+
+##' S4 class numeric list.
+##'
+##' @name numericlist-class
+##' @param data list of data
+##' @param pattern character of length 1 containing regular expression to be used as a filter when printing data to the console
+setClass("numericlist", slots=c(data="list", pattern="character"),
+         validity=valid.numericlist, prototype=list(data=null_list, pattern="*"))
+
+
+##' @title Methods for numericlist
+##' @description
+##' These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures.
+##' @name numericlist
+##' @examples
+##' \dontrun{
+##'   mod <- mrgmod(...)
+##'   as.list(param(mod))
+##'   as.numeric(init(mod))
+##' }
+NULL
+##' @export
+##' @rdname numericlist
+##' @param x object
+##' @param ... passed along to other methods
+setMethod("as.list", "numericlist", function(x,...) as.list(x@data))
+##' @export
+##' @rdname numericlist
+setMethod("as.numeric", "numericlist", function(x) {
+    ans <- unlist(x@data)
+    if(is.null(ans)) return(numeric(0))
+    return(ans)
+})
+##' @export
+##' @rdname numericlist
+##' @param row.names passed to \code{\link{as.data.frame}}
+##' @param optional passed to \code{\link{as.data.frame}}
+setMethod("as.data.frame", "numericlist", function(x,row.names=NULL, optional=FALSE,...) as.data.frame(x@data,row.names,optional,...))
+##' @export
+##' @rdname numericlist
+setMethod("length", "numericlist", function(x) length(x@data))
+##' @export
+##' @rdname numericlist
+setMethod("names", "numericlist", function(x) as.character(names(x@data)))
+
+##' @export
+##' @rdname numericlist
+##' @param name column to take; used with \code{$}
+setMethod("$", "numericlist", function(x,name){unlist(x@data[name],use.names=FALSE)})
+
+##' @export
+##' @rdname numericlist
+##' @param i elements to keep
+##' @param j not used
+##' @param drop not used
+##' @aliases [,numericlist-method
+setMethod("[", "numericlist", function(x,i,j,...){x@data[i,...]})
+
+
+create_numeric_list <- function(x,class,...) {
+    if(length(x) ==0) return(new(class))
+    new(class, data=x)
+}
+
+
+
+
+##' S4 events class
+##' @slot data a data frame of events
+##' @export
+setClass("ev", slots=c(data="data.frame"))
+##' S4 parameter_list class
+##' @details
+##' parameter_list is a \code{\link{numericlist-class}}
+setClass("parameter_list",contains="numericlist")
+##' S4 cmt_list class
+##' @details
+##' cmt_list is a \code{\link{numericlist-class}}
+setClass("cmt_list",contains="numericlist")
+
+
+## mrgmod:
+protomod <- list(model=character(0),
+                 package=character(0),
+                 soloc=tempdir(),
+                 project='.',
+                 start = 0.0,
+                 end=24.0,
+                 delta=1.0,
+                 add = numeric(0),
+                 tscale = as.double(1),
+                 digits=-1,
+                 quiet = FALSE,
+                 verbose = FALSE,
+                 debug=FALSE,
+                 preclean=FALSE,
+                 atol=1E-8,
+                 rtol=1E-8,
+                 maxsteps=2000,
+                 hmin=0,
+                 hmax=0,
+                 ixpr=0,
+                 mxhnil=0,
+                 shlib=list(date="", compiled=FALSE),
+                 func=c("MRGSOLVE_NO_ODE_FUN", "mrgsolve"),
+                 init_fun=c("MRGSOLVE_NO_INIT_FUN", "mrgsolve"),
+                 table_fun=c("MRGSOLVE_NO_TABLE_FUN","mrgsolve"),
+                 omega =new("omegalist"),
+                 sigma = new("sigmalist"),
+                 events=new("ev"),
+                 request="(all)",
+                 param = new("parameter_list"),
+                 init=new("cmt_list"),
+                 args = list(),
+                 fixed  = list(),
+                 advan=13,
+                 mindt=10*.Machine$double.eps
+                 )
+
+slot.names <- names(protomod)
+slots <- sapply(protomod, class)
+names(slots) <- names(protomod)
+
+eXclude <- function(x,what) x[!(x %in% what)]
+
+
+##' @importFrom dplyr intersect filter select rename slice distinct data_frame
+valid.mrgmod <- function(object) {
+    out <- c()
+
+    ##x0 <- !any(duplicated(c(cmt(object),pars(object), eXclude(c(object@omega@labels, object@omega@labels),'.'))))
+    x1 <- !any(is.element(cmt(object), pars(object)))
+    x1 <- x1 | neq(object)==0
+    x1 <- x1 | length(param(object))==0
+
+    x2 <- all(!duplicated(cmt(object)))
+    x3 <- all(!duplicated(pars(object)))
+
+    x4 <- TRUE#det(object@omega) >=0
+    x5 <- TRUE#nchar(object@defdose)==0 | is.element(object@defdose,cmt(object))
+    x6 <- TRUE# det(object@sigma) >=0
+
+    x7x <- dplyr::intersect(Reserved,pars(object))
+    x8x <- dplyr::intersect(Reserved,cmt(object))
+    x7 <- length(x7x) == 0
+    x8 <- length(x8x) == 0
+
+    x9x <- c(cmt(object), pars(object), names(omat(object)), names(smat(object)))
+    x9x <- x9x[x9x !="..."]
+    x9 <- length(x9x) == length(unique(x9x))
+
+    x10 <- !any(is.element(unlist(object@omega@labels),c(cmt(object),pars(object))))
+    x11 <- !any(is.element(unlist(object@sigma@labels),c(cmt(object),pars(object))))
+
+    if(all(c(x1,x2,x3,x4,x5,x7,x8,x9,x10,x11))) return(TRUE)
+
+    if(!x1) out <- c(out, "Found compartments and parameters with the same names")
+    if(!x2) {
+        dups <- cmt(object)[duplicated(cmt(object))]
+        out <- c(out, paste0("Found duplicate compartment names: ", paste(dups, collapse=",")))
+    }
+    if(!x3) {
+        dups <- pars(object)[duplicated(pars(object))]
+        out <- c(out, paste0("Found duplicate parameter names: ", paste(dups, collapse=",")))
+    }
+    if(!x4) out <- c(out, "omega matrix determinant is < 0")
+    #if(!x5) out <- c(out, "defdose is set, but not found in compartment list")
+    if(!x6) out <- c(out, "sigma matrix determinant is < 0")
+    if(!x7) out <- c(out, paste0("\n  Reserved words in $PARAM: ", paste(x7x, collapse=',')))
+    if(!x8) out <- c(out, paste0("\n  Reserved words in $INIT or $CMT: ", paste(x8x, collapse=',')))
+    if(!x9) out <- c(out, paste0("\n  Duplicate names: ", paste(x9x[duplicated(x9x)],collapse=',')))
+    if(!x10) out <- c(out, paste0("\n Duplicate names: omega labels also found in compartments or parameters"))
+    if(!x11) out <- c(out, paste0("\n Duplicate names: sigma labels also found in compartments or parameters"))
+    return(out)
+}
+
+
+##' S4 class for mrgsolve model object
+##'
+##' @section Notes:
+##' \itemize{
+##' \item Spaces in paths (\code{project} and \code{soloc}) are prohibited.
+##'
+##' }
+##'
+##' @slot model model name \code{<character>}
+##' @slot project working directory; must be writeable with no spaces \code{<character>}
+##' @slot start simulation start time \code{<numeric>}
+##' @slot end simulation end time \code{<numeric>}
+##' @slot delta simulation time interval \code{<numeric>}
+##' @slot add additional simulation times \code{<numeric-vector>}
+##' @slot param parameter_list
+##' @slot fixed a parameter_list of fixed value parameters; these are not updatable from \code{R}
+##' @slot init cmt_list
+##' @slot events \link[=ev]{events} object
+##' @slot digits significant digits in simulated output; negative integer means ignore \code{<numeric>}
+##' @slot hmin passed to dlsoda  \code{<numeric>}
+##' @slot hmax passed to dlsoda \code{<numeric>}
+##' @slot mxhnil passed to dlsoda \code{<numeric>}
+##' @slot ixpr passed to dlsoda \code{<numeric>}
+##' @slot atol passed to dlsoda \code{<numeric>}
+##' @slot rtol passed to dlsoda \code{<numeric>}
+##' @slot maxsteps passed to dlsoda \code{<numeric>}
+##' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
+##' @slot verbose print run information to screen \code{<logical>}
+##' @slot tscale used to scale time in simulated output \code{<numeric>}
+##' @slot omega \code{\link{matlist}} for simulating individual-level random effects
+##' @slot sigma \code{\link{matlist}} for simulating residual error variates
+##' @slot func character vector of length 2 specifying symbol name and package for ode function; this is not normally set by the user
+##' @slot init_fun character vector of length 2 specifying symbol name and package for main function; this is not normally set by the user
+##' @slot table_fun character vector of length 2 specifying symbol name and package for table function; this is not normally set by the user
+##' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
+##' @slot advan either 2, 4, or 13 \code{<numeric>}
+##' @slot request  vector of compartments to request \code{<character>}
+##' @slot soloc directory path for storing the model shared object \code{<character>}
+##' @slot mindt minimum time between simulation records \code{<numeric>}
+setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
+
+is.mrgmod <- function(x) inherits(x,"mrgmod")
+is.mrgindata <- function(x) inherits(x,"mrgindata")
+is.mrgsims <- function(x) inherits(x,"mrgsims")
+
+##' S4 class for mrgsolve simulation output
+##'
+##' @slot request character vector of compartments requested in simulated output
+##' @slot outnames character vector of column names in simulated output coming from table step
+##' @slot data matrix of simulated data
+##' @slot mod the mrgmod model object
+setClass("mrgsims", slots=c(request="character", outnames="character",data="matrix", mod="mrgmod",seed="integer",date="character"))
+
+setClass("batch_mrgsims",contains="mrgsims",
+         slots=c( knobs="character", batch="data.frame", request="character",moving="character",input="list"))
+
+setClass("lockedmod",
+         contains="mrgmod",
+         slots=c(
+           dllloc="character",
+           dllname="character",
+           src = "character",
+           include="character",
+           inpackage="logical"
+         )
+)
+
+setClass("packmod",
+         prototype = list(shlib=list(compiled=TRUE, date="date of package compile"),package="",src="",header=""),
+         contains="mrgmod",
+         slots=c(package="character",src="character", header="character")
+         )
+
+##' @export
+##' @rdname stime
+setClass("tgrid", slots=c(start="numeric", end="numeric", delta="numeric", add="numeric", offset="numeric", scale="numeric"),
+         prototype=list(start=0, end=24, delta=1, offset=0,scale=1))
+##' @export
+##' @rdname stime
+setClass("tgrids", slots=c(data="list"))
+
+
+
+
+

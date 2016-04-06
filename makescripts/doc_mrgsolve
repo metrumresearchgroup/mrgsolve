@@ -1,0 +1,48 @@
+#!/usr/bin/Rscript
+#.libPaths("~/Rlibs/lib")
+
+message("\n\nwriting documentation ... \n")
+library(metrumrg)
+library(methods)
+library(devtools)
+library(plyr)
+
+pkg <- file.path("~/dev/m4solve/rdev")
+document(pkg)
+#roxygenize(pkg)
+
+## message("\nwriting header files for nullmodel and housemodel\n")
+r <- file.path(pkg,"R")
+src <- file.path(pkg,"src")
+inc <- file.path(pkg, "inst", "include")
+
+#source(file.path(r,"attributes.R"))
+#source(file.path(r,"compile.R"))
+#ret <- pull_attributes("housemodel", project=src)
+
+source(file.path(r, "modspec.R"))
+
+ret <- modelparse(readLines(file.path(src,"housemodel.cpp")))
+ret$param <- tolist(ret$PARAM)
+init$param <- tolist(ret$INIT)
+
+
+txt <- generate_rdefs(cmt=names(ret$init),
+                      pars=names(ret$param),
+                      func=ode_symbol("housemodel"),
+                      init_fun=main_symbol("housemodel"),
+                      table_fun = table_symbol("housemodel"))
+
+cat(txt, sep="\n", file=file.path(inc, "housemodel.h"))
+
+file.copy(file.path(pkg, "src", "housemodel.cpp"), file.path(pkg, "inst", "project"),overwrite=TRUE)
+file.copy(file.path(pkg, "inst", "include", "housemodel.h"), file.path(pkg, "inst", "project"),overwrite=TRUE)
+
+saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),ret)
+
+
+
+
+
+
+

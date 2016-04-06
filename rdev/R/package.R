@@ -1,0 +1,298 @@
+## This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
+## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+
+
+
+globalVariables("test_package")
+
+
+##' @title mrgsolve
+##' @name mrgsolve
+##'
+##'
+##' @section Help with model specification file:
+##' See this help page: \code{\link{modelspec}}.
+##'
+##'
+##' @section Example models:
+##' See \code{\link{mrgsolve_example}} to export example models into your own, writeable project directory.
+##'
+##' @section Input data sets:
+##' See \code{\link{data_set}} for help creating input data sets.  See \code{\link{exdatasets}} for example input data sets.
+##'
+##' @section Package help:
+##' \itemize{
+##'  \item  Package \href{00Index.html}{index}, including a listing of all functions
+##'  \item Macros and variables in the model specification file: \code{\link{modelspec}}
+##'  \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
+##' }
+##'
+##' @section About the model object:
+##' The model object has class \code{\link[=mrgmod-class]{mrgmod}}.
+##'
+##'
+##' @name mrgsolve
+##' @description
+##' mrgsolve is an R package maintained under the auspices of Metrum Research Group, LLC, that facilitates
+##' simulation from models based on systems of ordinary differential equations (ODE) that are typically employed
+##' for understanding pharmacokinetics, pharmacodynamics, and systems biology and pharmacology.
+##' mrgsovle consists of computer code written in the R and C++ languages, providing an interface to
+##' the DLSODA differential equation solver (written in FORTRAN) provided through ODEPACK -
+##' A Systematized Collection of ODE Solvers.
+##'
+##' @section Handling simulated output:
+##' See \code{\link{mrgsims}} for methods to use with simulated output.
+##'
+##' @section Operations between mrgsolve objects:
+##' See \code{\link{mrgsolve_Ops}} for details.
+##'
+##' @section About the solver used by \code{mrgsolve}:
+##' See: \code{\link{aboutsolver}}
+##'
+##' @rdname mrgsolve_package
+##' @docType package
+##' @useDynLib mrgsolve mrgsolve_DEVTRAN mrgsolve_TOUCH_FUNS mrgsolve_EXPAND_EVENTS
+##' @importFrom Rcpp evalCpp
+##' @importFrom dplyr bind_rows
+##' @aliases mrgsolve
+##' @examples
+##'
+##' ## example("mrgsolve")
+##'
+##' mod <- mrgsolve:::house(delta=0.1)  %>% param(CL=0.5)
+##'
+##' events <-  ev(amt=1000, cmt=1, addl=5, ii=24)
+##'
+##' mod
+##' cfile(mod)
+##' see(mod)
+##' events
+##' stime(mod)
+##'
+##' param(mod)
+##' init(mod)
+##'
+##' out <- mod %>% ev(events) %>% mrgsim(end=168)
+##' out <- label(out, TRT=1)
+##'
+##' out
+##' head(out)
+##' tail(out)
+##' dim(out)
+##'
+##' mod(out)
+##' param(out)
+##'
+##' plot(out, GUT+CP~.)
+##'
+##' sims <- as.data.frame(out)
+##'
+##' t72 <- subset(sims, time==72)
+##' str(t72)
+##'
+##'
+##'
+##' idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
+##' out <- mod %>% ev(events) %>% mrgsim(end=168, idata=idata, req="")
+##' plot(out)
+##'
+##' out <- mod %>% ev(events) %>% mrgsim(carry.out="amt,evid,cmt,CL")
+##' head(out)
+##'
+##'
+##' out <- mod %>% ev() %>% knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
+##' plot(out, CP~., scales="same")
+##' plot(out, RESP+CP~time|CL, groups=Amt)
+##'
+##'
+##' ev1 <- ev(amt=500, cmt=2,rate=10)
+##' ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
+##' events <- ev1+ev2
+##' events
+##'
+##' out <- mod %>% ev(ev1+ev2) %>% mrgsim(end=180, req="")
+##' plot(out)
+##'
+##'
+##'
+##'
+##' ## Full NMTRAN data set
+##' data(exTheoph)
+##' head(exTheoph)
+##'
+##' mod <- mrgsolve:::house(delta=0.1)
+##'
+##' out <- mod %>% data_set(exTheoph) %>% mrgsim
+##'
+##' plot(out,CP~time|factor(ID),type='b', scales="same")
+##'
+##'
+##' ## "Condensed" data set
+##' data(extran1)
+##' extran1
+##'
+##' out <- mod %>% data_set(extran1) %>% mrgsim(end=200)
+##'
+##' plot(out,CP~time|factor(ID))
+##'
+##'
+##' ## idata
+##' data(exidata)
+##' exidata
+##'
+##' out <- mod %>% ev(amt=1000, cmt=1) %>% idata_set(exidata) %>%  mrgsim(end=72)
+##'
+##' plot(out, CP~., as="log10")
+##'
+##'
+##'
+##'code <- '
+##' $PARAM CL=1, VC=10, KA=1.1
+##' $INIT GUT=0, CENT=0
+##' $SET end=48, delta=0.25
+##'
+##' $MAIN
+##' double CLi = CL*exp(ETA(1));
+##' double VCi = VC*exp(ETA(2));
+##' double ke = CLi/VCi;
+##'
+##' $OMEGA corr=TRUE
+##' 0.04 0.6 0.09
+##'
+##' $ODE
+##' dxdt_GUT = -KA*GUT;
+##' dxdt_CENT = KA*GUT - ke*CENT;
+##'
+##' $TABLE
+##' table(CP) = CENT/VC;
+##'
+##' '
+##'
+##' mod <- mread(code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
+##'
+##' out <- mod %>% mrgsim
+##'
+##' out
+##'
+##' plot(out)
+##'
+##'
+##'
+##'
+NULL
+
+##' ODE solver.
+##'
+##' About the \code{ODEPACK} differential equation solver used by \code{mrgsolve}.
+##'
+##' @name aboutsolver
+##' @rdname aboutsolver
+##'
+##' @section DLSODA:
+##' \preformatted{
+##'C----------------------------------------------------------------------
+##'C This is the 12 November 2003 version of
+##'C DLSODA: Livermore Solver for Ordinary Differential Equations, with
+##'C         Automatic method switching for stiff and nonstiff problems.
+##'C
+##'C This version is in double precision.
+##'C
+##'C DLSODA solves the initial value problem for stiff or nonstiff
+##'C systems of first order ODEs,
+##'C     dy/dt = f(t,y) ,  or, in component form,
+##'C     dy(i)/dt = f(i) = f(i,t,y(1),y(2),...,y(NEQ)) (i = 1,...,NEQ).
+##'C
+##'C This a variant version of the DLSODE package.
+##'C It switches automatically between stiff and nonstiff methods.
+##'C This means that the user does not have to determine whether the
+##'C problem is stiff or not, and the solver will automatically choose the
+##'C appropriate method.  It always starts with the nonstiff method.
+##'C
+##'C Authors:       Alan C. Hindmarsh
+##'C                Center for Applied Scientific Computing, L-561
+##'C                Lawrence Livermore National Laboratory
+##'C                Livermore, CA 94551
+##'C and
+##'C                Linda R. Petzold
+##'C                Univ. of California at Santa Barbara
+##'C                Dept. of Computer Science
+##'C                Santa Barbara, CA 93106
+##'C
+##'C References:
+##'C 1.  Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
+##'C     Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),
+##'C     North-Holland, Amsterdam, 1983, pp. 55-64.
+##'C 2.  Linda R. Petzold, Automatic Selection of Methods for Solving
+##'C     Stiff and Nonstiff Systems of Ordinary Differential Equations,
+##'C     Siam J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
+##'C----------------------------------------------------------------------
+##' }
+NULL
+
+
+##' Reserved words in \code{mrgsolve}.
+##'
+##' @name reserved
+##' @details
+##' Note: this function is not exported; you must go into the \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
+##' @examples
+##' mrgsolve:::reserved()
+##'
+reserved <- function() {
+    cat(paste(" ", Reserved), sep="\n")
+}
+
+examples <- function(...) {
+   example("mrgsolve", package="mrgsolve",...)
+   example("knobs", package="mrgsolve",...)
+   example("param", package="mrgsolve",...)
+   example("init", package="mrgsolve",...)
+   example("mrgsim", package="mrgsolve",...)
+   example("mrgsims", package="mrgsolve",...)
+   example("mrgsolve_example", package="mrgsolve",...)
+   example("mrgsolve_utils", package="mrgsolve",...)
+   example("plot_mrgsims", package="mrgsolve",...)
+}
+
+tests <- function() {
+  if(!requireNamespace("testthat", quietly=TRUE)) stop("testthat not available")
+  testthat::test_package("mrgsolve")
+}
+
+models <- function() {
+    file.path(path.package("mrgsolve"), "models")
+}
+
+
+
+noRwarning <- '
+Could not find R program in PATH.
+If you are compiling your own models, please first make sure that
+the following command runs properly from your R prompt:
+  system("R CMD SHLIB -v")
+
+'
+
+testSHLIB <- function() {
+    system("R CMD SHLIB -v", ignore.stdout=TRUE)==0
+}
+
+
+.onLoad <- function(libname, pkgname) {
+
+    if(!testSHLIB()) {
+        warning(noRwarning, call.=FALSE)
+    }
+
+
+
+}
+
+
+.onAttach <- function(libname,pkgname) {
+    packageStartupMessage("mrgsolve: Community Edition")
+    packageStartupMessage("www.github.com/metrumresearchgroup")
+}
+

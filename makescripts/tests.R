@@ -1,0 +1,3 @@
+library(mrgsolve)
+
+mrgsolve:::tests()

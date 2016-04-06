@@ -1,3 +1,8 @@
+*.o
+*.so
+*.Rproj
 .Rproj.user
-mrgsolve.git.Rproj
 .Rhistory
+*.tar.gz
+!package/*.tar.gz
+*00_pkg_src
