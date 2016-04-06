@@ -3,3 +3,13 @@ sudo: false
 cache: packages
 
 warnings_are_errors: false
+
+
+os:
+  - linux
+  - osx
+  
+script:
+  - cd rdev
+  - Make all
+  - Make check
