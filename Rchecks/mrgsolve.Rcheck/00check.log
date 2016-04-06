@@ -1,10 +1,10 @@
-* using log directory ‘/Users/kyleb/git/mrgsolve.git/Rchecks/mrgsolve.Rcheck’
+* using log directory ‘/Users/kyleb/git/m4solve.git/Rchecks/mrgsolve.Rcheck’
 * using R version 3.2.3 (2015-12-10)
 * using platform: x86_64-apple-darwin13.4.0 (64-bit)
 * using session charset: UTF-8
 * checking for file ‘mrgsolve/DESCRIPTION’ ... OK
 * checking extension type ... Package
-* this is package ‘mrgsolve’ version ‘0.5.11.9005’
+* this is package ‘mrgsolve’ version ‘0.5.12’
 * checking package namespace information ... OK
 * checking package dependencies ... OK
 * checking if this is a source package ... OK
