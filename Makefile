@@ -6,7 +6,6 @@ TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=rdev/
 CHKDIR=Rchecks
 
-
 ## Set libPaths:
 export R_LIBS=${LIBDIR}
 
@@ -24,7 +23,6 @@ all:
 	make datasets
 	make build
 	make install
-
 
 
 .PHONY: doc
