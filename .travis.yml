@@ -14,5 +14,5 @@ os:
   - linux
   
 script:
-  - Make all
-  - Make check
+  - make all
+  - make check
