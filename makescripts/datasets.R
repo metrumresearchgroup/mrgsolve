@@ -1,6 +1,8 @@
-
 library(metrumrg)
 library(plyr)
+library(dplyr)
+library(mrgsolve)
+
 
 set.seed(112233)
 NID <- 10
