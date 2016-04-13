@@ -5,9 +5,8 @@
 
 
 
-
 #' Forward pipe.
-#'#'
+#'
 #' @importFrom magrittr %>%
 #' @name %>%
 #' @export

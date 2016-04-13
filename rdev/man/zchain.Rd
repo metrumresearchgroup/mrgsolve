@@ -3,11 +3,9 @@
 \name{\%>\%}
 \alias{\%>\%}
 \alias{\%T>\%}
-\title{Forward pipe.
-#'}
+\title{Forward pipe.}
 \description{
 Forward pipe.
-#'
 
 Tee.
 }

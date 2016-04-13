@@ -228,15 +228,14 @@ setMethod("summary", "mrgsims", function(object,...) {
 ##' @export
 ##' @rdname mrgsims
 setMethod("show", "mrgsims", function(object) {
-  digits <- 4
-  top <- head(object@data, n=5)
-  cat("Model: ", basename(cfile(mod(object))), "\n")
-  cat("Date:  ", object@date, "\n")
-  cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
-  cat("Time:  ", paste(range(object@data[,"time"]), collapse=" to "), "\n")
-  cat("ID:    ", length(unique(object@data[,"ID"])), "\n")
-  print(top, digits=digits)
-  cat(paste0("[showing ", digits, " significant digits]"))
+    digits <- 4
+    top <- head(object@data, n=8)
+    tcol <- match(c("time", "TIME"),colnames(object@data))[1]
+    cat("Model: ", basename(cfile(mod(object))), "\n")
+    cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
+    cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
+    cat("ID:    ", length(unique(object@data[,"ID"])), "\n")
+    print(top, digits=digits)
 })
 
 
@@ -308,11 +307,13 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
 
 
   ynames <- variables(x)
+
   if(length(ynames)==0) {
       message("No variables to plot")
       return(invisible(NULL))
 
   }
+
   if(length(ynames)>limit) {
       ynames <- ynames[1:limit]
       if(missing(limit)) warning(paste0("NOTE: show first ",
@@ -321,8 +322,9 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
                                         ), call.=FALSE)
   }
 
+  tname <- intersect(c("time", "TIME"), colnames(x@data))[1]
   lhs <- paste(ynames, collapse="+")
-  fmla <- as.formula(paste(lhs, "~time"))
+  fmla <- as.formula(paste0(lhs, "~", tname))
   plot(x,fmla,limit=limit,...)
 })
 
@@ -342,7 +344,12 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
 
   data <- as.data.frame(limit(x,...))
 
-  if(y[[3]]=='.') y[[3]] <- quote(time)
+  if(y[[3]] == '.')  {
+
+      if(exists("time", data)) y[[3]] <- quote(time)
+      if(exists("TIME", data)) y[[3]] <- quote(TIME)
+  }
+
 
   if(as=="cfb")  {
       data <- split(data, data$ID)
