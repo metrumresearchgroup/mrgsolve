@@ -1,4 +1,4 @@
-%>%                     Forward pipe. #'
+%>%                     Forward pipe.
 Req                     Set the 'Request' argument for 'mrgsim'.
 aboutsolver             ODE solver.
 add.ev                  Add two events objects
@@ -45,6 +45,7 @@ matlist                 Various functions for and properties of
                         'matlist' objects.
 matlist-class           S4 class matlist.
 mcRNG                   Set RNG to use L'Ecuyer-CMRG.
+mcode                   Write, compile, and load model code.
 merge.list              Merge two lists
 mod                     Return the model object.
 modMATRIX               Create a matrix.

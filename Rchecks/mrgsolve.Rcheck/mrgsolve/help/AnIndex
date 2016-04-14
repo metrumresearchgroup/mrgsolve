@@ -144,6 +144,7 @@ loadso,mrgmod-method	loadso
 lower2matrix	lower2matrix
 matlist	matlist
 matlist-class	matlist-class
+mcode	mcode
 mcRNG	mcRNG
 merge.list	merge
 mod	mod

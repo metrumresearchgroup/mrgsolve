@@ -6,13 +6,16 @@ __Please see the latest release__: [v0.5.12](https://github.com/metrumresearchgr
 * Coming
 
 ## New features
-* Coming
+* Added `mcode` function as alternative to using `mread` when your model is written in an `R` string.  Note the order of the arguments:
+first `model`, then `code`, then `project`.  `project` defaults to `tempdir`.  So the call is: `mod <- mcode("mymodel", code)`.  The
+equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
+
 
 
 # Since 0.5.11
 ## Bugs fixed
 * Added missing example model specification files (popExample, viralExample, others)
-* Added `mindt` attribute to `mrgmod` objects with default value of `.Machine$double.eps*10`. When the problem includes an infusion, the calculated end of the infusion 
+* Added `mindt` attribute to `mrgmod` objects with default value of `.Machine$double.eps*10`. When the problem includes an infusion, the calculated end of the infusion
 may come too close to another record.  Usually the solver will fail with the message `DLSODA- TOUT(=R1) too close to T(=R2) to start integration.`.  To fix this, set `mindt` to be greater than zero but small ... maybe 1E-12.  When `mindt` is greater than zero and `tto - tfrom` (the times of two adjacent records) is less than `mindt`, `mrgsolve` will set `tto` equal to `tfrom` ([issue 9](../../issues/9)).
 * `zero.re` didn't properly update the `$SIGMA` list when one matrix was named and another was unnamed.  This has been fixed.  ([issue 16](../../issues/16))
 * Fixed a bug where infusions with `ss`=1 caused `mrgsolve`/`R` to crash when the infusion duration was equal to or some multiple of the dosing interval. ([issue 19](../../issues/19))
@@ -24,11 +27,11 @@ may come too close to another record.  Usually the solver will fail with the mes
 
 
 ## New features
-* New aliases available for setting bioavailability, lag time and infusion duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT` (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion duration), and / or `R_DEPOT` (infusion rate). ([issue 13](../../issues/13))  
-* Added *slightly* more informative messages when `DLSODA` fails, including clear identification if the value of `istate`, which is 2 when the solver succeeds and negative when the solver fails. 
+* New aliases available for setting bioavailability, lag time and infusion duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT` (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion duration), and / or `R_DEPOT` (infusion rate). ([issue 13](../../issues/13))
+* Added *slightly* more informative messages when `DLSODA` fails, including clear identification if the value of `istate`, which is 2 when the solver succeeds and negative when the solver fails.
 * Added `labels` and `prefix` options to `$OMEGA` and `$SIGMA`.  These allow descriptive aliases for ETAs ... e.g. using `ETA_CL` rather than `ETA(1)`.  ([issue 15](../../issues/15))
 * Added `dplyr::slice` method for `mrgsims` objects ([issue 11](../../issues/11))
-* New argument to `mread`: `quiet`.  Setting `quiet` to `TRUE` will prevent printing messages when `mread` is called.  The default is `getOptions("mrgsolve_mread_quiet",FALSE)` ... so you can call `options(mrgsolve_mread_quiet = TRUE)` to globally turn off messages from `mread`.  
+* New argument to `mread`: `quiet`.  Setting `quiet` to `TRUE` will prevent printing messages when `mread` is called.  The default is `getOptions("mrgsolve_mread_quiet",FALSE)` ... so you can call `options(mrgsolve_mread_quiet = TRUE)` to globally turn off messages from `mread`.
 
 # Since 0.5.001
 
@@ -36,7 +39,7 @@ may come too close to another record.  Usually the solver will fail with the mes
 * Fixed paths for project (`project`) and shared object (`soloc`) so that "short" paths are used when compiling the model on Windows  platforms (info [issue 4](https://github.com/metrumresearchgroup/mrgsolve/issues/4) and [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#spaces-in-project-directory-path))
 * Fixed a bug where bioavailability fraction was not accounted for when setting infusion duration in `$MAIN` with `rate=-2` (see [issue 3](https://github.com/metrumresearchgroup/mrgsolve/issues/3))
 * `mrgsolve_example` prints a message telling the user to use `mrgmod` to read and compile the model.  The user should use `mread`.  The message has been updated. (info [issue 5](https://github.com/metrumresearchgroup/mrgsolve/issues/5))
-* Fixed bug where parameters were not correctly read from first row of a data set when certain `recsort` options were selected ([issue 6](https://github.com/metrumresearchgroup/mrgsolve/issues/6)) 
+* Fixed bug where parameters were not correctly read from first row of a data set when certain `recsort` options were selected ([issue 6](https://github.com/metrumresearchgroup/mrgsolve/issues/6))
 
 ## New Features
 *  Added `$ADVAN2` and `$ADVAN4` for implementing one- and two-compartment PK models with analytical solutions rather than ODEs (thanks to contributions by Bill Gillespie and Charles Margossian)

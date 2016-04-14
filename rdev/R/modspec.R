@@ -165,6 +165,37 @@ block_x <- function(x,y="",z="DONE") {
 }
 
 
+##' Write, compile, and load model code.
+##'
+##' This is a convenience function that ultimately calls \code{\link{mread}}.
+##'
+##' @param model model name
+##' @param project project name
+##' @param code character string specifying a \code{mrgsolve} model
+##' @param ... passed to \code{\link{mread}}
+##' @details
+##' Note that the arguments are in slightly different order than \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+##'
+##' @examples
+##'
+##' code <- '
+##' $CMT DEPOT CENT
+##' $ADVAN2
+##' $MAIN
+##' pred_CL = 1;
+##' pred_VC= 20;
+##' '
+##'
+##' mod <- mcode("example",code)
+##'
+##' @export
+##'
+mcode <- function(model,code, project=tempdir(),...) {
+    mread(model=model,project=project,code=code,...)
+}
+
+
+
 
 ##' Read a model specification file
 ##'

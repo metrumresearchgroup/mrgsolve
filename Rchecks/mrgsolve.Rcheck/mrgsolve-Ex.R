@@ -412,6 +412,32 @@ out
 
 
 cleanEx()
+nameEx("mcode")
+### * mcode
+
+flush(stderr()); flush(stdout())
+
+### Name: mcode
+### Title: Write, compile, and load model code.
+### Aliases: mcode
+
+### ** Examples
+
+
+code <- '
+$CMT DEPOT CENT
+$ADVAN2
+$MAIN
+pred_CL = 1;
+pred_VC= 20;
+'
+
+mod <- mcode("example",code)
+
+
+
+
+cleanEx()
 nameEx("modMATRIX")
 ### * modMATRIX
 

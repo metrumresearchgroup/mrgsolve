@@ -41,7 +41,6 @@ www.github.com/metrumresearchgroup
 > 
 > mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:35 2016 
 Dim:    482 x 4 
 Time:   0 to 120 
 ID:     1 
@@ -51,7 +50,10 @@ ID:     1
 [3,]  1 0.25 42.29 12.87
 [4,]  1 0.50 32.69 22.25
 [5,]  1 0.75 25.29 29.04
-[showing 4 significant digits]> 
+[6,]  1 1.00 20.05 33.91
+[7,]  1 1.25 16.45 37.37
+[8,]  1 1.50 14.01 39.78
+> 
 > 
 > 
 > 
@@ -418,7 +420,6 @@ Events:
 > out <- mod %>% data_set(exTheoph) %>% mrgsim
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:35 2016 
 Dim:    132 x 3 
 Time:   0 to 24.65 
 ID:     12 
@@ -428,13 +429,15 @@ ID:     12
 [3,]  1 0.57 0.08624
 [4,]  1 1.12 0.12643
 [5,]  1 2.02 0.15072
-[showing 4 significant digits]> plot(out)
+[6,]  1 3.82 0.15121
+[7,]  1 5.10 0.14348
+[8,]  1 7.03 0.13101
+> plot(out)
 > ## Condensed: mrgsolve fills in the observations
 > data(extran1)
 > out <- mod %>% data_set(extran1) %>% mrgsim
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:35 2016 
 Dim:    4814 x 3 
 Time:   0 to 240 
 ID:     5 
@@ -444,7 +447,10 @@ ID:     5
 [3,]  1 0.25 12.87
 [4,]  1 0.50 22.25
 [5,]  1 0.75 29.04
-[showing 4 significant digits]> plot(out)
+[6,]  1 1.00 33.91
+[7,]  1 1.25 37.37
+[8,]  1 1.50 39.78
+> plot(out)
 > ## Add a parameter to the data set
 > stopifnot(require(dplyr))
 Loading required package: dplyr
@@ -477,7 +483,6 @@ Joining by: "ID"
 > out <- mod %>% data_set(data) %>% carry.out(CL) %>%  mrgsim
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:35 2016 
 Dim:    4814 x 4 
 Time:   0 to 240 
 ID:     5 
@@ -487,7 +492,10 @@ ID:     5
 [3,]  1 0.25 1.252 12.85
 [4,]  1 0.50 1.252 22.18
 [5,]  1 0.75 1.252 28.89
-[showing 4 significant digits]> plot(out)
+[6,]  1 1.00 1.252 33.66
+[7,]  1 1.25 1.252 37.01
+[8,]  1 1.50 1.252 39.30
+> plot(out)
 > ## idata
 > data(exidata)
 > out <- mod %>% idata_set(exidata) %>% ev(amt=100,ii=24,addl=10) %>% mrgsim
@@ -683,6 +691,35 @@ Head:
 > 
 > 
 > cleanEx()
+> nameEx("mcode")
+> ### * mcode
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: mcode
+> ### Title: Write, compile, and load model code.
+> ### Aliases: mcode
+> 
+> ### ** Examples
+> 
+> 
+> code <- '
++ $CMT DEPOT CENT
++ $ADVAN2
++ $MAIN
++ pred_CL = 1;
++ pred_VC= 20;
++ '
+> 
+> mod <- mcode("example",code)
+Using ADVAN2
+Compiling example.cpp.cpp ... done.
+Loading: example89619d2e85d.so
+> 
+> 
+> 
+> 
+> cleanEx()
 > nameEx("modMATRIX")
 > ### * modMATRIX
 > 
@@ -800,7 +837,7 @@ Head:
 > 
 > mod <- mread(code=code, project=tempdir())
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_temp920473cb36d5.so
+Loading: _mrgsolve_temp89665953ee9.so
 > 
 > smat(mod)
 $...
@@ -892,7 +929,7 @@ capture(CP);
 > mod <- mread(code=code, "ADVAN2", tempdir())
 Using ADVAN2
 Compiling ADVAN2.cpp.cpp ... done.
-Loading: ADVAN29204227d1557.so
+Loading: ADVAN289629556719.so
 > 
 > mod %>%
 +   ev(amt=100,ii=24, addl=9) %>%
@@ -925,7 +962,7 @@ Loading: ADVAN29204227d1557.so
 > 
 > mod <- mread(code=code)
 Compiling _mrgsolve_temp.cpp.cpp ... (waiting) ... done.
-Loading: _mrgsolve_temp920419da2893.so
+Loading: _mrgsolve_temp896717933d.so
 > 
 > mod
 
@@ -933,9 +970,9 @@ Loading: _mrgsolve_temp920419da2893.so
 -------- mrgsolve model object (unix) --------
   Project: /Users/kyleb/git/m4solve.git/Rchecks/mrgsolve.Rcheck
   source:        _mrgsolve_temp.cpp
-  shared object: 920419da2893 (loaded)
+  shared object: 896717933d (loaded)
 
-  compile date:  04/06 21:50
+  compile date:  04/14 14:04
   Time:          start: 0 end: 24 delta: 1
   >              add: <none>
   >              tscale: 1
@@ -975,7 +1012,6 @@ Loading: _mrgsolve_temp920419da2893.so
 > out <- mrgsim(mod, end=22)
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    90 x 7 
 Time:   0 to 22 
 ID:     1 
@@ -985,42 +1021,48 @@ ID:     1
 [3,]  1 0.25  740.8 257.5 42.29 12.87 12.87
 [4,]  1 0.50  548.8 445.0 32.69 22.25 22.25
 [5,]  1 0.75  406.6 580.8 25.29 29.04 29.04
-[showing 4 significant digits]> 
+[6,]  1 1.00  301.2 678.3 20.05 33.91 33.91
+[7,]  1 1.25  223.1 747.4 16.45 37.37 37.37
+[8,]  1 1.50  165.3 795.6 14.01 39.78 39.78
+> 
 > 
 > data(exTheoph)
 > 
 > out <- mrgsim(mod, data=exTheoph)
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    132 x 7 
 Time:   0 to 24.65 
 ID:     12 
-     ID time   GUT  CENT  RESP      CP      DV
-[1,]  1 0.00 4.020 0.000 50.00 0.00000 0.00000
-[2,]  1 0.25 2.978 1.035 49.95 0.04552 0.04552
-[3,]  1 0.57 2.028 1.961 49.81 0.08624 0.08624
-[4,]  1 1.12 1.048 2.875 49.57 0.12643 0.12643
-[5,]  1 2.02 0.356 3.428 49.33 0.15072 0.15072
-[showing 4 significant digits]> 
+     ID time      GUT  CENT  RESP      CP      DV
+[1,]  1 0.00 4.020000 0.000 50.00 0.00000 0.00000
+[2,]  1 0.25 2.978089 1.035 49.95 0.04552 0.04552
+[3,]  1 0.57 2.028470 1.961 49.81 0.08624 0.08624
+[4,]  1 1.12 1.048417 2.875 49.57 0.12643 0.12643
+[5,]  1 2.02 0.356038 3.428 49.33 0.15072 0.15072
+[6,]  1 3.82 0.041060 3.439 49.25 0.15121 0.15121
+[7,]  1 5.10 0.008838 3.263 49.28 0.14348 0.14348
+[8,]  1 7.03 0.000872 2.980 49.34 0.13101 0.13101
+> 
 > out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    120 x 7 
 Time:   0.25 to 24.65 
 ID:     12 
-     ID time     GUT  CENT  RESP      CP      DV
-[1,]  1 0.25 2.97809 1.035 49.95 0.04552 0.04552
-[2,]  1 0.57 2.02847 1.961 49.81 0.08624 0.08624
-[3,]  1 1.12 1.04842 2.875 49.57 0.12643 0.12643
-[4,]  1 2.02 0.35604 3.428 49.33 0.15072 0.15072
-[5,]  1 3.82 0.04106 3.439 49.25 0.15121 0.15121
-[showing 4 significant digits]> 
+     ID time       GUT  CENT  RESP      CP      DV
+[1,]  1 0.25 2.978e+00 1.035 49.95 0.04552 0.04552
+[2,]  1 0.57 2.028e+00 1.961 49.81 0.08624 0.08624
+[3,]  1 1.12 1.048e+00 2.875 49.57 0.12643 0.12643
+[4,]  1 2.02 3.560e-01 3.428 49.33 0.15072 0.15072
+[5,]  1 3.82 4.106e-02 3.439 49.25 0.15121 0.15121
+[6,]  1 5.10 8.838e-03 3.263 49.28 0.14348 0.14348
+[7,]  1 7.03 8.720e-04 2.980 49.34 0.13101 0.13101
+[8,]  1 9.05 7.723e-05 2.703 49.40 0.11884 0.11884
+> 
 > out <- mrgsim(mod, data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    5904 x 8 
 Time:   0 to 120 
 ID:     12 
@@ -1030,11 +1072,13 @@ ID:     12
 [3,]  1 0.25     1 2.978 1.035 49.95 0.04552 0.04552
 [4,]  1 0.25     0 2.978 1.035 49.95 0.04552 0.04552
 [5,]  1 0.50     1 2.206 1.790 49.84 0.07870 0.07870
-[showing 4 significant digits]> 
+[6,]  1 0.57     0 2.028 1.961 49.81 0.08624 0.08624
+[7,]  1 0.75     1 1.634 2.337 49.73 0.10274 0.10274
+[8,]  1 1.00     1 1.211 2.729 49.61 0.12001 0.12001
+> 
 > out <- mrgsim(mod, req="CENT")
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    482 x 5 
 Time:   0 to 120 
 ID:     1 
@@ -1044,11 +1088,13 @@ ID:     1
 [3,]  1 0.25 257.5 12.87 12.87
 [4,]  1 0.50 445.0 22.25 22.25
 [5,]  1 0.75 580.8 29.04 29.04
-[showing 4 significant digits]> 
+[6,]  1 1.00 678.3 33.91 33.91
+[7,]  1 1.25 747.4 37.37 37.37
+[8,]  1 1.50 795.6 39.78 39.78
+> 
 > out <- mrgsim(mod, Req="CP,RESP")
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    482 x 4 
 Time:   0 to 120 
 ID:     1 
@@ -1058,7 +1104,10 @@ ID:     1
 [3,]  1 0.25 42.29 12.87
 [4,]  1 0.50 32.69 22.25
 [5,]  1 0.75 25.29 29.04
-[showing 4 significant digits]> 
+[6,]  1 1.00 20.05 33.91
+[7,]  1 1.25 16.45 37.37
+[8,]  1 1.50 14.01 39.78
+> 
 > 
 > 
 > 
@@ -1095,7 +1144,6 @@ attr(,"package")
 > 
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:41 2016 
 Dim:    481 x 7 
 Time:   0 to 120 
 ID:     1 
@@ -1105,7 +1153,10 @@ ID:     1
 [3,]  1 0.50  54.88 44.50 46.18 2.225 2.225
 [4,]  1 0.75  40.66 58.08 43.61 2.904 2.904
 [5,]  1 1.00  30.12 67.83 41.38 3.391 3.391
-[showing 4 significant digits]> head(out)
+[6,]  1 1.25  22.31 74.74 39.58 3.737 3.737
+[7,]  1 1.50  16.53 79.56 38.18 3.978 3.978
+[8,]  1 1.75  12.25 82.83 37.14 4.141 4.141
+> head(out)
 Model:  housemodel 
      ID time       GUT     CENT     RESP       CP       DV
 [1,]  1 0.00 100.00000  0.00000 50.00000 0.000000 0.000000
@@ -1132,7 +1183,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/06 21:49
+  compile date:  04/14 14:04
   Time:          start: 0 end: 120 delta: 0.25
   >              add: <none>
   >              tscale: 1
@@ -1277,7 +1328,7 @@ Use mread() to load and compile.
 > 
 > mod <- mread("pkpdExample", project=getwd()) %>% ev(amt=1000, time=0, cmt=1)
 Compiling pkpdExample.cpp.cpp ... done.
-Loading: pkpdExample9204617fc22.so
+Loading: pkpdExample8963ec88317.so
 > 
 > see(mod)
 
@@ -1313,7 +1364,6 @@ $CAPTURE CP
 > 
 > out
 Model:  pkpdExample.cpp 
-Date:   Wed Apr  6 21:50:42 2016 
 Dim:    482 x 6 
 Time:   0 to 48 
 ID:     1 
@@ -1323,7 +1373,10 @@ ID:     1
 [3,]  1  0.1  886.9 112.8 46.88  4.514
 [4,]  1  0.2  786.6 212.5 41.84  8.499
 [5,]  1  0.3  697.7 300.4 36.80 12.016
-[showing 4 significant digits]> 
+[6,]  1  0.4  618.8 377.9 32.18 15.118
+[7,]  1  0.5  548.8 446.3 28.12 17.850
+[8,]  1  0.6  486.8 506.4 24.59 20.257
+> 
 > plot(out)
 > 
 > out <- mod %>%
@@ -1363,7 +1416,7 @@ ID:     1
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/06 21:49
+  compile date:  04/14 14:04
   Time:          start: 0 end: 120 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1567,7 +1620,6 @@ Events:
 > 
 > out
 Model:  housemodel.cpp 
-Date:   Wed Apr  6 21:50:42 2016 
 Dim:    1682 x 8 
 Time:   0 to 168 
 ID:     1 
@@ -1577,7 +1629,10 @@ ID:     1
 [3,]  1  0.1  886.9 112.9 48.04  5.647  5.647   1
 [4,]  1  0.2  786.6 212.8 44.32 10.641 10.641   1
 [5,]  1  0.3  697.7 301.1 40.24 15.056 15.056   1
-[showing 4 significant digits]> head(out)
+[6,]  1  0.4  618.8 379.2 36.30 18.958 18.958   1
+[7,]  1  0.5  548.8 448.1 32.67 22.405 22.405   1
+[8,]  1  0.6  486.8 509.0 29.41 25.448 25.448   1
+> head(out)
 Model:  housemodel 
      ID time       GUT     CENT     RESP        CP        DV TRT
 [1,]  1  0.0    0.0000   0.0000 50.00000  0.000000  0.000000   1
@@ -1606,7 +1661,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/06 21:49
+  compile date:  04/14 14:04
   Time:          start: 0 end: 168 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1769,13 +1824,12 @@ Events:
 > 
 > mod <- mread(code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_temp9204cb0f767.so
+Loading: _mrgsolve_temp896650d3e11.so
 > 
 > out <- mod %>% mrgsim
 > 
 > out
 Model:  _mrgsolve_temp.cpp 
-Date:   Wed Apr  6 21:50:44 2016 
 Dim:    194 x 5 
 Time:   0 to 48 
 ID:     1 
@@ -1785,7 +1839,10 @@ ID:     1
 [3,]  1 0.25  759.6 237.1 23.71
 [4,]  1 0.50  576.9 410.9 41.09
 [5,]  1 0.75  438.2 536.8 53.68
-[showing 4 significant digits]> 
+[6,]  1 1.00  332.9 626.4 62.64
+[7,]  1 1.25  252.8 688.7 68.87
+[8,]  1 1.50  192.0 730.4 73.04
+> 
 > plot(out)
 > 
 > 
@@ -2248,7 +2305,7 @@ $...
 > 
 > mod <- mrgsolve:::house()
 > soloc(mod)
-[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpKDCduo"
+[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpbzdWz0"
 > 
 > 
 > 
@@ -2341,7 +2398,7 @@ $...
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  6.177 0.123 10.754 2.543 0.523 
+Time elapsed:  5.985 0.106 10.212 2.206 0.487 
 > grDevices::dev.off()
 null device 
           1 
