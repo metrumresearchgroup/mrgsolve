@@ -17,6 +17,9 @@ travis_build:
 	make build
 	make install
 
+readme:
+	Rscript -e 'library(rmarkdown); render("README.R")'
+
 
 all:
 	make doc
