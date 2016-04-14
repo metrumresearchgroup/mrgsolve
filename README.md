@@ -1,5 +1,7 @@
 [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
 
+
+
 Resources
 =========
 
@@ -12,6 +14,29 @@ Resources
 -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 
 <hr>
+
+Installation
+=====
+
+3 primary options exist to install `mrgsolve`:
+
+* Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
+
+* Latest stable version directly from github via:
+
+```
+devtools::install_github("metrumresearchgroup/mrgsolve@v0.5.12", subdir="rdev")
+```
+
+* The development version from github via:
+
+```
+devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
+```
+
+Note that installation from github will automatically install all dependencies, such RcppArmadillo.
+
+
 About
 =====
 
