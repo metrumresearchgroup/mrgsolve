@@ -1,7 +1,5 @@
 [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
 
-
-
 Resources
 =========
 
@@ -14,28 +12,25 @@ Resources
 -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 
 <hr>
-
 Installation
-=====
+============
 
 3 primary options exist to install `mrgsolve`:
 
-* Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
+-   Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
+-   Latest stable version directly from github via:
 
-* Latest stable version directly from github via:
-
-```
+``` r
 devtools::install_github("metrumresearchgroup/mrgsolve@v0.5.12", subdir="rdev")
 ```
 
-* The development version from github via:
+-   The development version from github via:
 
-```
+``` r
 devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
 ```
 
 Note that installation from github will automatically install all dependencies, such RcppArmadillo.
-
 
 About
 =====
@@ -132,7 +127,7 @@ out
 plot(out, CP+RESP~.)
 ```
 
-<img src="img/unnamed-chunk-7-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-9-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 ``` r
 out <- mod %>%
@@ -145,7 +140,7 @@ out <- mod %>%
 plot(out, auto.key=list(columns=3))
 ```
 
-<img src="img/unnamed-chunk-8-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-10-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 Also use `mrgsolve` for efficient, large-scale population simulation
 --------------------------------------------------------------------
@@ -192,7 +187,7 @@ out <- mod %>%
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 
-<img src="img/unnamed-chunk-12-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-14-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 Pass simulated output to your favorite data summary or visualization routines
 -----------------------------------------------------------------------------
@@ -223,7 +218,7 @@ out %>%
   geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
 ```
 
-<img src="img/unnamed-chunk-14-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/unnamed-chunk-16-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 <hr>
 <center>
