@@ -11,7 +11,7 @@
 #+ echo=FALSE
 library(lattice)
 library(knitr)
-opts_chunk$set(comment='.', fig.align="center", fig.path="img/")
+opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 
 
 #+
@@ -35,18 +35,18 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/")
 ##'
 
 
-##' 
+##'
 ##' # Installation
-##' 
+##'
 ##'  3 primary options exist to install `mrgsolve`:
-##'  
+##'
 ##'  * Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
 ##'  * Latest stable version directly from github via:
 #+ eval=FALSE
 devtools::install_github("metrumresearchgroup/mrgsolve@v0.5.12", subdir="rdev")
-##' 
+##'
 ##' * The development version from github via:
-##' 
+##'
 #+ eval=FALSE
 devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
 
