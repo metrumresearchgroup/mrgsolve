@@ -369,31 +369,31 @@ table(DV) = CP*exp(EPS(1));
 > mod <- mod %>% ev(amt=1000, time=0, cmt=1)
 > events(mod)
 Events:
-  time cmt evid  amt
-1    0   1    1 1000
+  time cmt  amt evid
+1    0   1 1000    1
 > 
 > loading <- ev(time=0, cmt=1, amt=1000)
 > maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
 > loading + maint
 Events:
-  time cmt evid  amt ii addl
-1    0   1    1 1000  0    0
-2   12   1    1  500 12   10
+  time cmt  amt evid ii addl
+1    0   1 1000    1  0    0
+2   12   1  500    1 12   10
 > 
 > 
 > ev(ID=1:10, cmt=1, time=0, amt=100)
 Events:
-   ID time cmt evid amt
-1   1    0   1    1 100
-2   2    0   1    1 100
-3   3    0   1    1 100
-4   4    0   1    1 100
-5   5    0   1    1 100
-6   6    0   1    1 100
-7   7    0   1    1 100
-8   8    0   1    1 100
-9   9    0   1    1 100
-10 10    0   1    1 100
+   ID time cmt amt evid
+1   1    0   1 100    1
+2   2    0   1 100    1
+3   3    0   1 100    1
+4   4    0   1 100    1
+5   5    0   1 100    1
+6   6    0   1 100    1
+7   7    0   1 100    1
+8   8    0   1 100    1
+9   9    0   1 100    1
+10 10    0   1 100    1
 > 
 > 
 > 
@@ -714,7 +714,7 @@ Head:
 > mod <- mcode("example",code)
 Using ADVAN2
 Compiling example.cpp.cpp ... done.
-Loading: example89619d2e85d.so
+Loading: example5a73bd60b41.so
 > 
 > 
 > 
@@ -837,7 +837,7 @@ Loading: example89619d2e85d.so
 > 
 > mod <- mread(code=code, project=tempdir())
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_temp89665953ee9.so
+Loading: _mrgsolve_temp5a73117cde79.so
 > 
 > smat(mod)
 $...
@@ -929,7 +929,7 @@ capture(CP);
 > mod <- mread(code=code, "ADVAN2", tempdir())
 Using ADVAN2
 Compiling ADVAN2.cpp.cpp ... done.
-Loading: ADVAN289629556719.so
+Loading: ADVAN25a731cf1e2e7.so
 > 
 > mod %>%
 +   ev(amt=100,ii=24, addl=9) %>%
@@ -962,7 +962,7 @@ Loading: ADVAN289629556719.so
 > 
 > mod <- mread(code=code)
 Compiling _mrgsolve_temp.cpp.cpp ... (waiting) ... done.
-Loading: _mrgsolve_temp896717933d.so
+Loading: _mrgsolve_temp5a732e079f8f.so
 > 
 > mod
 
@@ -970,9 +970,9 @@ Loading: _mrgsolve_temp896717933d.so
 -------- mrgsolve model object (unix) --------
   Project: /Users/kyleb/git/m4solve.git/Rchecks/mrgsolve.Rcheck
   source:        _mrgsolve_temp.cpp
-  shared object: 896717933d (loaded)
+  shared object: 5a732e079f8f (loaded)
 
-  compile date:  04/14 14:04
+  compile date:  04/18 09:28
   Time:          start: 0 end: 24 delta: 1
   >              add: <none>
   >              tscale: 1
@@ -1183,7 +1183,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/14 14:04
+  compile date:  04/18 09:27
   Time:          start: 0 end: 120 delta: 0.25
   >              add: <none>
   >              tscale: 1
@@ -1328,7 +1328,7 @@ Use mread() to load and compile.
 > 
 > mod <- mread("pkpdExample", project=getwd()) %>% ev(amt=1000, time=0, cmt=1)
 Compiling pkpdExample.cpp.cpp ... done.
-Loading: pkpdExample8963ec88317.so
+Loading: pkpdExample5a735f428fa7.so
 > 
 > see(mod)
 
@@ -1416,7 +1416,7 @@ ID:     1
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/14 14:04
+  compile date:  04/18 09:27
   Time:          start: 0 end: 120 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1492,8 +1492,8 @@ table(DV) = CP*exp(EPS(1));
 
 > events
 Events:
-  time cmt evid  amt addl ii
-1    0   1    1 1000    5 24
+  time cmt  amt addl ii evid
+1    0   1 1000    5 24    1
 > stime(mod)
    [1]   0.0   0.1   0.2   0.3   0.4   0.5   0.6   0.7   0.8   0.9   1.0   1.1
   [13]   1.2   1.3   1.4   1.5   1.6   1.7   1.8   1.9   2.0   2.1   2.2   2.3
@@ -1661,7 +1661,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/14 14:04
+  compile date:  04/18 09:27
   Time:          start: 0 end: 168 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1732,9 +1732,9 @@ Model:  housemodel
 > events <- ev1+ev2
 > events
 Events:
-  time cmt evid amt rate ii addl
-1    0   2    1 500   10  0    0
-2   54   1    1 100    0  8   10
+  time cmt amt rate evid ii addl
+1    0   2 500   10    1  0    0
+2   54   1 100    0    1  8   10
 > 
 > out <- mod %>% ev(ev1+ev2) %>% mrgsim(end=180, req="")
 > plot(out)
@@ -1824,7 +1824,7 @@ Events:
 > 
 > mod <- mread(code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_temp896650d3e11.so
+Loading: _mrgsolve_temp5a73f239de7.so
 > 
 > out <- mod %>% mrgsim
 > 
@@ -2305,7 +2305,7 @@ $...
 > 
 > mod <- mrgsolve:::house()
 > soloc(mod)
-[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpbzdWz0"
+[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmptpCzjb"
 > 
 > 
 > 
@@ -2398,7 +2398,7 @@ $...
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  5.985 0.106 10.212 2.206 0.487 
+Time elapsed:  6.225 0.131 10.108 1.908 0.448 
 > grDevices::dev.off()
 null device 
           1 
