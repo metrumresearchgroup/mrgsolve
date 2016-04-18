@@ -1,0 +1,1 @@
+PKG_CPPFLAGS=-I/Users/kyleb/Rlibs/lib/Rcpp/include/
