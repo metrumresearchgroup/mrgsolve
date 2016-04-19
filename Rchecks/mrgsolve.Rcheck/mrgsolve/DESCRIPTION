@@ -33,5 +33,5 @@ Collate: 'classes.R' 'events.R' 'Ops.R' 'RcppExports.R' 'chain.R'
         'nmxml.R' 'modspec.R' 'mrgsolve.R' 'package.R' 'param.R'
         'print.R' 'simtime.R' 'specdoc.R' 'update.R' 'zchain.R'
 RoxygenNote: 5.0.1
-Packaged: 2016-04-18 14:27:34 UTC; kyleb
-Built: R 3.2.3; x86_64-apple-darwin13.4.0; 2016-04-18 14:27:37 UTC; unix
+Packaged: 2016-04-19 17:15:53 UTC; kyleb
+Built: R 3.2.3; x86_64-apple-darwin13.4.0; 2016-04-19 17:15:57 UTC; unix
