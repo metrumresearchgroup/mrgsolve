@@ -17,7 +17,13 @@ options(mrgsolve_mread_quiet=TRUE)
 e1 <- ev(time=0,evid=1,amt=1000, rate=200)
 e2 <- ev(time=10,evid=4,amt=1000,rate=200)
 e <- e1 + e2
+e
 ```
+
+    ## Events:
+    ##   time cmt  amt rate evid
+    ## 1    0   1 1000  200    1
+    ## 2   10   1 1000  200    4
 
 Fine, but we expect compartments to start at zero
 =================================================
