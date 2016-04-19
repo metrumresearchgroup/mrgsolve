@@ -40,7 +40,7 @@ odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
   Inits = (init_func *)  &MRGSOLVE_NO_INIT_FUN;
   Table = (table_func*)  &MRGSOLVE_NO_TABLE_FUN;
 
-  d.evid=0;
+  d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
   d.ID = 1.0;
