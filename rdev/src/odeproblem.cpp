@@ -114,8 +114,7 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 }
 
 void odeproblem::init_call(double& time) {
-  d.time = 0;
-  d.evid = 0;
+  d.time = time;
 
   this->Inits(this->init(),
 	      this->y(),

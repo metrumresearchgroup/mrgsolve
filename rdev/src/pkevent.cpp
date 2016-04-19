@@ -143,7 +143,7 @@ void pkevent::implement(odeproblem * prob) {
     } {
       double tm = this->time();
       //prob->newind(2);
-      prob->init_call_record(tm);
+      prob->init_call(tm);
       if(this->rate() > 0) {
 	this->evid(5);
       } else {
