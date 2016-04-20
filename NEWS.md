@@ -4,6 +4,7 @@ __Please see the latest release__: [v0.5.12](https://github.com/metrumresearchgr
 
 ## Bugs fixed
 * Fixed a bug where infusion dosing events with `evid 4` were not properly implemented.  While investigating that issue, also found similar issue with `evid 4` infusions getting scheduled with `addl` ([issue 31](../../issues/31)).
+* Removed NSE evaluation for arguments passed into  `ev` to avoid unintended issues in evaluation ([issue 29](../../issues/29)).
 
 ## New features
 * Added `mcode` function as alternative to using `mread` when your model is written in an `R` string.  Note the order of the arguments:
