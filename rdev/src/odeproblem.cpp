@@ -40,7 +40,7 @@ odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
   Inits = (init_func *)  &MRGSOLVE_NO_INIT_FUN;
   Table = (table_func*)  &MRGSOLVE_NO_TABLE_FUN;
 
-  d.evid=0;
+  d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
   d.ID = 1.0;
@@ -114,8 +114,7 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 }
 
 void odeproblem::init_call(double& time) {
-  d.time = 0;
-  d.evid = 0;
+  d.time = time;
 
   this->Inits(this->init(),
 	      this->y(),

@@ -3,12 +3,14 @@ __Please see the latest release__: [v0.5.12](https://github.com/metrumresearchgr
 # Since 0.5.12
 
 ## Bugs fixed
-* Coming
+* Fixed a bug where infusion dosing events with `evid 4` were not properly implemented.  While investigating that issue, also found similar issue with `evid 4` infusions getting scheduled with `addl` ([issue 31](../../issues/31)).
+* Removed NSE evaluation for arguments passed into  `ev` to avoid unintended issues in evaluation ([issue 29](../../issues/29)).
 
 ## New features
 * Added `mcode` function as alternative to using `mread` when your model is written in an `R` string.  Note the order of the arguments:
 first `model`, then `code`, then `project`.  `project` defaults to `tempdir`.  So the call is: `mod <- mcode("mymodel", code)`.  The
 equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
+
 
 
 

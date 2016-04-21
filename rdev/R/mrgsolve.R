@@ -453,7 +453,10 @@ tran_mrgsim <- function(x,
                 } else {
                     toupper(out$trannames)
                 },
-                carry.data,carry.idata,request, out$outnames
+                carry.data,
+                carry.idata,
+                request,
+                out$outnames
                 )
 
     dimnames(out$data) <- list(NULL, cnames)

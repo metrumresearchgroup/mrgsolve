@@ -545,7 +545,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       denom = tfrom == 0 ? 1 : tfrom;
       dt  = (tto-tfrom)/denom;
 
-      prob->evid(this_rec->evid());
 
       // If tto is too close to tfrom, set tto to tfrom
       // dt is never negative; dt will never be < mindt when mindt==0
@@ -571,6 +570,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	}
       }
 
+      prob->evid(this_rec->evid());
       prob->init_call_record(tto);
       prob->INITSOLV();
 

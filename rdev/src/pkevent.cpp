@@ -140,21 +140,22 @@ void pkevent::implement(odeproblem * prob) {
       prob->y(i,0.0);
       prob->on(i);
       prob->rate0(i,0.0);
-
-    }
-    {
+    } {
       double tm = this->time();
-      prob->newind(2);
+      //prob->newind(2);
       prob->init_call(tm);
-
-      prob->fbio(eq_n, this->fn());
-      prob->y(eq_n,(this->amt() * this->fn()));
+      if(this->rate() > 0) {
+	this->evid(5);
+      } else {
+	this->evid(1);
+      }
+      this-> implement(prob);
+      return;
     }
-    break;
+
   case 11:
     prob->y(eq_n,(prob->y(eq_n)  + prob->xdose()));
     break;
-
   }
   prob->lsoda_init();
 }
@@ -296,8 +297,12 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double& maxtime, bool put_ev
 
   if(this->addl() > 0) {
 
-    unsigned int this_evid = this->evid() == 4 ? 1 : this->evid();
-   
+    unsigned int this_evid = this -> evid();
+
+    if(this_evid == 4) {
+      this_evid = this->rate() > 0 ? 5 : 1;
+    }
+
     for(unsigned int k=1; k <= this->addl(); k++) {
 
       double ontime = this->time() + this->ii()*double(k);

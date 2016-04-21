@@ -52,6 +52,8 @@ null_ev_df <- as.data.frame(null_ev)[0,]
 ##' \itemize{
 ##' \item Required input for creating events objects include \code{time} and \code{cmt}
 ##' \item If not supplied, \code{evid} is assumed to be 1
+##' \item If not supplied, \code{cmt}  is assumed to be 1
+##' \item If not supplied, \code{time} is assumed to be 0
 ##' \item \code{ID} may be specified as a vector
 ##' \item if replicate is \code{TRUE} (default), thenthe events regimen is replicated for each \code{ID}; otherwise, the number of
 ##' event rows must match the number of \code{ID}s entered
@@ -81,25 +83,27 @@ setGeneric("ev", function(x,...) standardGeneric("ev"))
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
-##' @importFrom dplyr data_frame mutate_
+##' @importFrom dplyr data_frame as_data_frame select   mutate_ arrange
 ##' @importFrom lazyeval lazy_dots
-setMethod("ev", "missing", function(evid=1, time=0, ID=numeric(0), cmt=1, replicate=TRUE,until=NULL,...) {
+setMethod("ev", "missing", function(evid=1, time=0, ID=numeric(0), cmt=1, replicate=TRUE, until=NULL, ...) {
 
 
     if(length(match.call())==1) { return(new("ev", data=data.frame()[0,]))}
 
     if(any(evid==0)) stop("evid cannot be 0 (observation)")
 
-    data <- data_frame(time=time,evid=evid,cmt=cmt) %>%
-        mutate_(.dots=lazyeval::lazy_dots(...)) %>% as.data.frame
+    data <-
+        as.data.frame(list(...)) %>%
+        dplyr::mutate(evid=evid,time=time,cmt=cmt) %>%
+        as.data.frame
 
     if(!missing(until)) {
         if(!exists("ii", data)) stop("ii is required when until is specified", call.=FALSE)
-        data$addl <- ceiling((data$time + until)/data$ii)-1
+        data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
     }
 
-
     if(length(ID) > 0) {
+
         if(!is.numeric(ID)) stop("ID must be numeric")
 
         if(replicate) {
@@ -107,23 +111,28 @@ setMethod("ev", "missing", function(evid=1, time=0, ID=numeric(0), cmt=1, replic
                 data <- as.list(data)
                 data <- lapply(data, unique)
                 data <- do.call("expand.grid", c(list(ID=ID,stringsAsFactors=FALSE),data))
-                data <- data[order(data$ID, data$time),]
+                data <- data %>% dplyr::arrange(ID,time)
                 rownames(data) <- NULL
             } else {
                 data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", list(), data.matrix(data), ID))
             }
+
         } else {
             if(length(ID)!=nrow(data)) stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
-            data$ID <- ID
+            data["ID"] <- ID
         }
-        data <- shuffle(data, c("ID", "time", "cmt"))
+
+        data <- data %>% shuffle(c("ID", "time", "cmt"))
+
     } else {
-        data <- shuffle(data, c("time", "cmt"))
+        data <- data %>% shuffle(c("time", "cmt"))
     }
 
     return(new("ev", data=data))
 
 })
+
+
 ##' @export
 ##' @rdname events
 setMethod("ev", "ev", function(x,...) return(x))
