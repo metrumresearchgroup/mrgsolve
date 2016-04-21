@@ -714,7 +714,7 @@ Head:
 > mod <- mcode("example",code)
 Using ADVAN2
 Compiling example.cpp.cpp ... done.
-Loading: examplee38737eafd00.so
+Loading: exampleefbf2c23ce80.so
 > 
 > 
 > 
@@ -837,7 +837,7 @@ Loading: examplee38737eafd00.so
 > 
 > mod <- mread(code=code, project=tempdir())
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_tempe387248827ae.so
+Loading: _mrgsolve_tempefbf62ca4c23.so
 > 
 > smat(mod)
 $...
@@ -929,7 +929,7 @@ capture(CP);
 > mod <- mread(code=code, "ADVAN2", tempdir())
 Using ADVAN2
 Compiling ADVAN2.cpp.cpp ... done.
-Loading: ADVAN2e38766e5233e.so
+Loading: ADVAN2efbf4f4cc080.so
 > 
 > mod %>%
 +   ev(amt=100,ii=24, addl=9) %>%
@@ -962,7 +962,7 @@ Loading: ADVAN2e38766e5233e.so
 > 
 > mod <- mread(code=code)
 Compiling _mrgsolve_temp.cpp.cpp ... (waiting) ... done.
-Loading: _mrgsolve_tempe3872b0f143e.so
+Loading: _mrgsolve_tempefbf4c8966.so
 > 
 > mod
 
@@ -970,9 +970,9 @@ Loading: _mrgsolve_tempe3872b0f143e.so
 -------- mrgsolve model object (unix) --------
   Project: /Users/kyleb/git/m4solve.git/Rchecks/mrgsolve.Rcheck
   source:        _mrgsolve_temp.cpp
-  shared object: e3872b0f143e (loaded)
+  shared object: efbf4c8966 (loaded)
 
-  compile date:  04/21 00:31
+  compile date:  04/21 08:52
   Time:          start: 0 end: 24 delta: 1
   >              add: <none>
   >              tscale: 1
@@ -1183,7 +1183,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/21 00:29
+  compile date:  04/21 08:51
   Time:          start: 0 end: 120 delta: 0.25
   >              add: <none>
   >              tscale: 1
@@ -1328,7 +1328,7 @@ Use mread() to load and compile.
 > 
 > mod <- mread("pkpdExample", project=getwd()) %>% ev(amt=1000, time=0, cmt=1)
 Compiling pkpdExample.cpp.cpp ... done.
-Loading: pkpdExamplee38745e6372b.so
+Loading: pkpdExampleefbf4940f5d7.so
 > 
 > see(mod)
 
@@ -1416,7 +1416,7 @@ ID:     1
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/21 00:29
+  compile date:  04/21 08:51
   Time:          start: 0 end: 120 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1661,7 +1661,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/21 00:29
+  compile date:  04/21 08:51
   Time:          start: 0 end: 168 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1824,7 +1824,7 @@ Events:
 > 
 > mod <- mread(code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_tempe3871d80f1b1.so
+Loading: _mrgsolve_tempefbf34609c9b.so
 > 
 > out <- mod %>% mrgsim
 > 
@@ -2305,7 +2305,7 @@ $...
 > 
 > mod <- mrgsolve:::house()
 > soloc(mod)
-[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpIyuLBR"
+[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpQi9jaR"
 > 
 > 
 > 
@@ -2398,7 +2398,7 @@ $...
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  5.93 0.116 9.888 1.808 0.563 
+Time elapsed:  5.834 0.104 9.598 1.791 0.423 
 > grDevices::dev.off()
 null device 
           1 
