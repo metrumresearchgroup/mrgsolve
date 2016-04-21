@@ -41,7 +41,8 @@ setGeneric("Req", function(x,...) standardGeneric("Req"))
 ##' @export
 ##' @rdname Req
 setMethod("Req", "mrgmod", function(x,...) {
-    x@args <- merge(x@args, list(Request=as.character(match.call()[-1])), strict=FALSE)
+
+    x@args <- merge(x@args, list(Request=as_character_args(match.call()[-1])), strict=FALSE)
     return(x)
 })
 
@@ -73,7 +74,7 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' @param subset passed to \code{dplyr::filter_}
 ##' @param select passed to \code{dplyr::select_}
 ##'
-##' @importFrom dplyr filter_ select_
+##' @importFrom dplyr filter_ select_ rename_
 ##' @importFrom lazyeval lazy
 ##'
 ##' @details
@@ -98,10 +99,14 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' data <- expand.ev(amt=c(10,20), rate=c(1,2))
 ##'
 ##'
-setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,...) {
+setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,rename=NULL,...) {
     if(exists("data", x@args)) stop("data already has been set.")
-    if(!missing(subset)) data <- filter_(data,.dots=lazy(subset))
-    if(!missing(select)) data <- select_(data,.dots=lazy(select))
+    if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
+    if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
+    if(!missing(rename)) {
+        rename <- set_altname(as.cvec2(substitute(rename)))
+        data <- dplyr::rename_(data,.dots=setNames(as.list(rename[["from"]]),rename[["to"]]))
+    }
     if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
     data <- mrgindata(m=x,x=data,...)
     x@args <- merge(x@args,list(data=data), strict=FALSE)
@@ -150,7 +155,7 @@ setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
 ##'
 ##'
 carry.out <- function(x,...) {
-    x@args <- merge(x@args, list(carry.out=as.character(match.call()[-1])), strict=FALSE)
+    x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
     return(x)
 }
 ##' Set the \code{tscale} argument for \code{mrgsim}.

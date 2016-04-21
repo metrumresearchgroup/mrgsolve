@@ -303,7 +303,6 @@ tran_mrgsim <- function(x,
                         capture=NULL,
                         obsonly=FALSE,
                         obsaug=FALSE,
-                        tcap=numeric(0),
                         ptime=numeric(0),
                         tgrid = numeric(0),
                         recsort=1,
@@ -348,8 +347,16 @@ tran_mrgsim <- function(x,
     if(!missing(Request)) {
         request <- trequest <- Request
     }
-    request <- as.cvec(request)
-    carry.out <- as.cvec(carry.out)
+
+    request <- as.cvec2(request)
+    rename.request <- set_altname(request)
+    request <- as.character(rename.request)
+
+
+    rename.carry <- set_altname(as.cvec2(carry.out))
+    carry.out <- as.character(rename.carry)
+
+
     trequest <- as.cvec(trequest)
 
     ## Set the seed:
@@ -385,7 +392,7 @@ tran_mrgsim <- function(x,
     carry.tran <- intersect(tolower(carry.out),
                             c("a.u.g", "evid", "amt", "cmt", "ii", "ss","rate", "addl"))
 
-    carry.out <- setdiff(carry.out, carry.tran)
+    carry.out <- setdiff(carry.out,carry.tran)
 
     carry.data <- intersect(carry.out,colnames(data))
     carry.idata <- intersect(carry.out, colnames(idata))
@@ -409,7 +416,6 @@ tran_mrgsim <- function(x,
     parin$advan <- x@advan
 
     parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo$tnames,cmt(x))))
-    if(!missing(tcap)) warning("tcap feature has been discontinued")
 
     parin$mtime <- sort(unique(mtime))
 
@@ -433,6 +439,7 @@ tran_mrgsim <- function(x,
         capture.output(file=capture, print(c(date=list(date()), parin=parin)))
         capture.output(file=capture, append=TRUE, print(idata))
         capture.output(file=capture, append=TRUE, print(data))
+        capture.output(file=capture, append=TRUE, print(carry.out))
     }
 
     out <- .Call(mrgsolve_DEVTRAN,
@@ -449,22 +456,22 @@ tran_mrgsim <- function(x,
     cnames <- c("ID",
                 "time",
                 if(lc) {
-                    out$trannames
+                    altname(rename.carry,out$trannames)
                 } else {
                     toupper(out$trannames)
                 },
-                carry.data,
-                carry.idata,
-                request,
-                out$outnames
+                altname(rename.carry,carry.data),
+                altname(rename.carry,carry.idata),
+                altname(rename.request,request),
+                altname(rename.request,out$outnames)
                 )
 
     dimnames(out$data) <- list(NULL, cnames)
 
     new("mrgsims",
-        request=request,
+        request=altname(rename.request,request),
         data=out$data,
-        outnames=out$outnames,
+        outnames=altname(rename.request,out$outnames),
         mod=x,
         seed=as.integer(seed),
         date=date())
