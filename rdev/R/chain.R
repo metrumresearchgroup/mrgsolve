@@ -71,8 +71,9 @@ sub_set <- function(e,x) {
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' @export
 ##' @rdname data_set
-##' @param subset passed to \code{dplyr::filter_}
-##' @param select passed to \code{dplyr::select_}
+##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
+##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
+##' @param rename parsed and passed to \code{dplyr::rename_}; change the names of columns in the data set
 ##'
 ##' @importFrom dplyr filter_ select_ rename_
 ##' @importFrom lazyeval lazy

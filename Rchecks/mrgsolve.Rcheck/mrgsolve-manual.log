@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  20 APR 2016 15:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  21 APR 2016 00:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -804,7 +804,7 @@ File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [22]
-Overfull \hbox (3.40875pt too wide) in paragraph at lines 1250--1251
+Overfull \hbox (3.40875pt too wide) in paragraph at lines 1252--1253
 []\T1/ptm/m/n/10 An ob-ject of class \T1/zi4/m/n/10 batch_mrgsims\T1/ptm/m/n/10
  . Most meth-ods for \T1/zi4/m/n/10 mrgsims \T1/ptm/m/n/10 ob-jects also work o
 n \T1/zi4/m/n/10 batch_mrgsims
@@ -834,7 +834,7 @@ File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 )
-Overfull \hbox (4.80792pt too wide) in paragraph at lines 1514--1515
+Overfull \hbox (4.80792pt too wide) in paragraph at lines 1516--1517
 []\T1/ptm/m/n/10 Note that the ar-gu-ments are in slightly dif-fer-ent or-der t
 han [][]\T1/zi4/m/n/10 mread[][][]\T1/ptm/m/n/10 . The de-fault \T1/zi4/m/n/10 
 project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 . 
@@ -1028,11 +1028,11 @@ Overfull \hbox (25.01662pt too wide) in paragraph at lines 417--419
  []
 
 [75] [76])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 4174.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 4174.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 4176.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 4176.
  (./Rd2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 4174.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 4174.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 4176.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 4176.
 
 Package rerunfilecheck Info: File `Rd2.out' has not changed.
 (rerunfilecheck)             Checksum: E49C0184C2A872D1B51CED390252E0A9;4789.
@@ -1040,7 +1040,7 @@ Package rerunfilecheck Info: File `Rd2.out' has not changed.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 4174.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 4176.
  ) 
 Here is how much of TeX's memory you used:
  7453 strings out of 493089
@@ -1078,7 +1078,7 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 228171 bytes).
+Output written on Rd2.pdf (76 pages, 228306 bytes).
 PDF statistics:
  2095 PDF objects out of 2487 (max. 8388607)
  1990 compressed objects within 20 object streams

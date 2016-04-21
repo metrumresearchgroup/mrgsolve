@@ -100,7 +100,7 @@ ive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [19]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [20]
-Overfull \hbox (3.40875pt too wide) in paragraph at lines 1250--1251
+Overfull \hbox (3.40875pt too wide) in paragraph at lines 1252--1253
 []\T1/ptm/m/n/10 An ob-ject of class \T1/zi4/m/n/10 batch_mrgsims\T1/ptm/m/n/10
  . Most meth-ods for \T1/zi4/m/n/10 mrgsims \T1/ptm/m/n/10 ob-jects also work o
 n \T1/zi4/m/n/10 batch_mrgsims
@@ -112,7 +112,7 @@ n \T1/zi4/m/n/10 batch_mrgsims
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [24]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [25]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (4.80792pt too wide) in paragraph at lines 1514--1515
+Overfull \hbox (4.80792pt too wide) in paragraph at lines 1516--1517
 []\T1/ptm/m/n/10 Note that the ar-gu-ments are in slightly dif-fer-ent or-der t
 han [][]\T1/zi4/m/n/10 mread[][][]\T1/ptm/m/n/10 . The de-fault \T1/zi4/m/n/10 
 project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 . 
@@ -208,7 +208,7 @@ exlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
 -dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/font
 s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/ur
 w/times/utmri8a.pfb>
-Output written on Rd2.pdf (70 pages, 189770 bytes).
+Output written on Rd2.pdf (70 pages, 189894 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (363 entries accepted, 2 rejected).
@@ -316,7 +316,7 @@ Writing index file Rd2.idx
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [21]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [22]
-Overfull \hbox (3.40875pt too wide) in paragraph at lines 1250--1251
+Overfull \hbox (3.40875pt too wide) in paragraph at lines 1252--1253
 []\T1/ptm/m/n/10 An ob-ject of class \T1/zi4/m/n/10 batch_mrgsims\T1/ptm/m/n/10
  . Most meth-ods for \T1/zi4/m/n/10 mrgsims \T1/ptm/m/n/10 ob-jects also work o
 n \T1/zi4/m/n/10 batch_mrgsims
@@ -328,7 +328,7 @@ n \T1/zi4/m/n/10 batch_mrgsims
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [26]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [27]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (4.80792pt too wide) in paragraph at lines 1514--1515
+Overfull \hbox (4.80792pt too wide) in paragraph at lines 1516--1517
 []\T1/ptm/m/n/10 Note that the ar-gu-ments are in slightly dif-fer-ent or-der t
 han [][]\T1/zi4/m/n/10 mread[][][]\T1/ptm/m/n/10 . The de-fault \T1/zi4/m/n/10 
 project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 . 
@@ -436,7 +436,7 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 227723 bytes).
+Output written on Rd2.pdf (76 pages, 227859 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (363 entries accepted, 2 rejected).
@@ -544,7 +544,7 @@ Writing index file Rd2.idx
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [21]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [22]
-Overfull \hbox (3.40875pt too wide) in paragraph at lines 1250--1251
+Overfull \hbox (3.40875pt too wide) in paragraph at lines 1252--1253
 []\T1/ptm/m/n/10 An ob-ject of class \T1/zi4/m/n/10 batch_mrgsims\T1/ptm/m/n/10
  . Most meth-ods for \T1/zi4/m/n/10 mrgsims \T1/ptm/m/n/10 ob-jects also work o
 n \T1/zi4/m/n/10 batch_mrgsims
@@ -556,7 +556,7 @@ n \T1/zi4/m/n/10 batch_mrgsims
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [26]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [27]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (4.80792pt too wide) in paragraph at lines 1514--1515
+Overfull \hbox (4.80792pt too wide) in paragraph at lines 1516--1517
 []\T1/ptm/m/n/10 Note that the ar-gu-ments are in slightly dif-fer-ent or-der t
 han [][]\T1/zi4/m/n/10 mread[][][]\T1/ptm/m/n/10 . The de-fault \T1/zi4/m/n/10 
 project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 . 
@@ -659,7 +659,7 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 228180 bytes).
+Output written on Rd2.pdf (76 pages, 228306 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (363 entries accepted, 2 rejected).
@@ -767,7 +767,7 @@ Writing index file Rd2.idx
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [21]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [22]
-Overfull \hbox (3.40875pt too wide) in paragraph at lines 1250--1251
+Overfull \hbox (3.40875pt too wide) in paragraph at lines 1252--1253
 []\T1/ptm/m/n/10 An ob-ject of class \T1/zi4/m/n/10 batch_mrgsims\T1/ptm/m/n/10
  . Most meth-ods for \T1/zi4/m/n/10 mrgsims \T1/ptm/m/n/10 ob-jects also work o
 n \T1/zi4/m/n/10 batch_mrgsims
@@ -779,7 +779,7 @@ n \T1/zi4/m/n/10 batch_mrgsims
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [26]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [27]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (4.80792pt too wide) in paragraph at lines 1514--1515
+Overfull \hbox (4.80792pt too wide) in paragraph at lines 1516--1517
 []\T1/ptm/m/n/10 Note that the ar-gu-ments are in slightly dif-fer-ent or-der t
 han [][]\T1/zi4/m/n/10 mread[][][]\T1/ptm/m/n/10 . The de-fault \T1/zi4/m/n/10 
 project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 . 
@@ -882,8 +882,8 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 228171 bytes).
+Output written on Rd2.pdf (76 pages, 228306 bytes).
 Transcript written on Rd2.log.
 Saving output to 'mrgsolve-manual.pdf' ...
 Done
-You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//Rtmpv9jRQR/Rd2pdfcbe81c7b6ca2'
+You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//RtmpTeolOq/Rd2pdfe20716bad447'
