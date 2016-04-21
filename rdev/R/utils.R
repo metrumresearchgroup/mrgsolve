@@ -874,7 +874,7 @@ if.file.remove <- function(x) {
 rename_cols <- function(.df, new_names) {
   if (!all(new_names %in% names(.df))) {
     missing <- new_names[which(!new_names %in% names(.df))]
-    stop(paste("the following names do not exist in the dataset: ", paste(missing, collapse = ", ")))
+    stop(paste("the following columns do not exist in the dataset: ", paste(missing, collapse = ", ")))
   }
   matches <- match(new_names, names(.df))
   names(.df)[matches] <- names(new_names)                 
