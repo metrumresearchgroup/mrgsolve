@@ -10,7 +10,7 @@ __Please see the latest release__: [v0.5.12](https://github.com/metrumresearchgr
 * Added `mcode` function as alternative to using `mread` when your model is written in an `R` string.  Note the order of the arguments:
 first `model`, then `code`, then `project`.  `project` defaults to `tempdir`.  So the call is: `mod <- mcode("mymodel", code)`.  The
 equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
-
+* `carry.out()` and `Req()` now take `newname = oldname` as input.  Use this syntax in `carry.out` when you want to copy a column from the input data set into the simulated data set, changing the column to `newname` from `oldname`.  Use this syntax in `Req` when you want to change the names of compartments or output variables spcified in `$TABLE` / `$CAPTURE`. 
 
 
 
