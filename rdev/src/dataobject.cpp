@@ -143,7 +143,9 @@ void dataobject::reload_parameters(Rcpp::NumericVector PARAM, odeproblem* prob) 
 
 
 
-void dataobject::get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly, bool debug) {
+void dataobject::get_records(recstack& a, int NID, int neq,
+			     int& obscount, int& evcount,
+			     bool obsonly, bool debug, odeproblem* prob) {
 
   // only look here for events or observations if there is more than one column:
   size_t h=0;
@@ -195,6 +197,9 @@ void dataobject::get_records(recstack& a, int NID, int neq, int& obscount, int& 
 			    Data(j,col["rate"])));
 
       if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) Rcpp::stop("rate must be positive or equal to -1 or -2");
+
+      // If non-zero rate, pick up that compartment for adding rates to ydot
+      if(ev->rate() !=0) prob->add_Rn(ev->cmt());
 
       if(obsonly) ev->output(false);
 

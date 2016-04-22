@@ -15,7 +15,6 @@ typedef std::vector<std::string > svec;
 typedef std::vector<int > ivec;
 typedef std::map<std::string,bool> sbmap;
 typedef std::map<double,int> di_map;
-
 typedef  const std::vector<double> cdvec;
 typedef  const std::map<std::string,double> csd_map;
 

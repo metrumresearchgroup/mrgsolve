@@ -97,7 +97,7 @@ void odeproblem::y_init(int pos, double value) {
 
 
 void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* prob) {
-  unsigned int i;
+
   // Call derivs:
   (prob->derivs())(t,
 		   y,
@@ -106,12 +106,10 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 		   prob->param()
 		   );
 
-  // Add on infusion rates:
-  for(i=0; i < prob->neq(); i++) {
-    if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
-    ydot[i] = (ydot[i] + prob->rate0(i));
-  }
+  prob->add_rates(ydot);
+
 }
+
 
 void odeproblem::init_call(double& time) {
 
@@ -595,5 +593,12 @@ double PolyExp(const double& x,
 }
 
 
+void odeproblem::add_rates(double* ydot) {
+  for (std::set<int>::iterator i = Rn.begin(); i != Rn.end(); i++) {
+    int e = *i - 1;
+    if(this->is_on(e)==0){ ydot[e] = 0.0; continue;}
+    ydot[e] = ydot[e] + R0[e];
+  }
+}
 
 

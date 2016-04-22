@@ -21,8 +21,8 @@ pred_CL = CL;
 pred_V = VC;
 pred_KA = KA;
 '
-comp_forget()
-pred <- mread(code=code, model="test13.1", project=tmp)
+
+pred <- mread("test13.1", tempdir(), code,preclean=TRUE)
 
 
 
@@ -50,7 +50,7 @@ test_that("ADVAN2 same as ODE - GUT,bolus,addl", {
 
 
 test_that("ADVAN2 same as ODE - GUT,infus,addl", {
-  e <- ev(amt=1000,rate=50,ii=48,addl=4)
+  e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=2)
   out1 <- ode  %>% ev(e) %>% 
     Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred %>% ev(e) %>% 

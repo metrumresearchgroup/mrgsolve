@@ -9,7 +9,6 @@ CHKDIR=Rchecks
 ## Set libPaths:
 export R_LIBS=${LIBDIR}
 
-
 travis_build:
 	make doc
 	make build
@@ -17,7 +16,6 @@ travis_build:
 
 readme:
 	Rscript -e 'library(rmarkdown); render("README.R")'
-
 
 all:
 	make doc
@@ -31,7 +29,6 @@ doc:
 
 build:
 	R CMD build --md5 $(PKGDIR)
-
 
 install:
 	R CMD INSTALL --install-tests ${TARBALL}
@@ -59,7 +56,6 @@ tests:
 
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
-
 
 datasets:
 	Rscript makescripts/datasets.R

@@ -13,6 +13,7 @@
 #include "odepack_dlsoda.h"
 #include <string>
 #include "mrgsolv.h"
+#include <set>
 
 class odeproblem;
 class Rodeproblem;
@@ -204,6 +205,9 @@ class odeproblem : public odepack_dlsoda {
   double get_pred_k12(){return pred[3]/pred[1];}
   double get_pred_k21(){return pred[3]/pred[4];}
 
+  int nRn(){return Rn.size();}
+  void add_Rn(int value){Rn.insert(value);}
+  void add_rates(double* ydot);
  protected:
 
   //! parameters
@@ -211,6 +215,8 @@ class odeproblem : public odepack_dlsoda {
   //! Acutal curent infusion rate
   dvec R0;
   std::vector<unsigned int> infusion_count;
+
+  std::set<int> Rn;
 
   //! User input infusion rate
   dvec R;
@@ -247,6 +253,7 @@ class odeproblem : public odepack_dlsoda {
   int Advan;
 
   dvec pred;
+
 
 };
 
