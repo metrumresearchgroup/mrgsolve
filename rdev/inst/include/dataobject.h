@@ -41,7 +41,7 @@ public:
   void idata_row();
   unsigned int get_idata_row(double ID){return idmap[ID];}
   void locate_tran(bool lc_);
-  void get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly,bool debug, odeproblem* prob);
+  void get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly,bool debug);
   int col_n(std::string name) {return col.at(name);}
   void check_idcol(dataobject* data);
   double get_value(int row, int col) {return Data(row,col);}

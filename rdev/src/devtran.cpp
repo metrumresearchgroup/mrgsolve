@@ -218,7 +218,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 
   // dataobject.cpp
   // Extract data records from the data set
-  dat->get_records(a, NID, neq, obscount, evcount,obsonly,debug,prob);
+  dat->get_records(a, NID, neq, obscount, evcount,obsonly,debug);
   // Offset for getting parameters from the data set (not idata)
   //int posoff = t2cov && obscount > 0 ? 1 : 0;
 

@@ -36,9 +36,6 @@ struct databox {
 };
 
 
-
-
-
 typedef void init_func(MRGSOLVE_INIT_SIGNATURE);
 
 typedef void table_func(MRGSOLVE_TABLE_SIGNATURE);
@@ -205,9 +202,11 @@ class odeproblem : public odepack_dlsoda {
   double get_pred_k12(){return pred[3]/pred[1];}
   double get_pred_k21(){return pred[3]/pred[4];}
 
-  int nRn(){return Rn.size();}
-  void add_Rn(int value){Rn.insert(value);}
-  void add_rates(double* ydot);
+  // SAVE
+  // int nRn(){return Rn.size();}
+  // void add_Rn(int value){Rn.insert(value);}
+  // void add_rates(double* ydot);
+
  protected:
 
   //! parameters
@@ -216,7 +215,8 @@ class odeproblem : public odepack_dlsoda {
   dvec R0;
   std::vector<unsigned int> infusion_count;
 
-  std::set<int> Rn;
+  // SAVE
+  //std::set<int> Rn;
 
   //! User input infusion rate
   dvec R;
