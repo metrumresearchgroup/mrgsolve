@@ -2,14 +2,27 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
+## Generate an advan/trans directive
+advtr <- function(advan,trans) {
+    if(advan==13 | trans==1) return("")
+    if((advan %in% c(1,2)) & !(trans %in% c(2,11))) {
+        stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call.=FALSE)
+    }
+    if((advan %in% c(3,4)) & !(trans %in% c(4,11))) {
+        stop("ADVAN 3 and 4 can only use trans 1, 4, or 11", call.=FALSE)
+    }
+    return(paste0("__ADVAN", advan, "_TRANS", trans, "__"))
+}
+
 
 ##' @include utils.R complog.R nmxml.R
 rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
   basename(tempfile(pattern=pattern,tmpdir='.'))
 }
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
-                "CMT", "ODE", "DES", "MAIN", "TABLE","ADVAN2", "ADVAN4",
+                "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
+                "SUBROUTINES", "ADVAN2", "ADVAN4",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
 ADVANs <- paste0("ADVAN", c(2,4))
@@ -20,27 +33,19 @@ set_args <- c("Req", "obsonly","mtime", "recsort",
 is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
 funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
 
-
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
-  nparam <- sum(match("PARAM", x,0))
-  ninit <- sum(match(c("INIT", "CMT"),x,0))
-  #cmts <- is.element(c("CMT", "VCMT"),x)
-  advans <- is.element(c("ADVAN2", "ADVAN4"),x)
-  mains <- is.element("MAIN",x)
 
-  if(sum(is.element("TABLE",x))>1) stop("Only one $TABLE block allowed.")
-  if(sum(is.element("MAIN",x))>1) stop("Only one $MAIN block allowed.")
-  if(sum(is.element("ODE",x))>1) stop("Only one $ODE block allowed.")
-  if(sum(is.element("SET",x))>1) stop("Only one $SET block allowed.")
 
-  if(sum(mains)>1) stop("Only one $MAIN block allowed.")
-  #if(sum(advans)>1) stop("Only one ADVAN block allowed.")
-  #if(sum(advans)>1 & sum(cmts)>1) stop("$CMT or $VCMT and $ADVANn not allowed in the same model.")
+  if(sum(is.element("TABLE",x)) > 1) stop("Only one $TABLE block allowed.",call.=FALSE)
+  if(sum(is.element("MAIN",x))  > 1) stop("Only one $MAIN block allowed.",call.=FALSE)
+  if(sum(is.element("ODE",x))   > 1) stop("Only one $ODE block allowed.",call.=FALSE)
+  if(sum(is.element("SET",x))   > 1) stop("Only one $SET block allowed.",call.=FALSE)
+  if(sum(is.element("MAIN",x))  > 1) stop("Only one $MAIN block allowed.",call.=FALSE)
 
   if(warn) {
-    if(ninit ==0 & sum(advans)==0)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
+    if(sum(is.element(c("INIT", "CMT"),x)) == 0)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
     if(length(invalid)>0) {
       warning(paste0("Invalid blocks found: ", paste(invalid, collapse=" ")), call.=FALSE)
     }
@@ -275,32 +280,24 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   spec  <- modelparse(readLines(modfile,warn=FALSE))
 
-  names(spec) <- gsub("DES", "ODE", names(spec), fixed=TRUE)
-  names(spec) <- gsub("PK", "MAIN", names(spec),fixed=TRUE)
+  ## Block name aliases and partial matches to block_list
+  names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
+  names(spec) <- gsub("PK",  "MAIN", names(spec), fixed=TRUE)
+  index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)
+  names(spec) <- ifelse(is.na(index),names(spec),block_list[index])
 
   check_spec_contents(names(spec),warn=warn,...)
 
   ## The main sections that need R processing:
   spec <- altglobal(spec)
 
+  ## Parse blocks
   specClass <- paste0("spec", names(spec))
-  for(i in 1:length(spec)) class(spec[[i]]) <- specClass[i]
-
+  for(i in seq_along(spec)) class(spec[[i]]) <- specClass[i]
   spec <- lapply(spec,handle_spec_block)
 
-  ## Look for ADVAN2 or ADVAN4
-  ## See below for more ADVAN-related checks
-  spec$SET$advan <- 13
-  advan <- is.element(ADVANs, names(spec))
-  if(any(advan)) {
-    if(sum(advan)>1) stop("Only one $ADVANn block allowed.")
-    if(any(is.element(c("VCMT"),names(spec)))) stop("Found $VCMT and $ADVANn in the same control stream.")
-    if(any(is.element("ODE", names(spec)))) stop("Found $ODE and $ADVANn in the same control stream.")
-    this.advan <- ADVANs[advan]
-    if(!quiet) message("Using ", this.advan);
-    spec$SET$advan <- as.integer(gsub("ADVAN", "", this.advan))
-  }
-
+  ## Collect potential multiples
+  subr  <- collect_subr(spec)
   omega <- collect_omat(spec)
   sigma <- collect_smat(spec)
   param <- collect_param(spec)
@@ -308,8 +305,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   table <- collect_table(spec)
   init  <- collect_init(spec)
 
-  SET <- spec[["SET"]]
-
+  SET <- as.list(spec[["SET"]])
   ENV <- spec[["ENV"]]
 
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -333,7 +329,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                 table=table))
   }
 
-  if(any(duplicated(names(SET)))) stop("duplicate setting names found (see $SET)")
 
   ## Constructor for model object:
   x <- new("mrgmod",
@@ -342,15 +337,17 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            package=temp,
            project=project,
            fixed=fixed,
-           advan=spec$SET$advan,
+           advan=subr[["advan"]],
+           trans=subr[["trans"]],
            omega=omega,sigma=sigma,
            param=as.param(param),
            init=as.init(init))
 
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   if(x@advan != 13) {
-    if(x@advan == 2 & neq(x) != 2) stop("Please specify exactly two compartments for ADVAN 2.")
-    if(x@advan == 4 & neq(x) != 3) stop("Please specify exactly three compartments for ADVAN 4.")
+      if(subr[["n"]] != neq(x)) {
+          stop("ADVAN ", x@advan, " requires exactly ", subr[["n"]] , " compartments.",call.=FALSE)
+      }
   }
 
   ## First update with what we found in the model specification file
@@ -390,6 +387,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       "\n// MAIN CODE BLOCK:",
       "BEGIN_main",
       spec[["MAIN"]],
+      advtr(x@advan,x@trans),
       "END_main",
       "\n// DIFFERENTIAL EQUATIONS:",
       "BEGIN_ode",
@@ -401,9 +399,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       "END_table",sep="\n", file=def.con)
   close(def.con)
 
-
   if(!compile) return(x)
-
 
   if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
 
@@ -658,42 +654,42 @@ setMethod("as_dmat", "data.frame", function(x,pat="*", ...) {
 })
 
 
-read_data_file <- function(file,...) {
-  if(!file.exists(file)) stop(paste0("Could not open file ", file))
+## read_data_file <- function(file,...) {
+##   if(!file.exists(file)) stop(paste0("Could not open file ", file))
 
-  csv <- grepl(".*\\.csv$", file)
-  rds <- grepl(".*\\.RDS$", file)
-
-
-  if(csv) {
-    return( read.csv(file=file,na.strings='.', as.is=TRUE, stringsAsFactors=FALSE,...))
-  }
-  if(rds) {
-    return(readRDS(file))
-  }
-  stop(paste0("file ", file, " may not be in the correct format; use file.csv or file.RDS"))
-
-}
+##   csv <- grepl(".*\\.csv$", file)
+##   rds <- grepl(".*\\.RDS$", file)
 
 
+##   if(csv) {
+##     return( read.csv(file=file,na.strings='.', as.is=TRUE, stringsAsFactors=FALSE,...))
+##   }
+##   if(rds) {
+##     return(readRDS(file))
+##   }
+##   stop(paste0("file ", file, " may not be in the correct format; use file.csv or file.RDS"))
 
-import_data <- function(file=character(0),data=NULL,
-                        input=character(0), rown=1,...) {
+## }
 
-  if(missing(data) & missing(file)) return(list())
-  rown <- as.numeric(rown)
-  if(!missing(file)) data <- read_data_file(file,nrows=(rown),...)
 
-  if(missing(input)) input <- names(data)
-  input <- as.cvec(input)
 
-  rown <- as.numeric(rown)[1]
-  if(rown > nrow(data) | rown <1) stop("Invalid rown value in $DATA")
+## import_data <- function(file=character(0),data=NULL,
+##                         input=character(0), rown=1,...) {
 
-  if(any(!is.element(input,names(data)))) stop("Invalid input name in $DATA")
-  return(as.list(data[rown,input]))
+##   if(missing(data) & missing(file)) return(list())
+##   rown <- as.numeric(rown)
+##   if(!missing(file)) data <- read_data_file(file,nrows=(rown),...)
 
-}
+##   if(missing(input)) input <- names(data)
+##   input <- as.cvec(input)
+
+##   rown <- as.numeric(rown)[1]
+##   if(rown > nrow(data) | rown <1) stop("Invalid rown value in $DATA")
+
+##   if(any(!is.element(input,names(data)))) stop("Invalid input name in $DATA")
+##   return(as.list(data[rown,input]))
+
+## }
 
 
 parseNMXML <- function(x) {
@@ -779,8 +775,10 @@ handle_spec_block.specFIXED <- function(x) parseFIXED(x)
 handle_spec_block.specCAPTURE <- function(x) parseCAPTURE(x)
 ##' @export
 handle_spec_block.specVCMT <- function(x) parseCMT(x)
-
-
+##' @export
+handle_spec_block.specSUBROUTINES <- function(x) {
+    scrape_opts(x,def=list(advan=13,trans=1),all=TRUE)
+}
 
 collect_matrix <- function(x,what,class,xmlname) {
   what <- c(what, "NMXMLDATA")
@@ -855,6 +853,35 @@ collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
   x <- do.call("c",x)
   return(as.init(x))
 }
+
+collect_subr <- function(x,what=c("ADVAN2", "ADVAN4", "SUBROUTINES")) {
+
+    ans <- list(advan=13,trans=1,strict=FALSE)
+
+    y <- x[names(x) %in% what]
+
+    if(length(y) >  1) stop("Only one of $ADVAN2, $ADVAN4, or $SUBROUTINES are allowed.",call.=FALSE)
+    if(length(y) == 0) return(ans)
+
+    if(names(y)=="ADVAN2") {
+        ans$advan <- 2
+    }
+    if(names(y)=="ADVAN4") {
+        ans$advan <- 4
+    }
+    if(names(y)=="SUBROUTINES") {
+        ans <- y[[1]]
+    }
+    if(ans[["advan"]] != 13) {
+        if(any(is.element(c("VCMT"),names(x)))) stop("Found $VCMT and $ADVANn in the same control stream.")
+        if(any(is.element("ODE", names(x)))) stop("Found $ODE and $ADVANn in the same control stream.")
+    }
+
+    ans[["n"]] <-switch(ans[["advan"]],`1` = 1,`2` = 2,`3` = 2,`4` = 3)
+
+    return(ans)
+}
+
 
 dosing_cmts <- function(x,what) {
   if(!is.character(x)) return(character(0))

@@ -24,6 +24,13 @@ pred_KA = KA;
 
 pred <- mread("test13.1", tempdir(), code,preclean=TRUE)
 
+code2 <- '
+$PARAM CL=1, V=20, KA=1.1
+$CMT CENT
+$SUB advan=1, trans=2
+'
+pred2 <- mread("test13.2", tempdir(), code2)
+
 
 
 test_that("ADVAN2 same as ODE - initial condition", {
@@ -66,8 +73,12 @@ test_that("ADVAN2 same as ODE - CENT,infus,addl", {
     Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred %>% ev(e) %>% 
     Req(CENT) %>% mrgsim(end=264,delta=0.1,digits=5)
+  e2 <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
+  out3 <- pred2 %>% ev(e2) %>% 
+    Req(CENT) %>% mrgsim(end=264,delta=0.1,digits=5)
   
   expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$CENT,out3$CENT)
 })
 
 
@@ -99,7 +110,7 @@ project <- file.path(system.file(package="mrgsolve"), "models")
 
 context("Compare ADVAN 4 with equivalent ODEs.")
 
-pred_code <- '
+ode_code <- '
 $PARAM CL=1, VC=20, Q=4, KA=1.1, VP=300
 $CMT GUT CENT PER
 $ODE
@@ -108,7 +119,8 @@ dxdt_CENT = KA*GUT - CENT*(CL+Q)/VC + PER*Q/VP;
 dxdt_PER = CENT*Q/VC - PER*Q/VP;
 '
 
-ode_code <- '
+
+pred_code <- '
 $PARAM CL=1, VC=20, KA=1.1, Q=4, VP=300
 $CMT GUT CENT PER
 $ADVAN4
@@ -119,10 +131,17 @@ pred_KA = KA;
 pred_Q = Q;
 pred_V3 = VP;
 '
+pred2 <- '
+$PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300
+$CMT CENT PER
+$SUB advan=3, trans=4
+'
+
 comp_forget()
 
-ode <- mread(code=ode_code, model="test13.2", project=tmp) 
-pred <- mread(code=pred_code, model="test13.3", project=tmp)
+ode <- mread(code=ode_code, model="test13.3", project=tmp) 
+pred <- mread(code=pred_code, model="test13.4", project=tmp)
+pred2 <- mread(code=pred2, model="test13.5", project=tmp)
 
 
 
@@ -170,8 +189,15 @@ test_that("ADVAN4 same as ODE - CENT,infus,addl", {
   out2 <- pred %>% ev(e) %>% 
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
   
+  e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
+  out3 <- pred2 %>% ev(e) %>% 
+    Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
+  
+  expect_equal(out1$CENT,out3$CENT)
+  expect_equal(out1$PER,out3$PER)
 })
 
 

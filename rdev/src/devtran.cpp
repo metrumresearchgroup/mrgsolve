@@ -48,7 +48,8 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   int advan             = Rcpp::as<int>    (parin["advan"]);
-  double mindt           = Rcpp::as<double> (parin["mindt"]);
+  double mindt          = Rcpp::as<double> (parin["mindt"]);
+
 
   if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
 
@@ -184,6 +185,10 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   case 2:
     break;
   case 4:
+    break;
+  case 1:
+    break;
+  case 3:
     break;
   default:
     CRUMP("advan must be either 13, 2, or 4");

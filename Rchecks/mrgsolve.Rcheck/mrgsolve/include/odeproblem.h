@@ -13,7 +13,7 @@
 #include "odepack_dlsoda.h"
 #include <string>
 #include "mrgsolv.h"
-#include <set>
+
 
 class odeproblem;
 class Rodeproblem;

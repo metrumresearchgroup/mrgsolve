@@ -35,9 +35,9 @@ The following objects are masked from 'package:base':
 D(1) must be set to a positive value in $MAIN.
 R(1) must be set to a positive value in $MAIN.
 testthat results ================================================================
-OK: 290 SKIPPED: 0 FAILED: 0
+OK: 293 SKIPPED: 0 FAILED: 0
 > 
 > 
 > proc.time()
    user  system elapsed 
- 17.280   2.948  20.756 
+ 19.411   3.122  22.948 

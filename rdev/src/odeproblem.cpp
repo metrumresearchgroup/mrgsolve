@@ -108,7 +108,6 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 
 
   // prob->add_rates(ydot);
-
   // // Add on infusion rates:
   for(unsigned int i=0; i < prob->neq(); i++) {
     if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
@@ -306,15 +305,19 @@ void odeproblem::advance(double& tfrom, double& tto) {
   if(Neq <= 0) return;
 
   if(Advan != 13) {
-    if(Advan==2) {
-      this->advan2(tfrom,tto);
+    if(Advan==2 | Advan==1) {
+      odeproblem* prob = this;
+      prob->advan2(tfrom,tto);
       return;
     }
-    if(Advan==4) {
-      this->advan4(tfrom,tto);
+
+    if(Advan==4 | Advan==3) {
+      odeproblem* prob = this;
+      prob->advan4(tfrom,tto);
       return;
     }
   }
+
 
   dlsoda_(&main_derivs,
 	  &Neq,
@@ -344,6 +347,7 @@ void odeproblem::advance(double& tfrom, double& tto) {
 
 void odeproblem::advan2(double tfrom,double tto) {
 
+  unsigned int neq = this->neq();
 
   double dt = tto-tfrom;
   if((this->get_pred_CL() <= 0) ||
@@ -352,7 +356,8 @@ void odeproblem::advan2(double tfrom,double tto) {
   double k10 = this->get_pred_k10();
   double ka = this->get_pred_KA();
 
-  if(k10<=0) Rcpp::stop("Invalid PK parameter values.");
+  if(k10 <= 0) Rcpp::stop("Invalid PK parameter values.");
+
   dvec alpha(2);
 
   alpha[0] = k10;
@@ -362,42 +367,59 @@ void odeproblem::advan2(double tfrom,double tto) {
   a[0] = ka/(ka-alpha[0]);
   a[1] = -a[0];
 
-  double init0 = this->y(0);
-  double init1 = this->y(1);
+  double init0 = 0, init1 = 0;
+  int eqoffset = 0;
 
-  double pred0 = 0;
-  double pred1 = 0;
+  if(neq==1) {
+    init0 = 0;
+    init1 = this->y(0);
+    eqoffset = 1;
+  }
+  if(neq==2) {
+    init0 = this->y(0);
+    init1 = this->y(1);
+  }
 
-  if((init0!=0) || (R0[0]!=0)) {
+  double pred0 = 0, pred1 = 0;
 
-    pred0 = init0*exp(-ka*dt);//+ R0[0]*(1-exp(-ka*dt))/ka;
+  if(neq ==2) {
+    if((init0!=0) || (R0[0]!=0)) {
 
-    if(ka > 0) { // new
-      pred0 += R0[0]*(1.0-exp(-ka*dt))/ka; // new
-      pred1 +=
-	PolyExp(dt,init0,0.0  ,0.0,0.0,false,a,alpha,2) +
-	PolyExp(dt,0.0  ,R0[0],dt ,0.0,false,a,alpha,2);
-    } else {
-      pred0 += R0[0]*dt; // new
+      pred0 = init0*exp(-ka*dt);//+ R0[0]*(1-exp(-ka*dt))/ka;
+
+      if(ka > 0) { // new
+	pred0 += R0[0]*(1.0-exp(-ka*dt))/ka; // new
+	pred1 +=
+	  PolyExp(dt,init0,0.0  ,0.0,0.0,false,a,alpha,2) +
+	  PolyExp(dt,0.0  ,R0[0],dt ,0.0,false,a,alpha,2);
+      } else {
+	pred0 += R0[0]*dt; // new
+      }
     }
   }
 
-  if((init1!=0) || (R0[1]!=0)) {
+  if((init1!=0) || (R0[1-eqoffset]!=0)) {
     a[0] = 1;
     pred1 +=
       PolyExp(dt,init1,0.0  ,0.0,0.0,false,a,alpha,1) +
-      PolyExp(dt,0.0  ,R0[1],dt ,0.0,false,a,alpha,1);
+      PolyExp(dt,0.0  ,R0[1-eqoffset],dt ,0.0,false,a,alpha,1);
   }
 
-  this->y(0,pred0);
-  this->y(1,pred1);
-
+  if(neq==2) {
+    this->y(0,pred0);
+    this->y(1,pred1);
+  }
+  if(neq==1) {
+    this->y(0,pred1);
+  }
 }
 
 
 void odeproblem::advan4(double tfrom,double tto) {
 
   double dt = tto - tfrom;
+
+  unsigned int neq = this->neq();
 
   // Make sure parameters are valid
   if((this->get_pred_VC() <= 0) ||
@@ -412,8 +434,17 @@ void odeproblem::advan4(double tfrom,double tto) {
 
   double ksum = k10+k12+k21;
 
-  double init0 = this->y(0),init1 = this->y(1),init2 = this->y(2);
-  double pred0 = 0, pred1 = 0, pred2 = 0;
+  double init0 = 0, init1 = 0, init2 = 0,  pred0 = 0, pred1 = 0, pred2 = 0;
+
+  int eqoffset = 0;
+
+  if(neq == 2) {
+    init0 = 0; init1 = this->y(0); init2 = this->y(1);
+    eqoffset = 1;
+  }
+  if(neq ==3) {
+    init0 = this->y(0); init1 = this->y(1); init2 = this->y(2);
+  }
 
   dvec alpha(3);
   dvec a(3);
@@ -422,71 +453,77 @@ void odeproblem::advan4(double tfrom,double tto) {
   alpha[1] = (ksum - sqrt(ksum*ksum-4.0*k10*k21))/2.0;
   alpha[2] = ka;
 
-  if((init0 != 0) || (R0[0] != 0)) {
+  if(neq==3) { // only do the absorption compartment if we have 3
+    if((init0 != 0) || (R0[0] != 0)) {
 
-    pred0 = init0*exp(-ka*dt);// + R0[0]*(1.0-exp(-ka*dt))/ka;
+      pred0 = init0*exp(-ka*dt);// + R0[0]*(1.0-exp(-ka*dt))/ka;
 
+      a[0] = ka*(k21-alpha[0])/((ka-alpha[0])*(alpha[1]-alpha[0]));
+      a[1] = ka*(k21-alpha[1])/((ka-alpha[1])*(alpha[0]-alpha[1]));
+      a[2] = -(a[0]+a[1]);
 
-    a[0] = ka*(k21-alpha[0])/((ka-alpha[0])*(alpha[1]-alpha[0]));
-    a[1] = ka*(k21-alpha[1])/((ka-alpha[1])*(alpha[0]-alpha[1]));
-    a[2] = -(a[0]+a[1]);
+      if(ka > 0) {  // new
+	pred0 += R0[0]*(1.0-exp(-ka*dt))/ka; // new
+	pred1 +=
+	  PolyExp(dt,init0,0,0,0,false,a,alpha,3) +
+	  PolyExp(dt,0,R0[0],dt,0,false,a,alpha,3);
 
-    if(ka > 0) {  // new
-      pred0 += R0[0]*(1.0-exp(-ka*dt))/ka; // new
-      pred1 +=
-	PolyExp(dt,init0,0,0,0,false,a,alpha,3) +
-	PolyExp(dt,0,R0[0],dt,0,false,a,alpha,3);
+	a[0] = ka * k12/((ka-alpha[0])*(alpha[1]-alpha[0]));
+	a[1] = ka * k12/((ka-alpha[1])*(alpha[0]-alpha[1]));
+	a[2] = -(a[0] + a[1]);
 
-      a[0] = ka * k12/((ka-alpha[0])*(alpha[1]-alpha[0]));
-      a[1] = ka * k12/((ka-alpha[1])*(alpha[0]-alpha[1]));
-      a[2] = -(a[0] + a[1]);
-
-      pred2 +=
-	PolyExp(dt,init0,0,0,0,false,a,alpha,3) +
-	PolyExp(dt,0,R0[0],dt,0,false,a,alpha,3);
-    } else {
-      pred0 += R0[0]*dt; // new
+	pred2 +=
+	  PolyExp(dt,init0,0,0,0,false,a,alpha,3) +
+	  PolyExp(dt,0,R0[0],dt,0,false,a,alpha,3);
+      } else {
+	pred0 += R0[0]*dt; // new
+      }
     }
   }
 
-  if((init1 != 0) || (R0[1] != 0)) {
+  if((init1 != 0) || (R0[1-eqoffset] != 0)) {
 
     a[0] = (k21 - alpha[0])/(alpha[1]-alpha[0]) ;
     a[1] = (k21 - alpha[1])/(alpha[0]-alpha[1]) ;
 
     pred1 +=
       PolyExp(dt,init1,0,0,0,false,a,alpha,2) +
-      PolyExp(dt,0,R0[1],dt,0,false,a,alpha,2);
+      PolyExp(dt,0,R0[1-eqoffset],dt,0,false,a,alpha,2);
 
     a[0] = k12/(alpha[1]-alpha[0]) ;
     a[1] = -a[0];
 
     pred2 +=
       PolyExp(dt,init1,0,0,0,false,a,alpha,2) +
-      PolyExp(dt,0,R0[1],dt,0,false,a,alpha,2);
+      PolyExp(dt,0,R0[1-eqoffset],dt,0,false,a,alpha,2);
   }
 
-  if((init2 != 0) || (R0[2] != 0)) {
+  if((init2 != 0) || (R0[2-eqoffset] != 0)) {
 
     a[0] = k21/(alpha[1]-alpha[0]);
     a[1] = -a[0];
 
     pred1 +=
       PolyExp(dt,init2,0,0,0,false,a,alpha,2) +
-      PolyExp(dt,0,R0[2],dt,0,false,a,alpha,2);
+      PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,2);
 
     a[0] = (k10 + k12 - alpha[0])/(alpha[1]-alpha[0]);
     a[1] = (k10 + k12 - alpha[1])/(alpha[0]-alpha[1]);
 
     pred2 +=
       PolyExp(dt,init2,0,0,0,false,a,alpha,2) +
-      PolyExp(dt,0,R0[2],dt,0,false,a,alpha,2);
+      PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,2);
   }
 
-  this->y(0,pred0);
-  this->y(1,pred1);
-  this->y(2,pred2);
-
+  if(neq ==2) {
+    this->y(0,pred1);
+    this->y(1,pred2);
+  }
+  if(neq ==3) {
+    this->y(0,pred0);
+    this->y(1,pred1);
+    this->y(2,pred2);
+  }
 }
 
 

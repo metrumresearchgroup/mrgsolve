@@ -66,6 +66,8 @@ S4 class for mrgsolve model object
 
 \item{\code{advan}}{either 2, 4, or 13 \code{<numeric>}}
 
+\item{\code{trans}}{either 1, 2, 4, or 11}
+
 \item{\code{request}}{vector of compartments to request \code{<character>}}
 
 \item{\code{soloc}}{directory path for storing the model shared object \code{<character>}}
