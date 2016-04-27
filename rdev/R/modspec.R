@@ -22,7 +22,7 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
-                "SUBROUTINES", "ADVAN2", "ADVAN4",
+                "ADVAN2", "ADVAN4", "PKMODEL",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
 ADVANs <- paste0("ADVAN", c(2,4))
@@ -282,7 +282,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   ## Block name aliases and partial matches to block_list
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
-  names(spec) <- gsub("PK",  "MAIN", names(spec), fixed=TRUE)
+  names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
   index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)
   names(spec) <- ifelse(is.na(index),names(spec),block_list[index])
 
@@ -346,7 +346,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   if(x@advan != 13) {
       if(subr[["n"]] != neq(x)) {
-          stop("ADVAN ", x@advan, " requires exactly ", subr[["n"]] , " compartments.",call.=FALSE)
+          stop("$PKMODEL requires  ", subr[["n"]] , " compartments in $CMT or $INIT.",call.=FALSE)
       }
   }
 
@@ -776,9 +776,23 @@ handle_spec_block.specCAPTURE <- function(x) parseCAPTURE(x)
 ##' @export
 handle_spec_block.specVCMT <- function(x) parseCMT(x)
 ##' @export
-handle_spec_block.specSUBROUTINES <- function(x) {
-    scrape_opts(x,def=list(advan=13,trans=1),all=TRUE)
+handle_spec_block.specPKMODEL <- function(x) {
+    x <- scrape_opts(x,all=TRUE)
+    do.call("PKMODEL",x)
 }
+
+##' Parse data from \code{$PKMODEL}
+##'
+##' @param ncmt number of compartments
+##' @param depot logical indicating whether to add depot compartment
+##' @param trans the parameterization for the PK model
+##' @param ... not used
+PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
+    stopifnot(ncmt %in% c(1,2))
+    advan <- pick_advan(ncmt,depot)
+    return(list(advan=advan, trans=trans, n=ncmt))
+}
+
 
 collect_matrix <- function(x,what,class,xmlname) {
   what <- c(what, "NMXMLDATA")
@@ -854,13 +868,13 @@ collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
   return(as.init(x))
 }
 
-collect_subr <- function(x,what=c("ADVAN2", "ADVAN4", "SUBROUTINES")) {
+collect_subr <- function(x,what=c("ADVAN2", "ADVAN4","PKMODEL")) {
 
     ans <- list(advan=13,trans=1,strict=FALSE)
 
     y <- x[names(x) %in% what]
 
-    if(length(y) >  1) stop("Only one of $ADVAN2, $ADVAN4, or $SUBROUTINES are allowed.",call.=FALSE)
+    if(length(y) >  1) stop("Only one of $ADVAN2, $ADVAN4, or $PKMODEL are allowed.",call.=FALSE)
     if(length(y) == 0) return(ans)
 
     if(names(y)=="ADVAN2") {
@@ -869,9 +883,10 @@ collect_subr <- function(x,what=c("ADVAN2", "ADVAN4", "SUBROUTINES")) {
     if(names(y)=="ADVAN4") {
         ans$advan <- 4
     }
-    if(names(y)=="SUBROUTINES") {
+    if(names(y) %in% c("PKMODEL")) {
         ans <- y[[1]]
     }
+
     if(ans[["advan"]] != 13) {
         if(any(is.element(c("VCMT"),names(x)))) stop("Found $VCMT and $ADVANn in the same control stream.")
         if(any(is.element("ODE", names(x)))) stop("Found $ODE and $ADVANn in the same control stream.")
@@ -895,8 +910,17 @@ dosing_cmts <- function(x,what) {
 
 
 
+## picks the default trans
+pick_trans <- function(ncmt,depot) {
+  switch(pick_advan(ncmt,depot),
+    `1` = 2,
+    `2` = 2,
+    `3` = 4,
+    `4` = 4
+  )
+}
 
-
-
-
+pick_advan <- function(ncmt,depot) {
+    ncmt + as.integer(depot) + as.integer(ncmt==2)
+}
 

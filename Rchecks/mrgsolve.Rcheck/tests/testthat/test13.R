@@ -27,7 +27,7 @@ pred <- mread("test13.1", tempdir(), code,preclean=TRUE)
 code2 <- '
 $PARAM CL=1, V=20, KA=1.1
 $CMT CENT
-$SUB advan=1, trans=2
+$PKMODEL ncmt=1
 '
 pred2 <- mread("test13.2", tempdir(), code2)
 
@@ -134,7 +134,7 @@ pred_V3 = VP;
 pred2 <- '
 $PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300
 $CMT CENT PER
-$SUB advan=3, trans=4
+$PKMODEL ncmt=2
 '
 
 comp_forget()

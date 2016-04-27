@@ -41,7 +41,7 @@
 ##' \item \bold{\code{$CMTN}} To get the number of specific compartments (CMT), specify names here as unquoted comma-separated list; they will be made
 ##' available in the C++ code as _N_CMT.
 ##' \item \bold{\code{$CAPTURE}} names of \code{C++} variables to capture in simulated output; separate by comma, space or newline. Each variable listed in this block will be passed to the \code{capture} macro discussed below.
-##' \item \bold{\code{$SUBROUTINES}} an options-only block; valid options are \code{advan} and \code{trans}.  Use these to select structure and parameterization for PK models with analytical solutions.  Set \code{advan} to 1 or 2 for one-compartment model (without or with first-order absorption) or 3 or 4 for two-compartment model (without or with first-order absorption.
+##' \item \bold{\code{$PKMODEL}} implement a one- or two- compartment PK model with analytical solution.  See \code{\link{PKMODEL}} for options.
 ##' }
 ##'
 ##'
