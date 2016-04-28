@@ -324,7 +324,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                 sigma=sigma,
                 SET=unlist(SET),
                 ENV=unlist(ENV),
-                GLOBAL=spec$GLOBAL,
+                GLOBAL=spec[["GLOBAL"]],
                 fixed=fixed,
                 table=table))
   }
@@ -363,10 +363,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(audit) audit_spec(x,spec,warn=warn)
 
   ## This must come after audit
-  if(is.null(spec$ODE)) spec$ODE <- "DXDTZERO();\n"
+  if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();\n"
 
   ## These are the symbols:
   x <- assign_symbols(x)
+
+  if(x@advan !=13) {
+      check_pred_symbols(x,spec[["MAIN"]])
+  }
 
   rd <-generate_rdefs(pars=names(param),
                       cmt=names(init),
@@ -923,4 +927,51 @@ pick_trans <- function(ncmt,depot) {
 pick_advan <- function(ncmt,depot) {
     ncmt + as.integer(depot) + as.integer(ncmt==2)
 }
+
+
+PK_ERR <- "Required PK parameters not found: "
+
+check_pred_symbols <- function(x,code) {
+    p <- pars(x)
+    code <- unlist(get_tokens(code,TRUE))
+    have <- unique(c(p,code))
+    if(x@trans==1) return(invisible(NULL))
+    if(x@advan==1) {
+        need <- c("CL","V")
+        if(x@trans==11) need <- paste0(need,"i")
+        if(!all(need %in% have)) {
+            diff <- setdiff(need,have)
+            stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
+        }
+        return(invisible(NULL))
+    }
+    if(x@advan==2) {
+        need <- c("CL","V","KA")
+        if(x@trans==11) need <- paste0(need,"i")
+        if(!all(need %in% have)) {
+            diff <- setdiff(need,have)
+            stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
+        }
+        return(invisible(NULL))
+    }
+    if(x@advan==3) {
+        need <- c("CL","V2","Q","V3")
+        if(x@trans==11) need <- paste0(need,"i")
+        if(!all(need %in% have)) {
+            diff <- setdiff(need,have)
+            stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
+        }
+        return(invisible(NULL))
+    }
+    if(x@advan==4) {
+        need <- s("CL","V2","Q","V3","KA")
+        if(x@trans==11) need <- paste0(need,"i")
+        if(!all(need %in% have)) {
+            diff <- setdiff(need,have)
+            stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
+        }
+        return(invisible(NULL))
+    }
+}
+
 

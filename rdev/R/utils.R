@@ -906,4 +906,9 @@ as.character.altname <- function(x,...) {
 }
 
 
+get_tokens <- function(x,unlist=FALSE) {
+    if(!is.character(x)) return(character(0))
+    if(unlist) return(.Call("mrgsolve_get_tokens", x)[["tokens"]])
+    .Call("mrgsolve_get_tokens", x)
+}
 

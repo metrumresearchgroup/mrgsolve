@@ -65,5 +65,5 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a);
 void match_both(svec a, svec b, ivec& ai, ivec& bi);
 void match_one(svec a, svec b, ivec& ret);
 Rcpp::List map_data_set(Rcpp::NumericMatrix data);
-
+Rcpp::List get_tokens(Rcpp::CharacterVector code);
 //Rcpp::List tokens(Rcpp::CharacterVector x, Rcpp::CharacterVector sep_);

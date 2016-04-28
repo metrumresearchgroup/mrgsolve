@@ -370,4 +370,27 @@ Rcpp::List map_data_set(Rcpp::NumericMatrix data_, Rcpp::NumericVector inpar,boo
 
 
 
+//[[Rcpp::export]]
+Rcpp::List get_tokens(Rcpp::CharacterVector code) {
+
+  Rcpp::List ret(code.size());
+
+  for(int i = 0; i < code.size(); i++) {
+    Rcpp::CharacterVector tokens;
+    std::string s = Rcpp::as<std::string>(code[i]);
+    boost::tokenizer<> tok(s);
+    for(boost::tokenizer<>::iterator beg=tok.begin(); beg!=tok.end();++beg){
+      tokens.push_back(*beg);
+    }
+    ret[i] = tokens;
+  }
+
+
+  Rcpp::List ans;
+  ans["tokens"] = ret;
+  return ans;
+}
+
+
+
 

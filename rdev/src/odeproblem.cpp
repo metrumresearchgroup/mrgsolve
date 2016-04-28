@@ -351,12 +351,12 @@ void odeproblem::advan2(double tfrom,double tto) {
 
   double dt = tto-tfrom;
   if((this->get_pred_CL() <= 0) ||
-     (this->get_pred_VC() <= 0)) Rcpp::stop("Invalid PK parameter values.");
+     (this->get_pred_VC() <= 0)) Rcpp::stop("A PK parameter has an invalid value.");
 
   double k10 = this->get_pred_k10();
   double ka = this->get_pred_KA();
 
-  if(k10 <= 0) Rcpp::stop("Invalid PK parameter values.");
+  if(k10 <= 0) Rcpp::stop("A PK parameter has an invalid value.");
 
   dvec alpha(2);
 
@@ -422,10 +422,10 @@ void odeproblem::advan4(double tfrom,double tto) {
   unsigned int neq = this->neq();
 
   // Make sure parameters are valid
-  if((this->get_pred_VC() <= 0) ||
-     (this->get_pred_VP() <= 0) ||
-     (this->get_pred_Q()  <= 0) ||
-     (this->get_pred_CL() <= 0)) Rcpp::stop("Invalid PK parameter values.");
+  if((this->get_pred_VC() <=  0) ||
+     (this->get_pred_VP() <=  0) ||
+     (this->get_pred_Q()  <   0) ||
+     (this->get_pred_CL() <=  0)) Rcpp::stop("A PK parameter has an invalid value.");
 
   double ka = this->get_pred_KA();
   double k10 = this->get_pred_k10();
