@@ -40,6 +40,7 @@ Collate:
     'events.R'
     'Ops.R'
     'RcppExports.R'
+    'aaa.R'
     'chain.R'
     'utils.R'
     'compile.R'
