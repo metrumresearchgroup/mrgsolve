@@ -161,21 +161,22 @@ Underfull \vbox (badness 10000) has occurred while \output is active [44]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [61]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [62]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66] [67]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [68]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [69]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [71]
 No file Rd2.ind.
-[71] (./Rd2.aux)
+[72] (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -209,12 +210,12 @@ exlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
 -dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/font
 s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/ur
 w/times/utmri8a.pfb>
-Output written on Rd2.pdf (71 pages, 190215 bytes).
+Output written on Rd2.pdf (72 pages, 191802 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
-Scanning input file Rd2.idx....done (365 entries accepted, 2 rejected).
-Sorting entries......done (3423 comparisons).
-Generating output file Rd2.ind....done (605 lines written, 0 warnings).
+Scanning input file Rd2.idx....done (366 entries accepted, 2 rejected).
+Sorting entries......done (3510 comparisons).
+Generating output file Rd2.ind....done (606 lines written, 0 warnings).
 Output written in Rd2.ind.
 Transcript written in Rd2.ilg.
 This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex)
@@ -378,29 +379,30 @@ Underfull \vbox (badness 10000) has occurred while \output is active [46]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [68] [69]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [71]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [72]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[73]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [73] (./Rd2.ind
+[74]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 9.
 
-[74] [75]
+[75] [76]
 Overfull \hbox (25.01662pt too wide) in paragraph at lines 419--421
 \T1/ptm/m/it/10 (\T1/zi4/m/it/10 plot,batch_mrgsims,missing-method\T1/ptm/m/it/
 10 )\T1/ptm/m/n/10 , 
-[76] [77]) (./Rd2.aux)
+[77] [78]) (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -438,12 +440,12 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (77 pages, 228561 bytes).
+Output written on Rd2.pdf (78 pages, 230346 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
-Scanning input file Rd2.idx....done (365 entries accepted, 2 rejected).
-Sorting entries......done (3423 comparisons).
-Generating output file Rd2.ind....done (605 lines written, 0 warnings).
+Scanning input file Rd2.idx....done (366 entries accepted, 2 rejected).
+Sorting entries......done (3510 comparisons).
+Generating output file Rd2.ind....done (606 lines written, 0 warnings).
 Output written in Rd2.ind.
 Transcript written in Rd2.ilg.
 This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex)
@@ -607,29 +609,30 @@ Underfull \vbox (badness 10000) has occurred while \output is active [46]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [68] [69]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [71]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [72]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[73]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [73] (./Rd2.ind
+[74]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 9.
 
-[74] [75]
+[75] [76]
 Overfull \hbox (25.01662pt too wide) in paragraph at lines 419--421
 \T1/ptm/m/it/10 (\T1/zi4/m/it/10 plot,batch_mrgsims,missing-method\T1/ptm/m/it/
 10 )\T1/ptm/m/n/10 , 
-[76] [77]) (./Rd2.aux)
+[77] [78]) (./Rd2.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -662,8 +665,8 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (77 pages, 228989 bytes).
+Output written on Rd2.pdf (78 pages, 230664 bytes).
 Transcript written on Rd2.log.
 Saving output to 'mrgsolve-manual.pdf' ...
 Done
-You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//RtmpyEXnwD/Rd2pdf2b202ca1677b'
+You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//RtmpkdoZkS/Rd2pdf36f426c7d1d1'

@@ -1,6 +1,7 @@
 *.o
 *.so
 *.Rproj
+Rchecks`
 .Rproj.user
 .Rhistory
 *.tar.gz

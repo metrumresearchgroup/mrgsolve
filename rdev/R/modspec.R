@@ -935,7 +935,7 @@ check_pred_symbols <- function(x,code) {
     p <- pars(x)
     code <- unlist(get_tokens(code,TRUE))
     have <- unique(c(p,code))
-    
+
     if(x@trans==1) return(invisible(NULL))
     
     need <- GLOBALS$ADVAN_PARMS[[as.character(x@advan)]]
@@ -947,7 +947,7 @@ check_pred_symbols <- function(x,code) {
         stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
     }
     return(invisible(NULL))
-    
+
 }
 
 

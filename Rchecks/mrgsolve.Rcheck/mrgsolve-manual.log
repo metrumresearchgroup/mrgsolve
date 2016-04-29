@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  28 APR 2016 16:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  28 APR 2016 19:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -977,13 +977,16 @@ File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [64]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
-) [65]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 )
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
+) [65]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [66]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
+)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [67]
@@ -995,13 +998,7 @@ File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [68] [69]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
-)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [70]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
-)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 )
@@ -1010,11 +1007,17 @@ File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [71]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
 ) [72]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
-) (./Rd2.ind
-[73]
+)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
+) [73] (./Rd2.ind
+[74]
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `T1/ptm/b/n' tried instead on input line 3.
 
@@ -1022,34 +1025,34 @@ LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 9.
 
-[74
+[75
 
-] [75]
+] [76]
 Overfull \hbox (25.01662pt too wide) in paragraph at lines 419--421
 \T1/ptm/m/it/10 (\T1/zi4/m/it/10 plot,batch_mrgsims,missing-method\T1/ptm/m/it/
 10 )\T1/ptm/m/n/10 , 
  []
 
-[76] [77])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 4201.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 4201.
+[77] [78])
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 4227.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 4227.
  (./Rd2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 4201.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 4201.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 4227.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 4227.
 
 Package rerunfilecheck Info: File `Rd2.out' has not changed.
-(rerunfilecheck)             Checksum: 84EF41463E0D198A7DE33ED8F3103459;4836.
+(rerunfilecheck)             Checksum: BDD24717260BEF4F411518D5C84498C1;4898.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 4201.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 4227.
  ) 
 Here is how much of TeX's memory you used:
- 7462 strings out of 493089
- 116614 string characters out of 6134842
+ 7472 strings out of 493089
+ 116848 string characters out of 6134842
  175071 words of memory out of 5000000
- 9822 multiletter control sequences out of 15000+600000
+ 9823 multiletter control sequences out of 15000+600000
  44456 words of font info for 54 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  38i,6n,34p,786b,592s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1081,10 +1084,10 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (77 pages, 228989 bytes).
+Output written on Rd2.pdf (78 pages, 230664 bytes).
 PDF statistics:
- 2113 PDF objects out of 2487 (max. 8388607)
- 2006 compressed objects within 21 object streams
- 838 named destinations out of 1000 (max. 500000)
- 753 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2129 PDF objects out of 2487 (max. 8388607)
+ 2021 compressed objects within 21 object streams
+ 845 named destinations out of 1000 (max. 500000)
+ 761 words of extra memory for PDF output out of 10000 (max. 10000000)
 
