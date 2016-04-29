@@ -221,6 +221,7 @@ project,mrgsims-method	project
 project,packmod-method	project
 relocate	relocate
 relocate,mrgmod-method	relocate
+rename_cols	rename_cols
 Req	Req
 req	Req
 Req,mrgmod-method	Req

@@ -86,6 +86,7 @@ plus.ev                 Add an events object to a mrgmod object
 project                 Return the name of the project directory.
 relocate                Update 'model' or 'project' in an 'mrgmod'
                         object.
+rename_cols             rename columns from vector for new names
 request                 Return the requested compartments from a
                         simulation run.
 reserved                Reserved words in 'mrgsolve'.

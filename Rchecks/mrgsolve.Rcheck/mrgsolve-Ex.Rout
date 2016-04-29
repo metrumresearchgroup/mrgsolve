@@ -713,7 +713,7 @@ Head:
 > 
 > mod <- mcode("example",code)
 Compiling example.cpp.cpp ... done.
-Loading: example2ca0475bf3fd.so
+Loading: example38773e0e20dc.so
 > 
 > 
 > 
@@ -836,7 +836,7 @@ Loading: example2ca0475bf3fd.so
 > 
 > mod <- mread(code=code, project=tempdir())
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_temp2ca065ef8ba4.so
+Loading: _mrgsolve_temp3877118f6b58.so
 > 
 > smat(mod)
 $...
@@ -927,7 +927,7 @@ capture(CP);
 > 
 > mod <- mread(code=code, "ADVAN2", tempdir())
 Compiling ADVAN2.cpp.cpp ... done.
-Loading: ADVAN22ca051b8f044.so
+Loading: ADVAN238775ed06769.so
 > 
 > mod %>%
 +   ev(amt=100,ii=24, addl=9) %>%
@@ -960,7 +960,7 @@ Loading: ADVAN22ca051b8f044.so
 > 
 > mod <- mread(code=code)
 Compiling _mrgsolve_temp.cpp.cpp ... (waiting) ... done.
-Loading: _mrgsolve_temp2ca079217cdf.so
+Loading: _mrgsolve_temp38777dde0dc.so
 > 
 > mod
 
@@ -968,9 +968,9 @@ Loading: _mrgsolve_temp2ca079217cdf.so
 -------- mrgsolve model object (unix) --------
   Project: /Users/kyleb/git/m4solve.git/Rchecks/mrgsolve.Rcheck
   source:        _mrgsolve_temp.cpp
-  shared object: 2ca079217cdf (loaded)
+  shared object: 38777dde0dc (loaded)
 
-  compile date:  04/28 16:46
+  compile date:  04/28 19:58
   Time:          start: 0 end: 24 delta: 1
   >              add: <none>
   >              tscale: 1
@@ -1181,7 +1181,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/28 16:45
+  compile date:  04/28 19:57
   Time:          start: 0 end: 120 delta: 0.25
   >              add: <none>
   >              tscale: 1
@@ -1326,7 +1326,7 @@ Use mread() to load and compile.
 > 
 > mod <- mread("pkpdExample", project=getwd()) %>% ev(amt=1000, time=0, cmt=1)
 Compiling pkpdExample.cpp.cpp ... done.
-Loading: pkpdExample2ca0123f4425.so
+Loading: pkpdExample38776db3f8e8.so
 > 
 > see(mod)
 
@@ -1414,7 +1414,7 @@ ID:     1
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/28 16:45
+  compile date:  04/28 19:57
   Time:          start: 0 end: 120 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1659,7 +1659,7 @@ Model:  housemodel
   source:        housemodel.cpp
   shared object: mrgsolve (loaded)
 
-  compile date:  04/28 16:45
+  compile date:  04/28 19:57
   Time:          start: 0 end: 168 delta: 0.1
   >              add: <none>
   >              tscale: 1
@@ -1822,7 +1822,7 @@ Events:
 > 
 > mod <- mread(code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
 Compiling _mrgsolve_temp.cpp.cpp ... done.
-Loading: _mrgsolve_temp2ca07860a14f.so
+Loading: _mrgsolve_temp387734734b6e.so
 > 
 > out <- mod %>% mrgsim
 > 
@@ -2147,262 +2147,17 @@ $IC50
 > 
 > 
 > cleanEx()
-> nameEx("reserved")
-> ### * reserved
+> nameEx("rename_cols")
+> ### * rename_cols
 > 
 > flush(stderr()); flush(stdout())
 > 
-> ### Name: reserved
-> ### Title: Reserved words in 'mrgsolve'.
-> ### Aliases: reserved
+> ### Name: rename_cols
+> ### Title: rename columns from vector for new names
+> ### Aliases: rename_cols
 > 
 > ### ** Examples
 > 
-> mrgsolve:::reserved()
-  ID
-  amt
-  cmt
-  ii
-  ss
-  addl
-  rate
-  time
-  TIME
-  SOLVERTIME
-  table
-  ETA
-  EPS
-  NEWIND
-  EVID
-  DONE
-  DXDTZERO
-  CFONSTOP
-  INITSOLV
-  _F
-  _R
-  _ALAG
-  pred_CL
-  pred_VC
-  pred_V
-  pred_V2
-  pred_KA
-  pred_Q
-  pred_VP
-  pred_V3
-  _SETINIT
-  report
-  double
-  int
-  bool
-> 
-> 
-> 
-> 
-> cleanEx()
-> nameEx("sigma")
-> ### * sigma
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: sigma
-> ### Title: Manipulate 'SIGMA' matrices.
-> ### Aliases: SIGMA sigma smat smat,list-method smat,matrix-method
-> ###   smat,missing-method smat,mrgmod-method smat,mrgsims-method
-> ###   smat,sigmalist-method
-> 
-> ### ** Examples
-> 
-> ## example("sigma")
-> mat1 <- matrix(1)
-> mat2 <- diag(c(1,2))
-> mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
-> mat4 <- dmat(0.1, 0.2, 0.3, 0.4)
-> 
-> smat(mat1)
-$...
-    [,1]
-1:     1
-
-> smat(mat1, mat2, mat3)
-$...
-    [,1]
-1:     1
-
-$...
-    [,1] [,2]
-2:     1    0
-3:     0    2
-
-$...
-     [,1]  [,2]
-4:  0.100 0.002
-5:  0.002 0.500
-
-> smat(A=mat1, B=mat2, C=mat3)
-$A
-    [,1]
-1:     1
-
-$B
-    [,1] [,2]
-2:     1    0
-3:     0    2
-
-$C
-     [,1]  [,2]
-4:  0.100 0.002
-5:  0.002 0.500
-
-> 
-> mod <- mrgsolve:::house() %>% smat(mat1)
-> 
-> smat(mod)
-$...
-    [,1]
-1:     1
-
-> smat(mod, make=TRUE)
-    [,1]
-1:     1
-> 
-> 
-> 
-> 
-> 
-> cleanEx()
-> nameEx("sodll")
-> ### * sodll
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: sodll
-> ### Title: Return the name of the shared object file.
-> ### Aliases: sodll sodll,lockedmod-method sodll,mrgmod-method
-> ###   sodll,packmod-method
-> 
-> ### ** Examples
-> 
-> mod <- mrgsolve:::house()
-> sodll(mod)
-[1] "/Users/kyleb/git/m4solve.git/Rchecks/mrgsolve.Rcheck/mrgsolve/libs/mrgsolve.so"
-> 
-> 
-> 
-> 
-> cleanEx()
-> nameEx("soloc")
-> ### * soloc
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: soloc
-> ### Title: Return the location of the model shared object.
-> ### Aliases: soloc
-> 
-> ### ** Examples
-> 
-> mod <- mrgsolve:::house()
-> soloc(mod)
-[1] "/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpXnXATh"
-> 
-> 
-> 
-> 
-> cleanEx()
-> nameEx("stime")
-> ### * stime
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: tgrid-class
-> ### Title: Get the times at which the model will be evaluated.
-> ### Aliases: stime tgrid-class tgrids-class
-> 
-> ### ** Examples
-> 
-> 
-> ## example("stime", package="mrgsolve")
-> 
-> mod <- mrgsolve:::house(end=12, delta=2, add=c(11,13,15))
-> 
-> stime(mod)
- [1]  0  2  4  6  8 10 11 12 13 15
-> 
-> out <- mrgsim(mod, end=-1, add=c(2,4,5))
-> 
-> stime(out)
-[1] 2 4 5
-> 
-> out$time
-[1] 2 4 5
-> 
-> 
-> 
-> cleanEx()
-> nameEx("tgrid")
-> ### * tgrid
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: stime,mrgmod-method
-> ### Title: Create a simtime object.
-> ### Aliases: *,tgrid,numeric-method *,tgrids,numeric-method
-> ###   +,tgrid,numeric-method +,tgrids,numeric-method c,tgrid-method
-> ###   c,tgrids-method show,tgrid-method show,tgrids-method
-> ###   stime,mrgmod-method stime,mrgsims-method stime,numeric-method
-> ###   stime,tgrid-method stime,tgrids-method tgrid tgrid_*_numeric
-> ###   tgrid_+_numeric tgrids_*_numeric tgrids_+_numeric
-> 
-> ### ** Examples
-> 
-> 
-> peak <- tgrid(0,6,0.2)
-> sparse <- tgrid(0,24,4)
-> 
-> day1 <- c(peak,sparse)
-> 
-> design <- c(day1, day1+72, day1+240)
-> 
-> mod <- mrgsolve:::house()
-> 
-> out <- mod %>% ev(amt=1000, ii=24, addl=10) %>% mrgsim(tgrid=design)
-> 
-> plot(out,CP~., type='b')
-> 
-> 
-> 
-> 
-> cleanEx()
-> nameEx("update")
-> ### * update
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: update
-> ### Title: Update the model object
-> ### Aliases: update update,ev-method update,mrgmod-method
-> ###   update,omegalist-method update,parameter_list-method
-> ###   update,sigmalist-method
-> 
-> ### ** Examples
-> 
->  mod <- mrgsolve:::house()
-> 
->  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
-> 
-> 
-> 
-> ### * <FOOTER>
-> ###
-> options(digits = 7L)
-> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  5.789 0.101 9.517 1.784 0.431 
-> grDevices::dev.off()
-null device 
-          1 
-> ###
-> ### Local variables: ***
-> ### mode: outline-minor ***
-> ### outline-regexp: "\\(> \\)?### [*]+" ***
-> ### End: ***
-> quit('no')
+> rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
+Error: could not find function "rename_cols"
+Execution halted

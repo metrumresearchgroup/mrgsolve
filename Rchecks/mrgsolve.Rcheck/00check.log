@@ -51,10 +51,22 @@
 * checking for GNU extensions in Makefiles ... OK
 * checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
 * checking compiled code ... OK
-* checking examples ... OK
+* checking examples ... ERROR
+Running examples in ‘mrgsolve-Ex.R’ failed
+The error most likely occurred in:
+
+> ### Name: rename_cols
+> ### Title: rename columns from vector for new names
+> ### Aliases: rename_cols
+> 
+> ### ** Examples
+> 
+> rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
+Error: could not find function "rename_cols"
+Execution halted
 * checking for unstated dependencies in ‘tests’ ... OK
 * checking tests ... OK
   Running ‘testthat.R’
 * checking PDF version of manual ... OK
 * DONE
-Status: OK
+Status: 1 ERROR

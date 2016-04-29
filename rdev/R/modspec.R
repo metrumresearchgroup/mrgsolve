@@ -932,10 +932,10 @@ pick_advan <- function(ncmt,depot) {
 PK_ERR <- "Required PK parameters not found: "
 
 check_pred_symbols <- function(x,code) {
-  ## since can't have numeric indices, but still want a hash table 
+  ## since can't have numeric indices, but still want a hash table
   ## in case use non incrementing indices
   advan_reqs <- list(
-    "1" = c("CL","V"), 
+    "1" = c("CL","V"),
     "2" = c("CL","V","KA"),
     "3" = c("CL","V2","Q","V3"),
     "4" = c("CL","V2","Q","V3","KA")
@@ -943,9 +943,9 @@ check_pred_symbols <- function(x,code) {
     p <- pars(x)
     code <- unlist(get_tokens(code,TRUE))
     have <- unique(c(p,code))
-    
+
     if(x@trans==1) return(invisible(NULL))
-    
+
     need <- advan_reqs[[as.character(x@advan)]]
     # assuming error checking has already processed for a valid advan,
     # however could add error check here with if (is.null(need)) {stop(...)}
@@ -955,7 +955,7 @@ check_pred_symbols <- function(x,code) {
         stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
     }
     return(invisible(NULL))
-    
+
 }
 
 

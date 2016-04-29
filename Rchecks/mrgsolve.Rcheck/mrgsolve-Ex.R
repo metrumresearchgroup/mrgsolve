@@ -1057,6 +1057,22 @@ project(mod)
 
 
 cleanEx()
+nameEx("rename_cols")
+### * rename_cols
+
+flush(stderr()); flush(stdout())
+
+### Name: rename_cols
+### Title: rename columns from vector for new names
+### Aliases: rename_cols
+
+### ** Examples
+
+rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
+
+
+
+cleanEx()
 nameEx("reserved")
 ### * reserved
 
