@@ -21,9 +21,9 @@ data_set(x, data, ...)
 
 \item{...}{passed along}
 
-\item{subset}{passed to \code{dplyr::filter_}}
+\item{subset}{passed to \code{dplyr::filter_}; retain only certain rows in the data set}
 
-\item{select}{passed to \code{dplyr::select_}}
+\item{select}{passed to \code{dplyr::select_}; retain only certain columns in the data set}
 }
 \description{
 Set the \code{data} argument for \code{mrgsim}.

@@ -53,16 +53,18 @@ void Rodeproblem::advance(double& tfrom, double& tto) {
 
   if(Neq <= 0) return;
 
-  if(Advan==2) {
-    odeproblem* prob = this;
-    prob->advan2(tfrom,tto);
-    return;
-  }
+  if(Advan != 13) {
+    if(Advan==2 | Advan==1) {
+      odeproblem* prob = this;
+      prob->advan2(tfrom,tto);
+      return;
+    }
 
-  if(Advan==4) {
-    odeproblem* prob = this;
-    prob->advan4(tfrom,tto);
-    return;
+    if(Advan==4 | Advan==3) {
+      odeproblem* prob = this;
+      prob->advan4(tfrom,tto);
+      return;
+    }
   }
 
 

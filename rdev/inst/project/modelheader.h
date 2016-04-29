@@ -47,6 +47,15 @@ struct databox {
 #define pred_V3 _pred_[4]
 #define pred_VP _pred_[4]
 
+#define __ADVAN1_TRANS2__  pred_CL = CL;  pred_V  = V;
+#define __ADVAN2_TRANS2__  pred_CL = CL;  pred_V  = V;   pred_KA = KA;
+#define __ADVAN3_TRANS4__  pred_CL = CL;  pred_V2 = V2;  pred_Q =  Q;  pred_V3 = V3;
+#define __ADVAN4_TRANS4__  pred_CL = CL;  pred_V2 = V2;  pred_Q =  Q;  pred_V3 = V3; pred_KA = KA;
+#define __ADVAN1_TRANS11__ pred_CL = CLi; pred_V  = Vi;
+#define __ADVAN2_TRANS11__ pred_CL = CLi; pred_V  = Vi;  pred_KA = KAi;
+#define __ADVAN3_TRANS11__ pred_CL = CLi; pred_V2 = V2i; pred_Q =  Qi;  pred_V3 = V3i;
+#define __ADVAN4_TRANS11__ pred_CL = CLi; pred_V2 = V2i; pred_Q =  Qi;  pred_V3 = V3i; pred_KA = KAi;
+
 
 #define BEGIN_pred extern "C" {void ODEFUN___(MRGSOLVE_PRED_SIGNATURE) {
 

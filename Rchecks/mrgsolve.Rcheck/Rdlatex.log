@@ -125,8 +125,8 @@ project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 .
 [32] (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [33]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [34]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [35]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [36] [37] [38]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [35] [36]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [37] [38]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [39] [40]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [41] [42]
@@ -150,31 +150,32 @@ Underfull \vbox (badness 10000) has occurred while \output is active [44]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [55]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [56]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [57]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [58]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [59]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [60]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [61]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [62]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65] [66]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66] [67]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [68]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [69]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 No file Rd2.ind.
-[70] (./Rd2.aux)
+[71] (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -208,12 +209,12 @@ exlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
 -dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/font
 s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/ur
 w/times/utmri8a.pfb>
-Output written on Rd2.pdf (70 pages, 189772 bytes).
+Output written on Rd2.pdf (71 pages, 190215 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
-Scanning input file Rd2.idx....done (363 entries accepted, 2 rejected).
-Sorting entries......done (3408 comparisons).
-Generating output file Rd2.ind....done (603 lines written, 0 warnings).
+Scanning input file Rd2.idx....done (365 entries accepted, 2 rejected).
+Sorting entries......done (3423 comparisons).
+Generating output file Rd2.ind....done (605 lines written, 0 warnings).
 Output written in Rd2.ind.
 Transcript written in Rd2.ilg.
 This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex)
@@ -341,8 +342,8 @@ project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 .
 [34] (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [35]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [36]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [37]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [38] [39] [40]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [37] [38]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [39] [40]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [41] [42]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [43] [44]
@@ -366,39 +367,40 @@ Underfull \vbox (badness 10000) has occurred while \output is active [46]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [57]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [58]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [59]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [60]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [61]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [62]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67] [68]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [69]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [68] [69]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [71]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [72]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[72]
+[73]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 9.
 
-[73] [74]
-Overfull \hbox (25.01662pt too wide) in paragraph at lines 417--419
+[74] [75]
+Overfull \hbox (25.01662pt too wide) in paragraph at lines 419--421
 \T1/ptm/m/it/10 (\T1/zi4/m/it/10 plot,batch_mrgsims,missing-method\T1/ptm/m/it/
 10 )\T1/ptm/m/n/10 , 
-[75] [76]) (./Rd2.aux)
+[76] [77]) (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -436,12 +438,12 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 227727 bytes).
+Output written on Rd2.pdf (77 pages, 228561 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
-Scanning input file Rd2.idx....done (363 entries accepted, 2 rejected).
-Sorting entries......done (3408 comparisons).
-Generating output file Rd2.ind....done (603 lines written, 0 warnings).
+Scanning input file Rd2.idx....done (365 entries accepted, 2 rejected).
+Sorting entries......done (3423 comparisons).
+Generating output file Rd2.ind....done (605 lines written, 0 warnings).
 Output written in Rd2.ind.
 Transcript written in Rd2.ilg.
 This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex)
@@ -569,8 +571,8 @@ project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 .
 [34] (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [35]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [36]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [37]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [38] [39] [40]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [37] [38]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [39] [40]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [41] [42]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [43] [44]
@@ -594,39 +596,40 @@ Underfull \vbox (badness 10000) has occurred while \output is active [46]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [57]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [58]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [59]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [60]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [61]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [62]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67] [68]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [69]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [68] [69]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [71]
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [72]
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[72]
+[73]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
 (Font)              using `T1/zi4/m/n' instead on input line 9.
 
-[73] [74]
-Overfull \hbox (25.01662pt too wide) in paragraph at lines 417--419
+[74] [75]
+Overfull \hbox (25.01662pt too wide) in paragraph at lines 419--421
 \T1/ptm/m/it/10 (\T1/zi4/m/it/10 plot,batch_mrgsims,missing-method\T1/ptm/m/it/
 10 )\T1/ptm/m/n/10 , 
-[75] [76]) (./Rd2.aux)
+[76] [77]) (./Rd2.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -659,231 +662,8 @@ xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
 dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 228183 bytes).
-Transcript written on Rd2.log.
-This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
-Scanning input file Rd2.idx....done (363 entries accepted, 2 rejected).
-Sorting entries......done (3408 comparisons).
-Generating output file Rd2.ind....done (603 lines written, 0 warnings).
-Output written in Rd2.ind.
-Transcript written in Rd2.ilg.
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex)
- restricted \write18 enabled.
-entering extended mode
-LaTeX2e <2015/01/01>
-Babel <3.9l> and hyphenation patterns for 79 languages loaded.
-(./Rd2.tex
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/book.cls
-Document Class: book 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/bk10.clo))
-(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/ifthen.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/longtable.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/bm.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/alltt.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/verbatim.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/url/url.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/textcomp.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/ts1enc.def))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/fontenc.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/t1enc.def))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/times.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/inconsolata/zi4.sty
-`inconsolata-zi4' v1.05, 2014/06/22 Text macros for Inconsolata (msharpe)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/graphics/keyval.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/graphics/color.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/latexconfig/color.cfg)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/pdftex-def/pdftex.def
-(/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/infwarerr.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/ltxcmds.sty)))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/hyperref.sty
-(/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
-(/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
-(/usr/local/texlive/2015/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/auxhook.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/pd1enc.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
-
-Package hyperref Message: Driver (autodetected): hpdftex.
-
-(/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/hpdftex.def
-(/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
-
-Package hyperref Warning: Option `hyperindex' has already been used,
-(hyperref)                setting the option has no effect on input line 366.
-
-
-Package hyperref Warning: Option `pagebackref' has already been used,
-(hyperref)                setting the option has no effect on input line 366.
-
-) (/usr/local/texlive/2015/texmf-dist/tex/latex/base/makeidx.sty)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/inputenc.sty
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/t1enc.dfu)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/ot1enc.dfu)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/omsenc.dfu)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/ts1enc.dfu))
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/latin1.def))
-Writing index file Rd2.idx
-(./Rd2.aux) (/usr/local/texlive/2015/texmf-dist/tex/latex/base/ts1cmr.fd)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/t1ptm.fd)
-(/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-) (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/nameref.sty
-(/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
-(./Rd2.out) (./Rd2.out)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/t1phv.fd) (./Rd2.toc
-[1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2]) (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [3]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [4]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [5]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [6]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [7]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [8]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [9]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [10]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [11]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [12]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [13]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [14] [15]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [16]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [17] [18]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [19]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [20]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [21]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [22]
-Overfull \hbox (3.40875pt too wide) in paragraph at lines 1250--1251
-[]\T1/ptm/m/n/10 An ob-ject of class \T1/zi4/m/n/10 batch_mrgsims\T1/ptm/m/n/10
- . Most meth-ods for \T1/zi4/m/n/10 mrgsims \T1/ptm/m/n/10 ob-jects also work o
-n \T1/zi4/m/n/10 batch_mrgsims
-[23] (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [24]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [25]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [26]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [27]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-Overfull \hbox (4.80792pt too wide) in paragraph at lines 1514--1515
-[]\T1/ptm/m/n/10 Note that the ar-gu-ments are in slightly dif-fer-ent or-der t
-han [][]\T1/zi4/m/n/10 mread[][][]\T1/ptm/m/n/10 . The de-fault \T1/zi4/m/n/10 
-project \T1/ptm/m/n/10 is \T1/zi4/m/n/10 tempdir()\T1/ptm/m/n/10 . 
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [28]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [29]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [30]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [31] [32] [33]
-[34] (/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [35]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [36]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [37]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [38] [39] [40]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [41] [42]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [43] [44]
-Underfull \vbox (badness 10000) has occurred while \output is active [45]
-Underfull \vbox (badness 10000) has occurred while \output is active [46]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [47]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [48]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [49]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [50]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [51]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [52]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [53] [54]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [55]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [56]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [57]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [58]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [59]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [60]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [61]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [62]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [63]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [64]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [65]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [66]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [67] [68]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [69]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def)
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [70]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) [71]
-(/usr/local/texlive/2015/texmf-dist/tex/latex/base/utf8.def) (./Rd2.ind
-[72]
-
-LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 9.
-
-[73] [74]
-Overfull \hbox (25.01662pt too wide) in paragraph at lines 417--419
-\T1/ptm/m/it/10 (\T1/zi4/m/it/10 plot,batch_mrgsims,missing-method\T1/ptm/m/it/
-10 )\T1/ptm/m/n/10 , 
-[75] [76]) (./Rd2.aux)
-
-LaTeX Font Warning: Some font shapes were not available, defaults substituted.
-
- )
-(see the transcript file for additional information)pdfTeX warning (dest): name
-{Rfn.set.seed} has been referenced but does not exist, replaced by a fixed one
-
-pdfTeX warning (dest): name{Rfn.summary.data.frame} has been referenced but doe
-s not exist, replaced by a fixed one
-
-pdfTeX warning (dest): name{Rfn.tail.matrix} has been referenced but does not e
-xist, replaced by a fixed one
-
-pdfTeX warning (dest): name{Rfn.head.matrix} has been referenced but does not e
-xist, replaced by a fixed one
-
-pdfTeX warning (dest): name{Rfn.expand.grid} has been referenced but does not e
-xist, replaced by a fixed one
-
-pdfTeX warning (dest): name{Rfn.as.data.frame} has been referenced but does not
- exist, replaced by a fixed one
-
-{/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/us
-r/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive
-/2015/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/20
-15/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/t
-exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
-xlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
-015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015/texmf-
-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts
-/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw
-/times/utmri8a.pfb>
-Output written on Rd2.pdf (76 pages, 228177 bytes).
+Output written on Rd2.pdf (77 pages, 228989 bytes).
 Transcript written on Rd2.log.
 Saving output to 'mrgsolve-manual.pdf' ...
 Done
-You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//Rtmp336qcs/Rd2pdfa33679216ff7'
+You may want to clean up by 'rm -rf /var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T//RtmpyEXnwD/Rd2pdf2b202ca1677b'

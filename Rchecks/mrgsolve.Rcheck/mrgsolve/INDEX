@@ -1,4 +1,5 @@
 %>%                     Forward pipe.
+PKMODEL                 Parse data from '$PKMODEL'
 Req                     Set the 'Request' argument for 'mrgsim'.
 aboutsolver             ODE solver.
 add.ev                  Add two events objects

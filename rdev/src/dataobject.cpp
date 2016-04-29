@@ -143,7 +143,9 @@ void dataobject::reload_parameters(Rcpp::NumericVector PARAM, odeproblem* prob) 
 
 
 
-void dataobject::get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly, bool debug) {
+void dataobject::get_records(recstack& a, int NID, int neq,
+			     int& obscount, int& evcount,
+			     bool obsonly, bool debug) {
 
   // only look here for events or observations if there is more than one column:
   size_t h=0;

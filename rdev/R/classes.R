@@ -220,6 +220,7 @@ protomod <- list(model=character(0),
                  args = list(),
                  fixed  = list(),
                  advan=13,
+                 trans=1,
                  mindt=10*.Machine$double.eps
                  )
 
@@ -317,6 +318,7 @@ valid.mrgmod <- function(object) {
 ##' @slot table_fun character vector of length 2 specifying symbol name and package for table function; this is not normally set by the user
 ##' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
 ##' @slot advan either 2, 4, or 13 \code{<numeric>}
+##' @slot trans either 1, 2, 4, or 11
 ##' @slot request  vector of compartments to request \code{<character>}
 ##' @slot soloc directory path for storing the model shared object \code{<character>}
 ##' @slot mindt minimum time between simulation records \code{<numeric>}

@@ -546,6 +546,12 @@ as.cvec <- function(x) {
     x <- gsub("^\\s+|\\s+$", "", x, perl=TRUE)
     unlist(strsplit(as.character(x),"\\s*(\n|,|\\s+)\\s*",perl=TRUE))
 }
+as.cvec2 <- function(x) {
+    x <- gsub("^\\s+|\\s+$", "", x, perl=TRUE)
+    unlist(strsplit(as.character(x),"\\s*(\n|,)\\s*",perl=TRUE))
+}
+
+
 
 vgrep <- function(pattern,x) {
     ##unique(unlist(sapply(pattern, grep, x=x, value=TRUE)))
@@ -879,5 +885,44 @@ rename_cols <- function(.df, new_names) {
   matches <- match(new_names, names(.df))
   names(.df)[matches] <- names(new_names)                 
   return(.df)
+}
+
+as_character_args <- function(x) {
+  x <- deparse(x)
+  x <- gsub("^.*\\(|\\)$", "", x)
+  x
+}
+
+
+set_altname <- function(x) {
+  if(length(x)==0) return(as.character(x))
+  y <- strsplit(as.character(x),"\\s*=\\s*")
+  to <- sapply(y,`[`,1)
+  from <- sapply(y,`[`,2)
+  from <- ifelse(is.na(from), to, from)
+  if(identical(from,to)) return(as.character(from))
+  return(structure(list(from=from,to=to,rename=!identical(from,to)),class="altname"))
+
+}
+
+altname <- function(x,...) UseMethod("altname")
+altname.default <- function(x,y,...) return(y)
+altname.altname <- function(x,y, ...) {
+  old <- match(y,x[["from"]])
+  old <- old[!is.na(old)]
+  nw <- match(x[["from"]],y)
+  nw <- nw[!is.na(nw)]
+  y[nw] <- x[["to"]][old]
+  return(y)
+}
+as.character.altname <- function(x,...) {
+    as.character(x[["from"]])
+}
+
+
+get_tokens <- function(x,unlist=FALSE) {
+    if(!is.character(x)) return(character(0))
+    if(unlist) return(.Call("mrgsolve_get_tokens", x)[["tokens"]])
+    .Call("mrgsolve_get_tokens", x)
 }
 

@@ -34,6 +34,7 @@ $TABLE table(cmtn) = N_DEPOT;
 mrgsolve:::comp_forget()
 mod <- NULL
 mod <- try(mread(code=code, model="FOO",tempdir(), audit=FALSE))
+
 out <- mrgsim(mod)
 
 context("CMTN block gives compartment numbers")

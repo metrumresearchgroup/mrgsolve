@@ -45,3 +45,7 @@ map_data_set <- function(data_, inpar, lc_) {
     .Call('mrgsolve_map_data_set', PACKAGE = 'mrgsolve', data_, inpar, lc_)
 }
 
+get_tokens <- function(code) {
+    .Call('mrgsolve_get_tokens', PACKAGE = 'mrgsolve', code)
+}
+

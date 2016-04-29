@@ -56,6 +56,7 @@ hm::VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + ETA(2));
 hm::KAi   = exp(log(KA)   + ETA(3));
 hm::KOUTi = exp(log(KOUT) + ETA(4));
 RESP_0 = KIN/hm::KOUTi;
+
 END_main
 
 // DIFFERENTIAL EQUATIONS:
