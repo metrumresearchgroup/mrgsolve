@@ -50,6 +50,7 @@ Collate:
     'mrgsims.R'
     'init.R'
     'knobs.R'
+    'library.R'
     'lockedmod.R'
     'matlist.R'
     'nmxml.R'

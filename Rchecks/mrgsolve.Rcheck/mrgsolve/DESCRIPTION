@@ -27,11 +27,12 @@ LinkingTo: Rcpp (>= 0.12.1), RcppArmadillo (>= 0.5.600.2.0),BH
 Suggests: lattice, testthat, XML
 LazyLoad: yes
 NeedsCompilation: yes
-Collate: 'classes.R' 'events.R' 'Ops.R' 'RcppExports.R' 'chain.R'
-        'utils.R' 'compile.R' 'complog.R' 'datasets.R' 'example.R'
-        'mrgsims.R' 'init.R' 'knobs.R' 'lockedmod.R' 'matlist.R'
-        'nmxml.R' 'modspec.R' 'mrgsolve.R' 'package.R' 'param.R'
-        'print.R' 'simtime.R' 'specdoc.R' 'update.R' 'zchain.R'
+Collate: 'classes.R' 'events.R' 'Ops.R' 'RcppExports.R' 'aaa.R'
+        'chain.R' 'utils.R' 'compile.R' 'complog.R' 'datasets.R'
+        'example.R' 'mrgsims.R' 'init.R' 'knobs.R' 'library.R'
+        'lockedmod.R' 'matlist.R' 'nmxml.R' 'modspec.R' 'mrgsolve.R'
+        'package.R' 'param.R' 'print.R' 'simtime.R' 'specdoc.R'
+        'update.R' 'zchain.R'
 RoxygenNote: 5.0.1
-Packaged: 2016-04-29 00:57:45 UTC; kyleb
-Built: R 3.2.3; x86_64-apple-darwin13.4.0; 2016-04-29 00:57:49 UTC; unix
+Packaged: 2016-04-29 18:31:20 UTC; kyleb
+Built: R 3.2.3; x86_64-apple-darwin13.4.0; 2016-04-29 18:31:24 UTC; unix

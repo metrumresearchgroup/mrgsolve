@@ -1009,6 +1009,36 @@ pars(mod)
 
 
 cleanEx()
+nameEx("pk_model")
+### * pk_model
+
+flush(stderr()); flush(stdout())
+
+### Name: pkmodel
+### Title: Simulate from 1- or 2-compartment PK model.
+### Aliases: pkmodel
+
+### ** Examples
+
+
+mod <- pkmodel(1)
+
+mod <- pkmodel(1,TRUE)
+
+mod %>% ev(amt=1000, ii=24, addl=3) %>% mrgsim(end=120)
+
+mod <- pkmodel(2)
+
+mod <- pkmodel(2,TRUE)
+
+
+
+
+
+
+
+
+cleanEx()
 nameEx("plot_mrgsims")
 ### * plot_mrgsims
 

@@ -205,6 +205,7 @@ parameter_list-class	parameter_list-class
 pars	pars
 pars,mrgmod-method	pars
 PKMODEL	PKMODEL
+pkmodel	pk_model
 plot,batch_mrgsims,formula-method	plot_batch_mrgsims
 plot,batch_mrgsims,missing-method	plot_batch_mrgsims
 plot,mrgsims,formula-method	plot_mrgsims

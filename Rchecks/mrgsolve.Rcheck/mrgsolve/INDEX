@@ -79,6 +79,7 @@ omega                   Manipulate 'OMEGA' matrices.
 param                   Get and set model parameters
 parameter_list-class    S4 parameter_list class
 pars                    Return the names of model parameters.
+pkmodel                 Simulate from 1- or 2-compartment PK model.
 plot,batch_mrgsims,missing-method
                         Plot method for mrgsims objects.
 plot_mrgsims            Generate a quick plot of simulated data.
