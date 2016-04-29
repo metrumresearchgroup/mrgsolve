@@ -1,3 +1,4 @@
+library(testthat)
 context("util functions")
 
 test_that("columns are renamed", {

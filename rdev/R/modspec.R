@@ -128,7 +128,7 @@ modelparse <- function(txt,split=FALSE,...) {
 
   end <- c((start-1),length(txt))[-1]
 
-  foo <- lapply(1:length(start), function(i) {
+  foo <- lapply(seq_along(start), function(i) {
     y <- txt[start[i]:end[i]]
     y[y!=""]
   })
