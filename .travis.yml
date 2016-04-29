@@ -18,5 +18,6 @@ os:
 
 script:
   - cd ../
+  - mkdir Rchecks
   - make travis_build
   - make check
