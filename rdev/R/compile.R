@@ -253,6 +253,20 @@ null_model <- function() {
               include=file.path(path.package("mrgsolve"),"include"))
 }
 
+
+as_PKMODEL <- function(x) {
+    x@func <- c("MRGSOLVE_NO_ODE_FUN", "mrgsolve")
+    x@init_fun <- c("MRGSOLVE_NO_INIT_FUN", "mrgsolve")
+    x@table_fun <- c("MRGSOLVE_NO_TABLE_FUN", "mrgsolve")
+    x <- new("packmod", x, package = "mrgsolve")
+    x@shlib$compiled <- TRUE
+    x@shlib$par <- pars(x)
+    x@shlib$cmt <- cmt(x)
+    return(x)
+}
+
+
+
 compiled_or_stop <- function(x) UseMethod("compiled_or_stop")
 compiled_or_stop.mrgmod <- function(x) {
     if(compiled(x)) return(invisible(NULL))

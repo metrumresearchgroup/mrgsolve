@@ -96,6 +96,13 @@ pkmodel <- function(ncmt=1,depot=FALSE,...) {
     code <- paste0("modpk", ncmt, ifelse(depot, "po", ""))
     mod <- suppressMessages(mcode(code,get(code))) %>% update(...)
     return(mod)
+    ## FOR DOWN THE ROAD
+    ## rds <- pfile("mrgsolve","project", code, "RDS")
+    ## x <- new("packmod", readRDS(rds), model = code, package="mrgsolve")
+    ## x <- relocate_funs(x,"mrgsolve")
+    ## x <- check_funs(x)
+    ## x <- update(x, ... ,strict=FALSE)
+    ## return(x)
 }
 
 

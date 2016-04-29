@@ -252,9 +252,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   modfile <- file.path(project,paste0(model, ".cpp"))
 
   temp <- rfile(model)
+  temp <- ifelse(udll,temp,model)
   temp_write <- compfile(temp,project)
 
-  package <- ifelse(udll,temp,model)
+  package <- temp
 
   if(audit) warn <- TRUE
 
@@ -937,7 +938,7 @@ check_pred_symbols <- function(x,code) {
     have <- unique(c(p,code))
 
     if(x@trans==1) return(invisible(NULL))
-    
+
     need <- GLOBALS$ADVAN_PARMS[[as.character(x@advan)]]
     # assuming error checking has already processed for a valid advan,
     # however could add error check here with if (is.null(need)) {stop(...)}
