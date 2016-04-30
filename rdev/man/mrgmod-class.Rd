@@ -72,6 +72,8 @@ S4 class for mrgsolve model object
 
 \item{\code{soloc}}{directory path for storing the model shared object \code{<character>}}
 
+\item{\code{code}}{a character vector of the model code}
+
 \item{\code{mindt}}{minimum time between simulation records \code{<numeric>}}
 }}
 \section{Notes}{

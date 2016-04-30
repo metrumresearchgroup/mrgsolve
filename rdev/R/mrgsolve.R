@@ -535,6 +535,7 @@ house <- function(...) {
 
     x <- relocate_funs(x, "mrgsolve")
     x <- check_funs(x)
+    x <- compiled(x,TRUE)
     x <- update(x,...,strict=FALSE)
     x
 }

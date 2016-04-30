@@ -150,21 +150,31 @@ setMethod("sodll", "packmod", function(x,...) {
 ##' Print model code to the console.
 ##'
 ##' @param x model object
+##' @param raw return the raw code
 ##' @param ... passed along
 ##' @return invisible NULL
 ##' @export
 setGeneric("see", function(x,...) standardGeneric("see"))
 ##' @export
 ##' @rdname see
-setMethod("see", "mrgmod", function(x,...) {
-    if(!file.exists(cfile(x))) {
-        warning("can't find source code file")
+setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
+    if(raw) return(x@code)
+    what <- x@code
+    if(length(what)==0) {
+        if(file.exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
+    }
+    if(length(what)==0) {
+        warning("No code to show.")
     } else {
         cat("\nModel file: ", basename(cfile(x)), "\n")
-        cat(readLines(cfile(x),warn=FALSE), sep="\n")
+        cat(paste0(" ", what), sep="\n")
     }
     return(invisible(NULL))
 })
+
+
+
+
 
 ##' Return the name of the project directory.
 ##'
@@ -875,7 +885,7 @@ if.file.remove <- function(x) {
 #' rename columns from vector for new names
 #' @param .df dataframe to rename
 #' @param new_names vector of names using syntax "<newname>" = "<oldname>"
-#' @examples 
+#' @examples
 #' rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
 #' @export
 rename_cols <- function(.df, new_names) {
@@ -884,7 +894,7 @@ rename_cols <- function(.df, new_names) {
     stop(paste("the following columns do not exist in the dataset: ", paste(missing, collapse = ", ")))
   }
   matches <- match(new_names, names(.df))
-  names(.df)[matches] <- names(new_names)                 
+  names(.df)[matches] <- names(new_names)
   return(.df)
 }
 
@@ -926,4 +936,21 @@ get_tokens <- function(x,unlist=FALSE) {
     if(unlist) return(.Call("mrgsolve_get_tokens", x)[["tokens"]])
     .Call("mrgsolve_get_tokens", x)
 }
+
+
+as_pack_mod <- function(model, project, PACKAGE) {
+    x <- mread(model, project,compile=FALSE,udll=FALSE)
+    x <- new("packmod",
+             x,
+             package=PACKAGE,
+             model=model
+             )
+
+    x <- relocate_funs(x, "mrgsolve")
+    x@shlib$par <- pars(x)
+    x@shlib$cmt <- cmt(x)
+    x <- relocate_funs(x, PACKAGE)
+    return(x)
+}
+
 

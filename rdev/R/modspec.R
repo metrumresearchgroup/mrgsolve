@@ -2,6 +2,16 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
+## TO BE REMOVED 4/29/16
+##c_com_start <- "/\\*"
+##c_com_end <- "\\*/"
+##GlobalVarRe <- "\\s*Global\\s+(double|int|bool|).*"
+##eol.comment <- "^([^#]*)\\#+.*$"; dhash <- "^([^#]*)\\##+.*$"; dslash <- "^(.*)//.*$"
+labre <- "\\s*\\$([A-Z,a-z,0-9]+)\\s*.*"
+drop.labre <- "\\$[A-Z,a-z,0-9]+\\s*(.*)"
+globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+
+
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
     if(advan==13 | trans==1) return("")
@@ -19,13 +29,6 @@ advtr <- function(advan,trans) {
 rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
   basename(tempfile(pattern=pattern,tmpdir='.'))
 }
-block_list <- c("ENV", "PROB", "PARAM", "INIT",
-                "CMT", "ODE", "DES", "MAIN", "TABLE",
-                "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
-                "ADVAN2", "ADVAN4", "PKMODEL",
-                "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
-
-ADVANs <- paste0("ADVAN", c(2,4))
 
 set_args <- c("Req", "obsonly","mtime", "recsort",
               "carry.out","Trequest","trequest")
@@ -78,30 +81,24 @@ fixed_parameters <- function(x) {
   paste0(paste(paste("const double", names(x)), unlist(x), sep="=", collapse=";\n"),';')
 }
 
+## TO BE REMOVED 4/29/16
+## default.nmext <- list(theta=TRUE,omega=FALSE,sigma=FALSE,prefix="THETA",omprefix="OMEGA", sgprefix="SG")
 
-default.nmext <- list(theta=TRUE,omega=FALSE,sigma=FALSE,prefix="THETA",omprefix="OMEGA", sgprefix="SG")
+## TO BE REMOVED 4/29/16
+## ulist <- function(x, combine=unique(names(x)),fromLast=FALSE,...) {
+##   if(is.null(x)) return(list())
+##   if(class(x)!="list") stop("x must be a list", call.=FALSE)
+##   combine <- as.cvec(combine)
+##   lnames <- names(x)
+##   dupn <- intersect(combine,unique(lnames[duplicated(lnames)]))
+##   dup <- lapply(dupn, function(i) {
+##     paste(unlist(x[grep(i,lnames)]),collapse=",")
+##   })
+##   names(dup) <- dupn
+##   ans <- c(x[!is.element(names(x),dupn)],dup)
+##   return(ans[!duplicated(names(ans), fromLast=fromLast)])
+## }
 
-ulist <- function(x, combine=unique(names(x)),fromLast=FALSE,...) {
-  if(is.null(x)) return(list())
-  if(class(x)!="list") stop("x must be a list", call.=FALSE)
-  combine <- as.cvec(combine)
-  lnames <- names(x)
-  dupn <- intersect(combine,unique(lnames[duplicated(lnames)]))
-  dup <- lapply(dupn, function(i) {
-    paste(unlist(x[grep(i,lnames)]),collapse=",")
-  })
-  names(dup) <- dupn
-  ans <- c(x[!is.element(names(x),dupn)],dup)
-  return(ans[!duplicated(names(ans), fromLast=fromLast)])
-}
-
-## C-style comment blocks
-c_com_start <- "/\\*"
-c_com_end <- "\\*/"
-labre <- "\\s*\\$([A-Z,a-z,0-9]+)\\s*.*"
-drop.labre <- "\\$[A-Z,a-z,0-9]+\\s*(.*)"
-GlobalVarRe <- "\\s*Global\\s+(double|int|bool|).*"
-eol.comment <- "^([^#]*)\\#+.*$"; dhash <- "^([^#]*)\\##+.*$"; dslash <- "^(.*)//.*$"
 
 compfile <- function(x,project) file.path(project,paste0(x, ".cpp.cpp"))
 
@@ -138,7 +135,7 @@ modelparse <- function(txt,split=FALSE,...) {
   foo
 }
 
-globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+
 altglobal <- function(code,moveto="GLOBAL",
                       what=grepl("MAIN|ODE|TABLE",names(code),perl=TRUE)) {
 
@@ -162,12 +159,13 @@ altglobal <- function(code,moveto="GLOBAL",
   return(code)
 }
 
-inclu <- function(x) paste0("#include \"",x,".h\"")
+##' TO BE REMOVED 4/29/16
+## inclu <- function(x) paste0("#include \"",x,".h\"")
 
-block_x <- function(x,y="",z="DONE") {
-  x <- c(y, x, z)
-  paste(x, collapse="\n")
-}
+## block_x <- function(x,y="",z="DONE") {
+##   x <- c(y, x, z)
+##   paste(x, collapse="\n")
+## }
 
 
 ##' Write, compile, and load model code.
@@ -441,6 +439,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$par <- pars(x)
   x@shlib$npar <- length(pars(x))
   x@shlib$ncmt <- length(cmt(x))
+  x@code <- readLines(modfile, warn=FALSE)
 
   return(x)
 }
@@ -658,43 +657,6 @@ setMethod("as_dmat", "data.frame", function(x,pat="*", ...) {
   lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,])))
 })
 
-
-## read_data_file <- function(file,...) {
-##   if(!file.exists(file)) stop(paste0("Could not open file ", file))
-
-##   csv <- grepl(".*\\.csv$", file)
-##   rds <- grepl(".*\\.RDS$", file)
-
-
-##   if(csv) {
-##     return( read.csv(file=file,na.strings='.', as.is=TRUE, stringsAsFactors=FALSE,...))
-##   }
-##   if(rds) {
-##     return(readRDS(file))
-##   }
-##   stop(paste0("file ", file, " may not be in the correct format; use file.csv or file.RDS"))
-
-## }
-
-
-
-## import_data <- function(file=character(0),data=NULL,
-##                         input=character(0), rown=1,...) {
-
-##   if(missing(data) & missing(file)) return(list())
-##   rown <- as.numeric(rown)
-##   if(!missing(file)) data <- read_data_file(file,nrows=(rown),...)
-
-##   if(missing(input)) input <- names(data)
-##   input <- as.cvec(input)
-
-##   rown <- as.numeric(rown)[1]
-##   if(rown > nrow(data) | rown <1) stop("Invalid rown value in $DATA")
-
-##   if(any(!is.element(input,names(data)))) stop("Invalid input name in $DATA")
-##   return(as.list(data[rown,input]))
-
-## }
 
 
 parseNMXML <- function(x) {

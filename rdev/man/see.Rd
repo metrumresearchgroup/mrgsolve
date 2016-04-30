@@ -8,12 +8,14 @@
 \usage{
 see(x, ...)
 
-\S4method{see}{mrgmod}(x, ...)
+\S4method{see}{mrgmod}(x, raw = FALSE, ...)
 }
 \arguments{
 \item{x}{model object}
 
 \item{...}{passed along}
+
+\item{raw}{return the raw code}
 }
 \value{
 invisible NULL

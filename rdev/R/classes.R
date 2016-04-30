@@ -207,7 +207,7 @@ protomod <- list(model=character(0),
                  hmax=0,
                  ixpr=0,
                  mxhnil=0,
-                 shlib=list(date="", compiled=FALSE),
+                 shlib=list(date="",par="", cmt="", compiled=FALSE),
                  func=c("MRGSOLVE_NO_ODE_FUN", "mrgsolve"),
                  init_fun=c("MRGSOLVE_NO_INIT_FUN", "mrgsolve"),
                  table_fun=c("MRGSOLVE_NO_TABLE_FUN","mrgsolve"),
@@ -221,7 +221,8 @@ protomod <- list(model=character(0),
                  fixed  = list(),
                  advan=13,
                  trans=1,
-                 mindt=10*.Machine$double.eps
+                 mindt=10*.Machine$double.eps,
+                 code = character(0)
                  )
 
 slot.names <- names(protomod)
@@ -321,6 +322,7 @@ valid.mrgmod <- function(object) {
 ##' @slot trans either 1, 2, 4, or 11
 ##' @slot request  vector of compartments to request \code{<character>}
 ##' @slot soloc directory path for storing the model shared object \code{<character>}
+##' @slot code a character vector of the model code
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
