@@ -940,6 +940,7 @@ get_tokens <- function(x,unlist=FALSE) {
 
 as_pack_mod <- function(model, project, PACKAGE) {
     x <- mread(model, project,compile=FALSE,udll=FALSE)
+    code <- readLines(cfile(x),warn=FALSE)
     x <- new("packmod",
              x,
              package=PACKAGE,
@@ -949,6 +950,7 @@ as_pack_mod <- function(model, project, PACKAGE) {
     x <- relocate_funs(x, "mrgsolve")
     x@shlib$par <- pars(x)
     x@shlib$cmt <- cmt(x)
+    x@code <- code
     x <- relocate_funs(x, PACKAGE)
     return(x)
 }
