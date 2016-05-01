@@ -53,6 +53,7 @@ Collate:
     'library.R'
     'lockedmod.R'
     'matlist.R'
+    'matrix.R'
     'nmxml.R'
     'modspec.R'
     'mrgsolve.R'

@@ -2,6 +2,8 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
+##' @include utils.R complog.R nmxml.R matrix.R
+
 ## TO BE REMOVED 4/29/16
 ##c_com_start <- "/\\*"
 ##c_com_end <- "\\*/"
@@ -25,7 +27,7 @@ advtr <- function(advan,trans) {
 }
 
 
-##' @include utils.R complog.R nmxml.R
+
 rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
   basename(tempfile(pattern=pattern,tmpdir='.'))
 }
@@ -444,44 +446,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   return(x)
 }
 
-##' Create a square numeric matrix from the lower-triangular elements
-##' @param x numeric data
-##' @param prefix used to generate column names
-##' @return a square symmetric numeric matrix with column names
-lower2matrix <- function(x, prefix=NULL) {
-  x <- as.numeric(x)
-  if(length(x)==1) return(matrix(x,nrow=1, ncol=1 ))
-  n <- 0.5*(sqrt(1-4*(-2*length(x)))-1)
-  if(!n==as.integer(n)) {
-    stop(paste("Block matrix has invalid specification: ", prefix),call.=FALSE)
-  }
-  mat <- diag(n)
-  mat[upper.tri(mat,diag=TRUE)] <- x
-  mat <- mat+t(mat) - diag(diag(mat))
-  mat
-}
 
-##' Create a diagonal numeric matrix from diagonal elements
-##' @param x numeric data
-##' @param prefix used to generate column names
-##' @return a numeric diagonal matrix
-numeric2diag <- function(x,prefix=NULL) {
-  x <- as.numeric(x)
-  if(length(x)==1) {
-    mat <- matrix(x)
-  } else {
-    mat <- diag(x)
-  }
-  mat
-}
-
-
+## These only really work in code blocks
 opts_only <- function(x,def=list(),all=FALSE) {
   opts <- scrape_opts(x)
   merge(def,opts, strict=!all,warn=FALSE,context="opts")
 }
-
-
 scrape_opts <- function(x,def=list(),all=FALSE) {
   x <- unlist(strsplit(x, "\n",perl=TRUE))
   opts <- grepl("=",x,perl=TRUE)
@@ -489,183 +459,18 @@ scrape_opts <- function(x,def=list(),all=FALSE) {
   opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
   c(list(x=data), opts)
 }
-
 scrape_and_pass <- function(x,pass,...) {
   o <- scrape_opts(x,...)
   ret <- do.call(pass,o)
   list(opts=o,data=ret)
 }
 
-
-##' Create a matrix.
-##'
-##' @param x data for building the matrix.  Data in \code{x} are assumed to be on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular elements if \code{block} is \code{TRUE}
-##' @param name name
-##' @param use logical; if FALSE, all matrix elements are set to 0
-##' @param block logical; if TRUE, try to make a block matrix; diagonal otherwise
-##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE
-##' @param digits if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning
-##' @param ... passed along
-##'
-##' @examples
-##' modMATRIX("1 2.2 333")
-##' modMATRIX("1 1.1 2.2", block=TRUE)
-##' modMATRIX("23 234 234 5234", use=FALSE)
-##'
-##' ans <- modMATRIX("1.1 0.657 2.2", correlation=TRUE, block=TRUE)
-##' ans
-##' cov2cor(ans)
-##'
-##' @export
-##'
-##'
-
-modMATRIX <- function(x,name="",use=TRUE,block=FALSE,correlation=FALSE,digits=-1,...) {
-  if(correlation) block <- TRUE
-  if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
-  if(!use) x <- rep(0,length(x))
-  if(block) {
-    x <- lower2matrix(x)
-    if(correlation) decorr(x)
-  } else {
-    x <- numeric2diag(x)
-  }
-  if(digits > 0) x <- signif(x, digits=digits)
-
-  return(x)
-}
-
-
-Diag <- function(x) {
-  if(is.matrix(x)) return(x)
-  diag(x, nrow=length(x),ncol=length(x))
-}
-
-##' Create matrices from vector input
-##' @param ... matrix data
-##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances
-##' @param digits if greater than zero, matrix is passed to signif (along with digits) prior to returning
-##' @details
-##' \code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix.  \code{dmat} makes a diagonal matrix.
-##' \code{BLOCK} is a synonym for \code{bmat}.
-##'
-##' @export
-##' @examples
-##'
-##' dmat(1,2,3)/10
-##'
-##' bmat(0.5,0.01,0.2)
-##'
-##' cmat(0.5, 0.87,0.2)
-##'
-##'
-##' @seealso as_bmat
-bmat <- function(...,correlation=FALSE, digits=-1) {
-  x <- lower2matrix(unlist(list(...)),prefix="bmat")
-  if(correlation) decorr(x)
-  if(digits>0) x <- signif(x,digits=digits)
-  return(x)
-}
-##' @export
-##' @rdname bmat
-BLOCK <- bmat
-
-##' @export
-##' @rdname bmat
-cmat <- function(...,digits=-1) {
-  bmat(...,digits=digits,correlation=TRUE)
-}
-
-##' @export
-##' @rdname bmat
-##' @seealso as_dmat
-dmat <- function(...) {
-  Diag(as.numeric(unlist(list(...))))
-}
-
-grepn <- function(x,pat,warn=FALSE) {
-  if(is.null(names(x))) {
-    if(warn) warning("grepn: pattern was specified, but names are NULL.", call.=FALSE)
-    return(x)
-  }
-  if(pat=="*") return(x)
-  x[grepl(pat,names(x),perl=TRUE)]
-}
-
-
-##' Coerce R objects to block or diagonal matrices.
-##'
-##' @param x an R object
-##' @param pat regular expression, character
-##' @param ... passed along
-##' @return A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.
-##' @seealso bmat, dmat
-##' @export
-##' @examples
-##'
-##' df <- data.frame(OMEGA1.1 = c(1,2),
-##'                  OMEGA2.1 = c(11,22),
-##'                  OMEGA2.2 = c(3,4),
-##'                  SIGMA1.1 = 1,
-##'                  FOO=-1)
-##'
-##' as_bmat(df, "OMEGA")
-##' as_dmat(df,"SIGMA")
-##' as_dmat(df[1,],"OMEGA")
-##'
-
-setGeneric("as_bmat", function(x,...) standardGeneric("as_bmat"))
-##' @export
-##' @rdname as_bmat
-setMethod("as_bmat", "list", function(x,...) {as_bmat(unlist(x),...)})
-##' @export
-##' @rdname as_bmat
-setMethod("as_bmat", "numeric", function(x,pat="*",...) {
-  x <- grepn(x,pat, !missing(pat))
-  do.call("bmat", list(x))
-})
-##' @export
-##' @rdname as_bmat
-setMethod("as_bmat", "data.frame", function(x,pat="*", ...) {
-  x <- x[,grepl(pat,names(x)),drop=FALSE]
-  lapply(seq_len(nrow(x)), function(i) bmat(unlist(x[i,])))
-})
-##' @export
-##' @rdname as_bmat
-setMethod("as_bmat", "ANY", function(x,...) {as_bmat(as.data.frame(x),...)})
-
-##' @export
-##' @rdname as_bmat
-setGeneric("as_dmat", function(x,...) standardGeneric("as_dmat"))
-##' @export
-##' @rdname as_bmat
-setMethod("as_dmat", "list", function(x,...) {as_dmat(unlist(x),...)})
-##' @export
-##' @rdname as_bmat
-setMethod("as_dmat", "ANY", function(x,...) {as_dmat(as.data.frame(x),...)})
-
-##' @export
-##' @rdname as_bmat
-setMethod("as_dmat", "numeric", function(x,pat="*",...) {
-  x <- grepn(x,pat, !missing(pat))
-  do.call("dmat", list(x))
-})
-##' @export
-##' @rdname as_bmat
-setMethod("as_dmat", "data.frame", function(x,pat="*", ...) {
-  x <- x[,grepl(pat,names(x)),drop=FALSE]
-  lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,])))
-})
-
-
-
+## Functions for handling code blocks
 parseNMXML <- function(x) {
   x <- tolist(x)
   xml <- do.call(nmxml,x)
   return(xml)
 }
-
-
 parseTHETA <- function(x) {
   opts <- scrape_opts(x,all=TRUE)
   x <- as.numeric(opts$x)
@@ -674,7 +479,6 @@ parseTHETA <- function(x) {
   names(x) <- paste0(opts$name, 1:length(x))
   as.param(x)
 }
-
 parsePARAM <- function(x) as.param(tolist(x))
 parseFIXED <- function(x) tolist(x)
 parseINIT <- function(x) tolist(x)
@@ -687,6 +491,7 @@ parseCMT <- function(x) {
 parseCMTN <- function(x) as.cvec(x)
 
 
+## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,class) {
 
   ret <- scrape_and_pass(x,"modMATRIX",def=list(name="...",prefix=""), all=TRUE)
@@ -703,9 +508,9 @@ specMATRIX <- function(x,class) {
                  labels=ret[["opts"]][["labels"]],
                  name=  ret[["opts"]][["name"]]),class=class)
 }
-
 specOMEGA <- function(x,y) specMATRIX(x,"omega_block")
 specSIGMA <- function(x,y) specMATRIX(x,"sigma_block")
+
 
 parseCAPTURE <- function(x) {
   x <- as.cvec(x)
@@ -713,6 +518,7 @@ parseCAPTURE <- function(x) {
 }
 
 
+## S3 methods for processing code blocks
 handle_spec_block <- function(x) UseMethod("handle_spec_block")
 ##' @export
 handle_spec_block.default <- function(x) return(x)
@@ -788,6 +594,7 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
 }
 
 
+## Used to collect OMEGA and SIGMA matrices
 collect_matrix <- function(x,what,class,xmlname) {
   what <- c(what, "NMXMLDATA")
 
@@ -811,10 +618,11 @@ collect_matrix <- function(x,what,class,xmlname) {
   return(x)
 
 }
-
 collect_omat <- function(x,what=c("omega_block")) collect_matrix(x,what,"omegalist", "omega")
 collect_smat <- function(x,what=c("sigma_block")) collect_matrix(x,what,"sigmalist","sigma")
 
+
+## May have multiple $FIXED
 collect_fixed <- function(x, what=c("fixed_list")) {
 
   x <- x[grepl("FIXED",names(x),perl=TRUE)]
@@ -828,6 +636,7 @@ collect_fixed <- function(x, what=c("fixed_list")) {
   return(list())
 }
 
+## May have multiple $PARAM blocks; also needs to collect from $NMXML
 collect_param <- function(x, what=c("parameter_list")) {
 
   what <- c(what, "NMXMLDATA")
@@ -847,13 +656,13 @@ collect_param <- function(x, what=c("parameter_list")) {
   return(as.param(list()))
 }
 
-
+## Merges code from $TABLE and $CAPTURE
 collect_table <- function(x,what=c("CAPTURE", "TABLE")) {
   x <- x[names(x) %in% what]
   unname(unlist(x))
 }
 
-
+## Look for initial conditions in $INIT, $CMT, and $VCMT
 collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
   x <- x[names(x) %in% what]
   if(length(x)==0) return(as.init(list()))
@@ -862,6 +671,7 @@ collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
   return(as.init(x))
 }
 
+## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("ADVAN2", "ADVAN4","PKMODEL")) {
 
     ans <- list(advan=13,trans=1,strict=FALSE)
@@ -870,7 +680,7 @@ collect_subr <- function(x,what=c("ADVAN2", "ADVAN4","PKMODEL")) {
 
     if(length(y) >  1) stop("Only one of $ADVAN2, $ADVAN4, or $PKMODEL are allowed.",call.=FALSE)
     if(length(y) == 0) return(ans)
-
+    ## Get rid of this once ADVANn are deprecated
     if(names(y)=="ADVAN2") {
         ans$advan <- 2
     }
@@ -886,7 +696,7 @@ collect_subr <- function(x,what=c("ADVAN2", "ADVAN4","PKMODEL")) {
         if(any(is.element("ODE", names(x)))) stop("Found $ODE and $ADVANn in the same control stream.")
     }
 
-    ans[["n"]] <-switch(ans[["advan"]],`1` = 1,`2` = 2,`3` = 2,`4` = 3)
+    ans[["n"]] <- ans[["advan"]] - as.integer(ans[["advan"]] > 2)
 
     return(ans)
 }
@@ -902,9 +712,7 @@ dosing_cmts <- function(x,what) {
   return(m)
 }
 
-
-
-## picks the default trans
+## Picks the default trans
 pick_trans <- function(ncmt,depot) {
   switch(pick_advan(ncmt,depot),
     `1` = 2,
@@ -914,12 +722,10 @@ pick_trans <- function(ncmt,depot) {
   )
 }
 
+## Picks advan based on ncmt and depot status
 pick_advan <- function(ncmt,depot) {
     ncmt + as.integer(depot) + as.integer(ncmt==2)
 }
-
-
-PK_ERR <- "Required PK parameters not found: "
 
 check_pred_symbols <- function(x,code) {
     p <- pars(x)
@@ -934,10 +740,9 @@ check_pred_symbols <- function(x,code) {
     if(x@trans==11) need <- paste0(need,"i")
     if(!all(need %in% have)) {
         diff <- setdiff(need,have)
-        stop(PK_ERR,paste(diff, collapse=","),call.=FALSE)
+        stop(GLOBALS$PKMODEL_NOT_FOUND,paste(diff, collapse=","),call.=FALSE)
     }
     return(invisible(NULL))
-
 }
 
 

@@ -956,3 +956,13 @@ as_pack_mod <- function(model, project, PACKAGE) {
 }
 
 
+grepn <- function(x,pat,warn=FALSE) {
+  if(is.null(names(x))) {
+    if(warn) warning("grepn: pattern was specified, but names are NULL.", call.=FALSE)
+    return(x)
+  }
+  if(pat=="*") return(x)
+  x[grepl(pat,names(x),perl=TRUE)]
+}
+
+
