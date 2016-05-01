@@ -350,13 +350,13 @@ void odeproblem::advan2(double tfrom,double tto) {
   unsigned int neq = this->neq();
 
   double dt = tto-tfrom;
-  if((this->get_pred_CL() <= 0) ||
-     (this->get_pred_VC() <= 0)) Rcpp::stop("A PK parameter has an invalid value.");
+  if (this->get_pred_CL() <= 0) Rcpp::stop("A pred_CL has a 0 or negative value.");
+  if (this->get_pred_VC() <= 0) Rcpp::stop("pred_VC has a 0 or negative  value.");
 
   double k10 = this->get_pred_k10();
   double ka = this->get_pred_KA();
 
-  if(k10 <= 0) Rcpp::stop("A PK parameter has an invalid value.");
+  if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
 
   dvec alpha(2);
 
@@ -422,10 +422,10 @@ void odeproblem::advan4(double tfrom,double tto) {
   unsigned int neq = this->neq();
 
   // Make sure parameters are valid
-  if((this->get_pred_VC() <=  0) ||
-     (this->get_pred_VP() <=  0) ||
-     (this->get_pred_Q()  <   0) ||
-     (this->get_pred_CL() <=  0)) Rcpp::stop("A PK parameter has an invalid value.");
+  if (this->get_pred_VC() <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
+  if (this->get_pred_VP() <=  0) Rcpp::stop("pred_VP has a 0 or negative  value.");
+  if (this->get_pred_Q()  <   0) Rcpp::stop("pred_Q has a 0 or negative  value.");
+  if (this->get_pred_CL() <=  0) Rcpp::stop("pred_CL has a 0 or negative  value.");
 
   double ka = this->get_pred_KA();
   double k10 = this->get_pred_k10();
