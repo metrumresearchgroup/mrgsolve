@@ -750,10 +750,37 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 ##' Parse data from \code{$PKMODEL}
 ##'
-##' @param ncmt number of compartments
+##' @param ncmt number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)
 ##' @param depot logical indicating whether to add depot compartment
-##' @param trans the parameterization for the PK model
+##' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11
 ##' @param ... not used
+##'
+##' @details
+##' When using \code{$PKMODEL}, certain symbols must be defined in the model specification depending
+##' on the value of \code{ncmt}, \code{depot} and \code{trans}.
+##'
+##' \itemize{
+##' \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
+##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V}, \code{KA}
+##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}
+##' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
+##'
+##' }
+##'
+##' If \code{trans=11} is specfied, use the symbols listed above for the \code{ncmt} / \code{depot} combination, but append \code{i} at the end (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
+##'
+##' If \code{trans=1}, the user must utilize the following symbols:
+##'
+##' \itemize{
+##' \item \code{pred_CL} for clearance
+##' \item \code{pred_V}  or \code{pred_V2} for central compartment volume of distribution
+##' \item \code{pred_Q}  for intercompartmental clearance
+##' \item \code{pred_V3} for for peripheral compartment volume of distribution
+##' \item \code{pred_KA} for absorption rate constant
+##'
+##' }
+##'
+##'
 PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
     stopifnot(ncmt %in% c(1,2))
     advan <- pick_advan(ncmt,depot)
