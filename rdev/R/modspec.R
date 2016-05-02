@@ -478,7 +478,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## lock some of this down so we can check order later
   x@shlib$cmt <- cmt(x)
   x@shlib$par <- pars(x)
-  x@shlib$date <- shdate(ntime())
   x@code <- readLines(modfile, warn=FALSE)
 
   if(!compile) return(x)
@@ -516,6 +515,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(!dll_loaded(x)) stop("Model was not found after attempted loading.")
 
   x <- compiled(x,TRUE)
+  x@shlib$date <- shdate(ntime())
 
   return(x)
 }
