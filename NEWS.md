@@ -17,6 +17,8 @@ equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
 ## Under the hood
 * Added `code` attribute to `mrgmod` objects.  The actual source code stays with the model object. `see` was modified to look at `x@code` first when showing the model code.
 * Added a tokenizer function (`get_tokens`, a wrapper for the boost tokenizer) to help checking the model specification file.
+* Data items entered in `$FIXED` are now implemented as C++ preprocessor directives by default rather than `const double` variables.  Use `$SET fixed_type = "define"` or `$SET fixed_type = "const"` to select between the approaches.
+
 
 # Since 0.5.11
 ## Bugs fixed
