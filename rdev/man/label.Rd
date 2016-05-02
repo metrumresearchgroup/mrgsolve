@@ -16,6 +16,6 @@ label(x, ...)
 \item{...}{name=value pairs; value must be numeric.}
 }
 \description{
-Attaches a named column to the simulation output with a single numeric value
+Attaches a named column to the simulation output with a single numeric value.
 }
 

@@ -4,7 +4,7 @@
 \name{limit}
 \alias{limit}
 \alias{limit,mrgsims-method}
-\title{Limit the scope of simulated output}
+\title{Limit the scope of simulated output.}
 \usage{
 limit(x, ...)
 
@@ -20,6 +20,6 @@ limit(x, ...)
 \item{select}{columns to keep}
 }
 \description{
-Limit the scope of simulated output
+Limit the scope of simulated output.
 }
 

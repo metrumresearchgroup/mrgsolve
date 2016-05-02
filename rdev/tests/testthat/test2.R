@@ -52,8 +52,7 @@ $SIGMA block=TRUE
 
 '
 mrgsolve:::comp_forget()
-tmp <- tempfile()
-dir.create(tmp)
+tmp <- tempdir()
 mod <- mread(code=code, project=tmp, model="test2", warn=FALSE)
 
 test_that("Parameters are parsed properly with mread", {

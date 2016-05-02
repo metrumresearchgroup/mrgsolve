@@ -1,5 +1,6 @@
 globalVariables("ID")
 
+
 ## This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
@@ -66,7 +67,7 @@ NULL
 
 ##' Label simulation output.
 ##'
-##' Attaches a named column to the simulation output with a single numeric value
+##' Attaches a named column to the simulation output with a single numeric value.
 ##'
 ##' @param x mrgsims object
 ##' @param ... name=value pairs; value must be numeric.
@@ -132,8 +133,6 @@ setMethod("$", "mrgsims", function(x,name) {
   if(!is.element(name, colnames(x@data))) stop("Couldn't find column ", name, " in simulated data")
   return(x@data[,name])
 })
-
-#setMethod("[", "mrgsims", function(x,i=TRUE,j=TRUE,...,drop=TRUE) {return(x@data[i,j,drop=drop])})
 
 
 ##' @export
@@ -404,7 +403,8 @@ submat.matrix <- function(x,subset,select=TRUE,...) {
 }
 
 
-##' Limit the scope of simulated output
+##' Limit the scope of simulated output.
+##'
 ##' @param x mrgsims or batch mrgsims object
 ##' @param ... passed along
 ##' @export

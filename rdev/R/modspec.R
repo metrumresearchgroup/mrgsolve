@@ -42,7 +42,6 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
 
-
   if(sum(is.element("TABLE",x)) > 1) stop("Only one $TABLE block allowed.",call.=FALSE)
   if(sum(is.element("MAIN",x))  > 1) stop("Only one $MAIN block allowed.",call.=FALSE)
   if(sum(is.element("ODE",x))   > 1) stop("Only one $ODE block allowed.",call.=FALSE)
@@ -78,9 +77,14 @@ audit_spec <- function(x,spec,warn=TRUE) {
 }
 
 
-fixed_parameters <- function(x) {
-  if(length(x)==0) return("")
-  paste0(paste(paste("const double", names(x)), unlist(x), sep="=", collapse=";\n"),';')
+fixed_parameters <- function(x,fixed_type) {
+    if(length(x)==0) return("")
+    if(is.null(fixed_type))  fixed_type <-  "define"
+    if(!(fixed_type %in% c("define", "const"))) stop("fixed_type must be either const or define.", call.=FALSE)
+    switch(fixed_type,
+           `const` =  paste0("const double ", paste0(names(x) ,"=" ,unlist(x), ";")),
+           `define` = paste0("#define ", names(x), " ", unlist(x))
+           )
 }
 
 ## TO BE REMOVED 4/29/16
@@ -115,33 +119,95 @@ modelparse <- function(txt,split=FALSE,...) {
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
 
   txt <- strsplit(txt, "##+|//+",perl=TRUE)
-  txt <- sapply(txt, FUN=function(x) x[1])
+  txt <- sapply(txt, `[`,1)
   txt[is.na(txt)] <- ""
+
+  ## m <- gregexpr("^\\s*\\$[^ ]+ *",txt)
+  ## ## The block labels
+  ## labs <- regmatches(txt, m)
+  ## ## The block content
+  ## cont <- regmatches(txt,m,invert=TRUE)
+
+  ## start <- which(sapply(labs,length)>0)
+  ## if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
+  ## end <- c((start-1),length(txt))[-1]
+
+  ## spec <- mapply(start,end, FUN=function(x,y) {
+  ##     z <- unlist(cont[x:y])
+  ##     z[z!=""]
+  ## })
+
+  ## names(spec) <- gsub("\\$| +", "", unlist(labs))
+
+  ## return(spec)
 
   start <- grep(labre,txt)
 
   if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
 
   labs <- gsub(labre,"\\1", txt[start])
+
   txt[start] <- gsub(drop.labre, "\\1", txt[start])
 
   end <- c((start-1),length(txt))[-1]
 
-  foo <- lapply(seq_along(start), function(i) {
-    y <- txt[start[i]:end[i]]
-    y[y!=""]
+  spec <- lapply(seq_along(start), function(i) {
+      y <- txt[start[i]:end[i]]
+      y[y!=""]
   })
 
-  names(foo) <- labs
+  names(spec) <- labs
 
-  foo
+  spec
+
 }
+
+## finds lines where C variables are declared
+## only double int and bool
+## find_c_dec <- function(x,what,where) {
+##     if(x[1] %in% c("double", "int", "bool") ) {
+
+##         return(dplyr::data_frame(var =  x[1],
+##                                  name = x[2],
+##                                  where = where,
+##                                  re = paste0(x[1],"\\s+",x[2])))
+##     }
+##     return(NULL)
+## }
+## search_cvar <- function(x,data) {
+##     equals <- grepl("=", data[[x]],perl=TRUE)
+##     y <- get_tokens(data[[x]][equals])[["tokens"]]
+##     lapply(y, find_c_dec, where=x) %>% bind_rows
+## }
+
+## move_to_global <- function(x,what=c("MAIN", "ODE", "TABLE")) {
+##     what <- match(what,names(x))
+##     what <- what[!is.na(what)]
+
+##     found <- lapply(what,search_cvar,x) %>% bind_rows
+
+##     for(i in seq_along(found[["where"]])) {
+##         x[[found[["where"]][i]]] <- gsub(found[["re"]][i],
+##                                          found[["name"]][i],
+##                                          x[[found[["where"]][i]]])
+##     }
+
+##     x[["GLOBAL"]] <- c(x[["GLOBAL"]],
+##                        "typedef double localdouble;",
+##                        "typedef int localint;",
+##                        "typedef bool localbool;",
+##                        paste0(found[["var"]]," ", found[["name"]], ";"))
+
+##     return(x)
+## }
 
 
 altglobal <- function(code,moveto="GLOBAL",
                       what=grepl("MAIN|ODE|TABLE",names(code),perl=TRUE)) {
 
-  check <- grep("^\\s*(predpk|bool|int|double)", unlist(code[what]), value=TRUE,perl=TRUE)
+  check <- grep("^\\s*(bool|int|double)", unlist(code[what]), value=TRUE,perl=TRUE)
+
+  check <- check[grepl("=",check)]
 
   if(any(sapply(strsplit(gsub("[><!=]=", " ",check), "=",perl=TRUE),length)>2)) {
 
@@ -150,7 +216,7 @@ altglobal <- function(code,moveto="GLOBAL",
 
   vars <- regmatches(check,regexpr(globalre2,check,perl=TRUE))
 
-  code[what] <- lapply(code[what], gsub, pattern="^\\s*(predpk|double|int|bool)\\s+", replacement="")
+  code[what] <- lapply(code[what], gsub, pattern="^\\s*(double|int|bool)\\s+(\\w+\\s*=)", replacement="\\2", perl=TRUE)
 
   vars <- unlist(vars)
 
@@ -356,7 +422,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   ## Arguments in $SET that will be passed to mrgsim
   simargs <- SET[is.element(names(SET),set_args)]
-  if(length(simargs)>0) x@args <- merge(x@args,simargs, strict=FALSE)
+
+  if(length(simargs) > 0) x@args <- merge(x@args,simargs, strict=FALSE)
 
   ## Next, update with what the user passed in as arguments
   x <- update(x, data=args,strict=FALSE)
@@ -369,6 +436,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## These are the symbols:
   x <- assign_symbols(x)
 
+  ## Certain symbols may be required in the model specification
+  ## if $PKMODEL was used
   if(x@advan !=13) {
       check_pred_symbols(x,spec[["MAIN"]])
   }
@@ -384,10 +453,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       parsedata=SET,
                       check.bounds=check.bounds)
 
+
   def.con <- file(temp_write, open="w")
   cat(rd, sep="\n", file=def.con)
   cat("\n// GLOBAL VARIABLES:\n",
-      fixed_parameters(fixed),
+      fixed_parameters(fixed,SET[["fixed_type"]]),
       spec[["GLOBAL"]],
       "\n// MAIN CODE BLOCK:",
       "BEGIN_main",
@@ -403,6 +473,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       table,
       "END_table",sep="\n", file=def.con)
   close(def.con)
+
+
+  ## lock some of this down so we can check order later
+  x@shlib$cmt <- cmt(x)
+  x@shlib$par <- pars(x)
+  x@shlib$date <- shdate(ntime())
+  x@code <- readLines(modfile, warn=FALSE)
 
   if(!compile) return(x)
 
@@ -429,19 +506,16 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   }
 
   if(ignore.stdout & !quiet) message("done.")
+
   store(x)
+
   if(!quiet) message("Loading: ", basename(sodll(x)))
 
   dyn.load(sodll(x))
 
   if(!dll_loaded(x)) stop("Model was not found after attempted loading.")
+
   x <- compiled(x,TRUE)
-  x@shlib$date <- shdate(ntime())
-  x@shlib$cmt <- cmt(x)
-  x@shlib$par <- pars(x)
-  x@shlib$npar <- length(pars(x))
-  x@shlib$ncmt <- length(cmt(x))
-  x@code <- readLines(modfile, warn=FALSE)
 
   return(x)
 }
@@ -471,6 +545,7 @@ parseNMXML <- function(x) {
   xml <- do.call(nmxml,x)
   return(xml)
 }
+
 parseTHETA <- function(x) {
   opts <- scrape_opts(x,all=TRUE)
   x <- as.numeric(opts$x)
@@ -480,16 +555,19 @@ parseTHETA <- function(x) {
   as.param(x)
 }
 parsePARAM <- function(x) as.param(tolist(x))
+
 parseFIXED <- function(x) tolist(x)
+
 parseINIT <- function(x) tolist(x)
+
 parseCMT <- function(x) {
   x <- tovec(x)
   y <- rep(0,length(x))
   names(y) <- x
   y
 }
-parseCMTN <- function(x) as.cvec(x)
 
+parseCMTN <- function(x) as.cvec(x)
 
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,class) {
@@ -508,9 +586,10 @@ specMATRIX <- function(x,class) {
                  labels=ret[["opts"]][["labels"]],
                  name=  ret[["opts"]][["name"]]),class=class)
 }
-specOMEGA <- function(x,y) specMATRIX(x,"omega_block")
-specSIGMA <- function(x,y) specMATRIX(x,"sigma_block")
 
+specOMEGA <- function(x,y) specMATRIX(x,"omega_block")
+
+specSIGMA <- function(x,y) specMATRIX(x,"sigma_block")
 
 parseCAPTURE <- function(x) {
   x <- as.cvec(x)
@@ -519,6 +598,7 @@ parseCAPTURE <- function(x) {
 
 
 ## S3 methods for processing code blocks
+## All of these need to be exported
 handle_spec_block <- function(x) UseMethod("handle_spec_block")
 ##' @export
 handle_spec_block.default <- function(x) return(x)
