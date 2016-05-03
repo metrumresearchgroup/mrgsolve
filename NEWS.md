@@ -12,7 +12,7 @@ first `model`, then `code`, then `project`.  `project` defaults to `tempdir`.  S
 equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
 * `carry.out()` and `Req()` now take `newname = oldname` as input.  Use this syntax in `carry.out` when you want to copy a column from the input data set into the simulated data set, changing the column to `newname` from `oldname`.  Use this syntax in `Req` when you want to change the names of compartments or output variables spcified in `$TABLE` / `$CAPTURE`. 
 * Added `pkmodel` function for easy loading and simulating from 1- and 2-compartment models ([issue 39])(../../issues/39).
-* Added new code block: `$PKMODEL` for simulating PK model with analytical solutions.  The main option for this block is `ncmt`, which picks the number of compartments for the pk model.  See `?PKMODEL` for more information and other options ([issue 34])(../../issues/34).
+* Added new code block: `$PKMODEL` for simulating PK model with analytical solutions.  The main option for this block is `ncmt`, which picks the number of compartments for the pk model.  See `?PKMODEL` for more information and other options ([issue 34](../../issues/34).
 
 ## Under the hood
 * Added `code` attribute to `mrgmod` objects.  The actual source code stays with the model object. `see` was modified to look at `x@code` first when showing the model code.
