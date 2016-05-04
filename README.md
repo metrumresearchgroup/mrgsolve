@@ -4,6 +4,7 @@ Resources
 =========
 
 -   [Latest release: 0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases)
+-   [User Guide](https://github.com/mrgsolve/mrgsolve.github.io/user_guide)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
