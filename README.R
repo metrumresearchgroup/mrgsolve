@@ -21,7 +21,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 ##' # Resources
 ##'
 ##'
-##' * [Latest release: 0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases)
+##' * [Latest release: 0.6.0](https://github.com/metrumresearchgroup/mrgsolve/releases)
 ##' * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 ##' * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
 ##'     * [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
@@ -43,7 +43,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 ##'  * Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
 ##'  * Latest stable version directly from github via:
 #+ eval=FALSE
-devtools::install_github("metrumresearchgroup/mrgsolve@v0.5.12", subdir="rdev")
+devtools::install_github("metrumresearchgroup/mrgsolve@v0.6.0", subdir="rdev")
 ##'
 ##' * The development version from github via:
 ##'

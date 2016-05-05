@@ -3,8 +3,7 @@
 Resources
 =========
 
--   [Latest release: 0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases)
--   [User Guide](https://mrgsolve.github.io/user_guide)
+-   [Latest release: 0.6.0](https://github.com/metrumresearchgroup/mrgsolve/releases)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
@@ -22,7 +21,7 @@ Installation
 -   Latest stable version directly from github via:
 
 ``` r
-devtools::install_github("metrumresearchgroup/mrgsolve@v0.5.12", subdir="rdev")
+devtools::install_github("metrumresearchgroup/mrgsolve@v0.6.0", subdir="rdev")
 ```
 
 -   The development version from github via:
@@ -111,6 +110,7 @@ out
 ```
 
     . Model:  demo.cpp 
+    . Date:   Thu May  5 18:40:26 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
@@ -120,15 +120,13 @@ out
     . [3,]  1  0.1  87.81 12.16 49.72 0.608
     . [4,]  1  0.2  77.11 22.78 49.03 1.139
     . [5,]  1  0.3  67.71 32.04 48.11 1.602
-    . [6,]  1  0.4  59.45 40.11 47.06 2.006
-    . [7,]  1  0.5  52.20 47.14 45.96 2.357
-    . [8,]  1  0.6  45.84 53.25 44.87 2.663
+    . [showing 4 significant digits]
 
 ``` r
 plot(out, CP+RESP~.)
 ```
 
-<img src="img/README-unnamed-chunk-9-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 ``` r
 out <- mod %>%
@@ -141,7 +139,7 @@ out <- mod %>%
 plot(out, auto.key=list(columns=3))
 ```
 
-<img src="img/README-unnamed-chunk-10-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
 Also use `mrgsolve` for efficient, large-scale population simulation
 --------------------------------------------------------------------
@@ -188,7 +186,7 @@ out <- mod %>%
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 
-<img src="img/README-unnamed-chunk-14-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 Pass simulated output to your favorite data summary or visualization routines
 -----------------------------------------------------------------------------
@@ -219,7 +217,7 @@ out %>%
   geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
 ```
 
-<img src="img/README-unnamed-chunk-16-1.png" title="" alt="" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 <hr>
 <center>
