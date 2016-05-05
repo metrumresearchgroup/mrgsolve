@@ -1,5 +1,12 @@
 __Please see the latest release__: [v0.5.12](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.5.12)
 
+# Since 0.6.0
+
+## Bugs fixed
+
+## New features
+
+
 # Since 0.5.12
 
 ## Bugs fixed
