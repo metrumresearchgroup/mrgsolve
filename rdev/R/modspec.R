@@ -79,7 +79,7 @@ audit_spec <- function(x,spec,warn=TRUE) {
 
 fixed_parameters <- function(x,fixed_type) {
     if(length(x)==0) return("")
-    if(is.null(fixed_type))  fixed_type <-  "define"
+    if(is.null(fixed_type))  fixed_type <-  "const"
     if(!(fixed_type %in% c("define", "const"))) stop("fixed_type must be either const or define.", call.=FALSE)
     switch(fixed_type,
            `const` =  paste0("const double ", paste0(names(x) ,"=" ,unlist(x), ";")),

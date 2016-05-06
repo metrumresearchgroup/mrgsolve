@@ -296,3 +296,4 @@ testSHLIB <- function() {
     packageStartupMessage("www.github.com/metrumresearchgroup")
 }
 
+
