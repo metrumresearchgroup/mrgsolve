@@ -13,6 +13,7 @@
 #include "boost/tokenizer.hpp"
 #include "boost/foreach.hpp"
 
+typedef boost::tokenizer<boost::escaped_list_separator<char> > so_tokenizer;
 
 double digits(double a, double b) {
   return std::floor(a*b)/b;
@@ -390,6 +391,40 @@ Rcpp::List get_tokens(Rcpp::CharacterVector code) {
   ans["tokens"] = ret;
   return ans;
 }
+
+
+
+//[[Rcpp::export]]
+Rcpp::List get_sep_tokens(Rcpp::CharacterVector code) {
+
+  Rcpp::List ret(code.size());
+
+  std::string sep1("\\");
+  std::string sep2(";,");
+  std::string sep3("\"\'");//let it have quoted arguments
+  boost::escaped_list_separator<char>sep(sep1,sep2,sep3);
+  for(int i = 0; i < code.size(); i++) {
+    Rcpp::CharacterVector tokens;
+    std::string s = Rcpp::as<std::string>(code[i]);
+
+    so_tokenizer tok(s,sep);
+    for(so_tokenizer::iterator beg=tok.begin(); beg!=tok.end();++beg){
+      tokens.push_back(*beg);
+    }
+    ret[i] = tokens;
+  }
+
+
+  Rcpp::List ans;
+  ans["tokens"] = ret;
+  return ans;
+}
+
+
+
+
+
+
 
 
 

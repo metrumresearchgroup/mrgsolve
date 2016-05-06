@@ -49,3 +49,7 @@ get_tokens <- function(code) {
     .Call('mrgsolve_get_tokens', PACKAGE = 'mrgsolve', code)
 }
 
+get_sep_tokens <- function(code) {
+    .Call('mrgsolve_get_sep_tokens', PACKAGE = 'mrgsolve', code)
+}
+

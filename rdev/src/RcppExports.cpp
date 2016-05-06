@@ -162,3 +162,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// get_sep_tokens
+Rcpp::List get_sep_tokens(Rcpp::CharacterVector code);
+RcppExport SEXP mrgsolve_get_sep_tokens(SEXP codeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type code(codeSEXP);
+    __result = Rcpp::wrap(get_sep_tokens(code));
+    return __result;
+END_RCPP
+}
