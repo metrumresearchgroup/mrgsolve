@@ -3,7 +3,7 @@
 Resources
 =========
 
--   [Latest release: 0.6.0](https://github.com/metrumresearchgroup/mrgsolve/releases)
+-   [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
@@ -110,7 +110,6 @@ out
 ```
 
     . Model:  demo.cpp 
-    . Date:   Thu May  5 18:40:26 2016 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
@@ -120,7 +119,9 @@ out
     . [3,]  1  0.1  87.81 12.16 49.72 0.608
     . [4,]  1  0.2  77.11 22.78 49.03 1.139
     . [5,]  1  0.3  67.71 32.04 48.11 1.602
-    . [showing 4 significant digits]
+    . [6,]  1  0.4  59.45 40.11 47.06 2.006
+    . [7,]  1  0.5  52.20 47.14 45.96 2.357
+    . [8,]  1  0.6  45.84 53.25 44.87 2.663
 
 ``` r
 plot(out, CP+RESP~.)
