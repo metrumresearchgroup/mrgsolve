@@ -293,7 +293,7 @@ testSHLIB <- function() {
 
 .onAttach <- function(libname,pkgname) {
     packageStartupMessage("mrgsolve: Community Edition")
-    packageStartupMessage("www.github.com/metrumresearchgroup")
+    packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
 }
 
 

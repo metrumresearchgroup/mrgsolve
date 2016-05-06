@@ -77,13 +77,19 @@ audit_spec <- function(x,spec,warn=TRUE) {
 }
 
 
+define_digits <- function(x) {
+    x <- as.character(x)
+    fix <- grep("[.+-]", x, invert=TRUE)
+    x[fix] <- paste0(x[fix], '.0')
+    x
+}
 fixed_parameters <- function(x,fixed_type) {
     if(length(x)==0) return("")
-    if(is.null(fixed_type))  fixed_type <-  "const"
+    if(is.null(fixed_type))  fixed_type <-  "define"
     if(!(fixed_type %in% c("define", "const"))) stop("fixed_type must be either const or define.", call.=FALSE)
     switch(fixed_type,
-           `const` =  paste0("const double ", paste0(names(x) ,"=" ,unlist(x), ";")),
-           `define` = paste0("#define ", names(x), " ", unlist(x))
+           `const` =  paste0("const double ", paste0(names(x) ,"= " ,unlist(x), ";")),
+           `define` = paste0("#define ", names(x), "  (", define_digits(unlist(x)),")")
            )
 }
 
