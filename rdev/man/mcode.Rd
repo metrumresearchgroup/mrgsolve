@@ -2,8 +2,7 @@
 % Please edit documentation in R/modspec.R
 \name{mcode}
 \alias{mcode}
-\title{TO BE REMOVED 4/29/16
-Write, compile, and load model code.}
+\title{Write, compile, and load model code.}
 \usage{
 mcode(model, code, project = tempdir(), ...)
 }

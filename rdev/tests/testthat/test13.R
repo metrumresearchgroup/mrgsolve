@@ -24,6 +24,7 @@ pred_KA = KA;
 
 pred <- mread("test13.1", tempdir(), code,preclean=TRUE)
 
+
 code2 <- '
 $PARAM CL=1, V=20, KA=1.1
 $CMT CENT

@@ -114,7 +114,7 @@ fixed_parameters <- function(x,fixed_type) {
 
 compfile <- function(x,project) file.path(project,paste0(x, ".cpp.cpp"))
 
-##' Parse model specification text
+##' Parse model specification text.
 ##' @param txt model specification text
 ##' @param split logical
 ##' @param ... arguments passed along
@@ -125,27 +125,10 @@ modelparse <- function(txt,split=FALSE,...) {
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
 
   txt <- strsplit(txt, "##+|//+",perl=TRUE)
-  txt <- sapply(txt, `[`,1)
+  txt <- sapply(txt, FUN=function(x) x[1])
   txt[is.na(txt)] <- ""
 
-  ## m <- gregexpr("^\\s*\\$[^ ]+ *",txt)
-  ## ## The block labels
-  ## labs <- regmatches(txt, m)
-  ## ## The block content
-  ## cont <- regmatches(txt,m,invert=TRUE)
-
-  ## start <- which(sapply(labs,length)>0)
-  ## if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
-  ## end <- c((start-1),length(txt))[-1]
-
-  ## spec <- mapply(start,end, FUN=function(x,y) {
-  ##     z <- unlist(cont[x:y])
-  ##     z[z!=""]
-  ## })
-
-  ## names(spec) <- gsub("\\$| +", "", unlist(labs))
-
-  ## return(spec)
+  ##txt <- txt[!(is.na(txt) | grepl("^\\s*$",txt))]
 
   start <- grep(labre,txt)
 
@@ -208,6 +191,34 @@ modelparse <- function(txt,split=FALSE,...) {
 ## }
 
 
+
+## ----------------------------------------------------------------------------
+## New function set for finding double / bool / int
+## and moving to global
+move_global_re_find <- "\\b(double|int|bool)\\s+\\w+\\s*="
+move_global_re_sub <- "\\b(double|bool|int)\\s+(\\w+\\s*=)"
+local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
+move_global <- function(x,what=c("MAIN", "ODE", "TABLE")) {
+    what <- intersect(what,names(x))
+    if(length(what)==0) return(x)
+    l <- lapply(x[what], get_c_vars) %>% unlist
+    x[["GLOBAL"]] <- c(x[["GLOBAL"]],l,local_var_typedef)
+    for(w in what) {
+        x[[w]] <- gsub(move_global_re_sub,"\\2",
+                       x[[w]],perl=TRUE)
+    }
+    return(x)
+}
+get_c_vars <- function(y) {
+  m <- gregexpr(move_global_re_find,y,perl=TRUE)
+  regmatches(y,m) %>%
+      unlist %>%
+          gsub(pattern="\\s*=$",
+               replacement=";",
+               perl=TRUE)
+}
+## ----------------------------------------------------------------------------
+
 altglobal <- function(code,moveto="GLOBAL",
                       what=grepl("MAIN|ODE|TABLE",names(code),perl=TRUE)) {
 
@@ -233,7 +244,7 @@ altglobal <- function(code,moveto="GLOBAL",
   return(code)
 }
 
-##' TO BE REMOVED 4/29/16
+## TO BE REMOVED 4/29/16
 ## inclu <- function(x) paste0("#include \"",x,".h\"")
 
 ## block_x <- function(x,y="",z="DONE") {
@@ -362,7 +373,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   check_spec_contents(names(spec),warn=warn,...)
 
   ## The main sections that need R processing:
-  spec <- altglobal(spec)
+  ##spec <- altglobal(spec)
+  spec <- move_global(spec)
 
   ## Parse blocks
   specClass <- paste0("spec", names(spec))

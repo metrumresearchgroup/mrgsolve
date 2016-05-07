@@ -2,7 +2,7 @@
 % Please edit documentation in R/modspec.R
 \name{modelparse}
 \alias{modelparse}
-\title{Parse model specification text}
+\title{Parse model specification text.}
 \usage{
 modelparse(txt, split = FALSE, ...)
 }
@@ -14,6 +14,6 @@ modelparse(txt, split = FALSE, ...)
 \item{...}{arguments passed along}
 }
 \description{
-Parse model specification text
+Parse model specification text.
 }
 
