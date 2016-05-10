@@ -77,7 +77,7 @@ class pkevent : public datarecord {
 
   bool infusion(){return (Evid==1) && (Rate > 0);}
   bool is_event() {return true;}
-  bool needs_sorting(){return ((Addl > 0) || (Rate > 0) || (Ss ==1));}
+  bool needs_sorting(){return ((Addl > 0) || (Rate > 0) || (Ss == 1));}
 
   bool unarmed() {return !Armed;}
   void arm() {Armed=true;}

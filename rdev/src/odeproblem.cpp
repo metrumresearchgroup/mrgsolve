@@ -171,25 +171,25 @@ void odeproblem::table_init_call() {
   d.newind = 0;
   d.evid = 0;
   this->table_call();
-  for(tablemap::iterator it=Tabledata.begin(); it!=Tabledata.end(); ++it) {
+  for(tablemap::iterator it = Tabledata.begin(); it != Tabledata.end(); ++it) {
     Tablenames.push_back(it->first);
   }
 }
 
 void odeproblem::rate_reset() {
-  for(int i=0; i < Neq; i++) {
+  for(int i = 0; i < Neq; i++) {
     R0[i] = 0.0;
     infusion_count[i] = 0;
   }
 }
 void odeproblem::rate_reset(unsigned short int eq_n) {
   R0[eq_n]  = 0.0;
-  infusion_count[eq_n]=0;
+  infusion_count[eq_n] = 0;
 }
 
 void odeproblem::reset_newid(double id_=1.0) {
 
-  for(int i=0; i < Neq; i++) {
+  for(int i = 0; i < Neq; i++) {
     R0[i] = 0.0;
     R[i] = 0.0;
     D[i] = 0.0;
@@ -200,9 +200,9 @@ void odeproblem::reset_newid(double id_=1.0) {
   }
 
   d.mtime.clear();
-  d.newind=1;
-  d.time=0.0;
-  d.XDOSE=0.0;
+  d.newind = 1;
+  d.time = 0.0;
+  d.XDOSE = 0.0;
 
   d.SYSTEMOFF=false;
   this->istate(1);
@@ -218,12 +218,12 @@ void odeproblem::rate_add(unsigned int pos, double value) {
 void odeproblem::rate_rm(unsigned int pos, double value) {
   if(infusion_count[pos] <= 0){
     infusion_count[pos] = 0;
-    R0[pos] =0.0;
+    R0[pos] = 0.0;
     return;
   } else {
     --infusion_count[pos];
     R0[pos] = R0[pos] - value;
-    if(R0[pos] < 0.0) R0[pos] =0.0;
+    if(R0[pos] < 0.0) R0[pos] = 0.0;
   }
 }
 

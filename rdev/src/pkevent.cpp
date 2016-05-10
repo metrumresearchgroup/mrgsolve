@@ -74,7 +74,8 @@ pkevent::pkevent(short int cmt_,
 
 
 double pkevent::dur(double b) {
-  return digits(b*this->amt()/this->rate(),1000000.0);
+  return(b*this->amt()/this->rate());
+  //return digits(b*this->amt()/this->rate(),1000000.0);
 }
 
 void pkevent::implement(odeproblem * prob) {
@@ -102,12 +103,15 @@ void pkevent::implement(odeproblem * prob) {
     break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) Rcpp::stop("Attemped infusion start for a compartment that is off");
-    if(this->fn()==0) break;
+    // infusion with no amount
+    if(this->amt() <= 0) break;
+    if(this->fn() == 0) break;
     prob->fbio(eq_n, this->fn());
     prob->rate_add(eq_n,this->rate());
     break;
   case 9: // Turn infusion off event record
     if(!prob->is_on(eq_n)) break;
+    if(this->amt() <= 0) break;
     prob->rate_rm(eq_n, this->rate());
     break;
   case 2: // Other type event record:
@@ -294,6 +298,7 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double& maxtime, bool put_ev
   double biofrac = this->fn();
 
   if(biofrac==0) return;
+  //if((this->rate() > 0) && (this -> amt() <= 0)) return;
 
   if(this->addl() > 0) {
 
@@ -342,6 +347,7 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double& maxtime, bool put_ev
 			     this->amt(),
 			     this->time() + this->dur(biofrac),//biofrac*this->amt()/this->rate(),
 			     this->rate()));
+
     evoff->id(this->id());
     evoff->pos(-300);
     evoff->output(false);

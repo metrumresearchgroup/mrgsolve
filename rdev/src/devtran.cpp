@@ -591,11 +591,12 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 
 	// Grab Bioavailability
 	double biofrac = prob->fbio(abs(ev->cmt())-1);
+
     	if(biofrac < 0) {
 	  CRUMP("mrgsolve: Bioavailability fraction is less than zero.");
 	}
-	ev->fn(biofrac);
 
+	ev->fn(biofrac);
 
 	// We already found an negative rate or duration in the data set.
 	if(ev->rate() < 0) {
@@ -607,7 +608,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	    }
 	    ev->rate(prob->rate(this_cmt));
 	  }
-
+	  
 	  if(ev->rate() == -2) {
 	    this_cmt = ev->cmt()-1;
 	    if(prob->dur(this_cmt) <= 0) {
@@ -617,7 +618,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	    ev->rate(ev->amt() * biofrac / prob->dur(this_cmt));
 	  }
 	}
-
+	
 	// If alag set for this compartment
 	// spawn a new event with no output and time modified by alag
 	// disarm this event
@@ -644,26 +645,22 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	  advance(it,1);
 	  thisi.insert(it,newev);
 	  newev->schedule(thisi, maxtime,addl_ev_first);
-	  std::sort(thisi.begin()+j,thisi.end(), CompByTimePosRec);
+	  std::sort(thisi.begin()+j+1,thisi.end(),CompByTimePosRec);
 
 	} else {
 	  ev->schedule(thisi, maxtime,addl_ev_first); //pkevent.cpp
 	  if(ev->needs_sorting()) {
-	    std::sort(thisi.begin()+j, thisi.end(), CompByTimePosRec);
+	    std::sort(thisi.begin()+j+1,thisi.end(),CompByTimePosRec);
 	  }
 	}
       }
 
-      // Implement dosing events:
-      //ttmp = this_rec->time();
-      //prob->advance(tfrom,ttmp);
-      //tfrom = ttmp;
       prob -> advance(tfrom,tto);
 
       if(ev_before_table) {
-	if(this_rec->evid()!=2) {
+	if(this_rec->evid() != 2) {
 	  this_rec->implement(prob);
-	  if(this_rec->evid() !=0) prob->lsoda_init();
+	  if(this_rec->evid() != 0) prob->lsoda_init();
 	}
       }
 
@@ -684,12 +681,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       	crow++;
       }// end if ouput()
 
-      // if(!ev_before_table) {
-      // 	if(this_rec->evid()!=2) {
-      // 	  this_rec->implement(prob);
-      // 	  if(this_rec->evid() !=0) prob->lsoda_init();
-      // 	}
-      // }
 
       // Reset or other events:
       if(this_rec->evid()==2) {

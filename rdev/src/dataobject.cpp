@@ -197,6 +197,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 			    Data(j,col["rate"])));
 
       if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) Rcpp::stop("rate must be positive or equal to -1 or -2");
+      //if((ev->rate() != 0 && ev->amt() <= 0)) Rcpp::stop("amt must be positive for infusion.");
 
       if(obsonly) ev->output(false);
 
