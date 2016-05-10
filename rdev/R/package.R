@@ -5,7 +5,6 @@
 
 
 
-globalVariables("test_package")
 
 
 ##' @title mrgsolve

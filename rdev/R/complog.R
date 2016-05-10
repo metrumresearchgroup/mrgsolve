@@ -54,7 +54,7 @@ complog <- function(full=FALSE) {
     }
     so <- md5 <- NULL
     db[["complog"]] %>%
-        dplyr::select(time,so,md5,file) %>%
+        dplyr::select_(.dots=c("time","so","md5","file")) %>%
             dplyr::mutate(so = basename(so),time=shtime(time)) %>%
                 dplyr::mutate(md5=cropstr(md5, 8,6)) %>%
                     as.data.frame
@@ -108,7 +108,7 @@ safe_wait <- function(x) {
 
     y <- db[["complog"]] %>%
         filter(file==basename(cfile(x))) %>%
-            select(time) %>% unlist
+            select_(.dots="time") %>% unlist
 
     if(length(y) ==0) return(invisible(NULL))
 

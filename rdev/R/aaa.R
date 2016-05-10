@@ -1,3 +1,8 @@
+##'
+##' @importFrom utils capture.output example str type.convert
+##' @importFrom stats as.formula
+
+
 GLOBALS <- new.env()
 
 GLOBALS$ADVAN_PARMS <- list(
@@ -15,5 +20,7 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "ADVAN2", "ADVAN4", "PKMODEL",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
+
+globalVariables(c("test_package","time"))
 
 

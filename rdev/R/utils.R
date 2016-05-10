@@ -735,30 +735,30 @@ tolist <- function(x,concat=TRUE,envir=list()) {
 
 }
 
-toolist <- function(x,backticks=TRUE) {
-    x <- unlist(.Call("mrgsolve_tokens", x, c(",", "\"")))
-    x <- .Call("mrgsolve_tokens", x[x!=""], c("=", "\""))
+## toolist <- function(x,backticks=TRUE) {
+##     x <- unlist(.Call("mrgsolve_tokens", x, c(",", "\"")))
+##     x <- .Call("mrgsolve_tokens", x[x!=""], c("=", "\""))
 
-    s <- sapply(x,length)==1
-    v <- lapply(x, FUN=function(x) as.character(x[2]))
-    n <- sapply(x, FUN=function(x) gsub("(^\\s*|\\s*$)", "", x[1]))
+##     s <- sapply(x,length)==1
+##     v <- lapply(x, FUN=function(x) as.character(x[2]))
+##     n <- sapply(x, FUN=function(x) gsub("(^\\s*|\\s*$)", "", x[1]))
 
-    if(any(s)) {
-        v[s] <- n[s]
-        n[s] <- ""
-    }
+##     if(any(s)) {
+##         v[s] <- n[s]
+##         n[s] <- ""
+##     }
 
-    names(v) <- n
+##     names(v) <- n
 
-    if(backticks) {
-        hasbt <- grepl("^`.*`$", unlist(v))
-        v[hasbt] <- lapply(v[hasbt], eval.backticks)
-        v[hasbt] <- lapply(v[hasbt], as.character)
-    }
+##     if(backticks) {
+##         hasbt <- grepl("^`.*`$", unlist(v))
+##         v[hasbt] <- lapply(v[hasbt], eval.backticks)
+##         v[hasbt] <- lapply(v[hasbt], as.character)
+##     }
 
-    v <- lapply(v, type.convert, as.is=TRUE)
-    v
-}
+##     v <- lapply(v, type.convert, as.is=TRUE)
+##     v
+## }
 
 tovec <- function(x,concat=TRUE) {
     if(is.null(x)) return(numeric(0))
