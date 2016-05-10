@@ -100,14 +100,15 @@ exTheoph <- exTheoph %>% group_by(ID) %>% mutate(ALAG1 = round(runif(1,1,3),3))
 doses <- subset(exTheoph, evid==1)
 
 
-test_that("F  and ALAG are set from data", {
+test_that("F  is set from data", {
   out1 <- mod1 %>% data_set(exTheoph) %>% mrgsim() 
+  expect_equivalent(limit(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
+})
+
+test_that("ALAG is set from data", {
   out2 <- mod1 %>% data_set(exTheoph) %>% 
     mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
   out2 <- out2 %>% limit(CENT>0) %>% as.tbl%>% group_by(ID) %>% slice(1)
-  
-  expect_equivalent(limit(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
   expect_equivalent(out2$time, doses$ALAG1)
 })
-
 
