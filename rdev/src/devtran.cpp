@@ -608,7 +608,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	    }
 	    ev->rate(prob->rate(this_cmt));
 	  }
-	  
+
 	  if(ev->rate() == -2) {
 	    this_cmt = ev->cmt()-1;
 	    if(prob->dur(this_cmt) <= 0) {
@@ -618,7 +618,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	    ev->rate(ev->amt() * biofrac / prob->dur(this_cmt));
 	  }
 	}
-	
+
 	// If alag set for this compartment
 	// spawn a new event with no output and time modified by alag
 	// disarm this event
@@ -645,7 +645,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
 	  advance(it,1);
 	  thisi.insert(it,newev);
 	  newev->schedule(thisi, maxtime,addl_ev_first);
-	  std::sort(thisi.begin()+j+1,thisi.end(),CompByTimePosRec);
+	  std::sort(thisi.begin()+j,thisi.end(),CompByTimePosRec);
 
 	} else {
 	  ev->schedule(thisi, maxtime,addl_ev_first); //pkevent.cpp
