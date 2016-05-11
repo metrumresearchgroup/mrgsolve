@@ -3,7 +3,7 @@
 Resources
 =========
 
--   [Latest release: 0.6.0](https://github.com/metrumresearchgroup/mrgsolve/releases)
+-   [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
