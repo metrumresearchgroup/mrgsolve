@@ -103,15 +103,12 @@ void pkevent::implement(odeproblem * prob) {
     break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) Rcpp::stop("Attemped infusion start for a compartment that is off");
-    // infusion with no amount
-    if(this->amt() <= 0) break;
     if(this->fn() == 0) break;
     prob->fbio(eq_n, this->fn());
     prob->rate_add(eq_n,this->rate());
     break;
   case 9: // Turn infusion off event record
     if(!prob->is_on(eq_n)) break;
-    if(this->amt() <= 0) break;
     prob->rate_rm(eq_n, this->rate());
     break;
   case 2: // Other type event record:

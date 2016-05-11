@@ -15,9 +15,7 @@ context("Infusions")
 
 ## Issue 43
 test_that("Infusion with amt == 0", {
-  out <- mod %>% ev(amt=0,rate=1000) %>% mrgsim
-  expect_true(all(out$GUT==0))
-  expect_true(all(out$CENT==0))
+  expect_error(mod %>% ev(amt=0,rate=1000) %>% mrgsim)
 })
 
 ## Issue 43

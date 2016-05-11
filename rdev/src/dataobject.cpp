@@ -196,8 +196,12 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 			    Data(j,col["time"]),
 			    Data(j,col["rate"])));
 
-      if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) Rcpp::stop("rate must be positive or equal to -1 or -2");
-      //if((ev->rate() != 0 && ev->amt() <= 0)) Rcpp::stop("amt must be positive for infusion.");
+      if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) {
+	Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
+      }
+      if((ev->rate() !=0 ) && (ev->amt() <= 0) && (ev->evid()==1)) {
+	Rcpp::stop("Non-zero rate requires positive amt.");
+      }
 
       if(obsonly) ev->output(false);
 
@@ -211,10 +215,10 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ev->id(Data(j,Idcol));
 
       if((ev->addl() > 0) && (ev->ii() <=0)) {
-	Rcpp::stop("found dosing record with addl > 0 and ii <= 0.");
+	Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
       }
       if((ev->ss()) && (ev->ii() <=0)) {
-	Rcpp::stop("found dosing record with ss==1 and ii <= 0.");
+	Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
       }
       a.at(h).at(k) = ev;
     }
