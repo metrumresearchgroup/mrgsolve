@@ -3,9 +3,7 @@ __Please see the latest release__: [v0.5.12](https://github.com/metrumresearchgr
 # Since 0.6.0
 
 ## Bugs fixed
-
-## New features
-
+* Fixed a bug when an infusion was attempted with `rate > 0` and `amt==0`.  Additionally, an error is generated when an infusion is attempted with zero `amt` ([issue 43](../../issues/43)).
 
 # Since 0.5.12
 
