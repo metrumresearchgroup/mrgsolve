@@ -39,7 +39,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 ##'
 ##' Workshops are planned for:
 ##' 
-##' * [ACoP7](http://www.acop7.org/workshops-at-acop) ([flyer](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
+##' * [ACoP7](http://www.acop7.org/workshops-at-acop) - Oct 27, 2016 ([flyer](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
 ##' * Baltimore, MD
 ##' * Boston, MA
 ##' * Philadelphia, PA
