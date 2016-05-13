@@ -19,7 +19,7 @@ Learn more about incorporating `mrgsolve` into your pharmacometrics workflow at 
 
 Workshops are planned for:
 
--   [ACoP7](http://www.acop7.org/workshops-at-acop) - Oct 27, 2016 ([flyer](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
+-   [ACoP7](http://www.acop7.org/workshops-at-acop) - Oct 27, 2016 ([overview](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
 -   Baltimore, MD
 -   Boston, MA
 -   Philadelphia, PA
