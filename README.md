@@ -12,6 +12,19 @@ Resources
 -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
 
 <hr>
+Workshops
+=========
+
+Learn more about incorporating `mrgsolve` into your pharmacometrics workflow at one our [upcoming regional workshops](http://metrumrg.com/events/2016/05/13/mrgsolve_workshops.html).
+
+Workshops are planned for:
+
+-   [ACoP7](http://www.acop7.org/workshops-at-acop) ([flyer](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
+-   Baltimore, MD
+-   Boston, MA
+-   Philadelphia, PA
+-   San Francisco, CA (in planning for Fall 2016)
+
 Installation
 ============
 
