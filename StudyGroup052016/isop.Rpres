@@ -1,0 +1,76 @@
+Simulation from PK/PD and systems pharmacology models in R with mrgsolve.
+========================================================
+author: Kyle Baron, Pharm.D., Ph.D.
+date: Metrum Research Group, LLC
+autosize: true
+
+Introduction
+========================================================
+
+- We now have several robust / fast packages available for simulating
+from ODE-based models in `R`
+
+- mrgsolve has been in development since 2011, originally to support a large QSP model
+  - Transition to Berkeley Madonna
+  - Originally front end to `deSolve`
+
+- Since mid 2014
+  - Compile ODEPACK into the package
+  - Simulation engine written in C++/Rcpp
+  - QSP and more traditional pop PK/PD type models
+
+- Public release since Fall 2015
+
+- Now open, active development on github
+
+
+Why?
+========================================================
+- Open-source / free
+- Speed
+- Convenience
+- Customized
+- Interact with other `R` functionality
+
+Obtaining and installing mrgsolve
+========================================================
+* `mrgsolve` is an open-source, freely-available `R` package
+* Usual compilers used with and supported by `R` are needed
+    * gfortran / Xcode on Mac
+    * Rtools.exe on Windows
+    * gcc on unix (probably already there)
+
+www.github.com/metrumresearchgroup/mrgsolve
+
+www.github.com/metrumresearchgroup/modmrg
+
+www.github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation
+
+Where to get help
+=================================================
+
+Read:
+* [mrgsolve.github.io/user_guide](http://mrgsolve.github.io/user_guide)
+* `?mrgsolve`
+* www.github.com/metrumresearchgroup/mrgsolve/wiki
+* www.github.com/metrumresearchgroup/mrgsolve/tree/master/March12
+
+
+Report / ask:
+* www.github.com/metrumresearchgroup/mrgsolve/issues
+* [groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve](http://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
+* [discuss.go-isop.org](http://discuss.go-isop.org)
+
+Today
+===================================
+1. Working with `mrgsolve` model objects
+    - Parameters
+    - Compartments
+    - stime
+1. Dosing with event objects
+1. Simulate from batches / populations with `data_set`
+1. Model specification
+   - Simple PK
+   - PK/PD
+   - Population
+
