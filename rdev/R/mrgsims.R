@@ -1,6 +1,3 @@
-globalVariables("ID")
-
-
 ## This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
@@ -10,7 +7,9 @@ NULL
 
 ##' Methods for working with \code{mrgsims} objects.
 ##'
-##' These methods help the user view simulation output and extract simulated data to work with further.  The methods listed here for the most part have generics defined by R or other R packages.  See the \code{seealso} section for other methods defined by \code{mrgsolve} that have their own documentation pages.
+##' These methods help the user view simulation output and extract simulated data to work with further.  The methods listed here for the
+##' most part have generics defined by R or other R packages.  See the \code{seealso} section for other methods defined by \code{mrgsolve}
+##' that have their own documentation pages.
 ##'
 ##' @details
 ##' Most methods should behave as expected according to other method commonly used in R (e.g. head, tail, as.data.frame, etc ...)
@@ -126,9 +125,9 @@ setGeneric("variables", function(x,...) standardGeneric("variables"))
 ##' @rdname variables
 setMethod("variables", "mrgsims", function(x,...) return(c(x@request,x@outnames)))
 
-##' @export
 ##' @rdname mrgsims
 ##' @param name name of column of simulated output to retain
+##' @export
 setMethod("$", "mrgsims", function(x,name) {
   if(!is.element(name, colnames(x@data))) stop("Couldn't find column ", name, " in simulated data")
   return(x@data[,name])
@@ -170,7 +169,7 @@ setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,
   return(as.data.frame(x@data,row.names,optional,...))
 })
 
-##'
+
 ##' @param .dots passed to various \code{dplyr} functions
 ##' @param .data passed to various \code{dplyr} functions
 ##' @param add passed to \code{dplyr::group_by_}
@@ -202,7 +201,7 @@ do_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>%
 ##' @export
 ##' @rdname mrgsims
 select_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::select_(...,.dots=.dots)
-##'
+
 ##' @export
 ##' @rdname mrgsims
 slice_.mrgsims <- function(.data,...) dplyr::slice_(as.data.frame(.data),...)
@@ -216,7 +215,6 @@ setMethod("subset", "mrgsims", function(x,...) {
 })
 
 ##' @param object passed to show
-##'
 ##' @export
 ##' @rdname mrgsims
 
@@ -300,7 +298,6 @@ cfb.data.frame <- function(x) {
 ##' plot(out, GUT+CP~.)
 ##'
 ##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
-##'
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
 
 

@@ -966,4 +966,23 @@ grepn <- function(x,pat,warn=FALSE) {
   x[grepl(pat,names(x),perl=TRUE)]
 }
 
+nonull <- function(x) x[!is.null(x)]
+
+s_pick <- function(x,name) {
+    stopifnot(is.list(x))
+    nonull(unlist(sapply(x,"[[",name)))
+}
+
+ll_pick <- function(x,name) {
+    stopifnot(is.list(x))
+    lapply(x,"[[",name)
+}
+
+l_pick <- function(x,name) {
+    stopifnot(is.list(x))
+    lapply(x,"[",name)
+}
+s_quote <- function(x) paste0("\'",x,"\'")
+d_quote <- function(x) paste0("\"",x,"\"")
+
 

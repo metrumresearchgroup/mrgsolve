@@ -85,7 +85,9 @@ summarise.each(.data, funs, ...)
 \item{object}{passed to show}
 }
 \description{
-These methods help the user view simulation output and extract simulated data to work with further.  The methods listed here for the most part have generics defined by R or other R packages.  See the \code{seealso} section for other methods defined by \code{mrgsolve} that have their own documentation pages.
+These methods help the user view simulation output and extract simulated data to work with further.  The methods listed here for the
+most part have generics defined by R or other R packages.  See the \code{seealso} section for other methods defined by \code{mrgsolve}
+that have their own documentation pages.
 }
 \details{
 Most methods should behave as expected according to other method commonly used in R (e.g. head, tail, as.data.frame, etc ...)

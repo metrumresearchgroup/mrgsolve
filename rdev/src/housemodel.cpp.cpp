@@ -1,6 +1,4 @@
-//* MRGSOLVE file
 #include "modelheader.h"
-#ifndef MODELINCLUDEGUARD
 #define INITFUN___ _model_housemodel_main__
 #define ODEFUN___ _model_housemodel_ode__
 #define TABLECODE___ _model_housemodel_table__
@@ -28,11 +26,9 @@
 #define KIN _THETA_[10]
 #define KOUT _THETA_[11]
 #define IC50 _THETA_[12]
-#define MODELINCLUDEGUARD
-#endif
+
 
 // GLOBAL VARIABLES:
-
 
 #define CP (CENT/hm::VCi)
 #define INH (CP/(IC50+CP))

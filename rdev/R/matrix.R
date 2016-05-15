@@ -1,7 +1,5 @@
 
-##'
 ##' @include utils.R
-##'
 NULL
 
 ##' Create a square numeric matrix from the lower-triangular elements.

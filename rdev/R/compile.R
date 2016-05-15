@@ -69,11 +69,10 @@ generate_rdefs <- function(pars,
     cmtindex <- (1:length(cmt))-1
     parsindex <- (1:length(pars))-1
 
-    cmtdef <-  paste("#define ", cmt,  " _A_[",cmtindex,"]", sep="",collapse="\n")
-    initdef <- paste("#define ", init,  " _A_0_[",cmtindex,"]", sep="",collapse="\n")
-    dxdef <-   paste("#define ", dxdt, " _DADT_[",cmtindex,"]", sep="",collapse="\n")
-
-    pardef <-  paste("#define ", pars, " _THETA_[",parsindex,"]", sep="",collapse="\n")
+    cmtdef <-  paste0("#define ", cmt,  " _A_[",    cmtindex,"]")
+    initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
+    dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
+    pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
 
     etal <- epsl <- NULL
 
@@ -107,130 +106,37 @@ generate_rdefs <- function(pars,
 
     if(length(cmtn)>0) {
         cmtnindex <- (match(cmtn,cmt))
-        cmtndef <- paste("#define ", paste0("N_", cmtn), " ", cmtnindex, sep="", collapse="\n")
-        Fdef <- paste("#define ", paste0("F_",cmtn), " _F_[",cmtnindex-1,"]", sep="",collapse="\n")
-        Adef <- paste("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex-1,"]", sep="",collapse="\n")
-        Ddef <- paste("#define ", paste0("D_",cmtn), " _D_[",cmtnindex-1,"]", sep="",collapse="\n")
-        Rdef <- paste("#define ", paste0("R_",cmtn), " _R_[",cmtnindex-1,"]", sep="",collapse="\n")
-
+        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex)
+        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex-1,"]")
+        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex-1,"]")
+        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex-1,"]")
+        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex-1,"]")
     }
 
     if(npar==0) pardef <- ""
-    if(ncmt==0) {
-        cmtdef <- initdef <- dxdef <- ""
-    }
+    if(ncmt==0) cmtdef <- initdef <- dxdef <- ""
 
-    lines <- c(
-        "//* MRGSOLVE file" ,
-        "#include \"modelheader.h\"",
-        "#ifndef MODELINCLUDEGUARD",
-        paste0("#define INITFUN___ ",init_fun),
-        paste0("#define ODEFUN___ ",func),
-        paste0("#define TABLECODE___ ", table_fun),
-        paste0("#define _nEQ ", ncmt),
-        paste0("#define _nPAR ", npar),
-        cmtndef,
-        Fdef,
-        Adef,
-        Rdef,
-        Ddef,
-        cmtdef,
-        initdef,
-        dxdef,
-        pardef,
-        etal,
-        epsl,
-        "#define MODELINCLUDEGUARD",
-        "#endif"
+    return(
+        c(paste0("#define INITFUN___ ",init_fun),
+          paste0("#define ODEFUN___ ",func),
+          paste0("#define TABLECODE___ ", table_fun),
+          paste0("#define _nEQ ", ncmt),
+          paste0("#define _nPAR ", npar),
+          cmtndef,
+          Fdef,
+          Adef,
+          Rdef,
+          Ddef,
+          cmtdef,
+          initdef,
+          dxdef,
+          pardef,
+          etal,
+          epsl
+          )
         )
-    return(lines)
 }
 
-
-
-## setGeneric("compile", function(x,...) standardGeneric("compile"))
-## setMethod("compile", "mrgmod", function(x,rdefs=TRUE,preclean=FALSE,unload.first=TRUE,verbose.shlib=FALSE,...) {
-
-##     if(!file.exists(cfile(x))) stop("Could not find model file: ", cfile(x))
-
-##     x <- compiled(x,FALSE)
-
-##     if(unload.first | .Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
-
-##     preclean <- x@preclean | preclean
-
-##     x <- write.rdefs(x,...)
-
-##     if(header_warning(x)) {
-##         message("Header file has changed; forcing preclean = TRUE")
-##         preclean <- TRUE
-##     }
-
-##     system.cmd <- paste("R CMD SHLIB  ", ifelse(preclean,"--preclean",""),cfile(x))
-
-##     skip <- checks_same(x)
-
-##     if(!skip | preclean) {
-##         message("Model: ", cfile(x))
-##         message("Compiling... ", appendLF=FALSE)
-##     }
-
-##     if(skip & !preclean & !x@verbose) message("Compile: nothing to be done.")
-
-##     status <- system(system.cmd, ignore.stdout = !verbose.shlib)
-
-##     if(status!=0) {
-##         message("Error while compiling model ", cfile(x))
-##         x <- compiled(x,FALSE)
-##     } else {
-##         if(!skip) message("done.")
-##         dyn.load(sodll(x))
-##         if(!dll_loaded(x)) stop("Model was not found after attempted loading.")
-##         x <- compiled(x,TRUE)
-##         write_check_file(x)
-##     }
-
-##     x@shlib$date <- date()
-##     x@shlib$version <- VERSION
-
-##     return(x)
-## })
-
-
-## check_file_name <- function(x, ...) {
-##     ## Generate the name of the check file
-##     filename(project(x),dllname(x), ".check")
-## }
-## write_check_file <- function(x,data=NULL) {
-##     if(is.null(data)) data <- check_file(x)
-##     attr(data, "date") <- date()
-##     dput(file=check_file_name(x),data)
-## }
-## read_check_file <- function(x,file=check_file_name(x)) {
-##     if(!file.exists(file)) return(list(h="nofiletoread", c="nofiletoread"))
-##     dget(file=file)
-## }
-## check_file <- function(x) {
-##     check <- tools::md5sum(c(path.expand(hfile(x)),path.expand(cfile(x))))
-##     names(check) <- c("h", "c")
-##     check[is.na(check)] <- "nofiletocheck"
-##     check
-## }
-## checks_same <- function(x) {
-
-##     all(read_check_file(x)==check_file(x))
-## }
-## header_same <- function(x) {
-##     read_check_file(x)["h"] == check_file(x)["h"]
-## }
-## check_file_exists <- function(x) {
-##     file.exists(check_file_name(x))
-## }
-## header_warning <- function(x) {
-##     check <- check_file(x)
-##     read <- read_check_file(x)
-##     (check["h"] != read["h"]) & check_file_exists(x) & check["c"] == read["c"]
-## }
 
 relocate_funs <- function(x,PACKAGE) {
     x@func[2] <- PACKAGE

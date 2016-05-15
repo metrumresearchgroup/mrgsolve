@@ -1,7 +1,6 @@
-##'
 ##' @importFrom utils capture.output example str type.convert
 ##' @importFrom stats as.formula
-
+NULL
 
 GLOBALS <- new.env()
 
@@ -17,10 +16,11 @@ GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
-                "ADVAN2", "ADVAN4", "PKMODEL",
+                "ADVAN2", "ADVAN4", "PKMODEL", "INCLUDE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
 
-globalVariables(c("test_package","time"))
+globalVariables(c("test_package","time", "ID"))
+
 
 

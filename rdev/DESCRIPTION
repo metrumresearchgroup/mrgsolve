@@ -54,6 +54,7 @@ Collate:
     'lockedmod.R'
     'matlist.R'
     'matrix.R'
+    'model_include.R'
     'nmxml.R'
     'modspec.R'
     'mrgsolve.R'

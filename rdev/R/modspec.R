@@ -472,10 +472,19 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       check.bounds=check.bounds)
 
 
+
+
+
   def.con <- file(temp_write, open="w")
-  cat(rd, sep="\n", file=def.con)
-  cat("\n// GLOBAL VARIABLES:\n",
+  ##cat(spec[["RCPP"]], file=def.con)
+  ## PLUGINS
+  cat(
+      ##spec[["INCLUDE"]][["code"]],
+      "#include \"modelheader.h\"",
+      rd,
+      ## This should get moved to rd
       fixed_parameters(fixed,SET[["fixed_type"]]),
+      "\n// GLOBAL VARIABLES:\n",
       spec[["GLOBAL"]],
       "\n// MAIN CODE BLOCK:",
       "BEGIN_main",
@@ -489,9 +498,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       "\n// TABLE CODE BLOCK:",
       "BEGIN_table",
       table,
-      "END_table",sep="\n", file=def.con)
+      "END_table",
+      sep="\n", file=def.con)
   close(def.con)
 
+  ## if(exists("INCLUDE",spec)) {
+  ##     on.exit(restore_env(spec[["INCLUDE"]]))
+  ## }
 
   ## lock some of this down so we can check order later
   x@shlib$cmt <- cmt(x)
@@ -499,6 +512,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@code <- readLines(modfile, warn=FALSE)
 
   if(!compile) return(x)
+
+  ##new_env(spec[["INCLUDE"]])
 
   if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
 
@@ -651,6 +666,17 @@ handle_spec_block.specPKMODEL <- function(x) {
     x <- scrape_opts(x,all=TRUE)
     do.call("PKMODEL",x)
 }
+
+requires_rcpp <- c("BINOMIAL", "WEIBULL","NORMAL")
+valid_include <- c(requires_rcpp, "Rcpp", "BH", "RcppArmadillo")
+
+##' @export
+handle_spec_block.specINCLUDE <- function(x) {
+    return(reshape_includes(get_includes(as.cvec(x))))
+}
+
+
+
 
 ##' Parse data from \code{$PKMODEL}
 ##'
