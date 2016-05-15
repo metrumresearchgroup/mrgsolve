@@ -46,16 +46,19 @@ reshape_includes <- function(x) {
     new_env <- list(CLINK_CPPFLAGS = clink)
 
     list(data=data,clink=clink, code=code,restore=restore, new_env=new_env)
-
-
 }
 
-new_env <- function(x) {
+modify_env <- function(x) {
+    if(length(x$new_env)==0) return(invisible(NULL))
     return(invisible(do.call(Sys.setenv,x$new_env)))
 }
 
 restore_env <- function(x) {
-    return(invisible(do.call(Sys.setenv,x$restore)))
+    restore <- x$restore[!is.na(x$restore)]
+    unset <- names(x$restore[is.na(x$restore)])
+    if(length(restore)) do.call(Sys.setenv,restore)
+    if(length(unset)) Sys.unsetenv(unset)
+    return(invisible(NULL))
 }
 
 

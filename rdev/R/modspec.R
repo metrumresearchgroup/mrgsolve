@@ -389,6 +389,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- collect_fixed(spec)
   table <- collect_table(spec)
   init  <- collect_init(spec)
+  do_include <- length(spec[["INCLUDE"]]) > 0
 
   SET <- as.list(spec[["SET"]])
   ENV <- spec[["ENV"]]
@@ -479,7 +480,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ##cat(spec[["RCPP"]], file=def.con)
   ## PLUGINS
   cat(
-      ##spec[["INCLUDE"]][["code"]],
+      spec[["INCLUDE"]][["code"]],
       "#include \"modelheader.h\"",
       rd,
       ## This should get moved to rd
@@ -502,9 +503,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       sep="\n", file=def.con)
   close(def.con)
 
-  ## if(exists("INCLUDE",spec)) {
-  ##     on.exit(restore_env(spec[["INCLUDE"]]))
-  ## }
+  if(do_include) on.exit(restore_env(spec[["INCLUDE"]]))
+
 
   ## lock some of this down so we can check order later
   x@shlib$cmt <- cmt(x)
@@ -513,7 +513,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   if(!compile) return(x)
 
-  ##new_env(spec[["INCLUDE"]])
+  if(do_include) modify_env(spec[["INCLUDE"]])
 
   if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
 
@@ -541,7 +541,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   store(x)
 
-  if(!quiet) message("Loading: ", basename(sodll(x)))
+  ##if(!quiet) message("Loading: ", basename(sodll(x)))
 
   dyn.load(sodll(x))
 
@@ -672,7 +672,9 @@ valid_include <- c(requires_rcpp, "Rcpp", "BH", "RcppArmadillo")
 
 ##' @export
 handle_spec_block.specINCLUDE <- function(x) {
-    return(reshape_includes(get_includes(as.cvec(x))))
+    x <- as.cvec(x)
+    if(length(x) ==0) return(list())
+    return(reshape_includes(get_includes(x)))
 }
 
 
