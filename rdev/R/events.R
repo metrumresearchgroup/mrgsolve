@@ -94,8 +94,10 @@ setMethod("ev", "missing", function(evid=1, time=0, ID=numeric(0), cmt=1, replic
 
     data <-
         as.data.frame(list(...)) %>%
-        dplyr::mutate(evid=evid,time=time,cmt=cmt) %>%
-        as.data.frame
+            dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
+                as.data.frame
+
+    if(!exists("amt",data)) stop("amt is required input.", call.=FALSE)
 
     if(!missing(until)) {
         if(!exists("ii", data)) stop("ii is required when until is specified", call.=FALSE)
@@ -129,7 +131,6 @@ setMethod("ev", "missing", function(evid=1, time=0, ID=numeric(0), cmt=1, replic
     }
 
     return(new("ev", data=data))
-
 })
 
 

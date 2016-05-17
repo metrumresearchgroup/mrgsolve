@@ -9,10 +9,13 @@
 ##c_com_end <- "\\*/"
 ##GlobalVarRe <- "\\s*Global\\s+(double|int|bool|).*"
 ##eol.comment <- "^([^#]*)\\#+.*$"; dhash <- "^([^#]*)\\##+.*$"; dslash <- "^(.*)//.*$"
-labre <- "\\s*\\$([A-Z,a-z,0-9]+)\\s*.*"
-drop.labre <- "\\$[A-Z,a-z,0-9]+\\s*(.*)"
-globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+## labre <- "\\s*\\$([A-Z,a-z,0-9]+)\\s*.*"
+## labre.rep <- "\\1"
+## drop.labre <- "\\$[A-Z,a-z,0-9]+\\s*(.*)"
+## drop.labre.rep <- "\\1"
 
+globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -124,19 +127,19 @@ modelparse <- function(txt,split=FALSE,...) {
 
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
 
-  txt <- strsplit(txt, "##+|//+",perl=TRUE)
-  txt <- sapply(txt, FUN=function(x) x[1])
-  txt[is.na(txt)] <- ""
+  txt <- strsplit(txt, "//+|##+",perl=TRUE)
+  txt <- sapply(txt, `[`,1L)
+  txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
 
   ##txt <- txt[!(is.na(txt) | grepl("^\\s*$",txt))]
 
-  start <- grep(labre,txt)
+  start <- grep(block_re,txt,perl=TRUE)
 
   if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
 
-  labs <- gsub(labre,"\\1", txt[start])
+  labs <- gsub(block_re,"\\2\\3", txt[start],perl=TRUE)
 
-  txt[start] <- gsub(drop.labre, "\\1", txt[start])
+  txt[start] <- gsub(block_re, "\\4", txt[start],perl=TRUE)
 
   end <- c((start-1),length(txt))[-1]
 
@@ -147,7 +150,7 @@ modelparse <- function(txt,split=FALSE,...) {
 
   names(spec) <- labs
 
-  spec
+  return(spec)
 
 }
 
@@ -219,6 +222,8 @@ get_c_vars <- function(y) {
 }
 ## ----------------------------------------------------------------------------
 
+
+## Replaced by move_global
 altglobal <- function(code,moveto="GLOBAL",
                       what=grepl("MAIN|ODE|TABLE",names(code),perl=TRUE)) {
 
@@ -503,9 +508,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       sep="\n", file=def.con)
   close(def.con)
 
-  if(do_include) on.exit(restore_env(spec[["INCLUDE"]]))
-
-
   ## lock some of this down so we can check order later
   x@shlib$cmt <- cmt(x)
   x@shlib$par <- pars(x)
@@ -513,7 +515,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   if(!compile) return(x)
 
-  if(do_include) modify_env(spec[["INCLUDE"]])
+  if(do_include) {
+      modify_env(spec[["INCLUDE"]])
+      on.exit(restore_env(spec[["INCLUDE"]]))
+  }
 
   if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
 
@@ -540,8 +545,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(ignore.stdout & !quiet) message("done.")
 
   store(x)
-
-  ##if(!quiet) message("Loading: ", basename(sodll(x)))
 
   dyn.load(sodll(x))
 
