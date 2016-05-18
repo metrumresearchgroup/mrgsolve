@@ -74,8 +74,6 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
 ##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
 ##'
-##' @importFrom dplyr filter_ select_
-##' @importFrom lazyeval lazy
 ##'
 ##' @details
 ##' Input data sets are \code{R} data frames that can include columns with any valid name, however columns with selected names are recognized by \code{mrgsolve} and incorporated into the simulation.
@@ -112,6 +110,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
     x@args <- merge(x@args,list(data=data), strict=FALSE)
     x
 })
+
 ##' @export
 ##' @rdname data_set
 setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {

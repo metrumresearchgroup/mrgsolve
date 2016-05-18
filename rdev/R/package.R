@@ -53,8 +53,6 @@
 ##' @rdname mrgsolve_package
 ##' @docType package
 ##' @useDynLib mrgsolve mrgsolve_DEVTRAN mrgsolve_TOUCH_FUNS mrgsolve_EXPAND_EVENTS
-##' @importFrom Rcpp evalCpp
-##' @importFrom dplyr bind_rows
 ##' @aliases mrgsolve
 ##' @examples
 ##'

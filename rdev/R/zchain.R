@@ -7,7 +7,6 @@
 
 #' Forward pipe.
 #'
-#' @importFrom magrittr %>%
 #' @name %>%
 #' @export
 #' @rdname zchain
@@ -16,7 +15,6 @@ NULL
 
 #' Tee.
 #'
-#' @importFrom magrittr %T>%
 #' @name %T>%
 #' @export
 #' @rdname zchain

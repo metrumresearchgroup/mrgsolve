@@ -25,43 +25,6 @@ setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
     return(add.ev(e1,e2))
 })
 
-##' @rdname mrgsolve_Ops
-##' @name plus_mrgmod_ev
-##' @docType methods
-##' @aliases +,mrgmod,ev-method
-setMethod("+", signature(e1="mrgmod", e2="ev"), function(e1,e2) {
-    stop("This operation has been deprecated.")
-    return(update(e1,events=e2))
-})
-
-
-##' @rdname mrgsolve_Ops
-##' @name plus_mrgmod_data.frame
-##' @docType methods
-##' @aliases +,mrgmod,data.frame-method
-setMethod("+", signature(e1="mrgmod", e2="data.frame"), function(e1,e2) {
-    stop("This operation has been deprecated.")
-    return(plus.ev(e1,as.ev(e2)))
-})
-
-##' @rdname mrgsolve_Ops
-##' @name plus_mrgmod_cmt_list
-##' @docType methods
-##' @aliases +,mrgmod,cmt_list-method
-setMethod("+", signature(e1="mrgmod", e2="cmt_list"), function(e1,e2) {
-    stop("This operation has been deprecated.")
-    update(e1, init=e2)
-})
-
-##' @rdname mrgsolve_Ops
-##' @name plus_mrgmod_parameter_list
-##' @docType methods
-##' @aliases +,mrgmod,parameter_list-method
-setMethod("+", signature(e1="mrgmod", e2="parameter_list"), function(e1,e2) {
-    stop("This operation has been deprecated.")
-    update(e1, param=e2)
-})
-
 ##' @export
 ##' @rdname mrgsolve_Ops
 setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
@@ -82,6 +45,21 @@ setMethod("%then%",c("ev", "ev"), function(e1,e2) {
 setMethod("+", c("ev", "numeric"), function(e1, e2) {
     e1@data$time <- e1@data$time + e2
     e1
+})
+
+
+##' @export
+##' @rdname mrgsolve_Ops
+##' @param x an ev object
+##' @param ... other ev objects to collect
+##' @param recursive not used
+setMethod("c", "ev", function(x,...,recursive=TRUE) {
+    y <- list(...)
+    if(length(y)==0) return(x)
+    for(i in seq_along(y)) {
+        x <- add.ev(x,y[[i]])
+    }
+    return(x)
 })
 
 
@@ -160,4 +138,8 @@ add.ev <- function(e1,e2) {
     }
     return(e1)
 }
+
+
+
+
 

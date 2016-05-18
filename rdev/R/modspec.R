@@ -399,6 +399,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   SET <- as.list(spec[["SET"]])
   ENV <- spec[["ENV"]]
 
+
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
 
   SET[["CMTN"]] <- c(spec[["CMTN"]],dosing)
@@ -670,8 +671,6 @@ handle_spec_block.specPKMODEL <- function(x) {
     do.call("PKMODEL",x)
 }
 
-requires_rcpp <- c("BINOMIAL", "WEIBULL","NORMAL")
-valid_include <- c(requires_rcpp, "Rcpp", "BH", "RcppArmadillo")
 
 ##' @export
 handle_spec_block.specINCLUDE <- function(x) {

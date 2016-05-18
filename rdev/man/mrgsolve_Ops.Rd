@@ -4,39 +4,32 @@
 \name{mrgsolve_Ops}
 \alias{+,ev,ev-method}
 \alias{+,ev,numeric-method}
-\alias{+,mrgmod,cmt_list-method}
-\alias{+,mrgmod,data.frame-method}
-\alias{+,mrgmod,ev-method}
-\alias{+,mrgmod,parameter_list-method}
 \alias{\%then\%}
 \alias{\%then\%,ev,ev-method}
+\alias{c,ev-method}
 \alias{mrgsolve_Ops}
-\alias{plus_mrgmod_cmt_list}
-\alias{plus_mrgmod_data.frame}
-\alias{plus_mrgmod_ev}
-\alias{plus_mrgmod_parameter_list}
 \title{Operations for ev objects.}
 \usage{
 \S4method{+}{ev,ev}(e1, e2)
-
-\S4method{+}{mrgmod,ev}(e1, e2)
-
-\S4method{+}{mrgmod,data.frame}(e1, e2)
-
-\S4method{+}{mrgmod,cmt_list}(e1, e2)
-
-\S4method{+}{mrgmod,parameter_list}(e1, e2)
 
 e1 \%then\% e2
 
 \S4method{\%then\%}{ev,ev}(e1, e2)
 
 \S4method{+}{ev,numeric}(e1, e2)
+
+\S4method{c}{ev}(x, ..., recursive = TRUE)
 }
 \arguments{
 \item{e1}{object on left hand side of operator (lhs)}
 
 \item{e2}{object on right hand side of operator (rhs)}
+
+\item{x}{an ev object}
+
+\item{...}{other ev objects to collect}
+
+\item{recursive}{not used}
 }
 \description{
 Operations for ev objects.

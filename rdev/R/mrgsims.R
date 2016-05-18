@@ -176,10 +176,8 @@ setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,
 ##' @param funs passed to \code{dplyr::summarise_each}
 ##' @export
 ##' @rdname mrgsims
-##' @importFrom dplyr as.tbl filter_ group_by_ mutate_ summarise_each_ do_ select_ slice_ summarise_
-##' @importFrom lazyeval lazy_dots
+##' @importFrom dplyr do_
 as.tbl.mrgsims <- function(x,...) dplyr::as.tbl(as.data.frame(x))
-##' @importFrom dplyr as.tbl
 ##' @export
 ##' @rdname mrgsims
 filter_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::filter_(...,.dots=.dots)

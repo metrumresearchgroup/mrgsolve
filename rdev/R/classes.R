@@ -232,7 +232,6 @@ names(slots) <- names(protomod)
 eXclude <- function(x,what) x[!(x %in% what)]
 
 
-##' @importFrom dplyr intersect filter select rename slice distinct data_frame
 valid.mrgmod <- function(object) {
     out <- c()
 

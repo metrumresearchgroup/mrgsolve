@@ -22,7 +22,7 @@ foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
 
 cpp <- normalizePath(cppfile(foo))
 
-file.copy(cpp, file.path(pkg, "src"),overwrite=TRUE)
+x <- file.copy(cpp, file.path(pkg, "src"),overwrite=TRUE)
 
 saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),foo)
 
