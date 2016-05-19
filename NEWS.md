@@ -1,7 +1,12 @@
 __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.6.1)
 
 # Since 0.6.1
+
+## Features
 * Added `as_data_set` to convert one or more event objects into a data frame that can be passed to `data_set`.  Does something similar to `expand.ev`, but more control.
+
+## Bugs fixed
+* Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied ([issue 44](../../issues/44)).
 
 
 # Since 0.6.0
