@@ -29,4 +29,19 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
 globalVariables(c("test_package","time", "ID","everything"))
 
 
+#' Forward pipe.
+#'
+#' @name %>%
+#' @export
+#' @rdname zchain
+NULL
+
+
+#' Tee.
+#'
+#' @name %T>%
+#' @export
+#' @rdname zchain
+NULL
+
 

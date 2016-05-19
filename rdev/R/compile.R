@@ -5,53 +5,6 @@
 
 ##' @include utils.R
 
-## variables related to RDEFS:
-
-
-CODE_ARCHIVE <- "
-#define NO_init_fun BEGIN_init_fun END_init_fun
-#define NO_table BEGIN_table END_table
-extern \"C\"{void MRGSOLVE_NO_INITS_FUN(MRGSOLVE_INIT_SIGNATURE) {};};
-extern \"C\"{void MRGSOLVE_NO_TABLES_FUN(MRGSOLVE_TABLE_SIGNATURE) {};};
-extern \"C\"{int MRGSOLVE_GET_NPARM() {return MRGSOLVE_NPARAM_;};};
-extern \"C\"{int MRGSOLVE_GET_NEQ() {return MRGSOLVE_NEQ_;};};
-
-"
-
-
-write.rdefs <- function(x,def.file=paste(dllname(x),"h",sep="."),...) {
-
-
-    modelheader <-file.path(system.file(package="mrgsolve"), "include", "modelheader.h")
-
-
-    #message("Writing R definitions to C header file...")
-    stopifnot(valid_project(x))
-    def.file <- file.path(project(x),def.file)
-
-    foo <- file.copy(modelheader, project(x), overwrite=TRUE)
-    if(!foo) stop("Could not copy header file out of R lib directory")
-
-    pars <- names(param(x))
-    cmt <-  cmt(x)
-
-    omats <- cumoffset(omat(x))
-    smats <- cumoffset(smat(x))
-
-    txt <- generate_rdefs(pars,cmt,ode_symbol(x), main_symbol(x), table_symbol(x),model(x),omats,smats,...)
-
-    def.con <- file(def.file, open="w")
-    cat(txt, sep="\n", file=def.con)
-    close(def.con)
-
-    x@shlib$cmt <- cmt
-    x@shlib$par <- pars
-
-    return(x)
-}
-
-
-
 
 generate_rdefs <- function(pars,
                            cmt,
@@ -145,20 +98,21 @@ relocate_funs <- function(x,PACKAGE) {
     x
 }
 
-null_model <- function() {
-    x <- new("mrgmod", model="nullmodel")
-
-    x@shlib$compiled <- TRUE
-    x@func <- c(ode_symbol("nullmodel"), "mrgsolve")
-    x@init_fun <- c("MRGSOLVE_NO_INIT_FUN", "mrgsolve")
-    x@table_fun <- c("MRGSOLVE_NO_TABLE_FUN", "mrgsolve")
-    as.locked(x,
-              file.path(path.package("mrgsolve"),"libs"),
-              dllname="mrgsolve",
-              src=file.path(path.package("mrgsolve"),"src"),
-              include=file.path(path.package("mrgsolve"),"include"))
-}
-
+## REMOVE 5/18/2016
+# null_model <- function() {
+#     x <- new("mrgmod", model="nullmodel")
+# 
+#     x@shlib$compiled <- TRUE
+#     x@func <- c(ode_symbol("nullmodel"), "mrgsolve")
+#     x@init_fun <- c("MRGSOLVE_NO_INIT_FUN", "mrgsolve")
+#     x@table_fun <- c("MRGSOLVE_NO_TABLE_FUN", "mrgsolve")
+#     as.locked(x,
+#               file.path(path.package("mrgsolve"),"libs"),
+#               dllname="mrgsolve",
+#               src=file.path(path.package("mrgsolve"),"src"),
+#               include=file.path(path.package("mrgsolve"),"include"))
+# }
+# 
 
 as_PKMODEL <- function(x) {
     x@func <- c("MRGSOLVE_NO_ODE_FUN", "mrgsolve")

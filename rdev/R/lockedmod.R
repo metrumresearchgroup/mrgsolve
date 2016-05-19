@@ -27,15 +27,6 @@ setMethod("as.locked", "mrgmod", function(x,dllloc,dllname,src,include,...) {
     x
 })
 
-## setMethod("compile", "lockedmod", function(x,...) {
-##     warning("this model is locked and cannot be re-compiled.")
-##     return(x)
-## })
-## setMethod("compile", "packmod", function(x,...) {
-##     warning("this model is pre-compiled with the package.")
-##     return(x)
-## })
-
 
 ##' Coerce an mrgmod object to packmod
 ##' @name as.packmod

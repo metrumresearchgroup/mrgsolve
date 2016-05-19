@@ -64,5 +64,4 @@ Collate:
     'simtime.R'
     'specdoc.R'
     'update.R'
-    'zchain.R'
 RoxygenNote: 5.0.1

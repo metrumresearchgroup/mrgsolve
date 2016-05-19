@@ -30,14 +30,17 @@ advtr <- function(advan,trans) {
 }
 
 
-
+## A random file name
 rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
   basename(tempfile(pattern=pattern,tmpdir='.'))
 }
 
+## These are arguments to mrgsim that
+## can be stated in $SET and then passed to mrgsim
 set_args <- c("Req", "obsonly","mtime", "recsort",
               "carry.out","Trequest","trequest")
 
+## REMOVE 5/18/2016
 is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
 funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
 
@@ -86,6 +89,7 @@ define_digits <- function(x) {
     x[fix] <- paste0(x[fix], '.0')
     x
 }
+
 fixed_parameters <- function(x,fixed_type) {
     if(length(x)==0) return("")
     if(is.null(fixed_type))  fixed_type <-  "define"
@@ -96,25 +100,7 @@ fixed_parameters <- function(x,fixed_type) {
            )
 }
 
-## TO BE REMOVED 4/29/16
-## default.nmext <- list(theta=TRUE,omega=FALSE,sigma=FALSE,prefix="THETA",omprefix="OMEGA", sgprefix="SG")
-
-## TO BE REMOVED 4/29/16
-## ulist <- function(x, combine=unique(names(x)),fromLast=FALSE,...) {
-##   if(is.null(x)) return(list())
-##   if(class(x)!="list") stop("x must be a list", call.=FALSE)
-##   combine <- as.cvec(combine)
-##   lnames <- names(x)
-##   dupn <- intersect(combine,unique(lnames[duplicated(lnames)]))
-##   dup <- lapply(dupn, function(i) {
-##     paste(unlist(x[grep(i,lnames)]),collapse=",")
-##   })
-##   names(dup) <- dupn
-##   ans <- c(x[!is.element(names(x),dupn)],dup)
-##   return(ans[!duplicated(names(ans), fromLast=fromLast)])
-## }
-
-
+## Form a file name / path for the file that is actually compiled
 compfile <- function(x,project) file.path(project,paste0(x, ".cpp.cpp"))
 
 ##' Parse model specification text.
@@ -123,6 +109,7 @@ compfile <- function(x,project) file.path(project,paste0(x, ".cpp.cpp"))
 ##' @param ... arguments passed along
 ##' @export
 modelparse <- function(txt,split=FALSE,...) {
+
   ## Take in model text and parse it out
 
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
@@ -153,46 +140,6 @@ modelparse <- function(txt,split=FALSE,...) {
   return(spec)
 
 }
-
-## finds lines where C variables are declared
-## only double int and bool
-## find_c_dec <- function(x,what,where) {
-##     if(x[1] %in% c("double", "int", "bool") ) {
-
-##         return(dplyr::data_frame(var =  x[1],
-##                                  name = x[2],
-##                                  where = where,
-##                                  re = paste0(x[1],"\\s+",x[2])))
-##     }
-##     return(NULL)
-## }
-## search_cvar <- function(x,data) {
-##     equals <- grepl("=", data[[x]],perl=TRUE)
-##     y <- get_tokens(data[[x]][equals])[["tokens"]]
-##     lapply(y, find_c_dec, where=x) %>% bind_rows
-## }
-
-## move_to_global <- function(x,what=c("MAIN", "ODE", "TABLE")) {
-##     what <- match(what,names(x))
-##     what <- what[!is.na(what)]
-
-##     found <- lapply(what,search_cvar,x) %>% bind_rows
-
-##     for(i in seq_along(found[["where"]])) {
-##         x[[found[["where"]][i]]] <- gsub(found[["re"]][i],
-##                                          found[["name"]][i],
-##                                          x[[found[["where"]][i]]])
-##     }
-
-##     x[["GLOBAL"]] <- c(x[["GLOBAL"]],
-##                        "typedef double localdouble;",
-##                        "typedef int localint;",
-##                        "typedef bool localbool;",
-##                        paste0(found[["var"]]," ", found[["name"]], ";"))
-
-##     return(x)
-## }
-
 
 
 ## ----------------------------------------------------------------------------
@@ -248,14 +195,6 @@ altglobal <- function(code,moveto="GLOBAL",
 
   return(code)
 }
-
-## TO BE REMOVED 4/29/16
-## inclu <- function(x) paste0("#include \"",x,".h\"")
-
-## block_x <- function(x,y="",z="DONE") {
-##   x <- c(y, x, z)
-##   paste(x, collapse="\n")
-## }
 
 
 ##' Write, compile, and load model code.
@@ -331,27 +270,18 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   warn <- warn & (!quiet)
 
-  project <- normalizePath(project,mustWork=TRUE, winslash="/")
-  soloc <- normalizePath(soloc,mustWork=TRUE, winslash="/")
+  ## Both project and soloc get normalized
+  project <- normalizePath(project, mustWork=TRUE, winslash="/")
+
+  soloc <- normalizePath(soloc ,mustWork=TRUE, winslash="/")
 
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
+
+  ## Check for spaces in the model name
   if(grepl(" +", model,perl=TRUE)) stop("model name cannot contain spaces.")
 
+  ## The model file is <stem>.cpp in the <project> directory
   modfile <- file.path(project,paste0(model, ".cpp"))
-
-  temp <- rfile(model)
-  temp <- ifelse(udll,temp,model)
-  temp_write <- compfile(temp,project)
-
-  package <- temp
-
-  if(audit) warn <- TRUE
-
-  args <- list(...)
-
-  ## Copy the main model header into project:
-  modelheaders <-file.path(system.file(package="mrgsolve"), "include", c("mrgsolv.h","modelheader.h"))
-  file.copy(modelheaders,project, overwrite=TRUE)
 
   ## If code is passed in as character:
   if(!missing(code)) {
@@ -364,26 +294,42 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     stop(paste0("Could not find model file ", modfile), call.=FALSE)
   }
 
-  ## Read the model spec and parse:
-  cfile <- compfile(model,build_path(project))
+  ## If we need a unique dll name, use rfile otherwise model
+  ## This is also the "package"
+  package <- ifelse(udll,rfile(model),model)
 
+  ## Where to write the temp file
+  ## This is <package>.cpp.cpp
+  package_write <- compfile(package,project)
+
+  if(audit) warn <- TRUE
+
+  ## Copy the main model header into project:
+  modelheaders <- file.path(system.file(package="mrgsolve"), "include", c("mrgsolv.h","modelheader.h"))
+  file.copy(modelheaders,project, overwrite=TRUE)
+
+  ## Read the model spec and parse:
   spec  <- modelparse(readLines(modfile,warn=FALSE))
 
-  ## Block name aliases and partial matches to block_list
+  ## Block name aliases
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
   names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
+
+  ## Expand partial matches
   index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)
   names(spec) <- ifelse(is.na(index),names(spec),block_list[index])
 
+  ## Do a check on what we found in the spec
   check_spec_contents(names(spec),warn=warn,...)
 
   ## The main sections that need R processing:
-  ##spec <- altglobal(spec)
   spec <- move_global(spec)
 
   ## Parse blocks
   specClass <- paste0("spec", names(spec))
   for(i in seq_along(spec)) class(spec[[i]]) <- specClass[i]
+
+  ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block)
 
   ## Collect potential multiples
@@ -397,13 +343,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   do_include <- length(spec[["INCLUDE"]]) > 0
 
   SET <- as.list(spec[["SET"]])
+
   ENV <- spec[["ENV"]]
 
-
+  ## Look for compartments we're dosing into: F/ALAG/D/R
+  ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
-
   SET[["CMTN"]] <- c(spec[["CMTN"]],dosing)
 
+  ## Virtual compartments
   if(any(is.element("VCMT", names(spec)))) {
     vcmt <- names(collect_init(spec,"VCMT"))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
@@ -421,12 +369,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                 table=table))
   }
 
-
   ## Constructor for model object:
   x <- new("mrgmod",
            model=model,
            soloc=as.character(soloc),
-           package=temp,
+           package=package,
            project=project,
            fixed=fixed,
            advan=subr[["advan"]],
@@ -435,11 +382,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param=as.param(param),
            init=as.init(init))
 
+  ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
+  ## Check $MAIN for the proper symbols
   if(x@advan != 13) {
       if(subr[["n"]] != neq(x)) {
           stop("$PKMODEL requires  ", subr[["n"]] , " compartments in $CMT or $INIT.",call.=FALSE)
       }
+      check_pred_symbols(x,spec[["MAIN"]])
   }
 
   ## First update with what we found in the model specification file
@@ -451,6 +401,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(length(simargs) > 0) x@args <- merge(x@args,simargs, strict=FALSE)
 
   ## Next, update with what the user passed in as arguments
+  args <- list(...)
   x <- update(x, data=args,strict=FALSE)
 
   if(audit) audit_spec(x,spec,warn=warn)
@@ -461,12 +412,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## These are the symbols:
   x <- assign_symbols(x)
 
-  ## Certain symbols may be required in the model specification
-  ## if $PKMODEL was used
-  if(x@advan !=13) {
-      check_pred_symbols(x,spec[["MAIN"]])
-  }
-
+  ## These are the various #define statements
+  ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars=names(param),
                       cmt=names(init),
                       ode_symbol(x),
@@ -478,13 +425,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       parsedata=SET,
                       check.bounds=check.bounds)
 
-
-
-
-
-  def.con <- file(temp_write, open="w")
-  ##cat(spec[["RCPP"]], file=def.con)
-  ## PLUGINS
+  ## Write the .cpp.cpp file
+  def.con <- file(package_write, open="w")
   cat(
       spec[["INCLUDE"]][["code"]],
       "#include \"modelheader.h\"",
@@ -513,6 +455,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$cmt <- cmt(x)
   x@shlib$par <- pars(x)
   x@code <- readLines(modfile, warn=FALSE)
+  x@shlib$date <- shdate(ntime())
 
   if(!compile) return(x)
 
@@ -521,22 +464,33 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
       on.exit(restore_env(spec[["INCLUDE"]]))
   }
 
+  ## This name is suitable for use in the build path
+  cfile <- compfile(model,build_path(project))
+
   if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
 
   preclean <- preclean | (!logged(model(x)))
 
   clean <- ifelse(preclean, " --preclean ", "")
 
+  # Wait at least 2 sec since last compile
   safe_wait(x)
 
-  check_and_copy(x,temp,preclean)
+  ## The temp file is copied to the actual file compile file
+  check_and_copy(x,package,preclean)
 
   purge_model(cfile(x))
 
-  status <- system(paste0("R CMD SHLIB ", clean, cfile, " -o ",sodll(x,short=TRUE)),
+  ## Compile the model
+  status <- system(paste0("R CMD SHLIB ",
+                          ifelse(preclean, " --preclean ", ""),
+                          cfile,
+                          " -o ",
+                          sodll(x,short=TRUE)),
                    ignore.stdout=ignore.stdout)
 
-  file.remove(compfile(temp,project(x)))
+
+  file.remove(compfile(package,project(x)))
 
   if(status!=0) {
     warning("Compile did not succeed.  Returning NULL.", immediate.=TRUE,call.=FALSE);
@@ -552,7 +506,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(!dll_loaded(x)) stop("Model was not found after attempted loading.")
 
   x <- compiled(x,TRUE)
-  x@shlib$date <- shdate(ntime())
 
   return(x)
 }

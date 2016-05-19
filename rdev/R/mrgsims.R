@@ -177,32 +177,58 @@ setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,
 ##' @export
 ##' @rdname mrgsims
 ##' @importFrom dplyr do_
-as.tbl.mrgsims <- function(x,...) dplyr::as.tbl(as.data.frame(x))
+as.tbl.mrgsims <- function(x,...) {
+    dplyr::as.tbl(as.data.frame(x))
+}
 ##' @export
 ##' @rdname mrgsims
-filter_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::filter_(...,.dots=.dots)
+filter_.mrgsims <- function(.data,...,.dots) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::filter_(...,.dots=.dots)
+}
 ##' @export
 ##' @rdname mrgsims
-group_by_.mrgsims <- function(.data,...,.dots,add=FALSE) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::group_by_(...,.dots=.dots)
+group_by_.mrgsims <- function(.data,...,.dots,add=FALSE) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::group_by_(...,.dots=.dots)
+}
 ##' @export
 ##' @rdname mrgsims
-mutate_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::mutate_(...,.dots=.dots)
+mutate_.mrgsims <- function(.data,...,.dots) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::mutate_(...,.dots=.dots)
+}
 ##' @export
 ##' @rdname mrgsims
-summarise.each <- function(.data,funs,...) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::summarise_each(funs,...)
+summarise.each <- function(.data,funs,...) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::summarise_each(funs,...)
+}
 ##' @export
 ##' @rdname mrgsims
-summarise_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::summarise_(...,.dots=.dots)
+summarise_.mrgsims <- function(.data,...,.dots) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::summarise_(...,.dots=.dots)
+}
 ##' @export
 ##' @rdname mrgsims
-do_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::do_(...,.dots=.dots)
+do_.mrgsims <- function(.data,...,.dots) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::do_(...,.dots=.dots)
+}
 ##' @export
 ##' @rdname mrgsims
-select_.mrgsims <- function(.data,...,.dots) dplyr::as.tbl(as.data.frame(.data)) %>% dplyr::select_(...,.dots=.dots)
+select_.mrgsims <- function(.data,...,.dots) {
+    dplyr::as.tbl(as.data.frame(.data)) %>%
+        dplyr::select_(...,.dots=.dots)
+}
 
 ##' @export
 ##' @rdname mrgsims
-slice_.mrgsims <- function(.data,...) dplyr::slice_(as.data.frame(.data),...)
+slice_.mrgsims <- function(.data,...) {
+    dplyr::slice_(as.data.frame(.data),...)
+}
+
 ##' @export
 ##' @rdname mrgsims
 setMethod("as.matrix", "mrgsims", function(x,...) return(x@data))
