@@ -28,8 +28,11 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 ##' * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
 ##'     * [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
 ##'     * [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
-##' * [`mrgsolve` discussion](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
-##' * [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues)
+##' * `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports)
+##'     * [Issue tracker](issues) (requires GitHub account; ok for questions or issue reports)
+##'     * [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
+
+
 
 ##'
 ##' <hr>
