@@ -309,7 +309,6 @@ tran_mrgsim <- function(x,
                         deslist = list(),
                         descol = character(0),
                         filbak=TRUE,
-                        lc = TRUE,
                         ...) {
 
     compiled_or_stop(x)
@@ -379,7 +378,7 @@ tran_mrgsim <- function(x,
     ## data
     if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
 
-    if(ncol(data)>1) {
+    if(ncol(data) > 1) {
         if(!any(grepl("time|TIME", colnames(data)))) stop("time is a required data set column")
         if(!any(grepl("ID", colnames(data)))) stop("ID is a required data set column")
         if(!any(grepl("cmt|CMT", colnames(data)))) stop("cmt is a required data set column")
@@ -400,7 +399,6 @@ tran_mrgsim <- function(x,
 
     parin <- parin(x)
     parin$recsort <- recsort
-    parin$lc <- lc
 
     parin$obsonly <- obsonly
     parin$obsaug <- obsaug
@@ -455,11 +453,7 @@ tran_mrgsim <- function(x,
 
     cnames <- c("ID",
                 "time",
-                if(lc) {
-                    altname(rename.carry,out$trannames)
-                } else {
-                    toupper(out$trannames)
-                },
+                altname(rename.carry,out$trannames),
                 altname(rename.carry,carry.data),
                 altname(rename.carry,carry.idata),
                 altname(rename.request,request),

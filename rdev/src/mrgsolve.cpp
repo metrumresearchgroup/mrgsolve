@@ -360,7 +360,7 @@ Rcpp::List map_data_set(Rcpp::NumericMatrix data_, Rcpp::NumericVector inpar,boo
   dataobject* data = new dataobject(data_,parnames);
 
   data->map_uid();
-  data->locate_tran(lc_);
+  data->locate_tran();
   data -> idata_row();
   Rcpp::List ans = data->ex_port();
 

@@ -40,7 +40,7 @@ public:
   void reload_parameters(Rcpp::NumericVector param, odeproblem* prob);
   void idata_row();
   unsigned int get_idata_row(double ID){return idmap[ID];}
-  void locate_tran(bool lc_);
+  void locate_tran();
   void get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly,bool debug);
   int col_n(std::string name) {return col.at(name);}
   void check_idcol(dataobject* data);

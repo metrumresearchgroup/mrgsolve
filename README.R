@@ -22,6 +22,8 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 ##'
 ##'
 ##' * [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases)
+##' * [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
+##' * [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
 ##' * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 ##' * [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
 ##'     * [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)

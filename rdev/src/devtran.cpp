@@ -38,7 +38,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   svec cmtnames = Rcpp::as<svec>(cmtnames_);
   for(size_t i=0; i < cmtnames.size(); i++) cmtnames[i] += "_0";
 
-  bool lc               = Rcpp::as<bool>   (parin["lc"]);
   unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   bool debug            = Rcpp::as<bool>   (parin["debug"]  );
   int digits            = Rcpp::as<int>    (parin["digits"] );
@@ -56,7 +55,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Create data objects from data and idata
   dataobject *dat = new dataobject(data,parnames);
   dat->map_uid();
-  dat->locate_tran(lc);
+  dat->locate_tran();
 
   dataobject *idat = new dataobject(idata, parnames,cmtnames);
   idat -> map_uid();

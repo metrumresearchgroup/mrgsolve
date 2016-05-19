@@ -43,10 +43,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data, svec _parnames,svec _cmtnames)
 }
 
 
-
-
 dataobject::~dataobject(){}
-
 
 void dataobject::map_uid() {
 
@@ -63,50 +60,70 @@ void dataobject::map_uid() {
   Endrow.push_back(Data.nrow()-1);
 }
 
-void dataobject::locate_tran(bool lc) {
+void dataobject::locate_tran() {
 
   int zeros = Data.ncol()-1;
-
 
   svec::const_iterator bg = Data_names.begin();
   svec::const_iterator ed = Data_names.end();
 
-  if(lc) {
-    col["amt"]  = std::find(bg,ed,"amt")  - bg;
-    col["ii"]   = std::find(bg,ed,"ii")   - bg;
-    col["cmt"]  = std::find(bg,ed,"cmt")  - bg;
-    col["addl"] = std::find(bg,ed,"addl") - bg;
-    col["ss"]   = std::find(bg,ed,"ss")   - bg;
-    col["rate"] = std::find(bg,ed,"rate") - bg;
-    col["evid"] = std::find(bg,ed,"evid") - bg;
-    col["time"] = std::find(bg,ed,"time") - bg;
-    if(col["cmt"] > zeros  && zeros > 0)
-      Rcpp::stop("Couldn't locate cmt in data set.");
-    if(col["time"] > zeros && zeros > 0)
-      Rcpp::stop("Couldn't locate time in data set.");
-  } else {
-    col["amt"]  = std::find(bg,ed, "AMT") - bg;
-    col["ii"]   = std::find(bg,ed,"II")   - bg;
-    col["cmt"]  = std::find(bg,ed, "CMT") - bg;
-    col["addl"] = std::find(bg,ed,"ADDL") - bg;
-    col["ss"]   = std::find(bg,ed,"SS")   - bg;
-    col["rate"] = std::find(bg,ed,"RATE") - bg;
-    col["evid"] = std::find(bg,ed,"EVID") - bg;
-    col["time"] = std::find(bg,ed,"TIME") - bg;
-    if(col["cmt"]  > zeros && zeros > 0)
-      Rcpp::stop("Couldn't locate CMT in data set.");
-    if(col["time"] > zeros && zeros > 0)
-      Rcpp::stop("Couldn't locate TIME in data set.");
+  int val = 0;
+
+  val = std::find(bg,ed,"amt")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"AMT") - bg));
+  }
+  col["amt"] = val;
+
+  val = std::find(bg,ed,"ii")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"II") - bg));
+  }
+  col["ii"] = val;
+
+  val = std::find(bg,ed,"cmt")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"CMT") - bg));
+  }
+  col["cmt"] = val;
+
+  val = std::find(bg,ed,"addl")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"ADDL") - bg));
+  }
+  col["addl"] = val;
+
+  val = std::find(bg,ed,"ss")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"SS") - bg));
+  }
+  col["ss"] = val;
+
+  val = std::find(bg,ed,"rate")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"RATE") - bg));
+  }
+  col["rate"] = val;
+
+  val = std::find(bg,ed,"evid")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"EVID") - bg));
+  }
+  col["evid"] = val;
+
+  val = std::find(bg,ed,"time")  - bg;
+  if(val  > zeros) {
+    val  = std::min(zeros, int(std::find(bg,ed,"TIME") - bg));
+  }
+  col["time"] = val;
+
+  if(col["cmt"] > zeros  && zeros > 0) {
+    Rcpp::stop("Couldn't locate cmt in data set.");
   }
 
-  if(col["amt"]  > zeros) col["amt"]  = zeros;
-  if(col["ii"]   > zeros) col["ii"]   = zeros;
-  if(col["addl"] > zeros) col["addl"] = zeros;
-  if(col["ss"]   > zeros) col["ss"]   = zeros;
-  if(col["rate"] > zeros) col["rate"] = zeros;
-  if(col["evid"] > zeros) col["evid"] = zeros;
-
-
+  if(col["time"] > zeros && zeros > 0) {
+    Rcpp::stop("Couldn't locate time/TIME in data set.");
+  }
 }
 
 
