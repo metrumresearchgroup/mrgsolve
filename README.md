@@ -11,7 +11,7 @@ Resources
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
     -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
 -   `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports)
-    -   [Issue tracker](issues) (requires GitHub account; ok for questions or issue reports)
+    -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
     -   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
 <hr>
