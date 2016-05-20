@@ -42,7 +42,7 @@ test_that("Pipe to summarise", {
 
 
 test_that("Pipe to select", {
-  x <- out %>% select(ID,RESP,time)
+  x <- out %>% dplyr::select(ID,RESP,time)
   expect_is(x, "tbl_df")
   expect_identical(names(x),c("ID","RESP", "time"))
 })

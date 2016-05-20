@@ -48,7 +48,7 @@ check-cran:
 
 test:
 	R CMD INSTALL ${PKGDIR}
-	Rscript -e 'library(testthat)' -e 'test_dir("rdev/tests")'
+	Rscript -e 'library(testthat)' -e 'test_dir("rdev/tests/testthat")'
 
 .PHONY: tests
 tests:

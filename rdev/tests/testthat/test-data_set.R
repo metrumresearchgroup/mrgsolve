@@ -35,7 +35,7 @@ test_that("Same result from upper and lower case names", {
 })
 
 test_that("Warning is generated when mixed upper/lower names", {
-    mix <- lo %>% rename(EVID = evid) 
+    mix <- lo %>% dplyr::rename(EVID = evid) 
     expect_warning(mod %>% data_set(mix))
 })
 
