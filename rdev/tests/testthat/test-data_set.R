@@ -28,7 +28,6 @@ test_that("Same result from upper and lower case names", {
   
   expect_is(plot(a, CP~.),"trellis")
   expect_is(plot(a, CP~TIME),"trellis")
-  expect_warning(plot(a, CP~time))
   expect_is(plot(b, CP~.),"trellis")
   expect_is(plot(b, CP~time),"trellis")
   expect_error(plot(b, CP~TIME))

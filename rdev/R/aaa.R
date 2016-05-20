@@ -6,6 +6,7 @@
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
+##' @include altname.R data_set.R idata_set.R
 NULL
 
 GLOBALS <- new.env()
@@ -29,7 +30,7 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
 
-globalVariables(c("test_package","time", "ID","everything"))
+globalVariables(c("test_package","time", "ID","everything", "TIME"))
 
 
 #' Forward pipe.

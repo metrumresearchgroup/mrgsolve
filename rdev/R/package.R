@@ -278,13 +278,9 @@ testSHLIB <- function() {
 
 
 .onLoad <- function(libname, pkgname) {
-
     if(!testSHLIB()) {
         warning(noRwarning, call.=FALSE)
     }
-
-
-
 }
 
 

@@ -364,8 +364,12 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
 
   data <- as.data.frame(limit(x,...))
   
-  if(!exists("time", data)) data <- data %>% dplyr::mutate(time="TIME")
-
+  if(!exists("time", data)) {
+    if(!exists("TIME", data)) stop("Couldn't find time or TIME column.",call.=FALSE)
+    # Must mutate here; not rename
+    data <- data %>% dplyr::mutate(time=TIME)
+  }
+  
   if(y[[3]] == '.')  y[[3]] <- quote(time)
 
   if(as=="cfb")  {
