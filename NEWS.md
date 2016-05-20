@@ -4,9 +4,11 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 
 ## Features
 * Added `as_data_set` to convert one or more event objects into a data frame that can be passed to `data_set`.  Does something similar to `expand.ev`, but more control.
+* For special column names (`time`, `amt`, `rate`, `evid`, `ii`, `addl` ,`ss`, `cmt`) either lower case or upper case names are recognized.  The determination is made on the `time` / `TIME` column (always required when using a data set).  If `time` `mrgsolve` will continue looking for lower case names; if `TIME` it will look for upper case names.  A warning is issued in case both upper and lower case names are included.
 
 ## Bugs fixed
 * Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied ([issue 44](../../issues/44)).
+* Shortened the path for both the shared object and the name of the `.cpp.cpp` file when compiling.
 
 
 # Since 0.6.0
