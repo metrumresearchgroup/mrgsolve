@@ -363,7 +363,8 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   requireNamespace("lattice", quietly=TRUE)
 
   data <- as.data.frame(limit(x,...))
-  if(!exists("time", data)) data <- data %>% dplyr::mutate(time=="TIME")
+  
+  if(!exists("time", data)) data <- data %>% dplyr::mutate(time="TIME")
 
   if(y[[3]] == '.')  y[[3]] <- quote(time)
 
