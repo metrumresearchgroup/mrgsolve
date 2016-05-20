@@ -16,6 +16,9 @@ GLOBALS$ADVAN_PARMS <- list(
   "3" = c("CL","V2","Q","V3"),
   "4" = c("CL","V2","Q","V3","KA")
 )
+GLOBALS$CARRY_TRAN_UC <- c("AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS")
+GLOBALS$CARRY_TRAN_LC <- tolower(GLOBALS[["CARRY_TRAN_UC"]])
+GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRAN_LC"]])
 
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 

@@ -57,8 +57,7 @@ match_param <- function(a,b,off=-1) {
 
 ifmatch <- function(a,b,off=-1) {
     ans <- match(a,b)
-    ans <- ans[!is.na(ans)]
-    return(ans + as.integer(off))
+    return(ans[!is.na(ans)] + as.integer(off))
 }
 
 fmatch <- function(x,y) {
@@ -122,6 +121,17 @@ mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
     }
 
     x <- data.matrix(x[,nu, drop=FALSE])
+    
+    uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
+    lc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_LC"]])
+    
+    if(uc & lc) {
+      warning("Both lower- & upper-case names found in the data set.\n",
+              "Please use either:\n",
+              "  time,amt,cmt,evid,ii,addl,ss,rate\n",
+              "or:\n",
+              "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
+    }
 
     class(x) <- c("mrgindata", class(x))
 
@@ -378,21 +388,29 @@ tran_mrgsim <- function(x,
     ## data
     if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
 
+    tcol <- "time"
+    
     if(ncol(data) > 1) {
-        if(!any(grepl("time|TIME", colnames(data)))) stop("time is a required data set column")
+        tcol <- intersect(c("time", "TIME"), colnames(data))
+        if(length(tcol)==0) stop("time is a required data set column")
+        if(length(tcol) > 1) stop("More than one time / TIME column found")
         if(!any(grepl("ID", colnames(data)))) stop("ID is a required data set column")
         if(!any(grepl("cmt|CMT", colnames(data)))) stop("cmt is a required data set column")
         ..zeros.. <- matrix(0,ncol=1,nrow=nrow(data), dimnames=list(NULL, "..zeros.."))
         data <- cbind(data, ..zeros..)
     }
-
+  
+    # Don't take ID,time,TIME
     carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
-
-    carry.tran <- intersect(tolower(carry.out),
-                            c("a.u.g", "evid", "amt", "cmt", "ii", "ss","rate", "addl"))
-
+    
+    # Only take names in GLOBALS$CARRY_TRAN
+    carry.tran <- intersect(carry.out,GLOBALS[["CARRY_TRAN"]])
+    carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
+    
+    # Non-tran items to carry out from data and idata
     carry.out <- setdiff(carry.out,carry.tran)
-
+    
+    # What to carry out from data and idata
     carry.data <- intersect(carry.out,colnames(data))
     carry.idata <- intersect(carry.out, colnames(idata))
     carry.idata <- setdiff(carry.idata, carry.data)
@@ -409,26 +427,31 @@ tran_mrgsim <- function(x,
 
     parin$carry_data <- ifmatch(carry.data,colnames(data))
     parin$carry_idata <- ifmatch(carry.idata,colnames(idata))
+    
+    # This has to be lower case; that's all we're looking for
     parin$carry_tran <- tolower(carry.tran)
-
-    parin$advan <- x@advan
-
-    parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo$tnames,cmt(x))))
+    
+    # Now, create a rename object 
+    # make_altnames: from, to
+    rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
+    carry.tran <- as.character(rename.carry.tran)
+    
+    # Only accept table names that are not compartments
+    parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo[["tnames"]],cmt(x))))
 
     parin$mtime <- sort(unique(mtime))
 
     stime <- stime(x)
+    
     if(inherits(tgrid, c("tgrid","tgrids"))) stime <- stime(tgrid)
 
-    if(length(deslist)>0) {
-        parin$tgridmatrix <- do.call("tgrid_matrix",deslist)
-        parin$whichtg <- tgrid_id(descol, idata)
+    if(length(deslist) > 0) {
+        parin[["tgridmatrix"]] <- do.call("tgrid_matrix",deslist)
+        parin[["whichtg"]] <- tgrid_id(descol, idata)
     } else {
-        parin$tgridmatrix <- tgrid_matrix(stime)
-        parin$whichtg <- integer(0)
+      parin[["tgridmatrix"]] <- tgrid_matrix(stime)
+      parin[["whichtg"]] <- integer(0)
     }
-
-
 
     parin$stimes <- stime
     parin$ptimes <- stime(ptime)
@@ -450,10 +473,15 @@ tran_mrgsim <- function(x,
                  as.matrix(omat(x)),as.matrix(smat(x)))
 
     if(length(out$issues)>0) stop(render_errors(unique(out$issues)),call.=FALSE)
-
+  
+    # out$trannames always comes back lower case in a specific order
+    # need to rename to get back to requested case
+    # Then, rename again for user-supplied renaming
+    carry.tran <- altname(rename.carry.tran,out[["trannames"]])
+    
     cnames <- c("ID",
-                "time",
-                altname(rename.carry,out$trannames),
+                tcol,
+                altname(rename.carry,carry.tran),
                 altname(rename.carry,carry.data),
                 altname(rename.carry,carry.idata),
                 altname(rename.request,request),
@@ -475,7 +503,7 @@ setGeneric("parin", function(x) standardGeneric("parin"))
 setMethod("parin", "mrgmod", function(x) {
     list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
          maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
-         digits=x@digits, tscale=x@tscale,stimes=stime(x),mindt=x@mindt)
+         digits=x@digits, tscale=x@tscale,stimes=stime(x),mindt=x@mindt, advan=x@advan)
 })
 
 init_function_pointer <- function(x) {

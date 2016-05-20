@@ -735,31 +735,6 @@ tolist <- function(x,concat=TRUE,envir=list()) {
 
 }
 
-## toolist <- function(x,backticks=TRUE) {
-##     x <- unlist(.Call("mrgsolve_tokens", x, c(",", "\"")))
-##     x <- .Call("mrgsolve_tokens", x[x!=""], c("=", "\""))
-
-##     s <- sapply(x,length)==1
-##     v <- lapply(x, FUN=function(x) as.character(x[2]))
-##     n <- sapply(x, FUN=function(x) gsub("(^\\s*|\\s*$)", "", x[1]))
-
-##     if(any(s)) {
-##         v[s] <- n[s]
-##         n[s] <- ""
-##     }
-
-##     names(v) <- n
-
-##     if(backticks) {
-##         hasbt <- grepl("^`.*`$", unlist(v))
-##         v[hasbt] <- lapply(v[hasbt], eval.backticks)
-##         v[hasbt] <- lapply(v[hasbt], as.character)
-##     }
-
-##     v <- lapply(v, type.convert, as.is=TRUE)
-##     v
-## }
-
 tovec <- function(x,concat=TRUE) {
     if(is.null(x)) return(numeric(0))
     ##x <- gsub(eol.comment, "\\1", x)
@@ -774,16 +749,6 @@ tovec <- function(x,concat=TRUE) {
 }
 
 parens <- function(x) paste0("(",x,")")
-
-eval.backticks <- function(x) {
-    hasbt <- grepl("^`.*`$", x)
-    if(!any(hasbt)) return(x)
-    x <- gsub("`", "", x)
-    x <- eval(parse(text=x))
-    x
-}
-
-
 
 
 ##' Create create character vectors.
@@ -855,8 +820,6 @@ filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
     file.path(dir, paste0(run, ext))
 }
 
-
-
 mesg <- function(...) cat(...,"\n",sep=" ", file="MESSAGES",append=TRUE)
 
 
@@ -905,6 +868,11 @@ as_character_args <- function(x) {
 }
 
 
+make_altnames <- function(from,to) {
+  if(missing(to)) to <- from
+  paste(to,from,sep="=")
+}
+
 set_altname <- function(x) {
   if(length(x)==0) return(as.character(x))
   y <- strsplit(as.character(x),"\\s*=\\s*")
@@ -920,7 +888,7 @@ altname <- function(x,...) UseMethod("altname")
 altname.default <- function(x,y,...) return(y)
 altname.altname <- function(x,y, ...) {
   old <- match(y,x[["from"]])
-  old <- old[!is.na(old)]
+  old <- sort(old[!is.na(old)])
   nw <- match(x[["from"]],y)
   nw <- nw[!is.na(nw)]
   y[nw] <- x[["to"]][old]

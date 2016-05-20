@@ -251,7 +251,7 @@ setMethod("summary", "mrgsims", function(object,...) {
 setMethod("show", "mrgsims", function(object) {
     digits <- 4
     top <- head(object@data, n=8)
-    tcol <- match(c("time", "TIME"),colnames(object@data))[1]
+    tcol <- intersect(c("time", "TIME"),colnames(object@data))[1]
     cat("Model: ", basename(cfile(mod(object))), "\n")
     cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
     cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
@@ -363,13 +363,9 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   requireNamespace("lattice", quietly=TRUE)
 
   data <- as.data.frame(limit(x,...))
+  if(!exists("time", data)) data <- data %>% dplyr::mutate(time=="TIME")
 
-  if(y[[3]] == '.')  {
-
-      if(exists("time", data)) y[[3]] <- quote(time)
-      if(exists("TIME", data)) y[[3]] <- quote(TIME)
-  }
-
+  if(y[[3]] == '.')  y[[3]] <- quote(time)
 
   if(as=="cfb")  {
       data <- split(data, data$ID)

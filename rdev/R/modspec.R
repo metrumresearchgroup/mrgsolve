@@ -484,7 +484,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Compile the model
   status <- system(paste0("R CMD SHLIB ",
                           ifelse(preclean, " --preclean ", ""),
-                          cfile,
+                          build_path(cfile),
                           " -o ",
                           sodll(x,short=TRUE)),
                    ignore.stdout=ignore.stdout)

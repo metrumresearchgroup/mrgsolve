@@ -254,7 +254,9 @@ setMethod("plot", c("batch_mrgsims","missing"), function(x,yval=variables(x),lim
   mov[rename] <- mapvalues(mov[rename], tran.use,tran.alt)
 
   data <- as.data.frame(x)
-
+  tcol <- intersect(c("time", "TIME"), names(data))
+  
+  
   ny <- length(yval)
 
   if(ny>limit) {
@@ -270,18 +272,18 @@ setMethod("plot", c("batch_mrgsims","missing"), function(x,yval=variables(x),lim
   drop <- c()
 
   if(all(mov=="")) {
-      fmla <- as.formula(paste(yval, "~time", sep=""))
+      fmla <- as.formula(paste0(yval, "~",tcol))
       groups <- rep(1,nrow(data))
       mov <- character(0)
   }
 
   if(length(mov)==1) {
-    fmla <- as.formula(paste(yval, "~time", sep=""))
+    fmla <- as.formula(paste0(yval, "~",tcol))
     groups <- factor(data[,mov[1]], labels=paste(mov[1], sort(unique(data[,mov[1]]))))
   }
   if(length(mov)>=2) {
     labels1 <- paste(mov[2],sort(unique(data[,mov[2]])))
-    fmla <- as.formula(paste(yval, "~time|factor(",mov[2],",labels=labels1)", sep=""))
+    fmla <- as.formula(paste0(yval, "~",tcol,"|factor(",mov[2],",labels=labels1)"))
     groups  <- factor(data[,mov[1]], labels=paste(mov[1], sort(unique(data[,mov[1]]))))
     if(length(mov) >=3) drop <- mov[3:length(mov)]
   }
@@ -289,7 +291,7 @@ setMethod("plot", c("batch_mrgsims","missing"), function(x,yval=variables(x),lim
   if(length(mov) >= 3 & ny==1) {
     labels1 <- paste(mov[2],sort(unique(data[,mov[2]])))
     labels2 <- paste(mov[3],sort(unique(data[,mov[3]])))
-    fmla <- as.formula(paste(yval, "~time|factor(",mov[2],",labels=labels1)*factor(",mov[3],",labels=labels2)", sep=""))
+    fmla <- as.formula(paste0(yval, "~",tcol,"|factor(",mov[2],",labels=labels1)*factor(",mov[3],",labels=labels2)"))
     groups  <- factor(data[,mov[1]], labels=paste(mov[1], sort(unique(data[,mov[1]]))))
     if(length(mov)<=3) drop <- c()
     if(length(mov)>=4) drop <- mov[4:length(mov)]
