@@ -2,14 +2,7 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-
-Reserved <- c("ID", "amt", "cmt", "ii", "ss",
-              "addl", "rate","time", "TIME",
-              "SOLVERTIME","table","ETA","EPS",
-              "NEWIND", "EVID","DONE","DXDTZERO",
-              "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
-              paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
-              "_SETINIT","report","double", "int", "bool")
+##' @include check_names.R
 
 null_list <- list()
 names(null_list) <- character(0)
@@ -18,77 +11,77 @@ names(null_list) <- character(0)
 single.number <- function(x) length(x)==1 & is.numeric(x)
 
 valid.numericlist <- function(object) {
-    x1 <- all(sapply(object@data,single.number))
-    x2 <- all(names(object@data) !="")
-    x3 <- !any(grepl("=|\\.",names(object),perl=TRUE))
-
-    x <- x1 & x2 & x3
-    if(all(x)) return(TRUE)
-
-    out <- c()
-    if(!x3) {
-        message("Problem with names:")
-        cat(paste(names(object), collapse=","))
-        out <- c(out, "Invalid names")
-    }
-    return(out)
-
+  x1 <- all(sapply(object@data,single.number))
+  x2 <- all(names(object@data) !="")
+  x3 <- !any(grepl("=|\\.",names(object),perl=TRUE))
+  
+  x <- x1 & x2 & x3
+  if(all(x)) return(TRUE)
+  
+  out <- c()
+  if(!x3) {
+    message("Problem with names:")
+    cat(paste(names(object), collapse=","))
+    out <- c(out, "Invalid names")
+  }
+  return(out)
+  
 }
 
 valid.matlist <- function(object) {
-
-    labels <- names(object@data)[names(object@data) != "..."]
-
-    x1 <- all(sapply(object@data, is.matrix))
-    x2 <- all(sapply(object@data, is.numeric))
-
-    x3 <- (!any(duplicated(labels))) | length(labels)==0
-
-    x4 <- all(sapply(object@data, det)>=0)
-
-    x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
-        nrow(x) == length(y)
-    }) %>% all
-
-
-    x <- x1 & x2 & x3 & x4 & x5
-
-    if(all(x)) return(TRUE)
-    out <- c()
-    if(!x1) out <- c(out, "Found objects that are not matrix")
-    if(!x2) out <- c(out, "Found matrices that are not numeric")
-    if(!x3) {
-        y <- labels[duplicated(labels)]
-        message("Problem with this/these name(s):")
-        cat(paste(y, collapse=","))
-        out <- c(out, "Found duplicate names")
-    }
-
-    if(!x4) {
-        y <- which(sapply(object@data, det) < 0)
-        message("Problem with this matrix:")
-        print(object@data[y])
-        out <- c(out, "Invalid matrix: determinant is less than 0")
-    }
-    if(!x5) {
-        out <- c(out, "Length of labels does not match the matrix entered.")
-    }
-    return(out)
+  
+  labels <- names(object@data)[names(object@data) != "..."]
+  
+  x1 <- all(sapply(object@data, is.matrix))
+  x2 <- all(sapply(object@data, is.numeric))
+  
+  x3 <- (!any(duplicated(labels))) | length(labels)==0
+  
+  x4 <- all(sapply(object@data, det)>=0)
+  
+  x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
+    nrow(x) == length(y)
+  }) %>% all
+  
+  
+  x <- x1 & x2 & x3 & x4 & x5
+  
+  if(all(x)) return(TRUE)
+  out <- c()
+  if(!x1) out <- c(out, "Found objects that are not matrix")
+  if(!x2) out <- c(out, "Found matrices that are not numeric")
+  if(!x3) {
+    y <- labels[duplicated(labels)]
+    message("Problem with this/these name(s):")
+    cat(paste(y, collapse=","))
+    out <- c(out, "Found duplicate names")
+  }
+  
+  if(!x4) {
+    y <- which(sapply(object@data, det) < 0)
+    message("Problem with this matrix:")
+    print(object@data[y])
+    out <- c(out, "Invalid matrix: determinant is less than 0")
+  }
+  if(!x5) {
+    out <- c(out, "Length of labels does not match the matrix entered.")
+  }
+  return(out)
 }
 
 dim_matlist <- function(x) {
-    if(length(x@data)==0) return(0)
-    unname(sapply(x@data,nrow))
+  if(length(x@data)==0) return(0)
+  unname(sapply(x@data,nrow))
 }
 
 create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
-    x <- x[!sapply(x,nrow)==0]
-    if(is.null(names(x))) names(x) <- rep("...", length(x))
-    names(x)[nchar(names(x))==0] <- "..."
-    if(is.null(unlist(labels))) labels <- lapply(x, function(y) rep('.',nrow(y)))
-    x <- new(class, data=x, labels=labels)
-    x@n <- dim_matlist(x)
-    return(x)
+  x <- x[!sapply(x,nrow)==0]
+  if(is.null(names(x))) names(x) <- rep("...", length(x))
+  names(x)[nchar(names(x))==0] <- "..."
+  if(is.null(unlist(labels))) labels <- lapply(x, function(y) rep('.',nrow(y)))
+  x <- new(class, data=x, labels=labels)
+  x@n <- dim_matlist(x)
+  return(x)
 }
 
 
@@ -96,7 +89,7 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
 ##'
 ##' @rdname matlist-class
 setClass("matlist", slots=c(data="list",n="numeric", labels="list"),
-                    prototype=list(data=list(), labels=list()),validity=valid.matlist)
+         prototype=list(data=list(), labels=list()),validity=valid.matlist)
 ##' @export
 ##' @rdname matlist-class
 setClass("omegalist", contains="matlist")
@@ -133,9 +126,9 @@ setMethod("as.list", "numericlist", function(x,...) as.list(x@data))
 ##' @export
 ##' @rdname numericlist
 setMethod("as.numeric", "numericlist", function(x) {
-    ans <- unlist(x@data)
-    if(is.null(ans)) return(numeric(0))
-    return(ans)
+  ans <- unlist(x@data)
+  if(is.null(ans)) return(numeric(0))
+  return(ans)
 })
 ##' @export
 ##' @rdname numericlist
@@ -164,8 +157,8 @@ setMethod("[", "numericlist", function(x,i,j,...){x@data[i,...]})
 
 
 create_numeric_list <- function(x,class,...) {
-    if(length(x) ==0) return(new(class))
-    new(class, data=x)
+  if(length(x) ==0) return(new(class))
+  new(class, data=x)
 }
 
 
@@ -223,7 +216,7 @@ protomod <- list(model=character(0),
                  trans=1,
                  mindt=10*.Machine$double.eps,
                  code = character(0)
-                 )
+)
 
 slot.names <- names(protomod)
 slots <- sapply(protomod, class)
@@ -231,54 +224,11 @@ names(slots) <- names(protomod)
 
 eXclude <- function(x,what) x[!(x %in% what)]
 
-
 valid.mrgmod <- function(object) {
-    out <- c()
-
-    ##x0 <- !any(duplicated(c(cmt(object),pars(object), eXclude(c(object@omega@labels, object@omega@labels),'.'))))
-    x1 <- !any(is.element(cmt(object), pars(object)))
-    x1 <- x1 | neq(object)==0
-    x1 <- x1 | length(param(object))==0
-
-    x2 <- all(!duplicated(cmt(object)))
-    x3 <- all(!duplicated(pars(object)))
-
-    x4 <- TRUE#det(object@omega) >=0
-    x5 <- TRUE#nchar(object@defdose)==0 | is.element(object@defdose,cmt(object))
-    x6 <- TRUE# det(object@sigma) >=0
-
-    x7x <- dplyr::intersect(Reserved,pars(object))
-    x8x <- dplyr::intersect(Reserved,cmt(object))
-    x7 <- length(x7x) == 0
-    x8 <- length(x8x) == 0
-
-    x9x <- c(cmt(object), pars(object), names(omat(object)), names(smat(object)))
-    x9x <- x9x[x9x !="..."]
-    x9 <- length(x9x) == length(unique(x9x))
-
-    x10 <- !any(is.element(unlist(object@omega@labels),c(cmt(object),pars(object))))
-    x11 <- !any(is.element(unlist(object@sigma@labels),c(cmt(object),pars(object))))
-
-    if(all(c(x1,x2,x3,x4,x5,x7,x8,x9,x10,x11))) return(TRUE)
-
-    if(!x1) out <- c(out, "Found compartments and parameters with the same names")
-    if(!x2) {
-        dups <- cmt(object)[duplicated(cmt(object))]
-        out <- c(out, paste0("Found duplicate compartment names: ", paste(dups, collapse=",")))
-    }
-    if(!x3) {
-        dups <- pars(object)[duplicated(pars(object))]
-        out <- c(out, paste0("Found duplicate parameter names: ", paste(dups, collapse=",")))
-    }
-    if(!x4) out <- c(out, "omega matrix determinant is < 0")
-    #if(!x5) out <- c(out, "defdose is set, but not found in compartment list")
-    if(!x6) out <- c(out, "sigma matrix determinant is < 0")
-    if(!x7) out <- c(out, paste0("\n  Reserved words in $PARAM: ", paste(x7x, collapse=',')))
-    if(!x8) out <- c(out, paste0("\n  Reserved words in $INIT or $CMT: ", paste(x8x, collapse=',')))
-    if(!x9) out <- c(out, paste0("\n  Duplicate names: ", paste(x9x[duplicated(x9x)],collapse=',')))
-    if(!x10) out <- c(out, paste0("\n Duplicate names: omega labels also found in compartments or parameters"))
-    if(!x11) out <- c(out, paste0("\n Duplicate names: sigma labels also found in compartments or parameters"))
-    return(out)
+  tags <- unlist(names(object), use.names=FALSE)
+  x <- check_names(tags,pars(object),cmt(object))
+  if(length(x)==0) return(TRUE)
+  return(x)
 }
 
 
@@ -355,7 +305,7 @@ setClass("packmod",
          prototype = list(shlib=list(compiled=TRUE, date="date of package compile"),package="",src="",header=""),
          contains="mrgmod",
          slots=c(package="character",src="character", header="character")
-         )
+)
 
 ##' @export
 ##' @rdname stime

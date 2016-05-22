@@ -922,4 +922,21 @@ l_pick <- function(x,name) {
 s_quote <- function(x) paste0("\'",x,"\'")
 d_quote <- function(x) paste0("\"",x,"\"")
 
+##' Get all names from a model object.
+##' 
+##' @param x the model object
+##' @export
+##' @name update
+##' @aliases names,mrgmod-method
+##' @examples
+##' mod <- mrgsolve:::house()
+##' names(mod)
+setMethod("names", "mrgmod", function(x) {
+  ans <- list()
+  ans$param <- pars(x)
+  ans$cmt <- cmt(x)
+  ans$omega <- list(names(omat(x)),unname(unlist(labels(omat(x)))))
+  ans$sigma <- list(names(smat(x)),unname(unlist(labels(smat(x)))))
+  return(ans)
+})
 

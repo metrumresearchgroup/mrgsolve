@@ -19,7 +19,7 @@ iv <- function(dose,par,time) {
 
 }
 
-mrgsolve:::comp_forget()
+mrgsolve::comp_forget()
 
 context("Loading a model via mread")
 mod <- suppressMessages(mread("firstmodel", project,atol=1E-20, rtol=1E-12, digits=8))
@@ -234,8 +234,9 @@ test_that("Events update properly through %>% operator",{
    expect_equivalent(myev, events(mod %>% ev(myev)))
 })
 test_that("Events update properly through update()",{
-   expect_equivalent(myev, update(mod, events=myev))
+   expect_equivalent(myev, events(update(mod, events=myev)))
 })
+
 ev1 <- ev(amt=555,cmt=1,rate=33)
 ev2 <- ev(amt=444,cmt=5,rate=22)
 ev12 <- ev1+ev2

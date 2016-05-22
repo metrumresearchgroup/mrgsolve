@@ -7,6 +7,7 @@
 \alias{dim,matlist-method}
 \alias{drop.re}
 \alias{drop.re,mrgmod-method}
+\alias{labels,matlist-method}
 \alias{length,matlist-method}
 \alias{matlist}
 \alias{names,matlist-method}
@@ -31,6 +32,8 @@ drop.re(.x, ...)
 \S4method{names}{matlist}(x)
 
 \S4method{length}{matlist}(x)
+
+\S4method{labels}{matlist}(object, ...)
 
 \S4method{dim}{matlist}(x)
 

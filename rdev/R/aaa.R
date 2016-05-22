@@ -6,7 +6,7 @@
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
-##' @include altname.R data_set.R idata_set.R
+##' @include altname.R data_set.R idata_set.R check_names.R
 NULL
 
 GLOBALS <- new.env()
@@ -28,6 +28,15 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "ADVAN2", "ADVAN4", "PKMODEL", "INCLUDE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
+
+Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
+              "addl", "rate","time", "TIME",
+              "AMT", "CMT", "II", "SS", "ADDL", "RATE","EVID",
+              "SOLVERTIME","table","ETA","EPS",
+              "NEWIND","DONE","DXDTZERO",
+              "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
+              paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
+              "_SETINIT","report","double", "int", "bool")
 
 
 globalVariables(c("test_package","time", "ID","everything", "TIME"))

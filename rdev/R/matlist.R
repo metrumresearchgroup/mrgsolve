@@ -3,7 +3,6 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
-
 ##'
 ##' Manipulate \code{OMEGA} matrices.
 ##'
@@ -238,6 +237,14 @@ setMethod("names", "matlist", function(x) names(x@data))
 ##' @export
 ##' @rdname matlist
 setMethod("length", "matlist", function(x) length(x@data))
+##' @export
+##' @rdname matlist
+setMethod("labels", "matlist", function(object,...) {
+  object@labels
+})
+
+
+
 
 ##' @export
 ##' @rdname matlist

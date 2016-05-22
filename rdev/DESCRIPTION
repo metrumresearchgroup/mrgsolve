@@ -36,6 +36,7 @@ Suggests:
 LazyLoad: yes
 NeedsCompilation: yes
 Collate:
+    'check_names.R'
     'classes.R'
     'events.R'
     'Ops.R'
