@@ -1,7 +1,7 @@
 includes <- new.env()
 
 includes[["Rcpp"]] <- function() {
-  list(code=c("#include <Rcpp.h>","#undef table"),
+  list(code=c("#include <Rcpp.h>"),
        CLINK = mrgsolve:::link_to("Rcpp"))
 }
 
@@ -10,13 +10,24 @@ includes[["BH"]] <- function() {
 }
 
 includes[["RcppArmadillo"]] <- function() {
-  list(CLINK = mrgsolve:::link_to("RcppArmadillo"))
+  list(CLINK = paste0(mrgsolve:::link_to("RcppArmadillo")," ",
+                      mrgsolve:::link_to("Rcpp")),
+       code=c(#define ARMA_DONT_USE_CXX11",
+         "#include <RcppArmadillo.h>",
+         "#define NDEBUG 1")
+  )
 }
 
 includes[["DIST"]] <- function() {
-  list(code="#include \"MRGSOLVE_DIST.h\"",
+  list(code=c("#include \"MRGSOLVE_DIST.h\""),
        CLINK = mrgsolve:::link_to("mrgsolve"),
        depends=c("Rcpp"))
+}
+
+includes[["MVNORM"]] <- function() {
+  list(code=c("#include \"MVNORM.h\""),
+       CLINK = mrgsolve:::link_to("mrgsolve"),
+       depends=c("RcppArmadillo"))
 }
 
 #  Construct a path to a package to add to CLINK_CPPFLAGS

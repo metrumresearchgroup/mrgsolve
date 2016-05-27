@@ -89,7 +89,6 @@ struct databox {
 
 // Table macros; NOTE: table conflicts with a macro in Rcpp
 #undef table
-
 #define table(a) _tabledata_[#a]
 #define capture(a) _tabledata_[#a] = a
 

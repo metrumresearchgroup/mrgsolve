@@ -8,8 +8,6 @@
 #include <memory>
 #include <iostream>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include "pkevent.h"
 #include "odepack_dlsoda.h"
 #include <string>
 #include "mrgsolv.h"
@@ -18,7 +16,6 @@
 class odeproblem;
 class Rodeproblem;
 
-typedef boost::shared_ptr<pkevent> ev_ptr;
 
 struct databox {
   unsigned int newind;
@@ -59,13 +56,7 @@ template<typename T,typename type2> void tofunptr(T b,type2 a) {
   b = reinterpret_cast<T>(R_ExternalPtrAddr(a));
 }
 
-struct idrec {
-  double id;
-  int start;
-  int end;
-};
 
-void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug);
 // ODE function
 
 // Send report to console when istate returns negative after dlsoda call

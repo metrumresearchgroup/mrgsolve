@@ -9,7 +9,18 @@
 #include <iostream>
 #include <vector>
 #include "datarecord.h"
+#include "mrgsolv.h"
+
+class pkevent;
 class odeproblem;
+
+typedef boost::shared_ptr<pkevent> ev_ptr;
+typedef std::vector<ev_ptr> evlist;
+typedef std::vector<evlist> evstack;
+typedef std::vector<rec_ptr> reclist;
+typedef std::vector<reclist> recstack;
+
+void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug);
 
 
 /**
@@ -95,11 +106,6 @@ class pkevent : public datarecord {
 
 };
 
-typedef boost::shared_ptr<pkevent> ev_ptr;
-typedef std::vector<ev_ptr> evlist;
-typedef std::vector<evlist> evstack;
-typedef std::vector<rec_ptr> reclist;
-typedef std::vector<reclist> recstack;
 
 
 

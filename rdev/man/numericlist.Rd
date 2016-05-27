@@ -47,11 +47,4 @@
 \description{
 These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures.
 }
-\examples{
-\dontrun{
-  mod <- mrgmod(...)
-  as.list(param(mod))
-  as.numeric(init(mod))
-}
-}
 

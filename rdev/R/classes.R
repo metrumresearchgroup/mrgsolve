@@ -88,8 +88,16 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
 ##' S4 class matlist.
 ##'
 ##' @rdname matlist-class
-setClass("matlist", slots=c(data="list",n="numeric", labels="list"),
-         prototype=list(data=list(), labels=list()),validity=valid.matlist)
+setClass("matlist", 
+         slots=c(
+           data="list",
+           n="numeric", 
+           labels="list"
+         ),
+         prototype=list(data=list(), labels=list()),
+         validity=valid.matlist
+)
+
 ##' @export
 ##' @rdname matlist-class
 setClass("omegalist", contains="matlist")
@@ -103,21 +111,22 @@ setClass("sigmalist", contains="matlist")
 ##' @name numericlist-class
 ##' @param data list of data
 ##' @param pattern character of length 1 containing regular expression to be used as a filter when printing data to the console
-setClass("numericlist", slots=c(data="list", pattern="character"),
-         validity=valid.numericlist, prototype=list(data=null_list, pattern="*"))
-
+setClass("numericlist", 
+         slots=c(
+           data="list", 
+           pattern="character"
+         ),
+         validity=valid.numericlist, 
+         prototype=list(data=null_list, pattern="*")
+)
 
 ##' @title Methods for numericlist
 ##' @description
 ##' These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures.
 ##' @name numericlist
-##' @examples
-##' \dontrun{
-##'   mod <- mrgmod(...)
-##'   as.list(param(mod))
-##'   as.numeric(init(mod))
-##' }
 NULL
+
+
 ##' @export
 ##' @rdname numericlist
 ##' @param x object
@@ -285,10 +294,26 @@ is.mrgsims <- function(x) inherits(x,"mrgsims")
 ##' @slot outnames character vector of column names in simulated output coming from table step
 ##' @slot data matrix of simulated data
 ##' @slot mod the mrgmod model object
-setClass("mrgsims", slots=c(request="character", outnames="character",data="matrix", mod="mrgmod",seed="integer",date="character"))
+setClass("mrgsims", 
+         slots=c(
+           request="character",
+           outnames="character",
+           data="matrix",
+           mod="mrgmod",
+           seed="integer",
+           date="character"
+         )
+)
 
 setClass("batch_mrgsims",contains="mrgsims",
-         slots=c( knobs="character", batch="data.frame", request="character",moving="character",input="list"))
+         slots=c(
+           knobs="character", 
+           batch="data.frame", 
+           request="character",
+           moving="character",
+           input="list"
+         )
+)
 
 setClass("lockedmod",
          contains="mrgmod",
@@ -304,7 +329,11 @@ setClass("lockedmod",
 setClass("packmod",
          prototype = list(shlib=list(compiled=TRUE, date="date of package compile"),package="",src="",header=""),
          contains="mrgmod",
-         slots=c(package="character",src="character", header="character")
+         slots=c(
+           package="character",
+           src="character", 
+           header="character"
+         )
 )
 
 ##' @export

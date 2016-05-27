@@ -4,6 +4,10 @@
 
 #ifndef MRGSOLV_H
 #define MRGSOLV_H
+
+#include <vector>
+#include <map>
+
 typedef std::vector<bool> bvec;
 typedef std::vector<double> dvec;
 typedef std::map<std::string,double> sd_map;

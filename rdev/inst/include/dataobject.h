@@ -11,7 +11,7 @@
 #include <string>
 #include "odeproblem.h"
 #include "RcppInclude.h"
-
+#include "pkevent.h"
 
 typedef std::map<std::string, ivec> sivec_map;
 typedef std::map<double, int> di_map;

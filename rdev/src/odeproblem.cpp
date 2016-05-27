@@ -248,55 +248,6 @@ void odeproblem::INITSOLV() {
   this->lsoda_init();
 }
 
-void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
-
-  if((b.size()==0) & (c.size()==0)) return;
-
-  double maxtime  = thisi.back()->time();
-  double mintime = thisi.at(0)->time();
-  std::sort(b.begin(), b.end());
-  std::sort(c.begin(), c.end());
-
-  b.insert(b.end(), c.begin(), c.end() );
-  std::sort(b.begin(), b.end());
-
-  b.erase(unique(b.begin(), b.end()), b.end());
-
-  std::size_t i = 0;
-
-  //  if(debug) Rcpp::Rcout <<std::endl<< "Adding phantom observation records from mtime " << std::endl;
-
-  bool dropmin = true;
-  bool dropmax = true;
-
-  // add mtimes from argument
-  for(i=0; i < b.size(); i++) {
-
-    if(b.at(i) <= mintime) {
-      if(debug && dropmin) {
-	Rcpp::Rcout << "dropping mtimes <=  min observation time" << std::endl;
-	dropmin = false;
-      }
-      continue;
-    }
-
-    if(b.at(i) >= maxtime)  {
-      if(debug && dropmax) {
-	Rcpp::Rcout << "dropping mtimes >= to max observation time" << std::endl;
-	dropmax = false;
-      }
-      break;
-    }
-
-    //if(debug)  Rcpp::Rcout << "mtime: " << b[i] << std::endl;
-    rec_ptr obs(new datarecord(100,b[i],0,-100,0));
-    obs->output(false);
-    thisi.push_back(obs);
-  }
-  // Sort
-  std::sort(thisi.begin(), thisi.end(), CompByTimePosRec);
-}
-
 
 
 
@@ -541,7 +492,8 @@ double PolyExp(const double& x,
   double inf=1E9;
   //maximum value for a double in C++
   int i;
-
+  
+  
   assert((alpha.size() >= n) && (a.size() >= n));
 
   //UPDATE DOSE

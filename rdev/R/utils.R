@@ -940,3 +940,9 @@ setMethod("names", "mrgmod", function(x) {
   return(ans)
 })
 
+make_CLINK <- function(x,what=names(x),add=NULL, setenv=FALSE) {
+  x <- c(x[intersect(names(x),what)],add)
+  if(length(x)==0) return("")
+  x <- paste("-I\"",x,"\"",collapse=" ", sep="")
+  return(x)
+}

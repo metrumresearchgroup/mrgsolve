@@ -281,6 +281,9 @@ testSHLIB <- function() {
     if(!testSHLIB()) {
         warning(noRwarning, call.=FALSE)
     }
+    what <- c("BH", "Rcpp", "RcppArmadillo", "mrgsolve")
+    pkg <- build_path(file.path(find.package(what,quiet=TRUE),"include"))
+    GLOBALS[["CLINK"]] <- setNames(pkg,what)
 }
 
 
