@@ -53,3 +53,7 @@ get_sep_tokens <- function(code) {
     .Call('mrgsolve_get_sep_tokens', PACKAGE = 'mrgsolve', code)
 }
 
+set_omega <- function(loc, omega_) {
+    invisible(.Call('mrgsolve_set_omega', PACKAGE = 'mrgsolve', loc, omega_))
+}
+

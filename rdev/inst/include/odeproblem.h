@@ -5,7 +5,6 @@
 #ifndef ODEPROBLEM_H
 #define ODEPROBLEM_H
 #include <math.h>
-#include <memory>
 #include <iostream>
 #include <vector>
 #include "odepack_dlsoda.h"
@@ -30,6 +29,7 @@ struct databox {
   double ID;
   bool CFONSTOP;
   double XDOSE;
+  void* omatrix;
 };
 
 
@@ -97,6 +97,9 @@ class odeproblem : public odepack_dlsoda {
   double table(std::string key){return Tabledata[key];}
   sd_map& table() {return Tabledata;}
 
+  //void set_omatrix(Rcpp::NumericMatrix* x_);
+  void pass_omega(arma::mat*);
+  
   bool CFONSTOP(){return d.CFONSTOP;}
 
   // param:

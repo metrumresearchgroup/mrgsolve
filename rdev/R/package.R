@@ -238,19 +238,19 @@ NULL
 ##' mrgsolve:::reserved()
 ##'
 reserved <- function() {
-    cat(paste(" ", Reserved), sep="\n")
+  cat(paste(" ", Reserved), sep="\n")
 }
 
 examples <- function(...) {
-   example("mrgsolve", package="mrgsolve",...)
-   example("knobs", package="mrgsolve",...)
-   example("param", package="mrgsolve",...)
-   example("init", package="mrgsolve",...)
-   example("mrgsim", package="mrgsolve",...)
-   example("mrgsims", package="mrgsolve",...)
-   example("mrgsolve_example", package="mrgsolve",...)
-   example("mrgsolve_utils", package="mrgsolve",...)
-   example("plot_mrgsims", package="mrgsolve",...)
+  example("mrgsolve", package="mrgsolve",...)
+  example("knobs", package="mrgsolve",...)
+  example("param", package="mrgsolve",...)
+  example("init", package="mrgsolve",...)
+  example("mrgsim", package="mrgsolve",...)
+  example("mrgsims", package="mrgsolve",...)
+  example("mrgsolve_example", package="mrgsolve",...)
+  example("mrgsolve_utils", package="mrgsolve",...)
+  example("plot_mrgsims", package="mrgsolve",...)
 }
 
 tests <- function() {
@@ -259,7 +259,7 @@ tests <- function() {
 }
 
 models <- function() {
-    file.path(path.package("mrgsolve"), "models")
+  file.path(path.package("mrgsolve"), "models")
 }
 
 
@@ -273,23 +273,25 @@ the following command runs properly from your R prompt:
 '
 
 testSHLIB <- function() {
-    system("R CMD SHLIB -v", ignore.stdout=TRUE)==0
+  system("R CMD SHLIB -v", ignore.stdout=TRUE)==0
 }
 
 
 .onLoad <- function(libname, pkgname) {
-    if(!testSHLIB()) {
-        warning(noRwarning, call.=FALSE)
-    }
-    what <- c("BH", "Rcpp", "RcppArmadillo", "mrgsolve")
-    pkg <- build_path(file.path(find.package(what,quiet=TRUE),"include"))
-    GLOBALS[["CLINK"]] <- setNames(pkg,what)
+  if(!testSHLIB()) {
+    warning(noRwarning, call.=FALSE)
+  }
+  # what <- c("BH", "Rcpp", "RcppArmadillo", "mrgsolve")
+  # pkg <- build_path(file.path(find.package(what,quiet=FALSE),"include"))
+  # names(pkg) <- what
+  # GLOBALS[["CLINK"]] <- pkg
 }
 
 
 .onAttach <- function(libname,pkgname) {
-    packageStartupMessage("mrgsolve: Community Edition")
-    packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
+  packageStartupMessage("mrgsolve: Community Edition")
+  packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
+  
 }
 
 

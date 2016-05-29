@@ -172,12 +172,15 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   if(debug) say("Creating Rodeproblem object");
 
   prob  = new Rodeproblem(inpar, init);
+  arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
+  prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);
   prob->copy_funs(funs);
   neq = prob->neq();
   prob->advan(advan);
   prob->init_call_record(time0);
-
+ 
+  
   switch(advan) {
   case 13:
     break;

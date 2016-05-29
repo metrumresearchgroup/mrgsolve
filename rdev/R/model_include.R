@@ -30,6 +30,12 @@ includes[["MVNORM"]] <- function() {
        depends=c("RcppArmadillo"))
 }
 
+includes[["SIMETA"]] <- function() {
+  list(code=c("#include \"SIMETA.h\""),
+       CLINK = mrgsolve:::link_to("mrgsolve"),
+       depends=c("RcppArmadillo"))
+}
+
 #  Construct a path to a package to add to CLINK_CPPFLAGS
 link_to <- function(package) {
     path <- find.package(package, quiet=TRUE)

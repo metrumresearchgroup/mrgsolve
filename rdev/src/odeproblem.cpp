@@ -10,6 +10,9 @@
 #include "odeproblem.h"
 #include "pkevent.h"
 
+Rcpp::NumericMatrix OMEGADEF(1,1);
+arma::mat OMGADEF(1,1,arma::fill::zeros);
+
 
 #define MRGSOLVE_MAX_SS_ITER 1000
 
@@ -45,18 +48,19 @@ odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
   d.time = 0.0;
   d.ID = 1.0;
 
-  d.EPS.assign(30,0.0);
-  d.ETA.resize(30,0.0);
+  d.EPS.assign(50,0.0);
+  d.ETA.resize(50,0.0);
 
   d.solving = false;
   d.INITSOLV = false;
   d.CFONSTOP = false;
   d.XDOSE = 0.0;
-
+  d.omatrix = static_cast<void*>(&OMGADEF);
   Tablenames.clear();
   Tabledata.clear();
   Advan = 13;
-
+  
+  
   pred.assign(5,0.0);
 
 }
@@ -248,7 +252,15 @@ void odeproblem::INITSOLV() {
   this->lsoda_init();
 }
 
+// void odeproblem::set_omatrix(Rcpp::NumericMatrix* x_) {
+//   arma::mat OMEGA( (*x_).begin(), (*x_).nrow(), (*x_).ncol(), false);
+//   arma::mat* foo = &OMEGA;
+//   d.omatrix = reinterpret_cast<void*>(foo);
+// }
 
+void odeproblem::pass_omega(arma::mat* x) {
+  d.omatrix = reinterpret_cast<void*>(x);
+}
 
 
 void odeproblem::advance(double& tfrom, double& tto) {

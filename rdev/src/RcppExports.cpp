@@ -173,3 +173,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// set_omega
+void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
+RcppExport SEXP mrgsolve_set_omega(SEXP locSEXP, SEXP omega_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type loc(locSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type omega_(omega_SEXP);
+    set_omega(loc, omega_);
+    return R_NilValue;
+END_RCPP
+}

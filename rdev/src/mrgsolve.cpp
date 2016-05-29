@@ -421,8 +421,12 @@ Rcpp::List get_sep_tokens(Rcpp::CharacterVector code) {
 }
 
 
-
-
+//[[Rcpp::export]]
+void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_) {
+ Rcpp::NumericMatrix* a = reinterpret_cast<Rcpp::NumericMatrix*>(R_ExternalPtrAddr(loc));
+ *a = omega_;
+ return; 
+}
 
 
 

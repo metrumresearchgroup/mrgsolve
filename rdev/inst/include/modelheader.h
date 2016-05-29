@@ -26,7 +26,7 @@ struct databox {
   const double time;
   const int evid;
   const dvec EPS;
-  const dvec ETA;
+  dvec ETA;
   bool SYSTEMOFF;
   bool solving;
   bool INITSOLV;
@@ -34,8 +34,10 @@ struct databox {
   const double ID;
   bool CFONSTOP;
   double XDOSE;
+  void* omatrix;
 };
 
+#define SIMETA _SIMETA_(_databox_.omatrix,_databox_.ETA);
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct

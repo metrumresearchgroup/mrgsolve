@@ -70,7 +70,7 @@ Rcpp::List get_tokens_sep(Rcpp::CharacterVector code);
 //Rcpp::List tokens(Rcpp::CharacterVector x, Rcpp::CharacterVector sep_);
 
 
-
+void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 
 
 

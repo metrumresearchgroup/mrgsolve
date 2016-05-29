@@ -28,7 +28,7 @@ Imports:
     dplyr (>= 0.4.3),
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10)
-LinkingTo: Rcpp (>= 0.12.1), RcppArmadillo (>= 0.5.600.2.0),BH
+LinkingTo: Rcpp (>= 0.12.1), RcppArmadillo (>= 0.5.600.2.0), BH
 Suggests:
     lattice,
     testthat,

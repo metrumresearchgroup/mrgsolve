@@ -6,6 +6,7 @@
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
+##' @importFrom stats setNames
 ##' @include altname.R data_set.R idata_set.R check_names.R
 NULL
 
