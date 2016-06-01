@@ -37,17 +37,19 @@ struct databox {
   void* omatrix;
 };
 
-#define SIMETA _SIMETA_(_databox_.omatrix,_databox_.ETA);
+
+#define _omega (_databox_.omatrix)
+#define _eta (_databox_.ETA)
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct
 // Also, V3/V3 are synonyms as well
 #define pred_CL _pred_[0]
-#define pred_V _pred_[1]
+#define pred_V  _pred_[1]
 #define pred_VC _pred_[1]
 #define pred_V2 _pred_[1]
 #define pred_KA _pred_[2]
-#define pred_Q _pred_[3]
+#define pred_Q  _pred_[3]
 #define pred_V3 _pred_[4]
 #define pred_VP _pred_[4]
 
@@ -90,17 +92,17 @@ struct databox {
 #define ID _databox_.ID
 
 // Table macros; NOTE: table conflicts with a macro in Rcpp
-#undef table
-#define table(a) _tabledata_[#a]
+#undef  table
+#define table(a)   _tabledata_[#a]
 #define capture(a) _tabledata_[#a] = a
 
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration
 // and dose lag time.  Keep these here, but
 // the model spec should prefer F_CMT, R_CMT, D_CMT, ALAG_CMT
-#define _F(a) _F_[a-1]
-#define _R(a) _R_[a-1]
-#define _D(a) _D_[a-1]
+#define _F(a)    _F_[a-1]
+#define _R(a)    _R_[a-1]
+#define _D(a)    _D_[a-1]
 #define _ALAG(a) _ALAG_[a-1]
 
 // These are the fundamental macros for

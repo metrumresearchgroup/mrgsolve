@@ -1,5 +1,11 @@
 includes <- new.env()
 
+include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
+order_includes <- function(x) {
+  x[match(intersect(include_order,names(x)),names(x))]
+}
+
+
 includes[["Rcpp"]] <- function() {
   list(code=c("#include <Rcpp.h>"),
        CLINK = mrgsolve:::link_to("Rcpp"))
@@ -12,36 +18,25 @@ includes[["BH"]] <- function() {
 includes[["RcppArmadillo"]] <- function() {
   list(CLINK = paste0(mrgsolve:::link_to("RcppArmadillo")," ",
                       mrgsolve:::link_to("Rcpp")),
-       code=c(#define ARMA_DONT_USE_CXX11",
-         "#include <RcppArmadillo.h>",
-         "#define NDEBUG 1")
+       code="#define ARMA_DONT_USE_CXX11
+             #include <RcppArmadillo.h>
+             #define NDEBUG 1"
   )
 }
 
-includes[["DIST"]] <- function() {
-  list(code=c("#include \"MRGSOLVE_DIST.h\""),
-       CLINK = mrgsolve:::link_to("mrgsolve"),
-       depends=c("Rcpp"))
-}
-
-includes[["MVNORM"]] <- function() {
-  list(code=c("#include \"MVNORM.h\""),
-       CLINK = mrgsolve:::link_to("mrgsolve"),
-       depends=c("RcppArmadillo"))
-}
-
-includes[["SIMETA"]] <- function() {
-  list(code=c("#include \"SIMETA.h\""),
-       CLINK = mrgsolve:::link_to("mrgsolve"),
+includes[["mrgx"]] <- function() {
+  list(code=c("#include \"mrgx.h\""),
+       CLINK = mrgsolve:::link_to("mrgsolve", "mrgx"),
        depends=c("RcppArmadillo"))
 }
 
 #  Construct a path to a package to add to CLINK_CPPFLAGS
-link_to <- function(package) {
+link_to <- function(package,dir="include") {
     path <- find.package(package, quiet=TRUE)
-    path <- file.path(path,"include")
+    path <- file.path(path,dir)
     return(paste0("-I\"",path,"\""))
 }
+
 # Get one include
 get_include <- function(name) {
     if(!exists(name,includes)) {
@@ -49,14 +44,19 @@ get_include <- function(name) {
     }
     includes[[name]]()
 }
+
+
 # Get all includes, include dependencies
 get_includes <- function(what) {
     x <- lapply(what,get_include)
     dep <- s_pick(x,"depends")
     need <- setdiff(dep,what)
     x <- c(lapply(need,get_include),x)
-    names(x) <- c(what,need)
-    x
+    names(x) <- c(need,what)
+    if(all(is.element(c("Rcpp","RcppArmadillo"),names(x)))) {
+        x <- x[names(x) != "Rcpp"] 
+    }
+    order_includes(x)
 }
 
 reshape_includes <- function(x) {

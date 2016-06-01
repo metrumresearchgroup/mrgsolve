@@ -627,7 +627,8 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 ##' @export
 handle_spec_block.specINCLUDE <- function(x) {
-    x <- as.cvec(x)
+    x <- unique(as.cvec(x))
+    
     if(length(x) ==0) return(list())
     return(reshape_includes(get_includes(x)))
 }
