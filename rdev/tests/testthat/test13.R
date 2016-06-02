@@ -133,7 +133,7 @@ pred_Q = Q;
 pred_V3 = VP;
 '
 pred2 <- '
-$PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300
+$PARAM CL=1, V1=20, KA=1.1, Q=4, V2=300
 $CMT CENT PER
 $PKMODEL ncmt=2
 '

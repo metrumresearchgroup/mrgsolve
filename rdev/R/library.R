@@ -27,7 +27,7 @@ pred_V    = V *exp(ETA(2));
 pred_KA   = KA*exp(ETA(3));
 '
 modpk2 <- '
-$PARAM CL = 1, V2 = 20, Q = 20, V3 = 100
+$PARAM CL = 1, V1 = 20, Q = 20, V2 = 100
 $CMT CENT PERIPH
 $PKMODEL ncmt=2, depot = FALSE,trans=1
 $OMEGA 0 0 0 0
@@ -36,9 +36,9 @@ $TABLE
 table(CP) = CENT/pred_V2;
 $MAIN
 pred_CL = CL*exp(ETA(1));
-pred_V2 = V2*exp(ETA(2));
+pred_V2 = V1*exp(ETA(2));
 pred_Q  = Q *exp(ETA(3));
-pred_V3 = V3*exp(ETA(4));
+pred_V3 = V2*exp(ETA(4));
 '
 modpk2po <- '
 $PARAM CL = 1, V2 = 20, Q = 20, V3 = 100, KA=1.1
