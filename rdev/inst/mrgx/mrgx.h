@@ -37,7 +37,7 @@ double runif(double a, double b) {
   return(double(ans[0]));
 }
 
-void simeta(void* m_, std::vector<double>&ETA ) {
+void simeta(void* m_, std::vector<double>&ETA) {
 
   arma::mat* m = reinterpret_cast<arma::mat*>(m_);
   arma::vec eigval;

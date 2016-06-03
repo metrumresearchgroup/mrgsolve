@@ -24,8 +24,6 @@ Workshops are planned for:
 
 -   [ACoP7](http://www.acop7.org/workshops-at-acop) - Oct 27, 2016 ([overview](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
 -   Baltimore, MD
--   Boston, MA
--   Philadelphia, PA
 -   San Francisco, CA (in planning for Fall 2016)
 
 Installation
@@ -98,7 +96,7 @@ $ODE
   dxdt_CENT = KA*GUT - (CL/VC)*CENT;
   dxdt_RESP = KIN*(1-INH) - KOUT*RESP;
 
-$TABLE capture(CP);
+$CAPTURE CP
 '
 ```
 
@@ -108,7 +106,7 @@ The model is parsed, compiled, and dynamically loaded into the `R` session
 -   Important model attributes can be updated in `R` without recompiling
 
 ``` r
-mod <- mread("demo", tempdir(), code)
+mod <- mcode("demo", code)
 ```
 
 Use `mrgsolve` as an interactive simulation tool for model exploration and sensitivity analyses
@@ -118,7 +116,8 @@ Use `mrgsolve` as an interactive simulation tool for model exploration and sensi
 -   Input and output data are kept in memory in the `R` process; writing or reading to disk is never necessary (unless results are to be saved for later use).
 
 ``` r
-out <- mod %>%
+out <- 
+  mod %>%
   ev(amt=100, ii=24, addl=2) %>%
   mrgsim(end=120)
 
@@ -146,7 +145,8 @@ plot(out, CP+RESP~.)
 <img src="img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 ``` r
-out <- mod %>%
+out <- 
+  mod %>%
   ev(amt=100, ii=24, addl=2) %>%
   Req(CP,RESP) %>%
   knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5))
@@ -192,10 +192,11 @@ head(data)
 -   Control simulation output from `R` to better manage memory
 
 ``` r
-out <- mod %>%
+out <- 
+  mod %>%
   data_set(data) %>%
   Req(RESP,CP) %>% obsonly %>%
-  carry.out(evid,amt,dose) %>%
+  carry.out(dose) %>%
   mrgsim(end=48, seed=1010)
 ```
 
