@@ -340,7 +340,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- collect_fixed(spec)
   table <- collect_table(spec)
   init  <- collect_init(spec)
-  do_include <- length(spec[["INCLUDE"]]) > 0
+  do_plugin <- length(spec[["PLUGIN"]]) > 0
 
   SET <- as.list(spec[["SET"]])
 
@@ -428,7 +428,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Write the .cpp.cpp file
   def.con <- file(package_write, open="w")
   cat(
-      spec[["INCLUDE"]][["code"]],
+      plugin_code(spec[["PLUGIN"]]),
       "#include \"modelheader.h\"",
       rd,
       ## This should get moved to rd
@@ -459,9 +459,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
 
   if(!compile) return(x)
 
-  if(do_include) {
-      modify_env(spec[["INCLUDE"]])
-      on.exit(restore_env(spec[["INCLUDE"]]))
+  if(do_plugin) {
+      set_clink(spec[["PLUGIN"]])
+      on.exit(Sys.unsetenv("CLINK_CPPFLAGS"))
   }
 
   ## This name is suitable for use in the build path
@@ -626,11 +626,10 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 
 ##' @export
-handle_spec_block.specINCLUDE <- function(x) {
+handle_spec_block.specPLUGIN <- function(x) {
     x <- unique(as.cvec(x))
-    
     if(length(x) ==0) return(list())
-    return(reshape_includes(get_includes(x)))
+    return(get_plugins(x))
 }
 
 
