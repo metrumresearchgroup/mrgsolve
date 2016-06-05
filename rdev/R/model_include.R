@@ -1,6 +1,6 @@
 includes <- new.env()
 plugins <- new.env()
-plugins[[".depends"]] <- list(mrgx="RcppArmadillo")
+plugins[[".depends"]] <- list(mrgx=c("Rcpp"),simeta="RcppArmadillo")
 
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
@@ -8,6 +8,9 @@ include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
 get_plugins <- function(what) {
   what <- unique(c(get_depends(what),what))
+  if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
+    what <- what[what != "Rcpp"] 
+  }
   x <- lapply(what,get_plugin)
   names(x) <- s_pick(x,"name")
   x
@@ -46,21 +49,30 @@ set_clink <- function(x) {
   return(invisible(NULL))
 }
 
+plugins[["simeta"]] <- list(
+  linkto="mrgsolve/mrgx",
+  code='#include "simeta.h"\n',name="simeta"
+)
+
 plugins[["mrgx"]] <- list(
   linkto="mrgsolve/mrgx",
   code='#include "mrgx.h"\n',name="mrgx"
 )
-
 plugins[["Rcpp"]] <- list(
   code = "#include <Rcpp.h>\n",
   linkto = "Rcpp/include", name="Rcpp"
 )
-
+plugins[["RcppEigen"]] <- list(
+  code = "#include <RcppEigen.h>\n",
+  linkto = c("Rcpp/include","RcppEigen/include"), name="RcppEigen"
+)
 plugins[["RcppArmadillo"]] <- list(
   name="RcppArmadillo",
   code="#define ARMA_DONT_USE_CXX11\n#include <RcppArmadillo.h>\n#define NDEBUG 1\n",
   linkto = c("Rcpp/include", "RcppArmadillo/include")
 )
+
+
 
 plugins[["BH"]] <- list(linkto="BH/include", name="BH")
 
