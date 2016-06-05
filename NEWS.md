@@ -5,10 +5,15 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 ## Features
 * Added `as_data_set` to convert one or more event objects into a data frame that can be passed to `data_set`.  Does something similar to `expand.ev`, but more control.
 * For special column names (`time`, `amt`, `rate`, `evid`, `ii`, `addl` ,`ss`, `cmt`) either lower case or upper case names are recognized.  The determination is made on the `time` / `TIME` column (always required when using a data set).  If `time` `mrgsolve` will continue looking for lower case names; if `TIME` it will look for upper case names.  A warning is issued in case both upper and lower case names are included.
+* Added `$PLUGIN` to let users extend their model specification file.  Valid plugins include `mrgx`, `simeta`, `Rcpp`, `RcppArmadillo`, and `BH`.  When a plugin is used, `mrgsolve` will link back the the appropriate package and possibly include appropriate header files when compiling the model.  For example, `simeta` will link back to `mrgsolve` and `RcppArmadillo` and allow the modeler to simulate a new set of `ETA`s.  The functions in `mrgx` are mostly wrappers for `rdist` functions provided by `Rcpp` (e.g. `rnorm`, `rexp` etc ... ).  But the user is free to link to `Rcpp` and call `Rcpp::rnorm` or any other `Rcpp` function with that plugin.
 
 ## Bugs fixed
 * Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied ([issue 44](../../issues/44)).
 * Shortened the path for both the shared object and the name of the `.cpp.cpp` file when compiling.
+
+
+## Important changes
+* When using `$PKMODEL` with `ncmt=2` and `depot=FALSE`, the default PK parameters are `CL`, `V1` (central volume), `Q`, `V2` (peripheral volume).  This is a change where the previous volumes were `V2` (central) and `V3` (peripheral).
 
 
 # Since 0.6.0
