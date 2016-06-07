@@ -12,24 +12,24 @@ rm(list=ls())
 
 
 code <- '
-$PLUGIN mrgx
+$PLUGIN Rcpp
 
 $MAIN
-double a = mrgx::rnorm(10,2);
-double b = mrgx::rbeta(1,1);
-double c = mrgx::rexp(0.5);
-double d = mrgx::rpois(0.6);
-double e = mrgx::rbinom(0.23);
-double f = mrgx::runif(25,70);
-double g = mrgx::rweibull(1,1.5);
+double a = R::rnorm(10,2);
+double b = R::rbeta(1,1);
+double c = R::rexp(0.5);
+double d = R::rpois(0.6);
+double e = R::rbinom(1,0.23);
+double f = R::runif(25,70);
+double g = R::rweibull(1,1.5);
 
 $CAPTURE a b c d e f g
 
 '
 
-context("mrgx - random")
+context("Rcpp - random")
 
-test_that("mrgx all distributions", {
+test_that("Rcpp all distributions", {
   mod <- mcode("test_plugin-1", code, warn=FALSE)
   out <- mod %>% mrgsim(end=1000)
   expect_true(all(out$f > 25 & out$f < 70))

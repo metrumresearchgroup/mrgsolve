@@ -61,6 +61,7 @@ numeric2diag <- function(x,prefix=NULL) {
 ##'
 ##'
 modMATRIX <- function(x,name="",use=TRUE,block=FALSE,correlation=FALSE,digits=-1,...) {
+  if(length(x)==0) return(matrix(nrow=0,ncol=0))
   if(correlation) block <- TRUE
   if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
   if(!use) x <- rep(0,length(x))
