@@ -40,3 +40,41 @@ test_that("Rcpp all distributions", {
 
 
 
+code <- '
+$PLUGIN simeta
+
+$OMEGA 1 1 3
+
+$MAIN
+
+
+if(NEWIND <= 1) {
+  
+  double a = ETA(1);
+  double b = ETA(2);
+
+  int i = 0;
+  
+  while(fabs(b) > 1 && i < 100) {
+    mrgx::simeta(_omega,_eta);
+    b = ETA(2);
+  }
+}
+
+double c = ETA(3);
+
+$CAPTURE a b c
+'
+
+context("simeta")
+
+test_that("resimulate ETAs", {
+  mod <- mcode("test_plugin-2", code, warn=FALSE)
+  out <- mod %>% mrgsim(end=-1, nid=1000)
+  expect_true(var(out$a) > var(out$b))
+  expect_true(var(out$c) > var(out$a))
+  expect_true(min(out$b) >= -1 & max(out$b) <= 1)
+  
+})
+
+
