@@ -101,7 +101,7 @@ fixed_parameters <- function(x,fixed_type) {
 }
 
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(x,project) file.path(project,paste0(x, ".cpp.cpp"))
+compfile <- function(x,project) file.path(project,paste0(x, "__cpp.cpp"))
 
 ##' Parse model specification text.
 ##' @param txt model specification text

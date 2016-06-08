@@ -158,7 +158,7 @@ comp_forget <- function(x) {
 
   o <- list.files(y,pattern="*\\.o$",full.names=TRUE)
 
-  cppcpp <- list.files(y,pattern="*\\.cpp\\.cpp",full.names=TRUE)
+  cppcpp <- list.files(y,pattern="*\\__cpp\\.cpp",full.names=TRUE)
 
   unlink(o)
 

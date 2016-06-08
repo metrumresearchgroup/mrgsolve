@@ -15,7 +15,7 @@ code <- '
 $PLUGIN Rcpp
 
 $MAIN
-double a = R::rnorm(10,2);
+double a = R::rnorm(10,1);
 double b = R::rbeta(1,1);
 double c = R::rexp(0.5);
 double d = R::rpois(0.6);
@@ -34,7 +34,7 @@ test_that("Rcpp all distributions", {
   out <- mod %>% mrgsim(end=1000)
   expect_true(all(out$f > 25 & out$f < 70))
   expect_true(all(out$b > 0 & out$b < 1))
-  expect_true(mean(out$a) > 9 & mean(out$a) < 10)
+  expect_true((mean(out$a) > 8) & (mean(out$a) < 11))
   
 })
 
