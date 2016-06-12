@@ -342,7 +342,7 @@ tran_mrgsim <- function(x,
     }
 
     ## Requesting table items
-    if(missing(trequest)) trequest <- foo$tnames
+    if(missing(trequest)) trequest <- c(foo$tnames,x@capture)
 
     ## If Trequest is supplied,
     ## take only tabled items and drop compartments
@@ -376,7 +376,7 @@ tran_mrgsim <- function(x,
     funs$deriv <- ode_function_pointer(x)
     funs$table <- table_function_pointer(x)
     funs$init <- init_function_pointer(x)
-
+    funs$config <- config_function_pointer(x)
 
     ## "idata"
     if(!is.mrgindata(idata)) idata <- mrgindata(idata,...)
@@ -438,7 +438,8 @@ tran_mrgsim <- function(x,
     
     # Only accept table names that are not compartments
     parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo[["tnames"]],cmt(x))))
-
+    capture_names <- unique(intersect(as.cvec(trequest),setdiff(x@capture,cmt(x))))
+    to_capture <- c(length(x@capture),(which(x@capture %in% capture_names)-1))
     parin$mtime <- sort(unique(mtime))
 
     stime <- stime(x)
@@ -461,6 +462,8 @@ tran_mrgsim <- function(x,
         capture.output(file=capture, append=TRUE, print(idata))
         capture.output(file=capture, append=TRUE, print(data))
         capture.output(file=capture, append=TRUE, print(carry.out))
+        capture.output(file=capture, append=TRUE, print(list(to_capture,capture_names)))
+        
     }
 
     out <- .Call(mrgsolve_DEVTRAN,
@@ -469,6 +472,7 @@ tran_mrgsim <- function(x,
                  names(param(x)),
                  init,
                  names(init(x)),
+                 to_capture,
                  funs,data,idata,
                  as.matrix(omat(x)),as.matrix(smat(x)))
 
@@ -485,7 +489,8 @@ tran_mrgsim <- function(x,
                 altname(rename.carry,carry.data),
                 altname(rename.carry,carry.idata),
                 altname(rename.request,request),
-                altname(rename.request,out$outnames)
+                altname(rename.request,out$outnames),
+                altname(rename.request,capture_names)
                 )
 
     dimnames(out$data) <- list(NULL, cnames)
@@ -493,7 +498,7 @@ tran_mrgsim <- function(x,
     new("mrgsims",
         request=altname(rename.request,request),
         data=out$data,
-        outnames=altname(rename.request,out$outnames),
+        outnames=altname(rename.request,out$outnames,capture_names),
         mod=x,
         seed=as.integer(seed),
         date=date())
@@ -505,6 +510,15 @@ setMethod("parin", "mrgmod", function(x) {
          maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
          digits=x@digits, tscale=x@tscale,stimes=stime(x),mindt=x@mindt, advan=x@advan)
 })
+
+
+config_function_pointer <- function(x) {
+  if(is.loaded(x@config_fun[1], PACKAGE=x@config_fun[2])) {
+    return(getNativeSymbolInfo(x@config_fun[1],x@config_fun[2])$address)
+  } else {
+    return(getNativeSymbolInfo("MRGSOLVE_NO_CONFIG_FUN", PACKAGE="mrgsolve")$address)
+  }
+}
 
 init_function_pointer <- function(x) {
     if(is.loaded(x@init_fun[1], PACKAGE=x@init_fun[2])) {
@@ -538,10 +552,11 @@ touch_funs <- function(x) {
     tfun <- table_function_pointer(x)
     ifun <- init_function_pointer(x)
     dfun <- ode_function_pointer(x)
+    cfun <- config_function_pointer(x)
     param <- as.numeric(param(x))
     init <- as.numeric(x@init)
 
-    out <- .Call(mrgsolve_TOUCH_FUNS, param, init,ifun, tfun, dfun)
+    out <- .Call(mrgsolve_TOUCH_FUNS,param,init,x@capture,ifun, tfun, dfun)
     names(out$init) <- names(init)
     out
 }

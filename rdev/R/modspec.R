@@ -30,6 +30,12 @@ advtr <- function(advan,trans) {
 }
 
 
+write_capture <- function(x) {
+  if(length(x)==0) return(NULL)
+  i <- seq_along(x)
+  paste0("_capture_[",i-1,"] = ", x[i], ";") 
+}
+
 ## A random file name
 rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
   basename(tempfile(pattern=pattern,tmpdir='.'))
@@ -380,7 +386,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            trans=subr[["trans"]],
            omega=omega,sigma=sigma,
            param=as.param(param),
-           init=as.init(init))
+           init=as.init(init),
+           capture=as.character(spec[["CAPTURE"]]))
   
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
@@ -419,9 +426,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       ode_symbol(x),
                       main_symbol(x),
                       table_symbol(x),
+                      config_symbol(x),
                       model=model(x),
-                      omat(x),
-                      smat(x),
+                      omats=omat(x),
+                      smats=smat(x),
                       parsedata=SET,
                       check.bounds=check.bounds)
   
@@ -436,6 +444,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     "\n// GLOBAL VARIABLES:\n",
     spec[["GLOBAL"]],
     "\n// MAIN CODE BLOCK:",
+    "BEGIN_config",
+    "END_config",
     "BEGIN_main",
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
@@ -447,6 +457,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     "\n// TABLE CODE BLOCK:",
     "BEGIN_table",
     table,
+    write_capture(x@capture),
     "END_table",
     sep="\n", file=def.con)
   close(def.con)
@@ -585,8 +596,7 @@ specSIGMA <- function(x,y) specMATRIX(x,"sigma_block")
 
 parseCAPTURE <- function(x) {
   x <- as.cvec(x)
-  if(length(x)==0) return(NULL)
-  paste0("capture(",as.cvec(x),");")
+  return(x)
 }
 
 
@@ -744,7 +754,7 @@ collect_param <- function(x, what=c("parameter_list")) {
 }
 
 ## Merges code from $TABLE and $CAPTURE
-collect_table <- function(x,what=c("CAPTURE", "TABLE")) {
+collect_table <- function(x,what=c("TABLE")) {
   x <- x[names(x) %in% what]
   unname(unlist(x))
 }

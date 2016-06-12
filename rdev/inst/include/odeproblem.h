@@ -39,6 +39,8 @@ typedef void table_func(MRGSOLVE_TABLE_SIGNATURE);
 
 typedef void deriv_func(MRGSOLVE_ODE_SIGNATURE);
 
+typedef void config_func(MRGSOLVE_CONFIG_SIGNATURE);
+
 typedef void main_deriv_func(int*        neq,
 			     double*     t,
 			     double*     y,
@@ -48,6 +50,7 @@ typedef void main_deriv_func(int*        neq,
 extern "C" {init_func  MRGSOLVE_NO_INIT_FUN ;}
 extern "C" {table_func MRGSOLVE_NO_TABLE_FUN;}
 extern "C" {deriv_func MRGSOLVE_NO_ODE_FUN  ;}
+extern "C" {config_func MRGSOLVE_NO_CONFIG_FUN  ;}
 
 main_deriv_func main_derivs;
 void neg_istate(int istate);
@@ -77,9 +80,11 @@ class odeproblem : public odepack_dlsoda {
   void advance(double& tfrom, double& tto);
 
   // initial conditions:
-  void init_fun (init_func * fptr)    {Inits  = fptr;}
-  void table_fun (table_func * fptr)  {Table  = fptr;}
-  void deriv_fun (deriv_func * fptr)  {Derivs = fptr;}
+  void init_fun (init_func*     fptr) {Inits  = fptr;}
+  void table_fun (table_func*   fptr) {Table  = fptr;}
+  void deriv_fun (deriv_func*   fptr) {Derivs = fptr;}
+  void config_fun (config_func* fptr) {Config = fptr;}
+  
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
   dvec& init()  {return Init_value;}
@@ -187,6 +192,9 @@ class odeproblem : public odepack_dlsoda {
 
   double xdose(){return d.XDOSE;}
   dvec& get_pred(){return pred;}
+  dvec& get_capture() {return Capture;}
+  double capture(int i) {return Capture[i];}
+  void  resize_capture(size_t n) {Capture.assign(int(n),0.0);}
   double get_pred_CL() {return pred[0];}
   double get_pred_VC() {return pred[1];}
   double get_pred_KA() {return pred[2];}
@@ -235,6 +243,9 @@ class odeproblem : public odepack_dlsoda {
 
   //! Table
   table_func* Table;
+  
+  // Configure
+  config_func* Config;
 
   sd_map Tabledata;
   std::vector<std::string> Tablenames;
@@ -243,11 +254,9 @@ class odeproblem : public odepack_dlsoda {
   std::vector<char> On;
 
   databox d;
-
   int Advan;
-
   dvec pred;
-
+  dvec Capture;
 
 };
 

@@ -20,7 +20,7 @@ arma::mat OMGADEF(1,1,arma::fill::zeros);
 extern "C" {void MRGSOLVE_NO_INIT_FUN(MRGSOLVE_INIT_SIGNATURE){}}
 extern "C" {void MRGSOLVE_NO_TABLE_FUN(MRGSOLVE_TABLE_SIGNATURE){}}
 extern "C" {void MRGSOLVE_NO_ODE_FUN(MRGSOLVE_ODE_SIGNATURE) {for(unsigned int i = 0; i < _A_0_.size(); i++) _DADT_[i] = 0;}}
-
+extern "C" {void MRGSOLVE_NO_CONFIG_FUN(MRGSOLVE_CONFIG_SIGNATURE){}}
 
 odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
   // R0 is the actual current infusion rate
@@ -39,10 +39,11 @@ odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
   Param.assign(npar_,0.0);
   Alag.assign(neq_,0.0);
 
-  Derivs = (deriv_func*) &MRGSOLVE_NO_ODE_FUN;
-  Inits = (init_func *)  &MRGSOLVE_NO_INIT_FUN;
-  Table = (table_func*)  &MRGSOLVE_NO_TABLE_FUN;
-
+  Derivs = (deriv_func*)  &MRGSOLVE_NO_ODE_FUN;
+  Inits = (init_func *)   &MRGSOLVE_NO_INIT_FUN;
+  Table = (table_func*)   &MRGSOLVE_NO_TABLE_FUN;
+  Config = (config_func*) &MRGSOLVE_NO_CONFIG_FUN;
+  
   d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
@@ -59,8 +60,6 @@ odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
   Tablenames.clear();
   Tabledata.clear();
   Advan = 13;
-  
-  
   pred.assign(5,0.0);
 
 }
@@ -167,7 +166,8 @@ void odeproblem::table_call() {
 	      this->rate(),
 	      this->table(),
 	      this->get_d(),
-	      this->get_pred());
+	      this->get_pred(), 
+	      this->get_capture());
 }
 
 void odeproblem::table_init_call() {
@@ -505,7 +505,6 @@ double PolyExp(const double& x,
   //maximum value for a double in C++
   int i;
   
-  
   assert((alpha.size() >= n) && (a.size() >= n));
 
   //UPDATE DOSE
@@ -598,15 +597,5 @@ double PolyExp(const double& x,
 
   return bolusResult + rate*result;
 }
-
-
-
-// void odeproblem::add_rates(double* ydot) {
-//   for (std::set<int>::iterator i = Rn.begin(); i != Rn.end(); i++) {
-//     int e = *i - 1;
-//     if(this->is_on(e)==0){ ydot[e] = 0.0; continue;}
-//     ydot[e] = ydot[e] + R0[e];
-//   }
-// }
 
 

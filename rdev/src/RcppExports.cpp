@@ -8,8 +8,8 @@
 using namespace Rcpp;
 
 // DEVTRAN
-Rcpp::List DEVTRAN(Rcpp::List parin, Rcpp::NumericVector inpar, Rcpp::CharacterVector parnames_, Rcpp::NumericVector init, Rcpp::CharacterVector cmtnames_, Rcpp::List funs, Rcpp::NumericMatrix data, Rcpp::NumericMatrix idata, Rcpp::NumericMatrix OMEGA, Rcpp::NumericMatrix SIGMA);
-RcppExport SEXP mrgsolve_DEVTRAN(SEXP parinSEXP, SEXP inparSEXP, SEXP parnames_SEXP, SEXP initSEXP, SEXP cmtnames_SEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP OMEGASEXP, SEXP SIGMASEXP) {
+Rcpp::List DEVTRAN(Rcpp::List parin, Rcpp::NumericVector inpar, Rcpp::CharacterVector parnames_, Rcpp::NumericVector init, Rcpp::CharacterVector cmtnames_, Rcpp::IntegerVector capture, Rcpp::List funs, Rcpp::NumericMatrix data, Rcpp::NumericMatrix idata, Rcpp::NumericMatrix OMEGA, Rcpp::NumericMatrix SIGMA);
+RcppExport SEXP mrgsolve_DEVTRAN(SEXP parinSEXP, SEXP inparSEXP, SEXP parnames_SEXP, SEXP initSEXP, SEXP cmtnames_SEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP OMEGASEXP, SEXP SIGMASEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -18,12 +18,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type parnames_(parnames_SEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type init(initSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cmtnames_(cmtnames_SEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type capture(captureSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type funs(funsSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type idata(idataSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type OMEGA(OMEGASEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type SIGMA(SIGMASEXP);
-    __result = Rcpp::wrap(DEVTRAN(parin, inpar, parnames_, init, cmtnames_, funs, data, idata, OMEGA, SIGMA));
+    __result = Rcpp::wrap(DEVTRAN(parin, inpar, parnames_, init, cmtnames_, capture, funs, data, idata, OMEGA, SIGMA));
     return __result;
 END_RCPP
 }
@@ -63,17 +64,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // TOUCH_FUNS
-Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, SEXP xifun, SEXP xtfun, SEXP xdfun);
-RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP xifunSEXP, SEXP xtfunSEXP, SEXP xdfunSEXP) {
+Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, Rcpp::CharacterVector capture, SEXP xifun, SEXP xtfun, SEXP xdfun);
+RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP captureSEXP, SEXP xifunSEXP, SEXP xtfunSEXP, SEXP xdfunSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type lparam(lparamSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type linit(linitSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type capture(captureSEXP);
     Rcpp::traits::input_parameter< SEXP >::type xifun(xifunSEXP);
     Rcpp::traits::input_parameter< SEXP >::type xtfun(xtfunSEXP);
     Rcpp::traits::input_parameter< SEXP >::type xdfun(xdfunSEXP);
-    __result = Rcpp::wrap(TOUCH_FUNS(lparam, linit, xifun, xtfun, xdfun));
+    __result = Rcpp::wrap(TOUCH_FUNS(lparam, linit, capture, xifun, xtfun, xdfun));
     return __result;
 END_RCPP
 }

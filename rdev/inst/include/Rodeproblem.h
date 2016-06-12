@@ -10,9 +10,11 @@
 #include <iostream>
 #include "RcppInclude.h"
 
-deriv_func * as_deriv_func(SEXP derivs);
-init_func * as_init_func(SEXP inits);
-table_func * as_table_func(SEXP table);
+deriv_func*  as_deriv_func( SEXP derivs);
+init_func*   as_init_func(  SEXP inits);
+table_func*  as_table_func( SEXP table);
+config_func* as_config_func(SEXP config);
+
 extern "C"{DL_FUNC tofunptr(SEXP a);}
 
 
@@ -25,6 +27,7 @@ class Rodeproblem : public odeproblem {
   void init_fun(SEXP ifun);
   void table_fun(SEXP tfun);
   void deriv_fun(SEXP dfun);
+  void config_fun(SEXP cfun);
   void copy_parin(Rcpp::List parin);
   void copy_funs(Rcpp::List funs);
 

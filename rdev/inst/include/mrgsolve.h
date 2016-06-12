@@ -69,8 +69,9 @@ Rcpp::List get_tokens(Rcpp::CharacterVector code);
 Rcpp::List get_tokens_sep(Rcpp::CharacterVector code);
 //Rcpp::List tokens(Rcpp::CharacterVector x, Rcpp::CharacterVector sep_);
 
-
 void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 
-
-
+Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
+                      Rcpp::NumericVector linit,
+                      Rcpp::CharacterVector capture,
+                      SEXP xifun, SEXP xtfun, SEXP xdfun);

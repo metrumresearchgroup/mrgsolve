@@ -25,6 +25,12 @@ table_func* as_table_func(SEXP table) {
   return(reinterpret_cast<table_func*>(tofunptr(table))); // Known to generate compiler warning
 }
 
+config_func* as_config_func(SEXP config) {
+  return(reinterpret_cast<config_func*>(tofunptr(config))); // Known to generate compiler warning
+}
+
+
+
 
 Rodeproblem::Rodeproblem(int npar_,int neq_) : odeproblem(npar_, neq_) {}
 
@@ -46,7 +52,9 @@ void Rodeproblem::table_fun(SEXP xtfun) {
 void Rodeproblem::deriv_fun(SEXP xdfun) {
   Derivs = as_deriv_func(xdfun);
 }
-
+void Rodeproblem::config_fun(SEXP xcfun) {
+  Config = as_config_func(xcfun); 
+}
 
 
 void Rodeproblem::advance(double& tfrom, double& tto) {
@@ -107,27 +115,6 @@ void Rodeproblem::copy_funs(Rcpp::List funs) {
   this->Rodeproblem::init_fun(funs["init"]);
   this->Rodeproblem::table_fun(funs["table"]);
   this->Rodeproblem::deriv_fun(funs["deriv"]);
+  this->Rodeproblem::config_fun(funs["config"]);
 }
-
-
-
-
-// void param_copy_from_data(Rodeproblem* prob,
-// 			  std::vector<std::string>& copy_names,
-// 			  //std::vector<std::string>& data_names,
-// 			  std::map<std::string,int>& datamap,
-// 			  int data_index,
-// 			  Rcpp::NumericMatrix data) {
-//   unsigned int k;
-//   // Parameters coming in from data set:
-//   for(k=0; k < copy_names.size(); k++) {
-//     prob->param(copy_names[k],data(data_index,datamap[copy_names[k]]));
-//   }
-//   // data set items:
-//   //for(k=0; k < data_names.size(); k++) {
-//   //   prob->dataitems(data_names[k],data(data_index,datamap[data_names[k]]));
-//   // }
-// }
-
-
 

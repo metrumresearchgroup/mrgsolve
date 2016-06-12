@@ -71,6 +71,8 @@ struct databox {
 // $MAIN, $ODE, and $TABLE get translated into these functions
 // We need ODEFUN___ and INITFUN___ and TABLECODE___ defined in the
 // .cpp.cpp model file
+#define BEGIN_config extern "C" {void CONFIGFUN___(MRGSOLVE_CONFIG_SIGNATURE) {
+#define END_config DONE
 #define BEGIN_ode extern "C" {void ODEFUN___(MRGSOLVE_ODE_SIGNATURE) {
 #define END_ode DONE
 #define BEGIN_main extern "C" {void INITFUN___(MRGSOLVE_INIT_SIGNATURE) {
