@@ -12,6 +12,7 @@ before_install:
 r_packages:
   - roxygen2
   - devtools
+  - RcppArmadillo
 
 os:
   - linux

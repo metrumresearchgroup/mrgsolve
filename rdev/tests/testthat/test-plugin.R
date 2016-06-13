@@ -35,7 +35,7 @@ test_that("Rcpp all distributions", {
   expect_true(all(out$f > 25 & out$f < 70))
   expect_true(all(out$b > 0 & out$b < 1))
   expect_true((mean(out$a) > 8) & (mean(out$a) < 11))
-  
+
 })
 
 
@@ -49,12 +49,12 @@ $MAIN
 
 
 if(NEWIND <= 1) {
-  
+
   double a = ETA(1);
   double b = ETA(2);
 
   int i = 0;
-  
+
   while(fabs(b) > 1 && i < 100) {
     mrgx::simeta(_omega,_eta);
     b = ETA(2);
@@ -70,12 +70,12 @@ $CAPTURE a b c
 context("simeta")
 
 test_that("resimulate ETAs", {
-  #mod <- mcode("test_plugin-2", code, warn=FALSE)
-  #out <- mod %>% mrgsim(end=-1, nid=1000)
-  #expect_true(var(out$a) > var(out$b))
-  #expect_true(var(out$c) > var(out$a))
-  #expect_true(min(out$b) >= -1 & max(out$b) <= 1)
-  
+  mod <- mcode("test_plugin-2", code)
+  out <- mod %>% mrgsim(end=-1, nid=1000)
+  expect_true(var(out$a) > var(out$b))
+  expect_true(var(out$c) > var(out$a))
+  expect_true(min(out$b) >= -1 & max(out$b) <= 1)
+
 })
 
 
