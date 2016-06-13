@@ -70,7 +70,7 @@ $CAPTURE a b c
 context("simeta")
 
 test_that("resimulate ETAs", {
-  mod <- mcode("test_plugin-2", code, warn=FALSE)
+  #mod <- mcode("test_plugin-2", code, warn=FALSE)
   #out <- mod %>% mrgsim(end=-1, nid=1000)
   #expect_true(var(out$a) > var(out$b))
   #expect_true(var(out$c) > var(out$a))
