@@ -58,12 +58,16 @@ if(NEWIND <= 1) {
   while(fabs(b) > 1 && i < 100) {
     mrgx::simeta(_omega,_eta);
     b = ETA(2);
+    i++;
   }
 }
 
 double c = ETA(3);
 
-$CAPTURE a b c
+$TABLE
+table(a) = a;
+table(b) = b;
+table(c) = c;
 '
 
 context("simeta")
