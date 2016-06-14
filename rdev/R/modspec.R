@@ -491,6 +491,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   purge_model(cfile(x))
   
   ## Compile the model
+  ## 
+  # sys.args <- list(command = paste0("R CMD SHLIB ",
+  #                                   ifelse(preclean, " --preclean ", ""),
+  #                                   build_path(cfile),
+  #                                   " -o ",
+  #                                   sodll(x,short=TRUE)),
+  #                  ignore.stdout = ignore.stdout,
+  #                  show.output.on.console = FALSE)
+  
   status <- system(paste0("R CMD SHLIB ",
                           ifelse(preclean, " --preclean ", ""),
                           build_path(cfile),
