@@ -14,7 +14,7 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 
 ## Important changes
 * When using `$PKMODEL` with `ncmt=2` and `depot=FALSE`, the default PK parameters are `CL`, `V1` (central volume), `Q`, `V2` (peripheral volume).  This is a change where the previous volumes were `V2` (central) and `V3` (peripheral).
-
+* `$CAPTURE` now saves output items to slots in `std::vector<double>`, rather than `map`.
 
 # Since 0.6.0
 
