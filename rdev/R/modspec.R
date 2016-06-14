@@ -470,10 +470,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
-  if(do_plugin) {
-    set_clink(spec[["PLUGIN"]])
-    on.exit(Sys.unsetenv("CLINK_CPPFLAGS"))
-  }
+  to_restore <- set_up_env(spec[["PLUGIN"]])
+  on.exit(do_restore(to_restore))
   
   ## This name is suitable for use in the build path
   cfile <- compfile(model,build_path(project))
