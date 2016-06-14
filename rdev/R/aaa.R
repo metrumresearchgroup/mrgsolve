@@ -7,6 +7,7 @@
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom stats setNames
+##' @importFrom RcppArmadillo armadillo_version
 ##' @include altname.R data_set.R idata_set.R check_names.R
 NULL
 
