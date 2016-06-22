@@ -43,7 +43,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
   ##     data <- dplyr::rename_(data,.dots=setNames(as.list(rename[["from"]]),rename[["to"]]))
   ## }
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
-  data <- mrgindata(m=x,x=data,...)
+  data <- mrgindata(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), strict=FALSE)
   return(x)
 })

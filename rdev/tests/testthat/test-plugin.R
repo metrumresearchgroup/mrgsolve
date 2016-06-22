@@ -27,7 +27,7 @@ $CAPTURE a b c d e f g
 
 '
 
-context("Rcpp - random")
+context("PLUGIN: Rcpp")
 
 test_that("Rcpp all distributions", {
   mod <- mcode("test_plugin-1", code, warn=FALSE)
@@ -67,7 +67,7 @@ double c = ETA(3);
 $CAPTURE a b c
 '
 
-context("simeta")
+context("PLUGIN: simeta")
 
 test_that("resimulate ETAs", {
     mod <- mcode("test_plugin-2", code)
