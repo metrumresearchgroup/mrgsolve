@@ -17,8 +17,8 @@ CALLINIT <- function(Nparam, Ninit, xifun) {
     .Call('mrgsolve_CALLINIT', PACKAGE = 'mrgsolve', Nparam, Ninit, xifun)
 }
 
-TOUCH_FUNS <- function(lparam, linit, capture, xifun, xtfun, xdfun) {
-    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, capture, xifun, xtfun, xdfun)
+TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, xifun, xtfun, xdfun) {
+    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, xifun, xtfun, xdfun)
 }
 
 MVGAUSS <- function(OMEGA_, n, seed) {

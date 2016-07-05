@@ -117,6 +117,7 @@ Rcpp::NumericVector CALLINIT(Rcpp::NumericVector Nparam, Rcpp::NumericVector Nin
 // [[Rcpp::export]]
 Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
                       Rcpp::NumericVector linit,
+                      int Neta, int Neps,
                       Rcpp::CharacterVector capture,
                       SEXP xifun, SEXP xtfun, SEXP xdfun) {
   
@@ -130,6 +131,8 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
   prob->Rodeproblem::init_fun(xifun);
   prob->Rodeproblem::table_fun(xtfun);
   prob->resize_capture(capture.size());
+  prob->neta(Neta);
+  prob->neps(Neps);
   
   double time = 0;
   prob->time(time);

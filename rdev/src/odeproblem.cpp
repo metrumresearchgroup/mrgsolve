@@ -85,11 +85,11 @@ odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
 odeproblem::~odeproblem(){}
 
 void odeproblem::neta(int n) {
-  if(n > 50) d.ETA.assign(n,0.0);
+  if(n > 25) d.ETA.assign(n,0.0);
 }
 
 void odeproblem::neps(int n) {
-  if(n > 50) d.EPS.assign(n,0.0);
+  if(n > 25) d.EPS.assign(n,0.0);
 }
 
 

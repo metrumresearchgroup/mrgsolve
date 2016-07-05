@@ -182,8 +182,9 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   neq = prob->neq();
   prob->advan(advan);
   prob->resize_capture(size_capture);
-  prob->init_call_record(time0);
   
+  //prob->init_call_record(time0);
+
   
   switch(advan) {
   case 13:
@@ -305,6 +306,8 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     neps = eps.n_cols;
   }
   prob->neps(SIGMA.ncol());
+  prob->init_call_record(time0);
+  
   
   // Figure out the output data set:
   const unsigned int n_out_col  = 2 + n_tran_carry + n_data_carry + n_idata_carry + nreq + ntable + n_capture;

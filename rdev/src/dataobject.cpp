@@ -64,7 +64,17 @@ void dataobject::locate_tran() {
 
   int zeros = Data.ncol()-1;
   
-  if(zeros==0) return;
+  if(zeros==0) {
+    col["amt"]  = 0;
+    col["ii"]   = 0;
+    col["addl"] = 0;
+    col["ss"]   = 0;
+    col["rate"] = 0;
+    col["evid"] = 0;
+    col["cmt"]  = 0;
+    col["time"] = 0;
+    return;
+  }
   
   svec::const_iterator bg = Data_names.begin();
   svec::const_iterator ed = Data_names.end();
@@ -80,6 +90,8 @@ void dataobject::locate_tran() {
   }
   
   col["time"] = tcol;
+  
+  
   
   if(lc) {
     col["amt"]  = std::find(bg,ed,"amt")  - bg;

@@ -555,8 +555,10 @@ touch_funs <- function(x) {
     cfun <- config_function_pointer(x)
     param <- as.numeric(param(x))
     init <- as.numeric(x@init)
+    neta <- sum(nrow(omat(x)))
+    neps <- sum(nrow(smat(x)))
 
-    out <- .Call(mrgsolve_TOUCH_FUNS,param,init,x@capture,ifun, tfun, dfun)
+    out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,ifun, tfun, dfun)
     names(out$init) <- names(init)
     out
 }

@@ -64,18 +64,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // TOUCH_FUNS
-Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, Rcpp::CharacterVector capture, SEXP xifun, SEXP xtfun, SEXP xdfun);
-RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP captureSEXP, SEXP xifunSEXP, SEXP xtfunSEXP, SEXP xdfunSEXP) {
+Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, int Neta, int Neps, Rcpp::CharacterVector capture, SEXP xifun, SEXP xtfun, SEXP xdfun);
+RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP xifunSEXP, SEXP xtfunSEXP, SEXP xdfunSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type lparam(lparamSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type linit(linitSEXP);
+    Rcpp::traits::input_parameter< int >::type Neta(NetaSEXP);
+    Rcpp::traits::input_parameter< int >::type Neps(NepsSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type capture(captureSEXP);
     Rcpp::traits::input_parameter< SEXP >::type xifun(xifunSEXP);
     Rcpp::traits::input_parameter< SEXP >::type xtfun(xtfunSEXP);
     Rcpp::traits::input_parameter< SEXP >::type xdfun(xdfunSEXP);
-    __result = Rcpp::wrap(TOUCH_FUNS(lparam, linit, capture, xifun, xtfun, xdfun));
+    __result = Rcpp::wrap(TOUCH_FUNS(lparam, linit, Neta, Neps, capture, xifun, xtfun, xdfun));
     return __result;
 END_RCPP
 }
