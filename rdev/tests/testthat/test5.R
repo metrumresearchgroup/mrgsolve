@@ -42,9 +42,9 @@ tmp <- tempdir()
 mod <- mread(code=code, project=tmp, model="test5")
 
 set.seed(668855)
-base1 <- as.list(mrgsim(mod) %>% as.tbl %>% distinct(ID))
+base1 <- as.list(mrgsim(mod) %>% as.tbl %>% distinct(ID, .keep_all=TRUE))
 set.seed(23456)
-base2 <- as.list(mrgsim(mod %>% param(ETA1 = 2, ETA2=3)) %>% as.tbl %>% distinct(ID))
+base2 <- as.list(mrgsim(mod %>% param(ETA1 = 2, ETA2=3)) %>% as.tbl %>% distinct(ID, .keep_all=TRUE))
 
 
 
@@ -62,14 +62,14 @@ test_that("Testing initial conditions from random effects", {
 })
 
 data <- data.frame(ID=1, ETA1=3, ETA2=2, time=0, cmt=1)
-base3 <- as.list(mrgsim(mod ,data=data) %>% as.tbl %>% distinct(ID))
+base3 <- as.list(mrgsim(mod ,data=data) %>% as.tbl %>% distinct(ID, .keep_all=TRUE))
 test_that("Testing initial conditions from data set", {
     expect_equivalent(base3$RESP, 103)
     expect_equivalent(base3$CENT,20)
 })
 
 data <- data.frame(ID=1, ETA1=10, ETA2=2, time=0, cmt=1)
-base4 <- as.list(mrgsim(mod ,idata=data) %>% as.tbl %>% distinct(ID))
+base4 <- as.list(mrgsim(mod ,idata=data) %>% as.tbl %>% distinct(ID, .keep_all=TRUE))
 test_that("Testing initial conditions from idata set", {
     expect_equivalent(base4$RESP, 110)
     expect_equivalent(base4$CENT,20)

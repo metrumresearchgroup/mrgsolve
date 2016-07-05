@@ -72,7 +72,7 @@ drop_model <- function(x) {
   so <-
     x %>%
     dplyr::select(so) %>%
-    dplyr::distinct(so) %>%
+    dplyr::distinct(so, .keep_all=TRUE) %>%
     unlist
 
   for(i in so) try(dyn.unload(i),silent=TRUE)
@@ -154,7 +154,7 @@ comp_forget <- function(x) {
 
   db[["complog"]] %>% drop_model
 
-  y <- db[["complog"]] %>% distinct(project) %>% select(project) %>% unlist
+  y <- db[["complog"]] %>% distinct(project,.keep_all=TRUE) %>% select(project) %>% unlist
 
   o <- list.files(y,pattern="*\\.o$",full.names=TRUE)
 

@@ -255,7 +255,7 @@ collect_ev <- function(...) {
           warning("Missing values in some columns.",call.=FALSE)
       }
   }
-  x <- x %>% dplyr::select(c(match(tran,names(x)),everything()))
+  x <- x %>% dplyr::select(c(match(tran,names(x)),seq_along(names(x))))
   return(x)
 }
 

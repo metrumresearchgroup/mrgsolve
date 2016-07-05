@@ -42,8 +42,8 @@ test_that("carry.out from complete data set",{
 })
 
 
-x <- out %>% as.data.frame %>% distinct(ID)
-y <- out %>% as.data.frame %>% distinct(ID,FOO)
+x <- out %>% as.data.frame %>% distinct(ID, .keep_all=TRUE)
+y <- out %>% as.data.frame %>% distinct(ID,FOO, .keep_all=TRUE)
 
 test_that("carry.out from idata set",{
   expect_equal(x$FOO,idata$FOO)
@@ -64,11 +64,11 @@ out2 <- mod %>%
   mrgsim(end=3,delta=1, obsonly=TRUE)
 
 
-x <- out %>% as.data.frame %>% distinct(ID)
-y <- out %>% as.data.frame %>% distinct(ID,ROW,FOO)
+x <- out %>% as.data.frame %>% distinct(ID, .keep_all=TRUE)
+y <- out %>% as.data.frame %>% distinct(ID,ROW,FOO, .keep_all=TRUE)
 
-x2 <- out2 %>% as.data.frame %>% distinct(ID)
-y2 <- out2 %>% as.data.frame %>% distinct(ID,ROW,FOO)
+x2 <- out2 %>% as.data.frame %>% distinct(ID, .keep_all=TRUE)
+y2 <- out2 %>% as.data.frame %>% distinct(ID,ROW,FOO, .keep_all=TRUE)
 
 test_that("carry.out from condensed data set", {
   expect_identical(x,y)
