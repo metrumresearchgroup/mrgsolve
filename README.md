@@ -1,31 +1,6 @@
-[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
-
-Resources
-=========
-
--   [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases)
--   [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
--   [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
--   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
--   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
-    -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
-    -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
--   `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports)
-    -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
-    -   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
+[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master) \# Resources \* [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases) \* [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi) \* [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation) \* [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery) \* [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki) \* [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md) \* [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms) \* `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports) \* [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports) \* [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
 <hr>
-Workshops
-=========
-
-Learn more about incorporating `mrgsolve` into your pharmacometrics workflow at one our [upcoming regional workshops](http://metrumrg.com/events/2016/05/13/mrgsolve_workshops.html).
-
-Workshops are planned for:
-
--   [ACoP7](http://www.acop7.org/workshops-at-acop) - Oct 27, 2016 ([overview](http://metrumrg.com/events/2016/10/27/ODEppkpd.html))
--   Baltimore, MD
--   San Francisco, CA (in planning for Fall 2016)
-
 Installation
 ============
 
@@ -44,7 +19,7 @@ devtools::install_github("metrumresearchgroup/mrgsolve@v0.6.0", subdir="rdev")
 devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
 ```
 
-Note that installation from github will automatically install all dependencies, such RcppArmadillo.
+Note that installation from `github` will automatically install all dependencies, such `RcppArmadillo`.
 
 About
 =====
@@ -56,7 +31,7 @@ About
 
 -   Installs via `R` package compile and install system
 -   Easy integration with any other relevant `R` functionality
-    -   Graphics: `lattice`, `ggplot2`
+-   Graphics: `lattice`, `ggplot2`
     -   Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
     -   Optimal design: `PFIM`, `PopED`
     -   Data summary: `dplyr` and many other functions and packages
@@ -142,7 +117,7 @@ out
 plot(out, CP+RESP~.)
 ```
 
-<img src="img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 ``` r
 out <- 
@@ -218,10 +193,9 @@ out %>%
   summarise(rmin = min(RESP), tmim=time[which.min(RESP)])
 ```
 
-    . Source: local data frame [3 x 3]
-    . 
+    . # A tibble: 3 x 3
     .    dose      rmin  tmim
-    .   (dbl)     (dbl) (dbl)
+    .   <dbl>     <dbl> <dbl>
     . 1   100 18.958869   2.9
     . 2   300 16.117261   3.5
     . 3  1000  6.198648   3.5
@@ -236,9 +210,3 @@ out %>%
 ```
 
 <img src="img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
-
-<hr>
-<center>
-<i>Metrum Research Group, LLC 2 Tunxis Rd Suite 112 Tariffville, CT 06081 </i>
-</center>
-<br> <br>

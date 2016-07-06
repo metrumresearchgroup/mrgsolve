@@ -3,8 +3,8 @@ title: ""
 date: ""
 author: ""
 output:
-md_document:
-   variant: markdown_github
+  md_document:
+    variant: markdown_github
 ---
 
 
