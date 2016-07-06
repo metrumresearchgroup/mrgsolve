@@ -17,7 +17,9 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 
 
 [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
+
 # Resources
+
   * [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases)
   * [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
   * [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)

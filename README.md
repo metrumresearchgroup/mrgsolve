@@ -1,4 +1,18 @@
-[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master) \# Resources \* [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases) \* [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi) \* [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation) \* [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery) \* [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki) \* [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md) \* [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms) \* `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports) \* [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports) \* [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
+[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
+
+Resources
+=========
+
+-   [Latest release: 0.6.1](https://github.com/metrumresearchgroup/mrgsolve/releases)
+-   [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
+-   [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
+-   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
+-   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
+    -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
+    -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
+-   `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports)
+    -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
+    -   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
 <hr>
 Installation
