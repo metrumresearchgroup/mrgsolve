@@ -1,3 +1,0 @@
-# Hands On examples
-The workshop in San Diego did not include a formal hands-on component.  We are providing some R examples here for those who desire some help getting started.
-
