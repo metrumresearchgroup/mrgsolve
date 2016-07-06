@@ -10,11 +10,12 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 ## Bugs fixed
 * Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied ([issue 44](../../issues/44)).
 * Shortened the path for both the shared object and the name of the `.cpp.cpp` file when compiling.
-
+* Fixed bug in `touch_funs` when large number (`> 25`) of ETAs in the model ([issue 68](../../issues/68)).
 
 ## Important changes
 * When using `$PKMODEL` with `ncmt=2` and `depot=FALSE`, the default PK parameters are `CL`, `V1` (central volume), `Q`, `V2` (peripheral volume).  This is a change where the previous volumes were `V2` (central) and `V3` (peripheral).
 * `$CAPTURE` now saves output items to slots in `std::vector<double>`, rather than `std::map<std::string,double>`.  We've known for a while that the `std::map` wasn't very efficient especially with large simulations.  Currently, items in `$TABLE` are still saved into `std::map` with `table()` macro.  The plan going forward is to eliminate that `table` `map` and force output variables into `$CAPTURE`.
+* Due to major changes to `dplyr`, now requiring `dplyr >= 0.5.0` ([issue 69](../../issues/69))
 
 # Since 0.6.0
 
