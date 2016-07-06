@@ -7,6 +7,8 @@ Resources
 -   [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
 -   [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
+-   [Extended examples](https://github.com/mrgsolve/examples)
+-   [Slide decks](https://github.com/mrgsolve/slides)
 -   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
     -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
     -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
@@ -161,7 +163,8 @@ Flexibility with input data sets
 -   No need to include observation records; `mrgsolve` will automatically insert
 
 ``` r
-data <- expand.ev(ID=1:10, amt=c(100,300,1000)) %>%
+data <- 
+  expand.ev(ID=1:10, amt=c(100,300,1000)) %>%
   mutate(dose=amt)
 
 head(data)
