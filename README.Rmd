@@ -153,7 +153,7 @@ out <-
 
 
 
-```{r,fig.height=6,fig.width=9}
+```{r,fig.height=4,fig.width=9}
 plot(out, auto.key=list(columns=3))
 ```
 
