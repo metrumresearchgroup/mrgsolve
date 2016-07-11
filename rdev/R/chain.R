@@ -71,6 +71,18 @@ carry.out <- function(x,...) {
   x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
   return(x)
 }
+
+##' Set the \code{carry.out} argument for \code{mrgsim}.
+##' 
+##' @param x model object
+##' @param ... passed along
+##' @export
+##' 
+carry_out <- function(x,...) {
+  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
+  return(x)
+}
+
 ##' Set the \code{tscale} argument for \code{mrgsim}.
 ##'
 ##'
