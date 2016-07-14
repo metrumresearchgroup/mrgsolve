@@ -250,7 +250,8 @@ setMethod("summary", "mrgsims", function(object,...) {
 ##' @rdname mrgsims
 setMethod("show", "mrgsims", function(object) {
     digits <- 4
-    top <- as.matrix(head(as.matrix(object@data), n=8))
+    n <- min(8,nrow(object@data))
+    top <- data.matrix(object@data[seq_len(n),,drop=FALSE],rownames.force=FALSE)
     tcol <- intersect(c("time", "TIME"),colnames(object@data))[1]
     cat("Model: ", basename(cfile(mod(object))), "\n")
     cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
