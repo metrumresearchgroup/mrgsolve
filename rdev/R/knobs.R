@@ -151,11 +151,12 @@ setMethod("knobs", c("mrgmod", "missing"), function(x,...,
   request <- out@request
 
   blah <- mrgsim(x, end=1, delta=1, verbose=FALSE)
-  out <- as.matrix(out)
+  out <- as.data.frame(out)
 
-  dimnames(out) <- list(NULL, unprotect(mapvalues(colnames(out), protect(tran.use),tran.alt,warn_missing=FALSE)))
+  names(out) <- c(unprotect(mapvalues(colnames(out), protect(tran.use),tran.alt,warn_missing=FALSE)))
 
-  new("batch_mrgsims", data=out, mod=x, batch=kdata, knobs=names(args),
+  new("batch_mrgsims", 
+      data=out, mod=x, batch=kdata, knobs=names(args),
       request=request,
       moving=moving,outnames=blah@outnames,input=input)
 

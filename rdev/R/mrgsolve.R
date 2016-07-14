@@ -497,7 +497,7 @@ tran_mrgsim <- function(x,
 
     new("mrgsims",
         request=altname(rename.request,request),
-        data=out$data,
+        data=as.data.frame(out$data),
         outnames=altname(rename.request,c(out$outnames,capture_names)),
         mod=x,
         seed=as.integer(seed),

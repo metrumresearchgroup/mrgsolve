@@ -231,7 +231,7 @@ slice_.mrgsims <- function(.data,...) {
 
 ##' @export
 ##' @rdname mrgsims
-setMethod("as.matrix", "mrgsims", function(x,...) return(x@data))
+setMethod("as.matrix", "mrgsims", function(x,...) return(as.matrix(x@data)))
 ##' @export
 ##' @rdname mrgsims
 setMethod("subset", "mrgsims", function(x,...) {
@@ -250,7 +250,7 @@ setMethod("summary", "mrgsims", function(object,...) {
 ##' @rdname mrgsims
 setMethod("show", "mrgsims", function(object) {
     digits <- 4
-    top <- head(object@data, n=8)
+    top <- as.matrix(head(as.matrix(object@data), n=8))
     tcol <- intersect(c("time", "TIME"),colnames(object@data))[1]
     cat("Model: ", basename(cfile(mod(object))), "\n")
     cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
@@ -423,6 +423,23 @@ submat.matrix <- function(x,subset,select=TRUE,...) {
     env <- as.data.frame(x[,grab,drop=FALSE])
     x[eval(subset,env,parent.frame()),select,drop=FALSE]
 }
+submat.data.frame <- function(x,subset,select,...) {
+  
+  if(!is.call(subset)) subset <- substitute(subset)
+  
+  vars <- all.vars(as.call(subset))
+  
+  if(!missing(select)){
+    nl <- as.list(1L:ncol(x))
+    names(nl) <- colnames(x)
+    select <- eval(substitute(select), nl, parent.frame())
+  }
+  
+  grab <- intersect(vars,colnames(x))
+  env <- as.data.frame(x[,grab,drop=FALSE])
+  x[eval(subset,env,parent.frame()),select,drop=FALSE]
+}
+
 
 
 ##' Limit the scope of simulated output.

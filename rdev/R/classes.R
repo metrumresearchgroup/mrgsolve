@@ -300,7 +300,7 @@ setClass("mrgsims",
          slots=c(
            request="character",
            outnames="character",
-           data="matrix",
+           data="data.frame",
            mod="mrgmod",
            seed="integer",
            date="character"
