@@ -517,33 +517,8 @@ pfile <- function(package,dir,file,ext=NULL) {
     return(ans)
 }
 
-check_funs <- function(x,report=FALSE) {
-    return(x)
-    if(!is.loaded(x@func[1],x@func[2])) {
-        x@func <- c("MRGSOLVE_NO_ODE_FUN", "mrgsolve")
-        if(report) message("ODE fun updated")
-    }
-    if(!is.loaded(x@init_fun[1],x@init_fun[2])) {
-        x@init_fun <- c("MRGSOLVE_NO_INIT_FUN", "mrgsolve")
-        if(report) message("INIT fun updated")
-    }
-    if(!is.loaded(x@table_fun[1],x@table_fun[2])) {
-        x@table_fun <- c("MRGSOLVE_NO_TABLE_FUN", "mrgsolve")
-        if(report) message("TABLE fun updated")
-    }
-}
-
 
 writeable <- function(x) file.access(x,mode=2)==0
-
-
-nofun <- function(x) {
-   mod <- new("mrgmod")
-   x@func <-  mod@func
-   x@init_fun <-  mod@init_fun
-   x@table_fun <- mod@table_fun
-   x
-}
 
 cropstr <- function(string, prefix, suffix, bump= "...") {
     nc <- nchar(string)
@@ -885,7 +860,6 @@ as_pack_mod <- function(model, project, PACKAGE) {
              model=model
              )
 
-    x <- relocate_funs(x, "mrgsolve")
     x@shlib$par <- pars(x)
     x@shlib$cmt <- cmt(x)
     x@code <- code

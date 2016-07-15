@@ -47,8 +47,8 @@ set_args <- c("Req", "obsonly","mtime", "recsort",
               "carry.out","Trequest","trequest")
 
 ## REMOVE 5/18/2016
-is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
-funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
+#is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
+#funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
@@ -387,7 +387,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            omega=omega,sigma=sigma,
            param=as.param(param),
            init=as.init(init),
+           funs  = funs_create(model,package),
            capture=as.character(spec[["CAPTURE"]]))
+  
   
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
@@ -415,18 +417,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## This must come after audit
   if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();\n"
-  
-  ## These are the symbols:
-  x <- assign_symbols(x)
-  
+
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars=names(param),
                       cmt=names(init),
-                      ode_symbol(x),
-                      main_symbol(x),
-                      table_symbol(x),
-                      config_symbol(x),
+                      ode_func(x),
+                      main_func(x),
+                      table_func(x),
+                      config_func(x),
                       model=model(x),
                       omats=omat(x),
                       smats=smat(x),

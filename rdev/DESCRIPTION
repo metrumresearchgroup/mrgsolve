@@ -52,6 +52,7 @@ Collate:
     'complog.R'
     'datasets.R'
     'example.R'
+    'funset.R'
     'mrgsims.R'
     'init.R'
     'knobs.R'

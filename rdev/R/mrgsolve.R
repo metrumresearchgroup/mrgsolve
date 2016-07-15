@@ -372,11 +372,7 @@ tran_mrgsim <- function(x,
     if(!is.na(seed)) set.seed(seed)
 
     ## ODE and init functions:
-    funs <- list()
-    funs$deriv <- ode_function_pointer(x)
-    funs$table <- table_function_pointer(x)
-    funs$init <- init_function_pointer(x)
-    funs$config <- config_function_pointer(x)
+    funs <- pointers(x@funs)
 
     ## "idata"
     if(!is.mrgindata(idata)) idata <- mrgindata(idata,...)
@@ -512,36 +508,6 @@ setMethod("parin", "mrgmod", function(x) {
 })
 
 
-config_function_pointer <- function(x) {
-  if(is.loaded(x@config_fun[1], PACKAGE=x@config_fun[2])) {
-    return(getNativeSymbolInfo(x@config_fun[1],x@config_fun[2])$address)
-  } else {
-    return(getNativeSymbolInfo("MRGSOLVE_NO_CONFIG_FUN", PACKAGE="mrgsolve")$address)
-  }
-}
-
-init_function_pointer <- function(x) {
-    if(is.loaded(x@init_fun[1], PACKAGE=x@init_fun[2])) {
-        return(getNativeSymbolInfo(x@init_fun[1],x@init_fun[2])$address)
-    } else {
-        return(getNativeSymbolInfo("MRGSOLVE_NO_INIT_FUN", PACKAGE="mrgsolve")$address)
-    }
-}
-table_function_pointer <- function(x) {
-    if(is.loaded(x@table_fun[1], PACKAGE=x@table_fun[2])) {
-        return(getNativeSymbolInfo(x@table_fun[1], x@table_fun[2])$address)
-    } else {
-        return(getNativeSymbolInfo("MRGSOLVE_NO_TABLE_FUN", PACKAGE="mrgsolve")$address)
-    }
-}
-ode_function_pointer <- function(x) {
-    if(is.loaded(x@func[1], PACKAGE=x@func[2])) {
-        return(getNativeSymbolInfo(x@func[1], x@func[2])$address)
-    } else {
-        return(getNativeSymbolInfo("MRGSOLVE_NO_ODE_FUN", PACKAGE="mrgsolve")$address)
-    }
-}
-
 
 ##' Get inits from compiled function.
 ##'
@@ -549,10 +515,11 @@ ode_function_pointer <- function(x) {
 ##' @export
 touch_funs <- function(x) {
 
-    tfun <- table_function_pointer(x)
-    ifun <- init_function_pointer(x)
-    dfun <- ode_function_pointer(x)
-    cfun <- config_function_pointer(x)
+    funp <- pointers(x@funs)
+    tfun <- funp[["table"]]
+    ifun <- funp[["init"]]
+    dfun <- funp[["deriv"]]
+    cfun <- funp[["config"]]
     param <- as.numeric(param(x))
     init <- as.numeric(x@init)
     neta <- sum(nrow(omat(x)))
@@ -573,7 +540,7 @@ house <- function(...) {
              )
 
     x <- relocate_funs(x, "mrgsolve")
-    x <- check_funs(x)
+    stopifnot(funs_loaded(x@funs))
     x <- compiled(x,TRUE)
     x <- update(x,...,strict=FALSE)
     x

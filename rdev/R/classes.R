@@ -10,6 +10,16 @@ names(null_list) <- character(0)
 
 single.number <- function(x) length(x)==1 & is.numeric(x)
 
+valid_funs <- function(x) {
+  x1 <- length(x)==5
+  x2 <- identical(names(x), c("PACKAGE", "main", "ode", "table", "config"))
+  if(x1 & x2) return(list(TRUE,""))
+  return(list(FALSE, c("Invalid functions specification.", 
+                  "This model object is not compatible with the current mrgsolve version.",
+                  "Rebuild the model object or upgrade the mrgsolve version.")))
+}
+
+
 valid.numericlist <- function(object) {
   x1 <- all(sapply(object@data,single.number))
   x2 <- all(names(object@data) !="")
@@ -210,10 +220,15 @@ protomod <- list(model=character(0),
                  ixpr=0,
                  mxhnil=0,
                  shlib=list(date="",par="", cmt="", compiled=FALSE),
-                 func=c("MRGSOLVE_NO_ODE_FUN", "mrgsolve"),
-                 init_fun=c("MRGSOLVE_NO_INIT_FUN", "mrgsolve"),
-                 table_fun=c("MRGSOLVE_NO_TABLE_FUN","mrgsolve"),
-                 config_fun=c("MRGSOLVE_NO_CONFIG_FUN","mrgsolve"),
+                 funs = c(PACKAGE=character(0),
+                          main=character(0),
+                          ode=character(0),
+                          table=character(0),
+                          config=character(0)),
+                 #func=c("MRGSOLVE_NO_ODE_FUN", "mrgsolve"),
+                 #init_fun=c("MRGSOLVE_NO_INIT_FUN", "mrgsolve"),
+                 #table_fun=c("MRGSOLVE_NO_TABLE_FUN","mrgsolve"),
+                 #config_fun=c("MRGSOLVE_NO_CONFIG_FUN","mrgsolve"),
                  omega =new("omegalist"),
                  sigma = new("sigmalist"),
                  events=new("ev"),
@@ -238,7 +253,11 @@ eXclude <- function(x,what) x[!(x %in% what)]
 valid.mrgmod <- function(object) {
   tags <- unlist(names(object), use.names=FALSE)
   x <- check_names(tags,pars(object),cmt(object))
-  if(length(x)==0) return(TRUE)
+  x1 <- length(x)==0
+  fun <- valid_funs(object@funs)
+  cool <- x1 & fun[[1]]
+  if(cool) return(TRUE)
+  x <- c(x,fun[[2]])
   return(x)
 }
 
@@ -274,9 +293,6 @@ valid.mrgmod <- function(object) {
 ##' @slot tscale used to scale time in simulated output \code{<numeric>}
 ##' @slot omega \code{\link{matlist}} for simulating individual-level random effects
 ##' @slot sigma \code{\link{matlist}} for simulating residual error variates
-##' @slot func character vector of length 2 specifying symbol name and package for ode function; this is not normally set by the user
-##' @slot init_fun character vector of length 2 specifying symbol name and package for main function; this is not normally set by the user
-##' @slot table_fun character vector of length 2 specifying symbol name and package for table function; this is not normally set by the user
 ##' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
 ##' @slot advan either 2, 4, or 13 \code{<numeric>}
 ##' @slot trans either 1, 2, 4, or 11
@@ -345,6 +361,7 @@ setClass("tgrid", slots=c(start="numeric", end="numeric", delta="numeric", add="
 ##' @export
 ##' @rdname stime
 setClass("tgrids", slots=c(data="list"))
+
 
 
 

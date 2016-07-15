@@ -56,12 +56,6 @@ S4 class for mrgsolve model object
 
 \item{\code{sigma}}{\code{\link{matlist}} for simulating residual error variates}
 
-\item{\code{func}}{character vector of length 2 specifying symbol name and package for ode function; this is not normally set by the user}
-
-\item{\code{init_fun}}{character vector of length 2 specifying symbol name and package for main function; this is not normally set by the user}
-
-\item{\code{table_fun}}{character vector of length 2 specifying symbol name and package for table function; this is not normally set by the user}
-
 \item{\code{args}}{\code{<list>} of arguments to be passed to \code{\link{mrgsim}}}
 
 \item{\code{advan}}{either 2, 4, or 13 \code{<numeric>}}

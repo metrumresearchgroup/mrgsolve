@@ -8,7 +8,7 @@ pkg <- file.path("rdev")
 document(pkg)
 
 cppfile <- function(x) {
-  file.path(proj,paste0(x@model, ".cpp.cpp"))
+  file.path(proj,paste0(x@model, "__cpp.cpp"))
 }
 
 ## message("\nwriting header files for nullmodel and housemodel\n")

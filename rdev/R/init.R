@@ -75,8 +75,8 @@ setMethod("init", "mrgmod", function(.x,.y=list(),..., .pat="*") {
 
     .x@init@pattern <- .pat
 
-    if(!do.call("is.loaded", as.list(.x@init_fun))) {
-        return(.x@init)
+    if(!is.loaded(main_func(.x),.x@funs["PACKAGE"])) {
+      return(.x@init)
     }
 
     if(neq(.x)==0) return(as.init())
@@ -104,8 +104,6 @@ setMethod("init", "ANY", function(.x,...) init(as.list(.x),...))
 
 setGeneric("callinit",  function(x,...) standardGeneric("callinit"))
 setMethod("callinit", "mrgmod", function(x,...) {
-
-    ifun <- init_function_pointer(x)
     param <- as.numeric(param(x))
     as.init(touch_funs(x)$init)
 })
