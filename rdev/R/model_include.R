@@ -16,6 +16,7 @@ do_restore <- function(restore) {
 
 
 get_plugins <- function(what) {
+  what <- c(what,"base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 

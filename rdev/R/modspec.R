@@ -344,7 +344,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- collect_fixed(spec)
   table <- collect_table(spec)
   init  <- collect_init(spec)
-  plugin <- get_plugins(c(spec[["PLUGIN"]],"base"))
+  plugin <- get_plugins(spec[["PLUGIN"]])
   
   SET <- as.list(spec[["SET"]])
   
@@ -637,7 +637,7 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 ##' @export
 handle_spec_block.specPLUGIN <- function(x) {
-  x <- unique(c("base",as.cvec(x)))
+  x <- unique(as.cvec(x))
   if("mrgx" %in% x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
   }
