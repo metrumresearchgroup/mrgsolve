@@ -59,6 +59,12 @@ plugin_code <- function(x) {
   s_pick(x,"code") 
 }
 
+plugin_names <- function(x) {
+  if(is.null(x)) return("// NO PLUGINS")
+  x <- s_pick(x,"name")
+  paste0("// PLUGINS: ", paste(x, collapse=" "))
+}
+
 set_clink <- function(x) {
   if(is.null(x)) return(invisible(NULL))
   Sys.setenv(CLINK_CPPFLAGS = make_clink(x)) 

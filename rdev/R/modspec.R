@@ -433,6 +433,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Write the .cpp.cpp file
   def.con <- file(package_write, open="w")
   cat(
+    plugin_names(plugin),
     plugin_code(plugin),
     "#include \"modelheader.h\"",
     rd,
@@ -489,7 +490,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   purge_model(cfile(x))
   
   ## Compile the model
-  
   status <- system(paste0("R CMD SHLIB ",
                           ifelse(preclean, " --preclean ", ""),
                           build_path(cfile),
