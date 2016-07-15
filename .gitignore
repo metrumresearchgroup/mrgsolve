@@ -1,7 +1,8 @@
+test.R
 *.o
 *.so
 *.Rproj
-Rchecks`
+Rchecks
 .Rproj.user
 .Rhistory
 *.tar.gz

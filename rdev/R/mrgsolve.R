@@ -538,7 +538,6 @@ house <- function(...) {
              package="mrgsolve",
              model="housemodel"
              )
-
     x <- relocate_funs(x, "mrgsolve")
     stopifnot(funs_loaded(x@funs))
     x <- compiled(x,TRUE)
