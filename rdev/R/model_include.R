@@ -3,7 +3,7 @@ plugins <- new.env()
 plugins[[".depends"]] <- list(mrgx=c("Rcpp"),simeta=c("RcppArmadillo"))
 
 
-include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
+include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx", "base")
 
 get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS")) {
   as.list(Sys.getenv(what, unset=NA)) 
@@ -82,6 +82,9 @@ set_up_env <- function(x) {
   return(restore)
 }
 
+plugins[["base"]] <- list(
+  linkto="mrgsolve/base", name="base"
+)
 
 plugins[["simeta"]] <- list(
   linkto="mrgsolve/mrgx",
@@ -100,14 +103,13 @@ plugins[["RcppEigen"]] <- list(
   code = "#include <RcppEigen.h>\n",
   linkto = c("Rcpp/include","RcppEigen/include"), name="RcppEigen"
 )
+
 plugins[["RcppArmadillo"]] <- list(
   name="RcppArmadillo",
   libs = c("$(LAPACK_LIBS)", "$(BLAS_LIBS)", "$(FLIBS)"),
   code="#define ARMA_DONT_USE_CXX11\n#include <RcppArmadillo.h>\n#define NDEBUG 1\n",
   linkto = c("Rcpp/include", "RcppArmadillo/include")
 )
-
-
 
 plugins[["BH"]] <- list(linkto="BH/include", name="BH")
 

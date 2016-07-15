@@ -281,16 +281,13 @@ testSHLIB <- function() {
   if(!testSHLIB()) {
     warning(noRwarning, call.=FALSE)
   }
-  # what <- c("BH", "Rcpp", "RcppArmadillo", "mrgsolve")
-  # pkg <- build_path(file.path(find.package(what,quiet=FALSE),"include"))
-  # names(pkg) <- what
-  # GLOBALS[["CLINK"]] <- pkg
+  GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 }
 
 
 .onAttach <- function(libname,pkgname) {
-  packageStartupMessage("mrgsolve: Community Edition")
-  packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
+  base::packageStartupMessage("mrgsolve: Community Edition")
+  base::packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
   
 }
 

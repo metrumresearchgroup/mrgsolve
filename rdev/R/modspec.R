@@ -107,7 +107,7 @@ fixed_parameters <- function(x,fixed_type) {
 }
 
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(x,project) file.path(project,paste0(x, "__cpp.cpp"))
+compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
 
 ##' Parse model specification text.
 ##' @param txt model specification text
@@ -123,9 +123,7 @@ modelparse <- function(txt,split=FALSE,...) {
   txt <- strsplit(txt, "//+|##+",perl=TRUE)
   txt <- sapply(txt, `[`,1L)
   txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
-  
-  ##txt <- txt[!(is.na(txt) | grepl("^\\s*$",txt))]
-  
+
   start <- grep(block_re,txt,perl=TRUE)
   
   if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
@@ -305,14 +303,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   package <- ifelse(udll,rfile(model),model)
   
   ## Where to write the temp file
-  ## This is <package>.cpp.cpp
-  package_write <- compfile(package,project)
+  ## This is <package>__cpp.cpp
+  package_write <- compfile(package,soloc)
   
   if(audit) warn <- TRUE
   
   ## Copy the main model header into project:
-  modelheaders <- file.path(system.file(package="mrgsolve"), "include", c("mrgsolv.h","modelheader.h"))
-  file.copy(modelheaders,project, overwrite=TRUE)
+  #modelheaders <- file.path(system.file(package="mrgsolve"), "include", c("mrgsolv.h","modelheader.h"))
+  #file.copy(modelheaders,project, overwrite=TRUE)
   
   ## Read the model spec and parse:
   spec  <- modelparse(readLines(modfile,warn=FALSE))
@@ -346,7 +344,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- collect_fixed(spec)
   table <- collect_table(spec)
   init  <- collect_init(spec)
-  do_plugin <- length(spec[["PLUGIN"]]) > 0
+  plugin <- get_plugins(c(spec[["PLUGIN"]],"base"))
   
   SET <- as.list(spec[["SET"]])
   
@@ -435,7 +433,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Write the .cpp.cpp file
   def.con <- file(package_write, open="w")
   cat(
-    plugin_code(spec[["PLUGIN"]]),
+    plugin_code(plugin),
     "#include \"modelheader.h\"",
     rd,
     ## This should get moved to rd
@@ -469,11 +467,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
-  to_restore <- set_up_env(spec[["PLUGIN"]])
+  to_restore <- set_up_env(plugin)
+  
   on.exit(do_restore(to_restore))
   
   ## This name is suitable for use in the build path
-  cfile <- compfile(model,build_path(project))
+  cfile <- compfile(model,build_path(soloc))
   
   if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
   
@@ -490,14 +489,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   purge_model(cfile(x))
   
   ## Compile the model
-  ## 
-  # sys.args <- list(command = paste0("R CMD SHLIB ",
-  #                                   ifelse(preclean, " --preclean ", ""),
-  #                                   build_path(cfile),
-  #                                   " -o ",
-  #                                   sodll(x,short=TRUE)),
-  #                  ignore.stdout = ignore.stdout,
-  #                  show.output.on.console = FALSE)
   
   status <- system(paste0("R CMD SHLIB ",
                           ifelse(preclean, " --preclean ", ""),
@@ -507,7 +498,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                    ignore.stdout=ignore.stdout)
   
   
-  file.remove(compfile(package,project(x)))
+  file.remove(compfile(package,soloc(x)))
   
   if(status!=0) {
     warning("Compile did not succeed.  Returning NULL.", immediate.=TRUE,call.=FALSE);
@@ -646,12 +637,12 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 ##' @export
 handle_spec_block.specPLUGIN <- function(x) {
-  x <- unique(as.cvec(x))
+  x <- unique(c("base",as.cvec(x)))
   if("mrgx" %in% x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
   }
   if(length(x) ==0) return(list())
-  return(get_plugins(x))
+  return(x)
 }
 
 

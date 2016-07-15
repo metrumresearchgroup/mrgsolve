@@ -87,8 +87,8 @@ drop_model <- function(x) {
 
 check_and_copy <- function(x,temp,preclean=FALSE) {
 
-  from <- compfile(temp,project(x))
-  to <- compfile(model(x),project(x))
+  from <- compfile(temp,soloc(x))
+  to <- compfile(model(x),soloc(x))
 
   if(!file.exists(to)) {
     file.copy(from,to)
