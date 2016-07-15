@@ -465,6 +465,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$par <- pars(x)
   x@code <- readLines(modfile, warn=FALSE)
   x@shlib$date <- shdate(ntime())
+  x@shlib$version <- GLOBALS[["version"]]
+  x@shlib$source <- compfile(model,soloc)
   
   if(!compile) return(x)
   
