@@ -10,8 +10,8 @@
 \S4method{plot}{mrgsims,missing}(x, limit = 16, ...)
 
 \S4method{plot}{mrgsims,formula}(x, y, limit = 16, show.grid = TRUE,
-  as = "raw", outer = TRUE, type = "l", lwd = 2, ylab = "raw value",
-  groups = ID, scales = list(y = list(relation = "free")), ...)
+  outer = TRUE, type = "l", lwd = 2, ylab = "value", groups = ID,
+  scales = list(y = list(relation = "free")), ...)
 }
 \arguments{
 \item{x}{mrgsims object}
@@ -23,8 +23,6 @@
 \item{y}{formula used for plotting}
 
 \item{show.grid}{logical indicating whether or not to draw panel.grid}
-
-\item{as}{transformations for plotting simulated values}
 
 \item{outer}{passed to xyplot}
 
@@ -43,10 +41,6 @@ Generate a quick plot of simulated data.
 }
 \details{
 Values for \code{as} argument: ;  \code{raw}: raw simulated output;
-\code{frac}: each observation normalized to baseline value;
-\code{cfb}: change (difference) from baseline;
-\code{cfblog}: change from baseline of log10-transformed values;
-\code{log10y}: log10 transformation; \code{lny}: natural log transformed.
 }
 \examples{
 

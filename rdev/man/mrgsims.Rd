@@ -133,10 +133,8 @@ plot(out)
 plot(out, CP~.)
 plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 
-out <- label(out, DOSE=100)
-head(out)
 }
 \seealso{
-mod request variables label limit stime
+mod request variables  limit stime
 }
 

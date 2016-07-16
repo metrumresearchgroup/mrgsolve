@@ -1,17 +1,16 @@
-
-#library(metrumrg)
 library(testthat)
-#library(MASS)
 library(mrgsolve)
 library(dplyr)
 
+mrgsolve:::comp_forget()
+rm(list=ls())
 
+lim <- function(x,...) {
+    x %>% dplyr::filter(...) %>% as.data.frame
+}
 
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
-
-mrgsolve:::comp_forget()
-rm(list=ls())
 
 context("Setting F and ALAG")
 
@@ -50,24 +49,24 @@ out24 <- mod2 %>% param(ALAG2 = 2) %>% mrgsim(end=5,recsort=1)
 
 
 test_that("F is set for compartment 1 and 2", {
-  expect_true(limit(out10,time==2)$CENT==100)
-  expect_true(limit(out11,time==2)$CENT==20)
-  expect_true(limit(out12,time==2)$CENT==80)
+  expect_true(lim(out10,time==2)$CENT==100)
+  expect_true(lim(out11,time==2)$CENT==20)
+  expect_true(lim(out12,time==2)$CENT==80)
   
-  expect_true(limit(out20,time==2)$DEPOT==100)
-  expect_true(limit(out21,time==2)$DEPOT==30)
-  expect_true(limit(out22,time==2)$DEPOT==10)
+  expect_true(lim(out20,time==2)$DEPOT==100)
+  expect_true(lim(out21,time==2)$DEPOT==30)
+  expect_true(lim(out22,time==2)$DEPOT==10)
 })
 
 test_that("ALAG is set for compartment 1 and 2", {
   
-  expect_true(limit(out10, CENT>0)$time[1]==0)
-  expect_true(limit(out13, CENT>0)$time[1]==1)
-  expect_true(limit(out14, CENT>0)$time[1]==0.5)
+  expect_true(lim(out10, CENT>0)$time[1]==0)
+  expect_true(lim(out13, CENT>0)$time[1]==1)
+  expect_true(lim(out14, CENT>0)$time[1]==0.5)
   
-  expect_true(limit(out20, DEPOT>0)$time[1]==1)
-  expect_true(limit(out23, DEPOT>0)$time[1]==1.3)
-  expect_true(limit(out24, DEPOT>0)$time[1]==3)
+  expect_true(lim(out20, DEPOT>0)$time[1]==1)
+  expect_true(lim(out23, DEPOT>0)$time[1]==1.3)
+  expect_true(lim(out24, DEPOT>0)$time[1]==3)
 })
 
 
@@ -76,8 +75,8 @@ test_that("F is set for multiple doses", {
   out1 <- mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% param(F1 = 1) %>% mrgsim(end=3,recsort=2)
   out2 <- mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% param(F1 = 0.2) %>% mrgsim(end=3,recsort=2)
   
-  expect_equivalent(limit(out1, time > 0)$CENT, c(100,200,300))
-  expect_equivalent(limit(out2, time > 0)$CENT, c(20,40,60))
+  expect_equivalent(lim(out1, time > 0)$CENT, c(100,200,300))
+  expect_equivalent(lim(out2, time > 0)$CENT, c(20,40,60))
 })
 
 
@@ -87,9 +86,9 @@ test_that("F and ALAG are set from idata", {
   idata <- mrgsolve:::expand.idata(ID=1:3, F1=c(0.2, 0.5), ALAG1=c(0.2, 0.5,0.7,0.99))
   out1 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim()
   out2 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim(add=1+idata$ALAG1,recsort=1)
-  out2 <- out2 %>% limit(CENT>0) %>% as.tbl %>% group_by(ID)%>% slice(1)
+  out2 <- out2 %>% lim(CENT>0) %>% as.tbl %>% group_by(ID)%>% slice(1)
   
-  expect_equivalent(limit(out1, time==2)$CENT, 100*idata$F1)
+  expect_equivalent(lim(out1, time==2)$CENT, 100*idata$F1)
   expect_equivalent(out2$time, 1+idata$ALAG1)
 })
 
@@ -102,13 +101,13 @@ doses <- subset(exTheoph, evid==1)
 
 test_that("F  is set from data", {
   out1 <- mod1 %>% data_set(exTheoph) %>% mrgsim() 
-  expect_equivalent(limit(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
+  expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
 test_that("ALAG is set from data", {
   out2 <- mod1 %>% data_set(exTheoph) %>% 
     mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
-  out2 <- out2 %>% limit(CENT>0) %>% as.tbl%>% group_by(ID) %>% slice(1)
+  out2 <- out2 %>% lim(CENT>0) %>% as.tbl%>% group_by(ID) %>% slice(1)
   expect_equivalent(out2$time, doses$ALAG1)
 })
 

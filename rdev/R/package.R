@@ -72,7 +72,6 @@
 ##' init(mod)
 ##'
 ##' out <- mod %>% ev(events) %>% mrgsim(end=168)
-##' out <- label(out, TRT=1)
 ##'
 ##' out
 ##' head(out)

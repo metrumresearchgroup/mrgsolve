@@ -4,7 +4,7 @@
 \name{label}
 \alias{label}
 \alias{label,mrgsims-method}
-\title{Label simulation output.}
+\title{DEPRECATED: Label simulation output.}
 \usage{
 label(x, ...)
 
