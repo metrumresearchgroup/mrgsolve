@@ -345,10 +345,6 @@ test_that("Moving knobs are correctly identified", {
    expect_identical(moving(out), c("CL", "amt"))
 })
 
-test_that("amt knob is correctly captured in output in Amt", {
-   expect_true(is.element("Amt", names(out)))
-})
-
 
 test_that("CL knob is correctly captured in output as CL", {
    expect_true(is.element("CL", names(out)))
@@ -357,10 +353,6 @@ test_that("CL knob is correctly captured in output as CL", {
 
 test_that("A false knob does not appear in simulated output", {
    expect_false(is.element("foo", names(out)))
-})
-
-test_that("Knob potential knob errors are caught", {
-   expect_error(knobs(mod, CL=c(1,2,3), amt=c(100,200)))
 })
 
 context("Testing events (basic testing)")
