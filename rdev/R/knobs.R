@@ -7,23 +7,6 @@
 ##' @include mrgsims.R
 ##' @include classes.R
 
-# tran.use <- c("time", "amt", "ii", "rate","ss", "addl","cmt")
-# tran.alt <- c("Time", "Amt", "Ii", "Rate", "Ss", "Addl", "Cmt")
-# dot.tran.use <- paste(".", tran.use, sep="")
-# knobable <- c()
-# knobable <- c(knobable, tran.use)
-
-# protect <- function(x) {
-#   paste("KNOB<", x, ">", sep="")
-# }
-# protected <- function(x,logical = FALSE) {
-#   re <- "^KNOB<.*>$"
-#   if(!logical) return(grep(re, x, value=TRUE))
-#   if(logical)  return(grepl(re, x))
-# }
-# unprotect <- function(x) {
-#   gsub("^\\KNOB<(.+)>$", "\\1", x)
-# }
 
 ##' @title Run sensitivity analysis on model settings
 ##'
@@ -271,8 +254,8 @@ new_plot_knobs <- function(x,yval=variables(x),auto.key=list(),...) {
   
   x@moving <- m[1:keep]
   
-  ncol <- min(nlevels(grval),5)
-  if(missing(auto.key)) auto.key <- list(columns = ncol)
+  if(missing(auto.key)) auto.key <- list(columns = min(nlevels(grval),5))
+  
   plot(x,as.formula(form),..., groups=grval,auto.key=auto.key)
   
 }
