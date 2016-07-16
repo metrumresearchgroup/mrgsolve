@@ -2,6 +2,13 @@
 ##' @include utils.R
 NULL
 
+decorr <- function(x) {
+  off <- x[lower.tri(x)]
+  if(any(off < -1 | off > 1)) stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
+  return(invisible(.Call("mrgsolve_decorr", x)))
+}
+
+
 ##' Create a square numeric matrix from the lower-triangular elements.
 ##'
 ##' @param x numeric data

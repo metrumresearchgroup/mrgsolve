@@ -94,7 +94,7 @@ plus.ev <- function(e1,e2) {
         data1 <- cbind(data1, add)
     }
 
-    data1 <- rbind_fill(data1, data2)
+    data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
 
     if(exists("ID", data1)) {
         data1<- data1[order(data1$ID, data1$time),]
@@ -129,7 +129,7 @@ add.ev <- function(e1,e2) {
         names(add) <- long
         e1@data <- cbind(e1@data, add)
     }
-    e1@data <- rbind_fill(e1@data, e2@data)
+    e1@data <- as.data.frame(dplyr::bind_rows(e1@data, e2@data))
 
     if(exists("ID", e1@data)) {
         e1@data<- e1@data[order(e1@data$ID, e1@data$time),]
