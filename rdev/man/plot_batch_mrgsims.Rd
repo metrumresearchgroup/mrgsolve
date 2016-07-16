@@ -6,19 +6,19 @@
 \alias{plot,batch_mrgsims,missing-method}
 \title{Plot method for mrgsims objects.}
 \usage{
-\S4method{plot}{batch_mrgsims,missing}(x, yval = variables(x), limit = 9,
-  ...)
+\S4method{plot}{batch_mrgsims,missing}(x, yval = variables(x),
+  auto.key = list(), ...)
 
 \S4method{plot}{batch_mrgsims,formula}(x, y, show.grid = TRUE, lwd = 2,
-  type = "l", as = "raw", auto.key = list(columns = 1), scales = list(y
-  = list(relation = "free")), ...)
+  type = "l", yval = variables(x), auto.key = list(columns = 1),
+  scales = list(y = list(relation = "free")), ...)
 }
 \arguments{
 \item{x}{mrsims object}
 
-\item{yval}{variables to plot}
+\item{yval}{y varialbes to plot}
 
-\item{limit}{maximum number of yval to plot}
+\item{auto.key}{passed to xyplot}
 
 \item{...}{arguments passed to xyplot}
 
@@ -29,10 +29,6 @@
 \item{lwd}{passed to xyplot}
 
 \item{type}{passed to xyplot}
-
-\item{as}{transformation for every yval that is plotted}
-
-\item{auto.key}{passed to xyplot}
 
 \item{scales}{passed to xyplot}
 }
