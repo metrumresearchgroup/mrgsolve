@@ -94,7 +94,7 @@ generate_rdefs <- function(pars,
 
 
 relocate_funs <- function(x,PACKAGE) {
-    x@funs[1] <- PACKAGE
+    x@package <- PACKAGE
     x
 }
 

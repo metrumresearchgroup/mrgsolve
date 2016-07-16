@@ -372,7 +372,7 @@ tran_mrgsim <- function(x,
     if(!is.na(seed)) set.seed(seed)
 
     ## ODE and init functions:
-    funs <- pointers(x@funs)
+    funs <- pointers(x)
 
     ## "idata"
     if(!is.mrgindata(idata)) idata <- mrgindata(idata,...)
@@ -515,7 +515,7 @@ setMethod("parin", "mrgmod", function(x) {
 ##' @export
 touch_funs <- function(x) {
 
-    funp <- pointers(x@funs)
+    funp <- pointers(x)
     tfun <- funp[["table"]]
     ifun <- funp[["init"]]
     dfun <- funp[["deriv"]]
@@ -538,8 +538,7 @@ house <- function(...) {
              package="mrgsolve",
              model="housemodel"
              )
-    x <- relocate_funs(x, "mrgsolve")
-    stopifnot(funs_loaded(x@funs))
+    stopifnot(funs_loaded(x))
     x <- compiled(x,TRUE)
     x <- update(x,...,strict=FALSE)
     x

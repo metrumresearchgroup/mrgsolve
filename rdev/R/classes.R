@@ -11,8 +11,8 @@ names(null_list) <- character(0)
 single.number <- function(x) length(x)==1 & is.numeric(x)
 
 valid_funs <- function(x) {
-  x1 <- length(x)==5
-  x2 <- identical(names(x), c("PACKAGE", "main", "ode", "table", "config"))
+  x1 <- length(x)==4
+  x2 <- identical(names(x), c("main", "ode", "table", "config"))
   if(x1 & x2) return(list(TRUE,""))
   return(list(FALSE, c("Invalid functions specification.", 
                   "This model object is not compatible with the current mrgsolve version.",
@@ -220,8 +220,7 @@ protomod <- list(model=character(0),
                  ixpr=0,
                  mxhnil=0,
                  shlib=list(date="",par="", cmt="", compiled=FALSE, version=NULL, source=""),
-                 funs = c(PACKAGE=character(0),
-                          main=character(0),
+                 funs = c(main=character(0),
                           ode=character(0),
                           table=character(0),
                           config=character(0)),

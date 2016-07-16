@@ -382,11 +382,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            fixed=fixed,
            advan=subr[["advan"]],
            trans=subr[["trans"]],
-           omega=omega,sigma=sigma,
+           omega=omega,
+           sigma=sigma,
            param=as.param(param),
            init=as.init(init),
-           funs  = funs_create(model,package),
-           capture=as.character(spec[["CAPTURE"]]))
+           funs  = funs_create(model),
+           capture=as.character(spec[["CAPTURE"]])
+           )
   
   
   ## ADVAN 13 is the ODEs

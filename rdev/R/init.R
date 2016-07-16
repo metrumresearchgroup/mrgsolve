@@ -75,7 +75,7 @@ setMethod("init", "mrgmod", function(.x,.y=list(),..., .pat="*") {
 
     .x@init@pattern <- .pat
 
-    if(!is.loaded(main_func(.x),.x@funs["PACKAGE"])) {
+    if(!is.loaded(main_func(.x),package(.x))) {
       return(.x@init)
     }
 

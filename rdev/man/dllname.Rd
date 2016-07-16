@@ -4,11 +4,17 @@
 \name{dllname}
 \alias{dllname}
 \alias{dllname,mrgmod-method}
+\alias{package}
+\alias{package,mrgmod-method}
 \title{Return the model name.}
 \usage{
 dllname(x, ...)
 
 \S4method{dllname}{mrgmod}(x, ...)
+
+package(x, ...)
+
+\S4method{package}{mrgmod}(x, ...)
 }
 \arguments{
 \item{x}{model object}
