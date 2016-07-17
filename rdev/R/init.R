@@ -34,7 +34,7 @@ setMethod("as.init", "NULL", function(.x,...) create_numeric_list(list(), "cmt_l
 ##'
 ##' Calling \code{init} with the model object as the first argument will return the model initial conditions as a \code{numericlist} object. See \code{\link{numericlist}} for methods to  deal with \code{cmt_list} objects.
 ##'
-##' @aliases init callinit
+##' @aliases init 
 ##' @param .x the model object
 ##' @param .y list to be merged into parameter list
 ##' @param .pat a regular expression (character) to be applied as a filter when printing compartments to the screen
@@ -71,18 +71,19 @@ setGeneric("init", function(.x,...) standardGeneric("init"))
 setMethod("init", "mrgmod", function(.x,.y=list(),..., .pat="*") {
 
     args <- c(as.list(.y),list(...))
+    
     if(length(args)>0) return(update(.x,init=args))
 
     .x@init@pattern <- .pat
 
-    if(!is.loaded(main_func(.x),package(.x))) {
+    if(!main_loaded(.x)) {
       return(.x@init)
     }
 
     if(neq(.x)==0) return(as.init())
 
     ## Otherwise call function:
-    .x@init <- callinit(.x)
+    .x@init <- as.init(touch_funs(.x)$init)
     slot(.x@init,"pattern") <- .pat
     return(.x@init)
 })
@@ -100,14 +101,6 @@ setMethod("init", "list", function(.x,...) {create_numeric_list(.x,"cmt_list",..
 ##' @export
 ##' @rdname init
 setMethod("init", "ANY", function(.x,...) init(as.list(.x),...))
-
-
-setGeneric("callinit",  function(x,...) standardGeneric("callinit"))
-setMethod("callinit", "mrgmod", function(x,...) {
-    param <- as.numeric(param(x))
-    as.init(touch_funs(x)$init)
-})
-
 
 showinit <-  function(x,digits=3,ncols=NULL,right=FALSE,...) {
     if(is.mt(x@data)) {

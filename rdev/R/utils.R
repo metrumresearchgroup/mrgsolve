@@ -77,12 +77,6 @@ setGeneric("dllname", function(x,...) standardGeneric("dllname"))
 ##' @export
 ##' @rdname dllname
 setMethod("dllname", "mrgmod", function(x,...) return(x@package))
-##' @export
-##' @rdname dllname
-setGeneric("package", function(x,...) standardGeneric("package"))
-##' @export
-##' @rdname dllname
-setMethod("package", "mrgmod", function(x,...) return(x@package))
 
 
 

@@ -8,7 +8,6 @@
 \alias{as.init,list-method}
 \alias{as.init,missing-method}
 \alias{as.init,numeric-method}
-\alias{callinit}
 \alias{init}
 \alias{init,ANY-method}
 \alias{init,list-method}

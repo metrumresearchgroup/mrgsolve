@@ -98,14 +98,11 @@ relocate_funs <- function(x,PACKAGE) {
     x
 }
 
-compiled_or_stop <- function(x) UseMethod("compiled_or_stop")
-compiled_or_stop.mrgmod <- function(x) {
-    if(compiled(x)) return(invisible(NULL))
-    stop("Model may not have been successfully compiled.\n", "   Source: ", cfile(x),"\n   Shared object (DLL): ", sodll(x))
+build_version <- function(x) {
+  x@shlib[["version"]] 
 }
-
 compiled <- function(x,status=NULL) {
-    if(is.null(status)) return(x@shlib$compiled & dll_loaded(x))
+    if(is.null(status)) return(x@shlib$compiled)
     x@shlib$compiled <- status
     return(x)
 }
