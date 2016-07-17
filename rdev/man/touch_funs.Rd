@@ -4,12 +4,12 @@
 \alias{touch_funs}
 \title{Get inits from compiled function.}
 \usage{
-touch_funs(x, funp = NULL)
+touch_funs(x, keep_pointers = TRUE)
 }
 \arguments{
 \item{x}{mrgmod model object}
 
-\item{funp}{optional list of model function pointers}
+\item{keep_pointers}{should function pointers be returned?}
 }
 \description{
 Get inits from compiled function.

@@ -324,9 +324,10 @@ tran_mrgsim <- function(x,
   verbose <- x@verbose
   
   ## ODE and init functions:
-  funs <- pointers(x)
-  foo <- touch_funs(x,funs)
-
+  ## This both touches the functions as well as
+  ## gets the function pointers
+  foo <- touch_funs(x,keep_pointers=TRUE)
+  
   param <- as.numeric(param(x))
   init <-  as.numeric(init(x))
   
@@ -362,7 +363,6 @@ tran_mrgsim <- function(x,
   request <- as.cvec2(request)
   rename.request <- set_altname(request)
   request <- as.character(rename.request)
-  
   
   rename.carry <- set_altname(as.cvec2(carry.out))
   carry.out <- as.character(rename.carry)
@@ -469,7 +469,8 @@ tran_mrgsim <- function(x,
                init,
                names(init(x)),
                to_capture,
-               funs,data,idata,
+               foo[["pointers"]],
+               data,idata,
                as.matrix(omat(x)),as.matrix(smat(x)))
   
   if(length(out$issues)>0) stop(render_errors(unique(out$issues)),call.=FALSE)
@@ -512,13 +513,11 @@ setMethod("parin", "mrgmod", function(x) {
 ##' Get inits from compiled function.
 ##'
 ##' @param x mrgmod model object
-##' @param funp optional list of model function pointers
+##' @param keep_pointers should function pointers be returned?
 ##' @export
-touch_funs <- function(x,funp=NULL) {
+touch_funs <- function(x,keep_pointers=TRUE) {
   
-  if(is.null(funp)) {
-    funp <- pointers(x)
-  }
+  funp <- pointers(x)
   
   tfun <- funp[["table"]]
   ifun <- funp[["main"]]
@@ -534,7 +533,12 @@ touch_funs <- function(x,funp=NULL) {
   
   names(out$init) <- names(init)
   
+  if(keep_pointers) {
+    out[["pointers"]] <- funp
+  }
+  
   out
+  
 }
 
 
