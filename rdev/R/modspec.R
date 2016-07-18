@@ -108,6 +108,18 @@ fixed_parameters <- function(x,fixed_type) {
 
 ## Form a file name / path for the file that is actually compiled
 compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
+compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
+compdir <- function() {
+  paste(c("mrgsolve","shlib",Sys.info()[c("sysname","release", "machine")]),collapse="-")
+}
+
+setup_soloc <- function(loc,model) {
+  soloc <- file.path(loc,compdir(),model)
+  if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
+  return(soloc)
+}
+
+
 
 ##' Parse model specification text.
 ##' @param txt model specification text
@@ -201,6 +213,8 @@ altglobal <- function(code,moveto="GLOBAL",
 }
 
 
+
+
 ##' Write, compile, and load model code.
 ##'
 ##' This is a convenience function that ultimately calls \code{\link{mread}}.
@@ -259,7 +273,7 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' $ODE dxdt_CENT = -(CL/VC)*CENT;
 ##' '
 ##'
-##' mod <- mread(code=code)
+##' mod <- mcode("ex_mread",code)
 ##'
 ##' mod
 ##'
@@ -271,15 +285,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),preclean=FALSE,...) {
   
   quiet <- as.logical(quiet)
-  
   warn <- warn & (!quiet)
+  
+  if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
   ## Both project and soloc get normalized
   project <- normalizePath(project, mustWork=TRUE, winslash="/")
+  soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
+  soloc <-   setup_soloc(soloc,model)  
   
-  soloc <- normalizePath(soloc ,mustWork=TRUE, winslash="/")
-  
-  if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
   ## Check for spaces in the model name
   if(grepl(" +", model,perl=TRUE)) stop("model name cannot contain spaces.")
@@ -302,15 +316,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This is also the "package"
   package <- ifelse(udll,rfile(model),model)
   
-  ## Where to write the temp file
-  ## This is <package>__cpp.cpp
-  package_write <- compfile(package,soloc)
-  
   if(audit) warn <- TRUE
-  
-  ## Copy the main model header into project:
-  #modelheaders <- file.path(system.file(package="mrgsolve"), "include", c("mrgsolv.h","modelheader.h"))
-  #file.copy(modelheaders,project, overwrite=TRUE)
   
   ## Read the model spec and parse:
   spec  <- modelparse(readLines(modfile,warn=FALSE))
@@ -432,8 +438,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       parsedata=SET,
                       check.bounds=check.bounds)
   
-  ## Write the .cpp.cpp file
-  def.con <- file(package_write, open="w")
+  ## Write the model code to temporary file
+  temp_write <- tempfile()
+  def.con <- file(temp_write, open="w")
   cat(
     plugin_names(plugin),
     plugin_code(plugin),
@@ -471,6 +478,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
+  
+  
+  
+  
   to_restore <- set_up_env(plugin)
   
   on.exit(do_restore(to_restore))
@@ -481,28 +492,24 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
   
   preclean <- preclean | (!logged(model(x)))
-  
-  clean <- ifelse(preclean, " --preclean ", "")
-  
+
+  same <- check_and_copy(from = temp_write,
+                         to = compfile(model(x),soloc(x)),
+                         preclean)
+
   # Wait at least 2 sec since last compile
   safe_wait(x)
-  
-  ## The temp file is copied to the actual file compile file
-  check_and_copy(x,package,preclean)
   
   purge_model(cfile(x))
   
   ## Compile the model
+  ## The shared object is model__cpp.so
   status <- system(paste0("R CMD SHLIB ",
                           ifelse(preclean, " --preclean ", ""),
-                          build_path(cfile),
-                          " -o ",
-                          sodll(x,short=TRUE)),
+                          build_path(cfile)
+                          ),
                    ignore.stdout=ignore.stdout)
-  
-  
-  file.remove(compfile(package,soloc(x)))
-  
+
   if(status!=0) {
     warning("Compile did not succeed.  Returning NULL.", immediate.=TRUE,call.=FALSE);
     return(NULL)
@@ -510,11 +517,16 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(ignore.stdout & !quiet) message("done.")
   
+  ## Rename the shared object to unique name
+  ## e.g model2340239403.so
+  if(!file.exists(compout(model,soloc(x)))) stop("Could not find shared object file after compilation.")
+  z <- file.copy(compout(model,soloc(x)),sodll(x))
+    
   store(x)
   
   dyn.load(sodll(x))
   
-  if(!dll_loaded(x)) stop("Model was not found after attempted loading.")
+  stopifnot(dll_loaded(x))
   
   x <- compiled(x,TRUE)
   
