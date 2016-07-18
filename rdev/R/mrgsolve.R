@@ -549,6 +549,7 @@ house <- function(...) {
            package="mrgsolve",
            model="housemodel"
   )
+  x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
   x <- update(x,...,strict=FALSE)
   z <- pointers(x)

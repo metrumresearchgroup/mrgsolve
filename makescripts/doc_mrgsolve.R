@@ -24,7 +24,8 @@ cppfile <- function(x) {
 
 ## I think mrgsolve functions available after doc
 foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
-foo@shlib$source <- NULL
+#foo@shlib$source <- NULL
+#foo@soloc <- ""
 cpp <- normalizePath(cppfile(foo))
 
 x <- file.copy(cpp, file.path(pkg, "src"),overwrite=TRUE)

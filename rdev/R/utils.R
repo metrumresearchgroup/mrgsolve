@@ -841,8 +841,11 @@ as_pack_mod <- function(model, project, PACKAGE) {
 
     x@shlib$par <- pars(x)
     x@shlib$cmt <- cmt(x)
+    x@shlib$source <- NULL
     x@code <- code
     x <- relocate_funs(x, PACKAGE)
+    x@soloc <- ""
+  
     return(x)
 }
 
