@@ -262,23 +262,7 @@ models <- function() {
 }
 
 
-
-noRwarning <- '
-Could not find R program in PATH.
-If you are compiling your own models, please first make sure that
-the following command runs properly from your R prompt:
-  system("R CMD SHLIB -v")
-
-'
-
-testSHLIB <- function() {
-  x <- system("R --version",ignore.stdout=TRUE, intern=TRUE)
-  is.null(attr(x,"status"))
-}
-
-
 .onLoad <- function(libname, pkgname) {
-
   GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 }
 
@@ -286,9 +270,7 @@ testSHLIB <- function() {
 .onAttach <- function(libname,pkgname) {
   base::packageStartupMessage("mrgsolve: Community Edition")
   base::packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
-  if(!testSHLIB()) {
-    warning(noRwarning, call.=FALSE)
-  }
+
 }
 
 
