@@ -466,7 +466,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$cmt <- cmt(x)
   x@shlib$par <- pars(x)
   x@code <- readLines(modfile, warn=FALSE)
-  x@shlib$date <- shdate(ntime())
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- compfile(model,soloc)
   
@@ -479,7 +478,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This name is suitable for use in the build path
   cfile <- compfile(model,build_path(soloc))
   
-  if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
+  if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
   
   preclean <- preclean | (!logged(model(x)))
   

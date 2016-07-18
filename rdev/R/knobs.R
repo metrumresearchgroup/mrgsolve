@@ -198,16 +198,17 @@ setMethod("show", "batch_mrgsims", function(object) {
 ##' @param lwd passed to xyplot
 ##' @param scales passed to xyplot
 ##' @param auto.key passed to xyplot
+##' @param mincol minimum number of columns in key
 ##' @param type passed to xyplot
 ##' @param ... arguments passed to xyplot
 ##' @export
 ##' @rdname plot_batch_mrgsims
-setMethod("plot", c("batch_mrgsims","missing"), function(x,yval=variables(x),auto.key=list(),...) {
-  new_plot_knobs(x,yval,auto.key,...)
+setMethod("plot", c("batch_mrgsims","missing"), function(x,yval=variables(x),auto.key=list(),mincol=3,...) {
+  new_plot_knobs(x,yval,auto.key,mincol,...)
 })
 
 
-new_plot_knobs <- function(x,yval=variables(x),auto.key=list(),...) {
+new_plot_knobs <- function(x,yval,auto.key,mincol,...) {
   
   m <- moving(x)
 
@@ -217,8 +218,7 @@ new_plot_knobs <- function(x,yval=variables(x),auto.key=list(),...) {
   
   ## var1+var2+var3 ...
   yval <- paste(yval, collapse="+")
-  ## Group by the first moving value
-  grval <- moving(x)[1]
+  
   ## The formula
   form <- paste0(yval,"~time")
   
@@ -240,7 +240,7 @@ new_plot_knobs <- function(x,yval=variables(x),auto.key=list(),...) {
   ## But if there is more than one y and more than two moving, keep only 2
   if(ny > 1 & nm >=2) keep <- 2
   
-  grval <- factor(df[,m[1]], labels=paste0(m[1],sort(unique(df[,m[1]]))))
+  grval <- factor(df[,m[1]], labels=paste0(m[1]," ",sort(unique(df[,m[1]]))))
   
   if(nm > keep) {
     kp <- unique(df[,m[c(1:keep)],drop=FALSE])
@@ -254,7 +254,9 @@ new_plot_knobs <- function(x,yval=variables(x),auto.key=list(),...) {
   
   x@moving <- m[1:keep]
   
-  if(missing(auto.key)) auto.key <- list(columns = min(nlevels(grval),5))
+  if(identical(auto.key,list())) {
+    auto.key <- list(columns = min(nlevels(grval),mincol))
+  }
   
   plot(x,as.formula(form),..., groups=grval,auto.key=auto.key)
   
@@ -270,6 +272,7 @@ setMethod("plot", c("batch_mrgsims","formula"), function(x,y,
                                                          auto.key=list(columns=1),
                                                          scales=list(y=list(relation='free')),
                                                          ...) {
+  
   requireNamespace("lattice", quietly=TRUE)
   
   if(y[[3]] == '.') {
@@ -283,7 +286,8 @@ setMethod("plot", c("batch_mrgsims","formula"), function(x,y,
   
   data <- as.data.frame(x)
   
-  lattice::xyplot(y,data=data,
+  lattice::xyplot(y,
+                  data=data,
                   type=type,
                   scales=scales,
                   drop.unused.levels=TRUE,

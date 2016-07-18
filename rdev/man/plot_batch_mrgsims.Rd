@@ -7,7 +7,7 @@
 \title{Plot method for mrgsims objects.}
 \usage{
 \S4method{plot}{batch_mrgsims,missing}(x, yval = variables(x),
-  auto.key = list(), ...)
+  auto.key = list(), mincol = 3, ...)
 
 \S4method{plot}{batch_mrgsims,formula}(x, y, show.grid = TRUE, lwd = 2,
   type = "l", yval = variables(x), auto.key = list(columns = 1),
@@ -19,6 +19,8 @@
 \item{yval}{y varialbes to plot}
 
 \item{auto.key}{passed to xyplot}
+
+\item{mincol}{minimum number of columns in key}
 
 \item{...}{arguments passed to xyplot}
 
