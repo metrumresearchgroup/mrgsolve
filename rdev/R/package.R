@@ -278,9 +278,7 @@ testSHLIB <- function() {
 
 
 .onLoad <- function(libname, pkgname) {
-  if(!testSHLIB()) {
-    warning(noRwarning, call.=FALSE)
-  }
+
   GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 }
 
@@ -288,7 +286,9 @@ testSHLIB <- function() {
 .onAttach <- function(libname,pkgname) {
   base::packageStartupMessage("mrgsolve: Community Edition")
   base::packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
-  
+  if(!testSHLIB()) {
+    warning(noRwarning, call.=FALSE)
+  }
 }
 
 
