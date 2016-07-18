@@ -272,7 +272,7 @@ the following command runs properly from your R prompt:
 '
 
 testSHLIB <- function() {
-  x <- system("R --version", intern=TRUE)
+  x <- system("R --version",ignore.stdout=TRUE, intern=TRUE)
   is.null(attr(x,"status"))
 }
 
