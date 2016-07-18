@@ -47,8 +47,8 @@ set_args <- c("Req", "obsonly","mtime", "recsort",
               "carry.out","Trequest","trequest")
 
 ## REMOVE 5/18/2016
-is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
-funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
+#is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
+#funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
@@ -107,7 +107,23 @@ fixed_parameters <- function(x,fixed_type) {
 }
 
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(x,project) file.path(project,paste0(x, "__cpp.cpp"))
+compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
+compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
+compdir <- function() {
+  paste(c("mrgsolve",
+          "so",
+          as.character(GLOBALS[["version"]]),
+          R.version$platform),
+        collapse="-")
+}
+
+setup_soloc <- function(loc,model) {
+  soloc <- file.path(loc,compdir(),model)
+  if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
+  return(soloc)
+}
+
+
 
 ##' Parse model specification text.
 ##' @param txt model specification text
@@ -123,8 +139,6 @@ modelparse <- function(txt,split=FALSE,...) {
   txt <- strsplit(txt, "//+|##+",perl=TRUE)
   txt <- sapply(txt, `[`,1L)
   txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
-  
-  ##txt <- txt[!(is.na(txt) | grepl("^\\s*$",txt))]
   
   start <- grep(block_re,txt,perl=TRUE)
   
@@ -203,6 +217,8 @@ altglobal <- function(code,moveto="GLOBAL",
 }
 
 
+
+
 ##' Write, compile, and load model code.
 ##'
 ##' This is a convenience function that ultimately calls \code{\link{mread}}.
@@ -261,7 +277,7 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' $ODE dxdt_CENT = -(CL/VC)*CENT;
 ##' '
 ##'
-##' mod <- mread(code=code)
+##' mod <- mcode("ex_mread",code)
 ##'
 ##' mod
 ##'
@@ -273,15 +289,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),preclean=FALSE,...) {
   
   quiet <- as.logical(quiet)
-  
   warn <- warn & (!quiet)
+  
+  if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
   ## Both project and soloc get normalized
   project <- normalizePath(project, mustWork=TRUE, winslash="/")
+  soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
+  soloc <-   setup_soloc(soloc,model)  
   
-  soloc <- normalizePath(soloc ,mustWork=TRUE, winslash="/")
-  
-  if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
   ## Check for spaces in the model name
   if(grepl(" +", model,perl=TRUE)) stop("model name cannot contain spaces.")
@@ -304,15 +320,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This is also the "package"
   package <- ifelse(udll,rfile(model),model)
   
-  ## Where to write the temp file
-  ## This is <package>.cpp.cpp
-  package_write <- compfile(package,project)
-  
   if(audit) warn <- TRUE
-  
-  ## Copy the main model header into project:
-  modelheaders <- file.path(system.file(package="mrgsolve"), "include", c("mrgsolv.h","modelheader.h"))
-  file.copy(modelheaders,project, overwrite=TRUE)
   
   ## Read the model spec and parse:
   spec  <- modelparse(readLines(modfile,warn=FALSE))
@@ -346,7 +354,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- collect_fixed(spec)
   table <- collect_table(spec)
   init  <- collect_init(spec)
-  do_plugin <- length(spec[["PLUGIN"]]) > 0
+  plugin <- get_plugins(spec[["PLUGIN"]])
   
   SET <- as.list(spec[["SET"]])
   
@@ -384,10 +392,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            fixed=fixed,
            advan=subr[["advan"]],
            trans=subr[["trans"]],
-           omega=omega,sigma=sigma,
+           omega=omega,
+           sigma=sigma,
            param=as.param(param),
            init=as.init(init),
-           capture=as.character(spec[["CAPTURE"]]))
+           funs  = funs_create(model),
+           capture=as.character(spec[["CAPTURE"]])
+  )
+  
   
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
@@ -416,27 +428,26 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This must come after audit
   if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();\n"
   
-  ## These are the symbols:
-  x <- assign_symbols(x)
-  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars=names(param),
                       cmt=names(init),
-                      ode_symbol(x),
-                      main_symbol(x),
-                      table_symbol(x),
-                      config_symbol(x),
+                      ode_func(x),
+                      main_func(x),
+                      table_func(x),
+                      config_func(x),
                       model=model(x),
                       omats=omat(x),
                       smats=smat(x),
                       parsedata=SET,
                       check.bounds=check.bounds)
   
-  ## Write the .cpp.cpp file
-  def.con <- file(package_write, open="w")
+  ## Write the model code to temporary file
+  temp_write <- tempfile()
+  def.con <- file(temp_write, open="w")
   cat(
-    plugin_code(spec[["PLUGIN"]]),
+    plugin_names(plugin),
+    plugin_code(plugin),
     "#include \"modelheader.h\"",
     rd,
     ## This should get moved to rd
@@ -466,62 +477,67 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$cmt <- cmt(x)
   x@shlib$par <- pars(x)
   x@code <- readLines(modfile, warn=FALSE)
-  x@shlib$date <- shdate(ntime())
+  x@shlib$version <- GLOBALS[["version"]]
+  x@shlib$source <- compfile(model,soloc)
   
   if(!compile) return(x)
   
-  to_restore <- set_up_env(spec[["PLUGIN"]])
+  to_restore <- set_up_env(plugin)
+  
   on.exit(do_restore(to_restore))
   
   ## This name is suitable for use in the build path
-  cfile <- compfile(model,build_path(project))
+  cfile <- compfile(model,build_path(soloc))
   
-  if(ignore.stdout & !quiet) message("Compiling ",basename(cfile)," ... ", appendLF=FALSE)
+  if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
   
   preclean <- preclean | (!logged(model(x)))
   
-  clean <- ifelse(preclean, " --preclean ", "")
+  same <- check_and_copy(from = temp_write,
+                         to = compfile(model(x),soloc(x)),
+                         preclean)
   
   # Wait at least 2 sec since last compile
   safe_wait(x)
   
-  ## The temp file is copied to the actual file compile file
-  check_and_copy(x,package,preclean)
-  
   purge_model(cfile(x))
   
   ## Compile the model
-  ## 
-  # sys.args <- list(command = paste0("R CMD SHLIB ",
-  #                                   ifelse(preclean, " --preclean ", ""),
-  #                                   build_path(cfile),
-  #                                   " -o ",
-  #                                   sodll(x,short=TRUE)),
-  #                  ignore.stdout = ignore.stdout,
-  #                  show.output.on.console = FALSE)
+  ## The shared object is model__cpp.so
+  syst <- paste0(R.home(component="bin"), 
+                 .Platform$file.sep,
+                 "R CMD SHLIB ",
+                 ifelse(preclean, " --preclean ", ""),
+                 build_path(cfile))
   
-  status <- system(paste0("R CMD SHLIB ",
-                          ifelse(preclean, " --preclean ", ""),
-                          build_path(cfile),
-                          " -o ",
-                          sodll(x,short=TRUE)),
-                   ignore.stdout=ignore.stdout)
+  status <- suppressWarnings(system(syst,intern=ignore.stdout))
   
+  output <- status
+  attributes(output) <- NULL
   
-  file.remove(compfile(package,project(x)))
+  status <- attr(status, "status")
   
-  if(status!=0) {
-    warning("Compile did not succeed.  Returning NULL.", immediate.=TRUE,call.=FALSE);
-    return(NULL)
+  comp_success <- is.null(status) & file.exists(compout(model,soloc(x)))
+  
+  if(!ignore.stdout & comp_success) {
+    cat(output, sep="\n") 
+  }
+  
+  if(!comp_success) {
+    stop("\n\nThere was a problem when compiling the model.",call.=FALSE);
   }
   
   if(ignore.stdout & !quiet) message("done.")
+  
+  ## Rename the shared object to unique name
+  ## e.g model2340239403.so
+  z <- file.copy(compout(model,soloc(x)),sodll(x))
   
   store(x)
   
   dyn.load(sodll(x))
   
-  if(!dll_loaded(x)) stop("Model was not found after attempted loading.")
+  stopifnot(dll_loaded(x))
   
   x <- compiled(x,TRUE)
   
@@ -652,7 +668,7 @@ handle_spec_block.specPLUGIN <- function(x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
   }
   if(length(x) ==0) return(list())
-  return(get_plugins(x))
+  return(x)
 }
 
 

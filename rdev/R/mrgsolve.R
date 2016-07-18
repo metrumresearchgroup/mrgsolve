@@ -18,12 +18,12 @@ tgrid_matrix <- function(...) {
 }
 
 tgrid_id <- function(col,idata) {
-    if(nrow(idata)==0) return(integer(0))
-    if(length(col)==0) return(integer(0))
-    if(!is.element(col,colnames(idata))) return(integer(0))
-    ## Converting to C indexing here
-    if(is.integer(idata[,col])) return(idata[,col]-1)
-    return(match(idata[,col],sort(unique(idata[,col])))-1)
+  if(nrow(idata)==0) return(integer(0))
+  if(length(col)==0) return(integer(0))
+  if(!is.element(col,colnames(idata))) return(integer(0))
+  ## Converting to C indexing here
+  if(is.integer(idata[,col])) return(idata[,col]-1)
+  return(match(idata[,col],sort(unique(idata[,col])))-1)
 }
 
 
@@ -41,36 +41,36 @@ tgrid_id <- function(col,idata) {
 ##' of these names exist in the data set, the column will not be renamed.
 ##' @export
 lctran <- function(data) {
-    n <- names(data)
-    infrom <- is.element(n,tran_upper)
-    haslower <- is.element(tolower(n),n)
-    change <- infrom & !haslower
-    if(sum(change) > 0) names(data)[change] <- tolower(n[change])
-    data
+  n <- names(data)
+  infrom <- is.element(n,tran_upper)
+  haslower <- is.element(tolower(n),n)
+  change <- infrom & !haslower
+  if(sum(change) > 0) names(data)[change] <- tolower(n[change])
+  data
 }
 
 match_param <- function(a,b,off=-1) {
-    ans1 <- match(a,b)
-    ans2 <- match(b[ans1],a)
-    list(par.loc=(ans1[!is.na(ans1)] + as.integer(off)), data.loc=(ans2[!is.na(ans2)] + as.integer(off)))
+  ans1 <- match(a,b)
+  ans2 <- match(b[ans1],a)
+  list(par.loc=(ans1[!is.na(ans1)] + as.integer(off)), data.loc=(ans2[!is.na(ans2)] + as.integer(off)))
 }
 
 ifmatch <- function(a,b,off=-1) {
-    ans <- match(a,b)
-    return(ans[!is.na(ans)] + as.integer(off))
+  ans <- match(a,b)
+  return(ans[!is.na(ans)] + as.integer(off))
 }
 
 fmatch <- function(x,y) {
-    x <- match(x,y,0)
-    sort(x,decreasing=TRUE)
+  x <- match(x,y,0)
+  sort(x,decreasing=TRUE)
 }
 
 
 validate_idata <- function(idata) {
-    if(is.null(idata)) return(invisible(TRUE))
-    if(!(is.data.frame(idata) | is.matrix(idata)))
-        stop("idata needs to be either NULL, data.frame, or matrix.")
-    return(invisible(TRUE))
+  if(is.null(idata)) return(invisible(TRUE))
+  if(!(is.data.frame(idata) | is.matrix(idata)))
+    stop("idata needs to be either NULL, data.frame, or matrix.")
+  return(invisible(TRUE))
 }
 
 
@@ -78,8 +78,8 @@ is.numeric.data.frame <- function(x)sapply(x, is.numeric)
 
 
 as.mrgindata <- function(x) {
-    class(x) <- c("mrgindata", x)
-    return(x)
+  class(x) <- c("mrgindata", x)
+  return(x)
 }
 
 ##' Prepare input data.frame or matrix
@@ -96,58 +96,58 @@ mrgindata <- function(x,...) UseMethod("mrgindata")
 ##' @rdname mrgindata
 ##' @export
 mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
-
-
-    if(verbose) quiet <- FALSE
-
-    if(is.mrgindata(x)) return(x)
-
-    if(is.mrgmod(m)) {
-        if(is.character(x[["cmt"]])) {
-            if(verbose) message("Converting cmt to integer")
-            x[["cmt"]] <- match(x[["cmt"]], cmt(m),0)
-        }
-        if(is.character(x[["CMT"]])) {
-            if(verbose) message("Converting CMT to integer")
-            x[["CMT"]] <- match(x[["CMT"]], cmt(m),0)
-        }
+  
+  
+  if(verbose) quiet <- FALSE
+  
+  if(is.mrgindata(x)) return(x)
+  
+  if(is.mrgmod(m)) {
+    if(is.character(x[["cmt"]])) {
+      if(verbose) message("Converting cmt to integer")
+      x[["cmt"]] <- match(x[["cmt"]], cmt(m),0)
     }
-
-
-    nu <-is.numeric(x)
-
-    if(sum(!nu)>0) {
-        if(!quiet) message("Dropping non-numeric columns: ", paste(names(x)[!nu], collapse=" "))
+    if(is.character(x[["CMT"]])) {
+      if(verbose) message("Converting CMT to integer")
+      x[["CMT"]] <- match(x[["CMT"]], cmt(m),0)
     }
-
-    x <- data.matrix(x[,nu, drop=FALSE])
-    
-    uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
-    lc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_LC"]])
-    
-    if(uc & lc) {
-      warning("Both lower- & upper-case names found in the data set.\n",
-              "Please use either:\n",
-              "  time,amt,cmt,evid,ii,addl,ss,rate\n",
-              "or:\n",
-              "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
-    }
-
-    class(x) <- c("mrgindata", class(x))
-
-    x
+  }
+  
+  
+  nu <-is.numeric(x)
+  
+  if(sum(!nu)>0) {
+    if(!quiet) message("Dropping non-numeric columns: ", paste(names(x)[!nu], collapse=" "))
+  }
+  
+  x <- data.matrix(x[,nu, drop=FALSE])
+  
+  uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
+  lc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_LC"]])
+  
+  if(uc & lc) {
+    warning("Both lower- & upper-case names found in the data set.\n",
+            "Please use either:\n",
+            "  time,amt,cmt,evid,ii,addl,ss,rate\n",
+            "or:\n",
+            "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
+  }
+  
+  class(x) <- c("mrgindata", class(x))
+  
+  x
 }
 
 
 ##' @rdname mrgindata
 ##' @export
 mrgindata.matrix <- function(x,verbose=FALSE,...) {
-    if(is.mrgindata(x)) return(x)
-    if(is.numeric(x)) {
-        class(x) <- c("mrgindata", class(x))
-        return(x)
-    }
-    stop("Input data matrix is not numeric")
+  if(is.mrgindata(x)) return(x)
+  if(is.numeric(x)) {
+    class(x) <- c("mrgindata", class(x))
+    return(x)
+  }
+  stop("Input data matrix is not numeric")
 }
 
 
@@ -240,65 +240,65 @@ setMethod("mrgsim", "mrgmod", function(x,
                                        data=NULL,
                                        idata=NULL,
                                        nid = 1,...) {
-
-    compiled_or_stop(x)
-
-    if(missing(data)) data <- x@args$data; x@args$data <- NULL
-    if(missing(idata)) idata <- x@args$idata; x@args$idata <- NULL
-
-    args <- merge(x@args, list(...), strict=FALSE)
-
-
-    if(length(args) > 0) {
-        x <- do.call("update",c(x,args))
-        if(x@verbose) message("Updating model object...")
-    }
-
-    if(is.null(data) & is.null(idata) & nid > 1) {
-        idata <- data.frame(ID=1:nid)
-    }
-
-    validate_idata(idata)
-
-    if(is.null(idata)) idata <- null_idata
-
-    ev <- as.data.frame(events(x))
-
-    if(nrow(ev) > 0 & is.element("ID",colnames(ev)) & is.null(data)) {
-        data <- mrgindata(ev,x,x@verbose)
-    }
-
-    if(!is.null(data)) {
-        out <- do.call("tran_mrgsim", c(list(x),list(data=data, idata=idata),args))
-        return(out)
-    }
-
-    if(nrow(idata)==0) {
-        ## is.null(data) & is.null(idata)
-        ##        idata <- cbind(data.frame(ID=1),list(param(x)))
-        idata <- data.frame(ID=1)
-    }
-
-    if(!is.element("ID", colnames(idata))) idata <- bind_col(idata, "ID", 1:nrow(idata))
-
-    if(nrow(ev) > 0) {
-        ## Generic events:
-        ev <- mrgindata(ev,x,x@verbose)
-        data <- .Call(mrgsolve_EXPAND_EVENTS,
-                      list(), ev, idata[,"ID"])
-    } else {
-        ## No data, no events:
-        data <- matrix(idata[,"ID"], ncol=1, dimnames=list(NULL, c("ID")))
-    }
-
+  
+  if(missing(data)) data <- x@args$data; x@args$data <- NULL
+  
+  if(missing(idata)) idata <- x@args$idata; x@args$idata <- NULL
+  
+  args <- merge(x@args, list(...), strict=FALSE)
+  
+  if(length(args) > 0) {
+    x <- do.call("update",c(x,args))
+    if(x@verbose) message("Updating model object...")
+  }
+  
+  if(is.null(data) & is.null(idata) & nid > 1) {
+    idata <- data.frame(ID=1:nid)
+  }
+  
+  validate_idata(idata)
+  
+  if(is.null(idata)) idata <- null_idata
+  
+  ev <- as.data.frame(events(x))
+  
+  if(nrow(ev) > 0 & is.element("ID",colnames(ev)) & is.null(data)) {
+    data <- mrgindata(ev,x,x@verbose)
+  }
+  
+  if(!is.null(data)) {
     out <- do.call("tran_mrgsim", c(list(x),list(data=data, idata=idata),args))
     return(out)
+  }
+  
+  if(nrow(idata)==0) {
+    ## is.null(data) & is.null(idata)
+    ##        idata <- cbind(data.frame(ID=1),list(param(x)))
+    idata <- data.frame(ID=1)
+  }
+  
+  if(!is.element("ID", colnames(idata))) idata <- bind_col(idata, "ID", 1:nrow(idata))
+  
+  if(nrow(ev) > 0) {
+    ## Generic events:
+    ev <- mrgindata(ev,x,x@verbose)
+    data <- .Call(mrgsolve_EXPAND_EVENTS,
+                  list(), ev, idata[,"ID"])
+  } else {
+    ## No data, no events:
+    data <- matrix(idata[,"ID"], ncol=1, dimnames=list(NULL, c("ID")))
+  }
+  
+  out <- do.call("tran_mrgsim", c(list(x),list(data=data, idata=idata),args))
+  
+  return(out)
+
 })
 
 ##' @export
 ##' @rdname mrgsim
 setMethod("mrgsim", "mrgsims", function(x,...) {
-    mrgsim(mod(x),...)
+  mrgsim(mod(x),...)
 })
 
 tran_mrgsim <- function(x,
@@ -320,271 +320,248 @@ tran_mrgsim <- function(x,
                         descol = character(0),
                         filbak=TRUE,
                         ...) {
-
-    compiled_or_stop(x)
-
-    verbose <- x@verbose
-    param <- as.numeric(param(x))
-    init <-  as.numeric(init(x))
-    foo <- touch_funs(x)
-
-    if(!identical(names(param(x)),x@shlib$par))
-        stop("The parameter list  has changed since the model was compiled.")
-    if(!identical(names(init(x)), x@shlib$cmt))
-        stop("The compartment list has changed since the model was compiled.")
-
-    ## request is stored in the model object
-    ## if request is (all) take all compartments
-    if(x@request[1]=="(all)") {
-        request <- cmt(x)
-    } else {
-        request <- x@request
-    }
-
-    ## Requesting table items
-    if(missing(trequest)) trequest <- c(foo$tnames,x@capture)
-
-    ## If Trequest is supplied,
-    ## take only tabled items and drop compartments
-    if(!missing(Trequest)) {
-        request <- ""
-        trequest <- Trequest
-    }
-
-    ## Request is an explicit listing of all
-    ## items that are compartments or tabled items
-    if(!missing(Request)) {
-        request <- trequest <- Request
-    }
-
-    request <- as.cvec2(request)
-    rename.request <- set_altname(request)
-    request <- as.character(rename.request)
-
-
-    rename.carry <- set_altname(as.cvec2(carry.out))
-    carry.out <- as.character(rename.carry)
-
-
-    trequest <- as.cvec(trequest)
-
-    ## Set the seed:
-    if(!is.na(seed)) set.seed(seed)
-
-    ## ODE and init functions:
-    funs <- list()
-    funs$deriv <- ode_function_pointer(x)
-    funs$table <- table_function_pointer(x)
-    funs$init <- init_function_pointer(x)
-    funs$config <- config_function_pointer(x)
-
-    ## "idata"
-    if(!is.mrgindata(idata)) idata <- mrgindata(idata,...)
-
-    idata_idcol <- match("ID", colnames(idata))
-
-    if(is.na(idata_idcol)) stop("idata matrix must have ID column")
-
-    ## data
-    if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
-
-    tcol <- "time"
-    
-    if(ncol(data) > 1) {
-        tcol <- intersect(c("time", "TIME"), colnames(data))
-        if(length(tcol)==0) stop("time is a required data set column")
-        if(length(tcol) > 1) stop("More than one time / TIME column found")
-        if(!any(grepl("ID", colnames(data)))) stop("ID is a required data set column")
-        if(!any(grepl("cmt|CMT", colnames(data)))) stop("cmt is a required data set column")
-        ..zeros.. <- matrix(0,ncol=1,nrow=nrow(data), dimnames=list(NULL, "..zeros.."))
-        data <- cbind(data, ..zeros..)
-    }
   
-    # Don't take ID,time,TIME
-    carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
-    
-    # Only take names in GLOBALS$CARRY_TRAN
-    carry.tran <- intersect(carry.out,GLOBALS[["CARRY_TRAN"]])
-    carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
-    
-    # Non-tran items to carry out from data and idata
-    carry.out <- setdiff(carry.out,carry.tran)
-    
-    # What to carry out from data and idata
-    carry.data <- intersect(carry.out,colnames(data))
-    carry.idata <- intersect(carry.out, colnames(idata))
-    carry.idata <- setdiff(carry.idata, carry.data)
-
-    parin <- parin(x)
-    parin$recsort <- recsort
-
-    parin$obsonly <- obsonly
-    parin$obsaug <- obsaug
-    request <- intersect(request,cmt(x))
-    parin$request <- match(request, cmt(x));
-    parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
-    parin$filbak <- filbak
-
-    parin$carry_data <- ifmatch(carry.data,colnames(data))
-    parin$carry_idata <- ifmatch(carry.idata,colnames(idata))
-    
-    # This has to be lower case; that's all we're looking for
-    parin$carry_tran <- tolower(carry.tran)
-    
-    # Now, create a rename object 
-    # make_altnames: from, to
-    rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
-    carry.tran <- as.character(rename.carry.tran)
-    
-    # Only accept table names that are not compartments
-    parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo[["tnames"]],cmt(x))))
-    capture_names <- unique(intersect(as.cvec(trequest),setdiff(x@capture,cmt(x))))
-    to_capture <- c(length(x@capture),(which(x@capture %in% capture_names)-1))
-    parin$mtime <- sort(unique(mtime))
-
-    stime <- stime(x)
-    
-    if(inherits(tgrid, c("tgrid","tgrids"))) stime <- stime(tgrid)
-
-    if(length(deslist) > 0) {
-        parin[["tgridmatrix"]] <- do.call("tgrid_matrix",deslist)
-        parin[["whichtg"]] <- tgrid_id(descol, idata)
-    } else {
-      parin[["tgridmatrix"]] <- tgrid_matrix(stime)
-      parin[["whichtg"]] <- integer(0)
-    }
-
-    parin$stimes <- stime
-    parin$ptimes <- stime(ptime)
-
-    if(is.character(capture)) {
-        capture.output(file=capture, print(c(date=list(date()), parin=parin)))
-        capture.output(file=capture, append=TRUE, print(idata))
-        capture.output(file=capture, append=TRUE, print(data))
-        capture.output(file=capture, append=TRUE, print(carry.out))
-        capture.output(file=capture, append=TRUE, print(list(to_capture,capture_names)))
-        
-    }
-
-    out <- .Call(mrgsolve_DEVTRAN,
-                 parin,
-                 param,
-                 names(param(x)),
-                 init,
-                 names(init(x)),
-                 to_capture,
-                 funs,data,idata,
-                 as.matrix(omat(x)),as.matrix(smat(x)))
-
-    if(length(out$issues)>0) stop(render_errors(unique(out$issues)),call.=FALSE)
+  verbose <- x@verbose
   
-    # out$trannames always comes back lower case in a specific order
-    # need to rename to get back to requested case
-    # Then, rename again for user-supplied renaming
-    carry.tran <- altname(rename.carry.tran,out[["trannames"]])
+  ## ODE and init functions:
+  ## This both touches the functions as well as
+  ## gets the function pointers
+  foo <- touch_funs(x,keep_pointers=TRUE)
+  
+  param <- as.numeric(param(x))
+  init <-  as.numeric(init(x))
+  
+  if(!identical(names(param(x)),x@shlib$par))
+    stop("The parameter list  has changed since the model was compiled.")
+  if(!identical(names(init(x)), x@shlib$cmt))
+    stop("The compartment list has changed since the model was compiled.")
+  
+  ## request is stored in the model object
+  ## if request is (all) take all compartments
+  if(x@request[1]=="(all)") {
+    request <- cmt(x)
+  } else {
+    request <- x@request
+  }
+  
+  ## Requesting table items
+  if(missing(trequest)) trequest <- c(foo$tnames,x@capture)
+  
+  ## If Trequest is supplied,
+  ## take only tabled items and drop compartments
+  if(!missing(Trequest)) {
+    request <- ""
+    trequest <- Trequest
+  }
+  
+  ## Request is an explicit listing of all
+  ## items that are compartments or tabled items
+  if(!missing(Request)) {
+    request <- trequest <- Request
+  }
+  
+  request <- as.cvec2(request)
+  rename.request <- set_altname(request)
+  request <- as.character(rename.request)
+  
+  rename.carry <- set_altname(as.cvec2(carry.out))
+  carry.out <- as.character(rename.carry)
+  
+  
+  trequest <- as.cvec(trequest)
+  
+  ## Set the seed:
+  if(!is.na(seed)) set.seed(seed)
+  
+
+  ## "idata"
+  if(!is.mrgindata(idata)) idata <- mrgindata(idata,...)
+  
+  idata_idcol <- match("ID", colnames(idata))
+  
+  if(is.na(idata_idcol)) stop("idata matrix must have ID column")
+  
+  ## data
+  if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
+  
+  tcol <- "time"
+  
+  if(ncol(data) > 1) {
+    tcol <- intersect(c("time", "TIME"), colnames(data))
+    if(length(tcol)==0) stop("time is a required data set column")
+    if(length(tcol) > 1) stop("More than one time / TIME column found")
+    if(!any(grepl("ID", colnames(data)))) stop("ID is a required data set column")
+    if(!any(grepl("cmt|CMT", colnames(data)))) stop("cmt is a required data set column")
+    ..zeros.. <- matrix(0,ncol=1,nrow=nrow(data), dimnames=list(NULL, "..zeros.."))
+    data <- cbind(data, ..zeros..)
+  }
+  
+  # Don't take ID,time,TIME
+  carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
+  
+  # Only take names in GLOBALS$CARRY_TRAN
+  carry.tran <- intersect(carry.out,GLOBALS[["CARRY_TRAN"]])
+  carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
+  
+  # Non-tran items to carry out from data and idata
+  carry.out <- setdiff(carry.out,carry.tran)
+  
+  # What to carry out from data and idata
+  carry.data <- intersect(carry.out,colnames(data))
+  carry.idata <- intersect(carry.out, colnames(idata))
+  carry.idata <- setdiff(carry.idata, carry.data)
+  
+  parin <- parin(x)
+  parin$recsort <- recsort
+  
+  parin$obsonly <- obsonly
+  parin$obsaug <- obsaug
+  request <- intersect(request,cmt(x))
+  parin$request <- match(request, cmt(x));
+  parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
+  parin$filbak <- filbak
+  
+  parin$carry_data <- ifmatch(carry.data,colnames(data))
+  parin$carry_idata <- ifmatch(carry.idata,colnames(idata))
+  
+  # This has to be lower case; that's all we're looking for
+  parin$carry_tran <- tolower(carry.tran)
+  
+  # Now, create a rename object 
+  # make_altnames: from, to
+  rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
+  carry.tran <- as.character(rename.carry.tran)
+  
+  # Only accept table names that are not compartments
+  parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo[["tnames"]],cmt(x))))
+  capture_names <- unique(intersect(as.cvec(trequest),setdiff(x@capture,cmt(x))))
+  to_capture <- c(length(x@capture),(which(x@capture %in% capture_names)-1))
+  parin$mtime <- sort(unique(mtime))
+  
+  stime <- stime(x)
+  
+  if(inherits(tgrid, c("tgrid","tgrids"))) stime <- stime(tgrid)
+  
+  if(length(deslist) > 0) {
+    parin[["tgridmatrix"]] <- do.call("tgrid_matrix",deslist)
+    parin[["whichtg"]] <- tgrid_id(descol, idata)
+  } else {
+    parin[["tgridmatrix"]] <- tgrid_matrix(stime)
+    parin[["whichtg"]] <- integer(0)
+  }
+  
+  parin$stimes <- stime
+  parin$ptimes <- stime(ptime)
+  
+  if(is.character(capture)) {
+    capture.output(file=capture, print(c(date=list(date()), parin=parin)))
+    capture.output(file=capture, append=TRUE, print(idata))
+    capture.output(file=capture, append=TRUE, print(data))
+    capture.output(file=capture, append=TRUE, print(carry.out))
+    capture.output(file=capture, append=TRUE, print(list(to_capture,capture_names)))
     
-    cnames <- c("ID",
-                tcol,
-                altname(rename.carry,carry.tran),
-                altname(rename.carry,carry.data),
-                altname(rename.carry,carry.idata),
-                altname(rename.request,request),
-                altname(rename.request,out$outnames),
-                altname(rename.request,capture_names)
-                )
-
-    dimnames(out$data) <- list(NULL, cnames)
-
-    new("mrgsims",
-        request=altname(rename.request,request),
-        data=out$data,
-        outnames=altname(rename.request,c(out$outnames,capture_names)),
-        mod=x,
-        seed=as.integer(seed),
-        date=date())
+  }
+  
+  out <- .Call(mrgsolve_DEVTRAN,
+               parin,
+               param,
+               names(param(x)),
+               init,
+               names(init(x)),
+               to_capture,
+               foo[["pointers"]],
+               data,idata,
+               as.matrix(omat(x)),as.matrix(smat(x)))
+  
+  if(length(out$issues)>0) stop(render_errors(unique(out$issues)),call.=FALSE)
+  
+  # out$trannames always comes back lower case in a specific order
+  # need to rename to get back to requested case
+  # Then, rename again for user-supplied renaming
+  carry.tran <- altname(rename.carry.tran,out[["trannames"]])
+  
+  cnames <- c("ID",
+              tcol,
+              altname(rename.carry,carry.tran),
+              altname(rename.carry,carry.data),
+              altname(rename.carry,carry.idata),
+              altname(rename.request,request),
+              altname(rename.request,out$outnames),
+              altname(rename.request,capture_names)
+  )
+  
+  dimnames(out$data) <- list(NULL, cnames)
+  
+  new("mrgsims",
+      request=altname(rename.request,request),
+      data=as.data.frame(out$data),
+      outnames=altname(rename.request,c(out$outnames,capture_names)),
+      mod=x,
+      seed=as.integer(seed),
+      date=date())
 }
 
 setGeneric("parin", function(x) standardGeneric("parin"))
 setMethod("parin", "mrgmod", function(x) {
-    list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
-         maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
-         digits=x@digits, tscale=x@tscale,stimes=stime(x),mindt=x@mindt, advan=x@advan)
+  list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
+       maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
+       digits=x@digits, tscale=x@tscale,stimes=stime(x),mindt=x@mindt, advan=x@advan)
 })
 
-
-config_function_pointer <- function(x) {
-  if(is.loaded(x@config_fun[1], PACKAGE=x@config_fun[2])) {
-    return(getNativeSymbolInfo(x@config_fun[1],x@config_fun[2])$address)
-  } else {
-    return(getNativeSymbolInfo("MRGSOLVE_NO_CONFIG_FUN", PACKAGE="mrgsolve")$address)
-  }
-}
-
-init_function_pointer <- function(x) {
-    if(is.loaded(x@init_fun[1], PACKAGE=x@init_fun[2])) {
-        return(getNativeSymbolInfo(x@init_fun[1],x@init_fun[2])$address)
-    } else {
-        return(getNativeSymbolInfo("MRGSOLVE_NO_INIT_FUN", PACKAGE="mrgsolve")$address)
-    }
-}
-table_function_pointer <- function(x) {
-    if(is.loaded(x@table_fun[1], PACKAGE=x@table_fun[2])) {
-        return(getNativeSymbolInfo(x@table_fun[1], x@table_fun[2])$address)
-    } else {
-        return(getNativeSymbolInfo("MRGSOLVE_NO_TABLE_FUN", PACKAGE="mrgsolve")$address)
-    }
-}
-ode_function_pointer <- function(x) {
-    if(is.loaded(x@func[1], PACKAGE=x@func[2])) {
-        return(getNativeSymbolInfo(x@func[1], x@func[2])$address)
-    } else {
-        return(getNativeSymbolInfo("MRGSOLVE_NO_ODE_FUN", PACKAGE="mrgsolve")$address)
-    }
-}
 
 
 ##' Get inits from compiled function.
 ##'
 ##' @param x mrgmod model object
+##' @param keep_pointers should function pointers be returned?
 ##' @export
-touch_funs <- function(x) {
-
-    tfun <- table_function_pointer(x)
-    ifun <- init_function_pointer(x)
-    dfun <- ode_function_pointer(x)
-    cfun <- config_function_pointer(x)
-    param <- as.numeric(param(x))
-    init <- as.numeric(x@init)
-    neta <- sum(nrow(omat(x)))
-    neps <- sum(nrow(smat(x)))
-
-    out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,ifun, tfun, dfun)
-    names(out$init) <- names(init)
-    out
+touch_funs <- function(x,keep_pointers=TRUE) {
+  
+  funp <- pointers(x)
+  
+  tfun <- funp[["table"]]
+  ifun <- funp[["main"]]
+  dfun <- funp[["ode"]]
+  cfun <- funp[["config"]]
+  
+  param <- as.numeric(param(x))
+  init <- as.numeric(x@init)
+  neta <- sum(nrow(omat(x)))
+  neps <- sum(nrow(smat(x)))
+  
+  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,ifun, tfun, dfun)
+  
+  names(out$init) <- names(init)
+  
+  if(keep_pointers) {
+    out[["pointers"]] <- funp
+  }
+  
+  out
+  
 }
 
 
 house <- function(...) {
-    att <- readRDS(file=pfile("mrgsolve", "project", "housemodel", "RDS"))
-    x <- new("packmod",
-             att,
-             package="mrgsolve",
-             model="housemodel"
-             )
-
-    x <- relocate_funs(x, "mrgsolve")
-    x <- check_funs(x)
-    x <- compiled(x,TRUE)
-    x <- update(x,...,strict=FALSE)
-    x
+  att <- readRDS(file=pfile("mrgsolve", "project", "housemodel", "RDS"))
+  x <- new("packmod",
+           att,
+           package="mrgsolve",
+           model="housemodel"
+  )
+  x@soloc <- dirname(sodll(x))
+  x <- compiled(x,TRUE)
+  x <- update(x,...,strict=FALSE)
+  z <- pointers(x)
+  x
 }
 
 
 SUPERMATRIX <- function(x,keep_names=FALSE) {
-
-    x <- .Call("mrgsolve_SUPERMATRIX",x,keep_names)
-    if(nrow(x) >0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
-    x
+  
+  x <- .Call("mrgsolve_SUPERMATRIX",x,keep_names)
+  if(nrow(x) >0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
+  x
 }
 
 

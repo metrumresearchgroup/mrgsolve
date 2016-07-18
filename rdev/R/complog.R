@@ -8,12 +8,11 @@ shtime <- function(x) format(as.POSIXct(x,origin="1970-01-01"), "%H:%M:%S")
 ntime <- function(x) as.numeric(Sys.time())
 SAFE_WAIT_TIME <- 2
 
-complog1 <- data.frame(md5=" ",
-                       time=0,
-                       file=" ",
-                       so=" ",
-                       project=" ",
-                       stringsAsFactors=FALSE)
+complog1 <- dplyr::data_frame(md5=" ",
+                              time=0,
+                              file=" ",
+                              so=" ",
+                              project=" ")
 
 complog0 <- complog1[0,]
 
@@ -22,18 +21,18 @@ comp_assign <- function(x) assign("complog",x,envir=db)
 
 ## Store a model in the complog
 store <- function(x,purge=TRUE) {
-
-  data <- dplyr::data_frame(md5 = tools::md5sum(cfile(x)),
-                            time=ntime(),
-                            file=basename(cfile(x)),
-                            so=sodll(x),
-                            model = model(x),
-                            project=project(x))
-
+  
+  data <- dplyr::data_frame(md5     = tools::md5sum(cfile(x)),
+                            time    = ntime(),
+                            file    = basename(cfile(x)),
+                            so      = sodll(x),
+                            model   = model(x),
+                            project = project(x))
+  
   db[["complog"]] %>%
     dplyr::bind_rows(data) %>%
     comp_assign
-
+  
   return(invisible(NULL))
 }
 
@@ -49,16 +48,16 @@ n_comp <- function() db[["complog"]] %>% nrow
 ##' @param full show a full display
 ##' @export
 complog <- function(full=FALSE) {
-
+  
   if(full) return(db[["complog"]])
-
+  
   if(n_comp()==0) {
     message("No models found.")
     return(invisible(NULL))
   }
-
+  
   so <- md5 <- NULL
-
+  
   db[["complog"]] %>%
     dplyr::select_(.dots=c("time","so","md5","file")) %>%
     dplyr::mutate(so = basename(so),time=shtime(time)) %>%
@@ -72,51 +71,53 @@ drop_model <- function(x) {
   so <-
     x %>%
     dplyr::select(so) %>%
-    dplyr::distinct(so, .keep_all=TRUE) %>%
+    dplyr::distinct(so) %>%
     unlist
-
+  
   for(i in so) try(dyn.unload(i),silent=TRUE)
-
+  
   x <- suppressWarnings(file.remove(so[file.exists(so)]))
-
+  
   if(any(!x)) warning("Could not delete model shared object.")
-
+  
   return(invisible(NULL))
-
+  
 }
 
-check_and_copy <- function(x,temp,preclean=FALSE) {
-
-  from <- compfile(temp,project(x))
-  to <- compfile(model(x),project(x))
-
+check_and_copy <- function(from,to,preclean=FALSE) {
+  
   if(!file.exists(to)) {
     file.copy(from,to)
+    same <- TRUE
   } else {
     same <- tools::md5sum(from) == tools::md5sum(to)
     if((!same) | preclean) {
       file.copy(from,to,overwrite=TRUE)
     }
   }
-  return(invisible(NULL))
+
+  z <- file.remove(from)
+  
+  return(same)
 }
 
 ## Wait a certain amount of time before re-compiling
 ## and loading a model
 safe_wait <- function(x) {
-
-  y <- db[["complog"]] %>%
+  
+  y <- 
+    db[["complog"]] %>%
     filter(file==basename(cfile(x))) %>%
     select_(.dots="time") %>% unlist
-
+  
   if(length(y) ==0) return(invisible(NULL))
-
+  
   z <- signif(ntime() - max(y),3)
-
+  
   if(z > SAFE_WAIT_TIME) return(invisible(NULL))
-
+  
   message("(waiting) ... ",appendLF=FALSE)
-
+  
   return(Sys.sleep(SAFE_WAIT_TIME-z))
 }
 
@@ -137,13 +138,14 @@ logged <- function(x) {
 
 
 grab_file <- function(x) {
-
-  x <- db[["complog"]] %>%
+  
+  x <- 
+    db[["complog"]] %>%
     filter(file==basename(x)) %>%
     slice(dplyr::n())
-
+  
   if(nrow(x)==0) return(complog1)
-
+  
   return(x)
 }
 
@@ -151,29 +153,28 @@ grab_file <- function(x) {
 ##' @rdname complog
 ##' @param x not used
 comp_forget <- function(x) {
-
+  
+  ## We're forgetting every model here
   db[["complog"]] %>% drop_model
-
-  y <- db[["complog"]] %>% distinct(project,.keep_all=TRUE) %>% select(project) %>% unlist
-
+  
+  y <- 
+    db[["complog"]] %>% 
+    distinct(project) %>% 
+    select(project) %>% 
+    unlist
+  
   o <- list.files(y,pattern="*\\.o$",full.names=TRUE)
-
+  
   cppcpp <- list.files(y,pattern="*\\__cpp\\.cpp",full.names=TRUE)
-
+  
   unlink(o)
-
+  
   unlink(cppcpp)
-
+  
   complog0 %>% comp_assign
-
+  
   return(invisible(NULL))
 }
-
-## REMOVE 5/18/2016
-#compdate <- function(x) return(shdate(grab_file(x@model)$time))
-#complast <- function(x) assign("last",ntime(), envir=db)
-#get_complast <- function() return(db[["last"]])
-
 
 ## This is the environment for the complog data base
 db <- new.env()

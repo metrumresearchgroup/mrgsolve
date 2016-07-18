@@ -114,16 +114,6 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 
     cat("\n")
 
-    if(verbose) {
-        cat("  shared object: ", sodll(x), "\n", sep="")
-        cat("  ode function:  ", as.character(x@func[1]),
-            ifelse(is.loaded(x@func[1],PACKAGE=x@model), " (loaded)", " (not loaded)"), "\n", sep="")
-        cat("  main function: ", as.character(x@init_fun[1]),
-            ifelse(is.loaded(x@init_fun[1], PACKAGE=x@init_fun[2]), " (loaded)", " (not loaded)"), "\n", sep="")
-        cat("  table function: ", as.character(x@table_fun[1]),
-            ifelse(is.loaded(x@table_fun[1], PACKAGE=x@table_fun[2]), " (loaded)", " (not loaded)"), "\n", sep="")
-        cat("\n")
-    }
 }
 
 ##' Print model details

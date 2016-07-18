@@ -50,7 +50,7 @@ $CMT CENT
 $ODE dxdt_CENT = -(CL/VC)*CENT;
 '
 
-mod <- mread(code=code)
+mod <- mcode("ex_mread",code)
 
 mod
 

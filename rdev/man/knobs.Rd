@@ -17,8 +17,7 @@
 \usage{
 knobs(x, y, ...)
 
-\S4method{knobs}{mrgmod,missing}(x, ..., carry.out = character(0),
-  drop = c("default", "none", "all"), update = list())
+\S4method{knobs}{mrgmod,missing}(x, y, ...)
 
 \S4method{knobs}{mrgmod,batch_mrgsims}(x, y, ...)
 
@@ -46,12 +45,6 @@ moving(x, ...)
 
 \item{...}{knobs: named numeric vectors that identify knob names and knob values for a
 batch run.  See details.}
-
-\item{carry.out}{passed to \code{\link{mrgsim}}}
-
-\item{drop}{defines which knobs to drop in the matrix of simulated data; with \code{drop} = "none", the values of all knobs appear in the simulated data matrix; with \code{drop}  = "all", no knob names appear in the simulated data matrix; when \code{drop} is "default", selected non-moving columns related to PK dosing are dropped: \code{cmt}, \code{time}, \code{addl}, \code{ii}, \code{ss}, \code{evid}.  In every case, the simulation run settings can be retreived with the \code{batch} method for the \code{batch_mrgsims} output object.}
-
-\item{update}{a list of arguments that are passed to update prior to running the knobs}
 
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
@@ -88,18 +81,17 @@ plot(out)
 plot(out,CP~.)
 plot(out, CP~time|VC, groups=CL, lty=2)
 
-out <- knobs(mod, amt=c(100,300,500), cmt=1,time=0)
+out <- knobs(mod, amt=c(100,300,500), cmt=1)
 plot(out)
 
-out <- mod \%>\% knobs(amt=c(100,300), CL=c(1,3),VC=c(5,20), cmt=1, time=0)
+out <- mod \%>\% knobs(amt=c(100,300), CL=c(1,3), VC=c(5,20), cmt=1)
 plot(out)
 plot(out, CP~.)
-plot(out, CP~time|CL*VC, groups=Amt)
 
-out <- knobs(mod, CL=c(1,2,3), drop="all")
+out <- knobs(mod, CL=c(1,2,3))
 out
 
-out <- knobs(mod, CL=c(1,2,3), drop="none")
+out <- knobs(mod, CL=c(1,2,3))
 out
 }
 

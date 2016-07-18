@@ -12,7 +12,7 @@ $PARAM CL=1, FORM=1,F1 = 0.1
 $MAIN
 
 F_CENT = 1;
-if(FORM==2) _F(1) = F1;
+if(FORM==2) F_CENT = F1;
 
 $CMT CENT
 $ODE dxdt_CENT = -(CL/10)*CENT;

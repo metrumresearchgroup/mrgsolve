@@ -74,14 +74,13 @@ param(mod)
 init(mod)
 
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168)
-out <- label(out, TRT=1)
 
 out
 head(out)
 tail(out)
 dim(out)
 
-mod(out)
+mrgsolve::mod(out)
 param(out)
 
 plot(out, GUT+CP~.)
@@ -103,7 +102,7 @@ head(out)
 
 out <- mod \%>\% ev() \%>\% knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
 plot(out, CP~., scales="same")
-plot(out, RESP+CP~time|CL, groups=Amt)
+plot(out, RESP+CP~time|CL)
 
 
 ev1 <- ev(amt=500, cmt=2,rate=10)

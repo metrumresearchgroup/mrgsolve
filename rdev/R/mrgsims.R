@@ -29,7 +29,7 @@ NULL
 ##' @param x mrgsims object
 ##' @param ... passed to other functions
 ##' @aliases mrgsims
-##' @seealso mod request variables label limit stime
+##' @seealso mod request variables  limit stime
 ##' @name mrgsims
 ##' @rdname mrgsims
 ##' @examples
@@ -60,11 +60,9 @@ NULL
 ##' plot(out, CP~.)
 ##' plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 ##'
-##' out <- label(out, DOSE=100)
-##' head(out)
 NULL
 
-##' Label simulation output.
+##' DEPRECATED: Label simulation output.
 ##'
 ##' Attaches a named column to the simulation output with a single numeric value.
 ##'
@@ -76,18 +74,7 @@ setGeneric("label", function(x,...) standardGeneric("label"))
 ##' @export
 ##' @rdname label
 setMethod("label", "mrgsims", function(x,...) {
-
-    args <- unlist(list(...))
-
-    if(!all(sapply(args, is.numeric))) stop("Values must be all numeric")
-
-    args <- sapply(args, function(x) x[1])
-
-    if(any(names(args) %in% colnames(x@data))) stop("label name already exists in simulated data.")
-    if(!all(nchar(names(args)) > 0)) stop("label name not found")
-    y <- matrix(args, nrow=dim(x)[1], ncol=length(args), byrow=TRUE, dimnames=list(NULL,names(args)))
-    x@data <- cbind(x@data,y)
-    x
+  stop("label is deprecated; use mutate instead.") 
 })
 
 ##' Return the model object.
@@ -178,60 +165,60 @@ setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,
 ##' @rdname mrgsims
 ##' @importFrom dplyr do_
 as.tbl.mrgsims <- function(x,...) {
-    dplyr::as.tbl(as.data.frame(x))
+  dplyr::as.tbl(as.data.frame(x))
 }
 ##' @export
 ##' @rdname mrgsims
 filter_.mrgsims <- function(.data,...,.dots) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::filter_(...,.dots=.dots)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::filter_(...,.dots=.dots)
 }
 ##' @export
 ##' @rdname mrgsims
 group_by_.mrgsims <- function(.data,...,.dots,add=FALSE) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::group_by_(...,.dots=.dots)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::group_by_(...,.dots=.dots)
 }
 ##' @export
 ##' @rdname mrgsims
 mutate_.mrgsims <- function(.data,...,.dots) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::mutate_(...,.dots=.dots)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::mutate_(...,.dots=.dots)
 }
 ##' @export
 ##' @rdname mrgsims
 summarise.each <- function(.data,funs,...) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::summarise_each(funs,...)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::summarise_each(funs,...)
 }
 ##' @export
 ##' @rdname mrgsims
 summarise_.mrgsims <- function(.data,...,.dots) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::summarise_(...,.dots=.dots)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::summarise_(...,.dots=.dots)
 }
 ##' @export
 ##' @rdname mrgsims
 do_.mrgsims <- function(.data,...,.dots) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::do_(...,.dots=.dots)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::do_(...,.dots=.dots)
 }
 ##' @export
 ##' @rdname mrgsims
 select_.mrgsims <- function(.data,...,.dots) {
-    dplyr::as.tbl(as.data.frame(.data)) %>%
-        dplyr::select_(...,.dots=.dots)
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::select_(...,.dots=.dots)
 }
 
 ##' @export
 ##' @rdname mrgsims
 slice_.mrgsims <- function(.data,...) {
-    dplyr::slice_(as.data.frame(.data),...)
+  dplyr::slice_(as.data.frame(.data),...)
 }
 
 ##' @export
 ##' @rdname mrgsims
-setMethod("as.matrix", "mrgsims", function(x,...) return(x@data))
+setMethod("as.matrix", "mrgsims", function(x,...) return(as.matrix(x@data)))
 ##' @export
 ##' @rdname mrgsims
 setMethod("subset", "mrgsims", function(x,...) {
@@ -249,40 +236,16 @@ setMethod("summary", "mrgsims", function(object,...) {
 ##' @export
 ##' @rdname mrgsims
 setMethod("show", "mrgsims", function(object) {
-    digits <- 4
-    top <- head(object@data, n=8)
-    tcol <- intersect(c("time", "TIME"),colnames(object@data))[1]
-    cat("Model: ", basename(cfile(mod(object))), "\n")
-    cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
-    cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
-    cat("ID:    ", length(unique(object@data[,"ID"])), "\n")
-    print(top, digits=digits)
+  digits <- 4
+  n <- min(8,nrow(object@data))
+  top <- data.matrix(object@data[seq_len(n),,drop=FALSE],rownames.force=FALSE)
+  tcol <- intersect(c("time", "TIME"),colnames(object@data))[1]
+  cat("Model: ", basename(cfile(mod(object))), "\n")
+  cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
+  cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
+  cat("ID:    ", length(unique(object@data[,"ID"])), "\n")
+  print(top, digits=digits)
 })
-
-
-##' This function is deprecated.
-##'
-##'
-##' @export
-##' @rdname firstonly
-firstonly <- function() {
-    stop("This function is deprecated.")
-}
-
-
-cfb <- function(x) UseMethod("cfb")
-cfb.data.frame <- function(x) {
-  time <- x$time
-  ID <- x$ID
-  y <- lapply(x, function(xx) xx - xx[1])
-  y <- data.frame(do.call('cbind', y))
-  y$time <- time
-  y$ID <- ID
-  y
-}
-
-
-
 
 
 
@@ -293,7 +256,6 @@ cfb.data.frame <- function(x) {
 ##' @param y formula used for plotting
 ##' @param limit limit the the number of panels to create
 ##' @param show.grid logical indicating whether or not to draw panel.grid
-##' @param as transformations for plotting simulated values
 ##' @param ylab passed to xyplot
 ##' @param scales passed to xyplot
 ##' @param type passed to xyplot
@@ -302,10 +264,6 @@ cfb.data.frame <- function(x) {
 ##' @param groups passed to xyplot
 ##' @param ... other arguments passed to xyplot
 ##' @details Values for \code{as} argument: ;  \code{raw}: raw simulated output;
-##' \code{frac}: each observation normalized to baseline value;
-##' \code{cfb}: change (difference) from baseline;
-##' \code{cfblog}: change from baseline of log10-transformed values;
-##' \code{log10y}: log10 transformation; \code{lny}: natural log transformed.
 ##' @export
 ##' @rdname plot_mrgsims
 ##' @aliases plot,mrgsims,missing-method
@@ -323,25 +281,25 @@ cfb.data.frame <- function(x) {
 ##'
 ##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
-
-
-
+  
+  
+  
   ynames <- variables(x)
-
+  
   if(length(ynames)==0) {
-      message("No variables to plot")
-      return(invisible(NULL))
-
+    message("No variables to plot")
+    return(invisible(NULL))
+    
   }
-
+  
   if(length(ynames)>limit) {
-      ynames <- ynames[1:limit]
-      if(missing(limit)) warning(paste0("NOTE: show first ",
-                                        limit,
-                                        " variables.  Check limit argument."
-                                        ), call.=FALSE)
+    ynames <- ynames[1:limit]
+    if(missing(limit)) warning(paste0("NOTE: show first ",
+                                      limit,
+                                      " variables.  Check limit argument."
+    ), call.=FALSE)
   }
-
+  
   tname <- intersect(c("time", "TIME"), colnames(x@data))[1]
   lhs <- paste(ynames, collapse="+")
   fmla <- as.formula(paste0(lhs, "~", tname))
@@ -354,15 +312,15 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
 ##' @aliases plot,mrgsims,formula-method
 setMethod("plot", c("mrgsims","formula"), function(x,y,
                                                    limit=16,show.grid=TRUE,
-                                                   as="raw",outer=TRUE,
+                                                   outer=TRUE,
                                                    type='l',lwd=2,
-                                                   ylab="raw value",
+                                                   ylab="value",
                                                    groups=ID,
                                                    scales=list(y=list(relation='free')),
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
-
-  data <- as.data.frame(limit(x,...))
+  
+  data <- as.data.frame(subset(x,...))
   
   if(!exists("time", data)) {
     if(!exists("TIME", data)) stop("Couldn't find time or TIME column.",call.=FALSE)
@@ -371,25 +329,9 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   }
   
   if(y[[3]] == '.')  y[[3]] <- quote(time)
-
-  if(as=="cfb")  {
-      data <- split(data, data$ID)
-      data <- lapply(data, cfb.data.frame)
-      data <- data.frame(do.call("rbind",data))
-
-    ylab <- "Change from baseline"
-  }
-  if(as=="log10") {
-    data[,variables(x)] <- log10(data[,variables(x)])
-    ylab="log10 value"
-  }
-  if(as=="log")   {
-    data[,variables(x)] <- log(data[,variables(x)])
-    ylab="log value"
-  }
-
- y <- structure(y, .Environment=environment())
- gr <- eval(substitute(groups),data)
+  
+  y <- structure(y, .Environment=environment())
+  gr <- eval(substitute(groups),data)
   ans <- lattice::xyplot(y,data=data,
                          groups=gr,
                          ylab=ylab,
@@ -398,34 +340,15 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
                          scales=scales,
                          lwd=lwd,
                          panel=function(...) {
-                             if(show.grid) lattice::panel.grid(h=-1,v=-1)
-                             lattice::panel.xyplot(...)
+                           if(show.grid) lattice::panel.grid(h=-1,v=-1)
+                           lattice::panel.xyplot(...)
                          },...
-                         )
+  )
   ans
 })
 
 
-submat <- function(x,...) UseMethod("submat")
-submat.matrix <- function(x,subset,select=TRUE,...) {
-
-    if(!is.call(subset)) subset <- substitute(subset)
-
-    vars <- all.vars(as.call(subset))
-
-    if(!missing(select)){
-        nl <- as.list(1L:ncol(x))
-        names(nl) <- colnames(x)
-        select <- eval(substitute(select), nl, parent.frame())
-    }
-
-    grab <- intersect(vars,colnames(x))
-    env <- as.data.frame(x[,grab,drop=FALSE])
-    x[eval(subset,env,parent.frame()),select,drop=FALSE]
-}
-
-
-##' Limit the scope of simulated output.
+##' DEPRECATED: Limit the scope of simulated output.
 ##'
 ##' @param x mrgsims or batch mrgsims object
 ##' @param ... passed along
@@ -435,15 +358,12 @@ setGeneric("limit", function(x,...) standardGeneric("limit"))
 ##' @param select columns to keep
 ##' @rdname limit
 setMethod("limit", "mrgsims", function(x,subset, select=TRUE,...) {
-    if(missing(subset)) return(x)
-    if(is.character(select)) select <- as.cvec(select)
-    x@data <- submat(x@data,substitute(subset),select)
-    return(x)
+  stop("The limit function is deprecated.  Use filter instead.")
 })
 
-same_data <- function(x,y) {
-    identical(x@data, y@data)
-}
+# same_data <- function(x,y) {
+#     identical(x@data, y@data)
+# }
 
 
 

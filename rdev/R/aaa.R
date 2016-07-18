@@ -1,4 +1,4 @@
-##' @importFrom utils capture.output example str type.convert
+##' @importFrom utils capture.output example str type.convert packageVersion
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
 ##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows mutate_each arrange data_frame as_data_frame
@@ -41,7 +41,7 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "_SETINIT","report","double", "int", "bool")
 
 
-globalVariables(c("test_package","time", "ID","everything", "TIME"))
+globalVariables(c("test_package","time", "ID","everything", "TIME", "address", "func", "loaded", "name", "not_found"))
 
 
 

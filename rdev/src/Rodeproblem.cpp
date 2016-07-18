@@ -112,9 +112,9 @@ void Rodeproblem::copy_parin(Rcpp::List parin) {
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
 }
 void Rodeproblem::copy_funs(Rcpp::List funs) {
-  this->Rodeproblem::init_fun(funs["init"]);
+  this->Rodeproblem::init_fun(funs["main"]);
   this->Rodeproblem::table_fun(funs["table"]);
-  this->Rodeproblem::deriv_fun(funs["deriv"]);
+  this->Rodeproblem::deriv_fun(funs["ode"]);
   this->Rodeproblem::config_fun(funs["config"]);
 }
 

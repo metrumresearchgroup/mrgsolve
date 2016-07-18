@@ -29,28 +29,16 @@ mrgsolve:::comp_forget()
 tmp <- tempdir()
 mod <- mread(code=code, project=tmp, model="test3")
 
-out <-mrgsim(mod, request="PERIPH,CENT")
-
-out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
 
 
 test_that("Testing request setting", {
+  out <- mrgsim(mod, request="PERIPH,CENT")
+  out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
+  
   expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP","EPS1", "ETA1", "FLAG"))
   expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","EPS1", "ETA1", "FLAG"))
 })
 
-out3 <- mrgsim(mod, Trequest="EPS1,FLAG,ETA1", request="PERIPH,CENT")
-out4 <- mrgsim(mod, Treq="FLAG")
-test_that("Testing Treq setting", {
-  expect_equal(names(out3),c("ID", "time","EPS1", "FLAG", "ETA1"))
-  expect_equal(names(out4),c("ID", "time","FLAG"))
-})
-
-out5 <- mrgsim(mod, Req="EPS1,CENT,GUT,FLAG", request="PERIPH", Treq="CP")
-
-test_that("Testing Req setting", {
-  expect_equal(names(out5),c("ID", "time","CENT","GUT","EPS1", "FLAG"))
-})
 
 code <- '
 $PARAM CL=1

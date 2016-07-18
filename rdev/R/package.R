@@ -72,14 +72,13 @@
 ##' init(mod)
 ##'
 ##' out <- mod %>% ev(events) %>% mrgsim(end=168)
-##' out <- label(out, TRT=1)
 ##'
 ##' out
 ##' head(out)
 ##' tail(out)
 ##' dim(out)
 ##'
-##' mod(out)
+##' mrgsolve::mod(out)
 ##' param(out)
 ##'
 ##' plot(out, GUT+CP~.)
@@ -101,7 +100,7 @@
 ##'
 ##' out <- mod %>% ev() %>% knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
 ##' plot(out, CP~., scales="same")
-##' plot(out, RESP+CP~time|CL, groups=Amt)
+##' plot(out, RESP+CP~time|CL)
 ##'
 ##'
 ##' ev1 <- ev(amt=500, cmt=2,rate=10)
@@ -263,35 +262,15 @@ models <- function() {
 }
 
 
-
-noRwarning <- '
-Could not find R program in PATH.
-If you are compiling your own models, please first make sure that
-the following command runs properly from your R prompt:
-  system("R CMD SHLIB -v")
-
-'
-
-testSHLIB <- function() {
-  system("R CMD SHLIB -v", ignore.stdout=TRUE)==0
-}
-
-
 .onLoad <- function(libname, pkgname) {
-  if(!testSHLIB()) {
-    warning(noRwarning, call.=FALSE)
-  }
-  # what <- c("BH", "Rcpp", "RcppArmadillo", "mrgsolve")
-  # pkg <- build_path(file.path(find.package(what,quiet=FALSE),"include"))
-  # names(pkg) <- what
-  # GLOBALS[["CLINK"]] <- pkg
+  GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 }
 
 
 .onAttach <- function(libname,pkgname) {
-  packageStartupMessage("mrgsolve: Community Edition")
-  packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
-  
+  base::packageStartupMessage("mrgsolve: Community Edition")
+  base::packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
+
 }
 
 
