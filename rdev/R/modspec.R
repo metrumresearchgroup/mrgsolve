@@ -110,7 +110,11 @@ fixed_parameters <- function(x,fixed_type) {
 compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
 compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
 compdir <- function() {
-  paste(c("mrgsolve","shlib",Sys.info()[c("sysname","release", "machine")]),collapse="-")
+  paste(c("mrgsolve",
+        "shlib", 
+        as.character(GLOBALS[["version"]]),
+        Sys.info()[c("sysname","release", "machine")]),
+        collapse="-")
 }
 
 setup_soloc <- function(loc,model) {
@@ -135,7 +139,7 @@ modelparse <- function(txt,split=FALSE,...) {
   txt <- strsplit(txt, "//+|##+",perl=TRUE)
   txt <- sapply(txt, `[`,1L)
   txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
-
+  
   start <- grep(block_re,txt,perl=TRUE)
   
   if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
@@ -394,7 +398,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            init=as.init(init),
            funs  = funs_create(model),
            capture=as.character(spec[["CAPTURE"]])
-           )
+  )
   
   
   ## ADVAN 13 is the ODEs
@@ -423,7 +427,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## This must come after audit
   if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();\n"
-
+  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars=names(param),
@@ -492,11 +496,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
   
   preclean <- preclean | (!logged(model(x)))
-
+  
   same <- check_and_copy(from = temp_write,
                          to = compfile(model(x),soloc(x)),
                          preclean)
-
+  
   # Wait at least 2 sec since last compile
   safe_wait(x)
   
@@ -507,9 +511,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   status <- system(paste0("R CMD SHLIB ",
                           ifelse(preclean, " --preclean ", ""),
                           build_path(cfile)
-                          ),
-                   ignore.stdout=ignore.stdout)
-
+  ),
+  ignore.stdout=ignore.stdout)
+  
   if(status!=0) {
     warning("Compile did not succeed.  Returning NULL.", immediate.=TRUE,call.=FALSE);
     return(NULL)
@@ -521,7 +525,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## e.g model2340239403.so
   if(!file.exists(compout(model,soloc(x)))) stop("Could not find shared object file after compilation.")
   z <- file.copy(compout(model,soloc(x)),sodll(x))
-    
+  
   store(x)
   
   dyn.load(sodll(x))
