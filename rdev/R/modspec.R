@@ -111,9 +111,9 @@ compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
 compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
 compdir <- function() {
   paste(c("mrgsolve",
-        "shlib", 
-        as.character(GLOBALS[["version"]]),
-        R.version$platform),
+          "shlib", 
+          as.character(GLOBALS[["version"]]),
+          R.version$platform),
         collapse="-")
 }
 
@@ -482,10 +482,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
-  
-  
-  
-  
   to_restore <- set_up_env(plugin)
   
   on.exit(do_restore(to_restore))
@@ -508,22 +504,31 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Compile the model
   ## The shared object is model__cpp.so
-  status <- system(paste0("R CMD SHLIB ",
-                          ifelse(preclean, " --preclean ", ""),
-                          build_path(cfile)
-  ),
-  ignore.stdout=ignore.stdout)
+  syst <- paste0("R CMD SHLIB ",
+                 ifelse(preclean, " --preclean ", ""),
+                 build_path(cfile))
   
-  if(status!=0) {
-    warning("Compile did not succeed.  Returning NULL.", immediate.=TRUE,call.=FALSE);
-    return(NULL)
+  status <- suppressWarnings(system(syst,intern=ignore.stdout))
+  
+  output <- status
+  attributes(output) <- NULL
+  
+  status <- attr(status, "status")
+  
+  comp_success <- is.null(status) & file.exists(compout(model,soloc(x)))
+  
+  if(!ignore.stdout & comp_success) {
+    cat(output, sep="\n") 
+  }
+  
+  if(!comp_success) {
+    stop("\n\nThere was a problem when compiling the model.",call.=FALSE);
   }
   
   if(ignore.stdout & !quiet) message("done.")
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  if(!file.exists(compout(model,soloc(x)))) stop("Could not find shared object file after compilation.")
   z <- file.copy(compout(model,soloc(x)),sodll(x))
   
   store(x)
