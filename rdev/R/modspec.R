@@ -113,7 +113,7 @@ compdir <- function() {
   paste(c("mrgsolve",
         "shlib", 
         as.character(GLOBALS[["version"]]),
-        Sys.info()[c("sysname","release", "machine")]),
+        gsub("\\s+", "", Sys.info()[c("sysname","release", "machine")])),
         collapse="-")
 }
 
