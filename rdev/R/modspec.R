@@ -111,7 +111,6 @@ compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
 compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
 compdir <- function() {
   paste(c("mrgsolve",
-          "shlib", 
           as.character(GLOBALS[["version"]]),
           R.version$platform),
         collapse="-")
