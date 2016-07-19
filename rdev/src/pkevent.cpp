@@ -169,7 +169,7 @@ void pkevent::steady_bolus(odeproblem* prob) {
   double tfrom = 0.0;
   double tto = 0.0;
   int i;
-  size_t j;
+  int j;
   std::vector<double> res(prob->neq(), 1E-9);
   std::vector<double> last(prob->neq(),1E-9);
 
@@ -221,7 +221,7 @@ void pkevent::steady_infusion(odeproblem * prob) {
   double tfrom = 0.0;
 
   int i;
-  size_t j;
+  int j;
   std::vector<double> res(prob->neq(), 0.0);
   std::vector<double> last(prob->neq(),1E-10);
   evlist offs;

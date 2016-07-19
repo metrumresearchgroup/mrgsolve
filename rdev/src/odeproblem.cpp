@@ -112,7 +112,7 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 
   // prob->add_rates(ydot);
   // // Add on infusion rates:
-  for(unsigned int i=0; i < prob->neq(); i++) {
+  for(int i=0; i < prob->neq(); i++) {
     if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
     ydot[i] = (ydot[i] + prob->rate0(i));
   }

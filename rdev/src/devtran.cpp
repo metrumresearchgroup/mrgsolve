@@ -69,7 +69,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   Rcpp::List ret;  // list for returning stuff
   int i=0,j=0,k=0;
   double time0 = 0.0;
-  unsigned int crow =0,  neq=0; //
+  int crow =0,  neq=0; //
   Rodeproblem *prob;
   size_t h=0;
   
@@ -129,10 +129,10 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   //obsonly = obsonly && (!(data.ncol() > 1));
   
-  int idataid = 0;
+  //int idataid = 0; warnings
   
   // find ID column in idata
-  if(idata.nrow() > 0) idataid = idat->idcol();
+  //if(idata.nrow() > 0) {idataid = idat->idcol(); warnings
   
   // These are the requested columns.
   Rcpp::IntegerVector request;
@@ -237,7 +237,8 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Deal with stimes:
   
   // Observations from stime will always come after events;
-  unsigned int nextpos = 0;
+  //unsigned int nextpos = 0; warnings
+  int nextpos = 0;
   if((obscount > 0) && (!obsaug)) {
     if(debug) say("Clearing stimes ...");
     stimes.clear();
@@ -713,7 +714,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   
   // Significant digits in simulated variables and outputs too
-  if(digits>0) for(size_t i=req_start; i < ans.ncol(); i++) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
+  if(digits > 0) for(size_t i=req_start; i < ans.ncol(); i++) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
   if((tscale !=1) && (tscale >= 0)) ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   
   // // Assemble return List

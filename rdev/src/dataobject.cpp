@@ -163,7 +163,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 			     bool obsonly, bool debug) {
 
   // only look here for events or observations if there is more than one column:
-  size_t h=0;
+  // size_t h=0; warnings
   int j=0, k=0;
   int evid, this_cmt;
   double lastime = 0;
@@ -171,7 +171,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 
   if(Data.ncol() <= 1) return;
 
-  for(h=0; h < NID; h++) {
+  for(int h=0; h < NID; h++) {
 
     lastime = 0;
 

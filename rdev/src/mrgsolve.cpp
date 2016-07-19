@@ -215,7 +215,7 @@ void asSDmap(sd_map& out, Rcpp::List x) {
 
 //[[Rcpp::export]]
 void decorr(Rcpp::NumericMatrix x) {
-  unsigned int i = 1, j=1, n=x.nrow();
+  int i = 1, j = 1, n = x.nrow();
   if(n != x.ncol()) Rcpp::stop("matrix is not square");
   for(i=0; i < n; i++) {
     for(j=0; j < n; j++) {
@@ -240,7 +240,7 @@ Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix x) {
 //[[Rcpp::export]]
 Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
   
-  size_t i,j,k;
+  int j,k;
   Rcpp::NumericMatrix mat;
   
   int tot=0;
@@ -250,10 +250,8 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
   
   Rcpp::CharacterVector this_nam;
   Rcpp::List dnames(2);
-  bool any_rnames=false;
-  bool any_cnames=false;
-  
-  for(i=0; i < a.size(); i++) {
+ 
+  for(size_t i=0; i < a.size(); i++) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     if(mat.nrow() ==0) continue;
     if(mat.nrow() != mat.ncol()) Rcpp::stop("Not all matrices are square");
@@ -273,16 +271,14 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
     }
     
     if(!Rf_isNull(dnames[0])) {
-      any_rnames=true;
       this_nam = dnames[0];
-      for(j=0; j< this_nam.size(); j++) rnam.push_back(this_nam[j]);
+      for(size_t j=0; j< this_nam.size(); j++) rnam.push_back(this_nam[j]);
     } else {
       for(j=0; j < mat.nrow(); j++) rnam.push_back(".");
     }
     if(!Rf_isNull(dnames[1])) {
-      any_cnames=true;
       this_nam = dnames[1];
-      for(j=0; j< this_nam.size(); j++) cnam.push_back(this_nam[j]);
+      for(size_t j=0; j< this_nam.size(); j++) cnam.push_back(this_nam[j]);
     } else {
       for(j=0; j < mat.ncol(); j++) cnam.push_back(".");
     }
@@ -293,7 +289,7 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
   int totcol = 0;
   
   Rcpp::NumericMatrix ret(tot,tot);
-  for(i=0; i < a.size(); i++) {
+  for(size_t i=0; i < a.size(); i++) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     
     for(j=0; j < mat.nrow(); j++) {
@@ -321,11 +317,9 @@ void match_both (svec a, svec b, ivec& ai, ivec& bi) {
   si_map A;
   si_map B;
   svec inter;
-  
-  int i = 0;
-  
-  for(i=0; i < a.size(); i++) A[a[i]] = i;
-  for(i=0; i < b.size(); i++) B[b[i]] = i;
+
+  for(size_t i=0; i < a.size(); i++) A[a[i]] = i;
+  for(size_t i=0; i < b.size(); i++) B[b[i]] = i;
   
   std::sort(a.begin(), a.end());
   std::sort(b.begin(), b.end());
@@ -334,10 +328,10 @@ void match_both (svec a, svec b, ivec& ai, ivec& bi) {
                         std::back_inserter(inter));
   
   ai.resize(inter.size());
-  for(i=0; i < inter.size(); i++) ai[i] = A[inter[i]];
+  for(size_t i=0; i < inter.size(); i++) ai[i] = A[inter[i]];
   
   bi.resize(inter.size());
-  for(i=0; i < inter.size(); i++) bi[i] = B[inter[i]];
+  for(size_t i=0; i < inter.size(); i++) bi[i] = B[inter[i]];
   
 }
 
@@ -347,7 +341,7 @@ void match_one (svec a, svec b, ivec& ret) {
   si_map A;
   svec inter;
   
-  for(int i=0; i < a.size(); i++) A[a[i]] = i;
+  for(size_t i=0; i < a.size(); i++) A[a[i]] = i;
   
   std::sort(a.begin(), a.end());
   std::sort(b.begin(), b.end());
@@ -355,7 +349,7 @@ void match_one (svec a, svec b, ivec& ret) {
   std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
                         std::back_inserter(inter));
   ret.resize(inter.size());
-  for(int i=0; i < inter.size(); i++) ret[i] = A[inter[i]];
+  for(size_t i=0; i < inter.size(); i++) ret[i] = A[inter[i]];
 }
 
 //[[Rcpp::export]]
