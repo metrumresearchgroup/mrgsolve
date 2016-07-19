@@ -28,7 +28,7 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 * Every time the model is rebuilt, the build directory is scanned for shared object files.  Excluding the main model shared object (unchanging name based on the model), old shared object files are deleted and, if currently loaded (`getLoadedDLLs()`), are attempted to be `dyn.unload`ed.
 * Upon model rebuild (via `mread` or `mcode`), if there are no changes to the source `.cpp` file, the source is not overwritten.  In that case, `make` will not re-build the shared object.  Using the `preclean` argument will force re-compilation (see `R CMD SHLIB`).
 * The header files `modelheader.h` and `mrgsolv.h` are no longer copied into the project directory.  But `CLINK_CPPFLAGS` environment variable is modlifed to include `<path-to-mrgsolve-package>/inst/base` so that these may be linked.
-
+* The `R CMD SHLIB` build process always uses `intern=TRUE` so that output is suppressed on both `Windows` and `mac/unix`.  The user may still request to view build output with the `ignore.stdout` argument.
 
 
 ## Deprecated
