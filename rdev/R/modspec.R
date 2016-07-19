@@ -26,10 +26,7 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
-## A random file name
-rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
-  basename(tempfile(pattern=pattern,tmpdir='.'))
-}
+
 
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
@@ -92,9 +89,16 @@ fixed_parameters <- function(x,fixed_type) {
   )
 }
 
+## A random file name
+so_stem <- function(x) paste0(x,"-so-")
+
+rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
+  basename(tempfile(pattern=so_stem(pattern),tmpdir='.'))
+}
+
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
-compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
+compfile <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source.cpp"))
+compout  <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source", .Platform$dynlib.ext))
 compdir <- function() {
   paste(c("mrgsolve",
           "so",
@@ -448,7 +452,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This name is suitable for use in the build path
   cfile <- compfile(model,build_path(soloc))
   
-  if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
+  if(ignore.stdout & !quiet) message("Compiling ",model(x)," ... ", appendLF=FALSE)
   
   same <- check_and_copy(from = temp_write,
                          to = compfile(model(x),soloc(x)),
