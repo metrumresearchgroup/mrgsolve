@@ -251,7 +251,8 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
   Rcpp::CharacterVector this_nam;
   Rcpp::List dnames(2);
  
-  for(size_t i=0; i < a.size(); i++) {
+  
+  for(int i=0, n = a.size(); i < n; i++) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     if(mat.nrow() ==0) continue;
     if(mat.nrow() != mat.ncol()) Rcpp::stop("Not all matrices are square");
@@ -272,13 +273,13 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
     
     if(!Rf_isNull(dnames[0])) {
       this_nam = dnames[0];
-      for(size_t j=0; j< this_nam.size(); j++) rnam.push_back(this_nam[j]);
+      for(int j=0, n=this_nam.size(); j < n; j++) rnam.push_back(this_nam[j]);
     } else {
       for(j=0; j < mat.nrow(); j++) rnam.push_back(".");
     }
     if(!Rf_isNull(dnames[1])) {
       this_nam = dnames[1];
-      for(size_t j=0; j< this_nam.size(); j++) cnam.push_back(this_nam[j]);
+      for(int j=0, n=this_nam.size(); j < n; j++) cnam.push_back(this_nam[j]);
     } else {
       for(j=0; j < mat.ncol(); j++) cnam.push_back(".");
     }
@@ -289,7 +290,7 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
   int totcol = 0;
   
   Rcpp::NumericMatrix ret(tot,tot);
-  for(size_t i=0; i < a.size(); i++) {
+  for(int i=0, n=a.size(); i < n; i++) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     
     for(j=0; j < mat.nrow(); j++) {

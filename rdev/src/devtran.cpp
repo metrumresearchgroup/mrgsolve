@@ -285,7 +285,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     }
   }
   
-  unsigned int NN = obscount;
+  int NN = obscount;
   if(!obsonly) NN = NN + evcount;
   
   // Create results matrix:

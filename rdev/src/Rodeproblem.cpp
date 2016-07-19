@@ -37,10 +37,13 @@ Rodeproblem::Rodeproblem(int npar_,int neq_) : odeproblem(npar_, neq_) {}
 Rodeproblem::Rodeproblem(Rcpp::NumericVector param,
 			 Rcpp::NumericVector init):odeproblem(param.size(),init.size()) {
   
-  //size_t i=0;  warnings
+  int i=0, n=0;  
   
-  for(size_t i=0; i < param.size(); i++) Param[i] =       double(param[i]);
-  for(size_t i=0; i < init.size(); i++)  Init_value[i] =  double(init[i]);
+  n = int(param.size());
+  for(i=0; i < n; i++) Param[i] =       double(param[i]);
+  
+  n = int(init.size());
+  for(i=0; i < n; i++)  Init_value[i] =  double(init[i]);
 }
 
 
