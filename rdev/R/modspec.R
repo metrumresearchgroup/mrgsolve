@@ -463,7 +463,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   cleanso(x)
   
   ## Compile the model
-  ## The shared object is model__cpp.so
+  ## The shared object is model-mread-source.cpp
   syst <- paste0(R.home(component="bin"), 
                  .Platform$file.sep,
                  "R CMD SHLIB ",
