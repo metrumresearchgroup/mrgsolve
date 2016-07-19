@@ -16,6 +16,27 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 * When using `$PKMODEL` with `ncmt=2` and `depot=FALSE`, the default PK parameters are `CL`, `V1` (central volume), `Q`, `V2` (peripheral volume).  This is a change where the previous volumes were `V2` (central) and `V3` (peripheral).
 * `$CAPTURE` now saves output items to slots in `std::vector<double>`, rather than `std::map<std::string,double>`.  We've known for a while that the `std::map` wasn't very efficient especially with large simulations.  Currently, items in `$TABLE` are still saved into `std::map` with `table()` macro.  The plan going forward is to eliminate that `table` `map` and force output variables into `$CAPTURE`.
 * Due to major changes to `dplyr`, now requiring `dplyr >= 0.5.0` ([issue 69](../../issues/69))
+* The `data` slot in `mrgsims` objects is now `data.frame`
+* The `knobs` function and `plot` method has been re-written.  Overall behavior for most applications should be the same.
+
+## Under the hood
+* `C++` symbols for model functions are now stored in the model object (`funs` slot)
+* The status of the model object (function names and compile status) can be checked with `mrgsolve:::funset(mod)`
+* A model is considered to be loaded and ready to go if all functions in `funs` can be found with `is.loaded`
+* Model shared objects are still stored within the `soloc` directory (by default `tempdir()`), but `mrgsolve` will create a subdirectory structure to organize compilation artifacts.  The outer directory is keyed based on the current `mrgsolve` version number and the computer platform.  Inner directories are based on the model name (`model(mod)`).  
+* A source file is created based on the `model` name and the shared object is created based on that name.  If the compilation is successful, the shared object (`.so` on mac/unix, `.dll` on Windows) is copied to a `.so` or `.dll` file with a unique stem (e.g. `model2lj239wsfo.so`).  This unique shared object is loaded into the `R` process for use with the model.  
+* Every time the model is rebuilt, the build directory is scanned for shared object files.  Excluding the main model shared object (unchanging name based on the model), old shared object files are deleted and, if currently loaded (`getLoadedDLLs()`), are attempted to be `dyn.unload`ed.
+* Upon model rebuild (via `mread` or `mcode`), if there are no changes to the source `.cpp` file, the source is not overwritten.  In that case, `make` will not re-build the shared object.  Using the `preclean` argument will force re-compilation (see `R CMD SHLIB`).
+* The header files `modelheader.h` and `mrgsolv.h` are no longer copied into the project directory.  But `CLINK_CPPFLAGS` environment variable is modlifed to include `<path-to-mrgsolve-package>/inst/base` so that these may be linked.
+* The `R CMD SHLIB` build process always uses `intern=TRUE` so that output is suppressed on both `Windows` and `mac/unix`.  The user may still request to view build output with the `ignore.stdout` argument.
+
+
+## Deprecated
+* The entire `complog` system, including:
+    * `comp_forget` a message is issued
+    * `complog` no message is issued
+* `trequest` argument to `mrgsim`
+
 
 # Since 0.6.0
 
