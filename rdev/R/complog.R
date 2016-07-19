@@ -15,9 +15,7 @@ check_and_copy <- function(from,to,preclean=FALSE) {
       file.copy(from,to,overwrite=TRUE)
     }
   }
-
   z <- file.remove(from)
-  
   return(same)
 }
 
@@ -47,7 +45,7 @@ safe_wait <- function(x) {
 ##' 
 cleanso <- function(x) {
   soloc <- soloc(x)
-  so <- list.files(soloc, pattern="*\\.so", full.names=TRUE)
+  so <- list.files(soloc, pattern=paste0("*\\", .Platform$dynlib.ext), full.names=TRUE)
   so <- so[so != compout(model(x),soloc)]
   lo <- sapply(getLoadedDLLs(), "[[", "path")
   y <- intersect(lo,so)
