@@ -16,6 +16,7 @@ do_restore <- function(restore) {
 
 
 get_plugins <- function(what) {
+  what <- c(what, "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 
@@ -88,8 +89,8 @@ set_up_env <- function(x) {
   return(restore)
 }
 
-plugins[["base-disabled"]] <- list(
-  linkto="mrgsolve/base", name="base-disabled"
+plugins[["base"]] <- list(
+  linkto="mrgsolve/base", name="base"
 )
 
 plugins[["simeta"]] <- list(
