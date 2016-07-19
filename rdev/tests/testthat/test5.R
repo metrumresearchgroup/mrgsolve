@@ -36,7 +36,7 @@ table(CP) = CP;
 table(ETA1) = ETA(1);
 '
 
-mrgsolve:::comp_forget()
+
 tmp <- tempdir()
 
 mod <- mread(code=code, project=tmp, model="test5")

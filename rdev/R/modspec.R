@@ -450,16 +450,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
   
-  preclean <- preclean | (!logged(model(x)))
-  
   same <- check_and_copy(from = temp_write,
                          to = compfile(model(x),soloc(x)),
                          preclean)
   
   # Wait at least 2 sec since last compile
   safe_wait(x)
-  
-  purge_model(cfile(x))
+  cleanso(x)
   
   ## Compile the model
   ## The shared object is model__cpp.so
@@ -491,9 +488,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
   z <- file.copy(compout(model,soloc(x)),sodll(x))
-  
-  store(x)
-  
+
   dyn.load(sodll(x))
   
   stopifnot(dll_loaded(x))

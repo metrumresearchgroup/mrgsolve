@@ -19,8 +19,6 @@ iv <- function(dose,par,time) {
 
 }
 
-mrgsolve::comp_forget()
-
 context("Loading a model via mread")
 mod <- suppressMessages(mread("firstmodel", project,atol=1E-20, rtol=1E-12, digits=8))
 

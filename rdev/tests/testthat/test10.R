@@ -8,7 +8,6 @@ require(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mrgsolve:::comp_forget()
 rm(list=ls())
 
 mod <- mrgsolve:::house()

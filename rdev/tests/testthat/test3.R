@@ -25,7 +25,7 @@ table(FLAG) = 2;
 table(ETA1) = ETA(1);
 table(EPS1) = EPS(1);
 '
-mrgsolve:::comp_forget()
+
 tmp <- tempdir()
 mod <- mread(code=code, project=tmp, model="test3")
 
@@ -58,13 +58,12 @@ table(ETA1) = ETA(1);
 table(EPS1) = EPS(1);
 '
 
-mrgsolve:::comp_forget()
+
 mod <- mread(code='$CMT CENT\n$PARAM CL=1', project=tmp, model="test3c")
 test_that("Testing that request is (all) by default", {
   expect_identical(mod@request, "(all)")
 })
 
-mrgsolve:::comp_forget()
 mod <- mread(code=code, project=tmp, model="test3b")
 cols <- names(mrgsim(mod))
 test_that("Testing that request is properly set in $SET", {

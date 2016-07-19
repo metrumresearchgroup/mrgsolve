@@ -18,15 +18,11 @@ $CMT CENT
 $ODE dxdt_CENT = -(CL/10)*CENT;
 $CAPTURE CL FORM  F1
 '
-comp_forget()
-
 
 mod <- mcode("bioav1",code) %>% carry.out(evid)
 
 
 context("Dedicated bioavailability tests")
-
-
 
 test_that("Bioav test with doses at time=0", {
   data <- expand.ev(ID=1:2,amt=100,FORM=c(1,2))

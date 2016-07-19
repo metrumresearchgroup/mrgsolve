@@ -78,9 +78,6 @@ $SIGMA name="sg", block=TRUE
 $PARAM CL=1
 $INIT CENT=0
 '
-
-
-mrgsolve:::comp_forget()
 mod <- mread(code=code, project=tmp, model="test6b")
 
 context("User OMEGA and SIGMA matrices are loaded correctly")
@@ -144,7 +141,6 @@ test_that("A warning is generated when nothing is updated",{
   expect_warning(mod %>% smat(S=matrix(1)))
 })
 
-mrgsolve:::comp_forget()
 code <- '
 $INIT a=1
 

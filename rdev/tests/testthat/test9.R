@@ -7,7 +7,6 @@ library(mrgsolve)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mrgsolve:::comp_forget()
 rm(list=ls())
 
 
@@ -31,7 +30,6 @@ $MAIN double Z = A+B+C+D+E;
 $TABLE table(cmtn) = N_DEPOT;
 '
 
-mrgsolve:::comp_forget()
 mod <- NULL
 mod <- try(mread(code=code, model="FOO",tempdir(), audit=FALSE))
 
