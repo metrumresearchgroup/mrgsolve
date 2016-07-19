@@ -25,11 +25,9 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 * A model is considered to be loaded and ready to go if all functions in `funs` can be found with `is.loaded`
 * Model shared objects are still stored within the `soloc` directory (by default `tempdir()`), but `mrgsolve` will create a subdirectory structure to organize compilation artifacts.  The outer directory is keyed based on the current `mrgsolve` version number and the computer platform.  Inner directories are based on the model name (`model(mod)`).  
 * A source file is created based on the `model` name and the shared object is created based on that name.  If the compilation is successful, the shared object (`.so` on mac/unix, `.dll` on Windows) is copied to a `.so` or `.dll` file with a unique stem (e.g. `model2lj239wsfo.so`).  This unique shared object is loaded into the `R` process for use with the model.  
+* Every time the model is rebuilt, the build directory is scanned for shared object files.  Excluding the main model shared object (unchanging name based on the model), old shared object files are deleted and, if currently loaded (`getLoadedDLLs()`), are attempted to be `dyn.unload`ed.
 * Upon model rebuild (via `mread` or `mcode`), if there are no changes to the source `.cpp` file, the source is not overwritten.  In that case, `make` will not re-build the shared object.  Using the `preclean` argument will force re-compilation (see `R CMD SHLIB`).
 * The header files `modelheader.h` and `mrgsolv.h` are no longer copied into the project directory.  But `CLINK_CPPFLAGS` environment variable is modlifed to include `<path-to-mrgsolve-package>/inst/base` so that these may be linked.
-
-
-
 
 
 
