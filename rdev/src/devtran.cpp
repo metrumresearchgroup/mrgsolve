@@ -714,7 +714,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   
   // Significant digits in simulated variables and outputs too
-  if(digits > 0) for(size_t i=req_start; i < ans.ncol(); i++) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
+  if(digits > 0) for(int i=req_start; i < ans.ncol(); i++) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
   if((tscale !=1) && (tscale >= 0)) ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   
   // // Assemble return List
