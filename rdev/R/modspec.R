@@ -4,16 +4,6 @@
 
 ##' @include utils.R complog.R nmxml.R matrix.R
 
-## TO BE REMOVED 4/29/16
-##c_com_start <- "/\\*"
-##c_com_end <- "\\*/"
-##GlobalVarRe <- "\\s*Global\\s+(double|int|bool|).*"
-##eol.comment <- "^([^#]*)\\#+.*$"; dhash <- "^([^#]*)\\##+.*$"; dslash <- "^(.*)//.*$"
-## labre <- "\\s*\\$([A-Z,a-z,0-9]+)\\s*.*"
-## labre.rep <- "\\1"
-## drop.labre <- "\\$[A-Z,a-z,0-9]+\\s*(.*)"
-## drop.labre.rep <- "\\1"
-
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
 
@@ -36,19 +26,12 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
-## A random file name
-rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
-  basename(tempfile(pattern=pattern,tmpdir='.'))
-}
+
 
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c("Req", "obsonly","mtime", "recsort",
               "carry.out","Trequest","trequest")
-
-## REMOVE 5/18/2016
-#is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
-#funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
@@ -106,9 +89,16 @@ fixed_parameters <- function(x,fixed_type) {
   )
 }
 
+## A random file name
+so_stem <- function(x) paste0(x,"-so-")
+
+rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
+  basename(tempfile(pattern=so_stem(pattern),tmpdir='.'))
+}
+
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(model,soloc) file.path(soloc,paste0(model, "__cpp.cpp"))
-compout  <- function(model,soloc) file.path(soloc,paste0(model, "__cpp", .Platform$dynlib.ext))
+compfile <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source.cpp"))
+compout  <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source", .Platform$dynlib.ext))
 compdir <- function() {
   paste(c("mrgsolve",
           "so",
@@ -188,33 +178,6 @@ get_c_vars <- function(y) {
          perl=TRUE)
 }
 ## ----------------------------------------------------------------------------
-
-
-## Replaced by move_global
-altglobal <- function(code,moveto="GLOBAL",
-                      what=grepl("MAIN|ODE|TABLE",names(code),perl=TRUE)) {
-  
-  check <- grep("^\\s*(bool|int|double)", unlist(code[what]), value=TRUE,perl=TRUE)
-  
-  check <- check[grepl("=",check)]
-  
-  if(any(sapply(strsplit(gsub("[><!=]=", " ",check), "=",perl=TRUE),length)>2)) {
-    
-    warning("Multiple variable declarations are not allowed in MAIN, ODE, or TABLE.")
-  }
-  
-  vars <- regmatches(check,regexpr(globalre2,check,perl=TRUE))
-  
-  code[what] <- lapply(code[what], gsub, pattern="^\\s*(double|int|bool)\\s+(\\w+\\s*=)", replacement="\\2", perl=TRUE)
-  
-  vars <- unlist(vars)
-  
-  if(length(vars)>0) vars <- paste0(vars, ";")
-  
-  code[[moveto]] <- c(code[[moveto]], "typedef double localdouble;","typedef int localint;","typedef bool localbool;",vars)
-  
-  return(code)
-}
 
 
 
@@ -489,9 +452,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This name is suitable for use in the build path
   cfile <- compfile(model,build_path(soloc))
   
-  if(ignore.stdout & !quiet) message("Compiling ",dllname(x)," ... ", appendLF=FALSE)
-  
-  preclean <- preclean | (!logged(model(x)))
+  if(ignore.stdout & !quiet) message("Compiling ",model(x)," ... ", appendLF=FALSE)
   
   same <- check_and_copy(from = temp_write,
                          to = compfile(model(x),soloc(x)),
@@ -499,8 +460,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   # Wait at least 2 sec since last compile
   safe_wait(x)
-  
-  purge_model(cfile(x))
+  cleanso(x)
   
   ## Compile the model
   ## The shared object is model__cpp.so
@@ -532,9 +492,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
   z <- file.copy(compout(model,soloc(x)),sodll(x))
-  
-  store(x)
-  
+
   dyn.load(sodll(x))
   
   stopifnot(dll_loaded(x))

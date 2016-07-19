@@ -51,7 +51,7 @@ $SIGMA block=TRUE
 0.1 0.002 0.3
 
 '
-mrgsolve:::comp_forget()
+
 tmp <- tempdir()
 mod <- mread(code=code, project=tmp, model="test2", warn=FALSE)
 
@@ -107,8 +107,6 @@ test_that("EPS values have proper variance", {
   expect_equal(round(var(out$EPS1),2),0.55)
 })
 
-
-mrgsolve:::comp_forget()
 
 code <- '
 $PARAM CL=1, VC=20

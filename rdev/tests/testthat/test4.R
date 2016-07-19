@@ -17,7 +17,6 @@ $OMEGA 0 0 0
 $SIGMA 0 0 0
 '
 
-mrgsolve:::comp_forget()
 tmp <- tempdir()
 
 mod <- mread(code=code, project=tmp, model="test4")

@@ -7,8 +7,6 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 context("Testing obsonly and obsaug arguments")
 
-mrgsolve:::comp_forget()
-
 mod <- mrgsolve:::house(add=c(8.123, 33.3333))
 data(exTheoph)
 

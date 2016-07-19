@@ -2,7 +2,6 @@ library(testthat)
 library(mrgsolve)
 library(dplyr)
 
-mrgsolve:::comp_forget()
 rm(list=ls())
 
 lim <- function(x,...) {

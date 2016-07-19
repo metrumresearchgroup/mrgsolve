@@ -138,8 +138,6 @@ $CMT CENT PER
 $PKMODEL ncmt=2
 '
 
-comp_forget()
-
 ode <- mread(code=ode_code, model="test13.3", project=tmp) 
 pred <- mread(code=pred_code, model="test13.4", project=tmp)
 pred2 <- mread(code=pred2, model="test13.5", project=tmp)
