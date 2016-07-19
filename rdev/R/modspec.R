@@ -4,16 +4,6 @@
 
 ##' @include utils.R complog.R nmxml.R matrix.R
 
-## TO BE REMOVED 4/29/16
-##c_com_start <- "/\\*"
-##c_com_end <- "\\*/"
-##GlobalVarRe <- "\\s*Global\\s+(double|int|bool|).*"
-##eol.comment <- "^([^#]*)\\#+.*$"; dhash <- "^([^#]*)\\##+.*$"; dslash <- "^(.*)//.*$"
-## labre <- "\\s*\\$([A-Z,a-z,0-9]+)\\s*.*"
-## labre.rep <- "\\1"
-## drop.labre <- "\\$[A-Z,a-z,0-9]+\\s*(.*)"
-## drop.labre.rep <- "\\1"
-
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
 
@@ -45,10 +35,6 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c("Req", "obsonly","mtime", "recsort",
               "carry.out","Trequest","trequest")
-
-## REMOVE 5/18/2016
-#is_loaded <- function(x) is.loaded(x[1],x[2],type="Call")
-#funs_loaded <- function(x) sapply(list(ode=x@func,main=x@init_fun,table=x@table_fun),is_loaded)
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
@@ -188,33 +174,6 @@ get_c_vars <- function(y) {
          perl=TRUE)
 }
 ## ----------------------------------------------------------------------------
-
-
-## Replaced by move_global
-altglobal <- function(code,moveto="GLOBAL",
-                      what=grepl("MAIN|ODE|TABLE",names(code),perl=TRUE)) {
-  
-  check <- grep("^\\s*(bool|int|double)", unlist(code[what]), value=TRUE,perl=TRUE)
-  
-  check <- check[grepl("=",check)]
-  
-  if(any(sapply(strsplit(gsub("[><!=]=", " ",check), "=",perl=TRUE),length)>2)) {
-    
-    warning("Multiple variable declarations are not allowed in MAIN, ODE, or TABLE.")
-  }
-  
-  vars <- regmatches(check,regexpr(globalre2,check,perl=TRUE))
-  
-  code[what] <- lapply(code[what], gsub, pattern="^\\s*(double|int|bool)\\s+(\\w+\\s*=)", replacement="\\2", perl=TRUE)
-  
-  vars <- unlist(vars)
-  
-  if(length(vars)>0) vars <- paste0(vars, ";")
-  
-  code[[moveto]] <- c(code[[moveto]], "typedef double localdouble;","typedef int localint;","typedef bool localbool;",vars)
-  
-  return(code)
-}
 
 
 

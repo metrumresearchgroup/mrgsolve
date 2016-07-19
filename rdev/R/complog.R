@@ -105,20 +105,13 @@ check_and_copy <- function(from,to,preclean=FALSE) {
 ## and loading a model
 safe_wait <- function(x) {
   
-  y <- 
-    db[["complog"]] %>%
-    filter(file==basename(cfile(x))) %>%
-    select_(.dots="time") %>% unlist
-  
-  if(length(y) ==0) return(invisible(NULL))
-  
-  z <- signif(ntime() - max(y),3)
-  
-  if(z > SAFE_WAIT_TIME) return(invisible(NULL))
-  
-  message("(waiting) ... ",appendLF=FALSE)
-  
-  return(Sys.sleep(SAFE_WAIT_TIME-z))
+  target <- compout(model(x),soloc(x))
+  if(!file.exists(target)) return(invisible(NULL))
+  mt <- file.info(target)[["mtime"]]
+  age <- as.POSIXct(Sys.time()) - as.POSIXct(mt)
+  if(age > SAFE_WAIT_TIME) return(invisible(NULL))
+  message("(waiting) ...")
+  return(Sys.sleep(SAFE_WAIT_TIME-age))
 }
 
 ## Drop a model from the log

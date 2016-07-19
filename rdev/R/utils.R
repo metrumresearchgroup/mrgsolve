@@ -8,7 +8,6 @@ loaded_dll_files <- function() {
 }
 
 dllfile <- function(x) paste0(dllname(x),.Platform$dynlib.ext)
-
 pathfun <- function(...) path.expand(...) #,mustWork=FALSE,winslash=.Platform$file.sep
 
 
