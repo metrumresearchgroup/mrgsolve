@@ -110,7 +110,7 @@ compdir <- function() {
 setup_soloc <- function(loc,model) {
   soloc <- file.path(loc,compdir(),model)
   if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
-  z <- file.copy(mrgsolve:::pfile("mrgsolve", "include", c("mrgsolv.h", "modelheader.h")), 
+  z <- file.copy(pfile("mrgsolve", "include", c("mrgsolv.h", "modelheader.h")), 
                  soloc,overwrite=TRUE)
   return(soloc)
 }
