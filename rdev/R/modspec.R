@@ -458,7 +458,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     setwd(cwd)
   })
   
-  setwd(soloc(x))
+  setwd(soloc)
   
   cfile <- compfile(model,soloc)
   
@@ -503,7 +503,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     status <- attr(status, "status")
     
-    comp_success <- is.null(status) & file.exists(compout(model,soloc(x)))
+    comp_success <- is.null(status) & file.exists(compout(model,soloc))
     
     if(!comp_success) {
       cat(output, sep="\n") 
@@ -516,7 +516,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  z <- file.copy(compout(model,soloc(x)),sodll(x))
+  z <- file.copy(compout(model,soloc),sodll(x))
   
   dyn.load(sodll(x))
   
