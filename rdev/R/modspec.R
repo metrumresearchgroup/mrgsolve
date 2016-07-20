@@ -479,14 +479,16 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                                     intern=ignore.stdout,
                                     ignore.stdout=ignore.stdout))
   
-  if(!ignore.stdout) {
+
+  if(!ignore.stdout) { ## not intern
     
     if(status != "0") {
       cat("\n\n")
       stop("There was a problem when compiling the model.",call.=FALSE)
     }
     
-  } else {
+    
+  } else { ## intern
     
     output <- status
     
@@ -511,7 +513,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   dyn.load(sodll(x))
   
-  stopifnot(dll_loaded(x))
+  stopifnot(all_loaded(x))
   
   x <- compiled(x,TRUE)
   
