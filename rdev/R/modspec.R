@@ -249,7 +249,8 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' mod %>% init(CENT=1000) %>% mrgsim %>% plot
 ##'
 mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
-                  ignore.stdout=TRUE,raw=FALSE,compile=TRUE,audit=FALSE,
+                  ignore.stdout=TRUE,
+                  raw=FALSE,compile=TRUE,audit=FALSE,
                   quiet=getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),preclean=FALSE,...) {
   
@@ -454,7 +455,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This name is suitable for use in the build path
   cfile <- compfile(model,build_path(soloc))
   
-  if(ignore.stdout & !quiet) message("Compiling ",model(x)," ... ", appendLF=FALSE)
+  if(ignore.stdout & !quiet) {
+    message("Compiling ",model(x)," ... ", appendLF=FALSE)
+  }
   
   same <- check_and_copy(from = temp_write,
                          to = compfile(model(x),soloc(x)),
@@ -472,29 +475,40 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  ifelse(preclean, " --preclean ", ""),
                  build_path(cfile))
   
-  status <- suppressWarnings(system(syst,intern=ignore.stdout))
+  status <- suppressWarnings(system(syst,
+                                    intern=ignore.stdout,
+                                    ignore.stdout=ignore.stdout))
   
-  output <- status
-  attributes(output) <- NULL
-  
-  status <- attr(status, "status")
-  
-  comp_success <- is.null(status) & file.exists(compout(model,soloc(x)))
-  
-  if(!ignore.stdout & comp_success) {
-    cat(output, sep="\n") 
+  if(!ignore.stdout) {
+    
+    if(status != "0") {
+      cat("\n\n")
+      stop("There was a problem when compiling the model.",call.=FALSE)
+    }
+    
+  } else {
+    
+    output <- status
+    
+    attributes(output) <- NULL
+    
+    status <- attr(status, "status")
+    
+    comp_success <- is.null(status) & file.exists(compout(model,soloc(x)))
+    
+    if(!comp_success) {
+      cat(output, sep="\n") 
+      cat("\n\n")
+      stop("There was a problem when compiling the model.",call.=FALSE);
+    } 
+    if(!quiet) message("done.")
   }
   
-  if(!comp_success) {
-    stop("\n\nThere was a problem when compiling the model.",call.=FALSE);
-  }
-  
-  if(ignore.stdout & !quiet) message("done.")
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
   z <- file.copy(compout(model,soloc(x)),sodll(x))
-
+  
   dyn.load(sodll(x))
   
   stopifnot(dll_loaded(x))
