@@ -45,6 +45,7 @@ make_clink <- function(x) {
     y <- find.package(dirname(ln))
     build_path(file.path(y,basename(ln)))
   })
+  if(length(link)==0) return("")
   paste(paste0("-I\"",link, "\""),collapse=" ")
 }
 
