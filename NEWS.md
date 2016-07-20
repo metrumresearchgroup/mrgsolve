@@ -30,7 +30,7 @@ __Please see the latest release__: [v0.6.1](https://github.com/metrumresearchgro
 * The header files `modelheader.h` and `mrgsolv.h` are no longer copied into the project directory.  But `CLINK_CPPFLAGS` environment variable is modlifed to include `<path-to-mrgsolve-package>/inst/base` so that these may be linked.
 * The `R CMD SHLIB` build process always uses `intern=TRUE` so that output is suppressed on both `Windows` and `mac/unix`.  The user may still request to view build output with the `ignore.stdout` argument.
 * Model build always links-to the `project` directory to look for `C++` header files.  When including a header file that may change from build to build, always run with `preclean=TRUE`.
-
+* `mrgsolve` now changes the working directory prior to building a model.  The working directory is restored on exit from `mread`.
 
 ## Deprecated
 * The entire `complog` system, including:
