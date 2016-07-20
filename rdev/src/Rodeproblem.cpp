@@ -36,10 +36,14 @@ Rodeproblem::Rodeproblem(int npar_,int neq_) : odeproblem(npar_, neq_) {}
 
 Rodeproblem::Rodeproblem(Rcpp::NumericVector param,
 			 Rcpp::NumericVector init):odeproblem(param.size(),init.size()) {
-  size_t i=0;
-
-  for(i=0; i < param.size(); i++) Param[i] =       double(param[i]);
-  for(i=0; i < init.size(); i++)  Init_value[i] =  double(init[i]);
+  
+  int i=0, n=0;  
+  
+  n = int(param.size());
+  for(i=0; i < n; i++) Param[i] =       double(param[i]);
+  
+  n = int(init.size());
+  for(i=0; i < n; i++)  Init_value[i] =  double(init[i]);
 }
 
 
@@ -62,13 +66,13 @@ void Rodeproblem::advance(double& tfrom, double& tto) {
   if(Neq <= 0) return;
 
   if(Advan != 13) {
-    if(Advan==2 | Advan==1) {
+    if((Advan==2) | (Advan==1)) {
       odeproblem* prob = this;
       prob->advan2(tfrom,tto);
       return;
     }
 
-    if(Advan==4 | Advan==3) {
+    if((Advan==4) | (Advan==3)) {
       odeproblem* prob = this;
       prob->advan4(tfrom,tto);
       return;

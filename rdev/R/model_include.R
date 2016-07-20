@@ -3,7 +3,7 @@ plugins <- new.env()
 plugins[[".depends"]] <- list(mrgx=c("Rcpp"),simeta=c("RcppArmadillo"))
 
 
-include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx", "base")
+include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
 get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS")) {
   as.list(Sys.getenv(what, unset=NA)) 
@@ -16,7 +16,7 @@ do_restore <- function(restore) {
 
 
 get_plugins <- function(what) {
-  what <- c(what,"base")
+  what <- c(what, "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 

@@ -50,6 +50,9 @@ funs_loaded <- function(x,crump=TRUE) {
   all(which_loaded(x)) & compiled(x)
 }
 
+all_loaded <- function(x) all(which_loaded(x))  
+
+
 pointers <- function(x) {
   if(!funs_loaded(x)) stop(FUNSET_ERROR)
   what <- funs(x)

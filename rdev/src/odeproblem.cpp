@@ -112,7 +112,7 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 
   // prob->add_rates(ydot);
   // // Add on infusion rates:
-  for(unsigned int i=0; i < prob->neq(); i++) {
+  for(int i=0; i < prob->neq(); i++) {
     if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
     ydot[i] = (ydot[i] + prob->rate0(i));
   }
@@ -268,13 +268,13 @@ void odeproblem::advance(double& tfrom, double& tto) {
   if(Neq <= 0) return;
 
   if(Advan != 13) {
-    if(Advan==2 | Advan==1) {
+    if((Advan==2) | (Advan==1)) {
       odeproblem* prob = this;
       prob->advan2(tfrom,tto);
       return;
     }
 
-    if(Advan==4 | Advan==3) {
+    if((Advan==4) | (Advan==3)) {
       odeproblem* prob = this;
       prob->advan4(tfrom,tto);
       return;

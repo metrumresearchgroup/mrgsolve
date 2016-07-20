@@ -82,7 +82,11 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   if(any(is.element(c("addl","ss","cmt"), moving))) 
     stop("addl, cmt, and ss can have only one level",call.=FALSE)
   
+  if(any(duplicated(moving))) stop("Duplicate knobs were found.", call.=FALSE)
+  
   if(length(input)==0) stop("No valid knobs found.", call.=FALSE)
+  
+  
   
   data <- do.call("expand.ev", input)
   
