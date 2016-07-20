@@ -473,7 +473,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 build_path(cfile))
+                 basename(cfile))
+  cwd <- getwd()
+  setwd(soloc(x))
+  on.exit(setwd(cwd),add=TRUE)
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
