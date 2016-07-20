@@ -448,11 +448,18 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
+  ## Set up for build
+  cwd <- getwd()
+  
   to_restore <- set_up_env(plugin,clink=project(x))
   
-  on.exit(do_restore(to_restore))
+  on.exit({
+    do_restore(to_restore)
+    setwd(cwd)
+  })
   
-  ## This name is suitable for use in the build path
+  setwd(soloc(x))
+  
   cfile <- compfile(model,soloc)
   
   if(ignore.stdout & !quiet) {
@@ -460,7 +467,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   }
   
   same <- check_and_copy(from = temp_write,
-                         to = compfile(model(x),soloc(x)),
+                         to = cfile,
                          preclean)
   
   # Wait at least 2 sec since last compile
@@ -474,15 +481,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
                  basename(cfile))
-  cwd <- getwd()
-  setwd(soloc(x))
-  on.exit(setwd(cwd),add=TRUE)
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
                                     ignore.stdout=ignore.stdout))
   
-
+  
   if(!ignore.stdout) { ## not intern
     
     if(status != "0") {
