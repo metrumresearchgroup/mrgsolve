@@ -448,7 +448,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
-  to_restore <- set_up_env(plugin)
+  to_restore <- set_up_env(plugin,clink=project(x))
   
   on.exit(do_restore(to_restore))
   

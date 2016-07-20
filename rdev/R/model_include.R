@@ -2,17 +2,7 @@ includes <- new.env()
 plugins <- new.env()
 plugins[[".depends"]] <- list(mrgx=c("Rcpp"),simeta=c("RcppArmadillo"))
 
-
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
-
-get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS")) {
-  as.list(Sys.getenv(what, unset=NA)) 
-}
-do_restore <- function(restore) {
-  unset <- sapply(restore, is.na)
-  if(any(!unset))  do.call(Sys.setenv,restore[!unset])
-  if(any(unset))   Sys.unsetenv(names(restore[unset]))
-}
 
 
 get_plugins <- function(what) {
@@ -38,21 +28,8 @@ get_plugin <- function(what) {
   plugins[[what]]
 }
 
-make_clink <- function(x) {
-  if(is.null(x)) return(NULL)
-  link <- unique(s_pick(x,"linkto"))
-  link <- sapply(link,function(ln) {
-    y <- find.package(dirname(ln))
-    build_path(file.path(y,basename(ln)))
-  })
-  paste(paste0("-I\"",link, "\""),collapse=" ")
-}
 
-make_libs <- function(x) {
-  if(is.null(x)) return(NULL)
-  libs <- unique(s_pick(x,"libs"))
-  paste0(libs, collapse=" ")
-}
+
 
 plugin_code <- function(x) {
   if(is.null(x)) return(NULL)
@@ -65,9 +42,29 @@ plugin_names <- function(x) {
   paste0("// PLUGINS: ", paste(x, collapse=" "))
 }
 
-set_clink <- function(x) {
-  if(is.null(x)) return(invisible(NULL))
-  Sys.setenv(CLINK_CPPFLAGS = make_clink(x)) 
+
+make_clink <- function(x,clink) {
+  if(is.null(x)) return(NULL)
+  link <- unique(s_pick(x,"linkto"))
+  link <- sapply(link,function(ln) {
+    y <- find.package(dirname(ln))
+    build_path(file.path(y,basename(ln)))
+  })
+  link <- c(link, build_path(clink))
+  if(length(link)==0) return("")
+  paste(paste0("-I\"",unique(link), "\""),collapse=" ")
+}
+
+set_clink <- function(x,clink=NULL) {
+  if(is.null(x) & is.null(clink)) return(invisible(NULL))
+  Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
+}
+
+
+make_libs <- function(x) {
+  if(is.null(x)) return(NULL)
+  libs <- unique(s_pick(x,"libs"))
+  paste0(libs, collapse=" ")
 }
 
 set_libs <- function(x) {
@@ -79,15 +76,26 @@ set_nodos <- function() {
   Sys.setenv(CYGWIN = "nodosfilewarning") 
 }
 
-set_up_env <- function(x) {
+set_up_env <- function(x,...) {
   restore <- get_restore()
   set_nodos()
   if(!is.null(x)) {
-    set_clink(x)
+    set_clink(x,...)
     set_libs(x)
   }
   return(restore)
 }
+
+get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS")) {
+  as.list(Sys.getenv(what, unset=NA)) 
+}
+
+do_restore <- function(restore) {
+  unset <- sapply(restore, is.na)
+  if(any(!unset))  do.call(Sys.setenv,restore[!unset])
+  if(any(unset))   Sys.unsetenv(names(restore[unset]))
+}
+
 
 plugins[["base"]] <- list(
   linkto="mrgsolve/base", name="base"
@@ -102,10 +110,12 @@ plugins[["mrgx"]] <- list(
   linkto="mrgsolve/mrgx",
   code='#include "mrgx.h"\n',name="mrgx"
 )
+
 plugins[["Rcpp"]] <- list(
   code = "#include <Rcpp.h>\n",
   linkto = "Rcpp/include", name="Rcpp"
 )
+
 plugins[["RcppEigen"]] <- list(
   code = "#include <RcppEigen.h>\n",
   linkto = c("Rcpp/include","RcppEigen/include"), name="RcppEigen"
@@ -118,5 +128,9 @@ plugins[["RcppArmadillo"]] <- list(
   linkto = c("Rcpp/include", "RcppArmadillo/include")
 )
 
-plugins[["BH"]] <- list(linkto="BH/include", name="BH")
+plugins[["BH"]] <- list(
+  linkto="BH/include", name="BH"
+)
+
+
 

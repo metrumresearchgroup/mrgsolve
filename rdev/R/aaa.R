@@ -41,7 +41,9 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "_SETINIT","report","double", "int", "bool")
 
 
-globalVariables(c("test_package","time", "ID","everything", "TIME", "address", "func", "loaded", "name", "not_found"))
+globalVariables(c("test_package","time", "ID",
+                  "everything", "TIME", "address",
+                  "func", "loaded", "name", "not_found"))
 
 
 
