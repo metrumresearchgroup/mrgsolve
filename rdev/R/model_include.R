@@ -16,7 +16,7 @@ do_restore <- function(restore) {
 
 
 get_plugins <- function(what) {
-  #what <- c(what, "base")
+  what <- c(what, "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 
@@ -38,15 +38,16 @@ get_plugin <- function(what) {
   plugins[[what]]
 }
 
-make_clink <- function(x) {
+make_clink <- function(x,clink) {
   if(is.null(x)) return(NULL)
   link <- unique(s_pick(x,"linkto"))
   link <- sapply(link,function(ln) {
     y <- find.package(dirname(ln))
     build_path(file.path(y,basename(ln)))
   })
+  link <- c(link, build_path(clink))
   if(length(link)==0) return("")
-  paste(paste0("-I\"",link, "\""),collapse=" ")
+  paste(paste0("-I\"",unique(link), "\""),collapse=" ")
 }
 
 make_libs <- function(x) {
@@ -66,9 +67,9 @@ plugin_names <- function(x) {
   paste0("// PLUGINS: ", paste(x, collapse=" "))
 }
 
-set_clink <- function(x) {
-  if(is.null(x)) return(invisible(NULL))
-  Sys.setenv(CLINK_CPPFLAGS = make_clink(x)) 
+set_clink <- function(x,clink=NULL) {
+  if(is.null(x) & is.null(clink)) return(invisible(NULL))
+  Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
 }
 
 set_libs <- function(x) {
@@ -80,11 +81,11 @@ set_nodos <- function() {
   Sys.setenv(CYGWIN = "nodosfilewarning") 
 }
 
-set_up_env <- function(x) {
+set_up_env <- function(x,...) {
   restore <- get_restore()
   set_nodos()
   if(!is.null(x)) {
-    set_clink(x)
+    set_clink(x,...)
     set_libs(x)
   }
   return(restore)
