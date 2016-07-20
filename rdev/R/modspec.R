@@ -453,7 +453,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   on.exit(do_restore(to_restore))
   
   ## This name is suitable for use in the build path
-  cfile <- compfile(model,build_path(soloc))
+  cfile <- compfile(model,soloc)
   
   if(ignore.stdout & !quiet) {
     message("Compiling ",model(x)," ... ", appendLF=FALSE)
