@@ -25,15 +25,23 @@ Installation
 -   Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
 -   Latest stable version directly from github via:
 
-`r   devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.1", subdir="rdev")`
+``` r
+  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.1", subdir="rdev")
+```
 
 -   The latest stable release can be installed with `install.packages` like this:
 
-`r   install.packages("mrgsolve",                    repos=c(options()$repos,"https://mrgsolve.github.io/pkg"),                    type="source")`
+``` r
+  install.packages("mrgsolve",
+                   repos=c(options()$repos,"https://mrgsolve.github.io/pkg"),
+                   type="source")
+```
 
 -   The development version from github via:
 
-`r   devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")`
+``` r
+  devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
+```
 
 Note that installation from `github` will automatically install all dependencies, such `RcppArmadillo`.
 
