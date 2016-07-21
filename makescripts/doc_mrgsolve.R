@@ -18,18 +18,14 @@ stopifnot(all(c(x1,x2)))
 
 document(pkg)
 
-cppfile <- function(x) {
-  file.path(proj,paste0(x@model, "__cpp.cpp"))
-}
 
 ## I think mrgsolve functions available after doc
 foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
-#foo@shlib$source <- NULL
-#foo@soloc <- ""
-cpp <- normalizePath(cppfile(foo))
+
+cpp <- normalizePath(foo$source)
 
 x <- file.copy(cpp, file.path(pkg, "src"),overwrite=TRUE)
 
-saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),foo)
+saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),foo$mod)
 
 

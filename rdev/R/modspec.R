@@ -446,19 +446,20 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- compfile(model,soloc)
   
-  if(!compile) return(x)
-  
-  
+
   to_restore <- set_up_env(plugin,clink=project(x))
   on.exit(do_restore(to_restore))
 
-  if(ignore.stdout & !quiet) {
-    message("Compiling ",model(x)," ... ", appendLF=FALSE)
-  }
-  
+
   same <- check_and_copy(from = temp_write,
                          to = compfile(model,soloc),
                          preclean)
+  
+  if(!compile) return(x)
+  
+  if(ignore.stdout & !quiet) {
+    message("Compiling ",model(x)," ... ", appendLF=FALSE)
+  }
   
   # Wait at least 2 sec since last compile
   safe_wait(x)

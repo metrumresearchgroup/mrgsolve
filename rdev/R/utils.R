@@ -837,7 +837,8 @@ as_pack_mod <- function(model, project, PACKAGE) {
              package=PACKAGE,
              model=model
              )
-
+    soloc <- soloc(x)
+    source <- compfile(model(x),soloc)
     x@shlib$par <- pars(x)
     x@shlib$cmt <- cmt(x)
     x@shlib$source <- NULL
@@ -845,7 +846,7 @@ as_pack_mod <- function(model, project, PACKAGE) {
     x <- relocate_funs(x, PACKAGE)
     x@soloc <- ""
   
-    return(x)
+    return(list(mod=x, soloc=soloc,source=source))
 }
 
 
