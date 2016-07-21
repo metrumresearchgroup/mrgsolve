@@ -26,6 +26,10 @@ cpp <- normalizePath(foo$source)
 
 x <- file.copy(cpp, file.path(pkg, "src"),overwrite=TRUE)
 
+mod <- foo$mod
 saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),foo$mod)
+
+
+
 
 
