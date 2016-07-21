@@ -1,7 +1,10 @@
-__Please see the latest release__: [v0.7.0](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.0)
+__Please see the latest release__: [v0.7.1](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.1)
+
+# Since 0.7.1
+No additions / changes yet.
 
 # Since 0.7.0
-No progress to report yet.
+- Revert back to previous behavior where `cwd` to `soloc` is not required to build the model.  This was only required on `Windows` systems where there was a space in the file name.   Correctly rendering the path for the build directory now.
 
 # Since 0.6.1
 
