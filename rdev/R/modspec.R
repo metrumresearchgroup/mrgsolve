@@ -448,26 +448,16 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!compile) return(x)
   
-  ## Set up for build
-  cwd <- getwd()
   
   to_restore <- set_up_env(plugin,clink=project(x))
-  
-  on.exit({
-    do_restore(to_restore)
-    #setwd(cwd)
-  })
-  
-  #setwd(soloc)
-  
-  cfile <- compfile(model,build_path(soloc))
-  
+  on.exit(do_restore(to_restore))
+
   if(ignore.stdout & !quiet) {
     message("Compiling ",model(x)," ... ", appendLF=FALSE)
   }
   
   same <- check_and_copy(from = temp_write,
-                         to = cfile,
+                         to = compfile(model,soloc),
                          preclean)
   
   # Wait at least 2 sec since last compile
@@ -480,7 +470,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 cfile)
+                 compfile(model,build_path(soloc)))
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
