@@ -455,12 +455,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   on.exit({
     do_restore(to_restore)
-    setwd(cwd)
+    #setwd(cwd)
   })
   
-  setwd(soloc)
+  #setwd(soloc)
   
-  cfile <- compfile(model,soloc)
+  cfile <- compfile(model,build_path(soloc))
   
   if(ignore.stdout & !quiet) {
     message("Compiling ",model(x)," ... ", appendLF=FALSE)
@@ -480,7 +480,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 basename(cfile))
+                 cfile)
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
