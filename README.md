@@ -25,15 +25,15 @@ Installation
 -   Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
 -   Latest stable version directly from github via:
 
-``` r
-devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.1", subdir="rdev")
-```
+`r   devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.1", subdir="rdev")`
+
+-   The latest stable release can be installed with `install.packages` like this:
+
+`r   install.packages("mrgsolve",                    repos=c(options()$repos,"https://mrgsolve.github.io/pkg"),                    type="source")`
 
 -   The development version from github via:
 
-``` r
-devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
-```
+`r   devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")`
 
 Note that installation from `github` will automatically install all dependencies, such `RcppArmadillo`.
 
@@ -133,7 +133,7 @@ out
 plot(out, CP+RESP~.)
 ```
 
-<img src="img/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 ``` r
 out <- 
@@ -147,7 +147,7 @@ out <-
 plot(out, auto.key=list(columns=3))
 ```
 
-<img src="img/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 Also use `mrgsolve` for efficient, large-scale population simulation
 --------------------------------------------------------------------
@@ -196,7 +196,7 @@ out <-
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 
-<img src="img/README-unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 Pass simulated output to your favorite data summary or visualization routines
 -----------------------------------------------------------------------------
@@ -226,4 +226,4 @@ out %>%
   geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
 ```
 
-<img src="img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
