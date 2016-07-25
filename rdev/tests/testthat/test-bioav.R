@@ -1,7 +1,7 @@
 
 library(mrgsolve)
 library(testthat)
-library(MASS)
+#library(MASS)
 
 
 Sys.setenv(R_TESTS="")
