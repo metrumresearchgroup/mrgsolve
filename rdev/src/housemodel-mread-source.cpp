@@ -1,5 +1,8 @@
-// PLUGINS: base
+// Source MD5: b91b381babcc6576c1efc65dfeab9285
+
 #include "modelheader.h"
+
+// DEFS:
 #define INITFUN___ _model_housemodel_main__
 #define ODEFUN___ _model_housemodel_ode__
 #define TABLECODE___ _model_housemodel_table__
@@ -29,9 +32,12 @@
 #define KOUT _THETA_[11]
 #define IC50 _THETA_[12]
 
+// FIXED:
+// No fixed parameters.
 
-// GLOBAL VARIABLES:
+// INCLUDES:
 
+// GLOBAL CODE BLOCK:
 #define CP (CENT/hm::VCi)
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
@@ -46,9 +52,11 @@ typedef double localdouble;
 typedef int localint;
 typedef bool localbool;
 
-// MAIN CODE BLOCK:
+// CONFIG CODE BLOCK:
 BEGIN_config
 END_config
+
+// MAIN CODE BLOCK:
 BEGIN_main
 _F(1) = F1;
 hm::CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ETA(1));
@@ -56,7 +64,6 @@ hm::VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + ETA(2));
 hm::KAi   = exp(log(KA)   + ETA(3));
 hm::KOUTi = exp(log(KOUT) + ETA(4));
 RESP_0 = KIN/hm::KOUTi;
-
 END_main
 
 // DIFFERENTIAL EQUATIONS:

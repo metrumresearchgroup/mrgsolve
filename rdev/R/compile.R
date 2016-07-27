@@ -67,8 +67,8 @@ generate_rdefs <- function(pars,
         Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex-1,"]")
     }
 
-    if(npar==0) pardef <- ""
-    if(ncmt==0) cmtdef <- initdef <- dxdef <- ""
+    if(npar==0) pardef <- NULL
+    if(ncmt==0) cmtdef <- initdef <- dxdef <- NULL
 
     return(
         c(paste0("#define INITFUN___ ",init_fun),

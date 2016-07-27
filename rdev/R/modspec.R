@@ -9,7 +9,7 @@ block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
-  if(advan==13 | trans==1) return("")
+  if(advan==13 | trans==1) return(NULL)
   if((advan %in% c(1,2)) & !(trans %in% c(2,11))) {
     stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call.=FALSE)
   }
@@ -80,7 +80,7 @@ define_digits <- function(x) {
 }
 
 fixed_parameters <- function(x,fixed_type) {
-  if(length(x)==0) return("")
+  if(length(x)==0) return("// No fixed parameters.")
   if(is.null(fixed_type))  fixed_type <-  "define"
   if(!(fixed_type %in% c("define", "const"))) stop("fixed_type must be either const or define.", call.=FALSE)
   switch(fixed_type,
@@ -392,7 +392,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(audit) audit_spec(x,spec,warn=warn)
   
   ## This must come after audit
-  if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();\n"
+  if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();"
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
@@ -408,21 +408,27 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       parsedata=SET,
                       check.bounds=check.bounds)
   
+                
   ## Write the model code to temporary file
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
-    plugin_names(plugin),
+    paste0("// Source MD5: ", tools::md5sum(modfile), "\n"),
     plugin_code(plugin),
     "#include \"modelheader.h\"",
-    rd,
+    "\n// DEFS:",
+    rd, 
     ## This should get moved to rd
+    "\n// FIXED:",
     fixed_parameters(fixed,SET[["fixed_type"]]),
-    "\n// GLOBAL VARIABLES:\n",
+    "\n// INCLUDES:",
+    form_includes(spec[["INCLUDE"]],project),
+    "\n// GLOBAL CODE BLOCK:",
     spec[["GLOBAL"]],
-    "\n// MAIN CODE BLOCK:",
+    "\n// CONFIG CODE BLOCK:",
     "BEGIN_config",
     "END_config",
+    "\n// MAIN CODE BLOCK:",
     "BEGIN_main",
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
@@ -447,7 +453,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$source <- compfile(model,soloc)
   
 
-  to_restore <- set_up_env(plugin,clink=project(x))
+  to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
   on.exit(do_restore(to_restore))
 
 
@@ -632,6 +638,29 @@ handle_spec_block.specVCMT <- function(x) parseCMT(x)
 handle_spec_block.specPKMODEL <- function(x) {
   x <- scrape_opts(x,all=TRUE)
   do.call("PKMODEL",x)
+}
+
+##' @export
+handle_spec_block.specINCLUDE <- function(x) {
+
+  x <- as.cvec2(x)
+  if(any(grepl("[\"\']",x,perl=TRUE))) {
+    stop("Items in $INCLUDE should not contain quotation marks.",call.=FALSE) 
+  }
+  if(any(!grepl("^.*\\.h$",x,perl=TRUE))) {
+    warning("$INCLUDE expects file names ending with .h",call.=FALSE) 
+  }
+  return(x)
+}
+
+form_includes <- function(x,where) {
+  if(is.null(x)) return(NULL)
+  files <- file.path(where,x)
+  if(!all(file.exists(files))) {
+    stop("All header files in $INCLUDE must exist in the project directory",call.=FALSE) 
+  }
+  md <- tools::md5sum(file.path(where,x))
+  paste0("#include \"", x, "\" // ", md)
 }
 
 
