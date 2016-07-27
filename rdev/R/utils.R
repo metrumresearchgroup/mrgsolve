@@ -175,6 +175,16 @@ setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
     return(invisible(NULL))
 })
 
+see_compfile <- function(x) {
+  file <- compfile(model(x),soloc(x))
+  if(!file.exists(file)) {
+    message("Could not find the compiled code for this model.")
+  }
+  cat(readLines(file),sep="\n")
+}
+
+
+
 ##' Return the name of the project directory.
 ##'
 ##' @param x model object or mrgsims object

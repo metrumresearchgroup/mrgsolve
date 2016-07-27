@@ -28,7 +28,7 @@ GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
-                "ADVAN2", "ADVAN4", "PKMODEL", "PLUGIN",
+                "ADVAN2", "ADVAN4", "PKMODEL", "PLUGIN", "INCLUDE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
 Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
