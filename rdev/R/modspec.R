@@ -199,10 +199,11 @@ get_c_vars <- function(y) {
 ##'
 ##' code <- '
 ##' $CMT DEPOT CENT
-##' $ADVAN2
+##' $PKMODEL ncmt=1, depot=TRUE
 ##' $MAIN
-##' pred_CL = 1;
-##' pred_VC= 20;
+##' double CL = 1;
+##' double V = 20;
+##' double KA = 1;
 ##' '
 ##'
 ##' mod <- mcode("example",code)
@@ -795,28 +796,22 @@ collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
 }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
-collect_subr <- function(x,what=c("ADVAN2", "ADVAN4","PKMODEL")) {
+collect_subr <- function(x,what=c("PKMODEL")) {
   
   ans <- list(advan=13,trans=1,strict=FALSE)
   
   y <- x[names(x) %in% what]
   
-  if(length(y) >  1) stop("Only one of $ADVAN2, $ADVAN4, or $PKMODEL are allowed.",call.=FALSE)
+  if(length(y) >  1) stop("Only one $PKMODEL block is allowed.",call.=FALSE)
   if(length(y) == 0) return(ans)
   ## Get rid of this once ADVANn are deprecated
-  if(names(y)=="ADVAN2") {
-    ans$advan <- 2
-  }
-  if(names(y)=="ADVAN4") {
-    ans$advan <- 4
-  }
   if(names(y) %in% c("PKMODEL")) {
     ans <- y[[1]]
   }
   
   if(ans[["advan"]] != 13) {
-    if(any(is.element(c("VCMT"),names(x)))) stop("Found $VCMT and $ADVANn in the same control stream.")
-    if(any(is.element("ODE", names(x)))) stop("Found $ODE and $ADVANn in the same control stream.")
+    if(any(is.element(c("VCMT"),names(x)))) stop("Found $VCMT and $PKMODEL in the same control stream.")
+    if(any(is.element("ODE", names(x)))) stop("Found $ODE and $PKMODEL in the same control stream.")
   }
   
   ans[["n"]] <- ans[["advan"]] - as.integer(ans[["advan"]] > 2)

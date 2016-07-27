@@ -25,10 +25,11 @@ Note that the arguments are in slightly different order than \code{\link{mread}}
 
 code <- '
 $CMT DEPOT CENT
-$ADVAN2
+$PKMODEL ncmt=1, depot=TRUE
 $MAIN
-pred_CL = 1;
-pred_VC= 20;
+double CL = 1;
+double V = 20;
+double KA = 1;
 '
 
 mod <- mcode("example",code)
