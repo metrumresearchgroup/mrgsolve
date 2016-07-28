@@ -30,7 +30,7 @@ test_that("Req gets the right variables", {
   expect_identical(x1,s(ID,time,GUT,CENT,PERIPH,a,b))
   expect_identical(x2,s(ID,time,PERIPH,GUT))
   expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,b,a))
+  expect_identical(x4,s(ID,time,a,b))
 })
 
 
@@ -45,7 +45,7 @@ test_that("Req gets the right variables, with request", {
   expect_identical(x1,s(ID,time,CENT,a,b))
   expect_identical(x2,s(ID,time,PERIPH,GUT))
   expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,b,a))
+  expect_identical(x4,s(ID,time,a,b))
 })
 
 
