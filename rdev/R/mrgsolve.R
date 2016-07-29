@@ -230,15 +230,20 @@ setMethod("mrgsim", "mrgmod", function(x,
   if(nrow(ev) > 0) {
     ## If we had events but no ID 
     ## expand that data frame to the number of IDs in idata 
+    ev$ID <- 1
+    ev <- mrgindata(ev,x,x@verbose)
+    
     data <- .Call(mrgsolve_EXPAND_EVENTS,
-                  list(), numeric_data_matrix(ev), idata[,"ID"])
+                  match("ID",colnames(ev),0), 
+                  numeric_data_matrix(ev), 
+                  idata[,"ID"])
   } else {
     ## No data, no events:
     data <- matrix(idata[,"ID"], ncol=1, 
                    dimnames=list(NULL, c("ID")))
   }
   
-  data <- mrgindata(data)
+  data <- mrgindata(data,x,x@verbose)
   
   ## simulate
   out <- do.call("tran_mrgsim", 

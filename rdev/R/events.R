@@ -116,7 +116,10 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
                 data <- data %>% dplyr::arrange(ID,time)
                 rownames(data) <- NULL
             } else {
-                data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", list(), data.matrix(data), ID))
+                data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
+                                         match("ID", colnames(data),0), 
+                                         data.matrix(data), 
+                                         ID))
             }
 
         } else {
@@ -164,7 +167,10 @@ setGeneric("as.ev", function(x,...) standardGeneric("as.ev"))
 setMethod("as.ev", "data.frame", function(x,nid=1,...) {
     if(nrow(x)==0) return(new("ev",data=data.frame()))
     if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.")
-    if(nid > 1) x <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", list(), data.matrix(x),c(1:nid)))
+    if(nid > 1) x <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
+                                      match("ID", colnames(x),0), 
+                                      data.matrix(x),
+                                      c(1:nid)))
     new("ev",data=x)
 })
 

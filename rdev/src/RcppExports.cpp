@@ -29,15 +29,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // EXPAND_EVENTS
-Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::List parin, Rcpp::NumericMatrix events, Rcpp::NumericVector id);
-RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP parinSEXP, SEXP eventsSEXP, SEXP idSEXP) {
+Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_, Rcpp::NumericMatrix events, Rcpp::NumericVector id);
+RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP idcol_SEXP, SEXP eventsSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< Rcpp::List >::type parin(parinSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type idcol_(idcol_SEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type events(eventsSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type id(idSEXP);
-    __result = Rcpp::wrap(EXPAND_EVENTS(parin, events, id));
+    __result = Rcpp::wrap(EXPAND_EVENTS(idcol_, events, id));
     return __result;
 END_RCPP
 }

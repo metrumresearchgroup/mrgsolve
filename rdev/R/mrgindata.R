@@ -51,8 +51,8 @@ mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
     
     x <- cbind(x, matrix(0,ncol=1,nrow=nrow(x), dimnames=list(NULL, "..zeros..")))
   }
-
-  x <- numeric_data_matrix(x)
+  
+  x <- numeric_data_matrix(x,quiet)
   
   uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
   lc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_LC"]])
@@ -70,7 +70,8 @@ mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
 }
 
 
-valid_idata <- function(x,verbose=FALSE,quiet=TRUE,...) {
+valid_idata <- function(x,verbose=FALSE,quiet=FALSE,...) {
+  
   if(verbose) quiet <- FALSE
   
   if(is.valid_idata(x)) return(x) 
@@ -85,10 +86,12 @@ valid_idata <- function(x,verbose=FALSE,quiet=TRUE,...) {
   
 }
 
-numeric_data_matrix <- function(x,quiet=TRUE) {
+numeric_data_matrix <- function(x,quiet=FALSE) {
   
   nu <-is.numeric(x)
+  
   if(sum(!nu)>0) {
+    
     if(!quiet) message("Dropping non-numeric columns: ", 
                        paste(names(x)[!nu], collapse=" "))
   }
@@ -99,7 +102,7 @@ idcol <- function(x) {
   match("ID", colnames(x)) 
 }
 timename <- function(x) {
-   intersect(c("time", "TIME"), colnames(x))[1]
+  intersect(c("time", "TIME"), colnames(x))[1]
 }
 cmtname <- function(x) {
   intersect(c("cmt", "CMT"), colnames(x))[1] 

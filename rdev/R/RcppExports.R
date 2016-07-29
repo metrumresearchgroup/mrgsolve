@@ -5,8 +5,8 @@ DEVTRAN <- function(parin, inpar, parnames_, init, cmtnames_, capture, funs, dat
     .Call('mrgsolve_DEVTRAN', PACKAGE = 'mrgsolve', parin, inpar, parnames_, init, cmtnames_, capture, funs, data, idata, OMEGA, SIGMA)
 }
 
-EXPAND_EVENTS <- function(parin, events, id) {
-    .Call('mrgsolve_EXPAND_EVENTS', PACKAGE = 'mrgsolve', parin, events, id)
+EXPAND_EVENTS <- function(idcol_, events, id) {
+    .Call('mrgsolve_EXPAND_EVENTS', PACKAGE = 'mrgsolve', idcol_, events, id)
 }
 
 test_stop <- function() {

@@ -8,54 +8,35 @@
 
 
 
-
-// Rcpp::NumericMatrix MAKETRAN(Rcpp::List parin,
-// 			     Rcpp::NumericMatrix base,
-// 			     Rcpp::NumericMatrix batch) {
-//   int i,j,k;
-//   int nset = batch.nrow();
-//   //  int npar = batch.ncol();
-//   int batch_start = base.ncol();
-//   // int idcol  = Rcpp::as<int>(parin["idcol"]);
-
-//   Rcpp::NumericMatrix ans(nset*base.nrow(),(base.ncol()+batch.ncol()));
-//   int crow = 0;
-//   for(i=0; i < batch.nrow(); i++) {
-//     for(j=0; j < base.nrow(); j++) {
-//       for(k=0; k < base.ncol(); k++) {
-// 	ans(crow,k) = base(j,k);
-//       }
-//       for(k=0; k < batch.ncol(); k++) {
-// 	ans(crow,k+batch_start) = batch(i,k);
-//       }
-//       ++crow;
-//     }
-//   }
-//   return(ans);
-// }
-
 // [[Rcpp::export]]
-Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::List parin,
-				  Rcpp::NumericMatrix events,
-				  Rcpp::NumericVector id) {
-
+Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_,
+                                  Rcpp::NumericMatrix events,
+                                  Rcpp::NumericVector id) {
+  
   int i,j,k;
-
-  Rcpp::NumericMatrix ans(events.nrow()*id.size(),events.ncol()+1);
-
+  int crow = 0;
+  
+  int idcol = idcol_[0]-1;
+  int ncol_new = events.ncol();
+  
   Rcpp::List dimnames = events.attr("dimnames");
   Rcpp::CharacterVector names = dimnames[1];
-  names.push_back("ID");
-  dimnames[1] = names;
+  
+  if(idcol < 0) {
+    ncol_new = events.ncol() + 1;  
+    names.push_back("ID");
+    idcol = ncol_new-1;
+    dimnames[1] = names;
+  } 
 
-  int crow=0;
-  int idcol = events.ncol();
+  Rcpp::NumericMatrix ans(events.nrow()*id.size(),ncol_new);
+  
   for(i=0; i < id.size(); i++) {
     for(j=0; j < events.nrow(); j++) {
-      ans(crow,idcol) = id[i];
       for(k=0; k < events.ncol(); k++) {
-	ans(crow,k) = events(j,k);
+        ans(crow,k) = events(j,k);
       }
+      ans(crow,idcol) = id[i];
       crow++;
     }
   }
