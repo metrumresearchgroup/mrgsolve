@@ -640,7 +640,7 @@ mapvalues <- function (x, from, to, warn_missing = FALSE) {
 }
 
 
-
+is.numeric.data.frame <- function(x) sapply(x, is.numeric)
 
 ##' Return the code blocks from a model specification file.
 ##'

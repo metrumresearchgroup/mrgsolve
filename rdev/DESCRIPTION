@@ -63,6 +63,7 @@ Collate:
     'model_include.R'
     'nmxml.R'
     'modspec.R'
+    'mrgindata.R'
     'mrgsolve.R'
     'package.R'
     'param.R'
