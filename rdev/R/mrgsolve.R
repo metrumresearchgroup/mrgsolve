@@ -192,11 +192,11 @@ setMethod("mrgsim", "mrgmod", function(x,
   if(is.null(data) & is.null(idata) & nid > 1) {
     idata <- data.frame(ID=1:nid)
   }
-  
   validate_idata(idata)
   
   ## If idata is still null, set it to null_idata (no rows)
   if(is.null(idata)) idata <- null_idata
+  
   
   ## Extract events in the object
   ev <- as.data.frame(events(x))
