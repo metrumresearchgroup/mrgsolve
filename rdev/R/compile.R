@@ -101,8 +101,42 @@ relocate_funs <- function(x,PACKAGE) {
 build_version <- function(x) {
   x@shlib[["version"]] 
 }
+
 compiled <- function(x,status=NULL) {
     if(is.null(status)) return(x@shlib$compiled)
     x@shlib$compiled <- status
     return(x)
 }
+
+
+
+win_def_name <- function(x) {
+  paste0(dllname(x),"-win.def") 
+}
+write_win_def <- function(x) {
+  if(.Platform$OS.type != "windows") return(NULL)
+  
+  file <- win_def_name(x)
+  
+  if(file.exists(file)) stop("Can't compile the model; .def file already exists.")
+  
+  f <- c("EXPORT",paste0("  ", funs(x)))
+  
+  cat(file=file, f, sep="\n")
+  
+  return(file)
+}
+rm_win_def <- function(x) {
+  
+  if(is.character(x)) {
+    if(file.exists(x)) {
+      file.remove(x)
+    }
+  }
+  
+  return(invisible(NULL))
+}
+
+
+
+

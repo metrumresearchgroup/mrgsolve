@@ -409,7 +409,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       parsedata=SET,
                       check.bounds=check.bounds)
   
-                
+  
   ## Write the model code to temporary file
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
@@ -453,11 +453,17 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- compfile(model,soloc)
   
-
+  
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-  on.exit(do_restore(to_restore))
-
-
+  
+  wd <- write_win_def(x)
+  
+  on.exit({
+    do_restore(to_restore)
+    rm_win_def(wd)
+  })
+  
+  
   same <- check_and_copy(from = temp_write,
                          to = compfile(model,soloc),
                          preclean)
@@ -643,7 +649,7 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 ##' @export
 handle_spec_block.specINCLUDE <- function(x) {
-
+  
   x <- as.cvec2(x)
   if(any(grepl("[\"\']",x,perl=TRUE))) {
     stop("Items in $INCLUDE should not contain quotation marks.",call.=FALSE) 
