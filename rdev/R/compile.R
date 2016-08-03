@@ -120,7 +120,7 @@ write_win_def <- function(x) {
   
   if(file.exists(file)) stop("Can't compile the model; .def file already exists.")
   
-  f <- c("EXPORT",paste0("  ", funs(x)))
+  f <- c("EXPORTS",paste0("  ", funs(x)))
   
   cat(file=file, f, sep="\n")
   
