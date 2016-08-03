@@ -90,8 +90,6 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
 
     if(any(evid==0)) stop("evid cannot be 0 (observation)")
 
-
-
     data <-
         as.data.frame(list(...)) %>%
             dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%

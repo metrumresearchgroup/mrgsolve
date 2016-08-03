@@ -101,9 +101,6 @@ comppart <- "-mread-source"
 compbase <- function(model) paste0(model, comppart)
 compfile <- function(model,soloc) file.path(soloc,paste0(model, comppart,".cpp"))
 compout  <- function(model,soloc) file.path(soloc,paste0(model, comppart, .Platform$dynlib.ext))
-
-
-
 compdir <- function() {
   paste(c("mrgsolve",
           "so",
@@ -115,8 +112,6 @@ compdir <- function() {
 setup_soloc <- function(loc,model) {
   soloc <- file.path(loc,compdir(),model)
   if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
-  #z <- file.copy(pfile("mrgsolve", "include", c("mrgsolv.h", "modelheader.h")), 
-  #               soloc,overwrite=TRUE)
   return(soloc)
 }
 
