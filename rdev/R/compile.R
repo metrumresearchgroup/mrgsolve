@@ -118,7 +118,9 @@ write_win_def <- function(x) {
   
   file <- win_def_name(x)
   
-  if(file.exists(file)) stop("Can't compile the model; .def file already exists.")
+  if(file.exists(file)) {
+    warning("model-win.def file already exists.")
+  }
   
   f <- c("EXPORTS",paste0("  ", funs(x)))
   
