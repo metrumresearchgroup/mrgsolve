@@ -111,7 +111,7 @@ compiled <- function(x,status=NULL) {
 
 
 win_def_name <- function(x) {
-  paste0(dllname(x),"-win.def") 
+  paste0(compbase(model(x)),"-win.def")
 }
 write_win_def <- function(x) {
   if(.Platform$OS.type != "windows") return(NULL)

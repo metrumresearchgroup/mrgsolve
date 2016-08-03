@@ -97,8 +97,13 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 }
 
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source.cpp"))
-compout  <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source", .Platform$dynlib.ext))
+comppart <- "-mread-source"
+compbase <- function(model) paste0(model, comppart)
+compfile <- function(model,soloc) file.path(soloc,paste0(model, comppart,".cpp"))
+compout  <- function(model,soloc) file.path(soloc,paste0(model, comppart, .Platform$dynlib.ext))
+
+
+
 compdir <- function() {
   paste(c("mrgsolve",
           "so",
