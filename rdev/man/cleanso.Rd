@@ -8,6 +8,8 @@ cleanso(x, where = soloc(x))
 }
 \arguments{
 \item{x}{model object}
+
+\item{where}{directory to clean up}
 }
 \description{
 Clean up model shared objects.

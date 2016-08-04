@@ -120,9 +120,9 @@ write_win_def <- function(x) {
   
   file <- win_def_name(x)
   
-  if(file.exists(file)) {
-    warning("model-win.def file already exists.")
-  }
+  #if(file.exists(file)) {
+  #  warning("model-win.def file already exists.")
+  #}
   
   cat(file=file, 
       c("EXPORTS",paste0(" ", funs(x))), 
