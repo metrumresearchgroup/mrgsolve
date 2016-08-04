@@ -97,8 +97,10 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 }
 
 ## Form a file name / path for the file that is actually compiled
-compfile <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source.cpp"))
-compout  <- function(model,soloc) file.path(soloc,paste0(model, "-mread-source", .Platform$dynlib.ext))
+comppart <- "-mread-source"
+compbase <- function(model) paste0(model, comppart)
+compfile <- function(model) paste0(model, comppart,".cpp")
+compout  <- function(model) paste0(model, comppart, .Platform$dynlib.ext)
 compdir <- function() {
   paste(c("mrgsolve",
           "so",
@@ -110,8 +112,6 @@ compdir <- function() {
 setup_soloc <- function(loc,model) {
   soloc <- file.path(loc,compdir(),model)
   if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
-  #z <- file.copy(pfile("mrgsolve", "include", c("mrgsolv.h", "modelheader.h")), 
-  #               soloc,overwrite=TRUE)
   return(soloc)
 }
 
@@ -259,16 +259,23 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   warn <- warn & (!quiet)
   
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
+
+  ## Check for spaces in the model name
+  if(grepl(" +", model,perl=TRUE)) {
+    stop("model name cannot contain spaces.")
+  }
   
+  if(any(grepl("\n", project))) {
+    stop("project argument contains newline(s); did you mean to call mcode?",call.=FALSE) 
+  }
+    
   ## Both project and soloc get normalized
   project <- normalizePath(project, mustWork=TRUE, winslash="/")
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   soloc <-   setup_soloc(soloc,model)  
   
   
-  ## Check for spaces in the model name
-  if(grepl(" +", model,perl=TRUE)) stop("model name cannot contain spaces.")
-  
+
   ## The model file is <stem>.cpp in the <project> directory
   modfile <- file.path(project,paste0(model, ".cpp"))
   
@@ -409,7 +416,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       parsedata=SET,
                       check.bounds=check.bounds)
   
-                
+  
   ## Write the model code to temporary file
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
@@ -451,15 +458,26 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$par <- pars(x)
   x@code <- readLines(modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- compfile(model,soloc)
+  x@shlib$source <- file.path(soloc,compfile(model))
   
-
+  
+  ## IN soloc directory
+  cwd <- getwd()
+  setwd(soloc)
+  
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-  on.exit(do_restore(to_restore))
 
-
+  ## this gets written in soloc
+  write_win_def(x)
+  
+  on.exit({
+    do_restore(to_restore)
+    setwd(cwd)
+  })
+  
+  
   same <- check_and_copy(from = temp_write,
-                         to = compfile(model,soloc),
+                         to = compfile(model),
                          preclean)
   
   if(!compile) return(x)
@@ -478,7 +496,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 compfile(model,build_path(soloc)))
+                 compfile(model))
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
@@ -501,7 +519,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     status <- attr(status, "status")
     
-    comp_success <- is.null(status) & file.exists(compout(model,soloc))
+    comp_success <- is.null(status) & file.exists(compout(model))
     
     if(!comp_success) {
       cat(output, sep="\n") 
@@ -514,7 +532,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  z <- file.copy(compout(model,soloc),sodll(x))
+  z <- file.copy(compout(model),sodll(x))
   
   dyn.load(sodll(x))
   
@@ -643,7 +661,7 @@ handle_spec_block.specPKMODEL <- function(x) {
 
 ##' @export
 handle_spec_block.specINCLUDE <- function(x) {
-
+  
   x <- as.cvec2(x)
   if(any(grepl("[\"\']",x,perl=TRUE))) {
     stop("Items in $INCLUDE should not contain quotation marks.",call.=FALSE) 

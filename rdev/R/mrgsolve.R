@@ -2,10 +2,20 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
+##' @include mrgindata.R
+##' @include utils.R
+
 tran_upper <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 
 nodataset <- matrix(0, nrow=0, ncol=8, dimnames=list(NULL,c("ID", "time", "evid", "amt", "cmt","addl", "ii", "ss")))
-null_idata <- matrix(0, nrow=0, ncol=1, dimnames=list(NULL, c("ID")))
+null_idata <- matrix(0, 
+                     nrow=0, ncol=1, 
+                     dimnames=list(NULL, c("ID")))
+
+null_data <-  matrix(0,  
+                     nrow=0, ncol=3, 
+                     dimnames=list(NULL, c("ID", "time", "cmt")))
+
 VERSION <- packageDescription("mrgsolve")$Version
 
 tgrid_matrix <- function(...) {
@@ -74,81 +84,7 @@ validate_idata <- function(idata) {
 }
 
 
-is.numeric.data.frame <- function(x)sapply(x, is.numeric)
 
-
-as.mrgindata <- function(x) {
-  class(x) <- c("mrgindata", x)
-  return(x)
-}
-
-##' Prepare input data.frame or matrix
-##'
-##' @param x data.frame or matrix
-##' @param m object that inherits from mrgmod
-##' @param verbose logical
-##' @param quiet if \code{TRUE}, messages will be suppressed
-##' @param ... additional arguments
-##' @return a matrix with non-numeric columns dropped; if x is a data.frame with character \code{cmt} column comprised of valid compartment names and \code{m} is a model object,
-##' the \code{cmt} column will be converted to the corresponding compartment number.
-##' @export
-mrgindata <- function(x,...) UseMethod("mrgindata")
-##' @rdname mrgindata
-##' @export
-mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
-  
-  
-  if(verbose) quiet <- FALSE
-  
-  if(is.mrgindata(x)) return(x)
-  
-  if(is.mrgmod(m)) {
-    if(is.character(x[["cmt"]])) {
-      if(verbose) message("Converting cmt to integer")
-      x[["cmt"]] <- match(x[["cmt"]], cmt(m),0)
-    }
-    if(is.character(x[["CMT"]])) {
-      if(verbose) message("Converting CMT to integer")
-      x[["CMT"]] <- match(x[["CMT"]], cmt(m),0)
-    }
-  }
-  
-  
-  nu <-is.numeric(x)
-  
-  if(sum(!nu)>0) {
-    if(!quiet) message("Dropping non-numeric columns: ", paste(names(x)[!nu], collapse=" "))
-  }
-  
-  x <- data.matrix(x[,nu, drop=FALSE])
-  
-  uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
-  lc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_LC"]])
-  
-  if(uc & lc) {
-    warning("Both lower- & upper-case names found in the data set.\n",
-            "Please use either:\n",
-            "  time,amt,cmt,evid,ii,addl,ss,rate\n",
-            "or:\n",
-            "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
-  }
-  
-  class(x) <- c("mrgindata", class(x))
-  
-  x
-}
-
-
-##' @rdname mrgindata
-##' @export
-mrgindata.matrix <- function(x,verbose=FALSE,...) {
-  if(is.mrgindata(x)) return(x)
-  if(is.numeric(x)) {
-    class(x) <- c("mrgindata", class(x))
-    return(x)
-  }
-  stop("Input data matrix is not numeric")
-}
 
 
 ##' Simulate from a model object.
@@ -242,57 +178,79 @@ setMethod("mrgsim", "mrgmod", function(x,
                                        nid = 1,...) {
   
   if(missing(data)) data <- x@args$data; x@args$data <- NULL
-  
   if(missing(idata)) idata <- x@args$idata; x@args$idata <- NULL
   
   args <- merge(x@args, list(...), strict=FALSE)
   
   if(length(args) > 0) {
     x <- do.call("update",c(x,args))
-    if(x@verbose) message("Updating model object...")
   }
   
+
+  ## Neither data nor idata passed in, but nid > 1
+  ## Build a simple idata set to use
   if(is.null(data) & is.null(idata) & nid > 1) {
     idata <- data.frame(ID=1:nid)
   }
-  
   validate_idata(idata)
   
+  ## If idata is still null, set it to null_idata (no rows)
   if(is.null(idata)) idata <- null_idata
   
+  
+  ## Extract events in the object
   ev <- as.data.frame(events(x))
   
+  ## If we found events and there is an ID column
+  ## create a data set
   if(nrow(ev) > 0 & is.element("ID",colnames(ev)) & is.null(data)) {
     data <- mrgindata(ev,x,x@verbose)
   }
   
+  
+  ## If data set is formed, do the simulation 
   if(!is.null(data)) {
-    out <- do.call("tran_mrgsim", c(list(x),list(data=data, idata=idata),args))
+    out <- do.call("tran_mrgsim", 
+                   c(list(x),list(data=data, idata=idata),args))
     return(out)
   }
   
+  ## If we had the null idata set
+  ## make one with one ID
   if(nrow(idata)==0) {
-    ## is.null(data) & is.null(idata)
-    ##        idata <- cbind(data.frame(ID=1),list(param(x)))
     idata <- data.frame(ID=1)
   }
   
-  if(!is.element("ID", colnames(idata))) idata <- bind_col(idata, "ID", 1:nrow(idata))
-  
-  if(nrow(ev) > 0) {
-    ## Generic events:
-    ev <- mrgindata(ev,x,x@verbose)
-    data <- .Call(mrgsolve_EXPAND_EVENTS,
-                  list(), ev, idata[,"ID"])
-  } else {
-    ## No data, no events:
-    data <- matrix(idata[,"ID"], ncol=1, dimnames=list(NULL, c("ID")))
+  ## If there is no ID column in idata, add one
+  if(!is.element("ID", colnames(idata))) {
+    idata <- bind_col(idata, "ID", 1:nrow(idata))
   }
   
-  out <- do.call("tran_mrgsim", c(list(x),list(data=data, idata=idata),args))
+  
+  if(nrow(ev) > 0) {
+    ## If we had events but no ID 
+    ## expand that data frame to the number of IDs in idata 
+    ev$ID <- 1
+    ev <- mrgindata(ev,x,x@verbose)
+    
+    data <- .Call(mrgsolve_EXPAND_EVENTS,
+                  match("ID",colnames(ev),0), 
+                  numeric_data_matrix(ev), 
+                  idata[,"ID"])
+  } else {
+    ## No data, no events:
+    data <- matrix(idata[,"ID"], ncol=1, 
+                   dimnames=list(NULL, c("ID")))
+  }
+  
+  data <- mrgindata(data,x,x@verbose)
+  
+  ## simulate
+  out <- do.call("tran_mrgsim", 
+                 c(list(x),list(data=data, idata=idata),args))
   
   return(out)
-
+  
 })
 
 ##' @export
@@ -373,28 +331,16 @@ tran_mrgsim <- function(x,
   ## Set the seed:
   if(!is.na(seed)) set.seed(seed)
   
-
+  
   ## "idata"
-  if(!is.mrgindata(idata)) idata <- mrgindata(idata,...)
-  
-  idata_idcol <- match("ID", colnames(idata))
-  
-  if(is.na(idata_idcol)) stop("idata matrix must have ID column")
+  if(!is.valid_idata(idata)) idata <- valid_idata(idata,verbose=verbose,...)
+  idata_icdol <- idcol(idata)
   
   ## data
   if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
   
-  tcol <- "time"
-  
-  if(ncol(data) > 1) {
-    tcol <- intersect(c("time", "TIME"), colnames(data))
-    if(length(tcol)==0) stop("time is a required data set column")
-    if(length(tcol) > 1) stop("More than one time / TIME column found")
-    if(!any(grepl("ID", colnames(data)))) stop("ID is a required data set column")
-    if(!any(grepl("cmt|CMT", colnames(data)))) stop("cmt is a required data set column")
-    ..zeros.. <- matrix(0,ncol=1,nrow=nrow(data), dimnames=list(NULL, "..zeros.."))
-    data <- cbind(data, ..zeros..)
-  }
+  tcol <- timename(data)
+  tcol <- ifelse(is.na(tcol), "time", tcol)
   
   # Don't take ID,time,TIME
   carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))

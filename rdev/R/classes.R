@@ -300,6 +300,7 @@ setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 is.mrgmod <- function(x) inherits(x,"mrgmod")
 is.mrgindata <- function(x) inherits(x,"mrgindata")
 is.mrgsims <- function(x) inherits(x,"mrgsims")
+is.valid_idata <- function(x) inherits(x,"valid_idata")
 
 ##' S4 class for mrgsolve simulation output
 ##'

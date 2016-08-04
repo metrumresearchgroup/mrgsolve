@@ -23,7 +23,7 @@ check_and_copy <- function(from,to,preclean=FALSE) {
 ## and loading a model
 safe_wait <- function(x) {
   
-  target <- compout(model(x),soloc(x))
+  target <- file.path(soloc(x),compout(model(x)))
   if(!file.exists(target)) return(invisible(NULL))
   mt <- file.info(target)[["mtime"]]
   age <- as.numeric(as.POSIXct(Sys.time())) - as.numeric(as.POSIXct(mt))
@@ -36,6 +36,7 @@ safe_wait <- function(x) {
 ##' Clean up model shared objects. 
 ##' 
 ##' @param x model object
+##' @param where directory to clean up
 ##' 
 ##' @details
 ##' \code{cleanso} removes (deletes) shared objects from the model compile directory and 
@@ -43,10 +44,9 @@ safe_wait <- function(x) {
 ##' 
 ##'
 ##' 
-cleanso <- function(x) {
-  soloc <- soloc(x)
-  so <- list.files(soloc, pattern=paste0("*\\", .Platform$dynlib.ext), full.names=TRUE)
-  so <- so[so != compout(model(x),soloc)]
+cleanso <- function(x,where=soloc(x)) {
+  so <- list.files(where, pattern=paste0("*\\", .Platform$dynlib.ext), full.names=TRUE)
+  so <- so[so != file.path(where,compout(model(x)))]
   lo <- sapply(getLoadedDLLs(), "[[", "path")
   y <- intersect(lo,so)
   for(w in y) foo <- try(dyn.unload(y),silent=TRUE)

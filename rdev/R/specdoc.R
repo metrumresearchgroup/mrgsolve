@@ -147,16 +147,12 @@
 ##'
 ##'
 ##' code <- '
-##' $PARAM CL = 1.5, VC=35, KA=1.2
+##' $PARAM CL = 1.5, V=35, KA=1.2
 ##'
 ##' $CMT DEPOT CENT
 ##'
-##' $ADVAN2
+##' $PKMODEL ncmt=1, depot=TRUE
 ##'
-##' $MAIN
-##' pred_CL = CL;
-##' pred_VC = VC;
-##' pred_KA = KA;
 ##' '
 ##'
 ##'

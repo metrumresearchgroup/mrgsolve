@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.7.2.9000
+Version: 0.7.2.9001
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Author: Kyle T. Baron [cre,aut,cph], Alan C. Hindmarsh [ctb], Linda R. Petzold
@@ -63,6 +63,7 @@ Collate:
     'model_include.R'
     'nmxml.R'
     'modspec.R'
+    'mrgindata.R'
     'mrgsolve.R'
     'package.R'
     'param.R'

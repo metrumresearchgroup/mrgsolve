@@ -102,7 +102,7 @@ head(out)
 
 out <- mod \%>\% ev() \%>\% knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
 plot(out, CP~., scales="same")
-plot(out, RESP+CP~time|CL)
+plot(out, RESP+CP~time|amt,groups=CL)
 
 
 ev1 <- ev(amt=500, cmt=2,rate=10)

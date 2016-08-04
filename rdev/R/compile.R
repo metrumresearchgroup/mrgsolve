@@ -101,8 +101,39 @@ relocate_funs <- function(x,PACKAGE) {
 build_version <- function(x) {
   x@shlib[["version"]] 
 }
+
 compiled <- function(x,status=NULL) {
     if(is.null(status)) return(x@shlib$compiled)
     x@shlib$compiled <- status
     return(x)
 }
+
+
+
+win_def_name <- function(x) {
+  paste0(compbase(model(x)),"-win.def")
+}
+
+write_win_def <- function(x) {
+  
+  if(.Platform$OS.type != "windows") return(NULL)
+  
+  cat(file=win_def_name(x), 
+      c("EXPORTS",paste0(" ", funs(x))), 
+      sep="\n")
+}
+
+rm_win_def <- function(x) {
+  
+  if(is.character(x)) {
+    if(file.exists(x)) {
+      file.remove(x)
+    }
+  }
+  
+  return(invisible(NULL))
+}
+
+
+
+

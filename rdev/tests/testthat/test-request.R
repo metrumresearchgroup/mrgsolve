@@ -17,6 +17,7 @@ $CAPTURE a b
 '
 
 mod <- mcode("req1", code)
+touch_funs(mod,FALSE)
 
 
 context("test-request")

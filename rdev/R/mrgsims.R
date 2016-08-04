@@ -239,7 +239,7 @@ setMethod("show", "mrgsims", function(object) {
   digits <- 4
   n <- min(8,nrow(object@data))
   top <- data.matrix(object@data[seq_len(n),,drop=FALSE],rownames.force=FALSE)
-  tcol <- intersect(c("time", "TIME"),colnames(object@data))[1]
+  tcol <- timename(object@data)
   cat("Model: ", basename(cfile(mod(object))), "\n")
   cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
   cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
@@ -300,7 +300,7 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
     ), call.=FALSE)
   }
   
-  tname <- intersect(c("time", "TIME"), colnames(x@data))[1]
+  tname <- timename(x@data)
   lhs <- paste(ynames, collapse="+")
   fmla <- as.formula(paste0(lhs, "~", tname))
   plot(x,fmla,limit=limit,...)
