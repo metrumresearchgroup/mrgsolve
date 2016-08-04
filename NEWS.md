@@ -1,7 +1,7 @@
 __Please see the latest release__: [v0.7.3](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.3)
 
 # Since 0.7.2
-- Addressed an issue where model compilation on Windows systems failed when certain symbol names were used in the model (#97).  In this release, a `dllname-win.def` file is created in `soloc` to export only the functions that `mrgsolve` needs to use.
+- Addressed an issue where model compilation on `Windows` systems failed when certain symbol names were used in the model (#97).  In this release, a `dllname-win.def` file is created in `soloc` to export only the functions that `mrgsolve` needs to use.  This is *only* relevant to `Windows` platform.
 - Added a check on the `project` argument to `mread`: if newline(s) are found, an error is generated and the user is prompted to use `mcode` instead.
 - Several changes under the hood (https://github.com/metrumresearchgroup/mrgsolve/pull/99)
 
