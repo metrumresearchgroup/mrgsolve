@@ -1,6 +1,7 @@
 library(mrgsolve)
 library(testthat)
 library(mrgsolve)
+library(dplyr)
 
 Sys.setenv(R_TESTS="")
 end <- 60
@@ -8,7 +9,7 @@ delta <- 3
 n <- length(seq(0,end,delta))
 mod <- mrgsolve:::house() %>% update(end=end, delta=delta)
 data(extran3)
-tb <- as.tbl(extran3)
+tb <- tbl_df(extran3)
 
 
 context("mrgindata tests") 
@@ -102,6 +103,32 @@ test_that("Run with data set - tbl", {
 })
 
 
+data(exidata)
+
+test_that("Run idata set", {
+  out <- 
+    mod %>%
+    idata_set(exidata) %>%
+    mrgsim
+  expect_equal(nrow(out), length(unique(exidata$ID))*n) 
+  expect_equal(length(unique(out$ID)),nrow(exidata))
+  
+})
+
+test_that("Run idata set with ev", {
+  
+  e <- ev(amt=100)
+  N <- length(unique(exidata$ID))
+  N <- N*n + N
+  
+  out <- 
+    mod %>%
+    ev(e) %>%
+    idata_set(exidata) %>%
+    mrgsim
+  expect_equal(nrow(out), N) 
+  expect_equal(length(unique(out$ID)),nrow(exidata))
+})
 
 
 
