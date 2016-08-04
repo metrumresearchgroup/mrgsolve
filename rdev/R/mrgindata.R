@@ -101,7 +101,6 @@ valid_idata <- function(x,verbose=FALSE,quiet=FALSE,...) {
 
 ## 1 - Drop non-numeric columns
 ## 2 - Make data.matrix
-## 3 - Bind a column of zeros 
 numeric_data_matrix <- function(x,quiet=FALSE) {
   
   nu <- is.numeric(x)

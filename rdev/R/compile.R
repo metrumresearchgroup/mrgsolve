@@ -115,6 +115,7 @@ win_def_name <- function(x) {
 }
 
 write_win_def <- function(x) {
+  
   if(.Platform$OS.type != "windows") return(NULL)
   
   file <- win_def_name(x)
@@ -123,9 +124,9 @@ write_win_def <- function(x) {
     warning("model-win.def file already exists.")
   }
   
-  f <- c("EXPORTS",paste0("  ", funs(x)))
-  
-  cat(file=file, f, sep="\n")
+  cat(file=file, 
+      c("EXPORTS",paste0(" ", funs(x))), 
+      sep="\n")
   
   return(file)
 }

@@ -99,8 +99,8 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 ## Form a file name / path for the file that is actually compiled
 comppart <- "-mread-source"
 compbase <- function(model) paste0(model, comppart)
-compfile <- function(model,soloc) file.path(soloc,paste0(model, comppart,".cpp"))
-compout  <- function(model,soloc) file.path(soloc,paste0(model, comppart, .Platform$dynlib.ext))
+compfile <- function(model) paste0(model, comppart,".cpp")
+compout  <- function(model) paste0(model, comppart, .Platform$dynlib.ext)
 compdir <- function() {
   paste(c("mrgsolve",
           "so",
@@ -451,21 +451,27 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$par <- pars(x)
   x@code <- readLines(modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- compfile(model,soloc)
+  x@shlib$source <- file.path(soloc,compfile(model))
   
+  
+  ## IN soloc directory
+  cwd <- getwd()
+  setwd(soloc)
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-  
-  wd <- write_win_def(x)
+
+  ## this gets written in soloc
+  windef <- write_win_def(x)
   
   on.exit({
     do_restore(to_restore)
-    rm_win_def(wd)
+    #rm_win_def(windef)
+    setwd(cwd)
   })
   
   
   same <- check_and_copy(from = temp_write,
-                         to = compfile(model,soloc),
+                         to = compfile(model),
                          preclean)
   
   if(!compile) return(x)
@@ -484,7 +490,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 compfile(model,build_path(soloc)))
+                 compfile(model))
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
@@ -507,7 +513,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     status <- attr(status, "status")
     
-    comp_success <- is.null(status) & file.exists(compout(model,soloc))
+    comp_success <- is.null(status) & file.exists(compout(model))
     
     if(!comp_success) {
       cat(output, sep="\n") 
@@ -520,7 +526,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  z <- file.copy(compout(model,soloc),sodll(x))
+  z <- file.copy(compout(model),sodll(x))
   
   dyn.load(sodll(x))
   

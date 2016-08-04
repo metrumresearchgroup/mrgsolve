@@ -176,7 +176,7 @@ setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
 })
 
 see_compfile <- function(x) {
-  file <- compfile(model(x),soloc(x))
+  file <- file.path(soloc(x),compfile(model(x)))
   if(!file.exists(file)) {
     message("Could not find the compiled code for this model.")
   }
@@ -848,7 +848,7 @@ as_pack_mod <- function(model, project, PACKAGE) {
              model=model
              )
     soloc <- soloc(x)
-    source <- compfile(model(x),soloc)
+    source <- file.path(soloc,compfile(model(x)))
     x@shlib$par <- pars(x)
     x@shlib$cmt <- cmt(x)
     x@shlib$source <- NULL
