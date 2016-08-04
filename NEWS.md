@@ -1,7 +1,13 @@
-__Please see the latest release__: [v0.7.1](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.1)
+__Please see the latest release__: [v0.7.3](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.3)
+
+# Since 0.7.2
+- Addressed an issue where model compilation on Windows systems failed when certain symbol names were used in the model (#97).  In this release, a `dllname-win.def` file is created in `soloc` to export only the functions that `mrgsolve` needs to use.
+- Added a check on the `project` argument to `mread`: if newline(s) are found, an error is generated and the user is prompted to use `mcode` instead.
+- Several changes under the hood (https://github.com/metrumresearchgroup/mrgsolve/pull/99)
+
 
 # Since 0.7.1
-No additions / changes yet.
+- Fixed bug where requested columns were not properly named in certain circumstances ([#86](../../issues/86)).
 
 # Since 0.7.0
 - Revert back to previous behavior where `cwd` to `soloc` is not required to build the model.  This was only required on `Windows` systems where there was a space in the file name.   Correctly rendering the path for the build directory now.
