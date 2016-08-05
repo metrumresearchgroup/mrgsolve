@@ -647,7 +647,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
           newev->ii(ev->ii());
           newev->ss(ev->ss());
           newev->id(ev->id());
-          newev->pos(-100);
+          newev->pos(-1200);
           newev->fn(biofrac);
           newev->output(false);
           
@@ -655,7 +655,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
           advance(it,1);
           thisi.insert(it,newev);
           newev->schedule(thisi, maxtime,addl_ev_first);
-          std::sort(thisi.begin()+j+1,thisi.end(),CompByTimePosRec);
+          std::sort(thisi.begin()+j,thisi.end(),CompByTimePosRec);
           
         } else {
           ev->schedule(thisi, maxtime,addl_ev_first); //pkevent.cpp
