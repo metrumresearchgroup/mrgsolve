@@ -107,11 +107,6 @@ validate_idata <- function(idata) {
 ##' \item{\code{carry.out} can be used to insert data columns into the output data set.  This is partially dependent on the
 ##' nature of the data brought into the problem.}
 ##' }
-setGeneric("mrgsim", function(x,...) standardGeneric("mrgsim"))
-
-
-##' @rdname mrgsim
-##' @export
 ##' @param data NMTRAN-like data set
 ##' @param idata a matrix or data frame of model parameters, one parameter per row
 ##' @section Additional arguments:
@@ -172,10 +167,10 @@ setGeneric("mrgsim", function(x,...) standardGeneric("mrgsim"))
 ##'
 
 
-setMethod("mrgsim", "mrgmod", function(x,
-                                       data=NULL,
-                                       idata=NULL,
-                                       nid = 1,...) {
+mrgsim <-  function(x,
+                    data=NULL,
+                    idata=NULL,
+                    nid = 1,...) {
   
   if(missing(data)) data <- x@args$data; x@args$data <- NULL
   if(missing(idata)) idata <- x@args$idata; x@args$idata <- NULL
@@ -186,7 +181,7 @@ setMethod("mrgsim", "mrgmod", function(x,
     x <- do.call("update",c(x,args))
   }
   
-
+  
   ## Neither data nor idata passed in, but nid > 1
   ## Build a simple idata set to use
   if(is.null(data) & is.null(idata) & nid > 1) {
@@ -239,7 +234,8 @@ setMethod("mrgsim", "mrgmod", function(x,
                   idata[,"ID"])
   } else {
     ## No data, no events:
-    data <- matrix(idata[,"ID"], ncol=1, 
+    data <- matrix(idata[,"ID"], 
+                   ncol=1, 
                    dimnames=list(NULL, c("ID")))
   }
   
@@ -251,13 +247,8 @@ setMethod("mrgsim", "mrgmod", function(x,
   
   return(out)
   
-})
+}
 
-##' @export
-##' @rdname mrgsim
-setMethod("mrgsim", "mrgsims", function(x,...) {
-  mrgsim(mod(x),...)
-})
 
 tran_mrgsim <- function(x,
                         data,
