@@ -17,16 +17,16 @@ mintern(model, tryload = TRUE, ...)
 Load a library model.
 }
 \examples{
-mod <- mread("pk1cmt",mrgmod())
-mod <- mread("pk2cmt",mrgmod()) 
-mod <- mread("pk3cmt",mrgmod()) 
-mod <- mread("irm1",mrgmod()) 
-mod <- mread("irm2",mrgmod()) 
-mod <- mread("irm3",mrgmod()) 
-mod <- mread("irm4",mrgmod())
-mod <- mread("emax",mrgmod())
-mod <- mread("effect",mrgmod())
-mod <- mread("tmdd",mrgmod()) 
+mod <- mread("pk1cmt",modlib())
+mod <- mread("pk2cmt",modlib()) 
+mod <- mread("pk3cmt",modlib()) 
+mod <- mread("irm1",modlib()) 
+mod <- mread("irm2",modlib()) 
+mod <- mread("irm3",modlib()) 
+mod <- mread("irm4",modlib())
+mod <- mread("emax",modlib())
+mod <- mread("effect",modlib())
+mod <- mread("tmdd",modlib()) 
 
 }
 
