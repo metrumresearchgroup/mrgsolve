@@ -1,7 +1,5 @@
 
-#library(metrumrg)
 library(testthat)
-#library(MASS)
 library(mrgsolve)
 
 Sys.setenv(R_TESTS="")
@@ -30,12 +28,13 @@ $MAIN double Z = A+B+C+D+E;
 $TABLE table(cmtn) = N_DEPOT;
 '
 
-mod <- NULL
-mod <- try(mread(code=code, model="FOO",tempdir(), audit=FALSE))
+
+mod <- try(mcode("FOO",code, audit=FALSE))
 
 out <- mrgsim(mod)
 
 context("CMTN block gives compartment numbers")
+
 test_that("Model compiles with FIXED and CMTN",{
   expect_is(mod, "mrgmod")
   expect_true(all(out$cmtn==2))

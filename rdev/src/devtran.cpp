@@ -637,9 +637,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         if(prob->alag(ev->cmt()) > 0) {
           
           ev->unarm();
-          
-          //int nextpos = put_ev_first ? -100 : (thisi.size() + 10);
-          
+    
           ev_ptr newev(new pkevent(ev->cmt(),
                                    ev->evid(),
                                    ev->amt(),
@@ -649,7 +647,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
           newev->ii(ev->ii());
           newev->ss(ev->ss());
           newev->id(ev->id());
-          newev->pos(-100);
+          newev->pos(-1200);
           newev->fn(biofrac);
           newev->output(false);
           

@@ -2,24 +2,23 @@ library(testthat)
 library(mrgsolve)
 library(dplyr)
 
-rm(list=ls())
-
-lim <- function(x,...) {
-    x %>% dplyr::filter(...) %>% as.data.frame
-}
+lim <- function(x,...) x %>% dplyr::filter(...) %>% as.data.frame
 
 Sys.setenv(R_TESTS="")
+
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Setting F and ALAG")
+context("Setting F_CMT")
 
 code <- '
 $PARAM F1=1, ALAG1=0, F2=1, ALAG2=0
+
 $CMT CENT DEPOT
 
 $MAIN
 ALAG_CENT = ALAG1;
 F_CENT = F1;
+
 ALAG_DEPOT = ALAG2;
 F_DEPOT = F2;
 
@@ -28,8 +27,10 @@ F_DEPOT = F2;
 ev1 <- ev(amt=100, cmt=1)
 ev2 <- ev(amt=100, cmt=2,time=1)
 
-mod <- mread("YSY",tempdir(), code,warn=FALSE) %>% 
-  carry.out(evid) %>% update(end=2)
+mod <- 
+  mcode("f_alag_model",code,warn=FALSE) %>% 
+  carry_out(evid) %>% 
+  update(end=2)
 
 mod1 <- mod %>% ev(ev1)
 mod2 <- mod %>% ev(ev2)
@@ -57,6 +58,8 @@ test_that("F is set for compartment 1 and 2", {
   expect_true(lim(out22,time==2)$DEPOT==10)
 })
 
+
+context("Set ALAG")
 test_that("ALAG is set for compartment 1 and 2", {
   
   expect_true(lim(out10, CENT>0)$time[1]==0)
@@ -71,8 +74,15 @@ test_that("ALAG is set for compartment 1 and 2", {
 
 
 test_that("F is set for multiple doses", {
-  out1 <- mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% param(F1 = 1) %>% mrgsim(end=3,recsort=2)
-  out2 <- mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% param(F1 = 0.2) %>% mrgsim(end=3,recsort=2)
+  out1 <- 
+    mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% 
+    param(F1 = 1) %>% 
+    mrgsim(end=3,recsort=2)
+  
+  out2 <- 
+    mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% 
+    param(F1 = 0.2) %>% 
+    mrgsim(end=3,recsort=2)
   
   expect_equivalent(lim(out1, time > 0)$CENT, c(100,200,300))
   expect_equivalent(lim(out2, time > 0)$CENT, c(20,40,60))
@@ -80,12 +90,11 @@ test_that("F is set for multiple doses", {
 
 
 
-
 test_that("F and ALAG are set from idata", {
   idata <- mrgsolve:::expand.idata(ID=1:3, F1=c(0.2, 0.5), ALAG1=c(0.2, 0.5,0.7,0.99))
   out1 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim()
   out2 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim(add=1+idata$ALAG1,recsort=1)
-  out2 <- out2 %>% lim(CENT>0) %>% as.tbl %>% group_by(ID)%>% slice(1)
+  out2 <- out2 %>% lim(CENT > 0) %>% as.tbl %>% group_by(ID)%>% slice(1)
   
   expect_equivalent(lim(out1, time==2)$CENT, 100*idata$F1)
   expect_equivalent(out2$time, 1+idata$ALAG1)
@@ -99,14 +108,24 @@ doses <- subset(exTheoph, evid==1)
 
 
 test_that("F  is set from data", {
-  out1 <- mod1 %>% data_set(exTheoph) %>% mrgsim() 
+  out1 <- mod %>% data_set(exTheoph) %>% mrgsim() 
   expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
+
 test_that("ALAG is set from data", {
-  out2 <- mod1 %>% data_set(exTheoph) %>% 
+  
+  out2 <- 
+    mod %>% 
+    data_set(exTheoph) %>% 
     mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
-  out2 <- out2 %>% lim(CENT>0) %>% as.tbl%>% group_by(ID) %>% slice(1)
+  
+  out2 <- 
+    out2 %>% 
+    dplyr::filter(CENT > 0) %>% 
+    group_by(ID) %>% slice(1)
+  
   expect_equivalent(out2$time, doses$ALAG1)
+  
 })
 
