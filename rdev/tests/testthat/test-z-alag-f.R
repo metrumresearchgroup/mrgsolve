@@ -28,7 +28,7 @@ ev1 <- ev(amt=100, cmt=1)
 ev2 <- ev(amt=100, cmt=2,time=1)
 
 mod <- 
-  mcode("YSY",code,warn=FALSE) %>% 
+  mcode("f_alag_model",code,warn=FALSE) %>% 
   carry_out(evid) %>% 
   update(end=2)
 
@@ -108,14 +108,23 @@ doses <- subset(exTheoph, evid==1)
 
 
 test_that("F  is set from data", {
-  out1 <- mod1 %>% data_set(exTheoph) %>% mrgsim() 
+  out1 <- mod %>% data_set(exTheoph) %>% mrgsim() 
   expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
 test_that("ALAG is set from data", {
-  out2 <- mod1 %>% data_set(exTheoph) %>% 
+  
+  out2 <- 
+    mod %>% 
+    data_set(exTheoph) %>% 
     mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
-  out2 <- out2 %>% lim(CENT>0) %>% as.tbl %>% group_by(ID) %>% slice(1)
+  
+  out2 <- 
+    out2 %>% 
+    dplyr::filter(CENT > 0) %>% 
+    group_by(ID) %>% slice(1)
+  
   expect_equivalent(out2$time, doses$ALAG1)
+  
 })
 
