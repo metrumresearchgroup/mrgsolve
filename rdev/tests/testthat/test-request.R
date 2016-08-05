@@ -77,7 +77,6 @@ mod <- mread(code=code, project=tmp, model="test3")
 test_that("Testing request setting", {
   out <- mrgsim(mod, request="PERIPH,CENT")
   out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
-  
   expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP","EPS1", "ETA1", "FLAG"))
   expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","EPS1", "ETA1", "FLAG"))
 })
