@@ -13,13 +13,16 @@ context("Setting F_CMT")
 
 code <- '
 $PARAM F1=1, ALAG1=0, F2=1, ALAG2=0
+
 $CMT CENT DEPOT
 
 $MAIN
 ALAG_CENT = ALAG1;
 F_CENT = F1;
+
 ALAG_DEPOT = ALAG2;
 F_DEPOT = F2;
+
 '
 
 ev1 <- ev(amt=100, cmt=1)
@@ -102,7 +105,7 @@ set.seed(101)
 data(exTheoph)
 df <- exTheoph
 
-df$FORM <- as.integer(df$ID >5)
+df$FORM <- as.integer(df$ID > 5)
 df$F1 <- mrgsolve:::mapvalues(df$FORM, c(0,1), c(0.8, 0.3))
 df <- df %>% group_by(ID) %>% dplyr::mutate(ALAG1 = round(runif(1,1,3),3))
 doses <- dplyr::filter(df, evid==1)
