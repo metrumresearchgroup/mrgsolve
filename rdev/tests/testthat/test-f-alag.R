@@ -5,7 +5,7 @@ library(dplyr)
 rm(list=ls())
 
 lim <- function(x,...) {
-    x %>% dplyr::filter(...) %>% as.data.frame
+  x %>% dplyr::filter(...) %>% as.data.frame
 }
 
 Sys.setenv(R_TESTS="")
@@ -22,7 +22,6 @@ ALAG_CENT = ALAG1;
 F_CENT = F1;
 ALAG_DEPOT = ALAG2;
 F_DEPOT = F2;
-
 '
 
 ev1 <- ev(amt=100, cmt=1)
@@ -71,8 +70,15 @@ test_that("ALAG is set for compartment 1 and 2", {
 
 
 test_that("F is set for multiple doses", {
-  out1 <- mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% param(F1 = 1) %>% mrgsim(end=3,recsort=2)
-  out2 <- mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% param(F1 = 0.2) %>% mrgsim(end=3,recsort=2)
+  out1 <- 
+    mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% 
+    param(F1 = 1) %>% 
+    mrgsim(end=3,recsort=2)
+  
+  out2 <- 
+    mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% 
+    param(F1 = 0.2) %>% 
+    mrgsim(end=3,recsort=2)
   
   expect_equivalent(lim(out1, time > 0)$CENT, c(100,200,300))
   expect_equivalent(lim(out2, time > 0)$CENT, c(20,40,60))
