@@ -7,6 +7,9 @@ library(dplyr)
 
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
+
+data(exTheoph)
+
 rm(list=ls())
 
 code <- '
