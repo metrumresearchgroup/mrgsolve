@@ -288,7 +288,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   }
   
   if(!file.exists(modfile)) {
-    if(project==mlib()) {
+    if(project==mrgmod()) {
       return(mintern(model)) 
     } else {
       stop(paste0("Could not find model file ", modfile), call.=FALSE)
