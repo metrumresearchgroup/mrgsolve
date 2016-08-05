@@ -50,4 +50,75 @@ test_that("Req gets the right variables, with request", {
 })
 
 
+context("Testing various request settings")
+
+code <- '
+$PARAM CL=1
+$INIT GUT=100, CENT=5, PERIPH=3
+
+
+$ODE
+dxdt_GUT = 0;
+dxdt_CENT = 0;
+dxdt_PERIPH = 0;
+
+$TABLE
+table(CP) = 1;
+table(FLAG) = 2;
+table(ETA1) = ETA(1);
+table(EPS1) = EPS(1);
+'
+
+tmp <- tempdir()
+mod <- mread(code=code, project=tmp, model="test3")
+
+
+
+test_that("Testing request setting", {
+  out <- mrgsim(mod, request="PERIPH,CENT")
+  out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
+  
+  expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP","EPS1", "ETA1", "FLAG"))
+  expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","EPS1", "ETA1", "FLAG"))
+})
+
+
+code <- '
+$PARAM CL=1
+$INIT GUT=100, CENT=5, PERIPH=3
+$SET
+req="CENT"
+
+$ODE
+dxdt_GUT = 0;
+dxdt_CENT = 0;
+dxdt_PERIPH = 0;
+
+$TABLE
+table(CP) = 1;
+table(FLAG) = 2;
+table(ETA1) = ETA(1);
+table(EPS1) = EPS(1);
+'
+
+
+
+test_that("Testing that request is (all) by default", {
+  mod <- mread(code='$CMT CENT\n$PARAM CL=1', project=tmp, model="test3c")
+  expect_identical(mod@request, "(all)")
+})
+
+
+test_that("Testing that request is properly set in $SET", {
+  mod <- mread(code=code, project=tmp, model="test3b")
+  cols <- names(mrgsim(mod))
+  expect_identical(mod@request, "CENT")
+  expect_identical(update(mod, req=c("PERIPH", "GUT"))@request, c("PERIPH", "GUT"))
+  expect_identical(update(mod, req="PERIPH,GUT")@request, "PERIPH,GUT")
+  expect_identical(intersect(cols,cmt(mod)), "CENT")
+})
+
+
+
+
 
