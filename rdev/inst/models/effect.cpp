@@ -1,0 +1,19 @@
+$PARAM  
+VC = 2.44, KA = 0.92, K10 = 0.44, K12 = 0.36, K21 = 0.24
+E0 = 157, EMAX = 29.95, EC50=4.956, KEO=1.305
+
+$SET delta=0.1, end=36
+
+$CMT GUT CENT PERIPH CE
+
+$ODE 
+double CP = CENT/VC;
+
+dxdt_GUT = -KA*GUT;
+dxdt_CENT = KA*GUT - K10*CENT - K12*CENT + K21*PERIPH;
+dxdt_PERIPH = K12*CENT - K21*PERIPH;
+dxdt_CE = KEO*(CP-CE);
+
+$TABLE
+table(EFFECT) = E0 - EMAX*CE/(CE+EC50);
+table(CP) = CENT/VC;
