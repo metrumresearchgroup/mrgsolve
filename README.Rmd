@@ -20,7 +20,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
 
 # Resources
 
-  * [Latest release: 0.7.3](https://github.com/metrumresearchgroup/mrgsolve/releases)
+  * [Latest release: 0.7.4](https://github.com/metrumresearchgroup/mrgsolve/releases)
   * [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
   * [User Guide](https://mrgsolve.github.io/user_guide)
   * [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
@@ -44,7 +44,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
   * Latest stable version directly from github via:
   
 ```{r,eval=FALSE}
-  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.3", subdir="rdev")
+  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.4", subdir="rdev")
 ```
 
   * The latest stable release can be installed with `install.packages` like this:
