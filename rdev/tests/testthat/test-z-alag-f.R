@@ -112,6 +112,7 @@ test_that("F  is set from data", {
   expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
+
 test_that("ALAG is set from data", {
   
   out2 <- 

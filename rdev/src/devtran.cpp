@@ -637,9 +637,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         if(prob->alag(ev->cmt()) > 0) {
           
           ev->unarm();
-          
-          //int nextpos = put_ev_first ? -100 : (thisi.size() + 10);
-          
+    
           ev_ptr newev(new pkevent(ev->cmt(),
                                    ev->evid(),
                                    ev->amt(),
@@ -657,7 +655,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
           advance(it,1);
           thisi.insert(it,newev);
           newev->schedule(thisi, maxtime,addl_ev_first);
-          std::sort(thisi.begin()+j,thisi.end(),CompByTimePosRec);
+          std::sort(thisi.begin()+j+1,thisi.end(),CompByTimePosRec);
           
         } else {
           ev->schedule(thisi, maxtime,addl_ev_first); //pkevent.cpp
