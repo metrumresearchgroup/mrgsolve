@@ -3,7 +3,7 @@
 ##' Internal model location.
 ##' 
 ##' @export
-modloclib <- function() object_dir() 
+.modl <- function() object_dir() 
 
 avail <- c("pk1cmt", "pk2cmt", "pk3cmt","irm1", "irm2", "irm3",
            "emax", "tmdd", "viral1", "viral2", "effect")
@@ -74,16 +74,16 @@ object_dir <- function() {
 ##' 
 ##' 
 ##' @examples
-##' mod <- mread("pk1cmt",mlib())
-##' mod <- mread("pk2cmt",mlib()) 
-##' mod <- mread("pk3cmt",mlib()) 
-##' mod <- mread("irm1",mlib()) 
-##' mod <- mread("irm2",mlib()) 
-##' mod <- mread("irm3",mlib()) 
-##' mod <- mread("irm4",mlib())
-##' mod <- mread("emax",mlib())
-##' mod <- mread("effect",mlib())
-##' mod <- mread("tmdd",mlib()) 
+##' mod <- mread("pk1cmt",.modl())
+##' mod <- mread("pk2cmt",.modl()) 
+##' mod <- mread("pk3cmt",.modl()) 
+##' mod <- mread("irm1",.modl()) 
+##' mod <- mread("irm2",.modl()) 
+##' mod <- mread("irm3",.modl()) 
+##' mod <- mread("irm4",.modl())
+##' mod <- mread("emax",.modl())
+##' mod <- mread("effect",.modl())
+##' mod <- mread("tmdd",.modl()) 
 ##' 
 mintern <- function(model,tryload=TRUE,...) {
   
