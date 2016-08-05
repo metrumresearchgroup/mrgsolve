@@ -85,16 +85,4 @@ test_that("Error when the number of parameters changes without recompile",{
 
 
 
-context("Testing events (basic testing)")
-
-out1 <- mrgsim(mod %>%init(CENT=0, DEPOT=0) %>% ev(amt=1000, time=0, cmt=1), carry.out="evid")
-out2 <- mrgsim(mod %>% init(CENT=0, DEPOT=1000), carry.out="evid")
-
-test_that("Events initialize properly", {
-    expect_equivalent(unlist(subset(out1, evid==0 & time > 0)), unlist(subset(out2, evid==0 & time >0)))  ## different row names
-})
-
-
-
-
 
