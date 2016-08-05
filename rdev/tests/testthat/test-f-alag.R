@@ -11,7 +11,7 @@ lim <- function(x,...) {
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Setting F and ALAG")
+context("Setting F_CMT")
 
 code <- '
 $PARAM F1=1, ALAG1=0, F2=1, ALAG2=0
@@ -58,6 +58,8 @@ test_that("F is set for compartment 1 and 2", {
   expect_true(lim(out22,time==2)$DEPOT==10)
 })
 
+
+contect("Set ALAG")
 test_that("ALAG is set for compartment 1 and 2", {
   
   expect_true(lim(out10, CENT>0)$time[1]==0)
@@ -88,7 +90,6 @@ test_that("F is set for multiple doses", {
 
 
 
-
 test_that("F and ALAG are set from idata", {
   idata <- mrgsolve:::expand.idata(ID=1:3, F1=c(0.2, 0.5), ALAG1=c(0.2, 0.5,0.7,0.99))
   out1 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim()
@@ -101,21 +102,23 @@ test_that("F and ALAG are set from idata", {
 
 set.seed(101)
 data(exTheoph)
-exTheoph$FORM <- as.integer(exTheoph$ID >5)
-exTheoph$F1 <- mrgsolve:::mapvalues(exTheoph$FORM, c(0,1), c(0.8, 0.3))
-exTheoph <- exTheoph %>% group_by(ID) %>% dplyr::mutate(ALAG1 = round(runif(1,1,3),3))
-doses <- dplyr::filter(exTheoph, evid==1)
+df <- exTheoph
+
+df$FORM <- as.integer(df$ID >5)
+df$F1 <- mrgsolve:::mapvalues(df$FORM, c(0,1), c(0.8, 0.3))
+df <- df %>% group_by(ID) %>% dplyr::mutate(ALAG1 = round(runif(1,1,3),3))
+doses <- dplyr::filter(df, evid==1)
 
 
 test_that("F  is set from data", {
-  out1 <- mod1 %>% data_set(exTheoph) %>% mrgsim() 
+  out1 <- mod1 %>% data_set(df) %>% mrgsim() 
   expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
 
 out2 <- 
   mod1 %>% 
-  data_set(exTheoph) %>% 
+  data_set(df) %>% 
   mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
 
 out2 <- 
