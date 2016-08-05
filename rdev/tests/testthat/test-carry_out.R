@@ -58,7 +58,7 @@ test_that("carry_out from idata set",{
 
 
 
-test_that("carry.out from condensed data set", {
+test_that("carry_out from condensed data set", {
   
   out <- mod %>%
     data_set(data) %>%

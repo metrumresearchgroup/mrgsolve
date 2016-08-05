@@ -3,7 +3,7 @@
 library(testthat)
 #library(MASS)
 library(mrgsolve)
-library(magrittr)
+#library(magrittr)
 library(dplyr)
 
 Sys.setenv(R_TESTS="")
@@ -14,7 +14,7 @@ mod <- mrgsolve:::house() %>% Req(CENT,RESP)
 
 data(exTheoph)
 df <- exTheoph %>% mutate(KYLE=7)
-mod %<>% data_set(df) 
+mod <- mod %>% data_set(df) 
 
 
 
