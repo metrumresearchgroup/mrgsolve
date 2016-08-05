@@ -57,8 +57,10 @@ test_that("Set initials via $MAIN", {
 
 
 test_that("Set initials via idata", {
-  id <- dplyr::data_frame(ID=1:3, C_0 = c(99,88,88))
+  id <- dplyr::data_frame(ID=1:3, C_0 = c(99,88,77), B_0 = c(6,7,8))
   out <- mod %>% idata_set(id) %>% mrgsim %>% filter(time==0)
+  expect_equal(out$B,c(6,7,8))
+  expect_equal(out$C,c(99,88,77))
 })
 
 
