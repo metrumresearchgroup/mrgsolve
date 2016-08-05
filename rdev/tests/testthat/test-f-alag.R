@@ -27,8 +27,10 @@ F_DEPOT = F2;
 ev1 <- ev(amt=100, cmt=1)
 ev2 <- ev(amt=100, cmt=2,time=1)
 
-mod <- mread("YSY",tempdir(), code,warn=FALSE) %>% 
-  carry.out(evid) %>% update(end=2)
+mod <- 
+  mcode("YSY",code,warn=FALSE) %>% 
+  carry_out(evid) %>% 
+  update(end=2)
 
 mod1 <- mod %>% ev(ev1)
 mod2 <- mod %>% ev(ev2)
@@ -101,7 +103,7 @@ data(exTheoph)
 exTheoph$FORM <- as.integer(exTheoph$ID >5)
 exTheoph$F1 <- mrgsolve:::mapvalues(exTheoph$FORM, c(0,1), c(0.8, 0.3))
 exTheoph <- exTheoph %>% group_by(ID) %>% mutate(ALAG1 = round(runif(1,1,3),3))
-doses <- subset(exTheoph, evid==1)
+doses <- dplyr::filter(exTheoph, evid==1)
 
 
 test_that("F  is set from data", {
@@ -112,7 +114,7 @@ test_that("F  is set from data", {
 test_that("ALAG is set from data", {
   out2 <- mod1 %>% data_set(exTheoph) %>% 
     mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
-  out2 <- out2 %>% lim(CENT>0) %>% as.tbl%>% group_by(ID) %>% slice(1)
+  out2 <- out2 %>% lim(CENT>0) %>% as.tbl %>% group_by(ID) %>% slice(1)
   expect_equivalent(out2$time, doses$ALAG1)
 })
 
