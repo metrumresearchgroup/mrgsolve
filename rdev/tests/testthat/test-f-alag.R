@@ -2,11 +2,10 @@ library(testthat)
 library(mrgsolve)
 library(dplyr)
 
-rm(list=ls())
-
 lim <- function(x,...) x %>% dplyr::filter(...) %>% as.data.frame
 
 Sys.setenv(R_TESTS="")
+
 options("mrgsolve_mread_quiet"=TRUE)
 
 context("Setting F_CMT")

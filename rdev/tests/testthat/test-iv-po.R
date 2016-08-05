@@ -50,12 +50,6 @@ test_that("Error on dosing into non-existant compartment", {
     expect_error(mod %>% ev(events10000) %>% mrgsim())
 })
 
-
-
-
-
-
-
 context("Testing error generation ")
 test_that("Error when parameters and compartments have same name", {
   expect_error(mrgmod("firstmodel", project, param=list(CENT=2)))
