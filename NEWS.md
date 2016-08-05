@@ -1,4 +1,13 @@
-__Please see the latest release__: [v0.7.3](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.3)
+__Please see the latest release__: [v0.7.4](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.4)
+
+# Since 0.7.4
+- Nothing to report (yet)
+
+# Since 0.7.3
+- Tests re-configured
+- Fixed issue with record sorting for lagged doses when using full `data_set `and `obsaug=TRUE` [(#102)](../../issues/102)
+- Fixed issue where `idata_set` wasn't handled properly when it was passed in as `tbl` [(#100)](../../issues/100)
+
 
 # Since 0.7.2
 - Addressed an issue where model compilation on `Windows` systems failed when certain symbol names were used in the model (#97).  In this release, a `dllname-win.def` file is created in `soloc` to export only the functions that `mrgsolve` needs to use.  This is *only* relevant to `Windows` platform.
