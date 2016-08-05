@@ -1,5 +1,9 @@
 ##' @include utils.R
 
+##' Internal model location.
+##' 
+##' @export
+modlib <- function() object_dir() 
 
 avail <- c("pk1cmt", "pk2cmt", "pk3cmt","irm1", "irm2", "irm3",
            "emax", "tmdd", "viral1", "viral2", "effect")
@@ -68,26 +72,25 @@ object_dir <- function() {
 ##' @param tryload try to load the model?
 ##' @param ... passed to update
 ##' 
-##' @export
 ##' 
 ##' @examples
-##' mod <- mintern("pk1cmt")
-##' mod <- mintern("pk2cmt") 
-##' mod <- mintern("pk3cmt") 
-##' mod <- mintern("irm1") 
-##' mod <- mintern("irm2") 
-##' mod <- mintern("irm3") 
-##' mod <- mintern("irm4")
-##' mod <- mintern("emax")
-##' mod <- mintern("effect")
-##' mod <- mintern("tmdd") 
+##' mod <- mread("pk1cmt",modlib())
+##' mod <- mread("pk2cmt",modlib()) 
+##' mod <- mread("pk3cmt",modlib()) 
+##' mod <- mread("irm1",modlib()) 
+##' mod <- mread("irm2",modlib()) 
+##' mod <- mread("irm3",modlib()) 
+##' mod <- mread("irm4",modlib())
+##' mod <- mread("emax",modlib())
+##' mod <- mread("effect",modlib())
+##' mod <- mread("tmdd",modlib()) 
 ##' 
 mintern <- function(model,tryload=TRUE,...) {
   
   if(missing(model)) model <- "<NONE>"
   
   if(!is.element(model,avail)) {
-    message("Available models:")
+    message("mrgsolve internal library:")
     cat(paste0("  ",avail),sep="\n")
     return(invisible(NULL))
   }
