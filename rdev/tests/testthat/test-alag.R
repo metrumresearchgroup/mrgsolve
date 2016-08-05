@@ -1,5 +1,7 @@
-library(mrgsolve)
+
 library(dplyr)
+library(magrittr)
+library(mrgsolve)
 library(testthat)
 
 

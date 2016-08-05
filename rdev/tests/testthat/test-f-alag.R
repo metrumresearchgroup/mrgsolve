@@ -112,19 +112,20 @@ test_that("F  is set from data", {
   expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
+
+out2 <- 
+  mod1 %>% 
+  data_set(exTheoph) %>% 
+  mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
+
+out2 <- 
+  out2 %>% 
+  dplyr::filter(CENT > 0) %>% 
+  dplyr::group_by(ID) %>% 
+  dplyr::slice(1) %>% dplyr::ungroup(.)
+
 test_that("ALAG is set from data", {
-  out2 <- 
-    mod1 %>% 
-    data_set(exTheoph) %>% 
-    mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
-  
-  out2 <- 
-    out2 %>% 
-    dplyr::filter(CENT > 0) %>% 
-    dplyr::group_by(ID) %>% 
-    dplyr::slice(1) %>% dplyr::ungroup(.)
-  
   expect_equivalent(out2$time, doses$ALAG1)
-  
+
 })
 
