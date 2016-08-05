@@ -101,35 +101,22 @@ test_that("F and ALAG are set from idata", {
   expect_equivalent(out2$time, 1+idata$ALAG1)
 })
 
-set.seed(101)
 data(exTheoph)
-df <- exTheoph
-
-df$FORM <- as.integer(df$ID > 5)
-df$F1 <- mrgsolve:::mapvalues(df$FORM, c(0,1), c(0.8, 0.3))
-df <- df %>% group_by(ID) %>% dplyr::mutate(ALAG1 = round(runif(1,1,3),3))
-doses <- dplyr::filter(df, evid==1)
+exTheoph$FORM <- as.integer(exTheoph$ID >5)
+exTheoph$F1 <- mrgsolve:::mapvalues(exTheoph$FORM, c(0,1), c(0.8, 0.3))
+exTheoph <- exTheoph %>% group_by(ID) %>% mutate(ALAG1 = round(runif(1,1,3),3))
+doses <- subset(exTheoph, evid==1)
 
 
 test_that("F  is set from data", {
-  out1 <- mod1 %>% data_set(df) %>% mrgsim() 
+  out1 <- mod1 %>% data_set(exTheoph) %>% mrgsim() 
   expect_equivalent(lim(out1, !duplicated(ID, fromLast=TRUE))$CENT, doses$amt*doses$F1)
 })
 
-
-out2 <- 
-  mod1 %>% 
-  data_set(df) %>% 
-  mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
-
-out2 <- 
-  out2 %>% 
-  dplyr::filter(CENT > 0) %>% 
-  dplyr::group_by(ID) %>% 
-  dplyr::slice(1) %>% dplyr::ungroup(.)
-
 test_that("ALAG is set from data", {
+  out2 <- mod1 %>% data_set(exTheoph) %>% 
+    mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
+  out2 <- out2 %>% lim(CENT>0) %>% as.tbl %>% group_by(ID) %>% slice(1)
   expect_equivalent(out2$time, doses$ALAG1)
-
 })
 
