@@ -4,9 +4,7 @@ library(dplyr)
 
 rm(list=ls())
 
-lim <- function(x,...) {
-  x %>% dplyr::filter(...) %>% as.data.frame
-}
+lim <- function(x,...) x %>% dplyr::filter(...) %>% as.data.frame
 
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
@@ -59,7 +57,7 @@ test_that("F is set for compartment 1 and 2", {
 })
 
 
-contect("Set ALAG")
+context("Set ALAG")
 test_that("ALAG is set for compartment 1 and 2", {
   
   expect_true(lim(out10, CENT>0)$time[1]==0)

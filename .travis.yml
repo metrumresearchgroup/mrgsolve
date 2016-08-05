@@ -20,6 +20,6 @@ os:
 script:
   - cd ../
   - mkdir Rchecks
-  - make check 
+  - make test 
 
 
