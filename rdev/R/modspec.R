@@ -253,13 +253,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   ignore.stdout=TRUE,
                   raw=FALSE,compile=TRUE,audit=FALSE,
                   quiet=getOption("mrgsolve_mread_quiet",FALSE),
-                  check.bounds=FALSE,warn=TRUE,soloc=tempdir(),preclean=FALSE,...) {
+                  check.bounds=FALSE,warn=TRUE,soloc=tempdir(),
+                  preclean=FALSE,...) {
   
   quiet <- as.logical(quiet)
   warn <- warn & (!quiet)
   
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
-
+  
   ## Check for spaces in the model name
   if(grepl(" +", model,perl=TRUE)) {
     stop("model name cannot contain spaces.")
@@ -268,14 +269,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(any(grepl("\n", project))) {
     stop("project argument contains newline(s); did you mean to call mcode?",call.=FALSE) 
   }
-    
+  
   ## Both project and soloc get normalized
   project <- normalizePath(project, mustWork=TRUE, winslash="/")
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   soloc <-   setup_soloc(soloc,model)  
   
   
-
+  
   ## The model file is <stem>.cpp in the <project> directory
   modfile <- file.path(project,paste0(model, ".cpp"))
   
@@ -287,7 +288,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   }
   
   if(!file.exists(modfile)) {
-    stop(paste0("Could not find model file ", modfile), call.=FALSE)
+    if(project==mlib()) {
+      return(mintern(model)) 
+    } else {
+      stop(paste0("Could not find model file ", modfile), call.=FALSE)
+    }
   }
   
   ## If we need a unique dll name, use rfile otherwise model
@@ -466,7 +471,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   setwd(soloc)
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-
+  
   ## this gets written in soloc
   write_win_def(x)
   
