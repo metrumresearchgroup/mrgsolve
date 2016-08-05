@@ -13,19 +13,15 @@ code <-'
 
 $PARAM CL=1, VC=30, KA=1.2, SET=7
 $CMT GUT CENT
-
-$MAIN 
-R_GUT =  SET;
-
-$OMEGA
-0
-
+$MAIN  R_GUT =  SET;
+$OMEGA 0
 $ODE
 dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - (CL/VC)*CENT;
 '
 
-mod <- mread("INfusion",tempdir(),code) %>%
+mod <- 
+  mcode("Infusion",code) %>%
   update(end=72) %>% obsonly
 
 
@@ -33,18 +29,18 @@ data <- expand.ev(ID=1:5,rate=c(1,5,10,50), amt=100)
 set.seed(1212)
 out0 <- mod %>% data_set(data) %>% mrgsim
 
+
 data <- data %>% mutate(SET = rate, rate=-1)
 set.seed(1212)
 out <- mod %>% data_set(data) %>% mrgsim
 
 
-
-test_that("Infusion rate is set by _R(n)", {
+test_that("Infusion rate is set by R_CMT", {
     expect_identical(out0$CENT, out$CENT)
 })
 
 data$rate <- -2
-test_that("Error when rate = -2 and _R(n) set instead of _D(n)", {
+test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
     expect_error(mod %>% data_set(data) %>% mrgsim)
 })
 
@@ -54,20 +50,15 @@ code <-'
 
 $PARAM CL=1, VC=30, KA=1.2, SET=0
 $CMT GUT CENT
-
-$MAIN 
-D_GUT =  SET;
-
-$OMEGA
-0
-
+$MAIN  D_GUT =  SET;
+$OMEGA 0
 $ODE
 dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - (CL/VC)*CENT;
 '
 
 
-mod <- mread("D",tempdir(),code) %>%
+mod <- mcode("D",code) %>%
   update(end=120) %>% obsonly
 
 
@@ -81,12 +72,12 @@ data <- data0 %>% mutate(SET = dur, rate=-2)
 set.seed(1212)
 out <- mod %>% data_set(data) %>% mrgsim
 
-test_that("Infusion rate is set by _D(n)", {
+test_that("Infusion rate is set by D_CMT", {
   expect_identical(out0$CENT, out$CENT)
 })
 
 data$rate <- -1
-test_that("Error when rate = -1 and _D(n) set instead of _R(n)", {
+test_that("Error when rate = -1 and D_CMT set instead of R_CMT", {
   expect_error(mod %>% data_set(data) %>% mrgsim)
 })
 
@@ -97,14 +88,14 @@ $MAIN D_CENT = D1; F_CENT = F1;
 $CMT CENT
 $ODE dxdt_CENT = -0.1*CENT;
 '
-mod <- mread("test11DF",tempdir(),code)
+mod <- mcode("test11DF",code)
 
-out <- mod %>% ev(amt=1000,  rate=-2) %>% mrgsim
+out <-  mod %>% ev(amt=1000,  rate=-2) %>% mrgsim
 out2 <- mod %>% ev(amt=1000, rate=-2, F1=0.5) %>% mrgsim
 out3 <- mod %>% ev(amt=1000, rate=-2, D1 = 10) %>% mrgsim
 out4 <- mod %>% ev(amt=1000, rate=-2, D1 = 10,F1=1.5) %>% mrgsim
 
-test_that("Correct infusion duration when _D and _F are set", {
+test_that("Correct infusion duration when D_CMT and F_CMT are set", {
   expect_true(out$time[which.max(out$CENT)] ==2)
   expect_true(out2$time[which.max(out2$CENT)]==2)
   expect_true(round(max(out$CENT)/max(out2$CENT),3) == 2)
@@ -129,7 +120,7 @@ out2 <- mod %>% ev(amt=1000, rate=-1, F1=0.5) %>% mrgsim
 out3 <- mod %>% ev(amt=1000, rate=-1, R1 = 50) %>% mrgsim
 out4 <- mod %>% ev(amt=1000, rate=-1, R1 = 200, F1=1.5) %>% mrgsim
 
-test_that("Correct infusion duration when _R and _F are set", {
+test_that("Correct infusion duration when R_CMT and F_CMT are set", {
   expect_true(out$time[which.max(out$CENT)] ==10)
   expect_true(out2$time[which.max(out2$CENT)]==5)
   expect_true(round(max(out$CENT)/max(out2$CENT),3) > 1)
