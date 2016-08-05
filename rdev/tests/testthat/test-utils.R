@@ -17,3 +17,59 @@ test_that("columns that don't exist throw an error", {
   expect_error(mrgsolve:::rename_cols(Theoph, c("dv" = "Donc", "id" = "subject")),
                "the following columns do not exist in the dataset:  Donc, subject")
 })
+
+
+context("Test utils")
+mod <- mrgsolve:::house()
+out <- mrgsim(mod)
+
+test_that("Corecing simulated output to data.frame", {
+  expect_is(as.data.frame(out), "data.frame")
+})
+test_that("Corecing simulated output to matrix", {
+  expect_is(as.matrix(out), "matrix")
+})
+test_that("Corecing parameters to list", {
+  expect_is(as.list(param(mod)), "list")
+})
+test_that("Corecing parameters to numeric", {
+  expect_is(as.numeric(param(mod)), "numeric")
+})
+test_that("Corecing initials to list", {
+  expect_is(as.list(init(mod)), "list")
+})
+test_that("Corecing initials to numeric", {
+  expect_is(as.numeric(init(mod)), "numeric")
+})
+test_that("Corecing parameters to data.frame", {
+  expect_is(as.data.frame(param(mod)), "data.frame")
+  
+})
+test_that("Corecing initials to data.frame", {
+  expect_is(as.data.frame(init(mod)), "data.frame")
+})
+test_that("stime correctly generates simulation times", {
+  expect_equal(stime(mod), seq(0,mod@end, mod@delta))
+  expect_equal(stime(update(mod, end=-1, add=c(1,6,9))), c(1,6,9))
+  expect_error(stime(update(mod, end=-1, add=c())))
+})
+test_that("Negative end time gives simulations at add only", {
+  expect_equal(stime(update(mod, end=-1, add=c(1,6,9))), c(1,6,9))
+  expect_error(stime(update(mod, end=-1, add=c())))
+})
+test_that("If no simulation times can be rendered time=0 only is simulated", {
+  out <- mrgsim(mod, end=-1, add=numeric(0))
+  expect_equal(unique(out$time),0)
+})
+test_that("Get parameter names with pars()", {
+  expect_equivalent(names(param(mod)), pars(mod))
+})
+
+test_that("Get compartment names with cmt()", {
+  expect_equivalent(names(param(mod)), pars(mod))
+})
+
+
+
+
+
