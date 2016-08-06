@@ -3,7 +3,7 @@
 Resources
 =========
 
--   [Latest release: 0.7.4](https://github.com/metrumresearchgroup/mrgsolve/releases)
+-   [Latest release: 0.7.5](https://github.com/metrumresearchgroup/mrgsolve/releases)
 -   [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
 -   [User Guide](https://mrgsolve.github.io/user_guide)
 -   [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
@@ -27,7 +27,7 @@ Installation
 -   Latest stable version directly from github via:
 
 ``` r
-  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.4", subdir="rdev")
+  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.5", subdir="rdev")
 ```
 
 -   The latest stable release can be installed with `install.packages` like this:
