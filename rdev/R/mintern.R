@@ -16,7 +16,7 @@ NULL
 ##' 
 ##' 
 ##' @examples
-##' \dont_run{
+##' \dontrun{
 ##' mod <- mread("pk1cmt", modlib())
 ##' mod <- mread("pk2cmt", modlib()) 
 ##' mod <- mread("pk3cmt", modlib()) 
