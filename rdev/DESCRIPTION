@@ -64,6 +64,7 @@ Collate:
     'model_include.R'
     'nmxml.R'
     'modspec.R'
+    'mread.R'
     'mrgindata.R'
     'mrgsolve.R'
     'package.R'
