@@ -1,7 +1,7 @@
 __Please see the latest release__: [v0.7.4](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.4)
 
 # Since 0.7.4
-- Nothing to report (yet)
+- The `modmrg` package was discontinued.  All of the pre-coded models are now available in `mrgsolve`.  Simply call `mread` with the model stem (e.g. `pk1cmt`, `irm3`, etc ...) and call `modlib()` as the `project` argument.  For example: `mod <- mread("emax", modlib())` will compile the `emax` model and return the model object.
 
 # Since 0.7.3
 - Tests re-configured
