@@ -16,6 +16,7 @@ NULL
 ##' 
 ##' 
 ##' @examples
+##' \dont_run{
 ##' mod <- mread("pk1cmt", modlib())
 ##' mod <- mread("pk2cmt", modlib()) 
 ##' mod <- mread("pk3cmt", modlib()) 
@@ -30,7 +31,7 @@ NULL
 ##' mod <- mread("viral2", modlib())
 ##' 
 ##' mrgsolve:::code(mod)
-##' 
+##' }
 ##' 
 modlib <- function(list=FALSE)  {
   if(list) return(modlib_list())
