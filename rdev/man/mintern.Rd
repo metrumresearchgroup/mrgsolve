@@ -16,17 +16,4 @@ mintern(model, tryload = TRUE, ...)
 \description{
 Load a library model.
 }
-\examples{
-mod <- mread("pk1cmt",modlib())
-mod <- mread("pk2cmt",modlib()) 
-mod <- mread("pk3cmt",modlib()) 
-mod <- mread("irm1",modlib()) 
-mod <- mread("irm2",modlib()) 
-mod <- mread("irm3",modlib()) 
-mod <- mread("irm4",modlib())
-mod <- mread("emax",modlib())
-mod <- mread("effect",modlib())
-mod <- mread("tmdd",modlib()) 
-
-}
 

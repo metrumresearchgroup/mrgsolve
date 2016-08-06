@@ -1,17 +1,54 @@
 ##' @include utils.R
+NULL
 
-##' Internal model location.
+##' Internal model library.
 ##' 
+##' @param list list available models
 ##' @export
-modlib <- function() object_dir() 
+##' 
+##' @details
+##' See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
+##' \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
+##' 
+##' Call \code{modlib(list=TRUE)} to list available models.  Once the model 
+##' is loaded (see examples below), call \code{mrgsolve:::code(mod)} to see
+##' model code and equations.
+##' 
+##' 
+##' @examples
+##' mod <- mread("pk1cmt", modlib())
+##' mod <- mread("pk2cmt", modlib()) 
+##' mod <- mread("pk3cmt", modlib()) 
+##' mod <- mread("irm1",   modlib()) 
+##' mod <- mread("irm2",   modlib()) 
+##' mod <- mread("irm3",   modlib()) 
+##' mod <- mread("irm4",   modlib())
+##' mod <- mread("emax",   modlib())
+##' mod <- mread("effect", modlib())
+##' mod <- mread("tmdd",   modlib())
+##' mod <- mread("viral1", modlib())
+##' mod <- mread("viral2", modlib())
+##' 
+##' mrgsolve:::code(mod)
+##' 
+##' 
+modlib <- function(list=FALSE)  {
+  if(list) return(modlib_list())
+  return(object_dir() )
+}
 
-avail <- c("pk1cmt", "pk2cmt", "pk3cmt","irm1", "irm2", "irm3",
+modlib_models <- c("pk1cmt", "pk2cmt", "pk3cmt","irm1", "irm2", "irm3",
            "emax", "tmdd", "viral1", "viral2", "effect")
 
+modlib_list <- function() {
+  message("mrgsolve internal library:")
+  cat(paste0("  ",modlib_models),sep="\n")
+  return(invisible(NULL))
+}
 
-##' mintern: PK/PD Model parameters, compartments, and output variables.
+##' modlib: PK/PD Model parameters, compartments, and output variables.
 ##' 
-##' @name mintern_details
+##' @name modlib_details
 ##'
 ##' @section Compartments:
 ##' \itemize{
@@ -73,28 +110,12 @@ object_dir <- function() {
 ##' @param ... passed to update
 ##' 
 ##' 
-##' @examples
-##' mod <- mread("pk1cmt",modlib())
-##' mod <- mread("pk2cmt",modlib()) 
-##' mod <- mread("pk3cmt",modlib()) 
-##' mod <- mread("irm1",modlib()) 
-##' mod <- mread("irm2",modlib()) 
-##' mod <- mread("irm3",modlib()) 
-##' mod <- mread("irm4",modlib())
-##' mod <- mread("emax",modlib())
-##' mod <- mread("effect",modlib())
-##' mod <- mread("tmdd",modlib()) 
 ##' 
 mintern <- function(model,tryload=TRUE,...) {
   
-  if(missing(model)) model <- "<NONE>"
-  
-  if(!is.element(model,avail)) {
-    message("mrgsolve internal library:")
-    cat(paste0("  ",avail),sep="\n")
-    return(invisible(NULL))
+  if(!is.element(model,modlib_models)) {
+    stop(model, " not found in the library. Use modlib(list=TRUE) to list models.",call.=FALSE)
   }
-  
   
   message("Compiling model: ", model)
   
@@ -112,9 +133,9 @@ mintern <- function(model,tryload=TRUE,...) {
 }
 
 
-##' mintern: Pharmacokinetic models.
+##' modlib: Pharmacokinetic models.
 ##' 
-##' @name mintern_pk
+##' @name modlib_pk
 ##' @param ... passed to update
 ##'
 ##' @section Model description:
@@ -127,7 +148,7 @@ mintern <- function(model,tryload=TRUE,...) {
 ##'
 ##' @details
 ##'
-##' See \code{\link{mintern_details}} for more detailed descriptions of parameters and compartments.
+##' See \code{\link{modlib_details}} for more detailed descriptions of parameters and compartments.
 ##'
 ##' The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{VC}, \code{KA1} and \code{KA2} and uses compartments \code{EV1},
 ##' \code{EV2}, and \code{CENT}.  The \code{pk2cmt} model adds a \code{PERIPH} compartment and parameters \code{Q} and \code{VP} to that of the
@@ -155,13 +176,12 @@ viral2 <- function(...) return(mintern("viral2",...))
 pd_effect <- function(...) mintern("effect",...) 
 
 
-##' mintern: Pharmacokinetic / pharmacodynamic models. 
+##' modlib: Pharmacokinetic / pharmacodynamic models. 
 ##' 
-##' @name mintern_pkpd
-##' @param ... passed to update
+##' @name modlib_pkpd
 ##' @details
 ##'
-##' See \code{\link{mintern_details}} for more detailed descriptions of parameters and compartments.
+##' See \code{\link{modlib_details}} for more detailed descriptions of parameters and compartments.
 ##'
 ##' All PK/PD models include 2-compartment PK model with absorption from 2 extravasular compartments and linear + nonlinear clearance.  The PK models are parameterized with \code{CL}, \code{VC}, \code{Q}, \code{VMAX}, \code{KM}, \code{KA1} and \code{KA2} and implement compartments \code{EV1}, \code{EV2}, \code{CENT}, \code{PERIPH} .  The indirect response models have compartment \code{RESP} and the emax model has output variable \code{RESP}.  PD parameters include \code{KIN}, \code{KOUT}, \code{IC50}, \code{EC50}, \code{IMAX}, \code{EMAX}, \code{E0}, and \code{n}.
 ##'
@@ -183,8 +203,8 @@ NULL
 
 
 
-##' mintern: Target mediated disposition model.
-##' @name mintern_tmdd
+##' modlib: Target mediated disposition model.
+##' @name modlib_tmdd
 ##' @param ... passed to update
 ##' 
 ##'
@@ -221,9 +241,9 @@ NULL
 
 
 
-##' mintern: HCV viral dynamics models.
-##' @name mintern_viral
-##' @param ... passed to update
+##' modlib: HCV viral dynamics models.
+##' @name modlib_viral
+##' 
 ##'
 ##' @section Models:
 ##' \itemize{
@@ -266,6 +286,7 @@ NULL
 ##' 
 ##' @param x an mrgsolve model object
 ##' @return a character vector of model code
+##' 
 code <- function(x) {
   what <- try(x@code, silent=TRUE)
   if(inherits("try-error",what)) {
