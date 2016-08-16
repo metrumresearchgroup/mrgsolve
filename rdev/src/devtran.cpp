@@ -49,6 +49,10 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   int advan             = Rcpp::as<int>    (parin["advan"]);
   double mindt          = Rcpp::as<double> (parin["mindt"]);
+  int t2advance         = Rcpp::as<int>    (parin["t2advance"]);
+  
+  if((t2advance < 0) || (t2advance > 1)) Rcpp::stop("Invalid value for t2advance.");
+  t2advance = 0;
   
   
   if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
@@ -99,7 +103,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     CRUMP("recsort must be 1, 2, 3, or 4.");
   }
   
-  
   // stime is a matrix, not a vector, with multiple columns to specify multiple designs
   // Matrix of observations (stime), one column per design
   
@@ -107,7 +110,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Vector of length idata.nrow() that maps each ID to a design
   // Already has C indexing
   Rcpp::IntegerVector tgridi = Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
-  if(tgridi.size()==0) tgridi = Rcpp::rep(0,NID);
+  if(tgridi.size() == 0) tgridi = Rcpp::rep(0,NID);
   if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
   
   if(max(tgridi) >= tgrid.ncol()) Rcpp::stop("Insufficient number of designs specified for this problem.");
@@ -124,15 +127,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   } else {
     tgridn.push_back(tgrid.nrow());
   }
-  
-  //  for(i=0; i < tgridn.size(); i++) nREP(tgridn[i]);
-  
-  //obsonly = obsonly && (!(data.ncol() > 1));
-  
-  //int idataid = 0; warnings
-  
-  // find ID column in idata
-  //if(idata.nrow() > 0) {idataid = idat->idcol(); warnings
   
   // These are the requested columns.
   Rcpp::IntegerVector request;
@@ -183,8 +177,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   prob->advan(advan);
   prob->resize_capture(size_capture);
   
-  //prob->init_call_record(time0);
-
   
   switch(advan) {
   case 13:
@@ -205,7 +197,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // dataobject.cpp
   if(nidata > 0) dat->check_idcol(idat);
   
-  
   // Allocate the record list and resize for each ID:
   // stimes will get push_backed for now;
   if(debug) say("Allocating the record stack.");
@@ -223,8 +214,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   }
   
   double tto, tfrom;
-  //double ttmp;
-  
+
   int obscount = 0;
   int evcount  = 0;
   
@@ -232,6 +222,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Extract data records from the data set
   dat->get_records(a, NID, neq, obscount, evcount,obsonly,debug);
   // Offset for getting parameters from the data set (not idata)
+  if((obscount == 0) && (t2advance > 0)) Rcpp::stop("The data set must have observations to use t2advance.");
   //int posoff = t2cov && obscount > 0 ? 1 : 0;
   
   // Deal with stimes:
@@ -482,7 +473,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // The current difference between tto and tfrom
   double dt = 0;
   double denom = 1;
-  
+  bool last_record = false;
   // LOOP ACROSS IDS:
   for(size_t i=0; i < a.size(); i++) {
     
@@ -513,7 +504,9 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       // If this record is from the data set, copy parameters from data
       dat->copy_parameters(this_rec->pos(), prob);
     } else {
-      if(filbak) dat->copy_parameters(dat->start(i),prob);
+      if(filbak) {
+        dat->copy_parameters(dat->start(i),prob);
+      }
     }
     
     // Calculate initial conditions:
@@ -529,11 +522,14 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     
     // LOOP ACROSS EACH RECORD for THIS ID:
     for(size_t j=0; j < thisi.size(); j++) {
+      
       if(j==0) {
         prob->solving(true);
       } else {
         prob->newind(2);
       }
+      
+      last_record = j==thisi.size()-1;
       
       rec_ptr this_rec = thisi.at(j);
       
@@ -555,7 +551,11 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       // For this ID, we already have parameters from the first row; only update when
       // we come across a record from the data set
       if(this_rec->from_data()) {
-        dat->copy_parameters(this_rec->pos(), prob);
+        if(last_record) {
+          dat->copy_parameters(this_rec -> pos(), prob);
+        } else {
+          dat->copy_parameters(this_rec->pos() + t2advance, prob);
+        }
       }
       
       tto = this_rec->time();
@@ -674,8 +674,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         }
       }
       
-      //prob->advance(tfrom,tto);
-      
       // Write save values to output matrix:
       prob->table_call();
       
@@ -696,7 +694,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         }
         for(int k=0; k < nreq; k++) ans(crow,(k+req_start)) = prob->y(request[k]);
         crow++;
-      }// end if ouput()
+      } // end if ouput()
       
       
       // Reset or other events:

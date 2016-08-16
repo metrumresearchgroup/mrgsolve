@@ -38,10 +38,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
   if(exists("data", x@args)) stop("data already has been set.")
   if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
-  ## if(!missing(rename)) {
-  ##     rename <- set_altname(as.cvec2(substitute(rename)))
-  ##     data <- dplyr::rename_(data,.dots=setNames(as.list(rename[["from"]]),rename[["to"]]))
-  ## }
+
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
   data <- mrgindata(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), strict=FALSE)
