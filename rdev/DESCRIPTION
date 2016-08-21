@@ -33,7 +33,8 @@ LinkingTo: Rcpp (>= 0.12.1), RcppArmadillo (>= 0.5.600.2.0), BH
 Suggests:
     lattice,
     testthat,
-    XML
+    XML,
+    yaml
 LazyLoad: yes
 NeedsCompilation: yes
 Collate:
@@ -73,4 +74,5 @@ Collate:
     'simtime.R'
     'specdoc.R'
     'update.R'
+    'yaml.R'
 RoxygenNote: 5.0.1

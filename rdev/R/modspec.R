@@ -203,9 +203,13 @@ scrape_and_pass <- function(x,pass,...) {
 
 ## Functions for handling code blocks
 parseNMXML <- function(x) {
+  pos <- attr(x,"pos")
   x <- tolist(x)
   xml <- do.call(nmxml,x)
-  return(xml)
+  mread.env$param[[pos]] <- xml$theta
+  mread.env$omega[[pos]] <- xml$omega
+  mread.env$sigma[[pos]] <- xml$sigma
+  return(NULL)
 }
 
 parseTHETA <- function(x) {
@@ -216,17 +220,32 @@ parseTHETA <- function(x) {
   names(x) <- paste0(opts$name, 1:length(x))
   as.param(x)
 }
-parsePARAM <- function(x) as.param(tolist(x))
+parsePARAM <- function(x) {
+  mread.env$param[[attr(x,"pos")]] <- tolist(x)
+  return(NULL)
+  #as.param(tolist(x))
+}
 
-parseFIXED <- function(x) tolist(x)
+parseFIXED <- function(x) {
+  mread.env$fixed[[attr(x,"pos")]] <- tolist(x)
+  #tolist(x)
+  return(NULL)
+}
 
-parseINIT <- function(x) tolist(x)
+parseINIT <- function(x) {
+  mread.env$init[[attr(x,"pos")]] <- tolist(x)  
+  #tolist(x)
+  return(NULL)
+}
 
 parseCMT <- function(x) {
+  pos <- attr(x,"pos")
   x <- tovec(x)
   y <- rep(0,length(x))
   names(y) <- x
-  y
+  mread.env$init[[pos]] <- as.list(y)
+  #y
+  return(NULL)
 }
 
 parseCMTN <- function(x) as.cvec(x)
@@ -251,10 +270,16 @@ specMATRIX <- function(x,class) {
                  name=  ret[["opts"]][["name"]]),class=class)
 }
 
-specOMEGA <- function(x,y) specMATRIX(x,"omega_block")
-
-specSIGMA <- function(x,y) specMATRIX(x,"sigma_block")
-
+specOMEGA <- function(x,y) {
+  m <- specMATRIX(x,"omega_block")
+  mread.env$omega[[attr(x,"pos")]] <- m
+  m
+}
+specSIGMA <- function(x,y) {
+  m <- specMATRIX(x,"sigma_block")
+  mread.env$sigma[[attr(x,"pos")]] <- m
+  m
+}
 parseCAPTURE <- function(x) {
   x <- as.cvec(x)
   return(x)
@@ -375,82 +400,94 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
 }
 
 
+
+
 ## Used to collect OMEGA and SIGMA matrices
-collect_matrix <- function(x,what,class,xmlname) {
-  what <- c(what, "NMXMLDATA")
-  
-  x <- x[sapply(x,inherits,what)]
-  
-  xmli <- unlist(sapply(x,inherits, "NMXMLDATA"))
-  
-  x[xmli] <- unname(lapply(x[xmli], function(x) x[[xmlname]]))
-  
+# collect_matrix <- function(x,what,class,xmlname) {
+#   what <- c(what, "NMXMLDATA")
+#   
+#   x <- x[sapply(x,inherits,what)]
+#   
+#   xmli <- unlist(sapply(x,inherits, "NMXMLDATA"))
+#   
+#   x[xmli] <- unname(lapply(x[xmli], function(x) x[[xmlname]]))
+#   
+#   if(length(x)==0) return(create_matlist(class=class))
+#   
+#   nr <- sapply(x,function(y) nrow(y[["data"]]))
+#   x <- x[nr > 0]
+#   
+#   d <- lapply(x,function(y) y[["data"]])
+#   l <- lapply(x,function(y) y[["labels"]])
+#   NAMES <- lapply(x,function(y) y[["name"]]) %>% unlist %>% unname
+#   names(d) <- NAMES
+#   names(l) <- NAMES
+#   x <- create_matlist(x=d, class=class, labels=l)
+#   return(x)
+#   
+# }
+# collect_omat <- function(x,what=c("omega_block")) collect_matrix(x,what,"omegalist", "omega")
+# collect_smat <- function(x,what=c("sigma_block")) collect_matrix(x,what,"sigmalist","sigma")
+
+collect_matlist <- function(x, class) {
+  x <- x[!sapply(x,is.null)]
   if(length(x)==0) return(create_matlist(class=class))
-  
-  nr <- sapply(x,function(y) nrow(y[["data"]]))
-  x <- x[nr > 0]
-  
-  d <- lapply(x,function(y) y[["data"]])
-  l <- lapply(x,function(y) y[["labels"]])
-  NAMES <- lapply(x,function(y) y[["name"]]) %>% unlist %>% unname
-  names(d) <- NAMES
-  names(l) <- NAMES
-  x <- create_matlist(x=d, class=class, labels=l)
-  return(x)
-  
+  d <- lapply(x,"[[","data")
+  l <- lapply(x, "[[", "labels")
+  NAMES <- lapply(x,"[[", "name") %>% unlist %>% unname
+  names(d) <- names(l) <- NAMES
+  create_matlist(x=d,class=class,labels=l)
 }
-collect_omat <- function(x,what=c("omega_block")) collect_matrix(x,what,"omegalist", "omega")
-collect_smat <- function(x,what=c("sigma_block")) collect_matrix(x,what,"sigmalist","sigma")
 
 
 ## May have multiple $FIXED
-collect_fixed <- function(x, what=c("fixed_list")) {
-  
-  x <- x[grepl("FIXED",names(x),perl=TRUE)]
-  
-  names(x) <- NULL
-  
-  x <- do.call("c",x)
-  
-  if(length(x)>0) return(x)
-  
-  return(list())
-}
+# collect_fixed <- function(x, what=c("fixed_list")) {
+#   
+#   x <- x[grepl("FIXED",names(x),perl=TRUE)]
+#   
+#   names(x) <- NULL
+#   
+#   x <- do.call("c",x)
+#   
+#   if(length(x)>0) return(x)
+#   
+#   return(list())
+# }
 
 ## May have multiple $PARAM blocks; also needs to collect from $NMXML
-collect_param <- function(x, what=c("parameter_list")) {
-  
-  what <- c(what, "NMXMLDATA")
-  
-  x <- x[sapply(x,inherits,what)]
-  
-  xmli <- unlist(sapply(x,inherits,"NMXMLDATA"))
-  
-  x[xmli] <- lapply(x[xmli], function(x) x$theta)
-  
-  names(x) <- NULL
-  
-  x <- unlist(lapply(x, as.numeric))
-  
-  if(length(x)>0) return(as.param(x))
-  
-  return(as.param(list()))
-}
-
+# collect_param <- function(x, what=c("parameter_list")) {
+#   
+#   what <- c(what, "NMXMLDATA")
+#   
+#   x <- x[sapply(x,inherits,what)]
+#   
+#   xmli <- unlist(sapply(x,inherits,"NMXMLDATA"))
+#   
+#   x[xmli] <- lapply(x[xmli], function(x) x$theta)
+#   
+#   names(x) <- NULL
+#   
+#   x <- unlist(lapply(x, as.numeric))
+#   
+#   if(length(x)>0) return(as.param(x))
+#   
+#   return(as.param(list()))
+# }
+# 
 ## Merges code from $TABLE and $CAPTURE
-collect_table <- function(x,what=c("TABLE")) {
-  x <- x[names(x) %in% what]
-  unname(unlist(x))
-}
+# collect_table <- function(x,what=c("TABLE")) {
+#   x <- x[names(x) %in% what]
+#   unname(unlist(x))
+# }
 
 ## Look for initial conditions in $INIT, $CMT, and $VCMT
-collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
-  x <- x[names(x) %in% what]
-  if(length(x)==0) return(as.init(list()))
-  names(x) <- NULL
-  x <- do.call("c",x)
-  return(as.init(x))
-}
+# collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
+#   x <- x[names(x) %in% what]
+#   if(length(x)==0) return(as.init(list()))
+#   names(x) <- NULL
+#   x <- do.call("c",x)
+#   return(as.init(x))
+# }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {

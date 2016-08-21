@@ -83,8 +83,7 @@ nmxml <- function(run=numeric(0), project=character(0),
     om <- structure(list(data=om, name=oname, labels=olabels), class="omega_block")
     sg <- structure(list(data=sg, name=sname, labels=slabels), class="sigma_block")
 
-
-    ans <- list(theta=as.param(th), omega=om,sigma=sg)
+    ans <- list(theta=th, omega=om,sigma=sg)
     return(structure(ans,class="NMXMLDATA"))
 
 }
