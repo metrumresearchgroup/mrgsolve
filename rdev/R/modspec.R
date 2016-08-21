@@ -241,26 +241,51 @@ parseLIST <- function(x,where) {
   return(NULL)
 }
 
-parsePARAM <- function(x) {
-
+parseINIT <- function(x) {
   y <- scrape_opts(x,
                    def=list(yaml=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["yaml"]]) {
+    stopifnot(requireNamespace("yaml",quietly=TRUE))
     l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
     l <- split3_yaml(l)
-    mread.env$param[[attr(x,"pos")]] <- l[["v"]]
+    mread.env[["init"]][[attr(x,"pos")]] <- l[["v"]]
+    return(NULL)
+  } 
+  parseLIST(x,"init")  
+  
+}
+
+
+parsePARAM <- function(x) {
+  
+  y <- scrape_opts(x,
+                   def=list(yaml=FALSE),
+                   marker="=>", all=TRUE,split=FALSE) 
+  if(y[["yaml"]]) {
+    stopifnot(requireNamespace("yaml",quietly=TRUE))
+    l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
+    l <- split3_yaml(l)
+    mread.env[["param"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
   parseLIST(x,"param")
 }
 
 parseCMT <- function(x) {
+  
   pos <- attr(x,"pos")
+  y <- scrape_opts(x,def=list(yaml=FALSE),
+                   marker="=>", all=TRUE,split=FALSE)
+  if(y[["yaml"]]) {
+    stopifnot(requireNamespace("yaml",quietly=TRUE))
+    l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
+    x <- names(l)
+  } 
   x <- tovec(x)
-  y <- rep(0,length(x))
-  names(y) <- x
-  mread.env$init[[pos]] <- as.list(y)
+  l <- rep(0,length(x))
+  names(l) <- x
+  mread.env[["init"]][[pos]] <- as.list(l)
   return(NULL)
 }
 
@@ -303,7 +328,7 @@ handle_spec_block.default <- function(x) return(x)
 ##' @export
 handle_spec_block.specPARAM <- function(x) parsePARAM(x)
 ##' @export
-handle_spec_block.specINIT <- function(x) parseLIST(x,"init")
+handle_spec_block.specINIT <- function(x) parseINIT(x)
 ##' @export
 handle_spec_block.specCMT <- function(x) parseCMT(x)
 ##' @export
