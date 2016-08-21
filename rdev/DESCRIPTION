@@ -63,6 +63,7 @@ Collate:
     'matrix.R'
     'mintern.R'
     'model_include.R'
+    'yaml.R'
     'nmxml.R'
     'modspec.R'
     'mread.R'
@@ -74,5 +75,4 @@ Collate:
     'simtime.R'
     'specdoc.R'
     'update.R'
-    'yaml.R'
 RoxygenNote: 5.0.1

@@ -2,7 +2,7 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-##' @include utils.R complog.R nmxml.R matrix.R
+##' @include utils.R complog.R nmxml.R matrix.R yaml.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
@@ -188,13 +188,26 @@ opts_only <- function(x,def=list(),all=FALSE) {
   opts <- scrape_opts(x)
   merge(def,opts, strict=!all,warn=FALSE,context="opts")
 }
-scrape_opts <- function(x,def=list(),all=FALSE) {
+scrape_opts <- function(x,def=list(),all=FALSE,marker="=",split=TRUE) {
   x <- unlist(strsplit(x, "\n",perl=TRUE))
-  opts <- grepl("=",x,perl=TRUE)
-  data <- unlist(strsplit(x[!opts],"\\s+",perl=TRUE))
+  opts <- grepl(marker,x,perl=TRUE)
+  if(split) {
+    data <- unlist(strsplit(x[!opts],"\\s+",perl=TRUE))
+  } else {
+    data <- x[!opts] 
+  }
+  if(marker=="=>") x[opts] <- gsub("=>", "=",x[opts])
   opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
   c(list(x=data), opts)
 }
+scrape_opts2 <- function(x,def=list(),all=FALSE,marker="=>?") {
+  x <- unlist(strsplit(x, "\n",perl=TRUE))
+  opts <- grepl(marker,x,perl=TRUE)
+  data <- x[!opts]
+  opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
+  c(list(x=data), opts)
+} 
+
 scrape_and_pass <- function(x,pass,...) {
   o <- scrape_opts(x,...)
   ret <- do.call(pass,o)
@@ -226,6 +239,20 @@ parseTHETA <- function(x) {
 parseLIST <- function(x,where) {
   mread.env[[where]][[attr(x,"pos")]] <- tolist(x)
   return(NULL)
+}
+
+parsePARAM <- function(x) {
+
+  y <- scrape_opts(x,
+                   def=list(yaml=FALSE),
+                   marker="=>", all=TRUE,split=FALSE) 
+  if(y[["yaml"]]) {
+    l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
+    l <- split3_yaml(l)
+    mread.env$param[[attr(x,"pos")]] <- l[["v"]]
+    return(NULL)
+  } 
+  parseLIST(x,"param")
 }
 
 parseCMT <- function(x) {
@@ -274,7 +301,7 @@ handle_spec_block <- function(x) UseMethod("handle_spec_block")
 ##' @export
 handle_spec_block.default <- function(x) return(x)
 ##' @export
-handle_spec_block.specPARAM <- function(x) parseLIST(x,"param")
+handle_spec_block.specPARAM <- function(x) parsePARAM(x)
 ##' @export
 handle_spec_block.specINIT <- function(x) parseLIST(x,"init")
 ##' @export
