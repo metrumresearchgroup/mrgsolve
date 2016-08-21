@@ -142,7 +142,7 @@ capture(CP);
 
 
 
-mod <- mread(code=code, project=tempdir())
+mod <- mcode("exspec", code)
 
 smat(mod)
 omat(mod)

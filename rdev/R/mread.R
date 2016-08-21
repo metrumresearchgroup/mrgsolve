@@ -166,11 +166,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## The main sections that need R processing:
   spec <- move_global(spec)
   
-  
+  ## Pull out the settings now
+  ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
   
   ## Parse blocks
+  ## Each block gets assigned a class to dispatch the handler function
+  ## Also, we use a position attribute so we know 
+  ## where we are when we're handling the block
   specClass <- paste0("spec", names(spec))
   for(i in seq_along(spec)) {
     spec[[i]] <- structure(.Data=spec[[i]],
@@ -178,6 +182,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                            pos=i)
   }
   
+  # Make a list of NULL equal to length of spec
+  # Each code block can contribute to / occupy one
+  # slot for each of param/fixed/init/omega/sigma
   temp <- vector("list",length(spec))
   mread.env$param <- temp
   mread.env$fixed <- temp
@@ -187,9 +194,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block)
+  
+  ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
-  init <- as.list(do.call("c",unname(mread.env$init)))
+  init <-  as.list(do.call("c",unname(mread.env$init)))
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)

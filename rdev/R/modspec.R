@@ -213,28 +213,18 @@ parseNMXML <- function(x) {
 }
 
 parseTHETA <- function(x) {
+  pos <- attr(x,"pos")
   opts <- scrape_opts(x,all=TRUE)
   x <- as.numeric(opts$x)
   x <- x[!is.na(x)]
   if(!exists("name", opts)) opts$name <- "THETA"
   names(x) <- paste0(opts$name, 1:length(x))
-  as.param(x)
-}
-parsePARAM <- function(x) {
-  mread.env$param[[attr(x,"pos")]] <- tolist(x)
-  return(NULL)
-  #as.param(tolist(x))
-}
-
-parseFIXED <- function(x) {
-  mread.env$fixed[[attr(x,"pos")]] <- tolist(x)
-  #tolist(x)
+  mread.env$param[[pos]] <- x
   return(NULL)
 }
 
-parseINIT <- function(x) {
-  mread.env$init[[attr(x,"pos")]] <- tolist(x)  
-  #tolist(x)
+parseLIST <- function(x,where) {
+  mread.env[[where]][[attr(x,"pos")]] <- tolist(x)
   return(NULL)
 }
 
@@ -244,11 +234,9 @@ parseCMT <- function(x) {
   y <- rep(0,length(x))
   names(y) <- x
   mread.env$init[[pos]] <- as.list(y)
-  #y
   return(NULL)
 }
 
-parseCMTN <- function(x) as.cvec(x)
 
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,class) {
@@ -258,9 +246,7 @@ specMATRIX <- function(x,class) {
   ret <- scrape_and_pass(x,"modMATRIX",def=list(name="...",prefix=""), all=TRUE)
   
   if(is.null(ret[["opts"]][["labels"]])) {
-    
     ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
-    
   } else {
     ret[["opts"]][["labels"]] <- paste0(ret[["opts"]][["prefix"]],ret[["opts"]][["labels"]])
   }
@@ -273,16 +259,12 @@ specMATRIX <- function(x,class) {
 specOMEGA <- function(x,y) {
   m <- specMATRIX(x,"omega_block")
   mread.env$omega[[attr(x,"pos")]] <- m
-  m
+  return(NULL)
 }
 specSIGMA <- function(x,y) {
   m <- specMATRIX(x,"sigma_block")
   mread.env$sigma[[attr(x,"pos")]] <- m
-  m
-}
-parseCAPTURE <- function(x) {
-  x <- as.cvec(x)
-  return(x)
+  return(NULL)
 }
 
 
@@ -292,9 +274,9 @@ handle_spec_block <- function(x) UseMethod("handle_spec_block")
 ##' @export
 handle_spec_block.default <- function(x) return(x)
 ##' @export
-handle_spec_block.specPARAM <- function(x) parsePARAM(x)
+handle_spec_block.specPARAM <- function(x) parseLIST(x,"param")
 ##' @export
-handle_spec_block.specINIT <- function(x) parseINIT(x)
+handle_spec_block.specINIT <- function(x) parseLIST(x,"init")
 ##' @export
 handle_spec_block.specCMT <- function(x) parseCMT(x)
 ##' @export
@@ -310,11 +292,11 @@ handle_spec_block.specNMXML <- function(x) parseNMXML(x)
 ##' @export
 handle_spec_block.specTHETA <- function(x) parseTHETA(x)
 ##' @export
-handle_spec_block.specCMTN <- function(x) parseCMTN(x)
+handle_spec_block.specCMTN <- function(x) as.cvec(x)
 ##' @export
-handle_spec_block.specFIXED <- function(x) parseFIXED(x)
+handle_spec_block.specFIXED <- function(x) parseLIST(x,"fixed")
 ##' @export
-handle_spec_block.specCAPTURE <- function(x) parseCAPTURE(x)
+handle_spec_block.specCAPTURE <- function(x) as.cvec(x)
 ##' @export
 handle_spec_block.specVCMT <- function(x) parseCMT(x)
 ##' @export
