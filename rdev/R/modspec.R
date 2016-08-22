@@ -243,12 +243,10 @@ parseLIST <- function(x,where) {
 
 parseINIT <- function(x) {
   y <- scrape_opts(x,
-                   def=list(yaml=FALSE),
+                   def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
-  if(y[["yaml"]]) {
-    stopifnot(requireNamespace("yaml",quietly=TRUE))
-    l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
-    l <- split3_yaml(l)
+  if(y[["annotated"]]) {
+    l <- split3_yaml(y[["x"]],3)
     mread.env[["init"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
@@ -260,12 +258,10 @@ parseINIT <- function(x) {
 parsePARAM <- function(x) {
   
   y <- scrape_opts(x,
-                   def=list(yaml=FALSE),
+                   def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
-  if(y[["yaml"]]) {
-    stopifnot(requireNamespace("yaml",quietly=TRUE))
-    l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
-    l <- split3_yaml(l)
+  if(y[["annotated"]]) {
+    l <- split3_yaml(y[["x"]],3)
     mread.env[["param"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
@@ -275,12 +271,11 @@ parsePARAM <- function(x) {
 parseCMT <- function(x) {
   
   pos <- attr(x,"pos")
-  y <- scrape_opts(x,def=list(yaml=FALSE),
+  y <- scrape_opts(x,def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE)
-  if(y[["yaml"]]) {
-    stopifnot(requireNamespace("yaml",quietly=TRUE))
-    l <- yaml::yaml.load(paste(y[["x"]],collapse="\n"))
-    x <- names(l)
+  if(y[["annotated"]]) {
+    l <- split3_yaml(y[["x"]],2)
+    x <- names(l[["v"]])
   } 
   x <- tovec(x)
   l <- rep(0,length(x))
