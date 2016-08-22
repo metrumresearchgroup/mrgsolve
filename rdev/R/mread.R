@@ -1,7 +1,6 @@
 
 ##' @include modspec.R
 NULL
-mread.env <- new.env()
 
 
 ##' Write, compile, and load model code.
@@ -185,6 +184,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
+  mread.env <- new.env()
   temp <- vector("list",length(spec))
   mread.env$param <- temp
   mread.env$fixed <- temp
@@ -193,7 +193,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   mread.env$sigma <- temp
   
   ## Call the handler for each block
-  spec <- lapply(spec,handle_spec_block)
+  spec <- lapply(spec,handle_spec_block,env=mread.env)
   
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))

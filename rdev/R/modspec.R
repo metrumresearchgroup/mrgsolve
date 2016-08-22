@@ -215,60 +215,60 @@ scrape_and_pass <- function(x,pass,...) {
 }
 
 ## Functions for handling code blocks
-parseNMXML <- function(x) {
+parseNMXML <- function(x,env,...) {
   pos <- attr(x,"pos")
   x <- tolist(x)
   xml <- do.call(nmxml,x)
-  mread.env$param[[pos]] <- xml$theta
-  mread.env$omega[[pos]] <- xml$omega
-  mread.env$sigma[[pos]] <- xml$sigma
+  env[["param"]][[pos]] <- xml$theta
+  env[["omega"]][[pos]] <- xml$omega
+  env[["sigma"]][[pos]] <- xml$sigma
   return(NULL)
 }
 
-parseTHETA <- function(x) {
+parseTHETA <- function(x,env,...) {
   pos <- attr(x,"pos")
   opts <- scrape_opts(x,all=TRUE)
   x <- as.numeric(opts$x)
   x <- x[!is.na(x)]
   if(!exists("name", opts)) opts$name <- "THETA"
   names(x) <- paste0(opts$name, 1:length(x))
-  mread.env$param[[pos]] <- x
+  env[["param"]][[pos]] <- x
   return(NULL)
 }
 
-parseLIST <- function(x,where) {
-  mread.env[[where]][[attr(x,"pos")]] <- tolist(x)
+parseLIST <- function(x,where,env,...) {
+  env[[where]][[attr(x,"pos")]] <- tolist(x)
   return(NULL)
 }
 
-parseINIT <- function(x) {
+parseINIT <- function(x,env,...) {
   y <- scrape_opts(x,
                    def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["annotated"]]) {
     l <- split3_yaml(y[["x"]],3)
-    mread.env[["init"]][[attr(x,"pos")]] <- l[["v"]]
+    env[["init"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
-  parseLIST(x,"init")  
+  parseLIST(x,"init",env,...)  
   
 }
 
 
-parsePARAM <- function(x) {
+parsePARAM <- function(x,env,...) {
   
   y <- scrape_opts(x,
                    def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["annotated"]]) {
     l <- split3_yaml(y[["x"]],3)
-    mread.env[["param"]][[attr(x,"pos")]] <- l[["v"]]
+    env[["param"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
-  parseLIST(x,"param")
+  parseLIST(x,"param",env,...)
 }
 
-parseCMT <- function(x) {
+parseCMT <- function(x,env,...) {
   
   pos <- attr(x,"pos")
   y <- scrape_opts(x,def=list(annotated=FALSE),
@@ -280,7 +280,7 @@ parseCMT <- function(x) {
   x <- tovec(x)
   l <- rep(0,length(x))
   names(l) <- x
-  mread.env[["init"]][[pos]] <- as.list(l)
+  env[["init"]][[pos]] <- as.list(l)
   return(NULL)
 }
 
@@ -303,57 +303,57 @@ specMATRIX <- function(x,class) {
                  name=  ret[["opts"]][["name"]]),class=class)
 }
 
-specOMEGA <- function(x,y) {
+specOMEGA <- function(x,env,...) {
   m <- specMATRIX(x,"omega_block")
-  mread.env$omega[[attr(x,"pos")]] <- m
+  env[["omega"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
-specSIGMA <- function(x,y) {
+specSIGMA <- function(x,env,...) {
   m <- specMATRIX(x,"sigma_block")
-  mread.env$sigma[[attr(x,"pos")]] <- m
+  env[["sigma"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
 
 
 ## S3 methods for processing code blocks
 ## All of these need to be exported
-handle_spec_block <- function(x) UseMethod("handle_spec_block")
+handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 ##' @export
-handle_spec_block.default <- function(x) return(x)
+handle_spec_block.default <- function(x,...) return(x)
 ##' @export
-handle_spec_block.specPARAM <- function(x) parsePARAM(x)
+handle_spec_block.specPARAM <- function(x,...) parsePARAM(x,...)
 ##' @export
-handle_spec_block.specINIT <- function(x) parseINIT(x)
+handle_spec_block.specINIT <- function(x,...) parseINIT(x,...)
 ##' @export
-handle_spec_block.specCMT <- function(x) parseCMT(x)
+handle_spec_block.specCMT <- function(x,...) parseCMT(x,...)
 ##' @export
-handle_spec_block.specSET <- function(x) tolist(x)
+handle_spec_block.specSET <- function(x,...) tolist(x)
 ##' @export
-handle_spec_block.specENV <- function(x) tolist(x)
+handle_spec_block.specENV <- function(x,...) tolist(x)
 ##' @export
-handle_spec_block.specOMEGA <- function(x) specOMEGA(x)
+handle_spec_block.specOMEGA <- function(x,...) specOMEGA(x,...)
 ##' @export
-handle_spec_block.specSIGMA <- function(x) specSIGMA(x)
+handle_spec_block.specSIGMA <- function(x,...) specSIGMA(x,...)
 ##' @export
-handle_spec_block.specNMXML <- function(x) parseNMXML(x)
+handle_spec_block.specNMXML <- function(x,...) parseNMXML(x,...)
 ##' @export
-handle_spec_block.specTHETA <- function(x) parseTHETA(x)
+handle_spec_block.specTHETA <- function(x,...) parseTHETA(x,...)
 ##' @export
-handle_spec_block.specCMTN <- function(x) as.cvec(x)
+handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
 ##' @export
-handle_spec_block.specFIXED <- function(x) parseLIST(x,"fixed")
+handle_spec_block.specFIXED <- function(x,...) parseLIST(x,"fixed",...)
 ##' @export
-handle_spec_block.specCAPTURE <- function(x) as.cvec(x)
+handle_spec_block.specCAPTURE <- function(x,...) as.cvec(x)
 ##' @export
-handle_spec_block.specVCMT <- function(x) parseCMT(x)
+handle_spec_block.specVCMT <- function(x,...) parseCMT(x,...)
 ##' @export
-handle_spec_block.specPKMODEL <- function(x) {
+handle_spec_block.specPKMODEL <- function(x,...) {
   x <- scrape_opts(x,all=TRUE)
   do.call("PKMODEL",x)
 }
 
 ##' @export
-handle_spec_block.specINCLUDE <- function(x) {
+handle_spec_block.specINCLUDE <- function(x,...) {
   
   x <- as.cvec2(x)
   if(any(grepl("[\"\']",x,perl=TRUE))) {
@@ -377,7 +377,7 @@ form_includes <- function(x,where) {
 
 
 ##' @export
-handle_spec_block.specPLUGIN <- function(x) {
+handle_spec_block.specPLUGIN <- function(x,...) {
   x <- unique(as.cvec(x))
   if("mrgx" %in% x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
