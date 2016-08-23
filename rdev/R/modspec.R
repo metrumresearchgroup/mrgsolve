@@ -2,7 +2,7 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-##' @include utils.R complog.R nmxml.R matrix.R yaml.R
+##' @include utils.R complog.R nmxml.R matrix.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
@@ -188,7 +188,7 @@ opts_only <- function(x,def=list(),all=FALSE) {
   opts <- scrape_opts(x)
   merge(def,opts, strict=!all,warn=FALSE,context="opts")
 }
-scrape_opts <- function(x,def=list(),all=FALSE,marker="=",split=TRUE) {
+scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",split=TRUE) {
   x <- unlist(strsplit(x, "\n",perl=TRUE))
   opts <- grepl(marker,x,perl=TRUE)
   if(split) {
@@ -196,18 +196,12 @@ scrape_opts <- function(x,def=list(),all=FALSE,marker="=",split=TRUE) {
   } else {
     data <- x[!opts] 
   }
-  if(marker=="=>") x[opts] <- gsub("=>", "=",x[opts])
+  if(any(grepl("=>",x[opts],fixed=TRUE))) {
+    x[opts] <- gsub("=>", "=",x[opts])
+  }
   opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
   c(list(x=data), opts)
 }
-scrape_opts2 <- function(x,def=list(),all=FALSE,marker="=>?") {
-  x <- unlist(strsplit(x, "\n",perl=TRUE))
-  opts <- grepl(marker,x,perl=TRUE)
-  data <- x[!opts]
-  opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
-  c(list(x=data), opts)
-} 
-
 scrape_and_pass <- function(x,pass,...) {
   o <- scrape_opts(x,...)
   ret <- do.call(pass,o)
@@ -227,8 +221,14 @@ parseNMXML <- function(x,env,...) {
 
 parseTHETA <- function(x,env,...) {
   pos <- attr(x,"pos")
-  opts <- scrape_opts(x,all=TRUE)
-  x <- as.numeric(opts$x)
+  opts <- scrape_opts(x,def=list(annotated=FALSE),all=TRUE,split=FALSE)
+  if(opts[["annotated"]]) {
+    l <- parse_annot(opts[["x"]],noname=TRUE)
+    x <- as.numeric(l[["v"]])
+  } else {
+    x <- as.numeric(as.cvec(opts$x))
+  }
+  
   x <- x[!is.na(x)]
   if(!exists("name", opts)) opts$name <- "THETA"
   names(x) <- paste0(opts$name, 1:length(x))
@@ -246,7 +246,7 @@ parseINIT <- function(x,env,...) {
                    def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["annotated"]]) {
-    l <- split3_yaml(y[["x"]],3)
+    l <- parse_annot(y[["x"]])
     env[["init"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
@@ -261,7 +261,7 @@ parsePARAM <- function(x,env,...) {
                    def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["annotated"]]) {
-    l <- split3_yaml(y[["x"]],3)
+    l <- parse_annot(y[["x"]])
     env[["param"]][[attr(x,"pos")]] <- l[["v"]]
     return(NULL)
   } 
@@ -274,7 +274,7 @@ parseCMT <- function(x,env,...) {
   y <- scrape_opts(x,def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE)
   if(y[["annotated"]]) {
-    l <- split3_yaml(y[["x"]],2)
+    l <- parse_annot(y[["x"]],novalue=TRUE)
     x <- names(l[["v"]])
   } 
   x <- tovec(x)
