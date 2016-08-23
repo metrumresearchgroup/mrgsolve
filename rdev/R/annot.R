@@ -18,6 +18,8 @@ parse_annot_line <- function(x, novalue=FALSE,noname=FALSE) {
   
   if(nchar(x)==0) return(NULL)
   
+  x <- trimws(x,"left")
+  
   col <- gmatch(":",x)
   
   if(length(col) != (2-noname-novalue)) {

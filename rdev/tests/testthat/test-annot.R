@@ -71,3 +71,26 @@ test_that("parse line - value  : text", {
   expect_error(mrgsolve:::parse_annot_line(x))
   
 })
+
+test_that("Full specification - $PARAM", {
+  
+  code <- '
+    $PARAM annotated => TRUE
+    CL: 2 : Clearance (L/hr)
+    VC: 12 : Volume (L)
+  '
+  mod <- mcode("test-annot-1",code)
+  expect_identical(pars(mod), c("CL", "VC"))
+})
+
+test_that("Full specification - $CMT", {
+  
+  code <- '
+    $CMT annotated => TRUE
+    GUT : Dosing (mg)
+    CENT : Central (mg)
+  '
+  mod <- mcode("test-annot-2",code)
+  expect_identical(cmt(mod), c("GUT", "CENT"))
+})
+
