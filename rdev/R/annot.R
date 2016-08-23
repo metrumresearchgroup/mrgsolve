@@ -28,20 +28,20 @@ parse_annot_line <- function(x, novalue=FALSE,noname=FALSE) {
   if(noname) x <- paste0(". :",x)
   if(novalue) x <- gsub(":", ": 0 :",x)
   
-  a <- trimws(strsplit(x,":",fixed=TRUE)[[1]])
+  a <- strsplit(x,"\\s*:\\s*",perl=TRUE)[[1]]
   
   b <- a[3]
   
   ## grep out units and options
-  units <- regmatches(b,gregexpr("\\s+\\(.*?\\)",b))[[1]]
-  options <- regmatches(b,gregexpr("\\s+\\[.*?\\]",b))[[1]]
+  units <- regmatches(b,gregexpr("\\s*\\(.*?\\)",b))[[1]]
+  options <- regmatches(b,gregexpr("\\s*\\[.*?\\]",b))[[1]]
   
   ## Drop matches
   for(what in c(units,options)) b <- gsub(what,"",b,fixed=TRUE)  
   
   ## Clean up matches
-  units <- gsub("^\\s*\\(|\\)$", "",units,perl=TRUE)
-  options <- gsub("^\\s*\\[|\\]$", "",options,perl=TRUE)
+  units <- gsub("\\s*\\(|\\)", "",units,perl=TRUE)
+  options <- gsub("\\s*\\[|\\]", "",options,perl=TRUE)
   
   ## This is the "description"
   b <- trimws(b)
