@@ -637,11 +637,13 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         if(prob->alag(ev->cmt()) > 0) {
           
           ev->unarm();
-    
+          
+          double alg = std::max(1E-8, prob->alag(ev->cmt()));
+          
           ev_ptr newev(new pkevent(ev->cmt(),
                                    ev->evid(),
                                    ev->amt(),
-                                   (ev->time() + prob->alag(ev->cmt())),
+                                   ev->time() + alg,
                                    ev->rate()));
           newev->addl(ev->addl());
           newev->ii(ev->ii());
