@@ -634,16 +634,14 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         // If alag set for this compartment
         // spawn a new event with no output and time modified by alag
         // disarm this event
-        if(prob->alag(ev->cmt()) > 0) {
-          
+        if((prob->alag(ev->cmt()) > mindt)) {
+  
           ev->unarm();
-          
-          double alg = std::max(1E-8, prob->alag(ev->cmt()));
           
           ev_ptr newev(new pkevent(ev->cmt(),
                                    ev->evid(),
                                    ev->amt(),
-                                   ev->time() + alg,
+                                   ev->time() + prob->alag(ev->cmt()),
                                    ev->rate()));
           newev->addl(ev->addl());
           newev->ii(ev->ii());
