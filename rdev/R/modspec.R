@@ -115,6 +115,12 @@ setup_soloc <- function(loc,model) {
   return(soloc)
 }
 
+protected_options <- function(x) {
+  x <- as.cvec2(x)
+  d <- !grepl("=",x,fixed=TRUE) & nchar(x) > 0
+  x[d] <- sapply(x[d],function(y) paste0(y, "=TRUE"))
+  paste0(">> ",paste(x,collapse=','))
+}
 
 
 ##' Parse model specification text.
@@ -184,24 +190,38 @@ get_c_vars <- function(y) {
 
 
 ## These only really work in code blocks
+option_line <- function(x) {
+  gsub(">>","",x,fixed=TRUE)
+}
+
 opts_only <- function(x,def=list(),all=FALSE) {
   opts <- scrape_opts(x)
   merge(def,opts, strict=!all,warn=FALSE,context="opts")
 }
-scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",split=TRUE) {
-  x <- unlist(strsplit(x, "\n",perl=TRUE))
-  opts <- grepl(marker,x,perl=TRUE)
+scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
+  
+  x <- unlist(strsplit(x, "\n",fixed=TRUE))
+  
+  ## Get lines starting with >>
+  opts <- grepl("^\\s*>>",x,perl=TRUE)
+  
+  if(!narrow) {
+    opts <- opts | grepl(marker,x,perl=TRUE) 
+  }
+  
   if(split) {
     data <- unlist(strsplit(x[!opts],"\\s+",perl=TRUE))
   } else {
-    data <- x[!opts] 
+    data <- gsub("^\\s*$", "",x[!opts])
   }
-  if(any(grepl("=>",x[opts],fixed=TRUE))) {
-    x[opts] <- gsub("=>", "=",x[opts])
-  }
-  opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
+  
+  opts <- option_line(x[opts])
+  
+  opts <- merge(def, tolist(opts),strict=!all,warn=FALSE,context="opts")
+  
   c(list(x=data), opts)
 }
+
 scrape_and_pass <- function(x,pass,...) {
   o <- scrape_opts(x,...)
   ret <- do.call(pass,o)
@@ -223,7 +243,7 @@ parseTHETA <- function(x,env,...) {
   pos <- attr(x,"pos")
   opts <- scrape_opts(x,def=list(annotated=FALSE),all=TRUE,split=FALSE)
   if(opts[["annotated"]]) {
-    l <- parse_annot(opts[["x"]],noname=TRUE)
+    l <- parse_annot(opts[["x"]],noname=TRUE,block="THETA")
     x <- as.numeric(l[["v"]])
   } else {
     x <- as.numeric(as.cvec(opts$x))
@@ -246,12 +266,14 @@ parseINIT <- function(x,env,...) {
                    def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["annotated"]]) {
-    l <- parse_annot(y[["x"]])
+    l <- parse_annot(y[["x"]],block="INIT")
     env[["init"]][[attr(x,"pos")]] <- l[["v"]]
-    return(NULL)
-  } 
-  parseLIST(x,"init",env,...)  
+    env[["annot"]][[attr(x,"pos")]] <- l[["an"]]
+  } else {
+    env[["init"]][[attr(x,"pos")]] <- tolist(y[["x"]])  
+  }
   
+  return(NULL)
 }
 
 
@@ -261,11 +283,15 @@ parsePARAM <- function(x,env,...) {
                    def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE) 
   if(y[["annotated"]]) {
-    l <- parse_annot(y[["x"]])
+    l <- parse_annot(y[["x"]],block="PARAM")
     env[["param"]][[attr(x,"pos")]] <- l[["v"]]
-    return(NULL)
-  } 
-  parseLIST(x,"param",env,...)
+    env[["annot"]][[attr(x,"pos")]] <- l[["an"]]
+  } else {
+    env[["param"]][[attr(x,"pos")]] <- tolist(y[["x"]])  
+  }
+  
+  
+  return(NULL)
 }
 
 parseCMT <- function(x,env,...) {
@@ -274,7 +300,8 @@ parseCMT <- function(x,env,...) {
   y <- scrape_opts(x,def=list(annotated=FALSE),
                    marker="=>", all=TRUE,split=FALSE)
   if(y[["annotated"]]) {
-    l <- parse_annot(y[["x"]],novalue=TRUE)
+    l <- parse_annot(y[["x"]],novalue=TRUE,block="CMT")
+    env[["annot"]][[attr(x,"pos")]] <- l[["an"]]
     x <- names(l[["v"]])
   } 
   x <- tovec(x)
@@ -282,6 +309,21 @@ parseCMT <- function(x,env,...) {
   names(l) <- x
   env[["init"]][[pos]] <- as.list(l)
   return(NULL)
+}
+
+parseFIXED <- function(x,env,...) {
+  y <- scrape_opts(x,
+                   def=list(annotated=FALSE),
+                   marker="=>", all=TRUE,split=FALSE) 
+  if(y[["annotated"]]) {
+    l <- parse_annot(y[["x"]],block="FIXED")
+    env[["fixed"]][[attr(x,"pos")]] <- l[["v"]]
+    env[["annot"]][[attr(x,"pos")]] <- l[["an"]]
+  } else {
+    env[["fixed"]][[attr(x,"pos")]] <- tolist(y[["x"]])  
+  }
+  return(NULL)
+  
 }
 
 
@@ -341,7 +383,7 @@ handle_spec_block.specTHETA <- function(x,...) parseTHETA(x,...)
 ##' @export
 handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
 ##' @export
-handle_spec_block.specFIXED <- function(x,...) parseLIST(x,"fixed",...)
+handle_spec_block.specFIXED <- function(x,...) parseFIXED(x,...)
 ##' @export
 handle_spec_block.specCAPTURE <- function(x,...) as.cvec(x)
 ##' @export

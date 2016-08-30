@@ -15,7 +15,7 @@ test_that("parse line - name : value : text", {
     expect_identical(y$unit, "L/hr")
     expect_identical(y$descr, "Clearance")
     expect_identical(y$value, "2")
-    expect_identical(y$options, character(0))
+    expect_identical(y$options, '.')
     
     x <- "CL: 2 : (L/hr2) Clearance [k=1]"
     y <- mrgsolve:::parse_annot_line(x)
@@ -26,10 +26,10 @@ test_that("parse line - name : value : text", {
     
     x <- "CL: 2 : Clearance"
     y <- mrgsolve:::parse_annot_line(x)
-    expect_identical(y$unit, character(0))
+    expect_identical(y$unit, '.')
     expect_identical(y$descr, "Clearance")
     expect_identical(y$value, "2")
-    expect_identical(y$options, character(0))
+    expect_identical(y$options, '.')
     
     x <- "CL: 2 : . "
     y <- mrgsolve:::parse_annot_line(x)
@@ -46,7 +46,7 @@ test_that("parse line - name  : text", {
   expect_identical(y$unit, "L/hr")
   expect_identical(y$descr, "Clearance")
   expect_identical(y$value, "0")
-  expect_identical(y$options, character(0))
+  expect_identical(y$options, '.')
   expect_error(mrgsolve:::parse_annot_line(x))
   
   x <- "CL:  (L/hr2) Clearance [  k=1  ]"
@@ -67,7 +67,7 @@ test_that("parse line - value  : text", {
   expect_identical(y$unit, "L/hr")
   expect_identical(y$descr, "Clearance")
   expect_identical(y$value, "1")
-  expect_identical(y$options, character(0))
+  expect_identical(y$options, '.')
   expect_error(mrgsolve:::parse_annot_line(x))
   
 })
@@ -75,7 +75,7 @@ test_that("parse line - value  : text", {
 test_that("Full specification - $PARAM", {
   
   code <- '
-    $PARAM annotated => TRUE
+    $PARAM >> annotated=TRUE
     CL: 2 : Clearance (  L/hr)
     VC: 12 : Volume (L)
   '
@@ -86,7 +86,7 @@ test_that("Full specification - $PARAM", {
 test_that("Full specification - $CMT", {
   
   code <- '
-    $CMT annotated => TRUE
+    $CMT >> annotated=TRUE
     GUT : Dosing (  mg)
     CENT : Central (mg )
   '

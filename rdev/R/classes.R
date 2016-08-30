@@ -236,7 +236,8 @@ protomod <- list(model=character(0),
                  advan=13,
                  trans=1,
                  mindt=10*.Machine$double.eps,
-                 code = character(0)
+                 code = character(0),
+                 annot = list()
 )
 
 slot.names <- names(protomod)

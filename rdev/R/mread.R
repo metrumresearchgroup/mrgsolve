@@ -191,6 +191,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   mread.env$init <- temp
   mread.env$omega <- temp
   mread.env$sigma <- temp
+  mread.env$annot <- temp
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
@@ -199,6 +200,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
+  annot <- mread.env$annot[!sapply(mread.env$annot,is.null)]
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
@@ -247,7 +249,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param=as.param(param),
            init=as.init(init),
            funs  = funs_create(model),
-           capture=as.character(spec[["CAPTURE"]])
+           capture=as.character(spec[["CAPTURE"]]),
+           annot=annot
   )
   
   

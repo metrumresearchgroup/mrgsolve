@@ -1,14 +1,23 @@
 
+render_annot <- function(x,block,...) {
+  dplyr::bind_rows(lapply(x,dplyr::as_data_frame)) %>%
+    dplyr::mutate(block=block) %>% 
+    dplyr::select(block,dplyr::everything()) %>%
+    as.data.frame
+}
 
-parse_annot <- function(x,noname=FALSE,novalue=FALSE) {
+
+parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.') {
   ## x is a list
   if(is.null(x)) return(NULL)
+  x <- x[nchar(x)>0]
   x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname)
   nm <- s_pick(x,"name")
   v <-  s_pick(x,"value")
-  v <- tolist(paste(v,collapse=","))
-  v <- setNames(v,nm)
-  list(v=v,o=list(), nm=nm)
+  v <- setNames(tolist(paste(v,collapse=",")),nm)
+  an <- lapply(x,"[", c("name","descr", "unit","options"))
+  an <-  render_annot(an,block)
+  list(v=v,an=an,nm=nm)
 }
 
 ## Convenience; keep around for a little bot
@@ -45,8 +54,12 @@ parse_annot_line <- function(x, novalue=FALSE,noname=FALSE) {
   units <- gsub("\\s*\\(\\s*|\\s*\\)", "",units,perl=TRUE)
   options <- gsub("\\s*\\[\\s*|\\s*\\]", "",options,perl=TRUE)
   
+  
   ## This is the "description"
   b <- trimws(b)
+  
+  if(length(units)==0) units <- '.'
+  if(length(options)==0) options <- '.'
   
   list(name=a[1],value=a[2],unit=units,options=options,descr=b)
 }
