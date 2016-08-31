@@ -198,6 +198,20 @@ opts_only <- function(x,def=list(),all=FALSE) {
   opts <- scrape_opts(x)
   merge(def,opts, strict=!all,warn=FALSE,context="opts")
 }
+
+##' Scrape options from a code block.
+##' 
+##' @param x data
+##' @param def default values
+##' @param all return all options, even those that are not in \code{def}
+##' @param marker assignment operator; used to locate lines with options
+##' @param narrow logical; if \code{TRUE}, only get options on lines starting with \code{>>}
+##' @param split logical; if \code{TRUE}, \code{x} is split on whitespace
+##' 
+##' @return list with elements \code{x} (the data without options) and named options 
+##' as specified in the block.
+##' 
+##' 
 scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
@@ -228,7 +242,15 @@ scrape_and_pass <- function(x,pass,...) {
   ret <- do.call(pass,o)
   list(opts=o,data=ret)
 }
-
+##' Scrape options and pass to function.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param pass function to call
+##' @param ... dots
+##' 
+##' @details Attributes of \code{x} are also scraped and merged with options.
+##' 
 scrape_and_call <- function(x,env,pass,...) {
   o <- scrape_opts(x,...)
   o$pos <- o$env <- o$class <- NULL
@@ -354,7 +376,7 @@ handle_spec_block.specFIXED <- function(x,...) {
 ##' @rdname handle_THETA
 ##' 
 THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
-
+  
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA")
     x <- as.numeric(l[["v"]])
