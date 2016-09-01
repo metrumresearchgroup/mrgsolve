@@ -14,29 +14,29 @@
 dataobject::dataobject(Rcpp::NumericMatrix _data, svec _parnames) {
   Data = _data;
   parnames = _parnames;
-
+  
   Rcpp::List dimnames = Data.attr("dimnames");
   Data_names = Rcpp::as<svec>(dimnames[1]);
-
+  
   Idcol = find_position("ID", Data_names);
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
-
+  
   // Connect Names in the data set with positions in the parameter list
   match_both(Data_names, parnames, par_from, par_to);
-
+  
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data, svec _parnames,svec _cmtnames) {
   Data = _data;
   parnames = _parnames;
   cmtnames = _cmtnames;
-
+  
   Rcpp::List dimnames = Data.attr("dimnames");
   Data_names = Rcpp::as<svec>(dimnames[1]);
-
+  
   Idcol = find_position("ID", Data_names);
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
-
+  
   // Connect Names in the data set with positions in the parameter list
   match_both(Data_names, parnames, par_from, par_to);
   match_both(Data_names, cmtnames, cmt_from,cmt_to);
@@ -46,7 +46,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data, svec _parnames,svec _cmtnames)
 dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
-
+  
   int i=0;
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
@@ -61,7 +61,7 @@ void dataobject::map_uid() {
 }
 
 void dataobject::locate_tran() {
-
+  
   int zeros = Data.ncol()-1;
   
   if(zeros==0) {
@@ -78,7 +78,7 @@ void dataobject::locate_tran() {
   
   svec::const_iterator bg = Data_names.begin();
   svec::const_iterator ed = Data_names.end();
-
+  
   int tcol = std::find(bg,ed,"time") - bg;
   
   bool lc = true;
@@ -141,6 +141,8 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   }
 }
 
+
+
 void dataobject::copy_inits(int this_row, odeproblem* prob) {
   // this should only be done from idata sets
   size_t i;
@@ -159,67 +161,68 @@ void dataobject::reload_parameters(Rcpp::NumericVector PARAM, odeproblem* prob) 
 
 
 void dataobject::get_records(recstack& a, int NID, int neq,
-			     int& obscount, int& evcount,
-			     bool obsonly, bool debug) {
-
+                             int& obscount, int& evcount,
+                             bool obsonly, bool debug) {
+  
   // only look here for events or observations if there is more than one column:
   // size_t h=0; warnings
   int j=0, k=0;
   int evid, this_cmt;
   double lastime = 0;
   if(debug) Rcpp::Rcout << "Generating record set ... " << std::endl;
-
+  
   if(Data.ncol() <= 1) return;
-
+  
   for(int h=0; h < NID; h++) {
-
+    
     lastime = 0;
-
-    for(j=this->start(h); j <= this->end(h); j++) {
-
+    
+    for(j = this -> start(h); j <= this -> end(h); j++) {
+      
       if(Data(j,col["time"]) < lastime) Rcpp::stop("Problem with time: data set is not sorted by time or time is negative.");
+      
       lastime = Data(j,col["time"]);
-
+      
       this_cmt = Data(j,col["cmt"]);
       evid = Data(j,col["evid"]);
-      k = j - this->start(h);
-
+      k = j - this -> start(h);
+      
       // If this is an observation record
       if(evid==0) {
-	if((this_cmt < 0) || (this_cmt > neq)) {
-	  Rcpp::stop("cmt number in observation record out of range.");
-	}
-	rec_ptr obs(new datarecord(0,Data(j,col["time"]),Data(j,col["cmt"]),j,Data(j,Idcol)));
-	obs->from_data(true);
-	a.at(h).at(k) = obs;
-	++obscount;
-	continue;
+        if((this_cmt < 0) || (this_cmt > neq)) {
+          Rcpp::stop("cmt number in observation record out of range.");
+        }
+        rec_ptr obs(new datarecord(0,Data(j,col["time"]),Data(j,col["cmt"]),j,Data(j,Idcol)));
+        obs->from_data(true);
+        a.at(h).at(k) = obs;
+        ++obscount;
+        continue;
       }
-
+      
       // If this is not an obsrevation record:
-
+      
       // Check that cmt is valid:
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
-	Rcpp::stop("cmt number in dosing record out of range.");
+        Rcpp::stop("cmt number in dosing record out of range.");
       }
-
+      
       ++evcount;
-
+      
       ev_ptr ev(new pkevent(Data(j,col["cmt"]),
-			    Data(j,col["evid"]),
-			    Data(j,col["amt"]),
-			    Data(j,col["time"]),
-			    Data(j,col["rate"])));
-
+                            Data(j,col["evid"]),
+                            Data(j,col["amt"]),
+                            Data(j,col["time"]),
+                            Data(j,col["rate"])));
+      
       if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) {
-	Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
+        Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
       }
       if((ev->rate() !=0 ) && (ev->amt() <= 0) && (ev->evid()==1)) {
-	Rcpp::stop("Non-zero rate requires positive amt.");
+        Rcpp::stop("Non-zero rate requires positive amt.");
       }
-
+      
       if(obsonly) ev->output(false);
-
+      
       ev->from_data(true);
       ev->evid(evid);
       ev->pos(j);
@@ -228,12 +231,12 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ev->addl(Data(j,col["addl"]));
       ev->ii(Data(j,col["ii"]));
       ev->id(Data(j,Idcol));
-
+      
       if((ev->addl() > 0) && (ev->ii() <=0)) {
-	Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
+        Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
       }
       if((ev->ss()) && (ev->ii() <=0)) {
-	Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
+        Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
       }
       a.at(h).at(k) = ev;
     }
@@ -243,41 +246,41 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 
 
 void dataobject::check_idcol(dataobject* data) {
-
+  
   if(data->ncol() == 0) {return;}
-
+  
   dvec udata;
   int i;
   int ndata  = data->nrow();
   int idcol = data->idcol();
-
+  
   udata.resize(ndata);
-
+  
   for(i=0; i < ndata; i++) udata[i] = data->get_value(i,idcol);
-
+  
   dvec uthis  = this->return_uid();
-
+  
   sort_unique(uthis);
   sort_unique(udata);
-
+  
   dvec inter;
   std::set_intersection(uthis.begin(), uthis.end(),
-			udata.begin(), udata.end(),
-			std::back_inserter(inter));
-
+                        udata.begin(), udata.end(),
+                        std::back_inserter(inter));
+  
   if(inter!=uthis) Rcpp::stop("ID found in the data set, but not in idata.");
-
+  
 }
 
 
 Rcpp::List dataobject::ex_port() {
-
+  
   Rcpp::List ret;
-
+  
   ret["Startrow"]  = Startrow;
   ret["Endrow"] =   Endrow;
-
-
+  
+  
   ret["Uid"] = Uid;
   ret["idmap"] = idmap;
   ret["par_from"] = par_from;
@@ -287,7 +290,7 @@ Rcpp::List dataobject::ex_port() {
   ret["tran_cols"] = col;
   ret["Data_names"]  = Data_names;
   return(ret);
-
+  
 }
 
 

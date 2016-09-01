@@ -16,6 +16,7 @@ $NMXML
 project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 oname="OMEGA", sname="SIGMA"
+sigma=TRUE
 
 $PARAM CL=1
 $INIT CENT=0
@@ -28,7 +29,7 @@ test_that("Model spec with $NMXML block can be parsed", {
   expect_is(mread(code=code,basename(tempfile()), project=tmp,warn=FALSE),"mrgmod")
 })
 
-mod <- mread(code=code, project=tmp, model="test6")
+mod <- mcode("test6", code)
 
 par <- lapply(as.list(param(mod)), round, digits=3)
 

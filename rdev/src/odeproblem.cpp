@@ -119,7 +119,7 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 }
 
 
-void odeproblem::init_call(double& time) {
+void odeproblem::init_call(const double& time) {
 
   d.time = time;
 
@@ -144,7 +144,7 @@ void odeproblem::init_copy_from_dummy() {
   for(int i=0; i< Neq; i++) Init_value[i] = Init_dummy[i];
 }
 
-void odeproblem::init_call_record(double& time) {
+void odeproblem::init_call_record(const double& time) {
   d.time = time;
 
   this->Inits(this->init_dummy(),
@@ -191,7 +191,7 @@ void odeproblem::rate_reset(unsigned short int eq_n) {
   infusion_count[eq_n] = 0;
 }
 
-void odeproblem::reset_newid(double id_=1.0) {
+void odeproblem::reset_newid(const double& id_=1.0) {
 
   for(int i = 0; i < Neq; i++) {
     R0[i] = 0.0;
@@ -214,12 +214,12 @@ void odeproblem::reset_newid(double id_=1.0) {
 }
 
 
-void odeproblem::rate_add(unsigned int pos, double value) {
+void odeproblem::rate_add(unsigned int pos, const double& value) {
   ++infusion_count[pos];
   R0[pos] = R0[pos] + value;
 }
 
-void odeproblem::rate_rm(unsigned int pos, double value) {
+void odeproblem::rate_rm(unsigned int pos, const double& value) {
   if(infusion_count[pos] <= 0){
     infusion_count[pos] = 0;
     R0[pos] = 0.0;
@@ -231,7 +231,7 @@ void odeproblem::rate_rm(unsigned int pos, double value) {
   }
 }
 
-void odeproblem::rate_replace(unsigned int pos, double value) {
+void odeproblem::rate_replace(unsigned int pos, const double& value) {
   infusion_count[pos] = 1;
   R0[pos] = value;
 }
@@ -263,7 +263,7 @@ void odeproblem::pass_omega(arma::mat* x) {
 }
 
 
-void odeproblem::advance(double& tfrom, double& tto) {
+void odeproblem::advance(double tfrom, double tto) {
   //this->hmax(std::min(this->hmax(),(tto-tfrom)));
   if(Neq <= 0) return;
 
@@ -302,13 +302,12 @@ void odeproblem::advance(double& tfrom, double& tto) {
 	  this
 	  );
 
-
   main_derivs(&Neq, &tto,Y, Ydot, this);
 
 
 }
 
-void odeproblem::advan2(double tfrom,double tto) {
+void odeproblem::advan2(const double& tfrom, const double& tto) {
 
   unsigned int neq = this->neq();
 
@@ -316,8 +315,8 @@ void odeproblem::advan2(double tfrom,double tto) {
   if (this->get_pred_CL() <= 0) Rcpp::stop("A pred_CL has a 0 or negative value.");
   if (this->get_pred_VC() <= 0) Rcpp::stop("pred_VC has a 0 or negative  value.");
 
-  double k10 = this->get_pred_k10();
-  double ka = this->get_pred_KA();
+  double k10 = this -> get_pred_k10();
+  double ka =  this -> get_pred_KA();
 
   if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
 
@@ -378,22 +377,22 @@ void odeproblem::advan2(double tfrom,double tto) {
 }
 
 
-void odeproblem::advan4(double tfrom,double tto) {
+void odeproblem::advan4(const double& tfrom, const double& tto) {
 
   double dt = tto - tfrom;
 
   unsigned int neq = this->neq();
 
   // Make sure parameters are valid
-  if (this->get_pred_VC() <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
-  if (this->get_pred_VP() <=  0) Rcpp::stop("pred_VP has a 0 or negative  value.");
-  if (this->get_pred_Q()  <   0) Rcpp::stop("pred_Q has a 0 or negative  value.");
-  if (this->get_pred_CL() <=  0) Rcpp::stop("pred_CL has a 0 or negative  value.");
+  if (this -> get_pred_VC() <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
+  if (this -> get_pred_VP() <=  0) Rcpp::stop("pred_VP has a 0 or negative  value.");
+  if (this -> get_pred_Q()  <   0) Rcpp::stop("pred_Q has a 0 or negative  value.");
+  if (this -> get_pred_CL() <=  0) Rcpp::stop("pred_CL has a 0 or negative  value.");
 
-  double ka = this->get_pred_KA();
-  double k10 = this->get_pred_k10();
-  double k12 = this->get_pred_k12();
-  double k21 = this->get_pred_k21();
+  double ka =  this -> get_pred_KA();
+  double k10 = this -> get_pred_k10();
+  double k12 = this -> get_pred_k12();
+  double k21 = this -> get_pred_k21();
 
   double ksum = k10+k12+k21;
 

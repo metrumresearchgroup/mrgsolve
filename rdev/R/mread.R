@@ -165,27 +165,52 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## The main sections that need R processing:
   spec <- move_global(spec)
   
+  ## Pull out the settings now
+  ## We might be passing parse settings in here ...
+  SET <- tolist(spec[["SET"]])
+  spec[["SET"]] <- NULL
+  
   ## Parse blocks
+  ## Each block gets assigned a class to dispatch the handler function
+  ## Also, we use a position attribute so we know 
+  ## where we are when we're handling the block
   specClass <- paste0("spec", names(spec))
-  for(i in seq_along(spec)) class(spec[[i]]) <- specClass[i]
+  for(i in seq_along(spec)) {
+    spec[[i]] <- structure(.Data=spec[[i]],
+                           class=specClass[i],
+                           pos=i)
+  }
+  
+  # Make a list of NULL equal to length of spec
+  # Each code block can contribute to / occupy one
+  # slot for each of param/fixed/init/omega/sigma
+  mread.env <- new.env()
+  temp <- vector("list",length(spec))
+  mread.env$param <- temp
+  mread.env$fixed <- temp
+  mread.env$init <- temp
+  mread.env$omega <- temp
+  mread.env$sigma <- temp
+  mread.env$annot <- temp
   
   ## Call the handler for each block
-  spec <- lapply(spec,handle_spec_block)
+  spec <- lapply(spec,handle_spec_block,env=mread.env)
+  
+  ## Collect the results
+  param <- as.list(do.call("c",unname(mread.env$param)))
+  fixed <- as.list(do.call("c",unname(mread.env$fixed)))
+  init <-  as.list(do.call("c",unname(mread.env$init)))
+  annot <- mread.env$annot[!sapply(mread.env$annot,is.null)]
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  omega <- collect_omat(spec)
-  sigma <- collect_smat(spec)
-  param <- collect_param(spec)
-  fixed <- collect_fixed(spec)
-  table <- collect_table(spec)
-  init  <- collect_init(spec)
+  omega <- collect_matlist(mread.env$omega, "omegalist")
+  sigma <- collect_matlist(mread.env$sigma, "sigmalist")
+  table <- unname(unlist(spec[names(spec)=="TABLE"]))
   plugin <- get_plugins(spec[["PLUGIN"]])
-  
-  SET <- as.list(spec[["SET"]])
-  
+
   ENV <- spec[["ENV"]]
-  
+ 
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -193,7 +218,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Virtual compartments
   if(any(is.element("VCMT", names(spec)))) {
-    vcmt <- names(collect_init(spec,"VCMT"))
+    what <- which(names(spec)=="VCMT")
+    vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
   
@@ -223,7 +249,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param=as.param(param),
            init=as.init(init),
            funs  = funs_create(model),
-           capture=as.character(spec[["CAPTURE"]])
+           capture=as.character(spec[["CAPTURE"]]),
+           annot=annot
   )
   
   

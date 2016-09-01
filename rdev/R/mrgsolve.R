@@ -268,6 +268,7 @@ tran_mrgsim <- function(x,
                         deslist = list(),
                         descol = character(0),
                         filbak=TRUE,
+                        t2advance = FALSE,
                         ...) {
   
   verbose <- x@verbose
@@ -322,7 +323,6 @@ tran_mrgsim <- function(x,
   ## Set the seed:
   if(!is.na(seed)) set.seed(seed)
   
-  
   ## "idata"
   if(!is.valid_idata(idata)) idata <- valid_idata(idata,verbose=verbose,...)
   idata_icdol <- idcol(idata)
@@ -349,6 +349,7 @@ tran_mrgsim <- function(x,
   carry.idata <- setdiff(carry.idata, carry.data)
   
   parin <- parin(x)
+  parin$t2advance <- as.integer(as.logical(t2advance))
   parin$recsort <- recsort
   
   parin$obsonly <- obsonly

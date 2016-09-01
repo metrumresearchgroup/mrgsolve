@@ -2,7 +2,7 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-##' @include utils.R complog.R nmxml.R matrix.R
+##' @include utils.R complog.R nmxml.R matrix.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
@@ -115,6 +115,12 @@ setup_soloc <- function(loc,model) {
   return(soloc)
 }
 
+protected_options <- function(x) {
+  x <- as.cvec2(x)
+  d <- !grepl("=",x,fixed=TRUE) & nchar(x) > 0
+  x[d] <- sapply(x[d],function(y) paste0(y, "=TRUE"))
+  paste0(">> ",paste(x,collapse=','))
+}
 
 
 ##' Parse model specification text.
@@ -184,52 +190,90 @@ get_c_vars <- function(y) {
 
 
 ## These only really work in code blocks
+option_line <- function(x) {
+  gsub(">>","",x,fixed=TRUE)
+}
+
 opts_only <- function(x,def=list(),all=FALSE) {
   opts <- scrape_opts(x)
   merge(def,opts, strict=!all,warn=FALSE,context="opts")
 }
-scrape_opts <- function(x,def=list(),all=FALSE) {
-  x <- unlist(strsplit(x, "\n",perl=TRUE))
-  opts <- grepl("=",x,perl=TRUE)
-  data <- unlist(strsplit(x[!opts],"\\s+",perl=TRUE))
-  opts <- merge(def, tolist(x[opts]),strict=!all,warn=FALSE,context="opts")
+
+##' Scrape options from a code block.
+##' 
+##' @param x data
+##' @param def default values
+##' @param all return all options, even those that are not in \code{def}
+##' @param marker assignment operator; used to locate lines with options
+##' @param narrow logical; if \code{TRUE}, only get options on lines starting with \code{>>}
+##' @param split logical; if \code{TRUE}, \code{x} is split on whitespace
+##' 
+##' @return list with elements \code{x} (the data without options) and named options 
+##' as specified in the block.
+##' 
+##' 
+scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
+  
+  x <- unlist(strsplit(x, "\n",fixed=TRUE))
+  
+  ## Get lines starting with >>
+  opts <- grepl("^\\s*>>",x,perl=TRUE)
+  
+  if(!narrow) {
+    opts <- opts | grepl(marker,x,perl=TRUE) 
+  }
+  
+  if(split) {
+    data <- unlist(strsplit(x[!opts],"\\s+",perl=TRUE))
+  } else {
+    data <- gsub("^\\s*$", "",x[!opts])
+  }
+  
+  opts <- option_line(x[opts])
+  
+  opts <- merge(def, tolist(opts),strict=!all,warn=FALSE,context="opts")
+  opts$x <- NULL
+  
   c(list(x=data), opts)
 }
+
 scrape_and_pass <- function(x,pass,...) {
   o <- scrape_opts(x,...)
   ret <- do.call(pass,o)
   list(opts=o,data=ret)
 }
+##' Scrape options and pass to function.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param pass function to call
+##' @param ... dots
+##' 
+##' @details Attributes of \code{x} are also scraped and merged with options.
+##' 
+scrape_and_call <- function(x,env,pass,...) {
+  o <- scrape_opts(x,...)
+  o$pos <- o$env <- o$class <- NULL
+  o <- c(o,attributes(x),list(env=env))
+  do.call(pass,o)
+}
+
 
 ## Functions for handling code blocks
-parseNMXML <- function(x) {
+parseNMXML <- function(x,env,...) {
+  pos <- attr(x,"pos")
   x <- tolist(x)
   xml <- do.call(nmxml,x)
-  return(xml)
+  env[["param"]][[pos]] <- xml$theta
+  env[["omega"]][[pos]] <- xml$omega
+  env[["sigma"]][[pos]] <- xml$sigma
+  return(NULL)
 }
 
-parseTHETA <- function(x) {
-  opts <- scrape_opts(x,all=TRUE)
-  x <- as.numeric(opts$x)
-  x <- x[!is.na(x)]
-  if(!exists("name", opts)) opts$name <- "THETA"
-  names(x) <- paste0(opts$name, 1:length(x))
-  as.param(x)
+parseLIST <- function(x,where,env,...) {
+  env[[where]][[attr(x,"pos")]] <- tolist(x)
+  return(NULL)
 }
-parsePARAM <- function(x) as.param(tolist(x))
-
-parseFIXED <- function(x) tolist(x)
-
-parseINIT <- function(x) tolist(x)
-
-parseCMT <- function(x) {
-  x <- tovec(x)
-  y <- rep(0,length(x))
-  names(y) <- x
-  y
-}
-
-parseCMTN <- function(x) as.cvec(x)
 
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,class) {
@@ -239,9 +283,7 @@ specMATRIX <- function(x,class) {
   ret <- scrape_and_pass(x,"modMATRIX",def=list(name="...",prefix=""), all=TRUE)
   
   if(is.null(ret[["opts"]][["labels"]])) {
-    
     ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
-    
   } else {
     ret[["opts"]][["labels"]] <- paste0(ret[["opts"]][["prefix"]],ret[["opts"]][["labels"]])
   }
@@ -251,55 +293,184 @@ specMATRIX <- function(x,class) {
                  name=  ret[["opts"]][["name"]]),class=class)
 }
 
-specOMEGA <- function(x,y) specMATRIX(x,"omega_block")
-
-specSIGMA <- function(x,y) specMATRIX(x,"sigma_block")
-
-parseCAPTURE <- function(x) {
-  x <- as.cvec(x)
-  return(x)
+specOMEGA <- function(x,env,...) {
+  m <- specMATRIX(x,"omega_block")
+  env[["omega"]][[attr(x,"pos")]] <- m
+  return(NULL)
+}
+specSIGMA <- function(x,env,...) {
+  m <- specMATRIX(x,"sigma_block")
+  env[["sigma"]][[attr(x,"pos")]] <- m
+  return(NULL)
 }
 
 
 ## S3 methods for processing code blocks
 ## All of these need to be exported
-handle_spec_block <- function(x) UseMethod("handle_spec_block")
+handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 ##' @export
-handle_spec_block.default <- function(x) return(x)
+handle_spec_block.default <- function(x,...) return(x)
+
+
+##' Parse \code{$PARAM} block.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param annotated logical
+##' @param pos block position
+##' @param ... passed
+##' 
+##' @rdname handle_PARAM
+##' 
+PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
+  
+  if(annotated) {
+    l <- parse_annot(x,block="PARAM")
+    env[["param"]][[pos]] <- l[["v"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+  } else {
+    env[["param"]][[pos]] <- tolist(x)  
+  }
+  return(NULL)
+}
 ##' @export
-handle_spec_block.specPARAM <- function(x) parsePARAM(x)
+handle_spec_block.specPARAM <- function(x,...) {
+  scrape_and_call(x,pass="PARAM",split=FALSE,all=TRUE,narrow=TRUE,...)
+}
+
+
+##' Parse \code{$FIXED} block.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param annotated logical
+##' @param pos parse position
+##' @param ... passed
+##' 
+##' @rdname handle_FIXED
+##' 
+FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
+  if(annotated) {
+    l <- parse_annot(x,block="FIXED")
+    env[["fixed"]][[pos]] <- l[["v"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+  } else {
+    env[["fixed"]][[pos]] <- tolist(x)  
+  }
+  return(NULL)
+}
 ##' @export
-handle_spec_block.specINIT <- function(x) parseINIT(x)
+handle_spec_block.specFIXED <- function(x,...) {
+  scrape_and_call(x,pass="FIXED",split=FALSE,all=TRUE,narrow=TRUE,...)
+}
+
+##' Parse \code{$THETA} block.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param annotated logical
+##' @param name character prefix for parameter names
+##' @param pos parse position
+##' @param ... passed
+##' 
+##' @rdname handle_THETA
+##' 
+THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
+  
+  if(annotated) {
+    l <- parse_annot(x,noname=TRUE,block="THETA")
+    x <- as.numeric(l[["v"]])
+  } else {
+    x <- as.numeric(as.cvec(x))
+  }
+  
+  x <- x[!is.na(x)]
+  names(x) <- paste0(name, 1:length(x))
+  env[["param"]][[pos]] <- x
+  return(NULL)
+}
 ##' @export
-handle_spec_block.specCMT <- function(x) parseCMT(x)
+handle_spec_block.specTHETA <- function(x,...) {
+  scrape_and_call(x,pass="THETA",split=FALSE,all=TRUE,...)
+}
+
+
+##' Parse \code{$INIT} block.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param annotated logical
+##' @param pos block position
+##' @param ... passed
+##' 
+##' @rdname handle_INIT
+##' 
+INIT <- function(x,env,annotated=FALSE,pos=1,...) {
+  if(annotated) {
+    l <- parse_annot(x,block="INIT")
+    env[["init"]][[pos]] <- l[["v"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+  } else {
+    env[["init"]][[pos]] <- tolist(x)  
+  }
+  return(NULL)
+}
 ##' @export
-handle_spec_block.specSET <- function(x) tolist(x)
+handle_spec_block.specINIT <- function(x,...) {
+  scrape_and_call(x,pass="INIT",split=FALSE,all=TRUE,narrow=TRUE,...)
+}
+
+
+##' Parse $CMT block.
+##' 
+##' @param x data
+##' @param env parse environment
+##' @param annotated logical
+##' @param pos block position
+##' @param ... passed
+##' 
+##' @rdname handle_CMT
+##' 
+CMT <- function(x,env,annotated=FALSE,pos=1,...) {
+  
+  if(annotated) {
+    l <- parse_annot(x,novalue=TRUE,block="CMT")
+    env[["annot"]][[pos]] <- l[["an"]]
+    x <- names(l[["v"]])
+  } 
+  x <- tovec(x)
+  l <- rep(0,length(x))
+  names(l) <- x
+  env[["init"]][[pos]] <- as.list(l)
+  return(NULL)
+}
 ##' @export
-handle_spec_block.specENV <- function(x) tolist(x)
+handle_spec_block.specCMT <- function(x,...) {
+  scrape_and_call(x,pass="CMT",split=FALSE,all=TRUE,narrow=FALSE,...)
+}
 ##' @export
-handle_spec_block.specOMEGA <- function(x) specOMEGA(x)
+handle_spec_block.specVCMT <- handle_spec_block.specCMT
 ##' @export
-handle_spec_block.specSIGMA <- function(x) specSIGMA(x)
+handle_spec_block.specSET <- function(x,...) tolist(x)
 ##' @export
-handle_spec_block.specNMXML <- function(x) parseNMXML(x)
+handle_spec_block.specENV <- function(x,...) tolist(x)
 ##' @export
-handle_spec_block.specTHETA <- function(x) parseTHETA(x)
+handle_spec_block.specOMEGA <- function(x,...) specOMEGA(x,...)
 ##' @export
-handle_spec_block.specCMTN <- function(x) parseCMTN(x)
+handle_spec_block.specSIGMA <- function(x,...) specSIGMA(x,...)
 ##' @export
-handle_spec_block.specFIXED <- function(x) parseFIXED(x)
+handle_spec_block.specNMXML <- function(x,...) parseNMXML(x,...)
 ##' @export
-handle_spec_block.specCAPTURE <- function(x) parseCAPTURE(x)
+handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
 ##' @export
-handle_spec_block.specVCMT <- function(x) parseCMT(x)
+handle_spec_block.specCAPTURE <- function(x,...) as.cvec(x)
 ##' @export
-handle_spec_block.specPKMODEL <- function(x) {
+handle_spec_block.specPKMODEL <- function(x,...) {
   x <- scrape_opts(x,all=TRUE)
   do.call("PKMODEL",x)
 }
-
 ##' @export
-handle_spec_block.specINCLUDE <- function(x) {
+handle_spec_block.specINCLUDE <- function(x,...) {
   
   x <- as.cvec2(x)
   if(any(grepl("[\"\']",x,perl=TRUE))) {
@@ -320,10 +491,8 @@ form_includes <- function(x,where) {
   md <- tools::md5sum(file.path(where,x))
   paste0("#include \"", x, "\" // ", md)
 }
-
-
 ##' @export
-handle_spec_block.specPLUGIN <- function(x) {
+handle_spec_block.specPLUGIN <- function(x,...) {
   x <- unique(as.cvec(x))
   if("mrgx" %in% x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
@@ -331,9 +500,6 @@ handle_spec_block.specPLUGIN <- function(x) {
   if(length(x) ==0) return(list())
   return(x)
 }
-
-
-
 
 ##' Parse data from \code{$PKMODEL}
 ##'
@@ -375,82 +541,18 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
 }
 
 
-## Used to collect OMEGA and SIGMA matrices
-collect_matrix <- function(x,what,class,xmlname) {
-  what <- c(what, "NMXMLDATA")
-  
-  x <- x[sapply(x,inherits,what)]
-  
-  xmli <- unlist(sapply(x,inherits, "NMXMLDATA"))
-  
-  x[xmli] <- unname(lapply(x[xmli], function(x) x[[xmlname]]))
-  
+
+
+collect_matlist <- function(x, class) {
+  x <- x[!sapply(x,is.null)]
   if(length(x)==0) return(create_matlist(class=class))
-  
-  nr <- sapply(x,function(y) nrow(y[["data"]]))
-  x <- x[nr > 0]
-  
-  d <- lapply(x,function(y) y[["data"]])
-  l <- lapply(x,function(y) y[["labels"]])
-  NAMES <- lapply(x,function(y) y[["name"]]) %>% unlist %>% unname
-  names(d) <- NAMES
-  names(l) <- NAMES
-  x <- create_matlist(x=d, class=class, labels=l)
-  return(x)
-  
-}
-collect_omat <- function(x,what=c("omega_block")) collect_matrix(x,what,"omegalist", "omega")
-collect_smat <- function(x,what=c("sigma_block")) collect_matrix(x,what,"sigmalist","sigma")
-
-
-## May have multiple $FIXED
-collect_fixed <- function(x, what=c("fixed_list")) {
-  
-  x <- x[grepl("FIXED",names(x),perl=TRUE)]
-  
-  names(x) <- NULL
-  
-  x <- do.call("c",x)
-  
-  if(length(x)>0) return(x)
-  
-  return(list())
+  d <- lapply(x,"[[","data")
+  l <- lapply(x, "[[", "labels")
+  NAMES <- lapply(x,"[[", "name") %>% unlist %>% unname
+  names(d) <- names(l) <- NAMES
+  create_matlist(x=d,class=class,labels=l)
 }
 
-## May have multiple $PARAM blocks; also needs to collect from $NMXML
-collect_param <- function(x, what=c("parameter_list")) {
-  
-  what <- c(what, "NMXMLDATA")
-  
-  x <- x[sapply(x,inherits,what)]
-  
-  xmli <- unlist(sapply(x,inherits,"NMXMLDATA"))
-  
-  x[xmli] <- lapply(x[xmli], function(x) x$theta)
-  
-  names(x) <- NULL
-  
-  x <- unlist(lapply(x, as.numeric))
-  
-  if(length(x)>0) return(as.param(x))
-  
-  return(as.param(list()))
-}
-
-## Merges code from $TABLE and $CAPTURE
-collect_table <- function(x,what=c("TABLE")) {
-  x <- x[names(x) %in% what]
-  unname(unlist(x))
-}
-
-## Look for initial conditions in $INIT, $CMT, and $VCMT
-collect_init <- function(x,what=c("INIT", "CMT", "VCMT")) {
-  x <- x[names(x) %in% what]
-  if(length(x)==0) return(as.init(list()))
-  names(x) <- NULL
-  x <- do.call("c",x)
-  return(as.init(x))
-}
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {

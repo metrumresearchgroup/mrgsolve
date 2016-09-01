@@ -8,7 +8,6 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-data(exTheoph)
 
 rm(list=ls())
 
@@ -29,8 +28,17 @@ test_that("Lagged bolus", {
     expect_equal(first,2.8)
 })
 
+## Issue #109
+test_that("Very small lag time doesn't crash", {
 
-
+  out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
+  expect_is(out, "mrgsims")
+  expect_equal(out$time[which.max(out$CENT)],0)
+  
+  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
+  expect_is(out, "mrgsims")
+  expect_equal(out$time[which.max(out$CENT)],2)
+})
 
 
 
