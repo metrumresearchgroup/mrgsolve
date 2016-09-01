@@ -48,9 +48,9 @@ void sort_unique(T& a) {
   a.erase(last, a.end());
 }
 
-int find_position(std::string what, svec& table);
+int find_position(std::string what, const svec& table);
 
-double digits(double a, double b);
+double digits(const double& a, const double& b);
 
 Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x);
 

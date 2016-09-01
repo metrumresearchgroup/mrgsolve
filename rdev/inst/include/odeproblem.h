@@ -77,7 +77,7 @@ class odeproblem : public odepack_dlsoda {
   bool solving(){return d.solving;}
   void solving(bool in){d.solving=in;}
 
-  void advance(double& tfrom, double& tto);
+  void advance(double tfrom, double tto);
 
   // initial conditions:
   void init_fun (init_func*     fptr) {Inits  = fptr;}
@@ -91,8 +91,8 @@ class odeproblem : public odepack_dlsoda {
   dvec& init_dummy(){return Init_dummy;}
 
   void init_copy_from_dummy();
-  void init_call(double& time);
-  void init_call_record(double& time);
+  void init_call(const double& time);
+  void init_call_record(const double& time);
   void y_init(int pos, double value);
 
   void table_call();
@@ -132,9 +132,9 @@ class odeproblem : public odepack_dlsoda {
   double rate0(unsigned int pos){return R0[pos];}
   int rate_count(unsigned int pos){return infusion_count[pos];}
 
-  void rate_add(unsigned int pos, double value);
-  void rate_rm(unsigned int pos,double value);
-  void rate_replace(unsigned int pos, double value);
+  void rate_add(unsigned int pos, const double& value);
+  void rate_rm(unsigned int pos,  const double& value);
+  void rate_replace(unsigned int pos, const double& value);
   void rate_reset();
   void rate_reset(unsigned short int eq_n);
 
@@ -146,7 +146,7 @@ class odeproblem : public odepack_dlsoda {
   dvec& alag()  {return Alag;}
   double alag(int cmt){return Alag.at(abs(cmt)-1);}
 
-  void reset_newid(double id_);
+  void reset_newid(const double& id_);
 
   // ETA
   void eta(int pos, double value) {d.ETA[pos] =value;}
@@ -180,8 +180,8 @@ class odeproblem : public odepack_dlsoda {
 
   void advan(int x){Advan = x;}
   int advan(){return Advan;}
-  void advan2(double tfrom,double tto);
-  void advan4(double tfrom,double tto);
+  void advan2(const double& tfrom, const double& tto);
+  void advan4(const double& tfrom, const double& tto);
 
   void neta(int n);
   void neps(int n);
@@ -289,8 +289,8 @@ extern "C" {void dlsoda_(
 			 main_deriv_func* derivs,
 			 int       * neq,
 			 double    * y,
-			 double    * tfrom,
-			 double    * tto,
+			 const double    * tfrom,
+			 const double    * tto,
 			 int       * itol,
 			 double    * rtol,
 			 double    * atol,

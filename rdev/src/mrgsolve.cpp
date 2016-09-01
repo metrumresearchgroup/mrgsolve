@@ -15,13 +15,13 @@
 
 typedef boost::tokenizer<boost::escaped_list_separator<char> > so_tokenizer;
 
-double digits(double a, double b) {
+double digits(const double& a, const double& b) {
   return std::floor(a*b)/b;
 }
 
 
-int find_position(std::string what, svec& table) {
-  svec::iterator svit = std::find(table.begin(), table.end(), what);
+int find_position(std::string what, const svec& table) {
+  svec::const_iterator svit = std::find(table.begin(), table.end(), what);
   if(svit==table.end()) return(-1);
   return(svit - table.begin());
 }
@@ -238,7 +238,7 @@ Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix x) {
 
 
 //[[Rcpp::export]]
-Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a,bool keep_names) {
+Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
   
   int j,k;
   Rcpp::NumericMatrix mat;

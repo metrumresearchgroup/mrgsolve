@@ -120,7 +120,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   // Number of non-na times in each design
   std::vector<int> tgridn;
-  if(ntgrid>1) {
+  if(ntgrid > 1) {
     for(i = 0; i < tgrid.ncol(); i++) {
       tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
     }
