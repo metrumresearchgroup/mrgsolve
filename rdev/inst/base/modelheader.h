@@ -110,6 +110,8 @@ struct databox {
 // avoid directly accessing the macros.
 #define ETA(a) _databox_.ETA.at(a-1)
 #define EPS(a) _databox_.EPS.at(a-1)
+#define _xETA(a) _databox_.ETA[a-1]
+#define _xEPS(a) _databox_.EPS[a-1]
 
 // Number fo equations
 #define _NEQ (_A_0_.size())
