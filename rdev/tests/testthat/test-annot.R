@@ -158,3 +158,23 @@ test_that("Full specification - $VCMT", {
   expect_equivalent(an$unit, c("x", "y", "z"))
   expect_equivalent(an$descr, c("123", "456", "789"))
 })
+
+test_that("Full specification - $CAPTURE", {
+  
+  code <- '
+  $MAIN
+  double a = 2;
+  double b = 3;
+  double c = 4;
+  $CAPTURE >> annotated=TRUE
+  a: first  (x)
+  b: second (y)
+  c: third  (z)
+  '
+  mod <- mcode("test-annot-5",code,compile=FALSE)
+  expect_identical(mod@capture, c("a", "b", "c"))
+  an <- mrgsolve:::details(mod) %>% (dplyr::bind_rows)
+  expect_equivalent(an$unit, c("x", "y", "z"))
+  expect_equivalent(an$descr, c("first", "second", "third"))
+  expect_true(all(an$block =="CAPTURE"))
+})
