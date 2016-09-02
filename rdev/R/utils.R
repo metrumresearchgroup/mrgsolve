@@ -912,3 +912,19 @@ make_CLINK <- function(x,what=names(x),add=NULL, setenv=FALSE) {
   x <- paste("-I\"",x,"\"",collapse=" ", sep="")
   return(x)
 }
+
+
+##' Show model specification and C++ files.
+##' 
+##' @param x model object
+##' @param spec logical; show the model specification file
+##' @param source logical; show the C++ file that is actually compiled
+##' @export
+##' 
+file_show <- function(x,spec=TRUE,source=TRUE,...) {
+  stopifnot(is.mrgmod(x))
+  what <- list()
+  if(spec) what$spec <- cfile(x)
+  if(source) what$source <- x@shlib$source
+  do.call(base::file.show,what)
+}
