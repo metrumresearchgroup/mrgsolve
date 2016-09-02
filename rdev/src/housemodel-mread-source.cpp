@@ -1,4 +1,4 @@
-// Source MD5: b91b381babcc6576c1efc65dfeab9285
+// Source MD5: 50a84b3b28654f1c3497e9bfede27cf0
 
 #include "modelheader.h"
 
@@ -9,6 +9,11 @@
 #define CONFIGFUN___ _model_housemodel_config__
 #define _nEQ 3
 #define _nPAR 13
+#define N_GUT 1
+#define F_GUT _F_[0]
+#define ALAG_GUT _ALAG_[0]
+#define R_GUT _R_[0]
+#define D_GUT _D_[0]
 #define GUT _A_[0]
 #define CENT _A_[1]
 #define RESP _A_[2]
@@ -48,6 +53,7 @@ namespace hm {
   localdouble KOUTi = 0;
   localdouble lWT = 0;
 }
+double DV;
 typedef double localdouble;
 typedef int localint;
 typedef bool localbool;
@@ -58,7 +64,7 @@ END_config
 
 // MAIN CODE BLOCK:
 BEGIN_main
-_F(1) = F1;
+F_GUT = F1;
 hm::CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ETA(1));
 hm::VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + ETA(2));
 hm::KAi   = exp(log(KA)   + ETA(3));
@@ -75,6 +81,7 @@ END_ode
 
 // TABLE CODE BLOCK:
 BEGIN_table
-capture(CP);
-table(DV) = CP*exp(EPS(1));
+DV = CP*exp(EPS(1));
+_capture_[0] = DV;
+_capture_[1] = CP;
 END_table

@@ -21,6 +21,9 @@ document(pkg)
 
 ## I think mrgsolve functions available after doc
 foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
+foo$mod <- mrgsolve:::embed_details(foo$mod)
+
+
 
 cpp <- normalizePath(foo$source)
 
