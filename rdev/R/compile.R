@@ -36,7 +36,7 @@ generate_rdefs <- function(pars,
         stopifnot(length(etai)==length(etal))
         which <- etal != "."
         if(sum(which) > 0) {
-            etal <- paste0("#define ", etal[which], " ETA(",etai[which],")")
+            etal <- paste0("#define ", etal[which], " _xETA(",etai[which],")")
         } else {
             etal <- NULL
         }
@@ -48,7 +48,7 @@ generate_rdefs <- function(pars,
         stopifnot(length(epsi)==length(epsl))
         which <- epsl != "."
         if(sum(which) > 0) {
-            epsl <- paste0("#define ", epsl[which], " EPS(",epsi[which],")")
+            epsl <- paste0("#define ", epsl[which], " _xEPS(",epsi[which],")")
         } else {
             epsl <- NULL
         }
