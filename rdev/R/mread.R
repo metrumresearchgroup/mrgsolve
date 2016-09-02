@@ -185,13 +185,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- new.env()
-  temp <- vector("list",length(spec))
-  mread.env$param <- temp
-  mread.env$fixed <- temp
-  mread.env$init <- temp
-  mread.env$omega <- temp
-  mread.env$sigma <- temp
-  mread.env$annot <- temp
+
+  mread.env$param <- vector("list",length(spec))
+  mread.env$fixed <- vector("list",length(spec))
+  mread.env$init  <- vector("list",length(spec))
+  mread.env$omega <- vector("list",length(spec))
+  mread.env$sigma <- vector("list",length(spec))
+  mread.env$annot <- vector("list",length(spec))
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
