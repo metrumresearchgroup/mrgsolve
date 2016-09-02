@@ -201,6 +201,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
   annot <- mread.env$annot[!sapply(mread.env$annot,is.null)]
+  assign(model,annot, envir=GLOBALS[["ANNOT"]])
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
@@ -249,8 +250,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param=as.param(param),
            init=as.init(init),
            funs  = funs_create(model),
-           capture=as.character(spec[["CAPTURE"]]),
-           annot=annot
+           capture=as.character(spec[["CAPTURE"]])
   )
   
   

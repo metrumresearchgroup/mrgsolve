@@ -64,3 +64,12 @@ parse_annot_line <- function(x, novalue=FALSE,noname=FALSE) {
   list(name=a[1],value=a[2],unit=units,options=options,descr=b)
 }
 
+
+details <- function(x,...) {
+  stopifnot(is.mrgmod(x))
+  model <- model(x)
+  if(!exists(model,envir=GLOBALS$ANNOT)) {
+    stop("Couldn't find details for model ", model, ".", call.=FALSE) 
+  }
+  return(get(model,envir=GLOBALS[["ANNOT"]]))
+}
