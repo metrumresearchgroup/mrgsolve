@@ -96,6 +96,7 @@ test_that("Full specification - $THETA", {
   expect_equivalent(as.numeric(param((mod))), c(2,12))
 })
 
+
 test_that("Full specification - $CMT", {
   
   code <- '
@@ -105,8 +106,9 @@ test_that("Full specification - $CMT", {
   '
   mod <- mcode("test-annot-2",code,compile=FALSE)
   expect_identical(cmt(mod), c("GUT", "CENT"))
-  expect_equivalent(mod@annot[[1]]$unit, c("mg", "mg"))
-  expect_equivalent(mod@annot[[1]]$descr, c("Dosing", "Central"))
+  an <- mrgsolve:::details(mod) %>% (dplyr::bind_rows)
+  expect_equivalent(an$unit, c("mg", "mg"))
+  expect_equivalent(an$descr, c("Dosing", "Central"))
 })
 
 test_that("Full specification - $INIT", {
@@ -119,8 +121,9 @@ test_that("Full specification - $INIT", {
   mod <- mcode("test-annot-2b",code,compile=FALSE)
   expect_identical(cmt(mod), c("GUT", "CENT"))
   expect_equivalent(as.numeric(init(mod)), c(12.3, 45.6))
-  expect_equivalent(mod@annot[[1]]$unit, c("mg", "mg"))
-  expect_equivalent(mod@annot[[1]]$descr, c("Dosing", "Central"))
+  an <- mrgsolve:::details(mod) %>% (dplyr::bind_rows)
+  expect_equivalent(an$unit, c("mg", "mg"))
+  expect_equivalent(an$descr, c("Dosing", "Central"))
   
 })
 
@@ -136,8 +139,9 @@ test_that("Full specification - $FIXED", {
   mod <- mcode("test-annot-3",code,compile=FALSE)
   expect_identical(names(allparam(mod)), c("A", "B", "C"))
   expect_equivalent(as.numeric(allparam(mod)),c(1,2,3))
-  expect_equivalent(mod@annot[[1]]$unit, c("a", "b", "c"))
-  expect_equivalent(mod@annot[[1]]$descr, c("Letter-A", "Letter-B", "Letter-C"))
+  an <- mrgsolve:::details(mod) %>% (dplyr::bind_rows)
+  expect_equivalent(an$unit, c("a", "b", "c"))
+  expect_equivalent(an$descr, c("Letter-A", "Letter-B", "Letter-C"))
 })
 
 test_that("Full specification - $VCMT", {
@@ -150,6 +154,7 @@ test_that("Full specification - $VCMT", {
   '
   mod <- mcode("test-annot-4",code,compile=FALSE)
   expect_identical(cmt(mod), c("A", "B", "C"))
-  expect_equivalent(mod@annot[[1]]$unit, c("x", "y", "z"))
-  expect_equivalent(mod@annot[[1]]$descr, c("123", "456", "789"))
+  an <- mrgsolve:::details(mod) %>% (dplyr::bind_rows)
+  expect_equivalent(an$unit, c("x", "y", "z"))
+  expect_equivalent(an$descr, c("123", "456", "789"))
 })
