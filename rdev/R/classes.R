@@ -298,7 +298,7 @@ valid.mrgmod <- function(object) {
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
-is.mrgmod <- function(x) inherits(x,"mrgmod")
+is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
 is.mrgindata <- function(x) inherits(x,"mrgindata")
 is.mrgsims <- function(x) inherits(x,"mrgsims")
 is.valid_idata <- function(x) inherits(x,"valid_idata")

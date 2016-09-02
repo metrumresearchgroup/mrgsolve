@@ -462,8 +462,20 @@ handle_spec_block.specSIGMA <- function(x,...) specSIGMA(x,...)
 handle_spec_block.specNMXML <- function(x,...) parseNMXML(x,...)
 ##' @export
 handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
+
+CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
+  if(annotated) {
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE")
+    env[["annot"]][[pos]] <- l[["an"]]
+    x <- names(l[["v"]])
+  } 
+  return(tovec(x))
+}
 ##' @export
-handle_spec_block.specCAPTURE <- function(x,...) as.cvec(x)
+handle_spec_block.specCAPTURE <- function(x,...) {
+  scrape_and_call(x,pass="CAPTURE",split=FALSE,all=TRUE,...)
+}
+
 ##' @export
 handle_spec_block.specPKMODEL <- function(x,...) {
   x <- scrape_opts(x,all=TRUE)
