@@ -919,6 +919,7 @@ make_CLINK <- function(x,what=names(x),add=NULL, setenv=FALSE) {
 ##' @param x model object
 ##' @param spec logical; show the model specification file
 ##' @param source logical; show the C++ file that is actually compiled
+##' @param ... not used
 ##' @export
 ##' 
 file_show <- function(x,spec=TRUE,source=TRUE,...) {
