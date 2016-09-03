@@ -40,10 +40,10 @@ Rodeproblem::Rodeproblem(Rcpp::NumericVector param,
   int i=0, n=0;  
   
   n = int(param.size());
-  for(i=0; i < n; i++) Param[i] =       double(param[i]);
+  for(i=0; i < n; ++i) Param[i] =       double(param[i]);
   
   n = int(init.size());
-  for(i=0; i < n; i++)  Init_value[i] =  double(init[i]);
+  for(i=0; i < n; ++i)  Init_value[i] =  double(init[i]);
 }
 
 

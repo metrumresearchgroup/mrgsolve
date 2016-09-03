@@ -108,7 +108,7 @@ Rcpp::NumericVector CALLINIT(Rcpp::NumericVector Nparam, Rcpp::NumericVector Nin
   
   prob->init_call(time);
   
-  for(i=0; i < neq; i++) ans[i] = prob->init(i);
+  for(i=0; i < neq; ++i) ans[i] = prob->init(i);
   delete prob;
   return(ans);
 }
@@ -151,7 +151,7 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
   
   Rcpp::NumericVector init_val(prob->neq());
   
-  for(i=0; i < (prob->neq()); i++) init_val[i] = init[i];
+  for(i=0; i < (prob->neq()); ++i) init_val[i] = init[i];
   
   ans["tnames"] = tablenames;
   ans["init"] = init_val;
@@ -206,19 +206,19 @@ Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x) {
   return(dimnames[1]);
 }
 
-void asSDmap(sd_map& out, Rcpp::List x) {
-  Rcpp::CharacterVector names = x.attr("names");
-  for(int i=0; i < x.size(); i++) {
-    out[std::string(names[i])] = Rcpp::as<double>(x[i]);
-  }
-}
+// void asSDmap(sd_map& out, Rcpp::List x) {
+//   Rcpp::CharacterVector names = x.attr("names");
+//   for(int i=0; i < x.size(); ++i) {
+//     out[std::string(names[i])] = Rcpp::as<double>(x[i]);
+//   }
+// }
 
 //[[Rcpp::export]]
 void decorr(Rcpp::NumericMatrix x) {
   int i = 1, j = 1, n = x.nrow();
   if(n != x.ncol()) Rcpp::stop("matrix is not square");
-  for(i=0; i < n; i++) {
-    for(j=0; j < n; j++) {
+  for(i=0; i < n; ++i) {
+    for(j=0; j < n; ++j) {
       if(j!=i) x(i,j) = x(i,j)*sqrt(x(i,i)*x(j,j));
     }
   }
@@ -228,8 +228,8 @@ void decorr(Rcpp::NumericMatrix x) {
 //[[Rcpp::export]]
 Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix x) {
   int i=0, j=0;
-  for(i=0; i < x.ncol(); i++) {
-    for(j=0; j < x.nrow(); j++) {
+  for(i=0; i < x.ncol(); ++i) {
+    for(j=0; j < x.nrow(); ++j) {
       x(i,j) = 0;
     }
   }
@@ -252,7 +252,7 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
   Rcpp::List dnames(2);
  
   
-  for(int i=0, n = a.size(); i < n; i++) {
+  for(int i=0, n = a.size(); i < n; ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     if(mat.nrow() ==0) continue;
     if(mat.nrow() != mat.ncol()) Rcpp::stop("Not all matrices are square");
@@ -264,7 +264,7 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
     dnames = mat.attr("dimnames");
     
     if(dnames.size()==0) {
-      for(j=0; j < mat.nrow(); j++) {
+      for(j=0; j < mat.nrow(); ++j) {
         rnam.push_back(".");
         cnam.push_back(".");
       }
@@ -273,15 +273,15 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
     
     if(!Rf_isNull(dnames[0])) {
       this_nam = dnames[0];
-      for(int j=0, n=this_nam.size(); j < n; j++) rnam.push_back(this_nam[j]);
+      for(int j=0, n=this_nam.size(); j < n; ++j) rnam.push_back(this_nam[j]);
     } else {
-      for(j=0; j < mat.nrow(); j++) rnam.push_back(".");
+      for(j=0; j < mat.nrow(); ++j) rnam.push_back(".");
     }
     if(!Rf_isNull(dnames[1])) {
       this_nam = dnames[1];
-      for(int j=0, n=this_nam.size(); j < n; j++) cnam.push_back(this_nam[j]);
+      for(int j=0, n=this_nam.size(); j < n; ++j) cnam.push_back(this_nam[j]);
     } else {
-      for(j=0; j < mat.ncol(); j++) cnam.push_back(".");
+      for(j=0; j < mat.ncol(); ++j) cnam.push_back(".");
     }
   }
   
@@ -290,11 +290,11 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
   int totcol = 0;
   
   Rcpp::NumericMatrix ret(tot,tot);
-  for(int i=0, n=a.size(); i < n; i++) {
+  for(int i=0, n=a.size(); i < n; ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     
-    for(j=0; j < mat.nrow(); j++) {
-      for(k=0; k < mat.ncol(); k++) {
+    for(j=0; j < mat.nrow(); ++j) {
+      for(k=0; k < mat.ncol(); ++k) {
         ret(totrow+j,totcol+k) = mat(j,k);
       }
     }
@@ -319,8 +319,8 @@ void match_both (svec a, svec b, ivec& ai, ivec& bi) {
   si_map B;
   svec inter;
 
-  for(size_t i=0; i < a.size(); i++) A[a[i]] = i;
-  for(size_t i=0; i < b.size(); i++) B[b[i]] = i;
+  for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
+  for(size_t i=0; i < b.size(); ++i) B[b[i]] = i;
   
   std::sort(a.begin(), a.end());
   std::sort(b.begin(), b.end());
@@ -329,10 +329,10 @@ void match_both (svec a, svec b, ivec& ai, ivec& bi) {
                         std::back_inserter(inter));
   
   ai.resize(inter.size());
-  for(size_t i=0; i < inter.size(); i++) ai[i] = A[inter[i]];
+  for(size_t i=0; i < inter.size(); ++i) ai[i] = A[inter[i]];
   
   bi.resize(inter.size());
-  for(size_t i=0; i < inter.size(); i++) bi[i] = B[inter[i]];
+  for(size_t i=0; i < inter.size(); ++i) bi[i] = B[inter[i]];
   
 }
 
@@ -342,7 +342,7 @@ void match_one (svec a, svec b, ivec& ret) {
   si_map A;
   svec inter;
   
-  for(size_t i=0; i < a.size(); i++) A[a[i]] = i;
+  for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
   
   std::sort(a.begin(), a.end());
   std::sort(b.begin(), b.end());
@@ -350,7 +350,7 @@ void match_one (svec a, svec b, ivec& ret) {
   std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
                         std::back_inserter(inter));
   ret.resize(inter.size());
-  for(size_t i=0; i < inter.size(); i++) ret[i] = A[inter[i]];
+  for(size_t i=0; i < inter.size(); ++i) ret[i] = A[inter[i]];
 }
 
 //[[Rcpp::export]]
@@ -377,7 +377,7 @@ Rcpp::List get_tokens(Rcpp::CharacterVector code) {
   
   Rcpp::List ret(code.size());
   
-  for(int i = 0; i < code.size(); i++) {
+  for(int i = 0; i < code.size(); ++i) {
     Rcpp::CharacterVector tokens;
     std::string s = Rcpp::as<std::string>(code[i]);
     boost::tokenizer<> tok(s);
@@ -404,7 +404,7 @@ Rcpp::List get_sep_tokens(Rcpp::CharacterVector code) {
   std::string sep2(";,");
   std::string sep3("\"\'");//let it have quoted arguments
   boost::escaped_list_separator<char>sep(sep1,sep2,sep3);
-  for(int i = 0; i < code.size(); i++) {
+  for(int i = 0; i < code.size(); ++i) {
     Rcpp::CharacterVector tokens;
     std::string s = Rcpp::as<std::string>(code[i]);
     

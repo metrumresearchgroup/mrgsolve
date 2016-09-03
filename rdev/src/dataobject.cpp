@@ -50,7 +50,7 @@ void dataobject::map_uid() {
   int i=0;
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
-  for(i=1; i < Data.nrow(); i++) {
+  for(i=1; i < Data.nrow(); ++i) {
     if(Data(i,Idcol) != Data(i-1, Idcol)) {
       Uid.push_back(Data(i,Idcol));
       Startrow.push_back(i);
@@ -128,7 +128,7 @@ void dataobject::locate_tran() {
 
 void dataobject::idata_row() {
   int i=0;
-  for(i=0; i < Data.nrow(); i++) {
+  for(i=0; i < Data.nrow(); ++i) {
     idmap[Data(i,Idcol)] =i;
   }
 }
@@ -136,7 +136,7 @@ void dataobject::idata_row() {
 
 void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t i;
-  for(i=0; i < par_from.size(); i++) {
+  for(i=0; i < par_from.size(); ++i) {
     prob->param(par_to.at(i),Data(this_row,par_from.at(i)));
   }
 }
@@ -146,14 +146,14 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
 void dataobject::copy_inits(int this_row, odeproblem* prob) {
   // this should only be done from idata sets
   size_t i;
-  for(i=0; i < cmt_from.size(); i++) {
+  for(i=0; i < cmt_from.size(); ++i) {
     prob->y_init(cmt_to.at(i),Data(this_row,cmt_from.at(i)));
   }
 }
 
 
 void dataobject::reload_parameters(Rcpp::NumericVector PARAM, odeproblem* prob) {
-  for(size_t i = 0; i < par_to.size(); i++) {
+  for(size_t i = 0; i < par_to.size(); ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
 }
@@ -173,11 +173,11 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   
   if(Data.ncol() <= 1) return;
   
-  for(int h=0; h < NID; h++) {
+  for(int h=0; h < NID; ++h) {
     
     lastime = 0;
     
-    for(j = this -> start(h); j <= this -> end(h); j++) {
+    for(j = this -> start(h); j <= this -> end(h); ++j) {
       
       if(Data(j,col["time"]) < lastime) Rcpp::stop("Problem with time: data set is not sorted by time or time is negative.");
       
@@ -256,7 +256,7 @@ void dataobject::check_idcol(dataobject* data) {
   
   udata.resize(ndata);
   
-  for(i=0; i < ndata; i++) udata[i] = data->get_value(i,idcol);
+  for(i=0; i < ndata; ++i) udata[i] = data->get_value(i,idcol);
   
   dvec uthis  = this->return_uid();
   

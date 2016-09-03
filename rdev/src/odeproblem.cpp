@@ -19,7 +19,7 @@ arma::mat OMGADEF(1,1,arma::fill::zeros);
 // dummy functions that do nothing
 extern "C" {void MRGSOLVE_NO_INIT_FUN(MRGSOLVE_INIT_SIGNATURE){}}
 extern "C" {void MRGSOLVE_NO_TABLE_FUN(MRGSOLVE_TABLE_SIGNATURE){}}
-extern "C" {void MRGSOLVE_NO_ODE_FUN(MRGSOLVE_ODE_SIGNATURE) {for(unsigned int i = 0; i < _A_0_.size(); i++) _DADT_[i] = 0;}}
+extern "C" {void MRGSOLVE_NO_ODE_FUN(MRGSOLVE_ODE_SIGNATURE) {for(unsigned int i = 0; i < _A_0_.size(); ++i) _DADT_[i] = 0;}}
 extern "C" {void MRGSOLVE_NO_CONFIG_FUN(MRGSOLVE_CONFIG_SIGNATURE){}}
 
 odeproblem::odeproblem(int npar_,int neq_) : odepack_dlsoda(npar_,neq_) {
@@ -112,7 +112,7 @@ void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* pro
 
   // prob->add_rates(ydot);
   // // Add on infusion rates:
-  for(int i=0; i < prob->neq(); i++) {
+  for(int i=0; i < prob->neq(); ++i) {
     if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
     ydot[i] = (ydot[i] + prob->rate0(i));
   }
@@ -133,7 +133,7 @@ void odeproblem::init_call(const double& time) {
 	      this->get_d(),
 	      this->get_pred());
 
-  for(int i=0; i < Neq; i++) {
+  for(int i=0; i < Neq; ++i) {
     this->y(i,this->init(i));
     Init_dummy[i] = this->init(i);
   }
@@ -141,7 +141,7 @@ void odeproblem::init_call(const double& time) {
 
 
 void odeproblem::init_copy_from_dummy() {
-  for(int i=0; i< Neq; i++) Init_value[i] = Init_dummy[i];
+  for(int i=0; i< Neq; ++i) Init_value[i] = Init_dummy[i];
 }
 
 void odeproblem::init_call_record(const double& time) {
@@ -181,7 +181,7 @@ void odeproblem::table_init_call() {
 }
 
 void odeproblem::rate_reset() {
-  for(int i = 0; i < Neq; i++) {
+  for(int i = 0; i < Neq; ++i) {
     R0[i] = 0.0;
     infusion_count[i] = 0;
   }
@@ -193,7 +193,7 @@ void odeproblem::rate_reset(unsigned short int eq_n) {
 
 void odeproblem::reset_newid(const double& id_=1.0) {
 
-  for(int i = 0; i < Neq; i++) {
+  for(int i = 0; i < Neq; ++i) {
     R0[i] = 0.0;
     R[i] = 0.0;
     D[i] = 0.0;
@@ -509,13 +509,13 @@ double PolyExp(const double& x,
   //UPDATE DOSE
   if (dose>0) {
     if((tau<=0)&&(x>=0)) {
-      for(i=0;i<n;i++){result += a[i]*exp(-alpha[i]*x);}
+      for(i=0;i<n; ++i){result += a[i]*exp(-alpha[i]*x);}
     }
     else if(!ss)  {
       nlntv=x/tau+1;
       dx=x-trunc(x/tau)*tau; // RISKY, but preliminary results suggest that trunc
       // works on Stan variables.
-      for(i=0;i<n;i++) {
+      for(i=0;i<n;++i) {
 	result += a[i]*exp(-alpha[i]*x)
 	  *(1-exp(-nlntv*alpha[i]*tau))/(1-exp(-alpha[i]*tau));
       }
@@ -523,7 +523,7 @@ double PolyExp(const double& x,
 
     else {
       dx = x-trunc(x/tau)*tau;
-      for(i=0;i<n;i++) result += a[i]*exp(-alpha[i]*x)/(1-exp(-alpha[i]*tau));
+      for(i=0;i<n;++i) result += a[i]*exp(-alpha[i]*x)/(1-exp(-alpha[i]*tau));
     }
   }
   bolusResult = dose*result;
@@ -534,10 +534,10 @@ double PolyExp(const double& x,
     if(tau<=0) {
       if(x>=0) {
 	if(x<=xinf) {
-	  for(i=0;i<n;i++) result += a[i]*(1-exp(-alpha[i]*x))/alpha[i];
+	  for(i=0;i<n;++i) result += a[i]*(1-exp(-alpha[i]*x))/alpha[i];
 	}
 	else {
-	  for(i=0;i<n;i++) {
+	  for(i=0;i<n;++i) {
 	    result += a[i]*(1-exp(-alpha[i]*xinf))*exp(-alpha[i]*(x-xinf))/alpha[i];
 	  }
 	}
@@ -549,7 +549,7 @@ double PolyExp(const double& x,
       dx=x-trunc(x/tau)*tau;
       nlntv=trunc(x/tau)+1;
       if(dx<=xinf) {
-	for(i=0;i<n;i++) {
+	for(i=0;i<n;++i) {
 	  if(n>1) {
 	    result += a[i]*(1-exp(-alpha[i]*xinf))*exp(-alpha[i]*(dx-xinf+tau))
 	      * (1-exp(-(nlntv-1)*alpha[i]*tau))/(1-exp(-alpha[i]*tau))/alpha[i];
@@ -558,7 +558,7 @@ double PolyExp(const double& x,
 	}
       }
       else  {
-	for(i=0;i<n;i++) {
+	for(i=0;i<n;++i) {
 	  result += a[i] * (1 - exp(-alpha[i]*xinf))*exp(-alpha[i]*(dx-xinf)) *
 	    (1-exp(-nlntv*alpha[i]*tau))/(1-exp(-alpha[i]*tau)) / alpha[i];
 	}
@@ -570,13 +570,13 @@ double PolyExp(const double& x,
       dx = x - trunc(x/tau)*tau;
       nlntv = trunc(x/tau)+1;
       if (dx <= xinf) {
-	for(i=0;i<n;i++) {
+	for(i=0;i<n;++i) {
 	  result += a[i] * (1 - exp(-alpha[i]*xinf))*exp(-alpha[i]*(dx-xinf+tau)) /
 	    (1-exp(-alpha[i]*tau)) / alpha[i] + a[i] * (1 - exp(-alpha[i]*dx)) / alpha[i];
 	}
       }
       else {
-	for(i=0;i<n;i++) {
+	for(i=0;i<n;++i) {
 	  result += a[i] * (1 - exp(-alpha[i]*xinf))*exp(-alpha[i]*(dx-xinf)) / (1-exp(-alpha[i]*tau)) / alpha[i];
 	}
       }
@@ -586,11 +586,11 @@ double PolyExp(const double& x,
   else  {
     if(!ss) {
       if(x>=0) {
-	for(i=0;i<n;i++) result +=a[i]*(1-exp(-alpha[i]*x))/alpha[i];
+	for(i=0;i<n;++i) result +=a[i]*(1-exp(-alpha[i]*x))/alpha[i];
       }
     }
     else {
-      for(i=0;i<n;i++) result += a[i]/alpha[i];
+      for(i=0;i<n;++i) result += a[i]/alpha[i];
     }
   }
 

@@ -113,7 +113,7 @@ class odeproblem : public odepack_dlsoda {
   void param(int pos, double value){Param[pos] = value;}
   double param(int pos){return Param[pos];}
 
-  void param(dvec& x) {for(size_t i = 0; i < x.size(); i++) Param.at(i) = x[i];}
+  void param(dvec& x) {for(size_t i = 0; i < x.size(); ++i) Param.at(i) = x[i];}
   dvec cacheparam() {return Param;}
 
 

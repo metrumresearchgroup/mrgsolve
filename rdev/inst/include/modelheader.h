@@ -129,7 +129,7 @@ struct databox {
 #define _SETINIT if(NEWIND <=1) // Convenience
 
 // Macro to insert dxdt_CMT = 0; for all compartments
-#define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; _i_++) _DADT_[_i_] = 0;
+#define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; ++_i_) _DADT_[_i_] = 0;
 
 // Work on this
 #define X_DOSE(a) _databox_.XDOSE = a

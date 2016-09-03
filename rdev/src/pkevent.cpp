@@ -121,7 +121,7 @@ void pkevent::implement(odeproblem * prob) {
     }
     break;
   case 3: // reset event record
-    for(int i=0; i < prob->neq(); i++) {
+    for(int i=0; i < prob->neq(); ++i) {
       prob->y(i,0.0);
       prob->on(i);
       prob->rate0(i,0.0);
@@ -137,7 +137,7 @@ void pkevent::implement(odeproblem * prob) {
     prob->y(eq_n, this->amt());
     break;
   case 4:
-    for(int i=0; i < prob->neq(); i++) {
+    for(int i=0; i < prob->neq(); ++i) {
       prob->y(i,0.0);
       prob->on(i);
       prob->rate0(i,0.0);
@@ -182,14 +182,14 @@ void pkevent::steady_bolus(odeproblem* prob) {
   ev_ptr evon(new pkevent(this->cmt(), 1, this->amt(), this->time(), this->rate()));
   evon->fn(this->fn());
   
-  for(i=1; i < N_SS; i++) {
+  for(i=1; i < N_SS; ++i) {
     tfrom = double(i-1)*ii;
     tto = double(i)*ii;
     evon->implement(prob);
     prob->lsoda_init();
     prob->advance(tfrom,tto);
     
-    for(j=0; j < prob->neq(); j++) {
+    for(j=0; j < prob->neq(); ++j) {
       res[j]  = pow(prob->y(j) - last[j],2);
       last[j] = prob->y(j);
     }
@@ -234,7 +234,7 @@ void pkevent::steady_infusion(odeproblem * prob) {
   // We only need one of these; it gets updated and re-used immediately
   ev_ptr evon(new pkevent(this->cmt(), 1, this->amt(), this->time(), this->rate()));
   
-  for(i=1; i < N_SS ; i++) {
+  for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
     evon->implement(prob);
     prob->lsoda_init();
@@ -264,7 +264,7 @@ void pkevent::steady_infusion(odeproblem * prob) {
     
     tfrom = nexti;
     
-    for(j=0; j < prob->neq(); j++) {
+    for(j=0; j < prob->neq(); ++j) {
       res[j]  = pow((prob->y(j)  - last[j]),2);
       last[j] = prob->y(j);
     }
@@ -305,10 +305,12 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, const double& maxtime, bool 
       this_evid = this->rate() > 0 ? 5 : 1;
     }
     
-    for(unsigned int k=1; k <= this->addl(); k++) {
+    for(unsigned int k=1; k <= this->addl(); ++k) {
       
       double ontime = this->time() + this->ii()*double(k);
+      
       if(ontime > maxtime) break;
+      
       ev_ptr evon(new pkevent(this->cmt(),
                               this_evid,
                               this->amt(),
@@ -321,6 +323,7 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, const double& maxtime, bool 
       evon->output(false);
       
       thisi.push_back(evon);
+      
       if(this->infusion()) {
         ev_ptr evoff(new pkevent(this->cmt(),
                                  9, // EVID 9 means infusion off
@@ -363,7 +366,7 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, const double& maxtime, bool 
         --ninf_ss;
       }
       
-      for(int k=0; k < ninf_ss; k++) {
+      for(int k=0; k < ninf_ss; ++k) {
         
         double offtime =  (first_off+double(k)*double(this->ii()));
         
@@ -405,7 +408,7 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
   bool dropmax = true;
   
   // add mtimes from argument
-  for(i=0; i < b.size(); i++) {
+  for(i=0; i < b.size(); ++i) {
     
     if(b.at(i) <= mintime) {
       if(debug && dropmin) {
