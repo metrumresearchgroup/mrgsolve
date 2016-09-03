@@ -16,6 +16,7 @@ arma::mat OMGADEF(1,1,arma::fill::zeros);
 
 #define MRGSOLVE_MAX_SS_ITER 1000
 
+
 // dummy functions that do nothing
 extern "C" {void MRGSOLVE_NO_INIT_FUN(MRGSOLVE_INIT_SIGNATURE){}}
 extern "C" {void MRGSOLVE_NO_TABLE_FUN(MRGSOLVE_TABLE_SIGNATURE){}}
