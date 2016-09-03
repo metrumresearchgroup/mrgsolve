@@ -15,7 +15,6 @@
 
 
 class odeproblem;
-//class Rodeproblem;
 
 struct databox {
   unsigned int newind;
@@ -74,7 +73,6 @@ template<typename T,typename type2> void tofunptr(T b,type2 a) {
 
 class odeproblem : public odepack_dlsoda {
 
-  //  friend class Rodeproblem;
 
  public:
   odeproblem(Rcpp::NumericVector param, Rcpp::NumericVector init);
@@ -185,7 +183,7 @@ class odeproblem : public odepack_dlsoda {
 
   databox& get_d(){return d;}
 
-  void advan(int x){Advan = x;}
+  void advan(int x);
   int advan(){return Advan;}
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
@@ -270,7 +268,12 @@ class odeproblem : public odepack_dlsoda {
   std::vector<char> On;
 
   databox d;
+  
+  // These are used for advan 2/4
   int Advan;
+  dvec a;
+  dvec alpha;
+  
   dvec pred;
   dvec Capture;
 

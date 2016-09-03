@@ -268,7 +268,7 @@ void odeproblem::pass_omega(arma::mat* x) {
 
 
 void odeproblem::advance(double tfrom, double tto) {
-  //this->hmax(std::min(this->hmax(),(tto-tfrom)));
+  
   if(Neq <= 0) return;
   
   if(Advan != 13) {
@@ -324,12 +324,10 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   
   if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
   
-  dvec alpha(2);
-  
+  //a and alpha are private members
   alpha[0] = k10;
   alpha[1] = ka;
-  
-  dvec a(2);
+
   a[0] = ka/(ka-alpha[0]);
   a[1] = -a[0];
   
@@ -412,8 +410,7 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
     init0 = this->y(0); init1 = this->y(1); init2 = this->y(2);
   }
   
-  dvec alpha(3);
-  dvec a(3);
+  //a and alpha are private members
   
   alpha[0] = (ksum + sqrt(ksum*ksum-4.0*k10*k21))/2.0;
   alpha[1] = (ksum - sqrt(ksum*ksum-4.0*k10*k21))/2.0;
@@ -644,5 +641,17 @@ void odeproblem::copy_funs(Rcpp::List funs) {
   Derivs = as_deriv_func(funs["ode"]);
   Config = as_config_func(funs["config"]); 
   
+}
+
+void odeproblem::advan(int x) {
+  Advan = x;
+  if((x==1) | (x ==2)) {
+    a.assign(2,0.0);
+    alpha.assign(2,0.0);
+  }
+  if((x==3) | (x==4)) {
+    a.assign(3,0.0);
+    alpha.assign(3,0.0);
+  }
 }
 

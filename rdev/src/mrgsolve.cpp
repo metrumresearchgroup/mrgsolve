@@ -5,7 +5,6 @@
 #include "RcppInclude.h"
 #include "mrgsolve.h"
 #include "odeproblem.h"
-//#include "Rodeproblem.h"
 #include "pkevent.h"
 #include <vector>
 #include <string>
