@@ -6,15 +6,34 @@
 #define ODEPROBLEM_H
 #include <math.h>
 #include <iostream>
+#include <memory>
 #include <vector>
 #include "odepack_dlsoda.h"
 #include <string>
 #include "mrgsolv.h"
+#include "RcppInclude.h"
+
+
+// double get_pred_CL() {return pred[0];}
+// double get_pred_VC() {return pred[1];}
+// double get_pred_KA() {return pred[2];}
+// double get_pred_Q()  {return pred[3];}
+// double get_pred_VP() {return pred[4];}
+// double get_pred_k10(){return pred[0]/pred[1];}
+// double get_pred_k12(){return pred[3]/pred[1];}
+// double get_pred_k21(){return pred[3]/pred[4];}
+
+#define MRGSOLVE_GET_PRED_CL  (pred[0])
+#define MRGSOLVE_GET_PRED_VC  (pred[1])
+#define MRGSOLVE_GET_PRED_KA  (pred[2])
+#define MRGSOLVE_GET_PRED_Q   (pred[3])
+#define MRGSOLVE_GET_PRED_VP  (pred[4])
+#define MRGSOLVE_GET_PRED_K10 (pred[0]/pred[1])
+#define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1])
+#define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4])
 
 
 class odeproblem;
-class Rodeproblem;
-
 
 struct databox {
   unsigned int newind;
@@ -42,11 +61,18 @@ typedef void deriv_func(MRGSOLVE_ODE_SIGNATURE);
 typedef void config_func(MRGSOLVE_CONFIG_SIGNATURE);
 
 typedef void main_deriv_func(int*        neq,
-			     double*     t,
-			     double*     y,
-			     double*     ydot,
-			     odeproblem* prob);
+                             double*     t,
+                             double*     y,
+                             double*     ydot,
+                             odeproblem* prob);
 
+
+deriv_func*  as_deriv_func( SEXP derivs);
+init_func*   as_init_func(  SEXP inits);
+table_func*  as_table_func( SEXP table);
+config_func* as_config_func(SEXP config);
+
+extern "C"{DL_FUNC tofunptr(SEXP a);}
 extern "C" {init_func  MRGSOLVE_NO_INIT_FUN ;}
 extern "C" {table_func MRGSOLVE_NO_TABLE_FUN;}
 extern "C" {deriv_func MRGSOLVE_NO_ODE_FUN  ;}
@@ -66,11 +92,9 @@ template<typename T,typename type2> void tofunptr(T b,type2 a) {
 
 class odeproblem : public odepack_dlsoda {
 
-  //  friend class Rodeproblem;
 
  public:
-
-  odeproblem(int npar_, int neq_);
+  odeproblem(Rcpp::NumericVector param, Rcpp::NumericVector init);
 
   virtual ~odeproblem();
 
@@ -113,7 +137,7 @@ class odeproblem : public odepack_dlsoda {
   void param(int pos, double value){Param[pos] = value;}
   double param(int pos){return Param[pos];}
 
-  void param(dvec& x) {for(size_t i = 0; i < x.size(); i++) Param.at(i) = x[i];}
+  void param(dvec& x) {for(size_t i = 0; i < x.size(); ++i) Param.at(i) = x[i];}
   dvec cacheparam() {return Param;}
 
 
@@ -178,7 +202,7 @@ class odeproblem : public odepack_dlsoda {
 
   databox& get_d(){return d;}
 
-  void advan(int x){Advan = x;}
+  void advan(int x);
   int advan(){return Advan;}
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
@@ -195,20 +219,22 @@ class odeproblem : public odepack_dlsoda {
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}
   void  resize_capture(size_t n) {Capture.assign(int(n),0.0);}
-  double get_pred_CL() {return pred[0];}
-  double get_pred_VC() {return pred[1];}
-  double get_pred_KA() {return pred[2];}
-  double get_pred_Q()  {return pred[3];}
-  double get_pred_VP() {return pred[4];}
-  double get_pred_k10(){return pred[0]/pred[1];}
-  double get_pred_k12(){return pred[3]/pred[1];}
-  double get_pred_k21(){return pred[3]/pred[4];}
+
 
   // SAVE
   // int nRn(){return Rn.size();}
   // void add_Rn(int value){Rn.insert(value);}
   // void add_rates(double* ydot);
 
+  // From Rodeproblem
+  void init_fun(SEXP ifun);
+  void table_fun(SEXP tfun);
+  void deriv_fun(SEXP dfun);
+  void config_fun(SEXP cfun);
+  
+  void copy_parin(Rcpp::List parin);
+  void copy_funs(Rcpp::List funs);
+  
  protected:
 
   //! parameters
@@ -254,7 +280,12 @@ class odeproblem : public odepack_dlsoda {
   std::vector<char> On;
 
   databox d;
+  
+  // These are used for advan 2/4
   int Advan;
+  dvec a;
+  dvec alpha;
+  
   dvec pred;
   dvec Capture;
 

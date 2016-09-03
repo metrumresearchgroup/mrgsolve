@@ -13,12 +13,8 @@ test_stop <- function() {
     invisible(.Call('mrgsolve_test_stop', PACKAGE = 'mrgsolve'))
 }
 
-CALLINIT <- function(Nparam, Ninit, xifun) {
-    .Call('mrgsolve_CALLINIT', PACKAGE = 'mrgsolve', Nparam, Ninit, xifun)
-}
-
-TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, xifun, xtfun, xdfun) {
-    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, xifun, xtfun, xdfun)
+TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs) {
+    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs)
 }
 
 MVGAUSS <- function(OMEGA_, n, seed) {

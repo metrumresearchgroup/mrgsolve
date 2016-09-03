@@ -11,6 +11,7 @@ struct var  {
   int NEWIND;
   int EVID;
 };
+
 #include <R_ext/Rdynload.h>
 extern "C"{DL_FUNC tofun(SEXP a);}
 // Sort an integer vector
@@ -32,14 +33,14 @@ typedef std::map<std::string, ivec> sivec_map;
 
 
 
-void asSDmap(sd_map& out, Rcpp::List x);
-
-template <class type1, class type2>
-  void asSImap(type1& a, type2 b) {
-  for(int i=0; i < b.size(); i++) {
-    a[std::string(b[i])] = i;
-  }
-}
+// void asSDmap(sd_map& out, Rcpp::List x);
+// 
+// template <class type1, class type2>
+//   void asSImap(type1& a, type2 b) {
+//   for(int i=0; i < b.size(); ++i) {
+//     a[std::string(b[i])] = i;
+//   }
+// }
 
 template <class T>
 void sort_unique(T& a) {
@@ -74,4 +75,4 @@ void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
                       Rcpp::NumericVector linit,
                       Rcpp::CharacterVector capture,
-                      SEXP xifun, SEXP xtfun, SEXP xdfun);
+                      Rcpp::List funs);

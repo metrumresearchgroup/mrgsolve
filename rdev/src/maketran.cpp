@@ -31,13 +31,13 @@ Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_,
 
   Rcpp::NumericMatrix ans(events.nrow()*id.size(),ncol_new);
   
-  for(i=0; i < id.size(); i++) {
-    for(j=0; j < events.nrow(); j++) {
-      for(k=0; k < events.ncol(); k++) {
+  for(i=0; i < id.size(); ++i) {
+    for(j=0; j < events.nrow(); ++j) {
+      for(k=0; k < events.ncol(); ++k) {
         ans(crow,k) = events(j,k);
       }
       ans(crow,idcol) = id[i];
-      crow++;
+      ++crow;
     }
   }
   dimnames[0]  = Rcpp::CharacterVector(0);

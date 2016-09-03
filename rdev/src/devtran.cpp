@@ -8,7 +8,6 @@
 #include <iostream>
 #include "mrgsolve.h"
 #include "odeproblem.h"
-#include "Rodeproblem.h"
 #include "pkevent.h"
 #include "dataobject.h"
 #include <map>
@@ -18,9 +17,9 @@
 
 
 #define CRUMP(a) Rcpp::stop(a)
-#define REP(a) Rcpp::Rcout << #a << std::endl;
-#define nREP(a) Rcpp::Rcout << a << std::endl;
-#define say(a) Rcpp::Rcout << a << std::endl;
+#define REP(a)   Rcpp::Rcout << #a << std::endl;
+#define nREP(a)  Rcpp::Rcout << a << std::endl;
+#define say(a)   Rcpp::Rcout << a << std::endl;
 
 // [[Rcpp::export]]
 Rcpp::List DEVTRAN(Rcpp::List parin,
@@ -37,7 +36,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   svec parnames = Rcpp::as<svec>(parnames_);
   svec cmtnames = Rcpp::as<svec>(cmtnames_);
-  for(size_t i=0; i < cmtnames.size(); i++) cmtnames[i] += "_0";
+  for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
   
   unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   bool debug            = Rcpp::as<bool>   (parin["debug"]  );
@@ -74,7 +73,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   int i=0,j=0,k=0;
   double time0 = 0.0;
   int crow =0,  neq=0; //
-  Rodeproblem *prob;
+  odeproblem *prob;
   size_t h=0;
   
   
@@ -121,7 +120,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Number of non-na times in each design
   std::vector<int> tgridn;
   if(ntgrid > 1) {
-    for(i = 0; i < tgrid.ncol(); i++) {
+    for(i = 0; i < tgrid.ncol(); ++i) {
       tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
     }
   } else {
@@ -166,9 +165,9 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   int size_capture = capture.at(0);
   int n_capture  = capture.size()-1;
   
-  if(debug) say("Creating Rodeproblem object");
+  if(debug) say("Creating odeproblem object");
   
-  prob  = new Rodeproblem(inpar, init);
+  prob  = new odeproblem(inpar, init);
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);
@@ -214,7 +213,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   }
   
   double tto, tfrom;
-
+  
   int obscount = 0;
   int evcount  = 0;
   
@@ -222,7 +221,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Extract data records from the data set
   dat->get_records(a, NID, neq, obscount, evcount,obsonly,debug);
   // Offset for getting parameters from the data set (not idata)
-  if((obscount == 0) && (t2advance > 0)) Rcpp::stop("The data set must have observations to use t2advance.");
+  //if((obscount == 0) && (t2advance > 0)) Rcpp::stop("The data set must have observations to use t2advance.");
   //int posoff = t2cov && obscount > 0 ? 1 : 0;
   
   // Deal with stimes:
@@ -236,21 +235,19 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     ptimes.clear();
   }
   
+  // bool extra_times = (stimes.size()>0) || (ptimes.size()>0); // Move down 9.2.16
   
-  bool extra_times = (stimes.size()>0) || (ptimes.size()>0);
-  
-  if(extra_times) {
+  if((stimes.size()>0) || (ptimes.size()>0)) {
     
     nextpos =  put_ev_first ?  (data.nrow() + 10) : -100;
     
     double id;
     size_t n = stimes.size();
     size_t m = ptimes.size();
-    unsigned int thisind=0;
+    unsigned int thisind = 0;
     
     if(debug) Rcpp::Rcout << "Adding observations from stime and sorting " << std::endl;
-    //if(debug && (!ipass)) say("    No ipass; will sort now");
-    
+  
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
       
       thisind = it-a.begin();
@@ -271,7 +268,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         obs->output(false);
         (*it).push_back(obs);
       }
-      // sort the records by time and original position only if we're not doing checkout
+      // sort the records by time and original position 
       std::sort((*it).begin(), (*it).end(), CompByTimePosRec);
     }
   }
@@ -313,38 +310,38 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   // Fill in id and time:
   /// This happens no matter what
-  if(debug) Rcpp::Rcout << "Filling in time and ID ... " << std::endl;
-  crow = 0; // current row counter:
-  
-  for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
-    for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
-      // Only if this is an output record:
-      // may not be output record if obsonly was TRUEs
-      if((*itt)->output()) {
-        ans(crow, 0) = (*itt)->id();
-        ans(crow,1) = (*itt)->time();
-        crow++;
-      }
-    }
-  }
+  //if(debug) Rcpp::Rcout << "Filling in time and ID ... " << std::endl;
+  //crow = 0; // current row counter:
+  // for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
+  //   for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
+  //     // Only if this is an output record:
+  //     // may not be output record if obsonly was TRUEs
+  //     if((*itt)->output()) {
+  //       ans(crow, 0) = (*itt)->id();
+  //       ans(crow,1) = (*itt)->time();
+  //       crow++;
+  //     }
+  //   }
+  // }
   
   
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
   if(n_tran_carry > 0) {
-    if(debug) say("Filling in carried items ...");
+    
+    //if(debug) say("Filling in carried items ...");
     
     svec::const_iterator tcbeg  = tran_carry.begin();
     svec::const_iterator tcend  = tran_carry.end();
     // items in tran_carry are always lc
-    bool carry_evid = std::find(tcbeg,tcend, "evid")     != tcend;
-    bool carry_cmt =  std::find(tcbeg,tcend, "cmt")      != tcend;
-    bool carry_amt =  std::find(tcbeg,tcend, "amt")      != tcend;
-    bool carry_ii =   std::find(tcbeg,tcend, "ii")       != tcend;
-    bool carry_addl = std::find(tcbeg,tcend, "addl")     != tcend;
-    bool carry_ss =   std::find(tcbeg,tcend, "ss")       != tcend;
-    bool carry_rate = std::find(tcbeg,tcend, "rate")     != tcend;
-    bool carry_aug  = std::find(tcbeg,tcend, "a.u.g")    != tcend;
+    bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
+    bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
+    bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
+    bool carry_ii =   std::find(tcbeg,tcend, "ii")    != tcend;
+    bool carry_addl = std::find(tcbeg,tcend, "addl")  != tcend;
+    bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
+    bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
+    bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
     
     if(carry_evid) tran_names.push_back("evid");
     if(carry_amt)  tran_names.push_back("amt");
@@ -361,15 +358,15 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
         if(!(*itt)->output()) continue;
         int n = 0;
-        if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                    n++;}
-        if(carry_amt)  {ans(crow,n+2) = (*itt)->amt();                     n++;}
-        if(carry_cmt)  {ans(crow,n+2) = (*itt)->cmt();                     n++;}
-        if(carry_ss)   {ans(crow,n+2) = (*itt)->ss();                      n++;}
-        if(carry_ii)   {ans(crow,n+2) = (*itt)->ii();                      n++;}
-        if(carry_addl) {ans(crow,n+2) = (*itt)->addl();                    n++;}
-        if(carry_rate) {ans(crow,n+2) = (*itt)->rate();                    n++;}
-        if(carry_aug)  {ans(crow,n+2) = ((*itt)->pos()==nextpos) && obsaug; n++;}
-        crow++;
+        if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                     ++n;}
+        if(carry_amt)  {ans(crow,n+2) = (*itt)->amt();                      ++n;}
+        if(carry_cmt)  {ans(crow,n+2) = (*itt)->cmt();                      ++n;}
+        if(carry_ss)   {ans(crow,n+2) = (*itt)->ss();                       ++n;}
+        if(carry_ii)   {ans(crow,n+2) = (*itt)->ii();                       ++n;}
+        if(carry_addl) {ans(crow,n+2) = (*itt)->addl();                     ++n;}
+        if(carry_rate) {ans(crow,n+2) = (*itt)->rate();                     ++n;}
+        if(carry_aug)  {ans(crow,n+2) = ((*itt)->pos()==nextpos) && obsaug; ++n;}
+        ++crow;
       }
     }
   }
@@ -400,7 +397,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       
       std::vector<rec_ptr> thisi = *it;
       
-      for(size_t i=0; i < thisi.size(); i++) {
+      for(size_t i = 0; i < thisi.size(); ++i) {
         
         if(carry_from_data) {
           // Need to reset this for each ID; indicates that
@@ -413,15 +410,15 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         if(!thisi.at(i)->output()) continue;
         
         // Copy from idata:
-        for(k=0; k < n_idata_carry; k++) {
+        for(k=0; k < n_idata_carry; ++k) {
           ans(crow, idata_carry_start+k) = idata(idatarow,idata_carry[k]);
         }
         
         if(carry_from_data) {
           if(lastpos >=0) {
-            for(k=0; k < n_data_carry; k++) ans(crow, data_carry_start+k)  = data(lastpos,data_carry[k]);
+            for(k=0; k < n_data_carry; ++k) ans(crow, data_carry_start+k)  = data(lastpos,data_carry[k]);
           } else {
-            for(k=0; k < n_data_carry; k++) ans(crow, data_carry_start+k)  = data(dat->start(j),data_carry[k]);
+            for(k=0; k < n_data_carry; ++k) ans(crow, data_carry_start+k)  = data(dat->start(j),data_carry[k]);
           }
         }
         // Increment current row:
@@ -442,7 +439,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     Rcpp::Rcout << "Parameters:                " << prob->npar()  << std::endl;
     Rcpp::Rcout << "Equations:                 " << neq  << std::endl;
     Rcpp::Rcout << "Requested compartments:    ";
-    for(i=0; i < nreq; i++) Rcpp::Rcout << (1+request[i]) << " ";
+    for(i=0; i < nreq; ++i) Rcpp::Rcout << (1+request[i]) << " ";
     Rcpp::Rcout << std::endl;
     Rcpp::Rcout << "OUTPUT MATRIX:             " << NN << " rows, " << n_out_col << " columns" << std::endl;
     
@@ -475,7 +472,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   double denom = 1;
   bool last_record = false;
   // LOOP ACROSS IDS:
-  for(size_t i=0; i < a.size(); i++) {
+  for(size_t i=0; i < a.size(); ++i) {
     
     std::vector<rec_ptr> thisi = a.at(i);
     
@@ -488,10 +485,10 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     if(i==0) prob->newind(0);
     
     // Copy eta values for this ID
-    for(j=0; j < neta; j++) prob->eta(j,eta(i,j));
+    for(j=0; j < neta; ++j) prob->eta(j,eta(i,j));
     
     // Copy eps values:
-    for(j=0; j < neps; j++) prob->eps(j,eps(crow,j));
+    for(j=0; j < neps; ++j) prob->eps(j,eps(crow,j));
     
     // Refresh parameters in data:
     dat->reload_parameters(inpar,prob);
@@ -510,7 +507,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     }
     
     // Calculate initial conditions:
-    for(k=0; k < neq; k++) prob->y_init(k,init[k]);
+    for(k=0; k < neq; ++k) prob->y_init(k,init[k]);
     // Copy initials from idata
     idat -> copy_inits(idat->get_idata_row(id),prob);
     // Call $MAIN
@@ -521,7 +518,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     prob->table_call();
     
     // LOOP ACROSS EACH RECORD for THIS ID:
-    for(size_t j=0; j < thisi.size(); j++) {
+    for(size_t j=0; j < thisi.size(); ++j) {
       
       if(j==0) {
         prob->solving(true);
@@ -537,13 +534,15 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       if(prob->systemoff()) {
         if(this_rec->output()) {
           if(prob->CFONSTOP()) {
-            for(int i=0; i < ntable; i++) ans(crow,(i+table_start)) = prob->table(tablenames.at(i));
-            for(int i=0; i < n_capture; i++) ans(crow,(i+capture_start)) = prob->capture(capture[i+1]);
-            for(int k=0; k < nreq;   k++) ans(crow,(k+req_start  )) = prob->y(request[k]);
+            ans(crow,0) = this_rec->id();
+            ans(crow,1) = this_rec->time();
+            for(int i=0; i < ntable; ++i)    ans(crow,(i+table_start  )) = prob->table(tablenames.at(i));
+            for(int i=0; i < n_capture; ++i) ans(crow,(i+capture_start)) = prob->capture(capture[i+1]);
+            for(int k=0; k < nreq; ++k)      ans(crow,(k+req_start    )) = prob->y(request[k]);
           } else {
             ans(crow,0) = NA_REAL;
           }
-          crow++;
+          ++crow;
         }
         continue;
       }
@@ -582,7 +581,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       
       // Only copy in a new eps value if we are actually advancing in time:
       if((tto > tfrom) && (crow < NN)) {
-        for(int k = 0; k < neps; k++) {
+        for(int k = 0; k < neps; ++k) {
           prob->eps(k,eps(crow,k));
         }
       }
@@ -614,7 +613,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         if(ev->rate() < 0) {
           if(ev->rate() == -1) {
             this_cmt = ev->cmt()-1;
-            if(prob->rate(this_cmt) <=0) {
+            if(prob->rate(this_cmt) <= 0) {
               Rcpp::Rcout << "R(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
               Rcpp::stop("Invalid infusion settings.");
             }
@@ -635,7 +634,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         // spawn a new event with no output and time modified by alag
         // disarm this event
         if((prob->alag(ev->cmt()) > mindt)) {
-  
+          
           ev->unarm();
           
           ev_ptr newev(new pkevent(ev->cmt(),
@@ -678,22 +677,25 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       prob->table_call();
       
       if(this_rec->output()) {
+        ans(crow,0) = this_rec->id();
+        ans(crow,1) = this_rec->time();
+        
         if(ntable>0) {
           k=0;
-          for(int i=0; i < ntable; i++) {
+          for(int i=0; i < ntable; ++i) {
             ans(crow,k+table_start) = prob->table(tablenames.at(i));
             ++k;
           }
         }
         if(n_capture > 0) {
           k=0;
-          for(int i=0; i < n_capture; i++) {
+          for(int i=0; i < n_capture; ++i) {
             ans(crow,k+capture_start) = prob->capture(capture[i+1]);
             ++k;
           }
         }
-        for(int k=0; k < nreq; k++) ans(crow,(k+req_start)) = prob->y(request[k]);
-        crow++;
+        for(int k=0; k < nreq; ++k) ans(crow,(k+req_start)) = prob->y(request[k]);
+        ++crow;
       } // end if ouput()
       
       
@@ -710,8 +712,8 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   
   // Significant digits in simulated variables and outputs too
-  if(digits > 0) for(int i=req_start; i < ans.ncol(); i++) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
-  if((tscale !=1) && (tscale >= 0)) ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
+  if(digits > 0) for(int i=req_start; i < ans.ncol(); ++i) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
+  if((tscale != 1) && (tscale >= 0)) ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   
   // // Assemble return List
   ret["data"] = ans;
