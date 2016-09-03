@@ -8,7 +8,7 @@
 #include <iostream>
 #include "mrgsolve.h"
 #include "odeproblem.h"
-#include "Rodeproblem.h"
+//#include "Rodeproblem.h"
 #include "pkevent.h"
 #include "dataobject.h"
 #include <map>
@@ -74,7 +74,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   int i=0,j=0,k=0;
   double time0 = 0.0;
   int crow =0,  neq=0; //
-  Rodeproblem *prob;
+  odeproblem *prob;
   size_t h=0;
   
   
@@ -166,9 +166,9 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   int size_capture = capture.at(0);
   int n_capture  = capture.size()-1;
   
-  if(debug) say("Creating Rodeproblem object");
+  if(debug) say("Creating odeproblem object");
   
-  prob  = new Rodeproblem(inpar, init);
+  prob  = new odeproblem(inpar, init);
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);

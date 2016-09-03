@@ -6,15 +6,16 @@
 #define ODEPROBLEM_H
 #include <math.h>
 #include <iostream>
+#include <memory>
 #include <vector>
 #include "odepack_dlsoda.h"
 #include <string>
 #include "mrgsolv.h"
+#include "RcppInclude.h"
 
 
 class odeproblem;
-class Rodeproblem;
-
+//class Rodeproblem;
 
 struct databox {
   unsigned int newind;
@@ -42,11 +43,18 @@ typedef void deriv_func(MRGSOLVE_ODE_SIGNATURE);
 typedef void config_func(MRGSOLVE_CONFIG_SIGNATURE);
 
 typedef void main_deriv_func(int*        neq,
-			     double*     t,
-			     double*     y,
-			     double*     ydot,
-			     odeproblem* prob);
+                             double*     t,
+                             double*     y,
+                             double*     ydot,
+                             odeproblem* prob);
 
+
+deriv_func*  as_deriv_func( SEXP derivs);
+init_func*   as_init_func(  SEXP inits);
+table_func*  as_table_func( SEXP table);
+config_func* as_config_func(SEXP config);
+
+extern "C"{DL_FUNC tofunptr(SEXP a);}
 extern "C" {init_func  MRGSOLVE_NO_INIT_FUN ;}
 extern "C" {table_func MRGSOLVE_NO_TABLE_FUN;}
 extern "C" {deriv_func MRGSOLVE_NO_ODE_FUN  ;}
@@ -69,8 +77,7 @@ class odeproblem : public odepack_dlsoda {
   //  friend class Rodeproblem;
 
  public:
-
-  odeproblem(int npar_, int neq_);
+  odeproblem(Rcpp::NumericVector param, Rcpp::NumericVector init);
 
   virtual ~odeproblem();
 
@@ -209,6 +216,15 @@ class odeproblem : public odepack_dlsoda {
   // void add_Rn(int value){Rn.insert(value);}
   // void add_rates(double* ydot);
 
+  // From Rodeproblem
+  void init_fun(SEXP ifun);
+  void table_fun(SEXP tfun);
+  void deriv_fun(SEXP dfun);
+  void config_fun(SEXP cfun);
+  
+  void copy_parin(Rcpp::List parin);
+  void copy_funs(Rcpp::List funs);
+  
  protected:
 
   //! parameters

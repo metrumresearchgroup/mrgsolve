@@ -5,7 +5,7 @@
 #include "RcppInclude.h"
 #include "mrgsolve.h"
 #include "odeproblem.h"
-#include "Rodeproblem.h"
+//#include "Rodeproblem.h"
 #include "pkevent.h"
 #include <vector>
 #include <string>
@@ -90,28 +90,28 @@ void neg_istate(int istate) {
 
 
 
-// [[Rcpp::export]]
-Rcpp::NumericVector CALLINIT(Rcpp::NumericVector Nparam, Rcpp::NumericVector Ninit, SEXP xifun) {
-  
-  Rodeproblem *prob = new Rodeproblem(Nparam,Ninit);
-  
-  int i=0;
-  int neq = prob->neq();
-  
-  prob->Rodeproblem::init_fun(xifun);
-  
-  Rcpp::NumericVector ans(neq);
-  
-  double time =0;
-  prob->time(0);
-  prob->evid(0);
-  
-  prob->init_call(time);
-  
-  for(i=0; i < neq; ++i) ans[i] = prob->init(i);
-  delete prob;
-  return(ans);
-}
+// 
+// Rcpp::NumericVector CALLINIT(Rcpp::NumericVector Nparam, Rcpp::NumericVector Ninit, SEXP xifun) {
+//   
+//   odeproblem *prob = new odeproblem(Nparam,Ninit);
+//   
+//   int i=0;
+//   int neq = prob->neq();
+//   
+//   prob->odeproblem::init_fun(xifun);
+//   
+//   Rcpp::NumericVector ans(neq);
+//   
+//   double time =0;
+//   prob->time(0);
+//   prob->evid(0);
+//   
+//   prob->init_call(time);
+//   
+//   for(i=0; i < neq; ++i) ans[i] = prob->init(i);
+//   delete prob;
+//   return(ans);
+// }
 
 
 // [[Rcpp::export]]
@@ -119,17 +119,13 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
                       Rcpp::NumericVector linit,
                       int Neta, int Neps,
                       Rcpp::CharacterVector capture,
-                      SEXP xifun, SEXP xtfun, SEXP xdfun) {
+                      Rcpp::List funs) {
   
-  
-  int i;
-  
+
   Rcpp::List ans;
   
-  Rodeproblem *prob  = new Rodeproblem(lparam, linit);
-  
-  prob->Rodeproblem::init_fun(xifun);
-  prob->Rodeproblem::table_fun(xtfun);
+  odeproblem* prob  = new odeproblem(lparam, linit);
+  prob->copy_funs(funs);
   prob->resize_capture(capture.size());
   prob->neta(Neta);
   prob->neps(Neps);
@@ -151,7 +147,7 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
   
   Rcpp::NumericVector init_val(prob->neq());
   
-  for(i=0; i < (prob->neq()); ++i) init_val[i] = init[i];
+  for(int i=0; i < (prob->neq()); ++i) init_val[i] = init[i];
   
   ans["tnames"] = tablenames;
   ans["init"] = init_val;
@@ -250,7 +246,7 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
   
   Rcpp::CharacterVector this_nam;
   Rcpp::List dnames(2);
- 
+  
   
   for(int i=0, n = a.size(); i < n; ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
@@ -318,7 +314,7 @@ void match_both (svec a, svec b, ivec& ai, ivec& bi) {
   si_map A;
   si_map B;
   svec inter;
-
+  
   for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
   for(size_t i=0; i < b.size(); ++i) B[b[i]] = i;
   

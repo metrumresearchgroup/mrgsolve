@@ -50,22 +50,9 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// CALLINIT
-Rcpp::NumericVector CALLINIT(Rcpp::NumericVector Nparam, Rcpp::NumericVector Ninit, SEXP xifun);
-RcppExport SEXP mrgsolve_CALLINIT(SEXP NparamSEXP, SEXP NinitSEXP, SEXP xifunSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type Nparam(NparamSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type Ninit(NinitSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type xifun(xifunSEXP);
-    __result = Rcpp::wrap(CALLINIT(Nparam, Ninit, xifun));
-    return __result;
-END_RCPP
-}
 // TOUCH_FUNS
-Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, int Neta, int Neps, Rcpp::CharacterVector capture, SEXP xifun, SEXP xtfun, SEXP xdfun);
-RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP xifunSEXP, SEXP xtfunSEXP, SEXP xdfunSEXP) {
+Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, int Neta, int Neps, Rcpp::CharacterVector capture, Rcpp::List funs);
+RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -74,10 +61,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type Neta(NetaSEXP);
     Rcpp::traits::input_parameter< int >::type Neps(NepsSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type capture(captureSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type xifun(xifunSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type xtfun(xtfunSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type xdfun(xdfunSEXP);
-    __result = Rcpp::wrap(TOUCH_FUNS(lparam, linit, Neta, Neps, capture, xifun, xtfun, xdfun));
+    Rcpp::traits::input_parameter< Rcpp::List >::type funs(funsSEXP);
+    __result = Rcpp::wrap(TOUCH_FUNS(lparam, linit, Neta, Neps, capture, funs));
     return __result;
 END_RCPP
 }

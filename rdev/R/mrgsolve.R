@@ -456,18 +456,13 @@ setMethod("parin", "mrgmod", function(x) {
 touch_funs <- function(x,keep_pointers=TRUE) {
   
   funp <- pointers(x)
-  
-  tfun <- funp[["table"]]
-  ifun <- funp[["main"]]
-  dfun <- funp[["ode"]]
-  cfun <- funp[["config"]]
-  
+
   param <- as.numeric(param(x))
   init <- as.numeric(x@init)
   neta <- sum(nrow(omat(x)))
   neps <- sum(nrow(smat(x)))
   
-  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,ifun, tfun, dfun)
+  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,funp)
   
   names(out$init) <- names(init)
   

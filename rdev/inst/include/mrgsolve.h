@@ -11,6 +11,7 @@ struct var  {
   int NEWIND;
   int EVID;
 };
+
 #include <R_ext/Rdynload.h>
 extern "C"{DL_FUNC tofun(SEXP a);}
 // Sort an integer vector
@@ -74,4 +75,4 @@ void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
                       Rcpp::NumericVector linit,
                       Rcpp::CharacterVector capture,
-                      SEXP xifun, SEXP xtfun, SEXP xdfun);
+                      Rcpp::List funs);
