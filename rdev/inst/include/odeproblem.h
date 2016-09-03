@@ -14,6 +14,25 @@
 #include "RcppInclude.h"
 
 
+// double get_pred_CL() {return pred[0];}
+// double get_pred_VC() {return pred[1];}
+// double get_pred_KA() {return pred[2];}
+// double get_pred_Q()  {return pred[3];}
+// double get_pred_VP() {return pred[4];}
+// double get_pred_k10(){return pred[0]/pred[1];}
+// double get_pred_k12(){return pred[3]/pred[1];}
+// double get_pred_k21(){return pred[3]/pred[4];}
+
+#define MRGSOLVE_GET_PRED_CL  (pred[0])
+#define MRGSOLVE_GET_PRED_VC  (pred[1])
+#define MRGSOLVE_GET_PRED_KA  (pred[2])
+#define MRGSOLVE_GET_PRED_Q   (pred[3])
+#define MRGSOLVE_GET_PRED_VP  (pred[4])
+#define MRGSOLVE_GET_PRED_K10 (pred[0]/pred[1])
+#define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1])
+#define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4])
+
+
 class odeproblem;
 
 struct databox {
@@ -200,14 +219,7 @@ class odeproblem : public odepack_dlsoda {
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}
   void  resize_capture(size_t n) {Capture.assign(int(n),0.0);}
-  double get_pred_CL() {return pred[0];}
-  double get_pred_VC() {return pred[1];}
-  double get_pred_KA() {return pred[2];}
-  double get_pred_Q()  {return pred[3];}
-  double get_pred_VP() {return pred[4];}
-  double get_pred_k10(){return pred[0]/pred[1];}
-  double get_pred_k12(){return pred[3]/pred[1];}
-  double get_pred_k21(){return pred[3]/pred[4];}
+
 
   // SAVE
   // int nRn(){return Rn.size();}
