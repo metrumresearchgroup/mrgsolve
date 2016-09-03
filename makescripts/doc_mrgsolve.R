@@ -25,6 +25,7 @@ foo$mod <- mrgsolve:::embed_details(foo$mod)
 
 
 
+
 cpp <- normalizePath(foo$source)
 
 x <- file.copy(cpp, file.path(pkg, "src"),overwrite=TRUE)

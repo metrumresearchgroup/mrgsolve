@@ -95,5 +95,6 @@ embed_details <- function(x,...) {
   stopifnot(is.mrgmod(x))
   x@annot[["data"]] <- details(x)
   x@annot[["embedded"]] <- TRUE
+  x@annot[["file"]] <- ""
   return(x)
 }
