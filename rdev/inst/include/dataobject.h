@@ -49,6 +49,7 @@ public:
   int col_n(std::string name) {return col.at(name);}
   void check_idcol(dataobject* data);
   double get_value(int row, int col) {return Data(row,col);}
+  Rcpp::IntegerVector get_col_n(Rcpp::CharacterVector what);
   //Rcpp::List ex_port();
 
  protected:

@@ -65,6 +65,14 @@ void dataobject::map_uid() {
   Endrow.push_back(Data.nrow()-1);
 }
 
+
+Rcpp::IntegerVector dataobject::get_col_n(Rcpp::CharacterVector what) {
+  Rcpp::IntegerVector ret = Rcpp::match(what, Data_names);
+  ret = Rcpp::na_omit(ret);
+  return(ret-1);
+}
+
+
 void dataobject::locate_tran() {
   
   int zeros = Data.ncol()-1;
@@ -276,6 +284,10 @@ void dataobject::check_idcol(dataobject* data) {
   if(inter!=uthis) Rcpp::stop("ID found in the data set, but not in idata.");
   
 }
+
+
+
+
 // 
 // 
 // Rcpp::List dataobject::ex_port() {

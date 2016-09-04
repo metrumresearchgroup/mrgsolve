@@ -58,10 +58,6 @@ lctran <- function(data) {
   data
 }
 
-ifmatch <- function(a,b,off=-1) {
-  ans <- match(a,b)
-  return(ans[!is.na(ans)] + as.integer(off))
-}
 
 validate_idata <- function(idata) {
   if(is.null(idata)) return(invisible(TRUE))
@@ -342,8 +338,8 @@ tran_mrgsim <- function(x,
   parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
   parin$filbak <- filbak
   
-  parin$carry_data <- ifmatch(carry.data,colnames(data))
-  parin$carry_idata <- ifmatch(carry.idata,colnames(idata))
+  parin$carry_data <- carry.data 
+  parin$carry_idata <- carry.idata 
   
   # This has to be lower case; that's all we're looking for
   parin$carry_tran <- tolower(carry.tran)

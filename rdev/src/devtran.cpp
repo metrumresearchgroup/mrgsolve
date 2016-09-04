@@ -140,8 +140,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   // These are the requested columns.
   Rcpp::IntegerVector request;
-  ivec data_carry, idata_carry;
-  svec tran_carry;
+  
   
   // Number of requested compartments
   // Number of items from data carried into answer
@@ -151,20 +150,27 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   request = parin["request"];
   nreq = request.size();
-  
+
   // Columns from the data set to carry:
-  data_carry = Rcpp::as<ivec >(parin["carry_data"]);
+  Rcpp::CharacterVector data_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
+  Rcpp::IntegerVector data_carry =  dat->get_col_n(data_carry_);
   n_data_carry = data_carry.size();
   
-  // Tran Items to carry:
-  tran_carry = Rcpp::as<svec >(parin["carry_tran"]);
-  n_tran_carry = tran_carry.size();
-  
+  // Columns from the data set to carry:
+  Rcpp::IntegerVector idata_carry;  
   if(idata.nrow()>0) {
-    idata_carry = Rcpp::as<ivec>(parin["carry_idata"]);
+    Rcpp::CharacterVector idata_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
+    idata_carry =  idat->get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
   }
   
+  
+  // Tran Items to carry:
+  svec tran_carry;
+  tran_carry = Rcpp::as<svec >(parin["carry_tran"]);
+  n_tran_carry = tran_carry.size();
+
+    
   // Vector of simulation times
   // only active if no evid=0 records in data (cleared out in that case).
   dvec stimes = Rcpp::as<dvec>(parin["stimes"]);
