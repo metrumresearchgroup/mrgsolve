@@ -257,12 +257,6 @@ void odeproblem::INITSOLV() {
   this->lsoda_init();
 }
 
-// void odeproblem::set_omatrix(Rcpp::NumericMatrix* x_) {
-//   arma::mat OMEGA( (*x_).begin(), (*x_).nrow(), (*x_).ncol(), false);
-//   arma::mat* foo = &OMEGA;
-//   d.omatrix = reinterpret_cast<void*>(foo);
-// }
-
 void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);
 }

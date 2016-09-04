@@ -23,8 +23,7 @@ tgrid_matrix <- function(...) {
   x <- lapply(x,stime)
   n <- sapply(x,length)
   x <- lapply(x,function(x) {length(x) <- max(n); x})
-  m <- matrix(unlist(x), ncol=length(n))
-  m
+  matrix(unlist(x), ncol=length(n))
 }
 
 tgrid_id <- function(col,idata) {
@@ -59,22 +58,10 @@ lctran <- function(data) {
   data
 }
 
-match_param <- function(a,b,off=-1) {
-  ans1 <- match(a,b)
-  ans2 <- match(b[ans1],a)
-  list(par.loc=(ans1[!is.na(ans1)] + as.integer(off)), data.loc=(ans2[!is.na(ans2)] + as.integer(off)))
-}
-
 ifmatch <- function(a,b,off=-1) {
   ans <- match(a,b)
   return(ans[!is.na(ans)] + as.integer(off))
 }
-
-fmatch <- function(x,y) {
-  x <- match(x,y,0)
-  sort(x,decreasing=TRUE)
-}
-
 
 validate_idata <- function(idata) {
   if(is.null(idata)) return(invisible(TRUE))
@@ -82,9 +69,6 @@ validate_idata <- function(idata) {
     stop("idata needs to be either NULL, data.frame, or matrix.")
   return(invisible(TRUE))
 }
-
-
-
 
 
 ##' Simulate from a model object.
@@ -317,7 +301,6 @@ tran_mrgsim <- function(x,
   rename.carry <- set_altname(as.cvec2(carry.out))
   carry.out <- as.character(rename.carry)
   
-  
   trequest <- as.cvec(trequest)
   
   ## Set the seed:
@@ -443,7 +426,9 @@ setGeneric("parin", function(x) standardGeneric("parin"))
 setMethod("parin", "mrgmod", function(x) {
   list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
        maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
-       digits=x@digits, tscale=x@tscale,stimes=stime(x),mindt=x@mindt, advan=x@advan)
+       digits=x@digits, tscale=x@tscale,
+       ##stimes=stime(x),
+       mindt=x@mindt, advan=x@advan)
 })
 
 

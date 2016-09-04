@@ -21,12 +21,23 @@
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
 
+
+/* Main simulation function.
+ * 
+ * @param parin list of data and options for the simulation
+ * @param inpar numeric parameter values
+ * @param parnames_ parameter names
+ * @param init numeric initial values
+ * @param cmtnames_ compartment names
+ *
+ */
+
 // [[Rcpp::export]]
 Rcpp::List DEVTRAN(Rcpp::List parin,
                    Rcpp::NumericVector inpar,
-                   Rcpp::CharacterVector parnames_,
+                   Rcpp::CharacterVector parnames,
                    Rcpp::NumericVector init,
-                   Rcpp::CharacterVector cmtnames_,
+                   Rcpp::CharacterVector cmtnames,
                    Rcpp::IntegerVector capture,
                    Rcpp::List funs,
                    Rcpp::NumericMatrix data,
@@ -34,9 +45,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
                    Rcpp::NumericMatrix OMEGA,
                    Rcpp::NumericMatrix SIGMA) {
   
-  svec parnames = Rcpp::as<svec>(parnames_);
-  svec cmtnames = Rcpp::as<svec>(cmtnames_);
-  for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
+  
   
   unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   bool debug            = Rcpp::as<bool>   (parin["debug"]  );
@@ -61,7 +70,9 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   dat->map_uid();
   dat->locate_tran();
   
-  dataobject *idat = new dataobject(idata, parnames,cmtnames);
+  // Really only need cmtnames to get initials from idata
+  for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
+  dataobject *idat = new dataobject(idata, parnames, cmtnames);
   idat -> map_uid();
   idat -> idata_row();
   
@@ -307,23 +318,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   const unsigned int req_start = idata_carry_start+n_idata_carry;
   const unsigned int table_start = req_start+nreq;
   const unsigned int capture_start = table_start+ntable;
-  
-  // Fill in id and time:
-  /// This happens no matter what
-  //if(debug) Rcpp::Rcout << "Filling in time and ID ... " << std::endl;
-  //crow = 0; // current row counter:
-  // for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
-  //   for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
-  //     // Only if this is an output record:
-  //     // may not be output record if obsonly was TRUEs
-  //     if((*itt)->output()) {
-  //       ans(crow, 0) = (*itt)->id();
-  //       ans(crow,1) = (*itt)->time();
-  //       crow++;
-  //     }
-  //   }
-  // }
-  
   
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;

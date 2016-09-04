@@ -19,26 +19,12 @@ double digits(const double& a, const double& b) {
 }
 
 
-int find_position(std::string what, const svec& table) {
-  svec::const_iterator svit = std::find(table.begin(), table.end(), what);
-  if(svit==table.end()) return(-1);
-  return(svit - table.begin());
+int find_position(Rcpp::CharacterVector what, Rcpp::CharacterVector& table) {
+  Rcpp::IntegerVector ma = Rcpp::match(what,table);
+  if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
+  return(ma[0]-1);
 }
 
-
-
-// [[Rcpp::export]]
-void test_stop() {
-  Rcpp::stop("This is an error message from Rcpp::stop.");
-}
-
-
-Rcpp::IntegerVector stl_sort(Rcpp::IntegerVector x) {
-  //http://gallery.rcpp.org/articles/sorting/
-  Rcpp::IntegerVector y = clone(x);
-  std::sort(y.begin(), y.end());
-  return y;
-}
 
 
 extern "C" {void mrgsolve_no_init_function(double *y,  std::vector<double>& param) {}}
@@ -89,30 +75,6 @@ void neg_istate(int istate) {
 
 
 
-// 
-// Rcpp::NumericVector CALLINIT(Rcpp::NumericVector Nparam, Rcpp::NumericVector Ninit, SEXP xifun) {
-//   
-//   odeproblem *prob = new odeproblem(Nparam,Ninit);
-//   
-//   int i=0;
-//   int neq = prob->neq();
-//   
-//   prob->odeproblem::init_fun(xifun);
-//   
-//   Rcpp::NumericVector ans(neq);
-//   
-//   double time =0;
-//   prob->time(0);
-//   prob->evid(0);
-//   
-//   prob->init_call(time);
-//   
-//   for(i=0; i < neq; ++i) ans[i] = prob->init(i);
-//   delete prob;
-//   return(ans);
-// }
-
-
 // [[Rcpp::export]]
 Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
                       Rcpp::NumericVector linit,
@@ -120,7 +82,7 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
                       Rcpp::CharacterVector capture,
                       Rcpp::List funs) {
   
-
+  
   Rcpp::List ans;
   
   odeproblem* prob  = new odeproblem(lparam, linit);
@@ -196,17 +158,12 @@ Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix OMEGA, int n2, Rcpp::NumericMatrix 
 }
 
 
-Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x) {
-  Rcpp::List dimnames = x.attr("dimnames");
-  return(dimnames[1]);
-}
-
-// void asSDmap(sd_map& out, Rcpp::List x) {
-//   Rcpp::CharacterVector names = x.attr("names");
-//   for(int i=0; i < x.size(); ++i) {
-//     out[std::string(names[i])] = Rcpp::as<double>(x[i]);
-//   }
+// Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x) {
+//   Rcpp::List dimnames = x.attr("dimnames");
+//   return(dimnames[1]);
 // }
+
+
 
 //[[Rcpp::export]]
 void decorr(Rcpp::NumericMatrix x) {
@@ -308,63 +265,28 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
 
 
 
-void match_both (svec a, svec b, ivec& ai, ivec& bi) {
-  
-  si_map A;
-  si_map B;
-  svec inter;
-  
-  for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
-  for(size_t i=0; i < b.size(); ++i) B[b[i]] = i;
-  
-  std::sort(a.begin(), a.end());
-  std::sort(b.begin(), b.end());
-  
-  std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
-                        std::back_inserter(inter));
-  
-  ai.resize(inter.size());
-  for(size_t i=0; i < inter.size(); ++i) ai[i] = A[inter[i]];
-  
-  bi.resize(inter.size());
-  for(size_t i=0; i < inter.size(); ++i) bi[i] = B[inter[i]];
-  
-}
-
-
-void match_one (svec a, svec b, ivec& ret) {
-  
-  si_map A;
-  svec inter;
-  
-  for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
-  
-  std::sort(a.begin(), a.end());
-  std::sort(b.begin(), b.end());
-  
-  std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
-                        std::back_inserter(inter));
-  ret.resize(inter.size());
-  for(size_t i=0; i < inter.size(); ++i) ret[i] = A[inter[i]];
-}
-
-//[[Rcpp::export]]
-Rcpp::List map_data_set(Rcpp::NumericMatrix data_, Rcpp::NumericVector inpar,bool lc_) {
-  
-  svec parnames = Rcpp::as<svec>(inpar.attr("names"));
-  
-  dataobject* data = new dataobject(data_,parnames);
-  
-  data->map_uid();
-  data->locate_tran();
-  data -> idata_row();
-  Rcpp::List ans = data->ex_port();
-  
-  delete data;
-  
-  return(ans);
-}
-
+// void match_both (svec a, svec b, ivec& ai, ivec& bi) {
+//   
+//   si_map A;
+//   si_map B;
+//   svec inter;
+//   
+//   for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
+//   for(size_t i=0; i < b.size(); ++i) B[b[i]] = i;
+//   
+//   std::sort(a.begin(), a.end());
+//   std::sort(b.begin(), b.end());
+//   
+//   std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
+//                         std::back_inserter(inter));
+//   
+//   ai.resize(inter.size());
+//   for(size_t i=0; i < inter.size(); ++i) ai[i] = A[inter[i]];
+//   
+//   bi.resize(inter.size());
+//   for(size_t i=0; i < inter.size(); ++i) bi[i] = B[inter[i]];
+//   
+// }
 
 
 //[[Rcpp::export]]
@@ -389,43 +311,21 @@ Rcpp::List get_tokens(Rcpp::CharacterVector code) {
 }
 
 
-
 //[[Rcpp::export]]
-Rcpp::List get_sep_tokens(Rcpp::CharacterVector code) {
+void from_to(const Rcpp::CharacterVector a, 
+             const Rcpp::CharacterVector b,
+             Rcpp::IntegerVector& ai,
+             Rcpp::IntegerVector& bi) {
   
-  Rcpp::List ret(code.size());
+  ai = Rcpp::match(b,a)-1;
+  bi = Rcpp::match(a,b)-1;
   
-  std::string sep1("\\");
-  std::string sep2(";,");
-  std::string sep3("\"\'");//let it have quoted arguments
-  boost::escaped_list_separator<char>sep(sep1,sep2,sep3);
-  for(int i = 0; i < code.size(); ++i) {
-    Rcpp::CharacterVector tokens;
-    std::string s = Rcpp::as<std::string>(code[i]);
-    
-    so_tokenizer tok(s,sep);
-    for(so_tokenizer::iterator beg=tok.begin(); beg!=tok.end();++beg){
-      tokens.push_back(*beg);
-    }
-    ret[i] = tokens;
-  }
+  ai = na_omit(ai);
+  bi = na_omit(bi);
   
+  std::sort(ai.begin(), ai.end());
   
-  Rcpp::List ans;
-  ans["tokens"] = ret;
-  return ans;
 }
-
-
-//[[Rcpp::export]]
-void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_) {
-  Rcpp::NumericMatrix* a = reinterpret_cast<Rcpp::NumericMatrix*>(R_ExternalPtrAddr(loc));
-  *a = omega_;
-  return; 
-}
-
-
-
 
 
 

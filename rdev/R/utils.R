@@ -273,14 +273,7 @@ setMethod("unloadso", "mrgmod", function(x, ...) {
 
 
 is.mt <- function(x) {return(is.null(x) | length(x)==0)}
-#is.string <- function(x) {return(is.character(x) & length(x)==1)}
-#has.names <- function(x) {return(!is.mt(names(x)))}
 
-
-## NEEDED: keep
-# ininit.mrgmod <- function(x,thislist) {
-#     names(thislist) %in% names(init(x))
-# }
 
 ##' Merge two lists
 ##'
@@ -319,16 +312,6 @@ merge.list <- function(x,y,...,strict=TRUE,
   }
   left
 }
-
-# blank_names <- function(x,y="") {
-#     if(is.null(names(x))) return(rep(y,length(x)))
-#     return(names(x))
-# }
-# fillin_names <- function(x,y="..none", z="..") {
-#     i <- which(names(x)=="")
-#     names(x)[i] <- paste0(y,i,z)
-#     x
-# }
 
 render_time <- function(x) {
     add <- times <- numeric(0)
@@ -403,12 +386,6 @@ as.matrix.list <- function(x,...,nrow=1) {
            )
 }
 
-# ctack <- function(x,...) UseMethod("ctack")
-# ctack.matrix <- function(x,...) {
-#     args <- list(...)
-#     if(length(args)==0) stop("no arguments passed")
-#     cbind(x,matrix(unlist(args), ncol=length(args), nrow=nrow(x),byrow=TRUE, dimnames=list(NULL,names(args))))
-# }
 
 bind_col <- function(x,y,z) {
     cbind(x,matrix(z,ncol=1, nrow=nrow(x), byrow=TRUE, dimnames=list(NULL, y)))
@@ -557,10 +534,10 @@ render_errors <- function(x) {
     paste(x, collapse="\n")
 }
 
-test_stop <- function() {
-    foo <- try(.Call("mrgsolve_test_stop", package="mrgsolve"))
-    return(foo)
-}
+# test_stop <- function() {
+#     foo <- try(.Call("mrgsolve_test_stop", package="mrgsolve"))
+#     return(foo)
+# }
 
 idata <- function(...,KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) {
     stop("idata is deprecated.")
@@ -683,9 +660,9 @@ blocks_ <- function(file,what) {
     cat(paste0(x1,unlist(bl)), sep="\n\n")
 }
 
-map_data_set <- function(dd,inpar) {
-    .Call("mrgsolve_map_data_set", data.matrix(dd),inpar, PACKAGE="mrgsolve")
-}
+# map_data_set <- function(dd,inpar) {
+#     .Call("mrgsolve_map_data_set", data.matrix(dd),inpar, PACKAGE="mrgsolve")
+# }
 
 
 

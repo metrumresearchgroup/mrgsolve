@@ -21,8 +21,12 @@ class dataobject {
 
 public:
 
-  dataobject(Rcpp::NumericMatrix _data, svec _parnames);
-  dataobject(Rcpp::NumericMatrix _data, svec _parnames, svec _initnames);
+  dataobject(Rcpp::NumericMatrix _data, 
+             Rcpp::CharacterVector _parnames);
+  
+  dataobject(Rcpp::NumericMatrix _data, 
+             Rcpp::CharacterVector _parnames, 
+             Rcpp::CharacterVector _initnames);
 
   virtual ~dataobject();
 
@@ -45,7 +49,7 @@ public:
   int col_n(std::string name) {return col.at(name);}
   void check_idcol(dataobject* data);
   double get_value(int row, int col) {return Data(row,col);}
-  Rcpp::List ex_port();
+  //Rcpp::List ex_port();
 
  protected:
 
@@ -54,19 +58,17 @@ public:
   ivec Endrow;
   int Idcol;
   Rcpp::NumericMatrix Data;
-  svec Data_names;
+  Rcpp::CharacterVector Data_names;
 
   si_map col;
-  ivec par_from;  // data set index
-  ivec par_to;    // parameter list index
-  svec parnames;
+  Rcpp::IntegerVector par_from;  // data set index
+  Rcpp::IntegerVector par_to;    // parameter list index
+  Rcpp::CharacterVector parnames;
   di_map idmap;
 
-  ivec cmt_from; // data set index
-  ivec cmt_to;  // cmt index
-  svec cmtnames;
-
-
+  Rcpp::IntegerVector cmt_from; // data set index
+  Rcpp::IntegerVector cmt_to;  // cmt index
+  Rcpp::CharacterVector cmtnames;
 };
 
 
