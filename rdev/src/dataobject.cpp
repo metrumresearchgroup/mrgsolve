@@ -150,7 +150,7 @@ void dataobject::idata_row() {
 void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t i;
   for(i=0; i < par_from.size(); ++i) {
-    prob->param(par_to.at(i),Data(this_row,par_from.at(i)));
+    prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
 
@@ -160,7 +160,7 @@ void dataobject::copy_inits(int this_row, odeproblem* prob) {
   // this should only be done from idata sets
   size_t i;
   for(i=0; i < cmt_from.size(); ++i) {
-    prob->y_init(cmt_to.at(i),Data(this_row,cmt_from.at(i)));
+    prob->y_init(cmt_to[i],Data(this_row,cmt_from[i]));
   }
 }
 
