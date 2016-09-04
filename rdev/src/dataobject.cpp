@@ -23,7 +23,6 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
   // Connect Names in the data set with positions in the parameter list
-  //match_both(Data_names, parnames, par_from, par_to);
   from_to(Data_names,parnames, par_from, par_to);
 }
 
@@ -41,8 +40,6 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
   // Connect Names in the data set with positions in the parameter list
-  //match_both(Data_names, parnames, par_from, par_to);
-  //match_both(Data_names, cmtnames, cmt_from,cmt_to);
   from_to(Data_names, parnames, par_from, par_to);
   from_to(Data_names, cmtnames, cmt_from, cmt_to);
 }

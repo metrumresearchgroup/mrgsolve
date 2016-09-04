@@ -334,6 +334,7 @@ tran_mrgsim <- function(x,
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
   request <- intersect(request,cmt(x))
+  #parint$request <- request
   parin$request <- match(request, cmt(x));
   parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
   parin$filbak <- filbak
