@@ -304,6 +304,18 @@ specSIGMA <- function(x,env,...) {
   return(NULL)
 }
 
+eval_ENV_block <- function(x,...) {
+  e <- new.env()
+  if(is.null(x)) return(e)
+  file <- tempfile()
+  cat(file=file,x, sep="\n")
+  x <- try(source(file,local=e))
+  if(inherits(x,"try-error")) {
+    stop("Failed to parse code in $ENV",call.=FALSE) 
+  }
+  return(e)
+}  
+
 
 ## S3 methods for processing code blocks
 ## All of these need to be exported
@@ -325,11 +337,11 @@ handle_spec_block.default <- function(x,...) return(x)
 PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
   
   if(annotated) {
-    l <- parse_annot(x,block="PARAM")
+    l <- parse_annot(x,block="PARAM",envir=env$ENV)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["param"]][[pos]] <- tolist(x)  
+    env[["param"]][[pos]] <- tolist(x,envir=env$ENV)  
   }
   return(NULL)
 }
@@ -351,11 +363,11 @@ handle_spec_block.specPARAM <- function(x,...) {
 ##' 
 FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   if(annotated) {
-    l <- parse_annot(x,block="FIXED")
+    l <- parse_annot(x,block="FIXED",envir=env$ENV)
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["fixed"]][[pos]] <- tolist(x)  
+    env[["fixed"]][[pos]] <- tolist(x,envir=env$ENV)  
   }
   return(NULL)
 }
@@ -378,7 +390,7 @@ handle_spec_block.specFIXED <- function(x,...) {
 THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
   
   if(annotated) {
-    l <- parse_annot(x,noname=TRUE,block="THETA")
+    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
     x <- as.numeric(as.cvec(x))
@@ -407,11 +419,11 @@ handle_spec_block.specTHETA <- function(x,...) {
 ##' 
 INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   if(annotated) {
-    l <- parse_annot(x,block="INIT")
+    l <- parse_annot(x,block="INIT",envir=env$ENV)
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["init"]][[pos]] <- tolist(x)  
+    env[["init"]][[pos]] <- tolist(x,envir=env$ENV)  
   }
   return(NULL)
 }
@@ -434,7 +446,7 @@ handle_spec_block.specINIT <- function(x,...) {
 CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CMT")
+    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } 
@@ -453,8 +465,6 @@ handle_spec_block.specVCMT <- handle_spec_block.specCMT
 ##' @export
 handle_spec_block.specSET <- function(x,...) tolist(x)
 ##' @export
-handle_spec_block.specENV <- function(x,...) tolist(x)
-##' @export
 handle_spec_block.specOMEGA <- function(x,...) specOMEGA(x,...)
 ##' @export
 handle_spec_block.specSIGMA <- function(x,...) specSIGMA(x,...)
@@ -465,7 +475,7 @@ handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
 
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CAPTURE")
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } 

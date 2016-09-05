@@ -7,14 +7,14 @@ render_annot <- function(x,block,...) {
 }
 
 
-parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.') {
+parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',...) {
   ## x is a list
   if(is.null(x)) return(NULL)
   x <- x[nchar(x)>0]
   x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname)
   nm <- s_pick(x,"name")
   v <-  s_pick(x,"value")
-  v <- setNames(tolist(paste(v,collapse=",")),nm)
+  v <- setNames(tolist(paste(v,collapse=","),...),nm)
   an <- lapply(x,"[", c("name","descr", "unit","options"))
   an <-  render_annot(an,block)
   list(v=v,an=an,nm=nm)
