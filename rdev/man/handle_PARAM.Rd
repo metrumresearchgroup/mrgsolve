@@ -4,7 +4,7 @@
 \alias{PARAM}
 \title{Parse \code{$PARAM} block.}
 \usage{
-PARAM(x, env, annotated = FALSE, pos = 1, ...)
+PARAM(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 }
 \arguments{
 \item{x}{data}

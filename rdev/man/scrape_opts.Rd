@@ -4,8 +4,8 @@
 \alias{scrape_opts}
 \title{Scrape options from a code block.}
 \usage{
-scrape_opts(x, def = list(), all = FALSE, marker = "=>?",
-  narrow = FALSE, split = TRUE)
+scrape_opts(x, envir = list(), def = list(), all = FALSE,
+  marker = "=>?", narrow = FALSE, split = TRUE)
 }
 \arguments{
 \item{x}{data}

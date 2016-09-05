@@ -212,7 +212,7 @@ opts_only <- function(x,def=list(),all=FALSE) {
 ##' as specified in the block.
 ##' 
 ##' 
-scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
+scrape_opts <- function(x,envir=list(),def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
   
@@ -231,7 +231,7 @@ scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=T
   
   opts <- option_line(x[opts])
   
-  opts <- merge(def, tolist(opts),strict=!all,warn=FALSE,context="opts")
+  opts <- merge(def, tolist(opts,envir=envir),strict=!all,warn=FALSE,context="opts")
   opts$x <- NULL
   
   c(list(x=data), opts)
@@ -252,7 +252,7 @@ scrape_and_pass <- function(x,pass,...) {
 ##' @details Attributes of \code{x} are also scraped and merged with options.
 ##' 
 scrape_and_call <- function(x,env,pass,...) {
-  o <- scrape_opts(x,...)
+  o <- scrape_opts(x,envir=env$ENV,...)
   o$pos <- o$env <- o$class <- NULL
   o <- c(o,attributes(x),list(env=env))
   do.call(pass,o)
@@ -276,11 +276,13 @@ parseLIST <- function(x,where,env,...) {
 }
 
 ## Used to parse OMEGA and SIGMA matrix blocks
-specMATRIX <- function(x,class) {
+specMATRIX <- function(x,class,env,...) {
   
   if(length(x)==0) stop("No data found in matrix block.")
   
-  ret <- scrape_and_pass(x,"modMATRIX",def=list(name="...",prefix=""), all=TRUE)
+  ret <- scrape_and_pass(x,"modMATRIX",
+                         def=list(name="...",prefix="", object=NULL,envir=env$ENV), 
+                         all=TRUE)
   
   if(is.null(ret[["opts"]][["labels"]])) {
     ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
@@ -294,12 +296,12 @@ specMATRIX <- function(x,class) {
 }
 
 specOMEGA <- function(x,env,...) {
-  m <- specMATRIX(x,"omega_block")
+  m <- specMATRIX(x,"omega_block",env,...)
   env[["omega"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
 specSIGMA <- function(x,env,...) {
-  m <- specMATRIX(x,"sigma_block")
+  m <- specMATRIX(x,"sigma_block",env,...)
   env[["sigma"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
@@ -307,9 +309,7 @@ specSIGMA <- function(x,env,...) {
 eval_ENV_block <- function(x,...) {
   e <- new.env()
   if(is.null(x)) return(e)
-  file <- tempfile()
-  cat(file=file,x, sep="\n")
-  x <- try(source(file,local=e))
+  x <- try(eval(parse(text=x),envir=e))
   if(inherits(x,"try-error")) {
     stop("Failed to parse code in $ENV",call.=FALSE) 
   }
@@ -334,17 +334,23 @@ handle_spec_block.default <- function(x,...) return(x)
 ##' 
 ##' @rdname handle_PARAM
 ##' 
-PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
+PARAM <- function(x,env,annotated=FALSE,pos=1,object = NULL,...) {
   
   if(annotated) {
     l <- parse_annot(x,block="PARAM",envir=env$ENV)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["param"]][[pos]] <- tolist(x,envir=env$ENV)  
+    if(!is.null(object)) {
+      x <- get(object,env$ENV) 
+    } else {
+      x <- tolist(x,envir=env$ENV) 
+    }
+    env[["param"]][[pos]] <- x
   }
   return(NULL)
 }
+
 ##' @export
 handle_spec_block.specPARAM <- function(x,...) {
   scrape_and_call(x,pass="PARAM",split=FALSE,all=TRUE,narrow=TRUE,...)

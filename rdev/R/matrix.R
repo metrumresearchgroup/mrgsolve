@@ -53,6 +53,7 @@ numeric2diag <- function(x,prefix=NULL) {
 ##' @param block logical; if TRUE, try to make a block matrix; diagonal otherwise
 ##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE
 ##' @param digits if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning
+##' @param envir environment from \code{$ENV}
 ##' @param ... passed along
 ##'
 ##' @examples
@@ -67,8 +68,11 @@ numeric2diag <- function(x,prefix=NULL) {
 ##' @export
 ##'
 ##'
-modMATRIX <- function(x,name="",use=TRUE,block=FALSE,correlation=FALSE,digits=-1,...) {
+modMATRIX <- function(x,name="",use=TRUE,block=FALSE,correlation=FALSE,digits=-1,object=NULL,envir=list(),...) {
+  
+  if(!is.null(object)) return(get(object,envir))
   if(length(x)==0) return(matrix(nrow=0,ncol=0))
+  
   if(correlation) block <- TRUE
   if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
   if(!use) x <- rep(0,length(x))
