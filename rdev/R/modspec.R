@@ -263,7 +263,7 @@ scrape_and_call <- function(x,env,pass,...) {
 ## Functions for handling code blocks
 parseNMXML <- function(x,env,...) {
   pos <- attr(x,"pos")
-  x <- tolist(x)
+  x <- tolist(x,envir=env$ENV)
   xml <- do.call(nmxml,x)
   env[["param"]][[pos]] <- xml$theta
   env[["omega"]][[pos]] <- xml$omega
@@ -365,17 +365,23 @@ handle_spec_block.specPARAM <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos parse position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_FIXED
 ##' 
-FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
+FIXED <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
   if(annotated) {
     l <- parse_annot(x,block="FIXED",envir=env$ENV)
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["fixed"]][[pos]] <- tolist(x,envir=env$ENV)  
+    if(!is.null(object)) {
+      x <- get(object,env$ENV) 
+    } else {
+      x <- tolist(x,envir=env$ENV) 
+    }
+    env[["fixed"]][[pos]] <- x
   }
   return(NULL)
 }
@@ -401,7 +407,7 @@ THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
-    x <- as.numeric(as.cvec(x))
+    x <- tolist(paste0(as.cvec(x),collapse=','),envir=env$ENV)
   }
   
   x <- x[!is.na(x)]
