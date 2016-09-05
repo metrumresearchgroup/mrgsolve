@@ -54,6 +54,7 @@ numeric2diag <- function(x,prefix=NULL) {
 ##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE
 ##' @param digits if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning
 ##' @param envir environment from \code{$ENV}
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed along
 ##'
 ##' @examples

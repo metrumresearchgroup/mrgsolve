@@ -20,6 +20,8 @@ modMATRIX(x, name = "", use = TRUE, block = FALSE, correlation = FALSE,
 
 \item{digits}{if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning}
 
+\item{object}{the (character) name of a \code{list} in \code{$ENV} to use for block output}
+
 \item{envir}{environment from \code{$ENV}}
 
 \item{...}{passed along}

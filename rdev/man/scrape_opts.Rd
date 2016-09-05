@@ -10,6 +10,8 @@ scrape_opts(x, envir = list(), def = list(), all = FALSE,
 \arguments{
 \item{x}{data}
 
+\item{envir}{environment from \code{$ENV}}
+
 \item{def}{default values}
 
 \item{all}{return all options, even those that are not in \code{def}}

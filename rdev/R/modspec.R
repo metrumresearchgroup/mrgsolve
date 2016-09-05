@@ -207,6 +207,7 @@ opts_only <- function(x,def=list(),all=FALSE) {
 ##' @param marker assignment operator; used to locate lines with options
 ##' @param narrow logical; if \code{TRUE}, only get options on lines starting with \code{>>}
 ##' @param split logical; if \code{TRUE}, \code{x} is split on whitespace
+##' @param envir environment from \code{$ENV}
 ##' 
 ##' @return list with elements \code{x} (the data without options) and named options 
 ##' as specified in the block.
@@ -282,7 +283,7 @@ specMATRIX <- function(x,class,env,...) {
   
   ret <- scrape_and_pass(x,"modMATRIX",
                          def=list(name="...",prefix="", object=NULL,envir=env$ENV), 
-                         all=TRUE)
+                         all=TRUE,envir=env$ENV)
   
   if(is.null(ret[["opts"]][["labels"]])) {
     ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
@@ -330,6 +331,7 @@ handle_spec_block.default <- function(x,...) return(x)
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_PARAM
@@ -419,17 +421,23 @@ handle_spec_block.specTHETA <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_INIT
 ##' 
-INIT <- function(x,env,annotated=FALSE,pos=1,...) {
+INIT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
   if(annotated) {
     l <- parse_annot(x,block="INIT",envir=env$ENV)
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["init"]][[pos]] <- tolist(x,envir=env$ENV)  
+    if(!is.null(object)) {
+      x <- get(object,env$ENV)
+    }  else {
+      x <- tolist(x,envir=env$ENV) 
+    }
+    env[["init"]][[pos]] <- x
   }
   return(NULL)
 }
@@ -484,9 +492,10 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
-  } 
+  }
   return(tovec(x))
 }
+
 ##' @export
 handle_spec_block.specCAPTURE <- function(x,...) {
   scrape_and_call(x,pass="CAPTURE",split=FALSE,all=TRUE,...)
