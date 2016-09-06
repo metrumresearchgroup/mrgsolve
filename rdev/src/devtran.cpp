@@ -207,19 +207,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   //if(debug) say("Allocating the record stack.");
   
   recstack a(NID);
-  // if(data.ncol()>1) {
-  //   // if data is full, this will be all observations and events;
-  //   // if data is condensed, this will be just events and observations from stimes
-  //   if(debug) say("Resizing ...");
-  //   for(recstack::iterator it = a.begin(); it !=a.end(); ++it) {
-  //     i = it - a.begin();
-  //     (*it).resize((dat->end(i) - dat->start(i))+1);
-  //   }
-  //   if(debug) say("done.");
-  // }
-  
-
-  
 
   // dataobject.cpp
   // Extract data records from the data set

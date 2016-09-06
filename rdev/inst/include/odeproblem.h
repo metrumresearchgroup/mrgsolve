@@ -133,6 +133,7 @@ class odeproblem : public odepack_dlsoda {
 
   // param:
 
+  dvec::const_iterator paramit() {return Param.begin();}  
   dvec& param() {return Param;}
   void param(int pos, double value){Param[pos] = value;}
   double param(int pos){return Param[pos];}

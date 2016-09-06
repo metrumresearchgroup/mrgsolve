@@ -11,6 +11,14 @@
 #include "mrgsolv.h"
 
 
+#define _COL_amt_   0u
+#define _COL_ii_    1u
+#define _COL_addl_  2u
+#define _COL_ss_    3u
+#define _COL_rate_  4u
+#define _COL_evid_  5u
+#define _COL_cmt_   6u
+#define _COL_time_  7u
 
 
 dataobject::dataobject(Rcpp::NumericMatrix _data, 
