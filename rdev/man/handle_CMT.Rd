@@ -4,7 +4,7 @@
 \alias{CMT}
 \title{Parse $CMT block.}
 \usage{
-CMT(x, env, annotated = FALSE, pos = 1, ...)
+CMT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 }
 \arguments{
 \item{x}{data}

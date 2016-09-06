@@ -463,14 +463,20 @@ handle_spec_block.specINIT <- function(x,...) {
 ##' 
 ##' @rdname handle_CMT
 ##' 
-CMT <- function(x,env,annotated=FALSE,pos=1,...) {
+CMT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
-  } 
-  x <- tovec(x)
+  } else {
+    if(!is.null(object)) {
+      x <- get(object,env$ENV) 
+    } else {
+      x <- tovec(x)
+    }
+  }
+
   l <- rep(0,length(x))
   names(l) <- x
   env[["init"]][[pos]] <- as.list(l)
