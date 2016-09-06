@@ -162,13 +162,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Do a check on what we found in the spec
   check_spec_contents(names(spec),warn=warn,...)
   
-  ## The main sections that need R processing:
-  spec <- move_global(spec)
-  
   ## Pull out the settings now
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
+  
+  ENV <- eval_ENV_block(spec[["ENV"]])
+  
+  ## The main sections that need R processing:
+  spec <- move_global(spec)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
@@ -192,6 +194,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   mread.env$omega <- vector("list",length(spec))
   mread.env$sigma <- vector("list",length(spec))
   mread.env$annot <- vector("list",length(spec))
+  mread.env$ENV <- ENV
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)

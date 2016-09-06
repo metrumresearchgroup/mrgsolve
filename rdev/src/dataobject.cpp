@@ -11,35 +11,37 @@
 #include "mrgsolv.h"
 
 
-dataobject::dataobject(Rcpp::NumericMatrix _data, svec _parnames) {
+dataobject::dataobject(Rcpp::NumericMatrix _data, 
+                       Rcpp::CharacterVector _parnames) {
   Data = _data;
   parnames = _parnames;
   
   Rcpp::List dimnames = Data.attr("dimnames");
-  Data_names = Rcpp::as<svec>(dimnames[1]);
+  Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
   // Connect Names in the data set with positions in the parameter list
-  match_both(Data_names, parnames, par_from, par_to);
-  
+  from_to(Data_names,parnames, par_from, par_to);
 }
 
-dataobject::dataobject(Rcpp::NumericMatrix _data, svec _parnames,svec _cmtnames) {
+dataobject::dataobject(Rcpp::NumericMatrix _data,
+                       Rcpp::CharacterVector _parnames,
+                       Rcpp::CharacterVector _cmtnames) {
   Data = _data;
   parnames = _parnames;
   cmtnames = _cmtnames;
   
   Rcpp::List dimnames = Data.attr("dimnames");
-  Data_names = Rcpp::as<svec>(dimnames[1]);
+  Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
   // Connect Names in the data set with positions in the parameter list
-  match_both(Data_names, parnames, par_from, par_to);
-  match_both(Data_names, cmtnames, cmt_from,cmt_to);
+  from_to(Data_names, parnames, par_from, par_to);
+  from_to(Data_names, cmtnames, cmt_from, cmt_to);
 }
 
 
@@ -60,6 +62,14 @@ void dataobject::map_uid() {
   Endrow.push_back(Data.nrow()-1);
 }
 
+
+Rcpp::IntegerVector dataobject::get_col_n(Rcpp::CharacterVector what) {
+  Rcpp::IntegerVector ret = Rcpp::match(what, Data_names);
+  ret = Rcpp::na_omit(ret);
+  return(ret-1);
+}
+
+
 void dataobject::locate_tran() {
   
   int zeros = Data.ncol()-1;
@@ -76,8 +86,8 @@ void dataobject::locate_tran() {
     return;
   }
   
-  svec::const_iterator bg = Data_names.begin();
-  svec::const_iterator ed = Data_names.end();
+  Rcpp::CharacterVector::iterator bg = Data_names.begin();
+  Rcpp::CharacterVector::iterator ed = Data_names.end();
   
   int tcol = std::find(bg,ed,"time") - bg;
   
@@ -137,7 +147,7 @@ void dataobject::idata_row() {
 void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t i;
   for(i=0; i < par_from.size(); ++i) {
-    prob->param(par_to.at(i),Data(this_row,par_from.at(i)));
+    prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
 
@@ -147,7 +157,7 @@ void dataobject::copy_inits(int this_row, odeproblem* prob) {
   // this should only be done from idata sets
   size_t i;
   for(i=0; i < cmt_from.size(); ++i) {
-    prob->y_init(cmt_to.at(i),Data(this_row,cmt_from.at(i)));
+    prob->y_init(cmt_to[i],Data(this_row,cmt_from[i]));
   }
 }
 
@@ -273,24 +283,28 @@ void dataobject::check_idcol(dataobject* data) {
 }
 
 
-Rcpp::List dataobject::ex_port() {
-  
-  Rcpp::List ret;
-  
-  ret["Startrow"]  = Startrow;
-  ret["Endrow"] =   Endrow;
-  
-  
-  ret["Uid"] = Uid;
-  ret["idmap"] = idmap;
-  ret["par_from"] = par_from;
-  ret["par_to"]  = par_to;
-  ret["Idcol"] = Idcol;
-  ret["parnames"] = parnames;
-  ret["tran_cols"] = col;
-  ret["Data_names"]  = Data_names;
-  return(ret);
-  
-}
 
 
+// 
+// 
+// Rcpp::List dataobject::ex_port() {
+//   
+//   Rcpp::List ret;
+//   
+//   ret["Startrow"]  = Startrow;
+//   ret["Endrow"] =   Endrow;
+//   
+//   
+//   ret["Uid"] = Uid;
+//   ret["idmap"] = idmap;
+//   ret["par_from"] = par_from;
+//   ret["par_to"]  = par_to;
+//   ret["Idcol"] = Idcol;
+//   ret["parnames"] = parnames;
+//   ret["tran_cols"] = col;
+//   ret["Data_names"]  = Data_names;
+//   return(ret);
+//   
+// }
+// 
+// 

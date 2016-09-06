@@ -41,8 +41,8 @@ test_that("Same result from upper and lower case names", {
 })
 
 test_that("Warning is generated when mixed upper/lower names", {
-    mix <- lo %>% dplyr::rename(EVID = evid) 
-    expect_warning(mod %>% data_set(mix))
+  mix <- lo %>% dplyr::rename(EVID = evid) 
+  expect_warning(mod %>% data_set(mix))
 })
 
 test_that("Filter out ID", {
@@ -51,8 +51,8 @@ test_that("Filter out ID", {
 })
 
 test_that("ID is required", {
-    df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-ID)
-    expect_error(mod %>% data_set(df) %>% mrgsim)
+  df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-ID)
+  expect_error(mod %>% data_set(df) %>% mrgsim)
 })
 
 test_that("cmt is required", {
@@ -83,3 +83,23 @@ test_that("Improperly sorted records produces error", {
 test_that("Properly sorted records produces no error", {
   expect_is((mod %>% data_set(dd2) %>% mrgsim),"mrgsims")
 })
+
+
+context("Tests for dataobject - data")
+
+test_that("Data set column order gives same answer", {
+  mod <- mrgsolve:::house() %>% omat(dmat(1,1,1,1))
+  data(extran3)
+  set.seed(9923403)
+  extran3 <- extran3 %>% mutate(a=-10, Z = -11, M = -22, h = -33)
+  extran3b <- extran3[,sample(seq_along(names(extran3)))]
+  
+  set.seed(22930)
+  out1 <- mod %>% carry_out(a,m,M,h) %>% data_set(extran3) %>% mrgsim
+  set.seed(22930)
+  out2 <- mod %>% carry_out(a,m,M,h) %>% data_set(extran3b) %>% mrgsim
+  expect_identical(as.matrix(out1),as.matrix(out2))
+  expect_false(all(names(extran3)==names(extran3b)))
+  rm(mod)
+})
+

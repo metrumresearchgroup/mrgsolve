@@ -207,12 +207,13 @@ opts_only <- function(x,def=list(),all=FALSE) {
 ##' @param marker assignment operator; used to locate lines with options
 ##' @param narrow logical; if \code{TRUE}, only get options on lines starting with \code{>>}
 ##' @param split logical; if \code{TRUE}, \code{x} is split on whitespace
+##' @param envir environment from \code{$ENV}
 ##' 
 ##' @return list with elements \code{x} (the data without options) and named options 
 ##' as specified in the block.
 ##' 
 ##' 
-scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
+scrape_opts <- function(x,envir=list(),def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
   
@@ -231,7 +232,7 @@ scrape_opts <- function(x,def=list(),all=FALSE,marker="=>?",narrow=FALSE,split=T
   
   opts <- option_line(x[opts])
   
-  opts <- merge(def, tolist(opts),strict=!all,warn=FALSE,context="opts")
+  opts <- merge(def, tolist(opts,envir=envir),strict=!all,warn=FALSE,context="opts")
   opts$x <- NULL
   
   c(list(x=data), opts)
@@ -252,7 +253,7 @@ scrape_and_pass <- function(x,pass,...) {
 ##' @details Attributes of \code{x} are also scraped and merged with options.
 ##' 
 scrape_and_call <- function(x,env,pass,...) {
-  o <- scrape_opts(x,...)
+  o <- scrape_opts(x,envir=env$ENV,...)
   o$pos <- o$env <- o$class <- NULL
   o <- c(o,attributes(x),list(env=env))
   do.call(pass,o)
@@ -262,7 +263,7 @@ scrape_and_call <- function(x,env,pass,...) {
 ## Functions for handling code blocks
 parseNMXML <- function(x,env,...) {
   pos <- attr(x,"pos")
-  x <- tolist(x)
+  x <- tolist(x,envir=env$ENV)
   xml <- do.call(nmxml,x)
   env[["param"]][[pos]] <- xml$theta
   env[["omega"]][[pos]] <- xml$omega
@@ -276,11 +277,13 @@ parseLIST <- function(x,where,env,...) {
 }
 
 ## Used to parse OMEGA and SIGMA matrix blocks
-specMATRIX <- function(x,class) {
+specMATRIX <- function(x,class,env,...) {
   
   if(length(x)==0) stop("No data found in matrix block.")
   
-  ret <- scrape_and_pass(x,"modMATRIX",def=list(name="...",prefix=""), all=TRUE)
+  ret <- scrape_and_pass(x,"modMATRIX",
+                         def=list(name="...",prefix="", object=NULL,envir=env$ENV), 
+                         all=TRUE,envir=env$ENV)
   
   if(is.null(ret[["opts"]][["labels"]])) {
     ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
@@ -294,15 +297,25 @@ specMATRIX <- function(x,class) {
 }
 
 specOMEGA <- function(x,env,...) {
-  m <- specMATRIX(x,"omega_block")
+  m <- specMATRIX(x,"omega_block",env,...)
   env[["omega"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
 specSIGMA <- function(x,env,...) {
-  m <- specMATRIX(x,"sigma_block")
+  m <- specMATRIX(x,"sigma_block",env,...)
   env[["sigma"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
+
+eval_ENV_block <- function(x,...) {
+  e <- new.env()
+  if(is.null(x)) return(e)
+  x <- try(eval(parse(text=x),envir=e))
+  if(inherits(x,"try-error")) {
+    stop("Failed to parse code in $ENV",call.=FALSE) 
+  }
+  return(e)
+}  
 
 
 ## S3 methods for processing code blocks
@@ -318,21 +331,28 @@ handle_spec_block.default <- function(x,...) return(x)
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_PARAM
 ##' 
-PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
+PARAM <- function(x,env,annotated=FALSE,pos=1,object = NULL,...) {
   
   if(annotated) {
-    l <- parse_annot(x,block="PARAM")
+    l <- parse_annot(x,block="PARAM",envir=env$ENV)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["param"]][[pos]] <- tolist(x)  
+    if(!is.null(object)) {
+      x <- get(object,env$ENV) 
+    } else {
+      x <- tolist(x,envir=env$ENV) 
+    }
+    env[["param"]][[pos]] <- x
   }
   return(NULL)
 }
+
 ##' @export
 handle_spec_block.specPARAM <- function(x,...) {
   scrape_and_call(x,pass="PARAM",split=FALSE,all=TRUE,narrow=TRUE,...)
@@ -345,17 +365,23 @@ handle_spec_block.specPARAM <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos parse position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_FIXED
 ##' 
-FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
+FIXED <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
   if(annotated) {
-    l <- parse_annot(x,block="FIXED")
+    l <- parse_annot(x,block="FIXED",envir=env$ENV)
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["fixed"]][[pos]] <- tolist(x)  
+    if(!is.null(object)) {
+      x <- get(object,env$ENV) 
+    } else {
+      x <- tolist(x,envir=env$ENV) 
+    }
+    env[["fixed"]][[pos]] <- x
   }
   return(NULL)
 }
@@ -378,10 +404,10 @@ handle_spec_block.specFIXED <- function(x,...) {
 THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
   
   if(annotated) {
-    l <- parse_annot(x,noname=TRUE,block="THETA")
+    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
-    x <- as.numeric(as.cvec(x))
+    x <- tolist(paste0(as.cvec(x),collapse=','),envir=env$ENV)
   }
   
   x <- x[!is.na(x)]
@@ -401,17 +427,23 @@ handle_spec_block.specTHETA <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_INIT
 ##' 
-INIT <- function(x,env,annotated=FALSE,pos=1,...) {
+INIT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
   if(annotated) {
-    l <- parse_annot(x,block="INIT")
+    l <- parse_annot(x,block="INIT",envir=env$ENV)
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    env[["init"]][[pos]] <- tolist(x)  
+    if(!is.null(object)) {
+      x <- get(object,env$ENV)
+    }  else {
+      x <- tolist(x,envir=env$ENV) 
+    }
+    env[["init"]][[pos]] <- x
   }
   return(NULL)
 }
@@ -431,14 +463,20 @@ handle_spec_block.specINIT <- function(x,...) {
 ##' 
 ##' @rdname handle_CMT
 ##' 
-CMT <- function(x,env,annotated=FALSE,pos=1,...) {
+CMT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CMT")
+    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
-  } 
-  x <- tovec(x)
+  } else {
+    if(!is.null(object)) {
+      x <- get(object,env$ENV) 
+    } else {
+      x <- tovec(x)
+    }
+  }
+
   l <- rep(0,length(x))
   names(l) <- x
   env[["init"]][[pos]] <- as.list(l)
@@ -453,8 +491,6 @@ handle_spec_block.specVCMT <- handle_spec_block.specCMT
 ##' @export
 handle_spec_block.specSET <- function(x,...) tolist(x)
 ##' @export
-handle_spec_block.specENV <- function(x,...) tolist(x)
-##' @export
 handle_spec_block.specOMEGA <- function(x,...) specOMEGA(x,...)
 ##' @export
 handle_spec_block.specSIGMA <- function(x,...) specSIGMA(x,...)
@@ -465,12 +501,13 @@ handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
 
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CAPTURE")
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
-  } 
+  }
   return(tovec(x))
 }
+
 ##' @export
 handle_spec_block.specCAPTURE <- function(x,...) {
   scrape_and_call(x,pass="CAPTURE",split=FALSE,all=TRUE,...)

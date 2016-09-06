@@ -49,26 +49,26 @@ void sort_unique(T& a) {
   a.erase(last, a.end());
 }
 
-int find_position(std::string what, const svec& table);
+int find_position(Rcpp::CharacterVector what,  Rcpp::CharacterVector& table);
 
 double digits(const double& a, const double& b);
 
-Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x);
+//Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x);
 
 void decorr(Rcpp::NumericMatrix x);
-
-//Rcpp::NumericMatrix supermatrix(Rcpp::List mats);
 
 typedef std::vector<Rcpp::NumericVector> mvec;
 
 Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a);
 
-void match_both(svec a, svec b, ivec& ai, ivec& bi);
-void match_one(svec a, svec b, ivec& ret);
-Rcpp::List map_data_set(Rcpp::NumericMatrix data);
+//void match_both(svec a, svec b, ivec& ai, ivec& bi);
+void from_to(const Rcpp::CharacterVector a, 
+             const Rcpp::CharacterVector b, 
+             Rcpp::IntegerVector& ai,
+             Rcpp::IntegerVector& bi);
+
 Rcpp::List get_tokens(Rcpp::CharacterVector code);
 Rcpp::List get_tokens_sep(Rcpp::CharacterVector code);
-//Rcpp::List tokens(Rcpp::CharacterVector x, Rcpp::CharacterVector sep_);
 
 void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 

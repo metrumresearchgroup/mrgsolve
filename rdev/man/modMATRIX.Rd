@@ -5,7 +5,7 @@
 \title{Create a matrix.}
 \usage{
 modMATRIX(x, name = "", use = TRUE, block = FALSE, correlation = FALSE,
-  digits = -1, ...)
+  digits = -1, object = NULL, envir = list(), ...)
 }
 \arguments{
 \item{x}{data for building the matrix.  Data in \code{x} are assumed to be on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular elements if \code{block} is \code{TRUE}}
@@ -19,6 +19,10 @@ modMATRIX(x, name = "", use = TRUE, block = FALSE, correlation = FALSE,
 \item{correlation}{logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE}
 
 \item{digits}{if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning}
+
+\item{object}{the (character) name of a \code{list} in \code{$ENV} to use for block output}
+
+\item{envir}{environment from \code{$ENV}}
 
 \item{...}{passed along}
 }

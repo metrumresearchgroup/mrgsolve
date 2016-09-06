@@ -24,15 +24,26 @@ valid.numericlist <- function(object) {
   x1 <- all(sapply(object@data,single.number))
   x2 <- all(names(object@data) !="")
   x3 <- !any(grepl("=|\\.",names(object),perl=TRUE))
-  
+
   x <- x1 & x2 & x3
   if(all(x)) return(TRUE)
   
+
   out <- c()
   if(!x3) {
     message("Problem with names:")
     cat(paste(names(object), collapse=","))
     out <- c(out, "Invalid names")
+  }
+  if(!x2) {
+    d <- object@data
+    d <- d[nchar(names(d))==0]
+    message("Parameter values without names:")
+    print(d)
+    out <- c(out, "All parameters require names")
+  }
+  if(!x1) {
+    out <- c(out, "All parameters must be single numbers") 
   }
   return(out)
   

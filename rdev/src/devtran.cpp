@@ -21,12 +21,23 @@
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
 
+
+/* Main simulation function.
+ * 
+ * @param parin list of data and options for the simulation
+ * @param inpar numeric parameter values
+ * @param parnames_ parameter names
+ * @param init numeric initial values
+ * @param cmtnames_ compartment names
+ *
+ */
+
 // [[Rcpp::export]]
 Rcpp::List DEVTRAN(Rcpp::List parin,
                    Rcpp::NumericVector inpar,
-                   Rcpp::CharacterVector parnames_,
+                   Rcpp::CharacterVector parnames,
                    Rcpp::NumericVector init,
-                   Rcpp::CharacterVector cmtnames_,
+                   Rcpp::CharacterVector cmtnames,
                    Rcpp::IntegerVector capture,
                    Rcpp::List funs,
                    Rcpp::NumericMatrix data,
@@ -34,9 +45,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
                    Rcpp::NumericMatrix OMEGA,
                    Rcpp::NumericMatrix SIGMA) {
   
-  svec parnames = Rcpp::as<svec>(parnames_);
-  svec cmtnames = Rcpp::as<svec>(cmtnames_);
-  for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
+  
   
   unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   bool debug            = Rcpp::as<bool>   (parin["debug"]  );
@@ -61,7 +70,9 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   dat->map_uid();
   dat->locate_tran();
   
-  dataobject *idat = new dataobject(idata, parnames,cmtnames);
+  // Really only need cmtnames to get initials from idata
+  for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
+  dataobject *idat = new dataobject(idata, parnames, cmtnames);
   idat -> map_uid();
   idat -> idata_row();
   
@@ -129,8 +140,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   // These are the requested columns.
   Rcpp::IntegerVector request;
-  ivec data_carry, idata_carry;
-  svec tran_carry;
+  
   
   // Number of requested compartments
   // Number of items from data carried into answer
@@ -140,20 +150,27 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   request = parin["request"];
   nreq = request.size();
-  
+
   // Columns from the data set to carry:
-  data_carry = Rcpp::as<ivec >(parin["carry_data"]);
+  Rcpp::CharacterVector data_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
+  Rcpp::IntegerVector data_carry =  dat->get_col_n(data_carry_);
   n_data_carry = data_carry.size();
   
-  // Tran Items to carry:
-  tran_carry = Rcpp::as<svec >(parin["carry_tran"]);
-  n_tran_carry = tran_carry.size();
-  
+  // Columns from the data set to carry:
+  Rcpp::IntegerVector idata_carry;  
   if(idata.nrow()>0) {
-    idata_carry = Rcpp::as<ivec>(parin["carry_idata"]);
+    Rcpp::CharacterVector idata_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
+    idata_carry =  idat->get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
   }
   
+  
+  // Tran Items to carry:
+  svec tran_carry;
+  tran_carry = Rcpp::as<svec >(parin["carry_tran"]);
+  n_tran_carry = tran_carry.size();
+
+    
   // Vector of simulation times
   // only active if no evid=0 records in data (cleared out in that case).
   dvec stimes = Rcpp::as<dvec>(parin["stimes"]);
@@ -308,23 +325,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   const unsigned int table_start = req_start+nreq;
   const unsigned int capture_start = table_start+ntable;
   
-  // Fill in id and time:
-  /// This happens no matter what
-  //if(debug) Rcpp::Rcout << "Filling in time and ID ... " << std::endl;
-  //crow = 0; // current row counter:
-  // for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
-  //   for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
-  //     // Only if this is an output record:
-  //     // may not be output record if obsonly was TRUEs
-  //     if((*itt)->output()) {
-  //       ans(crow, 0) = (*itt)->id();
-  //       ans(crow,1) = (*itt)->time();
-  //       crow++;
-  //     }
-  //   }
-  // }
-  
-  
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
   if(n_tran_carry > 0) {
@@ -404,10 +404,10 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
           // We haven't hit a dataset record yet
           if(i==0) lastpos = -1;
           // Need to log lastpos here regardless
-          if(thisi.at(i)->from_data()) lastpos = thisi.at(i)->pos();
+          if(thisi[i]->from_data()) lastpos = thisi[i]->pos();
         }
         
-        if(!thisi.at(i)->output()) continue;
+        if(!thisi[i]->output()) continue;
         
         // Copy from idata:
         for(k=0; k < n_idata_carry; ++k) {
@@ -474,10 +474,10 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // LOOP ACROSS IDS:
   for(size_t i=0; i < a.size(); ++i) {
     
-    std::vector<rec_ptr> thisi = a.at(i);
+    std::vector<rec_ptr> thisi = a[i];
     
-    tfrom = thisi.at(0)->time();
-    double id = thisi.at(0)->id();
+    tfrom = thisi[0]->time();
+    double id = thisi[0]->id();
     double maxtime = thisi.back()->time();
     
     prob->reset_newid(id);
@@ -496,7 +496,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
     idat->copy_parameters(idat->get_idata_row(id),prob);
     
     // Copy parameters from data
-    rec_ptr this_rec  = thisi.at(0);
+    rec_ptr this_rec  = thisi[0];
     if(this_rec->from_data()) {
       // If this record is from the data set, copy parameters from data
       dat->copy_parameters(this_rec->pos(), prob);
@@ -528,7 +528,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
       
       last_record = j==thisi.size()-1;
       
-      rec_ptr this_rec = thisi.at(j);
+      rec_ptr this_rec = thisi[j];
       
       // Fill in the remaining records once system is turned off
       if(prob->systemoff()) {
@@ -536,7 +536,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
           if(prob->CFONSTOP()) {
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
-            for(int i=0; i < ntable; ++i)    ans(crow,(i+table_start  )) = prob->table(tablenames.at(i));
+            for(int i=0; i < ntable; ++i)    ans(crow,(i+table_start  )) = prob->table(tablenames[i]);
             for(int i=0; i < n_capture; ++i) ans(crow,(i+capture_start)) = prob->capture(capture[i+1]);
             for(int k=0; k < nreq; ++k)      ans(crow,(k+req_start    )) = prob->y(request[k]);
           } else {
@@ -683,7 +683,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
         if(ntable>0) {
           k=0;
           for(int i=0; i < ntable; ++i) {
-            ans(crow,k+table_start) = prob->table(tablenames.at(i));
+            ans(crow,k+table_start) = prob->table(tablenames[i]);
             ++k;
           }
         }
