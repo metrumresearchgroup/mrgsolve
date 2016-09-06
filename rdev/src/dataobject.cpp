@@ -11,6 +11,8 @@
 #include "mrgsolv.h"
 
 
+
+
 dataobject::dataobject(Rcpp::NumericMatrix _data, 
                        Rcpp::CharacterVector _parnames) {
   Data = _data;
@@ -24,6 +26,8 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names,parnames, par_from, par_to);
+  
+  col.resize(8,0);
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -42,6 +46,8 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names, parnames, par_from, par_to);
   from_to(Data_names, cmtnames, cmt_from, cmt_to);
+  
+  col.resize(8,0);
 }
 
 
@@ -75,14 +81,14 @@ void dataobject::locate_tran() {
   int zeros = Data.ncol()-1;
   
   if(zeros==0) {
-    col["amt"]  = 0;
-    col["ii"]   = 0;
-    col["addl"] = 0;
-    col["ss"]   = 0;
-    col["rate"] = 0;
-    col["evid"] = 0;
-    col["cmt"]  = 0;
-    col["time"] = 0;
+    col[_COL_amt_]  = 0;
+    col[_COL_ii_]   = 0;
+    col[_COL_addl_] = 0;
+    col[_COL_ss_]   = 0;
+    col[_COL_rate_] = 0;
+    col[_COL_evid_] = 0;
+    col[_COL_cmt_]  = 0;
+    col[_COL_time_] = 0;
     return;
   }
   
@@ -99,37 +105,37 @@ void dataobject::locate_tran() {
     lc = false;
   }
   
-  col["time"] = tcol;
+  col[_COL_time_] = tcol;
   
   
   
   if(lc) {
-    col["amt"]  = std::find(bg,ed,"amt")  - bg;
-    col["ii"]   = std::find(bg,ed,"ii")   - bg;
-    col["addl"] = std::find(bg,ed,"addl") - bg;
-    col["ss"]   = std::find(bg,ed,"ss")   - bg;
-    col["rate"] = std::find(bg,ed,"rate") - bg;
-    col["evid"] = std::find(bg,ed,"evid") - bg;
-    col["cmt"]  = std::find(bg,ed,"cmt")  - bg;
+    col[_COL_amt_]  = std::find(bg,ed,"amt")  - bg;
+    col[_COL_ii_]   = std::find(bg,ed,"ii")   - bg;
+    col[_COL_addl_] = std::find(bg,ed,"addl") - bg;
+    col[_COL_ss_]   = std::find(bg,ed,"ss")   - bg;
+    col[_COL_rate_] = std::find(bg,ed,"rate") - bg;
+    col[_COL_evid_] = std::find(bg,ed,"evid") - bg;
+    col[_COL_cmt_]  = std::find(bg,ed,"cmt")  - bg;
     
   } else {
-    col["amt"]  = std::find(bg,ed,"AMT")  - bg;
-    col["ii"]   = std::find(bg,ed,"II")   - bg;
-    col["addl"] = std::find(bg,ed,"ADDL") - bg;
-    col["ss"]   = std::find(bg,ed,"SS")   - bg;
-    col["rate"] = std::find(bg,ed,"RATE") - bg;
-    col["evid"] = std::find(bg,ed,"EVID") - bg;
-    col["cmt"]  = std::find(bg,ed,"CMT")  - bg;
+    col[_COL_amt_]  = std::find(bg,ed,"AMT")  - bg;
+    col[_COL_ii_]   = std::find(bg,ed,"II")   - bg;
+    col[_COL_addl_] = std::find(bg,ed,"ADDL") - bg;
+    col[_COL_ss_]   = std::find(bg,ed,"SS")   - bg;
+    col[_COL_rate_] = std::find(bg,ed,"RATE") - bg;
+    col[_COL_evid_] = std::find(bg,ed,"EVID") - bg;
+    col[_COL_cmt_]  = std::find(bg,ed,"CMT")  - bg;
   }
   
-  if(col["amt"]  > zeros) col["amt"]  = zeros;
-  if(col["ii"]   > zeros) col["ii"]   = zeros;
-  if(col["addl"] > zeros) col["addl"] = zeros;
-  if(col["ss"]   > zeros) col["ss"]   = zeros;
-  if(col["rate"] > zeros) col["rate"] = zeros;
-  if(col["evid"] > zeros) col["evid"] = zeros;
+  if(col[_COL_amt_]  > zeros) col[_COL_amt_]  = zeros;
+  if(col[_COL_ii_]   > zeros) col[_COL_ii_]   = zeros;
+  if(col[_COL_addl_] > zeros) col[_COL_addl_] = zeros;
+  if(col[_COL_ss_]   > zeros) col[_COL_ss_]   = zeros;
+  if(col[_COL_rate_] > zeros) col[_COL_rate_] = zeros;
+  if(col[_COL_evid_] > zeros) col[_COL_evid_] = zeros;
   
-  if(col["cmt"] > zeros  && zeros > 0) {
+  if(col[_COL_cmt_] > zeros  && zeros > 0) {
     Rcpp::stop("Couldn't locate cmt or CMT in data set.");
   }
 }
@@ -139,7 +145,7 @@ void dataobject::locate_tran() {
 void dataobject::idata_row() {
   int i=0;
   for(i=0; i < Data.nrow(); ++i) {
-    idmap[Data(i,Idcol)] =i;
+    idmap[Data(i,Idcol)] = i;
   }
 }
 
@@ -189,12 +195,12 @@ void dataobject::get_records(recstack& a, int NID, int neq,
     
     for(j = this -> start(h); j <= this -> end(h); ++j) {
       
-      if(Data(j,col["time"]) < lastime) Rcpp::stop("Problem with time: data set is not sorted by time or time is negative.");
+      if(Data(j,col[_COL_time_]) < lastime) Rcpp::stop("Problem with time: data set is not sorted by time or time is negative.");
       
-      lastime = Data(j,col["time"]);
+      lastime = Data(j,col[_COL_time_]);
       
-      this_cmt = Data(j,col["cmt"]);
-      evid = Data(j,col["evid"]);
+      this_cmt = Data(j,col[_COL_cmt_]);
+      evid = Data(j,col[_COL_evid_]);
       k = j - this -> start(h);
       
       // If this is an observation record
@@ -202,9 +208,10 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if((this_cmt < 0) || (this_cmt > neq)) {
           Rcpp::stop("cmt number in observation record out of range.");
         }
-        rec_ptr obs(new datarecord(0,Data(j,col["time"]),Data(j,col["cmt"]),j,Data(j,Idcol)));
+        rec_ptr obs(new datarecord(0,Data(j,col[_COL_time_]),Data(j,col[_COL_cmt_]),j,Data(j,Idcol)));
         obs->from_data(true);
-        a.at(h).at(k) = obs;
+        //a.at(h).at(k) = obs;
+        a.at(h).push_back(obs);
         ++obscount;
         continue;
       }
@@ -218,11 +225,11 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ++evcount;
       
-      ev_ptr ev(new pkevent(Data(j,col["cmt"]),
-                            Data(j,col["evid"]),
-                            Data(j,col["amt"]),
-                            Data(j,col["time"]),
-                            Data(j,col["rate"])));
+      ev_ptr ev(new pkevent(Data(j,col[_COL_cmt_]),
+                            Data(j,col[_COL_evid_]),
+                            Data(j,col[_COL_amt_]),
+                            Data(j,col[_COL_time_]),
+                            Data(j,col[_COL_rate_])));
       
       if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) {
         Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
@@ -237,9 +244,9 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ev->evid(evid);
       ev->pos(j);
       ev->report(0);
-      ev->ss(Data(j,col["ss"]));
-      ev->addl(Data(j,col["addl"]));
-      ev->ii(Data(j,col["ii"]));
+      ev->ss(Data(j,col[_COL_ss_]));
+      ev->addl(Data(j,col[_COL_addl_]));
+      ev->ii(Data(j,col[_COL_ii_]));
       ev->id(Data(j,Idcol));
       
       if((ev->addl() > 0) && (ev->ii() <=0)) {
@@ -248,7 +255,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((ev->ss()) && (ev->ii() <=0)) {
         Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
       }
-      a.at(h).at(k) = ev;
+      //a.at(h).at(k) = ev;
+      a.at(h).push_back(ev);
     }
   }
 }
@@ -284,27 +292,3 @@ void dataobject::check_idcol(dataobject* data) {
 
 
 
-
-// 
-// 
-// Rcpp::List dataobject::ex_port() {
-//   
-//   Rcpp::List ret;
-//   
-//   ret["Startrow"]  = Startrow;
-//   ret["Endrow"] =   Endrow;
-//   
-//   
-//   ret["Uid"] = Uid;
-//   ret["idmap"] = idmap;
-//   ret["par_from"] = par_from;
-//   ret["par_to"]  = par_to;
-//   ret["Idcol"] = Idcol;
-//   ret["parnames"] = parnames;
-//   ret["tran_cols"] = col;
-//   ret["Data_names"]  = Data_names;
-//   return(ret);
-//   
-// }
-// 
-// 

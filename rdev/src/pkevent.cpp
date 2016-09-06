@@ -7,7 +7,7 @@
 #include "odeproblem.h"
 #include "mrgsolve.h"
 
-#define N_SS 2000
+#define N_SS 1000
 #define CRIT_DIFF_SS 1E-10
 
 
@@ -78,7 +78,7 @@ double pkevent::dur(double b) {
   //return digits(b*this->amt()/this->rate(),1000000.0);
 }
 
-void pkevent::implement(odeproblem * prob) {
+void pkevent::implement(odeproblem *prob) {
   
   if(this->unarmed()) return;
   
@@ -161,7 +161,7 @@ void pkevent::implement(odeproblem * prob) {
   prob->lsoda_init();
 }
 
-void pkevent::steady_bolus(odeproblem* prob) {
+void pkevent::steady_bolus(odeproblem *prob) {
   
   prob->rate_reset();
   

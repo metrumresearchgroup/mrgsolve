@@ -391,7 +391,7 @@ tran_mrgsim <- function(x,
                data,idata,
                as.matrix(omat(x)),as.matrix(smat(x)))
   
-  if(length(out$issues)>0) stop(render_errors(unique(out$issues)),call.=FALSE)
+  ##if(length(out$issues)>0) stop(render_errors(unique(out$issues)),call.=FALSE)
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case

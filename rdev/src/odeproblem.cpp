@@ -70,7 +70,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
   for(int i=0; i < neq_; ++i)  Init_value[i] =  double(init[i]);
-
+  
 }
 
 /** \example solve.cpp
@@ -104,14 +104,15 @@ void odeproblem::y_init(int pos, double value) {
 }
 
 
-void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* prob) {
+void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
   
   // Call derivs:
-  (prob->derivs())(t,
-   y,
-   ydot,
-   prob->init(),
-   prob->param()
+  (prob->derivs())(
+      t,
+      y,
+      ydot,
+      prob->init(),
+      prob->param()
   );
   
   
@@ -320,7 +321,7 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   //a and alpha are private members
   alpha[0] = k10;
   alpha[1] = ka;
-
+  
   a[0] = ka/(ka-alpha[0]);
   a[1] = -a[0];
   

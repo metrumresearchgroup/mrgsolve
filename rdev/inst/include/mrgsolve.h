@@ -76,3 +76,5 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
                       Rcpp::NumericVector linit,
                       Rcpp::CharacterVector capture,
                       Rcpp::List funs);
+
+

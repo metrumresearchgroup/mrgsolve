@@ -15,6 +15,8 @@ CMT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 
 \item{pos}{block position}
 
+\item{object}{the (character) name of a \code{list} in \code{$ENV} to use for block output}
+
 \item{...}{passed}
 }
 \description{

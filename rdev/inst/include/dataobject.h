@@ -13,6 +13,16 @@
 #include "RcppInclude.h"
 #include "pkevent.h"
 
+#define _COL_amt_   0u
+#define _COL_ii_    1u
+#define _COL_addl_  2u
+#define _COL_ss_    3u
+#define _COL_rate_  4u
+#define _COL_evid_  5u
+#define _COL_cmt_   6u
+#define _COL_time_  7u
+
+
 typedef std::map<std::string, ivec> sivec_map;
 typedef std::map<double, int> di_map;
 typedef std::map<std::string, int> si_map;
@@ -39,18 +49,18 @@ public:
   void map_uid();
   double get_uid(int i) {return Uid.at(i);}
   dvec return_uid() {return Uid;}
-  void copy_parameters(int this_row,odeproblem* prob);
-  void copy_inits(int this_row,odeproblem* prob);
-  void reload_parameters(Rcpp::NumericVector param, odeproblem* prob);
+  void copy_parameters(int this_row,odeproblem *prob);
+  void copy_inits(int this_row,odeproblem *prob);
+  void reload_parameters(Rcpp::NumericVector param, odeproblem *prob);
   void idata_row();
   unsigned int get_idata_row(double ID){return idmap[ID];}
   void locate_tran();
   void get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly,bool debug);
-  int col_n(std::string name) {return col.at(name);}
-  void check_idcol(dataobject* data);
+  //int col_n(std::string name) {return col.at(name);}
+  void check_idcol(dataobject *data);
   double get_value(int row, int col) {return Data(row,col);}
   Rcpp::IntegerVector get_col_n(Rcpp::CharacterVector what);
-  //Rcpp::List ex_port();
+
 
  protected:
 
@@ -61,7 +71,7 @@ public:
   Rcpp::NumericMatrix Data;
   Rcpp::CharacterVector Data_names;
 
-  si_map col;
+  std::vector<unsigned int> col;
   Rcpp::IntegerVector par_from;  // data set index
   Rcpp::IntegerVector par_to;    // parameter list index
   Rcpp::CharacterVector parnames;
