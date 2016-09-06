@@ -1,4 +1,27 @@
-__Please see the latest release__: [v0.7.4](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.4)
+
+
+__Please see the latest release__: [v0.7.6](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.6)
+
+# Since 0.7.5
+
+## Features
+
+- Added annotated code blocks for `$PARAM`, `$FIXED`, `$THETA`, `$CMT`, `$INIT`, and `$VCMT`. (../../issues/107)
+- `mrgsolve:::house()` model re-coded as an annotated model.
+- Re-implemented `$ENV` to allow users to create `R` objects that can be used at certain points
+when parsing the model. (../../issues/115)
+- Added `>>` signifier to code blocks that allow options; `>>` at the beginning of the line indicates that the `name=value` statements that follow are to be parsed as block options.
+- Added `object` argument for the following blocks: `$PARAM`, `$OMEGA`, `$SIGMA`, `$FIXED`, `$CMT`.  When `object` is set to a character string naming an object in `$ENV`, that object will be used to form the output from the block.
+
+## Bugs fixed
+
+- Fixed a bug which caused simulation run to hang when implementing a dose with a __very__ small lag time. (../../issues/109)
+- Fixed a bug where `valid.numericlist` wasn't returning `FALSE` for improperly-formed objects.
+
+## Under the hood
+
+- Now using an `environment` to collect objects when parsing the model specification file.
+- Some small changes to `C++` code that calculates compartment amounts for closed form one- and two-compartment models resulting in faster simulation runs.
 
 # Since 0.7.4
 - The `modmrg` package was discontinued.  All of the pre-coded models are now available in `mrgsolve`.  Simply call `mread` with the model stem (e.g. `pk1cmt`, `irm3`, etc ...) and call `modlib()` as the `project` argument.  For example: `mod <- mread("emax", modlib())` will compile the `emax` model and return the model object.
