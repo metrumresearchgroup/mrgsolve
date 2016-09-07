@@ -6,14 +6,14 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/pointer_cast.hpp>
 #include <iostream>
+#include <string>
 #include "mrgsolve.h"
 #include "odeproblem.h"
 #include "pkevent.h"
 #include "dataobject.h"
-#include <string>
 
-#include <RcppArmadillo.h>
-
+//#include <RcppArmadillo.h>
+#include "RcppInclude.h"
 
 #define CRUMP(a) Rcpp::stop(a)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;

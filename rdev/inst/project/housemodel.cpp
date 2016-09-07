@@ -1,6 +1,8 @@
 
 $PROB housemodel
 
+$PLUGIN base
+
 $PARAM >> annotated=TRUE
 CL   : 1    : Clearance  (L/hr)
 VC   : 20   : Volume of distribution (L)

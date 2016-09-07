@@ -3,12 +3,12 @@
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 #ifndef DATAOBJECT_H
 #define DATAOBJECT_H
-#include <math.h>
-#include <memory>
-#include <iostream>
+//#include <math.h>
+//#include <memory>
+//#include <iostream>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <string>
+//#include <string>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 #include "pkevent.h"

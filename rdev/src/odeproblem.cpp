@@ -4,9 +4,8 @@
 
 #include <cmath>
 #include <vector>
+//#include <numeric>
 #include "RcppInclude.h"
-#include <numeric>
-
 #include "odeproblem.h"
 #include "pkevent.h"
 
@@ -69,7 +68,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
-  for(int i=0; i < neq_; ++i)  Init_value[i] =  double(init[i]);
+  for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
   
 }
 
@@ -113,6 +112,7 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
       ydot,
       prob->init(),
       prob->param()
+      
   );
   
   
@@ -192,10 +192,10 @@ void odeproblem::rate_reset() {
     infusion_count[i] = 0;
   }
 }
-void odeproblem::rate_reset(unsigned short int eq_n) {
-  R0[eq_n]  = 0.0;
-  infusion_count[eq_n] = 0;
-}
+// void odeproblem::rate_reset(unsigned short int eq_n) {
+//   R0[eq_n]  = 0.0;
+//   infusion_count[eq_n] = 0;
+// }
 
 void odeproblem::reset_newid(const double& id_=1.0) {
   
@@ -237,10 +237,10 @@ void odeproblem::rate_rm(unsigned int pos, const double& value) {
   }
 }
 
-void odeproblem::rate_replace(unsigned int pos, const double& value) {
-  infusion_count[pos] = 1;
-  R0[pos] = value;
-}
+// void odeproblem::rate_replace(unsigned int pos, const double& value) {
+//   infusion_count[pos] = 1;
+//   R0[pos] = value;
+// }
 
 
 void odeproblem::on(unsigned short int eq_n) {

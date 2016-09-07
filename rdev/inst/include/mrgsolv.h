@@ -11,7 +11,6 @@
 typedef std::vector<bool> bvec;
 typedef std::vector<double> dvec;
 typedef std::map<std::string,double> sd_map;
-typedef std::vector<double> vec_double;
 
 typedef std::map<std::string,double> tablemap;
 typedef sd_map::iterator sdmit;
@@ -21,7 +20,7 @@ typedef std::map<std::string,bool> sbmap;
 typedef std::map<double,int> di_map;
 typedef  const std::vector<double> cdvec;
 typedef  const std::map<std::string,double> csd_map;
-typedef svec::const_iterator svecit;
+
 
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const dvec& _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
 
