@@ -5,7 +5,9 @@ $CMT CENT
 $PKMODEL ncmt=1, depot = FALSE,trans=1
 
 $TABLE
-table(CP) = CENT/pred_V;
+double CP = CENT/pred_V;
+
+$CAPTURE CP
 
 $OMEGA 0 0
 labels=s(ECL,EV)

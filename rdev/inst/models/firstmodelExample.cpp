@@ -9,4 +9,6 @@ dxdt_DEPOT = -KA*DEPOT;
 dxdt_CENT = KA*DEPOT - (CL/VC)*CENT;
 
 $TABLE
-table(CP) = CENT/VC;
+double CP = CENT/VC;
+
+$CAPTURE CP

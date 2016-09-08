@@ -34,9 +34,12 @@ dxdt_VM = mu*(1-eps)*p*I + (1-epsm)*fit*p*IM - c*VM;
 dxdt_expos = 0;
 
 $TABLE
-table(logVT) = log10(V+VM);
-table(logV) = log10(V);
-table(logVM) = log10(VM);
-table(logIT) = log10(IM+I);
-table(logChange) = log10(VM+V) - log10(VM_0 + V_0);
+double logVT = log10(V+VM);
+double logV = log10(V);
+double logVM = log10(VM);
+double logIT = log10(IM+I);
+double logChange = log10(VM+V) - log10(VM_0 + V_0);
+
+
+$CAPTURE logVT logV logVM logIT logChange
 

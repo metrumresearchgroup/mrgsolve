@@ -8,7 +8,6 @@ $INIT expos=0,T = 1126801, I = 1126801, V = 8148974
 
 $SET delta = 02.5
 
-
 $GLOBAL
 #define eps (expos/(IC50+expos))
 
@@ -25,5 +24,9 @@ dxdt_V = (1-eps)*p*I - c*V;
 dxdt_expos = 0;
 
 $TABLE
-table(logV) = log10(V);
-table(logChange) = log10(V) - log10(V_0);
+double logV = log10(V);
+double logChange = log10(V) - log10(V_0);
+
+$CAPTURE logV logChange
+
+

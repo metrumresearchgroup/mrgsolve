@@ -25,9 +25,15 @@
  * 
  * @param parin list of data and options for the simulation
  * @param inpar numeric parameter values
- * @param parnames_ parameter names
+ * @param parnames parameter names
  * @param init numeric initial values
- * @param cmtnames_ compartment names
+ * @param cmtnames compartment names
+ * @param capture indices in capture vector to actually get
+ * @param funs list of pointer addresses to model functions
+ * @param data the main data set
+ * @param idata the idata data aset
+ * @param OMEGA between-ID normal random effects
+ * @param SIGMA within-ID normal random effects
  *
  */
 
@@ -60,8 +66,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   //if((t2advance < 0) || (t2advance > 1)) Rcpp::stop("Invalid value for t2advance.");
   int t2advance = 0;
-  
-  
+
   if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
   
   // Create data objects from data and idata

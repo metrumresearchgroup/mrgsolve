@@ -29,6 +29,9 @@ dxdt_VM = mu*(1-eps1)*p*I + (1-eps2)*fit*p*IM - c*VM;
 
 
 $TABLE
-table(VT) = log10(V+VM);
-table(logVM) = log10(VM);
-table(logIT) = log10(IM+I);
+double VT = log10(V+VM);
+double logVM = log10(VM);
+double logIT = log10(IM+I);
+
+$CAPTURE VT logVM logIT
+  

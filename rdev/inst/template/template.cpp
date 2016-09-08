@@ -14,7 +14,8 @@ $ODE
 // like $ERROR and $TABLE
 $TABLE
 
-
+// Capture output variables
+$CAPTURE
 
 
 

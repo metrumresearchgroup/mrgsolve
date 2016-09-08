@@ -164,8 +164,9 @@ dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - ke*CENT;
 
 $TABLE
-table(CP) = CENT/VC;
+double CP = CENT/VC;
 
+$CAPTURE CP
 '
 
 mod <- mread(code=code) \%>\% ev(amt=1000, cmt=1, addl=2, ii=8)

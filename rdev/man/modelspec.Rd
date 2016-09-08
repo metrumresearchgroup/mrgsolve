@@ -69,7 +69,6 @@ available in the C++ code as _N_CMT.
 \item \code{_ALAG(n)} dosing event (evid=1) lag time.  See \code{ALAG_CMT} above.
  \item \code{_R(n)} infusion rate into the \code{n}th compartment. See \code{R_CMT} above.
  \item \code{_D(n)} infusion duration into the \code{n}th compartment.  See \code{D_CMT} above.
- \item \code{table(name) = value;} save value to the output simulation matrix with name \code{text}; readonly.  Only available in \code{table} code block.
  \item \code{ETA(n)} the value of the \code{n}th \code{ETA} drawn from normal distribution with mean \code{zero} and variance-covariance matrix \code{omega}; readonly.
  \item \code{EPS(n)} the value of the \code{n}th \code{EPS} drawn from normal distribution with mean \code{zero} and variance-covariance matrix \code{sigma}; readonly.
   \item \code{SYSTEMSTOPADVANCING()} {stop advancing the problem for current individual; all compartments will retain the same value for all subsequent simulation times,
@@ -134,10 +133,9 @@ dxdt_CENT = KA*GUT - KE*CENT;
 
 $TABLE
 
-table(ke) = CL/VC;
+double ke = CL/VC;
 
-capture(CP);
-
+$CAPTURE ke CP
 '
 
 

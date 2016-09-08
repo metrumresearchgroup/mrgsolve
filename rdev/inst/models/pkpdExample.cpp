@@ -19,6 +19,8 @@ double INH = CP/(EC50+CP);
 
 dxdt_RESP = KIN*(1-INH) - RESP*KOUT;
 
+$TABLE CP = CENT/VC;
+
 $CAPTURE CP
 
 
