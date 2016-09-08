@@ -50,6 +50,7 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     }
   }
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
+
 }
 
 audit_spec <- function(x,spec,warn=TRUE) {
@@ -323,6 +324,16 @@ eval_ENV_block <- function(x,...) {
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 ##' @export
 handle_spec_block.default <- function(x,...) return(x)
+
+##' @export 
+handle_spec_block.specTABLE <- function(x,...) {
+  if(any(grepl("\\s*table\\(", x))) {
+     warning("The table(name) = value; macro will be deprecated soon.\n",  
+              "Save your output to double and pass to $CAPTURE instead:\n",
+             "   $TABLE double name = value;\n   $CAPTURE name")
+  }
+  return(x)
+}
 
 
 ##' Parse \code{$PARAM} block.
