@@ -237,7 +237,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
                             evid,
                             Data(j,col[_COL_amt_]),
                             Data(j,col[_COL_time_]),
-                            Data(j,col[_COL_rate_])));
+                            Data(j,col[_COL_rate_]),
+                            j, Data(j,Idcol)));
       
       if((ev->rate() < 0) && (ev ->rate() != -1) && (ev->rate() !=-2)) {
         Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
@@ -250,11 +251,11 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ev->from_data(true);
       //ev->evid(evid);
-      ev->pos(j);
+      //ev->pos(j);
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
-      ev->id(Data(j,Idcol));
+      //ev->id(Data(j,Idcol));
       
       if((ev->addl() > 0) && (ev->ii() <=0)) {
         Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");

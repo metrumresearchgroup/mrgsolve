@@ -168,19 +168,17 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   svec tablenames = Rcpp::as<svec> (parin["table_names"]);
   const int ntable = tablenames.size();
-  const int size_capture = capture.at(0);
   const int n_capture  = capture.size()-1;
   
   if(debug) say("Creating odeproblem object");
   
-  prob  = new odeproblem(inpar, init);
+  prob  = new odeproblem(inpar, init, funs, capture.at(0));
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);
-  prob->copy_funs(funs);
   const int neq = prob->neq();
   prob->advan(advan);
-  prob->resize_capture(size_capture);
+
   
   
   switch(advan) {
@@ -631,12 +629,13 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
                                    ev->evid(),
                                    ev->amt(),
                                    ev->time() + prob->alag(ev->cmt()),
-                                   ev->rate()));
+                                   ev->rate(), 
+                                   -1200, ev->id()));
           newev->addl(ev->addl());
           newev->ii(ev->ii());
           newev->ss(ev->ss());
-          newev->id(ev->id());
-          newev->pos(-1200);
+          //newev->id(ev->id());
+          //newev->pos(-1200);
           newev->fn(biofrac);
           newev->output(false);
           

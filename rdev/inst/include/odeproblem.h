@@ -93,7 +93,10 @@ class odeproblem : public odepack_dlsoda {
   
   
 public:
-  odeproblem(Rcpp::NumericVector param, Rcpp::NumericVector init);
+  odeproblem(Rcpp::NumericVector param,
+             Rcpp::NumericVector init, 
+             Rcpp::List funs,
+             int n_capture_);
   
   virtual ~odeproblem();
   

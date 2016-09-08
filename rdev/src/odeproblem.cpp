@@ -23,7 +23,9 @@ extern "C" {void MRGSOLVE_NO_ODE_FUN(MRGSOLVE_ODE_SIGNATURE) {for(unsigned int i
 extern "C" {void MRGSOLVE_NO_CONFIG_FUN(MRGSOLVE_CONFIG_SIGNATURE){}}
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
-                       Rcpp::NumericVector init) : odepack_dlsoda(param.size(),init.size()) {
+                       Rcpp::NumericVector init,
+                       Rcpp::List funs,
+                       int n_capture_) : odepack_dlsoda(param.size(),init.size()) {
   
   int npar_ = int(param.size());
   int neq_ = int(init.size());
@@ -44,10 +46,10 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Param.assign(npar_,0.0);
   Alag.assign(neq_,0.0);
   
-  Derivs = (deriv_func*)  &MRGSOLVE_NO_ODE_FUN;
-  Inits = (init_func *)   &MRGSOLVE_NO_INIT_FUN;
-  Table = (table_func*)   &MRGSOLVE_NO_TABLE_FUN;
-  Config = (config_func*) &MRGSOLVE_NO_CONFIG_FUN;
+  // Derivs = (deriv_func*)  &MRGSOLVE_NO_ODE_FUN;
+  // Inits = (init_func *)   &MRGSOLVE_NO_INIT_FUN;
+  // Table = (table_func*)   &MRGSOLVE_NO_TABLE_FUN;
+  // Config = (config_func*) &MRGSOLVE_NO_CONFIG_FUN;
   
   d.evid = 0;
   d.newind = 0;
@@ -69,6 +71,13 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
   for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
+  
+  Inits = as_init_func(funs["main"]);
+  Table = as_table_func(funs["table"]);
+  Derivs = as_deriv_func(funs["ode"]);
+  Config = as_config_func(funs["config"]); 
+  
+  Capture.assign(n_capture_,0.0);
   
 }
 

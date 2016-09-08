@@ -23,15 +23,6 @@ datarecord::datarecord(int evid_, double time_, short int cmt_) {
   Fromdata=false;
   Cmt = cmt_;
 }
-datarecord::datarecord(int evid_, double time_, short int cmt_, int pos_) {
-  Id =  0.0;
-  Pos = pos_;
-  Time = time_;
-  Evid = evid_;
-  Output=true;
-  Fromdata = false;
-  Cmt = cmt_;
-}
 
 
 datarecord::~datarecord() {}

@@ -10,14 +10,10 @@
 #include <string>
 #include "dataobject.h"
 #include "boost/tokenizer.hpp"
-//#include "boost/foreach.hpp"
-
-//typedef boost::tokenizer<boost::escaped_list_separator<char> > so_tokenizer;
 
 double digits(const double& a, const double& b) {
   return std::floor(a*b)/b;
 }
-
 
 int find_position(Rcpp::CharacterVector what, Rcpp::CharacterVector& table) {
   Rcpp::IntegerVector ma = Rcpp::match(what,table);
@@ -26,8 +22,7 @@ int find_position(Rcpp::CharacterVector what, Rcpp::CharacterVector& table) {
 }
 
 
-
-extern "C" {void mrgsolve_no_init_function(double *y,  std::vector<double>& param) {}}
+//extern "C" {void mrgsolve_no_init_function(double *y,  std::vector<double>& param) {}}
 
 void neg_istate(int istate) {
   Rcpp::Rcout << std::endl << "mrgsolve: DLSODA returned with istate " << istate << std::endl;
@@ -85,9 +80,7 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
   
   Rcpp::List ans;
   
-  odeproblem* prob  = new odeproblem(lparam, linit);
-  prob->copy_funs(funs);
-  prob->resize_capture(capture.size());
+  odeproblem* prob  = new odeproblem(lparam, linit, funs, capture.size());
   prob->neta(Neta);
   prob->neps(Neps);
   

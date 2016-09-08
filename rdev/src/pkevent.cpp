@@ -15,25 +15,13 @@
 pkevent::pkevent(short int cmt_,
                  unsigned int evid_,
                  double amt_,
-                 double time_): datarecord(evid_, time_, cmt_) {
-  Amt = amt_;
-  Rate = 0.0;
-  Ss = 0;
-  Addl = 0;
-  Ii = 0.0;
-  Fn = 1.0;
-  Armed = true;
-}
-
-pkevent::pkevent(short int cmt_,
-                 unsigned int evid_,
-                 double amt_,
                  double time_,
-                 int opos_,
-                 double id_): datarecord(evid_, time_, cmt_, opos_, id_) {
-  
+                 double rate_,
+                 int pos_,
+                 double id_): datarecord(evid_, time_, cmt_, pos_, id_) {
+
   Amt = amt_;
-  Rate = 0.0;
+  Rate = rate_;
   Ss = 0;
   Addl = 0;
   Ii = 0.0;
@@ -56,21 +44,23 @@ pkevent::pkevent(short int cmt_,
   Armed = true;
 }
 
-pkevent::pkevent(short int cmt_,
-                 unsigned int evid_,
-                 double amt_,
-                 double time_,
-                 double rate_,
-                 int opos_,
-                 double id_):datarecord(evid_, time_, cmt_, opos_, id_){
-  Amt = amt_;
-  Rate = rate_;
-  Ss=0;
-  Addl = 0;
-  Ii = 0.0;
-  Fn = 1.0;
-  Armed = true;
-}
+
+
+// pkevent::pkevent(short int cmt_,
+//                  unsigned int evid_,
+//                  double amt_,
+//                  double time_,
+//                  double rate_,
+//                  int opos_,
+//                  double id_):datarecord(evid_, time_, cmt_, opos_, id_){
+//   Amt = amt_;
+//   Rate = rate_;
+//   Ss=0;
+//   Addl = 0;
+//   Ii = 0.0;
+//   Fn = 1.0;
+//   Armed = true;
+// }
 
 
 double pkevent::dur(double b) {
@@ -212,10 +202,7 @@ void pkevent::steady_bolus(odeproblem *prob) {
 
 
 void pkevent::steady_infusion(odeproblem * prob) {
-  
-  
-  //double ii = this->ii();
-  
+
   double duration = this->dur(Fn);
   
   double tfrom = 0.0;
@@ -303,10 +290,11 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
                              9, // EVID 9 means infusion off
                              Amt,
                              Time + this->dur(Fn),
-                             Rate));
+                             Rate, 
+                             -300, Id));
     
-    evoff->id(Id);
-    evoff->pos(-300);
+    //evoff->id(Id);
+    //evoff->pos(-300);
     evoff->output(false);
     thisi.push_back(evoff);
     
@@ -331,10 +319,11 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
                                  9, // EVID 9 means infusion off
                                  Amt,
                                  offtime,
-                                 Rate));
+                                 Rate, 
+                                 -300, Id));
         
-        evoff->id(Id);
-        evoff->pos(-300);
+        //evoff->id(Id);
+        //evoff->pos(-300);
         evoff->output(false);
         thisi.push_back(evoff);
         
@@ -369,10 +358,11 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
                               this_evid,
                               Amt,
                               ontime,
-                              Rate));
+                              Rate,
+                              nextpos,Id));
       
-      evon->id(Id);
-      evon->pos(nextpos);
+      //evon->id(Id);
+      //evon->pos(nextpos);
       evon->fn(Fn);
       evon->output(false);
       
@@ -383,10 +373,11 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
                                  9, // EVID 9 means infusion off
                                  Amt,
                                  ontime + this->dur(Fn),
-                                 Rate));
+                                 Rate, 
+                                 -300,Id));
         
-        evoff->id(Id);
-        evoff->pos(-300);
+        //evoff->id(Id);
+        //evoff->pos(-300);
         evoff->output(false);
         
         thisi.push_back(evoff);
