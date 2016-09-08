@@ -54,12 +54,11 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
-  const int advan             = Rcpp::as<int>    (parin["advan"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
-  int t2advance               = Rcpp::as<int>    (parin["t2advance"]);
+  //int t2advance               = Rcpp::as<int>    (parin["t2advance"]);
   
-  if((t2advance < 0) || (t2advance > 1)) Rcpp::stop("Invalid value for t2advance.");
-  t2advance = 0;
+  //if((t2advance < 0) || (t2advance > 1)) Rcpp::stop("Invalid value for t2advance.");
+  int t2advance = 0;
   
   
   if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
@@ -72,8 +71,8 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   // Really only need cmtnames to get initials from idata
   for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
   dataobject *idat = new dataobject(idata, parnames, cmtnames);
-  idat -> map_uid();
-  idat -> idata_row();
+  idat->map_uid();
+  idat->idata_row();
   
   // Number of individuals in the data set
   const unsigned int NID = dat->nid();
@@ -83,7 +82,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   int i=0,j=0,k=0;
   const double time0 = 0.0;
   int crow =0; 
-  odeproblem *prob;
   size_t h=0;
   
   obsaug  = obsaug & (data.nrow() > 0);
@@ -172,16 +170,13 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   
   if(debug) say("Creating odeproblem object");
   
-  prob  = new odeproblem(inpar, init, funs, capture.at(0));
+  odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);
   const int neq = prob->neq();
-  prob->advan(advan);
 
-  
-  
-  switch(advan) {
+  switch(prob->advan()) {
   case 13:
     break;
   case 2:

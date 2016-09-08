@@ -637,6 +637,7 @@ void odeproblem::copy_parin(Rcpp::List parin) {
   this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
   this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
+  Advan = Rcpp::as<int>(parin["advan"]);
 }
 void odeproblem::copy_funs(Rcpp::List funs) {
   Inits = as_init_func(funs["main"]);
