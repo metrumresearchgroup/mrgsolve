@@ -28,19 +28,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// EXPAND_EVENTS
-Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_, Rcpp::NumericMatrix events, Rcpp::NumericVector id);
-RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP idcol_SEXP, SEXP eventsSEXP, SEXP idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type idcol_(idcol_SEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type events(eventsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type id(idSEXP);
-    rcpp_result_gen = Rcpp::wrap(EXPAND_EVENTS(idcol_, events, id));
-    return rcpp_result_gen;
-END_RCPP
-}
 // TOUCH_FUNS
 Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, Rcpp::NumericVector linit, int Neta, int Neps, Rcpp::CharacterVector capture, Rcpp::List funs);
 RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP) {
@@ -140,5 +127,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type bi(biSEXP);
     from_to(a, b, ai, bi);
     return R_NilValue;
+END_RCPP
+}
+// EXPAND_EVENTS
+Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_, Rcpp::NumericMatrix events, Rcpp::NumericVector id);
+RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP idcol_SEXP, SEXP eventsSEXP, SEXP idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type idcol_(idcol_SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type events(eventsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type id(idSEXP);
+    rcpp_result_gen = Rcpp::wrap(EXPAND_EVENTS(idcol_, events, id));
+    return rcpp_result_gen;
 END_RCPP
 }

@@ -7,15 +7,15 @@
 // Send report to console when istate returns negative after dlsoda call
 void neg_istate(int  );
 
-struct var  {
-  int NEWIND;
-  int EVID;
-};
+// struct var  {
+//   int NEWIND;
+//   int EVID;
+// };
 
 #include <R_ext/Rdynload.h>
 extern "C"{DL_FUNC tofun(SEXP a);}
 // Sort an integer vector
-Rcpp::IntegerVector stl_sort(Rcpp::IntegerVector x);
+//Rcpp::IntegerVector stl_sort(Rcpp::IntegerVector x);
 
 
 void Talk(std::string label, double value);
@@ -31,16 +31,6 @@ typedef std::vector<std::string> svec;
 typedef std::vector<int> ivec;
 typedef std::map<std::string, ivec> sivec_map;
 
-
-
-// void asSDmap(sd_map& out, Rcpp::List x);
-// 
-// template <class type1, class type2>
-//   void asSImap(type1& a, type2 b) {
-//   for(int i=0; i < b.size(); ++i) {
-//     a[std::string(b[i])] = i;
-//   }
-// }
 
 template <class T>
 void sort_unique(T& a) {
@@ -68,7 +58,7 @@ void from_to(const Rcpp::CharacterVector a,
              Rcpp::IntegerVector& bi);
 
 Rcpp::List get_tokens(Rcpp::CharacterVector code);
-Rcpp::List get_tokens_sep(Rcpp::CharacterVector code);
+//Rcpp::List get_tokens_sep(Rcpp::CharacterVector code);
 
 void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 
@@ -77,4 +67,8 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
                       Rcpp::CharacterVector capture,
                       Rcpp::List funs);
 
+
+Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_,
+                                  Rcpp::NumericMatrix events,
+                                  Rcpp::NumericVector id); 
 
