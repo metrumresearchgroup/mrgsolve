@@ -10,7 +10,6 @@ datarecord::datarecord(int evid_, double time_, short int cmt_, int pos_, double
   Time = time_;
   Pos = pos_;
   Evid = evid_;
-  Report=0;
   Output=true;
   Fromdata=false;
   Cmt = cmt_;
@@ -20,7 +19,6 @@ datarecord::datarecord(int evid_, double time_, short int cmt_) {
   Pos = -1;
   Time = time_;
   Evid = evid_;
-  Report=0;
   Output=true;
   Fromdata=false;
   Cmt = cmt_;
@@ -30,7 +28,6 @@ datarecord::datarecord(int evid_, double time_, short int cmt_, int pos_) {
   Pos = pos_;
   Time = time_;
   Evid = evid_;
-  Report=0;
   Output=true;
   Fromdata = false;
   Cmt = cmt_;

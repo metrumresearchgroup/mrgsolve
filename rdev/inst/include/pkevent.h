@@ -81,7 +81,7 @@ class pkevent : public datarecord {
 
   //void schedule_addl(std::vector<rec_ptr>& thisi, const double& maxtime, double& biofrac);
   //void schedule_infusion(std::vector<rec_ptr>& thisi, const double& maxtime, double& biofrac);
-  void schedule(std::vector<rec_ptr>& thisi, const double& maxtime, bool put_ev_first);
+  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first);
   virtual void implement(odeproblem* prob);
   virtual void steady_infusion(odeproblem* prob);
   virtual void steady_bolus(odeproblem* prob);

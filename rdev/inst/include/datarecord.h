@@ -38,8 +38,8 @@ class datarecord {
 
   short int cmt(){return Cmt;}
 
-  char report(){return Report;}
-  void report(int report_) {Report=report_;}
+  //char report(){return Report;}
+  //void report(int report_) {Report=report_;}
   virtual bool is_event() {return false;}
   virtual void fn(double){};
 
@@ -54,7 +54,6 @@ class datarecord {
   double Id;
   int Pos;
   unsigned short int Evid;
-  char Report;
   bool Output;
   bool Fromdata;
   short int Cmt;

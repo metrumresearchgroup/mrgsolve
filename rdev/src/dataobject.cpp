@@ -234,7 +234,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ++evcount;
       
       ev_ptr ev(new pkevent(Data(j,col[_COL_cmt_]),
-                            Data(j,col[_COL_evid_]),
+                            evid,
                             Data(j,col[_COL_amt_]),
                             Data(j,col[_COL_time_]),
                             Data(j,col[_COL_rate_])));
@@ -249,9 +249,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if(obsonly) ev->output(false);
       
       ev->from_data(true);
-      ev->evid(evid);
+      //ev->evid(evid);
       ev->pos(j);
-      ev->report(0);
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
