@@ -46,26 +46,8 @@ pkevent::pkevent(short int cmt_,
 
 
 
-// pkevent::pkevent(short int cmt_,
-//                  unsigned int evid_,
-//                  double amt_,
-//                  double time_,
-//                  double rate_,
-//                  int opos_,
-//                  double id_):datarecord(evid_, time_, cmt_, opos_, id_){
-//   Amt = amt_;
-//   Rate = rate_;
-//   Ss=0;
-//   Addl = 0;
-//   Ii = 0.0;
-//   Fn = 1.0;
-//   Armed = true;
-// }
-
-
 double pkevent::dur(double b) {
   return(b*Amt/Rate);
-  //return digits(b*this->amt()/this->rate(),1000000.0);
 }
 
 void pkevent::implement(odeproblem *prob) {
@@ -201,7 +183,7 @@ void pkevent::steady_bolus(odeproblem *prob) {
 }
 
 
-void pkevent::steady_infusion(odeproblem * prob) {
+void pkevent::steady_infusion(odeproblem *prob) {
 
   double duration = this->dur(Fn);
   
@@ -278,9 +260,7 @@ bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
 void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
-  
-  //double biofrac = this->fn();
-  
+
   if(Fn==0) return;
   
   // End if infusion

@@ -42,11 +42,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Param.assign(npar_,0.0);
   Alag.assign(neq_,0.0);
   
-  // Derivs = (deriv_func*)  &MRGSOLVE_NO_ODE_FUN;
-  // Inits = (init_func *)   &MRGSOLVE_NO_INIT_FUN;
-  // Table = (table_func*)   &MRGSOLVE_NO_TABLE_FUN;
-  // Config = (config_func*) &MRGSOLVE_NO_CONFIG_FUN;
-  
   d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
@@ -197,10 +192,7 @@ void odeproblem::rate_reset() {
     infusion_count[i] = 0;
   }
 }
-// void odeproblem::rate_reset(unsigned short int eq_n) {
-//   R0[eq_n]  = 0.0;
-//   infusion_count[eq_n] = 0;
-// }
+
 
 void odeproblem::reset_newid(const double& id_=1.0) {
   
@@ -241,11 +233,6 @@ void odeproblem::rate_rm(unsigned int pos, const double& value) {
     if(R0[pos] < 0.0) R0[pos] = 0.0;
   }
 }
-
-// void odeproblem::rate_replace(unsigned int pos, const double& value) {
-//   infusion_count[pos] = 1;
-//   R0[pos] = value;
-// }
 
 
 void odeproblem::on(unsigned short int eq_n) {
@@ -629,7 +616,7 @@ config_func* as_config_func(SEXP config) {
   return(reinterpret_cast<config_func*>(tofunptr(config))); // Known to generate compiler warning
 }
 
-void odeproblem::copy_parin(Rcpp::List parin) {
+void odeproblem::copy_parin(const Rcpp::List& parin) {
   this->tol(Rcpp::as<double>(parin["atol"]),Rcpp::as<double>(parin["rtol"]));
   this->hmax(Rcpp::as<double>(parin["hmax"]));
   this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
@@ -637,7 +624,7 @@ void odeproblem::copy_parin(Rcpp::List parin) {
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
   this->advan(Rcpp::as<int>(parin["advan"]));
 }
-void odeproblem::copy_funs(Rcpp::List funs) {
+void odeproblem::copy_funs(const Rcpp::List& funs) {
   Inits = as_init_func(funs["main"]);
   Table = as_table_func(funs["table"]);
   Derivs = as_deriv_func(funs["ode"]);

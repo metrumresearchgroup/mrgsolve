@@ -15,7 +15,7 @@ double digits(const double& a, const double& b) {
   return std::floor(a*b)/b;
 }
 
-int find_position(Rcpp::CharacterVector what, Rcpp::CharacterVector& table) {
+int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector& table) {
   Rcpp::IntegerVector ma = Rcpp::match(what,table);
   if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
   return(ma[0]-1);
@@ -71,11 +71,11 @@ void neg_istate(int istate) {
 
 
 // [[Rcpp::export]]
-Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
-                      Rcpp::NumericVector linit,
+Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+                      const Rcpp::NumericVector& linit,
                       int Neta, int Neps,
-                      Rcpp::CharacterVector capture,
-                      Rcpp::List funs) {
+                      const Rcpp::CharacterVector& capture,
+                      const Rcpp::List& funs) {
   
   
   Rcpp::List ans;
@@ -114,11 +114,9 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
 
 
 // [[Rcpp::export]]
-arma::mat MVGAUSS(Rcpp::NumericMatrix OMEGA_, int n, int seed) {
-  
-  //  std::srand(12523);
-  
-  arma::mat OMEGA( OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
+arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n, int seed) {
+
+  arma::mat OMEGA(OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
   
   arma::vec eigval;
   arma::mat eigvec;
@@ -136,7 +134,7 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix OMEGA_, int n, int seed) {
 
 
 // [[Rcpp::export]]
-Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix OMEGA, int n2, Rcpp::NumericMatrix SIGMA, int seed) {
+Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix& SIGMA, int seed) {
   
   arma::mat eta;
   arma::mat eps;
@@ -151,7 +149,7 @@ Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix OMEGA, int n2, Rcpp::NumericMatrix 
 }
 
 //[[Rcpp::export]]
-void decorr(Rcpp::NumericMatrix x) {
+void decorr(Rcpp::NumericMatrix& x) {
   int i = 1, j = 1, n = x.nrow();
   if(n != x.ncol()) Rcpp::stop("matrix is not square");
   for(i=0; i < n; ++i) {
@@ -163,7 +161,7 @@ void decorr(Rcpp::NumericMatrix x) {
 
 
 //[[Rcpp::export]]
-Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix x) {
+Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix& x) {
   int i=0, j=0;
   for(i=0; i < x.ncol(); ++i) {
     for(j=0; j < x.nrow(); ++j) {
@@ -175,7 +173,7 @@ Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix x) {
 
 
 //[[Rcpp::export]]
-Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
+Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   
   int j,k;
   Rcpp::NumericMatrix mat;
@@ -249,7 +247,7 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
 
 
 //[[Rcpp::export]]
-Rcpp::List get_tokens(Rcpp::CharacterVector code) {
+Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   
   Rcpp::List ret(code.size());
   
@@ -271,8 +269,8 @@ Rcpp::List get_tokens(Rcpp::CharacterVector code) {
 
 
 //[[Rcpp::export]]
-void from_to(const Rcpp::CharacterVector a, 
-             const Rcpp::CharacterVector b,
+void from_to(const Rcpp::CharacterVector& a, 
+             const Rcpp::CharacterVector& b,
              Rcpp::IntegerVector& ai,
              Rcpp::IntegerVector& bi) {
   
@@ -288,9 +286,9 @@ void from_to(const Rcpp::CharacterVector a,
 
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_,
-                                  Rcpp::NumericMatrix events,
-                                  Rcpp::NumericVector id) {
+Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
+                                  const Rcpp::NumericMatrix& events,
+                                  const Rcpp::NumericVector& id) {
   
   int i,j,k;
   int crow = 0;

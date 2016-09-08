@@ -223,8 +223,8 @@ public:
   void deriv_fun(SEXP dfun);
   void config_fun(SEXP cfun);
   
-  void copy_parin(Rcpp::List parin);
-  void copy_funs(Rcpp::List funs);
+  void copy_parin(const Rcpp::List& parin);
+  void copy_funs(const Rcpp::List& funs);
   
 protected:
   

@@ -32,17 +32,17 @@
  */
 
 // [[Rcpp::export]]
-Rcpp::List DEVTRAN(Rcpp::List parin,
-                   Rcpp::NumericVector inpar,
-                   Rcpp::CharacterVector parnames,
-                   Rcpp::NumericVector init,
-                   Rcpp::CharacterVector cmtnames,
-                   Rcpp::IntegerVector capture,
-                   Rcpp::List funs,
-                   Rcpp::NumericMatrix data,
-                   Rcpp::NumericMatrix idata,
-                   Rcpp::NumericMatrix OMEGA,
-                   Rcpp::NumericMatrix SIGMA) {
+Rcpp::List DEVTRAN(const Rcpp::List parin,
+                   const Rcpp::NumericVector& inpar,
+                   const Rcpp::CharacterVector& parnames,
+                   const Rcpp::NumericVector& init,
+                   Rcpp::CharacterVector& cmtnames,
+                   const Rcpp::IntegerVector& capture,
+                   const Rcpp::List& funs,
+                   const Rcpp::NumericMatrix& data,
+                   const Rcpp::NumericMatrix& idata,
+                   Rcpp::NumericMatrix& OMEGA,
+                   Rcpp::NumericMatrix& SIGMA) {
   
   
   

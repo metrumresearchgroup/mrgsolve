@@ -77,7 +77,7 @@ void dataobject::map_uid() {
 }
 
 
-Rcpp::IntegerVector dataobject::get_col_n(Rcpp::CharacterVector what) {
+Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
   Rcpp::IntegerVector ret = Rcpp::match(what, Data_names);
   ret = Rcpp::na_omit(ret);
   return(ret-1);
@@ -158,7 +158,7 @@ void dataobject::idata_row() {
 }
 
 
-void dataobject::copy_parameters(int this_row, odeproblem* prob) {
+void dataobject::copy_parameters(int this_row, odeproblem *prob) {
   size_t i;
   for(i=0; i < par_from.size(); ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
@@ -167,7 +167,7 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
 
 
 
-void dataobject::copy_inits(int this_row, odeproblem* prob) {
+void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
   size_t i;
   for(i=0; i < cmt_from.size(); ++i) {
@@ -176,7 +176,7 @@ void dataobject::copy_inits(int this_row, odeproblem* prob) {
 }
 
 
-void dataobject::reload_parameters(Rcpp::NumericVector PARAM, odeproblem* prob) {
+void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, odeproblem *prob) {
   for(size_t i = 0; i < par_to.size(); ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
@@ -271,7 +271,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 
 
 
-void dataobject::check_idcol(dataobject* data) {
+void dataobject::check_idcol(dataobject *data) {
   
   if(data->ncol() == 0) {return;}
   

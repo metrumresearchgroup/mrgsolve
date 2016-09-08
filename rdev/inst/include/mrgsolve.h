@@ -21,8 +21,8 @@ extern "C"{DL_FUNC tofun(SEXP a);}
 void Talk(std::string label, double value);
 void Talk(std::string label);
 void Talk(std::string label, int value);
-arma::mat MVGAUSS(Rcpp::NumericMatrix OMEGA_, int n, int seed);
-Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix OMEGA, int n2, Rcpp::NumericMatrix SIGMA, int seed);
+arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n, int seed);
+Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix& SIGMA, int seed);
 
 
 typedef std::map<std::string,int > si_map;
@@ -39,36 +39,34 @@ void sort_unique(T& a) {
   a.erase(last, a.end());
 }
 
-int find_position(Rcpp::CharacterVector what,  Rcpp::CharacterVector& table);
+int find_position(const Rcpp::CharacterVector& what,  const Rcpp::CharacterVector& table);
 
 double digits(const double& a, const double& b);
 
 //Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x);
 
-void decorr(Rcpp::NumericMatrix x);
+void decorr(const Rcpp::NumericMatrix& x);
 
-typedef std::vector<Rcpp::NumericVector> mvec;
-
-Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a);
+Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
 
 //void match_both(svec a, svec b, ivec& ai, ivec& bi);
-void from_to(const Rcpp::CharacterVector a, 
-             const Rcpp::CharacterVector b, 
+void from_to(const Rcpp::CharacterVector& a, 
+             const Rcpp::CharacterVector& b, 
              Rcpp::IntegerVector& ai,
              Rcpp::IntegerVector& bi);
 
-Rcpp::List get_tokens(Rcpp::CharacterVector code);
+Rcpp::List get_tokens(const Rcpp::CharacterVector& code);
 //Rcpp::List get_tokens_sep(Rcpp::CharacterVector code);
 
 void set_omega(SEXP loc, Rcpp::NumericMatrix& omega_);
 
-Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam, 
-                      Rcpp::NumericVector linit,
-                      Rcpp::CharacterVector capture,
-                      Rcpp::List funs);
+Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+                      const Rcpp::NumericVector& linit,
+                      const Rcpp::CharacterVector& capture,
+                      const Rcpp::List& funs);
 
 
-Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_,
-                                  Rcpp::NumericMatrix events,
-                                  Rcpp::NumericVector id); 
+Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
+                                  const Rcpp::NumericMatrix& events,
+                                  const Rcpp::NumericVector& id); 
 

@@ -43,7 +43,7 @@ public:
   dvec return_uid() {return Uid;}
   void copy_parameters(int this_row,odeproblem *prob);
   void copy_inits(int this_row,odeproblem *prob);
-  void reload_parameters(Rcpp::NumericVector param, odeproblem *prob);
+  void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);
   void idata_row();
   unsigned int get_idata_row(double ID){return idmap[ID];}
   void locate_tran();
@@ -51,7 +51,7 @@ public:
   //int col_n(std::string name) {return col.at(name);}
   void check_idcol(dataobject *data);
   double get_value(int row, int col) {return Data(row,col);}
-  Rcpp::IntegerVector get_col_n(Rcpp::CharacterVector what);
+  Rcpp::IntegerVector get_col_n(const Rcpp::CharacterVector& what);
 
 
  protected:
