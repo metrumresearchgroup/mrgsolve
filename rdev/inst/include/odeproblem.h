@@ -72,10 +72,6 @@ table_func*  as_table_func( SEXP table);
 config_func* as_config_func(SEXP config);
 
 extern "C"{DL_FUNC tofunptr(SEXP a);}
-extern "C" {init_func  MRGSOLVE_NO_INIT_FUN ;}
-extern "C" {table_func MRGSOLVE_NO_TABLE_FUN;}
-extern "C" {deriv_func MRGSOLVE_NO_ODE_FUN  ;}
-extern "C" {config_func MRGSOLVE_NO_CONFIG_FUN  ;}
 
 main_deriv_func main_derivs;
 void neg_istate(int istate);
