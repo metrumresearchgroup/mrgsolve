@@ -286,6 +286,7 @@ void odeproblem::advance(double tfrom, double tto) {
       this->advan4(tfrom,tto);
       return;
     }
+    Rcpp::stop("mrgsolve: advan has invalid value.");
   }
   
   
@@ -637,7 +638,7 @@ void odeproblem::copy_parin(Rcpp::List parin) {
   this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
   this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
-  Advan = Rcpp::as<int>(parin["advan"]);
+  this->advan(Rcpp::as<int>(parin["advan"]));
 }
 void odeproblem::copy_funs(Rcpp::List funs) {
   Inits = as_init_func(funs["main"]);
@@ -649,13 +650,18 @@ void odeproblem::copy_funs(Rcpp::List funs) {
 
 void odeproblem::advan(int x) {
   Advan = x;
+  
+  if(Advan==13) return;
+  
   if((x==1) | (x ==2)) {
     a.assign(2,0.0);
     alpha.assign(2,0.0);
   }
+  
   if((x==3) | (x==4)) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
   }
+
 }
 

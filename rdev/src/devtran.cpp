@@ -55,6 +55,7 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
+  //const int advan = Rcpp::as<int>(parin["advan"]);
   //int t2advance               = Rcpp::as<int>    (parin["t2advance"]);
   
   //if((t2advance < 0) || (t2advance > 1)) Rcpp::stop("Invalid value for t2advance.");
@@ -176,21 +177,6 @@ Rcpp::List DEVTRAN(Rcpp::List parin,
   prob->copy_parin(parin);
   const int neq = prob->neq();
 
-  switch(prob->advan()) {
-  case 13:
-    break;
-  case 2:
-    break;
-  case 4:
-    break;
-  case 1:
-    break;
-  case 3:
-    break;
-  default:
-    CRUMP("advan must be either 1, 2, 3, 4, or 13.");
-  }
-  
   // Every ID in the data set needs to be found in idata if supplied:
   // dataobject.cpp
   if(nidata > 0) dat->check_idcol(idat);

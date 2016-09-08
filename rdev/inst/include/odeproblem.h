@@ -276,7 +276,7 @@ protected:
   
   databox d;
   
-  // These are used for advan 2/4
+  // These are used for advan 1/2/3/4
   int Advan;
   dvec a;
   dvec alpha;

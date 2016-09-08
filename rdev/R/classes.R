@@ -261,10 +261,12 @@ valid.mrgmod <- function(object) {
   tags <- unlist(names(object), use.names=FALSE)
   x <- check_names(tags,pars(object),cmt(object))
   x1 <- length(x)==0
+  x2 <- object@advan %in% c(1,2,3,4,13)
   fun <- valid_funs(object@funs)
-  cool <- x1 & fun[[1]]
+  cool <- x1 & x2 & fun[[1]]
   if(cool) return(TRUE)
   x <- c(x,fun[[2]])
+  if(!x2) x <- c(x,"Advan must be 1, 2, 3, 4, or 13")
   return(x)
 }
 
