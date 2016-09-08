@@ -26,24 +26,24 @@ class odepack_dlsoda {
   void ixpr(int value){xiwork[4] = value; if(value !=0) xiopt=1;}
   void maxsteps(int value){xiwork[5] = value; if(value !=0) xiopt=1;}
   void mxhnil(int value){xiwork[6] = value; if (value !=0) xiopt=1;}
-  double hmin(){return xrwork[6];}
-  double hmax(){return xrwork[5];}
-  int maxsteps(){return xiwork[5];}
-  int ixpr(){return xiwork[4];}
-  int mxhnil(){return xiwork[6];}
+  //double hmin(){return xrwork[6];}
+  //double hmax(){return xrwork[5];}
+  //int maxsteps(){return xiwork[5];}
+  //int ixpr(){return xiwork[4];}
+  //int mxhnil(){return xiwork[6];}
   int istate(){return xistate;}
   void istate(int value){xistate = value;}
   void lsoda_init(){xistate=1;}
   int itask(){return xitask;}
   void itask(int itask){xitask = itask;}
-  void usingevents(){xitask = 4; xusingevents=1;}
-  int iopt(){return xiopt;}
-  int itol(){return xitol;}
-  int jt(){return xjt;}
+  //void usingevents(){xitask = 4; xusingevents=1;}
+  //int iopt(){return xiopt;}
+  //int itol(){return xitol;}
+  //int jt(){return xjt;}
   void atol(double atol){xatol=atol;}
   void rtol(double rtol){xrtol=rtol;}
-  double atol(){return xatol;}
-  double rtol(){return xrtol;}
+  //double atol(){return xatol;}
+  //double rtol(){return xrtol;}
   void tol(double atol, double rtol);
 
 
@@ -53,8 +53,8 @@ class odepack_dlsoda {
   int * iwork(){return xiwork;}
   void iwork( int pos,  int value){xiwork[pos] = value;}
   void tcrit(double value){xrwork[0] = value;}
-  int liwork(){return xliwork;}
-  int lrwork(){return xlrwork;}
+  //int liwork(){return xliwork;}
+  //int lrwork(){return xlrwork;}
 
  // Number of parameters/equations:
   int npar() {return Npar;}

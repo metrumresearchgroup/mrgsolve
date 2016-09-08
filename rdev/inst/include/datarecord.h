@@ -11,7 +11,6 @@ class datarecord {
   friend class pkevent;
  public:
   datarecord(int evid_, double time_, short int cmt_, int pos_, double id_);
-  datarecord(int evid_, double time_, short int cmt_, int pos_);
   datarecord(int evid_, double time_, short int cmt_);
   datarecord(const datarecord& other);
   virtual ~datarecord();
@@ -38,8 +37,6 @@ class datarecord {
 
   short int cmt(){return Cmt;}
 
-  char report(){return Report;}
-  void report(int report_) {Report=report_;}
   virtual bool is_event() {return false;}
   virtual void fn(double){};
 
@@ -54,7 +51,6 @@ class datarecord {
   double Id;
   int Pos;
   unsigned short int Evid;
-  char Report;
   bool Output;
   bool Fromdata;
   short int Cmt;

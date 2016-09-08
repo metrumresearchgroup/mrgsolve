@@ -4,9 +4,8 @@
 
 #include <cmath>
 #include <vector>
+//#include <numeric>
 #include "RcppInclude.h"
-#include <numeric>
-
 #include "odeproblem.h"
 #include "pkevent.h"
 
@@ -18,13 +17,11 @@ arma::mat OMGADEF(1,1,arma::fill::zeros);
 
 
 // dummy functions that do nothing
-extern "C" {void MRGSOLVE_NO_INIT_FUN(MRGSOLVE_INIT_SIGNATURE){}}
-extern "C" {void MRGSOLVE_NO_TABLE_FUN(MRGSOLVE_TABLE_SIGNATURE){}}
-extern "C" {void MRGSOLVE_NO_ODE_FUN(MRGSOLVE_ODE_SIGNATURE) {for(unsigned int i = 0; i < _A_0_.size(); ++i) _DADT_[i] = 0;}}
-extern "C" {void MRGSOLVE_NO_CONFIG_FUN(MRGSOLVE_CONFIG_SIGNATURE){}}
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
-                       Rcpp::NumericVector init) : odepack_dlsoda(param.size(),init.size()) {
+                       Rcpp::NumericVector init,
+                       Rcpp::List funs,
+                       int n_capture_) : odepack_dlsoda(param.size(),init.size()) {
   
   int npar_ = int(param.size());
   int neq_ = int(init.size());
@@ -45,10 +42,10 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Param.assign(npar_,0.0);
   Alag.assign(neq_,0.0);
   
-  Derivs = (deriv_func*)  &MRGSOLVE_NO_ODE_FUN;
-  Inits = (init_func *)   &MRGSOLVE_NO_INIT_FUN;
-  Table = (table_func*)   &MRGSOLVE_NO_TABLE_FUN;
-  Config = (config_func*) &MRGSOLVE_NO_CONFIG_FUN;
+  // Derivs = (deriv_func*)  &MRGSOLVE_NO_ODE_FUN;
+  // Inits = (init_func *)   &MRGSOLVE_NO_INIT_FUN;
+  // Table = (table_func*)   &MRGSOLVE_NO_TABLE_FUN;
+  // Config = (config_func*) &MRGSOLVE_NO_CONFIG_FUN;
   
   d.evid = 0;
   d.newind = 0;
@@ -69,8 +66,15 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
-  for(int i=0; i < neq_; ++i)  Init_value[i] =  double(init[i]);
-
+  for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
+  
+  Inits = as_init_func(funs["main"]);
+  Table = as_table_func(funs["table"]);
+  Derivs = as_deriv_func(funs["ode"]);
+  Config = as_config_func(funs["config"]); 
+  
+  Capture.assign(n_capture_,0.0);
+  
 }
 
 /** \example solve.cpp
@@ -104,14 +108,16 @@ void odeproblem::y_init(int pos, double value) {
 }
 
 
-void main_derivs(int * neq, double * t, double *y, double *ydot, odeproblem* prob) {
+void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
   
   // Call derivs:
-  (prob->derivs())(t,
-   y,
-   ydot,
-   prob->init(),
-   prob->param()
+  (prob->derivs())(
+      t,
+      y,
+      ydot,
+      prob->init(),
+      prob->param()
+      
   );
   
   
@@ -191,10 +197,10 @@ void odeproblem::rate_reset() {
     infusion_count[i] = 0;
   }
 }
-void odeproblem::rate_reset(unsigned short int eq_n) {
-  R0[eq_n]  = 0.0;
-  infusion_count[eq_n] = 0;
-}
+// void odeproblem::rate_reset(unsigned short int eq_n) {
+//   R0[eq_n]  = 0.0;
+//   infusion_count[eq_n] = 0;
+// }
 
 void odeproblem::reset_newid(const double& id_=1.0) {
   
@@ -236,10 +242,10 @@ void odeproblem::rate_rm(unsigned int pos, const double& value) {
   }
 }
 
-void odeproblem::rate_replace(unsigned int pos, const double& value) {
-  infusion_count[pos] = 1;
-  R0[pos] = value;
-}
+// void odeproblem::rate_replace(unsigned int pos, const double& value) {
+//   infusion_count[pos] = 1;
+//   R0[pos] = value;
+// }
 
 
 void odeproblem::on(unsigned short int eq_n) {
@@ -276,6 +282,8 @@ void odeproblem::advance(double tfrom, double tto) {
       this->advan4(tfrom,tto);
       return;
     }
+    // If Advan isn't 13, it needs to be 1/2/3/4
+    Rcpp::stop("mrgsolve: advan has invalid value.");
   }
   
   
@@ -320,7 +328,7 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   //a and alpha are private members
   alpha[0] = k10;
   alpha[1] = ka;
-
+  
   a[0] = ka/(ka-alpha[0]);
   a[1] = -a[0];
   
@@ -627,6 +635,7 @@ void odeproblem::copy_parin(Rcpp::List parin) {
   this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
   this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
+  this->advan(Rcpp::as<int>(parin["advan"]));
 }
 void odeproblem::copy_funs(Rcpp::List funs) {
   Inits = as_init_func(funs["main"]);
@@ -638,13 +647,18 @@ void odeproblem::copy_funs(Rcpp::List funs) {
 
 void odeproblem::advan(int x) {
   Advan = x;
+  
+  if(Advan==13) return;
+  
   if((x==1) | (x ==2)) {
     a.assign(2,0.0);
     alpha.assign(2,0.0);
   }
+  
   if((x==3) | (x==4)) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
   }
+
 }
 

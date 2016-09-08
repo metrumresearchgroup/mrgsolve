@@ -10,14 +10,10 @@
 #include <string>
 #include "dataobject.h"
 #include "boost/tokenizer.hpp"
-#include "boost/foreach.hpp"
-
-typedef boost::tokenizer<boost::escaped_list_separator<char> > so_tokenizer;
 
 double digits(const double& a, const double& b) {
   return std::floor(a*b)/b;
 }
-
 
 int find_position(Rcpp::CharacterVector what, Rcpp::CharacterVector& table) {
   Rcpp::IntegerVector ma = Rcpp::match(what,table);
@@ -26,8 +22,7 @@ int find_position(Rcpp::CharacterVector what, Rcpp::CharacterVector& table) {
 }
 
 
-
-extern "C" {void mrgsolve_no_init_function(double *y,  std::vector<double>& param) {}}
+//extern "C" {void mrgsolve_no_init_function(double *y,  std::vector<double>& param) {}}
 
 void neg_istate(int istate) {
   Rcpp::Rcout << std::endl << "mrgsolve: DLSODA returned with istate " << istate << std::endl;
@@ -85,9 +80,7 @@ Rcpp::List TOUCH_FUNS(Rcpp::NumericVector lparam,
   
   Rcpp::List ans;
   
-  odeproblem* prob  = new odeproblem(lparam, linit);
-  prob->copy_funs(funs);
-  prob->resize_capture(capture.size());
+  odeproblem* prob  = new odeproblem(lparam, linit, funs, capture.size());
   prob->neta(Neta);
   prob->neps(Neps);
   
@@ -156,14 +149,6 @@ Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix OMEGA, int n2, Rcpp::NumericMatrix 
   
   return(ans);
 }
-
-
-// Rcpp::CharacterVector colnames(Rcpp::NumericMatrix x) {
-//   Rcpp::List dimnames = x.attr("dimnames");
-//   return(dimnames[1]);
-// }
-
-
 
 //[[Rcpp::export]]
 void decorr(Rcpp::NumericMatrix x) {
@@ -263,32 +248,6 @@ Rcpp::NumericMatrix SUPERMATRIX(Rcpp::List a, bool keep_names) {
 }
 
 
-
-
-// void match_both (svec a, svec b, ivec& ai, ivec& bi) {
-//   
-//   si_map A;
-//   si_map B;
-//   svec inter;
-//   
-//   for(size_t i=0; i < a.size(); ++i) A[a[i]] = i;
-//   for(size_t i=0; i < b.size(); ++i) B[b[i]] = i;
-//   
-//   std::sort(a.begin(), a.end());
-//   std::sort(b.begin(), b.end());
-//   
-//   std::set_intersection(a.begin(), a.end(), b.begin(), b.end(),
-//                         std::back_inserter(inter));
-//   
-//   ai.resize(inter.size());
-//   for(size_t i=0; i < inter.size(); ++i) ai[i] = A[inter[i]];
-//   
-//   bi.resize(inter.size());
-//   for(size_t i=0; i < inter.size(); ++i) bi[i] = B[inter[i]];
-//   
-// }
-
-
 //[[Rcpp::export]]
 Rcpp::List get_tokens(Rcpp::CharacterVector code) {
   
@@ -326,6 +285,46 @@ void from_to(const Rcpp::CharacterVector a,
   std::sort(ai.begin(), ai.end());
   
 }
+
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix EXPAND_EVENTS(Rcpp::IntegerVector idcol_,
+                                  Rcpp::NumericMatrix events,
+                                  Rcpp::NumericVector id) {
+  
+  int i,j,k;
+  int crow = 0;
+  
+  int idcol = idcol_[0]-1;
+  int ncol_new = events.ncol();
+  
+  Rcpp::List dimnames = events.attr("dimnames");
+  Rcpp::CharacterVector names = dimnames[1];
+  
+  if(idcol < 0) {
+    ncol_new = events.ncol() + 1;  
+    names.push_back("ID");
+    idcol = ncol_new-1;
+    dimnames[1] = names;
+  } 
+  
+  Rcpp::NumericMatrix ans(events.nrow()*id.size(),ncol_new);
+  
+  for(i=0; i < id.size(); ++i) {
+    for(j=0; j < events.nrow(); ++j) {
+      for(k=0; k < events.ncol(); ++k) {
+        ans(crow,k) = events(j,k);
+      }
+      ans(crow,idcol) = id[i];
+      ++crow;
+    }
+  }
+  dimnames[0]  = Rcpp::CharacterVector(0);
+  ans.attr("dimnames") = dimnames;
+  return(ans);
+}
+
+
 
 
 

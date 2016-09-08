@@ -459,6 +459,7 @@ handle_spec_block.specINIT <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
 ##' @rdname handle_CMT

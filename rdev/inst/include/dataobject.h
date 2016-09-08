@@ -3,15 +3,17 @@
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 #ifndef DATAOBJECT_H
 #define DATAOBJECT_H
-#include <math.h>
-#include <memory>
-#include <iostream>
+//#include <math.h>
+//#include <memory>
+//#include <iostream>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <string>
+//#include <string>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 #include "pkevent.h"
+
+
 
 typedef std::map<std::string, ivec> sivec_map;
 typedef std::map<double, int> di_map;
@@ -39,18 +41,18 @@ public:
   void map_uid();
   double get_uid(int i) {return Uid.at(i);}
   dvec return_uid() {return Uid;}
-  void copy_parameters(int this_row,odeproblem* prob);
-  void copy_inits(int this_row,odeproblem* prob);
-  void reload_parameters(Rcpp::NumericVector param, odeproblem* prob);
+  void copy_parameters(int this_row,odeproblem *prob);
+  void copy_inits(int this_row,odeproblem *prob);
+  void reload_parameters(Rcpp::NumericVector param, odeproblem *prob);
   void idata_row();
   unsigned int get_idata_row(double ID){return idmap[ID];}
   void locate_tran();
   void get_records(recstack& a, int NID, int neq, int& obscount, int& evcount, bool obsonly,bool debug);
-  int col_n(std::string name) {return col.at(name);}
-  void check_idcol(dataobject* data);
+  //int col_n(std::string name) {return col.at(name);}
+  void check_idcol(dataobject *data);
   double get_value(int row, int col) {return Data(row,col);}
   Rcpp::IntegerVector get_col_n(Rcpp::CharacterVector what);
-  //Rcpp::List ex_port();
+
 
  protected:
 
@@ -61,7 +63,7 @@ public:
   Rcpp::NumericMatrix Data;
   Rcpp::CharacterVector Data_names;
 
-  si_map col;
+  std::vector<unsigned int> col;
   Rcpp::IntegerVector par_from;  // data set index
   Rcpp::IntegerVector par_to;    // parameter list index
   Rcpp::CharacterVector parnames;

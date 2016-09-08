@@ -7,7 +7,7 @@
 #include "odeproblem.h"
 #include "mrgsolve.h"
 
-#define N_SS 2000
+#define N_SS 1000
 #define CRIT_DIFF_SS 1E-10
 
 
@@ -15,25 +15,13 @@
 pkevent::pkevent(short int cmt_,
                  unsigned int evid_,
                  double amt_,
-                 double time_): datarecord(evid_, time_, cmt_) {
-  Amt = amt_;
-  Rate = 0.0;
-  Ss = 0;
-  Addl = 0;
-  Ii = 0.0;
-  Fn = 1.0;
-  Armed = true;
-}
-
-pkevent::pkevent(short int cmt_,
-                 unsigned int evid_,
-                 double amt_,
                  double time_,
-                 int opos_,
-                 double id_): datarecord(evid_, time_, cmt_, opos_, id_) {
-  
+                 double rate_,
+                 int pos_,
+                 double id_): datarecord(evid_, time_, cmt_, pos_, id_) {
+
   Amt = amt_;
-  Rate = 0.0;
+  Rate = rate_;
   Ss = 0;
   Addl = 0;
   Ii = 0.0;
@@ -56,66 +44,68 @@ pkevent::pkevent(short int cmt_,
   Armed = true;
 }
 
-pkevent::pkevent(short int cmt_,
-                 unsigned int evid_,
-                 double amt_,
-                 double time_,
-                 double rate_,
-                 int opos_,
-                 double id_):datarecord(evid_, time_, cmt_, opos_, id_){
-  Amt = amt_;
-  Rate = rate_;
-  Ss=0;
-  Addl = 0;
-  Ii = 0.0;
-  Fn = 1.0;
-  Armed = true;
-}
+
+
+// pkevent::pkevent(short int cmt_,
+//                  unsigned int evid_,
+//                  double amt_,
+//                  double time_,
+//                  double rate_,
+//                  int opos_,
+//                  double id_):datarecord(evid_, time_, cmt_, opos_, id_){
+//   Amt = amt_;
+//   Rate = rate_;
+//   Ss=0;
+//   Addl = 0;
+//   Ii = 0.0;
+//   Fn = 1.0;
+//   Armed = true;
+// }
 
 
 double pkevent::dur(double b) {
-  return(b*this->amt()/this->rate());
+  return(b*Amt/Rate);
   //return digits(b*this->amt()/this->rate(),1000000.0);
 }
 
-void pkevent::implement(odeproblem * prob) {
+void pkevent::implement(odeproblem *prob) {
   
-  if(this->unarmed()) return;
+  if(!Armed) return;
   
-  unsigned int evid = this->evid();
+  unsigned int evid = Evid;
   
   if(this->infusion()) evid = 5;
   
-  int eq_n = std::abs(this->cmt())-1;
+  int eq_n = std::abs(Cmt)-1;
   
   // Check for steady state records:
-  if(this->ss()==1) {
-    if(this->fn()==0) Rcpp::stop("Cannot use ss flag when F(n) is zero.");
-    if((this->rate() == 0)) this->steady_bolus(prob);
-    if((this->rate() >  0)) this->steady_infusion(prob);
+  if(Ss==1) {
+    if(Fn==0) Rcpp::stop("Cannot use ss flag when F(n) is zero.");
+    if(Rate == 0) this->steady_bolus(prob);
+    if(Rate >  0) this->steady_infusion(prob);
   }
   
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) Rcpp::stop("Attemped bolus dose into a compartment that is off");
-    prob->fbio(eq_n, this->fn());
-    prob->y(eq_n,(prob->y(eq_n)  + this->amt() * this->fn()));
+    prob->fbio(eq_n, Fn);
+    prob->y(eq_n,(prob->y(eq_n)  + Amt * Fn));
     break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) Rcpp::stop("Attemped infusion start for a compartment that is off");
-    if(this->fn() == 0) break;
-    prob->fbio(eq_n, this->fn());
-    prob->rate_add(eq_n,this->rate());
+    if(Fn == 0) break;
+    prob->fbio(eq_n, Fn);
+    prob->rate_add(eq_n,Rate);
     break;
   case 9: // Turn infusion off event record
     if(!prob->is_on(eq_n)) break;
-    prob->rate_rm(eq_n, this->rate());
+    prob->rate_rm(eq_n, Rate);
     break;
   case 2: // Other type event record:
-    if(this->cmt() > 0) { // trn the compartment on
+    if(Cmt > 0) { // trn the compartment on
       prob->on(eq_n);
     }
-    if(this->cmt() < 0) {
+    if(Cmt < 0) {
       prob->off(eq_n);
       prob->y(eq_n,0.0);
     }
@@ -128,13 +118,13 @@ void pkevent::implement(odeproblem * prob) {
       
     }
     {
-      double tm = this->time();
+      //double tm = Time;
       prob->newind(1);
-      prob->init_call(tm);
+      prob->init_call(Time);
     }
     break;
   case 8: // replace
-    prob->y(eq_n, this->amt());
+    prob->y(eq_n, Amt);
     break;
   case 4:
     for(int i=0; i < prob->neq(); ++i) {
@@ -142,10 +132,10 @@ void pkevent::implement(odeproblem * prob) {
       prob->on(i);
       prob->rate0(i,0.0);
     } {
-      double tm = this->time();
+      //double tm = this->time();
       //prob->newind(2);
-      prob->init_call(tm);
-      if(this->rate() > 0) {
+      prob->init_call(Time);
+      if(Rate > 0) {
         this->evid(5);
       } else {
         this->evid(1);
@@ -161,11 +151,11 @@ void pkevent::implement(odeproblem * prob) {
   prob->lsoda_init();
 }
 
-void pkevent::steady_bolus(odeproblem* prob) {
+void pkevent::steady_bolus(odeproblem *prob) {
   
   prob->rate_reset();
   
-  double ii = this->ii();
+  //double ii = this->ii();
   double tfrom = 0.0;
   double tto = 0.0;
   int i;
@@ -179,12 +169,12 @@ void pkevent::steady_bolus(odeproblem* prob) {
   
   prob->lsoda_init();
   
-  ev_ptr evon(new pkevent(this->cmt(), 1, this->amt(), this->time(), this->rate()));
-  evon->fn(this->fn());
+  ev_ptr evon(new pkevent(Cmt, 1, Amt, Time, Rate));
+  evon->fn(Fn);
   
   for(i=1; i < N_SS; ++i) {
-    tfrom = double(i-1)*ii;
-    tto = double(i)*ii;
+    tfrom = double(i-1)*Ii;
+    tto = double(i)*Ii;
     evon->implement(prob);
     prob->lsoda_init();
     prob->advance(tfrom,tto);
@@ -212,11 +202,8 @@ void pkevent::steady_bolus(odeproblem* prob) {
 
 
 void pkevent::steady_infusion(odeproblem * prob) {
-  
-  
-  double ii = this->ii();
-  
-  double duration = this->dur(this->fn());//(this->fn()*this->amt())/(this->rate());
+
+  double duration = this->dur(Fn);
   
   double tfrom = 0.0;
   
@@ -232,7 +219,7 @@ void pkevent::steady_infusion(odeproblem * prob) {
   double nexti, toff;
   prob->rate_reset();
   // We only need one of these; it gets updated and re-used immediately
-  ev_ptr evon(new pkevent(this->cmt(), 1, this->amt(), this->time(), this->rate()));
+  ev_ptr evon(new pkevent(Cmt, 1, Amt, Time, Rate));
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
@@ -242,11 +229,11 @@ void pkevent::steady_infusion(odeproblem * prob) {
     
     // Create an event to turn the infusion off and push onto offs vector
     // Keep on creating these
-    ev_ptr evoff(new pkevent(this->cmt(),9,this->amt(),toff, this->rate()));
+    ev_ptr evoff(new pkevent(Cmt, 9, Amt, toff, Rate));
     offs.push_back(evoff);
     
     // The next time an infusion will start
-    nexti = double(i)*ii;
+    nexti = double(i)*Ii;
     // As long as there are infusions to turn off and the
     // first one is before or at the next infusion start time
     while((!offs.empty()) && (offs[0]->time()  <= nexti)) {
@@ -288,102 +275,117 @@ bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
 bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
 
 
-void pkevent::schedule(std::vector<rec_ptr>& thisi, const double& maxtime, bool put_ev_first) {
+void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
   
-  double biofrac = this->fn();
+  //double biofrac = this->fn();
   
-  if(biofrac==0) return;
-
+  if(Fn==0) return;
   
-  if(this->addl() > 0) {
+  // End if infusion
+  if(Rate > 0) {
     
-    unsigned int this_evid = this -> evid();
-    
-    if(this_evid == 4) {
-      this_evid = this->rate() > 0 ? 5 : 1;
-    }
-    
-    for(unsigned int k=1; k <= this->addl(); ++k) {
-      
-      double ontime = this->time() + this->ii()*double(k);
-      
-      if(ontime > maxtime) break;
-      
-      ev_ptr evon(new pkevent(this->cmt(),
-                              this_evid,
-                              this->amt(),
-                              ontime,
-                              this->rate()));
-      
-      evon->id(this->id());
-      evon->pos(nextpos);
-      evon->fn(biofrac);
-      evon->output(false);
-      
-      thisi.push_back(evon);
-      
-      if(this->infusion()) {
-        ev_ptr evoff(new pkevent(this->cmt(),
-                                 9, // EVID 9 means infusion off
-                                 this->amt(),
-                                 ontime + this->dur(biofrac),
-                                 this->rate()));
-        
-        evoff->id(this->id());
-        evoff->pos(-300);
-        evoff->output(false);
-        
-        thisi.push_back(evoff);
-      }
-    }
-  }
-  
-  if(this->rate() > 0) {
-    
-    ev_ptr evoff(new pkevent(this->cmt(),
+    ev_ptr evoff(new pkevent(Cmt,
                              9, // EVID 9 means infusion off
-                             this->amt(),
-                             this->time() + this->dur(biofrac),
-                             this->rate()));
+                             Amt,
+                             Time + this->dur(Fn),
+                             Rate, 
+                             -300, Id));
     
-    evoff->id(this->id());
-    evoff->pos(-300);
+    //evoff->id(Id);
+    //evoff->pos(-300);
     evoff->output(false);
     thisi.push_back(evoff);
     
-    if(this->ss()) {
+    if(Ss) {
       
-      double duration = this->dur(biofrac);//biofrac*this->amt()/this->rate();
+      double duration = this->dur(Fn);
       
       int ninf_ss = floor(duration/this->ii());
       
-      double first_off = duration - double(ninf_ss)*this->ii() + this->time();
+      double first_off = duration - double(ninf_ss)*Ii + Time;
       
-      if(first_off == this->time()) {
-        first_off = duration - this->ii() +  this->time();
+      if(first_off == Time) {
+        first_off = duration - Ii +  Time;
         --ninf_ss;
       }
       
       for(int k=0; k < ninf_ss; ++k) {
         
-        double offtime =  (first_off+double(k)*double(this->ii()));
+        double offtime = first_off+double(k)*double(Ii);
         
-        ev_ptr evoff(new pkevent(this->cmt(),
+        ev_ptr evoff(new pkevent(Cmt,
                                  9, // EVID 9 means infusion off
-                                 this->amt(),
+                                 Amt,
                                  offtime,
-                                 this->rate()));
+                                 Rate, 
+                                 -300, Id));
         
-        evoff->id(this->id());
-        evoff->pos(-300);
+        //evoff->id(Id);
+        //evoff->pos(-300);
         evoff->output(false);
         thisi.push_back(evoff);
         
       } // Done creating off infusions for end of steady_infusion
     } // end if(ss)
   } // end rate>0
+  
+  
+  if(Addl > 0) {
+    
+    unsigned int this_evid = Evid;
+    
+    if(this_evid == 4) {
+      this_evid = Rate > 0 ? 5 : 1;
+    }
+    
+    if(this->infusion()) {
+      thisi.reserve(thisi.size() + 2*Addl);  
+    } else {
+      thisi.reserve(thisi.size() + Addl); 
+    }
+    
+    double ontime = 0;
+    
+    for(unsigned int k=1; k <= Addl; ++k) {
+      
+      ontime = Time + Ii*double(k);
+      
+      if(ontime > maxtime) break;
+      
+      ev_ptr evon(new pkevent(Cmt,
+                              this_evid,
+                              Amt,
+                              ontime,
+                              Rate,
+                              nextpos,Id));
+      
+      //evon->id(Id);
+      //evon->pos(nextpos);
+      evon->fn(Fn);
+      evon->output(false);
+      
+      thisi.push_back(evon);
+      
+      if(this->infusion()) {
+        ev_ptr evoff(new pkevent(Cmt,
+                                 9, // EVID 9 means infusion off
+                                 Amt,
+                                 ontime + this->dur(Fn),
+                                 Rate, 
+                                 -300,Id));
+        
+        //evoff->id(Id);
+        //evoff->pos(-300);
+        evoff->output(false);
+        
+        thisi.push_back(evoff);
+      }
+    }
+  } // end addl
+  
+  
 }
 
 void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {

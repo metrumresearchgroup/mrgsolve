@@ -24,78 +24,87 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug);
 
 
 /**
-   @file pkevent.h
-   @brief Header file for pkevent class.
-*/
+ @file pkevent.h
+ @brief Header file for pkevent class.
+ */
 
 
 class pkevent : public datarecord {
-
- public:
+  
+public:
   pkevent(short int cmt_,
-	  unsigned int evid_,
-	  double amt_,
-	  double time_,
-	  double rate_);
-
+          unsigned int evid_,
+          double amt_,
+          double time_,
+          double rate_);
+  
   pkevent(short int cmt_,
-	  unsigned int evid_,
-	  double amt_,
-	  double time_);
-
-  pkevent(short int cmt_,
-	  unsigned int evid_,
-	  double amt_,
-	  double time_,
-	  int opos_,
-	  double id_);
-
-  pkevent(short int cmt_,
-	  unsigned int evid_,
-	  double amt_,
-	  double time_,
-	  double rate_,
-	  int opos_,
-	  double id_);
-
-
+          unsigned int evid_,
+          double amt_,
+          double time_,
+          double rate_,
+          int pos_, 
+          double id_);
+  
+  //   pkevent(short int cmt_,
+  // 	  unsigned int evid_,
+  // 	  double amt_,
+  // 	  double time_);
+  
+  //   pkevent(short int cmt_,
+  // 	  unsigned int evid_,
+  // 	  double amt_,
+  // 	  double time_,
+  // 	  int opos_,
+  // 	  double id_);
+  // 
+  //   pkevent(short int cmt_,
+  // 	  unsigned int evid_,
+  // 	  double amt_,
+  // 	  double time_,
+  // 	  double rate_,
+  // 	  int opos_,
+  // 	  double id_);
+  
+  
   //int evid(){return Evid;}
   //void evid(int evid_){Evid=evid_;}
   double amt(){return Amt;}
   double rate(){return Rate;}
   void rate(double value) {Rate = value;}
-
+  
   double dur(double b);
-
+  
   void addl(unsigned int addl_){Addl = addl_;}
   unsigned int addl(){return Addl;}
-
+  
   void ss(unsigned short int ss_){Ss = ss_;}
   unsigned short ss(){return Ss;}
-
+  
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
-
+  
   void fn(double value){Fn = value;}
   double fn(){return Fn;}
-
+  
   //void schedule_addl(std::vector<rec_ptr>& thisi, const double& maxtime, double& biofrac);
   //void schedule_infusion(std::vector<rec_ptr>& thisi, const double& maxtime, double& biofrac);
-  void schedule(std::vector<rec_ptr>& thisi, const double& maxtime, bool put_ev_first);
+  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first);
   virtual void implement(odeproblem* prob);
   virtual void steady_infusion(odeproblem* prob);
   virtual void steady_bolus(odeproblem* prob);
-
+  
   bool infusion(){return (Evid==1) && (Rate > 0);}
   bool is_event() {return true;}
   bool needs_sorting(){return ((Addl > 0) || (Rate > 0) || (Ss == 1));}
-
+  
   bool unarmed() {return !Armed;}
   void arm() {Armed=true;}
   void unarm() {Armed=false;}
-
-
- private:
+  
+  
+  
+private:
   unsigned int Addl;
   unsigned short int Ss;
   double Amt;
@@ -103,7 +112,7 @@ class pkevent : public datarecord {
   double Ii;
   double Fn;
   bool Armed;
-
+  
 };
 
 
