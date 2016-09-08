@@ -286,6 +286,7 @@ void odeproblem::advance(double tfrom, double tto) {
       this->advan4(tfrom,tto);
       return;
     }
+    // If Advan isn't 13, it needs to be 1/2/3/4
     Rcpp::stop("mrgsolve: advan has invalid value.");
   }
   
