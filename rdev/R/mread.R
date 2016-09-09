@@ -204,12 +204,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
   annot <- mread.env$annot[!sapply(mread.env$annot,is.null)]
+  omega <- omat(do.call("c", nonull.list(mread.env$omega)))
+  sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  omega <- collect_matlist(mread.env$omega, "omegalist")
-  sigma <- collect_matlist(mread.env$sigma, "sigmalist")
   table <- unname(unlist(spec[names(spec)=="TABLE"]))
   plugin <- get_plugins(spec[["PLUGIN"]])
 

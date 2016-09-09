@@ -65,7 +65,7 @@ setMethod("c", "tgrid", function(x,..., recursive=FALSE) {
 
 ##' @export
 ##' @rdname tgrid
-setMethod("c", "tgrids", function(x,...) {
+setMethod("c", "tgrids", function(x,...,recursive=FALSE) {
     do.call("c",c(x@data, list(...)))
 })
 

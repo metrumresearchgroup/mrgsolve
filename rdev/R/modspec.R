@@ -286,24 +286,28 @@ specMATRIX <- function(x,class,env,...) {
                          def=list(name="...",prefix="", object=NULL,envir=env$ENV), 
                          all=TRUE,envir=env$ENV)
   
-  if(is.null(ret[["opts"]][["labels"]])) {
-    ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
+  l <- ret[["opts"]][["labels"]]
+  d <- ret[["data"]]
+  n <- nrow(d)
+  d <- setNames(list(d),ret[["opts"]][["name"]])
+  
+  if(is.null(l)) {
+    l <- rep(".", n)
   } else {
-    ret[["opts"]][["labels"]] <- paste0(ret[["opts"]][["prefix"]],ret[["opts"]][["labels"]])
+    l <- paste0(ret[["opts"]][["prefix"]],l)
   }
   
-  structure(list(data=  ret[["data"]],
-                 labels=ret[["opts"]][["labels"]],
-                 name=  ret[["opts"]][["name"]]),class=class)
+  create_matlist(d,class=class,labels=list(l))
+  
 }
 
 specOMEGA <- function(x,env,...) {
-  m <- specMATRIX(x,"omega_block",env,...)
+  m <- specMATRIX(x,"omegalist",env,...)
   env[["omega"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
 specSIGMA <- function(x,env,...) {
-  m <- specMATRIX(x,"sigma_block",env,...)
+  m <- specMATRIX(x,"sigmalist",env,...)
   env[["sigma"]][[attr(x,"pos")]] <- m
   return(NULL)
 }
@@ -600,20 +604,6 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
   advan <- pick_advan(ncmt,depot)
   return(list(advan=advan, trans=trans, n=ncmt))
 }
-
-
-
-
-collect_matlist <- function(x, class) {
-  x <- x[!sapply(x,is.null)]
-  if(length(x)==0) return(create_matlist(class=class))
-  d <- lapply(x,"[[","data")
-  l <- lapply(x, "[[", "labels")
-  NAMES <- lapply(x,"[[", "name") %>% unlist %>% unname
-  names(d) <- names(l) <- NAMES
-  create_matlist(x=d,class=class,labels=l)
-}
-
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {

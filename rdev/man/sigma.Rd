@@ -5,6 +5,7 @@
 \alias{SIGMA}
 \alias{sigma}
 \alias{smat}
+\alias{smat,NULL-method}
 \alias{smat,list-method}
 \alias{smat,matrix-method}
 \alias{smat,missing-method}
@@ -24,6 +25,8 @@ smat(.x, ...)
 \S4method{smat}{sigmalist}(.x, ...)
 
 \S4method{smat}{mrgmod}(.x, ..., make = FALSE, strict = TRUE)
+
+\S4method{smat}{`NULL`}(.x, ...)
 
 \S4method{smat}{mrgsims}(.x, make = FALSE, ...)
 }

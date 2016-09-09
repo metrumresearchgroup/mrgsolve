@@ -846,7 +846,12 @@ grepn <- function(x,pat,warn=FALSE) {
   x[grepl(pat,names(x),perl=TRUE)]
 }
 
-nonull <- function(x) x[!is.null(x)]
+
+nonull <- function(x,...) UseMethod("nonull")
+##' @export
+nonull.default <- function(x,...) x[!is.null(x)]
+##' @export
+nonull.list <- function(x,...) x[!sapply(x,is.null)]
 
 s_pick <- function(x,name) {
     stopifnot(is.list(x))

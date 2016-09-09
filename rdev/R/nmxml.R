@@ -80,10 +80,10 @@ nmxml <- function(run=numeric(0), project=character(0),
 
     XML::free(tree)
 
-    om <- structure(list(data=om, name=oname, labels=olabels), class="omega_block")
-    sg <- structure(list(data=sg, name=sname, labels=slabels), class="sigma_block")
-
+    om <- create_matlist(setNames(list(om),oname), labels=list(olabels), class="omegalist")
+    sg <- create_matlist(setNames(list(sg),sname), labels=list(slabels), class="sigmalist")
     ans <- list(theta=th, omega=om,sigma=sg)
+    
     return(structure(ans,class="NMXMLDATA"))
 
 }

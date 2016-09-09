@@ -69,7 +69,14 @@ numeric2diag <- function(x,prefix=NULL) {
 ##' @export
 ##'
 ##'
-modMATRIX <- function(x,name="",use=TRUE,block=FALSE,correlation=FALSE,digits=-1,object=NULL,envir=list(),...) {
+modMATRIX <- function(x,
+                      name="",
+                      use=TRUE,
+                      block=FALSE,
+                      correlation=FALSE,
+                      digits=-1,
+                      object=NULL,
+                      envir=list(),...) {
   
   if(!is.null(object)) return(get(object,envir))
   if(length(x)==0) return(matrix(nrow=0,ncol=0))
