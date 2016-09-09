@@ -203,7 +203,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
-  annot <- mread.env$annot[!sapply(mread.env$annot,is.null)]
+  annot <- dplyr::bind_rows(nonull.list(mread.env$annot))
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   
@@ -256,7 +256,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            capture=as.character(spec[["CAPTURE"]])
   )
   
-  x@annot <- store_annot(x,annot)
+  x <- store_annot(x,annot)
   
   
   

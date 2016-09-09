@@ -66,35 +66,16 @@ parse_annot_line <- function(x, novalue=FALSE,noname=FALSE) {
 
 
 details <- function(x,...) {
-  
   stopifnot(is.mrgmod(x))
-  
-  if(x@annot[["embedded"]]) {
-    return(x@annot[["data"]]) 
-  }
-  
-  if(!is.character(x@annot[["file"]])) {
-    warning("Could not find location of detail information.", call.=FALSE) 
-    return(list())
-  }
-  if(!file.exists(x@annot[["file"]])) {
-    warning("File with detail information does not exist.", call.=FALSE) 
-    return(list())
-  }
-  readRDS(file=x@annot[["file"]])
+  return(x@annot[["data"]])  
 }
 
 store_annot <- function(x,what,loc=soloc(x),...) {
   stopifnot(is.mrgmod(x))
-  file_name <- file.path(loc,paste0(model(x),"-details.RDS"))
-  saveRDS(file=file_name,what)
-  return(list(file=file_name,embedded = FALSE))
+  x@annot <- list(data=what,embedded=TRUE)
+  x
 }
 
-embed_details <- function(x,...) {
-  stopifnot(is.mrgmod(x))
-  x@annot[["data"]] <- details(x)
-  x@annot[["embedded"]] <- TRUE
-  x@annot[["file"]] <- ""
-  return(x)
-}
+
+
+
