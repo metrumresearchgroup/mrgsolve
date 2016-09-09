@@ -282,17 +282,26 @@ parseLIST <- function(x,where,env,...) {
 
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,
-                       oclass,type,
+                       oclass,type, annotated = FALSE,
                        env, pos=1,
                        name="...",prefix="",labels=NULL,
                        object=NULL,...) {
   
-  if(is.null(object)) {
-    d <- modMATRIX(x,context=oclass,...) 
+  if(annotated) {
+    l <- parse_annot(x,block=toupper(type),envir=env$ENV,name_value=FALSE)
+    d <- modMATRIX(l[["v"]],context=oclass,...)
+    labels <- l[["an"]][["name"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+    
   } else {
-    d <- get(object,env$ENV)
+    if(is.null(object)) {
+      d <- modMATRIX(x,context=oclass,...) 
+    } else {
+      d <- get(object,env$ENV)
+    }
   }
-
+  
+  
   if(nrow(d)==0) stop("mrgsolve: the matrix must have at least 1 row (", oclass, ").",call.=FALSE)
   
   if(is.null(labels)) {
@@ -324,7 +333,7 @@ handle_spec_block.specSIGMA <- function(x,...) {
                   pass="specMATRIX",
                   def=list(oclass="sigmalist",type="sigma"),
                   split=FALSE,all=TRUE,narrow=FALSE,...)
-
+  
 }
 
 

@@ -7,14 +7,18 @@ render_annot <- function(x,block,...) {
 }
 
 
-parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',...) {
+parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,...) {
   ## x is a list
   if(is.null(x)) return(NULL)
   x <- x[nchar(x)>0]
   x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname)
   nm <- s_pick(x,"name")
   v <-  s_pick(x,"value")
-  v <- setNames(tolist(paste(v,collapse=","),...),nm)
+  if(name_value) {
+    v <- setNames(tolist(paste(v,collapse=","),...),nm)
+  } else {
+    v <- as.numeric(tovec(v)) 
+  }
   an <- lapply(x,"[", c("name","descr", "unit","options"))
   an <-  render_annot(an,block)
   list(v=v,an=an,nm=nm)
@@ -23,7 +27,7 @@ parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',...) {
 ## Convenience; keep around for a little bot
 gmatch <- function(what,x) as.integer(gregexpr(what,x,fixed=TRUE)[[1]])
 
-parse_annot_line <- function(x, novalue=FALSE,noname=FALSE) {
+parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   
   if(nchar(x)==0) return(NULL)
   
