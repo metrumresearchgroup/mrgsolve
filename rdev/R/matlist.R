@@ -325,7 +325,7 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
   if(length(what)==1) return(x)
   d <- lapply(what,as.matrix)
   d <- setNames(d,sapply(what,names))
-  l <- sapply(what, labels)
+  l <- sapply(unname(what), labels)
   create_matlist(d,labels=l, class=class(x)[1])
 })
 

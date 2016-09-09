@@ -12,15 +12,15 @@ decorr <- function(x) {
 ##' Create a square numeric matrix from the lower-triangular elements.
 ##'
 ##' @param x numeric data
-##' @param prefix used to generate column names
+##' @param context the working context
 ##' @return a square symmetric numeric matrix with column names
 ##'
-lower2matrix <- function(x, prefix=NULL) {
+lower2matrix <- function(x, context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) return(matrix(x,nrow=1, ncol=1 ))
   n <- 0.5*(sqrt(1-4*(-2*length(x)))-1)
   if(!n==as.integer(n)) {
-    stop(paste("Block matrix has invalid specification: ", prefix),call.=FALSE)
+    stop(paste0("Block matrix has invalid specification (", context, ")."),call.=FALSE)
   }
   mat <- diag(n)
   mat[upper.tri(mat,diag=TRUE)] <- x
@@ -31,10 +31,10 @@ lower2matrix <- function(x, prefix=NULL) {
 ##' Create a diagonal numeric matrix from diagonal elements.
 ##'
 ##' @param x numeric data
-##' @param prefix used to generate column names
+##' @param context used to generate column names
 ##' @return a numeric diagonal matrix
 ##'
-numeric2diag <- function(x,prefix=NULL) {
+numeric2diag <- function(x,context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) {
     mat <- matrix(x)
@@ -48,13 +48,11 @@ numeric2diag <- function(x,prefix=NULL) {
 ##' Create a matrix.
 ##'
 ##' @param x data for building the matrix.  Data in \code{x} are assumed to be on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular elements if \code{block} is \code{TRUE}
-##' @param name name
 ##' @param use logical; if FALSE, all matrix elements are set to 0
 ##' @param block logical; if TRUE, try to make a block matrix; diagonal otherwise
 ##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE
 ##' @param digits if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning
-##' @param envir environment from \code{$ENV}
-##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
+##' @param context the working context
 ##' @param ... passed along
 ##'
 ##' @examples
@@ -70,28 +68,27 @@ numeric2diag <- function(x,prefix=NULL) {
 ##'
 ##'
 modMATRIX <- function(x,
-                      name="",
                       use=TRUE,
                       block=FALSE,
                       correlation=FALSE,
                       digits=-1,
-                      object=NULL,
-                      envir=list(),...) {
+                      context="matlist",
+                      ...) {
   
-  if(!is.null(object)) return(get(object,envir))
-  if(length(x)==0) return(matrix(nrow=0,ncol=0))
+  if(length(x)==0 | is.null(x)) return(matrix(nrow=0,ncol=0))
   
   if(correlation) block <- TRUE
   if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
-  if(!use) x <- rep(0,length(x))
+  x <- x[x!=""]
   if(block) {
-    x <- lower2matrix(x)
+    x <- lower2matrix(x, context)
     if(correlation) decorr(x)
   } else {
     x <- numeric2diag(x)
   }
+  if(any(is.na(x))) stop("mrgsolve: NA values generated when forming matrix ", "(", context, ").")
+  if(!use) x <- ZERO(x)
   if(digits > 0) x <- signif(x, digits=digits)
-
   return(x)
 }
 
@@ -123,7 +120,7 @@ Diag <- function(x) {
 ##' @seealso as_bmat
 ##'
 bmat <- function(...,correlation=FALSE, digits=-1) {
-  x <- lower2matrix(unlist(list(...)),prefix="bmat")
+  x <- lower2matrix(unlist(list(...)),context="bmat")
   if(correlation) decorr(x)
   if(digits>0) x <- signif(x,digits=digits)
   return(x)
