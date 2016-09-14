@@ -256,7 +256,6 @@ void pkevent::steady_infusion(odeproblem *prob) {
 bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
 bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
 
-
 void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
@@ -364,8 +363,6 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
       }
     }
   } // end addl
-  
-  
 }
 
 void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {

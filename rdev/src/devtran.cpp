@@ -446,7 +446,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->init_call(tfrom);
     
     // mtime
-    add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
+    if(mtimes.size() > 0) add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
     
     prob->table_call();
     
