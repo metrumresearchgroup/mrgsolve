@@ -295,8 +295,6 @@ void odeproblem::advance(double tfrom, double tto) {
   );
   
   main_derivs(&Neq, &tto,Y, Ydot, this);
-  
-  
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {

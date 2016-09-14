@@ -197,7 +197,6 @@ public:
   dvec& mtime(){return d.mtime;}
   void clear_mtime(){d.mtime.clear();}
   
-  //double xdose(){return d.XDOSE;}
   dvec& get_pred(){return pred;}
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}
@@ -221,11 +220,8 @@ public:
 protected:
   
   //! parameters
-  //dvec Param;
   double* Param;
-  
-  
-  
+
   //! Acutal curent infusion rate
   double* R0;
   std::vector<unsigned int> infusion_count;
@@ -265,7 +261,6 @@ protected:
   
   //! Compartment on/off
   std::vector<char> On;
-  
   databox d;
   
   // These are used for advan 1/2/3/4

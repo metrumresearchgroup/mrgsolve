@@ -134,11 +134,11 @@ template <class type> void report(type a) {
 template <class type1, class type2> void report(type1 a, type2 b) {
   std::cout << a << " " << b << std::endl;
 }
-template <class type1, class type2> void report(type1 a, type2 b, type2 c) {
-  std::cout << a << " " << b << " " << c<< std::endl;
-}
-template <class type1, class type2>
-  void report(type1 a, type2 b, type2 c, type2 d) {
-  std::cout << a << " " << b << " " << c<< " " << d<< std::endl;
-}
+// template <class type1, class type2> void report(type1 a, type2 b, type2 c) {
+//   std::cout << a << " " << b << " " << c<< std::endl;
+// }
+// template <class type1, class type2>
+//   void report(type1 a, type2 b, type2 c, type2 d) {
+//   std::cout << a << " " << b << " " << c<< " " << d<< std::endl;
+// }
 #endif
