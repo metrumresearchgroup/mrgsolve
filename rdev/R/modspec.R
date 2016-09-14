@@ -316,7 +316,7 @@ specMATRIX <- function(x,
   if(is.null(labels)) {
     labels <- rep(".", nrow(d))
   } else {
-    labels <- paste0(prefix,labels)
+    labels <- paste0(prefix,tovec(labels))
   }
   
   d <- setNames(list(d),name)
