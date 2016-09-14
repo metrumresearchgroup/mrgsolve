@@ -34,13 +34,14 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   R.assign(neq_,0.0);
   // D holds the value of user input durations
   D.assign(neq_,0.0);
+
+  Param = new double[npar_]();  
+  Init_value = new double[neq_]();
+  Init_dummy = new double[neq_]();
   
-  Init_value.assign(neq_,0.0);
-  Init_dummy.assign(neq_,0.0);
   On.assign(neq_,1);
   F.assign(neq_,1.0);
-  //Param.assign(npar_,0.0);
-  Param = new double[npar_]();
+
   Alag.assign(neq_,0.0);
   
   d.evid = 0;
@@ -88,7 +89,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  
  */
 odeproblem::~odeproblem(){
-    delete [] Param;
+  delete [] Param;
+  delete [] Init_value;
+  delete [] Init_dummy;
 }
 
 void odeproblem::neta(int n) {
@@ -115,15 +118,14 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
       ydot,
       prob->init(),
       prob->param()
-      
+  
   );
   
   
   // prob->add_rates(ydot);
   // // Add on infusion rates:
   for(int i=0; i < prob->neq(); ++i) {
-    if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
-    ydot[i] = (ydot[i] + prob->rate0(i));
+    ydot[i] = (ydot[i] + prob->rate0(i))*(prob->is_on(i));
   }
 }
 
@@ -649,6 +651,6 @@ void odeproblem::advan(int x) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
   }
-
+  
 }
 

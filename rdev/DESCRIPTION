@@ -34,7 +34,7 @@ Suggests:
     lattice,
     testthat,
     XML,
-    yaml
+    rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes
 Collate:

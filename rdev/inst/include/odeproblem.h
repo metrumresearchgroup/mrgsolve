@@ -101,16 +101,11 @@ public:
   
   void advance(double tfrom, double tto);
   
-  // initial conditions:
-  //void init_fun (init_func*     fptr) {Inits  = fptr;}
-  //void table_fun (table_func*   fptr) {Table  = fptr;}
-  //void deriv_fun (deriv_func*   fptr) {Derivs = fptr;}
-  //void config_fun (config_func* fptr) {Config = fptr;}
-  
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
-  dvec& init()  {return Init_value;}
-  dvec& init_dummy(){return Init_dummy;}
+  //dvec& init()  {return Init_value;}
+  double* init() {return Init_value;}
+  double* init_dummy(){return Init_dummy;}
   
   void init_copy_from_dummy();
   void init_call(const double& time);
@@ -249,8 +244,8 @@ protected:
   dvec D;
   
   //! inital conditions:
-  dvec Init_value;
-  dvec Init_dummy;
+  double* Init_value;
+  double* Init_dummy;
   
   //! Bioavailability:
   dvec F;
