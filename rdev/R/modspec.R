@@ -127,6 +127,8 @@ protected_options <- function(x) {
 ##' Parse model specification text.
 ##' @param txt model specification text
 ##' @param split logical
+##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
+##' @param comment_re regular expression for comments
 ##' @param ... arguments passed along
 ##' @export
 modelparse <- function(txt, 

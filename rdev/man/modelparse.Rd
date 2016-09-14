@@ -12,6 +12,10 @@ modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = "//+|##+",
 
 \item{split}{logical}
 
+\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped}
+
+\item{comment_re}{regular expression for comments}
+
 \item{...}{arguments passed along}
 }
 \description{
