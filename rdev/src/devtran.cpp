@@ -267,15 +267,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat eta;
   if(neta > 0) {
     eta = MVGAUSS(OMEGA,NID,-1);
+    prob->neta(neta);
   }
-  prob->neta(OMEGA.ncol());
   
   const unsigned int neps = SIGMA.nrow();
   arma::mat eps;
   if(neps > 0) {
     eps = MVGAUSS(SIGMA, NN, -1);
+    prob->neps(neps);
   }
-  prob->neps(SIGMA.ncol());
+  
   prob->init_call_record(time0);
   
   
@@ -518,7 +519,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       prob->evid(this_rec->evid());
       prob->init_call_record(tto);
-      prob->INITSOLV();
+      //prob->INITSOLV();
       
       // Schedule ADDL and infusion end times
       if((this_rec->is_event()) && (this_rec->from_data())) {
