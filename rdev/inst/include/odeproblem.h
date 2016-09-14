@@ -103,11 +103,9 @@ public:
   
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
-  //dvec& init()  {return Init_value;}
   double* init() {return Init_value;}
   double* init_dummy(){return Init_dummy;}
-  
-  void init_copy_from_dummy();
+
   void init_call(const double& time);
   void init_call_record(const double& time);
   void y_init(int pos, double value);
@@ -125,18 +123,17 @@ public:
   bool CFONSTOP(){return d.CFONSTOP;}
   
   // param:
-  //const dvec& param() const {return Param;}
   const double* param() const {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
-  //double param(int pos) {return Param[pos];}
-  
-  
+
   // rate:
   dvec& rate(){return R;}
   void rate(unsigned int pos, double value) {R[pos] = value;}
   double rate(unsigned int pos) {return R[pos];}
+  
   void rate0(unsigned int pos, double value) {R0[pos] = value;}
   double rate0(unsigned int pos){return R0[pos];}
+  
   int rate_count(unsigned int pos){return infusion_count[pos];}
   void rate_add(unsigned int pos, const double& value);
   void rate_rm(unsigned int pos,  const double& value);
@@ -212,7 +209,7 @@ public:
   // SAVE
   // int nRn(){return Rn.size();}
   // void add_Rn(int value){Rn.insert(value);}
-  // void add_rates(double* ydot);
+   void add_rates(double* ydot);
   
   // From Rodeproblem
   void init_fun(SEXP ifun);
@@ -232,7 +229,7 @@ protected:
   
   
   //! Acutal curent infusion rate
-  dvec R0;
+  double* R0;
   std::vector<unsigned int> infusion_count;
   
   // SAVE

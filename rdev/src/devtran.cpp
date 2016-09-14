@@ -61,7 +61,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   
-  if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
+  // Warning if user fiddled with mindt
+  if(mindt > 1E-4) {
+    Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
+  }
   
   // Create data objects from data and idata
   dataobject *dat = new dataobject(data,parnames);
@@ -80,8 +83,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   int j=0,k=0;
   const double time0 = 0.0;
-  int crow =0; 
-  size_t h=0;
+  int crow = 0; 
+  size_t h = 0;
   
   obsaug  = obsaug & (data.nrow() > 0);
   
@@ -133,8 +136,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int ntable = tablenames.size();
   const unsigned int n_capture  = capture.size()-1;
   
-  if(debug) say("Creating odeproblem object");
-  
+
+  // Create odeproblem object  
   odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
@@ -150,9 +153,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // dataobject.cpp
   // Extract data records from the data set
+  // Track the number of observations and events
   unsigned int obscount = 0;
   unsigned int evcount  = 0;
-  
   dat->get_records(a, NID, neq, obscount, evcount, obsonly, debug);
   
   // Observations from stime will always come after events;
@@ -164,7 +167,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Need this for later
   int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
   
-  // Only if we need to insert observations into the stack
+  // ******* START TGRID SECTION *******
+  // Take apart tgrid matrix and create observation event objects
+  // with generic ID
+  // Only  do this if we need to insert observations into the stack
   if((obscount == 0) || (obsaug)) {
     
     // Padded times
@@ -197,7 +203,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Vector of vectors
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
-    
     std::vector<std::vector<rec_ptr> > designs;
     designs.reserve(tgridn.size());
     for(unsigned int i = 0; i < tgridn.size(); ++i) {
@@ -238,33 +243,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // sort the records by time and original position 
       std::sort((*it).begin(), (*it).end(), CompByTimePosRec);
     }
-  } // End tgrid
+  }
+  // ******* END TGRID SECTION ******* 
+  
+  
   
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
-  
   const unsigned int NN = obsonly ? obscount : (obscount + evcount);
-
-  const unsigned int neta = OMEGA.nrow();
-  arma::mat eta;
-  if(neta > 0) {
-    eta = MVGAUSS(OMEGA,NID,-1);
-    //neta = eta.n_cols;
-  }
-  prob->neta(OMEGA.ncol());
-  
-  const unsigned int neps = SIGMA.nrow();
-  arma::mat eps;
-  if(neps > 0) {
-    eps = MVGAUSS(SIGMA, NN, -1);
-    //neps = eps.n_cols;
-  }
-  prob->neps(SIGMA.ncol());
-  prob->init_call_record(time0);
-  
-  
-  // Figure out the output data set:
   const unsigned int n_out_col  = 2 + n_tran_carry + n_data_carry + n_idata_carry + nreq + ntable + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
   const unsigned int tran_carry_start = 2;
@@ -274,6 +261,24 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int table_start = req_start+nreq;
   const unsigned int capture_start = table_start+ntable;
   
+  // SIMULATE ETA AND EPS
+  //   - Need NN for this
+  const unsigned int neta = OMEGA.nrow();
+  arma::mat eta;
+  if(neta > 0) {
+    eta = MVGAUSS(OMEGA,NID,-1);
+  }
+  prob->neta(OMEGA.ncol());
+  
+  const unsigned int neps = SIGMA.nrow();
+  arma::mat eps;
+  if(neps > 0) {
+    eps = MVGAUSS(SIGMA, NN, -1);
+  }
+  prob->neps(SIGMA.ncol());
+  prob->init_call_record(time0);
+  
+  
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
   
@@ -281,6 +286,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
     Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
+    
     // items in tran_carry are always lc
     const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
     const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
@@ -379,11 +385,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   int this_cmt = 0;
   // Do one last reset on parameters:
-  dat->reload_parameters(inpar,prob);
+  // dat->reload_parameters(inpar,prob);
   // First, get idata parameters from the first ID in data
-  idat->copy_parameters(idat->get_idata_row(dat->get_uid(0)),prob);
+  // idat->copy_parameters(idat->get_idata_row(dat->get_uid(0)),prob);
   // Then, copy parameters from the first record in data
-  dat->copy_parameters(0,prob);
+  // dat->copy_parameters(0,prob);
   
   // The current difference between tto and tfrom
   double dt = 0;
@@ -394,21 +400,25 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   size_t a_size = a.size();
   
   // LOOP ACROSS IDS:
+  // tgrid observations have generic ID
+  // We must first figure out the ID we are working with
+  // and assign in the object
   for(size_t i=0; i < a_size; ++i) {
     
     tfrom = a[i][0]->time();
-    id = dat->get_uid(i);//a[i][0]->id();
+    
+    id = dat->get_uid(i);
+    
     this_idata_row  = idat->get_idata_row(id);
+    
     maxtime = a[i].back()->time();
     
     prob->reset_newid(id);
     
     if(i==0) prob->newind(0);
     
-    // Copy eta values for this ID
+    // Copy eta/eps values for this ID
     for(j=0; j < neta; ++j) prob->eta(j,eta(i,j));
-    
-    // Copy eps values:
     for(j=0; j < neps; ++j) prob->eps(j,eps(crow,j));
     
     // Refresh parameters in data:
@@ -441,8 +451,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->table_call();
     
     // LOOP ACROSS EACH RECORD for THIS ID:
-    size_t ai_size = a[i].size();
-    for(size_t j=0; j < ai_size; ++j) {
+    //size_t ai_size = a[i].size();
+    for(size_t j=0; j < a[i].size(); ++j) {
       
       if(j==0) {
         prob->solving(true);
@@ -451,6 +461,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       rec_ptr this_rec = a[i][j];
+      
       this_rec->id(id);
       
       // Fill in the remaining records once system is turned off
@@ -579,7 +590,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
         }
         // Remember to update the value of size
-        ai_size = a[i].size();
+        //ai_size = a[i].size();
       }
       
       prob -> advance(tfrom,tto);

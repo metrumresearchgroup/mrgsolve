@@ -27,7 +27,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   int neq_ = int(init.size());
   
   // R0 is the actual current infusion rate
-  R0.assign(neq_,0.0);
+  // R0.assign(neq_,0.0);
+  R0  = new double[neq_]();
+  
   infusion_count.assign(neq_,0);
   
   // R holds the value for user input rates via _R(n)
@@ -92,6 +94,7 @@ odeproblem::~odeproblem(){
   delete [] Param;
   delete [] Init_value;
   delete [] Init_dummy;
+  delete [] R0;
 }
 
 void odeproblem::neta(int n) {
@@ -118,17 +121,15 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
       ydot,
       prob->init(),
       prob->param()
-  
   );
-  
-  
-  // prob->add_rates(ydot);
-  // // Add on infusion rates:
-  for(int i=0; i < prob->neq(); ++i) {
-    ydot[i] = (ydot[i] + prob->rate0(i))*(prob->is_on(i));
-  }
+  prob->add_rates(ydot);
 }
 
+void odeproblem::add_rates(double* ydot) {
+  for(int i = 0; i < Neq; ++i) {
+    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+  }
+}
 
 void odeproblem::init_call(const double& time) {
   
@@ -148,11 +149,6 @@ void odeproblem::init_call(const double& time) {
     this->y(i,this->init(i));
     Init_dummy[i] = this->init(i);
   }
-}
-
-
-void odeproblem::init_copy_from_dummy() {
-  for(int i=0; i< Neq; ++i) Init_value[i] = Init_dummy[i];
 }
 
 void odeproblem::init_call_record(const double& time) {
