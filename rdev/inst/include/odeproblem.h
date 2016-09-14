@@ -42,11 +42,9 @@ struct databox {
   dvec ETA;
   bool SYSTEMOFF;
   bool solving;
-  bool INITSOLV;
   dvec mtime;
   double ID;
   bool CFONSTOP;
-  double XDOSE;
   void* omatrix;
 };
 
@@ -195,11 +193,11 @@ public:
   void neta(int n);
   void neps(int n);
   
-  void INITSOLV();
+  //void INITSOLV();
   dvec& mtime(){return d.mtime;}
   void clear_mtime(){d.mtime.clear();}
   
-  double xdose(){return d.XDOSE;}
+  //double xdose(){return d.XDOSE;}
   dvec& get_pred(){return pred;}
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}

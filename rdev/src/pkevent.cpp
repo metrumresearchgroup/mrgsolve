@@ -127,7 +127,7 @@ void pkevent::implement(odeproblem *prob) {
     }
     
   case 11:
-    prob->y(eq_n,(prob->y(eq_n)  + prob->xdose()));
+    //prob->y(eq_n,(prob->y(eq_n)  + prob->xdose()));
     break;
   }
   prob->lsoda_init();

@@ -55,9 +55,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.ETA.resize(50,0.0);
   
   d.solving = false;
-  d.INITSOLV = false;
+  //d.INITSOLV = false;
   d.CFONSTOP = false;
-  d.XDOSE = 0.0;
+  //d.XDOSE = 0.0;
   d.omatrix = static_cast<void*>(&OMGADEF);
   Tablenames.clear();
   Tabledata.clear();
@@ -210,8 +210,7 @@ void odeproblem::reset_newid(const double& id_=1.0) {
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
-  d.XDOSE = 0.0;
-  
+
   d.SYSTEMOFF=false;
   this->istate(1);
   d.ID = id_;
@@ -245,11 +244,11 @@ void odeproblem::off(unsigned short int eq_n) {
   this->y(eq_n,0.0);
 }
 
-void odeproblem::INITSOLV() {
-  if(!d.INITSOLV) return;
-  d.INITSOLV=false;
-  this->lsoda_init();
-}
+// void odeproblem::INITSOLV() {
+//   if(!d.INITSOLV) return;
+//   d.INITSOLV=false;
+//   this->lsoda_init();
+// }
 
 void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);

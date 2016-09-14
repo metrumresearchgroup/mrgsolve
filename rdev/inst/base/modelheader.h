@@ -26,11 +26,9 @@ struct databox {
   dvec ETA;
   bool SYSTEMOFF;
   bool solving;
-  bool INITSOLV;
   dvec mtime;
   const double ID;
   bool CFONSTOP;
-  double XDOSE;
   void* omatrix;
 };
 
@@ -122,18 +120,11 @@ struct databox {
 #define STOPADVANCING() SYSTEMSTOPADVANCING()  // Not sure why this is here
 #define CFONSTOP() (_databox_.CFONSTOP = true); // Carry forward on stop
 #define SYSTEMNOTADVANCING (_databox_.SYSTEMOFF)
-
-
 #define SOLVINGPROBLEM (_databox_.solving)
-#define INITSOLV() {_databox_.INITSOLV=true;}
 #define _SETINIT if(NEWIND <=1) // Convenience
 
 // Macro to insert dxdt_CMT = 0; for all compartments
 #define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; ++_i_) _DADT_[_i_] = 0;
-
-// Work on this
-#define X_DOSE(a) _databox_.XDOSE = a
-
 
 // Some functions for reporting values during a
 // simulation run
