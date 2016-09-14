@@ -46,27 +46,6 @@ public:
           int pos_, 
           double id_);
   
-  //   pkevent(short int cmt_,
-  // 	  unsigned int evid_,
-  // 	  double amt_,
-  // 	  double time_);
-  
-  //   pkevent(short int cmt_,
-  // 	  unsigned int evid_,
-  // 	  double amt_,
-  // 	  double time_,
-  // 	  int opos_,
-  // 	  double id_);
-  // 
-  //   pkevent(short int cmt_,
-  // 	  unsigned int evid_,
-  // 	  double amt_,
-  // 	  double time_,
-  // 	  double rate_,
-  // 	  int opos_,
-  // 	  double id_);
-  
-  
   //int evid(){return Evid;}
   //void evid(int evid_){Evid=evid_;}
   double amt(){return Amt;}
@@ -87,8 +66,6 @@ public:
   void fn(double value){Fn = value;}
   double fn(){return Fn;}
   
-  //void schedule_addl(std::vector<rec_ptr>& thisi, const double& maxtime, double& biofrac);
-  //void schedule_infusion(std::vector<rec_ptr>& thisi, const double& maxtime, double& biofrac);
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first);
   virtual void implement(odeproblem* prob);
   virtual void steady_infusion(odeproblem* prob);
@@ -103,7 +80,6 @@ public:
   void unarm() {Armed=false;}
   
   
-  
 private:
   unsigned int Addl;
   unsigned short int Ss;
@@ -115,14 +91,8 @@ private:
   
 };
 
-
-
-
 bool CompByTime(ev_ptr a, ev_ptr b);
 bool CompByoPos(ev_ptr a, ev_ptr b);
 bool CompByPos(ev_ptr a, ev_ptr b);
-
-
-
 
 #endif

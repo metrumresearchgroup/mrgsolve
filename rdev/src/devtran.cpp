@@ -12,7 +12,6 @@
 #include "pkevent.h"
 #include "dataobject.h"
 
-//#include <RcppArmadillo.h>
 #include "RcppInclude.h"
 
 #define CRUMP(a) Rcpp::stop(a)
@@ -61,7 +60,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
-
+  
   if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
   
   // Create data objects from data and idata
@@ -108,28 +107,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     CRUMP("recsort must be 1, 2, 3, or 4.");
   }
   
-  // stime is a matrix, not a vector, with multiple columns to specify multiple designs
-  // Matrix of observations (stime), one column per design
-  
-  Rcpp::NumericMatrix tgrid = Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
-  // Vector of length idata.nrow() that maps each ID to a design
-  // Already has C indexing
-  Rcpp::IntegerVector tgridi = Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
-  if(tgridi.size() == 0) tgridi = Rcpp::rep(0,NID);
-  if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
-  
-  if(max(tgridi) >= tgrid.ncol()) Rcpp::stop("Insufficient number of designs specified for this problem.");
-  
-  // Number of non-na times in each design
-  std::vector<int> tgridn;
-  if(tgrid.ncol() > 1) {
-    for(i = 0; i < tgrid.ncol(); ++i) {
-      tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
-    }
-  } else {
-    tgridn.push_back(tgrid.nrow());
-  }
-  
   // Requested compartments  
   Rcpp::IntegerVector request = parin["request"];
   const int nreq = request.size();
@@ -151,11 +128,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Tran Items to carry:
   Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const int n_tran_carry = tran_carry.size();
-  
-  // Vector of simulation times
-  // only active if no evid=0 records in data (cleared out in that case).
-  dvec ptimes = Rcpp::as<dvec>(parin["ptimes"]);
-  dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
   
   const svec tablenames = Rcpp::as<svec> (parin["table_names"]);
   const int ntable = tablenames.size();
@@ -182,25 +154,69 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int evcount  = 0;
   
   dat->get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-
+  
   // Observations from stime will always come after events;
   // unsigned int nextpos = 0; warnings
-  int nextpos = 0;
+  // Vector of simulation times
+  // only active if no evid=0 records in data (cleared out in that case).
+  dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
   
+  // Need this for later
+  int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
+  
+  // Only if we need to insert observations into the stack
   if((obscount == 0) || (obsaug)) {
     
-    nextpos =  put_ev_first ?  (data.nrow() + 10) : -100;
+    // Padded times
+    dvec ptimes = Rcpp::as<dvec>(parin["ptimes"]);
+    
+    // Matrix of designs
+    Rcpp::NumericMatrix tgrid = Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
+    
+    // Vector of length idata.nrow() that maps each ID to a design
+    // Already has C indexing
+    Rcpp::IntegerVector tgridi = Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
+    
+    if(tgridi.size() == 0) tgridi = Rcpp::rep(0,NID);
+    
+    if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
+    
+    if(max(tgridi) >= tgrid.ncol()) Rcpp::stop("Insufficient number of designs specified for this problem.");
+    
+    // Number of non-na times in each design
+    std::vector<int> tgridn;
+    if(tgrid.ncol() > 1) {
+      for(i = 0; i < tgrid.ncol(); ++i) {
+        tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
+      }
+    } else {
+      tgridn.push_back(tgrid.nrow());
+    }
+    
+    // Create a common dictionary of observation events
+    // Vector of vectors
+    // Outer vector: length = number of designs
+    // Inner vector: length = number of times in that design
+    
+    std::vector<std::vector<rec_ptr> > designs;
+    designs.reserve(tgridn.size());
+    for(int i = 0; i < tgridn.size(); ++i) {
+      std::vector<rec_ptr> z;
+      z.reserve(tgridn[i]);
+      for(int j = 0; j < tgridn[i]; ++j) { 
+        rec_ptr obs(new datarecord(0,tgrid(j,i),0,nextpos,0));
+        z.push_back(obs); 
+      }
+      designs.push_back(z);
+    }
     
     double id;
     size_t n;
     size_t m = ptimes.size();
-    unsigned int thisind = 0;
     
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
       
-      thisind = it-a.begin();
-      
-      id = dat->get_uid(thisind);
+      id = dat->get_uid(it-a.begin());
       
       j = idat->get_idata_row(id);
       
@@ -209,8 +225,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       (*it).reserve(((*it).size() + n + m + 10));
       
       for(h=0; h < n; h++) {
-        rec_ptr obs(new datarecord(0,tgrid(h,tgridi[j]),0,nextpos,id));
-        (*it).push_back(obs);
+        //rec_ptr obs(new datarecord(0,tgrid(h,tgridi[j]),0,nextpos,id));
+        (*it).push_back(designs.at(tgridi[j]).at(h));
         ++obscount;
       } // done adding stimes;
       
@@ -222,7 +238,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // sort the records by time and original position 
       std::sort((*it).begin(), (*it).end(), CompByTimePosRec);
     }
-  }
+  } // End tgrid
   
   // Create results matrix:
   //  rows: ntime*nset
@@ -382,7 +398,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   for(size_t i=0; i < a_size; ++i) {
     
     tfrom = a[i][0]->time();
-    id = a[i][0]->id();
+    id = dat->get_uid(i);//a[i][0]->id();
     this_idata_row  = idat->get_idata_row(id);
     maxtime = a[i].back()->time();
     
@@ -402,9 +418,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     //Copy parameters from idata
     idat->copy_parameters(this_idata_row,prob);
     
-    // Copy parameters from data
-    // rec_ptr this_rec  = a[i][0];
-    
     if(a[i][0]->from_data()) {
       // If this record is from the data set, copy parameters from data
       dat->copy_parameters(a[i][0]->pos(), prob);
@@ -416,11 +429,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     // Calculate initial conditions:
     for(k=0; k < neq; ++k) prob->y_init(k,init[k]);
+    
     // Copy initials from idata
     idat->copy_inits(this_idata_row,prob);
+    
     // Call $MAIN
     prob->init_call(tfrom);
     
+    // mtime
     add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
     
     prob->table_call();
@@ -436,6 +452,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       rec_ptr this_rec = a[i][j];
+      this_rec->id(id);
       
       // Fill in the remaining records once system is turned off
       if(prob->systemoff()) {
@@ -553,11 +570,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           reclist::iterator it = a[i].begin()+j;
           advance(it,1);
           a[i].insert(it,newev);
-          newev->schedule(a[i], maxtime,addl_ev_first);
+          newev->schedule(a[i], maxtime, addl_ev_first);
           std::sort(a[i].begin()+j,a[i].end(),CompByTimePosRec);
           
         } else {
-          ev->schedule(a[i], maxtime,addl_ev_first); //pkevent.cpp
+          ev->schedule(a[i], maxtime, addl_ev_first); //pkevent.cpp
           if(ev->needs_sorting()) {
             std::sort(a[i].begin()+j+1,a[i].end(),CompByTimePosRec);
           }
@@ -615,7 +632,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   if((verbose||debug)) Rcpp::Rcout << "done. " << std::endl;
-  
   
   // Significant digits in simulated variables and outputs too
   if(digits > 0) for(int i=req_start; i < ans.ncol(); ++i) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
