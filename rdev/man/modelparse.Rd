@@ -4,7 +4,8 @@
 \alias{modelparse}
 \title{Parse model specification text.}
 \usage{
-modelparse(txt, split = FALSE, ...)
+modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = "//+|##+",
+  ...)
 }
 \arguments{
 \item{txt}{model specification text}

@@ -129,15 +129,24 @@ protected_options <- function(x) {
 ##' @param split logical
 ##' @param ... arguments passed along
 ##' @export
-modelparse <- function(txt,split=FALSE,...) {
+modelparse <- function(txt, 
+                       split=FALSE,
+                       drop_blank = TRUE, 
+                       comment_re="//+|##+",...) {
   
   ## Take in model text and parse it out
   
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
   
-  txt <- strsplit(txt, "//+|##+",perl=TRUE)
+  txt <- strsplit(txt, comment_re, perl=TRUE)
+  
   txt <- sapply(txt, `[`,1L)
-  txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
+  
+  if(drop_blank) {
+    txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
+  } else {
+    txt[is.na(txt)] <- "\n"
+  }
   
   start <- grep(block_re,txt,perl=TRUE)
   

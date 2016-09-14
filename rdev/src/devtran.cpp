@@ -158,9 +158,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     n_idata_carry = idata_carry.size();
   }
   
-  
   // Tran Items to carry:
-  svec tran_carry = Rcpp::as<svec >(parin["carry_tran"]);
+  Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const int n_tran_carry = tran_carry.size();
 
     
@@ -298,8 +297,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     //if(debug) say("Filling in carried items ...");
     
-    svec::const_iterator tcbeg  = tran_carry.begin();
-    svec::const_iterator tcend  = tran_carry.end();
+    Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
+    Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
     // items in tran_carry are always lc
     bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
     bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
@@ -363,19 +362,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         idatarow = idat->get_idata_row(dat->get_uid(j));
       }
       
-      std::vector<rec_ptr> thisi = *it;
-      
-      for(size_t i = 0; i < thisi.size(); ++i) {
+      for(size_t i = 0; i < (*it).size(); ++i) {
         
         if(carry_from_data) {
           // Need to reset this for each ID; indicates that
           // We haven't hit a dataset record yet
           if(i==0) lastpos = -1;
           // Need to log lastpos here regardless
-          if(thisi[i]->from_data()) lastpos = thisi[i]->pos();
+          if((*it)[i]->from_data()) lastpos = (*it)[i]->pos();
         }
         
-        if(!thisi[i]->output()) continue;
+        if(!(*it)[i]->output()) continue;
         
         // Copy from idata:
         for(k=0; k < n_idata_carry; ++k) {
@@ -395,33 +392,34 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
   }
   
-  if((verbose||debug)) {
-    //Rcpp::Rcout << std::endl <<  "========================" << std::endl;
-    Rcpp::Rcout << std::endl;
-    Rcpp::Rcout << "THIS IS MRGSOLVE (DEVTRAN) " << std::endl;
-    Rcpp::Rcout << "TOT. NO. OF INDIVIDUALS:   " << NID << std::endl;
-    Rcpp::Rcout << "TOT. NO. OF OBS RECS:      " << obscount  << std::endl;
-    Rcpp::Rcout << "TOT. NO. OF EV  RECS:      " << evcount   << std::endl;
-    Rcpp::Rcout << "TOT. NO. OF ETA:           " << neta << std::endl;
-    Rcpp::Rcout << "TOT. NO. OF EPS:           " << neps << std::endl;
-    Rcpp::Rcout << "Parameters:                " << prob->npar()  << std::endl;
-    Rcpp::Rcout << "Equations:                 " << neq  << std::endl;
-    Rcpp::Rcout << "Requested compartments:    ";
-    for(i=0; i < nreq; ++i) Rcpp::Rcout << (1+request[i]) << " ";
-    Rcpp::Rcout << std::endl;
-    Rcpp::Rcout << "OUTPUT MATRIX:             " << NN << " rows, " << n_out_col << " columns" << std::endl;
-    
-  }
-  if(debug) {
-    Rcpp::Rcout << "========================" << std::endl;
-    Rcpp::Rcout << "id   in data column " << (dat->idcol() + 1) << std::endl;
-    //Rcpp::Rcout << "time in data column " << (dat->col_n("time") + 1) << std::endl;
-    //Rcpp::Rcout << "evid in data column " << (dat->col_n("evid") + 1) << std::endl ;
-    //Rcpp::Rcout << "amt  in data column " << (dat->col_n("amt") + 1) << std::endl;
-    //Rcpp::Rcout << "cmt  in data column " << (dat->col_n("cmt") + 1) << std::endl;
-    //Rcpp::Rcout << "rate in data column " << (dat->col_n("rate") + 1) << std::endl ;
-    Rcpp::Rcout << "========================" << std::endl;
-  }
+  // if((verbose||debug)) {
+  //   //Rcpp::Rcout << std::endl <<  "========================" << std::endl;
+  //   Rcpp::Rcout << std::endl;
+  //   Rcpp::Rcout << "THIS IS MRGSOLVE (DEVTRAN) " << std::endl;
+  //   Rcpp::Rcout << "TOT. NO. OF INDIVIDUALS:   " << NID << std::endl;
+  //   Rcpp::Rcout << "TOT. NO. OF OBS RECS:      " << obscount  << std::endl;
+  //   Rcpp::Rcout << "TOT. NO. OF EV  RECS:      " << evcount   << std::endl;
+  //   Rcpp::Rcout << "TOT. NO. OF ETA:           " << neta << std::endl;
+  //   Rcpp::Rcout << "TOT. NO. OF EPS:           " << neps << std::endl;
+  //   Rcpp::Rcout << "Parameters:                " << prob->npar()  << std::endl;
+  //   Rcpp::Rcout << "Equations:                 " << neq  << std::endl;
+  //   Rcpp::Rcout << "Requested compartments:    ";
+  //   for(i=0; i < nreq; ++i) Rcpp::Rcout << (1+request[i]) << " ";
+  //   Rcpp::Rcout << std::endl;
+  //   Rcpp::Rcout << "OUTPUT MATRIX:             " << NN << " rows, " << n_out_col << " columns" << std::endl;
+  //   
+  // }
+  // if(debug) {
+  //   Rcpp::Rcout << "========================" << std::endl;
+  //   Rcpp::Rcout << "id   in data column " << (dat->idcol() + 1) << std::endl;
+  //   //Rcpp::Rcout << "time in data column " << (dat->col_n("time") + 1) << std::endl;
+  //   //Rcpp::Rcout << "evid in data column " << (dat->col_n("evid") + 1) << std::endl ;
+  //   //Rcpp::Rcout << "amt  in data column " << (dat->col_n("amt") + 1) << std::endl;
+  //   //Rcpp::Rcout << "cmt  in data column " << (dat->col_n("cmt") + 1) << std::endl;
+  //   //Rcpp::Rcout << "rate in data column " << (dat->col_n("rate") + 1) << std::endl ;
+  //   Rcpp::Rcout << "========================" << std::endl;
+  // }
+  // 
   
   double tto, tfrom;
   crow = 0;
@@ -448,12 +446,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // LOOP ACROSS IDS:
   for(size_t i=0; i < a.size(); ++i) {
     
-    std::vector<rec_ptr> thisi = a[i];
+    //std::vector<rec_ptr> thisi = a[i];
     
-    tfrom = thisi[0]->time();
-    id = thisi[0]->id();
+    tfrom = a[i][0]->time();
+    id = a[i][0]->id();
     this_idata_row  = idat->get_idata_row(id);
-    maxtime = thisi.back()->time();
+    maxtime = a[i].back()->time();
     
     prob->reset_newid(id);
     
@@ -471,7 +469,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     idat->copy_parameters(this_idata_row,prob);
     
     // Copy parameters from data
-    rec_ptr this_rec  = thisi[0];
+    rec_ptr this_rec  = a[i][0];
     if(this_rec->from_data()) {
       // If this record is from the data set, copy parameters from data
       dat->copy_parameters(this_rec->pos(), prob);
@@ -488,12 +486,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Call $MAIN
     prob->init_call(tfrom);
     
-    add_mtime(thisi, mtimes, prob->mtime(),(debug||verbose));
+    add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
     
     prob->table_call();
     
     // LOOP ACROSS EACH RECORD for THIS ID:
-    for(size_t j=0; j < thisi.size(); ++j) {
+    for(size_t j=0; j < a[i].size(); ++j) {
       
       if(j==0) {
         prob->solving(true);
@@ -501,9 +499,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->newind(2);
       }
       
-      last_record = j==thisi.size()-1;
+      last_record = j==a[i].size()-1;
       
-      rec_ptr this_rec = thisi[j];
+      rec_ptr this_rec = a[i][j];
       
       // Fill in the remaining records once system is turned off
       if(prob->systemoff()) {
@@ -625,16 +623,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           newev->fn(biofrac);
           newev->output(false);
           
-          reclist::iterator it = thisi.begin()+j;
+          reclist::iterator it = a[i].begin()+j;
           advance(it,1);
-          thisi.insert(it,newev);
-          newev->schedule(thisi, maxtime,addl_ev_first);
-          std::sort(thisi.begin()+j,thisi.end(),CompByTimePosRec);
+          a[i].insert(it,newev);
+          newev->schedule(a[i], maxtime,addl_ev_first);
+          std::sort(a[i].begin()+j,a[i].end(),CompByTimePosRec);
           
         } else {
-          ev->schedule(thisi, maxtime,addl_ev_first); //pkevent.cpp
+          ev->schedule(a[i], maxtime,addl_ev_first); //pkevent.cpp
           if(ev->needs_sorting()) {
-            std::sort(thisi.begin()+j+1,thisi.end(),CompByTimePosRec);
+            std::sort(a[i].begin()+j+1,a[i].end(),CompByTimePosRec);
           }
         }
       }
@@ -707,9 +705,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   ret["data"] = ans;
   ret["outnames"] = tablenames;
   ret["trannames"] = tran_names;
-  //ret["issues"] = Rcpp::CharacterVector(0);
   
-  
+
   // // Clean up
   delete prob;
   delete dat;
