@@ -78,7 +78,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int NID = dat->nid();
   const int nidata = idat->nrow();
   
-  int i=0,j=0,k=0;
+  int j=0,k=0;
   const double time0 = 0.0;
   int crow =0; 
   size_t h=0;
@@ -109,15 +109,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Requested compartments  
   Rcpp::IntegerVector request = parin["request"];
-  const int nreq = request.size();
+  const unsigned int nreq = request.size();
   
   // Columns from the data set to carry:
   Rcpp::CharacterVector data_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
   Rcpp::IntegerVector data_carry =  dat->get_col_n(data_carry_);
-  const int n_data_carry = data_carry.size();
+  const unsigned int n_data_carry = data_carry.size();
   
   // Columns from the idata set to carry:
-  int n_idata_carry=0;
+  unsigned int n_idata_carry=0;
   Rcpp::IntegerVector idata_carry;  
   if(idata.nrow()>0) {
     Rcpp::CharacterVector idata_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
@@ -127,11 +127,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Tran Items to carry:
   Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
-  const int n_tran_carry = tran_carry.size();
+  const unsigned int n_tran_carry = tran_carry.size();
   
   const svec tablenames = Rcpp::as<svec> (parin["table_names"]);
-  const int ntable = tablenames.size();
-  const int n_capture  = capture.size()-1;
+  const unsigned int ntable = tablenames.size();
+  const unsigned int n_capture  = capture.size()-1;
   
   if(debug) say("Creating odeproblem object");
   
@@ -139,7 +139,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);
-  const int neq = prob->neq();
+  const unsigned int neq = prob->neq();
   
   // Every ID in the data set needs to be found in idata if supplied:
   // dataobject.cpp
@@ -150,8 +150,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // dataobject.cpp
   // Extract data records from the data set
-  int obscount = 0;
-  int evcount  = 0;
+  unsigned int obscount = 0;
+  unsigned int evcount  = 0;
   
   dat->get_records(a, NID, neq, obscount, evcount, obsonly, debug);
   
@@ -186,7 +186,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Number of non-na times in each design
     std::vector<int> tgridn;
     if(tgrid.ncol() > 1) {
-      for(i = 0; i < tgrid.ncol(); ++i) {
+      for(unsigned int i = 0; i < tgrid.ncol(); ++i) {
         tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
       }
     } else {
@@ -200,7 +200,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     std::vector<std::vector<rec_ptr> > designs;
     designs.reserve(tgridn.size());
-    for(int i = 0; i < tgridn.size(); ++i) {
+    for(unsigned int i = 0; i < tgridn.size(); ++i) {
       std::vector<rec_ptr> z;
       z.reserve(tgridn[i]);
       for(int j = 0; j < tgridn[i]; ++j) { 
@@ -244,22 +244,21 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
   
-  int NN = obscount;
-  if(!obsonly) NN = NN + evcount;
-  
-  int neta = 0;
+  const unsigned int NN = obsonly ? obscount : (obscount + evcount);
+
+  const unsigned int neta = OMEGA.nrow();
   arma::mat eta;
-  if(OMEGA.nrow() > 0) {
+  if(neta > 0) {
     eta = MVGAUSS(OMEGA,NID,-1);
-    neta = eta.n_cols;
+    //neta = eta.n_cols;
   }
   prob->neta(OMEGA.ncol());
   
-  int neps = 0;
+  const unsigned int neps = SIGMA.nrow();
   arma::mat eps;
-  if(SIGMA.nrow() > 0) {
+  if(neps > 0) {
     eps = MVGAUSS(SIGMA, NN, -1);
-    neps = eps.n_cols;
+    //neps = eps.n_cols;
   }
   prob->neps(SIGMA.ncol());
   prob->init_call_record(time0);
@@ -283,14 +282,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
     Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
     // items in tran_carry are always lc
-    bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
-    bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
-    bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
-    bool carry_ii =   std::find(tcbeg,tcend, "ii")    != tcend;
-    bool carry_addl = std::find(tcbeg,tcend, "addl")  != tcend;
-    bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
-    bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
-    bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
+    const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
+    const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
+    const bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
+    const bool carry_ii =   std::find(tcbeg,tcend, "ii")    != tcend;
+    const bool carry_addl = std::find(tcbeg,tcend, "addl")  != tcend;
+    const bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
+    const bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
+    const bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
     
     if(carry_evid) tran_names.push_back("evid");
     if(carry_amt)  tran_names.push_back("amt");
