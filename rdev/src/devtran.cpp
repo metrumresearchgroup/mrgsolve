@@ -61,12 +61,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
-  //const int advan = Rcpp::as<int>(parin["advan"]);
-  //int t2advance               = Rcpp::as<int>    (parin["t2advance"]);
-  
-  //if((t2advance < 0) || (t2advance > 1)) Rcpp::stop("Invalid value for t2advance.");
-  int t2advance = 0;
-  
+
   if(mindt > 1E-4) Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
   
   // Create data objects from data and idata
@@ -125,9 +120,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   if(max(tgridi) >= tgrid.ncol()) Rcpp::stop("Insufficient number of designs specified for this problem.");
   
-  // Number of designs
-  //unsigned int ntgrid = tgrid.ncol();
-  
   // Number of non-na times in each design
   std::vector<int> tgridn;
   if(tgrid.ncol() > 1) {
@@ -160,7 +152,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const int n_tran_carry = tran_carry.size();
   
-  
   // Vector of simulation times
   // only active if no evid=0 records in data (cleared out in that case).
   dvec ptimes = Rcpp::as<dvec>(parin["ptimes"]);
@@ -182,7 +173,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // dataobject.cpp
   if(nidata > 0) dat->check_idcol(idat);
   
-  // Allocate the record list and resize for each ID:
+  // Allocate the record list:
   recstack a(NID);
   
   // dataobject.cpp
@@ -191,12 +182,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int evcount  = 0;
   
   dat->get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  // Offset for getting parameters from the data set (not idata)
-  //if((obscount == 0) && (t2advance > 0)) Rcpp::stop("The data set must have observations to use t2advance.");
-  //int posoff = t2cov && obscount > 0 ? 1 : 0;
-  
-  // Deal with stimes:
-  
+
   // Observations from stime will always come after events;
   // unsigned int nextpos = 0; warnings
   int nextpos = 0;
@@ -237,7 +223,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       std::sort((*it).begin(), (*it).end(), CompByTimePosRec);
     }
   }
-  
   
   // Create results matrix:
   //  rows: ntime*nset
@@ -387,7 +372,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // The current difference between tto and tfrom
   double dt = 0;
-  double denom = 1;
   double id = 0;
   double maxtime = 0;
   double biofrac = 1.0;
@@ -479,8 +463,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       tto = this_rec->time();
-      denom = tfrom == 0 ? 1 : tfrom;
-      dt  = (tto-tfrom)/denom;
+      dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
       
       // If tto is too close to tfrom, set tto to tfrom
       // dt is never negative; dt will never be < mindt when mindt==0
@@ -587,7 +570,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(this_rec->evid() != 2) {
         this_rec->implement(prob);
-        if(this_rec->evid() != 0) prob->lsoda_init();
       }
       
       // Write save values to output matrix:
@@ -625,7 +607,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // Reset or other events:
       if(this_rec->evid()==2) {
         this_rec->implement(prob);
-        prob->lsoda_init();
       }
       
       // Move tto to tfrom
