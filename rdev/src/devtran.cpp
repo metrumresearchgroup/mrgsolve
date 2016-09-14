@@ -166,7 +166,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   dvec ptimes = Rcpp::as<dvec>(parin["ptimes"]);
   dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
   
-  svec tablenames = Rcpp::as<svec> (parin["table_names"]);
+  const svec tablenames = Rcpp::as<svec> (parin["table_names"]);
   const int ntable = tablenames.size();
   const int n_capture  = capture.size()-1;
   
@@ -302,10 +302,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     
     crow = 0; // current output row
+    int n = 0;
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
         if(!(*itt)->output()) continue;
-        int n = 0;
+        n = 0;
         if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                     ++n;}
         if(carry_amt)  {ans(crow,n+2) = (*itt)->amt();                      ++n;}
         if(carry_cmt)  {ans(crow,n+2) = (*itt)->cmt();                      ++n;}
@@ -318,7 +319,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
     }
   }
-  
   
   // Carry items from data or idata
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
@@ -474,6 +474,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // we come across a record from the data set
       if(this_rec->from_data()) {
         dat->copy_parameters(this_rec -> pos(), prob);
+        // if t2advance
         //dat->copy_parameters(this_rec->pos() + t2advance, prob);
       }
       
@@ -484,16 +485,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // If tto is too close to tfrom, set tto to tfrom
       // dt is never negative; dt will never be < mindt when mindt==0
       if((dt > 0.0) && (dt < mindt)) { // don't bother if dt==0
-        // if(debug) {
-        //   Rcpp::Rcout << "" << std::endl;
-        //   Rcpp::Rcout << "Two records are too close to each other:" <<  std::endl;
-        //   Rcpp::Rcout << "  evid: " << this_rec->evid() << std::endl;
-        //   Rcpp::Rcout << "  tfrom: " << tfrom << std::endl;
-        //   Rcpp::Rcout << "  tto: " << tto << std::endl;
-        //   Rcpp::Rcout << "  dt:  " << tto - tfrom << std::endl;
-        //   Rcpp::Rcout << "  pos: " << this_rec->pos() << std::endl;
-        //   Rcpp::Rcout << "  id: "  << this_rec->id() << std::endl;
-        // }
+        if(debug) {
+          Rcpp::Rcout << "" << std::endl;
+          Rcpp::Rcout << "Two records are too close to each other:" <<  std::endl;
+          Rcpp::Rcout << "  evid: " << this_rec->evid() << std::endl;
+          Rcpp::Rcout << "  tfrom: " << tfrom << std::endl;
+          Rcpp::Rcout << "  tto: " << tto << std::endl;
+          Rcpp::Rcout << "  dt:  " << tto - tfrom << std::endl;
+          Rcpp::Rcout << "  pos: " << this_rec->pos() << std::endl;
+          Rcpp::Rcout << "  id: "  << this_rec->id() << std::endl;
+        }
         tto = tfrom;
       }
       
@@ -542,7 +543,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             }
             ev->rate(ev->amt() * biofrac / prob->dur(this_cmt));
           }
-        }
+        } // End ev->rate() < 0
         
         // If alag set for this compartment
         // spawn a new event with no output and time modified by alag
@@ -556,7 +557,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                    ev->amt(),
                                    ev->time() + prob->alag(ev->cmt()),
                                    ev->rate(), 
-                                   -1200, ev->id()));
+                                   -1200, 
+                                   ev->id()));
           newev->addl(ev->addl());
           newev->ii(ev->ii());
           newev->ss(ev->ss());
@@ -638,14 +640,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if(digits > 0) for(int i=req_start; i < ans.ncol(); ++i) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
   if((tscale != 1) && (tscale >= 0)) ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   
-  // // Clean up
+  // Clean up
   delete prob;
   delete dat;
   delete idat;
   
   return Rcpp::List::create(Rcpp::Named("data") = ans,
-                            Rcpp::Named("outnames") = tablenames,
                             Rcpp::Named("trannames") = tran_names);
+  
   
 }
 
