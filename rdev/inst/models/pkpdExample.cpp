@@ -9,7 +9,6 @@ $SET delta= 0.25
 $GLOBAL
 #define CP (CENT/VC)
 
-
 $MAIN
 RESP_0 = KIN/KOUT;
 
