@@ -130,9 +130,11 @@ public:
   bool CFONSTOP(){return d.CFONSTOP;}
   
   // param:
-  const dvec& param() const {return Param;}
+  //const dvec& param() const {return Param;}
+  const double* param() const {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
   //double param(int pos) {return Param[pos];}
+  
   
   // rate:
   dvec& rate(){return R;}
@@ -229,7 +231,11 @@ public:
 protected:
   
   //! parameters
-  dvec Param;
+  //dvec Param;
+  double* Param;
+  
+  
+  
   //! Acutal curent infusion rate
   dvec R0;
   std::vector<unsigned int> infusion_count;

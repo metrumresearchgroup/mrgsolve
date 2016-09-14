@@ -39,7 +39,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Init_dummy.assign(neq_,0.0);
   On.assign(neq_,1);
   F.assign(neq_,1.0);
-  Param.assign(npar_,0.0);
+  //Param.assign(npar_,0.0);
+  Param = new double[npar_]();
   Alag.assign(neq_,0.0);
   
   d.evid = 0;
@@ -86,7 +87,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  @date January, 2014
  
  */
-odeproblem::~odeproblem(){}
+odeproblem::~odeproblem(){
+    delete [] Param;
+}
 
 void odeproblem::neta(int n) {
   if(n > 25) d.ETA.assign(n,0.0);
