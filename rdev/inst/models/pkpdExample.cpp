@@ -6,6 +6,8 @@ $CMT GUT CENT RESP
 
 $SET delta= 0.25
 
+$GLOBAL 
+#define CP (CENT/VC)
 
 $MAIN
 RESP_0 = KIN/KOUT;
@@ -14,12 +16,10 @@ $ODE
 dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - (CL/VC)*CENT;
 
-double CP = CENT/VC;
+
 double INH = CP/(EC50+CP);
 
 dxdt_RESP = KIN*(1-INH) - RESP*KOUT;
-
-$TABLE CP = CENT/VC;
 
 $CAPTURE CP
 
