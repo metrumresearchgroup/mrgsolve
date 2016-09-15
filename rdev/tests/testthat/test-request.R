@@ -69,10 +69,7 @@ table(ETA1) = ETA(1);
 table(EPS1) = EPS(1);
 '
 
-tmp <- tempdir()
-mod <- mread(code=code, project=tmp, model="test3")
-
-
+mod <- suppressWarnings(mcode("test3", code))
 
 test_that("Testing request setting", {
   out <- mrgsim(mod, request="PERIPH,CENT")
@@ -101,15 +98,8 @@ table(EPS1) = EPS(1);
 '
 
 
-
-test_that("Testing that request is (all) by default", {
-  mod <- mread(code='$CMT CENT\n$PARAM CL=1', project=tmp, model="test3c")
-  expect_identical(mod@request, "(all)")
-})
-
-
 test_that("Testing that request is properly set in $SET", {
-  mod <- mread(code=code, project=tmp, model="test3b")
+  mod <- suppressWarnings(mcode("test3b",code))
   cols <- names(mrgsim(mod))
   expect_identical(mod@request, "CENT")
   expect_identical(update(mod, req=c("PERIPH", "GUT"))@request, c("PERIPH", "GUT"))
@@ -117,6 +107,10 @@ test_that("Testing that request is properly set in $SET", {
   expect_identical(intersect(cols,cmt(mod)), "CENT")
 })
 
+test_that("Testing that request is (all) by default", {
+  mod <- mcode("test3c",'$CMT CENT\n$PARAM CL=1', compile=FALSE)
+  expect_identical(mod@request, "(all)")
+})
 
 
 

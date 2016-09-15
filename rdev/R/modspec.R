@@ -50,6 +50,7 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     }
   }
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
+  
 }
 
 audit_spec <- function(x,spec,warn=TRUE) {
@@ -126,17 +127,28 @@ protected_options <- function(x) {
 ##' Parse model specification text.
 ##' @param txt model specification text
 ##' @param split logical
+##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
+##' @param comment_re regular expression for comments
 ##' @param ... arguments passed along
 ##' @export
-modelparse <- function(txt,split=FALSE,...) {
+modelparse <- function(txt, 
+                       split=FALSE,
+                       drop_blank = TRUE, 
+                       comment_re="//+|##+",...) {
   
   ## Take in model text and parse it out
   
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
   
-  txt <- strsplit(txt, "//+|##+",perl=TRUE)
+  txt <- strsplit(txt, comment_re, perl=TRUE)
+  
   txt <- sapply(txt, `[`,1L)
-  txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
+  
+  if(drop_blank) {
+    txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
+  } else {
+    txt[is.na(txt)] <- "\n"
+  }
   
   start <- grep(block_re,txt,perl=TRUE)
   
@@ -238,11 +250,14 @@ scrape_opts <- function(x,envir=list(),def=list(),all=FALSE,marker="=>?",narrow=
   c(list(x=data), opts)
 }
 
-scrape_and_pass <- function(x,pass,...) {
-  o <- scrape_opts(x,...)
+scrape_and_pass <- function(x,pass,env,...) {
+  o <- scrape_opts(x,envir=env$ENV,...)
+  o$pos <- o$env <- o$class <- NULL
+  o <- c(o,attributes(x),list(env=env))
   ret <- do.call(pass,o)
   list(opts=o,data=ret)
 }
+
 ##' Scrape options and pass to function.
 ##' 
 ##' @param x data
@@ -277,35 +292,73 @@ parseLIST <- function(x,where,env,...) {
 }
 
 ## Used to parse OMEGA and SIGMA matrix blocks
-specMATRIX <- function(x,class,env,...) {
+specMATRIX <- function(x,
+                       oclass,type, annotated = FALSE,
+                       env, pos=1,
+                       name="...",prefix="",labels=NULL,
+                       object=NULL,...) {
   
-  if(length(x)==0) stop("No data found in matrix block.")
-  
-  ret <- scrape_and_pass(x,"modMATRIX",
-                         def=list(name="...",prefix="", object=NULL,envir=env$ENV), 
-                         all=TRUE,envir=env$ENV)
-  
-  if(is.null(ret[["opts"]][["labels"]])) {
-    ret[["opts"]][["labels"]] <- rep(".", nrow(ret[["data"]]))
+  if(annotated) {
+    l <- parse_annot(x,block=toupper(type),envir=env$ENV,name_value=FALSE)
+    d <- modMATRIX(l[["v"]],context=oclass,...)
+    labels <- l[["an"]][["name"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+    
   } else {
-    ret[["opts"]][["labels"]] <- paste0(ret[["opts"]][["prefix"]],ret[["opts"]][["labels"]])
+    if(is.null(object)) {
+      d <- modMATRIX(x,context=oclass,...) 
+    } else {
+      d <- get(object,env$ENV)
+    }
   }
   
-  structure(list(data=  ret[["data"]],
-                 labels=ret[["opts"]][["labels"]],
-                 name=  ret[["opts"]][["name"]]),class=class)
+  
+  if(nrow(d)==0) stop("mrgsolve: the matrix must have at least 1 row (", oclass, ").",call.=FALSE)
+  
+  if(is.null(labels)) {
+    labels <- rep(".", nrow(d))
+  } else {
+    labels <- paste0(prefix,tovec(labels))
+  }
+  
+  d <- setNames(list(d),name)
+  
+  x <- create_matlist(d,class=oclass,labels=list(labels))
+  
+  env[[type]][[pos]] <- x
+  
+  return(NULL)
 }
 
-specOMEGA <- function(x,env,...) {
-  m <- specMATRIX(x,"omega_block",env,...)
-  env[["omega"]][[attr(x,"pos")]] <- m
-  return(NULL)
+
+##' @export
+handle_spec_block.specOMEGA <- function(x,...) {
+  scrape_and_call(x,
+                  pass="specMATRIX",
+                  def=list(oclass="omegalist",type="omega"),
+                  split=FALSE,all=TRUE,narrow=FALSE,...)
 }
-specSIGMA <- function(x,env,...) {
-  m <- specMATRIX(x,"sigma_block",env,...)
-  env[["sigma"]][[attr(x,"pos")]] <- m
-  return(NULL)
+##' @export
+handle_spec_block.specSIGMA <- function(x,...) {
+  scrape_and_call(x,
+                  pass="specMATRIX",
+                  def=list(oclass="sigmalist",type="sigma"),
+                  split=FALSE,all=TRUE,narrow=FALSE,...)
+  
 }
+
+
+
+# specOMEGA <- function(x,env,...) {
+#   m <- specMATRIX(x,"omegalist",env,...)
+#   env[["omega"]][[attr(x,"pos")]] <- m
+#   return(NULL)
+# }
+# specSIGMA <- function(x,env,...) {
+#   m <- specMATRIX(x,"sigmalist",env,...)
+#   env[["sigma"]][[attr(x,"pos")]] <- m
+#   return(NULL)
+# }
 
 eval_ENV_block <- function(x,...) {
   e <- new.env()
@@ -323,6 +376,16 @@ eval_ENV_block <- function(x,...) {
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 ##' @export
 handle_spec_block.default <- function(x,...) return(x)
+
+##' @export 
+handle_spec_block.specTABLE <- function(x,...) {
+  if(any(grepl("\\s*table\\(", x))) {
+    warning("The table(name) = value; macro will be deprecated soon.\n",  
+            "Save your output to double and pass to $CAPTURE instead:\n",
+            "   $TABLE double name = value;\n   $CAPTURE name")
+  }
+  return(x)
+}
 
 
 ##' Parse \code{$PARAM} block.
@@ -477,7 +540,7 @@ CMT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
       x <- tovec(x)
     }
   }
-
+  
   l <- rep(0,length(x))
   names(l) <- x
   env[["init"]][[pos]] <- as.list(l)
@@ -491,10 +554,6 @@ handle_spec_block.specCMT <- function(x,...) {
 handle_spec_block.specVCMT <- handle_spec_block.specCMT
 ##' @export
 handle_spec_block.specSET <- function(x,...) tolist(x)
-##' @export
-handle_spec_block.specOMEGA <- function(x,...) specOMEGA(x,...)
-##' @export
-handle_spec_block.specSIGMA <- function(x,...) specSIGMA(x,...)
 ##' @export
 handle_spec_block.specNMXML <- function(x,...) parseNMXML(x,...)
 ##' @export
@@ -590,20 +649,6 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
-
-
-
-collect_matlist <- function(x, class) {
-  x <- x[!sapply(x,is.null)]
-  if(length(x)==0) return(create_matlist(class=class))
-  d <- lapply(x,"[[","data")
-  l <- lapply(x, "[[", "labels")
-  NAMES <- lapply(x,"[[", "name") %>% unlist %>% unname
-  names(d) <- names(l) <- NAMES
-  create_matlist(x=d,class=class,labels=l)
-}
-
-
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {
   
@@ -672,4 +717,16 @@ check_pred_symbols <- function(x,code) {
   return(invisible(NULL))
 }
 
+
+parse_env <- function(n,ENV=new.env()) {
+  mread.env <- new.env()
+  mread.env$param <- vector("list",n)
+  mread.env$fixed <- vector("list",n)
+  mread.env$init  <- vector("list",n)
+  mread.env$omega <- vector("list",n)
+  mread.env$sigma <- vector("list",n)
+  mread.env$annot <- vector("list",n)
+  mread.env$ENV <- ENV 
+  mread.env
+}
 

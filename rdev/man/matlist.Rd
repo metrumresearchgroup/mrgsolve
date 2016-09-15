@@ -4,6 +4,7 @@
 \name{matlist}
 \alias{as.list,matlist-method}
 \alias{as.matrix,matlist-method}
+\alias{c,matlist-method}
 \alias{dim,matlist-method}
 \alias{drop.re}
 \alias{drop.re,mrgmod-method}
@@ -40,6 +41,8 @@ drop.re(.x, ...)
 \S4method{nrow}{matlist}(x)
 
 \S4method{show}{matlist}(object)
+
+\S4method{c}{matlist}(x, ..., recursive = FALSE)
 }
 \arguments{
 \item{.x}{a matlist object}
@@ -49,6 +52,8 @@ drop.re(.x, ...)
 \item{x}{a matlist object}
 
 \item{object}{passed to showmatlist}
+
+\item{recursive}{not used}
 }
 \description{
 Various functions for and properties of \code{matlist} objects.

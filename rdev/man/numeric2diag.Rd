@@ -4,12 +4,12 @@
 \alias{numeric2diag}
 \title{Create a diagonal numeric matrix from diagonal elements.}
 \usage{
-numeric2diag(x, prefix = NULL)
+numeric2diag(x, context = NULL)
 }
 \arguments{
 \item{x}{numeric data}
 
-\item{prefix}{used to generate column names}
+\item{context}{used to generate column names}
 }
 \value{
 a numeric diagonal matrix

@@ -9,7 +9,6 @@ odepack_dlsoda::odepack_dlsoda(int npar_, int neq_) {
   Y = new double[neq_]();
   Ydot = new double[neq_]();
 
-
   xlrwork = std::max(int(20 + 16 * neq_),int(22 + 9  * neq_ + pow(neq_,2)));
   xliwork = 20+neq_;
 

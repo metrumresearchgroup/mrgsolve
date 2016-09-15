@@ -97,11 +97,9 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
     tablenames.push_back(it->first);
   }
   
-  const dvec& init = prob->init();
+  Rcpp::NumericVector init_val(linit.size());
   
-  Rcpp::NumericVector init_val(prob->neq());
-  
-  for(int i=0; i < (prob->neq()); ++i) init_val[i] = init[i];
+  for(int i=0; i < (prob->neq()); ++i) init_val[i] = prob->init(i);
   
   ans["tnames"] = tablenames;
   ans["init"] = init_val;

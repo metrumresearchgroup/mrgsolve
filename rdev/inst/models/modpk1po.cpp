@@ -4,7 +4,8 @@ $PKMODEL ncmt=1, depot = TRUE,trans=1
 $OMEGA 0 0 0
 labels=s(ECL,EV,EKA)
 $TABLE
-table(CP) = CENT/pred_V;
+double CP = CENT/pred_V;
+$CAPTURE CP
 $MAIN
 pred_CL   = CL*exp(ETA(1));
 pred_V    = V *exp(ETA(2));

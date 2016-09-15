@@ -4,6 +4,7 @@
 \name{omega}
 \alias{OMEGA}
 \alias{omat}
+\alias{omat,NULL-method}
 \alias{omat,list-method}
 \alias{omat,matrix-method}
 \alias{omat,missing-method}
@@ -18,6 +19,8 @@ omat(.x, ...)
 \S4method{omat}{missing}(.x, ...)
 
 \S4method{omat}{matrix}(.x, ..., labels = list())
+
+\S4method{omat}{`NULL`}(.x, ...)
 
 \S4method{omat}{list}(.x, ...)
 

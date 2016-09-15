@@ -67,6 +67,13 @@ setMethod("omat", "matrix", function(.x,..., labels=list()) {
     omat(c(list(.x),list(...)),labels=labels)
 })
 
+##' @export 
+##' @rdname omega
+setMethod("omat", "NULL", function(.x,...) {
+    omat(list(),...)
+})
+
+
 
 ##' @export
 ##' @rdname omega
@@ -167,6 +174,12 @@ setMethod("smat", "mrgmod", function(.x,...,make=FALSE,strict=TRUE) {
     as.matrix(.x@sigma)
 })
 
+
+##' @export
+##' @rdname sigma
+setMethod("smat", "NULL", function(.x,...) {
+  smat(list(),...)
+})
 
 
 ##' @export
@@ -303,9 +316,17 @@ setMethod("gettag", "matlist", function(x,...) {
     return(names(x@data))
 })
 
-
-
-
-
+##' @export
+##' @rdname matlist
+##' @param recursive not used
+setMethod("c", "matlist", function(x,...,recursive=FALSE) {
+  what <- c(list(x),list(...))
+  stopifnot(all(sapply(what,is.matlist)))
+  if(length(what)==1) return(x)
+  d <- lapply(what,as.matrix)
+  d <- setNames(d,sapply(what,names))
+  l <- sapply(unname(what), labels)
+  create_matlist(d,labels=l, class=class(x)[1])
+})
 
 

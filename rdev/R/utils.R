@@ -660,10 +660,22 @@ blocks_ <- function(file,what) {
     cat(paste0(x1,unlist(bl)), sep="\n\n")
 }
 
-# map_data_set <- function(dd,inpar) {
-#     .Call("mrgsolve_map_data_set", data.matrix(dd),inpar, PACKAGE="mrgsolve")
-# }
+render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
+  stopifnot(requireNamespace("rmarkdown"))
+  bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//+")
+  txt <- bl[["PROB"]]
+  if(is.null(txt)) stop("Couldn't find $PROB in model.",call.=FALSE)
 
+  
+  anot <- tempfile(fileext=".RDS")
+  saveRDS(file=anot, details(x))
+
+  cat(file=file, txt, sep="\n")
+  cat(file=file, "```{r,echo=FALSE,comment='.'}", paste0("readRDS(file=\"",anot, "\")"),"```",sep="\n",append=TRUE)
+  ret <- rmarkdown::render(file,quiet=quiet)
+  file.copy(ret,file.path(getwd(),basename(ret)))
+  return(ret)
+}
 
 
 tolist <- function(x,concat=TRUE,envir=list()) {
@@ -676,6 +688,10 @@ tolist <- function(x,concat=TRUE,envir=list()) {
     return(eval(parse(text=paste0("list(", x, ")")),envir=envir))
 
 }
+
+
+
+
 
 tovec <- function(x,concat=TRUE) {
     if(is.null(x)) return(numeric(0))
@@ -846,7 +862,12 @@ grepn <- function(x,pat,warn=FALSE) {
   x[grepl(pat,names(x),perl=TRUE)]
 }
 
-nonull <- function(x) x[!is.null(x)]
+
+nonull <- function(x,...) UseMethod("nonull")
+##' @export
+nonull.default <- function(x,...) x[!is.null(x)]
+##' @export
+nonull.list <- function(x,...) x[!sapply(x,is.null)]
 
 s_pick <- function(x,name) {
     stopifnot(is.list(x))

@@ -352,6 +352,7 @@ tran_mrgsim <- function(x,
   
   # Only accept table names that are not compartments
   parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo[["tnames"]],cmt(x))))
+  ## Non-compartment names in request
   capture_names <- unique(intersect(setdiff(x@capture,cmt(x)),as.cvec(trequest)))
   to_capture <- c(length(x@capture),(which(x@capture %in% capture_names)-1))
   parin$mtime <- sort(unique(mtime))
@@ -404,7 +405,7 @@ tran_mrgsim <- function(x,
               altname(rename.carry,carry.data),
               altname(rename.carry,carry.idata),
               altname(rename.request,request),
-              altname(rename.request,out$outnames),
+              altname(rename.request,parin$table_names),
               altname(rename.request,capture_names)
   )
   
@@ -413,7 +414,7 @@ tran_mrgsim <- function(x,
   new("mrgsims",
       request=altname(rename.request,request),
       data=as.data.frame(out$data),
-      outnames=altname(rename.request,c(out$outnames,capture_names)),
+      outnames=altname(rename.request,c(parin$table_names,capture_names)),
       mod=x,
       seed=as.integer(seed),
       date=date())

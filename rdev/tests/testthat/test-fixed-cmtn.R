@@ -29,7 +29,7 @@ $TABLE table(cmtn) = N_DEPOT;
 '
 
 
-mod <- try(mcode("FOO",code, audit=FALSE))
+mod <- try(suppressWarnings(mcode("FOO",code, audit=FALSE)))
 
 out <- mrgsim(mod)
 
@@ -50,3 +50,4 @@ test_that("FIXED items are excluded from param", {
 test_that("FIXED items can be recovered", {
     expect_identical(names(as.list(allparam(mod))),c("CL", "VC", "KM", "VMAX","A","B","C","D","E"))
 })
+

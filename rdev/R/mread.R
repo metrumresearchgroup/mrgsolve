@@ -186,15 +186,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
-  mread.env <- new.env()
-
-  mread.env$param <- vector("list",length(spec))
-  mread.env$fixed <- vector("list",length(spec))
-  mread.env$init  <- vector("list",length(spec))
-  mread.env$omega <- vector("list",length(spec))
-  mread.env$sigma <- vector("list",length(spec))
-  mread.env$annot <- vector("list",length(spec))
-  mread.env$ENV <- ENV
+  mread.env <- parse_env(length(spec),ENV)
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
@@ -203,13 +195,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
-  annot <- mread.env$annot[!sapply(mread.env$annot,is.null)]
+  annot <- dplyr::bind_rows(nonull.list(mread.env$annot))
+  omega <- omat(do.call("c", nonull.list(mread.env$omega)))
+  sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  omega <- collect_matlist(mread.env$omega, "omegalist")
-  sigma <- collect_matlist(mread.env$sigma, "sigmalist")
   table <- unname(unlist(spec[names(spec)=="TABLE"]))
   plugin <- get_plugins(spec[["PLUGIN"]])
 
@@ -256,7 +248,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            capture=as.character(spec[["CAPTURE"]])
   )
   
-  x@annot <- store_annot(x,annot)
+  x <- store_annot(x,annot)
   
   
   

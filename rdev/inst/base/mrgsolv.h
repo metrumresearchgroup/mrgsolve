@@ -8,25 +8,19 @@
 #include <vector>
 #include <map>
 
-typedef std::vector<bool> bvec;
 typedef std::vector<double> dvec;
 typedef std::map<std::string,double> sd_map;
-
 typedef std::map<std::string,double> tablemap;
-typedef sd_map::iterator sdmit;
 typedef std::vector<std::string > svec;
 typedef std::vector<int > ivec;
-typedef std::map<std::string,bool> sbmap;
-typedef std::map<double,int> di_map;
-typedef  const std::vector<double> cdvec;
-typedef  const std::map<std::string,double> csd_map;
+//typedef  const std::vector<double> cdvec;
 
 
-#define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const dvec& _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
+#define MRGSOLVE_INIT_SIGNATURE  double* _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
 
-#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, cdvec& _A_0_,  cdvec& _THETA_,  cdvec& _F_, cdvec& _R_, sd_map& _tabledata_, databox& _databox_, const dvec& _pred_, dvec& _capture_
+#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const double* _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_, sd_map& _tabledata_, databox& _databox_, const dvec& _pred_, dvec& _capture_
 
-#define MRGSOLVE_ODE_SIGNATURE const  double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, cdvec& _THETA_
+#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const double* _A_0_, const double* _THETA_
 
 #define MRGSOLVE_CONFIG_SIGNATURE svec& capture_names, dvec& capture_values
 

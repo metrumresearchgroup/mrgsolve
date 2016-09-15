@@ -27,19 +27,23 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   int neq_ = int(init.size());
   
   // R0 is the actual current infusion rate
-  R0.assign(neq_,0.0);
+  // R0.assign(neq_,0.0);
+  R0  = new double[neq_]();
+  
   infusion_count.assign(neq_,0);
   
   // R holds the value for user input rates via _R(n)
   R.assign(neq_,0.0);
   // D holds the value of user input durations
   D.assign(neq_,0.0);
+
+  Param = new double[npar_]();  
+  Init_value = new double[neq_]();
+  Init_dummy = new double[neq_]();
   
-  Init_value.assign(neq_,0.0);
-  Init_dummy.assign(neq_,0.0);
   On.assign(neq_,1);
   F.assign(neq_,1.0);
-  Param.assign(npar_,0.0);
+
   Alag.assign(neq_,0.0);
   
   d.evid = 0;
@@ -51,9 +55,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.ETA.resize(50,0.0);
   
   d.solving = false;
-  d.INITSOLV = false;
+  //d.INITSOLV = false;
   d.CFONSTOP = false;
-  d.XDOSE = 0.0;
+  //d.XDOSE = 0.0;
   d.omatrix = static_cast<void*>(&OMGADEF);
   Tablenames.clear();
   Tabledata.clear();
@@ -86,7 +90,12 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  @date January, 2014
  
  */
-odeproblem::~odeproblem(){}
+odeproblem::~odeproblem(){
+  delete [] Param;
+  delete [] Init_value;
+  delete [] Init_dummy;
+  delete [] R0;
+}
 
 void odeproblem::neta(int n) {
   if(n > 25) d.ETA.assign(n,0.0);
@@ -112,18 +121,15 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
       ydot,
       prob->init(),
       prob->param()
-      
   );
-  
-  
-  // prob->add_rates(ydot);
-  // // Add on infusion rates:
-  for(int i=0; i < prob->neq(); ++i) {
-    if(prob->is_on(i)==0){ ydot[i] = 0.0; continue;}
-    ydot[i] = (ydot[i] + prob->rate0(i));
-  }
+  prob->add_rates(ydot);
 }
 
+void odeproblem::add_rates(double* ydot) {
+  for(int i = 0; i < Neq; ++i) {
+    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+  }
+}
 
 void odeproblem::init_call(const double& time) {
   
@@ -143,11 +149,6 @@ void odeproblem::init_call(const double& time) {
     this->y(i,this->init(i));
     Init_dummy[i] = this->init(i);
   }
-}
-
-
-void odeproblem::init_copy_from_dummy() {
-  for(int i=0; i< Neq; ++i) Init_value[i] = Init_dummy[i];
 }
 
 void odeproblem::init_call_record(const double& time) {
@@ -209,8 +210,7 @@ void odeproblem::reset_newid(const double& id_=1.0) {
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
-  d.XDOSE = 0.0;
-  
+
   d.SYSTEMOFF=false;
   this->istate(1);
   d.ID = id_;
@@ -244,11 +244,11 @@ void odeproblem::off(unsigned short int eq_n) {
   this->y(eq_n,0.0);
 }
 
-void odeproblem::INITSOLV() {
-  if(!d.INITSOLV) return;
-  d.INITSOLV=false;
-  this->lsoda_init();
-}
+// void odeproblem::INITSOLV() {
+//   if(!d.INITSOLV) return;
+//   d.INITSOLV=false;
+//   this->lsoda_init();
+// }
 
 void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);
@@ -295,8 +295,6 @@ void odeproblem::advance(double tfrom, double tto) {
   );
   
   main_derivs(&Neq, &tto,Y, Ydot, this);
-  
-  
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
@@ -646,6 +644,6 @@ void odeproblem::advan(int x) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
   }
-
+  
 }
 

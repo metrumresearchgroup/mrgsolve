@@ -4,12 +4,12 @@
 \alias{lower2matrix}
 \title{Create a square numeric matrix from the lower-triangular elements.}
 \usage{
-lower2matrix(x, prefix = NULL)
+lower2matrix(x, context = NULL)
 }
 \arguments{
 \item{x}{numeric data}
 
-\item{prefix}{used to generate column names}
+\item{context}{the working context}
 }
 \value{
 a square symmetric numeric matrix with column names

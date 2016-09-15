@@ -8,7 +8,9 @@ $OMEGA 0 0 0 0
 labels=s(ECL,EV2,EQ,EV3)
 
 $TABLE
-table(CP) = CENT/pred_V2;
+double CP = CENT/pred_V2;
+
+$CAPTURE CP
 
 $MAIN
 pred_CL = CL*exp(ETA(1));

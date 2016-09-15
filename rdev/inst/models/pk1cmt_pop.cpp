@@ -20,7 +20,7 @@ $MAIN
   pop1::VCi = TVVC*exp(ETA(2));
   pop1::KA1i = TVKA1*exp(ETA(3));
   pop1::KA2i = TVKA2*exp(ETA(4));
-  _F(1) = F1;
+  F_EV1 = F1;
 
 $ODE
 pop1::CP = CENT/pop1::VCi;
@@ -31,7 +31,9 @@ dxdt_EV2 = -pop1::KA2i*EV2;
 dxdt_CENT = pop1::KA1i*EV1 + pop1::KA2i*EV2 - (pop1::CLi+CLNL)*pop1::CP;
 
 $TABLE
-table(CP) = pop1::CP*(1+EPS(1)); 
+double CP = pop1::CP*(1+EPS(1)); 
+
+$CAPTURE CP
 
 
 

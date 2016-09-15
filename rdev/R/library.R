@@ -5,8 +5,8 @@ modpk1 <- '
 $PARAM CL = 1, V = 20
 $CMT CENT
 $PKMODEL ncmt=1, depot = FALSE,trans=1
-$TABLE
-table(CP) = CENT/pred_V;
+$TABLE double CP = CENT/pred_V;
+$CAPTURE CP
 $OMEGA 0 0
 labels=s(ECL,EV)
 $MAIN
@@ -19,8 +19,8 @@ $CMT DEPOT CENT
 $PKMODEL ncmt=1, depot = TRUE,trans=1
 $OMEGA 0 0 0
 labels=s(ECL,EV,EKA)
-$TABLE
-table(CP) = CENT/pred_V;
+$TABLE double CP = CENT/pred_V;
+$CAPTURE CP
 $MAIN
 pred_CL   = CL*exp(ETA(1));
 pred_V    = V *exp(ETA(2));
@@ -32,8 +32,8 @@ $CMT CENT PERIPH
 $PKMODEL ncmt=2, depot = FALSE,trans=1
 $OMEGA 0 0 0 0
 labels=s(ECL,EV2,EQ,EV3)
-$TABLE
-table(CP) = CENT/pred_V2;
+$TABLE double CP = CENT/pred_V2;
+$CAPTURE CP
 $MAIN
 pred_CL = CL*exp(ETA(1));
 pred_V2 = V1*exp(ETA(2));
@@ -46,8 +46,8 @@ $CMT DEPOT CENT PERIPH
 $PKMODEL ncmt=2, depot = TRUE,trans=1
 $OMEGA 0 0 0 0 0
 labels=s(ECL,EV2,EQ,EV3,EKA)
-$TABLE
-table(CP) = CENT/pred_V2;
+$TABLE double CP = CENT/pred_V2;
+$CAPTURE CP
 $MAIN
 pred_CL = CL*exp(ETA(1));
 pred_V2 = V2*exp(ETA(2));

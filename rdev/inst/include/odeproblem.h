@@ -42,11 +42,9 @@ struct databox {
   dvec ETA;
   bool SYSTEMOFF;
   bool solving;
-  bool INITSOLV;
   dvec mtime;
   double ID;
   bool CFONSTOP;
-  double XDOSE;
   void* omatrix;
 };
 
@@ -101,18 +99,11 @@ public:
   
   void advance(double tfrom, double tto);
   
-  // initial conditions:
-  //void init_fun (init_func*     fptr) {Inits  = fptr;}
-  //void table_fun (table_func*   fptr) {Table  = fptr;}
-  //void deriv_fun (deriv_func*   fptr) {Derivs = fptr;}
-  //void config_fun (config_func* fptr) {Config = fptr;}
-  
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
-  dvec& init()  {return Init_value;}
-  dvec& init_dummy(){return Init_dummy;}
-  
-  void init_copy_from_dummy();
+  double* init() {return Init_value;}
+  double* init_dummy(){return Init_dummy;}
+
   void init_call(const double& time);
   void init_call_record(const double& time);
   void y_init(int pos, double value);
@@ -130,16 +121,17 @@ public:
   bool CFONSTOP(){return d.CFONSTOP;}
   
   // param:
-  const dvec& param() const {return Param;}
+  const double* param() const {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
-  //double param(int pos) {return Param[pos];}
-  
+
   // rate:
   dvec& rate(){return R;}
   void rate(unsigned int pos, double value) {R[pos] = value;}
   double rate(unsigned int pos) {return R[pos];}
+  
   void rate0(unsigned int pos, double value) {R0[pos] = value;}
   double rate0(unsigned int pos){return R0[pos];}
+  
   int rate_count(unsigned int pos){return infusion_count[pos];}
   void rate_add(unsigned int pos, const double& value);
   void rate_rm(unsigned int pos,  const double& value);
@@ -201,11 +193,10 @@ public:
   void neta(int n);
   void neps(int n);
   
-  void INITSOLV();
+  //void INITSOLV();
   dvec& mtime(){return d.mtime;}
   void clear_mtime(){d.mtime.clear();}
   
-  double xdose(){return d.XDOSE;}
   dvec& get_pred(){return pred;}
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}
@@ -215,7 +206,7 @@ public:
   // SAVE
   // int nRn(){return Rn.size();}
   // void add_Rn(int value){Rn.insert(value);}
-  // void add_rates(double* ydot);
+   void add_rates(double* ydot);
   
   // From Rodeproblem
   void init_fun(SEXP ifun);
@@ -229,9 +220,10 @@ public:
 protected:
   
   //! parameters
-  dvec Param;
+  double* Param;
+
   //! Acutal curent infusion rate
-  dvec R0;
+  double* R0;
   std::vector<unsigned int> infusion_count;
   
   // SAVE
@@ -243,8 +235,8 @@ protected:
   dvec D;
   
   //! inital conditions:
-  dvec Init_value;
-  dvec Init_dummy;
+  double* Init_value;
+  double* Init_dummy;
   
   //! Bioavailability:
   dvec F;
@@ -269,7 +261,6 @@ protected:
   
   //! Compartment on/off
   std::vector<char> On;
-  
   databox d;
   
   // These are used for advan 1/2/3/4

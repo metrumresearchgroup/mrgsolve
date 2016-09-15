@@ -15,5 +15,7 @@ dxdt_PERIPH = K12*CENT - K21*PERIPH;
 dxdt_CE = KEO*(CP-CE);
 
 $TABLE
-table(EFFECT) = E0 - EMAX*CE/(CE+EC50);
-table(CP) = CENT/VC;
+double EFFECT = E0 - EMAX*CE/(CE+EC50);
+CP = CENT/VC;
+
+$CAPTURE EFFECT CP

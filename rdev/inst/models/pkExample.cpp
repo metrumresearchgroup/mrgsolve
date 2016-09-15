@@ -8,5 +8,7 @@ dxdt_CENT = KA*GUT - (CL/VC)*CENT - (Q/VC)*CENT + (Q/VP)*PERIPH;
 dxdt_PERIPH = (Q/VC)*CENT  - (Q/VP)*PERIPH;
 
 $TABLE
-table(CP) = CENT/VC;
-table(RATEIN) = KA*GUT;
+double CP = CENT/VC;
+double RATEIN = KA*GUT;
+
+$CAPTURE CP RATEIN

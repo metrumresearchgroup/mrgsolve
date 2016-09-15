@@ -49,7 +49,7 @@ $SIGMA block=TRUE
 
 '
 
-mod <- mcode("test2",code, warn=FALSE)
+mod <- suppressWarnings(mcode("test2",code, warn=FALSE))
 
 test_that("Parameters are parsed properly with mread", {
   expect_equal(param(mod)$CL,1)
@@ -137,13 +137,13 @@ table(set_in_ode) = set_in_ode;
 '
 
 test_that("User-declared C++ variables are available globally", {
-  obj <- try(mcode("test-mread-3",code, warn=FALSE))
+  obj <- try(suppressWarnings(mcode("test-mread-3",code, warn=FALSE)))
   expect_is(obj, "mrgmod")
 })
 
 
 test_that("Error when code is passed as project", {
-  expect_error(mread("hey",code))
+  expect_error(suppressWarnings(mread("hey",code)))
 })
 
 

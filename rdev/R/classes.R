@@ -4,9 +4,7 @@
 
 ##' @include check_names.R
 
-null_list <- list()
-names(null_list) <- character(0)
-
+null_list <- setNames(list(), character(0))
 
 single.number <- function(x) length(x)==1 & is.numeric(x)
 
@@ -250,12 +248,10 @@ protomod <- list(model=character(0),
                  code = character(0),
                  annot = list()
 )
-
 slot.names <- names(protomod)
 slots <- sapply(protomod, class)
 names(slots) <- names(protomod)
 
-eXclude <- function(x,what) x[!(x %in% what)]
 
 valid.mrgmod <- function(object) {
   tags <- unlist(names(object), use.names=FALSE)
@@ -311,9 +307,27 @@ valid.mrgmod <- function(object) {
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
+
+##' Check if an object is \code{mrgmod} or \code{packmod}.
+##' 
+##' 
+##' @param x any object
+##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
+##' @export
+##' 
 is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
-is.mrgindata <- function(x) inherits(x,"mrgindata")
+
+##' Check if an object is \code{mrgsims}.
+##' 
+##' 
+##' @param x any object
+##' @export
+##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
+##' 
 is.mrgsims <- function(x) inherits(x,"mrgsims")
+
+is.matlist <- function(x) inherits(x,"matlist")
+is.mrgindata <- function(x) inherits(x,"mrgindata")
 is.valid_idata <- function(x) inherits(x,"valid_idata")
 
 ##' S4 class for mrgsolve simulation output
@@ -371,9 +385,6 @@ setClass("tgrid", slots=c(start="numeric", end="numeric", delta="numeric", add="
 ##' @export
 ##' @rdname stime
 setClass("tgrids", slots=c(data="list"))
-
-
-
 
 
 

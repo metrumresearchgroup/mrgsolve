@@ -57,6 +57,7 @@ class datarecord {
 };
 
 typedef boost::shared_ptr<datarecord> rec_ptr;
+
 bool CompByTimeRec(rec_ptr a, rec_ptr b);
 bool CompByTimePosRec(rec_ptr a, rec_ptr b);
 bool CompByTimeNsortRec(rec_ptr a, rec_ptr b);

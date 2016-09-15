@@ -247,11 +247,12 @@ $OMEGA
 prefix="x_"
 labels=s(a,b,c,d)
 1 2 3 4
+
 $OMEGA
 0 0 0
 
 '
-mod <- mread("label2", tempdir(),code,warn=FALSE)
+mod <- mcode("label2", code,warn=FALSE)
 
 test_that("Mixed labels / no labels and prefix", {
   expect_equivalent(mod@omega@labels, list(s(x_a,x_b,x_c,x_d),s(.,.,.)))

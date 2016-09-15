@@ -4,12 +4,17 @@
 \alias{modelparse}
 \title{Parse model specification text.}
 \usage{
-modelparse(txt, split = FALSE, ...)
+modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = "//+|##+",
+  ...)
 }
 \arguments{
 \item{txt}{model specification text}
 
 \item{split}{logical}
+
+\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped}
+
+\item{comment_re}{regular expression for comments}
 
 \item{...}{arguments passed along}
 }
