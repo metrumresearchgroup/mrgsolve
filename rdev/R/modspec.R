@@ -176,7 +176,7 @@ modelparse <- function(txt,
 move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
 move_global_re_sub <- "\\b(double|bool|int|capture)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
-move_global <- function(x,what=c("MAIN", "ODE", "TABLE")) {
+move_global <- function(x,env,what=c("MAIN", "ODE", "TABLE")) {
   what <- intersect(what,names(x))
   if(length(what)==0) return(x)
   l <- lapply(x[what], get_c_vars) %>% unlist
@@ -187,9 +187,11 @@ move_global <- function(x,what=c("MAIN", "ODE", "TABLE")) {
                    x[[w]],perl=TRUE)
   }
   cap <- grepl("^capture ", l, perl=TRUE)
+  
   if(any(cap)) {
-    cap <- trimws(unlist(strsplit(l[cap], "capture |;")))
-    x[["CAPTURE"]] <- c(x[["CAPTURE"]],paste(cap, collapse=" "))
+    cap <- trimws(unlist(strsplit(l[cap], "capture |;",perl=TRUE)))
+    env[["capture"]] <- cap[cap!=""]
+    if(is.null(x[["CAPTURE"]])) x[["CAPTURE"]] <- ""
   }
   return(x)
 }
@@ -350,19 +352,6 @@ handle_spec_block.specSIGMA <- function(x,...) {
                   split=FALSE,all=TRUE,narrow=FALSE,...)
   
 }
-
-
-
-# specOMEGA <- function(x,env,...) {
-#   m <- specMATRIX(x,"omegalist",env,...)
-#   env[["omega"]][[attr(x,"pos")]] <- m
-#   return(NULL)
-# }
-# specSIGMA <- function(x,env,...) {
-#   m <- specMATRIX(x,"sigmalist",env,...)
-#   env[["sigma"]][[attr(x,"pos")]] <- m
-#   return(NULL)
-# }
 
 eval_ENV_block <- function(x,...) {
   e <- new.env()
@@ -569,7 +558,9 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   }
-  return(unique(tovec(x)))
+  x <- c(tocvec(x),env$capture)
+  
+  return(unique(x))
 }
 
 ##' @export
@@ -730,6 +721,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$omega <- vector("list",n)
   mread.env$sigma <- vector("list",n)
   mread.env$annot <- vector("list",n)
+  mread.env$capture <- character(0)
   mread.env$ENV <- ENV 
   mread.env
 }

@@ -714,8 +714,11 @@ tolist <- function(x,concat=TRUE,envir=list()) {
 
 }
 
-
-
+tocvec <- function(x) {
+  if(is.null(x) | all(x=="")) return(character(0))
+  x <- unlist(strsplit(as.character(x),"(,|\\s+)",perl=TRUE))
+  return(x[x!=""])
+}
 
 
 tovec <- function(x,concat=TRUE) {

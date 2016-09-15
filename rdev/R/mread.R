@@ -171,8 +171,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ENV <- eval_ENV_block(spec[["ENV"]])
   
+  # Make a list of NULL equal to length of spec
+  # Each code block can contribute to / occupy one
+  # slot for each of param/fixed/init/omega/sigma
+  mread.env <- parse_env(length(spec),ENV)
+  
   ## The main sections that need R processing:
-  spec <- move_global(spec)
+  spec <- move_global(spec,mread.env)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
@@ -184,11 +189,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                            class=specClass[i],
                            pos=i)
   }
-  
-  # Make a list of NULL equal to length of spec
-  # Each code block can contribute to / occupy one
-  # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(length(spec),ENV)
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
@@ -207,8 +207,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   table <- unname(unlist(spec[names(spec)=="TABLE"]))
   plugin <- get_plugins(spec[["PLUGIN"]])
 
-  ENV <- spec[["ENV"]]
- 
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
