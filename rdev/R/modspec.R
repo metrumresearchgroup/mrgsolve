@@ -380,7 +380,7 @@ handle_spec_block.default <- function(x,...) return(x)
 ##' @export 
 handle_spec_block.specTABLE <- function(x,...) {
   if(any(grepl("\\s*table\\(", x))) {
-    warning("The table(name) = value; macro will be deprecated soon.\n",  
+    stop("The table(name) = value; macro has been deprecated.\n",  
             "Save your output to double and pass to $CAPTURE instead:\n",
             "   $TABLE double name = value;\n   $CAPTURE name")
   }

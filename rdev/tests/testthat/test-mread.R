@@ -27,10 +27,11 @@ dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - KE*CENT;
 
 $TABLE
-table(CP) = CP;
-table(FLAG) = 2;
-table(ETA1) = ETA(1);
-table(EPS1) = EPS(1);
+double FLAG = 2;
+double ETA1 = ETA(1);
+double EPS1 = EPS(1);
+
+$CAPTURE CP FLAG ETA1 EPS1
 
 $OMEGA name="A"
 1
@@ -129,11 +130,7 @@ $ODE
 double set_in_ode =1;
 ke2=556.2;
 
-$TABLE
-table(ke) = ke;
-table(ke2) = ke2;
-table(TRUTH) = TRUTH;
-table(set_in_ode) = set_in_ode;
+$CAPTURE ke ke2 TRUTH set_in_ode
 '
 
 test_that("User-declared C++ variables are available globally", {

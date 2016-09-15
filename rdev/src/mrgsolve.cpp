@@ -92,10 +92,10 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   prob->table_init_call();
   
   std::vector<std::string> tablenames;
-  const sd_map& Tabledata = prob->table();
-  for(tablemap::const_iterator it=Tabledata.begin(); it !=Tabledata.end(); ++it) {
-    tablenames.push_back(it->first);
-  }
+  //const sd_map& Tabledata = prob->table();
+  //for(tablemap::const_iterator it=Tabledata.begin(); it !=Tabledata.end(); ++it) {
+  //  tablenames.push_back(it->first);
+  //}
   
   Rcpp::NumericVector init_val(linit.size());
   

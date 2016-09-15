@@ -59,8 +59,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.CFONSTOP = false;
   //d.XDOSE = 0.0;
   d.omatrix = static_cast<void*>(&OMGADEF);
-  Tablenames.clear();
-  Tabledata.clear();
+  //Tablenames.clear();
+  //Tabledata.clear();
   Advan = 13;
   pred.assign(5,0.0);
   
@@ -171,7 +171,7 @@ void odeproblem::table_call() {
               this->param(),
               this->fbio(),
               this->rate(),
-              this->table(),
+              //this->table(),
               this->get_d(),
               this->get_pred(), 
               this->get_capture());
@@ -182,9 +182,9 @@ void odeproblem::table_init_call() {
   d.newind = 0;
   d.evid = 0;
   this->table_call();
-  for(tablemap::iterator it = Tabledata.begin(); it != Tabledata.end(); ++it) {
-    Tablenames.push_back(it->first);
-  }
+  //for(tablemap::iterator it = Tabledata.begin(); it != Tabledata.end(); ++it) {
+  //  Tablenames.push_back(it->first);
+  //}
 }
 
 void odeproblem::rate_reset() {
@@ -491,7 +491,7 @@ double PolyExp(const double& x,
   //maximum value for a double in C++
   int i;
   
-  assert((alpha.size() >= n) && (a.size() >= n));
+  //assert((alpha.size() >= n) && (a.size() >= n));
   
   //UPDATE DOSE
   if (dose>0) {

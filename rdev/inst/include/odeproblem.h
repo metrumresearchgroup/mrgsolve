@@ -112,8 +112,8 @@ public:
   void table_init_call();
   
   //int ntable(){return Tabledata.size();}
-  double table(std::string key){return Tabledata[key];}
-  sd_map& table() {return Tabledata;}
+  //double table(std::string key){return Tabledata[key];}
+  //sd_map& table() {return Tabledata;}
   
   //void set_omatrix(Rcpp::NumericMatrix* x_);
   void pass_omega(arma::mat*);
@@ -256,8 +256,8 @@ protected:
   // Configure
   config_func* Config;
   
-  sd_map Tabledata;
-  std::vector<std::string> Tablenames;
+  //sd_map Tabledata;
+  //std::vector<std::string> Tablenames;
   
   //! Compartment on/off
   std::vector<char> On;

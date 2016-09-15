@@ -132,8 +132,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const unsigned int n_tran_carry = tran_carry.size();
   
-  const svec tablenames = Rcpp::as<svec> (parin["table_names"]);
-  const unsigned int ntable = tablenames.size();
+  //const svec tablenames = Rcpp::as<svec> (parin["table_names"]);
+  //const unsigned int ntable = tablenames.size();
   const unsigned int n_capture  = capture.size()-1;
   
 
@@ -252,14 +252,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
   const unsigned int NN = obsonly ? obscount : (obscount + evcount);
-  const unsigned int n_out_col  = 2 + n_tran_carry + n_data_carry + n_idata_carry + nreq + ntable + n_capture;
+  const unsigned int n_out_col  = 2 + n_tran_carry + n_data_carry + n_idata_carry + nreq + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
   const unsigned int tran_carry_start = 2;
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
   const unsigned int idata_carry_start = data_carry_start + n_data_carry;
   const unsigned int req_start = idata_carry_start+n_idata_carry;
-  const unsigned int table_start = req_start+nreq;
-  const unsigned int capture_start = table_start+ntable;
+  //const unsigned int table_start = req_start+nreq;
+  //const unsigned int capture_start = table_start+ntable;
+  const unsigned int capture_start = req_start+nreq;
   
   // SIMULATE ETA AND EPS
   //   - Need NN for this
@@ -471,7 +472,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->CFONSTOP()) {
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
-            for(int i=0; i < ntable; ++i)    ans(crow,(i+table_start  )) = prob->table(tablenames[i]);
+            //for(int i=0; i < ntable; ++i)    ans(crow,(i+table_start  )) = prob->table(tablenames[i]);
             for(int i=0; i < n_capture; ++i) ans(crow,(i+capture_start)) = prob->capture(capture[i+1]);
             for(int k=0; k < nreq; ++k)      ans(crow,(k+req_start    )) = prob->y(request[k]);
           } else {
@@ -610,11 +611,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ans(crow,1) = this_rec->time();
         
         // Write out tabled items
-        k=0;
-        for(int i=0; i < ntable; ++i) {
-          ans(crow,k+table_start) = prob->table(tablenames[i]);
-          ++k;
-        }
+        // k=0;
+        // for(int i=0; i < ntable; ++i) {
+        //   ans(crow,k+table_start) = prob->table(tablenames[i]);
+        //   ++k;
+        // }
         
         // Write out captured items
         k=0;
