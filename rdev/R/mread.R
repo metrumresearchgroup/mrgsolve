@@ -153,7 +153,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Block name aliases
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
+  names(spec) <- gsub("POST", "TABLE", names(spec), fixed=TRUE)
   names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
+  
   
   ## Expand partial matches
   index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)

@@ -53,6 +53,7 @@ namespace hm {
   localdouble KOUTi = 0;
   localdouble lWT = 0;
 }
+typedef double capture;
 double DV;
 typedef double localdouble;
 typedef int localint;

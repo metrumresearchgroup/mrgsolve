@@ -35,10 +35,10 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "addl", "rate","time", "TIME",
               "AMT", "CMT", "II", "SS", "ADDL", "RATE","EVID",
               "SOLVERTIME","table","ETA","EPS",
-              "NEWIND","DONE","DXDTZERO",
+              "NEWIND","DONE","DXDTZERO", 
               "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
-              "_SETINIT","report","double", "int", "bool")
+              "_SETINIT","report","double", "int", "bool", "capture")
 
 
 globalVariables(c("test_package","time", "ID",

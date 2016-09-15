@@ -26,8 +26,6 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
-
-
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c("Req", "obsonly","mtime", "recsort",
@@ -175,17 +173,23 @@ modelparse <- function(txt,
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
 ## and moving to global
-move_global_re_find <- "\\b(double|int|bool)\\s+\\w+\\s*="
-move_global_re_sub <- "\\b(double|bool|int)\\s+(\\w+\\s*=)"
+move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
+move_global_re_sub <- "\\b(double|bool|int|capture)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 move_global <- function(x,what=c("MAIN", "ODE", "TABLE")) {
   what <- intersect(what,names(x))
   if(length(what)==0) return(x)
   l <- lapply(x[what], get_c_vars) %>% unlist
-  x[["GLOBAL"]] <- c(x[["GLOBAL"]],l,local_var_typedef)
+  x[["GLOBAL"]] <- c(x[["GLOBAL"]],
+                     "typedef double capture;",l,local_var_typedef)
   for(w in what) {
     x[[w]] <- gsub(move_global_re_sub,"\\2",
                    x[[w]],perl=TRUE)
+  }
+  cap <- grepl("^capture ", l, perl=TRUE)
+  if(any(cap)) {
+    cap <- trimws(unlist(strsplit(l[cap], "capture |;")))
+    x[["CAPTURE"]] <- c(x[["CAPTURE"]],paste(cap, collapse=" "))
   }
   return(x)
 }
@@ -565,7 +569,7 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   }
-  return(tovec(x))
+  return(unique(tovec(x)))
 }
 
 ##' @export
