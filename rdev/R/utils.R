@@ -666,13 +666,38 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
   txt <- bl[["PROB"]]
   if(is.null(txt)) stop("Couldn't find $PROB in model.",call.=FALSE)
 
-  
+  bl[["PROB"]] <- NULL
   anot <- tempfile(fileext=".RDS")
-  saveRDS(file=anot, details(x))
+  
+  for(i in seq_along(bl)) {
+    bl[[i]] <- paste(bl[[i]], collapse="\n") 
+  }
+  saveRDS(file=anot, list(details=details(x),code=x@code,bl=bl))
 
   cat(file=file, txt, sep="\n")
-  cat(file=file, "```{r,echo=FALSE,comment='.'}", paste0("readRDS(file=\"",anot, "\")"),"```",sep="\n",append=TRUE)
-  ret <- rmarkdown::render(file,quiet=quiet)
+  cat(file=file, 
+      "```{r,echo=FALSE,comment=''}", 
+      paste0("x <- readRDS(file=\"",anot, "\")"),
+      "```",
+      "# Model details",
+      "```{r,echo=FALSE,comment=''}", 
+      "print(x$details)",
+      "```",
+      "# Model code",
+      "## `$MAIN`",
+      "```{r,echo=FALSE,comment=''}", 
+      "cat(x$bl$MAIN,sep='')",
+      "```",
+      "## `$ODE`",
+      "```{r,echo=FALSE,comment=''}",
+      "cat(x$bl$ODE,sep='')",
+      "```",
+      "## `$TABLE`",
+      "```{r,echo=FALSE,comment=''}",
+      "cat(x$bl$TABLE,sep='')",
+      "```",
+      sep="\n",append=TRUE)
+  ret <- rmarkdown::render(file,quiet=quiet,output_format="pdf_document")
   file.copy(ret,file.path(getwd(),basename(ret)))
   return(ret)
 }
