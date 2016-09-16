@@ -23,7 +23,7 @@ setGeneric("shlib", function(x,...) standardGeneric("shlib"))
 ##' @export
 ##' @rdname shlib
 setMethod("shlib", "mrgmod", function(x,...) {
-    str(x@shlib,vec.len=10, no.list=TRUE, give.head=FALSE)
+  str(x@shlib,vec.len=10, no.list=TRUE, give.head=FALSE)
 })
 
 ##' Get the names of model compartments.
@@ -101,8 +101,8 @@ setMethod("model", "mrgmod", function(x,...) return(x@model))
 ##' soloc(mod)
 ##'
 soloc <- function(x,short=FALSE) {
-    if(short) return(build_path(x@soloc))
-    return(x@soloc)
+  if(short) return(build_path(x@soloc))
+  return(x@soloc)
 }
 
 
@@ -133,17 +133,17 @@ setGeneric("sodll", function(x,...) standardGeneric("sodll"))
 ##' @export
 ##' @rdname sodll
 setMethod("sodll", "mrgmod", function(x,...) {
-    return(pathfun(file.path(soloc(x,...),dllfile(x))))
+  return(pathfun(file.path(soloc(x,...),dllfile(x))))
 })
 ##' @export
 ##' @rdname sodll
 setMethod("sodll", "lockedmod", function(x,...) {
-    return(pathfun(filename(x@dllloc,x@dllname,.Platform$dynlib.ext,...)))
+  return(pathfun(filename(x@dllloc,x@dllname,.Platform$dynlib.ext,...)))
 })
 ##' @export
 ##' @rdname sodll
 setMethod("sodll", "packmod", function(x,...) {
-    return(pathfun(getLoadedDLLs()[[x@package]][["path"]]))
+  return(pathfun(getLoadedDLLs()[[x@package]][["path"]]))
 })
 
 
@@ -158,18 +158,18 @@ setGeneric("see", function(x,...) standardGeneric("see"))
 ##' @export
 ##' @rdname see
 setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
-    if(raw) return(x@code)
-    what <- x@code
-    if(length(what)==0) {
-        if(file.exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
-    }
-    if(length(what)==0) {
-        warning("No code to show.")
-    } else {
-        cat("\nModel file: ", basename(cfile(x)), "\n")
-        cat(paste0(" ", what), sep="\n")
-    }
-    return(invisible(NULL))
+  if(raw) return(x@code)
+  what <- x@code
+  if(length(what)==0) {
+    if(file.exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
+  }
+  if(length(what)==0) {
+    warning("No code to show.")
+  } else {
+    cat("\nModel file: ", basename(cfile(x)), "\n")
+    cat(paste0(" ", what), sep="\n")
+  }
+  return(invisible(NULL))
 })
 
 see_compfile <- function(x) {
@@ -198,7 +198,7 @@ setMethod("project", "mrgmod", function(x,...) return(x@project))
 ##' @export
 ##' @rdname project
 setMethod("project", "packmod", function(x,...) {
-    return(file.path(path.package(x@package),"project"))
+  return(file.path(path.package(x@package),"project"))
 })
 ##' @export
 ##' @rdname project
@@ -242,13 +242,13 @@ setGeneric("loadso", function(x,...) standardGeneric("loadso"))
 ##' @export
 ##' @rdname loadso
 setMethod("loadso", "mrgmod", function(x,...) {
-    if(.Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
-    foo <- try(dyn.load(sodll(x)))
-    if(class(foo)=="try-catch") {
-       message(foo)
-       return(invisible(FALSE))
-    }
-    return(invisible(x))
+  if(.Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
+  foo <- try(dyn.load(sodll(x)))
+  if(class(foo)=="try-catch") {
+    message(foo)
+    return(invisible(FALSE))
+  }
+  return(invisible(x))
 })
 ##' Unload the model shared object.
 ##'
@@ -259,13 +259,13 @@ setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 ##' @export
 ##' @rdname unloadso
 setMethod("unloadso", "mrgmod", function(x, ...) {
-    out <- try(dyn.unload(sodll(x)), TRUE)
-    if(inherits(out, "try-error")) {
-        stop(out[1])
-    } else {
-        message("unloaded ", sodll(x))
-    }
-    return(invisible(NULL))
+  out <- try(dyn.unload(sodll(x)), TRUE)
+  if(inherits(out, "try-error")) {
+    stop(out[1])
+  } else {
+    message("unloaded ", sodll(x))
+  }
+  return(invisible(NULL))
 })
 
 
@@ -287,20 +287,20 @@ is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 ##' @export
 merge.list <- function(x,y,...,strict=TRUE,
                        warn=TRUE,context="object",wild="...") {
-
+  
   left <- x
   right <- as.list(y)
-
+  
   if(strict) {
     right <- right[names(right)!=wild | is.null(names(right))]
   }
-
+  
   ## Merge two lists
   common <- intersect(names(left), names(right))
   common <- common[common != wild]
-
+  
   left[common] <- right[common]
-
+  
   if(!strict)  {
     new <- !is.element(names(right),names(left)) | names(right) == wild
     left <- c(left,right[new])
@@ -311,12 +311,12 @@ merge.list <- function(x,y,...,strict=TRUE,
 }
 
 render_time <- function(x) {
-    add <- times <- numeric(0)
-    if(!is.mt(x@add)){add <- x@add}
-    if(x@end >=0){times <-seq(x@start,x@end,x@delta)}
-    times <- invisible(as.numeric(c(times,add)))
-    if(is.mt(times)) {return(0)}
-    sort(unique(times[times>=0]))
+  add <- times <- numeric(0)
+  if(!is.mt(x@add)){add <- x@add}
+  if(x@end >=0){times <-seq(x@start,x@end,x@delta)}
+  times <- invisible(as.numeric(c(times,add)))
+  if(is.mt(times)) {return(0)}
+  sort(unique(times[times>=0]))
 }
 
 
@@ -348,7 +348,7 @@ setGeneric("stime", function(x,...) standardGeneric("stime"))
 ##' @export
 ##' @rdname tgrid
 setMethod("stime", "mrgmod",  function(x,...) {
-    render_time(x)
+  render_time(x)
 })
 ##' @export
 ##' @rdname tgrid
@@ -366,12 +366,12 @@ setMethod("stime", "mrgsims", function(x,...) stime(mod(x)))
 ##' @param seed if not null, passed to set.seed
 ##' @export
 mvgauss <- function(mat, n=10, seed=NULL) {
-    if(!is.null(seed)) set.seed(seed)
-    .Call("mrgsolve_MVGAUSS", PACKAGE="mrgsolve", mat, n,-1)
+  if(!is.null(seed)) set.seed(seed)
+  .Call("mrgsolve_MVGAUSS", PACKAGE="mrgsolve", mat, n,-1)
 }
 
 simulateres <- function(n1,omega,n2,sigma) {
-    .Call("mrgsolve_SIMRE", PACKAGE="mrgsolve", n1, omega,n2,sigma,-1)
+  .Call("mrgsolve_SIMRE", PACKAGE="mrgsolve", n1, omega,n2,sigma,-1)
 }
 
 ##' Get model random effect variances and covariancnes.
@@ -404,48 +404,89 @@ setGeneric("simre", function(x,...) standardGeneric("simre"))
 ##' @export
 ##' @rdname simre
 setMethod("simre", "mrgmod", function(x,seed=NULL,neta=10,neps=10,...) {
-    if(!is.null(seed)) set.seed(seed)
-    return(simulateres(neta,omat(x,make=TRUE), neps,smat(x,make=TRUE)))
+  if(!is.null(seed)) set.seed(seed)
+  return(simulateres(neta,omat(x,make=TRUE), neps,smat(x,make=TRUE)))
 })
 ##' @export
 ##' @rdname simre
 setMethod("simre", "mrgsims", function(x,seed=NULL,...) {
-    NID <- length(unique(x@data[,"ID"]))
-    N <- nrow(x@data)
-
-    y <- mod(x)
-
-    if(is.null(seed) & !is.na(x@seed)) set.seed(x@seed)
-    if(!is.null(seed) & is.na(x@seed)) set.seed(seed)
-
-    return(simulateres(NID,omat(y,make=TRUE), N, smat(y,make=TRUE)))
+  NID <- length(unique(x@data[,"ID"]))
+  N <- nrow(x@data)
+  
+  y <- mod(x)
+  
+  if(is.null(seed) & !is.na(x@seed)) set.seed(x@seed)
+  if(!is.null(seed) & is.na(x@seed)) set.seed(seed)
+  
+  return(simulateres(NID,omat(y,make=TRUE), N, smat(y,make=TRUE)))
 })
 
 pfile <- function(package,dir,file,ext=NULL) {
-    ans <- file.path(path.package(package),dir,file)
-    if(is.character(ext)) {
-        ans <- paste0(ans, ".", ext)
-    }
-    return(ans)
+  ans <- file.path(path.package(package),dir,file)
+  if(is.character(ext)) {
+    ans <- paste0(ans, ".", ext)
+  }
+  return(ans)
 }
 
 
 #writeable <- function(x) file.access(x,mode=2)==0
 
 cropstr <- function(string, prefix, suffix, bump= "...") {
-    nc <- nchar(string)
-    total <- prefix+suffix
-    if(all(nc <= total)) return(string)
-    paste0(substr(string,1,prefix) , bump, substr(string,(nc-suffix+nchar(bump)+1),nc))
+  nc <- nchar(string)
+  total <- prefix+suffix
+  if(all(nc <= total)) return(string)
+  paste0(substr(string,1,prefix) , bump, substr(string,(nc-suffix+nchar(bump)+1),nc))
 }
 
-as.cvec <- function(x) {
-    x <- gsub("^\\s+|\\s+$", "", x, perl=TRUE)
-    unlist(strsplit(as.character(x),"\\s*(\n|,|\\s+)\\s*",perl=TRUE))
+## Create character vector 
+## Split on comma or space 
+cvec_cs <- function(x) {
+  if(is.null(x) | length(x)==0) return(character(0))
+  x <- unlist(strsplit(as.character(x),",",fixed=TRUE))
+  x <- unlist(strsplit(x," ",fixed=TRUE))
+  x <- x[x!=""]
+  if(length(x)==0) {
+    return(character(0))
+  } else {
+    return(x) 
+  }
 }
-as.cvec2 <- function(x) {
-    x <- gsub("^\\s+|\\s+$", "", x, perl=TRUE)
-    unlist(strsplit(as.character(x),"\\s*(\n|,)\\s*",perl=TRUE))
+
+## Create a character vector
+## Split on comma and trim
+cvec_c_tr <- function(x) {
+  if(is.null(x) | length(x)==0) return(character(0))
+  x <- unlist(strsplit(as.character(x),",",fixed=TRUE))
+  x <- gsub("^\\s+|\\s+$", "",x, perl=TRUE)
+  x <- x[x!=""]
+  if(length(x)==0) {
+    return(character(0))
+  } else {
+    return(x) 
+  }
+}
+
+## Create a character vector 
+## Split on comma and rm whitespace
+cvec_c_nws <- function(x) {
+  if(is.null(x) | length(x)==0) return(character(0))
+  x <- unlist(strsplit(as.character(x),",",fixed=TRUE))
+  x <- gsub(" ", "",x, fixed=TRUE)
+  x <- x[x!=""]
+  if(length(x)==0) {
+    return(character(0))
+  } else {
+    return(x) 
+  }
+}
+
+
+## Old
+as.cvec <- function(x) {
+  if(is.null(x)) return(character(0))
+  x <- gsub("^\\s+|\\s+$", "", x, perl=TRUE)
+  unlist(strsplit(as.character(x),"\\s*(\n|,|\\s+)\\s*",perl=TRUE))
 }
 
 
@@ -471,12 +512,12 @@ expand.idata <- function(...) {
 ##' @export
 ##' @rdname expand.idata
 expand.ev <- function(...) {
-    ans <- expand.grid(...,stringsAsFactors=FALSE)
-    ans$ID <- 1:nrow(ans)
-    if(!exists("evid", ans)) ans$evid <- 1
-    if(!exists("cmt", ans)) ans$cmt <- 1
-    if(!exists("time", ans)) ans$time <- 0
-    shuffle(ans,"ID")
+  ans <- expand.grid(...,stringsAsFactors=FALSE)
+  ans$ID <- 1:nrow(ans)
+  if(!exists("evid", ans)) ans$evid <- 1
+  if(!exists("cmt", ans)) ans$cmt <- 1
+  if(!exists("time", ans)) ans$time <- 0
+  shuffle(ans,"ID")
 }
 
 
@@ -499,30 +540,30 @@ setGeneric("blocks", function(x,...) standardGeneric("blocks"))
 ##' @export
 ##' @rdname blocks
 setMethod("blocks", "mrgmod", function(x,...) {
-    what <- as.character(match.call()[-1])[-1]
-    blocks_(cfile(x),what)
+  what <- as.character(match.call()[-1])[-1]
+  blocks_(cfile(x),what)
 })
 ##' @export
 ##' @rdname blocks
 setMethod("blocks", "character", function(x,...) {
-    what <- as.character(match.call()[-1])[-1]
-    blocks_(x,what)
+  what <- as.character(match.call()[-1])[-1]
+  blocks_(x,what)
 })
 
 blocks_ <- function(file,what) {
-    if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
-    if(!file.exists(file)) stop("Can't find model file", call.=FALSE)
-    bl <- modelparse(readLines(file, warn=FALSE))
-    if(!any(what == "all")) bl <- bl[names(bl) %in% what]
-    if(length(bl)==0) {
-        message("No blocks found.")
-        return(invisible(NULL))
-    }
-
-    bl <- lapply(bl, paste, collapse="\n")
-    x1 <- paste0("$", names(bl), "\n")
-    cat("\nModel file:",basename(file), "\n\n")
-    cat(paste0(x1,unlist(bl)), sep="\n\n")
+  if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
+  if(!file.exists(file)) stop("Can't find model file", call.=FALSE)
+  bl <- modelparse(readLines(file, warn=FALSE))
+  if(!any(what == "all")) bl <- bl[names(bl) %in% what]
+  if(length(bl)==0) {
+    message("No blocks found.")
+    return(invisible(NULL))
+  }
+  
+  bl <- lapply(bl, paste, collapse="\n")
+  x1 <- paste0("$", names(bl), "\n")
+  cat("\nModel file:",basename(file), "\n\n")
+  cat(paste0(x1,unlist(bl)), sep="\n\n")
 }
 
 render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
@@ -530,7 +571,7 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
   bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//+")
   txt <- bl[["PROB"]]
   if(is.null(txt)) stop("Couldn't find $PROB in model.",call.=FALSE)
-
+  
   bl[["PROB"]] <- NULL
   anot <- tempfile(fileext=".RDS")
   
@@ -538,7 +579,7 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
     bl[[i]] <- paste(bl[[i]], collapse="\n") 
   }
   saveRDS(file=anot, list(details=details(x),code=x@code,bl=bl))
-
+  
   cat(file=file, txt, sep="\n")
   cat(file=file, 
       "```{r,echo=FALSE,comment=''}", 
@@ -569,34 +610,28 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
 
 
 tolist <- function(x,concat=TRUE,envir=list()) {
-
-    if(is.null(x)) return(list())
-    x <- gsub("(,|\\s)+$", "", x)
-    x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
-    x <- x[x!=""]
-    if(length(x)>1) x <- paste(x, collapse=',')
-    return(eval(parse(text=paste0("list(", x, ")")),envir=envir))
-
-}
-
-tocvec <- function(x) {
-  if(is.null(x) | all(x=="")) return(character(0))
-  x <- unlist(strsplit(as.character(x),"(,|\\s+)",perl=TRUE))
-  return(x[x!=""])
+  
+  if(is.null(x)) return(list())
+  x <- gsub("(,|\\s)+$", "", x)
+  x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
+  x <- x[x!=""]
+  if(length(x)>1) x <- paste(x, collapse=',')
+  return(eval(parse(text=paste0("list(", x, ")")),envir=envir))
+  
 }
 
 
 tovec <- function(x,concat=TRUE) {
-    if(is.null(x)) return(numeric(0))
-    ##x <- gsub(eol.comment, "\\1", x)
-    x <- gsub("(,|\\s)+$", "", x)
-    if(concat) {
-        x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
-        x <- x[x!=""]
-        if(length(x)>1) x <- paste(x, collapse=',')
-    }
-    x <- type.convert(unlist(strsplit(x,split="\\,|\n|\\s+",perl=TRUE)), as.is=TRUE)
-    x[nchar(x)>0]
+  if(is.null(x)) return(numeric(0))
+  ##x <- gsub(eol.comment, "\\1", x)
+  x <- gsub("(,|\\s)+$", "", x)
+  if(concat) {
+    x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
+    x <- x[x!=""]
+    if(length(x)>1) x <- paste(x, collapse=',')
+  }
+  x <- type.convert(unlist(strsplit(x,split="\\,|\n|\\s+",perl=TRUE)), as.is=TRUE)
+  x[nchar(x)>0]
 }
 
 
@@ -633,22 +668,22 @@ simargs <- function(x,...) UseMethod("simargs")
 ##' @export
 ##' @rdname simargs
 simargs.mrgmod <- function(x,clear=FALSE,...) {
-
-    if(clear) {
-        x@args <- list()
-        return(x)
-    }
-    x@args
+  
+  if(clear) {
+    x@args <- list()
+    return(x)
+  }
+  x@args
 }
 
 
 ## https://github.com/RcppCore/Rcpp/commit/59d3bf2e22dafb853c32d82b5e42899152f85c20
 build_path <- function(x) {
-    if(.Platform$OS.type != "windows") return(x)
-    x <- normalizePath(x)
-    if (grepl(' ', x, fixed=TRUE)) x <- utils::shortPathName(x)
-    x <- gsub("\\\\", "/", x)
-    return(x)
+  if(.Platform$OS.type != "windows") return(x)
+  x <- normalizePath(x)
+  if (grepl(' ', x, fixed=TRUE)) x <- utils::shortPathName(x)
+  x <- gsub("\\\\", "/", x)
+  return(x)
 }
 
 
@@ -661,7 +696,7 @@ mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
 
 if.file.remove <- function(x) {
-    if(file.exists(x)) file.remove(x)
+  if(file.exists(x)) file.remove(x)
 }
 
 #' rename columns from vector for new names
@@ -688,29 +723,29 @@ as_character_args <- function(x) {
 
 
 get_tokens <- function(x,unlist=FALSE) {
-    if(!is.character(x)) return(character(0))
-    if(unlist) return(.Call("mrgsolve_get_tokens", x)[["tokens"]])
-    .Call("mrgsolve_get_tokens", x)
+  if(!is.character(x)) return(character(0))
+  if(unlist) return(.Call("mrgsolve_get_tokens", x)[["tokens"]])
+  .Call("mrgsolve_get_tokens", x)
 }
 
 as_pack_mod <- function(model, project, PACKAGE) {
-    x <- mread(model, project,compile=FALSE,udll=FALSE)
-    code <- readLines(cfile(x),warn=FALSE)
-    x <- new("packmod",
-             x,
-             package=PACKAGE,
-             model=model
-             )
-    soloc <- soloc(x)
-    source <- file.path(soloc,compfile(model(x)))
-    x@shlib$par <- pars(x)
-    x@shlib$cmt <- cmt(x)
-    x@shlib$source <- NULL
-    x@code <- code
-    x <- relocate_funs(x, PACKAGE)
-    x@soloc <- ""
+  x <- mread(model, project,compile=FALSE,udll=FALSE)
+  code <- readLines(cfile(x),warn=FALSE)
+  x <- new("packmod",
+           x,
+           package=PACKAGE,
+           model=model
+  )
+  soloc <- soloc(x)
+  source <- file.path(soloc,compfile(model(x)))
+  x@shlib$par <- pars(x)
+  x@shlib$cmt <- cmt(x)
+  x@shlib$source <- NULL
+  x@code <- code
+  x <- relocate_funs(x, PACKAGE)
+  x@soloc <- ""
   
-    return(list(mod=x, soloc=soloc,source=source))
+  return(list(mod=x, soloc=soloc,source=source))
 }
 
 
@@ -731,18 +766,18 @@ nonull.default <- function(x,...) x[!is.null(x)]
 nonull.list <- function(x,...) x[!sapply(x,is.null)]
 
 s_pick <- function(x,name) {
-    stopifnot(is.list(x))
-    nonull(unlist(sapply(x,"[[",name)))
+  stopifnot(is.list(x))
+  nonull(unlist(sapply(x,"[[",name)))
 }
 
 ll_pick <- function(x,name) {
-    stopifnot(is.list(x))
-    lapply(x,"[[",name)
+  stopifnot(is.list(x))
+  lapply(x,"[[",name)
 }
 
 l_pick <- function(x,name) {
-    stopifnot(is.list(x))
-    lapply(x,"[",name)
+  stopifnot(is.list(x))
+  lapply(x,"[",name)
 }
 s_quote <- function(x) paste0("\'",x,"\'")
 d_quote <- function(x) paste0("\"",x,"\"")

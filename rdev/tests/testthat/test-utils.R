@@ -69,17 +69,6 @@ test_that("Get compartment names with cmt()", {
   expect_equivalent(names(param(mod)), pars(mod))
 })
 
-test_that("tocvec", {
-  expect_identical(mrgsolve:::tocvec(""), character(0))
-  expect_identical(mrgsolve:::tocvec("  "), character(0))
-  expect_identical(mrgsolve:::tocvec("\n"), character(0))
-  expect_identical(mrgsolve:::tocvec(NULL), character(0))
-  expect_identical(mrgsolve:::tocvec("a  b c"), c("a", "b", "c"))
-  expect_identical(mrgsolve:::tocvec("a  b  , c"), c("a", "b", "c"))
-  expect_identical(mrgsolve:::tocvec("a , b  \n\n c"), c("a", "b", "c"))
-  expect_identical(mrgsolve:::tocvec(c("A, B c","a , b  \n\n c")), c("A", "B", "c","a", "b", "c"))
-})
-
 
 
 ##' set_altname should return list with from/to

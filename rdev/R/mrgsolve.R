@@ -273,19 +273,20 @@ tran_mrgsim <- function(x,
   if(x@request[1]=="(all)") {
     request <- cmt(x)
   } else {
-    request <- as.cvec2(x@request)
+    request <- cvec_cs(x@request)
   }
 
-  # capture items
+  # capture items; will work on this
   capt <- x@capture
   
   # Requested
   has_Request <- !missing(Request)
-  Request <- as.cvec2(Request)
-  rename.Request <- set_altname(Request)
+  # comma-separated
+  rename.Request <- set_altname(cvec_c_nws(Request))
   Request <- as.character(rename.Request)
   
   # request is only for compartments
+  # restrict captures and request if Req is specified
   if(has_Request) {
      request <- intersect(Request,cmt(x))
      capt    <- intersect(Request,capt)
@@ -293,17 +294,17 @@ tran_mrgsim <- function(x,
     request <- intersect(request,cmt(x)) 
   }
   
-  
   # Non-compartment names in capture
-  capture_names <- unique(setdiff(capt,cmt(x)))
+  capt <- unique(setdiff(capt,cmt(x)))
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  to_capture <- c(length(x@capture),(match(capture_names,x@capture)-1))
+  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
   
   
   ## carry can be tran/data/idata
   # Items to carry out from the data set
-  rename.carry <- set_altname(as.cvec2(carry.out))
+  # carry.out --> comma-separated names
+  rename.carry <- set_altname(cvec_c_nws(carry.out))
   carry.out <- as.character(rename.carry)
 
   # Don't take ID,time,TIME
@@ -317,7 +318,7 @@ tran_mrgsim <- function(x,
   carry.out <- setdiff(carry.out,carry.tran)
   
   # What to carry out from data and idata
-  carry.data  <- intersect(carry.out,colnames(data))
+  carry.data  <- intersect(carry.out, colnames(data))
   carry.idata <- intersect(carry.out, colnames(idata))
  
   # Carry from data_set if name is in idata_set too
@@ -333,9 +334,9 @@ tran_mrgsim <- function(x,
   parin$ptimes <- stime(ptime)
   parin$filbak <- filbak
   
-  
+  # already took intersect
   parin$request <- as.integer(match(request, cmt(x))-1);
-  ##parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
+  
   
   # What to carry
   parin$carry_data <- carry.data 
@@ -382,7 +383,7 @@ tran_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(idata))
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry.out))
-    capture.output(file=capture, append=TRUE, print(list(to_capture,capture_names)))
+    capture.output(file=capture, append=TRUE, print(list(capt_pos,capt)))
   }
   
   ## Set the seed:
@@ -394,7 +395,7 @@ tran_mrgsim <- function(x,
                names(param(x)),
                init,
                names(init(x)),
-               to_capture,
+               capt_pos,
                pointers(x),
                data,idata,
                as.matrix(omat(x)),
@@ -411,7 +412,7 @@ tran_mrgsim <- function(x,
               altname(rename.carry,carry.data), ## Then carry data 
               altname(rename.carry,carry.idata), ## Then carry idata
               altname(rename.Request,request),   ## Then compartments
-              altname(rename.Request,capture_names) ## Then captures
+              altname(rename.Request,capt) ## Then captures
   )
   
   dimnames(out$data) <- list(NULL, cnames)
@@ -419,7 +420,7 @@ tran_mrgsim <- function(x,
   new("mrgsims",
       request=altname(rename.Request,request),
       data=as.data.frame(out$data),
-      outnames=altname(rename.Request,capture_names),
+      outnames=altname(rename.Request,capt),
       mod=x,
       seed=as.integer(seed))
 }

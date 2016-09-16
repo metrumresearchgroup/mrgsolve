@@ -9,8 +9,8 @@ set_altname <- function(x) {
     return(structure(list(from="",to="",rename=FALSE),class="altname"))
   }
   y <- strsplit(as.character(x),"\\s*=\\s*")
-  to <- sapply(y,`[`,1)
-  from <- sapply(y,`[`,2)
+  to <- sapply(y,`[`,1L)
+  from <- sapply(y,`[`,2L)
   from <- ifelse(is.na(from), to, from)
   if(identical(from,to)) return(as.character(from))
   return(structure(list(from=from,to=to,rename=!identical(from,to)),class="altname"))

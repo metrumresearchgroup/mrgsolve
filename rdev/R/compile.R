@@ -56,7 +56,7 @@ generate_rdefs <- function(pars,
 
     Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
 
-    cmtn <- unique(intersect(as.cvec(parsedata$CMTN),cmt))
+    cmtn <- unique(intersect(cvec_cs(parsedata$CMTN),cmt))
 
     if(length(cmtn)>0) {
         cmtnindex <- (match(cmtn,cmt))

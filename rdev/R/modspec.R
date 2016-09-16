@@ -114,12 +114,12 @@ setup_soloc <- function(loc,model) {
   return(soloc)
 }
 
-protected_options <- function(x) {
-  x <- as.cvec2(x)
-  d <- !grepl("=",x,fixed=TRUE) & nchar(x) > 0
-  x[d] <- sapply(x[d],function(y) paste0(y, "=TRUE"))
-  paste0(">> ",paste(x,collapse=','))
-}
+# protected_options <- function(x) {
+#   x <- as.cvec2(x)
+#   d <- !grepl("=",x,fixed=TRUE) & nchar(x) > 0
+#   x[d] <- sapply(x[d],function(y) paste0(y, "=TRUE"))
+#   paste0(">> ",paste(x,collapse=','))
+# }
 
 
 ##' Parse model specification text.
@@ -463,7 +463,7 @@ THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
-    x <- tolist(paste0(as.cvec(x),collapse=','),envir=env$ENV)
+    x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
   }
   
   x <- x[!is.na(x)]
@@ -550,7 +550,7 @@ handle_spec_block.specSET <- function(x,...) tolist(x)
 ##' @export
 handle_spec_block.specNMXML <- function(x,...) parseNMXML(x,...)
 ##' @export
-handle_spec_block.specCMTN <- function(x,...) as.cvec(x)
+handle_spec_block.specCMTN <- function(x,...) cvec_cs(x)
 
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   if(annotated) {
@@ -558,7 +558,7 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   }
-  x <- c(tocvec(x),env$capture)
+  x <- c(cvec_cs(x),env$capture)
   
   return(unique(x))
 }
@@ -576,7 +576,7 @@ handle_spec_block.specPKMODEL <- function(x,...) {
 ##' @export
 handle_spec_block.specINCLUDE <- function(x,...) {
   
-  x <- as.cvec2(x)
+  x <- cvec_c_tr(x)
   if(any(grepl("[\"\']",x,perl=TRUE))) {
     stop("Items in $INCLUDE should not contain quotation marks.",call.=FALSE) 
   }
@@ -597,7 +597,7 @@ form_includes <- function(x,where) {
 }
 ##' @export
 handle_spec_block.specPLUGIN <- function(x,...) {
-  x <- unique(as.cvec(x))
+  x <- unique(cvec_c_tr(x))
   if("mrgx" %in% x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
   }
