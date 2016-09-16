@@ -273,11 +273,8 @@ tran_mrgsim <- function(x,
   if(x@request[1]=="(all)") {
     request <- cmt(x)
   } else {
-    request <- x@request
+    request <- as.cvec2(x@request)
   }
-  
-  # requested compartments
-  request <- as.cvec2(request)
 
   # capture items
   capt <- x@capture
@@ -291,25 +288,24 @@ tran_mrgsim <- function(x,
   # request is only for compartments
   if(has_Request) {
      request <- intersect(Request,cmt(x))
-     capt <- intersect(Request,capt)
+     capt    <- intersect(Request,capt)
   } else {
     request <- intersect(request,cmt(x)) 
   }
   
+  
+  # Non-compartment names in capture
+  capture_names <- unique(setdiff(capt,cmt(x)))
+  # First spot is the number of capture.items, followed by integer positions
+  # Important to use the total length of x@capture
+  to_capture <- c(length(x@capture),(match(capture_names,x@capture)-1))
+  
+  
+  ## carry can be tran/data/idata
   # Items to carry out from the data set
   rename.carry <- set_altname(as.cvec2(carry.out))
   carry.out <- as.character(rename.carry)
 
-  ## "idata"
-  if(!is.valid_idata(idata)) idata <- valid_idata(idata,verbose=verbose,...)
-  idata_icdol <- idcol(idata)
-  
-  ## data
-  if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
-  
-  tcol <- timename(data)
-  tcol <- ifelse(is.na(tcol), "time", tcol)
-  
   # Don't take ID,time,TIME
   carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
   
@@ -326,9 +322,10 @@ tran_mrgsim <- function(x,
  
   # Carry from data_set if name is in idata_set too
   carry.idata <- setdiff(carry.idata, carry.data)
+
   
+  # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
-  #parin$t2advance <- as.integer(as.logical(t2advance))
   parin$recsort <- recsort
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
@@ -337,8 +334,8 @@ tran_mrgsim <- function(x,
   parin$filbak <- filbak
   
   
-  parin$request <- match(request, cmt(x));
-  parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
+  parin$request <- as.integer(match(request, cmt(x))-1);
+  ##parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
   
   # What to carry
   parin$carry_data <- carry.data 
@@ -351,12 +348,17 @@ tran_mrgsim <- function(x,
   rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
   carry.tran <- as.character(rename.carry.tran)
 
-  # Non-compartment names in capture
-  capture_names <- unique(setdiff(capt,cmt(x)))
-  # First spot is the number of capture.items, followed by integer positions
-  # Important to use the total length of x@capture
-  to_capture <- c(length(x@capture),(match(capture_names,x@capture)-1))
-
+  
+  ## "idata"
+  if(!is.valid_idata(idata)) idata <- valid_idata(idata,verbose=verbose,...)
+  idata_icdol <- idcol(idata)
+  
+  ## data
+  if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
+  
+  tcol <- timename(data)
+  tcol <- ifelse(is.na(tcol), "time", tcol)
+  
   # Derive stime vector either from tgrid or from the object
   if(inherits(tgrid, c("tgrid","tgrids"))) {
     stime <- stime(tgrid)
