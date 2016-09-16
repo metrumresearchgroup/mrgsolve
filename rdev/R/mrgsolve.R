@@ -93,9 +93,7 @@ validate_idata <- function(idata) {
 ##'
 ##' \itemize{
 ##' \item \code{mtime} numeric vector of times where the model is evaluated (with solver reset), but results are not included in simulated output
-##' \item \code{trequest} a vector of names of table data items to take in simulated ouput
-##' \item \code{Trequest} same as \code{trequest}, except that when Trequest is specified, all model compartments (in \code{request}) are dropped; this is just a shorter syntax for saying request="", trequest="name1,name2"
-##' \item \code{Request} a vector of compartment or table names to take in simulated output; if this is specified, \code{request}, \code{trequest}, and \code{Trequest} are ignored
+##' \item \code{Request} a vector of compartment or table names to take in simulated output; if this is specified, \code{request} is ignored
 ##' \item \code{obsonly} omit records with \code{evid} != 0 from simulated output
 ##' \item \code{obsaug} logical; when \code{TRUE} and a full data set is used, the simulated output is augmented with an observation at each time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating augmented observations can be requested by including \code{a.u.g} in \code{carry.out}
 ##' \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at the same time; 3 and 4 put those doses before padded observations at the same time.  2 and 4 will put doses scheduled through \code{addl} after observations at the same time; 1 and 3 put doses scheduled through \code{addl} before observations at the same time. \code{recsort} will not change the order of your input data set if both doses and observations are given.
@@ -236,8 +234,8 @@ tran_mrgsim <- function(x,
                         carry.out=character(0),
                         mtime=numeric(0),
                         seed=as.integer(NA),
-                        trequest=character(0),
-                        Trequest=character(0),
+                        #trequest=character(0),
+                        #Trequest=character(0),
                         Request=character(0),
                         capture=NULL,
                         obsonly=FALSE,
@@ -256,7 +254,11 @@ tran_mrgsim <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
-  foo <- touch_funs(x,keep_pointers=TRUE)
+  ##foo <- touch_funs(x,keep_pointers=TRUE)
+  
+  if(!model_loaded(x)) {
+    stop("The model is not properly loaded.  Aborting simulation.",call.=FALSE) 
+  }
   
   param <- as.numeric(param(x))
   init <-  as.numeric(init(x))
@@ -274,34 +276,30 @@ tran_mrgsim <- function(x,
     request <- x@request
   }
   
-  ## Requesting table items
-  if(missing(trequest)) trequest <- c(foo$tnames,x@capture)
-  
-  ## If Trequest is supplied,
-  ## take only tabled items and drop compartments
-  if(!missing(Trequest)) {
-    request <- ""
-    trequest <- Trequest
-  }
-  
-  ## Request is an explicit listing of all
-  ## items that are compartments or tabled items
-  if(!missing(Request)) {
-    request <- trequest <- Request
-  }
-  
+  # requested compartments
   request <- as.cvec2(request)
-  rename.request <- set_altname(request)
-  request <- as.character(rename.request)
+
+  # capture items
+  capt <- x@capture
   
+  # Requested
+  has_Request <- !missing(Request)
+  Request <- as.cvec2(Request)
+  rename.Request <- set_altname(Request)
+  Request <- as.character(rename.Request)
+  
+  # request is only for compartments
+  if(has_Request) {
+     request <- intersect(Request,cmt(x))
+     capt <- intersect(Request,capt)
+  } else {
+    request <- intersect(request,cmt(x)) 
+  }
+  
+  # Items to carry out from the data set
   rename.carry <- set_altname(as.cvec2(carry.out))
   carry.out <- as.character(rename.carry)
-  
-  trequest <- as.cvec(trequest)
-  
-  ## Set the seed:
-  if(!is.na(seed)) set.seed(seed)
-  
+
   ## "idata"
   if(!is.valid_idata(idata)) idata <- valid_idata(idata,verbose=verbose,...)
   idata_icdol <- idcol(idata)
@@ -323,25 +321,28 @@ tran_mrgsim <- function(x,
   carry.out <- setdiff(carry.out,carry.tran)
   
   # What to carry out from data and idata
-  carry.data <- intersect(carry.out,colnames(data))
+  carry.data  <- intersect(carry.out,colnames(data))
   carry.idata <- intersect(carry.out, colnames(idata))
+ 
+  # Carry from data_set if name is in idata_set too
   carry.idata <- setdiff(carry.idata, carry.data)
   
   parin <- parin(x)
-  parin$t2advance <- as.integer(as.logical(t2advance))
+  #parin$t2advance <- as.integer(as.logical(t2advance))
   parin$recsort <- recsort
-  
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
-  request <- intersect(request,cmt(x))
-  #parint$request <- request
-  parin$request <- match(request, cmt(x));
-  parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
+  parin$mtime <- sort(unique(mtime))
+  parin$ptimes <- stime(ptime)
   parin$filbak <- filbak
   
+  
+  parin$request <- match(request, cmt(x));
+  parin$request <- as.integer(parin$request[!is.na(parin$request)]-1)
+  
+  # What to carry
   parin$carry_data <- carry.data 
   parin$carry_idata <- carry.idata 
-  
   # This has to be lower case; that's all we're looking for
   parin$carry_tran <- tolower(carry.tran)
   
@@ -349,18 +350,21 @@ tran_mrgsim <- function(x,
   # make_altnames: from, to
   rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
   carry.tran <- as.character(rename.carry.tran)
+
+  # Non-compartment names in capture
+  capture_names <- unique(setdiff(capt,cmt(x)))
+  # First spot is the number of capture.items, followed by integer positions
+  # Important to use the total length of x@capture
+  to_capture <- c(length(x@capture),(match(capture_names,x@capture)-1))
+
+  # Derive stime vector either from tgrid or from the object
+  if(inherits(tgrid, c("tgrid","tgrids"))) {
+    stime <- stime(tgrid)
+  } else {
+    stime <- stime(x)  
+  }
   
-  # Only accept table names that are not compartments
-  parin$table_names <-  unique(intersect(as.cvec(trequest),setdiff(foo[["tnames"]],cmt(x))))
-  ## Non-compartment names in request
-  capture_names <- unique(intersect(setdiff(x@capture,cmt(x)),as.cvec(trequest)))
-  to_capture <- c(length(x@capture),(which(x@capture %in% capture_names)-1))
-  parin$mtime <- sort(unique(mtime))
-  
-  stime <- stime(x)
-  
-  if(inherits(tgrid, c("tgrid","tgrids"))) stime <- stime(tgrid)
-  
+  # Look for a deslist; if so, use that instead
   if(length(deslist) > 0) {
     parin[["tgridmatrix"]] <- do.call("tgrid_matrix",deslist)
     parin[["whichtg"]] <- tgrid_id(descol, idata)
@@ -368,18 +372,19 @@ tran_mrgsim <- function(x,
     parin[["tgridmatrix"]] <- tgrid_matrix(stime)
     parin[["whichtg"]] <- integer(0)
   }
-  
-  parin$stimes <- stime
-  parin$ptimes <- stime(ptime)
-  
+
+
+  # Dump some information out to file for debugging
   if(is.character(capture)) {
     capture.output(file=capture, print(c(date=list(date()), parin=parin)))
     capture.output(file=capture, append=TRUE, print(idata))
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry.out))
     capture.output(file=capture, append=TRUE, print(list(to_capture,capture_names)))
-    
   }
+  
+  ## Set the seed:
+  if(!is.na(seed)) set.seed(seed)
   
   out <- .Call(mrgsolve_DEVTRAN,
                parin,
@@ -388,9 +393,10 @@ tran_mrgsim <- function(x,
                init,
                names(init(x)),
                to_capture,
-               foo[["pointers"]],
+               pointers(x),
                data,idata,
-               as.matrix(omat(x)),as.matrix(smat(x)))
+               as.matrix(omat(x)),
+               as.matrix(smat(x)))
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
@@ -399,23 +405,21 @@ tran_mrgsim <- function(x,
   
   cnames <- c("ID",
               tcol,
-              altname(rename.carry,carry.tran),
-              altname(rename.carry,carry.data),
-              altname(rename.carry,carry.idata),
-              altname(rename.request,request),
-              altname(rename.request,parin$table_names),
-              altname(rename.request,capture_names)
+              altname(rename.carry,carry.tran), ## First tran
+              altname(rename.carry,carry.data), ## Then carry data 
+              altname(rename.carry,carry.idata), ## Then carry idata
+              altname(rename.Request,request),   ## Then compartments
+              altname(rename.Request,capture_names) ## Then captures
   )
   
   dimnames(out$data) <- list(NULL, cnames)
   
   new("mrgsims",
-      request=altname(rename.request,request),
+      request=altname(rename.Request,request),
       data=as.data.frame(out$data),
-      outnames=altname(rename.request,c(parin$table_names,capture_names)),
+      outnames=altname(rename.Request,capture_names),
       mod=x,
-      seed=as.integer(seed),
-      date=date())
+      seed=as.integer(seed))
 }
 
 setGeneric("parin", function(x) standardGeneric("parin"))
@@ -423,7 +427,6 @@ setMethod("parin", "mrgmod", function(x) {
   list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
        maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
        digits=x@digits, tscale=x@tscale,
-       ##stimes=stime(x),
        mindt=x@mindt, advan=x@advan)
 })
 
@@ -456,6 +459,21 @@ touch_funs <- function(x,keep_pointers=TRUE) {
 }
 
 
+##' Return a pre-compiled, PK/PD model.
+##' 
+##' @param ... passed to update
+##' 
+##' @return 
+##' A \code{packmod} object, ready to simulated.
+##' 
+##' @examples
+##' 
+##' mod <- mrgsolve:::house()
+##' 
+##' see(mod)
+##' 
+##' mod %>% ev(amt=100) %>% mrgsim %>% plot
+##' 
 house <- function(...) {
   att <- readRDS(file=pfile("mrgsolve", "project", "housemodel", "RDS"))
   x <- new("packmod",
@@ -466,15 +484,7 @@ house <- function(...) {
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
   x <- update(x,...,strict=FALSE)
-  z <- pointers(x)
-  x
-}
-
-
-SUPERMATRIX <- function(x,keep_names=FALSE) {
-  
-  x <- .Call("mrgsolve_SUPERMATRIX",x,keep_names)
-  if(nrow(x) >0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
+  #z <- pointers(x)
   x
 }
 

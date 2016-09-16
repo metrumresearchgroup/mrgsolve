@@ -5,7 +5,9 @@ make_altnames <- function(from,to) {
 }
 
 set_altname <- function(x) {
-  if(length(x)==0) return(as.character(x))
+  if(length(x)==0) {
+    return(structure(list(from="",to="",rename=FALSE),class="altname"))
+  }
   y <- strsplit(as.character(x),"\\s*=\\s*")
   to <- sapply(y,`[`,1)
   from <- sapply(y,`[`,2)

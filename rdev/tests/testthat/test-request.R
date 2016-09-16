@@ -6,14 +6,16 @@ Sys.setenv(R_TESTS="")
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
-$CMT GUT CENT PERIPH
+$CMT GUT CENT
+$INIT PERIPH=2
 $PKMODEL ncmt=2, depot=TRUE
 
 $MAIN
 double a = 1;
 double b = 2;
+double z = 3;
 
-$CAPTURE a b
+$CAPTURE b  z
 '
 
 mod <- mcode("req1", code)
@@ -27,11 +29,11 @@ test_that("Req gets the right variables", {
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
-  x4 <- names(mod %>% Req(b,a) %>% mrgsim)
-  expect_identical(x1,s(ID,time,GUT,CENT,PERIPH,a,b))
+  x4 <- names(mod %>% Req(b,z) %>% mrgsim)
+  expect_identical(x1,s(ID,time,GUT,CENT,PERIPH,b,z))
   expect_identical(x2,s(ID,time,PERIPH,GUT))
   expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,a,b))
+  expect_identical(x4,s(ID,time,b,z))
 })
 
 
@@ -42,11 +44,11 @@ test_that("Req gets the right variables, with request", {
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
-  x4 <- names(mod %>% Req(b,a) %>% mrgsim)
-  expect_identical(x1,s(ID,time,CENT,a,b))
+  x4 <- names(mod %>% Req(z,b) %>% mrgsim)
+  expect_identical(x1,s(ID,time,CENT,b,z))
   expect_identical(x2,s(ID,time,PERIPH,GUT))
   expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,a,b))
+  expect_identical(x4,s(ID,time,z,b))
 })
 
 
