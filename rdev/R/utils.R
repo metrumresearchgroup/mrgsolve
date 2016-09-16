@@ -3,19 +3,16 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-loaded_dll_files <- function() {
-    sapply(getLoadedDLLs(), function(x) x[["path"]])
-}
 
 dllfile <- function(x) paste0(dllname(x),.Platform$dynlib.ext)
 pathfun <- function(...) path.expand(...) #,mustWork=FALSE,winslash=.Platform$file.sep
 
-
-##' Get path to example models
-##' @export
-installed_models <- function() {
-    file.path(system.file(package="mrgsolve"), "inst", "models")
+# Used in `mrgsim`
+bind_col <- function(x,y,z) {
+  cbind(x,matrix(z,ncol=1, nrow=nrow(x), byrow=TRUE, dimnames=list(NULL, y)))
 }
+
+
 
 ##' Return information about model compilation.
 ##'
@@ -360,75 +357,6 @@ setMethod("stime", "mrgsims", function(x,...) stime(mod(x)))
 
 
 
-##' Coerce a list to a matrix
-##'
-##' All elements of the list must be of length 1.
-##'
-##' @param x a named list, with each element of length 1
-##' @param ... not used
-##' @param nrow the number of rows to make the matrix
-##' @return matrix with colnames set to the names of x
-##' @rdname as.matrix
-##' @author Kyle Baron
-##' @examples
-##' x <- list(a=1, b=2, c=3)
-##' as.matrix(x,nrow=3)
-as.matrix.list <- function(x,...,nrow=1) {
-
-    if(!all(sapply(x,length)==1))
-        stop("Cannot coerce list to matrix; some elements not length 1")
-
-    matrix(unlist(x),
-           ncol=length(x),
-           nrow=nrow,
-           byrow=TRUE,
-           dimnames=list(NULL,names(x))
-           )
-}
-
-
-bind_col <- function(x,y,z) {
-    cbind(x,matrix(z,ncol=1, nrow=nrow(x), byrow=TRUE, dimnames=list(NULL, y)))
-}
-
-
-# setGeneric("valid_project", function(x,...) standardGeneric("valid_project"))
-# setMethod("valid_project", "mrgmod", function(x) {
-#     dir <- project(x)
-#     (file.exists(dir)) & (1-file.access(dir,2))
-# })
-# 
-# setGeneric("found_model_file", function(x,...) standardGeneric("found_model_file"))
-# setMethod("found_model_file", "mrgmod", function(x) file.exists(cfile(x)))
-
-
-##' Get the package models directory.
-##'
-##' @export
-mrgsolve_models <- function() {
-    file.path(path.package("mrgsolve"), "models")
-}
-
-setGeneric("dll_loaded", function(x,...) standardGeneric("dll_loaded"))
-setMethod("dll_loaded", "mrgmod", function(x,...) {
-    l <- getLoadedDLLs()
-    tag <- ifelse(inherits(x,"lockedmod"),x@dllname , dllname(x))
-    l <- l[is.element(names(l),tag)]
-    is.element(sodll(x), sapply(l,FUN=function(x) x[["path"]]))
-})
-setMethod("dll_loaded", "lockedmod",  function(x,...) {
-    l <- getLoadedDLLs()
-    tag <- ifelse(inherits(x,"lockedmod"),x@dllname , dllname(x))
-    l <- l[is.element(names(l),tag)]
-    is.element(sodll(x), sapply(l,FUN=function(x) x[["path"]]))
-})
-setMethod("dll_loaded", "packmod",function(x,...) {
-    l <- getLoadedDLLs()
-    any(names(l) == x@package)
-})
-setMethod("dll_loaded", "character", function(x,...) {
-    is.element(x,loaded_dll_files())
-})
 
 
 ##' Simulate from a multivariate normal distribution with mean zero.
@@ -521,46 +449,6 @@ as.cvec2 <- function(x) {
 }
 
 
-# 
-# vgrep <- function(pattern,x) {
-#     ##unique(unlist(sapply(pattern, grep, x=x, value=TRUE)))
-#     unique(unlist(lapply(pattern, grep, x=x, value=TRUE)))
-# }
-
-render_errors <- function(x) {
-    if(length(x)==0) return(x)
-    x <- paste("  >", x)
-    x <- c(" ", x)
-    paste(x, collapse="\n")
-}
-
-# test_stop <- function() {
-#     foo <- try(.Call("mrgsolve_test_stop", package="mrgsolve"))
-#     return(foo)
-# }
-
-idata <- function(...,KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) {
-    stop("idata is deprecated.")
-    # x <- expand.grid(..., KEEP.OUT.ATTRS=KEEP.OUT.ATTRS, stringsAsFactors=FALSE)
-    # if(!exists("ID", x)) x <- cbind(data.frame(ID=1:nrow(x)),x)
-    # if(any(sapply(x,mode) !="numeric")) warning("non-numeric data were found.")
-    # return(x)
-    # 
-
-
-}
-
-
-# fixnames <- function(x,prefix,...) {
-#     return(x)
-#     if(is.null(names(x))) {
-#         names(x) <- rep(prefix,length(x))
-#     }
-#     names(x)[nchar(names(x))==0] <- prefix
-# 
-#     return(x)
-# }
-
 ##' Create data sets.
 ##'
 ##' @param ... passed to \code{\link{expand.grid}}
@@ -589,32 +477,7 @@ expand.ev <- function(...) {
     shuffle(ans,"ID")
 }
 
-# rbind_fill <- function(...) {
-#     data.frame(dplyr::bind_rows(...))
-# }
 
-
-mapvalues <- function (x, from, to, warn_missing = FALSE) {
-    if (length(from) != length(to)) {
-        stop("`from` and `to` vectors are not the same length.")
-    }
-    if (!is.atomic(x)) {
-        stop("`x` must be an atomic vector.")
-    }
-    if (is.factor(x)) {
-        levels(x) <- mapvalues(levels(x), from, to, warn_missing)
-        return(x)
-    }
-    mapidx <- match(x, from)
-    mapidxNA <- is.na(mapidx)
-    from_found <- sort(unique(mapidx))
-    if (warn_missing && length(from_found) != length(from)) {
-        message("The following `from` values were not present in `x`: ",
-            paste(from[!(1:length(from) %in% from_found)], collapse = ", "))
-    }
-    x[!mapidxNA] <- to[mapidx[!mapidxNA]]
-    x
-}
 
 
 is.numeric.data.frame <- function(x) sapply(x, is.numeric)
@@ -734,8 +597,6 @@ tovec <- function(x,concat=TRUE) {
     x[nchar(x)>0]
 }
 
-## parens <- function(x) paste0("(",x,")")
-
 
 ##' Create create character vectors.
 ##'
@@ -777,36 +638,6 @@ simargs.mrgmod <- function(x,clear=FALSE,...) {
     }
     x@args
 }
-
-
-
-shuffle <- function (x, who, after = NA)  {
-    names(x) <- make.unique(names(x))
-    who <- names(x[, who, drop = FALSE])
-    nms <- names(x)[!names(x) %in% who]
-    if (is.null(after))
-        after <- length(nms)
-    if (is.na(after))
-        after <- 0
-    if (length(after) == 0)
-        after <- length(nms)
-    if (is.character(after))
-        after <- match(after, nms, nomatch = 0)
-    if (after < 0)
-        after <- length(nms)
-    if (after > length(nms))
-        after <- length(nms)
-    nms <- append(nms, who, after = after)
-    x[nms]
-}
-
-
-filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
-    if(short) dir <- build_path(dir)
-    file.path(dir, paste0(run, ext))
-}
-
-# mesg <- function(...) cat(...,"\n",sep=" ", file="MESSAGES",append=TRUE)
 
 
 ## https://github.com/RcppCore/Rcpp/commit/59d3bf2e22dafb853c32d82b5e42899152f85c20
@@ -932,13 +763,6 @@ setMethod("names", "mrgmod", function(x) {
   return(ans)
 })
 
-make_CLINK <- function(x,what=names(x),add=NULL, setenv=FALSE) {
-  x <- c(x[intersect(names(x),what)],add)
-  if(length(x)==0) return("")
-  x <- paste("-I\"",x,"\"",collapse=" ", sep="")
-  return(x)
-}
-
 
 ##' Show model specification and C++ files.
 ##' 
@@ -954,4 +778,139 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   if(spec) what$spec <- cfile(x)
   if(source) what$source <- x@shlib$source
   do.call(base::file.show,what)
+}
+
+
+
+mapvalues <- function (x, from, to, warn_missing = FALSE) {
+  if (length(from) != length(to)) {
+    stop("`from` and `to` vectors are not the same length.")
+  }
+  if (!is.atomic(x)) {
+    stop("`x` must be an atomic vector.")
+  }
+  if (is.factor(x)) {
+    levels(x) <- mapvalues(levels(x), from, to, warn_missing)
+    return(x)
+  }
+  mapidx <- match(x, from)
+  mapidxNA <- is.na(mapidx)
+  from_found <- sort(unique(mapidx))
+  if (warn_missing && length(from_found) != length(from)) {
+    message("The following `from` values were not present in `x`: ",
+            paste(from[!(1:length(from) %in% from_found)], collapse = ", "))
+  }
+  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
+  x
+}
+
+
+shuffle <- function (x, who, after = NA)  {
+  names(x) <- make.unique(names(x))
+  who <- names(x[, who, drop = FALSE])
+  nms <- names(x)[!names(x) %in% who]
+  if (is.null(after))
+    after <- length(nms)
+  if (is.na(after))
+    after <- 0
+  if (length(after) == 0)
+    after <- length(nms)
+  if (is.character(after))
+    after <- match(after, nms, nomatch = 0)
+  if (after < 0)
+    after <- length(nms)
+  if (after > length(nms))
+    after <- length(nms)
+  nms <- append(nms, who, after = after)
+  x[nms]
+}
+
+
+
+
+filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
+  if(short) dir <- build_path(dir)
+  file.path(dir, paste0(run, ext))
+}
+
+
+
+
+# 15 sept 2016
+# render_errors <- function(x) {
+#     if(length(x)==0) return(x)
+#     x <- paste("  >", x)
+#     x <- c(" ", x)
+#     paste(x, collapse="\n")
+#}
+
+# 15 sept 2016
+# idata <- function(...,KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) {
+#     stop("idata is deprecated.")
+#     # x <- expand.grid(..., KEEP.OUT.ATTRS=KEEP.OUT.ATTRS, stringsAsFactors=FALSE)
+#     # if(!exists("ID", x)) x <- cbind(data.frame(ID=1:nrow(x)),x)
+#     # if(any(sapply(x,mode) !="numeric")) warning("non-numeric data were found.")
+#     # return(x)
+#     # 
+# 
+# 
+# }
+
+
+
+
+
+# as.matrix.list <- function(x,...,nrow=1) {
+# 
+#     if(!all(sapply(x,length)==1))
+#         stop("Cannot coerce list to matrix; some elements not length 1")
+# 
+#     matrix(unlist(x),
+#            ncol=length(x),
+#            nrow=nrow,
+#            byrow=TRUE,
+#            dimnames=list(NULL,names(x))
+#            )
+# }
+
+
+
+
+# 15 sept 2016
+# mrgsolve_models <- function() {
+#     file.path(path.package("mrgsolve"), "models")
+# }
+
+# 15 sept 2016
+# setGeneric("dll_loaded", function(x,...) standardGeneric("dll_loaded"))
+# setMethod("dll_loaded", "mrgmod", function(x,...) {
+#     l <- getLoadedDLLs()
+#     tag <- ifelse(inherits(x,"lockedmod"),x@dllname , dllname(x))
+#     l <- l[is.element(names(l),tag)]
+#     is.element(sodll(x), sapply(l,FUN=function(x) x[["path"]]))
+# })
+# setMethod("dll_loaded", "lockedmod",  function(x,...) {
+#     l <- getLoadedDLLs()
+#     tag <- ifelse(inherits(x,"lockedmod"),x@dllname , dllname(x))
+#     l <- l[is.element(names(l),tag)]
+#     is.element(sodll(x), sapply(l,FUN=function(x) x[["path"]]))
+# })
+# setMethod("dll_loaded", "packmod",function(x,...) {
+#     l <- getLoadedDLLs()
+#     any(names(l) == x@package)
+# })
+# setMethod("dll_loaded", "character", function(x,...) {
+#     is.element(x,loaded_dll_files())
+# })
+
+
+# 15 sept 2016
+# loaded_dll_files <- function() {
+#     sapply(getLoadedDLLs(), function(x) x[["path"]])
+# }
+
+
+# 15 sept 2016
+installed_models <- function() {
+  file.path(system.file(package="mrgsolve"), "inst", "models")
 }

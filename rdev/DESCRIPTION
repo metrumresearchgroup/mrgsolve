@@ -73,6 +73,5 @@ Collate:
     'param.R'
     'print.R'
     'simtime.R'
-    'specdoc.R'
     'update.R'
 RoxygenNote: 5.0.1

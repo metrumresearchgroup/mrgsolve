@@ -89,13 +89,13 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
     ssig <- dim_matlist(x@sigma)
     ssig <- paste(ssig,ssig, sep="x", collapse=',')
 
-    loaded <- ifelse(dll_loaded(x),"(loaded)", "(not loaded)")
+    loaded <- ifelse(model_loaded(x),"", "<not loaded>")
 
     header <- paste0("\n\n-------- mrgsolve model object (", .Platform$OS.type, ") --------\n")
     cat(header)
     cat("  Project: ",proj,"\n", sep="")
     cat("  source:        ", basename(cfile(x)), "\n", sep="")
-    cat("  shared object: ", gsub(model(x), "", dllname(x)), " ",loaded,"\n\n", sep="")
+    cat("  shared object: ", dllname(x), " ",loaded,"\n\n", sep="")
     cat("  compile date:  ", x@shlib$date, "\n", sep="")
 
 

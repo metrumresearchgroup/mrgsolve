@@ -3,17 +3,17 @@ context("util functions")
 
 test_that("columns are renamed", {
   expect_equal(names(mrgsolve:::rename_cols(Theoph, c("time" = "Time", "dv" = "conc"))),
-                c("Subject", "Wt", "Dose", "time", "dv"))
-                })
+               c("Subject", "Wt", "Dose", "time", "dv"))
+})
 
 test_that("columns are renamed and order preserved", {
   expect_equal(names(mrgsolve:::rename_cols(Theoph, c("dv" = "conc", "time" = "Time"))),
-                c("Subject", "Wt", "Dose", "time", "dv"))
-                })
+               c("Subject", "Wt", "Dose", "time", "dv"))
+})
 
 test_that("columns that don't exist throw an error", {
   expect_error(mrgsolve:::rename_cols(Theoph, c("dv" = "Donc")),
-              "the following columns do not exist in the dataset:  Donc")
+               "the following columns do not exist in the dataset:  Donc")
   expect_error(mrgsolve:::rename_cols(Theoph, c("dv" = "Donc", "id" = "subject")),
                "the following columns do not exist in the dataset:  Donc, subject")
 })
@@ -67,6 +67,35 @@ test_that("Get parameter names with pars()", {
 
 test_that("Get compartment names with cmt()", {
   expect_equivalent(names(param(mod)), pars(mod))
+})
+
+test_that("tocvec", {
+  expect_identical(mrgsolve:::tocvec(""), character(0))
+  expect_identical(mrgsolve:::tocvec("  "), character(0))
+  expect_identical(mrgsolve:::tocvec("\n"), character(0))
+  expect_identical(mrgsolve:::tocvec(NULL), character(0))
+  expect_identical(mrgsolve:::tocvec("a  b c"), c("a", "b", "c"))
+  expect_identical(mrgsolve:::tocvec("a  b  , c"), c("a", "b", "c"))
+  expect_identical(mrgsolve:::tocvec("a , b  \n\n c"), c("a", "b", "c"))
+  expect_identical(mrgsolve:::tocvec(c("A, B c","a , b  \n\n c")), c("A", "B", "c","a", "b", "c"))
+})
+
+
+
+##' set_altname should return list with from/to
+##' coercing to character returns x$from
+##' renaming retains the order of the new character vector
+test_that("altname", {
+  x <- mrgsolve:::set_altname(c("a = Z", "c=J", "b   = B"))
+  expect_identical(x$from, c("Z", "J", "B"))
+  expect_identical(x$to, c("a", "c", "b"))
+  res <- mrgsolve:::altname.altname(x, c(LETTERS))
+  expect_identical(res[2],"b")
+  expect_identical(res[26],"a")
+  expect_identical(res[10],"c")
+  expect_identical(mrgsolve:::as.character.altname(x),x$from)
+  res2 <- mrgsolve:::altname.altname(x, rev(LETTERS))
+  expect_identical(res,rev(res2))
 })
 
 

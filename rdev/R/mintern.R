@@ -289,6 +289,7 @@ NULL
 ##' @return a character vector of model code
 ##' 
 code <- function(x) {
+  stopifnot(is.mrgmod(x))
   what <- try(x@code, silent=TRUE)
   if(inherits("try-error",what)) {
     message("Could not find model code.")

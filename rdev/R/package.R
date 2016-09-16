@@ -4,15 +4,9 @@
 
 
 
-
-
-
 ##' @title mrgsolve
 ##' @name mrgsolve
 ##'
-##'
-##' @section Help with model specification file:
-##' See this help page: \code{\link{modelspec}}.
 ##'
 ##'
 ##' @section Example models:
@@ -24,7 +18,6 @@
 ##' @section Package help:
 ##' \itemize{
 ##'  \item  Package \href{00Index.html}{index}, including a listing of all functions
-##'  \item Macros and variables in the model specification file: \code{\link{modelspec}}
 ##'  \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
 ##' }
 ##'

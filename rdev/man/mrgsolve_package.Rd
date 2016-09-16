@@ -13,11 +13,6 @@ mrgsovle consists of computer code written in the R and C++ languages, providing
 the DLSODA differential equation solver (written in FORTRAN) provided through ODEPACK -
 A Systematized Collection of ODE Solvers.
 }
-\section{Help with model specification file}{
-
-See this help page: \code{\link{modelspec}}.
-}
-
 \section{Example models}{
 
 See \code{\link{mrgsolve_example}} to export example models into your own, writeable project directory.
@@ -32,7 +27,6 @@ See \code{\link{data_set}} for help creating input data sets.  See \code{\link{e
 
 \itemize{
  \item  Package \href{00Index.html}{index}, including a listing of all functions
- \item Macros and variables in the model specification file: \code{\link{modelspec}}
  \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
 }
 }

@@ -159,8 +159,7 @@ void dataobject::idata_row() {
 
 
 void dataobject::copy_parameters(int this_row, odeproblem *prob) {
-  size_t i;
-  for(i=0; i < par_from.size(); ++i) {
+  for(size_t i=0; i < par_from.size(); ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
@@ -169,8 +168,7 @@ void dataobject::copy_parameters(int this_row, odeproblem *prob) {
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
-  size_t i;
-  for(i=0; i < cmt_from.size(); ++i) {
+  for(size_t i=0; i < cmt_from.size(); ++i) {
     prob->y_init(cmt_to[i],Data(this_row,cmt_from[i]));
   }
 }
@@ -190,9 +188,10 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
   
   // only look here for events or observations if there is more than one column:
   // size_t h=0; warnings
-  int j=0, k=0;
-  int evid, this_cmt;
+  int j=0;
+  int this_cmt;
   double lastime = 0;
+  
   if(debug) Rcpp::Rcout << "Generating record set ... " << std::endl;
   
   if(Data.ncol() <= 1) return;
@@ -208,18 +207,15 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       lastime = Data(j,col[_COL_time_]);
       
       this_cmt = Data(j,col[_COL_cmt_]);
-      evid = Data(j,col[_COL_evid_]);
-      k = j - this -> start(h);
       
       // If this is an observation record
-      if(evid==0) {
+      if(Data(j,col[_COL_evid_])==0) {
         if((this_cmt < 0) || (this_cmt > neq)) {
           Rcpp::stop("cmt number in observation record out of range.");
         }
         rec_ptr obs(new datarecord(0,Data(j,col[_COL_time_]),Data(j,col[_COL_cmt_]),j,Data(j,Idcol)));
         obs->from_data(true);
-        //a.at(h).at(k) = obs;
-        a.at(h).push_back(obs);
+        a[h].push_back(obs);
         ++obscount;
         continue;
       }
@@ -234,7 +230,7 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       ++evcount;
       
       ev_ptr ev(new pkevent(Data(j,col[_COL_cmt_]),
-                            evid,
+                            Data(j,col[_COL_evid_]),
                             Data(j,col[_COL_amt_]),
                             Data(j,col[_COL_time_]),
                             Data(j,col[_COL_rate_]),
@@ -250,12 +246,10 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       if(obsonly) ev->output(false);
       
       ev->from_data(true);
-      //ev->evid(evid);
-      //ev->pos(j);
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
-      //ev->id(Data(j,Idcol));
+
       
       if((ev->addl() > 0) && (ev->ii() <=0)) {
         Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
@@ -263,8 +257,7 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       if((ev->ss()) && (ev->ii() <=0)) {
         Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
       }
-      //a.at(h).at(k) = ev;
-      a.at(h).push_back(ev);
+      a[h].push_back(ev);
     }
   }
 }
