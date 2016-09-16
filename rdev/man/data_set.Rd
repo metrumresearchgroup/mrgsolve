@@ -44,9 +44,12 @@ See \code{\link{exdatasets}} for different example data sets.
 }
 \examples{
 
+mod <- mrgsolve:::house()
+
 data <- expand.ev(ID=1:3, amt=c(10,20))
 
-data <- expand.ev(amt=c(10,20), rate=c(1,2))
+mod \%>\% data_set(data, ID > 1) \%>\% mrgsim
+
 
 
 }

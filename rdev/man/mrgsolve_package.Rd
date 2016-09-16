@@ -172,6 +172,13 @@ out
 plot(out)
 
 
+# Internal model library
+
+mod <- mread("irm1", modlib())
+
+mod
+
+mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
 
 
 }

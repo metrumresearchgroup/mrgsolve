@@ -29,9 +29,12 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##'
 ##' @examples
 ##'
+##' mod <- mrgsolve:::house()
+##' 
 ##' data <- expand.ev(ID=1:3, amt=c(10,20))
 ##'
-##' data <- expand.ev(amt=c(10,20), rate=c(1,2))
+##' mod %>% data_set(data, ID > 1) %>% mrgsim
+##'
 ##'
 ##'
 setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,...) {

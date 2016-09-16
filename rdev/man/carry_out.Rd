@@ -14,4 +14,17 @@ carry_out(x, ...)
 \description{
 Set the \code{carry.out} argument for \code{mrgsim}.
 }
+\examples{
+data(extran3)
+
+mod <- mrgsolve:::house()
+
+head(extran3)
+
+mod \%>\% 
+  data_set(extran3, ID == 1) \%>\% 
+  carry_out(CL,KA,amt,ii) \%>\% 
+  mrgsim
+
+}
 
