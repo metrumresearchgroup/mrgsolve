@@ -4,7 +4,8 @@
 \alias{THETA}
 \title{Parse \code{$THETA} block.}
 \usage{
-THETA(x, env, annotated = FALSE, pos = 1, name = "THETA", ...)
+THETA(x, env, annotated = FALSE, pos = 1, object = NULL, name = "THETA",
+  ...)
 }
 \arguments{
 \item{x}{data}
@@ -15,11 +16,17 @@ THETA(x, env, annotated = FALSE, pos = 1, name = "THETA", ...)
 
 \item{pos}{parse position}
 
+\item{object}{the (character) name of a \code{list} in \code{$ENV} to use for block output}
+
 \item{name}{character prefix for parameter names}
 
 \item{...}{passed}
 }
 \description{
 Parse \code{$THETA} block.
+}
+\details{
+If \code{object} is specified, it must be the name of a named list of
+\code{THETA} values.
 }
 

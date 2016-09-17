@@ -22,4 +22,7 @@ PARAM(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 \description{
 Parse \code{$PARAM} block.
 }
+\details{
+If \code{object} is specified, it must be the name of a named list.
+}
 

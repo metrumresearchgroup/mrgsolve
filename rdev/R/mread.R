@@ -192,6 +192,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
+  if(length(mread.env$error) > 0) {
+    stop(mread.env$error) 
+  }
   
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))

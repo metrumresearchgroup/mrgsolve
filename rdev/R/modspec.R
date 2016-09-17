@@ -160,7 +160,7 @@ modelparse <- function(txt,
   
   spec <- lapply(seq_along(start), function(i) {
     y <- txt[start[i]:end[i]]
-    y[y!=""]
+    y[!grepl("^\\s*$",y,perl=TRUE)]
   })
   
   names(spec) <- labs
@@ -206,6 +206,13 @@ get_c_vars <- function(y) {
 ## ----------------------------------------------------------------------------
 
 
+check_block_data <- function(x,env,pos) {
+  if(length(x)==0) {
+    warning("Block no. ", pos, ": no data was found.", call.=FALSE)
+  }
+  return(NULL)
+}
+
 
 ##' Scrape options from a code block.
 ##' 
@@ -231,7 +238,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
     opts <- opts | grepl(marker,x,fixed=TRUE) 
   }
   
-  data <- gsub("^\\s*$", "", x[!opts], perl=TRUE)
+  data <- x[!opts]#gsub("^\\s*$", "", x[!opts], perl=TRUE)
   
   opts <- gsub(">>","", x[opts], fixed=TRUE)
   
@@ -296,6 +303,8 @@ specMATRIX <- function(x,
                        name="...", prefix="", labels=NULL,
                        object=NULL,...) {
   
+  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  
   if(annotated) {
     l <- parse_annot(x,block=toupper(type),envir=env$ENV,name_value=FALSE)
     d <- modMATRIX(l[["v"]],context=oclass,...)
@@ -310,17 +319,12 @@ specMATRIX <- function(x,
     }
   }
   
-  
-  if(nrow(d)==0) {
-    stop("mrgsolve: the matrix must have at least 1 row (", 
-         oclass, ").",
-         call.=FALSE)
-  }
+  if(nrow(d)==0) return(NULL)
   
   if(is.null(labels)) {
     labels <- rep(".", nrow(d))
   } else {
-    labels <- paste0(prefix,tovec(labels))
+    labels <- paste0(prefix,cvec_cs(labels))
   }
   
   d <- setNames(list(d),name)
@@ -364,12 +368,16 @@ eval_ENV_block <- function(x,...) {
 ## All of these need to be exported
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 ##' @export
-handle_spec_block.default <- function(x,...) return(dump_opts(x))
+handle_spec_block.default <- function(x,...) {
+  return(dump_opts(x))
+}
 
 ##' @export 
 handle_spec_block.specTABLE <- function(x,...) {
   
   x <- dump_opts(x)
+  
+  check_block_data(x,env$ENV,pos)
   
   if(any(grepl("\\s*table\\(", x))) {
     stop("The table(name) = value; macro has been deprecated.\n",  
@@ -391,9 +399,14 @@ handle_spec_block.specTABLE <- function(x,...) {
 ##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
+##' @details
+##' If \code{object} is specified, it must be the name of a named list.
+##' 
 ##' @rdname handle_PARAM
 ##' 
 PARAM <- function(x,env,annotated=FALSE,pos=1,object = NULL,...) {
+  
+  if(is.null(object)) check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,block="PARAM",envir=env$ENV)
@@ -425,9 +438,15 @@ handle_spec_block.specPARAM <- function(x,...) {
 ##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
+##' @details
+##' If \code{object} is specified, it must be the name of a named list.
+##' 
 ##' @rdname handle_FIXED
 ##' 
 FIXED <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
+  
+  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  
   if(annotated) {
     l <- parse_annot(x,block="FIXED",envir=env$ENV)
     env[["fixed"]][[pos]] <- l[["v"]]
@@ -454,24 +473,43 @@ handle_spec_block.specFIXED <- function(x,...) {
 ##' @param annotated logical
 ##' @param name character prefix for parameter names
 ##' @param pos parse position
+##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
+##' 
+##' @details
+##' If \code{object} is specified, it must be the name of a named list of
+##' \code{THETA} values.
 ##' 
 ##' @rdname handle_THETA
 ##' 
-THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
+THETA <- function(x,env,annotated=FALSE,pos=1,
+                  object=NULL,name="THETA",...) {
+  
+  if(is.null(object)) check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
-    x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
+    if(is.null(object)) {
+      
+      x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
+    } else {
+      x <- get(object,env$ENV)
+    }
   }
   
   x <- x[!is.na(x)]
-  names(x) <- paste0(name, 1:length(x))
+  
+  if(length(x)==0) name <- character(0)
+  
+  names(x) <- paste0(name, seq_along(x))
+  
   env[["param"]][[pos]] <- x
+  
   return(NULL)
 }
+
 ##' @export
 handle_spec_block.specTHETA <- function(x,...) {
   scrape_and_call(x,pass="THETA",narrow=FALSE,...)
@@ -487,9 +525,15 @@ handle_spec_block.specTHETA <- function(x,...) {
 ##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
+##' @details
+##' If \code{object} is specified, it must be the name of a named list.
+##' 
 ##' @rdname handle_INIT
 ##' 
 INIT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
+  
+  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  
   if(annotated) {
     l <- parse_annot(x,block="INIT",envir=env$ENV)
     env[["init"]][[pos]] <- l[["v"]]
@@ -519,9 +563,15 @@ handle_spec_block.specINIT <- function(x,...) {
 ##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
+##' @details
+##' If \code{object} is specified, it must be the name of a character vector.
+
+##' 
 ##' @rdname handle_CMT
 ##' 
 CMT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
+  
+  if(is.null(object)) check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
@@ -531,7 +581,7 @@ CMT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
     if(!is.null(object)) {
       x <- get(object,env$ENV) 
     } else {
-      x <- tovec(x)
+      x <- cvec_cs(x)
     }
   }
   
@@ -570,14 +620,18 @@ handle_spec_block.specCMTN <- function(x,...) {
 ##' 
 ##' 
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
+  
+  check_block_data(x,env$ENV,pos)
+  
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   }
-  x <- c(cvec_cs(x),env$capture)
   
-  return(unique(x))
+  x <- unique(c(cvec_cs(x),env$capture))
+  
+  return(x)
 }
 
 ##' @export
@@ -594,6 +648,8 @@ handle_spec_block.specPKMODEL <- function(x,...) {
 handle_spec_block.specINCLUDE <- function(x,...) {
   
   x <- cvec_c_tr(dump_opts(x))
+  
+  check_block_data(x,env$ENV,pos)
   
   if(any(grepl("[\"\']",x,perl=TRUE))) {
     stop("Items in $INCLUDE should not contain quotation marks.",call.=FALSE) 
@@ -617,7 +673,11 @@ form_includes <- function(x,where) {
 }
 ##' @export
 handle_spec_block.specPLUGIN <- function(x,...) {
+  
   x <- unique(cvec_c_tr(x))
+  
+  check_block_data(x,env$ENV,pos)
+  
   if("mrgx" %in% x) {
     warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
   }
@@ -742,6 +802,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$sigma <- vector("list",n)
   mread.env$annot <- vector("list",n)
   mread.env$capture <- character(0)
+  mread.env$error <- character(0)
   mread.env$ENV <- ENV 
   mread.env
 }

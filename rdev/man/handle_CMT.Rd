@@ -22,4 +22,7 @@ CMT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 \description{
 Parse \code{$CMT} block.
 }
+\details{
+If \code{object} is specified, it must be the name of a character vector.
+}
 
