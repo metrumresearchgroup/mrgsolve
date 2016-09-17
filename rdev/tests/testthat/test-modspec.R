@@ -1,9 +1,7 @@
 library(mrgsolve)
 library(testthat)
 
-
 Sys.setenv(R_TESTS="")
-
 
 context("test-modspec")
 
@@ -53,7 +51,10 @@ test_that("Parse theta", {
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
 })
 
+test_that("Using table macro generates error", {
+  code <- "$TABLE\n table(CP) = 1; \n double x=3; \n table(Y) = 1;"
+  expect_error(mod <- mtemp(code))
 
-
+})
 
 
