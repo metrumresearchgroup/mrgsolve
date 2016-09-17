@@ -280,6 +280,12 @@ scrape_and_call <- function(x,env,pass,...) {
   do.call(pass,o)
 }
 
+dump_opts <- function(x,env,block,...) {
+  hasopt <- grep(">>", x, fixed=TRUE)
+  if(length(hasopt)==0) return(x)
+  hasopt <- grep("^\\s*>>", x[hasopt], perl=TRUE)
+  x[-hasopt]
+}
 
 ## Functions for handling code blocks
 parseNMXML <- function(x,env,...) {
@@ -368,16 +374,21 @@ eval_ENV_block <- function(x,...) {
 ## All of these need to be exported
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 ##' @export
-handle_spec_block.default <- function(x,...) return(x)
+handle_spec_block.default <- function(x,...) return(dump_opts(x))
 
 ##' @export 
 handle_spec_block.specTABLE <- function(x,...) {
+  
+  x <- dump_opts(x)
+  
   if(any(grepl("\\s*table\\(", x))) {
     stop("The table(name) = value; macro has been deprecated.\n",  
             "Save your output to double and pass to $CAPTURE instead:\n",
             "   $TABLE double name = value;\n   $CAPTURE name")
   }
+  
   return(x)
+  
 }
 
 
@@ -509,7 +520,7 @@ handle_spec_block.specINIT <- function(x,...) {
 }
 
 
-##' Parse $CMT block.
+##' Parse \code{$CMT} block.
 ##' 
 ##' @param x data
 ##' @param env parse environment
@@ -546,12 +557,28 @@ handle_spec_block.specCMT <- function(x,...) {
 ##' @export
 handle_spec_block.specVCMT <- handle_spec_block.specCMT
 ##' @export
-handle_spec_block.specSET <- function(x,...) tolist(x)
+handle_spec_block.specSET <- function(x,...) {
+  tolist(dump_opts(x))
+}
 ##' @export
-handle_spec_block.specNMXML <- function(x,...) parseNMXML(x,...)
+handle_spec_block.specNMXML <- function(x,...) {
+  parseNMXML(dump_opts(x),...)
+}
 ##' @export
-handle_spec_block.specCMTN <- function(x,...) cvec_cs(x)
+handle_spec_block.specCMTN <- function(x,...) {
+  cvec_cs(dump_opts(x))
+}
 
+
+##' Parse \code{$CAPTURE} block.
+##' 
+##' @param x block text
+##' @param env parse environment
+##' @param annotated logical
+##' @param pos parse position
+##' @param ... not used
+##' 
+##' 
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
@@ -576,13 +603,16 @@ handle_spec_block.specPKMODEL <- function(x,...) {
 ##' @export
 handle_spec_block.specINCLUDE <- function(x,...) {
   
-  x <- cvec_c_tr(x)
+  x <- cvec_c_tr(dump_opts(x))
+  
   if(any(grepl("[\"\']",x,perl=TRUE))) {
     stop("Items in $INCLUDE should not contain quotation marks.",call.=FALSE) 
   }
+  
   if(any(!grepl("^.*\\.h$",x,perl=TRUE))) {
     warning("$INCLUDE expects file names ending with .h",call.=FALSE) 
   }
+  
   return(x)
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/modspec.R
 \name{CMT}
 \alias{CMT}
-\title{Parse $CMT block.}
+\title{Parse \code{$CMT} block.}
 \usage{
 CMT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 }
@@ -20,6 +20,6 @@ CMT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 \item{...}{passed}
 }
 \description{
-Parse $CMT block.
+Parse \code{$CMT} block.
 }
 
