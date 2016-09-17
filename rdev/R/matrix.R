@@ -78,7 +78,8 @@ modMATRIX <- function(x,
   if(length(x)==0 | is.null(x)) return(matrix(nrow=0,ncol=0))
   
   if(correlation) block <- TRUE
-  if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
+  #if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
+  if(is.character(x)) x <- cvec_cs(x)
   x <- x[x!=""]
   if(block) {
     x <- lower2matrix(x, context)
