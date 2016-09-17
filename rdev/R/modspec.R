@@ -206,10 +206,6 @@ get_c_vars <- function(y) {
 ## ----------------------------------------------------------------------------
 
 
-# opts_only <- function(x,def=list(),all=FALSE) {
-#   opts <- scrape_opts(x)
-#   merge(def,opts, strict=!all,warn=FALSE,context="opts")
-# }
 
 ##' Scrape options from a code block.
 ##' 
@@ -224,7 +220,7 @@ get_c_vars <- function(y) {
 ##' as specified in the block.
 ##' 
 ##' 
-scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=>?",narrow=FALSE) {
+scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
   
@@ -232,7 +228,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=>?",narrow=F
   opts <- grepl("^\\s*>>",x,perl=TRUE)
   
   if(!narrow) {
-    opts <- opts | grepl(marker,x,perl=TRUE) 
+    opts <- opts | grepl(marker,x,fixed=TRUE) 
   }
   
   data <- gsub("^\\s*$", "", x[!opts], perl=TRUE)
@@ -412,7 +408,7 @@ PARAM <- function(x,env,annotated=FALSE,pos=1,object = NULL,...) {
 
 ##' @export
 handle_spec_block.specPARAM <- function(x,...) {
-  scrape_and_call(x,pass="PARAM",narrow=TRUE,...)
+  scrape_and_call(x,pass="PARAM",...)
 }
 
 
@@ -444,7 +440,7 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
 }
 ##' @export
 handle_spec_block.specFIXED <- function(x,...) {
-  scrape_and_call(x,pass="FIXED",narrow=TRUE,...)
+  scrape_and_call(x,pass="FIXED",...)
 }
 
 ##' Parse \code{$THETA} block.
@@ -474,7 +470,7 @@ THETA <- function(x,env,annotated=FALSE,pos=1,name="THETA",...) {
 }
 ##' @export
 handle_spec_block.specTHETA <- function(x,...) {
-  scrape_and_call(x,pass="THETA",...)
+  scrape_and_call(x,pass="THETA",narrow=FALSE,...)
 }
 
 
@@ -506,7 +502,7 @@ INIT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
 }
 ##' @export
 handle_spec_block.specINIT <- function(x,...) {
-  scrape_and_call(x,pass="INIT",narrow=TRUE,...)
+  scrape_and_call(x,pass="INIT",...)
 }
 
 
@@ -582,12 +578,12 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
 
 ##' @export
 handle_spec_block.specCAPTURE <- function(x,...) {
-  scrape_and_call(x,pass="CAPTURE",...)
+  scrape_and_call(x,pass="CAPTURE",narrow=FALSE,...)
 }
 
 ##' @export
 handle_spec_block.specPKMODEL <- function(x,...) {
-  x <- scrape_opts(x)
+  x <- scrape_opts(x, narrow=FALSE)
   do.call("PKMODEL",x)
 }
 ##' @export
