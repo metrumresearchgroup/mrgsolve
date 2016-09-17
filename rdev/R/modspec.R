@@ -238,7 +238,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
     opts <- opts | grepl(marker,x,fixed=TRUE) 
   }
   
-  data <- x[!opts]#gsub("^\\s*$", "", x[!opts], perl=TRUE)
+  data <- x[!opts]
   
   opts <- gsub(">>","", x[opts], fixed=TRUE)
   
@@ -621,17 +621,18 @@ handle_spec_block.specCMTN <- function(x,...) {
 ##' 
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   
-  check_block_data(x,env$ENV,pos)
-  
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
-  }
-  
-  x <- unique(c(cvec_cs(x),env$capture))
-  
+  } 
+    
+  x <- unique(c(cvec_cs(x),env$capture))    
+
+  check_block_data(x,env$ENV,pos)
+    
   return(x)
+  
 }
 
 ##' @export
