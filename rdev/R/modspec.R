@@ -232,7 +232,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   }
   
   data <- gsub("^\\s*$", "", x[!opts], perl=TRUE)
-
+  
   opts <- gsub(">>","", x[opts], fixed=TRUE)
   
   opts <- merge(def, tolist(opts,envir=envir),strict=!all,warn=FALSE,context="opts")
@@ -311,7 +311,11 @@ specMATRIX <- function(x,
   }
   
   
-  if(nrow(d)==0) stop("mrgsolve: the matrix must have at least 1 row (", oclass, ").",call.=FALSE)
+  if(nrow(d)==0) {
+    stop("mrgsolve: the matrix must have at least 1 row (", 
+         oclass, ").",
+         call.=FALSE)
+  }
   
   if(is.null(labels)) {
     labels <- rep(".", nrow(d))
@@ -369,8 +373,8 @@ handle_spec_block.specTABLE <- function(x,...) {
   
   if(any(grepl("\\s*table\\(", x))) {
     stop("The table(name) = value; macro has been deprecated.\n",  
-            "Save your output to double and pass to $CAPTURE instead:\n",
-            "   $TABLE double name = value;\n   $CAPTURE name")
+         "Save your output to double and pass to $CAPTURE instead:\n",
+         "   $TABLE double name = value;\n   $CAPTURE name")
   }
   
   return(x)
