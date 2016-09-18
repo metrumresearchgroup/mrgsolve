@@ -139,12 +139,14 @@ test_that("Typedef capture", {
   '
   
   expect_warning(mod <- mcode("test3d", code))
+  
   out <- mod %>% mrgsim(end=3)
   
   expect_true(all(out$a == 1))
   expect_true(all(out$b == 2))
   expect_true(all(out$d == 4))
-  
+  expect_false("capture_n" %in% names(out))
+
 })
 
 
