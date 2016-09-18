@@ -5,7 +5,7 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 
-context("Checking that random number generation respects R RNG via set.seed()")
+context("R RNG respected via set.seed()")
 mod <- mrgsolve:::house(omega=diag(c(1,1,1,1)))
 
 out1 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20))

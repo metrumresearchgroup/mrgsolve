@@ -24,18 +24,6 @@ test_that("$ENV sub into $PARAM", {
   expect_equivalent(as.numeric(param(mod)), c(1,2))
 })
 
-test_that("Get parameter list from $ENV",{
-  code <- '
-  $ENV mylist <- list(A = 1, B = 2)
-  $PARAM >> object="mylist"
-  '
-  mod <- mcode("test-env-2b", code, compile=FALSE)
-  expect_is(mod, "mrgmod")
-  expect_identical(pars(mod),c("A", "B"))
-  expect_equivalent(as.numeric(param(mod)), c(1,2))
-  
-})
-
 test_that("$ENV sub into $INIT", {
   code <- '
   $ENV a <- 1\n b <- 2

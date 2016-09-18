@@ -80,7 +80,7 @@ mod11 <- mrgsolve::mod(mrgsim(mod  %>% param(CL=12, VC=220)))
 
 
 
-context("Test updates: general and simulation times")
+context("Updates: general and simulation times")
 
 test_that("Model object updates through update and %>% operator", {
   expect_true(identical(mod1, mod2))
@@ -233,7 +233,7 @@ out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out[,c("CL", "VC", "ID")]),6)
 
 
-test_that("We can recover CL VC and ID from simulated data when passed in as idata",{
+test_that("Recover items from simulated data when passed in as idata",{
   expect_equivalent(out,pars)
 })
 
@@ -246,7 +246,7 @@ out <- mrgsim(mod, data=data, carry.out=c("CL", "VC"))
 out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out)[,c("CL", "VC", "ID")], 6)
 
-test_that("We can recover CL VC and ID from simulated data when passed in as data", {
+test_that("Recover items from simulated data when passed in as data", {
   expect_equivalent(out,pars)
 })
 
@@ -258,13 +258,13 @@ data1 <- as.data.frame(out1)
 out2 <- mrgsim(mod, data=data1, carry.out=c("evid", "amt", "rate", "addl", "ii"), req="")
 data2 <- as.data.frame(out2)
 
-context("Check that events-based simulation gives same results as data set-based simulation")
+context("Events-based sim same results as data set-based sim")
 test_that("CP is equal when simulating from events or data", {
   expect_identical(data1$CP, data2$CP)
 })
 
 
-context("Testing time-varying data items  passed in via data set")
+context("Time-varying data items passed in via data set")
 
 set.seed(11111)
 data1$ROW <- sample(1:nrow(data1))

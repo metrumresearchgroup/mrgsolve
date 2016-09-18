@@ -4,7 +4,7 @@
 \alias{INIT}
 \title{Parse \code{$INIT} block.}
 \usage{
-INIT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
+INIT(x, env, annotated = FALSE, pos = 1, ...)
 }
 \arguments{
 \item{x}{data}
@@ -15,14 +15,9 @@ INIT(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 
 \item{pos}{block position}
 
-\item{object}{the (character) name of a \code{list} in \code{$ENV} to use for block output}
-
 \item{...}{passed}
 }
 \description{
 Parse \code{$INIT} block.
-}
-\details{
-If \code{object} is specified, it must be the name of a named list.
 }
 

@@ -373,9 +373,11 @@ handle_spec_block.default <- function(x,...) {
 }
 
 ##' @export 
-handle_spec_block.specTABLE <- function(x,...) {
+handle_spec_block.specTABLE <- function(x,env,...) {
   
   x <- dump_opts(x)
+  
+  pos <- attr(x,"pos")
   
   check_block_data(x,env$ENV,pos)
   
@@ -396,30 +398,24 @@ handle_spec_block.specTABLE <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
-##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
-##' 
-##' @details
-##' If \code{object} is specified, it must be the name of a named list.
 ##' 
 ##' @rdname handle_PARAM
 ##' 
-PARAM <- function(x,env,annotated=FALSE,pos=1,object = NULL,...) {
+PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
   
-  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,block="PARAM",envir=env$ENV)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
+    
   } else {
-    if(!is.null(object)) {
-      x <- get(object,env$ENV) 
-    } else {
-      x <- tolist(x,envir=env$ENV) 
-    }
+    x <- tolist(x,envir=env$ENV) 
     env[["param"]][[pos]] <- x
   }
+  
   return(NULL)
 }
 
@@ -435,30 +431,24 @@ handle_spec_block.specPARAM <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos parse position
-##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
-##' 
-##' @details
-##' If \code{object} is specified, it must be the name of a named list.
 ##' 
 ##' @rdname handle_FIXED
 ##' 
-FIXED <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
+FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   
-  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,block="FIXED",envir=env$ENV)
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    if(!is.null(object)) {
-      x <- get(object,env$ENV) 
-    } else {
-      x <- tolist(x,envir=env$ENV) 
-    }
+    x <- tolist(x,envir=env$ENV) 
     env[["fixed"]][[pos]] <- x
   }
+  
+  
   return(NULL)
 }
 ##' @export
@@ -473,30 +463,21 @@ handle_spec_block.specFIXED <- function(x,...) {
 ##' @param annotated logical
 ##' @param name character prefix for parameter names
 ##' @param pos parse position
-##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
 ##' 
-##' @details
-##' If \code{object} is specified, it must be the name of a named list of
-##' \code{THETA} values.
 ##' 
 ##' @rdname handle_THETA
 ##' 
 THETA <- function(x,env,annotated=FALSE,pos=1,
-                  object=NULL,name="THETA",...) {
+                  name="THETA",...) {
   
-  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
-    if(is.null(object)) {
-      
-      x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
-    } else {
-      x <- get(object,env$ENV)
-    }
+    x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
   }
   
   x <- x[!is.na(x)]
@@ -522,30 +503,23 @@ handle_spec_block.specTHETA <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
-##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
-##' 
-##' @details
-##' If \code{object} is specified, it must be the name of a named list.
 ##' 
 ##' @rdname handle_INIT
 ##' 
-INIT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
+INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   
-  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,block="INIT",envir=env$ENV)
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
-    if(!is.null(object)) {
-      x <- get(object,env$ENV)
-    }  else {
-      x <- tolist(x,envir=env$ENV) 
-    }
+    x <- tolist(x,envir=env$ENV) 
     env[["init"]][[pos]] <- x
   }
+
   return(NULL)
 }
 ##' @export
@@ -560,29 +534,20 @@ handle_spec_block.specINIT <- function(x,...) {
 ##' @param env parse environment
 ##' @param annotated logical
 ##' @param pos block position
-##' @param object the (character) name of a \code{list} in \code{$ENV} to use for block output
 ##' @param ... passed
-##' 
-##' @details
-##' If \code{object} is specified, it must be the name of a character vector.
-
 ##' 
 ##' @rdname handle_CMT
 ##' 
-CMT <- function(x,env,annotated=FALSE,pos=1,object=NULL,...) {
+CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   
-  if(is.null(object)) check_block_data(x,env$ENV,pos)
+  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
-    if(!is.null(object)) {
-      x <- get(object,env$ENV) 
-    } else {
-      x <- cvec_cs(x)
-    }
+    x <- cvec_cs(x)
   }
   
   l <- rep(0,length(x))
@@ -626,11 +591,11 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } 
-    
+  
   x <- unique(c(cvec_cs(x),env$capture))    
-
+  
   check_block_data(x,env$ENV,pos)
-    
+  
   return(x)
   
 }
@@ -646,9 +611,11 @@ handle_spec_block.specPKMODEL <- function(x,...) {
   do.call("PKMODEL",x)
 }
 ##' @export
-handle_spec_block.specINCLUDE <- function(x,...) {
+handle_spec_block.specINCLUDE <- function(x,env,...) {
   
   x <- cvec_c_tr(dump_opts(x))
+  
+  pos <- attr(x, "pos")
   
   check_block_data(x,env$ENV,pos)
   
@@ -673,9 +640,11 @@ form_includes <- function(x,where) {
   paste0("#include \"", x, "\" // ", md)
 }
 ##' @export
-handle_spec_block.specPLUGIN <- function(x,...) {
+handle_spec_block.specPLUGIN <- function(x,env,...) {
   
   x <- unique(cvec_c_tr(x))
+  
+  pos <- attr(x,"pos")
   
   check_block_data(x,env$ENV,pos)
   
