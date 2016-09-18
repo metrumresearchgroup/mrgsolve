@@ -118,4 +118,33 @@ test_that("Testing that request is (all) by default", {
 
 
 
+test_that("Typedef capture", {
+  code <- '
+  $MAIN
+  capture a = 1;
+  double aa = 21;
+  capture b = 2;
+
+  $CMT CM_T
+  $ODE
+  capture c = 3;
+  double cc = 33;
+  dxdt_CM_T = 0;
+
+  $TABLE
+  double dd = 44;
+  capture d = 4;
+  capture capture_y = 1234;
+  double capture_n = 999;
+  '
+  
+  expect_warning(mod <- mcode("test3d", code))
+  out <- mod %>% mrgsim(end=3)
+  
+  expect_true(all(out$a == 1))
+  expect_true(all(out$b == 2))
+  expect_true(all(out$d == 4))
+  
+})
+
 

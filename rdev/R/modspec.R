@@ -177,24 +177,53 @@ move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
 move_global_re_sub <- "\\b(double|bool|int|capture)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 move_global <- function(x,env,what=c("MAIN", "ODE", "TABLE")) {
-  what <- intersect(what,names(x))
-  if(length(what)==0) return(x)
-  l <- lapply(x[what], get_c_vars) %>% unlist
-  x[["GLOBAL"]] <- c(x[["GLOBAL"]],
-                     "typedef double capture;",l,local_var_typedef)
-  for(w in what) {
-    x[[w]] <- gsub(move_global_re_sub,"\\2",
-                   x[[w]],perl=TRUE)
-  }
-  cap <- grepl("^capture ", l, perl=TRUE)
   
-  if(any(cap)) {
-    cap <- trimws(unlist(strsplit(l[cap], "capture |;",perl=TRUE)))
-    env[["capture"]] <- cap[cap!=""]
+  what <- intersect(what,names(x))
+  
+  if(length(what)==0) return(x)
+  
+  # Keep names in here for later
+  l <- lapply(x[what], get_c_vars)
+  
+  x[["GLOBAL"]] <- c(x[["GLOBAL"]],
+                     "typedef double capture;",
+                     unlist(l,use.names=FALSE),
+                     local_var_typedef)
+  
+  cap <- vector("list")
+  
+  for(w in what) {
+    
+    x[[w]] <- gsub(move_global_re_sub,
+                   "\\2",x[[w]],perl=TRUE)
+    
+    # **************************
+    # Search for capture 
+    wcap <- grepl("capture ", l[[w]], fixed=TRUE)
+    
+    if(any(wcap)) {
+      ll <- l[[w]][wcap]
+      ll <- ll[substr(ll,1,8) == "capture "]
+      if(w=="ODE") {
+        warning("Found capture type variables in $ODE.", 
+                "These will not be automatically captured.", 
+                call.=FALSE)
+        next 
+      }
+      cap[[w]] <- substr(ll,9,nchar(ll)-1)
+    }
+  }
+  
+  if(length(cap) > 0) {
+    # must trim this
+    env[["capture"]] <- mytrim(unlist(cap, use.names=FALSE))
     if(is.null(x[["CAPTURE"]])) x[["CAPTURE"]] <- ""
   }
+  # **************************
+  
   return(x)
 }
+
 get_c_vars <- function(y) {
   m <- gregexpr(move_global_re_find,y,perl=TRUE)
   regmatches(y,m) %>%
@@ -242,20 +271,21 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   
   opts <- gsub(">>","", x[opts], fixed=TRUE)
   
-  opts <- merge(def, tolist(opts,envir=envir),strict=!all,warn=FALSE,context="opts")
+  opts <- merge(def, tolist(opts,envir=envir),
+                strict=!all,warn=FALSE,context="opts")
   
   opts$x <- NULL
   
   c(list(x=data), opts)
 }
 
-scrape_and_pass <- function(x,pass,env,...) {
-  o <- scrape_opts(x,envir=env$ENV,...)
-  o$pos <- o$env <- o$class <- NULL
-  o <- c(o,attributes(x),list(env=env))
-  ret <- do.call(pass,o)
-  list(opts=o,data=ret)
-}
+# scrape_and_pass <- function(x,pass,env,...) {
+#   o <- scrape_opts(x,envir=env$ENV,...)
+#   o$pos <- o$env <- o$class <- NULL
+#   o <- c(o,attributes(x),list(env=env))
+#   ret <- do.call(pass,o)
+#   list(opts=o,data=ret)
+# }
 
 ##' Scrape options and pass to function.
 ##' 
@@ -519,7 +549,7 @@ INIT <- function(x,env,annotated=FALSE,pos=1,...) {
     x <- tolist(x,envir=env$ENV) 
     env[["init"]][[pos]] <- x
   }
-
+  
   return(NULL)
 }
 ##' @export

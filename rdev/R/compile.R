@@ -32,7 +32,7 @@ generate_rdefs <- function(pars,
 
     if(sum(nrow(omats)) > 0) {
         etai <- 1:sum(nrow(omats))
-        etal <- unlist(omats@labels)
+        etal <- unlist(omats@labels,use.names=FALSE)
         stopifnot(length(etai)==length(etal))
         which <- etal != "."
         if(sum(which) > 0) {
@@ -44,7 +44,7 @@ generate_rdefs <- function(pars,
 
     if(sum(nrow(smats)) > 0) {
         epsi <- 1:sum(nrow(smats))
-        epsl <- unlist(smats@labels)
+        epsl <- unlist(smats@labels,use.names=FALSE)
         stopifnot(length(epsi)==length(epsl))
         which <- epsl != "."
         if(sum(which) > 0) {

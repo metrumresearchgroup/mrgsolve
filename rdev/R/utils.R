@@ -439,6 +439,10 @@ cropstr <- function(string, prefix, suffix, bump= "...") {
   paste0(substr(string,1,prefix) , bump, substr(string,(nc-suffix+nchar(bump)+1),nc))
 }
 
+mytrim <- function(x) {
+  gsub("^\\s+|\\s+$", "",x,perl=TRUE) 
+}
+
 ## Create character vector 
 ## Split on comma or space 
 cvec_cs <- function(x) {
@@ -795,8 +799,8 @@ setMethod("names", "mrgmod", function(x) {
   ans <- list()
   ans$param <- pars(x)
   ans$cmt <- cmt(x)
-  ans$omega <- list(names(omat(x)),unname(unlist(labels(omat(x)))))
-  ans$sigma <- list(names(smat(x)),unname(unlist(labels(smat(x)))))
+  ans$omega <- list(names(omat(x)),unlist(labels(omat(x)),use.names=FALSE))
+  ans$sigma <- list(names(smat(x)),unlist(labels(smat(x)),use.names=FALSE))
   return(ans)
 })
 

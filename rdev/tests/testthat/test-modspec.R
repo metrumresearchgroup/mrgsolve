@@ -19,18 +19,8 @@ test_that("Parse matrix", {
   mod <- mtemp(code)
   expect_equal(dim(omat(mod))[[1]],c(2,2))  
   
-  expect_warning(mtemp("$OMEGA  \n \n\n  \n"))
-  expect_warning(mtemp("$OMEGA    "))
-  
 })
 
-test_that("Parse param", {
-  
-  expect_warning(mtemp("$PARAM  \n \n\n  \n"))
-  expect_warning(mtemp("$PARAM    "))
-  expect_warning(mtemp("$PARAM"))
-  
-})
 
 
 test_that("Parse capture", {
@@ -51,9 +41,6 @@ test_that("Parse capture", {
   expect_warning(mod <- mtemp(code))
   expect_equal(mod@capture, character(0))
   
-  expect_warning(mtemp("$CAPTURE  \n \n\n  \n"))
-  expect_warning(mtemp("$CAPTURE    "))
-  
 })
 
 
@@ -63,8 +50,6 @@ test_that("Parse cmt", {
   mod <- mtemp(code)
   expect_equal(cmt(mod), c("first", "second", "third"))
 
-  expect_warning(mtemp("$CMT  \n \n\n  \n"))
-  expect_warning(mtemp("$CMT    "))
 })
 
 
@@ -80,9 +65,6 @@ test_that("Parse theta", {
   code <- "$THETA >> name='theta' \n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
-  
-  expect_warning(mtemp("$THETA >> x=2 \n \n\n  \n"))
-  expect_warning(mtemp("$THETA    "))
 
 })
 
@@ -92,5 +74,16 @@ test_that("Using table macro generates error", {
   code <- "$TABLE\n table(CP) = 1; \n double x=3; \n table(Y) = 1;"
   expect_error(mod <- mtemp(code))
 })
+
+
+for(what in c("THETA", "PARAM", "CMT", 
+           "FIXED", "CAPTURE", "INIT",
+           "OMEGA", "SIGMA")) {
+  
+  test_that(paste0("Empty block: ", what), {
+    expect_warning(mtemp(paste0("$",what, "  ")))
+  })
+}
+
 
 
