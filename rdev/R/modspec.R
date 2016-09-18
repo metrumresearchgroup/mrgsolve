@@ -205,14 +205,16 @@ move_global <- function(x,env,what=c("MAIN", "ODE", "TABLE")) {
       ll <- l[[w]][wcap]
       ll <- ll[substr(ll,1,8) == "capture "]
       if(w=="ODE") {
-        warning("Found capture type variables in $ODE.", 
-                "These will not be automatically captured.", 
+        warning("Found capture typed variables in $ODE.\n", 
+                "These will not be automatically captured.\n", 
+                "The type should be changed to double.\n",
                 call.=FALSE)
         next 
       }
       cap[[w]] <- substr(ll,9,nchar(ll)-1)
     }
-  }
+    # **************************
+  } # <-- End for(w in what)
   
   if(length(cap) > 0) {
     # must trim this
