@@ -442,6 +442,11 @@ cropstr <- function(string, prefix, suffix, bump= "...") {
 mytrim <- function(x) {
   gsub("^\\s+|\\s+$", "",x,perl=TRUE) 
 }
+mytriml <- function(x) {
+  gsub("^\\s+", "",x,perl=TRUE) 
+}
+
+
 
 ## Create character vector 
 ## Split on comma or space 
@@ -866,15 +871,14 @@ shuffle <- function (x, who, after = NA)  {
   x[nms]
 }
 
-
-
-
 filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
   if(short) dir <- build_path(dir)
   file.path(dir, paste0(run, ext))
 }
 
-
+charcount <- function(x,w,fx=TRUE) {
+  nchar(x) - nchar(gsub(w,"",x,fixed=fx)) 
+}
 
 
 # 15 sept 2016

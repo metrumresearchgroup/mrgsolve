@@ -31,17 +31,17 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   
   if(nchar(x)==0) return(NULL)
   
-  x <- trimws(x,"left")
+  x <- mytriml(x)
   
-  col <- gmatch(":",x)
+  col <- charcount(x,":")[1]
   
-  if(length(col) != (2-noname-novalue)) {
+  if(col != (2-noname-novalue)) {
     stop("Improper model annotation: ", x, call.=FALSE) 
   }
   
   ## Fix up line if not name : value : other
   if(noname) x <- paste0(". :",x)
-  if(novalue) x <- gsub(":", ": 0 :",x)
+  if(novalue) x <- gsub(":",": 0 :",x,fixed=TRUE)
   
   a <- strsplit(x,"\\s*:\\s*",perl=TRUE)[[1]]
   
@@ -60,7 +60,7 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   
   
   ## This is the "description"
-  b <- trimws(b)
+  b <- mytrim(b)
   
   if(length(units)==0) units <- '.'
   if(length(options)==0) options <- '.'
