@@ -445,6 +445,9 @@ mytrim <- function(x) {
 mytriml <- function(x) {
   gsub("^\\s+", "",x,perl=TRUE) 
 }
+mytrimr <- function(x) {
+  gsub("\\s$", "",x,perl=TRUE) 
+}
 
 
 

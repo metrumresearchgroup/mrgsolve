@@ -5,7 +5,7 @@
 ##' @include utils.R complog.R nmxml.R matrix.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
-block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])(.*)"
+block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])\\s*(.*)"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -138,14 +138,12 @@ modelparse <- function(txt,
   
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
   
-  txt <- strsplit(txt, comment_re, perl=TRUE)
+  if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
-  txt <- sapply(txt, `[`,1L)
-  
-  if(drop_blank) {
-    txt <- txt[!is.na(txt) & !grepl("^\\s*$",txt,perl=TRUE)]
-  } else {
-    txt[is.na(txt)] <- "\n"
+  for(comment in c("//", "##")) {
+    m <- as.integer(regexpr(comment,txt,fixed=TRUE))
+    w <- m > 0
+    txt[w] <- substr(txt[w],1,m[w]-1)
   }
   
   start <- grep(block_re,txt,perl=TRUE)
@@ -159,8 +157,7 @@ modelparse <- function(txt,
   end <- c((start-1),length(txt))[-1]
   
   spec <- lapply(seq_along(start), function(i) {
-    y <- txt[start[i]:end[i]]
-    y[!grepl("^\\s*$",y,perl=TRUE)]
+    txt[start[i]:end[i]]
   })
   
   names(spec) <- labs
