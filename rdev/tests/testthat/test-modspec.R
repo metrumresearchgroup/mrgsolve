@@ -85,5 +85,29 @@ for(what in c("THETA", "PARAM", "CMT",
   })
 }
 
-
+test_that("Commented model", {
+  code <- '
+  // A comment
+  $PARAM CL = 2 ## comment
+  VC = 10
+  
+  KA=3
+  $INIT x=0, y = 3 // Hey
+  ## comment
+  h = 3 ## yo
+  ## comment
+  $TABLE
+  capture a=2; //
+  double b = 3;
+  ## 234234
+  $CAPTURE 
+    KA // Capturing KA
+  ' 
+  
+  expect_is(mod <- mcode("commented", code),"mrgmod")
+  expect_identical(param(mod),param(CL=2,VC=10,KA=3))
+  expect_identical(init(mod),init(x=0,y=3,h=3))
+  expect_identical(mod@capture, c("KA","a"))
+  
+})
 

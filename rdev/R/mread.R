@@ -251,8 +251,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   x <- store_annot(x,annot)
   
-  
-  
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   ## Check $MAIN for the proper symbols
