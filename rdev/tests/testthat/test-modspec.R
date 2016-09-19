@@ -88,7 +88,7 @@ for(what in c("THETA", "PARAM", "CMT",
 test_that("Commented model", {
   code <- '
   // A comment
-  $PARAM CL = 2 ## comment
+  $PARAM CL = 2## comment
   VC = 10
   
   KA=3
@@ -97,7 +97,7 @@ test_that("Commented model", {
   h = 3 ## yo
   ## comment
   $TABLE
-  capture a=2; //
+  capture a=2;//
   double b = 3;
   ## 234234
   $CAPTURE 

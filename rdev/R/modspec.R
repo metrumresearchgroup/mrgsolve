@@ -5,7 +5,7 @@
 ##' @include utils.R complog.R nmxml.R matrix.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
-block_re <-  "^\\s*(\\$([A-Z]\\w*)|\\[\\s*([A-Z]\\w*)\\s*])\\s*(.*)"
+block_re <-  "^\\s*\\$[A-Z]\\w*|\\[\\s*[A-Z]\\w*\\s*]"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -114,13 +114,6 @@ setup_soloc <- function(loc,model) {
   return(soloc)
 }
 
-# protected_options <- function(x) {
-#   x <- as.cvec2(x)
-#   d <- !grepl("=",x,fixed=TRUE) & nchar(x) > 0
-#   x[d] <- sapply(x[d],function(y) paste0(y, "=TRUE"))
-#   paste0(">> ",paste(x,collapse=','))
-# }
-
 
 ##' Parse model specification text.
 ##' @param txt model specification text
@@ -140,22 +133,34 @@ modelparse <- function(txt,
   
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
+  # Take out comments
   for(comment in c("//", "##")) {
     m <- as.integer(regexpr(comment,txt,fixed=TRUE))
     w <- m > 0
     txt[w] <- substr(txt[w],1,m[w]-1)
   }
   
-  start <- grep(block_re,txt,perl=TRUE)
+  # Look for block lines
+  m <- regexec(block_re,txt,perl=TRUE)
+  
+  # Where the block starts
+  start <- which(sapply(m,"[",1L) > 0)
   
   if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
   
-  labs <- gsub(block_re,"\\2\\3", txt[start],perl=TRUE)
+  # Get the matches
+  mm <- regmatches(txt[start],m[start])
   
-  txt[start] <- gsub(block_re, "\\4", txt[start],perl=TRUE)
+  # Block labels
+  labs <- gsub("[][$ ]", "", sapply(mm, "[",1L), perl=TRUE)
   
+  # Remove block label text
+  txt[start] <- mytriml(substr(txt[start], nchar(unlist(mm,use.names=FALSE))+1, nchar(txt[start])))
+  
+  # Where the block ends
   end <- c((start-1),length(txt))[-1]
   
+  # Create the list
   spec <- lapply(seq_along(start), function(i) {
     txt[start[i]:end[i]]
   })
@@ -166,6 +171,7 @@ modelparse <- function(txt,
   
 }
 
+using <- c("namespace mrgsolve {", "}","using namespace mrgsolve;")
 
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
@@ -173,19 +179,27 @@ modelparse <- function(txt,
 move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
 move_global_re_sub <- "\\b(double|bool|int|capture)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
-move_global <- function(x,env,what=c("MAIN", "ODE", "TABLE")) {
+move_global <- function(x,env,ns,model) {
   
-  what <- intersect(what,names(x))
+  what <- intersect(c("MAIN", "ODE", "TABLE"),names(x))
   
   if(length(what)==0) return(x)
-  
+
   # Keep names in here for later
   l <- lapply(x[what], get_c_vars)
   
-  x[["GLOBAL"]] <- c(x[["GLOBAL"]],
-                     "typedef double capture;",
-                     unlist(l,use.names=FALSE),
-                     local_var_typedef)
+  vars <- unlist(l, use.names=FALSE)
+  
+  if(ns) {
+    nsname <- paste0("__", model, "_")
+    vars <- c(paste0("namespace ", nsname, " {"),
+              vars,
+              "}", 
+              paste0("using namespace ", nsname, ";"))
+  }
+  
+  x[["GLOBAL"]] <- c(x[["GLOBAL"]],"typedef double capture;",
+                     vars,local_var_typedef)
   
   cap <- vector("list")
   
@@ -211,6 +225,7 @@ move_global <- function(x,env,what=c("MAIN", "ODE", "TABLE")) {
       cap[[w]] <- substr(ll,9,nchar(ll)-1)
     }
     # **************************
+    
   } # <-- End for(w in what)
   
   if(length(cap) > 0) {

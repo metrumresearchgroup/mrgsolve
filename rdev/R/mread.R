@@ -51,6 +51,7 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' @param udll use unique name for shared object
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first
+##' @param ns use a namespace for \code{C++} variables
 ##' @param ... passed along
 ##' @export
 ##' 
@@ -101,7 +102,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   raw=FALSE,compile=TRUE,audit=FALSE,
                   quiet=getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),
-                  preclean=FALSE,...) {
+                  preclean=FALSE,ns=TRUE,...) {
   
   quiet <- as.logical(quiet)
   warn <- warn & (!quiet)
@@ -166,7 +167,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Pull out the settings now
   ## We might be passing parse settings in here ...
-  SET <- tolist(spec[["SET"]])
+  SET <-tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
   
   ENV <- eval_ENV_block(spec[["ENV"]])
@@ -177,7 +178,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   mread.env <- parse_env(length(spec),ENV)
   
   ## The main sections that need R processing:
-  spec <- move_global(spec,mread.env)
+  spec <- move_global(spec,mread.env,as.logical(ns),model)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
