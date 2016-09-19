@@ -7,7 +7,7 @@
 mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
   ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = FALSE,
   quiet = getOption("mrgsolve_mread_quiet", FALSE), check.bounds = FALSE,
-  warn = TRUE, soloc = tempdir(), preclean = FALSE, ...)
+  warn = TRUE, soloc = tempdir(), preclean = FALSE, ns = FALSE, ...)
 }
 \arguments{
 \item{model}{model name}
@@ -35,6 +35,8 @@ mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
 \item{soloc}{directory where model shared object is stored}
 
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are cleaned up first}
+
+\item{ns}{use a namespace for \code{C++} variables}
 
 \item{...}{passed along}
 }

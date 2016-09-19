@@ -43,6 +43,11 @@
 // INCLUDES:
 
 // GLOBAL CODE BLOCK:
+typedef double capture;
+double DV;
+typedef double localdouble;
+typedef int localint;
+typedef bool localbool;
 
 #define CP (CENT/hm::VCi)
 #define INH (CP/(IC50+CP))
@@ -54,11 +59,6 @@ namespace hm {
   localdouble KOUTi = 0;
   localdouble lWT = 0;
 }
-typedef double capture;
-double DV;
-typedef double localdouble;
-typedef int localint;
-typedef bool localbool;
 
 // CONFIG CODE BLOCK:
 BEGIN_config

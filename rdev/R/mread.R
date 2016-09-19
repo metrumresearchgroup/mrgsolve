@@ -102,7 +102,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   raw=FALSE,compile=TRUE,audit=FALSE,
                   quiet=getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),
-                  preclean=FALSE,ns=TRUE,...) {
+                  preclean=FALSE,ns=FALSE,...) {
   
   quiet <- as.logical(quiet)
   warn <- warn & (!quiet)
@@ -167,7 +167,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Pull out the settings now
   ## We might be passing parse settings in here ...
-  SET <-tolist(spec[["SET"]])
+  SET <- tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
   
   ENV <- eval_ENV_block(spec[["ENV"]])

@@ -191,15 +191,16 @@ move_global <- function(x,env,ns,model) {
   vars <- unlist(l, use.names=FALSE)
   
   if(ns) {
-    nsname <- paste0("__", model, "_")
+    nsname <- paste0("_ns_", model,"_") 
     vars <- c(paste0("namespace ", nsname, " {"),
               vars,
               "}", 
-              paste0("using namespace ", nsname, ";"))
+              paste0("using namespace ", nsname, ";")
+              )
   }
   
-  x[["GLOBAL"]] <- c(x[["GLOBAL"]],"typedef double capture;",
-                     vars,local_var_typedef)
+  x[["GLOBAL"]] <- c("typedef double capture;",
+                     vars,local_var_typedef,x[["GLOBAL"]])
   
   cap <- vector("list")
   
