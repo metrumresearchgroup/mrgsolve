@@ -211,7 +211,6 @@ move_global <- function(x,env) {
       
       if(w=="ODE") {
         stop("Found capture typed variables in $ODE.\n", 
-             "These will not be automatically captured.\n", 
              "The type should be changed to double.\n",
              call.=FALSE)
       }
