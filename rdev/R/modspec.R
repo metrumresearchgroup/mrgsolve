@@ -344,9 +344,8 @@ specMATRIX <- function(x,
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
+  anl <- grepl(":",x,fixed=TRUE)
   if(annotated) {
-    
-    anl <- grepl(":",x,fixed=TRUE)
     types <- charcount(x[anl],":")
     if(all(types==1)) {
       unlinked <- TRUE 
@@ -371,6 +370,7 @@ specMATRIX <- function(x,
     env[["annot"]][[pos]] <- l[["an"]]
     
   } else {
+    if(any(anl)) x <- x[!anl]
     if(is.null(object)) {
       d <- modMATRIX(x,context=oclass,...) 
     } else {
