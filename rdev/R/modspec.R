@@ -280,6 +280,10 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   
   opts <- gsub(">>","", x[opts], fixed=TRUE)
   
+  # Look for at 
+  has_at <- charcount(opts,"@")
+  opts[has_at > 0] <- gsub("(^|[, ])@(\\w+)", "\\1\\2=TRUE", opts[has_at > 0],perl=TRUE)
+  
   opts <- merge(def, tolist(opts,envir=envir),
                 strict=!all,warn=FALSE,context="opts")
   
