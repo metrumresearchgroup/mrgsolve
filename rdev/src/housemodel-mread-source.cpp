@@ -46,7 +46,9 @@
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:
 typedef double capture;
-static double DV;
+namespace {
+  double DV;
+}
 typedef double localdouble;
 typedef int localint;
 typedef bool localbool;

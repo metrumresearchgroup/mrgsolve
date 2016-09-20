@@ -190,12 +190,11 @@ move_global <- function(x,env) {
   # Keep names in here for later
   l <- lapply(x[what], get_c_vars)
   
-  # Must do this check
-  decl <- unlist(l,use.names=FALSE)
-  if(length(decl) > 0) decl <- paste0("static ", decl)
-  
   env[["global"]] <- c("typedef double capture;",
-                       decl, local_var_typedef)
+                       "namespace {",
+                        paste0("  ",unlist(l, use.names=FALSE)),
+                       "}",
+                       local_var_typedef)
   
   cap <- vector("list")
   
