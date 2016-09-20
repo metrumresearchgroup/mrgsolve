@@ -340,12 +340,32 @@ specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
                        env, pos=1,
                        name="...", prefix="", labels=NULL,
-                       object=NULL,...) {
+                       object=NULL,unlinked=FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block=toupper(type),envir=env$ENV,name_value=FALSE)
+    
+    anl <- grepl(":",x,fixed=TRUE)
+    types <- charcount(x[anl],":")
+    if(all(types==1)) {
+      unlinked <- TRUE 
+      novalue <- TRUE
+    } else if(all(types==2)) {
+      unlinked <- FALSE
+      novalue <- FALSE
+    } else {
+      stop("Ambigious or mixed annotations in ",paste0("$",toupper(type)),call.=FALSE) 
+    }
+    
+    l <- parse_annot(x[anl],name_value=FALSE,
+                     block=toupper(type),
+                     envir=env$ENV,novalue=novalue)
+    
+    if(unlinked) {
+      l[["v"]] <- as.numeric(cvec_cs(x[!anl])) 
+    }
+  
     d <- modMATRIX(l[["v"]],context=oclass,...)
     labels <- l[["an"]][["name"]]
     env[["annot"]][[pos]] <- l[["an"]]
