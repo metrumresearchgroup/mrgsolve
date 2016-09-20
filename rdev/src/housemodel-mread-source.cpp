@@ -41,14 +41,17 @@
 // No fixed parameters.
 
 // INCLUDES:
+// No includes found.
 
 // GLOBAL CODE BLOCK:
+// GLOBAL VARS FROM BLOCKS & TYPEDEFS:
 typedef double capture;
-double DV;
+static double DV;
 typedef double localdouble;
 typedef int localint;
 typedef bool localbool;
 
+// GLOBAL START USER CODE:
 #define CP (CENT/hm::VCi)
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
@@ -66,7 +69,6 @@ END_config
 
 // MAIN CODE BLOCK:
 BEGIN_main
-
 F_GUT = F1;
 hm::CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ETA(1));
 hm::VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + ETA(2));
@@ -77,7 +79,6 @@ END_main
 
 // DIFFERENTIAL EQUATIONS:
 BEGIN_ode
-
 dxdt_GUT = -hm::KAi*GUT;
 dxdt_CENT = hm::KAi*GUT - (hm::CLi/hm::VCi)*CENT;
 dxdt_RESP = KIN*(1-INH) - hm::KOUTi*RESP;
@@ -85,7 +86,6 @@ END_ode
 
 // TABLE CODE BLOCK:
 BEGIN_table
-
 DV = CP*exp(EPS(1));
 _capture_[0] = DV;
 _capture_[1] = CP;

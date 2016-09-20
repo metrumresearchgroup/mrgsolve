@@ -126,8 +126,9 @@ test_that("Typedef capture", {
   capture b = 2;
 
   $CMT CM_T
+  
   $ODE
-  capture c = 3;
+  int c = 3;
   double cc = 33;
   dxdt_CM_T = 0;
 
@@ -138,7 +139,7 @@ test_that("Typedef capture", {
   double capture_n = 999;
   '
   
-  expect_warning(mod <- mcode("test3d", code))
+  mod <- mcode("test3d", code)
   
   out <- mod %>% mrgsim(end=3)
   
@@ -146,6 +147,15 @@ test_that("Typedef capture", {
   expect_true(all(out$b == 2))
   expect_true(all(out$d == 4))
   expect_false("capture_n" %in% names(out))
+  
+  code <- '
+  $CMT CM_T
+  $ODE
+  capture c = 3;
+  double cc = 33;
+  dxdt_CM_T = 0;
+  '
+  expect_error(mod <- mcode("test3e", code))
 
 })
 

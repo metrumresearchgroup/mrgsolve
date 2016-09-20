@@ -51,7 +51,6 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' @param udll use unique name for shared object
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first
-##' @param ns use a namespace for \code{C++} variables
 ##' @param ... passed along
 ##' @export
 ##' 
@@ -102,7 +101,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   raw=FALSE,compile=TRUE,audit=FALSE,
                   quiet=getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),
-                  preclean=FALSE,ns=FALSE,...) {
+                  preclean=FALSE,...) {
   
   quiet <- as.logical(quiet)
   warn <- warn & (!quiet)
@@ -122,8 +121,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   project <- normalizePath(project, mustWork=TRUE, winslash="/")
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   soloc <-   setup_soloc(soloc,model)  
-  
-  
   
   ## The model file is <stem>.cpp in the <project> directory
   modfile <- file.path(project,paste0(model, ".cpp"))
@@ -178,7 +175,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   mread.env <- parse_env(length(spec),ENV)
   
   ## The main sections that need R processing:
-  spec <- move_global(spec,mread.env,as.logical(ns),model)
+  spec <- move_global(spec,mread.env)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
@@ -194,7 +191,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
 
-  
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
@@ -309,10 +305,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     "\n// INCLUDES:",
     form_includes(spec[["INCLUDE"]],project),
     "\n// GLOBAL CODE BLOCK:",
+    "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
+    mread.env[["global"]],
+    "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
-    "\n// CONFIG CODE BLOCK:",
-    "BEGIN_config",
-    "END_config",
+    "\n// CONFIG CODE BLOCK:\nBEGIN_config\nEND_config",
     "\n// MAIN CODE BLOCK:",
     "BEGIN_main",
     spec[["MAIN"]],

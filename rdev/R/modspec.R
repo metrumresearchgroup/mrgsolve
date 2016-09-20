@@ -7,6 +7,7 @@
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*\\$[A-Z]\\w*|\\[\\s*[A-Z]\\w*\\s*]"
 
+
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
   if(advan==13 | trans==1) return(NULL)
@@ -162,7 +163,8 @@ modelparse <- function(txt,
   
   # Create the list
   spec <- lapply(seq_along(start), function(i) {
-    txt[start[i]:end[i]]
+    y <- txt[start[i]:end[i]]
+    y[y!=""]
   })
   
   names(spec) <- labs
@@ -171,36 +173,29 @@ modelparse <- function(txt,
   
 }
 
-using <- c("namespace mrgsolve {", "}","using namespace mrgsolve;")
+
 
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
 ## and moving to global
 move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
-move_global_re_sub <- "\\b(double|bool|int|capture)\\s+(\\w+\\s*=)"
+move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
-move_global <- function(x,env,ns,model) {
+move_global <- function(x,env) {
   
   what <- intersect(c("MAIN", "ODE", "TABLE"),names(x))
   
   if(length(what)==0) return(x)
-
+  
   # Keep names in here for later
   l <- lapply(x[what], get_c_vars)
   
-  vars <- unlist(l, use.names=FALSE)
+  # Must do this check
+  decl <- unlist(l,use.names=FALSE)
+  if(length(decl) > 0) decl <- paste0("static ", decl)
   
-  if(ns) {
-    nsname <- paste0("_ns_", model,"_") 
-    vars <- c(paste0("namespace ", nsname, " {"),
-              vars,
-              "}", 
-              paste0("using namespace ", nsname, ";")
-              )
-  }
-  
-  x[["GLOBAL"]] <- c("typedef double capture;",
-                     vars,local_var_typedef,x[["GLOBAL"]])
+  env[["global"]] <- c("typedef double capture;",
+                       decl, local_var_typedef)
   
   cap <- vector("list")
   
@@ -214,15 +209,16 @@ move_global <- function(x,env,ns,model) {
     wcap <- grepl("capture ", l[[w]], fixed=TRUE)
     
     if(any(wcap)) {
+      
+      if(w=="ODE") {
+        stop("Found capture typed variables in $ODE.\n", 
+             "These will not be automatically captured.\n", 
+             "The type should be changed to double.\n",
+             call.=FALSE)
+      }
+      
       ll <- l[[w]][wcap]
       ll <- ll[substr(ll,1,8) == "capture "]
-      if(w=="ODE") {
-        warning("Found capture typed variables in $ODE.\n", 
-                "These will not be automatically captured.\n", 
-                "The type should be changed to double.\n",
-                call.=FALSE)
-        next 
-      }
       cap[[w]] <- substr(ll,9,nchar(ll)-1)
     }
     # **************************
@@ -676,7 +672,7 @@ handle_spec_block.specINCLUDE <- function(x,env,...) {
 }
 
 form_includes <- function(x,where) {
-  if(is.null(x)) return(NULL)
+  if(is.null(x)) return("// No includes found.")
   files <- file.path(where,x)
   if(!all(file.exists(files))) {
     stop("All header files in $INCLUDE must exist in the project directory",call.=FALSE) 
