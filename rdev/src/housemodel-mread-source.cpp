@@ -1,4 +1,4 @@
-// Source MD5: 392d006bbfb561d76eca1083b43a6ec8
+// Source MD5: 9f9832420e4b4eed09989e24e70e3677
 
 #include "modelheader.h"
 
@@ -36,6 +36,11 @@
 #define KIN _THETA_[10]
 #define KOUT _THETA_[11]
 #define IC50 _THETA_[12]
+#define ECL _xETA(1)
+#define EVC _xETA(2)
+#define EKA _xETA(3)
+#define EKOUT _xETA(4)
+#define EXPO _xEPS(1)
 
 // FIXED:
 // No fixed parameters.
@@ -47,6 +52,10 @@
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:
 typedef double capture;
 namespace {
+  double CLi;
+  double VCi;
+  double KAi;
+  double KOUTi;
   double DV;
 }
 typedef double localdouble;
@@ -54,16 +63,9 @@ typedef int localint;
 typedef bool localbool;
 
 // GLOBAL START USER CODE:
-#define CP (CENT/hm::VCi)
+#define CP (CENT/VCi)
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
-namespace hm {
-  localdouble CLi = 0;
-  localdouble VCi = 0;
-  localdouble KAi = 0;
-  localdouble KOUTi = 0;
-  localdouble lWT = 0;
-}
 
 // CONFIG CODE BLOCK:
 BEGIN_config
@@ -72,23 +74,23 @@ END_config
 // MAIN CODE BLOCK:
 BEGIN_main
 F_GUT = F1;
-hm::CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ETA(1));
-hm::VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + ETA(2));
-hm::KAi   = exp(log(KA)   + ETA(3));
-hm::KOUTi = exp(log(KOUT) + ETA(4));
-RESP_0 = KIN/hm::KOUTi;
+CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ECL);
+VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + EVC);
+KAi   = exp(log(KA)   + EKA);
+KOUTi = exp(log(KOUT) + EKOUT);
+RESP_0 = KIN/KOUTi;
 END_main
 
 // DIFFERENTIAL EQUATIONS:
 BEGIN_ode
-dxdt_GUT = -hm::KAi*GUT;
-dxdt_CENT = hm::KAi*GUT - (hm::CLi/hm::VCi)*CENT;
-dxdt_RESP = KIN*(1-INH) - hm::KOUTi*RESP;
+dxdt_GUT = -KAi*GUT;
+dxdt_CENT = KAi*GUT - (CLi/VCi)*CENT;
+dxdt_RESP = KIN*(1-INH) - KOUTi*RESP;
 END_ode
 
 // TABLE CODE BLOCK:
 BEGIN_table
-DV = CP*exp(EPS(1));
+DV = CP*exp(EXPO);
 _capture_[0] = DV;
 _capture_[1] = CP;
 END_table

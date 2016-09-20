@@ -23,46 +23,38 @@ GUT  : Dosing compartment (mg)
 CENT : Central compartment (mg)
 RESP : Response (unitless)
 
-$OMEGA
+$OMEGA >> labels="ECL,EVC,EKA,EKOUT"
 0 0 0 0
 
-$SIGMA
+$SIGMA >> labels="EXPO"
 0
 
 $SET end=120, delta=0.25
 
 
 $GLOBAL
-#define CP (CENT/hm::VCi)
+#define CP (CENT/VCi)
 #define INH (CP/(IC50+CP))
 
 typedef double localdouble;
 
-namespace hm {
-  localdouble CLi = 0;
-  localdouble VCi = 0;
-  localdouble KAi = 0;
-  localdouble KOUTi = 0;
-  localdouble lWT = 0;
-}
-
 $MAIN
 F_GUT = F1;
 
-hm::CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ETA(1));
-hm::VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + ETA(2));
-hm::KAi   = exp(log(KA)   + ETA(3));
-hm::KOUTi = exp(log(KOUT) + ETA(4));
+double CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ECL);
+double VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + EVC);
+double KAi   = exp(log(KA)   + EKA);
+double KOUTi = exp(log(KOUT) + EKOUT);
 
-RESP_0 = KIN/hm::KOUTi;
+RESP_0 = KIN/KOUTi;
 
 $ODE
-dxdt_GUT = -hm::KAi*GUT;
-dxdt_CENT = hm::KAi*GUT - (hm::CLi/hm::VCi)*CENT;
-dxdt_RESP = KIN*(1-INH) - hm::KOUTi*RESP;
+dxdt_GUT = -KAi*GUT;
+dxdt_CENT = KAi*GUT - (CLi/VCi)*CENT;
+dxdt_RESP = KIN*(1-INH) - KOUTi*RESP;
 
 $TABLE
-double DV = CP*exp(EPS(1));
+double DV = CP*exp(EXPO);
 
 $CAPTURE >> annotated=TRUE
 DV: Dependent variable (ng/ml)
