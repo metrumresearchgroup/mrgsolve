@@ -67,23 +67,26 @@ valid.matlist <- function(object) {
   
   if(all(x)) return(TRUE)
   out <- c()
-  if(!x1) out <- c(out, "Found objects that are not matrix")
-  if(!x2) out <- c(out, "Found matrices that are not numeric")
+  if(!x1) out <- c(out, "Found objects that are not matrix.")
+  if(!x2) out <- c(out, "Found matrices that are not numeric.")
   if(!x3) {
     y <- labels[duplicated(labels)]
     message("Problem with this/these name(s):")
     cat(paste(y, collapse=","))
-    out <- c(out, "Found duplicate names")
+    out <- c(out, "Found duplicate names.")
   }
   
   if(!x4) {
     y <- which(sapply(object@data, det) < 0)
     message("Problem with this matrix:")
     print(object@data[y])
-    out <- c(out, "Invalid matrix: determinant is less than 0")
+    out <- c(out, "Invalid matrix: determinant is less than 0.")
   }
   if(!x5) {
-    out <- c(out, "Length of labels does not match the matrix entered.")
+    
+    n1 <- paste(sapply(object@data,   nrow),collapse=",")
+    n2 <- paste(sapply(object@labels, length),collapse=',')
+    out <- c(out, paste0("Length of labels (", n2, ") does not match the matrix rows (", n1, ")."))
   }
   return(out)
 }
