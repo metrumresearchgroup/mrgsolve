@@ -258,9 +258,11 @@ parse_ats <- function(x) {
   # Require that line starts with @
   # ls are lists of boolean options on a single ine
   if(any(charcount(x,"@") > 1)) {
-    x <- paste0("@",unlist(strsplit(x, "@", fixed=TRUE)))
+    x <- mytrim(unlist(strsplit(x, "@", fixed=TRUE)))
+  } else {
+    x <- mytrim(gsub("@", "", x, fixed=TRUE))  
   }
-  x <- mytrim(gsub("@", "", x, fixed=TRUE))
+  
   
   # Name/value lines will have spaces but not lists
   nv <- grepl(" ", x, fixed=TRUE) 
