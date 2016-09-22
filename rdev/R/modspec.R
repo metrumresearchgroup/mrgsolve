@@ -278,7 +278,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   
   has_at <- grepl("^\\s*@", x,perl=TRUE) 
   at <- cvec_cs(gsub("@","",x[has_at & !opts],fixed=TRUE))
-  at <- paste0(at,"=TRUE")
+  if(length(at) > 0) at <- paste0(at,"=TRUE")
   
   data <- x[!(opts | has_at)]
   
