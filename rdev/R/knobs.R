@@ -4,9 +4,6 @@
 
 
 
-##' @include mrgsims.R
-##' @include classes.R
-
 
 ##' @title Run sensitivity analysis on model settings
 ##'

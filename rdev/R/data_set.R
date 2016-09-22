@@ -53,3 +53,24 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
 setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(data_set(x,as.data.frame(data),...))
 })
+
+
+##' Convert select upper case column names to lower case to conform to \code{mrgsolve} data expectations.
+##'
+##'
+##' @param data an nmtran-like data frame
+##'
+##' @return A data.frame with renamed columns.
+##'
+##' @details
+##' Columns that will be renamed with lower case versions: \code{AMT}, \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, \code{TIME}.  If a lower case version
+##' of these names exist in the data set, the column will not be renamed.
+##' @export
+lctran <- function(data) {
+  n <- names(data)
+  infrom <- is.element(n,tran_upper)
+  haslower <- is.element(tolower(n),n)
+  change <- infrom & !haslower
+  if(sum(change) > 0) names(data)[change] <- tolower(n[change])
+  data
+}

@@ -3,14 +3,6 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
-
-##' @include mrgsims.R
-
-
-
-
-
-
 ## The init class is a numericlist; these functions create new objects.
 ##' @export
 ##' @rdname init

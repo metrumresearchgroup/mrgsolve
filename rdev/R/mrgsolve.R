@@ -3,7 +3,6 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 ##' @include mrgindata.R
-##' @include utils.R
 
 tran_upper <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 
@@ -38,25 +37,6 @@ tgrid_id <- function(col,idata) {
 
 
 
-##' Convert select upper case column names to lower case to conform to \code{mrgsolve} data expectations.
-##'
-##'
-##' @param data an nmtran-like data frame
-##'
-##' @return A data.frame with renamed columns.
-##'
-##' @details
-##' Columns that will be renamed with lower case versions: \code{AMT}, \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, \code{TIME}.  If a lower case version
-##' of these names exist in the data set, the column will not be renamed.
-##' @export
-lctran <- function(data) {
-  n <- names(data)
-  infrom <- is.element(n,tran_upper)
-  haslower <- is.element(tolower(n),n)
-  change <- infrom & !haslower
-  if(sum(change) > 0) names(data)[change] <- tolower(n[change])
-  data
-}
 
 
 validate_idata <- function(idata) {
@@ -435,61 +415,7 @@ setMethod("parin", "mrgmod", function(x) {
 
 
 
-##' Get inits from compiled function.
-##'
-##' @param x mrgmod model object
-##' @param keep_pointers should function pointers be returned?
-##' @export
-touch_funs <- function(x,keep_pointers=TRUE) {
-  
-  funp <- pointers(x)
 
-  param <- as.numeric(param(x))
-  init <- as.numeric(x@init)
-  neta <- sum(nrow(omat(x)))
-  neps <- sum(nrow(smat(x)))
-  
-  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,funp)
-  
-  names(out$init) <- names(init)
-  
-  if(keep_pointers) {
-    out[["pointers"]] <- funp
-  }
-  
-  out
-  
-}
-
-
-##' Return a pre-compiled, PK/PD model.
-##' 
-##' @param ... passed to update
-##' 
-##' @return 
-##' A \code{packmod} object, ready to simulated.
-##' 
-##' @examples
-##' 
-##' mod <- mrgsolve:::house()
-##' 
-##' see(mod)
-##' 
-##' mod %>% ev(amt=100) %>% mrgsim %>% plot
-##' 
-house <- function(...) {
-  att <- readRDS(file=pfile("mrgsolve", "project", "housemodel", "RDS"))
-  x <- new("packmod",
-           att,
-           package="mrgsolve",
-           model="housemodel"
-  )
-  x@soloc <- dirname(sodll(x))
-  x <- compiled(x,TRUE)
-  x <- update(x,...,strict=FALSE)
-  #z <- pointers(x)
-  x
-}
 
 
 

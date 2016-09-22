@@ -1,8 +1,6 @@
-##' @include classes.R
-##' 
-##' 
-##' 
-##' 
+
+
+
 
 FUNSET_ERROR <- 
 '

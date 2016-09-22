@@ -1,5 +1,4 @@
-##' @include utils.R
-NULL
+
 
 ##' Internal model library.
 ##' 

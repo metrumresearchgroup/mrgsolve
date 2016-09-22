@@ -41,11 +41,6 @@ The model object has class \code{\link[=mrgmod-class]{mrgmod}}.
 See \code{\link{mrgsims}} for methods to use with simulated output.
 }
 
-\section{Operations between mrgsolve objects}{
-
-See \code{\link{mrgsolve_Ops}} for details.
-}
-
 \section{About the solver used by \code{mrgsolve}}{
 
 See: \code{\link{aboutsolver}}

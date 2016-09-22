@@ -1,10 +1,7 @@
 
 
-## see classes.R for is.mrgindata
-
 as.mrgindata <- function(x) {
-  class(x) <- c("mrgindata", x)
-  return(x)
+  structure(x,class="mrgindata")
 }
 
 ##' Prepare input data.frame or matrix

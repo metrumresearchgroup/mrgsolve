@@ -191,10 +191,6 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 })
 
 
-call_ZERO <- function(x) .Call("mrgsolve_ZERO",x, PACKAGE="mrgsolve")
-ZERO_MATRIX <- function(x) diag(nrow(x))
-
-
 
 
 ##'

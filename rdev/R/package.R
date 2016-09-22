@@ -37,8 +37,6 @@
 ##' @section Handling simulated output:
 ##' See \code{\link{mrgsims}} for methods to use with simulated output.
 ##'
-##' @section Operations between mrgsolve objects:
-##' See \code{\link{mrgsolve_Ops}} for details.
 ##'
 ##' @section About the solver used by \code{mrgsolve}:
 ##' See: \code{\link{aboutsolver}}

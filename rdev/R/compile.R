@@ -3,9 +3,6 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
-##' @include utils.R
-
-
 generate_rdefs <- function(pars,
                            cmt,
                            func,
@@ -135,5 +132,30 @@ rm_win_def <- function(x) {
 }
 
 
+##' Get inits from compiled function.
+##'
+##' @param x mrgmod model object
+##' @param keep_pointers should function pointers be returned?
+##' @export
+touch_funs <- function(x,keep_pointers=TRUE) {
+  
+  funp <- pointers(x)
+  
+  param <- as.numeric(param(x))
+  init <- as.numeric(x@init)
+  neta <- sum(nrow(omat(x)))
+  neps <- sum(nrow(smat(x)))
+  
+  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,funp)
+  
+  names(out$init) <- names(init)
+  
+  if(keep_pointers) {
+    out[["pointers"]] <- funp
+  }
+  
+  out
+  
+}
 
 
