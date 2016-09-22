@@ -192,7 +192,7 @@ move_global <- function(x,env) {
   
   env[["global"]] <- c("typedef double capture;",
                        "namespace {",
-                        paste0("  ",unlist(l, use.names=FALSE)),
+                       paste0("  ",unlist(l, use.names=FALSE)),
                        "}",
                        local_var_typedef)
   
@@ -251,6 +251,41 @@ check_block_data <- function(x,env,pos) {
   return(NULL)
 }
 
+parse_ats <- function(x) {
+  
+  if(length(x)==0) return(list())
+  
+  # Require that line starts with @
+  # ls are lists of boolean options on a single ine
+  if(any(charcount(x,"@") > 1)) {
+    x <- paste0("@",unlist(strsplit(x, "@", fixed=TRUE)))
+  }
+  x <- mytrim(gsub("@", "", x, fixed=TRUE))
+  
+  # Name/value lines will have spaces but not lists
+  nv <- grepl(" ", x, fixed=TRUE) 
+  
+  # Boolean are not Name/value
+  if(any(!nv)) {
+    xx <- paste0(cvec_cs(x[!nv]), " TRUE")
+    x <- c(x[nv],xx)
+  }
+  
+  # find the first space
+  sp <- regexpr(" ", x, fixed=TRUE)
+  # The names
+  a <- substr(x, 1,sp-1)
+  # The values
+  b <- substr(x,sp+1,nchar(x))
+  if(any(charthere(b,"\"") | charthere(b,"'"))) {
+    warning("Found quotation mark in option value.",call.=FALSE) 
+  }
+  # Convert type
+  b <- setNames(lapply(b,type.convert,as.is=TRUE),a)
+
+  b
+}
+
 
 ##' Scrape options from a code block.
 ##' 
@@ -276,30 +311,27 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
     opts <- opts | grepl(marker,x,fixed=TRUE)
   }
   
-  has_at <- grepl("^\\s*@", x,perl=TRUE) 
-  at <- cvec_cs(gsub("@","",x[has_at & !opts],fixed=TRUE))
-  if(length(at) > 0) at <- paste0(at,"=TRUE")
+  has_at <- grepl("^\\s*@", x, perl=TRUE) 
+  at <- parse_ats(x[has_at])
   
   data <- x[!(opts | has_at)]
   
-  opts <- c(gsub(">>","", x[opts], fixed=TRUE),at)
+  opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
   opts <- merge(def, tolist(opts,envir=envir),
                 strict=!all,warn=FALSE,context="opts")
   
+  opts <- c(opts,at)
+  
+  if(any(duplicated(names(opts)))) {
+    stop("Found duplicated block option names.", call.=FALSE) 
+  }
+  
   opts$x <- NULL
-
   
   c(list(x=data), opts)
 }
 
-# scrape_and_pass <- function(x,pass,env,...) {
-#   o <- scrape_opts(x,envir=env$ENV,...)
-#   o$pos <- o$env <- o$class <- NULL
-#   o <- c(o,attributes(x),list(env=env))
-#   ret <- do.call(pass,o)
-#   list(opts=o,data=ret)
-# }
 
 ##' Scrape options and pass to function.
 ##' 
@@ -369,7 +401,7 @@ specMATRIX <- function(x,
     if(unlinked) {
       l[["v"]] <- as.numeric(cvec_cs(x[!anl])) 
     }
-  
+    
     d <- modMATRIX(l[["v"]],context=oclass,...)
     labels <- l[["an"]][["name"]]
     env[["annot"]][[pos]] <- l[["an"]]
