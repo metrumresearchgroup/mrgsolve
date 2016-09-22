@@ -888,7 +888,6 @@ charthere <- function(x,w,fx=TRUE) {
 }
 
 
-
 # 15 sept 2016
 # render_errors <- function(x) {
 #     if(length(x)==0) return(x)

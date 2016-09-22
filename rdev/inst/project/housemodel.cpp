@@ -3,7 +3,7 @@ $PROB housemodel
 
 $PLUGIN base
 
-$PARAM >> annotated=TRUE
+$PARAM @annotated
 CL   : 1    : Clearance  (L/hr)
 VC   : 20   : Volume of distribution (L)
 KA   : 1.2  : Absorption rate constant (1/hr)
@@ -18,15 +18,15 @@ KIN  : 100  : Resp prod rate constant (1/hr)
 KOUT : 2    : Resp elim rate constant (1/hr)
 IC50 : 10   : Conc giving 50% max resp (ng/ml)
 
-$CMT >> annotated=TRUE
+$CMT @annotated
 GUT  : Dosing compartment (mg)
 CENT : Central compartment (mg)
 RESP : Response (unitless)
 
-$OMEGA >> labels="ECL,EVC,EKA,EKOUT"
+$OMEGA @labels ECL EVC EKA EKOUT
 0 0 0 0
 
-$SIGMA >> labels="EXPO"
+$SIGMA @labels EXPO
 0
 
 $SET end=120, delta=0.25
@@ -56,7 +56,7 @@ dxdt_RESP = KIN*(1-INH) - KOUTi*RESP;
 $TABLE
 double DV = CP*exp(EXPO);
 
-$CAPTURE >> annotated=TRUE
+$CAPTURE @annotated
 DV: Dependent variable (ng/ml)
 CP: Plasma concentration (ng/ml)
 

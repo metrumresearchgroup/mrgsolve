@@ -257,13 +257,9 @@ parse_ats <- function(x) {
   
   # Require that line starts with @
   # ls are lists of boolean options on a single ine
-  if(any(charcount(x,"@") > 1)) {
-    x <- mytrim(unlist(strsplit(x, "@", fixed=TRUE)))
-  } else {
-    x <- mytrim(gsub("@", "", x, fixed=TRUE))  
-  }
-  
-  
+  x <- mytrim(unlist(strsplit(x,"@",fixed=TRUE)))
+  x <- x[x!=""]
+
   # Name/value lines will have spaces but not lists
   nv <- grepl(" ", x, fixed=TRUE) 
   
@@ -275,10 +271,14 @@ parse_ats <- function(x) {
   
   # find the first space
   sp <- regexpr(" ", x, fixed=TRUE)
-  # The names
+
+    # The names
   a <- substr(x, 1,sp-1)
+  
   # The values
   b <- substr(x,sp+1,nchar(x))
+  
+  # Warn if quotes
   if(any(charthere(b,"\"") | charthere(b,"'"))) {
     warning("Found quotation mark in option value.",call.=FALSE) 
   }
