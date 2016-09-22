@@ -111,3 +111,38 @@ test_that("Commented model", {
   
 })
 
+
+test_that("Parse at options", {
+  
+  ats <- mrgsolve:::parse_ats
+  
+  code <- '
+  
+  @bool1
+  @bool2
+
+  @name some person
+  @  zip   55455 @town minneapolis @city
+  @ state mn @midwest @x 2
+  '
+  
+  x <- unlist(strsplit(code, "\n"))
+  x <- ats(x)
+  
+  expect_is(x,"list")
+  expect_identical(x$bool1,TRUE)
+  expect_identical(x$bool2,TRUE)
+  expect_identical(x$city,TRUE)
+  expect_identical(x$midwest,TRUE)
+  expect_identical(x$name,"some person")
+  expect_identical(x$state,"mn")  
+  expect_identical(x$town,"minneapolis")
+  expect_equal(x$x,2)
+  expect_warning(ats(" @ ' a b c'"))  
+  expect_warning(ats('@ "a b c"'))  
+  
+})
+
+
+
+
