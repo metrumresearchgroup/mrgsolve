@@ -883,6 +883,11 @@ charcount <- function(x,w,fx=TRUE) {
   nchar(x) - nchar(gsub(w,"",x,fixed=fx)) 
 }
 
+charthere <- function(x,w,fx=TRUE) {
+  grepl(w,x,fixed=fx)
+}
+
+
 
 # 15 sept 2016
 # render_errors <- function(x) {

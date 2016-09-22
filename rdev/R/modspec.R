@@ -273,21 +273,22 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   opts <- grepl("^\\s*>>",x,perl=TRUE)
   
   if(!narrow) {
-    opts <- opts | grepl(marker,x,fixed=TRUE) 
+    opts <- opts | grepl(marker,x,fixed=TRUE)
   }
   
-  data <- x[!opts]
+  has_at <- grepl("^\\s*@", x,perl=TRUE) 
+  at <- cvec_cs(gsub("@","",x[has_at & !opts],fixed=TRUE))
+  at <- paste0(at,"=TRUE")
   
-  opts <- gsub(">>","", x[opts], fixed=TRUE)
+  data <- x[!(opts | has_at)]
   
-  # Look for at 
-  has_at <- charcount(opts,"@")
-  opts[has_at > 0] <- gsub("(^|[, ])@(\\w+)", "\\1\\2=TRUE", opts[has_at > 0],perl=TRUE)
+  opts <- c(gsub(">>","", x[opts], fixed=TRUE),at)
   
   opts <- merge(def, tolist(opts,envir=envir),
                 strict=!all,warn=FALSE,context="opts")
   
   opts$x <- NULL
+
   
   c(list(x=data), opts)
 }
