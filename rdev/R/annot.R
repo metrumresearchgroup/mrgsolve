@@ -55,8 +55,8 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   for(what in c(units,options)) b <- gsub(what,"",b,fixed=TRUE)  
   
   ## Clean up matches
-  units <- gsub("\\s*\\(\\s*|\\s*\\)", "",units,perl=TRUE)
-  options <- gsub("\\s*\\[\\s*|\\s*\\]", "",options,perl=TRUE)
+  units <-   gsub("\\s*\\(\\s*|\\s*\\)", "", units,   perl=TRUE)
+  options <- gsub("\\s*\\[\\s*|\\s*\\]", "", options, perl=TRUE)
   
   
   ## This is the "description"

@@ -822,7 +822,7 @@ collect_subr <- function(x,what=c("PKMODEL")) {
 
 dosing_cmts <- function(x,what) {
   if(!is.character(x)) return(character(0))
-  x <- unlist(strsplit(x,"\n"))
+  x <- unlist(strsplit(x,"\n",fixed=TRUE),use.names=FALSE)
   m <- regexpr("(ALAG|F|R|D)\\_[^= ]+", x, perl=TRUE)
   m <- regmatches(x,m)
   m <- unique(gsub("(ALAG|F|R|D)\\_", "",m))

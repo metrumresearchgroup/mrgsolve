@@ -15,7 +15,7 @@ check_names <- function(x,par,cmt) {
   x <- x[!is.element(x,c(".", "..."))]
   
   dups <- any(duplicated(x))
-  us <- any(grepl("\\_",x,perl=TRUE))
+  us <-  any(charthere(x,"_"))
   res <- any(is.element(x,Reserved))
   
   ans <- character(0)
@@ -35,8 +35,7 @@ check_names <- function(x,par,cmt) {
   ## Also, look for any name that conflicts with
   ##   bioav, lag-time, or infusion duration or ate
   if(us) {
-    u <- grep("\\_",x,perl=TRUE,value=TRUE)
-    leading <- grep("^\\_",x,perl=TRUE,value=TRUE)
+    leading <- x[substr(x,1,1)=="_"]
     if(length(leading) > 0) {
       ans <- c(ans, paste0("Leading underscore not allowed: ", paste(leading, collapse=" "))) 
     }
