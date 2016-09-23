@@ -109,11 +109,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
   ## Check for spaces in the model name
-  if(grepl(" +", model,perl=TRUE)) {
+  if(charthere(model," ")) {
     stop("model name cannot contain spaces.")
   }
   
-  if(any(grepl("\n", project))) {
+  if(any(charthere(project,"\n"))) {
     stop("project argument contains newline(s); did you mean to call mcode?",call.=FALSE) 
   }
   
@@ -151,7 +151,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
   names(spec) <- gsub("POST", "TABLE", names(spec), fixed=TRUE)
   names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
-  
   
   ## Expand partial matches
   index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)

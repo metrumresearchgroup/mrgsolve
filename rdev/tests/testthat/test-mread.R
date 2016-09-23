@@ -144,5 +144,13 @@ test_that("Error when code is passed as project", {
 })
 
 
+test_that("Model name with spaces is error", {
+    expect_error(mcode("ab cd", ""))
+})
 
+test_that("Error with duplicate blocks", {
+  expect_error(mcode("a", "$ODE \n $ODE"))
+  expect_error(mcode("a", "$MAIN \n $MAIN"))
+  expect_error(mcode("a", "$SET \n $SET"))
+})
 

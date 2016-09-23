@@ -482,7 +482,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
   
   check_block_data(x,env$ENV,pos)
   
-  if(any(grepl("\\s*table\\(", x))) {
+  if(any(grepl("table(", x,fixed=TRUE))) {
     stop("The table(name) = value; macro has been deprecated.\n",  
          "Save your output to double and pass to $CAPTURE instead:\n",
          "   $TABLE double name = value;\n   $CAPTURE name")
