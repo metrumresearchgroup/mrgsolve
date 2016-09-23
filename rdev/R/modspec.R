@@ -36,36 +36,39 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
   
-  if(sum(is.element("TABLE",x)) > 1) stop("Only one $TABLE block allowed.",call.=FALSE)
-  if(sum(is.element("MAIN",x))  > 1) stop("Only one $MAIN block allowed.",call.=FALSE)
-  if(sum(is.element("ODE",x))   > 1) stop("Only one $ODE block allowed.",call.=FALSE)
-  if(sum(is.element("SET",x))   > 1) stop("Only one $SET block allowed.",call.=FALSE)
-  if(sum(is.element("MAIN",x))  > 1) stop("Only one $MAIN block allowed.",call.=FALSE)
+  if(sum("MAIN"  == x) > 1) stop("Only one $MAIN block allowed in the model.",call.=FALSE)
+  if(sum("ODE"   == x) > 1) stop("Only one $ODE block allowed in the model.",call.=FALSE)
+  if(sum("SET"   == x) > 1) stop("Only one $SET block allowed in the model.",call.=FALSE)
   
   if(warn) {
-    if(sum(is.element(c("INIT", "CMT"),x)) == 0)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
-    if(length(invalid)>0) {
+    warn_cmt <- length(intersect(c("INIT", "CMT", "VCMT"),x)) == 0
+    warn_cmt <- warn_cmt & is.element("ODE",x)
+    
+    if(warn_cmt)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
+    
+    if(length(invalid) > 0) {
       warning(paste0("Invalid blocks found: ", paste(invalid, collapse=" ")), call.=FALSE)
     }
   }
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
-  
 }
+
 
 audit_spec <- function(x,spec,warn=TRUE) {
   
   cmt <- names(init(x))
   
-  if(warn) {
-    if(exists("ODE", spec)) {
-      eq <- paste0("dxdt_",cmt)
-      z <- rep(FALSE, length(cmt))
-      for(i in seq_along(cmt)) z[i] <- !any(grepl(eq[i],spec$ODE, perl=TRUE)  )
-      if(any(z)) {
-        ans <- paste(cmt[z], collapse=',')
-        warning(paste0("Audit: missing differential equation(s) for ", ans), call.=FALSE)
-      }
-    }
+  if(!exists("ODE", spec) | !warn | length(cmt) ==0) {
+    return(invisible(NULL))
+  }
+  
+  z <- sapply(paste0("dxdt_",cmt), function(dx) {
+    !any(grepl(dx,spec[["ODE"]],fixed=TRUE))
+  })
+
+  if(any(z)) {
+    ans <- paste(cmt[z], collapse=',')
+    warning(paste0("Audit: missing differential equation(s) for ", ans), call.=FALSE)
   }
   
   return(invisible(NULL))
@@ -259,7 +262,7 @@ parse_ats <- function(x) {
   # ls are lists of boolean options on a single ine
   x <- mytrim(unlist(strsplit(x,"@",fixed=TRUE)))
   x <- x[x!=""]
-
+  
   # Name/value lines will have spaces but not lists
   nv <- grepl(" ", x, fixed=TRUE) 
   
@@ -271,8 +274,8 @@ parse_ats <- function(x) {
   
   # find the first space
   sp <- regexpr(" ", x, fixed=TRUE)
-
-    # The names
+  
+  # The names
   a <- substr(x, 1,sp-1)
   
   # The values
@@ -284,7 +287,7 @@ parse_ats <- function(x) {
   }
   # Convert type
   b <- setNames(lapply(b,type.convert,as.is=TRUE),a)
-
+  
   b
 }
 

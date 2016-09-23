@@ -98,7 +98,7 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##'
 mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   ignore.stdout=TRUE,
-                  raw=FALSE,compile=TRUE,audit=FALSE,
+                  raw=FALSE,compile=TRUE,audit=TRUE,
                   quiet=getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds=FALSE,warn=TRUE,soloc=tempdir(),
                   preclean=FALSE,...) {
@@ -144,8 +144,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## This is also the "package"
   package <- ifelse(udll,rfile(model),model)
   
-  if(audit) warn <- TRUE
-  
   ## Read the model spec and parse:
   spec  <- modelparse(readLines(modfile,warn=FALSE))
   
@@ -162,11 +160,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Do a check on what we found in the spec
   check_spec_contents(names(spec),warn=warn,...)
   
-  ## Pull out the settings now
+  ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
-  
   ENV <- eval_ENV_block(spec[["ENV"]])
   
   # Make a list of NULL equal to length of spec
@@ -202,7 +199,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unname(unlist(spec[names(spec)=="TABLE"]))
+  table <- unlist(spec[names(spec)=="TABLE"],use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
 
   ## Look for compartments we're dosing into: F/ALAG/D/R
@@ -258,23 +255,25 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     check_pred_symbols(x,spec[["MAIN"]])
   }
   
+  ## This must come after audit
+  if(!exists("ODE", spec)) {
+    spec[["ODE"]] <- "DXDTZERO();"
+  } else if(audit) {
+    audit_spec(x,spec,warn=warn)
+  }
+  
+  
   ## First update with what we found in the model specification file
   x <- update(x, data=SET, strict=FALSE)
   
   ## Arguments in $SET that will be passed to mrgsim
   simargs <- SET[is.element(names(SET),set_args)]
-  
   if(length(simargs) > 0) x@args <- merge(x@args,simargs, strict=FALSE)
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
   x <- update(x, data=args,strict=FALSE)
-  
-  if(audit) audit_spec(x,spec,warn=warn)
-  
-  ## This must come after audit
-  if(is.null(spec[["ODE"]])) spec[["ODE"]] <- "DXDTZERO();"
-  
+
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars=names(param),
@@ -334,7 +333,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- file.path(soloc,compfile(model))
   
-  
   ## IN soloc directory
   cwd <- getwd()
   setwd(soloc)
@@ -348,7 +346,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     do_restore(to_restore)
     setwd(cwd)
   })
-  
   
   same <- check_and_copy(from = temp_write,
                          to = compfile(model),
@@ -376,14 +373,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                                     intern=ignore.stdout,
                                     ignore.stdout=ignore.stdout))
   
-  
   if(!ignore.stdout) { ## not intern
     
     if(status != "0") {
       cat("\n\n")
       stop("There was a problem when compiling the model.",call.=FALSE)
     }
-    
     
   } else { ## intern
     
