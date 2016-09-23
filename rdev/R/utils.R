@@ -31,26 +31,30 @@ is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 merge.list <- function(x,y,...,strict=TRUE,
                        warn=TRUE,context="object",wild="...") {
   
-  left <- x
-  right <- as.list(y)
+  #left <- x
+  #right <- as.list(y)
+  y <- as.list(y)
+  
   
   if(strict) {
-    right <- right[names(right)!=wild | is.null(names(right))]
+    y <- y[names(y)!=wild | is.null(names(y))]
   }
   
   ## Merge two lists
-  common <- intersect(names(left), names(right))
+  common <- intersect(names(x), names(y))
   common <- common[common != wild]
   
-  left[common] <- right[common]
+  x[common] <- y[common]
   
   if(!strict)  {
-    new <- !is.element(names(right),names(left)) | names(right) == wild
-    left <- c(left,right[new])
+    nw <- !is.element(names(y),names(x)) | names(y) == wild
+    x <- c(x,y[nw])
   } else {
-    if(length(common)==0 & warn) warning(paste0("Found nothing to update: ", context), call.=FALSE)
+    if(length(common)==0 & warn) {
+      warning(paste0("Found nothing to update: ", context), call.=FALSE)
+    }
   }
-  left
+  x
 }
 
 render_time <- function(x) {
@@ -61,12 +65,6 @@ render_time <- function(x) {
   if(is.mt(times)) {return(0)}
   sort(unique(times[times>=0]))
 }
-
-
-
-
-
-
 
 
 ##' Simulate from a multivariate normal distribution with mean zero.
@@ -119,8 +117,8 @@ mytrimr <- function(x) {
 ## Split on comma or space 
 cvec_cs <- function(x) {
   if(is.null(x) | length(x)==0) return(character(0))
-  x <- unlist(strsplit(as.character(x),",",fixed=TRUE))
-  x <- unlist(strsplit(x," ",fixed=TRUE))
+  x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
+  x <- unlist(strsplit(x," ",fixed=TRUE),use.names=FALSE)
   x <- x[x!=""]
   if(length(x)==0) {
     return(character(0))
@@ -133,7 +131,7 @@ cvec_cs <- function(x) {
 ## Split on comma and trim
 cvec_c_tr <- function(x) {
   if(is.null(x) | length(x)==0) return(character(0))
-  x <- unlist(strsplit(as.character(x),",",fixed=TRUE))
+  x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
   x <- gsub("^\\s+|\\s+$", "",x, perl=TRUE)
   x <- x[x!=""]
   if(length(x)==0) {
@@ -147,7 +145,7 @@ cvec_c_tr <- function(x) {
 ## Split on comma and rm whitespace
 cvec_c_nws <- function(x) {
   if(is.null(x) | length(x)==0) return(character(0))
-  x <- unlist(strsplit(as.character(x),",",fixed=TRUE))
+  x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
   x <- gsub(" ", "",x, fixed=TRUE)
   x <- x[x!=""]
   if(length(x)==0) {
@@ -185,6 +183,7 @@ expand.idata <- function(...) {
   ans$ID <- 1:nrow(ans)
   shuffle(ans,"ID")
 }
+
 ##' @export
 ##' @rdname expand.idata
 expand.ev <- function(...) {
@@ -195,8 +194,6 @@ expand.ev <- function(...) {
   if(!exists("time", ans)) ans$time <- 0
   shuffle(ans,"ID")
 }
-
-
 
 
 is.numeric.data.frame <- function(x) sapply(x, is.numeric)
@@ -246,14 +243,12 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
 
 
 tolist <- function(x,concat=TRUE,envir=list()) {
-  
   if(is.null(x)) return(list())
-  x <- gsub("(,|\\s)+$", "", x)
+  x <- gsub("(,|\\s)+$", "",x,perl=TRUE)
   x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
-  x <- x[x!=""]
+  x <- x[x!=""]  ## waste?
   if(length(x)>1) x <- paste(x, collapse=',')
   return(eval(parse(text=paste0("list(", x, ")")),envir=envir))
-  
 }
 
 
@@ -263,7 +258,7 @@ tovec <- function(x,concat=TRUE) {
   x <- gsub("(,|\\s)+$", "", x)
   if(concat) {
     x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
-    x <- x[x!=""]
+    x <- x[x!=""] # waste?
     if(length(x)>1) x <- paste(x, collapse=',')
   }
   x <- type.convert(unlist(strsplit(x,split="\\,|\n|\\s+",perl=TRUE)), as.is=TRUE)

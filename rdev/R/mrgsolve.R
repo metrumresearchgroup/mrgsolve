@@ -17,26 +17,35 @@ null_data <-  matrix(0,
 
 VERSION <- packageDescription("mrgsolve")$Version
 
-tgrid_matrix <- function(...) {
-  x <- list(...)
-  x <- lapply(x,stime)
-  n <- sapply(x,length)
-  x <- lapply(x,function(x) {length(x) <- max(n); x})
-  matrix(unlist(x), ncol=length(n))
+# tgrid_matrix <- function(...) {
+#   x <- lapply(list(...),stime)
+#   n <- sapply(x,length)
+#   x <- lapply(x,function(x) {length(x) <- max(n); x})
+#   matrix(unlist(x), ncol=length(n))
+# }
+
+tgrid_matrix <- function(x) {
+  n <- length(x)
+  if(n==1) return(matrix(x[[1]],ncol=1))
+  mat <- matrix(ncol=n,nrow=max(sapply(x,length)))
+  for(i in seq_along(x)) {
+    mat[seq_along(x[[i]]),i] <- x[[i]]
+  }
+  mat
 }
+
 
 tgrid_id <- function(col,idata) {
-  if(nrow(idata)==0) return(integer(0))
-  if(length(col)==0) return(integer(0))
-  if(!is.element(col,colnames(idata))) return(integer(0))
+  if(any(nrow(idata)==0,length(col)==0,
+         !is.element(col,colnames(idata)))) {
+    return(integer(0)) 
+  }
+
   ## Converting to C indexing here
-  if(is.integer(idata[,col])) return(idata[,col]-1)
-  return(match(idata[,col],sort(unique(idata[,col])))-1)
+  col <- idata[,col]
+  if(is.integer(col)) return(col-1)
+  return(match(col,sort(unique(col)))-1)
 }
-
-
-
-
 
 
 validate_idata <- function(idata) {
@@ -214,8 +223,6 @@ tran_mrgsim <- function(x,
                         carry.out=character(0),
                         mtime=numeric(0),
                         seed=as.integer(NA),
-                        #trequest=character(0),
-                        #Trequest=character(0),
                         Request=character(0),
                         capture=NULL,
                         obsonly=FALSE,
@@ -234,7 +241,7 @@ tran_mrgsim <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
-  ##foo <- touch_funs(x,keep_pointers=TRUE)
+  ## foo <- touch_funs(x,keep_pointers=TRUE)
   
   if(!model_loaded(x)) {
     stop("The model is not properly loaded.  Aborting simulation.",call.=FALSE) 
@@ -349,10 +356,10 @@ tran_mrgsim <- function(x,
   
   # Look for a deslist; if so, use that instead
   if(length(deslist) > 0) {
-    parin[["tgridmatrix"]] <- do.call("tgrid_matrix",deslist)
+    parin[["tgridmatrix"]] <- tgrid_matrix(deslist)
     parin[["whichtg"]] <- tgrid_id(descol, idata)
   } else {
-    parin[["tgridmatrix"]] <- tgrid_matrix(stime)
+    parin[["tgridmatrix"]] <- tgrid_matrix(list(stime))
     parin[["whichtg"]] <- integer(0)
   }
 

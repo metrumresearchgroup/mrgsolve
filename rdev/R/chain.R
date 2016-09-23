@@ -127,11 +127,8 @@ obsonly <- function(x,value=TRUE,...) {
 ##'
 ##' @export
 obsaug <- function(x,value=TRUE,...) {
-  
   x@args <- merge(x@args, list(obsaug=value), strict=FALSE)
-  
   x
-  
 }
 
 
