@@ -75,7 +75,7 @@ test_that("parse line - value  : text", {
 test_that("Full specification - $PARAM", {
   
   code <- '
-    $PARAM >> annotated=TRUE
+    $PARAM @annotated
     CL: 2 : Clearance (  L/hr)
     VC: 12 : Volume (L)
   '
@@ -87,7 +87,7 @@ test_that("Full specification - $PARAM", {
 test_that("Full specification - $THETA", {
   
   code <- '
-  $THETA >> annotated=TRUE, name="TH"
+  $THETA  @annotated @name TH
   2 : Clearance (  L/hr)
   12 : Volume (L)
   '
@@ -100,7 +100,7 @@ test_that("Full specification - $THETA", {
 test_that("Full specification - $CMT", {
   
   code <- '
-    $CMT >> annotated=TRUE
+    $CMT @annotated
     GUT : Dosing (  mg)
     CENT : Central (mg )
   '
@@ -114,7 +114,7 @@ test_that("Full specification - $CMT", {
 test_that("Full specification - $INIT", {
   
   code <- '
-  $INIT >> annotated=TRUE
+  $INIT @annotated
   GUT :  12.3 : Dosing (  mg)
   CENT : 45.6 : Central (mg )
   '
@@ -131,7 +131,7 @@ test_that("Full specification - $INIT", {
 test_that("Full specification - $FIXED", {
   
   code <- '
-  $FIXED >> annotated=TRUE
+  $FIXED @annotated
   A: 1 : Letter-A (a)
   B: 2 : Letter-B (b)
   C: 3 : Letter-C (c)
@@ -147,7 +147,7 @@ test_that("Full specification - $FIXED", {
 test_that("Full specification - $VCMT", {
   
   code <- '
-  $VCMT >> annotated=TRUE
+  $VCMT @annotated
   A: 123 (x)
   B: 456 (y)
   C: 789 (z)
@@ -166,7 +166,8 @@ test_that("Full specification - $CAPTURE", {
   double a = 2;
   double b = 3;
   double c = 4;
-  $CAPTURE >> annotated=TRUE
+  
+  $CAPTURE @annotated
   a: first  (x)
   b: second (y)
   c: third  (z)

@@ -145,7 +145,7 @@ double CLi = CL*exp(ETA(1));
 double VCi = VC*exp(ETA(2));
 double ke = CLi/VCi;
 
-$OMEGA corr=TRUE
+$OMEGA @correlation
 0.04 0.6 0.09
 
 $ODE

@@ -67,13 +67,13 @@ project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 oname="OMGA", sname="SIGMA"
 
-$OMEGA corr=TRUE, name="OM"
+$OMEGA @corr @name OM
 5 0.1 6
 
-$OMEGA use=FALSE
+$OMEGA @use FALSE
 11 12 13
 
-$SIGMA name="sg", block=TRUE
+$SIGMA @name sg @block
 7 0 8
 
 $PARAM CL=1
@@ -204,18 +204,19 @@ test_that("Get theta and omega", {
 context("Testing matrix labels")
 
 code <- '
-$OMEGA name="OM1"
-labels=s(a,b,c,d)
+$OMEGA 
+@name OM1
+@labels a b c d
 1 2 3 4
-$OMEGA
-99 99 99
-labels=s(x,y,z)
-$SIGMA 
-5 6 
-labels=s(e,f)
 
-$SIGMA
-labels=s(h,i,j,k,l)
+$OMEGA @labels x y z
+99 99 99
+
+
+$SIGMA @labels e f
+5 6 
+
+$SIGMA @labels h i j k l
 1 2 3 4 5
 
 '
@@ -244,8 +245,8 @@ test_that("zero.re actually zeros all matrices", {
 
 code <- '
 $OMEGA
-prefix="x_"
-labels=s(a,b,c,d)
+@prefix x_
+@labels a b c d 
 1 2 3 4
 
 $OMEGA

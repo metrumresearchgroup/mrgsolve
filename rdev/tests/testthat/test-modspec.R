@@ -15,7 +15,7 @@ test_that("Parse matrix", {
   mod <- mtemp(code)
   expect_equal(dim(omat(mod))[[1]],c(3,3))
   
-  code <- "$OMEGA \n block=TRUE \n 1 0.002 \n 3"
+  code <- "$OMEGA \n @block \n 1 0.002 \n 3"
   mod <- mtemp(code)
   expect_equal(dim(omat(mod))[[1]],c(2,2))  
   

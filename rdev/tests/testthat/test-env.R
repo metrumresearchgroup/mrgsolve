@@ -35,24 +35,24 @@ test_that("$ENV sub into $INIT", {
   expect_equivalent(as.numeric(init(mod)), c(1,2))
 })
 
-test_that("$ENV sub into block option", {
-  code <- '
-  $ENV yes <- TRUE; a <- 1; b <- 2
-  $INIT >> annotated=yes
-  A: a : A
-  B: b : B
-  '
-  mod <- mcode("test-env-4", code, compile=FALSE)
-  expect_is(mod, "mrgmod")
-  expect_identical(cmt(mod),c("A", "B"))
-  expect_equivalent(as.numeric(init(mod)), c(1,2))
-  
-})
+# test_that("$ENV sub into block option", {
+#   code <- '
+#   $ENV yes <- TRUE; a <- 1; b <- 2
+#   $INIT >> annotated=yes
+#   A: a : A
+#   B: b : B
+#   '
+#   mod <- mcode("test-env-4", code, compile=FALSE)
+#   expect_is(mod, "mrgmod")
+#   expect_identical(cmt(mod),c("A", "B"))
+#   expect_equivalent(as.numeric(init(mod)), c(1,2))
+#   
+# })
 
 test_that("Get $OMEGA matrix from $ENV", {
   code <- '
-  $ENV mat <- dmat(11,22,33)\n ll <- c("z", "y", "x") \n n = "OM"
-  $OMEGA  >> object = "mat", labels = ll, name = n
+  $ENV mat <- dmat(11,22,33)
+  $OMEGA  @object mat @labels z y x @name OM
   '
   mod <- mcode("test-env-5", code, compile=FALSE)
   expect_is(mod, "mrgmod")
@@ -62,6 +62,7 @@ test_that("Get $OMEGA matrix from $ENV", {
   expect_identical(labels(omat(mod))[[1]], c("z", "y", "x"))
   
 })
+
 
 test_that("$ENV sub into $FIXED", {
   code <- '

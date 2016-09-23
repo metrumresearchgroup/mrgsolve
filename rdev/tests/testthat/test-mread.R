@@ -33,19 +33,19 @@ double EPS1 = EPS(1);
 
 $CAPTURE CP FLAG ETA1 EPS1
 
-$OMEGA name="A"
+$OMEGA @name A
 1
 2
 3
 
-$OMEGA name="B", corr=TRUE
+$OMEGA  @name B @corr
 0.1
 0.5 0.2
 
 $SIGMA
 0.55
 
-$SIGMA block=TRUE
+$SIGMA @block
 0.1 0.002 0.3
 
 '

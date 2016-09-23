@@ -21,11 +21,6 @@
 
 ##'
 ##' 
-##' @include print.R
-##' @include init.R
-##' @include param.R
-##' @include update.R
-##' @include methods.R 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -33,7 +28,6 @@
 ##' @include class_matlist.R
 ##' @include class_numericlist.R
 ##' @include class_tgrid.R  
-##' @include matrix.R
 ##' @include utils.R 
 ##' @include RcppExports.R  
 ##' 

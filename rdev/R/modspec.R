@@ -354,7 +354,7 @@ scrape_and_call <- function(x,env,pass,...) {
 dump_opts <- function(x,env,block,...) {
   hasopt <- grep(">>", x, fixed=TRUE)
   if(length(hasopt)==0) return(x)
-  hasopt <- grep("^\\s*>>", x[hasopt], perl=TRUE)
+  hasopt <- grep("^\\s*(>>|@)", x[hasopt], perl=TRUE)
   x[-hasopt]
 }
 
