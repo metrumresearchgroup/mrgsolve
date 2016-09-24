@@ -45,15 +45,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // MVGAUSS
-arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n, int seed);
-RcppExport SEXP mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP, SEXP seedSEXP) {
+arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
+RcppExport SEXP mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type OMEGA_(OMEGA_SEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(MVGAUSS(OMEGA_, n, seed));
+    rcpp_result_gen = Rcpp::wrap(MVGAUSS(OMEGA_, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -139,6 +138,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type events(eventsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type id(idSEXP);
     rcpp_result_gen = Rcpp::wrap(EXPAND_EVENTS(idcol_, events, id));
+    return rcpp_result_gen;
+END_RCPP
+}
+// QUICKSIM
+Rcpp::NumericMatrix QUICKSIM(const Rcpp::List parin, const Rcpp::NumericVector& param, const Rcpp::NumericVector& init, const Rcpp::IntegerVector& capture, const Rcpp::List& funs, const Rcpp::NumericMatrix& data);
+RcppExport SEXP mrgsolve_QUICKSIM(SEXP parinSEXP, SEXP paramSEXP, SEXP initSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type parin(parinSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type param(paramSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type init(initSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type capture(captureSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(QUICKSIM(parin, param, init, capture, funs, data));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -36,14 +36,14 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   R.assign(neq_,0.0);
   // D holds the value of user input durations
   D.assign(neq_,0.0);
-
-  Param = new double[npar_]();  
+  
+  Param = new double[npar_]();
   Init_value = new double[neq_]();
   Init_dummy = new double[neq_]();
   
   On.assign(neq_,1);
   F.assign(neq_,1.0);
-
+  
   Alag.assign(neq_,0.0);
   
   d.evid = 0;
@@ -70,7 +70,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Inits = as_init_func(funs["main"]);
   Table = as_table_func(funs["table"]);
   Derivs = as_deriv_func(funs["ode"]);
-  Config = as_config_func(funs["config"]); 
+  Config = as_config_func(funs["config"]);
   
   Capture.assign(n_capture_,0.0);
   
@@ -127,7 +127,7 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
 
 void odeproblem::add_rates(double* ydot) {
   for(int i = 0; i < Neq; ++i) {
-    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+    ydot[i] = (ydot[i] + R0[i])*On[i];
   }
 }
 
@@ -173,7 +173,7 @@ void odeproblem::table_call() {
               this->rate(),
               //this->table(),
               this->get_d(),
-              this->get_pred(), 
+              this->get_pred(),
               this->get_capture());
 }
 
@@ -210,7 +210,7 @@ void odeproblem::reset_newid(const double& id_=1.0) {
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
-
+  
   d.SYSTEMOFF=false;
   this->istate(1);
   d.ID = id_;
@@ -254,6 +254,26 @@ void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);
 }
 
+void F77_NAME(dlsoda) (
+    main_deriv_func *derivs,
+    int             *neq,
+    double          *y,
+    const double    *tfrom,
+    const double    *tto,
+    int             *itol,
+    double          *rtol,
+    double          *atol,
+    int             *itask,
+    int             *istate,
+    int             *iopt,
+    double          *rwork,
+    int             *lrwork,
+    int             *iwork,
+    int             *liwork,
+    int             *dum, // dummy jacobian
+    int             *jt, // jacobian type
+    odeproblem      *prob
+);
 
 void odeproblem::advance(double tfrom, double tto) {
   
@@ -274,25 +294,53 @@ void odeproblem::advance(double tfrom, double tto) {
   }
   
   
-  dlsoda_(&main_derivs,
-          &Neq,
-          this->y(),
-          &tfrom,
-          &tto,
-          &xitol,
-          &xrtol,
-          &xatol,
-          &xitask,
-          &xistate,
-          &xiopt,
-          this ->rwork(),
-          &xlrwork,
-          this->iwork(),
-          &xliwork,
-          &Neq,
-          &xjt,
-          this
+  F77_CALL(dlsoda)(
+      &main_derivs,
+      &Neq,
+      this->y(),
+      &tfrom,
+      &tto,
+      &xitol,
+      &xrtol,
+      &xatol,
+      &xitask,
+      &xistate,
+      &xiopt,
+      this ->rwork(),
+      &xlrwork,
+      this->iwork(),
+      &xliwork,
+      &Neq,
+      &xjt,
+      this
   );
+  
+  // lsoda(&main_derivs,
+  //         Neq,
+  //         this->y(),
+  //         &tfrom,
+  //         tto,
+  //         xitol,
+  //         &xrtol,
+  //         &xatol,
+  //         xitask,
+  //         &xistate,
+  //         xiopt,
+  //         xjt,
+  //         xiwork[0],
+  //         xiwork[1],
+  //         xiwork[4],
+  //         xiwork[5],
+  //         xiwork[6],
+  //         xiwork[7],
+  //         xiwork[8],
+  //         xrwork[0],
+  //         xrwork[4],
+  //         xrwork[5],
+  //         xrwork[6],
+  //         this
+  // );
+  // 
   
   main_derivs(&Neq, &tto,Y, Ydot, this);
 }
@@ -374,7 +422,7 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   // Make sure parameters are valid
   if (MRGSOLVE_GET_PRED_VC <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
   if (MRGSOLVE_GET_PRED_VP <=  0) Rcpp::stop("pred_VP has a 0 or negative  value.");
-  if (MRGSOLVE_GET_PRED_Q  <   0) Rcpp::stop("pred_Q has a 0 or negative  value.");
+  if (MRGSOLVE_GET_PRED_Q  <   0) Rcpp::stop("pred_Q has a  negative  value.");
   if (MRGSOLVE_GET_PRED_CL <=  0) Rcpp::stop("pred_CL has a 0 or negative  value.");
   
   double ka =  MRGSOLVE_GET_PRED_KA;
@@ -626,7 +674,7 @@ void odeproblem::copy_funs(const Rcpp::List& funs) {
   Inits = as_init_func(funs["main"]);
   Table = as_table_func(funs["table"]);
   Derivs = as_deriv_func(funs["ode"]);
-  Config = as_config_func(funs["config"]); 
+  Config = as_config_func(funs["config"]);
   
 }
 
@@ -646,4 +694,3 @@ void odeproblem::advan(int x) {
   }
   
 }
-

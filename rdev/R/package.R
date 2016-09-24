@@ -43,7 +43,7 @@
 ##'
 ##' @rdname mrgsolve_package
 ##' @docType package
-##' @useDynLib mrgsolve mrgsolve_DEVTRAN mrgsolve_TOUCH_FUNS mrgsolve_EXPAND_EVENTS
+##' @useDynLib mrgsolve mrgsolve_DEVTRAN mrgsolve_TOUCH_FUNS mrgsolve_EXPAND_EVENTS mrgsolve_QUICKSIM
 ##' @aliases mrgsolve
 ##' @examples
 ##'

@@ -402,28 +402,15 @@ tran_mrgsim <- function(x,
               altname(rename.Request,capt) ## Then captures
   )
   
-  dimnames(out$data) <- list(NULL, cnames)
+  dimnames(out[["data"]]) <- list(NULL, cnames)
   
   new("mrgsims",
       request=altname(rename.Request,request),
-      data=as.data.frame(out$data),
+      data=as.data.frame(out[["data"]]),
       outnames=altname(rename.Request,capt),
       mod=x,
       seed=as.integer(seed))
 }
-
-setGeneric("parin", function(x) standardGeneric("parin"))
-setMethod("parin", "mrgmod", function(x) {
-  list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
-       maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
-       digits=x@digits, tscale=x@tscale,
-       mindt=x@mindt, advan=x@advan)
-})
-
-
-
-
-
 
 
 

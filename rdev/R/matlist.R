@@ -3,7 +3,7 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
-##'
+
 ##' Manipulate \code{OMEGA} matrices.
 ##'
 ##' The primary function is \code{omat} that can be used to both get the \code{$OMEGA} matrices
@@ -73,8 +73,6 @@ setMethod("omat", "NULL", function(.x,...) {
     omat(list(),...)
 })
 
-
-
 ##' @export
 ##' @rdname omega
 setMethod("omat", "list", function(.x,...) {
@@ -84,7 +82,6 @@ setMethod("omat", "list", function(.x,...) {
 ##' @export
 ##' @rdname omega
 setMethod("omat", "omegalist", function(.x,...) {return(.x)})
-
 
 ##' @export
 ##' @rdname omega
@@ -105,10 +102,6 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
     as.matrix(mod(.x)@omega)
 })
 
-
-
-
-##'
 ##' Manipulate \code{SIGMA} matrices.
 ##'
 ##' The primary function is \code{smat} that can be used to both get the \code{$SIGMA} matrices
@@ -141,6 +134,7 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
 ##'
 ##'
 setGeneric("smat",function(.x,...) standardGeneric("smat"))
+
 ##' @export
 ##' @rdname sigma
 setMethod("smat", "missing", function(...) {
@@ -149,19 +143,19 @@ setMethod("smat", "missing", function(...) {
     smat(lapply(x,as.matrix))
 })
 
-
 ##' @export
 ##' @rdname sigma
 setMethod("smat", "matrix", function(.x,...,labels=list()) smat(c(list(.x),list(...)),labels=labels))
+
 ##' @export
 ##' @rdname sigma
 setMethod("smat", "list", function(.x,...) {
     create_matlist(.x,class="sigmalist",...)
 })
+
 ##' @export
 ##' @rdname sigma
 setMethod("smat", "sigmalist", function(.x,...) return(.x))
-
 
 ##' @export
 ##' @rdname sigma
@@ -174,13 +168,11 @@ setMethod("smat", "mrgmod", function(.x,...,make=FALSE,strict=TRUE) {
     as.matrix(.x@sigma)
 })
 
-
 ##' @export
 ##' @rdname sigma
 setMethod("smat", "NULL", function(.x,...) {
   smat(list(),...)
 })
-
 
 ##' @export
 ##' @rdname sigma
@@ -190,10 +182,6 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
     as.matrix(mod(.x)@sigma)
 })
 
-
-
-
-##'
 ##' Various functions for and properties of \code{matlist} objects.
 ##'
 ##'
@@ -206,6 +194,7 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 ##' @name matlist
 ##' @rdname matlist
 setGeneric("zero.re", function(.x,...) standardGeneric("zero.re"))
+
 ##' @export
 ##' @rdname matlist
 setMethod("zero.re", "mrgmod", function(.x,...) {
@@ -220,6 +209,7 @@ setMethod("zero.re", "mrgmod", function(.x,...) {
 ##' @export
 ##' @rdname matlist
 setGeneric("drop.re", function(.x,...) standardGeneric("drop.re"))
+
 ##' @export
 ##' @rdname matlist
 setMethod("drop.re", "mrgmod", function(.x,...) {
@@ -231,9 +221,11 @@ setMethod("drop.re", "mrgmod", function(.x,...) {
 
     return(.x)
 })
+
 ##' @export
 ##' @rdname matlist
 setMethod("as.list", "matlist", function(x, ...) x@data)
+
 ##' @export
 ##' @rdname matlist
 setMethod("as.matrix", "matlist", function(x,...) {
@@ -243,27 +235,24 @@ setMethod("as.matrix", "matlist", function(x,...) {
 ##' @export
 ##' @rdname matlist
 setMethod("names", "matlist", function(x) names(x@data))
+
 ##' @export
 ##' @rdname matlist
 setMethod("length", "matlist", function(x) length(x@data))
+
 ##' @export
 ##' @rdname matlist
 setMethod("labels", "matlist", function(object,...) {
   object@labels
 })
 
-
-
-
 ##' @export
 ##' @rdname matlist
 setMethod("dim", "matlist", function(x)  lapply(x@data, dim))
+
 ##' @export
 ##' @rdname matlist
 setMethod("nrow", "matlist", function(x) unlist(lapply(x@data, nrow)))
-
-
-
 
 ##' @export
 ##' @rdname matlist
@@ -293,7 +282,6 @@ showmatlist <- function(x,...) {
 }
 
 cumoffset <- function(x) {
-
     off <- sapply(as.list(x), nrow)
     if(length(off)==0) return(integer(0))
     ans <- cumsum(c(0,off[-length(off)]))

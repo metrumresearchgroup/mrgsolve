@@ -21,7 +21,7 @@ extern "C"{DL_FUNC tofun(SEXP a);}
 void Talk(std::string label, double value);
 void Talk(std::string label);
 void Talk(std::string label, int value);
-arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n, int seed);
+arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix& SIGMA, int seed);
 
 

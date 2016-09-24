@@ -40,6 +40,7 @@ NeedsCompilation: yes
 Collate:
     'RcppExports.R'
     'utils.R'
+    'package.R'
     'class_tgrid.R'
     'class_numericlist.R'
     'class_matlist.R'
@@ -73,9 +74,9 @@ Collate:
     'mrgindata.R'
     'mrgsims.R'
     'mrgsolve.R'
-    'package.R'
     'param.R'
     'print.R'
+    'qsim.R'
     'simtime.R'
     'update.R'
 RoxygenNote: 5.0.1

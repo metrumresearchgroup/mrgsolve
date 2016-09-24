@@ -1,6 +1,6 @@
 SUPERMATRIX <- function(x,keep_names=FALSE) {
   x <- .Call("mrgsolve_SUPERMATRIX",x,keep_names)
-  if(nrow(x) >0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
+  if(nrow(x) > 0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
   x
 }
 
