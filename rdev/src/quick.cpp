@@ -39,34 +39,35 @@ unsigned int timecol = 0;
   unsigned int cmtcol = 1;
   unsigned int evidcol = 2;
   unsigned int amtcol = 3;
-  unsigned int ratecol = 4;
 }
 // [[Rcpp::export]]
 Rcpp::NumericMatrix QUICKSIM(const Rcpp::List parin,
                              const Rcpp::NumericVector& param,
                              const Rcpp::NumericVector& init,
-                             const Rcpp::IntegerVector& capture,
+                             const Rcpp::IntegerVector& capturei,
                              const Rcpp::List& funs,
                              const Rcpp::NumericMatrix& data) {
   
-  odeproblem *prob  = new odeproblem(param, init, funs, capture.at(0));
+  const int capn = capturei.at(0);
+  
+  odeproblem *prob  = new odeproblem(param, init, funs, capn);
   
   prob->copy_parin(parin);
   
   const unsigned int neq = prob->neq();
   
-  Rcpp::NumericMatrix ans(data.nrow(),neq+1);
+  Rcpp::NumericMatrix ans(data.nrow(),neq+1+capn);
   
   for(int i = 0; i < neq; ++i) {
     prob->y_init(i,init[i]); 
   }
   
   prob->lsoda_init();
-  
-  int i = 0;
+
   int j = 0;
   double tto =0;
   double tfrom = data(0,timecol);
+  int capstart = 1 + neq;
   
   for(int i = 0; i < data.nrow(); ++i) {
     
@@ -79,18 +80,22 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List parin,
       prob->lsoda_init();
     }
     
+    prob->table_call();
+    
     ans(i,0) = data(i,timecol);
     
     for(j = 0; j < neq; ++j) ans(i,1+j) = prob->y(j);
+    
+    for(j = 0; j < capn; j++) {
+      ans(i,capstart+j) = prob->capture(capturei[1+j]); 
+    }
     
     tfrom  = tto;
   }
   
   // Clean up
   delete prob;
-
   return ans;
-  
 }
 
 

@@ -25,7 +25,6 @@ struct databox {
   const dvec EPS;
   dvec ETA;
   bool SYSTEMOFF;
-  bool solving;
   dvec mtime;
   const double ID;
   bool CFONSTOP;

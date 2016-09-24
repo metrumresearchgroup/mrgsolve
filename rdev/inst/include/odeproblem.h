@@ -41,7 +41,6 @@ struct databox {
   dvec EPS;
   dvec ETA;
   bool SYSTEMOFF;
-  bool solving;
   dvec mtime;
   double ID;
   bool CFONSTOP;
@@ -93,9 +92,6 @@ public:
              int n_capture_);
 
   virtual ~odeproblem();
-
-  bool solving(){return d.solving;}
-  void solving(bool value){d.solving=value;}
 
   void advance(double tfrom, double tto);
 

@@ -63,11 +63,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   
-  // Warning if user fiddled with mindt
-  if(mindt > 1E-4) {
-    Rcpp::Rcout << "Warning: mindt may be too large (" << mindt << ")" << std::endl;
-  }
-  
   // Create data objects from data and idata
   dataobject *dat = new dataobject(data,parnames);
   dat->map_uid();
@@ -134,8 +129,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const unsigned int n_tran_carry = tran_carry.size();
   
-  //const svec tablenames = Rcpp::as<svec> (parin["table_names"]);
-  //const unsigned int ntable = tablenames.size();
+  // Captures
   const unsigned int n_capture  = capture.size()-1;
   
   
@@ -260,28 +254,29 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
   const unsigned int idata_carry_start = data_carry_start + n_data_carry;
   const unsigned int req_start = idata_carry_start+n_idata_carry;
-  //const unsigned int table_start = req_start+nreq;
-  //const unsigned int capture_start = table_start+ntable;
   const unsigned int capture_start = req_start+nreq;
   
   // SIMULATE ETA AND EPS
   //   - Need NN for this
   const unsigned int neta = OMEGA.nrow();
+  
   arma::mat eta;
+  
   if(neta > 0) {
     eta = MVGAUSS(OMEGA,NID);
     prob->neta(neta);
   }
   
   const unsigned int neps = SIGMA.nrow();
+  
   arma::mat eps;
+  
   if(neps > 0) {
     eps = MVGAUSS(SIGMA, NN);
     prob->neps(neps);
   }
   
   prob->init_call_record(time0);
-  
   
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
@@ -401,13 +396,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double maxtime = 0;
   double biofrac = 1.0;
   int this_idata_row = 0;
-  size_t a_size = a.size();
+  
+  // i is indexing the subject, j is the record
   
   // LOOP ACROSS IDS:
   // tgrid observations have generic ID
   // We must first figure out the ID we are working with
   // and assign in the object
-  for(size_t i=0; i < a_size; ++i) {
+  for(size_t i=0; i < a.size(); ++i) {
     
     tfrom = a[i][0]->time();
     
@@ -422,8 +418,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     if(i==0) prob->newind(0);
     
     // Copy eta/eps values for this ID
-    for(j=0; j < neta; ++j) prob->eta(j,eta(i,j));
-    for(j=0; j < neps; ++j) prob->eps(j,eps(crow,j));
+    for(k=0; k < neta; ++k) prob->eta(k,eta(i,k));
+    for(k=0; k < neps; ++k) prob->eps(k,eps(crow,k));
     
     // Refresh parameters in data:
     dat->reload_parameters(inpar,prob);
@@ -455,15 +451,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->table_call();
     
     // LOOP ACROSS EACH RECORD for THIS ID:
-    //size_t ai_size = a[i].size();
     for(size_t j=0; j < a[i].size(); ++j) {
       
-      if(j==0) {
-        prob->solving(true);
-      } else {
-        prob->newind(2);
-      }
-      
+      if(j!=0) prob->newind(2);
+    
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
@@ -474,9 +465,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->CFONSTOP()) {
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
-            //for(int i=0; i < ntable; ++i)    ans(crow,(i+table_start  )) = prob->table(tablenames[i]);
-            for(int i=0; i < n_capture; ++i) ans(crow,(i+capture_start)) = prob->capture(capture[i+1]);
-            for(int k=0; k < nreq; ++k)      ans(crow,(k+req_start    )) = prob->y(request[k]);
+            for(k=0; k < n_capture; ++k) ans(crow,(k+capture_start)) = prob->capture(capture[k+1]);
+            for(k=0; k < nreq; ++k)      ans(crow,(k+req_start)) = prob->y(request[k]);
           } else {
             ans(crow,0) = NA_REAL;
           }
@@ -489,8 +479,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // we come across a record from the data set
       if(this_rec->from_data()) {
         dat->copy_parameters(this_rec -> pos(), prob);
-        // if t2advance
-        //dat->copy_parameters(this_rec->pos() + t2advance, prob);
       }
       
       tto = this_rec->time();
@@ -499,6 +487,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // If tto is too close to tfrom, set tto to tfrom
       // dt is never negative; dt will never be < mindt when mindt==0
       if((dt > 0.0) && (dt < mindt)) { // don't bother if dt==0
+        tto = tfrom;
         if(debug) {
           Rcpp::Rcout << "" << std::endl;
           Rcpp::Rcout << "Two records are too close to each other:" <<  std::endl;
@@ -509,20 +498,18 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           Rcpp::Rcout << "  pos: " << this_rec->pos() << std::endl;
           Rcpp::Rcout << "  id: "  << this_rec->id() << std::endl;
         }
-        tto = tfrom;
       }
       
       
       // Only copy in a new eps value if we are actually advancing in time:
       if((tto > tfrom) && (crow < NN)) {
-        for(int k = 0; k < neps; ++k) {
+        for(k = 0; k < neps; ++k) {
           prob->eps(k,eps(crow,k));
         }
       }
       
       prob->evid(this_rec->evid());
       prob->init_call_record(tto);
-      //prob->INITSOLV();
       
       // Schedule ADDL and infusion end times
       if((this_rec->is_event()) && (this_rec->from_data())) {
@@ -611,14 +598,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // Write out ID and time
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
-        
-        // Write out tabled items
-        // k=0;
-        // for(int i=0; i < ntable; ++i) {
-        //   ans(crow,k+table_start) = prob->table(tablenames[i]);
-        //   ++k;
-        // }
-        
+
         // Write out captured items
         k=0;
         for(int i=0; i < n_capture; ++i) {
@@ -627,7 +607,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         // Write out requested compartments
-        for(int k=0; k < nreq; ++k) {
+        for(k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob->y(request[k]);
         }
         

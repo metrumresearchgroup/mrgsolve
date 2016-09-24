@@ -41,7 +41,7 @@ EXPAND_EVENTS <- function(idcol_, events, id) {
     .Call('mrgsolve_EXPAND_EVENTS', PACKAGE = 'mrgsolve', idcol_, events, id)
 }
 
-QUICKSIM <- function(parin, param, init, capture, funs, data) {
-    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, capture, funs, data)
+QUICKSIM <- function(parin, param, init, capturei, funs, data) {
+    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, capturei, funs, data)
 }
 

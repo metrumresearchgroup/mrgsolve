@@ -16,8 +16,6 @@ arma::mat OMGADEF(1,1,arma::fill::zeros);
 #define MRGSOLVE_MAX_SS_ITER 1000
 
 
-// dummy functions that do nothing
-
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
                        Rcpp::List funs,
@@ -26,14 +24,13 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   int npar_ = int(param.size());
   int neq_ = int(init.size());
   
-  // R0 is the actual current infusion rate
-  // R0.assign(neq_,0.0);
   R0  = new double[neq_]();
   
   infusion_count.assign(neq_,0);
   
   // R holds the value for user input rates via _R(n)
   R.assign(neq_,0.0);
+  
   // D holds the value of user input durations
   D.assign(neq_,0.0);
   
@@ -53,14 +50,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   d.EPS.assign(50,0.0);
   d.ETA.resize(50,0.0);
-  
-  d.solving = false;
-  //d.INITSOLV = false;
   d.CFONSTOP = false;
-  //d.XDOSE = 0.0;
   d.omatrix = static_cast<void*>(&OMGADEF);
-  //Tablenames.clear();
-  //Tabledata.clear();
+  
   Advan = 13;
   pred.assign(5,0.0);
   
