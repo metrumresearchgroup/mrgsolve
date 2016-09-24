@@ -5,13 +5,11 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/pointer_cast.hpp>
-#include <iostream>
 #include <string>
 #include "mrgsolve.h"
 #include "odeproblem.h"
 #include "pkevent.h"
 #include "dataobject.h"
-
 #include "RcppInclude.h"
 
 #define CRUMP(a) Rcpp::stop(a)
@@ -51,12 +49,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    Rcpp::NumericMatrix& OMEGA,
                    Rcpp::NumericMatrix& SIGMA) {
   
-  
-  
   const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
-  const bool debug            = Rcpp::as<bool>   (parin["debug"]  );
-  const int digits            = Rcpp::as<int>    (parin["digits"] );
-  const double tscale         = Rcpp::as<double> (parin["tscale"] );
+  const bool debug            = Rcpp::as<bool>   (parin["debug"]);
+  const int digits            = Rcpp::as<int>    (parin["digits"]);
+  const double tscale         = Rcpp::as<double> (parin["tscale"]);
   const bool obsonly          = Rcpp::as<bool>   (parin["obsonly"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
@@ -78,12 +74,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int NID = dat->nid();
   const int nidata = idat->nrow();
   
-  int j=0,k=0;
+  int j = 0, k = 0;
   const double time0 = 0.0;
   int crow = 0; 
   size_t h = 0;
   
-  obsaug  = obsaug & (data.nrow() > 0);
+  obsaug = obsaug & (data.nrow() > 0);
   
   bool put_ev_first = false;
   bool addl_ev_first = true;
@@ -97,7 +93,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     break;
   case 3:
     put_ev_first = true;
-    addl_ev_first  = true;
+    addl_ev_first = true;
     break;
   case 4:
     put_ev_first = true;
@@ -113,7 +109,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Columns from the data set to carry:
   Rcpp::CharacterVector data_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
-  Rcpp::IntegerVector data_carry =  dat->get_col_n(data_carry_);
+  const Rcpp::IntegerVector data_carry =  dat->get_col_n(data_carry_);
   const unsigned int n_data_carry = data_carry.size();
   
   // Columns from the idata set to carry:
@@ -131,7 +127,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Captures
   const unsigned int n_capture  = capture.size()-1;
-  
   
   // Create odeproblem object  
   odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
@@ -151,7 +146,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Extract data records from the data set
   // Track the number of observations and events
   unsigned int obscount = 0;
-  unsigned int evcount  = 0;
+  unsigned int evcount = 0;
   dat->get_records(a, NID, neq, obscount, evcount, obsonly, debug);
   
   // Observations from stime will always come after events;
@@ -200,14 +195,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
     std::vector<std::vector<rec_ptr> > designs;
+    
     designs.reserve(tgridn.size());
+    
     for(size_t i = 0; i < tgridn.size(); ++i) {
       std::vector<rec_ptr> z;
+    
       z.reserve(tgridn[i]);
+    
       for(int j = 0; j < tgridn[i]; ++j) { 
         rec_ptr obs(new datarecord(0,tgrid(j,i),0,nextpos,0));
         z.push_back(obs); 
       }
+      
       designs.push_back(z);
     }
     
@@ -365,12 +365,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         if(carry_from_data) {
           if(lastpos >=0) {
-            for(k=0; k < n_data_carry; ++k) ans(crow, data_carry_start+k)  = data(lastpos,data_carry[k]);
+            for(k=0; k < n_data_carry; ++k) {
+              ans(crow, data_carry_start+k)  = data(lastpos,data_carry[k]);
+            }
           } else {
-            for(k=0; k < n_data_carry; ++k) ans(crow, data_carry_start+k)  = data(dat->start(j),data_carry[k]);
+            for(k=0; k < n_data_carry; ++k) {
+              ans(crow, data_carry_start+k)  = data(dat->start(j),data_carry[k]);
+            }
           }
-        }
-        // Increment current row:
+        } // end carry_from_data
         ++crow;
       }
     }
@@ -465,15 +468,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->CFONSTOP()) {
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
-            for(k=0; k < n_capture; ++k) ans(crow,(k+capture_start)) = prob->capture(capture[k+1]);
-            for(k=0; k < nreq; ++k)      ans(crow,(k+req_start)) = prob->y(request[k]);
+            for(k=0; k < n_capture; ++k) {
+              ans(crow,(k+capture_start)) = prob->capture(capture[k+1]);
+            }
+            for(k=0; k < nreq; ++k) {
+              ans(crow,(k+req_start)) = prob->y(request[k]);
+            }
           } else {
             ans(crow,0) = NA_REAL;
           }
           ++crow;
         }
         continue;
-      }
+      } // End if(systemoff)
       
       // For this ID, we already have parameters from the first row; only update when
       // we come across a record from the data set
@@ -488,16 +495,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // dt is never negative; dt will never be < mindt when mindt==0
       if((dt > 0.0) && (dt < mindt)) { // don't bother if dt==0
         tto = tfrom;
-        if(debug) {
-          Rcpp::Rcout << "" << std::endl;
-          Rcpp::Rcout << "Two records are too close to each other:" <<  std::endl;
-          Rcpp::Rcout << "  evid: " << this_rec->evid() << std::endl;
-          Rcpp::Rcout << "  tfrom: " << tfrom << std::endl;
-          Rcpp::Rcout << "  tto: " << tto << std::endl;
-          Rcpp::Rcout << "  dt:  " << tto - tfrom << std::endl;
-          Rcpp::Rcout << "  pos: " << this_rec->pos() << std::endl;
-          Rcpp::Rcout << "  id: "  << this_rec->id() << std::endl;
-        }
       }
       
       

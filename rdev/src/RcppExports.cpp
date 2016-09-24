@@ -28,22 +28,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// TOUCH_FUNS
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, const Rcpp::NumericVector& linit, int Neta, int Neps, const Rcpp::CharacterVector& capture, const Rcpp::List& funs);
-RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type lparam(lparamSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type linit(linitSEXP);
-    Rcpp::traits::input_parameter< int >::type Neta(NetaSEXP);
-    Rcpp::traits::input_parameter< int >::type Neps(NepsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type capture(captureSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
-    rcpp_result_gen = Rcpp::wrap(TOUCH_FUNS(lparam, linit, Neta, Neps, capture, funs));
-    return rcpp_result_gen;
-END_RCPP
-}
 // MVGAUSS
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 RcppExport SEXP mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {
@@ -138,6 +122,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type events(eventsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type id(idSEXP);
     rcpp_result_gen = Rcpp::wrap(EXPAND_EVENTS(idcol_, events, id));
+    return rcpp_result_gen;
+END_RCPP
+}
+// TOUCH_FUNS
+Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, const Rcpp::NumericVector& linit, int Neta, int Neps, const Rcpp::CharacterVector& capture, const Rcpp::List& funs);
+RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type lparam(lparamSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type linit(linitSEXP);
+    Rcpp::traits::input_parameter< int >::type Neta(NetaSEXP);
+    Rcpp::traits::input_parameter< int >::type Neps(NepsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type capture(captureSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
+    rcpp_result_gen = Rcpp::wrap(TOUCH_FUNS(lparam, linit, Neta, Neps, capture, funs));
     return rcpp_result_gen;
 END_RCPP
 }

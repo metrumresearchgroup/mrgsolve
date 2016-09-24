@@ -5,10 +5,6 @@ DEVTRAN <- function(parin, inpar, parnames, init, cmtnames, capture, funs, data,
     .Call('mrgsolve_DEVTRAN', PACKAGE = 'mrgsolve', parin, inpar, parnames, init, cmtnames, capture, funs, data, idata, OMEGA, SIGMA)
 }
 
-TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs) {
-    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs)
-}
-
 MVGAUSS <- function(OMEGA_, n) {
     .Call('mrgsolve_MVGAUSS', PACKAGE = 'mrgsolve', OMEGA_, n)
 }
@@ -39,6 +35,10 @@ from_to <- function(a, b, ai, bi) {
 
 EXPAND_EVENTS <- function(idcol_, events, id) {
     .Call('mrgsolve_EXPAND_EVENTS', PACKAGE = 'mrgsolve', idcol_, events, id)
+}
+
+TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs) {
+    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs)
 }
 
 QUICKSIM <- function(parin, param, init, capturei, funs, data) {

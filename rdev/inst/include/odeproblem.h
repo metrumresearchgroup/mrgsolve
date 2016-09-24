@@ -5,7 +5,7 @@
 #ifndef ODEPROBLEM_H
 #define ODEPROBLEM_H
 #include <math.h>
-#include <iostream>
+//#include <iostream>
 #include <vector>
 #include <string>
 #include "odepack_dlsoda.h"
@@ -106,10 +106,6 @@ public:
 
   void table_call();
   void table_init_call();
-
-  //int ntable(){return Tabledata.size();}
-  //double table(std::string key){return Tabledata[key];}
-  //sd_map& table() {return Tabledata;}
 
   //void set_omatrix(Rcpp::NumericMatrix* x_);
   void pass_omega(arma::mat*);
@@ -252,9 +248,6 @@ protected:
   // Configure
   config_func* Config;
 
-  //sd_map Tabledata;
-  //std::vector<std::string> Tablenames;
-
   //! Compartment on/off
   std::vector<char> On;
   databox d;
@@ -279,6 +272,14 @@ double PolyExp(const double& x,
                const dvec& a,
                const dvec& alpha,
                const int n);
+
+
+
+Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+                      const Rcpp::NumericVector& linit,
+                      const Rcpp::CharacterVector& capture,
+                      const Rcpp::List& funs);
+
 
 
 #endif

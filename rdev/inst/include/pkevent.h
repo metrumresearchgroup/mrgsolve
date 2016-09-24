@@ -6,10 +6,11 @@
 
 #include <boost/shared_ptr.hpp>
 #include <math.h>
-#include <iostream>
+//#include <iostream>
 #include <vector>
 #include "datarecord.h"
 #include "mrgsolv.h"
+
 
 class pkevent;
 class odeproblem;

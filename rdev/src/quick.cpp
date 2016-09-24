@@ -2,10 +2,6 @@
 // To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-
-#include <iostream>
-#include <string>
-#include "mrgsolve.h"
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
@@ -35,7 +31,7 @@
  */
 
 namespace {
-unsigned int timecol = 0;
+  unsigned int timecol = 0;
   unsigned int cmtcol = 1;
   unsigned int evidcol = 2;
   unsigned int amtcol = 3;

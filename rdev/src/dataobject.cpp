@@ -7,7 +7,6 @@
 #include "dataobject.h"
 #include "mrgsolve.h"
 #include "pkevent.h"
-//#include <numeric>
 #include "mrgsolv.h"
 
 

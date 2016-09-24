@@ -5,7 +5,7 @@
 #include "pkevent.h"
 #include "RcppInclude.h"
 #include "odeproblem.h"
-#include "mrgsolve.h"
+//#include "mrgsolve.h"
 
 #define N_SS 1000
 #define CRIT_DIFF_SS 1E-10
@@ -253,8 +253,8 @@ void pkevent::steady_infusion(odeproblem *prob) {
 
 
 
-bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
-bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
+inline bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
+inline bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
 
 void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
   
@@ -380,9 +380,7 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
   b.erase(unique(b.begin(), b.end()), b.end());
   
   std::size_t i = 0;
-  
-  //  if(debug) Rcpp::Rcout <<std::endl<< "Adding phantom observation records from mtime " << std::endl;
-  
+ 
   bool dropmin = true;
   bool dropmax = true;
   

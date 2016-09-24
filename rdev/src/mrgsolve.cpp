@@ -4,11 +4,8 @@
 
 #include "RcppInclude.h"
 #include "mrgsolve.h"
-#include "odeproblem.h"
-#include "pkevent.h"
 #include <vector>
 #include <string>
-#include "dataobject.h"
 #include "boost/tokenizer.hpp"
 
 /**
@@ -84,48 +81,6 @@ void neg_istate(int istate) {
 }
 
 
-/**
- * Call the $MAIN function from a model object.
- * 
- * @param lparam model parameters
- * @param linit model initial contitions
- * @param Neta number of rows in OMEGA
- * @param Neps number of rows in SIGMA
- * @param capture vector of capture names
- * @param funs the model funset
- * @return list with updated initial conditions, number of paramerters,
- * and number of equations
- * 
- */
-// [[Rcpp::export]]
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
-                      const Rcpp::NumericVector& linit,
-                      int Neta, int Neps,
-                      const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs) {
-  
-  Rcpp::List ans;
-  
-  odeproblem* prob  = new odeproblem(lparam, linit, funs, capture.size());
-  prob->neta(Neta);
-  prob->neps(Neps);
-  
-  double time = 0;
-  prob->time(time);
-  prob->newind(0);
-  
-  prob->init_call(time);
- 
-  Rcpp::NumericVector init_val(linit.size());
-  
-  for(int i=0; i < (prob->neq()); ++i) init_val[i] = prob->init(i);
-  
-  ans["init"] = init_val;
-  ans["npar"] = prob->npar();
-  ans["neq"] = prob->neq();
-  delete prob;
-  return(ans);
-}
 
 
 /** 

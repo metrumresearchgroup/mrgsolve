@@ -7,7 +7,7 @@
 //#include <numeric>
 #include "RcppInclude.h"
 #include "odeproblem.h"
-#include "pkevent.h"
+//#include "pkevent.h"
 
 Rcpp::NumericMatrix OMEGADEF(1,1);
 arma::mat OMGADEF(1,1,arma::fill::zeros);
@@ -68,9 +68,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
 }
 
-/** \example solve.cpp
- * This is an example of how to use the odeproblem class.
- */
 
 /**
  @brief Destructor for odeproblem object
@@ -78,7 +75,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  Upon object construction, odeproblem dynamically allocates six arrays.  These arrays are "deleted" upon destruction.
  
  @return Void
- @author Kyle T. Baron
  @date January, 2014
  
  */
@@ -98,6 +94,15 @@ void odeproblem::neps(int n) {
 }
 
 
+
+/** 
+ * Assigns values to both the compartment and the 
+ * vector of initial conditions.
+ * 
+ * @param pos the compartment number (C++ indexing)
+ * @param value the value for the compartment
+ * 
+ */
 void odeproblem::y_init(int pos, double value) {
   this->y(pos,value);
   Init_value[pos] = value;
@@ -123,6 +128,13 @@ void odeproblem::add_rates(double* ydot) {
   }
 }
 
+
+/**
+ * Call $MAIN to get the initial conditions.
+ * 
+ * @param time what time to assume for the calculation.
+ * 
+ */
 void odeproblem::init_call(const double& time) {
   
   d.time = time;
@@ -143,6 +155,14 @@ void odeproblem::init_call(const double& time) {
   }
 }
 
+
+/**
+ * Call $MAIN with the dummy initial condition vector.
+ * 
+ * @param time the time to assume when making the call.
+ * 
+ * 
+ */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
   
@@ -157,13 +177,16 @@ void odeproblem::init_call_record(const double& time) {
               this->get_pred());
 }
 
+
+/** Call $TABLE.
+ * 
+ */
 void odeproblem::table_call() {
   this->Table(this->y(),
               this->init(),
               this->param(),
               this->fbio(),
               this->rate(),
-              //this->table(),
               this->get_d(),
               this->get_pred(),
               this->get_capture());
@@ -174,9 +197,6 @@ void odeproblem::table_init_call() {
   d.newind = 0;
   d.evid = 0;
   this->table_call();
-  //for(tablemap::iterator it = Tabledata.begin(); it != Tabledata.end(); ++it) {
-  //  Tablenames.push_back(it->first);
-  //}
 }
 
 void odeproblem::rate_reset() {
@@ -236,11 +256,6 @@ void odeproblem::off(unsigned short int eq_n) {
   this->y(eq_n,0.0);
 }
 
-// void odeproblem::INITSOLV() {
-//   if(!d.INITSOLV) return;
-//   d.INITSOLV=false;
-//   this->lsoda_init();
-// }
 
 void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);
@@ -574,7 +589,8 @@ double PolyExp(const double& x,
     }
     
     else if(!ss) {
-      assert(xinf <= tau); //and other case later, says Bill
+      if(xinf <= tau) Rcpp::stop("xinf <= tau in PolyExp");
+      //assert(xinf <= tau); //and other case later, says Bill
       dx=x-trunc(x/tau)*tau;
       nlntv=trunc(x/tau)+1;
       if(dx<=xinf) {
@@ -595,7 +611,7 @@ double PolyExp(const double& x,
     }
     
     else {
-      assert(xinf <= tau);
+      if(xinf <= tau) Rcpp::stop("xinf <= tau in PolyExp");
       dx = x - trunc(x/tau)*tau;
       nlntv = trunc(x/tau)+1;
       if (dx <= xinf) {
@@ -687,4 +703,48 @@ void odeproblem::advan(int x) {
     alpha.assign(3,0.0);
   }
   
+}
+
+
+/**
+ * Call the $MAIN function from a model object.
+ * 
+ * @param lparam model parameters
+ * @param linit model initial contitions
+ * @param Neta number of rows in OMEGA
+ * @param Neps number of rows in SIGMA
+ * @param capture vector of capture names
+ * @param funs the model funset
+ * @return list with updated initial conditions, number of paramerters,
+ * and number of equations
+ * 
+ */
+// [[Rcpp::export]]
+Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+                      const Rcpp::NumericVector& linit,
+                      int Neta, int Neps,
+                      const Rcpp::CharacterVector& capture,
+                      const Rcpp::List& funs) {
+  
+  Rcpp::List ans;
+  
+  odeproblem* prob  = new odeproblem(lparam, linit, funs, capture.size());
+  prob->neta(Neta);
+  prob->neps(Neps);
+  
+  double time = 0;
+  prob->time(time);
+  prob->newind(0);
+  
+  prob->init_call(time);
+  
+  Rcpp::NumericVector init_val(linit.size());
+  
+  for(int i=0; i < (prob->neq()); ++i) init_val[i] = prob->init(i);
+  
+  ans["init"] = init_val;
+  ans["npar"] = prob->npar();
+  ans["neq"] = prob->neq();
+  delete prob;
+  return(ans);
 }
