@@ -27,6 +27,7 @@ VERSION <- packageDescription("mrgsolve")$Version
 tgrid_matrix <- function(x) {
   n <- length(x)
   if(n==1) return(matrix(x[[1]],ncol=1))
+  x <- lapply(x,stime)
   mat <- matrix(ncol=n,nrow=max(sapply(x,length)))
   for(i in seq_along(x)) {
     mat[seq_along(x[[i]]),i] <- x[[i]]

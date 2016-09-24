@@ -254,26 +254,28 @@ void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);
 }
 
-void F77_NAME(dlsoda) (
-    main_deriv_func *derivs,
-    int             *neq,
-    double          *y,
-    const double    *tfrom,
-    const double    *tto,
-    int             *itol,
-    double          *rtol,
-    double          *atol,
-    int             *itask,
-    int             *istate,
-    int             *iopt,
-    double          *rwork,
-    int             *lrwork,
-    int             *iwork,
-    int             *liwork,
-    int             *dum, // dummy jacobian
-    int             *jt, // jacobian type
-    odeproblem      *prob
-);
+extern "C" {
+  void F77_NAME(dlsoda) (
+      main_deriv_func *derivs,
+      int             *neq,
+      double          *y,
+      const double    *tfrom,
+      const double    *tto,
+      int             *itol,
+      double          *rtol,
+      double          *atol,
+      int             *itask,
+      int             *istate,
+      int             *iopt,
+      double          *rwork,
+      int             *lrwork,
+      int             *iwork,
+      int             *liwork,
+      int             *dum, // dummy jacobian
+      int             *jt, // jacobian type
+      odeproblem      *prob
+  );
+}
 
 void odeproblem::advance(double tfrom, double tto) {
   
