@@ -108,10 +108,17 @@ void odeproblem::y_init(int pos, double value) {
   Init_value[pos] = value;
 }
 
-
+/** Derivative function that gets called by the solver. 
+ * 
+ * @param neq number of equations
+ * @param t solver time
+ * @param y current state
+ * @param ydot left hand side of differential equations
+ * @param prob an odeproblem object
+ * 
+ * 
+ */
 void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
-  
-  // Call derivs:
   (prob->derivs())(
       t,
       y,
@@ -132,7 +139,7 @@ void odeproblem::add_rates(double* ydot) {
 /**
  * Call $MAIN to get the initial conditions.
  * 
- * @param time what time to assume for the calculation.
+ * @param time the time to assume for the calculation
  * 
  */
 void odeproblem::init_call(const double& time) {
@@ -286,7 +293,7 @@ extern "C" {
 
 void odeproblem::advance(double tfrom, double tto) {
   
-  if(Neq <= 0) return;
+  if(Neq == 0) return;
   
   if(Advan != 13) {
     if((Advan==2) | (Advan==1)) {
@@ -306,7 +313,8 @@ void odeproblem::advance(double tfrom, double tto) {
   F77_CALL(dlsoda)(
       &main_derivs,
       &Neq,
-      this->y(),
+      //this->y(),
+      Y,
       &tfrom,
       &tto,
       &xitol,
@@ -315,9 +323,11 @@ void odeproblem::advance(double tfrom, double tto) {
       &xitask,
       &xistate,
       &xiopt,
-      this ->rwork(),
+      //this ->rwork(),
+      xrwork,
       &xlrwork,
-      this->iwork(),
+      //this->iwork(),
+      xiwork,
       &xliwork,
       &Neq,
       &xjt,

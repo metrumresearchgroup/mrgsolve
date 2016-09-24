@@ -259,18 +259,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // SIMULATE ETA AND EPS
   //   - Need NN for this
   const unsigned int neta = OMEGA.nrow();
-  
   arma::mat eta;
-  
   if(neta > 0) {
     eta = MVGAUSS(OMEGA,NID);
     prob->neta(neta);
   }
   
   const unsigned int neps = SIGMA.nrow();
-  
   arma::mat eps;
-  
   if(neps > 0) {
     eps = MVGAUSS(SIGMA, NN);
     prob->neps(neps);
@@ -456,7 +452,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // LOOP ACROSS EACH RECORD for THIS ID:
     for(size_t j=0; j < a[i].size(); ++j) {
       
-      if(j!=0) prob->newind(2);
+      if(j !=0 ) prob->newind(2);
     
       rec_ptr this_rec = a[i][j];
       
@@ -496,7 +492,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if((dt > 0.0) && (dt < mindt)) { // don't bother if dt==0
         tto = tfrom;
       }
-      
       
       // Only copy in a new eps value if we are actually advancing in time:
       if((tto > tfrom) && (crow < NN)) {

@@ -256,6 +256,20 @@ void pkevent::steady_infusion(odeproblem *prob) {
 inline bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
 inline bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
 
+
+/** 
+ * Schedule out doses.  If the dose was an infusion, schedule the 
+ * off infusion event.  If the dose included additional doses, 
+ * create those events and add them to the stack.  No doses
+ * will be scheduled beyond the maximum time for that individual.
+ * 
+ * @param thisi the record stack for this individual
+ * @param maxtime the last time already in the record for the individual
+ * @param put_ev_first logical; if true, the position of the event is -600; 
+ * otherwise, it is beyond the last record of the stack.  But records
+ * are always sorted first by time, then by position.
+ * 
+ */
 void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
