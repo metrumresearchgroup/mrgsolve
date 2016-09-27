@@ -198,15 +198,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     designs.reserve(tgridn.size());
     
     for(size_t i = 0; i < tgridn.size(); ++i) {
+      
       std::vector<rec_ptr> z;
-    
       z.reserve(tgridn[i]);
     
       for(int j = 0; j < tgridn[i]; ++j) { 
         rec_ptr obs(new datarecord(0,tgrid(j,i),0,nextpos,0));
         z.push_back(obs); 
       }
-      
       designs.push_back(z);
     }
     
@@ -226,14 +225,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       for(h=0; h < n; h++) {
         //rec_ptr obs(new datarecord(0,tgrid(h,tgridi[j]),0,nextpos,id));
-        (*it).push_back(designs.at(tgridi[j]).at(h));
+        it->push_back(designs.at(tgridi[j]).at(h));
         ++obscount;
       } // done adding stimes;
       
       for(h=0; h < m; h++) {
         rec_ptr obs(new datarecord(0,ptimes[h], 0, nextpos, id));
         obs->output(false);
-        (*it).push_back(obs);
+        it->push_back(obs);
       }
       // sort the records by time and original position 
       std::sort(it->begin(), it->end(), CompByTimePosRec);
@@ -339,7 +338,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         idatarow = idat->get_idata_row(dat->get_uid(j));
       }
       
-      size_t this_n = (*it).size();
+      size_t this_n = it->size();
       
       for(size_t i = 0; i < this_n; ++i) {
         
@@ -474,7 +473,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // For this ID, we already have parameters from the first row; only update when
       // we come across a record from the data set
       if(this_rec->from_data()) {
-        dat->copy_parameters(this_rec -> pos(), prob);
+        dat->copy_parameters(this_rec->pos(), prob);
       }
       
       tto = this_rec->time();

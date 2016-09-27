@@ -50,6 +50,7 @@ public:
   void get_records(recstack& a, int NID, unsigned int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
   void check_idcol(dataobject *data);
   double get_value(int row, int col) {return Data(row,col);}
+  double get_id_value(int row) {return Data(row,Idcol);}
   Rcpp::IntegerVector get_col_n(const Rcpp::CharacterVector& what);
 
 

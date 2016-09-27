@@ -35,11 +35,11 @@
 class odeproblem;
 
 struct databox {
+  dvec ETA;
+  dvec EPS;
   unsigned int newind;
   double time;
   int evid;
-  dvec EPS;
-  dvec ETA;
   bool SYSTEMOFF;
   dvec mtime;
   double ID;

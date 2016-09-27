@@ -372,7 +372,6 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
         //evoff->id(Id);
         //evoff->pos(-300);
         evoff->output(false);
-        
         thisi.push_back(evoff);
       }
     }
