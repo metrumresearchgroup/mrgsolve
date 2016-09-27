@@ -9,7 +9,11 @@ qsim(x, e, idata, stime)
 \arguments{
 \item{x}{model object}
 
-\item{data}{simulation skeleton}
+\item{e}{event object}
+
+\item{idata}{individual data set}
+
+\item{stime}{a \code{\link{tgrid}} object or any object with \code{\link{stime}} method}
 }
 \description{
 A quick simulation function.
