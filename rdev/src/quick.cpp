@@ -31,66 +31,74 @@
  */
 
 namespace {
-  unsigned int timecol = 0;
-  unsigned int cmtcol = 1;
-  unsigned int evidcol = 2;
-  unsigned int amtcol = 3;
+  unsigned int timecol = 1;
+  unsigned int cmtcol  = 2;
+  unsigned int evidcol = 3;
+  unsigned int amtcol  = 4;
 }
 // [[Rcpp::export]]
-Rcpp::NumericMatrix QUICKSIM(const Rcpp::List parin,
+Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
                              const Rcpp::NumericVector& param,
                              const Rcpp::NumericVector& init,
+                             const Rcpp::NumericMatrix& data,
+                             const Rcpp::NumericMatrix& idata,
                              const Rcpp::IntegerVector& capturei,
-                             const Rcpp::List& funs,
-                             const Rcpp::NumericMatrix& data) {
+                             const Rcpp::List& funs) {
   
   const int capn = capturei.at(0);
   
-  odeproblem *prob  = new odeproblem(param, init, funs, capn);
+  odeproblem prob(param, init, funs, capn);
   
-  prob->copy_parin(parin);
+  prob.copy_parin(parin);
   
-  const unsigned int neq = prob->neq();
+  double NN = data.nrow() * idata.nrow();
   
-  Rcpp::NumericMatrix ans(data.nrow(),neq+1+capn);
+  const unsigned int neq = prob.neq();
   
-  for(int i = 0; i < neq; ++i) {
-    prob->y_init(i,init[i]); 
-  }
+  Rcpp::NumericMatrix ans(NN,neq+1+capn);
   
-  prob->lsoda_init();
-
-  int j = 0;
   double tto =0;
   double tfrom = data(0,timecol);
   int capstart = 1 + neq;
+  int crow = 0;
+  int k; 
   
-  for(int i = 0; i < data.nrow(); ++i) {
+  // Simulate each individual
+  for(int i = 0; i < idata.nrow(); ++i) {
     
-    tto = data(i,timecol);
-    
-    prob->advance(tfrom,tto);
-    
-    if(data(i,evidcol)==1) {
-      prob-> y(data(i,cmtcol)-1,data(i,amtcol) + prob->y(data(i,cmtcol)-1));
-      prob->lsoda_init();
+    for(k = 0; k < neq; ++k) {
+      prob.y_init(k,init[k]); 
     }
+    prob.init_call(tto);
+    prob.lsoda_init();
     
-    prob->table_call();
+    tfrom = data(0,timecol);
+
+    // Simulate the same data set
+    for(int j = 0; j < data.nrow(); ++j) {
+      
+      tto = data(j,timecol);
     
-    ans(i,0) = data(i,timecol);
-    
-    for(j = 0; j < neq; ++j) ans(i,1+j) = prob->y(j);
-    
-    for(j = 0; j < capn; j++) {
-      ans(i,capstart+j) = prob->capture(capturei[1+j]); 
+      prob.advance(tfrom,tto);
+      
+      if(data(j,evidcol)==1) {
+        prob.y(data(j,cmtcol)-1,data(j,amtcol) + prob.y(data(j,cmtcol)-1));
+        prob.lsoda_init();
+      }
+      
+      prob.table_call();
+      ans(crow,0) = data(j,timecol);
+      ans(crow,1) = idata(i,1);
+      
+      for(k = 0; k < neq;  ++k) ans(crow,1+k) = prob.y(k);
+      for(k = 0; k < capn; ++k) {
+        ans(crow,capstart+k) = prob.capture(capturei[1+k]); 
+      }
+      tfrom  = tto;
+      ++crow;
     }
-    
-    tfrom  = tto;
   }
-  
   // Clean up
-  delete prob;
   return ans;
 }
 

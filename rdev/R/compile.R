@@ -158,4 +158,7 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   
 }
 
-
+# mread_info_code <- function(x) {
+#   ans <- paste0("{", length(pars(x)),",",length(cmt(x)),"};")
+#   paste0("const double ", info_func(x), "[] = ", ans)
+# }

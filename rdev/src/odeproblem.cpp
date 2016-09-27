@@ -4,17 +4,13 @@
 
 #include <cmath>
 #include <vector>
-//#include <numeric>
 #include "RcppInclude.h"
 #include "odeproblem.h"
-//#include "pkevent.h"
 
 Rcpp::NumericMatrix OMEGADEF(1,1);
 arma::mat OMGADEF(1,1,arma::fill::zeros);
 
-
 #define MRGSOLVE_MAX_SS_ITER 1000
-
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
@@ -25,7 +21,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   int neq_ = int(init.size());
   
   R0  = new double[neq_]();
-  
   infusion_count.assign(neq_,0);
   
   // R holds the value for user input rates via _R(n)
@@ -369,8 +364,9 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   unsigned int neq = this->neq();
   
   double dt = tto-tfrom;
-  if (MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("A pred_CL has a 0 or negative value.");
-  if (MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative  value.");
+  
+  if (MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
+  if (MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
   
   double k10 = MRGSOLVE_GET_PRED_K10;
   double ka =  MRGSOLVE_GET_PRED_KA;
@@ -738,23 +734,20 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   
   Rcpp::List ans;
   
-  odeproblem* prob  = new odeproblem(lparam, linit, funs, capture.size());
-  prob->neta(Neta);
-  prob->neps(Neps);
+  odeproblem prob(lparam, linit, funs, capture.size());
+  prob.neta(Neta);
+  prob.neps(Neps);
   
-  double time = 0;
-  prob->time(time);
-  prob->newind(0);
+  prob.newind(0);
   
-  prob->init_call(time);
+  prob.init_call(0.0);
   
   Rcpp::NumericVector init_val(linit.size());
   
-  for(int i=0; i < (prob->neq()); ++i) init_val[i] = prob->init(i);
+  for(int i=0; i < (prob.neq()); ++i) init_val[i] = prob.init(i);
   
   ans["init"] = init_val;
-  ans["npar"] = prob->npar();
-  ans["neq"] = prob->neq();
-  delete prob;
+  ans["npar"] = prob.npar();
+  ans["neq"] = prob.neq();
   return(ans);
 }

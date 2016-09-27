@@ -14,6 +14,7 @@ main_func   <- function(x) x@funs["main"]
 ode_func    <- function(x) x@funs["ode"]
 table_func  <- function(x) x@funs["table"] 
 config_func <- function(x) x@funs["config"]
+info_func   <- function(x) x@funs["info"]
 
 main_loaded <- function(x) {
   is.loaded(main_func(x),PACKAGE=dllname(x)) 

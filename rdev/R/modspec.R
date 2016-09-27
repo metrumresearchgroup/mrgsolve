@@ -8,6 +8,7 @@ globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*\\$[A-Z]\\w*|\\[\\s*[A-Z]\\w*\\s*]"
 
 
+
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
   if(advan==13 | trans==1) return(NULL)
