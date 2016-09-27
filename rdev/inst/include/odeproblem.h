@@ -97,12 +97,13 @@ public:
 
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
-  double* init() {return Init_value;}
-  double* init_dummy(){return Init_dummy;}
+  dvec& init() {return Init_value;}
+  dvec& init_dummy(){return Init_dummy;}
 
   void init_call(const double& time);
   void init_call_record(const double& time);
   void y_init(int pos, double value);
+  void y_init(Rcpp::NumericVector x);
 
   void table_call();
   void table_init_call();
@@ -215,7 +216,8 @@ protected:
   double* Param;
 
   //! Acutal curent infusion rate
-  double* R0;
+  dvec R0;
+  //double* R0;
   std::vector<unsigned int> infusion_count;
 
   // SAVE
@@ -227,8 +229,8 @@ protected:
   dvec D;
 
   //! inital conditions:
-  double* Init_value;
-  double* Init_dummy;
+  dvec Init_value;
+  dvec Init_dummy;
 
   //! Bioavailability:
   dvec F;

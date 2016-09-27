@@ -75,7 +75,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const int nidata = idat->nrow();
   
   int j = 0, k = 0;
-  const double time0 = 0.0;
   int crow = 0; 
   size_t h = 0;
   
@@ -223,7 +222,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       n = tgridn[tgridi[j]];
       
-      (*it).reserve(((*it).size() + n + m + 10));
+      it->reserve((it->size() + n + m + 10));
       
       for(h=0; h < n; h++) {
         //rec_ptr obs(new datarecord(0,tgrid(h,tgridi[j]),0,nextpos,id));
@@ -237,7 +236,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         (*it).push_back(obs);
       }
       // sort the records by time and original position 
-      std::sort((*it).begin(), (*it).end(), CompByTimePosRec);
+      std::sort(it->begin(), it->end(), CompByTimePosRec);
     }
   }
   // ******* END TGRID SECTION ******* 
@@ -272,7 +271,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->neps(neps);
   }
   
-  prob->init_call_record(time0);
+  prob->init_call_record(0.0);
   
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
@@ -305,7 +304,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     crow = 0; // current output row
     int n = 0;
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
-      for(reclist::const_iterator itt = (*it).begin(); itt != (*it).end(); ++itt) {
+      for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
         if(!(*itt)->output()) continue;
         n = 0;
         if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                     ++n;}
@@ -375,20 +374,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
   }
   
-  double tto, tfrom;
   
-  crow = 0;
   
   if(verbose||debug)  Rcpp::Rcout << "Solving ... ";
   
+  double tto, tfrom;
+  crow = 0;
   int this_cmt = 0;
-  // Do one last reset on parameters:
-  // dat->reload_parameters(inpar,prob);
-  // First, get idata parameters from the first ID in data
-  // idat->copy_parameters(idat->get_idata_row(dat->get_uid(0)),prob);
-  // Then, copy parameters from the first record in data
-  // dat->copy_parameters(0,prob);
-  
+
   // The current difference between tto and tfrom
   double dt = 0;
   double id = 0;
@@ -436,7 +429,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
     
     // Calculate initial conditions:
-    for(k=0; k < neq; ++k) prob->y_init(k,init[k]);
+    prob->y_init(init);
     
     // Copy initials from idata
     idat->copy_inits(this_idata_row,prob);
@@ -452,7 +445,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // LOOP ACROSS EACH RECORD for THIS ID:
     for(size_t j=0; j < a[i].size(); ++j) {
       
-      if(j !=0 ) prob->newind(2);
+      if(j != 0) prob->newind(2);
     
       rec_ptr this_rec = a[i][j];
       
@@ -522,7 +515,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(ev->rate() == -1) {
             this_cmt = ev->cmt()-1;
             if(prob->rate(this_cmt) <= 0) {
-              Rcpp::Rcout << "R(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
+              //Rcpp::Rcout << "R(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
               Rcpp::stop("Invalid infusion settings.");
             }
             ev->rate(prob->rate(this_cmt));
@@ -531,7 +524,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(ev->rate() == -2) {
             this_cmt = ev->cmt()-1;
             if(prob->dur(this_cmt) <= 0) {
-              Rcpp::Rcout << "D(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
+              //Rcpp::Rcout << "D(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
               Rcpp::stop("Invalid infusion settings.");
             }
             ev->rate(ev->amt() * biofrac / prob->dur(this_cmt));

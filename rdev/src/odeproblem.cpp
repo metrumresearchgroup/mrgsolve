@@ -20,7 +20,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   int npar_ = int(param.size());
   int neq_ = int(init.size());
   
-  R0  = new double[neq_]();
+  Param = new double[npar_]();
+  
+  R0.assign(neq_,0.0);
   infusion_count.assign(neq_,0);
   
   // R holds the value for user input rates via _R(n)
@@ -28,10 +30,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   // D holds the value of user input durations
   D.assign(neq_,0.0);
-  
-  Param = new double[npar_]();
-  Init_value = new double[neq_]();
-  Init_dummy = new double[neq_]();
+
+  Init_value.assign(neq_,0.0);
+  Init_dummy.assign(neq_,0.0);
   
   On.assign(neq_,1);
   F.assign(neq_,1.0);
@@ -75,9 +76,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  */
 odeproblem::~odeproblem(){
   delete [] Param;
-  delete [] Init_value;
-  delete [] Init_dummy;
-  delete [] R0;
 }
 
 void odeproblem::neta(int n) {
@@ -102,6 +100,15 @@ void odeproblem::y_init(int pos, double value) {
   this->y(pos,value);
   Init_value[pos] = value;
 }
+void odeproblem::y_init(Rcpp::NumericVector x) {
+  if(x.size() != Neq) Rcpp::stop("Initial vector is wrong size");
+  int i = 0;
+  for(Rcpp::NumericVector::iterator it = x.begin(); it != x.end(); ++it, ++i) {
+    Y[i] = *it;
+    Init_value[i] = *it;
+  }
+}
+
 
 /** Derivative function that gets called by the solver. 
  * 
@@ -308,7 +315,6 @@ void odeproblem::advance(double tfrom, double tto) {
   F77_CALL(dlsoda)(
       &main_derivs,
       &Neq,
-      //this->y(),
       Y,
       &tfrom,
       &tto,
@@ -318,10 +324,8 @@ void odeproblem::advance(double tfrom, double tto) {
       &xitask,
       &xistate,
       &xiopt,
-      //this ->rwork(),
       xrwork,
       &xlrwork,
-      //this->iwork(),
       xiwork,
       &xliwork,
       &Neq,

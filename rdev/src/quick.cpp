@@ -5,13 +5,7 @@
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-#define CRUMP(a) Rcpp::stop(a)
-#define REP(a)   Rcpp::Rcout << #a << std::endl;
-#define nREP(a)  Rcpp::Rcout << a << std::endl;
-#define say(a)   Rcpp::Rcout << a << std::endl;
-
-
-/** Perform a simulation run.
+/** Perform a simple simulation run.
  * 
  * @param parin list of data and options for the simulation
  * @param inpar numeric parameter values
@@ -30,6 +24,8 @@
  *
  */
 
+typedef  Rcpp::NumericMatrix::Column mcol;
+
 namespace {
   unsigned int timecol = 1;
   unsigned int cmtcol  = 2;
@@ -40,7 +36,7 @@ namespace {
 Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
                              const Rcpp::NumericVector& param,
                              const Rcpp::NumericVector& init,
-                             const Rcpp::NumericMatrix& data,
+                                   Rcpp::NumericMatrix& data,
                              const Rcpp::NumericMatrix& idata,
                              const Rcpp::IntegerVector& capturei,
                              const Rcpp::List& funs) {
@@ -51,44 +47,59 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   
   prob.copy_parin(parin);
   
-  double NN = data.nrow() * idata.nrow();
+  int NN = data.nrow() * idata.nrow();
   
   const unsigned int neq = prob.neq();
   
-  Rcpp::NumericMatrix ans(NN,neq+1+capn);
+  Rcpp::NumericMatrix ans(NN,1+neq+capn);
+  
+  mcol time = data(Rcpp::_,timecol);
+  mcol evid = data(Rcpp::_,evidcol);
+  mcol amt = data(Rcpp::_,amtcol);
+  mcol cmt = data(Rcpp::_,cmtcol);
   
   double tto =0;
-  double tfrom = data(0,timecol);
+  double tfrom = time[0];
   int capstart = 1 + neq;
   int crow = 0;
   int k; 
+  double ID = 0;
   
+  size_t irow = idata.nrow();
+  size_t drow = data.nrow();
   // Simulate each individual
-  for(int i = 0; i < idata.nrow(); ++i) {
+  for(size_t i = 0; i < irow; ++i) {
     
-    for(k = 0; k < neq; ++k) {
-      prob.y_init(k,init[k]); 
-    }
+    prob.y_init(init);
     prob.init_call(tto);
     prob.lsoda_init();
+    ID = idata(i,1);
+    prob.reset_newid(ID);
+    if(i==0) prob.newind(0);
     
-    tfrom = data(0,timecol);
+    tfrom = time[0];
 
     // Simulate the same data set
-    for(int j = 0; j < data.nrow(); ++j) {
+    for(size_t j = 0; j < drow; ++j) {
       
-      tto = data(j,timecol);
+      if(j==0) {
+        prob.newind(1);
+      } else {
+        prob.newind(2); 
+      }
+      tto = time[j];
     
       prob.advance(tfrom,tto);
       
-      if(data(j,evidcol)==1) {
-        prob.y(data(j,cmtcol)-1,data(j,amtcol) + prob.y(data(j,cmtcol)-1));
+      if(evid[j]==1) {
+        prob.y(cmt[j]-1,(amt[j] + prob.y(cmt[j]-1)));
         prob.lsoda_init();
       }
       
       prob.table_call();
-      ans(crow,0) = data(j,timecol);
-      ans(crow,1) = idata(i,1);
+      
+      ans(crow,0) = time[j];
+      ans(crow,1) = ID;
       
       for(k = 0; k < neq;  ++k) ans(crow,1+k) = prob.y(k);
       for(k = 0; k < capn; ++k) {
@@ -98,7 +109,6 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
       ++crow;
     }
   }
-  // Clean up
   return ans;
 }
 

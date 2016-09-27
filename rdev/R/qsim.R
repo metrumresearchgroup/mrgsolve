@@ -8,25 +8,21 @@
 ##' 
 qsim <- function(x,e,idata,stime) {
   
-  parin <- parin(x)
-
   e <- qdata(e,stime)
-  
-  idata <- data.matrix(idata)
-  
+
   cap <- c(length(x@capture),seq_along(x@capture)-1)
   
   out <- .Call('mrgsolve_QUICKSIM', 
                PACKAGE = 'mrgsolve',
-               parin,
+               parin(x),
                as.numeric(param(x)),
                as.numeric(init(x)),
-               e,idata,
+               e,data.matrix(idata),
                cap,
                pointers(x))
   
   dimnames(out) <- list(NULL, c("time", cmt(x),x@capture))
-  as.data.frame(out)
+  out
   
 }
 

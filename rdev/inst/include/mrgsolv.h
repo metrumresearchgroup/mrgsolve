@@ -16,11 +16,11 @@ typedef std::vector<int > ivec;
 //typedef  const std::vector<double> cdvec;
 
 
-#define MRGSOLVE_INIT_SIGNATURE  double* _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
+#define MRGSOLVE_INIT_SIGNATURE  const dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
 
-#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const double* _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_,  databox& _databox_, const dvec& _pred_, dvec& _capture_
+#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const dvec& _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_,  databox& _databox_, const dvec& _pred_, dvec& _capture_
 
-#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const double* _A_0_, const double* _THETA_
+#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const double* _THETA_
 
 #define MRGSOLVE_CONFIG_SIGNATURE svec& capture_names, dvec& capture_values
 
