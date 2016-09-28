@@ -4,6 +4,7 @@
 
 #include "odeproblem.h"
 #include "RcppInclude.h"
+#include "dataobject.h"
 
 /** Perform a simple simulation run.
  * 
@@ -31,15 +32,20 @@ namespace {
   unsigned int cmtcol  = 2;
   unsigned int evidcol = 3;
   unsigned int amtcol  = 4;
+  unsigned int ratecol = 5;
 }
 // [[Rcpp::export]]
 Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
                              const Rcpp::NumericVector& param,
                              const Rcpp::NumericVector& init,
+                             Rcpp::CharacterVector& parnames,
+                             Rcpp::CharacterVector& cmtnames,
                                    Rcpp::NumericMatrix& data,
                              const Rcpp::NumericMatrix& idata,
                              const Rcpp::IntegerVector& capturei,
                              const Rcpp::List& funs) {
+
+  dataobject idat(idata,parnames,cmtnames);
   
   const int capn = capturei.at(0);
   
@@ -47,34 +53,41 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   
   prob.copy_parin(parin);
   
-  int NN = data.nrow() * idata.nrow();
+  const unsigned int NN = data.nrow() * idata.nrow();
   
   const unsigned int neq = prob.neq();
   
-  Rcpp::NumericMatrix ans(NN,1+neq+capn);
+  Rcpp::NumericMatrix ans(NN,2+neq+capn);
   
   mcol time = data(Rcpp::_,timecol);
   mcol evid = data(Rcpp::_,evidcol);
   mcol amt = data(Rcpp::_,amtcol);
   mcol cmt = data(Rcpp::_,cmtcol);
+  mcol rate = data(Rcpp::_,ratecol);
+  cmt = cmt-1;
   
   double tto =0;
   double tfrom = time[0];
-  int capstart = 1 + neq;
+  int capstart = 2 + neq;
   int crow = 0;
   int k; 
   double ID = 0;
   
   size_t irow = idata.nrow();
   size_t drow = data.nrow();
+  
   // Simulate each individual
   for(size_t i = 0; i < irow; ++i) {
+    
+    idat.copy_parameters(i,&prob);
     
     prob.y_init(init);
     prob.init_call(tto);
     prob.lsoda_init();
-    ID = idata(i,1);
+    
+    ID = idata(i,0);
     prob.reset_newid(ID);
+    
     if(i==0) prob.newind(0);
     
     tfrom = time[0];
@@ -87,24 +100,31 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
       } else {
         prob.newind(2); 
       }
+      
       tto = time[j];
     
       prob.advance(tfrom,tto);
       
       if(evid[j]==1) {
-        prob.y(cmt[j]-1,(amt[j] + prob.y(cmt[j]-1)));
+        if(rate[j] > 0) {
+          prob.rate_bump(cmt[j],rate[j]);
+        } else {
+          prob.y_add(cmt[j],amt[j]);
+        }
         prob.lsoda_init();
       }
       
       prob.table_call();
       
-      ans(crow,0) = time[j];
-      ans(crow,1) = ID;
+      ans(crow,0) = ID;
+      ans(crow,1) = time[j];
       
-      for(k = 0; k < neq;  ++k) ans(crow,1+k) = prob.y(k);
+      for(k = 0; k < neq;  ++k) ans(crow,2+k) = prob.y(k);
+      
       for(k = 0; k < capn; ++k) {
         ans(crow,capstart+k) = prob.capture(capturei[1+k]); 
       }
+      
       tfrom  = tto;
       ++crow;
     }

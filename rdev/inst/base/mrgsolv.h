@@ -15,7 +15,6 @@ typedef std::vector<std::string > svec;
 typedef std::vector<int > ivec;
 //typedef  const std::vector<double> cdvec;
 
-
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
 
 #define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const dvec& _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_,  databox& _databox_, const dvec& _pred_, dvec& _capture_

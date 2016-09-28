@@ -9,7 +9,6 @@
 #include "pkevent.h"
 #include "mrgsolv.h"
 
-
 #define _COL_amt_   0u
 #define _COL_ii_    1u
 #define _COL_addl_  2u
@@ -33,6 +32,8 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names,parnames, par_from, par_to);
+  
+  idmap.reserve(_data.nrow());
   
   col.resize(8,0);
 }
@@ -63,10 +64,16 @@ dataobject::~dataobject(){}
 void dataobject::map_uid() {
   
   int i=0;
+  int n = Data.nrow();
+  
+  Uid.reserve(n);
+  Startrow.reserve(n);
+  Endrow.reserve(n);
+
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
   for(i=1; i < Data.nrow(); ++i) {
-    if(Data(i,Idcol) != Data(i-1, Idcol)) {
+    if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
       Startrow.push_back(i);
       Endrow.push_back(i-1);
@@ -158,6 +165,7 @@ void dataobject::copy_parameters(int this_row, odeproblem *prob) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
+
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets

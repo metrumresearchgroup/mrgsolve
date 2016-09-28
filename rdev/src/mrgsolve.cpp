@@ -93,7 +93,7 @@ void neg_istate(int istate) {
  */
 // [[Rcpp::export]]
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
-
+  
   arma::mat OMEGA(OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
   
   arma::vec eigval;
@@ -105,9 +105,12 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
   arma::mat X = arma::randn<arma::mat>(n,ncol);
   
   eigval = arma::sqrt(eigval);
+  
   arma::mat Z = arma::diagmat(eigval);
+  
   X = eigvec * Z * X.t();
-  return(X.t());
+  
+  return X.t();
 }
 
 
@@ -239,7 +242,9 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   
   
   Rcpp::List ans;
+  
   ans["tokens"] = ret;
+  
   return ans;
 }
 
@@ -256,7 +261,7 @@ void from_to(const Rcpp::CharacterVector& a,
   ai = na_omit(ai);
   bi = na_omit(bi);
   
-  std::sort(ai.begin(), ai.end());
+  std::sort(bi.begin(), bi.end());
   
 }
 

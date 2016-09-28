@@ -6,7 +6,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <math.h>
-//#include <iostream>
 #include <vector>
 #include "datarecord.h"
 #include "mrgsolv.h"
@@ -16,10 +15,7 @@ class pkevent;
 class odeproblem;
 
 typedef boost::shared_ptr<pkevent> ev_ptr;
-typedef std::vector<ev_ptr> evlist;
-typedef std::vector<evlist> evstack;
 typedef std::vector<rec_ptr> reclist;
-typedef std::vector<reclist> recstack;
 
 void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug);
 
@@ -47,8 +43,6 @@ public:
           int pos_, 
           double id_);
   
-  //int evid(){return Evid;}
-  //void evid(int evid_){Evid=evid_;}
   double amt(){return Amt;}
   double rate(){return Rate;}
   void rate(double value) {Rate = value;}
@@ -92,8 +86,8 @@ private:
   
 };
 
-bool CompByTime(ev_ptr a, ev_ptr b);
-bool CompByoPos(ev_ptr a, ev_ptr b);
-bool CompByPos(ev_ptr a, ev_ptr b);
+// bool CompByTime(ev_ptr a, ev_ptr b);
+// bool CompByoPos(ev_ptr a, ev_ptr b);
+// bool CompByPos(ev_ptr a, ev_ptr b);
 
 #endif

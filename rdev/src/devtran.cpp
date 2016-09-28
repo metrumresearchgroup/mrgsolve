@@ -200,12 +200,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     for(size_t i = 0; i < tgridn.size(); ++i) {
       
       std::vector<rec_ptr> z;
+      
       z.reserve(tgridn[i]);
     
       for(int j = 0; j < tgridn[i]; ++j) { 
         rec_ptr obs(new datarecord(0,tgrid(j,i),0,nextpos,0));
         z.push_back(obs); 
       }
+      
       designs.push_back(z);
     }
     

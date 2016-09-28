@@ -41,7 +41,7 @@ TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs) {
     .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs)
 }
 
-QUICKSIM <- function(parin, param, init, data, idata, capturei, funs) {
-    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, data, idata, capturei, funs)
+QUICKSIM <- function(parin, param, init, parnames, cmtnames, data, idata, capturei, funs) {
+    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, cmtnames, data, idata, capturei, funs)
 }
 

@@ -20,11 +20,13 @@ qsim <- function(x,e,idata,stime) {
                parin(x),
                as.numeric(param(x)),
                as.numeric(init(x)),
+               pars(x),
+               cmt(x),
                e,data.matrix(idata),
                cap,
                pointers(x))
   
-  dimnames(out) <- list(NULL, c("time", cmt(x),x@capture))
+  dimnames(out) <- list(NULL, c("ID","time", cmt(x),x@capture))
   out
   
 }
@@ -39,16 +41,17 @@ qdata <- function(e,stime) {
   time <- sort(unique(c(stime,doses)))
   nrow <- length(time)
   evid <- as.integer(time %in% doses)
-  rate <- rep(0,nrow)
+  rate <- rep(e$rate,nrow)
   amt <- e$amt * evid
   cmt <- e$cmt
-  x <- matrix(0,nrow=nrow,ncol=5)
+  x <- matrix(0,nrow=nrow,ncol=6)
   
   x[,1] <- 1
   x[,2] <- time
   x[,3] <- cmt
   x[,4] <- evid
   x[,5] <- amt
+  x[,6] <- rate
   
   x
 }

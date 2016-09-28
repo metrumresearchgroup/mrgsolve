@@ -7,10 +7,17 @@
 #include <math.h>
 //#include <iostream>
 #include <vector>
-#include <string>
+//#include <string>
 #include "odepack_dlsoda.h"
 #include "mrgsolv.h"
 #include "RcppInclude.h"
+#include "datarecord.h"
+
+//typedef boost::shared_ptr<pkevent> ev_ptr;
+//typedef std::vector<ev_ptr> evlist;
+//typedef std::vector<evlist> evstack;
+typedef std::vector<rec_ptr> reclist;
+typedef std::vector<reclist> recstack;
 
 
 // double get_pred_CL() {return pred[0];}
@@ -104,6 +111,7 @@ public:
   void init_call_record(const double& time);
   void y_init(int pos, double value);
   void y_init(Rcpp::NumericVector x);
+  void y_add(const unsigned int pos, const double& value);
 
   void table_call();
   void table_init_call();
@@ -128,9 +136,9 @@ public:
   int rate_count(unsigned int pos){return infusion_count[pos];}
   void rate_add(unsigned int pos, const double& value);
   void rate_rm(unsigned int pos,  const double& value);
-  //void rate_replace(unsigned int pos, const double& value);
+  void rate_bump(const unsigned int pos, const double& value);
   void rate_reset();
-  //void rate_reset(unsigned short int eq_n);
+
 
   // dur:
   dvec& dur(){return D;}
@@ -200,13 +208,7 @@ public:
   // int nRn(){return Rn.size();}
   // void add_Rn(int value){Rn.insert(value);}
    void add_rates(double* ydot);
-
-  // From Rodeproblem
-  void init_fun(SEXP ifun);
-  void table_fun(SEXP tfun);
-  void deriv_fun(SEXP dfun);
-  void config_fun(SEXP cfun);
-
+  
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
 
@@ -217,11 +219,7 @@ protected:
 
   //! Acutal curent infusion rate
   dvec R0;
-  //double* R0;
   std::vector<unsigned int> infusion_count;
-
-  // SAVE
-  //std::set<int> Rn;
 
   //! User input infusion rate
   dvec R;
@@ -251,7 +249,7 @@ protected:
   config_func* Config;
 
   //! Compartment on/off
-  std::vector<char> On;
+  std::vector<int> On;
   databox d;
 
   // These are used for advan 1/2/3/4

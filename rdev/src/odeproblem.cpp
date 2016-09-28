@@ -100,13 +100,17 @@ void odeproblem::y_init(int pos, double value) {
   this->y(pos,value);
   Init_value[pos] = value;
 }
+
 void odeproblem::y_init(Rcpp::NumericVector x) {
   if(x.size() != Neq) Rcpp::stop("Initial vector is wrong size");
-  int i = 0;
-  for(Rcpp::NumericVector::iterator it = x.begin(); it != x.end(); ++it, ++i) {
-    Y[i] = *it;
-    Init_value[i] = *it;
+  for(int i = 0; i < x.size(); ++i) {
+    Y[i] = x[i];
+    Init_value[i] = x[i];
   }
+}
+
+void odeproblem::y_add(const unsigned int pos, const double& value) {
+  Y[pos] = Y[pos] + value; 
 }
 
 
@@ -238,12 +242,17 @@ void odeproblem::reset_newid(const double& id_=1.0) {
 }
 
 
-void odeproblem::rate_add(unsigned int pos, const double& value) {
+void odeproblem::rate_add(const unsigned int pos, const double& value) {
   ++infusion_count[pos];
   R0[pos] = R0[pos] + value;
 }
 
-void odeproblem::rate_rm(unsigned int pos, const double& value) {
+void odeproblem::rate_bump(const unsigned int pos, const double& value) {
+  R0[pos] = R0[pos] + value;
+}
+
+
+void odeproblem::rate_rm(const unsigned int pos, const double& value) {
   if(infusion_count[pos] <= 0){
     infusion_count[pos] = 0;
     R0[pos] = 0.0;
@@ -256,10 +265,10 @@ void odeproblem::rate_rm(unsigned int pos, const double& value) {
 }
 
 
-void odeproblem::on(unsigned short int eq_n) {
+void odeproblem::on(const unsigned short int eq_n) {
   On[eq_n] = 1;
 }
-void odeproblem::off(unsigned short int eq_n) {
+void odeproblem::off(const unsigned short int eq_n) {
   if(infusion_count[eq_n]>0) Rcpp::stop("Attempting to turn compartment off when infusion is on.");
   On[eq_n] = 0;
   this->y(eq_n,0.0);
@@ -652,20 +661,6 @@ double PolyExp(const double& x,
   return bolusResult + rate*result;
 }
 
-
-void odeproblem::init_fun(SEXP xifun) {
-  Inits = as_init_func(xifun);
-}
-void odeproblem::table_fun(SEXP xtfun) {
-  Table = as_table_func(xtfun);
-}
-void odeproblem::deriv_fun(SEXP xdfun) {
-  Derivs = as_deriv_func(xdfun);
-}
-void odeproblem::config_fun(SEXP xcfun) {
-  Config = as_config_func(xcfun);
-}
-
 init_func* as_init_func(SEXP inits) {
   return(reinterpret_cast<init_func *>(tofunptr(inits))); // Known to generate compiler warning
 }
@@ -690,6 +685,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
   this->advan(Rcpp::as<int>(parin["advan"]));
 }
+
 void odeproblem::copy_funs(const Rcpp::List& funs) {
   Inits = as_init_func(funs["main"]);
   Table = as_table_func(funs["table"]);
@@ -748,10 +744,13 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   
   Rcpp::NumericVector init_val(linit.size());
   
-  for(int i=0; i < (prob.neq()); ++i) init_val[i] = prob.init(i);
+  for(int i=0; i < (prob.neq()); ++i) {
+    init_val[i] = prob.init(i);
+  }
   
   ans["init"] = init_val;
   ans["npar"] = prob.npar();
   ans["neq"] = prob.neq();
+  
   return(ans);
 }
