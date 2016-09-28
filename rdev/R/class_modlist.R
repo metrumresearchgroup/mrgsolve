@@ -20,14 +20,15 @@ str.modlist <- function(object,...) {
 }
 
 ##' @export
-##' @rdname modlist
+##' @rdname modlist-class
+##' @param x modlist object
 ##' @param name model to take; used with \code{$}
 setMethod("$", "modlist", function(x,name){x@data[[name]]})
 
 
 ##' S4 class matlist.
 ##'
-##' @rdname matlist-class
+##' @rdname modlist-class
 setClass("modlist",
          slots=c(data="list",n="numeric"),
          validity=valid.modlist
@@ -35,8 +36,12 @@ setClass("modlist",
 
 ##' Create a modlist object.
 ##' 
+##' @param project file path to models
+##' @param soloc directory where the models will be built
+##' @param prefix leading tag for models to process
+##' @param pattern a regular expression for models to get
 ##' 
-##' @export
+##' 
 ##' 
 modlist <- function(project='.', soloc=tempdir(), prefix="",
                     pattern=paste0(prefix,"*\\.cpp$")) {
