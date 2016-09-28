@@ -60,20 +60,20 @@ struct databox {
 #define __ADVAN4_TRANS11__ pred_CL = CLi; pred_V2 = V2i; pred_Q =  Qi;  pred_V3 = V3i; pred_KA = KAi;
 
 // Don't need this?
-#define BEGIN_pred extern "C" {void ODEFUN___(MRGSOLVE_PRED_SIGNATURE) {
+#define __BEGIN_pred__ extern "C" {void __ODEFUN___(MRGSOLVE_PRED_SIGNATURE) {
 
 // $MAIN, $ODE, and $TABLE get translated into these functions
 // We need ODEFUN___ and INITFUN___ and TABLECODE___ defined in the
 // .cpp.cpp model file
-#define BEGIN_config extern "C" {void CONFIGFUN___(MRGSOLVE_CONFIG_SIGNATURE) {
-#define END_config DONE
-#define BEGIN_ode extern "C" {void ODEFUN___(MRGSOLVE_ODE_SIGNATURE) {
-#define END_ode DONE
-#define BEGIN_main extern "C" {void INITFUN___(MRGSOLVE_INIT_SIGNATURE) {
-#define END_main DONE
-#define BEGIN_table extern "C" {void TABLECODE___(MRGSOLVE_TABLE_SIGNATURE) {
-#define END_table DONE
-#define DONE }}
+#define __BEGIN_config__ extern "C" {void __CONFIGFUN___(MRGSOLVE_CONFIG_SIGNATURE) {
+#define __END_config__ __DONE__
+#define __BEGIN_ode__ extern "C" {void __ODEFUN___(MRGSOLVE_ODE_SIGNATURE) {
+#define __END_ode__ __DONE__
+#define __BEGIN_main__ extern "C" {void __INITFUN___(MRGSOLVE_INIT_SIGNATURE) {
+#define __END_main__ __DONE__
+#define __BEGIN_table__ extern "C" {void __TABLECODE___(MRGSOLVE_TABLE_SIGNATURE) {
+#define __END_table__ __DONE__
+#define __DONE__ }}
 
 
 // New individual flag

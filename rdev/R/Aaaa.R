@@ -28,6 +28,7 @@
 ##' @include class_matlist.R
 ##' @include class_numericlist.R
 ##' @include class_tgrid.R  
+##' @include class_modlist.R
 ##' @include package.R
 ##' @include utils.R 
 ##' @include RcppExports.R  

@@ -125,15 +125,16 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * 
  */
 void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
-  (prob->derivs())(
-      t,
-      y,
-      ydot,
-      prob->init(),
-      prob->param()
-  );
-  prob->add_rates(ydot);
+  prob->call_derivs(neq,t,y,ydot);  
 }
+
+void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
+    Derivs(t,y,ydot,Init_value,Param);
+    for(int i = 0; i < Neq; ++i) {
+      ydot[i] = (ydot[i] + R0[i])*On[i]; 
+    }
+}
+
 
 void odeproblem::add_rates(double* ydot) {
   for(int i = 0; i < Neq; ++i) {
@@ -151,21 +152,14 @@ void odeproblem::add_rates(double* ydot) {
 void odeproblem::init_call(const double& time) {
   
   d.time = time;
-  
-  this->Inits(this->init(),
-              this->y(),
-              this->param(),
-              this->fbio(),
-              this->alag(),
-              this->rate(),
-              this->dur(),
-              this->get_d(),
-              this->get_pred());
+
+  Inits(Init_value,Y,Param,F,Alag,R,D,d,pred);
   
   for(int i=0; i < Neq; ++i) {
-    this->y(i,this->init(i));
-    Init_dummy[i] = this->init(i);
+    Y[i] = Init_value[i];
+    Init_dummy[i] = Init_value[i];
   }
+  
 }
 
 
@@ -178,16 +172,7 @@ void odeproblem::init_call(const double& time) {
  */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
-  
-  this->Inits(this->init_dummy(),
-              this->y(),
-              this->param(),
-              this->fbio(),
-              this->alag(),
-              this->rate(),
-              this->dur(),
-              this->get_d(),
-              this->get_pred());
+  Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred);
 }
 
 
@@ -195,14 +180,7 @@ void odeproblem::init_call_record(const double& time) {
  * 
  */
 void odeproblem::table_call() {
-  this->Table(this->y(),
-              this->init(),
-              this->param(),
-              this->fbio(),
-              this->rate(),
-              this->get_d(),
-              this->get_pred(),
-              this->get_capture());
+  Table(Y,Init_dummy,Param,F,R,d,pred,Capture);  
 }
 
 void odeproblem::table_init_call() {
@@ -342,34 +320,7 @@ void odeproblem::advance(double tfrom, double tto) {
       this
   );
   
-  // lsoda(&main_derivs,
-  //         Neq,
-  //         this->y(),
-  //         &tfrom,
-  //         tto,
-  //         xitol,
-  //         &xrtol,
-  //         &xatol,
-  //         xitask,
-  //         &xistate,
-  //         xiopt,
-  //         xjt,
-  //         xiwork[0],
-  //         xiwork[1],
-  //         xiwork[4],
-  //         xiwork[5],
-  //         xiwork[6],
-  //         xiwork[7],
-  //         xiwork[8],
-  //         xrwork[0],
-  //         xrwork[4],
-  //         xrwork[5],
-  //         xrwork[6],
-  //         this
-  // );
-  // 
-  
-  main_derivs(&Neq, &tto,Y, Ydot, this);
+  this->call_derivs(&Neq, &tto, Y, Ydot);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {

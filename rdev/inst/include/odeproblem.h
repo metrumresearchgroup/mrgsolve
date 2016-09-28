@@ -101,7 +101,7 @@ public:
   virtual ~odeproblem();
 
   void advance(double tfrom, double tto);
-
+  void call_derivs(int *neq, double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
   dvec& init() {return Init_value;}

@@ -68,8 +68,6 @@ test_that("Lagged bolus", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
-    
-    
 })
 
 
