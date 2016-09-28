@@ -53,6 +53,7 @@ Collate:
     'altname.R'
     'annot.R'
     'chain.R'
+    'class_modlist.R'
     'compile.R'
     'complog.R'
     'data_set.R'

@@ -4,18 +4,18 @@ delta=0.4, s=0, d=1/300, beta=5.5E-8
 eps1 = 0.995, eps2 = 0.75
 N = 6.5E6
 mu=6.14E-5, Tmax = 1.3E7, rho = 1.25
+
+$INIT
 T = 1126801, I = 1126801, V = 8148974
 VM = 87.8, IM = 12.1
 
-
 $MAIN
-T_0 = c*delta/((1-mu)*beta*p);
 
 double a = s + rho*T_0*(1-((T_0+N)/Tmax)) - d*T_0;
 double b = beta*T_0 * ((1-fit)/(1-mu-fit)) * (1+(rho*T_0)/(delta*Tmax));
 
+T_0 = c*delta/((1-mu)*beta*p);
 V_0 = a/b;
-
 I_0 = (beta/delta)*V_0 * T_0;
 VM_0 = V_0*(mu)/(1-mu-fit);
 IM_0 = (beta/delta) * VM_0 * T_0;
