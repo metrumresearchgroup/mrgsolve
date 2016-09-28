@@ -1,12 +1,18 @@
+SUPERMATRIX <- function(x,keep_names=FALSE) {
+  x <- .Call("mrgsolve_SUPERMATRIX",x,keep_names)
+  if(nrow(x) > 0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
+  x
+}
 
-##' @include utils.R
-NULL
-
+call_ZERO <- function(x) .Call("mrgsolve_ZERO",x, PACKAGE="mrgsolve")
+ZERO_MATRIX <- function(x) diag(nrow(x))
 decorr <- function(x) {
   off <- x[lower.tri(x)]
   if(any(off < -1 | off > 1)) stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
   return(invisible(.Call("mrgsolve_decorr", x)))
 }
+
+
 
 
 ##' Create a square numeric matrix from the lower-triangular elements.
@@ -78,7 +84,8 @@ modMATRIX <- function(x,
   if(length(x)==0 | is.null(x)) return(matrix(nrow=0,ncol=0))
   
   if(correlation) block <- TRUE
-  if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
+  #if(is.character(x)) x <- unlist(strsplit(x, "\\s+",perl=TRUE))
+  if(is.character(x)) x <- cvec_cs(x)
   x <- x[x!=""]
   if(block) {
     x <- lower2matrix(x, context)
@@ -207,5 +214,4 @@ setMethod("as_dmat", "data.frame", function(x,pat="*", ...) {
   x <- x[,grepl(pat,names(x)),drop=FALSE]
   lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,])))
 })
-
 

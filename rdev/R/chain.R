@@ -78,6 +78,18 @@ carry.out <- function(x,...) {
 ##' @param ... passed along
 ##' @export
 ##' 
+##' @examples
+##' data(extran3)
+##' 
+##' mod <- mrgsolve:::house()
+##' 
+##' head(extran3)
+##' 
+##' mod %>% 
+##'   data_set(extran3, ID == 1) %>% 
+##'   carry_out(CL,KA,amt,ii) %>% 
+##'   mrgsim
+##' 
 carry_out <- function(x,...) {
   x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
   return(x)
@@ -115,23 +127,59 @@ obsonly <- function(x,value=TRUE,...) {
 ##'
 ##' @export
 obsaug <- function(x,value=TRUE,...) {
-  
   x@args <- merge(x@args, list(obsaug=value), strict=FALSE)
-  
   x
-  
 }
 
 
 ##' Set observation designs for the simulation.
 ##'
+##' This function also allows you to assign different designs to different
+##' groups or individuals in a popultion.
+##'
 ##' @param x model object
-##' @param descol the \code{idata} column name for design assignment
+##' @param descol the \code{idata} column name (\code{character}) for design assignment
 ##' @param ... \code{tgrid} or \code{tgrids} objects or \code{numeric} vector
 ##' @param deslist a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...
-
+##' 
+##' @details
+##' This setup requires the use of an \code{idata_set}, with individual-level data
+##' passed in one \code{ID} per row.  For each \code{ID}, specify a grouping variable
+##' in \code{idata} (\code{descol}).  For each unique value of the grouping variable, 
+##' make one \code{\link{tgrid}} object and pass them in order as \code{...} or 
+##' form them into a list and pass as \code{deslist}.
+##' 
+##' You must assign the \code{idata_set} before assigning the designs in the 
+##' command chain (see the example below).
 ##'
 ##' @export
+##' 
+##' @examples 
+##' 
+##' peak <- tgrid(0,6,0.1)
+##' sparse <- tgrid(0,24,6)
+##' 
+##' des1 <- c(peak,sparse)
+##' des2 <- tgrid(0,72,4)
+##' 
+##' 
+##' data <- expand.ev(ID = 1:10, amt=c(100,300))
+##' data$GRP <- data$amt/100
+##' 
+##' idata <- data[,c("ID", "amt")]
+##' 
+##' mod <- mrgsolve:::house()
+##' 
+##' mod %>%
+##'   omat(dmat(1,1,1,1)) %>%
+##'   carry_out(GRP) %>%
+##'   idata_set(idata) %>%
+##'   design("amt", des1, des2) %>%
+##'   data_set(data) %>%
+##'   mrgsim %>% 
+##'   plot(RESP~time|GRP)
+##' 
+##' 
 design <- function(x,descol=character(0),...,deslist = list()) {
   
   descol <- as.character(substitute(descol))
@@ -170,8 +218,7 @@ design <- function(x,descol=character(0),...,deslist = list()) {
   x@args <- merge(x@args, list(descol=descol, deslist=des),strict=FALSE)
   
   x
-  
-  
+
 }
 
 

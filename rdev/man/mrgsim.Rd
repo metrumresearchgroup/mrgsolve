@@ -45,9 +45,7 @@ that occur prior to the first record in \code{data}.
 
 \itemize{
 \item \code{mtime} numeric vector of times where the model is evaluated (with solver reset), but results are not included in simulated output
-\item \code{trequest} a vector of names of table data items to take in simulated ouput
-\item \code{Trequest} same as \code{trequest}, except that when Trequest is specified, all model compartments (in \code{request}) are dropped; this is just a shorter syntax for saying request="", trequest="name1,name2"
-\item \code{Request} a vector of compartment or table names to take in simulated output; if this is specified, \code{request}, \code{trequest}, and \code{Trequest} are ignored
+\item \code{Request} a vector of compartment or table names to take in simulated output; if this is specified, \code{request} is ignored
 \item \code{obsonly} omit records with \code{evid} != 0 from simulated output
 \item \code{obsaug} logical; when \code{TRUE} and a full data set is used, the simulated output is augmented with an observation at each time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating augmented observations can be requested by including \code{a.u.g} in \code{carry.out}
 \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at the same time; 3 and 4 put those doses before padded observations at the same time.  2 and 4 will put doses scheduled through \code{addl} after observations at the same time; 1 and 3 put doses scheduled through \code{addl} before observations at the same time. \code{recsort} will not change the order of your input data set if both doses and observations are given.

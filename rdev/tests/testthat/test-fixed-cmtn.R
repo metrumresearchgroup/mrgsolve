@@ -25,7 +25,8 @@ C = 3.3, D=4.4, E = 5.5
 
 $MAIN double Z = A+B+C+D+E;
 
-$TABLE table(cmtn) = N_DEPOT;
+$TABLE double cmtn = N_DEPOT;
+$CAPTURE cmtn
 '
 
 

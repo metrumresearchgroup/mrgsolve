@@ -5,7 +5,7 @@
 \title{Read a model specification file}
 \usage{
 mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
-  ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = FALSE,
+  ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = TRUE,
   quiet = getOption("mrgsolve_mread_quiet", FALSE), check.bounds = FALSE,
   warn = TRUE, soloc = tempdir(), preclean = FALSE, ...)
 }

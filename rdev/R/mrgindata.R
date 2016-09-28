@@ -1,10 +1,7 @@
 
 
-## see classes.R for is.mrgindata
-
 as.mrgindata <- function(x) {
-  class(x) <- c("mrgindata", x)
-  return(x)
+  structure(x,class="mrgindata")
 }
 
 ##' Prepare input data.frame or matrix
@@ -89,7 +86,7 @@ valid_idata <- function(x,verbose=FALSE,quiet=FALSE,...) {
   
   if(is.valid_idata(x)) return(x) 
   
-  if(!any(grepl("ID", colnames(x),perl=TRUE))) {
+  if(!any("ID"==colnames(x))) {
     stop("idata set must contain ID column.", call.=FALSE) 
   }
   

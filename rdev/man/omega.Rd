@@ -69,12 +69,12 @@ omat(mod, make=TRUE)
 $OMEGA
 1 2 3
 
-$OMEGA block=TRUE
+$OMEGA @block
 1 0.1 2
 
-$OMEGA cor=TRUE
-prefix="ETA_"
-labels=s(CL,VC,KA)
+$OMEGA \\@cor
+\\@ prefix ETA_
+\\@ labels CL VC KA
 0.1
 0.67 0.2
 0 0 0.3

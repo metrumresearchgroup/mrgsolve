@@ -3,21 +3,13 @@
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 #ifndef DATAOBJECT_H
 #define DATAOBJECT_H
-//#include <math.h>
-//#include <memory>
-//#include <iostream>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-//#include <string>
+#include <boost/unordered_map.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"
-#include "pkevent.h"
 
-
-
-typedef std::map<std::string, ivec> sivec_map;
-typedef std::map<double, int> di_map;
-typedef std::map<std::string, int> si_map;
+typedef boost::unordered::unordered_map<int,double> u_di_map;
 
 class dataobject {
 
@@ -48,12 +40,11 @@ public:
   unsigned int get_idata_row(double ID){return idmap[ID];}
   void locate_tran();
   void get_records(recstack& a, int NID, unsigned int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
-  //int col_n(std::string name) {return col.at(name);}
   void check_idcol(dataobject *data);
   double get_value(int row, int col) {return Data(row,col);}
+  double get_id_value(int row) {return Data(row,Idcol);}
   Rcpp::IntegerVector get_col_n(const Rcpp::CharacterVector& what);
-
-
+  
  protected:
 
   dvec Uid;
@@ -67,7 +58,7 @@ public:
   Rcpp::IntegerVector par_from;  // data set index
   Rcpp::IntegerVector par_to;    // parameter list index
   Rcpp::CharacterVector parnames;
-  di_map idmap;
+  u_di_map idmap;
 
   Rcpp::IntegerVector cmt_from; // data set index
   Rcpp::IntegerVector cmt_to;  // cmt index

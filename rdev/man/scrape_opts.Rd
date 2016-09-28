@@ -4,8 +4,8 @@
 \alias{scrape_opts}
 \title{Scrape options from a code block.}
 \usage{
-scrape_opts(x, envir = list(), def = list(), all = FALSE,
-  marker = "=>?", narrow = FALSE, split = TRUE)
+scrape_opts(x, envir = list(), def = list(), all = TRUE, marker = "=",
+  narrow = TRUE)
 }
 \arguments{
 \item{x}{data}
@@ -19,8 +19,6 @@ scrape_opts(x, envir = list(), def = list(), all = FALSE,
 \item{marker}{assignment operator; used to locate lines with options}
 
 \item{narrow}{logical; if \code{TRUE}, only get options on lines starting with \code{>>}}
-
-\item{split}{logical; if \code{TRUE}, \code{x} is split on whitespace}
 }
 \value{
 list with elements \code{x} (the data without options) and named options 

@@ -8,8 +8,8 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
-#include <string>
+//#include <map>
+//#include <string>
 #include <math.h>
 #include "mrgsolv.h"
 
@@ -19,13 +19,12 @@ typedef bool local_bool;
 
 // A box of data that gets passed to $MAIN and $TABLE
 struct databox {
+  dvec ETA;
+  const dvec EPS;
   const unsigned int newind;
   const double time;
   const int evid;
-  const dvec EPS;
-  dvec ETA;
   bool SYSTEMOFF;
-  bool solving;
   dvec mtime;
   const double ID;
   bool CFONSTOP;
@@ -88,10 +87,6 @@ struct databox {
 // Data set individual
 #define ID _databox_.ID
 
-// Table macros; NOTE: table conflicts with a macro in Rcpp
-#undef  table
-#define table(a)   _tabledata_[#a]
-#define capture(a) _tabledata_[#a] = a
 
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration
@@ -111,7 +106,7 @@ struct databox {
 #define _xETA(a) _databox_.ETA[a-1]
 #define _xEPS(a) _databox_.EPS[a-1]
 
-// Number fo equations
+// Number of equations
 #define _NEQ (_A_0_.size())
 
 // Macros related to stopping the advance of the system
@@ -134,11 +129,5 @@ template <class type> void report(type a) {
 template <class type1, class type2> void report(type1 a, type2 b) {
   std::cout << a << " " << b << std::endl;
 }
-// template <class type1, class type2> void report(type1 a, type2 b, type2 c) {
-//   std::cout << a << " " << b << " " << c<< std::endl;
-// }
-// template <class type1, class type2>
-//   void report(type1 a, type2 b, type2 c, type2 d) {
-//   std::cout << a << " " << b << " " << c<< " " << d<< std::endl;
-// }
+
 #endif

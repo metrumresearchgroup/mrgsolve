@@ -4,7 +4,7 @@
 \alias{FIXED}
 \title{Parse \code{$FIXED} block.}
 \usage{
-FIXED(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
+FIXED(x, env, annotated = FALSE, pos = 1, ...)
 }
 \arguments{
 \item{x}{data}
@@ -14,8 +14,6 @@ FIXED(x, env, annotated = FALSE, pos = 1, object = NULL, ...)
 \item{annotated}{logical}
 
 \item{pos}{parse position}
-
-\item{object}{the (character) name of a \code{list} in \code{$ENV} to use for block output}
 
 \item{...}{passed}
 }

@@ -5,12 +5,12 @@
 #include "pkevent.h"
 #include "RcppInclude.h"
 #include "odeproblem.h"
-#include "mrgsolve.h"
+//#include "mrgsolve.h"
 
 #define N_SS 1000
 #define CRIT_DIFF_SS 1E-10
 
-
+typedef std::vector<ev_ptr> evlist;
 
 pkevent::pkevent(short int cmt_,
                  unsigned int evid_,
@@ -71,7 +71,7 @@ void pkevent::implement(odeproblem *prob) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) Rcpp::stop("Attemped bolus dose into a compartment that is off");
     prob->fbio(eq_n, Fn);
-    prob->y(eq_n,(prob->y(eq_n)  + Amt * Fn));
+    prob->y_add(eq_n, Amt * Fn);
     break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) Rcpp::stop("Attemped infusion start for a compartment that is off");
@@ -137,11 +137,11 @@ void pkevent::steady_bolus(odeproblem *prob) {
   
   prob->rate_reset();
   
-  //double ii = this->ii();
   double tfrom = 0.0;
   double tto = 0.0;
   int i;
   int j;
+  
   std::vector<double> res(prob->neq(), 1E-9);
   std::vector<double> last(prob->neq(),1E-9);
   
@@ -155,8 +155,10 @@ void pkevent::steady_bolus(odeproblem *prob) {
   evon->fn(Fn);
   
   for(i=1; i < N_SS; ++i) {
+    
     tfrom = double(i-1)*Ii;
     tto = double(i)*Ii;
+    
     evon->implement(prob);
     prob->lsoda_init();
     prob->advance(tfrom,tto);
@@ -170,7 +172,6 @@ void pkevent::steady_bolus(odeproblem *prob) {
     
     if(i>10) {
       diff = std::abs(this_sum - last_sum);
-      
       if((diff < CRIT_DIFF_SS)){
         break;
       }
@@ -200,6 +201,7 @@ void pkevent::steady_infusion(odeproblem *prob) {
   double diff = 1E6;
   double nexti, toff;
   prob->rate_reset();
+  
   // We only need one of these; it gets updated and re-used immediately
   ev_ptr evon(new pkevent(Cmt, 1, Amt, Time, Rate));
   
@@ -253,9 +255,23 @@ void pkevent::steady_infusion(odeproblem *prob) {
 
 
 
-bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
-bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
+// inline bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
+// inline bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
 
+
+/** 
+ * Schedule out doses.  If the dose was an infusion, schedule the 
+ * off infusion event.  If the dose included additional doses, 
+ * create those events and add them to the stack.  No doses
+ * will be scheduled beyond the maximum time for that individual.
+ * 
+ * @param thisi the record stack for this individual
+ * @param maxtime the last time already in the record for the individual
+ * @param put_ev_first logical; if true, the position of the event is -600; 
+ * otherwise, it is beyond the last record of the stack.  But records
+ * are always sorted first by time, then by position.
+ * 
+ */
 void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
@@ -265,15 +281,8 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
   // End if infusion
   if(Rate > 0) {
     
-    ev_ptr evoff(new pkevent(Cmt,
-                             9, // EVID 9 means infusion off
-                             Amt,
-                             Time + this->dur(Fn),
-                             Rate, 
-                             -300, Id));
-    
-    //evoff->id(Id);
-    //evoff->pos(-300);
+    ev_ptr evoff(new pkevent(Cmt, 9,  Amt, Time + this->dur(Fn), 
+                             Rate,-300, Id));
     evoff->output(false);
     thisi.push_back(evoff);
     
@@ -294,15 +303,8 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
         
         double offtime = first_off+double(k)*double(Ii);
         
-        ev_ptr evoff(new pkevent(Cmt,
-                                 9, // EVID 9 means infusion off
-                                 Amt,
-                                 offtime,
-                                 Rate, 
-                                 -300, Id));
-        
-        //evoff->id(Id);
-        //evoff->pos(-300);
+        ev_ptr evoff(new pkevent(Cmt,9, Amt,offtime,
+                                 Rate,-300, Id));
         evoff->output(false);
         thisi.push_back(evoff);
         
@@ -333,33 +335,24 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
       
       if(ontime > maxtime) break;
       
-      ev_ptr evon(new pkevent(Cmt,
-                              this_evid,
-                              Amt,
-                              ontime,
-                              Rate,
-                              nextpos,Id));
-      
-      //evon->id(Id);
-      //evon->pos(nextpos);
+      ev_ptr evon(new pkevent(Cmt,this_evid,Amt,ontime,
+                              Rate,nextpos,Id));
+
       evon->fn(Fn);
+      
       evon->output(false);
       
       thisi.push_back(evon);
       
       if(this->infusion()) {
-        ev_ptr evoff(new pkevent(Cmt,
-                                 9, // EVID 9 means infusion off
-                                 Amt,
+        ev_ptr evoff(new pkevent(Cmt,9, Amt,
                                  ontime + this->dur(Fn),
-                                 Rate, 
-                                 -300,Id));
-        
-        //evoff->id(Id);
-        //evoff->pos(-300);
+                                 Rate,-300,Id));
+  
         evoff->output(false);
         
         thisi.push_back(evoff);
+        
       }
     }
   } // end addl
@@ -380,9 +373,7 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
   b.erase(unique(b.begin(), b.end()), b.end());
   
   std::size_t i = 0;
-  
-  //  if(debug) Rcpp::Rcout <<std::endl<< "Adding phantom observation records from mtime " << std::endl;
-  
+ 
   bool dropmin = true;
   bool dropmax = true;
   

@@ -8,7 +8,7 @@ Sys.setenv(R_TESTS="")
 
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Setting F_CMT")
+context("Set F via F_CMT")
 
 code <- '
 $PARAM F1=1, ALAG1=0, F2=1, ALAG2=0
@@ -59,7 +59,7 @@ test_that("F is set for compartment 1 and 2", {
 })
 
 
-context("Set ALAG")
+context("Set ALAG via ALAG_CMT")
 test_that("ALAG is set for compartment 1 and 2", {
   
   expect_true(lim(out10, CENT>0)$time[1]==0)

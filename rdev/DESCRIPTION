@@ -1,13 +1,14 @@
 Package: mrgsolve
 Type: Package
-Version: 0.7.6.9006
+Version: 0.7.6.9015
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Author: Kyle T. Baron [cre,aut,cph], Alan C. Hindmarsh [ctb], Linda R. Petzold
     [ctb], Bill Gillespie [ctb], Charles Margossian [ctb], Metrum Research Group LLC
     [cre,aut,cph]
 Maintainer: Kyle T. Baron  <kyleb@metrumrg.com>
-URL: http://metrumrg.com/opensourcetools.html
+URL: https://github.com/metrumresearchgroup/mrgsolve
+BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
 Copyright: Metrum Research Group, LLC 2016
 Description: Facilitates simulation in R from hierarchical, ordinary
     differential equation (ODE) based models typically employed in drug development.
@@ -38,41 +39,45 @@ Suggests:
 LazyLoad: yes
 NeedsCompilation: yes
 Collate:
-    'check_names.R'
-    'classes.R'
-    'events.R'
-    'Ops.R'
     'RcppExports.R'
-    'idata_set.R'
-    'data_set.R'
+    'utils.R'
+    'package.R'
+    'class_tgrid.R'
+    'class_numericlist.R'
+    'class_matlist.R'
+    'class_ev.R'
+    'class_derived.R'
+    'class_mrgmod.R'
+    'class_mrgsims.R'
+    'Aaaa.R'
     'altname.R'
-    'aaa.R'
     'annot.R'
     'chain.R'
-    'utils.R'
     'compile.R'
     'complog.R'
+    'data_set.R'
     'datasets.R'
+    'events.R'
     'example.R'
     'funset.R'
-    'mrgsims.R'
+    'idata_set.R'
     'init.R'
     'knobs.R'
     'library.R'
-    'lockedmod.R'
     'matlist.R'
     'matrix.R'
+    'methods.R'
     'mintern.R'
     'model_include.R'
     'nmxml.R'
     'modspec.R'
     'mread.R'
     'mrgindata.R'
+    'mrgsims.R'
     'mrgsolve.R'
-    'package.R'
     'param.R'
     'print.R'
+    'qsim.R'
     'simtime.R'
-    'specdoc.R'
     'update.R'
 RoxygenNote: 5.0.1

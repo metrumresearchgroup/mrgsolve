@@ -25,8 +25,6 @@ sval <- unique(c("atol","rtol",
 ##' @param super.strict logical; strict common area updating
 ##' @param data a list of items to update; not used for now
 ##' @return The updated model object is returned.
-##' @details
-##' See also \code{\link{mrgsolve_Ops}} for alternative ways to update events, parameters, and initial conditions in a model object.
 ##' @export
 ##' @name update
 ##' @aliases update,mrgmod-method
@@ -95,8 +93,6 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
 same_sig <- function(x,y) {
     return(identical(unname(nrow(x)), unname(nrow(y))))
 }
-
-
 
 update_matlist <-  function(x,y,strict=TRUE,context="update_matlist",...) {
 

@@ -3,9 +3,6 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
-##' @include utils.R
-
-
 generate_rdefs <- function(pars,
                            cmt,
                            func,
@@ -32,7 +29,7 @@ generate_rdefs <- function(pars,
 
     if(sum(nrow(omats)) > 0) {
         etai <- 1:sum(nrow(omats))
-        etal <- unlist(omats@labels)
+        etal <- unlist(omats@labels,use.names=FALSE)
         stopifnot(length(etai)==length(etal))
         which <- etal != "."
         if(sum(which) > 0) {
@@ -44,7 +41,7 @@ generate_rdefs <- function(pars,
 
     if(sum(nrow(smats)) > 0) {
         epsi <- 1:sum(nrow(smats))
-        epsl <- unlist(smats@labels)
+        epsl <- unlist(smats@labels,use.names=FALSE)
         stopifnot(length(epsi)==length(epsl))
         which <- epsl != "."
         if(sum(which) > 0) {
@@ -56,7 +53,7 @@ generate_rdefs <- function(pars,
 
     Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
 
-    cmtn <- unique(intersect(as.cvec(parsedata$CMTN),cmt))
+    cmtn <- unique(intersect(cvec_cs(parsedata$CMTN),cmt))
 
     if(length(cmtn)>0) {
         cmtnindex <- (match(cmtn,cmt))
@@ -135,5 +132,33 @@ rm_win_def <- function(x) {
 }
 
 
+##' Get inits from compiled function.
+##'
+##' @param x mrgmod model object
+##' @param keep_pointers should function pointers be returned?
+##' @export
+touch_funs <- function(x,keep_pointers=TRUE) {
+  
+  funp <- pointers(x)
+  
+  param <- as.numeric(param(x))
+  init <- as.numeric(x@init)
+  neta <- sum(nrow(omat(x)))
+  neps <- sum(nrow(smat(x)))
+  
+  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,funp)
+  
+  names(out$init) <- names(init)
+  
+  if(keep_pointers) {
+    out[["pointers"]] <- funp
+  }
+  
+  out
+  
+}
 
-
+# mread_info_code <- function(x) {
+#   ans <- paste0("{", length(pars(x)),",",length(cmt(x)),"};")
+#   paste0("const double ", info_func(x), "[] = ", ans)
+# }

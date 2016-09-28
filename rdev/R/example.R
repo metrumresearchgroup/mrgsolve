@@ -37,18 +37,18 @@
 ##'
 mrgsolve_example <- function(model=c("pkExample", "pkpdExample","firstmodeExample","viralExample","popExample"),
                              project=getwd(),overwrite=FALSE,quiet=FALSE,...) {
-
-    model <- match.arg(model)
-    file <- paste0(model, ".cpp")
-    src <- file.path(system.file(package="mrgsolve"), "models",file)
-    target <- file.path(project, file)
-    if(!quiet) message("Copying ", file, " to ", project)
-    if(!(file.copy(src, target, overwrite=overwrite))) {
-        if(file.exists(target)) stop("\nDestination file already exists.\nRename destination or set overwrite to TRUE.")
-    } else {
-        if(!quiet) message("Use mread() to load and compile.")
-    }
-    return(invisible(NULL))
+  
+  model <- match.arg(model)
+  file <- paste0(model, ".cpp")
+  src <- file.path(system.file(package="mrgsolve"), "models",file)
+  target <- file.path(project, file)
+  if(!quiet) message("Copying ", file, " to ", project)
+  if(!(file.copy(src, target, overwrite=overwrite))) {
+    if(file.exists(target)) stop("\nDestination file already exists.\nRename destination or set overwrite to TRUE.")
+  } else {
+    if(!quiet) message("Use mread() to load and compile.")
+  }
+  return(invisible(NULL))
 }
 
 
@@ -63,24 +63,26 @@ mrgsolve_template <- function(model="template",
                               project=getwd(),
                               writeable = FALSE,
                               overwrite=FALSE) {
-
-  if(!file.exists(project)) stop("project directory doesn't exist")
-  if(file.access(project, 2) != 0) stop("project directory must be writeable")
-
-  dest <- file.path(project, paste(model, "cpp", sep="."))
-  if(!overwrite & file.exists(dest)) stop("Destination file already exists")
-
-  src <- file.path(system.file(package="mrgsolve"),"template", "template.cpp")
-
-  con <- file(src, "r")
-  txt <- readLines(con, warn=FALSE)
-  close(con)
-
-  con <- file(dest, "w")
-  cat(txt, file=con, sep="\n")
-  close(con)
-  message("Wrote model specification template to ", dest)
-  message("Additional editing is required before compiling model.")
+  
+  stop("mrgsolve: mrgsolve_template function has been deprecated.")
+  
+  # if(!file.exists(project)) stop("project directory doesn't exist")
+  # if(file.access(project, 2) != 0) stop("project directory must be writeable")
+  # 
+  # dest <- file.path(project, paste(model, "cpp", sep="."))
+  # if(!overwrite & file.exists(dest)) stop("Destination file already exists")
+  # 
+  # src <- file.path(system.file(package="mrgsolve"),"template", "template.cpp")
+  # 
+  # con <- file(src, "r")
+  # txt <- readLines(con, warn=FALSE)
+  # close(con)
+  # 
+  # con <- file(dest, "w")
+  # cat(txt, file=con, sep="\n")
+  # close(con)
+  # message("Wrote model specification template to ", dest)
+  # message("Additional editing is required before compiling model.")
 }
 
 

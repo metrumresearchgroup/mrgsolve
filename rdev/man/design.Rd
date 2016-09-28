@@ -9,13 +9,51 @@ design(x, descol = character(0), ..., deslist = list())
 \arguments{
 \item{x}{model object}
 
-\item{descol}{the \code{idata} column name for design assignment}
+\item{descol}{the \code{idata} column name (\code{character}) for design assignment}
 
 \item{...}{\code{tgrid} or \code{tgrids} objects or \code{numeric} vector}
 
 \item{deslist}{a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...}
 }
 \description{
-Set observation designs for the simulation.
+This function also allows you to assign different designs to different
+groups or individuals in a popultion.
+}
+\details{
+This setup requires the use of an \code{idata_set}, with individual-level data
+passed in one \code{ID} per row.  For each \code{ID}, specify a grouping variable
+in \code{idata} (\code{descol}).  For each unique value of the grouping variable, 
+make one \code{\link{tgrid}} object and pass them in order as \code{...} or 
+form them into a list and pass as \code{deslist}.
+
+You must assign the \code{idata_set} before assigning the designs in the 
+command chain (see the example below).
+}
+\examples{
+
+peak <- tgrid(0,6,0.1)
+sparse <- tgrid(0,24,6)
+
+des1 <- c(peak,sparse)
+des2 <- tgrid(0,72,4)
+
+
+data <- expand.ev(ID = 1:10, amt=c(100,300))
+data$GRP <- data$amt/100
+
+idata <- data[,c("ID", "amt")]
+
+mod <- mrgsolve:::house()
+
+mod \%>\%
+  omat(dmat(1,1,1,1)) \%>\%
+  carry_out(GRP) \%>\%
+  idata_set(idata) \%>\%
+  design("amt", des1, des2) \%>\%
+  data_set(data) \%>\%
+  mrgsim \%>\% 
+  plot(RESP~time|GRP)
+
+
 }
 

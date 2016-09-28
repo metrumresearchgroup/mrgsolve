@@ -18,7 +18,6 @@ stopifnot(all(c(x1,x2)))
 
 document(pkg)
 
-
 ## I think mrgsolve functions available after doc
 foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
 #foo$mod <- mrgsolve:::embed_details(foo$mod)

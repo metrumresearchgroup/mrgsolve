@@ -8,7 +8,31 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom stats setNames
 ##' @importFrom RcppArmadillo armadillo_version
-##' @include altname.R data_set.R idata_set.R check_names.R
+##'
+
+# 
+# Collate order
+# The bottom of the list is the most base / fundamental
+# Working up includes files that depend on files that are lower down
+# Once this list is implemented, no further includes
+# of these files should be required
+# 
+
+
+##'
+##' 
+##' @include class_mrgsims.R
+##' @include class_mrgmod.R
+##' @include class_derived.R
+##' @include class_ev.R
+##' @include class_matlist.R
+##' @include class_numericlist.R
+##' @include class_tgrid.R  
+##' @include package.R
+##' @include utils.R 
+##' @include RcppExports.R  
+##' 
+##' 
 NULL
 
 GLOBALS <- new.env()
@@ -35,10 +59,10 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "addl", "rate","time", "TIME",
               "AMT", "CMT", "II", "SS", "ADDL", "RATE","EVID",
               "SOLVERTIME","table","ETA","EPS",
-              "NEWIND","DONE","DXDTZERO",
+              "NEWIND","DONE","DXDTZERO", 
               "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
-              "_SETINIT","report","double", "int", "bool")
+              "_SETINIT","report","double", "int", "bool", "capture")
 
 
 globalVariables(c("test_package","time", "ID",

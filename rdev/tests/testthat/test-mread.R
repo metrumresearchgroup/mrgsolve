@@ -27,24 +27,25 @@ dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - KE*CENT;
 
 $TABLE
-table(CP) = CP;
-table(FLAG) = 2;
-table(ETA1) = ETA(1);
-table(EPS1) = EPS(1);
+double FLAG = 2;
+double ETA1 = ETA(1);
+double EPS1 = EPS(1);
 
-$OMEGA name="A"
+$CAPTURE CP FLAG ETA1 EPS1
+
+$OMEGA @name A
 1
 2
 3
 
-$OMEGA name="B", corr=TRUE
+$OMEGA  @name B @corr
 0.1
 0.5 0.2
 
 $SIGMA
 0.55
 
-$SIGMA block=TRUE
+$SIGMA @block
 0.1 0.002 0.3
 
 '
@@ -129,11 +130,7 @@ $ODE
 double set_in_ode =1;
 ke2=556.2;
 
-$TABLE
-table(ke) = ke;
-table(ke2) = ke2;
-table(TRUTH) = TRUTH;
-table(set_in_ode) = set_in_ode;
+$CAPTURE ke ke2 TRUTH set_in_ode
 '
 
 test_that("User-declared C++ variables are available globally", {
@@ -147,5 +144,13 @@ test_that("Error when code is passed as project", {
 })
 
 
+test_that("Model name with spaces is error", {
+    expect_error(mcode("ab cd", ""))
+})
 
+test_that("Error with duplicate blocks", {
+  expect_error(mcode("a", "$ODE \n $ODE"))
+  expect_error(mcode("a", "$MAIN \n $MAIN"))
+  expect_error(mcode("a", "$SET \n $SET"))
+})
 

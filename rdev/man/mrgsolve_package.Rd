@@ -13,11 +13,6 @@ mrgsovle consists of computer code written in the R and C++ languages, providing
 the DLSODA differential equation solver (written in FORTRAN) provided through ODEPACK -
 A Systematized Collection of ODE Solvers.
 }
-\section{Help with model specification file}{
-
-See this help page: \code{\link{modelspec}}.
-}
-
 \section{Example models}{
 
 See \code{\link{mrgsolve_example}} to export example models into your own, writeable project directory.
@@ -32,7 +27,6 @@ See \code{\link{data_set}} for help creating input data sets.  See \code{\link{e
 
 \itemize{
  \item  Package \href{00Index.html}{index}, including a listing of all functions
- \item Macros and variables in the model specification file: \code{\link{modelspec}}
  \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
 }
 }
@@ -45,11 +39,6 @@ The model object has class \code{\link[=mrgmod-class]{mrgmod}}.
 \section{Handling simulated output}{
 
 See \code{\link{mrgsims}} for methods to use with simulated output.
-}
-
-\section{Operations between mrgsolve objects}{
-
-See \code{\link{mrgsolve_Ops}} for details.
 }
 
 \section{About the solver used by \code{mrgsolve}}{
@@ -156,7 +145,7 @@ double CLi = CL*exp(ETA(1));
 double VCi = VC*exp(ETA(2));
 double ke = CLi/VCi;
 
-$OMEGA corr=TRUE
+$OMEGA @correlation
 0.04 0.6 0.09
 
 $ODE
@@ -178,6 +167,13 @@ out
 plot(out)
 
 
+# Internal model library
+
+mod <- mread("irm1", modlib())
+
+mod
+
+mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
 
 
 }

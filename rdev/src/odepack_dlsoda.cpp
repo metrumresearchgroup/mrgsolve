@@ -15,11 +15,14 @@ odepack_dlsoda::odepack_dlsoda(int npar_, int neq_) {
   xrwork = new double[xlrwork];
   xiwork = new int [xliwork];
 
+  xrwork[0] = 0.0;
   xrwork[4] = 0.0;      // h0
   xrwork[5] = 0.0;      // hmax
   xrwork[6] = 0.0;      // hmin
+ 
 
-
+  xiwork[0] = 0;
+  xiwork[1] = 0;
   xiwork[4] = 0;     // IXPR print if switch
   xiwork[5] = 500 ; //maxsteps_;
   xiwork[6] = 1;    //max number of prints

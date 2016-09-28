@@ -4,17 +4,29 @@
 
 #include "RcppInclude.h"
 #include "mrgsolve.h"
-#include "odeproblem.h"
-#include "pkevent.h"
 #include <vector>
 #include <string>
-#include "dataobject.h"
 #include "boost/tokenizer.hpp"
 
+/**
+ * Limit a number to a specific number of significant digits.
+ * 
+ * @param a the number to limit
+ * @param b the number of digits
+ * 
+ */
 double digits(const double& a, const double& b) {
   return std::floor(a*b)/b;
 }
 
+/** Find the position of a string in a character vector.
+ * 
+ * @param what the string to look for
+ * @param table where to look for the string
+ * @return the position of the string with 0-based indexing if the string is found;
+ * -1 otherwise
+ * 
+ */
 int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector& table) {
   Rcpp::IntegerVector ma = Rcpp::match(what,table);
   if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
@@ -70,50 +82,18 @@ void neg_istate(int istate) {
 
 
 
+
+/** 
+ * Simulate from a multivariate normal distribution with mean 0.
+ * 
+ * @param OMEGA_ the covariance matrix
+ * @param n the number of variates to simulate
+ * @return matrix of simulated variates
+ * 
+ */
 // [[Rcpp::export]]
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
-                      const Rcpp::NumericVector& linit,
-                      int Neta, int Neps,
-                      const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs) {
+arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
   
-  
-  Rcpp::List ans;
-  
-  odeproblem* prob  = new odeproblem(lparam, linit, funs, capture.size());
-  prob->neta(Neta);
-  prob->neps(Neps);
-  
-  double time = 0;
-  prob->time(time);
-  prob->newind(0);
-  
-  prob->init_call(time);
-  prob->table_init_call();
-  
-  std::vector<std::string> tablenames;
-  const sd_map& Tabledata = prob->table();
-  for(tablemap::const_iterator it=Tabledata.begin(); it !=Tabledata.end(); ++it) {
-    tablenames.push_back(it->first);
-  }
-  
-  Rcpp::NumericVector init_val(linit.size());
-  
-  for(int i=0; i < (prob->neq()); ++i) init_val[i] = prob->init(i);
-  
-  ans["tnames"] = tablenames;
-  ans["init"] = init_val;
-  ans["npar"] = prob->npar();
-  ans["neq"] = prob->neq();
-  delete prob;
-  return(ans);
-}
-
-
-
-// [[Rcpp::export]]
-arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n, int seed) {
-
   arma::mat OMEGA(OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
   
   arma::vec eigval;
@@ -125,9 +105,12 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n, int seed) {
   arma::mat X = arma::randn<arma::mat>(n,ncol);
   
   eigval = arma::sqrt(eigval);
+  
   arma::mat Z = arma::diagmat(eigval);
+  
   X = eigvec * Z * X.t();
-  return(X.t());
+  
+  return X.t();
 }
 
 
@@ -136,8 +119,8 @@ Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix
   
   arma::mat eta;
   arma::mat eps;
-  if(OMEGA.nrow() > 0) eta = MVGAUSS(OMEGA,n1,-1);
-  if(SIGMA.nrow() > 0) eps = MVGAUSS(SIGMA,n2,-1);
+  if(OMEGA.nrow() > 0) eta = MVGAUSS(OMEGA,n1);
+  if(SIGMA.nrow() > 0) eps = MVGAUSS(SIGMA,n2);
   
   Rcpp::List ans;
   ans["eta"] = eta;
@@ -183,7 +166,6 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   
   Rcpp::CharacterVector this_nam;
   Rcpp::List dnames(2);
-  
   
   for(int i=0, n = a.size(); i < n; ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
@@ -239,7 +221,6 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
     Rcpp::List dn = Rcpp::List::create(rnam,cnam);
     ret.attr("dimnames") = dn;
   }
-  
   return(ret);
 }
 
@@ -261,7 +242,9 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   
   
   Rcpp::List ans;
+  
   ans["tokens"] = ret;
+  
   return ans;
 }
 
@@ -278,7 +261,7 @@ void from_to(const Rcpp::CharacterVector& a,
   ai = na_omit(ai);
   bi = na_omit(bi);
   
-  std::sort(ai.begin(), ai.end());
+  std::sort(bi.begin(), bi.end());
   
 }
 

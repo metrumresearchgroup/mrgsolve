@@ -4,15 +4,9 @@
 
 
 
-
-
-
 ##' @title mrgsolve
 ##' @name mrgsolve
 ##'
-##'
-##' @section Help with model specification file:
-##' See this help page: \code{\link{modelspec}}.
 ##'
 ##'
 ##' @section Example models:
@@ -24,7 +18,6 @@
 ##' @section Package help:
 ##' \itemize{
 ##'  \item  Package \href{00Index.html}{index}, including a listing of all functions
-##'  \item Macros and variables in the model specification file: \code{\link{modelspec}}
 ##'  \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
 ##' }
 ##'
@@ -44,15 +37,13 @@
 ##' @section Handling simulated output:
 ##' See \code{\link{mrgsims}} for methods to use with simulated output.
 ##'
-##' @section Operations between mrgsolve objects:
-##' See \code{\link{mrgsolve_Ops}} for details.
 ##'
 ##' @section About the solver used by \code{mrgsolve}:
 ##' See: \code{\link{aboutsolver}}
 ##'
 ##' @rdname mrgsolve_package
 ##' @docType package
-##' @useDynLib mrgsolve mrgsolve_DEVTRAN mrgsolve_TOUCH_FUNS mrgsolve_EXPAND_EVENTS
+##' @useDynLib mrgsolve mrgsolve_DEVTRAN mrgsolve_TOUCH_FUNS mrgsolve_EXPAND_EVENTS mrgsolve_QUICKSIM
 ##' @aliases mrgsolve
 ##' @examples
 ##'
@@ -154,7 +145,7 @@
 ##' double VCi = VC*exp(ETA(2));
 ##' double ke = CLi/VCi;
 ##'
-##' $OMEGA corr=TRUE
+##' $OMEGA @correlation
 ##' 0.04 0.6 0.09
 ##'
 ##' $ODE
@@ -176,7 +167,14 @@
 ##' plot(out)
 ##'
 ##'
-##'
+##' # Internal model library
+##' 
+##' mod <- mread("irm1", modlib())
+##' 
+##' mod
+##' 
+##' mod %>% ev(amt=300, ii=12, addl=3) %>% mrgsim
+##' 
 ##'
 NULL
 

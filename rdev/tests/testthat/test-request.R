@@ -6,14 +6,16 @@ Sys.setenv(R_TESTS="")
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
-$CMT GUT CENT PERIPH
+$CMT GUT CENT
+$INIT PERIPH=2
 $PKMODEL ncmt=2, depot=TRUE
 
 $MAIN
 double a = 1;
 double b = 2;
+double z = 3;
 
-$CAPTURE a b
+$CAPTURE b  z
 '
 
 mod <- mcode("req1", code)
@@ -27,11 +29,11 @@ test_that("Req gets the right variables", {
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
-  x4 <- names(mod %>% Req(b,a) %>% mrgsim)
-  expect_identical(x1,s(ID,time,GUT,CENT,PERIPH,a,b))
+  x4 <- names(mod %>% Req(b,z) %>% mrgsim)
+  expect_identical(x1,s(ID,time,GUT,CENT,PERIPH,b,z))
   expect_identical(x2,s(ID,time,PERIPH,GUT))
   expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,a,b))
+  expect_identical(x4,s(ID,time,b,z))
 })
 
 
@@ -42,11 +44,11 @@ test_that("Req gets the right variables, with request", {
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
-  x4 <- names(mod %>% Req(b,a) %>% mrgsim)
-  expect_identical(x1,s(ID,time,CENT,a,b))
+  x4 <- names(mod %>% Req(z,b) %>% mrgsim)
+  expect_identical(x1,s(ID,time,CENT,b,z))
   expect_identical(x2,s(ID,time,PERIPH,GUT))
   expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,a,b))
+  expect_identical(x4,s(ID,time,z,b))
 })
 
 
@@ -63,10 +65,12 @@ dxdt_CENT = 0;
 dxdt_PERIPH = 0;
 
 $TABLE
-table(CP) = 1;
-table(FLAG) = 2;
-table(ETA1) = ETA(1);
-table(EPS1) = EPS(1);
+double FLAG = 2;
+double ETA1 = 1.1;
+double CP = 1;
+double EPS1 = 1.2;
+
+$CAPTURE CP FLAG ETA1 EPS1
 '
 
 mod <- suppressWarnings(mcode("test3", code))
@@ -74,8 +78,8 @@ mod <- suppressWarnings(mcode("test3", code))
 test_that("Testing request setting", {
   out <- mrgsim(mod, request="PERIPH,CENT")
   out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
-  expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP","EPS1", "ETA1", "FLAG"))
-  expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","EPS1", "ETA1", "FLAG"))
+  expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP", "FLAG","ETA1", "EPS1"))
+  expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","FLAG","ETA1", "EPS1"))
 })
 
 
@@ -91,10 +95,10 @@ dxdt_CENT = 0;
 dxdt_PERIPH = 0;
 
 $TABLE
-table(CP) = 1;
-table(FLAG) = 2;
-table(ETA1) = ETA(1);
-table(EPS1) = EPS(1);
+double CP = 1;
+double FLAG = 2;
+double ETA1 = ETA(1);
+double EPS1 = EPS(1);
 '
 
 
@@ -113,5 +117,46 @@ test_that("Testing that request is (all) by default", {
 })
 
 
+
+test_that("Typedef capture", {
+  code <- '
+  $MAIN
+  capture a = 1;
+  double aa = 21;
+  capture b = 2;
+
+  $CMT CM_T
+  
+  $ODE
+  int c = 3;
+  double cc = 33;
+  dxdt_CM_T = 0;
+
+  $TABLE
+  double dd = 44;
+  capture d = 4;
+  capture capture_y = 1234;
+  double capture_n = 999;
+  '
+  
+  mod <- mcode("test3d", code)
+  
+  out <- mod %>% mrgsim(end=3)
+  
+  expect_true(all(out$a == 1))
+  expect_true(all(out$b == 2))
+  expect_true(all(out$d == 4))
+  expect_false("capture_n" %in% names(out))
+  
+  code <- '
+  $CMT CM_T
+  $ODE
+  capture c = 3;
+  double cc = 33;
+  dxdt_CM_T = 0;
+  '
+  expect_error(mod <- mcode("test3e", code))
+
+})
 
 

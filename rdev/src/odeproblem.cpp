@@ -4,19 +4,13 @@
 
 #include <cmath>
 #include <vector>
-//#include <numeric>
 #include "RcppInclude.h"
 #include "odeproblem.h"
-#include "pkevent.h"
 
 Rcpp::NumericMatrix OMEGADEF(1,1);
 arma::mat OMGADEF(1,1,arma::fill::zeros);
 
-
 #define MRGSOLVE_MAX_SS_ITER 1000
-
-
-// dummy functions that do nothing
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
@@ -26,24 +20,23 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   int npar_ = int(param.size());
   int neq_ = int(init.size());
   
-  // R0 is the actual current infusion rate
-  // R0.assign(neq_,0.0);
-  R0  = new double[neq_]();
+  Param = new double[npar_]();
   
+  R0.assign(neq_,0.0);
   infusion_count.assign(neq_,0);
   
   // R holds the value for user input rates via _R(n)
   R.assign(neq_,0.0);
+  
   // D holds the value of user input durations
   D.assign(neq_,0.0);
 
-  Param = new double[npar_]();  
-  Init_value = new double[neq_]();
-  Init_dummy = new double[neq_]();
+  Init_value.assign(neq_,0.0);
+  Init_dummy.assign(neq_,0.0);
   
   On.assign(neq_,1);
   F.assign(neq_,1.0);
-
+  
   Alag.assign(neq_,0.0);
   
   d.evid = 0;
@@ -53,14 +46,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   d.EPS.assign(50,0.0);
   d.ETA.resize(50,0.0);
-  
-  d.solving = false;
-  //d.INITSOLV = false;
   d.CFONSTOP = false;
-  //d.XDOSE = 0.0;
   d.omatrix = static_cast<void*>(&OMGADEF);
-  Tablenames.clear();
-  Tabledata.clear();
+  
   Advan = 13;
   pred.assign(5,0.0);
   
@@ -70,15 +58,12 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Inits = as_init_func(funs["main"]);
   Table = as_table_func(funs["table"]);
   Derivs = as_deriv_func(funs["ode"]);
-  Config = as_config_func(funs["config"]); 
+  Config = as_config_func(funs["config"]);
   
   Capture.assign(n_capture_,0.0);
   
 }
 
-/** \example solve.cpp
- * This is an example of how to use the odeproblem class.
- */
 
 /**
  @brief Destructor for odeproblem object
@@ -86,15 +71,11 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  Upon object construction, odeproblem dynamically allocates six arrays.  These arrays are "deleted" upon destruction.
  
  @return Void
- @author Kyle T. Baron
  @date January, 2014
  
  */
 odeproblem::~odeproblem(){
   delete [] Param;
-  delete [] Init_value;
-  delete [] Init_dummy;
-  delete [] R0;
 }
 
 void odeproblem::neta(int n) {
@@ -106,15 +87,44 @@ void odeproblem::neps(int n) {
 }
 
 
+
+/** 
+ * Assigns values to both the compartment and the 
+ * vector of initial conditions.
+ * 
+ * @param pos the compartment number (C++ indexing)
+ * @param value the value for the compartment
+ * 
+ */
 void odeproblem::y_init(int pos, double value) {
   this->y(pos,value);
   Init_value[pos] = value;
 }
 
+void odeproblem::y_init(Rcpp::NumericVector x) {
+  if(x.size() != Neq) Rcpp::stop("Initial vector is wrong size");
+  for(int i = 0; i < x.size(); ++i) {
+    Y[i] = x[i];
+    Init_value[i] = x[i];
+  }
+}
 
+void odeproblem::y_add(const unsigned int pos, const double& value) {
+  Y[pos] = Y[pos] + value; 
+}
+
+
+/** Derivative function that gets called by the solver. 
+ * 
+ * @param neq number of equations
+ * @param t solver time
+ * @param y current state
+ * @param ydot left hand side of differential equations
+ * @param prob an odeproblem object
+ * 
+ * 
+ */
 void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
-  
-  // Call derivs:
   (prob->derivs())(
       t,
       y,
@@ -127,10 +137,17 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
 
 void odeproblem::add_rates(double* ydot) {
   for(int i = 0; i < Neq; ++i) {
-    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+    ydot[i] = (ydot[i] + R0[i])*On[i];
   }
 }
 
+
+/**
+ * Call $MAIN to get the initial conditions.
+ * 
+ * @param time the time to assume for the calculation
+ * 
+ */
 void odeproblem::init_call(const double& time) {
   
   d.time = time;
@@ -151,6 +168,14 @@ void odeproblem::init_call(const double& time) {
   }
 }
 
+
+/**
+ * Call $MAIN with the dummy initial condition vector.
+ * 
+ * @param time the time to assume when making the call.
+ * 
+ * 
+ */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
   
@@ -165,15 +190,18 @@ void odeproblem::init_call_record(const double& time) {
               this->get_pred());
 }
 
+
+/** Call $TABLE.
+ * 
+ */
 void odeproblem::table_call() {
   this->Table(this->y(),
               this->init(),
               this->param(),
               this->fbio(),
               this->rate(),
-              this->table(),
               this->get_d(),
-              this->get_pred(), 
+              this->get_pred(),
               this->get_capture());
 }
 
@@ -182,9 +210,6 @@ void odeproblem::table_init_call() {
   d.newind = 0;
   d.evid = 0;
   this->table_call();
-  for(tablemap::iterator it = Tabledata.begin(); it != Tabledata.end(); ++it) {
-    Tablenames.push_back(it->first);
-  }
 }
 
 void odeproblem::rate_reset() {
@@ -210,19 +235,24 @@ void odeproblem::reset_newid(const double& id_=1.0) {
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
-
+  
   d.SYSTEMOFF=false;
   this->istate(1);
   d.ID = id_;
 }
 
 
-void odeproblem::rate_add(unsigned int pos, const double& value) {
+void odeproblem::rate_add(const unsigned int pos, const double& value) {
   ++infusion_count[pos];
   R0[pos] = R0[pos] + value;
 }
 
-void odeproblem::rate_rm(unsigned int pos, const double& value) {
+void odeproblem::rate_bump(const unsigned int pos, const double& value) {
+  R0[pos] = R0[pos] + value;
+}
+
+
+void odeproblem::rate_rm(const unsigned int pos, const double& value) {
   if(infusion_count[pos] <= 0){
     infusion_count[pos] = 0;
     R0[pos] = 0.0;
@@ -235,29 +265,46 @@ void odeproblem::rate_rm(unsigned int pos, const double& value) {
 }
 
 
-void odeproblem::on(unsigned short int eq_n) {
+void odeproblem::on(const unsigned short int eq_n) {
   On[eq_n] = 1;
 }
-void odeproblem::off(unsigned short int eq_n) {
+void odeproblem::off(const unsigned short int eq_n) {
   if(infusion_count[eq_n]>0) Rcpp::stop("Attempting to turn compartment off when infusion is on.");
   On[eq_n] = 0;
   this->y(eq_n,0.0);
 }
 
-// void odeproblem::INITSOLV() {
-//   if(!d.INITSOLV) return;
-//   d.INITSOLV=false;
-//   this->lsoda_init();
-// }
 
 void odeproblem::pass_omega(arma::mat* x) {
   d.omatrix = reinterpret_cast<void*>(x);
 }
 
+extern "C" {
+  void F77_NAME(dlsoda) (
+      main_deriv_func *derivs,
+      int             *neq,
+      double          *y,
+      const double    *tfrom,
+      const double    *tto,
+      int             *itol,
+      double          *rtol,
+      double          *atol,
+      int             *itask,
+      int             *istate,
+      int             *iopt,
+      double          *rwork,
+      int             *lrwork,
+      int             *iwork,
+      int             *liwork,
+      int             *dum, // dummy jacobian
+      int             *jt, // jacobian type
+      odeproblem      *prob
+  );
+}
 
 void odeproblem::advance(double tfrom, double tto) {
   
-  if(Neq <= 0) return;
+  if(Neq == 0) return;
   
   if(Advan != 13) {
     if((Advan==2) | (Advan==1)) {
@@ -274,25 +321,53 @@ void odeproblem::advance(double tfrom, double tto) {
   }
   
   
-  dlsoda_(&main_derivs,
-          &Neq,
-          this->y(),
-          &tfrom,
-          &tto,
-          &xitol,
-          &xrtol,
-          &xatol,
-          &xitask,
-          &xistate,
-          &xiopt,
-          this ->rwork(),
-          &xlrwork,
-          this->iwork(),
-          &xliwork,
-          &Neq,
-          &xjt,
-          this
+  F77_CALL(dlsoda)(
+      &main_derivs,
+      &Neq,
+      Y,
+      &tfrom,
+      &tto,
+      &xitol,
+      &xrtol,
+      &xatol,
+      &xitask,
+      &xistate,
+      &xiopt,
+      xrwork,
+      &xlrwork,
+      xiwork,
+      &xliwork,
+      &Neq,
+      &xjt,
+      this
   );
+  
+  // lsoda(&main_derivs,
+  //         Neq,
+  //         this->y(),
+  //         &tfrom,
+  //         tto,
+  //         xitol,
+  //         &xrtol,
+  //         &xatol,
+  //         xitask,
+  //         &xistate,
+  //         xiopt,
+  //         xjt,
+  //         xiwork[0],
+  //         xiwork[1],
+  //         xiwork[4],
+  //         xiwork[5],
+  //         xiwork[6],
+  //         xiwork[7],
+  //         xiwork[8],
+  //         xrwork[0],
+  //         xrwork[4],
+  //         xrwork[5],
+  //         xrwork[6],
+  //         this
+  // );
+  // 
   
   main_derivs(&Neq, &tto,Y, Ydot, this);
 }
@@ -302,8 +377,9 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   unsigned int neq = this->neq();
   
   double dt = tto-tfrom;
-  if (MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("A pred_CL has a 0 or negative value.");
-  if (MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative  value.");
+  
+  if (MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
+  if (MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
   
   double k10 = MRGSOLVE_GET_PRED_K10;
   double ka =  MRGSOLVE_GET_PRED_KA;
@@ -374,7 +450,7 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   // Make sure parameters are valid
   if (MRGSOLVE_GET_PRED_VC <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
   if (MRGSOLVE_GET_PRED_VP <=  0) Rcpp::stop("pred_VP has a 0 or negative  value.");
-  if (MRGSOLVE_GET_PRED_Q  <   0) Rcpp::stop("pred_Q has a 0 or negative  value.");
+  if (MRGSOLVE_GET_PRED_Q  <   0) Rcpp::stop("pred_Q has a  negative  value.");
   if (MRGSOLVE_GET_PRED_CL <=  0) Rcpp::stop("pred_CL has a 0 or negative  value.");
   
   double ka =  MRGSOLVE_GET_PRED_KA;
@@ -491,7 +567,7 @@ double PolyExp(const double& x,
   //maximum value for a double in C++
   int i;
   
-  assert((alpha.size() >= n) && (a.size() >= n));
+  //assert((alpha.size() >= n) && (a.size() >= n));
   
   //UPDATE DOSE
   if (dose>0) {
@@ -532,7 +608,8 @@ double PolyExp(const double& x,
     }
     
     else if(!ss) {
-      assert(xinf <= tau); //and other case later, says Bill
+      if(xinf <= tau) Rcpp::stop("xinf <= tau in PolyExp");
+      //assert(xinf <= tau); //and other case later, says Bill
       dx=x-trunc(x/tau)*tau;
       nlntv=trunc(x/tau)+1;
       if(dx<=xinf) {
@@ -553,7 +630,7 @@ double PolyExp(const double& x,
     }
     
     else {
-      assert(xinf <= tau);
+      if(xinf <= tau) Rcpp::stop("xinf <= tau in PolyExp");
       dx = x - trunc(x/tau)*tau;
       nlntv = trunc(x/tau)+1;
       if (dx <= xinf) {
@@ -584,20 +661,6 @@ double PolyExp(const double& x,
   return bolusResult + rate*result;
 }
 
-
-void odeproblem::init_fun(SEXP xifun) {
-  Inits = as_init_func(xifun);
-}
-void odeproblem::table_fun(SEXP xtfun) {
-  Table = as_table_func(xtfun);
-}
-void odeproblem::deriv_fun(SEXP xdfun) {
-  Derivs = as_deriv_func(xdfun);
-}
-void odeproblem::config_fun(SEXP xcfun) {
-  Config = as_config_func(xcfun);
-}
-
 init_func* as_init_func(SEXP inits) {
   return(reinterpret_cast<init_func *>(tofunptr(inits))); // Known to generate compiler warning
 }
@@ -622,11 +685,12 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
   this->advan(Rcpp::as<int>(parin["advan"]));
 }
+
 void odeproblem::copy_funs(const Rcpp::List& funs) {
   Inits = as_init_func(funs["main"]);
   Table = as_table_func(funs["table"]);
   Derivs = as_deriv_func(funs["ode"]);
-  Config = as_config_func(funs["config"]); 
+  Config = as_config_func(funs["config"]);
   
 }
 
@@ -647,3 +711,46 @@ void odeproblem::advan(int x) {
   
 }
 
+
+/**
+ * Call the $MAIN function from a model object.
+ * 
+ * @param lparam model parameters
+ * @param linit model initial contitions
+ * @param Neta number of rows in OMEGA
+ * @param Neps number of rows in SIGMA
+ * @param capture vector of capture names
+ * @param funs the model funset
+ * @return list with updated initial conditions, number of paramerters,
+ * and number of equations
+ * 
+ */
+// [[Rcpp::export]]
+Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+                      const Rcpp::NumericVector& linit,
+                      int Neta, int Neps,
+                      const Rcpp::CharacterVector& capture,
+                      const Rcpp::List& funs) {
+  
+  Rcpp::List ans;
+  
+  odeproblem prob(lparam, linit, funs, capture.size());
+  prob.neta(Neta);
+  prob.neps(Neps);
+  
+  prob.newind(0);
+  
+  prob.init_call(0.0);
+  
+  Rcpp::NumericVector init_val(linit.size());
+  
+  for(int i=0; i < (prob.neq()); ++i) {
+    init_val[i] = prob.init(i);
+  }
+  
+  ans["init"] = init_val;
+  ans["npar"] = prob.npar();
+  ans["neq"] = prob.neq();
+  
+  return(ans);
+}
