@@ -10,8 +10,6 @@
 #include <string>
 
 typedef std::vector<double> dvec;
-typedef std::map<std::string,double> sd_map;
-//typedef std::map<std::string,double> tablemap;
 typedef std::vector<std::string > svec;
 typedef std::vector<int > ivec;
 
