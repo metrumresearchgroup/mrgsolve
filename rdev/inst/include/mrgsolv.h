@@ -7,13 +7,12 @@
 
 #include <vector>
 #include <map>
+#include <string>
 
 typedef std::vector<double> dvec;
-typedef std::map<std::string,double> sd_map;
-//typedef std::map<std::string,double> tablemap;
 typedef std::vector<std::string > svec;
 typedef std::vector<int > ivec;
-//typedef  const std::vector<double> cdvec;
+
 
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& _databox_, dvec& _pred_
 
