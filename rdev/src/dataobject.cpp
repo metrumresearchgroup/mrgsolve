@@ -67,21 +67,17 @@ void dataobject::map_uid() {
   int i=0;
   int n = Data.nrow();
   
-  Uid.reserve(n);
-  Startrow.reserve(n);
-  Endrow.reserve(n);
-
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
   
-  for(i=1; i < Data.nrow(); ++i) {
+  for(i=1; i < n; ++i) {
     if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
       Startrow.push_back(i);
       Endrow.push_back(i-1);
     }
   }
-  Endrow.push_back(Data.nrow()-1);
+  Endrow.push_back(n-1);
 }
 
 
@@ -286,14 +282,14 @@ void dataobject::check_idcol(dataobject *idat) {
   
   int nidata = idat->nrow();
   
-  dvec uidata(nidata);
+  uidtype uidata(nidata);
   
   for(int i=0; i < nidata; ++i) {
     uidata.push_back(idat->get_id_value(i));
   }
   
   // Uids from data
-  dvec uthis  = this->return_uid();
+  uidtype uthis  = this->return_uid();
   
   sort_unique(uthis);
   sort_unique(uidata);
