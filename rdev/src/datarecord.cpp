@@ -27,7 +27,7 @@ datarecord::datarecord(int evid_, double time_, short int cmt_) {
 
 datarecord::~datarecord() {}
 
-bool CompByTimePosRec(rec_ptr& a, rec_ptr& b)
+bool CompByTimePosRec(rec_ptr a, rec_ptr b)
 {
   // time-a != time-b
   if (a->time() < b->time()) return true;

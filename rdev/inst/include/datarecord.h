@@ -62,7 +62,7 @@ class datarecord {
 };
 
 
-bool CompByTimePosRec(rec_ptr& a, rec_ptr& b);
+bool CompByTimePosRec(rec_ptr a, rec_ptr b);
 
 // struct Comparator {
 //   bool operator()(rec_ptr& a, rec_ptr& b) {
