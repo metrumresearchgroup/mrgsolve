@@ -584,8 +584,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ans(crow,1) = this_rec->time();
 
         // Write out captured items
-        for(int i=0, k=0; i < n_capture; ++i, ++k) {
+        k = 0;
+        for(int i=0; i < n_capture; ++i) {
           ans(crow,k+capture_start) = prob->capture(capture[i+1]);
+          ++k;
         }
         
         // Write out requested compartments
