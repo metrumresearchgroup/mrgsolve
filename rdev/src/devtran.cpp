@@ -237,7 +237,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         it->push_back(obs);
       }
       // sort the records by time and original position 
-      //std::sort(it->begin(), it->end(), CompByTimePosRec);
       std::sort(it->begin(), it->end(), CompByTimePosRec);
     }
   }

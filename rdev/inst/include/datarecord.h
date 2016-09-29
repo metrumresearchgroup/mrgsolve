@@ -65,7 +65,7 @@ class datarecord {
 bool CompByTimePosRec(rec_ptr& a, rec_ptr& b);
 
 struct Comparator {
-  bool operator()(const rec_ptr& a, const rec_ptr& b) const {
+  bool operator()(rec_ptr& a, rec_ptr& b) {
     // time-a != time-b
     if (a->time() < b->time()) return true;
     if (b->time() < a->time()) return false;
