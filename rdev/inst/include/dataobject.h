@@ -9,7 +9,7 @@
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-typedef boost::unordered::unordered_map<int,double> u_di_map;
+typedef boost::unordered::unordered_map<double,int> idat_map;
 
 class dataobject {
 
@@ -51,14 +51,16 @@ public:
   ivec Startrow;
   ivec Endrow;
   int Idcol;
+  
   Rcpp::NumericMatrix Data;
   Rcpp::CharacterVector Data_names;
 
   std::vector<unsigned int> col;
+  
   Rcpp::IntegerVector par_from;  // data set index
   Rcpp::IntegerVector par_to;    // parameter list index
   Rcpp::CharacterVector parnames;
-  u_di_map idmap;
+  idat_map idmap;
 
   Rcpp::IntegerVector cmt_from; // data set index
   Rcpp::IntegerVector cmt_to;  // cmt index

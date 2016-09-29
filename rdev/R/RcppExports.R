@@ -9,10 +9,6 @@ MVGAUSS <- function(OMEGA_, n) {
     .Call('mrgsolve_MVGAUSS', PACKAGE = 'mrgsolve', OMEGA_, n)
 }
 
-SIMRE <- function(n1, OMEGA, n2, SIGMA, seed) {
-    .Call('mrgsolve_SIMRE', PACKAGE = 'mrgsolve', n1, OMEGA, n2, SIGMA, seed)
-}
-
 decorr <- function(x) {
     invisible(.Call('mrgsolve_decorr', PACKAGE = 'mrgsolve', x))
 }

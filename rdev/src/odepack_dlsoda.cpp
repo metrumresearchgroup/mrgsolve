@@ -1,5 +1,6 @@
 
 #include "odepack_dlsoda.h"
+#include <algorithm>
 
 odepack_dlsoda::odepack_dlsoda(int npar_, int neq_) {
 
@@ -29,7 +30,6 @@ odepack_dlsoda::odepack_dlsoda(int npar_, int neq_) {
   xiwork[7] = 12;  // maxordn
   xiwork[8] = 5;  // maxords
 
-  xusingevents = 0;
   xitol = 1;
   xiopt = 0;
   xitask = 1;
@@ -37,8 +37,6 @@ odepack_dlsoda::odepack_dlsoda(int npar_, int neq_) {
   xjt = 2;
   xatol = 1E-8;
   xrtol = 1E-8;
-
-
 }
 
 

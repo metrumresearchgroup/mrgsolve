@@ -19,9 +19,6 @@ out5 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20),seed=555)
 out6 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20),seed=555)
 
 
-out7 <- simre(out5)
-out8 <- simre(out6)
-out9 <- simre(out6)
 
 
 ident <- function(x,y,...) {
@@ -41,13 +38,6 @@ test_that("Runs with same seeds give same results with call to set.seed()", {
 })
 test_that("Runs with same seeds give same results when seed passed to mrgsim()", {
   expect_true(ident(out5,out6))
-})
-test_that("Random effects are properly recovered from runs with same seed passed", {
-  expect_true(identical(out7,out8))
-  expect_true(identical(out8,out9))
-})
-test_that("Random effects are properly recovered by repeated calls to simre", {
-  expect_true(identical(out8,out9))
 })
 
 

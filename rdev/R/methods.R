@@ -303,37 +303,23 @@ setMethod("revar", "mrgmod", function(x,...) return(list(omega=x@omega,sigma=x@s
 ##' @rdname revar
 setMethod("revar", "mrgsims", function(x,...) {revar(mod(x))})
 
-##' Simulate random effects from model.
-##'
-##' @param x model object
-##' @param seed passed to \code{\link{set.seed}}
-##' @param neta number of etas to simulate
-##' @param neps number of epsilon values to simulate
-##' @param ... passed along
-##'
-##' @export
-##' @rdname simre
-setGeneric("simre", function(x,...) standardGeneric("simre"))
-
-##' @export
-##' @rdname simre
-setMethod("simre", "mrgmod", function(x,seed=NULL,neta=10,neps=10,...) {
-  if(!is.null(seed)) set.seed(seed)
-  return(simulateres(neta,omat(x,make=TRUE), neps,smat(x,make=TRUE)))
-})
-##' @export
-##' @rdname simre
-setMethod("simre", "mrgsims", function(x,seed=NULL,...) {
-  NID <- length(unique(x@data[,"ID"]))
-  N <- nrow(x@data)
-  
-  y <- mod(x)
-  
-  if(is.null(seed) & !is.na(x@seed)) set.seed(x@seed)
-  if(!is.null(seed) & is.na(x@seed)) set.seed(seed)
-  
-  return(simulateres(NID,omat(y,make=TRUE), N, smat(y,make=TRUE)))
-})
+# setGeneric("simre", function(x,...) standardGeneric("simre"))
+# setMethod("simre", "mrgmod", function(x,seed=NULL,neta=10,neps=10,...) {
+#   if(!is.null(seed)) set.seed(seed)
+#   return(simulateres(neta,omat(x,make=TRUE), neps,smat(x,make=TRUE)))
+# })
+# 
+# setMethod("simre", "mrgsims", function(x,seed=NULL,...) {
+#   NID <- length(unique(x@data[,"ID"]))
+#   N <- nrow(x@data)
+#   
+#   y <- mod(x)
+#   
+#   if(is.null(seed) & !is.na(x@seed)) set.seed(x@seed)
+#   if(!is.null(seed) & is.na(x@seed)) set.seed(seed)
+#   
+#   return(simulateres(NID,omat(y,make=TRUE), N, smat(y,make=TRUE)))
+# })
 
 
 ##' Return the code blocks from a model specification file.

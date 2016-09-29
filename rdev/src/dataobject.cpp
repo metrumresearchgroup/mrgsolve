@@ -33,9 +33,8 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names,parnames, par_from, par_to);
   
-  idmap.reserve(_data.nrow());
-  
   col.resize(8,0);
+
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -49,13 +48,15 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
+  
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names, parnames, par_from, par_to);
   from_to(Data_names, cmtnames, cmt_from, cmt_to);
-  
+
   col.resize(8,0);
+  
 }
 
 
@@ -72,6 +73,7 @@ void dataobject::map_uid() {
 
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
+  
   for(i=1; i < Data.nrow(); ++i) {
     if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
@@ -92,6 +94,7 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
 
 void dataobject::locate_tran() {
   
+
   int zeros = Data.ncol()-1;
   
   if(zeros==0) {
@@ -120,8 +123,6 @@ void dataobject::locate_tran() {
   }
   
   col[_COL_time_] = tcol;
-  
-  
   
   if(lc) {
     col[_COL_amt_]  = std::find(bg,ed,"amt")  - bg;
@@ -192,16 +193,18 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
   int j=0;
   int this_cmt;
   double lastime = 0;
-
-  if(Data.ncol() <= 1) return;
   
+  if(Data.ncol() <= 1) {
+    return;
+  }
+
   for(int h=0; h < NID; ++h) {
     
     lastime = 0;
-    
+
     a[h].reserve(this->end(h) - this->start(h) + 5);
     
-    for(j = this -> start(h); j <= this -> end(h); ++j) {
+    for(j = this->start(h); j <= this->end(h); ++j) {
       
       if(Data(j,col[_COL_time_]) < lastime) {
         Rcpp::stop("Problem with time: data set is not sorted by time or time is negative.");
@@ -260,8 +263,7 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
-
-      
+  
       if((ev->addl() > 0) && (ev->ii() <=0)) {
         Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
       }

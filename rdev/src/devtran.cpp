@@ -237,6 +237,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         it->push_back(obs);
       }
       // sort the records by time and original position 
+      //std::sort(it->begin(), it->end(), CompByTimePosRec);
       std::sort(it->begin(), it->end(), CompByTimePosRec);
     }
   }
@@ -272,7 +273,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->neps(neps);
   }
   
-  prob->init_call_record(0.0);
+  // Do we need this?
+  //prob->init_call_record(0.0);
   
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
@@ -376,7 +378,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   
-  
   if(verbose||debug)  Rcpp::Rcout << "Solving ... ";
   
   double tto, tfrom;
@@ -441,10 +442,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // mtime
     if(mtimes.size() > 0) add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
     
-    prob->table_call();
+    // Do we need this?
+    //prob->table_call();
     
     // LOOP ACROSS EACH RECORD for THIS ID:
     for(size_t j=0; j < a[i].size(); ++j) {
+      
+      if(crow == NN) continue;
       
       if(j != 0) prob->newind(2);
     
@@ -483,12 +487,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       // If tto is too close to tfrom, set tto to tfrom
       // dt is never negative; dt will never be < mindt when mindt==0
-      if((dt > 0.0) && (dt < mindt)) { // don't bother if dt==0
+      if((dt > 0.0) && (dt < mindt)) { 
         tto = tfrom;
       }
       
       // Only copy in a new eps value if we are actually advancing in time:
-      if((tto > tfrom) && (crow < NN)) {
+      if(tto > tfrom) {
         for(k = 0; k < neps; ++k) {
           prob->eps(k,eps(crow,k));
         }
@@ -516,8 +520,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(ev->rate() == -1) {
             this_cmt = ev->cmt()-1;
             if(prob->rate(this_cmt) <= 0) {
-              //Rcpp::Rcout << "R(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
-              Rcpp::stop("Invalid infusion settings.");
+               Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
             }
             ev->rate(prob->rate(this_cmt));
           }
@@ -525,8 +528,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(ev->rate() == -2) {
             this_cmt = ev->cmt()-1;
             if(prob->dur(this_cmt) <= 0) {
-              //Rcpp::Rcout << "D(" << this_cmt + 1 << ") must be set to a positive value in $MAIN." << std::endl;
-              Rcpp::stop("Invalid infusion settings.");
+              Rcpp::stop("Invalid infusion setting: duration (D_CMT).");
             }
             ev->rate(ev->amt() * biofrac / prob->dur(this_cmt));
           }
@@ -549,8 +551,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           newev->addl(ev->addl());
           newev->ii(ev->ii());
           newev->ss(ev->ss());
-          //newev->id(ev->id());
-          //newev->pos(-1200);
           newev->fn(biofrac);
           newev->output(false);
           
@@ -566,11 +566,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             std::sort(a[i].begin()+j+1,a[i].end(),CompByTimePosRec);
           }
         }
-        // Remember to update the value of size
-        //ai_size = a[i].size();
       }
       
-      prob -> advance(tfrom,tto);
+      prob->advance(tfrom,tto);
       
       if(this_rec->evid() != 2) {
         this_rec->implement(prob);
@@ -586,10 +584,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ans(crow,1) = this_rec->time();
 
         // Write out captured items
-        k=0;
-        for(int i=0; i < n_capture; ++i) {
+        for(int i=0, k=0; i < n_capture; ++i, ++k) {
           ans(crow,k+capture_start) = prob->capture(capture[i+1]);
-          ++k;
         }
         
         // Write out requested compartments
@@ -597,7 +593,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           ans(crow,(k+req_start)) = prob->y(request[k]);
         }
         
-        ++crow;
+        ++crow; // this must inside check to output
       } // end if ouput()
       
       
@@ -610,12 +606,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       tfrom = tto;
     }
   }
-  
-  if((verbose||debug)) Rcpp::Rcout << "done. " << std::endl;
-  
+
   // Significant digits in simulated variables and outputs too
-  if(digits > 0) for(int i=req_start; i < ans.ncol(); ++i) ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
-  if((tscale != 1) && (tscale >= 0)) ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
+  if(digits > 0) {
+    for(int i=req_start; i < ans.ncol(); ++i) {
+      ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
+    }
+  }
+  if((tscale != 1) && (tscale >= 0)) {
+    ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
+  }
+  
   
   // Clean up
   delete prob;

@@ -86,8 +86,4 @@ private:
   
 };
 
-// bool CompByTime(ev_ptr a, ev_ptr b);
-// bool CompByoPos(ev_ptr a, ev_ptr b);
-// bool CompByPos(ev_ptr a, ev_ptr b);
-
 #endif

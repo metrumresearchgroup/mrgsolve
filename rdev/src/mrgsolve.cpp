@@ -33,9 +33,6 @@ int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector
   return(ma[0]-1);
 }
 
-
-//extern "C" {void mrgsolve_no_init_function(double *y,  std::vector<double>& param) {}}
-
 void neg_istate(int istate) {
   Rcpp::Rcout << std::endl << "mrgsolve: DLSODA returned with istate " << istate << std::endl;
   /*
@@ -111,22 +108,6 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
   X = eigvec * Z * X.t();
   
   return X.t();
-}
-
-
-// [[Rcpp::export]]
-Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix& SIGMA, int seed) {
-  
-  arma::mat eta;
-  arma::mat eps;
-  if(OMEGA.nrow() > 0) eta = MVGAUSS(OMEGA,n1);
-  if(SIGMA.nrow() > 0) eps = MVGAUSS(SIGMA,n2);
-  
-  Rcpp::List ans;
-  ans["eta"] = eta;
-  ans["eps"] = eps;
-  
-  return(ans);
 }
 
 //[[Rcpp::export]]

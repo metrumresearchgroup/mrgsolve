@@ -68,7 +68,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   
   double tto =0;
   double tfrom = time[0];
-  int capstart = 2 + neq;
+  const int capstart = 2 + neq;
   int crow = 0;
   int k; 
   double ID = 0;

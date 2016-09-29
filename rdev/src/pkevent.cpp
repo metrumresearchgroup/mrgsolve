@@ -5,7 +5,7 @@
 #include "pkevent.h"
 #include "RcppInclude.h"
 #include "odeproblem.h"
-//#include "mrgsolve.h"
+
 
 #define N_SS 1000
 #define CRIT_DIFF_SS 1E-10
@@ -43,7 +43,6 @@ pkevent::pkevent(short int cmt_,
   Fn = 1.0;
   Armed = true;
 }
-
 
 
 double pkevent::dur(double b) {
@@ -125,10 +124,6 @@ void pkevent::implement(odeproblem *prob) {
       this-> implement(prob);
       return;
     }
-    
-  case 11:
-    //prob->y(eq_n,(prob->y(eq_n)  + prob->xdose()));
-    break;
   }
   prob->lsoda_init();
 }
@@ -194,7 +189,9 @@ void pkevent::steady_infusion(odeproblem *prob) {
   int j;
   std::vector<double> res(prob->neq(), 0.0);
   std::vector<double> last(prob->neq(),1E-10);
+  
   evlist offs;
+  
   double this_sum = 0.0;
   double last_sum = 1E-6;
   
@@ -255,10 +252,6 @@ void pkevent::steady_infusion(odeproblem *prob) {
 
 
 
-// inline bool CompByTime(ev_ptr a, ev_ptr b) {return a->time() < b->time();}
-// inline bool CompByPos(ev_ptr a, ev_ptr b)  {return a->pos() < b->pos();  }
-
-
 /** 
  * Schedule out doses.  If the dose was an infusion, schedule the 
  * off infusion event.  If the dose included additional doses, 
@@ -272,7 +265,8 @@ void pkevent::steady_infusion(odeproblem *prob) {
  * are always sorted first by time, then by position.
  * 
  */
-void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first) {
+void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
+                       bool put_ev_first) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
 
@@ -284,6 +278,7 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_
     ev_ptr evoff(new pkevent(Cmt, 9,  Amt, Time + this->dur(Fn), 
                              Rate,-300, Id));
     evoff->output(false);
+    
     thisi.push_back(evoff);
     
     if(Ss) {
@@ -395,13 +390,12 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
       }
       break;
     }
-    
-    //if(debug)  Rcpp::Rcout << "mtime: " << b[i] << std::endl;
+
     rec_ptr obs(new datarecord(100,b[i],0,-100,0));
     obs->output(false);
     thisi.push_back(obs);
   }
-  // Sort
+
   std::sort(thisi.begin(), thisi.end(), CompByTimePosRec);
 }
 

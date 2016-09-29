@@ -7,8 +7,8 @@
 #include "RcppInclude.h"
 #include "odeproblem.h"
 
-Rcpp::NumericMatrix OMEGADEF(1,1);
-arma::mat OMGADEF(1,1,arma::fill::zeros);
+static Rcpp::NumericMatrix OMEGADEF(1,1);
+static arma::mat OMGADEF(1,1,arma::fill::zeros);
 
 #define MRGSOLVE_MAX_SS_ITER 1000
 
@@ -19,37 +19,32 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   int npar_ = int(param.size());
   int neq_ = int(init.size());
+  Advan = 13;
   
   Param = new double[npar_]();
-  
-  R0.assign(neq_,0.0);
-  infusion_count.assign(neq_,0);
-  
-  // R holds the value for user input rates via _R(n)
-  R.assign(neq_,0.0);
-  
-  // D holds the value of user input durations
-  D.assign(neq_,0.0);
-
   Init_value.assign(neq_,0.0);
   Init_dummy.assign(neq_,0.0);
   
-  On.assign(neq_,1);
+  R0.assign(neq_,0.0);
+  infusion_count.assign(neq_,0);
+  R.assign(neq_,0.0);
+  D.assign(neq_,0.0);
   F.assign(neq_,1.0);
-  
   Alag.assign(neq_,0.0);
+  
+  On.assign(neq_,1);
   
   d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
   d.ID = 1.0;
-  
   d.EPS.assign(50,0.0);
   d.ETA.resize(50,0.0);
   d.CFONSTOP = false;
   d.omatrix = static_cast<void*>(&OMGADEF);
   
-  Advan = 13;
+
+  
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
@@ -97,7 +92,7 @@ void odeproblem::neps(int n) {
  * 
  */
 void odeproblem::y_init(int pos, double value) {
-  this->y(pos,value);
+  Y[pos] = value;
   Init_value[pos] = value;
 }
 
@@ -133,13 +128,6 @@ void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
     for(int i = 0; i < Neq; ++i) {
       ydot[i] = (ydot[i] + R0[i])*On[i]; 
     }
-}
-
-
-void odeproblem::add_rates(double* ydot) {
-  for(int i = 0; i < Neq; ++i) {
-    ydot[i] = (ydot[i] + R0[i])*On[i];
-  }
 }
 
 
@@ -198,7 +186,7 @@ void odeproblem::rate_reset() {
 }
 
 
-void odeproblem::reset_newid(const double& id_=1.0) {
+void odeproblem::reset_newid(const double id_) {
   
   for(int i = 0; i < Neq; ++i) {
     R0[i] = 0.0;
@@ -209,13 +197,13 @@ void odeproblem::reset_newid(const double& id_=1.0) {
     F[i] = 1.0;
     Alag[i] = 0;
   }
-  
+
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
   
   d.SYSTEMOFF=false;
-  this->istate(1);
+  this->lsoda_init();
   d.ID = id_;
 }
 
