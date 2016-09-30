@@ -41,3 +41,7 @@ QUICKSIM <- function(parin, param, init, parnames, cmtnames, data, idata, captur
     .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, cmtnames, data, idata, capturei, funs)
 }
 
+PREDSIM <- function(parin, param, init, parnames, cmtnames, idata, capturei, funs) {
+    .Call('mrgsolve_PREDSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, cmtnames, idata, capturei, funs)
+}
+

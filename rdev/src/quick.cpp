@@ -5,6 +5,7 @@
 #include "odeproblem.h"
 #include "RcppInclude.h"
 #include "dataobject.h"
+#include "mrgsolve.h"
 
 /** Perform a simple simulation run.
  * 
@@ -28,7 +29,7 @@
 typedef  Rcpp::NumericMatrix::Column mcol;
 
 namespace {
-  unsigned int timecol = 1;
+unsigned int timecol = 1;
   unsigned int cmtcol  = 2;
   unsigned int evidcol = 3;
   unsigned int amtcol  = 4;
@@ -40,11 +41,11 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
                              const Rcpp::NumericVector& init,
                              Rcpp::CharacterVector& parnames,
                              Rcpp::CharacterVector& cmtnames,
-                                   Rcpp::NumericMatrix& data,
+                             Rcpp::NumericMatrix& data,
                              const Rcpp::NumericMatrix& idata,
                              const Rcpp::IntegerVector& capturei,
                              const Rcpp::List& funs) {
-
+  
   dataobject idat(idata,parnames,cmtnames);
   
   const int capn = capturei.at(0);
@@ -91,7 +92,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
     if(i==0) prob.newind(0);
     
     tfrom = time[0];
-
+    
     // Simulate the same data set
     for(size_t j = 0; j < drow; ++j) {
       
@@ -102,7 +103,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
       }
       
       tto = time[j];
-    
+      
       prob.advance(tfrom,tto);
       
       if(evid[j]==1) {
@@ -131,5 +132,37 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   }
   return ans;
 }
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix PREDSIM(const Rcpp::List& parin,
+                            const Rcpp::NumericVector& param,
+                            const Rcpp::NumericVector& init,
+                            Rcpp::CharacterVector& parnames,
+                            Rcpp::CharacterVector& cmtnames,
+                            const Rcpp::NumericMatrix& idata,
+                            const Rcpp::IntegerVector& capturei,
+                            const Rcpp::List& funs) {
+  
+  dataobject idat(idata,parnames);
+
+  const int capn = capturei.at(0);
+  odeproblem prob(param, init, funs, capn);
+  Rcpp::NumericMatrix ans(idata.nrow(),capn);
+  
+  int k; 
+  size_t irow = idata.nrow();
+  
+  // Simulate each individual
+  for(size_t i = 0; i < irow; ++i) {
+    idat.copy_parameters(i,&prob);
+    prob.init_call(0.0);
+    prob.table_call();
+    for(k = 0; k < capn; ++k) {
+      ans(i,k) = prob.capture(capturei[1+k]); 
+    }
+  }
+  return ans;
+}
+
 
 
