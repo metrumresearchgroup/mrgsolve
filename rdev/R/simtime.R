@@ -11,7 +11,7 @@
 ##' @rdname tgrid
 ##' @name tgrid
 ##'
-##'
+##' @param x tgrid object
 ##' @param start simulation start time
 ##' @param end simulation end time
 ##' @param delta simulation time step
@@ -44,31 +44,6 @@ tgrids <- function(...) {
     new("tgrids", data=list(...))
 }
 
-##' @export
-##' @rdname tgrid
-##' @param x mrgmod object
-##' @param recursive not used
-setMethod("c", "tgrid", function(x,..., recursive=FALSE) {
-
-    x <- c(list(x), list(...))
-
-    singles <- sapply(x, inherits, what="tgrid")
-
-    multis <- sapply(x, inherits, what="tgrids")
-
-    x <- c(x[singles], unlist(lapply(x[multis], function(y) y@data)))
-
-    do.call("tgrids", x)
-})
-
-##' @export
-##' @rdname tgrid
-setMethod("c", "tgrids", function(x,...,recursive=FALSE) {
-    do.call("c",c(x@data, list(...)))
-})
-
-
-
 #' @export
 #' @rdname tgrid
 setMethod("stime", "tgrid", function(x,...) {
@@ -88,8 +63,35 @@ setMethod("stime", "numeric", function(x,...) {
 })
 
 
+##' Operations with tgrid objects.
+##' 
+##' @export
+##' @rdname tgrid_ops
+##' @export
+##' @param x mrgmod object
+##' @param recursive not used
+##' @param ... passed along to other methods
+setMethod("c", "tgrid", function(x,..., recursive=FALSE) {
+  
+  x <- c(list(x), list(...))
+  
+  singles <- sapply(x, inherits, what="tgrid")
+  
+  multis <- sapply(x, inherits, what="tgrids")
+  
+  x <- c(x[singles], unlist(lapply(x[multis], function(y) y@data)))
+  
+  do.call("tgrids", x)
+})
 
-##' @rdname tgrid
+
+##' @export
+##' @rdname tgrid_ops
+setMethod("c", "tgrids", function(x,...,recursive=FALSE) {
+  do.call("c",c(x@data, list(...)))
+})
+
+##' @rdname tgrid_ops
 ##' @name tgrid_+_numeric
 ##' @docType methods
 ##' @aliases +,tgrid,numeric-method
@@ -100,7 +102,7 @@ setMethod("+", signature(e1="tgrid", e2="numeric"), function(e1,e2) {
     e1
 })
 
-##' @rdname tgrid
+##' @rdname tgrid_ops
 ##' @name tgrid_*_numeric
 ##' @docType methods
 ##' @aliases *,tgrid,numeric-method
@@ -110,7 +112,7 @@ setMethod("*", signature(e1="tgrid", e2="numeric"), function(e1,e2) {
 })
 
 
-##' @rdname tgrid
+##' @rdname tgrid_ops
 ##' @name tgrids_+_numeric
 ##' @docType methods
 ##' @aliases +,tgrids,numeric-method
@@ -122,7 +124,7 @@ setMethod("+", signature(e1="tgrids", e2="numeric"), function(e1,e2) {
     e1
 })
 
-##' @rdname tgrid
+##' @rdname tgrid_ops
 ##' @name tgrids_*_numeric
 ##' @docType methods
 ##' @aliases *,tgrids,numeric-method
@@ -155,9 +157,7 @@ setMethod("show", "tgrid", function(object) {
 ##' @export
 ##' @rdname tgrid
 setMethod("show", "tgrids", function(object) {
-
     lapply(object@data, function(x) {
-
         show(x)
         cat("--------\n")
     })

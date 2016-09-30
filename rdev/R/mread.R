@@ -327,8 +327,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   close(def.con)
   
   ## lock some of this down so we can check order later
-  x@shlib$cmt <- cmt(x)
-  x@shlib$par <- pars(x)
+  x@shlib$cmt <- names(init(x))
+  x@shlib$par <- names(param(x))
   x@code <- readLines(modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- file.path(soloc,compfile(model))

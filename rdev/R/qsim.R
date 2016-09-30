@@ -60,10 +60,7 @@ qdata <- function(e,stime) {
 ##' A quick simulation function.
 ##' 
 ##' @param x model object
-##' @param e event object
 ##' @param idata individual data set
-##' @param stime a \code{\link{tgrid}} object or any object with \code{\link{stime}} method
-##' 
 ##' 
 ##' @export
 ##' 

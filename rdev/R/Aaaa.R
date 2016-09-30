@@ -20,15 +20,18 @@
 
 
 ##'
-##' 
+##' @include methods.R
+
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
+
 ##' @include class_derived.R
 ##' @include class_ev.R
 ##' @include class_matlist.R
 ##' @include class_numericlist.R
 ##' @include class_tgrid.R  
 ##' @include class_modlist.R
+##' @include generics.R
 ##' @include package.R
 ##' @include utils.R 
 ##' @include RcppExports.R  

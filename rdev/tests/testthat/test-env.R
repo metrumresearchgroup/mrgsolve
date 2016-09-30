@@ -20,7 +20,7 @@ test_that("$ENV sub into $PARAM", {
   '
   mod <- mcode("test-env-2", code, compile=FALSE)
   expect_is(mod, "mrgmod")
-  expect_identical(pars(mod),c("A", "B"))
+  expect_identical(mrgsolve:::pars(mod),c("A", "B"))
   expect_equivalent(as.numeric(param(mod)), c(1,2))
 })
 
@@ -31,7 +31,7 @@ test_that("$ENV sub into $INIT", {
   '
   mod <- mcode("test-env-3", code, compile=FALSE)
   expect_is(mod, "mrgmod")
-  expect_identical(cmt(mod),c("A", "B"))
+  expect_identical(mrgsolve:::cmt(mod),c("A", "B"))
   expect_equivalent(as.numeric(init(mod)), c(1,2))
 })
 

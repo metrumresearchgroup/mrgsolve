@@ -2,77 +2,8 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-##' @title Get model events
-##'
-##' @description
-##' An accessor function for the \code{events} model attribute.
-##'
-##' Events can either be specified when the model object is created (with
-##' \code{mrgmod}) or by updating an existing model object (with \code{update}).
-##'
-##' @return Returns a user-defined data frame of events that should be suitable
-##' for passing into \code{lsoda}.  If events are stored as a data frame,
-##' \code{events} returns the data frame.  If events are stored as a function
-##' that generates the data frame, \code{events} calls the function and passes
-##' return back to the user.
-##'
-##' @param x mrgmodel object
-##' @param ... passed on
-##' @export events
-##' @author Kyle Baron
-##' @keywords events
-setGeneric("events", function(x,...) standardGeneric("events"))
-##' @rdname events
-##' @export
-setMethod("events", "mrgmod", function(x,...) {
 
-    args <- list(...)
-    if(length(args)>0) return(update(x,events=ev(...)))
 
-    x@events
-})
-##' @export
-##' @rdname events
-setMethod("events", "mrgsims", function(x,...) events(mod(x)))
-
-## REMOVE
-#checkevents.mrgmod <- function(x) {return(TRUE)}
-#null_ev <- list(time=0,cmt=0,amt=0, ss=0, ii=0, addl=0,rate=0, evid=0)
-#null_ev_col <- length(null_ev)
-#null_ev_names <- names(null_ev)
-#null_ev_df <- as.data.frame(null_ev)[0,]
-
-##' @title Create event object
-##' @return an object of class ev
-##'
-##' @details
-##' \itemize{
-##' \item Required input for creating events objects include \code{time} and \code{cmt}
-##' \item If not supplied, \code{evid} is assumed to be 1
-##' \item If not supplied, \code{cmt}  is assumed to be 1
-##' \item If not supplied, \code{time} is assumed to be 0
-##' \item \code{ID} may be specified as a vector
-##' \item if replicate is \code{TRUE} (default), thenthe events regimen is replicated for each \code{ID}; otherwise, the number of
-##' event rows must match the number of \code{ID}s entered
-##' }
-##'
-##' @export
-##' @rdname events
-##' @examples
-##' mod <- mrgsolve:::house()
-##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
-##' events(mod)
-##'
-##' loading <- ev(time=0, cmt=1, amt=1000)
-##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
-##' loading + maint
-##'
-##'
-##' ev(ID=1:10, cmt=1, time=0, amt=100)
-##'
-##'
-setGeneric("ev", function(x,...) standardGeneric("ev"))
-##' @export
 ##' @rdname events
 ##' @param evid event ID
 ##' @param ID subject ID
@@ -80,93 +11,70 @@ setGeneric("ev", function(x,...) standardGeneric("ev"))
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
+##' @export
 setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replicate=TRUE, until=NULL, ...) {
-
-
-    if(length(match.call())==1) { return(new("ev", data=data.frame()[0,]))}
-
-    if(any(evid==0)) stop("evid cannot be 0 (observation)")
-
-    data <-
-        as.data.frame(list(...)) %>%
-            dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
-                as.data.frame
-
-    if(!exists("amt",data)) stop("amt is required input.", call.=FALSE)
-
-    if(!missing(until)) {
-        if(!exists("ii", data)) stop("ii is required when until is specified", call.=FALSE)
-        data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
-    }
-
-    if(length(ID) > 0) {
-        ID <- seq_along(unique(ID))
-        if(!is.numeric(ID)) stop("ID must be numeric")
-
-        if(replicate) {
-            if(any(!is.numeric(data))) {
-                data <- as.list(data)
-                data <- lapply(data, unique)
-                data <- do.call("expand.grid", c(list(ID=ID,stringsAsFactors=FALSE),data))
-                data <- data %>% dplyr::arrange(ID,time)
-                rownames(data) <- NULL
-            } else {
-                data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
-                                         match("ID", colnames(data),0), 
-                                         data.matrix(data), 
-                                         ID))
-            }
-
-        } else {
-            if(length(ID)!=nrow(data)) stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
-            data["ID"] <- ID
-        }
-        data <- data %>% shuffle(c("ID", "time", "cmt"))
+  
+  if(length(match.call())==1) { return(new("ev", data=data.frame()[0,]))}
+  
+  if(any(evid==0)) stop("evid cannot be 0 (observation)")
+  
+  data <-
+    as.data.frame(list(...)) %>%
+    dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
+    as.data.frame
+  
+  if(!exists("amt",data)) stop("amt is required input.", call.=FALSE)
+  
+  if(!missing(until)) {
+    if(!exists("ii", data)) stop("ii is required when until is specified", call.=FALSE)
+    data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
+  }
+  
+  if(length(ID) > 0) {
+    ID <- seq_along(unique(ID))
+    if(!is.numeric(ID)) stop("ID must be numeric")
+    
+    if(replicate) {
+      if(any(!is.numeric(data))) {
+        data <- as.list(data)
+        data <- lapply(data, unique)
+        data <- do.call("expand.grid", c(list(ID=ID,stringsAsFactors=FALSE),data))
+        data <- data %>% dplyr::arrange(ID,time)
+        rownames(data) <- NULL
+      } else {
+        data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
+                                 match("ID", colnames(data),0), 
+                                 data.matrix(data), 
+                                 ID))
+      }
+      
     } else {
-        data <- data %>% shuffle(c("time", "cmt"))
+      if(length(ID)!=nrow(data)) stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
+      data["ID"] <- ID
     }
-    return(new("ev", data=data))
+    data <- data %>% shuffle(c("ID", "time", "cmt"))
+  } else {
+    data <- data %>% shuffle(c("time", "cmt"))
+  }
+  return(new("ev", data=data))
 })
 
-##' Create a regimen as event object.
-##'
-##' @param amt dose amount
-##' @param ii dosing interval
-##' @param addl additional doses
-##' @param ... passed to \code{\link{ev}}
-##' @export
-##'
-##'
-Rx <- function(amt,ii,addl,...) {
-    ev(amt=amt, ii=ii,addl=addl,...)
-}
 
-##' @export
 ##' @rdname events
+##' @export
 setMethod("ev", "ev", function(x,...) return(x))
-##' @export
-##' @rdname events
-setMethod("ev", "mrgmod", function(x,...) {
-    update(x,events=ev(...))
 
-})
-
-##' @rdname events
-##' @export
-setGeneric("as.ev", function(x,...) standardGeneric("as.ev"))
-
-
-##' @export
 ##' @param nid if greater than 1, will expand to the appropriate number of individuals
 ##' @rdname events
+##' @export
 setMethod("as.ev", "data.frame", function(x,nid=1,...) {
-    if(nrow(x)==0) return(new("ev",data=data.frame()))
-    if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.")
-    if(nid > 1) x <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
-                                      match("ID", colnames(x),0), 
-                                      data.matrix(x),
-                                      c(1:nid)))
-    new("ev",data=x)
+  if(nrow(x)==0) return(new("ev",data=data.frame()))
+  if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.")
+  if(nid > 1) x <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
+                                    match("ID", colnames(x),0), 
+                                    data.matrix(x),
+                                    c(1:nid)))
+  new("ev",data=x)
 })
 
 ##' @export
@@ -178,7 +86,7 @@ setMethod("as.matrix", "ev", function(x,...) as.matrix(as.data.frame(x,stringsAs
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
 setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
-    as.data.frame(x@data,row.names,optional,stringsAsFactors=FALSE,...)
+  as.data.frame(x@data,row.names,optional,stringsAsFactors=FALSE,...)
 })
 
 
@@ -215,18 +123,18 @@ setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
 setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 ##' @rdname as_data_set
 setMethod("as_data_set","ev", function(x,...) {
-    do.call(collect_ev,c(list(x),list(...)))
+  do.call(collect_ev,c(list(x),list(...)))
 })
 
 
 
 ##' @rdname events
-##' @export
 ##' @param object passed to show
+##' @export
 setMethod("show", "ev", function(object) {
-    cat("Events:\n")
-    print(as.data.frame(object))
-    return(invisible(NULL))
+  cat("Events:\n")
+  print(as.data.frame(object))
+  return(invisible(NULL))
 })
 
 
@@ -239,6 +147,7 @@ na2zero <- function(x) {
   x[is.na(x)] <- 0
   x
 }
+
 collect_ev <- function(...) {
   tran <- c("ID","time", "cmt", "evid",  "amt", "ii", "addl", "rate", "ss")
   x <- lapply(list(...),check_ev)
@@ -252,9 +161,9 @@ collect_ev <- function(...) {
   x <- dplyr::mutate_each(x,dplyr::funs(na2zero),which(what))
   na.check <- which(!what)
   if(length(na.check) > 0) {
-      if(any(is.na(unlist(x[,na.check])))) {
-          warning("Missing values in some columns.",call.=FALSE)
-      }
+    if(any(is.na(unlist(x[,na.check])))) {
+      warning("Missing values in some columns.",call.=FALSE)
+    }
   }
   x <- x %>% dplyr::select(c(match(tran,names(x)),seq_along(names(x))))
   return(x)
@@ -265,10 +174,10 @@ collect_ev <- function(...) {
 
 ##' Operations for ev objects.
 ##'
-##' @rdname ev_ops
 ##' @param e1 object on left hand side of operator (lhs)
 ##' @param e2 object on right hand side of operator (rhs)
 ##' @name ev_ops
+##' @rdname ev_ops
 ##' @aliases +,ev,ev-method
 ##' @docType methods
 ##'
@@ -279,8 +188,9 @@ setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
   return(add.ev(e1,e2))
 })
 
-##' @export
+
 ##' @rdname ev_ops
+##' @export
 setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 ##' @export
 ##' @rdname ev_ops
@@ -294,19 +204,20 @@ setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   e1 + e2
 })
 
-##' @export
 ##' @rdname ev_ops
+##' @export
 setMethod("+", c("ev", "numeric"), function(e1, e2) {
   e1@data$time <- e1@data$time + e2
   e1
 })
 
 
-##' @export
-##' @rdname ev_ops
+
 ##' @param x an ev object
 ##' @param ... other ev objects to collect
 ##' @param recursive not used
+##' @rdname ev_ops
+##' @export
 setMethod("c", "ev", function(x,...,recursive=TRUE) {
   y <- list(...)
   if(length(y)==0) return(x)
@@ -318,10 +229,10 @@ setMethod("c", "ev", function(x,...,recursive=TRUE) {
 
 
 
-##' Add an events object to a mrgmod object
-##' @param e1 mrgmod object
-##' @param e2 events object
-##' @export
+# Add an events object to a mrgmod object.
+# 
+# @param e1 mrgmod object
+# @param e2 events object
 plus.ev <- function(e1,e2) {
   
   data1 <- as.data.frame(events(e1))
@@ -360,10 +271,10 @@ plus.ev <- function(e1,e2) {
 }
 
 
-##' Add two events objects
-##' @param e1 first events object
-##' @param e2 second events object
-##' @export
+# Add two events objects.
+# 
+# @param e1 first events object
+# @param e2 second events object
 add.ev <- function(e1,e2) {
   
   short <- setdiff(names(e1@data), names(e2@data))

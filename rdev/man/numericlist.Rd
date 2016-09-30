@@ -36,7 +36,7 @@
 
 \item{optional}{passed to \code{\link{as.data.frame}}}
 
-\item{name}{column to take; used with \code{$}}
+\item{name}{column to take}
 
 \item{i}{elements to keep}
 

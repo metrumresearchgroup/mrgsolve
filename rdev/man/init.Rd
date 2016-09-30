@@ -15,7 +15,7 @@
 \alias{init,mrgmod-method}
 \alias{init,mrgsims-method}
 \alias{show,cmt_list-method}
-\title{Get and set model initial conditions.}
+\title{Create and work with cmt_list objects.}
 \usage{
 as.init(.x, ...)
 
@@ -59,8 +59,6 @@ an object of class \code{cmt_list} (see \code{\link{numericlist}})
 }
 \description{
 Calling \code{init} with the model object as the first argument will return the model initial conditions as a \code{numericlist} object. See \code{\link{numericlist}} for methods to  deal with \code{cmt_list} objects.
-
-##' @export
 }
 \details{
 Can be used to either get a compartment list object from a \code{mrgmod} model object or to update

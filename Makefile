@@ -27,6 +27,10 @@ all:
 doc:
 	Rscript makescripts/doc_mrgsolve.R
 
+.PHONY: staticdoc
+staticdoc:
+	Rscript makescripts/staticdocs.R
+
 build:
 	R CMD build --md5 $(PKGDIR)
 

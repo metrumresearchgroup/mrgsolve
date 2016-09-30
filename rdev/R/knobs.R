@@ -28,9 +28,6 @@
 ##' plot(out)
 ##'
 ##' out
-##' moving(out)
-##' batch(out)
-##'
 ##'
 ##' out <- mod %>% ev(events) %>% knobs(CL=c(1,2,3), VC=c(5,20,50))
 ##' plot(out)
@@ -50,6 +47,7 @@
 ##' out <- knobs(mod, CL=c(1,2,3))
 ##' out
 setGeneric("knobs", function(x,y,...) standardGeneric("knobs"))
+
 ##' @export
 ##' @rdname knobs
 setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
@@ -143,28 +141,14 @@ setMethod("as.matrix","batch_mrgsims", function(x,y,...) {
   x@data
 })
 
-##' @export
-##' @rdname knobs
-setGeneric("batch", function(x,...) standardGeneric("batch"))
 
-##' @export
-##' @rdname knobs
-setGeneric("moving", function(x,...) standardGeneric("moving"))
+batch <- function(x) x@batch
+moving <- function(x) x@moving
 
-##' @export
-##' @rdname knobs
-setMethod("batch", "batch_mrgsims", function(x,...) {
-  x@batch
-})
 ##' @export
 ##' @rdname knobs
 setMethod("knobs", "batch_mrgsims", function(x,...) {
   x@knobs
-})
-##' @export
-##' @rdname knobs
-setMethod("moving", "batch_mrgsims", function(x,...) {
-  x@moving
 })
 
 

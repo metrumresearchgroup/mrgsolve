@@ -4,10 +4,7 @@
 
 
 
-##' @title Get and set model parameters
-##'
-##' @description
-##' An accessor function for the \code{param} model attribute.
+##' Create and work with parameter_list objects.
 ##'
 ##' See \code{\link{numericlist}} for methods to deal with \code{parameter_list} objects.
 ##'
@@ -143,13 +140,11 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
 ##' @param object passed to show
 setMethod("show", "parameter_list", function(object) showparam(object))
 
-
 ##' @export
 ##' @rdname param
 allparam <- function(.x) {
     as.param(c(as.list(param(.x)), .x@fixed))
 }
-
 
 as.fixed <- function(x) {
     as.list(x)

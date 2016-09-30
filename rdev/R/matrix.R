@@ -112,7 +112,7 @@ Diag <- function(x) {
 ##' @param digits if greater than zero, matrix is passed to signif (along with digits) prior to returning
 ##' @details
 ##' \code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix.  \code{dmat} makes a diagonal matrix.
-##' \code{BLOCK} is a synonym for \code{bmat}.
+##' 
 ##'
 ##' @export
 ##' @examples
@@ -132,9 +132,7 @@ bmat <- function(...,correlation=FALSE, digits=-1) {
   if(digits>0) x <- signif(x,digits=digits)
   return(x)
 }
-##' @export
-##' @rdname bmat
-BLOCK <- bmat
+
 
 ##' @export
 ##' @rdname bmat

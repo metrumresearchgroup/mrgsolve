@@ -59,64 +59,27 @@
 ##'
 NULL
 
-##' DEPRECATED: Label simulation output.
-##'
-##' Attaches a named column to the simulation output with a single numeric value.
-##'
-##' @param x mrgsims object
-##' @param ... name=value pairs; value must be numeric.
-##' @export
-##' @rdname label
-setGeneric("label", function(x,...) standardGeneric("label"))
-##' @export
-##' @rdname label
-setMethod("label", "mrgsims", function(x,...) {
-  stop("label is deprecated; use mutate instead.") 
-})
 
-##' Return the model object.
-##'
-##' @param x mrgsims object
-##' @param ... passed along
-##' @export
-##' @rdname mod
-setGeneric("mod", function(x,...) standardGeneric("mod"))
 ##' @export
 ##' @rdname mod
 setMethod("mod", "mrgsims", function(x,...) {x@mod})
 
 
+request <- function(x) x@request
+variables <- function(x) {
+  stopifnot(is.mrgsims(x))
+  return(c(x@request,x@outnames))
+}
 
-##' Return the requested compartments from a simulation run.
-##'
-##' @param x mrgsims object
-##' @param ... passed along
-##' @seealso \code{\link{variables}}
-##' @export
-##' @rdname request
-setGeneric("request", function(x,...) standardGeneric("request"))
-##' @export
-##' @rdname request
-setMethod("request", "mrgsims", function(x,...) {return(x@request)})
 
-##' Return the requested compartments and tabled items from a simulation run.
-##'
-##' @param x mrgsims object
-##' @param ... passed along
-##' @seealso \code{\link{request}}
-setGeneric("variables", function(x,...) standardGeneric("variables"))
-##' @export
-##' @rdname variables
-setMethod("variables", "mrgsims", function(x,...) return(c(x@request,x@outnames)))
-
-##' @rdname mrgsims
 ##' @param name name of column of simulated output to retain
+##' @rdname mrgsims
 ##' @export
+##' 
 setMethod("$", "mrgsims", function(x,name) {
   if(!is.element(name, colnames(x@data))) stop("Couldn't find column ", name, " in simulated data")
   return(x@data[,name])
 })
-
 
 ##' @export
 ##' @rdname mrgsims
@@ -145,6 +108,80 @@ setMethod("names", "mrgsims", function(x) {
 })
 
 
+
+##' Methods for handling output with dplyr verbs.
+##' 
+##' @rdname mrgsims_dplyr
+##' @name mrgsims_dplyr
+##' 
+NULL
+
+##' @param x mrgsims object
+##' @param .dots passed to various \code{dplyr} functions
+##' @param .data passed to various \code{dplyr} functions
+##' @param add passed to \code{dplyr::group_by_}
+##' @param funs passed to \code{dplyr::summarise_each}
+##' @param ... passed to other methods
+##' @rdname mrgsims_dplyr
+##' @export
+##' @importFrom dplyr do_
+as.tbl.mrgsims <- function(x,...) {
+  dplyr::as.tbl(as.data.frame(x))
+}
+
+##' @rdname mrgsims_dplyr
+##' @export
+filter_.mrgsims <- function(.data,...,.dots) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::filter_(...,.dots=.dots)
+}
+
+##' @rdname mrgsims_dplyr
+##' @export
+group_by_.mrgsims <- function(.data,...,.dots,add=FALSE) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::group_by_(...,.dots=.dots)
+}
+
+##' @rdname mrgsims_dplyr
+##' @export
+mutate_.mrgsims <- function(.data,...,.dots) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::mutate_(...,.dots=.dots)
+}
+##' @rdname mrgsims_dplyr
+##' @export
+summarise.each <- function(.data,funs,...) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::summarise_each(funs,...)
+}
+##' @rdname mrgsims_dplyr
+##' @export
+summarise_.mrgsims <- function(.data,...,.dots) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::summarise_(...,.dots=.dots)
+}
+##' @rdname mrgsims_dplyr
+##' @export
+do_.mrgsims <- function(.data,...,.dots) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::do_(...,.dots=.dots)
+}
+##' @rdname mrgsims_dplyr
+##' @export
+select_.mrgsims <- function(.data,...,.dots) {
+  dplyr::as.tbl(as.data.frame(.data)) %>%
+    dplyr::select_(...,.dots=.dots)
+}
+
+##' @rdname mrgsims_dplyr
+##' @export
+slice_.mrgsims <- function(.data,...) {
+  dplyr::slice_(as.data.frame(.data),...)
+}
+
+
+
 ##' @export
 ##' @rdname mrgsims
 ##' @param row.names passed to \code{\link{as.data.frame}}
@@ -152,70 +189,10 @@ setMethod("names", "mrgsims", function(x) {
 setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,...) {
   return(as.data.frame(x@data,row.names,optional,...))
 })
-
-
-##' @param .dots passed to various \code{dplyr} functions
-##' @param .data passed to various \code{dplyr} functions
-##' @param add passed to \code{dplyr::group_by_}
-##' @param funs passed to \code{dplyr::summarise_each}
-##' @export
-##' @rdname mrgsims
-##' @importFrom dplyr do_
-as.tbl.mrgsims <- function(x,...) {
-  dplyr::as.tbl(as.data.frame(x))
-}
-##' @export
-##' @rdname mrgsims
-filter_.mrgsims <- function(.data,...,.dots) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::filter_(...,.dots=.dots)
-}
-##' @export
-##' @rdname mrgsims
-group_by_.mrgsims <- function(.data,...,.dots,add=FALSE) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::group_by_(...,.dots=.dots)
-}
-##' @export
-##' @rdname mrgsims
-mutate_.mrgsims <- function(.data,...,.dots) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::mutate_(...,.dots=.dots)
-}
-##' @export
-##' @rdname mrgsims
-summarise.each <- function(.data,funs,...) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::summarise_each(funs,...)
-}
-##' @export
-##' @rdname mrgsims
-summarise_.mrgsims <- function(.data,...,.dots) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::summarise_(...,.dots=.dots)
-}
-##' @export
-##' @rdname mrgsims
-do_.mrgsims <- function(.data,...,.dots) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::do_(...,.dots=.dots)
-}
-##' @export
-##' @rdname mrgsims
-select_.mrgsims <- function(.data,...,.dots) {
-  dplyr::as.tbl(as.data.frame(.data)) %>%
-    dplyr::select_(...,.dots=.dots)
-}
-
-##' @export
-##' @rdname mrgsims
-slice_.mrgsims <- function(.data,...) {
-  dplyr::slice_(as.data.frame(.data),...)
-}
-
 ##' @export
 ##' @rdname mrgsims
 setMethod("as.matrix", "mrgsims", function(x,...) return(as.matrix(x@data)))
+
 ##' @export
 ##' @rdname mrgsims
 setMethod("subset", "mrgsims", function(x,...) {
@@ -225,7 +202,6 @@ setMethod("subset", "mrgsims", function(x,...) {
 ##' @param object passed to show
 ##' @export
 ##' @rdname mrgsims
-
 setMethod("summary", "mrgsims", function(object,...) {
   summary(as.data.frame(object))
 })
@@ -345,24 +321,9 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
 })
 
 
-##' DEPRECATED: Limit the scope of simulated output.
-##'
-##' @param x mrgsims or batch mrgsims object
-##' @param ... passed along
 ##' @export
-setGeneric("limit", function(x,...) standardGeneric("limit"))
-##' @param subset rows to keep
-##' @param select columns to keep
-##' @rdname limit
-setMethod("limit", "mrgsims", function(x,subset, select=TRUE,...) {
-  stop("The limit function is deprecated.  Use filter instead.")
-})
-
-# same_data <- function(x,y) {
-#     identical(x@data, y@data)
-# }
-
-
+##' @rdname events
+setMethod("events", "mrgsims", function(x,...) events(mod(x)))
 
 
 

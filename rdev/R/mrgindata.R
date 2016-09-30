@@ -128,6 +128,9 @@ cmtname <- function(x) {
   intersect(c("cmt", "CMT"), colnames(x))[1] 
 }
 
+is.mrgindata <- function(x) inherits(x,"mrgindata")
+is.valid_idata <- function(x) inherits(x,"valid_idata")
+
 
 ##' @rdname mrgindata
 ##' @export
@@ -139,4 +142,6 @@ mrgindata.matrix <- function(x,verbose=FALSE,...) {
   }
   stop("Input data matrix is not numeric")
 }
+
+
 

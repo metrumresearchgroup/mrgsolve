@@ -5,21 +5,12 @@
 \alias{$,mrgsims-method}
 \alias{as.data.frame,mrgsims-method}
 \alias{as.matrix,mrgsims-method}
-\alias{as.tbl.mrgsims}
 \alias{dim,mrgsims-method}
-\alias{do_.mrgsims}
-\alias{filter_.mrgsims}
-\alias{group_by_.mrgsims}
 \alias{head,mrgsims-method}
 \alias{mrgsims}
-\alias{mutate_.mrgsims}
 \alias{names,mrgsims-method}
-\alias{select_.mrgsims}
 \alias{show,mrgsims-method}
-\alias{slice_.mrgsims}
 \alias{subset,mrgsims-method}
-\alias{summarise.each}
-\alias{summarise_.mrgsims}
 \alias{summary,mrgsims-method}
 \alias{tail,mrgsims-method}
 \title{Methods for working with \code{mrgsims} objects.}
@@ -36,24 +27,6 @@
 
 \S4method{as.data.frame}{mrgsims}(x, row.names = NULL, optional = FALSE,
   ...)
-
-\method{as.tbl}{mrgsims}(x, ...)
-
-\method{filter_}{mrgsims}(.data, ..., .dots)
-
-\method{group_by_}{mrgsims}(.data, ..., .dots, add = FALSE)
-
-\method{mutate_}{mrgsims}(.data, ..., .dots)
-
-summarise.each(.data, funs, ...)
-
-\method{summarise_}{mrgsims}(.data, ..., .dots)
-
-\method{do_}{mrgsims}(.data, ..., .dots)
-
-\method{select_}{mrgsims}(.data, ..., .dots)
-
-\method{slice_}{mrgsims}(.data, ...)
 
 \S4method{as.matrix}{mrgsims}(x, ...)
 
@@ -73,14 +46,6 @@ summarise.each(.data, funs, ...)
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
 \item{optional}{passed to \code{\link{as.data.frame}}}
-
-\item{.data}{passed to various \code{dplyr} functions}
-
-\item{.dots}{passed to various \code{dplyr} functions}
-
-\item{add}{passed to \code{dplyr::group_by_}}
-
-\item{funs}{passed to \code{dplyr::summarise_each}}
 
 \item{object}{passed to show}
 }

@@ -56,13 +56,13 @@ test_that("Parameters are parsed properly with mread", {
   expect_equal(param(mod)$CL,1)
   expect_equal(param(mod)$VC,20)
   expect_equal(param(mod)$KA,1.2)
-  expect_equal(pars(mod), c("CL", "VC", "KA", "VMAX", "KM"))
+  expect_equal(mrgsolve:::pars(mod), c("CL", "VC", "KA", "VMAX", "KM"))
 })
 
 test_that("Compartments are parsed properly with mread", {
   expect_equal(init(mod)$GUT,100)
   expect_equal(init(mod)$CENT,5)
-  expect_equal(cmt(mod), c("GUT", "CENT"))
+  expect_equal(mrgsolve:::cmt(mod), c("GUT", "CENT"))
 })
 
 test_that("Settings are parsed properly with mread", {

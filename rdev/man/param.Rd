@@ -15,7 +15,7 @@
 \alias{param,mrgmod-method}
 \alias{param,mrgsims-method}
 \alias{show,parameter_list-method}
-\title{Get and set model parameters}
+\title{Create and work with parameter_list objects.}
 \usage{
 param(.x, ...)
 
@@ -58,8 +58,6 @@ allparam(.x)
 An object of class \code{parameter_list} (see \code{\link{numericlist}}).
 }
 \description{
-An accessor function for the \code{param} model attribute.
-
 See \code{\link{numericlist}} for methods to deal with \code{parameter_list} objects.
 }
 \details{

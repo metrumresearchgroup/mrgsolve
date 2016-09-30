@@ -34,7 +34,7 @@ mod <- mcode("test6", code)
 par <- lapply(as.list(param(mod)), round, digits=3)
 
 test_that("THETAS are imported into the parameter list", {
-  expect_identical(pars(mod), c(paste0("THETA", 1:7),"CL"))
+  expect_identical(mrgsolve:::pars(mod), c(paste0("THETA", 1:7),"CL"))
   expect_identical(par$THETA6, 1.024)
   expect_identical(par$THETA2, 22.791)
 })
