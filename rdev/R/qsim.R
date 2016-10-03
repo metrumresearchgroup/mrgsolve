@@ -4,15 +4,35 @@
 ##' @param x model object
 ##' @param e event object
 ##' @param idata individual data set
-##' @param stime a \code{\link{tgrid}} object or any object with \code{\link{stime}} method
+##' @param req compartments to request
 ##' 
+##' 
+##' @examples 
+##' 
+##' mod <- mrgsolve:::house()
+##' 
+##' des <- tgrid(0,2400,1)
+##' 
+##' data <- recmatrix(ev(amt=1000, ii=24, addl=100),des)
+##' 
+##' out <- mod %>% qsim(data)
 ##' 
 ##' @export
 ##' 
-qsim <- function(x,e,idata,stime) {
+qsim <- function(x,e,idata,req=NULL) {
   
-  e <- qdata(e,stime)
-
+  if(missing(idata)) {
+    idata <- matrix(1,dimnames=list(NULL,"ID"))
+  }
+  
+  cm <- reqn <-  cmt(x)
+  if(is.null(req)) {
+    req <- seq_along(reqn)
+  } else {
+    req <- match(intersect(req,cm),cm)
+    reqn <- cm[req]
+  }
+  
   cap <- c(length(x@capture),seq_along(x@capture)-1)
   
   out <- .Call('mrgsolve_QUICKSIM', 
@@ -21,38 +41,98 @@ qsim <- function(x,e,idata,stime) {
                as.numeric(param(x)),
                as.numeric(init(x)),
                pars(x),
-               cmt(x),
-               e,data.matrix(idata),
+               e,attr(e,"n"),
+               data.matrix(idata),
+               as.integer(req-1),
                cap,
                pointers(x))
   
-  dimnames(out) <- list(NULL, c("ID","time", cmt(x),x@capture))
+  dimnames(out) <- list(NULL, c("ID","time", reqn,x@capture))
+  
   out
   
 }
 
-qdata <- function(e,stime) {
-  e <- as.data.frame(e)
-  if(is.null(e$ii)) {
-    e$ii <- 0
-    e$addl <- 0
+as_ev_matrix <- function(ev) {
+  n <- ev$addl+1
+  m1 <- matrix(nrow=n,ncol=5,
+               dimnames=list(NULL,c("time", "cmt","evid", "amt", "rate")),
+               c(ev$start + seq(0,ev$addl*ev$ii,ev$ii),
+                 rep(ev$cmt,n),
+                 rep(1,n),
+                 rep(ev$amt,n),
+                 rep(ev$rate,n)))
+  
+  if(ev$rate > 0) {
+    m2 <- matrix(nrow=n,ncol=5,byrow=FALSE,
+                 c(m1[,1] + m1[,4]/ev$rate,
+                   rep(ev$cmt,n),
+                   rep(9,n),
+                   rep(0,n),
+                   m1[,5])
+    )
+    m1 <- rbind(m1,m2)
   }
-  doses <- seq(0,by=e$ii,length.out=e$addl+1)
-  time <- sort(unique(c(stime,doses)))
-  nrow <- length(time)
-  evid <- as.integer(time %in% doses)
-  rate <- rep(e$rate,nrow)
-  amt <- e$amt * evid
-  cmt <- e$cmt
-  x <- matrix(0,nrow=nrow,ncol=6)
+  m1
+}
+
+obs_matrix <- function(x) {
+  matrix(nrow=length(x),ncol=5,
+         dimnames=list(NULL,c("time", "cmt","evid", "amt", "rate")),
+         c(x,vector("numeric",4*length(x))))
+}
+
+##' Create a matrix of events for simulation.
+##' 
+##' This function is for use with \code{\link{qsim}} only.
+##'
+##' @param x an events object
+##' @param times object that can be coerced to numeric with \code{\link{stime}}
+##' @param c_indexing if \code{TRUE}, compartment numbers will be decremented by 1
+##' @export
+##' 
+recmatrix <- function(x,times,c_indexing=TRUE) {
+  x <- as.data.frame(x)
+  if(!exists("rate", x)) x$rate <- 0
+  if(!exists("addl", x)) x$addl <- 0
+  if(!exists("ii", x)) x$ii <- 0
+  if(!exists("start", x)) x$start <- 0
+  if(c_indexing) x[["cmt"]] <- x[["cmt"]]-1
   
-  x[,1] <- 1
-  x[,2] <- time
-  x[,3] <- cmt
-  x[,4] <- evid
-  x[,5] <- amt
-  x[,6] <- rate
+  if(is.null(times)) stop("Please supply simulation times.")
+  x <- lapply(split(x,1:nrow(x)),as_ev_matrix)
+  x <- do.call(rbind,c(x,list(obs_matrix(stime(times)))))
+  structure(x[order(x[,1],x[,4]),],n=sum(x[,"evid"]==0))
+}
+
+
+
+
+##' A quick simulation function.
+##' 
+##' @param x model object
+##' @param idata individual data set
+##' 
+##' @export
+##' 
+psim <- function(x,idata) {
   
-  x
+  cap <- c(length(x@capture),seq_along(x@capture)-1)
+  
+  out <- .Call('mrgsolve_PREDSIM', 
+               PACKAGE = 'mrgsolve',
+               parin(x),
+               as.numeric(param(x)),
+               as.numeric(init(x)),
+               pars(x),
+               cmt(x),
+               data.matrix(idata),
+               cap,
+               pointers(x))
+  
+  dimnames(out) <- list(NULL, c(x@capture))
+  
+  out
+  
 }
 

@@ -7,8 +7,8 @@
 #include "RcppInclude.h"
 #include "odeproblem.h"
 
-Rcpp::NumericMatrix OMEGADEF(1,1);
-arma::mat OMGADEF(1,1,arma::fill::zeros);
+static Rcpp::NumericMatrix OMEGADEF(1,1);
+static arma::mat OMGADEF(1,1,arma::fill::zeros);
 
 #define MRGSOLVE_MAX_SS_ITER 1000
 
@@ -19,37 +19,32 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   int npar_ = int(param.size());
   int neq_ = int(init.size());
+  Advan = 13;
   
   Param = new double[npar_]();
-  
-  R0.assign(neq_,0.0);
-  infusion_count.assign(neq_,0);
-  
-  // R holds the value for user input rates via _R(n)
-  R.assign(neq_,0.0);
-  
-  // D holds the value of user input durations
-  D.assign(neq_,0.0);
-
   Init_value.assign(neq_,0.0);
   Init_dummy.assign(neq_,0.0);
   
-  On.assign(neq_,1);
+  R0.assign(neq_,0.0);
+  infusion_count.assign(neq_,0);
+  R.assign(neq_,0.0);
+  D.assign(neq_,0.0);
   F.assign(neq_,1.0);
-  
   Alag.assign(neq_,0.0);
+  
+  On.assign(neq_,1);
   
   d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
   d.ID = 1.0;
-  
   d.EPS.assign(50,0.0);
   d.ETA.resize(50,0.0);
   d.CFONSTOP = false;
   d.omatrix = static_cast<void*>(&OMGADEF);
   
-  Advan = 13;
+
+  
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
@@ -97,7 +92,7 @@ void odeproblem::neps(int n) {
  * 
  */
 void odeproblem::y_init(int pos, double value) {
-  this->y(pos,value);
+  Y[pos] = value;
   Init_value[pos] = value;
 }
 
@@ -125,20 +120,14 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * 
  */
 void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
-  (prob->derivs())(
-      t,
-      y,
-      ydot,
-      prob->init(),
-      prob->param()
-  );
-  prob->add_rates(ydot);
+  prob->call_derivs(neq,t,y,ydot);  
 }
 
-void odeproblem::add_rates(double* ydot) {
-  for(int i = 0; i < Neq; ++i) {
-    ydot[i] = (ydot[i] + R0[i])*On[i];
-  }
+void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
+    Derivs(t,y,ydot,Init_value,Param);
+    for(int i = 0; i < Neq; ++i) {
+      ydot[i] = (ydot[i] + R0[i])*On[i]; 
+    }
 }
 
 
@@ -151,21 +140,14 @@ void odeproblem::add_rates(double* ydot) {
 void odeproblem::init_call(const double& time) {
   
   d.time = time;
-  
-  this->Inits(this->init(),
-              this->y(),
-              this->param(),
-              this->fbio(),
-              this->alag(),
-              this->rate(),
-              this->dur(),
-              this->get_d(),
-              this->get_pred());
+
+  Inits(Init_value,Y,Param,F,Alag,R,D,d,pred);
   
   for(int i=0; i < Neq; ++i) {
-    this->y(i,this->init(i));
-    Init_dummy[i] = this->init(i);
+    Y[i] = Init_value[i];
+    Init_dummy[i] = Init_value[i];
   }
+  
 }
 
 
@@ -178,16 +160,7 @@ void odeproblem::init_call(const double& time) {
  */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
-  
-  this->Inits(this->init_dummy(),
-              this->y(),
-              this->param(),
-              this->fbio(),
-              this->alag(),
-              this->rate(),
-              this->dur(),
-              this->get_d(),
-              this->get_pred());
+  Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred);
 }
 
 
@@ -195,14 +168,7 @@ void odeproblem::init_call_record(const double& time) {
  * 
  */
 void odeproblem::table_call() {
-  this->Table(this->y(),
-              this->init(),
-              this->param(),
-              this->fbio(),
-              this->rate(),
-              this->get_d(),
-              this->get_pred(),
-              this->get_capture());
+  Table(Y,Init_dummy,Param,F,R,d,pred,Capture);  
 }
 
 void odeproblem::table_init_call() {
@@ -220,7 +186,7 @@ void odeproblem::rate_reset() {
 }
 
 
-void odeproblem::reset_newid(const double& id_=1.0) {
+void odeproblem::reset_newid(const double id_) {
   
   for(int i = 0; i < Neq; ++i) {
     R0[i] = 0.0;
@@ -231,13 +197,13 @@ void odeproblem::reset_newid(const double& id_=1.0) {
     F[i] = 1.0;
     Alag[i] = 0;
   }
-  
+
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
   
   d.SYSTEMOFF=false;
-  this->istate(1);
+  this->lsoda_init();
   d.ID = id_;
 }
 
@@ -342,34 +308,7 @@ void odeproblem::advance(double tfrom, double tto) {
       this
   );
   
-  // lsoda(&main_derivs,
-  //         Neq,
-  //         this->y(),
-  //         &tfrom,
-  //         tto,
-  //         xitol,
-  //         &xrtol,
-  //         &xatol,
-  //         xitask,
-  //         &xistate,
-  //         xiopt,
-  //         xjt,
-  //         xiwork[0],
-  //         xiwork[1],
-  //         xiwork[4],
-  //         xiwork[5],
-  //         xiwork[6],
-  //         xiwork[7],
-  //         xiwork[8],
-  //         xrwork[0],
-  //         xrwork[4],
-  //         xrwork[5],
-  //         xrwork[6],
-  //         this
-  // );
-  // 
-  
-  main_derivs(&Neq, &tto,Y, Ydot, this);
+  this->call_derivs(&Neq, &tto, Y, Ydot);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
@@ -754,3 +693,6 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   
   return(ans);
 }
+
+
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mread.R
 \name{mread}
 \alias{mread}
-\title{Read a model specification file}
+\title{Read a model specification file.}
 \usage{
 mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
   ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = TRUE,
@@ -12,9 +12,9 @@ mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
 \arguments{
 \item{model}{model name}
 
-\item{project}{working directory}
+\item{project}{location of the model specification file an any headers to be included}
 
-\item{code}{a character string with model specification code}
+\item{code}{a character string with model specification code to be used instead of a model file}
 
 \item{udll}{use unique name for shared object}
 
@@ -22,7 +22,7 @@ mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
 
 \item{raw}{if TRUE, return a list of raw output}
 
-\item{compile}{try to compile the model and load the shared object}
+\item{compile}{logical; if \code{TRUE}, the model will be built}
 
 \item{audit}{check the model specification file for errors}
 
@@ -39,7 +39,8 @@ mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
 \item{...}{passed along}
 }
 \description{
-Read a model specification file
+\code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
+a model object for simulation.
 }
 \section{Model Library}{
 

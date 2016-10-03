@@ -61,13 +61,7 @@ test_that("If no simulation times can be rendered time=0 only is simulated", {
   out <- mrgsim(mod, end=-1, add=numeric(0))
   expect_equal(unique(out$time),0)
 })
-test_that("Get parameter names with pars()", {
-  expect_equivalent(names(param(mod)), pars(mod))
-})
 
-test_that("Get compartment names with cmt()", {
-  expect_equivalent(names(param(mod)), pars(mod))
-})
 
 
 

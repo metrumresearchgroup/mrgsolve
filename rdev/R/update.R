@@ -69,19 +69,23 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
     ## Initial conditions list:
     if(exists("init",args)) {
         i <- x@init@data
-        i <- merge(i, args$init, strict=strict)
+        i <- merge(i, args$init, context="init", strict=strict)
         slot(x, "init") <- as.init(i)
     }
     ## Parameter update:
     if(exists("param",args)) {
         if(length(x@fixed)>0) {
-            if(any(is.element(names(args$param),names(x@fixed)))) warning("Attempted update of a $FIXED parameter.", call.=FALSE,immediate.=TRUE)
+            if(any(is.element(names(args$param),names(x@fixed)))) {
+              warning("Attempted update of a $FIXED parameter.", call.=FALSE,immediate.=TRUE)
+            }
         }
         x@param <- as.param(merge(x@param@data,args$param,strict=strict,context="param"))
     }
+    
     if(exists("omega", args)) {
         x@omega <- update_matlist(x@omega,omat(args$omega),strict=strict, context="omat")
     }
+    
     if(exists("sigma", args)) {
         x@sigma <- update_matlist(x@sigma,smat(args$sigma), strict=strict, context="smat")
     }

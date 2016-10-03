@@ -49,37 +49,34 @@ that occur prior to the first record in \code{data}.
 \item \code{obsonly} omit records with \code{evid} != 0 from simulated output
 \item \code{obsaug} logical; when \code{TRUE} and a full data set is used, the simulated output is augmented with an observation at each time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating augmented observations can be requested by including \code{a.u.g} in \code{carry.out}
 \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at the same time; 3 and 4 put those doses before padded observations at the same time.  2 and 4 will put doses scheduled through \code{addl} after observations at the same time; 1 and 3 put doses scheduled through \code{addl} before observations at the same time. \code{recsort} will not change the order of your input data set if both doses and observations are given.
-
 \item \code{filbak} For each \code{ID}, carry the first record  \code{data} backward to start of the simulation
-\item \code{mindt} The minimum allowable difference between \code{tto} and \code{tfrom}; if \code{(tto-tfrom)/denom} < \code{mindt} where \code{denom} is \code{tfrom} if \code{tfrom} is > 0 and 1 otherwise, then \code{tto} is set to \code{tfrom}.  This adjustment is
-usually helpful when there are infusions in the problem and the end of an infusion is very close to an observation time. When this is the
-case, the solver may fail with the message \code{DLSODA-  TOUT(=R1) too close to T(=R2) to start integration.}  When \code{mindt==0} the adjustment is not attempted.
-
 }
 }
 \examples{
 ## example("mrgsim")
 
 mod <- mrgsolve:::house() \%>\%  ev(amt=1000, cmt=1)
-out <- mrgsim(mod)
+out <- mod \%>\% mrgsim()
 plot(out)
 
-out <- mrgsim(mod, end=22)
+out <- mod \%>\% mrgsim(end=22)
 out
 
 
 data(exTheoph)
 
-out <- mrgsim(mod, data=exTheoph)
+out <- mod \%>\% data_set(exTheoph) \%>\% mrgsim()
 out
+
+out <- mod \%>\% mrgsim(data=exTheoph)
 
 out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
 out
 
-out <- mrgsim(mod, data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
+out <- mod \%>\% mrgsim(data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
 out
 
-out <- mrgsim(mod, req="CENT")
+out <- mod \%>\% mrgsim(req="CENT")
 out
 
 out <- mrgsim(mod, Req="CP,RESP")

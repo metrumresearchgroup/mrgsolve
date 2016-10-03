@@ -47,42 +47,49 @@ setClass("numericlist",
 
 ##' @title Methods for numericlist
 ##' @description
-##' These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures.
+##' These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures,
+##' extract elements from \code{numericlist}s, or get attributes from \code{numericlist}s.
 ##' @name numericlist
+##' @rdname numericlist
 NULL
 
 
-##' @export
+
 ##' @rdname numericlist
 ##' @param x object
 ##' @param ... passed along to other methods
+##' @export
 setMethod("as.list", "numericlist", function(x,...) as.list(x@data))
 
-##' @export
+
 ##' @rdname numericlist
+##' @export
 setMethod("as.numeric", "numericlist", function(x) {
   ans <- unlist(x@data)
   if(is.null(ans)) return(numeric(0))
   return(ans)
 })
 
-##' @export
 ##' @rdname numericlist
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
+##' @export
 setMethod("as.data.frame", "numericlist", function(x,row.names=NULL, optional=FALSE,...) as.data.frame(x@data,row.names,optional,...))
 
-##' @export
+
 ##' @rdname numericlist
+##' @export
 setMethod("length", "numericlist", function(x) length(x@data))
 
-##' @export
+
 ##' @rdname numericlist
+##' @export
 setMethod("names", "numericlist", function(x) as.character(names(x@data)))
 
-##' @export
+
 ##' @rdname numericlist
-##' @param name column to take; used with \code{$}
+##' @param name column to take
+##' @export
 setMethod("$", "numericlist", function(x,name){unlist(x@data[name],use.names=FALSE)})
 
 ##' @export

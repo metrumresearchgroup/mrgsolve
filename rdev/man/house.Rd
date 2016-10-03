@@ -10,7 +10,7 @@ house(...)
 \item{...}{passed to update}
 }
 \value{
-A \code{packmod} object, ready to simulated.
+A \code{packmod} object, ready to simulate.
 }
 \description{
 Return a pre-compiled, PK/PD model.

@@ -91,9 +91,6 @@ pfile <- function(package,dir,file,ext=NULL) {
   return(ans)
 }
 
-
-#writeable <- function(x) file.access(x,mode=2)==0
-
 cropstr <- function(string, prefix, suffix, bump= "...") {
   nc <- nchar(string)
   total <- prefix+suffix
@@ -164,7 +161,7 @@ as.cvec <- function(x) {
 }
 
 
-##' Create data sets.
+##' Create template data sets for simulation.
 ##'
 ##' @param ... passed to \code{\link{expand.grid}}
 ##' @export
@@ -455,80 +452,8 @@ single.number <- function(x) length(x)==1 & is.numeric(x)
 
 
 # 15 sept 2016
-# render_errors <- function(x) {
-#     if(length(x)==0) return(x)
-#     x <- paste("  >", x)
-#     x <- c(" ", x)
-#     paste(x, collapse="\n")
-#}
-
-# 15 sept 2016
-# idata <- function(...,KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE) {
-#     stop("idata is deprecated.")
-#     # x <- expand.grid(..., KEEP.OUT.ATTRS=KEEP.OUT.ATTRS, stringsAsFactors=FALSE)
-#     # if(!exists("ID", x)) x <- cbind(data.frame(ID=1:nrow(x)),x)
-#     # if(any(sapply(x,mode) !="numeric")) warning("non-numeric data were found.")
-#     # return(x)
-#     # 
-# 
-# 
-# }
-
-
-
-
-
-# as.matrix.list <- function(x,...,nrow=1) {
-# 
-#     if(!all(sapply(x,length)==1))
-#         stop("Cannot coerce list to matrix; some elements not length 1")
-# 
-#     matrix(unlist(x),
-#            ncol=length(x),
-#            nrow=nrow,
-#            byrow=TRUE,
-#            dimnames=list(NULL,names(x))
-#            )
-# }
-
-
-
-
-# 15 sept 2016
-# mrgsolve_models <- function() {
-#     file.path(path.package("mrgsolve"), "models")
-# }
-
-# 15 sept 2016
-# setGeneric("dll_loaded", function(x,...) standardGeneric("dll_loaded"))
-# setMethod("dll_loaded", "mrgmod", function(x,...) {
-#     l <- getLoadedDLLs()
-#     tag <- ifelse(inherits(x,"lockedmod"),x@dllname , dllname(x))
-#     l <- l[is.element(names(l),tag)]
-#     is.element(sodll(x), sapply(l,FUN=function(x) x[["path"]]))
-# })
-# setMethod("dll_loaded", "lockedmod",  function(x,...) {
-#     l <- getLoadedDLLs()
-#     tag <- ifelse(inherits(x,"lockedmod"),x@dllname , dllname(x))
-#     l <- l[is.element(names(l),tag)]
-#     is.element(sodll(x), sapply(l,FUN=function(x) x[["path"]]))
-# })
-# setMethod("dll_loaded", "packmod",function(x,...) {
-#     l <- getLoadedDLLs()
-#     any(names(l) == x@package)
-# })
-# setMethod("dll_loaded", "character", function(x,...) {
-#     is.element(x,loaded_dll_files())
-# })
-
-
-# 15 sept 2016
-# loaded_dll_files <- function() {
-#     sapply(getLoadedDLLs(), function(x) x[["path"]])
-# }
-
-
-# 15 sept 2016
 installed_models <- function() {
   file.path(system.file(package="mrgsolve"), "inst", "models")
 }
+
+

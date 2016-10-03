@@ -27,3 +27,13 @@ setClass("batch_mrgsims",contains="mrgsims",
            input="list"
          )
 )
+
+
+##' Check if an object is \code{mrgsims}.
+##' 
+##' 
+##' @param x any object
+##' @export
+##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
+##' 
+is.mrgsims <- function(x) inherits(x,"mrgsims")

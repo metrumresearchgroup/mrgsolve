@@ -7,7 +7,9 @@
 Use these functions with chaining commands togehter with the %>% operator.
 }
 \details{
-Other functions that may be used in the chain of commands include: \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},\code{\link{ev}},\code{\link{limit}}
+Other functions that may be used in the chain of commands include: 
+\code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
+\code{\link{ev}}
 or any other function that will take the output of the preceeding command as it's first argument.
 }
 \examples{

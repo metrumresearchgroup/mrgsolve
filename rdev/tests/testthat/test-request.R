@@ -108,7 +108,7 @@ test_that("Testing that request is properly set in $SET", {
   expect_identical(mod@request, "CENT")
   expect_identical(update(mod, req=c("PERIPH", "GUT"))@request, c("PERIPH", "GUT"))
   expect_identical(update(mod, req="PERIPH,GUT")@request, "PERIPH,GUT")
-  expect_identical(intersect(cols,cmt(mod)), "CENT")
+  expect_identical(intersect(cols,mrgsolve:::cmt(mod)), "CENT")
 })
 
 test_that("Testing that request is (all) by default", {

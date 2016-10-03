@@ -10,6 +10,7 @@ class odeproblem;
 class datarecord;
 typedef boost::shared_ptr<datarecord> rec_ptr;
 
+
 class datarecord {
   friend class pkevent;
  public:
@@ -31,6 +32,7 @@ class datarecord {
   virtual void implement(odeproblem*){}
   virtual void steady_bolus(odeproblem*){}
   virtual void steady_infusion(odeproblem*){};
+  
   virtual bool infusion(){return false;}
   virtual double amt(){return 0.0;};
   virtual unsigned short int ss(){return 0;}
@@ -60,10 +62,16 @@ class datarecord {
 };
 
 
+bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
 
-bool CompByTimeRec(rec_ptr a, rec_ptr b);
-bool CompByTimePosRec(rec_ptr a, rec_ptr b);
-bool CompByTimeNsortRec(rec_ptr a, rec_ptr b);
+struct CompRec {
+  inline bool operator()(const rec_ptr& a, const rec_ptr& b) {
+    if(a->time() == b->time())
+      return a->pos() < b->pos();
+    return a->time() < b->time();
+  }
+};
+
 
 #endif
 

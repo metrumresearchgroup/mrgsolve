@@ -9,7 +9,9 @@
 ##'
 ##' @name chain
 ##' @details
-##' Other functions that may be used in the chain of commands include: \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},\code{\link{ev}},\code{\link{limit}}
+##' Other functions that may be used in the chain of commands include: 
+##' \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
+##' \code{\link{ev}}
 ##' or any other function that will take the output of the preceeding command as it's first argument.
 ##'
 ##'
@@ -39,6 +41,7 @@ NULL
 ##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
 ##'
 setGeneric("Req", function(x,...) standardGeneric("Req"))
+
 ##' @export
 ##' @rdname Req
 setMethod("Req", "mrgmod", function(x,...) {
@@ -50,6 +53,7 @@ setMethod("Req", "mrgmod", function(x,...) {
 ##' @rdname Req
 ##' @export
 setGeneric("req", function(x,...) standardGeneric("req"))
+
 ##' @export
 ##' @rdname Req
 setMethod("req", "mrgmod", function(x,...) {
@@ -64,9 +68,6 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' @param x model object
 ##' @param ... passed along
 ##' @export
-##'
-##'
-##'
 carry.out <- function(x,...) {
   x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
   return(x)

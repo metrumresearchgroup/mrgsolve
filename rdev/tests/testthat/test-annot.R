@@ -5,6 +5,9 @@ library(dplyr)
 
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
+pars <- mrgsolve:::pars
+cmt <- mrgsolve:::cmt
+
 
 context("test-annot")
 

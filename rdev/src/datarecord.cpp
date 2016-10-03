@@ -4,6 +4,8 @@
 
 #include "RcppInclude.h"
 #include "datarecord.h"
+#include <functional>
+#include <algorithm>
 
 datarecord::datarecord(int evid_, double time_, short int cmt_, int pos_, double id_) {
   Id = id_;
@@ -27,10 +29,7 @@ datarecord::datarecord(int evid_, double time_, short int cmt_) {
 
 datarecord::~datarecord() {}
 
-bool CompByTimeRec(rec_ptr a, rec_ptr b) {return a->time() < b->time();}
-
-bool CompByTimePosRec(rec_ptr a, rec_ptr b)
-{
+bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b) {
   // time-a != time-b
   if (a->time() < b->time()) return true;
   if (b->time() < a->time()) return false;
@@ -38,7 +37,6 @@ bool CompByTimePosRec(rec_ptr a, rec_ptr b)
   if (a->pos() < b->pos()) return true;
   if (b->pos() < b->pos()) return false;
   return false;
-
 }
 
 

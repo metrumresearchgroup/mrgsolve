@@ -2,7 +2,8 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-
+batch <- function(x) x@batch
+moving <- function(x) x@moving
 
 
 ##' @title Run sensitivity analysis on model settings
@@ -10,6 +11,7 @@
 ##' @description Knobs can be parameter values or PK dosing items (e.g. amt).  By design, all combinations of specified knob/values are simulated.
 ##'
 ##' @param x the model object
+##' @param y a \code{batch_mrgsims} object
 ##' @param ... knobs: named numeric vectors that identify knob names and knob values for a
 ##' batch run.  See details.
 ##' @name knobs
@@ -28,9 +30,6 @@
 ##' plot(out)
 ##'
 ##' out
-##' moving(out)
-##' batch(out)
-##'
 ##'
 ##' out <- mod %>% ev(events) %>% knobs(CL=c(1,2,3), VC=c(5,20,50))
 ##' plot(out)
@@ -50,6 +49,7 @@
 ##' out <- knobs(mod, CL=c(1,2,3))
 ##' out
 setGeneric("knobs", function(x,y,...) standardGeneric("knobs"))
+
 ##' @export
 ##' @rdname knobs
 setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
@@ -74,12 +74,12 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   
   whatkn <- names(input)
   
-  moving <- whatkn[sapply(input, length)>1]
+  aremoving <- whatkn[sapply(input, length)>1]
   
-  if(any(is.element(c("addl","ss","cmt"), moving))) 
+  if(any(is.element(c("addl","ss","cmt"), aremoving))) 
     stop("addl, cmt, and ss can have only one level",call.=FALSE)
   
-  if(any(duplicated(moving))) stop("Duplicate knobs were found.", call.=FALSE)
+  if(any(duplicated(aremoving))) stop("Duplicate knobs were found.", call.=FALSE)
   
   if(length(input)==0) stop("No valid knobs found.", call.=FALSE)
   
@@ -114,7 +114,7 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
       batch=data,
       knobs=whatkn,
       request=request,
-      moving=moving,
+      moving=aremoving,
       outnames=outn,
       input=input)
   
@@ -136,35 +136,13 @@ setMethod("knobs", c("mrgmod", "batch_mrgsims"), function(x,y,...) {
 setMethod("as.data.frame","batch_mrgsims", function(x,row.names=NULL, optional=FALSE,...) {
   as.data.frame(x@data, row.names,optional,...)
 })
-##' @export
-##' @rdname knobs
-##' @param y batch_mrgsims object
-setMethod("as.matrix","batch_mrgsims", function(x,y,...) {
-  x@data
-})
 
-##' @export
-##' @rdname knobs
-setGeneric("batch", function(x,...) standardGeneric("batch"))
 
-##' @export
-##' @rdname knobs
-setGeneric("moving", function(x,...) standardGeneric("moving"))
 
-##' @export
-##' @rdname knobs
-setMethod("batch", "batch_mrgsims", function(x,...) {
-  x@batch
-})
 ##' @export
 ##' @rdname knobs
 setMethod("knobs", "batch_mrgsims", function(x,...) {
   x@knobs
-})
-##' @export
-##' @rdname knobs
-setMethod("moving", "batch_mrgsims", function(x,...) {
-  x@moving
 })
 
 

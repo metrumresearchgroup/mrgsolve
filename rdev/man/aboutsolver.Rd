@@ -2,7 +2,7 @@
 % Please edit documentation in R/package.R
 \name{aboutsolver}
 \alias{aboutsolver}
-\title{ODE solver.}
+\title{About the \code{ODEPACK} differential equation solver used by \code{mrgsolve}.}
 \description{
 About the \code{ODEPACK} differential equation solver used by \code{mrgsolve}.
 }

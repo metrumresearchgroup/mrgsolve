@@ -24,8 +24,8 @@ on the value of \code{ncmt}, \code{depot} and \code{trans}.
 
 \itemize{
 \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
-\item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V}, \code{KA}
-\item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}
+\item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  \code{KA}
+\item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q}, \code{V2}
 \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
 
 }

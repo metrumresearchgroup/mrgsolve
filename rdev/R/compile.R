@@ -68,10 +68,10 @@ generate_rdefs <- function(pars,
     if(ncmt==0) cmtdef <- initdef <- dxdef <- NULL
 
     return(
-        c(paste0("#define INITFUN___ ",init_fun),
-          paste0("#define ODEFUN___ ",func),
-          paste0("#define TABLECODE___ ", table_fun),
-          paste0("#define CONFIGFUN___ ", config_fun),
+        c(paste0("#define __INITFUN___ ",init_fun),
+          paste0("#define __ODEFUN___ ",func),
+          paste0("#define __TABLECODE___ ", table_fun),
+          paste0("#define __CONFIGFUN___ ", config_fun),
           paste0("#define _nEQ ", ncmt),
           paste0("#define _nPAR ", npar),
           cmtndef,

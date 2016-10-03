@@ -161,7 +161,6 @@ setMethod("smat", "sigmalist", function(.x,...) return(.x))
 ##' @rdname sigma
 ##' @param make logical; if TRUE, matrix list is rendered into a single matrix
 setMethod("smat", "mrgmod", function(.x,...,make=FALSE,strict=TRUE) {
-
     args <- list(...)
     if(length(args)>0) return(update(.x, sigma=smat(...), strict=strict))
     if(!make) return(.x@sigma)
@@ -182,7 +181,7 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
     as.matrix(mod(.x)@sigma)
 })
 
-##' Various functions for and properties of \code{matlist} objects.
+##' Methods for working with \code{matlist} objects.
 ##'
 ##'
 ##' @param .x a matlist object
@@ -205,6 +204,11 @@ setMethod("zero.re", "mrgmod", function(.x,...) {
     if(is.element("sigma", what) & !is.null(nrow(smat(.x)))) .x <- update(.x,sigma=unname(lapply(nrow(smat(.x)),diag,x=0)))
     return(.x)
 })
+
+##' @rdname matlist
+##' @export
+zero_re <- function(...) zero.re(...)
+
 
 ##' @export
 ##' @rdname matlist
@@ -300,9 +304,15 @@ setMethod("gettag", "matlist", function(x,...) {
     return(names(x@data))
 })
 
-##' @export
-##' @rdname matlist
+
+
+##' Operations with matlist objects.
+##' 
+##' @param x a matlist object
+##' @param ... other matlist objects
 ##' @param recursive not used
+##' @rdname matlist_ops
+##' @export
 setMethod("c", "matlist", function(x,...,recursive=FALSE) {
   what <- c(list(x),list(...))
   stopifnot(all(sapply(what,is.matlist)))

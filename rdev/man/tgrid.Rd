@@ -2,36 +2,19 @@
 % Please edit documentation in R/methods.R, R/simtime.R
 \docType{methods}
 \name{stime,mrgmod-method}
-\alias{*,tgrid,numeric-method}
-\alias{*,tgrids,numeric-method}
-\alias{+,tgrid,numeric-method}
-\alias{+,tgrids,numeric-method}
-\alias{c,tgrid-method}
-\alias{c,tgrids-method}
 \alias{show,tgrid-method}
 \alias{show,tgrids-method}
 \alias{stime,mrgmod-method}
-\alias{stime,mrgsims-method}
 \alias{stime,numeric-method}
 \alias{stime,tgrid-method}
 \alias{stime,tgrids-method}
 \alias{tgrid}
-\alias{tgrid_*_numeric}
-\alias{tgrid_+_numeric}
-\alias{tgrids_*_numeric}
-\alias{tgrids_+_numeric}
 \title{Create a simtime object.}
 \usage{
 \S4method{stime}{mrgmod}(x, ...)
 
-\S4method{stime}{mrgsims}(x, ...)
-
 tgrid(start = 0, end = 24, delta = 1, add = numeric(0), .offset = 0,
   .scale = 1, ...)
-
-\S4method{c}{tgrid}(x, ..., recursive = FALSE)
-
-\S4method{c}{tgrids}(x, ..., recursive = FALSE)
 
 \S4method{stime}{tgrid}(x, ...)
 
@@ -39,20 +22,12 @@ tgrid(start = 0, end = 24, delta = 1, add = numeric(0), .offset = 0,
 
 \S4method{stime}{numeric}(x, ...)
 
-\S4method{+}{tgrid,numeric}(e1, e2)
-
-\S4method{*}{tgrid,numeric}(e1, e2)
-
-\S4method{+}{tgrids,numeric}(e1, e2)
-
-\S4method{*}{tgrids,numeric}(e1, e2)
-
 \S4method{show}{tgrid}(object)
 
 \S4method{show}{tgrids}(object)
 }
 \arguments{
-\item{x}{mrgmod object}
+\item{x}{tgrid object}
 
 \item{...}{passed on to other methods}
 
@@ -68,18 +43,10 @@ tgrid(start = 0, end = 24, delta = 1, add = numeric(0), .offset = 0,
 
 \item{.scale}{the resulting set of times will be scaled by this factor}
 
-\item{recursive}{not used}
-
-\item{e1}{tgrid or tgrids object}
-
-\item{e2}{numeric value}
-
 \item{object}{passed to show}
 }
 \description{
 simtime objects allow the user to specify simulation start and end times, along with the simulation time step.
-
-##' @export
 }
 \examples{
 

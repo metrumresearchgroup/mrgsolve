@@ -7,8 +7,6 @@
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*\\$[A-Z]\\w*|\\[\\s*[A-Z]\\w*\\s*]"
 
-
-
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
   if(advan==13 | trans==1) return(NULL)
@@ -115,7 +113,13 @@ compdir <- function() {
 
 setup_soloc <- function(loc,model) {
   soloc <- file.path(loc,compdir(),model)
+  
   if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
+  
+  #h <- pfile("mrgsolve","include",c("modelheader", "mrgsolv"),"h")
+  
+  #file.copy(h,soloc)
+  
   return(soloc)
 }
 
@@ -770,8 +774,8 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' \itemize{
 ##' \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
-##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V}, \code{KA}
-##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}
+##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  \code{KA}
+##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q}, \code{V2}
 ##' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
 ##'
 ##' }
@@ -831,7 +835,7 @@ dosing_cmts <- function(x,what) {
   return(m)
 }
 
-## Picks the default trans
+# Picks the default trans
 pick_trans <- function(ncmt,depot) {
   switch(pick_advan(ncmt,depot),
          `1` = 2,
@@ -841,7 +845,7 @@ pick_trans <- function(ncmt,depot) {
   )
 }
 
-## Picks advan based on ncmt and depot status
+# Picks advan based on ncmt and depot status
 pick_advan <- function(ncmt,depot) {
   ncmt + as.integer(depot) + as.integer(ncmt==2)
 }

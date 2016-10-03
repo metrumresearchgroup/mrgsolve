@@ -36,18 +36,22 @@ mcode <- function(model,code, project=tempdir(),...) {
 
 
 
-##' Read a model specification file
+##' Read a model specification file.
+##' 
+##' \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
+##' a model object for simulation.
+##' 
 ##'
 ##' @param model model name
-##' @param project working directory
-##' @param code a character string with model specification code
+##' @param project location of the model specification file an any headers to be included
+##' @param soloc directory where model shared object is stored
+##' @param code a character string with model specification code to be used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
 ##' @param raw if TRUE, return a list of raw output
-##' @param compile try to compile the model and load the shared object
+##' @param compile logical; if \code{TRUE}, the model will be built
 ##' @param check.bounds check boundaries of parameter list
 ##' @param audit check the model specification file for errors
 ##' @param warn logical; if \code{TRUE}, print warning messages that may arise
-##' @param soloc directory where model shared object is stored
 ##' @param udll use unique name for shared object
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first
@@ -294,40 +298,41 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   cat(
     paste0("// Source MD5: ", tools::md5sum(modfile), "\n"),
     plugin_code(plugin),
-    "#include \"modelheader.h\"",
-    "\n// DEFS:",
-    rd, 
     ## This should get moved to rd
     "\n// FIXED:",
     fixed_parameters(fixed,SET[["fixed_type"]]),
     "\n// INCLUDES:",
     form_includes(spec[["INCLUDE"]],project),
+    "\n// BASIC MODELHEADER FILE:",
+    "#include \"modelheader.h\"",
+    "\n// DEFS:",
+    rd, 
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
-    "\n// CONFIG CODE BLOCK:\nBEGIN_config\nEND_config",
+    "\n// CONFIG CODE BLOCK:\n__BEGIN_config__\n__END_config__",
     "\n// MAIN CODE BLOCK:",
-    "BEGIN_main",
+    "__BEGIN_main__",
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
-    "END_main",
+    "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
-    "BEGIN_ode",
+    "__BEGIN_ode__",
     spec[["ODE"]],
-    "END_ode",
+    "__END_ode__",
     "\n// TABLE CODE BLOCK:",
-    "BEGIN_table",
+    "__BEGIN_table__",
     table,
     write_capture(x@capture),
-    "END_table",
+    "__END_table__",
     sep="\n", file=def.con)
   close(def.con)
   
   ## lock some of this down so we can check order later
-  x@shlib$cmt <- cmt(x)
-  x@shlib$par <- pars(x)
+  x@shlib$cmt <- names(init(x))
+  x@shlib$par <- names(param(x))
   x@code <- readLines(modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- file.path(soloc,compfile(model))

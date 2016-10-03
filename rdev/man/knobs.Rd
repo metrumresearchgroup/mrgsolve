@@ -3,15 +3,10 @@
 \docType{methods}
 \name{knobs}
 \alias{as.data.frame,batch_mrgsims-method}
-\alias{as.matrix,batch_mrgsims-method}
-\alias{batch}
-\alias{batch,batch_mrgsims-method}
 \alias{knobs}
 \alias{knobs,batch_mrgsims,ANY-method}
 \alias{knobs,mrgmod,batch_mrgsims-method}
 \alias{knobs,mrgmod,missing-method}
-\alias{moving}
-\alias{moving,batch_mrgsims-method}
 \alias{show,batch_mrgsims-method}
 \title{Run sensitivity analysis on model settings}
 \usage{
@@ -24,24 +19,14 @@ knobs(x, y, ...)
 \S4method{as.data.frame}{batch_mrgsims}(x, row.names = NULL,
   optional = FALSE, ...)
 
-\S4method{as.matrix}{batch_mrgsims}(x, y, ...)
-
-batch(x, ...)
-
-moving(x, ...)
-
-\S4method{batch}{batch_mrgsims}(x, ...)
-
 \S4method{knobs}{batch_mrgsims,ANY}(x, y, ...)
-
-\S4method{moving}{batch_mrgsims}(x, ...)
 
 \S4method{show}{batch_mrgsims}(object)
 }
 \arguments{
 \item{x}{the model object}
 
-\item{y}{batch_mrgsims object}
+\item{y}{a \code{batch_mrgsims} object}
 
 \item{...}{knobs: named numeric vectors that identify knob names and knob values for a
 batch run.  See details.}
@@ -72,9 +57,6 @@ out <- mod \%>\% ev(events) \%>\% knobs(CL=c(1,2,3))
 plot(out)
 
 out
-moving(out)
-batch(out)
-
 
 out <- mod \%>\% ev(events) \%>\% knobs(CL=c(1,2,3), VC=c(5,20,50))
 plot(out)

@@ -9,10 +9,6 @@ MVGAUSS <- function(OMEGA_, n) {
     .Call('mrgsolve_MVGAUSS', PACKAGE = 'mrgsolve', OMEGA_, n)
 }
 
-SIMRE <- function(n1, OMEGA, n2, SIGMA, seed) {
-    .Call('mrgsolve_SIMRE', PACKAGE = 'mrgsolve', n1, OMEGA, n2, SIGMA, seed)
-}
-
 decorr <- function(x) {
     invisible(.Call('mrgsolve_decorr', PACKAGE = 'mrgsolve', x))
 }
@@ -41,7 +37,11 @@ TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs) {
     .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs)
 }
 
-QUICKSIM <- function(parin, param, init, parnames, cmtnames, data, idata, capturei, funs) {
-    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, cmtnames, data, idata, capturei, funs)
+QUICKSIM <- function(parin, param, init, parnames, data, n, idata, req, capturei, funs) {
+    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, data, n, idata, req, capturei, funs)
+}
+
+PREDSIM <- function(parin, param, init, parnames, cmtnames, idata, capturei, funs) {
+    .Call('mrgsolve_PREDSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, cmtnames, idata, capturei, funs)
 }
 

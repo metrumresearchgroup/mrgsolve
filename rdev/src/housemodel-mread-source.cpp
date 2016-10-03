@@ -1,12 +1,20 @@
 // Source MD5: 24c788fa7a80a7978468dc17f09e5d3a
 
+
+// FIXED:
+// No fixed parameters.
+
+// INCLUDES:
+// No includes found.
+
+// BASIC MODELHEADER FILE:
 #include "modelheader.h"
 
 // DEFS:
-#define INITFUN___ _model_housemodel_main__
-#define ODEFUN___ _model_housemodel_ode__
-#define TABLECODE___ _model_housemodel_table__
-#define CONFIGFUN___ _model_housemodel_config__
+#define __INITFUN___ _model_housemodel_main__
+#define __ODEFUN___ _model_housemodel_ode__
+#define __TABLECODE___ _model_housemodel_table__
+#define __CONFIGFUN___ _model_housemodel_config__
 #define _nEQ 3
 #define _nPAR 13
 #define N_GUT 1
@@ -42,12 +50,6 @@
 #define EKOUT _xETA(4)
 #define EXPO _xEPS(1)
 
-// FIXED:
-// No fixed parameters.
-
-// INCLUDES:
-// No includes found.
-
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:
 typedef double capture;
@@ -68,29 +70,29 @@ typedef bool localbool;
 typedef double localdouble;
 
 // CONFIG CODE BLOCK:
-BEGIN_config
-END_config
+__BEGIN_config__
+__END_config__
 
 // MAIN CODE BLOCK:
-BEGIN_main
+__BEGIN_main__
 F_GUT = F1;
 CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ECL);
 VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + EVC);
 KAi   = exp(log(KA)   + EKA);
 KOUTi = exp(log(KOUT) + EKOUT);
 RESP_0 = KIN/KOUTi;
-END_main
+__END_main__
 
 // DIFFERENTIAL EQUATIONS:
-BEGIN_ode
+__BEGIN_ode__
 dxdt_GUT = -KAi*GUT;
 dxdt_CENT = KAi*GUT - (CLi/VCi)*CENT;
 dxdt_RESP = KIN*(1-INH) - KOUTi*RESP;
-END_ode
+__END_ode__
 
 // TABLE CODE BLOCK:
-BEGIN_table
+__BEGIN_table__
 DV = CP*exp(EXPO);
 _capture_[0] = DV;
 _capture_[1] = CP;
-END_table
+__END_table__

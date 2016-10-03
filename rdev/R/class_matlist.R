@@ -71,3 +71,5 @@ setClass("matlist",
          prototype=list(data=list(), labels=list()),
          validity=valid.matlist
 )
+
+is.matlist <- function(x) inherits(x,"matlist")

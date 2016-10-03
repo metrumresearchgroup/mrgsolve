@@ -103,14 +103,14 @@ object_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
 
-##' Load a library model.
-##' 
-##' @param model model name
-##' @param tryload try to load the model?
-##' @param ... passed to update
-##' 
-##' 
-##' 
+# Load a library model.
+# 
+# @param model model name
+# @param tryload try to load the model?
+# @param ... passed to update
+# 
+# 
+# 
 mintern <- function(model,tryload=TRUE,...) {
   
   if(!is.element(model,modlib_models)) {

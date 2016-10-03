@@ -48,7 +48,7 @@ test_that("Parse cmt", {
   
   code <- "$CMT\n yes=TRUE \n first \n \n \n second third \n \n"
   mod <- mtemp(code)
-  expect_equal(cmt(mod), c("first", "second", "third"))
+  expect_equal(mrgsolve:::cmt(mod), c("first", "second", "third"))
 
 })
 

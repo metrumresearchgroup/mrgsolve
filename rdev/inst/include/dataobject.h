@@ -9,8 +9,10 @@
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-typedef boost::unordered::unordered_map<int,double> u_di_map;
-
+typedef boost::unordered::unordered_map<double,int> idat_map;
+typedef std::deque<double> uidtype;
+typedef std::deque<int> datarowtype;
+  
 class dataobject {
 
 public:
@@ -32,7 +34,7 @@ public:
   int end(int i){return Endrow.at(i);}
   void map_uid();
   double get_uid(int i) {return Uid.at(i);}
-  dvec return_uid() {return Uid;}
+  uidtype return_uid() {return Uid;}
   void copy_parameters(int this_row,odeproblem *prob);
   void copy_inits(int this_row,odeproblem *prob);
   void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);
@@ -47,18 +49,20 @@ public:
   
  protected:
 
-  dvec Uid;
-  ivec Startrow;
-  ivec Endrow;
+  uidtype Uid;
+  datarowtype Startrow;
+  datarowtype Endrow;
   int Idcol;
+  
   Rcpp::NumericMatrix Data;
   Rcpp::CharacterVector Data_names;
 
   std::vector<unsigned int> col;
+  
   Rcpp::IntegerVector par_from;  // data set index
   Rcpp::IntegerVector par_to;    // parameter list index
   Rcpp::CharacterVector parnames;
-  u_di_map idmap;
+  idat_map idmap;
 
   Rcpp::IntegerVector cmt_from; // data set index
   Rcpp::IntegerVector cmt_to;  // cmt index
