@@ -15,7 +15,7 @@
 \alias{param,mrgmod-method}
 \alias{param,mrgsims-method}
 \alias{show,parameter_list-method}
-\title{Create and work with parameter_list objects.}
+\title{Create and work with \code{parameter_list} objects.}
 \usage{
 param(.x, ...)
 

@@ -100,6 +100,6 @@ plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 
 }
 \seealso{
-mod request variables  limit stime
+mod stime
 }
 

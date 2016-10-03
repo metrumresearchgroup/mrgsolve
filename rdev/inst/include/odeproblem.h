@@ -101,7 +101,8 @@ public:
   
   void table_call();
   void table_init_call();
-
+  void confg_call();
+  
   void pass_omega(arma::mat*);
   
   bool CFONSTOP(){return d.CFONSTOP;}
@@ -144,7 +145,7 @@ public:
   unsigned int newind(){return d.newind;}
   
   void evid(int evid_){d.evid = evid_;}
-
+  
   void advan(int x);
   int  advan(){return Advan;}
   void advan2(const double& tfrom, const double& tto);
@@ -152,15 +153,16 @@ public:
   
   void neta(int n);
   void neps(int n);
-
-    dvec& mtime(){return d.mtime;}
-
+  
+  dvec& mtime(){return d.mtime;}
+  
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}
-
+  
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
-  
+
+    
 protected:
   
   //! parameters

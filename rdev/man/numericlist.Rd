@@ -45,6 +45,7 @@
 \item{drop}{not used}
 }
 \description{
-These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures.
+These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures,
+extract elements from \code{numericlist}s, or get attributes from \code{numericlist}s.
 }
 

@@ -4,7 +4,7 @@
 
 
 
-##' Create and work with parameter_list objects.
+##' Create and work with \code{parameter_list} objects.
 ##'
 ##' See \code{\link{numericlist}} for methods to deal with \code{parameter_list} objects.
 ##'

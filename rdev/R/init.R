@@ -5,31 +5,8 @@
 
 ## The init class is a numericlist; these functions create new objects.
 
-##' @export
-##' @rdname init
-setGeneric("as.init", function(.x,...) standardGeneric("as.init"))
 
-##' @export
-##' @rdname init
-setMethod("as.init", "list", function(.x,...) create_numeric_list(.x,"cmt_list",...))
-
-##' @export
-##' @rdname init
-setMethod("as.init", "numeric", function(.x,...) create_numeric_list(as.list(.x),"cmt_list",...))
-
-##' @export
-##' @rdname init
-setMethod("as.init", "cmt_list", function(.x,...) .x)
-
-##' @export
-##' @rdname init
-setMethod("as.init", "missing", function(.x,...) create_numeric_list(list(), "cmt_list",...))
-
-##' @export
-##' @rdname init
-setMethod("as.init", "NULL", function(.x,...) create_numeric_list(list(), "cmt_list",...))
-
-##' Create and work with cmt_list objects.
+##' Create and work with \code{cmt_list} objects.
 ##'
 ##' Calling \code{init} with the model object as the first argument will return the model initial conditions as a \code{numericlist} object. See \code{\link{numericlist}} for methods to  deal with \code{cmt_list} objects.
 ##'
@@ -103,6 +80,31 @@ setMethod("init", "list", function(.x,...) {create_numeric_list(.x,"cmt_list",..
 setMethod("init", "ANY", function(.x,...) init(as.list(.x),...))
 
 Init <- function(x) x@init
+
+##' @export
+##' @rdname init
+setGeneric("as.init", function(.x,...) standardGeneric("as.init"))
+
+##' @export
+##' @rdname init
+setMethod("as.init", "list", function(.x,...) create_numeric_list(.x,"cmt_list",...))
+
+##' @export
+##' @rdname init
+setMethod("as.init", "numeric", function(.x,...) create_numeric_list(as.list(.x),"cmt_list",...))
+
+##' @export
+##' @rdname init
+setMethod("as.init", "cmt_list", function(.x,...) .x)
+
+##' @export
+##' @rdname init
+setMethod("as.init", "missing", function(.x,...) create_numeric_list(list(), "cmt_list",...))
+
+##' @export
+##' @rdname init
+setMethod("as.init", "NULL", function(.x,...) create_numeric_list(list(), "cmt_list",...))
+
 
 
 showinit <-  function(x,digits=3,ncols=NULL,right=FALSE,...) {

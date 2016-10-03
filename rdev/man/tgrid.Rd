@@ -47,8 +47,6 @@ tgrid(start = 0, end = 24, delta = 1, add = numeric(0), .offset = 0,
 }
 \description{
 simtime objects allow the user to specify simulation start and end times, along with the simulation time step.
-
-##' @export
 }
 \examples{
 

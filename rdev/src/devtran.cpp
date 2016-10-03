@@ -237,7 +237,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         it->push_back(obs);
       }
       // sort the records by time and original position 
-      std::sort(it->begin(), it->end(), CompByTimePosRec);
+      std::sort(it->begin(), it->end(), CompRec());
     }
   }
   // ******* END TGRID SECTION ******* 
@@ -557,12 +557,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           advance(it,1);
           a[i].insert(it,newev);
           newev->schedule(a[i], maxtime, addl_ev_first);
-          std::sort(a[i].begin()+j,a[i].end(),CompByTimePosRec);
+          std::sort(a[i].begin()+j,a[i].end(),CompRec());
           
         } else {
           ev->schedule(a[i], maxtime, addl_ev_first); //pkevent.cpp
           if(ev->needs_sorting()) {
-            std::sort(a[i].begin()+j+1,a[i].end(),CompByTimePosRec);
+            std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         }
       }

@@ -4,7 +4,7 @@
 \alias{qsim}
 \title{A quick simulation function.}
 \usage{
-qsim(x, e, idata, stime)
+qsim(x, e, idata, req = NULL)
 }
 \arguments{
 \item{x}{model object}
@@ -13,9 +13,20 @@ qsim(x, e, idata, stime)
 
 \item{idata}{individual data set}
 
-\item{stime}{a \code{\link{tgrid}} object or any object with \code{\link{stime}} method}
+\item{req}{compartments to request}
 }
 \description{
 A quick simulation function.
+}
+\examples{
+
+mod <- mrgsolve:::house()
+
+des <- tgrid(0,2400,1)
+
+data <- recmatrix(ev(amt=1000, ii=24, addl=100),des)
+
+out <- mod \%>\% qsim(data)
+
 }
 

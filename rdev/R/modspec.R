@@ -835,7 +835,7 @@ dosing_cmts <- function(x,what) {
   return(m)
 }
 
-## Picks the default trans
+# Picks the default trans
 pick_trans <- function(ncmt,depot) {
   switch(pick_advan(ncmt,depot),
          `1` = 2,
@@ -845,7 +845,7 @@ pick_trans <- function(ncmt,depot) {
   )
 }
 
-## Picks advan based on ncmt and depot status
+# Picks advan based on ncmt and depot status
 pick_advan <- function(ncmt,depot) {
   ncmt + as.integer(depot) + as.integer(ncmt==2)
 }

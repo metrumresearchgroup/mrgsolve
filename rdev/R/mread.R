@@ -36,18 +36,22 @@ mcode <- function(model,code, project=tempdir(),...) {
 
 
 
-##' Read a model specification file
+##' Read a model specification file.
+##' 
+##' \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
+##' a model object for simulation.
+##' 
 ##'
 ##' @param model model name
-##' @param project working directory
-##' @param code a character string with model specification code
+##' @param project location of the model specification file an any headers to be included
+##' @param soloc directory where model shared object is stored
+##' @param code a character string with model specification code to be used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
 ##' @param raw if TRUE, return a list of raw output
-##' @param compile try to compile the model and load the shared object
+##' @param compile logical; if \code{TRUE}, the model will be built
 ##' @param check.bounds check boundaries of parameter list
 ##' @param audit check the model specification file for errors
 ##' @param warn logical; if \code{TRUE}, print warning messages that may arise
-##' @param soloc directory where model shared object is stored
 ##' @param udll use unique name for shared object
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first

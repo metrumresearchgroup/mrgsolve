@@ -3,7 +3,6 @@
 \docType{methods}
 \name{knobs}
 \alias{as.data.frame,batch_mrgsims-method}
-\alias{as.matrix,batch_mrgsims-method}
 \alias{knobs}
 \alias{knobs,batch_mrgsims,ANY-method}
 \alias{knobs,mrgmod,batch_mrgsims-method}
@@ -20,8 +19,6 @@ knobs(x, y, ...)
 \S4method{as.data.frame}{batch_mrgsims}(x, row.names = NULL,
   optional = FALSE, ...)
 
-\S4method{as.matrix}{batch_mrgsims}(x, y, ...)
-
 \S4method{knobs}{batch_mrgsims,ANY}(x, y, ...)
 
 \S4method{show}{batch_mrgsims}(object)
@@ -29,7 +26,7 @@ knobs(x, y, ...)
 \arguments{
 \item{x}{the model object}
 
-\item{y}{batch_mrgsims object}
+\item{y}{a \code{batch_mrgsims} object}
 
 \item{...}{knobs: named numeric vectors that identify knob names and knob values for a
 batch run.  See details.}

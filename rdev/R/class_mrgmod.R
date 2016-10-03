@@ -302,7 +302,14 @@ setMethod("names", "mrgmod", function(x) {
 
 
 
-setMethod("ex", "mrgmod", function(x,...) {
+##' Coerce an \code{mrgmod} object to list.
+##' 
+##' @param x mrgmod object
+##' @param ... passed to other methods
+##' 
+##' @rdname as.list_mrgmod
+##' @export
+setMethod("as.list", "mrgmod", function(x,...) {
   
   within(list(), {
   
@@ -310,10 +317,14 @@ setMethod("ex", "mrgmod", function(x,...) {
     npar <- npar(x)
     pars <- pars(x)
     cmt <- cmt(x)
-    fixed <- names(x@fixed)
+    param <- as.list(param(x))
+    init <- as.list(init(x))
+    fixedp <- names(x@fixed)
+    fixed <- as.list(x@fixed)
     model <- model(x)
     project <- project(x)
     soloc <- soloc(x)
+    cfile <- cfile(x)
     sodll <- sodll(x)
     cfile <- cfile(x)
     shlib <- shlib(x)
@@ -322,7 +333,12 @@ setMethod("ex", "mrgmod", function(x,...) {
     capture <- x@capture
     request <- x@request
     re <- names(x)[c("omega", "sigma")]
-  
+    code <- x@code
+    details <- x@annot
+    advan <- x@advan
+    trans <- x@trans
+    solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
+                hmin=x@hmin,hmax=x@hmax)
   })
   
 })

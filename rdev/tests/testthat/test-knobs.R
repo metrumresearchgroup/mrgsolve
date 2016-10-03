@@ -18,7 +18,7 @@ test_that("knobs() returns object of class batch_mrgsims", {
 })
 
 test_that("Moving knobs are correctly identified", {
-  expect_identical(moving(out), c("CL", "amt"))
+  expect_identical(mrgsolve:::moving(out), c("CL", "amt"))
 })
 
 

@@ -26,7 +26,7 @@
 ##' @param x mrgsims object
 ##' @param ... passed to other functions
 ##' @aliases mrgsims
-##' @seealso mod request variables  limit stime
+##' @seealso mod stime
 ##' @name mrgsims
 ##' @rdname mrgsims
 ##' @examples

@@ -19,8 +19,8 @@ check_and_copy <- function(from,to,preclean=FALSE) {
   return(same)
 }
 
-## Wait a certain amount of time before re-compiling
-## and loading a model
+# Wait a certain amount of time before re-compiling
+# and loading a model
 safe_wait <- function(x) {
   
   target <- file.path(soloc(x),compout(model(x)))
@@ -33,17 +33,17 @@ safe_wait <- function(x) {
 }
 
 
-##' Clean up model shared objects. 
-##' 
-##' @param x model object
-##' @param where directory to clean up
-##' 
-##' @details
-##' \code{cleanso} removes (deletes) shared objects from the model compile directory and 
-##' attempts to unload shared objects which appear to be loaded.
-##' 
-##'
-##' 
+# Clean up model shared objects. 
+# 
+# @param x model object
+# @param where directory to clean up
+# 
+# @details
+# \code{cleanso} removes (deletes) shared objects from the model compile directory and 
+# attempts to unload shared objects which appear to be loaded.
+# 
+#
+# 
 cleanso <- function(x,where=soloc(x)) {
   so <- list.files(where, pattern=paste0("*\\", .Platform$dynlib.ext), full.names=TRUE)
   so <- so[so != file.path(where,compout(model(x)))]
@@ -53,17 +53,6 @@ cleanso <- function(x,where=soloc(x)) {
   file.remove(so)
   return(invisible(NULL))
 }
-
-##' Deprecated; use cleanso instead.
-##' 
-##' @export
-##' @param x model object
-##' 
-comp_forget <- function(x) {
-  message("comp_forget is deprecated.  Use mrgsolve:::cleanso(mod) for equivalent.")
-  return(invisible(NULL))
-}
-
 
 
 

@@ -6,10 +6,9 @@
 #ifndef MODELINCLUDEGUARD
 #define MODELINCLUDEGUARD
 
+
 #include <iostream>
 #include <vector>
-//#include <map>
-//#include <string>
 #include <math.h>
 #include "mrgsolv.h"
 
