@@ -196,9 +196,17 @@ expand.ev <- function(...) {
 is.numeric.data.frame <- function(x) sapply(x, is.numeric)
 
 
+
+##' Render an \code{mrgsolve} model.
+##' 
+##' @param x model object
+##' @param file file name to use for building; should have \code{.Rmd} extension
+##' @param quiet not used
+##' @param ... not used
+##' 
 render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
   stopifnot(requireNamespace("rmarkdown"))
-  bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//+")
+  bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//")
   txt <- bl[["PROB"]]
   if(is.null(txt)) stop("Couldn't find $PROB in model.",call.=FALSE)
   
@@ -206,31 +214,42 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
   anot <- tempfile(fileext=".RDS")
   
   for(i in seq_along(bl)) {
+    bl[[i]] <- bl[[i]][bl[[i]] !=""]
     bl[[i]] <- paste(bl[[i]], collapse="\n") 
   }
-  saveRDS(file=anot, list(details=details(x),code=x@code,bl=bl))
+
+
+  w <- options()$width
+  options(width=120)
+  d <- capture.output(print(details(x),row.names=FALSE))
+  options(width=w)
   
   cat(file=file, txt, sep="\n")
   cat(file=file, 
-      "```{r,echo=FALSE,comment=''}", 
-      paste0("x <- readRDS(file=\"",anot, "\")"),
-      "```",
       "# Model details",
-      "```{r,echo=FALSE,comment=''}", 
-      "print(x$details)",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}",
+      d,
+      "```",
+      "## Parameter values",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}", 
+      capture.output(param(x)),
+      "```",
+      "## Compartment initials",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}", 
+      capture.output(init(x)),
       "```",
       "# Model code",
       "## `$MAIN`",
-      "```{r,echo=FALSE,comment=''}", 
-      "cat(x$bl$MAIN,sep='')",
+      "```{c,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(cat(bl$MAIN,sep="\n")),
       "```",
       "## `$ODE`",
-      "```{r,echo=FALSE,comment=''}",
-      "cat(x$bl$ODE,sep='')",
+      "```{c,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(cat(bl$ODE,sep="\n")),
       "```",
       "## `$TABLE`",
-      "```{r,echo=FALSE,comment=''}",
-      "cat(x$bl$TABLE,sep='')",
+      "```{c,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(cat(bl$TABLE,sep="\n")),
       "```",
       sep="\n",append=TRUE)
   ret <- rmarkdown::render(file,quiet=quiet,output_format="pdf_document")

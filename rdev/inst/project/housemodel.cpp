@@ -1,5 +1,17 @@
 
-$PROB housemodel
+$PROB 
+
+# `mrgsolve` housemodel
+
+This model is compiled with `mrgsolve`.
+
+  - Author: Metrum Research Group, LLC
+  - Description: Generic indirect response PK/PD model
+  - Covariates: Weight, female sex
+  - Random effects: CL, VC, KA, KOUT
+  - Error model: exponential
+
+
 
 $PLUGIN base
 
