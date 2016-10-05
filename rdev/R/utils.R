@@ -211,10 +211,11 @@ is.numeric.data.frame <- function(x) sapply(x, is.numeric)
 ##' the \code{.Rmd} file is returned.
 ##' 
 ##' @examples
+##' \dontrun{
 ##' mod <- mrgsolve:::house()
 ##' 
 ##' mrgsolve:::render(mod,file="house.Rmd")
-##' 
+##' }
 ##' 
 ##' 
 render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,build=TRUE,...) {
