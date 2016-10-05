@@ -504,6 +504,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if((this_rec->is_event()) && (this_rec->from_data())) {
         
         ev_ptr ev = boost::dynamic_pointer_cast<pkevent>(this_rec);
+        //rec_ptr ev = this_rec;
         
         // Grab Bioavailability
         biofrac = prob->fbio(abs(ev->cmt())-1);
@@ -521,7 +522,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             if(prob->rate(this_cmt) <= 0) {
                Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
             }
-            ev->rate(prob->rate(this_cmt));
+            ev->pkevent::rate(prob->rate(this_cmt));
           }
           
           if(ev->rate() == -2) {
@@ -538,7 +539,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // disarm this event
         if((prob->alag(ev->cmt()) > mindt)) {
           
-          ev->unarm();
+          ev->pkevent::unarm();
           
           ev_ptr newev(new pkevent(ev->cmt(),
                                    ev->evid(),
@@ -560,8 +561,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           std::sort(a[i].begin()+j,a[i].end(),CompRec());
           
         } else {
-          ev->schedule(a[i], maxtime, addl_ev_first); //pkevent.cpp
-          if(ev->needs_sorting()) {
+          ev->pkevent::schedule(a[i], maxtime, addl_ev_first); //pkevent.cpp
+          if(ev->pkevent::needs_sorting()) {
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         }

@@ -196,46 +196,85 @@ expand.ev <- function(...) {
 is.numeric.data.frame <- function(x) sapply(x, is.numeric)
 
 
-render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
+
+##' Render an \code{mrgsolve} model.
+##' 
+##' @param x model object
+##' @param file file name to use for building; should have \code{.Rmd} extension
+##' @param quiet not used
+##' @param build if \code{TRUE}, the document is built with \code{rmarkdown::render}
+##' @param ... not used
+##' 
+##' @return 
+##' If the document is built, the path to the \code{.pdf} file 
+##' is returned.  If the document is not built, path to 
+##' the \code{.Rmd} file is returned.
+##' 
+##' @examples
+##' \dontrun{
+##' mod <- mrgsolve:::house()
+##' 
+##' mrgsolve:::render(mod,file="house.Rmd")
+##' }
+##' 
+##' 
+render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,build=TRUE,...) {
   stopifnot(requireNamespace("rmarkdown"))
-  bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//+")
+  bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//")
   txt <- bl[["PROB"]]
   if(is.null(txt)) stop("Couldn't find $PROB in model.",call.=FALSE)
   
   bl[["PROB"]] <- NULL
-  anot <- tempfile(fileext=".RDS")
   
   for(i in seq_along(bl)) {
+    bl[[i]] <- bl[[i]][bl[[i]] !=""]
     bl[[i]] <- paste(bl[[i]], collapse="\n") 
   }
-  saveRDS(file=anot, list(details=details(x),code=x@code,bl=bl))
+  
+  w <- options()$width
+  options(width=120)
+  on.exit(options(width=w))
   
   cat(file=file, txt, sep="\n")
   cat(file=file, 
-      "```{r,echo=FALSE,comment=''}", 
-      paste0("x <- readRDS(file=\"",anot, "\")"),
-      "```",
       "# Model details",
-      "```{r,echo=FALSE,comment=''}", 
-      "print(x$details)",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(print(details(x),row.names=FALSE)),
+      "```",
+      "## Parameter values",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}", 
+      capture.output(param(x)),
+      "```",
+      "## Compartment initials",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}", 
+      capture.output(init(x)),
+      "```",
+      "## Random Effects",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}", 
+      capture.output(revar(x)),
       "```",
       "# Model code",
       "## `$MAIN`",
-      "```{r,echo=FALSE,comment=''}", 
-      "cat(x$bl$MAIN,sep='')",
+      "```{c,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(cat(bl$MAIN,sep="\n")),
       "```",
       "## `$ODE`",
-      "```{r,echo=FALSE,comment=''}",
-      "cat(x$bl$ODE,sep='')",
+      "```{c,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(cat(bl$ODE,sep="\n")),
       "```",
       "## `$TABLE`",
-      "```{r,echo=FALSE,comment=''}",
-      "cat(x$bl$TABLE,sep='')",
+      "```{c,eval=FALSE,echo=TRUE,comment=''}",
+      capture.output(cat(bl$TABLE,sep="\n")),
       "```",
       sep="\n",append=TRUE)
-  ret <- rmarkdown::render(file,quiet=quiet,output_format="pdf_document")
-  file.copy(ret,file.path(getwd(),basename(ret)))
-  return(ret)
+  
+  if(build) {
+    ret <- rmarkdown::render(file,quiet=quiet,output_format="pdf_document")
+    file.copy(ret,file.path(getwd(),basename(ret)))
+    return(ret)
+  } else {
+    return(file) 
+  }
 }
 
 

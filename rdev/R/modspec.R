@@ -64,7 +64,7 @@ audit_spec <- function(x,spec,warn=TRUE) {
   z <- sapply(paste0("dxdt_",cmt), function(dx) {
     !any(grepl(dx,spec[["ODE"]],fixed=TRUE))
   })
-
+  
   if(any(z)) {
     ans <- paste(cmt[z], collapse=',')
     warning(paste0("Audit: missing differential equation(s) for ", ans), call.=FALSE)
@@ -134,7 +134,7 @@ setup_soloc <- function(loc,model) {
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
-                       comment_re="//+|##+",...) {
+                       comment_re=c("//", "##"),...) {
   
   ## Take in model text and parse it out
   
@@ -143,7 +143,7 @@ modelparse <- function(txt,
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
   # Take out comments
-  for(comment in c("//", "##")) {
+  for(comment in comment_re) {
     m <- as.integer(regexpr(comment,txt,fixed=TRUE))
     w <- m > 0
     txt[w] <- substr(txt[w],1,m[w]-1)
@@ -172,8 +172,11 @@ modelparse <- function(txt,
   # Create the list
   spec <- lapply(seq_along(start), function(i) {
     y <- txt[start[i]:end[i]]
-    y[y!=""]
   })
+  
+  if(drop_blank) {
+    spec <- lapply(spec,function(y) y[y!=""]) 
+  }
   
   names(spec) <- labs
   
