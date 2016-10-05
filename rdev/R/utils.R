@@ -202,33 +202,43 @@ is.numeric.data.frame <- function(x) sapply(x, is.numeric)
 ##' @param x model object
 ##' @param file file name to use for building; should have \code{.Rmd} extension
 ##' @param quiet not used
+##' @param build if \code{TRUE}, the document is built with \code{rmarkdown::render}
 ##' @param ... not used
 ##' 
-render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
+##' @return 
+##' If the document is built, the path to the \code{.pdf} file 
+##' is returned.  If the document is not built, path to 
+##' the \code{.Rmd} file is returned.
+##' 
+##' @examples
+##' mod <- mrgsolve:::house()
+##' 
+##' mrgsolve:::render(mod,file="house.Rmd")
+##' 
+##' 
+##' 
+render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,build=TRUE,...) {
   stopifnot(requireNamespace("rmarkdown"))
   bl <- modelparse(x@code,warn=FALSE,split=FALSE,drop_blank=FALSE,comment_re="//")
   txt <- bl[["PROB"]]
   if(is.null(txt)) stop("Couldn't find $PROB in model.",call.=FALSE)
   
   bl[["PROB"]] <- NULL
-  anot <- tempfile(fileext=".RDS")
   
   for(i in seq_along(bl)) {
     bl[[i]] <- bl[[i]][bl[[i]] !=""]
     bl[[i]] <- paste(bl[[i]], collapse="\n") 
   }
-
-
+  
   w <- options()$width
   options(width=120)
-  d <- capture.output(print(details(x),row.names=FALSE))
-  options(width=w)
+  on.exit(options(width=w))
   
   cat(file=file, txt, sep="\n")
   cat(file=file, 
       "# Model details",
       "```{r,eval=FALSE,echo=TRUE,comment=''}",
-      d,
+      capture.output(print(details(x),row.names=FALSE)),
       "```",
       "## Parameter values",
       "```{r,eval=FALSE,echo=TRUE,comment=''}", 
@@ -237,6 +247,10 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
       "## Compartment initials",
       "```{r,eval=FALSE,echo=TRUE,comment=''}", 
       capture.output(init(x)),
+      "```",
+      "## Random Effects",
+      "```{r,eval=FALSE,echo=TRUE,comment=''}", 
+      capture.output(revar(x)),
       "```",
       "# Model code",
       "## `$MAIN`",
@@ -252,9 +266,14 @@ render <- function(x,file=tempfile(fileext=".Rmd"),quiet=TRUE,...) {
       capture.output(cat(bl$TABLE,sep="\n")),
       "```",
       sep="\n",append=TRUE)
-  ret <- rmarkdown::render(file,quiet=quiet,output_format="pdf_document")
-  file.copy(ret,file.path(getwd(),basename(ret)))
-  return(ret)
+  
+  if(build) {
+    ret <- rmarkdown::render(file,quiet=quiet,output_format="pdf_document")
+    file.copy(ret,file.path(getwd(),basename(ret)))
+    return(ret)
+  } else {
+    return(file) 
+  }
 }
 
 
