@@ -1,30 +1,25 @@
 
 ##' Render an \code{mrgsolve} model.
 ##' 
-##' @param x model object
-##' @param file file name to use for building; should have \code{.Rmd} extension
-##' @param quiet not used
-##' @param build if \code{TRUE}, the document is built with \code{rmarkdown::render}
-##' @param ... not used
+##' @param x model object or the model name
+##' @param project the directory containing the \code{.cpp} model file 
+##' @param ... passed to \code{rmarkdown::render}
 ##' 
-##' @return 
-##' If the document is built, the path to the \code{.pdf} file 
-##' is returned.  If the document is not built, path to 
-##' the \code{.Rmd} file is returned.
 ##' 
 ##' @examples
 ##' \dontrun{
 ##' mod <- mrgsolve:::house()
-##' 
-##' mrgsolve:::render(mod,file="house.Rmd")
+##' mrgsolve:::render(mod)
+##' mrgsolve:::render("irm2", modlib())
 ##' }
 ##' 
-##' 
-
+##' @rdname render
 setGeneric("render", function(x,...) standardGeneric("render"))
+##' @rdname render
 setMethod("render", "character", function(x,project,...) {
   dorender(x,project,...)
 })
+##' @rdname render
 setMethod("render", "mrgmod", function(x,...) {
     project <- tempdir()
     file <- basename(cfile(x))
