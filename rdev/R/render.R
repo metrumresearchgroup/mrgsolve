@@ -48,6 +48,8 @@ dorender <- function(model,project,template=NULL,...) {
   
   pdf <- rmarkdown::render(out,params=list(model=model,project=project),...)
   
-  file.copy(pdf, getwd(),overwrite=TRUE)
+  invisible(file.copy(pdf, getwd(),overwrite=TRUE))
+  
+  
   
 }
