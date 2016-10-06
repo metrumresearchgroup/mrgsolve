@@ -204,7 +204,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       z.reserve(tgridn[i]);
     
       for(int j = 0; j < tgridn[i]; ++j) { 
-        rec_ptr obs(new datarecord(0,tgrid(j,i),0,nextpos,0));
+        rec_ptr obs = boost::make_shared<datarecord>(0,tgrid(j,i),0,nextpos,0);
         z.push_back(obs); 
       }
       
@@ -232,7 +232,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } // done adding stimes;
       
       for(h=0; h < m; h++) {
-        rec_ptr obs(new datarecord(0,ptimes[h], 0, nextpos, id));
+        rec_ptr obs = boost::make_shared<datarecord>(0,ptimes[h], 0, nextpos, id);
         obs->output(false);
         it->push_back(obs);
       }

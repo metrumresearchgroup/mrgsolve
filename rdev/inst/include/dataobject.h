@@ -5,6 +5,7 @@
 #define DATAOBJECT_H
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/unordered_map.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"

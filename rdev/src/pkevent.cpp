@@ -200,7 +200,7 @@ void pkevent::steady_infusion(odeproblem *prob) {
   prob->rate_reset();
   
   // We only need one of these; it gets updated and re-used immediately
-  ev_ptr evon(new pkevent(Cmt, 1, Amt, Time, Rate));
+  ev_ptr evon = boost::make_shared<pkevent>(Cmt, 1, Amt, Time, Rate);
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
@@ -210,7 +210,7 @@ void pkevent::steady_infusion(odeproblem *prob) {
     
     // Create an event to turn the infusion off and push onto offs vector
     // Keep on creating these
-    ev_ptr evoff(new pkevent(Cmt, 9, Amt, toff, Rate));
+    ev_ptr evoff = boost::make_shared<pkevent>(Cmt, 9, Amt, toff, Rate);
     offs.push_back(evoff);
     
     // The next time an infusion will start
@@ -275,8 +275,8 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   // End if infusion
   if(Rate > 0) {
     
-    ev_ptr evoff(new pkevent(Cmt, 9,  Amt, Time + this->dur(Fn), 
-                             Rate,-300, Id));
+    ev_ptr evoff = boost::make_shared<pkevent>(Cmt, 9,  Amt, Time + this->dur(Fn), 
+                             Rate,-300, Id);
     evoff->output(false);
     
     thisi.push_back(evoff);
@@ -298,8 +298,8 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime,
         
         double offtime = first_off+double(k)*double(Ii);
         
-        ev_ptr evoff(new pkevent(Cmt,9, Amt,offtime,
-                                 Rate,-300, Id));
+        ev_ptr evoff = boost::make_shared<pkevent>(Cmt,9, Amt,offtime,
+                                 Rate,-300, Id);
         evoff->output(false);
         thisi.push_back(evoff);
         
@@ -330,8 +330,8 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime,
       
       if(ontime > maxtime) break;
       
-      ev_ptr evon(new pkevent(Cmt,this_evid,Amt,ontime,
-                              Rate,nextpos,Id));
+      ev_ptr evon = boost::make_shared<pkevent>(Cmt,this_evid,Amt,ontime,
+                              Rate,nextpos,Id);
 
       evon->fn(Fn);
       
@@ -340,9 +340,9 @@ void pkevent::schedule(std::vector<rec_ptr>& thisi, double maxtime,
       thisi.push_back(evon);
       
       if(this->infusion()) {
-        ev_ptr evoff(new pkevent(Cmt,9, Amt,
+        ev_ptr evoff = boost::make_shared<pkevent>(Cmt,9, Amt,
                                  ontime + this->dur(Fn),
-                                 Rate,-300,Id));
+                                 Rate,-300,Id);
   
         evoff->output(false);
         
