@@ -20,6 +20,7 @@ to type `double` and list that variable name in `$CAPTURE`.  See also the `captu
 ## Bugs fixed
 - Fixed documentation issue in `PKMODEL`.  The volumes for two-compartment model with no depot should be `V1`/`V2`.
 
+
 ## Under the hood
 - User-declared `double/int/bool` in `$MAIN`, `$ODE`, `$TABLE` are kept in unnamed namespace and are local to the file.
 - Started to re-organize the `.R` files.

@@ -150,7 +150,7 @@ modelparse <- function(txt,
   }
   
   # Look for block lines
-  m <- regexec(block_re,txt,perl=TRUE)
+  m <- regexec(block_re,txt)
   
   # Where the block starts
   start <- which(sapply(m,"[",1L) > 0)
