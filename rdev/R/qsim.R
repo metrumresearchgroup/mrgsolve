@@ -45,7 +45,10 @@ qsim <- function(x,e,idata,req=NULL) {
                data.matrix(idata),
                as.integer(req-1),
                cap,
-               pointers(x))
+               pointers(x),
+               as.integer(c(sum(nrow(omat(x))),
+                          sum(nrow(smat(x)))))
+               )
   
   dimnames(out) <- list(NULL, c("ID","time", reqn,x@capture))
   

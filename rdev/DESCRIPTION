@@ -80,6 +80,7 @@ Collate:
     'param.R'
     'print.R'
     'qsim.R'
+    'render.R'
     'simtime.R'
     'update.R'
 RoxygenNote: 5.0.1
