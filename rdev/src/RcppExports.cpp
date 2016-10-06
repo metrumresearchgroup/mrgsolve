@@ -127,8 +127,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // QUICKSIM
-Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin, const Rcpp::NumericVector& param, const Rcpp::NumericVector& init, Rcpp::CharacterVector& parnames, Rcpp::NumericMatrix& data, Rcpp::IntegerVector& n, const Rcpp::NumericMatrix& idata, const Rcpp::IntegerVector& req, const Rcpp::IntegerVector& capturei, const Rcpp::List& funs);
-RcppExport SEXP mrgsolve_QUICKSIM(SEXP parinSEXP, SEXP paramSEXP, SEXP initSEXP, SEXP parnamesSEXP, SEXP dataSEXP, SEXP nSEXP, SEXP idataSEXP, SEXP reqSEXP, SEXP captureiSEXP, SEXP funsSEXP) {
+Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin, const Rcpp::NumericVector& param, const Rcpp::NumericVector& init, Rcpp::CharacterVector& parnames, Rcpp::NumericMatrix& data, Rcpp::IntegerVector& n, const Rcpp::NumericMatrix& idata, const Rcpp::IntegerVector& req, const Rcpp::IntegerVector& capturei, const Rcpp::List& funs, const Rcpp::IntegerVector& nre);
+RcppExport SEXP mrgsolve_QUICKSIM(SEXP parinSEXP, SEXP paramSEXP, SEXP initSEXP, SEXP parnamesSEXP, SEXP dataSEXP, SEXP nSEXP, SEXP idataSEXP, SEXP reqSEXP, SEXP captureiSEXP, SEXP funsSEXP, SEXP nreSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -142,7 +142,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type req(reqSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type capturei(captureiSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
-    rcpp_result_gen = Rcpp::wrap(QUICKSIM(parin, param, init, parnames, data, n, idata, req, capturei, funs));
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type nre(nreSEXP);
+    rcpp_result_gen = Rcpp::wrap(QUICKSIM(parin, param, init, parnames, data, n, idata, req, capturei, funs, nre));
     return rcpp_result_gen;
 END_RCPP
 }

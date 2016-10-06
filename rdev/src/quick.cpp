@@ -45,7 +45,8 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
                              const Rcpp::NumericMatrix& idata,
                              const Rcpp::IntegerVector& req,
                              const Rcpp::IntegerVector& capturei,
-                             const Rcpp::List& funs) {
+                             const Rcpp::List& funs,
+                             const Rcpp::IntegerVector& nre) {
   
   dataobject idat(idata,parnames);
   
@@ -54,7 +55,9 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   odeproblem prob(param, init, funs, capn);
   
   prob.copy_parin(parin);
-  
+  prob.neta(nre[0]);
+  prob.neps(nre[1]);
+
   const unsigned int NN = n[0] * idata.nrow();
   const unsigned int nreq = req.size();
   

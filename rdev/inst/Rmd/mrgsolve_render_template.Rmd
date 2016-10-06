@@ -1,0 +1,58 @@
+---
+params:
+  model: ""
+  project: ""
+---
+
+
+
+```{r,echo=FALSE}
+library(mrgsolve)
+library(knitr)
+options(width=120)
+opts_chunk$set(comment='',echo=FALSE)
+mod <- mread(params$model,params$project,compile=FALSE)
+blocks <- modelparse(mod@code,drop_blank=FALSE)
+prob <- blocks[["PROB"]]
+if(is.null(prob)) prob <- "$PROB not found in this control stream."
+
+par <-  capture.output(param(mod))
+init <- capture.output(init(mod))
+rmbl <- function(x) x[x!=""]
+
+```
+
+`r knit(text=prob)`
+
+
+
+# Model details
+```{r}
+print(mrgsolve:::details(mod),row.names=FALSE)
+```
+
+## Parameter values
+```{r}
+(param(mod))
+```
+
+## Compartments and initial values
+```{r}
+(init(mod))
+```
+
+# Model code
+
+```{r}
+cat(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET),sep="\n")
+```
+
+
+# `mrgsolve`
+- Date: `r date()`
+- Version: `r packageVersion("mrgsolve")`
+
+
+
+
+

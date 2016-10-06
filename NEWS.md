@@ -2,6 +2,30 @@
 
 __Please see the latest release__: [v0.7.6](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.6)
 
+# Since 0.7.6
+
+## Important changes
+- The `table()` macro in `$TABLE` is now deprecated (https://github.com/metrumresearchgroup/mrgsolve/pull/129).  To get derived values into the simulated output, users should assign
+to type `double` and list that variable name in `$CAPTURE`.  See also the `capture` typedef introduced below.
+
+
+## Features
+- Added `@` macros for indicating block options in model specification file.
+- Added `qsim` function for quick(er) simulation runs with just one parameter set.  
+- Added `recmatrix` that creates matrix simulation template for `qsim`.
+- Added `mrgsolve:::render` to create a document with overview of model contents.  Methods for both `mrgmod` objects and `character` strings pointing to a model file.
+- Use `mrgsolve:::details` to extract model annotation.
+- Added `capture` typedef in the model specification file.  Variables that are type `capture` are doubles and are automatically appended to `$CAPTURE`.  The `capture` typedef is not allowed in `$ODE` and probably should be reserved for `$TABLE`.
+
+## Bugs fixed
+- Fixed documentation issue in `PKMODEL`.  The volumes for two-compartment model with no depot should be `V1`/`V2`.
+
+
+## Under the hood
+- User-declared `double/int/bool` in `$MAIN`, `$ODE`, `$TABLE` are kept in unnamed namespace and are local to the file.
+- Started to re-organize the `.R` files.
+
+
 # Since 0.7.5
 
 ## Features

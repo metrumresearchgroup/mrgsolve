@@ -90,7 +90,7 @@ valid_idata <- function(x,verbose=FALSE,quiet=FALSE,...) {
     stop("idata set must contain ID column.", call.=FALSE) 
   }
   
-  x <- numeric_data_matrix(x,quiet)
+  x <- numeric_data_matrix(as.data.frame(x),quiet)
   
   return(x)
   
