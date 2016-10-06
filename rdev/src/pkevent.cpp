@@ -146,7 +146,7 @@ void pkevent::steady_bolus(odeproblem *prob) {
   
   prob->lsoda_init();
   
-  ev_ptr evon(new pkevent(Cmt, 1, Amt, Time, Rate));
+  ev_ptr evon = boost::make_shared<pkevent>(Cmt, 1, Amt, Time, Rate);
   evon->fn(Fn);
   
   for(i=1; i < N_SS; ++i) {
@@ -391,7 +391,7 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
       break;
     }
 
-    rec_ptr obs(new datarecord(100,b[i],0,-100,0));
+    rec_ptr obs = boost::make_shared<datarecord>(100,b[i],0,-100,0);
     obs->output(false);
     thisi.push_back(obs);
   }
