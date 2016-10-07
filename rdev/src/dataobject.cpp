@@ -6,7 +6,6 @@
 #include "RcppInclude.h"
 #include "dataobject.h"
 #include "mrgsolve.h"
-#include "pkevent.h"
 #include "mrgsolv.h"
 
 #define _COL_amt_   0u
@@ -172,7 +171,8 @@ void dataobject::copy_inits(int this_row, odeproblem *prob) {
 }
 
 
-void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, odeproblem *prob) {
+void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, 
+                                   odeproblem *prob) {
   for(size_t i = 0; i < par_to.size(); ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
@@ -217,12 +217,13 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
           Rcpp::stop("cmt number in observation record out of range.");
         }
         
-        rec_ptr obs = boost::make_shared<datarecord>(0,
-                                                  Data(j,col[_COL_time_]),
-                                                  Data(j,col[_COL_cmt_]),
-                                                  j,
-                                                  Data(j,Idcol));
-        obs->from_data(true);
+        rec_ptr obs = boost::make_shared<datarecord>(
+          Data(j,col[_COL_time_]),
+          Data(j,col[_COL_cmt_]),
+          j,
+          Data(j,Idcol)
+          );
+        
         a[h].push_back(obs);
         ++obscount;
         continue;
@@ -237,13 +238,15 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       
       ++evcount;
       
-      ev_ptr ev = boost::make_shared<pkevent>(Data(j,col[_COL_cmt_]),
-                                               Data(j,col[_COL_evid_]),
-                                               Data(j,col[_COL_amt_]),
-                                               Data(j,col[_COL_time_]),
-                                               Data(j,col[_COL_rate_]),
-                                               j, 
-                                               Data(j,Idcol));
+      rec_ptr ev = boost::make_shared<datarecord>(
+        Data(j,col[_COL_cmt_]),
+        Data(j,col[_COL_evid_]),
+        Data(j,col[_COL_amt_]),
+        Data(j,col[_COL_time_]),
+        Data(j,col[_COL_rate_]),
+        j, 
+        Data(j,Idcol)
+        );
       
       if((ev->rate() < 0) && (ev->rate() < -2)) {
         Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
@@ -253,18 +256,18 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
         Rcpp::stop("Non-zero rate requires positive amt.");
       }
       
-      if(obsonly) ev->output(false);
-      
       ev->from_data(true);
+      if(!obsonly) ev->output(true);
+  
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
   
-      if((ev->addl() > 0) && (ev->ii() <=0)) {
+      if((ev->addl() > 0) && (ev->ii() <= 0)) {
         Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
       }
       
-      if((ev->ss()) && (ev->ii() <=0)) {
+      if((ev->ss()) && (ev->ii() <= 0)) {
         Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
       }
       

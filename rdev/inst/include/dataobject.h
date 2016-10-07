@@ -6,11 +6,12 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/unordered_map.hpp>
+//#include <boost/unordered_map.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-typedef boost::unordered::unordered_map<double,int> idat_map;
+//typedef boost::unordered::unordered_map<double,int> idat_map;
+typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
 typedef std::deque<int> datarowtype;
   

@@ -8,9 +8,9 @@
 #include <string>
 #include "mrgsolve.h"
 #include "odeproblem.h"
-#include "pkevent.h"
 #include "dataobject.h"
 #include "RcppInclude.h"
+
 
 #define CRUMP(a) Rcpp::stop(a)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
@@ -202,9 +202,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       std::vector<rec_ptr> z;
       
       z.reserve(tgridn[i]);
-    
+      
       for(int j = 0; j < tgridn[i]; ++j) { 
-        rec_ptr obs = boost::make_shared<datarecord>(0,tgrid(j,i),0,nextpos,0);
+        rec_ptr obs = boost::make_shared<datarecord>(tgrid(j,i),nextpos,true);
         z.push_back(obs); 
       }
       
@@ -226,14 +226,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       it->reserve((it->size() + n + m + 10));
       
       for(h=0; h < n; h++) {
-        //rec_ptr obs(new datarecord(0,tgrid(h,tgridi[j]),0,nextpos,id));
         it->push_back(designs.at(tgridi[j]).at(h));
         ++obscount;
       } // done adding stimes;
       
       for(h=0; h < m; h++) {
-        rec_ptr obs = boost::make_shared<datarecord>(0,ptimes[h], 0, nextpos, id);
-        obs->output(false);
+        rec_ptr obs = boost::make_shared<datarecord>(ptimes[h],nextpos,false);
         it->push_back(obs);
       }
       // sort the records by time and original position 
@@ -382,7 +380,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double tto, tfrom;
   crow = 0;
   int this_cmt = 0;
-
+  
   // The current difference between tto and tfrom
   double dt = 0;
   double id = 0;
@@ -450,7 +448,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(crow == NN) continue;
       
       if(j != 0) prob->newind(2);
-    
+      
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
@@ -503,56 +501,48 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // Schedule ADDL and infusion end times
       if((this_rec->is_event()) && (this_rec->from_data())) {
         
-        ev_ptr ev = boost::dynamic_pointer_cast<pkevent>(this_rec);
-        //rec_ptr ev = this_rec;
-        
         // Grab Bioavailability
-        biofrac = prob->fbio(abs(ev->cmt())-1);
+        biofrac = prob->fbio(abs(this_rec->cmt())-1);
         
         if(biofrac < 0) {
           CRUMP("mrgsolve: Bioavailability fraction is less than zero.");
         }
         
-        ev->fn(biofrac);
+        this_rec->fn(biofrac);
         
         // We already found an negative rate or duration in the data set.
-        if(ev->rate() < 0) {
-          if(ev->rate() == -1) {
-            this_cmt = ev->cmt()-1;
+        if(this_rec->rate() < 0) {
+          if(this_rec->rate() == -1) {
+            this_cmt = this_rec->cmt()-1;
             if(prob->rate(this_cmt) <= 0) {
-               Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
+              Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
             }
-            ev->pkevent::rate(prob->rate(this_cmt));
+            this_rec->rate(prob->rate(this_cmt));
           }
           
-          if(ev->rate() == -2) {
-            this_cmt = ev->cmt()-1;
+          if(this_rec->rate() == -2) {
+            this_cmt = this_rec->cmt()-1;
             if(prob->dur(this_cmt) <= 0) {
               Rcpp::stop("Invalid infusion setting: duration (D_CMT).");
             }
-            ev->rate(ev->amt() * biofrac / prob->dur(this_cmt));
+            this_rec->rate(this_rec->amt() * biofrac / prob->dur(this_cmt));
           }
         } // End ev->rate() < 0
         
         // If alag set for this compartment
         // spawn a new event with no output and time modified by alag
         // disarm this event
-        if((prob->alag(ev->cmt()) > mindt)) {
+        if((prob->alag(this_rec->cmt()) > mindt)) {
           
-          ev->pkevent::unarm();
           
-          ev_ptr newev(new pkevent(ev->cmt(),
-                                   ev->evid(),
-                                   ev->amt(),
-                                   ev->time() + prob->alag(ev->cmt()),
-                                   ev->rate(), 
-                                   -1200, 
-                                   ev->id()));
-          newev->addl(ev->addl());
-          newev->ii(ev->ii());
-          newev->ss(ev->ss());
+          
+          rec_ptr newev = boost::make_shared<datarecord>(*this_rec);
+          newev->pos(-1200);
+          newev->phantom_rec();
+          newev->time(this_rec->time() + prob->alag(this_rec->cmt()));
           newev->fn(biofrac);
-          newev->output(false);
+          
+          this_rec->unarm();
           
           reclist::iterator it = a[i].begin()+j;
           advance(it,1);
@@ -561,8 +551,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           std::sort(a[i].begin()+j,a[i].end(),CompRec());
           
         } else {
-          ev->pkevent::schedule(a[i], maxtime, addl_ev_first); //pkevent.cpp
-          if(ev->pkevent::needs_sorting()) {
+          this_rec->schedule(a[i], maxtime, addl_ev_first); 
+          if(this_rec->needs_sorting()) {
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         }
@@ -582,7 +572,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // Write out ID and time
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
-
+        
         // Write out captured items
         k = 0;
         for(int i=0; i < n_capture; ++i) {
@@ -608,7 +598,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       tfrom = tto;
     }
   }
-
+  
   // Significant digits in simulated variables and outputs too
   if(digits > 0) {
     for(int i=req_start; i < ans.ncol(); ++i) {
