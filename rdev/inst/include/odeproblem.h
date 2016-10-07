@@ -207,6 +207,8 @@ protected:
   int Advan;
   dvec a;
   dvec alpha;
+  //
+  
   
   dvec pred;
   dvec Capture;

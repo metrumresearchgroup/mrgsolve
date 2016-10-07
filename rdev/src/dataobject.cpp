@@ -6,7 +6,6 @@
 #include "RcppInclude.h"
 #include "dataobject.h"
 #include "mrgsolve.h"
-#include "pkevent.h"
 #include "mrgsolv.h"
 
 #define _COL_amt_   0u
@@ -91,7 +90,7 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
 void dataobject::locate_tran() {
   
 
-  int zeros = Data.ncol()-1;
+  unsigned int zeros = Data.ncol()-1;
   
   if(zeros==0) {
     col[_COL_amt_]  = 0;
@@ -108,7 +107,7 @@ void dataobject::locate_tran() {
   Rcpp::CharacterVector::iterator bg = Data_names.begin();
   Rcpp::CharacterVector::iterator ed = Data_names.end();
   
-  int tcol = std::find(bg,ed,"time") - bg;
+  unsigned int tcol = std::find(bg,ed,"time") - bg;
   
   bool lc = true;
   
@@ -158,7 +157,8 @@ void dataobject::idata_row() {
 }
 
 void dataobject::copy_parameters(int this_row, odeproblem *prob) {
-  for(size_t i=0; i < par_from.size(); ++i) {
+  size_t n = par_from.size();
+  for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
@@ -166,21 +166,24 @@ void dataobject::copy_parameters(int this_row, odeproblem *prob) {
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
-  for(size_t i=0; i < cmt_from.size(); ++i) {
+  size_t n = cmt_from.size();
+  for(size_t i=0; i < n; ++i) {
     prob->y_init(cmt_to[i],Data(this_row,cmt_from[i]));
   }
 }
 
 
-void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, odeproblem *prob) {
-  for(size_t i = 0; i < par_to.size(); ++i) {
+void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, 
+                                   odeproblem *prob) {
+  size_t n = par_to.size();
+  for(size_t i = 0; i < n; ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
 }
 
 
 
-void dataobject::get_records(recstack& a, int NID, unsigned int neq,
+void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
                              bool obsonly, bool debug) {
   
@@ -217,12 +220,13 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
           Rcpp::stop("cmt number in observation record out of range.");
         }
         
-        rec_ptr obs(new datarecord(0,
-                                   Data(j,col[_COL_time_]),
-                                   Data(j,col[_COL_cmt_]),
-                                   j,
-                                   Data(j,Idcol)));
-        obs->from_data(true);
+        rec_ptr obs = boost::make_shared<datarecord>(
+          Data(j,col[_COL_time_]),
+          Data(j,col[_COL_cmt_]),
+          j,
+          Data(j,Idcol)
+          );
+        
         a[h].push_back(obs);
         ++obscount;
         continue;
@@ -237,13 +241,15 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
       
       ++evcount;
       
-      ev_ptr ev(new pkevent(Data(j,col[_COL_cmt_]),
-                            Data(j,col[_COL_evid_]),
-                            Data(j,col[_COL_amt_]),
-                            Data(j,col[_COL_time_]),
-                            Data(j,col[_COL_rate_]),
-                            j, 
-                            Data(j,Idcol)));
+      rec_ptr ev = boost::make_shared<datarecord>(
+        Data(j,col[_COL_cmt_]),
+        Data(j,col[_COL_evid_]),
+        Data(j,col[_COL_amt_]),
+        Data(j,col[_COL_time_]),
+        Data(j,col[_COL_rate_]),
+        j, 
+        Data(j,Idcol)
+        );
       
       if((ev->rate() < 0) && (ev->rate() < -2)) {
         Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
@@ -253,18 +259,18 @@ void dataobject::get_records(recstack& a, int NID, unsigned int neq,
         Rcpp::stop("Non-zero rate requires positive amt.");
       }
       
-      if(obsonly) ev->output(false);
-      
       ev->from_data(true);
+      if(!obsonly) ev->output(true);
+  
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
   
-      if((ev->addl() > 0) && (ev->ii() <=0)) {
+      if((ev->addl() > 0) && (ev->ii() <= 0)) {
         Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
       }
       
-      if((ev->ss()) && (ev->ii() <=0)) {
+      if((ev->ss()) && (ev->ii() <= 0)) {
         Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
       }
       
@@ -298,104 +304,3 @@ void dataobject::check_idcol(dataobject *idat) {
     Rcpp::stop("ID found in the data set, but not in idata.");
   }
 }
-// 
-// 
-// bool vec_compare(const std::vector<double>&a,
-//                  const std::vector<double>&b) {
-//   // time-a != time-b
-//   if (a[0] < b[0]) return true;
-//   if (b[0] < a[0]) return false;
-//   // time-a == time-b
-//   if (a[1] < b[1]) return true;
-//   if (b[1] < b[1]) return false;
-//   return false;
-// }
-// 
-// 
-// // [[Rcpp::export]]
-// void test_vec_rec(const Rcpp::NumericVector& pos,
-//                   const Rcpp::NumericVector& time) {
-// 
-//   if(pos.size() != time.size()) Rcpp::stop("Error size");
-// 
-//   int n = pos.size();
-// 
-//   std::vector<std::vector<double> > recs;
-//   recs.reserve(n*2);
-// 
-//   for(int i = 0; i < n; ++i) {
-//     std::vector<double> d(8,0.0);
-//     d[1] = pos[i];
-//     d[0] = time[i];
-//     recs.push_back(d);
-//   }
-// 
-//   std::sort(recs.begin(), recs.end(), vec_compare);
-//   for(int i = 0; i < n; ++i) {
-//     std::vector<double> d(8,0.0);
-//     d[1] = pos[i];
-//     d[0] = time[i];
-//     recs.push_back(d);
-//   }
-// 
-//   std::sort(recs.begin(), recs.end(), vec_compare);
-// }
-// 
-// 
-// 
-// bool obj_compare(const rec_ptr& a, const rec_ptr& b) {
-//   // time-a != time-b
-//   if (a->time() < b->time()) return true;
-//   if (b->time() < a->time()) return false;
-//   // time-a == time-b
-//   if (a->pos() < b->pos()) return true;
-//   if (b->pos() < b->pos()) return false;
-//   return false;
-// }
-// 
-// 
-// 
-// // [[Rcpp::export]]
-// void test_obj_rec(const Rcpp::NumericVector& pos,
-//                   const Rcpp::NumericVector& time) {
-// 
-//   if(pos.size() != time.size()) Rcpp::stop("Error size");
-// 
-//   int n = pos.size();
-// 
-// 
-//   std::vector<rec_ptr > recs;
-//   recs.reserve(n*2);
-// 
-//   for(int i = 0; i < n; ++i) {
-// 
-//     rec_ptr obs(new datarecord(0,
-//                                time[i],
-//                                0,
-//                                pos[i],
-//                                12));
-//     obs->from_data(true);
-//     recs.push_back(obs);
-//   }
-// 
-//   std::sort(recs.begin(), recs.end(), obj_compare);
-// 
-// 
-//   for(int i = 0; i < n; ++i) {
-//     ev_ptr ev(new pkevent(1,
-//                           1,
-//                          1,
-//                           time[1],
-//                           100,
-//                           pos[1],
-//                           100));
-//     ev->from_data(true);
-//     recs.push_back(ev);
-//   }
-// 
-//   std::sort(recs.begin(), recs.end(), obj_compare);
-// 
-// 
-// }
-// 
-// 

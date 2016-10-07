@@ -5,11 +5,13 @@
 #define DATAOBJECT_H
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
+#include <boost/make_shared.hpp>
+//#include <boost/unordered_map.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-typedef boost::unordered::unordered_map<double,int> idat_map;
+//typedef boost::unordered::unordered_map<double,int> idat_map;
+typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
 typedef std::deque<int> datarowtype;
   
@@ -41,7 +43,7 @@ public:
   void idata_row();
   unsigned int get_idata_row(double ID){return idmap[ID];}
   void locate_tran();
-  void get_records(recstack& a, int NID, unsigned int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
+  void get_records(recstack& a, int NID, int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
   void check_idcol(dataobject *data);
   double get_value(int row, int col) {return Data(row,col);}
   double get_id_value(int row) {return Data(row,Idcol);}
