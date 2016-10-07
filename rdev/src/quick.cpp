@@ -50,7 +50,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   
   dataobject idat(idata,parnames);
   
-  const int capn = capturei.at(0);
+  const unsigned int capn = capturei.at(0);
   
   odeproblem prob(param, init, funs, capn);
   
@@ -73,7 +73,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   double tfrom = time[0];
   const int capstart = 2 + nreq;
   int crow = 0;
-  int k; 
+  unsigned int k; 
   double ID = 0;
   bool skip = false;
   

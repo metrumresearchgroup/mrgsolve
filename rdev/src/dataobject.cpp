@@ -90,7 +90,7 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
 void dataobject::locate_tran() {
   
 
-  int zeros = Data.ncol()-1;
+  unsigned int zeros = Data.ncol()-1;
   
   if(zeros==0) {
     col[_COL_amt_]  = 0;
@@ -107,7 +107,7 @@ void dataobject::locate_tran() {
   Rcpp::CharacterVector::iterator bg = Data_names.begin();
   Rcpp::CharacterVector::iterator ed = Data_names.end();
   
-  int tcol = std::find(bg,ed,"time") - bg;
+  unsigned int tcol = std::find(bg,ed,"time") - bg;
   
   bool lc = true;
   
@@ -157,7 +157,8 @@ void dataobject::idata_row() {
 }
 
 void dataobject::copy_parameters(int this_row, odeproblem *prob) {
-  for(size_t i=0; i < par_from.size(); ++i) {
+  size_t n = par_from.size();
+  for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
@@ -165,7 +166,8 @@ void dataobject::copy_parameters(int this_row, odeproblem *prob) {
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
-  for(size_t i=0; i < cmt_from.size(); ++i) {
+  size_t n = cmt_from.size();
+  for(size_t i=0; i < n; ++i) {
     prob->y_init(cmt_to[i],Data(this_row,cmt_from[i]));
   }
 }
@@ -173,14 +175,15 @@ void dataobject::copy_inits(int this_row, odeproblem *prob) {
 
 void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, 
                                    odeproblem *prob) {
-  for(size_t i = 0; i < par_to.size(); ++i) {
+  size_t n = par_to.size();
+  for(size_t i = 0; i < n; ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
 }
 
 
 
-void dataobject::get_records(recstack& a, int NID, unsigned int neq,
+void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
                              bool obsonly, bool debug) {
   

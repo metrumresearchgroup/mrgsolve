@@ -65,7 +65,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   dat->locate_tran();
   
   // Really only need cmtnames to get initials from idata
-  for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
+  for(Rcpp::CharacterVector::iterator it = cmtnames.begin(); it != cmtnames.end(); ++it) {
+     *it += "_0";
+  }
+  //for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
   dataobject *idat = new dataobject(idata, parnames, cmtnames);
   idat->map_uid();
   idat->idata_row();
@@ -74,8 +77,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int NID = dat->nid();
   const int nidata = idat->nrow();
   
-  int j = 0, k = 0;
-  int crow = 0; 
+  int j = 0;
+  unsigned int k = 0;
+  unsigned int crow = 0; 
   size_t h = 0;
   
   obsaug = obsaug & (data.nrow() > 0);
@@ -182,7 +186,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Number of non-na times in each design
     std::vector<int> tgridn;
     if(tgrid.ncol() > 1) {
-      for(unsigned int i = 0; i < tgrid.ncol(); ++i) {
+      for(int i = 0; i < tgrid.ncol(); ++i) {
         tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
       }
     } else {
@@ -575,7 +579,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         // Write out captured items
         k = 0;
-        for(int i=0; i < n_capture; ++i) {
+        for(unsigned int i=0; i < n_capture; ++i) {
           ans(crow,k+capture_start) = prob->capture(capture[i+1]);
           ++k;
         }
