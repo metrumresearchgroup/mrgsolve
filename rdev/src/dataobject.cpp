@@ -287,12 +287,12 @@ void dataobject::get_ids(uidtype* ids) {
 }
 
 
-void dataobject::check_idcol(dataobject* idat) {
+void dataobject::check_idcol(dataobject& idat) {
   
-  if(idat->ncol() == 0) {return;}
+  if(idat.ncol() == 0) {return;}
   
   uidtype uidata;
-  idat->get_ids(&uidata);
+  idat.get_ids(&uidata);
   
   // Uids from data
   uidtype uthis  = this->return_uid();
