@@ -33,7 +33,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   from_to(Data_names,parnames, par_from, par_to);
   
   col.resize(8,0);
-
+  
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -53,7 +53,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names, parnames, par_from, par_to);
   from_to(Data_names, cmtnames, cmt_from, cmt_to);
-
+  
   col.resize(8,0);
   
 }
@@ -89,7 +89,7 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
 
 void dataobject::locate_tran() {
   
-
+  
   unsigned int zeros = Data.ncol()-1;
   
   if(zeros==0) {
@@ -196,11 +196,11 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   if(Data.ncol() <= 1) {
     return;
   }
-
+  
   for(int h=0; h < NID; ++h) {
     
     lastime = 0;
-
+    
     a[h].reserve(this->end(h) - this->start(h) + 5);
     
     for(j = this->start(h); j <= this->end(h); ++j) {
@@ -225,14 +225,12 @@ void dataobject::get_records(recstack& a, int NID, int neq,
           Data(j,col[_COL_cmt_]),
           j,
           Data(j,Idcol)
-          );
+        );
         
         a[h].push_back(obs);
         ++obscount;
         continue;
       }
-      
-      // If this is not an obsrevation record:
       
       // Check that cmt is valid:
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
@@ -249,9 +247,9 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         Data(j,col[_COL_rate_]),
         j, 
         Data(j,Idcol)
-        );
+      );
       
-      if((ev->rate() < 0) && (ev->rate() < -2)) {
+      if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
         Rcpp::stop("Non-zero rate must be positive or equal to -1 or -2");
       }
       
@@ -261,17 +259,18 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ev->from_data(true);
       if(!obsonly) ev->output(true);
-  
+      
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
-  
-      if((ev->addl() > 0) && (ev->ii() <= 0)) {
-        Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
-      }
       
-      if((ev->ss()) && (ev->ii() <= 0)) {
-        Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
+      if(ev->ii() <= 0) {
+        if(ev->addl() > 0) {
+          Rcpp::stop("Found dosing record with addl > 0 and ii <= 0.");
+        }
+        if(ev->ss()) {
+          Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
+        }
       }
       
       a[h].push_back(ev);
@@ -281,25 +280,26 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 }
 
 
+void dataobject::get_ids(uidtype* ids) {
+  for(int i = 0; i < Data.nrow(); ++i) {
+    ids->push_back(Data(i,Idcol)); 
+  }
+}
 
-void dataobject::check_idcol(dataobject *idat) {
+
+void dataobject::check_idcol(dataobject* idat) {
   
   if(idat->ncol() == 0) {return;}
   
-  int nidata = idat->nrow();
-  
-  uidtype uidata(nidata);
-  
-  for(int i=0; i < nidata; ++i) {
-    uidata.push_back(idat->get_id_value(i));
-  }
+  uidtype uidata;
+  idat->get_ids(&uidata);
   
   // Uids from data
   uidtype uthis  = this->return_uid();
   
   sort_unique(uthis);
   sort_unique(uidata);
-
+  
   if(!std::includes(uidata.begin(),uidata.end(),uthis.begin(),uthis.end())) {
     Rcpp::stop("ID found in the data set, but not in idata.");
   }

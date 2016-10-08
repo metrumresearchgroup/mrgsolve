@@ -70,7 +70,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   //for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
   dataobject *idat = new dataobject(idata, parnames, cmtnames);
-  idat->map_uid();
   idat->idata_row();
   
   // Number of individuals in the data set
@@ -118,10 +117,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Columns from the idata set to carry:
   unsigned int n_idata_carry=0;
   Rcpp::IntegerVector idata_carry;  
-  if(idata.nrow()>0) {
+  if(nidata > 0) {
     Rcpp::CharacterVector idata_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
     idata_carry =  idat->get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
+    dat->check_idcol(idat);
   }
   
   // Tran Items to carry:
@@ -140,7 +140,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Every ID in the data set needs to be found in idata if supplied:
   // dataobject.cpp
-  if(nidata > 0) dat->check_idcol(idat);
+  //if(nidata > 0) dat->check_idcol(idat);
   
   // Allocate the record list:
   recstack a(NID);
@@ -181,7 +181,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
     
-    if(max(tgridi) >= tgrid.ncol()) Rcpp::stop("Insufficient number of designs specified for this problem.");
+    if(max(tgridi) >= tgrid.ncol()) {
+      Rcpp::stop("Insufficient number of designs specified for this problem.");
+    }
     
     // Number of non-na times in each design
     std::vector<int> tgridn;
@@ -208,7 +210,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       z.reserve(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) { 
-        rec_ptr obs = boost::make_shared<datarecord>(tgrid(j,i),nextpos,true);
+        rec_ptr obs = boost::make_shared<datarecord>(
+          tgrid(j,i),nextpos,true
+        );
         z.push_back(obs); 
       }
       
@@ -281,7 +285,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   Rcpp::CharacterVector tran_names;
   
   if(n_tran_carry > 0) {
-    
+  
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
     Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
     
@@ -334,12 +338,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     unsigned int idatarow=0;
     
     const bool carry_from_data = n_data_carry > 0;
+    const bool carry_from_idata = (n_idata_carry > 0) & (nidata > 0); 
     
     for(recstack::iterator it=a.begin(); it!=a.end(); ++it) {
       
       j = it-a.begin();
       
-      if((n_idata_carry > 0) && (nidata > 0)) {
+      if(carry_from_idata) {
         idatarow = idat->get_idata_row(dat->get_uid(j));
       }
       
@@ -441,7 +446,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->init_call(tfrom);
     
     // mtime
-    if(mtimes.size() > 0) add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
+    if(mtimes.size() > 0) {
+      add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
+    }
     
     // Do we need this?
     //prob->table_call();
@@ -500,6 +507,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       prob->evid(this_rec->evid());
+      
       prob->init_call_record(tto);
       
       // Schedule ADDL and infusion end times
@@ -537,8 +545,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // spawn a new event with no output and time modified by alag
         // disarm this event
         if((prob->alag(this_rec->cmt()) > mindt)) {
-          
-          
           
           rec_ptr newev = boost::make_shared<datarecord>(*this_rec);
           newev->pos(-1200);
