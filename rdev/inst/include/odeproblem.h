@@ -161,8 +161,8 @@ public:
   
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
-
-    
+  
+  
 protected:
   
   //! parameters
@@ -233,6 +233,10 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
                       const Rcpp::CharacterVector& capture,
                       const Rcpp::List& funs);
 
-
+// SEXP ODEPTR(const Rcpp::NumericVector& lparam, 
+//                               const Rcpp::NumericVector& linit,
+//                               int Neta, int Neps,
+//                               const Rcpp::CharacterVector& capture,
+//                               const Rcpp::List& funs);
 
 #endif
