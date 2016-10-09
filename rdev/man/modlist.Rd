@@ -5,7 +5,7 @@
 \title{Create a modlist object.}
 \usage{
 modlist(project = ".", soloc = tempdir(), prefix = "",
-  pattern = paste0(prefix, "*\\\\.cpp$"))
+  pattern = paste0(prefix, "*\\\\.cpp$"), index_file = "MODLIST")
 }
 \arguments{
 \item{project}{file path to models}
