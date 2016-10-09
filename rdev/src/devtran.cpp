@@ -254,10 +254,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
   const unsigned int NN = obsonly ? obscount : (obscount + evcount);
-  const unsigned int n_out_col  = 2 + n_tran_carry + n_data_carry + n_idata_carry + nreq + n_capture;
+  const unsigned int n_out_col  = 2 + n_data_carry + n_idata_carry + nreq + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
-  const unsigned int tran_carry_start = 2;
-  const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
+  //const unsigned int tran_carry_start = 2;
+  const unsigned int data_carry_start = 2;
   const unsigned int idata_carry_start = data_carry_start + n_data_carry;
   const unsigned int req_start = idata_carry_start+n_idata_carry;
   const unsigned int capture_start = req_start+nreq;
@@ -283,50 +283,69 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
+  Rcpp::NumericMatrix trandata;
   
   if(n_tran_carry > 0) {
-  
-    Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
-    Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
-    
-    // items in tran_carry are always lc
-    const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
-    const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
-    const bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
-    const bool carry_ii =   std::find(tcbeg,tcend, "ii")    != tcend;
-    const bool carry_addl = std::find(tcbeg,tcend, "addl")  != tcend;
-    const bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
-    const bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
-    const bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
-    
-    if(carry_evid) tran_names.push_back("evid");
-    if(carry_amt)  tran_names.push_back("amt");
-    if(carry_cmt)  tran_names.push_back("cmt");
-    if(carry_ss)   tran_names.push_back("ss");
-    if(carry_ii)   tran_names.push_back("ii");
-    if(carry_addl) tran_names.push_back("addl");
-    if(carry_rate) tran_names.push_back("rate");
-    if(carry_aug)  tran_names.push_back("a.u.g");
-    
-    
-    crow = 0; // current output row
-    int n = 0;
-    for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
-      for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if(!(*itt)->output()) continue;
-        n = 0;
-        if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                     ++n;}
-        if(carry_amt)  {ans(crow,n+2) = (*itt)->amt();                      ++n;}
-        if(carry_cmt)  {ans(crow,n+2) = (*itt)->cmt();                      ++n;}
-        if(carry_ss)   {ans(crow,n+2) = (*itt)->ss();                       ++n;}
-        if(carry_ii)   {ans(crow,n+2) = (*itt)->ii();                       ++n;}
-        if(carry_addl) {ans(crow,n+2) = (*itt)->addl();                     ++n;}
-        if(carry_rate) {ans(crow,n+2) = (*itt)->rate();                     ++n;}
-        if(carry_aug)  {ans(crow,n+2) = ((*itt)->pos()==nextpos) && obsaug; ++n;}
-        ++crow;
-      }
-    }
+    Rcpp::NumericMatrix trandata(NN,8);
+    bool fill_tran = true;
+    std::vector<std::string> tran_names(8);
+    tran_names.push_back("evid");
+    tran_names.push_back("cmt");
+    tran_names.push_back("amt");
+    tran_names.push_back("ii");
+    tran_names.push_back("addl");
+    tran_names.push_back("ss");
+    tran_names.push_back("rate");
+    tran_names.push_back("a.u.g");
+  } else {
+    bool fill_tran = false;
+    Rcpp::NumericMatrix(0,0);
+    std::vector<std::string> tran_names;
   }
+  
+  // if(n_tran_carry > 0) {
+  //   
+  //   Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
+  //   Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
+  //   
+  //   // items in tran_carry are always lc
+  //   const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
+  //   const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
+  //   const bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
+  //   const bool carry_ii =   std::find(tcbeg,tcend, "ii")    != tcend;
+  //   const bool carry_addl = std::find(tcbeg,tcend, "addl")  != tcend;
+  //   const bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
+  //   const bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
+  //   const bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
+  //   
+  //   if(carry_evid) tran_names.push_back("evid");
+  //   if(carry_amt)  tran_names.push_back("amt");
+  //   if(carry_cmt)  tran_names.push_back("cmt");
+  //   if(carry_ss)   tran_names.push_back("ss");
+  //   if(carry_ii)   tran_names.push_back("ii");
+  //   if(carry_addl) tran_names.push_back("addl");
+  //   if(carry_rate) tran_names.push_back("rate");
+  //   if(carry_aug)  tran_names.push_back("a.u.g");
+  //   
+  //   
+  //   crow = 0; // current output row
+  //   int n = 0;
+  //   for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
+  //     for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
+  //       if(!(*itt)->output()) continue;
+  //       n = 0;
+  //       if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                     ++n;}
+  //       if(carry_amt)  {ans(crow,n+2) = (*itt)->amt();                      ++n;}
+  //       if(carry_cmt)  {ans(crow,n+2) = (*itt)->cmt();                      ++n;}
+  //       if(carry_ss)   {ans(crow,n+2) = (*itt)->ss();                       ++n;}
+  //       if(carry_ii)   {ans(crow,n+2) = (*itt)->ii();                       ++n;}
+  //       if(carry_addl) {ans(crow,n+2) = (*itt)->addl();                     ++n;}
+  //       if(carry_rate) {ans(crow,n+2) = (*itt)->rate();                     ++n;}
+  //       if(carry_aug)  {ans(crow,n+2) = ((*itt)->pos()==nextpos) && obsaug; ++n;}
+  //       ++crow;
+  //     }
+  //   }
+  // }
   
   // Carry items from data or idata
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
