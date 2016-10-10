@@ -349,17 +349,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       size_t this_n = it->size();
       
-      for(size_t i = 0; i < this_n; ++i) {
+    lastpos = -1;
+    for(reclist::iterator itt = it->begin(); itt != it->end(); ++itt) {
+      //for(size_t i = 0; i < this_n; ++i) {
         
         if(carry_from_data) {
           // Need to reset this for each ID; indicates that
           // We haven't hit a dataset record yet
-          if(i==0) lastpos = -1;
+          //if(i==0) lastpos = -1;
           // Need to log lastpos here regardless
-          if((*it)[i]->from_data()) lastpos = (*it)[i]->pos();
+          if((*itt)->from_data()) lastpos = (*itt)->pos();
         }
         
-        if(!(*it)[i]->output()) continue;
+        if(!(*itt)->output()) continue;
         
         // Copy from idata:
         for(k=0; k < n_idata_carry; ++k) {
