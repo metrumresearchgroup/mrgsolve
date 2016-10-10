@@ -50,6 +50,10 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
+  for(Rcpp::CharacterVector::iterator it = cmtnames.begin(); it != cmtnames.end(); ++it) {
+    *it += "_0";
+  }
+  
   // Connect Names in the data set with positions in the parameter list
   from_to(Data_names, parnames, par_from, par_to);
   from_to(Data_names, cmtnames, cmt_from, cmt_to);
@@ -306,7 +310,7 @@ void dataobject::check_idcol(dataobject& idat) {
 }
 
 
-void dataobject::carry_out(recstack& a, 
+void dataobject::carry_out(const recstack& a, 
                            Rcpp::NumericMatrix& ans,
                            dataobject& idat,
                            const Rcpp::IntegerVector& data_carry,
@@ -326,7 +330,7 @@ void dataobject::carry_out(recstack& a,
   const bool carry_from_data = n_data_carry > 0;
   const bool carry_from_idata = (n_idata_carry > 0) & (nidata > 0); 
   
-  for(recstack::iterator it=a.begin(); it!=a.end(); ++it) {
+  for(recstack::const_iterator it=a.begin(); it!=a.end(); ++it) {
     
     j = it-a.begin();
     
@@ -336,7 +340,7 @@ void dataobject::carry_out(recstack& a,
     
     lastpos = -1;
     
-    for(reclist::iterator itt = it->begin(); itt != it->end(); ++itt) {
+    for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
       
       // Get the last valid data set position to carry from
       if(carry_from_data) {
