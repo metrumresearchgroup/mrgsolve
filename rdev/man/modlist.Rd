@@ -5,7 +5,7 @@
 \title{Create a modlist object.}
 \usage{
 modlist(project = ".", soloc = tempdir(), prefix = "",
-  pattern = paste0(prefix, "*\\\\.cpp$"))
+  pattern = paste0(prefix, "*\\\\.cpp$"), index_file = "MODLIST")
 }
 \arguments{
 \item{project}{file path to models}
@@ -15,6 +15,8 @@ modlist(project = ".", soloc = tempdir(), prefix = "",
 \item{prefix}{leading tag for models to process}
 
 \item{pattern}{a regular expression for models to get}
+
+\item{index_file}{name of file to look for registered models}
 }
 \description{
 Create a modlist object.

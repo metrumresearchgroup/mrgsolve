@@ -44,25 +44,27 @@ setMethod("$", "modlist", function(x,name){x@data[[name]]})
 ##' @param soloc directory where the models will be built
 ##' @param prefix leading tag for models to process
 ##' @param pattern a regular expression for models to get
+##' @param index_file name of file to look for registered models
 ##' 
 ##' 
 ##' 
 modlist <- function(project='.', soloc=tempdir(), prefix="",
-                    pattern=paste0(prefix,"*\\.cpp$")) {
+                    pattern=paste0(prefix,"*\\.cpp$"),
+                    index_file="MODLIST") {
   
-  if(!file.exists(file.path(project,"MODLIST"))) {
-    stop("Could not find MODLIST file.",call.=FALSE) 
+  if(!file.exists(file.path(project,index_file))) {
+    stop("Could not find index_file file.",call.=FALSE) 
   }
   
-  models <- readLines(file.path(project,"MODLIST"))
+  models <- readLines(file.path(project,index_file))
   models <- models[models !=""]
   
   
   if(!all(file.exists(filename(project,models,".cpp")))) {
-    stop("Could not locate all models listed in MODLIST.",call.=FALSE) 
+    stop("Could not locate all models listed in index_file.",call.=FALSE) 
   }
   
-  message("Found ", length(models), " in this MODLIST.")
+  message("Found ", length(models), " in ", index_file)
   
   mod <- lapply(models,mread,project=project,soloc=soloc)
   names(mod) <- models
