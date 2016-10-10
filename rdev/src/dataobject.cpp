@@ -304,3 +304,65 @@ void dataobject::check_idcol(dataobject& idat) {
     Rcpp::stop("ID found in the data set, but not in idata.");
   }
 }
+
+
+void dataobject::carry_out(recstack& a, 
+                           Rcpp::NumericMatrix& ans,
+                           dataobject& idat,
+                           const Rcpp::IntegerVector& data_carry,
+                           const unsigned int data_carry_start,
+                           const Rcpp::IntegerVector& idata_carry,
+                           const unsigned int idata_carry_start) {
+  
+  int crow = 0;
+  int j = 0;
+  int lastpos = -1;
+  unsigned int idatarow=0;
+  int nidata = idat.nrow();
+  int n_data_carry = data_carry.size();
+  int n_idata_carry = idata_carry.size();
+  int k = 0;
+  
+  const bool carry_from_data = n_data_carry > 0;
+  const bool carry_from_idata = (n_idata_carry > 0) & (nidata > 0); 
+  
+  for(recstack::iterator it=a.begin(); it!=a.end(); ++it) {
+    
+    j = it-a.begin();
+    
+    if(carry_from_idata) {
+      idatarow = idat.get_idata_row(this->get_uid(j));
+    }
+    
+    lastpos = -1;
+    
+    for(reclist::iterator itt = it->begin(); itt != it->end(); ++itt) {
+      
+      // Get the last valid data set position to carry from
+      if(carry_from_data) {
+        if((*itt)->from_data()) lastpos = (*itt)->pos();
+      }
+      
+      if(!(*itt)->output()) continue;
+      
+      // Copy from idata:
+      for(k=0; k < n_idata_carry; ++k) {
+        ans(crow, idata_carry_start+k) = idat.Data(idatarow,idata_carry[k]);
+      }
+      
+      if(carry_from_data) {
+        if(lastpos >=0) {
+          for(k=0; k < n_data_carry; ++k) {
+            ans(crow, data_carry_start+k)  = Data(lastpos,data_carry[k]);
+          }
+        } else {
+          for(k=0; k < n_data_carry; ++k) {
+            ans(crow, data_carry_start+k)  = Data(this->start(j),data_carry[k]);
+          }
+        }
+      } // end carry_from_data
+      ++crow;
+    }
+  }
+}
+

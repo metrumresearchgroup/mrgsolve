@@ -14,20 +14,23 @@
 typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
 typedef std::deque<int> datarowtype;
-  
+
+
 class dataobject {
-
+  
 public:
-
+  
   dataobject(Rcpp::NumericMatrix _data, 
              Rcpp::CharacterVector _parnames);
   
   dataobject(Rcpp::NumericMatrix _data, 
              Rcpp::CharacterVector _parnames, 
              Rcpp::CharacterVector _initnames);
-
+  
+  Rcpp::NumericMatrix Data;
+  
   virtual ~dataobject();
-
+  
   unsigned int nrow() {return Data.nrow();}
   unsigned int ncol() {return Data.ncol();}
   unsigned int nid() {return Uid.size();}
@@ -49,24 +52,30 @@ public:
   double get_id_value(int row) {return Data(row,Idcol);}
   void get_ids(uidtype* ids);
   Rcpp::IntegerVector get_col_n(const Rcpp::CharacterVector& what);
+  void carry_out(recstack& a, 
+                 Rcpp::NumericMatrix& ans,
+                 dataobject& idat,
+                 const Rcpp::IntegerVector& data_carry,
+                 const unsigned int data_carry_start,
+                 const Rcpp::IntegerVector& idata_carry,
+                 const unsigned int idata_carry_start);
+    
+protected:
   
- protected:
-
   uidtype Uid;
   datarowtype Startrow;
   datarowtype Endrow;
   int Idcol;
   
-  Rcpp::NumericMatrix Data;
   Rcpp::CharacterVector Data_names;
-
+  
   std::vector<unsigned int> col;
   
   Rcpp::IntegerVector par_from;  // data set index
   Rcpp::IntegerVector par_to;    // parameter list index
   Rcpp::CharacterVector parnames;
   idat_map idmap;
-
+  
   Rcpp::IntegerVector cmt_from; // data set index
   Rcpp::IntegerVector cmt_to;  // cmt index
   Rcpp::CharacterVector cmtnames;

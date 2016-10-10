@@ -66,7 +66,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Really only need cmtnames to get initials from idata
   for(Rcpp::CharacterVector::iterator it = cmtnames.begin(); it != cmtnames.end(); ++it) {
-     *it += "_0";
+    *it += "_0";
   }
   //for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
   dataobject idat(idata, parnames, cmtnames);
@@ -284,10 +284,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
   if(n_tran_carry > 0) {
-
+    
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
     Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
-
+    
     // items in tran_carry are always lc
     const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
     const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
@@ -297,7 +297,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     const bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
     const bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
     const bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
-
+    
     if(carry_evid) tran_names.push_back("evid");
     if(carry_amt)  tran_names.push_back("amt");
     if(carry_cmt)  tran_names.push_back("cmt");
@@ -306,8 +306,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     if(carry_addl) tran_names.push_back("addl");
     if(carry_rate) tran_names.push_back("rate");
     if(carry_aug)  tran_names.push_back("a.u.g");
-
-
+    
+    
     crow = 0; // current output row
     int n = 0;
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
@@ -329,61 +329,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Carry items from data or idata
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
-    
-    crow = 0;
-    
-    int lastpos = -1;
-    
-    unsigned int idatarow=0;
-    
-    const bool carry_from_data = n_data_carry > 0;
-    const bool carry_from_idata = (n_idata_carry > 0) & (nidata > 0); 
-    
-    for(recstack::iterator it=a.begin(); it!=a.end(); ++it) {
-      
-      j = it-a.begin();
-      
-      if(carry_from_idata) {
-        idatarow = idat.get_idata_row(dat.get_uid(j));
-      }
-      
-      size_t this_n = it->size();
-      
-    lastpos = -1;
-    for(reclist::iterator itt = it->begin(); itt != it->end(); ++itt) {
-      //for(size_t i = 0; i < this_n; ++i) {
-        
-        if(carry_from_data) {
-          // Need to reset this for each ID; indicates that
-          // We haven't hit a dataset record yet
-          //if(i==0) lastpos = -1;
-          // Need to log lastpos here regardless
-          if((*itt)->from_data()) lastpos = (*itt)->pos();
-        }
-        
-        if(!(*itt)->output()) continue;
-        
-        // Copy from idata:
-        for(k=0; k < n_idata_carry; ++k) {
-          ans(crow, idata_carry_start+k) = idata(idatarow,idata_carry[k]);
-        }
-        
-        if(carry_from_data) {
-          if(lastpos >=0) {
-            for(k=0; k < n_data_carry; ++k) {
-              ans(crow, data_carry_start+k)  = data(lastpos,data_carry[k]);
-            }
-          } else {
-            for(k=0; k < n_data_carry; ++k) {
-              ans(crow, data_carry_start+k)  = data(dat.start(j),data_carry[k]);
-            }
-          }
-        } // end carry_from_data
-        ++crow;
-      }
-    }
+    dat.carry_out(a,ans,idat,data_carry,data_carry_start,
+                  idata_carry,idata_carry_start);
   }
-  
   
   if(verbose||debug)  Rcpp::Rcout << "Solving ... ";
   
@@ -623,7 +571,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Clean up
   delete prob;
-
+  
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
   
