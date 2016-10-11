@@ -28,7 +28,7 @@ setMethod("render", "mrgmod", function(x,...) {
 })
 
 
-dorender <- function(model,project,template=NULL,...) {
+dorender <- function(model,project,template=NULL,compile=FALSE,...) {
   
   if(!requireNamespace("rmarkdown")) {
     stop("need rmarkdown to use this function, please install via install.packages('rmarkdown')")
@@ -46,7 +46,7 @@ dorender <- function(model,project,template=NULL,...) {
   
   file.copy(template,out,overwrite=TRUE)
   
-  pdf <- rmarkdown::render(out,params=list(model=model,project=project),...)
+  pdf <- rmarkdown::render(out,params=list(model=model,project=project,compile=compile),...)
   
   invisible(file.copy(pdf, getwd(),overwrite=TRUE))
   
