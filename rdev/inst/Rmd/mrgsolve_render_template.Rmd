@@ -2,6 +2,7 @@
 params:
   model: ""
   project: ""
+  compile: FALSE
 ---
 
 
@@ -11,8 +12,14 @@ library(mrgsolve)
 library(knitr)
 options(width=120)
 opts_chunk$set(comment='',echo=FALSE)
-mod <- mread(params$model,params$project,compile=FALSE)
-blocks <- modelparse(mod@code,drop_blank=FALSE)
+```
+
+```{r,message=FALSE}
+mod <- mread(params$model,params$project,compile=params$compile,quiet=TRUE)
+```
+
+```{r}
+blocks <- modelparse(mod@code,drop_blank=FALSE,comment_re="//")
 prob <- blocks[["PROB"]]
 if(is.null(prob)) prob <- "$PROB not found in this control stream."
 
@@ -44,7 +51,7 @@ print(mrgsolve:::details(mod),row.names=FALSE)
 # Model code
 
 ```{r}
-cat(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET),sep="\n")
+cat(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET,PKMODEL),sep="\n")
 ```
 
 

@@ -55,34 +55,28 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double tscale         = Rcpp::as<double> (parin["tscale"]);
   const bool obsonly          = Rcpp::as<bool>   (parin["obsonly"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
+  obsaug = obsaug & (data.nrow() > 0);
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
+
   
   // Create data objects from data and idata
-  dataobject *dat = new dataobject(data,parnames);
-  dat->map_uid();
-  dat->locate_tran();
+  dataobject dat(data,parnames);
+  dat.map_uid();
+  dat.locate_tran();
   
-  // Really only need cmtnames to get initials from idata
-  for(Rcpp::CharacterVector::iterator it = cmtnames.begin(); it != cmtnames.end(); ++it) {
-     *it += "_0";
-  }
-  //for(size_t i=0; i < cmtnames.size(); ++i) cmtnames[i] += "_0";
-  dataobject *idat = new dataobject(idata, parnames, cmtnames);
-  idat->map_uid();
-  idat->idata_row();
+  dataobject idat(idata, parnames, cmtnames);
+  idat.idata_row();
   
   // Number of individuals in the data set
-  const unsigned int NID = dat->nid();
-  const int nidata = idat->nrow();
+  const unsigned int NID = dat.nid();
+  const int nidata = idat.nrow();
   
   int j = 0;
   unsigned int k = 0;
   unsigned int crow = 0; 
   size_t h = 0;
-  
-  obsaug = obsaug & (data.nrow() > 0);
   
   bool put_ev_first = false;
   bool addl_ev_first = true;
@@ -112,16 +106,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Columns from the data set to carry:
   Rcpp::CharacterVector data_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
-  const Rcpp::IntegerVector data_carry =  dat->get_col_n(data_carry_);
+  const Rcpp::IntegerVector data_carry =  dat.get_col_n(data_carry_);
   const unsigned int n_data_carry = data_carry.size();
   
   // Columns from the idata set to carry:
   unsigned int n_idata_carry=0;
   Rcpp::IntegerVector idata_carry;  
-  if(idata.nrow()>0) {
+  if(nidata > 0) {
     Rcpp::CharacterVector idata_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
-    idata_carry =  idat->get_col_n(idata_carry_);
+    idata_carry =  idat.get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
+    dat.check_idcol(idat);
   }
   
   // Tran Items to carry:
@@ -138,10 +133,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob->copy_parin(parin);
   const unsigned int neq = prob->neq();
   
-  // Every ID in the data set needs to be found in idata if supplied:
-  // dataobject.cpp
-  if(nidata > 0) dat->check_idcol(idat);
-  
   // Allocate the record list:
   recstack a(NID);
   
@@ -150,7 +141,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Track the number of observations and events
   unsigned int obscount = 0;
   unsigned int evcount = 0;
-  dat->get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
   
   // Observations from stime will always come after events;
   // unsigned int nextpos = 0; warnings
@@ -181,7 +172,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
     
-    if(max(tgridi) >= tgrid.ncol()) Rcpp::stop("Insufficient number of designs specified for this problem.");
+    if(max(tgridi) >= tgrid.ncol()) {
+      Rcpp::stop("Insufficient number of designs specified for this problem.");
+    }
     
     // Number of non-na times in each design
     std::vector<int> tgridn;
@@ -208,10 +201,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       z.reserve(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) { 
-        rec_ptr obs = boost::make_shared<datarecord>(tgrid(j,i),nextpos,true);
+        rec_ptr obs = boost::make_shared<datarecord>(
+          tgrid(j,i),nextpos,true
+        );
         z.push_back(obs); 
       }
-      
       designs.push_back(z);
     }
     
@@ -221,9 +215,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
       
-      id = dat->get_uid(it-a.begin());
+      id = dat.get_uid(it-a.begin());
       
-      j = idat->get_idata_row(id);
+      j = idat.get_idata_row(id);
       
       n = tgridn[tgridi[j]];
       
@@ -274,12 +268,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->neps(neps);
   }
   
-  // Do we need this?
-  //prob->init_call_record(0.0);
-  
   // Carry along TRAN data items (evid, amt, ii, ss, rate)
   Rcpp::CharacterVector tran_names;
-  
   if(n_tran_carry > 0) {
     
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
@@ -324,60 +314,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
   }
   
+  
   // Carry items from data or idata
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
-    
-    crow = 0;
-    
-    int lastpos = -1;
-    
-    unsigned int idatarow=0;
-    
-    const bool carry_from_data = n_data_carry > 0;
-    
-    for(recstack::iterator it=a.begin(); it!=a.end(); ++it) {
-      
-      j = it-a.begin();
-      
-      if((n_idata_carry > 0) && (nidata > 0)) {
-        idatarow = idat->get_idata_row(dat->get_uid(j));
-      }
-      
-      size_t this_n = it->size();
-      
-      for(size_t i = 0; i < this_n; ++i) {
-        
-        if(carry_from_data) {
-          // Need to reset this for each ID; indicates that
-          // We haven't hit a dataset record yet
-          if(i==0) lastpos = -1;
-          // Need to log lastpos here regardless
-          if((*it)[i]->from_data()) lastpos = (*it)[i]->pos();
-        }
-        
-        if(!(*it)[i]->output()) continue;
-        
-        // Copy from idata:
-        for(k=0; k < n_idata_carry; ++k) {
-          ans(crow, idata_carry_start+k) = idata(idatarow,idata_carry[k]);
-        }
-        
-        if(carry_from_data) {
-          if(lastpos >=0) {
-            for(k=0; k < n_data_carry; ++k) {
-              ans(crow, data_carry_start+k)  = data(lastpos,data_carry[k]);
-            }
-          } else {
-            for(k=0; k < n_data_carry; ++k) {
-              ans(crow, data_carry_start+k)  = data(dat->start(j),data_carry[k]);
-            }
-          }
-        } // end carry_from_data
-        ++crow;
-      }
-    }
+    dat.carry_out(a,ans,idat,data_carry,data_carry_start,
+                  idata_carry,idata_carry_start);
   }
-  
   
   if(verbose||debug)  Rcpp::Rcout << "Solving ... ";
   
@@ -400,14 +342,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // and assign in the object
   for(size_t i=0; i < a.size(); ++i) {
     
-    tfrom = a[i][0]->time();
-    
-    id = dat->get_uid(i);
-    
-    this_idata_row  = idat->get_idata_row(id);
-    
+    tfrom = a[i].front()->time();
     maxtime = a[i].back()->time();
     
+    id = dat.get_uid(i);
+    
+    this_idata_row  = idat.get_idata_row(id);
+  
     prob->reset_newid(id);
     
     if(i==0) prob->newind(0);
@@ -417,17 +358,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     for(k=0; k < neps; ++k) prob->eps(k,eps(crow,k));
     
     // Refresh parameters in data:
-    dat->reload_parameters(inpar,prob);
+    dat.reload_parameters(inpar,prob);
     
     //Copy parameters from idata
-    idat->copy_parameters(this_idata_row,prob);
+    idat.copy_parameters(this_idata_row,prob);
     
     if(a[i][0]->from_data()) {
       // If this record is from the data set, copy parameters from data
-      dat->copy_parameters(a[i][0]->pos(), prob);
+      dat.copy_parameters(a[i][0]->pos(), prob);
     } else {
       if(filbak) {
-        dat->copy_parameters(dat->start(i),prob);
+        dat.copy_parameters(dat.start(i),prob);
       }
     }
     
@@ -435,17 +376,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->y_init(init);
     
     // Copy initials from idata
-    idat->copy_inits(this_idata_row,prob);
+    idat.copy_inits(this_idata_row,prob);
     
     // Call $MAIN
     prob->init_call(tfrom);
     
     // mtime
-    if(mtimes.size() > 0) add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
-    
-    // Do we need this?
-    //prob->table_call();
-    
+    if(mtimes.size() > 0) {
+      add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
+    }
+
     // LOOP ACROSS EACH RECORD for THIS ID:
     for(size_t j=0; j < a[i].size(); ++j) {
       
@@ -480,7 +420,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // For this ID, we already have parameters from the first row; only update when
       // we come across a record from the data set
       if(this_rec->from_data()) {
-        dat->copy_parameters(this_rec->pos(), prob);
+        dat.copy_parameters(this_rec->pos(), prob);
       }
       
       tto = this_rec->time();
@@ -500,6 +440,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       prob->evid(this_rec->evid());
+      
       prob->init_call_record(tto);
       
       // Schedule ADDL and infusion end times
@@ -537,8 +478,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // spawn a new event with no output and time modified by alag
         // disarm this event
         if((prob->alag(this_rec->cmt()) > mindt)) {
-          
-          
           
           rec_ptr newev = boost::make_shared<datarecord>(*this_rec);
           newev->pos(-1200);
@@ -616,8 +555,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Clean up
   delete prob;
-  delete dat;
-  delete idat;
   
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);

@@ -43,7 +43,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.CFONSTOP = false;
   d.omatrix = static_cast<void*>(&OMGADEF);
   
-
+  
   
   pred.assign(5,0.0);
   
@@ -124,10 +124,10 @@ void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob)
 }
 
 void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
-    Derivs(t,y,ydot,Init_value,Param);
-    for(int i = 0; i < Neq; ++i) {
-      ydot[i] = (ydot[i] + R0[i])*On[i]; 
-    }
+  Derivs(t,y,ydot,Init_value,Param);
+  for(int i = 0; i < Neq; ++i) {
+    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+  }
 }
 
 
@@ -140,7 +140,7 @@ void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
 void odeproblem::init_call(const double& time) {
   
   d.time = time;
-
+  
   Inits(Init_value,Y,Param,F,Alag,R,D,d,pred);
   
   for(int i=0; i < Neq; ++i) {
@@ -197,7 +197,7 @@ void odeproblem::reset_newid(const double id_) {
     F[i] = 1.0;
     Alag[i] = 0;
   }
-
+  
   d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
@@ -695,4 +695,17 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
 }
 
 
-
+// 
+// SEXP ODEPTR(const Rcpp::NumericVector& lparam, 
+//                               const Rcpp::NumericVector& linit,
+//                               int Neta, int Neps,
+//                               const Rcpp::CharacterVector& capture,
+//                               const Rcpp::List& funs) {
+//   
+//   odeproblem* prob = new odeproblem(lparam, linit, funs, capture.size());
+//   prob->neta(Neta);
+//   prob->neps(Neps);
+//   
+//   Rcpp::XPtr<odeproblem> ret(prob);
+//   return ret; 
+// }
