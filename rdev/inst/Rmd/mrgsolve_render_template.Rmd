@@ -9,6 +9,7 @@ params:
 
 ```{r,echo=FALSE}
 library(mrgsolve)
+library(dplyr)
 library(knitr)
 options(width=120)
 opts_chunk$set(comment='',echo=FALSE)
@@ -35,7 +36,27 @@ rmbl <- function(x) x[x!=""]
 
 # Model details
 ```{r}
-print(mrgsolve:::details(mod),row.names=FALSE)
+d <- mrgsolve:::details(mod)
+  if(nrow(d) > 0) {
+  dfp <- 
+    as.data.frame(t(as.data.frame(param(mod)))) %>% 
+    setNames(.,"value") %>%
+    mutate(name=rownames(.))
+
+  dfi <- as.data.frame(t(as.data.frame(init(mod)))) %>%
+    setNames(.,"value") %>%
+    mutate(name=rownames(.))
+  
+  dfj <- bind_rows(dfp,dfi)
+  
+  d <- left_join(d,dfj,by="name")
+  
+  print(d,row.names=FALSE)
+  
+} else {
+  cat("No annotations were found in the model file.") 
+}
+
 ```
 
 ## Parameter values
