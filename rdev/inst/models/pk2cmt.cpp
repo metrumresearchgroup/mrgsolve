@@ -14,7 +14,7 @@ CENT   : Central compartment (mass)
 PERIPH : Peripheral compartment (mass) 
 EV2    : Second extravascular compartment (mass)
   
-$GLOBAL @annotated
+$GLOBAL 
 #define CP (CENT/VC)
 #define CT (PERIPH/VP)
 #define CLNL (VMAX/(KM+CP))
