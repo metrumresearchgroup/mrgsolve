@@ -1,44 +1,5 @@
 
 
-
-##' @export
-##' @rdname see
-setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
-  if(raw) return(x@code)
-  what <- x@code
-  if(length(what)==0) {
-    if(file.exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
-  }
-  if(length(what)==0) {
-    warning("No code to show.")
-  } else {
-    cat("\nModel file: ", basename(cfile(x)), "\n")
-    cat(paste0(" ", what), sep="\n")
-  }
-  return(invisible(NULL))
-})
-
-##' @export
-##' @rdname loadso
-setMethod("loadso", "mrgmod", function(x,...) {
-  if(.Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
-  foo <- try(dyn.load(sodll(x)))
-  if(class(foo)=="try-catch") {
-    message(foo)
-    return(invisible(FALSE))
-  }
-  return(invisible(x))
-})
-setMethod("unloadso", "mrgmod", function(x, ...) {
-  out <- try(dyn.unload(sodll(x)), TRUE)
-  if(inherits(out, "try-error")) {
-    stop(out[1])
-  } else {
-    message("unloaded ", sodll(x))
-  }
-  return(invisible(NULL))
-})
-
 ##' @export
 ##' @rdname tgrid
 setMethod("stime", "mrgmod",  function(x,...) {
