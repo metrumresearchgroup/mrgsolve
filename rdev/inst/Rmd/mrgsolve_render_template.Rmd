@@ -12,7 +12,7 @@ library(mrgsolve)
 library(dplyr)
 library(knitr)
 options(width=120)
-opts_chunk$set(comment='',echo=FALSE)
+opts_chunk$set(comment='',echo=FALSE,message=FALSE)
 ```
 
 ```{r,message=FALSE}
@@ -22,7 +22,7 @@ mod <- mread(params$model,params$project,compile=params$compile,quiet=TRUE)
 ```{r}
 blocks <- modelparse(mod@code,drop_blank=FALSE,comment_re="//")
 prob <- blocks[["PROB"]]
-if(is.null(prob)) prob <- "$PROB not found in this control stream."
+if(is.null(prob)) prob <- paste0("# Model: `", model(mod),"`")
 
 par <-  capture.output(param(mod))
 init <- capture.output(init(mod))
@@ -34,7 +34,7 @@ rmbl <- function(x) x[x!=""]
 
 
 
-# Model details
+# Details
 ```{r}
 d <- mrgsolve:::details(mod)
   if(nrow(d) > 0) {
@@ -74,12 +74,6 @@ d <- mrgsolve:::details(mod)
 ```{r}
 cat(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET,PKMODEL),sep="\n")
 ```
-
-
-# `mrgsolve`
-- Date: `r date()`
-- Version: `r packageVersion("mrgsolve")`
-
 
 
 

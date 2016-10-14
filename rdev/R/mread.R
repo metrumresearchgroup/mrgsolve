@@ -144,6 +144,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     }
   }
   
+  ## md5 checksum of the model file
+  md5 <- tools::md5sum(modfile)
+
+  
+  
+  
   ## If we need a unique dll name, use rfile otherwise model
   ## This is also the "package"
   package <- ifelse(udll,rfile(model),model)
@@ -190,7 +196,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
-
+  
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
@@ -204,7 +210,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   subr  <- collect_subr(spec)
   table <- unlist(spec[names(spec)=="TABLE"],use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
-
+  
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -276,7 +282,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Next, update with what the user passed in as arguments
   args <- list(...)
   x <- update(x, data=args,strict=FALSE)
-
+  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars=names(param),
@@ -296,7 +302,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
-    paste0("// Source MD5: ", tools::md5sum(modfile), "\n"),
+    paste0("// Source MD5: ", md5, "\n"),
     plugin_code(plugin),
     ## This should get moved to rd
     "\n// FIXED:",
@@ -336,6 +342,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@code <- readLines(modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- file.path(soloc,compfile(model))
+  x@shlib$md5 <- md5
   
   ## IN soloc directory
   cwd <- getwd()
