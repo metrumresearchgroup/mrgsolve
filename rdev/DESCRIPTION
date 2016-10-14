@@ -51,7 +51,6 @@ Collate:
     'class_derived.R'
     'class_mrgmod.R'
     'class_mrgsims.R'
-    'methods.R'
     'Aaaa.R'
     'altname.R'
     'annot.R'

@@ -20,7 +20,6 @@
 
 
 ##'
-##' @include methods.R
 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
