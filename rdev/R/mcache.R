@@ -2,7 +2,7 @@
 
 ##' @rdname mread 
 ##' @export
-mread_cache <- function(model,project='.',
+mread_cache <- function(model,project=getwd(),
                         code=NULL, soloc=tempdir(),quiet=FALSE,...) {
   
   build <- new_build(model,project,soloc,code) 
@@ -35,7 +35,7 @@ mread_cache <- function(model,project='.',
 }
 
 
-##' @rdname mread
+##' @rdname mcode
 ##' @export
 mcode_cache <- function(model,code,project=tempdir(),...) {
   mread_cache(model,project,code,...)
