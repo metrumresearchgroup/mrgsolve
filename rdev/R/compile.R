@@ -58,12 +58,12 @@ generate_rdefs <- function(pars,
     cmtn <- unique(intersect(cvec_cs(set$CMTN),cmt))
 
     if(length(cmtn)>0) {
-        cmtnindex <- (match(cmtn,cmt))
-        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex)
-        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex-1,"]")
-        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex-1,"]")
-        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex-1,"]")
-        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex-1,"]")
+        cmtnindex <- match(cmtn,cmt)-1
+        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)
+        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex,"]")
+        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex,"]")
+        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex,"]")
+        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex,"]")
     }
 
     if(npar==0) pardef <- NULL
