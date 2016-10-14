@@ -399,3 +399,46 @@ setMethod("unloadso", "mrgmod", function(x, ...) {
   }
   return(invisible(NULL))
 })
+
+##' @export
+##' @rdname tgrid
+setMethod("stime", "mrgmod",  function(x,...) {
+  render_time(x)
+})
+
+##' @export
+##' @rdname revar
+setMethod("revar", "mrgmod", function(x,...) {
+  return(list(omega=x@omega,sigma=x@sigma))
+})
+
+##' @export
+##' @rdname blocks
+setMethod("blocks", "mrgmod", function(x,...) {
+  what <- as.character(match.call()[-1])[-1]
+  blocks_(cfile(x),what)
+})
+
+##' @export
+##' @rdname blocks
+setMethod("blocks", "character", function(x,...) {
+  what <- as.character(match.call()[-1])[-1]
+  blocks_(x,what)
+})
+
+blocks_ <- function(file,what) {
+  if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
+  if(!file.exists(file)) stop("Can't find model file", call.=FALSE)
+  bl <- modelparse(readLines(file, warn=FALSE))
+  if(!any(what == "all")) bl <- bl[names(bl) %in% what]
+  if(length(bl)==0) {
+    message("No blocks found.")
+    return(invisible(NULL))
+  }
+  
+  bl <- lapply(bl, paste, collapse="\n")
+  x1 <- paste0("$", names(bl), "\n")
+  cat("\nModel file:",basename(file), "\n\n")
+  cat(paste0(x1,unlist(bl)), sep="\n\n")
+}
+
