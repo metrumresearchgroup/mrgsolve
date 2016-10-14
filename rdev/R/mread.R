@@ -266,7 +266,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                       model = model(x),
                       omats = omat(x),
                       smats = smat(x),
-                      parsedata = SET,
+                      set = SET,
                       check.bounds = check.bounds)
   
   ## Write the model code to temporary file

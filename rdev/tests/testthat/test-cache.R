@@ -6,13 +6,20 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 context("test-cache")
 
+mrgsolve:::update_wait_time(0)
 
 test_that("model caches via mread_cache", {
+  
   mod <- mread_cache("pk1cmt", modlib())
+  
+  t1 <- file.exists(file.path(mrgsolve:::soloc(mod), "mrgmod_cache.RDS"))
+  
+  expect_true(t1)
   
   mod2 <- mread_cache("pk1cmt", modlib())
   
   expect_identical(mod,mod2)
+
 })
 
 test_that("model caches via mcode_cache", {
@@ -30,5 +37,5 @@ test_that("model caches via mcode_cache", {
 })
 
 
-
+mrgsolve:::update_wait_time(1)
 
