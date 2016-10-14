@@ -1,3 +1,13 @@
+$PROB
+# Model: `pk1cmt`
+  - One-compartment PK model
+      - Dual first-order absorption
+      - Optional nonlinear clearance from `CENT`
+  - Source: `mrgsolve` internal library
+  - Date: `r Sys.Date()`
+  - Version: `r packageVersion("mrgsolve")`
+  
+
 $PARAM @annotated
 CL   :  1  : Clearance (volume/time)
 VC   : 20  : Central volume (volume)
