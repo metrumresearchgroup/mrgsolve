@@ -423,6 +423,14 @@ get_option <- function(what,opt,default=FALSE) {
   }
 }
 
+# get_logical <- function(what,opt) {
+#   if(is.element(what,names(opt))) {
+#     return(opt[[what]])
+#   } else {
+#     return(FALSE) 
+#   }
+# }
+
 has_name <- function(a,b) {
   is.element(a,names(b))
 }
