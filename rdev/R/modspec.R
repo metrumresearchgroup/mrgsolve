@@ -57,7 +57,7 @@ audit_spec <- function(x,spec,warn=TRUE) {
   
   cmt <- names(init(x))
   
-  if(!exists("ODE", spec) | !warn | length(cmt) ==0) {
+  if(!has_name("ODE", spec) | !warn | length(cmt) ==0) {
     return(invisible(NULL))
   }
   

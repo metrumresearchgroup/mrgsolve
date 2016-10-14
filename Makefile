@@ -45,6 +45,12 @@ check:
 	make build
 	R CMD check ${TARBALL} -o ${CHKDIR}
 
+qcheck: 
+	make doc
+	make build 
+	R CMD check ${TARBALL} -o ${CHKDIR} --no-manual --no-codoc
+
+
 check-cran:
 	make doc
 	make build

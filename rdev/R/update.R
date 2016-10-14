@@ -55,10 +55,10 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
 
     ## If we're not merging, just replace and return:
     if(!merge) {
-        if(exists("init",args)) {
+        if(has_name("init",args)) {
             stop("Error... initial conditions list (init) is only updateable when merge=TRUE.")
         }
-        if(exists("param",args)) {
+        if(has_name("param",args)) {
             x@param <- as.param(args$param)
         }
         validObject(x)
@@ -67,13 +67,13 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
 
     ## Otherwise, merge if arguments are there:
     ## Initial conditions list:
-    if(exists("init",args)) {
+    if(has_name("init",args)) {
         i <- x@init@data
         i <- merge(i, args$init, context="init", strict=strict)
         slot(x, "init") <- as.init(i)
     }
     ## Parameter update:
-    if(exists("param",args)) {
+    if(has_name("param",args)) {
         if(length(x@fixed)>0) {
             if(any(is.element(names(args$param),names(x@fixed)))) {
               warning("Attempted update of a $FIXED parameter.", call.=FALSE,immediate.=TRUE)
@@ -82,11 +82,11 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
         x@param <- as.param(merge(x@param@data,args$param,strict=strict,context="param"))
     }
     
-    if(exists("omega", args)) {
+    if(has_name("omega", args)) {
         x@omega <- update_matlist(x@omega,omat(args$omega),strict=strict, context="omat")
     }
     
-    if(exists("sigma", args)) {
+    if(has_name("sigma", args)) {
         x@sigma <- update_matlist(x@sigma,smat(args$sigma), strict=strict, context="smat")
     }
 

@@ -186,9 +186,9 @@ expand.idata <- function(...) {
 expand.ev <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
   ans$ID <- 1:nrow(ans)
-  if(!exists("evid", ans)) ans$evid <- 1
-  if(!exists("cmt", ans)) ans$cmt <- 1
-  if(!exists("time", ans)) ans$time <- 0
+  if(!has_name("evid", ans)) ans$evid <- 1
+  if(!has_name("cmt", ans)) ans$cmt <- 1
+  if(!has_name("time", ans)) ans$time <- 0
   shuffle(ans,"ID")
 }
 
@@ -414,5 +414,22 @@ single.number <- function(x) length(x)==1 & is.numeric(x)
 installed_models <- function() {
   file.path(system.file(package="mrgsolve"), "inst", "models")
 }
+
+get_option <- function(what,opt,default=FALSE) {
+  if(is.element(what,names(opt))) {
+    opt[[what]]
+  } else {
+    return(default) 
+  }
+}
+
+has_name <- function(a,b) {
+  is.element(a,names(b))
+}
+
+
+
+
+
 
 

@@ -237,7 +237,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   }
   
   ## This must come after audit
-  if(!exists("ODE", spec)) {
+  if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
   } else if(audit) {
     audit_spec(x,spec,warn=warn)

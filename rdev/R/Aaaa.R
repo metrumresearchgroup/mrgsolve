@@ -1,4 +1,4 @@
-##' @importFrom utils capture.output example str type.convert packageVersion
+##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
 ##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows mutate_each arrange data_frame as_data_frame
