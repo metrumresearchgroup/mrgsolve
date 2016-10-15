@@ -12,15 +12,25 @@ test_that("model caches via mread_cache", {
   
   mod <- mread_cache("pk1cmt", modlib())
   
-  t1 <- file.exists(file.path(mrgsolve:::soloc(mod), "mrgmod_cache.RDS"))
+  cache_file <- file.path(mrgsolve:::soloc(mod), "mrgmod_cache.RDS")
   
-  expect_true(t1)
+  file.exists(cache_file)
+  expect_true(file.exists(cache_file))
   
+  mo <- readRDS(cache_file)
+  
+  expect_identical(mo,mod)
+  
+  mo@shlib$foo <- "test"
+
+  saveRDS(mo,cache_file)  
+
   mod2 <- mread_cache("pk1cmt", modlib())
   
-  expect_identical(mod,mod2)
-
+  expect_equal(mod2@shlib$foo,"test")
 })
+
+
 
 test_that("model caches via mcode_cache", {
   code <- '
