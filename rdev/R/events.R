@@ -23,10 +23,10 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
     dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
     as.data.frame
   
-  if(!exists("amt",data)) stop("amt is required input.", call.=FALSE)
+  if(!has_name("amt",data)) stop("amt is required input.", call.=FALSE)
   
   if(!missing(until)) {
-    if(!exists("ii", data)) stop("ii is required when until is specified", call.=FALSE)
+    if(!has_name("ii", data)) stop("ii is required when until is specified", call.=FALSE)
     data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
   }
   
@@ -140,7 +140,7 @@ setMethod("show", "ev", function(object) {
 
 check_ev <- function(x) {
   x <- as.data.frame(x)
-  if(!exists("ID", x)) x[["ID"]] <- 1
+  if(!has_name("ID", x)) x[["ID"]] <- 1
   return(x)
 }
 na2zero <- function(x) {
@@ -196,7 +196,7 @@ setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 ##' @rdname ev_ops
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
-  if(!exists("ii",left) | !exists("addl",left)) stop("Both ii and addl are required in lhs",call.=FALSE)
+  if(!has_name("ii",left) | !has_name("addl",left)) stop("Both ii and addl are required in lhs",call.=FALSE)
   
   y <- max(with(left, time + ii*addl + ii))
   
@@ -261,7 +261,7 @@ plus.ev <- function(e1,e2) {
   
   data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
   
-  if(exists("ID", data1)) {
+  if(has_name("ID", data1)) {
     data1<- data1[order(data1$ID, data1$time),]
   } else {
     data1<- data1[order(data1$time),]
@@ -296,7 +296,7 @@ add.ev <- function(e1,e2) {
   }
   e1@data <- as.data.frame(dplyr::bind_rows(e1@data, e2@data))
   
-  if(exists("ID", e1@data)) {
+  if(has_name("ID", e1@data)) {
     e1@data<- e1@data[order(e1@data$ID, e1@data$time),]
   } else {
     e1@data<- e1@data[order(e1@data$time),]

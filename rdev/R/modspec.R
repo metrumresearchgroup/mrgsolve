@@ -57,7 +57,7 @@ audit_spec <- function(x,spec,warn=TRUE) {
   
   cmt <- names(init(x))
   
-  if(!exists("ODE", spec) | !warn | length(cmt) ==0) {
+  if(!has_name("ODE", spec) | !warn | length(cmt) ==0) {
     return(invisible(NULL))
   }
   
@@ -100,25 +100,26 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 
 ## Form a file name / path for the file that is actually compiled
 comppart <- "-mread-source"
+
 compbase <- function(model) paste0(model, comppart)
+
 compfile <- function(model) paste0(model, comppart,".cpp")
+
 compout  <- function(model) paste0(model, comppart, .Platform$dynlib.ext)
+
 compdir <- function() {
-  paste(c("mrgsolve",
-          "so",
+  paste(c("mrgsolve","so",
           as.character(GLOBALS[["version"]]),
-          R.version$platform),
-        collapse="-")
+          R.version$platform),collapse="-")
 }
 
+cachefile <- function(model) "model-cache.RDS"
+
 setup_soloc <- function(loc,model) {
+  
   soloc <- file.path(loc,compdir(),model)
   
   if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
-  
-  #h <- pfile("mrgsolve","include",c("modelheader", "mrgsolv"),"h")
-  
-  #file.copy(h,soloc)
   
   return(soloc)
 }
@@ -363,7 +364,7 @@ scrape_and_call <- function(x,env,pass,...) {
 }
 
 dump_opts <- function(x,env,block,...) {
-  hasopt <- grep(">>", x, fixed=TRUE)
+  hasopt <- unique(c(grep(">>", x, fixed=TRUE),grep("@", x, fixed=TRUE))) 
   if(length(hasopt)==0) return(x)
   hasopt <- grep("^\\s*(>>|@)", x[hasopt], perl=TRUE)
   x[-hasopt]

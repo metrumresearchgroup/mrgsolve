@@ -4,6 +4,11 @@
 
 SAFE_WAIT_TIME <- 2
 
+update_wait_time <- function(n) {
+  assignInMyNamespace("SAFE_WAIT_TIME",n)
+}
+
+
 check_and_copy <- function(from,to,preclean=FALSE) {
   
   if(!file.exists(to)) {

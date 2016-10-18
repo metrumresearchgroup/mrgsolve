@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.7.6.9023
+Version: 0.7.6.9024
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Author: Kyle T. Baron [cre,aut,cph], Alan C. Hindmarsh [ctb], Linda R. Petzold
@@ -51,11 +51,11 @@ Collate:
     'class_derived.R'
     'class_mrgmod.R'
     'class_mrgsims.R'
-    'methods.R'
     'Aaaa.R'
     'altname.R'
     'annot.R'
     'chain.R'
+    'class_build.R'
     'compile.R'
     'complog.R'
     'data_set.R'
@@ -69,6 +69,7 @@ Collate:
     'library.R'
     'matlist.R'
     'matrix.R'
+    'mcache.R'
     'model_include.R'
     'modlib.R'
     'nmxml.R'

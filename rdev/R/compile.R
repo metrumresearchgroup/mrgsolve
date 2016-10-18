@@ -9,7 +9,8 @@ generate_rdefs <- function(pars,
                            init_fun="",
                            table_fun="",
                            config_fun="",
-                           model="",omats,smats,parsedata=list(),...) {
+                           model="",omats,smats,
+                           set=list(),...) {
 
     npar <- length(pars)
     ncmt <- length(cmt)
@@ -17,14 +18,15 @@ generate_rdefs <- function(pars,
     dxdt <- paste0("dxdt_",cmt)
     init <- paste0(cmt, "_0")
 
-    cmtindex <- (1:length(cmt))-1
-    parsindex <- (1:length(pars))-1
+    cmtindex <- seq_along(cmt)-1
+    parsindex <- seq_along(pars)-1
 
     cmtdef <-  paste0("#define ", cmt,  " _A_[",    cmtindex,"]")
     initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
     dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
     pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
-
+    
+    
     etal <- epsl <- NULL
 
     if(sum(nrow(omats)) > 0) {
@@ -53,15 +55,15 @@ generate_rdefs <- function(pars,
 
     Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
 
-    cmtn <- unique(intersect(cvec_cs(parsedata$CMTN),cmt))
+    cmtn <- unique(intersect(cvec_cs(set$CMTN),cmt))
 
     if(length(cmtn)>0) {
-        cmtnindex <- (match(cmtn,cmt))
-        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex)
-        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex-1,"]")
-        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex-1,"]")
-        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex-1,"]")
-        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex-1,"]")
+        cmtnindex <- match(cmtn,cmt)-1
+        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)
+        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex,"]")
+        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex,"]")
+        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex,"]")
+        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex,"]")
     }
 
     if(npar==0) pardef <- NULL
@@ -158,7 +160,3 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   
 }
 
-# mread_info_code <- function(x) {
-#   ans <- paste0("{", length(pars(x)),",",length(cmt(x)),"};")
-#   paste0("const double ", info_func(x), "[] = ", ans)
-# }

@@ -108,48 +108,23 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   preclean=FALSE,...) {
   
   quiet <- as.logical(quiet)
+  
   warn <- warn & (!quiet)
   
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
-  ## Check for spaces in the model name
-  if(charthere(model," ")) {
-    stop("model name cannot contain spaces.")
-  }
-  
-  if(any(charthere(project,"\n"))) {
-    stop("project argument contains newline(s); did you mean to call mcode?",call.=FALSE) 
-  }
-  
-  ## Both project and soloc get normalized
-  project <- normalizePath(project, mustWork=TRUE, winslash="/")
-  soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
-  soloc <-   setup_soloc(soloc,model)  
-  
-  ## The model file is <stem>.cpp in the <project> directory
-  modfile <- file.path(project,paste0(model, ".cpp"))
-  
-  ## If code is passed in as character:
-  if(!missing(code)) {
-    mod.con <- file(modfile, open="w")
-    cat(code, "\n", file=mod.con)
-    close(mod.con)
-  }
-  
-  if(!file.exists(modfile)) {
-    if(project==modlib()) {
+  build <- new_build(model,project,soloc,code,udll)
+
+  if(!file.exists(build$modfile)) {
+    if(build$project==modlib()) {
       return(mintern(model)) 
     } else {
-      stop(paste0("Could not find model file ", modfile), call.=FALSE)
+      stop(paste0("Could not find model file ", build$modfile), call.=FALSE)
     }
   }
   
-  ## If we need a unique dll name, use rfile otherwise model
-  ## This is also the "package"
-  package <- ifelse(udll,rfile(model),model)
-  
   ## Read the model spec and parse:
-  spec  <- modelparse(readLines(modfile,warn=FALSE))
+  spec  <- modelparse(readLines(build$modfile,warn=FALSE))
   
   ## Block name aliases
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
@@ -182,6 +157,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Also, we use a position attribute so we know 
   ## where we are when we're handling the block
   specClass <- paste0("spec", names(spec))
+  
   for(i in seq_along(spec)) {
     spec[[i]] <- structure(.Data=spec[[i]],
                            class=specClass[i],
@@ -190,7 +166,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
-
+  
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
@@ -204,7 +180,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   subr  <- collect_subr(spec)
   table <- unlist(spec[names(spec)=="TABLE"],use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
-
+  
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -217,33 +193,35 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
   
-  if(raw) {
-    return(list(param=as.numeric(param),
-                init=as.numeric(init),
-                sigma=omega,
-                sigma=sigma,
-                SET=unlist(SET),
-                ENV=unlist(ENV),
-                GLOBAL=spec[["GLOBAL"]],
-                fixed=fixed,
-                table=table))
-  }
+  # 
+  # if(raw) {
+  #   return(list(param = as.numeric(param),
+  #               init=as.numeric(init),
+  #               sigma=omega,
+  #               sigma=sigma,
+  #               SET=unlist(SET),
+  #               ENV=unlist(ENV),
+  #               GLOBAL=spec[["GLOBAL"]],
+  #               fixed=fixed,
+  #               table=table))
+  # }
+  # 
   
   ## Constructor for model object:
   x <- new("mrgmod",
-           model=model,
-           soloc=as.character(soloc),
-           package=package,
-           project=project,
-           fixed=fixed,
-           advan=subr[["advan"]],
-           trans=subr[["trans"]],
-           omega=omega,
-           sigma=sigma,
-           param=as.param(param),
-           init=as.init(init),
-           funs  = funs_create(model),
-           capture=as.character(spec[["CAPTURE"]])
+           model = model,
+           soloc = build$soloc,
+           package = build$package,
+           project = build$project,
+           fixed = fixed,
+           advan = subr[["advan"]],
+           trans = subr[["trans"]],
+           omega = omega,
+           sigma = sigma,
+           param = as.param(param),
+           init = as.init(init),
+           funs = funs_create(model),
+           capture = as.character(spec[["CAPTURE"]])
   )
   
   x <- store_annot(x,annot)
@@ -259,7 +237,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   }
   
   ## This must come after audit
-  if(!exists("ODE", spec)) {
+  if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
   } else if(audit) {
     audit_spec(x,spec,warn=warn)
@@ -276,33 +254,32 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Next, update with what the user passed in as arguments
   args <- list(...)
   x <- update(x, data=args,strict=FALSE)
-
+  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
-  rd <-generate_rdefs(pars=names(param),
-                      cmt=names(init),
+  rd <-generate_rdefs(pars = names(param),
+                      cmt = names(init),
                       ode_func(x),
                       main_func(x),
                       table_func(x),
                       config_func(x),
-                      model=model(x),
-                      omats=omat(x),
-                      smats=smat(x),
-                      parsedata=SET,
-                      check.bounds=check.bounds)
-  
+                      model = model(x),
+                      omats = omat(x),
+                      smats = smat(x),
+                      set = SET,
+                      check.bounds = check.bounds)
   
   ## Write the model code to temporary file
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
-    paste0("// Source MD5: ", tools::md5sum(modfile), "\n"),
+    paste0("// Source MD5: ", build$md5, "\n"),
     plugin_code(plugin),
     ## This should get moved to rd
     "\n// FIXED:",
     fixed_parameters(fixed,SET[["fixed_type"]]),
     "\n// INCLUDES:",
-    form_includes(spec[["INCLUDE"]],project),
+    form_includes(spec[["INCLUDE"]],build$project),
     "\n// BASIC MODELHEADER FILE:",
     "#include \"modelheader.h\"",
     "\n// DEFS:",
@@ -333,13 +310,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## lock some of this down so we can check order later
   x@shlib$cmt <- names(init(x))
   x@shlib$par <- names(param(x))
-  x@code <- readLines(modfile, warn=FALSE)
+  x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- file.path(soloc,compfile(model))
+  x@shlib$source <- file.path(build$soloc,compfile(model))
+  x@shlib$md5 <- build$md5
   
   ## IN soloc directory
   cwd <- getwd()
-  setwd(soloc)
+  setwd(build$soloc)
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
   
@@ -352,7 +330,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   })
   
   same <- check_and_copy(from = temp_write,
-                         to = compfile(model),
+                         to = compfile(model(x)),
                          preclean)
   
   if(!compile) return(x)
@@ -371,7 +349,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 compfile(model))
+                 compfile(model(x)))
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,

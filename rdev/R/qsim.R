@@ -96,10 +96,10 @@ obs_matrix <- function(x) {
 ##' 
 recmatrix <- function(x,times,c_indexing=TRUE) {
   x <- as.data.frame(x)
-  if(!exists("rate", x)) x$rate <- 0
-  if(!exists("addl", x)) x$addl <- 0
-  if(!exists("ii", x)) x$ii <- 0
-  if(!exists("start", x)) x$start <- 0
+  if(!has_name("rate", x)) x$rate <- 0
+  if(!has_name("addl", x)) x$addl <- 0
+  if(!has_name("ii", x)) x$ii <- 0
+  if(!has_name("start", x)) x$start <- 0
   if(c_indexing) x[["cmt"]] <- x[["cmt"]]-1
   
   if(is.null(times)) stop("Please supply simulation times.")
