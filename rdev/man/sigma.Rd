@@ -24,7 +24,7 @@ smat(.x, ...)
 
 \S4method{smat}{sigmalist}(.x, ...)
 
-\S4method{smat}{mrgmod}(.x, ..., make = FALSE, strict = TRUE)
+\S4method{smat}{mrgmod}(.x, ..., make = FALSE, open = FALSE)
 
 \S4method{smat}{`NULL`}(.x, ...)
 
@@ -39,7 +39,7 @@ smat(.x, ...)
 
 \item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
 
-\item{strict}{passed to \code{\link{merge.list}}}
+\item{open}{passed to \code{\link{merge.list}}}
 
 \item{x}{\code{matlist} object}
 }

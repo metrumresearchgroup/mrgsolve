@@ -26,7 +26,7 @@ omat(.x, ...)
 
 \S4method{omat}{omegalist}(.x, ...)
 
-\S4method{omat}{mrgmod}(.x, ..., make = FALSE, strict = TRUE)
+\S4method{omat}{mrgmod}(.x, ..., make = FALSE, open = FALSE)
 
 \S4method{omat}{mrgsims}(.x, make = FALSE, ...)
 }
@@ -39,7 +39,7 @@ omat(.x, ...)
 
 \item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
 
-\item{strict}{passed to \code{\link{merge.list}}}
+\item{open}{passed to \code{\link{merge.list}}}
 
 \item{x}{\code{matlist} object}
 }

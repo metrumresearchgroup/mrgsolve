@@ -13,8 +13,8 @@
 \usage{
 \S4method{names}{mrgmod}(x)
 
-\S4method{update}{mrgmod}(object, ..., merge = TRUE, strict = TRUE,
-  super.strict = FALSE, data = list())
+\S4method{update}{mrgmod}(object, ..., merge = TRUE, open = FALSE,
+  data = list())
 
 \S4method{update}{omegalist}(object, y, ...)
 
@@ -34,11 +34,9 @@
 \item{merge}{logical indicating to merge (rather than replace) new and
 existing attributes.}
 
-\item{strict}{logical; used only when merge is \code{TRUE} and parameter list or initial conditions
-list is being updated; if \code{TRUE}, no new items will be added; if \code{FALSE}, the parameter list may
+\item{open}{logical; used only when merge is \code{TRUE} and parameter list or initial conditions
+list is being updated; if \code{FALSE}, no new items will be added; if \code{TRUE}, the parameter list may
 expand.}
-
-\item{super.strict}{logical; strict common area updating}
 
 \item{data}{a list of items to update; not used for now}
 

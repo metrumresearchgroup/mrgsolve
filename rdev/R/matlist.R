@@ -12,7 +12,7 @@
 ##' @param .x a matrix, list of matrices or \code{matlist} object
 ##' @param x  \code{matlist} object
 ##' @param labels character vector of names for \code{$OMEGA} elements; must be equal to number of rows/columns in the matrix
-##' @param strict passed to \code{\link{merge.list}}
+##' @param open passed to \code{\link{merge.list}}
 ##' @param ... passed to other functions, including \code{\link{modMATRIX}}
 ##' @export
 ##' @name omega
@@ -86,10 +86,10 @@ setMethod("omat", "omegalist", function(.x,...) {return(.x)})
 ##' @export
 ##' @rdname omega
 ##' @param make logical; if TRUE, matrix list is rendered into a single matrix
-setMethod("omat", "mrgmod", function(.x,...,make=FALSE,strict=TRUE) {
+setMethod("omat", "mrgmod", function(.x,...,make=FALSE,open=FALSE) {
 
     args <- list(...)
-    if(length(args)>0) return(update(.x, omega=omat(...), strict=strict))
+    if(length(args)>0) return(update(.x, omega=omat(...), open=open))
 
     if(!make) return(.x@omega)
     as.matrix(.x@omega)
@@ -111,7 +111,7 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
 ##' @param x  \code{matlist} object
 ##' @param labels character vector of names for \code{$SIGMA} elements; must be equal to number of rows/columns in the matrix
 ##' @param ... passed to other functions, including \code{\link{modMATRIX}}
-##' @param strict passed to \code{\link{merge.list}}
+##' @param open passed to \code{\link{merge.list}}
 ##' @export
 ##' @name sigma
 ##' @rdname sigma
@@ -160,9 +160,9 @@ setMethod("smat", "sigmalist", function(.x,...) return(.x))
 ##' @export
 ##' @rdname sigma
 ##' @param make logical; if TRUE, matrix list is rendered into a single matrix
-setMethod("smat", "mrgmod", function(.x,...,make=FALSE,strict=TRUE) {
+setMethod("smat", "mrgmod", function(.x,...,make=FALSE,open=FALSE) {
     args <- list(...)
-    if(length(args)>0) return(update(.x, sigma=smat(...), strict=strict))
+    if(length(args)>0) return(update(.x, sigma=smat(...), open=open))
     if(!make) return(.x@sigma)
     as.matrix(.x@sigma)
 })

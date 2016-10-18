@@ -15,7 +15,7 @@ setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sel
   if(!missing(subset)) data <- filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- select_(data,.dots=lazy(select))
   if(nrow(data) ==0) stop("Zero rows in idata after filtering.", call.=FALSE)
-  x@args <- merge(x@args,list(idata=as.data.frame(data)), strict=FALSE)
+  x@args <- merge(x@args,list(idata=as.data.frame(data)), open=TRUE)
   return(x)
 })
 ##' @export

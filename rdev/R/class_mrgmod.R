@@ -189,7 +189,7 @@ house <- function(...) {
   )
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
-  x <- update(x,...,strict=FALSE)
+  x <- update(x,...,open=TRUE)
   x
 }
 
@@ -359,4 +359,8 @@ setMethod("events", "mrgmod", function(x,...) {
 setMethod("ev", "mrgmod", function(x,...) {
   update(x,events=ev(...))
 })
+
+
+
+
 

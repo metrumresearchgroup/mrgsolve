@@ -46,7 +46,7 @@ setGeneric("Req", function(x,...) standardGeneric("Req"))
 ##' @rdname Req
 setMethod("Req", "mrgmod", function(x,...) {
   
-  x@args <- merge(x@args, list(Request=as_character_args(match.call()[-1])), strict=FALSE)
+  x@args <- merge(x@args, list(Request=as_character_args(match.call()[-1])), open=TRUE)
   return(x)
 })
 
@@ -57,7 +57,7 @@ setGeneric("req", function(x,...) standardGeneric("req"))
 ##' @export
 ##' @rdname Req
 setMethod("req", "mrgmod", function(x,...) {
-  x@args <- merge(x@args, list(request=as.character(match.call()[-1])), strict=FALSE)
+  x@args <- merge(x@args, list(request=as.character(match.call()[-1])), open=TRUE)
   return(x)
 })
 
@@ -69,7 +69,7 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' @param ... passed along
 ##' @export
 carry.out <- function(x,...) {
-  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
+  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
   return(x)
 }
 
@@ -92,7 +92,7 @@ carry.out <- function(x,...) {
 ##'   mrgsim
 ##' 
 carry_out <- function(x,...) {
-  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), strict=FALSE)
+  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
   return(x)
 }
 
@@ -104,7 +104,7 @@ carry_out <- function(x,...) {
 ##' @param ... passed along
 ##' @export
 tscale <- function(x,value=1,...) {
-  x@args <- merge(x@args, list(tscale=value), strict=FALSE)
+  x@args <- merge(x@args, list(tscale=value), open=TRUE)
   return(x)
 }
 
@@ -117,7 +117,7 @@ tscale <- function(x,value=1,...) {
 ##' @param ... passed along
 ##' @export
 obsonly <- function(x,value=TRUE,...) {
-  x@args <- merge(x@args, list(obsonly=value), strict=FALSE)
+  x@args <- merge(x@args, list(obsonly=value), open=TRUE)
   return(x)
 }
 ##' Set the \code{obsaug} argument for \code{mrgsim}.
@@ -128,7 +128,7 @@ obsonly <- function(x,value=TRUE,...) {
 ##'
 ##' @export
 obsaug <- function(x,value=TRUE,...) {
-  x@args <- merge(x@args, list(obsaug=value), strict=FALSE)
+  x@args <- merge(x@args, list(obsaug=value), open=TRUE)
   x
 }
 
@@ -216,7 +216,7 @@ design <- function(x,descol=character(0),...,deslist = list()) {
     }
   }
   
-  x@args <- merge(x@args, list(descol=descol, deslist=des),strict=FALSE)
+  x@args <- merge(x@args, list(descol=descol, deslist=des),open=TRUE)
   
   x
 

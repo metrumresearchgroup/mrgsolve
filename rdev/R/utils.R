@@ -23,20 +23,17 @@ is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 ##' @param warn issue warning if nothing found to update
 ##' @param context description of usage context
 ##' @param ... not used
-##' @param strict logical indicating whether or not new items should be allowed in the list upon merging.
+##' @param open logical indicating whether or not new items should be allowed in the list upon merging.
 ##' @rdname merge
 ##' @details
-##' Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{!strict}.
+##' Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{open}.
 ##' @export
-merge.list <- function(x,y,...,strict=TRUE,
+merge.list <- function(x,y,...,open=FALSE,
                        warn=TRUE,context="object",wild="...") {
   
-  #left <- x
-  #right <- as.list(y)
   y <- as.list(y)
   
-  
-  if(strict) {
+  if(!open) {
     y <- y[names(y)!=wild | is.null(names(y))]
   }
   
@@ -46,7 +43,7 @@ merge.list <- function(x,y,...,strict=TRUE,
   
   x[common] <- y[common]
   
-  if(!strict)  {
+  if(open)  {
     nw <- !is.element(names(y),names(x)) | names(y) == wild
     x <- c(x,y[nw])
   } else {

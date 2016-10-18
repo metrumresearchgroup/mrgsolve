@@ -4,7 +4,7 @@
 \alias{merge.list}
 \title{Merge two lists}
 \usage{
-\method{merge}{list}(x, y, ..., strict = TRUE, warn = TRUE,
+\method{merge}{list}(x, y, ..., open = FALSE, warn = TRUE,
   context = "object", wild = "...")
 }
 \arguments{
@@ -14,7 +14,7 @@
 
 \item{...}{not used}
 
-\item{strict}{logical indicating whether or not new items should be allowed in the list upon merging.}
+\item{open}{logical indicating whether or not new items should be allowed in the list upon merging.}
 
 \item{warn}{issue warning if nothing found to update}
 
@@ -26,6 +26,6 @@
 Merge two lists
 }
 \details{
-Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{!strict}.
+Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{open}.
 }
 

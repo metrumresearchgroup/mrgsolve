@@ -332,7 +332,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
   opts <- merge(def, tolist(opts,envir=envir),
-                strict=!all,warn=FALSE,context="opts")
+                open=all,warn=FALSE,context="opts")
   
   opts <- c(opts,at)
   
@@ -806,7 +806,7 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {
   
-  ans <- list(advan=13,trans=1,strict=FALSE)
+  ans <- list(advan=13,trans=1)
   
   y <- x[names(x) %in% what]
   
