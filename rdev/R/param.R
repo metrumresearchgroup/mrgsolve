@@ -56,8 +56,8 @@ setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE
   if(.strict) {
     if(!all(names(args) %in% pars(.x))) {
       foreign <- setdiff(names(args),pars(.x))
-      foreign <- paste(foreign, collapse=",")
-      stop("\n Names not found in the parameter list:\n", "  ", foreign, call.=FALSE) 
+      foreign <- paste(foreign, collapse=", ")
+      stop("\nNames not found in the parameter list:\n", "  ", foreign, call.=FALSE) 
     } 
   }
   
