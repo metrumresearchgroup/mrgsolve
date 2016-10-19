@@ -22,27 +22,4 @@ mrgsolve_example(model = c("pkExample", "pkpdExample", "firstmodeExample",
 \description{
 Extract example model from system library
 }
-\examples{
-## example("mrgsolve_example", package="mrgsolve")
-
-mrgsolve_example("pkpdExample", project=getwd())
-
-mod <- mread("pkpdExample", project=getwd()) \%>\% ev(amt=1000, time=0, cmt=1)
-
-see(mod)
-
-out <- mod \%>\% mrgsim(end=48,delta=0.1)
-
-out
-
-plot(out)
-
-out <- mod \%>\%
-  ev(amt=1000, ii=24, cmt=1, addl=10)  \%>\%
-  mrgsim(end=300)
-
-plot(out)
-plot(out, CP~time)
-
-}
 
