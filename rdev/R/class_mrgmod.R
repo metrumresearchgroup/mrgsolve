@@ -361,8 +361,6 @@ setMethod("ev", "mrgmod", function(x,...) {
 })
 
 
-
-<<<<<<< HEAD
 ##' @export
 ##' @rdname see
 setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
@@ -468,7 +466,6 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-=======
->>>>>>> strict
+
 
 

@@ -81,21 +81,12 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=li
         x@param <- as.param(merge(x@param@data,args$param,open=open,context="param"))
     }
     
-<<<<<<< HEAD
-    if(has_name("omega", args)) {
-        x@omega <- update_matlist(x@omega,omat(args$omega),strict=strict, context="omat")
-    }
-    
-    if(has_name("sigma", args)) {
-        x@sigma <- update_matlist(x@sigma,smat(args$sigma), strict=strict, context="smat")
-=======
     if(exists("omega", args)) {
         x@omega <- update_matlist(x@omega,omat(args$omega),open=open, context="omat")
     }
     
     if(exists("sigma", args)) {
         x@sigma <- update_matlist(x@sigma,smat(args$sigma), open=open, context="smat")
->>>>>>> strict
     }
 
     validObject(x)

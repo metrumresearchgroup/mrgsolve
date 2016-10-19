@@ -253,13 +253,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
-<<<<<<< HEAD
-  x <- update(x, data=args,strict=FALSE)
-  
-=======
+
   x <- update(x, data=args,open=TRUE)
 
->>>>>>> strict
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars = names(param),
