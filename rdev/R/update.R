@@ -19,10 +19,9 @@ sval <- unique(c("atol","rtol",
 ##' @param ... passed to other functions
 ##' @param merge logical indicating to merge (rather than replace) new and
 ##' existing attributes.
-##' @param strict logical; used only when merge is \code{TRUE} and parameter list or initial conditions
-##' list is being updated; if \code{TRUE}, no new items will be added; if \code{FALSE}, the parameter list may
+##' @param open logical; used only when merge is \code{TRUE} and parameter list or initial conditions
+##' list is being updated; if \code{FALSE}, no new items will be added; if \code{TRUE}, the parameter list may
 ##' expand.
-##' @param super.strict logical; strict common area updating
 ##' @param data a list of items to update; not used for now
 ##' @return The updated model object is returned.
 ##' @export
@@ -32,13 +31,13 @@ sval <- unique(c("atol","rtol",
 ##'  mod <- mrgsolve:::house()
 ##'
 ##'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
-setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.strict=FALSE,data=list()) {
+setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=list()) {
 
     x <- object
 
     args <- list(...)
 
-    if(!is.mt(data)) args <- merge(args,data,strict=FALSE)
+    if(!is.mt(data)) args <- merge(args,data,open=TRUE)
 
     if(is.mt(args)) return(x)
 
@@ -69,7 +68,7 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
     ## Initial conditions list:
     if(has_name("init",args)) {
         i <- x@init@data
-        i <- merge(i, args$init, context="init", strict=strict)
+        i <- merge(i, args$init, context="init", open=open)
         slot(x, "init") <- as.init(i)
     }
     ## Parameter update:
@@ -79,15 +78,15 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,strict=TRUE,super.
               warning("Attempted update of a $FIXED parameter.", call.=FALSE,immediate.=TRUE)
             }
         }
-        x@param <- as.param(merge(x@param@data,args$param,strict=strict,context="param"))
+        x@param <- as.param(merge(x@param@data,args$param,open=open,context="param"))
     }
     
-    if(has_name("omega", args)) {
-        x@omega <- update_matlist(x@omega,omat(args$omega),strict=strict, context="omat")
+    if(exists("omega", args)) {
+        x@omega <- update_matlist(x@omega,omat(args$omega),open=open, context="omat")
     }
     
-    if(has_name("sigma", args)) {
-        x@sigma <- update_matlist(x@sigma,smat(args$sigma), strict=strict, context="smat")
+    if(exists("sigma", args)) {
+        x@sigma <- update_matlist(x@sigma,smat(args$sigma), open=open, context="smat")
     }
 
     validObject(x)
@@ -98,7 +97,7 @@ same_sig <- function(x,y) {
     return(identical(unname(nrow(x)), unname(nrow(y))))
 }
 
-update_matlist <-  function(x,y,strict=TRUE,context="update_matlist",...) {
+update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
 
     n0 <- dim_matlist(x)
 
@@ -116,12 +115,12 @@ update_matlist <-  function(x,y,strict=TRUE,context="update_matlist",...) {
 
     } else {
         ##if(anon & all(names(x)=="...")) stop(paste("Improper signature:",context), call.=FALSE)
-        x@data <- merge(x@data, y@data,strict=strict,context=context,...)
+        x@data <- merge(x@data, y@data,open=open,context=context,...)
     }
 
     n <- dim_matlist(x)
 
-    if(!strict) {
+    if(open) {
         x@n <- n
     } else {
         if(!identical(n0,n)) stop(paste("Improper dimension:",context), call.=FALSE)

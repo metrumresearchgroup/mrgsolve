@@ -10,7 +10,7 @@ tmp <- tempdir()
 
 context("Compare PKMODEL with equivalent ODEs.")
 
-ode <- mrgsolve:::house() %>% param(Q = 0,CL=1,VC=20,KA=1.1)
+ode <- mrgsolve:::house() %>% param(CL=1,VC=20,KA=1.1)
 
 
 code2 <- '

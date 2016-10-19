@@ -44,7 +44,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
 
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
   data <- mrgindata(m=x,x=as.data.frame(data),...)
-  x@args <- merge(x@args,list(data=data), strict=FALSE)
+  x@args <- merge(x@args,list(data=data), open=TRUE)
   return(x)
 })
 

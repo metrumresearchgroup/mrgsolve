@@ -189,7 +189,7 @@ house <- function(...) {
   )
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
-  x <- update(x,...,strict=FALSE)
+  x <- update(x,...,open=TRUE)
   x
 }
 
@@ -466,6 +466,7 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   if(source) what$source <- x@shlib$source
   do.call(base::file.show,what)
 }
+
 
 
 

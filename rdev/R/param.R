@@ -12,6 +12,7 @@
 ##' @param .x the model object
 ##' @param .y list to be merged into parameter list
 ##' @param .pat a regular expression (character) to be applied as a filter for which parameters to show when printing
+##' @param .strict if \code{TRUE}, all names to be updated must be found in the parameter list
 ##' @param ... passed along or name/value pairs to update the parameters in a model object
 ##' @return An object of class \code{parameter_list} (see \code{\link{numericlist}}).
 ##'
@@ -39,29 +40,55 @@
 setGeneric("param", function(.x,...) standardGeneric("param"))
 ##' @export
 ##' @rdname param
-setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*") {
-
-    args <- c(as.list(.y),list(...))
-    if(length(args)>0) return(update(.x,param=args))
-
+setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE) {
+  
+  args <- c(as.list(.y),list(...))
+  
+  if(length(args)==0) {
     slot(.x@param, "pattern")  <- .pat
+    return(.x@param)
+  }
+  
+  if((length(args)-length(.y)) > 0 & missing(.strict))  {
+    .strict <- TRUE
+  }
+  
+  if(.strict) {
+    if(!all(names(args) %in% pars(.x))) {
+      foreign <- setdiff(names(args),pars(.x))
+      foreign <- paste(foreign, collapse=", ")
+      stop("\nNames not found in the parameter list:\n", "  ", foreign, call.=FALSE) 
+    } 
+  }
+  
+  return(update(.x,param=args))
 
-    .x@param
 })
 
 ##' @rdname param
 ##' @export
-setMethod("param", "mrgsims", function(.x,...) {param(mod(.x),...)})
+setMethod("param", "mrgsims", function(.x,...) {
+  param(mod(.x),...)
+})
 
 ##' @export
 ##' @rdname param
-setMethod("param", c("missing"), function(...) {param(list(...))})
+setMethod("param", c("missing"), function(...,.strict=TRUE) {
+  param(list(...),.strict=.strict)
+})
+
 ##' @rdname param
 ##' @export
-setMethod("param", "list", function(.x,...) {create_numeric_list(.x,"parameter_list",...)})
+setMethod("param", "list", function(.x,...) {
+  create_numeric_list(.x,"parameter_list",...)
+})
+
 ##' @rdname param
 ##' @export
-setMethod("param", "ANY", function(.x,...) {param(as.list(.x),...)})
+setMethod("param", "ANY", function(.x,...) {
+  param(as.list(.x),...)
+})
+
 
 
 ##' @export
@@ -82,57 +109,57 @@ setMethod("as.param", "missing", function(.x,...) create_numeric_list(list(), "p
 
 
 showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
-    pattern <- x@pattern
-    ini <- as.list(x)
-    showN <- length(ini)
-
-    if(length(ini)==0) {
-        message("No parameters in the model.")
-        return(invisible(NULL))
-    }
-
-    x <- names(ini)
-    y <- prettyNum(unlist(ini), digits=digits)
-    NPARAM <- length(x)
-    n <- 1:NPARAM
-
-    if(pattern !="*") {
-        take <- grepl(pattern,x)
-        x <- x[take]
-        y <- y[take]
-        n <- n[take]
-    }
-    ##if(length(x)==0) stop("No parameters to show with pat = ", pattern)
-    if(length(x)==0) {message("No matching parameters were found."); return(invisible(NULL))}
-    ord <- order(x)
-    x <- x[ord]
-    y <- y[ord]
-    n <- n[ord]
-
-    if(missing(ncols)) ncols <- ifelse(NPARAM > 30, 3,2)
-
-    N <- ceiling(length(x)/ncols)
-    target <- N*ncols
-    x <- c(x, rep(".", target-length(x)))
-    n <- c(n, rep(".", target-length(n)))
-    y <- c(y, rep(".", target-length(y)))
-    x <- gsub("\\(\\.\\)", "...", x)
-    grps <- ceiling(seq_along(x)/N)
-    x <- split(x,grps)
-    x <- data.frame(do.call('cbind',x))
-    y <- split(y,grps)
-    y <- data.frame(do.call('cbind',y))
-    sep <- data.frame(`.` = rep("|", N))
-    df <- cbind(x[,1],y[,1],sep)
-    for(i in 2:ncol(x)) {
-      df <- cbind(df,x[,i], y[,i],sep)
-    }
-     names(df) <- rep(c("name", "value", "."), ncols)
-    df[,ncol(df)] <- NULL
-    output <- df
-    cat("\n Model parameters (N=", showN, "):\n", sep="")
-    print(output, row.names=FALSE, right=right)
+  pattern <- x@pattern
+  ini <- as.list(x)
+  showN <- length(ini)
+  
+  if(length(ini)==0) {
+    message("No parameters in the model.")
     return(invisible(NULL))
+  }
+  
+  x <- names(ini)
+  y <- prettyNum(unlist(ini), digits=digits)
+  NPARAM <- length(x)
+  n <- 1:NPARAM
+  
+  if(pattern !="*") {
+    take <- grepl(pattern,x)
+    x <- x[take]
+    y <- y[take]
+    n <- n[take]
+  }
+  ##if(length(x)==0) stop("No parameters to show with pat = ", pattern)
+  if(length(x)==0) {message("No matching parameters were found."); return(invisible(NULL))}
+  ord <- order(x)
+  x <- x[ord]
+  y <- y[ord]
+  n <- n[ord]
+  
+  if(missing(ncols)) ncols <- ifelse(NPARAM > 30, 3,2)
+  
+  N <- ceiling(length(x)/ncols)
+  target <- N*ncols
+  x <- c(x, rep(".", target-length(x)))
+  n <- c(n, rep(".", target-length(n)))
+  y <- c(y, rep(".", target-length(y)))
+  x <- gsub("\\(\\.\\)", "...", x)
+  grps <- ceiling(seq_along(x)/N)
+  x <- split(x,grps)
+  x <- data.frame(do.call('cbind',x))
+  y <- split(y,grps)
+  y <- data.frame(do.call('cbind',y))
+  sep <- data.frame(`.` = rep("|", N))
+  df <- cbind(x[,1],y[,1],sep)
+  for(i in 2:ncol(x)) {
+    df <- cbind(df,x[,i], y[,i],sep)
+  }
+  names(df) <- rep(c("name", "value", "."), ncols)
+  df[,ncol(df)] <- NULL
+  output <- df
+  cat("\n Model parameters (N=", showN, "):\n", sep="")
+  print(output, row.names=FALSE, right=right)
+  return(invisible(NULL))
 }
 
 ##' @export
@@ -143,11 +170,11 @@ setMethod("show", "parameter_list", function(object) showparam(object))
 ##' @export
 ##' @rdname param
 allparam <- function(.x) {
-    as.param(c(as.list(param(.x)), .x@fixed))
+  as.param(c(as.list(param(.x)), .x@fixed))
 }
 
 as.fixed <- function(x) {
-    as.list(x)
+  as.list(x)
 }
 
 

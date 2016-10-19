@@ -19,11 +19,12 @@
 \usage{
 param(.x, ...)
 
-\S4method{param}{mrgmod}(.x, .y = list(), ..., .pat = "*")
+\S4method{param}{mrgmod}(.x, .y = list(), ..., .pat = "*",
+  .strict = FALSE)
 
 \S4method{param}{mrgsims}(.x, ...)
 
-\S4method{param}{missing}(.x, ...)
+\S4method{param}{missing}(..., .strict = TRUE)
 
 \S4method{param}{list}(.x, ...)
 
@@ -51,6 +52,8 @@ allparam(.x)
 \item{.y}{list to be merged into parameter list}
 
 \item{.pat}{a regular expression (character) to be applied as a filter for which parameters to show when printing}
+
+\item{.strict}{if \code{TRUE}, all names to be updated must be found in the parameter list}
 
 \item{object}{passed to show}
 }
