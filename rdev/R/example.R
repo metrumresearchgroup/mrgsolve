@@ -37,7 +37,7 @@
 ##'
 mrgsolve_example <- function(model=c("pkExample", "pkpdExample","firstmodeExample","viralExample","popExample"),
                              project=getwd(),overwrite=FALSE,quiet=FALSE,...) {
-  
+  stop("mrgsolve: mrgsolve_example function has been deprecated.")
   model <- match.arg(model)
   file <- paste0(model, ".cpp")
   src <- file.path(system.file(package="mrgsolve"), "models",file)
