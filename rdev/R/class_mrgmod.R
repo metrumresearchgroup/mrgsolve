@@ -189,7 +189,7 @@ house <- function(...) {
   )
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
-  x <- update(x,...,strict=FALSE)
+  x <- update(x,...,open=TRUE)
   x
 }
 
@@ -362,6 +362,7 @@ setMethod("ev", "mrgmod", function(x,...) {
 
 
 
+<<<<<<< HEAD
 ##' @export
 ##' @rdname see
 setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
@@ -467,5 +468,7 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
+=======
+>>>>>>> strict
 
 

@@ -26,6 +26,11 @@ test_that("Update parameter - via param", {
   
   out <- mod1 %>% param(A=3, B=2, C=1) %>% mrgsim
   expect_true(all(c(out$A==3,out$B==2,out$C==1)))
+  
+  expect_error(mod1 %>% param(FAKE = 5))
+  expect_error(mod1 %>% param(list(FAKE=3),strict=TRUE))
+  expect_warning(mod1 %>% param(list(FAKE=3)))
+  expect_is(mod1 %>% param(list(FAKE=3,B=2)), "mrgmod")
 })
 
 

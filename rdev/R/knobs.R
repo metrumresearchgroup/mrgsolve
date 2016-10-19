@@ -124,7 +124,7 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
 ##' @export
 ##' @rdname knobs
 setMethod("knobs", c("mrgmod", "batch_mrgsims"), function(x,y,...) {
-  input <- merge(y@input, list(...), strict=FALSE)
+  input <- merge(y@input, list(...), open=TRUE)
   do.call("knobs", c(list(x),input))
 })
 

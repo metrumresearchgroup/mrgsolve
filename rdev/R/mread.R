@@ -245,16 +245,21 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   
   ## First update with what we found in the model specification file
-  x <- update(x, data=SET, strict=FALSE)
+  x <- update(x, data=SET, open=TRUE)
   
   ## Arguments in $SET that will be passed to mrgsim
   simargs <- SET[is.element(names(SET),set_args)]
-  if(length(simargs) > 0) x@args <- merge(x@args,simargs, strict=FALSE)
+  if(length(simargs) > 0) x@args <- merge(x@args,simargs, open=TRUE)
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
+<<<<<<< HEAD
   x <- update(x, data=args,strict=FALSE)
   
+=======
+  x <- update(x, data=args,open=TRUE)
+
+>>>>>>> strict
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars = names(param),

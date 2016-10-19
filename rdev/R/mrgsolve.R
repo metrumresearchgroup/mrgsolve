@@ -133,7 +133,7 @@ mrgsim <-  function(x,
   if(missing(data)) data <- x@args$data; x@args$data <- NULL
   if(missing(idata)) idata <- x@args$idata; x@args$idata <- NULL
   
-  args <- merge(x@args, list(...), strict=FALSE)
+  args <- merge(x@args, list(...), open=TRUE)
   
   if(length(args) > 0) {
     x <- do.call("update",c(x,args))
