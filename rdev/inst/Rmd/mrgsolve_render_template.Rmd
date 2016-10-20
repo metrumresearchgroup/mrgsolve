@@ -48,7 +48,7 @@ if(nrow(d) > 0) {
                      value=diag(as.matrix(sg)))
   
   dfp <- 
-    as.data.frame(t(as.data.frame(param(mod)))) %>% 
+    as.data.frame(t(as.data.frame(allparam(mod)))) %>% 
     setNames(.,"value") %>%
     mutate(name=rownames(.))
   
