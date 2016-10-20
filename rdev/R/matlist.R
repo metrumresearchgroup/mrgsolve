@@ -324,3 +324,25 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 })
 
 
+collapse_matrix <- function(x,class) {
+  l <- list(unlist(labels(x)))
+  m <- list(as.matrix(x))
+  create_matlist(m,l,class=class)
+}
+
+collapse_sigma <- function(x) {
+  x@sigma <- collapse_matrix(smat(x),class="sigmalist")
+  x
+}
+collapse_omega <- function(x) {
+  x@omega <- collapse_matrix(omat(x),class="omegalist")
+  x
+}
+
+
+
+
+
+
+
+
