@@ -37,17 +37,26 @@ rmbl <- function(x) x[x!=""]
 # Details
 ```{r}
 d <- mrgsolve:::details(mod)
-  if(nrow(d) > 0) {
+if(nrow(d) > 0) {
+  
+  om <- omat(mod)
+  dfom <- data.frame(name=unlist(labels(om)),
+                     value=diag(as.matrix(om)))
+
+  sg <- smat(mod)
+  dfsg <- data.frame(name=unlist(labels(sg)),
+                     value=diag(as.matrix(sg)))
+  
   dfp <- 
-    as.data.frame(t(as.data.frame(param(mod)))) %>% 
+    as.data.frame(t(as.data.frame(allparam(mod)))) %>% 
     setNames(.,"value") %>%
     mutate(name=rownames(.))
-
+  
   dfi <- as.data.frame(t(as.data.frame(init(mod)))) %>%
     setNames(.,"value") %>%
     mutate(name=rownames(.))
   
-  dfj <- bind_rows(dfp,dfi)
+  dfj <- bind_rows(dfp,dfi,dfom,dfsg)
   
   d <- left_join(d,dfj,by="name")
   
@@ -59,14 +68,14 @@ d <- mrgsolve:::details(mod)
 
 ```
 
-## Parameter values
+## Parameter and fixed values
 ```{r}
-(param(mod))
+allparam(mod)
 ```
 
 ## Compartments and initial values
 ```{r}
-(init(mod))
+init(mod)
 ```
 
 # Model code

@@ -174,7 +174,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   annot <- dplyr::bind_rows(nonull.list(mread.env$annot))
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
-  
+
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
