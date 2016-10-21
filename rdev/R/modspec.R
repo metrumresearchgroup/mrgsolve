@@ -119,7 +119,7 @@ setup_soloc <- function(loc,model) {
   
   soloc <- file.path(loc,compdir(),model)
   
-  if(!file.exists(soloc)) dir.create(soloc,recursive=TRUE)
+  if(!file_exists(soloc)) dir.create(soloc,recursive=TRUE)
   
   return(soloc)
 }
@@ -743,7 +743,7 @@ handle_spec_block.specINCLUDE <- function(x,env,...) {
 form_includes <- function(x,where) {
   if(is.null(x)) return("// No includes found.")
   files <- file.path(where,x)
-  if(!all(file.exists(files))) {
+  if(!all(file_exists(files))) {
     stop("All header files in $INCLUDE must exist in the project directory",call.=FALSE) 
   }
   md <- tools::md5sum(file.path(where,x))

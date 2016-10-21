@@ -115,7 +115,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   build <- new_build(model,project,soloc,code,udll)
 
-  if(!file.exists(build$modfile)) {
+  if(!file_exists(build$modfile)) {
     if(build$project==modlib()) {
       return(mintern(model)) 
     } else {
@@ -371,7 +371,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     status <- attr(status, "status")
     
-    comp_success <- is.null(status) & file.exists(compout(model))
+    comp_success <- is.null(status) & file_exists(compout(model))
     
     if(!comp_success) {
       cat(output, sep="\n") 
