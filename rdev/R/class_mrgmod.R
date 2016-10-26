@@ -227,7 +227,7 @@ is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
 
 see_compfile <- function(x) {
   file <- file.path(soloc(x),compfile(model(x)))
-  if(!file.exists(file)) {
+  if(!file_exists(file)) {
     message("Could not find the compiled code for this model.")
   }
   cat(readLines(file),sep="\n")
@@ -368,7 +368,7 @@ setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
   if(raw) return(x@code)
   what <- x@code
   if(length(what)==0) {
-    if(file.exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
+    if(file_exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
   }
   if(length(what)==0) {
     warning("No code to show.")
@@ -428,7 +428,7 @@ setMethod("blocks", "character", function(x,...) {
 
 blocks_ <- function(file,what) {
   if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
-  if(!file.exists(file)) stop("Can't find model file", call.=FALSE)
+  if(!file_exists(file)) stop("Can't find model file", call.=FALSE)
   bl <- modelparse(readLines(file, warn=FALSE))
   if(!any(what == "all")) bl <- bl[names(bl) %in% what]
   if(length(bl)==0) {

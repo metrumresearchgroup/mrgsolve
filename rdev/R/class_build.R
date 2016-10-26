@@ -14,13 +14,13 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
   
   ## Both project and soloc get normalized
 
-  if(!file.exists(soloc)) {
+  if(!file_exists(soloc)) {
     stop("soloc directory does not exist.",call.=FALSE) 
   }
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   env$soloc <-   as.character(setup_soloc(soloc,model))
   
-  if(!file.exists(project)) {
+  if(!file_exists(project)) {
     stop("project directory does not exist.",call.=FALSE) 
   }
   env$project <- normalizePath(project, mustWork=TRUE, winslash="/")
@@ -35,7 +35,7 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
     close(mod.con)
   }
   
-  if(!file.exists(env$modfile)) {
+  if(!file_exists(env$modfile)) {
     stop("The model file ", basename(env$modfile), " does not exist.",call.=FALSE) 
   }
   

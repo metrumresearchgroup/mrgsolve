@@ -280,7 +280,7 @@ mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
 
 if.file.remove <- function(x) {
-  if(file.exists(x)) file.remove(x)
+  if(file_exists(x)) file.remove(x)
 }
 
 #' rename columns from vector for new names
@@ -432,7 +432,10 @@ has_name <- function(a,b) {
   is.element(a,names(b))
 }
 
-
+file_exists <- function(x) {
+  #file.access(x)==0 
+  file.exists(x)
+}
 
 
 

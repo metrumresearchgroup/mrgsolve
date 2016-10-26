@@ -11,7 +11,7 @@ update_wait_time <- function(n) {
 
 check_and_copy <- function(from,to,preclean=FALSE) {
   
-  if(!file.exists(to)) {
+  if(!file_exists(to)) {
     file.copy(from,to)
     same <- TRUE
   } else {
@@ -29,7 +29,7 @@ check_and_copy <- function(from,to,preclean=FALSE) {
 safe_wait <- function(x) {
   
   target <- file.path(soloc(x),compout(model(x)))
-  if(!file.exists(target)) return(invisible(NULL))
+  if(!file_exists(target)) return(invisible(NULL))
   mt <- file.info(target)[["mtime"]]
   age <- as.numeric(as.POSIXct(Sys.time())) - as.numeric(as.POSIXct(mt))
   if(age > SAFE_WAIT_TIME) return(invisible(NULL))
