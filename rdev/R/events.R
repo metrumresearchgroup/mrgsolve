@@ -154,8 +154,8 @@ collect_ev <- function(...) {
   y <- lapply(x, "[[","ID")
   mx <- sapply(y,function(xx) length(unique(xx)))
   mx <- cumsum(c(0,mx[-length(mx)]))
-  y <- mapply(y,mx, FUN=function(yi,mx) return(yi+mx))
-  x <- dplyr::bind_rows(x) %>% dplyr::mutate(ID = unlist(y))
+  y <- mapply(y,mx, FUN=function(yi,mx) return(yi+mx), SIMPLIFY=FALSE)
+  x <- dplyr::bind_rows(x) %>% dplyr::mutate(ID = unlist(y,use.names=TRUE))
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   x <- dplyr::mutate_each(x,dplyr::funs(na2zero),which(what))

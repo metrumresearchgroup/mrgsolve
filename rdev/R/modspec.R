@@ -700,9 +700,11 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
-  } 
+  } else {
+    x <- cvec_cs(x)
+  }
   
-  x <- unique(c(cvec_cs(x),env$capture))    
+  x <- unique(c(x,env$capture))    
   
   check_block_data(x,env$ENV,pos)
   
@@ -887,3 +889,48 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env
 }
 
+
+expand_seq <- function(ex){
+  matches <- unlist(regmatches(ex,
+                               regexec("(\\w+?)(\\d+):(\\d+):(\\d+)",
+                                       ex)
+  ), use.names = F)
+  return(paste0(matches[[2]],
+                seq(as.numeric(matches[[3]]),
+                    as.numeric(matches[[4]]),
+                    as.numeric(matches[[5]])
+                )
+  )
+  )
+}
+
+expand <- function(ex){
+  matches <- unlist(regmatches(ex,
+                               regexec("(\\w+?)(\\d+):(\\d+)",
+                                       ex)
+  ), use.names = F)
+  return(paste0(matches[[2]],
+                as.numeric(matches[[3]]):as.numeric(matches[[4]])
+  )
+  )
+}
+
+expand_maybe <- function(ex){
+  colons <- charcount(ex, ":")
+  if (colons) {
+    if(colons == 2) {
+      return(expand_seq(ex))
+    } else {
+      return(expand(ex) )
+    }
+  }
+  return(ex)
+  
+}
+
+deparens <- function(x,what=c(")", "(")) {
+  for(w in what) {
+    x <- gsub(w,"",x,fixed=TRUE) 
+  }
+  return(x)
+}
