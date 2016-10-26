@@ -433,7 +433,8 @@ has_name <- function(a,b) {
 }
 
 file_exists <- function(x) {
-  file.access(x)==0 
+  #file.access(x)==0 
+  file.exists(x)
 }
 
 
