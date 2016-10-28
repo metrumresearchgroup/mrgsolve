@@ -437,7 +437,13 @@ file_exists <- function(x) {
   file.exists(x)
 }
 
+file_writeable <- function(x) {
+  file.access(x,2) == 0 
+}
 
+file_readable <- function(x) {
+  file.access(x,4) == 0 
+}
 
 
 
