@@ -365,7 +365,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
   } else { ## intern
     
-    output <- status
+    output <- err <- status
     
     attributes(output) <- NULL
     
@@ -374,9 +374,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     comp_success <- is.null(status) & file_exists(compout(model))
     
     if(!comp_success) {
-      cat(output, sep="\n") 
+      cat(err, sep="\n") 
       cat("\n\n")
-      stop("There was a problem when compiling the model.",call.=FALSE);
+      stop("There was a problem when compiling the model " ,err, call.=FALSE);
     } 
     if(!quiet) message("done.")
   }

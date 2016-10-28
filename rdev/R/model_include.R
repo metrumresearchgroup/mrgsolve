@@ -29,8 +29,6 @@ get_plugin <- function(what) {
 }
 
 
-
-
 plugin_code <- function(x) {
   if(is.null(x)) return(NULL)
   s_pick(x,"code") 
@@ -54,16 +52,6 @@ make_clink <- function(x,clink) {
   if(length(link)==0) return("")
   paste(paste0("-I\"",unique(link), "\""),collapse=" ")
 }
-
-
-# make_CLINK <- function(x,what=names(x),add=NULL, setenv=FALSE) {
-#   x <- c(x[intersect(names(x),what)],add)
-#   if(length(x)==0) return("")
-#   x <- paste("-I\"",x,"\"",collapse=" ", sep="")
-#   return(x)
-# }
-# 
-
 
 set_clink <- function(x,clink=NULL) {
   if(is.null(x) & is.null(clink)) return(invisible(NULL))
