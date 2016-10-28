@@ -131,4 +131,12 @@ plugins[["BH"]] <- list(
 )
 
 
-
+write_make_vars <- function(x) {
+  clink <- paste0("PKG_CPPFLAGS=",paste(Sys.getenv("CLINK_CPPFLAGS"), collapse=" "))
+  libs <- paste0("PKG_LIBS=",paste(Sys.getenv("PKG_LIBS"),collapse=" "))
+  loc <- file.path(soloc(x),"Makevars")
+  cat(file=loc, "# from write_make_vars", "\n")
+  cat(file=loc, clink, "\n", append=TRUE)
+  cat(file=loc, libs,  "\n", append=TRUE)
+ 
+}

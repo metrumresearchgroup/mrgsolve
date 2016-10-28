@@ -321,12 +321,15 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   setwd(build$soloc)
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-  
+
   ## this gets written in soloc
   write_win_def(x)
+  write_make_vars(x)
+  do_restore(to_restore)
+  
   
   on.exit({
-    do_restore(to_restore)
+    #do_restore(to_restore)
     setwd(cwd)
   })
   
