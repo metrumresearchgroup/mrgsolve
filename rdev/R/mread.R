@@ -192,20 +192,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
-  
-  # 
-  # if(raw) {
-  #   return(list(param = as.numeric(param),
-  #               init=as.numeric(init),
-  #               sigma=omega,
-  #               sigma=sigma,
-  #               SET=unlist(SET),
-  #               ENV=unlist(ENV),
-  #               GLOBAL=spec[["GLOBAL"]],
-  #               fixed=fixed,
-  #               table=table))
-  # }
-  # 
+
   
   ## Constructor for model object:
   x <- new("mrgmod",
@@ -313,7 +300,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$par <- names(param(x))
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- file.path(build$soloc,compfile(model))
+  x@shlib$source <- file.path(build$soloc,build$compfile)
   x@shlib$md5 <- build$md5
   
   ## IN soloc directory
@@ -327,14 +314,13 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   write_make_vars(x)
   do_restore(to_restore)
   
-  
   on.exit({
     #do_restore(to_restore)
     setwd(cwd)
   })
   
   same <- check_and_copy(from = temp_write,
-                         to = compfile(model(x)),
+                         to = build$compfile,
                          preclean)
   
   if(!compile) return(x)
@@ -353,7 +339,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 compfile(model(x)))
+                 build$compfile)
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
@@ -374,7 +360,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     status <- attr(status, "status")
     
-    comp_success <- is.null(status) & file_exists(compout(model))
+    comp_success <- is.null(status) & file_exists(build$compout)
     
     if(!comp_success) {
       cat(err, sep="\n") 
@@ -387,7 +373,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  z <- file.copy(compout(model),sodll(x))
+  z <- file.copy(build$compout,sodll(x))
   
   dyn.load(sodll(x))
   

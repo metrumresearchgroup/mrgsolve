@@ -19,7 +19,6 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
   env <- new.env()
   
   ## Both project and soloc get normalized
-
   if(!file_writeable(soloc)) {
     stop("soloc directory must exist and be writeable.",call.=FALSE) 
   }
@@ -49,12 +48,17 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
   
   env$package <- ifelse(udll,rfile(model),model)
   
-  
   headers <- file.path(system.file("base",package="mrgsolve"),c("modelheader.h", "mrgsolv.h"))
   
   if(!all(file.copy(headers, env$soloc,overwrite=TRUE))) {
     stop("Couldn't find mrgsolve install location.") 
   }
+  
+  env$compfile <- compfile(model)
+  env$compbase <- compbase(model)
+  env$compout <- compout(model)
+  env$compdir <- compdir()
+  env$cachfile <- cachefile()
   
   return(env)
 
