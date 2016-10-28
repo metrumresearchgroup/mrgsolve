@@ -23,7 +23,7 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
     stop("soloc directory must exist and be writeable.",call.=FALSE) 
   }
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
-  env$soloc <-   as.character(setup_soloc(soloc,model))
+  env$soloc <-   as.character(create_soloc(soloc,model))
   
   if(!file_readable(project)) {
     stop("project directory must exist and be readable.",call.=FALSE) 
@@ -47,12 +47,6 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
   env$md5 <- tools::md5sum(env$modfile)
   
   env$package <- ifelse(udll,rfile(model),model)
-  
-  headers <- file.path(system.file("base",package="mrgsolve"),c("modelheader.h", "mrgsolv.h"))
-  
-  if(!all(file.copy(headers, env$soloc,overwrite=TRUE))) {
-    stop("Couldn't find mrgsolve install location.") 
-  }
   
   env$compfile <- compfile(model)
   env$compbase <- compbase(model)
@@ -89,7 +83,7 @@ compdir <- function() {
 
 cachefile <- function(model) "model-cache.RDS"
 
-setup_soloc <- function(loc,model) {
+create_soloc <- function(loc,model) {
   
   soloc <- file.path(loc,compdir(),model)
   

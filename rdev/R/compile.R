@@ -123,13 +123,11 @@ write_win_def <- function(x) {
 }
 
 rm_win_def <- function(x) {
-  
   if(is.character(x)) {
     if(file_exists(x)) {
       file.remove(x)
     }
   }
-  
   return(invisible(NULL))
 }
 

@@ -130,13 +130,27 @@ plugins[["BH"]] <- list(
   linkto="BH/include", name="BH"
 )
 
-
-write_make_vars <- function(x) {
+# @param x the build object
+# 
+# @details
+# We write a Makevars file in the soloc
+# Also, copy required headers (from mrgsolve base) there as well
+write_build_env <- function(x) {
+  
+  mkv <- file.path(x$soloc,"Makevars")
+  
   clink <- paste0("PKG_CPPFLAGS=",paste(Sys.getenv("CLINK_CPPFLAGS"), collapse=" "))
   libs <- paste0("PKG_LIBS=",paste(Sys.getenv("PKG_LIBS"),collapse=" "))
-  loc <- file.path(soloc(x),"Makevars")
-  cat(file=loc, "# from write_make_vars", "\n")
-  cat(file=loc, clink, "\n", append=TRUE)
-  cat(file=loc, libs,  "\n", append=TRUE)
- 
+  
+  
+  cat(file=mkv, "# from write_make_vars", "\n")
+  cat(file=mkv, clink, "\n", append=TRUE)
+  cat(file=mkv, libs,  "\n", append=TRUE)
+  
+  headers <- file.path(system.file("base",package="mrgsolve"),c("modelheader.h", "mrgsolv.h"))
+  
+  if(!all(file.copy(headers, x$soloc, overwrite=TRUE))) {
+    stop("Couldn't find mrgsolve install location.") 
+  }
+
 }

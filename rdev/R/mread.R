@@ -306,18 +306,14 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
+  on.exit(setwd(cwd))
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
 
   ## this gets written in soloc
+  write_build_env(build)
   write_win_def(x)
-  write_make_vars(x)
   do_restore(to_restore)
-  
-  on.exit({
-    #do_restore(to_restore)
-    setwd(cwd)
-  })
   
   same <- check_and_copy(from = temp_write,
                          to = build$compfile,
