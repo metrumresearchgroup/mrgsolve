@@ -160,7 +160,7 @@
 ##' $CAPTURE CP
 ##' '
 ##'
-##' mod <- mread(code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
+##' mod <- mread("package_example",code=code) %>% ev(amt=1000, cmt=1, addl=2, ii=8)
 ##'
 ##' out <- mod %>% mrgsim
 ##'

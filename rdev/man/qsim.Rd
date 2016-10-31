@@ -4,7 +4,7 @@
 \alias{qsim}
 \title{A quick simulation function.}
 \usage{
-qsim(x, e, idata, req = NULL)
+qsim(x, e, idata, req = NULL, tgrid = NULL)
 }
 \arguments{
 \item{x}{model object}
@@ -14,6 +14,8 @@ qsim(x, e, idata, req = NULL)
 \item{idata}{individual data set}
 
 \item{req}{compartments to request}
+
+\item{tgrid}{\code{tgrid} object; used if \code{e} is an \code{ev} object}
 }
 \description{
 A quick simulation function.

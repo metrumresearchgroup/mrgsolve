@@ -3,3 +3,7 @@
 ##' @export
 setClass("ev", slots=c(data="data.frame"))
 
+is.ev <- function(x) {
+  inherits(x,"ev")  
+}
+

@@ -306,14 +306,17 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
-  on.exit(setwd(cwd))
+  
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-
+  on.exit({
+    setwd(cwd)
+    do_restore(to_restore)
+  })
   ## this gets written in soloc
-  write_build_env(build)
+  #write_build_env(build)
   write_win_def(x)
-  do_restore(to_restore)
+  #do_restore(to_restore)
   
   same <- check_and_copy(from = temp_write,
                          to = build$compfile,
@@ -361,7 +364,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     if(!comp_success) {
       cat(err, sep="\n") 
       cat("\n\n")
-      stop("There was a problem when compiling the model " ,err, call.=FALSE);
+      stop("There was a problem when compiling the model. " ,err, call.=FALSE);
     } 
     if(!quiet) message("done.")
   }

@@ -5,6 +5,7 @@
 ##' @param e event object
 ##' @param idata individual data set
 ##' @param req compartments to request
+##' @param tgrid \code{tgrid} object; used if \code{e} is an \code{ev} object
 ##' 
 ##' 
 ##' @examples 
@@ -19,10 +20,18 @@
 ##' 
 ##' @export
 ##' 
-qsim <- function(x,e,idata,req=NULL) {
+qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
   
   if(missing(idata)) {
     idata <- matrix(1,dimnames=list(NULL,"ID"))
+  }
+  
+  if(is.ev(e)) {
+    if(!is.null(tgrid)) {
+      e <- recmatrix(e,tgrid) 
+    } else {
+      e <- recmatrix(e,stime(x))
+    }
   }
   
   cm <- reqn <-  cmt(x)
@@ -47,8 +56,8 @@ qsim <- function(x,e,idata,req=NULL) {
                cap,
                pointers(x),
                as.integer(c(sum(nrow(omat(x))),
-                          sum(nrow(smat(x)))))
-               )
+                            sum(nrow(smat(x)))))
+  )
   
   dimnames(out) <- list(NULL, c("ID","time", reqn,x@capture))
   
