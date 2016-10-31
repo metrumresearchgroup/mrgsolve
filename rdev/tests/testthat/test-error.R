@@ -7,7 +7,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 project <- file.path(system.file(package="mrgsolve"), "models")
 
-mod <- mread("firstmodel", project)
+mod <- mread("pk1cmt", modlib())
 
 context("Testing error generation ")
 
