@@ -76,14 +76,13 @@ pred_KA = KA*exp(ETA(5));
 ##'
 ##' mod <- pkmodel(1)
 ##'
-##' mod <- pkmodel(1,TRUE)
-##'
 ##' mod %>% ev(amt=1000, ii=24, addl=3) %>% mrgsim(end=120)
 ##'
+##' \dontrun{
+##' mod <- pkmodel(1,TRUE)
 ##' mod <- pkmodel(2)
-##'
 ##' mod <- pkmodel(2,TRUE)
-##'
+##' }
 ##'
 ##'
 ##'
@@ -96,7 +95,6 @@ pkmodel <- function(ncmt=1,depot=FALSE,...) {
     code <- paste0("modpk", ncmt, ifelse(depot, "po", ""))
     mod <- suppressMessages(mcode(code,get(code))) %>% update(...)
     return(mod)
-
 }
 
 
