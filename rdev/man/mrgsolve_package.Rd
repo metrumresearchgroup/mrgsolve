@@ -155,12 +155,12 @@ dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - ke*CENT;
 
 $TABLE
-double CP = CENT/VC;
+double CP = CENT/VCi;
 
 $CAPTURE CP
 '
 
-mod <- mread("package_example",code=code) \%>\% ev(amt=1000, cmt=1, addl=2, ii=8)
+mod <- mcode("package_example",code) \%>\% ev(amt=1000, cmt=1, addl=2, ii=8)
 
 out <- mod \%>\% mrgsim
 
