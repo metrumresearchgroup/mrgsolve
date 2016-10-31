@@ -69,14 +69,14 @@ test_that("Update parameter - via data, time-varying", {
 ## Make some updates to parameters and simulation times
 project <- file.path(system.file(package="mrgsolve"), "models")
 
-mod <- mread("firstmodel", project,atol=1E-20, rtol=1E-12, digits=8)
+mod <- mread("pk1cmt", modlib(),atol=1E-20, rtol=1E-12, digits=8)
 mod1 <- update(mod %>% param(CL=12, VC=220), delta=33, end=222)
 mod2 <- update(mod, param=list(CL=12, VC=220), delta=33, end=222)
 x <- sort(runif(100, 0,300))
 mod3 <- update(mod, add=x, end=1000, delta=20)
 mod4 <- update(mod, init=list(CENT=111))
 mod5 <- mod %>% param(VC=999)
-mod6 <- mod %>% init(DEPOT=5566)
+mod6 <- mod %>% init(EV1=5566)
 mod7 <- update(mod, hmin=111, hmax=222, maxsteps=333, ixpr=444, mxhnil=555, atol=1E-99, rtol=1E-88)
 mod8 <- mrgsolve::mod(mrgsim(mod, delta=33, end=222))
 mod9 <- update(mod, delta=33, end=222)
@@ -154,28 +154,28 @@ test_that("Parameters update via param and data.frame ",{
 
 test_that("Initials update via init and list",{
   
-  mod1 <- mod %>% init(list(CENT=123,DEPOT=456))
+  mod1 <- mod %>% init(list(CENT=123,EV1=456))
   expect_equal(init(mod1)$CENT, 123)
-  expect_equal(init(mod1)$DEPOT, 456)
+  expect_equal(init(mod1)$EV1, 456)
 })
 
 test_that("Initials update via init ",{
   
-  mod1 <- mod %>% init(CENT=1123, DEPOT=1456)
+  mod1 <- mod %>% init(CENT=1123, EV1=1456)
   expect_equal(init(mod1)$CENT, 1123)
-  expect_equal(init(mod1)$DEPOT, 1456)
+  expect_equal(init(mod1)$EV1, 1456)
 })
 
 
 test_that("Initials update via init and data.frame ",{
   
-  mod1 <- mod %>% init(data.frame(CENT=987,DEPOT=654))
+  mod1 <- mod %>% init(data.frame(CENT=987,EV1=654))
   expect_equal(init(mod1)$CENT, 987)
-  expect_equal(init(mod1)$DEPOT, 654)
+  expect_equal(init(mod1)$EV1, 654)
 })
 
 test_that("Initial conditions update properly via update()",{
-  expect_equal(init(mod6)$DEPOT,5566)
+  expect_equal(init(mod6)$EV1,5566)
 })
 
 context("Test updates: solver settings")

@@ -18,7 +18,7 @@ $PARAM CL=1, V=20, KA=1.1
 $CMT CENT
 $PKMODEL ncmt=1
 '
-pred2 <- mread("test13.2", tempdir(), code2)
+pred2 <- mcode("test13.2", code2)
 
 
 # 
@@ -122,9 +122,9 @@ $CMT CENT PER
 $PKMODEL ncmt=2
 '
 
-ode <- mread(code=ode_code, model="test13.3", project=tmp) 
+ode <- mcode("test13_3",ode_code) 
 #pred <- mread(code=pred_code, model="test13.4", project=tmp)
-pred2 <- mread(code=pred2, model="test13.5", project=tmp)
+pred2 <- mcode("test13_5",pred2)
 
 
 # 
