@@ -29,14 +29,13 @@ variances have initial value of zero and may be updated via \code{\link{omat}}.
 
 mod <- pkmodel(1)
 
-mod <- pkmodel(1,TRUE)
-
 mod \%>\% ev(amt=1000, ii=24, addl=3) \%>\% mrgsim(end=120)
 
+\dontrun{
+mod <- pkmodel(1,TRUE)
 mod <- pkmodel(2)
-
 mod <- pkmodel(2,TRUE)
-
+}
 
 
 
