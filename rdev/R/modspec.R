@@ -91,38 +91,6 @@ fixed_parameters <- function(x,fixed_type) {
   )
 }
 
-## A random file name
-so_stem <- function(x) paste0(x,"-so-")
-
-rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
-  basename(tempfile(pattern=so_stem(pattern),tmpdir='.'))
-}
-
-## Form a file name / path for the file that is actually compiled
-comppart <- "-mread-source"
-
-compbase <- function(model) paste0(model, comppart)
-
-compfile <- function(model) paste0(model, comppart,".cpp")
-
-compout  <- function(model) paste0(model, comppart, .Platform$dynlib.ext)
-
-compdir <- function() {
-  paste(c("mrgsolve","so",
-          as.character(GLOBALS[["version"]]),
-          R.version$platform),collapse="-")
-}
-
-cachefile <- function(model) "model-cache.RDS"
-
-setup_soloc <- function(loc,model) {
-  
-  soloc <- file.path(loc,compdir(),model)
-  
-  if(!file_exists(soloc)) dir.create(soloc,recursive=TRUE)
-  
-  return(soloc)
-}
 
 
 ##' Parse model specification text.

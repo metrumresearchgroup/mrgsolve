@@ -52,12 +52,11 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   
   const unsigned int capn = capturei.at(0);
   
-  odeproblem prob(param, init, funs, capn);
+  odeproblem* prob = new odeproblem(param, init, funs, capn);
+  prob->copy_parin(parin);
+  prob->neta(nre[0]);
+  prob->neps(nre[1]);
   
-  prob.copy_parin(parin);
-  prob.neta(nre[0]);
-  prob.neps(nre[1]);
-
   const unsigned int NN = n[0] * idata.nrow();
   const unsigned int nreq = req.size();
   
@@ -83,16 +82,16 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   // Simulate each individual
   for(size_t i = 0; i < irow; ++i) {
     
-    idat.copy_parameters(i,&prob);
+    idat.copy_parameters(i,prob);
     
-    prob.y_init(init);
-    prob.init_call(tto);
-    prob.lsoda_init();
+    prob->y_init(init);
+    prob->init_call(tto);
+    prob->lsoda_init();
     
     ID = idata(i,0);
-    prob.reset_newid(ID);
+    prob->reset_newid(ID);
     
-    if(i==0) prob.newind(0);
+    if(i==0) prob->newind(0);
     
     tfrom = time[0];
     
@@ -102,14 +101,14 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
       skip = false;
       
       if(j==0) {
-        prob.newind(1);
+        prob->newind(1);
       } else {
-        prob.newind(2); 
+        prob->newind(2); 
       }
       
       tto = time[j];
       
-      prob.advance(tfrom,tto);
+      prob->advance(tfrom,tto);
       
       switch(int(evid[j])) {
       case 0:
@@ -117,36 +116,38 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
       case 1: 
         skip = true;
         if(rate[j] > 0) {
-          prob.rate_bump(cmt[j],rate[j]);
+          prob->rate_bump(cmt[j],rate[j]);
         } else {
-          prob.y_add(cmt[j],amt[j]);
+          prob->y_add(cmt[j],amt[j]);
         }
-        prob.lsoda_init();
+        prob->lsoda_init();
         break;
       case 9: 
-        prob.rate_bump(cmt[j],-1*rate[j]);
+        prob->rate_bump(cmt[j],-1.0*rate[j]);
         skip = true;
-        prob.lsoda_init();
+        prob->lsoda_init();
         break;
       default:
         break;
       }
       
-      prob.table_call();
+      prob->table_call();
       tfrom = tto;
       
       if(!skip) {
         ans(crow,0) = ID;
         ans(crow,1) = time[j];
-        for(k = 0; k < nreq;  ++k) ans(crow,2+k) = prob.y(req[k]);
+        for(k = 0; k < nreq;  ++k) {
+          ans(crow,2+k) = prob->y(req[k]);
+        }
         for(k = 0; k < capn; ++k) {
-          ans(crow,capstart+k) = prob.capture(capturei[1+k]); 
+          ans(crow,capstart+k) = prob->capture(capturei[1+k]); 
         }
         ++crow;
       }
-      
     }
   }
+  delete prob;
   return ans;
 }
 

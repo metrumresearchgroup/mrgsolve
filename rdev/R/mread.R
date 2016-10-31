@@ -192,20 +192,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
-  
-  # 
-  # if(raw) {
-  #   return(list(param = as.numeric(param),
-  #               init=as.numeric(init),
-  #               sigma=omega,
-  #               sigma=sigma,
-  #               SET=unlist(SET),
-  #               ENV=unlist(ENV),
-  #               GLOBAL=spec[["GLOBAL"]],
-  #               fixed=fixed,
-  #               table=table))
-  # }
-  # 
+
   
   ## Constructor for model object:
   x <- new("mrgmod",
@@ -313,25 +300,26 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   x@shlib$par <- names(param(x))
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- file.path(build$soloc,compfile(model))
+  x@shlib$source <- file.path(build$soloc,build$compfile)
   x@shlib$md5 <- build$md5
   
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
   
+  
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-  
-  ## this gets written in soloc
-  write_win_def(x)
-  
   on.exit({
-    do_restore(to_restore)
     setwd(cwd)
+    do_restore(to_restore)
   })
+  ## this gets written in soloc
+  #write_build_env(build)
+  write_win_def(x)
+  #do_restore(to_restore)
   
   same <- check_and_copy(from = temp_write,
-                         to = compfile(model(x)),
+                         to = build$compfile,
                          preclean)
   
   if(!compile) return(x)
@@ -350,7 +338,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  .Platform$file.sep,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
-                 compfile(model(x)))
+                 build$compfile)
   
   status <- suppressWarnings(system(syst,
                                     intern=ignore.stdout,
@@ -365,18 +353,18 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
   } else { ## intern
     
-    output <- status
+    output <- err <- status
     
     attributes(output) <- NULL
     
     status <- attr(status, "status")
     
-    comp_success <- is.null(status) & file_exists(compout(model))
+    comp_success <- is.null(status) & file_exists(build$compout)
     
     if(!comp_success) {
-      cat(output, sep="\n") 
+      cat(err, sep="\n") 
       cat("\n\n")
-      stop("There was a problem when compiling the model.",call.=FALSE);
+      stop("There was a problem when compiling the model. " ,err, call.=FALSE);
     } 
     if(!quiet) message("done.")
   }
@@ -384,7 +372,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  z <- file.copy(compout(model),sodll(x))
+  z <- file.copy(build$compout,sodll(x))
   
   dyn.load(sodll(x))
   
