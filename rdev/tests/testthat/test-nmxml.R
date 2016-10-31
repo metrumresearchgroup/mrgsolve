@@ -26,7 +26,7 @@ $ODE dxdt_CENT=0;
 tmp <- tempdir()
 
 test_that("Model spec with $NMXML block can be parsed", {
-  expect_is(mread(code=code,basename(tempfile()), project=tmp,warn=FALSE),"mrgmod")
+  expect_is(mcode("nmxml1", code,warn=FALSE),"mrgmod")
 })
 
 mod <- mcode("test6", code)
@@ -79,7 +79,7 @@ $SIGMA @name sg @block
 $PARAM CL=1
 $INIT CENT=0
 '
-mod <- mread(code=code, project=tmp, model="test6b")
+mod <- mcode("test6b",code)
 
 context("User OMEGA and SIGMA matrices are loaded correctly")
 
@@ -156,7 +156,7 @@ $SIGMA
 
 '
 
-mod <- mread("tst_mat_update", tempdir(),code)
+mod <- mcode("tst_mat_update",code)
 context("Testing unnamed matrix updates")
 
 a <- dmat(1,2,3)
@@ -177,7 +177,7 @@ $NMXML
 project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 '
-mod <- mread(code=code, basename(tempfile()),project=tempdir(),warn=FALSE)
+mod <- mcode("nmxml512",code,warn=FALSE)
 
 
 test_that("No matrices when name not given", {
@@ -191,7 +191,7 @@ project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 omega=TRUE
 '
-mod <- mread(code=code, basename(tempfile()),project=tempdir(),warn=FALSE)
+mod <- mcode("nmxml2231",code,warn=FALSE)
 
 test_that("Get theta and omega", {
   expect_true(nrow(omat(mod))==3)
@@ -220,7 +220,7 @@ $SIGMA @labels h i j k l
 1 2 3 4 5
 
 '
-mod <- mread("label1", tempdir(),code,warn=FALSE)
+mod <- mcode("label1", code,warn=FALSE)
 
 
 test_that("Model compiles", {

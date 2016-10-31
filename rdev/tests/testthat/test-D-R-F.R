@@ -113,7 +113,7 @@ $CMT CENT
 $ODE dxdt_CENT = -0.1*CENT;
 '
 
-mod <- mread("test11RF",tempdir(),code) %>% update(delta=0.1)
+mod <- mcode("test11RF",code) %>% update(delta=0.1)
 
 out <- mod %>% ev(amt=1000,  rate=-1) %>% mrgsim
 out2 <- mod %>% ev(amt=1000, rate=-1, F1=0.5) %>% mrgsim

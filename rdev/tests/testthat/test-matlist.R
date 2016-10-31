@@ -19,7 +19,7 @@ $SIGMA 0 0 0
 
 tmp <- tempdir()
 
-mod <- mread(code=code, project=tmp, model="test4")
+mod <- mcode("test4",code)
 
 
 mod <- mod %>% omat(diag(c(1.2, 2.3,3.4))) %>% smat(diag(c(0.1, 0.2, 0.3)))
