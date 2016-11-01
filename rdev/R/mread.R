@@ -364,7 +364,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     if(!comp_success) {
       cat(err, sep="\n") 
       cat("\n\n")
-      stop("There was a problem when compiling the model. " ,err, call.=FALSE);
+      stop(paste0("There was a problem when compiling the model. " ,err), call.=FALSE);
     } 
     if(!quiet) message("done.")
   }
