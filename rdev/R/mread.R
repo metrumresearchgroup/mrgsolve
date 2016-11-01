@@ -348,7 +348,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     if(status != "0") {
       cat("\n\n")
-      stop("There was a problem when compiling the model.",call.=FALSE)
+      stop("There was a problem with compiling the model.",call.=FALSE)
     }
     
   } else { ## intern
