@@ -1,9 +1,9 @@
-library(mrgsolve)
 library(testthat)
 library(mrgsolve)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
+
 end <- 60
 delta <- 3
 n <- length(seq(0,end,delta))

@@ -1,8 +1,8 @@
-library(mrgsolve)
 library(testthat)
-
-
+library(mrgsolve)
+library(dplyr)
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
@@ -19,8 +19,6 @@ $CAPTURE b  z
 '
 
 mod <- mcode("req1", code)
-touch_funs(mod,FALSE)
-
 
 context("test-request")
 
@@ -73,7 +71,7 @@ double EPS1 = 1.2;
 $CAPTURE CP FLAG ETA1 EPS1
 '
 
-mod <- suppressWarnings(mcode("test3", code))
+mod <- suppressWarnings(mcode("test3tga", code))
 
 test_that("Testing request setting", {
   out <- mrgsim(mod, request="PERIPH,CENT")
@@ -103,7 +101,7 @@ double EPS1 = EPS(1);
 
 
 test_that("Testing that request is properly set in $SET", {
-  mod <- suppressWarnings(mcode("test3b",code))
+  mod <- suppressWarnings(mcode("test3bqea",code))
   cols <- names(mrgsim(mod))
   expect_identical(mod@request, "CENT")
   expect_identical(update(mod, req=c("PERIPH", "GUT"))@request, c("PERIPH", "GUT"))
@@ -139,7 +137,7 @@ test_that("Typedef capture", {
   double capture_n = 999;
   '
   
-  mod <- mcode("test3d", code)
+  mod <- mcode("test3dbbae", code)
   
   out <- mod %>% mrgsim(end=3)
   
@@ -155,7 +153,7 @@ test_that("Typedef capture", {
   double cc = 33;
   dxdt_CM_T = 0;
   '
-  expect_error(mod <- mcode("test3e", code))
+  expect_error(mod <- mcode("test3ewerw", code))
 
 })
 

@@ -1,11 +1,11 @@
-library(mrgsolve)
 library(testthat)
-
-
+library(mrgsolve)
+library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
-project <- file.path(system.file(package="mrgsolve"), "models")
 
+
+project <- file.path(system.file(package="mrgsolve"), "models")
 
 context("Test knobs")
 mod <- mread("firstmodel", project,atol=1E-20, rtol=1E-12, digits=8)

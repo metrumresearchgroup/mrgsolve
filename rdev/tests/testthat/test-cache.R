@@ -1,9 +1,9 @@
-library(mrgsolve)
 library(testthat)
 library(mrgsolve)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
+
 context("test-cache")
 
 mrgsolve:::update_wait_time(0)
@@ -47,5 +47,5 @@ test_that("model caches via mcode_cache", {
 })
 
 
-mrgsolve:::update_wait_time(1)
+mrgsolve:::update_wait_time(3)
 

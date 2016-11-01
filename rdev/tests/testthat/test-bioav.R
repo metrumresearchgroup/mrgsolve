@@ -1,10 +1,9 @@
-
-library(mrgsolve)
 library(testthat)
-
-
-
+library(mrgsolve)
+library(dplyr)
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
+
 
 code <- '
 $PARAM CL=1, FORM=1,F1 = 0.1

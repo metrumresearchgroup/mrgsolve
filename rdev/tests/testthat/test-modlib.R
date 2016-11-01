@@ -1,12 +1,9 @@
-
-
-library(mrgsolve)
 library(testthat)
+library(mrgsolve)
 library(dplyr)
-
-
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
+
 
 context("test-modlib models")
 
@@ -26,7 +23,7 @@ test_that("Lagged bolus", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
-  x <- test_lib("pk2cmt")
+  x <- test_lib("pk3cmt")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   

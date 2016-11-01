@@ -1,9 +1,8 @@
-library(mrgsolve)
 library(testthat)
 library(mrgsolve)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
 
 code1 <- '
 $SET request=""
@@ -12,7 +11,7 @@ $PARAM A = 0, B = 0, C = 0
 $CAPTURE A B C
 ' 
 
-mod1 <- mcode("code1", code1, warn=FALSE)
+mod1 <- mcode("code1eekd", code1, warn=FALSE)
 
 context("test-update")
 

@@ -1,14 +1,17 @@
-library(mrgsolve)
 library(testthat)
-
+library(mrgsolve)
+library(dplyr)
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-modspec")
 
 options(mrgsolve_mread_quiet=TRUE)
 
-mtemp <- function(...) mcode(model="tmp",..., compile=FALSE)
-
+mtemp <- function(...) {
+  
+  mcode(model=basename(tempfile()),..., compile=FALSE)
+}
 test_that("Parse matrix", {
   
   code <- "$OMEGA \n 1 2 \n 3"
