@@ -208,7 +208,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param = as.param(param),
            init = as.init(init),
            funs = funs_create(model),
-           capture = as.character(spec[["CAPTURE"]])
+           capture = as.character(spec[["CAPTURE"]]),
+           envir = ENV, 
+           plugin = names(plugin)
   )
   
   x <- store_annot(x,annot)

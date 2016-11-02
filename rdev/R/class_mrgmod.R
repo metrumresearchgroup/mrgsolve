@@ -89,7 +89,9 @@ protomod <- list(model=character(0),
                  trans=1,
                  mindt=10*.Machine$double.eps,
                  code = character(0),
-                 annot = list()
+                 annot = list(),
+                 envir = new.env(),
+                 plugin = character(0)
 )
 slot.names <- names(protomod)
 slots <- sapply(protomod, class)

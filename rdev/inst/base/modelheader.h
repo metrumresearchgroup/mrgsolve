@@ -28,6 +28,7 @@ struct databox {
   const double ID;
   bool CFONSTOP;
   void* omatrix;
+  void* envir;
 };
 
 

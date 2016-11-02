@@ -6,7 +6,7 @@ include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
 
 get_plugins <- function(what) {
-  what <- c(what, "base")
+  what <- c(cvec_cs(what), "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 

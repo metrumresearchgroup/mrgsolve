@@ -377,7 +377,8 @@ tran_mrgsim <- function(x,
                pointers(x),
                data,idata,
                as.matrix(omat(x)),
-               as.matrix(smat(x)))
+               as.matrix(smat(x)),
+               x@envir)
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case

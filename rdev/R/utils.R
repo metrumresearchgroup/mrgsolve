@@ -446,4 +446,10 @@ file_readable <- function(x) {
 }
 
 
+mrgnorm <- function(n,sigma) {
+  ncols <- ncol(sigma)
+  matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
+}
+
+
 

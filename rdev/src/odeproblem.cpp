@@ -9,7 +9,7 @@
 
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
-
+static Rcpp::Environment mtenv = Rcpp::new_env();
 #define MRGSOLVE_MAX_SS_ITER 1000
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
@@ -42,6 +42,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.ETA.resize(50,0.0);
   d.CFONSTOP = false;
   d.omatrix = static_cast<void*>(&OMGADEF);
+  d.envir = static_cast<void*>(&mtenv);
   
   
   
@@ -669,14 +670,15 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
                       const Rcpp::NumericVector& linit,
                       int Neta, int Neps,
                       const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs) {
+                      const Rcpp::List& funs,
+                      Rcpp::Environment envir) {
   
   Rcpp::List ans;
   
   odeproblem prob(lparam, linit, funs, capture.size());
   prob.neta(Neta);
   prob.neps(Neps);
-  
+  prob.pass_envir(&envir);
   prob.newind(0);
   
   prob.init_call(0.0);

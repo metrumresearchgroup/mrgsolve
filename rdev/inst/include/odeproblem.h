@@ -47,6 +47,7 @@ struct databox {
   double ID;
   bool CFONSTOP;
   void* omatrix;
+  void* envir;
 };
 
 
@@ -104,6 +105,7 @@ public:
   void confg_call();
   
   void pass_omega(arma::mat*);
+  void pass_envir(Rcpp::Environment* x){d.envir=reinterpret_cast<void*>(x);};
   
   bool CFONSTOP(){return d.CFONSTOP;}
   

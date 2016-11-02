@@ -47,7 +47,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::NumericMatrix& data,
                    const Rcpp::NumericMatrix& idata,
                    Rcpp::NumericMatrix& OMEGA,
-                   Rcpp::NumericMatrix& SIGMA) {
+                   Rcpp::NumericMatrix& SIGMA,
+                   Rcpp::Environment envir) {
   
   const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   const bool debug            = Rcpp::as<bool>   (parin["debug"]);
@@ -131,6 +132,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
   prob->pass_omega(&OMEGA_);
   prob->copy_parin(parin);
+  prob->pass_envir(&envir);
   const unsigned int neq = prob->neq();
   
   // Allocate the record list:
