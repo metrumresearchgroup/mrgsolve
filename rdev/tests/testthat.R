@@ -1,6 +1,8 @@
 Sys.setenv("R_TESTS" = "")
 library(testthat)
 library(mrgsolve)
-loadNamespace("dplyr")
-#test_check("mrgsolve",reporter="summary",filter="env")
-test_dir("testthat")
+
+if(.Platform$OS.type != "windows") {
+  test_check("mrgsolve",reporter="summary")
+}
+
