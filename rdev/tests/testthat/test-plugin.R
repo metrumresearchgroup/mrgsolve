@@ -35,8 +35,6 @@ test_that("Rcpp all distributions", {
 
 
 code <- '
-$PLUGIN simeta
-
 $OMEGA 1 1 3
 
 $MAIN
@@ -50,7 +48,7 @@ if(NEWIND <= 1) {
   int i = 0;
 
   while(fabs(b) > 1 && i < 100) {
-    mrgx::simeta(_omega,_eta);
+    simeta();
     b = ETA(2);
     i++;
   }
@@ -60,6 +58,7 @@ double c = ETA(3);
 
 $CAPTURE a b c
 '
+
 
 context("PLUGIN: simeta")
 

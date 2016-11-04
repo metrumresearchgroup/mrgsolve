@@ -33,6 +33,10 @@ typedef std::vector<reclist> recstack;
 #define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1])
 #define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4])
 
+// 
+// resim functor comes from mrgsolv.h
+// so it can get defined in the model
+// 
 
 class odeproblem;
 
@@ -46,7 +50,6 @@ struct databox {
   dvec mtime;
   double ID;
   bool CFONSTOP;
-  void* omatrix;
   void* envir;
 };
 
@@ -78,6 +81,10 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
   b = reinterpret_cast<T>(R_ExternalPtrAddr(a));
 }
 
+void dosimeta(void*);
+void dosimeps(void*);
+
+
 class odeproblem : public odepack_dlsoda {
   
   
@@ -104,7 +111,12 @@ public:
   void table_init_call();
   void confg_call();
   
-  void pass_omega(arma::mat*);
+  void omega(arma::mat x) {Omega = x;}
+  void sigma(arma::mat x) {Sigma = x;}
+  
+  arma::mat mv_omega(int n);
+  arma::mat mv_sigma(int n);
+
   void pass_envir(Rcpp::Environment* x){d.envir=reinterpret_cast<void*>(x);};
   
   bool CFONSTOP(){return d.CFONSTOP;}
@@ -163,8 +175,7 @@ public:
   
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
-  
-  
+
 protected:
   
   //! parameters
@@ -209,11 +220,17 @@ protected:
   int Advan;
   dvec a;
   dvec alpha;
-  //
   
-  
+  resim simeta;
+  resim simeps;
+
+  arma::mat Omega;
+  arma::mat Sigma;
+    
   dvec pred;
   dvec Capture;
+  
+
   
 };
 

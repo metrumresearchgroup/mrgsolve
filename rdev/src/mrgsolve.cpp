@@ -93,6 +93,12 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
   
   arma::mat OMEGA(OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
   
+  return MVGAUSS(OMEGA,n);
+  
+}
+
+arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
+
   arma::vec eigval;
   arma::mat eigvec;
   arma::eig_sym(eigval,eigvec, OMEGA);
@@ -109,6 +115,8 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
   
   return X.t();
 }
+
+
 
 //[[Rcpp::export]]
 void decorr(Rcpp::NumericMatrix& x) {

@@ -27,7 +27,6 @@ struct databox {
   dvec mtime;
   const double ID;
   bool CFONSTOP;
-  void* omatrix;
   void* envir;
 };
 

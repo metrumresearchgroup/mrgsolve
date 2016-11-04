@@ -8,6 +8,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom stats setNames
 ##' @importFrom RcppArmadillo armadillo_version
+##' @importFrom stats rnorm
 ##'
 
 # 

@@ -61,7 +61,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
 
-  
   // Create data objects from data and idata
   dataobject dat(data,parnames);
   dat.map_uid();
@@ -129,8 +128,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Create odeproblem object  
   odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
-  arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
-  prob->pass_omega(&OMEGA_);
+  arma::mat OMEGA_(OMEGA.begin(),OMEGA.nrow(),OMEGA.ncol(),false);
+  arma::mat SIGMA_(SIGMA.begin(),SIGMA.nrow(),SIGMA.ncol(),false);
+  prob->omega(OMEGA_);
+  prob->sigma(SIGMA_);
   prob->copy_parin(parin);
   prob->pass_envir(&envir);
   const unsigned int neq = prob->neq();
@@ -259,14 +260,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neta = OMEGA.nrow();
   arma::mat eta;
   if(neta > 0) {
-    eta = MVGAUSS(OMEGA,NID);
+    eta = prob->mv_omega(NID);
     prob->neta(neta);
   }
   
   const unsigned int neps = SIGMA.nrow();
   arma::mat eps;
   if(neps > 0) {
-    eps = MVGAUSS(SIGMA, NN);
+    eps = prob->mv_sigma(NN);
     prob->neps(neps);
   }
   

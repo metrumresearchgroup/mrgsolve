@@ -1,6 +1,6 @@
 includes <- new.env()
 plugins <- new.env()
-plugins[[".depends"]] <- list(mrgx=c("Rcpp"),simeta=c("RcppArmadillo"))
+plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
@@ -99,10 +99,10 @@ plugins[["base"]] <- list(
   linkto="mrgsolve/base", name="base"
 )
 
-plugins[["simeta"]] <- list(
-  linkto="mrgsolve/mrgx",
-  code='#include "simeta.h"\n',name="simeta"
-)
+# plugins[["simeta"]] <- list(
+#   linkto="mrgsolve/mrgx",
+#   code='#include "simeta.h"\n',name="simeta"
+# )
 
 plugins[["mrgx"]] <- list(
   linkto="mrgsolve/mrgx",
