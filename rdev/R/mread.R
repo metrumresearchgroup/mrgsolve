@@ -175,6 +175,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
 
+  ans <- check_globals(mread.env$move_global,names(init))
+  if(length(ans) > 0) {
+    stop(ans, call.=FALSE) 
+  }
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)

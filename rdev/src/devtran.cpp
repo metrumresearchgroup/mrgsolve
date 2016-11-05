@@ -398,6 +398,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       this_rec->id(id);
       
+ 
       // Fill in the remaining records once system is turned off
       if(prob->systemoff()) {
         if(this_rec->output()) {
@@ -440,8 +441,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       }
       
-      prob->evid(this_rec->evid());
-      
+      prob->set_d(this_rec);
       prob->init_call_record(tto);
       
       // Schedule ADDL and infusion end times

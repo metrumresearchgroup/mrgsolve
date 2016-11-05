@@ -49,6 +49,8 @@ struct databox {
   bool SYSTEMOFF;
   dvec mtime;
   double ID;
+  double amt;
+  short int cmt;
   bool CFONSTOP;
   void* envir;
 };
@@ -111,8 +113,7 @@ public:
   void table_init_call();
   void confg_call();
   
-  void omega(arma::mat x) {Omega = x;}
-  void sigma(arma::mat x) {Sigma = x;}
+  void set_d(rec_ptr this_rec);
   
   void omega(Rcpp::NumericMatrix& x);
   void sigma(Rcpp::NumericMatrix& x);
@@ -160,9 +161,7 @@ public:
   void time(double time_){d.time = time_;}
   void newind(unsigned int newind_){d.newind = newind_;}
   unsigned int newind(){return d.newind;}
-  
-  void evid(int evid_){d.evid = evid_;}
-  
+
   void advan(int x);
   int  advan(){return Advan;}
   void advan2(const double& tfrom, const double& tto);

@@ -58,11 +58,11 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.time = 0.0;
   d.ID = 1.0;
   d.EPS.assign(50,0.0);
-  d.ETA.resize(50,0.0);
+  d.ETA.assign(50,0.0);
   d.CFONSTOP = false;
-  
-  //d.envir = static_cast<void*>(&Rcpp::new_env());
-  
+  d.cmt = 0;
+  d.amt = 0;
+
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
@@ -152,6 +152,13 @@ void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
 }
 
 
+void odeproblem::set_d(rec_ptr this_rec) {
+  d.time = this_rec->time();
+  d.cmt = this_rec->cmt();
+  d.evid = this_rec->evid();
+  d.amt = this_rec->amt();
+}
+
 /**
  * Call $MAIN to get the initial conditions.
  * 
@@ -191,13 +198,13 @@ void odeproblem::init_call_record(const double& time) {
 void odeproblem::table_call() {
   Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps);  
 }
-
-void odeproblem::table_init_call() {
-  d.time = 0.0;
-  d.newind = 0;
-  d.evid = 0;
-  this->table_call();
-}
+// 
+// void odeproblem::table_init_call() {
+//   d.time = 0.0;
+//   d.newind = 0;
+//   d.evid = 0;
+//   this->table_call();
+// }
 
 void odeproblem::rate_reset() {
   for(int i = 0; i < Neq; ++i) {

@@ -169,13 +169,19 @@ move_global <- function(x,env) {
   
   # Keep names in here for later
   l <- lapply(x[what], get_c_vars)
+  ll <- unlist(l, use.names=FALSE)
   
   env[["global"]] <- c("typedef double capture;",
                        "namespace {",
-                       paste0("  ",unlist(l, use.names=FALSE)),
+                       paste0("  ",ll),
                        "}",
                        local_var_typedef)
   
+  ll <- cvec_cs(unlist(ll,use.names=FALSE))
+  ll <- gsub(";","",ll,fixed=TRUE)
+  ll <- setdiff(ll, c("double", "int", "bool", "capture"))
+  env$move_global <- ll
+
   cap <- vector("list")
   
   for(w in what) {
@@ -728,9 +734,9 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   
   check_block_data(x,env$ENV,pos)
   
-  if("mrgx" %in% x) {
-    warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
-  }
+  # if("mrgx" %in% x) {
+  #   warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
+  # }
   if(length(x) ==0) return(list())
   return(x)
 }

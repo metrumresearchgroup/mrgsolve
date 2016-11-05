@@ -26,13 +26,13 @@ struct databox {
   bool SYSTEMOFF;
   dvec mtime;
   const double ID;
+  const double amt;
+  const short int cmt;
   bool CFONSTOP;
   void* envir;
 };
 
 
-#define _omega (_databox_.omatrix)
-#define _eta (_databox_.ETA)
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct
@@ -76,15 +76,15 @@ struct databox {
 
 
 // New individual flag
-#define NEWIND _databox_.newind
+#define NEWIND self.newind
 // The data set time
-#define TIME _databox_.time
+#define TIME self.time
 // The ode solver time
 #define SOLVERTIME _ODETIME_[0]
 // Event ID
-#define EVID _databox_.evid
+#define EVID self.evid
 // Data set individual
-#define ID _databox_.ID
+#define ID self.ID
 
 
 // These are the fundamental macros for
@@ -100,21 +100,21 @@ struct databox {
 // random effects.  These might get used,
 // but users are allowed to insert labels to
 // avoid directly accessing the macros.
-#define ETA(a) _databox_.ETA.at(a-1)
-#define EPS(a) _databox_.EPS.at(a-1)
-#define _xETA(a) _databox_.ETA[a-1]
-#define _xEPS(a) _databox_.EPS[a-1]
+#define ETA(a) self.ETA.at(a-1)
+#define EPS(a) self.EPS.at(a-1)
+#define _xETA(a) self.ETA[a-1]
+#define _xEPS(a) self.EPS[a-1]
 
 // Number of equations
 #define _NEQ (_A_0_.size())
 
 // Macros related to stopping the advance of the system
 // once a condition is met
-#define SYSTEMSTOPADVANCING() (_databox_.SYSTEMOFF=true);
+#define SYSTEMSTOPADVANCING() (self.SYSTEMOFF=true);
 #define STOPADVANCING() SYSTEMSTOPADVANCING()  // Not sure why this is here
-#define CFONSTOP() (_databox_.CFONSTOP = true); // Carry forward on stop
-#define SYSTEMNOTADVANCING (_databox_.SYSTEMOFF)
-#define SOLVINGPROBLEM (_databox_.solving)
+#define CFONSTOP() (self.CFONSTOP = true); // Carry forward on stop
+#define SYSTEMNOTADVANCING (self.SYSTEMOFF)
+#define SOLVINGPROBLEM (self.solving)
 #define _SETINIT if(NEWIND <=1) // Convenience
 
 // Macro to insert dxdt_CMT = 0; for all compartments
