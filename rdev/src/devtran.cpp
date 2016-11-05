@@ -128,10 +128,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Create odeproblem object  
   odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
-  arma::mat OMEGA_(OMEGA.begin(),OMEGA.nrow(),OMEGA.ncol(),false);
-  arma::mat SIGMA_(SIGMA.begin(),SIGMA.nrow(),SIGMA.ncol(),false);
-  prob->omega(OMEGA_);
-  prob->sigma(SIGMA_);
+  prob->omega(OMEGA);
+  prob->sigma(SIGMA);
   prob->copy_parin(parin);
   prob->pass_envir(&envir);
   const unsigned int neq = prob->neq();

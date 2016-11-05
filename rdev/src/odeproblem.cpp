@@ -77,7 +77,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   simeta = resim(&dosimeta,reinterpret_cast<void*>(this));
   simeps = resim(&dosimeps,reinterpret_cast<void*>(this));
-
+  
 }
 
 
@@ -712,12 +712,12 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   return(ans);
 }
 
-// void odeproblem::omega(Rcpp::NumericMatrix& x) {
-//   Omega(x.begin(), x.nrow(), x.ncol(),false);
-// }
-// void odeproblem::sigma(Rcpp::NumericMatrix& x) {
-//   Sigma(x.begin(), x.nrow(), x.ncol(),false);
-// }
+void odeproblem::omega(Rcpp::NumericMatrix& x) {
+  Omega = Rcpp::as<arma::mat>(x);
+}
+void odeproblem::sigma(Rcpp::NumericMatrix& x) {
+  Sigma = Rcpp::as<arma::mat>(x);
+}
 
 arma::mat odeproblem::mv_omega(int n) {
   return MVGAUSS(Omega,n);

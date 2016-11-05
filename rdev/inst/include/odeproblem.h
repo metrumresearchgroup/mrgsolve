@@ -114,6 +114,9 @@ public:
   void omega(arma::mat x) {Omega = x;}
   void sigma(arma::mat x) {Sigma = x;}
   
+  void omega(Rcpp::NumericMatrix& x);
+  void sigma(Rcpp::NumericMatrix& x);
+  
   arma::mat mv_omega(int n);
   arma::mat mv_sigma(int n);
 
