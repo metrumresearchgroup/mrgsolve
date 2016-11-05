@@ -18,7 +18,7 @@ typedef bool local_bool;
 
 // A box of data that gets passed to $MAIN and $TABLE
 struct databox {
-  dvec ETA;
+  const dvec ETA;
   const dvec EPS;
   const unsigned int newind;
   const double time;
