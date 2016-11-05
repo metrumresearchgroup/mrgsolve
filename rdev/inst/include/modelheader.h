@@ -84,7 +84,7 @@ struct databox {
 // Event ID
 #define EVID self.evid
 // Data set individual
-#define ID self.ID
+#define ID self.id
 
 
 // These are the fundamental macros for
@@ -115,7 +115,7 @@ struct databox {
 #define CFONSTOP() (self.CFONSTOP = true); // Carry forward on stop
 #define SYSTEMNOTADVANCING (self.SYSTEMOFF)
 #define SOLVINGPROBLEM (self.solving)
-#define _SETINIT if(NEWIND <=1) // Convenience
+#define _SETINIT if(self.newind <=1) // Convenience
 
 // Macro to insert dxdt_CMT = 0; for all compartments
 #define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; ++_i_) _DADT_[_i_] = 0;
