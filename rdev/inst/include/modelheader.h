@@ -25,7 +25,7 @@ struct databox {
   const int evid;
   bool SYSTEMOFF;
   dvec mtime;
-  const double ID;
+  const double id;
   const double amt;
   const short int cmt;
   bool CFONSTOP;

@@ -56,7 +56,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
-  d.ID = 1.0;
+  d.id = 1.0;
   d.EPS.assign(50,0.0);
   d.ETA.assign(50,0.0);
   d.CFONSTOP = false;
@@ -232,7 +232,7 @@ void odeproblem::reset_newid(const double id_) {
   
   d.SYSTEMOFF=false;
   this->lsoda_init();
-  d.ID = id_;
+  d.id = id_;
 }
 
 

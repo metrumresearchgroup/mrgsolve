@@ -48,7 +48,7 @@ struct databox {
   int evid;
   bool SYSTEMOFF;
   dvec mtime;
-  double ID;
+  double id;
   double amt;
   short int cmt;
   bool CFONSTOP;
