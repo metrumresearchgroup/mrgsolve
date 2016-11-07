@@ -47,7 +47,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::NumericMatrix& data,
                    const Rcpp::NumericMatrix& idata,
                    Rcpp::NumericMatrix& OMEGA,
-                   Rcpp::NumericMatrix& SIGMA) {
+                   Rcpp::NumericMatrix& SIGMA,
+                   Rcpp::Environment envir) {
   
   const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   const bool debug            = Rcpp::as<bool>   (parin["debug"]);
@@ -60,7 +61,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
 
-  
   // Create data objects from data and idata
   dataobject dat(data,parnames);
   dat.map_uid();
@@ -128,9 +128,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Create odeproblem object  
   odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
-  arma::mat OMEGA_(OMEGA.begin(), OMEGA.nrow(), OMEGA.ncol(),false);
-  prob->pass_omega(&OMEGA_);
+  prob->omega(OMEGA);
+  prob->sigma(SIGMA);
   prob->copy_parin(parin);
+  prob->pass_envir(&envir);
   const unsigned int neq = prob->neq();
   
   // Allocate the record list:
@@ -257,14 +258,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neta = OMEGA.nrow();
   arma::mat eta;
   if(neta > 0) {
-    eta = MVGAUSS(OMEGA,NID);
+    eta = prob->mv_omega(NID);
     prob->neta(neta);
   }
   
   const unsigned int neps = SIGMA.nrow();
   arma::mat eps;
   if(neps > 0) {
-    eps = MVGAUSS(SIGMA, NN);
+    eps = prob->mv_sigma(NN);
     prob->neps(neps);
   }
   
@@ -391,8 +392,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(crow == NN) continue;
       
-      if(j != 0) prob->newind(2);
-      
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
@@ -439,9 +438,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       }
       
-      prob->evid(this_rec->evid());
+      prob->set_d(this_rec);
       
-      prob->init_call_record(tto);
+      if(j != 0) {
+        prob->newind(2);
+        prob->init_call_record(tto);
+      }  
       
       // Schedule ADDL and infusion end times
       if((this_rec->is_event()) && (this_rec->from_data())) {

@@ -1,9 +1,9 @@
-library(mrgsolve)
 library(testthat)
 library(mrgsolve)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
+
 
 code1 <- '
 $SET request="A,B,C", end=2, delta=1

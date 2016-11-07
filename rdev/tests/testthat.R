@@ -1,5 +1,8 @@
 Sys.setenv("R_TESTS" = "")
 library(testthat)
 library(mrgsolve)
-test_check("mrgsolve")
+
+if(.Platform$OS.type != "windows") {
+  test_check("mrgsolve",reporter="summary")
+}
 

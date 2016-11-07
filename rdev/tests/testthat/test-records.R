@@ -1,14 +1,8 @@
-
-#library(metrumrg)
 library(testthat)
-#library(MASS)
 library(mrgsolve)
-#library(magrittr)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
-
 
 mod <- mrgsolve:::house() %>% Req(CENT,RESP) 
 data(exidata) 

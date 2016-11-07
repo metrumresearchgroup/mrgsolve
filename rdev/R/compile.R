@@ -146,7 +146,7 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   neta <- sum(nrow(omat(x)))
   neps <- sum(nrow(smat(x)))
   
-  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,funp)
+  out <- .Call(mrgsolve_TOUCH_FUNS,param,init,neta,neps,x@capture,funp,x@envir)
   
   names(out$init) <- names(init)
   

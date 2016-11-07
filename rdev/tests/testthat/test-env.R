@@ -1,15 +1,13 @@
-library(mrgsolve)
 library(testthat)
+library(mrgsolve)
 library(dplyr)
-
-
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 context("Test $ENV")
 
 test_that("$ENV", {
-  mod <- mcode("test-env-1", "$ENV a <- 1\nb <- 2",compile=FALSE)
+  mod <- mcode("test_env_1", "$ENV a <- 1\nb <- 2",compile=FALSE)
   expect_is(mod, "mrgmod")
 })  
 
@@ -18,7 +16,7 @@ test_that("$ENV sub into $PARAM", {
   $ENV a <- 1; b <- 2
   $PARAM A = a, B = b
   '
-  mod <- mcode("test-env-2", code, compile=FALSE)
+  mod <- mcode("test_env_2", code, compile=FALSE)
   expect_is(mod, "mrgmod")
   expect_identical(mrgsolve:::pars(mod),c("A", "B"))
   expect_equivalent(as.numeric(param(mod)), c(1,2))
@@ -29,7 +27,7 @@ test_that("$ENV sub into $INIT", {
   $ENV a <- 1\n b <- 2
   $INIT A = a, B = b
   '
-  mod <- mcode("test-env-3", code, compile=FALSE)
+  mod <- mcode("test_env_3", code, compile=FALSE)
   expect_is(mod, "mrgmod")
   expect_identical(mrgsolve:::cmt(mod),c("A", "B"))
   expect_equivalent(as.numeric(init(mod)), c(1,2))

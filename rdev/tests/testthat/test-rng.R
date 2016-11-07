@@ -1,9 +1,8 @@
-library(mrgsolve)
 library(testthat)
-
+library(mrgsolve)
+library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
-
 
 context("R RNG respected via set.seed()")
 mod <- mrgsolve:::house(omega=diag(c(1,1,1,1)))

@@ -35,15 +35,37 @@ check_names <- function(x,par,cmt) {
   ## Also, look for any name that conflicts with
   ##   bioav, lag-time, or infusion duration or ate
   if(us) {
-    leading <- x[substr(x,1,1)=="_"]
-    if(length(leading) > 0) {
-      ans <- c(ans, paste0("Leading underscore not allowed: ", paste(leading, collapse=" "))) 
-    }
-    check <- as.character(sapply(c("F_", "ALAG_", "D_", "R_"),paste0,cmt))
-    iv_name <- intersect(x,check)
-    if(length(iv_name) > 0) {
-      ans <- c(ans, paste0("Reserved symbols in model names: ", iv_name))
-    }
+    ans <- check_us(x,cmt,ans)
+  }
+  return(ans)
+}
+
+
+check_us <- function(x,cmt,ans) {
+  leading <- x[substr(x,1,1)=="_"]
+  if(length(leading) > 0) {
+    ans <- c(ans, paste0("Leading underscore not allowed: ", paste(leading, collapse=" "))) 
+  }
+  check <- as.character(sapply(c("F_", "ALAG_", "D_", "R_"),paste0,cmt))
+  iv_name <- intersect(x,check)
+  if(length(iv_name) > 0) {
+    ans <- c(ans, paste0("Reserved symbols in model names: ", iv_name))
+  } 
+  return(ans)
+}
+
+
+
+check_globals <- function(x,cmt) {
+  ans <- character(0)
+  us <-  any(charthere(x,"_"))
+  res <- any(is.element(x,Reserved_cvar))
+  if(res) {
+    tmp <- paste(x[is.element(x,Reserved_cvar)],collapse=" ")
+    ans <- c(ans,paste0("Reserved words in model names: ",tmp))
+  }
+  if(us) {
+    ans <- check_us(x,cmt,ans) 
   }
   return(ans)
 }
@@ -89,7 +111,9 @@ protomod <- list(model=character(0),
                  trans=1,
                  mindt=10*.Machine$double.eps,
                  code = character(0),
-                 annot = list()
+                 annot = list(),
+                 envir = new.env(),
+                 plugin = character(0)
 )
 slot.names <- names(protomod)
 slots <- sapply(protomod, class)

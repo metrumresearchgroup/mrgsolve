@@ -11,6 +11,7 @@ void neg_istate(int  );
 extern "C"{DL_FUNC tofun(SEXP a);}
 
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
+arma::mat MVGAUSS(arma::mat& OMEGA_,int n);
 Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix& SIGMA, int seed);
 
 typedef std::map<std::string,int > si_map;

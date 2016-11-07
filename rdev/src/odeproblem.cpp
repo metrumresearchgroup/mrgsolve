@@ -6,11 +6,30 @@
 #include <vector>
 #include "RcppInclude.h"
 #include "odeproblem.h"
+#include "mrgsolve.h"
 
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
-
+//static Rcpp::Environment mtenv = Rcpp::new_env();
 #define MRGSOLVE_MAX_SS_ITER 1000
+
+
+void dosimeta(void* prob_) {
+  odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
+  arma::mat eta = prob->mv_omega(1);
+  for(unsigned int i=0; i < eta.n_cols; ++i) {
+    prob->eta(i,eta(0,i)); 
+  }
+}
+
+void dosimeps(void* prob_) {
+  odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
+  arma::mat eps = prob->mv_sigma(1);
+  for(unsigned int i=0; i < eps.n_cols; ++i) {
+    prob->eps(i,eps(0,i)); 
+  }
+}
+
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
@@ -37,14 +56,13 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.evid = 0;
   d.newind = 0;
   d.time = 0.0;
-  d.ID = 1.0;
+  d.id = 1.0;
   d.EPS.assign(50,0.0);
-  d.ETA.resize(50,0.0);
+  d.ETA.assign(50,0.0);
   d.CFONSTOP = false;
-  d.omatrix = static_cast<void*>(&OMGADEF);
-  
-  
-  
+  d.cmt = 0;
+  d.amt = 0;
+
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
@@ -56,6 +74,9 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Config = as_config_func(funs["config"]);
   
   Capture.assign(n_capture_,0.0);
+  
+  simeta = resim(&dosimeta,reinterpret_cast<void*>(this));
+  simeps = resim(&dosimeps,reinterpret_cast<void*>(this));
   
 }
 
@@ -131,6 +152,13 @@ void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
 }
 
 
+void odeproblem::set_d(rec_ptr this_rec) {
+  d.time = this_rec->time();
+  d.cmt = this_rec->cmt();
+  d.evid = this_rec->evid();
+  d.amt = this_rec->amt();
+}
+
 /**
  * Call $MAIN to get the initial conditions.
  * 
@@ -141,7 +169,7 @@ void odeproblem::init_call(const double& time) {
   
   d.time = time;
   
-  Inits(Init_value,Y,Param,F,Alag,R,D,d,pred);
+  Inits(Init_value,Y,Param,F,Alag,R,D,d,pred,simeta);
   
   for(int i=0; i < Neq; ++i) {
     Y[i] = Init_value[i];
@@ -160,7 +188,7 @@ void odeproblem::init_call(const double& time) {
  */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
-  Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred);
+  Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
 }
 
 
@@ -168,15 +196,15 @@ void odeproblem::init_call_record(const double& time) {
  * 
  */
 void odeproblem::table_call() {
-  Table(Y,Init_dummy,Param,F,R,d,pred,Capture);  
+  Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps);  
 }
-
-void odeproblem::table_init_call() {
-  d.time = 0.0;
-  d.newind = 0;
-  d.evid = 0;
-  this->table_call();
-}
+// 
+// void odeproblem::table_init_call() {
+//   d.time = 0.0;
+//   d.newind = 0;
+//   d.evid = 0;
+//   this->table_call();
+// }
 
 void odeproblem::rate_reset() {
   for(int i = 0; i < Neq; ++i) {
@@ -204,7 +232,7 @@ void odeproblem::reset_newid(const double id_) {
   
   d.SYSTEMOFF=false;
   this->lsoda_init();
-  d.ID = id_;
+  d.id = id_;
 }
 
 
@@ -240,10 +268,6 @@ void odeproblem::off(const unsigned short int eq_n) {
   this->y(eq_n,0.0);
 }
 
-
-void odeproblem::pass_omega(arma::mat* x) {
-  d.omatrix = reinterpret_cast<void*>(x);
-}
 
 extern "C" {
   void F77_NAME(dlsoda) (
@@ -669,14 +693,15 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
                       const Rcpp::NumericVector& linit,
                       int Neta, int Neps,
                       const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs) {
+                      const Rcpp::List& funs,
+                      Rcpp::Environment envir) {
   
   Rcpp::List ans;
   
   odeproblem prob(lparam, linit, funs, capture.size());
   prob.neta(Neta);
   prob.neps(Neps);
-  
+  prob.pass_envir(&envir);
   prob.newind(0);
   
   prob.init_call(0.0);
@@ -694,18 +719,18 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   return(ans);
 }
 
+void odeproblem::omega(Rcpp::NumericMatrix& x) {
+  Omega = Rcpp::as<arma::mat>(x);
+}
+void odeproblem::sigma(Rcpp::NumericMatrix& x) {
+  Sigma = Rcpp::as<arma::mat>(x);
+}
 
-// 
-// SEXP ODEPTR(const Rcpp::NumericVector& lparam, 
-//                               const Rcpp::NumericVector& linit,
-//                               int Neta, int Neps,
-//                               const Rcpp::CharacterVector& capture,
-//                               const Rcpp::List& funs) {
-//   
-//   odeproblem* prob = new odeproblem(lparam, linit, funs, capture.size());
-//   prob->neta(Neta);
-//   prob->neps(Neps);
-//   
-//   Rcpp::XPtr<odeproblem> ret(prob);
-//   return ret; 
-// }
+arma::mat odeproblem::mv_omega(int n) {
+  return MVGAUSS(Omega,n);
+}
+
+arma::mat odeproblem::mv_sigma(int n) {
+  return MVGAUSS(Sigma,n);
+}
+

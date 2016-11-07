@@ -1,14 +1,10 @@
-library(mrgsolve)
 library(testthat)
+library(mrgsolve)
 library(dplyr)
-
-
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-annot")
-
-
 
 test_that("Testing modMATRIX", {
     expect_equal(dim(modMATRIX("  0 0 0   0")), c(4,4))

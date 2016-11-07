@@ -8,6 +8,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom stats setNames
 ##' @importFrom RcppArmadillo armadillo_version
+##' @importFrom stats rnorm
 ##'
 
 # 
@@ -58,14 +59,17 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "PKMODEL", "PLUGIN", "INCLUDE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
 
+Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
+                   "ID", "TIME", "EVID","simeps", "self", "simeta",
+                   "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
+                   "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
+                   "SETINIT", "report")
+
 Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
-              "addl", "rate","time", "TIME",
-              "AMT", "CMT", "II", "SS", "ADDL", "RATE","EVID",
-              "SOLVERTIME","table","ETA","EPS",
-              "NEWIND","DONE","DXDTZERO", 
-              "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
+              "addl", "rate","time", Reserved_cvar,
+              "AMT", "CMT", "II", "SS", "ADDL", "RATE",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
-              "_SETINIT","report","double", "int", "bool", "capture")
+              "double", "int", "bool", "capture")
 
 
 globalVariables(c("test_package","time", "ID",

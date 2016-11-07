@@ -33,6 +33,10 @@ typedef std::vector<reclist> recstack;
 #define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1])
 #define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4])
 
+// 
+// resim functor comes from mrgsolv.h
+// so it can get defined in the model
+// 
 
 class odeproblem;
 
@@ -44,9 +48,11 @@ struct databox {
   int evid;
   bool SYSTEMOFF;
   dvec mtime;
-  double ID;
+  double id;
+  double amt;
+  short int cmt;
   bool CFONSTOP;
-  void* omatrix;
+  void* envir;
 };
 
 
@@ -77,6 +83,10 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
   b = reinterpret_cast<T>(R_ExternalPtrAddr(a));
 }
 
+void dosimeta(void*);
+void dosimeps(void*);
+
+
 class odeproblem : public odepack_dlsoda {
   
   
@@ -103,7 +113,15 @@ public:
   void table_init_call();
   void confg_call();
   
-  void pass_omega(arma::mat*);
+  void set_d(rec_ptr this_rec);
+  
+  void omega(Rcpp::NumericMatrix& x);
+  void sigma(Rcpp::NumericMatrix& x);
+  
+  arma::mat mv_omega(int n);
+  arma::mat mv_sigma(int n);
+
+  void pass_envir(Rcpp::Environment* x){d.envir=reinterpret_cast<void*>(x);};
   
   bool CFONSTOP(){return d.CFONSTOP;}
   
@@ -143,9 +161,7 @@ public:
   void time(double time_){d.time = time_;}
   void newind(unsigned int newind_){d.newind = newind_;}
   unsigned int newind(){return d.newind;}
-  
-  void evid(int evid_){d.evid = evid_;}
-  
+
   void advan(int x);
   int  advan(){return Advan;}
   void advan2(const double& tfrom, const double& tto);
@@ -161,8 +177,7 @@ public:
   
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
-  
-  
+
 protected:
   
   //! parameters
@@ -207,11 +222,17 @@ protected:
   int Advan;
   dvec a;
   dvec alpha;
-  //
   
-  
+  resim simeta;
+  resim simeps;
+
+  arma::mat Omega;
+  arma::mat Sigma;
+    
   dvec pred;
   dvec Capture;
+  
+
   
 };
 

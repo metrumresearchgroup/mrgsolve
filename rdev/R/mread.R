@@ -175,6 +175,10 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
 
+  ans <- check_globals(mread.env$move_global,names(init))
+  if(length(ans) > 0) {
+    stop(ans, call.=FALSE) 
+  }
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
@@ -208,7 +212,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param = as.param(param),
            init = as.init(init),
            funs = funs_create(model),
-           capture = as.character(spec[["CAPTURE"]])
+           capture = as.character(spec[["CAPTURE"]]),
+           envir = ENV, 
+           plugin = names(plugin)
   )
   
   x <- store_annot(x,annot)
@@ -348,7 +354,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     
     if(status != "0") {
       cat("\n\n")
-      stop("There was a problem when compiling the model.",call.=FALSE)
+      stop("There was a problem with compiling the model.",call.=FALSE)
     }
     
   } else { ## intern
@@ -364,7 +370,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     if(!comp_success) {
       cat(err, sep="\n") 
       cat("\n\n")
-      stop("There was a problem when compiling the model. " ,err, call.=FALSE);
+      stop(paste0("There was a problem when compiling the model. ", err), call.=FALSE);
     } 
     if(!quiet) message("done.")
   }
