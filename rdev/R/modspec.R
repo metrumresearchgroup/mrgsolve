@@ -733,10 +733,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   pos <- attr(x,"pos")
   
   check_block_data(x,env$ENV,pos)
-  
-  # if("mrgx" %in% x) {
-  #   warning("There are currently no functions provided by the mrgx plugin. All functions previously provided by mrgx can be called from the R namespace (e.g. R::rnorm(10,2)).", call.=FALSE)
-  # }
+
   if(length(x) ==0) return(list())
   return(x)
 }
@@ -779,6 +776,19 @@ PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
   advan <- pick_advan(ncmt,depot)
   return(list(advan=advan, trans=trans, n=ncmt))
 }
+
+
+NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
+  if(unnamed) name <-  NULL
+  env[["namespace"]][[pos]] <- wrap_namespace(x,name)
+  return(NULL)
+}
+
+##' @export
+handle_spec_block.specNAMESPACE <- function(x,...) {
+  scrape_and_call(x,pass="NAMESPACE",narrow=FALSE,...)
+}
+
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {
@@ -857,6 +867,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$omega <- vector("list",n)
   mread.env$sigma <- vector("list",n)
   mread.env$annot <- vector("list",n)
+  mread.env$namespace <- vector("list", n)
   mread.env$capture <- character(0)
   mread.env$error <- character(0)
   mread.env$ENV <- ENV 
@@ -908,3 +919,8 @@ deparens <- function(x,what=c(")", "(")) {
   }
   return(x)
 }
+
+wrap_namespace <- function(x,name) {
+  paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
+}
+

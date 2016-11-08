@@ -41,7 +41,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
                        Rcpp::CharacterVector _cmtnames) {
   Data = _data;
   parnames = _parnames;
-  cmtnames = _cmtnames;
+  cmtnames = Rcpp::clone(_cmtnames);
   
   Rcpp::List dimnames = Data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
@@ -49,6 +49,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   Idcol = find_position("ID", Data_names);
   
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
+  
   
   for(Rcpp::CharacterVector::iterator it = cmtnames.begin(); it != cmtnames.end(); ++it) {
     *it += "_0";

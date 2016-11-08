@@ -80,6 +80,7 @@ setMethod("init", "list", function(.x,...) {create_numeric_list(.x,"cmt_list",..
 setMethod("init", "ANY", function(.x,...) init(as.list(.x),...))
 
 Init <- function(x) x@init
+Cmt <-  function(x) names(x@init@data)
 
 ##' @export
 ##' @rdname init

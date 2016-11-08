@@ -33,8 +33,6 @@ private:
 
 #define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const double* _THETA_
 
-#define MRGSOLVE_CONFIG_SIGNATURE svec& capture_names, dvec& capture_values
-
-
+#define MRGSOLVE_CONFIG_SIGNATURE databox& self, const double* _THETA_, const double neq, const double npar
 
 #endif

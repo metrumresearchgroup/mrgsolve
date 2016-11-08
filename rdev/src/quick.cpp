@@ -79,19 +79,22 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   size_t irow = idata.nrow();
   size_t drow = data.nrow();
   
+
+  
   // Simulate each individual
   for(size_t i = 0; i < irow; ++i) {
     
     idat.copy_parameters(i,prob);
     
-    prob->y_init(init);
-    prob->init_call(tto);
-    prob->lsoda_init();
-    
     ID = idata(i,0);
     prob->reset_newid(ID);
     
     if(i==0) prob->newind(0);
+    
+    prob->y_init(init);
+    prob->config_call();
+    prob->init_call(tto);
+    prob->lsoda_init();
     
     tfrom = time[0];
     

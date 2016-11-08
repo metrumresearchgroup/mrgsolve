@@ -243,7 +243,7 @@ tran_mrgsim <- function(x,
   
   if(!identical(names(param(x)),x@shlib$par))
     stop("The parameter list  has changed since the model was compiled.")
-  if(!identical(names(init(x)), x@shlib$cmt))
+  if(!identical(Cmt(x), x@shlib$cmt))
     stop("The compartment list has changed since the model was compiled.")
   
   ## request is stored in the model object
@@ -372,7 +372,7 @@ tran_mrgsim <- function(x,
                param,
                names(param(x)),
                init,
-               names(init(x)),
+               names(Init(x)),
                capt_pos,
                pointers(x),
                data,idata,

@@ -198,13 +198,11 @@ void odeproblem::init_call_record(const double& time) {
 void odeproblem::table_call() {
   Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps);  
 }
-// 
-// void odeproblem::table_init_call() {
-//   d.time = 0.0;
-//   d.newind = 0;
-//   d.evid = 0;
-//   this->table_call();
-// }
+
+void odeproblem::config_call() {
+  Config(d,Param,Neq,Npar);
+}
+
 
 void odeproblem::rate_reset() {
   for(int i = 0; i < Neq; ++i) {
@@ -704,6 +702,7 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   prob.pass_envir(&envir);
   prob.newind(0);
   
+  prob.config_call();
   prob.init_call(0.0);
   
   Rcpp::NumericVector init_val(linit.size());

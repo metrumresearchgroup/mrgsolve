@@ -56,8 +56,9 @@ GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
-                "PKMODEL", "PLUGIN", "INCLUDE",
-                "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE")
+                "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
+                "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
+                "CONFIG")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
