@@ -50,7 +50,6 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   if(Idcol < 0) Rcpp::stop("Could not find ID column in data set.");
   
-  
   for(Rcpp::CharacterVector::iterator it = cmtnames.begin(); it != cmtnames.end(); ++it) {
     *it += "_0";
   }
