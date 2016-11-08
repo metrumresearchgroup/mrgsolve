@@ -31,11 +31,6 @@ typedef bool localbool;
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
 
-// CPPSETUP:
-namespace self {
-   
-}
-
 // DEFS:
 #define __INITFUN___ _model_housemodel_main__
 #define __ODEFUN___ _model_housemodel_ode__

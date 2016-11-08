@@ -790,14 +790,6 @@ handle_spec_block.specNAMESPACE <- function(x,...) {
 }
 
 
-##' @export
-handle_spec_block.specCPPSETUP <- function(x,env,...) {
-  c("void CPPSETUP(MRGSOLVE_CPPSETUP_SIGNATURE) {",
-    paste0("  ", x), 
-    "}")
-}
-
-
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {
   

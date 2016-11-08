@@ -65,7 +65,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   dataobject dat(data,parnames);
   dat.map_uid();
   dat.locate_tran();
-  
+
   dataobject idat(idata, parnames, cmtnames);
   idat.idata_row();
   
@@ -335,6 +335,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double biofrac = 1.0;
   int this_idata_row = 0;
   
+  prob->config_call();
+  
   // i is indexing the subject, j is the record
   
   // LOOP ACROSS IDS:
@@ -352,7 +354,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
     prob->reset_newid(id);
     
-    if(i==0) prob->newind(0);
+    if(i==0) {
+      prob->newind(0);
+    }
     
     // Copy eta/eps values for this ID
     for(k=0; k < neta; ++k) prob->eta(k,eta(i,k));

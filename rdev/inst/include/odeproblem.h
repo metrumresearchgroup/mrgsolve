@@ -105,13 +105,14 @@ public:
   
   void init_call(const double& time);
   void init_call_record(const double& time);
+
   void y_init(int pos, double value);
   void y_init(Rcpp::NumericVector x);
   void y_add(const unsigned int pos, const double& value);
   
   void table_call();
   void table_init_call();
-  void confg_call();
+  void config_call();
   
   void set_d(rec_ptr this_rec);
   
