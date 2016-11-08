@@ -174,7 +174,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   annot <- dplyr::bind_rows(nonull.list(mread.env$annot))
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
-
+  namespace <- do.call("c", mread.env$namespace)
+                       
   ans <- check_globals(mread.env$move_global,names(init))
   if(length(ans) > 0) {
     stop(ans, call.=FALSE) 
@@ -274,15 +275,20 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     fixed_parameters(fixed,SET[["fixed_type"]]),
     "\n// INCLUDES:",
     form_includes(spec[["INCLUDE"]],build$project),
+    "\n// NAMESPACES:",
+    namespace,
     "\n// BASIC MODELHEADER FILE:",
     "#include \"modelheader.h\"",
-    "\n// DEFS:",
-    rd, 
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
+
+    "\n// CPPSETUP:",
+    wrap_namespace(spec[["CPPSETUP"]], "self"),
+    "\n// DEFS:",
+    rd, 
     "\n// CONFIG CODE BLOCK:\n__BEGIN_config__\n__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
@@ -323,7 +329,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   #write_build_env(build)
   write_win_def(x)
   #do_restore(to_restore)
-  
+
   same <- check_and_copy(from = temp_write,
                          to = build$compfile,
                          preclean)

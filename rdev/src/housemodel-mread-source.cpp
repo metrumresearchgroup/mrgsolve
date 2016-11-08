@@ -7,8 +7,34 @@
 // INCLUDES:
 // No includes found.
 
+// NAMESPACES:
+
 // BASIC MODELHEADER FILE:
 #include "modelheader.h"
+
+// GLOBAL CODE BLOCK:
+// GLOBAL VARS FROM BLOCKS & TYPEDEFS:
+typedef double capture;
+namespace {
+  double CLi;
+  double VCi;
+  double KAi;
+  double KOUTi;
+  double DV;
+}
+typedef double localdouble;
+typedef int localint;
+typedef bool localbool;
+
+// GLOBAL START USER CODE:
+#define CP (CENT/VCi)
+#define INH (CP/(IC50+CP))
+typedef double localdouble;
+
+// CPPSETUP:
+namespace self {
+   
+}
 
 // DEFS:
 #define __INITFUN___ _model_housemodel_main__
@@ -49,25 +75,6 @@
 #define EKA _xETA(3)
 #define EKOUT _xETA(4)
 #define EXPO _xEPS(1)
-
-// GLOBAL CODE BLOCK:
-// GLOBAL VARS FROM BLOCKS & TYPEDEFS:
-typedef double capture;
-namespace {
-  double CLi;
-  double VCi;
-  double KAi;
-  double KOUTi;
-  double DV;
-}
-typedef double localdouble;
-typedef int localint;
-typedef bool localbool;
-
-// GLOBAL START USER CODE:
-#define CP (CENT/VCi)
-#define INH (CP/(IC50+CP))
-typedef double localdouble;
 
 // CONFIG CODE BLOCK:
 __BEGIN_config__

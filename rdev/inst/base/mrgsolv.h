@@ -35,6 +35,6 @@ private:
 
 #define MRGSOLVE_CONFIG_SIGNATURE svec& capture_names, dvec& capture_values
 
-
+#define MRGSOLVE_CPPSETUP_SIGNATURE databox& self
 
 #endif

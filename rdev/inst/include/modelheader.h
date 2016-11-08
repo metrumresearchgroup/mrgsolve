@@ -77,6 +77,8 @@ struct databox {
 
 // New individual flag
 #define NEWIND self.newind
+#define IF_NEWIND0 if(self.newind==0) 
+#define IF_NEWIND  if(self.newind<=1)
 // The data set time
 #define TIME self.time
 // The ode solver time
@@ -128,5 +130,7 @@ template <class type> void report(type a) {
 template <class type1, class type2> void report(type1 a, type2 b) {
   std::cout << a << " " << b << std::endl;
 }
+template <class T>
+void _IGNORE_UNUSED(T&) {} 
 
 #endif
