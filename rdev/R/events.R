@@ -304,9 +304,82 @@ add.ev <- function(e1,e2) {
   return(e1)
 }
 
-
-
-
+##' Replicate a list of events into a data set.
+##' 
+##' @param l list of event objects
+##' @param idata an idata set (one ID per row)
+##' @param evgroup the character name of the column in \code{idata} that specifies event object to implement
+##' @param join if \code{TRUE}, join \code{idata} to the data set before returning.
+##' 
+##' 
+##' @examples
+##' ev1 <- ev(amt=100)
+##' ev2 <- ev(amt=300, rate=100, ii=12, addl=10)
+##' 
+##' idata <- data.frame(ID=1:10) 
+##' idata$arm <- 1+(idata$ID %%2)
+##' 
+##' replicate_ev(list(ev1,ev2),idata,"arm",join=TRUE)
+##' 
+##' @export
+##' 
+replicate_ev <- function(l,idata,evgroup,join=FALSE) {
+  
+  if(!("ID" %in% colnames(idata))) {
+    stop("ID column missing from idata set.", call.=FALSE) 
+  }
+  
+  cols <- c("ii", "addl", "evid", "rate","ss","cmt", "time", "amt")
+  
+  zeros <- matrix(rep(0,length(cols)),nrow=1,
+                  dimnames=list(NULL,cols))
+  
+  l <- lapply(l,as.matrix)
+  
+  ucols <- unique(unlist(sapply(l,colnames,simplify=FALSE,USE.NAMES=FALSE)))
+  
+  if(!all(ucols %in% cols)) {
+    invalid <- setdiff(ucols,cols)
+    invalid <- paste(invalid,collapse=", ")
+    stop("Invalid event data items found: ", invalid, call.=FALSE)
+  }
+    
+  for(i in seq_along(l)) {
+    miss <- setdiff(ucols,colnames(l[[i]]))
+    if(length(miss) > 0) {
+      l[[i]] <- cbind(l[[i]],zeros[rep(1,nrow(l[[i]])),miss,drop=FALSE])
+    }
+  }
+  
+  l <- lapply(l,function(x) {
+      x[,colnames(l[[1]]),drop=FALSE]
+  })
+  
+  evgroup <- idata[,evgroup]
+  uevgroup <- unique(evgroup)
+  evgroup <- match(evgroup,uevgroup)
+  if(length(l) != length(uevgroup)) {
+    stop("For this idata set, please provide exactly ", 
+         length(uevgroup), 
+         " event objects.",call.=FALSE)
+  }
+  
+  x <- do.call(rbind,l[evgroup]) 
+  dimnames(x) <- list(NULL,colnames(x))
+  x <- as.data.frame(x)
+  
+  n <- (sapply(l,nrow))[evgroup]
+  ID <- rep(idata[["ID"]],times=n)
+  x[["ID"]] <- ID
+  
+  if(join) {
+    nu <- sapply(idata,is.numeric)
+    x <- dplyr::left_join(x,idata[,nu,drop=FALSE],by="ID") 
+  }
+  
+  return(x)
+  
+}
 
 
 
