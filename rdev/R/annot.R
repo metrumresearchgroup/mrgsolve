@@ -14,6 +14,7 @@ parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,.
   x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname)
   nm <- s_pick(x,"name")
   v <-  s_pick(x,"value")
+
   if(name_value) {
     v <- setNames(tolist(paste(v,collapse=","),...),nm)
   } else {
@@ -51,14 +52,16 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   units <- regmatches(b,gregexpr("\\s*\\(.*?\\)",b))[[1]]
   options <- regmatches(b,gregexpr("\\s*\\[.*?\\]",b))[[1]]
   
+  if(length(units)   > 1) units   <- units[length(units)]
+  if(length(options) > 1) options <- options[length(options)]
+  
   ## Drop matches
-  for(what in c(units,options)) b <- gsub(what,"",b,fixed=TRUE)  
+  for(what in c(units,options)) b <- sub(what,"",b,fixed=TRUE)  
   
   ## Clean up matches
   units <-   gsub("\\s*\\(\\s*|\\s*\\)", "", units,   perl=TRUE)
   options <- gsub("\\s*\\[\\s*|\\s*\\]", "", options, perl=TRUE)
-  
-  
+
   ## This is the "description"
   b <- mytrim(b)
   
