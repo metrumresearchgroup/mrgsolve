@@ -175,8 +175,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
+  capture <- unique(as.character(unlist(do.call("c", nonull.list(mread.env$capture)))))
   
-  annot <- capture_param(annot,spec[["CAPTURE"]])
+  annot <- capture_param(annot,capture)
   
   ans <- check_globals(mread.env$move_global,names(init))
   if(length(ans) > 0) {
@@ -215,7 +216,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            param = as.param(param),
            init = as.init(init),
            funs = funs_create(model),
-           capture = as.character(spec[["CAPTURE"]]),
+           capture = capture,
            envir = ENV, 
            plugin = names(plugin)
   )
