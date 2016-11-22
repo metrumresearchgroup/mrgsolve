@@ -62,6 +62,7 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   units <-   gsub("\\s*\\(\\s*|\\s*\\)", "", units,   perl=TRUE)
   options <- gsub("\\s*\\[\\s*|\\s*\\]", "", options, perl=TRUE)
 
+  
   ## This is the "description"
   b <- mytrim(b)
   

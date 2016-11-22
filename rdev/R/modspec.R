@@ -924,3 +924,19 @@ wrap_namespace <- function(x,name) {
   paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
 }
 
+# For captured items, copy annotation
+capture_param <- function(annot,capture) {
+  capture <- as.character(capture)
+  if(nrow(annot)==0 | length(capture)==0) {
+    return(annot) 
+  }
+  
+  # captured parameters
+  what <- dplyr::filter(annot, name %in% capture & block=="PARAM")
+  what <- dplyr::mutate(what, block="CAPTURE")
+  bind_rows(annot,what)
+}
+
+
+
+
