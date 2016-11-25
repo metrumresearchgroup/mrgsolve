@@ -319,11 +319,11 @@ add.ev <- function(e1,e2) {
 ##' idata <- data.frame(ID=1:10) 
 ##' idata$arm <- 1+(idata$ID %%2)
 ##' 
-##' replicate_ev(list(ev1,ev2),idata,"arm",join=TRUE)
+##' assign_ev(list(ev1,ev2),idata,"arm",join=TRUE)
 ##' 
 ##' @export
 ##' 
-replicate_ev <- function(l,idata,evgroup,join=FALSE) {
+assign_ev <- function(l,idata,evgroup,join=FALSE) {
   
   if(!("ID" %in% colnames(idata))) {
     stop("ID column missing from idata set.", call.=FALSE) 
