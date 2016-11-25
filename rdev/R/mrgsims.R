@@ -180,6 +180,10 @@ slice_.mrgsims <- function(.data,...) {
   dplyr::slice_(as.data.frame(.data),...)
 }
 
+##' @export
+as_data_frame.mrgsims <- function(.mrg,...) {
+  tibble::as_data_frame(as.data.frame(.mrg),...)
+}
 
 
 ##' @export

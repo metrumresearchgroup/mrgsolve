@@ -492,5 +492,12 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
 }
 
 
+##' @rdname param
+##' @param x mrgmod object
+##' @param name parameter to take
+##' @export
+setMethod("$", "mrgmod", function(x,name){
+  as.numeric(param(x))[name]
+})
 
 
