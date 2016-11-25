@@ -14,6 +14,7 @@ parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,.
   x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname)
   nm <- s_pick(x,"name")
   v <-  s_pick(x,"value")
+  
   if(name_value) {
     v <- setNames(tolist(paste(v,collapse=","),...),nm)
   } else {
@@ -51,8 +52,11 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   units <- regmatches(b,gregexpr("\\s*\\(.*?\\)",b))[[1]]
   options <- regmatches(b,gregexpr("\\s*\\[.*?\\]",b))[[1]]
   
+  if(length(units)   > 1) units   <- units[length(units)]
+  if(length(options) > 1) options <- options[length(options)]
+  
   ## Drop matches
-  for(what in c(units,options)) b <- gsub(what,"",b,fixed=TRUE)  
+  for(what in c(units,options)) b <- sub(what,"",b,fixed=TRUE)  
   
   ## Clean up matches
   units <-   gsub("\\s*\\(\\s*|\\s*\\)", "", units,   perl=TRUE)
@@ -68,10 +72,28 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   list(name=a[1],value=a[2],unit=units,options=options,descr=b)
 }
 
-
-details <- function(x,...) {
+##' Extract model details.
+##' 
+##' @param x a model object
+##' @param complete logical; if \code{TRUE}, un-annotated parameters and compartments will be added to the output
+##' @param values logical; if \code{TRUE}, a values column will be added to the output
+##' @param ... not used
+##' 
+details <- function(x,complete=FALSE,values=FALSE,...) {
+  
   stopifnot(is.mrgmod(x))
-  return(x@annot[["data"]])  
+  
+  ans <- x@annot[["data"]]
+  
+  if(nrow(ans)==0) {
+    ans <- cobble_details(x)
+  } else {
+    if(complete) ans <- complete_details(ans,x)
+  }
+  if(values) {
+    ans <- add_detail_values(ans,x) 
+  }
+  return(ans)
 }
 
 store_annot <- function(x,what,loc=soloc(x),...) {
@@ -80,6 +102,76 @@ store_annot <- function(x,what,loc=soloc(x),...) {
   x
 }
 
+cobble_details <- function(x) {
+  
+  ans <- list()
+  
+  par <- as.numeric(param(x))
+  if(length(par) > 0) {
+    ans[[1]] <- dplyr::data_frame(block="PARAM",name=names(par))  
+  }
+  fx <- as.numeric(x@fixed)
+  if(length(fx)>0) {
+    ans[[3]] <- dplyr::data_frame(block="FIXED", name=names(fx)) 
+  }
+  cmt <- as.numeric(init(x))
+  if(length(cmt)>0) {
+    ans[[3]] <- dplyr::data_frame(block="CMT", name=names(cmt)) 
+  }
+  
+  ans <- dplyr::bind_rows(ans)
+  ans <- mutate(ans,descr='.',units='.',options='.')
+  as.data.frame(dplyr::select(ans,block,name,descr,units,options))
+  
+}
 
+
+complete_details <- function(annot,x) {
+  
+  par <- as.numeric(param(x))
+  cmt <- as.numeric(init(x))
+  fx <- as.numeric(x@fixed)
+  name <- unique(annot[annot$block %in% c("PARAM", "CMT", "FIXED"),"name"])
+  dum <- annot[0,]
+  
+  
+  if(length(par) > 0) {
+    miss <- setdiff(names(par),name)
+    if(length(miss) > 0) {
+      par <- dplyr::data_frame(block="PARAM",name=miss,descr='.',unit='.',options='.')
+    } else {
+      par <- dum 
+    }
+    annot <- dplyr::bind_rows(annot,par)
+  }
+  
+  if(length(cmt) > 0) {
+    miss <- setdiff(names(cmt),name)
+    if(length(miss) > 0) {
+      cmt <- dplyr::data_frame(block="CMT",name=miss,descr='.',unit='.',options='.')
+    } else {
+      cmt <- dum 
+    }
+    annot <- dplyr::bind_rows(annot,cmt)
+  }
+  
+  if(length(fx) > 0) {
+    miss <- setdiff(names(fx),name)
+    if(length(miss) > 0) {
+      fx <- dplyr::data_frame(block="FIXED",name=miss,descr='.',unit='.',options='.')
+    }  else {
+      annot <- dplyr::bind_rows(annot,fx) 
+    }
+  }
+  return(annot)
+}
+
+add_detail_values <- function(annot,x) {
+  x <- c(as.numeric(allparam(x)),as.numeric(init(x)))
+  x <- dplyr::data_frame(name=names(x),value=x)
+  annot <- dplyr::left_join(annot,x,by="name")
+  return(annot)
+  
+}
 
 

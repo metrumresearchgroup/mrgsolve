@@ -211,8 +211,9 @@ move_global <- function(x,env) {
   
   if(length(cap) > 0) {
     # must trim this
-    env[["capture"]] <- mytrim(unlist(cap, use.names=FALSE))
-    if(is.null(x[["CAPTURE"]])) x[["CAPTURE"]] <- ""
+    x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
+    #env[["capture"]] <- 
+    #if(is.null(x[["CAPTURE"]])) x[["CAPTURE"]] <- ""
   }
   # **************************
   
@@ -678,12 +679,11 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
     x <- cvec_cs(x)
   }
   
-  x <- unique(c(x,env$capture))    
-  
   check_block_data(x,env$ENV,pos)
   
-  return(x)
+  env[["capture"]][[pos]] <- x
   
+  return(NULL)
 }
 
 ##' @export
@@ -868,7 +868,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$sigma <- vector("list",n)
   mread.env$annot <- vector("list",n)
   mread.env$namespace <- vector("list", n)
-  mread.env$capture <- character(0)
+  mread.env$capture <- vector("list",n)
   mread.env$error <- character(0)
   mread.env$ENV <- ENV 
   mread.env
@@ -923,4 +923,27 @@ deparens <- function(x,what=c(")", "(")) {
 wrap_namespace <- function(x,name) {
   paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
 }
+
+# For captured items, copy annotation
+capture_param <- function(annot,.capture) {
+  
+  .capture <- as.character(.capture)
+  
+  if(nrow(annot)==0 | length(.capture)==0) {
+    return(annot) 
+  }
+  
+  # only if we didn't already include an annotation
+  .capture <- setdiff(.capture,annot[annot[,"block"]=="CAPTURE","name"])
+  
+  # captured parameters
+  what <- dplyr::filter(annot, name %in% .capture & block=="PARAM")
+  .capture <- intersect(.capture,what[,"name"])
+  what <- dplyr::mutate(what, block="CAPTURE")
+  annot <- dplyr::filter(annot, !(block=="CAPTURE" & name %in% .capture))
+  bind_rows(annot,what)
+}
+
+
+
 
