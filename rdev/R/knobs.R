@@ -83,8 +83,6 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   
   if(length(input)==0) stop("No valid knobs found.", call.=FALSE)
   
-  
-  
   data <- do.call("expand.ev", input)
   
   x <- do.call("update", c(list(x),toupdate))
@@ -104,6 +102,7 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   outn <- out@outnames
   
   out <- out %>% as.data.frame
+  out <- dplyr::select_(out,.dots=setdiff(names(out),whatkn))
   
   data <- data %>% dplyr::select_(.dots=c("ID",whatkn))
   out <- dplyr::left_join(out,data, by="ID") 
