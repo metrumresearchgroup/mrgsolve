@@ -1,9 +1,9 @@
 SHELL := /bin/bash
 #LIBDIR=${HOME}/Rlibs/lib
 PACKAGE=mrgsolve
-VERSION=$(shell grep Version rdev/DESCRIPTION |awk '{print $$2}')
+VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
-PKGDIR=rdev/
+PKGDIR=.
 CHKDIR=Rchecks
 
 ## Set libPaths:
@@ -25,11 +25,11 @@ all:
 
 .PHONY: doc
 doc:
-	Rscript makescripts/doc_mrgsolve.R
+	Rscript inst/maintenance/doc_mrgsolve.R
 
 .PHONY: staticdoc
 staticdoc:
-	Rscript makescripts/staticdocs.R
+	Rscript inst/maintenance/staticdocs.R
 
 build:
 	R CMD build --md5 $(PKGDIR)
@@ -58,16 +58,16 @@ check-cran:
 
 test:
 	R CMD INSTALL ${PKGDIR}
-	Rscript -e 'library(testthat)' -e 'test_dir("rdev/tests/testthat")'
+	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")'
 
 .PHONY: tests
 tests:
-	Rscript makescripts/tests.R
+	Rscript inst/maintenance/tests.R
 
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
 
 datasets:
-	Rscript makescripts/datasets.R
+	Rscript inst/maintenance/datasets.R
 
 

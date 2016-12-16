@@ -3,7 +3,7 @@ message("\n\nwriting documentation ... \n")
 library(methods)
 library(devtools)
 
-pkg <- file.path("rdev")
+pkg <- file.path(".")
 ## message("\nwriting header files for nullmodel and housemodel\n")
 r <- file.path(pkg,"R")
 src <- file.path(pkg,"src")
@@ -16,7 +16,7 @@ x2 <- file.copy(file.path(inc,"mrgsolv.h"),file.path(inst,"base", "mrgsolv.h"),o
 stopifnot(all(c(x1,x2)))
 
 
-document(pkg)
+document()
 
 ## I think mrgsolve functions available after doc
 foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
