@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.7.6.9029
+Version: 0.7.6.9030
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Author: Kyle T. Baron [cre,aut,cph], Alan C. Hindmarsh [ctb], Linda R. Petzold
@@ -29,7 +29,8 @@ Imports:
     dplyr (>= 0.5.0),
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10),
-    RcppArmadillo (>= 0.5.600.2.0)
+    RcppArmadillo (>= 0.5.600.2.0),
+    tibble (>= 1.2)
 LinkingTo: Rcpp (>= 0.12.1), RcppArmadillo (>= 0.5.600.2.0), BH
 Suggests:
     lattice,

@@ -9,6 +9,7 @@
 ##' @importFrom stats setNames
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
+##' @importFrom tibble as_data_frame
 ##'
 
 # 
