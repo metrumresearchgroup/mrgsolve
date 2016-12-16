@@ -68,16 +68,16 @@ data2 <- merge(data,idata[,c("ID","CL", "VC", "KA")], by="ID", sort=FALSE, all.x
 #head(data2)
 
 exidata <- idata
-save(exidata,file="rdev/data/exidata.RData")
+save(exidata,file="data/exidata.RData")
 
 extran1 <- doses
-save(extran1, file="rdev/data/extran1.RData")
+save(extran1, file="data/extran1.RData")
 
 extran2 <- data
-save(extran2, file="rdev/data/extran2.RData")
+save(extran2, file="data/extran2.RData")
 
 extran3 <- data2
-save(extran3,file="rdev/data/extran3.RData")
+save(extran3,file="data/extran3.RData")
 
 data(Theoph)
 dd <- as.data.frame(Theoph)
@@ -90,7 +90,7 @@ dd$cmt[dd$evid==1] <- 1
 dd$conc[dd$time==0] <- 0
 
 exTheoph <- dd
-save(exTheoph, file="rdev/data/exTheoph.RData")
+save(exTheoph, file="data/exTheoph.RData")
 
 
 library(MASS)
@@ -113,7 +113,7 @@ names(pars) <- gsub("SG", "SIGMA", names(pars))
 pars$run <- 1:nrow(pars)
 pars <- shuffle(pars, "run")
 exBoot <- pars
-save(exBoot, file="rdev/data/exBoot.RData")
+save(exBoot, file="data/exBoot.RData")
 
 
 

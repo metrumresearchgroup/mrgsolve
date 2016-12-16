@@ -26,13 +26,13 @@ Four primary options exist to install `mrgsolve`:
 -   The development version from github via:
 
 ``` r
-  devtools::install_github("metrumresearchgroup/mrgsolve", subdir="rdev")
+  devtools::install_github("metrumresearchgroup/mrgsolve")
 ```
 
 -   Latest stable release directly from github via:
 
 ``` r
-  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.6", subdir="rdev")
+  devtools::install_github("metrumresearchgroup/mrgsolve@v0.7.6")
 ```
 
 -   The latest stable release can be installed with `install.packages` like this:
@@ -220,7 +220,7 @@ out %>%
   summarise(rmin = min(RESP), tmim=time[which.min(RESP)])
 ```
 
-    . # A tibble: 3 x 3
+    . # A tibble: 3 × 3
     .    dose      rmin  tmim
     .   <dbl>     <dbl> <dbl>
     . 1   100 18.958869   2.9
