@@ -4,7 +4,7 @@ PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
-CHKDIR=../Rchecks
+CHKDIR=Rchecks
 
 ## Set libPaths:
 export R_LIBS=${LIBDIR}
