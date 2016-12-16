@@ -6,9 +6,6 @@ warnings_are_errors: false
 
 pandoc: false
 
-before_install:
-  - cd rdev
-
 r_packages:
   - roxygen2
   - devtools
