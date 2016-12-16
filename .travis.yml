@@ -15,7 +15,6 @@ os:
   - linux
 
 script:
-  - cd ../
   - mkdir Rchecks
   - make check 
 
