@@ -15,8 +15,8 @@ to type `double` and list that variable name in `$CAPTURE`.  See also the `captu
 - The `mrgx` plugin was completely removed.  
 - Parameter updates via `param` method with signature `missing` will check names of
 input parameters against names of existing parameters.  An error is generated if a user
-attempts to update a parameter that doesn't exist.  Note that this does not apply for the 
-`param` method with signature `list` (../../issues/144). 
+attempts to update a parameter that doesn't exist.  Note that this does not apply for the
+`param` method with signature `list` (../../issues/144).
 - The git repository was re-organized so that the package lives in the base directory (https://github.com/metrumresearchgroup/mrgsolve/pull/171).  
 
 ## Features
@@ -31,7 +31,7 @@ attempts to update a parameter that doesn't exist.  Note that this does not appl
 - Added `assign_ev` function to help build simulation data sets from event objects (https://github.com/metrumresearchgroup/mrgsolve/pull/164).
 - Added `as_data_frame` method from the `tibble` package (../../issues/166).
 - When annotating model blocks, `mrgsolve` takes the __last__ parens item  as the "units" and the __last__ bracketed item as "options"
-- Added `$` operator for `mrgmod` objects to return the value of a parameter (99748d8a7e4976fc710152c2dfc82da9b059a852). 
+- Added `$` operator for `mrgmod` objects to return the value of a parameter (99748d8a7e4976fc710152c2dfc82da9b059a852).
 - Added `mread_cache` and `mcode_cache` functions to build and cache a model (https://github.com/metrumresearchgroup/mrgsolve/pull/143).
 
 ## Bugs fixed
@@ -142,7 +142,7 @@ when parsing the model. (../../issues/115)
 * Added `mcode` function as alternative to using `mread` when your model is written in an `R` string.  Note the order of the arguments:
 first `model`, then `code`, then `project`.  `project` defaults to `tempdir`.  So the call is: `mod <- mcode("mymodel", code)`.  The
 equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
-* `carry.out()` and `Req()` now take `newname = oldname` as input.  Use this syntax in `carry.out` when you want to copy a column from the input data set into the simulated data set, changing the column to `newname` from `oldname`.  Use this syntax in `Req` when you want to change the names of compartments or output variables spcified in `$TABLE` / `$CAPTURE`. 
+* `carry.out()` and `Req()` now take `newname = oldname` as input.  Use this syntax in `carry.out` when you want to copy a column from the input data set into the simulated data set, changing the column to `newname` from `oldname`.  Use this syntax in `Req` when you want to change the names of compartments or output variables spcified in `$TABLE` / `$CAPTURE`.
 * Added `pkmodel` function for easy loading and simulating from 1- and 2-compartment models ([issue 39](../../issues/39)).
 * Added new code block: `$PKMODEL` for simulating PK model with analytical solutions.  The main option for this block is `ncmt`, which picks the number of compartments for the pk model.  See `?PKMODEL` for more information and other options ([issue 34](../../issues/34)).
 

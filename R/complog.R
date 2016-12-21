@@ -54,8 +54,8 @@ cleanso <- function(x,where=soloc(x)) {
   so <- so[so != file.path(where,compout(model(x)))]
   lo <- sapply(getLoadedDLLs(), "[[", "path")
   y <- intersect(lo,so)
-  for(w in y) foo <- try(dyn.unload(y),silent=TRUE)
-  file.remove(so)
+  for(w in y) foo <- try(silent=TRUE,dyn.unload(w))
+  for(w in y) foo <- try(silent=TRUE,file.remove(w))
   return(invisible(NULL))
 }
 
