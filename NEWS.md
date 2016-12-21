@@ -7,7 +7,12 @@ __Please see the latest release__: [v0.7.6](https://github.com/metrumresearchgro
 ## Important changes
 - The `table()` macro in `$TABLE` is now deprecated (https://github.com/metrumresearchgroup/mrgsolve/pull/129).  To get derived values into the simulated output, users should assign
 to type `double` and list that variable name in `$CAPTURE`.  See also the `capture` typedef introduced below.
-
+- The `mrgx` plugin was completely removed.  
+- Parameter updates via `param` method with signature `missing` will check names of
+input parameters against names of existing parameters.  An error is generated if a user
+attempts to update a parameter that doesn't exist.  Note that this does not apply for the 
+`param` method with signature `list` (../../issues/144). 
+- The git repository was re-organized so that the package lives in the base directory (https://github.com/metrumresearchgroup/mrgsolve/pull/171).  
 
 ## Features
 - Added `@` macros for indicating block options in model specification file.
@@ -16,15 +21,25 @@ to type `double` and list that variable name in `$CAPTURE`.  See also the `captu
 - Added `mrgsolve:::render` to create a document with overview of model contents.  Methods for both `mrgmod` objects and `character` strings pointing to a model file.
 - Use `mrgsolve:::details` to extract model annotation.
 - Added `capture` typedef in the model specification file.  Variables that are type `capture` are doubles and are automatically appended to `$CAPTURE`.  The `capture` typedef is not allowed in `$ODE` and probably should be reserved for `$TABLE`.
+- `simeta` is available in `$MAIN` and `simeps` is available in `$TABLE` by default, no `$PLUGIN` is required.
+- Better support for including `R` objects in the model via `$ENV` (../../issues/158).
+- Added `assign_ev` function to help build simulation data sets from event objects (https://github.com/metrumresearchgroup/mrgsolve/pull/164).
+- Added `as_data_frame` method from the `tibble` package (../../issues/166).
+- When annotating model blocks, `mrgsolve` takes the __last__ parens item  as the "units" and the __last__ bracketed item as "options"
+- Added `$` operator for `mrgmod` objects to return the value of a parameter (99748d8a7e4976fc710152c2dfc82da9b059a852). 
+- Added `mread_cache` and `mcode_cache` functions to build and cache a model (https://github.com/metrumresearchgroup/mrgsolve/pull/143).
 
 ## Bugs fixed
 - Fixed documentation issue in `PKMODEL`.  The volumes for two-compartment model with no depot should be `V1`/`V2`.
-
+- Fixed bug in `knobs` where output column names are mal-formed when a user `$CAPTURE`s a parameter that is also being tweaked as a knob.
+- Fixed bug in annotated model specification when multiple unit or option specifications are made.
 
 ## Under the hood
 - User-declared `double/int/bool` in `$MAIN`, `$ODE`, `$TABLE` are kept in unnamed namespace and are local to the file.
 - Started to re-organize the `.R` files.
-
+- `mrgsolve:::details` returns a data frame of information regardless of whether the model was annotated or not (../../issues/165).
+- `mrgsolve::details` has additional arguments to help control output.
+- Removed `pkevent` class; all records are `datarecord`.
 
 # Since 0.7.5
 
