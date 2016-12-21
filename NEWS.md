@@ -1,6 +1,11 @@
 
 
-__Please see the latest release__: [v0.7.6](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.6)
+__Please see the latest release__: [v0.7.7](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.7)
+
+# Since 0.7.7
+
+- No changes so far.
+
 
 # Since 0.7.6
 
