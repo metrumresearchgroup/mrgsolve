@@ -452,4 +452,10 @@ mrgnorm <- function(n,sigma) {
 }
 
 
+where_is <- function(what,x) {
+  as.integer(unlist(gregexpr(what,x,fixed=TRUE)))
+}
+where_first <- function(what,x) {
+  as.integer(unlist(regexpr(what,x,fixed=TRUE)))
+}
 
