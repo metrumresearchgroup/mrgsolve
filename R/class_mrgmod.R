@@ -113,6 +113,7 @@ protomod <- list(model=character(0),
                  code = character(0),
                  annot = list(),
                  envir = new.env(),
+                 random = character(0),
                  plugin = character(0)
 )
 slot.names <- names(protomod)

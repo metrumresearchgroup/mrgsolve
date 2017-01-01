@@ -61,6 +61,7 @@ Collate:
     'complog.R'
     'data_set.R'
     'datasets.R'
+    'dmutate.R'
     'events.R'
     'example.R'
     'funset.R'

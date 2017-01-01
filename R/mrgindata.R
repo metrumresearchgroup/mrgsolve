@@ -25,7 +25,7 @@ mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
   if(verbose) quiet <- FALSE
   
   if(is.mrgindata(x)) return(x)
-  
+
   tcol <- "time"
   
   # check for ID column
@@ -78,6 +78,7 @@ mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
   structure(x, class="mrgindata")
   
 }
+
 
 
 valid_idata <- function(x,verbose=FALSE,quiet=FALSE,...) {

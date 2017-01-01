@@ -176,7 +176,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
   capture <- unique(as.character(unlist(do.call("c", nonull.list(mread.env$capture)))))
-  
+
   annot <- capture_param(annot,capture)
   
   ans <- check_globals(mread.env$move_global,names(init))
@@ -218,6 +218,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            funs = funs_create(model),
            capture = capture,
            envir = ENV, 
+           random = as.character(spec[["RANDOM"]]),
            plugin = names(plugin)
   )
   
