@@ -28,6 +28,10 @@ struct databox {
   const double id;
   const double amt;
   const short int cmt;
+  const int nid;
+  const int idn;
+  const int nrow;
+  const int rown;
   bool CFONSTOP;
   void* envir;
 };

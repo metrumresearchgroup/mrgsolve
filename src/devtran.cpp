@@ -335,6 +335,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double biofrac = 1.0;
   int this_idata_row = 0;
   
+  prob->nid(dat.nid());
+  prob->nrow(NN);
+  prob->idn(0);
+  prob->rown(0);
+  
   prob->config_call();
   
   // i is indexing the subject, j is the record
@@ -344,6 +349,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // We must first figure out the ID we are working with
   // and assign in the object
   for(size_t i=0; i < a.size(); ++i) {
+    
+    prob->idn(i);
     
     tfrom = a[i].front()->time();
     maxtime = a[i].back()->time();
@@ -395,6 +402,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     for(size_t j=0; j < a[i].size(); ++j) {
       
       if(crow == NN) continue;
+      
+      prob->rown(crow);
       
       rec_ptr this_rec = a[i][j];
       
