@@ -515,3 +515,19 @@ setMethod("$", "mrgmod", function(x,name){
 })
 
 
+##' List objects in \code{$ENV}.
+##' 
+##' @param x model object
+##' @param ... passed to \code{\link{ls}}
+##' @export
+##' 
+ls_env <- function(x,...) {
+  objects <- ls(x@envir,...)
+  cl <- sapply(objects,function(o) {
+    class(get(o,x@envir))
+  })
+  ans <- data.frame(object=objects,class=cl)
+  rownames(ans) <- NULL
+  dplyr::arrange(ans, class)
+  
+}
