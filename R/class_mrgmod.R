@@ -113,7 +113,6 @@ protomod <- list(model=character(0),
                  code = character(0),
                  annot = list(),
                  envir = new.env(),
-                 random = character(0),
                  plugin = character(0)
 )
 slot.names <- names(protomod)
@@ -379,12 +378,26 @@ setMethod("events", "mrgmod", function(x,...) {
   x@events
 })
 
+
 ##' @export
 ##' @rdname events
-setMethod("ev", "mrgmod", function(x,...) {
+setMethod("ev", "mrgmod", function(x,object=NULL,...) {
+  if(is.character(object)) {
+    return(update(x,events=eval(parse(text=object),envir=x@envir)))  
+  }
   update(x,events=ev(...))
 })
 
+##' @export
+##' @rdname events
+re_eval_env <- function(x,seed=NULL) {
+  if(is.numeric(seed)) set.seed(seed)
+  .x <- try(eval(parse(text=x@envir$.code),x@envir))
+  if(inherits(.x,"try-error")) {
+    stop("Failed to parse code in $ENV",call.=FALSE) 
+  }
+  return(invisible(x))
+}
 
 
 ##' @export

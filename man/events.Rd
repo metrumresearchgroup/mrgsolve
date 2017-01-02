@@ -13,6 +13,7 @@
 \alias{events}
 \alias{events,mrgmod-method}
 \alias{events,mrgsims-method}
+\alias{re_eval_env}
 \alias{show,ev-method}
 \title{Event objects for simulating PK and other interventions.}
 \usage{
@@ -24,7 +25,9 @@ as.ev(x, ...)
 
 \S4method{events}{mrgmod}(x, ...)
 
-\S4method{ev}{mrgmod}(x, ...)
+\S4method{ev}{mrgmod}(x, object = NULL, ...)
+
+re_eval_env(x, seed = NULL)
 
 \S4method{ev}{missing}(time = 0, evid = 1, ID = numeric(0), cmt = 1,
   replicate = TRUE, until = NULL, ...)
@@ -46,6 +49,8 @@ as.ev(x, ...)
 
 \item{...}{passed on}
 
+\item{object}{passed to show}
+
 \item{time}{event time}
 
 \item{evid}{event ID}
@@ -63,8 +68,6 @@ as.ev(x, ...)
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
 \item{optional}{passed to \code{\link{as.data.frame}}}
-
-\item{object}{passed to show}
 }
 \value{
 Returns a user-defined data frame of events that should be suitable

@@ -5,14 +5,17 @@
 \alias{data_set}
 \alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,data.frame-method}
+\alias{data_set,mrgmod,missing-method}
 \title{Set the \code{data} argument for \code{mrgsim}.}
 \usage{
 data_set(x, data, ...)
 
 \S4method{data_set}{mrgmod,data.frame}(x, data, subset = TRUE,
-  select = TRUE, ...)
+  select = TRUE, call = NULL, ...)
 
 \S4method{data_set}{mrgmod,ANY}(x, data, ...)
+
+\S4method{data_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
 \item{x}{model object}

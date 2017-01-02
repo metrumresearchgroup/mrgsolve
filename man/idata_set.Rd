@@ -5,14 +5,17 @@
 \alias{idata_set}
 \alias{idata_set,mrgmod,ANY-method}
 \alias{idata_set,mrgmod,data.frame-method}
+\alias{idata_set,mrgmod,missing-method}
 \title{Set the \code{idata} argument for \code{mrgsim}.}
 \usage{
 idata_set(x, data, ...)
 
 \S4method{idata_set}{mrgmod,data.frame}(x, data, subset = TRUE,
-  select = TRUE, ...)
+  select = TRUE, call = NULL, ...)
 
 \S4method{idata_set}{mrgmod,ANY}(x, data, ...)
+
+\S4method{idata_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
 \item{x}{model object}

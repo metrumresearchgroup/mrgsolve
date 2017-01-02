@@ -246,14 +246,6 @@ tran_mrgsim <- function(x,
   if(!identical(Cmt(x), x@shlib$cmt))
     stop("The compartment list has changed since the model was compiled.")
   
-  
-  if(length(x@random) > 0 & ncol(data) > 1) {
-    data <- as.data.frame(structure(data,class=NULL))
-    data[,"..zeros.."] <- NULL
-    data <- dmutate_list(data,x@random) 
-    data <- mrgindata(data)
-  }
-  
   ## request is stored in the model object
   ## if request is (all) take all compartments
   if(x@request[1]=="(all)") {

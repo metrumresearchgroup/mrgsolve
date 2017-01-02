@@ -218,7 +218,6 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
            funs = funs_create(model),
            capture = capture,
            envir = ENV, 
-           random = as.character(spec[["RANDOM"]]),
            plugin = names(plugin)
   )
   
