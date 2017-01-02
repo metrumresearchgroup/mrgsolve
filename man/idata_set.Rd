@@ -15,7 +15,7 @@ idata_set(x, data, ...)
 
 \S4method{idata_set}{mrgmod,ANY}(x, data, ...)
 
-\S4method{idata_set}{mrgmod,missing}(x, object, ...)
+\S4method{idata_set}{mrgmod,missing}(x, object, form = NULL, ...)
 }
 \arguments{
 \item{x}{model object}

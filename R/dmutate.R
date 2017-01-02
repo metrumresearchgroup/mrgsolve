@@ -8,7 +8,6 @@
 ##'
 ##' @export
 ##' @importFrom dplyr left_join
-##' @importFrom MASS mvrnorm
 ##' @examples
 ##'
 ##'

@@ -28,11 +28,20 @@ setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
 })
 ##' @export
 ##' @rdname idata_set
-setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
+setMethod("idata_set",c("mrgmod", "missing"), function(x,object,form=NULL,...) {
   object <- eval(parse(text=as.character(object)),envir=x@envir)
   if(is.function(object)) {
-    object <- do.call(object,args=list(...)) 
+    object <- do.call(object,args=list(...))
   }
-  return(idata_set(x,as.data.frame(object),...))
+  object <- as.data.frame(object)
+  if(is.character(form)) {
+    form <- cvec_cs(form)
+    form <- mget(form,mode="language",envir=x@envir)
+    for(f in form) {
+      object <- dmutate(object,f) 
+    }
+  }
+
+  return(idata_set(x,object,...))
 })
 
