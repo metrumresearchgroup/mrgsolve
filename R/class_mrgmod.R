@@ -382,14 +382,18 @@ setMethod("events", "mrgmod", function(x,...) {
 ##' @export
 ##' @rdname events
 setMethod("ev", "mrgmod", function(x,object=NULL,...) {
+  if(is.null(object)) return(update(x,events=ev(...)))
   if(is.character(object)) {
-    return(update(x,events=eval(parse(text=object),envir=x@envir)))  
+    object <- eval(parse(text=object),envir=x@envir)
   }
-  update(x,events=ev(...))
+  return(update(x,events=object,...))
 })
+
+
 
 ##' @export
 ##' @rdname events
+##' @param seed passed to \code{\link{set.seed}} if a numeric value is supplied
 re_eval_env <- function(x,seed=NULL) {
   if(is.numeric(seed)) set.seed(seed)
   .x <- try(eval(parse(text=x@envir$.code),x@envir))
@@ -530,4 +534,20 @@ ls_env <- function(x,...) {
   rownames(ans) <- NULL
   dplyr::arrange(ans, class)
   
+}
+
+
+##' Run the model cama function.
+##' 
+##' @param mod model object
+##' @param fn function name
+##' @param ... passed to update
+##' 
+##' 
+##' @details \code{sah-mah}
+##' @export
+cama <- function(mod,fn="cama",...) {
+  object_exists(fn, mod@envir, "function", inherits=FALSE)
+  f <- get(fn, mod@envir, inherits=FALSE)
+  mod %>% update(...) %>% f
 }

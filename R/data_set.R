@@ -37,16 +37,12 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##'
 ##'
 ##'
-setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,call=NULL,...) {
+setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,...) {
   if(exists("data", x@args)) stop("data already has been set.")
   if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
 
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
-  
-  if(is.character(call)) {
-    data <- do.call(call,envir=x@envir,args=c(list(data),list(...)))
-  }
   
   data <- mrgindata(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), open=TRUE)
@@ -60,6 +56,7 @@ setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
 })
 ##' @export
 ##' @rdname data_set
+##' @param object character name of an object existing in \code{$ENV} to use for the data set
 setMethod("data_set",c("mrgmod", "missing"), function(x,object,...) {
   object <- eval(parse(text=as.character(object)),envir=x@envir)  
   if(is.function(object)) {

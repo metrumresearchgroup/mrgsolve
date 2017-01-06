@@ -459,3 +459,11 @@ where_first <- function(what,x) {
   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
 }
 
+
+object_exists <- function(name,envir,mode="any",inherits=FALSE) {
+  if(!exists(name,envir=envir,mode=mode,inherits=inherits)) {
+    stop("Couldn't find object ", name, call.=FALSE) 
+  }
+  
+}
+

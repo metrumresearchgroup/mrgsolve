@@ -405,4 +405,12 @@ tran_mrgsim <- function(x,
 }
 
 
+param_as_parent <- function(x) {
+  e <- as.environment(as.list(param(x)))
+  parent.env(e) <- .GlobalEnv
+  parent.env(x@envir) <- e
+}
+global_as_parent <- function(x) {
+  parent.env(x@envir) <- .GlobalEnv 
+}
 

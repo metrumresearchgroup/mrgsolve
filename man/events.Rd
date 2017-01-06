@@ -51,6 +51,8 @@ re_eval_env(x, seed = NULL)
 
 \item{object}{passed to show}
 
+\item{seed}{passed to \code{\link{set.seed}} if a numeric value is supplied}
+
 \item{time}{event time}
 
 \item{evid}{event ID}

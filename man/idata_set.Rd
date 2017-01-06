@@ -11,11 +11,11 @@
 idata_set(x, data, ...)
 
 \S4method{idata_set}{mrgmod,data.frame}(x, data, subset = TRUE,
-  select = TRUE, call = NULL, ...)
+  select = TRUE, ...)
 
 \S4method{idata_set}{mrgmod,ANY}(x, data, ...)
 
-\S4method{idata_set}{mrgmod,missing}(x, object, form = NULL, ...)
+\S4method{idata_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
 \item{x}{model object}
@@ -27,6 +27,8 @@ idata_set(x, data, ...)
 \item{subset}{passed to \code{dplyr::filter_}}
 
 \item{select}{passed to \code{dplyr::select_}}
+
+\item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 }
 \description{
 Set the \code{idata} argument for \code{mrgsim}.

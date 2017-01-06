@@ -159,11 +159,13 @@ modelparse <- function(txt,
 ## New function set for finding double / bool / int
 ## and moving to global
 move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
+move_global_rcpp_re_find <- "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+\\w+\\s*="
 move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
+move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 move_global <- function(x,env) {
   
-  what <- intersect(c("MAIN", "ODE", "TABLE"),names(x))
+  what <- intersect(c("CONFIG","MAIN", "ODE", "TABLE"),names(x))
   
   if(length(what)==0) return(x)
   
@@ -180,8 +182,8 @@ move_global <- function(x,env) {
   ll <- cvec_cs(unlist(ll,use.names=FALSE))
   ll <- gsub(";","",ll,fixed=TRUE)
   ll <- setdiff(ll, c("double", "int", "bool", "capture"))
-  env$move_global <- ll
-
+  env[["move_global"]] <- ll
+  
   cap <- vector("list")
   
   for(w in what) {
@@ -209,6 +211,16 @@ move_global <- function(x,env) {
     
   } # <-- End for(w in what)
   
+  if("CONFIG" %in% what) {
+    l <- unlist(lapply(x["CONFIG"], get_rcpp_vars),use.names=FALSE)
+    env[["global"]] <- c(env[["global"]],
+                         "namespace {",
+                         paste0("  ",l),
+                         "}")
+    x[["CONFIG"]] <- gsub(move_global_rcpp_re_sub,
+                          "\\2",x[["CONFIG"]],perl=TRUE)
+  }
+  
   if(length(cap) > 0) {
     # must trim this
     x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
@@ -228,6 +240,15 @@ get_c_vars <- function(y) {
          replacement=";",
          perl=TRUE)
 }
+get_rcpp_vars <- function(y) {
+  m <- gregexpr(move_global_rcpp_re_find,y,perl=TRUE)
+  regmatches(y,m) %>%
+    unlist %>%
+    gsub(pattern="\\s*=$",
+         replacement=";",
+         perl=TRUE)
+}
+
 ## ----------------------------------------------------------------------------
 
 
@@ -734,7 +755,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   pos <- attr(x,"pos")
   
   check_block_data(x,env$ENV,pos)
-
+  
   if(length(x) ==0) return(list())
   return(x)
 }
