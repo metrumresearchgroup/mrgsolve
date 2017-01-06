@@ -33,9 +33,6 @@ mcode <- function(model,code, project=tempdir(),...) {
   mread(model=model,project=project,code=code,...)
 }
 
-
-
-
 ##' Read a model specification file.
 ##' 
 ##' \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
@@ -113,7 +110,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
-  build <- new_build(model,project,soloc,code,udll)
+  build <- new_build(model,project,soloc,code,preclean,udll)
 
   if(!file_exists(build$modfile)) {
     if(build$project==modlib()) {
@@ -311,7 +308,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   close(def.con)
   
   ## lock some of this down so we can check order later
-  x@shlib$cmt <- names(init(x))
+  x@shlib$cmt <- names(Init(x))
   x@shlib$par <- names(param(x))
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
@@ -334,8 +331,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   #do_restore(to_restore)
 
   same <- check_and_copy(from = temp_write,
-                         to = build$compfile,
-                         preclean)
+                         to = build$compfile)
   
   if(!compile) return(x)
   
