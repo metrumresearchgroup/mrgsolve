@@ -112,6 +112,9 @@ struct databox {
 // Number of equations
 #define _NEQ (_A_0_.size())
 
+// Extract objects out of $ENV
+#define _MRGX_GET(a,b) a b = mrgx::get<a>(self,#b);
+
 // Macros related to stopping the advance of the system
 // once a condition is met
 #define SYSTEMSTOPADVANCING() (self.SYSTEMOFF=true);

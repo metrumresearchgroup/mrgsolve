@@ -26,25 +26,12 @@ double rlognorm(const double mean, const double sd, const double lower, const do
   Rcpp::stop("Could not simulate log normal variate within specified bounds");
 }
 
-namespace env {
-Rcpp::NumericVector vector(databox& self, std::string name) {
-  Rcpp::Environment env = get_envir(self);
-  return env[name];
-} 
-Rcpp::NumericMatrix matrix(databox& self, std::string name) {
-  Rcpp::Environment env = get_envir(self);
-  return env[name];
-}
-Rcpp::CharacterVector cvector(databox& self, std::string name) {
-  Rcpp::Environment env = get_envir(self);
-  return env[name];
-}
-Rcpp::Function fun(databox& self, std::string name) {
+template<typename T>
+T get(databox& self, std::string name) {
   Rcpp::Environment env = get_envir(self);
   return env[name];
 }
 
-}
 }
 
 #endif

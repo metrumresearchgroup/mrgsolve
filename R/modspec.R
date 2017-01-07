@@ -211,16 +211,16 @@ move_global <- function(x,env) {
     
   } # <-- End for(w in what)
   
-  if("PREAMBLE" %in% what) {
-    l <- unlist(lapply(x["PREAMBLE"], get_rcpp_vars),use.names=FALSE)
-    env[["global"]] <- c(env[["global"]],
-                         "namespace {",
-                         paste0("  ",l),
-                         "}")
-    x[["PREAMBLE"]] <- gsub(move_global_rcpp_re_sub,
-                          "\\2",x[["PREAMBLE"]],perl=TRUE)
-  }
-  
+  # if("PREAMBLE" %in% what) {
+  #   l <- unlist(lapply(x["PREAMBLE"], get_rcpp_vars),use.names=FALSE)
+  #   env[["global"]] <- c(env[["global"]],
+  #                        "namespace {",
+  #                        paste0("  ",l),
+  #                        "}")
+  #   x[["PREAMBLE"]] <- gsub(move_global_rcpp_re_sub,
+  #                         "\\2",x[["PREAMBLE"]],perl=TRUE)
+  # }
+  # 
   if(length(cap) > 0) {
     # must trim this
     x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
