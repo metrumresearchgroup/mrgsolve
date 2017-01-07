@@ -396,10 +396,7 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 ##' @param seed passed to \code{\link{set.seed}} if a numeric value is supplied
 re_eval_env <- function(x,seed=NULL) {
   if(is.numeric(seed)) set.seed(seed)
-  .x <- try(eval(parse(text=x@envir$.code),x@envir))
-  if(inherits(.x,"try-error")) {
-    stop("Failed to parse code in $ENV",call.=FALSE) 
-  }
+  eval_ENV_block(x=x@envir$.code,where=project(x),envir=x@envir)
   return(invisible(x))
 }
 

@@ -139,7 +139,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
-  ENV <- eval_ENV_block(spec[["ENV"]])
+  ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one

@@ -459,15 +459,17 @@ handle_spec_block.specSIGMA <- function(x,...) {
   
 }
 
-eval_ENV_block <- function(x,...) {
-  e <- new.env()
-  if(is.null(x)) return(e)
-  .x <- try(eval(parse(text=x),envir=e))
+eval_ENV_block <- function(x,where,envir=new.env(),...) {
+  cwd <- getwd()
+  on.exit(setwd(cwd))
+  setwd(where)
+  if(is.null(x)) return(envir)
+  .x <- try(eval(parse(text=x),envir=envir))
   if(inherits(.x,"try-error")) {
     stop("Failed to parse code in $ENV",call.=FALSE) 
   }
-  e$.code <- x
-  return(e)
+  envir$.code <- x
+  return(envir)
 }  
 
 
