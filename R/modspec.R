@@ -165,7 +165,7 @@ move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 move_global <- function(x,env) {
   
-  what <- intersect(c("CONFIG","MAIN", "ODE", "TABLE"),names(x))
+  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE"),names(x))
   
   if(length(what)==0) return(x)
   
@@ -211,14 +211,14 @@ move_global <- function(x,env) {
     
   } # <-- End for(w in what)
   
-  if("CONFIG" %in% what) {
-    l <- unlist(lapply(x["CONFIG"], get_rcpp_vars),use.names=FALSE)
+  if("PREAMBLE" %in% what) {
+    l <- unlist(lapply(x["PREAMBLE"], get_rcpp_vars),use.names=FALSE)
     env[["global"]] <- c(env[["global"]],
                          "namespace {",
                          paste0("  ",l),
                          "}")
-    x[["CONFIG"]] <- gsub(move_global_rcpp_re_sub,
-                          "\\2",x[["CONFIG"]],perl=TRUE)
+    x[["PREAMBLE"]] <- gsub(move_global_rcpp_re_sub,
+                          "\\2",x[["PREAMBLE"]],perl=TRUE)
   }
   
   if(length(cap) > 0) {

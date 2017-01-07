@@ -39,10 +39,11 @@ Rcpp::CharacterVector cvector(databox& self, std::string name) {
   Rcpp::Environment env = get_envir(self);
   return env[name];
 }
-double scalar(databox& self, std::string name) {
-  Rcpp::NumericVector ans = vector(self,name);
-  return ans[0];
+Rcpp::Function fun(databox& self, std::string name) {
+  Rcpp::Environment env = get_envir(self);
+  return env[name];
 }
+
 }
 }
 
