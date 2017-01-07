@@ -9,6 +9,9 @@ CHKDIR=Rchecks
 ## Set libPaths:
 export R_LIBS=${LIBDIR}
 
+pkgdown:
+	Rscript -e 'library(pkgdown)' -e 'build_site()'
+
 travis_build:
 	make doc
 	make build
