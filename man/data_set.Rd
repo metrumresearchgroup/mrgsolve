@@ -5,6 +5,7 @@
 \alias{data_set}
 \alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,data.frame-method}
+\alias{data_set,mrgmod,missing-method}
 \title{Set the \code{data} argument for \code{mrgsim}.}
 \usage{
 data_set(x, data, ...)
@@ -13,6 +14,8 @@ data_set(x, data, ...)
   select = TRUE, ...)
 
 \S4method{data_set}{mrgmod,ANY}(x, data, ...)
+
+\S4method{data_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
 \item{x}{model object}
@@ -24,6 +27,8 @@ data_set(x, data, ...)
 \item{subset}{passed to \code{dplyr::filter_}; retain only certain rows in the data set}
 
 \item{select}{passed to \code{dplyr::select_}; retain only certain columns in the data set}
+
+\item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 }
 \description{
 Set the \code{data} argument for \code{mrgsim}.

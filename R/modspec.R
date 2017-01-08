@@ -159,11 +159,13 @@ modelparse <- function(txt,
 ## New function set for finding double / bool / int
 ## and moving to global
 move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
+move_global_rcpp_re_find <- "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+\\w+\\s*="
 move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
+move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 move_global <- function(x,env) {
   
-  what <- intersect(c("MAIN", "ODE", "TABLE"),names(x))
+  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE"),names(x))
   
   if(length(what)==0) return(x)
   
@@ -180,8 +182,8 @@ move_global <- function(x,env) {
   ll <- cvec_cs(unlist(ll,use.names=FALSE))
   ll <- gsub(";","",ll,fixed=TRUE)
   ll <- setdiff(ll, c("double", "int", "bool", "capture"))
-  env$move_global <- ll
-
+  env[["move_global"]] <- ll
+  
   cap <- vector("list")
   
   for(w in what) {
@@ -209,6 +211,16 @@ move_global <- function(x,env) {
     
   } # <-- End for(w in what)
   
+  # if("PREAMBLE" %in% what) {
+  #   l <- unlist(lapply(x["PREAMBLE"], get_rcpp_vars),use.names=FALSE)
+  #   env[["global"]] <- c(env[["global"]],
+  #                        "namespace {",
+  #                        paste0("  ",l),
+  #                        "}")
+  #   x[["PREAMBLE"]] <- gsub(move_global_rcpp_re_sub,
+  #                         "\\2",x[["PREAMBLE"]],perl=TRUE)
+  # }
+  # 
   if(length(cap) > 0) {
     # must trim this
     x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
@@ -228,6 +240,15 @@ get_c_vars <- function(y) {
          replacement=";",
          perl=TRUE)
 }
+get_rcpp_vars <- function(y) {
+  m <- gregexpr(move_global_rcpp_re_find,y,perl=TRUE)
+  regmatches(y,m) %>%
+    unlist %>%
+    gsub(pattern="\\s*=$",
+         replacement=";",
+         perl=TRUE)
+}
+
 ## ----------------------------------------------------------------------------
 
 
@@ -438,14 +459,17 @@ handle_spec_block.specSIGMA <- function(x,...) {
   
 }
 
-eval_ENV_block <- function(x,...) {
-  e <- new.env()
-  if(is.null(x)) return(e)
-  x <- try(eval(parse(text=x),envir=e))
-  if(inherits(x,"try-error")) {
+eval_ENV_block <- function(x,where,envir=new.env(),...) {
+  cwd <- getwd()
+  on.exit(setwd(cwd))
+  setwd(where)
+  if(is.null(x)) return(envir)
+  .x <- try(eval(parse(text=x),envir=envir))
+  if(inherits(.x,"try-error")) {
     stop("Failed to parse code in $ENV",call.=FALSE) 
   }
-  return(e)
+  envir$.code <- x
+  return(envir)
 }  
 
 
@@ -733,7 +757,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   pos <- attr(x,"pos")
   
   check_block_data(x,env$ENV,pos)
-
+  
   if(length(x) ==0) return(list())
   return(x)
 }

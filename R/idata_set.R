@@ -23,3 +23,19 @@ setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sel
 setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(idata_set(x,as.data.frame(data),...))
 })
+##' @export
+##' @rdname idata_set
+##' @param object character name of an object existing in \code{$ENV} to use for the data set
+##' 
+setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
+
+  object <- eval(parse(text=as.character(object)),envir=x@envir)
+  
+  if(is.function(object)) {
+    object <- do.call(object,args=list(...),envir=x@envir)
+  }
+  object <- as.data.frame(object)
+
+  return(idata_set(x,object,...))
+})
+

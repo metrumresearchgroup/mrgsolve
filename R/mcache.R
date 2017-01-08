@@ -3,9 +3,9 @@
 ##' @rdname mread 
 ##' @export
 mread_cache <- function(model,project=getwd(),
-                        code=NULL, soloc=tempdir(),quiet=FALSE,...) {
+                        code=NULL, soloc=tempdir(), quiet=FALSE, preclean=FALSE,...) {
   
-  build <- new_build(model,project,soloc,code) 
+  build <- new_build(model,project,soloc,code,preclean) 
   
   cache_file <- file.path(build$soloc,"mrgmod_cache.RDS")
   
@@ -28,7 +28,7 @@ mread_cache <- function(model,project=getwd(),
     return(x)
   }
   
-  x <- mread( model,project,soloc=soloc,quiet=quiet,...)
+  x <- mread(model,project,soloc=soloc,quiet=quiet,...)
   
   saveRDS(x,file=cache_file)
   

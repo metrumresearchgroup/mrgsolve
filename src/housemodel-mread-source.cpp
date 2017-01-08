@@ -71,7 +71,7 @@ typedef double localdouble;
 #define EKOUT _xETA(4)
 #define EXPO _xEPS(1)
 
-// CONFIG CODE BLOCK:
+// PREAMBLE CODE BLOCK:
 __BEGIN_config__
 __END_config__
 

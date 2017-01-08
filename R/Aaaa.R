@@ -59,7 +59,7 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "CONFIG")
+                "PREAMBLE")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
@@ -75,7 +75,7 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
 
 
 globalVariables(c("test_package","time", "ID","block", "descr",
-                  "everything", "TIME", "address",
+                  "everything", "TIME", "address","x",
                   "func", "loaded", "name", "not_found"))
 
 

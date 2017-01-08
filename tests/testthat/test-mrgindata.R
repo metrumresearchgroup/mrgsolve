@@ -41,8 +41,6 @@ test_that("Run with no input - and nid", {
   expect_equal(nrow(out),n*31)
 })
 
-
-
 test_that("Run ev event", {
   e <- ev(amt=100)
   out <- mod %>% ev(e) %>% mrgsim

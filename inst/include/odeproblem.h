@@ -51,6 +51,10 @@ struct databox {
   double id;
   double amt;
   short int cmt;
+  int nid;
+  int idn;
+  int nrow;
+  int rown;
   bool CFONSTOP;
   void* envir;
 };
@@ -170,6 +174,11 @@ public:
   
   void neta(int n);
   void neps(int n);
+  
+  void nid(int n) {d.nid = n;}
+  void nrow(int n) {d.nrow = n;}
+  void idn(int n) {d.idn = n;}
+  void rown(int n) {d.rown=n;}
   
   dvec& mtime(){return d.mtime;}
   

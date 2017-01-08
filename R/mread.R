@@ -33,9 +33,6 @@ mcode <- function(model,code, project=tempdir(),...) {
   mread(model=model,project=project,code=code,...)
 }
 
-
-
-
 ##' Read a model specification file.
 ##' 
 ##' \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
@@ -113,7 +110,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
-  build <- new_build(model,project,soloc,code,udll)
+  build <- new_build(model,project,soloc,code,preclean,udll)
 
   if(!file_exists(build$modfile)) {
     if(build$project==modlib()) {
@@ -142,7 +139,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
   spec[["SET"]] <- NULL
-  ENV <- eval_ENV_block(spec[["ENV"]])
+  ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
@@ -176,7 +173,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
   capture <- unique(as.character(unlist(do.call("c", nonull.list(mread.env$capture)))))
-  
+
   annot <- capture_param(annot,capture)
   
   ans <- check_globals(mread.env$move_global,names(init))
@@ -240,6 +237,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     audit_spec(x,spec,warn=warn)
   }
   
+  if(is.element("require", names(SET))) {
+    re <- cvec_cs(SET[["require"]])
+    for(pkg in re) {
+      stopifnot(requireNamespace(pkg,quietly=TRUE)) 
+    }
+  }
   
   ## First update with what we found in the model specification file
   x <- update(x, data=SET, open=TRUE)
@@ -289,9 +292,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     spec[["GLOBAL"]],
     "\n// DEFS:",
     rd, 
-    "\n// CONFIG CODE BLOCK:",
+    "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
-    spec[["CONFIG"]],
+    spec[["PREAMBLE"]],
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
@@ -311,7 +314,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   close(def.con)
   
   ## lock some of this down so we can check order later
-  x@shlib$cmt <- names(init(x))
+  x@shlib$cmt <- names(Init(x))
   x@shlib$par <- names(param(x))
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
@@ -334,8 +337,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   #do_restore(to_restore)
 
   same <- check_and_copy(from = temp_write,
-                         to = build$compfile,
-                         preclean)
+                         to = build$compfile)
   
   if(!compile) return(x)
   

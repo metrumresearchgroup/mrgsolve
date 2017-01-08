@@ -20,7 +20,7 @@ as_bmat(x, ...)
 
 \S4method{as_bmat}{numeric}(x, pat = "*", ...)
 
-\S4method{as_bmat}{data.frame}(x, pat = "*", ...)
+\S4method{as_bmat}{data.frame}(x, pat = "*", cols = NULL, ...)
 
 \S4method{as_bmat}{ANY}(x, ...)
 
@@ -32,7 +32,7 @@ as_dmat(x, ...)
 
 \S4method{as_dmat}{numeric}(x, pat = "*", ...)
 
-\S4method{as_dmat}{data.frame}(x, pat = "*", ...)
+\S4method{as_dmat}{data.frame}(x, pat = "*", cols = NULL, ...)
 }
 \arguments{
 \item{x}{an R object}
@@ -40,6 +40,8 @@ as_dmat(x, ...)
 \item{...}{passed along}
 
 \item{pat}{regular expression, character}
+
+\item{cols}{column names to use instead of \code{pat}}
 }
 \value{
 A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.

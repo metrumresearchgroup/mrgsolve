@@ -9,14 +9,14 @@ update_wait_time <- function(n) {
 }
 
 
-check_and_copy <- function(from,to,preclean=FALSE) {
+check_and_copy <- function(from,to) {
   
   if(!file_exists(to)) {
     file.copy(from,to)
     same <- TRUE
   } else {
     same <- tools::md5sum(from) == tools::md5sum(to)
-    if((!same) | preclean) {
+    if(!same) {
       file.copy(from,to,overwrite=TRUE)
     }
   }

@@ -59,7 +59,6 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
   return(new("ev", data=data))
 })
 
-
 ##' @rdname events
 ##' @export
 setMethod("ev", "ev", function(x,...) return(x))

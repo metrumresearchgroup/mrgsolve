@@ -1,11 +1,17 @@
 Package: mrgsolve
 Type: Package
-Version: 0.7.9.9001
+Version: 0.7.9.9002
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
-Author: Kyle T. Baron [cre,aut,cph], Alan C. Hindmarsh [ctb], Linda R. Petzold
-    [ctb], Bill Gillespie [ctb], Charles Margossian [ctb], Metrum Research Group LLC
-    [cre,aut,cph]
+Authors@R: c(
+    person("Kyle T", "Baron", "", "kyleb@metrumrg.com", c("aut", "cre", "cph")),
+    person("Alan C", "Hindmarsh", "", "", c("ctb")),
+    person("Linda R", "Petzold", "", "", c("ctb")),
+    person("Bill", "Gillespie", "", "", c("ctb")),
+    person("Charles", "Margossian", "", "", c("ctb")),
+    person("Metrum Research Group LLC", role =  c("cph")),
+    person("Devin", "Pastoor", "", "", c("ctb"))
+    )
 Maintainer: Kyle T. Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
@@ -59,8 +65,10 @@ Collate:
     'class_build.R'
     'compile.R'
     'complog.R'
+    'covset.R'
     'data_set.R'
     'datasets.R'
+    'dmutate.R'
     'events.R'
     'example.R'
     'funset.R'

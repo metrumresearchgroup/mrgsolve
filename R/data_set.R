@@ -43,6 +43,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
   if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
 
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
+  
   data <- mrgindata(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), open=TRUE)
   return(x)
@@ -52,6 +53,16 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
 ##' @rdname data_set
 setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(data_set(x,as.data.frame(data),...))
+})
+##' @export
+##' @rdname data_set
+##' @param object character name of an object existing in \code{$ENV} to use for the data set
+setMethod("data_set",c("mrgmod", "missing"), function(x,object,...) {
+  object <- eval(parse(text=as.character(object)),envir=x@envir)  
+  if(is.function(object)) {
+    object <- do.call(object,args=list(...)) 
+  }
+  return(data_set(x,as.data.frame(object),...))
 })
 
 

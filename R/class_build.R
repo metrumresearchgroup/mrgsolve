@@ -5,7 +5,7 @@
 # @param soloc the build directory
 # @param code model code
 # @param udll logical; if FALSE, a random dll name is generated
-new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
+new_build <- function(model,project,soloc,code=NULL,preclean=FALSE,udll=FALSE) {
   
   ## Check for spaces in the model name
   if(charthere(model," ")) {
@@ -23,7 +23,8 @@ new_build <- function(model,project,soloc,code=NULL,udll=FALSE) {
     stop("soloc directory must exist and be writeable.",call.=FALSE) 
   }
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
-  env$soloc <-   as.character(create_soloc(soloc,model))
+  
+  env$soloc <-   as.character(create_soloc(soloc,model,preclean))
   
   if(!file_readable(project)) {
     stop("project directory must exist and be readable.",call.=FALSE) 
@@ -83,9 +84,11 @@ compdir <- function() {
 
 cachefile <- function(model) "model-cache.RDS"
 
-create_soloc <- function(loc,model) {
+create_soloc <- function(loc,model,preclean) {
   
   soloc <- file.path(loc,compdir(),model)
+  
+  if(preclean) unlink(soloc,recursive=TRUE)
   
   if(!file_exists(soloc)) dir.create(soloc,recursive=TRUE)
   

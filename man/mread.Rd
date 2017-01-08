@@ -6,7 +6,7 @@
 \title{Read a model specification file.}
 \usage{
 mread_cache(model, project = getwd(), code = NULL, soloc = tempdir(),
-  quiet = FALSE, ...)
+  quiet = FALSE, preclean = FALSE, ...)
 
 mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
   ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = TRUE,
@@ -24,6 +24,8 @@ mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
 
 \item{quiet}{don't print messages when compiling}
 
+\item{preclean}{logical; if \code{TRUE}, compilation artifacts are cleaned up first}
+
 \item{...}{passed along}
 
 \item{udll}{use unique name for shared object}
@@ -39,8 +41,6 @@ mread(model = character(0), project = getwd(), code = NULL, udll = TRUE,
 \item{check.bounds}{check boundaries of parameter list}
 
 \item{warn}{logical; if \code{TRUE}, print warning messages that may arise}
-
-\item{preclean}{logical; if \code{TRUE}, compilation artifacts are cleaned up first}
 }
 \description{
 \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
