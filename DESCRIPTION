@@ -5,7 +5,7 @@ Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
     person("Kyle T", "Baron", "", "kyleb@metrumrg.com", c("aut", "cre", "cph")),
-    person("Alan C", "Hindmarsh", "C", "", c("ctb")),
+    person("Alan C", "Hindmarsh", "", "", c("ctb")),
     person("Linda R", "Petzold", "", "", c("ctb")),
     person("Bill", "Gillespie", "", "", c("ctb")),
     person("Charles", "Margossian", "", "", c("ctb")),
