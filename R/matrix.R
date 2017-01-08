@@ -182,8 +182,17 @@ setMethod("as_bmat", "numeric", function(x,pat="*",...) {
 })
 ##' @export
 ##' @rdname as_bmat
-setMethod("as_bmat", "data.frame", function(x,pat="*", ...) {
-  x <- x[,grepl(pat,names(x)),drop=FALSE]
+setMethod("as_bmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
+  if(is.character(cols)) {
+    cols <- cvec_cs(cols)
+    if(!all(cols %in% names(x))) {
+      stop("Invalid colums in cols argument.") 
+    }
+    cols <- names(x) %in% cols
+  } else {
+    cols <- grepl(pat,names(x))
+  }
+  x <- x[,cols,drop=FALSE]
   lapply(seq_len(nrow(x)), function(i) bmat(unlist(x[i,])))
 })
 ##' @export
@@ -208,8 +217,17 @@ setMethod("as_dmat", "numeric", function(x,pat="*",...) {
 })
 ##' @export
 ##' @rdname as_bmat
-setMethod("as_dmat", "data.frame", function(x,pat="*", ...) {
-  x <- x[,grepl(pat,names(x)),drop=FALSE]
+setMethod("as_dmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
+  if(is.character(cols)) {
+    cols <- cvec_cs(cols)
+    if(!all(cols %in% names(x))) {
+      stop("Invalid colums in cols argument.") 
+    }
+    cols <- names(x) %in% cols
+  } else {
+    cols <- grepl(pat,names(x))
+  }
+  x <- x[,cols,drop=FALSE]
   lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,])))
 })
 
