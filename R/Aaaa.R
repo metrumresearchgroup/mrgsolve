@@ -75,7 +75,7 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
 
 
 globalVariables(c("test_package","time", "ID","block", "descr",
-                  "everything", "TIME", "address",
+                  "everything", "TIME", "address","x",
                   "func", "loaded", "name", "not_found"))
 
 

@@ -467,3 +467,4 @@ object_exists <- function(name,envir,mode="any",inherits=FALSE) {
   
 }
 
+mt_fun <- function(){}

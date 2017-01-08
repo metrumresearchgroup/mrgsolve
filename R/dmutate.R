@@ -3,22 +3,15 @@
 ##' Add random variates to a data frame.
 ##'
 ##' @param data the data.frame to mutate
-##' @param form an unquoted R formula; see details.
+##' @param form an unquoted R formula; see details
 ##' @param ... additional inputs
 ##'
 ##' @export
-##' @importFrom dplyr left_join
-##' @importFrom MASS mvrnorm
-##' @examples
+##' @importFrom dplyr left_join bind_cols
+##' @importFrom stats rbinom
 ##'
 ##'
-##' data(Theoph)
 ##'
-##' Theoph %>% dmutate(SEX~binom(0.3|ID)) %>% head
-##' mu <- c(1,30)
-##' Sigma <- diag(c(1,1))
-##'
-##' Theoph %>% dmutate(CL+VC ~ MvLN(mu,Sigma|ID)) %>% head
 dmutate <- function(data,form,...) {
   if(is.language(form)) form <- deparse(form)
   form <- parse_form_3(form)
@@ -27,6 +20,8 @@ dmutate <- function(data,form,...) {
 
 
 ##' @export
+##' @rdname dmutate
+##' @param x formula
 dmutate_ <- function(data,x,...) {
   x <- parse_random_string(x)
   args <- x$args
@@ -83,7 +78,6 @@ parse_left <- function(x) {
 }
 
 
-##' @export
 bound <- function(call,n,envir=list(),mult=1.2,mn=-Inf,mx=Inf,tries=10) {
 
   n0 <- n
@@ -103,14 +97,8 @@ bound <- function(call,n,envir=list(),mult=1.2,mn=-Inf,mx=Inf,tries=10) {
 
 
 
-binomial <- function(n,p,...) rbinom(n,1,p)
+binomial <- function(n,p,...) stats::rbinom(n,1,p)
 Bin <- function(...) binomial
-bernoulli <- binomial
-normal <- function(n,mean,sd,...) rnorm(n,mean,sd)
-gamma <- function(n,shape,rate,...) rgamma(n,shape,rate)
-beta <- function(n,shape1,shape2,ncp=0,...) rbeta(n,shape1,shape2,ncp)
-uniform <- function(n,min,max,...) runif(n,min,max)
-lognormal <- function(n,mean,sd,...) exp(rnorm(n,mean,sd))
 
 parse_form <- function(x) {
   x <- gsub(" ", "",x, fixed=TRUE)
@@ -146,7 +134,6 @@ parse_random_block <- function(x) {
   x
 }
 
-##' @export
 dmutate_list <- function(data,block,...) {
 
   x <- parse_random_block(block)
@@ -256,10 +243,6 @@ parse_form_3 <- function(x) {
 }
 
 
-
-
-
-##' @export
 do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
 
   if(tries <=0) stop("tries must be >= 1")
@@ -278,7 +261,7 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
 
   mn <- eval(parse(text=x$lower),envir=envir)
   mx <- eval(parse(text=x$upper),envir=envir)
-  r <- data_frame(.x=bound(x$call,n=n,mn=mn, mx=mx,tries=tries,e=envir))
+  r <- data_frame(.x=bound(x$call,n=n,mn=mn, mx=mx,tries=tries,envir=envir))
   names(r) <- x$vars
   data <- data %>% select_(.dots=setdiff(names(data),names(r)))
 

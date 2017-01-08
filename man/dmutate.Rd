@@ -2,29 +2,23 @@
 % Please edit documentation in R/dmutate.R
 \name{dmutate}
 \alias{dmutate}
+\alias{dmutate_}
 \title{Add random variates to a data frame.}
 \usage{
 dmutate(data, form, ...)
+
+dmutate_(data, x, ...)
 }
 \arguments{
 \item{data}{the data.frame to mutate}
 
-\item{form}{an unquoted R formula; see details.}
+\item{form}{an unquoted R formula; see details}
 
 \item{...}{additional inputs}
+
+\item{x}{formula}
 }
 \description{
 Add random variates to a data frame.
-}
-\examples{
-
-
-data(Theoph)
-
-Theoph \%>\% dmutate(SEX~binom(0.3|ID)) \%>\% head
-mu <- c(1,30)
-Sigma <- diag(c(1,1))
-
-Theoph \%>\% dmutate(CL+VC ~ MvLN(mu,Sigma|ID)) \%>\% head
 }
 

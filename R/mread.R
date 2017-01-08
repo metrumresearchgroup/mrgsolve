@@ -237,6 +237,12 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
     audit_spec(x,spec,warn=warn)
   }
   
+  if(is.element("require", names(SET))) {
+    re <- cvec_cs(SET[["require"]])
+    for(pkg in re) {
+      stopifnot(requireNamespace(pkg,quietly=TRUE)) 
+    }
+  }
   
   ## First update with what we found in the model specification file
   x <- update(x, data=SET, open=TRUE)

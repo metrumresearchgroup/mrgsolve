@@ -27,11 +27,26 @@ double rlognorm(const double mean, const double sd, const double lower, const do
 }
 
 template<typename T>
-T get(databox& self, std::string name) {
+T get(const std::string name, databox& self) {
   Rcpp::Environment env = get_envir(self);
   return env[name];
 }
-
+template<typename T>
+T get(const std::string name) {
+  Rcpp::Environment env = Rcpp::Environment::global_env();
+  return env[name];
+} 
+template<typename T>
+T get(const std::string package, const std::string name) {
+  Rcpp::Environment env = Rcpp::Environment::namespace_env(package);
+  T ans = env[name];
+  return ans;
+} 
+Rcpp::Function mt_fun() {
+  Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");
+  Rcpp::Function ans = env["mt_fun"];
+  return ans;
+}
 }
 
 #endif
