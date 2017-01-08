@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Methods for working with  � mrgsims • mrgsolve</title>
+<title>Methods for working with  — mrgsims • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -165,69 +165,14 @@ show(object)</pre>
     <pre class="examples"><div class='input'>
 <span class='co'>## example("mrgsims")</span>
 
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>() <span class='kw'>%&gt;%</span> <span class='fu'><a href='init.html'>init</a></span>(<span class='kw'>GUT</span><span class='kw'>=</span><span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;C:\Users\devin\Documents\Repos\mrgsolve/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='no'>mod</span>)
-<span class='fu'>class</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; [1] &quot;mrgsims&quot;
-#&gt; attr(,&quot;package&quot;)
-#&gt; [1] &quot;mrgsolve&quot;</div><div class='input'>
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    241 x 6 
-#&gt; Time:   0 to 24 
-#&gt; ID:     1 
-#&gt;      ID time GUT CENT RESP CP
-#&gt; [1,]  1  0.0   0    0   50  0
-#&gt; [2,]  1  0.1   0    0   50  0
-#&gt; [3,]  1  0.2   0    0   50  0
-#&gt; [4,]  1  0.3   0    0   50  0
-#&gt; [5,]  1  0.4   0    0   50  0
-#&gt; [6,]  1  0.5   0    0   50  0
-#&gt; [7,]  1  0.6   0    0   50  0
-#&gt; [8,]  1  0.7   0    0   50  0</div><div class='input'><span class='fu'>head</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; Model:  demo </div><div class='output co'>#&gt;   ID time GUT CENT RESP CP
-#&gt; 1  1  0.0   0    0   50  0
-#&gt; 2  1  0.1   0    0   50  0
-#&gt; 3  1  0.2   0    0   50  0
-#&gt; 4  1  0.3   0    0   50  0
-#&gt; 5  1  0.4   0    0   50  0
-#&gt; 6  1  0.5   0    0   50  0</div><div class='input'><span class='fu'>tail</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; Model:  demo </div><div class='output co'>#&gt;     ID time GUT CENT RESP CP
-#&gt; 236  1 23.5   0    0   50  0
-#&gt; 237  1 23.6   0    0   50  0
-#&gt; 238  1 23.7   0    0   50  0
-#&gt; 239  1 23.8   0    0   50  0
-#&gt; 240  1 23.9   0    0   50  0
-#&gt; 241  1 24.0   0    0   50  0</div><div class='input'>
-<span class='fu'><a href='mod.html'>mod</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; 
-#&gt; 
-#&gt; -------- mrgsolve model object (windows) --------
-#&gt;   Project: C:/Users/devin/AppData/Local/Temp/RtmpCUybu4
-#&gt;   source:        demo.cpp
-#&gt;   shared object: demo-so-7dd83012d63 
-#&gt; 
-#&gt;   compile date:  
-#&gt;   Time:          start: 0 end: 24 delta: 0.1
-#&gt;   &gt;              add: &lt;none&gt;
-#&gt;   &gt;              tscale: 1
-#&gt; 
-#&gt;   Compartments:  GUT CENT RESP [3]
-#&gt;   Parameters:    TVCL TVVC KA KIN KOUT IC50 [6]
-#&gt;   Omega:         2x2 
-#&gt;   Sigma:         0x0 
-#&gt; 
-#&gt;   Solver:        atol: 1e-08 rtol: 1e-08
-#&gt;   &gt;              maxsteps: 2000 hmin: 0 hmax: 0
-#&gt; </div><div class='input'>
-<span class='fu'>dim</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; [1] 241   6</div><div class='input'><span class='fu'>names</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; [1] &quot;ID&quot;   &quot;time&quot; &quot;GUT&quot;  &quot;CENT&quot; &quot;RESP&quot; &quot;CP&quot;  </div><div class='input'>
-<span class='no'>mat</span> <span class='kw'>&lt;-</span> <span class='fu'>as.matrix</span>(<span class='no'>out</span>)
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='no'>out</span>)
-
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>out</span>, <span class='no'>time</span> <span class='kw'>&lt;</span> <span class='fl'>12</span>) <span class='co'>## a data frame</span>
-<span class='no'>out</span>$<span class='no'>CP</span></div><div class='output co'>#&gt;   [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt;  [38] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt;  [75] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt; [112] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt; [149] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt; [186] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-#&gt; [223] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</div><div class='input'>
-<span class='fu'>plot</span>(<span class='no'>out</span>)</div><img src='mrgsims-23.png' alt='' width='540' height='400' /><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>)</div><img src='mrgsims-25.png' alt='' width='540' height='400' /><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>+<span class='no'>RESP</span>~<span class='no'>time</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>, <span class='kw'>xlab</span><span class='kw'>=</span><span class='st'>"Time"</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Model sims"</span>)</div><img src='mrgsims-27.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>() <span class='kw'>%&gt;%</span> <span class='fu'><a href='init.html'>init</a></span>(<span class='kw'>GUT</span><span class='kw'>=</span><span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;/Users/kyleb/git/m4solve.git/pkg/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mrgsim(mod): no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='fu'>class</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>head</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in head(out): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>tail</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in tail(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='fu'><a href='mod.html'>mod</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mod(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='fu'>dim</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>names</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>mat</span> <span class='kw'>&lt;-</span> <span class='fu'>as.matrix</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in as.matrix(out): object &#39;out&#39; not found</span></div><div class='input'><span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in as.data.frame(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>out</span>, <span class='no'>time</span> <span class='kw'>&lt;</span> <span class='fl'>12</span>) <span class='co'>## a data frame</span></div><div class='output co'>#&gt; <span class='error'>Error in subset(out, time &lt; 12): object &#39;out&#39; not found</span></div><div class='input'><span class='no'>out</span>$<span class='no'>CP</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='fu'>plot</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, CP ~ .): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>+<span class='no'>RESP</span>~<span class='no'>time</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>, <span class='kw'>xlab</span><span class='kw'>=</span><span class='st'>"Time"</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Model sims"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, CP + RESP ~ time, scales = &quot;same&quot;, xlab = &quot;Time&quot;, main = &quot;Model sims&quot;): object &#39;out&#39; not found</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

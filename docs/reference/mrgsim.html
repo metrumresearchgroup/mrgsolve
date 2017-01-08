@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate from a model object. � mrgsim • mrgsolve</title>
+<title>Simulate from a model object. — mrgsim • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -142,97 +142,17 @@ that occur prior to the first record in <code>data</code>.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## example("mrgsim")</span>
 
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>() <span class='kw'>%&gt;%</span>  <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;C:\Users\devin\Documents\Repos\mrgsolve/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'><span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>()
-<span class='fu'>plot</span>(<span class='no'>out</span>)</div><img src='mrgsim-5.png' alt='' width='540' height='400' /><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>22</span>)
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    221 x 6 
-#&gt; Time:   0 to 22 
-#&gt; ID:     1 
-#&gt;      ID time GUT CENT RESP CP
-#&gt; [1,]  1  0.0   0    0   50  0
-#&gt; [2,]  1  0.1   0    0   50  0
-#&gt; [3,]  1  0.2   0    0   50  0
-#&gt; [4,]  1  0.3   0    0   50  0
-#&gt; [5,]  1  0.4   0    0   50  0
-#&gt; [6,]  1  0.5   0    0   50  0
-#&gt; [7,]  1  0.6   0    0   50  0
-#&gt; [8,]  1  0.7   0    0   50  0</div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>() <span class='kw'>%&gt;%</span>  <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;/Users/kyleb/git/m4solve.git/pkg/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'><span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>()</div><div class='output co'>#&gt; <span class='error'>Error in mrgsim(.): no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>22</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mrgsim(., end = 22): no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
 
 <span class='fu'>data</span>(<span class='no'>exTheoph</span>)
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>exTheoph</span>) <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>()
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    132 x 6 
-#&gt; Time:   0 to 24.65 
-#&gt; ID:     12 
-#&gt;      ID time       GUT  CENT  RESP      CP
-#&gt; [1,]  1 0.00 4.0200000 0.000 50.00 0.00000
-#&gt; [2,]  1 0.25 2.9045600 1.108 49.94 0.05541
-#&gt; [3,]  1 0.57 1.9160809 2.071 49.77 0.10353
-#&gt; [4,]  1 1.12 0.9373316 2.978 49.49 0.14891
-#&gt; [5,]  1 2.02 0.2909168 3.477 49.23 0.17383
-#&gt; [6,]  1 3.82 0.0280233 3.425 49.15 0.17124
-#&gt; [7,]  1 5.10 0.0053071 3.234 49.19 0.16171
-#&gt; [8,]  1 7.03 0.0004317 2.941 49.26 0.14706</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>exTheoph</span>)
-
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>mrgsim</span>(<span class='no'>mod</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>exTheoph</span>, <span class='kw'>obsonly</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    120 x 6 
-#&gt; Time:   0.25 to 24.65 
-#&gt; ID:     12 
-#&gt;      ID time       GUT  CENT  RESP      CP
-#&gt; [1,]  1 0.25 2.905e+00 1.108 49.94 0.05541
-#&gt; [2,]  1 0.57 1.916e+00 2.071 49.77 0.10353
-#&gt; [3,]  1 1.12 9.373e-01 2.978 49.49 0.14891
-#&gt; [4,]  1 2.02 2.909e-01 3.477 49.23 0.17383
-#&gt; [5,]  1 3.82 2.802e-02 3.425 49.15 0.17124
-#&gt; [6,]  1 5.10 5.307e-03 3.234 49.19 0.16171
-#&gt; [7,]  1 7.03 4.317e-04 2.941 49.26 0.14706
-#&gt; [8,]  1 9.05 3.124e-05 2.659 49.33 0.13296</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>exTheoph</span>, <span class='kw'>obsaug</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>carry.out</span><span class='kw'>=</span><span class='st'>"a.u.g"</span>)
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    3024 x 7 
-#&gt; Time:   0 to 24.65 
-#&gt; ID:     12 
-#&gt;      ID time a.u.g   GUT   CENT  RESP      CP
-#&gt; [1,]  1 0.00     1 0.000 0.0000 50.00 0.00000
-#&gt; [2,]  1 0.00     0 4.020 0.0000 50.00 0.00000
-#&gt; [3,]  1 0.10     1 3.530 0.4888 49.99 0.02444
-#&gt; [4,]  1 0.20     1 3.100 0.9156 49.96 0.04578
-#&gt; [5,]  1 0.25     0 2.905 1.1081 49.94 0.05541
-#&gt; [6,]  1 0.30     1 2.722 1.2879 49.92 0.06440
-#&gt; [7,]  1 0.40     1 2.390 1.6124 49.87 0.08062
-#&gt; [8,]  1 0.50     1 2.099 1.8950 49.81 0.09475</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>req</span><span class='kw'>=</span><span class='st'>"CENT"</span>)
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    241 x 4 
-#&gt; Time:   0 to 24 
-#&gt; ID:     1 
-#&gt;      ID time CENT CP
-#&gt; [1,]  1  0.0    0  0
-#&gt; [2,]  1  0.1    0  0
-#&gt; [3,]  1  0.2    0  0
-#&gt; [4,]  1  0.3    0  0
-#&gt; [5,]  1  0.4    0  0
-#&gt; [6,]  1  0.5    0  0
-#&gt; [7,]  1  0.6    0  0
-#&gt; [8,]  1  0.7    0  0</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>mrgsim</span>(<span class='no'>mod</span>, <span class='kw'>Req</span><span class='kw'>=</span><span class='st'>"CP,RESP"</span>)
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    241 x 4 
-#&gt; Time:   0 to 24 
-#&gt; ID:     1 
-#&gt;      ID time RESP CP
-#&gt; [1,]  1  0.0   50  0
-#&gt; [2,]  1  0.1   50  0
-#&gt; [3,]  1  0.2   50  0
-#&gt; [4,]  1  0.3   50  0
-#&gt; [5,]  1  0.4   50  0
-#&gt; [6,]  1  0.5   50  0
-#&gt; [7,]  1  0.6   50  0
-#&gt; [8,]  1  0.7   50  0</div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>exTheoph</span>) <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>()</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;), &quot;data.frame&quot;),     structure(function (x, data, ...)     standardGeneric(&quot;data_set&quot;), generic = structure(&quot;data_set&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = c(&quot;x&quot;,     &quot;data&quot;), default = `\001NULL\001`, skeleton = (function (x,         data, ...)     stop(&quot;invalid call in method dispatch to &#39;data_set&#39; (no default method)&quot;,         domain = NA))(x, data, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘data_set’ for signature ‘&quot;standardGeneric&quot;, &quot;data.frame&quot;’</span></div><div class='input'><span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>exTheoph</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x@args$data &lt;- NULL: no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>mrgsim</span>(<span class='no'>mod</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>exTheoph</span>, <span class='kw'>obsonly</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x@args$data &lt;- NULL: no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>exTheoph</span>, <span class='kw'>obsaug</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>carry.out</span><span class='kw'>=</span><span class='st'>"a.u.g"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in x@args$data &lt;- NULL: no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>mrgsim</span>(<span class='kw'>req</span><span class='kw'>=</span><span class='st'>"CENT"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mrgsim(., req = &quot;CENT&quot;): no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>mrgsim</span>(<span class='no'>mod</span>, <span class='kw'>Req</span><span class='kw'>=</span><span class='st'>"CP,RESP"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mrgsim(mod, Req = &quot;CP,RESP&quot;): no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'><span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
 
 
 </div></pre>

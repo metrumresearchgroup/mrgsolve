@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read a model specification file. � mread_cache • mrgsolve</title>
+<title>Read a model specification file. — mread_cache • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -154,59 +154,30 @@ $CMT CENT
 $ODE dxdt_CENT = -(CL/VC)*CENT;
 '</span>
 
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mcode_cache.html'>mcode</a></span>(<span class='st'>"ex_mread"</span>,<span class='no'>code</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: path[1]=&quot;C:\Users\devin\Documents\Repos\mrgsolve/base&quot;: The system cannot find the file specified</span></div><div class='output co'>#&gt; <span class='message'>Compiling ex_mread ... </span></div><div class='output co'>#&gt; c:/Rtools/mingw_64/bin/g++  -I&quot;C:/PROGRA~1/R/R-33~1.2/include&quot; -DNDEBUG    -I&quot;C:/Users/devin/Documents/Repos/mrgsolve/base&quot; -I&quot;C:/Users/devin/AppData/Local/Temp/RtmpCUybu4&quot; -I&quot;d:/Compiler/gcc-4.9.3/local330/include&quot;     -O2 -Wall  -mtune=core2 -c ex_mread-mread-source.cpp -o ex_mread-mread-source.o
-#&gt; ex_mread-mread-source.cpp:13:25: fatal error: modelheader.h: No such file or directory
-#&gt;  #include &quot;modelheader.h&quot;
-#&gt;                          ^
-#&gt; compilation terminated.
-#&gt; make: *** [ex_mread-mread-source.o] Error 1
-#&gt; Warning message:
-#&gt; running command &#39;make -f &quot;C:/PROGRA~1/R/R-33~1.2/etc/x64/Makeconf&quot; -f &quot;C:/PROGRA~1/R/R-33~1.2/share/make/winshlib.mk&quot; SHLIB_LDFLAGS=&#39;$(SHLIB_CXXLDFLAGS)&#39; SHLIB_LD=&#39;$(SHLIB_CXXLD)&#39; SHLIB=&quot;ex_mread-mread-source.dll&quot; WIN=64 TCLBIN=64 OBJECTS=&quot;ex_mread-mread-source.o&quot;&#39; had status 2 
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mcode_cache.html'>mcode</a></span>(<span class='st'>"ex_mread"</span>,<span class='no'>code</span>)</div><div class='output co'>#&gt; <span class='message'>Compiling ex_mread ... </span></div><div class='output co'>#&gt; 
 #&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='error'>Error: There was a problem when compiling the model. c:/Rtools/mingw_64/bin/g++  -I&quot;C:/PROGRA~1/R/R-33~1.2/include&quot; -DNDEBUG    -I&quot;C:/Users/devin/Documents/Repos/mrgsolve/base&quot; -I&quot;C:/Users/devin/AppData/Local/Temp/RtmpCUybu4&quot; -I&quot;d:/Compiler/gcc-4.9.3/local330/include&quot;     -O2 -Wall  -mtune=core2 -c ex_mread-mread-source.cpp -o ex_mread-mread-source.oThere was a problem when compiling the model. ex_mread-mread-source.cpp:13:25: fatal error: modelheader.h: No such file or directoryThere was a problem when compiling the model.  #include &quot;modelheader.h&quot;There was a problem when compiling the model.                          ^There was a problem when compiling the model. compilation terminated.There was a problem when compiling the model. make: *** [ex_mread-mread-source.o] Error 1There was a problem when compiling the model. Warning message:There was a problem when compiling the model. running command &#39;make -f &quot;C:/PROGRA~1/R/R-33~1.2/etc/x64/Makeconf&quot; -f &quot;C:/PROGRA~1/R/R-33~1.2/share/make/winshlib.mk&quot; SHLIB_LDFLAGS=&#39;$(SHLIB_CXXLDFLAGS)&#39; SHLIB_LD=&#39;$(SHLIB_CXXLD)&#39; SHLIB=&quot;ex_mread-mread-source.dll&quot; WIN=64 TCLBIN=64 OBJECTS=&quot;ex_mread-mread-source.o&quot;&#39; had status 2 </span></div><div class='input'>
-<span class='no'>mod</span></div><div class='output co'>#&gt; 
+#&gt; </div><div class='output co'>#&gt; <span class='error'>Error: There was a problem when compiling the model. </span></div><div class='input'>
+<span class='no'>mod</span></div><div class='output co'>#&gt; standardGeneric for &quot;mod&quot; defined from package &quot;mrgsolve&quot;
 #&gt; 
-#&gt; -------- mrgsolve model object (windows) --------
-#&gt;   Project: C:/Users/devin/AppData/Local/Temp/RtmpCUybu4
-#&gt;   source:        demo.cpp
-#&gt;   shared object: demo-so-7dd83012d63 
-#&gt; 
-#&gt;   compile date:  
-#&gt;   Time:          start: 0 end: 24 delta: 0.1
-#&gt;   &gt;              add: &lt;none&gt;
-#&gt;   &gt;              tscale: 1
-#&gt; 
-#&gt;   Compartments:  GUT CENT RESP [3]
-#&gt;   Parameters:    TVCL TVVC KA KIN KOUT IC50 [6]
-#&gt;   Omega:         2x2 
-#&gt;   Sigma:         0x0 
-#&gt; 
-#&gt;   Solver:        atol: 1e-08 rtol: 1e-08
-#&gt;   &gt;              maxsteps: 2000 hmin: 0 hmax: 0
-#&gt; </div><div class='input'>
-<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='init.html'>init</a></span>(<span class='kw'>CENT</span><span class='kw'>=</span><span class='fl'>1000</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span> <span class='kw'>%&gt;%</span> <span class='no'>plot</span></div><img src='mread_cache-9.png' alt='' width='540' height='400' /><div class='input'>
+#&gt; function (x, ...) 
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; &lt;environment: 0x10e647d78&gt;
+#&gt; Methods may be defined for arguments: x
+#&gt; Use  showMethods(&quot;mod&quot;)  for currently available ones.</div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='init.html'>init</a></span>(<span class='kw'>CENT</span><span class='kw'>=</span><span class='fl'>1000</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span> <span class='kw'>%&gt;%</span> <span class='no'>plot</span></div><div class='output co'>#&gt; <span class='message'>Problem with names:</span></div><div class='output co'>#&gt; x,...,</div><div class='output co'>#&gt; <span class='message'>Parameter values without names:</span></div><div class='output co'>#&gt; [[1]]
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; </div><div class='output co'>#&gt; <span class='error'>Error in validObject(.Object): invalid class “cmt_list” object: 1: Invalid names</span>
+#&gt; <span class='error'>invalid class “cmt_list” object: 2: All parameters require names</span>
+#&gt; <span class='error'>invalid class “cmt_list” object: 3: All parameters must be single numbers</span></div><div class='input'>
 
 <span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'>mread</span>(<span class='st'>"irm3"</span>, <span class='fu'><a href='modlib.html'>modlib</a></span>())</div><div class='output co'>#&gt; <span class='error'>Error: project directory must exist and be readable.</span></div><div class='input'>
-<span class='no'>mod</span></div><div class='output co'>#&gt; 
+<span class='no'>mod</span></div><div class='output co'>#&gt; standardGeneric for &quot;mod&quot; defined from package &quot;mrgsolve&quot;
 #&gt; 
-#&gt; -------- mrgsolve model object (windows) --------
-#&gt;   Project: C:/Users/devin/AppData/Local/Temp/RtmpCUybu4
-#&gt;   source:        demo.cpp
-#&gt;   shared object: demo-so-7dd83012d63 
-#&gt; 
-#&gt;   compile date:  
-#&gt;   Time:          start: 0 end: 24 delta: 0.1
-#&gt;   &gt;              add: &lt;none&gt;
-#&gt;   &gt;              tscale: 1
-#&gt; 
-#&gt;   Compartments:  GUT CENT RESP [3]
-#&gt;   Parameters:    TVCL TVVC KA KIN KOUT IC50 [6]
-#&gt;   Omega:         2x2 
-#&gt;   Sigma:         0x0 
-#&gt; 
-#&gt;   Solver:        atol: 1e-08 rtol: 1e-08
-#&gt;   &gt;              maxsteps: 2000 hmin: 0 hmax: 0
-#&gt; </div><div class='input'>
+#&gt; function (x, ...) 
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; &lt;environment: 0x10e647d78&gt;
+#&gt; Methods may be defined for arguments: x
+#&gt; Use  showMethods(&quot;mod&quot;)  for currently available ones.</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

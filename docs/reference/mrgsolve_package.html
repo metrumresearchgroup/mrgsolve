@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>mrgsolve � mrgsolve • mrgsolve</title>
+<title>mrgsolve — mrgsolve • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -127,150 +127,43 @@ A Systematized Collection of ODE Solvers.</p>
     <pre class="examples"><div class='input'>
 <span class='co'>## example("mrgsolve")</span>
 
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>(<span class='kw'>delta</span><span class='kw'>=</span><span class='fl'>0.1</span>)  <span class='kw'>%&gt;%</span> <span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='kw'>CL</span><span class='kw'>=</span><span class='fl'>0.5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;C:\Users\devin\Documents\Repos\mrgsolve/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>(<span class='kw'>delta</span><span class='kw'>=</span><span class='fl'>0.1</span>)  <span class='kw'>%&gt;%</span> <span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='kw'>CL</span><span class='kw'>=</span><span class='fl'>0.5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;/Users/kyleb/git/m4solve.git/pkg/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
 <span class='no'>events</span> <span class='kw'>&lt;-</span>  <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>24</span>)
 
 <span class='no'>events</span></div><div class='output co'>#&gt; Events:
 #&gt;   time cmt  amt addl ii evid
 #&gt; 1    0   1 1000    5 24    1</div><div class='input'>
-<span class='no'>mod</span></div><div class='output co'>#&gt; 
+<span class='no'>mod</span></div><div class='output co'>#&gt; standardGeneric for &quot;mod&quot; defined from package &quot;mrgsolve&quot;
 #&gt; 
-#&gt; -------- mrgsolve model object (windows) --------
-#&gt;   Project: C:/Users/devin/AppData/Local/Temp/RtmpCUybu4
-#&gt;   source:        demo.cpp
-#&gt;   shared object: demo-so-7dd83012d63 
-#&gt; 
-#&gt;   compile date:  
-#&gt;   Time:          start: 0 end: 24 delta: 0.1
-#&gt;   &gt;              add: &lt;none&gt;
-#&gt;   &gt;              tscale: 1
-#&gt; 
-#&gt;   Compartments:  GUT CENT RESP [3]
-#&gt;   Parameters:    TVCL TVVC KA KIN KOUT IC50 [6]
-#&gt;   Omega:         2x2 
-#&gt;   Sigma:         0x0 
-#&gt; 
-#&gt;   Solver:        atol: 1e-08 rtol: 1e-08
-#&gt;   &gt;              maxsteps: 2000 hmin: 0 hmax: 0
-#&gt; </div><div class='input'>
-<span class='fu'><a href='see.html'>see</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; 
-#&gt; Model file:  demo.cpp 
-#&gt;  
-#&gt;  $GLOBAL
-#&gt;  #define CP (CENT/VC)
-#&gt;  #define INH (CP/(IC50+CP))
-#&gt;  
-#&gt;  $SET delta=0.1
-#&gt;  
-#&gt;  $PARAM TVCL=1, TVVC=20, KA = 1.3, KIN=100, KOUT=2, IC50=10
-#&gt;  
-#&gt;  $CMT GUT, CENT, RESP
-#&gt;  
-#&gt;  $MAIN
-#&gt;    double CL = exp(log(TVCL) + ETA(1));
-#&gt;    double VC = exp(log(TVVC) + ETA(2));
-#&gt;  
-#&gt;    RESP_0 = KIN/KOUT;
-#&gt;  
-#&gt;  $OMEGA 0 0
-#&gt;  
-#&gt;  $ODE
-#&gt;    dxdt_GUT = -KA*GUT;
-#&gt;    dxdt_CENT = KA*GUT - (CL/VC)*CENT;
-#&gt;    dxdt_RESP = KIN*(1-INH) - KOUT*RESP;
-#&gt;  
-#&gt;  $CAPTURE CP
-#&gt;   </div><div class='input'>?
+#&gt; function (x, ...) 
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; &lt;environment: 0x10e647d78&gt;
+#&gt; Methods may be defined for arguments: x
+#&gt; Use  showMethods(&quot;mod&quot;)  for currently available ones.</div><div class='input'>
+<span class='fu'><a href='see.html'>see</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;see&quot;), generic = structure(&quot;see&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;see&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘see’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'>?
 <span class='fu'><a href='stime.html'>stime</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; <span class='message'>Rendering development documentation for &#39;stime&#39;</span></div><div class='input'>
-<span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; 
-#&gt;  Model parameters (N=6):
-#&gt;  name value . name value
-#&gt;  IC50 10    | KOUT 2    
-#&gt;  KA   1.3   | TVCL 1    
-#&gt;  KIN  100   | TVVC 20   </div><div class='input'><span class='fu'><a href='init.html'>init</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; 
-#&gt;  Model initial conditions (N=3):
-#&gt;  name       value . name       value
-#&gt;  CENT (2)   0     | RESP (3)   50   
-#&gt;  GUT (1)    0     | . ...      .    </div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>168</span>)
-
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    1682 x 6 
-#&gt; Time:   0 to 168 
-#&gt; ID:     1 
-#&gt;      ID time    GUT  CENT  RESP    CP
-#&gt; [1,]  1  0.0    0.0   0.0 50.00  0.00
-#&gt; [2,]  1  0.0 1000.0   0.0 50.00  0.00
-#&gt; [3,]  1  0.1  878.1 121.6 47.92  6.08
-#&gt; [4,]  1  0.2  771.1 227.8 44.07 11.39
-#&gt; [5,]  1  0.3  677.1 320.4 39.90 16.02
-#&gt; [6,]  1  0.4  594.5 401.1 35.89 20.06
-#&gt; [7,]  1  0.5  522.0 471.4 32.23 23.57
-#&gt; [8,]  1  0.6  458.4 532.5 28.96 26.63</div><div class='input'><span class='fu'>head</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; Model:  demo </div><div class='output co'>#&gt;   ID time       GUT     CENT     RESP        CP
-#&gt; 1  1  0.0    0.0000   0.0000 50.00000  0.000000
-#&gt; 2  1  0.0 1000.0000   0.0000 50.00000  0.000000
-#&gt; 3  1  0.1  878.0954 121.5937 47.92446  6.079687
-#&gt; 4  1  0.2  771.0516 227.7582 44.06937 11.387909
-#&gt; 5  1  0.3  677.0569 320.3773 39.89587 16.018863
-#&gt; 6  1  0.4  594.5205 401.1053 35.88915 20.055263</div><div class='input'><span class='fu'>tail</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; Model:  demo </div><div class='output co'>#&gt;      ID  time          GUT     CENT     RESP       CP
-#&gt; 1677  1 167.5 1.518079e-24 138.3258 29.25390 6.916289
-#&gt; 1678  1 167.6 1.331589e-24 137.6359 29.31456 6.881794
-#&gt; 1679  1 167.7 1.168353e-24 136.9494 29.37516 6.847471
-#&gt; 1680  1 167.8 1.025572e-24 136.2664 29.43571 6.813319
-#&gt; 1681  1 167.9 9.000213e-25 135.5868 29.49621 6.779338
-#&gt; 1682  1 168.0 7.895128e-25 134.9105 29.55665 6.745526</div><div class='input'><span class='fu'>dim</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; [1] 1682    6</div><div class='input'>
-<span class='kw'>mrgsolve</span><span class='kw'>::</span><span class='fu'><a href='mod.html'>mod</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; 
-#&gt; 
-#&gt; -------- mrgsolve model object (windows) --------
-#&gt;   Project: C:/Users/devin/AppData/Local/Temp/RtmpCUybu4
-#&gt;   source:        demo.cpp
-#&gt;   shared object: demo-so-7dd83012d63 
-#&gt; 
-#&gt;   compile date:  
-#&gt;   Time:          start: 0 end: 168 delta: 0.1
-#&gt;   &gt;              add: &lt;none&gt;
-#&gt;   &gt;              tscale: 1
-#&gt; 
-#&gt;   Compartments:  GUT CENT RESP [3]
-#&gt;   Parameters:    TVCL TVVC KA KIN KOUT IC50 [6]
-#&gt;   Omega:         2x2 
-#&gt;   Sigma:         0x0 
-#&gt; 
-#&gt;   Solver:        atol: 1e-08 rtol: 1e-08
-#&gt;   &gt;              maxsteps: 2000 hmin: 0 hmax: 0
-#&gt; </div><div class='input'><span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; 
-#&gt;  Model parameters (N=6):
-#&gt;  name value . name value
-#&gt;  IC50 10    | KOUT 2    
-#&gt;  KA   1.3   | TVCL 1    
-#&gt;  KIN  100   | TVVC 20   </div><div class='input'>
-<span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>GUT</span>+<span class='no'>CP</span>~<span class='no'>.</span>)</div><img src='mrgsolve-31.png' alt='' width='540' height='400' /><div class='input'>
-<span class='no'>sims</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='no'>out</span>)
-
-<span class='no'>t72</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>sims</span>, <span class='no'>time</span><span class='kw'>==</span><span class='fl'>72</span>)
-<span class='fu'>str</span>(<span class='no'>t72</span>)</div><div class='output co'>#&gt; &#39;data.frame&#39;:	1 obs. of  6 variables:
-#&gt;  $ ID  : num 1
-#&gt;  $ time: num 72
-#&gt;  $ GUT : num 1000
-#&gt;  $ CENT: num 436
-#&gt;  $ RESP: num 15.5
-#&gt;  $ CP  : num 21.8</div><div class='input'>
+<span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; <span class='message'>Problem with names:</span></div><div class='output co'>#&gt; x,...,</div><div class='output co'>#&gt; <span class='message'>Parameter values without names:</span></div><div class='output co'>#&gt; [[1]]
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; </div><div class='output co'>#&gt; <span class='error'>Error in validObject(.Object): invalid class “parameter_list” object: 1: Invalid names</span>
+#&gt; <span class='error'>invalid class “parameter_list” object: 2: All parameters require names</span>
+#&gt; <span class='error'>invalid class “parameter_list” object: 3: All parameters must be single numbers</span></div><div class='input'><span class='fu'><a href='init.html'>init</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; <span class='message'>Problem with names:</span></div><div class='output co'>#&gt; x,...,</div><div class='output co'>#&gt; <span class='message'>Parameter values without names:</span></div><div class='output co'>#&gt; [[1]]
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; </div><div class='output co'>#&gt; <span class='error'>Error in validObject(.Object): invalid class “cmt_list” object: 1: Invalid names</span>
+#&gt; <span class='error'>invalid class “cmt_list” object: 2: All parameters require names</span>
+#&gt; <span class='error'>invalid class “cmt_list” object: 3: All parameters must be single numbers</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>168</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'>
+<span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>head</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in head(out): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>tail</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in tail(out): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>dim</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='kw'>mrgsolve</span><span class='kw'>::</span><span class='fu'><a href='mod.html'>mod</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mrgsolve::mod(out): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in param(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>GUT</span>+<span class='no'>CP</span>~<span class='no'>.</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, GUT + CP ~ .): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>sims</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in as.data.frame(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>t72</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>sims</span>, <span class='no'>time</span><span class='kw'>==</span><span class='fl'>72</span>)</div><div class='output co'>#&gt; <span class='error'>Error in subset(sims, time == 72): object &#39;sims&#39; not found</span></div><div class='input'><span class='fu'>str</span>(<span class='no'>t72</span>)</div><div class='output co'>#&gt; <span class='error'>Error in str(t72): object &#39;t72&#39; not found</span></div><div class='input'>
 
 
 <span class='no'>idata</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>), <span class='kw'>CL</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>VC</span><span class='kw'>=</span><span class='fl'>12</span>)
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>168</span>, <span class='kw'>idata</span><span class='kw'>=</span><span class='no'>idata</span>, <span class='kw'>req</span><span class='kw'>=</span><span class='st'>""</span>)
-<span class='fu'>plot</span>(<span class='no'>out</span>)</div><img src='mrgsolve-35.png' alt='' width='540' height='400' /><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>carry.out</span><span class='kw'>=</span><span class='st'>"amt,evid,cmt,CL"</span>)
-<span class='fu'>head</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; Model:  demo </div><div class='output co'>#&gt;   ID time evid  amt cmt       GUT     CENT     RESP        CP
-#&gt; 1  1  0.0    0    0   0    0.0000   0.0000 50.00000  0.000000
-#&gt; 2  1  0.0    1 1000   1 1000.0000   0.0000 50.00000  0.000000
-#&gt; 3  1  0.1    0    0   0  878.0954 121.5937 47.92446  6.079687
-#&gt; 4  1  0.2    0    0   0  771.0516 227.7582 44.06937 11.387909
-#&gt; 5  1  0.3    0    0   0  677.0569 320.3773 39.89587 16.018863
-#&gt; 6  1  0.4    0    0   0  594.5205 401.1053 35.88915 20.055263</div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>168</span>, <span class='kw'>idata</span><span class='kw'>=</span><span class='no'>idata</span>, <span class='kw'>req</span><span class='kw'>=</span><span class='st'>""</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>carry.out</span><span class='kw'>=</span><span class='st'>"amt,evid,cmt,CL"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'><span class='fu'>head</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in head(out): object &#39;out&#39; not found</span></div><div class='input'>
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>() <span class='kw'>%&gt;%</span> <span class='fu'><a href='knobs.html'>knobs</a></span>(<span class='kw'>CL</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>,<span class='fl'>2</span>), <span class='kw'>amt</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>100</span>,<span class='fl'>300</span>,<span class='fl'>1000</span>), <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>48</span>)
-<span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>)</div><img src='mrgsolve-40.png' alt='' width='540' height='400' /><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>RESP</span>+<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='no'>amt</span>,<span class='kw'>groups</span><span class='kw'>=</span><span class='no'>CL</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;CL&#39; not found</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>() <span class='kw'>%&gt;%</span> <span class='fu'><a href='knobs.html'>knobs</a></span>(<span class='kw'>CL</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>,<span class='fl'>2</span>), <span class='kw'>amt</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>100</span>,<span class='fl'>300</span>,<span class='fl'>1000</span>), <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>48</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, CP ~ ., scales = &quot;same&quot;): object &#39;out&#39; not found</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>RESP</span>+<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='no'>amt</span>,<span class='kw'>groups</span><span class='kw'>=</span><span class='no'>CL</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, RESP + CP ~ time | amt, groups = CL): object &#39;out&#39; not found</span></div><div class='input'>
 
 <span class='no'>ev1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>rate</span><span class='kw'>=</span><span class='fl'>10</span>)
 <span class='no'>ev2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>100</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>time</span><span class='kw'>=</span><span class='fl'>54</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>10</span>)
@@ -279,8 +172,7 @@ A Systematized Collection of ODE Solvers.</p>
 #&gt;   time cmt amt rate evid ii addl
 #&gt; 1    0   2 500   10    1  0    0
 #&gt; 2   54   1 100    0    1  8   10</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>ev1</span>+<span class='no'>ev2</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>180</span>, <span class='kw'>req</span><span class='kw'>=</span><span class='st'>""</span>)
-<span class='fu'>plot</span>(<span class='no'>out</span>)</div><img src='mrgsolve-46.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>ev1</span>+<span class='no'>ev2</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>180</span>, <span class='kw'>req</span><span class='kw'>=</span><span class='st'>""</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out): object &#39;out&#39; not found</span></div><div class='input'>
 
 
 
@@ -293,10 +185,9 @@ A Systematized Collection of ODE Solvers.</p>
 #&gt; 4  1 79.6 4.02 1.12 10.50   0 0.00    0
 #&gt; 5  1 79.6 4.02 2.02  9.66   0 0.00    0
 #&gt; 6  1 79.6 4.02 3.82  8.58   0 0.00    0</div><div class='input'>
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>(<span class='kw'>delta</span><span class='kw'>=</span><span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;C:\Users\devin\Documents\Repos\mrgsolve/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>exTheoph</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span>
-
-<span class='fu'>plot</span>(<span class='no'>out</span>,<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='fu'>factor</span>(<span class='no'>ID</span>),<span class='kw'>type</span><span class='kw'>=</span><span class='st'>'b'</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>)</div><img src='mrgsolve-53.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>(<span class='kw'>delta</span><span class='kw'>=</span><span class='fl'>0.1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;/Users/kyleb/git/m4solve.git/pkg/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>exTheoph</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;), &quot;data.frame&quot;),     structure(function (x, data, ...)     standardGeneric(&quot;data_set&quot;), generic = structure(&quot;data_set&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = c(&quot;x&quot;,     &quot;data&quot;), default = `\001NULL\001`, skeleton = (function (x,         data, ...)     stop(&quot;invalid call in method dispatch to &#39;data_set&#39; (no default method)&quot;,         domain = NA))(x, data, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘data_set’ for signature ‘&quot;standardGeneric&quot;, &quot;data.frame&quot;’</span></div><div class='input'>
+<span class='fu'>plot</span>(<span class='no'>out</span>,<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='fu'>factor</span>(<span class='no'>ID</span>),<span class='kw'>type</span><span class='kw'>=</span><span class='st'>'b'</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, CP ~ time | factor(ID), type = &quot;b&quot;, scales = &quot;same&quot;): object &#39;out&#39; not found</span></div><div class='input'>
 
 <span class='co'>## "Condensed" data set</span>
 <span class='fu'>data</span>(<span class='no'>extran1</span>)
@@ -310,9 +201,8 @@ A Systematized Collection of ODE Solvers.</p>
 #&gt; 7  4 2000   2    0    2 48  100    1
 #&gt; 8  5 1000   1    0    0  0    0    1
 #&gt; 9  5 5000   1   24    0  0   60    1</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>extran1</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>200</span>)
-
-<span class='fu'>plot</span>(<span class='no'>out</span>,<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='fu'>factor</span>(<span class='no'>ID</span>))</div><img src='mrgsolve-57.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>extran1</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>200</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;), &quot;data.frame&quot;),     structure(function (x, data, ...)     standardGeneric(&quot;data_set&quot;), generic = structure(&quot;data_set&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = c(&quot;x&quot;,     &quot;data&quot;), default = `\001NULL\001`, skeleton = (function (x,         data, ...)     stop(&quot;invalid call in method dispatch to &#39;data_set&#39; (no default method)&quot;,         domain = NA))(x, data, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘data_set’ for signature ‘&quot;standardGeneric&quot;, &quot;data.frame&quot;’</span></div><div class='input'>
+<span class='fu'>plot</span>(<span class='no'>out</span>,<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='fu'>factor</span>(<span class='no'>ID</span>))</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, CP ~ time | factor(ID)): object &#39;out&#39; not found</span></div><div class='input'>
 
 <span class='co'>## idata</span>
 <span class='fu'>data</span>(<span class='no'>exidata</span>)
@@ -327,9 +217,8 @@ A Systematized Collection of ODE Solvers.</p>
 #&gt; 8   8 1.440 31.20 0.0931 4.030 1.310   7
 #&gt; 9   9 2.570 18.20 0.0570 0.862 1.950   3
 #&gt; 10 10 2.000  6.51 0.1540 3.220 0.699   9</div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='idata_set.html'>idata_set</a></span>(<span class='no'>exidata</span>) <span class='kw'>%&gt;%</span>  <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>72</span>)
-
-<span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>, <span class='kw'>as</span><span class='kw'>=</span><span class='st'>"log10"</span>)</div><img src='mrgsolve-61.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='idata_set.html'>idata_set</a></span>(<span class='no'>exidata</span>) <span class='kw'>%&gt;%</span>  <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>72</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'>
+<span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>, <span class='kw'>as</span><span class='kw'>=</span><span class='st'>"log10"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out, CP ~ ., as = &quot;log10&quot;): object &#39;out&#39; not found</span></div><div class='input'>
 
 
 <span class='no'>code</span> <span class='kw'>&lt;-</span> <span class='st'>'
@@ -355,69 +244,24 @@ double CP = CENT/VCi;
 $CAPTURE CP
 '</span>
 
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mcode_cache.html'>mcode</a></span>(<span class='st'>"package_example"</span>,<span class='no'>code</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>8</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: path[1]=&quot;C:\Users\devin\Documents\Repos\mrgsolve/base&quot;: The system cannot find the file specified</span></div><div class='output co'>#&gt; <span class='message'>Compiling package_example ... </span></div><div class='output co'>#&gt; c:/Rtools/mingw_64/bin/g++  -I&quot;C:/PROGRA~1/R/R-33~1.2/include&quot; -DNDEBUG    -I&quot;C:/Users/devin/Documents/Repos/mrgsolve/base&quot; -I&quot;C:/Users/devin/AppData/Local/Temp/RtmpCUybu4&quot; -I&quot;d:/Compiler/gcc-4.9.3/local330/include&quot;     -O2 -Wall  -mtune=core2 -c package_example-mread-source.cpp -o package_example-mread-source.o
-#&gt; package_example-mread-source.cpp:13:25: fatal error: modelheader.h: No such file or directory
-#&gt;  #include &quot;modelheader.h&quot;
-#&gt;                          ^
-#&gt; compilation terminated.
-#&gt; make: *** [package_example-mread-source.o] Error 1
-#&gt; Warning message:
-#&gt; running command &#39;make -f &quot;C:/PROGRA~1/R/R-33~1.2/etc/x64/Makeconf&quot; -f &quot;C:/PROGRA~1/R/R-33~1.2/share/make/winshlib.mk&quot; SHLIB_LDFLAGS=&#39;$(SHLIB_CXXLDFLAGS)&#39; SHLIB_LD=&#39;$(SHLIB_CXXLD)&#39; SHLIB=&quot;package_example-mread-source.dll&quot; WIN=64 TCLBIN=64 OBJECTS=&quot;package_example-mread-source.o&quot;&#39; had status 2 
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mcode_cache.html'>mcode</a></span>(<span class='st'>"package_example"</span>,<span class='no'>code</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>8</span>)</div><div class='output co'>#&gt; <span class='message'>Compiling package_example ... </span></div><div class='output co'>#&gt; 
 #&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='error'>Error: There was a problem when compiling the model. c:/Rtools/mingw_64/bin/g++  -I&quot;C:/PROGRA~1/R/R-33~1.2/include&quot; -DNDEBUG    -I&quot;C:/Users/devin/Documents/Repos/mrgsolve/base&quot; -I&quot;C:/Users/devin/AppData/Local/Temp/RtmpCUybu4&quot; -I&quot;d:/Compiler/gcc-4.9.3/local330/include&quot;     -O2 -Wall  -mtune=core2 -c package_example-mread-source.cpp -o package_example-mread-source.oThere was a problem when compiling the model. package_example-mread-source.cpp:13:25: fatal error: modelheader.h: No such file or directoryThere was a problem when compiling the model.  #include &quot;modelheader.h&quot;There was a problem when compiling the model.                          ^There was a problem when compiling the model. compilation terminated.There was a problem when compiling the model. make: *** [package_example-mread-source.o] Error 1There was a problem when compiling the model. Warning message:There was a problem when compiling the model. running command &#39;make -f &quot;C:/PROGRA~1/R/R-33~1.2/etc/x64/Makeconf&quot; -f &quot;C:/PROGRA~1/R/R-33~1.2/share/make/winshlib.mk&quot; SHLIB_LDFLAGS=&#39;$(SHLIB_CXXLDFLAGS)&#39; SHLIB_LD=&#39;$(SHLIB_CXXLD)&#39; SHLIB=&quot;package_example-mread-source.dll&quot; WIN=64 TCLBIN=64 OBJECTS=&quot;package_example-mread-source.o&quot;&#39; had status 2 </span></div><div class='input'>
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span>
-
-<span class='no'>out</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    241 x 6 
-#&gt; Time:   0 to 24 
-#&gt; ID:     1 
-#&gt;      ID time GUT CENT RESP CP
-#&gt; [1,]  1  0.0   0    0   50  0
-#&gt; [2,]  1  0.1   0    0   50  0
-#&gt; [3,]  1  0.2   0    0   50  0
-#&gt; [4,]  1  0.3   0    0   50  0
-#&gt; [5,]  1  0.4   0    0   50  0
-#&gt; [6,]  1  0.5   0    0   50  0
-#&gt; [7,]  1  0.6   0    0   50  0
-#&gt; [8,]  1  0.7   0    0   50  0</div><div class='input'>
-<span class='fu'>plot</span>(<span class='no'>out</span>)</div><img src='mrgsolve-70.png' alt='' width='540' height='400' /><div class='input'>
+#&gt; </div><div class='output co'>#&gt; <span class='error'>Error: There was a problem when compiling the model. </span></div><div class='input'>
+<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></div><div class='output co'>#&gt; <span class='error'>Error in mrgsim(.): no slot of name &quot;args&quot; for this object of class &quot;standardGeneric&quot;</span></div><div class='input'>
+<span class='no'>out</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object &#39;out&#39; not found</span></div><div class='input'>
+<span class='fu'>plot</span>(<span class='no'>out</span>)</div><div class='output co'>#&gt; <span class='error'>Error in plot(out): object &#39;out&#39; not found</span></div><div class='input'>
 
 <span class='co'># Internal model library</span>
 
 <span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mread_cache.html'>mread</a></span>(<span class='st'>"irm1"</span>, <span class='fu'><a href='modlib.html'>modlib</a></span>())</div><div class='output co'>#&gt; <span class='error'>Error: project directory must exist and be readable.</span></div><div class='input'>
-<span class='no'>mod</span></div><div class='output co'>#&gt; 
+<span class='no'>mod</span></div><div class='output co'>#&gt; standardGeneric for &quot;mod&quot; defined from package &quot;mrgsolve&quot;
 #&gt; 
-#&gt; -------- mrgsolve model object (windows) --------
-#&gt;   Project: C:/Users/devin/AppData/Local/Temp/RtmpCUybu4
-#&gt;   source:        demo.cpp
-#&gt;   shared object: demo-so-7dd83012d63 
-#&gt; 
-#&gt;   compile date:  
-#&gt;   Time:          start: 0 end: 24 delta: 0.1
-#&gt;   &gt;              add: &lt;none&gt;
-#&gt;   &gt;              tscale: 1
-#&gt; 
-#&gt;   Compartments:  GUT CENT RESP [3]
-#&gt;   Parameters:    TVCL TVVC KA KIN KOUT IC50 [6]
-#&gt;   Omega:         2x2 
-#&gt;   Sigma:         0x0 
-#&gt; 
-#&gt;   Solver:        atol: 1e-08 rtol: 1e-08
-#&gt;   &gt;              maxsteps: 2000 hmin: 0 hmax: 0
-#&gt; </div><div class='input'>
-<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>300</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>12</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>3</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    242 x 6 
-#&gt; Time:   0 to 24 
-#&gt; ID:     1 
-#&gt;      ID time   GUT   CENT  RESP    CP
-#&gt; [1,]  1  0.0   0.0   0.00 50.00 0.000
-#&gt; [2,]  1  0.0 300.0   0.00 50.00 0.000
-#&gt; [3,]  1  0.1 263.4  36.48 49.22 1.824
-#&gt; [4,]  1  0.2 231.3  68.33 47.47 3.416
-#&gt; [5,]  1  0.3 203.1  96.11 45.27 4.806
-#&gt; [6,]  1  0.4 178.4 120.33 42.94 6.017
-#&gt; [7,]  1  0.5 156.6 141.42 40.62 7.071
-#&gt; [8,]  1  0.6 137.5 159.76 38.42 7.988</div><div class='input'>
+#&gt; function (x, ...) 
+#&gt; standardGeneric(&quot;mod&quot;)
+#&gt; &lt;environment: 0x10e647d78&gt;
+#&gt; Methods may be defined for arguments: x
+#&gt; Use  showMethods(&quot;mod&quot;)  for currently available ones.</div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>300</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>12</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>3</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'>
 
 </div></pre>
   </div>

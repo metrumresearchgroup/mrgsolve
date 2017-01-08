@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Write, compile, and load model code. � mcode_cache • mrgsolve</title>
+<title>Write, compile, and load model code. — mcode_cache • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -113,16 +113,9 @@ double V = 20;
 double KA = 1;
 '</span>
 
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'>mcode</span>(<span class='st'>"example"</span>,<span class='no'>code</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: path[1]=&quot;C:\Users\devin\Documents\Repos\mrgsolve/base&quot;: The system cannot find the file specified</span></div><div class='output co'>#&gt; <span class='message'>Compiling example ... </span></div><div class='output co'>#&gt; c:/Rtools/mingw_64/bin/g++  -I&quot;C:/PROGRA~1/R/R-33~1.2/include&quot; -DNDEBUG    -I&quot;C:/Users/devin/Documents/Repos/mrgsolve/base&quot; -I&quot;C:/Users/devin/AppData/Local/Temp/RtmpCUybu4&quot; -I&quot;d:/Compiler/gcc-4.9.3/local330/include&quot;     -O2 -Wall  -mtune=core2 -c example-mread-source.cpp -o example-mread-source.o
-#&gt; example-mread-source.cpp:13:25: fatal error: modelheader.h: No such file or directory
-#&gt;  #include &quot;modelheader.h&quot;
-#&gt;                          ^
-#&gt; compilation terminated.
-#&gt; make: *** [example-mread-source.o] Error 1
-#&gt; Warning message:
-#&gt; running command &#39;make -f &quot;C:/PROGRA~1/R/R-33~1.2/etc/x64/Makeconf&quot; -f &quot;C:/PROGRA~1/R/R-33~1.2/share/make/winshlib.mk&quot; SHLIB_LDFLAGS=&#39;$(SHLIB_CXXLDFLAGS)&#39; SHLIB_LD=&#39;$(SHLIB_CXXLD)&#39; SHLIB=&quot;example-mread-source.dll&quot; WIN=64 TCLBIN=64 OBJECTS=&quot;example-mread-source.o&quot;&#39; had status 2 
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'>mcode</span>(<span class='st'>"example"</span>,<span class='no'>code</span>)</div><div class='output co'>#&gt; <span class='message'>Compiling example ... </span></div><div class='output co'>#&gt; 
 #&gt; 
-#&gt; </div><div class='output co'>#&gt; <span class='error'>Error: There was a problem when compiling the model. c:/Rtools/mingw_64/bin/g++  -I&quot;C:/PROGRA~1/R/R-33~1.2/include&quot; -DNDEBUG    -I&quot;C:/Users/devin/Documents/Repos/mrgsolve/base&quot; -I&quot;C:/Users/devin/AppData/Local/Temp/RtmpCUybu4&quot; -I&quot;d:/Compiler/gcc-4.9.3/local330/include&quot;     -O2 -Wall  -mtune=core2 -c example-mread-source.cpp -o example-mread-source.oThere was a problem when compiling the model. example-mread-source.cpp:13:25: fatal error: modelheader.h: No such file or directoryThere was a problem when compiling the model.  #include &quot;modelheader.h&quot;There was a problem when compiling the model.                          ^There was a problem when compiling the model. compilation terminated.There was a problem when compiling the model. make: *** [example-mread-source.o] Error 1There was a problem when compiling the model. Warning message:There was a problem when compiling the model. running command &#39;make -f &quot;C:/PROGRA~1/R/R-33~1.2/etc/x64/Makeconf&quot; -f &quot;C:/PROGRA~1/R/R-33~1.2/share/make/winshlib.mk&quot; SHLIB_LDFLAGS=&#39;$(SHLIB_CXXLDFLAGS)&#39; SHLIB_LD=&#39;$(SHLIB_CXXLD)&#39; SHLIB=&quot;example-mread-source.dll&quot; WIN=64 TCLBIN=64 OBJECTS=&quot;example-mread-source.o&quot;&#39; had status 2 </span></div><div class='input'>
+#&gt; </div><div class='output co'>#&gt; <span class='error'>Error: There was a problem when compiling the model. </span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

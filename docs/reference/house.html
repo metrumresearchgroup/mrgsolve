@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return a pre-compiled, PK/PD model. � house • mrgsolve</title>
+<title>Return a pre-compiled, PK/PD model. — house • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -96,36 +96,9 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'>house</span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;C:\Users\devin\Documents\Repos\mrgsolve/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
-<span class='fu'><a href='see.html'>see</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; 
-#&gt; Model file:  demo.cpp 
-#&gt;  
-#&gt;  $GLOBAL
-#&gt;  #define CP (CENT/VC)
-#&gt;  #define INH (CP/(IC50+CP))
-#&gt;  
-#&gt;  $SET delta=0.1
-#&gt;  
-#&gt;  $PARAM TVCL=1, TVVC=20, KA = 1.3, KIN=100, KOUT=2, IC50=10
-#&gt;  
-#&gt;  $CMT GUT, CENT, RESP
-#&gt;  
-#&gt;  $MAIN
-#&gt;    double CL = exp(log(TVCL) + ETA(1));
-#&gt;    double VC = exp(log(TVVC) + ETA(2));
-#&gt;  
-#&gt;    RESP_0 = KIN/KOUT;
-#&gt;  
-#&gt;  $OMEGA 0 0
-#&gt;  
-#&gt;  $ODE
-#&gt;    dxdt_GUT = -KA*GUT;
-#&gt;    dxdt_CENT = KA*GUT - (CL/VC)*CENT;
-#&gt;    dxdt_RESP = KIN*(1-INH) - KOUT*RESP;
-#&gt;  
-#&gt;  $CAPTURE CP
-#&gt;   </div><div class='input'>
-<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>100</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span> <span class='kw'>%&gt;%</span> <span class='no'>plot</span></div><img src='house-7.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'>house</span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;/Users/kyleb/git/m4solve.git/pkg/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
+<span class='fu'><a href='see.html'>see</a></span>(<span class='no'>mod</span>)</div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;see&quot;), generic = structure(&quot;see&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;see&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘see’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>100</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span> <span class='kw'>%&gt;%</span> <span class='no'>plot</span></div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)), structure(function (x,     ...) standardGeneric(&quot;ev&quot;), generic = structure(&quot;ev&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = &quot;x&quot;, default = `\001NULL\001`, skeleton = (function (x,     ...) stop(&quot;invalid call in method dispatch to &#39;ev&#39; (no default method)&quot;,     domain = NA))(x, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘ev’ for signature ‘&quot;standardGeneric&quot;’</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

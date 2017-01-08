@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Print model code to the console. — see • mrgsolve</title>
+<title>Add random variates to a data frame. — dmutate • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,31 +74,28 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Print model code to the console.</h1>
+    <h1>Add random variates to a data frame.</h1>
     </div>
 
     
-    <p>Print model code to the console.</p>
+    <p>Add random variates to a data frame.</p>
     
 
-    <pre><span class='fu'>see</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre><span class='fu'>dmutate</span>(<span class='no'>data</span>, <span class='no'>form</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for mrgmod</span>
-<span class='fu'>see</span>(<span class='no'>x</span>, <span class='kw'>raw</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>dmutate_</span>(<span class='no'>data</span>, <span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
-      <dt>x</dt>
-      <dd>model object</dd>
+      <dt>data</dt>
+      <dd>the data.frame to mutate</dd>
+      <dt>form</dt>
+      <dd>an unquoted R formula; see details</dd>
       <dt>...</dt>
-      <dd>passed along</dd>
-      <dt>raw</dt>
-      <dd>return the raw code</dd>
+      <dd>additional inputs</dd>
+      <dt>x</dt>
+      <dd>formula</dd>
     </dl>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>invisible NULL</p>
     
 
   </div>
@@ -106,9 +103,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

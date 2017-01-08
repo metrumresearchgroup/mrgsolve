@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Set the  � data_set • mrgsolve</title>
+<title>Set the  — data_set • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -122,22 +122,10 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;C:\Users\devin\Documents\Repos\mrgsolve/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>()</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open compressed file &#39;/Users/kyleb/git/m4solve.git/pkg/project/housemodel.RDS&#39;, probable reason &#39;No such file or directory&#39;</span></div><div class='output co'>#&gt; <span class='error'>Error in gzfile(file, &quot;rb&quot;): cannot open the connection</span></div><div class='input'>
 <span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='expand.idata.html'>expand.ev</a></span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>amt</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>10</span>,<span class='fl'>20</span>))
 
-<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>data_set</span>(<span class='no'>data</span>, <span class='no'>ID</span> <span class='kw'>&gt;</span> <span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></div><div class='output co'>#&gt; Model:  demo.cpp 
-#&gt; Dim:    1210 x 6 
-#&gt; Time:   0 to 24 
-#&gt; ID:     5 
-#&gt;      ID time    GUT  CENT  RESP     CP
-#&gt; [1,]  2  0.0  0.000 0.000 50.00 0.0000
-#&gt; [2,]  2  0.0 10.000 0.000 50.00 0.0000
-#&gt; [3,]  2  0.1  8.781 1.216 49.97 0.0608
-#&gt; [4,]  2  0.2  7.711 2.278 49.90 0.1139
-#&gt; [5,]  2  0.3  6.771 3.204 49.79 0.1602
-#&gt; [6,]  2  0.4  5.945 4.011 49.67 0.2006
-#&gt; [7,]  2  0.5  5.220 4.714 49.53 0.2357
-#&gt; [8,]  2  0.6  4.584 5.325 49.40 0.2663</div><div class='input'>
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>data_set</span>(<span class='no'>data</span>, <span class='no'>ID</span> <span class='kw'>&gt;</span> <span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></div><div class='output co'>#&gt; <span class='error'>Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0(&quot;\&quot;&quot;, vapply(classes, as.character,             &quot;&quot;), &quot;\&quot;&quot;, collapse = &quot;, &quot;)        stop(gettextf(&quot;unable to find an inherited method for function %s for signature %s&quot;,             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop(&quot;Internal error in finding inherited methods; didn&#39;t return a unique method&quot;,         domain = NA)})(list(structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;), &quot;data.frame&quot;),     structure(function (x, data, ...)     standardGeneric(&quot;data_set&quot;), generic = structure(&quot;data_set&quot;, package = &quot;mrgsolve&quot;), package = &quot;mrgsolve&quot;, group = list(), valueClass = character(0), signature = c(&quot;x&quot;,     &quot;data&quot;), default = `\001NULL\001`, skeleton = (function (x,         data, ...)     stop(&quot;invalid call in method dispatch to &#39;data_set&#39; (no default method)&quot;,         domain = NA))(x, data, ...), class = structure(&quot;standardGeneric&quot;, package = &quot;methods&quot;)),     &lt;environment&gt;): unable to find an inherited method for function ‘data_set’ for signature ‘&quot;standardGeneric&quot;, &quot;data.frame&quot;’</span></div><div class='input'>
 
 
 </div></pre>
