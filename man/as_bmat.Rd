@@ -40,6 +40,8 @@ as_dmat(x, ...)
 \item{...}{passed along}
 
 \item{pat}{regular expression, character}
+
+\item{cols}{column names to use instead of \code{pat}}
 }
 \value{
 A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.

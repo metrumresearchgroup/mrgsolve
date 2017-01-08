@@ -150,6 +150,7 @@ dmat <- function(...) {
 ##'
 ##' @param x an R object
 ##' @param pat regular expression, character
+##' @param cols column names to use instead of \code{pat}
 ##' @param ... passed along
 ##' @return A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.
 ##' @seealso bmat, dmat
