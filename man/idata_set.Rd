@@ -11,7 +11,7 @@
 idata_set(x, data, ...)
 
 \S4method{idata_set}{mrgmod,data.frame}(x, data, subset = TRUE,
-  select = TRUE, ...)
+  select = TRUE, covset = NULL, ...)
 
 \S4method{idata_set}{mrgmod,ANY}(x, data, ...)
 
@@ -27,6 +27,8 @@ idata_set(x, data, ...)
 \item{subset}{passed to \code{dplyr::filter_}}
 
 \item{select}{passed to \code{dplyr::select_}}
+
+\item{covset}{the name of a \code{\link{covset}} object in `$ENV`}
 
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 }

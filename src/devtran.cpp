@@ -60,7 +60,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
-
+  const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   // Create data objects from data and idata
   dataobject dat(data,parnames);
   dat.map_uid();
@@ -245,9 +245,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
   const unsigned int NN = obsonly ? obscount : (obscount + evcount);
-  const unsigned int n_out_col  = 2 + n_tran_carry + n_data_carry + n_idata_carry + nreq + n_capture;
+  int precol = 2 + int(tad);
+  const unsigned int n_out_col  = precol + n_tran_carry + n_data_carry + n_idata_carry + nreq + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
-  const unsigned int tran_carry_start = 2;
+  const unsigned int tran_carry_start = precol;
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
   const unsigned int idata_carry_start = data_carry_start + n_data_carry;
   const unsigned int req_start = idata_carry_start+n_idata_carry;
@@ -334,6 +335,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double maxtime = 0;
   double biofrac = 1.0;
   int this_idata_row = 0;
+  double told = 0;
   
   prob->nid(dat.nid());
   prob->nrow(NN);
@@ -444,6 +446,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         tto = tfrom;
       }
       
+      if(this_rec ->evid()==1) {
+        told =  tto;
+      }
+      
       // Only copy in a new eps value if we are actually advancing in time:
       if(tto > tfrom) {
         for(k = 0; k < neps; ++k) {
@@ -530,6 +536,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // Write out ID and time
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
+        if(tad) ans(crow,2) = tto - told;
         
         // Write out captured items
         k = 0;

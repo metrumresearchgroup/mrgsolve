@@ -530,7 +530,6 @@ ls_env <- function(x,...) {
   ans <- data.frame(object=objects,class=cl)
   rownames(ans) <- NULL
   dplyr::arrange(ans, class)
-  
 }
 
 
@@ -548,3 +547,18 @@ cama <- function(mod,fn="cama",...) {
   f <- get(fn, mod@envir, inherits=FALSE)
   mod %>% update(...) %>% f
 }
+
+param_in_env <- function(x) {
+  p <- as.list(param(x))
+  list2env(p[setdiff(names(p),ls(x@envir))],envir=x@envir)
+}
+param_out_env <- function(x) {
+  what <- intersect(names(param(x)),ls(envir=x@envir))
+  rm(list=what,envir=x@envir)
+  return(invisible(x))
+}
+
+
+
+
+

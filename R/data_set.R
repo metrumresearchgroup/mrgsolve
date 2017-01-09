@@ -10,7 +10,7 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' @rdname data_set
 ##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
 ##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
-##'
+##' @param covset the name of a \code{\link{covset}} object in `$ENV`
 ##'
 ##' @details
 ##' Input data sets are \code{R} data frames that can include columns with any valid name, however columns with selected names are recognized by \code{mrgsolve} and incorporated into the simulation.
@@ -37,13 +37,17 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##'
 ##'
 ##'
-setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,...) {
+setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,covset=NULL,...) {
   if(exists("data", x@args)) stop("data already has been set.")
   if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
 
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
-  
+  if(!is.null(covset)) {
+    covset <- get(covset,x@envir)
+    envir <- merge(as.list(param(x)),as.list(x@envir),open=TRUE)
+    data <- mutate_random(data,covset,envir=envir) 
+  }
   data <- mrgindata(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), open=TRUE)
   return(x)

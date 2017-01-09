@@ -225,6 +225,7 @@ tran_mrgsim <- function(x,
                         descol = character(0),
                         filbak=TRUE,
                         t2advance = FALSE,
+                        tad = FALSE,
                         ...) {
   
   verbose <- x@verbose
@@ -311,6 +312,10 @@ tran_mrgsim <- function(x,
   parin$mtime <- sort(unique(mtime))
   parin$ptimes <- stime(ptime)
   parin$filbak <- filbak
+  parin$tad <- tad
+  if(any(x@capture =="tad") & tad) {
+    stop("tad argument is true and 'tad' found in $CAPTURE",call.=FALSE); 
+  }
   
   # already took intersect
   parin$request <- as.integer(match(request, cmt(x))-1);
@@ -384,6 +389,8 @@ tran_mrgsim <- function(x,
   # need to rename to get back to requested case
   # Then, rename again for user-supplied renaming
   carry.tran <- altname(rename.carry.tran,out[["trannames"]])
+  
+  if(tad) tcol <- c(tcol,"tad")
   
   cnames <- c("ID",
               tcol,
