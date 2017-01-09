@@ -16,7 +16,7 @@
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
-
+#define __ALAG_POS -1200
 
 /** Perform a simulation run.
  * 
@@ -65,7 +65,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   dataobject dat(data,parnames);
   dat.map_uid();
   dat.locate_tran();
-
+  
   dataobject idat(idata, parnames, cmtnames);
   idat.idata_row();
   
@@ -303,14 +303,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
         if(!(*itt)->output()) continue;
         n = 0;
-        if(carry_evid) {ans(crow,n+2) = (*itt)->evid();                     ++n;}
-        if(carry_amt)  {ans(crow,n+2) = (*itt)->amt();                      ++n;}
-        if(carry_cmt)  {ans(crow,n+2) = (*itt)->cmt();                      ++n;}
-        if(carry_ss)   {ans(crow,n+2) = (*itt)->ss();                       ++n;}
-        if(carry_ii)   {ans(crow,n+2) = (*itt)->ii();                       ++n;}
-        if(carry_addl) {ans(crow,n+2) = (*itt)->addl();                     ++n;}
-        if(carry_rate) {ans(crow,n+2) = (*itt)->rate();                     ++n;}
-        if(carry_aug)  {ans(crow,n+2) = ((*itt)->pos()==nextpos) && obsaug; ++n;}
+        if(carry_evid) {ans(crow,n+precol) = (*itt)->evid();                     ++n;}
+        if(carry_amt)  {ans(crow,n+precol) = (*itt)->amt();                      ++n;}
+        if(carry_cmt)  {ans(crow,n+precol) = (*itt)->cmt();                      ++n;}
+        if(carry_ss)   {ans(crow,n+precol) = (*itt)->ss();                       ++n;}
+        if(carry_ii)   {ans(crow,n+precol) = (*itt)->ii();                       ++n;}
+        if(carry_addl) {ans(crow,n+precol) = (*itt)->addl();                     ++n;}
+        if(carry_rate) {ans(crow,n+precol) = (*itt)->rate();                     ++n;}
+        if(carry_aug)  {ans(crow,n+precol) = ((*itt)->pos()==nextpos) && obsaug; ++n;}
         ++crow;
       }
     }
@@ -335,7 +335,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double maxtime = 0;
   double biofrac = 1.0;
   int this_idata_row = 0;
-  double told = 0;
+  double told = -1;
   
   prob->nid(dat.nid());
   prob->nrow(NN);
@@ -352,6 +352,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // and assign in the object
   for(size_t i=0; i < a.size(); ++i) {
     
+    told = -1;
+    
     prob->idn(i);
     
     tfrom = a[i].front()->time();
@@ -360,7 +362,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     id = dat.get_uid(i);
     
     this_idata_row  = idat.get_idata_row(id);
-  
+    
     prob->reset_newid(id);
     
     if(i==0) {
@@ -399,7 +401,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     if(mtimes.size() > 0) {
       add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
     }
-
+    
     // LOOP ACROSS EACH RECORD for THIS ID:
     for(size_t j=0; j < a[i].size(); ++j) {
       
@@ -446,8 +448,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         tto = tfrom;
       }
       
-      if(this_rec ->evid()==1) {
-        told =  tto;
+      if(tad) {
+        if((this_rec->evid()==1) && (this_rec->pos() != __ALAG_POS)) {
+          told = tto;
+        }
       }
       
       // Only copy in a new eps value if we are actually advancing in time:
@@ -501,7 +505,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if((prob->alag(this_rec->cmt()) > mindt)) {
           
           rec_ptr newev = boost::make_shared<datarecord>(*this_rec);
-          newev->pos(-1200);
+          newev->pos(__ALAG_POS);
           newev->phantom_rec();
           newev->time(this_rec->time() + prob->alag(this_rec->cmt()));
           newev->fn(biofrac);
@@ -536,8 +540,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // Write out ID and time
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
-        if(tad) ans(crow,2) = tto - told;
-        
+        if(tad) {
+          ans(crow,2) = (told > -1) ? (tto - told) : -1;
+        }
         // Write out captured items
         k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
