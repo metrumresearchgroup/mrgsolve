@@ -1,4 +1,5 @@
 
+setClass("covset")
 
 ##' Add random variates to a data frame.
 ##'
@@ -7,7 +8,7 @@
 ##' @param ... additional inputs
 ##'
 ##' @export
-##' @importFrom dplyr left_join bind_cols data_frame select_
+##' @importFrom dplyr left_join bind_cols data_frame select_ mutate_
 ##' @importFrom stats rbinom setNames
 ##' @importFrom utils type.convert
 ##' @importFrom methods setGeneric
@@ -39,7 +40,11 @@ setMethod("mutate_random", c("data.frame", "character"), function(data,input,...
 setMethod("mutate_random", c("data.frame", "list"), function(data,input,...) {
   apply_covset(data,input,...)
 })
-
+##' @export
+##' @rdname mutate_random
+setMethod("mutate_random", c("data.frame", "covset"), function(data,input,...) {
+  mutate_random(data,as.list(input),...)
+})
 
 parse_right <- function(x) {
   bar <- where_first("|",x)
@@ -303,7 +308,22 @@ covset <- function(...) {
   lang <- sapply(x,is.language)
   x[lang] <- lapply(x[lang],deparse)
   x <- lapply(x,as.character)
-  return(setNames(x,y))
+
+  new.name <- x==unlist(y,use.names=FALSE)
+  if(any(new.name)) {
+    n <- sum(new.name)
+    y[new.name] <- paste0("x", seq(1,n))
+  }
+
+  x <- setNames(x,y)
+  return(structure(x,class="covset"))
+}
+
+is.covset <- function(x) return(inherits(x,"covset"))
+
+##' @export
+as.list.covset <- function(x) {
+  structure(x,class=NULL)
 }
 
 apply_covset <- function(data,.covset,...) {
@@ -312,7 +332,5 @@ apply_covset <- function(data,.covset,...) {
   }
   return(data)
 }
-
-
 
 
