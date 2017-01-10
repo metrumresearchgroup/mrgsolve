@@ -4,14 +4,21 @@
 \alias{PKMODEL}
 \title{Parse data from \code{$PKMODEL}}
 \usage{
-PKMODEL(ncmt = 1, depot = FALSE, trans = pick_trans(ncmt, depot), ...)
+PKMODEL(ncmt = 1, depot = FALSE, cmt = NULL, trans = pick_trans(ncmt,
+  depot), env = list(), pos = 1, ...)
 }
 \arguments{
 \item{ncmt}{number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)}
 
 \item{depot}{logical indicating whether to add depot compartment}
 
+\item{cmt}{compartment names as comma-delimited character}
+
 \item{trans}{the parameterization for the PK model; must be 1, 2, 4, or 11}
+
+\item{env}{parse environment}
+
+\item{pos}{block position number}
 
 \item{...}{not used}
 }

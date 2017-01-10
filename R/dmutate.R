@@ -300,6 +300,7 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
 
 
 ##' Create a set of covariates.
+##' @param x a covset
 ##' @param ... formulae to use for the covset
 ##' @export
 ##'
@@ -323,9 +324,10 @@ covset <- function(...) {
 is.covset <- function(x) return(inherits(x,"covset"))
 
 ##' @export
-as.list.covset <- function(x) {
+##' @rdname covset
+setMethod("as.list", "covset", function(x,...) {
   structure(x,class=NULL)
-}
+})
 
 apply_covset <- function(data,.covset,...) {
   for(i in seq_along(.covset)) {
