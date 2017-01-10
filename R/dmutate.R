@@ -8,7 +8,7 @@ setClass("covset")
 ##' @param ... additional inputs
 ##'
 ##' @export
-##' @importFrom dplyr left_join bind_cols data_frame select_ mutate_
+##' @importFrom dplyr left_join bind_cols data_frame select_ mutate_ ungroup
 ##' @importFrom stats rbinom setNames
 ##' @importFrom utils type.convert
 ##' @importFrom methods setGeneric
@@ -257,6 +257,7 @@ parse_form_3 <- function(x) {
 
 
 do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
+  data <- ungroup(data)
 
   if(x$dist == "mutate") {
     call <- as.character(x$call)
