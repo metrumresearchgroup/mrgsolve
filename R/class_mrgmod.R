@@ -532,6 +532,20 @@ ls_env <- function(x,...) {
   dplyr::arrange(ans, class)
 }
 
+##' Return model \code{$ENV}.
+##' 
+##' @param x model object
+##' @param tolist should the environment be coreced to \code{list}?
+##' @export
+##' 
+get_env <- function(x,tolist=TRUE) {
+  if(tolist) {
+    return(as.list(x@envir))  
+  } else {
+    return(x@envir) 
+  }
+}
+
 
 ##' Run the model cama function.
 ##' 

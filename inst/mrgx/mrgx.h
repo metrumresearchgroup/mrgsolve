@@ -41,12 +41,18 @@ T get(const std::string package, const std::string name) {
   Rcpp::Environment env = Rcpp::Environment::namespace_env(package);
   T ans = env[name];
   return ans;
-} 
+}
+template<typename T>
+T readRDS(std::string filename) {
+  Rcpp::Function readRDS = get<Rcpp::Function>("base", "readRDS");
+  return readRDS(filename);
+}
 Rcpp::Function mt_fun() {
   Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");
   Rcpp::Function ans = env["mt_fun"];
   return ans;
 }
+
 }
 
 #endif
