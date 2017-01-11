@@ -1,4 +1,4 @@
-[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
+[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master) [![questions](https://www.codewake.com/badges/ask_question.svg)](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
 
 Resources
 =========

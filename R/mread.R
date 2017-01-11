@@ -141,7 +141,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   spec[["SET"]] <- NULL
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   
-  if(any(names(spec)=="COV")) {
+  if(any(names(spec)=="COVARIATE")) {
     handle_cov(spec,ENV) 
   }
   

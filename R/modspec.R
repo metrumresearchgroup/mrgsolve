@@ -983,14 +983,18 @@ capture_param <- function(annot,.capture) {
 
 
 handle_cov <- function(spec,envir) {
-  where <- which(names(spec)=="COV")
+  where <- which(names(spec)=="COVARIATE")
   value <- vector(mode="list",length=length(where))
   x <- vector(mode="character",length=length(where))
   
   for(i in seq_along(where)) {
     y <- scrape_opts(spec[[where[i]]])
     value[[i]] <- as.covset(as.list(y$x))
+    if(is.null(y$name)) {
+      stop("All $COVARIATE blocks must have name block option set ($COVARIATE @name cov1)",call.=FALSE) 
+    }
     x[i] <- y$name
+    
   }
 
   for(i in seq_along(x)) {
