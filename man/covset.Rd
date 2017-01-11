@@ -2,6 +2,7 @@
 % Please edit documentation in R/dmutate.R
 \docType{methods}
 \name{covset}
+\alias{as.covset}
 \alias{as.list,covset-method}
 \alias{covset}
 \title{Create a set of covariates.}
@@ -9,6 +10,8 @@
 covset(...)
 
 \S4method{as.list}{covset}(x, ...)
+
+as.covset(x)
 }
 \arguments{
 \item{...}{formulae to use for the covset}

@@ -93,7 +93,7 @@ parse_left <- function(x) {
 }
 
 
-bound <- function(call,n,envir=list(),mult=1.2,mn=-Inf,mx=Inf,tries=10) {
+bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 
   n0 <- n
   n <- n*mult
@@ -106,6 +106,9 @@ bound <- function(call,n,envir=list(),mult=1.2,mn=-Inf,mx=Inf,tries=10) {
     ngot <- ngot + length(yy)
     y <- c(yy,y)
     if(ngot > n0) break
+  }
+  if(ngot < n0) {
+    stop("Could not simulate required variates within given bounds in ", tries, " tries", call.=FALSE) 
   }
   return(y[1:n0])
 }
@@ -329,6 +332,13 @@ setMethod("as.list", "covset", function(x,...) {
   structure(x,class=NULL)
 })
 
+##' @export
+##' @rdname covset
+as.covset <- function(x) {
+  if(!is.list(x)) stop("x needs to be a list")
+  structure(x,class="covset")  
+}
+
 apply_covset <- function(data,.covset,...) {
   for(i in seq_along(.covset)) {
     data <- mutate_random(data,.covset[[i]],...)
@@ -336,4 +346,11 @@ apply_covset <- function(data,.covset,...) {
   return(data)
 }
 
+get_covsets <- function(x) {
+  if(is.environment(x)) {
+    x <- as.list(x) 
+  }
+  cl <- sapply(x,class)
+  x[cl=="covset"]
+}
 

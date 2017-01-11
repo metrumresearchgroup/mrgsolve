@@ -982,5 +982,26 @@ capture_param <- function(annot,.capture) {
 }
 
 
+handle_cov <- function(spec,envir) {
+  where <- which(names(spec)=="COV")
+  value <- vector(mode="list",length=length(where))
+  x <- vector(mode="character",length=length(where))
+  
+  for(i in seq_along(where)) {
+    y <- scrape_opts(spec[[where[i]]])
+    value[[i]] <- as.covset(as.list(y$x))
+    x[i] <- y$name
+  }
+
+  for(i in seq_along(x)) {
+    if(exists(x[i],envir)) {
+      stop("Can't assign covset ", 
+           x[i], 
+           ": an object already exists with that name",call.=FALSE) 
+    }
+    assign(x[i],value[[i]],envir=envir)  
+  }
+  return(invisible(NULL))
+}
 
 
