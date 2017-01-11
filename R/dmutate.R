@@ -262,9 +262,9 @@ parse_form_3 <- function(x) {
 do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
   data <- ungroup(data)
 
-  if(x$dist == "mutate") {
+  if(x$dist == "expr") {
     call <- as.character(x$call)
-    call <- gsub("mutate\\((.+)\\)$", "\\1", call)
+    call <- gsub("expr\\((.+)\\)$", "\\1", call)
     .dots <- paste0("list(~",call,")")
     .dots <- eval(parse(text=.dots),envir=envir)
     names(.dots) <- x$vars

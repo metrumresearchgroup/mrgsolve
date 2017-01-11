@@ -981,9 +981,13 @@ capture_param <- function(annot,.capture) {
   bind_rows(annot,what)
 }
 
+##' @export
+handle_spec_block.specCOVSET <- function(x,...) {
+  return(x)
+}
 
 handle_cov <- function(spec,envir) {
-  where <- which(names(spec)=="COVARIATE")
+  where <- which(names(spec)=="COVSET")
   value <- vector(mode="list",length=length(where))
   x <- vector(mode="character",length=length(where))
   
@@ -991,10 +995,9 @@ handle_cov <- function(spec,envir) {
     y <- scrape_opts(spec[[where[i]]])
     value[[i]] <- as.covset(as.list(y$x))
     if(is.null(y$name)) {
-      stop("All $COVARIATE blocks must have name block option set ($COVARIATE @name cov1)",call.=FALSE) 
+      stop("All $COVSET blocks must have name block option set (e.g. $COVSET @name cov1)",call.=FALSE) 
     }
     x[i] <- y$name
-    
   }
 
   for(i in seq_along(x)) {
