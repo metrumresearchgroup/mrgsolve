@@ -1,4 +1,5 @@
 
+setClass("covset")
 
 ##' Add random variates to a data frame.
 ##'
@@ -7,7 +8,7 @@
 ##' @param ... additional inputs
 ##'
 ##' @export
-##' @importFrom dplyr left_join bind_cols data_frame select_
+##' @importFrom dplyr left_join bind_cols data_frame select_ mutate_ ungroup
 ##' @importFrom stats rbinom setNames
 ##' @importFrom utils type.convert
 ##' @importFrom methods setGeneric
@@ -39,15 +40,11 @@ setMethod("mutate_random", c("data.frame", "character"), function(data,input,...
 setMethod("mutate_random", c("data.frame", "list"), function(data,input,...) {
   apply_covset(data,input,...)
 })
-
-apply_covset <- function(data,.covset,...) {
-  for(i in seq_along(.covset)) {
-    data <- mutate_random(data,.covset[[i]],...)
-  }
-  return(data)
-}
-
-
+##' @export
+##' @rdname mutate_random
+setMethod("mutate_random", c("data.frame", "covset"), function(data,input,...) {
+  mutate_random(data,as.list(input),...)
+})
 
 parse_right <- function(x) {
   bar <- where_first("|",x)
@@ -96,7 +93,7 @@ parse_left <- function(x) {
 }
 
 
-bound <- function(call,n,envir=list(),mult=1.2,mn=-Inf,mx=Inf,tries=10) {
+bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 
   n0 <- n
   n <- n*mult
@@ -109,6 +106,9 @@ bound <- function(call,n,envir=list(),mult=1.2,mn=-Inf,mx=Inf,tries=10) {
     ngot <- ngot + length(yy)
     y <- c(yy,y)
     if(ngot > n0) break
+  }
+  if(ngot < n0) {
+    stop("Could not simulate required variates within given bounds in ", tries, " tries", call.=FALSE) 
   }
   return(y[1:n0])
 }
@@ -246,14 +246,31 @@ parse_form_3 <- function(x) {
     group <- ""
   }
 
-  right <- sub("(", "(.n,",right,fixed=TRUE)
+  op <- where_first("(",right)
+  dist <- substr(right,0,op-1)
+
+  if(substr(dist,0,1)=="r") {
+    right <- sub("(", "(.n,",right,fixed=TRUE)
+  }
+
   right <- parse(text=right)
   left <- parse_left(left)
-  c(left,list(call=right,by=group))
+  c(left,list(call=right,by=group,dist=dist))
 }
 
 
 do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
+  data <- ungroup(data)
+
+  if(x$dist == "expr") {
+    call <- as.character(x$call)
+    call <- gsub("expr\\((.+)\\)$", "\\1", call)
+    .dots <- paste0("list(~",call,")")
+    .dots <- eval(parse(text=.dots),envir=envir)
+    names(.dots) <- x$vars
+    data <- mutate_(data, .dots=.dots)
+    return(data)
+  }
 
   if(tries <=0) stop("tries must be >= 1")
 
@@ -286,6 +303,7 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
 
 
 ##' Create a set of covariates.
+##' @param x a covset
 ##' @param ... formulae to use for the covset
 ##' @export
 ##'
@@ -295,9 +313,44 @@ covset <- function(...) {
   lang <- sapply(x,is.language)
   x[lang] <- lapply(x[lang],deparse)
   x <- lapply(x,as.character)
-  return(setNames(x,y))
+
+  new.name <- x==unlist(y,use.names=FALSE)
+  if(any(new.name)) {
+    n <- sum(new.name)
+    y[new.name] <- paste0("x", seq(1,n))
+  }
+
+  x <- setNames(x,y)
+  return(structure(x,class="covset"))
 }
 
+is.covset <- function(x) return(inherits(x,"covset"))
 
+##' @export
+##' @rdname covset
+setMethod("as.list", "covset", function(x,...) {
+  structure(x,class=NULL)
+})
 
+##' @export
+##' @rdname covset
+as.covset <- function(x) {
+  if(!is.list(x)) stop("x needs to be a list")
+  structure(x,class="covset")  
+}
+
+apply_covset <- function(data,.covset,...) {
+  for(i in seq_along(.covset)) {
+    data <- mutate_random(data,.covset[[i]],...)
+  }
+  return(data)
+}
+
+get_covsets <- function(x) {
+  if(is.environment(x)) {
+    x <- as.list(x) 
+  }
+  cl <- sapply(x,class)
+  x[cl=="covset"]
+}
 

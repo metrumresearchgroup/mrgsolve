@@ -138,8 +138,8 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
-  spec[["SET"]] <- NULL
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
+  spec[["SET"]] <- spec[["ENV"]] <-  NULL
   
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
@@ -173,12 +173,11 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
   capture <- unique(as.character(unlist(do.call("c", nonull.list(mread.env$capture)))))
-
   annot <- capture_param(annot,capture)
   
-  ans <- check_globals(mread.env$move_global,names(init))
-  if(length(ans) > 0) {
-    stop(ans, call.=FALSE) 
+  check_globals_err <- check_globals(mread.env$move_global,names(init))
+  if(length(check_globals_err) > 0) {
+    stop(check_globals_err, call.=FALSE)
   }
   
   ## Collect potential multiples
@@ -191,13 +190,18 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
   SET[["CMTN"]] <- c(spec[["CMTN"]],dosing)
   
-  ## Virtual compartments
+  ## This section checks the contents of the spec and makes some special interventions
+  ##   Virtual compartments
   if(any(is.element("VCMT", names(spec)))) {
     what <- which(names(spec)=="VCMT")
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
-
+  ##  COVSET blocks
+  if(any(is.element("COVSET",names(spec)))) {
+    handle_cov(spec,ENV) 
+  }
+  
   
   ## Constructor for model object:
   x <- new("mrgmod",

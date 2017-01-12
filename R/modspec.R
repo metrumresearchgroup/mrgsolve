@@ -716,10 +716,13 @@ handle_spec_block.specCAPTURE <- function(x,...) {
 }
 
 ##' @export
-handle_spec_block.specPKMODEL <- function(x,...) {
+handle_spec_block.specPKMODEL <- function(x,env,...) {
   x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
   do.call("PKMODEL",x)
 }
+
 ##' @export
 handle_spec_block.specINCLUDE <- function(x,env,...) {
   
@@ -763,10 +766,12 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 }
 
 ##' Parse data from \code{$PKMODEL}
-##'
+##' @param cmt compartment names as comma-delimited character
 ##' @param ncmt number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)
 ##' @param depot logical indicating whether to add depot compartment
 ##' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11
+##' @param env parse environment
+##' @param pos block position number
 ##' @param ... not used
 ##'
 ##' @details
@@ -795,7 +800,15 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##' }
 ##'
 ##'
-PKMODEL <- function(ncmt=1, depot=FALSE, trans = pick_trans(ncmt,depot), ...) {
+PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),env=list(),pos=1,...) {
+  if(is.character(cmt)) {
+    cmt <- cvec_cs(cmt)
+    ncmt <- length(cmt)
+    init <- as.list(vector(mode="integer", length=ncmt))
+    names(init) <- cmt
+    env[["init"]][[pos]] <- init  
+    ncmt <- ncmt-depot
+  }
   stopifnot(ncmt %in% c(1,2))
   advan <- pick_advan(ncmt,depot)
   return(list(advan=advan, trans=trans, n=ncmt))
@@ -968,6 +981,34 @@ capture_param <- function(annot,.capture) {
   bind_rows(annot,what)
 }
 
+##' @export
+handle_spec_block.specCOVSET <- function(x,...) {
+  return(x)
+}
 
+handle_cov <- function(spec,envir) {
+  where <- which(names(spec)=="COVSET")
+  value <- vector(mode="list",length=length(where))
+  x <- vector(mode="character",length=length(where))
+  
+  for(i in seq_along(where)) {
+    y <- scrape_opts(spec[[where[i]]])
+    value[[i]] <- as.covset(as.list(y$x))
+    if(is.null(y$name)) {
+      stop("All $COVSET blocks must have name block option set (e.g. $COVSET @name cov1)",call.=FALSE) 
+    }
+    x[i] <- y$name
+  }
+
+  for(i in seq_along(x)) {
+    if(exists(x[i],envir)) {
+      stop("Can't assign covset ", 
+           x[i], 
+           ": an object already exists with that name",call.=FALSE) 
+    }
+    assign(x[i],value[[i]],envir=envir)  
+  }
+  return(invisible(NULL))
+}
 
 

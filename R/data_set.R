@@ -45,6 +45,8 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
   if(!is.null(covset)) {
     covset <- get(covset,x@envir)
+    if(!is.covset(covset)) stop("Object was not a covset.",call.=FALSE)
+    covset <- as.list(covset)
     envir <- merge(as.list(param(x)),as.list(x@envir),open=TRUE)
     data <- mutate_random(data,covset,envir=envir) 
   }
