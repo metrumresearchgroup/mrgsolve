@@ -4,7 +4,22 @@ __Please see the latest release__: [v0.7.7](https://github.com/metrumresearchgro
 
 # Since 0.7.7
 
-- No changes so far.
+## New Authors
+- Devin Pastoor is now listed as a contributor.  Thanks for all of your help!
+
+## New Features
+- Added `$COVSET` block to add simulated covariates from parameteric probability distributions to `data_set` or `idata_set`.
+- Added automatic, on-demand output of time-after-dose (`tad`) in the simulated output.  Use `mrgsim(tad=TRUE)`.
+- Several new functions added to `$PLUGIN mrgx`, including `mrgx::get<T>` for getting objects out of `$ENV` or a package namespace and `mrgx::mt_fun()` that is just a function that you can assign when declaring `Rcpp::Function`.
+- Added `object` argument to `idata_set` and `data_set` to get a `data.frame` (or function to call that returns `data.frame`) out of `$ENV` to use for simulation.
+
+## Changes / additions
+- Added `cmt` argument to `$PKMODEL`.  When `cmt` is set to a character vector or a comma-separated string, `$PKMODEL` infers the number of compartments and declares them in the model.  This means a separate `$CMT` block is not required when using `$PKMODEL`.
+- Added `cols` argument to `as_bmat` and `as_dmat` so that a character vector of names
+can be specified (rather than regular expression) to select data for creating matrix.
+- The `preclean` argument now causes `unlink` to be called on the model build directory.
+- Added several functions to help work with `$ENV`: `ls_env`, `get_env`, `re_eval_env`, `update_env`. 
+
 
 
 # Since 0.7.6
