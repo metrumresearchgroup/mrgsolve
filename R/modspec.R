@@ -993,7 +993,8 @@ handle_cov <- function(spec,envir) {
   
   for(i in seq_along(where)) {
     y <- scrape_opts(spec[[where[i]]])
-    value[[i]] <- as.covset(as.list(y$x))
+    xx <- lapply(y$x,new_covobj)
+    value[[i]] <- do.call(covset,xx)
     if(is.null(y$name)) {
       stop("All $COVSET blocks must have name block option set (e.g. $COVSET @name cov1)",call.=FALSE) 
     }
