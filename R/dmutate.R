@@ -46,30 +46,6 @@ setMethod("mutate_random", c("data.frame", "covset"), function(data,input,...) {
   mutate_random(data,as.list(input),...)
 })
 
-parse_right <- function(x) {
-  bar <- where_first("|",x)
-  op <- where_is("(",x)
-  cl <- where_is(")",x)
-  if(sum(op>0) != sum(cl>0)) {
-    stop("Unmatched parens: ", x)
-  }
-
-  lclose <- cl[length(cl)]
-
-  cond <- ""
-  if(bar[1] > 0) {
-    cond <- substr(x, bar[1], cl[length(cl)])
-    x <- sub(cond,"",x,fixed=TRUE)
-    x <- paste0(x,")")
-  }
-  x <- sub("(", "(internal$N,",x,fixed=TRUE)
-  cond <- sub("|", "", cond, fixed=TRUE)
-  cond <- sub(")", "", cond, fixed=TRUE)
-  dist <- substr(x,0,op[1]-1)
-  list(cond = cond, call=x,dist=dist,has.cond = nchar(cond) > 0)
-}
-
-
 parse_left_var <- function(x) {
   m <- regexec("(\\w+)(\\[(\\w+)?\\,(\\w+)?\\])?", x)
   m <- unlist(regmatches(x,m))
@@ -79,14 +55,13 @@ parse_left_var <- function(x) {
   upper <- m[5]
   if(lower=="") lower <- -Inf
   if(upper=="") upper <- Inf
-  return(list(var=var,bounds=bounds,lower=lower,upper=upper))
+  return(list(var=var,lower=Parse(lower),upper=Parse(upper)))
 }
 
 parse_left <- function(x) {
   x <- unlist(strsplit(x,"+",fixed=TRUE))
   x <- lapply(x,parse_left_var)
   vars <- s_pick(x,"var")
-  bounds <- s_pick(x,"bounds")
   lower <- s_pick(x,"lower")
   upper <- s_pick(x,"upper")
   list(vars=vars,lower=lower,upper=upper,n=length(vars))
@@ -115,46 +90,6 @@ bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 
 rbinomial <- function(n,p,...) rbinom(n,1,p)
 
-parse_form <- function(x) {
-  x <- gsub(" ", "",x, fixed=TRUE)
-  form <- strsplit(x,"~",fixed=TRUE)[[1]]
-  var <- parse_left(form[1])
-
-  bar <- where_first("|",form[2])
-
-  if(bar > 0) {
-    form <- strsplit(form[2], "|", fixed=TRUE)[[1]]
-    dist <- form[1]
-    by <- form[2]
-    by <- unlist(strsplit(by, "[*+]+"),use.names=FALSE)
-  } else {
-    dist <- form[2]
-    by <- character(0)
-  }
-  c(list(dist=dist,by=by),var)
-}
-
-peval <- function(x,envir=list()) {
-  eval(parse(text=x),envir=envir)
-}
-
-parse_random_block <- function(x) {
-  x <- unlist(strsplit(x, "\n",x,fixed=TRUE),use.names=FALSE)
-  x <- x[x!=""]
-  x <- lapply(x,parse_random_string)
-  x
-}
-
-mutate_random_list <- function(data,block,...) {
-
-  x <- parse_random_block(block)
-
-  for(i in seq_along(x)) {
-    data <- do_mutate(data,x[[i]],...)
-  }
-  return(data)
-}
-
 first_comma <- function(x,start=1) {
   open <- 0
   where <- NULL
@@ -174,6 +109,7 @@ first_comma <- function(x,start=1) {
 }
 
 rm_space <- function(x) gsub(" ", "",x,fixed=TRUE)
+peval <- function(x) eval(parse(text=x))
 
 parse_random_string <- function(string) {
   string <- rm_space(string)
@@ -258,6 +194,12 @@ parse_form_3 <- function(x) {
   c(left,list(call=right,by=group,dist=dist))
 }
 
+parse_form_object <- function(x) {
+  x <- parse_form_3(x)
+
+  x
+}
+
 
 do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
   data <- ungroup(data)
@@ -286,8 +228,8 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
     n <- nrow(data)
   }
 
-  mn <- eval(parse(text=x$lower),envir=envir)
-  mx <- eval(parse(text=x$upper),envir=envir)
+  mn <- eval(x$lower,envir=envir)
+  mx <- eval(x$upper,envir=envir)
   r <- data_frame(.x=bound(x$call,n=n,mn=mn, mx=mx,tries=tries,envir=envir))
   names(r) <- x$vars
   data <- select_(data,.dots=setdiff(names(data),names(r)))
@@ -353,4 +295,6 @@ get_covsets <- function(x) {
   cl <- sapply(x,class)
   x[cl=="covset"]
 }
+
+Parse <- function(x) parse(text=x)
 

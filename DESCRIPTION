@@ -63,6 +63,7 @@ Collate:
     'annot.R'
     'chain.R'
     'class_build.R'
+    'class_covset.R'
     'compile.R'
     'complog.R'
     'covset.R'
