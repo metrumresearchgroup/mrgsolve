@@ -33,6 +33,10 @@ EXPAND_EVENTS <- function(idcol_, events, id) {
     .Call('mrgsolve_EXPAND_EVENTS', PACKAGE = 'mrgsolve', idcol_, events, id)
 }
 
+recdata <- function(dose, obs, cols, n_out_col, n_out_row, nid, ntime, naddl, nii, namt, nevid, ncmt, nrate) {
+    .Call('mrgsolve_recdata', PACKAGE = 'mrgsolve', dose, obs, cols, n_out_col, n_out_row, nid, ntime, naddl, nii, namt, nevid, ncmt, nrate)
+}
+
 TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs, envir) {
     .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs, envir)
 }

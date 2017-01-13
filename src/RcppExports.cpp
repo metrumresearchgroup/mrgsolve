@@ -111,6 +111,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// recdata
+Rcpp::NumericMatrix recdata(const Rcpp::NumericMatrix& dose, const Rcpp::NumericMatrix& obs, const Rcpp::IntegerVector& cols, const int n_out_col, const int n_out_row, const int nid, const int ntime, const int naddl, const int nii, const int namt, const int nevid, const int ncmt, const int nrate);
+RcppExport SEXP mrgsolve_recdata(SEXP doseSEXP, SEXP obsSEXP, SEXP colsSEXP, SEXP n_out_colSEXP, SEXP n_out_rowSEXP, SEXP nidSEXP, SEXP ntimeSEXP, SEXP naddlSEXP, SEXP niiSEXP, SEXP namtSEXP, SEXP nevidSEXP, SEXP ncmtSEXP, SEXP nrateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dose(doseSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type cols(colsSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_out_col(n_out_colSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_out_row(n_out_rowSEXP);
+    Rcpp::traits::input_parameter< const int >::type nid(nidSEXP);
+    Rcpp::traits::input_parameter< const int >::type ntime(ntimeSEXP);
+    Rcpp::traits::input_parameter< const int >::type naddl(naddlSEXP);
+    Rcpp::traits::input_parameter< const int >::type nii(niiSEXP);
+    Rcpp::traits::input_parameter< const int >::type namt(namtSEXP);
+    Rcpp::traits::input_parameter< const int >::type nevid(nevidSEXP);
+    Rcpp::traits::input_parameter< const int >::type ncmt(ncmtSEXP);
+    Rcpp::traits::input_parameter< const int >::type nrate(nrateSEXP);
+    rcpp_result_gen = Rcpp::wrap(recdata(dose, obs, cols, n_out_col, n_out_row, nid, ntime, naddl, nii, namt, nevid, ncmt, nrate));
+    return rcpp_result_gen;
+END_RCPP
+}
 // TOUCH_FUNS
 Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, const Rcpp::NumericVector& linit, int Neta, int Neps, const Rcpp::CharacterVector& capture, const Rcpp::List& funs, Rcpp::Environment envir);
 RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP envirSEXP) {

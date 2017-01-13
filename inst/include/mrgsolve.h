@@ -49,3 +49,14 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
                                   const Rcpp::NumericMatrix& events,
                                   const Rcpp::NumericVector& id); 
 
+Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
+                            Rcpp::NumericMatrix& obs,
+                            Rcpp::IntegerVector& cols,
+                            const int n_out_col,const int n_out_row,
+                            const int nid, const int ntime, const int naddl,
+                            const int nii, const int namt, const int nevid, 
+                            const int ncmt, const int nrate);
+  
+  
+  
+  
