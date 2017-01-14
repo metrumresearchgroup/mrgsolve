@@ -4,7 +4,7 @@
 
 
 
-##' Create and work with \code{parameter_list} objects.
+##' Create and work with parameter objects.
 ##'
 ##' See \code{\link{numericlist}} for methods to deal with \code{parameter_list} objects.
 ##'
@@ -13,6 +13,7 @@
 ##' @param .y list to be merged into parameter list
 ##' @param .pat a regular expression (character) to be applied as a filter for which parameters to show when printing
 ##' @param .strict if \code{TRUE}, all names to be updated must be found in the parameter list
+##' @param object passed to show
 ##' @param ... passed along or name/value pairs to update the parameters in a model object
 ##' @return An object of class \code{parameter_list} (see \code{\link{numericlist}}).
 ##'
@@ -164,7 +165,6 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
 
 ##' @export
 ##' @rdname param
-##' @param object passed to show
 setMethod("show", "parameter_list", function(object) showparam(object))
 
 ##' @export

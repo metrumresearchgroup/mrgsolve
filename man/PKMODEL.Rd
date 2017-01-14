@@ -2,7 +2,7 @@
 % Please edit documentation in R/modspec.R
 \name{PKMODEL}
 \alias{PKMODEL}
-\title{Parse data from \code{$PKMODEL}.}
+\title{Parse PKMODEL BLOCK data.}
 \usage{
 PKMODEL(ncmt = 1, depot = FALSE, cmt = NULL, trans = pick_trans(ncmt,
   depot), env = list(), pos = 1, ...)
@@ -23,7 +23,7 @@ PKMODEL(ncmt = 1, depot = FALSE, cmt = NULL, trans = pick_trans(ncmt,
 \item{...}{not used}
 }
 \description{
-Parse data from \code{$PKMODEL}.
+Parse PKMODEL BLOCK data.
 }
 \details{
 When using \code{$PKMODEL}, certain symbols must be defined in the model specification depending

@@ -715,7 +715,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   return(x)
 }
 
-##' Parse data from \code{$PKMODEL}.
+##' Parse PKMODEL BLOCK data.
 ##' @param cmt compartment names as comma-delimited character
 ##' @param ncmt number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)
 ##' @param depot logical indicating whether to add depot compartment

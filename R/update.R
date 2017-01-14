@@ -11,9 +11,9 @@ sval <- unique(c("atol","rtol",
                  "maxsteps", "hmin", "hmax","tscale", "request"))
 
 
-##' @title Update the model object
+##' Update the model object.
 ##'
-##' @description After the model object is created, update various attributes.
+##' After the model object is created, update various attributes.
 ##'
 ##' @param object a model object
 ##' @param ... passed to other functions
@@ -159,7 +159,7 @@ setMethod("update", "ev", function(object,y,...) {
 
 
 
-##' Update \code{model} or \code{project} in an \code{mrgmod} object.
+##' Update model or project in an model object.
 ##'
 ##' @param x mrgmod object
 ##' @param model model name
@@ -179,11 +179,11 @@ setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
 
 
 
-##' Update objects in \code{$ENV}.
+##' Update objects in $ENV.
 ##' 
 ##' @param .x model object
-##' @param ... objects to update
 ##' @param .dots list of objects to updated
+##' @param ... objects to update
 ##' 
 ##' @export
 update_env <- function(.x,...,.dots=list()) {
