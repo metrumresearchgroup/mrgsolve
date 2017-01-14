@@ -31,12 +31,6 @@ data_set(x, data, ...)
 \item{covset}{the name of a \code{\link{covset}} object in \code{$ENV}}
 
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
-
-\item{subset}{passed to \code{dplyr::filter_}; retain only certain rows in the data set}
-
-\item{select}{passed to \code{dplyr::select_}; retain only certain columns in the data set}
-
-\item{covset}{the name of a \code{\link{covset}} object in \code{$ENV}}
 }
 \description{
 Select and modify a data set for simulation.

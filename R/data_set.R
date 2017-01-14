@@ -12,9 +12,6 @@
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' @export
 ##' @rdname data_set
-##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
-##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
-##' @param covset the name of a \code{\link{covset}} object in \code{$ENV}
 ##'
 ##' @details
 ##' Input data sets are \code{R} data frames that can include columns with any valid name, however columns with selected names are recognized by \code{mrgsolve} and incorporated into the simulation.
