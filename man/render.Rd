@@ -5,7 +5,7 @@
 \alias{render}
 \alias{render,character-method}
 \alias{render,mrgmod-method}
-\title{Render an \code{mrgsolve} model.}
+\title{Render a model to a document.}
 \usage{
 render(x, ...)
 
@@ -21,7 +21,7 @@ render(x, ...)
 \item{project}{the directory containing the \code{.cpp} model file}
 }
 \description{
-Render an \code{mrgsolve} model.
+Render a model to a document.
 }
 \examples{
 \dontrun{

@@ -1,5 +1,5 @@
 
-##' Render an \code{mrgsolve} model.
+##' Render a model to a document.
 ##' 
 ##' @param x model object or the model name
 ##' @param project the directory containing the \code{.cpp} model file 
