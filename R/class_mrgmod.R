@@ -537,7 +537,7 @@ ls_env <- function(x,...) {
   dplyr::arrange(ans, class)
 }
 
-##' Return model \code{$ENV}.
+##' Return model environment.
 ##' 
 ##' @param x model object
 ##' @param tolist should the environment be coreced to \code{list}?

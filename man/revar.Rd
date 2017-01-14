@@ -4,7 +4,7 @@
 \name{revar}
 \alias{revar}
 \alias{revar,mrgmod-method}
-\title{Get model random effect variances and covariancnes.}
+\title{Get model random effect variances and covariances.}
 \usage{
 revar(x, ...)
 
@@ -16,6 +16,6 @@ revar(x, ...)
 \item{...}{passed along}
 }
 \description{
-Get model random effect variances and covariancnes.
+Get model random effect variances and covariances.
 }
 

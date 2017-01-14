@@ -116,7 +116,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 
 }
 
-##' Print model details
+##' Print model details.
 ##'
 ##' @param object the model object
 ##' @export

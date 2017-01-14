@@ -241,16 +241,21 @@ ch <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 ##' @rdname cvec
 s <- ch
 
-##' Access or clear arguments for \code{mrgsim}.
+##' Access or clear arguments for calls to mrgsim.
 ##'
-##' @export
 ##' @param x model object
 ##' @param clear logical indicating whether or not clear args from the model object
 ##' @param ... passed along
 ##' @return If \code{clear} is \code{TRUE}, the argument list is cleared and the model object is returned.  Otherwise, the argument list is returned.
-simargs <- function(x,...) UseMethod("simargs")
+##' @examples
+##' mod <- mrgsolve:::house()
+##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
+
 ##' @export
-##' @rdname simargs
+simargs <- function(x,...) UseMethod("simargs")
+##' 
+##' @rdname
+##' @export
 simargs.mrgmod <- function(x,clear=FALSE,...) {
   
   if(clear) {

@@ -49,7 +49,7 @@ setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 ##' 
 setGeneric("stime", function(x,...) standardGeneric("stime"))
 
-##' Get model random effect variances and covariancnes.
+##' Get model random effect variances and covariances.
 ##'
 ##' @param x model object
 ##' @param ... passed along

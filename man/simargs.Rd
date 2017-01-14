@@ -2,12 +2,9 @@
 % Please edit documentation in R/utils.R
 \name{simargs}
 \alias{simargs}
-\alias{simargs.mrgmod}
-\title{Access or clear arguments for \code{mrgsim}.}
+\title{Access or clear arguments for calls to mrgsim.}
 \usage{
 simargs(x, ...)
-
-\method{simargs}{mrgmod}(x, clear = FALSE, ...)
 }
 \arguments{
 \item{x}{model object}
@@ -20,6 +17,10 @@ simargs(x, ...)
 If \code{clear} is \code{TRUE}, the argument list is cleared and the model object is returned.  Otherwise, the argument list is returned.
 }
 \description{
-Access or clear arguments for \code{mrgsim}.
+Access or clear arguments for calls to mrgsim.
+}
+\examples{
+mod <- mrgsolve:::house()
+mod \%>\% Req(CP,RESP) \%>\% carry_out(evid,WT,FLAG) \%>\% simargs
 }
 

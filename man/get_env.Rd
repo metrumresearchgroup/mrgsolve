@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgmod.R
 \name{get_env}
 \alias{get_env}
-\title{Return model \code{$ENV}.}
+\title{Return model environment.}
 \usage{
 get_env(x, tolist = TRUE)
 }
@@ -12,6 +12,6 @@ get_env(x, tolist = TRUE)
 \item{tolist}{should the environment be coreced to \code{list}?}
 }
 \description{
-Return model \code{$ENV}.
+Return model environment.
 }
 

@@ -10,7 +10,7 @@
 \alias{length,numericlist-method}
 \alias{names,numericlist-method}
 \alias{numericlist}
-\title{Methods for numericlist}
+\title{Methods for numericlist.}
 \usage{
 \S4method{as.list}{numericlist}(x, ...)
 

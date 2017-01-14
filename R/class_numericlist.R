@@ -45,10 +45,11 @@ setClass("numericlist",
          prototype=list(data=null_list, pattern="*")
 )
 
-##' @title Methods for numericlist
-##' @description
+##' Methods for numericlist.
+##' 
 ##' These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures,
 ##' extract elements from \code{numericlist}s, or get attributes from \code{numericlist}s.
+##' 
 ##' @name numericlist
 ##' @rdname numericlist
 NULL
