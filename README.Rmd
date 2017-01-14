@@ -27,7 +27,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="img/README-")
   * [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
   * Documentation
       * [User Guide](https://mrgsolve.github.io/user_guide)
-      * [R docs](https://mrgsolve.github.io/docs)
+      * [R docs](http://metrumresearchgroup.github.io/mrgsolve/reference/)
   * [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
   * [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
   * [Extended examples](https://github.com/mrgsolve/examples)
