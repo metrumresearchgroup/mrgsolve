@@ -5,7 +5,9 @@ Resources
 
 -   [Latest release: 0.7.7](https://github.com/metrumresearchgroup/mrgsolve/releases)
 -   [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
--   [User Guide](https://mrgsolve.github.io/user_guide)
+-   Documentation
+    -   [User Guide](https://mrgsolve.github.io/user_guide)
+    -   [R docs](https://mrgsolve.github.io/docs)
 -   [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
 -   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
 -   [Extended examples](https://github.com/mrgsolve/examples)
