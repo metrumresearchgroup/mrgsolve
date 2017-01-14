@@ -2,6 +2,7 @@
 % Please edit documentation in R/mrgsims.R
 \name{mrgsims_dplyr}
 \alias{as.tbl.mrgsims}
+\alias{distinct_.mrgsims}
 \alias{do_.mrgsims}
 \alias{filter_.mrgsims}
 \alias{group_by_.mrgsims}
@@ -18,6 +19,8 @@
 \method{filter_}{mrgsims}(.data, ..., .dots)
 
 \method{group_by_}{mrgsims}(.data, ..., .dots, add = FALSE)
+
+distinct_.mrgsims(.data, ..., .dots, .keep_all = FALSE)
 
 \method{mutate_}{mrgsims}(.data, ..., .dots)
 
@@ -41,6 +44,8 @@ summarise.each(.data, funs, ...)
 \item{.dots}{passed to various \code{dplyr} functions}
 
 \item{add}{passed to \code{dplyr::group_by_}}
+
+\item{.keep_all}{passed to \code{dplyr::distinct_}}
 
 \item{funs}{passed to \code{dplyr::summarise_each}}
 }
