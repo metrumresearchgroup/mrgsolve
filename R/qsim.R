@@ -34,6 +34,7 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
     }
   }
   
+  
   cm <- reqn <-  cmt(x)
   if(is.null(req)) {
     req <- seq_along(reqn)
@@ -64,6 +65,47 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
   out
   
 }
+
+
+
+# qsim_data <- function(x,data,req=NULL,tgrid=stime(x)) {
+#   
+#   data <- quick_data(x,data,tgrid)
+#   
+#   cm <- reqn <-  cmt(x)
+#   if(is.null(req)) {
+#     req <- seq_along(reqn)
+#   } else {
+#     req <- match(intersect(req,cm),cm)
+#     reqn <- cm[req]
+#   }
+#   
+#   cap <- c(length(x@capture),seq_along(x@capture)-1)
+#   
+#   NN <- sum(data[[1]][,3] %in% c(0,2))
+#   
+#   out <- .Call('mrgsolve_QUICKSIM_DATA', 
+#                PACKAGE = 'mrgsolve',
+#                parin(x),
+#                as.numeric(param(x)),
+#                as.numeric(init(x)),
+#                pars(x),
+#                NN,
+#                data.matrix(data[[1]]),
+#                data.matrix(data[[2]]),
+#                as.integer(req-1),
+#                cap,
+#                pointers(x),
+#                as.integer(c(sum(nrow(omat(x))),
+#                             sum(nrow(smat(x)))))
+#   )
+#   
+#   dimnames(out) <- list(NULL, c("ID","time", reqn,x@capture))
+#   
+#   out
+#   
+# }
+
 
 as_ev_matrix <- function(ev) {
   n <- ev$addl+1
@@ -118,6 +160,76 @@ recmatrix <- function(x,times,c_indexing=TRUE) {
 }
 
 
+# data_set_cols1 <- c("ID","TIME","EVID","CMT","AMT","RATE","II", "ADDL")
+# data_set_cols2 <- data_set_cols1[1:6]
+# data_set_matrix <- function(dose,times=numeric(0)) {
+#   names(dose) <- toupper(names(dose))
+#   dose <- dose[,!duplicated(names(dose))]
+#   dose <- dose[,names(dose) %in% data_set_cols1]
+#   
+#   if(!("AMT" %in% names(dose))) {
+#     dose[,"AMT"] <- 0
+#   }
+#   if(!("CMT" %in% names(dose))) {
+#     dose[,"CMT"] <- 0
+#   }
+#   if(!("EVID" %in% names(dose))) {
+#     dose[,"EVID"] <- 0
+#   }
+#   if(!("RATE" %in% names(dose))) {
+#     dose[,"RATE"] <- 0 
+#   }
+#   
+#   ii <- dose$II
+#   if(is.null(ii)) ii <- numeric(0)
+#   addl <- dose$ADDL
+#   if(is.null(addl)) addl <- numeric(0)
+#   
+#   dose <- dose[,data_set_cols2]
+#   
+#   dose1 <- nrow(dose)
+#   dose2 <- sum(addl)
+#   dose3 <- sum((addl+1) * ifelse(dose$RATE > 0,1,0))
+#   ndose <- dose1+dose2+dose3
+#   nid <- length(unique(dose$ID))
+#   nobs <- nid*length(times)
+#   ntot <- nobs + ndose
+#   
+#   nid <- 1
+#   ntime <- 2
+#   nevid <- 3
+#   ncmt <- 4
+#   namt <- 5
+#   nrate <- 6
+#   
+#   cols <- seq_along(names(dose))
+#   
+#   obs <- dose[1,]
+#   obs[,nevid] <- 0
+#   obs[,nrate] <- 0
+#   obs[,namt] <- 0
+#   obs <- obs[rep(1,length(times)),]
+#   obs[,ntime] <- times
+#   
+#   out <- .Call("mrgsolve_recdata", 
+#                PACKAGE="mrgsolve",
+#                data.matrix(dose),
+#                data.matrix(obs),
+#                as.integer(cols),
+#                ncol(dose),
+#                ntot,
+#                addl,
+#                ii,
+#                nid-1, 
+#                ntime-1, 
+#                namt-1, 
+#                nevid-1, 
+#                ncmt-1, 
+#                nrate-1)
+#   
+#   dimnames(out) <- list(NULL,names(dose))
+#   out %>% as.data.frame %>% arrange(ID,TIME,EVID) %>% data.matrix
+# }
 
 
 ##' A quick simulation function.

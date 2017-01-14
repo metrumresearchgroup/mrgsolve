@@ -53,10 +53,8 @@ Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
                             Rcpp::NumericMatrix& obs,
                             Rcpp::IntegerVector& cols,
                             const int n_out_col,const int n_out_row,
-                            const int nid, const int ntime, const int naddl,
-                            const int nii, const int namt, const int nevid, 
+                            const Rcpp::NumericVector& addl_,
+                            const Rcpp::NumericVector& ii_,
+                            const int nid, const int ntime,
+                            const int namt, const int nevid, 
                             const int ncmt, const int nrate);
-  
-  
-  
-  

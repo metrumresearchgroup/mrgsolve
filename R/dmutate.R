@@ -94,6 +94,7 @@ bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 }
 
 rbinomial <- function(n,p,...) rbinom(n,1,p)
+rlognorm <- function(...) exp(rnorm(...))
 
 first_comma <- function(x,start=1) {
   open <- 0
@@ -178,7 +179,10 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
     .dots <- paste0("list(~",x$call,")")
     .dots <- eval(parse(text=.dots),envir=envir)
     names(.dots) <- x$vars
-    data <- mutate_(data, .dots=.dots)
+    if(x$by != "") {
+      data <- group_by_(data,.dots=x$by) 
+    }
+    data <- mutate_(data, .dots=.dots) %>% ungroup
     return(data)
   }
 
