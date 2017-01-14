@@ -5,7 +5,7 @@
 \alias{mrgindata.data.frame}
 \alias{mrgindata.default}
 \alias{mrgindata.matrix}
-\title{Prepare input data.frame or matrix}
+\title{Prepare input data.frame or matrix.}
 \usage{
 mrgindata(x, ...)
 
@@ -32,6 +32,6 @@ a matrix with non-numeric columns dropped; if x is a data.frame with character \
 the \code{cmt} column will be converted to the corresponding compartment number.
 }
 \description{
-Prepare input data.frame or matrix
+Prepare input data.frame or matrix.
 }
 

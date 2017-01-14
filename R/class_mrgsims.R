@@ -1,7 +1,7 @@
 
 
 
-##' S4 class for mrgsolve simulation output
+##' S4 class for mrgsolve simulation output.
 ##'
 ##' @slot request character vector of compartments requested in simulated output
 ##' @slot outnames character vector of column names in simulated output coming from table step
@@ -29,11 +29,11 @@ setClass("batch_mrgsims",contains="mrgsims",
 )
 
 
-##' Check if an object is \code{mrgsims}.
-##' 
+##' Check if an object is mrgsim output.
 ##' 
 ##' @param x any object
-##' @export
+##' 
 ##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
 ##' 
+##' @export
 is.mrgsims <- function(x) inherits(x,"mrgsims")

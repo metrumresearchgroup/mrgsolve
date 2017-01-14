@@ -136,7 +136,7 @@ valid.mrgmod <- function(object) {
 
 
 
-##' S4 class for mrgsolve model object
+##' S4 class for mrgsolve model object.
 ##'
 ##' @section Notes:
 ##' \itemize{

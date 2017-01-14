@@ -3,9 +3,9 @@
 \docType{class}
 \name{mrgmod-class}
 \alias{mrgmod-class}
-\title{S4 class for mrgsolve model object}
+\title{S4 class for mrgsolve model object.}
 \description{
-S4 class for mrgsolve model object
+S4 class for mrgsolve model object.
 }
 \section{Slots}{
 

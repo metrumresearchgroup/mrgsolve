@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgsims.R
 \name{is.mrgsims}
 \alias{is.mrgsims}
-\title{Check if an object is \code{mrgsims}.}
+\title{Check if an object is mrgsim output.}
 \usage{
 is.mrgsims(x)
 }
@@ -13,6 +13,6 @@ is.mrgsims(x)
 \code{TRUE} if \code{x} inherits \code{mrgsims}.
 }
 \description{
-Check if an object is \code{mrgsims}.
+Check if an object is mrgsim output.
 }
 

@@ -4,15 +4,17 @@ as.mrgindata <- function(x) {
   structure(x,class="mrgindata")
 }
 
-##' Prepare input data.frame or matrix
+##' Prepare input data.frame or matrix.
 ##'
 ##' @param x data.frame or matrix
 ##' @param m object that inherits from mrgmod
 ##' @param verbose logical
 ##' @param quiet if \code{TRUE}, messages will be suppressed
 ##' @param ... additional arguments
+##' 
 ##' @return a matrix with non-numeric columns dropped; if x is a data.frame with character \code{cmt} column comprised of valid compartment names and \code{m} is a model object,
 ##' the \code{cmt} column will be converted to the corresponding compartment number.
+##' 
 ##' @export
 mrgindata <- function(x,...) UseMethod("mrgindata")
 ##' @rdname mrgindata
