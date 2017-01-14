@@ -6,7 +6,7 @@
 \alias{idata_set,mrgmod,ANY-method}
 \alias{idata_set,mrgmod,data.frame-method}
 \alias{idata_set,mrgmod,missing-method}
-\title{Set the \code{idata} argument for \code{mrgsim}.}
+\title{Select and modify a idata set for simulation.}
 \usage{
 idata_set(x, data, ...)
 
@@ -33,6 +33,35 @@ idata_set(x, data, ...)
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 }
 \description{
-Set the \code{idata} argument for \code{mrgsim}.
+Select and modify a idata set for simulation.
+}
+\details{
+The \code{idata_set} is a data.frame that specifies individual-level 
+data for the problem.  An  \code{ID} column is required and there 
+needs to be one row in the data frame for each individual.  
+
+In most cases, the columns in the `idata_set` have the same names
+as parameters in the \code{\link{param}} list.  When this is the case, 
+the parameter set is updated as the simulation proceeds once at the 
+start of each individual.  The `idata_set` can also be used to 
+set initial conditions for each individual: for a compartment called
+\code{CMT}, make a column in \code{idata_set} called \code{CMT_0} and 
+make the value the desired initial value for that compartment.  Note that 
+this initial condition will be over-ridden if you also set the \code{CMT_0} 
+in \code{$MAIN}.
+
+The most common application of \code{idata_set} is to specify a population
+or bach of simulations to do.  We commonly use \code{idata_set} with an 
+event object (see \code{\link{ev}}).  In that case, the event gets applied
+to each individual in the \code{\link{idata_set}}.  
+
+It is also possible to provide both a \code{data_set} and a \code{idata_set}.  
+In this case, the \code{idata_set} is used as a parameter lookup for \code{IDs}
+found in the \code{data_set}.  Remember in this case, it is the \code{data_set}
+(not the \code{idata_set}) that determines the number of individuals in the
+simulation.
+}
+\seealso{
+\code{\link{data_set}}, \code{\link{ev}}
 }
 

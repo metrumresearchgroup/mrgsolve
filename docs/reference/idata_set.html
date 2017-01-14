@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Set the  — idata_set • mrgsolve</title>
+<title>Select and modify a idata set for simulation. — idata_set • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,11 +74,11 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Set the </h1>
+    <h1>Select and modify a idata set for simulation.</h1>
     </div>
 
     
-    <p>Set the <code>idata</code> argument for <code>mrgsim</code>.</p>
+    <p>Select and modify a idata set for simulation.</p>
     
 
     <pre><span class='fu'>idata_set</span>(<span class='no'>x</span>, <span class='no'>data</span>, <span class='no'>...</span>)
@@ -111,13 +111,45 @@
       <dd>character name of an object existing in <code>$ENV</code> to use for the data set</dd>
     </dl>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The <code>idata_set</code> is a data.frame that specifies individual-level 
+data for the problem.  An  <code>ID</code> column is required and there 
+needs to be one row in the data frame for each individual.</p>
+    <p>In most cases, the columns in the `idata_set` have the same names
+as parameters in the <code><a href='$,mrgmod-method.html'>param</a></code> list.  When this is the case, 
+the parameter set is updated as the simulation proceeds once at the 
+start of each individual.  The `idata_set` can also be used to 
+set initial conditions for each individual: for a compartment called
+<code>CMT</code>, make a column in <code>idata_set</code> called <code>CMT_0</code> and 
+make the value the desired initial value for that compartment.  Note that 
+this initial condition will be over-ridden if you also set the <code>CMT_0</code> 
+in <code>$MAIN</code>.</p>
+    <p>The most common application of <code>idata_set</code> is to specify a population
+or bach of simulations to do.  We commonly use <code>idata_set</code> with an 
+event object (see <code><a href='events.html'>ev</a></code>).  In that case, the event gets applied
+to each individual in the <code>idata_set</code>.</p>
+    <p>It is also possible to provide both a <code>data_set</code> and a <code>idata_set</code>.  
+In this case, the <code>idata_set</code> is used as a parameter lookup for <code>IDs</code>
+found in the <code>data_set</code>.  Remember in this case, it is the <code>data_set</code>
+(not the <code>idata_set</code>) that determines the number of individuals in the
+simulation.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href='data_set.html'>data_set</a></code>, <code><a href='events.html'>ev</a></code></p>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

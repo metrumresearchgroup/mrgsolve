@@ -60,4 +60,7 @@ mod \%>\% data_set(data, ID > 1) \%>\% mrgsim
 
 
 }
+\seealso{
+\code{\link{idata_set}}, \code{\link{ev}}
+}
 

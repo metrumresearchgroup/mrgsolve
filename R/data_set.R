@@ -25,7 +25,8 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' Only numeric data can be brought in to the problem.  Any non-numeric data columns will be dropped with warning.
 ##'
 ##' See \code{\link{exdatasets}} for different example data sets.
-##'
+##' 
+##' @seealso \code{\link{idata_set}}, \code{\link{ev}}
 ##'
 ##' @examples
 ##'
