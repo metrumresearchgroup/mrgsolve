@@ -180,7 +180,7 @@
 ##'
 NULL
 
-##' About the \code{ODEPACK} differential equation solver used by \code{mrgsolve}.
+##' About the ODEPACK differential equation solver used by mrgsolve.
 ##'
 ##' @name aboutsolver
 ##' @rdname aboutsolver

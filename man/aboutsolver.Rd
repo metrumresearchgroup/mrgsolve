@@ -2,9 +2,9 @@
 % Please edit documentation in R/package.R
 \name{aboutsolver}
 \alias{aboutsolver}
-\title{About the \code{ODEPACK} differential equation solver used by \code{mrgsolve}.}
+\title{About the ODEPACK differential equation solver used by mrgsolve.}
 \description{
-About the \code{ODEPACK} differential equation solver used by \code{mrgsolve}.
+About the ODEPACK differential equation solver used by mrgsolve.
 }
 \section{DLSODA}{
 
