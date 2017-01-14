@@ -42,7 +42,8 @@ modlib_models <- c("pk1cmt", "pk2cmt", "pk3cmt","irm1", "irm2", "irm3",
 
 modlib_list <- function() {
   message("mrgsolve internal library:")
-  cat(paste0("  ",modlib_models),sep="\n")
+  models <- readLines(pfile("mrgsolve", "models", "MODLIST"))
+  cat(paste0("  ",models),sep="\n")
   return(invisible(NULL))
 }
 

@@ -26,7 +26,6 @@ generate_rdefs <- function(pars,
     dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
     pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
     
-    
     etal <- epsl <- NULL
 
     if(sum(nrow(omats)) > 0) {
@@ -136,6 +135,7 @@ rm_win_def <- function(x) {
 ##'
 ##' @param x mrgmod model object
 ##' @param keep_pointers should function pointers be returned?
+##' 
 ##' @export
 touch_funs <- function(x,keep_pointers=TRUE) {
   
