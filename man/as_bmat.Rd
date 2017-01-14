@@ -63,6 +63,6 @@ as_dmat(df[1,],"OMEGA")
 
 }
 \seealso{
-bmat, dmat
+\code{\link{bmat}}, \code{\link{dmat}}
 }
 

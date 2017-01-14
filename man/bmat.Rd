@@ -36,8 +36,8 @@ cmat(0.5, 0.87,0.2)
 
 }
 \seealso{
-as_bmat
+\code{\link{as_bmat}}
 
-as_dmat
+\code{\link{as_dmat}}
 }
 

@@ -124,7 +124,7 @@ Diag <- function(x) {
 ##' cmat(0.5, 0.87,0.2)
 ##'
 ##'
-##' @seealso as_bmat
+##' @seealso \code{\link{as_bmat}}
 ##'
 bmat <- function(...,correlation=FALSE, digits=-1) {
   x <- lower2matrix(unlist(list(...)),context="bmat")
@@ -141,7 +141,7 @@ cmat <- function(...,digits=-1) {
 }
 ##' @export
 ##' @rdname bmat
-##' @seealso as_dmat
+##' @seealso \code{\link{as_dmat}}
 dmat <- function(...) {
   Diag(as.numeric(unlist(list(...))))
 }
@@ -153,7 +153,7 @@ dmat <- function(...) {
 ##' @param cols column names to use instead of \code{pat}
 ##' @param ... passed along
 ##' @return A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.
-##' @seealso bmat, dmat
+##' @seealso \code{\link{bmat}}, \code{\link{dmat}}
 ##' @export
 ##' @examples
 ##'
