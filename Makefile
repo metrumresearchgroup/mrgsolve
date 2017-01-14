@@ -10,7 +10,7 @@ CHKDIR=Rchecks
 export R_LIBS=${LIBDIR}
 
 pkgdown:
-	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference()'
+	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference()' -e 'build_news()'
 
 travis_build:
 	make doc
