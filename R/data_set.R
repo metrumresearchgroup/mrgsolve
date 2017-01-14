@@ -1,4 +1,4 @@
-##' Set the \code{data} argument for \code{mrgsim}.
+##' Select and modify a data set for simulation.
 ##'
 ##'
 ##' @export

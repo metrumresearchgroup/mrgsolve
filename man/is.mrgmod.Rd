@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgmod.R
 \name{is.mrgmod}
 \alias{is.mrgmod}
-\title{Check if an object is \code{mrgmod} or \code{packmod}.}
+\title{Check if an object is a model object.}
 \usage{
 is.mrgmod(x)
 }
@@ -13,6 +13,7 @@ is.mrgmod(x)
 \code{TRUE} if \code{x} inherits \code{mrgsims}.
 }
 \description{
-Check if an object is \code{mrgmod} or \code{packmod}.
+The function checks to see if the object is either
+ \code{mrgmod} or \code{packmod}.
 }
 

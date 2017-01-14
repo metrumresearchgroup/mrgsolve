@@ -15,7 +15,7 @@
 \alias{init,mrgmod-method}
 \alias{init,mrgsims-method}
 \alias{show,cmt_list-method}
-\title{Create and work with \code{cmt_list} objects.}
+\title{Methods for working with the model compartment list.}
 \usage{
 init(.x, ...)
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgmod.R
 \name{ls_env}
 \alias{ls_env}
-\title{List objects in \code{$ENV}.}
+\title{List objects in the model environment.}
 \usage{
 ls_env(x, ...)
 }
@@ -12,6 +12,7 @@ ls_env(x, ...)
 \item{...}{passed to \code{\link{ls}}}
 }
 \description{
-List objects in \code{$ENV}.
+Each model keeps an internal environment that allows the user 
+to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
 }
 

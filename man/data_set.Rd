@@ -6,7 +6,7 @@
 \alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,data.frame-method}
 \alias{data_set,mrgmod,missing-method}
-\title{Set the \code{data} argument for \code{mrgsim}.}
+\title{Select and modify a data set for simulation.}
 \usage{
 data_set(x, data, ...)
 
@@ -33,7 +33,7 @@ data_set(x, data, ...)
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 }
 \description{
-Set the \code{data} argument for \code{mrgsim}.
+Select and modify a data set for simulation.
 }
 \details{
 Input data sets are \code{R} data frames that can include columns with any valid name, however columns with selected names are recognized by \code{mrgsolve} and incorporated into the simulation.

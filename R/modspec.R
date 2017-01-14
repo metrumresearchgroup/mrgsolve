@@ -211,21 +211,9 @@ move_global <- function(x,env) {
     
   } # <-- End for(w in what)
   
-  # if("PREAMBLE" %in% what) {
-  #   l <- unlist(lapply(x["PREAMBLE"], get_rcpp_vars),use.names=FALSE)
-  #   env[["global"]] <- c(env[["global"]],
-  #                        "namespace {",
-  #                        paste0("  ",l),
-  #                        "}")
-  #   x[["PREAMBLE"]] <- gsub(move_global_rcpp_re_sub,
-  #                         "\\2",x[["PREAMBLE"]],perl=TRUE)
-  # }
-  # 
   if(length(cap) > 0) {
     # must trim this
     x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
-    #env[["capture"]] <- 
-    #if(is.null(x[["CAPTURE"]])) x[["CAPTURE"]] <- ""
   }
   # **************************
   
@@ -765,7 +753,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   return(x)
 }
 
-##' Parse data from \code{$PKMODEL}
+##' Parse data from \code{$PKMODEL}.
 ##' @param cmt compartment names as comma-delimited character
 ##' @param ncmt number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)
 ##' @param depot logical indicating whether to add depot compartment

@@ -6,7 +6,7 @@
 ## The init class is a numericlist; these functions create new objects.
 
 
-##' Create and work with \code{cmt_list} objects.
+##' Methods for working with the model compartment list.
 ##'
 ##' Calling \code{init} with the model object as the first argument will return the model initial conditions as a \code{numericlist} object. See \code{\link{numericlist}} for methods to  deal with \code{cmt_list} objects.
 ##'
