@@ -4,6 +4,7 @@
 \name{covset}
 \alias{as.covset}
 \alias{as.list,covobj-method}
+\alias{as.list,covset-method}
 \alias{covset}
 \alias{new_covobj}
 \alias{print.covobj}
@@ -15,6 +16,8 @@ new_covobj(x, ...)
 \method{print}{covobj}(x, ...)
 
 \S4method{as.list}{covobj}(x, ...)
+
+\S4method{as.list}{covset}(x, ...)
 
 \method{print}{covset}(x, ...)
 

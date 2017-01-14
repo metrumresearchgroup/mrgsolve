@@ -34,6 +34,14 @@ print.covobj <- function(x,...) {
 setMethod("as.list", "covobj", function(x,...) {
   structure(x,class=NULL) 
 })
+##' @rdname covset
+##' @export
+setMethod("as.list", "covset", function(x,...) {
+  x <- lapply(x,structure, class=NULL)
+  structure(x,class=NULL) 
+})
+
+
 
 is.covobj <- function(x) {
   inherits(x,"covobj") 
