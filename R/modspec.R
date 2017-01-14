@@ -296,8 +296,6 @@ parse_ats <- function(x) {
 ##' 
 ##' @return list with elements \code{x} (the data without options) and named options 
 ##' as specified in the block.
-##' 
-##' 
 scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
@@ -489,16 +487,26 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 }
 
 
-##' Parse \code{$PARAM} block.
+##' Functions to parse code blocks.
+##' 
+##' Most of the basic blocks are listed in this help topic.  
+##' But see also \code{\link{PKMODEL}} which has more-involved 
+##' options and is documented separately.
 ##' 
 ##' @param x data
 ##' @param env parse environment
 ##' @param annotated logical
+##' @param name block name
 ##' @param pos block position
 ##' @param ... passed
 ##' 
-##' @rdname handle_PARAM
+##' @rdname BLOCK_PARSE
+##' @name BLOCK_PARSE
 ##' 
+##' @seealso \code{\link{PKMODEL}}
+NULL
+
+##' @rdname BLOCK_PARSE
 PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
   
   check_block_data(x,env$ENV,pos)
@@ -521,17 +529,7 @@ handle_spec_block.specPARAM <- function(x,...) {
   scrape_and_call(x,pass="PARAM",...)
 }
 
-
-##' Parse \code{$FIXED} block.
-##' 
-##' @param x data
-##' @param env parse environment
-##' @param annotated logical
-##' @param pos parse position
-##' @param ... passed
-##' 
-##' @rdname handle_FIXED
-##' 
+##' @rdname BLOCK_PARSE
 FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   
   check_block_data(x,env$ENV,pos)
@@ -553,18 +551,8 @@ handle_spec_block.specFIXED <- function(x,...) {
   scrape_and_call(x,pass="FIXED",...)
 }
 
-##' Parse \code{$THETA} block.
-##' 
-##' @param x data
-##' @param env parse environment
-##' @param annotated logical
-##' @param name character prefix for parameter names
-##' @param pos parse position
-##' @param ... passed
-##' 
-##' 
-##' @rdname handle_THETA
-##' 
+
+##' @rdname BLOCK_PARSE
 THETA <- function(x,env,annotated=FALSE,pos=1,
                   name="THETA",...) {
   
@@ -594,16 +582,7 @@ handle_spec_block.specTHETA <- function(x,...) {
 }
 
 
-##' Parse \code{$INIT} block.
-##' 
-##' @param x data
-##' @param env parse environment
-##' @param annotated logical
-##' @param pos block position
-##' @param ... passed
-##' 
-##' @rdname handle_INIT
-##' 
+##' @rdname BLOCK_PARSE
 INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   
   check_block_data(x,env$ENV,pos)
@@ -625,16 +604,7 @@ handle_spec_block.specINIT <- function(x,...) {
 }
 
 
-##' Parse \code{$CMT} block.
-##' 
-##' @param x data
-##' @param env parse environment
-##' @param annotated logical
-##' @param pos block position
-##' @param ... passed
-##' 
-##' @rdname handle_CMT
-##' 
+##' @rdname BLOCK_PARSE
 CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   
   check_block_data(x,env$ENV,pos)
@@ -672,15 +642,7 @@ handle_spec_block.specCMTN <- function(x,...) {
 }
 
 
-##' Parse \code{$CAPTURE} block.
-##' 
-##' @param x block text
-##' @param env parse environment
-##' @param annotated logical
-##' @param pos parse position
-##' @param ... not used
-##' 
-##' 
+##' @rdname BLOCK_PARSE
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   
   if(annotated) {
@@ -786,8 +748,8 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##' \item \code{pred_KA} for absorption rate constant
 ##'
 ##' }
-##'
-##'
+##' 
+##' @seealso \code{\link{BLOCK_PARSE}}
 PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),env=list(),pos=1,...) {
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
