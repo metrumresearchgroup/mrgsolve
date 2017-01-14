@@ -17,7 +17,7 @@ tscale(x, value = 1, ...)
 Rescale time in the simulated output.
 }
 \details{
-There is also a \code{tscale} argument to \code{\link{mrsolve}} that can 
+There is also a \code{tscale} argument to \code{\link{mrgsim}} that can 
 be set to accomplish the same thing as a call to \code{tscale} in 
 the pipeline.
 }

@@ -22,7 +22,7 @@ the like are not copied from the data set per se, but they are copied from
 \code{datarecord} objects that are created during the simulation.
 }
 \details{
-There is also a \code{carry.out} argument to \code{\link{mrsolve}} that can 
+There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can 
 be set to accomplish the same thing as a call to \code{carry_out} in 
 the pipeline.
 

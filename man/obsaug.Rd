@@ -12,7 +12,7 @@ obsaug(x, value = TRUE, ...)
 \item{value}{the value for \code{obsaug}}
 
 \item{...}{passed along
-There is also a \code{obsaug} argument to \code{\link{mrsolve}} that can 
+There is also a \code{obsaug} argument to \code{\link{mrgsim}} that can 
 be set to accomplish the same thing as a call to \code{obsaug} in 
 the pipeline.}
 }

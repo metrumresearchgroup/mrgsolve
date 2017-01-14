@@ -35,8 +35,8 @@ test_that("Simulation output is of class mrgsims", {
     expect_is(out, "mrgsims")
 })
 test_that("The simulation model can be recovered from output", {
-    expect_identical(mod, mrgsolve::mod(out))
-    expect_is(mrgsolve::mod(out), "mrgmod")
+    expect_identical(mod, mrgsolve:::mod(out))
+    expect_is(mrgsolve:::mod(out), "mrgmod")
 })
 
 test_that("CP from oral model is identical to closed form result", {

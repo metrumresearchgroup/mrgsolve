@@ -22,7 +22,7 @@ req(x, ...)
 \item{...}{unquoted names of compartments or tabled items
 
 
-There is also a \code{Req} argument to \code{\link{mrsolve}} that can 
+There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
 be set to accomplish the same thing as a call to \code{Req} in 
 the pipeline.
 

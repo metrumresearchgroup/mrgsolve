@@ -71,7 +71,7 @@
 ##' tail(out)
 ##' dim(out)
 ##'
-##' mrgsolve::mod(out)
+##' mrgsolve:::mod(out)
 ##' param(out)
 ##'
 ##' plot(out, GUT+CP~.)

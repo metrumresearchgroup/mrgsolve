@@ -26,7 +26,7 @@
 ##' @param x mrgsims object
 ##' @param ... passed to other functions
 ##' @aliases mrgsims
-##' @seealso mod stime
+##' @seealso  \code{\link{stime}}
 ##' @name mrgsims
 ##' @rdname mrgsims
 ##' @examples
@@ -42,7 +42,7 @@
 ##' head(out)
 ##' tail(out)
 ##'
-##' mod(out)
+##' mrgsolve:::mod(out)
 ##'
 ##' dim(out)
 ##' names(out)

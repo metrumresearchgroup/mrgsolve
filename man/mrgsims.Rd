@@ -83,7 +83,7 @@ out
 head(out)
 tail(out)
 
-mod(out)
+mrgsolve:::mod(out)
 
 dim(out)
 names(out)
@@ -100,6 +100,6 @@ plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 
 }
 \seealso{
-mod stime
+\code{\link{stime}}
 }
 

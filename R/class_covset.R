@@ -1,5 +1,6 @@
 
 setClass("covobj")
+setClass("covset")
 
 ##' Covobj and covset objects.
 ##' 

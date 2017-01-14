@@ -77,10 +77,10 @@ mod4 <- update(mod, init=list(CENT=111))
 mod5 <- mod %>% param(VC=999)
 mod6 <- mod %>% init(EV1=5566)
 mod7 <- update(mod, hmin=111, hmax=222, maxsteps=333, ixpr=444, mxhnil=555, atol=1E-99, rtol=1E-88)
-mod8 <- mrgsolve::mod(mrgsim(mod, delta=33, end=222))
+mod8 <- mrgsolve:::mod(mrgsim(mod, delta=33, end=222))
 mod9 <- update(mod, delta=33, end=222)
-mod10 <- mrgsolve::mod(mrgsim(mod, param=list(CL=12, VC=220)))
-mod11 <- mrgsolve::mod(mrgsim(mod  %>% param(CL=12, VC=220)))
+mod10 <- mrgsolve:::mod(mrgsim(mod, param=list(CL=12, VC=220)))
+mod11 <- mrgsolve:::mod(mrgsim(mod  %>% param(CL=12, VC=220)))
 
 
 

@@ -39,7 +39,7 @@ NULL
 ##' @param ... unquoted names of compartments or tabled items
 ##' 
 ##' 
-##' There is also a \code{Req} argument to \code{\link{mrsolve}} that can 
+##' There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
 ##' be set to accomplish the same thing as a call to \code{Req} in 
 ##' the pipeline.
 ##' 
@@ -91,7 +91,7 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' @param ... passed along
 ##' 
 ##' @details
-##' There is also a \code{carry.out} argument to \code{\link{mrsolve}} that can 
+##' There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can 
 ##' be set to accomplish the same thing as a call to \code{carry_out} in 
 ##' the pipeline.
 ##' 
@@ -116,7 +116,7 @@ carry.out <- function(x,...) {
 ##' @param ... passed along
 ##' 
 ##' @details
-##' There is also a \code{tscale} argument to \code{\link{mrsolve}} that can 
+##' There is also a \code{tscale} argument to \code{\link{mrgsim}} that can 
 ##' be set to accomplish the same thing as a call to \code{tscale} in 
 ##' the pipeline.
 ##' 
@@ -142,7 +142,7 @@ tscale <- function(x,value=1,...) {
 ##' @param ... passed along
 ##' 
 ##' @details
-##' There is also a \code{obsonly} argument to \code{\link{mrsolve}} that can 
+##' There is also a \code{obsonly} argument to \code{\link{mrgsim}} that can 
 ##' be set to accomplish the same thing as a call to \code{obsonly} in 
 ##' the pipeline.
 ##' 
@@ -156,7 +156,7 @@ obsonly <- function(x,value=TRUE,...) {
 ##' @param x model object
 ##' @param value the value for \code{obsaug}
 ##' @param ... passed along
-##' There is also a \code{obsaug} argument to \code{\link{mrsolve}} that can 
+##' There is also a \code{obsaug} argument to \code{\link{mrgsim}} that can 
 ##' be set to accomplish the same thing as a call to \code{obsaug} in 
 ##' the pipeline.
 ##' @export
