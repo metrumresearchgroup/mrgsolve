@@ -4,6 +4,7 @@
 \name{mutate_random}
 \alias{mutate_random}
 \alias{mutate_random,data.frame,character-method}
+\alias{mutate_random,data.frame,covobj-method}
 \alias{mutate_random,data.frame,covset-method}
 \alias{mutate_random,data.frame,formula-method}
 \alias{mutate_random,data.frame,list-method}
@@ -18,6 +19,8 @@ mutate_random(data, input, ...)
 \S4method{mutate_random}{data.frame,list}(data, input, ...)
 
 \S4method{mutate_random}{data.frame,covset}(data, input, ...)
+
+\S4method{mutate_random}{data.frame,covobj}(data, input, ...)
 }
 \arguments{
 \item{data}{the data.frame to mutate}

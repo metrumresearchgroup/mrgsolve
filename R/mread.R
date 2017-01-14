@@ -28,7 +28,6 @@ NULL
 ##' mod <- mcode("example",code)
 ##'
 ##' @export
-##'
 mcode <- function(model,code, project=tempdir(),...) {
   mread(model=model,project=project,code=code,...)
 }

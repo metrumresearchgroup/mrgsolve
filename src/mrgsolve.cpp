@@ -98,7 +98,7 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
 }
 
 arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
-
+  
   arma::vec eigval;
   arma::mat eigvec;
   arma::eig_sym(eigval,eigvec, OMEGA);
@@ -293,6 +293,98 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
 }
 
 
-
+// 
+// Rcpp::NumericMatrix recdata(const Rcpp::NumericMatrix& dose,
+//                             const Rcpp::NumericMatrix& obs,
+//                             const Rcpp::IntegerVector& cols,
+//                             const int n_out_col,const int n_out_row,
+//                             const Rcpp::NumericVector& addl_,
+//                             const Rcpp::NumericVector& ii_,
+//                             const int nid, const int ntime, 
+//                             const int namt, const int nevid, 
+//                             const int ncmt, const int nrate) {
+//   
+//   Rcpp::NumericMatrix mat(n_out_row,n_out_col);
+//   
+//   int crow = 0;
+//   double lastid  = dose(0,nid);
+//   int ii = 0;
+//   int addl = 0;
+//   double time = 0;
+//   double rate = 0;
+//   int i = 0; int j = 0;
+//   bool has_addl = addl_.size() > 0;
+//   bool has_ii = ii_.size() > 0;
+//   
+//   for(int r = 0; r < dose.nrow(); ++r) {
+//     
+//     for(i = 0; i < cols.size(); ++i) {
+//       mat(crow,i) = dose(r,i);
+//     }
+//     ++crow;
+//     
+//     time = dose(r,ntime);
+//     
+//     if(has_addl) {
+//       ii  = ii_(r);
+//       addl = addl_(r);      
+//     } else {
+//       ii = 0;
+//       addl = 0;
+//     }
+//     
+//     rate = dose(r,nrate);
+//     
+//     if(rate > 0) {
+//       for(i = 0; i < cols.size(); ++i) {
+//         mat(crow,i)  = dose(r,i);
+//       }
+//       mat(crow,ntime) = dose(r,ntime) + dose(r,namt)/rate;
+//       mat(crow,namt) = -1.0*mat(crow,namt);
+//       ++crow;
+//     }
+//     
+//     if(addl > 0) {
+//       for(i = 1; i <= addl; ++i) {
+//         for(int k = 0; k < cols.size(); ++k) {
+//           mat(crow,k) = dose(r,k);
+//         }
+//         
+//         mat(crow,ntime) = dose(r,ntime) + i*ii;
+//         ++crow;
+//         
+//         if(rate > 0) {
+//           for(int k = 0; k < cols.size(); ++k) {
+//             mat(crow,k) = dose(r,k);
+//           }
+//           mat(crow,ntime) = dose(r,ntime) + i*ii + dose(r,namt)/rate;
+//           mat(crow,namt) = -1.0*mat(crow,namt);
+//           ++crow;
+//         }
+//       }
+//     }
+//     
+//     bool last_dose = r==dose.nrow()-1;
+//     
+//     bool next_diff = false;
+//     if(r < dose.nrow()-1) {
+//       next_diff = dose(r+1,nid) != dose(r,nid);
+//     }
+//     
+//     if(last_dose || next_diff) {
+//       for(i = 0; i < obs.nrow(); ++i) {
+//         for(j = 0; j < obs.ncol(); ++j) {
+//           mat(crow,j) = obs(i,j);
+//         }
+//         mat(crow,nid) = dose(r,nid);
+//         ++crow;
+//       } 
+//     }
+//     lastid = dose(r,nid);
+//   }
+//   return mat;
+// }
+// 
+// 
 
 
