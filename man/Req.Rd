@@ -19,7 +19,20 @@ req(x, ...)
 \arguments{
 \item{x}{model object}
 
-\item{...}{unquoted names of compartments or tabled items}
+\item{...}{unquoted names of compartments or tabled items
+
+
+There is also a \code{Req} argument to \code{\link{mrsolve}} that can 
+be set to accomplish the same thing as a call to \code{Req} in 
+the pipeline.
+
+Note the difference between \code{req} and \code{Req}: the former only 
+selects compartments to appear in output while the latter selects both 
+compartments and captured items.  Also, when there are items are explicitly
+listed in \code{Req}, all other compartments or captured items not listed
+there are ignored.  But when compartments are selected with \code{req}
+all of the captured items are returned.  Remember that \code{req} is 
+strictly for compartments.}
 }
 \description{
 Use this function to select, by name, either compartments or derived variables 

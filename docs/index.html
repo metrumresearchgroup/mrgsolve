@@ -248,7 +248,7 @@ out</code></pre></div>
 <span class="st">  </span>mod %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/data_set.html">data_set</a></span>(.data) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/Req.html">Req</a></span>(RESP,CP) %&gt;%<span class="st"> </span>obsonly %&gt;%
-<span class="st">  </span><span class="kw"><a href="reference/carry.out.html">carry.out</a></span>(dose) %&gt;%
+<span class="st">  </span><span class="kw"><a href="reference/carry_out.html">carry.out</a></span>(dose) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/mrgsim.html">mrgsim</a></span>(<span class="dt">end=</span><span class="dv">48</span>, <span class="dt">seed=</span><span class="dv">1010</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out, RESP~time|<span class="kw">factor</span>(dose), <span class="dt">scales=</span><span class="st">"same"</span>)</code></pre></div>
 <p><img src="img/README-unnamed-chunk-15-1.png" width="864" style="display: block; margin: auto;"></p>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{obsonly}
 \alias{obsonly}
-\title{Set the \code{obsonly} argument for \code{mrgsim}.}
+\title{Collect only observations in the simulated output.}
 \usage{
 obsonly(x, value = TRUE, ...)
 }
@@ -14,6 +14,11 @@ obsonly(x, value = TRUE, ...)
 \item{...}{passed along}
 }
 \description{
-Set the \code{obsonly} argument for \code{mrgsim}.
+Collect only observations in the simulated output.
+}
+\details{
+There is also a \code{obsonly} argument to \code{\link{mrsolve}} that can 
+be set to accomplish the same thing as a call to \code{obsonly} in 
+the pipeline.
 }
 

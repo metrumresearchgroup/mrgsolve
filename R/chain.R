@@ -5,15 +5,16 @@
 
 ##' Functions for chaining commands together.
 ##'
-##' Use these functions with chaining commands togehter with the %>% operator.
+##' Use these functions with chaining commands togehter with the %>%
+##' operator.
 ##'
 ##' @name chain
+##' 
 ##' @details
 ##' Other functions that may be used in the chain of commands include: 
 ##' \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
-##' \code{\link{ev}}
+##' \code{\link{ev}}.
 ##' or any other function that will take the output of the preceeding command as it's first argument.
-##'
 ##'
 ##' @examples
 ##'
@@ -25,7 +26,6 @@
 ##' out <- mod %>% data_set(exTheoph) %>% mrgsim()
 ##' out <- mod %>% carry.out(evid) %>% ev(amt=100, cmt=1) %>% mrgsim()
 ##' out <- mod %>% Req(CP,RESP) %>% mrgsim()
-##'
 NULL
 
 # SEE ALSO: data_set and idata_set
@@ -37,12 +37,26 @@ NULL
 ##'
 ##' @param x model object
 ##' @param ... unquoted names of compartments or tabled items
-##' @export
+##' 
+##' 
+##' There is also a \code{Req} argument to \code{\link{mrsolve}} that can 
+##' be set to accomplish the same thing as a call to \code{Req} in 
+##' the pipeline.
+##' 
+##' Note the difference between \code{req} and \code{Req}: the former only 
+##' selects compartments to appear in output while the latter selects both 
+##' compartments and captured items.  Also, when there are items are explicitly
+##' listed in \code{Req}, all other compartments or captured items not listed
+##' there are ignored.  But when compartments are selected with \code{req}
+##' all of the captured items are returned.  Remember that \code{req} is 
+##' strictly for compartments.
+##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
 ##'
 ##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
 ##'
+##' @export
 setGeneric("Req", function(x,...) standardGeneric("Req"))
 
 ##' @export
@@ -73,44 +87,46 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' the like are not copied from the data set per se, but they are copied from
 ##' \code{datarecord} objects that are created during the simulation.
 ##'
-##'
 ##' @param x model object
 ##' @param ... passed along
+##' 
+##' @details
+##' There is also a \code{carry.out} argument to \code{\link{mrsolve}} that can 
+##' be set to accomplish the same thing as a call to \code{carry_out} in 
+##' the pipeline.
+##' 
+##' \code{carry.out} and \code{carry_out}.  Using the underscore version is now preferred.
 ##' @export
-carry.out <- function(x,...) {
-  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
-  return(x)
-}
-
-##' Set the \code{carry.out} argument for \code{mrgsim}.
-##' 
-##' @param x model object
-##' @param ... passed along
-##' @export
-##' 
-##' @examples
-##' data(extran3)
-##' 
-##' mod <- mrgsolve:::house()
-##' 
-##' head(extran3)
-##' 
-##' mod %>% 
-##'   data_set(extran3, ID == 1) %>% 
-##'   carry_out(CL,KA,amt,ii) %>% 
-##'   mrgsim
-##' 
 carry_out <- function(x,...) {
   x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
   return(x)
 }
 
-##' Set the \code{tscale} argument for \code{mrgsim}.
-##'
+##' @export
+##' @rdname carry_out
+carry.out <- function(x,...) {
+  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
+  return(x)
+}
+
+##' Rescale time in the simulated output.
 ##'
 ##' @param x model object
 ##' @param value value by which time will be scaled
 ##' @param ... passed along
+##' 
+##' @details
+##' There is also a \code{tscale} argument to \code{\link{mrsolve}} that can 
+##' be set to accomplish the same thing as a call to \code{tscale} in 
+##' the pipeline.
+##' 
+##' @examples
+##' # The model is in hours:
+##' mod <- mrgsolve:::house()
+##' 
+##' # The output is in days:
+##' mod %>% tscale(1/24) %>% mrgsim
+##' 
 ##' @export
 tscale <- function(x,value=1,...) {
   x@args <- merge(x@args, list(tscale=value), open=TRUE)
@@ -119,22 +135,30 @@ tscale <- function(x,value=1,...) {
 
 
 
-##' Set the \code{obsonly} argument for \code{mrgsim}.
+##' Collect only observations in the simulated output.
 ##'
 ##' @param x model object
 ##' @param value the value for \code{obsonly}
 ##' @param ... passed along
+##' 
+##' @details
+##' There is also a \code{obsonly} argument to \code{\link{mrsolve}} that can 
+##' be set to accomplish the same thing as a call to \code{obsonly} in 
+##' the pipeline.
+##' 
 ##' @export
 obsonly <- function(x,value=TRUE,...) {
   x@args <- merge(x@args, list(obsonly=value), open=TRUE)
   return(x)
 }
-##' Set the \code{obsaug} argument for \code{mrgsim}.
+##' Augment observations in the simulated output.
 ##'
 ##' @param x model object
 ##' @param value the value for \code{obsaug}
 ##' @param ... passed along
-##'
+##' There is also a \code{obsaug} argument to \code{\link{mrsolve}} that can 
+##' be set to accomplish the same thing as a call to \code{obsaug} in 
+##' the pipeline.
 ##' @export
 obsaug <- function(x,value=TRUE,...) {
   x@args <- merge(x@args, list(obsaug=value), open=TRUE)
@@ -145,7 +169,7 @@ obsaug <- function(x,value=TRUE,...) {
 ##' Set observation designs for the simulation.
 ##'
 ##' This function also allows you to assign different designs to different
-##' groups or individuals in a popultion.
+##' groups or individuals in a population.
 ##'
 ##' @param x model object
 ##' @param descol the \code{idata} column name (\code{character}) for design assignment
@@ -188,8 +212,6 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   data_set(data) %>%
 ##'   mrgsim %>% 
 ##'   plot(RESP~time|GRP)
-##' 
-##' 
 design <- function(x,descol=character(0),...,deslist = list()) {
   
   descol <- as.character(substitute(descol))

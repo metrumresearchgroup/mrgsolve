@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{obsaug}
 \alias{obsaug}
-\title{Set the \code{obsaug} argument for \code{mrgsim}.}
+\title{Augment observations in the simulated output.}
 \usage{
 obsaug(x, value = TRUE, ...)
 }
@@ -11,9 +11,12 @@ obsaug(x, value = TRUE, ...)
 
 \item{value}{the value for \code{obsaug}}
 
-\item{...}{passed along}
+\item{...}{passed along
+There is also a \code{obsaug} argument to \code{\link{mrsolve}} that can 
+be set to accomplish the same thing as a call to \code{obsaug} in 
+the pipeline.}
 }
 \description{
-Set the \code{obsaug} argument for \code{mrgsim}.
+Augment observations in the simulated output.
 }
 

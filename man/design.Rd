@@ -17,7 +17,7 @@ design(x, descol = character(0), ..., deslist = list())
 }
 \description{
 This function also allows you to assign different designs to different
-groups or individuals in a popultion.
+groups or individuals in a population.
 }
 \details{
 This setup requires the use of an \code{idata_set}, with individual-level data
@@ -53,7 +53,5 @@ mod \%>\%
   data_set(data) \%>\%
   mrgsim \%>\% 
   plot(RESP~time|GRP)
-
-
 }
 

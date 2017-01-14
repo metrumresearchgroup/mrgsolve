@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{tscale}
 \alias{tscale}
-\title{Set the \code{tscale} argument for \code{mrgsim}.}
+\title{Rescale time in the simulated output.}
 \usage{
 tscale(x, value = 1, ...)
 }
@@ -14,6 +14,19 @@ tscale(x, value = 1, ...)
 \item{...}{passed along}
 }
 \description{
-Set the \code{tscale} argument for \code{mrgsim}.
+Rescale time in the simulated output.
+}
+\details{
+There is also a \code{tscale} argument to \code{\link{mrsolve}} that can 
+be set to accomplish the same thing as a call to \code{tscale} in 
+the pipeline.
+}
+\examples{
+# The model is in hours:
+mod <- mrgsolve:::house()
+
+# The output is in days:
+mod \%>\% tscale(1/24) \%>\% mrgsim
+
 }
 

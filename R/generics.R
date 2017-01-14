@@ -91,20 +91,17 @@ setGeneric("ex", function(x,...) standardGeneric("ex"))
 ##' @export events
 setGeneric("events", function(x,...) standardGeneric("events"))
 
-##' Create event object.
-##' 
-##'
+
 ##' @details
 ##' \itemize{
 ##' \item Required input for creating events objects include \code{time} and \code{cmt}
-##' \item If not supplied, \code{evid} is assumed to be 1
-##' \item If not supplied, \code{cmt}  is assumed to be 1
-##' \item If not supplied, \code{time} is assumed to be 0
-##' \item \code{ID} may be specified as a vector
-##' \item if replicate is \code{TRUE} (default), thenthe events regimen is replicated for each \code{ID}; otherwise, the number of
+##' \item If not supplied, \code{evid} is assumed to be 1.
+##' \item If not supplied, \code{cmt}  is assumed to be 1.
+##' \item If not supplied, \code{time} is assumed to be 0.
+##' \item \code{ID} may be specified as a vector.
+##' \item If replicate is \code{TRUE} (default), thenthe events regimen is replicated for each \code{ID}; otherwise, the number of
 ##' event rows must match the number of \code{ID}s entered
 ##' }
-##'
 ##' @return events object
 ##' @export
 ##' @rdname events
@@ -132,6 +129,5 @@ setGeneric("as.ev", function(x,...) standardGeneric("as.ev"))
 ##'
 ##' @param x mrgsims object
 ##' @param ... passed along
-##' @export
 ##' @rdname mod
 setGeneric("mod", function(x,...) standardGeneric("mod"))

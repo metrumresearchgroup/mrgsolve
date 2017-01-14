@@ -60,7 +60,6 @@
 NULL
 
 
-##' @export
 ##' @rdname mod
 setMethod("mod", "mrgsims", function(x,...) {x@mod})
 
