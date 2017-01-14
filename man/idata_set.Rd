@@ -28,7 +28,7 @@ idata_set(x, data, ...)
 
 \item{select}{passed to \code{dplyr::select_}}
 
-\item{covset}{the name of a \code{\link{covset}} object in `$ENV`}
+\item{covset}{the name of a \code{\link{covset}} object in \code{$ENV}}
 
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 }

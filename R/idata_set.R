@@ -2,6 +2,10 @@
 ##'
 ##' @param x model object
 ##' @param data a data set coercable to data.frame
+##' @param object character name of an object existing in \code{$ENV} to use for the data set
+##' @param subset passed to \code{dplyr::filter_}
+##' @param select passed to \code{dplyr::select_}
+##' @param covset the name of a \code{\link{covset}} object in \code{$ENV}
 ##' @param ... passed along
 ##' @seealso \code{\link{data_set}}, \code{\link{ev}}
 ##' 
@@ -34,9 +38,6 @@
 ##' @export
 setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
 ##' @export
-##' @param subset passed to \code{dplyr::filter_}
-##' @param select passed to \code{dplyr::select_}
-##' @param covset the name of a \code{\link{covset}} object in `$ENV`
 ##' @rdname idata_set
 setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,covset=NULL,...) {
   if(exists("idata", x@args)) stop("idata has already been set.")
@@ -60,7 +61,6 @@ setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
 })
 ##' @export
 ##' @rdname idata_set
-##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' 
 setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
 

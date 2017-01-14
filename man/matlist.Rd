@@ -16,7 +16,7 @@
 \alias{zero.re}
 \alias{zero.re,mrgmod-method}
 \alias{zero_re}
-\title{Methods for working with \code{matlist} objects.}
+\title{Methods for working with matrix-list objects.}
 \usage{
 zero.re(.x, ...)
 
@@ -54,6 +54,6 @@ drop.re(.x, ...)
 \item{object}{passed to showmatlist}
 }
 \description{
-Methods for working with \code{matlist} objects.
+Methods for working with matrix-list objects.
 }
 

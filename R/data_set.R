@@ -4,13 +4,17 @@
 ##' @export
 ##' @param x model object
 ##' @param data data set
+##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
+##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
+##' @param covset the name of a \code{\link{covset}} object in \code{$ENV}
+##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' @param ... passed along
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' @export
 ##' @rdname data_set
 ##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
 ##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
-##' @param covset the name of a \code{\link{covset}} object in `$ENV`
+##' @param covset the name of a \code{\link{covset}} object in \code{$ENV}
 ##'
 ##' @details
 ##' Input data sets are \code{R} data frames that can include columns with any valid name, however columns with selected names are recognized by \code{mrgsolve} and incorporated into the simulation.
@@ -63,7 +67,6 @@ setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
 })
 ##' @export
 ##' @rdname data_set
-##' @param object character name of an object existing in \code{$ENV} to use for the data set
 setMethod("data_set",c("mrgmod", "missing"), function(x,object,...) {
   object <- eval(parse(text=as.character(object)),envir=x@envir)  
   if(is.function(object)) {
@@ -73,11 +76,9 @@ setMethod("data_set",c("mrgmod", "missing"), function(x,object,...) {
 })
 
 
-##' Convert select upper case column names to lower case to conform to \code{mrgsolve} data expectations.
-##'
+##' Convert select upper case column names to lower case to conform to mrgsolve data expectations.
 ##'
 ##' @param data an nmtran-like data frame
-##'
 ##' @return A data.frame with renamed columns.
 ##'
 ##' @details

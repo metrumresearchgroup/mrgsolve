@@ -12,7 +12,7 @@
 \alias{omat,mrgsims-method}
 \alias{omat,omegalist-method}
 \alias{omega}
-\title{Manipulate \code{OMEGA} matrices.}
+\title{Manipulate OMEGA matrices.}
 \usage{
 omat(.x, ...)
 

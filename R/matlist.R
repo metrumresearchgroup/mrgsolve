@@ -4,7 +4,7 @@
 
 
 
-##' Manipulate \code{OMEGA} matrices.
+##' Manipulate OMEGA matrices.
 ##'
 ##' The primary function is \code{omat} that can be used to both get the \code{$OMEGA} matrices
 ##' out of a model object and to update \code{$OMEGA} matrices in a model object.
@@ -102,7 +102,7 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
     as.matrix(mod(.x)@omega)
 })
 
-##' Manipulate \code{SIGMA} matrices.
+##' Manipulate SIGMA matrices.
 ##'
 ##' The primary function is \code{smat} that can be used to both get the \code{$SIGMA} matrices
 ##' out of a model object and to update \code{$SIGMA} matrices in a model object.
@@ -181,8 +181,7 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
     as.matrix(mod(.x)@sigma)
 })
 
-##' Methods for working with \code{matlist} objects.
-##'
+##' Methods for working with matrix-list objects.
 ##'
 ##' @param .x a matlist object
 ##' @param x a matlist object

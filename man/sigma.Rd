@@ -12,7 +12,7 @@
 \alias{smat,mrgmod-method}
 \alias{smat,mrgsims-method}
 \alias{smat,sigmalist-method}
-\title{Manipulate \code{SIGMA} matrices.}
+\title{Manipulate SIGMA matrices.}
 \usage{
 smat(.x, ...)
 
