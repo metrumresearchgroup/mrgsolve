@@ -227,7 +227,7 @@ NULL
 NULL
 
 
-##' Reserved words in \code{mrgsolve}.
+##' Reserved words.
 ##'
 ##' @name reserved
 ##' @details

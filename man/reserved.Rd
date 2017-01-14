@@ -2,12 +2,12 @@
 % Please edit documentation in R/package.R
 \name{reserved}
 \alias{reserved}
-\title{Reserved words in \code{mrgsolve}.}
+\title{Reserved words.}
 \usage{
 reserved()
 }
 \description{
-Reserved words in \code{mrgsolve}.
+Reserved words.
 }
 \details{
 Note: this function is not exported; you must go into the \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
