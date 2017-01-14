@@ -15,7 +15,7 @@ bind_col <- function(x,y,z) {
 is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 
 
-##' Merge two lists
+##' Merge two lists.
 ##'
 ##' @param x the original list
 ##' @param y the new list for merging
@@ -161,7 +161,7 @@ as.cvec <- function(x) {
 ##' Create template data sets for simulation.
 ##'
 ##' @param ... passed to \code{\link{expand.grid}}
-##' @export
+##' 
 ##' @details
 ##' An ID column is added as \code{1:nrow(ans)} if not supplied by the user.  
 ##' For \code{expand.ev}, defaults
@@ -171,7 +171,7 @@ as.cvec <- function(x) {
 ##' idata <- expand.idata(CL=c(1,2,3), VC=c(10,20,30))
 ##'
 ##' doses <- expand.ev(amt=c(300,100), ii=c(12,24), cmt=1)
-##'
+##' @export
 expand.idata <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
   ans$ID <- 1:nrow(ans)
@@ -246,15 +246,16 @@ s <- ch
 ##' @param x model object
 ##' @param clear logical indicating whether or not clear args from the model object
 ##' @param ... passed along
+##' 
 ##' @return If \code{clear} is \code{TRUE}, the argument list is cleared and the model object is returned.  Otherwise, the argument list is returned.
+##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
 ##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
-
+##' 
 ##' @export
 simargs <- function(x,...) UseMethod("simargs")
-##' 
-##' @rdname
+##' @rdname simargs
 ##' @export
 simargs.mrgmod <- function(x,clear=FALSE,...) {
   

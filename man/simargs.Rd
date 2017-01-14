@@ -2,9 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{simargs}
 \alias{simargs}
+\alias{simargs.mrgmod}
 \title{Access or clear arguments for calls to mrgsim.}
 \usage{
 simargs(x, ...)
+
+\method{simargs}{mrgmod}(x, clear = FALSE, ...)
 }
 \arguments{
 \item{x}{model object}
@@ -22,5 +25,6 @@ Access or clear arguments for calls to mrgsim.
 \examples{
 mod <- mrgsolve:::house()
 mod \%>\% Req(CP,RESP) \%>\% carry_out(evid,WT,FLAG) \%>\% simargs
+
 }
 

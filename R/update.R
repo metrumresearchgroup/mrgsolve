@@ -179,7 +179,7 @@ setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
 
 
 
-##' Update objects in $ENV.
+##' Update objects in model environment.
 ##' 
 ##' @param .x model object
 ##' @param .dots list of objects to updated

@@ -2,7 +2,7 @@
 % Please edit documentation in R/update.R
 \name{update_env}
 \alias{update_env}
-\title{Update objects in $ENV.}
+\title{Update objects in model environment.}
 \usage{
 update_env(.x, ..., .dots = list())
 }
@@ -14,6 +14,6 @@ update_env(.x, ..., .dots = list())
 \item{.dots}{list of objects to updated}
 }
 \description{
-Update objects in $ENV.
+Update objects in model environment.
 }
 
