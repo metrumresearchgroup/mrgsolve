@@ -6,7 +6,7 @@
 \alias{Req,mrgmod-method}
 \alias{req}
 \alias{req,mrgmod-method}
-\title{Set the \code{Request} argument for \code{mrgsim}.}
+\title{Request simulated output.}
 \usage{
 Req(x, ...)
 
@@ -22,7 +22,8 @@ req(x, ...)
 \item{...}{unquoted names of compartments or tabled items}
 }
 \description{
-Set the \code{Request} argument for \code{mrgsim}.
+Use this function to select, by name, either compartments or derived variables 
+that have been captured (see \code{\link{CAPTURE}}).
 }
 \examples{
 mod <- mrgsolve:::house()

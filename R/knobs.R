@@ -6,9 +6,10 @@ batch <- function(x) x@batch
 moving <- function(x) x@moving
 
 
-##' @title Run sensitivity analysis on model settings
+##' Run sensitivity analysis on model settings.
 ##'
-##' @description Knobs can be parameter values or PK dosing items (e.g. amt).  By design, all combinations of specified knob/values are simulated.
+##' Knobs can be parameter values or PK dosing items (e.g. amt).  
+##' By design, all combinations of specified knob/values are simulated.
 ##'
 ##' @param x the model object
 ##' @param y a \code{batch_mrgsims} object

@@ -30,7 +30,10 @@ NULL
 
 # SEE ALSO: data_set and idata_set
 
-##' Set the \code{Request} argument for \code{mrgsim}.
+##' Request simulated output. 
+##' 
+##' Use this function to select, by name, either compartments or derived variables 
+##' that have been captured (see \code{\link{CAPTURE}}).
 ##'
 ##' @param x model object
 ##' @param ... unquoted names of compartments or tabled items
@@ -62,7 +65,13 @@ setMethod("req", "mrgmod", function(x,...) {
 })
 
 
-##' Set the \code{carry.out} argument for \code{mrgsim}.
+##' Select items to carry into simulated output. 
+##' 
+##' When items named in this function are found in the input data set (either 
+##' \code{\link{data_set}} or \code{\link{idata_set}}), they are copied
+##' into the simulated output.  Special items like \code{evid} or \code{amt} or
+##' the like are not copied from the data set per se, but they are copied from
+##' \code{datarecord} objects that are created during the simulation.
 ##'
 ##'
 ##' @param x model object

@@ -3,7 +3,7 @@
 \docType{methods}
 \name{as.list,mrgmod-method}
 \alias{as.list,mrgmod-method}
-\title{Coerce an \code{mrgmod} object to list.}
+\title{Coerce a model object to list.}
 \usage{
 \S4method{as.list}{mrgmod}(x, ...)
 }
@@ -13,6 +13,6 @@
 \item{...}{passed to other methods}
 }
 \description{
-Coerce an \code{mrgmod} object to list.
+Coerce a model object to list.
 }
 

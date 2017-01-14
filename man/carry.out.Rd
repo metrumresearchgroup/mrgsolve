@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{carry.out}
 \alias{carry.out}
-\title{Set the \code{carry.out} argument for \code{mrgsim}.}
+\title{Select items to carry into simulated output.}
 \usage{
 carry.out(x, ...)
 }
@@ -12,6 +12,10 @@ carry.out(x, ...)
 \item{...}{passed along}
 }
 \description{
-Set the \code{carry.out} argument for \code{mrgsim}.
+When items named in this function are found in the input data set (either 
+\code{\link{data_set}} or \code{\link{idata_set}}), they are copied
+into the simulated output.  Special items like \code{evid} or \code{amt} or
+the like are not copied from the data set per se, but they are copied from
+\code{datarecord} objects that are created during the simulation.
 }
 

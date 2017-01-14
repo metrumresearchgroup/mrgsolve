@@ -238,8 +238,10 @@ as_pack_mod <- function(model, project, PACKAGE) {
   return(list(mod=x, soloc=soloc,source=source))
 }
 
-##' Check if an object is \code{mrgmod} or \code{packmod}.
+##' Check if an object is a model object. 
 ##' 
+##' The function checks to see if the object is either
+##'  \code{mrgmod} or \code{packmod}.
 ##' 
 ##' @param x any object
 ##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
@@ -326,7 +328,7 @@ setMethod("names", "mrgmod", function(x) {
 
 
 
-##' Coerce an \code{mrgmod} object to list.
+##' Coerce a model object to list.
 ##' 
 ##' @param x mrgmod object
 ##' @param ... passed to other methods
@@ -516,7 +518,10 @@ setMethod("$", "mrgmod", function(x,name){
 })
 
 
-##' List objects in \code{$ENV}.
+##' List objects in the model environment.
+##' 
+##' Each model keeps an internal environment that allows the user 
+##' to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
 ##' 
 ##' @param x model object
 ##' @param ... passed to \code{\link{ls}}

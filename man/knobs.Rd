@@ -8,7 +8,7 @@
 \alias{knobs,mrgmod,batch_mrgsims-method}
 \alias{knobs,mrgmod,missing-method}
 \alias{show,batch_mrgsims-method}
-\title{Run sensitivity analysis on model settings}
+\title{Run sensitivity analysis on model settings.}
 \usage{
 knobs(x, y, ...)
 
@@ -41,7 +41,8 @@ batch run.  See details.}
 An object of class \code{batch_mrgsims}.  Most methods for \code{mrgsims} objects also work on \code{batch_mrgsims} object.
 }
 \description{
-Knobs can be parameter values or PK dosing items (e.g. amt).  By design, all combinations of specified knob/values are simulated.
+Knobs can be parameter values or PK dosing items (e.g. amt).  
+By design, all combinations of specified knob/values are simulated.
 }
 \details{
 Valid knob names include: any parameter name (in \code{param(mod)}), time variables (\code{start}, \code{end}, \code{delta}), PK dosing items (\code{amt}, \code{ii}, \code{rate}, and others ...), and solver settings (\code{atol}, \code{hmax}, etc...).
