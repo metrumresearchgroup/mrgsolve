@@ -61,6 +61,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
+  
   // Create data objects from data and idata
   dataobject dat(data,parnames);
   dat.map_uid();
@@ -143,6 +144,26 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+  
+  // Find tofd 
+  std::vector<double> tofd;
+  if(tad) {
+    tofd.reserve(a.size());
+    for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
+      for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
+        if((*itt)->evid()==1) {
+          tofd.push_back((*itt)->time());
+          break;
+        }
+      }
+    }
+    if(tofd.size()==0) {
+      tofd.resize(a.size(),0.0); 
+    }
+    if(tofd.size() != a.size()) {
+       Rcpp::stop("There was a problem finding time of first dose.");
+    }
+  }
   
   // Observations from stime will always come after events;
   // unsigned int nextpos = 0; warnings
@@ -541,7 +562,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
         if(tad) {
-          ans(crow,2) = (told > -1) ? (tto - told) : -1;
+          ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
         // Write out captured items
         k = 0;

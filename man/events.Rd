@@ -13,7 +13,6 @@
 \alias{events}
 \alias{events,mrgmod-method}
 \alias{events,mrgsims-method}
-\alias{re_eval_env}
 \alias{show,ev-method}
 \title{Event objects for simulating PK and other interventions.}
 \usage{
@@ -26,8 +25,6 @@ as.ev(x, ...)
 \S4method{events}{mrgmod}(x, ...)
 
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
-
-re_eval_env(x, seed = NULL)
 
 \S4method{ev}{missing}(time = 0, evid = 1, ID = numeric(0), cmt = 1,
   replicate = TRUE, until = NULL, ...)
@@ -50,8 +47,6 @@ re_eval_env(x, seed = NULL)
 \item{...}{passed on}
 
 \item{object}{passed to show}
-
-\item{seed}{passed to \code{\link{set.seed}} if a numeric value is supplied}
 
 \item{time}{event time}
 

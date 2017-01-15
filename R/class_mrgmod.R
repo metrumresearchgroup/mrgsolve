@@ -392,17 +392,6 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 })
 
 
-
-##' @export
-##' @rdname events
-##' @param seed passed to \code{\link{set.seed}} if a numeric value is supplied
-re_eval_env <- function(x,seed=NULL) {
-  if(is.numeric(seed)) set.seed(seed)
-  eval_ENV_block(x=x@envir$.code,where=project(x),envir=x@envir)
-  return(invisible(x))
-}
-
-
 ##' @export
 ##' @rdname see
 setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
@@ -517,65 +506,6 @@ setMethod("$", "mrgmod", function(x,name){
   as.numeric(param(x))[name]
 })
 
-
-##' List objects in the model environment.
-##' 
-##' Each model keeps an internal environment that allows the user 
-##' to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
-##' 
-##' @param x model object
-##' @param ... passed to \code{\link{ls}}
-##' @export
-##' 
-ls_env <- function(x,...) {
-  objects <- ls(x@envir,...)
-  cl <- sapply(objects,function(o) {
-    class(get(o,x@envir))
-  })
-  ans <- data.frame(object=objects,class=cl)
-  rownames(ans) <- NULL
-  dplyr::arrange(ans, class)
-}
-
-##' Return model environment.
-##' 
-##' @param x model object
-##' @param tolist should the environment be coreced to \code{list}?
-##' @export
-##' 
-get_env <- function(x,tolist=TRUE) {
-  if(tolist) {
-    return(as.list(x@envir))  
-  } else {
-    return(x@envir) 
-  }
-}
-
-
-##' Run the model cama function.
-##' 
-##' @param mod model object
-##' @param fn function name
-##' @param ... passed to update
-##' 
-##' 
-##' @details \code{sah-mah}
-##' @export
-cama <- function(mod,fn="cama",...) {
-  object_exists(fn, mod@envir, "function", inherits=FALSE)
-  f <- get(fn, mod@envir, inherits=FALSE)
-  mod %>% update(...) %>% f
-}
-
-param_in_env <- function(x) {
-  p <- as.list(param(x))
-  list2env(p[setdiff(names(p),ls(x@envir))],envir=x@envir)
-}
-param_out_env <- function(x) {
-  what <- intersect(names(param(x)),ls(envir=x@envir))
-  rm(list=what,envir=x@envir)
-  return(invisible(x))
-}
 
 
 
