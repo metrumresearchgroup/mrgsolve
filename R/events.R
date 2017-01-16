@@ -108,7 +108,6 @@ setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
 ##'
 ##' To get a data frame with one row (event) per \code{ID} look at \code{\link{expand.ev}}.
 ##'
-##'
 ##' @examples
 ##'
 ##' as_data_set(ev(amt=c(100,200), cmt=1, ID=1:3),
@@ -120,6 +119,7 @@ setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
 ##'
 ##'
 setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
+
 ##' @rdname as_data_set
 setMethod("as_data_set","ev", function(x,...) {
   do.call(collect_ev,c(list(x),list(...)))
@@ -135,7 +135,6 @@ setMethod("show", "ev", function(object) {
   print(as.data.frame(object))
   return(invisible(NULL))
 })
-
 
 check_ev <- function(x) {
   x <- as.data.frame(x)
@@ -191,14 +190,15 @@ setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
 ##' @rdname ev_ops
 ##' @export
 setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
+
 ##' @export
 ##' @rdname ev_ops
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
-  if(!has_name("ii",left) | !has_name("addl",left)) stop("Both ii and addl are required in lhs",call.=FALSE)
-  
+  if(!has_name("ii",left) | !has_name("addl",left)) {
+    stop("Both ii and addl are required in lhs",call.=FALSE)
+  }
   y <- max(with(left, time + ii*addl + ii))
-  
   e2@data$time <- y
   e1 + e2
 })
@@ -209,8 +209,6 @@ setMethod("+", c("ev", "numeric"), function(e1, e2) {
   e1@data$time <- e1@data$time + e2
   e1
 })
-
-
 
 ##' @param x an ev object
 ##' @param ... other ev objects to collect
@@ -225,8 +223,6 @@ setMethod("c", "ev", function(x,...,recursive=TRUE) {
   }
   return(x)
 })
-
-
 
 # Add an events object to a mrgmod object.
 # 
@@ -245,7 +241,9 @@ plus.ev <- function(e1,e2) {
   short <- setdiff(names(data1), names(data2))
   long <- setdiff(names(data2), names(data1))
   
-  if(any(short=="ID") | any(long=="ID")) stop("ID found in one object but not the other")
+  if(any(short=="ID") | any(long=="ID")) {
+    stop("ID found in one object but not the other")
+  }
   
   if(length(short)>0) {
     add <- as.list(rep(0,length(short)))
@@ -279,8 +277,9 @@ add.ev <- function(e1,e2) {
   short <- setdiff(names(e1@data), names(e2@data))
   long <- setdiff(names(e2@data), names(e1@data))
   
-  if(any(short=="ID") | any(long=="ID")) stop("ID found in one ev object but not the other")
-  
+  if(any(short=="ID") | any(long=="ID")) {
+    stop("ID found in one ev object but not the other")
+  }
   
   if(length(short)>0) {
     add <- as.list(rep(0,length(short)))
@@ -321,7 +320,6 @@ add.ev <- function(e1,e2) {
 ##' assign_ev(list(ev1,ev2),idata,"arm",join=TRUE)
 ##' 
 ##' @export
-##' 
 assign_ev <- function(l,idata,evgroup,join=FALSE) {
   
   if(!("ID" %in% colnames(idata))) {

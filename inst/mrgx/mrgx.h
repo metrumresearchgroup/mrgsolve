@@ -27,7 +27,7 @@ double rlognorm(const double mean, const double sd, const double lower, const do
 }
 
 template<typename T>
-T get(const std::string name, databox& self) {
+T get(const std::string name, const databox& self) {
   Rcpp::Environment env = get_envir(self);
   return env[name];
 }
@@ -43,7 +43,7 @@ T get(const std::string package, const std::string name) {
   return ans;
 }
 template<typename T>
-T readRDS(std::string filename) {
+T readRDS(const std::string filename) {
   Rcpp::Function readRDS = get<Rcpp::Function>("base", "readRDS");
   return readRDS(filename);
 }

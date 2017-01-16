@@ -98,13 +98,14 @@ cropstr <- function(string, prefix, suffix, bump= "...") {
 mytrim <- function(x) {
   gsub("^\\s+|\\s+$", "",x,perl=TRUE) 
 }
+
 mytriml <- function(x) {
   gsub("^\\s+", "",x,perl=TRUE) 
 }
+
 mytrimr <- function(x) {
   gsub("\\s$", "",x,perl=TRUE) 
 }
-
 
 
 ## Create character vector 
@@ -231,12 +232,15 @@ tovec <- function(x,concat=TRUE) {
 ##' s(A,B,C)
 ##'
 setGeneric("cvec", function(x,...) standardGeneric("cvec"))
+
 ##' @export
 ##' @rdname cvec
 setMethod("cvec", "character", as.cvec)
+
 ##' @export
 ##' @rdname cvec
 ch <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
+
 ##' @export
 ##' @rdname cvec
 s <- ch
@@ -255,6 +259,7 @@ s <- ch
 ##' 
 ##' @export
 simargs <- function(x,...) UseMethod("simargs")
+
 ##' @rdname simargs
 ##' @export
 simargs.mrgmod <- function(x,clear=FALSE,...) {
@@ -279,9 +284,7 @@ build_path <- function(x) {
 
 ##' Set RNG to use L'Ecuyer-CMRG.
 ##'
-##'
 ##' @export
-##'
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
 
@@ -350,7 +353,6 @@ l_pick <- function(x,name) {
 }
 s_quote <- function(x) paste0("\'",x,"\'")
 d_quote <- function(x) paste0("\"",x,"\"")
-
 
 mapvalues <- function (x, from, to, warn_missing = FALSE) {
   if (length(from) != length(to)) {
@@ -426,51 +428,40 @@ get_option <- function(what,opt,default=FALSE) {
   }
 }
 
-# get_logical <- function(what,opt) {
-#   if(is.element(what,names(opt))) {
-#     return(opt[[what]])
-#   } else {
-#     return(FALSE) 
-#   }
-# }
-
 has_name <- function(a,b) {
   is.element(a,names(b))
 }
 
 file_exists <- function(x) {
-  #file.access(x)==0 
   file.exists(x)
+  #file.access(x)==0
 }
 
 file_writeable <- function(x) {
-  file.access(x,2) == 0 
+  file.access(x,2)==0 
 }
 
 file_readable <- function(x) {
-  file.access(x,4) == 0 
+  file.access(x,4)==0 
 }
-
 
 mrgnorm <- function(n,sigma) {
   ncols <- ncol(sigma)
   matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
 }
 
-
 where_is <- function(what,x) {
   as.integer(unlist(gregexpr(what,x,fixed=TRUE)))
 }
+
 where_first <- function(what,x) {
   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
 }
-
 
 object_exists <- function(name,envir,mode="any",inherits=FALSE) {
   if(!exists(name,envir=envir,mode=mode,inherits=inherits)) {
     stop("Couldn't find object ", name, call.=FALSE) 
   }
-  
 }
 
 mt_fun <- function(){}

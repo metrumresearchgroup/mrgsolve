@@ -179,17 +179,5 @@ setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
 
 
 
-##' Update objects in model environment.
-##' 
-##' @param .x model object
-##' @param .dots list of objects to updated
-##' @param ... objects to update
-##' 
-##' @export
-update_env <- function(.x,...,.dots=list()) {
-  right <- c(list(...),.dots)
-  left <- as.list(.x@envir)
-  .x@envir <- as.environment(merge(left,right))
-  return(invisible(.x))
-}
+
 
