@@ -37,6 +37,7 @@
 ##' 
 ##' @export
 setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
+
 ##' @export
 ##' @rdname idata_set
 setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,covset=NULL,...) {
@@ -54,11 +55,13 @@ setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sel
   x@args <- merge(x@args,list(idata=as.data.frame(data)), open=TRUE)
   return(x)
 })
+
 ##' @export
 ##' @rdname idata_set
 setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(idata_set(x,as.data.frame(data),...))
 })
+
 ##' @export
 ##' @rdname idata_set
 ##' 
