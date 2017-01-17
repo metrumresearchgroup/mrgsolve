@@ -10,6 +10,7 @@
 ##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' @param ... passed along
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
+
 ##' @export
 ##' @rdname data_set
 ##'
@@ -62,6 +63,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
 setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(data_set(x,as.data.frame(data),...))
 })
+
 ##' @export
 ##' @rdname data_set
 setMethod("data_set",c("mrgmod", "missing"), function(x,object,...) {

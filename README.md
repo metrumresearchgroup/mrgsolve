@@ -175,10 +175,11 @@ Flexibility with input data sets
 -   No need to include observation records; `mrgsolve` will automatically insert
 
 ``` r
-.data <- 
+data <- 
   expand.ev(ID=1:10, amt=c(100,300,1000)) %>%
   mutate(dose=amt)
 
+.data <- data
 head(.data)
 ```
 

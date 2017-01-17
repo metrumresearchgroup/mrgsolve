@@ -133,8 +133,19 @@ mrgsim <-  function(x,
                     idata=NULL,
                     nid = 1,...) {
   
-  if(missing(data)) data <- x@args$data; x@args$data <- NULL
-  if(missing(idata)) idata <- x@args$idata; x@args$idata <- NULL
+  if(is.null(data)) {
+    data <- x@args$data
+    x@args$data <- NULL
+  } else {
+   data <- as.data.frame(data) 
+  }
+  
+  if(is.null(idata)) {
+    idata <- x@args$idata
+    x@args$idata <- NULL
+  } else {
+    idata <- as.data.frame(idata) 
+  }
   
   args <- merge(x@args, list(...), open=TRUE)
   
@@ -148,6 +159,7 @@ mrgsim <-  function(x,
   if(is.null(data) & is.null(idata) & nid > 1) {
     idata <- data.frame(ID=1:nid)
   }
+  
   validate_idata(idata)
   
   ## If idata is still null, set it to null_idata (no rows)
@@ -341,7 +353,9 @@ tran_mrgsim <- function(x,
   idata_icdol <- idcol(idata)
   
   ## data
-  if(!is.mrgindata(data)) data <- mrgindata(data,x,verbose)
+  if(!is.mrgindata(data)) {
+    data <- mrgindata(data,x,verbose)
+  } 
   
   tcol <- timename(data)
   tcol <- ifelse(is.na(tcol), "time", tcol)
