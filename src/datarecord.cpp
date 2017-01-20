@@ -137,7 +137,7 @@ void datarecord::implement(odeproblem *prob) {
   
   switch (evid) {
   case 1: // Dosing event record
-    if(!prob->is_on(eq_n)) Rcpp::stop("Attemped bolus dose into a compartment that is off");
+    if(!prob->is_on(eq_n)) prob->on(eq_n);
     prob->fbio(eq_n, Fn);
     prob->y_add(eq_n, Amt * Fn);
     break;
