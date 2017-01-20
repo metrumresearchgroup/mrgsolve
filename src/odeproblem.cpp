@@ -256,10 +256,10 @@ void odeproblem::rate_rm(const unsigned int pos, const double& value) {
   }
 }
 
-
 void odeproblem::on(const unsigned short int eq_n) {
   On[eq_n] = 1;
 }
+
 void odeproblem::off(const unsigned short int eq_n) {
   if(infusion_count[eq_n]>0) Rcpp::stop("Attempting to turn compartment off when infusion is on.");
   On[eq_n] = 0;
