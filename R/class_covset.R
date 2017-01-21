@@ -69,16 +69,8 @@ call_type <- function(x) {
 
 
 is_covset <- function(x) {
- a <- is.list(x)
- if(a) {
-  b <- sapply(x,is.covobj) 
-  b <- all(b) 
- }
- if(all(a,b)) {
-    return(TRUE) 
- } else {
-    return(FALSE) 
- }
+  if(!is.list(x)) return(FALSE);
+  return(all(sapply(x,is.covobj)))
 }
 
 ##' @rdname covset
