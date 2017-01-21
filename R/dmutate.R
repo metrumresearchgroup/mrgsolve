@@ -99,7 +99,7 @@ bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 
 rbinomial <- function(n,p,...) rbinom(n,1,p)
 rlognorm <- function(...) exp(rnorm(...))
-rmvnorm <- function(...) mvrnorm(...)
+rmvnorm <- function(n,...) mvrnorm(n,...)
 
 first_comma <- function(x,start=1) {
   open <- 0
@@ -160,7 +160,9 @@ parse_form_3 <- function(x) {
   dist <- substr(right,0,op-1)
   
   if(substr(dist,0,1)=="r") {
+    if(names(formals(dist))[1]=="n") {
     right <- sub("(", "(.n,",right,fixed=TRUE)
+    }
   }
   
   if(dist=="expr") {
