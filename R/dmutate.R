@@ -12,6 +12,7 @@ setClass("covset")
 ##' @importFrom stats rbinom setNames
 ##' @importFrom utils type.convert
 ##' @importFrom methods setGeneric
+##' 
 setGeneric("mutate_random", function(data,input,...) standardGeneric("mutate_random"))
 
 
@@ -70,7 +71,7 @@ parse_left <- function(x) {
   vars <- s_pick(x,"var")
   lower <- s_pick(x,"lower")
   upper <- s_pick(x,"upper")
-  if(length(var) > 1) {
+  if(length(vars) > 1) {
     lower <- paste0("c(",paste(lower,collapse=','),")")
     upper <- paste0("c(",paste(upper,collapse=','),")")
   }
@@ -98,8 +99,22 @@ bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 }
 
 rbinomial <- function(n,p,...) rbinom(n,1,p)
-rlognorm <- function(...) exp(rnorm(...))
-rmvnorm <- function(n,...) mvrnorm(n,...)
+rlnorm <- function(...) exp(rnorm(...))
+rmvnorm <- function(n, mu, Sigma) {
+  if(!is.matrix(Sigma)) {
+    stop("Sigma should be a matrix.")
+  }
+  if(length(mu) != ncol(Sigma)) {
+    stop("Incompatible inputs.") 
+  }
+  if(det(Sigma) < 0) {
+    stop("Determinant: ", det(Sigma)) 
+  }
+  ncols <- ncol(Sigma)
+  mu <- rep(mu, each = n)
+  mu + matrix(rnorm(n * ncols), ncol = ncols) %*% chol(Sigma)
+}
+rlmvnorm <- function(n,...) exp(rmvnorm(n,...))
 
 first_comma <- function(x,start=1) {
   open <- 0
@@ -211,7 +226,7 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
   mn <- eval(x$lower,envir=envir)
   mx <- eval(x$upper,envir=envir)
   
-  if(x$dist=="rmvnorm") {
+  if(x$dist %in% c("rmvnorm", "rlmvnorm")) {
     r <- mvrnorm_bound(x$call,n=n,mn=mn,mx=mx,tries=tries,envir=envir)
   } else {
     r <- data_frame(.x=bound(x$call,n=n,mn=mn, mx=mx,tries=tries,envir=envir))
@@ -267,6 +282,11 @@ Parse <- function(x) parse(text=x)
 
 mvrnorm_bound <- function(call,n,envir=list(),mult=1.3,
                           mn=-Inf,mx=Inf,tries=10) {
+  
+  if(length(mn) < 2) {
+    stop("At least 2 variables required from rmvnorm simulation.",call.=FALSE) 
+  }
+  
   envir$.n <- n
   
   if(all(mn==-Inf) & all(mx==Inf)) {
