@@ -59,9 +59,9 @@ parse_left_var <- function(x) {
   bounds <- m[3]
   lower <- m[4]
   upper <- m[5]
-  if(lower=="") lower <- -Inf
-  if(upper=="") upper <- Inf
-  return(list(var=var,lower=Parse(lower),upper=Parse(upper)))
+  if(lower=="") lower <- "-Inf"
+  if(upper=="") upper <- "Inf"
+  return(list(var=var,lower=lower,upper=upper))
 }
 
 parse_left <- function(x) {
@@ -70,7 +70,11 @@ parse_left <- function(x) {
   vars <- s_pick(x,"var")
   lower <- s_pick(x,"lower")
   upper <- s_pick(x,"upper")
-  list(vars=vars,lower=lower,upper=upper,n=length(vars))
+  if(length(var) > 1) {
+    lower <- paste0("c(",paste(lower,collapse=','),")")
+    upper <- paste0("c(",paste(upper,collapse=','),")")
+  }
+  list(vars=vars,lower=Parse(lower),upper=Parse(upper),n=length(vars))
 }
 
 
@@ -95,6 +99,7 @@ bound <- function(call,n,envir=list(),mult=1.3,mn=-Inf,mx=Inf,tries=10) {
 
 rbinomial <- function(n,p,...) rbinom(n,1,p)
 rlognorm <- function(...) exp(rnorm(...))
+rmvnorm <- function(...) mvrnorm(...)
 
 first_comma <- function(x,start=1) {
   open <- 0
@@ -135,14 +140,14 @@ peval <- function(x) eval(parse(text=x))
 # 
 
 parse_form_3 <- function(x) {
-
+  
   x <- rm_space(x)
-
+  
   til <- where_first("~",x)
   bar <- where_first("|",x)
   left <- substr(x,0,til-1)
-
-
+  
+  
   if(bar > 0) {
     right <- substr(x,til+1,bar-1)
     group <- substr(x,bar+1,nchar(x))
@@ -150,10 +155,10 @@ parse_form_3 <- function(x) {
     right <- substr(x,til+1,nchar(x))
     group <- ""
   }
-
+  
   op <- where_first("(",right)
   dist <- substr(right,0,op-1)
-
+  
   if(substr(dist,0,1)=="r") {
     right <- sub("(", "(.n,",right,fixed=TRUE)
   }
@@ -162,7 +167,7 @@ parse_form_3 <- function(x) {
     right <- as.character(right)
     right <- gsub("expr\\((.+)\\)$", "\\1", right)
   }
-
+  
   right <- parse(text=right)
   left <- parse_left(left)
   c(left,list(call=right,by=group,dist=dist))
@@ -174,7 +179,7 @@ parse_form_3 <- function(x) {
 do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
   
   data <- ungroup(data)
-
+  
   if(call_type(x)==2) {
     .dots <- paste0("list(~",x$call,")")
     .dots <- eval(parse(text=.dots),envir=envir)
@@ -185,34 +190,38 @@ do_mutate <- function(data,x,envir=list(),tries=10,mult=1.5,...) {
     data <- mutate_(data, .dots=.dots) %>% ungroup
     return(data)
   }
+  
 
   if(tries <=0) stop("tries must be >= 1")
-
+  
   x$by <- c(x$by,x$opts$by)
   x$by <- x$by[x$by != ""]
-
+  
   has.by <- any(nchar(x$by) > 0)
-
+  
   if(has.by) {
     skele <- dplyr::distinct_(data,.dots=x$by)
     n <- nrow(skele)
   } else {
     n <- nrow(data)
   }
-
+  
   mn <- eval(x$lower,envir=envir)
   mx <- eval(x$upper,envir=envir)
-  r <- data_frame(.x=bound(x$call,n=n,mn=mn, mx=mx,tries=tries,envir=envir))
+  
+  if(x$dist=="rmvnorm") {
+    r <- mvrnorm_bound(x$call,n=n,mn=mn,mx=mx,tries=tries,envir=envir)
+  } else {
+    r <- data_frame(.x=bound(x$call,n=n,mn=mn, mx=mx,tries=tries,envir=envir))
+  }
   names(r) <- x$vars
   data <- select_(data,.dots=setdiff(names(data),names(r)))
-
   if(has.by) {
     r <- bind_cols(skele,r)
     return(left_join(data,r,by=x$by))
   } else {
     return(bind_cols(data,r))
   }
-
 }
 
 
@@ -252,4 +261,39 @@ get_covsets <- function(x) {
 }
 
 Parse <- function(x) parse(text=x)
+
+
+mvrnorm_bound <- function(call,n,envir=list(),mult=1.3,
+                          mn=-Inf,mx=Inf,tries=10) {
+  envir$.n <- n
+  
+  if(all(mn==-Inf) & all(mx==Inf)) {
+    return(as.data.frame(eval(call,envir=envir)))
+  }
+  
+  nn <- n*mult
+  out <- vector("list", tries)
+  ngot <- 0
+  for(i in seq(1,tries)) {
+    var <- eval(call,envir=envir)
+    w <- sapply(seq_along(mn), function(ii) {
+      var[,ii] >= mn[ii] & var[,ii] <= mx[ii]
+    }) %>% apply(MARGIN=1,all) 
+    var <- var[w,]
+    ngot <- ngot+nrow(var)
+    out[[i]] <- var
+    if(ngot >= n) {
+      break 
+    } 
+  }
+  
+  if(ngot > n) {
+    out <- as.data.frame(do.call("rbind",out)[1:n,])
+  } else {
+    stop("Couldn't generate the required number of variates.") 
+  }
+  return(out)
+}
+
+
 
