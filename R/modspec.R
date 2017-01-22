@@ -933,6 +933,7 @@ capture_param <- function(annot,.capture) {
 
 ##' @export
 handle_spec_block.specCOVSET <- function(x,...) {
+  require_covset()
   return(x)
 }
 
@@ -943,8 +944,8 @@ handle_cov <- function(spec,envir) {
   
   for(i in seq_along(where)) {
     y <- scrape_opts(spec[[where[i]]])
-    xx <- lapply(y$x,new_covobj)
-    value[[i]] <- do.call(covset,xx)
+    xx <- lapply(y$x,dmutate::new_covobj)
+    value[[i]] <- do.call(dmutate::covset,xx)
     if(is.null(y$name)) {
       stop("All $COVSET blocks must have name block option set (e.g. $COVSET @name cov1)",call.=FALSE) 
     }

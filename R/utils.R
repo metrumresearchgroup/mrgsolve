@@ -465,3 +465,13 @@ object_exists <- function(name,envir,mode="any",inherits=FALSE) {
 }
 
 mt_fun <- function(){}
+
+is.covset <- function(x) {
+  class(x)[1] =="covset" 
+}
+
+require_covset <- function() {
+  if(!requireNamespace("dmutate",quietly=FALSE)) {
+    stop("Please install the dmutate package to use the covset feature.",call.=FALSE) 
+  } 
+}
