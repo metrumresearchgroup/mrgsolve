@@ -475,3 +475,7 @@ require_covset <- function() {
     stop("Please install the dmutate package to use the covset feature.",call.=FALSE) 
   } 
 }
+
+covset <- function(...) {
+  dmutate::covset(...)
+}
