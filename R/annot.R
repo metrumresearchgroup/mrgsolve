@@ -1,6 +1,6 @@
 
 render_annot <- function(x,block,...) {
-  dplyr::bind_rows(lapply(x,dplyr::as_data_frame)) %>%
+  dplyr::bind_rows(lapply(x,tibble::as_data_frame)) %>%
     dplyr::mutate(block=block) %>% 
     dplyr::select(block,dplyr::everything()) %>%
     as.data.frame

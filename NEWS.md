@@ -19,7 +19,8 @@ __Please see the latest release__: [v0.7.7](https://github.com/metrumresearchgro
 can be specified (rather than regular expression) to select data for creating matrix.
 - The `preclean` argument now causes `unlink` to be called on the model build directory.
 - Added several functions to help work with `$ENV`: `ls_env`, `get_env`, `re_eval_env`, `update_env`. 
-
+- When a dose is administered into a compartment that is off, the compartment is now turned
+on and the dosing is allowed to proceed.  This is a change from previous behavior, where an error was generated.
 
 
 # Since 0.7.6

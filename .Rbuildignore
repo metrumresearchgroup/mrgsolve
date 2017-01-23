@@ -27,5 +27,7 @@ NEWS.md
 .git
 .gitignore
 .travis.yml
+_config.yml
 .Rinstignore
 Makefile
+docs
