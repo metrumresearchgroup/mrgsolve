@@ -42,8 +42,7 @@ Suggests:
     lattice,
     testthat,
     XML,
-    rmarkdown,
-    dmutate
+    rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes
 Collate:

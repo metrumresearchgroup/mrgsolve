@@ -471,11 +471,9 @@ is.covset <- function(x) {
 }
 
 require_covset <- function() {
-  if(!requireNamespace("dmutate",quietly=FALSE)) {
-    stop("Please install the dmutate package to use the covset feature.",call.=FALSE) 
-  } 
+  stop("covset features are not available in this version of mrgsolve.") 
 }
 
-covset <- function(...) {
-  dmutate::covset(...)
-}
+# covset <- function(...) {
+#   dmutate::covset(...)
+# }

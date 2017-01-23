@@ -5,7 +5,7 @@
 ##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' @param subset passed to \code{dplyr::filter_}
 ##' @param select passed to \code{dplyr::select_}
-##' @param covset the name of a \code{\link[dmutate]{covset}} object in \code{$ENV}
+##' @param covset coming in the future
 ##' @param ... passed along
 ##' @seealso \code{\link{data_set}}, \code{\link{ev}}
 ##' 
@@ -46,12 +46,13 @@ setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sel
   if(!missing(select)) data <- select_(data,.dots=lazy(select))
   if(nrow(data) ==0) stop("Zero rows in idata after filtering.", call.=FALSE)
   if(!is.null(covset)) {
-    require_covset()
-    covset <- get(covset,x@envir)
-    if(!is.covset(covset)) stop("Object was not a covset.",call.=FALSE)
-    covset <- as.list(covset)
-    envir <- merge(as.list(param(x)),as.list(x@envir),open=TRUE)
-    data <- dmutate::mutate_random(data,covset,envir=envir) 
+    stop("covset implementation has been disabled for the time begin.")
+    # require_covset()
+    # covset <- get(covset,x@envir)
+    # if(!is.covset(covset)) stop("Object was not a covset.",call.=FALSE)
+    # covset <- as.list(covset)
+    # envir <- merge(as.list(param(x)),as.list(x@envir),open=TRUE)
+    # data <- dmutate::mutate_random(data,covset,envir=envir) 
   }
   x@args <- merge(x@args,list(idata=as.data.frame(data)), open=TRUE)
   return(x)

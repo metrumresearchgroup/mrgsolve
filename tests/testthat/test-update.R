@@ -28,7 +28,7 @@ test_that("Update parameter - via param", {
   
   expect_error(mod1 %>% param(FAKE = 5))
   expect_error(mod1 %>% param(list(FAKE=3),strict=TRUE))
-  expect_warning(mod1 %>% param(list(FAKE=3)))
+  #expect_warning(mod1 %>% param(list(FAKE=3)))
   expect_is(mod1 %>% param(list(FAKE=3,B=2)), "mrgmod")
 })
 
