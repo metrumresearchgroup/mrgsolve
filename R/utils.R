@@ -309,7 +309,7 @@ rename_cols <- function(.df, new_names) {
 }
 
 as_character_args <- function(x) {
-  x <- deparse(x)
+  x <- deparse(x,width.cutoff=500)
   x <- gsub("^.*\\(|\\)$", "", x)
   x
 }
@@ -465,3 +465,17 @@ object_exists <- function(name,envir,mode="any",inherits=FALSE) {
 }
 
 mt_fun <- function(){}
+
+is.covset <- function(x) {
+  class(x)[1] =="covset" 
+}
+
+require_covset <- function() {
+  if(!requireNamespace("dmutate",quietly=FALSE)) {
+    stop("Please install the dmutate package to use the covset feature.",call.=FALSE) 
+  } 
+}
+
+covset <- function(...) {
+  dmutate::covset(...)
+}
