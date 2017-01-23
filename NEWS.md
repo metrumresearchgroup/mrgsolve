@@ -8,7 +8,6 @@ __Please see the latest release__: [v0.7.7](https://github.com/metrumresearchgro
 - Devin Pastoor is now listed as a contributor.  Thanks for all of your help!
 
 ## New Features
-- Added `$COVSET` block to add simulated covariates from parameteric probability distributions to `data_set` or `idata_set`.
 - Added automatic, on-demand output of time-after-dose (`tad`) in the simulated output.  Use `mrgsim(tad=TRUE)`.
 - Several new functions added to `$PLUGIN mrgx`, including `mrgx::get<T>` for getting objects out of `$ENV` or a package namespace and `mrgx::mt_fun()` that is just a function that you can assign when declaring `Rcpp::Function`.
 - Added `object` argument to `idata_set` and `data_set` to get a `data.frame` (or function to call that returns `data.frame`) out of `$ENV` to use for simulation.
