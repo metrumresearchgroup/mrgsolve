@@ -464,6 +464,8 @@ object_exists <- function(name,envir,mode="any",inherits=FALSE) {
   }
 }
 
+tparse <- function(x,...) parse(text=x,...)
+
 mt_fun <- function(){}
 
 is.covset <- function(x) {

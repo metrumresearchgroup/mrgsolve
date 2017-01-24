@@ -6,7 +6,6 @@
 ##' @param data data set
 ##' @param subset passed to \code{dplyr::filter_}; retain only certain rows in the data set
 ##' @param select passed to \code{dplyr::select_}; retain only certain columns in the data set
-##' @param covset coming in the future
 ##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' @param ... passed along
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
@@ -40,20 +39,13 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##'
 ##'
 ##'
-setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,covset=NULL,...) {
+setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,...) {
   if(exists("data", x@args)) stop("data already has been set.")
   if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
-
   if(nrow(data) ==0) stop("Zero rows in data after filtering.", call.=FALSE)
-  if(!is.null(covset)) {
-    stop("covset implementation has been disabled for the time begin.")
-    # require_covset()
-    # covset <- get(covset,x@envir)
-    # if(!is.covset(covset)) stop("Object was not a covset.",call.=FALSE)
-    # covset <- as.list(covset)
-    # envir <- merge(as.list(param(x)),as.list(x@envir),open=TRUE)
-    # data <- dmutate::mutate_random(data,covset,envir=envir) 
+  if(is.character(object)) {
+    data <- data_hooks(data,object,x@envir,param(x),...) 
   }
   data <- mrgindata(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), open=TRUE)
@@ -69,10 +61,7 @@ setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
 ##' @export
 ##' @rdname data_set
 setMethod("data_set",c("mrgmod", "missing"), function(x,object,...) {
-  object <- eval(parse(text=as.character(object)),envir=x@envir)  
-  if(is.function(object)) {
-    object <- do.call(object,args=list(...)) 
-  }
+  object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x,as.data.frame(object),...))
 })
 
@@ -93,4 +82,24 @@ lctran <- function(data) {
   change <- infrom & !haslower
   if(sum(change) > 0) names(data)[change] <- tolower(n[change])
   data
+}
+
+
+data_hooks <- function(data,object,envir,param=list(),...) {
+  param <- as.list(param)
+  envir <- merge(as.list(param),as.list(envir),open=TRUE)
+  objects <- cvec_cs(object)
+  args <- list(...)
+  if(missing(data)) {
+    data <- eval(tparse(objects[1]),envir=envir)
+    if(is.function(data)) {
+      data <- do.call(data,args,envir=as.environment(envir))
+    } 
+    objects <- objects[-1]
+  } 
+  for(f in objects) {
+    args$data <- data
+    data <- do.call(f,args,envir=as.environment(envir))
+  }
+  return(data)
 }
