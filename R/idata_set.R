@@ -5,7 +5,6 @@
 ##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' @param subset passed to \code{dplyr::filter_}
 ##' @param select passed to \code{dplyr::select_}
-##' @param covset coming in the future
 ##' @param ... passed along
 ##' @seealso \code{\link{data_set}}, \code{\link{ev}}
 ##' 
@@ -40,19 +39,13 @@ setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
 
 ##' @export
 ##' @rdname idata_set
-setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,covset=NULL,...) {
+setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,...) {
   if(exists("idata", x@args)) stop("idata has already been set.")
   if(!missing(subset)) data <- filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- select_(data,.dots=lazy(select))
   if(nrow(data) ==0) stop("Zero rows in idata after filtering.", call.=FALSE)
-  if(!is.null(covset)) {
-    stop("covset implementation has been disabled for the time begin.")
-    # require_covset()
-    # covset <- get(covset,x@envir)
-    # if(!is.covset(covset)) stop("Object was not a covset.",call.=FALSE)
-    # covset <- as.list(covset)
-    # envir <- merge(as.list(param(x)),as.list(x@envir),open=TRUE)
-    # data <- dmutate::mutate_random(data,covset,envir=envir) 
+  if(is.character(object)) {
+    data <- data_hooks(data,object,x@envir,param(x),...) 
   }
   x@args <- merge(x@args,list(idata=as.data.frame(data)), open=TRUE)
   return(x)
@@ -68,14 +61,7 @@ setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
 ##' @rdname idata_set
 ##' 
 setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
-
-  object <- eval(parse(text=object),envir=x@envir)
-  
-  if(is.function(object)) {
-    object <- do.call(object,args=list(...),envir=x@envir)
-  }
-  object <- as.data.frame(object)
-
+  object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(idata_set(x,object,...))
 })
 
