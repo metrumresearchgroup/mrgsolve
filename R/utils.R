@@ -476,12 +476,9 @@ require_covset <- function() {
   stop("covset features are not available in this version of mrgsolve.") 
 }
 
-no_warn_system <- function(...) {
-  suppressWarnings(system(...)) 
-}
 
 call_system <- function(args) {
-  suppressWarnings(do.call(system,args))
+  do.call(system,args)
 }
 
 build_error <- function(args,compfile) {
@@ -489,7 +486,6 @@ build_error <- function(args,compfile) {
     
     args$show.output.on.console <- FALSE 
     args$intern <- TRUE
-    
     err <- call_system(args)
     
     warn <- which(err=="Warning message:")[1]
@@ -497,16 +493,16 @@ build_error <- function(args,compfile) {
       err <- err[seq(1,warn-1)]
     }
     
-    errors <- grep(paste0("^",compfile),err)[1]
-    if(!is.na(errors)) {
-       command <- err[seq(1,errors-1)]
-       err <- err[seq(errors,length(err))]
-       cat(command, "\n")
-       foo <- sapply(err,message)
-    } else {
-      foo <- sapply(err,message) 
+    errors <- grepl(paste0("^",compfile),err)
+    
+    for(i in seq_along(errors)) {
+      if(errors[i]) {
+        message(err[i]) 
+      } else {
+        cat(err[i],"\n")
+      }
     }
-  } 
+  }
   cat("-------------\n")
   stop("there was a problem building the model.",call.=FALSE)
 }
