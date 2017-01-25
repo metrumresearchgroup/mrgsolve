@@ -485,13 +485,8 @@ build_error <- function(args,compfile) {
     
     args$show.output.on.console <- FALSE 
     args$intern <- TRUE
-    err <- do.call(system,args)
-    
-    warn <- which(err=="Warning message:")[1]
-    if(!is.na(warn)) {
-      err <- err[seq(1,warn-1)]
-    }
-    
+    err <- call_system(args)
+
     errors <- grepl(paste0("^",compfile),err)
     
     for(i in seq_along(errors)) {
