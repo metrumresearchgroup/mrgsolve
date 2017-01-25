@@ -492,15 +492,20 @@ build_error <- function(args,compfile) {
     
     err <- call_system(args)
     
-    warn <- which(err=="Warning message:")
-    err <- err[seq(1,warn-1)]
+    warn <- which(err=="Warning message:")[1]
+    if(!is.na(warn)) {
+      err <- err[seq(1,warn-1)]
+    }
     
     errors <- grep(paste0("^",compfile),err)[1]
-    command <- err[seq(1,errors-1)]
-    err <- err[seq(errors,length(err))]
-    
-    cat(command, "\n")
-    foo <- sapply(err,message)
+    if(!is.na(errors)) {
+       command <- err[seq(1,errors-1)]
+       err <- err[seq(errors,length(err))]
+       cat(command, "\n")
+       foo <- sapply(err,message)
+    } else {
+      foo <- sapply(err,message) 
+    }
   } 
   cat("-------------\n")
   stop("there was a problem building the model.",call.=FALSE)
