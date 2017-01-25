@@ -500,7 +500,7 @@ build_error <- function(args,compfile) {
     err <- err[seq(errors,length(err))]
     
     cat(command, "\n")
-    message(err)
+    foo <- sapply(err,message)
     cat("\n")
   } 
   cat("-------------\n")
