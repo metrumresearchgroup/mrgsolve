@@ -354,7 +354,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  build$compfile)
 
   args <- list(intern=FALSE,ignore.stdout=ignore.stdout,command=syst)
-  if(.Platform$OS.type=="windows") args$show.output.on.console <- ignore.stdout
+  if(.Platform$OS.type=="windows") args$show.output.on.console <- !ignore.stdout
   
   status <- call_system(args)
   
