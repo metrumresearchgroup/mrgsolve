@@ -12,6 +12,11 @@ export R_LIBS=${LIBDIR}
 pkgdown:
 	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference()' -e 'build_news()'
 
+cran:
+	make doc
+	make build
+	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
+
 travis_build:
 	make doc
 	make build
