@@ -477,17 +477,16 @@ require_covset <- function() {
 }
 
 call_system <- function(args) {
-    suppressWarnings(do.call(system,args))
+  suppressWarnings(do.call(system,args))
 }
 
 build_error <- function(args) {
-  if(.Platform$OS.type=="windows") {
+  if(.Platform$OS.type=="windows" & args$ignore.stdout) {
     args$show.output.on.console <- FALSE 
     args$intern <- TRUE
     err <- call_system(args)
     cat(err,sep="\n")
   } 
-  
   stop("There was an error when compiling the model.",call.=FALSE)
 }
 
