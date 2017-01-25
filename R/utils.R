@@ -476,9 +476,8 @@ require_covset <- function() {
   stop("covset features are not available in this version of mrgsolve.") 
 }
 
-
 call_system <- function(args) {
-  do.call(system,args)
+  suppressWarnings(do.call(system,args))
 }
 
 build_error <- function(args,compfile) {
@@ -486,7 +485,7 @@ build_error <- function(args,compfile) {
     
     args$show.output.on.console <- FALSE 
     args$intern <- TRUE
-    err <- call_system(args)
+    err <- do.call(system,args)
     
     warn <- which(err=="Warning message:")[1]
     if(!is.na(warn)) {
