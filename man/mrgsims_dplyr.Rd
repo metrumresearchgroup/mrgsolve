@@ -20,7 +20,7 @@
 
 \method{group_by_}{mrgsims}(.data, ..., .dots, add = FALSE)
 
-distinct_.mrgsims(.data, ..., .dots, .keep_all = FALSE)
+\method{distinct_}{mrgsims}(.data, ..., .dots, .keep_all = FALSE)
 
 \method{mutate_}{mrgsims}(.data, ..., .dots)
 

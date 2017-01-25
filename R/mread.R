@@ -110,7 +110,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
   
   build <- new_build(model,project,soloc,code,preclean,udll)
-
+  
   if(!file_exists(build$modfile)) {
     if(build$project==modlib()) {
       return(mintern(model)) 
@@ -249,9 +249,9 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
-
+  
   x <- update(x, data=args,open=TRUE)
-
+  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <-generate_rdefs(pars = names(param),
@@ -331,7 +331,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   #write_build_env(build)
   write_win_def(x)
   #do_restore(to_restore)
-
+  
   same <- check_and_copy(from = temp_write,
                          to = build$compfile)
   
@@ -352,36 +352,16 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
                  build$compfile)
+
+  args <- list(intern=FALSE,ignore.stdout=ignore.stdout,command=syst)
   
-  status <- suppressWarnings(system(syst,
-                                    intern=ignore.stdout,
-                                    ignore.stdout=ignore.stdout))
+  status <- call_system(args)
   
-  if(!ignore.stdout) { ## not intern
-    
-    if(status != "0") {
-      cat("\n\n")
-      stop("There was a problem with compiling the model.",call.=FALSE)
-    }
-    
-  } else { ## intern
-    
-    output <- err <- status
-    
-    attributes(output) <- NULL
-    
-    status <- attr(status, "status")
-    
-    comp_success <- is.null(status) & file_exists(build$compout)
-    
-    if(!comp_success) {
-      cat(err, sep="\n") 
-      cat("\n\n")
-      stop(paste0("There was a problem when compiling the model. ", err), call.=FALSE);
-    } 
-    if(!quiet) message("done.")
+  if(status != "0") {
+    build_error(args) 
+  } else {
+    if(ignore.stdout & !quiet) message("done.") 
   }
-  
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
