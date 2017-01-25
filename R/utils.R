@@ -487,7 +487,8 @@ build_error <- function(args) {
     err <- call_system(args)
     cat(err,sep="\n")
   } 
-  stop("There was an error when compiling the model.",call.=FALSE)
+  cat( "==============================================\n")
+  stop("There was a problem building the model.",call.=FALSE)
 }
 
 
