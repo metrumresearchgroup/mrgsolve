@@ -501,7 +501,6 @@ build_error <- function(args,compfile) {
     
     cat(command, "\n")
     foo <- sapply(err,message)
-    cat("\n")
   } 
   cat("-------------\n")
   stop("there was a problem building the model.",call.=FALSE)
