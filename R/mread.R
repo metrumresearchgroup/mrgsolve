@@ -359,7 +359,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   status <- call_system(args)
   
   if(status != "0") {
-    build_error(args) 
+    build_error(args,build$compfile) 
   } else {
     if(ignore.stdout & !quiet) message("done.") 
   }
