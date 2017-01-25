@@ -495,7 +495,7 @@ build_error <- function(args,compfile) {
     warn <- which(err=="Warning message:")
     err <- err[seq(1,warn-1)]
     
-    errors <- grep(paste0("^",compfile))[1]
+    errors <- grep(paste0("^",compfile),err)[1]
     command <- err[seq(1,errors-1)]
     err <- err[seq(errors,length(err))]
     
