@@ -78,4 +78,6 @@ clean:
 datasets:
 	Rscript inst/maintenance/datasets.R
 
-
+travis:
+	make build
+	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}

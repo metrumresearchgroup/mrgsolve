@@ -6,17 +6,10 @@ warnings_are_errors: false
 
 pandoc: false
 
-r_packages:
-  - roxygen2
-  - devtools
-  - RcppArmadillo
-
 os:
   - linux
 
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0
   - mkdir Rchecks
-  - make check 
-
-
+  - make travis
