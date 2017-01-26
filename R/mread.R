@@ -352,17 +352,42 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                  "R CMD SHLIB ",
                  ifelse(preclean, " --preclean ", ""),
                  build$compfile)
-
-  args <- list(intern=FALSE,ignore.stdout=ignore.stdout,command=syst)
-  if(.Platform$OS.type=="windows") args$show.output.on.console <- !ignore.stdout
   
-  status <- call_system(args)
+  ## Windows: always intern; output.on.console if not ignore.stdout
+  args <- list(command=syst)
   
-  if(status != "0") {
-    build_error(args,build$compfile) 
+  if(.Platform$OS.type=="windows") {
+    args$intern <- TRUE
+    args$show.output.on.console <- !ignore.stdout
   } else {
-    if(ignore.stdout & !quiet) message("done.") 
+    args$intern <- ignore.stdout
+    args$ignore.stdout <- ignore.stdout
   }
+  
+  output <- suppressWarnings(do.call(system,args))
+  
+  status <- attr(output,"status")
+  
+  if(args$intern) {
+    comp_success <- is.null(status) & file.exists(build$compout)
+  } else {
+    comp_success <- output=="0" & file.exists(build$compout)
+  }
+  
+  if(!comp_success) {
+    ## Always on windows
+    ## on unix only if ignore.stdout
+    if(args$intern) cat(output,sep="\n")
+    cat("-------------\n")
+    stop("there was a problem building the model.",call.=FALSE)
+  } 
+  
+  if(ignore.stdout) {
+    if(!quiet) message("done.")
+  }  else {
+    if(args$intern) cat(output,sep="\n") 
+  }
+  
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so

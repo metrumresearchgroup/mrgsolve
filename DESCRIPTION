@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.7.9.9004
+Version: 0.7.9.9006
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
@@ -12,7 +12,7 @@ Authors@R: c(
     person("Metrum Research Group LLC", role =  c("cph")),
     person("Devin", "Pastoor", "", "", c("ctb"))
     )
-Maintainer: Kyle T. Baron  <kyleb@metrumrg.com>
+Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
 Copyright: Metrum Research Group, LLC 2016
@@ -22,10 +22,10 @@ Description: Facilitates simulation in R from hierarchical, ordinary
     is parsed, compiled, and dynamically loaded into the R session. Input data are
     passed in and simulated data are returned as R objects, so disk access is never
     required during the simulation cycle after compiling. Differential equations
-    are solved with the DLSODA routine in ODEPACK [A. C. Hindmarsh, "ODEPACK,
+    are solved with the 'DLSODA' routine in 'ODEPACK' [A. C. Hindmarsh, "ODEPACK,
     A Systematized Collection of ODE Solvers," in Scientific Computing, R. S.
     Stepleman et al. (eds.), North-Holland, Amsterdam, 1983, pp.55-64.]. ACH and LRP
-    are listed as authors of the DLSODA function in ODEPACK.
+    are listed as authors of the 'DLSODA' function in 'ODEPACK'.
 License: CC BY-NC-ND 4.0
 Depends:
     R (>= 3.1.2),
