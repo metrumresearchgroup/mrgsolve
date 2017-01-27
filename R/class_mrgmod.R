@@ -8,8 +8,6 @@ valid_funs <- function(x) {
                        "Rebuild the model object or upgrade the mrgsolve version.")))
 }
 
-
-
 check_names <- function(x,par,cmt) {
   
   x <- x[!is.element(x,c(".", "..."))]
@@ -40,7 +38,6 @@ check_names <- function(x,par,cmt) {
   return(ans)
 }
 
-
 check_us <- function(x,cmt,ans) {
   leading <- x[substr(x,1,1)=="_"]
   if(length(leading) > 0) {
@@ -53,8 +50,6 @@ check_us <- function(x,cmt,ans) {
   } 
   return(ans)
 }
-
-
 
 check_globals <- function(x,cmt) {
   ans <- character(0)
@@ -70,8 +65,6 @@ check_globals <- function(x,cmt) {
   return(ans)
 }
 
-
-## mrgmod:
 protomod <- list(model=character(0),
                  package=character(0),
                  soloc=tempdir(),
@@ -115,11 +108,10 @@ protomod <- list(model=character(0),
                  envir = new.env(),
                  plugin = character(0)
 )
+
 slot.names <- names(protomod)
 slots <- sapply(protomod, class)
 names(slots) <- names(protomod)
-
-
 
 valid.mrgmod <- function(object) {
   tags <- unlist(names(object), use.names=FALSE)
@@ -133,8 +125,6 @@ valid.mrgmod <- function(object) {
   if(!x2) x <- c(x,"Advan must be 1, 2, 3, 4, or 13")
   return(x)
 }
-
-
 
 ##' S4 class for mrgsolve model object.
 ##'
@@ -174,8 +164,10 @@ valid.mrgmod <- function(object) {
 ##' @slot soloc directory path for storing the model shared object \code{<character>}
 ##' @slot code a character vector of the model code
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
+##' @slot envir internal model environment \code{<environment>}
+##' @slot annot model annotations \code{<list>}
+##' @slot plugin model plugins \code{<character>}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
-
 
 setClass("packmod",
          prototype = list(shlib=list(compiled=TRUE, date="date of package compile"),
@@ -187,7 +179,6 @@ setClass("packmod",
            header="character"
          )
 )
-
 
 ##' Return a pre-compiled, PK/PD model.
 ##' 
@@ -217,7 +208,6 @@ house <- function(...) {
   x
 }
 
-
 as_pack_mod <- function(model, project, PACKAGE) {
   x <- mread(model, project,compile=FALSE,udll=FALSE,ns=FALSE)
   code <- readLines(cfile(x),warn=FALSE)
@@ -246,10 +236,7 @@ as_pack_mod <- function(model, project, PACKAGE) {
 ##' @param x any object
 ##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
 ##' @export
-##' 
 is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
-
-
 
 see_compfile <- function(x) {
   file <- file.path(soloc(x),compfile(model(x)))
@@ -262,14 +249,14 @@ see_compfile <- function(x) {
 setMethod("project", "mrgmod", function(x,...) {
   return(x@project)
 })
+
 setMethod("project", "packmod", function(x,...) {
   return(file.path(path.package(x@package),"project"))
 })
 
-
-##' @export
 ##' @rdname cmtn
 ##' @param tag compartment name
+##' @export
 setMethod("cmtn", "mrgmod", function(x,tag,...) return(which(cmt(x)==tag)))
 
 neq <- function(x) length(cmt(x))
@@ -280,18 +267,18 @@ cmt <- function(x) names(Init(x))
 dllname <- function(x) x@package
 model <- function(x) x@model
 
-
-
 ##' Return the location of the model shared object.
 ##'
 ##' @param x model object
 ##' @param short logical; if \code{TRUE}, \code{soloc} will be rendered  with a short path name
-##' @export
+##' 
 ##' @rdname soloc
+##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
 ##' soloc(mod)
-##'
+##' 
+##' @export
 soloc <- function(x,short=FALSE) {
   if(short) return(build_path(x@soloc))
   return(x@soloc)
@@ -304,6 +291,7 @@ cfile <- function(x,...) {
 setMethod("sodll", "mrgmod", function(x,...) {
   return(pathfun(file.path(soloc(x,...),dllfile(x))))
 })
+
 setMethod("sodll", "packmod", function(x,...) {
   return(pathfun(getLoadedDLLs()[[x@package]][["path"]]))
 })
@@ -311,12 +299,15 @@ setMethod("sodll", "packmod", function(x,...) {
 ##' Get all names from a model object.
 ##' 
 ##' @param x the model object
-##' @export
+##' 
 ##' @name update
 ##' @aliases names,mrgmod-method
+##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
 ##' names(mod)
+##' 
+##' @export
 setMethod("names", "mrgmod", function(x) {
   ans <- list()
   ans$param <- pars(x)
@@ -325,8 +316,6 @@ setMethod("names", "mrgmod", function(x) {
   ans$sigma <- list(names(smat(x)),unlist(labels(smat(x)),use.names=FALSE))
   return(ans)
 })
-
-
 
 ##' Coerce a model object to list.
 ##' 
@@ -339,36 +328,37 @@ setMethod("as.list", "mrgmod", function(x,...) {
   
   within(list(), {
   
-    neq <- neq(x)
-    npar <- npar(x)
-    pars <- pars(x)
-    cmt <- cmt(x)
-    param <- as.list(param(x))
-    init <- as.list(init(x))
-    fixedp <- names(x@fixed)
-    fixed <- as.list(x@fixed)
-    model <- model(x)
-    project <- project(x)
-    soloc <- soloc(x)
+    functions <- funset(x)
+    plugins <- x@plugin
+    envir <- x@envir
+    solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
+                hmin=x@hmin,hmax=x@hmax)
+    trans <- x@trans
+    advan <- x@advan
+    details <- x@annot
+    code <- x@code
+    re <- names(x)[c("omega", "sigma")]
+    request <- x@request
+    capture <- x@capture
+    mindt <- x@mindt
+    stime <- list(start=x@start,end=x@end,delta=x@delta,add=x@add)
+    shlib <- shlib(x)
     cfile <- cfile(x)
     sodll <- sodll(x)
     cfile <- cfile(x)
-    shlib <- shlib(x)
-    stime <- list(start=x@start,end=x@end,delta=x@delta,add=x@add)
-    mindt <- x@mindt
-    capture <- x@capture
-    request <- x@request
-    re <- names(x)[c("omega", "sigma")]
-    code <- x@code
-    details <- x@annot
-    advan <- x@advan
-    trans <- x@trans
-    solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
-                hmin=x@hmin,hmax=x@hmax)
+    soloc <- soloc(x)
+    project <- project(x)
+    model <- model(x)
+    fixed <- as.list(x@fixed)
+    fixedp <- names(x@fixed)
+    init <- as.list(init(x))
+    param <- as.list(param(x))
+    cmt <- cmt(x)
+    pars <- pars(x)
+    neq <- neq(x)
+    npar <- npar(x)
   })
-  
 })
-
 
 ##' @rdname events
 ##' @export
@@ -380,7 +370,6 @@ setMethod("events", "mrgmod", function(x,...) {
   x@events
 })
 
-
 ##' @export
 ##' @rdname events
 setMethod("ev", "mrgmod", function(x,object=NULL,...) {
@@ -390,7 +379,6 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
   }
   return(update(x,events=object,...))
 })
-
 
 ##' @export
 ##' @rdname see
@@ -420,6 +408,7 @@ setMethod("loadso", "mrgmod", function(x,...) {
   }
   return(invisible(x))
 })
+
 setMethod("unloadso", "mrgmod", function(x, ...) {
   out <- try(dyn.unload(sodll(x)), TRUE)
   if(inherits(out, "try-error")) {
@@ -472,14 +461,12 @@ blocks_ <- function(file,what) {
   cat(paste0(x1,unlist(bl)), sep="\n\n")
 }
 
-
 parin <- function(x) {
   list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
        maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
        digits=x@digits, tscale=x@tscale,
        mindt=x@mindt, advan=x@advan)
 }
-
 
 ##' Show model specification and C++ files.
 ##' 
@@ -497,7 +484,6 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-
 ##' @rdname param
 ##' @param x mrgmod object
 ##' @param name parameter to take
@@ -506,8 +492,11 @@ setMethod("$", "mrgmod", function(x,name){
   as.numeric(param(x))[name]
 })
 
-
-
-
+re_build <- function(x,model=model(x),temp = FALSE) {
+  if(temp) {
+    model <- basename(tempfile(pattern="mod", tmpdir='.'))
+  }
+  mcode(model,x@code)
+}
 
 

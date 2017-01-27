@@ -17,6 +17,7 @@ new_build <- function(model,project,soloc,code=NULL,preclean=FALSE,udll=FALSE) {
   }
 
   env <- new.env()
+  env$win <- .Platform$OS.type=="windows"
   
   ## Both project and soloc get normalized
   if(!file_writeable(soloc)) {
@@ -66,7 +67,6 @@ rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){
 ## A random file name
 so_stem <- function(x) paste0(x,"-so-")
 
-
 ## Form a file name / path for the file that is actually compiled
 comppart <- "-mread-source"
 
@@ -94,8 +94,5 @@ create_soloc <- function(loc,model,preclean) {
   
   return(soloc)
 }
-
-
-
 
 

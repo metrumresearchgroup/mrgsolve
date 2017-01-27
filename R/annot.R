@@ -62,7 +62,6 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   units <-   gsub("\\s*\\(\\s*|\\s*\\)", "", units,   perl=TRUE)
   options <- gsub("\\s*\\[\\s*|\\s*\\]", "", options, perl=TRUE)
   
-  
   ## This is the "description"
   b <- mytrim(b)
   
@@ -125,7 +124,6 @@ cobble_details <- function(x) {
   
 }
 
-
 complete_details <- function(annot,x) {
   
   par <- as.numeric(param(x))
@@ -133,7 +131,6 @@ complete_details <- function(annot,x) {
   fx <- as.numeric(x@fixed)
   name <- unique(annot[annot$block %in% c("PARAM", "CMT", "FIXED"),"name"])
   dum <- annot[0,]
-  
   
   if(length(par) > 0) {
     miss <- setdiff(names(par),name)

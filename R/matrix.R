@@ -5,22 +5,20 @@ SUPERMATRIX <- function(x,keep_names=FALSE) {
 }
 
 call_ZERO <- function(x) .Call("mrgsolve_ZERO",x, PACKAGE="mrgsolve")
+
 ZERO_MATRIX <- function(x) diag(nrow(x))
+
 decorr <- function(x) {
   off <- x[lower.tri(x)]
   if(any(off < -1 | off > 1)) stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
   return(invisible(.Call("mrgsolve_decorr", x)))
 }
 
-
-
-
 ##' Create a square numeric matrix from the lower-triangular elements.
 ##'
 ##' @param x numeric data
 ##' @param context the working context
 ##' @return a square symmetric numeric matrix with column names
-##'
 lower2matrix <- function(x, context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) return(matrix(x,nrow=1, ncol=1 ))
@@ -39,7 +37,6 @@ lower2matrix <- function(x, context=NULL) {
 ##' @param x numeric data
 ##' @param context used to generate column names
 ##' @return a numeric diagonal matrix
-##'
 numeric2diag <- function(x,context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) {
@@ -113,8 +110,8 @@ Diag <- function(x) {
 ##' @details
 ##' \code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix.  \code{dmat} makes a diagonal matrix.
 ##' 
-##'
-##' @export
+##' @seealso \code{\link{as_bmat}}
+##' 
 ##' @examples
 ##'
 ##' dmat(1,2,3)/10
@@ -122,10 +119,8 @@ Diag <- function(x) {
 ##' bmat(0.5,0.01,0.2)
 ##'
 ##' cmat(0.5, 0.87,0.2)
-##'
-##'
-##' @seealso \code{\link{as_bmat}}
-##'
+##' 
+##' @export
 bmat <- function(...,correlation=FALSE, digits=-1) {
   x <- lower2matrix(unlist(list(...)),context="bmat")
   if(correlation) decorr(x)
@@ -134,14 +129,15 @@ bmat <- function(...,correlation=FALSE, digits=-1) {
 }
 
 
-##' @export
 ##' @rdname bmat
+##' @export
 cmat <- function(...,digits=-1) {
   bmat(...,digits=digits,correlation=TRUE)
 }
-##' @export
+
 ##' @rdname bmat
 ##' @seealso \code{\link{as_dmat}}
+##' @export
 dmat <- function(...) {
   Diag(as.numeric(unlist(list(...))))
 }
@@ -154,7 +150,7 @@ dmat <- function(...) {
 ##' @param ... passed along
 ##' @return A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.
 ##' @seealso \code{\link{bmat}}, \code{\link{dmat}}
-##' @export
+##' 
 ##' @examples
 ##'
 ##' df <- data.frame(OMEGA1.1 = c(1,2),
@@ -169,18 +165,21 @@ dmat <- function(...) {
 ##'
 ##' @rdname as_bmat
 ##' @name as_bmat
-##'
-
+##' 
+##' @export
 setGeneric("as_bmat", function(x,...) standardGeneric("as_bmat"))
+
 ##' @export
 ##' @rdname as_bmat
 setMethod("as_bmat", "list", function(x,...) {as_bmat(unlist(x),...)})
+
 ##' @export
 ##' @rdname as_bmat
 setMethod("as_bmat", "numeric", function(x,pat="*",...) {
   x <- grepn(x,pat, !missing(pat))
   do.call("bmat", list(x))
 })
+
 ##' @export
 ##' @rdname as_bmat
 setMethod("as_bmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
@@ -196,6 +195,7 @@ setMethod("as_bmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
   x <- x[,cols,drop=FALSE]
   lapply(seq_len(nrow(x)), function(i) bmat(unlist(x[i,])))
 })
+
 ##' @export
 ##' @rdname as_bmat
 setMethod("as_bmat", "ANY", function(x,...) {as_bmat(as.data.frame(x),...)})
@@ -203,19 +203,22 @@ setMethod("as_bmat", "ANY", function(x,...) {as_bmat(as.data.frame(x),...)})
 ##' @export
 ##' @rdname as_bmat
 setGeneric("as_dmat", function(x,...) standardGeneric("as_dmat"))
-##' @export
-##' @rdname as_bmat
-setMethod("as_dmat", "list", function(x,...) {as_dmat(unlist(x),...)})
-##' @export
-##' @rdname as_bmat
-setMethod("as_dmat", "ANY", function(x,...) {as_dmat(as.data.frame(x),...)})
 
 ##' @export
 ##' @rdname as_bmat
+setMethod("as_dmat", "list", function(x,...) {as_dmat(unlist(x),...)})
+
+##' @rdname as_bmat
+##' @export
+setMethod("as_dmat", "ANY", function(x,...) {as_dmat(as.data.frame(x),...)})
+
+##' @rdname as_bmat
+##' @export
 setMethod("as_dmat", "numeric", function(x,pat="*",...) {
   x <- grepn(x,pat, !missing(pat))
   do.call("dmat", list(x))
 })
+
 ##' @export
 ##' @rdname as_bmat
 setMethod("as_dmat", "data.frame", function(x,pat="*",cols=NULL, ...) {

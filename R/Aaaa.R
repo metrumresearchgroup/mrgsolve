@@ -1,3 +1,4 @@
+
 ##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
@@ -11,22 +12,8 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame
-##'
-
-# 
-# Collate order
-# The bottom of the list is the most base / fundamental
-# Working up includes files that depend on files that are lower down
-# Once this list is implemented, no further includes
-# of these files should be required
-# 
-
-
-##'
-
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
-
 ##' @include class_derived.R
 ##' @include class_ev.R
 ##' @include class_matlist.R
@@ -52,7 +39,6 @@ GLOBALS$ADVAN_PARMS <- list(
 GLOBALS$CARRY_TRAN_UC <- c("AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS")
 GLOBALS$CARRY_TRAN_LC <- tolower(GLOBALS[["CARRY_TRAN_UC"]])
 GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRAN_LC"]])
-
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
@@ -73,7 +59,6 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "AMT", "CMT", "II", "SS", "ADDL", "RATE",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
               "double", "int", "bool", "capture")
-
 
 globalVariables(c("test_package","time", "ID","block", "descr",
                   "everything", "TIME", "address","x",

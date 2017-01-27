@@ -1,7 +1,6 @@
 
 null_list <- setNames(list(), character(0))
 
-
 valid.numericlist <- function(object) {
   x1 <- all(sapply(object@data,single.number))
   x2 <- all(names(object@data) !="")
@@ -9,14 +8,15 @@ valid.numericlist <- function(object) {
   
   x <- x1 & x2 & x3
   if(all(x)) return(TRUE)
-  
-  
+
   out <- c()
+  
   if(!x3) {
     message("Problem with names:")
     cat(paste(names(object), collapse=","))
     out <- c(out, "Invalid names")
   }
+  
   if(!x2) {
     d <- object@data
     d <- d[nchar(names(d))==0]
@@ -24,12 +24,21 @@ valid.numericlist <- function(object) {
     print(d)
     out <- c(out, "All parameters require names")
   }
+  
   if(!x1) {
     out <- c(out, "All parameters must be single numbers") 
   }
+
   return(out)
-  
+
 }
+
+create_numeric_list <- function(x,class,...) {
+  if(length(x) ==0) return(new(class))
+  new(class, data=x)
+}
+
+
 
 ##' S4 class numeric list.
 ##'
@@ -62,7 +71,6 @@ NULL
 ##' @export
 setMethod("as.list", "numericlist", function(x,...) as.list(x@data))
 
-
 ##' @rdname numericlist
 ##' @export
 setMethod("as.numeric", "numericlist", function(x) {
@@ -75,18 +83,17 @@ setMethod("as.numeric", "numericlist", function(x) {
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
 ##' @export
-setMethod("as.data.frame", "numericlist", function(x,row.names=NULL, optional=FALSE,...) as.data.frame(x@data,row.names,optional,...))
-
+setMethod("as.data.frame", "numericlist", function(x,row.names=NULL, optional=FALSE,...) {
+  as.data.frame(x@data,row.names,optional,...)
+})
 
 ##' @rdname numericlist
 ##' @export
 setMethod("length", "numericlist", function(x) length(x@data))
 
-
 ##' @rdname numericlist
 ##' @export
 setMethod("names", "numericlist", function(x) as.character(names(x@data)))
-
 
 ##' @rdname numericlist
 ##' @param name column to take
@@ -100,13 +107,3 @@ setMethod("$", "numericlist", function(x,name){unlist(x@data[name],use.names=FAL
 ##' @param drop not used
 ##' @aliases [,numericlist-method
 setMethod("[", "numericlist", function(x,i,j,...){x@data[i,...]})
-
-
-create_numeric_list <- function(x,class,...) {
-  if(length(x) ==0) return(new(class))
-  new(class, data=x)
-}
-
-
-
-

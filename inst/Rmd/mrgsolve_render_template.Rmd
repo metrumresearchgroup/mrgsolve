@@ -2,7 +2,7 @@
 params:
   model: ""
   project: ""
-  compile: FALSE
+  compile: TRUE
 ---
 
 
@@ -31,7 +31,6 @@ rmbl <- function(x) x[x!=""]
 ```
 
 `r knit(text=prob)`
-
 
 
 # Details
@@ -68,12 +67,12 @@ if(nrow(d) > 0) {
 
 ```
 
-## Parameter and fixed values
+# Parameter and fixed values
 ```{r}
 allparam(mod)
 ```
 
-## Compartments and initial values
+# Compartments and initial values
 ```{r}
 init(mod)
 ```
@@ -82,6 +81,22 @@ init(mod)
 
 ```{r}
 cat(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET,PKMODEL),sep="\n")
+```
+
+# Environment
+```{r}
+x <- env_ls(mod)
+if(nrow(x) > 0) {
+  print(x,row.names=FALSE)
+} else {
+  cat("No objects in $ENV") 
+}
+
+```
+
+# Rendered
+```{r}
+cat(date())
 ```
 
 

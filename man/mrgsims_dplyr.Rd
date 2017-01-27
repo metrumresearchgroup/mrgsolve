@@ -2,6 +2,7 @@
 % Please edit documentation in R/mrgsims.R
 \name{mrgsims_dplyr}
 \alias{as.tbl.mrgsims}
+\alias{as_data_frame.mrgsims}
 \alias{distinct_.mrgsims}
 \alias{do_.mrgsims}
 \alias{filter_.mrgsims}
@@ -33,6 +34,8 @@ summarise.each(.data, funs, ...)
 \method{select_}{mrgsims}(.data, ..., .dots)
 
 \method{slice_}{mrgsims}(.data, ...)
+
+\method{as_data_frame}{mrgsims}(.mrg, ...)
 }
 \arguments{
 \item{x}{mrgsims object}

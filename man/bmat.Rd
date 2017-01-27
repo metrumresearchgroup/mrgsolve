@@ -33,7 +33,6 @@ bmat(0.5,0.01,0.2)
 
 cmat(0.5, 0.87,0.2)
 
-
 }
 \seealso{
 \code{\link{as_bmat}}

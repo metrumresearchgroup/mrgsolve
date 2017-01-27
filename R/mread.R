@@ -356,7 +356,7 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   ## Windows: always intern; output.on.console if not ignore.stdout
   args <- list(command=syst)
   
-  if(.Platform$OS.type=="windows") {
+  if(build$win) {
     args$intern <- TRUE
     args$show.output.on.console <- !ignore.stdout
   } else {

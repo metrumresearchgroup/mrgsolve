@@ -95,7 +95,6 @@ modlib_list <- function() {
 NULL
 
 
-
 cfile_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
@@ -104,14 +103,6 @@ object_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
 
-# Load a library model.
-# 
-# @param model model name
-# @param tryload try to load the model?
-# @param ... passed to update
-# 
-# 
-# 
 mintern <- function(model,tryload=TRUE,...) {
   
   if(!is.element(model,modlib_models)) {
@@ -243,9 +234,9 @@ NULL
 
 
 ##' modlib: HCV viral dynamics models.
+##' 
 ##' @name modlib_viral
 ##' 
-##'
 ##' @section Models:
 ##' \itemize{
 ##'  \item{\code{viral1}}: viral dynamics model with single HCV species

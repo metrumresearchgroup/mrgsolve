@@ -19,7 +19,6 @@ advtr <- function(advan,trans) {
   return(paste0("__ADVAN", advan, "_TRANS", trans, "__"))
 }
 
-
 write_capture <- function(x) {
   if(length(x)==0) return(NULL)
   i <- seq_along(x)
@@ -52,7 +51,6 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
 }
 
-
 audit_spec <- function(x,spec,warn=TRUE) {
   
   cmt <- names(init(x))
@@ -73,7 +71,6 @@ audit_spec <- function(x,spec,warn=TRUE) {
   return(invisible(NULL))
 }
 
-
 define_digits <- function(x) {
   x <- as.character(x)
   fix <- grep("[.+-]", x, invert=TRUE)
@@ -90,7 +87,6 @@ fixed_parameters <- function(x,fixed_type) {
          `define` = paste0("#define ", names(x), "  (", define_digits(unlist(x)),")")
   )
 }
-
 
 
 ##' Parse model specification text.
@@ -153,8 +149,6 @@ modelparse <- function(txt,
   
 }
 
-
-
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
 ## and moving to global
@@ -163,6 +157,7 @@ move_global_rcpp_re_find <- "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
 move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
+
 move_global <- function(x,env) {
   
   what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE"),names(x))
@@ -228,6 +223,7 @@ get_c_vars <- function(y) {
          replacement=";",
          perl=TRUE)
 }
+
 get_rcpp_vars <- function(y) {
   m <- gregexpr(move_global_rcpp_re_find,y,perl=TRUE)
   regmatches(y,m) %>%
@@ -236,9 +232,6 @@ get_rcpp_vars <- function(y) {
          replacement=";",
          perl=TRUE)
 }
-
-## ----------------------------------------------------------------------------
-
 
 check_block_data <- function(x,env,pos) {
   if(length(x)==0) {
@@ -284,7 +277,6 @@ parse_ats <- function(x) {
   b
 }
 
-
 ##' Scrape options from a code block.
 ##' 
 ##' @param x data
@@ -327,7 +319,6 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   
   c(list(x=data), opts)
 }
-
 
 ##' Scrape options and pass to function.
 ##' 
@@ -428,7 +419,6 @@ specMATRIX <- function(x,
   return(NULL)
 }
 
-
 ##' @export
 handle_spec_block.specOMEGA <- function(x,...) {
   scrape_and_call(x,
@@ -436,6 +426,7 @@ handle_spec_block.specOMEGA <- function(x,...) {
                   def=list(oclass="omegalist",type="omega"),
                   narrow=FALSE,...)
 }
+
 ##' @export
 handle_spec_block.specSIGMA <- function(x,...) {
   scrape_and_call(x,
@@ -457,7 +448,6 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   envir$.code <- x
   return(envir)
 }  
-
 
 ## S3 methods for processing code blocks
 ## All of these need to be exported
@@ -485,7 +475,6 @@ handle_spec_block.specTABLE <- function(x,env,...) {
   return(x)
   
 }
-
 
 ##' Functions to parse code blocks.
 ##' 
@@ -543,9 +532,9 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
     env[["fixed"]][[pos]] <- x
   }
   
-  
   return(NULL)
 }
+
 ##' @export
 handle_spec_block.specFIXED <- function(x,...) {
   scrape_and_call(x,pass="FIXED",...)
@@ -581,7 +570,6 @@ handle_spec_block.specTHETA <- function(x,...) {
   scrape_and_call(x,pass="THETA",narrow=FALSE,...)
 }
 
-
 ##' @rdname BLOCK_PARSE
 INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   
@@ -598,11 +586,11 @@ INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   
   return(NULL)
 }
+
 ##' @export
 handle_spec_block.specINIT <- function(x,...) {
   scrape_and_call(x,pass="INIT",...)
 }
-
 
 ##' @rdname BLOCK_PARSE
 CMT <- function(x,env,annotated=FALSE,pos=1,...) {
@@ -622,25 +610,28 @@ CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   env[["init"]][[pos]] <- as.list(l)
   return(NULL)
 }
+
 ##' @export
 handle_spec_block.specCMT <- function(x,...) {
   scrape_and_call(x,pass="CMT",narrow=FALSE,...)
 }
 ##' @export
 handle_spec_block.specVCMT <- handle_spec_block.specCMT
+
 ##' @export
 handle_spec_block.specSET <- function(x,...) {
   tolist(dump_opts(x))
 }
+
 ##' @export
 handle_spec_block.specNMXML <- function(x,...) {
   parseNMXML(dump_opts(x),...)
 }
+
 ##' @export
 handle_spec_block.specCMTN <- function(x,...) {
   cvec_cs(dump_opts(x))
 }
-
 
 ##' @rdname BLOCK_PARSE
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
@@ -702,6 +693,7 @@ form_includes <- function(x,where) {
   md <- tools::md5sum(file.path(where,x))
   paste0("#include \"", x, "\" // ", md)
 }
+
 ##' @export
 handle_spec_block.specPLUGIN <- function(x,env,...) {
   
