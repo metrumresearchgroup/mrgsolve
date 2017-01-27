@@ -30,6 +30,8 @@ setMethod("render", "mrgmod", function(x,...) {
 })
 
 ##' @param compile logical; if true, the model will be compiled to run
+##' @param model model name
+##' @param template template document
 ##' @rdname render
 dorender <- function(model,project,template=NULL,compile=TRUE,...) {
   

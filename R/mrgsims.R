@@ -174,9 +174,10 @@ slice_.mrgsims <- function(.data,...) {
 }
 
 ##' @rdname mrgsims_dplyr
+##' @param .data_ mrgsims object
 ##' @export
-as_data_frame.mrgsims <- function(.mrg,...) {
-  tibble::as_data_frame(as.data.frame(.mrg),...)
+as_data_frame.mrgsims <- function(.data_,...) {
+  tibble::as_data_frame(as.data.frame(.data_),...)
 }
 
 ##' @rdname mrgsims

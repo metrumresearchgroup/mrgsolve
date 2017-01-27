@@ -23,6 +23,10 @@ dorender(model, project, template = NULL, compile = TRUE, ...)
 
 \item{project}{the directory containing the \code{.cpp} model file}
 
+\item{model}{model name}
+
+\item{template}{template document}
+
 \item{compile}{logical; if true, the model will be compiled to run}
 }
 \description{
