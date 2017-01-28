@@ -89,10 +89,10 @@ cycle after compiling.
 * Installs via `R` package compile and install system
 * Easy integration with any other relevant `R` functionality
    * Graphics: `lattice`, `ggplot2`
-     * Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
-     * Optimal design: `PFIM`, `PopED`
-     * Data summary: `dplyr` and many other functions and packages
-     * Interactive model exploration with `shiny`
+   * Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
+   * Optimal design: `PFIM`, `PopED`
+   * Data summary: `dplyr` and many other functions and packages
+   * Interactive model exploration with `shiny`
 
 ```{r,message=FALSE}
 library(mrgsolve)
@@ -215,7 +215,7 @@ out <-
   mrgsim(end=48, seed=1010)
 ```
 
-```{r,fig.height=4,fig.width=9}
+```{r,fig.height=8,fig.width=8}
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 

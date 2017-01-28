@@ -60,10 +60,10 @@ About
 -   Installs via `R` package compile and install system
 -   Easy integration with any other relevant `R` functionality
 -   Graphics: `lattice`, `ggplot2`
-    -   Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
-    -   Optimal design: `PFIM`, `PopED`
-    -   Data summary: `dplyr` and many other functions and packages
-    -   Interactive model exploration with `shiny`
+-   Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
+-   Optimal design: `PFIM`, `PopED`
+-   Data summary: `dplyr` and many other functions and packages
+-   Interactive model exploration with `shiny`
 
 ``` r
 library(mrgsolve)
@@ -175,11 +175,10 @@ Flexibility with input data sets
 -   No need to include observation records; `mrgsolve` will automatically insert
 
 ``` r
-data <- 
+.data <- 
   expand.ev(ID=1:10, amt=c(100,300,1000)) %>%
   mutate(dose=amt)
 
-.data <- data
 head(.data)
 ```
 
