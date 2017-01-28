@@ -93,7 +93,6 @@
 <h2 class="hasAnchor">
 <a href="#new-features" class="anchor"> </a>New Features</h2>
 <ul>
-<li>Added <code>$COVSET</code> block to add simulated covariates from parameteric probability distributions to <code>data_set</code> or <code>idata_set</code>.</li>
 <li>Added automatic, on-demand output of time-after-dose (<code>tad</code>) in the simulated output. Use <code><a href="../reference/mrgsim.html">mrgsim(tad=TRUE)</a></code>.</li>
 <li>Several new functions added to <code>$PLUGIN mrgx</code>, including <code>mrgx::get&lt;T&gt;</code> for getting objects out of <code>$ENV</code> or a package namespace and <code>mrgx::mt_fun()</code> that is just a function that you can assign when declaring <code>Rcpp::Function</code>.</li>
 <li>Added <code>object</code> argument to <code>idata_set</code> and <code>data_set</code> to get a <code>data.frame</code> (or function to call that returns <code>data.frame</code>) out of <code>$ENV</code> to use for simulation.</li>
@@ -107,6 +106,7 @@
 <li>Added <code>cols</code> argument to <code>as_bmat</code> and <code>as_dmat</code> so that a character vector of names can be specified (rather than regular expression) to select data for creating matrix.</li>
 <li>The <code>preclean</code> argument now causes <code>unlink</code> to be called on the model build directory.</li>
 <li>Added several functions to help work with <code>$ENV</code>: <code>ls_env</code>, <code>get_env</code>, <code>re_eval_env</code>, <code>update_env</code>.</li>
+<li>When a dose is administered into a compartment that is off, the compartment is now turned on and the dosing is allowed to proceed. This is a change from previous behavior, where an error was generated.</li>
 </ul>
 </div>
 </div>

@@ -85,7 +85,7 @@
 
 <span class='co'># S4 method for mrgmod,data.frame</span>
 <span class='fu'>idata_set</span>(<span class='no'>x</span>, <span class='no'>data</span>, <span class='kw'>subset</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>select</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>covset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+  <span class='kw'>select</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>object</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for mrgmod,ANY</span>
 <span class='fu'>idata_set</span>(<span class='no'>x</span>, <span class='no'>data</span>, <span class='no'>...</span>)
@@ -105,8 +105,6 @@
       <dd>passed to <code>dplyr::filter_</code></dd>
       <dt>select</dt>
       <dd>passed to <code>dplyr::select_</code></dd>
-      <dt>covset</dt>
-      <dd>the name of a <code><a href='covset.html'>covset</a></code> object in <code>$ENV</code></dd>
       <dt>object</dt>
       <dd>character name of an object existing in <code>$ENV</code> to use for the data set</dd>
     </dl>

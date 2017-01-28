@@ -130,9 +130,10 @@
 </h2>
 <ul>
 <li>Installs via <code>R</code> package compile and install system</li>
-<li>Easy integration with any other relevant <code>R</code> functionality</li>
-<li>Graphics: <code>lattice</code>, <code>ggplot2</code>
+<li>Easy integration with any other relevant <code>R</code> functionality
 <ul>
+<li>Graphics: <code>lattice</code>, <code>ggplot2</code>
+</li>
 <li>Model estimation: <code>nls</code>,<code>nlme</code>, <code>MCMCpack</code>, <code>saemix</code>, others</li>
 <li>Optimal design: <code>PFIM</code>, <code>PopED</code>
 </li>
@@ -212,12 +213,12 @@ out</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out, CP+RESP~.)</code></pre></div>
 <p><img src="img/README-unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out &lt;-<span class="st"> </span>
-<span class="st">  </span>mod %&gt;%
-<span class="st">  </span><span class="kw"><a href="reference/events.html">ev</a></span>(<span class="dt">amt=</span><span class="dv">100</span>, <span class="dt">ii=</span><span class="dv">24</span>, <span class="dt">addl=</span><span class="dv">2</span>) %&gt;%
+<span class="st">  </span>mod %&gt;%<span class="st"> </span><span class="kw"><a href="reference/update.html">update</a></span>(<span class="dt">end=</span><span class="dv">48</span>) %&gt;%
+<span class="st">  </span><span class="kw"><a href="reference/events.html">ev</a></span>(<span class="dt">amt=</span><span class="dv">100</span>) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/Req.html">Req</a></span>(CP,RESP) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/knobs.html">knobs</a></span>(<span class="dt">TVVC=</span><span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">40</span>), <span class="dt">TVCL=</span><span class="kw">c</span>(<span class="fl">0.5</span>,<span class="fl">1.5</span>))</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out, <span class="dt">auto.key=</span><span class="kw">list</span>(<span class="dt">columns=</span><span class="dv">3</span>))</code></pre></div>
-<p><img src="img/README-unnamed-chunk-11-1.png" width="864" style="display: block; margin: auto;"></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out)</code></pre></div>
+<p><img src="img/README-unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;"></p>
 <div id="also-use-mrgsolve-for-efficient-large-scale-population-simulation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#also-use-mrgsolve-for-efficient-large-scale-population-simulation" class="anchor"> </a>Also use <code>mrgsolve</code> for efficient, large-scale population simulation</h2>
@@ -253,10 +254,10 @@ out</code></pre></div>
 <span class="st">  </span>mod %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/data_set.html">data_set</a></span>(.data) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/Req.html">Req</a></span>(RESP,CP) %&gt;%<span class="st"> </span>obsonly %&gt;%
-<span class="st">  </span><span class="kw"><a href="reference/carry_out.html">carry.out</a></span>(dose) %&gt;%
+<span class="st">  </span><span class="kw"><a href="reference/carry_out.html">carry_out</a></span>(dose) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/mrgsim.html">mrgsim</a></span>(<span class="dt">end=</span><span class="dv">48</span>, <span class="dt">seed=</span><span class="dv">1010</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out, RESP~time|<span class="kw">factor</span>(dose), <span class="dt">scales=</span><span class="st">"same"</span>)</code></pre></div>
-<p><img src="img/README-unnamed-chunk-15-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="img/README-unnamed-chunk-15-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="pass-simulated-output-to-your-favorite-data-summary-or-visualization-routines" class="section level2">

@@ -90,7 +90,8 @@
 <span class='co'># S3 method for mrgsims</span>
 <span class='fu'>group_by_</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>.dots</span>, <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>distinct_.mrgsims</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>.dots</span>, <span class='kw'>.keep_all</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='co'># S3 method for mrgsims</span>
+<span class='fu'>distinct_</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>.dots</span>, <span class='kw'>.keep_all</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='co'># S3 method for mrgsims</span>
 <span class='fu'>mutate_</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>.dots</span>)
@@ -107,7 +108,10 @@
 <span class='fu'>select_</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>.dots</span>)
 
 <span class='co'># S3 method for mrgsims</span>
-<span class='fu'>slice_</span>(<span class='no'>.data</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>slice_</span>(<span class='no'>.data</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for mrgsims</span>
+<span class='fu'>as_data_frame</span>(<span class='no'>.data_</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
@@ -125,6 +129,8 @@
       <dd>passed to <code>dplyr::distinct_</code></dd>
       <dt>funs</dt>
       <dd>passed to <code>dplyr::summarise_each</code></dd>
+      <dt>.data_</dt>
+      <dd>mrgsims object</dd>
     </dl>
     
 

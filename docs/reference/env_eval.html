@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Render a model to a document. — render • mrgsolve</title>
+<title>Re-evaluate the code in the ENV block. — env_eval • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,54 +74,38 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Render a model to a document.</h1>
+    <h1>Re-evaluate the code in the ENV block.</h1>
     </div>
 
     
-    <p>Render a model to a document.</p>
+    <p>The <code>$ENV</code> block is a block of R code that can 
+realize any sort of R object that might be used in running 
+a model.</p>
     
 
-    <pre><span class='fu'>render</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for character</span>
-<span class='fu'>render</span>(<span class='no'>x</span>, <span class='no'>project</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for mrgmod</span>
-<span class='fu'>render</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='fu'>dorender</span>(<span class='no'>model</span>, <span class='no'>project</span>, <span class='kw'>template</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>compile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre><span class='fu'>env_eval</span>(<span class='no'>x</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>x</dt>
-      <dd>model object or the model name</dd>
-      <dt>...</dt>
-      <dd>passed to <code>rmarkdown::render</code></dd>
-      <dt>project</dt>
-      <dd>the directory containing the <code>.cpp</code> model file</dd>
-      <dt>model</dt>
-      <dd>model name</dd>
-      <dt>template</dt>
-      <dd>template document</dd>
-      <dt>compile</dt>
-      <dd>logical; if true, the model will be compiled to run</dd>
+      <dd>model object</dd>
+      <dt>seed</dt>
+      <dd>passed to <code>set.seed</code> if a numeric value is supplied</dd>
     </dl>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Not run: ------------------------------------</span>
-<span class='co'># mod &lt;- mrgsolve:::house()</span>
-<span class='co'># mrgsolve:::render(mod)</span>
-<span class='co'># mrgsolve:::render("irm2", modlib())</span>
-<span class='co'>## ---------------------------------------------</span></div></pre>
+    <p><code><a href='env_get.html'>env_get</a></code>, <code><a href='env_ls.html'>env_ls</a></code></p>
+    
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>
