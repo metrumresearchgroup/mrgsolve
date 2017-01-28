@@ -149,10 +149,10 @@ plot(out, CP+RESP~.)
 
 ``` r
 out <- 
-  mod %>%
-  ev(amt=100, ii=24, addl=2) %>%
+  mod %>% update(end=48) %>%
+  ev(amt=100) %>%
   Req(CP,RESP) %>%
-  knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5),end=36)
+  knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5))
 ```
 
 ``` r
@@ -200,7 +200,7 @@ out <-
   mod %>%
   data_set(.data) %>%
   Req(RESP,CP) %>% obsonly %>%
-  carry.out(dose) %>%
+  carry_out(dose) %>%
   mrgsim(end=48, seed=1010)
 ```
 
