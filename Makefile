@@ -10,7 +10,7 @@ CHKDIR=Rchecks
 export R_LIBS=${LIBDIR}
 
 pkgdown:
-	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference()' -e 'build_news()'
+	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference(examples=FALSE)' -e 'build_news()'
 
 cran:
 	make doc
