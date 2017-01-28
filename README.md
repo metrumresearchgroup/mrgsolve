@@ -152,7 +152,7 @@ out <-
   mod %>%
   ev(amt=100, ii=24, addl=2) %>%
   Req(CP,RESP) %>%
-  knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5))
+  knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5),end=36)
 ```
 
 ``` r
