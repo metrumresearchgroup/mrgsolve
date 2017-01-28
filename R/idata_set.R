@@ -65,3 +65,11 @@ setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
   return(idata_set(x,object,...))
 })
 
+new_idata_set <- function(x,warn=FALSE) {
+
+  
+
+}
+
+
+

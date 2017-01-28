@@ -12,21 +12,21 @@ data(extran3)
 tb <- tbl_df(extran3)
 
 
-context("mrgindata tests") 
+context("valid_data_set tests") 
 
-test_that("mrgindata warns for character columns", {
+test_that("valid_data_set warns for character columns", {
   dat <- expand.ev(amt=100,ID=1:4,X="A")
-  expect_message(mrgindata(dat,mod=mod), regexp="^Dropping")
+  expect_message(valid_data_set(dat,mod=mod), regexp="^Dropping")
   
 })
 
-test_that("mrgindata subs character cmt", {
+test_that("valid_data_set subs character cmt", {
   dat <- expand.ev(amt=100,ID=1:4,cmt="RESP")
-  x <- mrgindata(dat,mod)
+  x <- valid_data_set(dat,mod)
   expect_true(all(x[,"cmt"] ==3))
 
   dat$cmt <- "GUT"
-  x <- mrgindata(dat,mod)
+  x <- valid_data_set(dat,mod)
   expect_true(all(x[,"cmt"] ==1))
   
 })
@@ -104,10 +104,7 @@ test_that("Run with data set - tbl", {
 data(exidata)
 
 test_that("Run idata set", {
-  out <- 
-    mod %>%
-    idata_set(exidata) %>%
-    mrgsim
+  out <- mod %>% idata_set(exidata) %>% mrgsim
   expect_equal(nrow(out), length(unique(exidata$ID))*n) 
   expect_equal(length(unique(out$ID)),nrow(exidata))
   
@@ -119,17 +116,19 @@ test_that("Run idata set with ev", {
   N <- length(unique(exidata$ID))
   N <- N*n + N
   
-  out <- 
-    mod %>%
-    ev(e) %>%
-    idata_set(exidata) %>%
-    mrgsim
+  out <- mod %>% ev(e) %>% idata_set(exidata) %>% mrgsim
   expect_equal(nrow(out), N) 
   expect_equal(length(unique(out$ID)),nrow(exidata))
 })
 
 
+test_that("Duplicate ID in idata_set gives error", {
+  
+  idata <- data_frame(ID=rep(1:10,each=5),CL=2)    
+  expect_error(mod %>% idata_set(idata) %>% mrgsim)
+  expect_error(mrgsim(mod,idata=idata_set))
 
+})
 
 
 

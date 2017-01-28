@@ -172,7 +172,7 @@ mrgsim <-  function(x,
   ## If we found events and there is an ID column
   ## create a data set
   if(nrow(ev) > 0 & is.element("ID",colnames(ev)) & is.null(data)) {
-    data <- mrgindata(ev,x,x@verbose)
+    data <- valid_data_set(ev,x,x@verbose)
   }
   
   
@@ -199,7 +199,7 @@ mrgsim <-  function(x,
     ## If we had events but no ID 
     ## expand that data frame to the number of IDs in idata 
     ev$ID <- 1
-    ev <- mrgindata(ev,x,x@verbose)
+    ev <- valid_data_set(ev,x,x@verbose)
     
     data <- .Call(mrgsolve_EXPAND_EVENTS,
                   match("ID",colnames(ev),0), 
@@ -212,7 +212,7 @@ mrgsim <-  function(x,
                    dimnames=list(NULL, c("ID")))
   }
   
-  data <- mrgindata(data,x,x@verbose)
+  data <- valid_data_set(data,x,x@verbose)
   
   ## simulate
   out <- do.call("tran_mrgsim", 
@@ -349,12 +349,14 @@ tran_mrgsim <- function(x,
 
   
   ## "idata"
-  if(!is.valid_idata(idata)) idata <- valid_idata(idata,verbose=verbose,...)
+  if(!is.valid_idata_set(idata)) {
+    idata <- valid_idata_set(idata,verbose=verbose,...)
+  }
   idata_icdol <- idcol(idata)
   
   ## data
-  if(!is.mrgindata(data)) {
-    data <- mrgindata(data,x,verbose)
+  if(!is.valid_data_set(data)) {
+    data <- valid_data_set(data,x,verbose)
   } 
   
   tcol <- timename(data)

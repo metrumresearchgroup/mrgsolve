@@ -1,7 +1,7 @@
 
 
-as.mrgindata <- function(x) {
-  structure(x,class="mrgindata")
+as.valid_data_set <- function(x) {
+  structure(x,class="valid_data_set")
 }
 
 ##' Prepare input data.frame or matrix.
@@ -16,23 +16,28 @@ as.mrgindata <- function(x) {
 ##' the \code{cmt} column will be converted to the corresponding compartment number.
 ##' 
 ##' @export
-mrgindata <- function(x,...) UseMethod("mrgindata")
-##' @rdname mrgindata
+valid_data_set <- function(x,...) UseMethod("valid_data_set")
+##' @rdname valid_data_set
 ##' @export
-mrgindata.default <- function(x,...) mrgindata(as.data.frame(x),...)
-##' @rdname mrgindata
+valid_data_set.default <- function(x,...) {
+  valid_data_set(as.data.frame(x),...)
+}
+
+##' @rdname valid_data_set
 ##' @export
-mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
+valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
   
   if(verbose) quiet <- FALSE
   
-  if(is.mrgindata(x)) return(x)
+  if(is.valid_data_set(x)) return(x)
 
   tcol <- "time"
   
   # check for ID column
   idcol <- intersect("ID", colnames(x))[1]
-  if(is.na(idcol)) stop("Couldn't find ID column in data set.", call.=FALSE)
+  if(is.na(idcol)) {
+    stop("Couldn't find ID column in data set.", call.=FALSE)
+  }
   
   if(ncol(x) > 1) {
     
@@ -77,26 +82,29 @@ mrgindata.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
   
-  structure(x, class="mrgindata")
+  structure(x, class="valid_data_set")
   
 }
 
 
 
-valid_idata <- function(x,verbose=FALSE,quiet=FALSE,...) {
+valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE,...) {
   
   if(verbose) quiet <- FALSE
   
-  if(is.valid_idata(x)) return(x) 
+  if(is.valid_idata_set(x)) return(x) 
   
-  if(!any("ID"==colnames(x))) {
-    stop("idata set must contain ID column.", call.=FALSE) 
+  if(!("ID" %in% colnames(x))) {
+    stop("ID is a required column for idata_set",call.=FALSE)
+  }
+  
+  if(any(duplicated(x[,"ID"]))) {
+    stop("duplicate IDs not allowed in idata_set",call.=FALSE) 
   }
   
   x <- numeric_data_matrix(as.data.frame(x),quiet)
   
   return(x)
-  
 }
 
 ## 1 - Drop non-numeric columns
@@ -115,8 +123,7 @@ numeric_data_matrix <- function(x,quiet=FALSE) {
   
   x <- data.matrix(x) 
   
-  
-  if(ncol(x)==0) stop("Invalid data set.",call.=FALSE)
+  if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
   
   return(x)
 }
@@ -124,27 +131,30 @@ numeric_data_matrix <- function(x,quiet=FALSE) {
 idcol <- function(x) {
   match("ID", colnames(x)) 
 }
+
 timename <- function(x) {
   intersect(c("time", "TIME"), colnames(x))[1]
 }
+
 cmtname <- function(x) {
   intersect(c("cmt", "CMT"), colnames(x))[1] 
 }
 
-is.mrgindata <- function(x) inherits(x,"mrgindata")
-is.valid_idata <- function(x) inherits(x,"valid_idata")
+is.valid_data_set <- function(x) {
+  inherits(x,"valid_data_set")
+}
 
+is.valid_idata_set <- function(x) {
+  inherits(x,"valid_idata_set")
+}
 
-##' @rdname mrgindata
+##' @rdname valid_data_set
 ##' @export
-mrgindata.matrix <- function(x,verbose=FALSE,...) {
+valid_data_set.matrix <- function(x,verbose=FALSE,...) {
   
-  if(is.mrgindata(x)) return(x)
+  if(is.valid_data_set(x)) return(x)
   if(is.numeric(x)) {
-    return(mrgindata(as.data.frame(x),...))
+    return(valid_data_set(as.data.frame(x),...))
   }
   stop("Input data matrix is not numeric")
 }
-
-
-

@@ -47,7 +47,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
   if(is.character(object)) {
     data <- data_hooks(data,object,x@envir,param(x),...) 
   }
-  data <- mrgindata(m=x,x=as.data.frame(data),...)
+  data <- valid_data_set(m=x,x=as.data.frame(data),...)
   x@args <- merge(x@args,list(data=data), open=TRUE)
   return(x)
 })
