@@ -69,6 +69,12 @@ S4 class for mrgsolve model object.
 \item{\code{code}}{a character vector of the model code}
 
 \item{\code{mindt}}{minimum time between simulation records \code{<numeric>}}
+
+\item{\code{envir}}{internal model environment \code{<environment>}}
+
+\item{\code{annot}}{model annotations \code{<list>}}
+
+\item{\code{plugin}}{model plugins \code{<character>}}
 }}
 \section{Notes}{
 

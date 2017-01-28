@@ -78,7 +78,6 @@ setMethod("req", "mrgmod", function(x,...) {
   return(x)
 })
 
-
 ##' Select items to carry into simulated output. 
 ##' 
 ##' When items named in this function are found in the input data set (either 
@@ -227,21 +226,16 @@ design <- function(x,descol=character(0),...,deslist = list()) {
   des <- des[unlist(lapply(des,inherits,c("tgrid", "tgrids", "numeric")))]
   
   if(length(des) ==0) stop("No valid tgrid objects found.")
-  
+
   if(length(descol) ==1) {
-    
     if(!exists("idata", x@args)) {
       stop("Please set idata before specifying designs.")
     }
-    
     if(!exists(descol, x@args$idata)) {
       stop(paste0("Column ", descol, " does not exist in idata."))
     }
-    
     x@args$idata[,descol] <- as.integer(as.factor(x@args$idata[,descol]))
-    
   } else {
-    
     if(length(des) > 1) {
       warning("Multiple designs specified but no idata key; only the first design will be used.",call.=FALSE)
     }

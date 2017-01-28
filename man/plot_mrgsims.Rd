@@ -55,5 +55,6 @@ plot(out, subset=time <=24)
 plot(out, GUT+CP~.)
 
 plot(out, CP+RESP~time, col="black", scales="same", lty=2)
+
 }
 

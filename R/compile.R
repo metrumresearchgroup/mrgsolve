@@ -106,8 +106,6 @@ compiled <- function(x,status=NULL) {
     return(x)
 }
 
-
-
 win_def_name <- function(x) {
   paste0(compbase(model(x)),"-win.def")
 }
@@ -129,7 +127,6 @@ rm_win_def <- function(x) {
   }
   return(invisible(NULL))
 }
-
 
 ##' Get inits from compiled function.
 ##'

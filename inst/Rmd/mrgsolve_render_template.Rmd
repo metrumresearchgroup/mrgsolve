@@ -2,7 +2,7 @@
 params:
   model: ""
   project: ""
-  compile: FALSE
+  compile: TRUE
 ---
 
 
@@ -13,6 +13,12 @@ library(dplyr)
 library(knitr)
 options(width=120)
 opts_chunk$set(comment='',echo=FALSE,message=FALSE)
+
+
+prep_chunk <- function(x) {
+  paste(capture.output(print(x)),collapse="\n")
+}
+
 ```
 
 ```{r,message=FALSE}
@@ -31,7 +37,6 @@ rmbl <- function(x) x[x!=""]
 ```
 
 `r knit(text=prob)`
-
 
 
 # Details
@@ -60,29 +65,67 @@ if(nrow(d) > 0) {
   
   d <- left_join(d,dfj,by="name")
   
-  print(d,row.names=FALSE)
+  x <- paste(capture.output(print(d,row.names=FALSE)),collapse="\n")
   
 } else {
-  cat("No annotations were found in the model file.") 
+  x <- "No annotations were found in the model file."
 }
 
 ```
 
-## Parameter and fixed values
-```{r}
-allparam(mod)
+```{c,echo=TRUE,eval=FALSE,code=x}
 ```
 
-## Compartments and initial values
+
+# Parameter and fixed values
 ```{r}
-init(mod)
+x <- prep_chunk(allparam(mod))
+```
+
+```{c,code=x,eval=FALSE,echo=TRUE}
+```
+
+# Compartments and initial values
+```{r}
+x <- prep_chunk(init(mod))
+```
+
+```{bash,code=x,eval=FALSE,echo=TRUE}
 ```
 
 # Model code
 
 ```{r}
-cat(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET,PKMODEL),sep="\n")
+x <- paste(capture.output(blocks(mod,GLOBAL,MAIN,ODE,TABLE,SET,PKMODEL)),collapse="\n")
 ```
+```{Rcpp,code=x,eval=FALSE,echo=TRUE}
+```
+
+
+# Environment
+```{r}
+x <- env_ls(mod)
+if(nrow(x) > 0) {
+  x <- capture.output(print(x,row.names=FALSE))
+  x <- paste(x,collapse="\n")
+} else {
+  x <- capture.output(cat("No objects in $ENV"))
+}
+
+```
+```{c,echo=TRUE,eval=FALSE,code=x}
+
+```
+
+
+
+# Rendered
+```{r}
+x <- capture.output(cat(date()))
+```
+```{c,code=x,eval=FALSE,echo=TRUE}
+```
+
 
 
 

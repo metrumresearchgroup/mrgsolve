@@ -23,6 +23,7 @@ env_eval <- function(x,seed=NULL) {
 ##' 
 ##' @param x model object
 ##' @param ... passed to \code{\link{ls}}
+##' 
 ##' @export
 env_ls <- function(x,...) {
   objects <- ls(x@envir,...)

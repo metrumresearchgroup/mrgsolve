@@ -39,6 +39,7 @@
 ##'
 ##' @keywords param
 setGeneric("param", function(.x,...) standardGeneric("param"))
+
 ##' @export
 ##' @rdname param
 setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE) {
@@ -58,12 +59,12 @@ setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE
     if(!all(names(args) %in% pars(.x))) {
       foreign <- setdiff(names(args),pars(.x))
       foreign <- paste(foreign, collapse=", ")
-      stop("\nNames not found in the parameter list:\n", "  ", foreign, call.=FALSE) 
+      stop("\nNames not found in the parameter list:\n", "  ", 
+           foreign, call.=FALSE) 
     } 
   }
   
   return(update(.x,param=args))
-
 })
 
 ##' @rdname param
@@ -90,24 +91,31 @@ setMethod("param", "ANY", function(.x,...) {
   param(as.list(.x),...)
 })
 
-
-
 ##' @export
 ##' @rdname param
 setGeneric("as.param", function(.x,...) standardGeneric("as.param"))
+
 ##' @export
 ##' @rdname param
-setMethod("as.param", "list", function(.x,...) create_numeric_list(.x,"parameter_list",...))
+setMethod("as.param", "list", function(.x,...) {
+  create_numeric_list(.x,"parameter_list",...)
+})
+
 ##' @export
 ##' @rdname param
-setMethod("as.param", "numeric", function(.x,...) create_numeric_list(as.list(.x),"parameter_list",...))
+setMethod("as.param", "numeric", function(.x,...) {
+  create_numeric_list(as.list(.x),"parameter_list",...)
+})
+
 ##' @export
 ##' @rdname param
 setMethod("as.param", "parameter_list", function(.x,...) .x)
+
 ##' @export
 ##' @rdname param
-setMethod("as.param", "missing", function(.x,...) create_numeric_list(list(), "parameter_list",...))
-
+setMethod("as.param", "missing", function(.x,...) {
+  create_numeric_list(list(), "parameter_list",...)
+})
 
 showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   pattern <- x@pattern
@@ -131,7 +139,10 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
     n <- n[take]
   }
   ##if(length(x)==0) stop("No parameters to show with pat = ", pattern)
-  if(length(x)==0) {message("No matching parameters were found."); return(invisible(NULL))}
+  if(length(x)==0) {
+    message("No matching parameters were found.")
+    return(invisible(NULL))
+  }
   ord <- order(x)
   x <- x[ord]
   y <- y[ord]
@@ -176,7 +187,3 @@ allparam <- function(.x) {
 as.fixed <- function(x) {
   as.list(x)
 }
-
-
-
-

@@ -15,10 +15,12 @@
 ##' 
 ##' @rdname render
 setGeneric("render", function(x,...) standardGeneric("render"))
+
 ##' @rdname render
 setMethod("render", "character", function(x,project,...) {
   dorender(x,project,...)
 })
+
 ##' @rdname render
 setMethod("render", "mrgmod", function(x,...) {
     project <- tempdir()
@@ -27,8 +29,11 @@ setMethod("render", "mrgmod", function(x,...) {
     dorender(model(x),project,...)
 })
 
-
-dorender <- function(model,project,template=NULL,compile=FALSE,...) {
+##' @param compile logical; if true, the model will be compiled to run
+##' @param model model name
+##' @param template template document
+##' @rdname render
+dorender <- function(model,project,template=NULL,compile=TRUE,...) {
   
   if(!requireNamespace("rmarkdown")) {
     stop("need rmarkdown to use this function, please install via install.packages('rmarkdown')")
@@ -49,7 +54,6 @@ dorender <- function(model,project,template=NULL,compile=FALSE,...) {
   pdf <- rmarkdown::render(out,params=list(model=model,project=project,compile=compile),...)
   
   invisible(file.copy(pdf, getwd(),overwrite=TRUE))
-  
-  
-  
+
 }
+

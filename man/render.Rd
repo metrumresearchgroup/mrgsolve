@@ -2,6 +2,7 @@
 % Please edit documentation in R/render.R
 \docType{methods}
 \name{render}
+\alias{dorender}
 \alias{render}
 \alias{render,character-method}
 \alias{render,mrgmod-method}
@@ -12,6 +13,8 @@ render(x, ...)
 \S4method{render}{character}(x, project, ...)
 
 \S4method{render}{mrgmod}(x, ...)
+
+dorender(model, project, template = NULL, compile = TRUE, ...)
 }
 \arguments{
 \item{x}{model object or the model name}
@@ -19,6 +22,12 @@ render(x, ...)
 \item{...}{passed to \code{rmarkdown::render}}
 
 \item{project}{the directory containing the \code{.cpp} model file}
+
+\item{model}{model name}
+
+\item{template}{template document}
+
+\item{compile}{logical; if true, the model will be compiled to run}
 }
 \description{
 Render a model to a document.

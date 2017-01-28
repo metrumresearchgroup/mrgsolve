@@ -63,50 +63,46 @@ NULL
 ##' @rdname mod
 setMethod("mod", "mrgsims", function(x,...) {x@mod})
 
-
 request <- function(x) x@request
+
 variables <- function(x) {
   stopifnot(is.mrgsims(x))
   return(c(x@request,x@outnames))
 }
 
-
 ##' @param name name of column of simulated output to retain
 ##' @rdname mrgsims
 ##' @export
-##' 
 setMethod("$", "mrgsims", function(x,name) {
   if(!is.element(name, colnames(x@data))) stop("Couldn't find column ", name, " in simulated data")
   return(x@data[,name])
 })
 
-##' @export
 ##' @rdname mrgsims
+##' @export
 setMethod("tail", "mrgsims",function(x,...) {
   cat("Model: ", model(mod(x)), "\n")
   return(tail(x@data,...))
 })
 
-##' @export
 ##' @rdname mrgsims
+##' @export
 setMethod("head", "mrgsims",function(x,...) {
   cat("Model: ", model(mod(x)), "\n")
   return(head(x@data,...))
 })
 
-##' @export
 ##' @rdname mrgsims
+##' @export
 setMethod("dim", "mrgsims", function(x) {
   return(dim(x@data))
 })
 
-##' @export
 ##' @rdname mrgsims
+##' @export
 setMethod("names", "mrgsims", function(x) {
   return(colnames(x@data))
 })
-
-
 
 ##' Methods for handling output with dplyr verbs.
 ##' 
@@ -124,7 +120,6 @@ NULL
 ##' @param ... passed to other methods
 ##' @rdname mrgsims_dplyr
 ##' @export
-##' @importFrom dplyr do_
 as.tbl.mrgsims <- function(x,...) {
   dplyr::as.tbl(as.data.frame(x))
 }
@@ -178,38 +173,41 @@ slice_.mrgsims <- function(.data,...) {
   dplyr::slice_(as_data_frame.mrgsims(.data),...)
 }
 
+##' @rdname mrgsims_dplyr
+##' @param .data_ mrgsims object
 ##' @export
-as_data_frame.mrgsims <- function(.mrg,...) {
-  tibble::as_data_frame(as.data.frame(.mrg),...)
+as_data_frame.mrgsims <- function(.data_,...) {
+  tibble::as_data_frame(as.data.frame(.data_),...)
 }
 
-
-##' @export
 ##' @rdname mrgsims
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
+##' @export
 setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,...) {
   return(as.data.frame(x@data,row.names,optional,...))
 })
-##' @export
-##' @rdname mrgsims
-setMethod("as.matrix", "mrgsims", function(x,...) return(as.matrix(x@data)))
 
 ##' @export
 ##' @rdname mrgsims
+##' @export
+setMethod("as.matrix", "mrgsims", function(x,...) return(as.matrix(x@data)))
+
+##' @rdname mrgsims
+##' @export
 setMethod("subset", "mrgsims", function(x,...) {
   subset(as.data.frame(x@data), ...)
 })
 
 ##' @param object passed to show
-##' @export
 ##' @rdname mrgsims
+##' @export
 setMethod("summary", "mrgsims", function(object,...) {
   summary(as.data.frame(object))
 })
 
-##' @export
 ##' @rdname mrgsims
+##' @export
 setMethod("show", "mrgsims", function(object) {
   digits <- 4
   n <- min(8,nrow(object@data))
@@ -227,6 +225,7 @@ setMethod("show", "mrgsims", function(object) {
 ##' Generate a quick plot of simulated data.
 ##'
 ##' @name plot_mrgsims
+##' 
 ##' @param x mrgsims object
 ##' @param y formula used for plotting
 ##' @param limit limit the the number of panels to create
@@ -238,10 +237,13 @@ setMethod("show", "mrgsims", function(object) {
 ##' @param outer passed to xyplot
 ##' @param groups passed to xyplot
 ##' @param ... other arguments passed to xyplot
-##' @details Values for \code{as} argument: ;  \code{raw}: raw simulated output;
-##' @export
+##'
 ##' @rdname plot_mrgsims
+##' 
 ##' @aliases plot,mrgsims,missing-method
+##' 
+##' @details Values for \code{as} argument: ;  \code{raw}: raw simulated output;
+##' 
 ##' @examples
 ##'
 ##' mod <- mrgsolve:::house(end=48, delta=0.2) %>% init(GUT=1000)
@@ -255,9 +257,9 @@ setMethod("show", "mrgsims", function(object) {
 ##' plot(out, GUT+CP~.)
 ##'
 ##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
+##' 
+##' @export
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
-  
-  
   
   ynames <- variables(x)
   
@@ -281,10 +283,9 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   plot(x,fmla,limit=limit,...)
 })
 
-
-##' @export
 ##' @rdname plot_mrgsims
 ##' @aliases plot,mrgsims,formula-method
+##' @export
 setMethod("plot", c("mrgsims","formula"), function(x,y,
                                                    limit=16,show.grid=TRUE,
                                                    outer=TRUE,
@@ -322,10 +323,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   ans
 })
 
-
-##' @export
 ##' @rdname events
+##' @export
 setMethod("events", "mrgsims", function(x,...) events(mod(x)))
-
-
 

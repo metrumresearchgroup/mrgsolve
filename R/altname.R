@@ -27,6 +27,7 @@ altname.altname <- function(x,y, ...) {
   y[nw] <- x[["to"]][old]
   return(y)
 }
+
 as.character.altname <- function(x,...) {
   as.character(x[["from"]])
 }

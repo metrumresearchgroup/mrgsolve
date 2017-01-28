@@ -53,6 +53,7 @@ After the model object is created, update various attributes.
 \examples{
 mod <- mrgsolve:::house()
 names(mod)
+
  mod <- mrgsolve:::house()
 
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))

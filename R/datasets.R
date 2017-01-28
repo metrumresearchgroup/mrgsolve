@@ -2,24 +2,25 @@
 ## To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-#' Example input data sets.
-#'
-#' @docType data
-#' @keywords datasets
-#' @rdname exdatasets
-#' @name exdatasets
-#' @details
-#' \itemize{
-#'  \item \code{exidata} holds individual-level parameters and other data items, one per row
-#'  \item \code{extran1} is a "condensed" data set
-#'  \item \code{extran2} is a full dataset
-#'  \item \code{extran3} is a full dataset with parameters
-#'  \item \code{exTheoph} is the theophylline data set, ready for input into \code{mrgsolve}
-#'  \item \code{exBoot} a set of bootstrap parameter estimates
-#'
-#' }
-#'
-#' @examples
+##' Example input data sets.
+##'
+##' @docType data
+##' @keywords datasets
+##' @rdname exdatasets
+##' @name exdatasets
+##' @details
+##' 
+##' \itemize{
+##'  \item \code{exidata} holds individual-level parameters and other data items, one per row
+##'  \item \code{extran1} is a "condensed" data set
+##'  \item \code{extran2} is a full dataset
+##'  \item \code{extran3} is a full dataset with parameters
+##'  \item \code{exTheoph} is the theophylline data set, ready for input into \code{mrgsolve}
+##'  \item \code{exBoot} a set of bootstrap parameter estimates
+##'
+##' }
+##'
+##' @examples
 ##'
 ##' mod <- mrgsolve:::house() %>% update(end=240) %>% Req(CP)
 ##'
@@ -28,35 +29,29 @@
 ##' out <- mod %>% data_set(exTheoph) %>% mrgsim
 ##' out
 ##' plot(out)
-
+##' 
 ##' ## Condensed: mrgsolve fills in the observations
 ##' data(extran1)
 ##' out <- mod %>% data_set(extran1) %>% mrgsim
 ##' out
 ##' plot(out)
-
+##' 
 ##' ## Add a parameter to the data set
 ##' stopifnot(require(dplyr))
 ##' data <- extran1 %>% distinct(ID) %>% select(ID) %>%
 ##'   mutate(CL=exp(log(1.5) + rnorm(nrow(.), 0,sqrt(0.1)))) %>%
 ##'   left_join(extran1,.)
-
+##'   
 ##' data
-
+##' 
 ##' out <- mod %>% data_set(data) %>% carry.out(CL) %>%  mrgsim
 ##' out
 ##' plot(out)
-
+##' 
 ##' ## idata
 ##' data(exidata)
 ##' out <- mod %>% idata_set(exidata) %>% ev(amt=100,ii=24,addl=10) %>% mrgsim
 ##' plot(out, CP~time|ID)
-#'
-#'
-#'
-#'
-#'
-#'
 NULL
 
 ##' @docType data
@@ -94,7 +89,6 @@ NULL
 #' @usage data(exTheoph)
 #' @rdname exdatasets
 NULL
-
 
 #' @docType data
 #' @keywords datasets
