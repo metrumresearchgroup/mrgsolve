@@ -59,11 +59,11 @@ About
 
 -   Installs via `R` package compile and install system
 -   Easy integration with any other relevant `R` functionality
--   Graphics: `lattice`, `ggplot2`
--   Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
--   Optimal design: `PFIM`, `PopED`
--   Data summary: `dplyr` and many other functions and packages
--   Interactive model exploration with `shiny`
+    -   Graphics: `lattice`, `ggplot2`
+    -   Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
+    -   Optimal design: `PFIM`, `PopED`
+    -   Data summary: `dplyr` and many other functions and packages
+    -   Interactive model exploration with `shiny`
 
 ``` r
 library(mrgsolve)
@@ -156,7 +156,7 @@ out <-
 ```
 
 ``` r
-plot(out, auto.key=list(columns=3))
+plot(out)
 ```
 
 <img src="img/README-unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
