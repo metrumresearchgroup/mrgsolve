@@ -1,36 +1,75 @@
 
-
 as.valid_data_set <- function(x) {
   structure(x,class="valid_data_set")
 }
+as.valid_idata_set <- function(x) {
+  structure(x,class="valid_idata_set")
+}
+is.valid_data_set <- function(x) {
+  inherits(x,"valid_data_set")
+}
+is.valid_idata_set <- function(x) {
+  inherits(x,"valid_idata_set")
+}
+idcol <- function(x) {
+  match("ID", colnames(x)) 
+}
+timename <- function(x) {
+  intersect(c("time", "TIME"), colnames(x))[1]
+}
+cmtname <- function(x) {
+  intersect(c("cmt", "CMT"), colnames(x))[1] 
+}
+numeric_data_matrix <- function(x,quiet=FALSE) {
+  nu <- is.numeric(x)
+  if(!all(nu)) {
+    if(!quiet) {
+      message("Dropping non-numeric columns: ", 
+              paste(names(x)[!nu], collapse=" "))
+    }
+    x <- x[,nu, drop=FALSE]
+  } 
+  x <- data.matrix(x) 
+  if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
+  return(x)
+}
 
-##' Prepare input data.frame or matrix.
+
+##' Validate and prepare data sets for simulation.
+##'
+##' @name valid_data
+##' @rdname valid_data
 ##'
 ##' @param x data.frame or matrix
-##' @param m object that inherits from mrgmod
+##' @param m a model object
 ##' @param verbose logical
 ##' @param quiet if \code{TRUE}, messages will be suppressed
 ##' @param ... additional arguments
 ##' 
-##' @return a matrix with non-numeric columns dropped; if x is a data.frame with character \code{cmt} column comprised of valid compartment names and \code{m} is a model object,
-##' the \code{cmt} column will be converted to the corresponding compartment number.
+##' @return a matrix with non-numeric columns dropped; if x is a 
+##' data.frame with character \code{cmt} column comprised of valid 
+##' compartment names and \code{m} is a model object,
+##' the \code{cmt} column will be converted to the corresponding 
+##' compartment number.
 ##' 
 ##' @export
 valid_data_set <- function(x,...) UseMethod("valid_data_set")
-##' @rdname valid_data_set
+
+##' @rdname valid_data
 ##' @export
 valid_data_set.default <- function(x,...) {
   valid_data_set(as.data.frame(x),...)
 }
 
-##' @rdname valid_data_set
+##' @rdname valid_data
 ##' @export
-valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
+valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,
+                                      quiet=FALSE,...) {
   
   if(verbose) quiet <- FALSE
   
   if(is.valid_data_set(x)) return(x)
-
+  
   tcol <- "time"
   
   # check for ID column
@@ -60,8 +99,8 @@ valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
     # TODO: look into droping these checks.
     tcol <- intersect(c("time", "TIME"), colnames(x))[1]
     if(is.na(tcol)) stop("Couldn't find time/TIME column in data set.", call.=FALSE)
-   
-     x <- cbind(x, matrix(0,
+    
+    x <- cbind(x, matrix(0,
                          ncol=1,
                          nrow=nrow(x), 
                          dimnames=list(NULL, "..zeros..")))
@@ -82,12 +121,21 @@ valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,quiet=FALSE,...) {
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
   
-  structure(x, class="valid_data_set")
+  as.valid_data_set(x)
   
 }
 
-
-
+##' Validate and prepare idata data sets for simulation.
+##' 
+##' 
+##' @seealso \code{\link{idata_set}}, \code{\link{data_set}},
+##' \code{\link{valid_data_set}}
+##' 
+##' @return A numeric matrix with class \code{valid_idata_set}.
+##' 
+##' @rdname valid_data
+##' 
+##' @export
 valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE,...) {
   
   if(verbose) quiet <- FALSE
@@ -102,53 +150,11 @@ valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE,...) {
     stop("duplicate IDs not allowed in idata_set",call.=FALSE) 
   }
   
-  x <- numeric_data_matrix(as.data.frame(x),quiet)
+  as.valid_idata_set(numeric_data_matrix(as.data.frame(x),quiet))
   
-  return(x)
 }
 
-## 1 - Drop non-numeric columns
-## 2 - Make data.matrix
-numeric_data_matrix <- function(x,quiet=FALSE) {
-  
-  nu <- is.numeric(x)
-  
-  if(!all(nu)) {
-    if(!quiet) {
-      message("Dropping non-numeric columns: ", 
-              paste(names(x)[!nu], collapse=" "))
-    }
-    x <- x[,nu, drop=FALSE]
-  } 
-  
-  x <- data.matrix(x) 
-  
-  if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
-  
-  return(x)
-}
-
-idcol <- function(x) {
-  match("ID", colnames(x)) 
-}
-
-timename <- function(x) {
-  intersect(c("time", "TIME"), colnames(x))[1]
-}
-
-cmtname <- function(x) {
-  intersect(c("cmt", "CMT"), colnames(x))[1] 
-}
-
-is.valid_data_set <- function(x) {
-  inherits(x,"valid_data_set")
-}
-
-is.valid_idata_set <- function(x) {
-  inherits(x,"valid_idata_set")
-}
-
-##' @rdname valid_data_set
+##' @rdname valid_data
 ##' @export
 valid_data_set.matrix <- function(x,verbose=FALSE,...) {
   
@@ -156,5 +162,5 @@ valid_data_set.matrix <- function(x,verbose=FALSE,...) {
   if(is.numeric(x)) {
     return(valid_data_set(as.data.frame(x),...))
   }
-  stop("Input data matrix is not numeric")
+  stop("Input data matrix is not numeric",call.=FALSE)
 }

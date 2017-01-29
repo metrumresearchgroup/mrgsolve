@@ -3,7 +3,6 @@
 ## Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
-
 ##' @rdname events
 ##' @param evid event ID
 ##' @param ID subject ID
@@ -14,7 +13,9 @@
 ##' @export
 setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replicate=TRUE, until=NULL, ...) {
   
-  if(length(match.call())==1) { return(new("ev", data=data.frame()[0,]))}
+  if(length(match.call())==1) { 
+    return(new("ev", data=data.frame()[0,]))
+  }
   
   if(any(evid==0)) stop("evid cannot be 0 (observation)")
   
@@ -38,11 +39,13 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
       if(any(!is.numeric(data))) {
         data <- as.list(data)
         data <- lapply(data, unique)
-        data <- do.call("expand.grid", c(list(ID=ID,stringsAsFactors=FALSE),data))
+        data <- do.call("expand.grid", 
+                        c(list(ID=ID,stringsAsFactors=FALSE),data))
         data <- data %>% dplyr::arrange(ID,time)
         rownames(data) <- NULL
       } else {
-        data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
+        data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", 
+                                 PACKAGE="mrgsolve", 
                                  match("ID", colnames(data),0), 
                                  data.matrix(data), 
                                  ID))
@@ -63,7 +66,8 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
 ##' @export
 setMethod("ev", "ev", function(x,...) return(x))
 
-##' @param nid if greater than 1, will expand to the appropriate number of individuals
+##' @param nid if greater than 1, will expand to the appropriate 
+##' number of individuals
 ##' @rdname events
 ##' @export
 setMethod("as.ev", "data.frame", function(x,nid=1,...) {
@@ -76,37 +80,39 @@ setMethod("as.ev", "data.frame", function(x,nid=1,...) {
   new("ev",data=x)
 })
 
-##' @export
 ##' @rdname events
+##' @export
 setMethod("as.matrix", "ev", function(x,...) as.matrix(as.data.frame(x,stringsAsFactors=FALSE),...))
 
-##' @export
-##' @rdname events
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
+##' 
+##' @rdname events
+##' @export
 setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
   as.data.frame(x@data,row.names,optional,stringsAsFactors=FALSE,...)
 })
 
-
 ##' Create a simulatinon data set from ev objects.
 ##'
 ##'
-##' @export
-##' @rdname as_data_set
 ##' @param x ev objects
 ##' @param ... more ev objects
-##' @return a data frame suitable for passing into \code{\link{data_set}}
-##'
+##' 
 ##' @details
-##' The goal is to take a series of event objects and combine them into a single
-##' data set that can be passed to \code{\link{data_set}}.  Each event object
-##' is added to the data frame as an \code{ID} or set of \code{ID}s  that are
-##' distinct from the  \code{ID}s in the other event objects. Note that including
-##' \code{ID} argument to the \code{\link{ev}} call where \code{length(ID)} is greater
-##' than one will render that set of events for all of \code{ID}s that are requested.
+##' The goal is to take a series of event objects and combine them 
+##' into a single data set that can be passed to \code{\link{data_set}}.  
+##' Each event object is added to the data frame as an \code{ID} 
+##' or set of \code{ID}s  that are distinct from the  \code{ID}s 
+##' in the other event objects. Note that including \code{ID} 
+##' argument to the \code{\link{ev}} call where \code{length(ID)} 
+##' is greater than one will render that set of 
+##' events for all of \code{ID}s that are requested.
 ##'
-##' To get a data frame with one row (event) per \code{ID} look at \code{\link{expand.ev}}.
+##' To get a data frame with one row (event) per \code{ID} 
+##' look at \code{\link{expand.ev}}.
+##' 
+##' @return a data frame suitable for passing into \code{\link{data_set}}
 ##'
 ##' @examples
 ##'
@@ -117,7 +123,8 @@ setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
 ##' # Instead of this, use expand.ev
 ##' as_data_set(ev(amt=100), ev(amt=200),ev(amt=300))
 ##'
-##'
+##' @rdname as_data_set
+##' @export
 setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 
 ##' @rdname as_data_set
@@ -125,10 +132,8 @@ setMethod("as_data_set","ev", function(x,...) {
   do.call(collect_ev,c(list(x),list(...)))
 })
 
-
-
-##' @rdname events
 ##' @param object passed to show
+##' @rdname events
 ##' @export
 setMethod("show", "ev", function(object) {
   cat("Events:\n")
@@ -175,24 +180,25 @@ collect_ev <- function(...) {
 ##' @param e1 object on left hand side of operator (lhs)
 ##' @param e2 object on right hand side of operator (rhs)
 ##' @name ev_ops
-##' @rdname ev_ops
+##' 
 ##' @aliases +,ev,ev-method
 ##' @docType methods
 ##'
 ##' @details
-##' All operations involving \code{\link[=mrgmod-class]{mrgmod}} objects have been deprecated.
+##' All operations involving \code{\link[=mrgmod-class]{mrgmod}} 
+##' objects have been deprecated.
 ##'
+##' @rdname ev_ops
 setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
   return(add.ev(e1,e2))
 })
-
 
 ##' @rdname ev_ops
 ##' @export
 setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 
-##' @export
 ##' @rdname ev_ops
+##' @export
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
   if(!has_name("ii",left) | !has_name("addl",left)) {
@@ -211,8 +217,9 @@ setMethod("+", c("ev", "numeric"), function(e1, e2) {
 })
 
 ##' @param x an ev object
-##' @param ... other ev objects to collect
 ##' @param recursive not used
+##' @param ... other ev objects to collect
+##' 
 ##' @rdname ev_ops
 ##' @export
 setMethod("c", "ev", function(x,...,recursive=TRUE) {
@@ -224,10 +231,6 @@ setMethod("c", "ev", function(x,...,recursive=TRUE) {
   return(x)
 })
 
-# Add an events object to a mrgmod object.
-# 
-# @param e1 mrgmod object
-# @param e2 events object
 plus.ev <- function(e1,e2) {
   
   data1 <- as.data.frame(events(e1))
@@ -250,6 +253,7 @@ plus.ev <- function(e1,e2) {
     names(add) <- short
     data2 <- cbind(data2, add)
   }
+  
   if(length(long) > 0) {
     add <- as.list(rep(0, length(long)))
     names(add) <- long
@@ -263,15 +267,12 @@ plus.ev <- function(e1,e2) {
   } else {
     data1<- data1[order(data1$time),]
   }
+  
   e1@events <- as.ev(data1)
+  
   return(e1)
 }
 
-
-# Add two events objects.
-# 
-# @param e1 first events object
-# @param e2 second events object
 add.ev <- function(e1,e2) {
   
   short <- setdiff(names(e1@data), names(e2@data))
@@ -338,9 +339,9 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
   if(!all(ucols %in% cols)) {
     invalid <- setdiff(ucols,cols)
     invalid <- paste(invalid,collapse=", ")
-    stop("Invalid event data items found: ", invalid, call.=FALSE)
+    stop("invalid event data items found: ", invalid, call.=FALSE)
   }
-    
+  
   for(i in seq_along(l)) {
     miss <- setdiff(ucols,colnames(l[[i]]))
     if(length(miss) > 0) {
@@ -349,12 +350,13 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
   }
   
   l <- lapply(l,function(x) {
-      x[,colnames(l[[1]]),drop=FALSE]
+    x[,colnames(l[[1]]),drop=FALSE]
   })
   
   evgroup <- idata[,evgroup]
   uevgroup <- unique(evgroup)
   evgroup <- match(evgroup,uevgroup)
+  
   if(length(l) != length(uevgroup)) {
     stop("For this idata set, please provide exactly ", 
          length(uevgroup), 
@@ -377,6 +379,3 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
   return(x)
   
 }
-
-
-

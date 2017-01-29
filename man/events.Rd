@@ -60,7 +60,8 @@ as.ev(x, ...)
 
 \item{until}{the expected maximum \bold{observation} time for this regimen}
 
-\item{nid}{if greater than 1, will expand to the appropriate number of individuals}
+\item{nid}{if greater than 1, will expand to the appropriate 
+number of individuals}
 
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 

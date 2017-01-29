@@ -36,7 +36,7 @@ Select and modify a idata set for simulation.
 \details{
 The \code{idata_set} is a data.frame that specifies individual-level 
 data for the problem.  An  \code{ID} column is required and there 
-needs to be one row in the data frame for each individual.  
+can be no more than one row in the data frame for each individual.  
 
 In most cases, the columns in the `idata_set` have the same names
 as parameters in the \code{\link{param}} list.  When this is the case, 
@@ -58,6 +58,21 @@ In this case, the \code{idata_set} is used as a parameter lookup for \code{IDs}
 found in the \code{data_set}.  Remember in this case, it is the \code{data_set}
 (not the \code{idata_set}) that determines the number of individuals in the
 simulation.
+}
+\examples{
+
+mod <- mrgsolve:::house()
+
+data(exidata)
+
+exidata
+
+mod \%>\% idata_set(exidata, ID <= 2) \%>\% mrgsim \%>\% plot
+
+mod \%>\% idata_set(exidata) \%>\% mrgsim
+
+mod \%>\% mrgsim(idata=exidata) 
+
 }
 \seealso{
 \code{\link{data_set}}, \code{\link{ev}}

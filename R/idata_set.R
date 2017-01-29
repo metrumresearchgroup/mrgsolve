@@ -6,12 +6,11 @@
 ##' @param subset passed to \code{dplyr::filter_}
 ##' @param select passed to \code{dplyr::select_}
 ##' @param ... passed along
-##' @seealso \code{\link{data_set}}, \code{\link{ev}}
 ##' 
 ##' @details
 ##' The \code{idata_set} is a data.frame that specifies individual-level 
 ##' data for the problem.  An  \code{ID} column is required and there 
-##' needs to be one row in the data frame for each individual.  
+##' can be no more than one row in the data frame for each individual.  
 ##' 
 ##' In most cases, the columns in the `idata_set` have the same names
 ##' as parameters in the \code{\link{param}} list.  When this is the case, 
@@ -34,42 +33,54 @@
 ##' (not the \code{idata_set}) that determines the number of individuals in the
 ##' simulation.
 ##' 
+##' @examples
+##' 
+##' mod <- mrgsolve:::house()
+##' 
+##' data(exidata)
+##' 
+##' exidata
+##' 
+##' mod %>% idata_set(exidata, ID <= 2) %>% mrgsim %>% plot
+##' 
+##' mod %>% idata_set(exidata) %>% mrgsim
+##' 
+##' mod %>% mrgsim(idata=exidata) 
+##' 
+##' @seealso \code{\link{data_set}}, \code{\link{ev}}
+##' 
 ##' @export
 setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
 
-##' @export
 ##' @rdname idata_set
-setMethod("idata_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,...) {
+##' @export
+setMethod("idata_set", c("mrgmod", "data.frame"), 
+          function(x,data,subset=TRUE,select=TRUE,object=NULL,...) {
+            
   if(exists("idata", x@args)) stop("idata has already been set.")
   if(!missing(subset)) data <- filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- select_(data,.dots=lazy(select))
-  if(nrow(data) ==0) stop("Zero rows in idata after filtering.", call.=FALSE)
+  if(nrow(data) ==0) {
+    stop("Zero rows in idata after filtering.", call.=FALSE)
+  }
   if(is.character(object)) {
     data <- data_hooks(data,object,x@envir,param(x),...) 
   }
   x@args <- merge(x@args,list(idata=as.data.frame(data)), open=TRUE)
   return(x)
+  
 })
 
-##' @export
 ##' @rdname idata_set
+##' @export
 setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(idata_set(x,as.data.frame(data),...))
 })
 
-##' @export
 ##' @rdname idata_set
-##' 
+##' @export
 setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(idata_set(x,object,...))
 })
-
-new_idata_set <- function(x,warn=FALSE) {
-
-  
-
-}
-
-
 

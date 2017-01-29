@@ -35,6 +35,7 @@ e1 \%then\% e2
 Operations for ev objects.
 }
 \details{
-All operations involving \code{\link[=mrgmod-class]{mrgmod}} objects have been deprecated.
+All operations involving \code{\link[=mrgmod-class]{mrgmod}} 
+objects have been deprecated.
 }
 
