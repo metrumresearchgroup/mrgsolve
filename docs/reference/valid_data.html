@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Operations for ev objects. — ev_ops • mrgsolve</title>
+<title>Validate and prepare data sets for simulation. — valid_data • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,45 +74,56 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Operations for ev objects.</h1>
+    <h1>Validate and prepare data sets for simulation.</h1>
     </div>
 
     
-    <p>Operations for ev objects.</p>
+    <p>Validate and prepare data sets for simulation.</p>
+
+    <p>Validate and prepare idata data sets for simulation.</p>
     
 
-    <pre># S4 method for ev,ev
-+(e1, e2)
+    <pre><span class='fu'>valid_data_set</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-e1 %then% e2
+<span class='co'># S3 method for default</span>
+<span class='fu'>valid_data_set</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-# S4 method for ev,ev
-%then%(e1, e2)
+<span class='co'># S3 method for data.frame</span>
+<span class='fu'>valid_data_set</span>(<span class='no'>x</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-# S4 method for ev,numeric
-+(e1, e2)
+<span class='fu'>valid_idata_set</span>(<span class='no'>x</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-# S4 method for ev
-c(x, ..., recursive = TRUE)</pre>
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>valid_data_set</span>(<span class='no'>x</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
-      <dt>e1</dt>
-      <dd>object on left hand side of operator (lhs)</dd>
-      <dt>e2</dt>
-      <dd>object on right hand side of operator (rhs)</dd>
       <dt>x</dt>
-      <dd>an ev object</dd>
+      <dd>data.frame or matrix</dd>
       <dt>...</dt>
-      <dd>other ev objects to collect</dd>
-      <dt>recursive</dt>
-      <dd>not used</dd>
+      <dd>additional arguments</dd>
+      <dt>m</dt>
+      <dd>a model object</dd>
+      <dt>verbose</dt>
+      <dd>logical</dd>
+      <dt>quiet</dt>
+      <dd>if <code>TRUE</code>, messages will be suppressed</dd>
     </dl>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>All operations involving <code><a href='mrgmod-class.html'>mrgmod</a></code> 
-objects have been deprecated.</p>
+    <p>a matrix with non-numeric columns dropped; if x is a 
+data.frame with character <code>cmt</code> column comprised of valid 
+compartment names and <code>m</code> is a model object,
+the <code>cmt</code> column will be converted to the corresponding 
+compartment number.</p>
+    <p>A numeric matrix with class <code>valid_idata_set</code>.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href='idata_set.html'>idata_set</a></code>, <code><a href='data_set.html'>data_set</a></code>,
+<code>valid_data_set</code></p>
     
 
   </div>
@@ -121,7 +132,9 @@ objects have been deprecated.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
           </ul>
 
   </div>

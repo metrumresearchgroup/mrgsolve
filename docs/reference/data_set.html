@@ -102,26 +102,52 @@
       <dt>...</dt>
       <dd>passed along</dd>
       <dt>subset</dt>
-      <dd>passed to <code>dplyr::filter_</code>; retain only certain rows in the data set</dd>
+      <dd>passed to <code>dplyr::filter_</code>; retain only certain 
+rows in the data set</dd>
       <dt>select</dt>
-      <dd>passed to <code>dplyr::select_</code>; retain only certain columns in the data set</dd>
+      <dd>passed to <code>dplyr::select_</code>; retain only certain 
+columns in the data set</dd>
       <dt>object</dt>
-      <dd>character name of an object existing in <code>$ENV</code> to use for the data set</dd>
+      <dd>character name of an object existing in <code>$ENV</code> 
+to use for the data set</dd>
     </dl>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Input data sets are <code>R</code> data frames that can include columns with any valid name, however columns with selected names are recognized by <code>mrgsolve</code> and incorporated into the simulation.</p>
-    <p><code>ID</code> specifies the subject ID and is required for every input data set.</p>
-    <p>When columns have the same name as parameters (<code>$PARAM</code> in the model specification file), the values in those columns will be used to update the corresponding parameter as the simulation progresses.</p>
-    <p>Input data set may include the following columns related to PK dosing events: <code>time</code>, <code>cmt</code>, <code>amt</code>, <code>rate</code>,
-<code>ii</code>, <code>addl</code>, <code>ss</code>.  <code>time</code> and <code>cmt</code> (and <code>ID</code>) are required columns in the input data set.  <code>time</code> is the observation or event time, <code>cmt</code> is the compartment number (see <code><a href='init.html'>init</a></code>), <code>amt</code> is the dosing amount, <code>rate</code> is the infusion rate, <code>ii</code> is the dosing interval, <code>addl</code> specifies additional doses to administer, and <code>ss</code> is a flag for steady state dosing.  These column names operate similarly to other non-linear mixed effects modeling software, but note that (except for <code>ID</code>) the column names related to PK dosing must be lower case.</p>
-    <p>Only numeric data can be brought in to the problem.  Any non-numeric data columns will be dropped with warning.</p>
+    <p>Input data sets are <code>R</code> data frames that can include columns 
+with any valid name, however columns with selected names are 
+treated specially by <code>mrgsolve</code> and incorporated into the 
+simulation.</p>
+    <p><code>ID</code> specifies the subject ID and is required for every 
+input data set.</p>
+    <p>When columns have the same name as parameters (<code>$PARAM</code> in 
+the model specification file), the values in those columns will 
+be used to update the corresponding parameter as the simulation 
+progresses.</p>
+    <p>Input data set may include the following columns related to 
+PK dosing events: <code>time</code>, <code>cmt</code>, <code>amt</code>, <code>rate</code>,
+<code>ii</code>, <code>addl</code>, <code>ss</code>.  <code>time</code> and <code>cmt</code> 
+(and <code>ID</code>) are required columns in the input data set. 
+<code>time</code> is the observation or event time, <code>cmt</code> 
+is the compartment number (see <code><a href='init.html'>init</a></code>), <code>amt</code> 
+is the dosing amount, <code>rate</code> is the infusion rate, 
+<code>ii</code> is the dosing interval, <code>addl</code> specifies 
+additional doses to administer, and <code>ss</code> is a flag 
+for steady state dosing.  These column names operate 
+similarly to other non-linear mixed effects modeling 
+software.  Upper case PK dosing column names including
+<code>TIME</code>, <code>CMT</code>, <code>AMT</code>, <code>RATE</code>, <code>II</code>,
+<code>ADDL</code>, <code>SS</code> are also recognized.  However, an 
+error will be generated if a mix of upper case and lower
+case columns are found.</p>
+    <p>Only numeric data can be brought in to the problem.  
+Any non-numeric data columns will be dropped with warning.</p>
     <p>See <code><a href='exdatasets.html'>exdatasets</a></code> for different example data sets.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='idata_set.html'>idata_set</a></code>, <code><a href='events.html'>ev</a></code></p>
+    <p><code><a href='idata_set.html'>idata_set</a></code>, <code><a href='events.html'>ev</a></code>, 
+<code><a href='valid_data.html'>valid_data_set</a></code>, <code><a href='valid_data.html'>valid_idata_set</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -130,7 +156,13 @@
 
 <span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='expand.idata.html'>expand.ev</a></span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>amt</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>10</span>,<span class='fl'>20</span>))
 
-<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>data_set</span>(<span class='no'>data</span>, <span class='no'>ID</span> <span class='kw'>&gt;</span> <span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span></pre>
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>data_set</span>(<span class='no'>data</span>, <span class='no'>ID</span> <span class='kw'>&gt;</span> <span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span>
+
+<span class='fu'>data</span>(<span class='no'>extran1</span>)
+<span class='fu'>head</span>(<span class='no'>extran1</span>)
+
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'>data_set</span>(<span class='no'>extran1</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span>
+<span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>extran1</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
