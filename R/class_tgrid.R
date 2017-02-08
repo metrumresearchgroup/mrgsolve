@@ -2,8 +2,17 @@
 
 ##' @export
 ##' @rdname stime
-setClass("tgrid", slots=c(start="numeric", end="numeric", delta="numeric", add="numeric", offset="numeric", scale="numeric"),
-         prototype=list(start=0, end=24, delta=1, offset=0,scale=1))
+setClass("tgrid", slots=c(start  = "numeric", 
+                          end    = "numeric", 
+                          delta  = "numeric", 
+                          add    = "numeric", 
+                          offset = "numeric", 
+                          scale  = "numeric"),
+         prototype=list(start  = 0, 
+                        end    = 24, 
+                        delta  = 1, 
+                        offset = 0,
+                        scale  = 1))
 
 ##' @export
 ##' @rdname stime
@@ -63,9 +72,13 @@ as_deslist <- function(data,descol="ID") {
   
   designs <- as.data.frame(distinct_(data,.dots=descol,.keep_all=TRUE))
   
-  lapply(split(designs,designs[,descol]), function(x) {
-      tgrid(start=x$start[1],end=x$end[1],delta=x$delta[1],add=unlist(x$add))
+  sp <- setNames(split(designs,designs[,descol]), paste0(descol,"_",designs[,descol]))
+  
+  out <- lapply(sp, function(x) {
+    tgrid(start=x$start[1],end=x$end[1],delta=x$delta[1],add=unlist(x$add))
   })
+  
+  structure(out, descol=descol)
 }
 
 

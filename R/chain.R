@@ -172,8 +172,8 @@ obsaug <- function(x,value=TRUE,...) {
 ##'
 ##' @param x model object
 ##' @param descol the \code{idata} column name (\code{character}) for design assignment
-##' @param ... \code{tgrid} or \code{tgrids} objects or \code{numeric} vector
 ##' @param deslist a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...
+##' @param ... not used
 ##' 
 ##' @details
 ##' This setup requires the use of an \code{idata_set}, with individual-level data
@@ -207,25 +207,26 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   omat(dmat(1,1,1,1)) %>%
 ##'   carry_out(GRP) %>%
 ##'   idata_set(idata) %>%
-##'   design("amt", des1, des2) %>%
+##'   design(list(des1, des2),"amt") %>%
 ##'   data_set(data) %>%
 ##'   mrgsim %>% 
 ##'   plot(RESP~time|GRP)
-design <- function(x,descol=character(0),...,deslist = list()) {
+design <- function(x, deslist=list(), descol = character(0),...) {
+  
+  if(missing(descol)) {
+    descol <- attr(deslist,"descol") 
+    if(is.null(descol)) {
+      stop("please provide a value for descol",call.=FALSE)
+    }
+  }
   
   descol <- as.character(substitute(descol))
   
   stopifnot(length(descol) <= 1)
   
-  if(length(deslist) > 0) {
-    des <- deslist
-  } else {
-    des <- list(...)
-  }
+  deslist <- deslist[unlist(lapply(deslist,inherits,c("tgrid", "tgrids", "numeric")),use.names=FALSE)]
   
-  des <- des[unlist(lapply(des,inherits,c("tgrid", "tgrids", "numeric")))]
-  
-  if(length(des) ==0) stop("No valid tgrid objects found.")
+  if(length(deslist) ==0) stop("No valid tgrid objects found.")
 
   if(length(descol) ==1) {
     if(!exists("idata", x@args)) {
@@ -236,12 +237,12 @@ design <- function(x,descol=character(0),...,deslist = list()) {
     }
     x@args$idata[,descol] <- as.integer(as.factor(x@args$idata[,descol]))
   } else {
-    if(length(des) > 1) {
+    if(length(deslist) > 1) {
       warning("Multiple designs specified but no idata key; only the first design will be used.",call.=FALSE)
     }
   }
   
-  x@args <- merge(x@args, list(descol=descol, deslist=des),open=TRUE)
+  x@args <- merge(x@args, list(descol=descol, deslist=deslist),open=TRUE)
   
   x
 
