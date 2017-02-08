@@ -3,6 +3,11 @@
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
+/**
+ * @file modelheader.h
+ */
+
+
 #ifndef MODELINCLUDEGUARD
 #define MODELINCLUDEGUARD
 

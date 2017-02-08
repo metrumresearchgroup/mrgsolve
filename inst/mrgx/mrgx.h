@@ -9,12 +9,6 @@
 
 #include "modelheader.h"
 
-/**
- * \defgroup mrgx mrgx namespace
- * @brief Extra C++ functions provided by mrgsolve.
- *
- */
-
 namespace mrgx {
 
 /**
@@ -26,9 +20,6 @@ namespace mrgx {
  * 
  * @param self the model databox object
  * @return the model environment
- * 
- * \ingroup mrgx
- * 
  */
 Rcpp::Environment get_envir(databox& self) {
   return (*(reinterpret_cast<Rcpp::Environment*>(self.envir)));
@@ -44,8 +35,6 @@ Rcpp::Environment get_envir(databox& self) {
  * @param lower lower bound for variates
  * @param upper upper bound for variates
  * @return the simulated variate
- * 
- * \ingroup mrgx
  */
 double rnorm(const double mean, const double sd, const double lower, const double upper) {
   double x = 0;
@@ -65,8 +54,6 @@ double rnorm(const double mean, const double sd, const double lower, const doubl
  * @param lower lower bound for variates
  * @param upper upper bound for variates
  * @return the simulated variate
- * 
- * \ingroup mrgx
  */
 double rlognorm(const double mean, const double sd, const double lower, const double upper) {
   double x = 0;
@@ -85,8 +72,6 @@ double rlognorm(const double mean, const double sd, const double lower, const do
  * @param name name of the R object to get
  * @param self the model data object
  * @return an object from the model environment
- * 
- * \ingroup mrgx
  */
 template<typename T>
 T get(const std::string name, const databox& self) {
@@ -98,8 +83,6 @@ T get(const std::string name, const databox& self) {
  * 
  * @param name name of the R object to get
  * @return an object from the global environment
- * 
- * \ingroup mrgx
  */
 template<typename T>
 T get(const std::string name) {
@@ -114,8 +97,6 @@ T get(const std::string name) {
  * @param package name of the package
  * @param name name of the object to get
  * @return an object from the package namespace
- * 
- * \ingroup mrgx
  */
 template<typename T>
 T get(const std::string package, const std::string name) {
@@ -128,8 +109,6 @@ T get(const std::string package, const std::string name) {
  * 
  * @param filename the name of the RDS file to read
  * @return an object saved in the RDS file
- * 
- * \ingroup mrgx
  */
 template<typename T>
 T readRDS(const std::string filename) {
@@ -141,8 +120,6 @@ T readRDS(const std::string filename) {
  * as a placeholder when declaring an <code>Rcpp::Function</code> object.
  * 
  * @return the function <code>mt_fun</code> from the mrgsolve namespace
- * 
- * \ingroup mrgx
  */
 Rcpp::Function mt_fun() {
   Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");

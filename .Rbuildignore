@@ -1,4 +1,4 @@
-
+inst/doc
 Doxyfile
 doxydoc
 ^.*\.Rproj$

@@ -5,8 +5,7 @@ var indexSectionsWithContent =
   2: "dmoqt",
   3: "dfgimrsty~",
   4: "acdfioprt",
-  5: "m",
-  6: "m"
+  5: "m"
 };
 
 var indexSectionNames =
@@ -16,8 +15,7 @@ var indexSectionNames =
   2: "files",
   3: "functions",
   4: "variables",
-  5: "typedefs",
-  6: "groups"
+  5: "typedefs"
 };
 
 var indexSectionLabels =
@@ -27,7 +25,6 @@ var indexSectionLabels =
   2: "Files",
   3: "Functions",
   4: "Variables",
-  5: "Typedefs",
-  6: "Modules"
+  5: "Typedefs"
 };
 
