@@ -27,10 +27,12 @@ setClass("tgrids", slots=c(data="list"))
 ##' one for each unique value found in \code{descol}.
 ##' 
 ##' @examples
-##' idata <- data_frame(ID=1:4, end=seq(24,96,24), delta=6,
+##' idata <- dplyr::data_frame(ID=1:4, end=seq(24,96,24), delta=6,
 ##' add=list(c(122,124,135),c(111), c(99),c(88)))
 ##' 
-##' idata <- mutate(idata, GRP = ID %%2)
+##' idata <- dplyr::mutate(idata, GRP = ID %%2)
+##' 
+##' idata
 ##' 
 ##' l <- as_deslist(idata,"GRP")
 ##' 
@@ -50,24 +52,20 @@ as_deslist <- function(data,descol="ID") {
     stop("end is a required column for input data", call.=FALSE) 
   }
   if(!is.element("delta", names(data))) {
-    data <- data %>% mutate(delta = 1) 
+    data <- mutate(data,delta = 1) 
   }
   if(!is.element("start", names(data))) {
-    data <- data %>% mutate(start=0) 
+    data <- mutate(data,start=0) 
   }
   if(!is.element("add", names(data))) {
-    data <- data %>% mutate(add=0)
+    data <- mutate(data,add=0)
   }
   
-  designs <- distinct_(data,.dots=descol,.keep_all=TRUE)
+  designs <- as.data.frame(distinct_(data,.dots=descol,.keep_all=TRUE))
   
-  designs <- mutate(group_by_(designs,.dots=descol),
-                    des=list(tgrid(start=first(start),
-                                   end=first(end),
-                                   delta=first(delta),
-                                   add=unlist(add[1]))))
-  
-  return(designs$des)
+  lapply(split(designs,designs[,descol]), function(x) {
+      tgrid(start=x$start[1],end=x$end[1],delta=x$delta[1],add=unlist(x$add))
+  })
 }
 
 
