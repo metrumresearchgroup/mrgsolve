@@ -10,10 +10,6 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ##export R_LIBS=${LIBDIR}
 
-doxygen:
-	doxygen
-
-
 pkgdown:
 	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference(examples=FALSE)' -e 'build_news()'
 
