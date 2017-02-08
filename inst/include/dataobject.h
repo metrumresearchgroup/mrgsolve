@@ -71,7 +71,7 @@ protected:
   uidtype Uid;  ///< unique IDs in the data set
   datarowtype Startrow;  ///< start row for each ID
   datarowtype Endrow; ///< data set end row for each ID
-  int Idcol; ///< which column holds ID value
+  int Idcol; ///< which column holds ID
   
   Rcpp::CharacterVector Data_names;
   

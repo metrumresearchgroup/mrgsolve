@@ -6,7 +6,6 @@
  * @file mrgsolv.h
  */
 
-
 #ifndef MRGSOLV_H
 #define MRGSOLV_H
 
@@ -14,30 +13,47 @@
 #include <map>
 #include <string>
 
+//! vector of doubles
 typedef std::vector<double> dvec;
+
+//! vector of strings
 typedef std::vector<std::string > svec;
+
+//! vector of integers
 typedef std::vector<int > ivec;
 
-// resim objects
 typedef void refun(void*);
+
+/**
+ * @brief Resim functor.
+ * 
+ * These functors are used to re-simulate <code>ETA</code>
+ * and <code>EPS</code> values.
+ * 
+ */
 struct resim {
+  //! resim constructor
   resim(refun* x, void* y) : fun(x), prob(y){}
   resim(){}
   void operator()() {
     return fun(prob);
   }
-private:
-  refun* fun;
-  void* prob;
+  
+protected:
+  refun* fun; ///< function to call to re-simulate
+  void* prob; ///< object to pass to re-simulated function
 };
 
-
+//! signature for <code>$MAIN</code>
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& self, dvec& _pred_, resim& simeta
 
+//! signature for <code>$TABLE</code>
 #define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const dvec& _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_,  databox& self, const dvec& _pred_, dvec& _capture_, resim& simeps
 
+//! signature for <code>$ODE</code>
 #define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const double* _THETA_
 
+//! signature for <code>$PREAMBLE</code>
 #define MRGSOLVE_CONFIG_SIGNATURE databox& self, const double* _THETA_, const double neq, const double npar
 
 #endif

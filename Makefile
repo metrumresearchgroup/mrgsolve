@@ -8,7 +8,7 @@ CHKDIR=Rchecks
 
 
 ## Set libPaths:
-export R_LIBS=${LIBDIR}
+##export R_LIBS=${LIBDIR}
 
 doxygen:
 	doxygen
