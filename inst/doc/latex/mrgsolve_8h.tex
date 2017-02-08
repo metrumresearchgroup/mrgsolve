@@ -1,0 +1,121 @@
+\hypertarget{mrgsolve_8h}{}\section{inst/include/mrgsolve.h File Reference}
+\label{mrgsolve_8h}\index{inst/include/mrgsolve.\+h@{inst/include/mrgsolve.\+h}}
+{\ttfamily \#include \char`\"{}Rcpp\+Include.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$R\+\_\+ext/\+Rdynload.\+h$>$}\newline
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ac8c87d9d1b07b3661f9418b6cdd7d5d0}\label{mrgsolve_8h_ac8c87d9d1b07b3661f9418b6cdd7d5d0}} 
+typedef std\+::map$<$ std\+::string, int $>$ {\bfseries si\+\_\+map}
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ae9590f05cab2a2cf429058c9015c5a40}\label{mrgsolve_8h_ae9590f05cab2a2cf429058c9015c5a40}} 
+typedef std\+::map$<$ std\+::string, double $>$ {\bfseries sd\+\_\+map}
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_afe4758fc2a6fcbc47623fb2510abe34d}\label{mrgsolve_8h_afe4758fc2a6fcbc47623fb2510abe34d}} 
+typedef std\+::vector$<$ std\+::string $>$ {\bfseries svec}
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a808982659d6604781e6c9672cf911f06}\label{mrgsolve_8h_a808982659d6604781e6c9672cf911f06}} 
+typedef std\+::vector$<$ int $>$ {\bfseries ivec}
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ab1922de84368a0fc0497074176807edc}\label{mrgsolve_8h_ab1922de84368a0fc0497074176807edc}} 
+typedef std\+::map$<$ std\+::string, ivec $>$ {\bfseries sivec\+\_\+map}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a7875a4c346c44f7d05f0468c90e25077}\label{mrgsolve_8h_a7875a4c346c44f7d05f0468c90e25077}} 
+void {\bfseries neg\+\_\+istate} (int)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a00a9977bf4077dd8be5a2b67474c4471}\label{mrgsolve_8h_a00a9977bf4077dd8be5a2b67474c4471}} 
+D\+L\+\_\+\+F\+U\+NC {\bfseries tofun} (S\+E\+XP a)
+\item 
+arma\+::mat \hyperlink{mrgsolve_8h_ac2ab0768112007b529276c46bcf0e2d9}{M\+V\+G\+A\+U\+SS} (Rcpp\+::\+Numeric\+Matrix \&O\+M\+E\+G\+A\+\_\+, int n)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a52789c6403a4ee16acbfa268e6fd0ed4}\label{mrgsolve_8h_a52789c6403a4ee16acbfa268e6fd0ed4}} 
+arma\+::mat {\bfseries M\+V\+G\+A\+U\+SS} (arma\+::mat \&O\+M\+E\+G\+A\+\_\+, int n)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ac1d89531e97c18f9401e313b57562a57}\label{mrgsolve_8h_ac1d89531e97c18f9401e313b57562a57}} 
+Rcpp\+::\+List {\bfseries S\+I\+M\+RE} (int n1, Rcpp\+::\+Numeric\+Matrix \&O\+M\+E\+GA, int n2, Rcpp\+::\+Numeric\+Matrix \&S\+I\+G\+MA, int seed)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ac39fd9854c52a1f5b84e54d140661e6b}\label{mrgsolve_8h_ac39fd9854c52a1f5b84e54d140661e6b}} 
+{\footnotesize template$<$class T $>$ }\\void {\bfseries sort\+\_\+unique} (T \&a)
+\item 
+int \hyperlink{mrgsolve_8h_a0e0284edd3176f2becdd55e6de257f4d}{find\+\_\+position} (const Rcpp\+::\+Character\+Vector \&what, const Rcpp\+::\+Character\+Vector \&table)
+\item 
+double \hyperlink{mrgsolve_8h_a29468b32b149176b5187784f69a302ab}{digits} (const double \&a, const double \&b)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a1a99b404cc05553524bdf43c2a73b0e7}\label{mrgsolve_8h_a1a99b404cc05553524bdf43c2a73b0e7}} 
+void {\bfseries decorr} (const Rcpp\+::\+Numeric\+Matrix \&x)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ae270c5f7b8dd3697d5254e2a2efe7582}\label{mrgsolve_8h_ae270c5f7b8dd3697d5254e2a2efe7582}} 
+Rcpp\+::\+Numeric\+Matrix {\bfseries S\+U\+P\+E\+R\+M\+A\+T\+R\+IX} (const Rcpp\+::\+List \&a)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_ac2085092e84e086a09536fdf7467e358}\label{mrgsolve_8h_ac2085092e84e086a09536fdf7467e358}} 
+void {\bfseries from\+\_\+to} (const Rcpp\+::\+Character\+Vector \&a, const Rcpp\+::\+Character\+Vector \&b, Rcpp\+::\+Integer\+Vector \&ai, Rcpp\+::\+Integer\+Vector \&bi)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_aa1217db0a93d9d11806d3ed4fd073cda}\label{mrgsolve_8h_aa1217db0a93d9d11806d3ed4fd073cda}} 
+Rcpp\+::\+List {\bfseries get\+\_\+tokens} (const Rcpp\+::\+Character\+Vector \&code)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a20e0409a78e5926821770fa41f4231fd}\label{mrgsolve_8h_a20e0409a78e5926821770fa41f4231fd}} 
+void {\bfseries set\+\_\+omega} (S\+E\+XP loc, Rcpp\+::\+Numeric\+Matrix \&omega\+\_\+)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a5d420661fd76d94704e0fc292e8fc87d}\label{mrgsolve_8h_a5d420661fd76d94704e0fc292e8fc87d}} 
+Rcpp\+::\+Numeric\+Matrix {\bfseries E\+X\+P\+A\+N\+D\+\_\+\+E\+V\+E\+N\+TS} (const Rcpp\+::\+Integer\+Vector \&idcol\+\_\+, const Rcpp\+::\+Numeric\+Matrix \&events, const Rcpp\+::\+Numeric\+Vector \&id)
+\item 
+\mbox{\Hypertarget{mrgsolve_8h_a10b2d0f56c6bcca710925b413d1f8765}\label{mrgsolve_8h_a10b2d0f56c6bcca710925b413d1f8765}} 
+Rcpp\+::\+Numeric\+Matrix {\bfseries recdata} (Rcpp\+::\+Numeric\+Matrix \&dose, Rcpp\+::\+Numeric\+Matrix \&obs, Rcpp\+::\+Integer\+Vector \&cols, const int n\+\_\+out\+\_\+col, const int n\+\_\+out\+\_\+row, const Rcpp\+::\+Numeric\+Vector \&addl\+\_\+, const Rcpp\+::\+Numeric\+Vector \&ii\+\_\+, const int nid, const int ntime, const int namt, const int nevid, const int ncmt, const int nrate)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{mrgsolve_8h_a29468b32b149176b5187784f69a302ab}\label{mrgsolve_8h_a29468b32b149176b5187784f69a302ab}} 
+\index{mrgsolve.\+h@{mrgsolve.\+h}!digits@{digits}}
+\index{digits@{digits}!mrgsolve.\+h@{mrgsolve.\+h}}
+\subsubsection{\texorpdfstring{digits()}{digits()}}
+{\footnotesize\ttfamily double digits (\begin{DoxyParamCaption}\item[{const double \&}]{a,  }\item[{const double \&}]{b }\end{DoxyParamCaption})}
+
+Limit a number to a specific number of significant digits.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & the number to limit \\
+\hline
+{\em b} & the number of digits \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{mrgsolve_8h_a0e0284edd3176f2becdd55e6de257f4d}\label{mrgsolve_8h_a0e0284edd3176f2becdd55e6de257f4d}} 
+\index{mrgsolve.\+h@{mrgsolve.\+h}!find\+\_\+position@{find\+\_\+position}}
+\index{find\+\_\+position@{find\+\_\+position}!mrgsolve.\+h@{mrgsolve.\+h}}
+\subsubsection{\texorpdfstring{find\+\_\+position()}{find\_position()}}
+{\footnotesize\ttfamily int find\+\_\+position (\begin{DoxyParamCaption}\item[{const Rcpp\+::\+Character\+Vector \&}]{what,  }\item[{const Rcpp\+::\+Character\+Vector \&}]{table }\end{DoxyParamCaption})}
+
+Find the position of a string in a character vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em what} & the string to look for \\
+\hline
+{\em table} & where to look for the string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the position of the string with 0-\/based indexing if the string is found; -\/1 otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{mrgsolve_8h_ac2ab0768112007b529276c46bcf0e2d9}\label{mrgsolve_8h_ac2ab0768112007b529276c46bcf0e2d9}} 
+\index{mrgsolve.\+h@{mrgsolve.\+h}!M\+V\+G\+A\+U\+SS@{M\+V\+G\+A\+U\+SS}}
+\index{M\+V\+G\+A\+U\+SS@{M\+V\+G\+A\+U\+SS}!mrgsolve.\+h@{mrgsolve.\+h}}
+\subsubsection{\texorpdfstring{M\+V\+G\+A\+U\+S\+S()}{MVGAUSS()}}
+{\footnotesize\ttfamily arma\+::mat M\+V\+G\+A\+U\+SS (\begin{DoxyParamCaption}\item[{Rcpp\+::\+Numeric\+Matrix \&}]{O\+M\+E\+G\+A\+\_\+,  }\item[{int}]{n }\end{DoxyParamCaption})}
+
+Simulate from a multivariate normal distribution with mean 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em O\+M\+E\+G\+A\+\_\+} & the covariance matrix \\
+\hline
+{\em n} & the number of variates to simulate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+matrix of simulated variates 
+\end{DoxyReturn}

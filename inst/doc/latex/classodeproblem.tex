@@ -1,0 +1,344 @@
+\hypertarget{classodeproblem}{}\section{odeproblem Class Reference}
+\label{classodeproblem}\index{odeproblem@{odeproblem}}
+Inheritance diagram for odeproblem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classodeproblem}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classodeproblem_acc18c1c3dfc77ab1191daffdd4382f14}\label{classodeproblem_acc18c1c3dfc77ab1191daffdd4382f14}} 
+{\bfseries odeproblem} (Rcpp\+::\+Numeric\+Vector param, Rcpp\+::\+Numeric\+Vector init, Rcpp\+::\+List funs, int n\+\_\+capture\+\_\+)
+\item 
+virtual \hyperlink{classodeproblem_a00c35020fc03286fd4596f25b3d82e34}{$\sim$odeproblem} ()
+\begin{DoxyCompactList}\small\item\em Destructor for odeproblem object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a0d35904cd64604463cba0065a3fc9c01}\label{classodeproblem_a0d35904cd64604463cba0065a3fc9c01}} 
+void {\bfseries advance} (double tfrom, double tto)
+\item 
+\mbox{\Hypertarget{classodeproblem_a3846fa84421ca3e2f84eceaf2958c519}\label{classodeproblem_a3846fa84421ca3e2f84eceaf2958c519}} 
+void {\bfseries call\+\_\+derivs} (int $\ast$neq, double $\ast$t, double $\ast$y, double $\ast$ydot)
+\item 
+\mbox{\Hypertarget{classodeproblem_a2de806c10c0ce7e2a422b9d4210640f9}\label{classodeproblem_a2de806c10c0ce7e2a422b9d4210640f9}} 
+void {\bfseries init} (int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_a1c53a46511e8c1739e4132073304c5e7}\label{classodeproblem_a1c53a46511e8c1739e4132073304c5e7}} 
+double {\bfseries init} (int pos)
+\item 
+void \hyperlink{classodeproblem_a415e0001bfe1282764c339b6e8695ab8}{init\+\_\+call} (const double \&time)
+\item 
+void \hyperlink{classodeproblem_adc4a5dbcc9561903a7aa81a90e8a908b}{init\+\_\+call\+\_\+record} (const double \&time)
+\item 
+void \hyperlink{classodeproblem_a258d7fdca6eb1b49cac25cea9fcca9c4}{y\+\_\+init} (int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_a21fec9644d1f590e11fc80cd50ff5f5c}\label{classodeproblem_a21fec9644d1f590e11fc80cd50ff5f5c}} 
+void {\bfseries y\+\_\+init} (Rcpp\+::\+Numeric\+Vector x)
+\item 
+\mbox{\Hypertarget{classodeproblem_aeb23afacc04444d129c91746e003240a}\label{classodeproblem_aeb23afacc04444d129c91746e003240a}} 
+void {\bfseries y\+\_\+add} (const unsigned int pos, const double \&value)
+\item 
+void \hyperlink{classodeproblem_a62371ab3a7331c680da61c34e0a77390}{table\+\_\+call} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a5671e548c6e81afd353a45b4b3c845af}\label{classodeproblem_a5671e548c6e81afd353a45b4b3c845af}} 
+void {\bfseries table\+\_\+init\+\_\+call} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a23ba805e57f18ec631645247c631c0ac}\label{classodeproblem_a23ba805e57f18ec631645247c631c0ac}} 
+void {\bfseries config\+\_\+call} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a40b09d94a66b474fd65213e415ddc969}\label{classodeproblem_a40b09d94a66b474fd65213e415ddc969}} 
+void {\bfseries set\+\_\+d} (rec\+\_\+ptr this\+\_\+rec)
+\item 
+\mbox{\Hypertarget{classodeproblem_a7d4724eff5756cd90aa4d8d7571b932e}\label{classodeproblem_a7d4724eff5756cd90aa4d8d7571b932e}} 
+void {\bfseries omega} (Rcpp\+::\+Numeric\+Matrix \&x)
+\item 
+\mbox{\Hypertarget{classodeproblem_abb8cdbe6d433204cb209405789b521f8}\label{classodeproblem_abb8cdbe6d433204cb209405789b521f8}} 
+void {\bfseries sigma} (Rcpp\+::\+Numeric\+Matrix \&x)
+\item 
+\mbox{\Hypertarget{classodeproblem_a2827c3ef1ce3acaa967dd6e315debfe3}\label{classodeproblem_a2827c3ef1ce3acaa967dd6e315debfe3}} 
+arma\+::mat {\bfseries mv\+\_\+omega} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_aa7d69c4024cf6783ce7c2556367a0675}\label{classodeproblem_aa7d69c4024cf6783ce7c2556367a0675}} 
+arma\+::mat {\bfseries mv\+\_\+sigma} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_a6a1253090d65c34a9a26e77b01a82573}\label{classodeproblem_a6a1253090d65c34a9a26e77b01a82573}} 
+void {\bfseries pass\+\_\+envir} (Rcpp\+::\+Environment $\ast$x)
+\item 
+\mbox{\Hypertarget{classodeproblem_a962ce2e5ac9d9b6514e6d06c52ece74e}\label{classodeproblem_a962ce2e5ac9d9b6514e6d06c52ece74e}} 
+bool {\bfseries C\+F\+O\+N\+S\+T\+OP} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_aeedc05b398a0440b9d8f96876e56a8a6}\label{classodeproblem_aeedc05b398a0440b9d8f96876e56a8a6}} 
+const double $\ast$ {\bfseries param} () const
+\item 
+\mbox{\Hypertarget{classodeproblem_a9669835dd93ca8415466b031aaccf0a5}\label{classodeproblem_a9669835dd93ca8415466b031aaccf0a5}} 
+void {\bfseries param} (int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_af6e95b3ef6e66fd90bd74d9d3e4cfdb9}\label{classodeproblem_af6e95b3ef6e66fd90bd74d9d3e4cfdb9}} 
+void {\bfseries rate} (unsigned int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_abb46c0c4c4ba37273775f207989b8593}\label{classodeproblem_abb46c0c4c4ba37273775f207989b8593}} 
+double {\bfseries rate} (unsigned int pos)
+\item 
+\mbox{\Hypertarget{classodeproblem_a037f4a9a3c152237557d092f5c9b18f2}\label{classodeproblem_a037f4a9a3c152237557d092f5c9b18f2}} 
+void {\bfseries rate0} (unsigned int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_a1a26afe1439b4b827e346a1eec4d5284}\label{classodeproblem_a1a26afe1439b4b827e346a1eec4d5284}} 
+double {\bfseries rate0} (unsigned int pos)
+\item 
+\mbox{\Hypertarget{classodeproblem_a7b5b4b266d8205069f6fa806fec959bd}\label{classodeproblem_a7b5b4b266d8205069f6fa806fec959bd}} 
+int {\bfseries rate\+\_\+count} (unsigned int pos)
+\item 
+\mbox{\Hypertarget{classodeproblem_a7985d0d2c71f3210fa043038efa7696b}\label{classodeproblem_a7985d0d2c71f3210fa043038efa7696b}} 
+void {\bfseries rate\+\_\+add} (unsigned int pos, const double \&value)
+\item 
+\mbox{\Hypertarget{classodeproblem_a6cd2af7fdeca1734d4ac96c31286b086}\label{classodeproblem_a6cd2af7fdeca1734d4ac96c31286b086}} 
+void {\bfseries rate\+\_\+rm} (unsigned int pos, const double \&value)
+\item 
+\mbox{\Hypertarget{classodeproblem_aec484a1e3327cac5360e9b323ce995f6}\label{classodeproblem_aec484a1e3327cac5360e9b323ce995f6}} 
+void {\bfseries rate\+\_\+bump} (const unsigned int pos, const double \&value)
+\item 
+\mbox{\Hypertarget{classodeproblem_a89919c8495a969c85027b645cc611549}\label{classodeproblem_a89919c8495a969c85027b645cc611549}} 
+void {\bfseries rate\+\_\+reset} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a6b01a064fdeca43c8d70c9acaf4cd01a}\label{classodeproblem_a6b01a064fdeca43c8d70c9acaf4cd01a}} 
+void {\bfseries dur} (unsigned int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_aa55e249b79cee0dd7292e2e26c512d4d}\label{classodeproblem_aa55e249b79cee0dd7292e2e26c512d4d}} 
+double {\bfseries dur} (unsigned int pos)
+\item 
+\mbox{\Hypertarget{classodeproblem_ae7047dc9fe7335cb4367a90a945801b5}\label{classodeproblem_ae7047dc9fe7335cb4367a90a945801b5}} 
+void {\bfseries fbio} (unsigned int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_abe453ef912e890b1f6e1fea51e627a5e}\label{classodeproblem_abe453ef912e890b1f6e1fea51e627a5e}} 
+double {\bfseries fbio} (unsigned int pos)
+\item 
+\mbox{\Hypertarget{classodeproblem_a486c40b4b6746afe3aa079cb7bb5c7dc}\label{classodeproblem_a486c40b4b6746afe3aa079cb7bb5c7dc}} 
+double {\bfseries alag} (int cmt)
+\item 
+\mbox{\Hypertarget{classodeproblem_ae210665b2d2c52c802aa2d95304ba111}\label{classodeproblem_ae210665b2d2c52c802aa2d95304ba111}} 
+void {\bfseries reset\+\_\+newid} (const double id\+\_\+)
+\item 
+\mbox{\Hypertarget{classodeproblem_a54f096ed754117bfe2c1a58d6661c69c}\label{classodeproblem_a54f096ed754117bfe2c1a58d6661c69c}} 
+void {\bfseries eta} (int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_a21f796445e785d46939ac4c50e719c37}\label{classodeproblem_a21f796445e785d46939ac4c50e719c37}} 
+void {\bfseries eps} (int pos, double value)
+\item 
+\mbox{\Hypertarget{classodeproblem_ab23130b9de7b9b8af0f72a01d1168a87}\label{classodeproblem_ab23130b9de7b9b8af0f72a01d1168a87}} 
+bool {\bfseries systemoff} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a2b6729af8ce989fe14c54657ae7c59f1}\label{classodeproblem_a2b6729af8ce989fe14c54657ae7c59f1}} 
+void {\bfseries on} (unsigned short int cmt)
+\item 
+\mbox{\Hypertarget{classodeproblem_a0f76cc6a34e82e34edc6c68c390bddae}\label{classodeproblem_a0f76cc6a34e82e34edc6c68c390bddae}} 
+void {\bfseries off} (unsigned short int cmt)
+\item 
+\mbox{\Hypertarget{classodeproblem_afa433b145c17640cbcf31e6a72e009f6}\label{classodeproblem_afa433b145c17640cbcf31e6a72e009f6}} 
+int {\bfseries is\+\_\+on} (unsigned int eq\+\_\+n)
+\item 
+\mbox{\Hypertarget{classodeproblem_a570f475a1f81d2128fa90b9551ec9c37}\label{classodeproblem_a570f475a1f81d2128fa90b9551ec9c37}} 
+void {\bfseries time} (double time\+\_\+)
+\item 
+\mbox{\Hypertarget{classodeproblem_a370c76cd4b8ae3ebd2d9ce3b1dd6a013}\label{classodeproblem_a370c76cd4b8ae3ebd2d9ce3b1dd6a013}} 
+void {\bfseries newind} (unsigned int newind\+\_\+)
+\item 
+\mbox{\Hypertarget{classodeproblem_a352d6631fea50cfe328011c6c337e8d7}\label{classodeproblem_a352d6631fea50cfe328011c6c337e8d7}} 
+unsigned int {\bfseries newind} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a01838d1e6b48e01746eea68d4f1603a2}\label{classodeproblem_a01838d1e6b48e01746eea68d4f1603a2}} 
+void {\bfseries advan} (int x)
+\item 
+\mbox{\Hypertarget{classodeproblem_a07c37e014e44c8cb933701870ca7f639}\label{classodeproblem_a07c37e014e44c8cb933701870ca7f639}} 
+int {\bfseries advan} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a197d9523fe129bb7e35e4e20c8e09fc2}\label{classodeproblem_a197d9523fe129bb7e35e4e20c8e09fc2}} 
+void {\bfseries advan2} (const double \&tfrom, const double \&tto)
+\item 
+\mbox{\Hypertarget{classodeproblem_a9e2b9f80bd614d5a03109e75e1fde18b}\label{classodeproblem_a9e2b9f80bd614d5a03109e75e1fde18b}} 
+void {\bfseries advan4} (const double \&tfrom, const double \&tto)
+\item 
+\mbox{\Hypertarget{classodeproblem_a96c6c7170fe10ea41cd889e5ff0a4dcd}\label{classodeproblem_a96c6c7170fe10ea41cd889e5ff0a4dcd}} 
+void {\bfseries neta} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_a99d73608dddbb8fdaa58592bda59d45a}\label{classodeproblem_a99d73608dddbb8fdaa58592bda59d45a}} 
+void {\bfseries neps} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_ad7800dc80fb646deea76e440af5fa6c6}\label{classodeproblem_ad7800dc80fb646deea76e440af5fa6c6}} 
+void {\bfseries nid} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_ae02303871f68a48c256ccc7ce2c71981}\label{classodeproblem_ae02303871f68a48c256ccc7ce2c71981}} 
+void {\bfseries nrow} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_ada58c0594a72e21a3aa3c56876599df4}\label{classodeproblem_ada58c0594a72e21a3aa3c56876599df4}} 
+void {\bfseries idn} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_ad385d5c62a5a215b537cbd88a98e4d28}\label{classodeproblem_ad385d5c62a5a215b537cbd88a98e4d28}} 
+void {\bfseries rown} (int n)
+\item 
+\mbox{\Hypertarget{classodeproblem_a5ae9d2f4c7b37407ddeddfdbcae7590c}\label{classodeproblem_a5ae9d2f4c7b37407ddeddfdbcae7590c}} 
+dvec \& {\bfseries mtime} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a54adaa665b551ba6ffe835e2d2ddf48f}\label{classodeproblem_a54adaa665b551ba6ffe835e2d2ddf48f}} 
+dvec \& {\bfseries get\+\_\+capture} ()
+\item 
+\mbox{\Hypertarget{classodeproblem_a9a053ea59d585643d52825c31e9ed203}\label{classodeproblem_a9a053ea59d585643d52825c31e9ed203}} 
+double {\bfseries capture} (int i)
+\item 
+\mbox{\Hypertarget{classodeproblem_a0058d8ce64adbefd960571d19de47ca4}\label{classodeproblem_a0058d8ce64adbefd960571d19de47ca4}} 
+void {\bfseries copy\+\_\+parin} (const Rcpp\+::\+List \&parin)
+\item 
+\mbox{\Hypertarget{classodeproblem_a44cc384c4d3c6e9c95dbafdfc92ba7b6}\label{classodeproblem_a44cc384c4d3c6e9c95dbafdfc92ba7b6}} 
+void {\bfseries copy\+\_\+funs} (const Rcpp\+::\+List \&funs)
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classodeproblem_a8d6506f6a9e0676911ee86659db725ae}\label{classodeproblem_a8d6506f6a9e0676911ee86659db725ae}} 
+double $\ast$ \hyperlink{classodeproblem_a8d6506f6a9e0676911ee86659db725ae}{Param}
+\begin{DoxyCompactList}\small\item\em model parameters \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_ae467cabc47b5d75c07cb2d48915d4507}\label{classodeproblem_ae467cabc47b5d75c07cb2d48915d4507}} 
+dvec \hyperlink{classodeproblem_ae467cabc47b5d75c07cb2d48915d4507}{R0}
+\begin{DoxyCompactList}\small\item\em acutal current infusion rate \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a51662bd0cd437b3481f83b662172d505}\label{classodeproblem_a51662bd0cd437b3481f83b662172d505}} 
+std\+::vector$<$ unsigned int $>$ \hyperlink{classodeproblem_a51662bd0cd437b3481f83b662172d505}{infusion\+\_\+count}
+\begin{DoxyCompactList}\small\item\em number of active infusions \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_af0b19177db1bdd5a610b34c298b8a7e5}\label{classodeproblem_af0b19177db1bdd5a610b34c298b8a7e5}} 
+dvec \hyperlink{classodeproblem_af0b19177db1bdd5a610b34c298b8a7e5}{R}
+\begin{DoxyCompactList}\small\item\em receive user input for infusion rate \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_af46382c0b9a5a489f726d0fb360d9e40}\label{classodeproblem_af46382c0b9a5a489f726d0fb360d9e40}} 
+dvec \hyperlink{classodeproblem_af46382c0b9a5a489f726d0fb360d9e40}{D}
+\begin{DoxyCompactList}\small\item\em receive user input for infusion duration \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a32596188c9d34831dd386240953691c4}\label{classodeproblem_a32596188c9d34831dd386240953691c4}} 
+dvec \hyperlink{classodeproblem_a32596188c9d34831dd386240953691c4}{Init\+\_\+value}
+\begin{DoxyCompactList}\small\item\em initial conditions \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_ab085f5070edbc99c01c55513ed74bdb6}\label{classodeproblem_ab085f5070edbc99c01c55513ed74bdb6}} 
+dvec \hyperlink{classodeproblem_ab085f5070edbc99c01c55513ed74bdb6}{Init\+\_\+dummy}
+\begin{DoxyCompactList}\small\item\em initial conditions for user input \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a5443840315f48d9d1d9843cac27e80d9}\label{classodeproblem_a5443840315f48d9d1d9843cac27e80d9}} 
+dvec \hyperlink{classodeproblem_a5443840315f48d9d1d9843cac27e80d9}{F}
+\begin{DoxyCompactList}\small\item\em bioavability \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a6148fd047b80b6c33a5f2468c3b134af}\label{classodeproblem_a6148fd047b80b6c33a5f2468c3b134af}} 
+dvec \hyperlink{classodeproblem_a6148fd047b80b6c33a5f2468c3b134af}{Alag}
+\begin{DoxyCompactList}\small\item\em dosing lag time \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_afa0a937e8489a0249ad57a34d9b802a5}\label{classodeproblem_afa0a937e8489a0249ad57a34d9b802a5}} 
+deriv\+\_\+func $\ast$ \hyperlink{classodeproblem_afa0a937e8489a0249ad57a34d9b802a5}{Derivs}
+\begin{DoxyCompactList}\small\item\em {\ttfamily \$\+O\+DE} function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a4d0e7e54edac6020951cc005b3d529ec}\label{classodeproblem_a4d0e7e54edac6020951cc005b3d529ec}} 
+init\+\_\+func $\ast$ \hyperlink{classodeproblem_a4d0e7e54edac6020951cc005b3d529ec}{Inits}
+\begin{DoxyCompactList}\small\item\em {\ttfamily \$\+M\+A\+IN} function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_ac117624df1306eb9cdbd92207c78afe7}\label{classodeproblem_ac117624df1306eb9cdbd92207c78afe7}} 
+table\+\_\+func $\ast$ \hyperlink{classodeproblem_ac117624df1306eb9cdbd92207c78afe7}{Table}
+\begin{DoxyCompactList}\small\item\em {\ttfamily \$\+T\+A\+B\+LE} function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a9a44457570e8d3358a0b41903a78e592}\label{classodeproblem_a9a44457570e8d3358a0b41903a78e592}} 
+config\+\_\+func $\ast$ \hyperlink{classodeproblem_a9a44457570e8d3358a0b41903a78e592}{Config}
+\begin{DoxyCompactList}\small\item\em {\ttfamily \$\+P\+R\+E\+A\+M\+B\+LE} function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a205d9c5f24a66739716e3d4db3382043}\label{classodeproblem_a205d9c5f24a66739716e3d4db3382043}} 
+std\+::vector$<$ int $>$ \hyperlink{classodeproblem_a205d9c5f24a66739716e3d4db3382043}{On}
+\begin{DoxyCompactList}\small\item\em compartment on/off indicator \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a950b8464c187a2b46fa6bfaa2052ff85}\label{classodeproblem_a950b8464c187a2b46fa6bfaa2052ff85}} 
+\hyperlink{structdatabox}{databox} \hyperlink{classodeproblem_a950b8464c187a2b46fa6bfaa2052ff85}{d}
+\begin{DoxyCompactList}\small\item\em various data passed to model functions \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classodeproblem_a03f5d0954b46554399ff09ee131f9071}\label{classodeproblem_a03f5d0954b46554399ff09ee131f9071}} 
+int {\bfseries Advan}
+\item 
+\mbox{\Hypertarget{classodeproblem_a2e097ea96af2c293904053e764e63263}\label{classodeproblem_a2e097ea96af2c293904053e764e63263}} 
+dvec {\bfseries a}
+\item 
+\mbox{\Hypertarget{classodeproblem_a2cc33c6e54bfecab2128965d712f4ddf}\label{classodeproblem_a2cc33c6e54bfecab2128965d712f4ddf}} 
+dvec {\bfseries alpha}
+\item 
+\mbox{\Hypertarget{classodeproblem_a4f2c3157beb52a27c029b4cb7bb8d7e5}\label{classodeproblem_a4f2c3157beb52a27c029b4cb7bb8d7e5}} 
+\hyperlink{structresim}{resim} {\bfseries simeta}
+\item 
+\mbox{\Hypertarget{classodeproblem_a312484a436a3bb0ea55276fa97d23fb5}\label{classodeproblem_a312484a436a3bb0ea55276fa97d23fb5}} 
+\hyperlink{structresim}{resim} {\bfseries simeps}
+\item 
+\mbox{\Hypertarget{classodeproblem_a38b999143a87c562d9db57e5fb82aa83}\label{classodeproblem_a38b999143a87c562d9db57e5fb82aa83}} 
+arma\+::mat {\bfseries Omega}
+\item 
+\mbox{\Hypertarget{classodeproblem_ada2a77ef3f99c53d24e64026f356b99d}\label{classodeproblem_ada2a77ef3f99c53d24e64026f356b99d}} 
+arma\+::mat {\bfseries Sigma}
+\item 
+\mbox{\Hypertarget{classodeproblem_a2f93a3e1c10c2d1bba1a359bb3321cc0}\label{classodeproblem_a2f93a3e1c10c2d1bba1a359bb3321cc0}} 
+dvec {\bfseries pred}
+\item 
+\mbox{\Hypertarget{classodeproblem_a4244e3ca9e9d52598d776c45fbb18ca4}\label{classodeproblem_a4244e3ca9e9d52598d776c45fbb18ca4}} 
+dvec {\bfseries Capture}
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classodeproblem_a00c35020fc03286fd4596f25b3d82e34}\label{classodeproblem_a00c35020fc03286fd4596f25b3d82e34}} 
+\index{odeproblem@{odeproblem}!````~odeproblem@{$\sim$odeproblem}}
+\index{````~odeproblem@{$\sim$odeproblem}!odeproblem@{odeproblem}}
+\subsubsection{\texorpdfstring{$\sim$odeproblem()}{~odeproblem()}}
+{\footnotesize\ttfamily odeproblem\+::$\sim$odeproblem (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Destructor for odeproblem object. 
+
+Upon object construction, odeproblem dynamically allocates six arrays. These arrays are \char`\"{}deleted\char`\"{} upon destruction.
+
+\begin{DoxyReturn}{Returns}
+Void 
+\end{DoxyReturn}
+\begin{DoxyDate}{Date}
+January, 2014 
+\end{DoxyDate}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classodeproblem_a415e0001bfe1282764c339b6e8695ab8}\label{classodeproblem_a415e0001bfe1282764c339b6e8695ab8}} 
+\index{odeproblem@{odeproblem}!init\+\_\+call@{init\+\_\+call}}
+\index{init\+\_\+call@{init\+\_\+call}!odeproblem@{odeproblem}}
+\subsubsection{\texorpdfstring{init\+\_\+call()}{init\_call()}}
+{\footnotesize\ttfamily void odeproblem\+::init\+\_\+call (\begin{DoxyParamCaption}\item[{const double \&}]{time }\end{DoxyParamCaption})}
+
+Call \$\+M\+A\+IN to get the initial conditions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & the time to assume for the calculation \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classodeproblem_adc4a5dbcc9561903a7aa81a90e8a908b}\label{classodeproblem_adc4a5dbcc9561903a7aa81a90e8a908b}} 
+\index{odeproblem@{odeproblem}!init\+\_\+call\+\_\+record@{init\+\_\+call\+\_\+record}}
+\index{init\+\_\+call\+\_\+record@{init\+\_\+call\+\_\+record}!odeproblem@{odeproblem}}
+\subsubsection{\texorpdfstring{init\+\_\+call\+\_\+record()}{init\_call\_record()}}
+{\footnotesize\ttfamily void odeproblem\+::init\+\_\+call\+\_\+record (\begin{DoxyParamCaption}\item[{const double \&}]{time }\end{DoxyParamCaption})}
+
+Call \$\+M\+A\+IN with the dummy initial condition vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & the time to assume when making the call. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classodeproblem_a62371ab3a7331c680da61c34e0a77390}\label{classodeproblem_a62371ab3a7331c680da61c34e0a77390}} 
+\index{odeproblem@{odeproblem}!table\+\_\+call@{table\+\_\+call}}
+\index{table\+\_\+call@{table\+\_\+call}!odeproblem@{odeproblem}}
+\subsubsection{\texorpdfstring{table\+\_\+call()}{table\_call()}}
+{\footnotesize\ttfamily void odeproblem\+::table\+\_\+call (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Call \$\+T\+A\+B\+LE. \mbox{\Hypertarget{classodeproblem_a258d7fdca6eb1b49cac25cea9fcca9c4}\label{classodeproblem_a258d7fdca6eb1b49cac25cea9fcca9c4}} 
+\index{odeproblem@{odeproblem}!y\+\_\+init@{y\+\_\+init}}
+\index{y\+\_\+init@{y\+\_\+init}!odeproblem@{odeproblem}}
+\subsubsection{\texorpdfstring{y\+\_\+init()}{y\_init()}}
+{\footnotesize\ttfamily void odeproblem\+::y\+\_\+init (\begin{DoxyParamCaption}\item[{int}]{pos,  }\item[{double}]{value }\end{DoxyParamCaption})}
+
+Assigns values to both the compartment and the vector of initial conditions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em pos} & the compartment number (C++ indexing) \\
+\hline
+{\em value} & the value for the compartment \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+inst/include/\hyperlink{odeproblem_8h}{odeproblem.\+h}\item 
+src/\hyperlink{odeproblem_8cpp}{odeproblem.\+cpp}\end{DoxyCompactItemize}

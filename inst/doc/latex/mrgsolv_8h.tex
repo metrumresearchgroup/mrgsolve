@@ -1,0 +1,40 @@
+\hypertarget{mrgsolv_8h}{}\section{inst/include/mrgsolv.h File Reference}
+\label{mrgsolv_8h}\index{inst/include/mrgsolv.\+h@{inst/include/mrgsolv.\+h}}
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structresim}{resim}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_aac42da048cebf6c173c6ad0830d5983b}\label{mrgsolv_8h_aac42da048cebf6c173c6ad0830d5983b}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+I\+N\+I\+T\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE}~dvec\& \+\_\+\+A\+\_\+0\+\_\+,const double$\ast$ \+\_\+\+A\+\_\+, const double$\ast$ \+\_\+\+T\+H\+E\+T\+A\+\_\+, dvec\& \+\_\+\+F\+\_\+, dvec\& \+\_\+\+A\+L\+A\+G\+\_\+, dvec\& \+\_\+\+R\+\_\+, dvec\& \+\_\+\+D\+\_\+,  \hyperlink{structdatabox}{databox}\& self, dvec\& \+\_\+pred\+\_\+, \hyperlink{structresim}{resim}\& simeta
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_a0063904bf51d98d5a65ba0aa3f648ecb}\label{mrgsolv_8h_a0063904bf51d98d5a65ba0aa3f648ecb}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+T\+A\+B\+L\+E\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE}~const double$\ast$ \+\_\+\+A\+\_\+, const dvec\& \+\_\+\+A\+\_\+0\+\_\+,  const double$\ast$ \+\_\+\+T\+H\+E\+T\+A\+\_\+,  const dvec\& \+\_\+\+F\+\_\+, const dvec\& \+\_\+\+R\+\_\+,  \hyperlink{structdatabox}{databox}\& self, const dvec\& \+\_\+pred\+\_\+, dvec\& \+\_\+capture\+\_\+, \hyperlink{structresim}{resim}\& simeps
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_a5621b41abbd9a4194934f55a6dbb8ee8}\label{mrgsolv_8h_a5621b41abbd9a4194934f55a6dbb8ee8}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+O\+D\+E\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE}~const double$\ast$ \+\_\+\+O\+D\+E\+T\+I\+M\+E\+\_\+, const double$\ast$ \+\_\+\+A\+\_\+, double$\ast$ \+\_\+\+D\+A\+D\+T\+\_\+,  const dvec\& \+\_\+\+A\+\_\+0\+\_\+, const double$\ast$ \+\_\+\+T\+H\+E\+T\+A\+\_\+
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_ae6fbbf87fdb55cef851d6fca83a34080}\label{mrgsolv_8h_ae6fbbf87fdb55cef851d6fca83a34080}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE}~\hyperlink{structdatabox}{databox}\& self, const double$\ast$ \+\_\+\+T\+H\+E\+T\+A\+\_\+, const double neq, const double npar
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_ac6aa1a2351760492203846ae74778c05}\label{mrgsolv_8h_ac6aa1a2351760492203846ae74778c05}} 
+typedef std\+::vector$<$ double $>$ {\bfseries dvec}
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_a92b5a0babe23f1e279da2a838c87bb2f}\label{mrgsolv_8h_a92b5a0babe23f1e279da2a838c87bb2f}} 
+typedef std\+::vector$<$ std\+::string $>$ {\bfseries svec}
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_abecc6891c535bbe7d4375a4e4d782df9}\label{mrgsolv_8h_abecc6891c535bbe7d4375a4e4d782df9}} 
+typedef std\+::vector$<$ int $>$ {\bfseries ivec}
+\item 
+\mbox{\Hypertarget{mrgsolv_8h_ac613b4ca01a92796048a8df95c0c60a8}\label{mrgsolv_8h_ac613b4ca01a92796048a8df95c0c60a8}} 
+typedef void {\bfseries refun}(void $\ast$)
+\end{DoxyCompactItemize}

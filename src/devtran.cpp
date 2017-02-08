@@ -3,6 +3,23 @@
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
+
+/**
+ * @mainpage
+ * 
+ * Documentation for mrgsolve C++ code.
+ *
+ *
+ *
+ */
+
+/**
+ * @file devtran.cpp
+ * 
+ */
+
+
+
 #include <boost/shared_ptr.hpp>
 #include <boost/pointer_cast.hpp>
 #include <string>
@@ -17,6 +34,8 @@
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
 #define __ALAG_POS -1200
+
+
 
 /** Perform a simulation run.
  * 

@@ -1,4 +1,6 @@
 
+Doxyfile
+doxydoc
 ^.*\.Rproj$
 ^\.Rproj\.user$
 vignettes/.*[.]toc$

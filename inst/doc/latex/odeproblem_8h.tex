@@ -1,0 +1,108 @@
+\hypertarget{odeproblem_8h}{}\section{inst/include/odeproblem.h File Reference}
+\label{odeproblem_8h}\index{inst/include/odeproblem.\+h@{inst/include/odeproblem.\+h}}
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}odepack\+\_\+dlsoda.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}mrgsolv.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Rcpp\+Include.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}datarecord.\+h\char`\"{}}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structdatabox}{databox}
+\item 
+class \hyperlink{classodeproblem}{odeproblem}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a33492bb6228a466e2caca33e164ad6ea}\label{odeproblem_8h_a33492bb6228a466e2caca33e164ad6ea}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+CL}~(pred\mbox{[}0\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_ac295a41c710e3fc1bf93d6917ea29fe7}\label{odeproblem_8h_ac295a41c710e3fc1bf93d6917ea29fe7}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+VC}~(pred\mbox{[}1\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_af53ae3e52d06521bb1fd0d261ea5f647}\label{odeproblem_8h_af53ae3e52d06521bb1fd0d261ea5f647}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+KA}~(pred\mbox{[}2\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_ae5a458f641ee2fbb7ba21baa02a76d82}\label{odeproblem_8h_ae5a458f641ee2fbb7ba21baa02a76d82}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+Q}~(pred\mbox{[}3\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_ab70efdc55e40c94b020b0b75c427c3a8}\label{odeproblem_8h_ab70efdc55e40c94b020b0b75c427c3a8}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+VP}~(pred\mbox{[}4\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a110797c1f6142a3940dd7463e9dfaddb}\label{odeproblem_8h_a110797c1f6142a3940dd7463e9dfaddb}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+K10}~(pred\mbox{[}0\mbox{]}/pred\mbox{[}1\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_acf5dee3fad9134130c3e6abf320e192e}\label{odeproblem_8h_acf5dee3fad9134130c3e6abf320e192e}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+K12}~(pred\mbox{[}3\mbox{]}/pred\mbox{[}1\mbox{]})
+\item 
+\mbox{\Hypertarget{odeproblem_8h_ae18a2783e6410f4d8889e2523fec7dd8}\label{odeproblem_8h_ae18a2783e6410f4d8889e2523fec7dd8}} 
+\#define {\bfseries M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+G\+E\+T\+\_\+\+P\+R\+E\+D\+\_\+\+K21}~(pred\mbox{[}3\mbox{]}/pred\mbox{[}4\mbox{]})
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a14471db201acb4a42c656e445130d955}\label{odeproblem_8h_a14471db201acb4a42c656e445130d955}} 
+typedef std\+::vector$<$ rec\+\_\+ptr $>$ {\bfseries reclist}
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a0e40dc57f752f27647c20fc248b86c6f}\label{odeproblem_8h_a0e40dc57f752f27647c20fc248b86c6f}} 
+typedef std\+::vector$<$ reclist $>$ {\bfseries recstack}
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a6192c201d632b8498cc03adf5a28e309}\label{odeproblem_8h_a6192c201d632b8498cc03adf5a28e309}} 
+typedef void {\bfseries init\+\_\+func}(M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+I\+N\+I\+T\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a283822b36ffc7e50e9ed7e28ac3d261c}\label{odeproblem_8h_a283822b36ffc7e50e9ed7e28ac3d261c}} 
+typedef void {\bfseries table\+\_\+func}(M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+T\+A\+B\+L\+E\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a9865ab8bde33af2df4bccee47db6d44a}\label{odeproblem_8h_a9865ab8bde33af2df4bccee47db6d44a}} 
+typedef void {\bfseries deriv\+\_\+func}(M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+O\+D\+E\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_ab0c5ef95f66e5b23dc7868228e3a5900}\label{odeproblem_8h_ab0c5ef95f66e5b23dc7868228e3a5900}} 
+typedef void {\bfseries config\+\_\+func}(M\+R\+G\+S\+O\+L\+V\+E\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+S\+I\+G\+N\+A\+T\+U\+RE)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a7b2a050194d6b2fb9d7ef190efbdfdf1}\label{odeproblem_8h_a7b2a050194d6b2fb9d7ef190efbdfdf1}} 
+typedef void {\bfseries main\+\_\+deriv\+\_\+func}(int $\ast$neq, double $\ast$t, double $\ast$y, double $\ast$ydot, \hyperlink{classodeproblem}{odeproblem} $\ast$prob)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a885b44fadcd74c7764aba2a2a08fef6a}\label{odeproblem_8h_a885b44fadcd74c7764aba2a2a08fef6a}} 
+deriv\+\_\+func $\ast$ {\bfseries as\+\_\+deriv\+\_\+func} (S\+E\+XP derivs)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_afe5e8927aea65c7195344871542e2d8b}\label{odeproblem_8h_afe5e8927aea65c7195344871542e2d8b}} 
+init\+\_\+func $\ast$ {\bfseries as\+\_\+init\+\_\+func} (S\+E\+XP inits)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a313b7599ffa43856a5a34c247609b081}\label{odeproblem_8h_a313b7599ffa43856a5a34c247609b081}} 
+table\+\_\+func $\ast$ {\bfseries as\+\_\+table\+\_\+func} (S\+E\+XP table)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a80ea5451590cb013fd7779a575b1ab8f}\label{odeproblem_8h_a80ea5451590cb013fd7779a575b1ab8f}} 
+config\+\_\+func $\ast$ {\bfseries as\+\_\+config\+\_\+func} (S\+E\+XP config)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_acd3e2c6e07fcc966255c67e94351a4be}\label{odeproblem_8h_acd3e2c6e07fcc966255c67e94351a4be}} 
+D\+L\+\_\+\+F\+U\+NC {\bfseries tofunptr} (S\+E\+XP a)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a4edd070b036ec7c8c879e3f9dfbf0497}\label{odeproblem_8h_a4edd070b036ec7c8c879e3f9dfbf0497}} 
+void {\bfseries neg\+\_\+istate} (int istate)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_aabe328982115fa93ededa583edd6b196}\label{odeproblem_8h_aabe328982115fa93ededa583edd6b196}} 
+{\footnotesize template$<$typename T , typename type2 $>$ }\\void {\bfseries tofunptr} (T b, type2 a)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a21c508b0926f429654904a2516e9d625}\label{odeproblem_8h_a21c508b0926f429654904a2516e9d625}} 
+void {\bfseries dosimeta} (void $\ast$)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a442e3df1470c8388ec7ba4565d476ebc}\label{odeproblem_8h_a442e3df1470c8388ec7ba4565d476ebc}} 
+void {\bfseries dosimeps} (void $\ast$)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a220653904414c2b10556024608457126}\label{odeproblem_8h_a220653904414c2b10556024608457126}} 
+double {\bfseries Poly\+Exp} (const double \&x, const double \&dose, const double \&rate, const double \&xinf, const double \&tau, const bool ss, const dvec \&a, const dvec \&alpha, const int n)
+\item 
+\mbox{\Hypertarget{odeproblem_8h_ae3a850ccce9eb29e8ab914b8c261e075}\label{odeproblem_8h_ae3a850ccce9eb29e8ab914b8c261e075}} 
+Rcpp\+::\+List {\bfseries T\+O\+U\+C\+H\+\_\+\+F\+U\+NS} (const Rcpp\+::\+Numeric\+Vector \&lparam, const Rcpp\+::\+Numeric\+Vector \&linit, const Rcpp\+::\+Character\+Vector \&capture, const Rcpp\+::\+List \&funs)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{odeproblem_8h_a3ef73791bd2f7697b69206ed29c16047}\label{odeproblem_8h_a3ef73791bd2f7697b69206ed29c16047}} 
+main\+\_\+deriv\+\_\+func {\bfseries main\+\_\+derivs}
+\end{DoxyCompactItemize}

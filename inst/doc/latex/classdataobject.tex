@@ -1,0 +1,131 @@
+\hypertarget{classdataobject}{}\section{dataobject Class Reference}
+\label{classdataobject}\index{dataobject@{dataobject}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classdataobject_a8483694418e230966e74064186c0bfc4}\label{classdataobject_a8483694418e230966e74064186c0bfc4}} 
+{\bfseries dataobject} (Rcpp\+::\+Numeric\+Matrix \+\_\+data, Rcpp\+::\+Character\+Vector \+\_\+parnames)
+\item 
+\mbox{\Hypertarget{classdataobject_a14d3df0ff6242472550384bee0b57e98}\label{classdataobject_a14d3df0ff6242472550384bee0b57e98}} 
+{\bfseries dataobject} (Rcpp\+::\+Numeric\+Matrix \+\_\+data, Rcpp\+::\+Character\+Vector \+\_\+parnames, Rcpp\+::\+Character\+Vector \+\_\+initnames)
+\item 
+\mbox{\Hypertarget{classdataobject_a1e71ba1792a9fadbb4b4e0bf67cff101}\label{classdataobject_a1e71ba1792a9fadbb4b4e0bf67cff101}} 
+unsigned int {\bfseries nrow} () const
+\item 
+\mbox{\Hypertarget{classdataobject_a8843b2e1b23ee5fe8f40202671ee75ee}\label{classdataobject_a8843b2e1b23ee5fe8f40202671ee75ee}} 
+unsigned int {\bfseries ncol} () const
+\item 
+\mbox{\Hypertarget{classdataobject_a83a26760357ced3f938a1dbf29deece9}\label{classdataobject_a83a26760357ced3f938a1dbf29deece9}} 
+unsigned int {\bfseries nid} () const
+\item 
+\mbox{\Hypertarget{classdataobject_acaa39a0aac83ba62d13a738ca2a473a8}\label{classdataobject_acaa39a0aac83ba62d13a738ca2a473a8}} 
+unsigned int {\bfseries idcol} () const
+\item 
+\mbox{\Hypertarget{classdataobject_ac242bbaaf29ec6a93b549f4f649be568}\label{classdataobject_ac242bbaaf29ec6a93b549f4f649be568}} 
+int {\bfseries start} (int i) const
+\item 
+\mbox{\Hypertarget{classdataobject_acaf7ee8b42108834b3b8c166f8964f64}\label{classdataobject_acaf7ee8b42108834b3b8c166f8964f64}} 
+int {\bfseries end} (int i) const
+\item 
+\mbox{\Hypertarget{classdataobject_ac9041a7122585160b536b82da0bed094}\label{classdataobject_ac9041a7122585160b536b82da0bed094}} 
+void {\bfseries map\+\_\+uid} ()
+\item 
+\mbox{\Hypertarget{classdataobject_ac4ca33465e8553b7d0cb1f62ff2c8240}\label{classdataobject_ac4ca33465e8553b7d0cb1f62ff2c8240}} 
+double {\bfseries get\+\_\+uid} (int i) const
+\item 
+\mbox{\Hypertarget{classdataobject_a91b02c6fe5f13fc48ad4e030152d5b5d}\label{classdataobject_a91b02c6fe5f13fc48ad4e030152d5b5d}} 
+uidtype {\bfseries return\+\_\+uid} () const
+\item 
+\mbox{\Hypertarget{classdataobject_a50ca76ba2c3d3726d61226aa1b73c5b6}\label{classdataobject_a50ca76ba2c3d3726d61226aa1b73c5b6}} 
+void {\bfseries copy\+\_\+parameters} (int this\+\_\+row, \hyperlink{classodeproblem}{odeproblem} $\ast$prob)
+\item 
+\mbox{\Hypertarget{classdataobject_a325a1e4bd95b50d07642940ec849c999}\label{classdataobject_a325a1e4bd95b50d07642940ec849c999}} 
+void {\bfseries copy\+\_\+inits} (int this\+\_\+row, \hyperlink{classodeproblem}{odeproblem} $\ast$prob)
+\item 
+\mbox{\Hypertarget{classdataobject_a675c4b37a93b2680528eb7d862f6ffd5}\label{classdataobject_a675c4b37a93b2680528eb7d862f6ffd5}} 
+void {\bfseries reload\+\_\+parameters} (const Rcpp\+::\+Numeric\+Vector \&param, \hyperlink{classodeproblem}{odeproblem} $\ast$prob)
+\item 
+\mbox{\Hypertarget{classdataobject_a1c4babcbc61c88f2f72500e594adcce6}\label{classdataobject_a1c4babcbc61c88f2f72500e594adcce6}} 
+void {\bfseries idata\+\_\+row} ()
+\item 
+\mbox{\Hypertarget{classdataobject_aa91370d528f90c10c9638ba8006e66fb}\label{classdataobject_aa91370d528f90c10c9638ba8006e66fb}} 
+unsigned int {\bfseries get\+\_\+idata\+\_\+row} (const double ID)
+\item 
+\mbox{\Hypertarget{classdataobject_a3e915eb5ff296483a6ae9dbbe394646b}\label{classdataobject_a3e915eb5ff296483a6ae9dbbe394646b}} 
+void {\bfseries locate\+\_\+tran} ()
+\item 
+\mbox{\Hypertarget{classdataobject_a75e142ee684513e5aac42241c3aed1e6}\label{classdataobject_a75e142ee684513e5aac42241c3aed1e6}} 
+void {\bfseries get\+\_\+records} (recstack \&a, int N\+ID, int neq, unsigned int \&obscount, unsigned int \&evcount, bool obsonly, bool debug)
+\item 
+\mbox{\Hypertarget{classdataobject_a1fde89995a8bbaaf70964bd0dcc90bdd}\label{classdataobject_a1fde89995a8bbaaf70964bd0dcc90bdd}} 
+void {\bfseries check\+\_\+idcol} (\hyperlink{classdataobject}{dataobject} \&data)
+\item 
+\mbox{\Hypertarget{classdataobject_a72cc6a0334d9eed18931deb66e283bca}\label{classdataobject_a72cc6a0334d9eed18931deb66e283bca}} 
+double {\bfseries get\+\_\+value} (const int row, const int col) const
+\item 
+\mbox{\Hypertarget{classdataobject_acb2e5de26d52f9518fe6cc040dad21a1}\label{classdataobject_acb2e5de26d52f9518fe6cc040dad21a1}} 
+double {\bfseries get\+\_\+id\+\_\+value} (const int row) const
+\item 
+\mbox{\Hypertarget{classdataobject_a08757c6b3b80dc258f8271dd5c24b737}\label{classdataobject_a08757c6b3b80dc258f8271dd5c24b737}} 
+void {\bfseries get\+\_\+ids} (uidtype $\ast$ids)
+\item 
+\mbox{\Hypertarget{classdataobject_a61b4b28130bb76d1d745e055855c70ea}\label{classdataobject_a61b4b28130bb76d1d745e055855c70ea}} 
+Rcpp\+::\+Integer\+Vector {\bfseries get\+\_\+col\+\_\+n} (const Rcpp\+::\+Character\+Vector \&what)
+\item 
+\mbox{\Hypertarget{classdataobject_a55d175292d064600c8c95550328b3a66}\label{classdataobject_a55d175292d064600c8c95550328b3a66}} 
+void {\bfseries carry\+\_\+out} (const recstack \&a, Rcpp\+::\+Numeric\+Matrix \&ans, \hyperlink{classdataobject}{dataobject} \&idat, const Rcpp\+::\+Integer\+Vector \&data\+\_\+carry, const unsigned int data\+\_\+carry\+\_\+start, const Rcpp\+::\+Integer\+Vector \&idata\+\_\+carry, const unsigned int idata\+\_\+carry\+\_\+start)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classdataobject_ae06ddbecdefdbabd9d91c6904ac7997a}\label{classdataobject_ae06ddbecdefdbabd9d91c6904ac7997a}} 
+Rcpp\+::\+Numeric\+Matrix {\bfseries Data}
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classdataobject_af7f42037224a63f823942bee20564f4b}\label{classdataobject_af7f42037224a63f823942bee20564f4b}} 
+uidtype {\bfseries Uid}
+\item 
+\mbox{\Hypertarget{classdataobject_a1af99aa30e3fa3f4228d23910ec1d662}\label{classdataobject_a1af99aa30e3fa3f4228d23910ec1d662}} 
+datarowtype {\bfseries Startrow}
+\item 
+\mbox{\Hypertarget{classdataobject_add8078bc49b2517acb741f4e41dc279b}\label{classdataobject_add8078bc49b2517acb741f4e41dc279b}} 
+datarowtype {\bfseries Endrow}
+\item 
+\mbox{\Hypertarget{classdataobject_a71ba45d63a4ba661e61763ebcedf7992}\label{classdataobject_a71ba45d63a4ba661e61763ebcedf7992}} 
+int {\bfseries Idcol}
+\item 
+\mbox{\Hypertarget{classdataobject_a7fd729533f43533d03269d89ea304086}\label{classdataobject_a7fd729533f43533d03269d89ea304086}} 
+Rcpp\+::\+Character\+Vector {\bfseries Data\+\_\+names}
+\item 
+\mbox{\Hypertarget{classdataobject_a8831d627f892595fd54c27dc25dcd607}\label{classdataobject_a8831d627f892595fd54c27dc25dcd607}} 
+std\+::vector$<$ unsigned int $>$ {\bfseries col}
+\item 
+\mbox{\Hypertarget{classdataobject_a3d867408acb208e0c7a1f070cae5d299}\label{classdataobject_a3d867408acb208e0c7a1f070cae5d299}} 
+Rcpp\+::\+Integer\+Vector {\bfseries par\+\_\+from}
+\item 
+\mbox{\Hypertarget{classdataobject_af16733b32bbf945a2b90a7d5e0a3d968}\label{classdataobject_af16733b32bbf945a2b90a7d5e0a3d968}} 
+Rcpp\+::\+Integer\+Vector {\bfseries par\+\_\+to}
+\item 
+\mbox{\Hypertarget{classdataobject_a06b4a1186d2575f79c351c43396c9af0}\label{classdataobject_a06b4a1186d2575f79c351c43396c9af0}} 
+Rcpp\+::\+Character\+Vector {\bfseries parnames}
+\item 
+\mbox{\Hypertarget{classdataobject_a338a8a79834d1d0d1c8c07b27afc7788}\label{classdataobject_a338a8a79834d1d0d1c8c07b27afc7788}} 
+idat\+\_\+map {\bfseries idmap}
+\item 
+\mbox{\Hypertarget{classdataobject_a1c8d7c0b5fb5b25b1e684c9da2506489}\label{classdataobject_a1c8d7c0b5fb5b25b1e684c9da2506489}} 
+Rcpp\+::\+Integer\+Vector {\bfseries cmt\+\_\+from}
+\item 
+\mbox{\Hypertarget{classdataobject_af343dae12c484026fbe2ae8f2e2d2a0c}\label{classdataobject_af343dae12c484026fbe2ae8f2e2d2a0c}} 
+Rcpp\+::\+Integer\+Vector {\bfseries cmt\+\_\+to}
+\item 
+\mbox{\Hypertarget{classdataobject_a5f253ce2cd8215febad559dfd663cb29}\label{classdataobject_a5f253ce2cd8215febad559dfd663cb29}} 
+Rcpp\+::\+Character\+Vector {\bfseries cmtnames}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+inst/include/\hyperlink{dataobject_8h}{dataobject.\+h}\item 
+src/\hyperlink{dataobject_8cpp}{dataobject.\+cpp}\end{DoxyCompactItemize}

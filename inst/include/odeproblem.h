@@ -2,6 +2,11 @@
 // To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
+/**
+ * @file odeproblem.h
+ * 
+ */
+
 #ifndef ODEPROBLEM_H
 #define ODEPROBLEM_H
 #include <math.h>
@@ -190,43 +195,21 @@ public:
 
 protected:
   
-  //! parameters
-  double* Param;
-  
-  //! Acutal curent infusion rate
-  dvec R0;
-  std::vector<unsigned int> infusion_count;
-  
-  //! User input infusion rate
-  dvec R;
-  //! User input infusion duration
-  dvec D;
-  
-  //! inital conditions:
-  dvec Init_value;
-  dvec Init_dummy;
-  
-  //! Bioavailability:
-  dvec F;
-  
-  //! ALAG:
-  dvec Alag;
-  
-  //! cpp function to calculate derivatives
-  deriv_func* Derivs;
-  
-  //! cpp function to calculated initial conditions based on parameters and
-  init_func* Inits;
-  
-  //! Table
-  table_func* Table;
-  
-  // Configure
-  config_func* Config;
-  
-  //! Compartment on/off
-  std::vector<int> On;
-  databox d;
+  double* Param; ///< model parameters
+  dvec R0; ///< acutal current infusion rate
+  std::vector<unsigned int> infusion_count; ///< number of active infusions
+  dvec R; ///< receive user input for infusion rate
+  dvec D; ///< receive user input for infusion duration
+  dvec Init_value; ///< initial conditions
+  dvec Init_dummy; ///< initial conditions for user input
+  dvec F; ///< bioavability
+  dvec Alag; ///< dosing lag time
+  deriv_func* Derivs; ///< <code>$ODE</code> function
+  init_func* Inits; ///< <code>$MAIN</code> function
+  table_func* Table; ///< <code>$TABLE</code> function
+  config_func* Config; ///< <code>$PREAMBLE</code> function
+  std::vector<int> On; ///< compartment on/off indicator
+  databox d; ///< various data passed to model functions
   
   // These are used for advan 1/2/3/4
   int Advan;
