@@ -1,7 +1,0 @@
-var searchData=
-[
-  ['dataobject',['dataobject',['../classdataobject.html#a8483694418e230966e74064186c0bfc4',1,'dataobject::dataobject(Rcpp::NumericMatrix _data, Rcpp::CharacterVector _parnames)'],['../classdataobject.html#a14d3df0ff6242472550384bee0b57e98',1,'dataobject::dataobject(Rcpp::NumericMatrix _data, Rcpp::CharacterVector _parnames, Rcpp::CharacterVector _initnames)']]],
-  ['datarecord',['datarecord',['../classdatarecord.html#a57566eae869dfb8e813c10670852ec07',1,'datarecord::datarecord(double time_, int pos_, bool output_)'],['../classdatarecord.html#a73f77d80f8b614d6ce41ef4958e94bc4',1,'datarecord::datarecord(double time_, short int cmt_, int pos_, double id_)'],['../classdatarecord.html#ad07f800501f2c89627c1a3ddcb107077',1,'datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_, int pos_, double id_)'],['../classdatarecord.html#a9bef6b545a4272423d4184271a9446a3',1,'datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_)']]],
-  ['devtran',['DEVTRAN',['../devtran_8cpp.html#af11cc72e404dab77cce70568f699aa12',1,'devtran.cpp']]],
-  ['digits',['digits',['../mrgsolve_8cpp.html#a29468b32b149176b5187784f69a302ab',1,'digits(const double &amp;a, const double &amp;b):&#160;mrgsolve.cpp'],['../mrgsolve_8h.html#a29468b32b149176b5187784f69a302ab',1,'digits(const double &amp;a, const double &amp;b):&#160;mrgsolve.cpp']]]
-];
