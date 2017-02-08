@@ -1,11 +1,37 @@
 \hypertarget{struct_comp_rec}{}\section{Comp\+Rec Struct Reference}
 \label{struct_comp_rec}\index{Comp\+Rec@{Comp\+Rec}}
+
+
+Functor for sorting data records in {\ttfamily reclist}.  
+
+
+
+
+{\ttfamily \#include $<$datarecord.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{struct_comp_rec_a1c828ad19a4fa286890bd50c82f99a04}\label{struct_comp_rec_a1c828ad19a4fa286890bd50c82f99a04}} 
 bool {\bfseries operator()} (const rec\+\_\+ptr \&a, const rec\+\_\+ptr \&b)
 \end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functor for sorting data records in {\ttfamily reclist}. 
+
+Records are first sorted by time, then by position.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & first record \\
+\hline
+{\em b} & second record \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean 
+\end{DoxyReturn}
 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}

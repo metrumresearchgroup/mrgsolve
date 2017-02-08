@@ -9,14 +9,13 @@
 
 #ifndef DATAOBJECT_H
 #define DATAOBJECT_H
+
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-//#include <boost/unordered_map.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-//typedef boost::unordered::unordered_map<double,int> idat_map;
 typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
 typedef std::deque<int> datarowtype;
@@ -25,10 +24,11 @@ typedef std::deque<int> datarowtype;
 class dataobject {
   
 public:
-  
+  //! constructor
   dataobject(Rcpp::NumericMatrix _data, 
              Rcpp::CharacterVector _parnames);
   
+  //! constructor
   dataobject(Rcpp::NumericMatrix _data, 
              Rcpp::CharacterVector _parnames, 
              Rcpp::CharacterVector _initnames);
@@ -68,23 +68,23 @@ public:
     
 protected:
   
-  uidtype Uid;
-  datarowtype Startrow;
-  datarowtype Endrow;
-  int Idcol;
+  uidtype Uid;  ///< unique IDs in the data set
+  datarowtype Startrow;  ///< start row for each ID
+  datarowtype Endrow; ///< data set end row for each ID
+  int Idcol; ///< which column holds ID value
   
   Rcpp::CharacterVector Data_names;
   
   std::vector<unsigned int> col;
   
-  Rcpp::IntegerVector par_from;  // data set index
-  Rcpp::IntegerVector par_to;    // parameter list index
-  Rcpp::CharacterVector parnames;
-  idat_map idmap;
+  Rcpp::IntegerVector par_from;  ///< index for parameters in data set
+  Rcpp::IntegerVector par_to;    ///< index for parameters in param list
+  Rcpp::CharacterVector parnames; ///< names of model parameters
+  idat_map idmap; ///< map to get 
   
-  Rcpp::IntegerVector cmt_from; // data set index
-  Rcpp::IntegerVector cmt_to;  // cmt index
-  Rcpp::CharacterVector cmtnames;
+  Rcpp::IntegerVector cmt_from; ///< index for compartments in data set
+  Rcpp::IntegerVector cmt_to;  ///< index for compartments in init list
+  Rcpp::CharacterVector cmtnames; ///< names of model compartments
 };
 
 

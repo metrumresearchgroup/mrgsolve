@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['readrds',['readRDS',['../mrgx_8h.html#a554f6cbf063e3b13452e510f5ca1cb95',1,'mrgx']]],
-  ['rlognorm',['rlognorm',['../mrgx_8h.html#a4d965868d96d9afa2164f500c2c57ca4',1,'mrgx']]],
-  ['rnorm',['rnorm',['../mrgx_8h.html#a16f34933e13e4ac7dce686161578759f',1,'mrgx']]]
+  ['init_5fcall',['init_call',['../classodeproblem.html#a415e0001bfe1282764c339b6e8695ab8',1,'odeproblem']]],
+  ['init_5fcall_5frecord',['init_call_record',['../classodeproblem.html#adc4a5dbcc9561903a7aa81a90e8a908b',1,'odeproblem']]]
 ];

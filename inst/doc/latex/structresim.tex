@@ -1,15 +1,38 @@
 \hypertarget{structresim}{}\section{resim Struct Reference}
 \label{structresim}\index{resim@{resim}}
+
+
+Resim functor.  
+
+
+
+
+{\ttfamily \#include $<$mrgsolv.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{structresim_a8776836c59a5748e28d68d795569064b}\label{structresim_a8776836c59a5748e28d68d795569064b}} 
-{\bfseries resim} (refun $\ast$x, void $\ast$y)
-\item 
+\hyperlink{structresim_a8776836c59a5748e28d68d795569064b}{resim} (refun $\ast$x, void $\ast$y)
+\begin{DoxyCompactList}\small\item\em resim constructor \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{structresim_a66f6218d872d52eab1b2f7560f2c1b72}\label{structresim_a66f6218d872d52eab1b2f7560f2c1b72}} 
 void {\bfseries operator()} ()
 \end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structresim_a34ecef977366860be72ee4c1a8ee2ba6}\label{structresim_a34ecef977366860be72ee4c1a8ee2ba6}} 
+refun $\ast$ \hyperlink{structresim_a34ecef977366860be72ee4c1a8ee2ba6}{fun}
+\begin{DoxyCompactList}\small\item\em function to call to re-\/simulate \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structresim_a85a513d872c25a973fafa56d4453c4e9}\label{structresim_a85a513d872c25a973fafa56d4453c4e9}} 
+void $\ast$ \hyperlink{structresim_a85a513d872c25a973fafa56d4453c4e9}{prob}
+\begin{DoxyCompactList}\small\item\em object to pass to re-\/simulated function \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Resim functor. 
+
+These functors are used to re-\/simulate {\ttfamily E\+TA} and {\ttfamily E\+PS} values. 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

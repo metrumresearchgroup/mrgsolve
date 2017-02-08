@@ -16,9 +16,9 @@
 
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
-//static Rcpp::Environment mtenv = Rcpp::new_env();
-#define MRGSOLVE_MAX_SS_ITER 1000
 
+//! the maximum number of iterations for steady-state calculation
+#define MRGSOLVE_MAX_SS_ITER 1000
 
 void dosimeta(void* prob_) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
@@ -35,7 +35,6 @@ void dosimeps(void* prob_) {
     prob->eps(i,eps(0,i)); 
   }
 }
-
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
@@ -88,27 +87,25 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
 
 
 /**
- @brief Destructor for odeproblem object
+ @brief Destructor for odeproblem object.
  
- Upon object construction, odeproblem dynamically allocates six arrays.  These arrays are "deleted" upon destruction.
- 
- @return Void
- @date January, 2014
+ Upon object construction, odeproblem dynamically allocates the Param 
+ array.
  
  */
 odeproblem::~odeproblem(){
   delete [] Param;
 }
 
+//! set number of <code>ETAs</code> in the model
 void odeproblem::neta(int n) {
   if(n > 25) d.ETA.assign(n,0.0);
 }
 
+//! set number of <code>EPSs</code> in the model
 void odeproblem::neps(int n) {
   if(n > 25) d.EPS.assign(n,0.0);
 }
-
-
 
 /** 
  * Assigns values to both the compartment and the 
@@ -131,6 +128,7 @@ void odeproblem::y_init(Rcpp::NumericVector x) {
   }
 }
 
+//! add <code>value</code> to compartment <code>pos</code>
 void odeproblem::y_add(const unsigned int pos, const double& value) {
   Y[pos] = Y[pos] + value; 
 }
@@ -143,8 +141,6 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param y current state
  * @param ydot left hand side of differential equations
  * @param prob an odeproblem object
- * 
- * 
  */
 void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
   prob->call_derivs(neq,t,y,ydot);  
@@ -166,10 +162,9 @@ void odeproblem::set_d(rec_ptr this_rec) {
 }
 
 /**
- * Call $MAIN to get the initial conditions.
+ * Call <code>$MAIN</code> to get the initial conditions.
  * 
  * @param time the time to assume for the calculation
- * 
  */
 void odeproblem::init_call(const double& time) {
   
@@ -186,30 +181,26 @@ void odeproblem::init_call(const double& time) {
 
 
 /**
- * Call $MAIN with the dummy initial condition vector.
+ * Call <code>$MAIN</code> with the dummy initial condition vector.
  * 
  * @param time the time to assume when making the call.
- * 
- * 
  */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
   Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
 }
 
-
-/** Call $TABLE.
- * 
- */
+//! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
   Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps);  
 }
 
+//! Call <code>$PREAMBLE</code> function.
 void odeproblem::config_call() {
   Config(d,Param,Neq,Npar);
 }
 
-
+//! Reset all infusion rates.
 void odeproblem::rate_reset() {
   for(int i = 0; i < Neq; ++i) {
     R0[i] = 0.0;
@@ -217,7 +208,7 @@ void odeproblem::rate_reset() {
   }
 }
 
-
+//! Reset <code>odeproblem</code> object for new individual.
 void odeproblem::reset_newid(const double id_) {
   
   for(int i = 0; i < Neq; ++i) {
@@ -239,7 +230,6 @@ void odeproblem::reset_newid(const double id_) {
   d.id = id_;
 }
 
-
 void odeproblem::rate_add(const unsigned int pos, const double& value) {
   ++infusion_count[pos];
   R0[pos] = R0[pos] + value;
@@ -248,7 +238,6 @@ void odeproblem::rate_add(const unsigned int pos, const double& value) {
 void odeproblem::rate_bump(const unsigned int pos, const double& value) {
   R0[pos] = R0[pos] + value;
 }
-
 
 void odeproblem::rate_rm(const unsigned int pos, const double& value) {
   if(infusion_count[pos] <= 0){
@@ -267,11 +256,12 @@ void odeproblem::on(const unsigned short int eq_n) {
 }
 
 void odeproblem::off(const unsigned short int eq_n) {
-  if(infusion_count[eq_n]>0) Rcpp::stop("Attempting to turn compartment off when infusion is on.");
+  if(infusion_count[eq_n]>0) {
+    Rcpp::stop("Attempting to turn compartment off when infusion is on.");
+  }
   On[eq_n] = 0;
   this->y(eq_n,0.0);
 }
-
 
 extern "C" {
   void F77_NAME(dlsoda) (
@@ -313,7 +303,6 @@ void odeproblem::advance(double tfrom, double tto) {
     // If Advan isn't 13, it needs to be 1/2/3/4
     Rcpp::stop("mrgsolve: advan has invalid value.");
   }
-  
   
   F77_CALL(dlsoda)(
       &main_derivs,
@@ -624,24 +613,47 @@ double PolyExp(const double& x,
       for(i=0;i<n;++i) result += a[i]/alpha[i];
     }
   }
-  
   return bolusResult + rate*result;
 }
 
+/**
+ * Get pointer for <code>$MAIN</code> function. 
+ * 
+ * @param inits address for <code>$MAIN</code> function
+ * 
+ */
 init_func* as_init_func(SEXP inits) {
-  return(reinterpret_cast<init_func *>(tofunptr(inits))); // Known to generate compiler warning
+  return(reinterpret_cast<init_func *>(tofunptr(inits))); 
 }
 
+/**
+ * Get pointer for <code>$ODE</code> function. 
+ * 
+ * @param derivs address for <code>$ODE</code> function
+ * 
+ */
 deriv_func* as_deriv_func(SEXP derivs) {
-  return(reinterpret_cast<deriv_func *>(tofunptr(derivs))); // Known to generate compiler warning
+  return(reinterpret_cast<deriv_func *>(tofunptr(derivs))); 
 }
 
+/**
+ * Get pointer for <code>$TABLE</code> function. 
+ * 
+ * @param table address for <code>$TABLE</code> function
+ * 
+ */
 table_func* as_table_func(SEXP table) {
-  return(reinterpret_cast<table_func*>(tofunptr(table))); // Known to generate compiler warning
+  return(reinterpret_cast<table_func*>(tofunptr(table)));
 }
 
+/**
+ * Get pointer for <code>$PREAMBLE</code> function. 
+ * 
+ * @param config address for <code>$PREAMBLE</code> function
+ * 
+ */
 config_func* as_config_func(SEXP config) {
-  return(reinterpret_cast<config_func*>(tofunptr(config))); // Known to generate compiler warning
+  return(reinterpret_cast<config_func*>(tofunptr(config)));
 }
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
@@ -675,19 +687,17 @@ void odeproblem::advan(int x) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
   }
-  
 }
 
-
 /**
- * Call the $MAIN function from a model object.
+ * Call the <code>$MAIN</code> function from a model object.
  * 
  * @param lparam model parameters
  * @param linit model initial contitions
- * @param Neta number of rows in OMEGA
- * @param Neps number of rows in SIGMA
+ * @param Neta number of rows in <code>OMEGA</code>
+ * @param Neps number of rows in <code>SIGMA</code>
  * @param capture vector of capture names
- * @param funs the model funset
+ * @param funs a list of model function pointers
  * @return list with updated initial conditions, number of paramerters,
  * and number of equations
  * 
@@ -727,6 +737,7 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
 void odeproblem::omega(Rcpp::NumericMatrix& x) {
   Omega = Rcpp::as<arma::mat>(x);
 }
+
 void odeproblem::sigma(Rcpp::NumericMatrix& x) {
   Sigma = Rcpp::as<arma::mat>(x);
 }

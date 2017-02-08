@@ -16,28 +16,6 @@
 #include "RcppInclude.h"
 #include "datarecord.h"
 
-typedef std::vector<rec_ptr> reclist;
-typedef std::vector<reclist> recstack;
-
-
-// double get_pred_CL() {return pred[0];}
-// double get_pred_VC() {return pred[1];}
-// double get_pred_KA() {return pred[2];}
-// double get_pred_Q()  {return pred[3];}
-// double get_pred_VP() {return pred[4];}
-// double get_pred_k10(){return pred[0]/pred[1];}
-// double get_pred_k12(){return pred[3]/pred[1];}
-// double get_pred_k21(){return pred[3]/pred[4];}
-
-#define MRGSOLVE_GET_PRED_CL  (pred[0])
-#define MRGSOLVE_GET_PRED_VC  (pred[1])
-#define MRGSOLVE_GET_PRED_KA  (pred[2])
-#define MRGSOLVE_GET_PRED_Q   (pred[3])
-#define MRGSOLVE_GET_PRED_VP  (pred[4])
-#define MRGSOLVE_GET_PRED_K10 (pred[0]/pred[1])
-#define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1])
-#define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4])
-
 // 
 // resim functor comes from mrgsolv.h
 // so it can get defined in the model
@@ -46,36 +24,55 @@ typedef std::vector<reclist> recstack;
 class odeproblem;
 
 struct databox {
-  dvec ETA;
-  dvec EPS;
-  unsigned int newind;
-  double time;
-  int evid;
-  bool SYSTEMOFF;
-  dvec mtime;
-  double id;
-  double amt;
-  short int cmt;
-  int nid;
-  int idn;
-  int nrow;
-  int rown;
-  bool CFONSTOP;
-  void* envir;
+  dvec ETA; ///< vector of ETA values
+  dvec EPS; ///< vector of EPS values
+  unsigned int newind; ///< new individual flag
+  double time; ///< current simulation time
+  int evid;  ///< event ID flag
+  bool SYSTEMOFF; ///< flag to stop advancing system for current ID
+  dvec mtime; ///< model time values
+  double id;  ///< current ID
+  double amt; ///< current dosing amount value
+  short int cmt; ///< current compartment value
+  int nid; ///< number of IDs in the data set
+  int idn; ///< current ID number
+  int nrow; ///< number of rows in output data set
+  int rown; ///< current output row number
+  bool CFONSTOP; ///< carry forward on stop indicator
+  void* envir; ///< model environment
 };
 
+//! vector of <code>datarecord</code> objects for one <code>ID</code>
+typedef std::vector<rec_ptr> reclist;
 
+//! vector of <code>reclist</code> vectors comprising  a data set
+typedef std::vector<reclist> recstack;
+
+//! <code>$MAIN</code> function
 typedef void init_func(MRGSOLVE_INIT_SIGNATURE);
 
+//! <code>$TABLE</code> function
 typedef void table_func(MRGSOLVE_TABLE_SIGNATURE);
 
+//! <code>$ODE</code> function
 typedef void deriv_func(MRGSOLVE_ODE_SIGNATURE);
 
+//! <code>$PREAMBLE</code> function
 typedef void config_func(MRGSOLVE_CONFIG_SIGNATURE);
 
+//! function to hand off to <code>DLSODA</code>
 typedef void main_deriv_func(int* neq, double* t,
                              double* y,double* ydot,
                              odeproblem* prob);
+
+#define MRGSOLVE_GET_PRED_CL  (pred[0]) ///< map CL to pred position 0 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_VC  (pred[1]) ///< map VC to pred position 1 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_KA  (pred[2]) ///< map KA to pred position 2 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_Q   (pred[3]) ///< map Q to pred position 3 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_VP  (pred[4]) ///< map VP to pred position 4 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_K10 (pred[0]/pred[1]) ///< rate constants for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1]) ///< rate constants for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4]) ///< rate constants for <code>$PKMODEL</code>
 
 
 deriv_func*  as_deriv_func( SEXP derivs);
@@ -95,10 +92,8 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
 void dosimeta(void*);
 void dosimeps(void*);
 
-
 class odeproblem : public odepack_dlsoda {
-  
-  
+
 public:
   odeproblem(Rcpp::NumericVector param,
              Rcpp::NumericVector init,
@@ -211,25 +206,28 @@ protected:
   std::vector<int> On; ///< compartment on/off indicator
   databox d; ///< various data passed to model functions
   
-  // These are used for advan 1/2/3/4
-  int Advan;
-  dvec a;
-  dvec alpha;
+  int Advan;  ///< simulation mode: 1/2/3/4 (PK models) or 13 (odes)
+  dvec a;     ///< used for advan 1/2/3/4 calculations
+  dvec alpha; ///< used for advan 1/2/3/4 calculation
   
-  resim simeta;
-  resim simeps;
+  resim simeta;  ///< functor for resimulating etas
+  resim simeps; ///< functor for resimulating epsilons
 
-  arma::mat Omega;
-  arma::mat Sigma;
+  arma::mat Omega; ///< variance/covariance matrix for between-subject variability
+  arma::mat Sigma; ///< variance/covariance matrix for within-subject variability
     
-  dvec pred;
-  dvec Capture;
-  
-
+  dvec pred; ///< brings clearances, volumes, and kas for advan 1/2/3/4 calculations
+  dvec Capture; ///< captured data items
   
 };
 
 
+/**
+ * Calculate PK model polyexponentials.
+ * 
+ * 
+ * 
+ */
 double PolyExp(const double& x,
                const double& dose,
                const double& rate,
@@ -239,8 +237,6 @@ double PolyExp(const double& x,
                const dvec& a,
                const dvec& alpha,
                const int n);
-
-
 
 Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
                       const Rcpp::NumericVector& linit,

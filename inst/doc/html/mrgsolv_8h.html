@@ -79,33 +79,41 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structresim.html">resim</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resim functor.  <a href="structresim.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:aac42da048cebf6c173c6ad0830d5983b"><td class="memItemLeft" align="right" valign="top"><a id="aac42da048cebf6c173c6ad0830d5983b"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MRGSOLVE_INIT_SIGNATURE</b>&#160;&#160;&#160;dvec&amp; _A_0_,const double* _A_, const double* _THETA_, dvec&amp; _F_, dvec&amp; _ALAG_, dvec&amp; _R_, dvec&amp; _D_,  <a class="el" href="structdatabox.html">databox</a>&amp; self, dvec&amp; _pred_, <a class="el" href="structresim.html">resim</a>&amp; simeta</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#aac42da048cebf6c173c6ad0830d5983b">MRGSOLVE_INIT_SIGNATURE</a>&#160;&#160;&#160;<a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _A_0_,const double* _A_, const double* _THETA_, <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _F_, <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _ALAG_, <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _R_, <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _D_,  <a class="el" href="structdatabox.html">databox</a>&amp; self, <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _pred_, <a class="el" href="structresim.html">resim</a>&amp; simeta</td></tr>
+<tr class="memdesc:aac42da048cebf6c173c6ad0830d5983b"><td class="mdescLeft">&#160;</td><td class="mdescRight">signature for <code>$MAIN</code> <br /></td></tr>
 <tr class="separator:aac42da048cebf6c173c6ad0830d5983b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0063904bf51d98d5a65ba0aa3f648ecb"><td class="memItemLeft" align="right" valign="top"><a id="a0063904bf51d98d5a65ba0aa3f648ecb"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MRGSOLVE_TABLE_SIGNATURE</b>&#160;&#160;&#160;const double* _A_, const dvec&amp; _A_0_,  const double* _THETA_,  const dvec&amp; _F_, const dvec&amp; _R_,  <a class="el" href="structdatabox.html">databox</a>&amp; self, const dvec&amp; _pred_, dvec&amp; _capture_, <a class="el" href="structresim.html">resim</a>&amp; simeps</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#a0063904bf51d98d5a65ba0aa3f648ecb">MRGSOLVE_TABLE_SIGNATURE</a>&#160;&#160;&#160;const double* _A_, const <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _A_0_,  const double* _THETA_,  const <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _F_, const <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _R_,  <a class="el" href="structdatabox.html">databox</a>&amp; self, const <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _pred_, <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _capture_, <a class="el" href="structresim.html">resim</a>&amp; simeps</td></tr>
+<tr class="memdesc:a0063904bf51d98d5a65ba0aa3f648ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">signature for <code>$TABLE</code> <br /></td></tr>
 <tr class="separator:a0063904bf51d98d5a65ba0aa3f648ecb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5621b41abbd9a4194934f55a6dbb8ee8"><td class="memItemLeft" align="right" valign="top"><a id="a5621b41abbd9a4194934f55a6dbb8ee8"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MRGSOLVE_ODE_SIGNATURE</b>&#160;&#160;&#160;const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec&amp; _A_0_, const double* _THETA_</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#a5621b41abbd9a4194934f55a6dbb8ee8">MRGSOLVE_ODE_SIGNATURE</a>&#160;&#160;&#160;const double* _ODETIME_, const double* _A_, double* _DADT_,  const <a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a>&amp; _A_0_, const double* _THETA_</td></tr>
+<tr class="memdesc:a5621b41abbd9a4194934f55a6dbb8ee8"><td class="mdescLeft">&#160;</td><td class="mdescRight">signature for <code>$ODE</code> <br /></td></tr>
 <tr class="separator:a5621b41abbd9a4194934f55a6dbb8ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6fbbf87fdb55cef851d6fca83a34080"><td class="memItemLeft" align="right" valign="top"><a id="ae6fbbf87fdb55cef851d6fca83a34080"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>MRGSOLVE_CONFIG_SIGNATURE</b>&#160;&#160;&#160;<a class="el" href="structdatabox.html">databox</a>&amp; self, const double* _THETA_, const double neq, const double npar</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#ae6fbbf87fdb55cef851d6fca83a34080">MRGSOLVE_CONFIG_SIGNATURE</a>&#160;&#160;&#160;<a class="el" href="structdatabox.html">databox</a>&amp; self, const double* _THETA_, const double neq, const double npar</td></tr>
+<tr class="memdesc:ae6fbbf87fdb55cef851d6fca83a34080"><td class="mdescLeft">&#160;</td><td class="mdescRight">signature for <code>$PREAMBLE</code> <br /></td></tr>
 <tr class="separator:ae6fbbf87fdb55cef851d6fca83a34080"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ac6aa1a2351760492203846ae74778c05"><td class="memItemLeft" align="right" valign="top"><a id="ac6aa1a2351760492203846ae74778c05"></a>
-typedef std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dvec</b></td></tr>
+typedef std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#ac6aa1a2351760492203846ae74778c05">dvec</a></td></tr>
+<tr class="memdesc:ac6aa1a2351760492203846ae74778c05"><td class="mdescLeft">&#160;</td><td class="mdescRight">vector of doubles <br /></td></tr>
 <tr class="separator:ac6aa1a2351760492203846ae74778c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92b5a0babe23f1e279da2a838c87bb2f"><td class="memItemLeft" align="right" valign="top"><a id="a92b5a0babe23f1e279da2a838c87bb2f"></a>
-typedef std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>svec</b></td></tr>
+typedef std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#a92b5a0babe23f1e279da2a838c87bb2f">svec</a></td></tr>
+<tr class="memdesc:a92b5a0babe23f1e279da2a838c87bb2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">vector of strings <br /></td></tr>
 <tr class="separator:a92b5a0babe23f1e279da2a838c87bb2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abecc6891c535bbe7d4375a4e4d782df9"><td class="memItemLeft" align="right" valign="top"><a id="abecc6891c535bbe7d4375a4e4d782df9"></a>
-typedef std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ivec</b></td></tr>
+typedef std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="mrgsolv_8h.html#abecc6891c535bbe7d4375a4e4d782df9">ivec</a></td></tr>
+<tr class="memdesc:abecc6891c535bbe7d4375a4e4d782df9"><td class="mdescLeft">&#160;</td><td class="mdescRight">vector of integers <br /></td></tr>
 <tr class="separator:abecc6891c535bbe7d4375a4e4d782df9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac613b4ca01a92796048a8df95c0c60a8"><td class="memItemLeft" align="right" valign="top"><a id="ac613b4ca01a92796048a8df95c0c60a8"></a>
 typedef void&#160;</td><td class="memItemRight" valign="bottom"><b>refun</b>(void *)</td></tr>

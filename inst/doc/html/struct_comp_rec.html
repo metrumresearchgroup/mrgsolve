@@ -65,6 +65,11 @@ $(function() {
 <div class="title">CompRec Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Functor for sorting data records in <code>reclist</code>.  
+ <a href="struct_comp_rec.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="datarecord_8h_source.html">datarecord.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -72,7 +77,18 @@ Public Member Functions</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (const rec_ptr &amp;a, const rec_ptr &amp;b)</td></tr>
 <tr class="separator:a1c828ad19a4fa286890bd50c82f99a04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Functor for sorting data records in <code>reclist</code>. </p>
+<p>Records are first sorted by time, then by position.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>first record </td></tr>
+    <tr><td class="paramname">b</td><td>second record </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>boolean </dd></dl>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>inst/include/<a class="el" href="datarecord_8h_source.html">datarecord.h</a></li>
 </ul>
 </div><!-- contents -->

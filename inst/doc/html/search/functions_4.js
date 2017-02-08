@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['main_5fderivs',['main_derivs',['../odeproblem_8cpp.html#a8b6c39c034226cde95fc096cdc2e39d0',1,'odeproblem.cpp']]],
-  ['mt_5ffun',['mt_fun',['../mrgx_8h.html#a7f1beb36722634cc4ad7d28ccdedc80d',1,'mrgx']]],
-  ['mvgauss',['MVGAUSS',['../mrgsolve_8cpp.html#ac2ab0768112007b529276c46bcf0e2d9',1,'MVGAUSS(Rcpp::NumericMatrix &amp;OMEGA_, int n):&#160;mrgsolve.cpp'],['../mrgsolve_8h.html#ac2ab0768112007b529276c46bcf0e2d9',1,'MVGAUSS(Rcpp::NumericMatrix &amp;OMEGA_, int n):&#160;mrgsolve.cpp']]]
+  ['get',['get',['../mrgx_8h.html#ab71fd80e9da8f4192219a9e258d2aab5',1,'mrgx::get(const std::string name, const databox &amp;self)'],['../mrgx_8h.html#a0500d813d7ce3a3c4c4a83e4d1dc4c31',1,'mrgx::get(const std::string name)'],['../mrgx_8h.html#a941a4a510630bc60e9963ddc18cfebdf',1,'mrgx::get(const std::string package, const std::string name)']]],
+  ['get_5fenvir',['get_envir',['../mrgx_8h.html#ac0f9d86256f3cb47f9ae798d63c99977',1,'mrgx']]]
 ];

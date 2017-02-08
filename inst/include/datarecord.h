@@ -18,27 +18,20 @@ typedef std::vector<rec_ptr> reclist;
 
 void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug);
 
-
 class datarecord {
   
 public:
-  //datarecord(int evid_, double time_, short int cmt_, int pos_, double id_);
-  //datarecord(int evid_, double time_, short int cmt_);
-  
-  
+  //! constructor
   datarecord(double time_, int pos_, bool output_);   
   
-  // Data set observations
+  //! constructor
   datarecord(double time_, short int cmt_, int pos_, double id_);
   
-  // Data set event
-  // Schedule events
-  //   Need to make sure that scheduled events are output false, from data false
+  //! constructor
   datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_,
-                         int pos_, double id_);   
+             int pos_, double id_);   
   
-  // Short event
-  // cmt evid amt time rate
+  //! short event constructor
   datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_);
   
   ~datarecord();
@@ -94,40 +87,46 @@ public:
   bool unarmed() {return !Armed;}
   void arm() {Armed=true;}
   void unarm() {Armed=false;}
-
+  
   void phantom_rec() {Output=false; Fromdata=false;}
   
-private:
-  double Time;
-  double Id;
-  int Pos;
-  unsigned short int Evid;
-  bool Output;
-  bool Fromdata;
-  short int Cmt;
-  unsigned int Addl;
-  unsigned short int Ss;
-  double Amt;
-  double Rate;
-  double Ii;
-  double Fn;
-  bool Armed;
+protected:
+  
+  double Time; ///< record time
+  double Id; ///< record ID value
+  int Pos; ///< record position number
+  unsigned short int Evid; ///< record event ID
+  bool Output; ///< should this record be included in output?
+  bool Fromdata; ///< is this record from the original data set?
+  short int Cmt; ///< record compartment number
+  unsigned int Addl; ///< number of additional doses
+  unsigned short int Ss; ///< record steady-state indicator
+  double Amt; ///< record dosing amount value
+  double Rate; ///< record infusion rate value
+  double Ii; ///< record inter-dose interval value
+  double Fn; ///< record bioavailability value
+  bool Armed; ///< only armed records are actually executed
+  
 };
 
 
 bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
 
+/** 
+ * @brief Functor for sorting data records in <code>reclist</code>. 
+ * 
+ * Records are first sorted by time, then by position. 
+ * 
+ * @param a first record
+ * @param b second record
+ * @return boolean 
+ */
 struct CompRec {
   inline bool operator()(const rec_ptr& a, const rec_ptr& b) {
     if(a->time() == b->time())
-      return a->pos() < b->pos();
-    return a->time() < b->time();
+      return a->pos()  < b->pos();
+      return a->time() < b->time();
   }
 };
 
-
 #endif
-
-
-
-

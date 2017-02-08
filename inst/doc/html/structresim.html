@@ -60,22 +60,43 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="structresim-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">resim Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Resim functor.  
+ <a href="structresim.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="mrgsolv_8h_source.html">mrgsolv.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8776836c59a5748e28d68d795569064b"><td class="memItemLeft" align="right" valign="top"><a id="a8776836c59a5748e28d68d795569064b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>resim</b> (refun *x, void *y)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structresim.html#a8776836c59a5748e28d68d795569064b">resim</a> (refun *x, void *y)</td></tr>
+<tr class="memdesc:a8776836c59a5748e28d68d795569064b"><td class="mdescLeft">&#160;</td><td class="mdescRight">resim constructor <br /></td></tr>
 <tr class="separator:a8776836c59a5748e28d68d795569064b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66f6218d872d52eab1b2f7560f2c1b72"><td class="memItemLeft" align="right" valign="top"><a id="a66f6218d872d52eab1b2f7560f2c1b72"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> ()</td></tr>
 <tr class="separator:a66f6218d872d52eab1b2f7560f2c1b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a34ecef977366860be72ee4c1a8ee2ba6"><td class="memItemLeft" align="right" valign="top"><a id="a34ecef977366860be72ee4c1a8ee2ba6"></a>
+refun *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structresim.html#a34ecef977366860be72ee4c1a8ee2ba6">fun</a></td></tr>
+<tr class="memdesc:a34ecef977366860be72ee4c1a8ee2ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">function to call to re-simulate <br /></td></tr>
+<tr class="separator:a34ecef977366860be72ee4c1a8ee2ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85a513d872c25a973fafa56d4453c4e9"><td class="memItemLeft" align="right" valign="top"><a id="a85a513d872c25a973fafa56d4453c4e9"></a>
+void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structresim.html#a85a513d872c25a973fafa56d4453c4e9">prob</a></td></tr>
+<tr class="memdesc:a85a513d872c25a973fafa56d4453c4e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">object to pass to re-simulated function <br /></td></tr>
+<tr class="separator:a85a513d872c25a973fafa56d4453c4e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Resim functor. </p>
+<p>These functors are used to re-simulate <code>ETA</code> and <code>EPS</code> values. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>inst/include/<a class="el" href="mrgsolv_8h_source.html">mrgsolv.h</a></li>
 </ul>
 </div><!-- contents -->
