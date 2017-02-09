@@ -3,6 +3,11 @@
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 
+/**
+ * @file odepack_dlsoda.h
+ */
+
+
 #ifndef ODEPACK_DLSODA_H
 #define ODEPACK_DLSODA_H
 #include <math.h>
@@ -41,15 +46,21 @@ public:
   
 protected :
 
-  int     xliwork, xlrwork,xistate;
-  int     xitask,xiopt,xitol;
-  int     Neq, Npar;
-  int     xjt;
-  double  xatol,xrtol;
-  double* xrwork;
-  int*    xiwork;
-  double* Y;
-  double* Ydot;
+  int     xliwork; ///< length of iwork array
+  int     xlrwork; ///< length of rwork array
+  int     xistate; ///< istate value
+  int     xitask; ///< itask value
+  int     xiopt; ///< iopt value
+  int     xitol; ///< itol value
+  int     Neq; ///< number of state variables
+  int     Npar; ///< number of model parameters
+  int     xjt; ///< jacobian indicator
+  double  xatol; ///< absolute tolerance
+  double  xrtol; ///< relative tolerance
+  double* xrwork; ///< rwork array
+  int*    xiwork; ///< iwork array
+  double* Y;  ///< current value of state variables
+  double* Ydot; ///< current value of ODEs
 };
 
 

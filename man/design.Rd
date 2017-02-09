@@ -4,16 +4,16 @@
 \alias{design}
 \title{Set observation designs for the simulation.}
 \usage{
-design(x, descol = character(0), ..., deslist = list())
+design(x, deslist = list(), descol = character(0), ...)
 }
 \arguments{
 \item{x}{model object}
 
+\item{deslist}{a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...}
+
 \item{descol}{the \code{idata} column name (\code{character}) for design assignment}
 
-\item{...}{\code{tgrid} or \code{tgrids} objects or \code{numeric} vector}
-
-\item{deslist}{a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...}
+\item{...}{not used}
 }
 \description{
 This function also allows you to assign different designs to different
@@ -49,7 +49,7 @@ mod \%>\%
   omat(dmat(1,1,1,1)) \%>\%
   carry_out(GRP) \%>\%
   idata_set(idata) \%>\%
-  design("amt", des1, des2) \%>\%
+  design(list(des1, des2),"amt") \%>\%
   data_set(data) \%>\%
   mrgsim \%>\% 
   plot(RESP~time|GRP)

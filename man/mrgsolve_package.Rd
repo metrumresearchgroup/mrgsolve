@@ -58,7 +58,7 @@ events
 mod
 
 see(mod)
-?
+
 stime(mod)
 
 param(mod)
@@ -67,12 +67,10 @@ init(mod)
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168)
 
 out
+
 head(out)
 tail(out)
 dim(out)
-
-mrgsolve:::mod(out)
-param(out)
 
 plot(out, GUT+CP~.)
 
@@ -81,8 +79,6 @@ sims <- as.data.frame(out)
 t72 <- subset(sims, time==72)
 str(t72)
 
-
-
 idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168, idata=idata, req="")
 plot(out)
@@ -90,8 +86,11 @@ plot(out)
 out <- mod \%>\% ev(events) \%>\% mrgsim(carry.out="amt,evid,cmt,CL")
 head(out)
 
+out <- 
+  mod \%>\% 
+  ev() \%>\% 
+  knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
 
-out <- mod \%>\% ev() \%>\% knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
 plot(out, CP~., scales="same")
 plot(out, RESP+CP~time|amt,groups=CL)
 
@@ -104,18 +103,6 @@ events
 out <- mod \%>\% ev(ev1+ev2) \%>\% mrgsim(end=180, req="")
 plot(out)
 
-
-
-
-## Full NMTRAN data set
-data(exTheoph)
-head(exTheoph)
-
-mod <- mrgsolve:::house(delta=0.1)
-
-out <- mod \%>\% data_set(exTheoph) \%>\% mrgsim
-
-plot(out,CP~time|factor(ID),type='b', scales="same")
 
 
 ## "Condensed" data set
@@ -131,42 +118,13 @@ plot(out,CP~time|factor(ID))
 data(exidata)
 exidata
 
-out <- mod \%>\% ev(amt=1000, cmt=1) \%>\% idata_set(exidata) \%>\%  mrgsim(end=72)
+out <- 
+  mod \%>\% 
+  ev(amt=1000, cmt=1) \%>\% 
+  idata_set(exidata) \%>\%  
+  mrgsim(end=72)
 
 plot(out, CP~., as="log10")
-
-
-
-code <- '
-$PARAM CL=1, VC=10, KA=1.1
-$INIT GUT=0, CENT=0
-$SET end=48, delta=0.25
-
-$MAIN
-double CLi = CL*exp(ETA(1));
-double VCi = VC*exp(ETA(2));
-double ke = CLi/VCi;
-
-$OMEGA @correlation
-0.04 0.6 0.09
-
-$ODE
-dxdt_GUT = -KA*GUT;
-dxdt_CENT = KA*GUT - ke*CENT;
-
-$TABLE
-double CP = CENT/VCi;
-
-$CAPTURE CP
-'
-
-mod <- mcode("package_example",code) \%>\% ev(amt=1000, cmt=1, addl=2, ii=8)
-
-out <- mod \%>\% mrgsim
-
-out
-
-plot(out)
 
 
 # Internal model library

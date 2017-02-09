@@ -1,6 +1,12 @@
 // This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
 // To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
 // Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+/**
+ * @file mrgsolve.h
+ * 
+ */
+
 #include "RcppInclude.h"
 
 
@@ -8,16 +14,29 @@
 void neg_istate(int  );
 
 #include <R_ext/Rdynload.h>
+
 extern "C"{DL_FUNC tofun(SEXP a);}
 
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
-arma::mat MVGAUSS(arma::mat& OMEGA_,int n);
-Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, Rcpp::NumericMatrix& SIGMA, int seed);
 
+arma::mat MVGAUSS(arma::mat& OMEGA_,int n);
+
+Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, 
+                 Rcpp::NumericMatrix& SIGMA, int seed);
+
+//! map key: string, value: integer
 typedef std::map<std::string,int > si_map;
+
+//! map key: string, value: double
 typedef std::map<std::string,double > sd_map;
+
+//! vector of strings
 typedef std::vector<std::string> svec;
+
+//! vector of integers
 typedef std::vector<int> ivec;
+
+//! map key: string, value: integer vector
 typedef std::map<std::string, ivec> sivec_map;
 
 
@@ -28,14 +47,15 @@ void sort_unique(T& a) {
   a.erase(last, a.end());
 }
 
-int find_position(const Rcpp::CharacterVector& what,  const Rcpp::CharacterVector& table);
+int find_position(const Rcpp::CharacterVector& what,  
+                  const Rcpp::CharacterVector& table);
 
 double digits(const double& a, const double& b);
 
 void decorr(const Rcpp::NumericMatrix& x);
 
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
-//void match_both(svec a, svec b, ivec& ai, ivec& bi);
+
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b, 
              Rcpp::IntegerVector& ai,
