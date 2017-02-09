@@ -7,8 +7,10 @@
 /**
  * @mainpage
  * 
- * Documentation for mrgsolve C++ code.
+ * Documentation for `mrgsolve` `C++` code.
  *
+ * To see functions available in the `mrgx` plugin, see the 
+ * `mrgx` module <a href="group__mrgx.html">here</a>.
  *
  *
  */
