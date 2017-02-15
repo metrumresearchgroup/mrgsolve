@@ -323,6 +323,8 @@ add.ev <- function(e1,e2) {
 ##' @export
 assign_ev <- function(l,idata,evgroup,join=FALSE) {
   
+  idata <- as.data.frame(idata)
+  
   if(!("ID" %in% colnames(idata))) {
     stop("ID column missing from idata set.", call.=FALSE) 
   }
