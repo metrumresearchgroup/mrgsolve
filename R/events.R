@@ -386,9 +386,9 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' @param ev an event object
 ##' @param days comma- or space-separated character string of valid days of the
 ##' the week (see details)
+##' @param addl additional doses to administer
 ##' @param ii inter-dose interval; intended use is to keep this at the 
 ##' default value
-##' @param addl additional doses to administer
 ##' @param ... event objects named by one the valid days of the week (see details)
 ##' 
 ##' @details
@@ -407,7 +407,6 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' @examples
 ##' 
 ##' # Monday, Wednesday, Friday x 4 weeks
-##' 
 ##' ev_days(ev(amt=100), days="m,w,f", addl=3)
 ##' 
 ##' # 50 mg Tuesdays, 100 mg Thursdays x 6 months
@@ -415,7 +414,7 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' 
 ##' 
 ##' @export
-ev_days <- function(ev=NULL,days="",ii=168,addl=0,...) {
+ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
   
   start <- c(m=0,t=24,w=48,th=72,f=96,sa=120,s=144)
   
