@@ -463,5 +463,10 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
   
   if(addl > 0) evs$addl <- addl
   
-  as.data.frame(dplyr::arrange(evs,time))
+  if("ID" %in% names(evs)) {
+    
+  } else {
+    return(as.data.frame(dplyr::arrange(evs,time)))
+  }
+  
 }
