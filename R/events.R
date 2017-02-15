@@ -463,5 +463,5 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
   
   if(addl > 0) evs$addl <- addl
   
-  evs
+  as.data.frame(dplyr::arrange(evs,time))
 }
