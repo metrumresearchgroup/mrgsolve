@@ -10,8 +10,12 @@
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
+##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} doses.  If \code{TRUE}, 
+##' \code{addl} doses are made explicit with \code{\link{realize_addl}}.
 ##' @export
-setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replicate=TRUE, until=NULL, ...) {
+setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
+                                    cmt=1, replicate=TRUE, until=NULL,
+                                    realize_addl=FALSE,...) {
   
   if(length(match.call())==1) { 
     return(new("ev", data=data.frame()[0,]))
@@ -52,13 +56,16 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
       }
       
     } else {
-      if(length(ID)!=nrow(data)) stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
+      if(length(ID)!=nrow(data)) { 
+        stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
+      }
       data["ID"] <- ID
     }
     data <- data %>% shuffle(c("ID", "time", "cmt"))
   } else {
     data <- data %>% shuffle(c("time", "cmt"))
   }
+  if(realize_addl) data <- realize_addl(data)
   return(new("ev", data=data))
 })
 
@@ -437,7 +444,6 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
     start <- c(m=0,t=1,w=2,th=3,f=4,sa=5,s=6)
     if(missing(ii)) ii <- 7
   }
-
   if(!is.null(ev)) {
     if(missing(days)) {
       stop("days argument must be supplied with ev argument.",call.=FALSE) 
@@ -457,29 +463,68 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
     evs <- args[names(args) %in% names(start)]
     days <- names(evs)
   }
-  
   if(length(evs)==0) {
     stop("no events were found.", call.=FALSE) 
   }
-  
   evs <- lapply(evs,as.data.frame)
-  
   for(d in days) {
     if(any(evs[[d]]$time > max.time)) {
       warning("not expecting time values greater than 24 hours or 1 day.",call.=FALSE)  
     }
     evs[[d]]$time <- evs[[d]]$time + start[d] 
   }
-  
   evs <- bind_rows(evs)
   evs$ii <- ii
-  
   if(addl > 0) evs$addl <- addl
-  
   if("ID" %in% names(evs)) {
     return(as.data.frame(dplyr::arrange(evs,ID,time)))
   } else {
     return(as.data.frame(dplyr::arrange(evs,time)))
   }
-  
 }
+
+##' Make addl doses explicit in an event object or data set.
+##' 
+##' @param x a \code{data_set} data frame or an \code{ev} object (see details)
+##' @param ... not used
+##' @details
+##' Required data elements: \code{addl} and \code{ii}.
+##' @export
+realize_addl <- function(x,...) UseMethod("realize_addl")
+##' @rdname realize_addl
+##' @export
+realize_addl.data.frame <- function(x,...) {
+  
+  if(!all(c("addl", "ii") %in% names(x))) {
+    stop("both addl and ii are required", call.=FALSE) 
+  }
+  add <- which(x[["addl"]] > 0)
+  addl <- lapply(add, function(i) {
+    df <- x[i,,drop=FALSE]
+    df <- df[rep(1,df$addl),]
+    df$time <- df$time + df$ii*seq(1,df$addl[1])
+    df$addl <- 0
+    df$ii <- 0
+    df
+  }) 
+  df <- bind_rows(x,bind_rows(addl))
+  df$ii <- 0
+  df$addl <- 0
+  if("ID" %in% names(df)) {
+    df <- dplyr::arrange(df,ID,time)
+  } else {
+    df <- dplyr::arrange(df,time)
+  }
+  df
+}
+##' @rdname realize_addl
+##' @export
+realize_addl.ev <- function(x,...) {
+  x@data <- realize_addl(x@data)
+  return(x)
+}
+
+
+
+
+

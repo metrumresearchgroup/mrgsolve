@@ -28,7 +28,7 @@ as.ev(x, ...)
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
 
 \S4method{ev}{missing}(time = 0, evid = 1, ID = numeric(0), cmt = 1,
-  replicate = TRUE, until = NULL, ...)
+  replicate = TRUE, until = NULL, realize_addl = FALSE, ...)
 
 \S4method{ev}{ev}(x, ...)
 
@@ -60,6 +60,9 @@ as.ev(x, ...)
 \item{replicate}{logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}}
 
 \item{until}{the expected maximum \bold{observation} time for this regimen}
+
+\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} doses.  If \code{TRUE}, 
+\code{addl} doses are made explicit with \code{\link{realize_addl}}.}
 
 \item{nid}{if greater than 1, will expand to the appropriate 
 number of individuals}
