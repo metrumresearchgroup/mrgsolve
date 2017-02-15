@@ -395,6 +395,7 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' @param addl additional doses to administer
 ##' @param ii inter-dose interval; intended use is to keep this at the 
 ##' default value
+##' @param unit time unit; the function can only currently handle hours or days
 ##' @param ... event objects named by one the valid days of the week (see details)
 ##' 
 ##' @details
@@ -424,10 +425,19 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' 
 ##' 
 ##' @export
-ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
+ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   
+  unit <- match.arg(unit)
+
+  max.time <- 24
   start <- c(m=0,t=24,w=48,th=72,f=96,sa=120,s=144)
   
+  if(unit=="days") {
+    max.time <- 1
+    start <- c(m=0,t=1,w=2,th=3,f=4,sa=5,s=6)
+    if(missing(ii)) ii <- 7
+  }
+
   if(!is.null(ev)) {
     if(missing(days)) {
       stop("days argument must be supplied with ev argument.",call.=FALSE) 
@@ -455,7 +465,10 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
   evs <- lapply(evs,as.data.frame)
   
   for(d in days) {
-    evs[[d]]$time <- start[d] 
+    if(any(evs[[d]]$time > max.time)) {
+      warning("not expecting time values greater than 24 hours or 1 day.",call.=FALSE)  
+    }
+    evs[[d]]$time <- evs[[d]]$time + start[d] 
   }
   
   evs <- bind_rows(evs)

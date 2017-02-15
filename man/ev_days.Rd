@@ -4,7 +4,8 @@
 \alias{ev_days}
 \title{Schedule dosing events on days of the week.}
 \usage{
-ev_days(ev = NULL, days = "", addl = 0, ii = 168, ...)
+ev_days(ev = NULL, days = "", addl = 0, ii = 168, unit = c("hours",
+  "days"), ...)
 }
 \arguments{
 \item{ev}{an event object}
@@ -16,6 +17,8 @@ the week (see details)}
 
 \item{ii}{inter-dose interval; intended use is to keep this at the 
 default value}
+
+\item{unit}{time unit; the function can only currently handle hours or days}
 
 \item{...}{event objects named by one the valid days of the week (see details)}
 }
