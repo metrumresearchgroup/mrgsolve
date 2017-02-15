@@ -29,4 +29,3 @@ mod <- mrgsolve:::house()
 mod \%>\% tscale(1/24) \%>\% mrgsim
 
 }
-

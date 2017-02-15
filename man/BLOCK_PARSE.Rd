@@ -2,12 +2,12 @@
 % Please edit documentation in R/modspec.R
 \name{BLOCK_PARSE}
 \alias{BLOCK_PARSE}
-\alias{CAPTURE}
-\alias{CMT}
-\alias{FIXED}
-\alias{INIT}
 \alias{PARAM}
+\alias{FIXED}
 \alias{THETA}
+\alias{INIT}
+\alias{CMT}
+\alias{CAPTURE}
 \title{Functions to parse code blocks.}
 \usage{
 PARAM(x, env, annotated = FALSE, pos = 1, ...)
@@ -43,4 +43,3 @@ options and is documented separately.
 \seealso{
 \code{\link{PKMODEL}}
 }
-

@@ -18,4 +18,3 @@ details(x, complete = FALSE, values = FALSE, ...)
 \description{
 Extract model details.
 }
-

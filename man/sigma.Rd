@@ -2,16 +2,16 @@
 % Please edit documentation in R/matlist.R
 \docType{methods}
 \name{sigma}
-\alias{SIGMA}
 \alias{sigma}
 \alias{smat}
-\alias{smat,NULL-method}
-\alias{smat,list-method}
-\alias{smat,matrix-method}
+\alias{SIGMA}
 \alias{smat,missing-method}
-\alias{smat,mrgmod-method}
-\alias{smat,mrgsims-method}
+\alias{smat,matrix-method}
+\alias{smat,list-method}
 \alias{smat,sigmalist-method}
+\alias{smat,mrgmod-method}
+\alias{smat,NULL-method}
+\alias{smat,mrgsims-method}
 \title{Manipulate SIGMA matrices.}
 \usage{
 smat(.x, ...)
@@ -65,4 +65,3 @@ smat(mod, make=TRUE)
 
 
 }
-

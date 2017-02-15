@@ -53,4 +53,3 @@ If \code{trans=1}, the user must utilize the following symbols:
 \seealso{
 \code{\link{BLOCK_PARSE}}
 }
-

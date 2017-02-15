@@ -16,4 +16,3 @@ Note: this function is not exported; you must go into the \code{mrgsolve} namesp
 mrgsolve:::reserved()
 
 }
-

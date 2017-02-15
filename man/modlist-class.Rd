@@ -2,8 +2,8 @@
 % Please edit documentation in R/class_modlist.R
 \docType{class}
 \name{modlist-class}
-\alias{$,modlist-method}
 \alias{modlist-class}
+\alias{$,modlist-method}
 \title{S4 class matlist.}
 \usage{
 \S4method{$}{modlist}(x, name)
@@ -16,4 +16,3 @@
 \description{
 S4 class matlist.
 }
-

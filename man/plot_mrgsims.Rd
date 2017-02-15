@@ -2,9 +2,9 @@
 % Please edit documentation in R/mrgsims.R
 \docType{methods}
 \name{plot_mrgsims}
-\alias{plot,mrgsims,formula-method}
-\alias{plot,mrgsims,missing-method}
 \alias{plot_mrgsims}
+\alias{plot,mrgsims,missing-method}
+\alias{plot,mrgsims,formula-method}
 \title{Generate a quick plot of simulated data.}
 \usage{
 \S4method{plot}{mrgsims,missing}(x, limit = 16, ...)
@@ -57,4 +57,3 @@ plot(out, GUT+CP~.)
 plot(out, CP+RESP~time, col="black", scales="same", lty=2)
 
 }
-

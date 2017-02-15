@@ -28,4 +28,3 @@ idata$arm <- 1+(idata$ID \%\%2)
 assign_ev(list(ev1,ev2),idata,"arm",join=TRUE)
 
 }
-

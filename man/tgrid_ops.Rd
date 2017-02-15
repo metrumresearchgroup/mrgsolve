@@ -2,16 +2,16 @@
 % Please edit documentation in R/simtime.R
 \docType{methods}
 \name{c,tgrid-method}
-\alias{*,tgrid,numeric-method}
-\alias{*,tgrids,numeric-method}
-\alias{+,tgrid,numeric-method}
-\alias{+,tgrids,numeric-method}
 \alias{c,tgrid-method}
 \alias{c,tgrids-method}
-\alias{tgrid_*_numeric}
 \alias{tgrid_+_numeric}
-\alias{tgrids_*_numeric}
+\alias{+,tgrid,numeric-method}
+\alias{tgrid_*_numeric}
+\alias{*,tgrid,numeric-method}
 \alias{tgrids_+_numeric}
+\alias{+,tgrids,numeric-method}
+\alias{tgrids_*_numeric}
+\alias{*,tgrids,numeric-method}
 \title{Operations with tgrid objects.}
 \usage{
 \S4method{c}{tgrid}(x, ..., recursive = FALSE)
@@ -40,4 +40,3 @@
 \description{
 Operations with tgrid objects.
 }
-

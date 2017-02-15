@@ -54,4 +54,3 @@ mod \%>\%
   mrgsim \%>\% 
   plot(RESP~time|GRP)
 }
-

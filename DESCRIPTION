@@ -93,4 +93,4 @@ Collate:
     'render.R'
     'simtime.R'
     'update.R'
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

@@ -120,7 +120,9 @@ modelparse <- function(txt,
   # Where the block starts
   start <- which(sapply(m,"[",1L) > 0)
   
-  if(length(start)==0) stop("No model specification file blocks were found.", call.=FALSE)
+  if(length(start)==0) {
+    stop("No model specification file blocks were found.", call.=FALSE)
+  }
   
   # Get the matches
   mm <- regmatches(txt[start],m[start])

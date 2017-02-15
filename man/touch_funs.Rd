@@ -14,4 +14,3 @@ touch_funs(x, keep_pointers = TRUE)
 \description{
 Get inits from compiled function.
 }
-

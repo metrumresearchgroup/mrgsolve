@@ -3,19 +3,19 @@
 \docType{methods}
 \name{$,mrgmod-method}
 \alias{$,mrgmod-method}
-\alias{allparam}
-\alias{as.param}
-\alias{as.param,list-method}
-\alias{as.param,missing-method}
-\alias{as.param,numeric-method}
-\alias{as.param,parameter_list-method}
 \alias{param}
-\alias{param,ANY-method}
-\alias{param,list-method}
-\alias{param,missing-method}
 \alias{param,mrgmod-method}
 \alias{param,mrgsims-method}
+\alias{param,missing-method}
+\alias{param,list-method}
+\alias{param,ANY-method}
+\alias{as.param}
+\alias{as.param,list-method}
+\alias{as.param,numeric-method}
+\alias{as.param,parameter_list-method}
+\alias{as.param,missing-method}
 \alias{show,parameter_list-method}
+\alias{allparam}
 \title{Create and work with parameter objects.}
 \usage{
 \S4method{$}{mrgmod}(x, name)
@@ -92,4 +92,3 @@ as.data.frame(param(mod))
 
 }
 \keyword{param}
-

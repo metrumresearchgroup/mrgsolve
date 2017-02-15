@@ -2,13 +2,13 @@
 % Please edit documentation in R/class_mrgmod.R, R/simtime.R
 \docType{methods}
 \name{stime,mrgmod-method}
-\alias{show,tgrid-method}
-\alias{show,tgrids-method}
 \alias{stime,mrgmod-method}
-\alias{stime,numeric-method}
+\alias{tgrid}
 \alias{stime,tgrid-method}
 \alias{stime,tgrids-method}
-\alias{tgrid}
+\alias{stime,numeric-method}
+\alias{show,tgrid-method}
+\alias{show,tgrids-method}
 \title{Create a simtime object.}
 \usage{
 \S4method{stime}{mrgmod}(x, ...)
@@ -64,4 +64,3 @@ out <- mod \%>\% ev(amt=1000, ii=24, addl=10) \%>\% mrgsim(tgrid=design)
 plot(out,CP~., type='b')
 
 }
-

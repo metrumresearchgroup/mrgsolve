@@ -19,4 +19,3 @@ a model.
 \seealso{
 \code{\link{env_get}}, \code{\link{env_ls}}
 }
-

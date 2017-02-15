@@ -19,4 +19,3 @@ mrgsolve_template(model = "template", project = getwd(),
 \description{
 Create model specification file from template
 }
-

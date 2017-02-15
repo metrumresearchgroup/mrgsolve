@@ -16,4 +16,3 @@ mvgauss(mat, n = 10, seed = NULL)
 \description{
 Simulate from a multivariate normal distribution with mean zero.
 }
-

@@ -2,12 +2,12 @@
 % Please edit documentation in R/events.R
 \docType{methods}
 \name{ev_ops}
+\alias{ev_ops}
 \alias{+,ev,ev-method}
-\alias{+,ev,numeric-method}
 \alias{\%then\%}
 \alias{\%then\%,ev,ev-method}
+\alias{+,ev,numeric-method}
 \alias{c,ev-method}
-\alias{ev_ops}
 \title{Operations for ev objects.}
 \usage{
 \S4method{+}{ev,ev}(e1, e2)
@@ -38,4 +38,3 @@ Operations for ev objects.
 All operations involving \code{\link[=mrgmod-class]{mrgmod}} 
 objects have been deprecated.
 }
-

@@ -21,4 +21,3 @@ There is also a \code{obsonly} argument to \code{\link{mrgsim}} that can
 be set to accomplish the same thing as a call to \code{obsonly} in 
 the pipeline.
 }
-

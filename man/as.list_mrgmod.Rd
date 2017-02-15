@@ -15,4 +15,3 @@
 \description{
 Coerce a model object to list.
 }
-

@@ -3,8 +3,8 @@
 \docType{methods}
 \name{idata_set}
 \alias{idata_set}
-\alias{idata_set,mrgmod,ANY-method}
 \alias{idata_set,mrgmod,data.frame-method}
+\alias{idata_set,mrgmod,ANY-method}
 \alias{idata_set,mrgmod,missing-method}
 \title{Select and modify a idata set for simulation.}
 \usage{
@@ -77,4 +77,3 @@ mod \%>\% mrgsim(idata=exidata)
 \seealso{
 \code{\link{data_set}}, \code{\link{ev}}
 }
-

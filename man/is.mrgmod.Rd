@@ -16,4 +16,3 @@ is.mrgmod(x)
 The function checks to see if the object is either
  \code{mrgmod} or \code{packmod}.
 }
-

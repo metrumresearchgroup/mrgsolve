@@ -31,4 +31,3 @@ data <- recmatrix(ev(amt=1000, ii=24, addl=100),des)
 out <- mod \%>\% qsim(data)
 
 }
-

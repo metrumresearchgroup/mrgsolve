@@ -15,4 +15,3 @@ is.mrgsims(x)
 \description{
 Check if an object is mrgsim output.
 }
-

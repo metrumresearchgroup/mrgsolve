@@ -19,4 +19,3 @@ mod <- mrgsolve:::house()
 soloc(mod)
 
 }
-

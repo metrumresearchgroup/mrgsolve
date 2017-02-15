@@ -18,4 +18,3 @@ revar(x, ...)
 \description{
 Get model random effect variances and covariances.
 }
-

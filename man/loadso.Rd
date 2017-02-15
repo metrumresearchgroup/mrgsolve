@@ -18,4 +18,3 @@ loadso(x, ...)
 \description{
 Load the model shared object.
 }
-

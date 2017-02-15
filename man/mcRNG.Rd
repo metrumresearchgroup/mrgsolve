@@ -9,4 +9,3 @@ mcRNG()
 \description{
 Set RNG to use L'Ecuyer-CMRG.
 }
-

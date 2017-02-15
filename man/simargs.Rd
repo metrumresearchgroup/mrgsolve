@@ -27,4 +27,3 @@ mod <- mrgsolve:::house()
 mod \%>\% Req(CP,RESP) \%>\% carry_out(evid,WT,FLAG) \%>\% simargs
 
 }
-

@@ -21,4 +21,3 @@ modlist(project = ".", soloc = tempdir(), prefix = "",
 \description{
 Create a modlist object.
 }
-

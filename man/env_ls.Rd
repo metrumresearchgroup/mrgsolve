@@ -15,4 +15,3 @@ env_ls(x, ...)
 Each model keeps an internal environment that allows the user 
 to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
 }
-

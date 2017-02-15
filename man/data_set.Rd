@@ -3,8 +3,8 @@
 \docType{methods}
 \name{data_set}
 \alias{data_set}
-\alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,data.frame-method}
+\alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,missing-method}
 \title{Select and modify a data set for simulation.}
 \usage{
@@ -91,4 +91,3 @@ mod \%>\% mrgsim(data=extran1)
 \code{\link{idata_set}}, \code{\link{ev}}, 
 \code{\link{valid_data_set}}, \code{\link{valid_idata_set}}
 }
-

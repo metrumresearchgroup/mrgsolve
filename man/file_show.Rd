@@ -18,4 +18,3 @@ file_show(x, spec = TRUE, source = TRUE, ...)
 \description{
 Show model specification and C++ files.
 }
-

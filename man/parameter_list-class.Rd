@@ -10,4 +10,3 @@ S4 parameter_list class
 \details{
 parameter_list is a \code{\link{numericlist-class}}
 }
-

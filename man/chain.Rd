@@ -24,4 +24,3 @@ out <- mod \%>\% data_set(exTheoph) \%>\% mrgsim()
 out <- mod \%>\% carry_out(evid) \%>\% ev(amt=100, cmt=1) \%>\% mrgsim()
 out <- mod \%>\% Req(CP,RESP) \%>\% mrgsim()
 }
-

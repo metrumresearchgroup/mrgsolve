@@ -24,4 +24,3 @@ Get the compartment number from a compartment name.
 mod <- mrgsolve:::house()
 mod \%>\% cmtn("CENT")
 }
-

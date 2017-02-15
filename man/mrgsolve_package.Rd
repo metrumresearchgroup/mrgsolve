@@ -45,6 +45,7 @@ See \code{\link{mrgsims}} for methods to use with simulated output.
 
 See: \code{\link{aboutsolver}}
 }
+
 \examples{
 
 ## example("mrgsolve")
@@ -137,4 +138,3 @@ mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
 
 
 }
-

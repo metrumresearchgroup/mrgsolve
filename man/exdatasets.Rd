@@ -2,13 +2,13 @@
 % Please edit documentation in R/datasets.R
 \docType{data}
 \name{exdatasets}
-\alias{exBoot}
-\alias{exTheoph}
 \alias{exdatasets}
 \alias{exidata}
 \alias{extran1}
 \alias{extran2}
 \alias{extran3}
+\alias{exTheoph}
+\alias{exBoot}
 \title{Example input data sets.}
 \usage{
 data(exidata)
@@ -71,4 +71,3 @@ out <- mod \%>\% idata_set(exidata) \%>\% ev(amt=100,ii=24,addl=10) \%>\% mrgsim
 plot(out, CP~time|ID)
 }
 \keyword{datasets}
-

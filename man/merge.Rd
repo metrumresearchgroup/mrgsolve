@@ -28,4 +28,3 @@ Merge two lists.
 \details{
 Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{open}.
 }
-

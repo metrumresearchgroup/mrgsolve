@@ -27,4 +27,3 @@ as specified in the block.
 \description{
 Scrape options from a code block.
 }
-

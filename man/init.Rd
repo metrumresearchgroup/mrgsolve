@@ -2,18 +2,18 @@
 % Please edit documentation in R/init.R
 \docType{methods}
 \name{init}
-\alias{as.init}
-\alias{as.init,NULL-method}
-\alias{as.init,cmt_list-method}
-\alias{as.init,list-method}
-\alias{as.init,missing-method}
-\alias{as.init,numeric-method}
 \alias{init}
-\alias{init,ANY-method}
-\alias{init,list-method}
-\alias{init,missing-method}
 \alias{init,mrgmod-method}
 \alias{init,mrgsims-method}
+\alias{init,missing-method}
+\alias{init,list-method}
+\alias{init,ANY-method}
+\alias{as.init}
+\alias{as.init,list-method}
+\alias{as.init,numeric-method}
+\alias{as.init,cmt_list-method}
+\alias{as.init,missing-method}
+\alias{as.init,NULL-method}
 \alias{show,cmt_list-method}
 \title{Methods for working with the model compartment list.}
 \usage{
@@ -81,4 +81,3 @@ init(mod)$CENT
 as.list(init(mod))
 as.data.frame(init(mod))
 }
-
