@@ -382,6 +382,10 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 
 ##' Schedule dosing events on days of the week.
 ##' 
+##' This function lets you schedule doses on specific 
+##' days of the week, allowing you to create dosing 
+##' regimens on Monday/Wednesday/Friday, or Tuesday/Thursday,
+##' or every other day (however you want to define that) etc.
 ##' 
 ##' @param ev an event object
 ##' @param days comma- or space-separated character string of valid days of the
@@ -403,6 +407,10 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' \item \code{sa} for Saturday
 ##' \item \code{s} for Sunday
 ##' }
+##' 
+##' The whole purpose of this function is to schedule doses on specific
+##' days of the week, in a repeating weekly schedule.  Please do use caution 
+##' when changing \code{ii} from it's default value.
 ##' 
 ##' @examples
 ##' 
