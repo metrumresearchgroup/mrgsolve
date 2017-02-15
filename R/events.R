@@ -323,6 +323,8 @@ add.ev <- function(e1,e2) {
 ##' @export
 assign_ev <- function(l,idata,evgroup,join=FALSE) {
   
+  idata <- as.data.frame(idata)
+  
   if(!("ID" %in% colnames(idata))) {
     stop("ID column missing from idata set.", call.=FALSE) 
   }
@@ -461,5 +463,10 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
   
   if(addl > 0) evs$addl <- addl
   
-  evs
+  if("ID" %in% names(evs)) {
+    return(as.data.frame(dplyr::arrange(evs,ID,time)))
+  } else {
+    return(as.data.frame(dplyr::arrange(evs,time)))
+  }
+  
 }
