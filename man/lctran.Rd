@@ -19,4 +19,3 @@ Convert select upper case column names to lower case to conform to mrgsolve data
 Columns that will be renamed with lower case versions: \code{AMT}, \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, \code{TIME}.  If a lower case version
 of these names exist in the data set, the column will not be renamed.
 }
-

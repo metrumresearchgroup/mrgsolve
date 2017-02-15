@@ -14,4 +14,3 @@ env_get(x, tolist = TRUE)
 \description{
 Return model environment.
 }
-

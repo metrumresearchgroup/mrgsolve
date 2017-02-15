@@ -379,3 +379,80 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
   return(x)
   
 }
+
+##' Schedule dosing events on days of the week.
+##' 
+##' 
+##' @param ev an event object
+##' @param days comma- or space-separated character string of valid days of the
+##' the week (see details)
+##' @param ii inter-dose interval; intended use is to keep this at the 
+##' default value
+##' @param addl additional doses to administer
+##' @param ... event objects named by one the valid days of the week (see details)
+##' 
+##' @details
+##' Valid names of the week are: 
+##' 
+##' \itemize{
+##' \item \code{m} for Monday
+##' \item \code{t} for Tuesday
+##' \item \code{w} for Wednesday
+##' \item \code{th} for Thursday
+##' \item \code{f} for Friday
+##' \item \code{sa} for Saturday
+##' \item \code{s} for Sunday
+##' }
+##' 
+##' @examples
+##' 
+##' # Monday, Wednesday, Friday x 4 weeks
+##' 
+##' ev_days(ev(amt=100), days="m,w,f", addl=3)
+##' 
+##' # 50 mg Tuesdays, 100 mg Thursdays x 6 months
+##' ev_days(t=ev(amt=50), th=ev(amt=100), addl=23)
+##' 
+##' 
+##' @export
+ev_days <- function(ev=NULL,days="",ii=168,addl=0,...) {
+  
+  start <- c(m=0,t=24,w=48,th=72,f=96,sa=120,s=144)
+  
+  if(!is.null(ev)) {
+    if(missing(days)) {
+      stop("days argument must be supplied with ev argument.",call.=FALSE) 
+    }
+    days <- cvec_cs(days)
+    if(!all(days %in% names(start))) {
+      valid <- paste(names(start),collapse=",")
+      err <- paste0("invalid day; valid days are: ", valid)
+      stop(err,call.=FALSE)
+    }
+    evs <- lapply(days,function(i) {
+      return(ev)
+    })
+    names(evs) <- days
+  } else {
+    args <- list(...)
+    evs <- args[names(args) %in% names(start)]
+    days <- names(evs)
+  }
+  
+  if(length(evs)==0) {
+    stop("no events were found.", call.=FALSE) 
+  }
+  
+  evs <- lapply(evs,as.data.frame)
+  
+  for(d in days) {
+    evs[[d]]$time <- start[d] 
+  }
+  
+  evs <- bind_rows(evs)
+  evs$ii <- ii
+  
+  if(addl > 0) evs$addl <- addl
+  
+  evs
+}

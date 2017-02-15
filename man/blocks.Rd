@@ -3,8 +3,8 @@
 \docType{methods}
 \name{blocks}
 \alias{blocks}
-\alias{blocks,character-method}
 \alias{blocks,mrgmod-method}
+\alias{blocks,character-method}
 \title{Return the code blocks from a model specification file.}
 \usage{
 blocks(x, ...)
@@ -27,4 +27,3 @@ mod \%>\% blocks
 mod \%>\% blocks(PARAM,TABLE)
 
 }
-

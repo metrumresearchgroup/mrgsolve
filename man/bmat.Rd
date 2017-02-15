@@ -39,4 +39,3 @@ cmat(0.5, 0.87,0.2)
 
 \code{\link{as_dmat}}
 }
-

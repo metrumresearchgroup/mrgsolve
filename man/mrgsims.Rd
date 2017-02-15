@@ -2,17 +2,17 @@
 % Please edit documentation in R/mrgsims.R
 \docType{methods}
 \name{mrgsims}
+\alias{mrgsims}
 \alias{$,mrgsims-method}
+\alias{tail,mrgsims-method}
+\alias{head,mrgsims-method}
+\alias{dim,mrgsims-method}
+\alias{names,mrgsims-method}
 \alias{as.data.frame,mrgsims-method}
 \alias{as.matrix,mrgsims-method}
-\alias{dim,mrgsims-method}
-\alias{head,mrgsims-method}
-\alias{mrgsims}
-\alias{names,mrgsims-method}
-\alias{show,mrgsims-method}
 \alias{subset,mrgsims-method}
 \alias{summary,mrgsims-method}
-\alias{tail,mrgsims-method}
+\alias{show,mrgsims-method}
 \title{Methods for working with \code{mrgsims} objects.}
 \usage{
 \S4method{$}{mrgsims}(x, name)
@@ -102,4 +102,3 @@ plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 \seealso{
 \code{\link{stime}}
 }
-

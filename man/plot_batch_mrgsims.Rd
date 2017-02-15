@@ -2,8 +2,8 @@
 % Please edit documentation in R/knobs.R
 \docType{methods}
 \name{plot,batch_mrgsims,missing-method}
-\alias{plot,batch_mrgsims,formula-method}
 \alias{plot,batch_mrgsims,missing-method}
+\alias{plot,batch_mrgsims,formula-method}
 \title{Plot method for mrgsims objects.}
 \usage{
 \S4method{plot}{batch_mrgsims,missing}(x, yval = variables(x),
@@ -37,4 +37,3 @@
 \description{
 Plot method for mrgsims objects.
 }
-

@@ -10,4 +10,3 @@ S4 cmt_list class
 \details{
 cmt_list is a \code{\link{numericlist-class}}
 }
-

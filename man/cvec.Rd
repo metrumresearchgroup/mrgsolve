@@ -2,9 +2,9 @@
 % Please edit documentation in R/utils.R
 \docType{methods}
 \name{cvec}
-\alias{ch}
 \alias{cvec}
 \alias{cvec,character-method}
+\alias{ch}
 \alias{s}
 \title{Create create character vectors.}
 \usage{
@@ -31,4 +31,3 @@ ch(A,B,C)
 s(A,B,C)
 
 }
-

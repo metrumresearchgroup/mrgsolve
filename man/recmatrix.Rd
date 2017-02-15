@@ -16,4 +16,3 @@ recmatrix(x, times, c_indexing = TRUE)
 \description{
 This function is for use with \code{\link{qsim}} only.
 }
-

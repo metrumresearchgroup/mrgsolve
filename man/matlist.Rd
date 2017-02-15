@@ -2,20 +2,21 @@
 % Please edit documentation in R/matlist.R
 \docType{methods}
 \name{matlist}
-\alias{as.list,matlist-method}
-\alias{as.matrix,matlist-method}
-\alias{dim,matlist-method}
-\alias{drop.re}
-\alias{drop.re,mrgmod-method}
-\alias{labels,matlist-method}
-\alias{length,matlist-method}
 \alias{matlist}
-\alias{names,matlist-method}
-\alias{nrow,matlist-method}
-\alias{show,matlist-method}
 \alias{zero.re}
+\alias{drop.re}
 \alias{zero.re,mrgmod-method}
 \alias{zero_re}
+\alias{drop.re}
+\alias{drop.re,mrgmod-method}
+\alias{as.list,matlist-method}
+\alias{as.matrix,matlist-method}
+\alias{names,matlist-method}
+\alias{length,matlist-method}
+\alias{labels,matlist-method}
+\alias{dim,matlist-method}
+\alias{nrow,matlist-method}
+\alias{show,matlist-method}
 \title{Methods for working with matrix-list objects.}
 \usage{
 zero.re(.x, ...)
@@ -56,4 +57,3 @@ drop.re(.x, ...)
 \description{
 Methods for working with matrix-list objects.
 }
-

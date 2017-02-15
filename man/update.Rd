@@ -2,13 +2,14 @@
 % Please edit documentation in R/class_mrgmod.R, R/update.R
 \docType{methods}
 \name{update}
+\alias{update}
 \alias{names,mrgmod-method}
 \alias{update}
-\alias{update,ev-method}
 \alias{update,mrgmod-method}
 \alias{update,omegalist-method}
-\alias{update,parameter_list-method}
 \alias{update,sigmalist-method}
+\alias{update,parameter_list-method}
+\alias{update,ev-method}
 \title{Get all names from a model object.}
 \usage{
 \S4method{names}{mrgmod}(x)
@@ -58,4 +59,3 @@ names(mod)
 
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
 }
-

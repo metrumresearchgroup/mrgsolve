@@ -19,4 +19,3 @@ the pipeline.}
 \description{
 Augment observations in the simulated output.
 }
-

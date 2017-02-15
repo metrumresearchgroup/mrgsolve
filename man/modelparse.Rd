@@ -21,4 +21,3 @@ modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = c("//",
 \description{
 Parse model specification text.
 }
-

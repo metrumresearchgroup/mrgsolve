@@ -3,10 +3,10 @@
 \name{valid_data}
 \alias{valid_data}
 \alias{valid_data_set}
-\alias{valid_data_set.data.frame}
 \alias{valid_data_set.default}
-\alias{valid_data_set.matrix}
+\alias{valid_data_set.data.frame}
 \alias{valid_idata_set}
+\alias{valid_data_set.matrix}
 \title{Validate and prepare data sets for simulation.}
 \usage{
 valid_data_set(x, ...)
@@ -49,4 +49,3 @@ Validate and prepare idata data sets for simulation.
 \code{\link{idata_set}}, \code{\link{data_set}},
 \code{\link{valid_data_set}}
 }
-

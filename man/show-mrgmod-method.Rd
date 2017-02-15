@@ -13,4 +13,3 @@
 \description{
 Print model details.
 }
-

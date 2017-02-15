@@ -14,4 +14,3 @@ psim(x, idata)
 \description{
 A quick simulation function.
 }
-

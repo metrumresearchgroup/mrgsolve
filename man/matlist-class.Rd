@@ -9,4 +9,3 @@
 \description{
 S4 class matlist.
 }
-

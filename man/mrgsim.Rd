@@ -55,6 +55,7 @@ time since the last dose.  Only data records with \code{evid == 1} will be consi
 purposes of \code{tad} calculation.
 }
 }
+
 \examples{
 ## example("mrgsim")
 
@@ -88,4 +89,3 @@ out
 
 
 }
-

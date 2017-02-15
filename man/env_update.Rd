@@ -16,4 +16,3 @@ env_update(.x, ..., .dots = list())
 \description{
 Update objects in model environment.
 }
-

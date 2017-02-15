@@ -2,10 +2,10 @@
 % Please edit documentation in R/render.R
 \docType{methods}
 \name{render}
-\alias{dorender}
 \alias{render}
 \alias{render,character-method}
 \alias{render,mrgmod-method}
+\alias{dorender}
 \title{Render a model to a document.}
 \usage{
 render(x, ...)
@@ -40,4 +40,3 @@ mrgsolve:::render("irm2", modlib())
 }
 
 }
-

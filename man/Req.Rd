@@ -44,4 +44,3 @@ mod <- mrgsolve:::house()
 mod \%>\% Req(CP,RESP) \%>\% ev(amt=1000) \%>\%  mrgsim
 
 }
-

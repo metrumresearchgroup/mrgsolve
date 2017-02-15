@@ -2,16 +2,16 @@
 % Please edit documentation in R/matlist.R
 \docType{methods}
 \name{omega}
-\alias{OMEGA}
+\alias{omega}
 \alias{omat}
+\alias{OMEGA}
+\alias{omat,missing-method}
+\alias{omat,matrix-method}
 \alias{omat,NULL-method}
 \alias{omat,list-method}
-\alias{omat,matrix-method}
-\alias{omat,missing-method}
+\alias{omat,omegalist-method}
 \alias{omat,mrgmod-method}
 \alias{omat,mrgsims-method}
-\alias{omat,omegalist-method}
-\alias{omega}
 \title{Manipulate OMEGA matrices.}
 \usage{
 omat(.x, ...)
@@ -81,4 +81,3 @@ $OMEGA \\@cor
 
 }
 }
-

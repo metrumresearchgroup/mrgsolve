@@ -44,4 +44,3 @@ as_data_set(ev(amt=c(100,200), cmt=1, ID=1:3),
 as_data_set(ev(amt=100), ev(amt=200),ev(amt=300))
 
 }
-

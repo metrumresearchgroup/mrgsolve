@@ -17,4 +17,3 @@ a numeric diagonal matrix
 \description{
 Create a diagonal numeric matrix from diagonal elements.
 }
-

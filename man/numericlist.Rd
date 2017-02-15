@@ -2,14 +2,14 @@
 % Please edit documentation in R/class_numericlist.R
 \docType{methods}
 \name{numericlist}
-\alias{$,numericlist-method}
-\alias{[,numericlist-method}
-\alias{as.data.frame,numericlist-method}
+\alias{numericlist}
 \alias{as.list,numericlist-method}
 \alias{as.numeric,numericlist-method}
+\alias{as.data.frame,numericlist-method}
 \alias{length,numericlist-method}
 \alias{names,numericlist-method}
-\alias{numericlist}
+\alias{$,numericlist-method}
+\alias{[,numericlist-method}
 \title{Methods for numericlist.}
 \usage{
 \S4method{as.list}{numericlist}(x, ...)
@@ -48,4 +48,3 @@
 These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures,
 extract elements from \code{numericlist}s, or get attributes from \code{numericlist}s.
 }
-

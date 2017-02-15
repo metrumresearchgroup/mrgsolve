@@ -22,4 +22,3 @@ mrgsolve_example(model = c("pkExample", "pkpdExample", "firstmodeExample",
 \description{
 Extract example model from system library
 }
-

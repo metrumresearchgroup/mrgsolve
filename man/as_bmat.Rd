@@ -3,15 +3,15 @@
 \docType{methods}
 \name{as_bmat}
 \alias{as_bmat}
-\alias{as_bmat,ANY-method}
-\alias{as_bmat,data.frame-method}
 \alias{as_bmat,list-method}
 \alias{as_bmat,numeric-method}
+\alias{as_bmat,data.frame-method}
+\alias{as_bmat,ANY-method}
 \alias{as_dmat}
-\alias{as_dmat,ANY-method}
-\alias{as_dmat,data.frame-method}
 \alias{as_dmat,list-method}
+\alias{as_dmat,ANY-method}
 \alias{as_dmat,numeric-method}
+\alias{as_dmat,data.frame-method}
 \title{Coerce R objects to block or diagonal matrices.}
 \usage{
 as_bmat(x, ...)
@@ -65,4 +65,3 @@ as_dmat(df[1,],"OMEGA")
 \seealso{
 \code{\link{bmat}}, \code{\link{dmat}}
 }
-

@@ -23,4 +23,3 @@ invisible NULL
 \description{
 Print model code to the console.
 }
-

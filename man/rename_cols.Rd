@@ -17,4 +17,3 @@ rename columns from vector for new names
 \examples{
 rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
 }
-

@@ -76,6 +76,7 @@ S4 class for mrgsolve model object.
 
 \item{\code{plugin}}{model plugins \code{<character>}}
 }}
+
 \section{Notes}{
 
 \itemize{

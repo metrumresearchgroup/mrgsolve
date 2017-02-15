@@ -17,4 +17,3 @@ a square symmetric numeric matrix with column names
 \description{
 Create a square numeric matrix from the lower-triangular elements.
 }
-

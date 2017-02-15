@@ -47,4 +47,3 @@ Get THETA, OMEGA and SIGMA from a completed NONMEM run
 \details{
 If \code{run} and \code{project} are supplied, the .xml file is assumed to be located in \code{run.xml}, in directory \code{run} off the \code{project} directory.  If \code{file} is supplied, \code{run} and \code{project} arguments are ignored.
 }
-

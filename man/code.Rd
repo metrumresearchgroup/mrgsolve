@@ -15,4 +15,3 @@ a character vector of model code
 \description{
 Extract the code from a model.
 }
-

@@ -12,4 +12,3 @@
 \description{
 S4 class numeric list.
 }
-

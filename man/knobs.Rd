@@ -2,11 +2,11 @@
 % Please edit documentation in R/knobs.R
 \docType{methods}
 \name{knobs}
-\alias{as.data.frame,batch_mrgsims-method}
 \alias{knobs}
-\alias{knobs,batch_mrgsims,ANY-method}
-\alias{knobs,mrgmod,batch_mrgsims-method}
 \alias{knobs,mrgmod,missing-method}
+\alias{knobs,mrgmod,batch_mrgsims-method}
+\alias{as.data.frame,batch_mrgsims-method}
+\alias{knobs,batch_mrgsims,ANY-method}
 \alias{show,batch_mrgsims-method}
 \title{Run sensitivity analysis on model settings.}
 \usage{
@@ -77,4 +77,3 @@ out
 out <- knobs(mod, CL=c(1,2,3))
 out
 }
-

@@ -43,4 +43,3 @@ lapply(l,stime)
 lapply(as_deslist(idata, "ID"),stime)
 
 }
-

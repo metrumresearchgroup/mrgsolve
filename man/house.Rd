@@ -24,4 +24,3 @@ see(mod)
 mod \%>\% ev(amt=100) \%>\% mrgsim \%>\% plot
 
 }
-
