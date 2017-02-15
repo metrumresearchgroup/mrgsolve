@@ -495,21 +495,23 @@ realize_addl <- function(x,...) UseMethod("realize_addl")
 ##' @export
 realize_addl.data.frame <- function(x,...) {
   
-  if(!all(c("addl", "ii") %in% names(x))) {
-    stop("both addl and ii are required", call.=FALSE) 
-  }
-  add <- which(x[["addl"]] > 0)
+  iicol <- which(names(x) %in% c("II", "ii"))[1]
+  addlcol <- which(names(x) %in% c("ADDL", "addl"))[1]
+  timecol <- which(names(x) %in% c("TIME", "time"))[1]
+  if(is.na(iicol)) stop("missing ii/II column.", call.=FALSE)
+  if(is.na(addlcol)) stop("missing addl/ADDL column.", call.=FALSE)
+  if(is.na(timecol)) stop("missing time/TIME column.", call.=FALSE)
+  
+  add <- which(x[[addlcol]] > 0)
   addl <- lapply(add, function(i) {
     df <- x[i,,drop=FALSE]
-    df <- df[rep(1,df$addl),]
-    df$time <- df$time + df$ii*seq(1,df$addl[1])
-    df$addl <- 0
-    df$ii <- 0
+    df <- df[rep(1,df[[addlcol]]),]
+    df[[timecol]] <- df[[timecol]] + df[[iicol]]*seq(1,df[[addlcol]][1])
     df
   }) 
   df <- bind_rows(x,bind_rows(addl))
-  df$ii <- 0
-  df$addl <- 0
+  df[[addlcol]] <- 0
+  df[[iicol]] <- 0
   if("ID" %in% names(df)) {
     df <- dplyr::arrange(df,ID,time)
   } else {
