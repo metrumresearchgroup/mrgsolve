@@ -71,7 +71,13 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
 
 ##' @rdname events
 ##' @export
-setMethod("ev", "ev", function(x,...) return(x))
+setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
+  if(realize_addl) {
+    return(realize_addl(x))
+  } else {
+    return(x)
+  }
+})
 
 ##' @param nid if greater than 1, will expand to the appropriate 
 ##' number of individuals

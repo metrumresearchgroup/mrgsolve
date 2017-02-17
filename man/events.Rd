@@ -30,7 +30,7 @@ as.ev(x, ...)
 \S4method{ev}{missing}(time = 0, evid = 1, ID = numeric(0), cmt = 1,
   replicate = TRUE, until = NULL, realize_addl = FALSE, ...)
 
-\S4method{ev}{ev}(x, ...)
+\S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 
 \S4method{as.ev}{data.frame}(x, nid = 1, ...)
 
