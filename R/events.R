@@ -10,8 +10,12 @@
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
+##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} doses.  If \code{TRUE}, 
+##' \code{addl} doses are made explicit with \code{\link{realize_addl}}.
 ##' @export
-setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replicate=TRUE, until=NULL, ...) {
+setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
+                                    cmt=1, replicate=TRUE, until=NULL,
+                                    realize_addl=FALSE,...) {
   
   if(length(match.call())==1) { 
     return(new("ev", data=data.frame()[0,]))
@@ -52,19 +56,28 @@ setMethod("ev", "missing", function(time=0,evid=1, ID=numeric(0), cmt=1, replica
       }
       
     } else {
-      if(length(ID)!=nrow(data)) stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
+      if(length(ID)!=nrow(data)) { 
+        stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
+      }
       data["ID"] <- ID
     }
     data <- data %>% shuffle(c("ID", "time", "cmt"))
   } else {
     data <- data %>% shuffle(c("time", "cmt"))
   }
+  if(realize_addl) data <- realize_addl(data)
   return(new("ev", data=data))
 })
 
 ##' @rdname events
 ##' @export
-setMethod("ev", "ev", function(x,...) return(x))
+setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
+  if(realize_addl) {
+    return(realize_addl(x))
+  } else {
+    return(x)
+  }
+})
 
 ##' @param nid if greater than 1, will expand to the appropriate 
 ##' number of individuals
@@ -395,6 +408,7 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' @param addl additional doses to administer
 ##' @param ii inter-dose interval; intended use is to keep this at the 
 ##' default value
+##' @param unit time unit; the function can only currently handle hours or days
 ##' @param ... event objects named by one the valid days of the week (see details)
 ##' 
 ##' @details
@@ -424,10 +438,18 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ##' 
 ##' 
 ##' @export
-ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
+ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   
+  unit <- match.arg(unit)
+
+  max.time <- 24
   start <- c(m=0,t=24,w=48,th=72,f=96,sa=120,s=144)
   
+  if(unit=="days") {
+    max.time <- 1
+    start <- c(m=0,t=1,w=2,th=3,f=4,sa=5,s=6)
+    if(missing(ii)) ii <- 7
+  }
   if(!is.null(ev)) {
     if(missing(days)) {
       stop("days argument must be supplied with ev argument.",call.=FALSE) 
@@ -447,26 +469,70 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,...) {
     evs <- args[names(args) %in% names(start)]
     days <- names(evs)
   }
-  
   if(length(evs)==0) {
     stop("no events were found.", call.=FALSE) 
   }
-  
   evs <- lapply(evs,as.data.frame)
-  
   for(d in days) {
-    evs[[d]]$time <- start[d] 
+    if(any(evs[[d]]$time > max.time)) {
+      warning("not expecting time values greater than 24 hours or 1 day.",call.=FALSE)  
+    }
+    evs[[d]]$time <- evs[[d]]$time + start[d] 
   }
-  
   evs <- bind_rows(evs)
   evs$ii <- ii
-  
   if(addl > 0) evs$addl <- addl
-  
   if("ID" %in% names(evs)) {
     return(as.data.frame(dplyr::arrange(evs,ID,time)))
   } else {
     return(as.data.frame(dplyr::arrange(evs,time)))
   }
-  
 }
+
+##' Make addl doses explicit in an event object or data set.
+##' 
+##' @param x a \code{data_set} data frame or an \code{ev} object (see details)
+##' @param ... not used
+##' @details
+##' Required data elements: \code{addl} and \code{ii}.
+##' @export
+realize_addl <- function(x,...) UseMethod("realize_addl")
+##' @rdname realize_addl
+##' @export
+realize_addl.data.frame <- function(x,...) {
+  
+  iicol <- which(names(x) %in% c("II", "ii"))[1]
+  addlcol <- which(names(x) %in% c("ADDL", "addl"))[1]
+  timecol <- which(names(x) %in% c("TIME", "time"))[1]
+  if(is.na(iicol)) stop("missing ii/II column.", call.=FALSE)
+  if(is.na(addlcol)) stop("missing addl/ADDL column.", call.=FALSE)
+  if(is.na(timecol)) stop("missing time/TIME column.", call.=FALSE)
+  
+  add <- which(x[[addlcol]] > 0)
+  addl <- lapply(add, function(i) {
+    df <- x[i,,drop=FALSE]
+    df <- df[rep(1,df[[addlcol]]),]
+    df[[timecol]] <- df[[timecol]] + df[[iicol]]*seq(1,df[[addlcol]][1])
+    df
+  }) 
+  df <- bind_rows(x,bind_rows(addl))
+  df[[addlcol]] <- 0
+  df[[iicol]] <- 0
+  if("ID" %in% names(df)) {
+    df <- dplyr::arrange(df,ID,time)
+  } else {
+    df <- dplyr::arrange(df,time)
+  }
+  df
+}
+##' @rdname realize_addl
+##' @export
+realize_addl.ev <- function(x,...) {
+  x@data <- realize_addl(x@data)
+  return(x)
+}
+
+
+
+
+
