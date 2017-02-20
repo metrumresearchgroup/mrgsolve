@@ -31,8 +31,8 @@ static R_CallMethodDef callEntries[]  = {
   {NULL, NULL, 0}
 };
 
-void init_mrgsolve_routines(DllInfo *info){
-  R_registerRoutines(info,
+void init_mrgsolve_routines(DllInfo *dll){
+  R_registerRoutines(dll,
                      NULL,            // .C
                      callEntries,     // .Call
                      NULL,            // .Fortran
@@ -41,12 +41,13 @@ void init_mrgsolve_routines(DllInfo *info){
 }
 
 
-void R_unload_mrgsolve(DllInfo *info) {  // #nocov start
+void R_unload_mrgsolve(DllInfo *dll) {  // #nocov start
 
 } 
 
-void R_init_mrgsolve(DllInfo* info) {
-  init_mrgsolve_routines(info);   // init routines
-  R_useDynamicSymbols(info, TRUE);
+void R_init_mrgsolve(DllInfo* dll) {
+  init_mrgsolve_routines(dll);   // init routines
+  R_useDynamicSymbols(dll, TRUE);
+  R_forceSymbols(dll, FALSE);
 }
 

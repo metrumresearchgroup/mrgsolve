@@ -1,17 +1,17 @@
 SUPERMATRIX <- function(x,keep_names=FALSE) {
-  x <- .Call("mrgsolve_SUPERMATRIX",x,keep_names)
+  x <- .Call(mrgsolve_SUPERMATRIX,x,keep_names)
   if(nrow(x) > 0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
   x
 }
 
-call_ZERO <- function(x) .Call("mrgsolve_ZERO",x, PACKAGE="mrgsolve")
+call_ZERO <- function(x) .Call(mrgsolve_ZERO,x)
 
 ZERO_MATRIX <- function(x) diag(nrow(x))
 
 decorr <- function(x) {
   off <- x[lower.tri(x)]
   if(any(off < -1 | off > 1)) stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
-  return(invisible(.Call("mrgsolve_decorr", x)))
+  return(invisible(.Call(mrgsolve_decorr, x)))
 }
 
 ##' Create a square numeric matrix from the lower-triangular elements.

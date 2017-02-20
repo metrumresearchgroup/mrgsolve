@@ -48,7 +48,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- data %>% dplyr::arrange(ID,time)
         rownames(data) <- NULL
       } else {
-        data <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", 
+        data <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
                                  PACKAGE="mrgsolve", 
                                  match("ID", colnames(data),0), 
                                  data.matrix(data), 
@@ -86,7 +86,7 @@ setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
 setMethod("as.ev", "data.frame", function(x,nid=1,...) {
   if(nrow(x)==0) return(new("ev",data=data.frame()))
   if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.")
-  if(nid > 1) x <- data.frame(.Call("mrgsolve_EXPAND_EVENTS", PACKAGE="mrgsolve", 
+  if(nid > 1) x <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
                                     match("ID", colnames(x),0), 
                                     data.matrix(x),
                                     c(1:nid)))
@@ -441,7 +441,7 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
 ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   
   unit <- match.arg(unit)
-
+  
   max.time <- 24
   start <- c(m=0,t=24,w=48,th=72,f=96,sa=120,s=144)
   
