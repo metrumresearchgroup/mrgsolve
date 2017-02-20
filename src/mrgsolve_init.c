@@ -47,7 +47,7 @@ void R_unload_mrgsolve(DllInfo *dll) {  // #nocov start
 
 void R_init_mrgsolve(DllInfo* dll) {
   init_mrgsolve_routines(dll);   // init routines
-  R_useDynamicSymbols(dll, TRUE);
-  R_forceSymbols(dll, FALSE);
+  //R_useDynamicSymbols(dll, FALSE);
+  //R_forceSymbols(dll, FALSE);
 }
 
