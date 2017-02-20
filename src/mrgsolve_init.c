@@ -16,8 +16,7 @@ SEXP mrgsolve_from_to(SEXP,SEXP,SEXP,SEXP);
 void mrgsolve_ZERO(SEXP);
 void mrgsolve_decorr(SEXP);
 
-
-static R_CallMethodDef callEntries[]  = {
+static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(mrgsolve_get_tokens,1),
   CALLDEF(mrgsolve_MVGAUSS,2),
   CALLDEF(mrgsolve_DEVTRAN,12),
@@ -31,23 +30,10 @@ static R_CallMethodDef callEntries[]  = {
   {NULL, NULL, 0}
 };
 
-void init_mrgsolve_routines(DllInfo *dll){
-  R_registerRoutines(dll,
-                     NULL,            // .C
-                     callEntries,     // .Call
-                     NULL,            // .Fortran
-                     NULL             // .External
-  );
-}
-
-
-void R_unload_mrgsolve(DllInfo *dll) {  // #nocov start
-
-} 
+void R_unload_mrgsolve(DllInfo *dll) {} 
 
 void R_init_mrgsolve(DllInfo* dll) {
-  init_mrgsolve_routines(dll);   // init routines
-  //R_useDynamicSymbols(dll, FALSE);
+  R_registerRoutines(dll,NULL,callEntryPoints,NULL,NULL);
+  R_useDynamicSymbols(dll, TRUE);
   //R_forceSymbols(dll, FALSE);
 }
-
