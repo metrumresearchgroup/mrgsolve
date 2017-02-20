@@ -135,18 +135,15 @@ void decorr(Rcpp::NumericMatrix& x) {
   }
 }
 
-
 //[[Rcpp::export]]
-Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix& x) {
+void ZERO(Rcpp::NumericMatrix& x) {
   int i=0, j=0;
   for(i=0; i < x.ncol(); ++i) {
     for(j=0; j < x.nrow(); ++j) {
       x(i,j) = 0;
     }
   }
-  return(x);
 }
-
 
 //[[Rcpp::export]]
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {

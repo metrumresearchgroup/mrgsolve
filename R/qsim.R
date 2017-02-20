@@ -232,31 +232,25 @@ recmatrix <- function(x,times,c_indexing=TRUE) {
 # }
 
 
-##' A quick simulation function.
-##' 
-##' @param x model object
-##' @param idata individual data set
-##' 
-##' @export
-##' 
-psim <- function(x,idata) {
-  
-  cap <- c(length(x@capture),seq_along(x@capture)-1)
-  
-  out <- .Call('mrgsolve_PREDSIM', 
-               PACKAGE = 'mrgsolve',
-               parin(x),
-               as.numeric(param(x)),
-               as.numeric(init(x)),
-               pars(x),
-               cmt(x),
-               data.matrix(idata),
-               cap,
-               pointers(x))
-  
-  dimnames(out) <- list(NULL, c(x@capture))
-  
-  out
-  
-}
+
+# psim <- function(x,idata) {
+#   
+#   cap <- c(length(x@capture),seq_along(x@capture)-1)
+#   
+#   out <- .Call('mrgsolve_PREDSIM', 
+#                PACKAGE = 'mrgsolve',
+#                parin(x),
+#                as.numeric(param(x)),
+#                as.numeric(init(x)),
+#                pars(x),
+#                cmt(x),
+#                data.matrix(idata),
+#                cap,
+#                pointers(x))
+#   
+#   dimnames(out) <- list(NULL, c(x@capture))
+#   
+#   out
+#   
+# }
 

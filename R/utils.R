@@ -75,9 +75,9 @@ mvgauss <- function(mat, n=10, seed=NULL) {
   .Call("mrgsolve_MVGAUSS", PACKAGE="mrgsolve", mat, n,-1)
 }
 
-simulateres <- function(n1,omega,n2,sigma) {
-  .Call("mrgsolve_SIMRE", PACKAGE="mrgsolve", n1, omega,n2,sigma,-1)
-}
+# simulateres <- function(n1,omega,n2,sigma) {
+#   .Call("mrgsolve_SIMRE", PACKAGE="mrgsolve", n1, omega,n2,sigma,-1)
+# }
 
 
 pfile <- function(package,dir,file,ext=NULL) {

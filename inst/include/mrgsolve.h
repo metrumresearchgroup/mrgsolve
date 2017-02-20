@@ -21,9 +21,6 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 
 arma::mat MVGAUSS(arma::mat& OMEGA_,int n);
 
-Rcpp::List SIMRE(int n1, Rcpp::NumericMatrix& OMEGA, int n2, 
-                 Rcpp::NumericMatrix& SIGMA, int seed);
-
 //! map key: string, value: integer
 typedef std::map<std::string,int > si_map;
 
@@ -55,6 +52,8 @@ double digits(const double& a, const double& b);
 void decorr(const Rcpp::NumericMatrix& x);
 
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
+
+void ZERO(Rcpp::NumericMatrix& x);
 
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b, 

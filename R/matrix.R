@@ -91,7 +91,7 @@ modMATRIX <- function(x,
     x <- numeric2diag(x)
   }
   if(any(is.na(x))) stop("mrgsolve: NA values generated when forming matrix ", "(", context, ").")
-  if(!use) x <- ZERO(x)
+  if(!use) call_ZERO(x)
   if(digits > 0) x <- signif(x, digits=digits)
   return(x)
 }

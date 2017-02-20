@@ -14,7 +14,7 @@ decorr <- function(x) {
 }
 
 ZERO <- function(x) {
-    .Call('mrgsolve_ZERO', PACKAGE = 'mrgsolve', x)
+    invisible(.Call('mrgsolve_ZERO', PACKAGE = 'mrgsolve', x))
 }
 
 SUPERMATRIX <- function(a, keep_names) {
