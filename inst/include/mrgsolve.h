@@ -8,14 +8,12 @@
  */
 
 #include "RcppInclude.h"
-
-
-// Send report to console when istate returns negative after dlsoda call
-void neg_istate(int  );
-
 #include <R_ext/Rdynload.h>
 
 extern "C"{DL_FUNC tofun(SEXP a);}
+
+// Send report to console when istate returns negative after dlsoda call
+void neg_istate(int);
 
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 
@@ -49,11 +47,11 @@ int find_position(const Rcpp::CharacterVector& what,
 
 double digits(const double& a, const double& b);
 
-void decorr(const Rcpp::NumericMatrix& x);
+void dcorr(const Rcpp::NumericMatrix& x);
 
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
 
-void ZERO(Rcpp::NumericMatrix& x);
+void allZERO(Rcpp::NumericMatrix& x);
 
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b, 
@@ -77,3 +75,4 @@ Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
                             const int nid, const int ntime,
                             const int namt, const int nevid, 
                             const int ncmt, const int nrate);
+

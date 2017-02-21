@@ -20,7 +20,7 @@ typedef std::vector<double> dvec;
 typedef std::vector<std::string > svec;
 
 //! vector of integers
-typedef std::vector<int > ivec;
+typedef std::vector<int> ivec;
 
 typedef void refun(void*);
 

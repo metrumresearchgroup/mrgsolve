@@ -4,14 +4,14 @@ SUPERMATRIX <- function(x,keep_names=FALSE) {
   x
 }
 
-call_ZERO <- function(x) .Call(mrgsolve_ZERO,x)
+call_ZERO <- function(x) .Call(mrgsolve_allZERO,x)
 
 ZERO_MATRIX <- function(x) diag(nrow(x))
 
 decorr <- function(x) {
   off <- x[lower.tri(x)]
   if(any(off < -1 | off > 1)) stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
-  return(invisible(.Call(mrgsolve_decorr, x)))
+  return(invisible(.Call(mrgsolve_dcorr, x)))
 }
 
 ##' Create a square numeric matrix from the lower-triangular elements.

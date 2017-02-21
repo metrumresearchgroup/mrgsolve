@@ -9,12 +9,12 @@ MVGAUSS <- function(OMEGA_, n) {
     .Call('mrgsolve_MVGAUSS', PACKAGE = 'mrgsolve', OMEGA_, n)
 }
 
-decorr <- function(x) {
-    invisible(.Call('mrgsolve_decorr', PACKAGE = 'mrgsolve', x))
+dcorr <- function(x) {
+    invisible(.Call('mrgsolve_dcorr', PACKAGE = 'mrgsolve', x))
 }
 
-ZERO <- function(x) {
-    invisible(.Call('mrgsolve_ZERO', PACKAGE = 'mrgsolve', x))
+allZERO <- function(x) {
+    invisible(.Call('mrgsolve_allZERO', PACKAGE = 'mrgsolve', x))
 }
 
 SUPERMATRIX <- function(a, keep_names) {

@@ -41,23 +41,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// decorr
-void decorr(Rcpp::NumericMatrix& x);
-RcppExport SEXP mrgsolve_decorr(SEXP xSEXP) {
+// dcorr
+void dcorr(Rcpp::NumericMatrix& x);
+RcppExport SEXP mrgsolve_dcorr(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
-    decorr(x);
+    dcorr(x);
     return R_NilValue;
 END_RCPP
 }
-// ZERO
-void ZERO(Rcpp::NumericMatrix& x);
-RcppExport SEXP mrgsolve_ZERO(SEXP xSEXP) {
+// allZERO
+void allZERO(Rcpp::NumericMatrix& x);
+RcppExport SEXP mrgsolve_allZERO(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
-    ZERO(x);
+    allZERO(x);
     return R_NilValue;
 END_RCPP
 }
