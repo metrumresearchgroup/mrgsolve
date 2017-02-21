@@ -51,8 +51,6 @@ void dcorr(const Rcpp::NumericMatrix& x);
 
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
 
-void allZERO(Rcpp::NumericMatrix& x);
-
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b, 
              Rcpp::IntegerVector& ai,

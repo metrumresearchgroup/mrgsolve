@@ -51,16 +51,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// allZERO
-void allZERO(Rcpp::NumericMatrix& x);
-RcppExport SEXP mrgsolve_allZERO(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
-    allZERO(x);
-    return R_NilValue;
-END_RCPP
-}
 // SUPERMATRIX
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names);
 RcppExport SEXP mrgsolve_SUPERMATRIX(SEXP aSEXP, SEXP keep_namesSEXP) {
@@ -82,19 +72,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type code(codeSEXP);
     rcpp_result_gen = Rcpp::wrap(get_tokens(code));
     return rcpp_result_gen;
-END_RCPP
-}
-// from_to
-void from_to(const Rcpp::CharacterVector& a, const Rcpp::CharacterVector& b, Rcpp::IntegerVector& ai, Rcpp::IntegerVector& bi);
-RcppExport SEXP mrgsolve_from_to(SEXP aSEXP, SEXP bSEXP, SEXP aiSEXP, SEXP biSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type ai(aiSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type bi(biSEXP);
-    from_to(a, b, ai, bi);
-    return R_NilValue;
 END_RCPP
 }
 // EXPAND_EVENTS

@@ -13,20 +13,12 @@ dcorr <- function(x) {
     invisible(.Call('mrgsolve_dcorr', PACKAGE = 'mrgsolve', x))
 }
 
-allZERO <- function(x) {
-    invisible(.Call('mrgsolve_allZERO', PACKAGE = 'mrgsolve', x))
-}
-
 SUPERMATRIX <- function(a, keep_names) {
     .Call('mrgsolve_SUPERMATRIX', PACKAGE = 'mrgsolve', a, keep_names)
 }
 
 get_tokens <- function(code) {
     .Call('mrgsolve_get_tokens', PACKAGE = 'mrgsolve', code)
-}
-
-from_to <- function(a, b, ai, bi) {
-    invisible(.Call('mrgsolve_from_to', PACKAGE = 'mrgsolve', a, b, ai, bi))
 }
 
 EXPAND_EVENTS <- function(idcol_, events, id) {

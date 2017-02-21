@@ -134,15 +134,6 @@ void dcorr(Rcpp::NumericMatrix& x) {
 }
 
 //[[Rcpp::export]]
-void allZERO(Rcpp::NumericMatrix& x) {
-  for(int i=0; i < x.ncol(); ++i) {
-    for(int j=0; j < x.nrow(); ++j) {
-      x(i,j) = 0;
-    }
-  }
-}
-
-//[[Rcpp::export]]
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   
   int j,k;
@@ -236,7 +227,6 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   return ans;
 }
 
-//[[Rcpp::export]]
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b,
              Rcpp::IntegerVector& ai,

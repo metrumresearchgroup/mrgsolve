@@ -4,13 +4,11 @@ SUPERMATRIX <- function(x,keep_names=FALSE) {
   x
 }
 
-call_ZERO <- function(x) .Call(mrgsolve_allZERO,x)
-
-ZERO_MATRIX <- function(x) diag(nrow(x))
-
 decorr <- function(x) {
   off <- x[lower.tri(x)]
-  if(any(off < -1 | off > 1)) stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
+  if(any(off < -1 | off > 1)) {
+    stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
+  }
   return(invisible(.Call(mrgsolve_dcorr, x)))
 }
 
@@ -91,7 +89,7 @@ modMATRIX <- function(x,
     x <- numeric2diag(x)
   }
   if(any(is.na(x))) stop("mrgsolve: NA values generated when forming matrix ", "(", context, ").")
-  if(!use) call_ZERO(x)
+  if(!use) x <- diag(x=0, nrow(x))
   if(digits > 0) x <- signif(x, digits=digits)
   return(x)
 }
