@@ -8,17 +8,15 @@
 RcppExport SEXP mrgsolve_dcorr(SEXP);
 RcppExport SEXP mrgsolve_get_tokens(SEXP);
 RcppExport SEXP mrgsolve_MVGAUSS(SEXP,SEXP);
-RcppExport SEXP mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
-                      SEXP,SEXP,SEXP,SEXP,SEXP);
+RcppExport SEXP mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
+                                 SEXP,SEXP,SEXP);
 RcppExport SEXP mrgsolve_SUPERMATRIX(SEXP,SEXP);
 RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 RcppExport SEXP mrgsolve_QUICKSIM(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
                        SEXP,SEXP,SEXP);
 RcppExport SEXP mrgsolve_allZERO(SEXP);
-
 RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
 RcppExport SEXP mrgsolve_from_to(SEXP,SEXP,SEXP,SEXP);
-
 
 extern "C" void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 extern "C" void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
@@ -34,12 +32,12 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(mrgsolve_TOUCH_FUNS,7),
   CALLDEF(mrgsolve_QUICKSIM,11),
   CALLDEF(mrgsolve_EXPAND_EVENTS,3),
-  CALLDEF(mrgsolve_from_to,4),
+  CALLDEF(mrgsolve_from_to,4),  
+  CALLDEF(mrgsolve_dcorr,1),
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
   CALLDEF(_model_housemodel_config__,MRGSOLVE_CONFIG_SIGNATURE_N),
-  CALLDEF(mrgsolve_dcorr,1),
   {NULL, NULL, 0}
 };
 
