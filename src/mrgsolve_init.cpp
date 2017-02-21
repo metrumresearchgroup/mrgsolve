@@ -1,6 +1,4 @@
-
 #include "RcppInclude.h"
-#include <R_ext/Rdynload.h>
 #include "modelheader.h"
 
 #define CALLDEF(name, n)  {#name, (DL_FUNC) &name, n}
@@ -16,10 +14,10 @@ RcppExport SEXP mrgsolve_QUICKSIM(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
                        SEXP,SEXP,SEXP);
 RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
 
-extern "C" void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
-extern "C" void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
-extern "C" void _model_housemodel_table__(MRGSOLVE_TABLE_SIGNATURE);
-extern "C" void _model_housemodel_config__(MRGSOLVE_CONFIG_SIGNATURE);
+RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
+RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
+RcppExport void _model_housemodel_table__(MRGSOLVE_TABLE_SIGNATURE);
+RcppExport void _model_housemodel_config__(MRGSOLVE_CONFIG_SIGNATURE);
 
 static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(mrgsolve_get_tokens,1),
@@ -37,9 +35,11 @@ static R_CallMethodDef callEntryPoints[]  = {
   {NULL, NULL, 0}
 };
 
-extern "C" void R_unload_mrgsolve(DllInfo *dll) {} 
+RcppExport void R_unload_mrgsolve(DllInfo *dll) {} 
 
-extern "C" void R_init_mrgsolve(DllInfo* dll) {
+RcppExport void R_init_mrgsolve(DllInfo* dll) {
   R_registerRoutines(dll,NULL,callEntryPoints,NULL,NULL);
   R_useDynamicSymbols(dll, FALSE);
 }
+
+#undef CALLDEF
