@@ -72,7 +72,7 @@ render_time <- function(x) {
 ##' @export
 mvgauss <- function(mat, n=10, seed=NULL) {
   if(!is.null(seed)) set.seed(seed)
-  .Call(mrgsolve_MVGAUSS, PACKAGE="mrgsolve", mat, n,-1)
+  .Call(mrgsolve_MVGAUSS, mat, n)
 }
 
 # simulateres <- function(n1,omega,n2,sigma) {
