@@ -256,8 +256,7 @@ parse_ats <- function(x) {
   
   # Boolean are not Name/value
   if(any(!nv)) {
-    xx <- paste0(cvec_cs(x[!nv]), " TRUE")
-    x <- c(x[nv],xx)
+    x[!nv] <- paste0(cvec_cs(x[!nv]), " TRUE")
   }
   
   # find the first space
