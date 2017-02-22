@@ -35,7 +35,8 @@ omat(.x, ...)
 
 \item{...}{passed to other functions, including \code{\link{modMATRIX}}}
 
-\item{labels}{character vector of names for \code{$OMEGA} elements; must be equal to number of rows/columns in the matrix}
+\item{labels}{character vector of names for \code{$OMEGA} elements; must be equal 
+to number of rows/columns in the matrix}
 
 \item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
 

@@ -9,12 +9,8 @@ MVGAUSS <- function(OMEGA_, n) {
     .Call('mrgsolve_MVGAUSS', PACKAGE = 'mrgsolve', OMEGA_, n)
 }
 
-decorr <- function(x) {
-    invisible(.Call('mrgsolve_decorr', PACKAGE = 'mrgsolve', x))
-}
-
-ZERO <- function(x) {
-    .Call('mrgsolve_ZERO', PACKAGE = 'mrgsolve', x)
+dcorr <- function(x) {
+    invisible(.Call('mrgsolve_dcorr', PACKAGE = 'mrgsolve', x))
 }
 
 SUPERMATRIX <- function(a, keep_names) {
@@ -23,10 +19,6 @@ SUPERMATRIX <- function(a, keep_names) {
 
 get_tokens <- function(code) {
     .Call('mrgsolve_get_tokens', PACKAGE = 'mrgsolve', code)
-}
-
-from_to <- function(a, b, ai, bi) {
-    invisible(.Call('mrgsolve_from_to', PACKAGE = 'mrgsolve', a, b, ai, bi))
 }
 
 EXPAND_EVENTS <- function(idcol_, events, id) {

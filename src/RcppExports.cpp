@@ -41,25 +41,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// decorr
-void decorr(Rcpp::NumericMatrix& x);
-RcppExport SEXP mrgsolve_decorr(SEXP xSEXP) {
+// dcorr
+void dcorr(Rcpp::NumericMatrix& x);
+RcppExport SEXP mrgsolve_dcorr(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
-    decorr(x);
+    dcorr(x);
     return R_NilValue;
-END_RCPP
-}
-// ZERO
-Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix& x);
-RcppExport SEXP mrgsolve_ZERO(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(ZERO(x));
-    return rcpp_result_gen;
 END_RCPP
 }
 // SUPERMATRIX
@@ -83,19 +72,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type code(codeSEXP);
     rcpp_result_gen = Rcpp::wrap(get_tokens(code));
     return rcpp_result_gen;
-END_RCPP
-}
-// from_to
-void from_to(const Rcpp::CharacterVector& a, const Rcpp::CharacterVector& b, Rcpp::IntegerVector& ai, Rcpp::IntegerVector& bi);
-RcppExport SEXP mrgsolve_from_to(SEXP aSEXP, SEXP bSEXP, SEXP aiSEXP, SEXP biSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type ai(aiSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type bi(biSEXP);
-    from_to(a, b, ai, bi);
-    return R_NilValue;
 END_RCPP
 }
 // EXPAND_EVENTS

@@ -122,10 +122,8 @@ arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
   return X.t();
 }
 
-
-
 //[[Rcpp::export]]
-void decorr(Rcpp::NumericMatrix& x) {
+void dcorr(Rcpp::NumericMatrix& x) {
   int i = 1, j = 1, n = x.nrow();
   if(n != x.ncol()) Rcpp::stop("matrix is not square");
   for(i=0; i < n; ++i) {
@@ -134,19 +132,6 @@ void decorr(Rcpp::NumericMatrix& x) {
     }
   }
 }
-
-
-//[[Rcpp::export]]
-Rcpp::NumericMatrix ZERO(Rcpp::NumericMatrix& x) {
-  int i=0, j=0;
-  for(i=0; i < x.ncol(); ++i) {
-    for(j=0; j < x.nrow(); ++j) {
-      x(i,j) = 0;
-    }
-  }
-  return(x);
-}
-
 
 //[[Rcpp::export]]
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
@@ -219,7 +204,6 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   return(ret);
 }
 
-
 //[[Rcpp::export]]
 Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   
@@ -243,8 +227,6 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   return ans;
 }
 
-
-//[[Rcpp::export]]
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b,
              Rcpp::IntegerVector& ai,
@@ -259,7 +241,6 @@ void from_to(const Rcpp::CharacterVector& a,
   std::sort(bi.begin(), bi.end());
   
 }
-
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,

@@ -28,7 +28,7 @@ env_eval <- function(x,seed=NULL) {
 env_ls <- function(x,...) {
   objects <- ls(x@envir,...)
   cl <- sapply(objects,function(o) {
-    class(get(o,x@envir))
+    paste(class(get(o,x@envir)),collapse=',')
   })
   ans <- data.frame(object=objects,class=cl)
   rownames(ans) <- NULL

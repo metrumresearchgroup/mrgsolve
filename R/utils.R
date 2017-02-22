@@ -72,12 +72,12 @@ render_time <- function(x) {
 ##' @export
 mvgauss <- function(mat, n=10, seed=NULL) {
   if(!is.null(seed)) set.seed(seed)
-  .Call("mrgsolve_MVGAUSS", PACKAGE="mrgsolve", mat, n,-1)
+  .Call(mrgsolve_MVGAUSS, mat, n)
 }
 
-simulateres <- function(n1,omega,n2,sigma) {
-  .Call("mrgsolve_SIMRE", PACKAGE="mrgsolve", n1, omega,n2,sigma,-1)
-}
+# simulateres <- function(n1,omega,n2,sigma) {
+#   .Call("mrgsolve_SIMRE", PACKAGE="mrgsolve", n1, omega,n2,sigma,-1)
+# }
 
 
 pfile <- function(package,dir,file,ext=NULL) {
@@ -317,8 +317,8 @@ as_character_args <- function(x) {
 
 get_tokens <- function(x,unlist=FALSE) {
   if(!is.character(x)) return(character(0))
-  if(unlist) return(.Call("mrgsolve_get_tokens", x)[["tokens"]])
-  .Call("mrgsolve_get_tokens", x)
+  if(unlist) return(.Call(mrgsolve_get_tokens, x)[["tokens"]])
+  .Call(mrgsolve_get_tokens, x)
 }
 
 grepn <- function(x,pat,warn=FALSE) {

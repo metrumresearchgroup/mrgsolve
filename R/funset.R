@@ -28,6 +28,9 @@ funs_create <- function(model,what=c("main", "ode", "table", "config")) {
   setNames(paste0("_model_", clean_symbol(model), "_",what ,"__"),what)
 }
 
+register_fun <- function(model) {
+  paste0("R_init_",model) 
+}
 
 package_loaded <- function(x) {
   is.element(dllname(x),names(getLoadedDLLs())) 

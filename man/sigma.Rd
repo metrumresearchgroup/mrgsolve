@@ -35,7 +35,8 @@ smat(.x, ...)
 
 \item{...}{passed to other functions, including \code{\link{modMATRIX}}}
 
-\item{labels}{character vector of names for \code{$SIGMA} elements; must be equal to number of rows/columns in the matrix}
+\item{labels}{character vector of names for \code{$SIGMA} elements; must be equal 
+to number of rows/columns in the matrix}
 
 \item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
 
@@ -44,8 +45,9 @@ smat(.x, ...)
 \item{x}{\code{matlist} object}
 }
 \description{
-The primary function is \code{smat} that can be used to both get the \code{$SIGMA} matrices
-out of a model object and to update \code{$SIGMA} matrices in a model object.
+The primary function is \code{smat} that can be used to both get the 
+\code{$SIGMA} matrices out of a model object and to update \code{$SIGMA} 
+matrices in a model object.
 }
 \examples{
 ## example("sigma")
@@ -62,6 +64,4 @@ mod <- mrgsolve:::house() \%>\% smat(mat1)
 
 smat(mod)
 smat(mod, make=TRUE)
-
-
 }

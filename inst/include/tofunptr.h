@@ -10,7 +10,8 @@
 #ifndef TOFUNPTR_H
 #define TOFUNPTR_H
 #include <Rinternals.h>
-typedef void * (*DL_FUNC)();
+#include <R_ext/Rdynload.h>
+//typedef void * (*DL_FUNC)();
 DL_FUNC tofunptr(SEXP a);
 #endif
 

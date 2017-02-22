@@ -72,5 +72,37 @@ test_that("$ENV sub into $FIXED", {
   x <- allparam(mod)
   expect_identical(names(x),c("A", "B"))
   expect_equivalent(as.numeric(x), c(1,2))
+  
+  l <- env_ls(mod)
+  expect_is(l,"data.frame")
 })
+
+
+code <- '
+$ENV
+x <- 1
+y <- 2
+e <- ev(amt=100)
+df <- data_frame(ID=1:2,amt=3)
+'
+
+
+test_that("env-funs", {
+  mod <- mcode("env-funs", code,compile=FALSE)
+  l <- env_get(mod)
+  expect_equal(names(l), c("x", "y", "e", "df"))
+  expect_equal(l$y,2)
+  
+  expect_is(env_ls(mod),"data.frame")
+  
+  mm <- env_update(mod,y=3)
+  l <- env_get(mm)
+  expect_equal(l$y,3)
+  
+  mmm <- env_eval(mod)
+  expect_is(mmm,"mrgmod")
+  
+})
+
+
 
