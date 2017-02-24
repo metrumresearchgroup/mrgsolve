@@ -5,6 +5,11 @@ About
 
 `mrgsolve` facilitates simulation in R from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. See the example below.
 
+Resources
+=========
+
+Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources.
+
 Installation
 ============
 
@@ -19,11 +24,6 @@ Ask a question
 
 -   [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
 -   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
-
-Resources
-=========
-
-Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources.
 
 <hr>
 Example
