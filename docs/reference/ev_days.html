@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Methods for working with matrix-list objects. — matlist • mrgsolve</title>
+<title>Schedule dosing events on days of the week. — ev_days • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,70 +74,78 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Methods for working with matrix-list objects.</h1>
+    <h1>Schedule dosing events on days of the week.</h1>
     </div>
 
     
-    <p>Methods for working with matrix-list objects.</p>
+    <p>This function lets you schedule doses on specific 
+days of the week, allowing you to create dosing 
+regimens on Monday/Wednesday/Friday, or Tuesday/Thursday,
+or every other day (however you want to define that) etc.</p>
     
 
-    <pre><span class='fu'>zero.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for mrgmod</span>
-<span class='fu'>zero.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
-
-<span class='fu'>zero_re</span>(<span class='no'>...</span>)
-
-<span class='fu'>drop.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for mrgmod</span>
-<span class='fu'>drop.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
-
-<span class='fu'>drop_re</span>(<span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>as.list</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>as.matrix</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>names</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>length</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>labels</span>(<span class='no'>object</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>dim</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>nrow</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)</pre>
+    <pre><span class='fu'>ev_days</span>(<span class='kw'>ev</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>days</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>addl</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ii</span> <span class='kw'>=</span> <span class='fl'>168</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"hours"</span>,
+  <span class='st'>"days"</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
-      <dt>.x</dt>
-      <dd>a matlist object</dd>
+      <dt>ev</dt>
+      <dd>an event object</dd>
+      <dt>days</dt>
+      <dd>comma- or space-separated character string of valid days of the
+the week (see details)</dd>
+      <dt>addl</dt>
+      <dd>additional doses to administer</dd>
+      <dt>ii</dt>
+      <dd>inter-dose interval; intended use is to keep this at the 
+default value</dd>
+      <dt>unit</dt>
+      <dd>time unit; the function can only currently handle hours or days</dd>
       <dt>...</dt>
-      <dd>passed along</dd>
-      <dt>x</dt>
-      <dd>a matlist object</dd>
-      <dt>object</dt>
-      <dd>passed to showmatlist</dd>
+      <dd>event objects named by one the valid days of the week (see details)</dd>
     </dl>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>Valid names of the week are:</p>
+    <p><ul>
+<li> <code>m</code> for Monday
+</li>
+<li> <code>t</code> for Tuesday
+</li>
+<li> <code>w</code> for Wednesday
+</li>
+<li> <code>th</code> for Thursday
+</li>
+<li> <code>f</code> for Friday
+</li>
+<li> <code>sa</code> for Saturday
+</li>
+<li> <code>s</code> for Sunday
+</li>
+</ul></p>
+    <p>The whole purpose of this function is to schedule doses on specific
+days of the week, in a repeating weekly schedule.  Please do use caution 
+when changing <code>ii</code> from it&#39;s default value.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples">
+<span class='co'># Monday, Wednesday, Friday x 4 weeks</span>
+<span class='fu'>ev_days</span>(<span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>100</span>), <span class='kw'>days</span><span class='kw'>=</span><span class='st'>"m,w,f"</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>3</span>)
+
+<span class='co'># 50 mg Tuesdays, 100 mg Thursdays x 6 months</span>
+<span class='fu'>ev_days</span>(<span class='kw'>t</span><span class='kw'>=</span><span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>50</span>), <span class='kw'>th</span><span class='kw'>=</span><span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>100</span>), <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>23</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

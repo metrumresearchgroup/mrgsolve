@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Functions for chaining commands together. — chain • mrgsolve</title>
+<title>Create a list of designs from a data frame. — as_deslist • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,38 +74,61 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Functions for chaining commands together.</h1>
+    <h1>Create a list of designs from a data frame.</h1>
     </div>
 
     
-    <p>Use these functions with chaining commands togehter with the <!-- %&gt;% -->
-operator.</p>
+    <p>Create a list of designs from a data frame.</p>
     
 
-        
+    <pre><span class='fu'>as_deslist</span>(<span class='no'>data</span>, <span class='kw'>descol</span> <span class='kw'>=</span> <span class='st'>"ID"</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>data</dt>
+      <dd>input data set; see details</dd>
+      <dt>descol</dt>
+      <dd>character column name to be used for design groups</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The function returns a list of <code>tgrid</code> objects, 
+one for each unique value found in <code>descol</code>.</p>
+    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Other functions that may be used in the chain of commands include: 
-<code><a href='$,mrgmod-method.html'>param</a></code>, <code><a href='init.html'>init</a></code>, <code><a href='update.html'>update</a></code>,
-<code><a href='events.html'>ev</a></code>.
-or any other function that will take the output of the preceeding command as it&#39;s first argument.</p>
+    <p>The input data set must have a column with the same name as the value 
+of <code>descol</code>.  Other column names should be <code>start</code> (the time 
+of the first observation), <code>end</code> (the time of the last observation), 
+<code>delta</code> (the time steps to take between <code>start</code> and <code>end</code>), 
+and <code>add</code> (other, ad-hoc times).  Note that <code>add</code> might be 
+a <code>list-column</code> to get a vector of times for each time grid object.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>()
+    <pre class="examples"><span class='no'>idata</span> <span class='kw'>&lt;-</span> <span class='kw'>dplyr</span><span class='kw'>::</span><span class='fu'>data_frame</span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>4</span>, <span class='kw'>end</span><span class='kw'>=</span><span class='fu'>seq</span>(<span class='fl'>24</span>,<span class='fl'>96</span>,<span class='fl'>24</span>), <span class='kw'>delta</span><span class='kw'>=</span><span class='fl'>6</span>,
+<span class='kw'>add</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='fu'>c</span>(<span class='fl'>122</span>,<span class='fl'>124</span>,<span class='fl'>135</span>),<span class='fu'>c</span>(<span class='fl'>111</span>), <span class='fu'>c</span>(<span class='fl'>99</span>),<span class='fu'>c</span>(<span class='fl'>88</span>)))
 
-<span class='fu'>data</span>(<span class='no'>exidata</span>)
-<span class='fu'>data</span>(<span class='no'>exTheoph</span>)
+<span class='no'>idata</span> <span class='kw'>&lt;-</span> <span class='kw'>dplyr</span><span class='kw'>::</span><span class='fu'>mutate</span>(<span class='no'>idata</span>, <span class='kw'>GRP</span> <span class='kw'>=</span> <span class='no'>ID</span> <span class='kw'>%%</span><span class='fl'>2</span>)
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>exTheoph</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>()
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='carry_out.html'>carry_out</a></span>(<span class='no'>evid</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>100</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>()
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='Req.html'>Req</a></span>(<span class='no'>CP</span>,<span class='no'>RESP</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>()</pre>
+<span class='no'>idata</span>
+
+<span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'>as_deslist</span>(<span class='no'>idata</span>,<span class='st'>"GRP"</span>)
+
+<span class='no'>l</span>
+
+<span class='fu'>lapply</span>(<span class='no'>l</span>,<span class='no'>stime</span>)
+
+<span class='fu'>lapply</span>(<span class='fu'>as_deslist</span>(<span class='no'>idata</span>, <span class='st'>"ID"</span>),<span class='no'>stime</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>

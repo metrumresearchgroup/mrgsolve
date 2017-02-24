@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Methods for working with matrix-list objects. — matlist • mrgsolve</title>
+<title>Make addl doses explicit in an event object or data set. — realize_addl • mrgsolve</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,62 +74,32 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Methods for working with matrix-list objects.</h1>
+    <h1>Make addl doses explicit in an event object or data set.</h1>
     </div>
 
     
-    <p>Methods for working with matrix-list objects.</p>
+    <p>Make addl doses explicit in an event object or data set.</p>
     
 
-    <pre><span class='fu'>zero.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
+    <pre><span class='fu'>realize_addl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-<span class='co'># S4 method for mrgmod</span>
-<span class='fu'>zero.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for data.frame</span>
+<span class='fu'>realize_addl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-<span class='fu'>zero_re</span>(<span class='no'>...</span>)
-
-<span class='fu'>drop.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for mrgmod</span>
-<span class='fu'>drop.re</span>(<span class='no'>.x</span>, <span class='no'>...</span>)
-
-<span class='fu'>drop_re</span>(<span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>as.list</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>as.matrix</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>names</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>length</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>labels</span>(<span class='no'>object</span>, <span class='no'>...</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>dim</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>nrow</span>(<span class='no'>x</span>)
-
-<span class='co'># S4 method for matlist</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)</pre>
+<span class='co'># S3 method for ev</span>
+<span class='fu'>realize_addl</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
-      <dt>.x</dt>
-      <dd>a matlist object</dd>
-      <dt>...</dt>
-      <dd>passed along</dd>
       <dt>x</dt>
-      <dd>a matlist object</dd>
-      <dt>object</dt>
-      <dd>passed to showmatlist</dd>
+      <dd>a <code>data_set</code> data frame or an <code>ev</code> object (see details)</dd>
+      <dt>...</dt>
+      <dd>not used</dd>
     </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Required data elements: <code>addl</code> and <code>ii</code>.</p>
     
 
   </div>
@@ -137,7 +107,9 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
 
   </div>
 </div>

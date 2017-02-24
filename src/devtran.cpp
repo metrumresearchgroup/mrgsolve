@@ -617,18 +617,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
     }
   }
+  
   if((tscale != 1) && (tscale >= 0)) {
     ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   }
-  
-  
+
   // Clean up
   delete prob;
   
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
-  
-  
 }
 
 

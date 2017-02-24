@@ -462,8 +462,10 @@ blocks_ <- function(file,what) {
 }
 
 parin <- function(x) {
-  list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), hmax=as.double(x@hmax),ixpr=x@ixpr,
-       maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,verbose=as.integer(x@verbose),debug=x@debug,
+  list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), 
+       hmax=as.double(x@hmax), ixpr=x@ixpr, 
+       maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
+       verbose=as.integer(x@verbose),debug=x@debug,
        digits=x@digits, tscale=x@tscale,
        mindt=x@mindt, advan=x@advan)
 }
@@ -489,7 +491,7 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
 ##' @param name parameter to take
 ##' @export
 setMethod("$", "mrgmod", function(x,name){
-  as.numeric(param(x))[name]
+  as.numeric(allparam(x))[name]
 })
 
 re_build <- function(x,model=model(x),temp = FALSE) {

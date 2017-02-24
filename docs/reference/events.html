@@ -96,10 +96,10 @@
 
 <span class='co'># S4 method for missing</span>
 <span class='fu'>ev</span>(<span class='kw'>time</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>evid</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ID</span> <span class='kw'>=</span> <span class='fu'>numeric</span>(<span class='fl'>0</span>), <span class='kw'>cmt</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>replicate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>until</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+  <span class='kw'>replicate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>until</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>realize_addl</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for ev</span>
-<span class='fu'>ev</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>ev</span>(<span class='no'>x</span>, <span class='kw'>realize_addl</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for data.frame</span>
 <span class='fu'>as.ev</span>(<span class='no'>x</span>, <span class='kw'>nid</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)
@@ -136,6 +136,9 @@
       <dd>logical; if <code>TRUE</code>, events will be replicated for each individual in <code>ID</code></dd>
       <dt>until</dt>
       <dd>the expected maximum <b>observation</b> time for this regimen</dd>
+      <dt>realize_addl</dt>
+      <dd>if <code>FALSE</code> (default), no change to <code>addl</code> doses.  If <code>TRUE</code>, 
+<code>addl</code> doses are made explicit with <code><a href='realize_addl.html'>realize_addl</a></code>.</dd>
       <dt>nid</dt>
       <dd>if greater than 1, will expand to the appropriate 
 number of individuals</dd>
