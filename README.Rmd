@@ -30,14 +30,14 @@ employed in drug development. See the example below.
 ```{r,eval=FALSE}
   devtools::install_github("metrumresearchgroup/mrgsolve")
 ```
-Also see important install-related information [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
+Also see important install-related information [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation).
 
 # Ask a question
   * [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
   * [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
 # Resources
-Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources
+Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources.
 
 <hr>
 
