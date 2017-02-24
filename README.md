@@ -1,63 +1,33 @@
 [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master) [![questions](https://www.codewake.com/badges/ask_question.svg)](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
 
-Resources
-=========
+About
+=====
 
--   [Latest release: 0.7.10](https://github.com/metrumresearchgroup/mrgsolve/releases)
--   [Get started with `mrgsolve`](https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi)
--   Documentation
-    -   [User Guide](https://mrgsolve.github.io/user_guide)
-    -   [R docs](http://metrumresearchgroup.github.io/mrgsolve/reference/)
--   [Installation guide](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-installation)
--   [Gallery](https://github.com/metrumresearchgroup/mrgsolve/wiki/gallery)
--   [Extended examples](https://github.com/mrgsolve/examples)
--   [Slide decks](https://github.com/mrgsolve/slides)
--   [Wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki)
-    -   [Upcoming changes](https://github.com/metrumresearchgroup/mrgsolve/blob/master/NEWS.md)
-    -   [Windows issues](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#issues-with-using-mrgsolve-on-windows-platforms)
--   `mrgsolve` questions and discussion (please use them ... we welcome questions, comments, and issue reports)
-    -   [Issue tracker](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
-    -   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
+`mrgsolve` facilitates simulation in R from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. See the example below.
 
-<hr>
 Installation
 ============
-
-Three main options exist to install `mrgsolve`:
-
--   The development version from github via:
 
 ``` r
   devtools::install_github("metrumresearchgroup/mrgsolve")
 ```
 
--   The latest stable release can be installed with `install.packages` like this:
+Also see important install-related information [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
 
-``` r
-  install.packages("mrgsolve",
-                   repos=c(options()$repos,"https://mrgsolve.github.io/pkg"),
-                   type="source")
-```
+Ask a question
+==============
 
--   Installation from source the source tar.gz file and all dependencies, [as documented in the wiki](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
+-   [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
+-   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
-Note that installation from `github` will automatically install all dependencies, such `RcppArmadillo`.
+Resources
+=========
 
-About
-=====
+Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources
 
-`mrgsolve` facilitates simulation in R from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. The modeler creates a model specification file consisting of `R` and `C++` code that is parsed, compiled, and dynamically loaded into the `R` session. Input data are passed in and simulated data are returned as `R` objects, so disk access is never required during the simulation cycle after compiling.
-
-`mrgsolve` is open-source software distributed as a package for `R`
--------------------------------------------------------------------
-
--   Installs via `R` package compile and install system
--   Easy integration with any other relevant `R` functionality
-    -   Graphics: `lattice`, `ggplot2`
-    -   Model estimation: `nls`,`nlme`, `MCMCpack`, `saemix`, others
-    -   Optimal design: `PFIM`, `PopED`
-    -   Data summary: `dplyr` and many other functions and packages
-    -   Interactive model exploration with `shiny`
+<hr>
+Example
+=======
 
 ``` r
 library(mrgsolve)
@@ -139,7 +109,7 @@ out
 plot(out, CP+RESP~.)
 ```
 
-<img src="img/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ``` r
 out <- 
@@ -153,7 +123,7 @@ out <-
 plot(out)
 ```
 
-<img src="img/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 Also use `mrgsolve` for efficient, large-scale population simulation
 --------------------------------------------------------------------
@@ -202,7 +172,7 @@ out <-
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 
-<img src="img/README-unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 Pass simulated output to your favorite data summary or visualization routines
 -----------------------------------------------------------------------------
@@ -232,4 +202,4 @@ out %>%
   geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
 ```
 
-<img src="img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="img/README-unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
