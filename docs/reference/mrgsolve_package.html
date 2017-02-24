@@ -136,7 +136,7 @@ A Systematized Collection of ODE Solvers.</p>
 <span class='no'>mod</span>
 
 <span class='fu'><a href='see.html'>see</a></span>(<span class='no'>mod</span>)
-?
+
 <span class='fu'><a href='stime.html'>stime</a></span>(<span class='no'>mod</span>)
 
 <span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='no'>mod</span>)
@@ -145,12 +145,10 @@ A Systematized Collection of ODE Solvers.</p>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>168</span>)
 
 <span class='no'>out</span>
+
 <span class='fu'>head</span>(<span class='no'>out</span>)
 <span class='fu'>tail</span>(<span class='no'>out</span>)
 <span class='fu'>dim</span>(<span class='no'>out</span>)
-
-<span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='mod.html'>mod</a></span>(<span class='no'>out</span>)
-<span class='fu'><a href='$,mrgmod-method.html'>param</a></span>(<span class='no'>out</span>)
 
 <span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>GUT</span>+<span class='no'>CP</span>~<span class='no'>.</span>)
 
@@ -159,8 +157,6 @@ A Systematized Collection of ODE Solvers.</p>
 <span class='no'>t72</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>sims</span>, <span class='no'>time</span><span class='kw'>==</span><span class='fl'>72</span>)
 <span class='fu'>str</span>(<span class='no'>t72</span>)
 
-
-
 <span class='no'>idata</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>ID</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>), <span class='kw'>CL</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.5</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>VC</span><span class='kw'>=</span><span class='fl'>12</span>)
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>168</span>, <span class='kw'>idata</span><span class='kw'>=</span><span class='no'>idata</span>, <span class='kw'>req</span><span class='kw'>=</span><span class='st'>""</span>)
 <span class='fu'>plot</span>(<span class='no'>out</span>)
@@ -168,8 +164,11 @@ A Systematized Collection of ODE Solvers.</p>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>events</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>carry.out</span><span class='kw'>=</span><span class='st'>"amt,evid,cmt,CL"</span>)
 <span class='fu'>head</span>(<span class='no'>out</span>)
 
+<span class='no'>out</span> <span class='kw'>&lt;-</span>
+  <span class='no'>mod</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='events.html'>ev</a></span>() <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='knobs.html'>knobs</a></span>(<span class='kw'>CL</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>,<span class='fl'>2</span>), <span class='kw'>amt</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>100</span>,<span class='fl'>300</span>,<span class='fl'>1000</span>), <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>48</span>)
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>() <span class='kw'>%&gt;%</span> <span class='fu'><a href='knobs.html'>knobs</a></span>(<span class='kw'>CL</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>,<span class='fl'>2</span>), <span class='kw'>amt</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>100</span>,<span class='fl'>300</span>,<span class='fl'>1000</span>), <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>48</span>)
 <span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>)
 <span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>RESP</span>+<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='no'>amt</span>,<span class='kw'>groups</span><span class='kw'>=</span><span class='no'>CL</span>)
 
@@ -182,18 +181,6 @@ A Systematized Collection of ODE Solvers.</p>
 <span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='no'>ev1</span>+<span class='no'>ev2</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>180</span>, <span class='kw'>req</span><span class='kw'>=</span><span class='st'>""</span>)
 <span class='fu'>plot</span>(<span class='no'>out</span>)
 
-
-
-
-<span class='co'>## Full NMTRAN data set</span>
-<span class='fu'>data</span>(<span class='no'>exTheoph</span>)
-<span class='fu'>head</span>(<span class='no'>exTheoph</span>)
-
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='kw'>mrgsolve</span><span class='kw'>:::</span><span class='fu'><a href='house.html'>house</a></span>(<span class='kw'>delta</span><span class='kw'>=</span><span class='fl'>0.1</span>)
-
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>exTheoph</span>) <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span>
-
-<span class='fu'>plot</span>(<span class='no'>out</span>,<span class='no'>CP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='fu'>factor</span>(<span class='no'>ID</span>),<span class='kw'>type</span><span class='kw'>=</span><span class='st'>'b'</span>, <span class='kw'>scales</span><span class='kw'>=</span><span class='st'>"same"</span>)
 
 
 <span class='co'>## "Condensed" data set</span>
@@ -209,42 +196,13 @@ A Systematized Collection of ODE Solvers.</p>
 <span class='fu'>data</span>(<span class='no'>exidata</span>)
 <span class='no'>exidata</span>
 
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='idata_set.html'>idata_set</a></span>(<span class='no'>exidata</span>) <span class='kw'>%&gt;%</span>  <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>72</span>)
+<span class='no'>out</span> <span class='kw'>&lt;-</span>
+  <span class='no'>mod</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='idata_set.html'>idata_set</a></span>(<span class='no'>exidata</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='mrgsim.html'>mrgsim</a></span>(<span class='kw'>end</span><span class='kw'>=</span><span class='fl'>72</span>)
 
 <span class='fu'>plot</span>(<span class='no'>out</span>, <span class='no'>CP</span>~<span class='no'>.</span>, <span class='kw'>as</span><span class='kw'>=</span><span class='st'>"log10"</span>)
-
-
-
-<span class='no'>code</span> <span class='kw'>&lt;-</span> <span class='st'>'
-$PARAM CL=1, VC=10, KA=1.1
-$INIT GUT=0, CENT=0
-$SET end=48, delta=0.25
-
-$MAIN
-double CLi = CL*exp(ETA(1));
-double VCi = VC*exp(ETA(2));
-double ke = CLi/VCi;
-
-$OMEGA @correlation
-0.04 0.6 0.09
-
-$ODE
-dxdt_GUT = -KA*GUT;
-dxdt_CENT = KA*GUT - ke*CENT;
-
-$TABLE
-double CP = CENT/VCi;
-
-$CAPTURE CP
-'</span>
-
-<span class='no'>mod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='mcode_cache.html'>mcode</a></span>(<span class='st'>"package_example"</span>,<span class='no'>code</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='events.html'>ev</a></span>(<span class='kw'>amt</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>cmt</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>addl</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>ii</span><span class='kw'>=</span><span class='fl'>8</span>)
-
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='no'>mod</span> <span class='kw'>%&gt;%</span> <span class='no'>mrgsim</span>
-
-<span class='no'>out</span>
-
-<span class='fu'>plot</span>(<span class='no'>out</span>)
 
 
 <span class='co'># Internal model library</span>

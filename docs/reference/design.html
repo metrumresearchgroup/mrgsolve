@@ -82,18 +82,18 @@
 groups or individuals in a population.</p>
     
 
-    <pre><span class='fu'>design</span>(<span class='no'>x</span>, <span class='kw'>descol</span> <span class='kw'>=</span> <span class='fu'>character</span>(<span class='fl'>0</span>), <span class='no'>...</span>, <span class='kw'>deslist</span> <span class='kw'>=</span> <span class='fu'>list</span>())</pre>
+    <pre><span class='fu'>design</span>(<span class='no'>x</span>, <span class='kw'>deslist</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>descol</span> <span class='kw'>=</span> <span class='fu'>character</span>(<span class='fl'>0</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>x</dt>
       <dd>model object</dd>
+      <dt>deslist</dt>
+      <dd>a list of <code>tgrid</code> or <code>tgrids</code> objects or <code>numeric</code> vector to be used in place of ...</dd>
       <dt>descol</dt>
       <dd>the <code>idata</code> column name (<code>character</code>) for design assignment</dd>
       <dt>...</dt>
-      <dd><code>tgrid</code> or <code>tgrids</code> objects or <code>numeric</code> vector</dd>
-      <dt>deslist</dt>
-      <dd>a list of <code>tgrid</code> or <code>tgrids</code> objects or <code>numeric</code> vector to be used in place of ...</dd>
+      <dd>not used</dd>
     </dl>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -127,7 +127,7 @@ command chain (see the example below).</p>
   <span class='fu'><a href='omega.html'>omat</a></span>(<span class='fu'><a href='bmat.html'>dmat</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>)) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='carry_out.html'>carry_out</a></span>(<span class='no'>GRP</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='idata_set.html'>idata_set</a></span>(<span class='no'>idata</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>design</span>(<span class='st'>"amt"</span>, <span class='no'>des1</span>, <span class='no'>des2</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>design</span>(<span class='fu'>list</span>(<span class='no'>des1</span>, <span class='no'>des2</span>),<span class='st'>"amt"</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='data_set.html'>data_set</a></span>(<span class='no'>data</span>) <span class='kw'>%&gt;%</span>
   <span class='no'>mrgsim</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>plot</span>(<span class='no'>RESP</span>~<span class='no'>time</span><span class='kw'>|</span><span class='no'>GRP</span>)</pre>

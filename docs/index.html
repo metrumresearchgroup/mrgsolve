@@ -64,7 +64,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#resources" class="anchor"> </a>Resources</h1></div>
 <ul>
-<li><a href="https://github.com/metrumresearchgroup/mrgsolve/releases">Latest release: 0.7.7</a></li>
+<li><a href="https://github.com/metrumresearchgroup/mrgsolve/releases">Latest release: 0.7.10</a></li>
 <li><a href="https://github.com/metrumresearchgroup/mrgsolve/wiki/howdoi">Get started with <code>mrgsolve</code></a></li>
 <li>Documentation
 <ul>
@@ -98,15 +98,11 @@
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"> </a>Installation</h1>
-<p>Four primary options exist to install <code>mrgsolve</code>:</p>
+<p>Three main options exist to install <code>mrgsolve</code>:</p>
 <ul>
 <li>The development version from github via:</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  devtools::<span class="kw">install_github</span>(<span class="st">"metrumresearchgroup/mrgsolve"</span>)</code></pre></div>
-<ul>
-<li>Latest stable release directly from github via:</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  devtools::<span class="kw">install_github</span>(<span class="st">"metrumresearchgroup/mrgsolve@v0.7.7"</span>)</code></pre></div>
 <ul>
 <li>The latest stable release can be installed with <code>install.packages</code> like this:</li>
 </ul>
@@ -159,7 +155,7 @@
 
 <span class="st">$PARAM TVCL=1, TVVC=20, KA = 1.3, KIN=100, KOUT=2, IC50=10</span>
 
-<span class="st">$CMT GUT, CENT, RESP</span>
+<span class="st">$CMT GUT CENT RESP</span>
 
 <span class="st">$MAIN</span>
 <span class="st">  double CL = exp(log(TVCL) + ETA(1));</span>
@@ -211,14 +207,14 @@ out</code></pre></div>
 . [7,]  1  0.5  52.20 47.14 45.96 2.357
 . [8,]  1  0.6  45.84 53.25 44.87 2.663</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out, CP+RESP~.)</code></pre></div>
-<p><img src="img/README-unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="img/README-unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out &lt;-<span class="st"> </span>
 <span class="st">  </span>mod %&gt;%<span class="st"> </span><span class="kw"><a href="reference/update.html">update</a></span>(<span class="dt">end=</span><span class="dv">48</span>) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/events.html">ev</a></span>(<span class="dt">amt=</span><span class="dv">100</span>) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/Req.html">Req</a></span>(CP,RESP) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/knobs.html">knobs</a></span>(<span class="dt">TVVC=</span><span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">40</span>), <span class="dt">TVCL=</span><span class="kw">c</span>(<span class="fl">0.5</span>,<span class="fl">1.5</span>))</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out)</code></pre></div>
-<p><img src="img/README-unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="img/README-unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;"></p>
 <div id="also-use-mrgsolve-for-efficient-large-scale-population-simulation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#also-use-mrgsolve-for-efficient-large-scale-population-simulation" class="anchor"> </a>Also use <code>mrgsolve</code> for efficient, large-scale population simulation</h2>
@@ -257,7 +253,7 @@ out</code></pre></div>
 <span class="st">  </span><span class="kw"><a href="reference/carry_out.html">carry_out</a></span>(dose) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/mrgsim.html">mrgsim</a></span>(<span class="dt">end=</span><span class="dv">48</span>, <span class="dt">seed=</span><span class="dv">1010</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(out, RESP~time|<span class="kw">factor</span>(dose), <span class="dt">scales=</span><span class="st">"same"</span>)</code></pre></div>
-<p><img src="img/README-unnamed-chunk-15-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="img/README-unnamed-chunk-14-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="pass-simulated-output-to-your-favorite-data-summary-or-visualization-routines" class="section level2">
@@ -279,7 +275,7 @@ out</code></pre></div>
 <span class="st">  </span>as.tbl %&gt;%
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="dt">data=</span>.) +
 <span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x=</span>time, <span class="dt">y=</span>RESP, <span class="dt">group=</span>ID, <span class="dt">col=</span><span class="kw">factor</span>(dose)))</code></pre></div>
-<p><img src="img/README-unnamed-chunk-17-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="img/README-unnamed-chunk-16-1.png" width="864" style="display: block; margin: auto;"></p>
 </div>
 </div>
 </div>
