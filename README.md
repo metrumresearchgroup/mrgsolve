@@ -12,7 +12,7 @@ Installation
   devtools::install_github("metrumresearchgroup/mrgsolve")
 ```
 
-Also see important install-related information [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation)
+Also see important install-related information [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation).
 
 Ask a question
 ==============
@@ -23,7 +23,7 @@ Ask a question
 Resources
 =========
 
-Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources
+Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources.
 
 <hr>
 Example
