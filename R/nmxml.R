@@ -19,6 +19,7 @@
 ##' @param oname name for \code{$OMEGA}
 ##' @param sname name for \code{$SIGMA}
 ##' @param ... passed along
+##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is assumed to be located in \code{run.xml}, in directory \code{run} off the \code{project} directory.  If \code{file} is supplied, \code{run} and \code{project} arguments are ignored.
 ##' @return a list with theta, omega and sigma elements, depending on what was requested

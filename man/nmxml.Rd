@@ -2,6 +2,7 @@
 % Please edit documentation in R/nmxml.R
 \name{nmxml}
 \alias{nmxml}
+\alias{NMXML}
 \title{Get THETA, OMEGA and SIGMA from a completed NONMEM run}
 \usage{
 nmxml(run = numeric(0), project = character(0), file = character(0),

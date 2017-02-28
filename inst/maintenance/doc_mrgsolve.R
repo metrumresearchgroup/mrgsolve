@@ -2,6 +2,8 @@ message("\n\nwriting documentation ... \n")
 
 library(methods)
 library(devtools)
+library(roxygen2)
+
 
 pkg <- file.path(".")
 ## message("\nwriting header files for nullmodel and housemodel\n")
