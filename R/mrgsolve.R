@@ -253,6 +253,21 @@ tran_mrgsim <- function(x,
   if(!model_loaded(x)) {
     stop("The model is not properly loaded.  Aborting simulation.",call.=FALSE) 
   }
+
+  ## data
+  if(!is.valid_data_set(data)) {
+    data <- valid_data_set(data,x,verbose)
+  } 
+  
+  ## "idata"
+  if(!is.valid_idata_set(idata)) {
+    idata <- valid_idata_set(idata,verbose=verbose,...)
+  }
+  
+  #idata_idcol <- idcol(idata)
+  
+  tcol <- timename(data)
+  tcol <- ifelse(is.na(tcol), "time", tcol)
   
   param <- as.numeric(param(x))
   init <-  as.numeric(Init(x))
@@ -294,7 +309,6 @@ tran_mrgsim <- function(x,
   # Important to use the total length of x@capture
   capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
   
-  
   ## carry can be tran/data/idata
   # Items to carry out from the data set
   # carry.out --> comma-separated names
@@ -318,7 +332,6 @@ tran_mrgsim <- function(x,
   # Carry from data_set if name is in idata_set too
   carry.idata <- setdiff(carry.idata, carry.data)
 
-  
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
@@ -328,6 +341,7 @@ tran_mrgsim <- function(x,
   parin$ptimes <- stime(ptime)
   parin$filbak <- filbak
   parin$tad <- tad
+  
   if(any(x@capture =="tad") & tad) {
     stop("tad argument is true and 'tad' found in $CAPTURE",call.=FALSE); 
   }
@@ -335,10 +349,10 @@ tran_mrgsim <- function(x,
   # already took intersect
   parin$request <- as.integer(match(request, cmt(x))-1);
   
-  
   # What to carry
   parin$carry_data <- carry.data 
   parin$carry_idata <- carry.idata 
+  
   # This has to be lower case; that's all we're looking for
   parin$carry_tran <- tolower(carry.tran)
   
@@ -347,21 +361,6 @@ tran_mrgsim <- function(x,
   rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
   carry.tran <- as.character(rename.carry.tran)
 
-  
-  ## "idata"
-  if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,verbose=verbose,...)
-  }
-  idata_icdol <- idcol(idata)
-  
-  ## data
-  if(!is.valid_data_set(data)) {
-    data <- valid_data_set(data,x,verbose)
-  } 
-  
-  tcol <- timename(data)
-  tcol <- ifelse(is.na(tcol), "time", tcol)
-  
   # Derive stime vector either from tgrid or from the object
   if(inherits(tgrid, c("tgrid","tgrids"))) {
     stime <- stime(tgrid)
@@ -377,7 +376,6 @@ tran_mrgsim <- function(x,
     parin[["tgridmatrix"]] <- tgrid_matrix(list(stime))
     parin[["whichtg"]] <- integer(0)
   }
-
 
   # Dump some information out to file for debugging
   if(is.character(capture)) {
