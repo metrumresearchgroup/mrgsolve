@@ -109,7 +109,7 @@ out
 plot(out, CP+RESP~.)
 ```
 
-<img src="img/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="inst/maintenance/img/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ``` r
 out <- 
@@ -123,7 +123,7 @@ out <-
 plot(out)
 ```
 
-<img src="img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+<img src="inst/maintenance/img/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 Also use `mrgsolve` for efficient, large-scale population simulation
 --------------------------------------------------------------------
@@ -172,7 +172,7 @@ out <-
 plot(out, RESP~time|factor(dose), scales="same")
 ```
 
-<img src="img/README-unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+<img src="inst/maintenance/img/README-unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 Pass simulated output to your favorite data summary or visualization routines
 -----------------------------------------------------------------------------
@@ -202,4 +202,4 @@ out %>%
   geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
 ```
 
-<img src="img/README-unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+<img src="inst/maintenance/img/README-unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
