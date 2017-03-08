@@ -1,7 +1,7 @@
 Package: mrgsolve
 Type: Package
 Version: 0.7.10.9007
-Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
+Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
     person("Kyle T", "Baron", "", "kyleb@metrumrg.com", c("aut", "cre")),
@@ -15,17 +15,17 @@ Authors@R: c(
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
-Copyright: Metrum Research Group, LLC 2016
-Description: Facilitates simulation in R from hierarchical, ordinary
+Copyright: Metrum Research Group, LLC 2017
+Description: Facilitates simulation from hierarchical, ordinary
     differential equation (ODE) based models typically employed in drug development.
-    The modeler creates a model specification file consisting of R and C++ code that
+    A model specification file is created consisting of R and C++ code that
     is parsed, compiled, and dynamically loaded into the R session. Input data are
-    passed in and simulated data are returned as R objects, so disk access is never
-    required during the simulation cycle after compiling. Differential equations
-    are solved with the 'DLSODA' routine in 'ODEPACK' [A. C. Hindmarsh, "ODEPACK,
-    A Systematized Collection of ODE Solvers," in Scientific Computing, R. S.
-    Stepleman et al. (eds.), North-Holland, Amsterdam, 1983, pp.55-64.]. ACH and LRP
-    are listed as authors of the 'DLSODA' function in 'ODEPACK'.
+    passed in and simulated data are returned as R objects.  A dosing event engine
+    allows interventions (bolus and infusion) to be managed separately from the 
+    model code. Differential equations are solved with the 'DLSODA' routine 
+    in 'ODEPACK' [A. C. Hindmarsh, 'ODEPACK, A Systematized Collection of ODE 
+    Solvers' in Scientific Computing, R. S. Stepleman et al. (eds.), 
+    North-Holland, Amsterdam, 1983, pp.55-64.]. 
 License: GPL (>=2)
 Depends:
     R (>= 3.1.2),
