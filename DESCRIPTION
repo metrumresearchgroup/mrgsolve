@@ -4,13 +4,13 @@ Version: 0.7.10.9006
 Title: Simulation from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
-    person("Kyle T", "Baron", "", "kyleb@metrumrg.com", c("aut", "cre", "cph")),
+    person("Kyle T", "Baron", "", "kyleb@metrumrg.com", c("aut", "cre")),
     person("Alan C", "Hindmarsh", "", "", c("ctb")),
     person("Linda R", "Petzold", "", "", c("ctb")),
     person("Bill", "Gillespie", "", "", c("ctb")),
     person("Charles", "Margossian", "", "", c("ctb")),
-    person("Metrum Research Group LLC", role =  c("cph")),
-    person("Devin", "Pastoor", "", "", c("ctb"))
+    person("Devin", "Pastoor", "", "", c("ctb")),
+    person("Metrum Research Group LLC", role =  c("cph"))
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
@@ -26,7 +26,7 @@ Description: Facilitates simulation in R from hierarchical, ordinary
     A Systematized Collection of ODE Solvers," in Scientific Computing, R. S.
     Stepleman et al. (eds.), North-Holland, Amsterdam, 1983, pp.55-64.]. ACH and LRP
     are listed as authors of the 'DLSODA' function in 'ODEPACK'.
-License: CC BY-NC-ND 4.0
+License: GPL (>=2)
 Depends:
     R (>= 3.1.2),
     methods
@@ -45,7 +45,7 @@ Suggests:
     rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes
-Collate:
+Collate: 
     'RcppExports.R'
     'utils.R'
     'package.R'
@@ -81,12 +81,12 @@ Collate:
     'mcache.R'
     'model_include.R'
     'modlib.R'
-    'nmxml.R'
     'modspec.R'
     'mread.R'
     'mrgindata.R'
     'mrgsims.R'
     'mrgsolve.R'
+    'nmxml.R'
     'param.R'
     'print.R'
     'qsim.R'

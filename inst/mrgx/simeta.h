@@ -1,29 +1,16 @@
-// #ifndef SIMETA_H
-// #define SIMETA_H
-// namespace mrgx {
-// 
-// void simeta(arma::mat* m, std::vector<double>&ETA) {
-//   
-//   //arma::mat* m = reinterpret_cast<arma::mat*>(m_);
-//   arma::vec eigval;
-//   arma::mat eigvec;
-//   arma::eig_sym(eigval,eigvec, *m);
-//   
-//   int ncol = (*m).n_cols;
-//   
-//   arma::mat X = arma::randn<arma::mat>(1,ncol);
-//   
-//   eigval = arma::sqrt(eigval);
-//   arma::mat Z = arma::diagmat(eigval);
-//   X = eigvec * Z * X.t();
-//   X = X.t();
-//   for(int i=0; i < ncol; i++) ETA[i] = X(0,i);
-//   
-// }
-// 
-// arma::mat cast_matrix(void* m_) {
-//   arma::mat* m = reinterpret_cast<arma::mat*>(m_); 
-//   return *m;
-// }
-// }
-// #endif
+// Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+//
+// This file is part of mrgsolve.
+//
+// mrgsolve is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+//
+// mrgsolve is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.

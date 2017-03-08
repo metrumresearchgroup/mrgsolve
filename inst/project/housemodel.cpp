@@ -1,4 +1,3 @@
-
 $PROB 
 
 # `mrgsolve` housemodel
