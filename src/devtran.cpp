@@ -104,7 +104,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   idat.idata_row();
   
   // Number of individuals in the data set
-  const unsigned int NID = dat.nid();
+  const int NID = dat.nid();
   const int nidata = idat.nrow();
   
   int j = 0;
@@ -219,13 +219,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Matrix of designs
     Rcpp::NumericMatrix tgrid = Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
     
+    
     // Vector of length idata.nrow() that maps each ID to a design
     // Already has C indexing
     Rcpp::IntegerVector tgridi = Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
-    
+
     if(tgridi.size() == 0) tgridi = Rcpp::rep(0,NID);
     
-    if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
+    if(tgridi.size() < (signed) NID) CRUMP("Length of design indicator less than NID.");
     
     if(max(tgridi) >= tgrid.ncol()) {
       Rcpp::stop("Insufficient number of designs specified for this problem.");
