@@ -226,7 +226,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
     if(tgridi.size() == 0) tgridi = Rcpp::rep(0,NID);
     
-    if(tgridi.size() < (signed) NID) CRUMP("Length of design indicator less than NID.");
+    if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
     
     if(max(tgridi) >= tgrid.ncol()) {
       Rcpp::stop("Insufficient number of designs specified for this problem.");
