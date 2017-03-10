@@ -235,10 +235,8 @@ models <- function() {
 }
 
 
-.onAttach <- function(libname,pkgname) {
-  base::packageStartupMessage("mrgsolve: Community Edition")
-  base::packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
-
-}
+# .onAttach <- function(libname,pkgname) {
+#   base::packageStartupMessage("mrgsolve: Community Edition")
+# }
 
 
