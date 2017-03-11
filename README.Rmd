@@ -137,7 +137,7 @@ plot(out)
 
 
 
-### Sse `mrgsolve` for large-scale population simulation
+### Use `mrgsolve` for large-scale population simulation
 
 ```{r}
 mod <- mod %>% omat(cmat(0.1, 0.67, 0.4))

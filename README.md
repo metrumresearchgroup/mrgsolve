@@ -130,7 +130,7 @@ plot(out)
 
 <img src="inst/maintenance/img/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
-### Sse `mrgsolve` for large-scale population simulation
+### Use `mrgsolve` for large-scale population simulation
 
 ``` r
 mod <- mod %>% omat(cmat(0.1, 0.67, 0.4))
