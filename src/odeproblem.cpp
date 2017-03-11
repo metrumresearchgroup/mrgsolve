@@ -86,16 +86,11 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
   for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
 
-
   *reinterpret_cast<void**>(&Inits) = R_ExternalPtrAddr(funs["main"]); 
   *reinterpret_cast<void**>(&Table) = R_ExternalPtrAddr(funs["table"]);
   *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
   *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
-  //Inits = reinterpret_cast<init_func*>(reinterpret_cast<long long>(R_ExternalPtrAddr(funs["main"])));
-  //Table = reinterpret_cast<table_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["table"])));
-  //Derivs = reinterpret_cast<deriv_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["ode"])));
-  //Config = reinterpret_cast<config_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["config"])));
-  
+
   Capture.assign(n_capture_,0.0);
   
   simeta = resim(&dosimeta,reinterpret_cast<void*>(this));
