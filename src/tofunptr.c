@@ -21,12 +21,15 @@
  * 
  */
 
+int empty = 1;
+
+/*
 #include "tofunptr.h"
 #include <Rinternals.h>
 DL_FUNC tofunptr(SEXP a) {
 return((DL_FUNC) R_ExternalPtrAddr(a));
 }
-
+*/
 
 
 
