@@ -33,7 +33,6 @@ Ask a question
 -   [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
 -   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
-<hr>
 Example
 -------
 
