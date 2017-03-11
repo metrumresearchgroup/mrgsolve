@@ -3,7 +3,7 @@ mrgsolve
 
 [![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master) [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues) [![Metrumrg](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
 
-`mrgsolve` facilitates simulation in R from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. See the example below.
+`mrgsolve` facilitates simulation in `R` from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. See the example below.
 
 Resources
 ---------
@@ -42,7 +42,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-### The model specification file is similar to other non-linear mixed effects modeling software
+The model specification file is similar to other non-linear mixed effects modeling software
 
 ``` r
 code <- '
