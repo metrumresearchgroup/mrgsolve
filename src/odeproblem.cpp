@@ -636,7 +636,7 @@ double PolyExp(const double& x,
  * 
  */
 // init_func* as_init_func(SEXP inits) {
-//   return(reinterpret_cast<init_func *>(tofunptr(inits))); 
+//   //return(reinterpret_cast<init_func *>(tofunptr(inits)));
 // }
 
 /**
@@ -646,7 +646,7 @@ double PolyExp(const double& x,
  * 
  */
 // deriv_func* as_deriv_func(SEXP derivs) {
-//   return(reinterpret_cast<deriv_func *>(tofunptr(derivs))); 
+//   //return(reinterpret_cast<deriv_func *>(tofunptr(derivs)));
 // }
 
 /**
@@ -656,7 +656,7 @@ double PolyExp(const double& x,
  * 
  */
 // table_func* as_table_func(SEXP table) {
-//   return(reinterpret_cast<table_func*>(tofunptr(table)));
+//   //return(reinterpret_cast<table_func*>(tofunptr(table)));
 // }
 
 /**
@@ -666,7 +666,7 @@ double PolyExp(const double& x,
  * 
  */
 // config_func* as_config_func(SEXP config) {
-//   return(reinterpret_cast<config_func*>(tofunptr(config)));
+//   //return(reinterpret_cast<config_func*>(tofunptr(config)));
 // }
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
@@ -679,16 +679,11 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {
-  // Inits = as_init_func(funs["main"]);
-  // Table = as_table_func(funs["table"]);
-  // Derivs = as_deriv_func(funs["ode"]);
-  // Config = as_config_func(funs["config"]);
+
   Inits = reinterpret_cast<init_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["main"])));
   Table = reinterpret_cast<table_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["table"])));
   Derivs = reinterpret_cast<deriv_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["ode"])));
   Config = reinterpret_cast<config_func*>(reinterpret_cast<long>(R_ExternalPtrAddr(funs["config"])));
-  
-  
 }
 
 void odeproblem::advan(int x) {
