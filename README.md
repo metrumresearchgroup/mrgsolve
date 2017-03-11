@@ -42,7 +42,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-The model specification file is similar to other non-linear mixed effects modeling software
+### The model specification file is similar to other non-linear mixed effects modeling software
 
 ``` r
 code <- '
@@ -73,7 +73,7 @@ $CAPTURE CP
 '
 ```
 
-The model is parsed, compiled, and dynamically loaded into the `R` session
+### The model is parsed, compiled, and dynamically loaded into the `R` session
 
 -   Information about the model is saved as an `R` object
 -   Important model attributes can be updated in `R` without recompiling
@@ -130,7 +130,7 @@ plot(out)
 
 <img src="inst/maintenance/img/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
-### Also use `mrgsolve` for efficient, large-scale population simulation
+### Sse `mrgsolve` for large-scale population simulation
 
 ``` r
 mod <- mod %>% omat(cmat(0.1, 0.67, 0.4))
