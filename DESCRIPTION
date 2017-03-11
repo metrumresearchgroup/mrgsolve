@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.8.2
+Version: 0.8.2.9000
 Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
