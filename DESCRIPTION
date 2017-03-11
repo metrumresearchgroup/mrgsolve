@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.8.0
+Version: 0.8.1
 Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
@@ -23,9 +23,7 @@ Description: Facilitates simulation from hierarchical, ordinary
     passed in and simulated data are returned as R objects.  A dosing event engine
     allows interventions (bolus and infusion) to be managed separately from the 
     model code. Differential equations are solved with the 'DLSODA' routine 
-    in 'ODEPACK' [A. C. Hindmarsh, 'ODEPACK, A Systematized Collection of ODE 
-    Solvers' in Scientific Computing, R. S. Stepleman et al. (eds.), 
-    North-Holland, Amsterdam, 1983, pp.55-64.]. 
+    in 'ODEPACK' (<https://computation.llnl.gov/casc/odepack/>). 
 License: GPL (>=2)
 Depends:
     R (>= 3.1.2),
