@@ -229,16 +229,12 @@ models <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
 
-
 .onLoad <- function(libname, pkgname) {
   GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 }
 
-
-.onAttach <- function(libname,pkgname) {
-  base::packageStartupMessage("mrgsolve: Community Edition")
-  base::packageStartupMessage("www.github.com/metrumresearchgroup/mrgsolve")
-
-}
+# .onAttach <- function(libname,pkgname) {
+#   base::packageStartupMessage("mrgsolve: Community Edition")
+# }
 
 

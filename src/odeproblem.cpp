@@ -85,12 +85,12 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
   for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
-  
-  Inits = as_init_func(funs["main"]);
-  Table = as_table_func(funs["table"]);
-  Derivs = as_deriv_func(funs["ode"]);
-  Config = as_config_func(funs["config"]);
-  
+
+  *reinterpret_cast<void**>(&Inits) = R_ExternalPtrAddr(funs["main"]); 
+  *reinterpret_cast<void**>(&Table) = R_ExternalPtrAddr(funs["table"]);
+  *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
+  *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
+
   Capture.assign(n_capture_,0.0);
   
   simeta = resim(&dosimeta,reinterpret_cast<void*>(this));
@@ -635,9 +635,9 @@ double PolyExp(const double& x,
  * @param inits address for <code>$MAIN</code> function
  * 
  */
-init_func* as_init_func(SEXP inits) {
-  return(reinterpret_cast<init_func *>(tofunptr(inits))); 
-}
+// init_func* as_init_func(SEXP inits) {
+//   //return(reinterpret_cast<init_func *>(tofunptr(inits)));
+// }
 
 /**
  * Get pointer for <code>$ODE</code> function. 
@@ -645,9 +645,9 @@ init_func* as_init_func(SEXP inits) {
  * @param derivs address for <code>$ODE</code> function
  * 
  */
-deriv_func* as_deriv_func(SEXP derivs) {
-  return(reinterpret_cast<deriv_func *>(tofunptr(derivs))); 
-}
+// deriv_func* as_deriv_func(SEXP derivs) {
+//   //return(reinterpret_cast<deriv_func *>(tofunptr(derivs)));
+// }
 
 /**
  * Get pointer for <code>$TABLE</code> function. 
@@ -655,9 +655,9 @@ deriv_func* as_deriv_func(SEXP derivs) {
  * @param table address for <code>$TABLE</code> function
  * 
  */
-table_func* as_table_func(SEXP table) {
-  return(reinterpret_cast<table_func*>(tofunptr(table)));
-}
+// table_func* as_table_func(SEXP table) {
+//   //return(reinterpret_cast<table_func*>(tofunptr(table)));
+// }
 
 /**
  * Get pointer for <code>$PREAMBLE</code> function. 
@@ -665,9 +665,9 @@ table_func* as_table_func(SEXP table) {
  * @param config address for <code>$PREAMBLE</code> function
  * 
  */
-config_func* as_config_func(SEXP config) {
-  return(reinterpret_cast<config_func*>(tofunptr(config)));
-}
+// config_func* as_config_func(SEXP config) {
+//   //return(reinterpret_cast<config_func*>(tofunptr(config)));
+// }
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
   this->tol(Rcpp::as<double>(parin["atol"]),Rcpp::as<double>(parin["rtol"]));
@@ -679,11 +679,10 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {
-  Inits = as_init_func(funs["main"]);
-  Table = as_table_func(funs["table"]);
-  Derivs = as_deriv_func(funs["ode"]);
-  Config = as_config_func(funs["config"]);
-  
+  *reinterpret_cast<void**>(&Inits) = R_ExternalPtrAddr(funs["main"]); 
+  *reinterpret_cast<void**>(&Table) = R_ExternalPtrAddr(funs["table"]);
+  *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
+  *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
 }
 
 void odeproblem::advan(int x) {
