@@ -19,6 +19,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="inst/maintenance/img/R
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) 
 [![questions](https://www.codewake.com/badges/ask_question.svg)](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve)
+[![Metrumrg](https://img.shields.io/badge/Contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
 
 # About
 `mrgsolve` facilitates simulation in R from hierarchical,
