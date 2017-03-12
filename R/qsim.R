@@ -259,7 +259,6 @@ recmatrix <- function(x,times,c_indexing=TRUE) {
 #                as.numeric(param(x)),
 #                as.numeric(init(x)),
 #                pars(x),
-#                cmt(x),
 #                data.matrix(idata),
 #                cap,
 #                pointers(x))

@@ -172,33 +172,32 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   return ans;
 }
 
-// [[Rcpp::export]]
-Rcpp::NumericMatrix PREDSIM(const Rcpp::List& parin,
-                            const Rcpp::NumericVector& param,
-                            const Rcpp::NumericVector& init,
-                            Rcpp::CharacterVector& parnames,
-                            Rcpp::CharacterVector& cmtnames,
-                            const Rcpp::NumericMatrix& idata,
-                            const Rcpp::IntegerVector& capturei,
-                            const Rcpp::List& funs) {
-  
-  dataobject idat(idata,parnames);
-  
-  const int capn = capturei.at(0);
-  odeproblem prob(param, init, funs, capn);
-  Rcpp::NumericMatrix ans(idata.nrow(),capn);
-  
-  int k; 
-  size_t irow = idata.nrow();
-  
-  // Simulate each individual
-  for(size_t i = 0; i < irow; ++i) {
-    idat.copy_parameters(i,&prob);
-    prob.init_call(0.0);
-    prob.table_call();
-    for(k = 0; k < capn; ++k) {
-      ans(i,k) = prob.capture(capturei[1+k]); 
-    }
-  }
-  return ans;
-}
+
+// Rcpp::NumericMatrix PREDSIM(const Rcpp::List& parin,
+//                             const Rcpp::NumericVector& param,
+//                             const Rcpp::NumericVector& init,
+//                             Rcpp::CharacterVector& parnames,
+//                             const Rcpp::NumericMatrix& idata,
+//                             const Rcpp::IntegerVector& capturei,
+//                             const Rcpp::List& funs) {
+//   
+//   dataobject idat(idata,parnames);
+//   
+//   const int capn = capturei.at(0);
+//   odeproblem prob(param, init, funs, capn);
+//   Rcpp::NumericMatrix ans(idata.nrow(),capn);
+//   
+//   int k; 
+//   size_t irow = idata.nrow();
+//   
+//   // Simulate each individual
+//   for(size_t i = 0; i < irow; ++i) {
+//     idat.copy_parameters(i,&prob);
+//     prob.init_call(0.0);
+//     prob.table_call();
+//     for(k = 0; k < capn; ++k) {
+//       ans(i,k) = prob.capture(capturei[1+k]); 
+//     }
+//   }
+//   return ans;
+// }
