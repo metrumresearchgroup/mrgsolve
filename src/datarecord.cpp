@@ -247,7 +247,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
     prob->advance(tfrom,tto);
     
     for(j=0; j < prob->neq(); ++j) {
-      res[j]  = pow(prob->y(j) - last[j],2);
+      res[j]  = pow(prob->y(j) - last[j], 2.0);
       last[j] = prob->y(j);
     }
     
@@ -321,7 +321,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
     tfrom = nexti;
     
     for(j=0; j < prob->neq(); ++j) {
-      res[j]  = pow((prob->y(j)  - last[j]),2);
+      res[j]  = pow((prob->y(j)  - last[j]), 2.0);
       last[j] = prob->y(j);
     }
     
