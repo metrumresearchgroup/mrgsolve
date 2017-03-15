@@ -124,7 +124,7 @@ test_that("Commented model", {
     KA // Capturing KA
   ' 
   
-  expect_is(mod <- mcode("commented", code),"mrgmod")
+  expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
   expect_identical(mod@capture, c("KA","a"))
