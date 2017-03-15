@@ -16,8 +16,8 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 Sys.setenv("R_TESTS" = "")
-library(testthat)
-library(mrgsolve)
+#library(testthat)
+#library(mrgsolve)
 
-test_check("mrgsolve", reporter="summary")
+#test_check("mrgsolve", reporter="summary")
 

@@ -44,16 +44,10 @@ $CAPTURE cmtn
 '
 
 
-mod <- try(suppressWarnings(mcode("FOO",code, audit=FALSE)))
-
-out <- mrgsim(mod)
+mod <- try(suppressWarnings(mcode("FOO",code, audit=FALSE,compile=FALSE)))
 
 context("CMTN block gives compartment numbers")
 
-test_that("Model compiles with FIXED and CMTN",{
-  expect_is(mod, "mrgmod")
-  expect_true(all(out$cmtn==2))
-})
 
 context("Fixed parameters")
 

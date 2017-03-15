@@ -13,6 +13,12 @@ CHKDIR=Rchecks
 pkgdown:
 	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference(examples=FALSE)' -e 'build_news()'
 
+test-all:
+	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")' -e 'test_dir("inst/maintenance/unit/testthat")'
+
+unit:
+	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit/testthat")'
+
 cran:
 	make doc
 	make build
@@ -53,7 +59,7 @@ check:
 	make doc
 	make build
 	R CMD check ${TARBALL} -o ${CHKDIR}
-
+	make unit
 qcheck: 
 	make doc
 	make build 
@@ -67,11 +73,8 @@ check-cran:
 
 test:
 	R CMD INSTALL ${PKGDIR}
-	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")'
+	make test-all
 
-.PHONY: tests
-tests:
-	Rscript inst/maintenance/tests.R
 
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi

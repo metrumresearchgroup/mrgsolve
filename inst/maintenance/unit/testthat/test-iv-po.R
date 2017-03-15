@@ -39,7 +39,7 @@ iv <- function(dose,par,time) {
 context("Loading a model via mread")
 mod <- suppressMessages(mread("firstmodel", project,atol=1E-20, rtol=1E-12, digits=8))
 
-out <- mrgsim(mod )
+out <- mrgsim(mod)
 comparepo <- signif(oral(as.list(init(mod))$DEPOT, param(mod), stime(mod)), digits=8)
 
 modiv <- mod %>% init(DEPOT=0, CENT=1000)

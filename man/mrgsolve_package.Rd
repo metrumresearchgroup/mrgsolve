@@ -129,12 +129,12 @@ plot(out, CP~., as="log10")
 
 
 # Internal model library
-
+\dontrun{
 mod <- mread("irm1", modlib())
 
 mod
 
 mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
-
+}
 
 }

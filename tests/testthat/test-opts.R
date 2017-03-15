@@ -34,7 +34,7 @@ test_that("Options where they don't belong", {
   $SET y = TRUE
   $CMTN CENT
   '
-  mod <- mcode("test-opts-1", code)
+  mod <- mcode("test-opts-1", code, compile=FALSE)
   expect_is(mod, "mrgmod")
   
 })
