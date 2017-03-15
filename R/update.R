@@ -42,9 +42,11 @@ sval <- unique(c("atol","rtol",
 ##' @name update
 ##' @aliases update,mrgmod-method
 ##' @examples
+##' \dontrun{
 ##'  mod <- mrgsolve:::house()
 ##'
 ##'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
+##'  }
 setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=list()) {
 
     x <- object

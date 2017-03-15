@@ -41,13 +41,14 @@
 ##' day1 <- c(peak,sparse)
 ##'
 ##' design <- c(day1, day1+72, day1+240)
-##'
+##' 
+##' \dontrun{
 ##' mod <- mrgsolve:::house()
 ##'
 ##' out <- mod %>% ev(amt=1000, ii=24, addl=10) %>% mrgsim(tgrid=design)
 ##'
 ##' plot(out,CP~., type='b')
-##'
+##' }
 tgrid <-  function(start=0,end=24,delta=1,add=numeric(0),.offset=0, .scale=1,...) {
     new("tgrid", start=start, end=end, delta=delta, add=add, offset=.offset, scale=.scale)
 }

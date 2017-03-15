@@ -45,13 +45,13 @@ test_that("Very small lag time doesn't crash", {
   out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
   expect_is(out, "mrgsims")
   expect_equal(out$time[which.max(out$CENT)],0)
-
+  
   out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
   expect_is(out, "mrgsims")
   expect_equal(out$time[which.max(out$CENT)],2)
-
+  
   out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-
+  
 })
 
 

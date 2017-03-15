@@ -26,6 +26,7 @@ Note that the arguments are in slightly different order than \code{\link{mread}}
 }
 \examples{
 
+\dontrun{ 
 code <- '
 $CMT DEPOT CENT
 $PKMODEL ncmt=1, depot=TRUE
@@ -36,5 +37,5 @@ double KA = 1;
 '
 
 mod <- mcode("example",code)
-
+}
 }

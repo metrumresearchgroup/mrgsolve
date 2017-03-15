@@ -22,48 +22,27 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-code <- '
-$PARAM LAG = 2.8
-$CMT CENT
-$MAIN
-ALAG_CENT = LAG;
-'
-mod <- mcode("alag1", code)
+mod <- mrgsolve:::house(end=5, delta=1) %>% Req() 
 
-
-context("Lagged doses")
-
-test_that("Lagged bolus", {
-    out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
-    first <- with(as.tbl(out),time[which(CENT > 0)[1]])
-    expect_equal(first,2.8)
+test_that("tad", {
+  out <- mrgsim(mod)
+  outt <- mrgsim(mod, tad=TRUE)
+  
+  expect_identical(names(out), c("ID", "time"))
+  expect_identical(names(outt), c("ID", "time", "tad"))
+  
+  e <- ev(amt=100, time=3)
+  
+  out <- mrgsim(mod,events=e,tad=TRUE)
+  expect_identical(out$tad, c(-3,-2,-1,0,0,1,2))
+  
+  out <- mrgsim(mod,events=e,tad=TRUE,obsonly=TRUE)
+  expect_identical(out$tad, c(-3,-2,-1,0,1,2))
+  expect_identical(out$time, c(0,1,2,3,4,5))
+  
+  e <- ev(amt=100, time=3, ii=3, addl=2)
+  out <- mrgsim(mod, events=e, end=11, obsonly=TRUE,tad=TRUE)
+  expect_equal(out$time, seq(0,11))
+  expect_equal(out$tad,c(-3,-2,-1,0,1,2,0,1,2,0,1,2))
 })
-
-## Issue #109
-test_that("Very small lag time doesn't crash", {
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],0)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],2)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
 

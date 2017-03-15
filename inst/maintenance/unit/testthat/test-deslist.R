@@ -22,48 +22,28 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-code <- '
-$PARAM LAG = 2.8
-$CMT CENT
-$MAIN
-ALAG_CENT = LAG;
-'
-mod <- mcode("alag1", code)
+test_that("deslist", {
+  idata <- data_frame(ID=1:3, start=0, end=c(1,2,3))
+  des <- as_deslist(idata,descol="ID")
+  expect_identical("ID", attr(des, "descol"))
 
-
-context("Lagged doses")
-
-test_that("Lagged bolus", {
-    out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
-    first <- with(as.tbl(out),time[which(CENT > 0)[1]])
-    expect_equal(first,2.8)
+  expect_equal(max(stime(des[[3]])),3)
+  expect_equal(max(stime(des[[1]])),1)
+  
+  mod <- mrgsolve:::house()
+  
+  out <- 
+    mod %>%
+    idata_set(idata) %>%
+    design(des) %>%
+    mrgsim()
+                
+  expect_is(out,"mrgsims")
+  expect_equal(out$time, c(0,1,0,1,2,0,1,2,3))
+  
+  out <- mrgsim(mod,idata=idata,deslist=des,descol="ID")
+  expect_equal(out$time, c(0,1,0,1,2,0,1,2,3))
+  
 })
-
-## Issue #109
-test_that("Very small lag time doesn't crash", {
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],0)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],2)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-
-})
-
-
-
-
-
-
-
-
-
-
-
-
 
 

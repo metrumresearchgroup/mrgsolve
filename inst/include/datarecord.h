@@ -136,9 +136,10 @@ bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
  */
 struct CompRec {
   inline bool operator()(const rec_ptr& a, const rec_ptr& b) {
-    if(a->time() == b->time())
-      return a->pos()  < b->pos();
-      return a->time() < b->time();
+    if(a->time() == b->time()) {
+      return a->pos() < b->pos();
+    }
+    return a->time() < b->time();
   }
 };
 

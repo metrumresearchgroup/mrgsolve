@@ -57,10 +57,11 @@ day1 <- c(peak,sparse)
 
 design <- c(day1, day1+72, day1+240)
 
+\dontrun{
 mod <- mrgsolve:::house()
 
 out <- mod \%>\% ev(amt=1000, ii=24, addl=10) \%>\% mrgsim(tgrid=design)
 
 plot(out,CP~., type='b')
-
+}
 }

@@ -72,7 +72,7 @@ for more information about the state variables and parameters in each model.
 
 \examples{
 
-
+\dontrun{
 code <- '
 $PARAM CL = 1, VC = 5
 $CMT CENT
@@ -89,5 +89,5 @@ mod \%>\% init(CENT=1000) \%>\% mrgsim \%>\% plot
 mod <- mread("irm3", modlib())
 
 mod
-
+}
 }

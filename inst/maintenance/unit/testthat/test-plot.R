@@ -18,52 +18,33 @@
 library(testthat)
 library(mrgsolve)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-code <- '
-$PARAM LAG = 2.8
-$CMT CENT
-$MAIN
-ALAG_CENT = LAG;
-'
-mod <- mcode("alag1", code)
+project <- file.path(system.file(package="mrgsolve"), "models")
+
+context("Testing that plots can be generated from output objects")
+
+mod <- mrgsolve:::house() %>% init(CENT=1000)
+out <- mrgsim(mod)
 
 
-context("Lagged doses")
-
-test_that("Lagged bolus", {
-    out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
-    first <- with(as.tbl(out),time[which(CENT > 0)[1]])
-    expect_equal(first,2.8)
-})
-
-## Issue #109
-test_that("Very small lag time doesn't crash", {
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],0)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],2)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# test_that("Plot from mrgsims without a formula", {
+#   expect_is(plot(out), "trellis")
+# })
+# 
+# test_that("Plot from mrgsims with a formula", {
+#   expect_is(plot(out, CP~time), "trellis")
+# })
+# 
+# 
+# out <- knobs(mod, CL=c(1,2,3), VC=c(10,20))
+# 
+# test_that("Plot from batch_mrgsims without a formula", {
+#   expect_is(plot(out), "trellis")
+#   
+# })
+# 
+# test_that("Plot from batch_mrgsims with a formula", {
+#   expect_is(plot(out, CP~time), "trellis")
+# })

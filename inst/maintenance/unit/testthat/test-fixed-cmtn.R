@@ -18,52 +18,51 @@
 library(testthat)
 library(mrgsolve)
 library(dplyr)
-
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+
 code <- '
-$PARAM LAG = 2.8
-$CMT CENT
-$MAIN
-ALAG_CENT = LAG;
+
+$CMTN DEPOT
+
+$PARAM CL=1, VC=20
+
+$INIT CENT=0 , DEPOT=0
+
+$FIXED A=1.1, B=2.2
+
+$PARAM KM = 2, VMAX=100
+
+$FIXED  
+C = 3.3, D=4.4, E = 5.5
+
+$MAIN double Z = A+B+C+D+E;
+
+$TABLE double cmtn = N_DEPOT;
+$CAPTURE cmtn
 '
-mod <- mcode("alag1", code)
 
 
-context("Lagged doses")
+mod <- try(suppressWarnings(mcode("FOO",code, audit=FALSE)))
 
-test_that("Lagged bolus", {
-    out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
-    first <- with(as.tbl(out),time[which(CENT > 0)[1]])
-    expect_equal(first,2.8)
+out <- mrgsim(mod)
+
+context("CMTN block gives compartment numbers")
+
+test_that("Model compiles with FIXED and CMTN",{
+  expect_is(mod, "mrgmod")
+  expect_true(all(out$cmtn==2))
 })
 
-## Issue #109
-test_that("Very small lag time doesn't crash", {
+context("Fixed parameters")
 
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],0)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],2)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-
+test_that("FIXED items are excluded from param", {
+    expect_identical(names(param(mod)),c("CL", "VC", "KM", "VMAX"))
+    expect_identical(names(mod@fixed),c("A", "B", "C", "D", "E"))
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
+test_that("FIXED items can be recovered", {
+    expect_identical(names(as.list(allparam(mod))),c("CL", "VC", "KM", "VMAX","A","B","C","D","E"))
+})
 

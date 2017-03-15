@@ -22,48 +22,27 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-code <- '
-$PARAM LAG = 2.8
-$CMT CENT
-$MAIN
-ALAG_CENT = LAG;
-'
-mod <- mcode("alag1", code)
+e <- ev(amt=100)
+b <- ev(amt=200)
 
-
-context("Lagged doses")
-
-test_that("Lagged bolus", {
-    out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
-    first <- with(as.tbl(out),time[which(CENT > 0)[1]])
-    expect_equal(first,2.8)
+test_that("Input error", {
+  expect_error(ev_days(e,"abc"))
+  expect_error(ev_days(e))
 })
 
-## Issue #109
-test_that("Very small lag time doesn't crash", {
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],0)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
-  expect_is(out, "mrgsims")
-  expect_equal(out$time[which.max(out$CENT)],2)
-
-  out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-
+test_that("Schedule with days argument", {
+  x <- as.data.frame(ev_days(e,"m,w,f"))
+  expect_identical(x$time,c(0,48,96))
+  x <- as.data.frame(ev_days(e,"m,t,w"))
+  expect_identical(x$time,c(0,24,48))
 })
 
-
-
-
-
-
-
-
-
-
-
-
+test_that("Schedule with missing arguments", {
+  x <- as.data.frame(ev_days(t=e, th=e, s=e))
+  expect_identical(x$time, c(24,72,144))
+  x <- as.data.frame(ev_days(f=e,sa=b))
+  expect_identical(x$time, c(96,120))
+  expect_identical(x$amt, c(100,200))
+})
 
 
