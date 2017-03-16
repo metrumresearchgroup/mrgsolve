@@ -88,3 +88,4 @@ datasets:
 travis:
 	make build
 	R CMD check --as-cran ${TARBALL} -o ${CHKDIR}
+	make test
