@@ -10,6 +10,9 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ##export R_LIBS=${LIBDIR}
 
+gut_check:
+	Rscript "inst/maintenance/gut_check.R"
+
 pkgdown:
 	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference(examples=FALSE)' -e 'build_news()'
 
