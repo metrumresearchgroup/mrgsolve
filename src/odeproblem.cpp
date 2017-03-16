@@ -86,8 +86,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
   for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
 
-  *reinterpret_cast<void**>(&Inits) = R_ExternalPtrAddr(funs["main"]); 
-  *reinterpret_cast<void**>(&Table) = R_ExternalPtrAddr(funs["table"]);
+  *reinterpret_cast<void**>(&Inits)  = R_ExternalPtrAddr(funs["main"]);
+  *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
   *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
   *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
 
@@ -347,8 +347,8 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   
   double dt = tto-tfrom;
   
-  if (MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
-  if (MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
   
   double k10 = MRGSOLVE_GET_PRED_K10;
   double ka =  MRGSOLVE_GET_PRED_KA;
@@ -679,8 +679,8 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {
-  *reinterpret_cast<void**>(&Inits) = R_ExternalPtrAddr(funs["main"]); 
-  *reinterpret_cast<void**>(&Table) = R_ExternalPtrAddr(funs["table"]);
+  *reinterpret_cast<void**>(&Inits)  = R_ExternalPtrAddr(funs["main"]);
+  *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
   *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
   *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
 }

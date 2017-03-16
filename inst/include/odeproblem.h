@@ -62,16 +62,16 @@ typedef std::vector<rec_ptr> reclist;
 typedef std::vector<reclist> recstack;
 
 //! <code>$MAIN</code> function
-typedef void init_func(MRGSOLVE_INIT_SIGNATURE);
+typedef void (*init_func)(MRGSOLVE_INIT_SIGNATURE);
 
 //! <code>$TABLE</code> function
-typedef void table_func(MRGSOLVE_TABLE_SIGNATURE);
+typedef void (*table_func)(MRGSOLVE_TABLE_SIGNATURE);
 
 //! <code>$ODE</code> function
-typedef void deriv_func(MRGSOLVE_ODE_SIGNATURE);
+typedef void (*deriv_func)(MRGSOLVE_ODE_SIGNATURE);
 
 //! <code>$PREAMBLE</code> function
-typedef void config_func(MRGSOLVE_CONFIG_SIGNATURE);
+typedef void (*config_func)(MRGSOLVE_CONFIG_SIGNATURE);
 
 //! function to hand off to <code>DLSODA</code>
 typedef void main_deriv_func(int* neq, double* t,
@@ -201,6 +201,7 @@ public:
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
 
+
 protected:
   
   double* Param; ///< model parameters
@@ -212,10 +213,7 @@ protected:
   dvec Init_dummy; ///< initial conditions for user input
   dvec F; ///< bioavability
   dvec Alag; ///< dosing lag time
-  deriv_func* Derivs; ///< <code>$ODE</code> function
-  init_func* Inits; ///< <code>$MAIN</code> function
-  table_func* Table; ///< <code>$TABLE</code> function
-  config_func* Config; ///< <code>$PREAMBLE</code> function
+
   std::vector<int> On; ///< compartment on/off indicator
   databox d; ///< various data passed to model functions
   
@@ -231,6 +229,12 @@ protected:
     
   dvec pred; ///< brings clearances, volumes, and kas for advan 1/2/3/4 calculations
   dvec Capture; ///< captured data items
+  
+  deriv_func Derivs; ///< <code>$ODE</code> function
+  init_func Inits; ///< <code>$MAIN</code> function
+  table_func Table; ///< <code>$TABLE</code> function
+  config_func Config; ///< <code>$PREAMBLE</code> function
+  
   
 };
 

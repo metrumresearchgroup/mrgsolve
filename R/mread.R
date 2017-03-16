@@ -32,6 +32,7 @@ NULL
 ##'
 ##' @examples
 ##'
+##' \dontrun{ 
 ##' code <- '
 ##' $CMT DEPOT CENT
 ##' $PKMODEL ncmt=1, depot=TRUE
@@ -42,7 +43,7 @@ NULL
 ##' '
 ##'
 ##' mod <- mcode("example",code)
-##'
+##' }
 ##' @export
 mcode <- function(model,code, project=tempdir(),...) {
   mread(model=model,project=project,code=code,...)
@@ -94,7 +95,7 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' 
 ##' @examples
 ##'
-##'
+##' \dontrun{
 ##' code <- '
 ##' $PARAM CL = 1, VC = 5
 ##' $CMT CENT
@@ -111,7 +112,7 @@ mcode <- function(model,code, project=tempdir(),...) {
 ##' mod <- mread("irm3", modlib())
 ##' 
 ##' mod
-##'
+##' }
 mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
                   ignore.stdout=TRUE,
                   raw=FALSE,compile=TRUE,audit=TRUE,

@@ -26,6 +26,7 @@
 #include <map>
 #include <string>
 
+
 //! vector of doubles
 typedef std::vector<double> dvec;
 
@@ -35,7 +36,7 @@ typedef std::vector<std::string > svec;
 //! vector of integers
 typedef std::vector<int> ivec;
 
-typedef void refun(void*);
+typedef void (*refun)(void*);
 
 /**
  * @brief Resim functor.
@@ -46,14 +47,14 @@ typedef void refun(void*);
  */
 struct resim {
   //! resim constructor
-  resim(refun* x, void* y) : fun(x), prob(y){}
+  resim(refun x, void* y) : fun(x), prob(y){}
   resim(){}
   void operator()() {
     return fun(prob);
   }
   
 protected:
-  refun* fun; ///< function to call to re-simulate
+  refun fun; ///< function to call to re-simulate
   void* prob; ///< object to pass to re-simulated function
 };
 

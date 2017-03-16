@@ -88,14 +88,14 @@ pred_KA = KA*exp(ETA(5));
 ##'
 ##' @examples
 ##'
+##' \dontrun{
 ##' mod <- pkmodel(1)
 ##'
 ##' mod %>% ev(amt=1000, ii=24, addl=3) %>% mrgsim(end=120)
-##'
-##' \dontrun{
 ##' mod <- pkmodel(1,TRUE)
 ##' mod <- pkmodel(2)
 ##' mod <- pkmodel(2,TRUE)
+##' 
 ##' }
 ##'
 ##'

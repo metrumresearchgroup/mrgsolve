@@ -85,7 +85,6 @@ test_that("resimulate ETAs", {
     expect_true(var(out$a) > var(out$b))
     expect_true(var(out$c) > var(out$a))
     expect_true(min(out$b) >= -1 & max(out$b) <= 1)
-
 })
 
 

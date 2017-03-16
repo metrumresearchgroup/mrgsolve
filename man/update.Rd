@@ -55,7 +55,9 @@ After the model object is created, update various attributes.
 mod <- mrgsolve:::house()
 names(mod)
 
+\dontrun{
  mod <- mrgsolve:::house()
 
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
+ }
 }
