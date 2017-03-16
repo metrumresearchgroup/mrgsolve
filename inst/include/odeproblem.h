@@ -105,7 +105,7 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
 void dosimeta(void*);
 void dosimeps(void*);
 
-class attribute_visible odeproblem : public odepack_dlsoda {
+class odeproblem : public odepack_dlsoda {
 
 public:
   odeproblem(Rcpp::NumericVector param,

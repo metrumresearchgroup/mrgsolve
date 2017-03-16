@@ -23,7 +23,6 @@
 #include <vector>
 #include <math.h>
 #include "mrgsolv.h"
-#include <R_ext/Visibility.h>
 
 typedef double local_double;
 typedef int local_int;
@@ -81,13 +80,13 @@ struct databox {
 // $MAIN, $ODE, and $TABLE get translated into these functions
 // We need ODEFUN___ and INITFUN___ and TABLECODE___ defined in the
 // .cpp.cpp model file
-#define __BEGIN_config__ extern "C" {attribute_visible void __CONFIGFUN___(MRGSOLVE_CONFIG_SIGNATURE) {
+#define __BEGIN_config__ extern "C" { void __CONFIGFUN___(MRGSOLVE_CONFIG_SIGNATURE) {
 #define __END_config__ __DONE__
-#define __BEGIN_ode__ extern "C" {attribute_visible void __ODEFUN___(MRGSOLVE_ODE_SIGNATURE) {
+#define __BEGIN_ode__ extern "C" { void __ODEFUN___(MRGSOLVE_ODE_SIGNATURE) {
 #define __END_ode__ __DONE__
-#define __BEGIN_main__ extern "C" {attribute_visible void __INITFUN___(MRGSOLVE_INIT_SIGNATURE) {
+#define __BEGIN_main__ extern "C" { void __INITFUN___(MRGSOLVE_INIT_SIGNATURE) {
 #define __END_main__ __DONE__
-#define __BEGIN_table__ extern "C" {attribute_visible void __TABLECODE___(MRGSOLVE_TABLE_SIGNATURE) {
+#define __BEGIN_table__ extern "C" { void __TABLECODE___(MRGSOLVE_TABLE_SIGNATURE) {
 #define __END_table__ __DONE__
 #define __DONE__ }}
 
