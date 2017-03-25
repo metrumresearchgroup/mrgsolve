@@ -292,3 +292,8 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
   return(ans);
 }
 
+
+
+
+
+
