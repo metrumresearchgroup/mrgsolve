@@ -184,7 +184,18 @@ mread <- function(model=character(0),project=getwd(),code=NULL,udll=TRUE,
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
-  annot <- dplyr::bind_rows(nonull.list(mread.env$annot))
+  annot_list_maybe <- nonull.list(mread.env$annot)
+  
+  # bind_rows in the new version of dplyr (as of 3/28/2017) errors on bind_rows
+  # for an empty list() with Error in bind_rows_(x, .id) : not compatible with STRSXP
+  # the behavior, based on the bind_rows expectation of a consistent api should
+  # be an empty data frame. This is different from do.call(rbind, list()), which returns
+  # null. Chose to maintain consistency of annot always being a dataframe
+  if (!length(annot_list_maybe)) {
+    annot <- dplyr::data_frame()
+  } else {
+    annot <- dplyr::bind_rows(annot_list_maybe)
+  }
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
