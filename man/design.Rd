@@ -4,7 +4,7 @@
 \alias{design}
 \title{Set observation designs for the simulation.}
 \usage{
-design(x, deslist = list(), descol = character(0), ...)
+design(x, deslist = list(), descol = attr(deslist, "descol"), ...)
 }
 \arguments{
 \item{x}{model object}

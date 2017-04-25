@@ -51,7 +51,6 @@ tgrid_id <- function(col,idata) {
 
   ## Converting to C indexing here
   col <- idata[,col]
-  #if(is.integer(col)) return(col-1)
   return(match(col,sort(unique(col)))-1)
 }
 
