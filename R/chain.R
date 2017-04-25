@@ -248,7 +248,7 @@ design <- function(x, deslist=list(), descol = character(0),...) {
     if(!exists(descol, x@args$idata)) {
       stop(paste0("Column ", descol, " does not exist in idata."))
     }
-    x@args$idata[,descol] <- as.integer(as.factor(x@args$idata[,descol]))
+    #x@args$idata[,descol] <- as.integer(as.factor(x@args$idata[,descol]))
   } else {
     if(length(deslist) > 1) {
       warning("Multiple designs specified but no idata key; only the first design will be used.",call.=FALSE)
