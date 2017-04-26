@@ -75,9 +75,8 @@ setGeneric("Req", function(x,...) standardGeneric("Req"))
 ##' @export
 ##' @rdname Req
 setMethod("Req", "mrgmod", function(x,...) {
-  
-  x@args <- merge(x@args, list(Request=as_character_args(match.call()[-1])), open=TRUE)
-  return(x)
+  x@args[["Request"]] <- as_character_args(match.call()[-1])
+  x
 })
 
 ##' @rdname Req
@@ -87,8 +86,8 @@ setGeneric("req", function(x,...) standardGeneric("req"))
 ##' @export
 ##' @rdname Req
 setMethod("req", "mrgmod", function(x,...) {
-  x@args <- merge(x@args, list(request=as.character(match.call()[-1])), open=TRUE)
-  return(x)
+  x@args[["request"]] <- as.character(match.call()[-1])
+  x
 })
 
 ##' Select items to carry into simulated output. 
@@ -110,15 +109,15 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' \code{carry.out} and \code{carry_out}.  Using the underscore version is now preferred.
 ##' @export
 carry_out <- function(x,...) {
-  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
-  return(x)
+  x@args[["carry.out"]] <- as_character_args(match.call()[-1])
+  x
 }
 
 ##' @export
 ##' @rdname carry_out
 carry.out <- function(x,...) {
-  x@args <- merge(x@args, list(carry.out=as_character_args(match.call()[-1])), open=TRUE)
-  return(x)
+  x@args[["carry.out"]] <- as_character_args(match.call()[-1])
+  x
 }
 
 ##' Rescale time in the simulated output.
@@ -141,8 +140,8 @@ carry.out <- function(x,...) {
 ##' 
 ##' @export
 tscale <- function(x,value=1,...) {
-  x@args <- merge(x@args, list(tscale=value), open=TRUE)
-  return(x)
+  x@args[["tscale"]] <- value
+  x
 }
 
 
@@ -160,8 +159,8 @@ tscale <- function(x,value=1,...) {
 ##' 
 ##' @export
 obsonly <- function(x,value=TRUE,...) {
-  x@args <- merge(x@args, list(obsonly=value), open=TRUE)
-  return(x)
+  x@args[["obsonly"]] <- value
+  x
 }
 ##' Augment observations in the simulated output.
 ##'
@@ -173,7 +172,7 @@ obsonly <- function(x,value=TRUE,...) {
 ##' the pipeline.
 ##' @export
 obsaug <- function(x,value=TRUE,...) {
-  x@args <- merge(x@args, list(obsaug=value), open=TRUE)
+  x@args[["obsaug"]] <- value
   x
 }
 
@@ -224,7 +223,7 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   data_set(data) %>%
 ##'   mrgsim %>% 
 ##'   plot(RESP~time|GRP)
-design <- function(x, deslist=list(), descol = character(0),...) {
+design <- function(x, deslist=list(), descol = character(0), ...) {
   
   if(missing(descol)) {
     descol <- attr(deslist,"descol") 
@@ -239,31 +238,25 @@ design <- function(x, deslist=list(), descol = character(0),...) {
   
   deslist <- deslist[unlist(lapply(deslist,inherits,c("tgrid", "tgrids", "numeric")),use.names=FALSE)]
   
-  if(length(deslist) ==0) stop("No valid tgrid objects found.")
-
-  if(length(descol) ==1) {
+  if(length(deslist) == 0) stop("No valid tgrid objects found.")
+  
+  if(length(descol) == 1) {
     if(!exists("idata", x@args)) {
       stop("Please set idata before specifying designs.")
     }
     if(!exists(descol, x@args$idata)) {
       stop(paste0("Column ", descol, " does not exist in idata."))
     }
-    x@args$idata[,descol] <- as.integer(as.factor(x@args$idata[,descol]))
   } else {
     if(length(deslist) > 1) {
-      warning("Multiple designs specified but no idata key; only the first design will be used.",call.=FALSE)
+      warning("Multiple designs specified but no idata key; only the first design will be used.", call.=FALSE)
     }
   }
   
-  x@args <- merge(x@args, list(descol=descol, deslist=deslist),open=TRUE)
+  x@args[["descol"]] <- descol
+  x@args[["deslist"]] <- deslist
   
   x
 
 }
-
-
-
-
-
-
 
