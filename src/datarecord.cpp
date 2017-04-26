@@ -279,12 +279,21 @@ void datarecord::steady_bolus(odeproblem *prob) {
     }
   }
   
-  prob->itask(1);
+  prob->lsoda_init();
 
 }
 
 
 void datarecord::steady_infusion(odeproblem *prob) {
+  
+  dvec state_incoming;
+  
+  if(Ss == 2) {
+    state_incoming.resize(prob->neq());
+    for(int i = 0; i < state_incoming.size(); i++) {
+      state_incoming[i] = prob->y(i);
+    }
+  }
   
   double duration = this->dur(Fn);
   
@@ -352,6 +361,13 @@ void datarecord::steady_infusion(odeproblem *prob) {
     }
     last_sum = this_sum;
   }
+  
+  if(Ss == 2) {
+    for(int i=0; i < state_incoming.size(); i++) {
+      prob->y(i,prob->y(i) + state_incoming[i]); 
+    }
+  }
+  
   prob->lsoda_init();
 }
 
