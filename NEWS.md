@@ -3,8 +3,8 @@
 # Since 0.8.6
 
 ## Bugs fixed
-- PR (../../pull/214) from @dastoor fixes compatibility issue with new `dplyr` 
-- Fixed bug in `deslist` implementation (../../issues/222)
+- PR #214 from @dastoor fixes compatibility issue with new `dplyr` 
+- Fixed bug in `deslist` implementation #222
 
 
 # Release 0.8.4
@@ -45,8 +45,8 @@ to type `double` and list that variable name in `$CAPTURE`.  See also the `captu
 - Parameter updates via `param` method with signature `missing` will check names of
 input parameters against names of existing parameters.  An error is generated if a user
 attempts to update a parameter that doesn't exist.  Note that this does not apply for the
-`param` method with signature `list` (../../issues/144).
-- The git repository was re-organized so that the package lives in the base directory (https://github.com/metrumresearchgroup/mrgsolve/pull/171).  
+`param` method with signature `list` (#144).
+- The git repository was re-organized so that the package lives in the base directory (PR #171).  
 
 ## Features
 - Added `@` macros for indicating block options in model specification file.
@@ -58,7 +58,7 @@ attempts to update a parameter that doesn't exist.  Note that this does not appl
 - `simeta` is available in `$MAIN` and `simeps` is available in `$TABLE` by default, no `$PLUGIN` is required.
 - Better support for including `R` objects in the model via `$ENV` (#158).
 - Added `assign_ev` function to help build simulation data sets from event objects (https://github.com/metrumresearchgroup/mrgsolve/pull/164).
-- Added `as_data_frame` method from the `tibble` package (../../issues/166).
+- Added `as_data_frame` method from the `tibble` package (#166).
 - When annotating model blocks, `mrgsolve` takes the __last__ parens item  as the "units" and the __last__ bracketed item as "options"
 - Added `$` operator for `mrgmod` objects to return the value of a parameter (99748d8a7e4976fc710152c2dfc82da9b059a852).
 - Added `mread_cache` and `mcode_cache` functions to build and cache a model (#143).
@@ -79,16 +79,16 @@ attempts to update a parameter that doesn't exist.  Note that this does not appl
 
 ## Features
 
-- Added annotated code blocks for `$PARAM`, `$FIXED`, `$THETA`, `$CMT`, `$INIT`, and `$VCMT`. (../../issues/107)
+- Added annotated code blocks for `$PARAM`, `$FIXED`, `$THETA`, `$CMT`, `$INIT`, and `$VCMT`. (#107)
 - `mrgsolve:::house()` model re-coded as an annotated model.
 - Re-implemented `$ENV` to allow users to create `R` objects that can be used at certain points
-when parsing the model. (../../issues/115)
+when parsing the model. (#115)
 - Added `>>` signifier to code blocks that allow options; `>>` at the beginning of the line indicates that the `name=value` statements that follow are to be parsed as block options.
 - Added `object` argument for the following blocks: `$PARAM`, `$OMEGA`, `$SIGMA`, `$FIXED`, `$CMT`.  When `object` is set to a character string naming an object in `$ENV`, that object will be used to form the output from the block.
 
 ## Bugs fixed
 
-- Fixed a bug which caused simulation run to hang when implementing a dose with a __very__ small lag time. (../../issues/109)
+- Fixed a bug which caused simulation run to hang when implementing a dose with a __very__ small lag time. (#109)
 - Fixed a bug where `valid.numericlist` wasn't returning `FALSE` for improperly-formed objects.
 
 ## Under the hood
@@ -101,8 +101,8 @@ when parsing the model. (../../issues/115)
 
 # Since 0.7.3
 - Tests re-configured
-- Fixed issue with record sorting for lagged doses when using full `data_set `and `obsaug=TRUE` [(#102)](../../issues/102)
-- Fixed issue where `idata_set` wasn't handled properly when it was passed in as `tbl` [(#100)](../../issues/100)
+- Fixed issue with record sorting for lagged doses when using full `data_set `and `obsaug=TRUE` (#102)
+- Fixed issue where `idata_set` wasn't handled properly when it was passed in as `tbl` (#100)
 
 
 # Since 0.7.2
@@ -112,7 +112,7 @@ when parsing the model. (../../issues/115)
 
 
 # Since 0.7.1
-- Fixed bug where requested columns were not properly named in certain circumstances ([#86](../../issues/86)).
+- Fixed bug where requested columns were not properly named in certain circumstances (#86).
 
 # Since 0.7.0
 - Revert back to previous behavior where `cwd` to `soloc` is not required to build the model.  This was only required on `Windows` systems where there was a space in the file name.   Correctly rendering the path for the build directory now.
@@ -125,14 +125,14 @@ when parsing the model. (../../issues/115)
 * Added `$PLUGIN` to let users extend their model specification file.  Valid plugins include `simeta`, `Rcpp`, `RcppArmadillo`, and `BH`.  When a plugin is used, `mrgsolve` will link back the the appropriate package and possibly include appropriate header files when compiling the model.  For example, `simeta` will link back to `mrgsolve` and `RcppArmadillo` and allow the modeler to simulate a new set of `ETA`s.  Use `Rcpp`  plugin to simulate random variates from common distibutions in `R`(e.g. `rnorm`, `rexp` etc ... ).  
 
 ## Bugs fixed
-* Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied ([issue 44](../../issues/44)).
+* Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied (#44).
 * Shortened the path for both the shared object and the name of the `.cpp.cpp` file when compiling.
-* Fixed bug in `touch_funs` when large number (`> 25`) of ETAs in the model ([issue 68](../../issues/68)).
+* Fixed bug in `touch_funs` when large number (`> 25`) of ETAs in the model (#68).
 
 ## Important changes
 * When using `$PKMODEL` with `ncmt=2` and `depot=FALSE`, the default PK parameters are `CL`, `V1` (central volume), `Q`, `V2` (peripheral volume).  This is a change where the previous volumes were `V2` (central) and `V3` (peripheral).
 * `$CAPTURE` now saves output items to slots in `std::vector<double>`, rather than `std::map<std::string,double>`.  We've known for a while that the `std::map` wasn't very efficient especially with large simulations.  Currently, items in `$TABLE` are still saved into `std::map` with `table()` macro.  The plan going forward is to eliminate that `table` `map` and force output variables into `$CAPTURE`.
-* Due to major changes to `dplyr`, now requiring `dplyr >= 0.5.0` ([issue 69](../../issues/69))
+* Due to major changes to `dplyr`, now requiring `dplyr >= 0.5.0` (#69)
 * The `data` slot in `mrgsims` objects is now `data.frame`
 * The `knobs` function and `plot` method has been re-written.  Overall behavior for most applications should be the same.
 
