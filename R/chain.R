@@ -223,10 +223,13 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   data_set(data) %>%
 ##'   mrgsim %>% 
 ##'   plot(RESP~time|GRP)
-design <- function(x, deslist=list(), descol = attr(deslist,"descol"), ...) {
+design <- function(x, deslist=list(), descol = character(0), ...) {
   
-  if(is.null(descol)) {
-    stop("please provide a value for descol",call.=FALSE)
+  if(missing(descol)) {
+    descol <- attr(deslist,"descol") 
+    if(is.null(descol)) {
+      stop("please provide a value for descol",call.=FALSE)
+    }
   }
   
   descol <- as.character(substitute(descol))
