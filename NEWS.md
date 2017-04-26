@@ -3,8 +3,8 @@
 # Since 0.8.6
 
 ## Bugs fixed
-- PR #215 from @dastoor fixes compatibility issue with new `dplyr` 
-- Fixed bug in `deslist` implementation #222
+- PR (../../pull/214) from @dastoor fixes compatibility issue with new `dplyr` 
+- Fixed bug in `deslist` implementation (../../issues/222)
 
 
 # Release 0.8.4
@@ -56,12 +56,12 @@ attempts to update a parameter that doesn't exist.  Note that this does not appl
 - Use `mrgsolve:::details` to extract model annotation.
 - Added `capture` typedef in the model specification file.  Variables that are type `capture` are doubles and are automatically appended to `$CAPTURE`.  The `capture` typedef is not allowed in `$ODE` and probably should be reserved for `$TABLE`.
 - `simeta` is available in `$MAIN` and `simeps` is available in `$TABLE` by default, no `$PLUGIN` is required.
-- Better support for including `R` objects in the model via `$ENV` (../../issues/158).
+- Better support for including `R` objects in the model via `$ENV` (#158).
 - Added `assign_ev` function to help build simulation data sets from event objects (https://github.com/metrumresearchgroup/mrgsolve/pull/164).
 - Added `as_data_frame` method from the `tibble` package (../../issues/166).
 - When annotating model blocks, `mrgsolve` takes the __last__ parens item  as the "units" and the __last__ bracketed item as "options"
 - Added `$` operator for `mrgmod` objects to return the value of a parameter (99748d8a7e4976fc710152c2dfc82da9b059a852).
-- Added `mread_cache` and `mcode_cache` functions to build and cache a model (https://github.com/metrumresearchgroup/mrgsolve/pull/143).
+- Added `mread_cache` and `mcode_cache` functions to build and cache a model (#143).
 
 ## Bugs fixed
 - Fixed documentation issue in `PKMODEL`.  The volumes for two-compartment model with no depot should be `V1`/`V2`.
@@ -71,7 +71,7 @@ attempts to update a parameter that doesn't exist.  Note that this does not appl
 ## Under the hood
 - User-declared `double/int/bool` in `$MAIN`, `$ODE`, `$TABLE` are kept in unnamed namespace and are local to the file.
 - Started to re-organize the `.R` files.
-- `mrgsolve:::details` returns a data frame of information regardless of whether the model was annotated or not (../../issues/165).
+- `mrgsolve:::details` returns a data frame of information regardless of whether the model was annotated or not (#165).
 - `mrgsolve::details` has additional arguments to help control output.
 - Removed `pkevent` class; all records are `datarecord`.
 
