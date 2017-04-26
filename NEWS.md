@@ -1,6 +1,20 @@
 
 
-__Please see the latest release__: [v0.7.7](https://github.com/metrumresearchgroup/mrgsolve/releases/tag/v0.7.7)
+# Since 0.8.6
+
+## Bugs fixed
+- PR #215 from @dastoor fixes compatibility issue with new `dplyr` 
+- Fixed bug in `deslist` implementation #222
+
+
+# Release 0.8.4
+- Reconfigure use of function pointer in unit tests
+
+# Release 0.8.3
+- Bug fix that prevented installation on Solaris
+
+# Release 0.8.2
+- The first release on CRAN
 
 # Since 0.7.7
 
