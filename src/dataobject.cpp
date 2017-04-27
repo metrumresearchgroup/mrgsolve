@@ -228,7 +228,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
     for(j = this->start(h); j <= this->end(h); ++j) {
       
       if(Data(j,col[_COL_time_]) < lastime) {
-        Rcpp::stop("Problem with time: data set is not sorted by time or time is negative.");
+        Rcpp::stop("data set is not sorted by time or time is negative.");
       }
       
       lastime = Data(j,col[_COL_time_]);

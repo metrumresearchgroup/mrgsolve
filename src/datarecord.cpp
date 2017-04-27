@@ -148,7 +148,7 @@ void datarecord::implement(odeproblem *prob) {
   int eq_n = std::abs(Cmt)-1;
   
   // Check for steady state records:
-  if(Ss==1) {
+  if(Ss > 0) {
     if(Fn==0) Rcpp::stop("Cannot use ss flag when F(n) is zero.");
     if(Rate == 0) this->steady_bolus(prob);
     if(Rate >  0) this->steady_infusion(prob);
@@ -218,6 +218,15 @@ void datarecord::implement(odeproblem *prob) {
 
 void datarecord::steady_bolus(odeproblem *prob) {
   
+  dvec state_incoming;
+  
+  if(Ss == 2) {
+    state_incoming.resize(prob->neq());
+    for(int i = 0; i < state_incoming.size(); i++) {
+       state_incoming[i] = prob->y(i);
+    }
+  }
+  
   prob->rate_reset();
   
   double tfrom = 0.0;
@@ -253,7 +262,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
     
     this_sum = std::accumulate(res.begin(), res.end(), 0.0);
     
-    if(i>10) {
+    if(i > 10) {
       diff = std::abs(this_sum - last_sum);
       if((diff < CRIT_DIFF_SS)){
         break;
@@ -263,11 +272,28 @@ void datarecord::steady_bolus(odeproblem *prob) {
     tfrom = tto;
     last_sum = this_sum;
   }
-  prob->itask(1);
+  
+  if(Ss == 2) {
+    for(int i=0; i < state_incoming.size(); i++) {
+      prob->y(i,prob->y(i) + state_incoming[i]); 
+    }
+  }
+  
+  prob->lsoda_init();
+
 }
 
 
 void datarecord::steady_infusion(odeproblem *prob) {
+  
+  dvec state_incoming;
+  
+  if(Ss == 2) {
+    state_incoming.resize(prob->neq());
+    for(int i = 0; i < state_incoming.size(); i++) {
+      state_incoming[i] = prob->y(i);
+    }
+  }
   
   double duration = this->dur(Fn);
   
@@ -335,6 +361,13 @@ void datarecord::steady_infusion(odeproblem *prob) {
     }
     last_sum = this_sum;
   }
+  
+  if(Ss == 2) {
+    for(int i=0; i < state_incoming.size(); i++) {
+      prob->y(i,prob->y(i) + state_incoming[i]); 
+    }
+  }
+  
   prob->lsoda_init();
 }
 
@@ -368,7 +401,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
                                                    Rate,-300, Id);
     thisi.push_back(evoff);
     
-    if(Ss) {
+    if(Ss > 0) {
       
       double duration = this->dur(Fn);
       

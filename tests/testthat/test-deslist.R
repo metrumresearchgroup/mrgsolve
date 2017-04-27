@@ -22,13 +22,18 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-test_that("deslist", {
-  idata <- data_frame(ID=1:3, start=0, end=c(1,2,3))
+test_that("as_deslist", {
+
+  idata <- data_frame(ID=c(33,11,88), start=0, end=c(1,2,3))
   des <- as_deslist(idata,descol="ID")
   expect_identical("ID", attr(des, "descol"))
 
+  ##' ID 88
   expect_equal(max(stime(des[[3]])),3)
-  expect_equal(max(stime(des[[1]])),1)
+  ##' ID 11
+  expect_equal(max(stime(des[[1]])),2)
+  ##' ID 33
+  expect_equal(max(stime(des[[2]])),1)
   
   mod <- mrgsolve:::house()
   
@@ -46,4 +51,17 @@ test_that("deslist", {
   
 })
 
+test_that("tgrid_id", {
+   idata <- data.frame(ID=c(3,1,2,4))
+   ans <- mrgsolve:::tgrid_id("ID",idata)
+   expect_equal(ans,c(2,0,1,3))
+})
+
+test_that("tgrid_matrix", {
+  l <- list(seq(1,3),tgrid(0,4,1),c(tgrid(0,2,1),tgrid(6,12,3)))
+  ans <- mrgsolve:::tgrid_matrix(l)
+  expect_equal(ans[,1],c(1,2,3,NA,NA,NA))
+  expect_equal(ans[,2],c(stime(l[[2]]),NA))
+  expect_equal(ans[,3],stime(l[[3]]))
+})
 
