@@ -2,6 +2,10 @@
 
 # Since 0.8.6
 
+## New Features
+- Dosing records with `ss=2` are recognized, allowing combining of 
+steady-state dosing regimens under linear kinetics (e.g. 10 mg QAM and 20 mg QPM) (#221)
+
 ## Bugs fixed
 - PR #214 from @dastoor fixes compatibility issue with new `dplyr` 
 - Fixed bug in `deslist` implementation #222
