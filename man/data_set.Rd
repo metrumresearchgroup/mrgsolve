@@ -11,7 +11,7 @@
 data_set(x, data, ...)
 
 \S4method{data_set}{mrgmod,data.frame}(x, data, subset = TRUE,
-  select = TRUE, object = NULL, ...)
+  select = TRUE, object = NULL, need = NULL, ...)
 
 \S4method{data_set}{mrgmod,ANY}(x, data, ...)
 
@@ -32,6 +32,8 @@ columns in the data set}
 
 \item{object}{character name of an object existing in \code{$ENV} 
 to use for the data set}
+
+\item{need}{passed to \code{\link{inven}}}
 }
 \description{
 Select and modify a data set for simulation.

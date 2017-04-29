@@ -27,6 +27,7 @@
 ##' columns in the data set
 ##' @param object character name of an object existing in \code{$ENV} 
 ##' to use for the data set
+##' @param need passed to \code{\link{inven}}
 ##' @param ... passed along
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 
