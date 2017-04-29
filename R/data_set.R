@@ -86,9 +86,11 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' mod %>% mrgsim(data=extran1)
 ##' 
 ##' @export
-setMethod("data_set", c("mrgmod", "data.frame"), 
-          function(x,data,subset=TRUE,select=TRUE,object=NULL,...) {
-            
+setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,need=NULL,...) {
+  
+  if(is.character(need)) {
+    inven(x,data,need) 
+  }
   if(exists("data", x@args)) stop("data already has been set.")
   if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
