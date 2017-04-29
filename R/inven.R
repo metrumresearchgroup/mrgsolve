@@ -44,7 +44,7 @@ inven <- function(x,obj,need="@all",crump=TRUE,...) {
 inventory <- function(...) {
   ans <- inven(...,crump=FALSE) 
   if(ans) message("Found all required parameters")
-  return(invisible(TRUE))
+  return(invisible(ans))
 }
 
 inven_stop <- function(x,obj,need) {
