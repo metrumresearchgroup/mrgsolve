@@ -46,19 +46,19 @@ inventory <- function(x,obj,...) {
   need <- select_vars_(names(param(x)),dots)
   if(length(need)==0) need <- names(param(x))
   ans <- inven(x,obj,need,crump=FALSE) 
-  if(ans) message("Found all required parameters")
+  if(ans) message("Found all required parameters.")
   return(invisible(ans))
 }
 
 inven_stop <- function(x,obj,need) {
   miss <- setdiff(need,names(obj))
-  stop("object is missing required parameters\n", 
+  stop("The object is missing required parameters:\n", 
        paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
 }
 
 inven_report <- function(x,obj,need) {
   miss <- setdiff(need,names(obj))
-  message("object is missing these parameters\n", 
+  message("The object is missing these parameters:\n", 
        paste(paste0(" - ",miss,collapse="\n")))
   return(invisible(FALSE))
 }
