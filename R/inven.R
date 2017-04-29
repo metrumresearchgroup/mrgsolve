@@ -12,13 +12,13 @@
 ##' 
 ##' 
 inven <- function(x,obj,need="@all",crump=TRUE,...) {
-  if(substr(need,1,1)=="@") {
-    if(need=="@all") {
-      need <- names(param(x))
-    } else {
-      need <- get(substr(need,2,nchar(need)),env_get(x,tolist=FALSE))  
-    }
-  }
+  # if(substr(need,1,1)=="@") {
+  #   if(need=="@all") {
+  #     need <- names(param(x))
+  #   } else {
+  #     need <- get(substr(need,2,nchar(need)),env_get(x,tolist=FALSE))  
+  #   }
+  # }
 
   if(is.null(need)) {
     if(crump) inven_stop(x,obj,names(param(x)))
@@ -41,8 +41,11 @@ inven <- function(x,obj,need="@all",crump=TRUE,...) {
 
 ##' @rdname inven
 ##' @export
-inventory <- function(...) {
-  ans <- inven(...,crump=FALSE) 
+inventory <- function(x,obj,...) {
+  dots <- lazyeval::lazy_dots(...)
+  need <- select_vars_(names(param(x)),dots)
+  if(length(need)==0) need <- names(param(x))
+  ans <- inven(x,obj,need,crump=FALSE) 
   if(ans) message("Found all required parameters")
   return(invisible(ans))
 }

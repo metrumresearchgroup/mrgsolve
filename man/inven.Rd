@@ -7,7 +7,7 @@
 \usage{
 inven(x, obj, need = "@all", crump = TRUE, ...)
 
-inventory(...)
+inventory(x, obj, ...)
 }
 \arguments{
 \item{x}{model object}
