@@ -17,7 +17,7 @@
 
 ##' @rawNamespace
 ##' if (utils::packageVersion("dplyr") > "0.5.0") {
-##'   importFrom("dplyr", "mutate_all")
+##'   importFrom("dplyr", "mutate_at")
 ##' } else {
 ##'   importFrom("dplyr", "mutate_each")
 ##' }
