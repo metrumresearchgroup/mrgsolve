@@ -187,7 +187,13 @@ collect_ev <- function(...) {
   x <- dplyr::bind_rows(x) %>% dplyr::mutate(ID = unlist(y,use.names=FALSE))
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
-  x <- dplyr::mutate_each(x,dplyr::funs(na2zero),which(what))
+  
+  if (utils::packageVersion("dplyr") > "0.5.0") {
+    x <- dplyr::mutate_at(x,which(what),dplyr::funs(na2zero))
+  } else {
+    x <- dplyr::mutate_each(x,dplyr::funs(na2zero),which(what))
+  }
+  
   na.check <- which(!what)
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
