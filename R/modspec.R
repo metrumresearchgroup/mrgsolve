@@ -398,7 +398,7 @@ specMATRIX <- function(x,
     
     l <- parse_annot(x[anl],name_value=FALSE,
                      block=toupper(type),
-                     envir=env$ENV,novalue=novalue)
+                     envir=env$ENV,novalue=novalue,context="MATRIX")
     
     if(unlinked) {
       l[["v"]] <- as.numeric(cvec_cs(x[!anl])) 
@@ -516,7 +516,7 @@ PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="PARAM",envir=env$ENV)
+    l <- parse_annot(x,block="PARAM",envir=env$ENV,context="PARAM")
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
     
@@ -539,7 +539,7 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="FIXED",envir=env$ENV)
+    l <- parse_annot(x,block="FIXED",envir=env$ENV,context="FIXED")
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -563,7 +563,7 @@ THETA <- function(x,env,annotated=FALSE,pos=1,
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
+    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV,context="THETA")
     x <- as.numeric(l[["v"]])
   } else {
     x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
@@ -591,7 +591,7 @@ INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="INIT",envir=env$ENV)
+    l <- parse_annot(x,block="INIT",envir=env$ENV,context="INIT")
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -613,7 +613,7 @@ CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
+    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV,context="CMT")
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
@@ -652,7 +652,7 @@ handle_spec_block.specCMTN <- function(x,...) {
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV,context="CAPTURE")
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
