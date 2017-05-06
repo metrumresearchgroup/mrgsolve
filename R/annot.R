@@ -23,11 +23,11 @@ render_annot <- function(x,block,...) {
 }
 
 
-parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,...) {
+parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,context="not given",...) {
   ## x is a list
   if(is.null(x)) return(NULL)
   x <- x[nchar(x)>0]
-  x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname)
+  x <- lapply(x,parse_annot_line,novalue=novalue,noname=noname,context=context)
   nm <- s_pick(x,"name")
   v <-  s_pick(x,"value")
   
@@ -44,7 +44,7 @@ parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,.
 ## Convenience; keep around for a little bot
 gmatch <- function(what,x) as.integer(gregexpr(what,x,fixed=TRUE)[[1]])
 
-parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
+parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given") {
   
   if(nchar(x)==0) return(NULL)
   
@@ -53,7 +53,8 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE) {
   col <- charcount(x,":")[1]
   
   if(col != (2-noname-novalue)) {
-    stop("Improper model annotation: ", x, call.=FALSE) 
+    stop("improper annotation format ", x,"\n", 
+         "  Context: ", context, call.=FALSE) 
   }
   
   ## Fix up line if not name : value : other

@@ -72,6 +72,7 @@ Collate:
     'funset.R'
     'idata_set.R'
     'init.R'
+    'inven.R'
     'knobs.R'
     'library.R'
     'matlist.R'

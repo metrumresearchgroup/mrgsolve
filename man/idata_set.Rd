@@ -11,7 +11,7 @@
 idata_set(x, data, ...)
 
 \S4method{idata_set}{mrgmod,data.frame}(x, data, subset = TRUE,
-  select = TRUE, object = NULL, ...)
+  select = TRUE, object = NULL, need = NULL, ...)
 
 \S4method{idata_set}{mrgmod,ANY}(x, data, ...)
 
@@ -29,6 +29,8 @@ idata_set(x, data, ...)
 \item{select}{passed to \code{dplyr::select_}}
 
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
+
+\item{need}{passed to \code{\link{inven}}}
 }
 \description{
 Select and modify a idata set for simulation.

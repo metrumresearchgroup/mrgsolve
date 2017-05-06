@@ -15,13 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+##' @rawNamespace
+##' if (utils::packageVersion("dplyr") > "0.5.0") {
+##'   importFrom("dplyr", "mutate_at")
+##' } else {
+##'   importFrom("dplyr", "mutate_each")
+##' }
+
 
 ##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
-##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows mutate_each arrange data_frame 
+##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange data_frame 
 ##' @importFrom dplyr intersect filter select rename slice distinct  do_ everything
-##' @importFrom dplyr distinct_ first data_frame arrange
+##' @importFrom dplyr distinct_ first data_frame arrange select_vars_
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
