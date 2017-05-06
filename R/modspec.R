@@ -145,7 +145,9 @@ modelparse <- function(txt,
   labs <- gsub("[][$ ]", "", sapply(mm, "[",1L), perl=TRUE)
   
   # Remove block label text
-  txt[start] <- mytriml(substr(txt[start], nchar(unlist(mm,use.names=FALSE))+1, nchar(txt[start])))
+  txt[start] <- mytriml(substr(txt[start], 
+                               nchar(unlist(mm,use.names=FALSE))+1, 
+                               nchar(txt[start])))
   
   # Where the block ends
   end <- c((start-1),length(txt))[-1]
@@ -156,7 +158,7 @@ modelparse <- function(txt,
   })
   
   if(drop_blank) {
-    spec <- lapply(spec,function(y) y[y!=""]) 
+    spec <- lapply(spec,function(y) y[grepl("\\S+",y,perl=TRUE)])
   }
   
   names(spec) <- labs
