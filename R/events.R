@@ -58,7 +58,8 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- lapply(data, unique)
         data <- do.call("expand.grid", 
                         c(list(ID=ID,stringsAsFactors=FALSE),data))
-        data <- data %>% dplyr::arrange(ID,time)
+        #data <- data %>% dplyr::arrange(ID,time)
+        data <- dplyr::arrange_(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
         data <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
@@ -184,7 +185,8 @@ collect_ev <- function(...) {
   mx <- sapply(y,function(xx) length(unique(xx)))
   mx <- cumsum(c(0,mx[-length(mx)]))
   y <- mapply(y,mx, FUN=function(yi,mx) return(yi+mx), SIMPLIFY=FALSE)
-  x <- dplyr::bind_rows(x) %>% dplyr::mutate(ID = unlist(y,use.names=FALSE))
+  x <- dplyr::bind_rows(x)
+  x <- dplyr::mutate(x,ID = unlist(y,use.names=FALSE))
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
@@ -200,7 +202,7 @@ collect_ev <- function(...) {
       warning("Missing values in some columns.",call.=FALSE)
     }
   }
-  x <- x %>% dplyr::select(c(match(tran,names(x)),seq_along(names(x))))
+  x <- dplyr::select(x,c(match(tran,names(x)),seq_along(names(x))))
   return(x)
 }
 
@@ -502,9 +504,9 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   evs$ii <- ii
   if(addl > 0) evs$addl <- addl
   if("ID" %in% names(evs)) {
-    return(as.data.frame(dplyr::arrange(evs,ID,time)))
+    return(as.data.frame(dplyr::arrange_(evs,.dots=c("ID","time"))))
   } else {
-    return(as.data.frame(dplyr::arrange(evs,time)))
+    return(as.data.frame(dplyr::arrange_(evs,.dots=c("time"))))
   }
 }
 
@@ -538,9 +540,9 @@ realize_addl.data.frame <- function(x,...) {
   df[[addlcol]] <- 0
   df[[iicol]] <- 0
   if("ID" %in% names(df)) {
-    df <- dplyr::arrange(df,ID,time)
+    df <- dplyr::arrange_(df,.dots=c("ID","time"))
   } else {
-    df <- dplyr::arrange(df,time)
+    df <- dplyr::arrange_(df,.dots=c("time"))
   }
   df
 }

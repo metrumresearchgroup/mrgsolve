@@ -145,9 +145,7 @@ modelparse <- function(txt,
   labs <- gsub("[][$ ]", "", sapply(mm, "[",1L), perl=TRUE)
   
   # Remove block label text
-  txt[start] <- mytriml(substr(txt[start], 
-                               nchar(unlist(mm,use.names=FALSE))+1, 
-                               nchar(txt[start])))
+  txt[start] <- mytriml(substr(txt[start], nchar(unlist(mm,use.names=FALSE))+1, nchar(txt[start])))
   
   # Where the block ends
   end <- c((start-1),length(txt))[-1]
@@ -158,7 +156,7 @@ modelparse <- function(txt,
   })
   
   if(drop_blank) {
-    spec <- lapply(spec,function(y) y[grepl("\\S+",y,perl=TRUE)])
+    spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
   names(spec) <- labs
@@ -400,7 +398,7 @@ specMATRIX <- function(x,
     
     l <- parse_annot(x[anl],name_value=FALSE,
                      block=toupper(type),
-                     envir=env$ENV,novalue=novalue,context="MATRIX")
+                     envir=env$ENV,novalue=novalue)
     
     if(unlinked) {
       l[["v"]] <- as.numeric(cvec_cs(x[!anl])) 
@@ -518,7 +516,7 @@ PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="PARAM",envir=env$ENV,context="PARAM")
+    l <- parse_annot(x,block="PARAM",envir=env$ENV)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
     
@@ -541,7 +539,7 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="FIXED",envir=env$ENV,context="FIXED")
+    l <- parse_annot(x,block="FIXED",envir=env$ENV)
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -565,7 +563,7 @@ THETA <- function(x,env,annotated=FALSE,pos=1,
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV,context="THETA")
+    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
   } else {
     x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
@@ -593,7 +591,7 @@ INIT <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="INIT",envir=env$ENV,context="INIT")
+    l <- parse_annot(x,block="INIT",envir=env$ENV)
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -615,7 +613,7 @@ CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV,context="CMT")
+    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
@@ -654,7 +652,7 @@ handle_spec_block.specCMTN <- function(x,...) {
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV,context="CAPTURE")
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
@@ -934,8 +932,11 @@ capture_param <- function(annot,.capture) {
   
   # captured parameters
   what <- dplyr::filter(annot, name %in% .capture & block=="PARAM")
-  .capture <- intersect(.capture,what[,"name"])
-  what <- dplyr::mutate(what, block="CAPTURE")
+  if(nrow(what) > 0) {
+    .capture <- intersect(.capture,what[,"name"])
+    what[["block"]] <- "CAPTURE"
+  }
+
   annot <- dplyr::filter(annot, !(block=="CAPTURE" & name %in% .capture))
   bind_rows(annot,what)
 }
