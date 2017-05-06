@@ -22,7 +22,7 @@
 ##'   importFrom("dplyr", "mutate_each")
 ##' }
 
-
+##' @importFrom rlang .data
 ##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
