@@ -45,9 +45,9 @@ inventory <- function(x,obj,...) {
   dots <- lazyeval::lazy_dots(...)
   need <- select_vars_(names(param(x)),dots)
   if(length(need)==0) need <- names(param(x))
-  ans <- inven(x,obj,need,crump=FALSE) 
-  if(ans) message("Found all required parameters.")
-  return(invisible(ans))
+  inven(x,obj,need,crump=FALSE) 
+  message("Found all required parameters.")
+  return(x)
 }
 
 inven_stop <- function(x,obj,need) {
