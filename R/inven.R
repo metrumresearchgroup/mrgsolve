@@ -7,9 +7,6 @@
 ##' in \code{need} is not found in the object
 ##' 
 ##' @export
-##' 
-##' 
-##' 
 inven <- function(x,obj,need=NULL,crump=TRUE) {
   # if(substr(need,1,1)=="@") {
   #   if(need=="@all") {
