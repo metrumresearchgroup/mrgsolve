@@ -49,8 +49,8 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
 #' @return original mrgmod
 #' @export
 inventory <- function(x,obj,..., .strict = TRUE) {
-  dots <- lazyeval::lazy_dots(...)
-  need <- select_vars_(names(param(x)),dots)
+  
+  need <- select_vars(names(param(x)), ...)
   
   if(!length(need)) {
     return(x)
