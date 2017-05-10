@@ -20,7 +20,9 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
   # }
 
   if(is.null(need)) {
-    return(inven_report(obj,names(param(x))))
+    # return a consistent type of empty character vector 
+    # if nothing missing
+    return(vector(mode = "character"))
   }
   
   need <- cvec_cs(need)
@@ -29,31 +31,53 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
     stop("need can only be parameter names", call.=FALSE) 
   }
   
-  if(!all(need %in% names(obj))) {
-    if(crump) inven_stop(obj,need)
-    return(inven_report(obj,need))
+  if(crump) {
+    inven_stop(obj,need)
   }
   
-  return(invisible(TRUE))
+  return(inven_report(obj, need))
 }
 
-##' @rdname inven
-##' @export
-inventory <- function(x,obj,...) {
+#' Check whether all required parameters needed in a model are present in an object
+#' @param x mrgsolve model
+#' @param obj dataframe to pass to idata_set or data_set
+#' @param ... capture dplyr-style parameter requirements
+#' @param .strict whether to stop execution if all requirements are present (TRUE) or just warn (FALSE)
+#' @examples \dontrun{
+#' inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
+#' inventory(mod, idata, everything()) # all parameters
+#' inventory(mod, idata, contains("OCC")) # all parameters containing OCC
+#' inventory(mod, idata, -F) # all parameters except F
+#' }
+#' @return original mrgmod
+#' @export
+inventory <- function(x,obj,..., .strict = TRUE) {
   dots <- lazyeval::lazy_dots(...)
   need <- select_vars_(names(param(x)),dots)
+  
   if(!length(need)) {
     return(x)
   }
-  inven(x,obj,need,crump=FALSE) 
-  message("Found all required parameters.")
+  
+  if (.strict) {
+    inven_stop(obj, need)
+  }
+  
+  found <- inven_report(obj, need)
+  if (!length(found)) {
+    message("Found all required parameters.")
+  }
+  
   return(x)
 }
 
 inven_stop <- function(obj,need) {
   miss <- setdiff(need,names(obj))
-  stop("The object is missing required parameters:\n", 
-       paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
+  if (length(miss)) {
+    stop("The object is missing required parameters:\n", 
+         paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
+  }
+  return(TRUE)
 }
 
 inven_report <- function(obj,need) {
