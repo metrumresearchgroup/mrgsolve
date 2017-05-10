@@ -58,8 +58,10 @@ inven_stop <- function(obj,need) {
 
 inven_report <- function(obj,need) {
   miss <- setdiff(need,names(obj))
-  warning("The object is missing these parameters:\n", 
+  if (length(miss)) {
+    warning("The object is missing these parameters:\n", 
        paste(paste0(" - ",miss,collapse="\n")))
+  }
   return(miss)
 }
 
