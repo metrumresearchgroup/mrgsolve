@@ -5,13 +5,12 @@
 ##' @param need required parameters
 ##' @param crump logical; if \code{TRUE} an error is generated when any parameter
 ##' in \code{need} is not found in the object
-##' @param ... passed along
 ##' 
 ##' @export
 ##' 
 ##' 
 ##' 
-inven <- function(x,obj,need=NULL,crump=TRUE,...) {
+inven <- function(x,obj,need=NULL,crump=TRUE) {
   # if(substr(need,1,1)=="@") {
   #   if(need=="@all") {
   #     need <- names(param(x))
