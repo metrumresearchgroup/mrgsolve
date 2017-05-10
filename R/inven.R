@@ -21,7 +21,6 @@ inven <- function(x,obj,need=NULL,crump=TRUE,...) {
   # }
 
   if(is.null(need)) {
-    if(crump) inven_stop(x,obj,names(param(x)))
     return(inven_report(x,obj,names(param(x))))
   }
   
