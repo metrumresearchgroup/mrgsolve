@@ -20,7 +20,7 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
   # }
 
   if(is.null(need)) {
-    return(inven_report(x,obj,names(param(x))))
+    return(inven_report(obj,names(param(x))))
   }
   
   need <- cvec_cs(need)
@@ -30,8 +30,8 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
   }
   
   if(!all(need %in% names(obj))) {
-    if(crump) inven_stop(x,obj,need)
-    return(inven_report(x,obj,need))
+    if(crump) inven_stop(obj,need)
+    return(inven_report(obj,need))
   }
   
   return(invisible(TRUE))
@@ -50,13 +50,13 @@ inventory <- function(x,obj,...) {
   return(x)
 }
 
-inven_stop <- function(x,obj,need) {
+inven_stop <- function(obj,need) {
   miss <- setdiff(need,names(obj))
   stop("The object is missing required parameters:\n", 
        paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
 }
 
-inven_report <- function(x,obj,need) {
+inven_report <- function(obj,need) {
   miss <- setdiff(need,names(obj))
   warning("The object is missing these parameters:\n", 
        paste(paste0(" - ",miss,collapse="\n")))
