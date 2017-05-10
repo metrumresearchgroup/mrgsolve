@@ -11,7 +11,7 @@
 ##' 
 ##' 
 ##' 
-inven <- function(x,obj,need="@all",crump=TRUE,...) {
+inven <- function(x,obj,need=NULL,crump=TRUE,...) {
   # if(substr(need,1,1)=="@") {
   #   if(need=="@all") {
   #     need <- names(param(x))
