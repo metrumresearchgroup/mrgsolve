@@ -178,7 +178,7 @@ do_.mrgsims <- function(.data,...,.dots) {
 ##' @rdname mrgsims_dplyr
 ##' @export
 select_.mrgsims <- function(.data,...,.dots) {
-    dplyr::select_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+    select_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 
 ##' @rdname mrgsims_dplyr
