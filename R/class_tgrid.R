@@ -76,13 +76,13 @@ as_deslist <- function(data,descol="ID") {
     stop("end is a required column for input data", call.=FALSE) 
   }
   if(!is.element("delta", names(data))) {
-    data <- mutate(data,delta = 1) 
+    data[["delta"]] <- 1
   }
   if(!is.element("start", names(data))) {
-    data <- mutate(data,start=0) 
+    data[["start"]] <- 0
   }
   if(!is.element("add", names(data))) {
-    data <- mutate(data,add=0)
+    data[["add"]] <- 0
   }
   
   designs <- as.data.frame(distinct_(data,.dots=descol,.keep_all=TRUE))
