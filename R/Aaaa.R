@@ -21,6 +21,18 @@
 ##' } else {
 ##'   importFrom("dplyr", "mutate_each")
 ##' }
+##' if (utils::packageVersion("dplyr") > "0.5.0") {
+##'   importFrom("dplyr", "arrange_at")
+##' } else {
+##'   importFrom("dplyr", "arrange_")
+##' }
+##' 
+##' if (utils::packageVersion("dplyr") > "0.5.0") {
+##'   importFrom("dplyr", "select_at")
+##' } else {
+##'   importFrom("dplyr", "select_")
+##' }
+##' 
 
 ##' @importFrom rlang .data
 ##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace

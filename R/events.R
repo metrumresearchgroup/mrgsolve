@@ -58,8 +58,8 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- lapply(data, unique)
         data <- do.call("expand.grid", 
                         c(list(ID=ID,stringsAsFactors=FALSE),data))
-        #data <- data %>% dplyr::arrange(ID,time)
-        data <- dplyr::arrange_(data,.dots=c("ID", "time"))
+      
+        data <- arrange__(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
         data <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
@@ -504,9 +504,9 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   evs$ii <- ii
   if(addl > 0) evs$addl <- addl
   if("ID" %in% names(evs)) {
-    return(as.data.frame(dplyr::arrange_(evs,.dots=c("ID","time"))))
+    return(as.data.frame(arrange__(evs,.dots=c("ID","time"))))
   } else {
-    return(as.data.frame(dplyr::arrange_(evs,.dots=c("time"))))
+    return(as.data.frame(arrange__(evs,.dots=c("time"))))
   }
 }
 
@@ -540,9 +540,9 @@ realize_addl.data.frame <- function(x,...) {
   df[[addlcol]] <- 0
   df[[iicol]] <- 0
   if("ID" %in% names(df)) {
-    df <- dplyr::arrange_(df,.dots=c("ID","time"))
+    df <- arrange__(df,.dots=c("ID","time"))
   } else {
-    df <- dplyr::arrange_(df,.dots=c("time"))
+    df <- arrange__(df,.dots=c("time"))
   }
   df
 }

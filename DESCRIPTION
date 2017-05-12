@@ -66,6 +66,7 @@ Collate:
     'covset.R'
     'data_set.R'
     'datasets.R'
+    'dplyr_subs.R'
     'env.R'
     'events.R'
     'example.R'
