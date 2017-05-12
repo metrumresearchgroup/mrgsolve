@@ -92,7 +92,7 @@ funset <- function(x) {
   ans <- 
     dplyr::bind_rows(unname(ans)) %>% 
     dplyr::mutate(func = names(funs(x)))  %>%
-    mrgsolve:::select_(func,.dots=c("name","loaded")) %>% 
+    select__(func,.dots=c("name","loaded")) %>% 
     as.data.frame
   
   shlib <- dplyr::data_frame(package=pkg,
