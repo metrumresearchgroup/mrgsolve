@@ -5,13 +5,9 @@
 ##' @param need required parameters
 ##' @param crump logical; if \code{TRUE} an error is generated when any parameter
 ##' in \code{need} is not found in the object
-##' @param ... passed along
 ##' 
 ##' @export
-##' 
-##' 
-##' 
-inven <- function(x,obj,need="@all",crump=TRUE,...) {
+inven <- function(x,obj,need=NULL,crump=TRUE) {
   # if(substr(need,1,1)=="@") {
   #   if(need=="@all") {
   #     need <- names(param(x))
@@ -21,8 +17,9 @@ inven <- function(x,obj,need="@all",crump=TRUE,...) {
   # }
 
   if(is.null(need)) {
-    if(crump) inven_stop(x,obj,names(param(x)))
-    return(inven_report(x,obj,names(param(x))))
+    # return a consistent type of empty character vector 
+    # if nothing missing
+    return(vector(mode = "character"))
   }
   
   need <- cvec_cs(need)
@@ -31,35 +28,61 @@ inven <- function(x,obj,need="@all",crump=TRUE,...) {
     stop("need can only be parameter names", call.=FALSE) 
   }
   
-  if(!all(need %in% names(obj))) {
-    if(crump) inven_stop(x,obj,need)
-    return(inven_report(x,obj,need))
+  if(crump) {
+    inven_stop(obj,need)
   }
   
-  return(invisible(TRUE))
+  return(inven_report(obj, need))
 }
 
-##' @rdname inven
-##' @export
-inventory <- function(x,obj,...) {
-  dots <- lazyeval::lazy_dots(...)
-  need <- select_vars_(names(param(x)),dots)
-  if(length(need)==0) need <- names(param(x))
-  ans <- inven(x,obj,need,crump=FALSE) 
-  if(ans) message("Found all required parameters.")
-  return(invisible(ans))
+#' Check whether all required parameters needed in a model are present in an object
+#' @param x mrgsolve model
+#' @param obj dataframe to pass to idata_set or data_set
+#' @param ... capture dplyr-style parameter requirements
+#' @param .strict whether to stop execution if all requirements are present (TRUE) or just warn (FALSE)
+#' @examples \dontrun{
+#' inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
+#' inventory(mod, idata, everything()) # all parameters
+#' inventory(mod, idata, contains("OCC")) # all parameters containing OCC
+#' inventory(mod, idata, -F) # all parameters except F
+#' }
+#' @return original mrgmod
+#' @export
+inventory <- function(x,obj,..., .strict = TRUE) {
+  
+  need <- select_vars(names(param(x)), ...)
+  
+  if(!length(need)) {
+    return(x)
+  }
+  
+  if (.strict) {
+    inven_stop(obj, need)
+  }
+  
+  found <- inven_report(obj, need)
+  if (!length(found)) {
+    message("Found all required parameters.")
+  }
+  
+  return(x)
 }
 
-inven_stop <- function(x,obj,need) {
+inven_stop <- function(obj,need) {
   miss <- setdiff(need,names(obj))
-  stop("The object is missing required parameters:\n", 
-       paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
+  if (length(miss)) {
+    stop("The object is missing required parameters:\n", 
+         paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
+  }
+  return(TRUE)
 }
 
-inven_report <- function(x,obj,need) {
+inven_report <- function(obj,need) {
   miss <- setdiff(need,names(obj))
-  message("The object is missing these parameters:\n", 
+  if (length(miss)) {
+    warning("The object is missing these parameters:\n", 
        paste(paste0(" - ",miss,collapse="\n")))
-  return(invisible(FALSE))
+  }
+  return(miss)
 }
 
