@@ -2,12 +2,9 @@
 % Please edit documentation in R/inven.R
 \name{inven}
 \alias{inven}
-\alias{inventory}
 \title{Inventory parameters in R objects.}
 \usage{
-inven(x, obj, need = "@all", crump = TRUE, ...)
-
-inventory(x, obj, ...)
+inven(x, obj, need = NULL, crump = TRUE)
 }
 \arguments{
 \item{x}{model object}
@@ -18,8 +15,6 @@ inventory(x, obj, ...)
 
 \item{crump}{logical; if \code{TRUE} an error is generated when any parameter
 in \code{need} is not found in the object}
-
-\item{...}{passed along}
 }
 \description{
 Inventory parameters in R objects.

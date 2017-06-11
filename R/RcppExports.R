@@ -2,34 +2,34 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 DEVTRAN <- function(parin, inpar, parnames, init, cmtnames, capture, funs, data, idata, OMEGA, SIGMA, envir) {
-    .Call('mrgsolve_DEVTRAN', PACKAGE = 'mrgsolve', parin, inpar, parnames, init, cmtnames, capture, funs, data, idata, OMEGA, SIGMA, envir)
+    .Call(mrgsolve_DEVTRAN, parin, inpar, parnames, init, cmtnames, capture, funs, data, idata, OMEGA, SIGMA, envir)
 }
 
 MVGAUSS <- function(OMEGA_, n) {
-    .Call('mrgsolve_MVGAUSS', PACKAGE = 'mrgsolve', OMEGA_, n)
+    .Call(mrgsolve_MVGAUSS, OMEGA_, n)
 }
 
 dcorr <- function(x) {
-    invisible(.Call('mrgsolve_dcorr', PACKAGE = 'mrgsolve', x))
+    invisible(.Call(mrgsolve_dcorr, x))
 }
 
 SUPERMATRIX <- function(a, keep_names) {
-    .Call('mrgsolve_SUPERMATRIX', PACKAGE = 'mrgsolve', a, keep_names)
+    .Call(mrgsolve_SUPERMATRIX, a, keep_names)
 }
 
 get_tokens <- function(code) {
-    .Call('mrgsolve_get_tokens', PACKAGE = 'mrgsolve', code)
+    .Call(mrgsolve_get_tokens, code)
 }
 
 EXPAND_EVENTS <- function(idcol_, events, id) {
-    .Call('mrgsolve_EXPAND_EVENTS', PACKAGE = 'mrgsolve', idcol_, events, id)
+    .Call(mrgsolve_EXPAND_EVENTS, idcol_, events, id)
 }
 
 TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs, envir) {
-    .Call('mrgsolve_TOUCH_FUNS', PACKAGE = 'mrgsolve', lparam, linit, Neta, Neps, capture, funs, envir)
+    .Call(mrgsolve_TOUCH_FUNS, lparam, linit, Neta, Neps, capture, funs, envir)
 }
 
 QUICKSIM <- function(parin, param, init, parnames, data, n, idata, req, capturei, funs, nre) {
-    .Call('mrgsolve_QUICKSIM', PACKAGE = 'mrgsolve', parin, param, init, parnames, data, n, idata, req, capturei, funs, nre)
+    .Call(mrgsolve_QUICKSIM, parin, param, init, parnames, data, n, idata, req, capturei, funs, nre)
 }
 
