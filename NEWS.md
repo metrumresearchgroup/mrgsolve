@@ -1,6 +1,6 @@
 
 
-# Since 0.8.6
+# 0.8.6.9000
 
 ## New Features
 - Dosing records with `ss=2` are recognized, allowing combining of 
@@ -9,7 +9,7 @@ steady-state dosing regimens under linear kinetics (e.g. 10 mg QAM and 20 mg QPM
 ## Bugs fixed
 - PR #214 from @dastoor fixes compatibility issue with new `dplyr` 
 - Fixed bug in `deslist` implementation #222
-
+- PR #238 fixes incorrect steady-state values when dose is associated with lagtime (#239)
 
 # Release 0.8.4
 - Reconfigure use of function pointer in unit tests
