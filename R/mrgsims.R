@@ -315,7 +315,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   if(!has_name("time", data)) {
     if(!has_name("TIME", data)) stop("Couldn't find time or TIME column.",call.=FALSE)
     # Must mutate here; not rename
-    data <- data %>% dplyr::mutate(time=TIME)
+    data <- dplyr::mutate(data,time=TIME)
   }
   
   if(y[[3]] == '.')  y[[3]] <- quote(time)

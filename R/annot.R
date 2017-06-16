@@ -16,10 +16,10 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 render_annot <- function(x,block,...) {
-  dplyr::bind_rows(lapply(x,tibble::as_data_frame)) %>%
-    dplyr::mutate(block=block) %>% 
-    dplyr::select(block,dplyr::everything()) %>%
-    as.data.frame
+  x <- dplyr::bind_rows(lapply(x,tibble::as_data_frame))
+  x <- dplyr::mutate(x,block=block) 
+  x <- dplyr::select_(x,.dots=c("block", names(x)))
+  as.data.frame(x)
 }
 
 
@@ -136,8 +136,9 @@ cobble_details <- function(x) {
   }
   
   ans <- dplyr::bind_rows(ans)
-  ans <- mutate(ans,descr='.',units='.',options='.')
-  as.data.frame(dplyr::select(ans,block,name,descr,units,options))
+  ans <- dplyr::mutate(ans,descr='.', units='.', options='.')
+  ans <- dplyr::select_(ans,.dots=c("block","name","descr","units","options"))
+  as.data.frame(ans)
   
 }
 
