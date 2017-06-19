@@ -62,6 +62,7 @@ public:
   void pos(int pos_) {Pos=pos_;}
   
   short int cmt(){return Cmt;}
+  short int cmtn(){return std::abs(Cmt)-1;}
   
   void output(bool in){Output=in;}
   bool output(){return Output;}
