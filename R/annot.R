@@ -18,7 +18,7 @@
 render_annot <- function(x,block,...) {
   x <- dplyr::bind_rows(lapply(x,tibble::as_data_frame))
   x <- dplyr::mutate(x,block=block) 
-  x <- dplyr::select_(x,.dots=c("block", names(x)))
+  x <- select__(x,.dots=c("block", names(x)))
   as.data.frame(x)
 }
 
@@ -137,7 +137,7 @@ cobble_details <- function(x) {
   
   ans <- dplyr::bind_rows(ans)
   ans <- dplyr::mutate(ans,descr='.', units='.', options='.')
-  ans <- dplyr::select_(ans,.dots=c("block","name","descr","units","options"))
+  ans <- select__(ans,.dots=c("block","name","descr","units","options"))
   as.data.frame(ans)
   
 }
