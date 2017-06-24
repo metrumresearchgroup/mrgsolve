@@ -48,13 +48,17 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
 #' }
 #' @return original mrgmod
 #' @export
-inventory <- function(x,obj,..., .strict = TRUE) {
+inventory <- function(x,obj,..., .strict = FALSE) {
   
   oname <- as.character(as.list(match.call())$obj)
 
   need <- select_vars(names(param(x)),...)
   
-  if(!length(need)) need <- names(param(x))
+  if(!length(need)) {
+    need <- names(param(x))
+  } else {
+    if(missing(.strict)) .strict <- TRUE 
+  }
   
   if (.strict) {
     inven_stop(obj, need, oname)
@@ -80,7 +84,7 @@ inven_stop <- function(obj,need,oname) {
 inven_report <- function(obj,need,oname) {
   miss <- setdiff(need,names(obj))
   if (length(miss)) {
-    warning(shQuote(oname), " is missing these parameters:\n", 
+    warning("Missing parameters in ", shQuote(oname), "\n", 
             paste(paste0(" - ",miss,collapse="\n")), call.=FALSE)
   }
   return(miss)
