@@ -483,8 +483,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->init_call_record(tto);
       }  
       
-      this_rec->fn(prob->fbio(this_rec->cmtn()))
-      
       if((this_rec->is_event()) && (this_rec->from_data())) {
         
         biofrac = prob->fbio(abs(this_rec->cmt())-1);

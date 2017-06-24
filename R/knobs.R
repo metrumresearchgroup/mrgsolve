@@ -115,9 +115,9 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   outn <- out@outnames
   
   out <- out %>% as.data.frame
-  out <- out[,setdiff(names(out),whatkn),drop=FALSE]
+  out <- out[,unique(setdiff(names(out),whatkn)),drop=FALSE]
   
-  data <- data[,c("ID",whatkn),drop=FALSE]
+  data <- data[,unique(c("ID",whatkn)),drop=FALSE]
   out <- dplyr::left_join(out,data, by="ID") 
   
   new("batch_mrgsims",

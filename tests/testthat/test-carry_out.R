@@ -41,9 +41,8 @@ idata <- expand.idata(ID=1:10) %>% mutate(FOO=ID)
 out <- 
   mod %>% 
   data_set(exTheoph, ID <=2) %>% 
-  carry_out(WT,evid,ROW) %>% 
-  obsonly() %>% 
-  mrgsim(obsfirst=FALSE)
+  carry_out(WT,evid,ROW) %>%
+  mrgsim(obsfirst=FALSE,obsonly=TRUE)
 
 
 context("Testing carry_out")

@@ -18,7 +18,7 @@
 render_annot <- function(x,block,...) {
   x <- dplyr::bind_rows(lapply(x,tibble::as_data_frame))
   x <- dplyr::mutate(x,block=block) 
-  x <- x[,c("block", names(x)),drop=FALSE]
+  x <- x[,unique(c("block", names(x))),drop=FALSE]
   as.data.frame(x)
 }
 
