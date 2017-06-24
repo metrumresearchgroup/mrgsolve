@@ -50,38 +50,38 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
 #' @export
 inventory <- function(x,obj,..., .strict = TRUE) {
   
-  need <- select_vars(names(param(x)), ...)
+  oname <- as.character(as.list(match.call())$obj)
+
+  need <- select_vars(names(param(x)),...)
   
-  if(!length(need)) {
-    return(x)
-  }
+  if(!length(need)) need <- names(param(x))
   
   if (.strict) {
-    inven_stop(obj, need)
+    inven_stop(obj, need, oname)
   }
   
-  found <- inven_report(obj, need)
+  found <- inven_report(obj, need, oname)
   if (!length(found)) {
-    message("Found all required parameters.")
+    message("Found all required parameters in ", sQuote(oname),".")
   }
   
-  return(x)
+  return(invisible(x))
 }
 
-inven_stop <- function(obj,need) {
+inven_stop <- function(obj,need,oname) {
   miss <- setdiff(need,names(obj))
   if (length(miss)) {
-    stop("The object is missing required parameters:\n", 
-         paste(paste0("- ",miss,collapse="\n")),call.=FALSE)
+    stop("missing parameters in ", sQuote(oname), "\n", 
+         paste(paste0(" - ",miss,collapse="\n")),call.=FALSE)
   }
   return(TRUE)
 }
 
-inven_report <- function(obj,need) {
+inven_report <- function(obj,need,oname) {
   miss <- setdiff(need,names(obj))
   if (length(miss)) {
-    warning("The object is missing these parameters:\n", 
-            paste(paste0(" - ",miss,collapse="\n")))
+    warning(shQuote(oname), " is missing these parameters:\n", 
+            paste(paste0(" - ",miss,collapse="\n")), call.=FALSE)
   }
   return(miss)
 }
