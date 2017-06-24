@@ -36,10 +36,11 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
 }
 
 #' Check whether all required parameters needed in a model are present in an object
-#' @param x mrgsolve model
-#' @param obj dataframe to pass to idata_set or data_set
+#' @param x model object
+#' @param obj dataframe to pass to \code{\link{idata_set}} or \code{\link{data_set}}
 #' @param ... capture dplyr-style parameter requirements
-#' @param .strict whether to stop execution if all requirements are present (TRUE) or just warn (FALSE)
+#' @param .strict whether to stop execution if all requirements are present (\code{TRUE}) 
+#' or just warn (\code{FALSE}); see details
 #' @examples \dontrun{
 #' inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
 #' inventory(mod, idata, everything()) # all parameters
@@ -47,6 +48,13 @@ inven <- function(x,obj,need=NULL,crump=TRUE) {
 #' inventory(mod, idata, -F) # all parameters except F
 #' }
 #' @return original mrgmod
+#' @details 
+#' If parameter requirements are not explicitly stated, the requirement defaults to 
+#' all parameter names in \code{x}.  Note that, by default,
+#' the inventory is not \code{.strict} by default unless the user explicitly
+#' states the parameter requirement. That is, if parameter requirements are explicitly 
+#' stated, \code{.strict} will be set to \code{TRUE} if a value \code{.strict} was not
+#' passed in the call.
 #' @export
 inventory <- function(x,obj,..., .strict = FALSE) {
   
