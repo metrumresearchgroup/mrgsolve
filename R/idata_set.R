@@ -76,7 +76,7 @@ setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
 ##' @export
 setMethod("idata_set", c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,need=NULL,...) {
             
-  if(!is.null(need)) suppressMessages(inventory(x,data,need))
+  if(is.character(need)) suppressMessages(inventory(x,data,need))
   if(exists("idata", x@args)) stop("idata has already been set.")
   if(!missing(subset)) data <- filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- select_(data,.dots=lazy(select))
