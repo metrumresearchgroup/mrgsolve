@@ -46,6 +46,9 @@ struct databox {
   const int rown;
   bool CFONSTOP;
   void* envir;
+  void stop() {SYSTEMOFF=9;}
+  void stop_id() {SYSTEMOFF=2;}
+  void stop_id_cf(){SYSTEMOFF=1;}
 };
 
 

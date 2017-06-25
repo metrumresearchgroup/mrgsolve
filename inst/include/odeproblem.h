@@ -53,6 +53,9 @@ struct databox {
   int rown; ///< current output row number
   bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
+  void stop() {SYSTEMOFF=9;}
+  void stop_id() {SYSTEMOFF=1;}
+  void stop_id_cf(){SYSTEMOFF=2;}
 };
 
 //! vector of <code>datarecord</code> objects for one <code>ID</code>
