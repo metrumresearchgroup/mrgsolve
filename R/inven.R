@@ -24,7 +24,7 @@
 inventory <- function(x,obj,..., .strict = FALSE) {
   
   oname <- as.character(as.list(match.call())$obj)
-
+  
   need <- select_vars(names(param(x)),...)
   
   if(!length(need)) {
@@ -33,35 +33,23 @@ inventory <- function(x,obj,..., .strict = FALSE) {
     if(missing(.strict)) .strict <- TRUE 
   }
   
-  if(.strict) inven_stop(obj, need, oname)
-  
-  found <- inven_report(obj, need, oname)
-  
-  if (!length(found)) {
+  missing <- setdiff(need,names(obj))
+  miss <- length(missing) 
+
+  if(!miss) {
     message("Found all required parameters in ", sQuote(oname),".")
+    return(invisible(x))
+  }
+  
+  if(.strict) {
+    stop("missing parameters in ", sQuote(oname), "\n", 
+         paste(paste0(" - ", missing, collapse="\n")), call.=FALSE)
+  } else {
+    warning("Missing parameters in ", shQuote(oname), "\n", 
+            paste(paste0(" - ", missing, collapse="\n")), call.=FALSE)
   }
   
   return(invisible(x))
 }
 
-inven_stop <- function(obj,need,oname) {
-  miss <- setdiff(need,names(obj))
-  
-  if (length(miss)) {
-    stop("missing parameters in ", sQuote(oname), "\n", 
-         paste(paste0(" - ", miss, collapse="\n")), call.=FALSE)
-  }
-  
-  return(TRUE)
-}
-
-inven_report <- function(obj,need,oname) {
-  miss <- setdiff(need,names(obj))
-  
-  if (length(miss)) {
-    warning("Missing parameters in ", shQuote(oname), "\n", 
-            paste(paste0(" - ", miss, collapse="\n")), call.=FALSE)
-  }
-  return(miss)
-}
 
