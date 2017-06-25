@@ -35,7 +35,7 @@ struct databox {
   const unsigned int newind;
   const double time;
   const int evid;
-  bool SYSTEMOFF;
+  unsigned short int  SYSTEMOFF;
   dvec mtime;
   const double id;
   const double amt;
@@ -131,12 +131,15 @@ struct databox {
 
 // Macros related to stopping the advance of the system
 // once a condition is met
-#define SYSTEMSTOPADVANCING() (self.SYSTEMOFF=true);
+#define SYSTEMSTOPADVANCING() (self.SYSTEMOFF=1);
 #define STOPADVANCING() SYSTEMSTOPADVANCING()  // Not sure why this is here
 #define CFONSTOP() (self.CFONSTOP = true); // Carry forward on stop
 #define SYSTEMNOTADVANCING (self.SYSTEMOFF)
 #define SOLVINGPROBLEM (self.solving)
 #define _SETINIT if(self.newind <=1) // Convenience
+#define _STOP_ID() (self.SYSTEMOFF=2);
+#define _STOP_ID_CF() (self.SYSTEMOFF=1);
+#define _STOP_ERROR() (self.SYSTEMOFF=9);
 
 // Macro to insert dxdt_CMT = 0; for all compartments
 #define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; ++_i_) _DADT_[_i_] = 0;

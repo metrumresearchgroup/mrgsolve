@@ -42,7 +42,7 @@ struct databox {
   unsigned int newind; ///< new individual flag
   double time; ///< current simulation time
   int evid;  ///< event ID flag
-  bool SYSTEMOFF; ///< flag to stop advancing system for current ID
+  unsigned short int SYSTEMOFF; ///< flag to stop advancing system for current ID
   dvec mtime; ///< model time values
   double id;  ///< current ID
   double amt; ///< current dosing amount value
@@ -169,7 +169,7 @@ public:
   
   void eta(int pos, double value) {d.ETA[pos] =value;}
   void eps(int pos, double value) {d.EPS[pos] = value;}
-  bool systemoff(){return d.SYSTEMOFF;}
+  unsigned short int systemoff(){return d.SYSTEMOFF;}
   
   void on(unsigned short int cmt);
   void off(unsigned short int cmt);

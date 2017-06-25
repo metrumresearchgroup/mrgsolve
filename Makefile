@@ -53,7 +53,7 @@ build:
 	R CMD build --md5 $(PKGDIR)
 
 install:
-	R CMD INSTALL --install-tests ${TARBALL}
+	R CMD INSTALL --install-tests ${TARBALL} -l ~/Rlibs
 
 install-build:
 	R CMD INSTALL --build --install-tests ${TARBALL}
