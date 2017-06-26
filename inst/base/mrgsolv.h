@@ -71,7 +71,7 @@ protected:
 #define MRGSOLVE_ODE_SIGNATURE_N 5
 
 //! signature for <code>$TABLE</code>
-#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const dvec& _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_,  databox& self, const dvec& _pred_, dvec& _capture_, resim& simeps, const dvec& _INFUSION_
+#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const dvec& _A_0_,  const double* _THETA_, databox& self, const dvec& _pred_, dvec& _capture_, resim& simeps, const dvec& _INFUSION_
 #define MRGSOLVE_TABLE_SIGNATURE_N 10
 
 #endif

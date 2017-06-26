@@ -113,6 +113,8 @@ struct databox {
 #define _R(a)    _R_[a-1]
 #define _D(a)    _D_[a-1]
 #define _ALAG(a) _ALAG_[a-1]
+// THE ACTUAL TOTAL INFUSION RATE FOR CMT a
+#define _INFUSION(a) _INFUSION_.at(a-1)
 
 // These are the fundamental macros for
 // random effects.  These might get used,

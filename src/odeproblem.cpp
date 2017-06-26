@@ -204,7 +204,7 @@ void odeproblem::init_call_record(const double& time) {
 
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
-  Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps,R0);  
+  Table(Y,Init_dummy,Param,d,pred,Capture,simeps,R0);  
 }
 
 //! Call <code>$PREAMBLE</code> function.
