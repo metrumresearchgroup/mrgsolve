@@ -44,7 +44,6 @@ struct databox {
   const int idn;
   const int nrow;
   const int rown;
-  bool CFONSTOP;
   void* envir;
   void stop() {SYSTEMOFF=9;}
   void stop_id() {SYSTEMOFF=2;}
@@ -136,9 +135,7 @@ struct databox {
 // once a condition is met
 #define SYSTEMSTOPADVANCING() (self.SYSTEMOFF=1);
 #define STOPADVANCING() SYSTEMSTOPADVANCING()  // Not sure why this is here
-#define CFONSTOP() (self.CFONSTOP = true); // Carry forward on stop
 #define SYSTEMNOTADVANCING (self.SYSTEMOFF)
-#define SOLVINGPROBLEM (self.solving)
 #define _SETINIT if(self.newind <=1) // Convenience
 #define _STOP_ID() (self.SYSTEMOFF=2);
 #define _STOP_ID_CF() (self.SYSTEMOFF=1);

@@ -77,7 +77,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.id = 1.0;
   d.EPS.assign(50,0.0);
   d.ETA.assign(50,0.0);
-  d.CFONSTOP = false;
   d.cmt = 0;
   d.amt = 0;
 
@@ -205,7 +204,7 @@ void odeproblem::init_call_record(const double& time) {
 
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
-  Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps);  
+  Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps,R0);  
 }
 
 //! Call <code>$PREAMBLE</code> function.

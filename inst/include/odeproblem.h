@@ -42,7 +42,7 @@ struct databox {
   unsigned int newind; ///< new individual flag
   double time; ///< current simulation time
   int evid;  ///< event ID flag
-  unsigned short int SYSTEMOFF; ///< flag to stop advancing system for current ID
+  bool SYSTEMOFF; ///< flag to stop advancing system for current ID
   dvec mtime; ///< model time values
   double id;  ///< current ID
   double amt; ///< current dosing amount value
@@ -51,11 +51,10 @@ struct databox {
   int idn; ///< current ID number
   int nrow; ///< number of rows in output data set
   int rown; ///< current output row number
-  bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
   void stop() {SYSTEMOFF=9;}
-  void stop_id() {SYSTEMOFF=1;}
-  void stop_id_cf(){SYSTEMOFF=2;}
+  void stop_id() {SYSTEMOFF=2;}
+  void stop_id_cf(){SYSTEMOFF=1;}
 };
 
 //! vector of <code>datarecord</code> objects for one <code>ID</code>
@@ -144,8 +143,6 @@ public:
 
   void pass_envir(Rcpp::Environment* x){d.envir=reinterpret_cast<void*>(x);};
   
-  bool CFONSTOP(){return d.CFONSTOP;}
-  
   const double* param() const {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
   
@@ -172,7 +169,7 @@ public:
   
   void eta(int pos, double value) {d.ETA[pos] =value;}
   void eps(int pos, double value) {d.EPS[pos] = value;}
-  unsigned short int systemoff(){return d.SYSTEMOFF;}
+  bool systemoff(){return d.SYSTEMOFF;}
   
   void on(unsigned short int cmt);
   void off(unsigned short int cmt);

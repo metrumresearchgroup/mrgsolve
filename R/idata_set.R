@@ -24,7 +24,7 @@
 ##' @param object character name of an object existing in \code{$ENV} to use for the data set
 ##' @param subset passed to \code{dplyr::filter_}
 ##' @param select passed to \code{dplyr::select_}
-##' @param need passed to \code{\link{inven}}
+##' @param need passed to \code{\link{inventory}}
 ##' @param ... passed along
 ##' 
 ##' @details
