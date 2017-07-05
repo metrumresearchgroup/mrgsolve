@@ -95,17 +95,29 @@ setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
 
 ##' @param nid if greater than 1, will expand to the appropriate 
 ##' number of individuals
+##' @param keep_id if \code{TRUE}, \code{ID} column is retained if it exists
 ##' @rdname events
 ##' @export
-setMethod("as.ev", "data.frame", function(x,nid=1,...) {
+setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
+  
   if(nrow(x)==0) return(new("ev",data=data.frame()))
-  if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.")
-  if(nid > 1) x <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
-                                    match("ID", colnames(x),0), 
-                                    data.matrix(x),
-                                    c(1:nid)))
+  
+  if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.",call.=FALSE)
+  
+  if(nid > 1) {
+    if(!exists("ID",x)) stop("please add ID column to data frame",call.=FALSE)
+    x <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
+                          match("ID", colnames(x),0), 
+                          data.matrix(x),
+                          c(1:nid)))
+  } else {
+    if(exists("ID",x) & !keep_id) x[,"ID"] <- NULL
+  }
+  
   new("ev",data=x)
+  
 })
+
 
 ##' @rdname events
 ##' @export

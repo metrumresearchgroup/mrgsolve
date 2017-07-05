@@ -32,7 +32,7 @@ as.ev(x, ...)
 
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 
-\S4method{as.ev}{data.frame}(x, nid = 1, ...)
+\S4method{as.ev}{data.frame}(x, nid = 1, keep_id = TRUE, ...)
 
 \S4method{as.matrix}{ev}(x, ...)
 
@@ -66,6 +66,8 @@ as.ev(x, ...)
 
 \item{nid}{if greater than 1, will expand to the appropriate 
 number of individuals}
+
+\item{keep_id}{if \code{TRUE}, \code{ID} column is retained if it exists}
 
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
