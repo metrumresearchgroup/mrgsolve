@@ -30,7 +30,7 @@ idata_set(x, data, ...)
 
 \item{object}{character name of an object existing in \code{$ENV} to use for the data set}
 
-\item{need}{passed to \code{\link{inven}}}
+\item{need}{passed to \code{\link{inventory}}}
 }
 \description{
 Select and modify a idata set for simulation.

@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 project <- file.path(system.file(package="mrgsolve"), "models")
 tmp <- tempdir()
 
-context("Compare PKMODEL with equivalent ODEs.")
+context("Compare PKMODEL with equivalent ODEs")
 
 ode <- mrgsolve:::house() %>% param(CL=1,VC=20,KA=1.1)
 

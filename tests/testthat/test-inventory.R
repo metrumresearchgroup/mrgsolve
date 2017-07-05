@@ -1,3 +1,27 @@
+# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+#
+# This file is part of mrgsolve.
+#
+# mrgsolve is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# mrgsolve is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
+
+library(testthat)
+library(mrgsolve)
+library(dplyr)
+Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
+
+
 context("inventory")
 
 # test_that("inven_report displays warns and missing items", {
@@ -23,28 +47,22 @@ test_that("inventory works", {
 })
 
 test_that("inventory errors when missing required params", {
-  expect_error(inventory(mod, missing_obj, dplyr::everything()), 
-               "The object is missing required parameters:\\n- OCC2")
-  expect_error(inventory(mod, missing_obj, dplyr::contains("OCC")), 
-               "The object is missing required parameters:\\n- OCC2")
-  expect_error(inventory(mod, missing_obj, V:F), 
-               "The object is missing required parameters:\\n- OCC2")
-  expect_error(inventory(mod, missing_obj, OCC2), 
-               "The object is missing required parameters:\\n- OCC2")
+  expect_error(inventory(mod, missing_obj, dplyr::everything()))
+  expect_error(inventory(mod, missing_obj, dplyr::contains("OCC")))
+  expect_error(inventory(mod, missing_obj, V:F))
+  expect_error(inventory(mod, missing_obj, OCC2))
 })
 
 test_that("inventory warns when missing required params but not checking strictly", {
   expect_warning(inventory(mod, missing_obj, 
                            dplyr::everything(), 
-                           .strict = FALSE), 
-                 "The object is missing these parameters:\\n - OCC2")
+                           .strict = FALSE))
   expect_s4_class(inventory(mod, missing_obj, 
                             dplyr::everything(), 
                             .strict = FALSE), "mrgmod")
   expect_warning(inventory(mod, missing_obj, 
                            OCC2, 
-                           .strict = FALSE), 
-                 "The object is missing these parameters:\\n - OCC2")
+                           .strict = FALSE))
   expect_s4_class(inventory(mod, missing_obj, 
                             OCC2, 
                             .strict = FALSE), "mrgmod")
