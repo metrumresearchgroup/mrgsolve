@@ -17,6 +17,7 @@
 
 Sys.setenv("R_TESTS" = "")
 library(testthat)
+library(magrittr)
 library(mrgsolve)
 
 test_check("mrgsolve", reporter="summary")

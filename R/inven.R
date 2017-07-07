@@ -1,5 +1,3 @@
-
-
 #' Check whether all required parameters needed in a model are present in an object
 #' @param x model object
 #' @param obj data.frame to pass to \code{\link{idata_set}} or \code{\link{data_set}}
@@ -51,5 +49,3 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   
   return(invisible(x))
 }
-
-
