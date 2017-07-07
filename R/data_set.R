@@ -27,7 +27,7 @@
 ##' columns in the data set
 ##' @param object character name of an object existing in \code{$ENV} 
 ##' to use for the data set
-##' @param need passed to \code{\link{inven}}
+##' @param need passed to \code{\link{inventory}}
 ##' @param ... passed along
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 
@@ -90,7 +90,7 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,need=NULL,...) {
   
   if(is.character(need)) {
-    inven(x,data,need) 
+    suppressMessages(inventory(x,data,need))
   }
   if(exists("data", x@args)) stop("data already has been set.")
   if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))

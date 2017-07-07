@@ -33,7 +33,7 @@ columns in the data set}
 \item{object}{character name of an object existing in \code{$ENV} 
 to use for the data set}
 
-\item{need}{passed to \code{\link{inven}}}
+\item{need}{passed to \code{\link{inventory}}}
 }
 \description{
 Select and modify a data set for simulation.

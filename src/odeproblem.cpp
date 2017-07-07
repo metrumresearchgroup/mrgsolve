@@ -238,7 +238,7 @@ void odeproblem::reset_newid(const double id_) {
   d.newind = 1;
   d.time = 0.0;
   
-  d.SYSTEMOFF=false;
+  d.SYSTEMOFF=0;
   this->lsoda_init();
   d.id = id_;
 }

@@ -435,8 +435,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       this_rec->id(id);
       
       if(prob->systemoff()) {
+        unsigned short int status = prob->systemoff();
+        if(status==9) Rcpp::stop("The problem was stopped at user request.");
         if(this_rec->output()) {
-          if(prob->CFONSTOP()) {
+          if(status==1) {
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
             for(k=0; k < n_capture; ++k) {
@@ -446,7 +448,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               ans(crow,(k+req_start)) = prob->y(request[k]);
             }
           } else {
-            ans(crow,0) = NA_REAL;
+            for(k=0; k < ans.ncol(); ++k) {
+              ans(crow,k) = NA_REAL;
+            }
           }
           ++crow;
         }

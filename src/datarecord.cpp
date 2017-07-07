@@ -145,7 +145,7 @@ void datarecord::implement(odeproblem *prob) {
   
   if(this->infusion()) evid = 5;
   
-  int eq_n = std::abs(Cmt)-1;
+  int eq_n = this->cmtn();//std::abs(Cmt)-1;
   
   // Check for steady state records:
   if(Ss > 0) {
