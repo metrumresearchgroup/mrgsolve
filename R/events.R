@@ -353,8 +353,10 @@ add.ev <- function(e1,e2) {
 ##' 
 ##' @param l list of event objects
 ##' @param idata an idata set (one ID per row)
-##' @param evgroup the character name of the column in \code{idata} that specifies event object to implement
-##' @param join if \code{TRUE}, join \code{idata} to the data set before returning.
+##' @param evgroup the character name of the column in \code{idata} 
+##' that specifies event object to implement
+##' @param join if \code{TRUE}, join \code{idata} to the data set 
+##' before returning.
 ##' 
 ##' 
 ##' @examples
@@ -364,10 +366,10 @@ add.ev <- function(e1,e2) {
 ##' idata <- data.frame(ID=1:10) 
 ##' idata$arm <- 1+(idata$ID %%2)
 ##' 
-##' assign_ev(list(ev1,ev2),idata,"arm",join=TRUE)
+##' ev_assign(list(ev1,ev2),idata,"arm",join=TRUE)
 ##' 
 ##' @export
-assign_ev <- function(l,idata,evgroup,join=FALSE) {
+ev_assign <- function(l,idata,evgroup,join=FALSE) {
   
   idata <- as.data.frame(idata)
   
@@ -427,6 +429,12 @@ assign_ev <- function(l,idata,evgroup,join=FALSE) {
   return(x)
   
 }
+
+##' @param ... used to pass arguments from \code{assign_ev}
+##' to \code{ev_assign}
+##' @rdname ev_assign
+##' @export
+assign_ev <- function(...) ev_assign(...)
 
 ##' Schedule dosing events on days of the week.
 ##' 
@@ -508,7 +516,8 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   evs <- lapply(evs,as.data.frame)
   for(d in days) {
     if(any(evs[[d]]$time > max.time)) {
-      warning("not expecting time values greater than 24 hours or 1 day.",call.=FALSE)  
+      warning("not expecting time values greater than 24 hours or 1 day.",
+              call.=FALSE)  
     }
     evs[[d]]$time <- evs[[d]]$time + start[d] 
   }
@@ -564,8 +573,6 @@ realize_addl.ev <- function(x,...) {
   x@data <- realize_addl(x@data)
   return(x)
 }
-
-
 
 
 
