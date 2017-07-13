@@ -75,8 +75,8 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
 // Data set event
 // Schedule events
 //   Need to make sure that scheduled events are output false, from data false
-datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_,
-                       int pos_, double id_) {
+datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, 
+                       double rate_, int pos_, double id_) {
   Time = time_;
   Cmt  = cmt_;
   Pos = pos_;
@@ -99,7 +99,8 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, dou
 
 // Short event
 // cmt evid amt time rate
-datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_) {
+datarecord::datarecord(short int cmt_, int evid_, double amt_, 
+                       double time_, double rate_) {
   
   Cmt  = cmt_;
   Evid = evid_;
@@ -187,7 +188,6 @@ void datarecord::implement(odeproblem *prob) {
       
     }
     {
-      //double tm = Time;
       prob->newind(1);
       prob->init_call(Time);
     }
@@ -201,8 +201,6 @@ void datarecord::implement(odeproblem *prob) {
       prob->on(i);
       prob->rate0(i,0.0);
     } {
-      //double tm = this->time();
-      //prob->newind(2);
       prob->init_call(Time);
       if(Rate > 0) {
         this->evid(5);
@@ -339,6 +337,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
       prob->lsoda_init();
       tfrom = toff;
       offs.erase(offs.begin());
+      
     }
     
     prob->lsoda_init();
@@ -398,7 +397,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
     rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9,  Amt, 
                                                    Time + this->dur(Fn), 
-                                                   Rate,-300, Id);
+                                                   Rate, -300, Id);
     thisi.push_back(evoff);
     
     if(Ss > 0) {
@@ -456,10 +455,9 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
       thisi.push_back(evon);
       
       if(this->infusion()) {
-        rec_ptr evoff = boost::make_shared<datarecord>(Cmt,9, Amt,
+        rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9, Amt,
                                                        ontime + this->dur(Fn),
-                                                       Rate,-300,Id);
-        
+                                                       Rate, -300, Id);
         thisi.push_back(evoff);
         
       }
