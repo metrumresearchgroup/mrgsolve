@@ -548,12 +548,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } // end is_event & from data
       
       if(this_rec->evid()==1 && this_rec->rate() > 0) {
-        rec_ptr evoff = boost::make_shared<datarecord>(*this_rec);
-        evoff->evid(9);
-        evoff->time(evoff->time()+evoff->dur(prob->fbio(abs(this_rec->cmt())-1)));
-        evoff->pos(-300);
-        evoff->output(false);
-        evoff->from_data(false);
+        rec_ptr evoff = boost::make_shared<datarecord>(this_rec->cmt(), 
+                                                       9, 
+                                                       this_rec->amt(), 
+                                                       this_rec->time()+this_rec->dur(prob->fbio(abs(this_rec->cmt())-1)),
+                                                       this_rec->rate(), 
+                                                       -300, 
+                                                       this_rec->id());
         a[i].push_back(evoff);
         std::sort(a[i].begin()+j,a[i].end(),CompRec()); 
       }
