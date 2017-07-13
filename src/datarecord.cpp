@@ -92,7 +92,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
   
   Output = false;
   Armed = true;
-  Fromdata=false;
+  Fromdata = false;
 }
 
 
@@ -221,7 +221,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
     for(int i = 0; i < state_incoming.size(); i++) {
-       state_incoming[i] = prob->y(i);
+      state_incoming[i] = prob->y(i);
     }
   }
   
@@ -278,7 +278,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
   }
   
   prob->lsoda_init();
-
+  
 }
 
 
@@ -393,36 +393,34 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   if(Fn==0) return;
   
   // End if infusion
-  if(Rate > 0) {
+  if(Rate > 0 && Ss > 0) {
     
-    rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9,  Amt, 
-                                                   Time + this->dur(Fn), 
-                                                   Rate, -300, Id);
-    thisi.push_back(evoff);
+    //rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9,  Amt, 
+    //                                               Time + this->dur(Fn), 
+    //                                               Rate, -300, Id);
+    //thisi.push_back(evoff);
     
-    if(Ss > 0) {
+    double duration = this->dur(Fn);
+    
+    int ninf_ss = floor(duration/this->ii());
+    
+    double first_off = duration - double(ninf_ss)*Ii + Time;
+    
+    if(first_off == Time) {
+      first_off = duration - Ii +  Time;
+      --ninf_ss;
+    }
+    
+    for(int k=0; k < ninf_ss; ++k) {
       
-      double duration = this->dur(Fn);
+      double offtime = first_off + double(k)*double(Ii);
       
-      int ninf_ss = floor(duration/this->ii());
+      rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9, Amt, offtime,
+                                                     Rate, -300, Id);
+      thisi.push_back(evoff);
       
-      double first_off = duration - double(ninf_ss)*Ii + Time;
-      
-      if(first_off == Time) {
-        first_off = duration - Ii +  Time;
-        --ninf_ss;
-      }
-      
-      for(int k=0; k < ninf_ss; ++k) {
-        
-        double offtime = first_off+double(k)*double(Ii);
-        
-        rec_ptr evoff = boost::make_shared<datarecord>(Cmt,9, Amt,offtime,
-                                                       Rate,-300, Id);
-        thisi.push_back(evoff);
-        
-      } // Done creating off infusions for end of steady_infusion
-    } // end if(ss)
+    } // Done creating off infusions for end of steady_infusion
+    // end if(ss)
   } // end rate>0
   
   
@@ -448,22 +446,23 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
       
       if(ontime > maxtime) break;
       
-      rec_ptr evon = boost::make_shared<datarecord>(Cmt,this_evid,Amt,ontime,
-                                                    Rate,nextpos,Id);
+      rec_ptr evon = boost::make_shared<datarecord>(Cmt, this_evid, Amt, 
+                                                    ontime, Rate, nextpos, 
+                                                    Id);
       evon->fn(Fn);
-
+      
       thisi.push_back(evon);
       
-      if(this->infusion()) {
-        rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9, Amt,
-                                                       ontime + this->dur(Fn),
-                                                       Rate, -300, Id);
-        thisi.push_back(evoff);
-        
-      }
+      // if(this->infusion()) {
+      //   rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9, Amt,
+      //                                                  ontime + this->dur(Fn),
+      //                                                  Rate, -300, Id);
+      //   thisi.push_back(evoff);
+      //   
+      // }
     }
   } // end addl
-}
+}  
 
 void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
   

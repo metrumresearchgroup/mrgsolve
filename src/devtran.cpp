@@ -545,6 +545,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         }
+      } // end is_event & from data
+      
+      if(this_rec->evid()==1 && this_rec->rate() > 0) {
+        rec_ptr evoff = boost::make_shared<datarecord>(*this_rec);
+        evoff->evid(9);
+        evoff->time(evoff->time()+evoff->dur(prob->fbio(abs(this_rec->cmt())-1)));
+        evoff->pos(-300);
+        evoff->output(false);
+        evoff->from_data(false);
+        a[i].push_back(evoff);
+        std::sort(a[i].begin()+j,a[i].end(),CompRec()); 
       }
       
       prob->advance(tfrom,tto);
