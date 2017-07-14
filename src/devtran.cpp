@@ -518,9 +518,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // If we have a dose wit lag time
         if((prob->alag(this_rec->cmt()) > mindt)) {
           
+          double tdiff = 0;
+          
           if(this_rec->ss()==1) {
             this_rec->implement(prob);
-            double tdiff = this_rec->ii() - prob->alag(this_rec->cmt());
+            tdiff = this_rec->ii() - prob->alag(this_rec->cmt());
             prob->advance(this_rec->time(),tdiff);
             prob->lsoda_init();
           }
@@ -548,10 +550,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } // end is_event & from data
       
       if(this_rec->evid()==1 && this_rec->rate() > 0) {
+        
+        double toff = this_rec->time() + this_rec->dur(prob->fbio(abs(this_rec->cmt())-1));
+        
         rec_ptr evoff = boost::make_shared<datarecord>(this_rec->cmt(), 
                                                        9, 
                                                        this_rec->amt(), 
-                                                       this_rec->time()+this_rec->dur(prob->fbio(abs(this_rec->cmt())-1)),
+                                                       toff,
                                                        this_rec->rate(), 
                                                        -300, 
                                                        this_rec->id());
