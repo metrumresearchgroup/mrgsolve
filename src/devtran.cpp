@@ -518,15 +518,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // If we have a dose wit lag time
         if((prob->alag(this_rec->cmt()) > mindt)) {
           
-          double tdiff = 0;
-          
-          if(this_rec->ss()==1) {
-            this_rec->implement(prob);
-            tdiff = this_rec->ii() - prob->alag(this_rec->cmt());
-            prob->advance(this_rec->time(),tdiff);
-            prob->lsoda_init();
-          }
-          
           rec_ptr newev = boost::make_shared<datarecord>(*this_rec);
           newev->pos(__ALAG_POS);
           newev->phantom_rec();
