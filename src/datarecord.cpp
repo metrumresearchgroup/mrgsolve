@@ -48,7 +48,6 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Ss = 0;
   Addl = 0;
   Id = 1;
-  //Fn = 0;
   Fromdata=false;
   Armed = false;
 }
@@ -65,7 +64,6 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Rate = 0;
   Ii = 0;
   Ss = 0;
-  //Fn = 0;
   Addl = 0;
   Output = true;
   Armed = false;
@@ -84,12 +82,9 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
   Evid = evid_;
   Amt = amt_;
   Rate = rate_;
-  
   Addl = 0;
   Ii = 0;
   Ss = 0;
-  //Fn = 1;
-  
   Output = false;
   Armed = true;
   Fromdata = false;
@@ -112,8 +107,6 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_,
   Addl = 0;
   Ii = 0;
   Ss = 0;
-  //Fn = 1;
-  
   Output = false;
   Armed = true;
   Fromdata = false;
@@ -146,7 +139,7 @@ void datarecord::implement(odeproblem* prob) {
   
   if(this->infusion()) evid = 5;
   
-  int eq_n = this->cmtn();//std::abs(Cmt)-1;
+  int eq_n = this->cmtn();
   
   double Fn = prob->fbio(eq_n);
   
@@ -160,21 +153,19 @@ void datarecord::implement(odeproblem* prob) {
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
-    //prob->fbio(eq_n, Fn);
     prob->y_add(eq_n, Amt * Fn);
     break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     if(Fn == 0) break;
-    //prob->fbio(eq_n, Fn);
     prob->rate_add(eq_n,Rate);
     break;
   case 9: // Turn infusion off event record
-    //if(!prob->is_on(eq_n)) break;
+    if(!prob->is_on(eq_n)) break;
     prob->rate_rm(eq_n, Rate);
     break;
   case 2: // Other type event record:
-    if(Cmt > 0) { // trn the compartment on
+    if(Cmt > 0) { 
       prob->on(eq_n);
     }
     if(Cmt < 0) {
@@ -233,8 +224,8 @@ void datarecord::steady_bolus(odeproblem *prob) {
   int i;
   int j;
   
-  std::vector<double> res(prob->neq(), 1E-9);
-  std::vector<double> last(prob->neq(),1E-9);
+  std::vector<double> res(prob->neq(),  1E-9);
+  std::vector<double> last(prob->neq(), 1E-9);
   
   double this_sum = 0.0;
   double last_sum = 1E-6;
@@ -243,8 +234,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
-  //evon->fn(Fn);
-  
+
   for(i=1; i < N_SS; ++i) {
     
     tfrom = double(i-1)*Ii;
@@ -267,19 +257,15 @@ void datarecord::steady_bolus(odeproblem *prob) {
         break;
       }
     }
-    
     tfrom = tto;
     last_sum = this_sum;
   }
-  
   if(Ss == 2) {
     for(int i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
     }
   }
-  
   prob->lsoda_init();
-  
 }
 
 
