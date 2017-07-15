@@ -90,12 +90,6 @@ typedef void main_deriv_func(int* neq, double* t,
 #define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1]) ///< rate constants for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4]) ///< rate constants for <code>$PKMODEL</code>
 
-
-// deriv_func*  as_deriv_func( SEXP derivs);
-// init_func*   as_init_func(  SEXP inits);
-// table_func*  as_table_func( SEXP table);
-// config_func* as_config_func(SEXP config);
-
 extern "C"{DL_FUNC tofunptr(SEXP a);}
 
 main_deriv_func main_derivs;
@@ -158,6 +152,7 @@ public:
   void rate_add(unsigned int pos, const double& value);
   void rate_rm(unsigned int pos,  const double& value);
   void rate_bump(const unsigned int pos, const double& value);
+  void rate_main(rec_ptr rec);
   void rate_reset();
   
   void dur(unsigned int pos, double value) {D[pos] = value;}

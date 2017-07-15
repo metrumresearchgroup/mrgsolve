@@ -160,17 +160,17 @@ void datarecord::implement(odeproblem* prob) {
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
-    prob->fbio(eq_n, Fn);
+    //prob->fbio(eq_n, Fn);
     prob->y_add(eq_n, Amt * Fn);
     break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     if(Fn == 0) break;
-    prob->fbio(eq_n, Fn);
+    //prob->fbio(eq_n, Fn);
     prob->rate_add(eq_n,Rate);
     break;
   case 9: // Turn infusion off event record
-    if(!prob->is_on(eq_n)) break;
+    //if(!prob->is_on(eq_n)) break;
     prob->rate_rm(eq_n, Rate);
     break;
   case 2: // Other type event record:
@@ -405,20 +405,17 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     double first_off = duration - double(ninf_ss)*Ii + Time;
     
     if(first_off == Time) {
-      first_off = duration - Ii +  Time;
+      first_off = duration - Ii + Time;
       --ninf_ss;
     }
     
     for(int k=0; k < ninf_ss; ++k) {
-      
       double offtime = first_off + double(k)*double(Ii);
-      
       rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
       thisi.push_back(evoff);
-      
-    } // Done creating off infusions for end of steady_infusion
-    // end if(ss)
-  } // end rate>0
+    } 
+    
+  } // end if ss
   
   
   if(Addl > 0) {
@@ -437,14 +434,13 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
     double ontime = 0;
     
-    for(unsigned int k=1; k <= Addl; ++k) {
+    for(unsigned int k=1; k<=Addl; ++k) {
       
       ontime = Time + Ii*double(k);
       
       if(ontime > maxtime) break;
       
-      rec_ptr evon = NEWREC(Cmt, this_evid, Amt,ontime, Rate, nextpos,Id);
-      //evon->fn(Fn);
+      rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
       
       thisi.push_back(evon);
     }

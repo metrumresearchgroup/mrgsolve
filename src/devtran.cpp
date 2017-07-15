@@ -399,9 +399,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     for(k=0; k < neta; ++k) prob->eta(k,eta(i,k));
     for(k=0; k < neps; ++k) prob->eps(k,eps(crow,k));
-    
-    //dat.reload_parameters(inpar,prob);
-    
+
     idat.copy_parameters(this_idata_row,prob);
     
     if(a[i][0]->from_data()) {
@@ -485,74 +483,61 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->init_call_record(tto);
       }  
       
-      // A dosing record from the data
-      if(this_rec->is_event_data()) {
+      // Some non-observation event happening
+      if(this_rec->is_dose()) {
         
         this_cmtn = this_rec->cmtn();
         
         Fn = prob->fbio(this_cmtn);
-        
         if(Fn < 0) {
-          CRUMP("mrgsolve: Bioavailability fraction is less than zero.");
+          CRUMP("mrgsolve: bioavailability fraction is less than zero.");
         }
         
-        //this_rec->fn(Fn);
-        
-        if(this_rec->rate() < 0) {
-          if(this_rec->rate() == -1) {
-            if(prob->rate(this_cmtn) <= 0) {
-              Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
-            }
-            this_rec->rate(prob->rate(this_cmtn));
-          }
-          
-          if(this_rec->rate() == -2) {
-            if(prob->dur(this_cmtn) <= 0) {
-              Rcpp::stop("Invalid infusion setting: duration (D_CMT).");
-            }
-            this_rec->rate(this_rec->amt() * Fn / prob->dur(this_cmtn));
-          }
-        }
-        
-        // If we have a dose with lag time
-        if((prob->alag(this_cmtn) > mindt)) {
-          
-          rec_ptr newev = NEWREC(*this_rec);
-          newev->pos(__ALAG_POS);
-          newev->phantom_rec();
-          newev->time(this_rec->time() + prob->alag(this_cmtn));
-          //newev->fn(Fn);
-          
-          this_rec->unarm();
-          
-          reclist::iterator it = a[i].begin()+j;
-          advance(it,1);
-          a[i].insert(it,newev);
-          newev->schedule(a[i], maxtime, addl_ev_first, Fn);
-          std::sort(a[i].begin()+j,a[i].end(),CompRec());
-          
-        } else {
-          this_rec->schedule(a[i], maxtime, addl_ev_first, Fn); 
-          if(this_rec->needs_sorting()) {
-            std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
-          }
-        }
-      } // end is_event & from data
+        bool sort_recs = false;
+        unsigned int sort_offset = 0;
       
-      // Schedule infusion off records, regardless of where it came from
-      if(this_rec->int_infusion()) {
+        if(this_rec->from_data()) {
+          if(this_rec->rate() < 0) {
+            prob->rate_main(this_rec);
+          }
+          if(prob->alag(this_cmtn) > mindt) {
+            if(this_rec->ss() > 0) {
+              Rcpp::stop("ss dosing records with lag time are not currently supported");
+            }
+            rec_ptr newev = NEWREC(*this_rec);
+            newev->pos(__ALAG_POS);
+            newev->phantom_rec();
+            newev->time(this_rec->time() + prob->alag(this_cmtn));
+            this_rec->unarm();
+            reclist::iterator it = a[i].begin()+j;
+            advance(it,1);
+            a[i].insert(it,newev);
+            newev->schedule(a[i], maxtime, addl_ev_first, Fn);
+            sort_recs = true;
+            sort_offset = 0;
+          } else {
+            this_rec->schedule(a[i], maxtime, addl_ev_first, Fn); 
+            sort_recs = this_rec->needs_sorting();
+            sort_offset = 1;
+          }
+        }
         
-        double toff = this_rec->time() + this_rec->dur(prob->fbio(this_cmtn));
+        if(this_rec->int_infusion()) {
+          rec_ptr evoff = NEWREC(this_rec->cmt(), 
+                                 9, 
+                                 this_rec->amt(), 
+                                 this_rec->time() + this_rec->dur(Fn),
+                                 this_rec->rate(), 
+                                 -300, 
+                                 this_rec->id());
+          a[i].push_back(evoff);
+          sort_recs = true;
+        }
         
-        rec_ptr evoff = NEWREC(this_rec->cmt(), 
-                               9, 
-                               this_rec->amt(), 
-                               toff,
-                               this_rec->rate(), 
-                               -300, 
-                               this_rec->id());
-        a[i].push_back(evoff);
-        std::sort(a[i].begin()+j,a[i].end(),CompRec()); 
+        // SORT
+        if(sort_recs) {
+          std::sort(a[i].begin()+sort_offset,a[i].end(),CompRec()); 
+        }
       }
       
       prob->advance(tfrom,tto);
@@ -564,45 +549,36 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob->table_call();
       
       if(this_rec->output()) {
-        
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
         if(tad) {
           ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
-        
         k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
           ans(crow,k+capture_start) = prob->capture(capture[i+1]);
           ++k;
         }
-        
         for(k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob->y(request[k]);
         }
         ++crow; 
       } 
-      
       if(this_rec->evid()==2) {
         this_rec->implement(prob);
       }
-      
       tfrom = tto;
     }
   }
-  
   if(digits > 0) {
     for(int i=req_start; i < ans.ncol(); ++i) {
       ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
     }
   }
-  
   if((tscale != 1) && (tscale >= 0)) {
     ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   }
-  
   delete prob;
-  
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
 }

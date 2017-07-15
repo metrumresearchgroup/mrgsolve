@@ -88,9 +88,6 @@ public:
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
   
-  //void fn(double value){Fn = value;}
-  //double fn(){return Fn;}
-  
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, double Fn);
   void implement(odeproblem* prob);
   void steady_infusion(odeproblem* prob);
@@ -99,10 +96,11 @@ public:
   bool infusion(){return (Evid==1) && (Rate > 0);}
   bool int_infusion(){return (Evid==1) && (Rate > 0) && (Amt > 0);}
   bool ss_int_infusion(){return (Evid==1) && (Rate > 0) && (Amt > 0) && (Ss > 0);}
-  bool const_infusion(){return (Evid==1) & (Rate > 0) && (Amt == 0);}
+  bool const_infusion(){return (Evid==1) && (Rate > 0) && (Amt == 0);}
   bool is_event() {return (Evid != 0) && (Evid != 2) ;}
-  bool is_event_data() {return (Evid !=0) && (Evid != 2) && Fromdata;}
-  bool needs_sorting(){return ((Addl > 0) || (Rate > 0) || (Ss == 1));}
+  bool is_dose(){return Evid==1;}
+  bool is_event_data() {return (Evid != 0) && (Evid != 2) && Fromdata;}
+  bool needs_sorting(){return ((Addl > 0) || (Ss == 1));}
   
   bool unarmed() {return !Armed;}
   void arm() {Armed=true;}
