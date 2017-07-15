@@ -48,7 +48,6 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Ss = 0;
   Addl = 0;
   Id = 1;
-  Fn = 0;
   Fromdata=false;
   Armed = false;
 }
@@ -65,7 +64,6 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Rate = 0;
   Ii = 0;
   Ss = 0;
-  Fn = 0;
   Addl = 0;
   Output = true;
   Armed = false;
@@ -75,8 +73,8 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
 // Data set event
 // Schedule events
 //   Need to make sure that scheduled events are output false, from data false
-datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_,
-                       int pos_, double id_) {
+datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, 
+                       double rate_, int pos_, double id_) {
   Time = time_;
   Cmt  = cmt_;
   Pos = pos_;
@@ -84,22 +82,20 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, dou
   Evid = evid_;
   Amt = amt_;
   Rate = rate_;
-  
   Addl = 0;
   Ii = 0;
   Ss = 0;
-  Fn = 1;
-  
   Output = false;
   Armed = true;
-  Fromdata=false;
+  Fromdata = false;
 }
 
 
 
 // Short event
 // cmt evid amt time rate
-datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_) {
+datarecord::datarecord(short int cmt_, int evid_, double amt_, 
+                       double time_, double rate_) {
   
   Cmt  = cmt_;
   Evid = evid_;
@@ -111,8 +107,6 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, dou
   Addl = 0;
   Ii = 0;
   Ss = 0;
-  Fn = 1;
-  
   Output = false;
   Armed = true;
   Fromdata = false;
@@ -137,7 +131,7 @@ double datarecord::dur(double b) {
   return(b*Amt/Rate);
 }
 
-void datarecord::implement(odeproblem *prob) {
+void datarecord::implement(odeproblem* prob) {
   
   if(Evid==0 || (!Armed)) return;
   
@@ -145,7 +139,9 @@ void datarecord::implement(odeproblem *prob) {
   
   if(this->infusion()) evid = 5;
   
-  int eq_n = this->cmtn();//std::abs(Cmt)-1;
+  int eq_n = this->cmtn();
+  
+  double Fn = prob->fbio(eq_n);
   
   // Check for steady state records:
   if(Ss > 0) {
@@ -157,13 +153,11 @@ void datarecord::implement(odeproblem *prob) {
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
-    prob->fbio(eq_n, Fn);
     prob->y_add(eq_n, Amt * Fn);
     break;
   case 5:  // Turn infusion on event record
-    if(!prob->is_on(eq_n)) Rcpp::stop("Attemped infusion start for a compartment that is off");
+    if(!prob->is_on(eq_n)) prob->on(eq_n);
     if(Fn == 0) break;
-    prob->fbio(eq_n, Fn);
     prob->rate_add(eq_n,Rate);
     break;
   case 9: // Turn infusion off event record
@@ -171,7 +165,7 @@ void datarecord::implement(odeproblem *prob) {
     prob->rate_rm(eq_n, Rate);
     break;
   case 2: // Other type event record:
-    if(Cmt > 0) { // trn the compartment on
+    if(Cmt > 0) { 
       prob->on(eq_n);
     }
     if(Cmt < 0) {
@@ -184,10 +178,8 @@ void datarecord::implement(odeproblem *prob) {
       prob->y(i,0.0);
       prob->on(i);
       prob->rate0(i,0.0);
-      
     }
     {
-      //double tm = Time;
       prob->newind(1);
       prob->init_call(Time);
     }
@@ -201,8 +193,6 @@ void datarecord::implement(odeproblem *prob) {
       prob->on(i);
       prob->rate0(i,0.0);
     } {
-      //double tm = this->time();
-      //prob->newind(2);
       prob->init_call(Time);
       if(Rate > 0) {
         this->evid(5);
@@ -223,7 +213,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
     for(int i = 0; i < state_incoming.size(); i++) {
-       state_incoming[i] = prob->y(i);
+      state_incoming[i] = prob->y(i);
     }
   }
   
@@ -234,8 +224,8 @@ void datarecord::steady_bolus(odeproblem *prob) {
   int i;
   int j;
   
-  std::vector<double> res(prob->neq(), 1E-9);
-  std::vector<double> last(prob->neq(),1E-9);
+  std::vector<double> res(prob->neq(),  1E-9);
+  std::vector<double> last(prob->neq(), 1E-9);
   
   double this_sum = 0.0;
   double last_sum = 1E-6;
@@ -243,9 +233,8 @@ void datarecord::steady_bolus(odeproblem *prob) {
   
   prob->lsoda_init();
   
-  rec_ptr evon = boost::make_shared<datarecord>(Cmt, 1, Amt, Time, Rate);
-  evon->fn(Fn);
-  
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
+
   for(i=1; i < N_SS; ++i) {
     
     tfrom = double(i-1)*Ii;
@@ -268,19 +257,15 @@ void datarecord::steady_bolus(odeproblem *prob) {
         break;
       }
     }
-    
     tfrom = tto;
     last_sum = this_sum;
   }
-  
   if(Ss == 2) {
     for(int i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
     }
   }
-  
   prob->lsoda_init();
-
 }
 
 
@@ -294,6 +279,8 @@ void datarecord::steady_infusion(odeproblem *prob) {
       state_incoming[i] = prob->y(i);
     }
   }
+  
+  double Fn = prob->fbio(this->cmtn());
   
   double duration = this->dur(Fn);
   
@@ -314,7 +301,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
   prob->rate_reset();
   
   // We only need one of these; it gets updated and re-used immediately
-  rec_ptr evon = boost::make_shared<datarecord>(Cmt, 1, Amt, Time, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
@@ -324,7 +311,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
     
     // Create an event to turn the infusion off and push onto offs vector
     // Keep on creating these
-    rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9, Amt, toff, Rate);
+    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
     offs.push_back(evoff);
     
     // The next time an infusion will start
@@ -339,6 +326,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
       prob->lsoda_init();
       tfrom = toff;
       offs.erase(offs.begin());
+      
     }
     
     prob->lsoda_init();
@@ -387,44 +375,33 @@ void datarecord::steady_infusion(odeproblem *prob) {
  * 
  */
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
-                          bool put_ev_first) {
+                          bool put_ev_first, double Fn) {
   
   int nextpos = put_ev_first ? -600 : (thisi.size() + 10);
   
   if(Fn==0) return;
   
-  // End if infusion
-  if(Rate > 0) {
+  // Steady state intermittent infusion
+  if(this->ss_int_infusion()) {
     
-    rec_ptr evoff = boost::make_shared<datarecord>(Cmt, 9,  Amt, 
-                                                   Time + this->dur(Fn), 
-                                                   Rate,-300, Id);
-    thisi.push_back(evoff);
+    double duration = this->dur(Fn);
     
-    if(Ss > 0) {
-      
-      double duration = this->dur(Fn);
-      
-      int ninf_ss = floor(duration/this->ii());
-      
-      double first_off = duration - double(ninf_ss)*Ii + Time;
-      
-      if(first_off == Time) {
-        first_off = duration - Ii +  Time;
-        --ninf_ss;
-      }
-      
-      for(int k=0; k < ninf_ss; ++k) {
-        
-        double offtime = first_off+double(k)*double(Ii);
-        
-        rec_ptr evoff = boost::make_shared<datarecord>(Cmt,9, Amt,offtime,
-                                                       Rate,-300, Id);
-        thisi.push_back(evoff);
-        
-      } // Done creating off infusions for end of steady_infusion
-    } // end if(ss)
-  } // end rate>0
+    int ninf_ss = floor(duration/this->ii());
+    
+    double first_off = duration - double(ninf_ss)*Ii + Time;
+    
+    if(first_off == Time) {
+      first_off = duration - Ii + Time;
+      --ninf_ss;
+    }
+    
+    for(int k=0; k < ninf_ss; ++k) {
+      double offtime = first_off + double(k)*double(Ii);
+      rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
+      thisi.push_back(evoff);
+    } 
+    
+  } // end if ss
   
   
   if(Addl > 0) {
@@ -435,7 +412,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
       this_evid = Rate > 0 ? 5 : 1;
     }
     
-    if(this->infusion()) {
+    if(this->int_infusion()) {
       thisi.reserve(thisi.size() + 2*Addl);  
     } else {
       thisi.reserve(thisi.size() + Addl); 
@@ -443,29 +420,18 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
     double ontime = 0;
     
-    for(unsigned int k=1; k <= Addl; ++k) {
+    for(unsigned int k=1; k<=Addl; ++k) {
       
       ontime = Time + Ii*double(k);
       
       if(ontime > maxtime) break;
       
-      rec_ptr evon = boost::make_shared<datarecord>(Cmt,this_evid,Amt,ontime,
-                                                    Rate,nextpos,Id);
-      evon->fn(Fn);
-
-      thisi.push_back(evon);
+      rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
       
-      if(this->infusion()) {
-        rec_ptr evoff = boost::make_shared<datarecord>(Cmt,9, Amt,
-                                                       ontime + this->dur(Fn),
-                                                       Rate,-300,Id);
-        
-        thisi.push_back(evoff);
-        
-      }
+      thisi.push_back(evon);
     }
   } // end addl
-}
+}  
 
 void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
   
@@ -505,7 +471,7 @@ void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
       break;
     }
     
-    rec_ptr obs = boost::make_shared<datarecord>(100,b[i],0,-100,0);
+    rec_ptr obs = NEWREC(100,b[i],0,-100,0);
     obs->output(false);
     obs->from_data(false);
     thisi.push_back(obs);

@@ -194,7 +194,6 @@ void dataobject::copy_inits(int this_row, odeproblem *prob) {
   }
 }
 
-
 void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM, 
                                    odeproblem *prob) {
   size_t n = par_to.size();
@@ -203,13 +202,11 @@ void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM,
   }
 }
 
-
-
 void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
                              bool obsonly, bool debug) {
   
-  // only look here for events or observations if there is more than one column:
+  // only look here for events or observation if there is more than one column:
   // size_t h=0; warnings
   int j=0;
   int this_cmt;
@@ -282,6 +279,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ev->from_data(true);
       if(!obsonly) ev->output(true);
       
+      
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
@@ -294,20 +292,16 @@ void dataobject::get_records(recstack& a, int NID, int neq,
           Rcpp::stop("Found dosing record with ss==1 and ii <= 0.");
         }
       }
-      
       a[h].push_back(ev);
-      
     }
   }
 }
-
 
 void dataobject::get_ids(uidtype* ids) {
   for(int i = 0; i < Data.nrow(); ++i) {
     ids->push_back(Data(i,Idcol)); 
   }
 }
-
 
 void dataobject::check_idcol(dataobject& idat) {
   

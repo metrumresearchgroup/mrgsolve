@@ -56,20 +56,20 @@ test_that("inventory errors when missing required params", {
 
 })
 
-test_that("inventory warns when missing required params but not checking strictly", {
-  expect_warning(inventory(mod, missing_obj, 
+# test_that("inventory warns when missing required params but not checking strictly", {
+#   expect_warning(inventory(mod, missing_obj, 
+#                            dplyr::everything(), 
+#                            .strict = FALSE))
+# 
+#   expect_s4_class(inventory(mod, missing_obj, 
+#                             dplyr::everything(), 
+#                             .strict = FALSE), "mrgmod")
+#   expect_warning(inventory(mod, missing_obj, 
+#                            OCC2, 
+#                            .strict = FALSE))
+# 
+#   expect_s4_class(inventory(mod, missing_obj, 
+#                             OCC2, 
+#                             .strict = FALSE), "mrgmod")
+# })
 
-                           dplyr::everything(), 
-                           .strict = FALSE))
-
-  expect_s4_class(inventory(mod, missing_obj, 
-                            dplyr::everything(), 
-                            .strict = FALSE), "mrgmod")
-  expect_warning(inventory(mod, missing_obj, 
-                           OCC2, 
-                           .strict = FALSE))
-
-  expect_s4_class(inventory(mod, missing_obj, 
-                            OCC2, 
-                            .strict = FALSE), "mrgmod")
-})
