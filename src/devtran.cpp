@@ -241,9 +241,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       z.reserve(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) { 
-        rec_ptr obs = boost::make_shared<datarecord>(
-          tgrid(j,i),nextpos,true
-        );
+        rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
         z.push_back(obs); 
       }
       designs.push_back(z);
@@ -270,7 +268,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       
       for(h=0; h < m; h++) {
-        rec_ptr obs = boost::make_shared<datarecord>(ptimes[h],nextpos,false);
+        rec_ptr obs = NEWREC(ptimes[h],nextpos,false);
         it->push_back(obs);
       }
       
@@ -359,11 +357,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   double tto, tfrom;
   crow = 0;
-  int this_cmt = 0;
+  int this_cmtn = 0;
   double dt = 0;
   double id = 0;
   double maxtime = 0;
-  double biofrac = 1.0;
+  double Fn = 1.0;
   int this_idata_row = 0;
   double told = -1;
   
@@ -487,70 +485,72 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->init_call_record(tto);
       }  
       
-      if((this_rec->is_event()) && (this_rec->from_data())) {
+      // A dosing record from the data
+      if(this_rec->is_event_data()) {
         
-        biofrac = prob->fbio(abs(this_rec->cmt())-1);
+        this_cmtn = this_rec->cmtn();
         
-        if(biofrac < 0) {
+        Fn = prob->fbio(this_cmtn);
+        
+        if(Fn < 0) {
           CRUMP("mrgsolve: Bioavailability fraction is less than zero.");
         }
         
-        this_rec->fn(biofrac);
+        //this_rec->fn(Fn);
         
         if(this_rec->rate() < 0) {
           if(this_rec->rate() == -1) {
-            this_cmt = this_rec->cmt()-1;
-            if(prob->rate(this_cmt) <= 0) {
+            if(prob->rate(this_cmtn) <= 0) {
               Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
             }
-            this_rec->rate(prob->rate(this_cmt));
+            this_rec->rate(prob->rate(this_cmtn));
           }
           
           if(this_rec->rate() == -2) {
-            this_cmt = this_rec->cmt()-1;
-            if(prob->dur(this_cmt) <= 0) {
+            if(prob->dur(this_cmtn) <= 0) {
               Rcpp::stop("Invalid infusion setting: duration (D_CMT).");
             }
-            this_rec->rate(this_rec->amt() * biofrac / prob->dur(this_cmt));
+            this_rec->rate(this_rec->amt() * Fn / prob->dur(this_cmtn));
           }
         }
         
-        // If we have a dose wit lag time
-        if((prob->alag(this_rec->cmt()) > mindt)) {
+        // If we have a dose with lag time
+        if((prob->alag(this_cmtn) > mindt)) {
           
-          rec_ptr newev = boost::make_shared<datarecord>(*this_rec);
+          rec_ptr newev = NEWREC(*this_rec);
           newev->pos(__ALAG_POS);
           newev->phantom_rec();
-          newev->time(this_rec->time() + prob->alag(this_rec->cmt()));
-          newev->fn(biofrac);
+          newev->time(this_rec->time() + prob->alag(this_cmtn));
+          //newev->fn(Fn);
           
           this_rec->unarm();
           
           reclist::iterator it = a[i].begin()+j;
           advance(it,1);
           a[i].insert(it,newev);
-          newev->schedule(a[i], maxtime, addl_ev_first);
+          newev->schedule(a[i], maxtime, addl_ev_first, Fn);
           std::sort(a[i].begin()+j,a[i].end(),CompRec());
           
         } else {
-          this_rec->schedule(a[i], maxtime, addl_ev_first); 
+          this_rec->schedule(a[i], maxtime, addl_ev_first, Fn); 
           if(this_rec->needs_sorting()) {
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         }
       } // end is_event & from data
       
-      if(this_rec->evid()==1 && this_rec->rate() > 0) {
+      // Schedule infusion off records, regardless of where it came from
+      if(this_rec->int_infusion()) {
         
-        double toff = this_rec->time() + this_rec->dur(prob->fbio(abs(this_rec->cmt())-1));
+        double toff = this_rec->time() + this_rec->dur(prob->fbio(this_cmtn));
         
-        rec_ptr evoff = boost::make_shared<datarecord>(this_rec->cmt(), 
-                                                       9, 
-                                                       this_rec->amt(), 
-                                                       toff,
-                                                       this_rec->rate(), 
-                                                       -300, 
-                                                       this_rec->id());
+        rec_ptr evoff = NEWREC(this_rec->cmt(), 
+                               9, 
+                               this_rec->amt(), 
+                               toff,
+                               this_rec->rate(), 
+                               -300, 
+                               this_rec->id());
         a[i].push_back(evoff);
         std::sort(a[i].begin()+j,a[i].end(),CompRec()); 
       }

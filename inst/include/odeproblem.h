@@ -166,7 +166,7 @@ public:
   void fbio(unsigned int pos, double value) {F.at(pos) = value;}
   double fbio(unsigned int pos) {return F.at(pos);}
   
-  double alag(int cmt){return Alag.at(abs(cmt)-1);}
+  double alag(int cmt){return Alag.at(cmt);}
   
   void reset_newid(const double id_);
   

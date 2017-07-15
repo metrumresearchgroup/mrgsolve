@@ -279,6 +279,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ev->from_data(true);
       if(!obsonly) ev->output(true);
       
+      
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
