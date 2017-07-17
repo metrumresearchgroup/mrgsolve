@@ -33,9 +33,9 @@ Imports:
     dplyr (>= 0.5.0),
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10),
-    RcppArmadillo (>= 0.5.600.2.0),
+    RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 1.2)
-LinkingTo: Rcpp (>= 0.12.1), RcppArmadillo (>= 0.5.600.2.0), BH
+LinkingTo: Rcpp (>= 0.12.12), RcppArmadillo (>= 0.7.900.2.0), BH (>= 1.62.0-1)
 Suggests:
     lattice,
     testthat,
