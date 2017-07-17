@@ -61,7 +61,7 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
   
   cap <- c(length(x@capture),seq_along(x@capture)-1)
   
-  out <- .Call(mrgsolve_QUICKSIM, 
+  out <- .Call(`_mrgsolve_QUICKSIM`, 
                PACKAGE = 'mrgsolve',
                parin(x),
                as.numeric(param(x)),

@@ -43,7 +43,7 @@
 #include "RcppInclude.h"
 
 
-#define CRUMP(a) Rcpp::stop(a)
+#define CRUMP(a) throw Rcpp::exception(a,false)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
@@ -190,7 +190,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       tofd.resize(a.size(),0.0); 
     }
     if(tofd.size() != a.size()) {
-      Rcpp::stop("There was a problem finding time of first dose.");
+      CRUMP("There was a problem finding time of first dose.");
     }
   }
   
@@ -213,7 +213,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     if(tgridi.size() < NID) CRUMP("Length of design indicator less than NID.");
     
     if(max(tgridi) >= tgrid.ncol()) {
-      Rcpp::stop("Insufficient number of designs specified for this problem.");
+      CRUMP("Insufficient number of designs specified for this problem.");
     }
     
     // Number of non-na times in each design
@@ -432,7 +432,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(prob->systemoff()) {
         unsigned short int status = prob->systemoff();
-        if(status==9) Rcpp::stop("The problem was stopped at user request.");
+        if(status==9) CRUMP("The problem was stopped at user request.");
         if(this_rec->output()) {
           if(status==1) {
             ans(crow,0) = this_rec->id();
@@ -502,7 +502,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
           if(prob->alag(this_cmtn) > mindt) {
             if(this_rec->ss() > 0) {
-              Rcpp::stop("ss dosing records with lag time are not currently supported");
+              CRUMP("ss dosing records with lag time are not currently supported");
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);

@@ -20,16 +20,16 @@
 
 #define CALLDEF(name, n)  {#name, (DL_FUNC) &name, n}
 
-RcppExport SEXP mrgsolve_dcorr(SEXP);
-RcppExport SEXP mrgsolve_get_tokens(SEXP);
-RcppExport SEXP mrgsolve_MVGAUSS(SEXP,SEXP);
-RcppExport SEXP mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
+RcppExport SEXP _mrgsolve_dcorr(SEXP);
+RcppExport SEXP _mrgsolve_get_tokens(SEXP);
+RcppExport SEXP _mrgsolve_MVGAUSS(SEXP,SEXP);
+RcppExport SEXP _mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
                                  SEXP,SEXP,SEXP);
-RcppExport SEXP mrgsolve_SUPERMATRIX(SEXP,SEXP);
-RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-RcppExport SEXP mrgsolve_QUICKSIM(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
+RcppExport SEXP _mrgsolve_SUPERMATRIX(SEXP,SEXP);
+RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+RcppExport SEXP _mrgsolve_QUICKSIM(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
                        SEXP,SEXP,SEXP);
-RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
+RcppExport SEXP _mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
 
 RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
@@ -37,14 +37,14 @@ RcppExport void _model_housemodel_table__(MRGSOLVE_TABLE_SIGNATURE);
 RcppExport void _model_housemodel_config__(MRGSOLVE_CONFIG_SIGNATURE);
 
 static R_CallMethodDef callEntryPoints[]  = {
-  CALLDEF(mrgsolve_get_tokens,1),
-  CALLDEF(mrgsolve_MVGAUSS,2),
-  CALLDEF(mrgsolve_DEVTRAN,12),
-  CALLDEF(mrgsolve_SUPERMATRIX,2),
-  CALLDEF(mrgsolve_TOUCH_FUNS,7),
-  CALLDEF(mrgsolve_QUICKSIM,11),
-  CALLDEF(mrgsolve_EXPAND_EVENTS,3),
-  CALLDEF(mrgsolve_dcorr,1),
+  CALLDEF(_mrgsolve_get_tokens,1),
+  CALLDEF(_mrgsolve_MVGAUSS,2),
+  CALLDEF(_mrgsolve_DEVTRAN,12),
+  CALLDEF(_mrgsolve_SUPERMATRIX,2),
+  CALLDEF(_mrgsolve_TOUCH_FUNS,7),
+  CALLDEF(_mrgsolve_QUICKSIM,11),
+  CALLDEF(_mrgsolve_EXPAND_EVENTS,3),
+  CALLDEF(_mrgsolve_dcorr,1),
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),

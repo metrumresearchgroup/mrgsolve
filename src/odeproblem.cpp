@@ -224,13 +224,13 @@ void odeproblem::rate_reset() {
 void odeproblem::rate_main(rec_ptr rec) {
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
-      Rcpp::stop("Invalid infusion setting: rate (R_CMT).");
+      throw Rcpp::exception("invalid infusion setting: rate (R_CMT).", false);
     }
     rec->rate(this->rate(rec->cmtn()));
   }
   if(rec->rate() == -2) {
     if(this->dur(rec->cmtn()) <= 0) {
-      Rcpp::stop("Invalid infusion setting: duration (D_CMT).");
+      throw Rcpp::exception("invalid infusion setting: duration (D_CMT).",false);
     }
     rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
   }
