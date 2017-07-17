@@ -30,7 +30,7 @@ Depends:
     methods
 Imports:
     Rcpp (>= 0.12.12),
-    dplyr (>= 0.5.0),
+    dplyr (>= 0.7.1),
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10),
     RcppArmadillo (>= 0.7.900.2.0),
