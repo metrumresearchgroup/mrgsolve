@@ -173,6 +173,114 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
 }
 
 
+
+// Rcpp::NumericMatrix QUICKSIM_DATA(const Rcpp::List& parin,
+//                                   const Rcpp::NumericVector& param,
+//                                   const Rcpp::NumericVector& init,
+//                                   Rcpp::CharacterVector& parnames,
+//                                   Rcpp::IntegerVector& n,
+//                                   Rcpp::NumericMatrix& data,
+//                                   const Rcpp::IntegerVector& req,
+//                                   const Rcpp::IntegerVector& capturei,
+//                                   const Rcpp::List& funs,
+//                                   const Rcpp::IntegerVector& nre) {
+//   
+//   const unsigned int capn = capturei.at(0);
+//   
+//   odeproblem* prob = new odeproblem(param, init, funs, capn);
+//   prob->copy_parin(parin);
+//   prob->neta(nre[0]);
+//   prob->neps(nre[1]);
+//   
+//   const unsigned int NN = n[0];
+//   const unsigned int nreq = req.size();
+//   
+//   Rcpp::NumericMatrix ans(NN,2+nreq+capn);
+//   
+//   // mcol time = data(Rcpp::_,timecol);
+//   // mcol evid = data(Rcpp::_,evidcol);
+//   // mcol amt = data(Rcpp::_,amtcol);
+//   // mcol cmt = data(Rcpp::_,cmtcol);
+//   // mcol rate = data(Rcpp::_,ratecol);
+//   // mcol id = data(Rcpp::_,idcol);
+//     
+//   double tto =0;
+//   double tfrom = data(0,timecol);
+//   const int capstart = 2 + nreq;
+//   int crow = 0;
+//   unsigned int k; 
+//   double ID = data(0,idcol)+1;
+//   bool skip = false;
+//   
+//   size_t drow = data.nrow();
+//   
+//   prob->y_init(init);
+//   prob->config_call();
+//   prob->init_call(tto);
+//   prob->lsoda_init();
+// 
+//   // Simulate each individual
+//   for(size_t i = 0; i < drow; ++i) {
+//     
+//     if(i==0) prob->newind(0);
+//     
+//     if(data(i,idcol) != ID) {
+//       prob->reset_newid(data(i,idcol));
+//       prob->init_call(tto);
+//     }
+//     
+//     tto = data(i,timecol);
+//     
+//     prob->init_call_record(tto);
+//   
+//     skip = false;
+//     
+//     prob->advance(tfrom,tto);
+//     
+//     switch(int(data(i,evidcol))) {
+//     case 0:
+//       break;
+//     case 1: 
+//       skip = true;
+//       if(data(i,ratecol) > 0) {
+//         prob->rate_bump(data(i,cmtcol),data(i,ratecol));
+//       } else {
+//         prob->y_add(data(i,cmtcol),data(i,amtcol));
+//       }
+//       prob->lsoda_init();
+//       break;
+//     case 9: 
+//       prob->rate_bump(data(i,cmtcol),-1.0*data(i,ratecol));
+//       skip = true;
+//       prob->lsoda_init();
+//       break;
+//     default:
+//       break;
+//     }
+//     
+//     prob->table_call();
+//     tfrom = tto;
+//     ID = data(i,idcol);
+//     
+//     if(!skip) {
+//       ans(crow,0) = ID;
+//       ans(crow,1) = data(i,timecol);
+//       for(k = 0; k < nreq;  ++k) {
+//         ans(crow,2+k) = prob->y(req[k]);
+//       }
+//       for(k = 0; k < capn; ++k) {
+//         ans(crow,capstart+k) = prob->capture(capturei[1+k]); 
+//       }
+//       ++crow;
+//     }
+//   }
+//   delete prob;
+//   return ans;
+// }
+
+
+
+
 // Rcpp::NumericMatrix PREDSIM(const Rcpp::List& parin,
 //                             const Rcpp::NumericVector& param,
 //                             const Rcpp::NumericVector& init,
