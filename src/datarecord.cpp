@@ -145,7 +145,7 @@ void datarecord::implement(odeproblem* prob) {
   
   // Check for steady state records:
   if(Ss > 0) {
-    if(Fn==0) Rcpp::stop("Cannot use ss flag when F(n) is zero.");
+    if(Fn==0) throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
     if(Rate == 0) this->steady_bolus(prob);
     if(Rate >  0) this->steady_infusion(prob);
   }

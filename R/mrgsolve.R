@@ -214,7 +214,7 @@ mrgsim <-  function(x,
     ev$ID <- 1
     ev <- valid_data_set(ev,x,x@verbose)
     
-    data <- .Call(mrgsolve_EXPAND_EVENTS,
+    data <- .Call(`_mrgsolve_EXPAND_EVENTS`,
                   match("ID",colnames(ev),0), 
                   numeric_data_matrix(ev), 
                   idata[,"ID"])
@@ -402,7 +402,7 @@ tran_mrgsim <- function(x,
   ## Set the seed:
   if(!is.na(seed)) set.seed(seed)
   
-  out <- .Call(mrgsolve_DEVTRAN,
+  out <- .Call(`_mrgsolve_DEVTRAN`,
                parin,
                param,
                names(param(x)),

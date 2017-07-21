@@ -61,7 +61,7 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
   
   cap <- c(length(x@capture),seq_along(x@capture)-1)
   
-  out <- .Call(mrgsolve_QUICKSIM, 
+  out <- .Call(`_mrgsolve_QUICKSIM`, 
                PACKAGE = 'mrgsolve',
                parin(x),
                as.numeric(param(x)),
@@ -83,11 +83,8 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
 }
 
 
-
-# qsim_data <- function(x,data,req=NULL,tgrid=stime(x)) {
-#   
-#   data <- quick_data(x,data,tgrid)
-#   
+# qsim_data <- function(x,data,req=NULL,stime=NULL) {
+# 
 #   cm <- reqn <-  cmt(x)
 #   if(is.null(req)) {
 #     req <- seq_along(reqn)
@@ -95,33 +92,32 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
 #     req <- match(intersect(req,cm),cm)
 #     reqn <- cm[req]
 #   }
-#   
+# 
 #   cap <- c(length(x@capture),seq_along(x@capture)-1)
-#   
-#   NN <- sum(data[[1]][,3] %in% c(0,2))
-#   
-#   out <- .Call('mrgsolve_QUICKSIM_DATA', 
+# 
+#   NN <- sum(data[,3] %in% c(0,2))
+# 
+#   out <- .Call(`_mrgsolve_QUICKSIM_DATA`,
 #                PACKAGE = 'mrgsolve',
 #                parin(x),
 #                as.numeric(param(x)),
 #                as.numeric(init(x)),
 #                pars(x),
 #                NN,
-#                data.matrix(data[[1]]),
-#                data.matrix(data[[2]]),
+#                data.matrix(data),
 #                as.integer(req-1),
 #                cap,
 #                pointers(x),
 #                as.integer(c(sum(nrow(omat(x))),
 #                             sum(nrow(smat(x)))))
 #   )
-#   
+# 
 #   dimnames(out) <- list(NULL, c("ID","time", reqn,x@capture))
-#   
+# 
 #   out
-#   
+# 
 # }
-
+# 
 
 as_ev_matrix <- function(ev) {
   n <- ev$addl+1
@@ -146,11 +142,26 @@ as_ev_matrix <- function(ev) {
   m1
 }
 
-obs_matrix <- function(x) {
+# get_rate_off <- function(x) {
+#   dur <- x$amt/x$rate
+#   y <- mutate(x,time=time+dur,rate=-1*rate)
+#   y
+# }
+
+obs_matrix <- function(x,n=1) {
+  if(n > 1) x <- rep(x,times=n)
   matrix(nrow=length(x),ncol=5,
          dimnames=list(NULL,c("time", "cmt","evid", "amt", "rate")),
          c(x,vector("numeric",4*length(x))))
 }
+
+id_obs_matrix <- function(obs,ids) {
+  ids <- unique(ids)
+  mat <- obs_matrix(obs,length(ids))
+  ID <- rep(ids,each=length(obs))
+  cbind(matrix(ID,nrow=length(ID),dimnames=list(NULL,"ID")),mat)
+}
+
 
 ##' Create a matrix of events for simulation.
 ##' 

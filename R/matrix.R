@@ -17,7 +17,7 @@
 
 
 SUPERMATRIX <- function(x,keep_names=FALSE) {
-  x <- .Call(mrgsolve_SUPERMATRIX,x,keep_names)
+  x <- .Call(`_mrgsolve_SUPERMATRIX`,x,keep_names)
   if(nrow(x) > 0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
   x
 }
@@ -27,7 +27,7 @@ decorr <- function(x) {
   if(any(off < -1 | off > 1)) {
     stop("For correlation matrix, all off-diagonal elements must be in [-1,1].")
   }
-  return(invisible(.Call(mrgsolve_dcorr, x)))
+  return(invisible(.Call(`_mrgsolve_dcorr`, x)))
 }
 
 ##' Create a square numeric matrix from the lower-triangular elements.

@@ -62,7 +62,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- dplyr::arrange_(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
-        data <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
+        data <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
                                  PACKAGE="mrgsolve", 
                                  match("ID", colnames(data),0), 
                                  data.matrix(data), 
@@ -106,7 +106,7 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   
   if(nid > 1) {
     if(!exists("ID",x)) stop("please add ID column to data frame",call.=FALSE)
-    x <- data.frame(.Call(mrgsolve_EXPAND_EVENTS, 
+    x <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
                           match("ID", colnames(x),0), 
                           data.matrix(x),
                           c(1:nid)))

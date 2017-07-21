@@ -9,7 +9,7 @@ using namespace Rcpp;
 
 // DEVTRAN
 Rcpp::List DEVTRAN(const Rcpp::List parin, const Rcpp::NumericVector& inpar, const Rcpp::CharacterVector& parnames, const Rcpp::NumericVector& init, Rcpp::CharacterVector& cmtnames, const Rcpp::IntegerVector& capture, const Rcpp::List& funs, const Rcpp::NumericMatrix& data, const Rcpp::NumericMatrix& idata, Rcpp::NumericMatrix& OMEGA, Rcpp::NumericMatrix& SIGMA, Rcpp::Environment envir);
-RcppExport SEXP mrgsolve_DEVTRAN(SEXP parinSEXP, SEXP inparSEXP, SEXP parnamesSEXP, SEXP initSEXP, SEXP cmtnamesSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP OMEGASEXP, SEXP SIGMASEXP, SEXP envirSEXP) {
+RcppExport SEXP _mrgsolve_DEVTRAN(SEXP parinSEXP, SEXP inparSEXP, SEXP parnamesSEXP, SEXP initSEXP, SEXP cmtnamesSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP OMEGASEXP, SEXP SIGMASEXP, SEXP envirSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,7 @@ END_RCPP
 }
 // MVGAUSS
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
-RcppExport SEXP mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {
+RcppExport SEXP _mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +43,7 @@ END_RCPP
 }
 // dcorr
 void dcorr(Rcpp::NumericMatrix& x);
-RcppExport SEXP mrgsolve_dcorr(SEXP xSEXP) {
+RcppExport SEXP _mrgsolve_dcorr(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
@@ -53,7 +53,7 @@ END_RCPP
 }
 // SUPERMATRIX
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names);
-RcppExport SEXP mrgsolve_SUPERMATRIX(SEXP aSEXP, SEXP keep_namesSEXP) {
+RcppExport SEXP _mrgsolve_SUPERMATRIX(SEXP aSEXP, SEXP keep_namesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -65,7 +65,7 @@ END_RCPP
 }
 // get_tokens
 Rcpp::List get_tokens(const Rcpp::CharacterVector& code);
-RcppExport SEXP mrgsolve_get_tokens(SEXP codeSEXP) {
+RcppExport SEXP _mrgsolve_get_tokens(SEXP codeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -76,7 +76,7 @@ END_RCPP
 }
 // EXPAND_EVENTS
 Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_, const Rcpp::NumericMatrix& events, const Rcpp::NumericVector& id);
-RcppExport SEXP mrgsolve_EXPAND_EVENTS(SEXP idcol_SEXP, SEXP eventsSEXP, SEXP idSEXP) {
+RcppExport SEXP _mrgsolve_EXPAND_EVENTS(SEXP idcol_SEXP, SEXP eventsSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -89,7 +89,7 @@ END_RCPP
 }
 // TOUCH_FUNS
 Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, const Rcpp::NumericVector& linit, int Neta, int Neps, const Rcpp::CharacterVector& capture, const Rcpp::List& funs, Rcpp::Environment envir);
-RcppExport SEXP mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP envirSEXP) {
+RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP envirSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -106,7 +106,7 @@ END_RCPP
 }
 // QUICKSIM
 Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin, const Rcpp::NumericVector& param, const Rcpp::NumericVector& init, Rcpp::CharacterVector& parnames, Rcpp::NumericMatrix& data, Rcpp::IntegerVector& n, const Rcpp::NumericMatrix& idata, const Rcpp::IntegerVector& req, const Rcpp::IntegerVector& capturei, const Rcpp::List& funs, const Rcpp::IntegerVector& nre);
-RcppExport SEXP mrgsolve_QUICKSIM(SEXP parinSEXP, SEXP paramSEXP, SEXP initSEXP, SEXP parnamesSEXP, SEXP dataSEXP, SEXP nSEXP, SEXP idataSEXP, SEXP reqSEXP, SEXP captureiSEXP, SEXP funsSEXP, SEXP nreSEXP) {
+RcppExport SEXP _mrgsolve_QUICKSIM(SEXP parinSEXP, SEXP paramSEXP, SEXP initSEXP, SEXP parnamesSEXP, SEXP dataSEXP, SEXP nSEXP, SEXP idataSEXP, SEXP reqSEXP, SEXP captureiSEXP, SEXP funsSEXP, SEXP nreSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
