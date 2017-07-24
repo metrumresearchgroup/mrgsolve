@@ -86,14 +86,6 @@ valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,
   
   if(is.valid_data_set(x)) return(x)
   
-  if(!exists("cmt", x)) x[,"cmt"] <- 1
-  
-  if(!exists("amt", x)) x[,"amt"] <- 0
-  
-  if(!exists("evid", x)) {
-    x[,"evid"] <- as.integer(x[,"amt"] > 0)
-  }
-  
   tcol <- "time"
   
   # check for ID column
