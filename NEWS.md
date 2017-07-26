@@ -2,9 +2,18 @@
 
 # 0.8.6.9000
 
+## Important changes
+- The bioavailability parameter now gets updated  with each and every dose, regardless
+of whether it was explicitly coded in the data set or implicitly via `addl`.  The 
+previous behavior had bioavailability parameter locked at the value at the time 
+the initiating dose was implemented
+- Updated package dependency requirements.  Notably, `mrgsolve` now requires `Rcpp >= 0.12.12`
+and `dplyr >= 0.7.1`
+
 ## New Features
 - Dosing records with `ss=2` are recognized, allowing combining of 
 steady-state dosing regimens under linear kinetics (e.g. 10 mg QAM and 20 mg QPM) (#221)
+- Added function (`inventory`) that reconciles model parameters with names in an object (e.g. a simulation data set) verify that required parameters can be found in the data object.
 
 ## Bugs fixed
 - PR #214 from @dastoor fixes compatibility issue with new `dplyr` 
