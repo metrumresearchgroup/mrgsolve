@@ -444,7 +444,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               ans(crow,(k+req_start)) = prob->y(request[k]);
             }
           } else {
-            for(k=0; k < ans.ncol(); ++k) {
+            for(size_t k=0; k < ans.ncol(); ++k) {
               ans(crow,k) = NA_REAL;
             }
           }

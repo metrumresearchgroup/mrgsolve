@@ -212,7 +212,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
   
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
-    for(int i = 0; i < state_incoming.size(); i++) {
+    for(size_t i = 0; i < state_incoming.size(); i++) {
       state_incoming[i] = prob->y(i);
     }
   }
@@ -261,7 +261,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
     last_sum = this_sum;
   }
   if(Ss == 2) {
-    for(int i=0; i < state_incoming.size(); i++) {
+    for(size_t i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
     }
   }
@@ -275,7 +275,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
   
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
-    for(int i = 0; i < state_incoming.size(); i++) {
+    for(size_t i = 0; i < state_incoming.size(); i++) {
       state_incoming[i] = prob->y(i);
     }
   }
@@ -351,7 +351,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
   }
   
   if(Ss == 2) {
-    for(int i=0; i < state_incoming.size(); i++) {
+    for(size_t i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
     }
   }

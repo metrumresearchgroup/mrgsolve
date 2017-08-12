@@ -49,7 +49,9 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
   }
   
   if(length(ID) > 0) {
-    ID <- seq_along(unique(ID))
+    
+    ID <- unique(ID)
+    
     if(!is.numeric(ID)) stop("ID must be numeric")
     
     if(replicate) {
@@ -71,7 +73,8 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
       
     } else {
       if(length(ID)!=nrow(data)) { 
-        stop("Length of ID does not match number of events while replicate = FALSE", call.=FALSE)
+        stop("Length of ID does not match number of events while replicate = FALSE", 
+             call.=FALSE)
       }
       data["ID"] <- ID
     }
@@ -116,6 +119,12 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   
   new("ev",data=x)
   
+})
+
+##' @rdname events
+##' @export
+setMethod("as.ev", "ev", function(x,...) {
+    do.call("c", c(list(x),list(...)))
 })
 
 
@@ -196,7 +205,7 @@ collect_ev <- function(...) {
   y <- lapply(x, "[[","ID")
   mx <- sapply(y,function(xx) length(unique(xx)))
   mx <- cumsum(c(0,mx[-length(mx)]))
-  y <- mapply(y,mx, FUN=function(yi,mx) return(yi+mx), SIMPLIFY=FALSE)
+  y <- mapply(y,mx, FUN=function(yi,mxi) return(yi+mxi), SIMPLIFY=FALSE)
   x <- dplyr::bind_rows(x)
   x <- dplyr::mutate(x,ID = unlist(y,use.names=FALSE))
   tran <- intersect(tran,names(x))

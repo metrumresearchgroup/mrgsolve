@@ -11,6 +11,7 @@
 \alias{ev,missing-method}
 \alias{ev,ev-method}
 \alias{as.ev,data.frame-method}
+\alias{as.ev,ev-method}
 \alias{as.matrix,ev-method}
 \alias{as.data.frame,ev-method}
 \alias{show,ev-method}
@@ -33,6 +34,8 @@ as.ev(x, ...)
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 
 \S4method{as.ev}{data.frame}(x, nid = 1, keep_id = TRUE, ...)
+
+\S4method{as.ev}{ev}(x, ...)
 
 \S4method{as.matrix}{ev}(x, ...)
 
