@@ -437,14 +437,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(status==1) {
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
-            for(k=0; k < n_capture; ++k) {
+            for(unsigned int k=0; k < n_capture; ++k) {
               ans(crow,(k+capture_start)) = prob->capture(capture[k+1]);
             }
-            for(k=0; k < nreq; ++k) {
+            for(unsigned int k=0; k < nreq; ++k) {
               ans(crow,(k+req_start)) = prob->y(request[k]);
             }
           } else {
-            for(size_t k=0; k < ans.ncol(); ++k) {
+            for(int k=0; k < ans.ncol(); ++k) {
               ans(crow,k) = NA_REAL;
             }
           }

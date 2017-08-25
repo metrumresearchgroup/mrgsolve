@@ -612,7 +612,7 @@ realize_addl.ev <- function(x,...) {
 ##' ev_schedule(e1, wait = 8, e2, id = 1:10)
 ##' 
 ##' @export
-ev_schedule <- function(..., id = NULL, .dots = NULL) {
+ev_seq <- function(..., id = NULL, .dots = NULL) {
   na2zero <- function(x) {
     x[is.na(x)] <- 0
     x
