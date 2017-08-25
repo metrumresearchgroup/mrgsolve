@@ -60,11 +60,13 @@ as.ev(x, ...)
 
 \item{cmt}{compartment}
 
-\item{replicate}{logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}}
+\item{replicate}{logical; if \code{TRUE}, events will be replicated for 
+each individual in \code{ID}}
 
 \item{until}{the expected maximum \bold{observation} time for this regimen}
 
-\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} doses.  If \code{TRUE}, 
+\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} doses. 
+ If \code{TRUE}, 
 \code{addl} doses are made explicit with \code{\link{realize_addl}}.}
 
 \item{nid}{if greater than 1, will expand to the appropriate 

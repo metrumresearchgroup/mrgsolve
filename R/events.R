@@ -20,10 +20,12 @@
 ##' @param evid event ID
 ##' @param ID subject ID
 ##' @param time event time
-##' @param replicate logical; if \code{TRUE}, events will be replicated for each individual in \code{ID}
+##' @param replicate logical; if \code{TRUE}, events will be replicated for 
+##' each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
-##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} doses.  If \code{TRUE}, 
+##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} doses. 
+##'  If \code{TRUE}, 
 ##' \code{addl} doses are made explicit with \code{\link{realize_addl}}.
 ##' @export
 setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
@@ -44,7 +46,9 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
   if(!has_name("amt",data)) stop("amt is required input.", call.=FALSE)
   
   if(!missing(until)) {
-    if(!has_name("ii", data)) stop("ii is required when until is specified", call.=FALSE)
+    if(!has_name("ii", data)) {
+      stop("ii is required when until is specified", call.=FALSE)
+    }
     data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
   }
   
@@ -105,8 +109,9 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   
   if(nrow(x)==0) return(new("ev",data=data.frame()))
   
-  if(!all(c("cmt", "time") %in% names(x))) stop("cmt, time are required data items for events.",call.=FALSE)
-  
+  if(!all(c("cmt", "time") %in% names(x))) {
+    stop("cmt, time are required data items for events.",call.=FALSE)
+  }
   if(nid > 1) {
     if(!exists("ID",x)) stop("please add ID column to data frame",call.=FALSE)
     x <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
@@ -124,13 +129,15 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
 ##' @rdname events
 ##' @export
 setMethod("as.ev", "ev", function(x,...) {
-    do.call("c", c(list(x),list(...)))
+  do.call("c", c(list(x),list(...)))
 })
 
 
 ##' @rdname events
 ##' @export
-setMethod("as.matrix", "ev", function(x,...) as.matrix(as.data.frame(x,stringsAsFactors=FALSE),...))
+setMethod("as.matrix", "ev", function(x,...) {
+  as.matrix(as.data.frame(x,stringsAsFactors=FALSE),...)
+})
 
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
@@ -584,4 +591,67 @@ realize_addl.ev <- function(x,...) {
 }
 
 
+##' Schedule a series of event objects
+##' 
+##' @param ... event objects or numeric arguments named \code{wait}
+##' @param id numeric vector of subject ids
+##' @param .dots a list of event objects that replaces \code{...}
+##' 
+##' @details
+##' When numerics named \code{wait} are mixed in with the 
+##' event objects, a period with no dosing activity is 
+##' incorporated into the sequence, between the adjacent 
+##' dosing event objects.
+##' 
+##' @examples
+##' e1 <- ev(amt=100, ii=12, addl=1)
+##' e2 <- ev(amt=200)
+##' 
+##' ev_schedule(e1, wait = 8, e2)
+##' 
+##' ev_schedule(e1, wait = 8, e2, id = 1:10)
+##' 
+##' @export
+ev_schedule <- function(..., id = NULL, .dots = NULL) {
+  na2zero <- function(x) {
+    x[is.na(x)] <- 0
+    x
+  }
+  evs <- list(...)
+  if(is.list(.dots)) {
+    evs <- .dots 
+  }
+  out <- vector("list", length(evs))
+  start <- 0
+  for(i in seq_along(out)) {
+    if(names(evs)[i]=="wait") {
+      start <- start + evs[[i]]
+      evs[[i]] <- list()
+      next
+    }
+    e <- as.data.frame(evs[[i]])
+    if(nrow(e) !=1) stop("events can only have one row", call.=FALSE)
+    if(is.null(e$ii)) e$ii <- 0
+    if(is.null(e$addl)) e$addl <- 0
+    after <-  dplyr::if_else(is.null(e$.after), 0, e$.after)
+    e$time <- e$time + start
+    start <- start + after + e$ii*e$addl
+    out[[i]] <- e
+  }
+  out <- dplyr::bind_rows(out) 
+  out <- dplyr::mutate(out, .after = NULL)
+  if(exists("rate", out)) {
+    out["rate"] <- na2zero(out["rate"])
+  }
+  if(exists("ss",out)) {
+    out["ss"] <- na2zero(out["ss"]) 
+  }
+  if(is.numeric(id)) {
+    out <- EXPAND_EVENTS(match("ID",colnames(out),0), 
+                         numeric_data_matrix(out), 
+                         id  
+    )
+  }
+  as.ev(as.data.frame(out))
+}
 
