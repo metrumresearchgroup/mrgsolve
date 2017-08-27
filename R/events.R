@@ -618,20 +618,36 @@ ev_rep <- function(x, id, as.ev = FALSE) {
 ##' @param .dots a list of event objects that replaces \code{...}
 ##' 
 ##' @details
+##' The doses for the next event line start after 
+##' all of the doses from the previous event line plus 
+##' one dosing interval from the previous event line (see
+##' examples).  
+##' 
 ##' When numerics named \code{wait} are mixed in with the 
 ##' event objects, a period with no dosing activity is 
 ##' incorporated into the sequence, between the adjacent 
-##' dosing event objects.
+##' dosing event objects.  Values for \code{wait} can
+##' be negative.
+##' 
+##' Values for \code{time} in any event object act like
+##' a prefix time spacer wherever that event 
+##' occurs in the event sequence (see examples).
 ##' 
 ##' @examples
+##' 
 ##' e1 <- ev(amt=100, ii=12, addl=1)
+##' 
 ##' e2 <- ev(amt=200)
+##' 
+##' ev_seq(e1, e2)
 ##' 
 ##' ev_seq(e1, wait = 8, e2)
 ##' 
 ##' ev_seq(e1, wait = 8, e2, id = 1:10)
 ##' 
 ##' ev_seq(e1, wait = 120, e2, wait = 120, e1)
+##' 
+##' ev_seq(ev(amt=100, ii=12), ev(time=8, amt=200))
 ##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
