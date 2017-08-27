@@ -590,6 +590,20 @@ realize_addl.ev <- function(x,...) {
   return(x)
 }
 
+##' Replicate an event object
+##' 
+##' @param x event object
+##' @param id numeric vector if IDs
+##' @param as.ev if \code{TRUE} an event object is returned
+##' 
+##' @export
+ev_rep <- function(x, id, as.ev = FALSE) {
+  x <- as.data.frame(x) 
+  x <- EXPAND_EVENTS(0,numeric_data_matrix(x),id)
+  x <- as.data.frame(x)
+  if(as.ev) return(as.ev(x))
+  return(x)
+}
 
 ##' Schedule a series of event objects
 ##' 
@@ -607,9 +621,9 @@ realize_addl.ev <- function(x,...) {
 ##' e1 <- ev(amt=100, ii=12, addl=1)
 ##' e2 <- ev(amt=200)
 ##' 
-##' ev_schedule(e1, wait = 8, e2)
+##' ev_seq(e1, wait = 8, e2)
 ##' 
-##' ev_schedule(e1, wait = 8, e2, id = 1:10)
+##' ev_seq(e1, wait = 8, e2, id = 1:10)
 ##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
@@ -647,10 +661,7 @@ ev_seq <- function(..., id = NULL, .dots = NULL) {
     out["ss"] <- na2zero(out["ss"]) 
   }
   if(is.numeric(id)) {
-    out <- EXPAND_EVENTS(match("ID",colnames(out),0), 
-                         numeric_data_matrix(out), 
-                         id  
-    )
+    out <- ev_rep(out,id)
   }
   as.ev(as.data.frame(out))
 }
