@@ -633,6 +633,9 @@ ev_rep <- function(x, id, n = NULL, wait = 0, as.ev = FALSE) {
 ##' @param n number of times to repeat
 ##' @param wait time to wait between repeats
 ##' 
+##' @return 
+##' A dosing data.frame.
+##' 
 ##' @export
 ev_repeat <- function(x,n,wait=0) {
   x <- as.data.frame(x)

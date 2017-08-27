@@ -13,6 +13,9 @@ ev_repeat(x, n, wait = 0)
 
 \item{wait}{time to wait between repeats}
 }
+\value{
+A dosing data.frame.
+}
 \description{
 Repeat a block of dosing events
 }
