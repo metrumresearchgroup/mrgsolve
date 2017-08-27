@@ -13,6 +13,10 @@ ev_rep(x, id, as.ev = FALSE)
 
 \item{as.ev}{if \code{TRUE} an event object is returned}
 }
+\value{
+A single event object or event object as 
+determined by the value of \code{as.ev}.
+}
 \description{
 Replicate an event object
 }

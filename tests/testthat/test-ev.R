@@ -73,18 +73,18 @@ test_that("sequence of event objects", {
   e2 <- ev(amt=2, ii=24, addl=1)
   e3 <- ev(amt=3, ii=12, addl=4)
   
-  e <- as.data.frame(ev_seq(e1,e2,e3))
+  e <- as.data.frame(seq(e1,e2,e3))
   expect_equal(nrow(e), 3)
   expect_equal(e$time, c(0,96, 144))
   
-  e <- ev_seq(e1, wait = 20, e2, wait= -10, e3)
+  e <- seq(e1, wait = 20, e2, wait= -10, e3)
   
   e <- as.data.frame(e)
   
   expect_equal(nrow(e), 3)
   expect_equal(e$time, c(0,116,154))
   
-  expect_is(ev_seq(e2, e1, wait=2, e1),"ev")
+  expect_is(seq(e2, e1, wait=2, e1),"ev")
 
 })
 
@@ -103,7 +103,7 @@ test_that("replicate an event object", {
 test_that("events with without rate" , {
   e1 <- ev(amt=1, ii=12)
   e2 <- ev(amt=2, ii=24, rate=1)
-  e <- ev_seq(e1,e2)
+  e <- seq(e1,e2)
   expect_is(e, "ev")
   e <- as.data.frame(e)
   expect_equal(e$rate,c(0,1))

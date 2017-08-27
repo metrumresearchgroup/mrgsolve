@@ -2,9 +2,12 @@
 % Please edit documentation in R/events.R
 \name{ev_seq}
 \alias{ev_seq}
+\alias{seq.ev}
 \title{Schedule a series of event objects}
 \usage{
 ev_seq(..., id = NULL, .dots = NULL)
+
+\method{seq}{ev}(...)
 }
 \arguments{
 \item{...}{event objects or numeric arguments named \code{wait}}
@@ -12,6 +15,9 @@ ev_seq(..., id = NULL, .dots = NULL)
 \item{id}{numeric vector of subject ids}
 
 \item{.dots}{a list of event objects that replaces \code{...}}
+}
+\value{
+A single event object.
 }
 \description{
 Schedule a series of event objects
@@ -31,6 +37,10 @@ be negative.
 Values for \code{time} in any event object act like
 a prefix time spacer wherever that event 
 occurs in the event sequence (see examples).
+
+Use the generic \code{\link{seq}} when the first argument 
+is an event object.  If a waiting period is the 
+first event, you will need to use \code{ev_seq}.
 }
 \examples{
 
@@ -38,14 +48,14 @@ e1 <- ev(amt=100, ii=12, addl=1)
 
 e2 <- ev(amt=200)
 
-ev_seq(e1, e2)
+seq(e1, e2)
 
-ev_seq(e1, wait = 8, e2)
+seq(e1, wait = 8, e2)
 
-ev_seq(e1, wait = 8, e2, id = 1:10)
+seq(e1, wait = 8, e2, id = 1:10)
 
-ev_seq(e1, wait = 120, e2, wait = 120, e1)
+ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
 
-ev_seq(ev(amt=100, ii=12), ev(time=8, amt=200))
+seq(ev(amt=100, ii=12), ev(time=8, amt=200))
 
 }

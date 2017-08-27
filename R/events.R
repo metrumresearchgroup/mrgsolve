@@ -602,6 +602,10 @@ realize_addl.ev <- function(x,...) {
 ##' 
 ##' ev_rep(e1, 1:5)
 ##' 
+##' @return
+##' A single event object or event object as 
+##' determined by the value of \code{as.ev}.
+##' 
 ##' @export
 ev_rep <- function(x, id, as.ev = FALSE) {
   x <- as.data.frame(x) 
@@ -639,15 +643,23 @@ ev_rep <- function(x, id, as.ev = FALSE) {
 ##' 
 ##' e2 <- ev(amt=200)
 ##' 
-##' ev_seq(e1, e2)
+##' seq(e1, e2)
 ##' 
-##' ev_seq(e1, wait = 8, e2)
+##' seq(e1, wait = 8, e2)
 ##' 
-##' ev_seq(e1, wait = 8, e2, id = 1:10)
+##' seq(e1, wait = 8, e2, id = 1:10)
 ##' 
-##' ev_seq(e1, wait = 120, e2, wait = 120, e1)
+##' ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
 ##' 
-##' ev_seq(ev(amt=100, ii=12), ev(time=8, amt=200))
+##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
+##' 
+##' @details
+##' Use the generic \code{\link{seq}} when the first argument 
+##' is an event object.  If a waiting period is the 
+##' first event, you will need to use \code{ev_seq}.
+##' 
+##' @return
+##' A single event object.
 ##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
@@ -690,3 +702,8 @@ ev_seq <- function(..., id = NULL, .dots = NULL) {
   as.ev(as.data.frame(out))
 }
 
+##' @export
+##' @rdname ev_seq
+seq.ev <- function(...) {
+  ev_seq(...) 
+}
