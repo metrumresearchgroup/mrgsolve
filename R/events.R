@@ -596,6 +596,12 @@ realize_addl.ev <- function(x,...) {
 ##' @param id numeric vector if IDs
 ##' @param as.ev if \code{TRUE} an event object is returned
 ##' 
+##' @examples
+##' 
+##' e1 <- c(ev(amt=100), ev(amt=200, ii=24, addl=2, time=72))
+##' 
+##' ev_rep(e1, 1:5)
+##' 
 ##' @export
 ev_rep <- function(x, id, as.ev = FALSE) {
   x <- as.data.frame(x) 
@@ -625,6 +631,8 @@ ev_rep <- function(x, id, as.ev = FALSE) {
 ##' 
 ##' ev_seq(e1, wait = 8, e2, id = 1:10)
 ##' 
+##' ev_seq(e1, wait = 120, e2, wait = 120, e1)
+##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
   na2zero <- function(x) {
@@ -637,6 +645,9 @@ ev_seq <- function(..., id = NULL, .dots = NULL) {
   }
   out <- vector("list", length(evs))
   start <- 0
+  if(is.null(names(evs))) {
+    names(evs) <- rep(".", length(evs))
+  }
   for(i in seq_along(out)) {
     if(names(evs)[i]=="wait") {
       start <- start + evs[[i]]
@@ -649,7 +660,7 @@ ev_seq <- function(..., id = NULL, .dots = NULL) {
     if(is.null(e$addl)) e$addl <- 0
     after <-  dplyr::if_else(is.null(e$.after), 0, e$.after)
     e$time <- e$time + start
-    start <- start + after + e$ii*e$addl
+    start <- start + after + e$ii*e$addl + e$ii
     out[[i]] <- e
   }
   out <- dplyr::bind_rows(out) 
