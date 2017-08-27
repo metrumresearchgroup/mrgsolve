@@ -592,9 +592,16 @@ realize_addl.ev <- function(x,...) {
 
 ##' Replicate an event object
 ##' 
+##' An event sequence can be replicated a certain number of
+##' times in a certain number of IDs.
+##' 
 ##' @param x event object
 ##' @param id numeric vector if IDs
+##' @param n passed to \code{\link{ev_repeat}}
+##' @param wait passed to \code{\link{ev_repeat}}
 ##' @param as.ev if \code{TRUE} an event object is returned
+##' 
+##' @seealso \code{\link{ev_repeat}}
 ##' 
 ##' @examples
 ##' 
@@ -607,13 +614,47 @@ realize_addl.ev <- function(x,...) {
 ##' determined by the value of \code{as.ev}.
 ##' 
 ##' @export
-ev_rep <- function(x, id, as.ev = FALSE) {
+ev_rep <- function(x, id, n = NULL, wait = 0, as.ev = FALSE) {
   x <- as.data.frame(x) 
   x <- EXPAND_EVENTS(0,numeric_data_matrix(x),id)
   x <- as.data.frame(x)
+  if(!is.null(n)) {
+    if(n  > 1) {
+      x <- ev_repeat(x,n,wait)
+    }
+  }
   if(as.ev) return(as.ev(x))
   return(x)
 }
+
+##' Repeat a block of dosing events
+##' 
+##' @param x event object or dosing data frame
+##' @param n number of times to repeat
+##' @param wait time to wait between repeats
+##' 
+##' @export
+ev_repeat <- function(x,n,wait=0) {
+  x <- as.data.frame(x)
+  if(!exists("ii", x)) x["ii"] <- 0
+  if(!exists("addl", x)) x["addl"] <- 0
+  start <- x[1,"time"]
+  end <- x$time + x$ii*x$addl + x$ii
+  end <- max(end) + wait
+  out <- vector("list", n)
+  for(i in seq_len(n)) {
+    nxt <- x
+    nxt$time <- start + nxt$time + end*(i-1)
+    out[[i]] <- nxt
+  }
+  out <- dplyr::bind_rows(out)
+  if(exists("ID", out)) {
+    out <- dplyr::arrange_(out,"ID", "time") 
+  }
+  out
+}
+
+
 
 ##' Schedule a series of event objects
 ##' 
@@ -663,7 +704,7 @@ ev_rep <- function(x, id, as.ev = FALSE) {
 ##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
-
+  
   evs <- list(...)
   if(is.list(.dots)) {
     evs <- .dots 
