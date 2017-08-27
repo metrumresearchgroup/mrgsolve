@@ -132,7 +132,6 @@ setMethod("as.ev", "ev", function(x,...) {
   do.call("c", c(list(x),list(...)))
 })
 
-
 ##' @rdname events
 ##' @export
 setMethod("as.matrix", "ev", function(x,...) {
@@ -187,6 +186,11 @@ setMethod("as_data_set","ev", function(x,...) {
   do.call(collect_ev,c(list(x),list(...)))
 })
 
+##' @rdname as_data_set
+setMethod("as_data_set","data.frame", function(x,...) {
+  as_data_set(as.ev(x),...)
+})
+
 ##' @param object passed to show
 ##' @rdname events
 ##' @export
@@ -200,10 +204,6 @@ check_ev <- function(x) {
   x <- as.data.frame(x)
   if(!has_name("ID", x)) x[["ID"]] <- 1
   return(x)
-}
-na2zero <- function(x) {
-  x[is.na(x)] <- 0
-  x
 }
 
 collect_ev <- function(...) {
@@ -651,10 +651,7 @@ ev_rep <- function(x, id, as.ev = FALSE) {
 ##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
-  na2zero <- function(x) {
-    x[is.na(x)] <- 0
-    x
-  }
+
   evs <- list(...)
   if(is.list(.dots)) {
     evs <- .dots 

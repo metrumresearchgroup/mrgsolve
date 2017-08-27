@@ -22,6 +22,18 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+test_that("event requirements and defaults", {
+  expect_error(ev(time=24))
+  expect_error(ev(amt=100, evid=0))
+  expect_is(ev(amt=100), "ev")
+  df <- as.data.frame(ev(amt=100))
+  expect_equal(df$time, 0)
+  expect_equal(df$evid,1)
+  expect_equal(df$cmt,1)
+})
+
+
+
 test_that("collection of events", {
   e1 <- ev(amt=200)
   e2 <- ev(amt=100,time=1)
@@ -74,5 +86,26 @@ test_that("sequence of event objects", {
   
   expect_is(ev_seq(e2, e1, wait=2, e1),"ev")
 
+})
+
+test_that("replicate an event object", {
+  
+  e1 <- ev(amt=1, ii=24, addl=3)
+ 
+  df <- ev_rep(e1, 11:14)
+  
+  expect_is(df, "data.frame")
+  
+  expect_equal(df$ID, 11:14)
+  
+})
+
+test_that("events with without rate" , {
+  e1 <- ev(amt=1, ii=12)
+  e2 <- ev(amt=2, ii=24, rate=1)
+  e <- ev_seq(e1,e2)
+  expect_is(e, "ev")
+  e <- as.data.frame(e)
+  expect_equal(e$rate,c(0,1))
 })
 

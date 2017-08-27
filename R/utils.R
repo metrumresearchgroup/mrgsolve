@@ -507,6 +507,10 @@ build_error <- function(args,compfile) {
   stop("there was a problem building the model.",call.=FALSE)
 }
 
+na2zero <- function(x) {
+  x[is.na(x)] <- 0
+  x
+}
 
 # covset <- function(...) {
 #   dmutate::covset(...)
