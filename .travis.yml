@@ -11,12 +11,11 @@ pandoc: false
 os:
   - linux
 
-sudo: required
 
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
-  - sudo apt-get install gcc-4.8 -y
+  - add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - apt-get update -q
+  - apt-get install gcc-4.8 -y
 
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0
