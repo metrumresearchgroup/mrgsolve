@@ -1,5 +1,7 @@
 language: R
 
+cache: packages
+
 sudo: false
 
 warnings_are_errors: false
@@ -8,6 +10,11 @@ pandoc: false
 
 os:
   - linux
+
+addons:
+  apt:
+    packages:
+    - g++-4.8
 
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0
