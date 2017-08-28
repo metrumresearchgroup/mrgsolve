@@ -1,13 +1,12 @@
-language: R
+language: r
 sudo: false
+dist: trusty
 cache: packages
+latex: false
 
 warnings_are_errors: false
 
 pandoc: false
-
-os:
-  - linux
 
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0

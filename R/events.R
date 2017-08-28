@@ -132,7 +132,6 @@ setMethod("as.ev", "ev", function(x,...) {
   do.call("c", c(list(x),list(...)))
 })
 
-
 ##' @rdname events
 ##' @export
 setMethod("as.matrix", "ev", function(x,...) {
@@ -187,6 +186,11 @@ setMethod("as_data_set","ev", function(x,...) {
   do.call(collect_ev,c(list(x),list(...)))
 })
 
+##' @rdname as_data_set
+setMethod("as_data_set","data.frame", function(x,...) {
+  as_data_set(as.ev(x),...)
+})
+
 ##' @param object passed to show
 ##' @rdname events
 ##' @export
@@ -200,10 +204,6 @@ check_ev <- function(x) {
   x <- as.data.frame(x)
   if(!has_name("ID", x)) x[["ID"]] <- 1
   return(x)
-}
-na2zero <- function(x) {
-  x[is.na(x)] <- 0
-  x
 }
 
 collect_ev <- function(...) {
@@ -592,9 +592,16 @@ realize_addl.ev <- function(x,...) {
 
 ##' Replicate an event object
 ##' 
+##' An event sequence can be replicated a certain number of
+##' times in a certain number of IDs.
+##' 
 ##' @param x event object
 ##' @param id numeric vector if IDs
+##' @param n passed to \code{\link{ev_repeat}}
+##' @param wait passed to \code{\link{ev_repeat}}
 ##' @param as.ev if \code{TRUE} an event object is returned
+##' 
+##' @seealso \code{\link{ev_repeat}}
 ##' 
 ##' @examples
 ##' 
@@ -602,14 +609,55 @@ realize_addl.ev <- function(x,...) {
 ##' 
 ##' ev_rep(e1, 1:5)
 ##' 
+##' @return
+##' A single event object or event object as 
+##' determined by the value of \code{as.ev}.
+##' 
 ##' @export
-ev_rep <- function(x, id, as.ev = FALSE) {
+ev_rep <- function(x, id = 1, n = NULL, wait = 0, as.ev = FALSE) {
   x <- as.data.frame(x) 
   x <- EXPAND_EVENTS(0,numeric_data_matrix(x),id)
   x <- as.data.frame(x)
+  if(!is.null(n)) {
+    if(n  > 1) {
+      x <- ev_repeat(x,n,wait)
+    }
+  }
   if(as.ev) return(as.ev(x))
   return(x)
 }
+
+##' Repeat a block of dosing events
+##' 
+##' @param x event object or dosing data frame
+##' @param n number of times to repeat
+##' @param wait time to wait between repeats
+##' 
+##' @return 
+##' A dosing data.frame.
+##' 
+##' @export
+ev_repeat <- function(x,n,wait=0) {
+  x <- as.data.frame(x)
+  if(!exists("ii", x)) x["ii"] <- 0
+  if(!exists("addl", x)) x["addl"] <- 0
+  start <- x[1,"time"]
+  end <- x$time + x$ii*x$addl + x$ii
+  end <- max(end) + wait
+  out <- vector("list", n)
+  for(i in seq_len(n)) {
+    nxt <- x
+    nxt$time <- start + nxt$time + end*(i-1)
+    out[[i]] <- nxt
+  }
+  out <- dplyr::bind_rows(out)
+  if(exists("ID", out)) {
+    out <- dplyr::arrange_(out,"ID", "time") 
+  }
+  out
+}
+
+
 
 ##' Schedule a series of event objects
 ##' 
@@ -639,22 +687,27 @@ ev_rep <- function(x, id, as.ev = FALSE) {
 ##' 
 ##' e2 <- ev(amt=200)
 ##' 
-##' ev_seq(e1, e2)
+##' seq(e1, e2)
 ##' 
-##' ev_seq(e1, wait = 8, e2)
+##' seq(e1, wait = 8, e2)
 ##' 
-##' ev_seq(e1, wait = 8, e2, id = 1:10)
+##' seq(e1, wait = 8, e2, id = 1:10)
 ##' 
-##' ev_seq(e1, wait = 120, e2, wait = 120, e1)
+##' ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
 ##' 
-##' ev_seq(ev(amt=100, ii=12), ev(time=8, amt=200))
+##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
+##' 
+##' @details
+##' Use the generic \code{\link{seq}} when the first argument 
+##' is an event object.  If a waiting period is the 
+##' first event, you will need to use \code{ev_seq}.
+##' 
+##' @return
+##' A single event object.
 ##' 
 ##' @export
 ev_seq <- function(..., id = NULL, .dots = NULL) {
-  na2zero <- function(x) {
-    x[is.na(x)] <- 0
-    x
-  }
+  
   evs <- list(...)
   if(is.list(.dots)) {
     evs <- .dots 
@@ -693,3 +746,8 @@ ev_seq <- function(..., id = NULL, .dots = NULL) {
   as.ev(as.data.frame(out))
 }
 
+##' @export
+##' @rdname ev_seq
+seq.ev <- function(...) {
+  ev_seq(...) 
+}
