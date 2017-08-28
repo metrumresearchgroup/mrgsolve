@@ -11,12 +11,6 @@ pandoc: false
 os:
   - linux
 
-
-before_install:
-  - add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - apt-get update -q
-  - apt-get install gcc-4.8 -y
-
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0
   - mkdir Rchecks
