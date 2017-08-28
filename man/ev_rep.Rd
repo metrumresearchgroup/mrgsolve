@@ -4,7 +4,7 @@
 \alias{ev_rep}
 \title{Replicate an event object}
 \usage{
-ev_rep(x, id, n = NULL, wait = 0, as.ev = FALSE)
+ev_rep(x, id = 1, n = NULL, wait = 0, as.ev = FALSE)
 }
 \arguments{
 \item{x}{event object}

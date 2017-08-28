@@ -614,7 +614,7 @@ realize_addl.ev <- function(x,...) {
 ##' determined by the value of \code{as.ev}.
 ##' 
 ##' @export
-ev_rep <- function(x, id, n = NULL, wait = 0, as.ev = FALSE) {
+ev_rep <- function(x, id = 1, n = NULL, wait = 0, as.ev = FALSE) {
   x <- as.data.frame(x) 
   x <- EXPAND_EVENTS(0,numeric_data_matrix(x),id)
   x <- as.data.frame(x)
