@@ -11,13 +11,10 @@ pandoc: false
 os:
   - linux
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
+before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
+  - sudo apt-get install gcc-4.8 -y
 
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0
