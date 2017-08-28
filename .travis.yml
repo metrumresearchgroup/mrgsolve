@@ -1,4 +1,5 @@
 language: R
+
 sudo: false
 
 warnings_are_errors: false
@@ -11,4 +12,5 @@ os:
 script:
   - export _R_CHECK_FORCE_SUGGESTS_=0
   - mkdir Rchecks
+  - R CMD install RcppArmadillo
   - make travis
