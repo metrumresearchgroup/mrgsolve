@@ -282,7 +282,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
   const unsigned int NN = obsonly ? obscount : (obscount + evcount);
   int precol = 2 + int(tad);
-  const unsigned int n_out_col  = precol + n_tran_carry + n_data_carry + n_idata_carry + nreq + n_capture;
+  const unsigned int n_out_col  = precol + n_tran_carry 
+    + n_data_carry + n_idata_carry + nreq + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
   const unsigned int tran_carry_start = precol;
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
@@ -501,18 +502,23 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             prob->rate_main(this_rec);
           }
           if(prob->alag(this_cmtn) > mindt) {
+            
             if(this_rec->ss() > 0) {
               CRUMP("ss dosing records with lag time are not currently supported");
             }
+            
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->time(this_rec->time() + prob->alag(this_cmtn));
-            this_rec->unarm();
+            
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
             a[i].insert(it,newev);
             newev->schedule(a[i], maxtime, addl_ev_first, Fn);
+            
+            this_rec->unarm();
+            
             sort_recs = true;
             sort_offset = 0;
           } else {
@@ -522,14 +528,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
         }
         
+        // This block gets hit for any and all infusions; sometimes the
+        // infusion just got started and we need to add the lag time
+        // sometimes it is an infusion via addl and lag time is already there
         if(this_rec->int_infusion()) {
           rec_ptr evoff = NEWREC(this_rec->cmt(), 
                                  9, 
                                  this_rec->amt(), 
                                  this_rec->time() + this_rec->dur(Fn),
                                  this_rec->rate(), 
-                                 -300, 
+                                 -299, 
                                  this_rec->id());
+          if(this_rec->from_data()) {
+            evoff->time(evoff->time() + prob->alag(this_cmtn)); 
+          }
           a[i].push_back(evoff);
           sort_recs = true;
         }
