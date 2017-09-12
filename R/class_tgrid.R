@@ -67,7 +67,7 @@ setClass("tgrids", slots=c(data="list"))
 ##' lapply(as_deslist(idata, "ID"),stime)
 ##' 
 ##' @export
-as_deslist <- function(data,descol="ID") {
+as_deslist <- function(data, descol="ID") {
   
   if(!is.data.frame(data)) {
     stop("data must be a data frame", call.=FALSE) 
@@ -84,10 +84,20 @@ as_deslist <- function(data,descol="ID") {
   if(!is.element("add", names(data))) {
     data[["add"]] <- 0
   }
+
+  designs <- distinct_(data, .dots=descol, .keep_all=TRUE)
   
-  designs <- as.data.frame(distinct_(data,.dots=descol,.keep_all=TRUE))
+  designs <- as.data.frame(designs)
   
-  sp <- setNames(split(designs,designs[,descol]), paste0(descol,"_",designs[,descol]))
+  data <- as.data.frame(data)
+  
+  deslevels <- sort(designs[,descol])
+  
+  fact <- match(designs[,descol], deslevels)
+  
+  sp <- split(designs, fact)
+  
+  sp <- setNames(sp, paste0(descol,"_",deslevels))
   
   out <- lapply(sp, function(x) {
     tgrid(start=x$start[1],end=x$end[1],delta=x$delta[1],add=unlist(x$add))

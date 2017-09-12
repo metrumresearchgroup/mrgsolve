@@ -68,7 +68,7 @@ generate_rdefs <- function(pars,
 
     cmtn <- unique(intersect(cvec_cs(set$CMTN),cmt))
 
-    if(length(cmtn)>0) {
+    if(length(cmtn) > 0) {
         cmtnindex <- match(cmtn,cmt)-1
         cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)
         Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex,"]")
