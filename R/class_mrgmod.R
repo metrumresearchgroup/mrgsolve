@@ -361,7 +361,6 @@ setMethod("as.list", "mrgmod", function(x,...) {
     shlib <- shlib(x)
     cfile <- cfile(x)
     sodll <- sodll(x)
-    cfile <- cfile(x)
     soloc <- soloc(x)
     project <- project(x)
     model <- model(x)

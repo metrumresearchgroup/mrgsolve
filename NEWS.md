@@ -2,6 +2,11 @@
 
 # 0.8.6.9000
 
+## Bug Fix
+- Fixed bug where deslist was created in the wrong order
+
+# 0.8.6.9000
+
 ## Important changes
 - The bioavailability parameter now gets updated  with each and every dose, regardless
 of whether it was explicitly coded in the data set or implicitly via `addl`.  The 
