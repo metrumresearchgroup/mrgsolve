@@ -1,9 +1,11 @@
 
 
-# 0.8.6.9000
+# 0.8.6.9001
 
 ## Bug Fix
 - Fixed bug where deslist was created in the wrong order
+- Fixed bug where infusion duration was incorrect when paired with
+non-zero lag time (test added)
 
 # 0.8.6.9000
 
