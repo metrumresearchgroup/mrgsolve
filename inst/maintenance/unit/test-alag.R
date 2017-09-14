@@ -23,7 +23,7 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 code <- '
-$PARAM LAG = 2.8, D1 = 1
+$PARAM LAG = 2.8
 $CMT CENT
 $MAIN
 ALAG_CENT = LAG;
@@ -53,18 +53,6 @@ test_that("Very small lag time doesn't crash", {
   out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
   
 })
-
-
-## Issue #267
-
-test_that("Infusion duration correct with lag time", {
-  
-  
-})
-
-
-
-
 
 
 
