@@ -532,6 +532,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
         if(this_rec->int_infusion()) {
+          
           rec_ptr evoff = NEWREC(this_rec->cmt(), 
                                  9, 
                                  this_rec->amt(), 

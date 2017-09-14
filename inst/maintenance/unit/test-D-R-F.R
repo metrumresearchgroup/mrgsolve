@@ -23,7 +23,6 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 project <- file.path(system.file(package="mrgsolve"), "models")
 
-Sys.sleep(1)
 
 context("Testing infusion inputs")
 
@@ -101,8 +100,8 @@ test_that("Error when rate = -1 and D_CMT set instead of R_CMT", {
 
 
 code <- '
-$PARAM D1 = 2, F1=1
-$MAIN D_CENT = D1; F_CENT = F1;
+$PARAM D1 = 2, F1=1, LAGT = 0
+$MAIN D_CENT = D1; F_CENT = F1; ALAG_CENT = LAGT;
 $CMT CENT
 $ODE dxdt_CENT = -0.1*CENT;
 '
@@ -120,6 +119,36 @@ test_that("Correct infusion duration when D_CMT and F_CMT are set", {
   expect_true(out3$time[which.max(out3$CENT)]==10)
   expect_true(out4$time[which.max(out4$CENT)]==10)
   expect_true(round(max(out3$CENT)/max(out4$CENT),3) == 0.667)
+})
+
+## Issue 267
+test_that("Correct infusion duration with lag time", {
+  out <- 
+    mod %>% 
+    ev(amt=1000, rate=-2) %>%
+    mrgsim(end = 24)
+  
+  tmax <- out$time[which.max(out$CENT)]
+  expect_equal(tmax,2)
+  
+  out <- 
+    mod %>% 
+    param(LAGT = 5) %>%
+    ev(amt=1000, rate=-2) %>%
+    mrgsim(end = 24)
+  
+  tmax <- out$time[which.max(out$CENT)]
+  expect_equal(tmax,7)
+  
+  out <- 
+    mod %>% 
+    param(LAGT = 12, D1 = 10) %>%
+    ev(amt=1000, rate=-2) %>%
+    mrgsim(end = 24)
+  
+  tmax <- out$time[which.max(out$CENT)]
+  expect_equal(tmax,22)
+  
 })
 
 
