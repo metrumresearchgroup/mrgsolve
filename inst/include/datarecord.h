@@ -104,6 +104,7 @@ public:
   
   bool unarmed() {return !Armed;}
   void arm() {Armed=true;}
+  bool armed() {return Armed;}
   void unarm() {Armed=false;}
   
   void phantom_rec() {Output=false; Fromdata=false;}
