@@ -62,9 +62,7 @@ test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
 })
 
 
-
 code <-'
-
 $PARAM CL=1, VC=30, KA=1.2, SET=0
 $CMT GUT CENT
 $MAIN  D_GUT =  SET;
@@ -121,6 +119,7 @@ test_that("Correct infusion duration when D_CMT and F_CMT are set", {
   expect_true(round(max(out3$CENT)/max(out4$CENT),3) == 0.667)
 })
 
+
 ## Issue 267
 test_that("Correct infusion duration with lag time", {
   out <- 
@@ -151,6 +150,27 @@ test_that("Correct infusion duration with lag time", {
   
 })
 
+## Issue 267
+test_that("Correct infusion duration with lag time, multiple", {
+  out <- 
+    mod %>% 
+    param(LAGT = 4, D1 = 10) %>%
+    ev(amt=1000, rate = -2, ii=24, addl=3) %>% 
+    mrgsim(end=97, obsonly = TRUE) 
+  
+  # To simplify, correct for LAGT and then analyze
+  out <- mutate(out, time = time - 4, DAY = 1+floor(time/24))
+  out <- filter(out, DAY >= 1)
+  sum <- group_by(out, DAY) 
+  sum <- summarise(sum, tmax = time[which.max(CENT)], 
+                   tmin = time[which.min(CENT)])
+  
+  expect_equal(sum$tmax[1], 10)
+  expect_equal(sum$tmax, 10 + c(0, 24, 48, 72))
+  expect_equal(sum$tmin, seq(0,72,24))
+  
+})
+
 
 
 code <- '
@@ -175,7 +195,6 @@ test_that("Correct infusion duration when R_CMT and F_CMT are set", {
   expect_true(out4$time[which.max(out4$CENT)]==7.5)
   expect_true(round(max(out3$CENT)/max(out4$CENT),3) < 1)
 })
-
 
 
 
