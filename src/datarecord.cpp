@@ -29,7 +29,7 @@
 #include <algorithm>
 
 #define N_SS 1000
-#define CRIT_DIFF_SS 1E-10
+#define CRIT_DIFF_SS 1E-12
 
 // Tgrid Observations that need to get output
 // And Ptime observations
