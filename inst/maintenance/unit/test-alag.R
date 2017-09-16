@@ -23,13 +23,12 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 code <- '
-$PARAM LAG = 2.8
-$CMT CENT
+$PARAM LAG = 2.8, CL = 1, V = 20
+$PKMODEL cmt = "CENT"
 $MAIN
 ALAG_CENT = LAG;
 '
 mod <- mcode("alag1", code)
-
 
 context("Lagged doses")
 
@@ -55,8 +54,33 @@ test_that("Very small lag time doesn't crash", {
 })
 
 
+test_that("Lag time on SS record - bolus", {
+  e <- ev(amt=100, ii = 12, LAGT = 5, addl = 10, ss = 1)
+  out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
+  pick <- filter(out, time %in% seq(0,240,12))
+  cent <- round(pick$CENT,3)
+  expect_true(all(cent==cent[1]))
+})
 
+test_that("Lag time on SS record - infusion", {
+  e <- ev(amt=100, ii = 12, LAGT = 3, addl = 10, ss = 1, rate = 100/2)
+  out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
+  pick <- filter(out, time %in% seq(0,240,12))
+  cent <- round(pick$CENT,4)
+  expect_true(all(cent==cent[1]))
+  
+  pick2 <- filter(out, time %in% (7+seq(0,240,12)))
+  cent2 <- round(pick2$CENT,4)
+  expect_true(all(cent2==cent2[1]))
+})
 
+test_that("Error lagtime >= ii for bolus", {
+  e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
+  expect_error(mrgsim(mod, ev = e))
+})
 
-
+test_that("Error lagtime+duration >= ii for infusion", {
+  e <- ev(amt=100, ii = 12, LAG = 3, rate = 100/10, ss = 1)
+  expect_error(mrgsim(mod, ev = e))
+})
 
