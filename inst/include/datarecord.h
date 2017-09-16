@@ -92,6 +92,7 @@ public:
   void implement(odeproblem* prob);
   void steady_infusion(odeproblem* prob);
   void steady_bolus(odeproblem* prob);
+  void steady(odeproblem* prob, double Fn);
   
   bool infusion(){return (Evid==1) && (Rate > 0);}
   bool int_infusion(){return (Evid==1) && (Rate > 0) && (Amt > 0);}

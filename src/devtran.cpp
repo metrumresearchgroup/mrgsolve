@@ -414,7 +414,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->y_init(init);
     
     idat.copy_inits(this_idata_row,prob);
-    
+    prob->set_d(a[i][0]);
     prob->init_call(tfrom);
     
     if(mtimes.size() > 0) {
@@ -477,10 +477,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       }
       
-      prob->set_d(this_rec);
-      
       if(j != 0) {
         prob->newind(2);
+        prob->set_d(this_rec);
         prob->init_call_record(tto);
       }  
       
@@ -504,13 +503,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->alag(this_cmtn) > mindt) {
             
             if(this_rec->ss() > 0) {
-              CRUMP("ss dosing records with lag time are not currently supported");
+              this_rec->steady(prob, Fn);
             }
             
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->time(this_rec->time() + prob->alag(this_cmtn));
+            newev->ss(0);
             
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
