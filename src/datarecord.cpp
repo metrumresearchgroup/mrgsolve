@@ -29,7 +29,7 @@
 #include <algorithm>
 
 #define N_SS 1000
-#define CRIT_DIFF_SS 1E-10
+#define CRIT_DIFF_SS 1E-12
 
 // Tgrid Observations that need to get output
 // And Ptime observations
@@ -131,6 +131,8 @@ double datarecord::dur(double b) {
   return(b*Amt/Rate);
 }
 
+
+
 void datarecord::implement(odeproblem* prob) {
   
   if(Evid==0 || (!Armed)) return;
@@ -143,12 +145,7 @@ void datarecord::implement(odeproblem* prob) {
   
   double Fn = prob->fbio(eq_n);
   
-  // Check for steady state records:
-  if(Ss > 0) {
-    if(Fn==0) throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
-    if(Rate == 0) this->steady_bolus(prob);
-    if(Rate >  0) this->steady_infusion(prob);
-  }
+  if(Ss > 0) this->steady(prob, Fn);
   
   switch (evid) {
   case 1: // Dosing event record
@@ -206,7 +203,16 @@ void datarecord::implement(odeproblem* prob) {
   prob->lsoda_init();
 }
 
-void datarecord::steady_bolus(odeproblem *prob) {
+/* 
+ * Brings systme to steady state if appropriate.
+ */
+void datarecord::steady(odeproblem* prob, double Fn) {
+  if(Fn==0) throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
+  if(Rate == 0) this->steady_bolus(prob);
+  if(Rate >  0) this->steady_infusion(prob);
+}
+
+void datarecord::steady_bolus(odeproblem* prob) {
   
   dvec state_incoming;
   
@@ -234,7 +240,7 @@ void datarecord::steady_bolus(odeproblem *prob) {
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
-
+  
   for(i=1; i < N_SS; ++i) {
     
     tfrom = double(i-1)*Ii;
@@ -247,26 +253,41 @@ void datarecord::steady_bolus(odeproblem *prob) {
     for(j=0; j < prob->neq(); ++j) {
       res[j]  = pow(prob->y(j) - last[j], 2.0);
       last[j] = prob->y(j);
-    }
+    } 
     
     this_sum = std::accumulate(res.begin(), res.end(), 0.0);
     
     if(i > 10) {
       diff = std::abs(this_sum - last_sum);
       if((diff < CRIT_DIFF_SS)){
+        tfrom = double(i-1)*Ii;
+        tto  = double(i)*Ii;
         break;
       }
     }
     tfrom = tto;
     last_sum = this_sum;
   }
+  
+  // If we need a lagtime, give one more dose
+  // and advance to tto - lagtime.
+  double lagt = prob->alag(this->cmtn());
+  if(lagt > 0) {
+    if(lagt >= Ii) {
+      throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
+    }
+    evon->implement(prob); 
+    prob->lsoda_init();
+    prob->advance(tfrom, (tto - lagt));
+  }
+  
   if(Ss == 2) {
     for(size_t i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
     }
-  }
+  } 
   prob->lsoda_init();
-}
+} 
 
 
 void datarecord::steady_infusion(odeproblem *prob) {
@@ -326,7 +347,6 @@ void datarecord::steady_infusion(odeproblem *prob) {
       prob->lsoda_init();
       tfrom = toff;
       offs.erase(offs.begin());
-      
     }
     
     prob->lsoda_init();
@@ -344,10 +364,36 @@ void datarecord::steady_infusion(odeproblem *prob) {
     if(i>10) {
       diff = std::abs(this_sum - last_sum);
       if(diff < CRIT_DIFF_SS) {
+        tfrom = nexti;
+        nexti  = double(i+1)*Ii;
         break;
       }
     }
     last_sum = this_sum;
+  }
+  
+  // If we need a lagtime, give one more dose
+  // and advance to tto - lagtime.
+  double lagt = prob->alag(this->cmtn());
+  if(lagt > 0) {
+    if(lagt >= Ii) {
+      throw Rcpp::exception(
+          "ALAG(n) greater than ii on ss record.",false
+      );
+    }
+    if((duration + lagt) >= Ii) {
+      throw Rcpp::exception(
+          "Infusion duration + ALAG(n) greater than ii on ss record.",false
+      );
+    }
+    evon->time(tfrom);
+    evon->implement(prob);
+    toff  = tfrom + duration;
+    prob->advance(tfrom,toff);
+    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+    evoff->implement(prob);
+    prob->lsoda_init();
+    prob->advance(toff, (nexti - lagt));
   }
   
   if(Ss == 2) {
