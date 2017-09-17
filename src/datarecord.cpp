@@ -276,6 +276,9 @@ void datarecord::steady_bolus(odeproblem* prob) {
     if(lagt >= Ii) {
       throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
     }
+    if(Ss==2) {
+      throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
+    }
     evon->implement(prob); 
     prob->lsoda_init();
     prob->advance(tfrom, (tto - lagt));
@@ -385,6 +388,9 @@ void datarecord::steady_infusion(odeproblem *prob) {
       throw Rcpp::exception(
           "Infusion duration + ALAG(n) greater than ii on ss record.",false
       );
+    }
+    if(Ss==2) {
+      throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
     }
     evon->time(tfrom);
     evon->implement(prob);
