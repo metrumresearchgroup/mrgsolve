@@ -1,6 +1,6 @@
 
 
-# 0.8.6.9001
+# 0.8.9.9002
 
 ## Bug Fix
 - Fixed bug where deslist was created in the wrong order
@@ -10,9 +10,11 @@ non-zero lag time (test added)
 first record for an individual 164b5e47341cf237f12bfef475dfca222fd70a63
 
 ## Important changes
-- Add support for dosing records with both lag time and ss flag; an error message 
-will be generated if lag time is greater than ii or if lag time + infusion duration is 
-greater than ii.
+- Add support for dosing records with both lag time and ss flag; an error message will be generated if lag time is greater than ii or if lag time + infusion duration is greater than ii.
+- The behavior of `ev_assign` is changed so that the unique values 
+of `evgroup` are sorted prior to making event assignments.  Details about 
+the new behavior are now included in the R help topic.
+
 
 # 0.8.6.9000
 

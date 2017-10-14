@@ -26,6 +26,18 @@ to \code{ev_assign}}
 \description{
 Replicate a list of events into a data set.
 }
+\details{
+\code{ev_assign} connects events in a list passed in as the
+\code{l} argument to values in the data set identified in the 
+\code{evgroup} argument.  For making assignments, the unique 
+values in the \code{evgroup} column are first sorted so that 
+the first sorted unique value in \code{evgroup} is assigned 
+to the first event in \code{l}, the second sorted value in 
+\code{evgroup} column is assigned to the second event in 
+\code{l}, and so on.  This is a change from previous behavior, 
+which did not sort the unique values in \code{evgroup} prior to 
+making the assignments.
+}
 \examples{
 ev1 <- ev(amt=100)
 ev2 <- ev(amt=300, rate=100, ii=12, addl=10)
@@ -33,6 +45,8 @@ ev2 <- ev(amt=300, rate=100, ii=12, addl=10)
 idata <- data.frame(ID=1:10) 
 idata$arm <- 1+(idata$ID \%\%2)
 
-ev_assign(list(ev1,ev2),idata,"arm",join=TRUE)
+ev_assign(list(ev1,ev2), idata, "arm", join=TRUE)
+
+
 
 }
