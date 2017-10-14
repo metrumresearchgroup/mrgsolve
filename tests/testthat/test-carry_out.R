@@ -21,6 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-carry_out")
 
 mod <- mrgsolve:::house()
 
@@ -44,8 +45,6 @@ out <-
   carry_out(WT,evid,ROW) %>%
   mrgsim(obsfirst=FALSE,obsonly=TRUE)
 
-
-context("Testing carry_out")
 
 out <- mod %>% 
   data_set(exTheoph) %>% 

@@ -21,11 +21,9 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-carry-out")
 
 mod <- mrgsolve:::house() %>% update(end=5, delta=1) %>% Req(CP)
-
-
-context("Testing carry_out of tran / PK dosing items")
 
 ex <- rep(0,7)
 

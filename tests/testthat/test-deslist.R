@@ -22,6 +22,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-deslist")
+
 test_that("as_deslist", {
 
   idata <- data_frame(ID=c(33,11,88), start=0, end=c(1,2,3))

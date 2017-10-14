@@ -21,10 +21,9 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-dplyr-generics")
 
 project <- file.path(system.file(package="mrgsolve"), "models")
-
-context("Use dplyr generics on mrgsims objects")
 
 out  <- mrgsolve:::house() %>% ev(amt=100) %>% mrgsim(end=122)
 

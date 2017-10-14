@@ -20,7 +20,10 @@ library(mrgsolve)
 library(dplyr)
 
 Sys.setenv(R_TESTS="")
+
 options("mrgsolve_mread_quiet"=TRUE)
+
+context("test-ev_days")
 
 e <- ev(amt=100)
 b <- ev(amt=200)

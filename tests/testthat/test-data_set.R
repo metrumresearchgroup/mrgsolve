@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 mod <- mrgsolve:::house() %>% update(end=240)
 
-context("Testing data_set")
+context("test-data_set")
 
 data(extran1)
 lo <- extran1
@@ -78,9 +78,6 @@ test_that("time is required", {
   expect_error(mod %>% data_set(df) %>% mrgsim)
 })
 
-
-context("Data set record sorting")
-
 mod <- mrgsolve:::house()
 
 data(exTheoph)
@@ -96,9 +93,6 @@ test_that("Improperly sorted records produces error", {
 test_that("Properly sorted records produces no error", {
   expect_is((mod %>% data_set(dd2) %>% mrgsim),"mrgsims")
 })
-
-
-context("Tests for dataobject - data")
 
 test_that("Data set column order gives same answer", {
   mod <- mrgsolve:::house() %>% omat(dmat(1,1,1,1))

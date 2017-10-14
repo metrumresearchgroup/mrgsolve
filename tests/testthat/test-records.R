@@ -21,7 +21,10 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-records")
+
 mod <- mrgsolve:::house() %>% Req(CENT,RESP) 
+
 data(exidata) 
 
 

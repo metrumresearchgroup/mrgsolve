@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Testing obsonly and obsaug arguments")
+context("test-obsonly-obsaug")
 
 mod <- mrgsolve:::house(add=c(8.123, 33.3333))
 

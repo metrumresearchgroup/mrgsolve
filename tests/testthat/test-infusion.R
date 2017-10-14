@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 mod <- mrgsolve:::house()
 
-context("Infusions")
+context("test-infusion")
 
 ## Issue 43
 test_that("Infusion with amt == 0", {
@@ -96,10 +96,6 @@ test_that("Infusion with duration a multiple of ii", {
     expect_is(out, "mrgsims")
 })
 
-
-
-context("Infusions that end too close to observations.")
-
 mod  <- mrgsolve:::house()
 
 test_that("Infusion with no obs overlap", {
@@ -112,9 +108,6 @@ test_that("Infusion with obs overlap", {
   expect_is(mod %>% mrgsim(delta=0.1), "mrgsims")
   #expect_error(mod %>% update(mindt=0) %>% mrgsim(delta=0.1))
 })
-
-
-context("Infusion with ss flag")
 
 test_that("Infusion executes with ss flag and ii==dur", {
   out <- 

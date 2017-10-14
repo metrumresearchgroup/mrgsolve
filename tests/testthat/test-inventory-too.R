@@ -22,7 +22,7 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 
-context("test-inventory")
+context("test-inventory-too")
 
 test_that("inventory conditions", {
     
