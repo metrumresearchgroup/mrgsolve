@@ -22,6 +22,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-ev")
+
 test_that("event requirements and defaults", {
   expect_error(ev(time=24))
   expect_error(ev(amt=100, evid=0))

@@ -22,6 +22,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-tad")
+
 mod <- mrgsolve:::house(end=5, delta=1) %>% Req() 
 
 test_that("tad", {

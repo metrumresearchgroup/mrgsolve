@@ -21,15 +21,14 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-mrgindata")
+
 end <- 60
 delta <- 3
 n <- length(seq(0,end,delta))
 mod <- mrgsolve:::house() %>% update(end=end, delta=delta)
 data(extran3)
 tb <- tbl_df(extran3)
-
-
-context("valid_data_set tests") 
 
 test_that("valid_data_set warns for character columns", {
   dat <- expand.ev(amt=100,ID=1:4,X="A")

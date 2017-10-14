@@ -21,6 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-fixed-cmtn")
 
 code <- '
 
@@ -45,11 +46,6 @@ $CAPTURE cmtn
 
 
 mod <- try(suppressWarnings(mcode("FOO",code, audit=FALSE,compile=FALSE)))
-
-context("CMTN block gives compartment numbers")
-
-
-context("Fixed parameters")
 
 test_that("FIXED items are excluded from param", {
     expect_identical(names(param(mod)),c("CL", "VC", "KM", "VMAX"))

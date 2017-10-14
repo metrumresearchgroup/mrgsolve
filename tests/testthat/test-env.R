@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Test $ENV")
+context("test-env")
 
 test_that("$ENV", {
   mod <- mcode("test_env_1", "$ENV a <- 1\nb <- 2",compile=FALSE)

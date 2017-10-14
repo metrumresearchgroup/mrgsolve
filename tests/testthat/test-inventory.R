@@ -22,7 +22,7 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 
-context("inventory")
+context("test-inventory")
 
 # test_that("inven_report displays warns and missing items", {
 #   obj <- data.frame(KA = 1, CL = 1, V = 1, OCC = 1, F = 1)

@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 project <- file.path(system.file(package="mrgsolve"), "models")
 
-context("Testing matlist operations")
+context("test-matlist")
 
 code <- '
 $OMEGA 0 0 0 

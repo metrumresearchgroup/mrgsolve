@@ -21,6 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-rename")
 
 mod <- mrgsolve:::house() %>% Req(CENT,RESP) 
 
@@ -28,9 +29,7 @@ data(exTheoph)
 df <- exTheoph %>% mutate(KYLE=7)
 mod <- mod %>% data_set(df) 
 
-
-
-context("Rename via carry.out #30")
+## "Rename via carry.out #30"
 test_that("tran item is renamed", {
   out <- mod %>% carry.out(EVID=evid) %>% mrgsim
   expect_true(all(is.element(s(RESP,CENT,EVID), names(out))))
