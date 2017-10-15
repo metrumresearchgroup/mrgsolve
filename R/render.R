@@ -43,14 +43,15 @@ setMethod("render", "mrgmod", function(x,...) {
     project <- tempdir()
     file <- basename(cfile(x))
     cat(code(x), file=filename(project,file),sep="\n")
-    dorender(model(x),project,...)
+    dorender(model(x),modfile(x),project,...)
 })
 
 ##' @param compile logical; if true, the model will be compiled to run
 ##' @param model model name
 ##' @param template template document
+##' @param modfile the model specification file name (with extension)
 ##' @rdname render
-dorender <- function(model,project,template=NULL,compile=TRUE,...) {
+dorender <- function(model,modfile,project,template=NULL,compile=TRUE,...) {
   
   if(!requireNamespace("rmarkdown")) {
     stop("need rmarkdown to use this function, please install via install.packages('rmarkdown')")
@@ -64,11 +65,12 @@ dorender <- function(model,project,template=NULL,compile=TRUE,...) {
     template <- system.file("Rmd", "mrgsolve_render_template.Rmd",package="mrgsolve")
   }
   
-  out <- filename(tempdir(),model,".Rmd")
+  out <- filename(tempdir(), model,".Rmd")
   
-  file.copy(template,out,overwrite=TRUE)
+  file.copy(template, out, overwrite=TRUE)
   
-  pdf <- rmarkdown::render(out,params=list(model=model,project=project,compile=compile),...)
+  pdf <- rmarkdown::render(out,params=list(model=model, modfile = modfile, project=project,
+                                           compile=compile),...)
   
   invisible(file.copy(pdf, getwd(),overwrite=TRUE))
 

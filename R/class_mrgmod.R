@@ -82,6 +82,7 @@ check_globals <- function(x,cmt) {
 }
 
 protomod <- list(model=character(0),
+                 modfile = character(0),
                  package=character(0),
                  soloc=tempdir(),
                  project='.',
@@ -187,7 +188,7 @@ setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",
          prototype = list(shlib=list(compiled=TRUE, date="date of package compile"),
-                          package="",src="",header=""),
+                          package="", src="", header=""),
          contains="mrgmod",
          slots=c(
            package="character",
@@ -215,8 +216,8 @@ house <- function(...) {
   att <- readRDS(file=pfile("mrgsolve", "project", "housemodel", "RDS"))
   x <- new("packmod",
            att,
-           package="mrgsolve",
-           model="housemodel"
+           package = "mrgsolve",
+           model = "housemodel"
   )
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
@@ -225,12 +226,12 @@ house <- function(...) {
 }
 
 as_pack_mod <- function(model, project, PACKAGE) {
-  x <- mread(model, project,compile=FALSE,udll=FALSE,ns=FALSE)
+  x <- mread(model, project, compile=FALSE, udll=FALSE, ns=FALSE)
   code <- readLines(cfile(x),warn=FALSE)
   x <- new("packmod",
            x,
            package=PACKAGE,
-           model=model
+           model = model
   )
   soloc <- soloc(x)
   source <- file.path(soloc,compfile(model(x)))
@@ -241,7 +242,7 @@ as_pack_mod <- function(model, project, PACKAGE) {
   x <- relocate_funs(x, PACKAGE)
   x@soloc <- ""
   
-  return(list(mod=x, soloc=soloc,source=source))
+  return(list(mod=x, soloc=soloc, source=source))
 }
 
 ##' Check if an object is a model object. 
@@ -282,6 +283,7 @@ shlib <- function(x) x@shlib
 cmt <- function(x) names(Init(x))
 dllname <- function(x) x@package
 model <- function(x) x@model
+modfile <- function(x) x@modfile
 
 ##' Return the location of the model shared object.
 ##'
@@ -301,7 +303,7 @@ soloc <- function(x,short=FALSE) {
 }
 
 cfile <- function(x,...) {
-  return(pathfun(filename(project(x),model(x),".cpp",...)))
+  return(pathfun(filename(project(x),modfile(x),...)))
 }
 
 setMethod("sodll", "mrgmod", function(x,...) {

@@ -14,7 +14,7 @@ render(x, ...)
 
 \S4method{render}{mrgmod}(x, ...)
 
-dorender(model, project, template = NULL, compile = TRUE, ...)
+dorender(model, modfile, project, template = NULL, compile = TRUE, ...)
 }
 \arguments{
 \item{x}{model object or the model name}
@@ -24,6 +24,8 @@ dorender(model, project, template = NULL, compile = TRUE, ...)
 \item{project}{the directory containing the \code{.cpp} model file}
 
 \item{model}{model name}
+
+\item{modfile}{the model specification file name (with extension)}
 
 \item{template}{template document}
 
