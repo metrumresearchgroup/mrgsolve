@@ -85,7 +85,7 @@ $CMT CENT
 $ODE dxdt_CENT = -(CL/VC)*CENT;
 '
 
-mod <- mcode("ex_mread",code)
+mod <- mcode("ex_mread", code)
 
 mod
 
@@ -95,5 +95,17 @@ mod \%>\% init(CENT=1000) \%>\% mrgsim \%>\% plot
 mod <- mread("irm3", modlib())
 
 mod
+
+# if the model is in the file mymodel.cpp
+mod <- mread("mymodel")
+
+# if the model is in the file mymodel.txt
+mod <- mread(file = "mymodel.txt")
+
+or
+
+mod <- mread_file("mymodel.txt")
+
+
 }
 }
