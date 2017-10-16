@@ -70,7 +70,6 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first
 ##' @param ... passed along
-##' @export
 ##' 
 ##' @section Model Library:
 ##' 
@@ -126,6 +125,8 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' 
 ##' 
 ##' }
+##' 
+##' @export
 mread <- function(model = NULL, project = getwd(), code = NULL, 
                   file = paste0(model, ".cpp"), 
                   udll = TRUE, ignore.stdout=TRUE,

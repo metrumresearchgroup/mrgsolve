@@ -399,11 +399,11 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 
 ##' @export
 ##' @rdname see
-setMethod("see", "mrgmod", function(x,raw=FALSE,...) {
+setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
   if(raw) return(x@code)
   what <- x@code
   if(length(what)==0) {
-    if(file_exists(cfile(x))) what <- readLines(cfile(x),warn=FALSE)
+    if(file_exists(cfile(x))) what <- readLines(cfile(x), warn=FALSE)
   }
   if(length(what)==0) {
     warning("No code to show.")
