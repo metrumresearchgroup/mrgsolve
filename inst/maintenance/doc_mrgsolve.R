@@ -1,3 +1,4 @@
+ 
 message("\n\nwriting documentation ... \n")
 
 library(methods)
@@ -21,7 +22,7 @@ stopifnot(all(c(x1,x2)))
 document()
 
 ## I think mrgsolve functions available after doc
-foo <- mrgsolve:::as_pack_mod("housemodel",proj, "mrgsolve")
+foo <- mrgsolve:::as_pack_mod("housemodel", proj, "mrgsolve")
 
 #foo$mod <- mrgsolve:::embed_details(foo$mod)
 

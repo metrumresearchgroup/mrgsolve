@@ -21,11 +21,15 @@
 # @param soloc the build directory
 # @param code model code
 # @param udll logical; if FALSE, a random dll name is generated
-new_build <- function(model,project,soloc,code=NULL,preclean=FALSE,udll=FALSE) {
+new_build <- function(file, model, project, soloc, code=NULL, 
+                      preclean = FALSE, udll = FALSE) {
   
-  ## Check for spaces in the model name
+  if(is.null(model)) model <- tools::file_path_sans_ext(file)
+  
+  if(file == ".cpp") stop("invalid file and/or model argument", call. = FALSE)
+  
   if(charthere(model," ")) {
-    stop("model name cannot contain spaces.")
+    stop("model name cannot contain spaces.", call. = FALSE)
   }
   
   if(any(charthere(project,"\n"))) {
@@ -39,6 +43,7 @@ new_build <- function(model,project,soloc,code=NULL,preclean=FALSE,udll=FALSE) {
   if(!file_writeable(soloc)) {
     stop("soloc directory must exist and be writeable.",call.=FALSE) 
   }
+  
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   
   env$soloc <-   as.character(create_soloc(soloc,model,preclean))
@@ -46,10 +51,11 @@ new_build <- function(model,project,soloc,code=NULL,preclean=FALSE,udll=FALSE) {
   if(!file_readable(project)) {
     stop("project directory must exist and be readable.",call.=FALSE) 
   }
+  
   env$project <- normalizePath(project, mustWork=TRUE, winslash="/")
   
-  ## The model file is <stem>.cpp in the <project> directory
-  env$modfile <- file.path(project,paste0(model, ".cpp"))
+  ## The model file is <stem>.cpp in the <project> directory if a
+  env$modfile <- file.path(project,file)
   
   ## If code is passed in as character:
   if(is.character(code)) {
@@ -64,13 +70,14 @@ new_build <- function(model,project,soloc,code=NULL,preclean=FALSE,udll=FALSE) {
   
   env$md5 <- tools::md5sum(env$modfile)
   
-  env$package <- ifelse(udll,rfile(model),model)
+  env$package <- ifelse(udll,rfile(model), model)
   
   env$compfile <- compfile(model)
   env$compbase <- compbase(model)
   env$compout <- compout(model)
   env$compdir <- compdir()
   env$cachfile <- cachefile()
+  env$model <- model
   
   return(env)
 
