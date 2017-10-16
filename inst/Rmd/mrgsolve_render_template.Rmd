@@ -1,6 +1,7 @@
 ---
 params:
   model: ""
+  modfile: ""
   project: ""
   compile: TRUE
 ---
@@ -22,11 +23,11 @@ prep_chunk <- function(x) {
 ```
 
 ```{r,message=FALSE}
-mod <- mread(params$model,params$project,compile=params$compile,quiet=TRUE)
+mod <- mread(file = params$modfile, params$project, compile=params$compile, quiet=TRUE)
 ```
 
 ```{r}
-blocks <- modelparse(mod@code,drop_blank=FALSE,comment_re="//")
+blocks <- modelparse(mod@code, drop_blank=FALSE, comment_re="//")
 prob <- blocks[["PROB"]]
 if(is.null(prob)) prob <- paste0("# Model: `", model(mod),"`")
 
