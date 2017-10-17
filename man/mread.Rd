@@ -22,7 +22,7 @@ mread_file(file, ...)
 
 \item{project}{location of the model specification file an any headers to be included}
 
-\item{file}{the full file name (but without path) where the model is specified}
+\item{file}{the full file name (with extension, but without path) where the model is specified}
 
 \item{code}{a character string with model specification code to be used instead of a model file}
 
@@ -51,6 +51,14 @@ mread_file(file, ...)
 \description{
 \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
 a model object for simulation.
+}
+\details{
+When the \code{model} argument is used, 
+\code{mrgsolve} assumes the model is written in the 
+file with \code{model} as the stem and \code{.cpp} as the 
+extension.  Use the \code{file} argument to \code{mread} or use 
+\code{mread_file} to read a model from a file without
+the \code{.cpp} extension.
 }
 \section{Model Library}{
 

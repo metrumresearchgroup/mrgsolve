@@ -19,9 +19,9 @@
 ##' @rdname mread 
 ##' @export
 mread_cache <- function(model = NULL, project = getwd(), file = paste0(model, ".cpp"),
-                        code = NULL, soloc = tempdir(), quiet=FALSE, 
+                        code = NULL, soloc = tempdir(), quiet = FALSE, 
                         preclean = FALSE, ...) {
-  
+
   build <- new_build(file, model, project, soloc, code, preclean) 
 
   cache_file <- file.path(build$soloc, "mrgmod_cache.RDS")
