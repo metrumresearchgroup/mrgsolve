@@ -94,6 +94,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
+  const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   
   // Create data objects from data and idata
   dataobject dat(data,parnames);
@@ -365,6 +366,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double Fn = 1.0;
   int this_idata_row = 0;
   double told = -1;
+  bool locf = false;
   
   prob->nid(dat.nid());
   prob->nrow(NN);
@@ -400,7 +402,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     for(k=0; k < neta; ++k) prob->eta(k,eta(i,k));
     for(k=0; k < neps; ++k) prob->eps(k,eps(crow,k));
-
+    
     idat.copy_parameters(this_idata_row,prob);
     
     if(a[i][0]->from_data()) {
@@ -454,8 +456,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       } 
       
+      locf = false;
       if(this_rec->from_data()) {
-        dat.copy_parameters(this_rec->pos(), prob);
+        if(nocb) {
+          dat.copy_parameters(this_rec->pos(), prob);
+        } else {
+          locf = true;    
+        }
       }
       
       tto = this_rec->time();
@@ -495,7 +502,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         bool sort_recs = false;
         unsigned int sort_offset = 0;
-      
+        
         if(this_rec->from_data()) {
           if(this_rec->rate() < 0) {
             prob->rate_main(this_rec);
@@ -556,6 +563,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(this_rec->evid() != 2) {
         this_rec->implement(prob);
+      }
+      
+      if(locf) {
+        dat.copy_parameters(this_rec->pos(), prob);
       }
       
       prob->table_call();
