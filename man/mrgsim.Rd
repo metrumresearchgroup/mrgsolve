@@ -53,6 +53,9 @@ that occur prior to the first record in \code{data}.
 \item \code{tad} logical; when \code{TRUE} a column is added to simulated output is added showing the 
 time since the last dose.  Only data records with \code{evid == 1} will be considered doses for the 
 purposes of \code{tad} calculation.
+\item \code{nocb} if \code{TRUE} (default), time-varying items in a data set will be
+implemented as next observation carried back; if \code{FALSE} time-varying items
+in a data set will be implemented as last observation carried forward.  
 }
 }
 
