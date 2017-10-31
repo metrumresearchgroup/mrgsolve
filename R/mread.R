@@ -57,7 +57,7 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##'
 ##' @param model model name
 ##' @param project location of the model specification file an any headers to be included
-##' @param file the full file name (but without path) where the model is specified
+##' @param file the full file name (with extension, but without path) where the model is specified
 ##' @param soloc directory where model shared object is stored
 ##' @param code a character string with model specification code to be used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
@@ -70,6 +70,15 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first
 ##' @param ... passed along
+##' 
+##' @details
+##' When the \code{model} argument is used, 
+##' \code{mrgsolve} assumes the model is written in the 
+##' file with \code{model} as the stem and \code{.cpp} as the 
+##' extension.  Use the \code{file} argument to \code{mread} or use 
+##' \code{mread_file} to read a model from a file without
+##' the \code{.cpp} extension. 
+##' 
 ##' 
 ##' @section Model Library:
 ##' 
@@ -132,8 +141,8 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
                   udll = TRUE, ignore.stdout=TRUE,
                   raw = FALSE, compile = TRUE, audit = TRUE,
                   quiet = getOption("mrgsolve_mread_quiet",FALSE),
-                  check.bounds=FALSE, warn=TRUE, soloc=tempdir(),
-                  preclean=FALSE, ...) {
+                  check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
+                  preclean = FALSE, ...) {
   
   quiet <- as.logical(quiet)
   
@@ -448,12 +457,12 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   return(x)
 }
 
-
 ##' @export
 ##' @rdname mread
 mread_file <- function(file, ...) {
   model <- tools::file_path_sans_ext(file)
   mread(model = model, file = file, ...)
 }
+
 
 

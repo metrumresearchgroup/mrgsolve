@@ -218,11 +218,7 @@ collect_ev <- function(...) {
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
-  if (utils::packageVersion("dplyr") > "0.5.0") {
-    x <- dplyr::mutate_at(x,which(what),dplyr::funs(na2zero))
-  } else {
-    x <- dplyr::mutate_each(x,dplyr::funs(na2zero),which(what))
-  }
+  x <- dplyr::mutate_at(x,which(what),dplyr::funs(na2zero))
   
   na.check <- which(!what)
   if(length(na.check) > 0) {
