@@ -1,4 +1,11 @@
+# 0.8.9.9004
+- Added `nocb` argument to `mrgsim`.  If `nobc` is 
+`TRUE` (default), `mrgsim` continues to use 
+next observation carried forward to advance the system
+when there are time-varying parameters (including covariates).  If `nocb` is `FALSE`, `mrgsim` will use last observation carried forward (`locf`) to advance the system when there are time-varying parameters. 
 
+# 0.8.9.9003
+- Minor improvements to documentation
 
 # 0.8.9.9002
 
@@ -11,9 +18,7 @@ first record for an individual 164b5e47341cf237f12bfef475dfca222fd70a63
 
 ## Important changes
 - Add support for dosing records with both lag time and ss flag; an error message will be generated if lag time is greater than ii or if lag time + infusion duration is greater than ii.
-- The behavior of `ev_assign` is changed so that the unique values 
-of `evgroup` are sorted prior to making event assignments.  Details about 
-the new behavior are now included in the R help topic.
+- The behavior of `ev_assign` is changed so that the unique values of `evgroup` are sorted prior to making event assignments.  Details about the new behavior are now included in the R help topic.
 
 
 # 0.8.6.9000
