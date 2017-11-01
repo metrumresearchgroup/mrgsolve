@@ -1,4 +1,13 @@
+# 0.8.10
+- Release to CRAN
+
 # 0.8.9.9004
+- Added `file` argument to `mread` to allow coding model 
+specification files with any extension.  The current 
+behavior continues to be assuming that the model 
+is in a `.cpp` file, but using the `file` argument
+allows any file name for model specification.
+
 - Added `nocb` argument to `mrgsim`.  If `nobc` is 
 `TRUE` (default), `mrgsim` continues to use 
 next observation carried forward to advance the system
@@ -11,10 +20,9 @@ when there are time-varying parameters (including covariates).  If `nocb` is `FA
 
 ## Bug Fix
 - Fixed bug where deslist was created in the wrong order
-- Fixed bug where infusion duration was incorrect when paired with
-non-zero lag time (test added)
+- Fixed bug where infusion duration was incorrect when paired with non-zero lag time (test added)
 - Fixed bug where `self` object was not correctly updated for the 
-first record for an individual 164b5e47341cf237f12bfef475dfca222fd70a63
+first record for an individual (#273)
 
 ## Important changes
 - Add support for dosing records with both lag time and ss flag; an error message will be generated if lag time is greater than ii or if lag time + infusion duration is greater than ii.
