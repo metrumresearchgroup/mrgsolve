@@ -1,6 +1,6 @@
 Package: mrgsolve 
 Type: Package
-Version: 0.8.9.9004
+Version: 0.8.10
 Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
@@ -30,7 +30,7 @@ Depends:
     methods
 Imports:
     Rcpp (>= 0.12.12),
-    dplyr (>= 0.7.1),
+    dplyr (>= 0.7.4),
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10),
     RcppArmadillo (>= 0.7.900.2.0),
