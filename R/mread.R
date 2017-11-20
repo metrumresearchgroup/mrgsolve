@@ -250,12 +250,7 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
-  ##  COVSET blocks
-  if(any(is.element("COVSET",names(spec)))) {
-    handle_cov(spec,ENV) 
-  }
-  
-  
+
   ## Constructor for model object:
   x <- new("mrgmod",
            model = model,
@@ -309,7 +304,7 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
-  rd <-generate_rdefs(pars = names(param),
+  rd <- generate_rdefs(pars = names(param),
                       cmt = names(init),
                       ode_func(x),
                       main_func(x),

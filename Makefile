@@ -8,7 +8,7 @@ CHKDIR=Rchecks
 
 
 ## Set libPaths:
-##export R_LIBS=${LIBDIR}
+## export R_LIBS=${LIBDIR}
 
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
