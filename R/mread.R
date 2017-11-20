@@ -252,12 +252,18 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
   
+  if(is.element("Rcpp", names(plugin))) {
+    spec <- global_rcpp(spec)
+  }
+  
   if(is.element("mrgx", names(plugin))) {
     toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
     topream <- "_env = mrgx::get_envir(self);"
-    spec[["GLOBAL"]] <-  c(toglob, spec[["GLOBAL"]])
     spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
+    spec[["GLOBAL"]] <-  c(toglob, spec[["GLOBAL"]])
   }
+  
+
 
   ## Constructor for model object:
   x <- new("mrgmod",
