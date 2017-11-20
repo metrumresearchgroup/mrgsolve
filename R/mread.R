@@ -253,8 +253,8 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   }
   
   if(is.element("mrgx", names(plugin))) {
-    toglob <- wrap_namespace("Rcpp::Environment _envir;", NULL)
-    topream <- "_envir = mrgx::get_envir(self);"
+    toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
+    topream <- "_env = mrgx::get_envir(self);"
     spec[["GLOBAL"]] <-  c(toglob, spec[["GLOBAL"]])
     spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
   }
