@@ -235,20 +235,28 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"],use.names=FALSE)
+  table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
   
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
-  SET[["CMTN"]] <- c(spec[["CMTN"]],dosing)
+  SET[["CMTN"]] <- c(spec[["CMTN"]], dosing)
   
-  ## This section checks the contents of the spec and makes some special interventions
-  ##   Virtual compartments
+  # This section checks the contents of the spec and makes some special 
+  # interventions
+  # Virtual compartments
   if(any(is.element("VCMT", names(spec)))) {
     what <- which(names(spec)=="VCMT")
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
+  }
+  
+  if(is.element("mrgx", names(plugin))) {
+    toglob <- wrap_namespace("Rcpp::Environment _envir;", NULL)
+    topream <- "_envir = mrgx::get_envir(self);"
+    spec[["GLOBAL"]] <-  c(toglob, spec[["GLOBAL"]])
+    spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
   }
 
   ## Constructor for model object:
