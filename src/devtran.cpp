@@ -491,7 +491,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
 
       // Some non-observation event happening
-      if(this_rec->is_dose()) {
+      if(this_rec->is_event()) {
 
         this_cmtn = this_rec->cmtn();
 
@@ -504,36 +504,33 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         unsigned int sort_offset = 0;
 
         if(this_rec->from_data()) {
+          
           if(this_rec->rate() < 0) {
             prob->rate_main(this_rec);
           }
-          if(prob->alag(this_cmtn) > mindt) {
-
+          
+          if(prob->alag(this_cmtn) > mindt) { // there is a valid lagtime
             if(this_rec->ss() > 0) {
               this_rec->steady(prob, Fn);
             }
-
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->time(this_rec->time() + prob->alag(this_cmtn));
             newev->ss(0);
-
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
             a[i].insert(it,newev);
             newev->schedule(a[i], maxtime, addl_ev_first, Fn);
-
             this_rec->unarm();
-
             sort_recs = true;
             sort_offset = 0;
-          } else {
+          } else { // no valid lagtime
             this_rec->schedule(a[i], maxtime, addl_ev_first, Fn);
             sort_recs = this_rec->needs_sorting();
             sort_offset = 1;
           }
-        }
+        } // from data
 
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
@@ -557,7 +554,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(sort_recs) {
           std::sort(a[i].begin()+sort_offset,a[i].end(),CompRec());
         }
-      }
+      } // is_dose
 
       prob->advance(tfrom,tto);
 

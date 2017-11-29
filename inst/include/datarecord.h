@@ -98,7 +98,7 @@ public:
   bool int_infusion(){return (Evid==1) && (Rate > 0) && (Amt > 0);}
   bool ss_int_infusion(){return (Evid==1) && (Rate > 0) && (Amt > 0) && (Ss > 0);}
   bool const_infusion(){return (Evid==1) && (Rate > 0) && (Amt == 0);}
-  bool is_event() {return (Evid != 0) && (Evid != 2) ;}
+  bool is_event() {return (Evid != 0);}
   bool is_dose(){return Evid==1;}
   bool is_event_data() {return (Evid != 0) && (Evid != 2) && Fromdata;}
   bool needs_sorting(){return ((Addl > 0) || (Ss == 1));}
