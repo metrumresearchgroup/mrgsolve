@@ -204,7 +204,7 @@ void datarecord::implement(odeproblem* prob) {
 }
 
 /* 
- * Brings systme to steady state if appropriate.
+ * Brings system to steady state if appropriate.
  */
 void datarecord::steady(odeproblem* prob, double Fn) {
   if(Fn==0) throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
