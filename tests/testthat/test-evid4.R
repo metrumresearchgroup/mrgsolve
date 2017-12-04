@@ -32,7 +32,6 @@ test_that("evid4 bolus dosing is the same as evid1", {
   out1 <- mrgsim(mod, events = e1) %>% as.data.frame
   out4 <- mrgsim(mod, events = e4) %>% as.data.frame
   expect_identical(out1, out4)
-
 })
 
 test_that("evid4 infusion dosing is the same as evid1", {
