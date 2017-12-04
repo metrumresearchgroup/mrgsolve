@@ -474,14 +474,6 @@ tparse <- function(x,...) parse(text=x,...)
 
 mt_fun <- function(){}
 
-is.covset <- function(x) {
-  class(x)[1] =="covset" 
-}
-
-require_covset <- function() {
-  stop("covset features are not available in this version of mrgsolve.") 
-}
-
 call_system <- function(args) {
   suppressWarnings(do.call(system,args))
 }
@@ -512,6 +504,3 @@ na2zero <- function(x) {
   x
 }
 
-# covset <- function(...) {
-#   dmutate::covset(...)
-# }

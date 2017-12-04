@@ -256,6 +256,37 @@ check_block_data <- function(x,env,pos) {
   return(NULL)
 }
 
+# Code for relocating Rcpp objects in PREAMBLE
+global_rcpp_reg <- "\\s*global\\s+(Rcpp::)?(Logical|Integer|Character|Numeric)(Vector|Matrix)\\s+(\\w+?)\\s*(=.*;)"
+global_rcpp_sub <- "\\s*global\\s+(Rcpp::)?(Logical|Integer|Character|Numeric)(Vector|Matrix)\\s+"
+
+declare_rcpp_globals <- function(x) {
+  paste0("Rcpp::", x[3], x[4], " ", x[5], ";")
+}
+
+get_rcpp_globals <- function(x) {
+  m <- regmatches(x,regexec(global_rcpp_reg, x, perl = TRUE))
+  w <- which(sapply(m,length) > 0)
+  vars <- declare <-  character(0)
+  if(length(w) > 0) {
+    vars <- sapply(m[w],  "[", 5L)
+    x[w] <- gsub(global_rcpp_sub, "", x[w])
+    declare <- sapply(m[w], declare_rcpp_globals)
+  }
+  list(x = x, m = m, w = w, vars = vars, declare = declare) 
+}
+
+global_rcpp <- function(spec) {
+  x <- spec[["PREAMBLE"]]
+  globals <- get_rcpp_globals(x)
+  if(length(globals[["vars"]]) > 0) {
+    spec[["PREAMBLE"]] <- globals[["x"]]
+    spec[["GLOBAL"]] <- c(wrap_namespace(globals[["declare"]],NULL), spec[["GLOBAL"]])
+  }
+  spec
+}
+
+
 parse_ats <- function(x) {
   
   if(length(x)==0) return(list())
@@ -940,39 +971,4 @@ capture_param <- function(annot,.capture) {
   annot <- dplyr::filter(annot, !(block=="CAPTURE" & name %in% .capture))
   bind_rows(annot,what)
 }
-
-##' @export
-handle_spec_block.specCOVSET <- function(x,...) {
-  stop("$COVSET is not a valid block.")
-  # require_covset()
-  # return(x)
-}
-
-handle_cov <- function(spec,envir) {
-  return(invisible(NULL))
-  # where <- which(names(spec)=="COVSET")
-  # value <- vector(mode="list",length=length(where))
-  # x <- vector(mode="character",length=length(where))
-  # 
-  # for(i in seq_along(where)) {
-  #   y <- scrape_opts(spec[[where[i]]])
-  #   xx <- lapply(y$x,dmutate::new_covobj)
-  #   value[[i]] <- do.call(dmutate::covset,xx)
-  #   if(is.null(y$name)) {
-  #     stop("All $COVSET blocks must have name block option set (e.g. $COVSET @name cov1)",call.=FALSE) 
-  #   }
-  #   x[i] <- y$name
-  # }
-  # 
-  # for(i in seq_along(x)) {
-  #   if(exists(x[i],envir)) {
-  #     stop("Can't assign covset ", 
-  #          x[i], 
-  #          ": an object already exists with that name",call.=FALSE) 
-  #   }
-  #   assign(x[i],value[[i]],envir=envir)  
-  # }
-  # return(invisible(NULL))
-}
-
 

@@ -235,27 +235,36 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"],use.names=FALSE)
+  table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
   
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
-  SET[["CMTN"]] <- c(spec[["CMTN"]],dosing)
+  SET[["CMTN"]] <- c(spec[["CMTN"]], dosing)
   
-  ## This section checks the contents of the spec and makes some special interventions
-  ##   Virtual compartments
+  # This section checks the contents of the spec and makes some special 
+  # interventions
+  # Virtual compartments
   if(any(is.element("VCMT", names(spec)))) {
     what <- which(names(spec)=="VCMT")
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
-  ##  COVSET blocks
-  if(any(is.element("COVSET",names(spec)))) {
-    handle_cov(spec,ENV) 
+  
+  if(is.element("Rcpp", names(plugin))) {
+    spec <- global_rcpp(spec)
   }
   
+  if(is.element("mrgx", names(plugin))) {
+    toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
+    topream <- "_env = mrgx::get_envir(self);"
+    spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
+    spec[["GLOBAL"]] <-  c(toglob, spec[["GLOBAL"]])
+  }
   
+
+
   ## Constructor for model object:
   x <- new("mrgmod",
            model = model,
@@ -309,7 +318,7 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
-  rd <-generate_rdefs(pars = names(param),
+  rd <- generate_rdefs(pars = names(param),
                       cmt = names(init),
                       ode_func(x),
                       main_func(x),

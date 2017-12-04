@@ -1,4 +1,6 @@
-# 0.8.10.9000
+# 0.8.10.9001
+
+- The model environment is automatically imported as `_env` when `mrgx` plugin is invoked
 
 # 0.8.10
 - Release to CRAN
