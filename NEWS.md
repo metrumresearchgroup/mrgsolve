@@ -1,3 +1,6 @@
+# 0.8.10.9002
+- Added `mrgsim_df` function to return data frame rather than `mrgsims` object
+
 # 0.8.10.9001
 
 - The model environment is automatically imported as `_env` when `mrgx` plugin is invoked

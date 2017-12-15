@@ -67,7 +67,8 @@ validate_idata <- function(idata) {
 ##'
 ##' This function sets up the simulation run from data stored in the model object as well as
 ##' arguments passed in.  Note that there are many non-formal arguments to this function that
-##' can be used to customize the simulation run and it's output.
+##' can be used to customize the simulation run and it's output. Use \code{mrgsim_df} to 
+##' return a data frame rather than \code{mrgsims} object.
 ##'
 ##' @name mrgsim
 ##' @rdname mrgsim
@@ -103,9 +104,18 @@ validate_idata <- function(idata) {
 ##' }
 ##' @details
 ##' \itemize{
-##' \item When using \code{data} and \code{idata} together, an error is generated if an ID occurs in \code{data} but not \code{idata}.  Also, when looking up data in \code{idata}, ID in \code{idata} is assumed to be uniquely keyed to ID in \code{data}.  No error is generated if ID is duplicated in \code{data}; parameters will be used from the first occurrence found in \code{idata}.
-##'  \item \code{carry.out}: \code{idata} is assumed to be individual-level and variables that are carried from \code{idata} are repeated throughout the invidivual's simulated data.  Variables carried from \code{data} are carried via last-observation carry forward.  \code{NA} is returned from observations that are inserted into simulated output
-##' that occur prior to the first record in \code{data}.
+##' \item When using \code{data} and \code{idata} together, an error is 
+##' generated if an  ID occurs in \code{data} but not \code{idata}.  
+##' Also, when looking up data in \code{idata}, ID in \code{idata} is 
+##' assumed to be uniquely keyed to ID in \code{data}.  No error is 
+##' generated if ID is duplicated in \code{data}; parameters will be used 
+##' from the first occurrence found in \code{idata}.
+##'  \item \code{carry.out}: \code{idata} is assumed to be 
+##' individual-level and variables that are carried from \code{idata} 
+##' are repeated throughout the invidivual's simulated data.  Variables 
+##' carried from \code{data} are carried via last-observation carry forward.  
+##' \code{NA} is returned from observations that are inserted into 
+##' simulated output that occur prior to the first record in \code{data}.
 ##'
 ##'
 ##' }
@@ -144,10 +154,7 @@ validate_idata <- function(idata) {
 ##'
 
 
-mrgsim <-  function(x,
-                    data=NULL,
-                    idata=NULL,
-                    nid = 1,...) {
+mrgsim <-  function(x, data=NULL, idata=NULL, nid=1, ...) {
   
   if(is.null(data)) {
     data <- x@args$data
@@ -446,6 +453,9 @@ tran_mrgsim <- function(x,
       seed=as.integer(seed))
 }
 
+##' @rdname mrgsim
+##' @export
+mrgsim_df <- function(...) as_data_frame(mrgsim(...))
 
 param_as_parent <- function(x) {
   e <- as.environment(as.list(param(x)))
