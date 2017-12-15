@@ -265,6 +265,7 @@ tran_mrgsim <- function(x,
                         t2advance = FALSE,
                         tad = FALSE,
                         nocb = TRUE,
+                        skip_init_calc = FALSE,
                         ...) {
   
   verbose <- x@verbose
@@ -366,6 +367,7 @@ tran_mrgsim <- function(x,
   parin$filbak <- filbak
   parin$tad <- tad
   parin$nocb <- nocb
+  parin$do_init_calc <- !skip_init_calc
   
   if(any(x@capture =="tad") & tad) {
     stop("tad argument is true and 'tad' found in $CAPTURE",call.=FALSE); 

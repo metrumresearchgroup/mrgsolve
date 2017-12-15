@@ -95,6 +95,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
+  const bool do_inits         = Rcpp::as<bool>   (parin["do_init_calc"]);
 
   // Create data objects from data and idata
   dataobject dat(data,parnames);
@@ -167,6 +168,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob->sigma(SIGMA);
   prob->copy_parin(parin);
   prob->pass_envir(&envir);
+  prob->do_init_calc(do_inits);
   const unsigned int neq = prob->neq();
 
   recstack a(NID);

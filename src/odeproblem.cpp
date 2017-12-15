@@ -81,6 +81,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.cmt = 0;
   d.amt = 0;
   
+  Do_Init_Calc = true;
+  
   pred.assign(5,0.0);
   
   for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
@@ -185,11 +187,12 @@ void odeproblem::init_call(const double& time) {
   
   Inits(Init_value,Y,Param,F,Alag,R,D,d,pred,simeta);
   
-  for(int i=0; i < Neq; ++i) {
-    Y[i] = Init_value[i];
-    Init_dummy[i] = Init_value[i];
+  if(Do_Init_Calc) {
+    for(int i=0; i < Neq; ++i) {
+      Y[i] = Init_value[i];
+      Init_dummy[i] = Init_value[i];
+    }
   }
-  
 }
 
 

@@ -57,6 +57,7 @@ typedef  Rcpp::NumericMatrix::Column mcol;
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
+                             bool do_inits,
                              const Rcpp::NumericVector& param,
                              const Rcpp::NumericVector& init,
                              Rcpp::CharacterVector& parnames,
@@ -76,6 +77,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   prob->copy_parin(parin);
   prob->neta(nre[0]);
   prob->neps(nre[1]);
+  prob->do_init_calc(do_inits);
   
   const unsigned int NN = n[0] * idata.nrow();
   const unsigned int nreq = req.size();
