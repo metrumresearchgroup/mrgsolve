@@ -133,6 +133,7 @@ void odeproblem::neps(int n) {
 void odeproblem::y_init(int pos, double value) {
   Y[pos] = value;
   Init_value[pos] = value;
+  Init_dummy[pos] = value;
 }
 
 void odeproblem::y_init(Rcpp::NumericVector x) {
@@ -140,6 +141,7 @@ void odeproblem::y_init(Rcpp::NumericVector x) {
   for(int i = 0; i < x.size(); ++i) {
     Y[i] = x[i];
     Init_value[i] = x[i];
+    Init_dummy[i] = x[i];
   }
 }
 
@@ -185,13 +187,17 @@ void odeproblem::init_call(const double& time) {
   
   d.time = time;
   
-  Inits(Init_value,Y,Param,F,Alag,R,D,d,pred,simeta);
-  
   if(Do_Init_Calc) {
+    Inits(Init_value,Y,Param,F,Alag,R,D,d,pred,simeta);
     for(int i=0; i < Neq; ++i) {
       Y[i] = Init_value[i];
       Init_dummy[i] = Init_value[i];
     }
+  } else {
+    for(int i=0; i < Neq; ++i) {
+      Init_dummy[i] = Init_value[i];
+    }
+    Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
   }
 }
 
@@ -208,7 +214,7 @@ void odeproblem::init_call_record(const double& time) {
 
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
-  Table(Y,Init_dummy,Param,F,R,d,pred,Capture,simeps);  
+  Table(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
 }
 
 //! Call <code>$PREAMBLE</code> function.
@@ -647,46 +653,6 @@ double PolyExp(const double& x,
   return bolusResult + rate*result;
 }
 
-/**
- * Get pointer for <code>$MAIN</code> function. 
- * 
- * @param inits address for <code>$MAIN</code> function
- * 
- */
-// init_func* as_init_func(SEXP inits) {
-//   //return(reinterpret_cast<init_func *>(tofunptr(inits)));
-// }
-
-/**
- * Get pointer for <code>$ODE</code> function. 
- * 
- * @param derivs address for <code>$ODE</code> function
- * 
- */
-// deriv_func* as_deriv_func(SEXP derivs) {
-//   //return(reinterpret_cast<deriv_func *>(tofunptr(derivs)));
-// }
-
-/**
- * Get pointer for <code>$TABLE</code> function. 
- * 
- * @param table address for <code>$TABLE</code> function
- * 
- */
-// table_func* as_table_func(SEXP table) {
-//   //return(reinterpret_cast<table_func*>(tofunptr(table)));
-// }
-
-/**
- * Get pointer for <code>$PREAMBLE</code> function. 
- * 
- * @param config address for <code>$PREAMBLE</code> function
- * 
- */
-// config_func* as_config_func(SEXP config) {
-//   //return(reinterpret_cast<config_func*>(tofunptr(config)));
-// }
-
 void odeproblem::copy_parin(const Rcpp::List& parin) {
   this->tol(Rcpp::as<double>(parin["atol"]),Rcpp::as<double>(parin["rtol"]));
   this->hmax(Rcpp::as<double>(parin["hmax"]));
@@ -694,6 +660,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
   this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
   this->advan(Rcpp::as<int>(parin["advan"]));
+  Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {

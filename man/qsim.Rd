@@ -4,7 +4,7 @@
 \alias{qsim}
 \title{A quick simulation function.}
 \usage{
-qsim(x, e, idata, req = NULL, tgrid = NULL)
+qsim(x, e, idata, req = NULL, tgrid = NULL, skip_init_calc = FALSE)
 }
 \arguments{
 \item{x}{model object}
