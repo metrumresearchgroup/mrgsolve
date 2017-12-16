@@ -76,7 +76,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   prob->copy_parin(parin);
   prob->neta(nre[0]);
   prob->neps(nre[1]);
-  
+
   const unsigned int NN = n[0] * idata.nrow();
   const unsigned int nreq = req.size();
   

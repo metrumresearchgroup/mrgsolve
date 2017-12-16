@@ -21,7 +21,7 @@
 ##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange data_frame 
 ##' @importFrom dplyr intersect filter select rename slice distinct  do_ everything
 ##' @importFrom dplyr distinct_ first data_frame arrange select_vars_ select_vars
-##' @importFrom dplyr if_else mutate_at
+##' @importFrom dplyr if_else mutate_at summarise_each
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp

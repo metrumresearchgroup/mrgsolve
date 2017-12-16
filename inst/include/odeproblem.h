@@ -56,6 +56,7 @@ struct databox {
   void stop() {SYSTEMOFF=9;}
   void stop_id() {SYSTEMOFF=1;}
   void stop_id_cf(){SYSTEMOFF=2;}
+  
 };
 
 //! vector of <code>datarecord</code> objects for one <code>ID</code>
@@ -112,6 +113,7 @@ public:
   
   virtual ~odeproblem();
   
+  void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto);
   void call_derivs(int *neq, double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
@@ -233,6 +235,7 @@ protected:
   table_func Table; ///< <code>$TABLE</code> function
   config_func Config; ///< <code>$PREAMBLE</code> function
   
+  bool Do_Init_Calc;
   
 };
 

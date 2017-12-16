@@ -36,7 +36,8 @@
 ##' 
 ##' @export
 ##' 
-qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
+qsim <- function(x,e,idata,req=NULL,tgrid=NULL,
+                 skip_init_calc = FALSE) {
   
   if(missing(idata)) {
     idata <- matrix(1,dimnames=list(NULL,"ID"))
@@ -61,9 +62,13 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL) {
   
   cap <- c(length(x@capture),seq_along(x@capture)-1)
   
+  parin <- parin(x)
+  
+  parin$do_init_calc <- !skip_init_calc
+  
   out <- .Call(`_mrgsolve_QUICKSIM`, 
                PACKAGE = 'mrgsolve',
-               parin(x),
+               parin,
                as.numeric(param(x)),
                as.numeric(init(x)),
                pars(x),

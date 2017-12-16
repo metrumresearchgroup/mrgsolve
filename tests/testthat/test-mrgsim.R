@@ -18,29 +18,15 @@
 library(testthat)
 library(mrgsolve)
 library(dplyr)
+
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-# Issue 299
-context("test-evid4")
+context("test-mrgsim")
 
-mod <- mrgsolve:::house()
-
-test_that("evid4 bolus dosing is the same as evid1", {
-  e1 <- ev(amt = 100, ii = 24, addl = 3)
-  e4 <- ev(amt = 100, ii = 24, addl = 3, evid = 4)
-  out1 <- mrgsim(mod, events = e1) %>% as.data.frame
-  out4 <- mrgsim(mod, events = e4) %>% as.data.frame
-  expect_identical(out1, out4)
+test_that("mrgsim_df", {
+  mod <- mrgsolve:::house()
+  out <- mrgsim_df(mod, events = ev(amt=100))
+  expect_is(out, "data.frame")
 })
-
-test_that("evid4 infusion dosing is the same as evid1", {
-  e1 <- ev(amt = 100, ii = 24, addl = 3, rate = 10)
-  e4 <- ev(amt = 100, ii = 24, addl = 3, rate = 10, evid = 4)
-  out1 <- mrgsim(mod, events = e1) %>% as.data.frame
-  out4 <- mrgsim(mod, events = e4) %>% as.data.frame
-  expect_identical(out1, out4)
-})
-
-
 

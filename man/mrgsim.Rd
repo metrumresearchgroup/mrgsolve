@@ -2,9 +2,12 @@
 % Please edit documentation in R/mrgsolve.R
 \name{mrgsim}
 \alias{mrgsim}
+\alias{mrgsim_df}
 \title{Simulate from a model object.}
 \usage{
 mrgsim(x, data = NULL, idata = NULL, nid = 1, ...)
+
+mrgsim_df(...)
 }
 \arguments{
 \item{x}{the model objects}
@@ -23,7 +26,8 @@ an object of class \code{\link{mrgsims}}
 \description{
 This function sets up the simulation run from data stored in the model object as well as
 arguments passed in.  Note that there are many non-formal arguments to this function that
-can be used to customize the simulation run and it's output.
+can be used to customize the simulation run and it's output. Use \code{mrgsim_df} to 
+return a data frame rather than \code{mrgsims} object.
 }
 \details{
 \itemize{
@@ -33,9 +37,18 @@ nature of the data brought into the problem.}
 }
 
 \itemize{
-\item When using \code{data} and \code{idata} together, an error is generated if an ID occurs in \code{data} but not \code{idata}.  Also, when looking up data in \code{idata}, ID in \code{idata} is assumed to be uniquely keyed to ID in \code{data}.  No error is generated if ID is duplicated in \code{data}; parameters will be used from the first occurrence found in \code{idata}.
- \item \code{carry.out}: \code{idata} is assumed to be individual-level and variables that are carried from \code{idata} are repeated throughout the invidivual's simulated data.  Variables carried from \code{data} are carried via last-observation carry forward.  \code{NA} is returned from observations that are inserted into simulated output
-that occur prior to the first record in \code{data}.
+\item When using \code{data} and \code{idata} together, an error is 
+generated if an  ID occurs in \code{data} but not \code{idata}.  
+Also, when looking up data in \code{idata}, ID in \code{idata} is 
+assumed to be uniquely keyed to ID in \code{data}.  No error is 
+generated if ID is duplicated in \code{data}; parameters will be used 
+from the first occurrence found in \code{idata}.
+ \item \code{carry.out}: \code{idata} is assumed to be 
+individual-level and variables that are carried from \code{idata} 
+are repeated throughout the invidivual's simulated data.  Variables 
+carried from \code{data} are carried via last-observation carry forward.  
+\code{NA} is returned from observations that are inserted into 
+simulated output that occur prior to the first record in \code{data}.
 
 
 }
