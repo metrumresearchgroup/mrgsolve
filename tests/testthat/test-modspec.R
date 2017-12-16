@@ -45,17 +45,15 @@ test_that("Parse matrix", {
 
 test_that("Parse capture", {
   
-  code <- "$CAPTURE\n yes=TRUE \n z a"
+  code <- "$CAPTURE\n  \n banana = b z apple = a"
   mod <- mtemp(code)
-  expect_equal(mod@capture, c("z", "a"))
+  expect_equal(mod@capture, c("banana","z", "apple"))
   
-  code <- "$CAPTURE\n yes=TRUE \n z a \n\n\n d\n e, f"
+  code <- "$CAPTURE\n  z a \n\n\n d\n e, f"
   mod <- mtemp(code)
   expect_equal(mod@capture, c("z", "a", "d", "e", "f"))
   
-  code <- "$CAPTURE >> yes=TRUE \n z a \n\n\n d\n e, f"
-  mod <- mtemp(code)
-  expect_equal(mod@capture, c("z", "a", "d", "e", "f"))
+  
   
   code <- "$CAPTURE \n"
   expect_warning(mod <- mtemp(code))

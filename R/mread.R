@@ -225,7 +225,9 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
-  capture <- unique(as.character(unlist(do.call("c", nonull.list(mread.env$capture)))))
+  .capture <- as.character(unlist(do.call("c", nonull.list(mread.env$capture))))
+  .capture <- find_renames(.capture)
+  capture <- .capture$to
   annot <- capture_param(annot,capture)
   
   check_globals_err <- check_globals(mread.env$move_global,names(init))
@@ -368,7 +370,7 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
     table,
-    write_capture(x@capture),
+    write_capture(.capture$from),
     "__END_table__",
     sep="\n", file=def.con)
   close(def.con)

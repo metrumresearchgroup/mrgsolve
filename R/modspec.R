@@ -34,7 +34,7 @@ advtr <- function(advan,trans) {
 }
 
 write_capture <- function(x) {
-  if(length(x)==0) return(NULL)
+  if(length(x) == 0) return(NULL)
   i <- seq_along(x)
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
@@ -699,7 +699,7 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
 
 ##' @export
 handle_spec_block.specCAPTURE <- function(x,...) {
-  scrape_and_call(x,pass="CAPTURE",narrow=FALSE,...)
+  scrape_and_call(x,pass="CAPTURE",narrow=TRUE,...)
 }
 
 ##' @export

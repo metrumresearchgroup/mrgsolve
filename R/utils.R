@@ -504,3 +504,20 @@ na2zero <- function(x) {
   x
 }
 
+# split a string and look for name = value pairs
+find_renames <- function(x) {
+  if(length(x)==0) list(from = character(0), to = character(0))
+  x <- gsub("=", " = ", x, fixed = TRUE)
+  x <- cvec_cs(x)
+  eq <- x=="="
+  weq <- which(eq)
+  to <- weq-1
+  from <- weq+1
+  alone <- setdiff(seq_along(x), c(to,from,weq))
+  from <- x[sort(c(from,alone))]
+  to <- x[sort(c(to,alone))]
+  drop <- duplicated(to, fromLast = TRUE)
+  from <- from[!drop]
+  to <- to[!drop]
+  list(from = from, to = to)
+}
