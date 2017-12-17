@@ -20,7 +20,7 @@ make_altnames <- function(from,to) {
   paste(to,from,sep="=")
 }
 
-set_altname <- function(x) {
+set_altname <- function(x,unique = FALSE) {
   if(length(x)==0) {
     return(structure(list(from="",to="",rename=FALSE),class="altname"))
   }
@@ -28,6 +28,11 @@ set_altname <- function(x) {
   to <- sapply(y,`[`,1L)
   from <- sapply(y,`[`,2L)
   from <- ifelse(is.na(from), to, from)
+  if(unique) {
+    drop <- duplicated(to,fromLast=TRUE)
+    to <- to[!drop]
+    from <- from[!drop]
+  }
   if(identical(from,to)) return(as.character(from))
   return(structure(list(from=from,to=to,rename=!identical(from,to)),class="altname"))
   
@@ -49,5 +54,6 @@ as.character.altname <- function(x,...) {
 }
 
 
+# split a string and look for name = value or value data
 
 

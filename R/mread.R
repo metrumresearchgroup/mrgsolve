@@ -225,10 +225,13 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
-  .capture <- as.character(unlist(do.call("c", nonull.list(mread.env$capture))))
-  .capture <- find_renames(.capture)
-  capture <- .capture$to
-  annot <- capture_param(annot,capture)
+  
+  # capture is a vector that may be name or to_name = from_name
+  # capture will be to_names and it's names are from names 
+  capture <- unlist(do.call("c", nonull.list(mread.env$capture)))
+  capture <- .ren.create(as.character(capture))
+  
+  annot <- capture_param(annot,.ren.new(capture))
   
   check_globals_err <- check_globals(mread.env$move_global,names(init))
   if(length(check_globals_err) > 0) {
@@ -281,7 +284,7 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
            param = as.param(param),
            init = as.init(init),
            funs = funs_create(model),
-           capture = capture,
+           capture = .ren.chr(capture),
            envir = ENV, 
            plugin = names(plugin),
            modfile = basename(build$modfile)
@@ -370,7 +373,7 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
     table,
-    write_capture(.capture$from),
+    write_capture(.ren.old(capture)),
     "__END_table__",
     sep="\n", file=def.con)
   close(def.con)

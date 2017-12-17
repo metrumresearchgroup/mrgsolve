@@ -47,17 +47,17 @@ test_that("Parse capture", {
   
   code <- "$CAPTURE\n  \n banana = b z apple = a"
   mod <- mtemp(code)
-  expect_equal(mod@capture, c("banana","z", "apple"))
+  expect_equal(mod@capture, c(b = "banana", z = "z", a = "apple"))
   
   code <- "$CAPTURE\n  z a \n\n\n d\n e, f"
   mod <- mtemp(code)
-  expect_equal(mod@capture, c("z", "a", "d", "e", "f"))
+  expect_equal(mod@capture, c(z = "z", a = "a", d = "d", e = "e", f = "f"))
   
   
   
   code <- "$CAPTURE \n"
   expect_warning(mod <- mtemp(code))
-  expect_equal(mod@capture, character(0))
+  expect_equivalent(mod@capture, character(0))
   
 })
 
@@ -119,13 +119,13 @@ test_that("Commented model", {
   double b = 3;
   ## 234234
   $CAPTURE 
-    KA // Capturing KA
+    kaya = KA // Capturing KA
   ' 
   
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
-  expect_identical(mod@capture, c("KA","a"))
+  expect_identical(mod@capture, c(KA = "kaya",a = "a"))
   
 })
 

@@ -22,7 +22,7 @@
 ##' @param idata individual data set
 ##' @param req compartments to request
 ##' @param tgrid \code{tgrid} object; used if \code{e} is an \code{ev} object
-##' 
+##' @param skip_init_calc not used
 ##' 
 ##' @examples 
 ##' 

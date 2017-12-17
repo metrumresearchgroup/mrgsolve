@@ -34,7 +34,8 @@ Imports:
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10),
     RcppArmadillo (>= 0.7.900.2.0),
-    tibble (>= 1.2)
+    tibble (>= 1.2),
+    R6
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 
@@ -92,6 +93,7 @@ Collate:
     'param.R'
     'print.R'
     'qsim.R'
+    'relabel.R'
     'render.R'
     'simtime.R'
     'update.R'

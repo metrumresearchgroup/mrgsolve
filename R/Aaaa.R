@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+
 ##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
@@ -29,6 +30,7 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame
+##' @importFrom R6 R6Class
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -78,7 +80,8 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "double", "int", "bool", "capture")
 
 globalVariables(c("test_package","time", "ID","block", "descr",
-                  "everything", "TIME", "address","x",
+                  "everything", "TIME", "address","x", 
+                  "self",
                   "func", "loaded", "name", "not_found"))
 
 

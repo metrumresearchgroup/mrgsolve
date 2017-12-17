@@ -192,7 +192,7 @@ test_that("Full specification - $CAPTURE", {
   c: third  (z)
   '
   mod <- mcode("test-annot-5",code,compile=FALSE)
-  expect_identical(mod@capture, c("a", "b", "c"))
+  expect_identical(mod@capture, c(a = "a", b = "b", c = "c"))
   an <- mrgsolve:::details(mod) %>% (dplyr::bind_rows)
   expect_equivalent(an$unit, c("x", "y", "z"))
   expect_equivalent(an$descr, c("first", "second", "third"))

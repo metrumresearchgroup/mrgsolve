@@ -16,6 +16,8 @@ qsim(x, e, idata, req = NULL, tgrid = NULL, skip_init_calc = FALSE)
 \item{req}{compartments to request}
 
 \item{tgrid}{\code{tgrid} object; used if \code{e} is an \code{ev} object}
+
+\item{skip_init_calc}{not used}
 }
 \description{
 A quick simulation function.

@@ -316,8 +316,11 @@ tran_mrgsim <- function(x,
   # Requested
   has_Request <- !missing(Request)
   # comma-separated
-  rename.Request <- set_altname(cvec_c_nws(Request))
-  Request <- as.character(rename.Request)
+  #rename.Request <- set_altname(cvec_c_nws(Request))
+  #Request <- as.character(rename.Request)
+  rename.Request <- .ren.create(Request)
+  Request <- rename.Request$old
+  
   
   # request is only for compartments
   # restrict captures and request if Req is specified
@@ -337,9 +340,12 @@ tran_mrgsim <- function(x,
   ## carry can be tran/data/idata
   # Items to carry out from the data set
   # carry.out --> comma-separated names
-  rename.carry <- set_altname(cvec_c_nws(carry.out))
-  carry.out <- as.character(rename.carry)
-
+  # rename.carry <- set_altname(cvec_c_nws(carry.out))
+  # carry.out <- as.character(rename.carry)
+  rename.carry <- .ren.create(carry.out)
+  carry.out <- rename.carry$old
+  
+  
   # Don't take ID,time,TIME
   carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
   
@@ -385,8 +391,11 @@ tran_mrgsim <- function(x,
   
   # Now, create a rename object 
   # make_altnames: from, to
-  rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
-  carry.tran <- as.character(rename.carry.tran)
+  # rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
+  # carry.tran <- as.character(rename.carry.tran)
+  rename.carry.tran <- .ren.create(parin[["carry_tran"]],carry.tran)
+  carry.tran <- rename.carry.tran$old
+  
 
   # Derive stime vector either from tgrid or from the object
   if(inherits(tgrid, c("tgrid","tgrids"))) {
@@ -432,25 +441,25 @@ tran_mrgsim <- function(x,
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
   # Then, rename again for user-supplied renaming
-  carry.tran <- altname(rename.carry.tran,out[["trannames"]])
+  carry.tran <- .ren.rename(rename.carry.tran,out[["trannames"]])
   
   if(tad) tcol <- c(tcol,"tad")
   
   cnames <- c("ID",
               tcol,
-              altname(rename.carry,carry.tran), ## First tran
-              altname(rename.carry,carry.data), ## Then carry data 
-              altname(rename.carry,carry.idata), ## Then carry idata
-              altname(rename.Request,request),   ## Then compartments
-              altname(rename.Request,capt) ## Then captures
+              .ren.rename(rename.carry,carry.tran), ## First tran
+              .ren.rename(rename.carry,carry.data), ## Then carry data 
+              .ren.rename(rename.carry,carry.idata), ## Then carry idata
+              .ren.rename(rename.Request,request),   ## Then compartments
+              .ren.rename(rename.Request,capt) ## Then captures
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
   
   new("mrgsims",
-      request=altname(rename.Request,request),
+      request=.ren.rename(rename.Request,request),
       data=as.data.frame(out[["data"]]),
-      outnames=altname(rename.Request,capt),
+      outnames=.ren.rename(rename.Request,capt),
       mod=x,
       seed=as.integer(seed))
 }
