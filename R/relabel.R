@@ -90,11 +90,14 @@
 #                                      relabel = relabel_relabel)
 # )
 
-.ren.create <- function(x,y = NULL) {
+.ren.create <- function(x,y = NULL,sanitize = "sanitize_capture") {
   x <- .ren.parse(x,y) 
   self <- list(identical = FALSE, old = character(0), new = character(0))
   self$old <- x$Old
   self$new <- x$New
+  if(!is.null(sanitize)) {
+    self$new <- do.call(sanitize, list(self$new))
+  }
   self$identical <- FALSE
   if(all(self$old==self$new)) {
     self$identical <- TRUE 

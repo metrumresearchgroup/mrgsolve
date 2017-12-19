@@ -504,4 +504,12 @@ na2zero <- function(x) {
   x
 }
 
+sanitize_capture <- function(x) {
+  for(i in seq_along(x)) {
+    x[i] <- gsub("\\[|\\(", "_", x[i])
+    x[i] <- gsub("\\]|\\)", "",  x[i])
+  }
+  x
+}
+
 
