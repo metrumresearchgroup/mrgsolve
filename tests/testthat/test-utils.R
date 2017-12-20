@@ -87,23 +87,3 @@ test_that("If no simulation times can be rendered time=0 only is simulated", {
 
 
 
-##' set_altname should return list with from/to
-##' coercing to character returns x$from
-##' renaming retains the order of the new character vector
-test_that("altname", {
-  x <- mrgsolve:::set_altname(c("a = Z", "c=J", "b   = B"))
-  expect_identical(x$from, c("Z", "J", "B"))
-  expect_identical(x$to, c("a", "c", "b"))
-  res <- mrgsolve:::altname.altname(x, c(LETTERS))
-  expect_identical(res[2],"b")
-  expect_identical(res[26],"a")
-  expect_identical(res[10],"c")
-  expect_identical(mrgsolve:::as.character.altname(x),x$from)
-  res2 <- mrgsolve:::altname.altname(x, rev(LETTERS))
-  expect_identical(res,rev(res2))
-})
-
-
-
-
-

@@ -61,7 +61,6 @@ Collate:
     'class_mrgmod.R'
     'class_mrgsims.R'
     'Aaaa.R'
-    'altname.R'
     'annot.R'
     'chain.R'
     'class_build.R'
