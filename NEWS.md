@@ -1,5 +1,21 @@
 # 0.8.10.9003
 
+## New Features
+- Bioavability specified in `$MAIN` is accounted for when simulating with
+`qsim`; there is still no bioavability adjustment for infusions or 
+lag times adjustments to doses
+
+- Added capability to rename data items in `$CAPTURE`; also, 
+names are partially sanitized, removing parens and brackets.  
+For example `$CAPTURE WT = WGT ETA(1) TVCL = THETA1`
+
+- Added `qsim_df` function, retruning data frame rather than
+matrix
+
+## Bug Fixes
+- Fixed bug preventing simulation with `qsim` with no event
+
+
 # 0.8.10.9002
 - Added `mrgsim_df` function to return data frame rather than `mrgsims` object
 
