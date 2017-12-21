@@ -23,6 +23,19 @@
 ##' @param req compartments to request
 ##' @param tgrid \code{tgrid} object; used if \code{e} is an \code{ev} object
 ##' @param skip_init_calc not used
+##' @param ... passed to \code{\link{qsim}}
+##' 
+##' @details
+##' Use when simulating with no intervention or a simple intervention.
+##' The rule of thumb to keep in mind with this function is that 
+##' the timing of all events and observations is determined prior to 
+##' the model run.  This has particular consequences for infusion
+##' duration and lag times that might be set in \code{$MAIN}. 
+##' Specifically, bioavailability is implemented for bolus but not 
+##' infusion doses.  Infusion rates and durations are not modeled
+##' from \code{$MAIN}. Dose lag times are not modeled
+##' from \code{$MAIN}. If these features are needed or when in doubt, 
+##' use \code{\link{mrgsim}}.
 ##' 
 ##' @examples 
 ##' 
@@ -36,12 +49,14 @@
 ##' 
 ##' @export
 ##' 
-qsim <- function(x,e,idata,req=NULL,tgrid=NULL,
+qsim <- function(x,e=NULL,idata=NULL,req=NULL,tgrid=NULL,
                  skip_init_calc = FALSE) {
   
-  if(missing(idata)) {
+  if(is.null(idata)) {
     idata <- matrix(1,dimnames=list(NULL,"ID"))
   }
+  
+  if(is.null(e)) e <- ev()
   
   if(is.ev(e)) {
     if(!is.null(tgrid)) {
@@ -49,8 +64,7 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL,
     } else {
       e <- recmatrix(e,stime(x))
     }
-  }
-  
+  } 
   
   cm <- reqn <-  cmt(x)
   if(is.null(req)) {
@@ -87,42 +101,12 @@ qsim <- function(x,e,idata,req=NULL,tgrid=NULL,
   
 }
 
+##' @rdname qsim
+##' @export
+qsim_df <- function(...) {
+  as_data_frame(qsim(...)) 
+}
 
-# qsim_data <- function(x,data,req=NULL,stime=NULL) {
-# 
-#   cm <- reqn <-  cmt(x)
-#   if(is.null(req)) {
-#     req <- seq_along(reqn)
-#   } else {
-#     req <- match(intersect(req,cm),cm)
-#     reqn <- cm[req]
-#   }
-# 
-#   cap <- c(length(x@capture),seq_along(x@capture)-1)
-# 
-#   NN <- sum(data[,3] %in% c(0,2))
-# 
-#   out <- .Call(`_mrgsolve_QUICKSIM_DATA`,
-#                PACKAGE = 'mrgsolve',
-#                parin(x),
-#                as.numeric(param(x)),
-#                as.numeric(init(x)),
-#                pars(x),
-#                NN,
-#                data.matrix(data),
-#                as.integer(req-1),
-#                cap,
-#                pointers(x),
-#                as.integer(c(sum(nrow(omat(x))),
-#                             sum(nrow(smat(x)))))
-#   )
-# 
-#   dimnames(out) <- list(NULL, c("ID","time", reqn,x@capture))
-# 
-#   out
-# 
-# }
-# 
 
 as_ev_matrix <- function(ev) {
   n <- ev$addl+1
@@ -177,16 +161,17 @@ id_obs_matrix <- function(obs,ids) {
 ##' @param c_indexing if \code{TRUE}, compartment numbers will be decremented by 1
 ##' @export
 ##' 
-recmatrix <- function(x,times,c_indexing=TRUE) {
+recmatrix <- function(x, times, c_indexing=TRUE) {
   x <- as.data.frame(x)
-  if(!has_name("rate", x)) x$rate <- 0
-  if(!has_name("addl", x)) x$addl <- 0
-  if(!has_name("ii", x)) x$ii <- 0
-  if(!has_name("start", x)) x$start <- 0
-  if(c_indexing) x[["cmt"]] <- x[["cmt"]]-1
-  
+  if(nrow(x) > 0) {
+    if(!has_name("rate", x)) x$rate <- 0
+    if(!has_name("addl", x)) x$addl <- 0
+    if(!has_name("ii", x)) x$ii <- 0
+    if(!has_name("start", x)) x$start <- 0
+    if(c_indexing) x[["cmt"]] <- x[["cmt"]]-1
+  }
   if(is.null(times)) stop("Please supply simulation times.")
-  x <- lapply(split(x,1:nrow(x)),as_ev_matrix)
+  x <- lapply(split(x,seq_len(nrow(x))),as_ev_matrix)
   x <- do.call(rbind,c(x,list(obs_matrix(stime(times)))))
   structure(x[order(x[,1],x[,4]),],n=sum(x[,"evid"]==0))
 }
