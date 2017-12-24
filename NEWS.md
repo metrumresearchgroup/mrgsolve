@@ -14,6 +14,10 @@ matrix
 
 - Added `as.list` method for `mrgsims` objects
 
+- Added `deep` argument for `as.list` method for `mrgmod` object; 
+it was taking a lot of time to return the function set, so now 
+you only get it if `deep = TRUE`
+
 ## Bug Fixes
 - Fixed bug preventing simulation with `qsim` with no event
 
