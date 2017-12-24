@@ -338,27 +338,37 @@ setMethod("names", "mrgmod", function(x) {
 ##' Coerce a model object to list.
 ##' 
 ##' @param x mrgmod object
-##' @param ... passed to other methods
+##' @param deep if \code{TRUE}, extra information is returned
+##' (see details). 
+##' @param ... not used
+##' 
+##' @details 
+##' If \code{deep} is \code{TRUE}, then the values for
+##' \code{trans}, \code{advan}, and \code{mindt} are
+##' returned as well as a summary of internal model 
+##' functions (with a call to \code{mrgsolve:::funset}).
 ##' 
 ##' @rdname as.list_mrgmod
 ##' @export
-setMethod("as.list", "mrgmod", function(x,...) {
+setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   
   within(list(), {
-  
-    functions <- funset(x)
+
     plugins <- x@plugin
     envir <- x@envir
     solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
                 hmin=x@hmin,hmax=x@hmax)
-    trans <- x@trans
-    advan <- x@advan
+    if(deep) {
+      trans <- x@trans
+      advan <- x@advan
+      mindt <- x@mindt
+      functions <- funset(x)
+    }
     details <- x@annot
     code <- x@code
     re <- names(x)[c("omega", "sigma")]
     request <- x@request
     capture <- x@capture
-    mindt <- x@mindt
     stime <- list(start=x@start,end=x@end,delta=x@delta,add=x@add)
     shlib <- shlib(x)
     cfile <- cfile(x)

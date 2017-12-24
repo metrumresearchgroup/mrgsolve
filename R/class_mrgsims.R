@@ -51,3 +51,21 @@ setClass("batch_mrgsims",contains="mrgsims",
 ##' 
 ##' @export
 is.mrgsims <- function(x) inherits(x,"mrgsims")
+
+
+##' Corece an mrgsims object to list
+##' 
+##' @param x an mrgsims object
+##' @param ... not used
+##' @export
+setMethod("as.list", "mrgsims", function(x, ...) {
+  to_get <- slotNames("mrgsims") 
+  out <- vector("list",length(to_get))
+  for(.i in seq_along(to_get)) {
+    out[[.i]] <- slot(x,to_get[.i]) 
+  }
+  setNames(out, to_get)
+})
+
+
+
