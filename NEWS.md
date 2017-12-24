@@ -12,6 +12,8 @@ For example `$CAPTURE WT = WGT ETA(1) TVCL = THETA1`
 - Added `qsim_df` function, retruning data frame rather than
 matrix
 
+- Added `as.list` method for `mrgsims` objects
+
 ## Bug Fixes
 - Fixed bug preventing simulation with `qsim` with no event
 
