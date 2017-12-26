@@ -72,24 +72,34 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' @param ... passed along
 ##' 
 ##' @details
-##' When the \code{model} argument is used, 
-##' \code{mrgsolve} assumes the model is written in the 
-##' file with \code{model} as the stem and \code{.cpp} as the 
-##' extension.  Use the \code{file} argument to \code{mread} or use 
-##' \code{mread_file} to read a model from a file without
-##' the \code{.cpp} extension. 
+##' The \code{model} argument is required.  For typical use, 
+##' the \code{file} argument is omitted and the value 
+##' for \code{file} is generated from the value for \code{model}.
+##' To determine the source file name, \code{mrgsolve} will look for 
+##' a file extension in the value of \code{model}.  A file extension is 
+##' assumed when it find sa period followed by one to three alpha-numeric 
+##' characters at the end of the string (e.g. \code{mymodel.txt} but not 
+##' \code{my.model}).  If no file extension is found, the extension \code{.cpp} 
+##' is assumed (e.g. \code{file} is \code{<model-name>.cpp}).  If a file 
+##' extension is found, \code{file} is \code{<model-name>}.    
+##' 
+##' Best practice is to avoid using \code{.} in \code{model} unless
+##' you are using \code{model} to point to the model specification 
+##' file name. Otherwise, use \code{\link{mread_file}}. 
 ##' 
 ##' 
 ##' @section Model Library:
 ##' 
-##' \code{mrgsolve} comes bundled with several precoded PK, PK/PD, and other systems models
-##' that are accessible via the \code{mread} interface.  
+##' \code{mrgsolve} comes bundled with several precoded PK, PK/PD, and 
+##' other systems models that are accessible via the \code{mread} interface.  
 ##' 
 ##' Models available in the library include:
 ##' 
 ##' \itemize{
-##'   \item PK models: \code{pk1cmt}, \code{pk2cmt}, \code{pk3cmt}, \code{tmdd}
-##'   \item PKPD models: \code{irm1}, \code{irm2}, \code{irm3}, \code{irm4}, \code{emax}, \code{effect}
+##'   \item PK models: \code{pk1cmt}, \code{pk2cmt}, \code{pk3cmt},
+##'                    \code{pk1}, \code{pk2}, \code{popex}, \code{tmdd}
+##'   \item PKPD models: \code{irm1}, \code{irm2}, \code{irm3}, \code{irm4},
+##'                       \code{emax}, \code{effect}
 ##'   \item Other models: \code{viral1}, \code{viral2}
 ##' }
 ##' 
@@ -99,8 +109,9 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' to the \code{mrgsolve} model library location via \code{\link{modlib}}.
 ##' 
 ##' For more details, see \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
-##' \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}}, and \code{\link{modlib_details}}
-##' for more information about the state variables and parameters in each model.
+##' \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}}, and 
+##' \code{\link{modlib_details}} for more information about the state 
+##' variables and parameters in each model.
 ##' 
 ##' @examples
 ##'
