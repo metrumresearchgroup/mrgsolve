@@ -66,6 +66,7 @@ Collate:
     'class_build.R'
     'compile.R'
     'complog.R'
+    'config.R'
     'covset.R'
     'data_set.R'
     'datasets.R'

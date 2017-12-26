@@ -9,11 +9,10 @@
 mread_cache(model = NULL, project = getwd(), file = paste0(model, ".cpp"),
   code = NULL, soloc = tempdir(), quiet = FALSE, preclean = FALSE, ...)
 
-mread(model = NULL, project = getwd(), code = NULL, file = paste0(model,
-  ".cpp"), udll = TRUE, ignore.stdout = TRUE, raw = FALSE,
-  compile = TRUE, audit = TRUE, quiet = getOption("mrgsolve_mread_quiet",
-  FALSE), check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
-  preclean = FALSE, ...)
+mread(model, project = getwd(), code = NULL, file = NULL, udll = TRUE,
+  ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = TRUE,
+  quiet = getOption("mrgsolve_mread_quiet", FALSE), check.bounds = FALSE,
+  warn = TRUE, soloc = tempdir(), preclean = FALSE, ...)
 
 mread_file(file, ...)
 }

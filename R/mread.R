@@ -136,8 +136,8 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' }
 ##' 
 ##' @export
-mread <- function(model = NULL, project = getwd(), code = NULL, 
-                  file = paste0(model, ".cpp"), 
+mread <- function(model, project = getwd(), code = NULL, 
+                  file = NULL, 
                   udll = TRUE, ignore.stdout=TRUE,
                   raw = FALSE, compile = TRUE, audit = TRUE,
                   quiet = getOption("mrgsolve_mread_quiet",FALSE),
@@ -148,9 +148,9 @@ mread <- function(model = NULL, project = getwd(), code = NULL,
   
   warn <- warn & (!quiet)
   
-  if(!missing(code) & missing(model)) model <- "_mrgsolve_temp"
-  
-  build <- new_build(file, model, project, soloc, code, preclean, udll)
+  build <- new_build(file = file, model = model, project = project, 
+                     soloc = soloc, code = code, preclean = preclean, 
+                     udll = udll)
   
   model <- build$model
   

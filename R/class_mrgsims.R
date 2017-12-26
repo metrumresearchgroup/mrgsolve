@@ -64,8 +64,8 @@ setMethod("as.list", "mrgsims", function(x, ...) {
   for(.i in seq_along(to_get)) {
     out[[.i]] <- slot(x,to_get[.i]) 
   }
-  setNames(out, to_get)
+  out <- setNames(out, to_get)
+  structure(out, class = "mrgsims_list")
 })
-
 
 

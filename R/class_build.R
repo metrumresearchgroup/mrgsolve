@@ -21,22 +21,36 @@
 # @param soloc the build directory
 # @param code model code
 # @param udll logical; if FALSE, a random dll name is generated
-new_build <- function(file, model, project, soloc, code=NULL, 
+new_build <- function(file, model, project, soloc, code = NULL, 
                       preclean = FALSE, udll = FALSE) {
   
-  if(is.null(model)) model <- tools::file_path_sans_ext(file)
-  
-  if(file == ".cpp") stop("invalid file and/or model argument", call. = FALSE)
-  
+  if(length(model) == 0) stop("invalid model name", call. = FALSE)
+
   if(charthere(model," ")) {
     stop("model name cannot contain spaces.", call. = FALSE)
   }
   
+  
+  if(is.null(file)) {
+    model_has_ext <- grepl("\\.[[:alnum:]]{1,3}$", model, perl = TRUE)
+    if(!model_has_ext) {
+      file <- paste0(model,".cpp") 
+    } else {
+      file <- model    
+    }
+  }
+  
+  model <- gsub(".", "_", model, fixed = TRUE)
+
   if(any(charthere(project,"\n"))) {
-    stop("project argument contains newline(s); did you mean to call mcode?",call.=FALSE) 
+    stop(
+      "project argument contains newline(s); did you mean to call mcode?",
+      call.=FALSE
+      ) 
   }
 
   env <- new.env()
+  
   env$win <- .Platform$OS.type=="windows"
   
   ## Both project and soloc get normalized
@@ -46,7 +60,7 @@ new_build <- function(file, model, project, soloc, code=NULL,
   
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   
-  env$soloc <-   as.character(create_soloc(soloc,model,preclean))
+  env$soloc <- as.character(create_soloc(soloc,model,preclean))
   
   if(!file_readable(project)) {
     stop("project directory must exist and be readable.",call.=FALSE) 
@@ -54,7 +68,6 @@ new_build <- function(file, model, project, soloc, code=NULL,
   
   env$project <- normalizePath(project, mustWork=TRUE, winslash="/")
   
-  ## The model file is <stem>.cpp in the <project> directory if a
   env$modfile <- file.path(project,file)
   
   ## If code is passed in as character:
