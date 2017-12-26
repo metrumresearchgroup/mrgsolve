@@ -24,18 +24,18 @@ opt_env <- function(values = list()) {
 }
 
 
-##' Options used by mrgsolve
-##' 
-##' @details
-##' 
-##' \itemize{
-##'  \item \code{end} default simulation end time
-##'  \item \code{delta} default simulation step value
-##'  \item \code{model_ext} default model file extension; should 
-##'  include period if applicable (e.g. \code{.cpp} or \code{.txt})
-##' }
-##' 
-##'
+## Options used by mrgsolve
+## 
+## @details
+## 
+## \itemize{
+##  \item \code{end} default simulation end time
+##  \item \code{delta} default simulation step value
+##  \item \code{model_ext} default model file extension; should 
+##  include period if applicable (e.g. \code{.cpp} or \code{.txt})
+## }
+## 
+##
 mrgsolve_opts <- opt_env(
   list(end = 24, 
        delta = 1, 
