@@ -36,7 +36,9 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
     return(new("ev", data=data.frame()[0,]))
   }
   
-  if(any(evid==0)) stop("evid cannot be 0 (observation)")
+  if(any(evid==0)) {
+    stop("evid cannot be 0 (observation)")
+  }
   
   data <-
     as.data.frame(list(...)) %>%
@@ -64,7 +66,6 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- lapply(data, unique)
         data <- do.call("expand.grid", 
                         c(list(ID=ID,stringsAsFactors=FALSE),data))
-        #data <- data %>% dplyr::arrange(ID,time)
         data <- dplyr::arrange_(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
@@ -77,7 +78,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
       
     } else {
       if(length(ID)!=nrow(data)) { 
-        stop("Length of ID does not match number of events while replicate = FALSE", 
+        stop("Length of ID does not match number of events while replicate = FALSE",
              call.=FALSE)
       }
       data["ID"] <- ID
@@ -112,8 +113,15 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   if(!all(c("cmt", "time") %in% names(x))) {
     stop("cmt, time are required data items for events.",call.=FALSE)
   }
+  if(!("evid" %in% names(x))) {
+    x[["evid"]] <- 1 
+  } else {
+    x <- x[x$evid != 0,] 
+  }
   if(nid > 1) {
-    if(!exists("ID",x)) stop("please add ID column to data frame",call.=FALSE)
+    if(!exists("ID",x)) {
+      stop("please add ID column to data frame",call.=FALSE)
+    }
     x <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
                           match("ID", colnames(x),0), 
                           data.matrix(x),
@@ -144,7 +152,9 @@ setMethod("as.matrix", "ev", function(x,...) {
 ##' @rdname events
 ##' @export
 setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
-  as.data.frame(x@data,row.names,optional,stringsAsFactors=FALSE,...)
+  as.data.frame(
+    x@data,row.names,optional,stringsAsFactors=FALSE,...
+  )
 })
 
 ##' Create a simulatinon data set from ev objects.
@@ -207,7 +217,8 @@ check_ev <- function(x) {
 }
 
 collect_ev <- function(...) {
-  tran <- c("ID","time", "cmt", "evid",  "amt", "ii", "addl", "rate", "ss")
+  tran <- c("ID","time", "cmt", "evid",  
+            "amt", "ii", "addl", "rate", "ss")
   x <- lapply(list(...),check_ev)
   y <- lapply(x, "[[","ID")
   mx <- sapply(y,function(xx) length(unique(xx)))
@@ -520,7 +531,8 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   }
   if(!is.null(ev)) {
     if(missing(days)) {
-      stop("days argument must be supplied with ev argument.",call.=FALSE) 
+      stop("days argument must be supplied with ev argument.",
+           call.=FALSE) 
     }
     days <- cvec_cs(days)
     if(!all(days %in% names(start))) {
@@ -621,7 +633,7 @@ realize_addl.ev <- function(x,...) {
 ##' ev_rep(e1, 1:5)
 ##' 
 ##' @return
-##' A single event object or event object as 
+##' A single data.frame or event object as 
 ##' determined by the value of \code{as.ev}.
 ##' 
 ##' @export
@@ -631,24 +643,26 @@ ev_rep <- function(x, id = 1, n = NULL, wait = 0, as.ev = FALSE) {
   x <- as.data.frame(x)
   if(!is.null(n)) {
     if(n  > 1) {
-      x <- ev_repeat(x,n,wait)
+      x <- ev_repeat(x,n=n,wait=wait)
     }
   }
   if(as.ev) return(as.ev(x))
   return(x)
-}
+} 
 
 ##' Repeat a block of dosing events
 ##' 
 ##' @param x event object or dosing data frame
 ##' @param n number of times to repeat
 ##' @param wait time to wait between repeats
+##' @param as.ev if \code{TRUE}, an event object is
+##' returned; otherwise a data.frame is returned
 ##' 
 ##' @return 
-##' A dosing data.frame.
+##' See \code{as.ev} argument.
 ##' 
 ##' @export
-ev_repeat <- function(x,n,wait=0) {
+ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
   x <- as.data.frame(x)
   if(!exists("ii", x)) x["ii"] <- 0
   if(!exists("addl", x)) x["addl"] <- 0
@@ -665,7 +679,11 @@ ev_repeat <- function(x,n,wait=0) {
   if(exists("ID", out)) {
     out <- dplyr::arrange_(out,"ID", "time") 
   }
-  out
+  if(as.ev) {
+    return(as.ev(out))
+  } else {
+    return(out) 
+  }
 }
 
 

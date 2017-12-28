@@ -39,7 +39,6 @@ out6 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20),seed=555)
 
 
 ident <- function(x,y,...) {
-  x@date <- y@date <- date()
   identical(x,y) 
 }
 
