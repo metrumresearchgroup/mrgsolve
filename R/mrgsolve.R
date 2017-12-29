@@ -69,7 +69,8 @@ validate_idata <- function(idata) {
 ##' object as well as arguments passed in.  Note that there are several 
 ##' non-formal arguments to this function that can be used to customize 
 ##' the simulation run and it's output. Use \code{mrgsim_df} to 
-##' return a data frame rather than \code{mrgsims} object.
+##' return a data frame rather than \code{mrgsims} object.  Other \code{mrgsim}
+##' variant functions based on different input combinations are listed below.
 ##'
 ##' @name mrgsim
 ##' @rdname mrgsim
@@ -137,10 +138,24 @@ validate_idata <- function(idata) {
 ##' carried from \code{data} are carried via last-observation carry forward.  
 ##' \code{NA} is returned from observations that are inserted into 
 ##' simulated output that occur prior to the first record in \code{data}.
-##'
+##' 
 ##'
 ##' }
-
+##' 
+##' @section Variant functions:
+##' 
+##' \itemize{
+##'   \item \code{mrgsim_e} simulate using an event object
+##'   \item \code{mrgsim_ei} simulate using an event object and \code{idata_set}
+##'   \item \code{mrgsim_d} simulate using a \code{data_set}
+##'   \item \code{mrgsim_di} simulate using a \code{data_set} and \code{idata_set}
+##'   \item \code{mrgsim_i} simulate using a \code{idata_set}
+##'   \item \code{mrgsim_0} simulate using just the model
+##' }
+##' 
+##' The \code{mrgsim_df} function isn't a variant like the functions in the above list.  Rather, 
+##' \code{mrgsim_df} returns a data frame (\code{tibble}) rather than a \code{mrgsims} object.
+##' 
 ##' @examples
 ##' ## example("mrgsim")
 ##' 
@@ -297,7 +312,6 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
          call. = FALSE)
   }
   events <- As_data_set(events)
-  #events <- convert_character_cmt(events,x)
   tran_mrgsim(x, data = events, idata = null_idata,...)
 }
 
@@ -341,7 +355,23 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   tran_mrgsim(x, data = data, idata = idata, ...)
 }
 
+##' @rdname mrgsim
+##' @export
+mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
+  assert_that(nrow(idata) > 0)
+  if(!has_ID(idata)) {
+    idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
+  }
+  data <- matrix(idata[["ID"]], ncol = 1, dimnames = list(NULL, "ID"))
+  tran_mrgsim(x, data = data, idata = idata, ...)
+}
 
+##' @rdname mrgsim
+##' @export
+mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
+  data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
+  tran_mrgsim(x, data = data, idata = null_idata, ...)
+}
 
 ##' @rdname mrgsim
 ##' @export

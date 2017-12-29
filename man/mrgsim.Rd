@@ -6,6 +6,8 @@
 \alias{mrgsim_d}
 \alias{mrgsim_ei}
 \alias{mrgsim_di}
+\alias{mrgsim_i}
+\alias{mrgsim_0}
 \alias{mrgsim_df}
 \title{Simulate from a model object.}
 \usage{
@@ -18,6 +20,10 @@ mrgsim_d(x, data, idata = NULL, events = NULL, ...)
 mrgsim_ei(x, events, idata, data = NULL, ...)
 
 mrgsim_di(x, data, idata, events = NULL, ...)
+
+mrgsim_i(x, idata, data = NULL, events = NULL, ...)
+
+mrgsim_0(x, idata = NULL, data = NULL, events = NULL, ...)
 
 mrgsim_df(...)
 }
@@ -43,7 +49,8 @@ This function sets up the simulation run from data stored in the model
 object as well as arguments passed in.  Note that there are several 
 non-formal arguments to this function that can be used to customize 
 the simulation run and it's output. Use \code{mrgsim_df} to 
-return a data frame rather than \code{mrgsims} object.
+return a data frame rather than \code{mrgsims} object.  Other \code{mrgsim}
+variant functions based on different input combinations are listed below.
 }
 \details{
 \itemize{
@@ -104,6 +111,22 @@ set will be implemented as next observation carried back; if \code{FALSE}
 time-varying items in a data set will be implemented as last observation 
 carried forward.  
 }
+}
+
+\section{Variant functions}{
+
+
+\itemize{
+  \item \code{mrgsim_e} simulate using an event object
+  \item \code{mrgsim_ei} simulate using an event object and \code{idata_set}
+  \item \code{mrgsim_d} simulate using a \code{data_set}
+  \item \code{mrgsim_di} simulate using a \code{data_set} and \code{idata_set}
+  \item \code{mrgsim_i} simulate using a \code{idata_set}
+  \item \code{mrgsim_0} simulate using just the model
+}
+
+The \code{mrgsim_df} function isn't a variant like the functions in the above list.  Rather, 
+\code{mrgsim_df} returns a data frame (\code{tibble}) rather than a \code{mrgsims} object.
 }
 
 \examples{
