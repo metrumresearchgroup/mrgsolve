@@ -55,7 +55,7 @@ test_that("Same result from upper and lower case names", {
 
 test_that("Warning is generated when mixed upper/lower names", {
   mix <-  dplyr::rename(lo, EVID = evid) 
-  expect_warning(data_set(mod,mix))
+  expect_warning(mrgsim(data_set(mod,mix)))
 })
 
 test_that("Filter out ID", {

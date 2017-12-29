@@ -434,8 +434,12 @@ get_option <- function(what,opt,default=FALSE) {
   }
 }
 
-has_name <- function(a,b) {
-  is.element(a,names(b))
+has_name <- function(name,object) {
+  is.element(name,names(object))
+}
+
+has_ID <- function(object) {
+  is.element("ID", names(object)) 
 }
 
 file_exists <- function(x) {

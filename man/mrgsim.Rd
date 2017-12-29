@@ -5,7 +5,7 @@
 \alias{mrgsim_df}
 \title{Simulate from a model object.}
 \usage{
-mrgsim(x, data = NULL, idata = NULL, nid = 1, ...)
+mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
 
 mrgsim_df(...)
 }
@@ -15,6 +15,8 @@ mrgsim_df(...)
 \item{data}{NMTRAN-like data set}
 
 \item{idata}{a matrix or data frame of model parameters, one parameter per row}
+
+\item{events}{an event object}
 
 \item{nid}{integer number of individuals to simulate; only used if 
 idata and data are missing}
@@ -95,13 +97,13 @@ carried forward.
 \examples{
 ## example("mrgsim")
 
-mod <- mrgsolve:::house() \%>\%  ev(amt=1000, cmt=1)
-out <- mod \%>\% mrgsim()
+e <- ev(amt = 1000)
+mod <- mrgsolve:::house() 
+out <- mod \%>\% ev(e) \%>\% mrgsim()
 plot(out)
 
-out <- mod \%>\% mrgsim(end=22)
+out <- mod \%>\% ev(e) \%>\% mrgsim(end=22)
 out
-
 
 data(exTheoph)
 
@@ -116,12 +118,10 @@ out
 out <- mod \%>\% mrgsim(data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
 out
 
-out <- mod \%>\% mrgsim(req="CENT")
+out <- mod \%>\% ev(e) \%>\% mrgsim(req="CENT")
 out
 
-out <- mrgsim(mod, Req="CP,RESP")
+out <- mrgsim(mod, Req="CP,RESP", events = e)
 out
-
-
 
 }

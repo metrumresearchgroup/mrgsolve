@@ -20,7 +20,7 @@
 setAs("NULL", "character", function(from) character(0))
 
 sval <- unique(c("atol","rtol",
-                 "events","verbose","debug","preclean","mindt",
+                 "verbose","debug","preclean","mindt",
                  "digits", "ixpr", "mxhnil","start", "end", "add", "delta",
                  "maxsteps", "hmin", "hmax","tscale", "request"))
 

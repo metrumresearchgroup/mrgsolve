@@ -33,7 +33,7 @@ these are not updatable from \code{R}}
 
 \item{\code{init}}{\code{<cmt_list>}}
 
-\item{\code{events}}{\code{\link[=ev]{events}} object}
+\item{\code{events}}{deprecated}
 
 \item{\code{digits}}{significant digits in simulated output; negative integer means ignore \code{<numeric>}}
 

@@ -18,24 +18,31 @@
 as.valid_data_set <- function(x) {
   structure(x,class="valid_data_set")
 }
+
 as.valid_idata_set <- function(x) {
   structure(x,class="valid_idata_set")
 }
+
 is.valid_data_set <- function(x) {
   inherits(x,"valid_data_set")
 }
+
 is.valid_idata_set <- function(x) {
   inherits(x,"valid_idata_set")
 }
+
 idcol <- function(x) {
   match("ID", colnames(x)) 
 }
+
 timename <- function(x) {
   intersect(c("time", "TIME"), colnames(x))[1]
 }
+
 cmtname <- function(x) {
   intersect(c("cmt", "CMT"), colnames(x))[1] 
 }
+
 numeric_data_matrix <- function(x,quiet=FALSE) {
   nu <- is.numeric(x)
   if(!all(nu)) {
@@ -48,6 +55,16 @@ numeric_data_matrix <- function(x,quiet=FALSE) {
   x <- data.matrix(x) 
   if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
   return(x)
+}
+
+convert_character_cmt <- function(data, mod) {
+  cmtcol <- intersect(c("cmt", "CMT"), names(data))
+  for(cm in cmtcol) {
+    if(is.character(data[[cm]])) {
+      data[[cm]] <- match(data[[cm]], cmt(mod),0)  
+    }
+  }
+  return(data)
 }
 
 
@@ -98,9 +115,13 @@ valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,
     
     # First, check for compartment
     cmtcol <- intersect(c("cmt", "CMT"), colnames(x))[1]
-    if(is.na(cmtcol)) stop("Couldn't find cmt/CMT column in data set.", call.=FALSE)
+    if(is.na(cmtcol))  {
+      stop("Couldn't find cmt/CMT column in data set.",
+           call.=FALSE)
+    }
     
-    # Convert cmt/CMT to numeric if it's character and you have the model object
+    # Convert cmt/CMT to numeric if it's character and you 
+    # have the model object
     if(is.mrgmod(m)) {
       if(is.character(x[[cmtcol]])) {
         if(verbose) message("Converting cmt to integer")
@@ -114,7 +135,10 @@ valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,
     # Now, check for time/TIME and ID
     # TODO: look into droping these checks.
     tcol <- intersect(c("time", "TIME"), colnames(x))[1]
-    if(is.na(tcol)) stop("Couldn't find time/TIME column in data set.", call.=FALSE)
+    if(is.na(tcol)) {
+      stop("Couldn't find time/TIME column in data set.",
+           call.=FALSE)
+    }
     
     x <- cbind(x, matrix(0,
                          ncol=1,

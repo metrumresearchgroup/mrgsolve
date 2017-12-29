@@ -48,7 +48,7 @@ tgrid_id <- function(col,idata) {
          !is.element(col,colnames(idata)))) {
     return(integer(0)) 
   }
-
+  
   ## Converting to C indexing here
   col <- idata[,col]
   return(match(col,sort(unique(col)))-1)
@@ -88,6 +88,7 @@ validate_idata <- function(idata) {
 ##' into the problem.}
 ##' }
 ##' @param data NMTRAN-like data set
+##' @param events an event object
 ##' @param idata a matrix or data frame of model parameters, one parameter per row
 ##' @section Additional arguments:
 ##'
@@ -142,14 +143,14 @@ validate_idata <- function(idata) {
 
 ##' @examples
 ##' ## example("mrgsim")
-##'
-##' mod <- mrgsolve:::house() %>%  ev(amt=1000, cmt=1)
-##' out <- mod %>% mrgsim()
+##' 
+##' e <- ev(amt = 1000)
+##' mod <- mrgsolve:::house() 
+##' out <- mod %>% ev(e) %>% mrgsim()
 ##' plot(out)
 ##'
-##' out <- mod %>% mrgsim(end=22)
+##' out <- mod %>% ev(e) %>% mrgsim(end=22)
 ##' out
-##'
 ##'
 ##' data(exTheoph)
 ##'
@@ -164,94 +165,108 @@ validate_idata <- function(idata) {
 ##' out <- mod %>% mrgsim(data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
 ##' out
 ##'
-##' out <- mod %>% mrgsim(req="CENT")
+##' out <- mod %>% ev(e) %>% mrgsim(req="CENT")
 ##' out
 ##'
-##' out <- mrgsim(mod, Req="CP,RESP")
+##' out <- mrgsim(mod, Req="CP,RESP", events = e)
 ##' out
-##'
-##'
-##'
-
-
-mrgsim <-  function(x, data=NULL, idata=NULL, nid=1, ...) {
+##' 
+mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
+  
+  if(nid > 1) {
+    if(!is.null(data)) {
+      warning("a data_set was passed to mrgsim, but will not be used", 
+              call. = FALSE)
+    }
+    idata <- data.frame(ID = seq_len(nid))
+    if(has_ID(as.data.frame(events))) {
+      stop("event object cannot contain 'ID' when using 'nid' argument",
+           call. = FALSE)
+    }
+    mrgsim(x, data = NULL, idata = idata, events = events, ...)
+  }
   
   if(is.null(data)) {
     data <- x@args$data
-    x@args$data <- NULL
-  } else {
-   data <- as.data.frame(data) 
-  }
-  
+  } 
   if(is.null(idata)) {
     idata <- x@args$idata
-    x@args$idata <- NULL
-  } else {
-    idata <- as.data.frame(idata) 
+  }
+  if(is.null(events)) {
+    events <- x@args$events
   }
   
-  args <- merge(x@args, list(...), open=TRUE)
+  if(is.ev(events)) {
+    events <- as_data_frame_ev(events) 
+  } else {
+    events <- as.data.frame(events)
+  }
   
+  data <- as.data.frame(data)
+  have_data <- nrow(data) > 0
+  idata <- as.data.frame(idata)
+  have_idata <- nrow(idata) > 0
+  have_events <- nrow(events) > 0
+  have_events_id <- have_events & has_ID(events)
+  
+  if(have_events & have_data) {
+    events <- as.data.frame(NULL)
+    have_events <- have_events_id <- FALSE
+  }
+  
+  # clear out args and process
+  x@args$idata <- NULL
+  x@args$data <- NULL
+  x@args$events <- NULL
+  args <- merge.list(x@args, list(...), open=TRUE)
   if(length(args) > 0) {
     x <- do.call("update",c(x,args))
-  }
-  
-  
-  ## Neither data nor idata passed in, but nid > 1
-  ## Build a simple idata set to use
-  if(is.null(data) & is.null(idata) & nid > 1) {
-    idata <- data.frame(ID=1:nid)
-  }
+  } 
   
   validate_idata(idata)
   
   ## If idata is still null, set it to null_idata (no rows)
-  if(is.null(idata)) idata <- null_idata
-  
-  
-  ## Extract events in the object
-  ev <- as.data.frame(events(x))
+  if(!have_idata) {
+    idata <- null_idata
+  }
   
   ## If we found events and there is an ID column
   ## create a data set
-  if(nrow(ev) > 0 & is.element("ID",colnames(ev)) & is.null(data)) {
-    data <- valid_data_set(ev,x,x@verbose)
+  if(have_events_id) {
+    data <- events
+    have_data <- TRUE
   }
   
-  
   ## If data set is formed, do the simulation 
-  if(!is.null(data)) {
+  if(have_data) {
     out <- do.call("tran_mrgsim", 
-                   c(list(x),list(data=data, idata=idata),args))
+                   c(list(x),list(data=data,idata=idata),args))
     return(out)
   }
   
   ## If we had the null idata set
   ## make one with one ID
-  if(nrow(idata)==0) {
+  ## otherwise, add ID if it's not there
+  if(!have_idata) {
     idata <- data.frame(ID=1)
+  } else {
+    if(!has_ID(idata)) {
+      idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
+    }
   }
   
-  ## If there is no ID column in idata, add one
-  if(!is.element("ID", colnames(idata))) {
-    idata <- bind_col(idata, "ID", 1:nrow(idata))
-  }
-  
-  
-  if(nrow(ev) > 0) {
+  if(have_events) {
     ## If we had events but no ID 
     ## expand that data frame to the number of IDs in idata 
-    ev$ID <- 1
-    ev <- valid_data_set(ev,x,x@verbose)
-    
+    events[["ID"]] <- 1
+    events <- convert_character_cmt(events,x)
     data <- .Call(`_mrgsolve_EXPAND_EVENTS`,
-                  match("ID",colnames(ev),0), 
-                  numeric_data_matrix(ev), 
+                  match("ID",colnames(events),0), 
+                  numeric_data_matrix(events), 
                   idata[,"ID"])
   } else {
     ## No data, no events:
-    data <- matrix(idata[,"ID"], 
-                   ncol=1, 
+    data <- matrix(idata[,"ID"], ncol=1, 
                    dimnames=list(NULL, c("ID")))
   }
   
@@ -282,7 +297,6 @@ tran_mrgsim <- function(x,
                         deslist = list(),
                         descol = character(0),
                         filbak=TRUE,
-                        t2advance = FALSE,
                         tad = FALSE,
                         nocb = TRUE,
                         skip_init_calc = FALSE,
@@ -298,7 +312,7 @@ tran_mrgsim <- function(x,
   if(!model_loaded(x)) {
     stop("The model is not properly loaded.  Aborting simulation.",call.=FALSE) 
   }
-
+  
   ## data
   if(!is.valid_data_set(data)) {
     data <- valid_data_set(data,x,verbose)
@@ -308,8 +322,6 @@ tran_mrgsim <- function(x,
   if(!is.valid_idata_set(idata)) {
     idata <- valid_idata_set(idata,verbose=verbose,...)
   }
-  
-  #idata_idcol <- idcol(idata)
   
   tcol <- timename(data)
   tcol <- ifelse(is.na(tcol), "time", tcol)
@@ -329,7 +341,7 @@ tran_mrgsim <- function(x,
   } else {
     request <- cvec_cs(x@request)
   }
-
+  
   # capture items; will work on this
   capt <- x@capture
   
@@ -345,8 +357,8 @@ tran_mrgsim <- function(x,
   # request is only for compartments
   # restrict captures and request if Req is specified
   if(has_Request) {
-     request <- intersect(Request,cmt(x))
-     capt    <- intersect(Request,capt)
+    request <- intersect(Request,cmt(x))
+    capt    <- intersect(Request,capt)
   } else {
     request <- intersect(request,cmt(x)) 
   }
@@ -379,10 +391,10 @@ tran_mrgsim <- function(x,
   # What to carry out from data and idata
   carry.data  <- intersect(carry.out, colnames(data))
   carry.idata <- intersect(carry.out, colnames(idata))
- 
+  
   # Carry from data_set if name is in idata_set too
   carry.idata <- setdiff(carry.idata, carry.data)
-
+  
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
@@ -416,7 +428,7 @@ tran_mrgsim <- function(x,
   rename.carry.tran <- .ren.create(parin[["carry_tran"]],carry.tran)
   carry.tran <- rename.carry.tran$old
   
-
+  
   # Derive stime vector either from tgrid or from the object
   if(inherits(tgrid, c("tgrid","tgrids"))) {
     stime <- stime(tgrid)
@@ -432,7 +444,7 @@ tran_mrgsim <- function(x,
     parin[["tgridmatrix"]] <- tgrid_matrix(list(stime))
     parin[["whichtg"]] <- integer(0)
   }
-
+  
   # Dump some information out to file for debugging
   if(is.character(capture)) {
     capture.output(file=capture, print(c(date=list(date()), parin=parin)))
@@ -493,7 +505,20 @@ param_as_parent <- function(x) {
   parent.env(e) <- .GlobalEnv
   parent.env(x@envir) <- e
 }
+
 global_as_parent <- function(x) {
   parent.env(x@envir) <- .GlobalEnv 
 }
 
+As_data_set <- function(x) {
+  if(!is.data.frame(x)) {
+    if(is.ev(x)) {
+      x <- x@data
+    } else {
+      x <- as.data.frame(x) 
+    } 
+  }
+  if(nrow(x)==0) return(x)
+  if(!has_name("ID", x)) x[["ID"]] <- 1
+  return(x)
+}

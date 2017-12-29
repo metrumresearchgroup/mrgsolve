@@ -4,14 +4,11 @@
 \name{as_data_set}
 \alias{as_data_set}
 \alias{as_data_set,ev-method}
-\alias{as_data_set,data.frame-method}
 \title{Create a simulatinon data set from ev objects.}
 \usage{
 as_data_set(x, ...)
 
 \S4method{as_data_set}{ev}(x, ...)
-
-\S4method{as_data_set}{data.frame}(x, ...)
 }
 \arguments{
 \item{x}{ev objects}

@@ -113,7 +113,7 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   if(!all(c("cmt", "time") %in% names(x))) {
     stop("cmt, time are required data items for events.",call.=FALSE)
   }
-  if(!("evid" %in% names(x))) {
+  if(!has_name("evid", x)) {
     x[["evid"]] <- 1 
   } else {
     x <- x[x$evid != 0,] 
@@ -125,7 +125,7 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
     x <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
                           match("ID", colnames(x),0), 
                           data.matrix(x),
-                          c(1:nid)))
+                          seq_len(nid)))
   } else {
     if(exists("ID",x) & !keep_id) x[,"ID"] <- NULL
   }
@@ -152,10 +152,12 @@ setMethod("as.matrix", "ev", function(x,...) {
 ##' @rdname events
 ##' @export
 setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
-  as.data.frame(
+  as.data.frame.data.frame(
     x@data,row.names,optional,stringsAsFactors=FALSE,...
   )
 })
+
+as_data_frame_ev <- function(x) x@data
 
 ##' Create a simulatinon data set from ev objects.
 ##'
@@ -193,13 +195,13 @@ setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 
 ##' @rdname as_data_set
 setMethod("as_data_set","ev", function(x,...) {
-  do.call(collect_ev,c(list(x),list(...)))
+  other_ev <- list(...)
+  if(length(other_ev)==0) {
+    return(check_ev(x)) 
+  }
+  do.call(collect_ev,c(list(x),other_ev))
 })
 
-##' @rdname as_data_set
-setMethod("as_data_set","data.frame", function(x,...) {
-  as_data_set(as.ev(x),...)
-})
 
 ##' @param object passed to show
 ##' @rdname events
@@ -217,9 +219,10 @@ check_ev <- function(x) {
 }
 
 collect_ev <- function(...) {
+  x <- list(...)
   tran <- c("ID","time", "cmt", "evid",  
             "amt", "ii", "addl", "rate", "ss")
-  x <- lapply(list(...),check_ev)
+  x <- lapply(x,check_ev)
   y <- lapply(x, "[[","ID")
   mx <- sapply(y,function(xx) length(unique(xx)))
   mx <- cumsum(c(0,mx[-length(mx)]))

@@ -111,7 +111,6 @@ protomod <- list(model=character(0),
                           config=character(0)),
                  omega=new("omegalist"),
                  sigma = new("sigmalist"),
-                 events=new("ev"),
                  request="(all)",
                  param = new("parameter_list"),
                  init=new("cmt_list"),
@@ -164,7 +163,7 @@ valid.mrgmod <- function(object) {
 ##' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
 ##' these are not updatable from \code{R}
 ##' @slot init \code{<cmt_list>}
-##' @slot events \code{\link[=ev]{events}} object
+##' @slot events deprecated
 ##' @slot digits significant digits in simulated output; negative integer means ignore \code{<numeric>}
 ##' @slot hmin passed to \code{\link[=aboutsolver]{dlsoda}}  \code{<numeric>}
 ##' @slot hmax passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
@@ -362,7 +361,7 @@ setMethod("names", "mrgmod", function(x) {
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   
   within(list(), {
-
+    
     plugins <- x@plugin
     envir <- x@envir
     solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
@@ -399,21 +398,25 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 ##' @rdname events
 ##' @export
 setMethod("events", "mrgmod", function(x,...) {
-  
-  args <- list(...)
-  if(length(args)>0) return(update(x,events=ev(...)))
-  
-  x@events
+  warning("events are no longer included in the model object")
+  # args <- list(...)
+  # if(length(args)>0) return(update(x,events=ev(...)))
+  # 
+  # x@events
 })
 
 ##' @export
 ##' @rdname events
 setMethod("ev", "mrgmod", function(x,object=NULL,...) {
-  if(is.null(object)) return(update(x,events=ev(...)))
+  if(is.null(object)) {
+    x@args[["events"]] <- ev(...)
+    return(x)
+  } 
   if(is.character(object)) {
-    object <- eval(parse(text=object),envir=x@envir)
+    object <- eval(parse(text = object),envir = x@envir)
   }
-  return(update(x,events=object,...))
+  x@args[["events"]] <- object
+  x
 })
 
 ##' @export
