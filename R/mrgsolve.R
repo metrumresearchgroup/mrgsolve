@@ -177,21 +177,21 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
     if(!is.null(data)) {
       warning("a data_set was passed to mrgsim, but will not be used", 
               call. = FALSE)
-    }
+    } 
     idata <- data.frame(ID = seq_len(nid))
     if(has_ID(as.data.frame(events))) {
       stop("event object cannot contain 'ID' when using 'nid' argument",
            call. = FALSE)
-    }
+    } 
     mrgsim(x, data = NULL, idata = idata, events = events, ...)
-  }
+  } 
   
   if(is.null(data)) {
     data <- x@args$data
-  } 
+  }  
   if(is.null(idata)) {
     idata <- x@args$idata
-  }
+  } 
   if(is.null(events)) {
     events <- x@args$events
   }
@@ -218,16 +218,18 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   x@args$idata <- NULL
   x@args$data <- NULL
   x@args$events <- NULL
+  
   args <- merge.list(x@args, list(...), open=TRUE)
+  
   if(length(args) > 0) {
     x <- do.call("update",c(x,args))
   } 
   
-  validate_idata(idata)
-  
   ## If idata is still null, set it to null_idata (no rows)
   if(!have_idata) {
     idata <- null_idata
+  } else {
+    validate_idata(idata)
   }
   
   ## If we found events and there is an ID column
@@ -235,51 +237,101 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   if(have_events_id) {
     data <- events
     have_data <- TRUE
-  }
+  } 
   
   ## If data set is formed, do the simulation 
   if(have_data) {
-    out <- do.call("tran_mrgsim", 
-                   c(list(x),list(data=data,idata=idata),args))
+    out <- do.call(
+      "tran_mrgsim", 
+      c(list(x),list(data=data,idata=idata),args)
+    )
     return(out)
   }
   
   ## If we had the null idata set
   ## make one with one ID
   ## otherwise, add ID if it's not there
-  if(!have_idata) {
-    idata <- data.frame(ID=1)
-  } else {
-    if(!has_ID(idata)) {
-      idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
-    }
+  if(have_idata & !has_ID(idata)) {
+    idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
   
   if(have_events) {
     ## If we had events but no ID 
-    ## expand that data frame to the number of IDs in idata 
-    events[["ID"]] <- 1
+    ## expand that data frame to the number of 
     events <- convert_character_cmt(events,x)
-    data <- .Call(`_mrgsolve_EXPAND_EVENTS`,
-                  match("ID",colnames(events),0), 
-                  numeric_data_matrix(events), 
-                  idata[,"ID"])
-  } else {
-    ## No data, no events:
-    data <- matrix(idata[,"ID"], ncol=1, 
-                   dimnames=list(NULL, c("ID")))
-  }
+    events[["ID"]] <- 1
+    if(have_idata) {
+      data <- .Call(`_mrgsolve_EXPAND_EVENTS`,
+                    match("ID",colnames(events),0), 
+                    numeric_data_matrix(events), 
+                    idata[["ID"]])
+    } else {
+      data <- events 
+    }
+  } else { 
+    if(have_idata) {
+      data <- matrix(idata[["ID"]], ncol=1, 
+                     dimnames=list(NULL, c("ID")))
+    } else {
+      data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
+    }
+  } 
   
   data <- valid_data_set(data,x,x@verbose)
   
   ## simulate
-  out <- do.call("tran_mrgsim", 
-                 c(list(x),list(data=data, idata=idata),args))
+  out <- do.call(
+    "tran_mrgsim", 
+    c(list(x),list(data=data, idata=idata), args)
+  )
   
   return(out)
-  
+} 
+
+##' @rdname mrgsim
+##' @export
+mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
+  if(!is.null(idata) | !is.null(data)) {
+    stop("data and idata are not allowed with this call", 
+         call. = FALSE)
+  }
+  events <- As_data_set(events)
+  #events <- convert_character_cmt(events,x)
+  tran_mrgsim(x, data = events, idata = null_idata,...)
 }
 
+##' @rdname mrgsim
+##' @export
+mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
+  if(!is.null(idata) | !is.null(events)) {
+    stop("idata and events are not allowed with this call", 
+         call. = FALSE)
+  }
+  tran_mrgsim(x, data = data, idata = null_idata, ...)
+}
+
+##' @rdname mrgsim
+##' @export
+mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
+  events <- as_data_frame_ev(events)
+  if(has_ID(events)) {
+    stop("the event object cannot have 'ID' element; use mrgsim_d instead", 
+         call. = FALSE)
+  }
+  events[["ID"]] <- 1
+  if(!has_ID(idata)) {
+    idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
+  }
+  data <- .Call(`_mrgsolve_EXPAND_EVENTS`,
+                match("ID",colnames(events),0), 
+                numeric_data_matrix(events), 
+                idata[,"ID"])
+  tran_mrgsim(x, data = data, idata = idata, ...)
+}
+
+##' @rdname mrgsim
+##' @export
+mrgsim_df <- function(...) as_data_frame(mrgsim(...))
 
 tran_mrgsim <- function(x,
                         data,
@@ -291,7 +343,6 @@ tran_mrgsim <- function(x,
                         capture=NULL,
                         obsonly=FALSE,
                         obsaug=FALSE,
-                        ptime=numeric(0),
                         tgrid = numeric(0),
                         recsort=1,
                         deslist = list(),
@@ -307,10 +358,10 @@ tran_mrgsim <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
-  ## foo <- touch_funs(x,keep_pointers=TRUE)
   
   if(!model_loaded(x)) {
-    stop("The model is not properly loaded.  Aborting simulation.",call.=FALSE) 
+    stop("The model is not properly loaded.  Aborting simulation.",
+         call.=FALSE) 
   }
   
   ## data
@@ -324,15 +375,17 @@ tran_mrgsim <- function(x,
   }
   
   tcol <- timename(data)
-  tcol <- ifelse(is.na(tcol), "time", tcol)
+  tcol <- if_else(is.na(tcol), "time", tcol)
   
   param <- as.numeric(param(x))
   init <-  as.numeric(Init(x))
   
-  if(!identical(names(param(x)),x@shlib$par))
-    stop("The parameter list  has changed since the model was compiled.")
-  if(!identical(Cmt(x), x@shlib$cmt))
+  if(!identical(names(param(x)),x@shlib$par)) {
+    stop("The parameter list has changed since the model was compiled.")
+  }
+  if(!identical(Cmt(x), x@shlib$cmt)) {
     stop("The compartment list has changed since the model was compiled.")
+  }
   
   ## request is stored in the model object
   ## if request is (all) take all compartments
@@ -348,11 +401,8 @@ tran_mrgsim <- function(x,
   # Requested
   has_Request <- !missing(Request)
   # comma-separated
-  #rename.Request <- set_altname(cvec_c_nws(Request))
-  #Request <- as.character(rename.Request)
   rename.Request <- .ren.create(Request)
   Request <- rename.Request$old
-  
   
   # request is only for compartments
   # restrict captures and request if Req is specified
@@ -365,18 +415,15 @@ tran_mrgsim <- function(x,
   
   # Non-compartment names in capture
   capt <- unique(setdiff(capt,cmt(x)))
+  
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
   capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
   
   ## carry can be tran/data/idata
   # Items to carry out from the data set
-  # carry.out --> comma-separated names
-  # rename.carry <- set_altname(cvec_c_nws(carry.out))
-  # carry.out <- as.character(rename.carry)
   rename.carry <- .ren.create(carry.out)
   carry.out <- rename.carry$old
-  
   
   # Don't take ID,time,TIME
   carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
@@ -401,7 +448,6 @@ tran_mrgsim <- function(x,
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
   parin$mtime <- sort(unique(mtime))
-  parin$ptimes <- stime(ptime)
   parin$filbak <- filbak
   parin$tad <- tad
   parin$nocb <- nocb
@@ -422,9 +468,6 @@ tran_mrgsim <- function(x,
   parin$carry_tran <- tolower(carry.tran)
   
   # Now, create a rename object 
-  # make_altnames: from, to
-  # rename.carry.tran <- set_altname(make_altnames(parin[["carry_tran"]],carry.tran))
-  # carry.tran <- as.character(rename.carry.tran)
   rename.carry.tran <- .ren.create(parin[["carry_tran"]],carry.tran)
   carry.tran <- rename.carry.tran$old
   
@@ -496,9 +539,6 @@ tran_mrgsim <- function(x,
       seed=as.integer(seed))
 }
 
-##' @rdname mrgsim
-##' @export
-mrgsim_df <- function(...) as_data_frame(mrgsim(...))
 
 param_as_parent <- function(x) {
   e <- as.environment(as.list(param(x)))
@@ -510,15 +550,3 @@ global_as_parent <- function(x) {
   parent.env(x@envir) <- .GlobalEnv 
 }
 
-As_data_set <- function(x) {
-  if(!is.data.frame(x)) {
-    if(is.ev(x)) {
-      x <- x@data
-    } else {
-      x <- as.data.frame(x) 
-    } 
-  }
-  if(nrow(x)==0) return(x)
-  if(!has_name("ID", x)) x[["ID"]] <- 1
-  return(x)
-}

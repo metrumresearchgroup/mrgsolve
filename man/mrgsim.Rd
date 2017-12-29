@@ -2,10 +2,19 @@
 % Please edit documentation in R/mrgsolve.R
 \name{mrgsim}
 \alias{mrgsim}
+\alias{mrgsim_e}
+\alias{mrgsim_d}
+\alias{mrgsim_ei}
 \alias{mrgsim_df}
 \title{Simulate from a model object.}
 \usage{
 mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
+
+mrgsim_e(x, events, idata = NULL, data = NULL, ...)
+
+mrgsim_d(x, data, idata = NULL, events = NULL, ...)
+
+mrgsim_ei(x, events, idata, data = NULL, ...)
 
 mrgsim_df(...)
 }

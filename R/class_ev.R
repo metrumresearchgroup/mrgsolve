@@ -24,4 +24,8 @@ is.ev <- function(x) {
   inherits(x,"ev")  
 }
 
+names_ev <- function(x) {
+  stopifnot(is.ev(x))
+  names(x@data)
+}
 

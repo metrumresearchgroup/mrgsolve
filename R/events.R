@@ -158,6 +158,20 @@ setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
 })
 
 as_data_frame_ev <- function(x) x@data
+As_data_set <- function(x) {
+  if(!is.data.frame(x)) {
+    if(is.ev(x)) {
+      x <- x@data
+    } else {
+      x <- as.data.frame(x) 
+    } 
+  }
+  if(nrow(x)==0) return(x)
+  if(!has_name("ID", x)) x[["ID"]] <- 1
+  return(x)
+}
+
+
 
 ##' Create a simulatinon data set from ev objects.
 ##'

@@ -90,10 +90,6 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
     solvertxt <- sapply(solvertxt, function(i) paste(i, collapse= " "))
     solvertxt <- paste0(print.solver.header, solvertxt)
 
-    evtxt <- "<none>"
-    ev <- as.data.frame(events(x))
-    if(nrow(ev)>0) evtxt <- paste0("Yes (", nrow(ev), " rows)")
-
     proj <- normalizePath(project(x), mustWork=FALSE,winslash=.Platform$file.sep)
     proj <- cropstr(proj, 16,44)
 
