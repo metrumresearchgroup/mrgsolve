@@ -52,10 +52,12 @@ test_that("mrgsim_df", {
 })
 
 test_that("mrgsim with ev", {
+  
   out_pipe <- mod %>% ev(e) %>% mrgsim()
-  out_pipe@mod@args <- list()
   out <- mrgsim(mod, events = e)
   out_quick <- mrgsim_e(mod,e)
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_identical(out,out_quick)
   expect_is(out, "mrgsims")
@@ -64,9 +66,10 @@ test_that("mrgsim with ev", {
 
 test_that("mrgsim with ev and idata", {
   out_pipe <- mod %>% ev(e) %>% idata_set(idata) %>% mrgsim()
-  out_pipe@mod@args <- list()
   out <- mrgsim(mod, idata=idata, events = e)
   out_quick <- mrgsim_ei(mod, e, idata)
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_identical(out,out_quick)
   expect_equal(length(unique(out$ID)),10)
@@ -74,16 +77,23 @@ test_that("mrgsim with ev and idata", {
 
 test_that("mrgsim with ev and ID and idata", {
   out_pipe <- mod %>% ev(e_id) %>% idata_set(idata) %>% mrgsim()
-  out_pipe@mod@args <- list()
   out <- mrgsim(mod, idata=idata, events = e_id)
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_error(mrgsim_ei(mod, e_id, idata))
   expect_identical(out,out_pipe)
   expect_equal(length(unique(out$ID)),3)  
 })
 
-
 test_that("mrgsim with data and idata", {
   out <- mrgsim(mod, data = data, idata = idata, carry.out = "CL,V")
+  out_pipe <- mod %>% data_set(data) %>% idata_set(idata) %>% 
+    mrgsim(carry.out = "CL,V")
+  out_quick <- mrgsim_di(mod,data,idata, carry.out="CL,V")
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
+  expect_identical(out,out_pipe)
+  expect_identical(out,out_quick)
   out12 <- filter(out, time==12)
   expect_equal(length(unique(out$ID)), 7)
   expect_equal(length(unique(out12$CENT)), 7)
@@ -99,8 +109,9 @@ test_that("mrgsim with data and idata", {
 test_that("mrgsim with ev and ID", {
   out <- mrgsim(mod, events = e_id)
   out_pipe <- mod %>% ev(e_id) %>% mrgsim
-  out_pipe@mod@args <- list()
   out_quick <- mrgsim_e(mod, e_id)
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_identical(out,out_quick)
   expect_is(out, "mrgsims")
@@ -111,7 +122,8 @@ test_that("mrgsim with data", {
   out <- mod %>% mrgsim(data = data)
   out_pipe <- mod %>% data_set(data) %>% mrgsim
   out_quick <- mrgsim_d(mod,data)
-  out_pipe@mod@args <- list()
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_identical(out,out_quick)
   expect_is(out, "mrgsims")
@@ -126,7 +138,8 @@ test_that("mrgsim with data", {
 test_that("mrgsim with data and ev", {
   out <- mod %>% mrgsim(data = data, events = e)
   out_pipe <- mod %>% data_set(data) %>% ev(e) %>% mrgsim
-  out_pipe@mod@args <- list()
+  
+  out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_is(out, "mrgsims")
   expect_equal(length(unique(out$ID)),7)

@@ -30,7 +30,7 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame
-##' @importFrom R6 R6Class
+##' @importFrom assertthat assert_that
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R

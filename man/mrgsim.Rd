@@ -5,6 +5,7 @@
 \alias{mrgsim_e}
 \alias{mrgsim_d}
 \alias{mrgsim_ei}
+\alias{mrgsim_di}
 \alias{mrgsim_df}
 \title{Simulate from a model object.}
 \usage{
@@ -15,6 +16,8 @@ mrgsim_e(x, events, idata = NULL, data = NULL, ...)
 mrgsim_d(x, data, idata = NULL, events = NULL, ...)
 
 mrgsim_ei(x, events, idata, data = NULL, ...)
+
+mrgsim_di(x, data, idata, events = NULL, ...)
 
 mrgsim_df(...)
 }

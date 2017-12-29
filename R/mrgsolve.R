@@ -214,6 +214,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
     have_events <- have_events_id <- FALSE
   }
   
+  
   # clear out args and process
   x@args$idata <- NULL
   x@args$data <- NULL
@@ -328,6 +329,19 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
                 idata[,"ID"])
   tran_mrgsim(x, data = data, idata = idata, ...)
 }
+
+##' @rdname mrgsim
+##' @export
+mrgsim_di <- function(x, data, idata, events = NULL, ...) {
+  assert_that(nrow(data) > 0)
+  assert_that(nrow(idata) > 0)
+  if(!has_ID(idata)) {
+    idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
+  }
+  tran_mrgsim(x, data = data, idata = idata, ...)
+}
+
+
 
 ##' @rdname mrgsim
 ##' @export
