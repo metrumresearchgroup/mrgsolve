@@ -189,7 +189,7 @@ As_data_set <- function(x) {
 
 
 
-##' Create a simulatinon data set from ev objects.
+##' Create a simulatinon data set from ev objects
 ##'
 ##'
 ##' @param x ev objects
@@ -277,7 +277,7 @@ collect_ev <- function(...) {
 
 
 
-##' Operations for ev objects.
+##' Operations for ev objects
 ##'
 ##' @param e1 object on left hand side of operator (lhs)
 ##' @param e2 object on right hand side of operator (rhs)
@@ -603,7 +603,7 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   }
 }
 
-##' Make addl doses explicit in an event object or data set.
+##' Make addl doses explicit in an event object or data set
 ##' 
 ##' @param x a \code{data_set} data frame or an \code{ev} object (see details)
 ##' @param ... not used
