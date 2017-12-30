@@ -296,7 +296,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   }
   args <- list(...)
   x <- do.call(update, c(x,args))
-  args <- merge.list(x@args,args,open = TRUE)
+  args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
     c(list(x = x, data = As_data_set(events), idata = null_idata), args)
@@ -311,7 +311,7 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   } 
   args <- list(...)
   x <- do.call(update, c(x,args))
-  args <- merge.list(x@args,args,open = TRUE)
+  args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
     c(list(x = x, data = data, idata = null_idata), args)
@@ -338,7 +338,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   }
   args <- list(...)
   x <- do.call(update, c(x,args))
-  args <- merge.list(x@args,args,open = TRUE)
+  args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
     c(list(x = x, data = data, idata = idata), args)
@@ -356,7 +356,7 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   }
   args <- list(...)
   x <- do.call(update, c(x,args))
-  args <- merge.list(x@args,args,open = TRUE)
+  args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
     c(list(x = x, data = data, idata = idata), args)
@@ -375,7 +375,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   data <- matrix(idata[["ID"]], ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
   x <- do.call(update, c(x,args))
-  args <- merge.list(x@args,args,open = TRUE)
+  args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
     c(list(x = x, data = data, idata = idata), args)
@@ -388,7 +388,7 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
   x <- do.call(update, c(x,args))
-  args <- merge.list(x@args,args,open = TRUE)
+  args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
     c(list(x = x, data = data, idata = null_idata), args)

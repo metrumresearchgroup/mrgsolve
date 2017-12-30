@@ -25,18 +25,23 @@ bind_col <- function(x,y,z) {
 
 is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 
-##' Merge two lists.
+##' Merge two lists
 ##'
 ##' @param x the original list
 ##' @param y the new list for merging
+##' @param open logical indicating whether or not new items should 
+##' be allowed in the list upon merging
 ##' @param wild wild-card name; see details
 ##' @param warn issue warning if nothing found to update
 ##' @param context description of usage context
 ##' @param ... not used
-##' @param open logical indicating whether or not new items should be allowed in the list upon merging.
+##' 
 ##' @rdname merge
+##' 
 ##' @details
-##' Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{open}.
+##' Wild-card names (\code{wild}) are always retained in \code{x} and
+##' are brought along from \code{y} only when \code{open}.
+##' 
 ##' @export
 merge.list <- function(x,y,...,open=FALSE,
                        warn=TRUE,context="object",wild="...") {
@@ -63,6 +68,13 @@ merge.list <- function(x,y,...,open=FALSE,
   }
   x
 }
+
+combine_list <- function(left,right) {
+  stopifnot(all(is.list(left), is.list(right)))
+  nw <- c(left,right)
+  nw[!duplicated(names(nw),fromLast=TRUE)]
+}
+
 
 render_time <- function(x) {
   add <- times <- numeric(0)

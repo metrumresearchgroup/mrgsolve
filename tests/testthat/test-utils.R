@@ -41,7 +41,40 @@ test_that("columns that don't exist throw an error", {
 })
 
 
-context("Test utils")
+a <- list(a = 1, b = 2, c = 3)
+b <- list(b = 4, c = 5, d = 6)
+
+test_that("merge two lists, open", {
+  ans <- merge(a,b, open = TRUE)  
+  expect_equal(names(ans), c("a", "b", "c", "d"))
+  expect_equal(ans$b,4)
+  expect_equal(ans$d, 6)
+})
+
+test_that("merge two lists, closed", {
+  ans <- merge(a,b, open = FALSE)  
+  expect_equal(names(ans), c("a", "b", "c"))
+  expect_equal(ans$b,4)
+  expect_equal(ans$c, 5)
+})
+
+test_that("combine_list", {
+    ans <- merge(a,b, open = TRUE)
+    ans_combined <- combine_list(a,b)
+    expect_identical(ans,ans_combined)
+    
+    ans <- merge(a,list(), open = TRUE)
+    ans_combined <- combine_list(a,list())
+    expect_identical(ans,ans_combined)
+    
+    ans <- merge(list(),b, open = TRUE)
+    ans_combined <- combine_list(list(),b)
+    expect_identical(ans,ans_combined)
+})
+
+
+
+
 mod <- mrgsolve:::house()
 out <- mrgsim(mod)
 

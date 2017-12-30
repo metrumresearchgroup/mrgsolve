@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{merge.list}
 \alias{merge.list}
-\title{Merge two lists.}
+\title{Merge two lists}
 \usage{
 \method{merge}{list}(x, y, ..., open = FALSE, warn = TRUE,
   context = "object", wild = "...")
@@ -14,7 +14,8 @@
 
 \item{...}{not used}
 
-\item{open}{logical indicating whether or not new items should be allowed in the list upon merging.}
+\item{open}{logical indicating whether or not new items should 
+be allowed in the list upon merging}
 
 \item{warn}{issue warning if nothing found to update}
 
@@ -23,8 +24,9 @@
 \item{wild}{wild-card name; see details}
 }
 \description{
-Merge two lists.
+Merge two lists
 }
 \details{
-Wild-card names (\code{wild}) are always retained in \code{x} and are brought along from \code{y} only when \code{open}.
+Wild-card names (\code{wild}) are always retained in \code{x} and
+are brought along from \code{y} only when \code{open}.
 }
