@@ -114,6 +114,12 @@ setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
 
 ##' @export
 ##' @rdname data_set
+setMethod("data_set", c("mrgmod", "ev"), function(x,data,...) {
+    return(data_set(x,As_data_set(data),...))
+})
+
+##' @export
+##' @rdname data_set
 setMethod("data_set", c("mrgmod", "missing"), function(x,object,...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x,as.data.frame(object),...))

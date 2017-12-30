@@ -217,6 +217,10 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
     events <- x@args$events
   }
   
+  if(is.ev(data)) {
+    data <- As_data_set(data) 
+  }
+  
   data <- as.data.frame(data)
   have_data <- nrow(data) > 0
   idata <- as.data.frame(idata)

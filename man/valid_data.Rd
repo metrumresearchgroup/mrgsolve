@@ -7,7 +7,7 @@
 \alias{valid_data_set.data.frame}
 \alias{valid_idata_set}
 \alias{valid_data_set.matrix}
-\title{Validate and prepare data sets for simulation.}
+\title{Validate and prepare data sets for simulation}
 \usage{
 valid_data_set(x, ...)
 
@@ -41,7 +41,7 @@ compartment number.
 A numeric matrix with class \code{valid_idata_set}.
 }
 \description{
-Validate and prepare data sets for simulation.
+Validate and prepare data sets for simulation
 
 Validate and prepare idata data sets for simulation.
 }

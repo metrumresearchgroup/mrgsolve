@@ -5,6 +5,7 @@
 \alias{data_set}
 \alias{data_set,mrgmod,data.frame-method}
 \alias{data_set,mrgmod,ANY-method}
+\alias{data_set,mrgmod,ev-method}
 \alias{data_set,mrgmod,missing-method}
 \title{Select and modify a data set for simulation.}
 \usage{
@@ -14,6 +15,8 @@ data_set(x, data, ...)
   select = TRUE, object = NULL, need = NULL, ...)
 
 \S4method{data_set}{mrgmod,ANY}(x, data, ...)
+
+\S4method{data_set}{mrgmod,ev}(x, data, ...)
 
 \S4method{data_set}{mrgmod,missing}(x, object, ...)
 }
