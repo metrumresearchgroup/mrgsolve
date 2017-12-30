@@ -8,7 +8,7 @@
 \alias{\%then\%,ev,ev-method}
 \alias{+,ev,numeric-method}
 \alias{c,ev-method}
-\title{Operations for ev objects.}
+\title{Operations for ev objects}
 \usage{
 \S4method{+}{ev,ev}(e1, e2)
 
@@ -32,7 +32,7 @@ e1 \%then\% e2
 \item{recursive}{not used}
 }
 \description{
-Operations for ev objects.
+Operations for ev objects
 }
 \details{
 All operations involving \code{\link[=mrgmod-class]{mrgmod}} 

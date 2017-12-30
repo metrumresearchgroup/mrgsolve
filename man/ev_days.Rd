@@ -2,7 +2,7 @@
 % Please edit documentation in R/events.R
 \name{ev_days}
 \alias{ev_days}
-\title{Schedule dosing events on days of the week.}
+\title{Schedule dosing events on days of the week}
 \usage{
 ev_days(ev = NULL, days = "", addl = 0, ii = 168, unit = c("hours",
   "days"), ...)

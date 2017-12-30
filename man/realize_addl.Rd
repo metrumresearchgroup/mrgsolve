@@ -4,7 +4,7 @@
 \alias{realize_addl}
 \alias{realize_addl.data.frame}
 \alias{realize_addl.ev}
-\title{Make addl doses explicit in an event object or data set.}
+\title{Make addl doses explicit in an event object or data set}
 \usage{
 realize_addl(x, ...)
 
@@ -18,7 +18,7 @@ realize_addl(x, ...)
 \item{...}{not used}
 }
 \description{
-Make addl doses explicit in an event object or data set.
+Make addl doses explicit in an event object or data set
 }
 \details{
 Required data elements: \code{addl} and \code{ii}.
