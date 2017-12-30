@@ -46,7 +46,7 @@ as.ev(x, ...)
 \method{as.matrix}{ev}(x, ...)
 
 \method{as.data.frame}{ev}(x, row.names = NULL, optional = FALSE,
-  ID = NULL, ...)
+  add_ID = NULL, ...)
 
 \S4method{show}{ev}(object)
 
@@ -86,6 +86,9 @@ number of individuals}
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
 \item{optional}{passed to \code{\link{as.data.frame}}}
+
+\item{add_ID}{numeric ID of length 1 used to add \code{ID} column
+only if one doesn't already exist}
 }
 \value{
 Returns a user-defined data frame of events that should be suitable

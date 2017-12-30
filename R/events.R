@@ -159,13 +159,15 @@ as.matrix.ev <- function(x,...) {
 
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
+##' @param add_ID numeric ID of length 1 used to add \code{ID} column
+##' only if one doesn't already exist
 ##' @method as.data.frame ev
 ##' @rdname events
 ##' @export
-as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, ID = NULL, ...) {
+as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, add_ID = NULL, ...) {
   ans <- x@data
-  if(is.numeric(ID)) {
-    ans[["ID"]] <- ID
+  if(is.numeric(add_ID) & !has_ID(ans)) {
+    ans[["ID"]] <- add_ID[1]
   } 
   return(ans)
 }
