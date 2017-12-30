@@ -68,7 +68,7 @@ convert_character_cmt <- function(data, mod) {
 }
 
 
-##' Validate and prepare data sets for simulation.
+##' Validate and prepare data sets for simulation
 ##'
 ##' @name valid_data
 ##' @rdname valid_data
@@ -96,8 +96,8 @@ valid_data_set.default <- function(x,...) {
 
 ##' @rdname valid_data
 ##' @export
-valid_data_set.data.frame <- function(x,m=NULL,verbose=FALSE,
-                                      quiet=FALSE,...) {
+valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
+                                      quiet = FALSE,...) {
   
   if(verbose) quiet <- FALSE
   
