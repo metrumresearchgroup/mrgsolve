@@ -80,7 +80,7 @@ test_that("mrgsim with ev and ID and idata", {
   out <- mrgsim(mod, idata=idata, events = e_id)
   
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
-  expect_error(mrgsim_ei(mod, e_id, idata))
+
   expect_identical(out,out_pipe)
   expect_equal(length(unique(out$ID)),3)  
 })
@@ -88,8 +88,10 @@ test_that("mrgsim with ev and ID and idata", {
 test_that("mrgsim with data and idata", {
   out <- mrgsim(mod, data = data, idata = idata, carry.out = "CL,V")
   out_pipe <- mod %>% data_set(data) %>% idata_set(idata) %>% 
-    mrgsim(carry.out = "CL,V")
+    carry_out(CL,V) %>%
+    mrgsim()
   out_quick <- mrgsim_di(mod,data,idata, carry.out="CL,V")
+  
   
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
