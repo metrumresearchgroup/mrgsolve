@@ -45,20 +45,24 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
     dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
     as.data.frame
   
-  if(!has_name("amt",data)) stop("amt is required input.", call.=FALSE)
+  if(!has_name("amt",data)) {
+    stop("amt is required input.", call.=FALSE)
+  }
   
   if(!missing(until)) {
     if(!has_name("ii", data)) {
       stop("ii is required when until is specified", call.=FALSE)
     }
-    data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
+    data[["addl"]] <- ceiling((data[["time"]] + until)/data[["ii"]])-1
   }
   
   if(length(ID) > 0) {
     
     ID <- unique(ID)
     
-    if(!is.numeric(ID)) stop("ID must be numeric")
+    if(!is.numeric(ID)) {
+      stop("ID must be numeric", call.=FALSE)
+    }
     
     if(replicate) {
       if(any(!is.numeric(data))) {
@@ -81,13 +85,15 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         stop("Length of ID does not match number of events while replicate = FALSE",
              call.=FALSE)
       }
-      data["ID"] <- ID
+      data[["ID"]] <- ID
     }
     data <- data %>% shuffle(c("ID", "time", "cmt"))
   } else {
     data <- data %>% shuffle(c("time", "cmt"))
   }
+  
   if(realize_addl) data <- realize_addl(data)
+  
   return(new("ev", data=data))
 })
 
@@ -108,18 +114,22 @@ setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
 ##' @export
 setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   
-  if(nrow(x)==0) return(new("ev",data=data.frame()))
+  if(nrow(x)==0) {
+    return(new("ev",data=data.frame()))
+  }
   
   if(!all(c("cmt", "time") %in% names(x))) {
     stop("cmt, time are required data items for events.",call.=FALSE)
   }
+  
   if(!has_name("evid", x)) {
     x[["evid"]] <- 1 
   } else {
     x <- x[x$evid != 0,] 
   }
+  
   if(nid > 1) {
-    if(!exists("ID",x)) {
+    if(!has_ID(x)) {
       stop("please add ID column to data frame",call.=FALSE)
     }
     x <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
@@ -127,7 +137,7 @@ setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
                           data.matrix(x),
                           seq_len(nid)))
   } else {
-    if(exists("ID",x) & !keep_id) x[,"ID"] <- NULL
+    if(has_ID(x) & !keep_id) x[,"ID"] <- NULL
   }
   
   new("ev",data=x)
@@ -140,32 +150,28 @@ setMethod("as.ev", "ev", function(x,...) {
   do.call("c", c(list(x),list(...)))
 })
 
+##' @method as.matrix ev
 ##' @rdname events
 ##' @export
-setMethod("as.matrix", "ev", function(x,...) {
-  as.matrix(as.data.frame(x,stringsAsFactors=FALSE),...)
-})
+as.matrix.ev <- function(x,...) {
+  as.matrix(x@data,...) 
+}
 
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
-##' @param force_ID if \code{TRUE}, an ID column
-##' will be added if not found
-##' 
+##' @method as.data.frame ev
 ##' @rdname events
 ##' @export
-setMethod("as.data.frame", "ev", function(
-  x,row.names=NULL,optional=FALSE,force_ID = FALSE, ...) {
-  
-  ans <- as.data.frame.data.frame(
-    x@data,row.names,optional,stringsAsFactors=FALSE,...
-  )
-  if(force_ID & !has_ID(ans)) {
-    ans[["ID"]] <- 1
+as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, ID = NULL, ...) {
+  ans <- x@data
+  if(is.numeric(ID)) {
+    ans[["ID"]] <- ID
   } 
   return(ans)
-})
+}
 
 as_data_frame_ev <- function(x) x@data
+
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {
     if(is.ev(x)) {

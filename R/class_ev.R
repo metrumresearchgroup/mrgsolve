@@ -24,8 +24,17 @@ is.ev <- function(x) {
   inherits(x,"ev")  
 }
 
-names_ev <- function(x) {
-  stopifnot(is.ev(x))
-  names(x@data)
+##' @rdname events
+##' @export
+setMethod("names", "ev", function(x) {
+    names(x@data)
+})
+
+##' @param .data the event object
+##' @rdname events
+##' @export
+mutate.ev <- function(.data, ...) {
+  .data@data <- as.data.frame(mutate(.data@data, ...))
+  .data
 }
 
