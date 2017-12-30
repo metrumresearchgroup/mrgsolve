@@ -2,37 +2,20 @@
 % Please edit documentation in R/mrgsolve.R
 \name{mrgsim}
 \alias{mrgsim}
-\alias{mrgsim_e}
-\alias{mrgsim_d}
-\alias{mrgsim_ei}
-\alias{mrgsim_di}
-\alias{mrgsim_i}
-\alias{mrgsim_0}
 \alias{mrgsim_df}
-\title{Simulate from a model object.}
+\title{Simulate from a model object}
 \usage{
 mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
-
-mrgsim_e(x, events, idata = NULL, data = NULL, ...)
-
-mrgsim_d(x, data, idata = NULL, events = NULL, ...)
-
-mrgsim_ei(x, events, idata, data = NULL, ...)
-
-mrgsim_di(x, data, idata, events = NULL, ...)
-
-mrgsim_i(x, idata, data = NULL, events = NULL, ...)
-
-mrgsim_0(x, idata = NULL, data = NULL, events = NULL, ...)
 
 mrgsim_df(...)
 }
 \arguments{
 \item{x}{the model objects}
 
-\item{data}{NMTRAN-like data set}
+\item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
 
-\item{idata}{a matrix or data frame of model parameters, one parameter per row}
+\item{idata}{a matrix or data frame of model parameters, 
+one parameter per row (see \code{\link{idata_set}})}
 
 \item{events}{an event object}
 
@@ -49,24 +32,24 @@ This function sets up the simulation run from data stored in the model
 object as well as arguments passed in.  Note that there are several 
 non-formal arguments to this function that can be used to customize 
 the simulation run and it's output. Use \code{mrgsim_df} to 
-return a data frame rather than \code{mrgsims} object.  Other \code{mrgsim}
-variant functions based on different input combinations are listed below.
+return a data frame rather than \code{mrgsims} object.
 }
 \details{
 \itemize{
+
 \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
+
 \item{\code{carry.out} can be used to insert data columns into the output 
 data set.  This is partially dependent on the nature of the data brought 
 into the problem.}
-}
 
-\itemize{
 \item When using \code{data} and \code{idata} together, an error is 
 generated if an  ID occurs in \code{data} but not \code{idata}.  
 Also, when looking up data in \code{idata}, ID in \code{idata} is 
 assumed to be uniquely keyed to ID in \code{data}.  No error is 
 generated if ID is duplicated in \code{data}; parameters will be used 
 from the first occurrence found in \code{idata}.
+ 
  \item \code{carry.out}: \code{idata} is assumed to be 
 individual-level and variables that are carried from \code{idata} 
 are repeated throughout the invidivual's simulated data.  Variables 
@@ -81,17 +64,22 @@ simulated output that occur prior to the first record in \code{data}.
 
 
 \itemize{
+
 \item \code{mtime} numeric vector of times where the model is evaluated 
 (with solver reset), but results are not included in simulated output
+
 \item \code{Request} a vector of compartment or table names to take in 
 simulated output; if this is specified, \code{request} is ignored
+
 \item \code{obsonly} omit records with \code{evid} != 0 from simulated 
 output
+
 \item \code{obsaug} logical; when \code{TRUE} and a full data set is 
 used, the simulated output is augmented with an observation at each 
 time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating 
 augmented observations can be requested by including \code{a.u.g} in 
 \code{carry.out}
+
 \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 
 1 and 2 put doses in a data set after padded observations at the same 
 time; 3 and 4 put those doses before padded observations at the same 
@@ -100,33 +88,21 @@ observations at the same time; 1 and 3 put doses scheduled through
 \code{addl} before observations at the same time. \code{recsort} will 
 not change the order of your input data set if both doses and observations 
 are given.
+
 \item \code{filbak} For each \code{ID}, carry the first record  \code{data} 
 backward to start of the simulation
+
 \item \code{tad} logical; when \code{TRUE} a column is added to simulated 
 output is added showing the time since the last dose.  Only data records 
 with \code{evid == 1} will be considered doses for the purposes of 
 \code{tad} calculation.
+
 \item \code{nocb} if \code{TRUE} (default), time-varying items in a data 
 set will be implemented as next observation carried back; if \code{FALSE} 
 time-varying items in a data set will be implemented as last observation 
 carried forward.  
+
 }
-}
-
-\section{Variant functions}{
-
-
-\itemize{
-  \item \code{mrgsim_e} simulate using an event object
-  \item \code{mrgsim_ei} simulate using an event object and \code{idata_set}
-  \item \code{mrgsim_d} simulate using a \code{data_set}
-  \item \code{mrgsim_di} simulate using a \code{data_set} and \code{idata_set}
-  \item \code{mrgsim_i} simulate using a \code{idata_set}
-  \item \code{mrgsim_0} simulate using just the model
-}
-
-The \code{mrgsim_df} function isn't a variant like the functions in the above list.  Rather, 
-\code{mrgsim_df} returns a data frame (\code{tibble}) rather than a \code{mrgsims} object.
 }
 
 \examples{
@@ -159,4 +135,8 @@ out
 out <- mrgsim(mod, Req="CP,RESP", events = e)
 out
 
+
+}
+\seealso{
+\code{\link{mrgsim_variants}}
 }

@@ -20,7 +20,13 @@
 
 tran_upper <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 
-nodataset <- matrix(0, nrow=0, ncol=8, dimnames=list(NULL,c("ID", "time", "evid", "amt", "cmt","addl", "ii", "ss")))
+nodataset <- matrix(0, nrow=0, ncol=8, 
+                    dimnames=list(
+                      NULL,
+                      c("ID", "time", "evid", "amt", "cmt","addl", "ii", "ss")
+                    )
+)
+
 null_idata <- matrix(0, 
                      nrow=0, ncol=1, 
                      dimnames=list(NULL, c("ID")))
@@ -29,7 +35,6 @@ null_data <-  matrix(0,
                      nrow=0, ncol=3, 
                      dimnames=list(NULL, c("ID", "time", "cmt")))
 
-VERSION <- packageDescription("mrgsolve")$Version
 
 tgrid_matrix <- function(x) {
   n <- length(x)
@@ -63,48 +68,46 @@ validate_idata <- function(idata) {
 }
 
 
-##' Simulate from a model object.
+##' Simulate from a model object
 ##'
 ##' This function sets up the simulation run from data stored in the model
 ##' object as well as arguments passed in.  Note that there are several 
 ##' non-formal arguments to this function that can be used to customize 
 ##' the simulation run and it's output. Use \code{mrgsim_df} to 
-##' return a data frame rather than \code{mrgsims} object.  Other \code{mrgsim}
-##' variant functions based on different input combinations are listed below.
+##' return a data frame rather than \code{mrgsims} object.
 ##'
-##' @name mrgsim
-##' @rdname mrgsim
+##' 
 ##' @param x the model objects
+##' @param data NMTRAN-like data set (see \code{\link{data_set}})
+##' @param idata a matrix or data frame of model parameters, 
+##' one parameter per row (see \code{\link{idata_set}})
+##' @param events an event object
 ##' @param nid integer number of individuals to simulate; only used if 
 ##' idata and data are missing
 ##' @param ... passed to \code{\link[mrgsolve]{update}}
+##' 
 ##' @return an object of class \code{\link{mrgsims}}
-##' @import methods
-##' @export
-##' @details
-##' \itemize{
-##' \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
-##' \item{\code{carry.out} can be used to insert data columns into the output 
-##' data set.  This is partially dependent on the nature of the data brought 
-##' into the problem.}
-##' }
-##' @param data NMTRAN-like data set
-##' @param events an event object
-##' @param idata a matrix or data frame of model parameters, one parameter per row
+##' 
+##' 
 ##' @section Additional arguments:
 ##'
 ##' \itemize{
+##' 
 ##' \item \code{mtime} numeric vector of times where the model is evaluated 
 ##' (with solver reset), but results are not included in simulated output
+##' 
 ##' \item \code{Request} a vector of compartment or table names to take in 
 ##' simulated output; if this is specified, \code{request} is ignored
+##' 
 ##' \item \code{obsonly} omit records with \code{evid} != 0 from simulated 
 ##' output
+##' 
 ##' \item \code{obsaug} logical; when \code{TRUE} and a full data set is 
 ##' used, the simulated output is augmented with an observation at each 
 ##' time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating 
 ##' augmented observations can be requested by including \code{a.u.g} in 
 ##' \code{carry.out}
+##' 
 ##' \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 
 ##' 1 and 2 put doses in a data set after padded observations at the same 
 ##' time; 3 and 4 put those doses before padded observations at the same 
@@ -113,25 +116,38 @@ validate_idata <- function(idata) {
 ##' \code{addl} before observations at the same time. \code{recsort} will 
 ##' not change the order of your input data set if both doses and observations 
 ##' are given.
+##' 
 ##' \item \code{filbak} For each \code{ID}, carry the first record  \code{data} 
 ##' backward to start of the simulation
+##' 
 ##' \item \code{tad} logical; when \code{TRUE} a column is added to simulated 
 ##' output is added showing the time since the last dose.  Only data records 
 ##' with \code{evid == 1} will be considered doses for the purposes of 
 ##' \code{tad} calculation.
+##' 
 ##' \item \code{nocb} if \code{TRUE} (default), time-varying items in a data 
 ##' set will be implemented as next observation carried back; if \code{FALSE} 
 ##' time-varying items in a data set will be implemented as last observation 
 ##' carried forward.  
+##' 
 ##' }
+##' 
 ##' @details
 ##' \itemize{
+##' 
+##' \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
+##' 
+##' \item{\code{carry.out} can be used to insert data columns into the output 
+##' data set.  This is partially dependent on the nature of the data brought 
+##' into the problem.}
+##' 
 ##' \item When using \code{data} and \code{idata} together, an error is 
 ##' generated if an  ID occurs in \code{data} but not \code{idata}.  
 ##' Also, when looking up data in \code{idata}, ID in \code{idata} is 
 ##' assumed to be uniquely keyed to ID in \code{data}.  No error is 
 ##' generated if ID is duplicated in \code{data}; parameters will be used 
 ##' from the first occurrence found in \code{idata}.
+##'  
 ##'  \item \code{carry.out}: \code{idata} is assumed to be 
 ##' individual-level and variables that are carried from \code{idata} 
 ##' are repeated throughout the invidivual's simulated data.  Variables 
@@ -142,19 +158,7 @@ validate_idata <- function(idata) {
 ##'
 ##' }
 ##' 
-##' @section Variant functions:
-##' 
-##' \itemize{
-##'   \item \code{mrgsim_e} simulate using an event object
-##'   \item \code{mrgsim_ei} simulate using an event object and \code{idata_set}
-##'   \item \code{mrgsim_d} simulate using a \code{data_set}
-##'   \item \code{mrgsim_di} simulate using a \code{data_set} and \code{idata_set}
-##'   \item \code{mrgsim_i} simulate using a \code{idata_set}
-##'   \item \code{mrgsim_0} simulate using just the model
-##' }
-##' 
-##' The \code{mrgsim_df} function isn't a variant like the functions in the above list.  Rather, 
-##' \code{mrgsim_df} returns a data frame (\code{tibble}) rather than a \code{mrgsims} object.
+##' @seealso \code{\link{mrgsim_variants}}
 ##' 
 ##' @examples
 ##' ## example("mrgsim")
@@ -186,6 +190,8 @@ validate_idata <- function(idata) {
 ##' out <- mrgsim(mod, Req="CP,RESP", events = e)
 ##' out
 ##' 
+##' 
+##' @export
 mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   
   if(nid > 1) {
@@ -246,8 +252,39 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   }
 } 
 
-
 ##' @rdname mrgsim
+##' @export
+mrgsim_df <- function(...) as_data_frame(mrgsim(...))
+
+
+##' mrgsim variant functions
+##' 
+##' These functions are called by \code{\link{mrgsim}} and have
+##' explicit input requirements written into the function name.
+##' 
+##' @inheritParams mrgsim
+##' 
+##' @details
+##' 
+##' \bold{Important:} all of these functions require that 
+##' \code{data}, \code{idata}, and/or \code{events} be pass
+##' directly to the functions.  They will not recognize these
+##' inputs from a pipeline. 
+##' 
+##' \itemize{
+##'   \item \code{mrgsim_e} simulate using an event object
+##'   \item \code{mrgsim_ei} simulate using an event object and 
+##'     \code{idata_set}
+##'   \item \code{mrgsim_d} simulate using a \code{data_set}
+##'   \item \code{mrgsim_di} simulate using a \code{data_set} and  
+##'     \code{idata_set}
+##'   \item \code{mrgsim_i} simulate using a \code{idata_set}
+##'   \item \code{mrgsim_0} simulate using just the model
+##' }
+##' 
+##' @seealso \code{\link{mrgsim}}
+##' @name mrgsim_variants
+##' @rdname mrgsim_variants
 ##' @export
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   if(!is.ev(events)) {
@@ -262,7 +299,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   )
 } 
 
-##' @rdname mrgsim
+##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   if(!is.data.frame(data)) {
@@ -277,7 +314,7 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   )
 } 
 
-##' @rdname mrgsim
+##' @rdname mrgsim_variants
 ##' @export
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   if(!all(is.ev(events),is.data.frame(idata))) {
@@ -304,7 +341,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim
+##' @rdname mrgsim_variants
 ##' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   if(!all(is.data.frame(data),is.data.frame(idata))) {
@@ -322,7 +359,7 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim
+##' @rdname mrgsim_variants
 ##' @export
 mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   if(!all(is.data.frame(idata))) {
@@ -341,7 +378,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim
+##' @rdname mrgsim_variants
 ##' @export
 mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
@@ -354,9 +391,6 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim
-##' @export
-mrgsim_df <- function(...) as_data_frame(mrgsim(...))
 
 tran_mrgsim <- function(x,
                         data,

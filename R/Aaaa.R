@@ -31,6 +31,7 @@
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame
 ##' @importFrom assertthat assert_that
+##' @import methods
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -85,6 +86,7 @@ globalVariables(c("test_package","time", "ID","block", "descr",
                   "func", "loaded", "name", "not_found"))
 
 
+VERSION <- packageDescription("mrgsolve")$Version
 
 #' Forward pipe.
 #'
