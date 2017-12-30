@@ -194,19 +194,6 @@ validate_idata <- function(idata) {
 ##' @export
 mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   
-  if(nid > 1) {
-    if(!is.null(data)) {
-      warning("a data_set was passed to mrgsim, but will not be used", 
-              call. = FALSE)
-    } 
-    idata <- data.frame(ID = seq_len(nid))
-    if(has_ID(as.data.frame(events))) {
-      stop("event object cannot contain 'ID' when using 'nid' argument",
-           call. = FALSE)
-    } 
-    mrgsim(x, data = NULL, idata = idata, events = events, ...)
-  } 
-  
   if(is.null(data)) {
     data <- x@args$data
   }  
@@ -220,6 +207,11 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   if(is.ev(data)) {
     data <- As_data_set(data) 
   }
+  
+  if(nid > 1) {
+    return(mrgsim_nid(x, nid, events, ...))
+  } 
+  
   
   data <- as.data.frame(data)
   have_data <- nrow(data) > 0
@@ -395,6 +387,18 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   )
 }
 
+mrgsim_nid <- function(x, nid, events = ev(), ...) {
+  nid <- max(nid,1)
+  idata <- data.frame(ID = seq_len(nid))
+  if(has_ID(as.data.frame(events))) {
+    stop("event object cannot contain 'ID' when using 'nid' argument",
+         call. = FALSE)
+  } 
+  if(is.ev(events)) {
+    return(mrgsim_ei(x, events, idata, ...) )
+  }
+  return(mrgsim_i(x, idata, ...))
+}
 
 tran_mrgsim <- function(x,
                         data,

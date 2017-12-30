@@ -153,6 +153,17 @@ test_that("mrgsim with nid", {
   expect_equal(length(unique(out$ID)),5)
 })
 
-
+test_that("update arguments are passed", {
+  out <- mrgsim(mod, atol = 1E-4, rtol = 1E-3, 
+                add = c(12,13,14),
+                end = 11, delta = 2, maxsteps = 5000)
+  mod <- out@mod
+  expect_equal(mod@atol, 1E-4)
+  expect_equal(mod@rtol, 1E-3)
+  expect_equal(mod@end,  11)
+  expect_equal(mod@add ,c(12,13,14))
+  expect_equal(mod@delta, 2)
+  expect_equal(mod@maxsteps, 5000)
+})
 
 
