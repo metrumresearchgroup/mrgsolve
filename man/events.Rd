@@ -39,7 +39,8 @@ as.ev(x, ...)
 
 \S4method{as.matrix}{ev}(x, ...)
 
-\S4method{as.data.frame}{ev}(x, row.names = NULL, optional = FALSE, ...)
+\S4method{as.data.frame}{ev}(x, row.names = NULL, optional = FALSE,
+  force_ID = FALSE, ...)
 
 \S4method{show}{ev}(object)
 
@@ -77,6 +78,9 @@ number of individuals}
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
 \item{optional}{passed to \code{\link{as.data.frame}}}
+
+\item{force_ID}{if \code{TRUE}, an ID column
+will be added if not found}
 }
 \value{
 Returns a user-defined data frame of events that should be suitable

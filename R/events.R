@@ -148,13 +148,21 @@ setMethod("as.matrix", "ev", function(x,...) {
 
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
+##' @param force_ID if \code{TRUE}, an ID column
+##' will be added if not found
 ##' 
 ##' @rdname events
 ##' @export
-setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
-  as.data.frame.data.frame(
+setMethod("as.data.frame", "ev", function(
+  x,row.names=NULL,optional=FALSE,force_ID = FALSE, ...) {
+  
+  ans <- as.data.frame.data.frame(
     x@data,row.names,optional,stringsAsFactors=FALSE,...
   )
+  if(force_ID & !has_ID(ans)) {
+    ans[["ID"]] <- 1
+  } 
+  return(ans)
 })
 
 as_data_frame_ev <- function(x) x@data
@@ -167,7 +175,7 @@ As_data_set <- function(x) {
     } 
   }
   if(nrow(x)==0) return(x)
-  if(!has_name("ID", x)) x[["ID"]] <- 1
+  if(!has_ID(x)) x[["ID"]] <- 1
   return(x)
 }
 

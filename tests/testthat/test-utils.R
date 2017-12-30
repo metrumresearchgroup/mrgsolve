@@ -60,15 +60,15 @@ test_that("merge two lists, closed", {
 
 test_that("combine_list", {
     ans <- merge(a,b, open = TRUE)
-    ans_combined <- combine_list(a,b)
+    ans_combined <- mrgsolve:::combine_list(a,b)
     expect_identical(ans,ans_combined)
     
     ans <- merge(a,list(), open = TRUE)
-    ans_combined <- combine_list(a,list())
+    ans_combined <- mrgsolve:::combine_list(a,list())
     expect_identical(ans,ans_combined)
     
     ans <- merge(list(),b, open = TRUE)
-    ans_combined <- combine_list(list(),b)
+    ans_combined <- mrgsolve:::combine_list(list(),b)
     expect_identical(ans,ans_combined)
 })
 
