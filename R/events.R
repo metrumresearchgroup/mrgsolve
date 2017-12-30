@@ -405,7 +405,7 @@ add.ev <- function(e1,e2) {
   return(e1)
 }
 
-##' Replicate a list of events into a data set.
+##' Replicate a list of events into a data set
 ##' 
 ##' @param l list of event objects
 ##' @param idata an idata set (one ID per row)
@@ -507,7 +507,7 @@ ev_assign <- function(l,idata,evgroup,join=FALSE) {
 ##' @export
 assign_ev <- function(...) ev_assign(...)
 
-##' Schedule dosing events on days of the week.
+##' Schedule dosing events on days of the week
 ##' 
 ##' This function lets you schedule doses on specific 
 ##' days of the week, allowing you to create dosing 
