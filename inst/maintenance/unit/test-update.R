@@ -219,24 +219,24 @@ test_that("Solver setting rtol updates properly", {
 })
 
 
-context("Test updates: events")
-myev <- ev(amt=111, time=222, ii=333, addl=444, cmt=999)
-
-test_that("Events update properly through %>% operator",{
-  expect_equivalent(myev, events(mod %>% ev(myev)))
-})
-test_that("Events update properly through update()",{
-  expect_equivalent(myev, events(update(mod, events=myev)))
-})
-
-ev1 <- ev(amt=555,cmt=1,rate=33)
-ev2 <- ev(amt=444,cmt=5,rate=22)
-ev12 <- ev1+ev2
-
-test_that("Events update properly through %>%  and  + operator", {
-  expect_equivalent(ev12, events(mod %>% ev(ev1 + ev2)))
-})
-
+# context("Test updates: events")
+# myev <- ev(amt=111, time=222, ii=333, addl=444, cmt=999)
+# 
+# test_that("Events update properly through %>% operator",{
+#   expect_equivalent(myev, events(mod %>% ev(myev)))
+# })
+# test_that("Events update properly through update()",{
+#   expect_equivalent(myev, events(update(mod, events=myev)))
+# })
+# 
+# ev1 <- ev(amt=555,cmt=1,rate=33)
+# ev2 <- ev(amt=444,cmt=5,rate=22)
+# ev12 <- ev1+ev2
+# 
+# test_that("Events update properly through %>%  and  + operator", {
+#   expect_equivalent(ev12, events(mod %>% ev(ev1 + ev2)))
+# })
+# 
 
 
 

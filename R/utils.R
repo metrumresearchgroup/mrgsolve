@@ -255,6 +255,7 @@ s <- ch
 ##'
 ##' @param x model object
 ##' @param clear logical indicating whether or not clear args from the model object
+##' @param which character with lenght 1 naming a single arg to get
 ##' @param ... passed along
 ##' 
 ##' @return If \code{clear} is \code{TRUE}, the argument list is cleared and the model object is returned.  Otherwise, the argument list is returned.
@@ -264,17 +265,16 @@ s <- ch
 ##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
 ##' 
 ##' @export
-simargs <- function(x,...) UseMethod("simargs")
-
-##' @rdname simargs
-##' @export
-simargs.mrgmod <- function(x,clear=FALSE,...) {
+simargs <- function(x, which = NULL, clear=FALSE,...) {
   
   if(clear) {
     x@args <- list()
     return(x)
   }
-  x@args
+  if(!is.character(which)) {
+    return(x@args) 
+  }
+  return(x@args[[which]])
 }
 
 
@@ -434,8 +434,12 @@ get_option <- function(what,opt,default=FALSE) {
   }
 }
 
-has_name <- function(a,b) {
-  is.element(a,names(b))
+has_name <- function(name,object) {
+  is.element(name,names(object))
+}
+
+has_ID <- function(object) {
+  is.element("ID", names(object)) 
 }
 
 file_exists <- function(x) {

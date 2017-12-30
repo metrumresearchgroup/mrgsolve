@@ -12,6 +12,10 @@ S4 class for mrgsolve model object.
 \describe{
 \item{\code{model}}{model name \code{<character>}}
 
+\item{\code{modfile}}{source model specification file name \code{<character>}}
+
+\item{\code{package}}{the shared object file name \code{character>}}
+
 \item{\code{project}}{working directory; must be writeable with no spaces \code{<character>}}
 
 \item{\code{start}}{simulation start time \code{<numeric>}}
@@ -22,33 +26,38 @@ S4 class for mrgsolve model object.
 
 \item{\code{add}}{additional simulation times \code{<numeric-vector>}}
 
-\item{\code{param}}{parameter_list}
+\item{\code{param}}{\code{<parameter_list>}}
 
-\item{\code{fixed}}{a parameter_list of fixed value parameters; these are not updatable from \code{R}}
+\item{\code{fixed}}{a \code{<parameter_list>} of fixed value parameters; 
+these are not updatable from \code{R}}
 
-\item{\code{init}}{cmt_list}
+\item{\code{init}}{\code{<cmt_list>}}
 
-\item{\code{events}}{\link[=ev]{events} object}
+\item{\code{events}}{deprecated}
 
 \item{\code{digits}}{significant digits in simulated output; negative integer means ignore \code{<numeric>}}
 
-\item{\code{hmin}}{passed to dlsoda  \code{<numeric>}}
+\item{\code{hmin}}{passed to \code{\link[=aboutsolver]{dlsoda}}  \code{<numeric>}}
 
-\item{\code{hmax}}{passed to dlsoda \code{<numeric>}}
+\item{\code{hmax}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
 
-\item{\code{mxhnil}}{passed to dlsoda \code{<numeric>}}
+\item{\code{mxhnil}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
 
-\item{\code{ixpr}}{passed to dlsoda \code{<numeric>}}
+\item{\code{ixpr}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
 
-\item{\code{atol}}{passed to dlsoda \code{<numeric>}}
+\item{\code{atol}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
 
-\item{\code{rtol}}{passed to dlsoda \code{<numeric>}}
+\item{\code{rtol}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
 
-\item{\code{maxsteps}}{passed to dlsoda \code{<numeric>}}
+\item{\code{maxsteps}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
 
 \item{\code{preclean}}{passed to R CMD SHLIB during compilation \code{<logical>}}
 
 \item{\code{verbose}}{print run information to screen \code{<logical>}}
+
+\item{\code{quiet}}{print various information to screen \code{<logical>}}
+
+\item{\code{debug}}{not used}
 
 \item{\code{tscale}}{used to scale time in simulated output \code{<numeric>}}
 
@@ -60,7 +69,7 @@ S4 class for mrgsolve model object.
 
 \item{\code{advan}}{either 2, 4, or 13 \code{<numeric>}}
 
-\item{\code{trans}}{either 1, 2, 4, or 11}
+\item{\code{trans}}{either 1, 2, 4, or 11 \code{<numeric>}}
 
 \item{\code{request}}{vector of compartments to request \code{<character>}}
 
@@ -68,9 +77,14 @@ S4 class for mrgsolve model object.
 
 \item{\code{code}}{a character vector of the model code}
 
+\item{\code{capture}}{a character vector of variables that are captured from 
+the simulation \code{<character>}}
+
 \item{\code{mindt}}{minimum time between simulation records \code{<numeric>}}
 
 \item{\code{envir}}{internal model environment \code{<environment>}}
+
+\item{\code{shlib}}{a list of data related to build outcome \code{<list>}}
 
 \item{\code{annot}}{model annotations \code{<list>}}
 

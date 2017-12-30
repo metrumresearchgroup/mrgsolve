@@ -4,7 +4,7 @@
 \alias{ev_repeat}
 \title{Repeat a block of dosing events}
 \usage{
-ev_repeat(x, n, wait = 0)
+ev_repeat(x, n, wait = 0, as.ev = FALSE)
 }
 \arguments{
 \item{x}{event object or dosing data frame}
@@ -12,9 +12,12 @@ ev_repeat(x, n, wait = 0)
 \item{n}{number of times to repeat}
 
 \item{wait}{time to wait between repeats}
+
+\item{as.ev}{if \code{TRUE}, an event object is
+returned; otherwise a data.frame is returned}
 }
 \value{
-A dosing data.frame.
+See \code{as.ev} argument.
 }
 \description{
 Repeat a block of dosing events

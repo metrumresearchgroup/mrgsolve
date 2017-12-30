@@ -3,20 +3,24 @@
 \name{mrgsim}
 \alias{mrgsim}
 \alias{mrgsim_df}
-\title{Simulate from a model object.}
+\title{Simulate from a model object}
 \usage{
-mrgsim(x, data = NULL, idata = NULL, nid = 1, ...)
+mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
 
 mrgsim_df(...)
 }
 \arguments{
 \item{x}{the model objects}
 
-\item{data}{NMTRAN-like data set}
+\item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
 
-\item{idata}{a matrix or data frame of model parameters, one parameter per row}
+\item{idata}{a matrix or data frame of model parameters, 
+one parameter per row (see \code{\link{idata_set}})}
 
-\item{nid}{integer number of individuals to simulate; only used if idata and data are missing}
+\item{events}{an event object}
+
+\item{nid}{integer number of individuals to simulate; only used if 
+idata and data are missing}
 
 \item{...}{passed to \code{\link[mrgsolve]{update}}}
 }
@@ -24,25 +28,28 @@ mrgsim_df(...)
 an object of class \code{\link{mrgsims}}
 }
 \description{
-This function sets up the simulation run from data stored in the model object as well as
-arguments passed in.  Note that there are many non-formal arguments to this function that
-can be used to customize the simulation run and it's output. Use \code{mrgsim_df} to 
+This function sets up the simulation run from data stored in the model
+object as well as arguments passed in.  Note that there are several 
+non-formal arguments to this function that can be used to customize 
+the simulation run and it's output. Use \code{mrgsim_df} to 
 return a data frame rather than \code{mrgsims} object.
 }
 \details{
 \itemize{
-\item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
-\item{\code{carry.out} can be used to insert data columns into the output data set.  This is partially dependent on the
-nature of the data brought into the problem.}
-}
 
-\itemize{
+\item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
+
+\item{\code{carry.out} can be used to insert data columns into the output 
+data set.  This is partially dependent on the nature of the data brought 
+into the problem.}
+
 \item When using \code{data} and \code{idata} together, an error is 
 generated if an  ID occurs in \code{data} but not \code{idata}.  
 Also, when looking up data in \code{idata}, ID in \code{idata} is 
 assumed to be uniquely keyed to ID in \code{data}.  No error is 
 generated if ID is duplicated in \code{data}; parameters will be used 
 from the first occurrence found in \code{idata}.
+ 
  \item \code{carry.out}: \code{idata} is assumed to be 
 individual-level and variables that are carried from \code{idata} 
 are repeated throughout the invidivual's simulated data.  Variables 
@@ -57,31 +64,57 @@ simulated output that occur prior to the first record in \code{data}.
 
 
 \itemize{
-\item \code{mtime} numeric vector of times where the model is evaluated (with solver reset), but results are not included in simulated output
-\item \code{Request} a vector of compartment or table names to take in simulated output; if this is specified, \code{request} is ignored
-\item \code{obsonly} omit records with \code{evid} != 0 from simulated output
-\item \code{obsaug} logical; when \code{TRUE} and a full data set is used, the simulated output is augmented with an observation at each time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating augmented observations can be requested by including \code{a.u.g} in \code{carry.out}
-\item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at the same time; 3 and 4 put those doses before padded observations at the same time.  2 and 4 will put doses scheduled through \code{addl} after observations at the same time; 1 and 3 put doses scheduled through \code{addl} before observations at the same time. \code{recsort} will not change the order of your input data set if both doses and observations are given.
-\item \code{filbak} For each \code{ID}, carry the first record  \code{data} backward to start of the simulation
-\item \code{tad} logical; when \code{TRUE} a column is added to simulated output is added showing the 
-time since the last dose.  Only data records with \code{evid == 1} will be considered doses for the 
-purposes of \code{tad} calculation.
-\item \code{nocb} if \code{TRUE} (default), time-varying items in a data set will be
-implemented as next observation carried back; if \code{FALSE} time-varying items
-in a data set will be implemented as last observation carried forward.  
+
+\item \code{mtime} numeric vector of times where the model is evaluated 
+(with solver reset), but results are not included in simulated output
+
+\item \code{Request} a vector of compartment or table names to take in 
+simulated output; if this is specified, \code{request} is ignored
+
+\item \code{obsonly} omit records with \code{evid} != 0 from simulated 
+output
+
+\item \code{obsaug} logical; when \code{TRUE} and a full data set is 
+used, the simulated output is augmented with an observation at each 
+time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating 
+augmented observations can be requested by including \code{a.u.g} in 
+\code{carry.out}
+
+\item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 
+1 and 2 put doses in a data set after padded observations at the same 
+time; 3 and 4 put those doses before padded observations at the same 
+time.  2 and 4 will put doses scheduled through \code{addl} after 
+observations at the same time; 1 and 3 put doses scheduled through 
+\code{addl} before observations at the same time. \code{recsort} will 
+not change the order of your input data set if both doses and observations 
+are given.
+
+\item \code{filbak} For each \code{ID}, carry the first record  \code{data} 
+backward to start of the simulation
+
+\item \code{tad} logical; when \code{TRUE} a column is added to simulated 
+output is added showing the time since the last dose.  Only data records 
+with \code{evid == 1} will be considered doses for the purposes of 
+\code{tad} calculation.
+
+\item \code{nocb} if \code{TRUE} (default), time-varying items in a data 
+set will be implemented as next observation carried back; if \code{FALSE} 
+time-varying items in a data set will be implemented as last observation 
+carried forward.  
+
 }
 }
 
 \examples{
 ## example("mrgsim")
 
-mod <- mrgsolve:::house() \%>\%  ev(amt=1000, cmt=1)
-out <- mod \%>\% mrgsim()
+e <- ev(amt = 1000)
+mod <- mrgsolve:::house() 
+out <- mod \%>\% ev(e) \%>\% mrgsim()
 plot(out)
 
-out <- mod \%>\% mrgsim(end=22)
+out <- mod \%>\% ev(e) \%>\% mrgsim(end=22)
 out
-
 
 data(exTheoph)
 
@@ -96,12 +129,14 @@ out
 out <- mod \%>\% mrgsim(data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
 out
 
-out <- mod \%>\% mrgsim(req="CENT")
+out <- mod \%>\% ev(e) \%>\% mrgsim(req="CENT")
 out
 
-out <- mrgsim(mod, Req="CP,RESP")
+out <- mrgsim(mod, Req="CP,RESP", events = e)
 out
 
 
-
+}
+\seealso{
+\code{\link{mrgsim_variants}}
 }

@@ -103,14 +103,14 @@ protomod <- list(model=character(0),
                  hmax=0,
                  ixpr=0,
                  mxhnil=0,
-                 shlib=list(date="",par="", cmt="", compiled=FALSE, version=NULL, source=""),
+                 shlib=list(date="",par="", cmt="", compiled=FALSE, 
+                            version=NULL, source=""),
                  funs = c(main=character(0),
                           ode=character(0),
                           table=character(0),
                           config=character(0)),
                  omega=new("omegalist"),
                  sigma = new("sigmalist"),
-                 events=new("ev"),
                  request="(all)",
                  param = new("parameter_list"),
                  init=new("cmt_list"),
@@ -152,36 +152,44 @@ valid.mrgmod <- function(object) {
 ##' }
 ##'
 ##' @slot model model name \code{<character>}
+##' @slot modfile source model specification file name \code{<character>}
+##' @slot package the shared object file name \code{character>}
 ##' @slot project working directory; must be writeable with no spaces \code{<character>}
 ##' @slot start simulation start time \code{<numeric>}
 ##' @slot end simulation end time \code{<numeric>}
 ##' @slot delta simulation time interval \code{<numeric>}
 ##' @slot add additional simulation times \code{<numeric-vector>}
-##' @slot param parameter_list
-##' @slot fixed a parameter_list of fixed value parameters; these are not updatable from \code{R}
-##' @slot init cmt_list
-##' @slot events \link[=ev]{events} object
+##' @slot param \code{<parameter_list>}
+##' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
+##' these are not updatable from \code{R}
+##' @slot init \code{<cmt_list>}
+##' @slot events deprecated
 ##' @slot digits significant digits in simulated output; negative integer means ignore \code{<numeric>}
-##' @slot hmin passed to dlsoda  \code{<numeric>}
-##' @slot hmax passed to dlsoda \code{<numeric>}
-##' @slot mxhnil passed to dlsoda \code{<numeric>}
-##' @slot ixpr passed to dlsoda \code{<numeric>}
-##' @slot atol passed to dlsoda \code{<numeric>}
-##' @slot rtol passed to dlsoda \code{<numeric>}
-##' @slot maxsteps passed to dlsoda \code{<numeric>}
+##' @slot hmin passed to \code{\link[=aboutsolver]{dlsoda}}  \code{<numeric>}
+##' @slot hmax passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot mxhnil passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot ixpr passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot atol passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot rtol passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot maxsteps passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
 ##' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 ##' @slot verbose print run information to screen \code{<logical>}
+##' @slot quiet print various information to screen \code{<logical>}
+##' @slot debug not used
 ##' @slot tscale used to scale time in simulated output \code{<numeric>}
 ##' @slot omega \code{\link{matlist}} for simulating individual-level random effects
 ##' @slot sigma \code{\link{matlist}} for simulating residual error variates
 ##' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
 ##' @slot advan either 2, 4, or 13 \code{<numeric>}
-##' @slot trans either 1, 2, 4, or 11
+##' @slot trans either 1, 2, 4, or 11 \code{<numeric>}
 ##' @slot request  vector of compartments to request \code{<character>}
 ##' @slot soloc directory path for storing the model shared object \code{<character>}
 ##' @slot code a character vector of the model code
+##' @slot capture a character vector of variables that are captured from 
+##' the simulation \code{<character>}
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 ##' @slot envir internal model environment \code{<environment>}
+##' @slot shlib a list of data related to build outcome \code{<list>}
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
@@ -353,7 +361,7 @@ setMethod("names", "mrgmod", function(x) {
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   
   within(list(), {
-
+    
     plugins <- x@plugin
     envir <- x@envir
     solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
@@ -390,21 +398,25 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 ##' @rdname events
 ##' @export
 setMethod("events", "mrgmod", function(x,...) {
-  
-  args <- list(...)
-  if(length(args)>0) return(update(x,events=ev(...)))
-  
-  x@events
+  warning("events are no longer included in the model object")
+  # args <- list(...)
+  # if(length(args)>0) return(update(x,events=ev(...)))
+  # 
+  # x@events
 })
 
 ##' @export
 ##' @rdname events
 setMethod("ev", "mrgmod", function(x,object=NULL,...) {
-  if(is.null(object)) return(update(x,events=ev(...)))
+  if(is.null(object)) {
+    x@args[["events"]] <- ev(...)
+    return(x)
+  } 
   if(is.character(object)) {
-    object <- eval(parse(text=object),envir=x@envir)
+    object <- eval(parse(text = object),envir = x@envir)
   }
-  return(update(x,events=object,...))
+  x@args[["events"]] <- object
+  x
 })
 
 ##' @export

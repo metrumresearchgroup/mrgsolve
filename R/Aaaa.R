@@ -22,7 +22,7 @@
 ##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange data_frame 
 ##' @importFrom dplyr intersect filter select rename slice distinct  do_ everything
 ##' @importFrom dplyr distinct_ first data_frame arrange select_vars_ select_vars
-##' @importFrom dplyr if_else mutate_at summarise_each
+##' @importFrom dplyr if_else mutate_at summarise_each is.tbl
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
@@ -30,7 +30,8 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame
-##' @importFrom R6 R6Class
+##' @importFrom assertthat assert_that
+##' @import methods
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -85,6 +86,7 @@ globalVariables(c("test_package","time", "ID","block", "descr",
                   "func", "loaded", "name", "not_found"))
 
 
+VERSION <- packageDescription("mrgsolve")$Version
 
 #' Forward pipe.
 #'
