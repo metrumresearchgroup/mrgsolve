@@ -10,7 +10,7 @@
 \alias{update,sigmalist-method}
 \alias{update,parameter_list-method}
 \alias{update,ev-method}
-\title{Get all names from a model object.}
+\title{Get all names from a model object}
 \usage{
 \S4method{names}{mrgmod}(x)
 
@@ -43,12 +43,14 @@ added; if \code{TRUE}, the parameter list may expand.}
 \item{data}{a list of items to update; not used for now}
 
 \item{y}{another object involved in update}
+
+\item{.y}{data to update}
 }
 \value{
 The updated model object is returned.
 }
 \description{
-Get all names from a model object.
+Get all names from a model object
 
 After the model object is created, update various attributes.
 }
@@ -62,5 +64,4 @@ names(mod)
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
  }
  
- @export
 }

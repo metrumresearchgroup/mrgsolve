@@ -322,11 +322,12 @@ setMethod("sodll", "packmod", function(x,...) {
   return(pathfun(getLoadedDLLs()[[x@package]][["path"]]))
 })
 
-##' Get all names from a model object.
+##' Get all names from a model object
 ##' 
 ##' @param x the model object
 ##' 
 ##' @name update
+##' 
 ##' @aliases names,mrgmod-method
 ##' 
 ##' @examples

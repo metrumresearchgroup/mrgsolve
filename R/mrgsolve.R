@@ -630,7 +630,7 @@ tran_mrgsimple <- function(x,
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,verbose=verbose,...)
+    idata <- valid_idata_set(idata,verbose=verbose)
   }
   
   tcol <- timename(data)

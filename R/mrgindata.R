@@ -187,7 +187,7 @@ valid_data_set.matrix <- function(x,verbose=FALSE) {
   
   if(is.valid_data_set(x)) return(x)
   if(is.numeric(x)) {
-    return(valid_data_set(as.data.frame(x),...))
+    return(valid_data_set(as.data.frame(x)))
   }
   stop("input data matrix is not numeric",call.=FALSE)
 }

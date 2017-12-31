@@ -52,7 +52,8 @@ sval <- unique(c("atol","rtol",
 ##'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
 ##'  }
 ##'  
-##'  @export
+##' @export
+##'  
 setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=NULL) {
   
   args <- list(...)
@@ -178,14 +179,15 @@ setMethod("update", "omegalist", function(object,y,...) {
   update_matlist(object, omat(y),context="omat",...)
 })
 
-##' @export
 ##' @rdname update
+##' @export
 setMethod("update", "sigmalist", function(object,y,...) {
   update_matlist(object, smat(y),context="smat",...)
 })
 
-##' @export
 ##' @rdname update
+##' @param .y data to update
+##' @export
 setMethod("update", "parameter_list", function(object,.y,...) {
   object <- as.param(
     merge.list(
