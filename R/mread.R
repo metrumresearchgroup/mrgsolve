@@ -325,7 +325,9 @@ mread <- function(model, project = getwd(), code = NULL,
   
   ## Arguments in $SET that will be passed to mrgsim
   simargs <- SET[is.element(names(SET),set_args)]
-  if(length(simargs) > 0) x@args <- merge(x@args,simargs, open=TRUE)
+  if(length(simargs) > 0) {
+    x@args <- combine_list(x@args,simargs)
+  }
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)

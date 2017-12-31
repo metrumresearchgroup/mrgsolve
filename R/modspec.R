@@ -352,7 +352,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   
   opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
-  opts <- merge(def, tolist(opts,envir=envir),
+  opts <- merge.list(def, tolist(opts,envir=envir),
                 open=all,warn=FALSE,context="opts")
   
   opts <- c(opts,at)

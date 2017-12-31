@@ -152,7 +152,7 @@ lctran <- function(data) {
 
 data_hooks <- function(data,object,envir,param=list(),...) {
   param <- as.list(param)
-  envir <- merge(as.list(param),as.list(envir),open=TRUE)
+  envir <- combine_list(as.list(param),as.list(envir))
   objects <- cvec_cs(object)
   args <- list(...)
   if(missing(data)) {

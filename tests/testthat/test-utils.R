@@ -63,6 +63,10 @@ test_that("combine_list", {
     ans_combined <- mrgsolve:::combine_list(a,b)
     expect_identical(ans,ans_combined)
     
+    ans <- merge(b,a, open = TRUE)
+    ans_combined <- mrgsolve:::combine_list(b,a)
+    expect_identical(ans,ans_combined)
+    
     ans <- merge(a,list(), open = TRUE)
     ans_combined <- mrgsolve:::combine_list(a,list())
     expect_identical(ans,ans_combined)

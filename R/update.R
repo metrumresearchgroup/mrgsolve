@@ -24,6 +24,9 @@ sval <- unique(c("atol","rtol",
                  "digits", "ixpr", "mxhnil","start", "end", "add", "delta",
                  "maxsteps", "hmin", "hmax","tscale", "request"))
 
+other_val <- c("param", "init", "omega", "sigma")
+
+all_updatable <- c(sval,other_val)
 
 ##' Update the model object
 ##'
@@ -59,7 +62,7 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=NU
   args <- list(...)
   
   if(!is.null(data)) {
-    args <- merge.list(args,data,open=TRUE)
+    args <- combine_list(args,data)
   }
   
   if(length(args)==0) return(object)
@@ -92,14 +95,14 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=NU
   ## Otherwise, merge if arguments are there:
   
   ## Initial conditions list:
-  if(has_name("init",args)) {
+  if(is.element("init", a)) {
     i <- object@init@data
-    i <- merge(i, args$init, context="init", open=open)
+    i <- merge.list(i, args$init, context="init", open=open)
     slot(object, "init") <- as.init(i)
   }
   
   ## Parameter update:
-  if(has_name("param",args)) {
+  if(is.element("param", a)) {
     if(length(object@fixed)>0) {
       if(any(is.element(names(args$param),names(object@fixed)))) {
         warning("attempted update of a $FIXED parameter.", 
@@ -114,23 +117,20 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=NU
   }
   
   ## OMEGA
-  if(has_name("omega", args)) {
+  if(is.element("omega", a)) {
     object@omega <- update_matlist(
       object@omega,omat(args$omega),open=open, context="omat"
     )
   }
   
   ## SIGMA
-  if(has_name("sigma", args)) {
+  if(is.element("sigma", a)) {
     object@sigma <- update_matlist(
       object@sigma,smat(args$sigma), open=open, context="smat"
     )
   }
   
-  validObject(object)
-  
   return(object)
-
 })
 
 same_sig <- function(x,y) {
@@ -141,20 +141,25 @@ update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
   
   n0 <- dim_matlist(x)
   
-  if(length(x)==0) stop(paste0(context, ": there is no matrix to update"))
+  if(length(x)==0) {
+    stop(paste0(context, ": there is no matrix to update"))
+  }  
   
   anon <- all(names(y)=="...")
+  
   ss <- same_sig(x,y)
-  if(anon & !ss) stop(paste("Improper signature:", context), call.=FALSE)
+  
+  if(anon & !ss) {
+    stop(paste("improper signature:", context), call.=FALSE)
+  }
   
   if(ss & anon) {
     ## If we match the sig and all input is unnamed
     labels <- names(x@data)
     x@data <- y@data
     names(x@data) <- labels
-    
   } else {
-    x@data <- merge(x@data, y@data,open=open,context=context,...)
+    x@data <- merge.list(x@data, y@data,open=open,context=context,...)
   }
   
   n <- dim_matlist(x)

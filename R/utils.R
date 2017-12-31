@@ -63,26 +63,37 @@ merge.list <- function(x,y,...,open=FALSE,
     x <- c(x,y[nw])
   } else {
     if(length(common)==0 & warn) {
-      warning(paste0("Found nothing to update: ", context), call.=FALSE)
+      warning(paste0("found nothing to update: ", context), call.=FALSE)
     }
   }
   x
 }
 
-combine_list <- function(left,right) {
-  stopifnot(all(is.list(left), is.list(right)))
-  nw <- c(left,right)
-  nw[!duplicated(names(nw),fromLast=TRUE)]
+combine_list <- function(left, right) {
+  if(!all(is.list(left),is.list(right))) {
+    stop("input are not lists")
+  }
+  left[names(right)] <-  right
+  left
+}
+
+update_list <- function(left, right) {
+  if(!all(is.list(left),is.list(right))) {
+    stop("input are not lists")
+  }
+  common <- intersect(names(left), names(right))
+  left[common] <-  right[common]
+  left
 }
 
 
 render_time <- function(x) {
   add <- times <- numeric(0)
-  if(!is.mt(x@add)){add <- x@add}
-  if(x@end >=0){times <-seq(x@start,x@end,x@delta)}
-  times <- invisible(as.numeric(c(times,add)))
+  #if(!is.mt(x@add)){add <- x@add}
+  if(x@end >= 0){times <-seq(x@start,x@end,x@delta)}
+  times <- invisible(as.numeric(unique(c(times,x@add))))
   if(is.mt(times)) {return(0)}
-  sort(unique(times[times>=0]))
+  sort(times[times>=0])
 }
 
 
