@@ -15,14 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-as.valid_data_set <- function(x) {
-  structure(x,class="valid_data_set")
-}
-
-as.valid_idata_set <- function(x) {
-  structure(x,class="valid_idata_set")
-}
-
 is.valid_data_set <- function(x) {
   inherits(x,"valid_data_set")
 }
@@ -77,7 +69,6 @@ convert_character_cmt <- function(data, mod) {
 ##' @param m a model object
 ##' @param verbose logical
 ##' @param quiet if \code{TRUE}, messages will be suppressed
-##' @param ... additional arguments
 ##' 
 ##' @return a matrix with non-numeric columns dropped; if x is a 
 ##' data.frame with character \code{cmt} column comprised of valid 
@@ -86,33 +77,24 @@ convert_character_cmt <- function(data, mod) {
 ##' compartment number.
 ##' 
 ##' @export
-valid_data_set <- function(x,...) UseMethod("valid_data_set")
-
-##' @rdname valid_data
-##' @export
-valid_data_set.default <- function(x,...) {
-  valid_data_set(as.data.frame(x),...)
-}
-
-##' @rdname valid_data
-##' @export
-valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
-                                      quiet = FALSE,...) {
+valid_data_set <- function(x, m = NULL, verbose = FALSE,
+                           quiet = FALSE {
   
   if(verbose) quiet <- FALSE
   
   if(is.valid_data_set(x)) return(x)
   
+  x <- as.data.frame(x)
+  
   if(nrow(x)==0) {
     stop("input data / event object has zero rows", 
          call. = FALSE)  
   }
-
+  
   tcol <- "time"
   
   # check for ID column
-  idcol <- intersect("ID", colnames(x))[1]
-  if(is.na(idcol)) {
+  if(!has_ID(x)) {
     stop("couldn't find ID column in data set.")
   }
   
@@ -164,11 +146,11 @@ valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
   
-  as.valid_data_set(x)
+  structure(x, class = "valid_data_set")
   
 }
 
-##' Validate and prepare idata data sets for simulation.
+##' Validate and prepare idata data sets for simulation
 ##' 
 ##' 
 ##' @seealso \code{\link{idata_set}}, \code{\link{data_set}},
@@ -179,13 +161,15 @@ valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
 ##' @rdname valid_data
 ##' 
 ##' @export
-valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE,...) {
+valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE) {
   
   if(verbose) quiet <- FALSE
   
   if(is.valid_idata_set(x)) return(x) 
   
-  if(!("ID" %in% colnames(x))) {
+  x <- as.data.frame(x)
+  
+  if(!has_ID(x)) {
     stop("ID is a required column for idata_set",call.=FALSE)
   }
   
@@ -193,17 +177,17 @@ valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE,...) {
     stop("duplicate IDs not allowed in idata_set",call.=FALSE) 
   }
   
-  as.valid_idata_set(numeric_data_matrix(as.data.frame(x),quiet))
-  
+  structure(numeric_data_matrix(as.data.frame(x),quiet),
+            class="valid_idata_set")
 }
 
 ##' @rdname valid_data
 ##' @export
-valid_data_set.matrix <- function(x,verbose=FALSE,...) {
+valid_data_set.matrix <- function(x,verbose=FALSE) {
   
   if(is.valid_data_set(x)) return(x)
   if(is.numeric(x)) {
     return(valid_data_set(as.data.frame(x),...))
   }
-  stop("Input data matrix is not numeric",call.=FALSE)
+  stop("input data matrix is not numeric",call.=FALSE)
 }
