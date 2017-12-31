@@ -67,6 +67,12 @@ env_get <- function(x,tolist=TRUE) {
   }
 }
 
+##' @rdname env_get
+##' @export
+env_get_env <- function(x) {
+  x@envir 
+}
+
 ##' Update objects in model environment
 ##' 
 ##' @param .x model object
@@ -77,24 +83,7 @@ env_get <- function(x,tolist=TRUE) {
 env_update <- function(.x,...,.dots=list()) {
   right <- c(list(...),.dots)
   left <- as.list(.x@envir)
-  .x@envir <- as.environment(merge(left,right))
-  return(invisible(.x))
-}
-
-##' Add objects to model environment
-##' 
-##' @param .x model object
-##' @param x passed to \code{\link{assign}}
-##' @param value passed to \code{\link{assign}}
-##' 
-##' @export
-env_assign <- function(.x, x, value) {
-  x <- as.character(x)
-  if(substr(x,1,1)=='.') {
-    stop("assignment name should not start with '.'", 
-         call. = FALSE)
-  }
-  assign(x, value, envir = .x@envir)
+  .x@envir <- as.environment(merge.list(left,right))
   return(invisible(.x))
 }
 

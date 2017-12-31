@@ -26,6 +26,13 @@ a data frame.  All of these functions are called by `mrgsim`
 - Added method so that event objects can be passed to `data_set`; also, 
 coercing event objects to `data_set` when passed in as `data`
 
+- Added `all.equal.mrgmod` function to compare two 
+model objects. The function returns logical (only)
+
+- Added `env_get_env` that always just returns the 
+model environment; it has identical result as
+`env_get(mod, tolist = FALSE)`
+
 ## Bug Fixes
 - Fixed bug preventing simulation with `qsim` with no event
 

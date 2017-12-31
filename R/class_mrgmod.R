@@ -399,10 +399,6 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 ##' @export
 setMethod("events", "mrgmod", function(x,...) {
   warning("events are no longer included in the model object")
-  # args <- list(...)
-  # if(length(args)>0) return(update(x,events=ev(...)))
-  # 
-  # x@events
 })
 
 ##' @export
@@ -540,4 +536,12 @@ re_build <- function(x,model=model(x),temp = FALSE) {
   mcode(model,x@code)
 }
 
-
+##' @export
+all.equal.mrgmod <- function(target, current) {
+  target.env <- as.list(target@envir)
+  current.env <- as.list(current@envir)
+  target@envir <- current@envir <- new.env()
+  t1 <- isTRUE(identical(target,current))
+  t2 <- identical(target.env, current.env)
+  all(t1,t2)
+}

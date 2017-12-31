@@ -2,9 +2,12 @@
 % Please edit documentation in R/env.R
 \name{env_get}
 \alias{env_get}
+\alias{env_get_env}
 \title{Return model environment}
 \usage{
 env_get(x, tolist = TRUE)
+
+env_get_env(x)
 }
 \arguments{
 \item{x}{model object}
