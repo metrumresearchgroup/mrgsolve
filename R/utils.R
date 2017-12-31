@@ -87,15 +87,6 @@ update_list <- function(left, right) {
 }
 
 
-render_time <- function(x) {
-  add <- times <- numeric(0)
-  #if(!is.mt(x@add)){add <- x@add}
-  if(x@end >= 0){times <-seq(x@start,x@end,x@delta)}
-  times <- invisible(as.numeric(unique(c(times,x@add))))
-  if(is.mt(times)) {return(0)}
-  sort(times[times>=0])
-}
-
 
 ##' Simulate from a multivariate normal distribution with mean zero.
 ##'

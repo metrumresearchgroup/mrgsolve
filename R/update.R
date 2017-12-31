@@ -43,7 +43,14 @@ all_updatable <- c(sval,other_val)
 ##' @param data a list of items to update; not used for now
 ##' 
 ##' @return The updated model object is returned.
-##'
+##' 
+##' @details
+##' Slots that can be updated: atol, rtol, verbose, 
+##' debug, preclean, mindt, digits, ixpr, 
+##' mxhnil, hmin, hmax, maxsteps, start, end, 
+##' delta, add, tscals, request, param,
+##' init, omega, sigma.
+##' 
 ##' @name update
 ##' 
 ##' @aliases update,mrgmod-method
@@ -79,20 +86,6 @@ setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=NU
       slot(object, sval[valid.full[i]]) <- args[[valid.in[i]]]
     }
   }
-  
-  ## If we're not merging, just replace and return:
-  # if(!merge) {
-  #   if(has_name("init",args)) {
-  #     stop("Error ... initial conditions list (init) is only updateable when merge=TRUE.")
-  #   }
-  #   if(has_name("param",args)) {
-  #     object@param <- as.param(args$param)
-  #   }
-  #   validObject(object)
-  #   return(object)
-  # }
-  
-  ## Otherwise, merge if arguments are there:
   
   ## Initial conditions list:
   if(is.element("init", a)) {

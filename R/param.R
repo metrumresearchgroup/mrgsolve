@@ -118,9 +118,6 @@ setMethod("param", "ANY", function(.x,...) {
   param(as.list(.x),...)
 })
 
-Param <- function(x) x@param
-Param_list <- function(x) x@param@data
-Pars <-  function(x) names(x@param@data)
 
 
 ##' @export

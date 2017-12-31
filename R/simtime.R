@@ -17,9 +17,10 @@
 
 
 
-##' Create a simtime object.
+##' Create a simtime object
 ##'
-##' simtime objects allow the user to specify simulation start and end times, along with the simulation time step.
+##' simtime objects allow the user to specify simulation start and end times, 
+##' along with the simulation time step.
 ##'
 ##' @rdname tgrid
 ##' @name tgrid
@@ -49,15 +50,15 @@
 ##'
 ##' plot(out,CP~., type='b')
 ##' }
-tgrid <-  function(start=0,end=24,delta=1,add=numeric(0),.offset=0, .scale=1,...) {
-    new("tgrid", start=start, end=end, delta=delta, add=add, offset=.offset, scale=.scale)
+tgrid <-  function(start=0,end=24,delta=1,add=numeric(0),
+                   .offset=0, .scale=1,...) {
+    new("tgrid", start=start, end=end, delta=delta, 
+        add=add, offset=.offset, scale=.scale)
 }
-
 
 tgrids <- function(...) {
     new("tgrids", data=list(...))
 }
-
 
 #' @rdname tgrid
 #' @export
@@ -68,9 +69,17 @@ setMethod("stime", "tgrid", function(x,...) {
 #' @rdname tgrid
 #' @export
 setMethod("stime", "tgrids", function(x,...) {
-    sort(unique(unlist(lapply(x@data,stime))))
+    sort(unique(unlist(lapply(x@data,stime), use.names=FALSE)))
 })
 
+render_time <- function(x) {
+  add <- times <- numeric(0)
+  #if(!is.mt(x@add)){add <- x@add}
+  if(x@end >= 0){times <-seq(x@start,x@end,x@delta)}
+  times <- invisible(as.numeric(unique(c(times,x@add))))
+  if(is.mt(times)) {return(0)}
+  sort(times[times>=0])
+}
 
 ##' @rdname tgrid
 ##' @export

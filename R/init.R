@@ -104,9 +104,6 @@ setMethod("init", "ANY", function(.x,...) {
   init(as.list(.x),...)
 })
 
-Init <- function(x) x@init
-Cmt <-  function(x) names(x@init@data)
-
 ##' @export
 ##' @rdname init
 setGeneric("as.init", function(.x,...) standardGeneric("as.init"))

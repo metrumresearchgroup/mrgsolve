@@ -19,9 +19,10 @@ valid_funs <- function(x) {
   x1 <- length(x)==4
   x2 <- identical(names(x), c("main", "ode", "table", "config"))
   if(x1 & x2) return(list(TRUE,""))
-  return(list(FALSE, c("Invalid functions specification.",
-                       "This model object is not compatible with the current mrgsolve version.",
-                       "Rebuild the model object or upgrade the mrgsolve version.")))
+  return(list(FALSE, 
+              c("Invalid functions specification.",
+                "This model object is not compatible with the current mrgsolve version.",
+                "Rebuild the model object or upgrade the mrgsolve version.")))
 }
 
 check_names <- function(x,par,cmt) {
@@ -57,12 +58,15 @@ check_names <- function(x,par,cmt) {
 check_us <- function(x,cmt,ans) {
   leading <- x[substr(x,1,1)=="_"]
   if(length(leading) > 0) {
-    ans <- c(ans, paste0("Leading underscore not allowed: ", paste(leading, collapse=" "))) 
+    ans <- c(ans, 
+             paste0("Leading underscore not allowed: ", 
+                    paste(leading, collapse=" "))) 
   }
   check <- as.character(sapply(c("F_", "ALAG_", "D_", "R_"),paste0,cmt))
   iv_name <- intersect(x,check)
   if(length(iv_name) > 0) {
-    ans <- c(ans, paste0("Reserved symbols in model names: ", iv_name))
+    ans <- c(ans, 
+             paste0("Reserved symbols in model names: ", iv_name))
   } 
   return(ans)
 }
@@ -143,7 +147,7 @@ valid.mrgmod <- function(object) {
   return(x)
 }
 
-##' S4 class for mrgsolve model object.
+##' S4 class for mrgsolve model object
 ##'
 ##' @section Notes:
 ##' \itemize{
@@ -205,7 +209,7 @@ setClass("packmod",
          )
 )
 
-##' Return a pre-compiled, PK/PD model.
+##' Return a pre-compiled, PK/PD model
 ##' 
 ##' @param ... passed to update
 ##' 
@@ -253,7 +257,7 @@ as_pack_mod <- function(model, project, PACKAGE) {
   return(list(mod=x, soloc=soloc, source=source))
 }
 
-##' Check if an object is a model object. 
+##' Check if an object is a model object 
 ##' 
 ##' The function checks to see if the object is either
 ##'  \code{mrgmod} or \code{packmod}.
@@ -266,7 +270,7 @@ is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
 see_compfile <- function(x) {
   file <- file.path(soloc(x),compfile(model(x)))
   if(!file_exists(file)) {
-    message("Could not find the compiled code for this model.")
+    message("could not find the compiled code for this model.")
   }
   cat(readLines(file),sep="\n")
 }
@@ -282,7 +286,9 @@ setMethod("project", "packmod", function(x,...) {
 ##' @rdname cmtn
 ##' @param tag compartment name
 ##' @export
-setMethod("cmtn", "mrgmod", function(x,tag,...) return(which(cmt(x)==tag)))
+setMethod("cmtn", "mrgmod", function(x,tag,...) {
+  return(which(cmt(x)==tag))
+})
 
 neq <- function(x) length(cmt(x))
 npar <- function(x) length(pars(x))
@@ -292,11 +298,18 @@ cmt <- function(x) names(Init(x))
 dllname <- function(x) x@package
 model <- function(x) x@model
 modfile <- function(x) x@modfile
+Param <- function(x) x@param
+Param_list <- function(x) x@param@data
+Pars <-  function(x) names(x@param@data)
+Init <- function(x) x@init
+Cmt <-  function(x) names(x@init@data)
 
-##' Return the location of the model shared object.
+
+##' Return the location of the model shared object
 ##'
 ##' @param x model object
-##' @param short logical; if \code{TRUE}, \code{soloc} will be rendered  with a short path name
+##' @param short logical; if \code{TRUE}, \code{soloc} will
+##'  be rendered  with a short path name
 ##' 
 ##' @rdname soloc
 ##' 
