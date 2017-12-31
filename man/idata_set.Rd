@@ -6,7 +6,7 @@
 \alias{idata_set,mrgmod,data.frame-method}
 \alias{idata_set,mrgmod,ANY-method}
 \alias{idata_set,mrgmod,missing-method}
-\title{Select and modify a idata set for simulation.}
+\title{Select and modify a idata set for simulation}
 \usage{
 idata_set(x, data, ...)
 
@@ -28,12 +28,13 @@ idata_set(x, data, ...)
 
 \item{select}{passed to \code{dplyr::select_}}
 
-\item{object}{character name of an object existing in \code{$ENV} to use for the data set}
+\item{object}{character name of an object existing in \code{$ENV} 
+to use for the data set}
 
 \item{need}{passed to \code{\link{inventory}}}
 }
 \description{
-Select and modify a idata set for simulation.
+Select and modify a idata set for simulation
 }
 \details{
 The \code{idata_set} is a data.frame that specifies individual-level 

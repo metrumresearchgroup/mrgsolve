@@ -15,13 +15,13 @@
 \S4method{names}{mrgmod}(x)
 
 \S4method{update}{mrgmod}(object, ..., merge = TRUE, open = FALSE,
-  data = list())
+  data = NULL)
 
 \S4method{update}{omegalist}(object, y, ...)
 
 \S4method{update}{sigmalist}(object, y, ...)
 
-\S4method{update}{parameter_list}(object, y, ...)
+\S4method{update}{parameter_list}(object, .y, ...)
 
 \S4method{update}{ev}(object, y, ...)
 }
@@ -30,14 +30,15 @@
 
 \item{object}{a model object}
 
-\item{...}{passed to other functions}
+\item{...}{named items to update}
 
-\item{merge}{logical indicating to merge (rather than replace) new and
-existing attributes.}
+\item{merge}{logical indicating to merge (rather than replace) 
+new and existing attributes}
 
-\item{open}{logical; used only when merge is \code{TRUE} and parameter list or initial conditions
-list is being updated; if \code{FALSE}, no new items will be added; if \code{TRUE}, the parameter list may
-expand.}
+\item{open}{logical; used only when merge is \code{TRUE} and 
+parameter list or initial conditions
+list is being updated; if \code{FALSE}, no new items will be 
+added; if \code{TRUE}, the parameter list may expand.}
 
 \item{data}{a list of items to update; not used for now}
 
@@ -60,4 +61,6 @@ names(mod)
 
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
  }
+ 
+ @export
 }

@@ -7,11 +7,11 @@
 \alias{valid_data_set.matrix}
 \title{Validate and prepare data sets for simulation}
 \usage{
-valid_data_set(x, m = NULL, verbose = FALSE, quiet = FALSE, ...)
+valid_data_set(x, m = NULL, verbose = FALSE, quiet = FALSE)
 
-valid_idata_set(x, verbose = FALSE, quiet = FALSE, ...)
+valid_idata_set(x, verbose = FALSE, quiet = FALSE)
 
-valid_data_set.matrix(x, verbose = FALSE, ...)
+valid_data_set.matrix(x, verbose = FALSE)
 }
 \arguments{
 \item{x}{data.frame or matrix}
@@ -21,8 +21,6 @@ valid_data_set.matrix(x, verbose = FALSE, ...)
 \item{verbose}{logical}
 
 \item{quiet}{if \code{TRUE}, messages will be suppressed}
-
-\item{...}{additional arguments}
 }
 \value{
 a matrix with non-numeric columns dropped; if x is a 

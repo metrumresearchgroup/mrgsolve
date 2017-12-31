@@ -18,12 +18,14 @@
 
 ##' @rdname mread 
 ##' @export
-mread_cache <- function(model = NULL, project = getwd(), file = paste0(model, ".cpp"),
-                        code = NULL, soloc = tempdir(), quiet = FALSE, 
+mread_cache <- function(model = NULL, project = getwd(), 
+                        file = paste0(model, ".cpp"),
+                        code = NULL, soloc = tempdir(), 
+                        quiet = FALSE, 
                         preclean = FALSE, ...) {
-
+  
   build <- new_build(file, model, project, soloc, code, preclean) 
-
+  
   cache_file <- file.path(build$soloc, "mrgmod_cache.RDS")
   
   ## If the cache file doesn't exist, build and return
@@ -42,7 +44,7 @@ mread_cache <- function(model = NULL, project = getwd(), file = paste0(model, ".
   if(all(t0,t1,t2,t3,te)) {
     if(!quiet) message("Loading model from cache.")
     loadso(x)
-    return(x)
+    return(update(x,...))
   }
   
   x <- mread(build$model, project, soloc=soloc, quiet=quiet, 

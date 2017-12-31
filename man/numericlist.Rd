@@ -10,7 +10,7 @@
 \alias{names,numericlist-method}
 \alias{$,numericlist-method}
 \alias{[,numericlist-method}
-\title{Methods for numericlist.}
+\title{Methods for numericlist}
 \usage{
 \S4method{as.list}{numericlist}(x, ...)
 
@@ -45,6 +45,8 @@
 \item{drop}{not used}
 }
 \description{
-These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures,
-extract elements from \code{numericlist}s, or get attributes from \code{numericlist}s.
+These methods can be used to corece \code{param} and 
+\code{init} objects into common \code{R} data structures,
+extract elements from \code{numericlist}s, or get attributes 
+from \code{numericlist}s.
 }

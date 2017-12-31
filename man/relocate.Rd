@@ -4,7 +4,7 @@
 \name{relocate}
 \alias{relocate}
 \alias{relocate,mrgmod-method}
-\title{Update model or project in an model object.}
+\title{Update model or project in an model object}
 \usage{
 relocate(x, ...)
 
@@ -23,5 +23,5 @@ relocate(x, ...)
 updated model object
 }
 \description{
-Update model or project in an model object.
+Update model or project in an model object
 }

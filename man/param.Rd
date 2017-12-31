@@ -16,7 +16,7 @@
 \alias{as.param,missing-method}
 \alias{show,parameter_list-method}
 \alias{allparam}
-\title{Create and work with parameter objects.}
+\title{Create and work with parameter objects}
 \usage{
 \S4method{$}{mrgmod}(x, name)
 
@@ -54,27 +54,35 @@ allparam(.x)
 
 \item{.x}{the model object}
 
-\item{...}{passed along or name/value pairs to update the parameters in a model object}
+\item{...}{passed along or name/value pairs to update the parameters 
+in a model object}
 
 \item{.y}{list to be merged into parameter list}
 
-\item{.pat}{a regular expression (character) to be applied as a filter for which parameters to show when printing}
+\item{.pat}{a regular expression (character) to be applied as a filter 
+for which parameters to show when printing}
 
-\item{.strict}{if \code{TRUE}, all names to be updated must be found in the parameter list}
+\item{.strict}{if \code{TRUE}, all names to be updated must be found 
+in the parameter list}
 
 \item{object}{passed to show}
 }
 \value{
-An object of class \code{parameter_list} (see \code{\link{numericlist}}).
+An object of class \code{parameter_list} (see 
+\code{\link{numericlist}}).
 }
 \description{
-See \code{\link{numericlist}} for methods to deal with \code{parameter_list} objects.
+See \code{\link{numericlist}} for methods to deal with 
+\code{parameter_list} objects.
 }
 \details{
-Can be used to either get a parameter list object from a \code{mrgmod} model object or to update
-the parameters in a model object.  For both uses, the return value is a \code{parameter_list} object.
+Can be used to either get a parameter list object from a 
+\code{mrgmod} model object or to update
+the parameters in a model object.  For both uses, the return value 
+is a \code{parameter_list} object.
 For the former use, \code{param} is usually called to print
-the parameters to the screen, but the parameter_list object can also be coreced to a list or numeric R object.
+the parameters to the screen, but the parameter_list object can also 
+be coreced to a list or numeric R object.
 }
 \examples{
 ## example("param")

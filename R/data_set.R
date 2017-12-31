@@ -102,7 +102,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
     data <- data_hooks(data,object,x@envir,param(x),...) 
   }
   #data <- valid_data_set(m=x,x=as.data.frame(data),...)
-  x@args <- merge(x@args,list(data=data), open=TRUE)
+  x@args[["data"]] <- data
   return(x)
 })
 
@@ -126,14 +126,19 @@ setMethod("data_set", c("mrgmod", "missing"), function(x,object,...) {
 })
 
 
-##' Convert select upper case column names to lower case to conform to mrgsolve data expectations.
+##' Convert select upper case column names to lower case to conform 
+##' to mrgsolve data expectations
 ##'
 ##' @param data an nmtran-like data frame
-##' @return A data.frame with renamed columns.
+##' 
+##' @return A data.frame with renamed columns
 ##'
 ##' @details
-##' Columns that will be renamed with lower case versions: \code{AMT}, \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, \code{TIME}.  If a lower case version
-##' of these names exist in the data set, the column will not be renamed.
+##' Columns that will be renamed with lower case versions: \code{AMT}, 
+##' \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, 
+##' \code{TIME}.  If a lower case version of these names exist in the data 
+##' set, the column will not be renamed.
+##' 
 ##' @export
 lctran <- function(data) {
   n <- names(data)

@@ -3,12 +3,14 @@
 \docType{class}
 \name{numericlist-class}
 \alias{numericlist-class}
-\title{S4 class numeric list.}
+\title{S4 class numeric list}
 \arguments{
 \item{data}{list of data}
 
-\item{pattern}{character of length 1 containing regular expression to be used as a filter when printing data to the console}
+\item{pattern}{character of length 1 containing regular 
+expression to be used as a filter when printing data to the 
+console}
 }
 \description{
-S4 class numeric list.
+S4 class numeric list
 }
