@@ -164,9 +164,10 @@ as.matrix.ev <- function(x,...) {
 ##' @method as.data.frame ev
 ##' @rdname events
 ##' @export
-as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, add_ID = NULL, ...) {
+as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, 
+                             add_ID = NULL, ...) {
   ans <- x@data
-  if(is.numeric(add_ID) & !has_ID(ans)) {
+  if(is.numeric(add_ID) & !has_ID(ans) & nrow(ans) > 0) {
     ans[["ID"]] <- add_ID[1]
   } 
   return(ans)

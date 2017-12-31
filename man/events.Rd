@@ -8,6 +8,7 @@
 \alias{as.ev}
 \alias{names,ev-method}
 \alias{mutate.ev}
+\alias{nrow.ev}
 \alias{events,mrgmod-method}
 \alias{ev,mrgmod-method}
 \alias{ev,missing-method}
@@ -29,6 +30,8 @@ as.ev(x, ...)
 \S4method{names}{ev}(x)
 
 \method{mutate}{ev}(.data, ...)
+
+nrow.ev(x)
 
 \S4method{events}{mrgmod}(x, ...)
 

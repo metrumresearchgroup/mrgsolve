@@ -38,3 +38,6 @@ mutate.ev <- function(.data, ...) {
   .data
 }
 
+##' @rdname events
+##' @export
+nrow.ev <- function(x) nrow(x@data)

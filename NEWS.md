@@ -21,7 +21,7 @@ you only get it if `deep = TRUE`
 - Added `mrgsim` variant functions with explicit input requirements
 written into the function name.  For example, call `mrgsim_e` 
 to simulate from an event object, `mrgsim_d` to simulate from 
-a data frame.  All of these functions are called by `mrgsim`
+a data frame.  All of these functions are called by `mrgsim`.
 
 - Added method so that event objects can be passed to `data_set`; also, 
 coercing event objects to `data_set` when passed in as `data`

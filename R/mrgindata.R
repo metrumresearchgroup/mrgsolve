@@ -104,15 +104,16 @@ valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
   if(is.valid_data_set(x)) return(x)
   
   if(nrow(x)==0) {
-    stop("the data set has 0 rows", call. = FALSE) 
+    stop("input data / event object has zero rows", 
+         call. = FALSE)  
   }
-  
+
   tcol <- "time"
   
   # check for ID column
   idcol <- intersect("ID", colnames(x))[1]
   if(is.na(idcol)) {
-    stop("couldn't find ID column in data set.", call.=FALSE)
+    stop("couldn't find ID column in data set.")
   }
   
   if(ncol(x) > 1) {
@@ -120,8 +121,7 @@ valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
     # First, check for compartment
     cmtcol <- intersect(c("cmt", "CMT"), colnames(x))[1]
     if(is.na(cmtcol))  {
-      stop("Couldn't find cmt/CMT column in data set.",
-           call.=FALSE)
+      stop("couldn't find cmt/CMT column in data set")
     }
     
     # Convert cmt/CMT to numeric if it's character and you 
@@ -140,8 +140,7 @@ valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
     # TODO: look into droping these checks.
     tcol <- intersect(c("time", "TIME"), colnames(x))[1]
     if(is.na(tcol)) {
-      stop("Couldn't find time/TIME column in data set.",
-           call.=FALSE)
+      stop("couldn't find time/TIME column in data set")
     }
     
     x <- cbind(x, matrix(0,

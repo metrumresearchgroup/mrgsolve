@@ -139,7 +139,7 @@ test_that("mrgsim with data", {
 
 test_that("mrgsim with data and ev", {
   out <- mod %>% mrgsim(data = data, events = e)
-  out_pipe <- mod %>% data_set(data) %>% ev(e) %>% mrgsim
+  out_pipe <- mod %>% data_set(data) %>% ev(e) %>% mrgsim()
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_is(out, "mrgsims")
@@ -147,7 +147,7 @@ test_that("mrgsim with data and ev", {
 })
 
 test_that("mrgsim with nid", {
-  out <- mod %>% mrgsim(nid = 5)
+  out <- mod %>% mrgsim(nid = 5, end = 2)
   expect_is(out, "mrgsims")
   expect_equal(length(unique(out$ID)),5)
 })
@@ -166,3 +166,16 @@ test_that("update arguments are passed", {
 })
 
 
+test_that("no data generates error", {
+  e <- ev()
+  data <- as.data.frame(e)
+  expect_error(mrgsim(mod, events = e))
+  expect_error(mrgsim(mod, data = data))
+})
+
+test_that("no idata no problem generates error", {
+  e <- ev(amt = 100)
+  idata <- as.data.frame(e)[0,]
+  expect_is(mrgsim(mod, events = e, idata = idata, end = -1), "mrgsims")
+  expect_is(mrgsim(mod, data = data, idata = idata, end = -1), "mrgsims")
+})

@@ -307,7 +307,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   if(!is.ev(events)) {
     stop("invalid 'events' argument", call. = FALSE) 
   }
-  expand <- !has_ID(events)
+  expand <- !has_ID(events) & nrow(idata) > 0
   events <- as.data.frame(events, add_ID = 1)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
