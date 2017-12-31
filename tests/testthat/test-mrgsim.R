@@ -140,7 +140,6 @@ test_that("mrgsim with data", {
 test_that("mrgsim with data and ev", {
   out <- mod %>% mrgsim(data = data, events = e)
   out_pipe <- mod %>% data_set(data) %>% ev(e) %>% mrgsim
-  
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
   expect_identical(out,out_pipe)
   expect_is(out, "mrgsims")

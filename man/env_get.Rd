@@ -2,7 +2,7 @@
 % Please edit documentation in R/env.R
 \name{env_get}
 \alias{env_get}
-\title{Return model environment.}
+\title{Return model environment}
 \usage{
 env_get(x, tolist = TRUE)
 }
@@ -12,5 +12,5 @@ env_get(x, tolist = TRUE)
 \item{tolist}{should the environment be coreced to \code{list}?}
 }
 \description{
-Return model environment.
+Return model environment
 }

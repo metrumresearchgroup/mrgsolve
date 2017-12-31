@@ -103,12 +103,16 @@ valid_data_set.data.frame <- function(x, m = NULL, verbose = FALSE,
   
   if(is.valid_data_set(x)) return(x)
   
+  if(nrow(x)==0) {
+    stop("the data set has 0 rows", call. = FALSE) 
+  }
+  
   tcol <- "time"
   
   # check for ID column
   idcol <- intersect("ID", colnames(x))[1]
   if(is.na(idcol)) {
-    stop("Couldn't find ID column in data set.", call.=FALSE)
+    stop("couldn't find ID column in data set.", call.=FALSE)
   }
   
   if(ncol(x) > 1) {

@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Re-evaluate the code in the ENV block.
+##' Re-evaluate the code in the ENV block
 ##' 
 ##' The \code{$ENV} block is a block of R code that can 
 ##' realize any sort of R object that might be used in running 
@@ -34,7 +34,7 @@ env_eval <- function(x,seed=NULL) {
   return(invisible(x))
 }
 
-##' List objects in the model environment.
+##' List objects in the model environment
 ##' 
 ##' Each model keeps an internal environment that allows the user 
 ##' to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
@@ -53,7 +53,7 @@ env_ls <- function(x,...) {
   dplyr::arrange_(ans, .dots=c("class"))
 }
 
-##' Return model environment.
+##' Return model environment
 ##' 
 ##' @param x model object
 ##' @param tolist should the environment be coreced to \code{list}?
@@ -67,7 +67,7 @@ env_get <- function(x,tolist=TRUE) {
   }
 }
 
-##' Update objects in model environment.
+##' Update objects in model environment
 ##' 
 ##' @param .x model object
 ##' @param .dots list of objects to updated
@@ -81,7 +81,24 @@ env_update <- function(.x,...,.dots=list()) {
   return(invisible(.x))
 }
 
-##' Run the model cama function.
+##' Add objects to model environment
+##' 
+##' @param .x model object
+##' @param x passed to \code{\link{assign}}
+##' @param value passed to \code{\link{assign}}
+##' 
+##' @export
+env_assign <- function(.x, x, value) {
+  x <- as.character(x)
+  if(substr(x,1,1)=='.') {
+    stop("assignment name should not start with '.'", 
+         call. = FALSE)
+  }
+  assign(x, value, envir = .x@envir)
+  return(invisible(.x))
+}
+
+##' Run the model cama function
 ##' 
 ##' @param mod model object
 ##' @param fn function name
@@ -95,6 +112,7 @@ cama <- function(mod,fn="cama",...) {
   f <- get(fn, mod@envir, inherits=FALSE)
   mod %>% update(...) %>% f
 }
+
 
 param_in_env <- function(x) {
   p <- as.list(param(x))

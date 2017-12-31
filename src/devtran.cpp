@@ -260,7 +260,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
       n = tgridn[tgridi[j]];
 
-      it->reserve((it->size() + n + 10));
+      it->reserve((it->size() + n));
 
       for(h=0; h < n; h++) {
         it->push_back(designs[tgridi[j]][h]);

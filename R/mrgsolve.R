@@ -204,20 +204,12 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
     events <- x@args$events
   }
   
-  if(is.ev(data)) {
-    data <- As_data_set(data) 
-  }
-  
   if(nid > 1) {
     return(mrgsim_nid(x, nid, events, ...))
   } 
   
-  
-  data <- as.data.frame(data)
-  have_data <- nrow(data) > 0
-  idata <- as.data.frame(idata)
-  have_idata <- nrow(idata) > 0
-  
+  have_data <- !is.null(data)
+  have_idata <- !is.null(idata)
   have_events <- !is.null(events)
   
   # clear out args and process
@@ -284,23 +276,22 @@ mrgsim_df <- function(...) as_data_frame(mrgsim(...))
 ##' @export
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   if(!is.ev(events)) {
-    stop("invalid 'events' argument", call. = FALSE) 
+    stop("invalid 'events' argument") 
   }
+  events <- as.data.frame(events, add_ID = 1)
   args <- list(...)
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
-    c(list(x = x, data = As_data_set(events), idata = null_idata), args)
+    c(list(x = x, data = events, idata = null_idata), args)
   )
 } 
 
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
-  if(!is.data.frame(data)) {
-    stop('invalid data argument', call. = FALSE)
-  } 
+  data <- as.data.frame(data, add_ID = 1)
   args <- list(...)
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
@@ -313,36 +304,36 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
-  if(!all(is.ev(events),is.data.frame(idata))) {
-    stop("invalid arguments", call. = FALSE) 
+  if(!is.ev(events)) {
+    stop("invalid 'events' argument", call. = FALSE) 
   }
-  data <- as_data_frame_ev(events)
-  expand <- !has_ID(data)
-  if(!has_ID(data)) {
+  expand <- !has_ID(events)
+  events <- as.data.frame(events, add_ID = 1)
+  idata <- as.data.frame(idata)
+  if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   } 
   if(expand) {
-    data[["ID"]] <- 1
-    data <- .Call(`_mrgsolve_EXPAND_EVENTS`,
-                  match("ID",colnames(data),0), 
-                  numeric_data_matrix(data), 
-                  idata[,"ID"])
+    events <- convert_character_cmt(events)
+    events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
+                    match("ID",colnames(events),0), 
+                    numeric_data_matrix(events), 
+                    idata[,"ID"])
   }
   args <- list(...)
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     tran_mrgsim, 
-    c(list(x = x, data = data, idata = idata), args)
+    c(list(x = x, data = events, idata = idata), args)
   )
 }
 
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
-  if(!all(is.data.frame(data),is.data.frame(idata))) {
-    stop("invalid arguments: data, idata", call. = FALSE) 
-  }
+  data <- as.data.frame(data, add_ID = 1)
+  idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
@@ -358,9 +349,7 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
-  if(!all(is.data.frame(idata))) {
-    stop("invalid argument: idata", call. = FALSE) 
-  }
+  idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
