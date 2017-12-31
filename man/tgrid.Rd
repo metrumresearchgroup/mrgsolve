@@ -9,7 +9,7 @@
 \alias{stime,numeric-method}
 \alias{show,tgrid-method}
 \alias{show,tgrids-method}
-\title{Create a simtime object.}
+\title{Create a simtime object}
 \usage{
 \S4method{stime}{mrgmod}(x, ...)
 
@@ -46,7 +46,8 @@ tgrid(start = 0, end = 24, delta = 1, add = numeric(0), .offset = 0,
 \item{object}{passed to show}
 }
 \description{
-simtime objects allow the user to specify simulation start and end times, along with the simulation time step.
+simtime objects allow the user to specify simulation start and end times, 
+along with the simulation time step.
 }
 \examples{
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgmod.R
 \name{house}
 \alias{house}
-\title{Return a pre-compiled, PK/PD model.}
+\title{Return a pre-compiled, PK/PD model}
 \usage{
 house(...)
 }
@@ -13,7 +13,7 @@ house(...)
 A \code{packmod} object, ready to simulate.
 }
 \description{
-Return a pre-compiled, PK/PD model.
+Return a pre-compiled, PK/PD model
 }
 \examples{
 

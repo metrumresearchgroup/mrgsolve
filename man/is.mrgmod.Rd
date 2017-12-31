@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgmod.R
 \name{is.mrgmod}
 \alias{is.mrgmod}
-\title{Check if an object is a model object.}
+\title{Check if an object is a model object}
 \usage{
 is.mrgmod(x)
 }

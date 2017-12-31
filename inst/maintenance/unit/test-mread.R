@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Testing new model specification file")
+context("test-mread")
 
 code <- '
 $PARAM CL=1, VC=20, KA=1.2

@@ -290,7 +290,7 @@ setMethod("cmtn", "mrgmod", function(x,tag,...) {
   return(which(cmt(x)==tag))
 })
 
-neq <- function(x) length(cmt(x))
+neq <- function(x) length(Init(x))
 npar <- function(x) length(pars(x))
 pars <- function(x) names(param(x))
 shlib <- function(x) x@shlib
