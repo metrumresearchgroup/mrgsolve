@@ -379,7 +379,7 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
 mrgsim_nid <- function(x, nid, events = ev(), ...) {
   nid <- max(nid,1)
   idata <- data.frame(ID = seq_len(nid))
-  if(has_ID(as.data.frame(events))) {
+  if(has_ID(events)) {
     stop("event object cannot contain 'ID' when using 'nid' argument",
          call. = FALSE)
   } 
@@ -427,7 +427,7 @@ tran_mrgsim <- function(x,
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,verbose=verbose,...)
+    idata <- valid_idata_set(idata,verbose=verbose)
   }
   
   tcol <- timename(data)

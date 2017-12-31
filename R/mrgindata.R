@@ -78,7 +78,7 @@ convert_character_cmt <- function(data, mod) {
 ##' 
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE,
-                           quiet = FALSE {
+                           quiet = FALSE) {
   
   if(verbose) quiet <- FALSE
   

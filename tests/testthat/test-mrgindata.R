@@ -32,7 +32,7 @@ tb <- tbl_df(extran3)
 
 test_that("valid_data_set warns for character columns", {
   dat <- expand.ev(amt=100,ID=1:4,X="A")
-  expect_message(valid_data_set(dat,mod=mod), regexp="^Dropping")
+  expect_message(valid_data_set(dat,m=mod), regexp="^Dropping")
   
 })
 
