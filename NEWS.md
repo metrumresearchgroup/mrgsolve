@@ -33,9 +33,15 @@ model objects. The function returns logical (only)
 model environment; it has identical result as
 `env_get(mod, tolist = FALSE)`
 
+- Change `mread_cache` and `mcode_cache` so that the 
+cache is invalidated when `preclean` argument is `TRUE`
+
 ## Bug Fixes
 - Fixed bug preventing simulation with `qsim` with no event
 
+## Functions removed
+- `mrgsolve_example` and `mrgsolve_template`; these had been deprecated 
+previously with warning; use `modlib()` models instead
 
 # 0.8.10.9002
 - Added `mrgsim_df` function to return data frame rather than `mrgsims` object

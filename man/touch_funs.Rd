@@ -2,7 +2,7 @@
 % Please edit documentation in R/compile.R
 \name{touch_funs}
 \alias{touch_funs}
-\title{Get inits from compiled function.}
+\title{Get inits from compiled function}
 \usage{
 touch_funs(x, keep_pointers = TRUE)
 }
@@ -12,5 +12,5 @@ touch_funs(x, keep_pointers = TRUE)
 \item{keep_pointers}{should function pointers be returned?}
 }
 \description{
-Get inits from compiled function.
+Get inits from compiled function
 }

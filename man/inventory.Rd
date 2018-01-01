@@ -13,7 +13,8 @@ inventory(x, obj, ..., .strict = FALSE)
 
 \item{...}{capture dplyr-style parameter requirements}
 
-\item{.strict}{whether to stop execution if all requirements are present (\code{TRUE}) 
+\item{.strict}{whether to stop execution if all requirements are present
+ (\code{TRUE}) 
 or just warn (\code{FALSE}); see details}
 }
 \value{

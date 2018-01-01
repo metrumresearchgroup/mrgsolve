@@ -29,7 +29,7 @@ mread_cache <- function(model = NULL, project = getwd(),
   cache_file <- file.path(build$soloc, "mrgmod_cache.RDS")
   
   ## If the cache file doesn't exist, build and return
-  te <- file.exists(cache_file)
+  te <- file.exists(cache_file) & !preclean
   t0 <- t1 <- t2 <- t3 <- FALSE
   
   if(te) {

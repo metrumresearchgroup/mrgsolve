@@ -19,9 +19,6 @@
 ##' @title mrgsolve
 ##' @name mrgsolve
 ##' 
-##' @section Example models:
-##' See \code{\link{mrgsolve_example}} to export example models into 
-##' your own, writeable project directory.
 ##'
 ##' @section Input data sets:
 ##' See \code{\link{data_set}} for help creating input data sets.  

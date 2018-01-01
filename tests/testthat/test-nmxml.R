@@ -168,7 +168,6 @@ $SIGMA
 '
 
 mod <- mcode("tst_mat_update",code, compile = FALSE)
-context("Testing unnamed matrix updates")
 
 a <- dmat(1,2,3)
 b <- dmat(4,5,6)
@@ -185,8 +184,7 @@ $NMXML
 project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 '
-mod <- mcode("nmxml512",code,warn=FALSE, compile = FALSE)
-
+mod <- mcode("nmxml512", code, warn=FALSE, compile = FALSE)
 
 test_that("No matrices when name not given", {
   expect_null(nrow(omat(mod)))
@@ -223,8 +221,7 @@ $SIGMA @labels h i j k l
 1 2 3 4 5
 
 '
-mod <- mcode("label1", code,warn=FALSE, compile = FALSE)
-
+mod <- mcode("label1", code, warn=FALSE, compile = FALSE)
 
 test_that("Model compiles", {
   expect_is(mod,"mrgmod")
@@ -236,8 +233,7 @@ test_that("Labels are assigned to $OMEGA and $SIGMA", {
 })
   
 
-
-test_that("zero.re actually zeros all matrices", {
+test_that("zero_re zeros all matrices", {
   x <- mod %>% zero_re %>% omat %>% as.matrix
   expect_true(all(as.numeric(x)==0))
   x <- mod %>% zero_re %>% smat %>% as.matrix
@@ -249,8 +245,8 @@ test_that("zero.re actually zeros all matrices", {
 code <- '
 $OMEGA
 @prefix x_
-@labels a b c d 
-1 2 3 4
+@labels a b 
+1 2 
 
 $OMEGA
 0 0 0
@@ -259,7 +255,7 @@ $OMEGA
 mod <- mcode("label2", code,warn=FALSE, compile = FALSE)
 
 test_that("Mixed labels / no labels and prefix", {
-  expect_equivalent(mod@omega@labels, list(s(x_a,x_b,x_c,x_d),s(.,.,.)))
+  expect_equivalent(mod@omega@labels, list(s(x_a,x_b),s(.,.,.)))
 })
 
 

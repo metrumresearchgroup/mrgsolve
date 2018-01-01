@@ -2,7 +2,8 @@
 #' @param x model object
 #' @param obj data.frame to pass to \code{\link{idata_set}} or \code{\link{data_set}}
 #' @param ... capture dplyr-style parameter requirements
-#' @param .strict whether to stop execution if all requirements are present (\code{TRUE}) 
+#' @param .strict whether to stop execution if all requirements are present
+#'  (\code{TRUE}) 
 #' or just warn (\code{FALSE}); see details
 #' @examples \dontrun{
 #' inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
@@ -23,10 +24,10 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   
   oname <- as.character(as.list(match.call())$obj)
   
-  need <- select_vars(names(param(x)),...)
+  need <- select_vars(Pars(x),...)
   
   if(!length(need)) {
-    need <- names(param(x))
+    need <- Pars(x)
   } else {
     if(missing(.strict)) .strict <- TRUE 
   }

@@ -16,12 +16,6 @@ providing an interface to the DLSODA differential equation solver
 (written in FORTRAN) provided through ODEPACK -
 A Systematized Collection of ODE Solvers.
 }
-\section{Example models}{
-
-See \code{\link{mrgsolve_example}} to export example models into 
-your own, writeable project directory.
-}
-
 \section{Input data sets}{
 
 See \code{\link{data_set}} for help creating input data sets.  
