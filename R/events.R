@@ -684,6 +684,11 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE, ...) {
     addl[[sscol]] <- 0
   }
   
+  evidcol <- which(names(x) %in% c("evid", "EVID"))[1]
+  if(!is.na(evidcol)) {
+    addl[[evidcol]] <- if_else(addl[[evidcol]] == 4, 1, addl[[evidcol]])  
+  }
+
   if(mark_new) {
     addl <- mutate(addl, .addl_row_ = 1)
     x <- mutate(x, .addl_row_ = 0)

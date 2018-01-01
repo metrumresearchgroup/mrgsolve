@@ -16,20 +16,22 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
+##' @importFrom utils capture.output example str type.convert 
+##' @importFrom utils packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
-##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
-##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange data_frame 
-##' @importFrom dplyr intersect filter select rename slice distinct  do_ everything
-##' @importFrom dplyr distinct_ first data_frame arrange select_vars_ select_vars
-##' @importFrom dplyr if_else mutate_at summarise_each is.tbl
+##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl 
+##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange
+##' @importFrom dplyr intersect filter select rename slice distinct  do_ 
+##' @importFrom dplyr distinct_ first arrange select_vars_ 
+##' @importFrom dplyr select_vars everything
+##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom stats setNames
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
-##' @importFrom tibble as_data_frame
+##' @importFrom tibble as_data_frame data_frame
 ##' @importFrom assertthat assert_that
 ##' @import methods
 ##' @include class_mrgsims.R
