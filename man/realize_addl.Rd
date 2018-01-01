@@ -8,7 +8,7 @@
 \usage{
 realize_addl(x, ...)
 
-\method{realize_addl}{data.frame}(x, ...)
+\method{realize_addl}{data.frame}(x, warn = FALSE, mark_new = FALSE, ...)
 
 \method{realize_addl}{ev}(x, ...)
 }
@@ -16,10 +16,22 @@ realize_addl(x, ...)
 \item{x}{a \code{data_set} data frame or an \code{ev} object (see details)}
 
 \item{...}{not used}
+
+\item{warn}{if \code{TRUE} a warning is issued if no \code{ADDL} or
+\code{addl} column is found}
+
+\item{mark_new}{if \code{TRUE}, a flag is added to indicate new columns}
 }
 \description{
 Make addl doses explicit in an event object or data set
 }
 \details{
-Required data elements: \code{addl} and \code{ii}.
+This function is intended for use with data frames or event objects
+that do \bold{not} include time-varying data items. Use the 
+\code{mark_new} option to get a flag inserted into the output
+for further processing.
+
+If no \code{addl} column is found the data frame is returned and 
+a warning is issued if \code{warn} is true. If \code{ii} or 
+\code{time} are missing, an error is generated.
 }

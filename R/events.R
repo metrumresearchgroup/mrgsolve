@@ -118,6 +118,8 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     return(new("ev",data=data.frame()))
   }
   
+  x <- as.data.frame(x)
+  
   convert <- c("TIME", GLOBALS[["CARRY_TRAN_UC"]])
   upper <- intersect(convert,names(x))
   
@@ -137,7 +139,11 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
   if(!has_name("evid", x)) {
     x[["evid"]] <- 1 
   } else {
+    x[["evid"]] <- na2zero(x$evid)
     x <- x[x$evid != 0,] 
+    if(nrow(x)==0) {
+      stop("no dosing events found", call. = FALSE) 
+    }
   }
   
   if(has_ID(x) & !keep_id) x[,"ID"] <- NULL
@@ -633,10 +639,16 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' Make addl doses explicit in an event object or data set
 ##' 
 ##' @param x a \code{data_set} data frame or an \code{ev} object (see details)
-##' @param warn if \code{TRUE} a warning is issued if no \code{ADDL} or \code{addl}
-##' column is found
+##' @param warn if \code{TRUE} a warning is issued if no \code{ADDL} or
+##' \code{addl} column is found
+##' @param mark_new if \code{TRUE}, a flag is added to indicate new columns
 ##' @param ... not used
 ##' @details
+##' This function is intended for use with data frames or event objects
+##' that do \bold{not} include time-varying data items. Use the 
+##' \code{mark_new} option to get a flag inserted into the output
+##' for further processing.
+##' 
 ##' If no \code{addl} column is found the data frame is returned and 
 ##' a warning is issued if \code{warn} is true. If \code{ii} or 
 ##' \code{time} are missing, an error is generated. 
@@ -645,7 +657,7 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 realize_addl <- function(x,...) UseMethod("realize_addl")
 ##' @rdname realize_addl
 ##' @export
-realize_addl.data.frame <- function(x, warn = FALSE, ...) {
+realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE, ...) {
   
   addlcol <- which(names(x) %in% c("ADDL", "addl"))[1]
   if(is.na(addlcol)) {
@@ -656,6 +668,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, ...) {
   timecol <- which(names(x) %in% c("TIME", "time"))[1]
   if(is.na(iicol)) stop("missing ii/II column.", call.=FALSE)
   if(is.na(timecol)) stop("missing time/TIME column.", call.=FALSE)
+  
   time_name <- names(x)[timecol]
   add <- which(x[[addlcol]] > 0)
   addl <- lapply(add, function(i) {
@@ -664,7 +677,19 @@ realize_addl.data.frame <- function(x, warn = FALSE, ...) {
     df[[timecol]] <- df[[timecol]] + df[[iicol]]*seq(1,df[[addlcol]][1])
     df
   }) 
-  df <- bind_rows(x,bind_rows(addl))
+  addl <- bind_rows(addl)
+  
+  sscol <- which(names(x) %in% c("ss", "SS"))[1]
+  if(!is.na(sscol)) {
+    addl[[sscol]] <- 0
+  }
+  
+  if(mark_new) {
+    addl <- mutate(addl, .addl_row_ = 1)
+    x <- mutate(x, .addl_row_ = 0)
+  }
+  
+  df <- bind_rows(x,addl)
   df[[addlcol]] <- 0
   df[[iicol]] <- 0
   if("ID" %in% names(df)) {
@@ -678,7 +703,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, ...) {
 ##' @rdname realize_addl
 ##' @export
 realize_addl.ev <- function(x,...) {
-  x@data <- realize_addl(x@data)
+  x@data <- realize_addl(x@data,...)
   return(x)
 }
 

@@ -531,5 +531,3 @@ sanitize_capture <- function(x) {
   }
   x
 }
-
-

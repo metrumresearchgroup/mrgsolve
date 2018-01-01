@@ -63,8 +63,6 @@ test_that("realized events", {
 })
 
 test_that("realized event error", {
-  expect_error(ev(amt=100, realize_addl=TRUE))
-  expect_error(ev(amt=100, ii=24, realize_addl=TRUE))
   expect_error(ev(amt=100, addl=24, realize_addl=TRUE))
 })
 
@@ -80,26 +78,18 @@ test_that("sequence of event objects", {
   expect_equal(e$time, c(0,96, 144))
   
   e <- seq(e1, wait = 20, e2, wait= -10, e3)
-  
   e <- as.data.frame(e)
-  
   expect_equal(nrow(e), 3)
   expect_equal(e$time, c(0,116,154))
-  
   expect_is(seq(e2, e1, wait=2, e1),"ev")
   
 })
 
 test_that("replicate an event object", {
-  
   e1 <- ev(amt=1, ii=24, addl=3)
-  
   df <- ev_rep(e1, 11:14)
-  
   expect_is(df, "data.frame")
-  
   expect_equal(df$ID, 11:14)
-  
 })
 
 test_that("events with without rate" , {
@@ -148,4 +138,20 @@ test_that("misc methods", {
     expect_false(mrgsolve:::is.ev(as.data.frame(e)))
 })
 
-
+test_that("as.ev", {
+  df <- data_frame(amt = 100, foo = 5)
+  d <- as.data.frame(as.ev(df))
+  expect_equal(d$cmt,1)
+  expect_equal(d$amt,100)
+  expect_equal(d$evid,1)
+  expect_equal(d$time,0)
+  expect_equal(d$foo,5)
+  
+  df <- data_frame(amt = 200, evid = 1)
+  obs <- mutate(df, evid = 0)
+  df <- bind_rows(df,obs)
+  d <- as.data.frame(as.ev(df))
+  
+  expect_equal(d$evid,1)
+  
+})

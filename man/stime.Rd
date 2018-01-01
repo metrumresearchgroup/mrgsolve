@@ -21,8 +21,11 @@ a sorted vector of unique times
 Get the times at which the model will be evaluated.
 }
 \details{
-Simulation times include the sequence of times created from \code{start}, \code{end}, and \code{delta} and the vector of times
-found in \code{add}.  Making \code{end} negative will omit any \code{start} / \code{end} / \code{delta} sequence.  Negative values are discarded from the result.
+Simulation times include the sequence of times created from 
+\code{start}, \code{end}, and \code{delta} and the vector of times
+found in \code{add}.  Making \code{end} negative will omit any 
+\code{start} / \code{end} / \code{delta} sequence.  Negative values 
+are discarded from the result.
 }
 \examples{
 
