@@ -52,7 +52,7 @@
   list(Old = from, New = to)
 }
 
-.ren.create <- function(x,y = NULL,sanitize = "sanitize_capture") {
+.ren.create <- function(x, y = NULL, sanitize = "sanitize_capture") {
   x <- .ren.parse(x,y) 
   self <- list(identical = FALSE, old = character(0), new = character(0))
   self$old <- x$Old

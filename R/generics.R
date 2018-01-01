@@ -51,8 +51,11 @@ setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 ##' @param ... passed on
 ##' @return a sorted vector of unique times
 ##' @details
-##' Simulation times include the sequence of times created from \code{start}, \code{end}, and \code{delta} and the vector of times
-##' found in \code{add}.  Making \code{end} negative will omit any \code{start} / \code{end} / \code{delta} sequence.  Negative values are discarded from the result.
+##' Simulation times include the sequence of times created from 
+##' \code{start}, \code{end}, and \code{delta} and the vector of times
+##' found in \code{add}.  Making \code{end} negative will omit any 
+##' \code{start} / \code{end} / \code{delta} sequence.  Negative values 
+##' are discarded from the result.
 ##' @export
 ##' @examples
 ##'
@@ -110,12 +113,14 @@ setGeneric("events", function(x,...) standardGeneric("events"))
 
 ##' @details
 ##' \itemize{
-##' \item Required input for creating events objects include \code{time} and \code{cmt}
+##' \item Required input for creating events objects include 
+##' \code{time} and \code{cmt}
 ##' \item If not supplied, \code{evid} is assumed to be 1.
 ##' \item If not supplied, \code{cmt}  is assumed to be 1.
 ##' \item If not supplied, \code{time} is assumed to be 0.
 ##' \item \code{ID} may be specified as a vector.
-##' \item If replicate is \code{TRUE} (default), thenthe events regimen is replicated for each \code{ID}; otherwise, the number of
+##' \item If replicate is \code{TRUE} (default), thenthe events 
+##' regimen is replicated for each \code{ID}; otherwise, the number of
 ##' event rows must match the number of \code{ID}s entered
 ##' }
 ##' @return events object
