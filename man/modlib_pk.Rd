@@ -2,7 +2,7 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_pk}
 \alias{modlib_pk}
-\title{modlib: Pharmacokinetic models.}
+\title{modlib: Pharmacokinetic models}
 \arguments{
 \item{...}{passed to update}
 }
@@ -10,7 +10,7 @@
 an object of class \code{packmod}
 }
 \description{
-modlib: Pharmacokinetic models.
+modlib: Pharmacokinetic models
 }
 \details{
 See \code{\link{modlib_details}} for more detailed descriptions of 
@@ -27,7 +27,8 @@ that of the two-compartment models.  All pk models also have parameters
 }
 \section{Model description}{
 
-All pk models have two extravascular dosing compartments and potential for linear and nonlinear clearance.
+All pk models have two extravascular dosing compartments and potential 
+for linear and nonlinear clearance.
 \itemize{
  \item{\code{pk1cmt}}: one compartment pk model using ODEs
  \item{\code{pk2cmt}}: two compartment pk  model using ODEs

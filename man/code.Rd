@@ -2,7 +2,7 @@
 % Please edit documentation in R/modlib.R
 \name{code}
 \alias{code}
-\title{Extract the code from a model.}
+\title{Extract the code from a model}
 \usage{
 code(x)
 }
@@ -13,5 +13,5 @@ code(x)
 a character vector of model code
 }
 \description{
-Extract the code from a model.
+Extract the code from a model
 }

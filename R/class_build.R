@@ -78,7 +78,9 @@ new_build <- function(file, model, project, soloc, code = NULL,
   }
   
   if(!file_exists(env$modfile)) {
-    stop("The model file ", basename(env$modfile), " does not exist.",call.=FALSE) 
+    stop("the model file ", 
+         basename(env$modfile), 
+         " does not exist.",call.=FALSE) 
   }
   
   env$md5 <- tools::md5sum(env$modfile)

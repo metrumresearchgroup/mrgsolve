@@ -2,15 +2,16 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_viral}
 \alias{modlib_viral}
-\title{modlib: HCV viral dynamics models.}
+\title{modlib: HCV viral dynamics models}
 \description{
-modlib: HCV viral dynamics models.
+modlib: HCV viral dynamics models
 }
 \section{Models}{
 
 \itemize{
  \item{\code{viral1}}: viral dynamics model with single HCV species
- \item{\code{viral2}}: viral dynamics model with wild-type and mutant HCV species
+ \item{\code{viral2}}: viral dynamics model with wild-type and mutant 
+ HCV species
 }
 }
 

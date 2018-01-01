@@ -22,7 +22,8 @@
 ##' @export
 ##' 
 ##' @details
-##' See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
+##' See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
+##' \code{\link{modlib_pkpd}}, 
 ##' \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
 ##' 
 ##' Call \code{modlib(list=TRUE)} to list available models.  Once the model 
@@ -68,7 +69,7 @@ modlib_list <- function() {
   return(invisible(NULL))
 }
 
-##' modlib: PK/PD Model parameters, compartments, and output variables.
+##' modlib: PK/PD Model parameters, compartments, and output variables
 ##' 
 ##' @name modlib_details
 ##'
@@ -89,29 +90,38 @@ modlib_list <- function() {
 ##'
 ##' @section PK parameters:
 ##' \itemize{
-##' \item{\code{KA1}, \code{KA2}}:  first order absorption rate constants from first and second extravascular compartment (1/time)
+##' \item{\code{KA1}, \code{KA2}}:  first order absorption rate constants 
+##' from first and second extravascular compartment (1/time)
 ##' \item{\code{CL}}: clearance (volume/time)
 ##' \item{\code{VC}}: volume of distribution, central compartment (volume)
-##' \item{\code{VP}}:  volume of distribution, peripheral compartment (volume)
-##' \item{\code{VP2}}: volume of distribution, peripheral compartment 2 (volume)
+##' \item{\code{VP}}:  volume of distribution, peripheral compartment 
+##' (volume)
+##' \item{\code{VP2}}: volume of distribution, peripheral compartment 2 
+##' (volume)
 ##' \item{\code{Q}}: intercompartmental clearance (volume/time)
 ##' \item{\code{Q2}}: intercompartmental clearance 2 (volume/time)
 ##' \item{\code{VMAX}}:  maximum rate, nonlinear process (mass/time)
 ##' \item{\code{KM}}: Michaelis constant (mass/volume)
 ##' \item{\code{K10}}: elimination rate constant (1/time); \code{CL/VC}
-##' \item{\code{K12}}: rate constant for transfer to peripheral compartment from central (1/time); \code{Q/VC}
-##' \item{\code{K21}}: rate constant for transfer to central compartment from peripheral (1/time); \code{Q/VP}
+##' \item{\code{K12}}: rate constant for transfer to peripheral compartment 
+##' from central (1/time); \code{Q/VC}
+##' \item{\code{K21}}: rate constant for transfer to central compartment from
+##'  peripheral (1/time); \code{Q/VP}
 ##' }
 ##'
 ##' @section PD parameters:
 ##' \itemize{
 ##' \item{\code{E0}}: baseline effect (emax model)
 ##' \item{\code{EMAX}, \code{IMAX}}: maximum effect (response)
-##' \item{\code{EC50}, \code{IC50}}: concentration producing 50 percent of effect (mass/volume)
-##' \item{\code{KIN}}: zero-order response production rate (irm models) (response/time)
-##' \item{\code{KOUT}}: first-order response elimination rate (irm models) (1/time)
+##' \item{\code{EC50}, \code{IC50}}: concentration producing 50 percent of 
+##' effect (mass/volume)
+##' \item{\code{KIN}}: zero-order response production rate (irm models) 
+##' (response/time)
+##' \item{\code{KOUT}}: first-order response elimination rate (irm models)
+##'  (1/time)
 ##' \item{\code{n}}: sigmoidicity factor
-##' \item{\code{KEO}}: rate constant for transfer to effect compartment (1/time)
+##' \item{\code{KEO}}: rate constant for transfer to effect compartment 
+##' (1/time)
 ##' }
 NULL
 
@@ -124,36 +134,14 @@ object_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
 
-mintern <- function(model,tryload=TRUE,...) {
-  
-  if(!is.element(model,modlib_models)) {
-    stop(model, " not found in the library. Use modlib(list=TRUE) to list models.",
-         call.=FALSE)
-  }
-  
-  message("Compiling model: ", model)
-  
-  code <- scan(filename(object_dir(), model, ".cpp"),
-               what=character(0),sep="\n",quiet=TRUE)
-  if(length(code)>1) code <- paste(code,collapse="\n")
-  newmodel <- paste0("mintern_", model)
-  x <- mrgsolve::mcode(newmodel,code,quiet=TRUE)
-  x <- update(x,...)
-  a <- try(mrgsolve::touch_funs(x),silent=TRUE)
-  if(inherits(a,"try-error")) {
-    stop("There was an error in this model.",call.=FALSE)
-  }
-  return(x)
-}
-
-
-##' modlib: Pharmacokinetic models.
+##' modlib: Pharmacokinetic models
 ##' 
 ##' @name modlib_pk
 ##' @param ... passed to update
 ##'
 ##' @section Model description:
-##' All pk models have two extravascular dosing compartments and potential for linear and nonlinear clearance.
+##' All pk models have two extravascular dosing compartments and potential 
+##' for linear and nonlinear clearance.
 ##' \itemize{
 ##'  \item{\code{pk1cmt}}: one compartment pk model using ODEs
 ##'  \item{\code{pk2cmt}}: two compartment pk  model using ODEs
@@ -182,23 +170,7 @@ mintern <- function(model,tryload=TRUE,...) {
 NULL
 
 
-
-pk1cmt <- function(...) {mintern("pk1cmt",...)}
-pk2cmt <- function(...) return(mintern("pk2cmt",...))
-pk3cmt <- function(...) return(mintern("pk3cmt", ...))
-pk1cmt_pop <- function(...) return(mintern("pk1cmt_pop", ...))
-irm1 <- function(...) return(mintern("irm1",...))
-irm2 <- function(...) return(mintern("irm2",...))
-irm3 <- function(...) return(mintern("irm3",...))
-irm4 <- function(...) return(mintern("irm4",...))
-emax <- function(...) return(mintern("emax",...))
-tmdd <- function(...) return(mintern("tmdd",...))
-viral1 <- function(...) return(mintern("viral1",...))
-viral2 <- function(...) return(mintern("viral2",...))
-pd_effect <- function(...) mintern("effect",...) 
-
-
-##' modlib: Pharmacokinetic / pharmacodynamic models. 
+##' modlib: Pharmacokinetic / pharmacodynamic models
 ##' 
 ##' @name modlib_pkpd
 ##' @details
@@ -232,8 +204,7 @@ pd_effect <- function(...) mintern("effect",...)
 NULL
 
 
-
-##' modlib: Target mediated disposition model.
+##' modlib: Target mediated disposition model
 ##' @name modlib_tmdd
 ##' @param ... passed to update
 ##' 
@@ -271,14 +242,15 @@ NULL
 
 
 
-##' modlib: HCV viral dynamics models.
+##' modlib: HCV viral dynamics models
 ##' 
 ##' @name modlib_viral
 ##' 
 ##' @section Models:
 ##' \itemize{
 ##'  \item{\code{viral1}}: viral dynamics model with single HCV species
-##'  \item{\code{viral2}}: viral dynamics model with wild-type and mutant HCV species
+##'  \item{\code{viral2}}: viral dynamics model with wild-type and mutant 
+##'  HCV species
 ##' }
 ##'
 ##' @section Parameters:
@@ -312,7 +284,7 @@ NULL
 NULL
 
 
-##' Extract the code from a model.
+##' Extract the code from a model
 ##' 
 ##' @param x an mrgsolve model object
 ##' @return a character vector of model code

@@ -165,14 +165,6 @@ mread <- function(model, project = getwd(), code = NULL,
   
   model <- build$model
   
-  if(!file_exists(build$modfile)) {
-    if(build$project==modlib()) {
-      return(mintern(model)) 
-    } else {
-      stop(paste0("Could not find model file ", build$modfile), call.=FALSE)
-    }
-  }
-  
   ## Read the model spec and parse:
   spec  <- modelparse(readLines(build$modfile,warn=FALSE))
   

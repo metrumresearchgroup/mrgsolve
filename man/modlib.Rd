@@ -13,7 +13,8 @@ modlib(list = FALSE)
 Internal model library.
 }
 \details{
-See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
+See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
+\code{\link{modlib_pkpd}}, 
 \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
 
 Call \code{modlib(list=TRUE)} to list available models.  Once the model 

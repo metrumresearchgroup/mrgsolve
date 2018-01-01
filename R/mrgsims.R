@@ -88,7 +88,9 @@ variables <- function(x) {
 ##' @rdname mrgsims
 ##' @export
 setMethod("$", "mrgsims", function(x,name) {
-  if(!is.element(name, colnames(x@data))) stop("Couldn't find column ", name, " in simulated data")
+  if(!is.element(name, colnames(x@data))) {
+    stop("Couldn't find column ", name, " in simulated data")
+  }
   return(x@data[,name])
 })
 
@@ -118,7 +120,7 @@ setMethod("names", "mrgsims", function(x) {
   return(colnames(x@data))
 })
 
-##' Methods for handling output with dplyr verbs.
+##' Methods for handling output with dplyr verbs
 ##' 
 ##' @rdname mrgsims_dplyr
 ##' @name mrgsims_dplyr
@@ -141,48 +143,48 @@ as.tbl.mrgsims <- function(x,...) {
 ##' @rdname mrgsims_dplyr
 ##' @export
 filter_.mrgsims <- function(.data,...,.dots) {
-    filter_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+  filter_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 group_by_.mrgsims <- function(.data,...,.dots,add=FALSE) {
-    group_by_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+  group_by_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 distinct_.mrgsims <- function(.data,...,.dots,.keep_all=FALSE) {
-    distinct_(as_data_frame.mrgsims(.data),...,.dots=.dots,.keep_all=.keep_all)
+  distinct_(as_data_frame.mrgsims(.data),...,.dots=.dots,.keep_all=.keep_all)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 mutate_.mrgsims <- function(.data,...,.dots) {
-    mutate_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+  mutate_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 ##' @rdname mrgsims_dplyr
 ##' @export
 summarise.each <- function(.data,funs,...) {
-    dplyr::summarise_each(as_data_frame.mrgsims(.data),funs,...)
+  dplyr::summarise_each(as_data_frame.mrgsims(.data),funs,...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 summarise_.mrgsims <- function(.data,...,.dots) {
-    summarise_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+  summarise_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 do_.mrgsims <- function(.data,...,.dots) {
-    do_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+  do_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 select_.mrgsims <- function(.data,...,.dots) {
-    select_(as_data_frame.mrgsims(.data),...,.dots=.dots)
+  select_(as_data_frame.mrgsims(.data),...,.dots=.dots)
 }
 
 ##' @rdname mrgsims_dplyr
@@ -239,8 +241,7 @@ setMethod("show", "mrgsims", function(object) {
 })
 
 
-
-##' Generate a quick plot of simulated data.
+##' Generate a quick plot of simulated data
 ##'
 ##' @name plot_mrgsims
 ##' 
@@ -289,10 +290,12 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   
   if(length(ynames)>limit) {
     ynames <- ynames[1:limit]
-    if(missing(limit)) warning(paste0("NOTE: show first ",
-                                      limit,
-                                      " variables.  Check limit argument."
-    ), call.=FALSE)
+    if(missing(limit)) {
+      warning(paste0("NOTE: show first ",
+                     limit,
+                     " variables.  Check limit argument."
+      ), call.=FALSE)
+    }
   }
   
   tname <- timename(x@data)
@@ -317,7 +320,9 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   data <- as.data.frame(subset(x,...))
   
   if(!has_name("time", data)) {
-    if(!has_name("TIME", data)) stop("Couldn't find time or TIME column.",call.=FALSE)
+    if(!has_name("TIME", data)) {
+      stop("Couldn't find time or TIME column.",call.=FALSE)
+    }
     # Must mutate here; not rename
     data <- dplyr::mutate(data,time=TIME)
   }
@@ -340,8 +345,4 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   )
   ans
 })
-
-##' @rdname events
-##' @export
-setMethod("events", "mrgsims", function(x,...) events(mod(x)))
 

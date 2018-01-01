@@ -2,9 +2,9 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_pkpd}
 \alias{modlib_pkpd}
-\title{modlib: Pharmacokinetic / pharmacodynamic models.}
+\title{modlib: Pharmacokinetic / pharmacodynamic models}
 \description{
-modlib: Pharmacokinetic / pharmacodynamic models.
+modlib: Pharmacokinetic / pharmacodynamic models
 }
 \details{
 See \code{\link{modlib_details}} for more detailed descriptions of 
