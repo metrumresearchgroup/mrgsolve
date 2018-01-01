@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Functions for chaining commands together.
+##' Functions for chaining commands together
 ##'
 ##' Use these functions with chaining commands togehter with the %>%
 ##' operator.
@@ -27,8 +27,11 @@
 ##' Other functions that may be used in the chain of commands include: 
 ##' \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
 ##' \code{\link{ev}}.
-##' or any other function that will take the output of the preceeding command as it's first argument.
-##'
+##' or any other function that will take the output of the preceeding command 
+##' as it's first argument.
+##' 
+##' @seealso \code{\link{data_set}}, \code{\link{idata_set}}
+##' 
 ##' @examples
 ##'
 ##' mod <- mrgsolve:::house()
@@ -41,17 +44,15 @@
 ##' out <- mod %>% Req(CP,RESP) %>% mrgsim()
 NULL
 
-# SEE ALSO: data_set and idata_set
-
-##' Request simulated output. 
+##' Request simulated output
 ##' 
-##' Use this function to select, by name, either compartments or derived variables 
-##' that have been captured (see \code{\link{CAPTURE}}).
+##' Use this function to select, by name, either compartments or derived 
+##' variables that have been captured (see \code{\link{CAPTURE}}).
 ##'
 ##' @param x model object
 ##' @param ... unquoted names of compartments or tabled items
 ##' 
-##' 
+##' @details
 ##' There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
 ##' be set to accomplish the same thing as a call to \code{Req} in 
 ##' the pipeline.
@@ -90,7 +91,7 @@ setMethod("req", "mrgmod", function(x,...) {
   x
 })
 
-##' Select items to carry into simulated output. 
+##' Select items to carry into simulated output
 ##' 
 ##' When items named in this function are found in the input data set (either 
 ##' \code{\link{data_set}} or \code{\link{idata_set}}), they are copied
@@ -106,7 +107,9 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' be set to accomplish the same thing as a call to \code{carry_out} in 
 ##' the pipeline.
 ##' 
-##' \code{carry.out} and \code{carry_out}.  Using the underscore version is now preferred.
+##' \code{carry.out} and \code{carry_out}.  Using the underscore version is 
+##' now preferred.
+##' 
 ##' @export
 carry_out <- function(x,...) {
   x@args[["carry.out"]] <- as_character_args(match.call()[-1])
@@ -120,7 +123,7 @@ carry.out <- function(x,...) {
   x
 }
 
-##' Rescale time in the simulated output.
+##' Rescale time in the simulated output
 ##'
 ##' @param x model object
 ##' @param value value by which time will be scaled
@@ -146,7 +149,7 @@ tscale <- function(x,value=1,...) {
 
 
 
-##' Collect only observations in the simulated output.
+##' Collect only observations in the simulated output
 ##'
 ##' @param x model object
 ##' @param value the value for \code{obsonly}
@@ -162,7 +165,7 @@ obsonly <- function(x,value=TRUE,...) {
   x@args[["obsonly"]] <- value
   x
 }
-##' Augment observations in the simulated output.
+##' Augment observations in the simulated output
 ##'
 ##' @param x model object
 ##' @param value the value for \code{obsaug}
@@ -177,22 +180,24 @@ obsaug <- function(x,value=TRUE,...) {
 }
 
 
-##' Set observation designs for the simulation.
+##' Set observation designs for the simulation
 ##'
 ##' This function also allows you to assign different designs to different
 ##' groups or individuals in a population.
 ##'
 ##' @param x model object
-##' @param descol the \code{idata} column name (\code{character}) for design assignment
-##' @param deslist a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...
+##' @param descol the \code{idata} column name (\code{character}) for design 
+##' assignment
+##' @param deslist a list of \code{tgrid} or \code{tgrids} objects or 
+##' \code{numeric} vector to be used in place of ...
 ##' @param ... not used
 ##' 
 ##' @details
-##' This setup requires the use of an \code{idata_set}, with individual-level data
-##' passed in one \code{ID} per row.  For each \code{ID}, specify a grouping variable
-##' in \code{idata} (\code{descol}).  For each unique value of the grouping variable, 
-##' make one \code{\link{tgrid}} object and pass them in order as \code{...} or 
-##' form them into a list and pass as \code{deslist}.
+##' This setup requires the use of an \code{idata_set}, with individual-level 
+##' data passed in one \code{ID} per row.  For each \code{ID}, specify a 
+##' grouping variable in \code{idata} (\code{descol}).  For each unique value 
+##' of the grouping variable, make one \code{\link{tgrid}} object and pass them 
+##' in order as \code{...} or form them into a list and pass as \code{deslist}.
 ##' 
 ##' You must assign the \code{idata_set} before assigning the designs in the 
 ##' command chain (see the example below).
@@ -236,20 +241,25 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
   
   stopifnot(length(descol) <= 1)
   
-  deslist <- deslist[unlist(lapply(deslist,inherits,c("tgrid", "tgrids", "numeric")),use.names=FALSE)]
+  deslist <- deslist[unlist(lapply(
+    deslist,inherits,c("tgrid", "tgrids", "numeric")),use.names=FALSE
+  )]
   
-  if(length(deslist) == 0) stop("No valid tgrid objects found.")
+  if(length(deslist) == 0) {
+    stop("No valid tgrid objects found.")
+  }
   
   if(length(descol) == 1) {
     if(!exists("idata", x@args)) {
-      stop("Please set idata before specifying designs.")
+      stop("please set idata before specifying designs.")
     }
     if(!exists(descol, x@args$idata)) {
-      stop(paste0("Column ", descol, " does not exist in idata."))
+      stop(paste0("column ", descol, " does not exist in idata."))
     }
   } else {
     if(length(deslist) > 1) {
-      warning("Multiple designs specified but no idata key; only the first design will be used.", call.=FALSE)
+      warning("Multiple designs specified but no idata key;
+              only the first design will be used.", call.=FALSE)
     }
   }
   
@@ -257,6 +267,5 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
   x@args[["deslist"]] <- deslist
   
   x
-
 }
 

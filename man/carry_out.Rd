@@ -3,7 +3,7 @@
 \name{carry_out}
 \alias{carry_out}
 \alias{carry.out}
-\title{Select items to carry into simulated output.}
+\title{Select items to carry into simulated output}
 \usage{
 carry_out(x, ...)
 
@@ -26,5 +26,6 @@ There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can
 be set to accomplish the same thing as a call to \code{carry_out} in 
 the pipeline.
 
-\code{carry.out} and \code{carry_out}.  Using the underscore version is now preferred.
+\code{carry.out} and \code{carry_out}.  Using the underscore version is 
+now preferred.
 }

@@ -5,13 +5,22 @@
 \alias{as.list,mrgmod-method}
 \title{Coerce a model object to list.}
 \usage{
-\S4method{as.list}{mrgmod}(x, ...)
+\S4method{as.list}{mrgmod}(x, deep = FALSE, ...)
 }
 \arguments{
 \item{x}{mrgmod object}
 
-\item{...}{passed to other methods}
+\item{deep}{if \code{TRUE}, extra information is returned
+(see details).}
+
+\item{...}{not used}
 }
 \description{
 Coerce a model object to list.
+}
+\details{
+If \code{deep} is \code{TRUE}, then the values for
+\code{trans}, \code{advan}, and \code{mindt} are
+returned as well as a summary of internal model 
+functions (with a call to \code{mrgsolve:::funset}).
 }

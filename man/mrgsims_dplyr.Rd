@@ -13,7 +13,7 @@
 \alias{select_.mrgsims}
 \alias{slice_.mrgsims}
 \alias{as_data_frame.mrgsims}
-\title{Methods for handling output with dplyr verbs.}
+\title{Methods for handling output with dplyr verbs}
 \usage{
 \method{as.tbl}{mrgsims}(x, ...)
 
@@ -55,5 +55,5 @@ summarise.each(.data, funs, ...)
 \item{.data_}{mrgsims object}
 }
 \description{
-Methods for handling output with dplyr verbs.
+Methods for handling output with dplyr verbs
 }

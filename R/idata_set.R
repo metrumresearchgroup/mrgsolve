@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -17,11 +17,12 @@
 
 
 
-##' Select and modify a idata set for simulation.
+##' Select and modify a idata set for simulation
 ##'
 ##' @param x model object
 ##' @param data a data set coercable to data.frame
-##' @param object character name of an object existing in \code{$ENV} to use for the data set
+##' @param object character name of an object existing in \code{$ENV} 
+##' to use for the data set
 ##' @param subset passed to \code{dplyr::filter_}
 ##' @param select passed to \code{dplyr::select_}
 ##' @param need passed to \code{\link{inventory}}
@@ -77,16 +78,16 @@ setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
 setMethod("idata_set", c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,need=NULL,...) {
             
   if(is.character(need)) suppressMessages(inventory(x,data,need))
-  if(exists("idata", x@args)) stop("idata has already been set.")
+  #if(exists("idata", x@args)) stop("idata has already been set")
   if(!missing(subset)) data <- filter_(data,.dots=lazy(subset))
   if(!missing(select)) data <- select_(data,.dots=lazy(select))
   if(nrow(data)==0) {
-    stop("Zero rows in idata after filtering.", call.=FALSE)
+    stop("zero rows in idata after filtering.", call.=FALSE)
   }
   if(is.character(object)) {
     data <- data_hooks(data,object,x@envir,param(x),...) 
   }
-  x@args <- merge(x@args,list(idata=as.data.frame(data)), open=TRUE)
+  x@args[["idata"]] <- as.data.frame(data)
   return(x)
   
 })

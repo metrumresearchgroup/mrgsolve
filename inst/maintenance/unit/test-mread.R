@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -21,10 +21,10 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("Testing new model specification file")
+context("test-mread")
 
 code <- '
-$PARAM CL=1, VC=20, KA=1.2
+$PARAM CL=1, VC=20
 VMAX=2, KM=3
 
 $INIT GUT=100, CENT=5
@@ -38,8 +38,11 @@ double KE = 0;
 
 $MAIN
 KE = CL/VC;
+double KA = 1.2;
 
 $ODE
+double set_in_ode = 1;
+
 dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT - KE*CENT;
 
@@ -48,7 +51,7 @@ double FLAG = 2;
 double ETA1 = ETA(1);
 double EPS1 = EPS(1);
 
-$CAPTURE CP FLAG ETA1 EPS1
+$CAPTURE CP FLAG ETA1 EPS1 set_in_ode
 
 $OMEGA @name A
 1
@@ -72,8 +75,7 @@ mod <- suppressWarnings(mcode("test2",code, warn=FALSE))
 test_that("Parameters are parsed properly with mread", {
   expect_equal(param(mod)$CL,1)
   expect_equal(param(mod)$VC,20)
-  expect_equal(param(mod)$KA,1.2)
-  expect_equal(mrgsolve:::pars(mod), c("CL", "VC", "KA", "VMAX", "KM"))
+  expect_equal(mrgsolve:::Pars(mod), c("CL", "VC","VMAX", "KM"))
 })
 
 test_that("Compartments are parsed properly with mread", {
@@ -115,44 +117,10 @@ test_that("Sigma matrices are properly parsed", {
 })
 
 
-set.seed(8282)
-
 test_that("EPS values have proper variance", {
-  out <- mrgsim(mod,end=100000, delta=1)
+  set.seed(8282)
+  out <- mrgsim(mod,end=100000, delta=1, init = list(GUT = 0, CENT = 0))
   expect_equal(round(var(out$EPS1),2),0.55)
-})
-
-
-code <- '
-$PARAM CL=1, VC=20
-$INIT  CENT=0
-
-$GLOBAL 
-double kyle=5;
-
-
-$MAIN
-double ke=CL/20;
-double ke2 = CL/VC;
-
-double a=5;
-a = a/1;
-
-bool TRUTH = true;
-
-bool LIE = false;
-LIE = false;
-
-$ODE
-double set_in_ode =1;
-ke2=556.2;
-
-$CAPTURE ke ke2 TRUTH set_in_ode
-'
-
-test_that("User-declared C++ variables are available globally", {
-  obj <- try(suppressWarnings(mcode("test-mread-3",code, warn=FALSE)))
-  expect_is(obj, "mrgmod")
 })
 
 
@@ -160,14 +128,13 @@ test_that("Error when code is passed as project", {
   expect_error(suppressWarnings(mread("hey",code)))
 })
 
-
 test_that("Model name with spaces is error", {
     expect_error(mcode("ab cd", ""))
 })
 
 test_that("Error with duplicate blocks", {
-  expect_error(mcode("a", "$ODE \n $ODE"))
-  expect_error(mcode("a", "$MAIN \n $MAIN"))
-  expect_error(mcode("a", "$SET \n $SET"))
+  expect_error(mcode("a", "$ODE \n $ODE",compile = FALSE))
+  expect_error(mcode("a", "$MAIN \n $MAIN",compile = FALSE))
+  expect_error(mcode("a", "$SET \n $SET",compile = FALSE))
 })
 

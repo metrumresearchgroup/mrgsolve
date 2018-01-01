@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{chain}
 \alias{chain}
-\title{Functions for chaining commands together.}
+\title{Functions for chaining commands together}
 \description{
 Use these functions with chaining commands togehter with the %>%
 operator.
@@ -11,7 +11,8 @@ operator.
 Other functions that may be used in the chain of commands include: 
 \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
 \code{\link{ev}}.
-or any other function that will take the output of the preceeding command as it's first argument.
+or any other function that will take the output of the preceeding command 
+as it's first argument.
 }
 \examples{
 
@@ -23,4 +24,7 @@ data(exTheoph)
 out <- mod \%>\% data_set(exTheoph) \%>\% mrgsim()
 out <- mod \%>\% carry_out(evid) \%>\% ev(amt=100, cmt=1) \%>\% mrgsim()
 out <- mod \%>\% Req(CP,RESP) \%>\% mrgsim()
+}
+\seealso{
+\code{\link{data_set}}, \code{\link{idata_set}}
 }

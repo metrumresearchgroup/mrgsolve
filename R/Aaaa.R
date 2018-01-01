@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+
 ##' @importFrom utils capture.output example str type.convert packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl select
 ##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange data_frame 
 ##' @importFrom dplyr intersect filter select rename slice distinct  do_ everything
 ##' @importFrom dplyr distinct_ first data_frame arrange select_vars_ select_vars
-##' @importFrom dplyr if_else mutate_at summarise_each
+##' @importFrom dplyr if_else mutate_at summarise_each is.tbl
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
@@ -29,6 +30,8 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame
+##' @importFrom assertthat assert_that
+##' @import methods
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -78,10 +81,12 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "double", "int", "bool", "capture")
 
 globalVariables(c("test_package","time", "ID","block", "descr",
-                  "everything", "TIME", "address","x",
+                  "everything", "TIME", "address","x", 
+                  "self",
                   "func", "loaded", "name", "not_found"))
 
 
+VERSION <- packageDescription("mrgsolve")$Version
 
 #' Forward pipe.
 #'

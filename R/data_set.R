@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -101,8 +101,8 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,sele
   if(is.character(object)) {
     data <- data_hooks(data,object,x@envir,param(x),...) 
   }
-  data <- valid_data_set(m=x,x=as.data.frame(data),...)
-  x@args <- merge(x@args,list(data=data), open=TRUE)
+  #data <- valid_data_set(m=x,x=as.data.frame(data),...)
+  x@args[["data"]] <- data
   return(x)
 })
 
@@ -114,20 +114,31 @@ setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
 
 ##' @export
 ##' @rdname data_set
+setMethod("data_set", c("mrgmod", "ev"), function(x,data,...) {
+    return(data_set(x,As_data_set(data),...))
+})
+
+##' @export
+##' @rdname data_set
 setMethod("data_set", c("mrgmod", "missing"), function(x,object,...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x,as.data.frame(object),...))
 })
 
 
-##' Convert select upper case column names to lower case to conform to mrgsolve data expectations.
+##' Convert select upper case column names to lower case to conform 
+##' to mrgsolve data expectations
 ##'
 ##' @param data an nmtran-like data frame
-##' @return A data.frame with renamed columns.
+##' 
+##' @return A data.frame with renamed columns
 ##'
 ##' @details
-##' Columns that will be renamed with lower case versions: \code{AMT}, \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, \code{TIME}.  If a lower case version
-##' of these names exist in the data set, the column will not be renamed.
+##' Columns that will be renamed with lower case versions: \code{AMT}, 
+##' \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, 
+##' \code{TIME}.  If a lower case version of these names exist in the data 
+##' set, the column will not be renamed.
+##' 
 ##' @export
 lctran <- function(data) {
   n <- names(data)
@@ -141,7 +152,7 @@ lctran <- function(data) {
 
 data_hooks <- function(data,object,envir,param=list(),...) {
   param <- as.list(param)
-  envir <- merge(as.list(param),as.list(envir),open=TRUE)
+  envir <- combine_list(as.list(param),as.list(envir))
   objects <- cvec_cs(object)
   args <- list(...)
   if(missing(data)) {

@@ -1,6 +1,6 @@
 Package: mrgsolve 
 Type: Package
-Version: 0.8.10.9002
+Version: 0.8.10.9003
 Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
@@ -34,7 +34,8 @@ Imports:
     magrittr (>= 1.5),
     lazyeval (>= 0.1.10),
     RcppArmadillo (>= 0.7.900.2.0),
-    tibble (>= 1.2)
+    tibble (>= 1.2),
+    assertthat
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 
@@ -60,24 +61,19 @@ Collate:
     'class_mrgmod.R'
     'class_mrgsims.R'
     'Aaaa.R'
-    'altname.R'
     'annot.R'
     'chain.R'
     'class_build.R'
     'compile.R'
-    'complog.R'
-    'covset.R'
     'data_set.R'
     'datasets.R'
     'env.R'
     'events.R'
-    'example.R'
     'funset.R'
     'idata_set.R'
     'init.R'
     'inven.R'
     'knobs.R'
-    'library.R'
     'matlist.R'
     'matrix.R'
     'mcache.R'
@@ -92,7 +88,7 @@ Collate:
     'param.R'
     'print.R'
     'qsim.R'
+    'relabel.R'
     'render.R'
-    'simtime.R'
     'update.R'
 RoxygenNote: 6.0.1

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -41,7 +41,44 @@ test_that("columns that don't exist throw an error", {
 })
 
 
-context("Test utils")
+a <- list(a = 1, b = 2, c = 3)
+b <- list(b = 4, c = 5, d = 6)
+
+test_that("merge two lists, open", {
+  ans <- merge(a,b, open = TRUE)  
+  expect_equal(names(ans), c("a", "b", "c", "d"))
+  expect_equal(ans$b,4)
+  expect_equal(ans$d, 6)
+})
+
+test_that("merge two lists, closed", {
+  ans <- merge(a,b, open = FALSE)  
+  expect_equal(names(ans), c("a", "b", "c"))
+  expect_equal(ans$b,4)
+  expect_equal(ans$c, 5)
+})
+
+test_that("combine_list", {
+    ans <- merge(a,b, open = TRUE)
+    ans_combined <- mrgsolve:::combine_list(a,b)
+    expect_identical(ans,ans_combined)
+    
+    ans <- merge(b,a, open = TRUE)
+    ans_combined <- mrgsolve:::combine_list(b,a)
+    expect_identical(ans,ans_combined)
+    
+    ans <- merge(a,list(), open = TRUE)
+    ans_combined <- mrgsolve:::combine_list(a,list())
+    expect_identical(ans,ans_combined)
+    
+    ans <- merge(list(),b, open = TRUE)
+    ans_combined <- mrgsolve:::combine_list(list(),b)
+    expect_identical(ans,ans_combined)
+})
+
+
+
+
 mod <- mrgsolve:::house()
 out <- mrgsim(mod)
 
@@ -83,26 +120,6 @@ test_that("If no simulation times can be rendered time=0 only is simulated", {
   out <- mrgsim(mod, end=-1, add=numeric(0))
   expect_equal(unique(out$time),0)
 })
-
-
-
-
-##' set_altname should return list with from/to
-##' coercing to character returns x$from
-##' renaming retains the order of the new character vector
-test_that("altname", {
-  x <- mrgsolve:::set_altname(c("a = Z", "c=J", "b   = B"))
-  expect_identical(x$from, c("Z", "J", "B"))
-  expect_identical(x$to, c("a", "c", "b"))
-  res <- mrgsolve:::altname.altname(x, c(LETTERS))
-  expect_identical(res[2],"b")
-  expect_identical(res[26],"a")
-  expect_identical(res[10],"c")
-  expect_identical(mrgsolve:::as.character.altname(x),x$from)
-  res2 <- mrgsolve:::altname.altname(x, rev(LETTERS))
-  expect_identical(res,rev(res2))
-})
-
 
 
 

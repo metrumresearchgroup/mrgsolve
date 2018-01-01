@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -36,27 +36,33 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
     return(new("ev", data=data.frame()[0,]))
   }
   
-  if(any(evid==0)) stop("evid cannot be 0 (observation)")
+  if(any(evid==0)) {
+    stop("evid cannot be 0 (observation)")
+  }
   
   data <-
     as.data.frame(list(...)) %>%
     dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
     as.data.frame
   
-  if(!has_name("amt",data)) stop("amt is required input.", call.=FALSE)
+  if(!has_name("amt",data)) {
+    stop("amt is required input.", call.=FALSE)
+  }
   
   if(!missing(until)) {
     if(!has_name("ii", data)) {
       stop("ii is required when until is specified", call.=FALSE)
     }
-    data["addl"] <- ceiling((data["time"] + until)/data["ii"])-1
+    data[["addl"]] <- ceiling((data[["time"]] + until)/data[["ii"]])-1
   }
   
   if(length(ID) > 0) {
     
     ID <- unique(ID)
     
-    if(!is.numeric(ID)) stop("ID must be numeric")
+    if(!is.numeric(ID)) {
+      stop("ID must be numeric", call.=FALSE)
+    }
     
     if(replicate) {
       if(any(!is.numeric(data))) {
@@ -64,7 +70,6 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- lapply(data, unique)
         data <- do.call("expand.grid", 
                         c(list(ID=ID,stringsAsFactors=FALSE),data))
-        #data <- data %>% dplyr::arrange(ID,time)
         data <- dplyr::arrange_(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
@@ -77,16 +82,18 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
       
     } else {
       if(length(ID)!=nrow(data)) { 
-        stop("Length of ID does not match number of events while replicate = FALSE", 
+        stop("Length of ID does not match number of events while replicate = FALSE",
              call.=FALSE)
       }
-      data["ID"] <- ID
+      data[["ID"]] <- ID
     }
     data <- data %>% shuffle(c("ID", "time", "cmt"))
   } else {
     data <- data %>% shuffle(c("time", "cmt"))
   }
+  
   if(realize_addl) data <- realize_addl(data)
+  
   return(new("ev", data=data))
 })
 
@@ -107,19 +114,30 @@ setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
 ##' @export
 setMethod("as.ev", "data.frame", function(x,nid=1,keep_id=TRUE,...) {
   
-  if(nrow(x)==0) return(new("ev",data=data.frame()))
+  if(nrow(x)==0) {
+    return(new("ev",data=data.frame()))
+  }
   
   if(!all(c("cmt", "time") %in% names(x))) {
     stop("cmt, time are required data items for events.",call.=FALSE)
   }
+  
+  if(!has_name("evid", x)) {
+    x[["evid"]] <- 1 
+  } else {
+    x <- x[x$evid != 0,] 
+  }
+  
   if(nid > 1) {
-    if(!exists("ID",x)) stop("please add ID column to data frame",call.=FALSE)
+    if(!has_ID(x)) {
+      stop("please add ID column to data frame",call.=FALSE)
+    }
     x <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
                           match("ID", colnames(x),0), 
                           data.matrix(x),
-                          c(1:nid)))
+                          seq_len(nid)))
   } else {
-    if(exists("ID",x) & !keep_id) x[,"ID"] <- NULL
+    if(has_ID(x) & !keep_id) x[,"ID"] <- NULL
   }
   
   new("ev",data=x)
@@ -132,22 +150,47 @@ setMethod("as.ev", "ev", function(x,...) {
   do.call("c", c(list(x),list(...)))
 })
 
+##' @method as.matrix ev
 ##' @rdname events
 ##' @export
-setMethod("as.matrix", "ev", function(x,...) {
-  as.matrix(as.data.frame(x,stringsAsFactors=FALSE),...)
-})
+as.matrix.ev <- function(x,...) {
+  as.matrix(x@data,...) 
+}
 
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
-##' 
+##' @param add_ID numeric ID of length 1 used to add \code{ID} column
+##' only if one doesn't already exist
+##' @method as.data.frame ev
 ##' @rdname events
 ##' @export
-setMethod("as.data.frame", "ev", function(x,row.names=NULL,optional=FALSE,...) {
-  as.data.frame(x@data,row.names,optional,stringsAsFactors=FALSE,...)
-})
+as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, 
+                             add_ID = NULL, ...) {
+  ans <- x@data
+  if(is.numeric(add_ID) & !has_ID(ans) & nrow(ans) > 0) {
+    ans[["ID"]] <- add_ID[1]
+  } 
+  return(ans)
+}
 
-##' Create a simulatinon data set from ev objects.
+as_data_frame_ev <- function(x) x@data
+
+As_data_set <- function(x) {
+  if(!is.data.frame(x)) {
+    if(is.ev(x)) {
+      x <- x@data
+    } else {
+      x <- as.data.frame(x) 
+    } 
+  }
+  if(nrow(x)==0) return(x)
+  if(!has_ID(x)) x[["ID"]] <- 1
+  return(x)
+}
+
+
+
+##' Create a simulatinon data set from ev objects
 ##'
 ##'
 ##' @param x ev objects
@@ -183,13 +226,13 @@ setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 
 ##' @rdname as_data_set
 setMethod("as_data_set","ev", function(x,...) {
-  do.call(collect_ev,c(list(x),list(...)))
+  other_ev <- list(...)
+  if(length(other_ev)==0) {
+    return(check_ev(x)) 
+  }
+  do.call(collect_ev,c(list(x),other_ev))
 })
 
-##' @rdname as_data_set
-setMethod("as_data_set","data.frame", function(x,...) {
-  as_data_set(as.ev(x),...)
-})
 
 ##' @param object passed to show
 ##' @rdname events
@@ -207,8 +250,10 @@ check_ev <- function(x) {
 }
 
 collect_ev <- function(...) {
-  tran <- c("ID","time", "cmt", "evid",  "amt", "ii", "addl", "rate", "ss")
-  x <- lapply(list(...),check_ev)
+  x <- list(...)
+  tran <- c("ID","time", "cmt", "evid",  
+            "amt", "ii", "addl", "rate", "ss")
+  x <- lapply(x,check_ev)
   y <- lapply(x, "[[","ID")
   mx <- sapply(y,function(xx) length(unique(xx)))
   mx <- cumsum(c(0,mx[-length(mx)]))
@@ -233,7 +278,7 @@ collect_ev <- function(...) {
 
 
 
-##' Operations for ev objects.
+##' Operations for ev objects
 ##'
 ##' @param e1 object on left hand side of operator (lhs)
 ##' @param e2 object on right hand side of operator (rhs)
@@ -361,7 +406,7 @@ add.ev <- function(e1,e2) {
   return(e1)
 }
 
-##' Replicate a list of events into a data set.
+##' Replicate a list of events into a data set
 ##' 
 ##' @param l list of event objects
 ##' @param idata an idata set (one ID per row)
@@ -463,7 +508,7 @@ ev_assign <- function(l,idata,evgroup,join=FALSE) {
 ##' @export
 assign_ev <- function(...) ev_assign(...)
 
-##' Schedule dosing events on days of the week.
+##' Schedule dosing events on days of the week
 ##' 
 ##' This function lets you schedule doses on specific 
 ##' days of the week, allowing you to create dosing 
@@ -520,7 +565,8 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   }
   if(!is.null(ev)) {
     if(missing(days)) {
-      stop("days argument must be supplied with ev argument.",call.=FALSE) 
+      stop("days argument must be supplied with ev argument.",
+           call.=FALSE) 
     }
     days <- cvec_cs(days)
     if(!all(days %in% names(start))) {
@@ -558,7 +604,7 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   }
 }
 
-##' Make addl doses explicit in an event object or data set.
+##' Make addl doses explicit in an event object or data set
 ##' 
 ##' @param x a \code{data_set} data frame or an \code{ev} object (see details)
 ##' @param ... not used
@@ -621,7 +667,7 @@ realize_addl.ev <- function(x,...) {
 ##' ev_rep(e1, 1:5)
 ##' 
 ##' @return
-##' A single event object or event object as 
+##' A single data.frame or event object as 
 ##' determined by the value of \code{as.ev}.
 ##' 
 ##' @export
@@ -631,24 +677,26 @@ ev_rep <- function(x, id = 1, n = NULL, wait = 0, as.ev = FALSE) {
   x <- as.data.frame(x)
   if(!is.null(n)) {
     if(n  > 1) {
-      x <- ev_repeat(x,n,wait)
+      x <- ev_repeat(x,n=n,wait=wait)
     }
   }
   if(as.ev) return(as.ev(x))
   return(x)
-}
+} 
 
 ##' Repeat a block of dosing events
 ##' 
 ##' @param x event object or dosing data frame
 ##' @param n number of times to repeat
 ##' @param wait time to wait between repeats
+##' @param as.ev if \code{TRUE}, an event object is
+##' returned; otherwise a data.frame is returned
 ##' 
 ##' @return 
-##' A dosing data.frame.
+##' See \code{as.ev} argument.
 ##' 
 ##' @export
-ev_repeat <- function(x,n,wait=0) {
+ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
   x <- as.data.frame(x)
   if(!exists("ii", x)) x["ii"] <- 0
   if(!exists("addl", x)) x["addl"] <- 0
@@ -665,7 +713,11 @@ ev_repeat <- function(x,n,wait=0) {
   if(exists("ID", out)) {
     out <- dplyr::arrange_(out,"ID", "time") 
   }
-  out
+  if(as.ev) {
+    return(as.ev(out))
+  } else {
+    return(out) 
+  }
 }
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -24,3 +24,20 @@ is.ev <- function(x) {
   inherits(x,"ev")  
 }
 
+##' @rdname events
+##' @export
+setMethod("names", "ev", function(x) {
+    names(x@data)
+})
+
+##' @param .data the event object
+##' @rdname events
+##' @export
+mutate.ev <- function(.data, ...) {
+  .data@data <- as.data.frame(mutate(.data@data, ...))
+  .data
+}
+
+##' @rdname events
+##' @export
+nrow.ev <- function(x) nrow(x@data)

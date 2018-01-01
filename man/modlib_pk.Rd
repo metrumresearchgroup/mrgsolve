@@ -2,7 +2,7 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_pk}
 \alias{modlib_pk}
-\title{modlib: Pharmacokinetic models.}
+\title{modlib: Pharmacokinetic models}
 \arguments{
 \item{...}{passed to update}
 }
@@ -10,23 +10,32 @@
 an object of class \code{packmod}
 }
 \description{
-modlib: Pharmacokinetic models.
+modlib: Pharmacokinetic models
 }
 \details{
-See \code{\link{modlib_details}} for more detailed descriptions of parameters and compartments.
+See \code{\link{modlib_details}} for more detailed descriptions of 
+parameters and compartments.
 
-The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{VC}, \code{KA1} and \code{KA2} and uses compartments \code{EV1},
-\code{EV2}, and \code{CENT}.  The \code{pk2cmt} model adds a \code{PERIPH} compartment and parameters \code{Q} and \code{VP} to that of the
-one-compartment model.  Likewise, the three-compartment model (\code{pk3cmt}) adds \code{PERIPH2} and parameters \code{Q2} and \code{VP2} to
-that of the two-compartment models.  All pk models also have parameters \code{VMAX} (defaulting to zero, no non-linear clearance) and \code{KM}.
+The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{VC}, 
+\code{KA1} and \code{KA2} and uses compartments \code{EV1},
+\code{EV2}, and \code{CENT}.  The \code{pk2cmt} model adds a \code{PERIPH} 
+compartment and parameters \code{Q} and \code{VP} to that of the
+one-compartment model.  Likewise, the three-compartment model (\code{pk3cmt}) 
+adds \code{PERIPH2} and parameters \code{Q2} and \code{VP2} to
+that of the two-compartment models.  All pk models also have parameters 
+\code{VMAX} (defaulting to zero, no non-linear clearance) and \code{KM}.
 }
 \section{Model description}{
 
-All pk models have two extravascular dosing compartments and potential for linear and nonlinear clearance.
+All pk models have two extravascular dosing compartments and potential 
+for linear and nonlinear clearance.
 \itemize{
- \item{\code{pk1cmt}}: one compartment pk model
- \item{\code{pk2cmt}}: two compartment pk  model
- \item{\code{pk3cmt}}: three compartment pk model
+ \item{\code{pk1cmt}}: one compartment pk model using ODEs
+ \item{\code{pk2cmt}}: two compartment pk  model using ODEs
+ \item{\code{pk3cmt}}: three compartment pk model using ODEs
+ \item{\code{pk1}}: one compartment pk model in closed-form
+ \item{\code{pk2}}: two compartment pk model in closed-form
+ \item{\code{popex}}: a simple population pk model
 }
 }
 

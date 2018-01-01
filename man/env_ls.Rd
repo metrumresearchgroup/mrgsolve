@@ -2,7 +2,7 @@
 % Please edit documentation in R/env.R
 \name{env_ls}
 \alias{env_ls}
-\title{List objects in the model environment.}
+\title{List objects in the model environment}
 \usage{
 env_ls(x, ...)
 }

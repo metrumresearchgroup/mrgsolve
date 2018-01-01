@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -61,7 +61,8 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
             partxt[[5]] <- "..."
         }
 
-        partxt[[length(partxt)]] <- c(partxt[[length(partxt)]], paste0("[", npars,"]"))
+        partxt[[length(partxt)]] <- c(partxt[[length(partxt)]], 
+                                      paste0("[", npars,"]"))
         partxt <- sapply(partxt, function(i) paste(i, collapse=" "))
 
         partxt <- paste0(parheader[1:length(partxt)],partxt)
@@ -78,23 +79,22 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
             inittxt <- inittxt[1:4]
             inittxt[[5]] <- "..."
         }
-        inittxt[[length(inittxt)]] <- c(inittxt[[length(inittxt)]], paste0("[",ninit,"]"))
+        inittxt[[length(inittxt)]] <- c(inittxt[[length(inittxt)]], 
+                                        paste0("[",ninit,"]"))
         inittxt <- sapply(inittxt,function(i) paste(i, collapse=" "))
         inittxt <- paste0(initheader[1:length(inittxt)],inittxt)
     } else {
         inittxt <- paste0(initheader[1],"<none>")
     }
-    solvertxt <- list(atol=x@atol, rtol=x@rtol,maxsteps=x@maxsteps, hmin=x@hmin, hmax=x@hmax)
+    solvertxt <- list(atol=x@atol, rtol=x@rtol,maxsteps=x@maxsteps, 
+                      hmin=x@hmin, hmax=x@hmax)
     solvertxt <- paste(names(solvertxt), unlist(solvertxt), sep=": ")
     solvertxt <- list(solvertxt[1:2], solvertxt[3:5])
     solvertxt <- sapply(solvertxt, function(i) paste(i, collapse= " "))
     solvertxt <- paste0(print.solver.header, solvertxt)
 
-    evtxt <- "<none>"
-    ev <- as.data.frame(events(x))
-    if(nrow(ev)>0) evtxt <- paste0("Yes (", nrow(ev), " rows)")
-
-    proj <- normalizePath(project(x), mustWork=FALSE,winslash=.Platform$file.sep)
+    proj <- normalizePath(project(x), mustWork=FALSE,
+                          winslash=.Platform$file.sep)
     proj <- cropstr(proj, 16,44)
 
 
@@ -105,7 +105,8 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 
     loaded <- ifelse(model_loaded(x),"", "<not loaded>")
 
-    header <- paste0("\n\n-------- mrgsolve model object (", .Platform$OS.type, ") --------\n")
+    header <- paste0("\n\n-------- mrgsolve model object (", 
+                     .Platform$OS.type, ") --------\n")
     cat(header)
     cat("  Project: ",proj,"\n", sep="")
     cat("  source:        ", basename(cfile(x)), "\n", sep="")
@@ -130,7 +131,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 
 }
 
-##' Print model details.
+##' Print model details
 ##'
 ##' @param object the model object
 ##' @export

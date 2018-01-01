@@ -135,7 +135,10 @@ void dataobject::locate_tran() {
   
   if(tcol > zeros) {
     tcol = std::find(bg,ed,"TIME") - bg;
-    if(tcol > zeros) throw Rcpp::exception("Could not find time or TIME column in the data set.",false);
+    if(tcol > zeros) {
+      throw Rcpp::exception("Could not find time or TIME column in the data set.",
+                            false);
+    }
     lc = false;
   }
   
@@ -225,7 +228,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
     for(j = this->start(h); j <= this->end(h); ++j) {
       
       if(Data(j,col[_COL_time_]) < lastime) {
-        throw Rcpp::exception("data set is not sorted by time or time is negative.",false);
+        throw Rcpp::exception("data set is not sorted by time or time is negative.",
+                              false);
       }
       
       lastime = Data(j,col[_COL_time_]);
@@ -236,7 +240,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if(Data(j,col[_COL_evid_])==0) {
         
         if((this_cmt < 0) || (this_cmt > neq)) {
-          throw Rcpp::exception("cmt number in observation record out of range.",false);
+          throw Rcpp::exception("cmt number in observation record out of range.",
+                                false);
         }
         
         rec_ptr obs = boost::make_shared<datarecord>(
@@ -253,7 +258,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       // Check that cmt is valid:
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
-        throw Rcpp::exception("cmt number in dosing record out of range.",false);
+        throw Rcpp::exception("cmt number in dosing record out of range.",
+                              false);
       }
       
       ++evcount;
@@ -321,7 +327,8 @@ void dataobject::check_idcol(dataobject& idat) {
   sort_unique(uidata);
   
   if(!std::includes(uidata.begin(),uidata.end(),uthis.begin(),uthis.end())) {
-    throw Rcpp::exception("ID found in the data set, but not in idata.",false);
+    throw Rcpp::exception("ID found in the data set, but not in idata.",
+                          false);
   }
 }
 

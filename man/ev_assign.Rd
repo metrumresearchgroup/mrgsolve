@@ -3,7 +3,7 @@
 \name{ev_assign}
 \alias{ev_assign}
 \alias{assign_ev}
-\title{Replicate a list of events into a data set.}
+\title{Replicate a list of events into a data set}
 \usage{
 ev_assign(l, idata, evgroup, join = FALSE)
 
@@ -24,7 +24,7 @@ before returning.}
 to \code{ev_assign}}
 }
 \description{
-Replicate a list of events into a data set.
+Replicate a list of events into a data set
 }
 \details{
 \code{ev_assign} connects events in a list passed in as the

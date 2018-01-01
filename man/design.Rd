@@ -2,16 +2,18 @@
 % Please edit documentation in R/chain.R
 \name{design}
 \alias{design}
-\title{Set observation designs for the simulation.}
+\title{Set observation designs for the simulation}
 \usage{
 design(x, deslist = list(), descol = character(0), ...)
 }
 \arguments{
 \item{x}{model object}
 
-\item{deslist}{a list of \code{tgrid} or \code{tgrids} objects or \code{numeric} vector to be used in place of ...}
+\item{deslist}{a list of \code{tgrid} or \code{tgrids} objects or 
+\code{numeric} vector to be used in place of ...}
 
-\item{descol}{the \code{idata} column name (\code{character}) for design assignment}
+\item{descol}{the \code{idata} column name (\code{character}) for design 
+assignment}
 
 \item{...}{not used}
 }
@@ -20,11 +22,11 @@ This function also allows you to assign different designs to different
 groups or individuals in a population.
 }
 \details{
-This setup requires the use of an \code{idata_set}, with individual-level data
-passed in one \code{ID} per row.  For each \code{ID}, specify a grouping variable
-in \code{idata} (\code{descol}).  For each unique value of the grouping variable, 
-make one \code{\link{tgrid}} object and pass them in order as \code{...} or 
-form them into a list and pass as \code{deslist}.
+This setup requires the use of an \code{idata_set}, with individual-level 
+data passed in one \code{ID} per row.  For each \code{ID}, specify a 
+grouping variable in \code{idata} (\code{descol}).  For each unique value 
+of the grouping variable, make one \code{\link{tgrid}} object and pass them 
+in order as \code{...} or form them into a list and pass as \code{deslist}.
 
 You must assign the \code{idata_set} before assigning the designs in the 
 command chain (see the example below).

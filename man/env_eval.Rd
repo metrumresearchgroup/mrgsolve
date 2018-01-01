@@ -2,7 +2,7 @@
 % Please edit documentation in R/env.R
 \name{env_eval}
 \alias{env_eval}
-\title{Re-evaluate the code in the ENV block.}
+\title{Re-evaluate the code in the ENV block}
 \usage{
 env_eval(x, seed = NULL)
 }

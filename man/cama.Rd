@@ -2,7 +2,7 @@
 % Please edit documentation in R/env.R
 \name{cama}
 \alias{cama}
-\title{Run the model cama function.}
+\title{Run the model cama function}
 \usage{
 cama(mod, fn = "cama", ...)
 }
@@ -14,7 +14,7 @@ cama(mod, fn = "cama", ...)
 \item{...}{passed to update}
 }
 \description{
-Run the model cama function.
+Run the model cama function
 }
 \details{
 \code{sah-mah}

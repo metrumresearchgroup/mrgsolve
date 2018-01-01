@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -30,7 +30,7 @@ ALAG_CENT = LAG;
 '
 mod <- mcode("alag1", code)
 
-context("Lagged doses")
+context("test-alag")
 
 test_that("Lagged bolus", {
     out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)

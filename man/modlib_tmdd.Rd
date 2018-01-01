@@ -2,12 +2,12 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_tmdd}
 \alias{modlib_tmdd}
-\title{modlib: Target mediated disposition model.}
+\title{modlib: Target mediated disposition model}
 \arguments{
 \item{...}{passed to update}
 }
 \description{
-modlib: Target mediated disposition model.
+modlib: Target mediated disposition model
 }
 \section{Parameters}{
 

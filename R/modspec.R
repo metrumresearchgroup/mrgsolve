@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -34,7 +34,7 @@ advtr <- function(advan,trans) {
 }
 
 write_capture <- function(x) {
-  if(length(x)==0) return(NULL)
+  if(length(x) == 0) return(NULL)
   i <- seq_along(x)
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
@@ -352,7 +352,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   
   opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
-  opts <- merge(def, tolist(opts,envir=envir),
+  opts <- merge.list(def, tolist(opts,envir=envir),
                 open=all,warn=FALSE,context="opts")
   
   opts <- c(opts,at)
@@ -699,7 +699,7 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
 
 ##' @export
 handle_spec_block.specCAPTURE <- function(x,...) {
-  scrape_and_call(x,pass="CAPTURE",narrow=FALSE,...)
+  scrape_and_call(x,pass="CAPTURE",narrow=TRUE,...)
 }
 
 ##' @export
@@ -866,7 +866,7 @@ pick_advan <- function(ncmt,depot) {
 }
 
 check_pred_symbols <- function(x,code) {
-  p <- pars(x)
+  p <- Pars(x)
   code <- unlist(get_tokens(code,TRUE))
   have <- unique(c(p,code))
   

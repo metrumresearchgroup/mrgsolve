@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -141,7 +141,66 @@ rm_win_def <- function(x) {
   return(invisible(NULL))
 }
 
-##' Get inits from compiled function.
+
+SAFE_WAIT_TIME <- 1.5
+
+update_wait_time <- function(n) {
+  assignInMyNamespace("SAFE_WAIT_TIME",n)
+}
+
+
+check_and_copy <- function(from,to) {
+  
+  if(!file_exists(to)) {
+    file.copy(from,to)
+    same <- TRUE
+  } else {
+    same <- tools::md5sum(from) == tools::md5sum(to)
+    if(!same) {
+      file.copy(from,to,overwrite=TRUE)
+    }
+  }
+  z <- file.remove(from)
+  return(same)
+}
+
+# Wait a certain amount of time before re-compiling
+# and loading a model
+safe_wait <- function(x) {
+  
+  target <- file.path(soloc(x),compout(model(x)))
+  if(!file_exists(target)) return(invisible(NULL))
+  mt <- file.info(target)[["mtime"]]
+  age <- as.numeric(as.POSIXct(Sys.time())) - as.numeric(as.POSIXct(mt))
+  if(age > SAFE_WAIT_TIME) return(invisible(NULL))
+  message("(waiting) ...")
+  return(Sys.sleep(SAFE_WAIT_TIME-age))
+}
+
+
+# Clean up model shared objects. 
+# 
+# @param x model object
+# @param where directory to clean up
+# 
+# @details
+# \code{cleanso} removes (deletes) shared objects from the model compile directory and 
+# attempts to unload shared objects which appear to be loaded.
+# 
+#
+# 
+cleanso <- function(x,where=soloc(x)) {
+  so <- list.files(where, 
+                   pattern =  paste0("*\\", .Platform$dynlib.ext), full.names=TRUE)
+  so <- so[so != file.path(where,compout(model(x)))]
+  lo <- sapply(getLoadedDLLs(), "[[", "path")
+  y <- intersect(lo,so)
+  for(w in y) foo <- try(silent=TRUE,dyn.unload(w))
+  for(w in y) foo <- try(silent=TRUE,file.remove(w))
+  return(invisible(NULL))
+}
+
+##' Get inits from compiled function
 ##'
 ##' @param x mrgmod model object
 ##' @param keep_pointers should function pointers be returned?
@@ -156,7 +215,8 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   neta <- sum(nrow(omat(x)))
   neps <- sum(nrow(smat(x)))
   
-  out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,neta,neps,x@capture,funp,x@envir)
+  out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,neta,
+               neps,x@capture,funp,x@envir)
   
   names(out$init) <- names(init)
   

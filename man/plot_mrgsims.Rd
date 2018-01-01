@@ -5,7 +5,7 @@
 \alias{plot_mrgsims}
 \alias{plot,mrgsims,missing-method}
 \alias{plot,mrgsims,formula-method}
-\title{Generate a quick plot of simulated data.}
+\title{Generate a quick plot of simulated data}
 \usage{
 \S4method{plot}{mrgsims,missing}(x, limit = 16, ...)
 
@@ -37,7 +37,7 @@
 \item{scales}{passed to xyplot}
 }
 \description{
-Generate a quick plot of simulated data.
+Generate a quick plot of simulated data
 }
 \details{
 Values for \code{as} argument: ;  \code{raw}: raw simulated output;

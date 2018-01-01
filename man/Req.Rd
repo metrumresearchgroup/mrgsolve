@@ -6,7 +6,7 @@
 \alias{Req,mrgmod-method}
 \alias{req}
 \alias{req,mrgmod-method}
-\title{Request simulated output.}
+\title{Request simulated output}
 \usage{
 Req(x, ...)
 
@@ -19,9 +19,13 @@ req(x, ...)
 \arguments{
 \item{x}{model object}
 
-\item{...}{unquoted names of compartments or tabled items
-
-
+\item{...}{unquoted names of compartments or tabled items}
+}
+\description{
+Use this function to select, by name, either compartments or derived 
+variables that have been captured (see \code{\link{CAPTURE}}).
+}
+\details{
 There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
 be set to accomplish the same thing as a call to \code{Req} in 
 the pipeline.
@@ -32,11 +36,7 @@ compartments and captured items.  Also, when there are items are explicitly
 listed in \code{Req}, all other compartments or captured items not listed
 there are ignored.  But when compartments are selected with \code{req}
 all of the captured items are returned.  Remember that \code{req} is 
-strictly for compartments.}
-}
-\description{
-Use this function to select, by name, either compartments or derived variables 
-that have been captured (see \code{\link{CAPTURE}}).
+strictly for compartments.
 }
 \examples{
 mod <- mrgsolve:::house()

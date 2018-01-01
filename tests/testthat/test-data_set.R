@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -54,8 +54,8 @@ test_that("Same result from upper and lower case names", {
 })
 
 test_that("Warning is generated when mixed upper/lower names", {
-  mix <- lo %>% dplyr::rename(EVID = evid) 
-  expect_warning(mod %>% data_set(mix))
+  mix <-  dplyr::rename(lo, EVID = evid) 
+  expect_warning(mrgsim(data_set(mod,mix)))
 })
 
 test_that("Filter out ID", {

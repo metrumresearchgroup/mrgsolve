@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Render a model to a document.
+##' Render a model to a document
 ##' 
 ##' @param x model object or the model name
 ##' @param project the directory containing the \code{.cpp} model file 
@@ -40,10 +40,10 @@ setMethod("render", "character", function(x,project,...) {
 
 ##' @rdname render
 setMethod("render", "mrgmod", function(x,...) {
-    project <- tempdir()
-    file <- basename(cfile(x))
-    cat(code(x), file=filename(project,file),sep="\n")
-    dorender(model(x),modfile(x),project,...)
+  project <- tempdir()
+  file <- basename(cfile(x))
+  cat(code(x), file=filename(project,file),sep="\n")
+  dorender(model(x),modfile(x),project,...)
 })
 
 ##' @param compile logical; if true, the model will be compiled to run
@@ -54,7 +54,8 @@ setMethod("render", "mrgmod", function(x,...) {
 dorender <- function(model,modfile,project,template=NULL,compile=TRUE,...) {
   
   if(!requireNamespace("rmarkdown")) {
-    stop("need rmarkdown to use this function, please install via install.packages('rmarkdown')")
+    stop("need rmarkdown to use this function, 
+         please install via install.packages('rmarkdown')")
   } 
   
   if(!file.exists(project)) {
@@ -69,10 +70,13 @@ dorender <- function(model,modfile,project,template=NULL,compile=TRUE,...) {
   
   file.copy(template, out, overwrite=TRUE)
   
-  pdf <- rmarkdown::render(out,params=list(model=model, modfile = modfile, project=project,
-                                           compile=compile),...)
+  pdf <- rmarkdown::render(
+    out,
+    params=list(model=model, modfile = modfile, project=project,
+                compile=compile),...
+  )
   
-  invisible(file.copy(pdf, getwd(),overwrite=TRUE))
-
+  invisible(file.copy(pdf, getwd(), overwrite=TRUE))
+  
 }
 

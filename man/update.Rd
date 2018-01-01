@@ -10,18 +10,18 @@
 \alias{update,sigmalist-method}
 \alias{update,parameter_list-method}
 \alias{update,ev-method}
-\title{Get all names from a model object.}
+\title{Get all names from a model object}
 \usage{
 \S4method{names}{mrgmod}(x)
 
 \S4method{update}{mrgmod}(object, ..., merge = TRUE, open = FALSE,
-  data = list())
+  data = NULL)
 
 \S4method{update}{omegalist}(object, y, ...)
 
 \S4method{update}{sigmalist}(object, y, ...)
 
-\S4method{update}{parameter_list}(object, y, ...)
+\S4method{update}{parameter_list}(object, .y, ...)
 
 \S4method{update}{ev}(object, y, ...)
 }
@@ -30,26 +30,36 @@
 
 \item{object}{a model object}
 
-\item{...}{passed to other functions}
+\item{...}{named items to update}
 
-\item{merge}{logical indicating to merge (rather than replace) new and
-existing attributes.}
+\item{merge}{logical indicating to merge (rather than replace) 
+new and existing attributes}
 
-\item{open}{logical; used only when merge is \code{TRUE} and parameter list or initial conditions
-list is being updated; if \code{FALSE}, no new items will be added; if \code{TRUE}, the parameter list may
-expand.}
+\item{open}{logical; used only when merge is \code{TRUE} and 
+parameter list or initial conditions
+list is being updated; if \code{FALSE}, no new items will be 
+added; if \code{TRUE}, the parameter list may expand.}
 
 \item{data}{a list of items to update; not used for now}
 
 \item{y}{another object involved in update}
+
+\item{.y}{data to update}
 }
 \value{
 The updated model object is returned.
 }
 \description{
-Get all names from a model object.
+Get all names from a model object
 
 After the model object is created, update various attributes.
+}
+\details{
+Slots that can be updated: atol, rtol, verbose, 
+debug, preclean, mindt, digits, ixpr, 
+mxhnil, hmin, hmax, maxsteps, start, end, 
+delta, add, tscals, request, param,
+init, omega, sigma.
 }
 \examples{
 mod <- mrgsolve:::house()
@@ -60,4 +70,5 @@ names(mod)
 
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
  }
+ 
 }

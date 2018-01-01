@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -41,6 +41,14 @@ test_that("Lagged bolus", {
   expect_is(x[[2]],"mrgsims")
   
   x <- test_lib("pk3cmt")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+  
+  x <- test_lib("pk1")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+  
+  x <- test_lib("pk2")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   

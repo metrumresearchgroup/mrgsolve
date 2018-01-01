@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -19,7 +19,7 @@ library(testthat)
 library(mrgsolve)
 library(dplyr)
 Sys.setenv(R_TESTS="")
-options("mrgsolve_mread_quiet"=TRUE)
+options("mrgsolve_mread_quiet"=FALSE)
 
 context("test-cache")
 
@@ -27,24 +27,21 @@ mrgsolve:::update_wait_time(0)
 
 test_that("model caches via mread_cache", {
   
-  mod <- mread_cache("pk1cmt", modlib())
+  mod <- mread_cache("pk1", modlib())
   
   cache_file <- file.path(mrgsolve:::soloc(mod), "mrgmod_cache.RDS")
   
-  file.exists(cache_file)
   expect_true(file.exists(cache_file))
   
   mo <- readRDS(cache_file)
   
-  #expect_identical(mo,mod)
-  
-  mo@shlib$foo <- "test"
+  mo@args$foo <- "test"
 
   saveRDS(mo,cache_file)  
 
-  mod2 <- mread_cache("pk1cmt", modlib())
+  mod2 <- mread_cache("pk1", modlib(), compile = FALSE)
   
-  expect_equal(mod2@shlib$foo,"test")
+  expect_equal(mod2@args$foo,mo@args$foo)
 })
 
 
@@ -56,10 +53,8 @@ test_that("model caches via mcode_cache", {
   $MAIN double z = 4;
   '
   code2 <- paste0(code, "double x = 5;")
-  mod <- mcode_cache("test_mcode_cache",code)
-  mod2 <- mcode_cache("test_mcode_cache",code)
-  mod3 <- mcode_cache("test_mcode_cache", code2)
-  #expect_identical(mod,mod2)
+  mod <- mcode_cache("test_mcode_cache",code, compile = FALSE)
+  mod3 <- mcode_cache("test_mcode_cache", code2, compile = FALSE)
   expect_false(identical(mod,mod3))
 })
 

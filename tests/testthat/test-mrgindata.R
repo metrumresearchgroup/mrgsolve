@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -28,11 +28,10 @@ delta <- 3
 n <- length(seq(0,end,delta))
 mod <- mrgsolve:::house() %>% update(end=end, delta=delta)
 data(extran3)
-tb <- tbl_df(extran3)
 
 test_that("valid_data_set warns for character columns", {
   dat <- expand.ev(amt=100,ID=1:4,X="A")
-  expect_message(valid_data_set(dat,mod=mod), regexp="^Dropping")
+  expect_message(valid_data_set(dat,m=mod), regexp="^Dropping")
   
 })
 
@@ -92,9 +91,6 @@ test_that("Run bad data sets", {
   
 })
 
-
-
-
 test_that("Run ev event - and nid", {
   e <- ev(amt=100)
   out <- mod %>% ev(e) %>% mrgsim(nid=7)
@@ -112,8 +108,11 @@ test_that("Run with data set - data.frame", {
 })
 
 test_that("Run with data set - tbl", {
-  out <- mod %>% data_set(dplyr::tbl_df(extran3)) %>% mrgsim
-  expect_equal(nrow(out),nrow(extran3))
+  data <- filter(extran3, ID <= 3)
+  out <- mod %>% data_set(dplyr::tbl_df(data)) %>% mrgsim
+  expect_equal(nrow(out),nrow(data))
+  out <- mod %>% data_set(as_data_frame(data)) %>% mrgsim
+  expect_equal(nrow(out),nrow(data))
 })
 
 
@@ -139,11 +138,9 @@ test_that("Run idata set with ev", {
 
 
 test_that("Duplicate ID in idata_set gives error", {
-  
   idata <- data_frame(ID=rep(1:10,each=5),CL=2)    
   expect_error(mod %>% idata_set(idata) %>% mrgsim)
   expect_error(mrgsim(mod,idata=idata_set))
-
 })
 
 

@@ -3,27 +3,18 @@
 \name{valid_data}
 \alias{valid_data}
 \alias{valid_data_set}
-\alias{valid_data_set.default}
-\alias{valid_data_set.data.frame}
 \alias{valid_idata_set}
 \alias{valid_data_set.matrix}
-\title{Validate and prepare data sets for simulation.}
+\title{Validate and prepare data sets for simulation}
 \usage{
-valid_data_set(x, ...)
+valid_data_set(x, m = NULL, verbose = FALSE, quiet = FALSE)
 
-\method{valid_data_set}{default}(x, ...)
+valid_idata_set(x, verbose = FALSE, quiet = FALSE)
 
-\method{valid_data_set}{data.frame}(x, m = NULL, verbose = FALSE,
-  quiet = FALSE, ...)
-
-valid_idata_set(x, verbose = FALSE, quiet = FALSE, ...)
-
-\method{valid_data_set}{matrix}(x, verbose = FALSE, ...)
+valid_data_set.matrix(x, verbose = FALSE)
 }
 \arguments{
 \item{x}{data.frame or matrix}
-
-\item{...}{additional arguments}
 
 \item{m}{a model object}
 
@@ -41,9 +32,9 @@ compartment number.
 A numeric matrix with class \code{valid_idata_set}.
 }
 \description{
-Validate and prepare data sets for simulation.
+Validate and prepare data sets for simulation
 
-Validate and prepare idata data sets for simulation.
+Validate and prepare idata data sets for simulation
 }
 \seealso{
 \code{\link{idata_set}}, \code{\link{data_set}},

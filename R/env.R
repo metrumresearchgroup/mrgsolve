@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Re-evaluate the code in the ENV block.
+##' Re-evaluate the code in the ENV block
 ##' 
 ##' The \code{$ENV} block is a block of R code that can 
 ##' realize any sort of R object that might be used in running 
@@ -34,7 +34,7 @@ env_eval <- function(x,seed=NULL) {
   return(invisible(x))
 }
 
-##' List objects in the model environment.
+##' List objects in the model environment
 ##' 
 ##' Each model keeps an internal environment that allows the user 
 ##' to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
@@ -53,7 +53,7 @@ env_ls <- function(x,...) {
   dplyr::arrange_(ans, .dots=c("class"))
 }
 
-##' Return model environment.
+##' Return model environment
 ##' 
 ##' @param x model object
 ##' @param tolist should the environment be coreced to \code{list}?
@@ -67,7 +67,13 @@ env_get <- function(x,tolist=TRUE) {
   }
 }
 
-##' Update objects in model environment.
+##' @rdname env_get
+##' @export
+env_get_env <- function(x) {
+  x@envir 
+}
+
+##' Update objects in model environment
 ##' 
 ##' @param .x model object
 ##' @param .dots list of objects to updated
@@ -77,11 +83,11 @@ env_get <- function(x,tolist=TRUE) {
 env_update <- function(.x,...,.dots=list()) {
   right <- c(list(...),.dots)
   left <- as.list(.x@envir)
-  .x@envir <- as.environment(merge(left,right))
+  .x@envir <- as.environment(merge.list(left,right))
   return(invisible(.x))
 }
 
-##' Run the model cama function.
+##' Run the model cama function
 ##' 
 ##' @param mod model object
 ##' @param fn function name
@@ -95,6 +101,7 @@ cama <- function(mod,fn="cama",...) {
   f <- get(fn, mod@envir, inherits=FALSE)
   mod %>% update(...) %>% f
 }
+
 
 param_in_env <- function(x) {
   p <- as.list(param(x))

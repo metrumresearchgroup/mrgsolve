@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -18,26 +18,35 @@
 
 
 
-##' Create and work with parameter objects.
+##' Create and work with parameter objects
 ##'
-##' See \code{\link{numericlist}} for methods to deal with \code{parameter_list} objects.
+##' See \code{\link{numericlist}} for methods to deal with 
+##' \code{parameter_list} objects.
 ##'
 ##'
 ##' @param .x the model object
 ##' @param .y list to be merged into parameter list
-##' @param .pat a regular expression (character) to be applied as a filter for which parameters to show when printing
-##' @param .strict if \code{TRUE}, all names to be updated must be found in the parameter list
+##' @param .pat a regular expression (character) to be applied as a filter 
+##' for which parameters to show when printing
+##' @param .strict if \code{TRUE}, all names to be updated must be found 
+##' in the parameter list
 ##' @param object passed to show
-##' @param ... passed along or name/value pairs to update the parameters in a model object
-##' @return An object of class \code{parameter_list} (see \code{\link{numericlist}}).
+##' @param ... passed along or name/value pairs to update the parameters 
+##' in a model object
+##' 
+##' @return An object of class \code{parameter_list} (see 
+##' \code{\link{numericlist}}).
 ##'
-##' @details Can be used to either get a parameter list object from a \code{mrgmod} model object or to update
-##' the parameters in a model object.  For both uses, the return value is a \code{parameter_list} object.
+##' @details Can be used to either get a parameter list object from a 
+##' \code{mrgmod} model object or to update
+##' the parameters in a model object.  For both uses, the return value 
+##' is a \code{parameter_list} object.
 ##' For the former use, \code{param} is usually called to print
-##' the parameters to the screen, but the parameter_list object can also be coreced to a list or numeric R object.
+##' the parameters to the screen, but the parameter_list object can also 
+##' be coreced to a list or numeric R object.
 ##'
 ##'
-##'@examples
+##' @examples
 ##' ## example("param")
 ##' mod <- mrgsolve:::house()
 ##'
@@ -58,27 +67,31 @@ setGeneric("param", function(.x,...) standardGeneric("param"))
 ##' @rdname param
 setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE) {
   
-  args <- c(as.list(.y),list(...))
+  .dots <- list(...)
   
-  if(length(args)==0) {
+  if(length(.y) == 0 & length(.dots) == 0) {
     slot(.x@param, "pattern")  <- .pat
     return(.x@param)
   }
   
-  if((length(args)-length(.y)) > 0 & missing(.strict))  {
-    .strict <- TRUE
+  if(missing(.strict) & length(.dots) > 0) {
+    .strict <- TRUE 
   }
   
+  args <- c(as.list(.y),.dots)
+  
   if(.strict) {
-    if(!all(names(args) %in% pars(.x))) {
-      foreign <- setdiff(names(args),pars(.x))
+    if(!all(names(args) %in% Pars(.x))) {
+      foreign <- setdiff(names(args),Pars(.x))
       foreign <- paste(foreign, collapse=", ")
-      stop("\nNames not found in the parameter list:\n", "  ", 
+      stop("\n names not found in the parameter list:\n", "  ", 
            foreign, call.=FALSE) 
     } 
   }
   
-  return(update(.x,param=args))
+  .x@param <- update(.x@param, args)
+  
+  return(.x) #return(update(.x,param=args))
 })
 
 ##' @rdname param
@@ -105,9 +118,14 @@ setMethod("param", "ANY", function(.x,...) {
   param(as.list(.x),...)
 })
 
+
+
 ##' @export
 ##' @rdname param
-setGeneric("as.param", function(.x,...) standardGeneric("as.param"))
+setGeneric("as.param", function(.x,...) {
+  standardGeneric("as.param")
+})
+
 
 ##' @export
 ##' @rdname param
@@ -190,7 +208,9 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
 
 ##' @export
 ##' @rdname param
-setMethod("show", "parameter_list", function(object) showparam(object))
+setMethod("show", "parameter_list", function(object) {
+  showparam(object)
+})
 
 ##' @export
 ##' @rdname param

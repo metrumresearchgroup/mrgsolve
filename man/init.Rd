@@ -50,22 +50,29 @@ as.init(.x, ...)
 
 \item{.y}{list to be merged into parameter list}
 
-\item{.pat}{a regular expression (character) to be applied as a filter when printing compartments to the screen}
+\item{.pat}{a regular expression (character) to be applied as 
+a filter when printing compartments to the screen}
 
 \item{object}{to show}
 }
 \value{
-an object of class \code{cmt_list} (see \code{\link{numericlist}})
+an object of class \code{cmt_list} (see 
+\code{\link{numericlist}})
 }
 \description{
-Calling \code{init} with the model object as the first argument will return the model initial conditions as a \code{numericlist} object. See \code{\link{numericlist}} for methods to  deal with \code{cmt_list} objects.
+Calling \code{init} with the model object as the first argument 
+will return the model initial conditions as a \code{numericlist} 
+object. See \code{\link{numericlist}} for methods to  deal with 
+\code{cmt_list} objects.
 }
 \details{
-Can be used to either get a compartment list object from a \code{mrgmod} model object or to update
-the compartment initial conditions in a model object.  For both uses, the return value is a \code{cmt_list} object.
-For the former use, \code{init} is usually called to print
-the compartment initial conditions to the screen, but the \code{cmt_list} object can also be coreced to
-a list or numeric R object.
+Can be used to either get a compartment list object from a 
+\code{mrgmod} model object or to update the compartment initial 
+conditions in a model object.  For both uses, the return value 
+is a \code{cmt_list} object. For the former use, \code{init} 
+is usually called to print the compartment initial conditions 
+to the screen, but the \code{cmt_list} object can also be coreced 
+to a list or numeric R object.
 }
 \examples{
 ## example("init")

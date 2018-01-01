@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -31,7 +31,6 @@ dxdt_foo = -ke*foo;
 
 $CAPTURE ke
 $CMT foo
-
 '
 
 e1 <- ev(amt = 0, evid = 2, ke = 0E-12)
@@ -42,19 +41,15 @@ e <- as.data.frame(c(e1,e2, e3, e4)) %>% mutate(ID = 1)
 
 mod <- mcode("mypk",code)
 
-out1 <- mod %>% mrgsim(data = e, nocb = TRUE, end = -1)
-out2 <- mod %>% mrgsim(data = e, nocb = FALSE, end = -1)
-
 test_that("simulation with nocb", {
-  expect_true(out1$foo[4] < 1)
-  expect_true(out1$foo[3] == 100)
-  
+  out <- mod %>% mrgsim(data = e, nocb = TRUE, end = -1)
+  expect_true(out$foo[4] < 1)
+  expect_true(out$foo[3] == 100)
 })
 
 test_that("simulation with locf", {
-  expect_true(out2$foo[4] == 100)
-  expect_true(out2$foo[5] < 50)
+  out <- mod %>% mrgsim(data = e, nocb = FALSE, end = -1)
+  expect_true(out$foo[4] == 100)
+  expect_true(out$foo[5] < 50)
 })
-
-
 

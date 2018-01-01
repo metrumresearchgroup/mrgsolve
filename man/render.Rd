@@ -6,7 +6,7 @@
 \alias{render,character-method}
 \alias{render,mrgmod-method}
 \alias{dorender}
-\title{Render a model to a document.}
+\title{Render a model to a document}
 \usage{
 render(x, ...)
 
@@ -32,7 +32,7 @@ dorender(model, modfile, project, template = NULL, compile = TRUE, ...)
 \item{compile}{logical; if true, the model will be compiled to run}
 }
 \description{
-Render a model to a document.
+Render a model to a document
 }
 \examples{
 \dontrun{

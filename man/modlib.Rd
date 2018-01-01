@@ -13,11 +13,12 @@ modlib(list = FALSE)
 Internal model library.
 }
 \details{
-See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
+See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
+\code{\link{modlib_pkpd}}, 
 \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
 
 Call \code{modlib(list=TRUE)} to list available models.  Once the model 
-is loaded (see examples below), call \code{mrgsolve:::code(mod)} to see
+is loaded (see examples below), call \code{as.list(mod)$code} to see
 model code and equations.
 }
 \examples{
@@ -25,6 +26,9 @@ model code and equations.
 mod <- mread("pk1cmt", modlib())
 mod <- mread("pk2cmt", modlib()) 
 mod <- mread("pk3cmt", modlib()) 
+mod <- mread("pk1",    modlib())
+mod <- mread("pk2",    modlib())
+mod <- mread("popex",  modlib())
 mod <- mread("irm1",   modlib()) 
 mod <- mread("irm2",   modlib()) 
 mod <- mread("irm3",   modlib()) 

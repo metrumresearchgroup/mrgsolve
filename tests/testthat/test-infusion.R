@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -59,7 +59,8 @@ test_that("Consecutive infusions act as one long infusion",{
     mrgsim(end=1000,delta=0.1,recsort=3, atol=1E-12, rtol=1E-12, digits=6)
   expect_true(all(out$CENT==200))
   
-  d <- expand.ev(ID=1, time=seq(0,1000,100),rate=10,cmt=2,amt=1000) %>% mutate(ID=1)
+  d <- expand.ev(ID=1, time=seq(0,1000,100),rate=10,cmt=2,amt=1000) %>% 
+    mutate(ID=1)
   b <- d %>% filter(time==0) %>% mutate(amt=200,rate=0)
   data <- bind_rows(b,d)
   out <- 

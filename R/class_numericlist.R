@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -24,13 +24,13 @@ valid.numericlist <- function(object) {
   
   x <- x1 & x2 & x3
   if(all(x)) return(TRUE)
-
+  
   out <- c()
   
   if(!x3) {
     message("Problem with names:")
     cat(paste(names(object), collapse=","))
-    out <- c(out, "Invalid names")
+    out <- c(out, "invalid names")
   }
   
   if(!x2) {
@@ -38,15 +38,15 @@ valid.numericlist <- function(object) {
     d <- d[nchar(names(d))==0]
     message("Parameter values without names:")
     print(d)
-    out <- c(out, "All parameters require names")
+    out <- c(out, "all parameters require names")
   }
   
   if(!x1) {
-    out <- c(out, "All parameters must be single numbers") 
+    out <- c(out, "all parameters must be single numbers") 
   }
-
+  
   return(out)
-
+  
 }
 
 create_numeric_list <- function(x,class,...) {
@@ -55,12 +55,15 @@ create_numeric_list <- function(x,class,...) {
 }
 
 
-
-##' S4 class numeric list.
+##' S4 class numeric list
 ##'
 ##' @name numericlist-class
+##' 
 ##' @param data list of data
-##' @param pattern character of length 1 containing regular expression to be used as a filter when printing data to the console
+##' @param pattern character of length 1 containing regular 
+##' expression to be used as a filter when printing data to the 
+##' console
+##' 
 setClass("numericlist", 
          slots=c(
            data="list", 
@@ -70,22 +73,24 @@ setClass("numericlist",
          prototype=list(data=null_list, pattern="*")
 )
 
-##' Methods for numericlist.
+##' Methods for numericlist
 ##' 
-##' These methods can be used to corece \code{param} and \code{init} objects into common \code{R} data structures,
-##' extract elements from \code{numericlist}s, or get attributes from \code{numericlist}s.
+##' These methods can be used to corece \code{param} and 
+##' \code{init} objects into common \code{R} data structures,
+##' extract elements from \code{numericlist}s, or get attributes 
+##' from \code{numericlist}s.
 ##' 
 ##' @name numericlist
 ##' @rdname numericlist
 NULL
 
-
-
 ##' @rdname numericlist
 ##' @param x object
 ##' @param ... passed along to other methods
 ##' @export
-setMethod("as.list", "numericlist", function(x,...) as.list(x@data))
+setMethod("as.list", "numericlist", function(x,...) {
+  x@data
+})
 
 ##' @rdname numericlist
 ##' @export
@@ -99,22 +104,29 @@ setMethod("as.numeric", "numericlist", function(x) {
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
 ##' @export
-setMethod("as.data.frame", "numericlist", function(x,row.names=NULL, optional=FALSE,...) {
+setMethod("as.data.frame", "numericlist", function(
+  x,row.names=NULL, optional=FALSE,...) {
   as.data.frame(x@data,row.names,optional,...)
 })
 
 ##' @rdname numericlist
 ##' @export
-setMethod("length", "numericlist", function(x) length(x@data))
+setMethod("length", "numericlist", function(x) { 
+  length(x@data)
+})
 
 ##' @rdname numericlist
 ##' @export
-setMethod("names", "numericlist", function(x) as.character(names(x@data)))
+setMethod("names", "numericlist", function(x) {
+  as.character(names(x@data))
+})
 
 ##' @rdname numericlist
 ##' @param name column to take
 ##' @export
-setMethod("$", "numericlist", function(x,name){unlist(x@data[name],use.names=FALSE)})
+setMethod("$", "numericlist", function(x,name){
+  unlist(x@data[name],use.names=FALSE)
+})
 
 ##' @export
 ##' @rdname numericlist
@@ -122,4 +134,6 @@ setMethod("$", "numericlist", function(x,name){unlist(x@data[name],use.names=FAL
 ##' @param j not used
 ##' @param drop not used
 ##' @aliases [,numericlist-method
-setMethod("[", "numericlist", function(x,i,j,...){x@data[i,...]})
+setMethod("[", "numericlist", function(x,i,j,...){
+  x@data[i,...]
+})

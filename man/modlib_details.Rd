@@ -2,9 +2,9 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_details}
 \alias{modlib_details}
-\title{modlib: PK/PD Model parameters, compartments, and output variables.}
+\title{modlib: PK/PD Model parameters, compartments, and output variables}
 \description{
-modlib: PK/PD Model parameters, compartments, and output variables.
+modlib: PK/PD Model parameters, compartments, and output variables
 }
 \section{Compartments}{
 
@@ -28,18 +28,23 @@ modlib: PK/PD Model parameters, compartments, and output variables.
 \section{PK parameters}{
 
 \itemize{
-\item{\code{KA1}, \code{KA2}}:  first order absorption rate constants from first and second extravascular compartment (1/time)
+\item{\code{KA1}, \code{KA2}}:  first order absorption rate constants 
+from first and second extravascular compartment (1/time)
 \item{\code{CL}}: clearance (volume/time)
 \item{\code{VC}}: volume of distribution, central compartment (volume)
-\item{\code{VP}}:  volume of distribution, peripheral compartment (volume)
-\item{\code{VP2}}: volume of distribution, peripheral compartment 2 (volume)
+\item{\code{VP}}:  volume of distribution, peripheral compartment 
+(volume)
+\item{\code{VP2}}: volume of distribution, peripheral compartment 2 
+(volume)
 \item{\code{Q}}: intercompartmental clearance (volume/time)
 \item{\code{Q2}}: intercompartmental clearance 2 (volume/time)
 \item{\code{VMAX}}:  maximum rate, nonlinear process (mass/time)
 \item{\code{KM}}: Michaelis constant (mass/volume)
 \item{\code{K10}}: elimination rate constant (1/time); \code{CL/VC}
-\item{\code{K12}}: rate constant for transfer to peripheral compartment from central (1/time); \code{Q/VC}
-\item{\code{K21}}: rate constant for transfer to central compartment from peripheral (1/time); \code{Q/VP}
+\item{\code{K12}}: rate constant for transfer to peripheral compartment 
+from central (1/time); \code{Q/VC}
+\item{\code{K21}}: rate constant for transfer to central compartment from
+ peripheral (1/time); \code{Q/VP}
 }
 }
 
@@ -48,11 +53,15 @@ modlib: PK/PD Model parameters, compartments, and output variables.
 \itemize{
 \item{\code{E0}}: baseline effect (emax model)
 \item{\code{EMAX}, \code{IMAX}}: maximum effect (response)
-\item{\code{EC50}, \code{IC50}}: concentration producing 50 percent of effect (mass/volume)
-\item{\code{KIN}}: zero-order response production rate (irm models) (response/time)
-\item{\code{KOUT}}: first-order response elimination rate (irm models) (1/time)
+\item{\code{EC50}, \code{IC50}}: concentration producing 50 percent of 
+effect (mass/volume)
+\item{\code{KIN}}: zero-order response production rate (irm models) 
+(response/time)
+\item{\code{KOUT}}: first-order response elimination rate (irm models)
+ (1/time)
 \item{\code{n}}: sigmoidicity factor
-\item{\code{KEO}}: rate constant for transfer to effect compartment (1/time)
+\item{\code{KEO}}: rate constant for transfer to effect compartment 
+(1/time)
 }
 }
 

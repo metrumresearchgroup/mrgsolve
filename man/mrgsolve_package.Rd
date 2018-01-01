@@ -6,27 +6,27 @@
 \alias{mrgsolve-package}
 \title{mrgsolve}
 \description{
-mrgsolve is an R package maintained under the auspices of Metrum Research Group, LLC, that facilitates
-simulation from models based on systems of ordinary differential equations (ODE) that are typically employed
-for understanding pharmacokinetics, pharmacodynamics, and systems biology and pharmacology.
-mrgsovle consists of computer code written in the R and C++ languages, providing an interface to
-the DLSODA differential equation solver (written in FORTRAN) provided through ODEPACK -
+mrgsolve is an R package maintained under the auspices of 
+Metrum Research Group, LLC, that facilitates simulation from 
+models based on systems of ordinary differential equations (ODE) 
+that are typically employed for understanding pharmacokinetics, 
+pharmacodynamics, and systems biology and pharmacology. mrgsovle 
+consists of computer code written in the R and C++ languages, 
+providing an interface to the DLSODA differential equation solver 
+(written in FORTRAN) provided through ODEPACK -
 A Systematized Collection of ODE Solvers.
 }
-\section{Example models}{
-
-See \code{\link{mrgsolve_example}} to export example models into your own, writeable project directory.
-}
-
 \section{Input data sets}{
 
-See \code{\link{data_set}} for help creating input data sets.  See \code{\link{exdatasets}} for example input data sets.
+See \code{\link{data_set}} for help creating input data sets.  
+See \code{\link{exdatasets}} for example input data sets.
 }
 
 \section{Package help}{
 
 \itemize{
- \item  Package \href{00Index.html}{index}, including a listing of all functions
+ \item  Package \href{00Index.html}{index}, including a listing 
+ of all functions
  \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
 }
 }
@@ -135,6 +135,7 @@ mod <- mread("irm1", modlib())
 mod
 
 mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
+
 }
 
 }

@@ -95,6 +95,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   unsigned int k; 
   double ID = 0;
   bool skip = false;
+  double f = 1;
   
   size_t irow = idata.nrow();
   size_t drow = data.nrow();
@@ -139,7 +140,8 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
         if(rate[j] > 0) {
           prob->rate_bump(cmt[j],rate[j]);
         } else {
-          prob->y_add(cmt[j],amt[j]);
+          f = std::max(0.0,prob->fbio(cmt[j]));
+          prob->y_add(cmt[j],amt[j]*f);
         }
         prob->lsoda_init();
         break;

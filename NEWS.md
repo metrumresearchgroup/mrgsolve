@@ -1,3 +1,48 @@
+# 0.8.10.9003
+
+## New Features
+- Bioavability specified in `$MAIN` is accounted for when simulating with
+`qsim`; there is still no bioavability adjustment for infusions or 
+lag times adjustments to doses
+
+- Added capability to rename data items in `$CAPTURE`; also, 
+names are partially sanitized, removing parens and brackets.  
+For example `$CAPTURE WT = WGT ETA(1) TVCL = THETA1`
+
+- Added `qsim_df` function, retruning data frame rather than
+matrix
+
+- Added `as.list` method for `mrgsims` objects
+
+- Added `deep` argument for `as.list` method for `mrgmod` object; 
+it was taking a lot of time to return the function set, so now 
+you only get it if `deep = TRUE`
+
+- Added `mrgsim` variant functions with explicit input requirements
+written into the function name.  For example, call `mrgsim_e` 
+to simulate from an event object, `mrgsim_d` to simulate from 
+a data frame.  All of these functions are called by `mrgsim`.
+
+- Added method so that event objects can be passed to `data_set`; also, 
+coercing event objects to `data_set` when passed in as `data`
+
+- Added `all.equal.mrgmod` function to compare two 
+model objects. The function returns logical (only)
+
+- Added `env_get_env` that always just returns the 
+model environment; it has identical result as
+`env_get(mod, tolist = FALSE)`
+
+- Change `mread_cache` and `mcode_cache` so that the 
+cache is invalidated when `preclean` argument is `TRUE`
+
+## Bug Fixes
+- Fixed bug preventing simulation with `qsim` with no event
+
+## Functions removed
+- `mrgsolve_example` and `mrgsolve_template`; these had been deprecated 
+previously with warning; use `modlib()` models instead
+
 # 0.8.10.9002
 - Added `mrgsim_df` function to return data frame rather than `mrgsims` object
 

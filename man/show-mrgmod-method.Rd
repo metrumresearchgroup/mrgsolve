@@ -3,7 +3,7 @@
 \docType{methods}
 \name{show,mrgmod-method}
 \alias{show,mrgmod-method}
-\title{Print model details.}
+\title{Print model details}
 \usage{
 \S4method{show}{mrgmod}(object)
 }
@@ -11,5 +11,5 @@
 \item{object}{the model object}
 }
 \description{
-Print model details.
+Print model details
 }

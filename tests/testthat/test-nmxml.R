@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -21,9 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-project <- file.path(system.file(package="mrgsolve"), "models")
-
-context("Testing NMXML functionality")
+context("test-nmxml")
 
 
 code <- '
@@ -41,10 +39,10 @@ $ODE dxdt_CENT=0;
 tmp <- tempdir()
 
 test_that("Model spec with $NMXML block can be parsed", {
-  expect_is(mcode("nmxml1", code,warn=FALSE),"mrgmod")
+  expect_is(mcode("nmxml1", code,warn=FALSE, compile = FALSE),"mrgmod")
 })
 
-mod <- mcode("test6", code)
+mod <- mcode("test6", code, compile = FALSE)
 
 par <- lapply(as.list(param(mod)), round, digits=3)
 
@@ -94,9 +92,7 @@ $SIGMA @name sg @block
 $PARAM CL=1
 $INIT CENT=0
 '
-mod <- mcode("test6b",code)
-
-context("User OMEGA and SIGMA matrices are loaded correctly")
+mod <- mcode("test6b",code, compile = FALSE)
 
 mat <- signif(as.matrix(omat(mod)),3)
 
@@ -131,7 +127,7 @@ test_that("Loading SIGMA from multiple sources", {
   expect_equivalent(mat[1,1], 4)
 })
 
-context("Testing OMEGA and SIGMA updates")
+
 a <- bmat(c(1,0.1,3))
 b <- as.list(omat(update(mod, omega=list(OM=a))))$OM
 
@@ -171,8 +167,7 @@ $SIGMA
 
 '
 
-mod <- mcode("tst_mat_update",code)
-context("Testing unnamed matrix updates")
+mod <- mcode("tst_mat_update",code, compile = FALSE)
 
 a <- dmat(1,2,3)
 b <- dmat(4,5,6)
@@ -184,16 +179,12 @@ test_that("Warning issued if updating unnamed matrix with named matrix", {
   expect_warning(mod %>% omat(a=b))
 })
 
-context("NMXML with no names specified")
-
-
 code <- '
 $NMXML
 project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 '
-mod <- mcode("nmxml512",code,warn=FALSE)
-
+mod <- mcode("nmxml512", code, warn=FALSE, compile = FALSE)
 
 test_that("No matrices when name not given", {
   expect_null(nrow(omat(mod)))
@@ -206,17 +197,13 @@ project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 omega=TRUE
 '
-mod <- mcode("nmxml2231",code,warn=FALSE)
+mod <- mcode("nmxml2231",code,warn=FALSE, compile = FALSE)
 
 test_that("Get theta and omega", {
   expect_true(nrow(omat(mod))==3)
   expect_identical(names(omat(mod)),"...")
   expect_null(nrow(smat(mod)))
 })
-
-
-
-context("Testing matrix labels")
 
 code <- '
 $OMEGA 
@@ -227,7 +214,6 @@ $OMEGA
 $OMEGA @labels x y z
 99 99 99
 
-
 $SIGMA @labels e f
 5 6 
 
@@ -235,8 +221,7 @@ $SIGMA @labels h i j k l
 1 2 3 4 5
 
 '
-mod <- mcode("label1", code,warn=FALSE)
-
+mod <- mcode("label1", code, warn=FALSE, compile = FALSE)
 
 test_that("Model compiles", {
   expect_is(mod,"mrgmod")
@@ -248,11 +233,10 @@ test_that("Labels are assigned to $OMEGA and $SIGMA", {
 })
   
 
-
-test_that("zero.re actually zeros all matrices", {
-  x <- mod %>% zero.re %>% omat %>% as.matrix
+test_that("zero_re zeros all matrices", {
+  x <- mod %>% zero_re %>% omat %>% as.matrix
   expect_true(all(as.numeric(x)==0))
-  x <- mod %>% zero.re %>% smat %>% as.matrix
+  x <- mod %>% zero_re %>% smat %>% as.matrix
   expect_true(all(as.numeric(x)==0))
 })
 
@@ -261,21 +245,20 @@ test_that("zero.re actually zeros all matrices", {
 code <- '
 $OMEGA
 @prefix x_
-@labels a b c d 
-1 2 3 4
+@labels a b 
+1 2 
 
 $OMEGA
 0 0 0
 
 '
-mod <- mcode("label2", code,warn=FALSE)
+mod <- mcode("label2", code,warn=FALSE, compile = FALSE)
 
 test_that("Mixed labels / no labels and prefix", {
-  expect_equivalent(mod@omega@labels, list(s(x_a,x_b,x_c,x_d),s(.,.,.)))
+  expect_equivalent(mod@omega@labels, list(s(x_a,x_b),s(.,.,.)))
 })
 
-  
-  
+
   
   
   

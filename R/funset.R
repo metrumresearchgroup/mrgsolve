@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-FUNSET_ERROR <- 
+FUNSET_ERROR__ <- 
 '
 There was a problem accessing the model shared object.
   Either the model object is corrupted or  
@@ -70,7 +70,7 @@ all_loaded <- function(x) all(which_loaded(x))
 
 
 pointers <- function(x) {
-  if(!funs_loaded(x)) stop(FUNSET_ERROR)
+  if(!funs_loaded(x)) stop(FUNSET_ERROR__)
   what <- funs(x)
   ans <- getNativeSymbolInfo(what,PACKAGE=dllname(x))
   setNames(lapply(ans, "[[","address"),names(what))

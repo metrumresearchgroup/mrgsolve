@@ -4,33 +4,36 @@
 \alias{mread_cache}
 \alias{mread}
 \alias{mread_file}
-\title{Read a model specification file.}
+\title{Read a model specification file}
 \usage{
 mread_cache(model = NULL, project = getwd(), file = paste0(model, ".cpp"),
   code = NULL, soloc = tempdir(), quiet = FALSE, preclean = FALSE, ...)
 
-mread(model = NULL, project = getwd(), code = NULL, file = paste0(model,
-  ".cpp"), udll = TRUE, ignore.stdout = TRUE, raw = FALSE,
-  compile = TRUE, audit = TRUE, quiet = getOption("mrgsolve_mread_quiet",
-  FALSE), check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
-  preclean = FALSE, ...)
+mread(model, project = getwd(), code = NULL, file = NULL, udll = TRUE,
+  ignore.stdout = TRUE, raw = FALSE, compile = TRUE, audit = TRUE,
+  quiet = getOption("mrgsolve_mread_quiet", FALSE), check.bounds = FALSE,
+  warn = TRUE, soloc = tempdir(), preclean = FALSE, ...)
 
 mread_file(file, ...)
 }
 \arguments{
 \item{model}{model name}
 
-\item{project}{location of the model specification file an any headers to be included}
+\item{project}{location of the model specification file an any 
+headers to be included}
 
-\item{file}{the full file name (with extension, but without path) where the model is specified}
+\item{file}{the full file name (with extension, but without path)
+where the model is specified}
 
-\item{code}{a character string with model specification code to be used instead of a model file}
+\item{code}{a character string with model specification code to be 
+used instead of a model file}
 
 \item{soloc}{directory where model shared object is stored}
 
 \item{quiet}{don't print messages when compiling}
 
-\item{preclean}{logical; if \code{TRUE}, compilation artifacts are cleaned up first}
+\item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
+cleaned up first}
 
 \item{...}{passed along}
 
@@ -49,28 +52,39 @@ mread_file(file, ...)
 \item{warn}{logical; if \code{TRUE}, print warning messages that may arise}
 }
 \description{
-\code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
+\code{mread} reads and parses a \code{mrgsolve} model 
+specification file, builds the model, and returns 
 a model object for simulation.
 }
 \details{
-When the \code{model} argument is used, 
-\code{mrgsolve} assumes the model is written in the 
-file with \code{model} as the stem and \code{.cpp} as the 
-extension.  Use the \code{file} argument to \code{mread} or use 
-\code{mread_file} to read a model from a file without
-the \code{.cpp} extension.
+The \code{model} argument is required.  For typical use, 
+the \code{file} argument is omitted and the value 
+for \code{file} is generated from the value for \code{model}.
+To determine the source file name, \code{mrgsolve} will look for 
+a file extension in the value of \code{model}.  A file extension is 
+assumed when it find sa period followed by one to three alpha-numeric 
+characters at the end of the string (e.g. \code{mymodel.txt} but not 
+\code{my.model}).  If no file extension is found, the extension \code{.cpp} 
+is assumed (e.g. \code{file} is \code{<model-name>.cpp}).  If a file 
+extension is found, \code{file} is \code{<model-name>}.    
+
+Best practice is to avoid using \code{.} in \code{model} unless
+you are using \code{model} to point to the model specification 
+file name. Otherwise, use \code{\link{mread_file}}.
 }
 \section{Model Library}{
 
 
-\code{mrgsolve} comes bundled with several precoded PK, PK/PD, and other systems models
-that are accessible via the \code{mread} interface.  
+\code{mrgsolve} comes bundled with several precoded PK, PK/PD, and 
+other systems models that are accessible via the \code{mread} interface.  
 
 Models available in the library include:
 
 \itemize{
-  \item PK models: \code{pk1cmt}, \code{pk2cmt}, \code{pk3cmt}, \code{tmdd}
-  \item PKPD models: \code{irm1}, \code{irm2}, \code{irm3}, \code{irm4}, \code{emax}, \code{effect}
+  \item PK models: \code{pk1cmt}, \code{pk2cmt}, \code{pk3cmt},
+                   \code{pk1}, \code{pk2}, \code{popex}, \code{tmdd}
+  \item PKPD models: \code{irm1}, \code{irm2}, \code{irm3}, \code{irm4},
+                      \code{emax}, \code{effect}
   \item Other models: \code{viral1}, \code{viral2}
 }
 
@@ -80,8 +94,9 @@ reference the correct model name and point the \code{project} argument
 to the \code{mrgsolve} model library location via \code{\link{modlib}}.
 
 For more details, see \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
-\code{\link{modlib_tmdd}}, \code{\link{modlib_viral}}, and \code{\link{modlib_details}}
-for more information about the state variables and parameters in each model.
+\code{\link{modlib_tmdd}}, \code{\link{modlib_viral}}, and 
+\code{\link{modlib_details}} for more information about the state 
+variables and parameters in each model.
 }
 
 \examples{

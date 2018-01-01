@@ -3,7 +3,7 @@
 \name{expand.idata}
 \alias{expand.idata}
 \alias{expand.ev}
-\title{Create template data sets for simulation.}
+\title{Create template data sets for simulation}
 \usage{
 expand.idata(...)
 
@@ -13,7 +13,7 @@ expand.ev(...)
 \item{...}{passed to \code{\link{expand.grid}}}
 }
 \description{
-Create template data sets for simulation.
+Create template data sets for simulation
 }
 \details{
 An ID column is added as \code{1:nrow(ans)} if not supplied by the user.  

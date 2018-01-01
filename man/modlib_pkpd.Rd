@@ -2,16 +2,26 @@
 % Please edit documentation in R/modlib.R
 \name{modlib_pkpd}
 \alias{modlib_pkpd}
-\title{modlib: Pharmacokinetic / pharmacodynamic models.}
+\title{modlib: Pharmacokinetic / pharmacodynamic models}
 \description{
-modlib: Pharmacokinetic / pharmacodynamic models.
+modlib: Pharmacokinetic / pharmacodynamic models
 }
 \details{
-See \code{\link{modlib_details}} for more detailed descriptions of parameters and compartments.
+See \code{\link{modlib_details}} for more detailed descriptions of 
+parameters and compartments.
 
-All PK/PD models include 2-compartment PK model with absorption from 2 extravasular compartments and linear + nonlinear clearance.  The PK models are parameterized with \code{CL}, \code{VC}, \code{Q}, \code{VMAX}, \code{KM}, \code{KA1} and \code{KA2} and implement compartments \code{EV1}, \code{EV2}, \code{CENT}, \code{PERIPH} .  The indirect response models have compartment \code{RESP} and the emax model has output variable \code{RESP}.  PD parameters include \code{KIN}, \code{KOUT}, \code{IC50}, \code{EC50}, \code{IMAX}, \code{EMAX}, \code{E0}, and \code{n}.
+All PK/PD models include 2-compartment PK model with absorption from 
+2 extravasular compartments and linear + nonlinear clearance.  The 
+PK models are parameterized with \code{CL}, \code{VC}, \code{Q}, 
+\code{VMAX}, \code{KM}, \code{KA1} and \code{KA2} and implement 
+compartments \code{EV1}, \code{EV2}, \code{CENT}, \code{PERIPH} .  
+The indirect response models have compartment \code{RESP} and the emax 
+model has output variable \code{RESP}.  PD parameters include \code{KIN}, 
+\code{KOUT}, \code{IC50}, \code{EC50}, \code{IMAX}, \code{EMAX}, \code{E0}, 
+and \code{n}.
 
-Also, once the model is loaded, use \code{\link{see}} method for \code{mrgmod} to view the model code.
+Also, once the model is loaded, use \code{\link{see}} method for 
+\code{mrgmod} to view the model code.
 }
 \section{Model description}{
 

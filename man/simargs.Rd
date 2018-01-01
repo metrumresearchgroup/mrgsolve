@@ -2,25 +2,27 @@
 % Please edit documentation in R/utils.R
 \name{simargs}
 \alias{simargs}
-\alias{simargs.mrgmod}
-\title{Access or clear arguments for calls to mrgsim.}
+\title{Access or clear arguments for calls to mrgsim}
 \usage{
-simargs(x, ...)
-
-\method{simargs}{mrgmod}(x, clear = FALSE, ...)
+simargs(x, which = NULL, clear = FALSE, ...)
 }
 \arguments{
 \item{x}{model object}
 
-\item{...}{passed along}
+\item{which}{character with lenght 1 naming a single arg to get}
 
-\item{clear}{logical indicating whether or not clear args from the model object}
+\item{clear}{logical indicating whether or not clear args from 
+the model object}
+
+\item{...}{passed along}
 }
 \value{
-If \code{clear} is \code{TRUE}, the argument list is cleared and the model object is returned.  Otherwise, the argument list is returned.
+If \code{clear} is \code{TRUE}, the argument list is 
+cleared and the model object is returned.  Otherwise, the argument 
+list is returned.
 }
 \description{
-Access or clear arguments for calls to mrgsim.
+Access or clear arguments for calls to mrgsim
 }
 \examples{
 mod <- mrgsolve:::house()

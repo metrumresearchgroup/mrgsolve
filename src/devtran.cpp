@@ -202,7 +202,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
   if((obscount == 0) || (obsaug)) {
 
-    dvec ptimes = Rcpp::as<dvec>(parin["ptimes"]);
+    //dvec ptimes = Rcpp::as<dvec>(parin["ptimes"]);
 
     Rcpp::NumericMatrix tgrid = Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
 
@@ -250,7 +250,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
     double id;
     size_t n;
-    size_t m = ptimes.size();
+    //size_t m = ptimes.size();
 
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
 
@@ -260,18 +260,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
       n = tgridn[tgridi[j]];
 
-      it->reserve((it->size() + n + m + 10));
+      it->reserve((it->size() + n));
 
       for(h=0; h < n; h++) {
-        //it->push_back(designs.at(tgridi[j]).at(h));
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
       }
 
-      for(h=0; h < m; h++) {
-        rec_ptr obs = NEWREC(ptimes[h],nextpos,false);
-        it->push_back(obs);
-      }
+      //for(h=0; h < m; h++) {
+      //  rec_ptr obs = NEWREC(ptimes[h],nextpos,false);
+      //  it->push_back(obs);
+      //}
 
       std::sort(it->begin(), it->end(), CompRec());
     }

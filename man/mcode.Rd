@@ -3,7 +3,7 @@
 \name{mcode_cache}
 \alias{mcode_cache}
 \alias{mcode}
-\title{Write, compile, and load model code.}
+\title{Write, compile, and load model code}
 \usage{
 mcode_cache(model, code, project = tempdir(), ...)
 
@@ -22,7 +22,8 @@ mcode(model, code, project = tempdir(), ...)
 This is a convenience function that ultimately calls \code{\link{mread}}.
 }
 \details{
-Note that the arguments are in slightly different order than \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+Note that the arguments are in slightly different order than 
+\code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
 }
 \examples{
 

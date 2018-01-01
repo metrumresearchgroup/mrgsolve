@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -17,18 +17,20 @@
 
 ##' S4 class for mrgsolve simulation output.
 ##'
-##' @slot request character vector of compartments requested in simulated output
-##' @slot outnames character vector of column names in simulated output coming from table step
-##' @slot data matrix of simulated data
+##' @slot request character vector of compartments requested in simulated 
+##' output
+##' @slot outnames character vector of column names in simulated output 
+##' coming from table step
+##' @slot data data.frame of simulated data
 ##' @slot mod the mrgmod model object
+##' @slot seed if one was passed in to \code{\link{mrgsim}}
 setClass("mrgsims",
          slots=c(
            request="character",
            outnames="character",
            data="data.frame",
            mod="mrgmod",
-           seed="integer",
-           date="character"
+           seed="integer"
          )
 )
 
@@ -51,3 +53,21 @@ setClass("batch_mrgsims",contains="mrgsims",
 ##' 
 ##' @export
 is.mrgsims <- function(x) inherits(x,"mrgsims")
+
+
+##' Corece an mrgsims object to list
+##' 
+##' @param x an mrgsims object
+##' @param ... not used
+##' @export
+setMethod("as.list", "mrgsims", function(x, ...) {
+  to_get <- slotNames("mrgsims") 
+  out <- vector("list",length(to_get))
+  for(.i in seq_along(to_get)) {
+    out[[.i]] <- slot(x,to_get[.i]) 
+  }
+  out <- setNames(out, to_get)
+  structure(out, class = "mrgsims_list")
+})
+
+
