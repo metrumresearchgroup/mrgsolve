@@ -6,7 +6,7 @@
 \alias{cvec,character-method}
 \alias{ch}
 \alias{s}
-\title{Create create character vectors.}
+\title{Create create character vectors}
 \usage{
 cvec(x, ...)
 
@@ -22,7 +22,7 @@ s(...)
 \item{...}{unquoted strings (for \code{ch})}
 }
 \description{
-Create create character vectors.
+Create create character vectors
 }
 \examples{
 

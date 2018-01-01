@@ -4,7 +4,7 @@
 \alias{mread_cache}
 \alias{mread}
 \alias{mread_file}
-\title{Read a model specification file.}
+\title{Read a model specification file}
 \usage{
 mread_cache(model = NULL, project = getwd(), file = paste0(model, ".cpp"),
   code = NULL, soloc = tempdir(), quiet = FALSE, preclean = FALSE, ...)
@@ -19,17 +19,21 @@ mread_file(file, ...)
 \arguments{
 \item{model}{model name}
 
-\item{project}{location of the model specification file an any headers to be included}
+\item{project}{location of the model specification file an any 
+headers to be included}
 
-\item{file}{the full file name (with extension, but without path) where the model is specified}
+\item{file}{the full file name (with extension, but without path)
+where the model is specified}
 
-\item{code}{a character string with model specification code to be used instead of a model file}
+\item{code}{a character string with model specification code to be 
+used instead of a model file}
 
 \item{soloc}{directory where model shared object is stored}
 
 \item{quiet}{don't print messages when compiling}
 
-\item{preclean}{logical; if \code{TRUE}, compilation artifacts are cleaned up first}
+\item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
+cleaned up first}
 
 \item{...}{passed along}
 
@@ -48,7 +52,8 @@ mread_file(file, ...)
 \item{warn}{logical; if \code{TRUE}, print warning messages that may arise}
 }
 \description{
-\code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
+\code{mread} reads and parses a \code{mrgsolve} model 
+specification file, builds the model, and returns 
 a model object for simulation.
 }
 \details{

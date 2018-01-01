@@ -3,7 +3,7 @@
 \name{qsim}
 \alias{qsim}
 \alias{qsim_df}
-\title{A quick simulation function.}
+\title{A quick simulation function}
 \usage{
 qsim(x, e = NULL, idata = NULL, req = NULL, tgrid = NULL,
   skip_init_calc = FALSE)
@@ -26,7 +26,7 @@ qsim_df(...)
 \item{...}{passed to \code{\link{qsim}}}
 }
 \description{
-A quick simulation function.
+A quick simulation function
 }
 \details{
 Use when simulating with no intervention or a simple intervention.

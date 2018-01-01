@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{mvgauss}
 \alias{mvgauss}
-\title{Simulate from a multivariate normal distribution with mean zero.}
+\title{Simulate from a multivariate normal distribution with mean zero}
 \usage{
 mvgauss(mat, n = 10, seed = NULL)
 }
@@ -14,5 +14,5 @@ mvgauss(mat, n = 10, seed = NULL)
 \item{seed}{if not null, passed to set.seed}
 }
 \description{
-Simulate from a multivariate normal distribution with mean zero.
+Simulate from a multivariate normal distribution with mean zero
 }

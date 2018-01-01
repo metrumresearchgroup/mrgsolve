@@ -2,10 +2,10 @@
 % Please edit documentation in R/utils.R
 \name{mcRNG}
 \alias{mcRNG}
-\title{Set RNG to use L'Ecuyer-CMRG.}
+\title{Set RNG to use L'Ecuyer-CMRG}
 \usage{
 mcRNG()
 }
 \description{
-Set RNG to use L'Ecuyer-CMRG.
+Set RNG to use L'Ecuyer-CMRG
 }
