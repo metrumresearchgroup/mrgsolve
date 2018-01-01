@@ -29,7 +29,9 @@
 ##' \code{\link{ev}}.
 ##' or any other function that will take the output of the preceeding command 
 ##' as it's first argument.
-##'
+##' 
+##' @seealso \code{\link{data_set}}, \code{\link{idata_set}}
+##' 
 ##' @examples
 ##'
 ##' mod <- mrgsolve:::house()
@@ -41,8 +43,6 @@
 ##' out <- mod %>% carry_out(evid) %>% ev(amt=100, cmt=1) %>% mrgsim()
 ##' out <- mod %>% Req(CP,RESP) %>% mrgsim()
 NULL
-
-# SEE ALSO: data_set and idata_set
 
 ##' Request simulated output
 ##' 
@@ -91,7 +91,7 @@ setMethod("req", "mrgmod", function(x,...) {
   x
 })
 
-##' Select items to carry into simulated output. 
+##' Select items to carry into simulated output
 ##' 
 ##' When items named in this function are found in the input data set (either 
 ##' \code{\link{data_set}} or \code{\link{idata_set}}), they are copied
@@ -123,7 +123,7 @@ carry.out <- function(x,...) {
   x
 }
 
-##' Rescale time in the simulated output.
+##' Rescale time in the simulated output
 ##'
 ##' @param x model object
 ##' @param value value by which time will be scaled
@@ -149,7 +149,7 @@ tscale <- function(x,value=1,...) {
 
 
 
-##' Collect only observations in the simulated output.
+##' Collect only observations in the simulated output
 ##'
 ##' @param x model object
 ##' @param value the value for \code{obsonly}
@@ -165,7 +165,7 @@ obsonly <- function(x,value=TRUE,...) {
   x@args[["obsonly"]] <- value
   x
 }
-##' Augment observations in the simulated output.
+##' Augment observations in the simulated output
 ##'
 ##' @param x model object
 ##' @param value the value for \code{obsaug}
@@ -245,7 +245,9 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
     deslist,inherits,c("tgrid", "tgrids", "numeric")),use.names=FALSE
   )]
   
-  if(length(deslist) == 0) stop("No valid tgrid objects found.")
+  if(length(deslist) == 0) {
+    stop("No valid tgrid objects found.")
+  }
   
   if(length(descol) == 1) {
     if(!exists("idata", x@args)) {
@@ -256,7 +258,8 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
     }
   } else {
     if(length(deslist) > 1) {
-      warning("Multiple designs specified but no idata key; only the first design will be used.", call.=FALSE)
+      warning("Multiple designs specified but no idata key;
+              only the first design will be used.", call.=FALSE)
     }
   }
   
@@ -264,6 +267,5 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
   x@args[["deslist"]] <- deslist
   
   x
-  
 }
 

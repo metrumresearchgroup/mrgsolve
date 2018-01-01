@@ -3,7 +3,7 @@
 \name{carry_out}
 \alias{carry_out}
 \alias{carry.out}
-\title{Select items to carry into simulated output.}
+\title{Select items to carry into simulated output}
 \usage{
 carry_out(x, ...)
 

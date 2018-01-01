@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{obsonly}
 \alias{obsonly}
-\title{Collect only observations in the simulated output.}
+\title{Collect only observations in the simulated output}
 \usage{
 obsonly(x, value = TRUE, ...)
 }
@@ -14,7 +14,7 @@ obsonly(x, value = TRUE, ...)
 \item{...}{passed along}
 }
 \description{
-Collect only observations in the simulated output.
+Collect only observations in the simulated output
 }
 \details{
 There is also a \code{obsonly} argument to \code{\link{mrgsim}} that can 

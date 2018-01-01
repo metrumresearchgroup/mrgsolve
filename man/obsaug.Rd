@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{obsaug}
 \alias{obsaug}
-\title{Augment observations in the simulated output.}
+\title{Augment observations in the simulated output}
 \usage{
 obsaug(x, value = TRUE, ...)
 }
@@ -17,5 +17,5 @@ be set to accomplish the same thing as a call to \code{obsaug} in
 the pipeline.}
 }
 \description{
-Augment observations in the simulated output.
+Augment observations in the simulated output
 }
