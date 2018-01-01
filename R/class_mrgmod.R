@@ -136,7 +136,7 @@ names(slots) <- names(protomod)
 
 valid.mrgmod <- function(object) {
   tags <- unlist(names(object), use.names=FALSE)
-  x <- check_names(tags,pars(object),cmt(object))
+  x <- check_names(tags,Pars(object),Cmt(object))
   x1 <- length(x)==0
   x2 <- object@advan %in% c(1,2,3,4,13)
   fun <- valid_funs(object@funs)
@@ -247,8 +247,8 @@ as_pack_mod <- function(model, project, PACKAGE) {
   )
   soloc <- soloc(x)
   source <- file.path(soloc,compfile(model(x)))
-  x@shlib$par <- pars(x)
-  x@shlib$cmt <- cmt(x)
+  x@shlib$par <- Pars(x)
+  x@shlib$cmt <- Cmt(x)
   x@shlib$source <- NULL
   x@code <- code
   x <- relocate_funs(x, PACKAGE)
@@ -291,7 +291,7 @@ setMethod("cmtn", "mrgmod", function(x,tag,...) {
 })
 
 neq <- function(x) length(Init(x))
-npar <- function(x) length(pars(x))
+npar <- function(x) length(Pars(x))
 pars <- function(x) names(param(x))
 shlib <- function(x) x@shlib
 cmt <- function(x) names(Init(x))
@@ -350,8 +350,8 @@ setMethod("sodll", "packmod", function(x,...) {
 ##' @export
 setMethod("names", "mrgmod", function(x) {
   ans <- list()
-  ans$param <- pars(x)
-  ans$init <- cmt(x)
+  ans$param <- Pars(x)
+  ans$init <- Cmt(x)
   ans$omega <- list(names(omat(x)),unlist(labels(omat(x)),use.names=FALSE))
   ans$sigma <- list(names(smat(x)),unlist(labels(smat(x)),use.names=FALSE))
   return(ans)

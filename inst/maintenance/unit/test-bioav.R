@@ -43,8 +43,7 @@ context("test-bioav")
 test_that("Bioav test with doses at time=0", {
   data <- expand.ev(ID=1:2,amt=100,FORM=c(1,2))
   out <- mod %>% data_set(data) %>%
-    mrgsim() %>% dplyr::as.tbl() %>%
-    filter(evid==1)
+    mrgsim() %>% filter(evid==1)
   expect_equal(c(100,100,10,10),out$CENT)
   expect_equal(rep(0,4),out$time)
   expect_equal(c(1,1,2,2),out$FORM)

@@ -21,10 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-project <- file.path(system.file(package="mrgsolve"), "models")
 
-
-context("Testing infusion inputs")
+context("test-D-R-F")
 
 code <- '
 $PARAM D1 = 2, F1=1, LAGT = 0, R1 = 1, mode = 0

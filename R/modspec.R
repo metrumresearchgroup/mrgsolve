@@ -866,7 +866,7 @@ pick_advan <- function(ncmt,depot) {
 }
 
 check_pred_symbols <- function(x,code) {
-  p <- pars(x)
+  p <- Pars(x)
   code <- unlist(get_tokens(code,TRUE))
   have <- unique(c(p,code))
   
