@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -19,7 +19,7 @@
 NULL
 
 
-##' Write, compile, and load model code.
+##' Write, compile, and load model code
 ##'
 ##' This is a convenience function that ultimately calls \code{\link{mread}}.
 ##'
@@ -28,7 +28,8 @@ NULL
 ##' @param code character string specifying a \code{mrgsolve} model
 ##' @param ... passed to \code{\link{mread}}
 ##' @details
-##' Note that the arguments are in slightly different order than \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+##' Note that the arguments are in slightly different order than 
+##' \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
 ##'
 ##' @examples
 ##'
@@ -49,17 +50,21 @@ mcode <- function(model, code, project=tempdir(), ...) {
   mread(model=model, project=project, code=code,...)
 }
 
-##' Read a model specification file.
+##' Read a model specification file
 ##' 
-##' \code{mread} reads and parses a \code{mrgsolve} model specification file, builds the model, and returns 
+##' \code{mread} reads and parses a \code{mrgsolve} model 
+##' specification file, builds the model, and returns 
 ##' a model object for simulation.
 ##' 
 ##'
 ##' @param model model name
-##' @param project location of the model specification file an any headers to be included
-##' @param file the full file name (with extension, but without path) where the model is specified
+##' @param project location of the model specification file an any 
+##' headers to be included
+##' @param file the full file name (with extension, but without path)
+##' where the model is specified
 ##' @param soloc directory where model shared object is stored
-##' @param code a character string with model specification code to be used instead of a model file
+##' @param code a character string with model specification code to be 
+##' used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
 ##' @param raw if TRUE, return a list of raw output
 ##' @param compile logical; if \code{TRUE}, the model will be built
@@ -68,7 +73,8 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' @param warn logical; if \code{TRUE}, print warning messages that may arise
 ##' @param udll use unique name for shared object
 ##' @param quiet don't print messages when compiling
-##' @param preclean logical; if \code{TRUE}, compilation artifacts are cleaned up first
+##' @param preclean logical; if \code{TRUE}, compilation artifacts are 
+##' cleaned up first
 ##' @param ... passed along
 ##' 
 ##' @details

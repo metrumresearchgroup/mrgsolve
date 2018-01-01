@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -51,44 +51,6 @@
   }
   list(Old = from, New = to)
 }
-
-# relabel_initialize <- function(x,y = NULL) {
-#   x <- relabel_parse(x,y) 
-#   self$Old <- x$Old
-#   self$New <- x$New
-#   if(all(x$Old==x$New)) {
-#     self$identical <- TRUE 
-#   }
-# }
-# 
-# 
-# relabel_relabel <- function(y) {
-#   if(self$identical) return(y)
-#   old <- match(y,self$Old)
-#   old <- sort(old[!is.na(old)])
-#   nw <- match(self$Old,y)
-#   nw <- nw[!is.na(nw)]
-#   y[nw] <- self$New[old]
-#   return(y)
-# }
-# 
-# relabel <- R6::R6Class("relabel" , class = TRUE,
-#                        public = list(initialize = relabel_initialize, 
-#                                      Old = character(0), 
-#                                      New = character(0),
-#                                      identical = FALSE,
-#                                      as_vector = function(named = TRUE) {
-#                                        if(named) return(setNames(self$New,self$Old))
-#                                        return(self$New)
-#                                      },
-#                                      old  = function() {
-#                                        self$Old
-#                                      }, 
-#                                      new = function() {
-#                                        self$New 
-#                                      }, 
-#                                      relabel = relabel_relabel)
-# )
 
 .ren.create <- function(x,y = NULL,sanitize = "sanitize_capture") {
   x <- .ren.parse(x,y) 

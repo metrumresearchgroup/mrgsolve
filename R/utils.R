@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -88,7 +88,7 @@ update_list <- function(left, right) {
 
 
 
-##' Simulate from a multivariate normal distribution with mean zero.
+##' Simulate from a multivariate normal distribution with mean zero
 ##'
 ##' @param mat a positive-definite matrix
 ##' @param n number of variates to simulate
@@ -179,7 +179,7 @@ as.cvec <- function(x) {
 }
 
 
-##' Create template data sets for simulation.
+##' Create template data sets for simulation
 ##'
 ##' @param ... passed to \code{\link{expand.grid}}
 ##' 
@@ -210,11 +210,7 @@ expand.ev <- function(...) {
   shuffle(ans,"ID")
 }
 
-
 is.numeric.data.frame <- function(x) sapply(x, is.numeric)
-
-
-
 
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())
@@ -240,7 +236,7 @@ tovec <- function(x,concat=TRUE) {
 }
 
 
-##' Create create character vectors.
+##' Create create character vectors
 ##'
 ##' @param x comma-separated quoted string (for \code{cvec})
 ##' @param ... unquoted strings (for \code{ch})
@@ -265,14 +261,17 @@ ch <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 ##' @rdname cvec
 s <- ch
 
-##' Access or clear arguments for calls to mrgsim.
+##' Access or clear arguments for calls to mrgsim
 ##'
 ##' @param x model object
-##' @param clear logical indicating whether or not clear args from the model object
+##' @param clear logical indicating whether or not clear args from 
+##' the model object
 ##' @param which character with lenght 1 naming a single arg to get
 ##' @param ... passed along
 ##' 
-##' @return If \code{clear} is \code{TRUE}, the argument list is cleared and the model object is returned.  Otherwise, the argument list is returned.
+##' @return If \code{clear} is \code{TRUE}, the argument list is 
+##' cleared and the model object is returned.  Otherwise, the argument 
+##' list is returned.
 ##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
@@ -302,7 +301,7 @@ build_path <- function(x) {
 }
 
 
-##' Set RNG to use L'Ecuyer-CMRG.
+##' Set RNG to use L'Ecuyer-CMRG
 ##'
 ##' @export
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
@@ -321,7 +320,8 @@ if.file.remove <- function(x) {
 rename_cols <- function(.df, new_names) {
   if (!all(new_names %in% names(.df))) {
     missing <- new_names[which(!new_names %in% names(.df))]
-    stop(paste("the following columns do not exist in the dataset: ", paste(missing, collapse = ", ")))
+    stop(paste("the following columns do not exist in the dataset: ", 
+               paste(missing, collapse = ", ")))
   }
   matches <- match(new_names, names(.df))
   names(.df)[matches] <- names(new_names)
@@ -343,7 +343,10 @@ get_tokens <- function(x,unlist=FALSE) {
 
 grepn <- function(x,pat,warn=FALSE) {
   if(is.null(names(x))) {
-    if(warn) warning("grepn: pattern was specified, but names are NULL.", call.=FALSE)
+    if(warn) {
+      warning("grepn: pattern was specified, but names are NULL.", 
+              call.=FALSE)
+    }
     return(x)
   }
   if(pat=="*") return(x)
@@ -458,7 +461,6 @@ has_ID <- function(object) {
 
 file_exists <- function(x) {
   file.exists(x)
-  #file.access(x)==0
 }
 
 file_writeable <- function(x) {
