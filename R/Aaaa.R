@@ -22,9 +22,10 @@
 ##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl 
 ##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange
 ##' @importFrom dplyr intersect filter select rename slice distinct  do_ 
-##' @importFrom dplyr distinct_ first arrange select_vars_ 
-##' @importFrom dplyr select_vars everything
+##' @importFrom dplyr distinct_ first  select_vars_ 
+##' @importFrom dplyr select_vars everything arrange_
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
+##' @importFrom dplyr funs_  mutate_all group_by ungroup n
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
@@ -62,6 +63,9 @@ GLOBALS$CARRY_TRAN_UC <- c("AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS")
 GLOBALS$CARRY_TRAN_LC <- tolower(GLOBALS[["CARRY_TRAN_UC"]])
 GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRAN_LC"]])
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
+GLOBALS$TRAN_UPPER <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
+GLOBALS$TRAN_LOWER <- tolower(GLOBALS$TRAN_UPPER)
+
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",

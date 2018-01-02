@@ -8,7 +8,8 @@
 \usage{
 realize_addl(x, ...)
 
-\method{realize_addl}{data.frame}(x, warn = FALSE, mark_new = FALSE, ...)
+\method{realize_addl}{data.frame}(x, warn = FALSE, mark_new = FALSE,
+  fill = c("inherit", "na", "locf"), ...)
 
 \method{realize_addl}{ev}(x, ...)
 }
@@ -21,17 +22,38 @@ realize_addl(x, ...)
 \code{addl} column is found}
 
 \item{mark_new}{if \code{TRUE}, a flag is added to indicate new columns}
+
+\item{fill}{specifies how to handle non-dose related data columns
+in new data set records; this option is critical when handling 
+data sets with time-varying, non-dose-related data items; see details}
 }
 \description{
 Make addl doses explicit in an event object or data set
 }
 \details{
-This function is intended for use with data frames or event objects
-that do \bold{not} include time-varying data items. Use the 
-\code{mark_new} option to get a flag inserted into the output
-for further processing.
-
 If no \code{addl} column is found the data frame is returned and 
-a warning is issued if \code{warn} is true. If \code{ii} or 
-\code{time} are missing, an error is generated.
+a warning is issued if \code{warn} is true. If \code{ii}, 
+\code{time}, or \code{evid} are missing, an error is generated.
+
+Use caution when passing in data that has non-dose-related data 
+columns that vary within a subject and pay special attention
+to the \code{fill} argument.  By definition, \code{realize_addl}
+will add new rows to your data frame and it is not obvious 
+how the non-dose-related data should be handled in these new 
+rows.  When \code{inherit} is chosen, the new records have
+non-dose-related data that is identical to the originating 
+dose record.  This should be fine when these data items are not 
+varying with time, but will present a problem when the data
+are varying with time.  When \code{locf} is chosen, 
+the missing data are filled in with \code{NA} and an
+last observation carry forward operation is applied to 
+\bold{every} column in the data set.  This may not be what 
+you want if you already had missing values in the input 
+data set and want to preserve that missingness. When \code{na}
+is chosen, the missing data are filled in with \code{NA} and 
+no \code{locf} operation is applied.  But note that these
+missing values may be problematic for a mrgsolve simulation 
+run. If you have any time-varying columns or missing data
+in your data set, be sure to check that the output from 
+this function is what you were expecting.
 }
