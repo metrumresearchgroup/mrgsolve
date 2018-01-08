@@ -41,7 +41,7 @@ nrow.ev(x)
 
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 
-\S4method{as.ev}{data.frame}(x, nid = 1, keep_id = TRUE, ...)
+\S4method{as.ev}{data.frame}(x, keep_id = TRUE, clean = FALSE, ...)
 
 \S4method{as.ev}{ev}(x, ...)
 
@@ -78,10 +78,10 @@ each individual in \code{ID}}
  If \code{TRUE}, 
 \code{addl} doses are made explicit with \code{\link{realize_addl}}.}
 
-\item{nid}{if greater than 1, will expand to the appropriate 
-number of individuals}
-
 \item{keep_id}{if \code{TRUE}, \code{ID} column is retained if it exists}
+
+\item{clean}{if \code{TRUE}, only dosing or ID information is retained in
+the result}
 
 \item{row.names}{passed to \code{\link{as.data.frame}}}
 
@@ -105,12 +105,14 @@ Events can either be specified when the model object is created (with
 }
 \details{
 \itemize{
-\item Required input for creating events objects include \code{time} and \code{cmt}
+\item Required input for creating events objects include 
+\code{time} and \code{cmt}
 \item If not supplied, \code{evid} is assumed to be 1.
 \item If not supplied, \code{cmt}  is assumed to be 1.
 \item If not supplied, \code{time} is assumed to be 0.
 \item \code{ID} may be specified as a vector.
-\item If replicate is \code{TRUE} (default), thenthe events regimen is replicated for each \code{ID}; otherwise, the number of
+\item If replicate is \code{TRUE} (default), thenthe events 
+regimen is replicated for each \code{ID}; otherwise, the number of
 event rows must match the number of \code{ID}s entered
 }
 }

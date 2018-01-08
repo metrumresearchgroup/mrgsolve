@@ -532,4 +532,27 @@ sanitize_capture <- function(x) {
   x
 }
 
+# from metrumrg package
+locf <- function(x){
+  good <- !is.na(x)
+  positions <- seq(length(x))
+  good.positions <- good * positions
+  last.good.position <- cummax(good.positions)
+  last.good.position[last.good.position==0] <- NA
+  x[last.good.position]
+}
+forbak <- function(x)nocb(locf(x))
+bakfor <- function(x)locf(nocb(x))
+nocb <- function(x)rev(locf(rev(x)))
 
+locf_data_frame <- function(x) {
+  mutate_all(x, .funs = funs_("locf"))
+}
+
+locf_ev <- function(x) {
+  if(!is.ev(x)) {
+    stop("x is not an event object") 
+  }
+  x@data <- mutate_all(x@data, funs_("locf"))
+  x
+}
