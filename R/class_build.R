@@ -24,31 +24,27 @@
 new_build <- function(file, model, project, soloc, code = NULL, 
                       preclean = FALSE, udll = FALSE) {
   
-  if(length(model) == 0) stop("invalid model name", call. = FALSE)
-
+  if(length(model) == 0) {
+    stop("invalid model name", call. = FALSE)
+  }
+  
   if(charthere(model," ")) {
     stop("model name cannot contain spaces.", call. = FALSE)
   }
   
-  
   if(is.null(file)) {
-    model_has_ext <- grepl("\\.[[:alnum:]]{1,3}$", model, perl = TRUE)
-    if(!model_has_ext) {
-      file <- paste0(model,".cpp") 
-    } else {
-      file <- model    
-    }
+    file <- paste0(model,".cpp")
   }
   
-  model <- gsub(".", "_", model, fixed = TRUE)
-
+  new_model <- gsub(".", "_", model, fixed = TRUE)
+  
   if(any(charthere(project,"\n"))) {
     stop(
       "project argument contains newline(s); did you mean to call mcode?",
       call.=FALSE
-      ) 
+    ) 
   }
-
+  
   env <- new.env()
   
   env$win <- .Platform$OS.type=="windows"
@@ -60,7 +56,7 @@ new_build <- function(file, model, project, soloc, code = NULL,
   
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   
-  env$soloc <- as.character(create_soloc(soloc,model,preclean))
+  env$soloc <- as.character(create_soloc(soloc,new_model,preclean))
   
   if(!file_readable(project)) {
     stop("project directory must exist and be readable.",call.=FALSE) 
@@ -78,24 +74,29 @@ new_build <- function(file, model, project, soloc, code = NULL,
   }
   
   if(!file_exists(env$modfile)) {
-    stop("the model file ", 
-         basename(env$modfile), 
-         " does not exist.",call.=FALSE) 
+    new_modfile <- file.path(project,model)
+    if(!file_exists(new_modfile)) {
+      stop("the model file ", 
+           basename(env$modfile), 
+           " does not exist.",call.=FALSE) 
+    } else {
+      env$modfile <- new_modfile  
+    }
   }
   
   env$md5 <- tools::md5sum(env$modfile)
   
-  env$package <- ifelse(udll,rfile(model), model)
+  env$package <- ifelse(udll, rfile(model), new_model)
   
-  env$compfile <- compfile(model)
-  env$compbase <- compbase(model)
-  env$compout <- compout(model)
+  env$compfile <- compfile(new_model)
+  env$compbase <- compbase(new_model)
+  env$compout <- compout(new_model)
   env$compdir <- compdir()
   env$cachfile <- cachefile()
-  env$model <- model
+  env$model <- new_model
   
   return(env)
-
+  
 }
 
 rfile <- function(pattern="",tmpdir=normalizePath(getwd(),winslash="/")){

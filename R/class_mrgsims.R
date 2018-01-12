@@ -23,14 +23,12 @@
 ##' coming from table step
 ##' @slot data data.frame of simulated data
 ##' @slot mod the mrgmod model object
-##' @slot seed if one was passed in to \code{\link{mrgsim}}
 setClass("mrgsims",
          slots=c(
            request="character",
            outnames="character",
            data="data.frame",
-           mod="mrgmod",
-           seed="integer"
+           mod="mrgmod"
          )
 )
 

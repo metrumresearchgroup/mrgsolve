@@ -19,7 +19,5 @@ coming from table step}
 \item{\code{data}}{data.frame of simulated data}
 
 \item{\code{mod}}{the mrgmod model object}
-
-\item{\code{seed}}{if one was passed in to \code{\link{mrgsim}}}
 }}
 

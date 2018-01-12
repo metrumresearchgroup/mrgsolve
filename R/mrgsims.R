@@ -104,7 +104,7 @@ setMethod("tail", "mrgsims",function(x,...) {
 ##' @rdname mrgsims
 ##' @export
 setMethod("head", "mrgsims",function(x,...) {
-  cat("Model: ", model(mod(x)), "\n")
+  #cat("Model: ", model(mod(x)), "\n")
   return(head(x@data,...))
 })
 
@@ -233,7 +233,7 @@ setMethod("show", "mrgsims", function(object) {
   n <- min(8,nrow(object@data))
   top <- data.matrix(object@data[seq_len(n),,drop=FALSE],rownames.force=FALSE)
   tcol <- timename(object@data)
-  cat("Model: ", basename(cfile(mod(object))), "\n")
+  cat("Model: ", model(mod(object)), "\n")
   cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
   cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
   cat("ID:    ", length(unique(object@data[,"ID"])), "\n")
