@@ -250,7 +250,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
     double id;
     size_t n;
-    //size_t m = ptimes.size();
 
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
 
@@ -266,11 +265,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
       }
-
-      //for(h=0; h < m; h++) {
-      //  rec_ptr obs = NEWREC(ptimes[h],nextpos,false);
-      //  it->push_back(obs);
-      //}
 
       std::sort(it->begin(), it->end(), CompRec());
     }
@@ -353,8 +347,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     dat.carry_out(a,ans,idat,data_carry,data_carry_start,
                   idata_carry,idata_carry_start);
   }
-
-  if(verbose||debug)  Rcpp::Rcout << "Solving ... ";
 
   double tto, tfrom;
   crow = 0;
