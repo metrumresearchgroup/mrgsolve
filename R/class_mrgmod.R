@@ -339,8 +339,6 @@ setMethod("sodll", "packmod", function(x,...) {
 ##' 
 ##' @param x the model object
 ##' 
-##' @name update
-##' 
 ##' @aliases names,mrgmod-method
 ##' 
 ##' @examples
@@ -429,8 +427,8 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
   x
 })
 
-##' @export
 ##' @rdname see
+##' @export
 setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
   if(raw) return(x@code)
   what <- x@code
@@ -446,8 +444,8 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
   return(invisible(NULL))
 })
 
-##' @export
 ##' @rdname loadso
+##' @export
 setMethod("loadso", "mrgmod", function(x,...) {
   if(.Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
   foo <- try(dyn.load(sodll(x)))
@@ -468,27 +466,28 @@ setMethod("unloadso", "mrgmod", function(x, ...) {
   return(invisible(NULL))
 })
 
-##' @export
+
 ##' @rdname tgrid
+##' @export
 setMethod("stime", "mrgmod",  function(x,...) {
   render_time(x)
 })
 
-##' @export
 ##' @rdname revar
+##' @export
 setMethod("revar", "mrgmod", function(x,...) {
   return(list(omega=x@omega,sigma=x@sigma))
 })
 
-##' @export
 ##' @rdname blocks
+##' @export
 setMethod("blocks", "mrgmod", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(cfile(x),what)
 })
 
-##' @export
 ##' @rdname blocks
+##' @export
 setMethod("blocks", "character", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(x,what)
@@ -535,9 +534,11 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-##' @rdname param
+
 ##' @param x mrgmod object
 ##' @param name parameter to take
+##'
+##' @rdname param
 ##' @export
 setMethod("$", "mrgmod", function(x,name){
   as.numeric(allparam(x))[name]

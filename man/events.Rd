@@ -74,9 +74,9 @@ each individual in \code{ID}}
 
 \item{until}{the expected maximum \bold{observation} time for this regimen}
 
-\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} doses. 
- If \code{TRUE}, 
-\code{addl} doses are made explicit with \code{\link{realize_addl}}.}
+\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} 
+doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
+\code{\link{realize_addl}}}
 
 \item{keep_id}{if \code{TRUE}, \code{ID} column is retained if it exists}
 

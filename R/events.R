@@ -24,9 +24,10 @@
 ##' each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
-##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} doses. 
-##'  If \code{TRUE}, 
-##' \code{addl} doses are made explicit with \code{\link{realize_addl}}.
+##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
+##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
+##' \code{\link{realize_addl}}
+##' 
 ##' @export
 setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
                                     cmt=1, replicate=TRUE, until=NULL,
@@ -42,7 +43,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
   
   data <-
     as.data.frame(list(...)) %>%
-    dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
+    mutate(time=time,cmt=cmt,evid=evid) %>%
     as.data.frame
   
   if(!has_name("amt",data)) {

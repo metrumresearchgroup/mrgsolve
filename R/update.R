@@ -170,8 +170,8 @@ update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
   return(x)
 }
 
-##' @export
 ##' @rdname update
+##' @export
 ##' @param y another object involved in update
 setMethod("update", "omegalist", function(object,y,...) {
   update_matlist(object, omat(y),context="omat",...)
