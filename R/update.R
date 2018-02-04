@@ -48,7 +48,7 @@ all_updatable <- c(sval,other_val)
 ##' Slots that can be updated: atol, rtol, verbose, 
 ##' debug, preclean, mindt, digits, ixpr, 
 ##' mxhnil, hmin, hmax, maxsteps, start, end, 
-##' delta, add, tscals, request, param,
+##' delta, add, tscale, request, param,
 ##' init, omega, sigma.
 ##' 
 ##' @name update

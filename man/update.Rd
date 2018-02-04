@@ -50,7 +50,7 @@ After the model object is created, update various attributes.
 Slots that can be updated: atol, rtol, verbose, 
 debug, preclean, mindt, digits, ixpr, 
 mxhnil, hmin, hmax, maxsteps, start, end, 
-delta, add, tscals, request, param,
+delta, add, tscale, request, param,
 init, omega, sigma.
 }
 \examples{

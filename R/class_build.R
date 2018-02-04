@@ -58,13 +58,13 @@ new_build <- function(file, model, project, soloc, code = NULL,
   
   env$soloc <- as.character(create_soloc(soloc,new_model,preclean))
   
-  if(!file_readable(project)) {
+  env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
+  
+  if(!file_readable(env$project)) {
     stop("project directory must exist and be readable.",call.=FALSE) 
   }
   
-  env$project <- normalizePath(project, mustWork=TRUE, winslash="/")
-  
-  env$modfile <- file.path(project,file)
+  env$modfile <- file.path(env$project,file)
   
   ## If code is passed in as character:
   if(is.character(code)) {
@@ -74,7 +74,7 @@ new_build <- function(file, model, project, soloc, code = NULL,
   }
   
   if(!file_exists(env$modfile)) {
-    new_modfile <- file.path(project,model)
+    new_modfile <- file.path(env$project,model)
     if(!file_exists(new_modfile)) {
       stop("the model file ", 
            basename(env$modfile), 

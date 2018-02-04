@@ -50,23 +50,34 @@
 \item{object}{passed to show}
 }
 \description{
-These methods help the user view simulation output and extract simulated data to work with further.  The methods listed here for the
-most part have generics defined by R or other R packages.  See the \code{seealso} section for other methods defined by \code{mrgsolve}
-that have their own documentation pages.
+These methods help the user view simulation output and extract 
+simulated data to work with further.  The methods listed here 
+for the most part have generics defined by R or other R packages.  
+See the \code{seealso} section for other methods defined 
+by \code{mrgsolve} that have their own documentation pages.
 }
 \details{
-Most methods should behave as expected according to other method commonly used in R (e.g. head, tail, as.data.frame, etc ...)
+Most methods should behave as expected according to other method 
+commonly used in R (e.g. head, tail, as.data.frame, etc ...)
 
 \itemize{
-  \item{\code{subset}} coreces simulated output to data.frame and passes to subset.data.frame
-  \item{\code{$}} selects a column in the simulated data and returns numeric
-  \item{\code{head}} see \code{\link{head.matrix}}; returns simulated data
-  \item{\code{tail}} see \code{\link{tail.matrix}}; returns simulated data
-  \item{\code{dim}, \code{nrow}, \code{ncol}} returns dimensions, number of rows, and number of columns in simulated data
-  \item{\code{as.data.frame}} coreces simulated data to data.frame and returns the data.frame
+  \item{\code{subset}} coreces simulated output to data.frame and 
+  passes to subset.data.frame
+  \item{\code{$}} selects a column in the simulated data and 
+  returns numeric
+  \item{\code{head}} see \code{\link{head.matrix}}; returns 
+  simulated data
+  \item{\code{tail}} see \code{\link{tail.matrix}}; returns 
+  simulated data
+  \item{\code{dim}, \code{nrow}, \code{ncol}} returns dimensions, 
+  number of rows, and number of columns in simulated data
+  \item{\code{as.data.frame}} coreces simulated data to data.frame 
+  and returns the data.frame
   \item{\code{as.matrix}} returns matrix of simulated data
-  \item{\code{as.tbl}} coreces simulated to \code{tbl_df}; requires \code{dplyr}
-  \item{\code{summary}} coreces simulated data to data.frame and passes to \code{\link{summary.data.frame}}
+  \item{\code{as.tbl}} coreces simulated to \code{tbl_df}; 
+  requires \code{dplyr}
+  \item{\code{summary}} coreces simulated data to data.frame 
+  and passes to \code{\link{summary.data.frame}}
   \item{\code{plot}} plots simulated data; see \code{\link{plot_mrgsims}}
 }
 }
