@@ -183,6 +183,7 @@ code <- '
 $NMXML
 project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
+omega = FALSE, sigma = FALSE
 '
 mod <- mcode("nmxml512", code, warn=FALSE, compile = FALSE)
 
@@ -195,7 +196,7 @@ code <- '
 $NMXML
 project=file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
-omega=TRUE
+sigma = FALSE
 '
 mod <- mcode("nmxml2231",code,warn=FALSE, compile = FALSE)
 

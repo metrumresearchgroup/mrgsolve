@@ -1,3 +1,36 @@
+# 0.8.10.9005
+
+## New Features
+
+- Added better support for writing model files with any 
+extension.  For example, `mread("mymodel.txt")` will read
+from the file `mymodel.txt` if it exists.  However, the default 
+behavior remains unchanged so that `mread("mymodel")` will 
+expect to find the model in the file `mymodel.cpp`. 
+
+## Bug Fixes
+
+- Fixed bug where the md5 value on the model file cound not 
+be calculated under certain `project` path formulations #315
+
+## Important changes
+
+- The `realize_addl` function was re-factored to better
+account for time-varying data items; more option are 
+provided for seeing where rows were inserted into the 
+data set and whether to make assumptions about other 
+data in those rows or not
+
+- mrgsolve no longer utilizes any functions from the 
+XML package.  All previous functionality that depended
+on XML now depends on xml2.  As such, xml2 is listed 
+under the Suggests dependency.
+
+- When using `$NMXML`, the `$OMEGA` and `$SIGMA` matrices
+are now loaded by default; see new default arguments
+to `mrgsolve:::nmxml`
+
+
 # 0.8.10.9003
 
 ## New Features
@@ -48,7 +81,8 @@ previously with warning; use `modlib()` models instead
 
 # 0.8.10.9001
 
-- The model environment is automatically imported as `_env` when `mrgx` plugin is invoked
+- The model environment is automatically imported as `_env` when 
+`mrgx` plugin is invoked
 
 # 0.8.10
 - Release to CRAN

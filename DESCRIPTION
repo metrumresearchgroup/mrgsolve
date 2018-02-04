@@ -43,7 +43,7 @@ LinkingTo:
 Suggests:
     lattice,
     testthat,
-    XML,
+    xml2,
     rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes
