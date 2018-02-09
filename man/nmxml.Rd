@@ -37,7 +37,7 @@ nmxml(run = numeric(0), project = character(0), file = character(0),
 
 \item{sname}{name for \code{$SIGMA}}
 
-\item{...}{passed along}
+\item{...}{not used}
 }
 \value{
 A list with theta, omega and sigma elements, 

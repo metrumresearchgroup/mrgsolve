@@ -31,7 +31,7 @@
 ##' @param tname name for \code{$THETA}
 ##' @param oname name for \code{$OMEGA}
 ##' @param sname name for \code{$SIGMA}
-##' @param ... passed along
+##' @param ... not used
 ##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is 

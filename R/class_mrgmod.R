@@ -439,7 +439,7 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
     warning("No code to show.")
   } else {
     cat("\nModel file: ", basename(cfile(x)), "\n")
-    cat(paste0(" ", what), sep="\n")
+    cat(what, sep="\n")
   }
   return(invisible(NULL))
 })

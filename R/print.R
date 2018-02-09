@@ -95,7 +95,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 
     proj <- normalizePath(project(x), mustWork=FALSE,
                           winslash=.Platform$file.sep)
-    proj <- cropstr(proj, 16,44)
+    proj <- cropstr(proj, 16,16)
 
 
     osig <- dim_matlist(x@omega)
@@ -111,7 +111,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
     cat("  Project: ",proj,"\n", sep="")
     cat("  source:        ", basename(cfile(x)), "\n", sep="")
     cat("  shared object: ", dllname(x), " ",loaded,"\n\n", sep="")
-    cat("  compile date:  ", x@shlib$date, "\n", sep="")
+    #cat("  compile date:  ", x@shlib$date, "\n", sep="")
 
 
     cat(tt, sep="\n")
