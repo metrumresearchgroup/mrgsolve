@@ -226,6 +226,9 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   }
   
   if(have_data) {
+    if(is.ev(data)) {
+      data <- as.data.frame(data, add_ID = 1)  
+    }
     if(have_idata) {
       return(mrgsim_di(x, data = data, idata = idata, ...)) 
     } else {
@@ -291,7 +294,6 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
-  data <- as.data.frame(data, add_ID = 1)
   args <- list(...)
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
