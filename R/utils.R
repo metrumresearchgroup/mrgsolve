@@ -556,3 +556,11 @@ locf_ev <- function(x) {
   x@data <- mutate_all(x@data, funs_("locf"))
   x
 }
+
+
+arrange__ <- function(df, .dots) {
+  arrange(df, UQS(syms(.dots)))
+}
+select__ <- function(df, .dots) {
+  select(df, UQS(syms(.dots)))
+}

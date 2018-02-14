@@ -35,7 +35,8 @@ Imports:
     lazyeval (>= 0.1.10),
     RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 1.2),
-    assertthat
+    assertthat, 
+    rlang
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 

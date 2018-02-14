@@ -21,10 +21,11 @@
 ##' @export
 ##' @param x model object
 ##' @param data data set
-##' @param subset passed to \code{dplyr::filter_}; retain only certain 
-##' rows in the data set
-##' @param select passed to \code{dplyr::select_}; retain only certain 
-##' columns in the data set
+##' @param .subset an unquoted expression passed to 
+##' \code{dplyr::filter}; retain only certain rows in the data set
+##' @param .select passed to \code{dplyr::select}; retain only certain 
+##' columns in the data set; this should be the result of a call to 
+##' \code{dplyr::vars()}
 ##' @param object character name of an object existing in \code{$ENV} 
 ##' to use for the data set
 ##' @param need passed to \code{\link{inventory}}
@@ -87,14 +88,14 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' mod %>% mrgsim(data=extran1)
 ##' 
 ##' @export
-setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,subset=TRUE,select=TRUE,object=NULL,need=NULL,...) {
+setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
   
   if(is.character(need)) {
     suppressMessages(inventory(x,data,need))
   }
-  if(exists("data", x@args)) stop("data already has been set.")
-  if(!missing(subset)) data <- dplyr::filter_(data,.dots=lazy(subset))
-  if(!missing(select)) data <- dplyr::select_(data,.dots=lazy(select))
+  #if(exists("data", x@args)) stop("data already has been set.")
+  if(!missing(.subset)) data <- filter(data,UQS(enquo(.subset)))
+  if(!missing(.select)) data <- select(data,UQS(.select))
   if(nrow(data) ==0) {
     stop("Zero rows in data after filtering.", call.=FALSE)
   }

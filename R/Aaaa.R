@@ -33,6 +33,7 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame data_frame
+##' @importFrom rlang UQS enquo syms
 ##' @importFrom assertthat assert_that
 ##' @import methods
 ##' @include class_mrgsims.R
