@@ -85,7 +85,7 @@ as_deslist <- function(data, descol="ID") {
     data[["add"]] <- 0
   }
 
-  designs <- distinct_(data, .dots=descol, .keep_all=TRUE)
+  designs <- distinct__(data, .dots=descol, .keep_all=TRUE)
   
   designs <- as.data.frame(designs)
   

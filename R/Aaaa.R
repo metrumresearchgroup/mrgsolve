@@ -19,13 +19,13 @@
 ##' @importFrom utils capture.output example str type.convert 
 ##' @importFrom utils packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
-##' @importFrom dplyr mutate mutate_  slice slice_ group_by_ summarise_ as.tbl 
-##' @importFrom dplyr filter_ summarise_each_ select_ bind_rows arrange
-##' @importFrom dplyr intersect filter select rename slice distinct  do_ 
-##' @importFrom dplyr distinct_ first  select_vars_ 
-##' @importFrom dplyr select_vars everything arrange_
+##' @importFrom dplyr mutate slice as.tbl pull
+##' @importFrom dplyr bind_rows arrange summarise summarise_at
+##' @importFrom dplyr intersect filter select rename slice distinct do
+##' @importFrom dplyr distinct first select_vars_ 
+##' @importFrom dplyr select_vars everything 
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
-##' @importFrom dplyr funs_  mutate_all group_by ungroup n
+##' @importFrom dplyr mutate_all group_by ungroup n
 ##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp

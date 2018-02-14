@@ -717,7 +717,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   addl <- addl[unlist(expand),]
   
   addl <- 
-    group_by_(addl,"..rown_") %>%
+    group_by__(addl,"..rown_") %>%
     mutate(..dosen_ = seq(n())) %>% 
     ungroup
   
@@ -767,7 +767,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   if(locf) {
     has_na <- any(is.na(x))
     if(has_na & hasid) {
-      df <- locf_data_frame(group_by_(df,"ID"))
+      df <- locf_data_frame(group_by__(df,"ID"))
     } else {
       df <- locf_data_frame(df) 
     }

@@ -50,7 +50,7 @@ env_ls <- function(x,...) {
   })
   ans <- data.frame(object=objects,class=cl)
   rownames(ans) <- NULL
-  dplyr::arrange_(ans, .dots=c("class"))
+  arrange__(ans, .dots=c("class"))
 }
 
 ##' Return model environment
