@@ -94,8 +94,8 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.se
     suppressMessages(inventory(x,data,need))
   }
   #if(exists("data", x@args)) stop("data already has been set.")
-  if(!missing(.subset)) data <- filter(data,UQS(enquo(.subset)))
-  if(!missing(.select)) data <- select(data,UQS(.select))
+  if(!missing(.subset)) data <- dplyr::filter(data,UQS(enquo(.subset)))
+  if(!missing(.select)) data <- dplyr::select(data,UQS(.select))
   if(nrow(data) ==0) {
     stop("Zero rows in data after filtering.", call.=FALSE)
   }

@@ -47,11 +47,28 @@ The updated model object is returned.
 After the model object is created, update various attributes.
 }
 \details{
-Slots that can be updated: atol, rtol, verbose, 
-debug, preclean, mindt, digits, ixpr, 
-mxhnil, hmin, hmax, maxsteps, start, end, 
-delta, add, tscale, request, param,
-init, omega, sigma.
+Slots that can be updated: 
+
+\itemize{
+\item verbose
+\item debug
+\item preclean
+\item mindt
+\item digits
+\item atol - absolute solver tolerance
+\item rtol - relative solver tolerance
+\item ixpr - see \code{IXPR} in \code{\link{aboutsolver}}
+\item mxhnil - see \code{MXHNIL} in \code{\link{aboutsolver}}
+\item hmin - see \code{HMIN} in \code{\link{aboutsolver}}
+\item maxsteps - see \code{MXSTEP} in \code{\link{aboutsolver}}
+\item start, end, delta, add
+\item tscale
+\item request
+\item param
+\item init
+\item omega
+\item sigma
+}
 }
 \examples{
 \dontrun{
