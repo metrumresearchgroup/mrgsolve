@@ -15,10 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-
+##' @import methods
+##' 
 ##' @importFrom utils capture.output example str type.convert 
 ##' @importFrom utils packageVersion assignInMyNamespace
 ##' @importFrom stats as.formula
+##' @importFrom stats setNames
+##' @importFrom stats rnorm
 ##' @importFrom dplyr mutate slice as.tbl pull
 ##' @importFrom dplyr bind_rows arrange summarise summarise_at
 ##' @importFrom dplyr intersect filter select rename slice distinct do
@@ -26,16 +29,12 @@
 ##' @importFrom dplyr select_vars everything 
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 ##' @importFrom dplyr mutate_all group_by ungroup n
-##' @importFrom lazyeval lazy_dots lazy
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
-##' @importFrom stats setNames
 ##' @importFrom RcppArmadillo armadillo_version
-##' @importFrom stats rnorm
 ##' @importFrom tibble as_data_frame data_frame
 ##' @importFrom rlang UQS enquo syms
-##' @importFrom assertthat assert_that
-##' @import methods
+##' 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -48,7 +47,6 @@
 ##' @include package.R
 ##' @include utils.R 
 ##' @include RcppExports.R  
-##' 
 ##' 
 NULL
 
