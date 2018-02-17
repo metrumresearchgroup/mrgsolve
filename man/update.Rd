@@ -55,12 +55,13 @@ Slots that can be updated:
 \item preclean
 \item mindt
 \item digits
-\item atol - absolute solver tolerance
-\item rtol - relative solver tolerance
-\item ixpr - see \code{IXPR} in \code{\link{aboutsolver}}
-\item mxhnil - see \code{MXHNIL} in \code{\link{aboutsolver}}
-\item hmin - see \code{HMIN} in \code{\link{aboutsolver}}
-\item maxsteps - see \code{MXSTEP} in \code{\link{aboutsolver}}
+\item atol - absolute solver tolerance; see \code{\link{solversettings}}
+\item rtol - relative solver tolerance; see \code{\link{solversettings}}
+\item ixpr - see \code{IXPR} in \code{\link{solversettings}}
+\item mxhnil - see \code{MXHNIL} in \code{\link{solversettings}}
+\item hmin - see \code{HMIN} in \code{\link{solversettings}}
+\item hmax - see \code{HMAX} in \code{\link{solversettings}}
+\item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
 \item start, end, delta, add
 \item tscale
 \item request
@@ -75,6 +76,9 @@ Slots that can be updated:
  mod <- mrgsolve:::house()
 
  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
- }
+}
  
+}
+\seealso{
+\code{\link{update}}, \code{\link{mrgmod-class}}
 }

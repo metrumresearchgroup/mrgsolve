@@ -37,19 +37,19 @@ these are not updatable from \code{R}}
 
 \item{\code{digits}}{significant digits in simulated output; negative integer means ignore \code{<numeric>}}
 
-\item{\code{hmin}}{passed to \code{\link[=aboutsolver]{dlsoda}}  \code{<numeric>}}
+\item{\code{hmin}}{passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}}
 
-\item{\code{hmax}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
+\item{\code{hmax}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
-\item{\code{mxhnil}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
+\item{\code{mxhnil}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
-\item{\code{ixpr}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
+\item{\code{ixpr}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
-\item{\code{atol}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
+\item{\code{atol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
-\item{\code{rtol}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
+\item{\code{rtol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
-\item{\code{maxsteps}}{passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}}
+\item{\code{maxsteps}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
 \item{\code{preclean}}{passed to R CMD SHLIB during compilation \code{<logical>}}
 
@@ -99,3 +99,6 @@ the simulation \code{<character>}}
 }
 }
 
+\seealso{
+\code{\link{update}}, \code{\link{solversettings}}
+}

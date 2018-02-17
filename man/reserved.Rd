@@ -10,7 +10,8 @@ reserved()
 Reserved words.
 }
 \details{
-Note: this function is not exported; you must go into the \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
+Note: this function is not exported; you must go into the 
+\code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
 }
 \examples{
 mrgsolve:::reserved()

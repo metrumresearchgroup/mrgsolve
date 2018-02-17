@@ -195,7 +195,52 @@ NULL
 ##'C     Siam J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
 ##'C----------------------------------------------------------------------
 ##' }
+NULL
+
+##' Optional inputs for DLSODA
 ##' 
+##' These are settings for the differential equation 
+##' solver (\code{DLSODA}) that can be accessed via
+##' the R interface.  The code listing below is taken directly
+##' from the \code{DLSODA} source code.  
+##'
+##' @name solversettings
+##' @rdname solversettings
+##' @seealso \code{\link{aboutsolver}}, \code{\link{update}}
+##' 
+##' @details
+##' 
+##' The following items can be set
+##' 
+##' \itemize{
+##' \item \code{hmax} (\code{HMAX} below); decrease \code{hmax} when 
+##' you want to limit how big of a step the solver can take when 
+##' integrating from one time to the next time. However be aware
+##' that smaller \code{hmax} will result in longer run times.
+##' \item \code{hmin} (\code{HMIN} below); don't fiddle with this
+##' unless you know what you're doing.  
+##' \item \code{ixpr} (\code{IXPR} below)
+##' \item \code{maxsteps} (\code{MXSTEP} below); increase this 
+##' number when the solver has a long interval between 
+##' two integration times (e.g. when observation records are 
+##' far apart). 
+##' \item \code{mxhnil} (\code{MXHNIL below}); don't usually 
+##' modify this one
+##' \item \code{atol} - the absolute solver tolerance; decrease
+##' this number (e.g. to 1E-10 or 1E-20 or 1E-50) when the 
+##' value in a compartment can get extremely small; without this 
+##' extra (lower) tolerance, the value can get so low that the number
+##' can randomly become negative.  However be aware that more precision
+##' here will result in longer run times. 
+##' \item \code{rtol} - the reltive solver tolerances; decrease this 
+##' number when you want a more precise solution.  However be aware 
+##' that more precision here will result in longer run times.
+##' }
+##' 
+##' 
+##' 
+##'
+##' @section Solver Settings:
 ##' \preformatted{
 ##'C-----------------------------------------------------------------------
 ##'C Optional Inputs.
@@ -213,8 +258,6 @@ NULL
 ##'C
 ##'C Name    Location      Meaning and Default Value
 ##'C
-##'C H0      RWORK(5)  the step size to be attempted on the first step.
-##'C                   The default value is determined by the solver.
 ##'C
 ##'C HMAX    RWORK(6)  the maximum absolute step size allowed.
 ##'C                   The default value is infinite.
@@ -239,17 +282,6 @@ NULL
 ##'C                   This must be positive to result in a non-default
 ##'C                   value.  The default value is 10.
 ##'C
-##'C MXORDN  IWORK(8)  the maximum order to be allowed for the nonstiff
-##'C                   (Adams) method.  the default value is 12.
-##'C                   if MXORDN exceeds the default value, it will
-##'C                   be reduced to the default value.
-##'C                   MXORDN is held constant during the problem.
-##'C
-##'C MXORDS  IWORK(9)  the maximum order to be allowed for the stiff
-##'C                   (BDF) method.  The default value is 5.
-##'C                   If MXORDS exceeds the default value, it will
-##'C                   be reduced to the default value.
-##'C                   MXORDS is held constant during the problem.
 ##'C-----------------------------------------------------------------------
 ##' }
 NULL
@@ -259,7 +291,8 @@ NULL
 ##'
 ##' @name reserved
 ##' @details
-##' Note: this function is not exported; you must go into the \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
+##' Note: this function is not exported; you must go into the 
+##' \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
 ##' @examples
 ##' mrgsolve:::reserved()
 ##'

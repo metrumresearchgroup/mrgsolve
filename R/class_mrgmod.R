@@ -169,13 +169,13 @@ valid.mrgmod <- function(object) {
 ##' @slot init \code{<cmt_list>}
 ##' @slot events deprecated
 ##' @slot digits significant digits in simulated output; negative integer means ignore \code{<numeric>}
-##' @slot hmin passed to \code{\link[=aboutsolver]{dlsoda}}  \code{<numeric>}
-##' @slot hmax passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot mxhnil passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot ixpr passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot atol passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot rtol passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot maxsteps passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot hmin passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}
+##' @slot hmax passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 ##' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 ##' @slot verbose print run information to screen \code{<logical>}
 ##' @slot quiet print various information to screen \code{<logical>}
@@ -196,6 +196,8 @@ valid.mrgmod <- function(object) {
 ##' @slot shlib a list of data related to build outcome \code{<list>}
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
+##' 
+##' @seealso \code{\link{update}}, \code{\link{solversettings}}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",

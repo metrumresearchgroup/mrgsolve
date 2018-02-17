@@ -316,7 +316,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   } 
   if(expand) {
-    events <- convert_character_cmt(events)
+    events <- convert_character_cmt(events,x)
     events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
                     match("ID",colnames(events),0), 
                     numeric_data_matrix(events), 
