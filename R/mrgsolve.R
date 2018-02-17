@@ -226,6 +226,9 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   }
   
   if(have_data) {
+    if(is.ev(data)) {
+      data <- as.data.frame(data, add_ID = 1)  
+    }
     if(have_idata) {
       return(mrgsim_di(x, data = data, idata = idata, ...)) 
     } else {
@@ -283,7 +286,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
-    tran_mrgsim, 
+    do_mrgsim, 
     c(list(x = x, data = events, idata = null_idata), args)
   )
 } 
@@ -291,12 +294,11 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
-  data <- as.data.frame(data, add_ID = 1)
   args <- list(...)
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
-    tran_mrgsim, 
+    do_mrgsim, 
     c(list(x = x, data = data, idata = null_idata), args)
   )
 } 
@@ -314,7 +316,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   } 
   if(expand) {
-    events <- convert_character_cmt(events)
+    events <- convert_character_cmt(events,x)
     events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
                     match("ID",colnames(events),0), 
                     numeric_data_matrix(events), 
@@ -324,7 +326,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
-    tran_mrgsim, 
+    do_mrgsim, 
     c(list(x = x, data = events, idata = idata), args)
   )
 }
@@ -341,7 +343,7 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
-    tran_mrgsim, 
+    do_mrgsim, 
     c(list(x = x, data = data, idata = idata), args)
   )
 }
@@ -358,7 +360,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
-    tran_mrgsim, 
+    do_mrgsim, 
     c(list(x = x, data = data, idata = idata), args)
   )
 }
@@ -371,7 +373,7 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
-    tran_mrgsim, 
+    do_mrgsim, 
     c(list(x = x, data = data, idata = null_idata), args)
   )
 }
@@ -389,25 +391,55 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   return(mrgsim_i(x, idata, ...))
 }
 
-tran_mrgsim <- function(x,
-                        data,
-                        idata = NULL,
-                        carry.out = character(0),
-                        mtime = numeric(0),
-                        seed = as.integer(NA),
-                        Request = character(0),
-                        capture = NULL,
-                        obsonly = FALSE,
-                        obsaug = FALSE,
-                        tgrid = numeric(0),
-                        recsort = 1,
-                        deslist = list(),
-                        descol = character(0),
-                        filbak = TRUE,
-                        tad = FALSE,
-                        nocb = TRUE,
-                        skip_init_calc = FALSE,
-                        ...) {
+##' Do an mrgsim run
+##' 
+##' @param x a model object
+##' @param data a simulation data set
+##' @param idata individual-level data
+##' @param carry.out data items to copy into the output
+##' @param mtime not used
+##' @param seed deprecated
+##' @param Request compartments or captured variables to retain
+##' in the simulated output
+##' @param capture character file name used for debugging (not related
+##' to \code{$CAPTURE}
+##' @param obsonly if \code{TRUE}, dosing records are not included
+##' in the output
+##' @param obsaug augment the data set with time grid observations
+##' @param tgrid a tgrid object
+##' @param recsort record sorting flag
+##' @param deslist a list of tgrid objects
+##' @param descol the name of a column for assigning designs
+##' @param filbak carry data items backward when the first 
+##' data set row has time greater than zero
+##' @param tad if \code{TRUE}, include time after dose
+##' in the output
+##' @param nocb if \code{TRUE}, use next observation carry 
+##' backward method; otherwise, use \code{locf}
+##' @param skip_init_calc don't use \code{$MAIN} to 
+##' calculate initial conditions
+##' @param ... not used
+##' 
+##' 
+##' @export
+do_mrgsim <- function(x,
+                      data,
+                      idata = null_idata,
+                      carry.out = character(0),
+                      mtime = numeric(0),
+                      seed = as.integer(NA),
+                      Request = character(0),
+                      capture = NULL,
+                      obsonly = FALSE,
+                      obsaug = FALSE,
+                      tgrid = numeric(0),
+                      recsort = 1,
+                      deslist = list(),
+                      descol = character(0),
+                      filbak = TRUE,
+                      tad = FALSE,
+                      nocb = TRUE,
+                      skip_init_calc = FALSE, ...) {
   
   verbose <- x@verbose
   
@@ -554,7 +586,10 @@ tran_mrgsim <- function(x,
   }
   
   ## Set the seed:
-  if(!is.na(seed)) set.seed(seed)
+  if(!is.na(seed)) {
+    stop("the seed argument is deprecated; use set.seed(seed) instead", 
+         call. = FALSE)
+  }
   
   out <- .Call(`_mrgsolve_DEVTRAN`,
                parin,
@@ -591,26 +626,25 @@ tran_mrgsim <- function(x,
       request=.ren.rename(rename.Request,request),
       data=as.data.frame(out[["data"]]),
       outnames=.ren.rename(rename.Request,capt),
-      mod=x,
-      seed=as.integer(seed))
+      mod=x)
 }
 
 
-tran_mrgsimple <- function(x,
-                           data,
-                           idata = NULL,
-                           seed = as.integer(NA),
-                           obsonly = FALSE,
-                           obsaug = FALSE,
-                           tgrid = numeric(0),
-                           recsort = 1,
-                           deslist = list(),
-                           descol = character(0),
-                           filbak = TRUE,
-                           tad = FALSE,
-                           nocb = TRUE,
-                           skip_init_calc = FALSE,
-                           ...) {
+do_mrgsimple <- function(x,
+                         data,
+                         idata = NULL,
+                         seed = as.integer(NA),
+                         obsonly = FALSE,
+                         obsaug = FALSE,
+                         tgrid = numeric(0),
+                         recsort = 1,
+                         deslist = list(),
+                         descol = character(0),
+                         filbak = TRUE,
+                         tad = FALSE,
+                         nocb = TRUE,
+                         skip_init_calc = FALSE,
+                         ...) {
   
   verbose <- x@verbose
   

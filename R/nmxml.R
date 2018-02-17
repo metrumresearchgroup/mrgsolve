@@ -31,77 +31,112 @@
 ##' @param tname name for \code{$THETA}
 ##' @param oname name for \code{$OMEGA}
 ##' @param sname name for \code{$SIGMA}
-##' @param ... passed along
+##' @param ... not used
 ##' @aliases NMXML
 ##' @details
-##' If \code{run} and \code{project} are supplied, the .xml file is assumed to be located in \code{run.xml}, in directory \code{run} off the \code{project} directory.  If \code{file} is supplied, \code{run} and \code{project} arguments are ignored.
-##' @return a list with theta, omega and sigma elements, depending on what was requested
+##' If \code{run} and \code{project} are supplied, the .xml file is 
+##' assumed to be located in \code{run.xml}, in directory \code{run} 
+##' off the \code{project} directory.  If \code{file} is supplied, 
+##' \code{run} and \code{project} arguments are ignored.
+##' 
+##' This function requires that the \code{xml2} package 
+##' be installed and loadable.  If \code{requireNamespace("xml2")}
+##' fails, an error will be generated. 
+##' 
+##' @return A list with theta, omega and sigma elements, 
+##' depending on what was requested
+##' 
+##' @examples
+##' 
+##' if(requireNamespace("xml2")) {
+##'   proj <- system.file("nonmem", package = "mrgsolve")
+##'   mrgsolve:::nmxml(run = 1005, project = proj)
+##' }
+##' 
 nmxml <- function(run=numeric(0), project=character(0),
                   file=character(0),
-                  theta=TRUE,omega=FALSE,sigma=FALSE,
-                  olabels = NULL,slabels=NULL,
+                  theta=TRUE, omega=TRUE, sigma=TRUE,
+                  olabels = NULL, slabels=NULL,
                   oprefix = "", sprefix="",
-                  tname="THETA", oname="...",sname="...",...) {
-
-    if(!requireNamespace("XML")) stop("Could not load namespace for package XML.", call.=FALSE)
-
-    theta <- theta | !missing(tname)
-    omega <- omega | !missing(oname)
-    sigma <- sigma | !missing(sname)
-
-    if(!missing(file)) {
-        target <- file
+                  tname="THETA", oname="...", sname="...", ...) {
+  
+  if(!requireNamespace("xml2")) {
+    stop("Could not load namespace for package xml2", call.=FALSE)
+  }
+  
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
+  
+  if(!missing(file)) {
+    target <- file
+  } else {
+    if(missing(run) | missing(project)) {
+      stop("Both file and run/project are missing")
+    }
+    target <- file.path(project, run, paste0(run, ".xml"))
+  }
+  
+  tree <- xml2::as_list(xml2::read_xml(target))
+  tree <- tree$output$nonmem$problem$estimation
+  
+  th <- list()
+  om <- matrix(0,0,0)
+  sg <- matrix(0,0,0)
+  
+  if(theta) {
+    stopifnot(nchar(tname) > 0)
+    th <- sapply(tree$theta, "[", USE.NAMES=FALSE)
+    th <- as.list(as.numeric(th))
+    names(th) <- paste0(tname, seq(length(th)))
+  }
+  
+  if(omega) {
+    stopifnot(nchar(oname) > 0)
+    om <- nm_xml_matrix(tree$omega)
+    if(is.null(olabels)) {
+      olabels <- rep('.', nrow(om))
     } else {
-        if(missing(run) | missing(project)) stop("Both file and run/project are missing")
-        target <- file.path(project, run, paste0(run, ".xml"))
+      olabels <- paste0(oprefix,olabels)
     }
-
-    tree <-XML::xmlParse(readLines(target), asText = TRUE, error = NULL)
-
-    th <- list()
-    om <- matrix(0,0,0)
-    sg <- matrix(0,0,0)
-
-    if(theta) {
-        stopifnot(nchar(tname) > 0)
-        th <-XML::xpathSApply(tree, "//nm:theta/nm:val", fun = XML::xmlValue)
-        th <- as.list(as.numeric(th))
-        names(th) <- paste0(tname, 1:length(th))
+  }
+  
+  if(sigma) {
+    stopifnot(nchar(sname) > 0)
+    sg <- nm_xml_matrix(tree$sigma)
+    if(is.null(slabels)) {
+      slabels <- rep('.', nrow(sg))
+    } else {
+      slabels <- paste0(sprefix,slabels)
     }
+  }
 
-    if(omega) {
-        stopifnot(nchar(oname) > 0)
-        om <- XML::xpathSApply(tree,'//nm:omega/nm:row/nm:col', fun= XML::xmlValue)
-        om <- lower2matrix(om)
-        if(is.null(olabels)) {
-            olabels <- rep('.', nrow(om))
-        } else {
-            olabels <- paste0(oprefix,olabels)
-        }
-
-    }
-
-    if(sigma) {
-        stopifnot(nchar(sname) > 0)
-        sg <- XML::xpathSApply(tree, "//nm:sigma/nm:row/nm:col", fun=XML::xmlValue)
-        sg <- lower2matrix(sg)
-        if(is.null(slabels)) {
-            slabels <- rep('.', nrow(sg))
-        } else {
-            slabels <- paste0(sprefix,slabels)
-        }
-    }
-
-    XML::free(tree)
-
-    om <- create_matlist(setNames(list(om),oname), labels=list(olabels), class="omegalist")
-    sg <- create_matlist(setNames(list(sg),sname), labels=list(slabels), class="sigmalist")
-    ans <- list(theta=th, omega=om,sigma=sg)
-    
-    return(structure(ans,class="NMXMLDATA"))
-
+  om <- create_matlist(setNames(list(om),oname), 
+                       labels=list(olabels), 
+                       class="omegalist")
+  
+  sg <- create_matlist(setNames(list(sg),sname), 
+                       labels=list(slabels), 
+                       class="sigmalist")
+  
+  ans <- list(theta=th, omega=om, sigma=sg)
+  
+  return(structure(ans,class="NMXMLDATA"))
+  
 }
 
 
+nm_xml_matrix <- function(x) {
+  m <- matrix(0,nrow = length(x), ncol = length(x))
+  for(i in seq(x)) {
+    row <- x[[i]]
+    ri <- as.integer(attr(row, "rname"))
+    for(j in seq(i)) {
+      ci <- as.integer(attr(row[[j]], "cname"))
+      m[ri,ci] <- m[ci,ri] <- as.numeric(row[[j]][[1]])
+    }
+  } 
+  m
+}
 
 

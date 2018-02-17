@@ -165,6 +165,10 @@ mread <- function(model, project = getwd(), code = NULL,
   
   warn <- warn & (!quiet)
   
+  if(missing(model) & !missing(file)) {
+    model <- file  
+  }
+  
   build <- new_build(file = file, model = model, project = project, 
                      soloc = soloc, code = code, preclean = preclean, 
                      udll = udll)
@@ -306,7 +310,8 @@ mread <- function(model, project = getwd(), code = NULL,
   ## Check $MAIN for the proper symbols
   if(x@advan != 13) {
     if(subr[["n"]] != neq(x)) {
-      stop("$PKMODEL requires  ", subr[["n"]] , " compartments in $CMT or $INIT.",call.=FALSE)
+      stop("$PKMODEL requires  ", subr[["n"]] , 
+           " compartments in $CMT or $INIT.",call.=FALSE)
     }
     check_pred_symbols(x,spec[["MAIN"]])
   }

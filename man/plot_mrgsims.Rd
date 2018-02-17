@@ -39,9 +39,6 @@
 \description{
 Generate a quick plot of simulated data
 }
-\details{
-Values for \code{as} argument: ;  \code{raw}: raw simulated output;
-}
 \examples{
 
 mod <- mrgsolve:::house(end=48, delta=0.2) \%>\% init(GUT=1000)

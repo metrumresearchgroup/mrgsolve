@@ -6,7 +6,7 @@
 \title{Get THETA, OMEGA and SIGMA from a completed NONMEM run}
 \usage{
 nmxml(run = numeric(0), project = character(0), file = character(0),
-  theta = TRUE, omega = FALSE, sigma = FALSE, olabels = NULL,
+  theta = TRUE, omega = TRUE, sigma = TRUE, olabels = NULL,
   slabels = NULL, oprefix = "", sprefix = "", tname = "THETA",
   oname = "...", sname = "...", ...)
 }
@@ -37,14 +37,30 @@ nmxml(run = numeric(0), project = character(0), file = character(0),
 
 \item{sname}{name for \code{$SIGMA}}
 
-\item{...}{passed along}
+\item{...}{not used}
 }
 \value{
-a list with theta, omega and sigma elements, depending on what was requested
+A list with theta, omega and sigma elements, 
+depending on what was requested
 }
 \description{
 Get THETA, OMEGA and SIGMA from a completed NONMEM run
 }
 \details{
-If \code{run} and \code{project} are supplied, the .xml file is assumed to be located in \code{run.xml}, in directory \code{run} off the \code{project} directory.  If \code{file} is supplied, \code{run} and \code{project} arguments are ignored.
+If \code{run} and \code{project} are supplied, the .xml file is 
+assumed to be located in \code{run.xml}, in directory \code{run} 
+off the \code{project} directory.  If \code{file} is supplied, 
+\code{run} and \code{project} arguments are ignored.
+
+This function requires that the \code{xml2} package 
+be installed and loadable.  If \code{requireNamespace("xml2")}
+fails, an error will be generated.
+}
+\examples{
+
+if(requireNamespace("xml2")) {
+  proj <- system.file("nonmem", package = "mrgsolve")
+  mrgsolve:::nmxml(run = 1005, project = proj)
+}
+
 }

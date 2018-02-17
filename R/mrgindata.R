@@ -106,6 +106,11 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE,
       stop("couldn't find cmt/CMT column in data set")
     }
     
+    if(any(is.na(x[,cmtcol]))) {
+      stop("found missing value in cmt/CMT column")
+    }
+    
+    
     # Convert cmt/CMT to numeric if it's character and you 
     # have the model object
     if(is.mrgmod(m)) {

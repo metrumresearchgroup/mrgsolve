@@ -169,13 +169,13 @@ valid.mrgmod <- function(object) {
 ##' @slot init \code{<cmt_list>}
 ##' @slot events deprecated
 ##' @slot digits significant digits in simulated output; negative integer means ignore \code{<numeric>}
-##' @slot hmin passed to \code{\link[=aboutsolver]{dlsoda}}  \code{<numeric>}
-##' @slot hmax passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot mxhnil passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot ixpr passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot atol passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot rtol passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
-##' @slot maxsteps passed to \code{\link[=aboutsolver]{dlsoda}} \code{<numeric>}
+##' @slot hmin passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}
+##' @slot hmax passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 ##' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 ##' @slot verbose print run information to screen \code{<logical>}
 ##' @slot quiet print various information to screen \code{<logical>}
@@ -196,6 +196,8 @@ valid.mrgmod <- function(object) {
 ##' @slot shlib a list of data related to build outcome \code{<list>}
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
+##' 
+##' @seealso \code{\link{update}}, \code{\link{solversettings}}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",
@@ -339,8 +341,6 @@ setMethod("sodll", "packmod", function(x,...) {
 ##' 
 ##' @param x the model object
 ##' 
-##' @name update
-##' 
 ##' @aliases names,mrgmod-method
 ##' 
 ##' @examples
@@ -429,8 +429,8 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
   x
 })
 
-##' @export
 ##' @rdname see
+##' @export
 setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
   if(raw) return(x@code)
   what <- x@code
@@ -441,13 +441,13 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
     warning("No code to show.")
   } else {
     cat("\nModel file: ", basename(cfile(x)), "\n")
-    cat(paste0(" ", what), sep="\n")
+    cat(what, sep="\n")
   }
   return(invisible(NULL))
 })
 
-##' @export
 ##' @rdname loadso
+##' @export
 setMethod("loadso", "mrgmod", function(x,...) {
   if(.Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
   foo <- try(dyn.load(sodll(x)))
@@ -468,27 +468,28 @@ setMethod("unloadso", "mrgmod", function(x, ...) {
   return(invisible(NULL))
 })
 
-##' @export
+
 ##' @rdname tgrid
+##' @export
 setMethod("stime", "mrgmod",  function(x,...) {
   render_time(x)
 })
 
-##' @export
 ##' @rdname revar
+##' @export
 setMethod("revar", "mrgmod", function(x,...) {
   return(list(omega=x@omega,sigma=x@sigma))
 })
 
-##' @export
 ##' @rdname blocks
+##' @export
 setMethod("blocks", "mrgmod", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(cfile(x),what)
 })
 
-##' @export
 ##' @rdname blocks
+##' @export
 setMethod("blocks", "character", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(x,what)
@@ -535,9 +536,11 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-##' @rdname param
+
 ##' @param x mrgmod object
 ##' @param name parameter to take
+##'
+##' @rdname param
 ##' @export
 setMethod("$", "mrgmod", function(x,name){
   as.numeric(allparam(x))[name]

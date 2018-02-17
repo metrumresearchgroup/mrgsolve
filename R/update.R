@@ -45,12 +45,30 @@ all_updatable <- c(sval,other_val)
 ##' @return The updated model object is returned.
 ##' 
 ##' @details
-##' Slots that can be updated: atol, rtol, verbose, 
-##' debug, preclean, mindt, digits, ixpr, 
-##' mxhnil, hmin, hmax, maxsteps, start, end, 
-##' delta, add, tscals, request, param,
-##' init, omega, sigma.
+##' Slots that can be updated: 
 ##' 
+##' \itemize{
+##' \item verbose
+##' \item debug
+##' \item preclean
+##' \item mindt
+##' \item digits
+##' \item atol - absolute solver tolerance; see \code{\link{solversettings}}
+##' \item rtol - relative solver tolerance; see \code{\link{solversettings}}
+##' \item ixpr - see \code{IXPR} in \code{\link{solversettings}}
+##' \item mxhnil - see \code{MXHNIL} in \code{\link{solversettings}}
+##' \item hmin - see \code{HMIN} in \code{\link{solversettings}}
+##' \item hmax - see \code{HMAX} in \code{\link{solversettings}}
+##' \item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
+##' \item start, end, delta, add
+##' \item tscale
+##' \item request
+##' \item param
+##' \item init
+##' \item omega
+##' \item sigma
+##' } 
+##'  
 ##' @name update
 ##' 
 ##' @aliases update,mrgmod-method
@@ -60,7 +78,9 @@ all_updatable <- c(sval,other_val)
 ##'  mod <- mrgsolve:::house()
 ##'
 ##'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
-##'  }
+##' }
+##'  
+##' @seealso \code{\link{update}}, \code{\link{mrgmod-class}}
 ##'  
 ##' @export
 ##'  
@@ -170,8 +190,8 @@ update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
   return(x)
 }
 
-##' @export
 ##' @rdname update
+##' @export
 ##' @param y another object involved in update
 setMethod("update", "omegalist", function(object,y,...) {
   update_matlist(object, omat(y),context="omat",...)

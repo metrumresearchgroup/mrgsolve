@@ -24,9 +24,10 @@
 ##' each individual in \code{ID}
 ##' @param cmt compartment
 ##' @param until the expected maximum \bold{observation} time for this regimen
-##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} doses. 
-##'  If \code{TRUE}, 
-##' \code{addl} doses are made explicit with \code{\link{realize_addl}}.
+##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
+##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
+##' \code{\link{realize_addl}}
+##' 
 ##' @export
 setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
                                     cmt=1, replicate=TRUE, until=NULL,
@@ -40,10 +41,9 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
     stop("evid cannot be 0 (observation)")
   }
   
-  data <-
-    as.data.frame(list(...)) %>%
-    dplyr::mutate(time=time,cmt=cmt,evid=evid) %>%
-    as.data.frame
+  data <- as_data_frame(list(..., time = time, cmt = cmt, evid = evid))
+
+  data <- as.data.frame(data)
   
   if(!has_name("amt",data)) {
     stop("amt is required input.", call.=FALSE)
@@ -70,7 +70,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
         data <- lapply(data, unique)
         data <- do.call("expand.grid", 
                         c(list(ID=ID,stringsAsFactors=FALSE),data))
-        data <- dplyr::arrange_(data,.dots=c("ID", "time"))
+        data <- arrange__(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
         data <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
@@ -630,9 +630,9 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   evs$ii <- ii
   if(addl > 0) evs$addl <- addl
   if("ID" %in% names(evs)) {
-    return(as.data.frame(dplyr::arrange_(evs,.dots=c("ID","time"))))
+    return(as.data.frame(arrange__(evs,.dots = c("ID","time"))))
   } else {
-    return(as.data.frame(dplyr::arrange_(evs,.dots=c("time"))))
+    return(as.data.frame(arrange__(evs,.dots = c("time"))))
   }
 }
 
@@ -717,7 +717,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   addl <- addl[unlist(expand),]
   
   addl <- 
-    group_by_(addl,"..rown_") %>%
+    group_by__(addl,"..rown_") %>%
     mutate(..dosen_ = seq(n())) %>% 
     ungroup
   
@@ -758,7 +758,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
     .arrang <- c("ID", .arrang)  
   }
   
-  df <- arrange_(df,.dots=.arrang)
+  df <- arrange__(df,.dots=.arrang)
   
   if(!mark_new) {
     df <- mutate(df, .addl_row_  = NULL)  
@@ -767,7 +767,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   if(locf) {
     has_na <- any(is.na(x))
     if(has_na & hasid) {
-      df <- locf_data_frame(group_by_(df,"ID"))
+      df <- locf_data_frame(group_by__(df,"ID"))
     } else {
       df <- locf_data_frame(df) 
     }
@@ -844,9 +844,9 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
     nxt$time <- start + nxt$time + end*(i-1)
     out[[i]] <- nxt
   }
-  out <- dplyr::bind_rows(out)
+  out <- bind_rows(out)
   if(exists("ID", out)) {
-    out <- dplyr::arrange_(out,"ID", "time") 
+    out <- arrange__(out, c("ID", "time")) 
   }
   if(as.ev) {
     return(as.ev(out))
