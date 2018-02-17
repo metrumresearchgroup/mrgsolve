@@ -1,7 +1,9 @@
+# 0.8.10.9007
+- No changes yet
+
 # 0.8.10.9006
 
 - Stop importing assertthat and lazyeval
-
 
 # 0.8.10.9005
 
