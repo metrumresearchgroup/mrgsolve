@@ -30,6 +30,11 @@ under the Suggests dependency.
 are now loaded by default; see new default arguments
 to `mrgsolve:::nmxml`
 
+## Documentation
+- Added `solversettings` help topic that identifies some of the 
+DLSODA inputs you can tweak
+- Improved doumentation for `update` method as well as
+`mrgmod-class`
 
 # 0.8.10.9003
 
