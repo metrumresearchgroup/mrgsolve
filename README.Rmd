@@ -2,9 +2,7 @@
 title: ""
 date: ""
 author: ""
-output:
-  md_document:
-    variant: markdown_github
+output: github_document
 ---
 
 
@@ -45,7 +43,7 @@ __Please__ be sure to see important install-related information [here](https://g
 
 ## Ask a question
   * [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
-  * [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
+
 
 
 
@@ -163,12 +161,13 @@ head(.data)
  * Control simulation output from `R` to better manage memory
 
 ```{r}
+set.seed(1010)
 out <- 
   mod %>%
   data_set(.data) %>%
   Req(RESP,CP) %>% obsonly %>%
   carry_out(dose) %>%
-  mrgsim(end=48, seed=1010)
+  mrgsim(end=48)
 ```
 
 ```{r,fig.height=4,fig.width=8}

@@ -1,11 +1,11 @@
 # 0.8.10.9007
 - No changes yet
 
-# 0.8.10.9006
+# mrgsolve 0.8.10.9006
 
 - Stop importing assertthat and lazyeval
 
-# 0.8.10.9005
+# mrgsolve 0.8.10.9005
 
 ## New Features
 
@@ -43,7 +43,7 @@ DLSODA inputs you can tweak
 - Improved doumentation for `update` method as well as
 `mrgmod-class`
 
-# 0.8.10.9003
+# mrgsolve 0.8.10.9003
 
 ## New Features
 - Bioavability specified in `$MAIN` is accounted for when simulating with
@@ -88,18 +88,18 @@ cache is invalidated when `preclean` argument is `TRUE`
 - `mrgsolve_example` and `mrgsolve_template`; these had been deprecated 
 previously with warning; use `modlib()` models instead
 
-# 0.8.10.9002
+# mrgsolve 0.8.10.9002
 - Added `mrgsim_df` function to return data frame rather than `mrgsims` object
 
-# 0.8.10.9001
+# mrgsolve 0.8.10.9001
 
 - The model environment is automatically imported as `_env` when 
 `mrgx` plugin is invoked
 
-# 0.8.10
+# mrgsolve 0.8.10
 - Release to CRAN
 
-# 0.8.9.9004
+# mrgsolve 0.8.9.9004
 - Added `file` argument to `mread` to allow coding model 
 specification files with any extension.  The current 
 behavior continues to be assuming that the model 
@@ -113,10 +113,10 @@ when there are time-varying parameters (including covariates).  If `nocb` is
 `FALSE`, `mrgsim` will use last observation carried forward (`locf`) to advance 
 the system when there are time-varying parameters. 
 
-# 0.8.9.9003
+# mrgsolve 0.8.9.9003
 - Minor improvements to documentation
 
-# 0.8.9.9002
+# mrgsolve 0.8.9.9002
 
 ## Bug Fix
 - Fixed bug where deslist was created in the wrong order
@@ -134,7 +134,7 @@ are sorted prior to making event assignments.  Details about the new behavior
 are now included in the R help topic.
 
 
-# 0.8.6.9000
+# mrgsolve 0.8.6.9000
 
 ## Important changes
 - The bioavailability parameter now gets updated  with each and every dose, 
@@ -158,16 +158,16 @@ be found in the data object.
 - PR #238 fixes incorrect steady-state values when dose is associated with 
 lagtime (#239)
 
-# Release 0.8.4
+#  mrgsolve 0.8.4
 - Reconfigure use of function pointer in unit tests
 
-# Release 0.8.3
+#  mrgsolve 0.8.3
 - Bug fix that prevented installation on Solaris
 
-# Release 0.8.2
+#  mrgsolve 0.8.2
 - The first release on CRAN
 
-# Since 0.7.7
+# mrgsolve 0.7.7
 
 ## New Authors
 - Devin Pastoor is now listed as a contributor.  Thanks for all of your help!
@@ -199,7 +199,7 @@ is now turned on and the dosing is allowed to proceed.  This is a change
 from previous behavior, where an error was generated.
 
 
-# Since 0.7.6
+# mrgsolve 0.7.6
 
 ## Important changes
 - The `table()` macro in `$TABLE` is now deprecated 
@@ -257,7 +257,7 @@ whether the model was annotated or not (#165).
 - `mrgsolve::details` has additional arguments to help control output.
 - Removed `pkevent` class; all records are `datarecord`.
 
-# Since 0.7.5
+# mrgsolve 0.7.5
 
 ## Features
 
@@ -289,14 +289,14 @@ specification file.
 - Some small changes to `C++` code that calculates compartment amounts for 
 closed form one- and two-compartment models resulting in faster simulation runs.
 
-# Since 0.7.4
+# mrgsolve 0.7.4
 - The `modmrg` package was discontinued.  All of the pre-coded models are 
 now available in mrgsolve.  Simply call `mread` with the model stem (e.g. 
 `pk1cmt`, `irm3`, etc ...) and call `modlib()` as the `project` argument.  
 For example: `mod <- mread("emax", modlib())` will compile the `emax` model 
 and return the model object.
 
-# Since 0.7.3
+# mrgsolve 0.7.3
 - Tests re-configured
 - Fixed issue with record sorting for lagged doses when using full `data_set 
 `and `obsaug=TRUE` (#102)
@@ -304,7 +304,7 @@ and return the model object.
 in as `tbl` (#100)
 
 
-# Since 0.7.2
+# mrgsolve 0.7.2
 - Addressed an issue where model compilation on `Windows` systems failed when 
 certain symbol names were used in the model (#97).  In this release, a 
 `dllname-win.def` file is created in `soloc` to export only the functions that 
@@ -315,17 +315,17 @@ an error is generated and the user is prompted to use `mcode` instead.
 (https://github.com/metrumresearchgroup/mrgsolve/pull/99)
 
 
-# Since 0.7.1
+# mrgsolve 0.7.1
 - Fixed bug where requested columns were not properly named in certain 
 circumstances (#86).
 
-# Since 0.7.0
+# mrgsolve 0.7.0
 - Revert back to previous behavior where `cwd` to `soloc` is not required to 
 build the model.  This was only required on `Windows` systems where there was 
 a space in the file name.   Correctly rendering the path for the build 
 directory now.
 
-# Since 0.6.1
+# mrgsolve 0.6.1
 
 ## Features
 * Added `as_data_set` to convert one or more event objects into a data frame 
@@ -413,14 +413,14 @@ The working directory is restored on exit from `mread`.
 * `trequest` argument to `mrgsim`
 
 
-# Since 0.6.0
+# mrgsolve 0.6.0
 
 ## Bugs fixed
 * Fixed a bug when an infusion was attempted with `rate > 0` and `amt==0`.  
 Additionally, an error is generated when an infusion is attempted with zero 
 `amt` ([issue 43](../../issues/43)).
 
-# Since 0.5.12
+# mrgsolve 0.5.12
 
 ## Bugs fixed
 * Fixed a bug where infusion dosing events with `evid 4` were not properly 
@@ -459,7 +459,7 @@ fixed_type = "define"` or `$SET fixed_type = "const"` to select between
 the approaches.
 
 
-# Since 0.5.11
+# mrgsolve 0.5.11
 ## Bugs fixed
 * Added missing example model specification files (popExample, viralExample, 
 others)
@@ -515,7 +515,7 @@ printing messages when `mread` is called.  The default is
 `options(mrgsolve_mread_quiet = TRUE)` to globally turn off messages 
 from `mread`.
 
-# Since 0.5.001
+# 0.5.001
 
 ## Bugs Fixed
 * Fixed paths for project (`project`) and shared object (`soloc`) so that 
