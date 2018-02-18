@@ -4,7 +4,7 @@
 \name{see}
 \alias{see}
 \alias{see,mrgmod-method}
-\title{Print model code to the console.}
+\title{Print model code to the console}
 \usage{
 see(x, ...)
 
@@ -21,5 +21,5 @@ see(x, ...)
 invisible NULL
 }
 \description{
-Print model code to the console.
+Print model code to the console
 }

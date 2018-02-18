@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Get the compartment number from a compartment name.
+##' Get the compartment number from a compartment name
 ##'
 ##' @param x model object
 ##' @param ... passed along
@@ -26,7 +26,7 @@
 ##' @export
 setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 
-##' Print model code to the console.
+##' Print model code to the console
 ##'
 ##' @param x model object
 ##' @param raw return the raw code
@@ -35,7 +35,7 @@ setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 ##' @export
 setGeneric("see", function(x,...) standardGeneric("see"))
 
-##' Load the model shared object.
+##' Load the model shared object
 ##'
 ##' @param x the model object
 ##' @param ... passed along
@@ -43,7 +43,7 @@ setGeneric("see", function(x,...) standardGeneric("see"))
 setGeneric("loadso", function(x,...) standardGeneric("loadso"))
 setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 
-##' Get the times at which the model will be evaluated.
+##' Get the times at which the model will be evaluated
 ##'
 ##' @name stime
 ##'
@@ -68,7 +68,7 @@ setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 ##' 
 setGeneric("stime", function(x,...) standardGeneric("stime"))
 
-##' Get model random effect variances and covariances.
+##' Get model random effect variances and covariances
 ##'
 ##' @param x model object
 ##' @param ... passed along
@@ -77,7 +77,7 @@ setGeneric("stime", function(x,...) standardGeneric("stime"))
 ##' @rdname revar
 setGeneric("revar", function(x,...) standardGeneric("revar"))
 
-##' Return the code blocks from a model specification file.
+##' Return the code blocks from a model specification file
 ##'
 ##' @param x model object or path to model specification file
 ##' @param ... passed along
@@ -94,7 +94,7 @@ setGeneric("sodll", function(x,...) standardGeneric("sodll"))
 setGeneric("ex", function(x,...) standardGeneric("ex"))
 
 
-##' Event objects for simulating PK and other interventions.
+##' Event objects for simulating PK and other interventions
 ##'
 ##' Events can either be specified when the model object is created (with
 ##' \code{mrgmod}) or by updating an existing model object (with \code{update}).
@@ -146,7 +146,7 @@ setGeneric("ev", function(x,...) standardGeneric("ev"))
 setGeneric("as.ev", function(x,...) standardGeneric("as.ev"))
 
 
-##' Return the model object.
+##' Return the model object
 ##'
 ##' @param x mrgsims object
 ##' @param ... passed along

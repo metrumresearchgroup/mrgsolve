@@ -4,7 +4,7 @@
 \name{cmtn}
 \alias{cmtn}
 \alias{cmtn,mrgmod-method}
-\title{Get the compartment number from a compartment name.}
+\title{Get the compartment number from a compartment name}
 \usage{
 cmtn(x, ...)
 
@@ -18,7 +18,7 @@ cmtn(x, ...)
 \item{tag}{compartment name}
 }
 \description{
-Get the compartment number from a compartment name.
+Get the compartment number from a compartment name
 }
 \examples{
 mod <- mrgsolve:::house()

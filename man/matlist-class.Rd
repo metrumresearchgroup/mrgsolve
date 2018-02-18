@@ -5,7 +5,7 @@
 \alias{matlist-class}
 \alias{omegalist-class}
 \alias{sigmalist-class}
-\title{S4 class matlist.}
+\title{S4 class matlist}
 \description{
-S4 class matlist.
+S4 class matlist
 }

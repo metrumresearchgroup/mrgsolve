@@ -30,7 +30,7 @@ decorr <- function(x) {
   return(invisible(.Call(`_mrgsolve_dcorr`, x)))
 }
 
-##' Create a square numeric matrix from the lower-triangular elements.
+##' Create a square numeric matrix from the lower-triangular elements
 ##'
 ##' @param x numeric data
 ##' @param context the working context
@@ -48,7 +48,7 @@ lower2matrix <- function(x, context=NULL) {
   mat
 }
 
-##' Create a diagonal numeric matrix from diagonal elements.
+##' Create a diagonal numeric matrix from diagonal elements
 ##'
 ##' @param x numeric data
 ##' @param context used to generate column names
@@ -64,13 +64,19 @@ numeric2diag <- function(x,context=NULL) {
 }
 
 
-##' Create a matrix.
+##' Create a matrix
 ##'
-##' @param x data for building the matrix.  Data in \code{x} are assumed to be on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular elements if \code{block} is \code{TRUE}
+##' @param x data for building the matrix.  Data in \code{x} are assumed to be
+##' on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular
+##' elements if \code{block} is \code{TRUE}
 ##' @param use logical; if FALSE, all matrix elements are set to 0
-##' @param block logical; if TRUE, try to make a block matrix; diagonal otherwise
-##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE
-##' @param digits if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning
+##' @param block logical; if TRUE, try to make a block matrix; diagonal
+##' otherwise
+##' @param correlation logical; if TRUE, off diagonal elements are assumed to 
+##' be correlations and converted to covariances; if correlation is TRUE, then
+##'  block is set to TRUE
+##' @param digits if value of this argument is greater than zero, the matrix 
+##' is passed to signif (along with digits) prior to returning
 ##' @param context the working context
 ##' @param ... passed along
 ##'
@@ -106,7 +112,9 @@ modMATRIX <- function(x,
   } else {
     x <- numeric2diag(x)
   }
-  if(any(is.na(x))) stop("mrgsolve: NA values generated when forming matrix ", "(", context, ").")
+  if(any(is.na(x))) {
+    stop("mrgsolve: NA values generated when forming matrix ", "(", context, ").")
+  }
   if(!use) x <- diag(x=0, nrow(x))
   if(digits > 0) x <- signif(x, digits=digits)
   return(x)
@@ -118,13 +126,16 @@ Diag <- function(x) {
   diag(x, nrow=length(x),ncol=length(x))
 }
 
-##' Create matrices from vector input.
+##' Create matrices from vector input
 ##'
 ##' @param ... matrix data
-##' @param correlation logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances
-##' @param digits if greater than zero, matrix is passed to signif (along with digits) prior to returning
+##' @param correlation logical; if TRUE, off diagonal elements are assumed 
+##' to be correlations and converted to covariances
+##' @param digits if greater than zero, matrix is passed to signif (along 
+##' with digits) prior to returning
 ##' @details
-##' \code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix.  \code{dmat} makes a diagonal matrix.
+##' \code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix. 
+##' \code{dmat} makes a diagonal matrix.
 ##' 
 ##' @seealso \code{\link{as_bmat}}
 ##' 
@@ -158,13 +169,14 @@ dmat <- function(...) {
   Diag(as.numeric(unlist(list(...))))
 }
 
-##' Coerce R objects to block or diagonal matrices.
+##' Coerce R objects to block or diagonal matrices
 ##'
 ##' @param x an R object
 ##' @param pat regular expression, character
 ##' @param cols column names to use instead of \code{pat}
 ##' @param ... passed along
-##' @return A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.
+##' @return A numeric matrix for list and numeric methods.  For data.frames, 
+##' a list of matrices are returned.
 ##' @seealso \code{\link{bmat}}, \code{\link{dmat}}
 ##' 
 ##' @examples

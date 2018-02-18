@@ -5,7 +5,7 @@
 \alias{blocks}
 \alias{blocks,mrgmod-method}
 \alias{blocks,character-method}
-\title{Return the code blocks from a model specification file.}
+\title{Return the code blocks from a model specification file}
 \usage{
 blocks(x, ...)
 
@@ -19,7 +19,7 @@ blocks(x, ...)
 \item{...}{passed along}
 }
 \description{
-Return the code blocks from a model specification file.
+Return the code blocks from a model specification file
 }
 \examples{
 mod <- mrgsolve:::house()

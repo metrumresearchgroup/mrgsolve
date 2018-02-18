@@ -75,7 +75,7 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
 }
 
 
-##' S4 class matlist.
+##' S4 class matlist
 ##'
 ##' @rdname matlist-class
 setClass("matlist", 

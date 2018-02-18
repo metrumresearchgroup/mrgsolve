@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_tgrid.R
 \name{as_deslist}
 \alias{as_deslist}
-\title{Create a list of designs from a data frame.}
+\title{Create a list of designs from a data frame}
 \usage{
 as_deslist(data, descol = "ID")
 }
@@ -16,7 +16,7 @@ The function returns a list of \code{tgrid} objects,
 one for each unique value found in \code{descol}.
 }
 \description{
-Create a list of designs from a data frame.
+Create a list of designs from a data frame
 }
 \details{
 The input data set must have a column with the same name as the value 

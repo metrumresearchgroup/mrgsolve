@@ -76,6 +76,7 @@ Collate:
     'matlist.R'
     'matrix.R'
     'mcache.R'
+    'mcode.R'
     'model_include.R'
     'modlib.R'
     'modspec.R'

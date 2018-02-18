@@ -18,7 +18,7 @@
 \alias{as.matrix.ev}
 \alias{as.data.frame.ev}
 \alias{show,ev-method}
-\title{Event objects for simulating PK and other interventions.}
+\title{Event objects for simulating PK and other interventions}
 \usage{
 events(x, ...)
 

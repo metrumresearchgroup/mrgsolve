@@ -2,28 +2,34 @@
 % Please edit documentation in R/matrix.R
 \name{modMATRIX}
 \alias{modMATRIX}
-\title{Create a matrix.}
+\title{Create a matrix}
 \usage{
 modMATRIX(x, use = TRUE, block = FALSE, correlation = FALSE,
   digits = -1, context = "matlist", ...)
 }
 \arguments{
-\item{x}{data for building the matrix.  Data in \code{x} are assumed to be on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular elements if \code{block} is \code{TRUE}}
+\item{x}{data for building the matrix.  Data in \code{x} are assumed to be
+on-diagonal elements if \code{block} is \code{FALSE} and lower-triangular
+elements if \code{block} is \code{TRUE}}
 
 \item{use}{logical; if FALSE, all matrix elements are set to 0}
 
-\item{block}{logical; if TRUE, try to make a block matrix; diagonal otherwise}
+\item{block}{logical; if TRUE, try to make a block matrix; diagonal
+otherwise}
 
-\item{correlation}{logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances; if correlation is TRUE, then block is set to TRUE}
+\item{correlation}{logical; if TRUE, off diagonal elements are assumed to 
+be correlations and converted to covariances; if correlation is TRUE, then
+ block is set to TRUE}
 
-\item{digits}{if value of this argument is greater than zero, the matrix is passed to signif (along with digits) prior to returning}
+\item{digits}{if value of this argument is greater than zero, the matrix 
+is passed to signif (along with digits) prior to returning}
 
 \item{context}{the working context}
 
 \item{...}{passed along}
 }
 \description{
-Create a matrix.
+Create a matrix
 }
 \examples{
 modMATRIX("1 2.2 333")

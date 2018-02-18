@@ -4,7 +4,7 @@
 \name{mod}
 \alias{mod}
 \alias{mod,mrgsims-method}
-\title{Return the model object.}
+\title{Return the model object}
 \usage{
 mod(x, ...)
 
@@ -16,5 +16,5 @@ mod(x, ...)
 \item{...}{passed along}
 }
 \description{
-Return the model object.
+Return the model object
 }
