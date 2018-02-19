@@ -1,4 +1,7 @@
-# 0.8.10.9007
+# mrgsolve 0.8.10.9008
+
+
+# mrgsolve 0.8.10.9007
 - Clean up and re-organize Rd files; more-logical grouping and 
 ordering
 
