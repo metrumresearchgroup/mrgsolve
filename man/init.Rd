@@ -15,7 +15,7 @@
 \alias{as.init,missing-method}
 \alias{as.init,NULL-method}
 \alias{show,cmt_list-method}
-\title{Methods for working with the model compartment list.}
+\title{Methods for working with the model compartment list}
 \usage{
 init(.x, ...)
 

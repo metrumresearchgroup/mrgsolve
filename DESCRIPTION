@@ -88,6 +88,7 @@ Collate:
     'param.R'
     'print.R'
     'qsim.R'
+    'realize_addl.R'
     'relabel.R'
     'render.R'
     'update.R'

@@ -24,20 +24,87 @@ is.ev <- function(x) {
   inherits(x,"ev")  
 }
 
-##' @rdname events
-##' @export
-setMethod("names", "ev", function(x) {
-    names(x@data)
-})
-
+##' Mutate an events object
+##' 
 ##' @param .data the event object
-##' @rdname events
+##' @param ... passed to \code{dplyr::mutate}
 ##' @export
 mutate.ev <- function(.data, ...) {
   .data@data <- as.data.frame(mutate(.data@data, ...))
   .data
 }
 
-##' @rdname events
+##' Various methods for event objects
+##' 
+##' 
+##' @param x an events object
+##' @param row.names passed to \code{\link{as.data.frame}}
+##' @param optional passed to \code{\link{as.data.frame}}
+##' @param add_ID numeric ID of length 1 used to add \code{ID} column
+##' only if one doesn't already exist
+##' @param object used for \code{show}
+##' @param ... passed to various methods
+##' 
+##' @rdname ev_methods
+##' @name ev_methods
+##' 
+##' @method nrow ev
+##' 
 ##' @export
-nrow.ev <- function(x) nrow(x@data)
+nrow.ev <- function(x) {
+  nrow(x@data)
+}
+
+##' @rdname ev_methods
+##' @export
+setMethod("names", "ev", function(x) {
+  names(x@data)
+})
+
+
+##' @method as.matrix ev
+##' @rdname ev_methods
+##' @export
+as.matrix.ev <- function(x,...) {
+  as.matrix(x@data,...) 
+}
+
+##' @method as.data.frame ev
+##' @rdname ev_methods
+##' @export
+as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, 
+                             add_ID = NULL, ...) {
+  ans <- x@data
+  if(is.numeric(add_ID) & !has_ID(ans) & nrow(ans) > 0) {
+    ans[["ID"]] <- add_ID[1]
+  } 
+  return(ans)
+}
+
+##' @rdname ev_methods
+##' @export
+setMethod("show", "ev", function(object) {
+  cat("Events:\n")
+  print(as.data.frame(object))
+  return(invisible(NULL))
+})
+
+
+as_data_frame_ev <- function(x) x@data
+
+As_data_set <- function(x) {
+  if(!is.data.frame(x)) {
+    if(is.ev(x)) {
+      x <- x@data
+    } else {
+      x <- as.data.frame(x) 
+    } 
+  }
+  if(nrow(x)==0) return(x)
+  if(!has_ID(x)) x[["ID"]] <- 1
+  return(x)
+}
+
+
+
+

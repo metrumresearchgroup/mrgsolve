@@ -409,25 +409,24 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   })
 })
 
+
+##' DEPRECATED: get an events object from a model object
+##' 
+##' @param x an object
+##' @param ... not used
+##' 
+##' @export
+setGeneric("events", function(x,...) {
+  standardGeneric("events")
+})
+
 ##' @rdname events
 ##' @export
 setMethod("events", "mrgmod", function(x,...) {
   warning("events are no longer included in the model object")
 })
 
-##' @export
-##' @rdname events
-setMethod("ev", "mrgmod", function(x,object=NULL,...) {
-  if(is.null(object)) {
-    x@args[["events"]] <- ev(...)
-    return(x)
-  } 
-  if(is.character(object)) {
-    object <- eval(parse(text = object),envir = x@envir)
-  }
-  x@args[["events"]] <- object
-  x
-})
+
 
 ##' @rdname see
 ##' @export
@@ -536,15 +535,6 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-
-##' @param x mrgmod object
-##' @param name parameter to take
-##'
-##' @rdname param
-##' @export
-setMethod("$", "mrgmod", function(x,name){
-  as.numeric(allparam(x))[name]
-})
 
 re_build <- function(x,model=model(x),temp = FALSE) {
   if(temp) {

@@ -61,7 +61,9 @@
 ##' as.data.frame(param(mod))
 ##'
 ##' @keywords param
-setGeneric("param", function(.x,...) standardGeneric("param"))
+setGeneric("param", function(.x,...) {
+  standardGeneric("param")
+})
 
 ##' @export
 ##' @rdname param
@@ -120,34 +122,6 @@ setMethod("param", "ANY", function(.x,...) {
 
 
 
-##' @export
-##' @rdname param
-setGeneric("as.param", function(.x,...) {
-  standardGeneric("as.param")
-})
-
-
-##' @export
-##' @rdname param
-setMethod("as.param", "list", function(.x,...) {
-  create_numeric_list(.x,"parameter_list",...)
-})
-
-##' @export
-##' @rdname param
-setMethod("as.param", "numeric", function(.x,...) {
-  create_numeric_list(as.list(.x),"parameter_list",...)
-})
-
-##' @export
-##' @rdname param
-setMethod("as.param", "parameter_list", function(.x,...) .x)
-
-##' @export
-##' @rdname param
-setMethod("as.param", "missing", function(.x,...) {
-  create_numeric_list(list(), "parameter_list",...)
-})
 
 showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   pattern <- x@pattern
@@ -217,6 +191,43 @@ setMethod("show", "parameter_list", function(object) {
 allparam <- function(.x) {
   as.param(c(as.list(param(.x)), .x@fixed))
 }
+
+##' @export
+##' @rdname param
+setGeneric("as.param", function(.x,...) {
+  standardGeneric("as.param")
+})
+
+##' @export
+##' @rdname param
+setMethod("as.param", "list", function(.x,...) {
+  create_numeric_list(.x,"parameter_list",...)
+})
+
+##' @export
+##' @rdname param
+setMethod("as.param", "numeric", function(.x,...) {
+  create_numeric_list(as.list(.x),"parameter_list",...)
+})
+
+##' @export
+##' @rdname param
+setMethod("as.param", "parameter_list", function(.x,...) .x)
+
+##' @export
+##' @rdname param
+setMethod("as.param", "missing", function(.x,...) {
+  create_numeric_list(list(), "parameter_list",...)
+})
+
+##' @param x mrgmod object
+##' @param name parameter to take
+##'
+##' @rdname param
+##' @export
+setMethod("$", "mrgmod", function(x,name){
+  as.numeric(allparam(x))[name]
+})
 
 as.fixed <- function(x) {
   as.list(x)
