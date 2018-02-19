@@ -82,6 +82,6 @@ ev(ID=1:10, cmt=1, time=0, amt=100)
 \seealso{
 \code{\link{ev_rep}}, \code{\link{ev_days}}, 
 \code{\link{ev_repeat}}, \code{\link{ev_assign}},
-\code{\link{ev_seq}},
+\code{\link{ev_seq}}, \code{\link{mutate.ev}},
 \code{\link{as.ev}}, \code{\link{ev_methods}}
 }

@@ -1,5 +1,6 @@
 # 0.8.10.9007
-- No changes yet
+- Clean up and re-organize Rd files; more-logical grouping and 
+ordering
 
 # mrgsolve 0.8.10.9006
 
