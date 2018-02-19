@@ -5,7 +5,7 @@
 \alias{stime}
 \alias{tgrid-class}
 \alias{tgrids-class}
-\title{Get the times at which the model will be evaluated.}
+\title{Get the times at which the model will be evaluated}
 \usage{
 stime(x, ...)
 }
@@ -18,7 +18,7 @@ stime(x, ...)
 a sorted vector of unique times
 }
 \description{
-Get the times at which the model will be evaluated.
+Get the times at which the model will be evaluated
 }
 \details{
 Simulation times include the sequence of times created from 

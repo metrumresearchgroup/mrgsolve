@@ -4,7 +4,7 @@
 \alias{bmat}
 \alias{cmat}
 \alias{dmat}
-\title{Create matrices from vector input.}
+\title{Create matrices from vector input}
 \usage{
 bmat(..., correlation = FALSE, digits = -1)
 
@@ -15,15 +15,18 @@ dmat(...)
 \arguments{
 \item{...}{matrix data}
 
-\item{correlation}{logical; if TRUE, off diagonal elements are assumed to be correlations and converted to covariances}
+\item{correlation}{logical; if TRUE, off diagonal elements are assumed 
+to be correlations and converted to covariances}
 
-\item{digits}{if greater than zero, matrix is passed to signif (along with digits) prior to returning}
+\item{digits}{if greater than zero, matrix is passed to signif (along 
+with digits) prior to returning}
 }
 \description{
-Create matrices from vector input.
+Create matrices from vector input
 }
 \details{
-\code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix.  \code{dmat} makes a diagonal matrix.
+\code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix. 
+\code{dmat} makes a diagonal matrix.
 }
 \examples{
 

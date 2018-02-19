@@ -12,7 +12,7 @@
 \alias{as_dmat,ANY-method}
 \alias{as_dmat,numeric-method}
 \alias{as_dmat,data.frame-method}
-\title{Coerce R objects to block or diagonal matrices.}
+\title{Coerce R objects to block or diagonal matrices}
 \usage{
 as_bmat(x, ...)
 
@@ -44,10 +44,11 @@ as_dmat(x, ...)
 \item{cols}{column names to use instead of \code{pat}}
 }
 \value{
-A numeric matrix for list and numeric methods.  For data.frames, a list of matrices are returned.
+A numeric matrix for list and numeric methods.  For data.frames, 
+a list of matrices are returned.
 }
 \description{
-Coerce R objects to block or diagonal matrices.
+Coerce R objects to block or diagonal matrices
 }
 \examples{
 

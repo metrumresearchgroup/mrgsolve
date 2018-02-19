@@ -2,7 +2,7 @@
 % Please edit documentation in R/matrix.R
 \name{lower2matrix}
 \alias{lower2matrix}
-\title{Create a square numeric matrix from the lower-triangular elements.}
+\title{Create a square numeric matrix from the lower-triangular elements}
 \usage{
 lower2matrix(x, context = NULL)
 }
@@ -15,5 +15,5 @@ lower2matrix(x, context = NULL)
 a square symmetric numeric matrix with column names
 }
 \description{
-Create a square numeric matrix from the lower-triangular elements.
+Create a square numeric matrix from the lower-triangular elements
 }

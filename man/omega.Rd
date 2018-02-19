@@ -12,7 +12,7 @@
 \alias{omat,omegalist-method}
 \alias{omat,mrgmod-method}
 \alias{omat,mrgsims-method}
-\title{Manipulate OMEGA matrices.}
+\title{Manipulate OMEGA matrices}
 \usage{
 omat(.x, ...)
 
@@ -35,8 +35,8 @@ omat(.x, ...)
 
 \item{...}{passed to other functions, including \code{\link{modMATRIX}}}
 
-\item{labels}{character vector of names for \code{$OMEGA} elements; must be equal 
-to number of rows/columns in the matrix}
+\item{labels}{character vector of names for \code{$OMEGA} elements; must 
+be equal to number of rows/columns in the matrix}
 
 \item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
 
@@ -45,8 +45,9 @@ to number of rows/columns in the matrix}
 \item{x}{\code{matlist} object}
 }
 \description{
-The primary function is \code{omat} that can be used to both get the \code{$OMEGA} matrices
-out of a model object and to update \code{$OMEGA} matrices in a model object.
+The primary function is \code{omat} that can be used to both get the 
+\code{$OMEGA} matrices out of a model object and to update \code{$OMEGA} 
+matrices in a model object.
 }
 \examples{
 ## example("omega")

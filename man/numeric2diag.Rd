@@ -2,7 +2,7 @@
 % Please edit documentation in R/matrix.R
 \name{numeric2diag}
 \alias{numeric2diag}
-\title{Create a diagonal numeric matrix from diagonal elements.}
+\title{Create a diagonal numeric matrix from diagonal elements}
 \usage{
 numeric2diag(x, context = NULL)
 }
@@ -15,5 +15,5 @@ numeric2diag(x, context = NULL)
 a numeric diagonal matrix
 }
 \description{
-Create a diagonal numeric matrix from diagonal elements.
+Create a diagonal numeric matrix from diagonal elements
 }

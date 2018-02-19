@@ -4,7 +4,7 @@
 \name{loadso}
 \alias{loadso}
 \alias{loadso,mrgmod-method}
-\title{Load the model shared object.}
+\title{Load the model shared object}
 \usage{
 loadso(x, ...)
 
@@ -16,5 +16,5 @@ loadso(x, ...)
 \item{...}{passed along}
 }
 \description{
-Load the model shared object.
+Load the model shared object
 }

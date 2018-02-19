@@ -19,36 +19,6 @@
 NULL
 
 
-##' Write, compile, and load model code
-##'
-##' This is a convenience function that ultimately calls \code{\link{mread}}.
-##'
-##' @param model model name
-##' @param project project name
-##' @param code character string specifying a \code{mrgsolve} model
-##' @param ... passed to \code{\link{mread}}
-##' @details
-##' Note that the arguments are in slightly different order than 
-##' \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
-##'
-##' @examples
-##'
-##' \dontrun{ 
-##' code <- '
-##' $CMT DEPOT CENT
-##' $PKMODEL ncmt=1, depot=TRUE
-##' $MAIN
-##' double CL = 1;
-##' double V = 20;
-##' double KA = 1;
-##' '
-##'
-##' mod <- mcode("example",code)
-##' }
-##' @export
-mcode <- function(model, code, project=tempdir(), ...) {
-  mread(model=model, project=project, code=code,...)
-}
 
 ##' Read a model specification file
 ##' 
@@ -151,6 +121,8 @@ mcode <- function(model, code, project=tempdir(), ...) {
 ##' 
 ##' 
 ##' }
+##' 
+##' @seealso \code{\link{mcode}}, \code{\link{mcode_cache}}
 ##' 
 ##' @export
 mread <- function(model, project = getwd(), code = NULL, 
@@ -485,6 +457,45 @@ mread <- function(model, project = getwd(), code = NULL,
   x <- compiled(x,TRUE)
   
   return(x)
+}
+
+##' @rdname mread 
+##' @export
+mread_cache <- function(model = NULL, project = getwd(), 
+                        file = paste0(model, ".cpp"),
+                        code = NULL, soloc = tempdir(), 
+                        quiet = FALSE, 
+                        preclean = FALSE, ...) {
+  
+  build <- new_build(file, model, project, soloc, code, preclean) 
+  
+  cache_file <- file.path(build$soloc, "mrgmod_cache.RDS")
+  
+  ## If the cache file doesn't exist, build and return
+  te <- file.exists(cache_file) & !preclean
+  t0 <- t1 <- t2 <- t3 <- FALSE
+  
+  if(te) {
+    x <- readRDS(cache_file)
+    t0 <- is.mrgmod(x)
+    if(t1 <- is.character(x@shlib$md5)) {
+      t2 <- x@shlib$md5 == build$md5
+    }
+    t3 <- file.exists(sodll(x))
+  }
+  
+  if(all(t0,t1,t2,t3,te)) {
+    if(!quiet) message("Loading model from cache.")
+    loadso(x)
+    return(update(x,...))
+  }
+  
+  x <- mread(build$model, project, soloc=soloc, quiet=quiet, 
+             file = basename(build$modfile), ...)
+  
+  saveRDS(x,file=cache_file)
+  
+  return(x) 
 }
 
 ##' @export

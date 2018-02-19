@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Get the compartment number from a compartment name.
+##' Get the compartment number from a compartment name
 ##'
 ##' @param x model object
 ##' @param ... passed along
@@ -26,7 +26,7 @@
 ##' @export
 setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 
-##' Print model code to the console.
+##' Print model code to the console
 ##'
 ##' @param x model object
 ##' @param raw return the raw code
@@ -35,7 +35,7 @@ setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 ##' @export
 setGeneric("see", function(x,...) standardGeneric("see"))
 
-##' Load the model shared object.
+##' Load the model shared object
 ##'
 ##' @param x the model object
 ##' @param ... passed along
@@ -43,7 +43,7 @@ setGeneric("see", function(x,...) standardGeneric("see"))
 setGeneric("loadso", function(x,...) standardGeneric("loadso"))
 setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 
-##' Get the times at which the model will be evaluated.
+##' Get the times at which the model will be evaluated
 ##'
 ##' @name stime
 ##'
@@ -68,7 +68,7 @@ setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
 ##' 
 setGeneric("stime", function(x,...) standardGeneric("stime"))
 
-##' Get model random effect variances and covariances.
+##' Get model random effect variances and covariances
 ##'
 ##' @param x model object
 ##' @param ... passed along
@@ -77,7 +77,7 @@ setGeneric("stime", function(x,...) standardGeneric("stime"))
 ##' @rdname revar
 setGeneric("revar", function(x,...) standardGeneric("revar"))
 
-##' Return the code blocks from a model specification file.
+##' Return the code blocks from a model specification file
 ##'
 ##' @param x model object or path to model specification file
 ##' @param ... passed along
@@ -94,59 +94,7 @@ setGeneric("sodll", function(x,...) standardGeneric("sodll"))
 setGeneric("ex", function(x,...) standardGeneric("ex"))
 
 
-##' Event objects for simulating PK and other interventions.
-##'
-##' Events can either be specified when the model object is created (with
-##' \code{mrgmod}) or by updating an existing model object (with \code{update}).
-##'
-##' @return Returns a user-defined data frame of events that should be suitable
-##' for passing into \code{lsoda}.  If events are stored as a data frame,
-##' \code{events} returns the data frame.  If events are stored as a function
-##' that generates the data frame, \code{events} calls the function and passes
-##' return back to the user.
-##'
-##' @param x mrgmodel object
-##' @param ... passed on
-##' @export events
-setGeneric("events", function(x,...) standardGeneric("events"))
-
-
-##' @details
-##' \itemize{
-##' \item Required input for creating events objects include 
-##' \code{time} and \code{cmt}
-##' \item If not supplied, \code{evid} is assumed to be 1.
-##' \item If not supplied, \code{cmt}  is assumed to be 1.
-##' \item If not supplied, \code{time} is assumed to be 0.
-##' \item \code{ID} may be specified as a vector.
-##' \item If replicate is \code{TRUE} (default), thenthe events 
-##' regimen is replicated for each \code{ID}; otherwise, the number of
-##' event rows must match the number of \code{ID}s entered
-##' }
-##' @return events object
-##' @export
-##' @rdname events
-##' @examples
-##' mod <- mrgsolve:::house()
-##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
-##' events(mod)
-##'
-##' loading <- ev(time=0, cmt=1, amt=1000)
-##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
-##' loading + maint
-##'
-##'
-##' ev(ID=1:10, cmt=1, time=0, amt=100)
-##'
-##'
-setGeneric("ev", function(x,...) standardGeneric("ev"))
-
-##' @rdname events
-##' @export
-setGeneric("as.ev", function(x,...) standardGeneric("as.ev"))
-
-
-##' Return the model object.
+##' Return the model object
 ##'
 ##' @param x mrgsims object
 ##' @param ... passed along

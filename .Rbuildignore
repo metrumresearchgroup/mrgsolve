@@ -1,3 +1,4 @@
+DOCS/
 mrgsolve/
 cran-comments.md
 Rchecks
@@ -37,3 +38,4 @@ _config.yml
 .Rinstignore
 Makefile
 docs
+^DOCS$

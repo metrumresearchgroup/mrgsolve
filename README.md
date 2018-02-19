@@ -1,3 +1,4 @@
+
 mrgsolve
 ========
 
@@ -31,7 +32,6 @@ Ask a question
 --------------
 
 -   [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
--   [Google Group](https://groups.google.com/a/metrumrg.com/forum/#!forum/mrgsolve) (email list or web-based discussion)
 
 Example
 -------
@@ -96,7 +96,7 @@ out <-
 out
 ```
 
-    . Model:  demo.cpp 
+    . Model:  demo 
     . Dim:    1202 x 6 
     . Time:   0 to 120 
     . ID:     1 
@@ -163,12 +163,13 @@ head(.data)
 -   Control simulation output from `R` to better manage memory
 
 ``` r
+set.seed(1010)
 out <- 
   mod %>%
   data_set(.data) %>%
   Req(RESP,CP) %>% obsonly %>%
   carry_out(dose) %>%
-  mrgsim(end=48, seed=1010)
+  mrgsim(end=48)
 ```
 
 ``` r
@@ -188,12 +189,12 @@ out %>%
   summarise(rmin = min(RESP), tmim=time[which.min(RESP)])
 ```
 
-    . # A tibble: 3 × 3
-    .    dose      rmin  tmim
-    .   <dbl>     <dbl> <dbl>
-    . 1   100 18.958869   2.9
-    . 2   300 16.117261   3.5
-    . 3  1000  6.198648   3.5
+    . # A tibble: 3 x 3
+    .    dose  rmin  tmim
+    .   <dbl> <dbl> <dbl>
+    . 1   100 19.0   2.90
+    . 2   300 16.1   3.50
+    . 3  1000  6.20  3.50
 
 Plot with `ggplot2`
 

@@ -34,7 +34,7 @@ setClass("tgrid", slots=c(start  = "numeric",
 setClass("tgrids", slots=c(data="list"))
 
 
-##' Create a list of designs from a data frame.
+##' Create a list of designs from a data frame
 ##' 
 ##' @param data input data set; see details
 ##' @param descol character column name to be used for design groups

@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Methods for working with the model compartment list.
+##' Methods for working with the model compartment list
 ##'
 ##' Calling \code{init} with the model object as the first argument 
 ##' will return the model initial conditions as a \code{numericlist} 
@@ -106,15 +106,21 @@ setMethod("init", "ANY", function(.x,...) {
 
 ##' @export
 ##' @rdname init
-setGeneric("as.init", function(.x,...) standardGeneric("as.init"))
+setGeneric("as.init", function(.x,...) {
+  standardGeneric("as.init")
+})
 
 ##' @export
 ##' @rdname init
-setMethod("as.init", "list", function(.x,...) create_numeric_list(.x,"cmt_list",...))
+setMethod("as.init", "list", function(.x,...) {
+  create_numeric_list(.x,"cmt_list",...)
+})
 
 ##' @export
 ##' @rdname init
-setMethod("as.init", "numeric", function(.x,...) create_numeric_list(as.list(.x),"cmt_list",...))
+setMethod("as.init", "numeric", function(.x,...) {
+  create_numeric_list(as.list(.x),"cmt_list",...)
+})
 
 ##' @export
 ##' @rdname init

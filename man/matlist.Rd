@@ -18,7 +18,7 @@
 \alias{dim,matlist-method}
 \alias{nrow,matlist-method}
 \alias{show,matlist-method}
-\title{Methods for working with matrix-list objects.}
+\title{Methods for working with matrix-list objects}
 \usage{
 zero.re(.x, ...)
 
@@ -58,5 +58,5 @@ drop_re(...)
 \item{object}{passed to showmatlist}
 }
 \description{
-Methods for working with matrix-list objects.
+Methods for working with matrix-list objects
 }

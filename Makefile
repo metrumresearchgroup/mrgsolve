@@ -14,7 +14,9 @@ gut_check:
 	Rscript "inst/maintenance/gut_check.R"
 
 pkgdown:
-	Rscript -e 'library(pkgdown)' -e 'build_home()' -e 'build_reference(examples=FALSE)' -e 'build_news()'
+	Rscript "inst/maintenance/pkgdown.R"
+	cp -r DOCS/ ../../mrgsolve/docs/
+	touch ../../mrgsolve/docs/.nojekyll
 
 test-all:
 	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")' -e 'test_dir("inst/maintenance/unit")'
