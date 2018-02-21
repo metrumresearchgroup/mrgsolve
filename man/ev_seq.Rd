@@ -5,16 +5,18 @@
 \alias{seq.ev}
 \title{Schedule a series of event objects}
 \usage{
-ev_seq(..., id = NULL, .dots = NULL)
+ev_seq(..., ID = NULL, .dots = NULL, id = NULL)
 
 \method{seq}{ev}(...)
 }
 \arguments{
 \item{...}{event objects or numeric arguments named \code{wait}}
 
-\item{id}{numeric vector of subject ids}
+\item{ID}{numeric vector of subject IDs}
 
 \item{.dots}{a list of event objects that replaces \code{...}}
+
+\item{id}{deprecated; use \code{ID}}
 }
 \value{
 A single event object.

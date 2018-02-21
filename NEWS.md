@@ -1,5 +1,6 @@
 # mrgsolve 0.8.10.9008
-
+- Changed `id` argument to `ID` in `ev_rep` and `ev_seq`; a warning
+is issued if `id` is used
 
 # mrgsolve 0.8.10.9007
 - Clean up and re-organize Rd files; more-logical grouping and 
