@@ -443,7 +443,7 @@ add.ev <- function(e1,e2) {
 ##' @export
 ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
   if(!missing(id)) {
-    message("id argument is deprecated; use ID instead")
+    warning("id argument is deprecated; use ID instead")
     ID <- id
   }
   x <- as.data.frame(x) 
@@ -547,7 +547,7 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   
   if(!missing(id)) {
-    message("id argument is deprecated; using ID instead")
+    warning("id argument is deprecated; using ID instead")
     ID <- id
   }
   evs <- list(...)
