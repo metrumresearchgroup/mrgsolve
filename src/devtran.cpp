@@ -195,7 +195,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
   }
 
-  dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
+  //dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
 
   // Need this for later
   int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
@@ -410,9 +410,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->set_d(a[i][0]);
     prob->init_call(tfrom);
 
-    if(mtimes.size() > 0) {
-      add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
-    }
+    // if(mtimes.size() > 0) {
+    //   //void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
+    //   //add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
+    // }
 
     for(size_t j=0; j < a[i].size(); ++j) {
 

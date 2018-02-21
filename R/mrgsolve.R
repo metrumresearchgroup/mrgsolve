@@ -93,8 +93,6 @@ validate_idata <- function(idata) {
 ##'
 ##' \itemize{
 ##' 
-##' \item \code{mtime} numeric vector of times where the model is evaluated 
-##' (with solver reset), but results are not included in simulated output
 ##' 
 ##' \item \code{Request} a vector of compartment or table names to take in 
 ##' simulated output; if this is specified, \code{request} is ignored
@@ -397,7 +395,6 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param data a simulation data set
 ##' @param idata individual-level data
 ##' @param carry.out data items to copy into the output
-##' @param mtime not used
 ##' @param seed deprecated
 ##' @param Request compartments or captured variables to retain
 ##' in the simulated output
@@ -426,7 +423,6 @@ do_mrgsim <- function(x,
                       data,
                       idata = null_idata,
                       carry.out = character(0),
-                      mtime = numeric(0),
                       seed = as.integer(NA),
                       Request = character(0),
                       capture = NULL,
@@ -536,7 +532,7 @@ do_mrgsim <- function(x,
   parin$recsort <- recsort
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
-  parin$mtime <- sort(unique(mtime))
+  #parin$mtime <- sort(unique(mtime))
   parin$filbak <- filbak
   parin$tad <- tad
   parin$nocb <- nocb
@@ -688,7 +684,7 @@ do_mrgsimple <- function(x,
   parin$recsort <- recsort
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
-  parin$mtime <- numeric(0)
+  #parin$mtime <- numeric(0)
   parin$filbak <- filbak
   parin$tad <- tad
   parin$nocb <- nocb

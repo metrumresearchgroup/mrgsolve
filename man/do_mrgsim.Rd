@@ -5,10 +5,10 @@
 \title{Do an mrgsim run}
 \usage{
 do_mrgsim(x, data, idata = null_idata, carry.out = character(0),
-  mtime = numeric(0), seed = as.integer(NA), Request = character(0),
-  capture = NULL, obsonly = FALSE, obsaug = FALSE, tgrid = numeric(0),
-  recsort = 1, deslist = list(), descol = character(0), filbak = TRUE,
-  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ...)
+  seed = as.integer(NA), Request = character(0), capture = NULL,
+  obsonly = FALSE, obsaug = FALSE, tgrid = numeric(0), recsort = 1,
+  deslist = list(), descol = character(0), filbak = TRUE, tad = FALSE,
+  nocb = TRUE, skip_init_calc = FALSE, ...)
 }
 \arguments{
 \item{x}{a model object}
@@ -18,8 +18,6 @@ do_mrgsim(x, data, idata = null_idata, carry.out = character(0),
 \item{idata}{individual-level data}
 
 \item{carry.out}{data items to copy into the output}
-
-\item{mtime}{not used}
 
 \item{seed}{deprecated}
 

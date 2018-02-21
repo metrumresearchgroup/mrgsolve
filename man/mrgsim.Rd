@@ -65,8 +65,6 @@ simulated output that occur prior to the first record in \code{data}.
 
 \itemize{
 
-\item \code{mtime} numeric vector of times where the model is evaluated 
-(with solver reset), but results are not included in simulated output
 
 \item \code{Request} a vector of compartment or table names to take in 
 simulated output; if this is specified, \code{request} is ignored
