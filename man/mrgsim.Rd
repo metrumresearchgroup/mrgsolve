@@ -93,8 +93,13 @@ backward to start of the simulation
 \item \code{tad} logical; when \code{TRUE} a column is added to simulated 
 output is added showing the time since the last dose.  Only data records 
 with \code{evid == 1} will be considered doses for the purposes of 
-\code{tad} calculation.
-
+\code{tad} calculation. The \code{tad} can be properly calculated with 
+a dosing lag time in the model as long as the dosing lag time (specified 
+in \code{$MAIN})  is always  appropriate for any subsequent doses scheduled 
+through \code{addl}.  This will always be true if the lag time doesn't 
+change over time.  But it might (possibly) not hold if the lag time changes
+prior to the last dose in the \code{addl} sequence.  
+ 
 \item \code{nocb} if \code{TRUE} (default), time-varying items in a data 
 set will be implemented as next observation carried back; if \code{FALSE} 
 time-varying items in a data set will be implemented as last observation 
