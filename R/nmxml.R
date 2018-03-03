@@ -139,4 +139,25 @@ nm_xml_matrix <- function(x) {
   m
 }
 
+##' Extract estimates from NONMEM ext file
+##' 
+##' 
+##' @param run a run number or run identifier
+##' @param project the NONMEM project directory
+##' @param file the ext file name
+##' @export 
+read_nmext <- function(run, file = paste0(run, ".ext"), project = getwd()) {
+  file <- file.path(project, run, file)
+  if(!file.exists(file)) {
+    stop("The file ", file, " does not exist.", call. = FALSE)
+  }
+  df <- read.table(file, skip = 1, header = TRUE)
+  ans <- filter(df, ITERATION == -1E9)
+  if(nrow(ans) != 1) {
+    stop("Could not find estimates in the file: ", basename(file), 
+         call. = FALSE)
+  }
+  names(ans) <- gsub("[[:punct:]]", "", names(ans))
+  return(ans)
+}
 
