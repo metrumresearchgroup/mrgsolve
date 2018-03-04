@@ -78,7 +78,9 @@ nmxml <- function(run=numeric(0), project=character(0),
   }
   
   tree <- xml2::as_list(xml2::read_xml(target))
-  tree <- tree$output$nonmem$problem$estimation
+  tree <- ifelse(is.null(tree[["output"]]),
+                 tree$nonmem$problem$estimation,
+                 tree$output$nonmem$problem$estimation)
   
   th <- list()
   om <- matrix(0,0,0)
