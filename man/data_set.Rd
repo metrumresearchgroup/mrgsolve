@@ -7,7 +7,7 @@
 \alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,ev-method}
 \alias{data_set,mrgmod,missing-method}
-\title{Select and modify a data set for simulation.}
+\title{Select and modify a data set for simulation}
 \usage{
 data_set(x, data, ...)
 
@@ -40,7 +40,7 @@ to use for the data set}
 \item{need}{passed to \code{\link{inventory}}}
 }
 \description{
-Select and modify a data set for simulation.
+Select and modify a data set for simulation
 }
 \details{
 Input data sets are \code{R} data frames that can include columns 
