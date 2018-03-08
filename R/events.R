@@ -281,7 +281,6 @@ collect_ev <- function(...) {
   if(!has_ID(x)) {
     stop("No ID column in the data set", call. = FALSE)
   }
-  
   return(x)
 }
 
@@ -472,8 +471,12 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
 ##' @export
 ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
   x <- as.data.frame(x)
-  if(!exists("ii", x)) x["ii"] <- 0
-  if(!exists("addl", x)) x["addl"] <- 0
+  if(!exists("ii", x)) {
+    x["ii"] <- 0
+  }
+  if(!exists("addl", x)) {
+    x["addl"] <- 0
+  }
   start <- x[1,"time"]
   end <- x$time + x$ii*x$addl + x$ii
   end <- max(end) + wait

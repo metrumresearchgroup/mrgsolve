@@ -32,7 +32,7 @@
 ##' @param ... passed along
 setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 
-##' @rdname data_set
+##' 
 ##'
 ##' @details
 ##' Input data sets are \code{R} data frames that can include columns 
@@ -86,6 +86,8 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' 
 ##' mod %>% data_set(extran1) %>% mrgsim
 ##' mod %>% mrgsim(data=extran1)
+##' 
+##' @rdname data_set
 ##' 
 ##' @export
 setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
