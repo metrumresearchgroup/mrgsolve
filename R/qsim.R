@@ -211,6 +211,8 @@ data_qsim <- function(e, times) {
   
   cols <- unique(c("time", "cmt", "evid", "amt", "rate", colnames(dmat)))
   
+  dmat[,"cmt"] <- dmat[,"cmt"] - 1
+  
   dmat <- dmat[,cols,drop = FALSE]
   
   if(any(d$addl > 0)) {
@@ -247,6 +249,8 @@ data_qsim <- function(e, times) {
   }
   
   dmat[,"addl"] <- dmat[,"ii"] <- 0
+  
+  
   
   totrows <- length(times) + nrow(d) + sum(d$addl) + nrate
   
