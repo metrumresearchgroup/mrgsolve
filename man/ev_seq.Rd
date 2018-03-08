@@ -42,7 +42,11 @@ occurs in the event sequence (see examples).
 
 Use the generic \code{\link{seq}} when the first argument 
 is an event object.  If a waiting period is the 
-first event, you will need to use \code{ev_seq}.
+first event, you will need to use \code{ev_seq}.  When 
+an event object has multiple rows, the end time for 
+that sequence is taken to be one dosing interval 
+after the event that takes place on the last 
+row of the event object.
 }
 \examples{
 
