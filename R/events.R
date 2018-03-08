@@ -538,7 +538,11 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ##' @details
 ##' Use the generic \code{\link{seq}} when the first argument 
 ##' is an event object.  If a waiting period is the 
-##' first event, you will need to use \code{ev_seq}.
+##' first event, you will need to use \code{ev_seq}.  When 
+##' an event object has multiple rows, the end time for 
+##' that sequence is taken to be one dosing interval 
+##' after the event that takes place on the last 
+##' row of the event object. 
 ##' 
 ##' @return
 ##' A single event object.
@@ -555,10 +559,10 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     evs <- .dots 
   }
   out <- vector("list", length(evs))
-  start <- 0
   if(is.null(names(evs))) {
     names(evs) <- rep(".", length(evs))
   }
+  start <- 0
   for(i in seq_along(out)) {
     if(names(evs)[i]=="wait") {
       start <- start + evs[[i]]
@@ -566,14 +570,20 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
       next
     }
     e <- as.data.frame(evs[[i]])
-    if(nrow(e) !=1) {
-      stop("events can only have one row", call.=FALSE)
+    if(is.null(e[["ii"]])) {
+      e[["ii"]] <- 0
     }
-    if(is.null(e$ii)) e$ii <- 0
-    if(is.null(e$addl)) e$addl <- 0
-    after <-  if_else(is.null(e$.after), 0, e$.after)
-    e$time <- e$time + start
-    start <- start + after + e$ii*e$addl + e$ii
+    if(is.null(e[["addl"]])) {
+      e[["addl"]] <- 0
+    }
+    after <-  if_else(is.null(e[[".after"]]), 0, e[[".after"]])
+    e[["time"]] <- e[["time"]] + start
+    elast <- slice(e, nrow(e))
+    start <- 
+      elast[["time"]] + 
+      after + 
+      elast[["ii"]]*elast[["addl"]] + 
+      elast[["ii"]]
     out[[i]] <- e
   }
   out <- bind_rows(out) 
