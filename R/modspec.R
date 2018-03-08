@@ -534,7 +534,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
   
 }
 
-##' Functions to parse code blocks.
+##' Functions to parse code blocks
 ##' 
 ##' Most of the basic blocks are listed in this help topic.  
 ##' But see also \code{\link{PKMODEL}} which has more-involved 
@@ -543,6 +543,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 ##' @param x data
 ##' @param env parse environment
 ##' @param annotated logical
+##' @param covariates logical
 ##' @param name block name
 ##' @param pos block position
 ##' @param ... passed

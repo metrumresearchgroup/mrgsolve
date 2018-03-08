@@ -13,6 +13,10 @@ read_nmext(run, file = paste0(run, ".ext"), project = getwd())
 
 \item{project}{the NONMEM project directory}
 }
+\value{
+A list with theta, omega, and sigma in a format
+ready to be used to update a model object.
+}
 \description{
 Extract estimates from NONMEM ext file
 }
