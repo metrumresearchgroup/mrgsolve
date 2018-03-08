@@ -87,6 +87,7 @@ Collate:
     'nmxml.R'
     'param.R'
     'print.R'
+    'qmrgsim.R'
     'qsim.R'
     'realize_addl.R'
     'relabel.R'

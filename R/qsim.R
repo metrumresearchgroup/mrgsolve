@@ -60,9 +60,9 @@ qsim <- function(x,e=NULL,idata=NULL,req=NULL,tgrid=NULL,
   
   if(is.ev(e)) {
     if(!is.null(tgrid)) {
-      e <- recmatrix(e,tgrid) 
+      e <- data_qsim(e,tgrid) 
     } else {
-      e <- recmatrix(e,stime(x))
+      e <- data_qsim(e,stime(x))
     }
   } 
   
@@ -131,12 +131,6 @@ as_ev_matrix <- function(ev) {
   m1
 }
 
-# get_rate_off <- function(x) {
-#   dur <- x$amt/x$rate
-#   y <- mutate(x,time=time+dur,rate=-1*rate)
-#   y
-# }
-
 obs_matrix <- function(x,n=1) {
   if(n > 1) x <- rep(x,times=n)
   matrix(nrow=length(x),ncol=5,
@@ -152,7 +146,7 @@ id_obs_matrix <- function(obs,ids) {
 }
 
 
-##' Create a matrix of events for simulation.
+##' Create a matrix of events for simulation
 ##' 
 ##' This function is for use with \code{\link{qsim}} only.
 ##'
@@ -174,4 +168,99 @@ recmatrix <- function(x, times, c_indexing=TRUE) {
   x <- lapply(split(x,seq_len(nrow(x))),as_ev_matrix)
   x <- do.call(rbind,c(x,list(obs_matrix(stime(times)))))
   structure(x[order(x[,1],x[,4]),],n=sum(x[,"evid"]==0))
+}
+
+##' Create a matrix of events and observations for simulation
+##' 
+##' This function is to be used with \code{\link{qsim}} only.
+##' 
+##' @param e an event object
+##' @param times numeric vector of observation times or a 
+##' \code{tgrid} object
+##' 
+##' @return A numeric matrix with at minimum columns of 
+##' \code{time}, \code{cmt}, \code{evid}, \code{amt}, 
+##' \code{rate}.
+##' 
+##' @examples
+##' e <- ev(amt = 100, ii = 12, addl = 2, rate = 50)
+##' 
+##' times <- tgrid(end = 240, delta = 6)
+##' 
+##' data_qsim(e, times)
+##' 
+##' 
+##' @export
+data_qsim <- function(e, times) {
+  
+  times <- stime(times)
+  
+  d <- as.data.frame(e)
+  
+  if(!exists("rate",d)) {
+    d$rate <- 0  
+  }
+  if(!exists("addl", d)) {
+    d$addl <- 0  
+  }
+  if(!exists("ii", d)) {
+    d$ii <- 0  
+  }
+  
+  dmat <- data.matrix(d)
+  
+  cols <- unique(c("time", "cmt", "evid", "amt", "rate", colnames(dmat)))
+  
+  dmat <- dmat[,cols,drop = FALSE]
+  
+  if(any(d$addl > 0)) {
+    
+    admat <- dmat[dmat[,"addl"] > 0,,drop = FALSE]
+    
+    reps <- unlist(
+      sapply(
+        admat[,"addl"],seq, simplify = FALSE, USE.NAMES = FALSE
+      ), 
+      use.names = FALSE
+    )
+    
+    admat <- admat[
+      rep(seq(nrow(admat)),times = admat[,"addl"]),,
+      drop = FALSE]
+    
+    admat[,"time"] <- 
+      admat[,"time"] +
+      admat[,"ii"]*reps
+    
+    dmat <- rbind(dmat,admat)
+  }
+  
+  nrate <- 0
+  if(any(d$rate > 0)) {
+    drate <- dmat[dmat[,"rate"] > 0,,drop = FALSE]
+    drate[,"evid"] <- 9
+    drate[,"time"] <- 
+      drate[,"time"] + 
+      drate[,"amt"]/drate[,"rate"]
+    dmat <- rbind(dmat,drate)
+    nrate <- nrow(drate)
+  }
+  
+  dmat[,"addl"] <- dmat[,"ii"] <- 0
+  
+  totrows <- length(times) + nrow(d) + sum(d$addl) + nrate
+  
+  mat <- matrix(0, nrow = totrows, ncol = ncol(d))
+  
+  dimnames(mat) <- list(NULL, colnames(dmat))
+  
+  mat[seq(nrow(dmat)),seq(ncol(dmat))] <- dmat
+  
+  tindex <- seq(nrow(dmat)+1, nrow(mat))
+  
+  mat[tindex,"time"] <- times
+  
+  mat <- mat[order(mat[,"time"],mat[,"evid"]),]
+  
+  structure(mat, n = sum(mat[,"evid"]==0))
 }

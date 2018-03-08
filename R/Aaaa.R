@@ -18,7 +18,7 @@
 ##' @import methods
 ##' 
 ##' @importFrom utils capture.output example str type.convert 
-##' @importFrom utils packageVersion assignInMyNamespace
+##' @importFrom utils packageVersion assignInMyNamespace read.table
 ##' @importFrom stats as.formula
 ##' @importFrom stats setNames
 ##' @importFrom stats rnorm

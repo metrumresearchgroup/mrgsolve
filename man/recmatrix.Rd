@@ -2,7 +2,7 @@
 % Please edit documentation in R/qsim.R
 \name{recmatrix}
 \alias{recmatrix}
-\title{Create a matrix of events for simulation.}
+\title{Create a matrix of events for simulation}
 \usage{
 recmatrix(x, times, c_indexing = TRUE)
 }

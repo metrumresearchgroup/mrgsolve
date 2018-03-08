@@ -98,7 +98,9 @@ a dosing lag time in the model as long as the dosing lag time (specified
 in \code{$MAIN})  is always  appropriate for any subsequent doses scheduled 
 through \code{addl}.  This will always be true if the lag time doesn't 
 change over time.  But it might (possibly) not hold if the lag time changes
-prior to the last dose in the \code{addl} sequence.  
+prior to the last dose in the \code{addl} sequence.  This known limitation
+shouldn't affect \code{tad} calculation in most common dosing lag time
+implementations.  
  
 \item \code{nocb} if \code{TRUE} (default), time-varying items in a data 
 set will be implemented as next observation carried back; if \code{FALSE} 
