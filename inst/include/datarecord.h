@@ -124,7 +124,6 @@ protected:
   double Amt; ///< record dosing amount value
   double Rate; ///< record infusion rate value
   double Ii; ///< record inter-dose interval value
-  double Fn; ///< record bioavailability value
   bool Armed; ///< only armed records are actually executed
   
 };

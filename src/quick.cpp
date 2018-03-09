@@ -24,6 +24,7 @@
 #include "odeproblem.h"
 #include "RcppInclude.h"
 #include "dataobject.h"
+#include "datarecord.h"
 #include "mrgsolve.h"
 
 /** Perform a simple simulation run.
@@ -46,14 +47,146 @@
  */
 
 namespace {
-  unsigned int timecol = 0;
+unsigned int timecol = 0;
   unsigned int cmtcol  = 1;
   unsigned int evidcol = 2;
   unsigned int amtcol  = 3;
   unsigned int ratecol = 4;
 }
 
+// namespace {
+//   unsigned int timecol_ = 1;
+//   unsigned int cmtcol_  = 2;
+//   unsigned int evidcol_ = 4;
+//   unsigned int amtcol_  = 3;
+//   unsigned int ratecol_ = 8;
+//   unsigned int iicol_ = 5;
+//   unsigned int sscol_ = 6;
+//   unsigned int addlcol_  = 7;
+//   unsigned int idcol_ = 0;
+// }
+// 
+
+
 typedef  Rcpp::NumericMatrix::Column mcol;
+
+
+// Rcpp::NumericMatrix QMRGSIM(const Rcpp::List& parin,
+//                             const Rcpp::NumericVector& param,
+//                             const Rcpp::NumericVector& init,
+//                             Rcpp::CharacterVector& parnames,
+//                             Rcpp::NumericVector& stimes,
+//                             Rcpp::NumericMatrix& data,
+//                             const Rcpp::NumericMatrix& idata,
+//                             const Rcpp::IntegerVector& req,
+//                             const Rcpp::IntegerVector& capturei,
+//                             const Rcpp::List& funs, 
+//                             const Rcpp::IntegerVector& cols) {
+//   
+//   dataobject idat(idata,parnames);
+//   
+//   const unsigned int capn = capturei.at(0);
+//   const unsigned int NID = idata.nrow();
+//   const unsigned int n = data.nrow();
+//   
+//   
+//   odeproblem* prob = new odeproblem(param, init, funs, capn);
+//   prob->copy_parin(parin);
+//   prob->neta(10);
+//   prob->neps(10);
+//   
+//   const unsigned int NN = (n+stimes.size()) *  NID;
+//   const unsigned int nreq = req.size();
+//   
+//   Rcpp::NumericMatrix ans(NN,2+nreq+capn);
+//   
+//   reclist recs;
+//   recs.reserve(n+stimes.size());
+//  
+//   for(int i=0; i < data.nrow(); i++) {
+//     rec_ptr ev = boost::make_shared<datarecord>(
+//       data(i,cols[cmtcol_]),
+//       data(i,cols[evidcol_]),
+//       data(i,cols[amtcol_]),
+//       data(i,cols[timecol_]),
+//       data(i,cols[ratecol_]),
+//       -300, 
+//       data(i,cols[idcol_])
+//     );
+//     ev->ss(data(i,cols[sscol_]));
+//     ev->addl(data(i,cols[addlcol_]));
+//     ev->ii(data(i,cols[iicol_]));
+//     recs.push_back(ev);
+//   }
+//   
+//   for(int i=0; i < stimes.size(); ++i) {
+//     rec_ptr obs = boost::make_shared<datarecord>(
+//       stimes[i],
+//       1, // cmt
+//       1000, // pos
+//       1 // id
+//     );
+//     recs.push_back(obs);
+//   }
+//   
+//   std::sort(recs.begin(), recs.end(), CompByTimePosRec);
+//   prob->y_init(init);
+//   prob->init_call(0);
+//   
+//   double tfrom = 0; 
+//   double tto = 0;
+//   double crow = 0;
+//   int capstart = 2+nreq;
+//   prob->newind(0);
+//   for(int i = 0; i < NID; i++) {
+//     
+//     tto = recs[0]->time();
+//     tfrom = tto;
+//     prob->reset_newid(i);
+//     idat.copy_parameters(i,prob);
+//     
+// 
+//     prob->init_call(tfrom);
+//     prob->lsoda_init();
+// 
+//     prob->set_d(recs[0]);
+//     prob->init_call(tfrom);
+// 
+//     for(int j = 0; j < recs.size(); ++j) {
+//       
+//       if(j==0) {
+//         prob->newind(1);
+//       } else {
+//         prob->newind(2); 
+//       }
+// 
+//       
+//       rec_ptr this_rec = recs[j];
+//       
+//       tto = this_rec->time();
+//       prob->set_d(this_rec);
+//       prob->init_call_record(tto);
+//       prob->advance(tfrom,tto);
+//       this_rec->implement(prob);
+//       prob->table_call();
+//       ans(crow,0) = this_rec->id();
+//       ans(crow,1) = tto;
+//       for(int k = 0; k < nreq;  ++k) {
+//         ans(crow,2+k) = prob->y(req[k]);
+//       }
+//       for(int k = 0; k < capn; ++k) {
+//          ans(crow,capstart+k) = prob->capture(capturei[1+k]); 
+//       }
+//       tfrom = tto;
+//       crow++;
+//     }
+//   }
+//   
+//   delete prob;
+//   return ans;
+// }
+// 
+
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
@@ -76,7 +209,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   prob->copy_parin(parin);
   prob->neta(nre[0]);
   prob->neps(nre[1]);
-
+  
   const unsigned int NN = n[0] * idata.nrow();
   const unsigned int nreq = req.size();
   
@@ -173,6 +306,7 @@ Rcpp::NumericMatrix QUICKSIM(const Rcpp::List& parin,
   delete prob;
   return ans;
 }
+
 
 
 

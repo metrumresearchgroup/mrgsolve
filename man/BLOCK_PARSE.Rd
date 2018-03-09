@@ -8,9 +8,9 @@
 \alias{INIT}
 \alias{CMT}
 \alias{CAPTURE}
-\title{Functions to parse code blocks.}
+\title{Functions to parse code blocks}
 \usage{
-PARAM(x, env, annotated = FALSE, pos = 1, ...)
+PARAM(x, env, annotated = FALSE, covariates = FALSE, pos = 1, ...)
 
 FIXED(x, env, annotated = FALSE, pos = 1, ...)
 
@@ -28,6 +28,8 @@ CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 \item{env}{parse environment}
 
 \item{annotated}{logical}
+
+\item{covariates}{logical}
 
 \item{pos}{block position}
 

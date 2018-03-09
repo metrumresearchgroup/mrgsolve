@@ -48,9 +48,15 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
   
-  if(sum("MAIN"  == x) > 1) stop("Only one $MAIN block allowed in the model.",call.=FALSE)
-  if(sum("ODE"   == x) > 1) stop("Only one $ODE block allowed in the model.",call.=FALSE)
-  if(sum("SET"   == x) > 1) stop("Only one $SET block allowed in the model.",call.=FALSE)
+  if(sum("MAIN"  == x) > 1){
+    stop("Only one $MAIN block allowed in the model.",call.=FALSE)
+  }
+  if(sum("ODE"   == x) > 1) {
+    stop("Only one $ODE block allowed in the model.",call.=FALSE)
+  }
+  if(sum("SET"   == x) > 1) {
+    stop("Only one $SET block allowed in the model.",call.=FALSE)
+  }
   
   if(warn) {
     warn_cmt <- length(intersect(c("INIT", "CMT", "VCMT"),x)) == 0
@@ -93,9 +99,15 @@ define_digits <- function(x) {
 }
 
 fixed_parameters <- function(x,fixed_type) {
-  if(length(x)==0) return("// No fixed parameters.")
-  if(is.null(fixed_type))  fixed_type <-  "define"
-  if(!(fixed_type %in% c("define", "const"))) stop("fixed_type must be either const or define.", call.=FALSE)
+  if(length(x)==0) {
+    return("// No fixed parameters.")
+  }
+  if(is.null(fixed_type)) {
+    fixed_type <-  "define"
+  }
+  if(!(fixed_type %in% c("define", "const"))) {
+    stop("fixed_type must be either const or define.", call.=FALSE)
+  }
   switch(fixed_type,
          `const` =  paste0("const double ", paste0(names(x) ,"= " ,unlist(x), ";")),
          `define` = paste0("#define ", names(x), "  (", define_digits(unlist(x)),")")
@@ -353,7 +365,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
   opts <- merge.list(def, tolist(opts,envir=envir),
-                open=all,warn=FALSE,context="opts")
+                     open=all,warn=FALSE,context="opts")
   
   opts <- c(opts,at)
   
@@ -522,7 +534,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
   
 }
 
-##' Functions to parse code blocks.
+##' Functions to parse code blocks
 ##' 
 ##' Most of the basic blocks are listed in this help topic.  
 ##' But see also \code{\link{PKMODEL}} which has more-involved 
@@ -531,6 +543,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 ##' @param x data
 ##' @param env parse environment
 ##' @param annotated logical
+##' @param covariates logical
 ##' @param name block name
 ##' @param pos block position
 ##' @param ... passed
@@ -542,7 +555,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 NULL
 
 ##' @rdname BLOCK_PARSE
-PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
+PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,...) {
   
   check_block_data(x,env$ENV,pos)
   
@@ -554,6 +567,12 @@ PARAM <- function(x,env,annotated=FALSE,pos=1,...) {
   } else {
     x <- tolist(x,envir=env$ENV) 
     env[["param"]][[pos]] <- x
+  }
+  
+  if(covariates) {
+    env[["covariates"]] <- c(
+      env[["covariates"]], names(env[["param"]][[pos]])
+    )
   }
   
   return(NULL)
@@ -755,7 +774,9 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 
 ##' Parse PKMODEL BLOCK data.
 ##' @param cmt compartment names as comma-delimited character
-##' @param ncmt number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)
+##' @param ncmt number of compartments; must be 1 (one-compartment, 
+##' not including a depot dosing compartment) or 2 (two-compartment model, 
+##' not including a depot dosing compartment)
 ##' @param depot logical indicating whether to add depot compartment
 ##' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11
 ##' @param env parse environment
@@ -763,8 +784,9 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##' @param ... not used
 ##'
 ##' @details
-##' When using \code{$PKMODEL}, certain symbols must be defined in the model specification depending
-##' on the value of \code{ncmt}, \code{depot} and \code{trans}.
+##' When using \code{$PKMODEL}, certain symbols must be defined in the 
+##' model specification depending on the value of \code{ncmt}, \code{depot} 
+##' and \code{trans}.
 ##'
 ##' \itemize{
 ##' \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
@@ -774,7 +796,9 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' }
 ##'
-##' If \code{trans=11} is specfied, use the symbols listed above for the \code{ncmt} / \code{depot} combination, but append \code{i} at the end (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
+##' If \code{trans=11} is specfied, use the symbols listed above for the 
+##' \code{ncmt} / \code{depot} combination, but append \code{i} at the end 
+##' (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
 ##'
 ##' If \code{trans=1}, the user must utilize the following symbols:
 ##'
@@ -822,7 +846,9 @@ collect_subr <- function(x,what=c("PKMODEL")) {
   
   y <- x[names(x) %in% what]
   
-  if(length(y) >  1) stop("Only one $PKMODEL block is allowed.",call.=FALSE)
+  if(length(y) >  1) {
+    stop("Only one $PKMODEL block is allowed.",call.=FALSE)
+  }
   if(length(y) == 0) return(ans)
   ## Get rid of this once ADVANn are deprecated
   if(names(y) %in% c("PKMODEL")) {
@@ -830,8 +856,12 @@ collect_subr <- function(x,what=c("PKMODEL")) {
   }
   
   if(ans[["advan"]] != 13) {
-    if(any(is.element(c("VCMT"),names(x)))) stop("Found $VCMT and $PKMODEL in the same control stream.")
-    if(any(is.element("ODE", names(x)))) stop("Found $ODE and $PKMODEL in the same control stream.")
+    if(any(is.element(c("VCMT"),names(x)))) {
+      stop("Found $VCMT and $PKMODEL in the same control stream.")
+    }
+    if(any(is.element("ODE", names(x)))) {
+      stop("Found $ODE and $PKMODEL in the same control stream.")
+    }
   }
   
   ans[["n"]] <- ans[["advan"]] - as.integer(ans[["advan"]] > 2)
@@ -895,6 +925,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list",n)
   mread.env$error <- character(0)
+  mread.env$covariates <- character(0)
   mread.env$ENV <- ENV 
   mread.env
 }
@@ -967,7 +998,7 @@ capture_param <- function(annot,.capture) {
     .capture <- intersect(.capture,what[,"name"])
     what[["block"]] <- "CAPTURE"
   }
-
+  
   annot <- dplyr::filter(annot, !(block=="CAPTURE" & name %in% .capture))
   bind_rows(annot,what)
 }

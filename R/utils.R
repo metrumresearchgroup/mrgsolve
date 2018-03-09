@@ -559,17 +559,17 @@ locf_ev <- function(x) {
 
 
 arrange__ <- function(df, .dots) {
-  arrange(df, UQS(syms(.dots)))
+  arrange(df, `!!!`(syms(.dots)))
 }
 select__ <- function(df, .dots) {
-  select(df, UQS(syms(.dots)))
+  select(df, `!!!`(syms(.dots)))
 }
 group_by__ <- function(df,.dots, add = FALSE) {
-  group_by(df, UQS(syms(.dots)), add = add)
+  group_by(df, `!!!`(syms(.dots)), add = add)
 }
 funs__ <- function(...) {
-  dplyr::funs(UQS(syms(...)))  
+  dplyr::funs(`!!!`(syms(...)))  
 }
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
-  dplyr::distinct(df, UQS(syms(.dots)), .keep_all = .keep_all)  
+  dplyr::distinct(df, `!!!`(syms(.dots)), .keep_all = .keep_all)  
 }

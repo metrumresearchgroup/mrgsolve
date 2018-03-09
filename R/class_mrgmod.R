@@ -403,6 +403,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
+    covariates <- as.character(x@shlib$covariates)
     pars <- pars(x)
     neq <- neq(x)
     npar <- npar(x)

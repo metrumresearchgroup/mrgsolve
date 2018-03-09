@@ -142,11 +142,11 @@ void datarecord::implement(odeproblem* prob) {
   if(this->infusion()) evid = 5;
   
   int eq_n = this->cmtn();
-  
+
   double Fn = prob->fbio(eq_n);
   
   if(Ss > 0) this->steady(prob, Fn);
-  
+
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);

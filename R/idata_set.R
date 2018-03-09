@@ -74,16 +74,22 @@
 ##' @seealso \code{\link{data_set}}, \code{\link{ev}}
 ##' 
 ##' @export
-setGeneric("idata_set", function(x,data,...) standardGeneric("idata_set"))
+setGeneric("idata_set", function(x,data,...) {
+  standardGeneric("idata_set")
+})
 
 ##' @rdname idata_set
 ##' @export
 setMethod("idata_set", c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
-            
+  
   if(is.character(need)) suppressMessages(inventory(x,data,need))
-  #if(exists("idata", x@args)) stop("idata has already been set")
-  if(!missing(.subset)) data <- filter(data,UQS(enquo(.subset)))
-  if(!missing(.select)) data <- select(data,UQS(.select))
+  
+  if(!missing(.subset)) {
+    data <- filter(data,`!!!`(enquo(.subset)))
+  }
+  if(!missing(.select)) {
+    data <- select(data,`!!!`(.select))
+  }
   if(nrow(data)==0) {
     stop("zero rows in idata after filtering.", call.=FALSE)
   }

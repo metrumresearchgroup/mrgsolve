@@ -5,16 +5,18 @@
 \alias{seq.ev}
 \title{Schedule a series of event objects}
 \usage{
-ev_seq(..., id = NULL, .dots = NULL)
+ev_seq(..., ID = NULL, .dots = NULL, id = NULL)
 
 \method{seq}{ev}(...)
 }
 \arguments{
 \item{...}{event objects or numeric arguments named \code{wait}}
 
-\item{id}{numeric vector of subject ids}
+\item{ID}{numeric vector of subject IDs}
 
 \item{.dots}{a list of event objects that replaces \code{...}}
+
+\item{id}{deprecated; use \code{ID}}
 }
 \value{
 A single event object.
@@ -40,7 +42,11 @@ occurs in the event sequence (see examples).
 
 Use the generic \code{\link{seq}} when the first argument 
 is an event object.  If a waiting period is the 
-first event, you will need to use \code{ev_seq}.
+first event, you will need to use \code{ev_seq}.  When 
+an event object has multiple rows, the end time for 
+that sequence is taken to be one dosing interval 
+after the event that takes place on the last 
+row of the event object.
 }
 \examples{
 

@@ -83,7 +83,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    Rcpp::NumericMatrix& SIGMA,
                    Rcpp::Environment envir) {
 
-  const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
+  //const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   const bool debug            = Rcpp::as<bool>   (parin["debug"]);
   const int digits            = Rcpp::as<int>    (parin["digits"]);
   const double tscale         = Rcpp::as<double> (parin["tscale"]);
@@ -195,7 +195,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
   }
 
-  dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
+  //dvec mtimes = Rcpp::as<dvec>(parin["mtime"]);
 
   // Need this for later
   int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
@@ -410,9 +410,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob->set_d(a[i][0]);
     prob->init_call(tfrom);
 
-    if(mtimes.size() > 0) {
-      add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
-    }
+    // if(mtimes.size() > 0) {
+    //   //void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug) {
+    //   //add_mtime(a[i], mtimes, prob->mtime(),(debug||verbose));
+    // }
 
     for(size_t j=0; j < a[i].size(); ++j) {
 
@@ -457,17 +458,18 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
 
       tto = this_rec->time();
+      
       dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
 
       if((dt > 0.0) && (dt < mindt)) {
         tto = tfrom;
       }
 
-      if(tad) {
-        if((this_rec->evid()==1) && (this_rec->pos() != __ALAG_POS)) {
-          told = tto;
-        }
-      }
+      // if(tad) {
+      //   if((this_rec->evid()==1) && (this_rec->pos() != __ALAG_POS)) {
+      //     told = tto;
+      //   }
+      // }
 
       if(tto > tfrom) {
         for(k = 0; k < neps; ++k) {
@@ -483,10 +485,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
       // Some non-observation event happening
       if(this_rec->is_event()) {
-
+        
         this_cmtn = this_rec->cmtn();
-
+        
         Fn = prob->fbio(this_cmtn);
+        
         if(Fn < 0) {
           CRUMP("mrgsolve: bioavailability fraction is less than zero.");
         }
@@ -544,6 +547,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // SORT
         if(sort_recs) {
           std::sort(a[i].begin()+sort_offset,a[i].end(),CompRec());
+        }
+        
+        if(tad) {
+          if((this_rec->evid()==1)) {
+            if(this_rec->armed()) {
+              told = tto - prob->alag(this_cmtn);  
+            }
+          }
         }
       } // is_dose
 

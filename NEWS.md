@@ -1,4 +1,13 @@
-# 0.8.10.9007
+# mrgsolve 0.8.10.9008
+- Changed `id` argument to `ID` in `ev_rep` and `ev_seq`; a warning
+is issued if `id` is used
+- Added `data_qsim` for creating input data sets to use with `qsim`
+- Fixed a bug where time after dose was not correctly 
+calculated for additional doses with a lag time #327
+- Added `read_nmext` to read in nonmem model output from 
+the .ext file
+
+# mrgsolve 0.8.10.9007
 - Clean up and re-organize Rd files; more-logical grouping and 
 ordering
 

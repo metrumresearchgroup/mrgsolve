@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Select and modify a data set for simulation.
+##' Select and modify a data set for simulation
 ##'
 ##'
-##' @export
 ##' @param x model object
 ##' @param data data set
 ##' @param .subset an unquoted expression passed to 
@@ -30,10 +29,7 @@
 ##' to use for the data set
 ##' @param need passed to \code{\link{inventory}}
 ##' @param ... passed along
-setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
-
-##' @rdname data_set
-##'
+##' 
 ##' @details
 ##' Input data sets are \code{R} data frames that can include columns 
 ##' with any valid name, however columns with selected names are 
@@ -88,39 +84,48 @@ setGeneric("data_set", function(x,data,...) standardGeneric("data_set"))
 ##' mod %>% mrgsim(data=extran1)
 ##' 
 ##' @export
+setGeneric("data_set", function(x,data,...) {
+  standardGeneric("data_set")
+})
+
+
+##' @rdname data_set
+##' @export
 setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
   
   if(is.character(need)) {
     suppressMessages(inventory(x,data,need))
   }
-  #if(exists("data", x@args)) stop("data already has been set.")
-  if(!missing(.subset)) data <- dplyr::filter(data,UQS(enquo(.subset)))
-  if(!missing(.select)) data <- dplyr::select(data,UQS(.select))
+  if(!missing(.subset)) {
+    data <- dplyr::filter(data,`!!!`(enquo(.subset)))
+  }
+  if(!missing(.select)) {
+    data <- dplyr::select(data,`!!!`(.select))
+  }
   if(nrow(data) ==0) {
     stop("Zero rows in data after filtering.", call.=FALSE)
   }
   if(is.character(object)) {
     data <- data_hooks(data,object,x@envir,param(x),...) 
   }
-  #data <- valid_data_set(m=x,x=as.data.frame(data),...)
   x@args[["data"]] <- data
   return(x)
 })
 
-##' @export
 ##' @rdname data_set
+##' @export
 setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
   return(data_set(x,as.data.frame(data),...))
 })
 
-##' @export
 ##' @rdname data_set
+##' @export
 setMethod("data_set", c("mrgmod", "ev"), function(x,data,...) {
-    return(data_set(x,As_data_set(data),...))
+  return(data_set(x,As_data_set(data),...))
 })
 
-##' @export
 ##' @rdname data_set
+##' @export
 setMethod("data_set", c("mrgmod", "missing"), function(x,object,...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x,as.data.frame(object),...))

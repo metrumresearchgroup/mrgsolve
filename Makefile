@@ -89,5 +89,5 @@ datasets:
 
 travis:
 	make build
-	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
+	#R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
 	make test

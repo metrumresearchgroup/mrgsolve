@@ -18,7 +18,7 @@
 ##' @import methods
 ##' 
 ##' @importFrom utils capture.output example str type.convert 
-##' @importFrom utils packageVersion assignInMyNamespace
+##' @importFrom utils packageVersion assignInMyNamespace read.table
 ##' @importFrom stats as.formula
 ##' @importFrom stats setNames
 ##' @importFrom stats rnorm
@@ -33,7 +33,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble as_data_frame data_frame
-##' @importFrom rlang UQS enquo syms
+##' @importFrom rlang enquo syms !!!
 ##' 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R

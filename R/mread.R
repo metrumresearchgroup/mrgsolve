@@ -373,6 +373,7 @@ mread <- function(model, project = getwd(), code = NULL,
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- file.path(build$soloc,build$compfile)
   x@shlib$md5 <- build$md5
+  x@shlib$covariates <- mread.env$covariates
   
   ## IN soloc directory
   cwd <- getwd()

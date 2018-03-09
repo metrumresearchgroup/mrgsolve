@@ -8,7 +8,9 @@ PKMODEL(ncmt = 1, depot = FALSE, cmt = NULL, trans = pick_trans(ncmt,
   depot), env = list(), pos = 1, ...)
 }
 \arguments{
-\item{ncmt}{number of compartments; must be 1 (one-compartment, not including a depot dosing compartment) or 2 (two-compartment model, not including a depot dosing compartment)}
+\item{ncmt}{number of compartments; must be 1 (one-compartment, 
+not including a depot dosing compartment) or 2 (two-compartment model, 
+not including a depot dosing compartment)}
 
 \item{depot}{logical indicating whether to add depot compartment}
 
@@ -26,8 +28,9 @@ PKMODEL(ncmt = 1, depot = FALSE, cmt = NULL, trans = pick_trans(ncmt,
 Parse PKMODEL BLOCK data.
 }
 \details{
-When using \code{$PKMODEL}, certain symbols must be defined in the model specification depending
-on the value of \code{ncmt}, \code{depot} and \code{trans}.
+When using \code{$PKMODEL}, certain symbols must be defined in the 
+model specification depending on the value of \code{ncmt}, \code{depot} 
+and \code{trans}.
 
 \itemize{
 \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
@@ -37,7 +40,9 @@ on the value of \code{ncmt}, \code{depot} and \code{trans}.
 
 }
 
-If \code{trans=11} is specfied, use the symbols listed above for the \code{ncmt} / \code{depot} combination, but append \code{i} at the end (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
+If \code{trans=11} is specfied, use the symbols listed above for the 
+\code{ncmt} / \code{depot} combination, but append \code{i} at the end 
+(e.g. \code{CLi} or \code{Qi} or \code{KAi}).
 
 If \code{trans=1}, the user must utilize the following symbols:
 

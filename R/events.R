@@ -215,7 +215,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
   if(!has_name("evid", x)) {
     x[["evid"]] <- 1 
   } else {
-    x[["evid"]] <- na2zero(x$evid)
+    x[["evid"]] <- na2zero(x[["evid"]])
     x <- x[x$evid != 0,] 
     if(nrow(x)==0) {
       stop("no dosing events found", call. = FALSE) 
@@ -255,33 +255,32 @@ collect_ev <- function(...) {
   mx <- sapply(y,function(xx) length(unique(xx)))
   mx <- cumsum(c(0,mx[-length(mx)]))
   y <- mapply(y,mx, FUN=function(yi,mxi) return(yi+mxi), SIMPLIFY=FALSE)
-  x <- dplyr::bind_rows(x)
-  x <- dplyr::mutate(x,ID = unlist(y,use.names=FALSE))
+  x <- bind_rows(x)
+  x <- mutate(x,ID = unlist(y,use.names=FALSE))
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
-  x <- dplyr::mutate_at(x,which(what),dplyr::funs(na2zero))
+  x <- mutate_at(x,which(what),dplyr::funs(na2zero))
   
   na.check <- which(!what)
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
-      warning("missing values in some columns.",call.=FALSE)
+      warning("Missing values in some columns.",call.=FALSE)
     }
   }
   x <- dplyr::select(x,c(match(tran,names(x)),seq_along(names(x))))
   
   if(!any(c("time", "TIME") %in% names(x))) {
-    stop("no time or TIME column in the data set", call. = FALSE) 
+    stop("No time or TIME column in the data set", call. = FALSE) 
   }
   
   if(!any(c("cmt", "CMT") %in% names(x))) {
-    stop("no cmt or CMT column", call. = FALSE) 
+    stop("No cmt or CMT column", call. = FALSE) 
   }
   
   if(!has_ID(x)) {
-    stop("no ID column in the data set", call. = FALSE)
+    stop("No ID column in the data set", call. = FALSE)
   }
-  
   return(x)
 }
 
@@ -422,10 +421,11 @@ add.ev <- function(e1,e2) {
 ##' times in a certain number of IDs.
 ##' 
 ##' @param x event object
-##' @param id numeric vector if IDs
+##' @param ID numeric vector if IDs
 ##' @param n passed to \code{\link{ev_repeat}}
 ##' @param wait passed to \code{\link{ev_repeat}}
 ##' @param as.ev if \code{TRUE} an event object is returned
+##' @param id deprecated; use \code{ID} instead
 ##' 
 ##' @seealso \code{\link{ev_repeat}}
 ##' 
@@ -440,9 +440,13 @@ add.ev <- function(e1,e2) {
 ##' determined by the value of \code{as.ev}.
 ##' 
 ##' @export
-ev_rep <- function(x, id = 1, n = NULL, wait = 0, as.ev = FALSE) {
+ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
+  if(!missing(id)) {
+    warning("id argument is deprecated; use ID instead")
+    ID <- id
+  }
   x <- as.data.frame(x) 
-  x <- EXPAND_EVENTS(0,numeric_data_matrix(x),id)
+  x <- EXPAND_EVENTS(0,numeric_data_matrix(x),as.numeric(ID))
   x <- as.data.frame(x)
   if(!is.null(n)) {
     if(n  > 1) {
@@ -467,8 +471,12 @@ ev_rep <- function(x, id = 1, n = NULL, wait = 0, as.ev = FALSE) {
 ##' @export
 ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
   x <- as.data.frame(x)
-  if(!exists("ii", x)) x["ii"] <- 0
-  if(!exists("addl", x)) x["addl"] <- 0
+  if(!exists("ii", x)) {
+    x["ii"] <- 0
+  }
+  if(!exists("addl", x)) {
+    x["addl"] <- 0
+  }
   start <- x[1,"time"]
   end <- x$time + x$ii*x$addl + x$ii
   end <- max(end) + wait
@@ -494,8 +502,9 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ##' Schedule a series of event objects
 ##' 
 ##' @param ... event objects or numeric arguments named \code{wait}
-##' @param id numeric vector of subject ids
+##' @param ID numeric vector of subject IDs
 ##' @param .dots a list of event objects that replaces \code{...}
+##' @param id deprecated; use \code{ID}
 ##' 
 ##' @details
 ##' The doses for the next event line start after 
@@ -532,23 +541,31 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ##' @details
 ##' Use the generic \code{\link{seq}} when the first argument 
 ##' is an event object.  If a waiting period is the 
-##' first event, you will need to use \code{ev_seq}.
+##' first event, you will need to use \code{ev_seq}.  When 
+##' an event object has multiple rows, the end time for 
+##' that sequence is taken to be one dosing interval 
+##' after the event that takes place on the last 
+##' row of the event object. 
 ##' 
 ##' @return
 ##' A single event object.
 ##' 
 ##' @export
-ev_seq <- function(..., id = NULL, .dots = NULL) {
+ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   
+  if(!missing(id)) {
+    warning("id argument is deprecated; using ID instead")
+    ID <- id
+  }
   evs <- list(...)
   if(is.list(.dots)) {
     evs <- .dots 
   }
   out <- vector("list", length(evs))
-  start <- 0
   if(is.null(names(evs))) {
     names(evs) <- rep(".", length(evs))
   }
+  start <- 0
   for(i in seq_along(out)) {
     if(names(evs)[i]=="wait") {
       start <- start + evs[[i]]
@@ -556,24 +573,32 @@ ev_seq <- function(..., id = NULL, .dots = NULL) {
       next
     }
     e <- as.data.frame(evs[[i]])
-    if(nrow(e) !=1) stop("events can only have one row", call.=FALSE)
-    if(is.null(e$ii)) e$ii <- 0
-    if(is.null(e$addl)) e$addl <- 0
-    after <-  dplyr::if_else(is.null(e$.after), 0, e$.after)
-    e$time <- e$time + start
-    start <- start + after + e$ii*e$addl + e$ii
+    if(is.null(e[["ii"]])) {
+      e[["ii"]] <- 0
+    }
+    if(is.null(e[["addl"]])) {
+      e[["addl"]] <- 0
+    }
+    after <-  if_else(is.null(e[[".after"]]), 0, e[[".after"]])
+    e[["time"]] <- e[["time"]] + start
+    elast <- slice(e, nrow(e))
+    start <- 
+      elast[["time"]] + 
+      after + 
+      elast[["ii"]]*elast[["addl"]] + 
+      elast[["ii"]]
     out[[i]] <- e
   }
-  out <- dplyr::bind_rows(out) 
-  out <- dplyr::mutate(out, .after = NULL)
+  out <- bind_rows(out) 
+  out <- mutate(out, .after = NULL)
   if(exists("rate", out)) {
     out["rate"] <- na2zero(out["rate"])
   }
   if(exists("ss",out)) {
     out["ss"] <- na2zero(out["ss"]) 
   }
-  if(is.numeric(id)) {
-    out <- ev_rep(out,id)
+  if(is.numeric(ID)) {
+    out <- ev_rep(out,ID)
   }
   as.ev(as.data.frame(out))
 }

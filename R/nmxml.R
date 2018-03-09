@@ -139,4 +139,47 @@ nm_xml_matrix <- function(x) {
   m
 }
 
+##' Extract estimates from NONMEM ext file
+##' 
+##' 
+##' @param run a run number or run identifier
+##' @param project the NONMEM project directory
+##' @param file the ext file name
+##' 
+##' @return A list with theta, omega, and sigma in a format
+##' ready to be used to update a model object.
+##' 
+##' @examples
+##' project <- system.file("nonmem", package = "mrgsolve")
+##' 
+##' est <- read_nmext(1005, project = project)
+##' 
+##' est$theta
+##' 
+##' est$omega
+##' 
+##' est$sigma
+##' 
+##' @export 
+read_nmext <- function(run, file = paste0(run, ".ext"), project = getwd()) {
+  file <- file.path(project, run, file)
+  if(!file.exists(file)) {
+    stop("The file ", file, " does not exist.", call. = FALSE)
+  }
+  df <- read.table(file, skip = 1, header = TRUE)
+  ans <- df[df[["ITERATION"]] == -1E9,]
+  if(nrow(ans) != 1) {
+    stop("Could not find estimates in the file: ", basename(file), 
+         call. = FALSE)
+  }
+  ans <- as.list(ans)
+  names(ans) <- gsub("[[:punct:]]", "", names(ans))
+  ans <- list(
+    theta = ans[grepl("THETA", names(ans))],
+    omega = as_bmat(ans, "OMEGA"), 
+    sigma = as_bmat(ans, "SIGMA"),
+    raw = ans  
+  )
+  return(ans)
+}
 
