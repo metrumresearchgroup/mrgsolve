@@ -5,9 +5,11 @@
 \alias{as.tbl.mrgsims}
 \alias{pull.mrgsims}
 \alias{filter_.mrgsims}
+\alias{filter_sims}
 \alias{group_by.mrgsims}
 \alias{distinct.mrgsims}
 \alias{mutate.mrgsims}
+\alias{mutate_sims}
 \alias{summarise.each}
 \alias{summarise.mrgsims}
 \alias{do.mrgsims}
@@ -22,11 +24,15 @@
 
 filter_.mrgsims(.data, ...)
 
+filter_sims(.data, ...)
+
 \method{group_by}{mrgsims}(.data, ..., add = FALSE)
 
 \method{distinct}{mrgsims}(.data, ..., .keep_all = FALSE)
 
 \method{mutate}{mrgsims}(.data, ...)
+
+mutate_sims(.data, ...)
 
 \method{summarise}{each}(.data, funs, ...)
 
