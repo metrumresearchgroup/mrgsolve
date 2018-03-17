@@ -165,6 +165,13 @@ filter_.mrgsims <- function(.data,...) {
 
 ##' @rdname mrgsims_dplyr
 ##' @export
+filter_sims <- function(.data, ... ) {
+  .data@data <- dplyr::filter(.data@data, ...)
+  .data
+}
+
+##' @rdname mrgsims_dplyr
+##' @export
 group_by.mrgsims <- function(.data,...,add=FALSE) {
   dplyr::group_by(as_data_frame.mrgsims(.data),...,add = add)
 }
@@ -180,6 +187,13 @@ distinct.mrgsims <- function(.data,...,.keep_all=FALSE) {
 ##' @export
 mutate.mrgsims <- function(.data,...) {
   dplyr::mutate(as_data_frame.mrgsims(.data),...)
+}
+
+##' @rdname mrgsims_dplyr
+##' @export
+mutate_sims <- function(.data, ...) {
+  .data@data <- dplyr::mutate(.data@data, ...)
+  .data
 }
 
 ##' @rdname mrgsims_dplyr
@@ -338,6 +352,8 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   
   data <- as.data.frame(subset(x,...))
   
+  if(length(y)==2) y[[3]] <- as.symbol(".")
+  
   if(!has_name("time", data)) {
     if(!has_name("TIME", data)) {
       stop("Couldn't find time or TIME column.",call.=FALSE)
@@ -365,3 +381,43 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   ans
 })
 
+
+##' Plot data as an mrgsims object
+##' 
+##' @param .data a data frame
+##' @param ... unquoted column names to plot on y-axis
+##' @param .f a formula to plot
+##' @param .dots extra arguments passed to \code{lattice::xyplot}
+##' 
+##' @details 
+##' This function is only intended for use with data frames that 
+##' were created by modifying an \code{mrgsims} object.
+##' 
+##' @examples
+##'
+##' mod <- mrgsolve:::house() %>% ev(amt = 100)
+##' 
+##' out <- mrgsim(mod) 
+##' out_df <- dplyr::mutate(out, time <= 72)
+##' 
+##' plot(out)
+##' plot_sims(out, CP, RESP)
+##' 
+##' \dontrun{
+##' plot_sims(out, .f = ~ CP + RESP)
+##' plot_sims(out, .f = CP + RESP ~ time)
+##' }
+##' 
+##' @export
+plot_sims <- function(.data, ..., .f = NULL, .dots = list()) {
+  .data <- as.data.frame(.data)
+  vars <- quos(...)
+  vars <- select_vars(names(.data), `!!!`(vars))
+  .dots$x <- new("mrgsims", data = .data, outnames = vars)
+  if(rlang::is_formula(.f)) {
+    if(length(.f)==2) .f[[3]] <- as.symbol(".")
+    .dots$y <- .f
+    return(do.call(plot, .dots))
+  }
+  return(do.call(plot, .dots))
+}

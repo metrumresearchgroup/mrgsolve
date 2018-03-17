@@ -56,7 +56,7 @@
 nmxml <- function(run=numeric(0), project=character(0),
                   file=character(0),
                   theta=TRUE, omega=TRUE, sigma=TRUE,
-                  olabels = NULL, slabels=NULL,
+                  olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
                   tname="THETA", oname="...", sname="...", ...) {
   
@@ -99,6 +99,9 @@ nmxml <- function(run=numeric(0), project=character(0),
     } else {
       olabels <- paste0(oprefix,olabels)
     }
+    olabels <- list(olabels)
+  } else {
+    olabels <- list()
   }
   
   if(sigma) {
@@ -109,14 +112,17 @@ nmxml <- function(run=numeric(0), project=character(0),
     } else {
       slabels <- paste0(sprefix,slabels)
     }
+    slabels <- list(slabels)
+  } else {
+    slabels <- list()
   }
 
   om <- create_matlist(setNames(list(om),oname), 
-                       labels=list(olabels), 
+                       labels=olabels, 
                        class="omegalist")
   
   sg <- create_matlist(setNames(list(sg),sname), 
-                       labels=list(slabels), 
+                       labels=slabels, 
                        class="sigmalist")
   
   ans <- list(theta=th, omega=om, sigma=sg)

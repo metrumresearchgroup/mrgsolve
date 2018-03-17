@@ -24,15 +24,30 @@ is.ev <- function(x) {
   inherits(x,"ev")  
 }
 
-##' Mutate an events object
+##' dplyr verbs for event objects
 ##' 
 ##' @param .data the event object
-##' @param ... passed to \code{dplyr::mutate}
+##' @param ... passed to the \code{dplyr} function
+##' @rdname ev_dplyr
 ##' @export
 mutate.ev <- function(.data, ...) {
   .data@data <- as.data.frame(mutate(.data@data, ...))
   .data
 }
+##' @rdname ev_dplyr
+##' @export
+select.ev <- function(.data, ...) {
+  .data@data <- as.data.frame(dplyr::select(.data@data,...))
+  .data 
+}
+##' @rdname ev_dplyr
+##' @export
+setMethod("filter", "ev", function(.data, ...) {
+  .data@data <- as.data.frame(dplyr::filter(.data@data,...))
+  .data
+})
+
+
 
 ##' Various methods for event objects
 ##' 

@@ -33,7 +33,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble as_data_frame data_frame
-##' @importFrom rlang enquo syms !!!
+##' @importFrom rlang quos enquo syms !!!
 ##' 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R

@@ -1,3 +1,10 @@
+# mrgsolve 0.8.10.9009
+- Added `mutate_sims` and `filter_sims` that work on `mrgsims` (output) 
+objects, modifying the `data` slot and returning a modified `mrgsims` object
+rather than `data.frame`
+- Added `plot_sims` function that takes a data frame of simulated output
+and generates a plot using the `mrgsims` method
+
 # mrgsolve 0.8.10.9008
 - Changed `id` argument to `ID` in `ev_rep` and `ev_seq`; a warning
 is issued if `id` is used

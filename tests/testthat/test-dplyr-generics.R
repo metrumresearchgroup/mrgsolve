@@ -71,16 +71,24 @@ test_that("Pipe to group_by", {
   expect_identical(as.character(groups(x)),c("ID","RESP"))
 })
 
-
-
 test_that("Pipe to slice", {
   x <- out %>% slice(c(6,11))
   expect_is(x, "data.frame")
   expect_true(all(x$time %in% c(1,2.25)))
 })
 
+test_that("filter_mrgsims", {
+  x <- out %>% filter_sims(time > 30)
+  expect_is(x, "mrgsims")
+  expect_true(all(x$time > 30))
+})
 
-
+test_that("mutate_mrgsims", {
+  chk <- out$CENT + out$RESP
+  x <- out %>% mutate_sims(foo = CENT + RESP)
+  expect_is(x, "mrgsims")
+  expect_true(all(x$foo == chk))
+})
 
 
 
