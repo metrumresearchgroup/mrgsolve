@@ -42,10 +42,10 @@ select.ev <- function(.data, ...) {
 }
 ##' @rdname ev_dplyr
 ##' @export
-setMethod("filter", "ev", function(.data, ...) {
+filter_.ev <-  function(.data, ...) {
   .data@data <- as.data.frame(dplyr::filter(.data@data,...))
   .data
-})
+}
 
 
 
