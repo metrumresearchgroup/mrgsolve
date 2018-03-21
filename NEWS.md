@@ -1,5 +1,7 @@
-# mrgsolve 0.8.10.9010
+# mrgsolve 0.8.10.9011
 
+# mrgsolve 0.8.10.9010
+- Fixed bug in `filter.ev` method
 
 # mrgsolve 0.8.10.9009
 - Added `mutate_sims` and `filter_sims` that work on `mrgsims` (output) 
