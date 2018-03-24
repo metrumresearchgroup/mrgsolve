@@ -1,4 +1,5 @@
 # mrgsolve 0.8.10.9012
+- Use `dplyr::filter_` for `filter_.ev`
 
 # mrgsolve 0.8.10.9011
 - mtime clear bug

@@ -43,7 +43,7 @@ select.ev <- function(.data, ...) {
 ##' @rdname ev_dplyr
 ##' @export
 filter_.ev <-  function(.data, ...) {
-  .data@data <- as.data.frame(dplyr::filter(.data@data,...))
+  .data@data <- as.data.frame(dplyr::filter_(.data@data,...))
   .data
 }
 
