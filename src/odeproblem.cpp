@@ -258,7 +258,6 @@ void odeproblem::reset_newid(const double id_) {
     Alag[i] = 0;
   }
   
-  //d.mtime.clear();
   d.newind = 1;
   d.time = 0.0;
   
