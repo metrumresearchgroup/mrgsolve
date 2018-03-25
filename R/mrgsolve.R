@@ -539,7 +539,6 @@ do_mrgsim <- function(x,
   parin$recsort <- recsort
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
-  #parin$mtime <- sort(unique(mtime))
   parin$filbak <- filbak
   parin$tad <- tad
   parin$nocb <- nocb
@@ -691,7 +690,6 @@ do_mrgsimple <- function(x,
   parin$recsort <- recsort
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
-  #parin$mtime <- numeric(0)
   parin$filbak <- filbak
   parin$tad <- tad
   parin$nocb <- nocb

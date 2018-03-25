@@ -43,7 +43,6 @@ struct databox {
   double time; ///< current simulation time
   int evid;  ///< event ID flag
   unsigned short int SYSTEMOFF; ///< flag to stop advancing system for current ID
-  dvec mtime; ///< model time values
   double id;  ///< current ID
   double amt; ///< current dosing amount value
   short int cmt; ///< current compartment value
@@ -192,8 +191,6 @@ public:
   void nrow(int n) {d.nrow = n;}
   void idn(int n) {d.idn = n;}
   void rown(int n) {d.rown=n;}
-  
-  dvec& mtime(){return d.mtime;}
   
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}

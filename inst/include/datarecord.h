@@ -29,8 +29,6 @@ class datarecord;
 typedef boost::shared_ptr<datarecord> rec_ptr;
 typedef std::vector<rec_ptr> reclist;
 
-void add_mtime(reclist& thisi, dvec& b, dvec& c, bool debug);
-
 #define NEWREC boost::make_shared<datarecord>
 
 class datarecord {

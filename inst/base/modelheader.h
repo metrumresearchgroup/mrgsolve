@@ -36,7 +36,6 @@ struct databox {
   const double time;
   const int evid;
   unsigned short int  SYSTEMOFF;
-  dvec mtime;
   const double id;
   const double amt;
   const short int cmt;

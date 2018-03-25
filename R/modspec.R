@@ -41,7 +41,7 @@ write_capture <- function(x) {
 
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
-set_args <- c("Req", "obsonly","mtime", "recsort",
+set_args <- c("Req", "obsonly", "recsort",
               "carry.out","Trequest","trequest")
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
