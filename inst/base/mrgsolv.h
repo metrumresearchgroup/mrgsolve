@@ -58,6 +58,15 @@ protected:
   void* prob; ///< object to pass to re-simulated function
 };
 
+struct shuttle {
+  shuttle(double a_, int b_, int c_ = 1) :  time(a_), evid(b_), cmt(c_){}
+  double time; 
+  int evid;
+  double cmt;
+  double amt; 
+  double rate;
+};
+
 //! signature for <code>$MAIN</code>
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& self, dvec& _pred_, resim& simeta
 #define MRGSOLVE_INIT_SIGNATURE_N 10

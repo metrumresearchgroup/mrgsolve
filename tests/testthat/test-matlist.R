@@ -30,14 +30,12 @@ $OMEGA 0 0 0
 $SIGMA 0 0 0
 '
 
-
 mod <- mcode("test4",code,compile=FALSE)
 
 
 mod <- mod %>% 
   omat(diag(c(1.2, 2.3,3.4))) %>% 
   smat(diag(c(0.1, 0.2, 0.3)))
-
 
 test_that("Indexing OMEGA matrix elements", {
   expect_equivalent(as.matrix(omat(mod))[2,2],2.3)
@@ -65,8 +63,17 @@ test_that("Indexing OMEGA matrix elements with multiple matrices", {
     expect_equivalent(mat[9,8],98)
 })
 
+test_that("Update a model with no matrix", {
+  mod@omega <- omat()
+  expect_is(omat(mod, list()), "mrgmod")
+  expect_is(omat(mod, matrix(0,0,0)), "mrgmod")  
+  expect_error(omat(mod, dmat(1,2,3)), "improper signature")
+})
 
-
+test_that("Update a model matrix", {
+  expect_is(omat(mod, dmat(55,66,77)), "mrgmod")  
+  expect_error(omat(mod, dmat(1)))  
+})
 
 
 

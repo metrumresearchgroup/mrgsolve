@@ -55,6 +55,7 @@ struct databox {
   void stop() {SYSTEMOFF=9;}
   void stop_id() {SYSTEMOFF=1;}
   void stop_id_cf(){SYSTEMOFF=2;}
+  std::vector<shuttle> recs;
   
 };
 
@@ -166,7 +167,7 @@ public:
   
   void reset_newid(const double id_);
   
-  void eta(int pos, double value) {d.ETA[pos] =value;}
+  void eta(int pos, double value) {d.ETA[pos] = value;}
   void eps(int pos, double value) {d.EPS[pos] = value;}
   unsigned short int systemoff(){return d.SYSTEMOFF;}
   
@@ -197,8 +198,11 @@ public:
   
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
-
-
+  
+  bool any_mtime() {return d.recs.size() > 0;}
+  std::vector<shuttle> mtimes(){return d.recs;}
+  void clear_mtime(){d.recs.clear();}
+  
 protected:
   
   double* Param; ///< model parameters
@@ -257,11 +261,5 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
                       const Rcpp::NumericVector& linit,
                       const Rcpp::CharacterVector& capture,
                       const Rcpp::List& funs);
-
-// SEXP ODEPTR(const Rcpp::NumericVector& lparam, 
-//                               const Rcpp::NumericVector& linit,
-//                               int Neta, int Neps,
-//                               const Rcpp::CharacterVector& capture,
-//                               const Rcpp::List& funs);
 
 #endif

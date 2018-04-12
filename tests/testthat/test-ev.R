@@ -34,8 +34,6 @@ test_that("event requirements and defaults", {
   expect_equal(df$cmt,1)
 })
 
-
-
 test_that("collection of events", {
   e1 <- ev(amt=200)
   e2 <- ev(amt=100,time=1)
@@ -45,7 +43,6 @@ test_that("collection of events", {
   expect_equal(e$time, c(0,1))
   expect_equal(e$amt, c(200,100))
 })
-
 
 test_that("realized events", {
   e <- as.data.frame(ev(amt=100, ii=24, addl=4))
@@ -132,6 +129,13 @@ test_that("mutate an ev object", {
     expect_equal(df$cmt, 2)
 })
 
+test_that("filter an ev object", {
+  e <- ev(amt = 100, cmt = 1, ii = 24, addl = 13)
+  e <- realize_addl(e)
+  e2 <- filter(e, time > 100) %>% as.data.frame()
+  expect_true(all(e2[["time"]] > 100))
+})
+
 test_that("misc methods", {
     e <- ev(amt = 100)
     expect_true(mrgsolve:::is.ev(e))
@@ -155,3 +159,6 @@ test_that("as.ev", {
   expect_equal(d$evid,1)
   
 })
+
+
+

@@ -63,7 +63,7 @@ public:
   void copy_inits(int this_row,odeproblem *prob);
   void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);
   void idata_row();
-  unsigned int get_idata_row(const double ID)  {return idmap[ID];}
+  unsigned int get_idata_row(const double ID);  
   void locate_tran();
   void get_records(recstack& a, int NID, int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
   void check_idcol(dataobject& data);

@@ -1,3 +1,16 @@
+# mrgsolve 0.8.10.9014
+- Add OMEGA and SIGMA matrices to `as.list.mrgmod` output under the names
+omat and smat, respectively
+- It is no longer an error to attempt to update slots for OMEGA
+and SIGMA matrices when there is no matrices in the slot as long 
+as the update is with an empty list or a matrix with zero rows
+- Fix segmentation fault when both data set and idata set are used 
+in a simulation with certain mis-matches in the ID content 
+between the two #352
+
+# mrgsolve 0.8.10.9013
+- Removes more mtime code (wasn't in use)
+
 # mrgsolve 0.8.10.9012
 - Use `dplyr::filter_` for `filter_.ev`
 

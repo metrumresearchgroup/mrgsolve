@@ -142,7 +142,7 @@ void dataobject::locate_tran() {
     tcol = std::find(bg,ed,"TIME") - bg;
     if(tcol > zeros) {
       throw Rcpp::exception(
-          "Could not find time or TIME column in the data set.",
+          "Could not find time or TIME column in the data set",
           false)
       ;
     }
@@ -159,7 +159,6 @@ void dataobject::locate_tran() {
     col[_COL_rate_] = std::find(bg,ed,"rate") - bg;
     col[_COL_evid_] = std::find(bg,ed,"evid") - bg;
     col[_COL_cmt_]  = std::find(bg,ed,"cmt")  - bg;
-    
   } else {
     col[_COL_amt_]  = std::find(bg,ed,"AMT")  - bg;
     col[_COL_ii_]   = std::find(bg,ed,"II")   - bg;
@@ -179,7 +178,7 @@ void dataobject::locate_tran() {
   
   if(col[_COL_cmt_] > zeros  && zeros > 0) {
     throw Rcpp::exception(
-        "Couldn't locate cmt or CMT in data set.",false
+        "Could not locate cmt or CMT in data set",false
     );
   }
 }
@@ -252,7 +251,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
-              "cmt number in observation record out of range.",
+              "Compartment number in observation record out of range",
               false
           );
         }
@@ -272,7 +271,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       // Check that cmt is valid:
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
         throw Rcpp::exception(
-            "cmt number in dosing record out of range.",
+            "Compartment number in dosing record out of range",
             false
         );
       }
@@ -335,6 +334,10 @@ void dataobject::get_ids(uidtype* ids) {
   }
 }
 
+unsigned int dataobject::get_idata_row(const double ID) {
+  return idmap[ID];
+}
+  
 void dataobject::check_idcol(dataobject& idat) {
   
   if(idat.ncol() == 0) {return;}

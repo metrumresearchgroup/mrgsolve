@@ -400,6 +400,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     model <- model(x)
     fixed <- as.list(x@fixed)
     fixedp <- names(x@fixed)
+    smat <- as.list(smat(x))
+    omat <- as.list(omat(x))
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
