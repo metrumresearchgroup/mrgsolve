@@ -133,6 +133,11 @@ mread <- function(model, project = getwd(), code = NULL,
                   check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
                   preclean = FALSE, ...) {
   
+  if(charthere(model, "/")) {
+    project <- dirname(model)
+    model <- basename(model)
+  }
+  
   quiet <- as.logical(quiet)
   
   warn <- warn & (!quiet)

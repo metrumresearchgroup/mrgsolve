@@ -155,8 +155,10 @@ update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
   n0 <- dim_matlist(x)
   
   if(length(x)==0) {
-    stop(paste0(context, ": there is no matrix to update"))
-  }  
+    if(length(y)==0) {
+      return(x)
+    }
+  }
   
   anon <- all(names(y)=="...")
   

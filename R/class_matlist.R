@@ -89,3 +89,5 @@ setClass("matlist",
 )
 
 is.matlist <- function(x) inherits(x,"matlist")
+
+
