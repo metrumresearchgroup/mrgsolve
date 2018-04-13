@@ -40,7 +40,8 @@ all_updatable <- c(sval,other_val)
 ##' parameter list or initial conditions
 ##' list is being updated; if \code{FALSE}, no new items will be 
 ##' added; if \code{TRUE}, the parameter list may expand.
-##' @param data a list of items to update; not used for now
+##' @param data a list of items to update; this list is combined 
+##' with any items passed in via \code{...}
 ##' 
 ##' @return The updated model object is returned.
 ##' 
@@ -84,7 +85,7 @@ all_updatable <- c(sval,other_val)
 ##'  
 ##' @export
 ##'  
-setMethod("update", "mrgmod", function(object,..., merge=TRUE,open=FALSE,data=NULL) {
+setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data=NULL) {
   
   args <- list(...)
   

@@ -1,5 +1,8 @@
 # mrgsolve 0.8.10.9015
-
+- Re-configured the list of data coming from `as.list.mrgmod` so that 
+the names match the names that you would pass to `update.mrgmod`; also
+added some items so that all updateable slots in the model object
+are exported by calling `as.list` #354
 
 # mrgsolve 0.8.10.9014
 - Add OMEGA and SIGMA matrices to `as.list.mrgmod` output under the names
