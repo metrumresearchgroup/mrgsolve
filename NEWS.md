@@ -1,3 +1,6 @@
+# mrgsolve 0.8.10.9015
+
+
 # mrgsolve 0.8.10.9014
 - Add OMEGA and SIGMA matrices to `as.list.mrgmod` output under the names
 omat and smat, respectively

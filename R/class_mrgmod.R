@@ -375,23 +375,34 @@ setMethod("names", "mrgmod", function(x) {
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   
   within(list(), {
-    
+    verbose <- x@verbose
+    debug <- x@debug
+    preclean <- x@preclean
+    mindt <- x@mindt
+    tscale <- x@tscale
+    request <- x@request
+    digits <- x@digits
     plugins <- x@plugin
     envir <- x@envir
-    solver <- c(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,
-                hmin=x@hmin,hmax=x@hmax)
+    hmax <- x@hmax
+    hmin <- x@hmin
+    maxsteps <- x@maxsteps
+    rtol <- x@rtol
+    atol <- x@atol
     if(deep) {
       trans <- x@trans
       advan <- x@advan
-      mindt <- x@mindt
       functions <- funset(x)
     }
     details <- x@annot
     code <- x@code
-    re <- names(x)[c("omega", "sigma")]
+    random <- names(x)[c("omega", "sigma")]
     request <- x@request
     capture <- x@capture
-    stime <- list(start=x@start,end=x@end,delta=x@delta,add=x@add)
+    add <- x@add
+    delta <- x@delta
+    end <- x@end
+    start <- x@start
     shlib <- shlib(x)
     cfile <- cfile(x)
     sodll <- sodll(x)
@@ -400,8 +411,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     model <- model(x)
     fixed <- as.list(x@fixed)
     fixedp <- names(x@fixed)
-    smat <- as.list(smat(x))
-    omat <- as.list(omat(x))
+    sigma <- as.list(smat(x))
+    omega <- as.list(omat(x))
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
