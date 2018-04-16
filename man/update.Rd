@@ -34,7 +34,8 @@ parameter list or initial conditions
 list is being updated; if \code{FALSE}, no new items will be 
 added; if \code{TRUE}, the parameter list may expand.}
 
-\item{data}{a list of items to update; not used for now}
+\item{data}{a list of items to update; this list is combined 
+with any items passed in via \code{...}}
 
 \item{y}{another object involved in update}
 

@@ -157,7 +157,7 @@ setGeneric("smat",function(.x,...) standardGeneric("smat"))
 ##' @rdname sigma
 setMethod("smat", "missing", function(...) {
   x <- list(...)
-  if(length(x)==0) return(create_matlist(class="omegalist"))
+  if(length(x)==0) return(create_matlist(class="sigmalist"))
   smat(lapply(x,as.matrix))
 })
 
@@ -195,7 +195,6 @@ setMethod("smat", "NULL", function(.x,...) {
 ##' @export
 ##' @rdname sigma
 setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
-  
   if(!make) return(mod(.x)@sigma)
   as.matrix(mod(.x)@sigma)
 })
@@ -237,12 +236,10 @@ setGeneric("drop.re", function(.x,...) standardGeneric("drop.re"))
 ##' @export
 ##' @rdname matlist
 setMethod("drop.re", "mrgmod", function(.x,...) {
-  
   what <- as.character(eval(substitute(alist(...))))
   if(length(what)==0) what <- c("omega", "sigma")
   if(is.element("omega", what)) .x@omega <- new("omegalist")
   if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
-  
   return(.x)
 })
 

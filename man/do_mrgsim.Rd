@@ -6,7 +6,7 @@
 \usage{
 do_mrgsim(x, data, idata = null_idata, carry.out = character(0),
   seed = as.integer(NA), Request = character(0), capture = NULL,
-  obsonly = FALSE, obsaug = FALSE, tgrid = numeric(0), recsort = 1,
+  obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
   deslist = list(), descol = character(0), filbak = TRUE, tad = FALSE,
   nocb = TRUE, skip_init_calc = FALSE, ...)
 }
@@ -32,7 +32,8 @@ in the output}
 
 \item{obsaug}{augment the data set with time grid observations}
 
-\item{tgrid}{a tgrid object}
+\item{tgrid}{a tgrid object; or a numeric vector of simulation times
+or another object with an \code{stime} method}
 
 \item{recsort}{record sorting flag}
 
