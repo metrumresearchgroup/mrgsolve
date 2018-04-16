@@ -176,7 +176,6 @@ setMethod("stime", "numeric", function(x,...) {
   sort(unique(x))
 })
 
-
 ##' Operations with tgrid objects
 ##' 
 ##' @param x mrgmod object
