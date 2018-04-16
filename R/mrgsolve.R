@@ -250,7 +250,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
 
 ##' @rdname mrgsim
 ##' @export
-mrgsim_df <- function(...) as_data_frame(mrgsim(...))
+mrgsim_df <- function(...) as.data.frame(mrgsim(...))
 
 
 ##' mrgsim variant functions
@@ -410,7 +410,8 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param obsonly if \code{TRUE}, dosing records are not included
 ##' in the output
 ##' @param obsaug augment the data set with time grid observations
-##' @param tgrid a tgrid object
+##' @param tgrid a tgrid object; or a numeric vector of simulation times
+##' or another object with an \code{stime} method
 ##' @param recsort record sorting flag
 ##' @param deslist a list of tgrid objects
 ##' @param descol the name of a column for assigning designs
@@ -435,7 +436,7 @@ do_mrgsim <- function(x,
                       capture = NULL,
                       obsonly = FALSE,
                       obsaug = FALSE,
-                      tgrid = numeric(0),
+                      tgrid = NULL,
                       recsort = 1,
                       deslist = list(),
                       descol = character(0),
@@ -563,7 +564,7 @@ do_mrgsim <- function(x,
   carry.tran <- rename.carry.tran$old
   
   # Derive stime vector either from tgrid or from the object
-  if(inherits(tgrid, c("tgrid","tgrids"))) {
+  if(!is.null(tgrid)) {
     stime <- stime(tgrid)
   } else {
     stime <- stime(x)  
@@ -638,7 +639,7 @@ do_mrgsimple <- function(x,
                          seed = as.integer(NA),
                          obsonly = FALSE,
                          obsaug = FALSE,
-                         tgrid = numeric(0),
+                         tgrid = NULL,
                          recsort = 1,
                          deslist = list(),
                          descol = character(0),
@@ -702,7 +703,7 @@ do_mrgsimple <- function(x,
   parin$carry_tran <- character(0)
   
   # Derive stime vector either from tgrid or from the object
-  if(inherits(tgrid, c("tgrid","tgrids"))) {
+  if(!is.null(tgrid)) {
     stime <- stime(tgrid)
   } else {
     stime <- stime(x)  

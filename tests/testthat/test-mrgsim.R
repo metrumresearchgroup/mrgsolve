@@ -48,7 +48,7 @@ test_that("mrgsim_df", {
   out <- mrgsim_df(mod, events = ev(amt=100))
   out2 <- mrgsim_e(mod,ev(amt = 100))
   expect_is(out, "data.frame")
-  expect_identical(out, as_data_frame(out2))
+  expect_identical(out, as.data.frame(out2))
 })
 
 test_that("mrgsim with ev", {
