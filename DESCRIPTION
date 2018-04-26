@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.8.10.9015
+Version: 0.8.11
 Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
@@ -42,7 +42,7 @@ LinkingTo:
 Suggests:
     lattice,
     testthat,
-    xml2,
+    xml2 (>= 1.2.0),
     rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes

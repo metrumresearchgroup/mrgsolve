@@ -78,7 +78,13 @@ nmxml <- function(run=numeric(0), project=character(0),
   }
   
   tree <- xml2::as_list(xml2::read_xml(target))
-  tree <- tree$output$nonmem$problem$estimation
+  
+  # https://github.com/r-lib/xml2/blob/master/NEWS.md#xml2-120
+  if(packageVersion("xml2") >= "1.2.0") {
+    tree <- tree[["output"]][["nonmem"]][["problem"]][["estimation"]]      
+  } else {
+    tree <- tree[["nonmem"]][["problem"]][["estimation"]]
+  }
   
   th <- list()
   om <- matrix(0,0,0)

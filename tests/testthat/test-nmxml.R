@@ -229,8 +229,8 @@ test_that("Model compiles", {
 })
 
 test_that("Labels are assigned to $OMEGA and $SIGMA", {
-  expect_equivalent(mod@omega@labels, list(s(a,b,c,d),s(x,y,z)))
-  expect_equivalent(mod@sigma@labels, list(s(e,f), s(h,i,j,k,l)))
+  expect_equivalent(mod@omega@labels, list(s_(a,b,c,d),s_(x,y,z)))
+  expect_equivalent(mod@sigma@labels, list(s_(e,f), s_(h,i,j,k,l)))
 })
   
 
@@ -256,7 +256,7 @@ $OMEGA
 mod <- mcode("label2", code,warn=FALSE, compile = FALSE)
 
 test_that("Mixed labels / no labels and prefix", {
-  expect_equivalent(mod@omega@labels, list(s(x_a,x_b),s(.,.,.)))
+  expect_equivalent(mod@omega@labels, list(s_(x_a,x_b),s_(.,.,.)))
 })
 
 

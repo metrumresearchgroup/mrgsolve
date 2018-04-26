@@ -1,3 +1,9 @@
+# mrgsove 0.8.11
+- Internal release
+- Removed the function `s` and replaced with `s_`; this was not a problem 
+created by mrgsolve but rather by ggplot2, which calls `mgcv::s` via 
+`geom_smooth` under certian circumstances
+
 # mrgsolve 0.8.10.9015
 - Re-configured the list of data coming from `as.list.mrgmod` so that
 the names match the names that you would pass to `update.mrgmod`; also
