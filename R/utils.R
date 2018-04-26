@@ -244,8 +244,7 @@ tovec <- function(x,concat=TRUE) {
 ##' @examples
 ##'
 ##' cvec("A,B,C")
-##' ch(A,B,C)
-##' s(A,B,C)
+##' s_(A,B,C)
 ##'
 setGeneric("cvec", function(x,...) standardGeneric("cvec"))
 
@@ -255,11 +254,7 @@ setMethod("cvec", "character", as.cvec)
 
 ##' @export
 ##' @rdname cvec
-ch <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
-
-##' @export
-##' @rdname cvec
-s <- ch
+s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 
 ##' Access or clear arguments for calls to mrgsim
 ##'

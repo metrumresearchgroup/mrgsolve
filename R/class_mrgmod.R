@@ -410,7 +410,6 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     project <- project(x)
     model <- model(x)
     fixed <- as.list(x@fixed)
-    fixedp <- names(x@fixed)
     sigma <- as.list(smat(x))
     omega <- as.list(omat(x))
     init <- as.list(init(x))

@@ -45,10 +45,10 @@ test_that("Req gets the right variables", {
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
   x4 <- names(mod %>% Req(b,z) %>% mrgsim)
-  expect_identical(x1,s(ID,time,GUT,CENT,PERIPH,b,z))
-  expect_identical(x2,s(ID,time,PERIPH,GUT))
-  expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,b,z))
+  expect_identical(x1,s_(ID,time,GUT,CENT,PERIPH,b,z))
+  expect_identical(x2,s_(ID,time,PERIPH,GUT))
+  expect_identical(x3,s_(ID,time,PERIPH,b))
+  expect_identical(x4,s_(ID,time,b,z))
 })
 
 
@@ -60,10 +60,10 @@ test_that("Req gets the right variables, with request", {
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
   x4 <- names(mod %>% Req(z,b) %>% mrgsim)
-  expect_identical(x1,s(ID,time,CENT,b,z))
-  expect_identical(x2,s(ID,time,PERIPH,GUT))
-  expect_identical(x3,s(ID,time,PERIPH,b))
-  expect_identical(x4,s(ID,time,z,b))
+  expect_identical(x1,s_(ID,time,CENT,b,z))
+  expect_identical(x2,s_(ID,time,PERIPH,GUT))
+  expect_identical(x3,s_(ID,time,PERIPH,b))
+  expect_identical(x4,s_(ID,time,z,b))
 })
 
 
