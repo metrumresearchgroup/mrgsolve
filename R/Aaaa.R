@@ -21,10 +21,11 @@
 ##' @importFrom utils packageVersion assignInMyNamespace read.table
 ##' @importFrom stats as.formula
 ##' @importFrom stats setNames
-##' @importFrom stats rnorm
+##' @importFrom stats rnorm 
+##' @importFrom dplyr filter filter_
 ##' @importFrom dplyr mutate slice as.tbl pull
 ##' @importFrom dplyr bind_rows arrange summarise summarise_at
-##' @importFrom dplyr intersect filter select rename slice distinct do
+##' @importFrom dplyr intersect select rename slice distinct do
 ##' @importFrom dplyr distinct first select_vars_ 
 ##' @importFrom dplyr select_vars everything 
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
