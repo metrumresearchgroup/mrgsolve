@@ -1,3 +1,8 @@
+# mrgsolve 0.8.12.9000
+
+
+# mrgsolve 0.8.12
+- Minor changes to namespace for CRAN
 # mrgsove 0.8.11
 - Internal release
 - Removed the function `s` and replaced with `s_`; this was not a problem 
