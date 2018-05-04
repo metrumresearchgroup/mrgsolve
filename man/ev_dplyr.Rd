@@ -10,7 +10,7 @@
 
 \method{select}{ev}(.data, ...)
 
-filter_.ev(.data, ...)
+\method{filter_}{ev}(.data, ...)
 }
 \arguments{
 \item{.data}{the event object}

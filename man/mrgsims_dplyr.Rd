@@ -22,7 +22,7 @@
 
 \method{pull}{mrgsims}(.data, ...)
 
-filter_.mrgsims(.data, ...)
+\method{filter_}{mrgsims}(.data, ...)
 
 filter_sims(.data, ...)
 
