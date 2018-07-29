@@ -2,19 +2,30 @@
 % Please edit documentation in R/annot.R
 \name{details}
 \alias{details}
-\title{Extract model details.}
+\title{Extract model details}
 \usage{
 details(x, complete = FALSE, values = FALSE, ...)
 }
 \arguments{
 \item{x}{a model object}
 
-\item{complete}{logical; if \code{TRUE}, un-annotated parameters and compartments will be added to the output}
+\item{complete}{logical; if \code{TRUE}, un-annotated parameters and \
+compartments will be added to the output}
 
 \item{values}{logical; if \code{TRUE}, a values column will be added to the output}
 
 \item{...}{not used}
 }
 \description{
-Extract model details.
+Extract model details
+}
+\details{
+This function is not exported.  You will have to call it 
+with \code{mrgsolve:::details()}.
+}
+\examples{
+mod <- mrgsolve:::house()
+
+mrgsolve:::details(mod)
+
 }

@@ -1,6 +1,7 @@
 library(pkgdown)
 library(methods)
-build_site(".", path = "DOCS")
+override = list()
+build_site(".", override = list(destination = "DOCS"))
 # init_site(".", path = "DOCS")
 # build_articles(".", path = "DOCS")
 # build_home(".", path = "DOCS")

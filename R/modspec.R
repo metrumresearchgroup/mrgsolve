@@ -115,17 +115,21 @@ fixed_parameters <- function(x,fixed_type) {
 }
 
 
-##' Parse model specification text.
+##' Parse model specification text
 ##' @param txt model specification text
 ##' @param split logical
 ##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
 ##' @param comment_re regular expression for comments
-##' @param ... arguments passed along
+##' @examples
+##' file <- file.path(modlib(), "pk1.cpp")
+##' 
+##' modelparse(readLines(file))
+##' 
 ##' @export
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
-                       comment_re=c("//", "##"),...) {
+                       comment_re=c("//", "##")) {
   
   ## Take in model text and parse it out
   
@@ -335,7 +339,7 @@ parse_ats <- function(x) {
   b
 }
 
-##' Scrape options from a code block.
+##' Scrape options from a code block
 ##' 
 ##' @param x data
 ##' @param def default values
@@ -378,12 +382,12 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   c(list(x=data), opts)
 }
 
-##' Scrape options and pass to function.
+##' Scrape options and pass to function
 ##' 
 ##' @param x data
 ##' @param env parse environment
 ##' @param pass function to call
-##' @param ... dots
+##' @param ... arguments passed to \code{\link{scrape_opts}}
 ##' 
 ##' @details Attributes of \code{x} are also scraped and merged with options.
 ##' 
@@ -436,12 +440,19 @@ specMATRIX <- function(x,
       unlinked <- FALSE
       novalue <- FALSE
     } else {
-      stop("Ambigious or mixed annotations in ",paste0("$",toupper(type)),call.=FALSE) 
+      stop(
+        "Ambigious or mixed annotations in ",
+        paste0("$",toupper(type)),
+        call.=FALSE
+      )
     }
     
-    l <- parse_annot(x[anl],name_value=FALSE,
-                     block=toupper(type),
-                     envir=env$ENV,novalue=novalue)
+    l <- parse_annot(
+      x[anl],
+      name_value=FALSE,
+      block=toupper(type),
+      envir=env$ENV,novalue=novalue
+    )
     
     if(unlinked) {
       l[["v"]] <- as.numeric(cvec_cs(x[!anl])) 
@@ -510,6 +521,7 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
 ## S3 methods for processing code blocks
 ## All of these need to be exported
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
+
 ##' @export
 handle_spec_block.default <- function(x,...) {
   return(dump_opts(x))
@@ -722,6 +734,14 @@ handle_spec_block.specCAPTURE <- function(x,...) {
 }
 
 ##' @export
+handle_spec_block.specPRED <- function(x,env,...) {
+  x <- scrape_opts(x, narrow = FALSE)
+  x$env <- env
+  x$pos <- attr(x,"pos")
+  do.call("PRED",x)
+}
+
+##' @export
 handle_spec_block.specPKMODEL <- function(x,env,...) {
   x <- scrape_opts(x, narrow=FALSE)
   x$env <- env
@@ -772,7 +792,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   return(x)
 }
 
-##' Parse PKMODEL BLOCK data.
+##' Parse PKMODEL BLOCK data
 ##' @param cmt compartment names as comma-delimited character
 ##' @param ncmt number of compartments; must be 1 (one-compartment, 
 ##' not including a depot dosing compartment) or 2 (two-compartment model, 
@@ -826,7 +846,6 @@ PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
-
 NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
   if(unnamed) name <-  NULL
   env[["namespace"]][[pos]] <- wrap_namespace(x,name)
@@ -837,7 +856,6 @@ NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
 handle_spec_block.specNAMESPACE <- function(x,...) {
   scrape_and_call(x,pass="NAMESPACE",narrow=FALSE,...)
 }
-
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {

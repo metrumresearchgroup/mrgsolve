@@ -13,6 +13,10 @@ CHKDIR=Rchecks
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
 
+everything:
+	make all
+	make pkgdown
+
 pkgdown:
 	Rscript "inst/maintenance/pkgdown.R"
 	cp -r DOCS/ ../../mrgsolve/docs/

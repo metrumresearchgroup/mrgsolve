@@ -180,6 +180,10 @@ setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
 ##' the result
 ##' @param ... not used
 ##' 
+##' @examples
+##' data <- data.frame(amt = 100) 
+##' 
+##' as.ev(data)
 ##' 
 ##' @export
 setGeneric("as.ev", function(x,...) {
