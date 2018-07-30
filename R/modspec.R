@@ -23,7 +23,7 @@ block_re <-  "^\\s*\\$[A-Z]\\w*|\\s*\\[+\\s*[A-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
-  if(advan==13 | trans==1) return(NULL)
+  if(advan==13 | trans %in% c(0,1)) return(NULL)
   if((advan %in% c(1,2)) & !(trans %in% c(2,11))) {
     stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call.=FALSE)
   }
@@ -735,11 +735,22 @@ handle_spec_block.specCAPTURE <- function(x,...) {
 
 ##' @export
 handle_spec_block.specPRED <- function(x,env,...) {
-  x <- scrape_opts(x, narrow = FALSE)
+  x <- scrape_opts(x)
   x$env <- env
   x$pos <- attr(x,"pos")
   do.call("PRED",x)
 }
+
+
+PRED <- function(x,env,...) {
+  if(any("MAIN"==env[["blocks"]])) {
+    stop("Found $MAIN not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("TABLE"==env[["blocks"]])) {
+    stop("Found $TABLE not allowed when $PRED is used",call.=FALSE)  
+  }
+}
+
 
 ##' @export
 handle_spec_block.specPKMODEL <- function(x,env,...) {
@@ -860,6 +871,11 @@ handle_spec_block.specNAMESPACE <- function(x,...) {
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {
   
+  if("PRED" %in% names(x)) {
+    ans <- list(advan = 0, trans = 0, n = 0)
+    return(ans)
+  }
+  
   ans <- list(advan=13,trans=1)
   
   y <- x[names(x) %in% what]
@@ -932,7 +948,8 @@ check_pred_symbols <- function(x,code) {
 }
 
 
-parse_env <- function(n,ENV=new.env()) {
+parse_env <- function(spec,ENV=new.env()) {
+  n <- length(spec)
   mread.env <- new.env()
   mread.env$param <- vector("list",n)
   mread.env$fixed <- vector("list",n)
@@ -945,6 +962,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$error <- character(0)
   mread.env$covariates <- character(0)
   mread.env$ENV <- ENV 
+  mread.env$blocks <- names(spec)
   mread.env
 }
 

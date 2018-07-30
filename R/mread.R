@@ -176,7 +176,7 @@ mread <- function(model, project = getwd(), code = NULL,
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(length(spec),ENV)
+  mread.env <- parse_env(spec,ENV)
   
   ## The main sections that need R processing:
   spec <- move_global(spec,mread.env)
@@ -188,9 +188,11 @@ mread <- function(model, project = getwd(), code = NULL,
   specClass <- paste0("spec", names(spec))
   
   for(i in seq_along(spec)) {
-    spec[[i]] <- structure(.Data=spec[[i]],
-                           class=specClass[i],
-                           pos=i)
+    spec[[i]] <- structure(
+      .Data=spec[[i]],
+      class=specClass[i],
+      pos=i
+    )
   }
   
   ## Call the handler for each block
@@ -202,11 +204,6 @@ mread <- function(model, project = getwd(), code = NULL,
   init <-  as.list(do.call("c",unname(mread.env$init)))
   annot_list_maybe <- nonull.list(mread.env$annot)
   
-  # bind_rows in the new version of dplyr (as of 3/28/2017) errors on bind_rows
-  # for an empty list() with Error in bind_rows_(x, .id) : not compatible with STRSXP
-  # the behavior, based on the bind_rows expectation of a consistent api should
-  # be an empty data frame. This is different from do.call(rbind, list()), which returns
-  # null. Chose to maintain consistency of annot always being a dataframe
   if (!length(annot_list_maybe)) {
     annot <- dplyr::data_frame()
   } else {
@@ -255,11 +252,9 @@ mread <- function(model, project = getwd(), code = NULL,
     toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
     topream <- "_env = mrgx::get_envir(self);"
     spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
-    spec[["GLOBAL"]] <-  c(toglob, spec[["GLOBAL"]])
+    spec[["GLOBAL"]] <-   c(toglob, spec[["GLOBAL"]])
   }
   
-
-
   ## Constructor for model object:
   x <- new("mrgmod",
            model = model,
@@ -285,7 +280,7 @@ mread <- function(model, project = getwd(), code = NULL,
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   ## Check $MAIN for the proper symbols
-  if(x@advan != 13) {
+  if(x@advan %in% c(2,4)) {
     if(subr[["n"]] != neq(x)) {
       stop("$PKMODEL requires  ", subr[["n"]] , 
            " compartments in $CMT or $INIT.",call.=FALSE)
