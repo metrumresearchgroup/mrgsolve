@@ -173,6 +173,7 @@ mread <- function(model, project = getwd(), code = NULL,
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   spec[["SET"]] <- spec[["ENV"]] <-  NULL
   
+  
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
@@ -230,6 +231,7 @@ mread <- function(model, project = getwd(), code = NULL,
   table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
   
+
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -361,6 +363,7 @@ mread <- function(model, project = getwd(), code = NULL,
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
     table,
+    spec[["PRED"]],
     write_capture(.ren.old(capture)),
     "__END_table__",
     sep="\n", file=def.con)

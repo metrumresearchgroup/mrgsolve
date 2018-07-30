@@ -192,7 +192,7 @@ local_var_typedef <- c("typedef double localdouble;","typedef int localint;","ty
 
 move_global <- function(x,env) {
   
-  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE"),names(x))
+  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
   
   if(length(what)==0) return(x)
   
@@ -744,11 +744,12 @@ handle_spec_block.specPRED <- function(x,env,...) {
 
 PRED <- function(x,env,...) {
   if(any("MAIN"==env[["blocks"]])) {
-    stop("Found $MAIN not allowed when $PRED is used",call.=FALSE)  
+    stop("$MAIN not allowed when $PRED is used",call.=FALSE)  
   }
   if(any("TABLE"==env[["blocks"]])) {
-    stop("Found $TABLE not allowed when $PRED is used",call.=FALSE)  
+    stop("$TABLE not allowed when $PRED is used",call.=FALSE)  
   }
+  return(x)
 }
 
 
@@ -843,7 +844,8 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##' }
 ##' 
 ##' @seealso \code{\link{BLOCK_PARSE}}
-PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),env=list(),pos=1,...) {
+PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
+                    env=list(),pos=1,...) {
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
     ncmt <- length(cmt)
