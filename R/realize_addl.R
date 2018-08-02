@@ -40,11 +40,14 @@
 ##'  
 ##' @export
 realize_addl <- function(x,...) UseMethod("realize_addl")
+
 ##' @rdname realize_addl
 ##' @export
 realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE, 
                                     fill = c("inherit", "na", "locf"), 
                                     ...) {
+  
+  x <- ungroup(x)
   
   fill <- match.arg(fill)
   locf <- fill=="locf"
@@ -53,6 +56,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   hasid <- has_ID(x)
   
   addlcol <- which(names(x) %in% c("ADDL", "addl"))[1]
+  
   if(is.na(addlcol)) {
     if(warn) warning("missing addl/ADDL column", call. = FALSE)
     return(x)
