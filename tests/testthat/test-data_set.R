@@ -110,3 +110,22 @@ test_that("Data set column order gives same answer", {
   rm(mod)
 })
 
+test_that("numerics_only", {
+  n <- 10
+  data <- dplyr::data_frame(
+    ID = as.numeric(seq(n)), 
+    EYES = "black", 
+    DATETM = as.POSIXct("2018-01-01 08:00:00"), 
+    DATE = as.Date(DATETM),
+    INT = as.integer(ID),
+    BOOL = INT > 6
+  )
+  df <- numerics_only(data)
+  expect_equal(names(df), c("ID", "INT", "BOOL"))
+  expect_true(all(mrgsolve:::is.numeric.data.frame(df)))
+  expect_message(numerics_only(data))
+  df <- numerics_only(data,convert_lgl = FALSE)
+  expect_equal(names(df), c("ID", "INT"))
+  expect_true(all(mrgsolve:::is.numeric.data.frame(df)))
+  expect_silent(numerics_only(data,quiet=TRUE))
+})

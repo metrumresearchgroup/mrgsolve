@@ -62,7 +62,7 @@
 ##' case columns are found.
 ##'
 ##' Only numeric data can be brought in to the problem.  
-##' Any non-numeric data columns will be dropped with warning.
+##' Any non-numeric data columns will be dropped with warning.  
 ##'
 ##' See \code{\link{exdatasets}} for different example data sets.
 ##' 
