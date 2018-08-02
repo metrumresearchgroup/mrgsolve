@@ -40,6 +40,7 @@ select.ev <- function(.data, ...) {
   .data@data <- as.data.frame(dplyr::select(.data@data,...))
   .data 
 }
+
 ##' @rdname ev_dplyr
 ##' @export
 filter_.ev <-  function(.data, ...) {
