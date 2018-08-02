@@ -88,11 +88,13 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
   list(name=a[1],value=a[2],unit=units,options=options,descr=b)
 }
 
-##' Extract model details.
+##' Extract model details
 ##' 
 ##' @param x a model object
-##' @param complete logical; if \code{TRUE}, un-annotated parameters and compartments will be added to the output
-##' @param values logical; if \code{TRUE}, a values column will be added to the output
+##' @param complete logical; if \code{TRUE}, un-annotated parameters and 
+##' compartments will be added to the output
+##' @param values logical; if \code{TRUE}, a values column will be added to 
+##' the output
 ##' @param ... not used
 ##' 
 details <- function(x,complete=FALSE,values=FALSE,...) {
