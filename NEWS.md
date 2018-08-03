@@ -1,5 +1,9 @@
 # mrgsolve 0.8.12.9000
 
+## New functions
+- Added `numerics_only` function to drop non-numeric columns from 
+the input data set after optionally converting logical columns
+to integer
 
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN

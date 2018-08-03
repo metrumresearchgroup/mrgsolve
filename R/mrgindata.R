@@ -36,18 +36,37 @@ cmtname <- function(x) {
 }
 
 numeric_data_matrix <- function(x,quiet=FALSE) {
-  nu <- is.numeric(x)
-  if(!all(nu)) {
-    if(!quiet) {
-      message("Dropping non-numeric columns: ", 
-              paste(names(x)[!nu], collapse=" "))
-    }
-    x <- x[,nu, drop=FALSE]
-  } 
-  x <- data.matrix(x) 
+  x <- data.matrix(numerics_only(x,quiet)) 
   if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
   return(x)
 }
+
+##' Prepare data.frame for input to mrgsim
+##' 
+##' @param x a input data set
+##' @param quiet logical indicating whether or not warnings 
+##' should be printed
+##' @param convert_lgl by default, convert logical 
+##' columns with \code{\link{as.integer}}
+##' 
+##' @export
+numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
+  if(convert_lgl) {
+    if(any(sapply(x,is.logical))) {
+      x <- dplyr::mutate_if(x, is.logical, as.integer)
+    }
+  }
+  nu <- is.numeric(x)
+  if(!all(nu)) {
+    if(!quiet) {
+      message("Dropping non-numeric columns: \n  ", 
+              paste(names(x)[!nu], collapse=" "))
+    }
+    x <- dplyr::select(x,which(nu))
+  } 
+  x
+}
+
 
 convert_character_cmt <- function(data, mod) {
   cmtcol <- intersect(c("cmt", "CMT"), names(data))

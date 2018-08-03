@@ -32,6 +32,7 @@ check_names <- function(x,par,cmt) {
   dups <- any(duplicated(x))
   us <-  any(charthere(x,"_"))
   res <- any(is.element(x,Reserved))
+  alph <- !all(grepl("^[[:alpha:]]",x))
   
   ans <- character(0)
   
@@ -42,8 +43,13 @@ check_names <- function(x,par,cmt) {
   }
   ## Look for names in the Reserved word list
   if(res) {
-    tmp <- paste(x[is.element(x,Reserved)],collapse=" ")
+    tmp <- paste0(x[is.element(x,Reserved)],collapse=" ")
     ans <- c(ans,paste0("Reserved words in model names: ",tmp))
+  }
+  ## names that don't start with alpha
+  if(alph) {
+    tmp <- paste0(x[!grepl("^[[:alpha:]]", x)], collapse = " ")
+    ans <- c(ans, paste0("Names without leading alpha character: ", tmp))
   }
   ## Scan for names with underscores
   ## Leading underscores are not allowed
