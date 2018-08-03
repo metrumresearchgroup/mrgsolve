@@ -36,7 +36,7 @@
 ##' data for the problem.  An  \code{ID} column is required and there 
 ##' can be no more than one row in the data frame for each individual.  
 ##' 
-##' In most cases, the columns in the `idata_set` have the same names
+##' In most cases, the columns in the \code{idata_set} have the same names
 ##' as parameters in the \code{\link{param}} list.  When this is the case, 
 ##' the parameter set is updated as the simulation proceeds once at the 
 ##' start of each individual.  The `idata_set` can also be used to 
@@ -65,11 +65,18 @@
 ##' 
 ##' exidata
 ##' 
-##' mod %>% idata_set(exidata, ID <= 2) %>% mrgsim %>% plot
+##' mod %>% 
+##'   idata_set(exidata, ID <= 2) %>% 
+##'   ev(amt = 100) %>%
+##'   mrgsim() %>% 
+##'   plot()
 ##' 
-##' mod %>% idata_set(exidata) %>% mrgsim
+##' mod %>% 
+##'   idata_set(exidata) %>% 
+##'   ev(amt = 100) %>%
+##'   mrgsim()
 ##' 
-##' mod %>% mrgsim(idata=exidata) 
+##' mod %>% ev(amt = 100) %>% mrgsim(idata=exidata) 
 ##' 
 ##' @seealso \code{\link{data_set}}, \code{\link{ev}}
 ##' 

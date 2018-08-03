@@ -98,5 +98,7 @@ setGeneric("ex", function(x,...) standardGeneric("ex"))
 ##'
 ##' @param x mrgsims object
 ##' @param ... passed along
+##' 
+##' 
 ##' @rdname mod
 setGeneric("mod", function(x,...) standardGeneric("mod"))

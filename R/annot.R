@@ -97,6 +97,15 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
 ##' the output
 ##' @param ... not used
 ##' 
+##' @details
+##' This function is not exported.  You will have to call it 
+##' with \code{mrgsolve:::details()}. 
+##' 
+##' @examples
+##' mod <- mrgsolve:::house()
+##' 
+##' mrgsolve:::details(mod)
+##' 
 details <- function(x,complete=FALSE,values=FALSE,...) {
   
   stopifnot(is.mrgmod(x))
