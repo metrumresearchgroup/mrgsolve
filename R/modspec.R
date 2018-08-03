@@ -436,7 +436,10 @@ specMATRIX <- function(x,
       unlinked <- FALSE
       novalue <- FALSE
     } else {
-      stop("Ambigious or mixed annotations in ",paste0("$",toupper(type)),call.=FALSE) 
+      stop(
+        "Ambigious or mixed annotations in ",paste0("$",toupper(type)),
+        call.=FALSE
+      ) 
     }
     
     l <- parse_annot(
@@ -452,6 +455,13 @@ specMATRIX <- function(x,
     d <- modMATRIX(l[["v"]],context=oclass,...)
     labels <- l[["an"]][["name"]]
     env[["annot"]][[pos]] <- l[["an"]]
+    
+    if(unlinked & nrow(d) != length(labels)) {
+      stop(
+        "Annotated matrix in unlinked configuration is misspecified", 
+        call. = FALSE
+      )
+    }
     
   } else {
     if(any(anl)) x <- x[!anl]
