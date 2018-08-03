@@ -426,7 +426,7 @@ specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
                        env, pos=1,
                        name="...", prefix="", labels=NULL,
-                       object=NULL,unlinked=FALSE,...) {
+                       object=NULL, unlinked=FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
@@ -462,6 +462,13 @@ specMATRIX <- function(x,
     labels <- l[["an"]][["name"]]
     env[["annot"]][[pos]] <- l[["an"]]
     
+    if(unlinked & nrow(d) != length(labels)) {
+      stop(
+        "Annotated matrix in unlinked configuration is misspecified", 
+        call. = FALSE
+      )
+    }
+    
   } else {
     if(any(anl)) x <- x[!anl]
     if(is.null(object)) {
@@ -490,19 +497,22 @@ specMATRIX <- function(x,
 
 ##' @export
 handle_spec_block.specOMEGA <- function(x,...) {
-  scrape_and_call(x,
-                  pass="specMATRIX",
-                  def=list(oclass="omegalist",type="omega"),
-                  narrow=FALSE,...)
+  scrape_and_call(
+    x,
+    pass="specMATRIX",
+    def=list(oclass="omegalist",type="omega"),
+    narrow=FALSE,...
+  )
 }
 
 ##' @export
 handle_spec_block.specSIGMA <- function(x,...) {
-  scrape_and_call(x,
-                  pass="specMATRIX",
-                  def=list(oclass="sigmalist",type="sigma"),
-                  narrow=FALSE,...)
-  
+  scrape_and_call(
+    x,
+    pass="specMATRIX",
+    def=list(oclass="sigmalist",type="sigma"),
+    narrow=FALSE,...
+  )
 }
 
 eval_ENV_block <- function(x,where,envir=new.env(),...) {

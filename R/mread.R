@@ -438,7 +438,18 @@ mread <- function(model, project = getwd(), code = NULL,
   if(!comp_success) {
     ## Always on windows
     ## on unix only if ignore.stdout
-    if(args$intern) cat(output,sep="\n")
+    if(args$intern) {
+      cat(output,sep="\n")
+      if(any(grepl("status 127", output, fixed = TRUE))) {
+        warning(
+         c("Found 'status 127' in compliation error message.  ", 
+           "This usually means that the build toolchain (including compilers) ",
+           "can't be located on your system.  Please reinstall the toolchain, ",
+           "check the PATH environment variable and/or ask for help on ",
+           "http://mrgsolve.github.io/issues")
+        )
+      }
+    }
     cat("-------------\n")
     stop("there was a problem building the model.",call.=FALSE)
   } 

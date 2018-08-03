@@ -12,7 +12,8 @@ details(x, complete = FALSE, values = FALSE, ...)
 \item{complete}{logical; if \code{TRUE}, un-annotated parameters and \
 compartments will be added to the output}
 
-\item{values}{logical; if \code{TRUE}, a values column will be added to the output}
+\item{values}{logical; if \code{TRUE}, a values column will be added to 
+the output}
 
 \item{...}{not used}
 }
@@ -27,5 +28,4 @@ with \code{mrgsolve:::details()}.
 mod <- mrgsolve:::house()
 
 mrgsolve:::details(mod)
-
 }
