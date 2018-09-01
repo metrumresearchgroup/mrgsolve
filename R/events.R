@@ -26,12 +26,15 @@
 ##' ways.
 ##'
 ##' @param x a model object
-##' @param evid event ID
-##' @param ID subject ID
 ##' @param time event time
+##' @param amt dose amount
+##' @param evid event ID
+##' @param cmt compartment
+
+##' @param ID subject ID
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for 
 ##' each individual in \code{ID}
-##' @param cmt compartment
+
 ##' @param until the expected maximum \bold{observation} time for this regimen
 ##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
@@ -43,11 +46,14 @@
 ##' 
 ##' @details
 ##' \itemize{
-##' \item Required input for creating events objects include 
-##' \code{time} and \code{cmt}
+##' \item Required items in events objects include 
+##' \code{time}, \code{amt}, \code{evid} and \code{cmt}.
 ##' \item If not supplied, \code{evid} is assumed to be 1.
 ##' \item If not supplied, \code{cmt}  is assumed to be 1.
 ##' \item If not supplied, \code{time} is assumed to be 0.
+##' \item If \code{amt} is not supplied, an error will be generated.
+##' \item Other items can include \code{ii}, \code{ss}, and \code{addl}
+##' (see \code{\link{data_set}} for details on all of these items).
 ##' \item \code{ID} may be specified as a vector.
 ##' \item If replicate is \code{TRUE} (default), thenthe events 
 ##' regimen is replicated for each \code{ID}; otherwise, the number of
@@ -93,9 +99,8 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 
 ##' @rdname ev
 ##' @export
-setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
-                                    cmt=1, replicate=TRUE, until=NULL,
-                                    realize_addl=FALSE,...) {
+setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0), 
+                                    replicate=TRUE, until=NULL, realize_addl=FALSE, ...) {
   
   if(length(match.call())==1) { 
     return(new("ev", data=data.frame()[0,]))
@@ -105,7 +110,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
     stop("evid cannot be 0 (observation)")
   }
   
-  data <- as_data_frame(list(..., time = time, cmt = cmt, evid = evid))
+  data <- as_data_frame(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
   
@@ -180,6 +185,10 @@ setMethod("ev", "ev", function(x, realize_addl=FALSE,...) {
 ##' the result
 ##' @param ... not used
 ##' 
+##' @examples
+##' data <- data.frame(amt = 100) 
+##' 
+##' as.ev(data)
 ##' 
 ##' @export
 setGeneric("as.ev", function(x,...) {

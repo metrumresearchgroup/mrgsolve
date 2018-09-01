@@ -32,6 +32,7 @@ check_names <- function(x,par,cmt) {
   dups <- any(duplicated(x))
   us <-  any(charthere(x,"_"))
   res <- any(is.element(x,Reserved))
+  alph <- !all(grepl("^[[:alpha:]]",x))
   
   ans <- character(0)
   
@@ -42,8 +43,13 @@ check_names <- function(x,par,cmt) {
   }
   ## Look for names in the Reserved word list
   if(res) {
-    tmp <- paste(x[is.element(x,Reserved)],collapse=" ")
+    tmp <- paste0(x[is.element(x,Reserved)],collapse=" ")
     ans <- c(ans,paste0("Reserved words in model names: ",tmp))
+  }
+  ## names that don't start with alpha
+  if(alph) {
+    tmp <- paste0(x[!grepl("^[[:alpha:]]", x)], collapse = " ")
+    ans <- c(ans, paste0("Names without leading alpha character: ", tmp))
   }
   ## Scan for names with underscores
   ## Leading underscores are not allowed
@@ -138,12 +144,12 @@ valid.mrgmod <- function(object) {
   tags <- unlist(names(object), use.names=FALSE)
   x <- check_names(tags,Pars(object),Cmt(object))
   x1 <- length(x)==0
-  x2 <- object@advan %in% c(1,2,3,4,13)
+  x2 <- object@advan %in% c(0,1,2,3,4,13)
   fun <- valid_funs(object@funs)
   cool <- x1 & x2 & fun[[1]]
   if(cool) return(TRUE)
   x <- c(x,fun[[2]])
-  if(!x2) x <- c(x,"Advan must be 1, 2, 3, 4, or 13")
+  if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, or 13")
   return(x)
 }
 

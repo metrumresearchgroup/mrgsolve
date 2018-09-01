@@ -112,6 +112,17 @@ odeproblem::~odeproblem(){
   delete [] Param;
 }
 
+double odeproblem::fbio(unsigned int pos) {
+  if(Neq==0) return 1.0;
+  return F.at(pos);
+}
+
+double odeproblem::alag(int cmt){
+  if(Neq==0) return 0.0;
+  return Alag.at(cmt);
+}
+
+
 //! set number of <code>ETAs</code> in the model
 void odeproblem::neta(int n) {
   if(n > 25) d.ETA.assign(n,0.0);
@@ -233,13 +244,13 @@ void odeproblem::rate_reset() {
 void odeproblem::rate_main(rec_ptr rec) {
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("invalid infusion setting: rate (R_CMT).", false);
+      throw Rcpp::exception("Invalid infusion setting: rate (R_CMT).", false);
     }
     rec->rate(this->rate(rec->cmtn()));
   }
   if(rec->rate() == -2) {
     if(this->dur(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("invalid infusion setting: duration (D_CMT).",false);
+      throw Rcpp::exception("Invalid infusion setting: duration (D_CMT).",false);
     }
     rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
   }
@@ -336,7 +347,8 @@ void odeproblem::advance(double tfrom, double tto) {
       this->advan4(tfrom,tto);
       return;
     }
-    // If Advan isn't 13, it needs to be 1/2/3/4
+
+    // If Advan isn't 13, it needs to be 0/1/2/3/4
     Rcpp::stop("mrgsolve: advan has invalid value.");
   }
   

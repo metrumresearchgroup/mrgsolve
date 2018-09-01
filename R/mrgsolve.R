@@ -594,18 +594,20 @@ do_mrgsim <- function(x,
          call. = FALSE)
   }
   
-  out <- .Call(`_mrgsolve_DEVTRAN`,
-               parin,
-               param,
-               names(param(x)),
-               init,
-               names(Init(x)),
-               capt_pos,
-               pointers(x),
-               data,idata,
-               as.matrix(omat(x)),
-               as.matrix(smat(x)),
-               x@envir)
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    names(param(x)),
+    init,
+    names(Init(x)),
+    capt_pos,
+    pointers(x),
+    data,idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir
+  )
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
@@ -614,13 +616,14 @@ do_mrgsim <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  cnames <- c("ID",
-              tcol,
-              .ren.rename(rename.carry,carry.tran), ## First tran
-              .ren.rename(rename.carry,carry.data), ## Then carry data 
-              .ren.rename(rename.carry,carry.idata), ## Then carry idata
-              .ren.rename(rename.Request,request),   ## Then compartments
-              .ren.rename(rename.Request,capt) ## Then captures
+  cnames <- c(
+    "ID",
+    tcol,
+    .ren.rename(rename.carry,carry.tran), ## First tran
+    .ren.rename(rename.carry,carry.data), ## Then carry data 
+    .ren.rename(rename.carry,carry.idata), ## Then carry idata
+    .ren.rename(rename.Request,request),   ## Then compartments
+    .ren.rename(rename.Request,capt) ## Then captures
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)

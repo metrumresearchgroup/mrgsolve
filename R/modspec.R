@@ -23,7 +23,7 @@ block_re <-  "^\\s*\\$[A-Z]\\w*|\\s*\\[+\\s*[A-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
-  if(advan==13 | trans==1) return(NULL)
+  if(advan==13 | trans %in% c(0,1)) return(NULL)
   if((advan %in% c(1,2)) & !(trans %in% c(2,11))) {
     stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call.=FALSE)
   }
@@ -115,17 +115,21 @@ fixed_parameters <- function(x,fixed_type) {
 }
 
 
-##' Parse model specification text.
+##' Parse model specification text
 ##' @param txt model specification text
 ##' @param split logical
 ##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
 ##' @param comment_re regular expression for comments
-##' @param ... arguments passed along
+##' @examples
+##' file <- file.path(modlib(), "pk1.cpp")
+##' 
+##' modelparse(readLines(file))
+##' 
 ##' @export
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
-                       comment_re=c("//", "##"),...) {
+                       comment_re=c("//", "##")) {
   
   ## Take in model text and parse it out
   
@@ -188,7 +192,7 @@ local_var_typedef <- c("typedef double localdouble;","typedef int localint;","ty
 
 move_global <- function(x,env) {
   
-  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE"),names(x))
+  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
   
   if(length(what)==0) return(x)
   
@@ -335,7 +339,7 @@ parse_ats <- function(x) {
   b
 }
 
-##' Scrape options from a code block.
+##' Scrape options from a code block
 ##' 
 ##' @param x data
 ##' @param def default values
@@ -378,12 +382,12 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
   c(list(x=data), opts)
 }
 
-##' Scrape options and pass to function.
+##' Scrape options and pass to function
 ##' 
 ##' @param x data
 ##' @param env parse environment
 ##' @param pass function to call
-##' @param ... dots
+##' @param ... arguments passed to \code{\link{scrape_opts}}
 ##' 
 ##' @details Attributes of \code{x} are also scraped and merged with options.
 ##' 
@@ -422,7 +426,7 @@ specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
                        env, pos=1,
                        name="...", prefix="", labels=NULL,
-                       object=NULL,unlinked=FALSE,...) {
+                       object=NULL, unlinked=FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
@@ -436,12 +440,19 @@ specMATRIX <- function(x,
       unlinked <- FALSE
       novalue <- FALSE
     } else {
-      stop("Ambigious or mixed annotations in ",paste0("$",toupper(type)),call.=FALSE) 
+      stop(
+        "Ambigious or mixed annotations in ",
+        paste0("$",toupper(type)),
+        call.=FALSE
+      )
     }
     
-    l <- parse_annot(x[anl],name_value=FALSE,
-                     block=toupper(type),
-                     envir=env$ENV,novalue=novalue)
+    l <- parse_annot(
+      x[anl],
+      name_value=FALSE,
+      block=toupper(type),
+      envir=env$ENV,novalue=novalue
+    )
     
     if(unlinked) {
       l[["v"]] <- as.numeric(cvec_cs(x[!anl])) 
@@ -450,6 +461,13 @@ specMATRIX <- function(x,
     d <- modMATRIX(l[["v"]],context=oclass,...)
     labels <- l[["an"]][["name"]]
     env[["annot"]][[pos]] <- l[["an"]]
+    
+    if(unlinked & nrow(d) != length(labels)) {
+      stop(
+        "Annotated matrix in unlinked configuration is misspecified", 
+        call. = FALSE
+      )
+    }
     
   } else {
     if(any(anl)) x <- x[!anl]
@@ -479,19 +497,22 @@ specMATRIX <- function(x,
 
 ##' @export
 handle_spec_block.specOMEGA <- function(x,...) {
-  scrape_and_call(x,
-                  pass="specMATRIX",
-                  def=list(oclass="omegalist",type="omega"),
-                  narrow=FALSE,...)
+  scrape_and_call(
+    x,
+    pass="specMATRIX",
+    def=list(oclass="omegalist",type="omega"),
+    narrow=FALSE,...
+  )
 }
 
 ##' @export
 handle_spec_block.specSIGMA <- function(x,...) {
-  scrape_and_call(x,
-                  pass="specMATRIX",
-                  def=list(oclass="sigmalist",type="sigma"),
-                  narrow=FALSE,...)
-  
+  scrape_and_call(
+    x,
+    pass="specMATRIX",
+    def=list(oclass="sigmalist",type="sigma"),
+    narrow=FALSE,...
+  )
 }
 
 eval_ENV_block <- function(x,where,envir=new.env(),...) {
@@ -510,6 +531,7 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
 ## S3 methods for processing code blocks
 ## All of these need to be exported
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
+
 ##' @export
 handle_spec_block.default <- function(x,...) {
   return(dump_opts(x))
@@ -722,6 +744,38 @@ handle_spec_block.specCAPTURE <- function(x,...) {
 }
 
 ##' @export
+handle_spec_block.specPRED <- function(x,env,...) {
+  x <- scrape_opts(x)
+  x$env <- env
+  x$pos <- attr(x,"pos")
+  do.call("PRED",x)
+}
+
+
+PRED <- function(x,env,...) {
+  if(any("MAIN"==env[["blocks"]])) {
+    stop("$MAIN not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("TABLE"==env[["blocks"]])) {
+    stop("$TABLE not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("PKMODEL"==env[["blocks"]])) {
+    stop("$PKMODEL not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("CMT"==env[["blocks"]])) {
+    stop("$CMT not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("INIT"==env[["blocks"]])) {
+    stop("$INIT not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("ODE"==env[["blocks"]])) {
+    stop("$ODE not allowed when $PRED is used",call.=FALSE)  
+  }
+  return(x)
+}
+
+
+##' @export
 handle_spec_block.specPKMODEL <- function(x,env,...) {
   x <- scrape_opts(x, narrow=FALSE)
   x$env <- env
@@ -772,7 +826,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   return(x)
 }
 
-##' Parse PKMODEL BLOCK data.
+##' Parse PKMODEL BLOCK data
 ##' @param cmt compartment names as comma-delimited character
 ##' @param ncmt number of compartments; must be 1 (one-compartment, 
 ##' not including a depot dosing compartment) or 2 (two-compartment model, 
@@ -812,7 +866,8 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##' }
 ##' 
 ##' @seealso \code{\link{BLOCK_PARSE}}
-PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),env=list(),pos=1,...) {
+PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
+                    env=list(),pos=1,...) {
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
     ncmt <- length(cmt)
@@ -826,7 +881,6 @@ PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
-
 NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
   if(unnamed) name <-  NULL
   env[["namespace"]][[pos]] <- wrap_namespace(x,name)
@@ -838,9 +892,13 @@ handle_spec_block.specNAMESPACE <- function(x,...) {
   scrape_and_call(x,pass="NAMESPACE",narrow=FALSE,...)
 }
 
-
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
 collect_subr <- function(x,what=c("PKMODEL")) {
+  
+  if("PRED" %in% names(x)) {
+    ans <- list(advan = 0, trans = 0, n = 0)
+    return(ans)
+  }
   
   ans <- list(advan=13,trans=1)
   
@@ -914,7 +972,8 @@ check_pred_symbols <- function(x,code) {
 }
 
 
-parse_env <- function(n,ENV=new.env()) {
+parse_env <- function(spec,ENV=new.env()) {
+  n <- length(spec)
   mread.env <- new.env()
   mread.env$param <- vector("list",n)
   mread.env$fixed <- vector("list",n)
@@ -927,6 +986,7 @@ parse_env <- function(n,ENV=new.env()) {
   mread.env$error <- character(0)
   mread.env$covariates <- character(0)
   mread.env$ENV <- ENV 
+  mread.env$blocks <- names(spec)
   mread.env
 }
 

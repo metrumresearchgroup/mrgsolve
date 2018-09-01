@@ -226,7 +226,7 @@ setMethod("as.param", "missing", function(.x,...) {
 ##' @rdname param
 ##' @export
 setMethod("$", "mrgmod", function(x,name){
-  as.numeric(allparam(x))[name]
+  unname(as.numeric(allparam(x))[name])
 })
 
 as.fixed <- function(x) {

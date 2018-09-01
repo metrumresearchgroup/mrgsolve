@@ -2,7 +2,7 @@
 % Please edit documentation in R/modspec.R
 \name{scrape_and_call}
 \alias{scrape_and_call}
-\title{Scrape options and pass to function.}
+\title{Scrape options and pass to function}
 \usage{
 scrape_and_call(x, env, pass, ...)
 }
@@ -13,10 +13,10 @@ scrape_and_call(x, env, pass, ...)
 
 \item{pass}{function to call}
 
-\item{...}{dots}
+\item{...}{arguments passed to \code{\link{scrape_opts}}}
 }
 \description{
-Scrape options and pass to function.
+Scrape options and pass to function
 }
 \details{
 Attributes of \code{x} are also scraped and merged with options.

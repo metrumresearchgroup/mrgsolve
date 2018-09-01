@@ -101,7 +101,7 @@ mvgauss <- function(mat, n=10, seed=NULL) {
 
 
 pfile <- function(package,dir,file,ext=NULL) {
-  ans <- file.path(path.package(package),dir,file)
+  ans <- file.path(system.file(package=package),dir,file)
   if(is.character(ext)) {
     ans <- paste0(ans, ".", ext)
   }

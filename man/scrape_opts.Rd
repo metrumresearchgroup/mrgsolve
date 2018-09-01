@@ -2,7 +2,7 @@
 % Please edit documentation in R/modspec.R
 \name{scrape_opts}
 \alias{scrape_opts}
-\title{Scrape options from a code block.}
+\title{Scrape options from a code block}
 \usage{
 scrape_opts(x, envir = list(), def = list(), all = TRUE, marker = "=",
   narrow = TRUE)
@@ -25,5 +25,5 @@ list with elements \code{x} (the data without options) and named options
 as specified in the block.
 }
 \description{
-Scrape options from a code block.
+Scrape options from a code block
 }

@@ -108,14 +108,12 @@ setMethod("$", "mrgsims", function(x,name) {
 ##' @rdname mrgsims
 ##' @export
 setMethod("tail", "mrgsims", function(x,...) {
-  cat("Model: ", model(mod(x)), "\n")
   return(tail(x@data,...))
 })
 
 ##' @rdname mrgsims
 ##' @export
 setMethod("head", "mrgsims", function(x,...) {
-  #cat("Model: ", model(mod(x)), "\n")
   return(head(x@data,...))
 })
 

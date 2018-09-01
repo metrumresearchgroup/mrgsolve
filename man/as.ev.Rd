@@ -26,3 +26,9 @@ the result}
 \description{
 Coerce an object to class ev
 }
+\examples{
+data <- data.frame(amt = 100) 
+
+as.ev(data)
+
+}
