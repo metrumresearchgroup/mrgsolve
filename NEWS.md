@@ -9,6 +9,13 @@ to integer
 - Added `$PRED` block for models that don't utilize any compartments
 - Added `pred1` to the `modlib`
 
+## New behavior
+- `time/TIME` is no longer required in a data set when `$PRED` is in use
+- `cmt/CMT` is no longer required in a data set; a default value of 0 will 
+be assigned in case it is missing and an error will continue to be generated
+when dosing into an invalid compartment (0 is always an invalid index
+for dosing compartment)
+
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN
 # mrgsove 0.8.11
