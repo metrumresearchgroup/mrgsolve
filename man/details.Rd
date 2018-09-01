@@ -9,7 +9,7 @@ details(x, complete = FALSE, values = FALSE, ...)
 \arguments{
 \item{x}{a model object}
 
-\item{complete}{logical; if \code{TRUE}, un-annotated parameters and \
+\item{complete}{logical; if \code{TRUE}, un-annotated parameters and 
 compartments will be added to the output}
 
 \item{values}{logical; if \code{TRUE}, a values column will be added to 
@@ -28,4 +28,5 @@ with \code{mrgsolve:::details()}.
 mod <- mrgsolve:::house()
 
 mrgsolve:::details(mod)
+
 }

@@ -372,12 +372,13 @@ mread <- function(model, project = getwd(), code = NULL,
   ## lock some of this down so we can check order later
   x@shlib$cmt <- names(Init(x))
   x@shlib$par <- names(param(x))
+  x@shlib$neq <- length(x@shlib$cmt)
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib$version <- GLOBALS[["version"]]
   x@shlib$source <- file.path(build$soloc,build$compfile)
   x@shlib$md5 <- build$md5
   x@shlib$covariates <- mread.env$covariates
-  
+
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)

@@ -759,6 +759,18 @@ PRED <- function(x,env,...) {
   if(any("TABLE"==env[["blocks"]])) {
     stop("$TABLE not allowed when $PRED is used",call.=FALSE)  
   }
+  if(any("PKMODEL"==env[["blocks"]])) {
+    stop("$PKMODEL not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("CMT"==env[["blocks"]])) {
+    stop("$CMT not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("INIT"==env[["blocks"]])) {
+    stop("$INIT not allowed when $PRED is used",call.=FALSE)  
+  }
+  if(any("ODE"==env[["blocks"]])) {
+    stop("$ODE not allowed when $PRED is used",call.=FALSE)  
+  }
   return(x)
 }
 

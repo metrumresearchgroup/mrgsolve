@@ -160,11 +160,6 @@ public:
   void dur(unsigned int pos, double value) {D[pos] = value;}
   double dur(unsigned int pos){return D[pos];}
   
-  void fbio(unsigned int pos, double value) {F.at(pos) = value;}
-  double fbio(unsigned int pos) {return F.at(pos);}
-  
-  double alag(int cmt){return Alag.at(cmt);}
-  
   void reset_newid(const double id_);
   
   void eta(int pos, double value) {d.ETA[pos] = value;}
@@ -175,6 +170,11 @@ public:
   void off(unsigned short int cmt);
   
   int is_on(unsigned int eq_n){return On[eq_n];}
+  
+  void fbio(unsigned int pos, double value) {F.at(pos) = value;}
+  double fbio(unsigned int pos);
+  double alag(int cmt);
+  
   
   void time(double time_){d.time = time_;}
   void newind(unsigned int newind_){d.newind = newind_;}

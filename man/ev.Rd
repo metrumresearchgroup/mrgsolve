@@ -12,8 +12,9 @@ ev(x, ...)
 
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
 
-\S4method{ev}{missing}(time = 0, evid = 1, ID = numeric(0), cmt = 1,
-  replicate = TRUE, until = NULL, realize_addl = FALSE, ...)
+\S4method{ev}{missing}(time = 0, amt, evid = 1, cmt = 1,
+  ID = numeric(0), replicate = TRUE, until = NULL, realize_addl = FALSE,
+  ...)
 
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 }
@@ -28,9 +29,9 @@ ev(x, ...)
 
 \item{evid}{event ID}
 
-\item{ID}{subject ID}
-
 \item{cmt}{compartment}
+
+\item{ID}{subject ID}
 
 \item{replicate}{logical; if \code{TRUE}, events will be replicated for 
 each individual in \code{ID}}
@@ -55,7 +56,7 @@ ways.
 \details{
 \itemize{
 \item Required input for creating events objects include 
-\code{time} and \code{cmt}
+\code{time}, \code{amt}, and \code{cmt}.
 \item If not supplied, \code{evid} is assumed to be 1.
 \item If not supplied, \code{cmt}  is assumed to be 1.
 \item If not supplied, \code{time} is assumed to be 0.

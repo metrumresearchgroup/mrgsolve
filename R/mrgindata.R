@@ -96,12 +96,16 @@ convert_character_cmt <- function(data, mod) {
 ##' compartment number.
 ##' 
 ##' @export
-valid_data_set <- function(x, m = NULL, verbose = FALSE,
-                           quiet = FALSE) {
+valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
   if(verbose) quiet <- FALSE
   
   if(is.valid_data_set(x)) return(x)
+  
+  if(!is.mrgmod(m)) {
+    stop("A valid model object is required to validate the data set.", 
+         call. = FALSE)
+  }
   
   x <- as.data.frame(x)
   
@@ -114,45 +118,41 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE,
     stop("Could not find ID column in data set", call. = FALSE)
   }
   
-  if(ncol(x) > 1) {
-    
-    # First, check for compartment
-    cmtcol <- intersect(c("cmt", "CMT"), colnames(x))[1]
-    if(is.na(cmtcol))  {
-      stop("Could not find cmt/CMT column in data set")
-    }
-    
+  # special case
+  if(ncol(x)==1) {
+    x <- numeric_data_matrix(x,quiet)
+    return(structure(x, class = "valid_data_set"))
+  }
+  
+  
+  # First, check for compartment
+  cmtcol <- cmtname(x)
+  if(!is.na(cmtcol)) {
     if(any(is.na(x[,cmtcol]))) {
       stop("Found missing value in cmt/CMT column")
     }
-    
-    # Convert cmt/CMT to numeric if it's character and you 
-    # have the model object
-    if(is.mrgmod(m)) {
-      if(is.character(x[[cmtcol]])) {
-        if(verbose) message("Converting cmt to integer")
-        x[[cmtcol]] <- match(x[[cmtcol]], cmt(m),0)
-      }
+    if(is.character(x[[cmtcol]])) {
+      if(verbose) message("Converting cmt to integer")
+      x[[cmtcol]] <- match(x[[cmtcol]], cmt(m),0)
     }
-    
-    # Drop character columns
-    x <- numeric_data_matrix(x,quiet)
-    
-    # Now, check for time/TIME and ID
-    # TODO: look into droping these checks.
-    tcol <- intersect(c("time", "TIME"), colnames(x))[1]
-    if(is.na(tcol)) {
-      stop("Could not find time/TIME column in data set", call. = FALSE)
-    }
-    
-    x <- cbind(x, matrix(0,
-                         ncol=1,
-                         nrow=nrow(x), 
-                         dimnames=list(NULL, "..zeros..")))
-    
-  } else {
-    x <- numeric_data_matrix(x,quiet)  
   }
+  
+  tcol <- timename(x)
+  if(is.na(tcol)) {
+    if(neq(m) > 0) {
+      stop(
+        "A time or TIME column is required in the data set item with this model.",
+        call. = FALSE
+      )  
+    }
+  }
+  
+  # Drop character columns
+  x <- numeric_data_matrix(x,quiet)
+  x <- cbind(x, matrix(0,
+                       ncol=1,
+                       nrow=nrow(x), 
+                       dimnames=list(NULL, "..zeros..")))
   
   # Look for both upper and lower case column names
   uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
@@ -167,7 +167,6 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE,
   }
   
   structure(x, class = "valid_data_set")
-  
 }
 
 ##' Validate and prepare idata data sets for simulation

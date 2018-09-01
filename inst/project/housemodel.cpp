@@ -19,6 +19,7 @@ CL   : 1    : Clearance  (L/hr)
 VC   : 20   : Volume of distribution (L)
 KA   : 1.2  : Absorption rate constant (1/hr)
 F1   : 1.0  : Bioavailability fraction (.)
+D1   : 2.0  : Infusion duration (hr)
 WT   : 70   : Weight (kg)
 SEX  : 0    : Covariate female sex
 WTCL : 0.75 : Exponent WT on CL
@@ -51,6 +52,7 @@ typedef double localdouble;
 
 $MAIN
 F_GUT = F1;
+D_CENT = D1;
 
 double CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ECL);
 double VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + EVC);

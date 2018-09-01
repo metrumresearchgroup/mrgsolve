@@ -72,7 +72,6 @@ test_that("Lagged bolus", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
-
   x <- test_lib("emax")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
@@ -81,7 +80,6 @@ test_that("Lagged bolus", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
-
   x <- test_lib("viral2")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
@@ -90,6 +88,9 @@ test_that("Lagged bolus", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
+  x <- test_lib("pred1")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
 })
 
 

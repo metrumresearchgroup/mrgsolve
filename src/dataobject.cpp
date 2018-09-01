@@ -70,7 +70,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   if(Idcol < 0) {
     throw Rcpp::exception(
-        "could not find ID column in data set.",false
+        "Could not find ID column in data set.",false
     );
   }
   
@@ -136,21 +136,18 @@ void dataobject::locate_tran() {
   
   unsigned int tcol = std::find(bg,ed,"time") - bg;
   
-  bool lc = true;
-  
-  if(tcol > zeros) {
-    tcol = std::find(bg,ed,"TIME") - bg;
-    if(tcol > zeros) {
-      throw Rcpp::exception(
-          "Could not find time or TIME column in the data set",
-          false)
-      ;
-    }
-    lc = false;
-  }
-  
+  bool lc = tcol <= zeros;
   col[_COL_time_] = tcol;
   
+  if(!lc) {
+    tcol = std::find(bg,ed,"TIME") - bg;
+    if(tcol > zeros) {
+      col[_COL_time_] = zeros;
+    } else {
+      col[_COL_time_] = tcol;
+    }
+  }
+
   if(lc) {
     col[_COL_amt_]  = std::find(bg,ed,"amt")  - bg;
     col[_COL_ii_]   = std::find(bg,ed,"ii")   - bg;
@@ -175,12 +172,7 @@ void dataobject::locate_tran() {
   if(col[_COL_ss_]   > zeros) col[_COL_ss_]   = zeros;
   if(col[_COL_rate_] > zeros) col[_COL_rate_] = zeros;
   if(col[_COL_evid_] > zeros) col[_COL_evid_] = zeros;
-  
-  if(col[_COL_cmt_] > zeros  && zeros > 0) {
-    throw Rcpp::exception(
-        "Could not locate cmt or CMT in data set",false
-    );
-  }
+  if(col[_COL_cmt_] > zeros) col[_COL_cmt_] = zeros;
 }
 
 void dataobject::idata_row() {
@@ -213,9 +205,73 @@ void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM,
   }
 }
 
+void dataobject:: get_records_pred(recstack& a, int NID, int neq,
+                                   unsigned int& obscount, unsigned int& evcount,
+                                   bool obsonly, bool debug) {
+  
+  int j=0;
+  double lastime = 0;
+  if(Data.ncol() <=1) {
+    return;  
+  }
+  for(int h=0; h < NID; ++h) {
+    lastime = Data(this->start(h),col[_COL_time_]);
+    a[h].reserve(this->end(h) - this->start(h) + 5);
+    
+    for(j=this->start(h); j <= this->end(h); ++j) {
+      if(Data(j,col[_COL_time_]) < lastime) {
+        Rcpp::Rcout << lastime << std::endl;
+        throw Rcpp::exception(
+            "The data set is not sorted by time.",
+            false
+        );
+      }
+      lastime = Data(j,col[_COL_time_]);        
+      rec_ptr obs = boost::make_shared<datarecord>(
+        Data(j,col[_COL_time_]),
+        Data(j,col[_COL_cmt_]),
+        j,
+        Data(j,Idcol)
+      );
+      
+      if(Data(j,col[_COL_cmt_]) != 0.0) {
+        throw Rcpp::exception(
+            "All records must have cmt set to zero.",
+            false
+        ); 
+      }
+      if(Data(j,col[_COL_rate_]) != 0.0) {
+        throw Rcpp::exception(
+            "All records must have rate set to zero.",
+            false
+        ); 
+      }
+      if(Data(j,col[_COL_ss_]) != 0.0) {
+        throw Rcpp::exception(
+            "All records must have ss set to zero.",
+            false
+        ); 
+      }
+
+      obs->evid(Data(j,col[_COL_evid_]));
+      obs->addl(Data(j,col[_COL_addl_]));
+      obs->ii(Data(j,col[_COL_ii_]));
+      obs->unarm();
+      a[h].push_back(obs);
+      ++obscount;
+    }
+  }
+}
+
+
 void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
                              bool obsonly, bool debug) {
+  
+  if(neq==0) {
+    get_records_pred(a, NID, neq, obscount, evcount, obsonly, debug);
+    return;  
+  }
   
   // only look here for events or observation if there is more than one column:
   // size_t h=0; warnings
@@ -237,7 +293,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
-            "data set is not sorted by time or time is negative.",
+            "The data set is not sorted by time or time is negative.",
             false
         );
       }
@@ -251,7 +307,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
-              "Compartment number in observation record out of range",
+              "Compartment number in observation record out of range.",
               false
           );
         }

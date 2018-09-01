@@ -2,7 +2,7 @@
 % Please edit documentation in R/modlib.R
 \name{modlib}
 \alias{modlib}
-\title{Internal model library.}
+\title{Internal model library}
 \usage{
 modlib(list = FALSE)
 }
@@ -10,7 +10,7 @@ modlib(list = FALSE)
 \item{list}{list available models}
 }
 \description{
-Internal model library.
+Internal model library
 }
 \details{
 See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
@@ -38,6 +38,7 @@ mod <- mread("effect", modlib())
 mod <- mread("tmdd",   modlib())
 mod <- mread("viral1", modlib())
 mod <- mread("viral2", modlib())
+mod <- mread("pred1",  modlib())
 
 mrgsolve:::code(mod)
 }

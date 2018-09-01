@@ -44,7 +44,7 @@
 ##' @details
 ##' \itemize{
 ##' \item Required input for creating events objects include 
-##' \code{time} and \code{cmt}
+##' \code{time}, \code{amt}, and \code{cmt}.
 ##' \item If not supplied, \code{evid} is assumed to be 1.
 ##' \item If not supplied, \code{cmt}  is assumed to be 1.
 ##' \item If not supplied, \code{time} is assumed to be 0.
@@ -93,9 +93,8 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 
 ##' @rdname ev
 ##' @export
-setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0), 
-                                    cmt=1, replicate=TRUE, until=NULL,
-                                    realize_addl=FALSE,...) {
+setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0), 
+                                    replicate=TRUE, until=NULL, realize_addl=FALSE, ...) {
   
   if(length(match.call())==1) { 
     return(new("ev", data=data.frame()[0,]))
@@ -105,7 +104,7 @@ setMethod("ev", "missing", function(time=0, evid=1, ID=numeric(0),
     stop("evid cannot be 0 (observation)")
   }
   
-  data <- as_data_frame(list(..., time = time, cmt = cmt, evid = evid))
+  data <- as_data_frame(list(..., time = time, amt = 0, cmt = cmt, evid = evid))
   
   data <- as.data.frame(data)
   

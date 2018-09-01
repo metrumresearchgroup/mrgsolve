@@ -17,7 +17,6 @@
 
 ##' Select and modify a data set for simulation
 ##'
-##'
 ##' @param x model object
 ##' @param data data set
 ##' @param .subset an unquoted expression passed to 
@@ -46,8 +45,14 @@
 ##'
 ##' Input data set may include the following columns related to 
 ##' PK dosing events: \code{time}, \code{cmt}, \code{amt}, \code{rate},
-##' \code{ii}, \code{addl}, \code{ss}.  \code{time} and \code{cmt} 
-##' (and \code{ID}) are required columns in the input data set. 
+##' \code{ii}, \code{addl}, \code{ss}.  Along with \code{ID}, \code{time} 
+##' is a required column in the input data set unless \code{$PRED} is in 
+##' use.  Upper case PK dosing column names including
+##' \code{TIME}, \code{CMT}, \code{AMT}, \code{RATE}, \code{II},
+##' \code{ADDL}, \code{SS} are also recognized.  However, an 
+##' error will be generated if a mix of upper case and lower
+##' case columns in this family are found.
+##'  
 ##' \code{time} is the observation or event time, \code{cmt} 
 ##' is the compartment number (see \code{\link{init}}), \code{amt} 
 ##' is the dosing amount, \code{rate} is the infusion rate, 
@@ -55,12 +60,13 @@
 ##' additional doses to administer, and \code{ss} is a flag 
 ##' for steady state dosing.  These column names operate 
 ##' similarly to other non-linear mixed effects modeling 
-##' software.  Upper case PK dosing column names including
-##' \code{TIME}, \code{CMT}, \code{AMT}, \code{RATE}, \code{II},
-##' \code{ADDL}, \code{SS} are also recognized.  However, an 
-##' error will be generated if a mix of upper case and lower
-##' case columns are found.
-##'
+##' software. 
+##' 
+##' An error will be generate when mrgsolve detects that the data set
+##' is not sorted by \code{time} within an individual.  Also, an error 
+##' will be generated in case mrgsolve finds negative values for 
+##' \code{time}, unless \code{$PRED} is in use.
+##' 
 ##' Only numeric data can be brought in to the problem.  
 ##' Any non-numeric data columns will be dropped with warning.  
 ##' See \code{\link{numerics_only}}, which is used 

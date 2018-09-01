@@ -112,6 +112,17 @@ odeproblem::~odeproblem(){
   delete [] Param;
 }
 
+double odeproblem::fbio(unsigned int pos) {
+  if(Neq==0) return 1.0;
+  return F.at(pos);
+}
+
+double odeproblem::alag(int cmt){
+  if(Neq==0) return 0.0;
+  return Alag.at(cmt);
+}
+
+
 //! set number of <code>ETAs</code> in the model
 void odeproblem::neta(int n) {
   if(n > 25) d.ETA.assign(n,0.0);
@@ -336,6 +347,7 @@ void odeproblem::advance(double tfrom, double tto) {
       this->advan4(tfrom,tto);
       return;
     }
+
     // If Advan isn't 13, it needs to be 1/2/3/4
     Rcpp::stop("mrgsolve: advan has invalid value.");
   }

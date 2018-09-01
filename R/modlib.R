@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Internal model library.
+##' Internal model library
 ##' 
 ##' @param list list available models
 ##' @export
@@ -48,6 +48,7 @@
 ##' mod <- mread("tmdd",   modlib())
 ##' mod <- mread("viral1", modlib())
 ##' mod <- mread("viral2", modlib())
+##' mod <- mread("pred1",  modlib())
 ##' 
 ##' mrgsolve:::code(mod)
 ##' }
