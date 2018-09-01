@@ -26,12 +26,15 @@
 ##' ways.
 ##'
 ##' @param x a model object
-##' @param evid event ID
-##' @param ID subject ID
 ##' @param time event time
+##' @param amt dose amount
+##' @param evid event ID
+##' @param cmt compartment
+
+##' @param ID subject ID
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for 
 ##' each individual in \code{ID}
-##' @param cmt compartment
+
 ##' @param until the expected maximum \bold{observation} time for this regimen
 ##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
@@ -43,11 +46,14 @@
 ##' 
 ##' @details
 ##' \itemize{
-##' \item Required input for creating events objects include 
-##' \code{time}, \code{amt}, and \code{cmt}.
+##' \item Required items in events objects include 
+##' \code{time}, \code{amt}, \code{evid} and \code{cmt}.
 ##' \item If not supplied, \code{evid} is assumed to be 1.
 ##' \item If not supplied, \code{cmt}  is assumed to be 1.
 ##' \item If not supplied, \code{time} is assumed to be 0.
+##' \item If \code{amt} is not supplied, an error will be generated.
+##' \item Other items can include \code{ii}, \code{ss}, and \code{addl}
+##' (see \code{\link{data_set}} for details on all of these items).
 ##' \item \code{ID} may be specified as a vector.
 ##' \item If replicate is \code{TRUE} (default), thenthe events 
 ##' regimen is replicated for each \code{ID}; otherwise, the number of
@@ -104,7 +110,7 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
     stop("evid cannot be 0 (observation)")
   }
   
-  data <- as_data_frame(list(..., time = time, amt = 0, cmt = cmt, evid = evid))
+  data <- as_data_frame(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
   

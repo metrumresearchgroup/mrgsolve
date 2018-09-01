@@ -118,7 +118,7 @@ test_that("coerce to data frame", {
 
 test_that("get names", {
   e <- ev(amt = 100, time = 0, evid = 1, ii = 12, addl = 24)
-  expect_equal(names(e), c("time", "cmt", "amt", "ii", "addl", "evid"))
+  expect_equal(names(e), c("time", "cmt", "amt", "evid", "ii", "addl"))
 })
 
 test_that("mutate an ev object", {

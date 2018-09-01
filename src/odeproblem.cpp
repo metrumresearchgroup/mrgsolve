@@ -244,13 +244,13 @@ void odeproblem::rate_reset() {
 void odeproblem::rate_main(rec_ptr rec) {
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("invalid infusion setting: rate (R_CMT).", false);
+      throw Rcpp::exception("Invalid infusion setting: rate (R_CMT).", false);
     }
     rec->rate(this->rate(rec->cmtn()));
   }
   if(rec->rate() == -2) {
     if(this->dur(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("invalid infusion setting: duration (D_CMT).",false);
+      throw Rcpp::exception("Invalid infusion setting: duration (D_CMT).",false);
     }
     rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
   }
@@ -348,7 +348,7 @@ void odeproblem::advance(double tfrom, double tto) {
       return;
     }
 
-    // If Advan isn't 13, it needs to be 1/2/3/4
+    // If Advan isn't 13, it needs to be 0/1/2/3/4
     Rcpp::stop("mrgsolve: advan has invalid value.");
   }
   

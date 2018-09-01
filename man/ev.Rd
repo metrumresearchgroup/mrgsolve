@@ -27,6 +27,8 @@ ev(x, ...)
 
 \item{time}{event time}
 
+\item{amt}{dose amount}
+
 \item{evid}{event ID}
 
 \item{cmt}{compartment}
@@ -55,11 +57,14 @@ ways.
 }
 \details{
 \itemize{
-\item Required input for creating events objects include 
-\code{time}, \code{amt}, and \code{cmt}.
+\item Required items in events objects include 
+\code{time}, \code{amt}, \code{evid} and \code{cmt}.
 \item If not supplied, \code{evid} is assumed to be 1.
 \item If not supplied, \code{cmt}  is assumed to be 1.
 \item If not supplied, \code{time} is assumed to be 0.
+\item If \code{amt} is not supplied, an error will be generated.
+\item Other items can include \code{ii}, \code{ss}, and \code{addl}
+(see \code{\link{data_set}} for details on all of these items).
 \item \code{ID} may be specified as a vector.
 \item If replicate is \code{TRUE} (default), thenthe events 
 regimen is replicated for each \code{ID}; otherwise, the number of

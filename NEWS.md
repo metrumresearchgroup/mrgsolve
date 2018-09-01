@@ -5,6 +5,10 @@
 the input data set after optionally converting logical columns
 to integer
 
+## New features
+- Added `$PRED` block for models that don't utilize any compartments
+- Added `pred1` to the `modlib`
+
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN
 # mrgsove 0.8.11
