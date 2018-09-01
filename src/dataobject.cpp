@@ -147,7 +147,7 @@ void dataobject::locate_tran() {
       col[_COL_time_] = tcol;
     }
   }
-
+  
   if(lc) {
     col[_COL_amt_]  = std::find(bg,ed,"amt")  - bg;
     col[_COL_ii_]   = std::find(bg,ed,"ii")   - bg;
@@ -252,13 +252,17 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
             false
         ); 
       }
-
+      
       obs->evid(Data(j,col[_COL_evid_]));
       obs->addl(Data(j,col[_COL_addl_]));
       obs->ii(Data(j,col[_COL_ii_]));
       obs->unarm();
       a[h].push_back(obs);
-      ++obscount;
+      if(obs->evid() ==0) {
+        ++obscount;
+      } else {
+        ++evcount;  
+      }
     }
   }
 }
@@ -393,7 +397,7 @@ void dataobject::get_ids(uidtype* ids) {
 unsigned int dataobject::get_idata_row(const double ID) {
   return idmap[ID];
 }
-  
+
 void dataobject::check_idcol(dataobject& idat) {
   
   if(idat.ncol() == 0) {return;}

@@ -1,4 +1,4 @@
-language: r
+language: R
 sudo: false
 dist: trusty
 cache: packages
@@ -10,10 +10,11 @@ binary_packages:
   - dplyr
   
 env:
-  - R_KEEP_PKG_SOURCE=yes
-  - _R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
-  - _R_S3_METHOD_LOOKUP_USE_TOPENV_AS_DEFENV_=true  
-  - _R_CHECK_FORCE_SUGGESTS=0
+  global: 
+    - R_KEEP_PKG_SOURCE=yes
+    - _R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
+    - _R_S3_METHOD_LOOKUP_USE_TOPENV_AS_DEFENV_=true  
+    - _R_CHECK_FORCE_SUGGESTS=0
 
 pandoc: false
 
