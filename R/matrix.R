@@ -170,14 +170,27 @@ dmat <- function(...) {
 }
 
 ##' Coerce R objects to block or diagonal matrices
+##' 
 ##'
-##' @param x an R object
+##' @param x data frame or list 
 ##' @param pat regular expression, character
 ##' @param cols column names to use instead of \code{pat}
-##' @param ... passed along
+##' @param ... arguments passed to \code{\link{dmat}} or \code{\link{bmat}}
 ##' @return A numeric matrix for list and numeric methods.  For data.frames, 
 ##' a list of matrices are returned.
-##' @seealso \code{\link{bmat}}, \code{\link{dmat}}
+##' @seealso \code{\link{bmat}}, \code{\link{dmat}}, \code{\link{cmat}}
+##' 
+##' @details
+##' Use \code{as_dmat} to create a diagonal matrix, \code{as_bmat}
+##' to create a block matrix, and \code{as_cmat} to create a block 
+##' matrix where diagonal elements are understood to be correlations
+##' rather than covariances. \code{as_cmat} uses \code{as_bmat} to 
+##' form the matrix and then converts off-diagonal elements to 
+##' covariances before returning.
+##' 
+##' The methods for \code{data.frame} will work down the rows
+##' of the data frame and make the appropriate matrix from 
+##' the data in each row.  The result is a list of matrices. 
 ##' 
 ##' @examples
 ##'
@@ -199,13 +212,15 @@ setGeneric("as_bmat", function(x,...) standardGeneric("as_bmat"))
 
 ##' @export
 ##' @rdname as_bmat
-setMethod("as_bmat", "list", function(x,...) {as_bmat(unlist(x),...)})
+setMethod("as_bmat", "list", function(x,...) {
+  as_bmat(unlist(x),...)
+})
 
 ##' @export
 ##' @rdname as_bmat
 setMethod("as_bmat", "numeric", function(x,pat="*",...) {
   x <- grepn(x,pat, !missing(pat))
-  do.call("bmat", list(x))
+  do.call("bmat", list(x,...))
 })
 
 ##' @export
@@ -221,12 +236,14 @@ setMethod("as_bmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
     cols <- grepl(pat,names(x))
   }
   x <- x[,cols,drop=FALSE]
-  lapply(seq_len(nrow(x)), function(i) bmat(unlist(x[i,])))
+  lapply(seq_len(nrow(x)), function(i) bmat(unlist(x[i,],use.names=FALSE),...))
 })
 
 ##' @export
 ##' @rdname as_bmat
-setMethod("as_bmat", "ANY", function(x,...) {as_bmat(as.data.frame(x),...)})
+setMethod("as_bmat", "ANY", function(x,...) {
+  as_bmat(as.data.frame(x),...)
+})
 
 ##' @export
 ##' @rdname as_bmat
@@ -234,17 +251,21 @@ setGeneric("as_dmat", function(x,...) standardGeneric("as_dmat"))
 
 ##' @export
 ##' @rdname as_bmat
-setMethod("as_dmat", "list", function(x,...) {as_dmat(unlist(x),...)})
+setMethod("as_dmat", "list", function(x,...) {
+  as_dmat(unlist(x),...)
+})
 
 ##' @rdname as_bmat
 ##' @export
-setMethod("as_dmat", "ANY", function(x,...) {as_dmat(as.data.frame(x),...)})
+setMethod("as_dmat", "ANY", function(x,...) {
+  as_dmat(as.data.frame(x),...)
+})
 
 ##' @rdname as_bmat
 ##' @export
 setMethod("as_dmat", "numeric", function(x,pat="*",...) {
   x <- grepn(x,pat, !missing(pat))
-  do.call("dmat", list(x))
+  do.call("dmat", list(x,...))
 })
 
 ##' @export
@@ -260,6 +281,13 @@ setMethod("as_dmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
     cols <- grepl(pat,names(x))
   }
   x <- x[,cols,drop=FALSE]
-  lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,])))
+  lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,],use.names=FALSE),...))
 })
 
+##' @export
+##' @rdname as_bmat
+as_cmat <- function(x,...) {
+  x <- as_bmat(x,...)
+  decorr(x)
+  x
+}
