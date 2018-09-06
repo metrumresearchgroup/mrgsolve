@@ -56,7 +56,17 @@ struct databox {
   void stop_id() {SYSTEMOFF=1;}
   void stop_id_cf(){SYSTEMOFF=2;}
   std::vector<shuttle> recs;
-  
+  void mevent(double time, int evid) {
+    shuttle ev(time,evid);
+    recs.push_back(ev);
+  }
+  void mevent(double time, int evid, int cmt, double amt, double rate) {
+    shuttle ev(time,evid); 
+    ev.cmt = cmt;
+    ev.amt = amt; 
+    ev.rate = rate;
+    recs.push_back(ev);
+  }
 };
 
 //! vector of <code>datarecord</code> objects for one <code>ID</code>
