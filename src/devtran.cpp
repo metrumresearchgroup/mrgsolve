@@ -197,9 +197,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Need this for later
   int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
-   
+  
   if((obscount == 0) || (obsaug)) {
-     
+    
     Rcpp::NumericMatrix tgrid = Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
     
     bool multiple_tgrid = tgrid.ncol() > 1;
@@ -366,7 +366,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob->rown(0);
   
   prob->config_call();
-  
+  reclist mtimehx;
   // i is indexing the subject, j is the record
   
   // LOOP ACROSS IDS:
@@ -474,25 +474,37 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->init_call_record(tto);
       }
       
-      // if(prob->any_mtime()) {
-      //   std::vector<shuttle> mt  = prob->mtimes();
-      //   for(size_t mti = 0; mti < mt.size(); ++mti) {
-      //     int this_evid = mt[mti].evid;
-      //     double this_time = mt[mti].time;
-      //     if(this_time < tto) next;
-      //     double this_amt = mt[mti].amt;
-      //     const int this_cmt = mt[mti].cmt;
-      //     if(neq!=0 && this_evid !=0) {
-      //       if((this_cmt == 0) || (abs(this_cmt) > neq)) {
-      //         CRUMP("cmt number in event from $MAIN out of range");
-      //       }
-      //     }
-      //     rec_ptr new_ev = NEWREC(this_cmt, this_evid,this_amt, this_time, 0.0);
-      //     a[i].push_back(new_ev);
-      //     std::sort(a[i].begin()+i,a[i].end(),CompRec());
-      //   }
-      //   prob->clear_mtime();
-      // }
+      if(prob->any_mtime()) {
+        if(prob->newind() <=1) mtimehx.clear();  
+        std::vector<shuttle> mt  = prob->mtimes();
+        for(size_t mti = 0; mti < mt.size(); ++mti) {
+          double this_time = (mt[mti]).time;
+          if(this_time < tto) continue;
+          int this_evid = (mt[mti]).evid;
+          double this_amt = mt[mti].amt;
+          int this_cmt = (mt[mti]).cmt;
+          if(neq!=0 && this_evid !=0) {
+            if((this_cmt == 0) || (this_cmt > neq)) {
+              Rcpp::Rcout << this_cmt << std::endl;
+              CRUMP("Compartment number in event from $MAIN out of range.");
+            }
+          }
+        
+          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,0.0);
+          new_ev->phantom_rec();
+          //Rcpp::Rcout << "length " << mtimehx.size() << std::endl;
+          bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
+          if(!foo) {
+            //Rcpp::Rcout << "didn't find it " << tto << " " << this_evid << " " << this_time << std::endl;
+            a[i].push_back(new_ev);
+            std::sort(a[i].begin()+i,a[i].end(),CompRec());
+            mtimehx.push_back(new_ev);
+          } else {
+            //Rcpp::Rcout << "FOUND it " << tto << " " << this_evid << " " << this_time << std::endl;
+          }
+        }
+        prob->clear_mtime();
+      }
       
       // Some non-observation event happening
       if(this_rec->is_event()) {

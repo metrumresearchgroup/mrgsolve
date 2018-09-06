@@ -107,6 +107,7 @@ public:
   void unarm() {Armed=false;}
   
   void phantom_rec() {Output=false; Fromdata=false;}
+  bool is_phantom() {return !Output && !Fromdata;}
   
 protected:
   
@@ -128,6 +129,7 @@ protected:
 
 
 bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
+bool CompEqual(const reclist& a, double time, int evid, int cmt);
 
 /** 
  * @brief Functor for sorting data records in <code>reclist</code>. 
