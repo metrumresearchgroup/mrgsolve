@@ -129,7 +129,7 @@ protected:
 
 
 bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
-bool CompEqual(const reclist& a, double time, int evid, int cmt);
+bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt);
 
 /** 
  * @brief Functor for sorting data records in <code>reclist</code>. 
