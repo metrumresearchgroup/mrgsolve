@@ -65,6 +65,7 @@ struct shuttle {
   int cmt = 1;
   double amt = 0.0; 
   double rate = 0.0;
+  bool now = false;
 };
 
 //! signature for <code>$MAIN</code>

@@ -474,7 +474,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->init_call_record(tto);
       }
       
-
+      
       // Some non-observation event happening
       if(this_rec->is_event()) {
         
@@ -579,12 +579,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
           rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,0.0);
           new_ev->phantom_rec();
-          bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
-          if(!foo) {
-            a[i].push_back(new_ev);
-            std::sort(a[i].begin(),a[i].end(),CompRec());
-            mtimehx.push_back(new_ev);
-          } 
+          if(mt[mti].now) {
+            new_ev->implement(prob);
+          } else {
+            bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
+            if(!foo) {
+              a[i].push_back(new_ev);
+              std::sort(a[i].begin(),a[i].end(),CompRec());
+              mtimehx.push_back(new_ev);
+            } 
+          }
         }
         prob->clear_mtime();
       }
