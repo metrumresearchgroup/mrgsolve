@@ -129,3 +129,26 @@ test_that("numerics_only", {
   expect_true(all(mrgsolve:::is.numeric.data.frame(df)))
   expect_silent(numerics_only(data,quiet=TRUE))
 })
+
+test_that("missing value in param column is error", {
+  data <- expand.ev(amt = 100, ii = 24, addl = 2, WT = NA_real_, FOO = 2)
+  expect_error(mrgsim_d(mod,data), 
+               regexp="Input data has parameter column\\(s\\) with NA")
+  
+  idata <- dplyr::select(data, ID,WT)
+  expect_error(mrgsim_i(mod,idata), 
+               regexp="Input data has parameter column\\(s\\) with NA*")
+})
+
+test_that("missing value in time/rate/ID is error", {
+  data <- data.frame(ID = 1, time = NA_real_, amt = 100, cmt = 1, evid=1)
+  expect_error(mrgsim_d(mod,data), 
+               regexp="Input data has column\\(s\\) with NA*")
+  
+  
+  data <- data.frame(ID = 1, rate = NA_real_, amt = 100, cmt = 1, evid=1,time=0)
+  expect_error(mrgsim_d(mod,data), 
+               regexp="Input data has column\\(s\\) with NA*")
+})
+
+

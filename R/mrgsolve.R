@@ -463,7 +463,7 @@ do_mrgsim <- function(x,
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,verbose=verbose)
+    idata <- valid_idata_set(idata,x,verbose=verbose)
   }
   
   tcol <- timename(data)
@@ -670,7 +670,7 @@ do_mrgsimple <- function(x,
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,verbose=verbose)
+    idata <- valid_idata_set(idata,x,verbose=verbose)
   }
   
   tcol <- timename(data)
@@ -747,9 +747,6 @@ do_mrgsimple <- function(x,
       mod=x,
       seed=as.integer(seed))
 }
-
-
-
 
 param_as_parent <- function(x) {
   e <- as.environment(as.list(param(x)))

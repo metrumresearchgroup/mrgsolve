@@ -9,7 +9,7 @@
 \usage{
 valid_data_set(x, m = NULL, verbose = FALSE, quiet = FALSE)
 
-valid_idata_set(x, verbose = FALSE, quiet = FALSE)
+valid_idata_set(x, m, verbose = FALSE, quiet = FALSE)
 
 valid_data_set.matrix(x, verbose = FALSE)
 }
