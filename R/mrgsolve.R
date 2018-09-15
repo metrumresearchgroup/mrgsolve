@@ -31,10 +31,17 @@ null_idata <- matrix(0,
                      nrow=0, ncol=1, 
                      dimnames=list(NULL, c("ID")))
 
+no_idata_set <- function() {
+  structure(null_idata,class="valid_idata_set")  
+}
+
 null_data <-  matrix(0,  
                      nrow=0, ncol=3, 
                      dimnames=list(NULL, c("ID", "time", "cmt")))
 
+no_data_set <- function() {
+  structure(matrix(1,dimnames=list(NULL, "ID")), class="valid_data_set")
+}
 
 tgrid_matrix <- function(x) {
   n <- length(x)
@@ -292,7 +299,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
-    c(list(x = x, data = events, idata = null_idata), args)
+    c(list(x = x, data = events, idata = no_idata_set()), args)
   )
 } 
 
@@ -304,7 +311,7 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
-    c(list(x = x, data = data, idata = null_idata), args)
+    c(list(x = x, data = data, idata = no_idata_set()), args)
   )
 } 
 
@@ -379,7 +386,7 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
-    c(list(x = x, data = data, idata = null_idata), args)
+    c(list(x = x, data = data, idata = no_idata_set()), args)
   )
 }
 
@@ -429,7 +436,7 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @export
 do_mrgsim <- function(x,
                       data,
-                      idata = null_idata,
+                      idata = no_idata_set(),
                       carry.out = character(0),
                       seed = as.integer(NA),
                       Request = character(0),

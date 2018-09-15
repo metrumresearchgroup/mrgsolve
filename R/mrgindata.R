@@ -218,24 +218,24 @@ valid_data_set.matrix <- function(x,verbose=FALSE) {
 
 check_data_set_na <- function(data,m) {
   if(!anyNA(data)) return(invisible(NULL))
+  err <- FALSE
   flagged <- check_column_na(
     data,
     Pars(m)
   )
-  if(length(flagged) > 0) {
-    stop("Input data has parameter column(s) with NA:\n ", 
-         paste0(flagged, collapse=", "), 
-         call. = FALSE)
+  for(col in flagged) {
+    warning("Parameter column ", col, " must not contain missing values.", call.=FALSE,immediate.=TRUE) 
+    err <- TRUE
   }
   flagged <- check_column_na(
     data,
     c("ID","TIME", "time", "RATE", "rate")
   )
-  if(length(flagged) > 0) {
-    stop("Input data has column(s) with NA:\n ",
-         paste0(flagged, collapse=", "),
-         call. = FALSE)
-  }
+  for(col in flagged) {
+    warning(col, " column must not contain missing values.", call.=FALSE,immediate.=TRUE) 
+    err <- TRUE
+  }  
+  if(err) stop("Found missing values in input data.", call.=FALSE)
   return(invisible(NULL))
 }
 
