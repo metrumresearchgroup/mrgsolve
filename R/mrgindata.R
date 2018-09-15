@@ -149,6 +149,9 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
   # Drop character columns
   x <- numeric_data_matrix(x,quiet)
+  
+  check_data_set_na(x,m)
+  
   x <- cbind(x, matrix(0,
                        ncol=1,
                        nrow=nrow(x), 
@@ -180,7 +183,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 ##' @rdname valid_data
 ##' 
 ##' @export
-valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE) {
+valid_idata_set <- function(x,m,verbose=FALSE,quiet=FALSE) {
   
   if(verbose) quiet <- FALSE
   
@@ -196,17 +199,58 @@ valid_idata_set <- function(x,verbose=FALSE,quiet=FALSE) {
     stop("duplicate IDs not allowed in idata_set",call.=FALSE) 
   }
   
-  structure(numeric_data_matrix(as.data.frame(x),quiet),
-            class="valid_idata_set")
+  x <- numeric_data_matrix(x,quiet)
+  
+  check_data_set_na(x,m)
+  
+  structure(x, class="valid_idata_set")
 }
 
 ##' @rdname valid_data
 ##' @export
 valid_data_set.matrix <- function(x,verbose=FALSE) {
-  
   if(is.valid_data_set(x)) return(x)
   if(is.numeric(x)) {
     return(valid_data_set(as.data.frame(x)))
   }
   stop("input data matrix is not numeric",call.=FALSE)
 }
+
+check_data_set_na <- function(data,m) {
+  if(!anyNA(data)) return(invisible(NULL))
+  flagged <- check_column_na(
+    data,
+    Pars(m)
+  )
+  if(length(flagged) > 0) {
+    stop("Input data has parameter column(s) with NA:\n ", 
+         paste0(flagged, collapse=", "), 
+         call. = FALSE)
+  }
+  flagged <- check_column_na(
+    data,
+    c("ID","TIME", "time", "RATE", "rate")
+  )
+  if(length(flagged) > 0) {
+    stop("Input data has column(s) with NA:\n ",
+         paste0(flagged, collapse=", "),
+         call. = FALSE)
+  }
+  return(invisible(NULL))
+}
+
+check_column_na <- function(data,cols) {
+  check <- intersect(colnames(data),cols)
+  if(length(check)==0) return(character(0))
+  if(!anyNA(data[,check])) return(character(0))
+  flagged <- character(0)
+  for(col in check) {
+    if(anyNA(data[,col])) {
+      flagged <- c(flagged,col)
+    }
+  }
+  return(flagged)
+}
+
+
+

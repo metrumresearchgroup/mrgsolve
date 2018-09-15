@@ -75,7 +75,7 @@ for steady state dosing.  These column names operate
 similarly to other non-linear mixed effects modeling 
 software. 
 
-An error will be generate when mrgsolve detects that the data set
+An error will be generated when mrgsolve detects that the data set
 is not sorted by \code{time} within an individual.  Also, an error 
 will be generated in case mrgsolve finds negative values for 
 \code{time}, unless \code{$PRED} is in use.
@@ -84,6 +84,11 @@ Only numeric data can be brought in to the problem.
 Any non-numeric data columns will be dropped with warning.  
 See \code{\link{numerics_only}}, which is used 
 to prepare the data set. 
+
+An error will be generated if any parameter columns in the 
+input data set contain \code{NA}.  Likewise, and error will 
+be generated if missing values are found in the following
+columns: \code{ID}, \code{time}/\code{TIME}, \code{rate}/\code{RATE}. 
 
 See \code{\link{exdatasets}} for different example data sets.
 }

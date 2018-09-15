@@ -57,6 +57,9 @@
 ##' (not the \code{idata_set}) that determines the number of individuals in the
 ##' simulation.
 ##' 
+##' An error will be generated if any parameter columns in the 
+##' input idata set contain \code{NA}.  
+##'  
 ##' @examples
 ##' 
 ##' mod <- mrgsolve:::house()

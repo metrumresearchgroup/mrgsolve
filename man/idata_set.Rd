@@ -64,6 +64,9 @@ In this case, the \code{idata_set} is used as a parameter lookup for \code{IDs}
 found in the \code{data_set}.  Remember in this case, it is the \code{data_set}
 (not the \code{idata_set}) that determines the number of individuals in the
 simulation.
+
+An error will be generated if any parameter columns in the 
+input idata set contain \code{NA}.
 }
 \examples{
 
