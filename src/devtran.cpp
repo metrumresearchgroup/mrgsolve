@@ -487,8 +487,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         bool sort_recs = false;
-        unsigned int sort_offset = 0;
-        
+
         if(this_rec->from_data()) {
           
           if(this_rec->rate() < 0) {
@@ -510,11 +509,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->schedule(a[i], maxtime, addl_ev_first, Fn);
             this_rec->unarm();
             sort_recs = true;
-            sort_offset = 0;
           } else { // no valid lagtime
             this_rec->schedule(a[i], maxtime, addl_ev_first, Fn);
             sort_recs = this_rec->needs_sorting();
-            sort_offset = 1;
           }
         } // from data
         
@@ -538,7 +535,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         // SORT
         if(sort_recs) {
-          std::sort(a[i].begin()+sort_offset,a[i].end(),CompRec());
+          std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
         }
         
         if(tad) {
@@ -585,7 +582,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
             if(!foo) {
               a[i].push_back(new_ev);
-              std::sort(a[i].begin(),a[i].end(),CompRec());
+              std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
               mtimehx.push_back(new_ev);
             } 
           }
