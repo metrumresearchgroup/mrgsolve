@@ -4,7 +4,7 @@
 \alias{do_mrgsim}
 \title{Do an mrgsim run}
 \usage{
-do_mrgsim(x, data, idata = null_idata, carry.out = character(0),
+do_mrgsim(x, data, idata = no_idata_set(), carry.out = character(0),
   seed = as.integer(NA), Request = character(0), capture = NULL,
   obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
   deslist = list(), descol = character(0), filbak = TRUE, tad = FALSE,
