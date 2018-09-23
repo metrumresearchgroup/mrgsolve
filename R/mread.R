@@ -45,7 +45,7 @@ NULL
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are 
 ##' cleaned up first
-##' @param ... passed along
+##' @param ... passed to \code{\link[mrgsolve]{update}}
 ##' 
 ##' @details
 ##' The \code{model} argument is required.  For typical use, 

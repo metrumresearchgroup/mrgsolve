@@ -24,7 +24,7 @@
 new_build <- function(file, model, project, soloc, code = NULL, 
                       preclean = FALSE, udll = FALSE) {
   
-  if(length(model) == 0) {
+  if(length(model) == 0 | nchar(model)==0) {
     stop("invalid model name", call. = FALSE)
   }
   
