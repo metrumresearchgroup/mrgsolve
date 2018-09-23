@@ -6,6 +6,8 @@
 \alias{zero.re}
 \alias{zero.re,mrgmod-method}
 \alias{zero_re}
+\alias{drop_re}
+\alias{drop.re}
 \alias{as.list,matlist-method}
 \alias{as.matrix,matlist-method}
 \alias{names,matlist-method}
@@ -21,6 +23,10 @@ zero.re(.x, ...)
 \S4method{zero.re}{mrgmod}(.x, ..., .drop = FALSE)
 
 zero_re(...)
+
+drop_re(.x, ...)
+
+drop.re(...)
 
 \S4method{as.list}{matlist}(x, ...)
 

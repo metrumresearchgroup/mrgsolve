@@ -232,14 +232,18 @@ setMethod("zero.re", "mrgmod", function(.x,...,.drop=FALSE) {
 ##' @export
 zero_re <- function(...) zero.re(...)
 
+##' @rdname matlist
+##' @export
 drop_re <- function(.x,...) {
+  warning("drop.re and drop_re are deprecated.  Use zero_re instead.")
   what <- as.character(eval(substitute(alist(...))))
   if(length(what)==0) what <- c("omega", "sigma")
   if(is.element("omega", what)) .x@omega <- new("omegalist")
   if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
   return(.x)
 }
-
+##' @rdname matlist
+##' @export
 drop.re <- function(...) drop_re(...)
 
 ##' @export
