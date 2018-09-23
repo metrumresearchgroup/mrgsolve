@@ -19,6 +19,9 @@ for dosing compartment)
 input data set with the following names: `ID`, `time/TIME`, `rate/RATE` ,
 or any column that shares a name with an item in the parameter list.
 
+## Deprecated
+- `drop.re` and `drop_re`; use `zero_re` instead
+
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN
 # mrgsove 0.8.11
