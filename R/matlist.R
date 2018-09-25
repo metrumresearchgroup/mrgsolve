@@ -203,17 +203,20 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 ##'
 ##' @param .x a matlist object
 ##' @param x a matlist object
+##' @param .drop if \code{TRUE}, \code{zero_re} will drop \code{omega}
+##' or \code{sigma} or both entirely
 ##' @param ... passed along
 ##'
 ##' @export
-##' @aliases zero.re drop.re
+##' @aliases zero.re 
 ##' @name matlist
 ##' @rdname matlist
 setGeneric("zero.re", function(.x,...) standardGeneric("zero.re"))
 
 ##' @export
 ##' @rdname matlist
-setMethod("zero.re", "mrgmod", function(.x,...) {
+setMethod("zero.re", "mrgmod", function(.x,...,.drop=FALSE) {
+  if(.drop) return(drop_re(.x,...))
   what <- as.character(eval(substitute(alist(...))))
   if(length(what)==0) what <- c("omega", "sigma")
   if(is.element("omega", what) & !is.null(nrow(omat(.x)))) {
@@ -229,23 +232,19 @@ setMethod("zero.re", "mrgmod", function(.x,...) {
 ##' @export
 zero_re <- function(...) zero.re(...)
 
-##' @export
 ##' @rdname matlist
-setGeneric("drop.re", function(.x,...) standardGeneric("drop.re"))
-
 ##' @export
-##' @rdname matlist
-setMethod("drop.re", "mrgmod", function(.x,...) {
+drop_re <- function(.x,...) {
+  .Deprecated(msg="drop.re and drop_re are deprecated.  Use zero_re instead.")
   what <- as.character(eval(substitute(alist(...))))
   if(length(what)==0) what <- c("omega", "sigma")
   if(is.element("omega", what)) .x@omega <- new("omegalist")
   if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
   return(.x)
-})
-
+}
 ##' @rdname matlist
 ##' @export
-drop_re <- function(...) drop.re(...)
+drop.re <- function(...) drop_re(...)
 
 ##' @export
 ##' @rdname matlist
