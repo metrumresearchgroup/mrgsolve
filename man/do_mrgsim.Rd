@@ -53,7 +53,7 @@ backward method; otherwise, use \code{locf}}
 \item{skip_init_calc}{don't use \code{$MAIN} to 
 calculate initial conditions}
 
-\item{...}{not used}
+\item{...}{passed to update}
 }
 \description{
 Do an mrgsim run

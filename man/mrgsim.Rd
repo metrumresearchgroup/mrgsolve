@@ -143,5 +143,5 @@ out
 
 }
 \seealso{
-\code{\link{mrgsim_variants}}
+\code{\link{mrgsim_variants}}, \code{\link{mrgsimple}}
 }

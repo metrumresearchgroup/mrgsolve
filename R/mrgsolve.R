@@ -20,24 +20,29 @@
 
 tran_upper <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 
-nodataset <- matrix(0, nrow=0, ncol=8, 
-                    dimnames=list(
-                      NULL,
-                      c("ID", "time", "evid", "amt", "cmt","addl", "ii", "ss")
-                    )
+nodataset <- matrix(
+  0, nrow=0, ncol=8, 
+  dimnames=list(
+    NULL,
+    c("ID", "time", "evid", "amt", "cmt","addl", "ii", "ss")
+  )
 )
 
-null_idata <- matrix(0, 
-                     nrow=0, ncol=1, 
-                     dimnames=list(NULL, c("ID")))
+null_idata <- matrix(
+  0, 
+  nrow=0, ncol=1, 
+  dimnames=list(NULL, c("ID"))
+)
 
 no_idata_set <- function() {
   structure(null_idata,class="valid_idata_set")  
 }
 
-null_data <-  matrix(0,  
-                     nrow=0, ncol=3, 
-                     dimnames=list(NULL, c("ID", "time", "cmt")))
+null_data <-  matrix(
+  0,  
+  nrow=0, ncol=3, 
+  dimnames=list(NULL, c("ID", "time", "cmt"))
+)
 
 no_data_set <- function() {
   structure(matrix(1,dimnames=list(NULL, "ID")), class="valid_data_set")
@@ -81,7 +86,7 @@ validate_idata <- function(idata) {
 ##' object as well as arguments passed in.  Note that there are several 
 ##' non-formal arguments to this function that can be used to customize 
 ##' the simulation run and it's output. Use \code{mrgsim_df} to 
-##' return a data frame rather than \code{mrgsims} object.
+##' return a data frame rather than \code{mrgsims} object. 
 ##'
 ##' 
 ##' @param x the model objects
@@ -170,7 +175,7 @@ validate_idata <- function(idata) {
 ##'
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim_variants}}
+##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_dq}}
 ##' 
 ##' @examples
 ##' ## example("mrgsim")
@@ -283,9 +288,11 @@ mrgsim_df <- function(...) as.data.frame(mrgsim(...))
 ##'     \code{idata_set}
 ##'   \item \code{mrgsim_i} simulate using a \code{idata_set}
 ##'   \item \code{mrgsim_0} simulate using just the model
+##'   \item \code{mrgsim_dq} simulate from a data set with quicker 
+##'   turnaround (see \code{\link{mrgsim_dq}})
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_dq}}
 ##' @name mrgsim_variants
 ##' @rdname mrgsim_variants
 ##' @export
@@ -430,7 +437,7 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' backward method; otherwise, use \code{locf}
 ##' @param skip_init_calc don't use \code{$MAIN} to 
 ##' calculate initial conditions
-##' @param ... not used
+##' @param ... passed to update
 ##' 
 ##' 
 ##' @export

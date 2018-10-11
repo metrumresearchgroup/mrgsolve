@@ -56,5 +56,5 @@ inputs from a pipeline.
 }
 }
 \seealso{
-\code{\link{mrgsim}}
+\code{\link{mrgsim}}, \code{\link{mrgsimple}}
 }
