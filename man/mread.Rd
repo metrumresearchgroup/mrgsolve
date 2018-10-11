@@ -49,7 +49,7 @@ where the model is specified}
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
 cleaned up first}
 
-\item{...}{passed along}
+\item{...}{passed to \code{\link[mrgsolve]{update}}}
 }
 \description{
 \code{mread} reads and parses a \code{mrgsolve} model 

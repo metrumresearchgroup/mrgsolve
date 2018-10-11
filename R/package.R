@@ -206,7 +206,7 @@ NULL
 ##'
 ##' @name solversettings
 ##' @rdname solversettings
-##' @seealso \code{\link{aboutsolver}}, \code{\link{update}}
+##' @seealso \code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
 ##' 
 ##' @details
 ##' 

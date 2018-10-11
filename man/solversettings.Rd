@@ -85,5 +85,5 @@ C-----------------------------------------------------------------------
 }
 
 \seealso{
-\code{\link{aboutsolver}}, \code{\link{update}}
+\code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
 }
