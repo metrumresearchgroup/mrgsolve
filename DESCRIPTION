@@ -82,6 +82,7 @@ Collate:
     'modspec.R'
     'mread.R'
     'mrgindata.R'
+    'mrgsim_dq.R'
     'mrgsims.R'
     'mrgsolve.R'
     'nmxml.R'

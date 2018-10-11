@@ -33,3 +33,7 @@ QUICKSIM <- function(parin, param, init, parnames, data, n, idata, req, capturei
     .Call(`_mrgsolve_QUICKSIM`, parin, param, init, parnames, data, n, idata, req, capturei, funs, nre)
 }
 
+SIMDATA <- function(parin, inpar, parnames, init, cmtnames, capture, funs, data, OMEGA, SIGMA, envir) {
+    .Call(`_mrgsolve_SIMDATA`, parin, inpar, parnames, init, cmtnames, capture, funs, data, OMEGA, SIGMA, envir)
+}
+
