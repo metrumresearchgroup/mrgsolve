@@ -11,7 +11,6 @@
 ##' @export
 mrgsim_dq <- function(x,
                       data,
-                      capture = NULL,
                       recsort = 1,
                       skip_init_calc = FALSE, ...) {
   

@@ -53,8 +53,10 @@ inputs from a pipeline.
     \code{idata_set}
   \item \code{mrgsim_i} simulate using a \code{idata_set}
   \item \code{mrgsim_0} simulate using just the model
+  \item \code{mrgsim_dq} simulate from a data set with quicker 
+  turnaround (see \code{\link{mrgsim_dq}})
 }
 }
 \seealso{
-\code{\link{mrgsim}}, \code{\link{mrgsimple}}
+\code{\link{mrgsim}}, \code{\link{mrgsim_dq}}
 }

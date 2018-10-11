@@ -2,10 +2,9 @@
 % Please edit documentation in R/mrgsim_dq.R
 \name{mrgsim_dq}
 \alias{mrgsim_dq}
-\title{Do a simplified simulation run}
+\title{Do a simplified, quicker simulation run}
 \usage{
-mrgsim_dq(x, data, capture = NULL, recsort = 1, skip_init_calc = FALSE,
-  ...)
+mrgsim_dq(x, data, recsort = 1, skip_init_calc = FALSE, ...)
 }
 \arguments{
 \item{x}{a model object}
@@ -20,5 +19,5 @@ calculate initial conditions}
 \item{...}{passed to update}
 }
 \description{
-Do a simplified simulation run
+Do a simplified, quicker simulation run
 }
