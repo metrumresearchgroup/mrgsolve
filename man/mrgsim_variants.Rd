@@ -32,11 +32,16 @@ one parameter per row (see \code{\link{idata_set}})}
 
 \item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
 
-\item{...}{passed to \code{\link[mrgsolve]{update}}}
+\item{...}{passed to \code{\link[mrgsolve]{update}} and 
+\code{\link{do_mrgsim}}; please see these help topics for other 
+arguments for \code{\link{mrgsim}}}
 }
 \description{
 These functions are called by \code{\link{mrgsim}} and have
-explicit input requirements written into the function name.
+explicit input requirements written into the function name. Use 
+\code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
+simulation for tasks like parameter optimization,  sensitivity analyses, 
+or optimal design.
 }
 \details{
 \bold{Important:} all of these functions require that 
@@ -53,10 +58,10 @@ inputs from a pipeline.
     \code{idata_set}
   \item \code{mrgsim_i} simulate using a \code{idata_set}
   \item \code{mrgsim_0} simulate using just the model
-  \item \code{mrgsim_dq} simulate from a data set with quicker 
-  turnaround (see \code{\link{mrgsim_dq}})
+  \item \code{mrgsim_q} simulate from a data set with quicker 
+  turnaround (see \code{\link{mrgsim_q}})
 }
 }
 \seealso{
-\code{\link{mrgsim}}, \code{\link{mrgsim_dq}}
+\code{\link{mrgsim}}, \code{\link{mrgsim_q}}
 }

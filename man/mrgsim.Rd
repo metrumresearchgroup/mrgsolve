@@ -22,7 +22,9 @@ one parameter per row (see \code{\link{idata_set}})}
 \item{nid}{integer number of individuals to simulate; only used if 
 idata and data are missing}
 
-\item{...}{passed to \code{\link[mrgsolve]{update}}}
+\item{...}{passed to \code{\link[mrgsolve]{update}} and 
+\code{\link{do_mrgsim}}; please see these help topics for other 
+arguments for \code{\link{mrgsim}}}
 }
 \value{
 an object of class \code{\link{mrgsims}}
@@ -31,11 +33,17 @@ an object of class \code{\link{mrgsims}}
 This function sets up the simulation run from data stored in the model
 object as well as arguments passed in.  Note that there are several 
 non-formal arguments to this function that can be used to customize 
-the simulation run and it's output. Use \code{mrgsim_df} to 
-return a data frame rather than \code{mrgsims} object.
+the simulation run and it's output.  Use \code{\link{mrgsim_q}} instead to
+benchark mrgsolve or to do repeated quick simulation for tasks like 
+parameter optimization,  sensitivity analyses, or optimal design.  See
+\code{\link{mrgsim_variants}} for other mrgsim-like functions that have 
+more focused inputs.
 }
 \details{
 \itemize{
+
+\item Use \code{mrgsim_df} to return a data frame rather than 
+\code{mrgsims} object.
 
 \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
 
@@ -62,6 +70,8 @@ simulated output that occur prior to the first record in \code{data}.
 }
 \section{Additional arguments}{
 
+
+These are other arguments that are passed to \code{\link{do_mrgsim}}.
 
 \itemize{
 
@@ -143,5 +153,6 @@ out
 
 }
 \seealso{
-\code{\link{mrgsim_variants}}, \code{\link{mrgsim_dq}}
+\code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}, 
+\code{\link{do_mrgsim}}
 }

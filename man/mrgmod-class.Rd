@@ -100,5 +100,5 @@ the simulation \code{<character>}}
 }
 
 \seealso{
-\code{\link{update}}, \code{\link{solversettings}}
+\code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 }
