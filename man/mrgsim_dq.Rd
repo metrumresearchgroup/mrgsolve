@@ -4,7 +4,8 @@
 \alias{mrgsim_dq}
 \title{Do a simplified, quicker simulation run}
 \usage{
-mrgsim_dq(x, data, recsort = 1, skip_init_calc = FALSE, ...)
+mrgsim_dq(x, data, recsort = 1, stime = numeric(0),
+  skip_init_calc = FALSE, ...)
 }
 \arguments{
 \item{x}{a model object}
@@ -12,6 +13,10 @@ mrgsim_dq(x, data, recsort = 1, skip_init_calc = FALSE, ...)
 \item{data}{a simulation data set}
 
 \item{recsort}{record sorting flag}
+
+\item{stime}{a numeric vector of observation times; these observation
+times will only be added to the output if there are no observation
+records in \code{data}}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to 
 calculate initial conditions}

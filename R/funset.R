@@ -20,7 +20,7 @@ FUNSET_ERROR__ <-
 '
 There was a problem accessing the model shared object.
   Either the model object is corrupted or  
-  the model was not properly compiled.
+  the model was not properly compiled and/or loaded.
 Check mrgsolve:::funset(mod) for more information.
 '
 

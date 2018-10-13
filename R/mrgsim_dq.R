@@ -3,6 +3,9 @@
 ##' @param x a model object
 ##' @param data a simulation data set
 ##' @param recsort record sorting flag
+##' @param stime a numeric vector of observation times; these observation
+##' times will only be added to the output if there are no observation
+##' records in \code{data}
 ##' @param skip_init_calc don't use \code{$MAIN} to 
 ##' calculate initial conditions
 ##' @param ... passed to update
@@ -12,16 +15,8 @@
 mrgsim_dq <- function(x,
                       data,
                       recsort = 1,
+                      stime = numeric(0),
                       skip_init_calc = FALSE, ...) {
-  
-  ## ODE and init functions:
-  ## This both touches the functions as well as
-  ## gets the function pointers
-  
-  if(!model_loaded(x)) {
-    stop("The model is not properly loaded.  Aborting simulation.",
-         call.=FALSE) 
-  }
   
   ## data
   if(!is.valid_data_set(data)) {
@@ -48,6 +43,7 @@ mrgsim_dq <- function(x,
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
+  parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
   
   # already took intersect

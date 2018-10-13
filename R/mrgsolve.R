@@ -465,11 +465,6 @@ do_mrgsim <- function(x,
   ## This both touches the functions as well as
   ## gets the function pointers
   
-  if(!model_loaded(x)) {
-    stop("The model is not properly loaded.  Aborting simulation.",
-         call.=FALSE) 
-  }
-  
   ## data
   if(!is.valid_data_set(data)) {
     data <- valid_data_set(data,x,verbose)
@@ -671,11 +666,6 @@ do_mrgsimple <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
-  
-  if(!model_loaded(x)) {
-    stop("The model is not properly loaded.  Aborting simulation.",
-         call.=FALSE) 
-  }
   
   ## data
   if(!is.valid_data_set(data)) {

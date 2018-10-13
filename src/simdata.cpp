@@ -139,18 +139,49 @@ Rcpp::List SIMDATA(const Rcpp::List parin,
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, false, false);
   
+  bool obsaug = false;
+  
+  int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
+  
+  if((obscount == 0) || (obsaug)) {
+    
+    Rcpp::NumericVector stime = Rcpp::as<Rcpp::NumericVector>(parin["stime"]);
+  
+    size_t n = stime.size();
+    
+    std::vector<rec_ptr> observations;
+    
+    observations.reserve(n);
+    
+    for(int j = 0; j < n; ++j) {
+      rec_ptr obs = NEWREC(stime[j],nextpos,true);
+      observations.push_back(obs);
+    }
+    
+    // We have to look up the design from the idata set
+    for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+      it->reserve((it->size() + n));
+      for(int h=0; h < n; ++h) {
+        it->push_back(observations[h]);
+        ++obscount;
+      } 
+      std::sort(it->begin(), it->end(), CompRec());
+    }
+  }
+  
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
   const unsigned int NN =  (obscount + evcount);
-  int precol = 2;// + int(tad);
+  int precol = 2;
   const unsigned int n_out_col  = precol + nreq + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
-  const unsigned int tran_carry_start = precol;
-  const unsigned int data_carry_start = tran_carry_start;
-  const unsigned int idata_carry_start = data_carry_start;
-  const unsigned int req_start = idata_carry_start;
-  const unsigned int capture_start = req_start+nreq;
+  // const unsigned int tran_carry_start = precol;
+  // const unsigned int data_carry_start = tran_carry_start;
+  // const unsigned int idata_carry_start = data_carry_start;
+  // const unsigned int req_start = idata_carry_start;
+  const unsigned int req_start = precol;
+  const unsigned int capture_start = req_start + nreq;
   
   const unsigned int neta = OMEGA.nrow();
   arma::mat eta;
@@ -174,7 +205,6 @@ Rcpp::List SIMDATA(const Rcpp::List parin,
   double maxtime = 0;
   double Fn = 1.0;
   double told = -1;
-  bool locf = false;
   
   prob->nid(dat.nid());
   prob->nrow(NN);
@@ -252,7 +282,6 @@ Rcpp::List SIMDATA(const Rcpp::List parin,
         continue;
       }
       
-      locf = false;
       if(this_rec->from_data()) {
         dat.copy_parameters(this_rec->pos(), prob);
       }
@@ -346,10 +375,6 @@ Rcpp::List SIMDATA(const Rcpp::List parin,
       
       if(this_rec->evid() != 2) {
         this_rec->implement(prob);
-      }
-      
-      if(locf) {
-        dat.copy_parameters(this_rec->pos(), prob);
       }
       
       prob->table_call();
