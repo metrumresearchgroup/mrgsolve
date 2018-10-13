@@ -4,9 +4,10 @@
 ##' but you need a quicker turnaround time.  The timing differences 
 ##' might be difficult to detect for a single simulation run
 ##' but could become appreciable with repeated simulation.  See
-##' \code{details} for important differences in how \code{mrgsim_q}
-##' is invoked.  This function should always be used for benchmarking
-##' simulation time with mrgsolve.
+##' \code{details} for important differences in how \code{\link{mrgsim_q}}
+##' is invoked compared to \code{\link{mrgsim}} and \code{\link{mrgsim_d}}.  
+##' This function should always be used for benchmarking simulation time with
+##' mrgsolve.
 ##' 
 ##' @param x a model object
 ##' @param data a simulation data set
