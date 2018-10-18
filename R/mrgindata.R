@@ -224,15 +224,21 @@ check_data_set_na <- function(data,m) {
     Pars(m)
   )
   for(col in flagged) {
-    warning("Parameter column ", col, " must not contain missing values.", call.=FALSE,immediate.=TRUE) 
-    err <- TRUE
+    warning(
+      "Parameter column ", col, " must not contain missing values.", 
+      call.=FALSE, immediate.=TRUE
+    ) 
   }
   flagged <- check_column_na(
     data,
     c("ID","TIME", "time", "RATE", "rate")
   )
   for(col in flagged) {
-    warning(col, " column must not contain missing values.", call.=FALSE,immediate.=TRUE) 
+    message(
+      col, 
+      " column must not contain missing values.", 
+      call.=FALSE,immediate.=TRUE
+    ) 
     err <- TRUE
   }  
   if(err) stop("Found missing values in input data.", call.=FALSE)

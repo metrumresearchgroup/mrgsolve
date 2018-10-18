@@ -8,6 +8,8 @@ to integer
 ## New features
 - Added `$PRED` block for models that don't utilize any compartments
 - Added `pred1` to the `modlib`
+- Added `mrgsim_q` function for simulation from a model objejct 
+with quicker turnaround time
 
 ## New behavior
 - `time/TIME` is no longer required in a data set when `$PRED` is in use

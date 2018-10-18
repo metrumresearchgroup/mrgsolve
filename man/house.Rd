@@ -7,7 +7,7 @@
 house(...)
 }
 \arguments{
-\item{...}{passed to update}
+\item{...}{passed to \code{\link[mrgsolve]{update}}}
 }
 \value{
 A \code{packmod} object, ready to simulate.

@@ -85,8 +85,11 @@ validate_idata <- function(idata) {
 ##' This function sets up the simulation run from data stored in the model
 ##' object as well as arguments passed in.  Note that there are several 
 ##' non-formal arguments to this function that can be used to customize 
-##' the simulation run and it's output. Use \code{mrgsim_df} to 
-##' return a data frame rather than \code{mrgsims} object. 
+##' the simulation run and it's output.  Use \code{\link{mrgsim_q}} instead to
+##' benchark mrgsolve or to do repeated quick simulation for tasks like 
+##' parameter optimization,  sensitivity analyses, or optimal design.  See
+##' \code{\link{mrgsim_variants}} for other mrgsim-like functions that have 
+##' more focused inputs.  
 ##'
 ##' 
 ##' @param x the model objects
@@ -96,12 +99,16 @@ validate_idata <- function(idata) {
 ##' @param events an event object
 ##' @param nid integer number of individuals to simulate; only used if 
 ##' idata and data are missing
-##' @param ... passed to \code{\link[mrgsolve]{update}}
+##' @param ... passed to \code{\link[mrgsolve]{update}} and 
+##' \code{\link{do_mrgsim}}; please see these help topics for other 
+##' arguments for \code{\link{mrgsim}}
 ##' 
 ##' @return an object of class \code{\link{mrgsims}}
 ##' 
 ##' 
 ##' @section Additional arguments:
+##' 
+##' These are other arguments that are passed to \code{\link{do_mrgsim}}.
 ##'
 ##' \itemize{
 ##' 
@@ -150,7 +157,12 @@ validate_idata <- function(idata) {
 ##' }
 ##' 
 ##' @details
+##' 
+##' 
 ##' \itemize{
+##' 
+##' \item Use \code{mrgsim_df} to return a data frame rather than 
+##' \code{mrgsims} object.
 ##' 
 ##' \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
 ##' 
@@ -175,7 +187,8 @@ validate_idata <- function(idata) {
 ##'
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_dq}}
+##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}, 
+##' \code{\link{do_mrgsim}}
 ##' 
 ##' @examples
 ##' ## example("mrgsim")
@@ -268,7 +281,10 @@ mrgsim_df <- function(...) as.data.frame(mrgsim(...))
 ##' mrgsim variant functions
 ##' 
 ##' These functions are called by \code{\link{mrgsim}} and have
-##' explicit input requirements written into the function name.
+##' explicit input requirements written into the function name. Use 
+##' \code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
+##' simulation for tasks like parameter optimization,  sensitivity analyses, 
+##' or optimal design.
 ##' 
 ##' @inheritParams mrgsim
 ##' 
@@ -288,11 +304,11 @@ mrgsim_df <- function(...) as.data.frame(mrgsim(...))
 ##'     \code{idata_set}
 ##'   \item \code{mrgsim_i} simulate using a \code{idata_set}
 ##'   \item \code{mrgsim_0} simulate using just the model
-##'   \item \code{mrgsim_dq} simulate from a data set with quicker 
-##'   turnaround (see \code{\link{mrgsim_dq}})
+##'   \item \code{mrgsim_q} simulate from a data set with quicker 
+##'   turnaround (see \code{\link{mrgsim_q}})
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_dq}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_q}}
 ##' @name mrgsim_variants
 ##' @rdname mrgsim_variants
 ##' @export
@@ -464,11 +480,6 @@ do_mrgsim <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
-  
-  if(!model_loaded(x)) {
-    stop("The model is not properly loaded.  Aborting simulation.",
-         call.=FALSE) 
-  }
   
   ## data
   if(!is.valid_data_set(data)) {
@@ -671,11 +682,6 @@ do_mrgsimple <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
-  
-  if(!model_loaded(x)) {
-    stop("The model is not properly loaded.  Aborting simulation.",
-         call.=FALSE) 
-  }
   
   ## data
   if(!is.valid_data_set(data)) {

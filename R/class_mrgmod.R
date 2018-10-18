@@ -203,7 +203,7 @@ valid.mrgmod <- function(object) {
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
 ##' 
-##' @seealso \code{\link{update}}, \code{\link{solversettings}}
+##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",
@@ -219,7 +219,7 @@ setClass("packmod",
 
 ##' Return a pre-compiled, PK/PD model
 ##' 
-##' @param ... passed to update
+##' @param ... passed to \code{\link[mrgsolve]{update}}
 ##' 
 ##' @return 
 ##' A \code{packmod} object, ready to simulate.
@@ -563,7 +563,7 @@ re_build <- function(x,model=model(x),temp = FALSE) {
 }
 
 ##' @export
-all.equal.mrgmod <- function(target, current) {
+all.equal.mrgmod <- function(target, current,...) {
   target.env <- as.list(target@envir)
   current.env <- as.list(current@envir)
   target@envir <- current@envir <- new.env()
