@@ -44,7 +44,9 @@
 ##' For the former use, \code{param} is usually called to print
 ##' the parameters to the screen, but the parameter_list object can also 
 ##' be coreced to a list or numeric R object.
-##'
+##' 
+##' use \code{allparam} to get a \code{parameter_list} object including 
+##' both model parameters and data items listed in \code{$FIXED}.
 ##'
 ##' @examples
 ##' ## example("param")
@@ -180,17 +182,17 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   return(invisible(NULL))
 }
 
-##' @rdname param
-##' @export
-setMethod("show", "parameter_list", function(object) {
-  showparam(object)
-})
-
 ##' @export
 ##' @rdname param
 allparam <- function(.x) {
   as.param(c(as.list(param(.x)), .x@fixed))
 }
+
+##' @rdname param
+##' @export
+setMethod("show", "parameter_list", function(object) {
+  showparam(object)
+})
 
 setGeneric("as.param", function(.x,...) {
   standardGeneric("as.param")

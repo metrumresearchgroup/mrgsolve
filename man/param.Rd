@@ -8,8 +8,8 @@
 \alias{param,missing-method}
 \alias{param,list-method}
 \alias{param,ANY-method}
-\alias{show,parameter_list-method}
 \alias{allparam}
+\alias{show,parameter_list-method}
 \title{Create and work with parameter objects}
 \usage{
 param(.x, ...)
@@ -25,9 +25,9 @@ param(.x, ...)
 
 \S4method{param}{ANY}(.x, ...)
 
-\S4method{show}{parameter_list}(object)
-
 allparam(.x)
+
+\S4method{show}{parameter_list}(object)
 }
 \arguments{
 \item{.x}{the model object}
@@ -61,6 +61,9 @@ is a \code{parameter_list} object.
 For the former use, \code{param} is usually called to print
 the parameters to the screen, but the parameter_list object can also 
 be coreced to a list or numeric R object.
+
+use \code{allparam} to get a \code{parameter_list} object including 
+both model parameters and data items listed in \code{$FIXED}.
 }
 \examples{
 ## example("param")

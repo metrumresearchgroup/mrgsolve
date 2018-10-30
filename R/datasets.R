@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Example input data sets.
+##' Example input data sets
 ##'
 ##' @docType data
 ##' @keywords datasets

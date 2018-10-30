@@ -586,7 +586,7 @@ parin <- function(x) {
        mindt=x@mindt, advan=x@advan)
 }
 
-##' Show model specification and C++ files.
+##' Show model specification and C++ files
 ##' 
 ##' @param x model object
 ##' @param spec logical; show the model specification file
