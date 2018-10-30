@@ -112,14 +112,14 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' 
 ##' @export
 carry_out <- function(x,...) {
-  x@args[["carry.out"]] <- as_character_args(match.call()[-1])
+  x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
 ##' @export
 ##' @rdname carry_out
 carry.out <- function(x,...) {
-  x@args[["carry.out"]] <- as_character_args(match.call()[-1])
+  x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 

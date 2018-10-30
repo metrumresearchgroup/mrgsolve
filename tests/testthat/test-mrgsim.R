@@ -86,11 +86,11 @@ test_that("mrgsim with ev and ID and idata", {
 })
 
 test_that("mrgsim with data and idata", {
-  out <- mrgsim(mod, data = data, idata = idata, carry.out = "CL,V")
+  out <- mrgsim(mod, data = data, idata = idata, carry_out = "CL,V")
   out_pipe <- mod %>% data_set(data) %>% idata_set(idata) %>% 
     carry_out(CL,V) %>%
     mrgsim()
-  out_quick <- mrgsim_di(mod,data,idata, carry.out="CL,V")
+  out_quick <- mrgsim_di(mod,data,idata, carry_out="CL,V")
   
   
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)

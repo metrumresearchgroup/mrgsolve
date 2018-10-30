@@ -123,7 +123,7 @@ validate_idata <- function(idata) {
 ##' used, the simulated output is augmented with an observation at each 
 ##' time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating 
 ##' augmented observations can be requested by including \code{a.u.g} in 
-##' \code{carry.out}
+##' \code{carry_out}
 ##' 
 ##' \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 
 ##' 1 and 2 put doses in a data set after padded observations at the same 
@@ -166,7 +166,7 @@ validate_idata <- function(idata) {
 ##' 
 ##' \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
 ##' 
-##' \item{\code{carry.out} can be used to insert data columns into the output 
+##' \item{\code{carry_out} can be used to insert data columns into the output 
 ##' data set.  This is partially dependent on the nature of the data brought 
 ##' into the problem.}
 ##' 
@@ -177,7 +177,7 @@ validate_idata <- function(idata) {
 ##' generated if ID is duplicated in \code{data}; parameters will be used 
 ##' from the first occurrence found in \code{idata}.
 ##'  
-##'  \item \code{carry.out}: \code{idata} is assumed to be 
+##'  \item \code{carry_out}: \code{idata} is assumed to be 
 ##' individual-level and variables that are carried from \code{idata} 
 ##' are repeated throughout the invidivual's simulated data.  Variables 
 ##' carried from \code{data} are carried via last-observation carry forward.  
@@ -211,7 +211,7 @@ validate_idata <- function(idata) {
 ##' out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
 ##' out
 ##'
-##' out <- mod %>% mrgsim(data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
+##' out <- mod %>% mrgsim(data=exTheoph, obsaug=TRUE, carry_out="a.u.g")
 ##' out
 ##'
 ##' out <- mod %>% ev(e) %>% mrgsim(req="CENT")
@@ -433,7 +433,8 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param x a model object
 ##' @param data a simulation data set
 ##' @param idata individual-level data
-##' @param carry.out data items to copy into the output
+##' @param carry_out data items to copy into the output
+##' @param carry.out soon to be deprecated; use \code{carry_out} instead
 ##' @param seed deprecated
 ##' @param Request compartments or captured variables to retain
 ##' in the simulated output
@@ -462,6 +463,7 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 do_mrgsim <- function(x,
                       data,
                       idata = no_idata_set(),
+                      carry_out = carry.out,
                       carry.out = character(0),
                       seed = as.integer(NA),
                       Request = character(0),
@@ -542,22 +544,22 @@ do_mrgsim <- function(x,
   
   ## carry can be tran/data/idata
   # Items to carry out from the data set
-  rename.carry <- .ren.create(carry.out)
-  carry.out <- rename.carry$old
+  rename.carry <- .ren.create(carry_out)
+  carry_out <- rename.carry$old
   
   # Don't take ID,time,TIME
-  carry.out <- setdiff(carry.out, c("ID", "time", "TIME"))
+  carry_out <- setdiff(carry_out, c("ID", "time", "TIME"))
   
   # Only take names in GLOBALS$CARRY_TRAN
-  carry.tran <- intersect(carry.out,GLOBALS[["CARRY_TRAN"]])
+  carry.tran <- intersect(carry_out,GLOBALS[["CARRY_TRAN"]])
   carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
   
   # Non-tran items to carry out from data and idata
-  carry.out <- setdiff(carry.out,carry.tran)
+  carry_out <- setdiff(carry_out,carry.tran)
   
   # What to carry out from data and idata
-  carry.data  <- intersect(carry.out, colnames(data))
-  carry.idata <- intersect(carry.out, colnames(idata))
+  carry.data  <- intersect(carry_out, colnames(data))
+  carry.idata <- intersect(carry_out, colnames(idata))
   
   # Carry from data_set if name is in idata_set too
   carry.idata <- setdiff(carry.idata, carry.data)
@@ -611,7 +613,7 @@ do_mrgsim <- function(x,
     capture.output(file=capture, print(c(date=list(date()), parin=parin)))
     capture.output(file=capture, append=TRUE, print(idata))
     capture.output(file=capture, append=TRUE, print(data))
-    capture.output(file=capture, append=TRUE, print(carry.out))
+    capture.output(file=capture, append=TRUE, print(carry_out))
     capture.output(file=capture, append=TRUE, print(list(capt_pos,capt)))
   }
   

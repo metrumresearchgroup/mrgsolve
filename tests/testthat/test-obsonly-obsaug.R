@@ -27,9 +27,9 @@ mod <- mrgsolve:::house(add=c(8.123, 33.3333))
 
 data(exTheoph)
 
-out1 <- mrgsim(mod, obsonly=TRUE, data=exTheoph, carry.out="evid")
+out1 <- mrgsim(mod, obsonly=TRUE, data=exTheoph, carry_out="evid")
 out2 <- mrgsim(mod, obsonly=TRUE, data=exTheoph)
-out3 <- mrgsim(mod, obsaug=TRUE,  data=exTheoph, carry.out="a.u.g")
+out3 <- mrgsim(mod, obsaug=TRUE,  data=exTheoph, carry_out="a.u.g")
 
 test_that("Using of obsonly with data set", {
   expect_true(all(out1$evid==0))

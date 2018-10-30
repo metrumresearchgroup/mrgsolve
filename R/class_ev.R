@@ -48,8 +48,6 @@ filter_.ev <-  function(.data, ...) {
   .data
 }
 
-
-
 ##' Various methods for event objects
 ##' 
 ##' 
@@ -63,6 +61,16 @@ filter_.ev <-  function(.data, ...) {
 ##' 
 ##' @rdname ev_methods
 ##' @name ev_methods
+##' 
+##' @examples
+##' 
+##' e <- ev(amt = 100)
+##' 
+##' names(e)
+##' 
+##' as.data.frame(e)
+##' 
+##' nrow(e)
 ##' 
 ##' @method nrow ev
 ##' 

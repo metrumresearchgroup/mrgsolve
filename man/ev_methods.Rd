@@ -38,3 +38,14 @@ only if one doesn't already exist}
 \description{
 Various methods for event objects
 }
+\examples{
+
+e <- ev(amt = 100)
+
+names(e)
+
+as.data.frame(e)
+
+nrow(e)
+
+}

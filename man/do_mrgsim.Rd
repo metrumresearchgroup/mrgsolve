@@ -4,11 +4,11 @@
 \alias{do_mrgsim}
 \title{Do an mrgsim run}
 \usage{
-do_mrgsim(x, data, idata = no_idata_set(), carry.out = character(0),
-  seed = as.integer(NA), Request = character(0), capture = NULL,
-  obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
-  deslist = list(), descol = character(0), filbak = TRUE, tad = FALSE,
-  nocb = TRUE, skip_init_calc = FALSE, ...)
+do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
+  carry.out = character(0), seed = as.integer(NA), Request = character(0),
+  capture = NULL, obsonly = FALSE, obsaug = FALSE, tgrid = NULL,
+  recsort = 1, deslist = list(), descol = character(0), filbak = TRUE,
+  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ...)
 }
 \arguments{
 \item{x}{a model object}
@@ -17,7 +17,9 @@ do_mrgsim(x, data, idata = no_idata_set(), carry.out = character(0),
 
 \item{idata}{individual-level data}
 
-\item{carry.out}{data items to copy into the output}
+\item{carry_out}{data items to copy into the output}
+
+\item{carry.out}{soon to be deprecated; use \code{carry_out} instead}
 
 \item{seed}{deprecated}
 

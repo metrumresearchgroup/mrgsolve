@@ -47,7 +47,7 @@ more focused inputs.
 
 \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
 
-\item{\code{carry.out} can be used to insert data columns into the output 
+\item{\code{carry_out} can be used to insert data columns into the output 
 data set.  This is partially dependent on the nature of the data brought 
 into the problem.}
 
@@ -58,7 +58,7 @@ assumed to be uniquely keyed to ID in \code{data}.  No error is
 generated if ID is duplicated in \code{data}; parameters will be used 
 from the first occurrence found in \code{idata}.
  
- \item \code{carry.out}: \code{idata} is assumed to be 
+ \item \code{carry_out}: \code{idata} is assumed to be 
 individual-level and variables that are carried from \code{idata} 
 are repeated throughout the invidivual's simulated data.  Variables 
 carried from \code{data} are carried via last-observation carry forward.  
@@ -86,7 +86,7 @@ output
 used, the simulated output is augmented with an observation at each 
 time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating 
 augmented observations can be requested by including \code{a.u.g} in 
-\code{carry.out}
+\code{carry_out}
 
 \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 
 1 and 2 put doses in a data set after padded observations at the same 
@@ -141,7 +141,7 @@ out <- mod \%>\% mrgsim(data=exTheoph)
 out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
 out
 
-out <- mod \%>\% mrgsim(data=exTheoph, obsaug=TRUE, carry.out="a.u.g")
+out <- mod \%>\% mrgsim(data=exTheoph, obsaug=TRUE, carry_out="a.u.g")
 out
 
 out <- mod \%>\% ev(e) \%>\% mrgsim(req="CENT")

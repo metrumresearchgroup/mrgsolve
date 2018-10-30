@@ -147,7 +147,7 @@ VC <- exp(rnorm(100, log(30), sqrt(0.5)))
 pars <- signif(data.frame(CL=CL,VC=VC),6)
 pars$ID <- 1:nrow(pars)
 
-out <- mrgsim(mod, idata=pars, end=8, carry.out="CL,VC")
+out <- mrgsim(mod, idata=pars, end=8, carry_out="CL,VC")
 out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out[,c("CL", "VC", "ID")]),6)
 
@@ -159,7 +159,7 @@ test_that("Recover items from simulated data when passed in as idata",{
 data <- expand.grid(time=seq(0,12,1), ID=1:100, cmt=1)
 data <- merge(data, pars, sort=FALSE)
 
-out <- mrgsim(mod, data=data, carry.out="CL,VC")
+out <- mrgsim(mod, data=data, carry_out="CL,VC")
 out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out)[,c("CL", "VC", "ID")], 6)
 
@@ -171,11 +171,11 @@ events <- ev(time=c(0,24,48), amt=1000, rate=50,
              addl=c(0,0,10), ii=12,cmt=1)
 
 out1 <- mrgsim(mod %>% ev(events), idata=data.frame(ID=1:20), end=200,
-               carry.out="evid,amt,rate,addl,ii,cmt", req="")
+               carry_out="evid,amt,rate,addl,ii,cmt", req="")
 data1 <- as.data.frame(out1)
 
 out2 <- mrgsim(mod, data=data1, 
-               carry.out="evid,amt,rate,addl,ii,cmt", req="")
+               carry_out="evid,amt,rate,addl,ii,cmt", req="")
 data2 <- as.data.frame(out2)
 
 test_that("CP is equal when simulating from events or data", {
@@ -186,7 +186,7 @@ test_that("CP is equal when simulating from events or data", {
 set.seed(11111)
 data1$ROW <- sample(1:nrow(data1))
 
-out <- mrgsim(mod, data=data1, carry.out="ROW")
+out <- mrgsim(mod, data=data1, carry_out="ROW")
 
 test_that("Time-varying data items in data are properly carried into output", {
   expect_true(all(data1$ROW == out$ROW))

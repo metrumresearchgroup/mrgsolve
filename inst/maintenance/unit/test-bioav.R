@@ -35,7 +35,7 @@ $ODE dxdt_CENT = -(CL/10)*CENT;
 $CAPTURE CL FORM  F1
 '
 
-mod <- mcode("bioav1",code) %>% carry.out(evid)
+mod <- mcode("bioav1",code) %>% carry_out(evid)
 
 
 context("test-bioav")

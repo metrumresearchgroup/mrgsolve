@@ -66,7 +66,7 @@ ways.
 \item Other items can include \code{ii}, \code{ss}, and \code{addl}
 (see \code{\link{data_set}} for details on all of these items).
 \item \code{ID} may be specified as a vector.
-\item If replicate is \code{TRUE} (default), thenthe events 
+\item If replicate is \code{TRUE} (default), then the events 
 regimen is replicated for each \code{ID}; otherwise, the number of
 event rows must match the number of \code{ID}s entered
 }
