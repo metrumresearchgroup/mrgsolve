@@ -77,7 +77,7 @@ plot(out, GUT+CP~.)
 
 sims <- as.data.frame(out)
 
-t72 <- subset(sims, time==72)
+t72 <- dplyr::filter(sims, time==72)
 str(t72)
 
 idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)

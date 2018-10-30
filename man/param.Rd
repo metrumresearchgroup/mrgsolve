@@ -10,12 +10,6 @@
 \alias{param,ANY-method}
 \alias{show,parameter_list-method}
 \alias{allparam}
-\alias{as.param}
-\alias{as.param,list-method}
-\alias{as.param,numeric-method}
-\alias{as.param,parameter_list-method}
-\alias{as.param,missing-method}
-\alias{$,mrgmod-method}
 \title{Create and work with parameter objects}
 \usage{
 param(.x, ...)
@@ -34,18 +28,6 @@ param(.x, ...)
 \S4method{show}{parameter_list}(object)
 
 allparam(.x)
-
-as.param(.x, ...)
-
-\S4method{as.param}{list}(.x, ...)
-
-\S4method{as.param}{numeric}(.x, ...)
-
-\S4method{as.param}{parameter_list}(.x, ...)
-
-\S4method{as.param}{missing}(.x, ...)
-
-\S4method{$}{mrgmod}(x, name)
 }
 \arguments{
 \item{.x}{the model object}
@@ -62,10 +44,6 @@ for which parameters to show when printing}
 in the parameter list}
 
 \item{object}{passed to show}
-
-\item{x}{mrgmod object}
-
-\item{name}{parameter to take}
 }
 \value{
 An object of class \code{parameter_list} (see 

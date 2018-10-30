@@ -324,7 +324,7 @@ setMethod("gettag", "matlist", function(x,...) {
   return(names(x@data))
 })
 
-##' Operations with matlist objects.
+##' Operations with matlist objects
 ##' 
 ##' @param x a matlist object
 ##' @param ... other matlist objects

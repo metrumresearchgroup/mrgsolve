@@ -3,7 +3,7 @@
 \docType{methods}
 \name{as.list,mrgmod-method}
 \alias{as.list,mrgmod-method}
-\title{Coerce a model object to list.}
+\title{Coerce a model object to list}
 \usage{
 \S4method{as.list}{mrgmod}(x, deep = FALSE, ...)
 }
@@ -16,7 +16,7 @@
 \item{...}{not used}
 }
 \description{
-Coerce a model object to list.
+Coerce a model object to list
 }
 \details{
 If \code{deep} is \code{TRUE}, then the values for

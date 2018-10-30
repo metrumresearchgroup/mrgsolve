@@ -92,7 +92,7 @@ validate_idata <- function(idata) {
 ##' more focused inputs.  
 ##'
 ##' 
-##' @param x the model objects
+##' @param x the model object
 ##' @param data NMTRAN-like data set (see \code{\link{data_set}})
 ##' @param idata a matrix or data frame of model parameters, 
 ##' one parameter per row (see \code{\link{idata_set}})
@@ -281,7 +281,9 @@ mrgsim_df <- function(...) as.data.frame(mrgsim(...))
 ##' mrgsim variant functions
 ##' 
 ##' These functions are called by \code{\link{mrgsim}} and have
-##' explicit input requirements written into the function name. Use 
+##' explicit input requirements written into the function name.  The motivation
+##' behind these variants is to give the user a clear workflow with 
+##' specific, required inputs as indicated by the function name. Use 
 ##' \code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
 ##' simulation for tasks like parameter optimization,  sensitivity analyses, 
 ##' or optimal design.

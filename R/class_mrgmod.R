@@ -278,7 +278,7 @@ is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
 see_compfile <- function(x) {
   file <- file.path(soloc(x),compfile(model(x)))
   if(!file_exists(file)) {
-    message("could not find the compiled code for this model.")
+    message("Could not find the compiled code for this model.")
   }
   cat(readLines(file),sep="\n")
 }
@@ -363,7 +363,7 @@ setMethod("names", "mrgmod", function(x) {
   return(ans)
 })
 
-##' Coerce a model object to list.
+##' Coerce a model object to list
 ##' 
 ##' @param x mrgmod object
 ##' @param deep if \code{TRUE}, extra information is returned
@@ -428,6 +428,54 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   })
 })
 
+
+##' Select parameter values from a model object
+##' 
+##' The \code{$} and \code{[[} operators get the value 
+##' of a single parameter in the model.  The 
+##' \code{[} gets several values, returning a 
+##' nameed list.  
+##' 
+##' @param x mrgmod object
+##' @param name parameter to take
+##' @param i an element to select
+##' @param exact not used
+##' @rdname mrgmod_extract
+##' @export
+setMethod("$", "mrgmod", function(x, name){
+  if(! name %in% Pars(x)) {
+    stop(
+      "Parameter ", name, "not found in the parameter list.", 
+      call.=FALSE
+    )  
+  }
+  unname(as.numeric(allparam(x))[name])
+})
+
+##' @rdname mrgmod_extract
+##' @export
+setMethod("[[", "mrgmod", function(x, i, exact=TRUE) {
+  if(!i %in% Pars(x)) {
+    stop(
+      "Parameter ", i, " not found in the parameter list.", 
+      call.=FALSE
+    )  
+  }
+  unname(as.list(allparam(x))[[i]])  
+})
+
+##' @rdname mrgmod_extract
+##' @export
+setMethod("[", "mrgmod", function(x, i) {
+  if(!all(i %in% Pars(x))) {
+    wrong <- paste0(setdiff(i, Pars(x)),collapse=',')
+    stop(
+      "Parameter(s) ", wrong, " not found in the parameter list.", 
+      call.=FALSE
+    )  
+  }
+  as.list(allparam(x))[i]
+})
 
 ##' DEPRECATED: get an events object from a model object
 ##' 

@@ -3,7 +3,7 @@
 \docType{methods}
 \name{c,matlist-method}
 \alias{c,matlist-method}
-\title{Operations with matlist objects.}
+\title{Operations with matlist objects}
 \usage{
 \S4method{c}{matlist}(x, ..., recursive = FALSE)
 }
@@ -15,5 +15,5 @@
 \item{recursive}{not used}
 }
 \description{
-Operations with matlist objects.
+Operations with matlist objects
 }

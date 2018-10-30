@@ -93,7 +93,7 @@ setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE
   
   .x@param <- update(.x@param, args)
   
-  return(.x) #return(update(.x,param=args))
+  return(.x)
 })
 
 ##' @rdname param
@@ -102,8 +102,8 @@ setMethod("param", "mrgsims", function(.x,...) {
   param(mod(.x),...)
 })
 
-##' @export
 ##' @rdname param
+##' @export
 setMethod("param", c("missing"), function(...,.strict=TRUE) {
   param(list(...),.strict=.strict)
 })
@@ -136,7 +136,7 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   x <- names(ini)
   y <- prettyNum(unlist(ini), digits=digits)
   NPARAM <- length(x)
-  n <- 1:NPARAM
+  n <- seq(NPARAM)
   
   if(pattern !="*") {
     take <- grepl(pattern,x)
@@ -180,8 +180,8 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   return(invisible(NULL))
 }
 
-##' @export
 ##' @rdname param
+##' @export
 setMethod("show", "parameter_list", function(object) {
   showparam(object)
 })
@@ -192,42 +192,24 @@ allparam <- function(.x) {
   as.param(c(as.list(param(.x)), .x@fixed))
 }
 
-##' @export
-##' @rdname param
 setGeneric("as.param", function(.x,...) {
   standardGeneric("as.param")
 })
 
-##' @export
-##' @rdname param
 setMethod("as.param", "list", function(.x,...) {
   create_numeric_list(.x,"parameter_list",...)
 })
 
-##' @export
-##' @rdname param
 setMethod("as.param", "numeric", function(.x,...) {
   create_numeric_list(as.list(.x),"parameter_list",...)
 })
 
-##' @export
-##' @rdname param
 setMethod("as.param", "parameter_list", function(.x,...) .x)
 
-##' @export
-##' @rdname param
 setMethod("as.param", "missing", function(.x,...) {
   create_numeric_list(list(), "parameter_list",...)
 })
 
-##' @param x mrgmod object
-##' @param name parameter to take
-##'
-##' @rdname param
-##' @export
-setMethod("$", "mrgmod", function(x,name){
-  unname(as.numeric(allparam(x))[name])
-})
 
 as.fixed <- function(x) {
   as.list(x)

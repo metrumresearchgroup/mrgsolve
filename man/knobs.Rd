@@ -8,7 +8,7 @@
 \alias{as.data.frame,batch_mrgsims-method}
 \alias{knobs,batch_mrgsims,ANY-method}
 \alias{show,batch_mrgsims-method}
-\title{Run sensitivity analysis on model settings.}
+\title{Run sensitivity analysis on model settings}
 \usage{
 knobs(x, y, ...)
 
@@ -31,11 +31,11 @@ knobs(x, y, ...)
 \item{...}{knobs: named numeric vectors that identify knob names and knob values for a
 batch run.  See details.}
 
-\item{row.names}{passed to \code{\link{as.data.frame}}}
+\item{row.names}{passed to \code{as.data.frame.data.frame}}
 
-\item{optional}{passed to \code{\link{as.data.frame}}}
+\item{optional}{passed to \code{as.data.frame.data.frame}}
 
-\item{object}{passed to show}
+\item{object}{the object to show}
 }
 \value{
 An object of class \code{batch_mrgsims}.  Most methods for \code{mrgsims} objects also work on \code{batch_mrgsims} object.
@@ -45,7 +45,10 @@ Knobs can be parameter values or PK dosing items (e.g. amt).
 By design, all combinations of specified knob/values are simulated.
 }
 \details{
-Valid knob names include: any parameter name (in \code{param(mod)}), time variables (\code{start}, \code{end}, \code{delta}), PK dosing items (\code{amt}, \code{ii}, \code{rate}, and others ...), and solver settings (\code{atol}, \code{hmax}, etc...).
+Valid knob names include: any parameter name (in \code{param(mod)}), 
+time variables (\code{start}, \code{end}, \code{delta}), PK dosing items 
+(\code{amt}, \code{ii}, \code{rate}, and others ...), and solver settings 
+(\code{atol}, \code{hmax}, etc...).
 }
 \examples{
 ## example("knobs")

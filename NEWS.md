@@ -18,8 +18,12 @@ be assigned in case it is missing and an error will continue to be generated
 when dosing into an invalid compartment (0 is always an invalid index
 for dosing compartment)
 - An error will be generated if missing values (`NA`) are detected in an 
-input data set with the following names: `ID`, `time/TIME`, `rate/RATE` ,
+input data set with the following names: `ID`, `time/TIME`,
 or any column that shares a name with an item in the parameter list.
+
+## Bugs fixed
+- Fixed bug related to record sort order #406
+
 
 ## Deprecated
 - `drop.re` and `drop_re`; use `zero_re` instead

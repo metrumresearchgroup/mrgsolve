@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Methods for working with \code{mrgsims} objects.
+##' Methods for working with \code{mrgsims} objects
 ##'
 ##' These methods help the user view simulation output and extract 
 ##' simulated data to work with further.  The methods listed here 
@@ -29,8 +29,6 @@
 ##' commonly used in R (e.g. head, tail, as.data.frame, etc ...)
 ##'
 ##' \itemize{
-##'   \item{\code{subset}} coreces simulated output to data.frame and 
-##'   passes to subset.data.frame
 ##'   \item{\code{$}} selects a column in the simulated data and 
 ##'   returns numeric
 ##'   \item{\code{head}} see \code{\link{head.matrix}}; returns 
@@ -75,7 +73,6 @@
 ##' mat <- as.matrix(out)
 ##' df <- as.data.frame(out)
 ##'
-##' df <- subset(out, time < 12) ## a data frame
 ##' out$CP
 ##'
 ##' plot(out)
@@ -246,12 +243,6 @@ setMethod("as.matrix", "mrgsims", function(x,...) {
   return(as.matrix(x@data))
 })
 
-##' @rdname mrgsims
-##' @export
-setMethod("subset", "mrgsims", function(x,...) {
-  subset(as.data.frame(x@data), ...)
-})
-
 ##' @param object passed to show
 ##' @rdname mrgsims
 ##' @export
@@ -348,7 +339,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
-  data <- as.data.frame(subset(x,...))
+  data <- as.data.frame(subset(as.data.frame(x),...))
   
   if(length(y)==2) y[[3]] <- as.symbol(".")
   

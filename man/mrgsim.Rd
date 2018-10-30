@@ -10,7 +10,7 @@ mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
 mrgsim_df(...)
 }
 \arguments{
-\item{x}{the model objects}
+\item{x}{the model object}
 
 \item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
 

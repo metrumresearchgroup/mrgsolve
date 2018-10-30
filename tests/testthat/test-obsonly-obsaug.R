@@ -41,8 +41,8 @@ test_that("Using obsonly with events object", {
   expect_identical(mrgsim(mod %>% ev(amt=100, cmt=1), obsonly=TRUE)$time,stime(mod))
 })
 
-augtimes <- subset(out3, a.u.g==1)$time
-datatimes <- subset(out3, a.u.g==0)$time
+augtimes <- dplyr::filter(out3, a.u.g==1)$time
+datatimes <- dplyr::filter(out3, a.u.g==0)$time
 alltimes <- lapply(split(exTheoph, exTheoph$ID), function(x){
   return(sort(c(x$time, stime(mod))))
 })
