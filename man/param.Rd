@@ -59,25 +59,35 @@ Can be used to either get a parameter list object from a
 the parameters in a model object.  For both uses, the return value 
 is a \code{parameter_list} object.
 For the former use, \code{param} is usually called to print
-the parameters to the screen, but the parameter_list object can also 
+the parameters to the screen, but the \code{parameter_list} object can also 
 be coreced to a list or numeric R object.
 
-use \code{allparam} to get a \code{parameter_list} object including 
+Use \code{allparam} to get a \code{parameter_list} object including 
 both model parameters and data items listed in \code{$FIXED}.
 }
 \examples{
 ## example("param")
+
 mod <- mrgsolve:::house()
 
 param(mod)
+
 param(mod, .pat="^(C|F)") ## may be useful when large number of parameters
 
 class(param(mod))
 
 param(mod)$KA
 
+param(mod)[["KA"]]
+
 as.list(param(mod))
+
 as.data.frame(param(mod))
+
+param(mod, TVCL = 1.2)
+
+new_values <- list(TVCL = 1.3, TVV = 20.5)
+param(mod, new_values)
 
 }
 \keyword{param}
