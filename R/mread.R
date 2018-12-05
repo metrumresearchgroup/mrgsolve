@@ -429,55 +429,35 @@ mread <- function(model, project = getwd(), code = NULL,
   
   out <- suppressWarnings(
     exec_internal(
-      syst, 
-      args = args, 
+      syst,
+      args = args,
       error = FALSE
     )
   )
-  status <- out$status
-  comp_success <- status==0 & file.exists(build$compout)
+  
+  comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {
-    out$stdout <- rawToChar(out$stdout)
-    out$stderr <- rawToChar(out$stderr)
+    print(rawToChar(out$stderr))
+    out <- build_output_cleanup(out,build) 
     cat("\n",out$stdout,sep="\n")
-    errr <- strsplit(out$stderr, "\n|\r\n")[[1]]
-    del <- paste0("^",build$compfile,":")
-    errr <- sapply(
-      errr, 
-      sub, 
-      pattern = del, 
-      replacement = ""
-    )
-    del <- "^ *In function 'void _model.*:$"
-    errr <- sapply(
-      errr, 
-      sub, 
-      pattern = del, 
-      replacement = ""
-    )
-    errr <- paste0(errr, collapse = "\n")
-    #errr <- errr[!grepl("^\\s*$")]
-
-    out$stderr <- strsplit(out$stderr, "\n|\r\n")[[1]]
-    cat("-----BUILD ERROR MESSAGES---------------------\n")
+    header <- "-----BUILD ERROR MESSAGES---------------------"
+    footer <- paste0(rep("-",nchar(header)),collapse = "")
+    cat(header,"\n",sep="")
     warning(
-      "The model failed to build.  Returning build status information.",
+      "There was an error when building the model.  Returning build status information.",
       call.=FALSE
     )
-    message(errr,appendLF=FALSE)
-    cat("\n----------------------------------------------\n\n")
-    out <- c(list(build = build), out)
-    out <- structure(out, class = "mrgsolve-build-error")
+    message(out$errr,appendLF=FALSE)
+    cat("\n",footer,"\n",sep="")
     return(invisible(out))
   } 
   
   if(ignore.stdout) {
     if(!quiet) message("done.")
   }  else {
-    cat(rawToChar(out$stdout),sep="\n") 
+    cat(out$stdout,sep="\n") 
   }
-  
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so

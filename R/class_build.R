@@ -134,4 +134,30 @@ create_soloc <- function(loc,model,preclean) {
   return(soloc)
 }
 
+msub <- function(pattern,replacement,x,...) {
+  sapply(x, pattern = pattern, replacement = replacement, FUN = sub)
+}
+
+mgsub <- function(pattern,replacement,x,...) {
+  sapply(x, pattern = pattern, replacement = replacement, FUN = gsub)
+}
+
+build_output_cleanup <- function(x,build) {
+  x$stdout <- rawToChar(x$stdout)
+  x$stderr <- rawToChar(x$stderr)
+  errr <- strsplit(x$stderr, "\n|\r\n")[[1]]
+  x$stderr <- errr
+  patt <- paste0("^", build$compfile, ":")
+  errr <- msub(pattern = patt, replacement = "", x = errr)
+  patt <- "^ *In function 'void _model.*:$"
+  errr <- msub(pattern = patt, replacement = "", x = errr)
+  errr <- paste0(errr, collapse = "\n")
+  x$errr <- errr
+  x <- c(list(build = build), x)
+  x <- structure(x, class = "mrgsolve-build-error")
+  x
+}
+
+
+
 
