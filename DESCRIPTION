@@ -10,6 +10,7 @@ Authors@R: c(
     person("Bill", "Gillespie", "", "", c("ctb")),
     person("Charles", "Margossian", "", "", c("ctb")),
     person("Devin", "Pastoor", "", "", c("ctb")),
+    person("Bill", "Denney", "", "", c("ctb"), comment=c(ORCID="0000-0002-5759-428X")),
     person("Metrum Research Group LLC", role =  c("cph"))
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
