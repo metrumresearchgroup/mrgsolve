@@ -282,7 +282,7 @@ mread <- function(model, project = getwd(), code = NULL,
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   ## Check $MAIN for the proper symbols
-  if(x@advan %in% c(2,4)) {
+  if(x@advan %in% c(1,2,3,4)) {
     if(subr[["n"]] != neq(x)) {
       stop("$PKMODEL requires  ", subr[["n"]] , 
            " compartments in $CMT or $INIT.",call.=FALSE)

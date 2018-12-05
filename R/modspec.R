@@ -137,6 +137,10 @@ modelparse <- function(txt,
   
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
+  # Activate code hidden in comment
+  re <- "^ *// *\\[ *(\\$\\w+) *\\]"
+  txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
+ 
   # Take out comments
   for(comment in comment_re) {
     m <- as.integer(regexpr(comment,txt,fixed=TRUE))
