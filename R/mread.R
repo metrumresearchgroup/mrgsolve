@@ -441,31 +441,32 @@ mread <- function(model, project = getwd(), code = NULL,
     out$stdout <- rawToChar(out$stdout)
     out$stderr <- rawToChar(out$stderr)
     cat("\n",out$stdout,sep="\n")
-    errr <- out$stderr
-    del <- paste0("^",mod$build$compfile,":")
+    errr <- strsplit(out$stderr, "\n|\r\n")[[1]]
+    del <- paste0("^",build$compfile,":")
     errr <- sapply(
       errr, 
-      gsub, 
+      sub, 
       pattern = del, 
       replacement = ""
     )
     del <- "^ *In function 'void _model.*:$"
     errr <- sapply(
       errr, 
-      gsub, 
+      sub, 
       pattern = del, 
       replacement = ""
     )
+    errr <- paste0(errr, collapse = "\n")
     #errr <- errr[!grepl("^\\s*$")]
 
     out$stderr <- strsplit(out$stderr, "\n|\r\n")[[1]]
-    cat("-------BUILD ERROR MESSAGES--------\n")
+    cat("-----BUILD ERROR MESSAGES---------------------\n")
     warning(
       "The model failed to build.  Returning build status information.",
       call.=FALSE
     )
     message(errr,appendLF=FALSE)
-    cat("----------------------------------\n\n")
+    cat("\n----------------------------------------------\n\n")
     out <- c(list(build = build), out)
     out <- structure(out, class = "mrgsolve-build-error")
     return(invisible(out))
