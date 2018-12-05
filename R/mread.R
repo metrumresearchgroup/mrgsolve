@@ -442,6 +442,22 @@ mread <- function(model, project = getwd(), code = NULL,
     out$stderr <- rawToChar(out$stderr)
     cat("\n",out$stdout,sep="\n")
     errr <- out$stderr
+    del <- paste0("^",mod$build$compfile,":")
+    errr <- sapply(
+      errr, 
+      gsub, 
+      pattern = del, 
+      replacement = ""
+    )
+    del <- "^ *In function 'void _model.*:$"
+    errr <- sapply(
+      errr, 
+      gsub, 
+      pattern = del, 
+      replacement = ""
+    )
+    #errr <- errr[!grepl("^\\s*$")]
+
     out$stderr <- strsplit(out$stderr, "\n|\r\n")[[1]]
     cat("-------BUILD ERROR MESSAGES--------\n")
     warning(
