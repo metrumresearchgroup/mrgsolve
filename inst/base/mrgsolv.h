@@ -59,13 +59,19 @@ protected:
 };
 
 struct shuttle {
-  shuttle(double a_, int b_) :  time(a_), evid(b_){}
-  double time = 0.0; 
-  int evid = 1;
-  int cmt = 1;
-  double amt = 0.0; 
-  double rate = 0.0;
-  bool now = false;
+  shuttle(double a_, int b_) :  time(a_), evid(b_) {
+    evid = 1;
+    cmt = 1;
+    amt = 0.0;
+    rate = 0.0;
+    now = false;
+  }
+  double time; 
+  int evid;
+  int cmt;
+  double amt; 
+  double rate;
+  bool now;
 };
 
 //! signature for <code>$MAIN</code>
