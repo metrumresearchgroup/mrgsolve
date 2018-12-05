@@ -442,7 +442,7 @@ mread <- function(model, project = getwd(), code = NULL,
     out$stderr <- rawToChar(out$stderr)
     cat("\n",out$stdout,sep="\n")
     errr <- out$stderr
-    out$stderr <- strsplit(out$stderr, "\n")[[1]]
+    out$stderr <- strsplit(out$stderr, "\n|\r\n")[[1]]
     cat("-------BUILD ERROR MESSAGES--------\n")
     warning(
       "The model failed to build.  Returning build status information.",
