@@ -30,9 +30,11 @@ Validate and prepare data sets for simulation
 }
 \examples{
 
+mod <- mrgsolve:::house()
+
 data(exTheoph)
 
-valid_data_set(exTheoph)
+valid_data_set(exTheoph,mod)
 
 }
 \seealso{

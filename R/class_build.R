@@ -158,6 +158,27 @@ build_output_cleanup <- function(x,build) {
   x
 }
 
+build_failed <- function(out,build) {
+  out <- build_output_cleanup(out,build) 
+  message("error.", appendLF=FALSE)
+  msg <- divider_msg("stdout")
+  cat("\n\n", msg, "\n", sep="")
+  cat(strwrap(out$stdout,width=60),sep="\n")
+  header <- "\n---:: stderr ::---------------------"
+  footer <- paste0(rep("-",nchar(header)),collapse = "")
+  msg <- divider_msg("stderr")
+  cat("\n",msg,"\n",sep="")
+  warning("There was an error when building the model.\n", 
+          "mread is returning with build error information.",
+          call.=FALSE
+  )
+  message(out$errr,appendLF=FALSE)
+  msg <- divider_msg()
+  cat("\n",msg,"\n",sep="")
+  out$errr <- NULL
+  return(invisible(out)) 
+}
+
 
 
 

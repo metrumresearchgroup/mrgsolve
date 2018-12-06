@@ -568,3 +568,16 @@ funs__ <- function(...) {
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
   dplyr::distinct(df, `!!!`(syms(.dots)), .keep_all = .keep_all)  
 }
+
+divider_msg <- function(msg = "", width = 60) {
+  if(nchar(msg) > 0) {
+    msg <- paste0("---:: ", msg, " ::")    
+  }
+  rem <- width - nchar(msg)
+  msg <- paste0(
+    msg, 
+    paste0(rep("-", rem),collapse="")
+  )
+  return(msg)
+}
+

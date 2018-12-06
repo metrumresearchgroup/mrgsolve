@@ -84,9 +84,10 @@ as.list(param(mod))
 
 as.data.frame(param(mod))
 
-param(mod, TVCL = 1.2)
+param(mod, CL = 1.2)
 
-new_values <- list(TVCL = 1.3, TVV = 20.5)
+new_values <- list(CL = 1.3, VC = 20.5)
+
 param(mod, new_values)
 
 }

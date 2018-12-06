@@ -413,12 +413,6 @@ mread <- function(model, project = getwd(), code = NULL,
   
   ## Compile the model
   ## The shared object is model-mread-source.cpp
-  # syst <- paste0(R.home(component="bin"), 
-  #                .Platform$file.sep,
-  #                "R CMD SHLIB ",
-  #                ifelse(preclean, " --preclean ", ""),
-  #                build$compfile)
-  # 
   syst <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
   
   args <- c(
@@ -438,25 +432,14 @@ mread <- function(model, project = getwd(), code = NULL,
   comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {
-    print(rawToChar(out$stderr))
-    out <- build_output_cleanup(out,build) 
-    cat("\n",out$stdout,sep="\n")
-    header <- "-----BUILD ERROR MESSAGES---------------------"
-    footer <- paste0(rep("-",nchar(header)),collapse = "")
-    cat(header,"\n",sep="")
-    warning(
-      "There was an error when building the model.  Returning build status information.",
-      call.=FALSE
-    )
-    message(out$errr,appendLF=FALSE)
-    cat("\n",footer,"\n",sep="")
-    return(invisible(out))
+    return(build_failed(out,build))
   } 
   
   if(ignore.stdout) {
-    if(!quiet) message("done.")
+    if(!quiet) message("done.", appendLF=FALSE)
   }  else {
-    cat(out$stdout,sep="\n") 
+    out <- build_output_cleanup(out,build) 
+    cat(strwrap(out$stdout,width=60),sep="\n")
   }
   
   ## Rename the shared object to unique name
