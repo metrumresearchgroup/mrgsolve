@@ -135,24 +135,35 @@ create_soloc <- function(loc,model,preclean) {
 }
 
 msub <- function(pattern,replacement,x,...) {
-  sapply(x, pattern = pattern, replacement = replacement, FUN = sub)
+  sapply(
+    x, 
+    pattern = pattern, 
+    replacement = replacement, 
+    FUN = sub, 
+    USE.NAMES=FALSE
+  )
 }
 
 mgsub <- function(pattern,replacement,x,...) {
-  sapply(x, pattern = pattern, replacement = replacement, FUN = gsub)
+  sapply(
+    x, 
+    pattern = pattern, 
+    replacement = replacement, 
+    FUN = gsub,
+    USE.NAMES = FALSE
+  )
 }
 
 build_output_cleanup <- function(x,build) {
   x$stdout <- rawToChar(x$stdout)
-  x$stderr <- rawToChar(x$stderr)
-  errr <- strsplit(x$stderr, "\n|\r\n")[[1]]
-  x$stderr <- errr
+  x$stdout <- strwrap(x$stdout,width=60)
+  errr <- rawToChar(x$stderr)
+  errr <- strsplit(errr, "\n|\r\n")[[1]]
   patt <- paste0("^", build$compfile, ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
   patt <- "^ *In function 'void _model.*:$"
   errr <- msub(pattern = patt, replacement = "", x = errr)
-  errr <- paste0(errr, collapse = "\n")
-  x$errr <- errr
+  x$stderr <- errr
   x <- c(list(build = build), x)
   x <- structure(x, class = "mrgsolve-build-error")
   x
@@ -163,22 +174,30 @@ build_failed <- function(out,build) {
   message("error.", appendLF=FALSE)
   msg <- divider_msg("stdout")
   cat("\n\n", msg, "\n", sep="")
-  cat(strwrap(out$stdout,width=60),sep="\n")
+  cat(out$stdout,sep="\n")
   header <- "\n---:: stderr ::---------------------"
   footer <- paste0(rep("-",nchar(header)),collapse = "")
   msg <- divider_msg("stderr")
   cat("\n",msg,"\n",sep="")
-  warning("There was an error when building the model.\n", 
-          "mread is returning with build error information.",
-          call.=FALSE
-  )
-  message(out$errr,appendLF=FALSE)
+  xx <- paste0(out$stderr,collapse="\n")
+  message(xx,appendLF=FALSE)
   msg <- divider_msg()
   cat("\n",msg,"\n",sep="")
-  out$errr <- NULL
-  return(invisible(out)) 
+  saveRDS(out,file.path(tempdir(),"build_error.RDS"))
+  stop(
+    "There was a problem building the model.",
+    call.=FALSE
+  )
 }
 
-
+get_build_output <- function() {
+  file <- file.path(tempdir(),"build_error.RDS")
+  file <- normalizePath(file,mustWork=FALSE)
+  if(!file.exists(file)) {
+    message("No build output was found.")
+    return(invisible(list()))
+  }
+  return(readRDS(file))
+}
 
 

@@ -439,7 +439,7 @@ mread <- function(model, project = getwd(), code = NULL,
     if(!quiet) message("done.", appendLF=FALSE)
   }  else {
     out <- build_output_cleanup(out,build) 
-    cat(strwrap(out$stdout,width=60),sep="\n")
+    cat(out$stdout,sep="\n")
   }
   
   ## Rename the shared object to unique name
