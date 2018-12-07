@@ -203,7 +203,6 @@ Rcpp::NumericMatrix MRGSIMQ(const Rcpp::List parin,
   double id = 0;
   double maxtime = 0;
   double Fn = 1.0;
-  double told = -1;
   
   prob->nid(dat.nid());
   prob->nrow(NN);
@@ -219,9 +218,7 @@ Rcpp::NumericMatrix MRGSIMQ(const Rcpp::List parin,
   // We must first figure out the ID we are working with
   // and assign in the object
   for(size_t i=0; i < a.size(); ++i) {
-    
-    told = -1;
-    
+
     prob->idn(i);
     
     tfrom = a[i].front()->time();

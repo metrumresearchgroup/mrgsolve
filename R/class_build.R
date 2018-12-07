@@ -134,4 +134,70 @@ create_soloc <- function(loc,model,preclean) {
   return(soloc)
 }
 
+msub <- function(pattern,replacement,x,...) {
+  sapply(
+    x, 
+    pattern = pattern, 
+    replacement = replacement, 
+    FUN = sub, 
+    USE.NAMES=FALSE
+  )
+}
+
+mgsub <- function(pattern,replacement,x,...) {
+  sapply(
+    x, 
+    pattern = pattern, 
+    replacement = replacement, 
+    FUN = gsub,
+    USE.NAMES = FALSE
+  )
+}
+
+build_output_cleanup <- function(x,build) {
+  x$stdout <- rawToChar(x$stdout)
+  x$stdout <- strwrap(x$stdout,width=60)
+  errr <- rawToChar(x$stderr)
+  errr <- strsplit(errr, "\n|\r\n")[[1]]
+  patt <- paste0("^", build$compfile, ":")
+  errr <- msub(pattern = patt, replacement = "", x = errr)
+  patt <- "^ *In function 'void _model.*:$"
+  errr <- msub(pattern = patt, replacement = "", x = errr)
+  x$stderr <- errr
+  x <- c(list(build = build), x)
+  x <- structure(x, class = "mrgsolve-build-error")
+  x
+}
+
+build_failed <- function(out,build) {
+  out <- build_output_cleanup(out,build) 
+  message("error.", appendLF=FALSE)
+  msg <- divider_msg("stdout")
+  cat("\n\n", msg, "\n", sep="")
+  cat(out$stdout,sep="\n")
+  header <- "\n---:: stderr ::---------------------"
+  footer <- paste0(rep("-",nchar(header)),collapse = "")
+  msg <- divider_msg("stderr")
+  cat("\n",msg,"\n",sep="")
+  xx <- paste0(out$stderr,collapse="\n")
+  message(xx,appendLF=FALSE)
+  msg <- divider_msg()
+  cat("\n",msg,"\n",sep="")
+  saveRDS(out,file.path(tempdir(),"build_error.RDS"))
+  stop(
+    "There was a problem building the model.",
+    call.=FALSE
+  )
+}
+
+get_build_output <- function() {
+  file <- file.path(tempdir(),"build_error.RDS")
+  file <- normalizePath(file,mustWork=FALSE)
+  if(!file.exists(file)) {
+    message("No build output was found.")
+    return(invisible(list()))
+  }
+  return(readRDS(file))
+}
+
 

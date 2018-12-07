@@ -9,6 +9,7 @@
 \alias{length,numericlist-method}
 \alias{names,numericlist-method}
 \alias{$,numericlist-method}
+\alias{[[,numericlist-method}
 \alias{[,numericlist-method}
 \title{Methods for numericlist}
 \usage{
@@ -25,6 +26,8 @@
 
 \S4method{$}{numericlist}(x, name)
 
+\S4method{[[}{numericlist}(x, i, ..., exact = TRUE)
+
 \S4method{[}{numericlist}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
@@ -39,6 +42,8 @@
 \item{name}{column to take}
 
 \item{i}{elements to keep}
+
+\item{exact}{not used}
 
 \item{j}{not used}
 

@@ -35,6 +35,7 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble as_data_frame data_frame
 ##' @importFrom rlang quos enquo syms !!!
+##' @importFrom sys exec_internal
 ##' 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R

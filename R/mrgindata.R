@@ -98,9 +98,11 @@ convert_character_cmt <- function(data, mod) {
 ##' 
 ##' @examples
 ##' 
+##' mod <- mrgsolve:::house()
+##' 
 ##' data(exTheoph)
 ##' 
-##' valid_data_set(exTheoph)
+##' valid_data_set(exTheoph,mod)
 ##' 
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {

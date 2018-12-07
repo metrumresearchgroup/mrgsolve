@@ -231,7 +231,7 @@ mread <- function(model, project = getwd(), code = NULL,
   table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
   
-
+  
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -313,17 +313,19 @@ mread <- function(model, project = getwd(), code = NULL,
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
-  rd <- generate_rdefs(pars = names(param),
-                      cmt = names(init),
-                      ode_func(x),
-                      main_func(x),
-                      table_func(x),
-                      config_func(x),
-                      model = model(x),
-                      omats = omat(x),
-                      smats = smat(x),
-                      set = SET,
-                      check.bounds = check.bounds)
+  rd <- generate_rdefs(
+    pars = names(param),
+    cmt = names(init),
+    ode_func(x),
+    main_func(x),
+    table_func(x),
+    config_func(x),
+    model = model(x),
+    omats = omat(x),
+    smats = smat(x),
+    set = SET,
+    check.bounds = check.bounds
+  )
   
   ## Write the model code to temporary file
   temp_write <- tempfile()
@@ -378,7 +380,7 @@ mread <- function(model, project = getwd(), code = NULL,
   x@shlib$source <- file.path(build$soloc,build$compfile)
   x@shlib$md5 <- build$md5
   x@shlib$covariates <- mread.env$covariates
-
+  
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
@@ -394,13 +396,15 @@ mread <- function(model, project = getwd(), code = NULL,
   write_win_def(x)
   #do_restore(to_restore)
   
-  same <- check_and_copy(from = temp_write,
-                         to = build$compfile)
+  same <- check_and_copy(
+    from = temp_write,
+    to = build$compfile
+  )
   
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
-    message("Compiling ",model(x)," ... ", appendLF=FALSE)
+    message("Building ", model(x)," ... ", appendLF=FALSE)
   }
   
   # Wait at least 2 sec since last compile
@@ -409,58 +413,34 @@ mread <- function(model, project = getwd(), code = NULL,
   
   ## Compile the model
   ## The shared object is model-mread-source.cpp
-  syst <- paste0(R.home(component="bin"), 
-                 .Platform$file.sep,
-                 "R CMD SHLIB ",
-                 ifelse(preclean, " --preclean ", ""),
-                 build$compfile)
+  syst <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
   
-  ## Windows: always intern; output.on.console if not ignore.stdout
-  args <- list(command=syst)
+  args <- c(
+    "CMD", "SHLIB",
+    ifelse(preclean, "--preclean ", ""),
+    build$compfile
+  )
   
-  if(build$win) {
-    args$intern <- TRUE
-    args$show.output.on.console <- !ignore.stdout
-  } else {
-    args$intern <- ignore.stdout
-    args$ignore.stdout <- ignore.stdout
-  }
+  out <- suppressWarnings(
+    exec_internal(
+      syst,
+      args = args,
+      error = FALSE
+    )
+  )
   
-  output <- suppressWarnings(do.call(system,args))
-  
-  status <- attr(output,"status")
-  
-  if(args$intern) {
-    comp_success <- is.null(status) & file.exists(build$compout)
-  } else {
-    comp_success <- output=="0" & file.exists(build$compout)
-  }
+  comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {
-    ## Always on windows
-    ## on unix only if ignore.stdout
-    if(args$intern) {
-      cat(output,sep="\n")
-      if(any(grepl("status 127", output, fixed = TRUE))) {
-        warning(
-         c("Found 'status 127' in compliation error message.  ", 
-           "This usually means that the build toolchain (including compilers) ",
-           "can't be located on your system.  Please reinstall the toolchain, ",
-           "check the PATH environment variable and/or ask for help on ",
-           "http://mrgsolve.github.io/issues")
-        )
-      }
-    }
-    cat("-------------\n")
-    stop("there was a problem building the model.",call.=FALSE)
+    return(build_failed(out,build))
   } 
   
   if(ignore.stdout) {
-    if(!quiet) message("done.")
+    if(!quiet) message("done.", appendLF=FALSE)
   }  else {
-    if(args$intern) cat(output,sep="\n") 
+    out <- build_output_cleanup(out,build) 
+    cat(out$stdout,sep="\n")
   }
-  
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so

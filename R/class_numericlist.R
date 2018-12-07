@@ -128,6 +128,13 @@ setMethod("$", "numericlist", function(x,name){
   unlist(x@data[name],use.names=FALSE)
 })
 
+##' @rdname numericlist
+##' @param exact not used
+##' @export
+setMethod("[[", "numericlist", function(x,i,...,exact=TRUE){
+  unlist(x@data[[i]],use.names=FALSE)
+})
+
 ##' @export
 ##' @rdname numericlist
 ##' @param i elements to keep

@@ -41,8 +41,10 @@ write_capture <- function(x) {
 
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
-set_args <- c("Req", "obsonly", "recsort",
-              "carry.out","Trequest","trequest")
+set_args <- c(
+  "Req", "obsonly", "recsort",
+  "carry.out","Trequest","trequest"
+)
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
@@ -65,7 +67,9 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     if(warn_cmt)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
     
     if(length(invalid) > 0) {
-      warning(paste0("Invalid blocks found: ", paste(invalid, collapse=" ")), call.=FALSE)
+      warning(
+        paste0("Invalid blocks found: ", paste(invalid, collapse=" ")), call.=FALSE
+      )
     }
   }
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
@@ -140,7 +144,7 @@ modelparse <- function(txt,
   # Activate code hidden in comment
   re <- "^ *// *\\[ *(\\$\\w+) *\\]"
   txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
- 
+  
   # Take out comments
   for(comment in comment_re) {
     m <- as.integer(regexpr(comment,txt,fixed=TRUE))
