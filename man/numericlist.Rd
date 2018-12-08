@@ -55,3 +55,4 @@ These methods can be used to corece \code{param} and
 extract elements from \code{numericlist}s, or get attributes 
 from \code{numericlist}s.
 }
+\keyword{internal}

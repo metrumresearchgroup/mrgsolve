@@ -40,7 +40,9 @@ to use for the data set}
 \item{need}{passed to \code{\link{inventory}}}
 }
 \description{
-Select and modify a data set for simulation
+The input data set (\code{data_set}) is a data frame that specifies
+observations, model events, and / or paramter values for a population
+of individuals.
 }
 \details{
 Input data sets are \code{R} data frames that can include columns 

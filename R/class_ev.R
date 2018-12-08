@@ -18,6 +18,7 @@
 ##' S4 events class
 ##' @slot data a data frame of events
 ##' @export
+##' @keywords internal
 setClass("ev", slots=c(data="data.frame"))
 
 is.ev <- function(x) {
@@ -107,6 +108,7 @@ as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE,
 
 ##' @rdname ev_methods
 ##' @export
+##' @keywords internal
 setMethod("show", "ev", function(object) {
   cat("Events:\n")
   print(as.data.frame(object))

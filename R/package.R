@@ -286,8 +286,7 @@ NULL
 ##' }
 NULL
 
-
-##' Reserved words.
+##' Reserved words
 ##'
 ##' @name reserved
 ##' @details

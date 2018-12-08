@@ -65,7 +65,6 @@
 ##' head(out)
 ##' tail(out)
 ##'
-##' mrgsolve:::mod(out)
 ##'
 ##' dim(out)
 ##' names(out)
@@ -83,6 +82,7 @@ NULL
 
 
 ##' @rdname mod
+##' @keywords internal
 setMethod("mod", "mrgsims", function(x,...) {x@mod})
 
 request <- function(x) x@request
@@ -239,6 +239,7 @@ setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,
 ##' @export
 ##' @rdname mrgsims
 ##' @export
+##' @keywords internal
 setMethod("as.matrix", "mrgsims", function(x,...) {
   return(as.matrix(x@data))
 })
@@ -252,6 +253,7 @@ setMethod("summary", "mrgsims", function(object,...) {
 
 ##' @rdname mrgsims
 ##' @export
+##' @keywords internal
 setMethod("show", "mrgsims", function(object) {
   digits <- 4
   n <- min(8,nrow(object@data))

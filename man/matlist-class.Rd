@@ -9,3 +9,4 @@
 \description{
 S4 class matlist
 }
+\keyword{internal}

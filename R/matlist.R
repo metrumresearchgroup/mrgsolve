@@ -278,9 +278,10 @@ setMethod("dim", "matlist", function(x)  lapply(x@data, dim))
 ##' @rdname matlist
 setMethod("nrow", "matlist", function(x) unlist(lapply(x@data, nrow)))
 
-##' @export
 ##' @rdname matlist
 ##' @param object passed to showmatlist
+##' @export
+##' @keywords internal
 setMethod("show", "matlist", function(object) showmatlist(object))
 showmatlist <- function(x,...) {
   

@@ -16,38 +16,11 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Functions for chaining commands together
-##'
-##' Use these functions with chaining commands togehter with the %>%
-##' operator.
-##'
-##' @name chain
-##' 
-##' @details
-##' Other functions that may be used in the chain of commands include: 
-##' \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
-##' \code{\link{ev}}.
-##' or any other function that will take the output of the preceeding command 
-##' as it's first argument.
-##' 
-##' @seealso \code{\link{data_set}}, \code{\link{idata_set}}
-##' 
-##' @examples
-##'
-##' mod <- mrgsolve:::house()
-##'
-##' data(exidata)
-##' data(exTheoph)
-##'
-##' out <- mod %>% data_set(exTheoph) %>% mrgsim()
-##' out <- mod %>% carry_out(evid) %>% ev(amt=100, cmt=1) %>% mrgsim()
-##' out <- mod %>% Req(CP,RESP) %>% mrgsim()
-NULL
-
 ##' Request simulated output
 ##' 
 ##' Use this function to select, by name, either compartments or derived 
-##' variables that have been captured (see \code{\link{CAPTURE}}).
+##' variables that have been captured (see \code{\link{CAPTURE}}) into
+##' the simulated output.
 ##'
 ##' @param x model object
 ##' @param ... unquoted names of compartments or tabled items

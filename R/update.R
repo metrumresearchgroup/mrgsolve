@@ -231,11 +231,13 @@ setMethod("update", "ev", function(object,y,...) {
 ##' @param model model name
 ##' @param project project directory
 ##' @param ... passed along
-##' @export
 ##' @return updated model object
-setGeneric("relocate", function(x,...) standardGeneric("relocate"))
 ##' @export
+##' @keywords internal
+setGeneric("relocate", function(x,...) standardGeneric("relocate"))
+
 ##' @rdname relocate
+##' @export
 setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
   if(!missing(model)) x@model <- model
   if(!missing(project)) x@project <- normalizePath(project,winslash=.Platform$file.sep)

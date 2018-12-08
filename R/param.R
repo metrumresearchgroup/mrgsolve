@@ -30,7 +30,6 @@
 ##' for which parameters to show when printing
 ##' @param .strict if \code{TRUE}, all names to be updated must be found 
 ##' in the parameter list
-##' @param object passed to show
 ##' @param ... passed along or name/value pairs to update the parameters 
 ##' in a model object
 ##' 
@@ -199,8 +198,10 @@ allparam <- function(.x) {
   as.param(c(as.list(param(.x)), .x@fixed))
 }
 
-##' @rdname param
+##' Show the parameter list
+##' @param object the object to show
 ##' @export
+##' @keywords internal
 setMethod("show", "parameter_list", function(object) {
   showparam(object)
 })

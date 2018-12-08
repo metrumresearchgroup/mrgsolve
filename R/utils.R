@@ -43,6 +43,7 @@ is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 ##' are brought along from \code{y} only when \code{open}.
 ##' 
 ##' @export
+##' @keywords internal
 merge.list <- function(x,y,...,open=FALSE,
                        warn=TRUE,context="object",wild="...") {
   
@@ -94,6 +95,7 @@ update_list <- function(left, right) {
 ##' @param n number of variates to simulate
 ##' @param seed if not null, passed to set.seed
 ##' @export
+##' @keywords internal
 mvgauss <- function(mat, n=10, seed=NULL) {
   if(!is.null(seed)) set.seed(seed)
   .Call(`_mrgsolve_MVGAUSS`, mat, n)
@@ -240,20 +242,22 @@ tovec <- function(x,concat=TRUE) {
 ##'
 ##' @param x comma-separated quoted string (for \code{cvec})
 ##' @param ... unquoted strings (for \code{ch})
-##' @export
 ##' @examples
 ##'
 ##' cvec("A,B,C")
 ##' s_(A,B,C)
-##'
+##' @export
+##' @keywords internal
 setGeneric("cvec", function(x,...) standardGeneric("cvec"))
 
 ##' @export
 ##' @rdname cvec
+##' @keywords internal
 setMethod("cvec", "character", as.cvec)
 
 ##' @export
 ##' @rdname cvec
+##' @keywords internal
 s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 
 ##' Access or clear arguments for calls to mrgsim

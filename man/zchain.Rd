@@ -2,10 +2,8 @@
 % Please edit documentation in R/Aaaa.R
 \name{\%>\%}
 \alias{\%>\%}
-\alias{\%T>\%}
-\title{Forward pipe.}
+\title{Forward pipe}
 \description{
-Forward pipe.
-
-Tee.
+Forward pipe
 }
+\keyword{internal}

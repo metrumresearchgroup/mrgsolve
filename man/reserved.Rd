@@ -2,12 +2,12 @@
 % Please edit documentation in R/package.R
 \name{reserved}
 \alias{reserved}
-\title{Reserved words.}
+\title{Reserved words}
 \usage{
 reserved()
 }
 \description{
-Reserved words.
+Reserved words
 }
 \details{
 Note: this function is not exported; you must go into the 

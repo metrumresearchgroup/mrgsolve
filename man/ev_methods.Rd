@@ -49,3 +49,4 @@ as.data.frame(e)
 nrow(e)
 
 }
+\keyword{internal}

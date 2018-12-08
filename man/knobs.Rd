@@ -28,7 +28,8 @@ knobs(x, y, ...)
 
 \item{y}{a \code{batch_mrgsims} object}
 
-\item{...}{knobs: named numeric vectors that identify knob names and knob values for a
+\item{...}{knobs: named numeric vectors that identify knob names and knob 
+values for a
 batch run.  See details.}
 
 \item{row.names}{passed to \code{as.data.frame.data.frame}}
@@ -38,7 +39,8 @@ batch run.  See details.}
 \item{object}{the object to show}
 }
 \value{
-An object of class \code{batch_mrgsims}.  Most methods for \code{mrgsims} objects also work on \code{batch_mrgsims} object.
+An object of class \code{batch_mrgsims}.  Most methods for 
+\code{mrgsims} objects also work on \code{batch_mrgsims} object.
 }
 \description{
 Knobs can be parameter values or PK dosing items (e.g. amt).  
@@ -80,3 +82,4 @@ out
 out <- knobs(mod, CL=c(1,2,3))
 out
 }
+\keyword{internal}

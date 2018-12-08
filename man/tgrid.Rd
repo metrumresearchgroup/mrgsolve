@@ -66,3 +66,4 @@ out <- mod \%>\% ev(amt=1000, ii=24, addl=10) \%>\% mrgsim(tgrid=design)
 plot(out,CP~., type='b')
 }
 }
+\keyword{internal}

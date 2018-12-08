@@ -201,11 +201,14 @@ cleanso <- function(x,where=soloc(x)) {
 }
 
 ##' Get inits from compiled function
+##' 
+##' This function is usually for internal use.
 ##'
 ##' @param x mrgmod model object
 ##' @param keep_pointers should function pointers be returned?
 ##' 
 ##' @export
+##' @keywords internal
 touch_funs <- function(x,keep_pointers=TRUE) {
   
   funp <- pointers(x)

@@ -18,3 +18,4 @@ columns with \code{\link{as.integer}}}
 \description{
 Prepare data.frame for input to mrgsim
 }
+\keyword{internal}

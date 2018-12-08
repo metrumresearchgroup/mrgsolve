@@ -59,3 +59,4 @@ or \code{sigma} or both entirely}
 \description{
 Methods for working with matrix-list objects
 }
+\keyword{internal}

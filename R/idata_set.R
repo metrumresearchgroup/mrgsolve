@@ -18,6 +18,10 @@
 
 
 ##' Select and modify a idata set for simulation
+##' 
+##' The individual data set (\code{idata_set}) is a data frame with one 
+##' row for each individual in a population, specifying parameters and 
+##' other individual-level data.
 ##'
 ##' @param x model object
 ##' @param data a data set coercable to data.frame

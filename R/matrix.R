@@ -35,6 +35,7 @@ decorr <- function(x) {
 ##' @param x numeric data
 ##' @param context the working context
 ##' @return a square symmetric numeric matrix with column names
+##' @keywords internal
 lower2matrix <- function(x, context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) return(matrix(x,nrow=1, ncol=1 ))
@@ -53,6 +54,7 @@ lower2matrix <- function(x, context=NULL) {
 ##' @param x numeric data
 ##' @param context used to generate column names
 ##' @return a numeric diagonal matrix
+##' @keywords internal
 numeric2diag <- function(x,context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) {
@@ -89,9 +91,8 @@ numeric2diag <- function(x,context=NULL) {
 ##' ans
 ##' cov2cor(ans)
 ##'
+##' @keywords internal
 ##' @export
-##'
-##'
 modMATRIX <- function(x,
                       use=TRUE,
                       block=FALSE,

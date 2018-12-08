@@ -101,4 +101,5 @@ setGeneric("ex", function(x,...) standardGeneric("ex"))
 ##' 
 ##' 
 ##' @rdname mod
+##' @keywords internal
 setGeneric("mod", function(x,...) standardGeneric("mod"))

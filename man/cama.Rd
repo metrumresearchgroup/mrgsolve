@@ -19,3 +19,4 @@ Run the model cama function
 \details{
 \code{sah-mah}
 }
+\keyword{internal}

@@ -30,19 +30,15 @@
 ##' @param amt dose amount
 ##' @param evid event ID
 ##' @param cmt compartment
-
 ##' @param ID subject ID
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for 
 ##' each individual in \code{ID}
-
 ##' @param until the expected maximum \bold{observation} time for this regimen
 ##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
 ##' \code{\link{realize_addl}}
 ##' @param object passed to show
 ##' @param ... passed on
-##' 
-##' @export events
 ##' 
 ##' @details
 ##' \itemize{
@@ -69,7 +65,6 @@
 ##' @examples
 ##' mod <- mrgsolve:::house()
 ##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
-##' events(mod)
 ##'
 ##' loading <- ev(time=0, cmt=1, amt=1000)
 ##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
@@ -78,7 +73,7 @@
 ##'
 ##' ev(ID=1:10, cmt=1, time=0, amt=100)
 ##'
-##'
+##' @export
 setGeneric("ev", function(x,...) {
   standardGeneric("ev")
 })
@@ -308,16 +303,19 @@ collect_ev <- function(...) {
 ##' objects have been deprecated.
 ##'
 ##' @rdname ev_ops
+##' @keywords internal
 setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
   return(add.ev(e1,e2))
 })
 
 ##' @rdname ev_ops
 ##' @export
+##' @keywords internal
 setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 
 ##' @rdname ev_ops
 ##' @export
+##' @keywords internal
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
   if(!has_name("ii",left) | !has_name("addl",left)) {
@@ -330,6 +328,7 @@ setMethod("%then%",c("ev", "ev"), function(e1,e2) {
 
 ##' @rdname ev_ops
 ##' @export
+##' @keywords internal
 setMethod("+", c("ev", "numeric"), function(e1, e2) {
   e1@data$time <- e1@data$time + e2
   e1
@@ -350,47 +349,47 @@ setMethod("c", "ev", function(x,...,recursive=TRUE) {
   return(x)
 })
 
-plus.ev <- function(e1,e2) {
-  
-  data1 <- as.data.frame(events(e1))
-  data2 <- as.data.frame(e2)
-  
-  if(nrow(data1)==0) {
-    e1@events <- e2
-    return(e1)
-  }
-  
-  short <- setdiff(names(data1), names(data2))
-  long <- setdiff(names(data2), names(data1))
-  
-  if(any(short=="ID") | any(long=="ID")) {
-    stop("ID found in one object but not the other")
-  }
-  
-  if(length(short)>0) {
-    add <- as.list(rep(0,length(short)))
-    names(add) <- short
-    data2 <- cbind(data2, add)
-  }
-  
-  if(length(long) > 0) {
-    add <- as.list(rep(0, length(long)))
-    names(add) <- long
-    data1 <- cbind(data1, add)
-  }
-  
-  data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
-  
-  if(has_name("ID", data1)) {
-    data1<- data1[order(data1$ID, data1$time),]
-  } else {
-    data1<- data1[order(data1$time),]
-  }
-  
-  e1@events <- as.ev(data1)
-  
-  return(e1)
-}
+# plus.ev <- function(e1,e2) {
+#   
+#   data1 <- as.data.frame(events(e1))
+#   data2 <- as.data.frame(e2)
+#   
+#   if(nrow(data1)==0) {
+#     e1@events <- e2
+#     return(e1)
+#   }
+#   
+#   short <- setdiff(names(data1), names(data2))
+#   long <- setdiff(names(data2), names(data1))
+#   
+#   if(any(short=="ID") | any(long=="ID")) {
+#     stop("ID found in one object but not the other")
+#   }
+#   
+#   if(length(short)>0) {
+#     add <- as.list(rep(0,length(short)))
+#     names(add) <- short
+#     data2 <- cbind(data2, add)
+#   }
+#   
+#   if(length(long) > 0) {
+#     add <- as.list(rep(0, length(long)))
+#     names(add) <- long
+#     data1 <- cbind(data1, add)
+#   }
+#   
+#   data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
+#   
+#   if(has_name("ID", data1)) {
+#     data1<- data1[order(data1$ID, data1$time),]
+#   } else {
+#     data1<- data1[order(data1$time),]
+#   }
+#   
+#   e1@events <- as.ev(data1)
+#   
+#   return(e1)
+# }
 
 add.ev <- function(e1,e2) {
   

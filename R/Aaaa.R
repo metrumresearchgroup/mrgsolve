@@ -95,19 +95,14 @@ globalVariables(c("test_package","time", "ID","block", "descr",
 
 VERSION <- packageDescription("mrgsolve")$Version
 
-#' Forward pipe.
+#' Forward pipe
+#' 
+#' 
 #'
 #' @name %>%
-#' @export
 #' @rdname zchain
-NULL
-
-
-#' Tee.
-#'
-#' @name %T>%
 #' @export
-#' @rdname zchain
+#' @keywords internal
 NULL
 
 

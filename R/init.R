@@ -118,9 +118,13 @@ setMethod("as.init", "numeric", function(.x,...) {
 
 setMethod("as.init", "cmt_list", function(.x,...) .x)
 
-setMethod("as.init", "missing", function(.x,...) create_numeric_list(list(), "cmt_list",...))
+setMethod("as.init", "missing", function(.x,...) {
+  create_numeric_list(list(), "cmt_list",...)
+})
 
-setMethod("as.init", "NULL", function(.x,...) create_numeric_list(list(), "cmt_list",...))
+setMethod("as.init", "NULL", function(.x,...) {
+  create_numeric_list(list(), "cmt_list",...)
+})
 
 
 
@@ -182,8 +186,9 @@ showinit <-  function(x,digits=3,ncols=NULL,right=FALSE,...) {
   
 }
 
+##' Show the compartment list
 ##' @param object the object to show
-##' @rdname init
 ##' @export
+##' @keywords internal
 setMethod("show", "cmt_list", function(object) showinit(object))
 

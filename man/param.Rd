@@ -9,7 +9,6 @@
 \alias{param,list-method}
 \alias{param,ANY-method}
 \alias{allparam}
-\alias{show,parameter_list-method}
 \title{Create and work with parameter objects}
 \usage{
 param(.x, ...)
@@ -26,8 +25,6 @@ param(.x, ...)
 \S4method{param}{ANY}(.x, ...)
 
 allparam(.x)
-
-\S4method{show}{parameter_list}(object)
 }
 \arguments{
 \item{.x}{the model object}
@@ -42,8 +39,6 @@ for which parameters to show when printing}
 
 \item{.strict}{if \code{TRUE}, all names to be updated must be found 
 in the parameter list}
-
-\item{object}{passed to show}
 }
 \value{
 An object of class \code{parameter_list} (see 

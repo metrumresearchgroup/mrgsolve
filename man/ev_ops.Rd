@@ -38,3 +38,4 @@ Operations for ev objects
 All operations involving \code{\link[=mrgmod-class]{mrgmod}} 
 objects have been deprecated.
 }
+\keyword{internal}

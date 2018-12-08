@@ -164,7 +164,8 @@ valid.mrgmod <- function(object) {
 ##' @slot model model name \code{<character>}
 ##' @slot modfile source model specification file name \code{<character>}
 ##' @slot package the shared object file name \code{character>}
-##' @slot project working directory; must be writeable with no spaces \code{<character>}
+##' @slot project working directory; must be writeable with no spaces 
+##' \code{<character>}
 ##' @slot start simulation start time \code{<numeric>}
 ##' @slot end simulation end time \code{<numeric>}
 ##' @slot delta simulation time interval \code{<numeric>}
@@ -173,27 +174,31 @@ valid.mrgmod <- function(object) {
 ##' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
 ##' these are not updatable from \code{R}
 ##' @slot init \code{<cmt_list>}
-##' @slot events deprecated
-##' @slot digits significant digits in simulated output; negative integer means ignore \code{<numeric>}
+##' @slot digits significant digits in simulated output; negative integer means 
+##' ignore \code{<numeric>}
 ##' @slot hmin passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}
 ##' @slot hmax passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-##' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} 
+##' \code{<numeric>}
 ##' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 ##' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 ##' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-##' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+##' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} 
+##' \code{<numeric>}
 ##' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 ##' @slot verbose print run information to screen \code{<logical>}
 ##' @slot quiet print various information to screen \code{<logical>}
 ##' @slot debug not used
 ##' @slot tscale used to scale time in simulated output \code{<numeric>}
-##' @slot omega \code{\link{matlist}} for simulating individual-level random effects
+##' @slot omega \code{\link{matlist}} for simulating individual-level random 
+##' effects
 ##' @slot sigma \code{\link{matlist}} for simulating residual error variates
 ##' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
 ##' @slot advan either 2, 4, or 13 \code{<numeric>}
 ##' @slot trans either 1, 2, 4, or 11 \code{<numeric>}
 ##' @slot request  vector of compartments to request \code{<character>}
-##' @slot soloc directory path for storing the model shared object \code{<character>}
+##' @slot soloc directory path for storing the model shared object 
+##' \code{<character>}
 ##' @slot code a character vector of the model code
 ##' @slot capture a character vector of variables that are captured from 
 ##' the simulation \code{<character>}
@@ -204,6 +209,7 @@ valid.mrgmod <- function(object) {
 ##' @slot plugin model plugins \code{<character>}
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
+##' @keywords internal
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",
@@ -477,24 +483,6 @@ setMethod("[", "mrgmod", function(x, i) {
   as.list(allparam(x))[i]
 })
 
-##' DEPRECATED: get an events object from a model object
-##' 
-##' @param x an object
-##' @param ... not used
-##' 
-##' @export
-setGeneric("events", function(x,...) {
-  standardGeneric("events")
-})
-
-##' @rdname events
-##' @export
-setMethod("events", "mrgmod", function(x,...) {
-  warning("events are no longer included in the model object")
-})
-
-
-
 ##' @rdname see
 ##' @export
 setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
@@ -593,7 +581,7 @@ parin <- function(x) {
 ##' @param source logical; show the C++ file that is actually compiled
 ##' @param ... not used
 ##' @export
-##' 
+##' @keywords internal
 file_show <- function(x,spec=TRUE,source=TRUE,...) {
   stopifnot(is.mrgmod(x))
   what <- list()

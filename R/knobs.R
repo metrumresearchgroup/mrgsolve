@@ -25,10 +25,12 @@ moving <- function(x) x@moving
 ##'
 ##' @param x the model object
 ##' @param y a \code{batch_mrgsims} object
-##' @param ... knobs: named numeric vectors that identify knob names and knob values for a
+##' @param ... knobs: named numeric vectors that identify knob names and knob 
+##' values for a
 ##' batch run.  See details.
 ##' @name knobs
-##' @return An object of class \code{batch_mrgsims}.  Most methods for \code{mrgsims} objects also work on \code{batch_mrgsims} object.
+##' @return An object of class \code{batch_mrgsims}.  Most methods for 
+##' \code{mrgsims} objects also work on \code{batch_mrgsims} object.
 ##' @details
 ##' Valid knob names include: any parameter name (in \code{param(mod)}), 
 ##' time variables (\code{start}, \code{end}, \code{delta}), PK dosing items 
@@ -163,6 +165,7 @@ setMethod("knobs", "batch_mrgsims", function(x,...) {
 ##' @param object the object to show
 ##' @rdname knobs
 ##' @export
+##' @keywords internal
 setMethod("show", "batch_mrgsims", function(object) {
   
   cat("Model: ", model(mod(object)),"\n")
@@ -182,7 +185,7 @@ setMethod("show", "batch_mrgsims", function(object) {
   return(invisible(NULL))
 })
 
-##' Plot method for mrgsims objects.
+##' Plot method for mrgsims objects
 ##'
 ##' @param x mrsims object
 ##' @param y a formula passed to xyplot

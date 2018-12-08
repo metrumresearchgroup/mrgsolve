@@ -50,6 +50,7 @@ numeric_data_matrix <- function(x,quiet=FALSE) {
 ##' columns with \code{\link{as.integer}}
 ##' 
 ##' @export
+##' @keywords internal
 numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
   if(convert_lgl) {
     if(any(sapply(x,is.logical))) {
@@ -59,8 +60,10 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
   nu <- is.numeric(x)
   if(!all(nu)) {
     if(!quiet) {
-      message("Dropping non-numeric columns: \n  ", 
-              paste(names(x)[!nu], collapse=" "))
+      message(
+        "Dropping non-numeric columns: \n  ", 
+        paste(names(x)[!nu], collapse=" ")
+      )
     }
     x <- dplyr::select(x,which(nu))
   } 
@@ -79,8 +82,11 @@ convert_character_cmt <- function(data, mod) {
 }
 
 
-##' Validate and prepare data sets for simulation
+##' Validate and prepare a data sets for simulation
 ##'
+##' This function is called by mrgsim.  Users may also call this function
+##' to pre-validate data when the same data set is used for repeated 
+##' simulation.
 ##'
 ##' @param x data.frame or matrix
 ##' @param m a model object

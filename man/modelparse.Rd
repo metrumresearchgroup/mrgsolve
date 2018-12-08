@@ -25,3 +25,4 @@ file <- file.path(modlib(), "pk1.cpp")
 modelparse(readLines(file))
 
 }
+\keyword{internal}

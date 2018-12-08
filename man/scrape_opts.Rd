@@ -18,12 +18,14 @@ scrape_opts(x, envir = list(), def = list(), all = TRUE, marker = "=",
 
 \item{marker}{assignment operator; used to locate lines with options}
 
-\item{narrow}{logical; if \code{TRUE}, only get options on lines starting with \code{>>}}
+\item{narrow}{logical; if \code{TRUE}, only get options on lines starting 
+with \code{>>}}
 }
 \value{
-list with elements \code{x} (the data without options) and named options 
-as specified in the block.
+list with elements \code{x} (the data without options) and named 
+options  as specified in the block.
 }
 \description{
 Scrape options from a code block
 }
+\keyword{internal}

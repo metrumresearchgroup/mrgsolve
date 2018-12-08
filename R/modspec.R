@@ -130,6 +130,7 @@ fixed_parameters <- function(x,fixed_type) {
 ##' modelparse(readLines(file))
 ##' 
 ##' @export
+##' @keywords internal
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
@@ -353,11 +354,13 @@ parse_ats <- function(x) {
 ##' @param def default values
 ##' @param all return all options, even those that are not in \code{def}
 ##' @param marker assignment operator; used to locate lines with options
-##' @param narrow logical; if \code{TRUE}, only get options on lines starting with \code{>>}
+##' @param narrow logical; if \code{TRUE}, only get options on lines starting 
+##' with \code{>>}
 ##' @param envir environment from \code{$ENV}
 ##' 
-##' @return list with elements \code{x} (the data without options) and named options 
-##' as specified in the block.
+##' @return list with elements \code{x} (the data without options) and named 
+##' options  as specified in the block.
+##' @keywords internal
 scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
@@ -398,7 +401,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
 ##' @param ... arguments passed to \code{\link{scrape_opts}}
 ##' 
 ##' @details Attributes of \code{x} are also scraped and merged with options.
-##' 
+##' @keywords internal
 scrape_and_call <- function(x,env,pass,...) {
   o <- scrape_opts(x,envir=env$ENV,...)
   o$pos <- o$env <- o$class <- NULL
@@ -852,9 +855,12 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' \itemize{
 ##' \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
-##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  \code{KA}
-##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q}, \code{V2}
-##' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
+##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  
+##' \code{KA}
+##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, 
+##' \code{Q}, \code{V2}
+##' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, 
+##' \code{Q}, \code{V3}, \code{KA}
 ##'
 ##' }
 ##'
@@ -866,7 +872,8 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' \itemize{
 ##' \item \code{pred_CL} for clearance
-##' \item \code{pred_V}  or \code{pred_V2} for central compartment volume of distribution
+##' \item \code{pred_V}  or \code{pred_V2} for central compartment volume of 
+##' distribution
 ##' \item \code{pred_Q}  for intercompartmental clearance
 ##' \item \code{pred_V3} for for peripheral compartment volume of distribution
 ##' \item \code{pred_KA} for absorption rate constant
@@ -898,6 +905,18 @@ NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
 ##' @export
 handle_spec_block.specNAMESPACE <- function(x,...) {
   scrape_and_call(x,pass="NAMESPACE",narrow=FALSE,...)
+}
+
+##' @export
+handle_spec_block.specODE <- function(x,...) {
+  re <- "\\bETA\\([0-9]+\\)"
+  chk <- grepl(re,x)
+  if(any(chk)) {
+    er1 <- "ETA(n) is not allowed in ODE block:"
+    er2 <- paste0("\n * ", x[which(chk)])
+    stop(er1,er2,call.=FALSE)
+  }
+  return(x)
 }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon

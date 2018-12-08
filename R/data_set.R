@@ -16,6 +16,10 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 ##' Select and modify a data set for simulation
+##' 
+##' The input data set (\code{data_set}) is a data frame that specifies
+##' observations, model events, and / or paramter values for a population
+##' of individuals. 
 ##'
 ##' @param x model object
 ##' @param data data set

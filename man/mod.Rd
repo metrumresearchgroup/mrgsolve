@@ -18,3 +18,4 @@ mod(x, ...)
 \description{
 Return the model object
 }
+\keyword{internal}

@@ -15,22 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' @export
 ##' @rdname matlist-class
+##' @export
+##' @keywords internal
 setClass("omegalist", contains="matlist")
 
-##' @export
+
 ##' @rdname matlist-class
+##' @export
+##' @keywords internal
 setClass("sigmalist", contains="matlist")
 
 ##' S4 parameter_list class
 ##' @details
 ##' parameter_list is a \code{\link{numericlist-class}}
+##' @keywords internal
 setClass("parameter_list",contains="numericlist")
 
 ##' S4 cmt_list class
 ##' @details
 ##' cmt_list is a \code{\link{numericlist-class}}
+##' @keywords internal
 setClass("cmt_list",contains="numericlist")
 
 

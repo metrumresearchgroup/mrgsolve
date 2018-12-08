@@ -37,3 +37,4 @@ stime(mod)
 
 
 }
+\keyword{internal}
