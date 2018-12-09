@@ -50,7 +50,6 @@ numeric_data_matrix <- function(x,quiet=FALSE) {
 ##' columns with \code{\link{as.integer}}
 ##' 
 ##' @export
-##' @keywords internal
 numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
   if(convert_lgl) {
     if(any(sapply(x,is.logical))) {
