@@ -31,6 +31,9 @@
 ##' @param tname name for \code{$THETA}
 ##' @param oname name for \code{$OMEGA}
 ##' @param sname name for \code{$SIGMA}
+##' @param index the estimation number to return;  "last" will return the 
+##' last estimation results; otherwise, pass an integer indicating which 
+##' estimation results to return
 ##' @param ... not used
 ##' @aliases NMXML
 ##' @details
@@ -58,12 +61,9 @@ nmxml <- function(run=numeric(0), project=character(0),
                   theta=TRUE, omega=TRUE, sigma=TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...", ...) {
-  
-  if(!requireNamespace("xml2")) {
-    stop("Could not load namespace for package xml2", call.=FALSE)
-  }
-  
+                  tname="THETA", oname="...", sname="...",
+                  index = "last", ...) {
+
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
   sigma <- sigma | !missing(sname)
@@ -72,19 +72,35 @@ nmxml <- function(run=numeric(0), project=character(0),
     target <- file
   } else {
     if(missing(run) | missing(project)) {
-      stop("Both file and run/project are missing")
+      stop("Both file and run/project are missing.", call.=FALSE)
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
   
-  tree <- xml2::as_list(xml2::read_xml(target))
+  if(!requireNamespace("xml2")) {
+    stop("Could not load namespace for package xml2.", call.=FALSE)
+  }
+  tree <- xml2::read_xml(target)
+  tree <- xml2::xml_find_all(tree,'.//nm:estimation')
+  tree <- xml2::as_list(tree)
+  
+  if(index=="last") index <- length(tree)
+  
+  if(!is.numeric(index)) {
+    stop("nmxml: index must be 'last' or a numeric value.",call.=FALSE)  
+  }
+  if(index > length(tree)) {
+    stop("nmxml: index is out of bounds.",call.=FALSE)
+  }
+  
+  tree <- tree[[index]]
   
   # https://github.com/r-lib/xml2/blob/master/NEWS.md#xml2-120
-  if(packageVersion("xml2") >= "1.2.0") {
-    tree <- tree[["output"]][["nonmem"]][["problem"]][["estimation"]]      
-  } else {
-    tree <- tree[["nonmem"]][["problem"]][["estimation"]]
-  }
+  # if(packageVersion("xml2") >= "1.2.0") {
+  #   tree <- tree[["output"]][["nonmem"]][["problem"]][["estimation"]]      
+  # } else {
+  #   tree <- tree[["nonmem"]][["problem"]][["estimation"]]
+  # }
   
   th <- list()
   om <- matrix(0,0,0)
@@ -122,14 +138,18 @@ nmxml <- function(run=numeric(0), project=character(0),
   } else {
     slabels <- list()
   }
-
-  om <- create_matlist(setNames(list(om),oname), 
-                       labels=olabels, 
-                       class="omegalist")
   
-  sg <- create_matlist(setNames(list(sg),sname), 
-                       labels=slabels, 
-                       class="sigmalist")
+  om <- create_matlist(
+    setNames(list(om),oname), 
+    labels=olabels, 
+    class="omegalist"
+  )
+  
+  sg <- create_matlist(
+    setNames(list(sg),sname), 
+    labels=slabels, 
+    class="sigmalist"
+  )
   
   ans <- list(theta=th, omega=om, sigma=sg)
   
