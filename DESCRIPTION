@@ -47,6 +47,7 @@ Suggests:
     rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes
+Encoding: UTF-8
 Collate: 
     'RcppExports.R'
     'utils.R'
@@ -94,4 +95,4 @@ Collate:
     'relabel.R'
     'render.R'
     'update.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

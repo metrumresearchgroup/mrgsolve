@@ -4,8 +4,8 @@
 \alias{ev_days}
 \title{Schedule dosing events on days of the week}
 \usage{
-ev_days(ev = NULL, days = "", addl = 0, ii = 168, unit = c("hours",
-  "days"), ...)
+ev_days(ev = NULL, days = "", addl = 0, ii = 168,
+  unit = c("hours", "days"), ...)
 }
 \arguments{
 \item{ev}{an event object}

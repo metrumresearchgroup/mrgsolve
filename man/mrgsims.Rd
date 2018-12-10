@@ -24,8 +24,8 @@
 
 \S4method{names}{mrgsims}(x)
 
-\S4method{as.data.frame}{mrgsims}(x, row.names = NULL, optional = FALSE,
-  ...)
+\S4method{as.data.frame}{mrgsims}(x, row.names = NULL,
+  optional = FALSE, ...)
 
 \S4method{as.matrix}{mrgsims}(x, ...)
 

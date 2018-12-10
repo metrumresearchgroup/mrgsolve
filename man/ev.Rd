@@ -13,8 +13,8 @@ ev(x, ...)
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
 
 \S4method{ev}{missing}(time = 0, amt, evid = 1, cmt = 1,
-  ID = numeric(0), replicate = TRUE, until = NULL, realize_addl = FALSE,
-  ...)
+  ID = numeric(0), replicate = TRUE, until = NULL,
+  realize_addl = FALSE, ...)
 
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 }

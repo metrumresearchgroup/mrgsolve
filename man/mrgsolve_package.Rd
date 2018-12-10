@@ -16,34 +16,21 @@ providing an interface to the DLSODA differential equation solver
 (written in FORTRAN) provided through ODEPACK -
 A Systematized Collection of ODE Solvers.
 }
-\section{Input data sets}{
+\section{Resources}{
 
-See \code{\link{data_set}} for help creating input data sets.  
-See \code{\link{exdatasets}} for example input data sets.
+\itemize{
+\item Main mrgsolve resource page: \href{https://mrgsolve.github.io}{https://mrgsolve.github.io}
+\item User guide: \href{https://mrgsolve.github.io/user_guide}{https://mrgsolve.github.io/user_guide}
+\item Vignettes: \href{https://mrgsolve.github.io/vignettes}{https://mrgsolve/github.io/vignettes}
+}
 }
 
-\section{Package help}{
+\section{Also see}{
 
 \itemize{
  \item  Package \href{00Index.html}{index}, including a listing 
  of all functions
- \item Reserved words in \code{mrgsolve}: \code{\link[mrgsolve]{reserved}}
 }
-}
-
-\section{About the model object}{
-
-The model object has class \code{\link[=mrgmod-class]{mrgmod}}.
-}
-
-\section{Handling simulated output}{
-
-See \code{\link{mrgsims}} for methods to use with simulated output.
-}
-
-\section{About the solver used by \code{mrgsolve}}{
-
-See: \code{\link{aboutsolver}}
 }
 
 \examples{

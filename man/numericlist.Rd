@@ -17,8 +17,8 @@
 
 \S4method{as.numeric}{numericlist}(x)
 
-\S4method{as.data.frame}{numericlist}(x, row.names = NULL, optional = FALSE,
-  ...)
+\S4method{as.data.frame}{numericlist}(x, row.names = NULL,
+  optional = FALSE, ...)
 
 \S4method{length}{numericlist}(x)
 

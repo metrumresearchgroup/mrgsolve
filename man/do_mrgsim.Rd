@@ -5,10 +5,11 @@
 \title{Do an mrgsim run}
 \usage{
 do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
-  carry.out = character(0), seed = as.integer(NA), Request = character(0),
-  capture = NULL, obsonly = FALSE, obsaug = FALSE, tgrid = NULL,
-  recsort = 1, deslist = list(), descol = character(0), filbak = TRUE,
-  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ...)
+  carry.out = character(0), seed = as.integer(NA),
+  Request = character(0), capture = NULL, obsonly = FALSE,
+  obsaug = FALSE, tgrid = NULL, recsort = 1, deslist = list(),
+  descol = character(0), filbak = TRUE, tad = FALSE, nocb = TRUE,
+  skip_init_calc = FALSE, ...)
 }
 \arguments{
 \item{x}{a model object}
