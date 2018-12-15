@@ -6,9 +6,14 @@ TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
 CHKDIR=Rchecks
 
-
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
+
+covr: 
+	Rscript "inst/maintenance/covr.R"
+
+house: 
+	Rscript "inst/maintenance/build_housemodel.R"
 
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
@@ -29,11 +34,13 @@ unit:
 	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
 
 cran:
+	make house
 	make doc
 	make build
 	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
 
 travis_build:
+	make housemodel
 	make doc
 	make build
 	make install
@@ -51,10 +58,6 @@ all:
 doc:
 	Rscript inst/maintenance/doc_mrgsolve.R
 
-.PHONY: staticdoc
-staticdoc:
-	Rscript inst/maintenance/staticdocs.R
-
 build:
 	R CMD build --md5 $(PKGDIR)
 
@@ -65,17 +68,19 @@ install-build:
 	R CMD INSTALL --build --install-tests ${TARBALL}
 
 check:
+	make house
 	make doc
 	make build
 	R CMD check ${TARBALL} -o ${CHKDIR}
 	make unit
+
 qcheck: 
 	make doc
 	make build 
 	R CMD check ${TARBALL} -o ${CHKDIR} --no-manual --no-codoc
 
-
 check-cran:
+	make house
 	make doc
 	make build
 	R CMD check --as-cran ${TARBALL} -o ${CHKDIR}
@@ -83,7 +88,6 @@ check-cran:
 test:
 	R CMD INSTALL ${PKGDIR}
 	make test-all
-
 
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
@@ -94,6 +98,7 @@ datasets:
 	Rscript inst/maintenance/datasets.R
 
 travis:
+	make house
 	make build
 	#R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
 	make test
