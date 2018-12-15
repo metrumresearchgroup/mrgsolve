@@ -54,24 +54,12 @@ valid.matlist <- function(object) {
     
     n1 <- paste(sapply(object@data,   nrow),collapse=",")
     n2 <- paste(sapply(object@labels, length),collapse=',')
-    out <- c(out, paste0("Length of labels (", n2, ") does not match the matrix rows (", n1, ")."))
+    out <- c(
+      out, 
+      paste0("Length of labels (", n2, ") does not match the matrix rows (", n1, ").")
+    )
   }
   return(out)
-}
-
-dim_matlist <- function(x) {
-  if(length(x@data)==0) return(0)
-  unname(sapply(x@data,nrow))
-}
-
-create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
-  x <- x[!sapply(x,nrow)==0]
-  if(is.null(names(x))) names(x) <- rep("...", length(x))
-  names(x)[nchar(names(x))==0] <- "..."
-  if(is.null(unlist(labels))) labels <- lapply(x, function(y) rep('.',nrow(y)))
-  x <- new(class, data=x, labels=labels)
-  x@n <- dim_matlist(x)
-  return(x)
 }
 
 
@@ -89,5 +77,23 @@ setClass("matlist",
 )
 
 is.matlist <- function(x) inherits(x,"matlist")
+
+
+dim_matlist <- function(x) {
+  if(length(x@data)==0) return(0)
+  unname(sapply(x@data,nrow))
+}
+
+create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
+  x <- x[!sapply(x,nrow)==0]
+  if(is.null(names(x))) names(x) <- rep("...", length(x))
+  names(x)[nchar(names(x))==0] <- "..."
+  if(is.null(unlist(labels))) labels <- lapply(x, function(y) rep('.',nrow(y)))
+  x <- new(class, data=x, labels=labels)
+  x@n <- dim_matlist(x)
+  return(x)
+}
+
+
 
 

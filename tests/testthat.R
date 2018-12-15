@@ -21,4 +21,3 @@ library(magrittr)
 library(mrgsolve)
 
 test_check("mrgsolve", reporter="summary")
-

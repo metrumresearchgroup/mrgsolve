@@ -36,11 +36,9 @@ mod9 <- update(mod, delta=33, end=222)
 mod10 <- mrgsolve:::mod(mrgsim(mod, param=list(CL=12, VC=220)))
 mod11 <- mrgsolve:::mod(mrgsim(mod  %>% param(CL=12, VC=220)))
 
-
-
 context("test-update")
 
-test_that("Model object updates through update and %>% operator", {
+test_that("model object updates through update and %>% operator", {
   expect_true(identical(mod1, mod2))
   expect_true(!identical(mod1, mod))
 })
@@ -49,53 +47,22 @@ test_that("Simulation times update properly via update",{
   expect_equal(stime(mod1), seq(0,mod1@end, mod2@delta))
   expect_equal(stime(mod3), sort(unique(c(x,seq(0,mod3@end, mod3@delta)))))
 })
-test_that("Simulation times update properly when passed into mrgsim",{
+
+test_that("Simulation times update when passed into mrgsim",{
   expect_identical(mod8,mod9)
 })
 
-test_that("Parameters update properly via %>% operator",{
-  expect_equal(param(mod1)$CL, 12)
-})
-
-
-test_that("Parameters update properly via update()",{
-  expect_equal(param(mod2)$VC, 220)
-})
-
-test_that("A parameter that isn't updated remains the same",{
-  expect_equal(param(mod2)$KA, param(mod)$KA)
-})
-
-test_that("Parameter updates properly when passed to mrgsim",{
+test_that("Parameter updates when passed to mrgsim",{
   expect_equal(param(mod10)$CL, param(mod2)$CL)
   expect_equal(param(mod10)$VC, param(mod2)$VC)
 })
 
-test_that("Parameter updates properly when added inside mrgsim call",{
+test_that("Parameter updates when added inside mrgsim call",{
   expect_equal(param(mod11)$CL, param(mod1)$CL)
   expect_equal(param(mod11)$VC, param(mod1)$VC)
 })
 
 rm(mod8,mod9,mod10,mod11)
-
-
-test_that("Parameters update via param and list",{
-  mod1 <- mod %>% param(list(CL=123,VC=456))
-  expect_equal(param(mod1)$CL, 123)
-  expect_equal(param(mod1)$VC, 456)
-})
-
-test_that("Parameters update via param ",{
-  mod1 <- mod %>% param(CL=1123, VC=1456)
-  expect_equal(param(mod1)$CL, 1123)
-  expect_equal(param(mod1)$VC, 1456)
-})
-
-test_that("Parameters update via param and data.frame ",{
-  mod1 <- mod %>% param(data.frame(CL=987,VC=654))
-  expect_equal(param(mod1)$CL, 987)
-  expect_equal(param(mod1)$VC, 654)
-})
 
 test_that("Initials update via init and list",{
   mod1 <- mod %>% init(list(CENT=123,GUT=456))
@@ -109,48 +76,52 @@ test_that("Initials update via init ",{
   expect_equal(init(mod1)$GUT, 1456)
 })
 
-
 test_that("Initials update via init and data.frame ",{
   mod1 <- mod %>% init(data.frame(CENT=987,GUT=654))
   expect_equal(init(mod1)$CENT, 987)
   expect_equal(init(mod1)$GUT, 654)
 })
 
-test_that("Initial conditions update properly via update()",{
+test_that("Initial conditions update via update()",{
   expect_equal(init(mod6)$GUT,5566)
 })
 
-test_that("Solver setting hmin updates properly", {
+test_that("Solver setting hmin updates", {
   expect_equal(mod7@hmin,111)
 })
-test_that("Solver setting hmax updates properly", {
+
+test_that("Solver setting hmax updates", {
   expect_equal(mod7@hmax,222)
 })
-test_that("Solver setting maxsteps updates properly", {
+
+test_that("Solver setting maxsteps updates", {
   expect_equal(mod7@maxsteps,333)
 })
-test_that("Solver setting ixpr updates properly", {
+
+test_that("Solver setting ixpr updates", {
   expect_equal(mod7@ixpr,444)
 })
-test_that("Solver setting mxhnil updates properly", {
+
+test_that("Solver setting mxhnil updates", {
   expect_equal(mod7@mxhnil,555)
 })
-test_that("Solver setting atol updates properly", {
+
+test_that("Solver setting atol updates", {
   expect_equal(mod7@atol,1E-99)
 })
-test_that("Solver setting rtol updates properly", {
+
+test_that("Solver setting rtol updates", {
   expect_equal(mod7@rtol,1E-88)
 })
 
 CL <- exp(rnorm(100, log(3),  sqrt(0.5)))
 VC <- exp(rnorm(100, log(30), sqrt(0.5))) 
 pars <- signif(data.frame(CL=CL,VC=VC),6)
-pars$ID <- 1:nrow(pars)
+pars$ID <- seq(nrow(pars))
 
 out <- mrgsim(mod, idata=pars, end=8, carry_out="CL,VC")
 out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out[,c("CL", "VC", "ID")]),6)
-
 
 test_that("Recover items from simulated data when passed in as idata",{
   expect_equivalent(out,pars)
@@ -181,7 +152,6 @@ data2 <- as.data.frame(out2)
 test_that("CP is equal when simulating from events or data", {
   expect_identical(data1$CP, data2$CP)
 })
-
 
 set.seed(11111)
 data1$ROW <- sample(1:nrow(data1))

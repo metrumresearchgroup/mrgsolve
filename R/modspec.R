@@ -432,6 +432,16 @@ parseLIST <- function(x,where,env,...) {
   return(NULL)
 }
 
+
+## S3 methods for processing code blocks
+## All of these need to be exported
+handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
+
+##' @export
+handle_spec_block.default <- function(x,...) {
+  return(dump_opts(x))
+}
+
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
@@ -538,15 +548,6 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   envir$.code <- x
   return(envir)
 }  
-
-## S3 methods for processing code blocks
-## All of these need to be exported
-handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
-
-##' @export
-handle_spec_block.default <- function(x,...) {
-  return(dump_opts(x))
-}
 
 ##' @export 
 handle_spec_block.specTABLE <- function(x,env,...) {

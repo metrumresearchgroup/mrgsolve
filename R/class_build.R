@@ -155,15 +155,15 @@ mgsub <- function(pattern,replacement,x,...) {
 }
 
 build_output_cleanup <- function(x,build) {
-  x$stdout <- rawToChar(x$stdout)
-  x$stdout <- strwrap(x$stdout,width=60)
-  errr <- rawToChar(x$stderr)
+  x[["stdout"]] <- rawToChar(x[["stdout"]])
+  x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
+  errr <- rawToChar(x[["stderr"]])
   errr <- strsplit(errr, "\n|\r\n")[[1]]
-  patt <- paste0("^", build$compfile, ":")
+  patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
   patt <- "^ *In function 'void _model.*:$"
   errr <- msub(pattern = patt, replacement = "", x = errr)
-  x$stderr <- errr
+  x[["stderr"]] <- errr
   x <- c(list(build = build), x)
   x <- structure(x, class = "mrgsolve-build-error")
   x
@@ -174,23 +174,25 @@ build_failed <- function(out,build) {
   message("error.", appendLF=FALSE)
   msg <- divider_msg("stdout")
   cat("\n\n", msg, "\n", sep="")
-  cat(out$stdout,sep="\n")
+  cat(out[["stdout"]],sep="\n")
   header <- "\n---:: stderr ::---------------------"
   footer <- paste0(rep("-",nchar(header)),collapse = "")
   msg <- divider_msg("stderr")
   cat("\n",msg,"\n",sep="")
-  xx <- paste0(out$stderr,collapse="\n")
+  xx <- paste0(out[["stderr"]],collapse="\n")
   message(xx,appendLF=FALSE)
   msg <- divider_msg()
   cat("\n",msg,"\n",sep="")
+  out[["date"]] <- date()
   saveRDS(out,file.path(tempdir(),"build_error.RDS"))
+  build_handle_127(out)
   stop(
     "There was a problem building the model.",
     call.=FALSE
   )
 }
 
-get_build_output <- function() {
+build_get_output <- function() {
   file <- file.path(tempdir(),"build_error.RDS")
   file <- normalizePath(file,mustWork=FALSE)
   if(!file.exists(file)) {
@@ -200,4 +202,14 @@ get_build_output <- function() {
   return(readRDS(file))
 }
 
+build_handle_127 <- function(out) {
+  found127 <- any(grepl("Error +127", out[["stderr"]]))
+  if(found127) {
+    message("NOTE: 'Error 127' was detected in the above message.")
+    message("This possibly indicates that the build toolchain could not be found.")
+    message("Please check for proper compiler installation ('Rtools.exe' on Windows).")
+    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.")
+  }
+  return(invisible(NULL))  
+}
 

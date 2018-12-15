@@ -83,15 +83,13 @@ validate_idata <- function(idata) {
 ##' Simulate from a model object
 ##'
 ##' This function sets up the simulation run from data stored in the model
-##' object as well as arguments passed in.  Note that there are several 
-##' non-formal arguments to this function that can be used to customize 
-##' the simulation run and it's output.  Use \code{\link{mrgsim_q}} instead to
-##' benchark mrgsolve or to do repeated quick simulation for tasks like 
-##' parameter optimization,  sensitivity analyses, or optimal design.  See
+##' object as well as arguments passed in.  Use \code{\link{mrgsim_q}} instead 
+##' to benchark mrgsolve or to do repeated quick simulation for tasks like 
+##' parameter optimization, sensitivity analyses, or optimal design.  See
 ##' \code{\link{mrgsim_variants}} for other mrgsim-like functions that have 
-##' more focused inputs.  
+##' more focused inputs. \code{mrgsim_df} coreces output to data.frame 
+##' prior to returning.
 ##'
-##' 
 ##' @param x the model object
 ##' @param data NMTRAN-like data set (see \code{\link{data_set}})
 ##' @param idata a matrix or data frame of model parameters, 
@@ -100,64 +98,12 @@ validate_idata <- function(idata) {
 ##' @param nid integer number of individuals to simulate; only used if 
 ##' idata and data are missing
 ##' @param ... passed to \code{\link[mrgsolve]{update}} and 
-##' \code{\link{do_mrgsim}}; please see these help topics for other 
-##' arguments for \code{\link{mrgsim}}
+##' \code{\link{do_mrgsim}}
 ##' 
-##' @return an object of class \code{\link{mrgsims}}
+##' @return An object of class \code{\link{mrgsims}}
 ##' 
-##' 
-##' @section Additional arguments:
-##' 
-##' These are other arguments that are passed to \code{\link{do_mrgsim}}.
-##'
-##' \itemize{
-##' 
-##' 
-##' \item \code{Request} a vector of compartment or table names to take in 
-##' simulated output; if this is specified, \code{request} is ignored
-##' 
-##' \item \code{obsonly} omit records with \code{evid} != 0 from simulated 
-##' output
-##' 
-##' \item \code{obsaug} logical; when \code{TRUE} and a full data set is 
-##' used, the simulated output is augmented with an observation at each 
-##' time in \code{\link{stime}}().  When using \code{obsaug}, a flag indicating 
-##' augmented observations can be requested by including \code{a.u.g} in 
-##' \code{carry_out}
-##' 
-##' \item \code{recsort}  Default value is 1.  Possible values are 1,2,3,4: 
-##' 1 and 2 put doses in a data set after padded observations at the same 
-##' time; 3 and 4 put those doses before padded observations at the same 
-##' time.  2 and 4 will put doses scheduled through \code{addl} after 
-##' observations at the same time; 1 and 3 put doses scheduled through 
-##' \code{addl} before observations at the same time. \code{recsort} will 
-##' not change the order of your input data set if both doses and observations 
-##' are given.
-##' 
-##' \item \code{filbak} For each \code{ID}, carry the first record  \code{data} 
-##' backward to start of the simulation
-##' 
-##' \item \code{tad} logical; when \code{TRUE} a column is added to simulated 
-##' output is added showing the time since the last dose.  Only data records 
-##' with \code{evid == 1} will be considered doses for the purposes of 
-##' \code{tad} calculation. The \code{tad} can be properly calculated with 
-##' a dosing lag time in the model as long as the dosing lag time (specified 
-##' in \code{$MAIN})  is always  appropriate for any subsequent doses scheduled 
-##' through \code{addl}.  This will always be true if the lag time doesn't 
-##' change over time.  But it might (possibly) not hold if the lag time changes
-##' prior to the last dose in the \code{addl} sequence.  This known limitation
-##' shouldn't affect \code{tad} calculation in most common dosing lag time
-##' implementations.  
-##'  
-##' \item \code{nocb} if \code{TRUE} (default), time-varying items in a data 
-##' set will be implemented as next observation carried back; if \code{FALSE} 
-##' time-varying items in a data set will be implemented as last observation 
-##' carried forward.  
-##' 
-##' }
 ##' 
 ##' @details
-##' 
 ##' 
 ##' \itemize{
 ##' 
@@ -187,37 +133,45 @@ validate_idata <- function(idata) {
 ##'
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}, 
-##' \code{\link{do_mrgsim}}
+##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}
 ##' 
 ##' @examples
 ##' ## example("mrgsim")
 ##' 
 ##' e <- ev(amt = 1000)
+##' 
 ##' mod <- mrgsolve:::house() 
+##' 
 ##' out <- mod %>% ev(e) %>% mrgsim()
+##' 
 ##' plot(out)
 ##'
 ##' out <- mod %>% ev(e) %>% mrgsim(end=22)
+##' 
 ##' out
 ##'
 ##' data(exTheoph)
 ##'
 ##' out <- mod %>% data_set(exTheoph) %>% mrgsim()
+##' 
 ##' out
 ##' 
 ##' out <- mod %>% mrgsim(data=exTheoph)
 ##'
 ##' out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
+##' 
 ##' out
 ##'
 ##' out <- mod %>% mrgsim(data=exTheoph, obsaug=TRUE, carry_out="a.u.g")
+##' 
 ##' out
 ##'
 ##' out <- mod %>% ev(e) %>% mrgsim(req="CENT")
+##' 
 ##' out
 ##'
 ##' out <- mrgsim(mod, Req="CP,RESP", events = e)
+##' 
 ##' out
 ##' 
 ##' 
@@ -428,37 +382,52 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   return(mrgsim_i(x, idata, ...))
 }
 
-##' Do an mrgsim run
-##' 
-##' @param x a model object
-##' @param data a simulation data set
-##' @param idata individual-level data
 ##' @param carry_out data items to copy into the output
 ##' @param carry.out soon to be deprecated; use \code{carry_out} instead
 ##' @param seed deprecated
 ##' @param Request compartments or captured variables to retain
-##' in the simulated output
+##' in the simulated output; this is different than the \code{request}
+##' slot in the model object, which refers only to model compartments
 ##' @param capture character file name used for debugging (not related
 ##' to \code{$CAPTURE}
 ##' @param obsonly if \code{TRUE}, dosing records are not included
 ##' in the output
-##' @param obsaug augment the data set with time grid observations
+##' @param obsaug augment the data set with time grid observations; when 
+##' \code{TRUE} and a full data set is used, the simulated output is augmented 
+##' with an observation at each time in \code{\link{stime}}().  When using
+##' \code{obsaug}, a flag indicating augmented observations can be requested by
+##' including \code{a.u.g} in  \code{carry_out}
 ##' @param tgrid a tgrid object; or a numeric vector of simulation times
 ##' or another object with an \code{stime} method
-##' @param recsort record sorting flag
+##' @param recsort record sorting flag.  Default value is 1.  Possible values 
+##' are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
+##' the same time; 3 and 4 put those doses before padded observations at the 
+##' same time.  2 and 4 will put doses scheduled through \code{addl} after 
+##' observations at the same time; 1 and 3 put doses scheduled through 
+##' \code{addl} before observations at the same time. \code{recsort} will 
+##' not change the order of your input data set if both doses and observations 
+##' are given.
 ##' @param deslist a list of tgrid objects
 ##' @param descol the name of a column for assigning designs
 ##' @param filbak carry data items backward when the first 
 ##' data set row has time greater than zero
-##' @param tad if \code{TRUE}, include time after dose
-##' in the output
+##' @param tad when \code{TRUE} a column is added to simulated 
+##' output is added showing the time since the last dose.  Only data records 
+##' with \code{evid == 1} will be considered doses for the purposes of 
+##' \code{tad} calculation. The \code{tad} can be properly calculated with 
+##' a dosing lag time in the model as long as the dosing lag time (specified 
+##' in \code{$MAIN})  is always  appropriate for any subsequent doses scheduled 
+##' through \code{addl}.  This will always be true if the lag time doesn't 
+##' change over time.  But it might (possibly) not hold if the lag time changes
+##' prior to the last dose in the \code{addl} sequence.  This known limitation
+##' shouldn't affect \code{tad} calculation in most common dosing lag time
+##' implementations.  
 ##' @param nocb if \code{TRUE}, use next observation carry 
-##' backward method; otherwise, use \code{locf}
+##' backward method; otherwise, use \code{locf}.  
 ##' @param skip_init_calc don't use \code{$MAIN} to 
 ##' calculate initial conditions
-##' @param ... passed to update
 ##' 
-##' 
+##' @rdname mrgsim
 ##' @export
 do_mrgsim <- function(x,
                       data,

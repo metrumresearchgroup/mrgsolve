@@ -15,13 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-
 includes <- new.env()
 plugins <- new.env()
 plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
-
 
 get_plugins <- function(what) {
   what <- c(cvec_cs(what), "base")
@@ -46,7 +44,6 @@ get_plugin <- function(what) {
   plugins[[what]]
 }
 
-
 plugin_code <- function(x) {
   if(is.null(x)) return(NULL)
   s_pick(x,"code") 
@@ -57,7 +54,6 @@ plugin_names <- function(x) {
   x <- s_pick(x,"name")
   paste0("// PLUGINS: ", paste(x, collapse=" "))
 }
-
 
 make_clink <- function(x,clink) {
   if(is.null(x)) return(NULL)
@@ -75,7 +71,6 @@ set_clink <- function(x,clink=NULL) {
   if(is.null(x) & is.null(clink)) return(invisible(NULL))
   Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
 }
-
 
 make_libs <- function(x) {
   if(is.null(x)) return(NULL)
@@ -112,15 +107,9 @@ do_restore <- function(restore) {
   if(any(unset))   Sys.unsetenv(names(restore[unset]))
 }
 
-
 plugins[["base"]] <- list(
   linkto="mrgsolve/base", name="base"
 )
-
-# plugins[["simeta"]] <- list(
-#   linkto="mrgsolve/mrgx",
-#   code='#include "simeta.h"\n',name="simeta"
-# )
 
 plugins[["mrgx"]] <- list(
   linkto="mrgsolve/mrgx",
@@ -148,6 +137,16 @@ plugins[["BH"]] <- list(
   linkto="BH/include", name="BH"
 )
 
+# plugins[["TAD"]] <- list(
+#   name = "TAD", 
+#   code = c("#define __MRGSOLVE_USE_PLUGIN_TAD__", '#include "mrgsolve_plugin_tad.h"')
+# )
+# 
+# plugins[["REPORT"]] <- list(
+#   name = "REPORT", 
+#   code = c("#define __MRGSOLVE_USE_PLUGIN_REPORT__", '#include "mrgsolve_plugin_report.h"')
+# )
+
 # @param x the build object
 # 
 # @details
@@ -160,15 +159,16 @@ write_build_env <- function(x) {
   clink <- paste0("PKG_CPPFLAGS=",paste(Sys.getenv("CLINK_CPPFLAGS"), collapse=" "))
   libs <- paste0("PKG_LIBS=",paste(Sys.getenv("PKG_LIBS"),collapse=" "))
   
-  
   cat(file=mkv, "# from write_make_vars", "\n")
   cat(file=mkv, clink, "\n", append=TRUE)
   cat(file=mkv, libs,  "\n", append=TRUE)
   
-  headers <- file.path(system.file("base",package="mrgsolve"),c("modelheader.h", "mrgsolv.h"))
+  headers <- file.path(
+    system.file("base",package="mrgsolve"),
+    c("modelheader.h", "mrgsolv.h")
+  )
   
   if(!all(file.copy(headers, x$soloc, overwrite=TRUE))) {
-    stop("Couldn't find mrgsolve install location.") 
+    stop("Couldn't find mrgsolve install location.", call.=FALSE) 
   }
-
 }

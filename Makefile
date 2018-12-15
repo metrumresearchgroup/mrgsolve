@@ -87,6 +87,8 @@ test:
 
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
+	rm src/*.o
+	rm src/*.so
 
 datasets:
 	Rscript inst/maintenance/datasets.R

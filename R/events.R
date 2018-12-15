@@ -18,12 +18,9 @@
 
 ##' Event objects for simulating PK and other interventions
 ##' 
-##' An event object contains one or more dosing records that 
-##' makes up a dosing regimen.  The event object may include 
-##' an ID column, but it usually doesn't.  Event objects have 
-##' operators and other functions that can take simple or elementary 
-##' event sequences and combine them in potentially more complicated
-##' ways.
+##' An event object specifies dosing or other interventions that get implemented
+##' during simulation. Event objects do similar things as \code{\link{data_set}}, 
+##' but simpler and quicker.
 ##'
 ##' @param x a model object
 ##' @param time event time
@@ -38,7 +35,7 @@
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
 ##' \code{\link{realize_addl}}
 ##' @param object passed to show
-##' @param ... passed on
+##' @param ... other items to be incorporated into the event object
 ##' 
 ##' @details
 ##' \itemize{
@@ -64,14 +61,15 @@
 ##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
+##' 
 ##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
 ##'
 ##' loading <- ev(time=0, cmt=1, amt=1000)
+##' 
 ##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
+##' 
 ##' loading + maint
 ##'
-##'
-##' ev(ID=1:10, cmt=1, time=0, amt=100)
 ##'
 ##' @export
 setGeneric("ev", function(x,...) {
@@ -105,14 +103,14 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
     stop("evid cannot be 0 (observation)")
   }
   
+  if(missing(amt)) {
+    stop("argument \"amt\" is missing, with no default.", call.=FALSE)  
+  }
+  
   data <- as_data_frame(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
-  
-  if(!has_name("amt",data)) {
-    stop("amt is required input.", call.=FALSE)
-  }
-  
+
   if(!missing(until)) {
     if(!has_name("ii", data)) {
       stop("ii is required when until is specified", call.=FALSE)

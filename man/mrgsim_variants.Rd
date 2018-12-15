@@ -33,8 +33,7 @@ one parameter per row (see \code{\link{idata_set}})}
 \item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
 
 \item{...}{passed to \code{\link[mrgsolve]{update}} and 
-\code{\link{do_mrgsim}}; please see these help topics for other 
-arguments for \code{\link{mrgsim}}}
+\code{\link{do_mrgsim}}}
 }
 \description{
 These functions are called by \code{\link{mrgsim}} and have

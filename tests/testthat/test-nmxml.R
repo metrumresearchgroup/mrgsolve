@@ -66,7 +66,6 @@ test_that("SIGMA are imported into the sigma list", {
   expect_equivalent(mat[1,2],0)
 })
 
-
 code <- '
 
 $OMEGA
@@ -103,7 +102,6 @@ test_that("Loading OMEGA from multiple sources", {
   expect_equivalent(mat[6,5],-0.0372)
 })
 
-
 test_that("Correlation in corr matrix is converted to covariance", {
   expect_equivalent(mat[8,7],0.548)
 })
@@ -131,7 +129,7 @@ test_that("Loading SIGMA from multiple sources", {
 a <- bmat(c(1,0.1,3))
 b <- as.list(omat(update(mod, omega=list(OM=a))))$OM
 
-test_that("Update OMEGA by name", {
+test_that("update OMEGA by name", {
   expect_identical(a, b)
 })
 
@@ -141,8 +139,7 @@ test_that("Update SIGMA by name", {
   expect_identical(a, b)
 })
 
-
-test_that("An error is generated for incompatible dimensions",{
+test_that("error is generated for incompatible dimensions",{
   expect_error(mod %>% omat(OM=matrix(1)))
   expect_error(mod %>% omat(OM=dmat(1,2,3,4,5,6)))
   expect_error(mod %>% smat(sg=dmat(1,2,3)))
@@ -232,7 +229,6 @@ test_that("Labels are assigned to $OMEGA and $SIGMA", {
   expect_equivalent(mod@omega@labels, list(s_(a,b,c,d),s_(x,y,z)))
   expect_equivalent(mod@sigma@labels, list(s_(e,f), s_(h,i,j,k,l)))
 })
-  
 
 test_that("zero_re zeros all matrices", {
   x <- mod %>% zero_re %>% omat %>% as.matrix
@@ -240,8 +236,6 @@ test_that("zero_re zeros all matrices", {
   x <- mod %>% zero_re %>% smat %>% as.matrix
   expect_true(all(as.numeric(x)==0))
 })
-
-
 
 code <- '
 $OMEGA
@@ -259,7 +253,19 @@ test_that("Mixed labels / no labels and prefix", {
   expect_equivalent(mod@omega@labels, list(s_(x_a,x_b),s_(.,.,.)))
 })
 
+test_that("read_nmext returns estimates", {
+  project <- system.file("nonmem", package="mrgsolve")
+  x <- read_nmext(1005, project)   
+  expect_equal(names(x), c("param", "omega", "sigma", "raw"))
+  expect_is(x$param, "list")
+  expect_is(x$omega, "matrix")
+  expect_is(x$sigma, "matrix")
+  
+  x2 <- read_nmext(path=file.path(project, 1005, "1005.ext"))
+  expect_identical(x,x2)
+})
+  
+  
 
-  
-  
+
   

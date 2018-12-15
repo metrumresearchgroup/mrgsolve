@@ -19,6 +19,7 @@
 ##' Write, compile, and load model code
 ##'
 ##' This is a convenience function that ultimately calls \code{\link{mread}}.
+##' Model code is written to a file and read back in using \code{\link{mread}}.
 ##'
 ##' @param model model name
 ##' @param project project name
@@ -27,6 +28,9 @@
 ##' @details
 ##' Note that the arguments are in slightly different order than 
 ##' \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+##' 
+##' See the \code{\link{mread}} help topic for discussion about caching
+##' compilation results with \code{mcode_cache}.  
 ##'
 ##' @examples
 ##'

@@ -20,10 +20,14 @@ mcode_cache(model, code, project = tempdir(), ...)
 }
 \description{
 This is a convenience function that ultimately calls \code{\link{mread}}.
+Model code is written to a file and read back in using \code{\link{mread}}.
 }
 \details{
 Note that the arguments are in slightly different order than 
 \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+
+See the \code{\link{mread}} help topic for discussion about caching
+compilation results with \code{mcode_cache}.
 }
 \examples{
 

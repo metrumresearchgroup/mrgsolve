@@ -65,7 +65,6 @@
 ##' input idata set contain \code{NA}.  
 ##'  
 ##' @examples
-##' 
 ##' mod <- mrgsolve:::house()
 ##' 
 ##' data(exidata)

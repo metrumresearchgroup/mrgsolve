@@ -21,7 +21,7 @@ ev(x, ...)
 \arguments{
 \item{x}{a model object}
 
-\item{...}{passed on}
+\item{...}{other items to be incorporated into the event object}
 
 \item{object}{passed to show}
 
@@ -48,12 +48,9 @@ doses.  If \code{TRUE}, \code{addl} doses are made explicit with
 events object
 }
 \description{
-An event object contains one or more dosing records that 
-makes up a dosing regimen.  The event object may include 
-an ID column, but it usually doesn't.  Event objects have 
-operators and other functions that can take simple or elementary 
-event sequences and combine them in potentially more complicated
-ways.
+An event object specifies dosing or other interventions that get implemented
+during simulation. Event objects do similar things as \code{\link{data_set}}, 
+but simpler and quicker.
 }
 \details{
 \itemize{
@@ -73,14 +70,15 @@ event rows must match the number of \code{ID}s entered
 }
 \examples{
 mod <- mrgsolve:::house()
+
 mod <- mod \%>\% ev(amt=1000, time=0, cmt=1)
 
 loading <- ev(time=0, cmt=1, amt=1000)
+
 maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
+
 loading + maint
 
-
-ev(ID=1:10, cmt=1, time=0, amt=100)
 
 }
 \seealso{

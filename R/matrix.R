@@ -173,6 +173,11 @@ dmat <- function(...) {
 
 ##' Coerce R objects to block or diagonal matrices
 ##' 
+##' These are simple functions that may be helpful to create the matrix objects
+##' that mrgsolve expects.  Functions are named based on whether they create a
+##' diagonal matrix (\code{d}), a block matrix (\code{b}), or a a correlation
+##' matrix (\code{c}).
+##' 
 ##'
 ##' @param x data frame or list 
 ##' @param pat regular expression, character
@@ -196,11 +201,13 @@ dmat <- function(...) {
 ##' 
 ##' @examples
 ##'
-##' df <- data.frame(OMEGA1.1 = c(1,2),
-##'                  OMEGA2.1 = c(11,22),
-##'                  OMEGA2.2 = c(3,4),
-##'                  SIGMA1.1 = 1,
-##'                  FOO=-1)
+##' df <- data.frame(
+##'   OMEGA1.1 = c(1,2),
+##'   OMEGA2.1 = c(11,22),
+##'   OMEGA2.2 = c(3,4),
+##'   SIGMA1.1 = 1,
+##'   FOO=-1
+##' )
 ##'
 ##' as_bmat(df, "OMEGA")
 ##' as_dmat(df,"SIGMA")

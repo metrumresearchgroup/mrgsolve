@@ -364,25 +364,69 @@ setMethod("names", "mrgmod", function(x) {
   ans <- list()
   ans$param <- Pars(x)
   ans$init <- Cmt(x)
-  ans$omega <- list(names(omat(x)),unlist(labels(omat(x)),use.names=FALSE))
-  ans$sigma <- list(names(smat(x)),unlist(labels(smat(x)),use.names=FALSE))
+  ans$omega <- names(omat(x))
+  ans$sigma <- names(smat(x))
+  ans$omega_labels <- labels(omat(x))
+  ans$sigma_labels <- labels(smat(x))
   return(ans)
 })
 
 ##' Coerce a model object to list
 ##' 
 ##' @param x mrgmod object
-##' @param deep if \code{TRUE}, extra information is returned
+##' @param deep if `TRUE`, extra information is returned
 ##' (see details). 
 ##' @param ... not used
 ##' 
 ##' @details 
-##' If \code{deep} is \code{TRUE}, then the values for
-##' \code{trans}, \code{advan}, and \code{mindt} are
+##' If `deep` is `TRUE`, then the values for
+##' `trans`,`advan`, and `mindt` are
 ##' returned as well as a summary of internal model 
-##' functions (with a call to \code{mrgsolve:::funset}).
+##' functions (with a call to `mrgsolve:::funset`).
 ##' 
-##' @rdname as.list_mrgmod
+##' @section Slots:
+##' - `npar`: number of parameters
+##' - `neq`: number of compartments or differential equations
+##' - `pars`: names of model parameters
+##' - `covariates`: names of parameters identified as covariates
+##' - `cmt`: names of model compartments
+##' - `param`: the parameter list
+##' - `init`: initial condition list
+##' - `omega`: `$OMEGA` matrices, as a `matlist` object
+##' - `sigma`: `$SIGMA` matrices, as a `matlist` object
+##' - `fixed`: named list of `$FIXED` values
+##' - `model`: model name
+##' - `project`: model project directory
+##' - `soloc`: directory where the model is being built
+##' - `sodll`: complete path to the model shared object
+##' - `cfile`: path for the model source code file 
+##' - `shlib`: list of compilation information
+##' - `start`: simulation start time
+##' - `end`: simulation end time
+##' - `delta`: simulation time step
+##' - `add`: additional simulation times
+##' - `capture`: names of captured data items
+##' - `random`: names and labels of `$OMEGA` and `$SIGMA`
+##' - `code`: model source code from `cfile`
+##' - `details`: model details data frame
+##' - `atol`: see [solversettings]
+##' - `rtol`: see [solversettings]
+##' - `maxsteps`: see [solversettings]
+##' - `hmin`: see [solversettings]
+##' - `hmax`: see [solversettings]
+##' - `envir`: the model environment
+##' - `plugins`: plugins invoked in the model
+##' - `digits`: number of digits to request in simulated data
+##' - `request`: compartments requested upon simulation
+##' - `tscale`: multiplicative scalar for time in results only
+##' - `mindt`: simulation output time below which there model will assume to 
+##'   have not advanced
+##' - `preclean`: logical indicating to clean up compilation artifacts prior
+##'   to compiling
+##' - `debug`: print debugging information during simulation run
+##' - `verbose`: print extra information during setup for model run
+##' 
+##' @md
 ##' @export
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   
@@ -408,7 +452,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     }
     details <- x@annot
     code <- x@code
-    random <- names(x)[c("omega", "sigma")]
+    random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
     request <- x@request
     capture <- x@capture
     add <- x@add
@@ -522,7 +566,6 @@ setMethod("unloadso", "mrgmod", function(x, ...) {
   return(invisible(NULL))
 })
 
-
 ##' @rdname tgrid
 ##' @export
 setMethod("stime", "mrgmod",  function(x,...) {
@@ -566,12 +609,14 @@ blocks_ <- function(file,what) {
 }
 
 parin <- function(x) {
-  list(rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), 
-       hmax=as.double(x@hmax), ixpr=x@ixpr, 
-       maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
-       verbose=as.integer(x@verbose),debug=x@debug,
-       digits=x@digits, tscale=x@tscale,
-       mindt=x@mindt, advan=x@advan)
+  list(
+    rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), 
+    hmax=as.double(x@hmax), ixpr=x@ixpr, 
+    maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
+    verbose=as.integer(x@verbose),debug=x@debug,
+    digits=x@digits, tscale=x@tscale,
+    mindt=x@mindt, advan=x@advan
+  )
 }
 
 ##' Show model specification and C++ files
@@ -589,7 +634,6 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   if(source) what$source <- x@shlib$source
   do.call(base::file.show,what)
 }
-
 
 re_build <- function(x,model=model(x),temp = FALSE) {
   if(temp) {

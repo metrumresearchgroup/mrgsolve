@@ -24,9 +24,15 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-ev")
 
+test_that("observations are not allowed", {
+  expect_error(ev(amt=100, evid=0)) 
+})
+
+test_that("doses are required", {
+  expect_error(ev(time=24), "amt") 
+})
+
 test_that("event requirements and defaults", {
-  expect_error(ev(time=24))
-  expect_error(ev(amt=100, evid=0))
   expect_is(ev(amt=100), "ev")
   df <- as.data.frame(ev(amt=100))
   expect_equal(df$time, 0)
@@ -62,7 +68,6 @@ test_that("realized events", {
 test_that("realized event error", {
   expect_error(ev(amt=100, addl=24, realize_addl=TRUE))
 })
-
 
 test_that("sequence of event objects", {
   
@@ -115,18 +120,20 @@ test_that("coerce to data frame", {
   expect_equal(ans$ID, 4)
 })
 
-
 test_that("get names", {
   e <- ev(amt = 100, time = 0, evid = 1, ii = 12, addl = 24)
-  expect_equal(names(e), c("time", "cmt", "amt", "evid", "ii", "addl"))
+  expect_equal(
+    names(e), 
+    c("time", "cmt", "amt", "evid", "ii", "addl")
+  )
 })
 
 test_that("mutate an ev object", {
-    e <- ev(amt = 100, cmt = 1)
-    e2 <- mutate(e, cmt = 2)
-    expect_is(e2, "ev")
-    df <- as.data.frame(e2)
-    expect_equal(df$cmt, 2)
+  e <- ev(amt = 100, cmt = 1)
+  e2 <- mutate(e, cmt = 2)
+  expect_is(e2, "ev")
+  df <- as.data.frame(e2)
+  expect_equal(df$cmt, 2)
 })
 
 test_that("filter an ev object", {
@@ -137,9 +144,9 @@ test_that("filter an ev object", {
 })
 
 test_that("misc methods", {
-    e <- ev(amt = 100)
-    expect_true(mrgsolve:::is.ev(e))
-    expect_false(mrgsolve:::is.ev(as.data.frame(e)))
+  e <- ev(amt = 100)
+  expect_true(mrgsolve:::is.ev(e))
+  expect_false(mrgsolve:::is.ev(as.data.frame(e)))
 })
 
 test_that("as.ev", {
@@ -159,6 +166,3 @@ test_that("as.ev", {
   expect_equal(d$evid,1)
   
 })
-
-
-

@@ -77,7 +77,6 @@ Collate:
     'knobs.R'
     'matlist.R'
     'matrix.R'
-    'mcache.R'
     'mcode.R'
     'model_include.R'
     'modlib.R'

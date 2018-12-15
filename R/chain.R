@@ -120,8 +120,6 @@ tscale <- function(x,value=1,...) {
   x
 }
 
-
-
 ##' Collect only observations in the simulated output
 ##'
 ##' @param x model object
@@ -151,7 +149,6 @@ obsaug <- function(x,value=TRUE,...) {
   x@args[["obsaug"]] <- value
   x
 }
-
 
 ##' Set observation designs for the simulation
 ##'

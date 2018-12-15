@@ -22,7 +22,8 @@ mread_file(file, ...)
 \item{model}{model name}
 
 \item{project}{location of the model specification file an any 
-headers to be included}
+headers to be included; see also the discussion about model 
+library under details as well as the \code{\link{modlib}} help topic}
 
 \item{code}{a character string with model specification code to be 
 used instead of a model file}
@@ -54,17 +55,18 @@ cleaned up first}
 \item{...}{passed to \code{\link[mrgsolve]{update}}}
 }
 \description{
-\code{mread} reads and parses a \code{mrgsolve} model 
-specification file, builds the model, and returns 
-a model object for simulation.
+\code{mread} reads and parses the \code{mrgsolve} model specification file,
+builds the model, and returns a model object for simulation. 
+\code{mread_cache} does the same, but caches the compilation result for 
+later use.
 }
 \details{
 The \code{model} argument is required.  For typical use, 
 the \code{file} argument is omitted and the value 
 for \code{file} is generated from the value for \code{model}.
 To determine the source file name, \code{mrgsolve} will look for 
-a file extension in the value of \code{model}.  A file extension is 
-assumed when it find sa period followed by one to three alpha-numeric 
+a file extension in \code{model}.  A file extension is 
+assumed when it finds a period followed by one to three alpha-numeric 
 characters at the end of the string (e.g. \code{mymodel.txt} but not 
 \code{my.model}).  If no file extension is found, the extension \code{.cpp} 
 is assumed (e.g. \code{file} is \code{<model-name>.cpp}).  If a file 
@@ -72,7 +74,21 @@ extension is found, \code{file} is \code{<model-name>}.
 
 Best practice is to avoid using \code{.} in \code{model} unless
 you are using \code{model} to point to the model specification 
-file name. Otherwise, use \code{\link{mread_file}}.
+file name. Otherwise, use \code{\link{mread_file}}. 
+
+Use the \code{soloc} argument to specify a directory location for building
+the model.  This is the location where the model shared object will be 
+stored on disk.  The default is a temporary directory, so compilation 
+artifacts are lost when R restarts when the default is used.  Changing
+\code{soloc} to a persistent directory location will preserve those 
+artifacts across R restarts.  Also, if simulation from a single model is 
+being done in separate processes on separate compute nodes, it might be 
+necessary to store these compilcation artifacts in a local directory 
+to make them accessible to the different nodes. 
+
+Similarly, using \code{mread_cache} will cache results in the temporary 
+directory and the cache cannot be accessed after the R process is 
+restarted.
 }
 \section{Model Library}{
 

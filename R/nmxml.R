@@ -176,9 +176,10 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' @param run a run number or run identifier
 ##' @param project the NONMEM project directory
-##' @param file the ext file name
+##' @param file the `ext` file name
+##' @param path full path and file name for `ext` file
 ##' 
-##' @return A list with theta, omega, and sigma in a format
+##' @return A list with param, omega, and sigma in a format
 ##' ready to be used to update a model object.
 ##' 
 ##' @examples
@@ -186,15 +187,21 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' est <- read_nmext(1005, project = project)
 ##' 
-##' est$theta
+##' est$param
 ##' 
 ##' est$omega
 ##' 
 ##' est$sigma
 ##' 
+##' @md
 ##' @export 
-read_nmext <- function(run, file = paste0(run, ".ext"), project = getwd()) {
-  file <- file.path(project, run, file)
+read_nmext <- function(run, project = getwd(), file = paste0(run, ".ext"), 
+                       path=NULL) {
+  if(is.character(path)) {
+    file <- path
+  } else {
+    file <- file.path(project, run, file)  
+  }
   if(!file.exists(file)) {
     stop("The file ", file, " does not exist.", call. = FALSE)
   }
@@ -207,7 +214,7 @@ read_nmext <- function(run, file = paste0(run, ".ext"), project = getwd()) {
   ans <- as.list(ans)
   names(ans) <- gsub("[[:punct:]]", "", names(ans))
   ans <- list(
-    theta = ans[grepl("THETA", names(ans))],
+    param = ans[grepl("THETA", names(ans))],
     omega = as_bmat(ans, "OMEGA"), 
     sigma = as_bmat(ans, "SIGMA"),
     raw = ans  

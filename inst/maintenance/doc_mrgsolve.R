@@ -1,4 +1,4 @@
- 
+
 message("\n\nwriting documentation ... \n")
 
 library(methods)
@@ -18,16 +18,15 @@ x1 <- file.copy(file.path(inc,"modelheader.h"),file.path(inst,"base", "modelhead
 x2 <- file.copy(file.path(inc,"mrgsolv.h"),file.path(inst,"base", "mrgsolv.h"),overwrite=TRUE)
 stopifnot(all(c(x1,x2)))
 
-
 document()
 
+#foo <- mrgsolve:::mread("housemodel", "inst/project/", compile=FALSE)
+
 ## I think mrgsolve functions available after doc
+source("R/modspec.R")
 foo <- mrgsolve:::as_pack_mod("housemodel", proj, "mrgsolve")
 
 #foo$mod <- mrgsolve:::embed_details(foo$mod)
-
-
-
 
 cpp <- normalizePath(foo$source)
 

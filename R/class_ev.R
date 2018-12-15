@@ -35,6 +35,7 @@ mutate.ev <- function(.data, ...) {
   .data@data <- as.data.frame(mutate(.data@data, ...))
   .data
 }
+
 ##' @rdname ev_dplyr
 ##' @export
 select.ev <- function(.data, ...) {
@@ -85,7 +86,6 @@ nrow.ev <- function(x) {
 setMethod("names", "ev", function(x) {
   names(x@data)
 })
-
 
 ##' @method as.matrix ev
 ##' @rdname ev_methods

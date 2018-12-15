@@ -15,5 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+library(testthat)
+library(mrgsolve)
+library(dplyr)
+Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
+
+test_that("inits are constructed", {
+  x <- init(A = 1, B = 2)  
+  expect_is(x, "cmt_list")
+  x <- init(list(A = 1, B = 2))
+  expect_is(x, "cmt_list")
+  x <- init(c(A = 1, B = 2))
+  expect_is(x, "cmt_list")
+  expect_error(init(A = c(1,2)))
+  expect_error(init(A = "B"))
+})
+
 
 
