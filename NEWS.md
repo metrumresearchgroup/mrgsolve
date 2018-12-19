@@ -7,9 +7,10 @@ to integer
 
 ## New features
 - Added `$PRED` block for models that don't utilize any compartments
-- Added `pred1` to the `modlib`
+- Added `pred1` to the internal model library (`modlib()`)
 - Added `mrgsim_q` function for simulation from a model objejct 
 with quicker turnaround time
+- `mread` will take `soloc` and `project` arguments from `options()`
 
 ## New behavior
 - `time/TIME` is no longer required in a data set when `$PRED` is in use
@@ -19,10 +20,10 @@ when dosing into an invalid compartment (0 is always an invalid index
 for dosing compartment)
 - An error will be generated if missing values (`NA`) are detected in an 
 input data set with the following names: `ID`, `time/TIME`,
-or any column that shares a name with an item in the parameter list.
+or any column that shares a name with an item in the parameter list
 - An `index` argument was added to the `$NMXML` block to allow results
 selection when multiple estimation blocks were used.  The new default 
-is to use the last result.
+is to use the last result
 
 ## Bugs fixed
 - Fixed bug related to record sort order #406
