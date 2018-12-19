@@ -809,12 +809,17 @@ handle_spec_block.specINCLUDE <- function(x,env,...) {
   }
   
   if(any(!grepl("^.*\\.h$",x,perl=TRUE))) {
-    warning("$INCLUDE expects file names ending with .h",call.=FALSE) 
+    warning(
+      "$INCLUDE expects file names ending with '.h'",
+      call.=FALSE,
+      immediate.=TRUE
+    ) 
   }
   
   x <- file.path(env[["project"]],x)
   
   if(!all(file_exists(x))) {
+    message("Attempting to include:\n",paste0(" ",x, collapse = "\n"))
     stop(
       "All header files in $INCLUDE must exist in the project directory.",
       call.=FALSE
