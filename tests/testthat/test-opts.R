@@ -45,7 +45,7 @@ test_that("Scrape and call", {
   >> d = 2
   CL=1, V=2, KA=3
   '
-  e <- mrgsolve:::parse_env(1)
+  e <- mrgsolve:::parse_env(1,tempdir())
   
   code <- trimws(unlist(strsplit(code, "\n")))
   

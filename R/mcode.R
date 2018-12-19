@@ -50,13 +50,15 @@
 ##' @seealso \code{\link{mread}}, \code{\link{mread_cache}}
 ##' 
 ##' @export
-mcode <- function(model, code, project=tempdir(), ...) {
+mcode <- function(
+  model, code, project = getOption("mrgsolve.project", tempdir()), ...) {
   mread(model=model, project=project, code=code,...)
 }
 
 ##' @rdname mcode
 ##' @export
-mcode_cache <- function(model, code, project=tempdir(),  ...) {
+mcode_cache <- function(
+  model, code, project = getOption("mrgsolve.project", tempdir()),  ...) {
   mread_cache(model, project, code = code, ...)
 }
 

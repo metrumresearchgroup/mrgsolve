@@ -812,17 +812,22 @@ handle_spec_block.specINCLUDE <- function(x,env,...) {
     warning("$INCLUDE expects file names ending with .h",call.=FALSE) 
   }
   
+  x <- file.path(env[["project"]],x)
+  
+  if(!all(file_exists(x))) {
+    stop(
+      "All header files in $INCLUDE must exist in the project directory.",
+      call.=FALSE
+    ) 
+  }
+  
   return(x)
 }
 
-form_includes <- function(x,where) {
-  if(is.null(x)) return("// No includes found.")
-  files <- file.path(where,x)
-  if(!all(file_exists(files))) {
-    stop("All header files in $INCLUDE must exist in the project directory",call.=FALSE) 
-  }
-  md <- tools::md5sum(file.path(where,x))
-  paste0("#include \"", x, "\" // ", md)
+form_includes <- function(files) {
+  if(is.null(files)) return(character(0))
+  md <- tools::md5sum(files)
+  paste0("#include \"", files, "\" // ", md)
 }
 
 ##' @export
@@ -1000,9 +1005,10 @@ check_pred_symbols <- function(x,code) {
 }
 
 
-parse_env <- function(spec,ENV=new.env()) {
+parse_env <- function(spec,project,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
+  mread.env$project <- project
   mread.env$param <- vector("list",n)
   mread.env$fixed <- vector("list",n)
   mread.env$init  <- vector("list",n)

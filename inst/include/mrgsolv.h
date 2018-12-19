@@ -60,7 +60,6 @@ protected:
 
 struct shuttle {
   shuttle(double a_, int b_) :  time(a_), evid(b_) {
-    evid = 1;
     cmt = 1;
     amt = 0.0;
     rate = 0.0;

@@ -6,14 +6,17 @@
 \alias{mread_file}
 \title{Read a model specification file}
 \usage{
-mread(model, project = getwd(), code = NULL, file = NULL,
-  udll = TRUE, ignore.stdout = TRUE, raw = FALSE, compile = TRUE,
-  audit = TRUE, quiet = getOption("mrgsolve_mread_quiet", FALSE),
-  check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
-  preclean = FALSE, ...)
+mread(model, project = getOption("mrgsolve.project", getwd()),
+  code = NULL, file = NULL, udll = TRUE, ignore.stdout = TRUE,
+  raw = FALSE, compile = TRUE, audit = TRUE,
+  quiet = getOption("mrgsolve_mread_quiet", FALSE),
+  check.bounds = FALSE, warn = TRUE,
+  soloc = getOption("mrgsolve.soloc", tempdir()), preclean = FALSE,
+  ...)
 
-mread_cache(model = NULL, project = getwd(), file = paste0(model,
-  ".cpp"), code = NULL, soloc = tempdir(), quiet = FALSE,
+mread_cache(model = NULL, project = getOption("mrgsolve.project",
+  getwd()), file = paste0(model, ".cpp"), code = NULL,
+  soloc = getOption("mrgsolve.soloc", tempdir()), quiet = FALSE,
   preclean = FALSE, ...)
 
 mread_file(file, ...)

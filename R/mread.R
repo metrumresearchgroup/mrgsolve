@@ -140,12 +140,13 @@ NULL
 ##' @seealso \code{\link{mcode}}, \code{\link{mcode_cache}}
 ##' 
 ##' @export
-mread <- function(model, project = getwd(), code = NULL, 
-                  file = NULL, 
+mread <- function(model, project = getOption("mrgsolve.project", getwd()), 
+                  code = NULL, file = NULL, 
                   udll = TRUE, ignore.stdout=TRUE,
                   raw = FALSE, compile = TRUE, audit = TRUE,
                   quiet = getOption("mrgsolve_mread_quiet",FALSE),
-                  check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
+                  check.bounds = FALSE, warn = TRUE, 
+                  soloc = getOption("mrgsolve.soloc",tempdir()),
                   preclean = FALSE, ...) {
   
   if(charthere(model, "/")) {
@@ -194,7 +195,7 @@ mread <- function(model, project = getwd(), code = NULL,
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(spec,ENV)
+  mread.env <- parse_env(spec,project=build$project,ENV)
   
   ## The main sections that need R processing:
   spec <- move_global(spec,mread.env)
@@ -329,6 +330,17 @@ mread <- function(model, project = getwd(), code = NULL,
   
   x <- update(x, data=args,open=TRUE)
   
+  ## lock some of this down so we can check order later
+  x@code <- readLines(build$modfile, warn=FALSE)
+  x@shlib[["cmt"]] <- names(Init(x))
+  x@shlib[["par"]] <- names(param(x))
+  x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
+  x@shlib[["covariates"]] <- mread.env$covariates
+  x@shlib[["version"]] <- GLOBALS[["version"]]
+  x@shlib[["include"]] <- spec[["INCLUDE"]]
+  x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
+  x@shlib[["md5"]] <- build$md5
+  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(
@@ -355,7 +367,7 @@ mread <- function(model, project = getwd(), code = NULL,
     "\n// FIXED:",
     fixed_parameters(fixed,SET[["fixed_type"]]),
     "\n// INCLUDES:",
-    form_includes(spec[["INCLUDE"]],build$project),
+    form_includes(spec[["INCLUDE"]]),
     "\n// NAMESPACES:",
     namespace,
     "\n// BASIC MODELHEADER FILE:",
@@ -389,15 +401,7 @@ mread <- function(model, project = getwd(), code = NULL,
     sep="\n", file=def.con)
   close(def.con)
   
-  ## lock some of this down so we can check order later
-  x@shlib$cmt <- names(Init(x))
-  x@shlib$par <- names(param(x))
-  x@shlib$neq <- length(x@shlib$cmt)
-  x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- file.path(build$soloc,build$compfile)
-  x@shlib$md5 <- build$md5
-  x@shlib$covariates <- mread.env$covariates
+  
   
   ## IN soloc directory
   cwd <- getwd()
@@ -475,9 +479,9 @@ mread <- function(model, project = getwd(), code = NULL,
 
 ##' @rdname mread 
 ##' @export
-mread_cache <- function(model = NULL, project = getwd(), 
+mread_cache <- function(model = NULL, project = getOption("mrgsolve.project", getwd()), 
                         file = paste0(model, ".cpp"),
-                        code = NULL, soloc = tempdir(), 
+                        code = NULL, soloc = getOption("mrgsolve.soloc", tempdir()), 
                         quiet = FALSE, 
                         preclean = FALSE, ...) {
   
@@ -487,7 +491,7 @@ mread_cache <- function(model = NULL, project = getwd(),
   
   ## If the cache file doesn't exist, build and return
   te <- file.exists(cache_file) & !preclean
-  t0 <- t1 <- t2 <- t3 <- FALSE
+  t0 <- t1 <- t2 <- t3 <- t4 <- FALSE
   
   if(te) {
     x <- readRDS(cache_file)
@@ -496,16 +500,19 @@ mread_cache <- function(model = NULL, project = getwd(),
       t2 <- x@shlib$md5 == build$md5
     }
     t3 <- file.exists(sodll(x))
+    t4 <- length(x@shlib[["include"]])==0
   }
   
-  if(all(t0,t1,t2,t3,te)) {
+  if(all(t0,t1,t2,t3,t4,te)) {
     if(!quiet) message("Loading model from cache.")
     loadso(x)
     return(update(x,...))
   }
   
-  x <- mread(build$model, project, soloc=soloc, quiet=quiet, 
-             file = basename(build$modfile), ...)
+  x <- mread(
+    build$model, project, soloc=soloc, quiet=quiet, 
+    file = basename(build$modfile), ...
+  )
   
   saveRDS(x,file=cache_file)
   

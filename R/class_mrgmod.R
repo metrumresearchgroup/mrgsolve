@@ -651,3 +651,10 @@ all.equal.mrgmod <- function(target, current,...) {
   t2 <- identical(target.env, current.env)
   all(t1,t2)
 }
+
+get_model_md5 <- function(x) {
+  files <- c(cfile(x),x@shlib[["include"]])
+  tools::md5sum(files)
+}
+
+

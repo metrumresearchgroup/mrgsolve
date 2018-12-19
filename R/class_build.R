@@ -51,19 +51,19 @@ new_build <- function(file, model, project, soloc, code = NULL,
   
   ## Both project and soloc get normalized
   if(!file_writeable(soloc)) {
-    stop("soloc directory must exist and be writeable.",call.=FALSE) 
+    stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE) 
   }
   
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   
   env$soloc <- as.character(create_soloc(soloc,new_model,preclean))
   
-  env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
-  
-  if(!file_readable(env$project)) {
-    stop("project directory must exist and be readable.",call.=FALSE) 
+  if(!file_readable(project)) {
+    stop("project directory '", project, "' must exist and be readable.",call.=FALSE) 
   }
   
+  env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
+
   env$modfile <- file.path(env$project,file)
   
   ## If code is passed in as character:
