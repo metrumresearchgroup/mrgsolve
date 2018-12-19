@@ -4,7 +4,7 @@
 \alias{details}
 \title{Extract model details}
 \usage{
-details(x, complete = FALSE, values = FALSE, ...)
+details(x, complete = FALSE, values = TRUE, ...)
 }
 \arguments{
 \item{x}{a model object}

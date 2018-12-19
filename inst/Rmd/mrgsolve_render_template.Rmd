@@ -1,7 +1,6 @@
 ---
 params:
   model: ""
-  modfile: ""
   project: ""
   compile: TRUE
 ---
@@ -15,7 +14,6 @@ library(knitr)
 options(width=120)
 opts_chunk$set(comment='',echo=FALSE,message=FALSE)
 
-
 prep_chunk <- function(x) {
   paste(capture.output(print(x)),collapse="\n")
 }
@@ -23,13 +21,13 @@ prep_chunk <- function(x) {
 ```
 
 ```{r,message=FALSE}
-mod <- mread(file = params$modfile, params$project, compile=params$compile, quiet=TRUE)
+mod <- mread(model = params$model, project = params$project, compile=params$compile, quiet=TRUE)
 ```
 
 ```{r}
 blocks <- modelparse(mod@code, drop_blank=FALSE, comment_re="//")
 prob <- blocks[["PROB"]]
-if(is.null(prob)) prob <- paste0("# Model: `", model(mod),"`")
+if(is.null(prob)) prob <- paste0("# Model: `", mrgsolve:::model(mod),"`")
 
 par <-  capture.output(param(mod))
 init <- capture.output(init(mod))
@@ -42,7 +40,7 @@ rmbl <- function(x) x[x!=""]
 
 # Details
 ```{r}
-d <- mrgsolve:::details(mod)
+d <- mrgsolve:::details(mod,values=FALSE)
 if(nrow(d) > 0) {
   
   om <- omat(mod)

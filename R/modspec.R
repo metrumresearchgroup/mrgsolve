@@ -64,11 +64,16 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     warn_cmt <- length(intersect(c("INIT", "CMT", "VCMT"),x)) == 0
     warn_cmt <- warn_cmt & is.element("ODE",x)
     
-    if(warn_cmt)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
+    if(warn_cmt)  {
+      warning(
+        "Could not find a $INIT or $CMT block.", 
+        call.=FALSE, immediate. = TRUE
+      )
+    }
     
     if(length(invalid) > 0) {
       warning(
-        paste0("Invalid blocks found: ", paste(invalid, collapse=" ")), call.=FALSE
+        paste0("Invalid blocks found: ", paste(invalid, collapse=" "), "."), call.=FALSE
       )
     }
   }

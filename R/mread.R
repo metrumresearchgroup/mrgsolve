@@ -30,11 +30,13 @@ NULL
 ##'
 ##' @param model model name
 ##' @param project location of the model specification file an any 
-##' headers to be included; see also the discussion about model 
+##' headers to be included; see also the discussion about model; this argument
+##' can be set via \code{options()}
 ##' library under details as well as the \code{\link{modlib}} help topic
 ##' @param file the full file name (with extension, but without path)
 ##' where the model is specified
-##' @param soloc directory where model shared object is stored
+##' @param soloc the directory location where the model shared object is built
+##' and stored; see details; this argument can be set via \code{options()}
 ##' @param code a character string with model specification code to be 
 ##' used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
@@ -183,7 +185,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   names(spec) <- ifelse(is.na(index),names(spec),block_list[index])
   
   ## Do a check on what we found in the spec
-  check_spec_contents(names(spec),warn=warn,...)
+  check_spec_contents(names(spec), warn=warn,...)
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...

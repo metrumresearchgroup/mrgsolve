@@ -163,6 +163,3 @@ test_that("at options are parsed", {
   expect_warning(ats('@ "a b c"'))  
 })
 
-
-
-

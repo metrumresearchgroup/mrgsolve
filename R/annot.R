@@ -23,7 +23,8 @@ render_annot <- function(x,block,...) {
 }
 
 
-parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,context="not given",...) {
+parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,
+                        context="not given",...) {
   ## x is a list
   if(is.null(x)) return(NULL)
   x <- x[nchar(x)>0]
@@ -106,7 +107,7 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
 ##' 
 ##' mrgsolve:::details(mod)
 ##' 
-details <- function(x,complete=FALSE,values=FALSE,...) {
+details <- function(x,complete=FALSE,values=TRUE,...) {
   
   stopifnot(is.mrgmod(x))
   
@@ -194,6 +195,10 @@ complete_details <- function(annot,x) {
 
 add_detail_values <- function(annot,x) {
   x <- c(as.numeric(allparam(x)),as.numeric(init(x)))
+  if(length(x)==0) {
+    annot <- mutate(annot, value = NA_real_)
+    return(annot)
+  }
   x <- dplyr::data_frame(name=names(x),value=x)
   annot <- dplyr::left_join(annot,x,by="name")
   return(annot)

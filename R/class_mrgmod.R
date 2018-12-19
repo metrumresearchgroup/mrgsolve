@@ -495,7 +495,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 setMethod("$", "mrgmod", function(x, name){
   if(! name %in% Pars(x)) {
     stop(
-      "Parameter ", name, "not found in the parameter list.", 
+      "Parameter ", name, " not found in the parameter list.", 
       call.=FALSE
     )  
   }

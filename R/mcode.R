@@ -52,7 +52,7 @@
 ##' @export
 mcode <- function(
   model, code, project = getOption("mrgsolve.project", tempdir()), ...) {
-  mread(model=model, project=project, code=code,...)
+  mread(model=model, project=project, code=code, ...)
 }
 
 ##' @rdname mcode

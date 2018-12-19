@@ -59,5 +59,5 @@ test_that("model caches via mcode_cache", {
 })
 
 
-mrgsolve:::update_wait_time(3)
+mrgsolve:::update_wait_time(2)
 

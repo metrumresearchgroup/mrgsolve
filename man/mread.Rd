@@ -25,7 +25,8 @@ mread_file(file, ...)
 \item{model}{model name}
 
 \item{project}{location of the model specification file an any 
-headers to be included; see also the discussion about model 
+headers to be included; see also the discussion about model; this argument
+can be set via \code{options()}
 library under details as well as the \code{\link{modlib}} help topic}
 
 \item{code}{a character string with model specification code to be 
@@ -50,7 +51,8 @@ where the model is specified}
 
 \item{warn}{logical; if \code{TRUE}, print warning messages that may arise}
 
-\item{soloc}{directory where model shared object is stored}
+\item{soloc}{the directory location where the model shared object is built
+and stored; see details; this argument can be set via \code{options()}}
 
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
 cleaned up first}
