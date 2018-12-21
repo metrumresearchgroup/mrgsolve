@@ -585,3 +585,8 @@ divider_msg <- function(msg = "", width = 60) {
   return(msg)
 }
 
+reg_exec_match <- function(x, pattern) {
+  m <- regexec(pattern,x)
+  regmatches(x,m)
+}
+

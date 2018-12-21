@@ -563,7 +563,11 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     warning("id argument is deprecated; using ID instead")
     ID <- id
   }
+  
   evs <- list(...)
+  
+  if(length(evs)==1) return(evs[[1]])
+  
   if(is.list(.dots)) {
     evs <- .dots 
   }
