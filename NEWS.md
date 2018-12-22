@@ -11,6 +11,8 @@ to integer
 - Added `mrgsim_q` function for simulation from a model objejct 
 with quicker turnaround time
 - `mread` will take `soloc` and `project` arguments from `options()`
+- Added `ev_rx` to allow creation of dosing events with Rx-like specification
+- Added `output` argument to `mrgsim` so that e.g. data.frame can be returned
 
 ## New behavior
 - `time/TIME` is no longer required in a data set when `$PRED` is in use
