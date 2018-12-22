@@ -186,9 +186,10 @@ as.cvec <- function(x) {
 ##' @param ... passed to \code{\link{expand.grid}}
 ##' 
 ##' @details
-##' An ID column is added as \code{1:nrow(ans)} if not supplied by the user.  
-##' For \code{expand.ev}, defaults
-##' also added: \code{cmt = 1}, \code{time = 0}, \code{evid = 1}.
+##' An ID column is added as \code{seq(nrow(ans))} if not supplied by the user.  
+##' For \code{expand.ev}, defaults also added include \code{cmt = 1}, 
+##' \code{time = 0}, \code{evid = 1}.  If \code{total} is included, 
+##' then \code{addl} is derived as \code{total} - 1.
 ##'
 ##' @examples
 ##' idata <- expand.idata(CL=c(1,2,3), VC=c(10,20,30))
@@ -209,6 +210,10 @@ expand.ev <- function(...) {
   if(!has_name("evid", ans)) ans$evid <- 1
   if(!has_name("cmt", ans)) ans$cmt <- 1
   if(!has_name("time", ans)) ans$time <- 0
+  if(has_name("total",ans)) {
+    ans[["addl"]] <- ans[["total"]]-1
+    ans[["total"]] <- NULL
+  }
   shuffle(ans,"ID")
 }
 

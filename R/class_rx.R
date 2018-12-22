@@ -17,107 +17,63 @@
 
 ##' @include class_ev.R
 ##' @include events.R
+NULL
 
-
-parse_this_rx <- function(x) {
-  dose <- reg_exec_match(x, "^ *([0-9]+)")[[1]]
-  amt <- as.numeric(dose[2])
-  if(is.na(amt)) {
-    stop("A dose amount is required in parse_rx.", call.=FALSE)  
-  }
-  number <- reg_exec_match(x, " *x *([0-9]+)")[[1]]
-  dur <- reg_exec_match(x,"ov[er]* +([0-9]+) *([hdw]*)")[[1]]
-  dur <- as.numeric(dur[2])
-  rate <- amt/dur
-  cmt <- reg_exec_match(x, "in +([0-9]+)")[[1]][2]
-  if(is.na(cmt)) cmt <- 1
-  inter <- reg_exec_match(x, "[Qq] *([0-9]+) *([hdw]*)")[[1]]
-  at <- reg_exec_match(x, "aft[er]* +([0-9]+) *([hdw]*)")[[1]][2]
-  if(is.na(at)) at <- 0
-  l <- list()
-  l[["amt"]] <- as.numeric(dose[2])
-  l[["cmt"]] <- as.numeric(cmt)
-  l[["addl"]] <- as.numeric(number[2])-1
-  l[["rate"]] <- rate
-  l[["ii"]] <- as.numeric(inter[2])
-  l[["time"]] <- as.numeric(at)
-  structure(l, class="sig")
-}
-
-##' Parse Rx directions
+##' Create intervention objects from Rx input
 ##' 
-##' An alternative to call int [ev] with 
-##' named arguments.  
+##' See details below for Rx specification. Actual parsing is done
+##' by [parse_rx]; this function can be used to debug Rx inputs.
 ##' 
-##' @param x an Rx string; see `details` and `examples`
-##' @return An event object
-##' 
-##' @details
-##' 
-##' - The dose is found at the start of the string by sequential digits
-##' - Use `in` to identify the dosing compartment number
-##' - Use `q` to identify the dosing interval
-##' - Use `over` to indicate an infusion and its duration
-##' - Use `x` to indicate total number of doses
-##' - Use `then` or `,` to separate dosing periods
-##' - User `after` to insert a lag in the start of a period
-##' 
-##' @examples
-##' # examples("parse_rx")
-##' 
-##' parse_rx("100")
-##' 
-##' parse_rx("100 in 2")
-##' 
-##' parse_rx("100 q12 x 3")
-##' 
-##' parse_rx("100 over 2")
-##' 
-##' parse_rx("100 q 24 x 3 then 50 q12 x 2")
-##' 
-##' parse_rx("100 then 50 q 24 after 12")
-##' 
-##' @seealso [ev_rx]
-##' @md
-##' @export
-parse_rx <- function(x) {
-  x <- strsplit(x, "then|,")[[1]]
-  x <- trimws(x)
-  ans <- lapply(x, parse_this_rx)
-  ans <- lapply(ans,as.ev)
-  if(length(ans) > 1) return(do.call(seq,ans))
-  return(ans[[1]])
-}
-
-setClass("sig")
-##' Coerce sig object to event
-##' 
-##' @param x a sig object
-##' @param ... not used
-##' @keywords internal
-setMethod("as.ev", "sig", function(x,...) {
-  data <- data.frame(
-    time = x[["time"]], amt = x[["amt"]], cmt = x[["cmt"]],
-    rate = x[["rate"]], addl = x[["addl"]], ii = x[["ii"]]
-  )
-  data <- dplyr::select_if(data, .p = function(x) !is.na(x))
-  as.ev(dplyr::select(data,"time","cmt","amt",everything()))
-})
-
-##' Create interventions from Rx input
-##' 
-##' See [parse_rx] for Rx specification.
-##' 
-##' @param x a model object
-##' @param y Rx input; see [parse_rx] for details
+##' @param x a model object or `character` Rx input 
+##' @param y `character` Rx input; see details
 ##' @param df if `TRUE` then a data frame is returned
 ##' @param ... not used at this time
 ##' 
+##' @section Rx specification:
+##' 
+##' - The dose is found at the start of the string by sequential digits; this 
+##'   may be integer, decimal, or in scientific notation
+##' - Use `in` to identify the dosing compartment number; must be integer
+##' - Use `q` to identify the dosing interval; must be integer or 
+##'   decimal number (but not scientific notation)
+##' - Use `over` to indicate an infusion and its duration; integer or 
+##'   decimal number
+##' - Use `x` to indicate total number of doses; must be integer
+##' - Use `then` or `,` to separate dosing periods
+##' - User `after` to insert a lag in the start of a period; integer or 
+##'   decimal number (but not scientific notation)
+##' 
+##' @return The method dispatched on model object (`mrgmod`) returns another
+##' model object.  The `character` method returns an event object.  The
+##' `parse_rx` function return a list named with 
+##' arguments for the event object constructor [ev].
+##' 
 ##' @examples
+##' # example("ev_rx")
+##' 
+##' ev_rx("100")
+##' 
+##' ev_rx("100 in 2")
+##' 
+##' ev_rx("100 q12 x 3")
+##' 
+##' ev_rx("100 over 2")
+##' 
+##' ev_rx("100 q 24 x 3 then 50 q12 x 2")
+##' 
+##' ev_rx("100 then 50 q 24 after 12")
+##' 
+##' ev_rx("100.2E-2 q4")
+##' 
+##' ev_rx("100 over 2.23")
 ##' 
 ##' ev_rx("100 q 12 x 3")
-##' @seealso [parse_rx]
+##' 
+##' parse_rx("100 mg q 24 then 200 mg q12")
+##' 
 ##' @md
+##' @rdname ev_rx
+##' @export
 setGeneric("ev_rx", function(x,y,...) {
   standardGeneric("ev_rx")
 })
@@ -130,8 +86,49 @@ setMethod("ev_rx", signature=c("mrgmod", "character"), function(x,y,...) {
 
 ##' @rdname ev_rx
 ##' @export
-setMethod("ev_rx", signature="character", function(x,df = FALSE,...) {
-  x <- ev(parse_rx(x))
+setMethod("ev_rx", signature=c("character","missing"), function(x,df = FALSE,...) {
+  x <- parse_rx(x)
+  if(is.list(x[[1]])) {
+    x <- lapply(x, do.call, what = ev)  
+    x <- do.call(seq,x)
+  } else {
+    x <- do.call(ev,x)
+  }
   if(df) return(as.data.frame(x))
   return(x)
 })
+
+##' @rdname ev_rx
+##' @export
+parse_rx <- function(x) {
+  x <- strsplit(x, "then|,")[[1]]
+  x <- trimws(x)
+  x <- lapply(x, parse_this_rx)
+  if(length(x)==1) return(x[[1]])
+  return(x)
+}
+
+parse_this_rx <- function(x) {
+  dose <- reg_exec_match(x, "^ *(\\d+[\\.]*\\d*[Ee\\+\\-]{0,2}\\d*)")[[1]]
+  amt <- as.numeric(dose[2])
+  if(is.na(amt)) {
+    stop("A dose amount is required in parse_rx.", call.=FALSE)  
+  }
+  number <- reg_exec_match(x, " *x *(\\d+)")[[1]]
+  dur <- reg_exec_match(x,"ov[er]* +(\\d+[\\.]*\\d*) *([hdw]*)")[[1]]
+  dur <- as.numeric(dur[2])
+  rate <- amt/dur
+  cmt <- reg_exec_match(x, "in +(\\d+)")[[1]][2]
+  if(is.na(cmt)) cmt <- 1
+  inter <- reg_exec_match(x, "[Qq] *(\\d+[\\.]*\\d*) *([hdw]*)")[[1]]
+  at <- reg_exec_match(x, "aft[er]* +(-*\\d+[\\.]*\\d*) *([hdw]*)")[[1]][2]
+  if(is.na(at)) at <- 0
+  l <- list()
+  l[["time"]] <- as.numeric(at)
+  l[["cmt"]] <- as.numeric(cmt)
+  l[["amt"]] <- as.numeric(dose[2])
+  l[["ii"]] <- as.numeric(inter[2])
+  l[["addl"]] <- as.numeric(number[2])-1
+  l[["rate"]] <- rate
+  l[sapply(l,function(x) !is.na(x))]
+}

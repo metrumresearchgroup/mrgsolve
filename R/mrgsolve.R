@@ -229,8 +229,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
 
 ##' @rdname mrgsim
 ##' @export
-mrgsim_df <- function(...) as.data.frame(mrgsim(...))
-
+mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 
 ##' mrgsim variant functions
 ##' 
@@ -388,8 +387,11 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param Request compartments or captured variables to retain
 ##' in the simulated output; this is different than the \code{request}
 ##' slot in the model object, which refers only to model compartments
+##' @param output  if \code{NULL} (the default) a mrgsims object is returned; 
+##' otherwise, pass \code{df} to return a data.frame or \code{matrix} to 
+##' return a matrix
 ##' @param capture character file name used for debugging (not related
-##' to \code{$CAPTURE}
+##' to \code{$CAPTURE})
 ##' @param obsonly if \code{TRUE}, dosing records are not included
 ##' in the output
 ##' @param obsaug augment the data set with time grid observations; when 
@@ -436,6 +438,7 @@ do_mrgsim <- function(x,
                       carry.out = character(0),
                       seed = as.integer(NA),
                       Request = character(0),
+                      output = NULL,
                       capture = NULL,
                       obsonly = FALSE,
                       obsaug = FALSE,
@@ -625,6 +628,15 @@ do_mrgsim <- function(x,
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
+  
+  if(!is.null(output)) {
+    if(output=="df") {
+      return(as.data.frame(out[["data"]]))  
+    }
+    if(output=="matrix") {
+      return(out[["data"]])  
+    }
+  }
   
   new("mrgsims",
       request=.ren.rename(rename.Request,request),

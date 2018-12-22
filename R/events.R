@@ -45,6 +45,8 @@
 ##' \item If not supplied, \code{cmt}  is assumed to be 1.
 ##' \item If not supplied, \code{time} is assumed to be 0.
 ##' \item If \code{amt} is not supplied, an error will be generated.
+##' \item If \code{total} is supplied, then \code{addl} will be set 
+##' to \code{total} - 1.
 ##' \item Other items can include \code{ii}, \code{ss}, and \code{addl}
 ##' (see \code{\link{data_set}} for details on all of these items).
 ##' \item \code{ID} may be specified as a vector.
@@ -111,6 +113,11 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
   
   data <- as.data.frame(data)
 
+  if("total" %in% names(data)) {
+    data[["addl"]] <- data[["total"]]-1
+    data[["total"]] <- NULL
+  }
+  
   if(!missing(until)) {
     if(!has_name("ii", data)) {
       stop("ii is required when until is specified", call.=FALSE)

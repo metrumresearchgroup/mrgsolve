@@ -8,14 +8,14 @@
 \usage{
 mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
 
-mrgsim_df(...)
+mrgsim_df(..., output = "df")
 
 do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
   carry.out = character(0), seed = as.integer(NA),
-  Request = character(0), capture = NULL, obsonly = FALSE,
-  obsaug = FALSE, tgrid = NULL, recsort = 1, deslist = list(),
-  descol = character(0), filbak = TRUE, tad = FALSE, nocb = TRUE,
-  skip_init_calc = FALSE, ...)
+  Request = character(0), output = NULL, capture = NULL,
+  obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
+  deslist = list(), descol = character(0), filbak = TRUE,
+  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ...)
 }
 \arguments{
 \item{x}{the model object}
@@ -33,6 +33,10 @@ idata and data are missing}
 \item{...}{passed to \code{\link[mrgsolve]{update}} and 
 \code{\link{do_mrgsim}}}
 
+\item{output}{if \code{NULL} (the default) a mrgsims object is returned; 
+otherwise, pass \code{df} to return a data.frame or \code{matrix} to 
+return a matrix}
+
 \item{carry_out}{data items to copy into the output}
 
 \item{carry.out}{soon to be deprecated; use \code{carry_out} instead}
@@ -44,7 +48,7 @@ in the simulated output; this is different than the \code{request}
 slot in the model object, which refers only to model compartments}
 
 \item{capture}{character file name used for debugging (not related
-to \code{$CAPTURE}}
+to \code{$CAPTURE})}
 
 \item{obsonly}{if \code{TRUE}, dosing records are not included
 in the output}

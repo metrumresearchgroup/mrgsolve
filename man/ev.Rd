@@ -60,6 +60,8 @@ but simpler and quicker.
 \item If not supplied, \code{cmt}  is assumed to be 1.
 \item If not supplied, \code{time} is assumed to be 0.
 \item If \code{amt} is not supplied, an error will be generated.
+\item If \code{total} is supplied, then \code{addl} will be set 
+to \code{total} - 1.
 \item Other items can include \code{ii}, \code{ss}, and \code{addl}
 (see \code{\link{data_set}} for details on all of these items).
 \item \code{ID} may be specified as a vector.

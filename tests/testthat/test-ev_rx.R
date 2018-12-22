@@ -36,44 +36,81 @@ all.equal.ev <- function(a,b) {
 test_that("parse dose only - bolus", {
   a <- ev_rx("100")
   b <- ev(amt = 100)
-  expect_true(all.equal(a,b))
+  expect_identical(a,b)
 })
 
 test_that("parse dose only - infusion", {
   a <- ev_rx("100 over 2")
   b <- ev(amt = 100, rate = 100/2)
-  expect_true(all.equal(a,b))
+  expect_identical(a,b)
   
   a <- ev_rx("100 ov 2")
-  expect_true(all.equal(a,b))
-  
+  expect_identical(a,b)
 })
 
 test_that("parse dose plus additional - bolus", {
   a <- ev_rx("100 q 12 x 3")
   b <- ev(amt = 100,  ii = 12, addl = 2)
-  expect_true(all.equal(a,b))
+  expect_identical(a,b)
 })
 
 test_that("parse dose plus additional - infusion", {
   a <- ev_rx("100 over 10 q 12 x 3")
   b <- ev(amt = 100,  ii = 12, addl = 2, rate = 100/10)
-  expect_true(all.equal(a,b))
+  expect_identical(a,b)
 })
 
 test_that("parse multiple - infusion / bolus", {
   a <- ev_rx("100 over 10 q 12 x 3 then 200 q 24 x 2")
-  b <- ev(amt = 100, rate = 100/10, ii = 12, addl = 2)
+  b <- ev(amt = 100, ii = 12, addl = 2, rate = 100/10, )
   c <- ev(amt = 200, ii = 24, addl = 1)
   d <- seq(b,c)
-  expect_true(all.equal(a,d))
+  expect_identical(a,d)
   
   a <- ev_rx("100 over 10 q 12 x 3 ,  200 q 24 x 2")
-  expect_true(all.equal(a,d))
+  expect_identical(a,d)
 })
 
 test_that("parse dose into compartment", {
   a <- ev_rx("100 over 10 in 4 q 12 x 3")
-  b <- ev(amt = 100, rate = 100/10, cmt = 4, ii = 12, addl = 2)
-  expect_true(all.equal(a,b))
+  b <- ev(amt = 100, cmt = 4, ii = 12, addl = 2,  rate = 100/10, )
+  expect_identical(a,b)
 })
+
+test_that("dose can be in decimal or scientific", {
+  a <- ev_rx("1.23E4")
+  b <- ev(amt = 1.23E4)
+  expect_identical(a,b)
+
+  a <- ev_rx("1.23e-4")
+  b <- ev(amt = 1.23e-4)
+  expect_identical(a,b)
+
+  a <- ev_rx("1.23E+4")
+  b <- ev(amt = 1.23E+4)
+  expect_identical(a,b)
+})
+
+test_that("infusion duration can be decimal", {
+  a <- ev_rx("1000 over 1.3")
+  b <- ev(amt = 1000, rate = 1000/1.3)
+  expect_identical(a,b)
+})
+
+test_that("infusion duration can be decimal", {
+  a <- ev_rx("1000 over 1.3")
+  b <- ev(amt = 1000, rate = 1000/1.3)
+  expect_identical(a,b)
+})
+
+test_that("after parameter can be decimal", {
+  a <- ev_rx("1000 after 2")
+  b <- ev(amt = 1000, time =2)
+  expect_identical(a,b)
+
+  a <- ev_rx("1000 after 2.93")
+  b <- ev(amt = 1000, time=2.93)
+  expect_identical(a,b)
+})
+
+
