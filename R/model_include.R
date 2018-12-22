@@ -137,10 +137,10 @@ plugins[["BH"]] <- list(
   linkto="BH/include", name="BH"
 )
 
-# plugins[["TAD"]] <- list(
-#   name = "TAD", 
-#   code = c("#define __MRGSOLVE_USE_PLUGIN_TAD__", '#include "mrgsolve_plugin_tad.h"')
-# )
+plugins[["TAD"]] <- list(
+  name = "TAD",
+  code = "#define __MRGSOLVE_USE_PLUGIN_TAD__"
+)
 # 
 # plugins[["REPORT"]] <- list(
 #   name = "REPORT", 

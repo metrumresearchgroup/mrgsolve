@@ -32,7 +32,7 @@ model object.  The \code{character} method returns an event object.  The
 arguments for the event object constructor \link{ev}.
 }
 \description{
-See details for Rx specification. Actual parsing is done
+See details below for Rx specification. Actual parsing is done
 by \link{parse_rx}; this function can be used to debug Rx inputs.
 }
 \section{Rx specification}{

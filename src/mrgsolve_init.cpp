@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2018  Metrum Research Group, LLC
 //
 // This file is part of mrgsolve.
 //
@@ -37,13 +37,6 @@ RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
 RcppExport void _model_housemodel_table__(MRGSOLVE_TABLE_SIGNATURE);
 RcppExport void _model_housemodel_config__(MRGSOLVE_CONFIG_SIGNATURE);
-
-// RcppExport SEXP _mrgsolve_QMRGSIM(
-//     SEXP, SEXP, SEXP,
-//     SEXP, SEXP, SEXP,
-//     SEXP, SEXP, SEXP,
-//     SEXP, SEXP
-// );
 
 static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_get_tokens,1),
