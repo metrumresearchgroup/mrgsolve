@@ -110,6 +110,10 @@ pfile <- function(package,dir,file,ext=NULL) {
   return(ans)
 }
 
+mrgsolve_file <- function(..., package="mrgsolve") {
+  system.file(..., package = package)
+}
+
 cropstr <- function(string, prefix, suffix, bump= "...") {
   nc <- nchar(string)
   total <- prefix+suffix

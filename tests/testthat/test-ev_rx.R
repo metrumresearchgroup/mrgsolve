@@ -27,7 +27,7 @@ all.equal.ev <- function(a,b) {
   a <- a@data
   b <- b@data
   if(!identical(sort(names(a)),sort(names(b)))) {
-    return(FALSE)  
+    return(FALSE)
   }
   a <- a[,names(b)]
   return(identical(a,b))
@@ -43,7 +43,7 @@ test_that("parse dose only - infusion", {
   a <- ev_rx("100 over 2")
   b <- ev(amt = 100, rate = 100/2)
   expect_identical(a,b)
-  
+
   a <- ev_rx("100 ov 2")
   expect_identical(a,b)
 })
@@ -64,9 +64,9 @@ test_that("parse multiple - infusion / bolus", {
   a <- ev_rx("100 over 10 q 12 x 3 then 200 q 24 x 2")
   b <- ev(amt = 100, ii = 12, addl = 2, rate = 100/10, )
   c <- ev(amt = 200, ii = 24, addl = 1)
-  d <- seq(b,c)
+  d <- ev_seq(b,c)
   expect_identical(a,d)
-  
+
   a <- ev_rx("100 over 10 q 12 x 3 ,  200 q 24 x 2")
   expect_identical(a,d)
 })

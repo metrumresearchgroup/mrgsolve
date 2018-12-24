@@ -239,9 +239,10 @@ setClass("packmod",
 ##' mod %>% ev(amt=100) %>% mrgsim %>% plot
 ##' 
 house <- function(...) {
-  att <- readRDS(file=pfile("mrgsolve", "project", "housemodel", "RDS"))
+  project <- mrgsolve_file("project")
+  att <- as_pack_mod("housemodel", project, "mrgsolve")
   x <- new("packmod",
-           att,
+           att[["mod"]],
            package = "mrgsolve",
            model = "housemodel"
   )
@@ -267,7 +268,6 @@ as_pack_mod <- function(model, project, PACKAGE) {
   x@code <- code
   x <- relocate_funs(x, PACKAGE)
   x@soloc <- ""
-  
   return(list(mod=x, soloc=soloc, source=source))
 }
 

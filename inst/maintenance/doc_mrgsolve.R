@@ -22,12 +22,12 @@ stopifnot(all(c(x1,x2)))
 
 roxygen2::roxygenize()
 
-## I think mrgsolve functions available after doc
-proj <- file.path("inst", "project")
-source("R/modspec.R")
-foo <- mrgsolve:::as_pack_mod("housemodel", proj, "mrgsolve")
-mod <- foo$mod
-saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),foo$mod)
+# ## I think mrgsolve functions available after doc
+# proj <- file.path("inst", "project")
+# source("R/modspec.R")
+# foo <- mrgsolve:::as_pack_mod("housemodel", proj, "mrgsolve")
+# mod <- foo$mod
+# saveRDS(file=file.path(pkg,"inst", "project","housemodel.RDS"),foo$mod,version=2)
 
 message("\nFinished with roxygenize. \n")
 

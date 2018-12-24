@@ -339,7 +339,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
   x@shlib[["covariates"]] <- mread.env$covariates
   x@shlib[["version"]] <- GLOBALS[["version"]]
-  x@shlib[["include"]] <- spec[["INCLUDE"]]
+  inc <- spec[["INCLUDE"]]
+  if(is.null(inc)) inc <- character(0)
+  x@shlib[["include"]] <- inc
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
   x@shlib[["md5"]] <- build$md5
   

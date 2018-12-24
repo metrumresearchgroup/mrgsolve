@@ -5,6 +5,7 @@
 \alias{ev_methods}
 \alias{nrow.ev}
 \alias{names,ev-method}
+\alias{nrow,ev-method}
 \alias{as.matrix.ev}
 \alias{as.data.frame.ev}
 \alias{show,ev-method}
@@ -13,6 +14,8 @@
 \method{nrow}{ev}(x)
 
 \S4method{names}{ev}(x)
+
+\S4method{nrow}{ev}(x)
 
 \method{as.matrix}{ev}(x, ...)
 

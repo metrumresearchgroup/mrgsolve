@@ -23,6 +23,8 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-nmxml")
 
+if(!requireNamespace("xml2",quietly=TRUE)) skip("xml2 is not installed.")
+
 
 code <- '
 $NMXML
@@ -39,7 +41,7 @@ $ODE dxdt_CENT=0;
 tmp <- tempdir()
 
 test_that("Model spec with $NMXML block can be parsed", {
-  expect_is(mcode("nmxml1", code,warn=FALSE, compile = FALSE),"mrgmod")
+  expect_is(mcode("nmxml1", code, warn=FALSE, compile = FALSE),"mrgmod")
 })
 
 mod <- mcode("test6", code, compile = FALSE)
@@ -264,8 +266,6 @@ test_that("read_nmext returns estimates", {
   x2 <- read_nmext(path=file.path(project, 1005, "1005.ext"))
   expect_identical(x,x2)
 })
-  
-  
 
 
-  
+

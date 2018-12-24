@@ -100,7 +100,7 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   }
   addl[[iicol]] <- 0
   
-  addl[[evidcol]] <- if_else(
+  addl[[evidcol]] <- ifelse(
     addl[[evidcol]] == 4, 
     1, 
     addl[[evidcol]]

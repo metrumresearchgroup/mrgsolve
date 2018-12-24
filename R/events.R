@@ -416,7 +416,7 @@ add.ev <- function(e1,e2) {
     names(add) <- long
     e1@data <- cbind(e1@data, add)
   }
-  e1@data <- as.data.frame(dplyr::bind_rows(e1@data, e2@data))
+  e1@data <- as.data.frame(bind_rows(e1@data, e2@data))
   
   if(has_name("ID", e1@data)) {
     e1@data<- e1@data[order(e1@data$ID, e1@data$time),]
@@ -545,12 +545,12 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ##' 
 ##' seq(e1, wait = 8, e2)
 ##' 
-##' seq(e1, wait = 8, e2, id = 1:10)
+##' seq(e1, wait = 8, e2, ID = 1:10)
 ##' 
 ##' ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
 ##' 
 ##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
-##' 
+##'
 ##' @details
 ##' Use the generic \code{\link{seq}} when the first argument 
 ##' is an event object.  If a waiting period is the 
@@ -567,14 +567,12 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   
   if(!missing(id)) {
-    warning("id argument is deprecated; using ID instead")
+    warning("id argument is deprecated; using ID instead.")
     ID <- id
   }
   
   evs <- list(...)
-  
-  if(length(evs)==1) return(evs[[1]])
-  
+
   if(is.list(.dots)) {
     evs <- .dots 
   }
@@ -596,7 +594,7 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     if(is.null(e[["addl"]])) {
       e[["addl"]] <- 0
     }
-    after <-  if_else(is.null(e[[".after"]]), 0, e[[".after"]])
+    after <-  ifelse(is.null(e[[".after"]]), 0, e[[".after"]])
     e[["time"]] <- e[["time"]] + start
     elast <- slice(e, nrow(e))
     start <- 
@@ -607,12 +605,12 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     out[[i]] <- e
   }
   out <- bind_rows(out) 
-  out <- mutate(out, .after = NULL)
+  out[[".after"]] <- NULL
   if(exists("rate", out)) {
-    out["rate"] <- na2zero(out["rate"])
+    out[["rate"]] <- na2zero(out[["rate"]])
   }
   if(exists("ss",out)) {
-    out["ss"] <- na2zero(out["ss"]) 
+    out[["ss"]] <- na2zero(out[["ss"]]) 
   }
   if(is.numeric(ID)) {
     out <- ev_rep(out,ID)

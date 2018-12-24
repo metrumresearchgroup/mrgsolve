@@ -81,7 +81,7 @@ setGeneric("ev_rx", function(x,y,...) {
 ##' @rdname ev_rx
 ##' @export
 setMethod("ev_rx", signature=c("mrgmod", "character"), function(x,y,...) {
-  ev(x,parse_rx(y))
+  ev(x,ev_rx(y))
 })
 
 ##' @rdname ev_rx
@@ -90,7 +90,7 @@ setMethod("ev_rx", signature=c("character","missing"), function(x,df = FALSE,...
   x <- parse_rx(x)
   if(is.list(x[[1]])) {
     x <- lapply(x, do.call, what = ev)  
-    x <- do.call(seq,x)
+    x <- do.call(ev_seq,x)
   } else {
     x <- do.call(ev,x)
   }
@@ -126,9 +126,9 @@ parse_this_rx <- function(x) {
   l <- list()
   l[["time"]] <- as.numeric(at)
   l[["cmt"]] <- as.numeric(cmt)
-  l[["amt"]] <- as.numeric(dose[2])
+  l[["amt"]] <- amt
   l[["ii"]] <- as.numeric(inter[2])
   l[["addl"]] <- as.numeric(number[2])-1
   l[["rate"]] <- rate
-  l[sapply(l,function(x) !is.na(x))]
+  l[sapply(l,function(xx) !is.na(xx))]
 }

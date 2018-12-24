@@ -87,6 +87,12 @@ setMethod("names", "ev", function(x) {
   names(x@data)
 })
 
+##' @rdname ev_methods
+##' @export
+setMethod("nrow", "ev", function(x) {
+  nrow(x@data)
+})
+
 ##' @method as.matrix ev
 ##' @rdname ev_methods
 ##' @export
