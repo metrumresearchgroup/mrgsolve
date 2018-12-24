@@ -136,6 +136,7 @@ obsonly <- function(x,value=TRUE,...) {
   x@args[["obsonly"]] <- value
   x
 }
+
 ##' Augment observations in the simulated output
 ##'
 ##' @param x model object
@@ -172,7 +173,6 @@ obsaug <- function(x,value=TRUE,...) {
 ##' You must assign the \code{idata_set} before assigning the designs in the 
 ##' command chain (see the example below).
 ##'
-##' @export
 ##' 
 ##' @examples 
 ##' 
@@ -198,6 +198,9 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   data_set(data) %>%
 ##'   mrgsim %>% 
 ##'   plot(RESP~time|GRP)
+##' 
+##' @export
+##' 
 design <- function(x, deslist=list(), descol = character(0), ...) {
   
   if(missing(descol)) {

@@ -225,25 +225,23 @@ setMethod("update", "ev", function(object,y,...) {
 })
 
 
-##' Update model or project in an model object
-##'
-##' @param x mrgmod object
-##' @param model model name
-##' @param project project directory
-##' @param ... passed along
-##' @return updated model object
-##' @export
-##' @keywords internal
-setGeneric("relocate", function(x,...) standardGeneric("relocate"))
-
-##' @rdname relocate
-##' @export
-setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
-  if(!missing(model)) x@model <- model
-  if(!missing(project)) x@project <- normalizePath(project,winslash=.Platform$file.sep)
-  validObject(x)
-  return(x)
-})
+# Update model or project in an model object
+#
+# @param x mrgmod object
+# @param model model name
+# @param project project directory
+# @param ... passed along
+# @return updated model object
+# @export
+# @keywords internal
+# setGeneric("relocate", function(x,...) standardGeneric("relocate"))
+# 
+# setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
+#   if(!missing(model)) x@model <- model
+#   if(!missing(project)) x@project <- normalizePath(project,winslash=.Platform$file.sep)
+#   validObject(x)
+#   return(x)
+# })
 
 
 

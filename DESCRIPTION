@@ -30,11 +30,11 @@ Depends:
     methods
 Imports:
     Rcpp (>= 0.12.12),
-    dplyr (>= 0.7.4),
+    dplyr (>= 0.7.8),
     magrittr (>= 1.5),
     RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 1.2),
-    rlang (>= 0.2.0), 
+    rlang (>= 0.3.0.1), 
     sys
 LinkingTo: 
     Rcpp (>= 0.12.12), 
@@ -53,7 +53,6 @@ Collate:
     'utils.R'
     'package.R'
     'generics.R'
-    'class_modlist.R'
     'class_tgrid.R'
     'class_numericlist.R'
     'class_matlist.R'

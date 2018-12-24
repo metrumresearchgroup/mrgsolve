@@ -41,7 +41,7 @@ generate_rdefs <- function(pars,
     etal <- epsl <- NULL
 
     if(sum(nrow(omats)) > 0) {
-        etai <- 1:sum(nrow(omats))
+        etai <- seq_len(sum(nrow(omats)))
         etal <- unlist(omats@labels,use.names=FALSE)
         stopifnot(length(etai)==length(etal))
         which <- etal != "."
@@ -53,7 +53,7 @@ generate_rdefs <- function(pars,
     }
 
     if(sum(nrow(smats)) > 0) {
-        epsi <- 1:sum(nrow(smats))
+        epsi <- seq_len(sum(nrow(smats)))
         epsl <- unlist(smats@labels,use.names=FALSE)
         stopifnot(length(epsi)==length(epsl))
         which <- epsl != "."
@@ -124,12 +124,8 @@ win_def_name <- function(x) {
 }
 
 write_win_def <- function(x) {
-  
   if(.Platform$OS.type != "windows") return(NULL)
-  
-  cat(file=win_def_name(x), 
-      c("EXPORTS",paste0(" ", funs(x))), 
-      sep="\n")
+  cat(file=win_def_name(x), c("EXPORTS",paste0(" ", funs(x))),sep="\n")
 }
 
 rm_win_def <- function(x) {
@@ -178,7 +174,7 @@ safe_wait <- function(x) {
 }
 
 
-# Clean up model shared objects. 
+# Clean up model shared objects
 # 
 # @param x model object
 # @param where directory to clean up
@@ -218,16 +214,14 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   neta <- sum(nrow(omat(x)))
   neps <- sum(nrow(smat(x)))
   
-  out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,neta,
-               neps,x@capture,funp,x@envir)
+  out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,neta,neps,x@capture,funp,
+               x@envir)
   
   names(out$init) <- names(init)
   
   if(keep_pointers) {
     out[["pointers"]] <- funp
   }
-  
   out
-  
 }
 

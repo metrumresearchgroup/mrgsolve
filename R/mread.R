@@ -406,22 +406,19 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     sep="\n", file=def.con)
   close(def.con)
   
-  
-  
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
-  
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
   on.exit({
     setwd(cwd)
     do_restore(to_restore)
   })
+  
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)
-  #do_restore(to_restore)
   
   same <- check_and_copy(
     from = temp_write,
@@ -484,9 +481,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
 
 ##' @rdname mread 
 ##' @export
-mread_cache <- function(model = NULL, project = getOption("mrgsolve.project", getwd()), 
+mread_cache <- function(model = NULL, 
+                        project = getOption("mrgsolve.project", getwd()), 
                         file = paste0(model, ".cpp"),
-                        code = NULL, soloc = getOption("mrgsolve.soloc", tempdir()), 
+                        code = NULL, 
+                        soloc = getOption("mrgsolve.soloc", tempdir()), 
                         quiet = FALSE, 
                         preclean = FALSE, ...) {
   

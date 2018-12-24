@@ -56,13 +56,11 @@ filter_.ev <-  function(.data, ...) {
 ##' @param x an events object
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
-##' @param add_ID numeric ID of length 1 used to add \code{ID} column
-##' only if one doesn't already exist
+##' @param add_ID numeric ID of length 1 used to add \code{ID} column only if 
+##' one doesn't already exist
 ##' @param object used for \code{show}
 ##' @param ... passed to various methods
 ##' 
-##' @rdname ev_methods
-##' @name ev_methods
 ##' 
 ##' @examples
 ##' 
@@ -72,26 +70,25 @@ filter_.ev <-  function(.data, ...) {
 ##' 
 ##' as.data.frame(e)
 ##' 
+##' dim(e)
+##' 
 ##' nrow(e)
 ##' 
-##' @method nrow ev
-##' 
+##' @rdname ev_methods
+##' @name ev_methods
+NULL
+
+##' @rdname ev_methods
 ##' @export
-nrow.ev <- function(x) {
-  nrow(x@data)
+names.ev <- function(x) {
+  names(x@data)  
 }
 
 ##' @rdname ev_methods
 ##' @export
-setMethod("names", "ev", function(x) {
-  names(x@data)
-})
-
-##' @rdname ev_methods
-##' @export
-setMethod("nrow", "ev", function(x) {
-  nrow(x@data)
-})
+dim.ev <- function(x) {
+  dim(x@data)  
+}
 
 ##' @method as.matrix ev
 ##' @rdname ev_methods

@@ -202,7 +202,7 @@ as.cvec <- function(x) {
 ##' @export
 expand.idata <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
-  ans$ID <- 1:nrow(ans)
+  ans$ID <- seq_len(nrow(ans))
   shuffle(ans,"ID")
 }
 
@@ -210,7 +210,7 @@ expand.idata <- function(...) {
 ##' @rdname expand.idata
 expand.ev <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
-  ans$ID <- 1:nrow(ans)
+  ans$ID <- seq_len(nrow(ans))
   if(!has_name("evid", ans)) ans$evid <- 1
   if(!has_name("cmt", ans)) ans$cmt <- 1
   if(!has_name("time", ans)) ans$time <- 0
@@ -319,29 +319,11 @@ if.file.remove <- function(x) {
   if(file_exists(x)) file.remove(x)
 }
 
-#' rename columns from vector for new names
-#' @param .df dataframe to rename
-#' @param new_names vector of names using syntax "<newname>" = "<oldname>"
-#' @examples
-#' rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
-#' @export
-rename_cols <- function(.df, new_names) {
-  if (!all(new_names %in% names(.df))) {
-    missing <- new_names[which(!new_names %in% names(.df))]
-    stop(paste("the following columns do not exist in the dataset: ", 
-               paste(missing, collapse = ", ")))
-  }
-  matches <- match(new_names, names(.df))
-  names(.df)[matches] <- names(new_names)
-  return(.df)
-}
-
 as_character_args <- function(x) {
   x <- deparse(x,width.cutoff=500)
   x <- gsub("^.*\\(|\\)$", "", x)
   x
 }
-
 
 get_tokens <- function(x,unlist=FALSE) {
   if(!is.character(x)) return(character(0))

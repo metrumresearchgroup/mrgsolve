@@ -3,19 +3,16 @@
 \docType{methods}
 \name{ev_methods}
 \alias{ev_methods}
-\alias{nrow.ev}
-\alias{names,ev-method}
-\alias{nrow,ev-method}
+\alias{names.ev}
+\alias{dim.ev}
 \alias{as.matrix.ev}
 \alias{as.data.frame.ev}
 \alias{show,ev-method}
 \title{Various methods for event objects}
 \usage{
-\method{nrow}{ev}(x)
+\method{names}{ev}(x)
 
-\S4method{names}{ev}(x)
-
-\S4method{nrow}{ev}(x)
+\method{dim}{ev}(x)
 
 \method{as.matrix}{ev}(x, ...)
 
@@ -33,8 +30,8 @@
 
 \item{optional}{passed to \code{\link{as.data.frame}}}
 
-\item{add_ID}{numeric ID of length 1 used to add \code{ID} column
-only if one doesn't already exist}
+\item{add_ID}{numeric ID of length 1 used to add \code{ID} column only if 
+one doesn't already exist}
 
 \item{object}{used for \code{show}}
 }
@@ -48,6 +45,8 @@ e <- ev(amt = 100)
 names(e)
 
 as.data.frame(e)
+
+dim(e)
 
 nrow(e)
 
