@@ -98,7 +98,6 @@ datasets:
 	Rscript inst/maintenance/datasets.R
 
 travis:
-	make house
 	make build
 	#R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
 	make test
