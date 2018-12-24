@@ -9,7 +9,7 @@
 \alias{extran3}
 \alias{exTheoph}
 \alias{exBoot}
-\title{Example input data sets.}
+\title{Example input data sets}
 \usage{
 data(exidata)
 
@@ -24,7 +24,7 @@ data(exTheoph)
 data(exBoot)
 }
 \description{
-Example input data sets.
+Example input data sets
 }
 \details{
 \itemize{

@@ -16,38 +16,11 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Functions for chaining commands together
-##'
-##' Use these functions with chaining commands togehter with the %>%
-##' operator.
-##'
-##' @name chain
-##' 
-##' @details
-##' Other functions that may be used in the chain of commands include: 
-##' \code{\link{param}}, \code{\link{init}}, \code{\link[mrgsolve]{update}},
-##' \code{\link{ev}}.
-##' or any other function that will take the output of the preceeding command 
-##' as it's first argument.
-##' 
-##' @seealso \code{\link{data_set}}, \code{\link{idata_set}}
-##' 
-##' @examples
-##'
-##' mod <- mrgsolve:::house()
-##'
-##' data(exidata)
-##' data(exTheoph)
-##'
-##' out <- mod %>% data_set(exTheoph) %>% mrgsim()
-##' out <- mod %>% carry_out(evid) %>% ev(amt=100, cmt=1) %>% mrgsim()
-##' out <- mod %>% Req(CP,RESP) %>% mrgsim()
-NULL
-
 ##' Request simulated output
 ##' 
 ##' Use this function to select, by name, either compartments or derived 
-##' variables that have been captured (see \code{\link{CAPTURE}}).
+##' variables that have been captured (see \code{\link{CAPTURE}}) into
+##' the simulated output.
 ##'
 ##' @param x model object
 ##' @param ... unquoted names of compartments or tabled items
@@ -112,14 +85,14 @@ setMethod("req", "mrgmod", function(x,...) {
 ##' 
 ##' @export
 carry_out <- function(x,...) {
-  x@args[["carry.out"]] <- as_character_args(match.call()[-1])
+  x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
 ##' @export
 ##' @rdname carry_out
 carry.out <- function(x,...) {
-  x@args[["carry.out"]] <- as_character_args(match.call()[-1])
+  x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
@@ -147,8 +120,6 @@ tscale <- function(x,value=1,...) {
   x
 }
 
-
-
 ##' Collect only observations in the simulated output
 ##'
 ##' @param x model object
@@ -165,6 +136,7 @@ obsonly <- function(x,value=TRUE,...) {
   x@args[["obsonly"]] <- value
   x
 }
+
 ##' Augment observations in the simulated output
 ##'
 ##' @param x model object
@@ -178,7 +150,6 @@ obsaug <- function(x,value=TRUE,...) {
   x@args[["obsaug"]] <- value
   x
 }
-
 
 ##' Set observation designs for the simulation
 ##'
@@ -202,7 +173,6 @@ obsaug <- function(x,value=TRUE,...) {
 ##' You must assign the \code{idata_set} before assigning the designs in the 
 ##' command chain (see the example below).
 ##'
-##' @export
 ##' 
 ##' @examples 
 ##' 
@@ -228,6 +198,9 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   data_set(data) %>%
 ##'   mrgsim %>% 
 ##'   plot(RESP~time|GRP)
+##' 
+##' @export
+##' 
 design <- function(x, deslist=list(), descol = character(0), ...) {
   
   if(missing(descol)) {

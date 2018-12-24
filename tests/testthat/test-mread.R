@@ -15,5 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+library(testthat)
+library(mrgsolve)
+library(dplyr)
+Sys.setenv(R_TESTS="")
+options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-mread")
+
+test_that("ETA(n) in $ODE is error", {
+  code <- '$OMEGA 1\n$ODE double a = ETA(1);'  
+  expect_error(mcode("test-mread-eta", code, compile = FALSE))
+})
+
+test_that("Warning with no $CMT or $INIT", {
+  code <- '$OMEGA 1\n$ODE double a = 2;'  
+  expect_warning(mcode("test-mread-cmt", code,quiet=FALSE,compile=FALSE))
+})
 

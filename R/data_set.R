@@ -16,6 +16,10 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 ##' Select and modify a data set for simulation
+##' 
+##' The input data set (\code{data_set}) is a data frame that specifies
+##' observations, model events, and / or paramter values for a population
+##' of individuals. 
 ##'
 ##' @param x model object
 ##' @param data data set
@@ -139,7 +143,7 @@ setMethod("data_set", c("mrgmod", "ev"), function(x,data,...) {
 
 ##' @rdname data_set
 ##' @export
-setMethod("data_set", c("mrgmod", "missing"), function(x,object,...) {
+setMethod("data_set", c("mrgmod", "missing"), function(x, object,...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x,as.data.frame(object),...))
 })

@@ -10,10 +10,9 @@
 \alias{names,mrgsims-method}
 \alias{as.data.frame,mrgsims-method}
 \alias{as.matrix,mrgsims-method}
-\alias{subset,mrgsims-method}
 \alias{summary,mrgsims-method}
 \alias{show,mrgsims-method}
-\title{Methods for working with \code{mrgsims} objects.}
+\title{Methods for working with \code{mrgsims} objects}
 \usage{
 \S4method{$}{mrgsims}(x, name)
 
@@ -25,12 +24,10 @@
 
 \S4method{names}{mrgsims}(x)
 
-\S4method{as.data.frame}{mrgsims}(x, row.names = NULL, optional = FALSE,
-  ...)
+\S4method{as.data.frame}{mrgsims}(x, row.names = NULL,
+  optional = FALSE, ...)
 
 \S4method{as.matrix}{mrgsims}(x, ...)
-
-\S4method{subset}{mrgsims}(x, ...)
 
 \S4method{summary}{mrgsims}(object, ...)
 
@@ -61,8 +58,6 @@ Most methods should behave as expected according to other method
 commonly used in R (e.g. head, tail, as.data.frame, etc ...)
 
 \itemize{
-  \item{\code{subset}} coreces simulated output to data.frame and 
-  passes to subset.data.frame
   \item{\code{$}} selects a column in the simulated data and 
   returns numeric
   \item{\code{head}} see \code{\link{head.matrix}}; returns 
@@ -94,7 +89,6 @@ out
 head(out)
 tail(out)
 
-mrgsolve:::mod(out)
 
 dim(out)
 names(out)
@@ -102,7 +96,6 @@ names(out)
 mat <- as.matrix(out)
 df <- as.data.frame(out)
 
-df <- subset(out, time < 12) ## a data frame
 out$CP
 
 plot(out)
@@ -113,3 +106,4 @@ plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 \seealso{
 \code{\link{stime}}
 }
+\keyword{internal}

@@ -475,7 +475,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
     double ontime = 0;
     
-    int nextpos = addl_ev_first ?  -600-this->pos() : (thisi.size() + 10);
+    int nextpos = addl_ev_first ?  (this->pos() - 600) : (thisi.size() + 10);
     
     for(unsigned int k=1; k<=Addl; ++k) {
       

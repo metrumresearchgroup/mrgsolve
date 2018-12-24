@@ -33,7 +33,7 @@ context("test-inventory")
 # })
 
 
-mod <- mcode("test", "$PARAM KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1")
+mod <- mcode("test", "$PARAM KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1",compile = FALSE)
 all_obj <- data.frame(KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1)
 missing_obj <- data.frame(KA = 1, CL = 1, V = 1, OCC1 = 1, F = 1)
 
@@ -55,21 +55,3 @@ test_that("inventory errors when missing required params", {
   expect_error(inventory(mod, missing_obj, OCC2))
 
 })
-
-# test_that("inventory warns when missing required params but not checking strictly", {
-#   expect_warning(inventory(mod, missing_obj, 
-#                            dplyr::everything(), 
-#                            .strict = FALSE))
-# 
-#   expect_s4_class(inventory(mod, missing_obj, 
-#                             dplyr::everything(), 
-#                             .strict = FALSE), "mrgmod")
-#   expect_warning(inventory(mod, missing_obj, 
-#                            OCC2, 
-#                            .strict = FALSE))
-# 
-#   expect_s4_class(inventory(mod, missing_obj, 
-#                             OCC2, 
-#                             .strict = FALSE), "mrgmod")
-# })
-

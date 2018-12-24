@@ -13,3 +13,4 @@ S4 events class
 \item{\code{data}}{a data frame of events}
 }}
 
+\keyword{internal}

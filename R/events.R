@@ -18,31 +18,24 @@
 
 ##' Event objects for simulating PK and other interventions
 ##' 
-##' An event object contains one or more dosing records that 
-##' makes up a dosing regimen.  The event object may include 
-##' an ID column, but it usually doesn't.  Event objects have 
-##' operators and other functions that can take simple or elementary 
-##' event sequences and combine them in potentially more complicated
-##' ways.
+##' An event object specifies dosing or other interventions that get implemented
+##' during simulation. Event objects do similar things as \code{\link{data_set}}, 
+##' but simpler and quicker.
 ##'
 ##' @param x a model object
 ##' @param time event time
 ##' @param amt dose amount
 ##' @param evid event ID
 ##' @param cmt compartment
-
 ##' @param ID subject ID
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for 
 ##' each individual in \code{ID}
-
 ##' @param until the expected maximum \bold{observation} time for this regimen
 ##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
 ##' \code{\link{realize_addl}}
 ##' @param object passed to show
-##' @param ... passed on
-##' 
-##' @export events
+##' @param ... other items to be incorporated into the event object
 ##' 
 ##' @details
 ##' \itemize{
@@ -52,10 +45,12 @@
 ##' \item If not supplied, \code{cmt}  is assumed to be 1.
 ##' \item If not supplied, \code{time} is assumed to be 0.
 ##' \item If \code{amt} is not supplied, an error will be generated.
+##' \item If \code{total} is supplied, then \code{addl} will be set 
+##' to \code{total} - 1.
 ##' \item Other items can include \code{ii}, \code{ss}, and \code{addl}
 ##' (see \code{\link{data_set}} for details on all of these items).
 ##' \item \code{ID} may be specified as a vector.
-##' \item If replicate is \code{TRUE} (default), thenthe events 
+##' \item If replicate is \code{TRUE} (default), then the events 
 ##' regimen is replicated for each \code{ID}; otherwise, the number of
 ##' event rows must match the number of \code{ID}s entered
 ##' }
@@ -68,17 +63,17 @@
 ##' 
 ##' @examples
 ##' mod <- mrgsolve:::house()
+##' 
 ##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
-##' events(mod)
 ##'
 ##' loading <- ev(time=0, cmt=1, amt=1000)
+##' 
 ##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
+##' 
 ##' loading + maint
 ##'
 ##'
-##' ev(ID=1:10, cmt=1, time=0, amt=100)
-##'
-##'
+##' @export
 setGeneric("ev", function(x,...) {
   standardGeneric("ev")
 })
@@ -110,12 +105,17 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
     stop("evid cannot be 0 (observation)")
   }
   
+  if(missing(amt)) {
+    stop("argument \"amt\" is missing, with no default.", call.=FALSE)  
+  }
+  
   data <- as_data_frame(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
-  
-  if(!has_name("amt",data)) {
-    stop("amt is required input.", call.=FALSE)
+
+  if("total" %in% names(data)) {
+    data[["addl"]] <- data[["total"]]-1
+    data[["total"]] <- NULL
   }
   
   if(!missing(until)) {
@@ -308,16 +308,19 @@ collect_ev <- function(...) {
 ##' objects have been deprecated.
 ##'
 ##' @rdname ev_ops
+##' @keywords internal
 setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
   return(add.ev(e1,e2))
 })
 
 ##' @rdname ev_ops
 ##' @export
+##' @keywords internal
 setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 
 ##' @rdname ev_ops
 ##' @export
+##' @keywords internal
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
   if(!has_name("ii",left) | !has_name("addl",left)) {
@@ -330,6 +333,7 @@ setMethod("%then%",c("ev", "ev"), function(e1,e2) {
 
 ##' @rdname ev_ops
 ##' @export
+##' @keywords internal
 setMethod("+", c("ev", "numeric"), function(e1, e2) {
   e1@data$time <- e1@data$time + e2
   e1
@@ -350,47 +354,47 @@ setMethod("c", "ev", function(x,...,recursive=TRUE) {
   return(x)
 })
 
-plus.ev <- function(e1,e2) {
-  
-  data1 <- as.data.frame(events(e1))
-  data2 <- as.data.frame(e2)
-  
-  if(nrow(data1)==0) {
-    e1@events <- e2
-    return(e1)
-  }
-  
-  short <- setdiff(names(data1), names(data2))
-  long <- setdiff(names(data2), names(data1))
-  
-  if(any(short=="ID") | any(long=="ID")) {
-    stop("ID found in one object but not the other")
-  }
-  
-  if(length(short)>0) {
-    add <- as.list(rep(0,length(short)))
-    names(add) <- short
-    data2 <- cbind(data2, add)
-  }
-  
-  if(length(long) > 0) {
-    add <- as.list(rep(0, length(long)))
-    names(add) <- long
-    data1 <- cbind(data1, add)
-  }
-  
-  data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
-  
-  if(has_name("ID", data1)) {
-    data1<- data1[order(data1$ID, data1$time),]
-  } else {
-    data1<- data1[order(data1$time),]
-  }
-  
-  e1@events <- as.ev(data1)
-  
-  return(e1)
-}
+# plus.ev <- function(e1,e2) {
+#   
+#   data1 <- as.data.frame(events(e1))
+#   data2 <- as.data.frame(e2)
+#   
+#   if(nrow(data1)==0) {
+#     e1@events <- e2
+#     return(e1)
+#   }
+#   
+#   short <- setdiff(names(data1), names(data2))
+#   long <- setdiff(names(data2), names(data1))
+#   
+#   if(any(short=="ID") | any(long=="ID")) {
+#     stop("ID found in one object but not the other")
+#   }
+#   
+#   if(length(short)>0) {
+#     add <- as.list(rep(0,length(short)))
+#     names(add) <- short
+#     data2 <- cbind(data2, add)
+#   }
+#   
+#   if(length(long) > 0) {
+#     add <- as.list(rep(0, length(long)))
+#     names(add) <- long
+#     data1 <- cbind(data1, add)
+#   }
+#   
+#   data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
+#   
+#   if(has_name("ID", data1)) {
+#     data1<- data1[order(data1$ID, data1$time),]
+#   } else {
+#     data1<- data1[order(data1$time),]
+#   }
+#   
+#   e1@events <- as.ev(data1)
+#   
+#   return(e1)
+# }
 
 add.ev <- function(e1,e2) {
   
@@ -412,7 +416,7 @@ add.ev <- function(e1,e2) {
     names(add) <- long
     e1@data <- cbind(e1@data, add)
   }
-  e1@data <- as.data.frame(dplyr::bind_rows(e1@data, e2@data))
+  e1@data <- as.data.frame(bind_rows(e1@data, e2@data))
   
   if(has_name("ID", e1@data)) {
     e1@data<- e1@data[order(e1@data$ID, e1@data$time),]
@@ -541,12 +545,12 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ##' 
 ##' seq(e1, wait = 8, e2)
 ##' 
-##' seq(e1, wait = 8, e2, id = 1:10)
+##' seq(e1, wait = 8, e2, ID = 1:10)
 ##' 
 ##' ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
 ##' 
 ##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
-##' 
+##'
 ##' @details
 ##' Use the generic \code{\link{seq}} when the first argument 
 ##' is an event object.  If a waiting period is the 
@@ -563,10 +567,12 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   
   if(!missing(id)) {
-    warning("id argument is deprecated; using ID instead")
+    warning("id argument is deprecated; using ID instead.")
     ID <- id
   }
+  
   evs <- list(...)
+
   if(is.list(.dots)) {
     evs <- .dots 
   }
@@ -588,7 +594,7 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     if(is.null(e[["addl"]])) {
       e[["addl"]] <- 0
     }
-    after <-  if_else(is.null(e[[".after"]]), 0, e[[".after"]])
+    after <-  ifelse(is.null(e[[".after"]]), 0, e[[".after"]])
     e[["time"]] <- e[["time"]] + start
     elast <- slice(e, nrow(e))
     start <- 
@@ -599,12 +605,12 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     out[[i]] <- e
   }
   out <- bind_rows(out) 
-  out <- mutate(out, .after = NULL)
+  out[[".after"]] <- NULL
   if(exists("rate", out)) {
-    out["rate"] <- na2zero(out["rate"])
+    out[["rate"]] <- na2zero(out[["rate"]])
   }
   if(exists("ss",out)) {
-    out["ss"] <- na2zero(out["ss"]) 
+    out[["ss"]] <- na2zero(out[["ss"]]) 
   }
   if(is.numeric(ID)) {
     out <- ev_rep(out,ID)

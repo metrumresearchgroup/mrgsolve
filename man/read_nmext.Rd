@@ -4,17 +4,20 @@
 \alias{read_nmext}
 \title{Extract estimates from NONMEM ext file}
 \usage{
-read_nmext(run, file = paste0(run, ".ext"), project = getwd())
+read_nmext(run, project = getwd(), file = paste0(run, ".ext"),
+  path = NULL)
 }
 \arguments{
 \item{run}{a run number or run identifier}
 
-\item{file}{the ext file name}
-
 \item{project}{the NONMEM project directory}
+
+\item{file}{the \code{ext} file name}
+
+\item{path}{full path and file name for \code{ext} file}
 }
 \value{
-A list with theta, omega, and sigma in a format
+A list with param, omega, and sigma in a format
 ready to be used to update a model object.
 }
 \description{
@@ -25,7 +28,7 @@ project <- system.file("nonmem", package = "mrgsolve")
 
 est <- read_nmext(1005, project = project)
 
-est$theta
+est$param
 
 est$omega
 

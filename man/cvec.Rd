@@ -25,5 +25,5 @@ Create create character vectors
 
 cvec("A,B,C")
 s_(A,B,C)
-
 }
+\keyword{internal}

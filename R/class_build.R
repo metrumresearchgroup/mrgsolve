@@ -51,19 +51,19 @@ new_build <- function(file, model, project, soloc, code = NULL,
   
   ## Both project and soloc get normalized
   if(!file_writeable(soloc)) {
-    stop("soloc directory must exist and be writeable.",call.=FALSE) 
+    stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE) 
   }
   
   soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
   
   env$soloc <- as.character(create_soloc(soloc,new_model,preclean))
   
-  env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
-  
-  if(!file_readable(env$project)) {
-    stop("project directory must exist and be readable.",call.=FALSE) 
+  if(!file_readable(project)) {
+    stop("project directory '", project, "' must exist and be readable.",call.=FALSE) 
   }
   
+  env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
+
   env$modfile <- file.path(env$project,file)
   
   ## If code is passed in as character:
@@ -134,4 +134,82 @@ create_soloc <- function(loc,model,preclean) {
   return(soloc)
 }
 
+msub <- function(pattern,replacement,x,...) {
+  sapply(
+    x, 
+    pattern = pattern, 
+    replacement = replacement, 
+    FUN = sub, 
+    USE.NAMES=FALSE
+  )
+}
+
+mgsub <- function(pattern,replacement,x,...) {
+  sapply(
+    x, 
+    pattern = pattern, 
+    replacement = replacement, 
+    FUN = gsub,
+    USE.NAMES = FALSE
+  )
+}
+
+build_output_cleanup <- function(x,build) {
+  x[["stdout"]] <- rawToChar(x[["stdout"]])
+  x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
+  errr <- rawToChar(x[["stderr"]])
+  errr <- strsplit(errr, "\n|\r\n")[[1]]
+  patt <- paste0("^", build[["compfile"]], ":")
+  errr <- msub(pattern = patt, replacement = "", x = errr)
+  patt <- "^ *In function 'void _model.*:$"
+  errr <- msub(pattern = patt, replacement = "", x = errr)
+  x[["stderr"]] <- errr
+  x <- c(list(build = build), x)
+  x <- structure(x, class = "mrgsolve-build-error")
+  x
+}
+
+build_failed <- function(out,build) {
+  out <- build_output_cleanup(out,build) 
+  message("error.", appendLF=FALSE)
+  msg <- divider_msg("stdout")
+  cat("\n\n", msg, "\n", sep="")
+  cat(out[["stdout"]],sep="\n")
+  header <- "\n---:: stderr ::---------------------"
+  footer <- paste0(rep("-",nchar(header)),collapse = "")
+  msg <- divider_msg("stderr")
+  cat("\n",msg,"\n",sep="")
+  xx <- paste0(out[["stderr"]],collapse="\n")
+  message(xx,appendLF=FALSE)
+  msg <- divider_msg()
+  cat("\n",msg,"\n",sep="")
+  out[["date"]] <- date()
+  saveRDS(out,file.path(tempdir(),"build_error.RDS"))
+  build_handle_127(out)
+  stop(
+    "There was a problem building the model.",
+    call.=FALSE
+  )
+}
+
+build_get_output <- function() {
+  file <- file.path(tempdir(),"build_error.RDS")
+  file <- normalizePath(file,mustWork=FALSE)
+  if(!file.exists(file)) {
+    message("No build output was found.")
+    return(invisible(list()))
+  }
+  return(readRDS(file))
+}
+
+build_handle_127 <- function(out) {
+  found127 <- any(grepl("Error +127", out[["stderr"]]))
+  if(found127) {
+    message("NOTE: 'Error 127' was detected in the above message.")
+    message("This possibly indicates that the build toolchain could not be found.")
+    message("Please check for proper compiler installation ('Rtools.exe' on Windows).")
+    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.")
+  }
+  return(invisible(NULL))  
+}
 

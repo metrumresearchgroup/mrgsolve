@@ -11,8 +11,8 @@
 \alias{stime,mrgmod-method}
 \title{Create a simtime object}
 \usage{
-tgrid(start = 0, end = 24, delta = 1, add = numeric(0), .offset = 0,
-  .scale = 1, ...)
+tgrid(start = 0, end = 24, delta = 1, add = numeric(0),
+  .offset = 0, .scale = 1, ...)
 
 \S4method{stime}{tgrid}(x, ...)
 
@@ -66,3 +66,4 @@ out <- mod \%>\% ev(amt=1000, ii=24, addl=10) \%>\% mrgsim(tgrid=design)
 plot(out,CP~., type='b')
 }
 }
+\keyword{internal}

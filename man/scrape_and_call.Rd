@@ -21,3 +21,4 @@ Scrape options and pass to function
 \details{
 Attributes of \code{x} are also scraped and merged with options.
 }
+\keyword{internal}

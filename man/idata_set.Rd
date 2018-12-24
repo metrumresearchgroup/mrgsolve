@@ -37,7 +37,9 @@ to use for the data set}
 \item{need}{passed to \code{\link{inventory}}}
 }
 \description{
-Select and modify a idata set for simulation
+The individual data set (\code{idata_set}) is a data frame with one 
+row for each individual in a population, specifying parameters and 
+other individual-level data.
 }
 \details{
 The \code{idata_set} is a data.frame that specifies individual-level 
@@ -69,7 +71,6 @@ An error will be generated if any parameter columns in the
 input idata set contain \code{NA}.
 }
 \examples{
-
 mod <- mrgsolve:::house()
 
 data(exidata)

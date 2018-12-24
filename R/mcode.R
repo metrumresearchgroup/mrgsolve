@@ -19,6 +19,7 @@
 ##' Write, compile, and load model code
 ##'
 ##' This is a convenience function that ultimately calls \code{\link{mread}}.
+##' Model code is written to a file and read back in using \code{\link{mread}}.
 ##'
 ##' @param model model name
 ##' @param project project name
@@ -27,6 +28,9 @@
 ##' @details
 ##' Note that the arguments are in slightly different order than 
 ##' \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+##' 
+##' See the \code{\link{mread}} help topic for discussion about caching
+##' compilation results with \code{mcode_cache}.  
 ##'
 ##' @examples
 ##'
@@ -46,13 +50,15 @@
 ##' @seealso \code{\link{mread}}, \code{\link{mread_cache}}
 ##' 
 ##' @export
-mcode <- function(model, code, project=tempdir(), ...) {
-  mread(model=model, project=project, code=code,...)
+mcode <- function(
+  model, code, project = getOption("mrgsolve.project", tempdir()), ...) {
+  mread(model=model, project=project, code=code, ...)
 }
 
 ##' @rdname mcode
 ##' @export
-mcode_cache <- function(model, code, project=tempdir(),  ...) {
+mcode_cache <- function(
+  model, code, project = getOption("mrgsolve.project", tempdir()),  ...) {
   mread_cache(model, project, code = code, ...)
 }
 

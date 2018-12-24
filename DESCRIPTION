@@ -31,11 +31,12 @@ Depends:
     methods
 Imports:
     Rcpp (>= 0.12.12),
-    dplyr (>= 0.7.4),
+    dplyr (>= 0.7.8),
     magrittr (>= 1.5),
     RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 1.2),
-    rlang (>= 0.2.0)
+    rlang (>= 0.3.0.1), 
+    sys
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 
@@ -47,12 +48,12 @@ Suggests:
     rmarkdown
 LazyLoad: yes
 NeedsCompilation: yes
+Encoding: UTF-8
 Collate: 
     'RcppExports.R'
     'utils.R'
     'package.R'
     'generics.R'
-    'class_modlist.R'
     'class_tgrid.R'
     'class_numericlist.R'
     'class_matlist.R'
@@ -64,11 +65,12 @@ Collate:
     'annot.R'
     'chain.R'
     'class_build.R'
+    'events.R'
+    'class_rx.R'
     'compile.R'
     'data_set.R'
     'datasets.R'
     'env.R'
-    'events.R'
     'funset.R'
     'idata_set.R'
     'init.R'
@@ -76,7 +78,6 @@ Collate:
     'knobs.R'
     'matlist.R'
     'matrix.R'
-    'mcache.R'
     'mcode.R'
     'model_include.R'
     'modlib.R'
@@ -94,4 +95,4 @@ Collate:
     'relabel.R'
     'render.R'
     'update.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

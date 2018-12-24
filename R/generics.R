@@ -91,7 +91,7 @@ setGeneric("revar", function(x,...) standardGeneric("revar"))
 setGeneric("blocks", function(x,...) standardGeneric("blocks"))
 setGeneric("project", function(x,...) standardGeneric("project"))
 setGeneric("sodll", function(x,...) standardGeneric("sodll"))
-setGeneric("ex", function(x,...) standardGeneric("ex"))
+#setGeneric("ex", function(x,...) standardGeneric("ex"))
 
 
 ##' Return the model object
@@ -101,4 +101,5 @@ setGeneric("ex", function(x,...) standardGeneric("ex"))
 ##' 
 ##' 
 ##' @rdname mod
+##' @keywords internal
 setGeneric("mod", function(x,...) standardGeneric("mod"))

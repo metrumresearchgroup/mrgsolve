@@ -4,7 +4,7 @@
 \name{plot,batch_mrgsims,missing-method}
 \alias{plot,batch_mrgsims,missing-method}
 \alias{plot,batch_mrgsims,formula-method}
-\title{Plot method for mrgsims objects.}
+\title{Plot method for mrgsims objects}
 \usage{
 \S4method{plot}{batch_mrgsims,missing}(x, yval = variables(x),
   auto.key = list(), mincol = 3, ...)
@@ -35,5 +35,5 @@
 \item{scales}{passed to xyplot}
 }
 \description{
-Plot method for mrgsims objects.
+Plot method for mrgsims objects
 }

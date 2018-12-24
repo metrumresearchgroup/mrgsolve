@@ -17,6 +17,7 @@
 
 ##' @export
 ##' @rdname stime
+##' @keywords internal
 setClass("tgrid", slots=c(start  = "numeric", 
                           end    = "numeric", 
                           delta  = "numeric", 
@@ -250,10 +251,10 @@ setMethod("*", c("tgrids","numeric"), function(e1,e2) {
   e1
 })
 
-
-##' @export
 ##' @rdname tgrid
 ##' @param object passed to show
+##' @export
+##' @keywords internal
 setMethod("show", "tgrid", function(object) {
   x <- stime(object)
   min <- min(x)

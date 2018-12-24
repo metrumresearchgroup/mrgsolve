@@ -14,3 +14,4 @@ console}
 \description{
 S4 class numeric list
 }
+\keyword{internal}

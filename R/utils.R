@@ -43,6 +43,7 @@ is.mt <- function(x) {return(is.null(x) | length(x)==0)}
 ##' are brought along from \code{y} only when \code{open}.
 ##' 
 ##' @export
+##' @keywords internal
 merge.list <- function(x,y,...,open=FALSE,
                        warn=TRUE,context="object",wild="...") {
   
@@ -94,6 +95,7 @@ update_list <- function(left, right) {
 ##' @param n number of variates to simulate
 ##' @param seed if not null, passed to set.seed
 ##' @export
+##' @keywords internal
 mvgauss <- function(mat, n=10, seed=NULL) {
   if(!is.null(seed)) set.seed(seed)
   .Call(`_mrgsolve_MVGAUSS`, mat, n)
@@ -106,6 +108,10 @@ pfile <- function(package,dir,file,ext=NULL) {
     ans <- paste0(ans, ".", ext)
   }
   return(ans)
+}
+
+mrgsolve_file <- function(..., package="mrgsolve") {
+  system.file(..., package = package)
 }
 
 cropstr <- function(string, prefix, suffix, bump= "...") {
@@ -184,9 +190,10 @@ as.cvec <- function(x) {
 ##' @param ... passed to \code{\link{expand.grid}}
 ##' 
 ##' @details
-##' An ID column is added as \code{1:nrow(ans)} if not supplied by the user.  
-##' For \code{expand.ev}, defaults
-##' also added: \code{cmt = 1}, \code{time = 0}, \code{evid = 1}.
+##' An ID column is added as \code{seq(nrow(ans))} if not supplied by the user.  
+##' For \code{expand.ev}, defaults also added include \code{cmt = 1}, 
+##' \code{time = 0}, \code{evid = 1}.  If \code{total} is included, 
+##' then \code{addl} is derived as \code{total} - 1.
 ##'
 ##' @examples
 ##' idata <- expand.idata(CL=c(1,2,3), VC=c(10,20,30))
@@ -195,7 +202,7 @@ as.cvec <- function(x) {
 ##' @export
 expand.idata <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
-  ans$ID <- 1:nrow(ans)
+  ans$ID <- seq_len(nrow(ans))
   shuffle(ans,"ID")
 }
 
@@ -203,10 +210,14 @@ expand.idata <- function(...) {
 ##' @rdname expand.idata
 expand.ev <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
-  ans$ID <- 1:nrow(ans)
+  ans$ID <- seq_len(nrow(ans))
   if(!has_name("evid", ans)) ans$evid <- 1
   if(!has_name("cmt", ans)) ans$cmt <- 1
   if(!has_name("time", ans)) ans$time <- 0
+  if(has_name("total",ans)) {
+    ans[["addl"]] <- ans[["total"]]-1
+    ans[["total"]] <- NULL
+  }
   shuffle(ans,"ID")
 }
 
@@ -240,20 +251,22 @@ tovec <- function(x,concat=TRUE) {
 ##'
 ##' @param x comma-separated quoted string (for \code{cvec})
 ##' @param ... unquoted strings (for \code{ch})
-##' @export
 ##' @examples
 ##'
 ##' cvec("A,B,C")
 ##' s_(A,B,C)
-##'
+##' @export
+##' @keywords internal
 setGeneric("cvec", function(x,...) standardGeneric("cvec"))
 
 ##' @export
 ##' @rdname cvec
+##' @keywords internal
 setMethod("cvec", "character", as.cvec)
 
 ##' @export
 ##' @rdname cvec
+##' @keywords internal
 s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 
 ##' Access or clear arguments for calls to mrgsim
@@ -306,29 +319,11 @@ if.file.remove <- function(x) {
   if(file_exists(x)) file.remove(x)
 }
 
-#' rename columns from vector for new names
-#' @param .df dataframe to rename
-#' @param new_names vector of names using syntax "<newname>" = "<oldname>"
-#' @examples
-#' rename_cols(Theoph, c("dv" = "conc", "ID" = "Subject"))
-#' @export
-rename_cols <- function(.df, new_names) {
-  if (!all(new_names %in% names(.df))) {
-    missing <- new_names[which(!new_names %in% names(.df))]
-    stop(paste("the following columns do not exist in the dataset: ", 
-               paste(missing, collapse = ", ")))
-  }
-  matches <- match(new_names, names(.df))
-  names(.df)[matches] <- names(new_names)
-  return(.df)
-}
-
 as_character_args <- function(x) {
   x <- deparse(x,width.cutoff=500)
   x <- gsub("^.*\\(|\\)$", "", x)
   x
 }
-
 
 get_tokens <- function(x,unlist=FALSE) {
   if(!is.character(x)) return(character(0))
@@ -568,3 +563,21 @@ funs__ <- function(...) {
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
   dplyr::distinct(df, `!!!`(syms(.dots)), .keep_all = .keep_all)  
 }
+
+divider_msg <- function(msg = "", width = 60) {
+  if(nchar(msg) > 0) {
+    msg <- paste0("---:: ", msg, " ::")    
+  }
+  rem <- width - nchar(msg)
+  msg <- paste0(
+    msg, 
+    paste0(rep("-", rem),collapse="")
+  )
+  return(msg)
+}
+
+reg_exec_match <- function(x, pattern) {
+  m <- regexec(pattern,x)
+  regmatches(x,m)
+}
+

@@ -95,6 +95,7 @@ env_update <- function(.x,...,.dots=list()) {
 ##' 
 ##' @details \code{sah-mah}
 ##' 
+##' @keywords internal
 ##' @export
 cama <- function(mod,fn="cama",...) {
   object_exists(fn, mod@envir, "function", inherits=FALSE)

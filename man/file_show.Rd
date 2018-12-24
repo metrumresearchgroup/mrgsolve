@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_mrgmod.R
 \name{file_show}
 \alias{file_show}
-\title{Show model specification and C++ files.}
+\title{Show model specification and C++ files}
 \usage{
 file_show(x, spec = TRUE, source = TRUE, ...)
 }
@@ -16,5 +16,6 @@ file_show(x, spec = TRUE, source = TRUE, ...)
 \item{...}{not used}
 }
 \description{
-Show model specification and C++ files.
+Show model specification and C++ files
 }
+\keyword{internal}

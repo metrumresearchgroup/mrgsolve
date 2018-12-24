@@ -135,6 +135,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 ##'
 ##' @param object the model object
 ##' @export
+##' @keywords internal
 setMethod("show", "mrgmod", function(object) print.mrgmod(object))
 
 

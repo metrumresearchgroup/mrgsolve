@@ -35,7 +35,7 @@ $CAPTURE CL VP = V2, ETA(1) ka = KA
 mod <- mcode("test-capture", code)
 
 test_that("Renamed captured items are properly named", {
-  out <- mrgsim(mod, carry.out = "evid")
+  out <- mrgsim(mod, carry_out = "evid")
   expect_identical(
     names(out), 
     c("ID", "time", "evid", "CL", "VP", "ETA_1", "ka", "b")

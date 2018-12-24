@@ -10,8 +10,8 @@
 \alias{drop.re}
 \alias{as.list,matlist-method}
 \alias{as.matrix,matlist-method}
-\alias{names,matlist-method}
-\alias{length,matlist-method}
+\alias{names.matlist}
+\alias{length.matlist}
 \alias{labels,matlist-method}
 \alias{dim,matlist-method}
 \alias{nrow,matlist-method}
@@ -32,9 +32,9 @@ drop.re(...)
 
 \S4method{as.matrix}{matlist}(x, ...)
 
-\S4method{names}{matlist}(x)
+\method{names}{matlist}(x)
 
-\S4method{length}{matlist}(x)
+\method{length}{matlist}(x)
 
 \S4method{labels}{matlist}(object, ...)
 
@@ -59,3 +59,4 @@ or \code{sigma} or both entirely}
 \description{
 Methods for working with matrix-list objects
 }
+\keyword{internal}

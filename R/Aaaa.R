@@ -35,6 +35,7 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble as_data_frame data_frame
 ##' @importFrom rlang quos enquo syms !!!
+##' @importFrom sys exec_internal
 ##' 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
@@ -43,7 +44,6 @@
 ##' @include class_matlist.R
 ##' @include class_numericlist.R
 ##' @include class_tgrid.R  
-##' @include class_modlist.R
 ##' @include generics.R
 ##' @include package.R
 ##' @include utils.R 
@@ -94,19 +94,14 @@ globalVariables(c("test_package","time", "ID","block", "descr",
 
 VERSION <- packageDescription("mrgsolve")$Version
 
-#' Forward pipe.
+#' Forward pipe
+#' 
+#' 
 #'
 #' @name %>%
-#' @export
 #' @rdname zchain
-NULL
-
-
-#' Tee.
-#'
-#' @name %T>%
 #' @export
-#' @rdname zchain
+#' @keywords internal
 NULL
 
 

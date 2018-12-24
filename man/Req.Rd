@@ -23,7 +23,8 @@ req(x, ...)
 }
 \description{
 Use this function to select, by name, either compartments or derived 
-variables that have been captured (see \code{\link{CAPTURE}}).
+variables that have been captured (see \code{\link{CAPTURE}}) into
+the simulated output.
 }
 \details{
 There is also a \code{Req} argument to \code{\link{mrgsim}} that can 

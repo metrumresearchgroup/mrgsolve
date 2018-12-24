@@ -5,12 +5,13 @@
 // No fixed parameters.
 
 // INCLUDES:
-// No includes found.
+
 
 // NAMESPACES:
 
 // BASIC MODELHEADER FILE:
 #include "modelheader.h"
+#include "mrgsolve_plugin_tad.h"
 
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:

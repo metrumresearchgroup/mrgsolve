@@ -45,7 +45,7 @@ test_that("Scrape and call", {
   >> d = 2
   CL=1, V=2, KA=3
   '
-  e <- mrgsolve:::parse_env(1)
+  e <- mrgsolve:::parse_env(spec=1,project=tempdir())
   
   code <- trimws(unlist(strsplit(code, "\n")))
   
@@ -57,23 +57,5 @@ test_that("Scrape and call", {
   expect_identical(e$param[[1]], list(CL=1, V=2, KA=3))
 
 })
-# 
-# code <- '
-#   >> d = 2, block=TRUE
-#    1 
-#    2 3 
-#    4 5 6
-#   '
-# e <- mrgsolve:::parse_env(1)
-# 
-# code <- trimws(unlist(strsplit(code, "\n")))
-# 
-# code <- structure(code[code!=""], pos=1)
-# 
-# mrgsolve:::scrape_and_call(code,e,
-#                 pass="specMATRIX",
-#                 def=list(oclass="omegalist",type="omega"),
-#                 split=FALSE,all=TRUE,narrow=FALSE)
-
 
 

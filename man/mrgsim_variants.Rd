@@ -23,7 +23,7 @@ mrgsim_i(x, idata, data = NULL, events = NULL, ...)
 mrgsim_0(x, idata = NULL, data = NULL, events = NULL, ...)
 }
 \arguments{
-\item{x}{the model objects}
+\item{x}{the model object}
 
 \item{events}{an event object}
 
@@ -33,12 +33,13 @@ one parameter per row (see \code{\link{idata_set}})}
 \item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
 
 \item{...}{passed to \code{\link[mrgsolve]{update}} and 
-\code{\link{do_mrgsim}}; please see these help topics for other 
-arguments for \code{\link{mrgsim}}}
+\code{\link{do_mrgsim}}}
 }
 \description{
 These functions are called by \code{\link{mrgsim}} and have
-explicit input requirements written into the function name. Use 
+explicit input requirements written into the function name.  The motivation
+behind these variants is to give the user a clear workflow with 
+specific, required inputs as indicated by the function name. Use 
 \code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
 simulation for tasks like parameter optimization,  sensitivity analyses, 
 or optimal design.

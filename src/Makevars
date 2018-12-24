@@ -7,4 +7,4 @@
 ##CXX_STD = CXX11
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 ##PKG_CPPFLAGS =  -I../inst/include  -g
-PKG_CPPFLAGS = -I../inst/include
+PKG_CPPFLAGS = -I../inst/include -I../inst/base

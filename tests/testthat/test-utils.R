@@ -23,23 +23,6 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-utils")
 
-test_that("columns are renamed", {
-  expect_equal(names(mrgsolve:::rename_cols(Theoph, c("time" = "Time", "dv" = "conc"))),
-               c("Subject", "Wt", "Dose", "time", "dv"))
-})
-
-test_that("columns are renamed and order preserved", {
-  expect_equal(names(mrgsolve:::rename_cols(Theoph, c("dv" = "conc", "time" = "Time"))),
-               c("Subject", "Wt", "Dose", "time", "dv"))
-})
-
-test_that("columns that don't exist throw an error", {
-  expect_error(mrgsolve:::rename_cols(Theoph, c("dv" = "Donc")),
-               "the following columns do not exist in the dataset:  Donc")
-  expect_error(mrgsolve:::rename_cols(Theoph, c("dv" = "Donc", "id" = "subject")),
-               "the following columns do not exist in the dataset:  Donc, subject")
-})
-
 
 a <- list(a = 1, b = 2, c = 3)
 b <- list(b = 4, c = 5, d = 6)

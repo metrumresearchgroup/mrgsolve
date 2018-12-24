@@ -367,12 +367,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   prob->config_call();
   reclist mtimehx;
+
   // i is indexing the subject, j is the record
-  
-  // LOOP ACROSS IDS:
-  // tgrid observations have generic ID
-  // We must first figure out the ID we are working with
-  // and assign in the object
   for(size_t i=0; i < a.size(); ++i) {
     
     told = -1;

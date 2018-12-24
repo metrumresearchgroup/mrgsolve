@@ -48,7 +48,7 @@
 ##' out <- mod %>% qsim(data)
 ##' 
 ##' @export
-##' 
+##' @keywords internal
 qsim <- function(x,e=NULL,idata=NULL,req=NULL,tgrid=NULL,
                  skip_init_calc = FALSE) {
   
@@ -103,6 +103,7 @@ qsim <- function(x,e=NULL,idata=NULL,req=NULL,tgrid=NULL,
 
 ##' @rdname qsim
 ##' @export
+##' @keywords internal
 qsim_df <- function(...) {
   as_data_frame(qsim(...)) 
 }
@@ -154,7 +155,7 @@ id_obs_matrix <- function(obs,ids) {
 ##' @param times object that can be coerced to numeric with \code{\link{stime}}
 ##' @param c_indexing if \code{TRUE}, compartment numbers will be decremented by 1
 ##' @export
-##' 
+##' @keywords internal
 recmatrix <- function(x, times, c_indexing=TRUE) {
   x <- as.data.frame(x)
   if(nrow(x) > 0) {
@@ -191,6 +192,7 @@ recmatrix <- function(x, times, c_indexing=TRUE) {
 ##' 
 ##' 
 ##' @export
+##' @keywords internal
 data_qsim <- function(e, times) {
   
   times <- stime(times)

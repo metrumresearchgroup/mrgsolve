@@ -59,8 +59,10 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
   nu <- is.numeric(x)
   if(!all(nu)) {
     if(!quiet) {
-      message("Dropping non-numeric columns: \n  ", 
-              paste(names(x)[!nu], collapse=" "))
+      message(
+        "Dropping non-numeric columns: \n  ", 
+        paste(names(x)[!nu], collapse=" ")
+      )
     }
     x <- dplyr::select(x,which(nu))
   } 
@@ -79,21 +81,33 @@ convert_character_cmt <- function(data, mod) {
 }
 
 
-##' Validate and prepare data sets for simulation
+##' Validate and prepare a data sets for simulation
 ##'
-##' @name valid_data
-##' @rdname valid_data
+##' This function is called by mrgsim.  Users may also call this function
+##' to pre-validate data when the same data set is used for repeated 
+##' simulation.
 ##'
 ##' @param x data.frame or matrix
 ##' @param m a model object
 ##' @param verbose logical
 ##' @param quiet if \code{TRUE}, messages will be suppressed
 ##' 
-##' @return a matrix with non-numeric columns dropped; if x is a 
+##' @return A matrix with non-numeric columns dropped; if x is a 
 ##' data.frame with character \code{cmt} column comprised of valid 
 ##' compartment names and \code{m} is a model object,
 ##' the \code{cmt} column will be converted to the corresponding 
 ##' compartment number.
+##' 
+##' @seealso \code{\link{valid_idata_set}}, \code{\link{idata_set}}, 
+##' \code{\link{data_set}}
+##' 
+##' @examples
+##' 
+##' mod <- mrgsolve:::house()
+##' 
+##' data(exTheoph)
+##' 
+##' valid_data_set(exTheoph,mod)
 ##' 
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
@@ -174,16 +188,15 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 
 ##' Validate and prepare idata data sets for simulation
 ##' 
-##' 
-##' @seealso \code{\link{idata_set}}, \code{\link{data_set}},
-##' \code{\link{valid_data_set}}
-##' 
 ##' @return A numeric matrix with class \code{valid_idata_set}.
 ##' 
-##' @rdname valid_data
+##' @inheritParams valid_data_set
+##' 
+##' @seealso \code{\link{valid_data_set}}, \code{\link{idata_set}}, 
+##' \code{\link{data_set}}
 ##' 
 ##' @export
-valid_idata_set <- function(x,m,verbose=FALSE,quiet=FALSE) {
+valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
   
   if(verbose) quiet <- FALSE
   
@@ -206,7 +219,7 @@ valid_idata_set <- function(x,m,verbose=FALSE,quiet=FALSE) {
   structure(x, class="valid_idata_set")
 }
 
-##' @rdname valid_data
+##' @rdname valid_data_set
 ##' @export
 valid_data_set.matrix <- function(x,verbose=FALSE) {
   if(is.valid_data_set(x)) return(x)

@@ -58,7 +58,7 @@ seq(e1, e2)
 
 seq(e1, wait = 8, e2)
 
-seq(e1, wait = 8, e2, id = 1:10)
+seq(e1, wait = 8, e2, ID = 1:10)
 
 ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
 

@@ -4,8 +4,8 @@
 \alias{modelparse}
 \title{Parse model specification text}
 \usage{
-modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = c("//",
-  "##"))
+modelparse(txt, split = FALSE, drop_blank = TRUE,
+  comment_re = c("//", "##"))
 }
 \arguments{
 \item{txt}{model specification text}
@@ -25,3 +25,4 @@ file <- file.path(modlib(), "pk1.cpp")
 modelparse(readLines(file))
 
 }
+\keyword{internal}

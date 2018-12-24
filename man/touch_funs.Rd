@@ -12,5 +12,6 @@ touch_funs(x, keep_pointers = TRUE)
 \item{keep_pointers}{should function pointers be returned?}
 }
 \description{
-Get inits from compiled function
+This function is usually for internal use.
 }
+\keyword{internal}

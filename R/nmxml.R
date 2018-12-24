@@ -31,6 +31,9 @@
 ##' @param tname name for \code{$THETA}
 ##' @param oname name for \code{$OMEGA}
 ##' @param sname name for \code{$SIGMA}
+##' @param index the estimation number to return;  "last" will return the 
+##' last estimation results; otherwise, pass an integer indicating which 
+##' estimation results to return
 ##' @param ... not used
 ##' @aliases NMXML
 ##' @details
@@ -58,12 +61,9 @@ nmxml <- function(run=numeric(0), project=character(0),
                   theta=TRUE, omega=TRUE, sigma=TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...", ...) {
-  
-  if(!requireNamespace("xml2")) {
-    stop("Could not load namespace for package xml2", call.=FALSE)
-  }
-  
+                  tname="THETA", oname="...", sname="...",
+                  index = "last", ...) {
+
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
   sigma <- sigma | !missing(sname)
@@ -72,19 +72,35 @@ nmxml <- function(run=numeric(0), project=character(0),
     target <- file
   } else {
     if(missing(run) | missing(project)) {
-      stop("Both file and run/project are missing")
+      stop("Both file and run/project are missing.", call.=FALSE)
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
   
-  tree <- xml2::as_list(xml2::read_xml(target))
+  if(!requireNamespace("xml2")) {
+    stop("Could not load namespace for package xml2.", call.=FALSE)
+  }
+  tree <- xml2::read_xml(target)
+  tree <- xml2::xml_find_all(tree,'.//nm:estimation')
+  tree <- xml2::as_list(tree)
+  
+  if(index=="last") index <- length(tree)
+  
+  if(!is.numeric(index)) {
+    stop("nmxml: index must be 'last' or a numeric value.",call.=FALSE)  
+  }
+  if(index > length(tree)) {
+    stop("nmxml: index is out of bounds.",call.=FALSE)
+  }
+  
+  tree <- tree[[index]]
   
   # https://github.com/r-lib/xml2/blob/master/NEWS.md#xml2-120
-  if(packageVersion("xml2") >= "1.2.0") {
-    tree <- tree[["output"]][["nonmem"]][["problem"]][["estimation"]]      
-  } else {
-    tree <- tree[["nonmem"]][["problem"]][["estimation"]]
-  }
+  # if(packageVersion("xml2") >= "1.2.0") {
+  #   tree <- tree[["output"]][["nonmem"]][["problem"]][["estimation"]]      
+  # } else {
+  #   tree <- tree[["nonmem"]][["problem"]][["estimation"]]
+  # }
   
   th <- list()
   om <- matrix(0,0,0)
@@ -122,14 +138,18 @@ nmxml <- function(run=numeric(0), project=character(0),
   } else {
     slabels <- list()
   }
-
-  om <- create_matlist(setNames(list(om),oname), 
-                       labels=olabels, 
-                       class="omegalist")
   
-  sg <- create_matlist(setNames(list(sg),sname), 
-                       labels=slabels, 
-                       class="sigmalist")
+  om <- create_matlist(
+    setNames(list(om),oname), 
+    labels=olabels, 
+    class="omegalist"
+  )
+  
+  sg <- create_matlist(
+    setNames(list(sg),sname), 
+    labels=slabels, 
+    class="sigmalist"
+  )
   
   ans <- list(theta=th, omega=om, sigma=sg)
   
@@ -156,9 +176,10 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' @param run a run number or run identifier
 ##' @param project the NONMEM project directory
-##' @param file the ext file name
+##' @param file the `ext` file name
+##' @param path full path and file name for `ext` file
 ##' 
-##' @return A list with theta, omega, and sigma in a format
+##' @return A list with param, omega, and sigma in a format
 ##' ready to be used to update a model object.
 ##' 
 ##' @examples
@@ -166,15 +187,21 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' est <- read_nmext(1005, project = project)
 ##' 
-##' est$theta
+##' est$param
 ##' 
 ##' est$omega
 ##' 
 ##' est$sigma
 ##' 
+##' @md
 ##' @export 
-read_nmext <- function(run, file = paste0(run, ".ext"), project = getwd()) {
-  file <- file.path(project, run, file)
+read_nmext <- function(run, project = getwd(), file = paste0(run, ".ext"), 
+                       path=NULL) {
+  if(is.character(path)) {
+    file <- path
+  } else {
+    file <- file.path(project, run, file)  
+  }
   if(!file.exists(file)) {
     stop("The file ", file, " does not exist.", call. = FALSE)
   }
@@ -187,7 +214,7 @@ read_nmext <- function(run, file = paste0(run, ".ext"), project = getwd()) {
   ans <- as.list(ans)
   names(ans) <- gsub("[[:punct:]]", "", names(ans))
   ans <- list(
-    theta = ans[grepl("THETA", names(ans))],
+    param = ans[grepl("THETA", names(ans))],
     omega = as_bmat(ans, "OMEGA"), 
     sigma = as_bmat(ans, "SIGMA"),
     raw = ans  

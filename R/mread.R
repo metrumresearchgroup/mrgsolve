@@ -22,17 +22,21 @@ NULL
 
 ##' Read a model specification file
 ##' 
-##' \code{mread} reads and parses a \code{mrgsolve} model 
-##' specification file, builds the model, and returns 
-##' a model object for simulation.
+##' \code{mread} reads and parses the \code{mrgsolve} model specification file,
+##' builds the model, and returns a model object for simulation. 
+##' \code{mread_cache} does the same, but caches the compilation result for 
+##' later use. 
 ##' 
 ##'
 ##' @param model model name
 ##' @param project location of the model specification file an any 
-##' headers to be included
+##' headers to be included; see also the discussion about model; this argument
+##' can be set via \code{options()}
+##' library under details as well as the \code{\link{modlib}} help topic
 ##' @param file the full file name (with extension, but without path)
 ##' where the model is specified
-##' @param soloc directory where model shared object is stored
+##' @param soloc the directory location where the model shared object is built
+##' and stored; see details; this argument can be set via \code{options()}
 ##' @param code a character string with model specification code to be 
 ##' used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
@@ -52,8 +56,8 @@ NULL
 ##' the \code{file} argument is omitted and the value 
 ##' for \code{file} is generated from the value for \code{model}.
 ##' To determine the source file name, \code{mrgsolve} will look for 
-##' a file extension in the value of \code{model}.  A file extension is 
-##' assumed when it find sa period followed by one to three alpha-numeric 
+##' a file extension in \code{model}.  A file extension is 
+##' assumed when it finds a period followed by one to three alpha-numeric 
 ##' characters at the end of the string (e.g. \code{mymodel.txt} but not 
 ##' \code{my.model}).  If no file extension is found, the extension \code{.cpp} 
 ##' is assumed (e.g. \code{file} is \code{<model-name>.cpp}).  If a file 
@@ -63,6 +67,19 @@ NULL
 ##' you are using \code{model} to point to the model specification 
 ##' file name. Otherwise, use \code{\link{mread_file}}. 
 ##' 
+##' Use the \code{soloc} argument to specify a directory location for building
+##' the model.  This is the location where the model shared object will be 
+##' stored on disk.  The default is a temporary directory, so compilation 
+##' artifacts are lost when R restarts when the default is used.  Changing
+##' \code{soloc} to a persistent directory location will preserve those 
+##' artifacts across R restarts.  Also, if simulation from a single model is 
+##' being done in separate processes on separate compute nodes, it might be 
+##' necessary to store these compilcation artifacts in a local directory 
+##' to make them accessible to the different nodes. 
+##' 
+##' Similarly, using \code{mread_cache} will cache results in the temporary 
+##' directory and the cache cannot be accessed after the R process is 
+##' restarted.
 ##' 
 ##' @section Model Library:
 ##' 
@@ -125,12 +142,13 @@ NULL
 ##' @seealso \code{\link{mcode}}, \code{\link{mcode_cache}}
 ##' 
 ##' @export
-mread <- function(model, project = getwd(), code = NULL, 
-                  file = NULL, 
+mread <- function(model, project = getOption("mrgsolve.project", getwd()), 
+                  code = NULL, file = NULL, 
                   udll = TRUE, ignore.stdout=TRUE,
                   raw = FALSE, compile = TRUE, audit = TRUE,
                   quiet = getOption("mrgsolve_mread_quiet",FALSE),
-                  check.bounds = FALSE, warn = TRUE, soloc = tempdir(),
+                  check.bounds = FALSE, warn = TRUE, 
+                  soloc = getOption("mrgsolve.soloc",tempdir()),
                   preclean = FALSE, ...) {
   
   if(charthere(model, "/")) {
@@ -146,9 +164,11 @@ mread <- function(model, project = getwd(), code = NULL,
     model <- file  
   }
   
-  build <- new_build(file = file, model = model, project = project, 
-                     soloc = soloc, code = code, preclean = preclean, 
-                     udll = udll)
+  build <- new_build(
+    file = file, model = model, project = project, 
+    soloc = soloc, code = code, preclean = preclean, 
+    udll = udll
+  )
   
   model <- build$model
   
@@ -165,7 +185,7 @@ mread <- function(model, project = getwd(), code = NULL,
   names(spec) <- ifelse(is.na(index),names(spec),block_list[index])
   
   ## Do a check on what we found in the spec
-  check_spec_contents(names(spec),warn=warn,...)
+  check_spec_contents(names(spec), warn=warn,...)
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
@@ -177,7 +197,7 @@ mread <- function(model, project = getwd(), code = NULL,
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(spec,ENV)
+  mread.env <- parse_env(spec,project=build$project,ENV)
   
   ## The main sections that need R processing:
   spec <- move_global(spec,mread.env)
@@ -231,7 +251,7 @@ mread <- function(model, project = getwd(), code = NULL,
   table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
   
-
+  
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
@@ -258,23 +278,24 @@ mread <- function(model, project = getwd(), code = NULL,
   }
   
   ## Constructor for model object:
-  x <- new("mrgmod",
-           model = model,
-           soloc = build$soloc,
-           package = build$package,
-           project = build$project,
-           fixed = fixed,
-           advan = subr[["advan"]],
-           trans = subr[["trans"]],
-           omega = omega,
-           sigma = sigma,
-           param = as.param(param),
-           init = as.init(init),
-           funs = funs_create(model),
-           capture = .ren.chr(capture),
-           envir = ENV, 
-           plugin = names(plugin),
-           modfile = basename(build$modfile)
+  x <- new(
+    "mrgmod",
+    model = model,
+    soloc = build$soloc,
+    package = build$package,
+    project = build$project,
+    fixed = fixed,
+    advan = subr[["advan"]],
+    trans = subr[["trans"]],
+    omega = omega,
+    sigma = sigma,
+    param = as.param(param),
+    init = as.init(init),
+    funs = funs_create(model),
+    capture = .ren.chr(capture),
+    envir = ENV, 
+    plugin = names(plugin),
+    modfile = basename(build$modfile)
   )
   
   x <- store_annot(x,annot)
@@ -282,7 +303,7 @@ mread <- function(model, project = getwd(), code = NULL,
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   ## Check $MAIN for the proper symbols
-  if(x@advan %in% c(2,4)) {
+  if(x@advan %in% c(1,2,3,4)) {
     if(subr[["n"]] != neq(x)) {
       stop("$PKMODEL requires  ", subr[["n"]] , 
            " compartments in $CMT or $INIT.",call.=FALSE)
@@ -311,19 +332,34 @@ mread <- function(model, project = getwd(), code = NULL,
   
   x <- update(x, data=args,open=TRUE)
   
+  ## lock some of this down so we can check order later
+  x@code <- readLines(build$modfile, warn=FALSE)
+  x@shlib[["cmt"]] <- names(Init(x))
+  x@shlib[["par"]] <- names(param(x))
+  x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
+  x@shlib[["covariates"]] <- mread.env$covariates
+  x@shlib[["version"]] <- GLOBALS[["version"]]
+  inc <- spec[["INCLUDE"]]
+  if(is.null(inc)) inc <- character(0)
+  x@shlib[["include"]] <- inc
+  x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
+  x@shlib[["md5"]] <- build$md5
+  
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
-  rd <- generate_rdefs(pars = names(param),
-                      cmt = names(init),
-                      ode_func(x),
-                      main_func(x),
-                      table_func(x),
-                      config_func(x),
-                      model = model(x),
-                      omats = omat(x),
-                      smats = smat(x),
-                      set = SET,
-                      check.bounds = check.bounds)
+  rd <- generate_rdefs(
+    pars = names(param),
+    cmt = names(init),
+    ode_func(x),
+    main_func(x),
+    table_func(x),
+    config_func(x),
+    model = model(x),
+    omats = omat(x),
+    smats = smat(x),
+    set = SET,
+    check.bounds = check.bounds
+  )
   
   ## Write the model code to temporary file
   temp_write <- tempfile()
@@ -335,11 +371,12 @@ mread <- function(model, project = getwd(), code = NULL,
     "\n// FIXED:",
     fixed_parameters(fixed,SET[["fixed_type"]]),
     "\n// INCLUDES:",
-    form_includes(spec[["INCLUDE"]],build$project),
+    form_includes(spec[["INCLUDE"]]),
     "\n// NAMESPACES:",
     namespace,
     "\n// BASIC MODELHEADER FILE:",
     "#include \"modelheader.h\"",
+    "#include \"mrgsolve_plugin_tad.h\"",
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
@@ -369,38 +406,29 @@ mread <- function(model, project = getwd(), code = NULL,
     sep="\n", file=def.con)
   close(def.con)
   
-  ## lock some of this down so we can check order later
-  x@shlib$cmt <- names(Init(x))
-  x@shlib$par <- names(param(x))
-  x@shlib$neq <- length(x@shlib$cmt)
-  x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib$version <- GLOBALS[["version"]]
-  x@shlib$source <- file.path(build$soloc,build$compfile)
-  x@shlib$md5 <- build$md5
-  x@shlib$covariates <- mread.env$covariates
-
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
-  
   
   to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
   on.exit({
     setwd(cwd)
     do_restore(to_restore)
   })
+  
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)
-  #do_restore(to_restore)
   
-  same <- check_and_copy(from = temp_write,
-                         to = build$compfile)
+  same <- check_and_copy(
+    from = temp_write,
+    to = build$compfile
+  )
   
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
-    message("Compiling ",model(x)," ... ", appendLF=FALSE)
+    message("Building ", model(x)," ... ", appendLF=FALSE)
   }
   
   # Wait at least 2 sec since last compile
@@ -409,58 +437,34 @@ mread <- function(model, project = getwd(), code = NULL,
   
   ## Compile the model
   ## The shared object is model-mread-source.cpp
-  syst <- paste0(R.home(component="bin"), 
-                 .Platform$file.sep,
-                 "R CMD SHLIB ",
-                 ifelse(preclean, " --preclean ", ""),
-                 build$compfile)
+  syst <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
   
-  ## Windows: always intern; output.on.console if not ignore.stdout
-  args <- list(command=syst)
+  args <- c(
+    "CMD", "SHLIB",
+    ifelse(preclean, "--preclean ", ""),
+    build$compfile
+  )
   
-  if(build$win) {
-    args$intern <- TRUE
-    args$show.output.on.console <- !ignore.stdout
-  } else {
-    args$intern <- ignore.stdout
-    args$ignore.stdout <- ignore.stdout
-  }
+  out <- suppressWarnings(
+    exec_internal(
+      syst,
+      args = args,
+      error = FALSE
+    )
+  )
   
-  output <- suppressWarnings(do.call(system,args))
-  
-  status <- attr(output,"status")
-  
-  if(args$intern) {
-    comp_success <- is.null(status) & file.exists(build$compout)
-  } else {
-    comp_success <- output=="0" & file.exists(build$compout)
-  }
+  comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {
-    ## Always on windows
-    ## on unix only if ignore.stdout
-    if(args$intern) {
-      cat(output,sep="\n")
-      if(any(grepl("status 127", output, fixed = TRUE))) {
-        warning(
-         c("Found 'status 127' in compliation error message.  ", 
-           "This usually means that the build toolchain (including compilers) ",
-           "can't be located on your system.  Please reinstall the toolchain, ",
-           "check the PATH environment variable and/or ask for help on ",
-           "http://mrgsolve.github.io/issues")
-        )
-      }
-    }
-    cat("-------------\n")
-    stop("there was a problem building the model.",call.=FALSE)
+    return(build_failed(out,build))
   } 
   
   if(ignore.stdout) {
-    if(!quiet) message("done.")
+    if(!quiet) message("done.", appendLF=FALSE)
   }  else {
-    if(args$intern) cat(output,sep="\n") 
+    out <- build_output_cleanup(out,build) 
+    cat(out$stdout,sep="\n")
   }
-  
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
@@ -477,9 +481,11 @@ mread <- function(model, project = getwd(), code = NULL,
 
 ##' @rdname mread 
 ##' @export
-mread_cache <- function(model = NULL, project = getwd(), 
+mread_cache <- function(model = NULL, 
+                        project = getOption("mrgsolve.project", getwd()), 
                         file = paste0(model, ".cpp"),
-                        code = NULL, soloc = tempdir(), 
+                        code = NULL, 
+                        soloc = getOption("mrgsolve.soloc", tempdir()), 
                         quiet = FALSE, 
                         preclean = FALSE, ...) {
   
@@ -489,7 +495,7 @@ mread_cache <- function(model = NULL, project = getwd(),
   
   ## If the cache file doesn't exist, build and return
   te <- file.exists(cache_file) & !preclean
-  t0 <- t1 <- t2 <- t3 <- FALSE
+  t0 <- t1 <- t2 <- t3 <- t4 <- FALSE
   
   if(te) {
     x <- readRDS(cache_file)
@@ -498,16 +504,19 @@ mread_cache <- function(model = NULL, project = getwd(),
       t2 <- x@shlib$md5 == build$md5
     }
     t3 <- file.exists(sodll(x))
+    t4 <- length(x@shlib[["include"]])==0
   }
   
-  if(all(t0,t1,t2,t3,te)) {
+  if(all(t0,t1,t2,t3,t4,te)) {
     if(!quiet) message("Loading model from cache.")
     loadso(x)
     return(update(x,...))
   }
   
-  x <- mread(build$model, project, soloc=soloc, quiet=quiet, 
-             file = basename(build$modfile), ...)
+  x <- mread(
+    build$model, project, soloc=soloc, quiet=quiet, 
+    file = basename(build$modfile), ...
+  )
   
   saveRDS(x,file=cache_file)
   

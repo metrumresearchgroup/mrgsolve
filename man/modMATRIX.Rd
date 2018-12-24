@@ -41,3 +41,4 @@ ans
 cov2cor(ans)
 
 }
+\keyword{internal}

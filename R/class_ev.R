@@ -18,6 +18,7 @@
 ##' S4 events class
 ##' @slot data a data frame of events
 ##' @export
+##' @keywords internal
 setClass("ev", slots=c(data="data.frame"))
 
 is.ev <- function(x) {
@@ -34,6 +35,7 @@ mutate.ev <- function(.data, ...) {
   .data@data <- as.data.frame(mutate(.data@data, ...))
   .data
 }
+
 ##' @rdname ev_dplyr
 ##' @export
 select.ev <- function(.data, ...) {
@@ -48,35 +50,45 @@ filter_.ev <-  function(.data, ...) {
   .data
 }
 
-
-
 ##' Various methods for event objects
 ##' 
 ##' 
 ##' @param x an events object
 ##' @param row.names passed to \code{\link{as.data.frame}}
 ##' @param optional passed to \code{\link{as.data.frame}}
-##' @param add_ID numeric ID of length 1 used to add \code{ID} column
-##' only if one doesn't already exist
+##' @param add_ID numeric ID of length 1 used to add \code{ID} column only if 
+##' one doesn't already exist
 ##' @param object used for \code{show}
 ##' @param ... passed to various methods
 ##' 
+##' 
+##' @examples
+##' 
+##' e <- ev(amt = 100)
+##' 
+##' names(e)
+##' 
+##' as.data.frame(e)
+##' 
+##' dim(e)
+##' 
+##' nrow(e)
+##' 
 ##' @rdname ev_methods
 ##' @name ev_methods
-##' 
-##' @method nrow ev
-##' 
+NULL
+
+##' @rdname ev_methods
 ##' @export
-nrow.ev <- function(x) {
-  nrow(x@data)
+names.ev <- function(x) {
+  names(x@data)  
 }
 
 ##' @rdname ev_methods
 ##' @export
-setMethod("names", "ev", function(x) {
-  names(x@data)
-})
-
+dim.ev <- function(x) {
+  dim(x@data)  
+}
 
 ##' @method as.matrix ev
 ##' @rdname ev_methods
@@ -99,6 +111,7 @@ as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE,
 
 ##' @rdname ev_methods
 ##' @export
+##' @keywords internal
 setMethod("show", "ev", function(object) {
   cat("Events:\n")
   print(as.data.frame(object))

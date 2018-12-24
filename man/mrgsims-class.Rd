@@ -3,9 +3,9 @@
 \docType{class}
 \name{mrgsims-class}
 \alias{mrgsims-class}
-\title{S4 class for mrgsolve simulation output.}
+\title{S4 class for mrgsolve simulation output}
 \description{
-S4 class for mrgsolve simulation output.
+S4 class for mrgsolve simulation output
 }
 \section{Slots}{
 
@@ -21,3 +21,4 @@ coming from table step}
 \item{\code{mod}}{the mrgmod model object}
 }}
 
+\keyword{internal}

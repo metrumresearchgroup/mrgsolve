@@ -18,7 +18,9 @@
 
 SUPERMATRIX <- function(x,keep_names=FALSE) {
   x <- .Call(`_mrgsolve_SUPERMATRIX`,x,keep_names)
-  if(nrow(x) > 0 & !keep_names) dimnames(x) <- list(paste0(1:nrow(x), ": "), NULL)
+  if(nrow(x) > 0 & !keep_names) {
+    dimnames(x) <- list(paste0(seq_len(nrow(x)), ": "), NULL)
+  }
   x
 }
 
@@ -35,6 +37,7 @@ decorr <- function(x) {
 ##' @param x numeric data
 ##' @param context the working context
 ##' @return a square symmetric numeric matrix with column names
+##' @keywords internal
 lower2matrix <- function(x, context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) return(matrix(x,nrow=1, ncol=1 ))
@@ -53,6 +56,7 @@ lower2matrix <- function(x, context=NULL) {
 ##' @param x numeric data
 ##' @param context used to generate column names
 ##' @return a numeric diagonal matrix
+##' @keywords internal
 numeric2diag <- function(x,context=NULL) {
   x <- as.numeric(x)
   if(length(x)==1) {
@@ -89,9 +93,8 @@ numeric2diag <- function(x,context=NULL) {
 ##' ans
 ##' cov2cor(ans)
 ##'
+##' @keywords internal
 ##' @export
-##'
-##'
 modMATRIX <- function(x,
                       use=TRUE,
                       block=FALSE,
@@ -147,6 +150,8 @@ Diag <- function(x) {
 ##'
 ##' cmat(0.5, 0.87,0.2)
 ##' 
+##' @rdname matrix_helpers
+##' @name matrix_helpers
 ##' @export
 bmat <- function(...,correlation=FALSE, digits=-1) {
   x <- lower2matrix(unlist(list(...)),context="bmat")
@@ -155,14 +160,13 @@ bmat <- function(...,correlation=FALSE, digits=-1) {
   return(x)
 }
 
-
-##' @rdname bmat
+##' @rdname matrix_helpers
 ##' @export
 cmat <- function(...,digits=-1) {
   bmat(...,digits=digits,correlation=TRUE)
 }
 
-##' @rdname bmat
+##' @rdname matrix_helpers
 ##' @seealso \code{\link{as_dmat}}
 ##' @export
 dmat <- function(...) {
@@ -170,6 +174,11 @@ dmat <- function(...) {
 }
 
 ##' Coerce R objects to block or diagonal matrices
+##' 
+##' These are simple functions that may be helpful to create the matrix objects
+##' that mrgsolve expects.  Functions are named based on whether they create a
+##' diagonal matrix (\code{d}), a block matrix (\code{b}), or a a correlation
+##' matrix (\code{c}).
 ##' 
 ##'
 ##' @param x data frame or list 
@@ -194,37 +203,38 @@ dmat <- function(...) {
 ##' 
 ##' @examples
 ##'
-##' df <- data.frame(OMEGA1.1 = c(1,2),
-##'                  OMEGA2.1 = c(11,22),
-##'                  OMEGA2.2 = c(3,4),
-##'                  SIGMA1.1 = 1,
-##'                  FOO=-1)
+##' df <- data.frame(
+##'   OMEGA1.1 = c(1,2),
+##'   OMEGA2.1 = c(11,22),
+##'   OMEGA2.2 = c(3,4),
+##'   SIGMA1.1 = 1,
+##'   FOO=-1
+##' )
 ##'
 ##' as_bmat(df, "OMEGA")
 ##' as_dmat(df,"SIGMA")
 ##' as_dmat(df[1,],"OMEGA")
 ##'
-##' @rdname as_bmat
-##' @name as_bmat
+##' @rdname matrix_converters
 ##' 
 ##' @export
 setGeneric("as_bmat", function(x,...) standardGeneric("as_bmat"))
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setMethod("as_bmat", "list", function(x,...) {
   as_bmat(unlist(x),...)
 })
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setMethod("as_bmat", "numeric", function(x,pat="*",...) {
   x <- grepn(x,pat, !missing(pat))
   do.call("bmat", list(x,...))
 })
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setMethod("as_bmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
   if(is.character(cols)) {
     cols <- cvec_cs(cols)
@@ -239,37 +249,37 @@ setMethod("as_bmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
   lapply(seq_len(nrow(x)), function(i) bmat(unlist(x[i,],use.names=FALSE),...))
 })
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setMethod("as_bmat", "ANY", function(x,...) {
   as_bmat(as.data.frame(x),...)
 })
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setGeneric("as_dmat", function(x,...) standardGeneric("as_dmat"))
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setMethod("as_dmat", "list", function(x,...) {
   as_dmat(unlist(x),...)
 })
 
-##' @rdname as_bmat
+##' @rdname matrix_converters
 ##' @export
 setMethod("as_dmat", "ANY", function(x,...) {
   as_dmat(as.data.frame(x),...)
 })
 
-##' @rdname as_bmat
+##' @rdname matrix_converters
 ##' @export
 setMethod("as_dmat", "numeric", function(x,pat="*",...) {
   x <- grepn(x,pat, !missing(pat))
   do.call("dmat", list(x,...))
 })
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 setMethod("as_dmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
   if(is.character(cols)) {
     cols <- cvec_cs(cols)
@@ -284,8 +294,8 @@ setMethod("as_dmat", "data.frame", function(x,pat="*",cols=NULL, ...) {
   lapply(seq_len(nrow(x)), function(i) dmat(unlist(x[i,],use.names=FALSE),...))
 })
 
+##' @rdname matrix_converters
 ##' @export
-##' @rdname as_bmat
 as_cmat <- function(x,...) {
   x <- as_bmat(x,...)
   decorr(x)

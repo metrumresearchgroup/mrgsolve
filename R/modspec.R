@@ -41,8 +41,10 @@ write_capture <- function(x) {
 
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
-set_args <- c("Req", "obsonly", "recsort",
-              "carry.out","Trequest","trequest")
+set_args <- c(
+  "Req", "obsonly", "recsort",
+  "carry.out","Trequest","trequest"
+)
 
 check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   invalid <- setdiff(x,block_list)
@@ -62,10 +64,17 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     warn_cmt <- length(intersect(c("INIT", "CMT", "VCMT"),x)) == 0
     warn_cmt <- warn_cmt & is.element("ODE",x)
     
-    if(warn_cmt)  warning("Could not find a $INIT or $CMT block", call.=FALSE)
+    if(warn_cmt)  {
+      warning(
+        "Could not find a $INIT or $CMT block.", 
+        call.=FALSE, immediate. = TRUE
+      )
+    }
     
     if(length(invalid) > 0) {
-      warning(paste0("Invalid blocks found: ", paste(invalid, collapse=" ")), call.=FALSE)
+      warning(
+        paste0("Invalid blocks found: ", paste(invalid, collapse=" "), "."), call.=FALSE
+      )
     }
   }
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
@@ -126,6 +135,7 @@ fixed_parameters <- function(x,fixed_type) {
 ##' modelparse(readLines(file))
 ##' 
 ##' @export
+##' @keywords internal
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
@@ -136,6 +146,10 @@ modelparse <- function(txt,
   if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
   
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
+  
+  # Activate code hidden in comment
+  re <- "^ *// *\\[ *(\\$\\w+) *\\]"
+  txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
   
   # Take out comments
   for(comment in comment_re) {
@@ -345,11 +359,13 @@ parse_ats <- function(x) {
 ##' @param def default values
 ##' @param all return all options, even those that are not in \code{def}
 ##' @param marker assignment operator; used to locate lines with options
-##' @param narrow logical; if \code{TRUE}, only get options on lines starting with \code{>>}
+##' @param narrow logical; if \code{TRUE}, only get options on lines starting 
+##' with \code{>>}
 ##' @param envir environment from \code{$ENV}
 ##' 
-##' @return list with elements \code{x} (the data without options) and named options 
-##' as specified in the block.
+##' @return list with elements \code{x} (the data without options) and named 
+##' options  as specified in the block.
+##' @keywords internal
 scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
@@ -390,7 +406,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
 ##' @param ... arguments passed to \code{\link{scrape_opts}}
 ##' 
 ##' @details Attributes of \code{x} are also scraped and merged with options.
-##' 
+##' @keywords internal
 scrape_and_call <- function(x,env,pass,...) {
   o <- scrape_opts(x,envir=env$ENV,...)
   o$pos <- o$env <- o$class <- NULL
@@ -419,6 +435,16 @@ parseNMXML <- function(x,env,...) {
 parseLIST <- function(x,where,env,...) {
   env[[where]][[attr(x,"pos")]] <- tolist(x)
   return(NULL)
+}
+
+
+## S3 methods for processing code blocks
+## All of these need to be exported
+handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
+
+##' @export
+handle_spec_block.default <- function(x,...) {
+  return(dump_opts(x))
 }
 
 ## Used to parse OMEGA and SIGMA matrix blocks
@@ -527,15 +553,6 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   envir$.code <- x
   return(envir)
 }  
-
-## S3 methods for processing code blocks
-## All of these need to be exported
-handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
-
-##' @export
-handle_spec_block.default <- function(x,...) {
-  return(dump_opts(x))
-}
 
 ##' @export 
 handle_spec_block.specTABLE <- function(x,env,...) {
@@ -797,20 +814,30 @@ handle_spec_block.specINCLUDE <- function(x,env,...) {
   }
   
   if(any(!grepl("^.*\\.h$",x,perl=TRUE))) {
-    warning("$INCLUDE expects file names ending with .h",call.=FALSE) 
+    warning(
+      "$INCLUDE expects file names ending with '.h'",
+      call.=FALSE,
+      immediate.=TRUE
+    ) 
+  }
+  
+  x <- file.path(env[["project"]],x)
+  
+  if(!all(file_exists(x))) {
+    message("Attempting to include:\n",paste0(" ",x, collapse = "\n"))
+    stop(
+      "All header files in $INCLUDE must exist in the project directory.",
+      call.=FALSE
+    ) 
   }
   
   return(x)
 }
 
-form_includes <- function(x,where) {
-  if(is.null(x)) return("// No includes found.")
-  files <- file.path(where,x)
-  if(!all(file_exists(files))) {
-    stop("All header files in $INCLUDE must exist in the project directory",call.=FALSE) 
-  }
-  md <- tools::md5sum(file.path(where,x))
-  paste0("#include \"", x, "\" // ", md)
+form_includes <- function(files) {
+  if(is.null(files)) return(character(0))
+  md <- tools::md5sum(files)
+  paste0("#include \"", files, "\" // ", md)
 }
 
 ##' @export
@@ -844,9 +871,12 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' \itemize{
 ##' \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
-##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  \code{KA}
-##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q}, \code{V2}
-##' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
+##' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  
+##' \code{KA}
+##' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, 
+##' \code{Q}, \code{V2}
+##' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, 
+##' \code{Q}, \code{V3}, \code{KA}
 ##'
 ##' }
 ##'
@@ -858,7 +888,8 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' \itemize{
 ##' \item \code{pred_CL} for clearance
-##' \item \code{pred_V}  or \code{pred_V2} for central compartment volume of distribution
+##' \item \code{pred_V}  or \code{pred_V2} for central compartment volume of 
+##' distribution
 ##' \item \code{pred_Q}  for intercompartmental clearance
 ##' \item \code{pred_V3} for for peripheral compartment volume of distribution
 ##' \item \code{pred_KA} for absorption rate constant
@@ -890,6 +921,18 @@ NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
 ##' @export
 handle_spec_block.specNAMESPACE <- function(x,...) {
   scrape_and_call(x,pass="NAMESPACE",narrow=FALSE,...)
+}
+
+##' @export
+handle_spec_block.specODE <- function(x,...) {
+  re <- "\\bETA\\([0-9]+\\)"
+  chk <- grepl(re,x)
+  if(any(chk)) {
+    er1 <- "ETA(n) is not allowed in ODE block:"
+    er2 <- paste0("\n * ", x[which(chk)])
+    stop(er1,er2,call.=FALSE)
+  }
+  return(x)
 }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
@@ -972,9 +1015,10 @@ check_pred_symbols <- function(x,code) {
 }
 
 
-parse_env <- function(spec,ENV=new.env()) {
+parse_env <- function(spec,project,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
+  mread.env$project <- project
   mread.env$param <- vector("list",n)
   mread.env$fixed <- vector("list",n)
   mread.env$init  <- vector("list",n)

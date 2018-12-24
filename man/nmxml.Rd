@@ -8,7 +8,7 @@
 nmxml(run = numeric(0), project = character(0), file = character(0),
   theta = TRUE, omega = TRUE, sigma = TRUE, olabels = NULL,
   slabels = NULL, oprefix = "", sprefix = "", tname = "THETA",
-  oname = "...", sname = "...", ...)
+  oname = "...", sname = "...", index = "last", ...)
 }
 \arguments{
 \item{run}{run number}
@@ -36,6 +36,10 @@ nmxml(run = numeric(0), project = character(0), file = character(0),
 \item{oname}{name for \code{$OMEGA}}
 
 \item{sname}{name for \code{$SIGMA}}
+
+\item{index}{the estimation number to return;  "last" will return the 
+last estimation results; otherwise, pass an integer indicating which 
+estimation results to return}
 
 \item{...}{not used}
 }

@@ -30,7 +30,6 @@
 ##' for which parameters to show when printing
 ##' @param .strict if \code{TRUE}, all names to be updated must be found 
 ##' in the parameter list
-##' @param object passed to show
 ##' @param ... passed along or name/value pairs to update the parameters 
 ##' in a model object
 ##' 
@@ -42,23 +41,36 @@
 ##' the parameters in a model object.  For both uses, the return value 
 ##' is a \code{parameter_list} object.
 ##' For the former use, \code{param} is usually called to print
-##' the parameters to the screen, but the parameter_list object can also 
+##' the parameters to the screen, but the \code{parameter_list} object can also 
 ##' be coreced to a list or numeric R object.
-##'
+##' 
+##' Use \code{allparam} to get a \code{parameter_list} object including 
+##' both model parameters and data items listed in \code{$FIXED}.
 ##'
 ##' @examples
 ##' ## example("param")
+##' 
 ##' mod <- mrgsolve:::house()
 ##'
 ##' param(mod)
+##' 
 ##' param(mod, .pat="^(C|F)") ## may be useful when large number of parameters
 ##'
 ##' class(param(mod))
 ##'
 ##' param(mod)$KA
+##' 
+##' param(mod)[["KA"]]
 ##'
 ##' as.list(param(mod))
+##' 
 ##' as.data.frame(param(mod))
+##' 
+##' param(mod, CL = 1.2)
+##' 
+##' new_values <- list(CL = 1.3, VC = 20.5)
+##' 
+##' param(mod, new_values)
 ##'
 ##' @keywords param
 setGeneric("param", function(.x,...) {
@@ -93,7 +105,7 @@ setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE
   
   .x@param <- update(.x@param, args)
   
-  return(.x) #return(update(.x,param=args))
+  return(.x)
 })
 
 ##' @rdname param
@@ -102,8 +114,8 @@ setMethod("param", "mrgsims", function(.x,...) {
   param(mod(.x),...)
 })
 
-##' @export
 ##' @rdname param
+##' @export
 setMethod("param", c("missing"), function(...,.strict=TRUE) {
   param(list(...),.strict=.strict)
 })
@@ -136,7 +148,7 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   x <- names(ini)
   y <- prettyNum(unlist(ini), digits=digits)
   NPARAM <- length(x)
-  n <- 1:NPARAM
+  n <- seq(NPARAM)
   
   if(pattern !="*") {
     take <- grepl(pattern,x)
@@ -182,52 +194,36 @@ showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
 
 ##' @export
 ##' @rdname param
-setMethod("show", "parameter_list", function(object) {
-  showparam(object)
-})
-
-##' @export
-##' @rdname param
 allparam <- function(.x) {
   as.param(c(as.list(param(.x)), .x@fixed))
 }
 
+##' Show the parameter list
+##' @param object the object to show
 ##' @export
-##' @rdname param
+##' @keywords internal
+setMethod("show", "parameter_list", function(object) {
+  showparam(object)
+})
+
 setGeneric("as.param", function(.x,...) {
   standardGeneric("as.param")
 })
 
-##' @export
-##' @rdname param
 setMethod("as.param", "list", function(.x,...) {
   create_numeric_list(.x,"parameter_list",...)
 })
 
-##' @export
-##' @rdname param
 setMethod("as.param", "numeric", function(.x,...) {
   create_numeric_list(as.list(.x),"parameter_list",...)
 })
 
-##' @export
-##' @rdname param
 setMethod("as.param", "parameter_list", function(.x,...) .x)
 
-##' @export
-##' @rdname param
 setMethod("as.param", "missing", function(.x,...) {
   create_numeric_list(list(), "parameter_list",...)
 })
 
-##' @param x mrgmod object
-##' @param name parameter to take
-##'
-##' @rdname param
-##' @export
-setMethod("$", "mrgmod", function(x,name){
-  unname(as.numeric(allparam(x))[name])
-})
 
 as.fixed <- function(x) {
   as.list(x)

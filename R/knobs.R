@@ -18,19 +18,24 @@
 batch <- function(x) x@batch
 moving <- function(x) x@moving
 
-##' Run sensitivity analysis on model settings.
+##' Run sensitivity analysis on model settings
 ##'
 ##' Knobs can be parameter values or PK dosing items (e.g. amt).  
 ##' By design, all combinations of specified knob/values are simulated.
 ##'
 ##' @param x the model object
 ##' @param y a \code{batch_mrgsims} object
-##' @param ... knobs: named numeric vectors that identify knob names and knob values for a
+##' @param ... knobs: named numeric vectors that identify knob names and knob 
+##' values for a
 ##' batch run.  See details.
 ##' @name knobs
-##' @return An object of class \code{batch_mrgsims}.  Most methods for \code{mrgsims} objects also work on \code{batch_mrgsims} object.
+##' @return An object of class \code{batch_mrgsims}.  Most methods for 
+##' \code{mrgsims} objects also work on \code{batch_mrgsims} object.
 ##' @details
-##' Valid knob names include: any parameter name (in \code{param(mod)}), time variables (\code{start}, \code{end}, \code{delta}), PK dosing items (\code{amt}, \code{ii}, \code{rate}, and others ...), and solver settings (\code{atol}, \code{hmax}, etc...).
+##' Valid knob names include: any parameter name (in \code{param(mod)}), 
+##' time variables (\code{start}, \code{end}, \code{delta}), PK dosing items 
+##' (\code{amt}, \code{ii}, \code{rate}, and others ...), and solver settings 
+##' (\code{atol}, \code{hmax}, etc...).
 ##' @export
 ##' @examples
 ##' ## example("knobs")
@@ -63,8 +68,8 @@ moving <- function(x) x@moving
 ##' out
 setGeneric("knobs", function(x,y,...) standardGeneric("knobs"))
 
-##' @export
 ##' @rdname knobs
+##' @export
 setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   
   input <- list(...)
@@ -75,7 +80,9 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   ## if not, other dosing items are removed and we pass as idata set
   has.amt <- is.element("amt", names(input))
   
-  if(!has.amt) input <- input[!is.element(names(input),c("ii","amt","rate","addl","ss","cmt"))]
+  if(!has.amt) {
+    input <- input[!is.element(names(input),c("ii","amt","rate","addl","ss","cmt"))]
+  }
   
   p <- pars(x)
   
@@ -133,34 +140,32 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
 })
 
 
-##' @export
 ##' @rdname knobs
+##' @export
 setMethod("knobs", c("mrgmod", "batch_mrgsims"), function(x,y,...) {
   input <- merge(y@input, list(...), open=TRUE)
   do.call("knobs", c(list(x),input))
 })
 
 
-##' @export
+##' @param row.names passed to \code{as.data.frame.data.frame}
+##' @param optional passed to \code{as.data.frame.data.frame}
 ##' @rdname knobs
-##' @param row.names passed to \code{\link{as.data.frame}}
-##' @param optional passed to \code{\link{as.data.frame}}
+##' @export
 setMethod("as.data.frame","batch_mrgsims", function(x,row.names=NULL, optional=FALSE,...) {
   as.data.frame(x@data, row.names,optional,...)
 })
 
-
-
-##' @export
 ##' @rdname knobs
+##' @export
 setMethod("knobs", "batch_mrgsims", function(x,...) {
   x@knobs
 })
 
-
+##' @param object the object to show
 ##' @rdname knobs
 ##' @export
-##' @param object passed to show
+##' @keywords internal
 setMethod("show", "batch_mrgsims", function(object) {
   
   cat("Model: ", model(mod(object)),"\n")
@@ -180,7 +185,7 @@ setMethod("show", "batch_mrgsims", function(object) {
   return(invisible(NULL))
 })
 
-##' Plot method for mrgsims objects.
+##' Plot method for mrgsims objects
 ##'
 ##' @param x mrsims object
 ##' @param y a formula passed to xyplot

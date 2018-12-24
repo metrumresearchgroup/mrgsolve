@@ -8,13 +8,6 @@
 \alias{init,missing-method}
 \alias{init,list-method}
 \alias{init,ANY-method}
-\alias{as.init}
-\alias{as.init,list-method}
-\alias{as.init,numeric-method}
-\alias{as.init,cmt_list-method}
-\alias{as.init,missing-method}
-\alias{as.init,NULL-method}
-\alias{show,cmt_list-method}
 \title{Methods for working with the model compartment list}
 \usage{
 init(.x, ...)
@@ -28,20 +21,6 @@ init(.x, ...)
 \S4method{init}{list}(.x, ...)
 
 \S4method{init}{ANY}(.x, ...)
-
-as.init(.x, ...)
-
-\S4method{as.init}{list}(.x, ...)
-
-\S4method{as.init}{numeric}(.x, ...)
-
-\S4method{as.init}{cmt_list}(.x, ...)
-
-\S4method{as.init}{missing}(.x, ...)
-
-\S4method{as.init}{`NULL`}(.x, ...)
-
-\S4method{show}{cmt_list}(object)
 }
 \arguments{
 \item{.x}{the model object}
@@ -52,8 +31,6 @@ as.init(.x, ...)
 
 \item{.pat}{a regular expression (character) to be applied as 
 a filter when printing compartments to the screen}
-
-\item{object}{to show}
 }
 \value{
 an object of class \code{cmt_list} (see 

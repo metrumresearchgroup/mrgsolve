@@ -26,10 +26,10 @@ context("test-modspec")
 options(mrgsolve_mread_quiet=TRUE)
 
 mtemp <- function(...) {
-  
   mcode(model=basename(tempfile()),..., compile=FALSE)
 }
-test_that("Parse matrix", {
+
+test_that("matrix data is parsed", {
   
   code <- "$OMEGA \n 1 2 \n 3"
   mod <- mtemp(code)
@@ -43,7 +43,7 @@ test_that("Parse matrix", {
 
 
 
-test_that("Parse capture", {
+test_that("capture data is parsed", {
   
   code <- "$CAPTURE\n  \n banana = b z apple = a"
   mod <- mtemp(code)
@@ -51,9 +51,11 @@ test_that("Parse capture", {
   
   code <- "$CAPTURE\n  z a \n\n\n d\n e, f"
   mod <- mtemp(code)
-  expect_equal(mod@capture, c(z = "z", a = "a", d = "d", e = "e", f = "f"))
   
-  
+  expect_equal(
+    mod@capture, 
+    c(z = "z", a = "a", d = "d", e = "e", f = "f")
+  )
   
   code <- "$CAPTURE \n"
   expect_warning(mod <- mtemp(code))
@@ -62,16 +64,16 @@ test_that("Parse capture", {
 })
 
 
-test_that("Parse cmt", {
+test_that("cmt block is parsed", {
   
   code <- "$CMT\n yes=TRUE \n first \n \n \n second third \n \n"
   mod <- mtemp(code)
   expect_equal(mrgsolve:::cmt(mod), c("first", "second", "third"))
-
+  
 })
 
 
-test_that("Parse theta", {
+test_that("theta block is parsed", {
   code <- "$THETA\n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(THETA1=0.1, THETA2=0.2, THETA3=0.3))
@@ -83,10 +85,8 @@ test_that("Parse theta", {
   code <- "$THETA >> name='theta' \n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
-
+  
 })
-
-
 
 test_that("Using table macro generates error", {
   code <- "$TABLE\n table(CP) = 1; \n double x=3; \n table(Y) = 1;"
@@ -95,8 +95,8 @@ test_that("Using table macro generates error", {
 
 
 for(what in c("THETA", "PARAM", "CMT", 
-           "FIXED", "CAPTURE", "INIT",
-           "OMEGA", "SIGMA")) {
+              "FIXED", "CAPTURE", "INIT",
+              "OMEGA", "SIGMA")) {
   
   test_that(paste0("Empty block: ", what), {
     expect_warning(mtemp(paste0("$",what, "  ")))
@@ -121,7 +121,7 @@ test_that("Commented model", {
   $CAPTURE 
     kaya = KA // Capturing KA
   ' 
-  
+
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
@@ -130,7 +130,7 @@ test_that("Commented model", {
 })
 
 
-test_that("Parse at options", {
+test_that("at options are parsed", {
   
   ats <- mrgsolve:::parse_ats
   
@@ -146,7 +146,10 @@ test_that("Parse at options", {
   
   x <- unlist(strsplit(code, "\n"))
   x <- ats(x)
-  
+  expect_equal(
+    names(x), 
+    c("bool1", "bool2", "name", "zip", "town", "city", "state", "midwest", "x")
+  )
   expect_is(x,"list")
   expect_identical(x$bool1,TRUE)
   expect_identical(x$bool2,TRUE)
@@ -158,9 +161,5 @@ test_that("Parse at options", {
   expect_equal(x$x,2)
   expect_warning(ats(" @ ' a b c'"))  
   expect_warning(ats('@ "a b c"'))  
-  
 })
-
-
-
 

@@ -124,7 +124,8 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
 ##'
 ##' @param .x a matrix, list of matrices or \code{matlist} object
 ##' @param x  \code{matlist} object
-##' @param labels character vector of names for \code{$SIGMA} elements; must be equal 
+##' @param labels character vector of names for \code{$SIGMA} elements; must be
+##' equal 
 ##' to number of rows/columns in the matrix
 ##' @param make logical; if TRUE, matrix list is rendered into a single matrix
 ##' @param ... passed to other functions, including \code{\link{modMATRIX}}
@@ -242,6 +243,7 @@ drop_re <- function(.x,...) {
   if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
   return(.x)
 }
+
 ##' @rdname matlist
 ##' @export
 drop.re <- function(...) drop_re(...)
@@ -258,11 +260,15 @@ setMethod("as.matrix", "matlist", function(x,...) {
 
 ##' @export
 ##' @rdname matlist
-setMethod("names", "matlist", function(x) names(x@data))
+names.matlist <- function(x) {
+  names(x@data)  
+}
 
 ##' @export
 ##' @rdname matlist
-setMethod("length", "matlist", function(x) length(x@data))
+length.matlist <- function(x) {
+  length(x@data)  
+}
 
 ##' @export
 ##' @rdname matlist
@@ -278,9 +284,10 @@ setMethod("dim", "matlist", function(x)  lapply(x@data, dim))
 ##' @rdname matlist
 setMethod("nrow", "matlist", function(x) unlist(lapply(x@data, nrow)))
 
-##' @export
 ##' @rdname matlist
 ##' @param object passed to showmatlist
+##' @export
+##' @keywords internal
 setMethod("show", "matlist", function(object) showmatlist(object))
 showmatlist <- function(x,...) {
   
@@ -313,18 +320,7 @@ cumoffset <- function(x) {
   ans
 }
 
-setGeneric("rename",function(x,...) standardGeneric("rename"))
-setMethod("rename", "matlist", function(x,names,...) {
-  names(x@data) <- names
-  return(x)
-})
-
-setGeneric("gettag", function(x,...) standardGeneric("gettag"))
-setMethod("gettag", "matlist", function(x,...) {
-  return(names(x@data))
-})
-
-##' Operations with matlist objects.
+##' Operations with matlist objects
 ##' 
 ##' @param x a matlist object
 ##' @param ... other matlist objects

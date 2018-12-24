@@ -8,14 +8,7 @@
 \alias{param,missing-method}
 \alias{param,list-method}
 \alias{param,ANY-method}
-\alias{show,parameter_list-method}
 \alias{allparam}
-\alias{as.param}
-\alias{as.param,list-method}
-\alias{as.param,numeric-method}
-\alias{as.param,parameter_list-method}
-\alias{as.param,missing-method}
-\alias{$,mrgmod-method}
 \title{Create and work with parameter objects}
 \usage{
 param(.x, ...)
@@ -31,21 +24,7 @@ param(.x, ...)
 
 \S4method{param}{ANY}(.x, ...)
 
-\S4method{show}{parameter_list}(object)
-
 allparam(.x)
-
-as.param(.x, ...)
-
-\S4method{as.param}{list}(.x, ...)
-
-\S4method{as.param}{numeric}(.x, ...)
-
-\S4method{as.param}{parameter_list}(.x, ...)
-
-\S4method{as.param}{missing}(.x, ...)
-
-\S4method{$}{mrgmod}(x, name)
 }
 \arguments{
 \item{.x}{the model object}
@@ -60,12 +39,6 @@ for which parameters to show when printing}
 
 \item{.strict}{if \code{TRUE}, all names to be updated must be found 
 in the parameter list}
-
-\item{object}{passed to show}
-
-\item{x}{mrgmod object}
-
-\item{name}{parameter to take}
 }
 \value{
 An object of class \code{parameter_list} (see 
@@ -81,22 +54,36 @@ Can be used to either get a parameter list object from a
 the parameters in a model object.  For both uses, the return value 
 is a \code{parameter_list} object.
 For the former use, \code{param} is usually called to print
-the parameters to the screen, but the parameter_list object can also 
+the parameters to the screen, but the \code{parameter_list} object can also 
 be coreced to a list or numeric R object.
+
+Use \code{allparam} to get a \code{parameter_list} object including 
+both model parameters and data items listed in \code{$FIXED}.
 }
 \examples{
 ## example("param")
+
 mod <- mrgsolve:::house()
 
 param(mod)
+
 param(mod, .pat="^(C|F)") ## may be useful when large number of parameters
 
 class(param(mod))
 
 param(mod)$KA
 
+param(mod)[["KA"]]
+
 as.list(param(mod))
+
 as.data.frame(param(mod))
+
+param(mod, CL = 1.2)
+
+new_values <- list(CL = 1.3, VC = 20.5)
+
+param(mod, new_values)
 
 }
 \keyword{param}
