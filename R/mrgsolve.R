@@ -235,8 +235,8 @@ mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 ##' 
 ##' These functions are called by \code{\link{mrgsim}} and have
 ##' explicit input requirements written into the function name.  The motivation
-##' behind these variants is to give the user a clear workflow with 
-##' specific, required inputs as indicated by the function name. Use 
+##' behind these variants is to give the user a clear workflow with specific,
+##' required inputs as indicated by the function name. Use 
 ##' \code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
 ##' simulation for tasks like parameter optimization,  sensitivity analyses, 
 ##' or optimal design.
@@ -473,7 +473,7 @@ do_mrgsim <- function(x,
   param <- as.numeric(param(x))
   init <-  as.numeric(Init(x))
   
-  if(!identical(names(param(x)),x@shlib$par)) {
+  if(!identical(Pars(x),x@shlib$par)) {
     stop("The parameter list has changed since the model was compiled.")
   }
   if(!identical(Cmt(x), x@shlib$cmt)) {
@@ -645,21 +645,18 @@ do_mrgsim <- function(x,
       mod=x)
 }
 
-
 do_mrgsimple <- function(x,
                          data,
-                         idata = NULL,
-                         seed = as.integer(NA),
+                         idata = no_idata_set(),
                          obsonly = FALSE,
                          obsaug = FALSE,
                          tgrid = NULL,
                          recsort = 1,
                          deslist = list(),
                          descol = character(0),
-                         filbak = TRUE,
                          tad = FALSE,
-                         nocb = TRUE,
                          skip_init_calc = FALSE,
+                         output = NULL,
                          ...) {
   
   verbose <- x@verbose
@@ -687,9 +684,6 @@ do_mrgsimple <- function(x,
   # capture items; will work on this
   capt <- x@capture
   
-  # Non-compartment names in capture
-  capt <- unique(setdiff(capt,cmt(x)))
-  
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
   capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
@@ -699,12 +693,11 @@ do_mrgsimple <- function(x,
   parin$recsort <- recsort
   parin$obsonly <- obsonly
   parin$obsaug <- obsaug
-  parin$filbak <- filbak
+  parin$filbak <- TRUE
   parin$tad <- tad
-  parin$nocb <- nocb
+  parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  # already took intersect
   parin$request <- as.integer(seq_along(cmt(x))-1)
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
@@ -726,18 +719,20 @@ do_mrgsimple <- function(x,
     parin[["whichtg"]] <- integer(0)
   }
   
-  out <- .Call(`_mrgsolve_DEVTRAN`,
-               parin,
-               param,
-               names(param(x)),
-               init,
-               names(Init(x)),
-               capt_pos,
-               pointers(x),
-               data,idata,
-               as.matrix(omat(x)),
-               as.matrix(smat(x)),
-               x@envir)
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    Pars(x),
+    init,
+    names(Init(x)),
+    capt_pos,
+    pointers(x),
+    data,idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir
+  )
   
   if(tad) tcol <- c(tcol,"tad")
   
@@ -745,12 +740,17 @@ do_mrgsimple <- function(x,
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
   
+  if(!is.null(output)) {
+    if(output=="df") {
+      return(as.data.frame(out[["data"]]))  
+    }
+  }
+  
   new("mrgsims",
       request=cmt(x),
       data=as.data.frame(out[["data"]]),
       outnames=capt,
-      mod=x,
-      seed=as.integer(seed))
+      mod=x)
 }
 
 param_as_parent <- function(x) {

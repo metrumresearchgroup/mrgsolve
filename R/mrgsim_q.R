@@ -16,8 +16,8 @@
 ##' times will only be added to the output if there are no observation
 ##' records in \code{data}
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param matrix_return if \code{TRUE}, a matrix of simulated data is returned
-##' instead of an mrgsims object
+##' @param output output data type; if \code{NULL}, then an \code{mrgsims}
+##' object is returned; if \code{"df"} then a data frame is returned
 ##' 
 ##' @details
 ##' 
@@ -70,7 +70,7 @@ mrgsim_q <- function(x,
                      data,
                      recsort = 1,
                      stime = numeric(0),
-                     matrix_return = FALSE,
+                     output = NULL,
                      skip_init_calc = FALSE) {
   
   ## data
@@ -125,8 +125,15 @@ mrgsim_q <- function(x,
   
   dimnames(out) <- list(NULL, cnames)
   
-  if(matrix_return) return(out)
-
+  if(!is.null(output)) {
+    if(output=="df") {
+      return(as.data.frame(out))  
+    }
+    if(output=="matrix") {
+      return(out)  
+    }
+  }
+  
   new("mrgsims",
       request=compartments,
       data=as.data.frame(out),

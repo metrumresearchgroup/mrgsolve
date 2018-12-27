@@ -438,3 +438,32 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
     return(as.data.frame(arrange__(evs,.dots = c("time"))))
   }
 }
+
+
+##' Insert observations into a data set
+##' 
+##' @param data a data set or event object
+##' @param times a vector of observation times
+##' 
+##' @details
+##' Non-numeric columns will be dropped with a warning.
+##' 
+##' @return A data frame
+##' 
+##' @examples
+##' data <- expand.ev(amt = c(100,200,300))
+##' 
+##' expand_observations(data, times = seq(0,48,2))
+##' 
+##' @export
+expand_observations <- function(data, times) {
+  data <- As_data_set(data)
+  dont_copy <- c("ID", "amt", "cmt", "evid", "ii", "ss", "rate","time","addl")
+  dont_copy <- unique(c(dont_copy,toupper(dont_copy)))
+  dat <- data.matrix(numerics_only(data))
+  copy <- which(!is.element(colnames(dat),dont_copy))-1
+  a <- EXPAND_OBSERVATIONS(dat,times,copy)
+  ans <- as.data.frame(a$data)
+  names(ans) <- colnames(dat)
+  ans
+}
