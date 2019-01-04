@@ -14,7 +14,8 @@ PARAM(x, env, annotated = FALSE, covariates = FALSE, pos = 1, ...)
 
 FIXED(x, env, annotated = FALSE, pos = 1, ...)
 
-THETA(x, env, annotated = FALSE, pos = 1, name = "THETA", ...)
+THETA(x, env, annotated = FALSE, pos = 1, name = "THETA",
+  fill = NULL, ...)
 
 INIT(x, env, annotated = FALSE, pos = 1, ...)
 
@@ -36,6 +37,8 @@ CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 \item{...}{passed}
 
 \item{name}{block name}
+
+\item{fill}{data to use for block contents}
 }
 \description{
 Most of the basic blocks are listed in this help topic.  

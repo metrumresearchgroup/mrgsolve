@@ -585,6 +585,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 ##' @param covariates logical
 ##' @param name block name
 ##' @param pos block position
+##' @param fill data to use for block contents
 ##' @param ... passed
 ##' 
 ##' @rdname BLOCK_PARSE
@@ -646,11 +647,14 @@ handle_spec_block.specFIXED <- function(x,...) {
 
 
 ##' @rdname BLOCK_PARSE
-THETA <- function(x,env,annotated=FALSE,pos=1,
-                  name="THETA",...) {
-  
+THETA <- function(x, env, annotated=FALSE, pos=1,
+                  name="THETA", fill = NULL,...) {
+  if(!is.null(fill)) {
+    x <- eval(parse(text = fill))   
+  }
+    
   check_block_data(x,env$ENV,pos)
-  
+
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])

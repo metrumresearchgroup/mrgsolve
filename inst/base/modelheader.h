@@ -25,44 +25,8 @@
 #include "mrgsolv.h"
 
 typedef double local_double;
-typedef int local_int;
-typedef bool local_bool;
-
-// A box of data that gets passed to $MAIN and $TABLE
-struct databox {
-  const dvec ETA;
-  const dvec EPS;
-  const unsigned int newind;
-  const double time;
-  const int evid;
-  unsigned short int  SYSTEMOFF;
-  const double id;
-  const double amt;
-  const short int cmt;
-  const int nid;
-  const int idn;
-  const int nrow;
-  const int rown;
-  bool CFONSTOP;
-  void* envir;
-  void stop() {SYSTEMOFF=9;}
-  void stop_id() {SYSTEMOFF=2;}
-  void stop_id_cf(){SYSTEMOFF=1;}
-  std::vector<shuttle> recs;
-  void mevent(double time, int evid) {
-    shuttle ev(time,evid);
-    recs.push_back(ev);
-  }
-  void mevent(double time, int evid, int cmt, double amt, double rate) {
-    shuttle ev(time,evid); 
-    ev.cmt = cmt;
-    ev.amt = amt; 
-    ev.rate = rate;
-    recs.push_back(ev);
-  }
-};
-
-
+typedef int    local_int;
+typedef bool   local_bool;
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct

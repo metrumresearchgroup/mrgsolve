@@ -64,6 +64,7 @@ create_numeric_list <- function(x,class,...) {
 ##' expression to be used as a filter when printing data to the 
 ##' console
 ##' @keywords internal
+##' @export
 setClass("numericlist", 
          slots=c(
            data="list", 

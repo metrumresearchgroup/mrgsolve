@@ -141,6 +141,12 @@ plugins[["TAD"]] <- list(
   name = "TAD",
   code = "#define __MRGSOLVE_USE_PLUGIN_TAD__"
 )
+
+read_lines_from_base <- function(file) {
+  readLines(mrgsolve_file("base", file))
+}
+
+
 # 
 # plugins[["REPORT"]] <- list(
 #   name = "REPORT", 

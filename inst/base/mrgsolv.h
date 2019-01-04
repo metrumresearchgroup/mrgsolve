@@ -23,18 +23,9 @@
 #define MRGSOLV_H
 
 #include <vector>
-#include <map>
-#include <string>
-
 
 //! vector of doubles
 typedef std::vector<double> dvec;
-
-//! vector of strings
-typedef std::vector<std::string > svec;
-
-//! vector of integers
-typedef std::vector<int> ivec;
 
 typedef void (*refun)(void*);
 
@@ -73,6 +64,33 @@ struct shuttle {
   bool now;
 };
 
+//! member functions mevent and tad come in via housemodel; see inst/base/databox.cpp
+class databox {
+public:
+  std::vector<double> ETA; ///< vector of ETA values
+  std::vector<double> EPS; ///< vector of EPS values
+  unsigned int newind; ///< new individual flag
+  double time; ///< current simulation time
+  int evid;  ///< event ID flag
+  unsigned short int SYSTEMOFF; ///< flag to stop advancing system for current ID
+  double id;  ///< current ID
+  double amt; ///< current dosing amount value
+  short int cmt; ///< current compartment value
+  int nid; ///< number of IDs in the data set
+  int idn; ///< current ID number
+  int nrow; ///< number of rows in output data set
+  int rown; ///< current output row number
+  bool CFONSTOP; ///< carry forward on stop indicator
+  void* envir; ///< model environment
+  void stop() {SYSTEMOFF=9;}
+  void stop_id() {SYSTEMOFF=1;}
+  void stop_id_cf(){SYSTEMOFF=2;}
+  std::vector<shuttle> recs;
+  void mevent(double time, int evid);
+  double tad();
+};
+
+
 //! signature for <code>$MAIN</code>
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& self, dvec& _pred_, resim& simeta
 #define MRGSOLVE_INIT_SIGNATURE_N 10
@@ -90,3 +108,4 @@ struct shuttle {
 #define MRGSOLVE_CONFIG_SIGNATURE_N 4
 
 #endif
+

@@ -17,6 +17,7 @@
 
 #include "RcppInclude.h"
 #include "modelheader.h"
+#include "mrgsolv.h"
 
 #define CALLDEF(name, n)  {#name, (DL_FUNC) &name, n}
 

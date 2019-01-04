@@ -205,11 +205,13 @@ valid.mrgmod <- function(object) {
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 ##' @slot envir internal model environment \code{<environment>}
 ##' @slot shlib a list of data related to build outcome \code{<list>}
+##' @slot funs symbol names for model functions in the shared object
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
+##' @export
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",

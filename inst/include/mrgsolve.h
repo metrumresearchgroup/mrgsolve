@@ -32,22 +32,6 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 
 arma::mat MVGAUSS(arma::mat& OMEGA_,int n);
 
-//! map key: string, value: integer
-typedef std::map<std::string,int > si_map;
-
-//! map key: string, value: double
-typedef std::map<std::string,double > sd_map;
-
-//! vector of strings
-typedef std::vector<std::string> svec;
-
-//! vector of integers
-typedef std::vector<int> ivec;
-
-//! map key: string, value: integer vector
-typedef std::map<std::string, ivec> sivec_map;
-
-
 template <class T>
 void sort_unique(T& a) {
   std::sort(a.begin(), a.end());

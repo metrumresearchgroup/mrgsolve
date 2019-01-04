@@ -103,3 +103,5 @@ setGeneric("sodll", function(x,...) standardGeneric("sodll"))
 ##' @rdname mod
 ##' @keywords internal
 setGeneric("mod", function(x,...) standardGeneric("mod"))
+
+setGeneric("nrow")

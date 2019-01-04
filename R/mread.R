@@ -376,7 +376,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     namespace,
     "\n// BASIC MODELHEADER FILE:",
     "#include \"modelheader.h\"",
-    "#include \"mrgsolve_plugin_tad.h\"",
+    "\n//INCLUDE databox functions:",
+    read_lines_from_base("databox.cpp"),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
@@ -460,7 +461,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   } 
   
   if(ignore.stdout) {
-    if(!quiet) message("done.", appendLF=FALSE)
+    if(!quiet) message("done.\n", appendLF=FALSE)
   }  else {
     out <- build_output_cleanup(out,build) 
     cat(out$stdout,sep="\n")

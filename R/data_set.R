@@ -444,6 +444,9 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' 
 ##' @param data a data set or event object
 ##' @param times a vector of observation times
+##' @param unique `logical`; if `TRUE` then values for `time` are 
+##' dropped if they are found anywhere in `data`
+##'
 ##' 
 ##' @details
 ##' Non-numeric columns will be dropped with a warning.
@@ -456,8 +459,13 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' expand_observations(data, times = seq(0,48,2))
 ##' 
 ##' @export
-expand_observations <- function(data, times) {
+expand_observations <- function(data, times, unique = FALSE) {
+  
   data <- As_data_set(data)
+  if(unique) {
+    tcol <- timename(data)
+    times <- times[!times %in% unique(data[[tcol]])]
+  }
   dont_copy <- c("ID", "amt", "cmt", "evid", "ii", "ss", "rate","time","addl")
   dont_copy <- unique(c(dont_copy,toupper(dont_copy)))
   dat <- data.matrix(numerics_only(data))
