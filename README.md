@@ -1,18 +1,28 @@
 
-mrgsolve
-========
+# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png">
 
-[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master) [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues) [![Metrumrg](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
+[![Build
+Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
+[![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
+[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues)
+[![Metrumrg](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
 
-`mrgsolve` facilitates simulation in `R` from hierarchical, ordinary differential equation (ODE) based models typically employed in drug development. See the example below.
+mrgsolve is an R package for simulation from hierarchical, ordinary
+differential equation (ODE) based models typically employed in drug
+development. mrgsolve is free and open-source software.
 
-Resources
----------
+## Resources
 
-Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional resources.
+Please see [mrgsolve.github.io](https://mrgsolve.github.io) for
+additional resources, including:
 
-Installation
-------------
+  - [User Guide](https://mrgsolve.github.io/user_guide)
+  - [R Documentation](https://mrgsolve.github.io/docs)
+  - [Vignettes](https://mrgsolve.github.io/vignettes)
+  - [Gallery](https://github.com/mrgsolve/gallery)
+
+## Installation
 
 We recommend staying up to date with the development version
 
@@ -23,186 +33,170 @@ devtools::install_github("metrumresearchgroup/mrgsolve")
 Otherwise, install the latest release on CRAN
 
 ``` r
-install.packages("mrgsolve", type="source")
+install.packages("mrgsolve")
 ```
 
-**Please** be sure to see important install-related information [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation).
+**Please** be sure to see important install-related information
+[here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation).
 
-Ask a question
---------------
+## Interaction
 
--   [Issue tracker (preferred)](https://github.com/metrumresearchgroup/mrgsolve/issues) (requires GitHub account; ok for questions or issue reports)
+We welcome **questions** about anything mrgsolve: installation, getting
+your model to work, understanding better how mrgsolve works. We also
+welcome **suggestions** for how to make mrgsolve more useful to you and
+to the pharmacometrics community.
 
-Example
--------
+Please interact with us at the [Issue
+Tracker](https://github.com/metrumresearchgroup/mrgsolve/issues). This
+requires a GitHub account.
+
+## Some examples
+
+### A simple simulation
 
 ``` r
 library(mrgsolve)
-library(dplyr)
-library(ggplot2)
 ```
 
-### The model specification file is similar to other non-linear mixed effects modeling software
+Load a model from the internal library
 
 ``` r
-code <- '
-$GLOBAL
-#define CP (CENT/VC)
-#define INH (CP/(IC50+CP))
-
-$SET delta=0.1
-
-$PARAM TVCL=1, TVVC=20, KA = 1.3, KIN=100, KOUT=2, IC50=10
-
-$CMT GUT CENT RESP
-
-$MAIN
-double CL = exp(log(TVCL) + ETA(1));
-double VC = exp(log(TVVC) + ETA(2));
-
-RESP_0 = KIN/KOUT;
-
-$OMEGA 0 0
-
-$ODE
-dxdt_GUT = -KA*GUT;
-dxdt_CENT = KA*GUT - (CL/VC)*CENT;
-dxdt_RESP = KIN*(1-INH) - KOUT*RESP;
-
-$CAPTURE CP
-'
+mod <- mread("pk1", modlib())
 ```
 
-### The model is parsed, compiled, and dynamically loaded into the `R` session
-
--   Information about the model is saved as an `R` object
--   Important model attributes can be updated in `R` without recompiling
+Simulate a simple regimen
 
 ``` r
-mod <- mcode("demo", code)
+mod %>% 
+  ev(amt = 100, ii = 24, addl = 9) %>%
+  mrgsim(end = 300, delta = 0.1) %>% 
+  plot(CP~time)
 ```
 
-### Use `mrgsolve` as an interactive simulation tool for model exploration and sensitivity analyses
+<img src="inst/maintenance/img/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
--   Simulated data are returned as `R` objects
--   Input and output data are kept in memory in the `R` process; writing or reading to disk is never necessary (unless results are to be saved for later use).
-
-``` r
-out <- 
-  mod %>%
-  ev(amt=100, ii=24, addl=2) %>%
-  mrgsim(end=120)
-
-out
-```
-
-    . Model:  demo 
-    . Dim:    1202 x 6 
-    . Time:   0 to 120 
-    . ID:     1 
-    .      ID time    GUT  CENT  RESP    CP
-    . [1,]  1  0.0   0.00  0.00 50.00 0.000
-    . [2,]  1  0.0 100.00  0.00 50.00 0.000
-    . [3,]  1  0.1  87.81 12.16 49.72 0.608
-    . [4,]  1  0.2  77.11 22.78 49.03 1.139
-    . [5,]  1  0.3  67.71 32.04 48.11 1.602
-    . [6,]  1  0.4  59.45 40.11 47.06 2.006
-    . [7,]  1  0.5  52.20 47.14 45.96 2.357
-    . [8,]  1  0.6  45.84 53.25 44.87 2.663
+A more complicated regimen: 100 mg infusions over 2 hours every 24 hours
+for one week, followed by 50 mg boluses every 12 hours for 10 days:
 
 ``` r
-plot(out, CP+RESP~.)
+mod %>% 
+  ev_rx("100 over 2h q 24 x 7 then 50 q 12 x 20") %>%
+  mrgsim(end = 600, delta = 0.1) %>% 
+  plot(CP~time)
 ```
 
 <img src="inst/maintenance/img/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
+### Population simulation
+
 ``` r
-out <- 
-  mod %>% update(end=48) %>%
-  ev(amt=100) %>%
-  Req(CP,RESP) %>%
-  knobs(TVVC=c(10,20,40), TVCL=c(0.5,1.5))
+mod <- mread("popex", modlib()) %>% zero_re()
 ```
 
+A data set looking at different patient weights and doses
+
 ``` r
-plot(out)
+library(dplyr)
+
+data <- expand.ev(amt = c(100,150), WT = seq(40,140,20)) %>% mutate(dose = amt)
+
+head(data)
 ```
 
-<img src="inst/maintenance/img/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+    .   ID amt WT evid cmt time dose
+    . 1  1 100 40    1   1    0  100
+    . 2  2 150 40    1   1    0  150
+    . 3  3 100 60    1   1    0  100
+    . 4  4 150 60    1   1    0  150
+    . 5  5 100 80    1   1    0  100
+    . 6  6 150 80    1   1    0  150
 
-### Use `mrgsolve` for large-scale population simulation
+Simulate
 
 ``` r
-mod <- mod %>% omat(cmat(0.1, 0.67, 0.4))
+mod %>% 
+  data_set(data) %>% 
+  carry_out(dose,WT) %>%
+  mrgsim(delta = 0.1, end = 72) %>% 
+  plot(IPRED~time|factor(dose),scales = "same")
 ```
 
-### Flexibility with input data sets
+<img src="inst/maintenance/img/README-unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
--   Data set format that is likely familiar to modeling and simulation scientists
--   No need to include observation records; `mrgsolve` will automatically insert
+### Sensitivity analysis with PBPK model
 
 ``` r
-.data <- 
-  expand.ev(ID=1:10, amt=c(100,300,1000)) %>%
-  mutate(dose=amt)
-
-head(.data)
+mod <- mread("pbcsa", modlib())
 ```
 
-    .   ID amt evid cmt time dose
-    . 1  1 100    1   1    0  100
-    . 2  2 100    1   1    0  100
-    . 3  3 100    1   1    0  100
-    . 4  4 100    1   1    0  100
-    . 5  5 100    1   1    0  100
-    . 6  6 100    1   1    0  100
-
-### Input data are passed in as `R` objects
-
--   Pass many different data sets or implement different designs in the same model code without recompiling
--   Control simulation output from `R` to better manage memory
+Reference
 
 ``` r
-set.seed(1010)
-out <- 
-  mod %>%
-  data_set(.data) %>%
-  Req(RESP,CP) %>% obsonly %>%
-  carry_out(dose) %>%
-  mrgsim(end=48)
+blocks(mod,PROB)
 ```
 
-``` r
-plot(out, RESP~time|factor(dose), scales="same")
+``` 
+  
+  Model file: pbcsa.cpp 
+  
+  $PROB
+  # Yoshikado et al. (2016)
+  - Title: __Quantitative Analyses of Hepatic OATP-Mediated
+  Interactions Between Statins and Inhibitors Using PBPK
+  Modeling With a Parameter Optimiaztion Method__
+  - Reference: CP\&T vol. 100 no. 5 pp. 513-23 11/2016
+  - Parameters: 40
+  - Compartments: 31
 ```
 
-<img src="inst/maintenance/img/README-unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
-
-### Pass simulated output to your favorite data summary or visualization routines
-
-Summarise with `dplyr`
+Model parameters
 
 ``` r
-out %>%
-  as.tbl %>%
-  group_by(dose) %>%
-  summarise(rmin = min(RESP), tmim=time[which.min(RESP)])
+param(mod)
 ```
 
-    . # A tibble: 3 x 3
-    .    dose  rmin  tmim
-    .   <dbl> <dbl> <dbl>
-    . 1   100 19.0    2.9
-    . 2   300 16.1    3.5
-    . 3  1000  6.20   3.5
+    . 
+    .  Model parameters (N=26):
+    .  name    value   . name  value 
+    .  Clr     0       | PSadi 0.17  
+    .  exFadi  0.145   | PSmus 4.08  
+    .  exFliv  0.278   | PSski 0.623 
+    .  exFmus  0.146   | Qadi  0.223 
+    .  exFski  0.321   | Qh    1.2   
+    .  fafg    0.572   | Qmus  0.642 
+    .  fb      0.06    | Qski  0.257 
+    .  fhCLint 0.00978 | tlag  0.254 
+    .  ka      0.999   | Vadi  0.143 
+    .  Kp_adi  17.3    | Vcent 0.075 
+    .  Kp_liv  16.7    | Vliv  0.0241
+    .  Kp_mus  2.98    | Vmus  0.429 
+    .  Kp_ski  13.6    | Vski  0.111
 
-Plot with `ggplot2`
+Set up a batch to siumulate
 
 ``` r
-out %>%
-  as.tbl %>%
-  ggplot(data=.) +
-  geom_line(aes(x=time, y=RESP, group=ID, col=factor(dose)))
+idata <- expand.idata(Kp_liv = seq(4,20,2))
+
+idata
+```
+
+    .   ID Kp_liv
+    . 1  1      4
+    . 2  2      6
+    . 3  3      8
+    . 4  4     10
+    . 5  5     12
+    . 6  6     14
+    . 7  7     16
+    . 8  8     18
+    . 9  9     20
+
+``` r
+mod %>% 
+  ev(amt = 2000) %>% 
+  idata_set(idata) %>%
+  mrgsim(end = 24, delta = 0.1) %>%
+  plot(CSA~time, scale = list(y = list(log =TRUE, at = 10^seq(-4,4))))
 ```
 
 <img src="inst/maintenance/img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
