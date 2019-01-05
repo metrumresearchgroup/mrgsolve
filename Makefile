@@ -109,5 +109,5 @@ check-devel:
 	Rscript -e 'rhub::check_with_rdevel()'
 
 check-win:
-	Rscript -e 'rhub::check_on_windows()'
+	Rscript -e 'devtools::check_win_devel()'
 
