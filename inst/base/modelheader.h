@@ -15,14 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODELINCLUDEGUARD
-#define MODELINCLUDEGUARD
-
+#ifndef MODELHEADER_H
+#define MODELHEADER_H
 
 #include <iostream>
 #include <vector>
 #include <math.h>
-#include "mrgsolv.h"
 
 typedef double local_double;
 typedef int    local_int;

@@ -71,7 +71,7 @@ new_build <- function(file, model, project, soloc, code = NULL,
   }
   
   env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
-
+  
   env$modfile <- file.path(env$project,file)
   
   ## If code is passed in as character:
@@ -103,6 +103,14 @@ new_build <- function(file, model, project, soloc, code = NULL,
   env$cachfile <- cachefile()
   env$model <- new_model
   
+  env$cmd <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
+  
+  env$args <- c(
+    "CMD", "SHLIB",
+    ifelse(preclean, "--preclean ", ""),
+    env$compfile
+  )
+
   return(env)
   
 }
@@ -124,9 +132,10 @@ compfile <- function(model) paste0(model, comppart,".cpp")
 compout  <- function(model) paste0(model, comppart, .Platform$dynlib.ext)
 
 compdir <- function() {
-  paste(c("mrgsolve","so",
-          as.character(GLOBALS[["version"]]),
-          R.version$platform),collapse="-")
+  paste0(
+    c("mrgsolve","so",as.character(GLOBALS[["version"]]),R.version$platform),
+    collapse="-"
+  )
 }
 
 cachefile <- function(model) "model-cache.RDS"
@@ -140,6 +149,14 @@ create_soloc <- function(loc,model,preclean) {
   if(!file_exists(soloc)) dir.create(soloc,recursive=TRUE)
   
   return(soloc)
+}
+
+setup_soloc <- function(build_loc) {
+  files <- c("mrgsolv.h", "modelheader.h")
+  ans <- file.copy(mrgsolve_file("include", files), build_loc, overwrite = TRUE)
+  if(!all(ans)) {
+    stop("Failed to copy build headers to build directory.", call.=FALSE)  
+  }
 }
 
 msub <- function(pattern,replacement,x,...) {

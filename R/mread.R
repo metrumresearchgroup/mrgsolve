@@ -374,7 +374,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     form_includes(spec[["INCLUDE"]]),
     "\n// NAMESPACES:",
     namespace,
-    "\n// BASIC MODELHEADER FILE:",
+    "\n// MODEL HEADER FILES:",
+    "#include \"mrgsolv.h\"",
     "#include \"modelheader.h\"",
     "\n//INCLUDE databox functions:",
     read_lines_from_base("databox.cpp"),
@@ -420,7 +421,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)
-  
+
   same <- check_and_copy(
     from = temp_write,
     to = build$compfile
@@ -438,18 +439,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Compile the model
   ## The shared object is model-mread-source.cpp
-  syst <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
-  
-  args <- c(
-    "CMD", "SHLIB",
-    ifelse(preclean, "--preclean ", ""),
-    build$compfile
-  )
   
   out <- suppressWarnings(
     exec_internal(
-      syst,
-      args = args,
+      cmd = build$cmd,
+      args = build$args,
       error = FALSE
     )
   )

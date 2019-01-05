@@ -9,7 +9,8 @@
 
 // NAMESPACES:
 
-// BASIC MODELHEADER FILE:
+// MODEL HEADER FILES:
+#include "mrgsolv.h"
 #include "modelheader.h"
 
 //INCLUDE databox functions:
