@@ -51,10 +51,18 @@ new_build <- function(file, model, project, soloc, code = NULL,
   
   ## Both project and soloc get normalized
   if(!file_writeable(soloc)) {
-    stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE) 
+    if(file_writeable(dirname(soloc))) {
+      message("Creating build directory: ", soloc)
+      dir.create(soloc)  
+      if(!file_writeable(soloc)) {
+        stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE)  
+      }
+    } else {
+      stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE) 
+    }
   }
   
-  soloc <-   normalizePath(soloc, mustWork=TRUE, winslash="/")
+  soloc <- normalizePath(soloc, mustWork=TRUE, winslash="/")
   
   env$soloc <- as.character(create_soloc(soloc,new_model,preclean))
   

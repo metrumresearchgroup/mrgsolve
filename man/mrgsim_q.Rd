@@ -4,8 +4,8 @@
 \alias{mrgsim_q}
 \title{Simulate from a model object with quicker turnaround}
 \usage{
-mrgsim_q(x, data, recsort = 1, stime = numeric(0),
-  matrix_return = FALSE, skip_init_calc = FALSE)
+mrgsim_q(x, data, recsort = 1, stime = numeric(0), output = NULL,
+  skip_init_calc = FALSE)
 }
 \arguments{
 \item{x}{a model object}
@@ -18,8 +18,8 @@ mrgsim_q(x, data, recsort = 1, stime = numeric(0),
 times will only be added to the output if there are no observation
 records in \code{data}}
 
-\item{matrix_return}{if \code{TRUE}, a matrix of simulated data is returned
-instead of an mrgsims object}
+\item{output}{output data type; if \code{NULL}, then an \code{mrgsims}
+object is returned; if \code{"df"} then a data frame is returned}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 }

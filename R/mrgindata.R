@@ -111,10 +111,10 @@ convert_character_cmt <- function(data, mod) {
 ##' 
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
-  
-  if(verbose) quiet <- FALSE
-  
+
   if(is.valid_data_set(x)) return(x)
+    
+  if(verbose) quiet <- FALSE
   
   if(!is.mrgmod(m)) {
     stop("A valid model object is required to validate the data set.", 

@@ -18,6 +18,8 @@
 
 ##' Internal model library
 ##' 
+##' @param model \code{character} name of a model in the library
+##' @param ... passed to \code{\link{mread_cache}}
 ##' @param list list available models
 ##' @export
 ##' 
@@ -25,6 +27,9 @@
 ##' See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
 ##' \code{\link{modlib_pkpd}}, 
 ##' \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
+##' 
+##' Call \code{modlib("<modelname>")} to compile and load a mode from the 
+##' library.
 ##' 
 ##' Call \code{modlib(list=TRUE)} to list available models.  Once the model 
 ##' is loaded (see examples below), call \code{as.list(mod)$code} to see
@@ -53,14 +58,19 @@
 ##' mrgsolve:::code(mod)
 ##' }
 ##' 
-modlib <- function(list=FALSE)  {
-  if(list) return(modlib_list())
-  return(object_dir() )
+modlib <- function(model = NULL,...,list=FALSE)  {
+  if(list) {
+    return(modlib_list())
+  }
+  if(is.character(model)) {
+    return(mread_cache(model, project = modlib(), ...))
+  }
+  return(object_dir())
 }
 
 modlib_models <- c("pk1cmt", "pk2cmt", "pk3cmt",
-                   "pk1", "pk2", "popex",
-                   "irm1", "irm2", "irm3",
+                   "pk", "pk1", "pk2", "popex",
+                   "irm1", "irm2", "irm3", "pred1", 
                    "emax", "tmdd", "viral1", "viral2", "effect")
 
 modlib_list <- function() {

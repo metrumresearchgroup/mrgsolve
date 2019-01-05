@@ -140,7 +140,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int nreq = request.size();
   
   // Columns from the data set to carry:
-  Rcpp::CharacterVector data_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
+  Rcpp::CharacterVector data_carry_ = 
+    Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
   const Rcpp::IntegerVector data_carry =  dat.get_col_n(data_carry_);
   const unsigned int n_data_carry = data_carry.size();
   
@@ -148,14 +149,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int n_idata_carry=0;
   Rcpp::IntegerVector idata_carry;
   if(nidata > 0) {
-    Rcpp::CharacterVector idata_carry_ = Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
+    Rcpp::CharacterVector idata_carry_ = 
+      Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
     idata_carry =  idat.get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
     dat.check_idcol(idat);
   }
   
   // Tran Items to carry:
-  Rcpp::CharacterVector tran_carry = Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
+  Rcpp::CharacterVector tran_carry = 
+    Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const unsigned int n_tran_carry = tran_carry.size();
   
   // Captures
@@ -200,12 +203,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   if((obscount == 0) || (obsaug)) {
     
-    Rcpp::NumericMatrix tgrid = Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
+    Rcpp::NumericMatrix tgrid = 
+      Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
     
     bool multiple_tgrid = tgrid.ncol() > 1;
     
     // Already has C indexing
-    Rcpp::IntegerVector tgridi = Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
+    Rcpp::IntegerVector tgridi = 
+      Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
     
     // Number of non-na times in each design
     std::vector<int> tgridn;
@@ -367,7 +372,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   prob->config_call();
   reclist mtimehx;
-
+  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
@@ -483,7 +488,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         bool sort_recs = false;
-
+        
         if(this_rec->from_data()) {
           
           if(this_rec->rate() < 0) {
@@ -620,4 +625,92 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   delete prob;
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
+}
+
+// [[Rcpp::export]]
+Rcpp::List EXPAND_OBSERVATIONS(
+    const Rcpp::NumericMatrix& data,
+    const Rcpp::NumericVector& times,
+    const Rcpp::IntegerVector& to_copy) {
+  
+  Rcpp::CharacterVector parnames;
+  // Create data objects from data and idata
+  dataobject dat(data,parnames);
+  dat.map_uid();
+  dat.locate_tran();
+  
+  const int NID = dat.nid();
+  
+  // Create odeproblem object
+  
+  recstack a(NID);
+  
+  unsigned int obscount = 0;
+  unsigned int evcount = 0;
+  unsigned int neq = 10000;
+  bool obsonly = false;
+  bool debug = false;
+  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+  int nextpos = -1;
+  obscount = 0;
+  
+  std::vector<rec_ptr> z;
+  
+  z.reserve(times.size());
+  
+  for(int j = 0; j < times.size(); ++j) {
+    rec_ptr obs = NEWREC(times[j],nextpos,true);
+    z.push_back(obs);
+  }
+  
+  size_t n = z.size();
+  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+    it->reserve((it->size() + n));
+    for(size_t h=0; h < n; h++) {
+      it->push_back(z.at(h));
+      ++obscount;
+    } 
+    std::sort(it->begin(), it->end(), CompRec());
+  }
+  
+  const int recs = (data.nrow()) + obscount;
+  
+  Rcpp::NumericMatrix d(recs,data.ncol());
+  
+  int crow = 0;
+  int last_data_row = -1;
+  
+  int Idcol = find_position("ID", dat.Data_names);
+  if(Idcol < 0) {
+    throw Rcpp::exception("Could not find ID column in data set.",false);
+  }
+  
+  Rcpp::LogicalVector index(recs);
+  
+  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+    int i = it - a.begin();
+    double id = dat.get_uid(i);
+    last_data_row = dat.start(i);
+    for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
+      if((*itt)->from_data()) {
+        last_data_row = (*itt)->pos();    
+        for(int i = 0; i < data.ncol(); i++) {
+          d(crow,i) = data(last_data_row,i);  
+          index[crow] = false;
+        }
+      }  else {
+        d(crow,dat.col.at(7)) = (*itt)->time();
+        d(crow,Idcol) = id;
+        for(int k=0; k < to_copy.size(); k++) {
+          d(crow,to_copy[k]) = data(last_data_row,to_copy[k]);  
+        }
+        index[crow] = true;
+      }
+      ++crow;
+    }
+  }
+  Rcpp::List ans;
+  ans["data"] = d;
+  ans["index"] = index;
+  return ans;
 }

@@ -79,7 +79,9 @@ public:
                  const unsigned int data_carry_start,
                  const Rcpp::IntegerVector& idata_carry,
                  const unsigned int idata_carry_start);
-    
+  std::vector<unsigned int> col;
+  Rcpp::CharacterVector Data_names;
+  
 protected:
   
   uidtype Uid;  ///< unique IDs in the data set
@@ -87,10 +89,7 @@ protected:
   datarowtype Endrow; ///< data set end row for each ID
   int Idcol; ///< which column holds ID
   
-  Rcpp::CharacterVector Data_names;
-  
-  std::vector<unsigned int> col;
-  
+
   Rcpp::IntegerVector par_from;  ///< index for parameters in data set
   Rcpp::IntegerVector par_to;    ///< index for parameters in param list
   Rcpp::CharacterVector parnames; ///< names of model parameters

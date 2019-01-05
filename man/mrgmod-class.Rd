@@ -90,6 +90,8 @@ the simulation \code{<character>}}
 
 \item{\code{shlib}}{a list of data related to build outcome \code{<list>}}
 
+\item{\code{funs}}{symbol names for model functions in the shared object}
+
 \item{\code{annot}}{model annotations \code{<list>}}
 
 \item{\code{plugin}}{model plugins \code{<character>}}

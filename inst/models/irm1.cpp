@@ -10,10 +10,10 @@ $PROB
 
 $PARAM @annotated
 CL   :  1  : Clearance (volume/time)
-VC   : 20  : Central volume (volume)
+V2   : 20  : Central volume (volume)
 Q    :  2  : Inter-compartmental clearance (volume/time)
-VP   : 10  : Peripheral volume of distribution (volume)
-KA1  :  1  : Absorption rate constant 1 (1/time)
+V3   : 10  : Peripheral volume of distribution (volume)
+KA   :  1  : Absorption rate constant 1 (1/time)
 KA2  :  1  : Absorption rate constant 2 (1/time)
 KIN  : 10  : Response in rate constant (1/time)
 KOUT :  2  : Response out rate constant (1/time)
@@ -31,8 +31,8 @@ RESP   : Response compartment
 EV2    : Second extravascular compartment (mass)
 
 $GLOBAL
-#define CP (CENT/VC)
-#define CT (PERIPH/VP)
+#define CP (CENT/V2)
+#define CT (PERIPH/V3)
 #define CLNL (VMAX/(KM+CP))
 #define INH (IMAX*pow(CP,n)/(pow(IC50,n)+pow(CP,n)))
 
@@ -40,9 +40,9 @@ $MAIN
 RESP_0 = KIN/KOUT;
 
 $ODE
-dxdt_EV1    = -KA1*EV1;
+dxdt_EV1    = -KA *EV1;
 dxdt_EV2    = -KA2*EV2;
-dxdt_CENT   =  KA1*EV1 + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
+dxdt_CENT   =  KA *EV1 + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
 dxdt_PERIPH =  Q*CP - Q*CT;
 dxdt_RESP   =  KIN*(1-INH) - KOUT*RESP;
 
