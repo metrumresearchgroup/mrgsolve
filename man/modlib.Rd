@@ -4,9 +4,13 @@
 \alias{modlib}
 \title{Internal model library}
 \usage{
-modlib(list = FALSE)
+modlib(model = NULL, ..., list = FALSE)
 }
 \arguments{
+\item{model}{\code{character} name of a model in the library}
+
+\item{...}{passed to \code{\link{mread_cache}}}
+
 \item{list}{list available models}
 }
 \description{
@@ -16,6 +20,9 @@ Internal model library
 See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
 \code{\link{modlib_pkpd}}, 
 \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
+
+Call \code{modlib("<modelname>")} to compile and load a mode from the 
+library.
 
 Call \code{modlib(list=TRUE)} to list available models.  Once the model 
 is loaded (see examples below), call \code{as.list(mod)$code} to see
