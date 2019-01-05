@@ -12,16 +12,15 @@ library(knitr)
 opts_chunk$set(comment='.', fig.align="center", fig.path="inst/maintenance/img/README-")
 ```
 
-# mrgsolve
+# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png">
 
-[![Build Status master](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)
+[![Build Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues)
 [![Metrumrg](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
 
 
-<img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png">
 
 mrgsolve is an R package for simulation from hierarchical, ordinary differential
 equation (ODE) based models typically employed in drug development.
@@ -29,12 +28,12 @@ equation (ODE) based models typically employed in drug development.
 
 ## Resources
 Please see [mrgsolve.github.io](https://mrgsolve.github.io) for additional
-resources, including
+resources, including:
 
 - [User Guide](https://mrgsolve.github.io/user_guide)
 - [R Documentation](https://mrgsolve.github.io/docs)
-- [Vignettes](https://mrgsolve.github.io/vignettes) (in progress)
-- [Gallery](https://github.com/mrgsolve/gallery) (in progress)
+- [Vignettes](https://mrgsolve.github.io/vignettes) 
+- [Gallery](https://github.com/mrgsolve/gallery) 
 
 
 ## Installation
