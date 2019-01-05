@@ -39,9 +39,13 @@ install.packages("mrgsolve")
 **Please** be sure to see important install-related information
 [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation).
 
-## Ask a question
+## Interaction
 
-We welcome questions about anything: installation, getting your model to
-work, understanding better how mrgsolve works. Please ask at the [Issue
+We welcome **questions** about anything mrgsolve: installation, getting
+your model to work, understanding better how mrgsolve works. We also
+welcome **suggestions** for how to make mrgsolve more useful to you and
+to the pharmacometrics community.
+
+Please interact with us at the [Issue
 Tracker](https://github.com/metrumresearchgroup/mrgsolve/issues). This
-requires a GitHub account. But we accept all types of questions there.
+requires a GitHub account.
