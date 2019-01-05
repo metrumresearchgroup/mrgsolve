@@ -23,7 +23,8 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="inst/maintenance/img/R
 
 
 mrgsolve is an R package for simulation from hierarchical, ordinary differential
-equation (ODE) based models typically employed in drug development.
+equation (ODE) based models typically employed in drug development.  mrgsolve
+is free and open-source software.  
 
 
 ## Resources
@@ -61,7 +62,102 @@ Please interact with us at the [Issue Tracker](https://github.com/metrumresearch
 This requires a GitHub account. 
 
 
+## Some examples
+
+### A simple simulation
+```{r,echo=FALSE}
+options(mrgsolve_mread_quiet = TRUE)
+```
 
 
+```{r}
+library(mrgsolve)
+```
+
+Load a model from the internal library
+```{r}
+mod <- mread("pk1", modlib())
+```
+
+Simulate a simple regimen
+```{r}
+mod %>% 
+  ev(amt = 100, ii = 24, addl = 9) %>%
+  mrgsim(end = 300, delta = 0.1) %>% 
+  plot(CP~time)
+```
+
+
+A more complicated regimen
+
+```{r}
+mod %>% 
+  ev_rx("100 over 2h q 24 x 9 then 50 q 12 x 20") %>%
+  mrgsim(end = 600, delta = 0.1) %>% 
+  plot(CP~time)
+```
+
+
+### Population simulation
+
+```{r}
+mod <- mread("popex", modlib()) %>% zero_re()
+```
+
+
+A data set looking at different patient weights and doses
+
+```{r, message=FALSE}
+library(dplyr)
+
+data <- expand.ev(amt = c(100,150), WT = seq(40,140,20)) %>% mutate(dose = amt)
+
+head(data)
+```
+
+Simulate
+```{r}
+mod %>% 
+  data_set(data) %>% 
+  carry_out(dose,WT) %>%
+  mrgsim(delta = 0.1, end = 72) %>% 
+  plot(IPRED~time|factor(dose),scales = "same")
+```
+
+
+### Sensitivity analysis with PBPK model
+
+```{r}
+mod <- mread("pbcsa", modlib())
+```
+
+Reference
+
+```{r, comment = " "}
+blocks(mod,PROB)
+```
+
+Model parameters
+
+```{r}
+param(mod)
+```
+
+
+Set up a  batch to siumulate
+```{r}
+idata <- expand.idata(Kp_liv = seq(4,20,2))
+
+idata
+```
+
+
+```{r}
+mod %>% 
+  ev(amt = 2000) %>% 
+  idata_set(idata) %>%
+  mrgsim(end = 24, delta = 0.1) %>%
+  plot(CSA~time, scale = list(y = list(log =TRUE, at = 10^seq(-4,4))))
+```
 
 
