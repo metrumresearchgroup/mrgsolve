@@ -88,11 +88,12 @@ mod %>%
 ```
 
 
-A more complicated regimen
+A more complicated regimen: 100 mg infusions over 2 hours every 24 hours
+for one week, followed by 50 mg boluses every 12 hours for 10 days:
 
 ```{r}
 mod %>% 
-  ev_rx("100 over 2h q 24 x 9 then 50 q 12 x 20") %>%
+  ev_rx("100 over 2h q 24 x 7 then 50 q 12 x 20") %>%
   mrgsim(end = 600, delta = 0.1) %>% 
   plot(CP~time)
 ```
