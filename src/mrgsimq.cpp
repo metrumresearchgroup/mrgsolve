@@ -377,7 +377,7 @@ Rcpp::NumericMatrix MRGSIMQ(const Rcpp::List parin,
       
       if(prob->any_mtime()) {
         if(prob->newind() <=1) mtimehx.clear();  
-        std::vector<shuttle> mt  = prob->mtimes();
+        std::vector<evdata> mt  = prob->mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           double this_time = (mt[mti]).time;
           if(this_time < tto) continue;

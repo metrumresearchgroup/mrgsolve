@@ -49,8 +49,8 @@ protected:
   void* prob; ///< object to pass to re-simulated function
 };
 
-struct shuttle {
-  shuttle(double a_, int b_) :  time(a_), evid(b_) {
+struct evdata {
+  evdata(double a_, int b_) :  time(a_), evid(b_) {
     cmt = 1;
     amt = 0.0;
     rate = 0.0;
@@ -85,11 +85,10 @@ public:
   void stop() {SYSTEMOFF=9;}
   void stop_id() {SYSTEMOFF=1;}
   void stop_id_cf(){SYSTEMOFF=2;}
-  std::vector<shuttle> recs;
+  std::vector<evdata> mevector;
   void mevent(double time, int evid);
   double tad();
 };
-
 
 //! signature for <code>$MAIN</code>
 #define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& self, dvec& _pred_, resim& simeta

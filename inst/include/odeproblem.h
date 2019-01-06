@@ -171,9 +171,9 @@ public:
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
   
-  bool any_mtime() {return d.recs.size() > 0;}
-  std::vector<shuttle> mtimes(){return d.recs;}
-  void clear_mtime(){d.recs.clear();}
+  bool any_mtime() {return d.mevector.size() > 0;}
+  std::vector<evdata> mtimes(){return d.mevector;}
+  void clear_mtime(){d.mevector.clear();}
   
 protected:
   
