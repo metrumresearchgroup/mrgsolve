@@ -95,8 +95,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   Capture.assign(n_capture_,0.0);
   
-  simeta = resim(&dosimeta,reinterpret_cast<void*>(this));
-  simeps = resim(&dosimeps,reinterpret_cast<void*>(this));
+  simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));
+  simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
   
 }
 

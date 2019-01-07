@@ -18,9 +18,9 @@
 #ifndef MODELHEADER_H
 #define MODELHEADER_H
 
-#include <iostream>
 #include <vector>
 #include <math.h>
+#include "mrgsolv.h"
 
 typedef double local_double;
 typedef int    local_int;
@@ -119,14 +119,5 @@ typedef bool   local_bool;
 
 // Macro to insert dxdt_CMT = 0; for all compartments
 #define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; ++_i_) _DADT_[_i_] = 0;
-
-// Some functions for reporting values during a
-// simulation run
-template <class type> void report(type a) {
-  std::cout << "from report " << a << std::endl;
-}
-template <class type1, class type2> void report(type1 a, type2 b) {
-  std::cout << a << " " << b << std::endl;
-}
 
 #endif

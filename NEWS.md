@@ -4,15 +4,20 @@
 - Added `numerics_only` function to drop non-numeric columns from 
 the input data set after optionally converting logical columns
 to integer
+- Added `ev_rx` function to write dosing interventions in notation similar
+to a prescription sig
 
 ## New features
 - Added `$PRED` block for models that don't utilize any compartments
 - Added `pred1` to the internal model library (`modlib()`)
 - Added `mrgsim_q` function for simulation from a model objejct 
 with quicker turnaround time
-- `mread` will take `soloc` and `project` arguments from `options()`
-- Added `ev_rx` to allow creation of dosing events with Rx-like specification
-- Added `output` argument to `mrgsim` so that e.g. data.frame can be returned
+- `mread` will take `soloc` and `project` arguments from `options()` as
+`mrgsolve.soloc` and `mrgsolve.project`, respectively
+- Added `output` argument to `mrgsim` so that e.g. data.frame can be returned, 
+without creating the usual `mrgsims` object
+- The directory name passed to the `soloc` argument of `mread` (or `mcode` or 
+cache versions of both) will be created if it doesn't exist
 
 ## New behavior
 - `time/TIME` is no longer required in a data set when `$PRED` is in use
@@ -25,14 +30,22 @@ input data set with the following names: `ID`, `time/TIME`,
 or any column that shares a name with an item in the parameter list
 - An `index` argument was added to the `$NMXML` block to allow results
 selection when multiple estimation blocks were used.  The new default 
-is to use the last result
+is to use the last result.
+- `modlib` is now able to function as a wrapper to `mread` for models in 
+the model library so that, for example,  `modlib("pk1")` is equivalent to 
+`mread("pk1", modlib())`.
 
 ## Bugs fixed
 - Fixed bug related to record sort order #406
 
-
 ## Deprecated
 - `drop.re` and `drop_re`; use `zero_re` instead
+
+## Breaking changes
+- An undocumented function called `report` was previously available to use in 
+model code.  This function has been moved to a namespace and is now available
+as `mrg::report`.  This feature continues to be undocumented.
+
 
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN

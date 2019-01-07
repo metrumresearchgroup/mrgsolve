@@ -14,35 +14,7 @@
 #include "modelheader.h"
 
 //INCLUDE databox functions:
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
-//
-// This file is part of mrgsolve.
-//
-// mrgsolve is free software: you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-//
-// mrgsolve is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
-
-void databox::mevent(double time, int evid) {
-  evdata ev(time,evid);
-  mevector.push_back(ev);
-}
-
-double databox::tad() {
-  static double told = time;
-  if(newind <=1) told = 0;
-  if(evid==1) told = time;
-  return told < 0 ? 0 : time - told;
-}
-
+#include "databox_cpp.h"
 
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:

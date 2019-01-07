@@ -36,7 +36,8 @@ NULL
 ##' @param file the full file name (with extension, but without path)
 ##' where the model is specified
 ##' @param soloc the directory location where the model shared object is built
-##' and stored; see details; this argument can be set via \code{options()}
+##' and stored; see details; this argument can be set via \code{options()}; 
+##' if the directory does not exist, `mread` will attempt to create it.
 ##' @param code a character string with model specification code to be 
 ##' used instead of a model file
 ##' @param ignore.stdout passed to system call for compiling model
@@ -75,7 +76,8 @@ NULL
 ##' artifacts across R restarts.  Also, if simulation from a single model is 
 ##' being done in separate processes on separate compute nodes, it might be 
 ##' necessary to store these compilcation artifacts in a local directory 
-##' to make them accessible to the different nodes. 
+##' to make them accessible to the different nodes. If the \code{soloc} 
+##' directory does not exist, `mread` will attempt to create it.
 ##' 
 ##' Similarly, using \code{mread_cache} will cache results in the temporary 
 ##' directory and the cache cannot be accessed after the R process is 
@@ -378,7 +380,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "#include \"mrgsolv.h\"",
     "#include \"modelheader.h\"",
     "\n//INCLUDE databox functions:",
-    read_lines_from_base("databox.cpp"),
+    "#include \"databox_cpp.h\"",
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
