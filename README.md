@@ -1,5 +1,5 @@
 
-# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png" width="150px">
+# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png" width="135px">
 
 [![Build
 Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
