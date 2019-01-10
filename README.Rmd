@@ -12,7 +12,7 @@ library(knitr)
 opts_chunk$set(comment='.', fig.align="center", fig.path="inst/maintenance/img/README-")
 ```
 
-# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png">
+# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png" width="150px">
 
 [![Build Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
