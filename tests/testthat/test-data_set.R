@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -112,7 +112,7 @@ test_that("Data set column order gives same answer", {
 
 test_that("numerics_only", {
   n <- 10
-  data <- dplyr::data_frame(
+  data <- tibble(
     ID = as.numeric(seq(n)), 
     EYES = "black", 
     DATETM = as.POSIXct("2018-01-01 08:00:00"), 

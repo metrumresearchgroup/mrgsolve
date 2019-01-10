@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -85,7 +85,7 @@ funset <- function(x) {
     } else {
       name <- as.character(NA)
     }
-    data_frame(name=name,loaded=loaded)
+    tibble(name=name,loaded=loaded)
   }) 
   
   ans <- 
@@ -94,7 +94,7 @@ funset <- function(x) {
   
   ans <- as.data.frame(ans[,c("name", "loaded"),drop=FALSE])
   
-  shlib <- data_frame(
+  shlib <- tibble(
     package=pkg,
     version=as.character(build_version(x)),
     compiled=compiled(x)

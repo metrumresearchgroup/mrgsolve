@@ -18,7 +18,8 @@ mcode_cache(model, code, project = getOption("mrgsolve.project",
 
 \item{project}{project name}
 
-\item{...}{passed to \code{\link{mread}}}
+\item{...}{passed to \code{\link{mread}}; see that help topic for other
+arguments that can be set}
 }
 \description{
 This is a convenience function that ultimately calls \code{\link{mread}}.

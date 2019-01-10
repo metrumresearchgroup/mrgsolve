@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -117,9 +117,6 @@ setMethod("show", "ev", function(object) {
   print(as.data.frame(object))
   return(invisible(NULL))
 })
-
-
-as_data_frame_ev <- function(x) x@data
 
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {

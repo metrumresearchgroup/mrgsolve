@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -27,9 +27,9 @@ context("test-ev_assign")
 e <- ev(amt=100)
 b <- ev(amt=200)
 
-data0 <- data_frame(ID = c(1,2,3), COV = c(1,2,3))
+data0 <- tibble(ID = c(1,2,3), COV = c(1,2,3))
 
-data <- data_frame(ID = c(1,2,3,4), COV = c(2,1,1,2))
+data <-tibble(ID = c(1,2,3,4), COV = c(2,1,1,2))
 
 
 test_that("Input error", {

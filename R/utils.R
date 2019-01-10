@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -535,7 +535,7 @@ forbak <- function(x)nocb(locf(x))
 bakfor <- function(x)locf(nocb(x))
 nocb <- function(x)rev(locf(rev(x)))
 
-locf_data_frame <- function(x) {
+locf_tibble <- function(x) {
   mutate_all(x, .funs = funs__("locf"))
 }
 

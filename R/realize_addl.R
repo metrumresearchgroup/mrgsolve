@@ -1,3 +1,21 @@
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+#
+# This file is part of mrgsolve.
+#
+# mrgsolve is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# mrgsolve is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
+
+
 ##' Make addl doses explicit in an event object or data set
 ##' 
 ##' @param x a \code{data_set} data frame or an \code{ev} object (see details)
@@ -133,9 +151,9 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   if(locf) {
     has_na <- any(is.na(x))
     if(has_na & hasid) {
-      df <- locf_data_frame(group_by__(df,"ID"))
+      df <- locf_tibble(group_by__(df,"ID"))
     } else {
-      df <- locf_data_frame(df) 
+      df <- locf_tibble(df) 
     }
   }
   as.data.frame(df)

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,8 @@
 ##' @param model model name
 ##' @param project project name
 ##' @param code character string specifying a \code{mrgsolve} model
-##' @param ... passed to \code{\link{mread}}
+##' @param ... passed to \code{\link{mread}}; see that help topic for other
+##' arguments that can be set
 ##' @details
 ##' Note that the arguments are in slightly different order than 
 ##' \code{\link{mread}}.  The default \code{project} is \code{tempdir()}.

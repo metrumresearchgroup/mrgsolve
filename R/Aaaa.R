@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -30,10 +30,11 @@
 ##' @importFrom dplyr select_vars everything 
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 ##' @importFrom dplyr mutate_all group_by ungroup n
+##' @importFrom dplyr data_frame as_data_frame
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
-##' @importFrom tibble as_data_frame data_frame
+##' @importFrom tibble tibble as_tibble
 ##' @importFrom rlang quos enquo syms !!!
 ##' @importFrom sys exec_internal
 ##' 

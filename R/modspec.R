@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -190,6 +190,10 @@ modelparse <- function(txt,
   }
   
   names(spec) <- labs
+  
+  for(i in which(labs %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
+    spec[[i]] <- gsub("; *$", "", spec[[i]])  
+  }
   
   return(spec)
   
@@ -603,7 +607,6 @@ PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,...) {
     l <- parse_annot(x,block="PARAM",envir=env$ENV)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
-    
   } else {
     x <- tolist(x,envir=env$ENV) 
     env[["param"]][[pos]] <- x

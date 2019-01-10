@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -100,7 +100,7 @@ $ENV
 x <- 1
 y <- 2
 e <- ev(amt=100)
-df <- data_frame(ID=1:2,amt=3)
+df <- tibble(ID=1:2,amt=3)
 '
 
 

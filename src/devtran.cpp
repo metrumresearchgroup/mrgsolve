@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2018  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 //
 // This file is part of mrgsolve.
 //
@@ -562,7 +562,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(prob->any_mtime()) {
         if(prob->newind() <=1) mtimehx.clear();  
-        std::vector<shuttle> mt  = prob->mtimes();
+        std::vector<mrgsolve::evdata> mt  = prob->mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           double this_time = (mt[mti]).time;
           if(this_time < tto) continue;

@@ -52,7 +52,8 @@ where the model is specified}
 \item{warn}{logical; if \code{TRUE}, print warning messages that may arise}
 
 \item{soloc}{the directory location where the model shared object is built
-and stored; see details; this argument can be set via \code{options()}}
+and stored; see details; this argument can be set via \code{options()}; 
+if the directory does not exist, `mread` will attempt to create it.}
 
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
 cleaned up first}
@@ -89,7 +90,8 @@ artifacts are lost when R restarts when the default is used.  Changing
 artifacts across R restarts.  Also, if simulation from a single model is 
 being done in separate processes on separate compute nodes, it might be 
 necessary to store these compilcation artifacts in a local directory 
-to make them accessible to the different nodes. 
+to make them accessible to the different nodes. If the \code{soloc} 
+directory does not exist, `mread` will attempt to create it.
 
 Similarly, using \code{mread_cache} will cache results in the temporary 
 directory and the cache cannot be accessed after the R process is 

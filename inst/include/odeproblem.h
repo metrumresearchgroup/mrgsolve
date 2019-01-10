@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2017  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
 //
 // This file is part of mrgsolve.
 //
@@ -24,9 +24,9 @@
 #define ODEPROBLEM_H
 #include <math.h>
 #include <vector>
+#include "RcppInclude.h"
 #include "odepack_dlsoda.h"
 #include "mrgsolv.h"
-#include "RcppInclude.h"
 #include "datarecord.h"
 
 // 
@@ -171,9 +171,9 @@ public:
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
   
-  bool any_mtime() {return d.recs.size() > 0;}
-  std::vector<shuttle> mtimes(){return d.recs;}
-  void clear_mtime(){d.recs.clear();}
+  bool any_mtime() {return d.mevector.size() > 0;}
+  std::vector<mrgsolve::evdata> mtimes(){return d.mevector;}
+  void clear_mtime(){d.mevector.clear();}
   
 protected:
   
@@ -194,8 +194,8 @@ protected:
   std::vector<double> a;     ///< used for advan 1/2/3/4 calculations
   std::vector<double> alpha; ///< used for advan 1/2/3/4 calculation
   
-  resim simeta;  ///< functor for resimulating etas
-  resim simeps; ///< functor for resimulating epsilons
+  mrgsolve::resim simeta;  ///< functor for resimulating etas
+  mrgsolve::resim simeps; ///< functor for resimulating epsilons
 
   arma::mat Omega; ///< variance/covariance matrix for between-subject variability
   arma::mat Sigma; ///< variance/covariance matrix for within-subject variability

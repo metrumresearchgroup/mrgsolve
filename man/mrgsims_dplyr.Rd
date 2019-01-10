@@ -16,6 +16,7 @@
 \alias{select.mrgsims}
 \alias{slice.mrgsims}
 \alias{as_data_frame.mrgsims}
+\alias{as_tibble.mrgsims}
 \title{Methods for handling output with dplyr verbs}
 \usage{
 \method{as.tbl}{mrgsims}(x, ...)
@@ -44,7 +45,9 @@ mutate_sims(.data, ...)
 
 \method{slice}{mrgsims}(.data, ...)
 
-\method{as_data_frame}{mrgsims}(.data_, ...)
+as_data_frame.mrgsims(.data_, ...)
+
+\method{as_tibble}{mrgsims}(.data_, ...)
 }
 \arguments{
 \item{x}{mrgsims object}
