@@ -4,13 +4,13 @@ Version: 0.8.12.9000
 Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
     Models
 Authors@R: c(
-    person("Kyle T", "Baron", "", "kyleb@metrumrg.com", c("aut", "cre")),
-    person("Alan C", "Hindmarsh", "", "", c("ctb")),
-    person("Linda R", "Petzold", "", "", c("ctb")),
-    person("Bill", "Gillespie", "", "", c("ctb")),
-    person("Charles", "Margossian", "", "", c("ctb")),
-    person("Devin", "Pastoor", "", "", c("ctb")),
-    person("Bill", "Denney", "", "", c("ctb"), comment=c(ORCID="0000-0002-5759-428X")),
+    person("Kyle T", "Baron", "", "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
+    person("Alan C", "Hindmarsh", "", "", role=c("ctb")),
+    person("Linda R", "Petzold", "", "", role=c("ctb")),
+    person("Bill", "Gillespie", "", "", role=c("ctb")),
+    person("Charles", "Margossian", "", "", role=c("ctb")),
+    person("Devin", "Pastoor", "", "", role=c("ctb")),
+    person("Bill", "Denney", "", "", role=c("ctb"), comment=c(ORCID="0000-0002-5759-428X")),
     person("Metrum Research Group LLC", role =  c("cph"))
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>

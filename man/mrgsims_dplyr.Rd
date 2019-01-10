@@ -44,7 +44,7 @@ mutate_sims(.data, ...)
 
 \method{slice}{mrgsims}(.data, ...)
 
-\method{as_data_frame}{mrgsims}(.data_, ...)
+as_data_frame.mrgsims(.data_, ...)
 }
 \arguments{
 \item{x}{mrgsims object}
