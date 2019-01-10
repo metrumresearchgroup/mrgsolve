@@ -151,9 +151,9 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   if(locf) {
     has_na <- any(is.na(x))
     if(has_na & hasid) {
-      df <- locf_data_frame(group_by__(df,"ID"))
+      df <- locf_tibble(group_by__(df,"ID"))
     } else {
-      df <- locf_data_frame(df) 
+      df <- locf_tibble(df) 
     }
   }
   as.data.frame(df)

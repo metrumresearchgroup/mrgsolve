@@ -149,13 +149,13 @@ as.tbl.mrgsims <- function(x,...) {
 ##' @rdname mrgsims_dplyr
 ##' @export
 pull.mrgsims <- function(.data, ...) {
-  dplyr::pull(as_data_frame.mrgsims(.data), ...)
+  dplyr::pull(as_tibble.mrgsims(.data), ...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 filter_.mrgsims <- function(.data,...) {
-  dplyr::filter_(as_data_frame.mrgsims(.data),...)
+  dplyr::filter_(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
@@ -168,20 +168,20 @@ filter_sims <- function(.data, ... ) {
 ##' @rdname mrgsims_dplyr
 ##' @export
 group_by.mrgsims <- function(.data,...,add=FALSE) {
-  dplyr::group_by(as_data_frame.mrgsims(.data),...,add = add)
+  dplyr::group_by(as_tibble.mrgsims(.data),...,add = add)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 distinct.mrgsims <- function(.data,...,.keep_all=FALSE) {
-  dplyr::distinct(as_data_frame.mrgsims(.data),...,
+  dplyr::distinct(as_tibble.mrgsims(.data),...,
                   .keep_all=.keep_all)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 mutate.mrgsims <- function(.data,...) {
-  dplyr::mutate(as_data_frame.mrgsims(.data),...)
+  dplyr::mutate(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
@@ -194,39 +194,46 @@ mutate_sims <- function(.data, ...) {
 ##' @rdname mrgsims_dplyr
 ##' @export
 summarise.each <- function(.data,funs,...) {
-  dplyr::summarise_each(as_data_frame.mrgsims(.data),funs,...)
+  dplyr::summarise_each(as_tibble.mrgsims(.data),funs,...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 summarise.mrgsims <- function(.data,...) {
-  dplyr::summarise(as_data_frame.mrgsims(.data),...)
+  dplyr::summarise(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 do.mrgsims <- function(.data,...,.dots) {
-  dplyr::do(as_data_frame.mrgsims(.data),...)
+  dplyr::do(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 select.mrgsims <- function(.data,...) {
-  dplyr::select(as_data_frame.mrgsims(.data),...)
+  dplyr::select(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @export
 slice.mrgsims <- function(.data,...) {
-  dplyr::slice(as_data_frame.mrgsims(.data),...)
+  dplyr::slice(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
 ##' @param .data_ mrgsims object
 ##' @export
 as_data_frame.mrgsims <- function(.data_,...) {
-  as_data_frame(as.data.frame(.data_),...)
+  as_tibble(as.data.frame(.data_),...)
 }
+
+##' @rdname mrgsims_dplyr
+##' @export
+as_tibble.mrgsims <- function(.data_,...) {
+  as_tibble(as.data.frame(.data_),...)  
+}
+
 
 ##' @rdname mrgsims
 ##' @param row.names passed to \code{\link{as.data.frame}}

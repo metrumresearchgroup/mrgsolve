@@ -26,7 +26,7 @@ context("test-deslist")
 
 test_that("as_deslist", {
 
-  idata <- data_frame(ID=c(33,11,88), start=0, end=c(1,2,3))
+  idata <- tibble(ID=c(33,11,88), start=0, end=c(1,2,3))
   des <- as_deslist(idata,descol="ID")
   expect_identical("ID", attr(des, "descol"))
 

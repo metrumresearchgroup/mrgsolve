@@ -228,7 +228,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   annot_list_maybe <- nonull.list(mread.env$annot)
   
   if (!length(annot_list_maybe)) {
-    annot <- dplyr::data_frame()
+    annot <- tibble()
   } else {
     annot <- dplyr::bind_rows(annot_list_maybe)
   }

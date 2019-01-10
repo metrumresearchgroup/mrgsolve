@@ -111,7 +111,7 @@ test_that("Run with data set - tbl", {
   data <- filter(extran3, ID <= 3)
   out <- mod %>% data_set(dplyr::tbl_df(data)) %>% mrgsim
   expect_equal(nrow(out),nrow(data))
-  out <- mod %>% data_set(as_data_frame(data)) %>% mrgsim
+  out <- mod %>% data_set(as_tibble(data)) %>% mrgsim
   expect_equal(nrow(out),nrow(data))
 })
 
@@ -138,7 +138,7 @@ test_that("Run idata set with ev", {
 
 
 test_that("Duplicate ID in idata_set gives error", {
-  idata <- data_frame(ID=rep(1:10,each=5),CL=2)    
+  idata <- tibble(ID=rep(1:10,each=5),CL=2)    
   expect_error(mod %>% idata_set(idata) %>% mrgsim)
   expect_error(mrgsim(mod,idata=idata_set))
 })

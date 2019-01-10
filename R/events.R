@@ -109,7 +109,7 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
     stop("argument \"amt\" is missing, with no default.", call.=FALSE)  
   }
   
-  data <- as_data_frame(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
+  data <- as_tibble(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
 

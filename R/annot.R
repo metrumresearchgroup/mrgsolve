@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 render_annot <- function(x,block,...) {
-  x <- dplyr::bind_rows(lapply(x,tibble::as_data_frame))
+  x <- dplyr::bind_rows(lapply(x,tibble::as_tibble))
   x <- dplyr::mutate(x,block=block) 
   x <- x[,unique(c("block", names(x))),drop=FALSE]
   as.data.frame(x)
@@ -136,15 +136,15 @@ cobble_details <- function(x) {
   
   par <- as.numeric(param(x))
   if(length(par) > 0) {
-    ans[[1]] <- dplyr::data_frame(block="PARAM",name=names(par))  
+    ans[[1]] <- tibble(block="PARAM",name=names(par))  
   }
   fx <- as.numeric(x@fixed)
   if(length(fx)>0) {
-    ans[[3]] <- dplyr::data_frame(block="FIXED", name=names(fx)) 
+    ans[[3]] <- tibble(block="FIXED", name=names(fx)) 
   }
   cmt <- as.numeric(init(x))
   if(length(cmt)>0) {
-    ans[[3]] <- dplyr::data_frame(block="CMT", name=names(cmt)) 
+    ans[[3]] <- tibble(block="CMT", name=names(cmt)) 
   }
   
   ans <- dplyr::bind_rows(ans)
@@ -165,7 +165,7 @@ complete_details <- function(annot,x) {
   if(length(par) > 0) {
     miss <- setdiff(names(par),name)
     if(length(miss) > 0) {
-      par <- dplyr::data_frame(block="PARAM",name=miss,descr='.',unit='.',options='.')
+      par <- tibble(block="PARAM",name=miss,descr='.',unit='.',options='.')
     } else {
       par <- dum 
     }
@@ -175,7 +175,7 @@ complete_details <- function(annot,x) {
   if(length(cmt) > 0) {
     miss <- setdiff(names(cmt),name)
     if(length(miss) > 0) {
-      cmt <- dplyr::data_frame(block="CMT",name=miss,descr='.',unit='.',options='.')
+      cmt <- tibble(block="CMT",name=miss,descr='.',unit='.',options='.')
     } else {
       cmt <- dum 
     }
@@ -185,7 +185,7 @@ complete_details <- function(annot,x) {
   if(length(fx) > 0) {
     miss <- setdiff(names(fx),name)
     if(length(miss) > 0) {
-      fx <- dplyr::data_frame(block="FIXED",name=miss,descr='.',unit='.',options='.')
+      fx <- tibble(block="FIXED",name=miss,descr='.',unit='.',options='.')
     }  else {
       annot <- dplyr::bind_rows(annot,fx) 
     }
@@ -199,7 +199,7 @@ add_detail_values <- function(annot,x) {
     annot <- mutate(annot, value = NA_real_)
     return(annot)
   }
-  x <- dplyr::data_frame(name=names(x),value=x)
+  x <- tibble(name=names(x),value=x)
   annot <- dplyr::left_join(annot,x,by="name")
   return(annot)
   

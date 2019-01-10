@@ -118,9 +118,6 @@ setMethod("show", "ev", function(object) {
   return(invisible(NULL))
 })
 
-
-as_data_frame_ev <- function(x) x@data
-
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {
     if(is.ev(x)) {

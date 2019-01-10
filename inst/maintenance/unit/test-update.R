@@ -71,8 +71,8 @@ test_that("Update parameter - via data, time-varying", {
   ## data with time-varying covariate
   data <- 
     bind_rows(
-      data_frame(ID=1, time=seq(0,10,1), A = 2*time, B = 1.1*time),
-      data_frame(ID=2, time=seq(0,15,1), A = 22*time, B = 11.1*time)
+      tibble(ID=1, time=seq(0,10,1), A = 2*time, B = 1.1*time),
+      tibble(ID=2, time=seq(0,15,1), A = 22*time, B = 11.1*time)
     ) %>% mutate(evid=ifelse(time==1,1,0),cmt=1)
     
   out <- mod1 %>% data_set(data)  %>% mrgsim()

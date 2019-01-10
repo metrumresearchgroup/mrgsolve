@@ -150,7 +150,7 @@ test_that("misc methods", {
 })
 
 test_that("as.ev", {
-  df <- data_frame(amt = 100, foo = 5)
+  df <- tibble(amt = 100, foo = 5)
   d <- as.data.frame(as.ev(df))
   expect_equal(d$cmt,1)
   expect_equal(d$amt,100)
@@ -158,7 +158,7 @@ test_that("as.ev", {
   expect_equal(d$time,0)
   expect_equal(d$foo,5)
 
-  df <- data_frame(amt = 200, evid = 1)
+  df <- tibble(amt = 200, evid = 1)
   obs <- mutate(df, evid = 0)
   df <- bind_rows(df,obs)
   d <- as.data.frame(as.ev(df))
