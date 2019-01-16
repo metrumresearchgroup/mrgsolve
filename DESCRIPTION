@@ -1,7 +1,7 @@
 Package: mrgsolve
 Type: Package
-Version: 0.8.12.9000
-Title: Simulate from ODE-Based Population PK/PD and Systems Pharmacology
+Version: 0.9.0
+Title: Simulate from ODE-Based Population PK/PD, Systems Pharmacology, and PBPK
     Models
 Authors@R: c(
     person("Kyle T", "Baron", "", "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
@@ -11,12 +11,12 @@ Authors@R: c(
     person("Charles", "Margossian", "", "", role=c("ctb")),
     person("Devin", "Pastoor", "", "", role=c("ctb")),
     person("Bill", "Denney", "", "", role=c("ctb"), comment=c(ORCID="0000-0002-5759-428X")),
-    person("Metrum Research Group LLC", role =  c("cph"))
+    person("Metrum Research Group", role =  c("cph"))
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
-Copyright: Metrum Research Group, LLC 2018
+Copyright: Metrum Research Group 2019
 Description: Facilitates simulation from hierarchical, ordinary
     differential equation (ODE) based models typically employed in drug development.
     A model specification file is created consisting of R and C++ code that
@@ -36,7 +36,7 @@ Imports:
     RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 1.2),
     rlang (>= 0.3.0.1), 
-    sys
+    sys (>= 2.1)
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 

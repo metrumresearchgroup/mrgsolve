@@ -19,10 +19,12 @@ valid_funs <- function(x) {
   x1 <- length(x)==4
   x2 <- identical(names(x), c("main", "ode", "table", "config"))
   if(x1 & x2) return(list(TRUE,""))
-  return(list(FALSE, 
-              c("Invalid functions specification.",
-                "This model object is not compatible with the current mrgsolve version.",
-                "Rebuild the model object or upgrade the mrgsolve version.")))
+  msg <- c(
+    "Invalid functions specification.",
+    "This model object is not compatible with the current mrgsolve version.",
+    "Rebuild the model object or upgrade the mrgsolve version."
+  )
+  return(list(FALSE, msg))
 }
 
 check_names <- function(x,par,cmt) {
@@ -548,25 +550,27 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
 
 ##' @rdname loadso
 ##' @export
-setMethod("loadso", "mrgmod", function(x,...) {
-  if(.Platform$OS.type!="unix") try(dyn.unload(sodll(x)),silent=TRUE)
+loadso.mrgmod <- function(x,...) {
+  if(.Platform$OS.type!="unix") {
+    try(dyn.unload(sodll(x)),silent=TRUE)
+  }
   foo <- try(dyn.load(sodll(x)))
   if(class(foo)=="try-catch") {
     message(foo)
     return(invisible(FALSE))
   }
   return(invisible(x))
-})
+}
 
-setMethod("unloadso", "mrgmod", function(x, ...) {
-  out <- try(dyn.unload(sodll(x)), TRUE)
+unloadso.mrgmod <- function(x, ...) {
+  out <- try(dyn.unload(sodll(x)),silent=TRUE)
   if(inherits(out, "try-error")) {
     stop(out[1])
   } else {
-    message("unloaded ", sodll(x))
+    message("unloaded ", basename(sodll(x)))
   }
   return(invisible(NULL))
-})
+}
 
 ##' @rdname tgrid
 ##' @export

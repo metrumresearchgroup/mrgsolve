@@ -36,12 +36,37 @@ setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 setGeneric("see", function(x,...) standardGeneric("see"))
 
 ##' Load the model shared object
+##' 
+##' Once the model is compiled, the model object can be used to re-load
+##' the model shared object (the compiled code underlying the mode) when 
+##' the simulation is to be done in a different R process. 
 ##'
 ##' @param x the model object
-##' @param ... passed along
+##' @param ... not used
+##' 
+##' @return The model object (invisibly).
+##' 
+##' 
+##' @details
+##' The `loadso` function most frequently needs to be used when parallelizing
+##' simulations across worker nodes.  The model can be run after calling 
+##' `loadso`, without requiring that it is re-compiled on worker nodes. It is 
+##' likely required that the model is built (and the shared object stored) in 
+##' a local directory off of the working R directory (see the second example).
+##' 
+##' @examples
+##' 
+##' \dontrun{ 
+##'   mod <- mread("pk1", modlib())
+##'   loadso(mod)
+##'   
+##'   mod2 <- mread("pk2", modlib(), soloc = "build")
+##'   loadso(mod2)
+##' }
+##' 
 ##' @export
-setGeneric("loadso", function(x,...) standardGeneric("loadso"))
-setGeneric("unloadso", function(x,...) standardGeneric("unloadso"))
+loadso <- function(x,...) UseMethod("loadso")
+unloadso <- function(x,...) UseMethod("unloadso")
 
 ##' Get the times at which the model will be evaluated
 ##'
