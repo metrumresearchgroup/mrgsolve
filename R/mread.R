@@ -18,8 +18,6 @@
 ##' @include modspec.R
 NULL
 
-
-
 ##' Read a model specification file
 ##' 
 ##' \code{mread} reads and parses the \code{mrgsolve} model specification file,

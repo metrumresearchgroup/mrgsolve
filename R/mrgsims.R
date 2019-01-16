@@ -328,7 +328,6 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
       ), call.=FALSE)
     }
   }
-  
   tname <- timename(x@data)
   lhs <- paste(ynames, collapse="+")
   fmla <- as.formula(paste0(lhs, "~", tname))
@@ -362,19 +361,24 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   
   if(y[[3]] == '.')  y[[3]] <- quote(time)
   
+  if(length(y[[2]])==1) ylab <- deparse(y[[2]])
+
   y <- structure(y, .Environment=environment())
   gr <- eval(substitute(groups),data)
-  ans <- lattice::xyplot(y,data=data,
-                         groups=gr,
-                         ylab=ylab,
-                         outer=outer,
-                         type=type,
-                         scales=scales,
-                         lwd=lwd,
-                         panel=function(...) {
-                           if(show.grid) lattice::panel.grid(h=-1,v=-1)
-                           lattice::panel.xyplot(...)
-                         },...
+  ans <- lattice::xyplot(
+    y,
+    data=data,
+    groups=gr,
+    ylab=ylab,
+    outer=outer,
+    type=type,
+    scales=scales,
+    lwd=lwd,
+    strip = lattice::strip.custom(style=1,bg="grey85"),
+    panel=function(...) {
+      if(show.grid) lattice::panel.grid(h=-1,v=-1)
+      lattice::panel.xyplot(...)
+    },...
   )
   ans
 })
