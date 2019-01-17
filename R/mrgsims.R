@@ -264,11 +264,12 @@ setMethod("summary", "mrgsims", function(object,...) {
 setMethod("show", "mrgsims", function(object) {
   digits <- 4
   n <- min(8,nrow(object@data))
-  top <- data.matrix(object@data[seq_len(n),,drop=FALSE],rownames.force=FALSE)
+  top <- object@data[seq_len(n),,drop=FALSE]
+  rownames(top) <- paste0(seq_len(n), ": ")
   tcol <- timename(object@data)
   cat("Model: ", model(mod(object)), "\n")
   cat("Dim:   ", dim(object)[1], "x", dim(object)[2], "\n")
-  cat("Time:  ", paste(range(object@data[,tcol]), collapse=" to "), "\n")
+  cat("Time:  ", paste(round(range(object@data[,tcol]),2), collapse=" to "), "\n")
   cat("ID:    ", length(unique(object@data[,"ID"])), "\n")
   print(top, digits=digits)
 })
@@ -284,6 +285,10 @@ setMethod("show", "mrgsims", function(object) {
 ##' @param show.grid logical indicating whether or not to draw panel.grid
 ##' @param ylab passed to xyplot
 ##' @param scales passed to xyplot
+##' @param logy plot the y variables on log scale
+##' @param logbr log scale breaks indicator; use `1` for breaks every log
+##' unit; use `3` for breaks every half log unit; use `0` for default 
+##' breaks
 ##' @param type passed to xyplot
 ##' @param lwd passed to xyplot
 ##' @param outer passed to xyplot
@@ -308,6 +313,7 @@ setMethod("show", "mrgsims", function(object) {
 ##'
 ##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
 ##' 
+##' @md
 ##' @export
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   
@@ -344,6 +350,8 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
                                                    ylab="value",
                                                    groups=ID,
                                                    scales=list(y=list(relation='free')),
+                                                   logy = FALSE,
+                                                   logbr = 3,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
@@ -362,6 +370,18 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   if(y[[3]] == '.')  y[[3]] <- quote(time)
   
   if(length(y[[2]])==1) ylab <- deparse(y[[2]])
+  
+  if(logy) {
+    scales[["y"]][["log"]] <- TRUE
+    if(!logbr %in% c(0,1,3)) {
+      stop("'logbr' must be either 0, 1, or 3.", call.=FALSE)  
+    }
+    if(logbr > 0) {
+      breaks <- 10^seq(-10,10)
+      if(logbr==3) breaks <- sort(c(breaks,3*breaks))
+      scales[["y"]][["at"]] <- breaks
+    }
+  }
 
   y <- structure(y, .Environment=environment())
   gr <- eval(substitute(groups),data)

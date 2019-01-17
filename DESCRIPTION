@@ -1,8 +1,8 @@
 Package: mrgsolve
 Type: Package
 Version: 0.9.0
-Title: Simulate from ODE-Based Population PK/PD, Systems Pharmacology, and PBPK
-    Models
+Title: Simulate from ODE-Based Population PK/PD, Systems Pharmacology, and 
+    Physiologically-Based Pharmacokinetic Models
 Authors@R: c(
     person("Kyle T", "Baron", "", "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
     person("Alan C", "Hindmarsh", "", "", role=c("ctb")),
@@ -95,4 +95,5 @@ Collate:
     'relabel.R'
     'render.R'
     'update.R'
+    'workflows.R'
 RoxygenNote: 6.1.1

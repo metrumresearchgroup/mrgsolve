@@ -35,7 +35,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo syms !!!
+##' @importFrom rlang quos enquo syms !!! quo_name
 ##' @importFrom sys exec_internal
 ##' 
 ##' @include class_mrgsims.R
