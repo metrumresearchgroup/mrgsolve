@@ -18,7 +18,8 @@
 
 ##' Simulate a sequence of parameters
 ##' 
-##' This function is experimental and may change or go away at any time.
+##' This function is experimental and may change or go away at any time without
+##' notice.
 ##' 
 ##' @param mod a model object
 ##' @param ... unquoted parameter names
@@ -35,13 +36,13 @@
 ##' 
 ##' mod %>% 
 ##'   ev(amt = 100) %>% 
-##'   mrgsweep(CL, VC) %>% 
+##'   wf_sweep(CL, VC) %>% 
 ##'   plot(CP~time|sweep)
 ##' 
 ##' @keywords internal
 ##' @md
 ##' @export
-mrgsweep <- function(mod, ..., n=10, cv=30, nsd = 2) {
+wf_sweep <- function(mod, ..., n=10, cv=30, nsd = 2) {
   par <- dplyr::select(as_tibble(as.list(param(mod))),...)
   point <- as.list(par)
   out <- vector(mode = "list", length = length(point))
