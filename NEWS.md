@@ -23,6 +23,7 @@ with quicker turnaround time
 without creating the usual `mrgsims` object
 - The directory name passed to the `soloc` argument of `mread` (or `mcode` or 
 cache versions of both) will be created if it doesn't exist
+- Added `pk2iv` model as convenience option
 
 ## New behavior
 - `time/TIME` is no longer required in a data set when `$PRED` is in use
