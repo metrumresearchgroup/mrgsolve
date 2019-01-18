@@ -30,7 +30,6 @@ out  <- mrgsolve:::house() %>% ev(amt=100) %>% mrgsim(end=122)
 test_that("Pipe to tibble", {
   expect_is(out %>% as.tbl, "tbl_df")
   expect_is(out %>% as_tibble, "tbl_df")
-  expect_is(out %>% as_data_frame, "tbl_df")
 })
 
 test_that("Pipe to mutate", {
@@ -53,16 +52,11 @@ test_that("Pipe to summarise", {
   expect_true(x$max==122)
 })
 
-
-
-
 test_that("Pipe to select", {
   x <- out %>% dplyr::select(ID,RESP,time)
   expect_is(x, "tbl_df")
   expect_identical(names(x),c("ID","RESP", "time"))
 })
-
-
 
 test_that("Pipe to group_by", {
   x <- out %>% group_by(ID,RESP)
@@ -88,6 +82,3 @@ test_that("mutate_mrgsims", {
   expect_is(x, "mrgsims")
   expect_true(all(x$foo == chk))
 })
-
-
-

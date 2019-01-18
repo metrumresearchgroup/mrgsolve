@@ -1,3 +1,8 @@
+# mrgsolve 0.9.0
+- Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis
+outputs can easily be plotted on log scale
+- release
+
 # mrgsolve 0.8.12.9000
 
 ## New functions

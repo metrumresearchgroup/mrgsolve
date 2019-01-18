@@ -9,6 +9,12 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
 
+testing:
+	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
+	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
+	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
+	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master
+
 covr: 
 	Rscript "inst/maintenance/covr.R"
 

@@ -2,29 +2,28 @@ Package: mrgsolve
 Type: Package
 Version: 0.9.0
 Title: Simulate from ODE-Based Population PK/PD, Systems Pharmacology, and 
-    Physiologically-Based Pharmacokinetic Models
+    PB-PK Models
 Authors@R: c(
-    person("Kyle T", "Baron", "", "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
-    person("Alan C", "Hindmarsh", "", "", role=c("ctb")),
-    person("Linda R", "Petzold", "", "", role=c("ctb")),
-    person("Bill", "Gillespie", "", "", role=c("ctb")),
-    person("Charles", "Margossian", "", "", role=c("ctb")),
-    person("Devin", "Pastoor", "", "", role=c("ctb")),
-    person("Bill", "Denney", "", "", role=c("ctb"), comment=c(ORCID="0000-0002-5759-428X")),
-    person("Metrum Research Group", role =  c("cph"))
+    person("Kyle T", "Baron", email = "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
+    person("Alan C", "Hindmarsh", role = "ctb"),
+    person("Linda R", "Petzold", role = "ctb"),
+    person("Bill", "Gillespie", role = "ctb"),
+    person("Charles", "Margossian", role = "ctb"),
+    person("Devin", "Pastoor", role = "ctb"),
+    person("Bill", "Denney", role = "ctb", comment=c(ORCID="0000-0002-5759-428X")),
+    person("Metrum Research Group", role = "cph")
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
-Copyright: Metrum Research Group 2019
 Description: Facilitates simulation from hierarchical, ordinary
-    differential equation (ODE) based models typically employed in drug development.
-    A model specification file is created consisting of R and C++ code that
-    is parsed, compiled, and dynamically loaded into the R session. Input data are
-    passed in and simulated data are returned as R objects.  A dosing event engine
-    allows interventions (bolus and infusion) to be managed separately from the 
-    model code. Differential equations are solved with the 'DLSODA' routine 
-    in 'ODEPACK' (<https://computation.llnl.gov/casc/odepack/>). 
+    differential equation (ODE) based models typically employed in drug development. 
+    A model specification file is created consisting of R and C++ code that is 
+    parsed, compiled, and dynamically loaded into the R session. Input data are 
+    passed in and simulated data are returned as R objects.  A dosing event 
+    engine allows interventions (bolus and infusion) to be managed separately 
+    from the model code. Differential equations are solved with the 'DLSODA' 
+    routine in 'ODEPACK' (<https://computation.llnl.gov/casc/odepack/>).  
 License: GPL (>=2)
 Depends:
     R (>= 3.1.2),
