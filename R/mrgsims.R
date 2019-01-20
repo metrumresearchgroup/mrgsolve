@@ -37,12 +37,12 @@
 ##'   simulated data
 ##'   \item{\code{dim}, \code{nrow}, \code{ncol}} returns dimensions, 
 ##'   number of rows, and number of columns in simulated data
-##'   \item{\code{as.data.frame}} coreces simulated data to data.frame 
+##'   \item{\code{as.data.frame}} coerces simulated data to data.frame 
 ##'   and returns the data.frame
 ##'   \item{\code{as.matrix}} returns matrix of simulated data
-##'   \item{\code{as.tbl}} coreces simulated to \code{tbl_df}; 
+##'   \item{\code{as.tbl}} coerces simulated to \code{tbl_df}; 
 ##'   requires \code{dplyr}
-##'   \item{\code{summary}} coreces simulated data to data.frame 
+##'   \item{\code{summary}} coerces simulated data to data.frame 
 ##'   and passes to \code{\link{summary.data.frame}}
 ##'   \item{\code{plot}} plots simulated data; see \code{\link{plot_mrgsims}}
 ##' }

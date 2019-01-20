@@ -174,7 +174,7 @@ valid.mrgmod <- function(object) {
 ##' @slot add additional simulation times \code{<numeric-vector>}
 ##' @slot param \code{<parameter_list>}
 ##' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
-##' these are not updatable from \code{R}
+##' these are not updateable from \code{R}
 ##' @slot init \code{<cmt_list>}
 ##' @slot digits significant digits in simulated output; negative integer means 
 ##' ignore \code{<numeric>}
@@ -488,7 +488,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 ##' The \code{$} and \code{[[} operators get the value 
 ##' of a single parameter in the model.  The 
 ##' \code{[} gets several values, returning a 
-##' nameed list.  
+##' named list.  
 ##' 
 ##' @param x mrgmod object
 ##' @param name parameter to take

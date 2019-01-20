@@ -18,7 +18,7 @@
 ##' Select and modify a data set for simulation
 ##' 
 ##' The input data set (\code{data_set}) is a data frame that specifies
-##' observations, model events, and / or paramter values for a population
+##' observations, model events, and / or parameter values for a population
 ##' of individuals. 
 ##'
 ##' @param x model object
@@ -193,7 +193,7 @@ data_hooks <- function(data,object,envir,param=list(),...) {
 }
 
 
-##' Create a simulatinon data set from ev objects
+##' Create a simulation data set from ev objects
 ##'
 ##'
 ##' @param x ev objects

@@ -887,7 +887,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 ##'
 ##' }
 ##'
-##' If \code{trans=11} is specfied, use the symbols listed above for the 
+##' If \code{trans=11} is specified, use the symbols listed above for the 
 ##' \code{ncmt} / \code{depot} combination, but append \code{i} at the end 
 ##' (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
 ##'

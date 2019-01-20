@@ -9,7 +9,7 @@ modlib: PK/PD Model parameters, compartments, and output variables
 \section{Compartments}{
 
 \itemize{
-\item{\code{EV1}, \code{EV2}}: extravasular dosing compartments
+\item{\code{EV1}, \code{EV2}}: extravascular dosing compartments
 \item{\code{CENT}}: central PK compartment
 \item{\code{PERIPH}}: peripheral PK compartment
 \item{\code{PERIPH2}}: peripheral PK compartment 2

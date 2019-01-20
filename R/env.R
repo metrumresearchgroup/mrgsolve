@@ -56,7 +56,7 @@ env_ls <- function(x,...) {
 ##' Return model environment
 ##' 
 ##' @param x model object
-##' @param tolist should the environment be coreced to \code{list}?
+##' @param tolist should the environment be coerced to \code{list}?
 ##' 
 ##' @export
 env_get <- function(x,tolist=TRUE) {

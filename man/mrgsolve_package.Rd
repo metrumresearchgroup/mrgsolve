@@ -7,10 +7,10 @@
 \title{mrgsolve}
 \description{
 mrgsolve is an R package maintained under the auspices of 
-Metrum Research Group, LLC, that facilitates simulation from 
+Metrum Research Group that facilitates simulation from 
 models based on systems of ordinary differential equations (ODE) 
 that are typically employed for understanding pharmacokinetics, 
-pharmacodynamics, and systems biology and pharmacology. mrgsovle 
+pharmacodynamics, and systems biology and pharmacology. mrgsolve 
 consists of computer code written in the R and C++ languages, 
 providing an interface to the DLSODA differential equation solver 
 (written in FORTRAN) provided through ODEPACK -

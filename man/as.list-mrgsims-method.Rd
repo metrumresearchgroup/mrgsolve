@@ -3,7 +3,7 @@
 \docType{methods}
 \name{as.list,mrgsims-method}
 \alias{as.list,mrgsims-method}
-\title{Corece an mrgsims object to list}
+\title{Coerece an mrgsims object to list}
 \usage{
 \S4method{as.list}{mrgsims}(x, ...)
 }
@@ -13,5 +13,5 @@
 \item{...}{not used}
 }
 \description{
-Corece an mrgsims object to list
+Coerece an mrgsims object to list
 }

@@ -9,7 +9,7 @@ simargs(x, which = NULL, clear = FALSE, ...)
 \arguments{
 \item{x}{model object}
 
-\item{which}{character with lenght 1 naming a single arg to get}
+\item{which}{character with length 1 naming a single arg to get}
 
 \item{clear}{logical indicating whether or not clear args from 
 the model object}

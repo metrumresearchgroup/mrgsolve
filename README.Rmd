@@ -18,7 +18,7 @@ opts_chunk$set(comment='.', fig.align="center", fig.path="inst/maintenance/img/R
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues)
-[![Metrumrg](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
+[![MetrumRG](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
 
 
 
@@ -135,7 +135,7 @@ mod <- mread("pbcsa", modlib())
 Reference
 
 ```{r, comment = " "}
-blocks(mod,PROB)
+blocks(mod,PROB) 
 ```
 
 Model parameters
@@ -145,7 +145,7 @@ param(mod)
 ```
 
 
-Set up a  batch to siumulate
+Set up a  batch to simulate
 ```{r}
 idata <- expand.idata(Kp_liv = seq(4,20,2))
 

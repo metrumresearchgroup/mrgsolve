@@ -54,7 +54,7 @@ setClass("batch_mrgsims",contains="mrgsims",
 is.mrgsims <- function(x) inherits(x,"mrgsims")
 
 
-##' Corece an mrgsims object to list
+##' Coerece an mrgsims object to list
 ##' 
 ##' @param x an mrgsims object
 ##' @param ... not used

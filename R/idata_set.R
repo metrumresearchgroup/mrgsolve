@@ -24,7 +24,7 @@
 ##' other individual-level data.
 ##'
 ##' @param x model object
-##' @param data a data set coercable to data.frame
+##' @param data a data set that can be coerced to data.frame
 ##' @param object character name of an object existing in \code{$ENV} 
 ##' to use for the data set
 ##' @param .subset an unquoted expression passed to 
@@ -51,7 +51,7 @@
 ##' in \code{$MAIN}.
 ##' 
 ##' The most common application of \code{idata_set} is to specify a population
-##' or bach of simulations to do.  We commonly use \code{idata_set} with an 
+##' or batch of simulations to do.  We commonly use \code{idata_set} with an 
 ##' event object (see \code{\link{ev}}).  In that case, the event gets applied
 ##' to each individual in the \code{\link{idata_set}}.  
 ##' 

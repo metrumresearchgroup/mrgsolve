@@ -21,6 +21,11 @@ covr:
 house: 
 	Rscript "inst/maintenance/build_housemodel.R"
 
+no-test:
+	make build
+	R CMD check ${TARBALL} --no-tests
+	
+
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
 

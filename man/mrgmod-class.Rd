@@ -30,7 +30,7 @@ S4 class for mrgsolve model object
 \item{\code{param}}{\code{<parameter_list>}}
 
 \item{\code{fixed}}{a \code{<parameter_list>} of fixed value parameters; 
-these are not updatable from \code{R}}
+these are not updateable from \code{R}}
 
 \item{\code{init}}{\code{<cmt_list>}}
 

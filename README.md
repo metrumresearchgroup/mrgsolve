@@ -6,7 +6,7 @@ Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](h
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues)
-[![Metrumrg](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
+[![MetrumRG](https://img.shields.io/badge/contact-MetrumRG-brightgreen.svg)](http://metrumrg.com)
 
 mrgsolve is an R package for simulation from hierarchical, ordinary
 differential equation (ODE) based models typically employed in drug
@@ -132,7 +132,7 @@ mod <- mread("pbcsa", modlib())
 Reference
 
 ``` r
-blocks(mod,PROB)
+blocks(mod,PROB) 
 ```
 
 ``` 
@@ -172,7 +172,7 @@ param(mod)
     .  Kp_mus  2.98    | Vmus  0.429 
     .  Kp_ski  13.6    | Vski  0.111
 
-Set up a batch to siumulate
+Set up a batch to simulate
 
 ``` r
 idata <- expand.idata(Kp_liv = seq(4,20,2))

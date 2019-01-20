@@ -28,7 +28,7 @@
 ##' @param .y list to be merged into parameter list
 ##' @param .pat a regular expression (character) to be applied as 
 ##' a filter when printing compartments to the screen
-##' @param ... passsed along
+##' @param ... passed along
 ##' @return an object of class \code{cmt_list} (see 
 ##' \code{\link{numericlist}})
 ##' @details
@@ -37,7 +37,7 @@
 ##' conditions in a model object.  For both uses, the return value 
 ##' is a \code{cmt_list} object. For the former use, \code{init} 
 ##' is usually called to print the compartment initial conditions 
-##' to the screen, but the \code{cmt_list} object can also be coreced 
+##' to the screen, but the \code{cmt_list} object can also be coerced 
 ##' to a list or numeric R object.
 ##'
 ##' @examples
