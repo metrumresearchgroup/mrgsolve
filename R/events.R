@@ -116,14 +116,16 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
   data <- as_tibble(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
-
+  
   if("total" %in% names(data)) {
     data[["addl"]] <- data[["total"]]-1
     data[["total"]] <- NULL
   }
   
-  if(is.numeric(tinf) & tinf > 0) {
-    data[["rate"]] <- data[["amt"]]/tinf  
+  if(is.numeric(tinf)) {
+    if(tinf > 0) {
+      data[["rate"]] <- data[["amt"]]/tinf  
+    }
   }
   
   if(!missing(until)) {
@@ -580,7 +582,7 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   }
   
   evs <- list(...)
-
+  
   if(is.list(.dots)) {
     evs <- .dots 
   }

@@ -15,17 +15,9 @@ Authors@R: c(
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
-Description: Facilitates simulation from hierarchical, ordinary
-    differential equation (ODE) based models typically employed in drug 
-    development, including pharmacokinetic (PK), pharmacokinetic-pharmacodynamic 
-    (PK-PD), physiologically-based pharmacokinetic (PB-PK), and quantitative
-    systems pharmacology (QSP) models.  A model specification file is created 
-    consisting of R and C++ code that is parsed, compiled, and dynamically 
-    loaded into the R session. Input data are passed in and simulated data are 
-    returned as R objects.  A dosing event engine allows interventions (bolus 
-    and infusion) to be managed separately from the model code. Differential 
-    equations are solved with the 'DLSODA' routine in 'ODEPACK' 
-    (<https://computation.llnl.gov/casc/odepack/>).  
+Description: Fast simulation from hierarchical, ordinary
+    differential equation (ODE) based models typically employed in quantitative
+    pharmacology and systems biology.  
 License: GPL (>=2)
 Depends:
     R (>= 3.1.2),

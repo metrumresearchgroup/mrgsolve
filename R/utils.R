@@ -198,11 +198,11 @@ as.cvec <- function(x) {
 ##' zero.
 ##'
 ##' @examples
-##' idata <- expand.idata(CL=c(1,2,3), VC=c(10,20,30))
+##' idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))
 ##'
-##' doses <- expand.ev(amt=c(300,100), ii=c(12,24), cmt=1)
+##' doses <- expand.ev(amt = c(300,100), ii = c(12,24), cmt = 1)
 ##' 
-##' infusion
+##' infusion <- expand.ev(amt = 100, tinf = 2)
 ##' 
 ##' @md
 ##' @export
