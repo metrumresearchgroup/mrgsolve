@@ -96,7 +96,7 @@ carry.out <- function(x,...) {
   x
 }
 
-##' Rescale time in the simulated output
+##' Re-scale time in the simulated output
 ##'
 ##' @param x model object
 ##' @param value value by which time will be scaled

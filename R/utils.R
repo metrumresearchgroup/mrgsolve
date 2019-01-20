@@ -194,7 +194,7 @@ as.cvec <- function(x) {
 ##' For `expand.ev`, defaults also added include `cmt = 1`, 
 ##' `time = 0`, `evid = 1`.  If `total` is included, 
 ##' then `addl` is derived as `total` - 1. If `tinf` is included, then 
-##' an infusion rate is derived for rowa where `tinf` is greater than 
+##' an infusion rate is derived for row where `tinf` is greater than 
 ##' zero.
 ##'
 ##' @examples
@@ -286,12 +286,12 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 ##' Access or clear arguments for calls to mrgsim
 ##'
 ##' @param x model object
-##' @param clear logical indicating whether or not clear args from 
+##' @param clear logical indicating whether or not to clear `args` from 
 ##' the model object
 ##' @param which character with length 1 naming a single arg to get
 ##' @param ... passed along
 ##' 
-##' @return If \code{clear} is \code{TRUE}, the argument list is 
+##' @return If `clear` is `TRUE`, the argument list is 
 ##' cleared and the model object is returned.  Otherwise, the argument 
 ##' list is returned.
 ##' 
@@ -299,6 +299,7 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 ##' mod <- mrgsolve:::house()
 ##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
 ##' 
+##' @md
 ##' @export
 simargs <- function(x, which = NULL, clear=FALSE,...) {
   

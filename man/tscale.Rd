@@ -2,7 +2,7 @@
 % Please edit documentation in R/chain.R
 \name{tscale}
 \alias{tscale}
-\title{Rescale time in the simulated output}
+\title{Re-scale time in the simulated output}
 \usage{
 tscale(x, value = 1, ...)
 }
@@ -14,7 +14,7 @@ tscale(x, value = 1, ...)
 \item{...}{passed along}
 }
 \description{
-Rescale time in the simulated output
+Re-scale time in the simulated output
 }
 \details{
 There is also a \code{tscale} argument to \code{\link{mrgsim}} that can 

@@ -14,7 +14,7 @@
   scales = list(y = list(relation = "free")), ...)
 }
 \arguments{
-\item{x}{mrsims object}
+\item{x}{mrgsims object}
 
 \item{yval}{y variables to plot}
 

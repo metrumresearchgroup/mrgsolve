@@ -20,7 +20,7 @@ An ID column is added as \code{seq(nrow(ans))} if not supplied by the user.
 For \code{expand.ev}, defaults also added include \code{cmt = 1},
 \code{time = 0}, \code{evid = 1}.  If \code{total} is included,
 then \code{addl} is derived as \code{total} - 1. If \code{tinf} is included, then
-an infusion rate is derived for rowa where \code{tinf} is greater than
+an infusion rate is derived for row where \code{tinf} is greater than
 zero.
 }
 \examples{

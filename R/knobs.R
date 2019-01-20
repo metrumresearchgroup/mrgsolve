@@ -187,7 +187,7 @@ setMethod("show", "batch_mrgsims", function(object) {
 
 ##' Plot method for mrgsims objects
 ##'
-##' @param x mrsims object
+##' @param x mrgsims object
 ##' @param y a formula passed to xyplot
 ##' @param yval y variables to plot
 ##' @param show.grid print grid in the plot

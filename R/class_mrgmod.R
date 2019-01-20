@@ -174,7 +174,7 @@ valid.mrgmod <- function(object) {
 ##' @slot add additional simulation times \code{<numeric-vector>}
 ##' @slot param \code{<parameter_list>}
 ##' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
-##' these are not updateable from \code{R}
+##' these are not updatable from \code{R}
 ##' @slot init \code{<cmt_list>}
 ##' @slot digits significant digits in simulated output; negative integer means 
 ##' ignore \code{<numeric>}
