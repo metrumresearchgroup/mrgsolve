@@ -15,9 +15,8 @@ Authors@R: c(
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
 URL: https://github.com/metrumresearchgroup/mrgsolve
 BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
-Description: Fast simulation from hierarchical, ordinary
-    differential equation (ODE) based models typically employed in quantitative
-    pharmacology and systems biology.  
+Description: Fast simulation from ordinary differential equation (ODE) based 
+    models typically employed in quantitative pharmacology and systems biology.  
 License: GPL (>=2)
 Depends:
     R (>= 3.1.2),
