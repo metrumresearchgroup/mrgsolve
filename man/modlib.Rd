@@ -46,6 +46,7 @@ mod <- mread("tmdd",   modlib())
 mod <- mread("viral1", modlib())
 mod <- mread("viral2", modlib())
 mod <- mread("pred1",  modlib())
+mod <- mread("pbpk",   modlib())
 
 mrgsolve:::code(mod)
 }

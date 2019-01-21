@@ -19,8 +19,9 @@ maximum values for the sweep}
 \item{nsd}{the number of standard deviations over which to sweep}
 }
 \value{
-A mrgsims object with a character column named \code{sweep} indicating
-the sweep parameter name.
+A mrgsims object with a character columns named \code{.name}
+indicating the parameter name and \code{.value} indicating the sweep
+value.
 }
 \description{
 This function is experimental and may change or go away at any time without
@@ -32,7 +33,7 @@ mod <- mrgsolve:::house() \%>\% zero_re()
 mod \%>\% 
   ev(amt = 100) \%>\% 
   wf_sweep(CL, VC) \%>\% 
-  plot(CP~time|sweep)
+  plot(CP~time|.name)
 
 }
 \keyword{internal}

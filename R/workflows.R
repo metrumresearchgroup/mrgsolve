@@ -28,8 +28,9 @@
 ##' maximum values for the sweep
 ##' @param nsd the number of standard deviations over which to sweep
 ##' 
-##' @return A mrgsims object with a character column named `sweep` indicating 
-##' the sweep parameter name.
+##' @return A mrgsims object with a character columns named `.name`
+##' indicating the parameter name and `.value` indicating the sweep
+##' value.
 ##' 
 ##' @examples
 ##' mod <- mrgsolve:::house() %>% zero_re()
@@ -37,7 +38,7 @@
 ##' mod %>% 
 ##'   ev(amt = 100) %>% 
 ##'   wf_sweep(CL, VC) %>% 
-##'   plot(CP~time|sweep)
+##'   plot(CP~time|.name)
 ##' 
 ##' @keywords internal
 ##' @md
@@ -46,7 +47,9 @@ wf_sweep <- function(mod, ..., n=10, cv=30, nsd = 2) {
   par <- dplyr::select(as_tibble(as.list(param(mod))),...)
   point <- as.list(par)
   out <- vector(mode = "list", length = length(point))
+  values <- vector(mode = "list", length = length(point))
   std <- sqrt((cv/100)^2)
+  .n <- n
   for(p in seq_along(point)) {
     x <- point[[p]]
     if(x <= 0) {
@@ -60,6 +63,7 @@ wf_sweep <- function(mod, ..., n=10, cv=30, nsd = 2) {
     from <- log(x) - nsd*std
     to <-   log(x) + nsd*std
     valu <- exp(seq(from, to, length.out = n))    
+    values[[p]] <- valu
     points <- point
     points[[p]] <- valu
     out[[p]] <- expand.grid(points)
@@ -70,7 +74,8 @@ wf_sweep <- function(mod, ..., n=10, cv=30, nsd = 2) {
   ntot <- nrow(sims)
   sims <- mutate_sims(
     sims, 
-    sweep = rep(names(point), each = ntot/length(point))
+    .name = rep(names(point), each = ntot/length(point)), 
+    .value = rep(signif(unlist(values),3), each = ntot/length(point)/.n)
   )
   sims
 }

@@ -12,8 +12,8 @@ ev(x, ...)
 
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
 
-\S4method{ev}{missing}(amt, cmt = 1, tinf = NULL, time = 0,
-  evid = 1, ID = numeric(0), replicate = TRUE, until = NULL,
+\S4method{ev}{missing}(time = 0, amt, evid = 1, cmt = 1,
+  ID = numeric(0), replicate = TRUE, until = NULL, tinf = NULL,
   realize_addl = FALSE, ...)
 
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
@@ -26,16 +26,13 @@ details}
 
 \item{object}{passed to show}
 
-\item{amt}{dose amount}
-
-\item{cmt}{compartment}
-
-\item{tinf}{infusion time; if greater than zero, then the \code{rate} item 
-will be derived as \code{amt/tinf}}
-
 \item{time}{event time}
 
+\item{amt}{dose amount}
+
 \item{evid}{event ID}
+
+\item{cmt}{compartment}
 
 \item{ID}{subject ID}
 
@@ -43,6 +40,9 @@ will be derived as \code{amt/tinf}}
 each individual in \code{ID}}
 
 \item{until}{the expected maximum \bold{observation} time for this regimen}
+
+\item{tinf}{infusion time; if greater than zero, then the \code{rate} item 
+will be derived as \code{amt/tinf}}
 
 \item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} 
 doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
