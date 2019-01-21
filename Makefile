@@ -122,3 +122,7 @@ check-devel:
 check-win:
 	Rscript -e 'devtools::check_win_devel()'
 
+check-winhub:
+	Rscript -e 'rhub::check_on_windows()'
+
+

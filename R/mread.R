@@ -421,7 +421,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)
-
+  
   same <- check_and_copy(
     from = temp_write,
     to = build$compfile
@@ -440,14 +440,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Compile the model
   ## The shared object is model-mread-source.cpp
   
-  out <- suppressWarnings(
-    exec_internal(
-      cmd = build$cmd,
-      args = build$args,
-      error = FALSE
-    )
-  )
-  
+  out <- suppressWarnings(build_exec(build))
+
   comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {

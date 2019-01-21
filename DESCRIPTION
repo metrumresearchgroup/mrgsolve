@@ -27,8 +27,7 @@ Imports:
     magrittr (>= 1.5),
     RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 1.2),
-    rlang (>= 0.3.0.1), 
-    sys (>= 2.1)
+    rlang (>= 0.3.0.1)
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 

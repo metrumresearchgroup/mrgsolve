@@ -103,14 +103,18 @@ new_build <- function(file, model, project, soloc, code = NULL,
   env$cachfile <- cachefile()
   env$model <- new_model
   
-  env$cmd <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
+  env$cmd <- paste0(
+    R.home(component="bin"),
+    .Platform$file.sep,
+    "R"
+  )
   
   env$args <- c(
     "CMD", "SHLIB",
     ifelse(preclean, "--preclean ", ""),
     env$compfile
   )
-
+  
   return(env)
   
 }
@@ -180,9 +184,9 @@ mgsub <- function(pattern,replacement,x,...) {
 }
 
 build_output_cleanup <- function(x,build) {
-  x[["stdout"]] <- rawToChar(x[["stdout"]])
+  #x[["stdout"]] <- rawToChar(x[["stdout"]])
   x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
-  errr <- rawToChar(x[["stderr"]])
+  errr <- x[["stderr"]]#rawToChar(x[["stderr"]])
   errr <- strsplit(errr, "\n|\r\n")[[1]]
   patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
@@ -238,3 +242,16 @@ build_handle_127 <- function(out) {
   return(invisible(NULL))  
 }
 
+build_exec <- function(build) {
+  status <- system2(
+    build$cmd,
+    args = build$args,
+    stdout = "STD_OUT_TXT",
+    stderr = "STD_ERR_TXT"
+  )
+  out <- readLines("STD_OUT_TXT")
+  err <- readLines("STD_ERR_TXT")
+  if(length(out)==0) out <- ""
+  if(length(err)==0) err <- ""
+  list(status = status, stdout = out, stderr = err)
+}
