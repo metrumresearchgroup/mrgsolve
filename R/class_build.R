@@ -184,10 +184,8 @@ mgsub <- function(pattern,replacement,x,...) {
 }
 
 build_output_cleanup <- function(x,build) {
-  #x[["stdout"]] <- rawToChar(x[["stdout"]])
   x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
-  errr <- x[["stderr"]]#rawToChar(x[["stderr"]])
-  errr <- strsplit(errr, "\n|\r\n")[[1]]
+  errr <- x[["stderr"]]
   patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
   patt <- "^ *In function 'void _model.*:$"
@@ -216,7 +214,7 @@ build_failed <- function(out,build) {
   saveRDS(out,file.path(tempdir(),"build_error.RDS"))
   build_handle_127(out)
   stop(
-    "There was a problem building the model.",
+    "The model build step failed.",
     call.=FALSE
   )
 }
@@ -246,11 +244,11 @@ build_exec <- function(build) {
   status <- system2(
     build$cmd,
     args = build$args,
-    stdout = "STD_OUT_TXT",
-    stderr = "STD_ERR_TXT"
+    stdout = "MRGSOLVE_BUILD_STD_OUT_TXT",
+    stderr = "MRGSOLVE_BUILD_STD_ERR_TXT"
   )
-  out <- readLines("STD_OUT_TXT")
-  err <- readLines("STD_ERR_TXT")
+  out <- readLines("MRGSOLVE_BUILD_STD_OUT_TXT")
+  err <- readLines("MRGSOLVE_BUILD_STD_ERR_TXT")
   if(length(out)==0) out <- ""
   if(length(err)==0) err <- ""
   list(status = status, stdout = out, stderr = err)

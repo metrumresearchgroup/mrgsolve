@@ -23,16 +23,16 @@
 ##' but simpler and quicker.
 ##'
 ##' @param x a model object
-##' @param time event time
 ##' @param amt dose amount
-##' @param evid event ID
 ##' @param cmt compartment
+##' @param tinf infusion time; if greater than zero, then the \code{rate} item 
+##' will be derived as \code{amt/tinf}
+##' @param time event time
+##' @param evid event ID
 ##' @param ID subject ID
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for 
 ##' each individual in \code{ID}
 ##' @param until the expected maximum \bold{observation} time for this regimen
-##' @param tinf infusion time; if greater than zero, then the \code{rate} item 
-##' will be derived as \code{amt/tinf}
 ##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
 ##' \code{\link{realize_addl}}
@@ -97,9 +97,9 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 
 ##' @rdname ev
 ##' @export
-setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0), 
-                                    replicate=TRUE, until=NULL, tinf=NULL,
-                                    realize_addl=FALSE, ...) {
+setMethod("ev", "missing", function(amt, cmt = 1, tinf = NULL, time = 0,  
+                                    evid = 1, ID = numeric(0), replicate = TRUE, 
+                                    until = NULL, realize_addl = FALSE, ...) {
   
   if(length(match.call())==1) { 
     return(new("ev", data=data.frame()[0,]))
