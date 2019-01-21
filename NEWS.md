@@ -52,7 +52,8 @@ the model library so that, for example,  `modlib("pk1")` is equivalent to
 - An undocumented function called `report` was previously available to use in 
 model code.  This function has been moved to a namespace and is now available
 as `mrg::report`.  This feature continues to be undocumented.
-
+- The argument order for `ev()` was changed to make it more intuitive; this 
+could break existing code.
 
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN
