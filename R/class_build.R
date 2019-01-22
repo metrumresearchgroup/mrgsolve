@@ -254,10 +254,8 @@ build_get_output <- function() {
 build_handle_127 <- function(out) {
   found127 <- any(grepl("Error +127", out[["stderr"]]))
   if(found127) {
-    message("NOTE: 'Error 127' was detected in the above message.")
-    message("This possibly indicates that the build toolchain could not be found.")
-    message("Please check for proper compiler installation ('Rtools.exe' on Windows).")
-    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.")
+    msg <- readLines(system.file("msg", "error127.txt", package="mrgsolve"))
+    null <- lapply(msg,message)
     cat(divider_msg(),"\n")
   }
   return(invisible(NULL))  

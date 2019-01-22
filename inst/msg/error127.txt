@@ -1,0 +1,6 @@
+NOTE: 'Error 127' was detected in the above message.
+ This possibly indicates that the build toolchain
+ could not be found. Please check for proper compiler 
+ installation ('Rtools.exe' on Windows).  Also consider
+ trying 'pkgbuild::check_build_tools(debug=TRUE)' to
+ assist in diagnosing this issue.
