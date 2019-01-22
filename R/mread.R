@@ -445,6 +445,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {
+    if(ignore.stdout) message("error.", appendLF=FALSE)
     return(build_failed(out,build))
   } 
   

@@ -102,7 +102,8 @@ new_build <- function(file, model, project, soloc, code = NULL,
   env$compdir <- compdir()
   env$cachfile <- cachefile()
   env$model <- new_model
-  
+  env$stdout <- "build_exec_std_out"
+  env$stderr <- "build_exec_std_err"
   env$cmd <- paste0(
     R.home(component="bin"),
     .Platform$file.sep,
@@ -183,9 +184,31 @@ mgsub <- function(pattern,replacement,x,...) {
   )
 }
 
+
+build_exec <- function(build) {
+  status <- system2(
+    build$cmd,
+    args = build$args,
+    stdout = build[["stdout"]],
+    stderr = build[["stderr"]]
+  )
+  list(status = status, stdout = "", stderr = "")
+}
+
 build_output_cleanup <- function(x,build) {
+  if(file.exists(build[["stdout"]])) {
+    x[["stdout"]] <- readLines(build[["stdout"]])  
+    if(length(x[["stdout"]])==0) x[["stdout"]] <- ""
+  } else {
+    x[["stdout"]] <- "could not find build output"
+  }
+  if(file.exists(build[["stderr"]])) {
+    errr <- readLines(build[["stderr"]])
+    if(length(errr)==0) errr <- ""
+  } else {
+    errr <- "could not find build error"
+  }
   x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
-  errr <- x[["stderr"]]
   patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
   patt <- "^ *In function 'void _model.*:$"
@@ -197,10 +220,9 @@ build_output_cleanup <- function(x,build) {
 }
 
 build_failed <- function(out,build) {
-  out <- build_output_cleanup(out,build) 
-  message("error.", appendLF=FALSE)
+  out <- build_output_cleanup(out,build)
   msg <- divider_msg("stdout")
-  cat("\n\n", msg, "\n", sep="")
+  cat("\n", msg, "\n", sep="")
   cat(out[["stdout"]],sep="\n")
   header <- "\n---:: stderr ::---------------------"
   footer <- paste0(rep("-",nchar(header)),collapse = "")
@@ -235,21 +257,7 @@ build_handle_127 <- function(out) {
     message("NOTE: 'Error 127' was detected in the above message.")
     message("This possibly indicates that the build toolchain could not be found.")
     message("Please check for proper compiler installation ('Rtools.exe' on Windows).")
-    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.")
+    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.\n")
   }
   return(invisible(NULL))  
-}
-
-build_exec <- function(build) {
-  status <- system2(
-    build$cmd,
-    args = build$args,
-    stdout = "MRGSOLVE_BUILD_STD_OUT_TXT",
-    stderr = "MRGSOLVE_BUILD_STD_ERR_TXT"
-  )
-  out <- readLines("MRGSOLVE_BUILD_STD_OUT_TXT")
-  err <- readLines("MRGSOLVE_BUILD_STD_ERR_TXT")
-  if(length(out)==0) out <- ""
-  if(length(err)==0) err <- ""
-  list(status = status, stdout = out, stderr = err)
 }
