@@ -222,7 +222,7 @@ build_output_cleanup <- function(x,build) {
 build_failed <- function(out,build) {
   out <- build_output_cleanup(out,build)
   msg <- divider_msg("stdout")
-  cat("\n", msg, "\n", sep="")
+  cat("\n\n", msg, "\n", sep="")
   cat(out[["stdout"]],sep="\n")
   header <- "\n---:: stderr ::---------------------"
   footer <- paste0(rep("-",nchar(header)),collapse = "")
@@ -257,7 +257,8 @@ build_handle_127 <- function(out) {
     message("NOTE: 'Error 127' was detected in the above message.")
     message("This possibly indicates that the build toolchain could not be found.")
     message("Please check for proper compiler installation ('Rtools.exe' on Windows).")
-    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.\n")
+    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.")
+    cat(divider_msg(),"\n")
   }
   return(invisible(NULL))  
 }
