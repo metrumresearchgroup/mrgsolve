@@ -20,7 +20,7 @@ modlib: Target mediated disposition model
 \item{\code{KINT}}: internalization rate constant
 \item{\code{KON}}: association rate constant
 \item{\code{KOFF}}: dissociation rate constant
-\item{\code{KSYN}}: target systhesis rate
+\item{\code{KSYN}}: target synthesis rate
 \item{\code{KDEG}}: target degredation rate constant
 }
 }

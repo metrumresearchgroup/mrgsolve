@@ -187,18 +187,24 @@ as.cvec <- function(x) {
 
 ##' Create template data sets for simulation
 ##'
-##' @param ... passed to \code{\link{expand.grid}}
+##' @param ... passed to [expand.grid]
 ##' 
 ##' @details
-##' An ID column is added as \code{seq(nrow(ans))} if not supplied by the user.  
-##' For \code{expand.ev}, defaults also added include \code{cmt = 1}, 
-##' \code{time = 0}, \code{evid = 1}.  If \code{total} is included, 
-##' then \code{addl} is derived as \code{total} - 1.
+##' An ID column is added as `seq(nrow(ans))` if not supplied by the user.  
+##' For `expand.ev`, defaults also added include `cmt = 1`, 
+##' `time = 0`, `evid = 1`.  If `total` is included, 
+##' then `addl` is derived as `total` - 1. If `tinf` is included, then 
+##' an infusion rate is derived for row where `tinf` is greater than 
+##' zero.
 ##'
 ##' @examples
-##' idata <- expand.idata(CL=c(1,2,3), VC=c(10,20,30))
+##' idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))
 ##'
-##' doses <- expand.ev(amt=c(300,100), ii=c(12,24), cmt=1)
+##' doses <- expand.ev(amt = c(300,100), ii = c(12,24), cmt = 1)
+##' 
+##' infusion <- expand.ev(amt = 100, tinf = 2)
+##' 
+##' @md
 ##' @export
 expand.idata <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
@@ -211,12 +217,20 @@ expand.idata <- function(...) {
 expand.ev <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
   ans$ID <- seq_len(nrow(ans))
-  if(!has_name("evid", ans)) ans$evid <- 1
-  if(!has_name("cmt", ans)) ans$cmt <- 1
-  if(!has_name("time", ans)) ans$time <- 0
+  if(!has_name("evid", ans)) ans[["evid"]] <- 1
+  if(!has_name("cmt", ans)) ans[["cmt"]] <- 1
+  if(!has_name("time", ans)) ans[["time"]] <- 0
   if(has_name("total",ans)) {
     ans[["addl"]] <- ans[["total"]]-1
     ans[["total"]] <- NULL
+  }
+  if(has_name("tinf", ans)) {
+    ans[["rate"]] <- ifelse(
+      ans[["tinf"]] > 0, 
+      ans[["amt"]]/ans[["tinf"]],
+      0
+    )
+    ans[["tinf"]] <- NULL
   }
   shuffle(ans,"ID")
 }
@@ -272,12 +286,12 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 ##' Access or clear arguments for calls to mrgsim
 ##'
 ##' @param x model object
-##' @param clear logical indicating whether or not clear args from 
+##' @param clear logical indicating whether or not to clear `args` from 
 ##' the model object
-##' @param which character with lenght 1 naming a single arg to get
+##' @param which character with length 1 naming a single arg to get
 ##' @param ... passed along
 ##' 
-##' @return If \code{clear} is \code{TRUE}, the argument list is 
+##' @return If `clear` is `TRUE`, the argument list is 
 ##' cleared and the model object is returned.  Otherwise, the argument 
 ##' list is returned.
 ##' 
@@ -285,6 +299,7 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
 ##' mod <- mrgsolve:::house()
 ##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
 ##' 
+##' @md
 ##' @export
 simargs <- function(x, which = NULL, clear=FALSE,...) {
   

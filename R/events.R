@@ -31,11 +31,14 @@
 ##' @param replicate logical; if \code{TRUE}, events will be replicated for 
 ##' each individual in \code{ID}
 ##' @param until the expected maximum \bold{observation} time for this regimen
+##' @param tinf infusion time; if greater than zero, then the \code{rate} item 
+##' will be derived as \code{amt/tinf}
 ##' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
 ##' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
 ##' \code{\link{realize_addl}}
 ##' @param object passed to show
-##' @param ... other items to be incorporated into the event object
+##' @param ... other items to be incorporated into the event object; see 
+##' details
 ##' 
 ##' @details
 ##' \itemize{
@@ -95,7 +98,8 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 ##' @rdname ev
 ##' @export
 setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0), 
-                                    replicate=TRUE, until=NULL, realize_addl=FALSE, ...) {
+                                    replicate=TRUE, until=NULL, tinf=NULL,
+                                    realize_addl=FALSE, ...) {
   
   if(length(match.call())==1) { 
     return(new("ev", data=data.frame()[0,]))
@@ -112,10 +116,16 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
   data <- as_tibble(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
   
   data <- as.data.frame(data)
-
+  
   if("total" %in% names(data)) {
     data[["addl"]] <- data[["total"]]-1
     data[["total"]] <- NULL
+  }
+  
+  if(is.numeric(tinf)) {
+    if(tinf > 0) {
+      data[["rate"]] <- data[["amt"]]/tinf  
+    }
   }
   
   if(!missing(until)) {
@@ -156,9 +166,9 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
       }
       data[["ID"]] <- ID
     }
-    data <- data %>% shuffle(c("ID", "time", "cmt"))
+    data <- shuffle(data,c("ID", "time", "cmt"))
   } else {
-    data <- data %>% shuffle(c("time", "cmt"))
+    data <- shuffle(data,c("time", "cmt"))
   }
   
   if(realize_addl) data <- realize_addl(data)
@@ -572,7 +582,7 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   }
   
   evs <- list(...)
-
+  
   if(is.list(.dots)) {
     evs <- .dots 
   }

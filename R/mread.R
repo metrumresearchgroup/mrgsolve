@@ -18,8 +18,6 @@
 ##' @include modspec.R
 NULL
 
-
-
 ##' Read a model specification file
 ##' 
 ##' \code{mread} reads and parses the \code{mrgsolve} model specification file,
@@ -75,7 +73,7 @@ NULL
 ##' \code{soloc} to a persistent directory location will preserve those 
 ##' artifacts across R restarts.  Also, if simulation from a single model is 
 ##' being done in separate processes on separate compute nodes, it might be 
-##' necessary to store these compilcation artifacts in a local directory 
+##' necessary to store these compilation artifacts in a local directory 
 ##' to make them accessible to the different nodes. If the \code{soloc} 
 ##' directory does not exist, `mread` will attempt to create it.
 ##' 
@@ -423,7 +421,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)
-
+  
   same <- check_and_copy(
     from = temp_write,
     to = build$compfile
@@ -442,17 +440,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Compile the model
   ## The shared object is model-mread-source.cpp
   
-  out <- suppressWarnings(
-    exec_internal(
-      cmd = build$cmd,
-      args = build$args,
-      error = FALSE
-    )
-  )
-  
+  out <- suppressWarnings(build_exec(build))
+
   comp_success <- out$status==0 & file.exists(build$compout)
   
   if(!comp_success) {
+    if(ignore.stdout) message("error.", appendLF=FALSE)
     return(build_failed(out,build))
   } 
   

@@ -5,7 +5,7 @@
 \alias{as_data_set}
 \alias{as_data_set,ev-method}
 \alias{as_data_set,data.frame-method}
-\title{Create a simulatinon data set from ev objects}
+\title{Create a simulation data set from ev objects}
 \usage{
 as_data_set(x, ...)
 
@@ -22,7 +22,7 @@ as_data_set(x, ...)
 a data frame suitable for passing into \code{\link{data_set}}
 }
 \description{
-Create a simulatinon data set from ev objects
+Create a simulation data set from ev objects
 }
 \details{
 The goal is to take a series of event objects and combine them 

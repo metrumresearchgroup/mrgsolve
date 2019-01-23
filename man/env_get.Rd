@@ -12,7 +12,7 @@ env_get_env(x)
 \arguments{
 \item{x}{model object}
 
-\item{tolist}{should the environment be coreced to \code{list}?}
+\item{tolist}{should the environment be coerced to \code{list}?}
 }
 \description{
 Return model environment

@@ -11,7 +11,7 @@ See \code{\link{modlib_details}} for more detailed descriptions of
 parameters and compartments.
 
 All PK/PD models include 2-compartment PK model with absorption from 
-2 extravasular compartments and linear + nonlinear clearance.  The 
+2 extravascular compartments and linear + nonlinear clearance.  The 
 PK models are parameterized with \code{CL}, \code{VC}, \code{Q}, 
 \code{VMAX}, \code{KM}, \code{KA1} and \code{KA2} and implement 
 compartments \code{EV1}, \code{EV2}, \code{CENT}, \code{PERIPH} .  

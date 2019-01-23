@@ -205,11 +205,11 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
   x <- as.data.frame(x)
   
   if(!has_ID(x)) {
-    stop("ID is a required column for idata_set",call.=FALSE)
+    stop("ID is a required column for idata_set.",call.=FALSE)
   }
   
-  if(any(duplicated(x[,"ID"]))) {
-    stop("duplicate IDs not allowed in idata_set",call.=FALSE) 
+  if(any(duplicated(x[["ID"]]))) {
+    stop("Duplicate IDs not allowed in idata_set.",call.=FALSE) 
   }
   
   x <- numeric_data_matrix(x,quiet)
@@ -226,7 +226,7 @@ valid_data_set.matrix <- function(x,verbose=FALSE) {
   if(is.numeric(x)) {
     return(valid_data_set(as.data.frame(x)))
   }
-  stop("input data matrix is not numeric",call.=FALSE)
+  stop("Input data matrix is not numeric.",call.=FALSE)
 }
 
 check_data_set_na <- function(data,m) {

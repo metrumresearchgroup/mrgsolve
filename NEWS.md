@@ -1,3 +1,8 @@
+# mrgsolve 0.9.0
+- Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis
+outputs can easily be plotted on log scale
+- release
+
 # mrgsolve 0.8.12.9000
 
 ## New functions
@@ -5,12 +10,12 @@
 the input data set after optionally converting logical columns
 to integer
 - Added `ev_rx` function to write dosing interventions in notation similar
-to a prescription sig
+to a prescription 'sig'
 
 ## New features
 - Added `$PRED` block for models that don't utilize any compartments
 - Added `pred1` to the internal model library (`modlib()`)
-- Added `mrgsim_q` function for simulation from a model objejct 
+- Added `mrgsim_q` function for simulation from a model object 
 with quicker turnaround time
 - `mread` will take `soloc` and `project` arguments from `options()` as
 `mrgsolve.soloc` and `mrgsolve.project`, respectively
@@ -18,6 +23,8 @@ with quicker turnaround time
 without creating the usual `mrgsims` object
 - The directory name passed to the `soloc` argument of `mread` (or `mcode` or 
 cache versions of both) will be created if it doesn't exist
+- Added `pk2iv` model as convenience option
+- Added `tinf` argument to `ev()` constructor function
 
 ## New behavior
 - `time/TIME` is no longer required in a data set when `$PRED` is in use
@@ -46,20 +53,19 @@ the model library so that, for example,  `modlib("pk1")` is equivalent to
 model code.  This function has been moved to a namespace and is now available
 as `mrg::report`.  This feature continues to be undocumented.
 
-
 # mrgsolve 0.8.12
 - Minor changes to namespace for CRAN
 
-# mrgsove 0.8.11
+# mrgsolve 0.8.11
 - Internal release
 - Removed the function `s` and replaced with `s_`; this was not a problem 
 created by mrgsolve but rather by ggplot2, which calls `mgcv::s` via 
-`geom_smooth` under certian circumstances
+`geom_smooth` under certain circumstances
 
 # mrgsolve 0.8.10.9015
 - Re-configured the list of data coming from `as.list.mrgmod` so that
 the names match the names that you would pass to `update.mrgmod`; also
-added some items so that all updateable slots in the model object
+added some items so that all updatable slots in the model object
 are exported by calling `as.list` #354
 
 # mrgsolve 0.8.10.9014
@@ -120,7 +126,7 @@ expect to find the model in the file `mymodel.cpp`.
 
 ## Bug Fixes
 
-- Fixed bug where the md5 value on the model file cound not
+- Fixed bug where the MD5 value on the model file could not
 be calculated under certain `project` path formulations #315
 
 ## Important changes
@@ -143,21 +149,21 @@ to `mrgsolve:::nmxml`
 ## Documentation
 - Added `solversettings` help topic that identifies some of the
 DLSODA inputs you can tweak
-- Improved doumentation for `update` method as well as
+- Improved documentation for `update` method as well as
 `mrgmod-class`
 
 # mrgsolve 0.8.10.9003
 
 ## New Features
-- Bioavability specified in `$MAIN` is accounted for when simulating with
-`qsim`; there is still no bioavability adjustment for infusions or
+- Bioavailability specified in `$MAIN` is accounted for when simulating with
+`qsim`; there is still no bioavailability adjustment for infusions or
 lag times adjustments to doses
 
 - Added capability to rename data items in `$CAPTURE`; also,
 names are partially sanitized, removing parens and brackets.  
 For example `$CAPTURE WT = WGT ETA(1) TVCL = THETA1`
 
-- Added `qsim_df` function, retruning data frame rather than
+- Added `qsim_df` function, returning data frame rather than
 matrix
 
 - Added `as.list` method for `mrgsims` objects
@@ -339,14 +345,14 @@ objects (https://github.com/metrumresearchgroup/mrgsolve/pull/164).
 - Added `as_data_frame` method from the `tibble` package (#166).
 - When annotating model blocks, mrgsolve takes the __last__ parens item  as
 the "units" and the __last__ bracketed item as "options"
-- Added `$` operator for `mrgmod` objects to return the value of a parameter (99748d8a7e4976fc710152c2dfc82da9b059a852).
+- Added `$` operator for `mrgmod` objects to return the value of a parameter.
 - Added `mread_cache` and `mcode_cache` functions to build and cache a model
 (#143).
 
 ## Bugs fixed
 - Fixed documentation issue in `PKMODEL`.  The volumes for two-compartment
 model with no depot should be `V1`/`V2`.
-- Fixed bug in `knobs` where output column names are mal-formed when a user
+- Fixed bug in `knobs` where output column names are malformed when a user
 `$CAPTURE`s a parameter that is also being tweaked as a knob.
 - Fixed bug in annotated model specification when multiple unit or option
 specifications are made.
@@ -446,7 +452,7 @@ is used, mrgsolve will link back the the appropriate package and possibly
 include appropriate header files when compiling the model.  For example,
 `simeta` will link back to mrgsolve and `RcppArmadillo` and allow the modeler
 to simulate a new set of `ETA`s.  Use `Rcpp`  plugin to simulate random variates
-from common distibutions in `R`(e.g. `rnorm`, `rexp` etc ... ).  
+from common distributions in `R`(e.g. `rnorm`, `rexp` etc ... ).  
 
 ## Bugs fixed
 * Fixed issue with `ev` where no rows were returned if `amt` wasn't supplied
@@ -498,7 +504,7 @@ source `.cpp` file, the source is not overwritten.  In that case, `make` will
 not re-build the shared object.  Using the `preclean` argument will force
 re-compilation (see `R CMD SHLIB`).
 * The header files `modelheader.h` and `mrgsolv.h` are no longer copied into
-the project directory.  But `CLINK_CPPFLAGS` environment variable is modlifed
+the project directory.  But `CLINK_CPPFLAGS` environment variable is modified
 to include `<path-to-mrgsolve-package>/inst/base` so that these may be linked.
 * The `R CMD SHLIB` build process always uses `intern=TRUE` so that output is
 suppressed on both `Windows` and `mac/unix`.  The user may still request to
@@ -542,7 +548,7 @@ equivalent `mread` call is: `mod <- mread("mymodel", tempdir(),code)`.
 syntax in `carry.out` when you want to copy a column from the input data set
 into the simulated data set, changing the column to `newname` from `oldname`.  
 Use this syntax in `Req` when you want to change the names of compartments or
-output variables spcified in `$TABLE` / `$CAPTURE`.
+output variables specified in `$TABLE` / `$CAPTURE`.
 * Added `pkmodel` function for easy loading and simulating from 1- and
 2-compartment models ([issue 39](../../issues/39)).
 * Added new code block: `$PKMODEL` for simulating PK model with analytical

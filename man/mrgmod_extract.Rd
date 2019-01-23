@@ -26,5 +26,5 @@
 The \code{$} and \code{[[} operators get the value 
 of a single parameter in the model.  The 
 \code{[} gets several values, returning a 
-nameed list.
+named list.
 }

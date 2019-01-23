@@ -89,7 +89,7 @@ artifacts are lost when R restarts when the default is used.  Changing
 \code{soloc} to a persistent directory location will preserve those 
 artifacts across R restarts.  Also, if simulation from a single model is 
 being done in separate processes on separate compute nodes, it might be 
-necessary to store these compilcation artifacts in a local directory 
+necessary to store these compilation artifacts in a local directory 
 to make them accessible to the different nodes. If the \code{soloc} 
 directory does not exist, `mread` will attempt to create it.
 

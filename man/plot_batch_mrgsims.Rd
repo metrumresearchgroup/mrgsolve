@@ -14,9 +14,9 @@
   scales = list(y = list(relation = "free")), ...)
 }
 \arguments{
-\item{x}{mrsims object}
+\item{x}{mrgsims object}
 
-\item{yval}{y varialbes to plot}
+\item{yval}{y variables to plot}
 
 \item{auto.key}{passed to xyplot}
 

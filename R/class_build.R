@@ -102,15 +102,20 @@ new_build <- function(file, model, project, soloc, code = NULL,
   env$compdir <- compdir()
   env$cachfile <- cachefile()
   env$model <- new_model
-  
-  env$cmd <- paste0(R.home(component="bin"),.Platform$file.sep,"R")
+  env$stdout <- "build_exec_std_out"
+  env$stderr <- "build_exec_std_err"
+  env$cmd <- paste0(
+    R.home(component="bin"),
+    .Platform$file.sep,
+    "R"
+  )
   
   env$args <- c(
     "CMD", "SHLIB",
     ifelse(preclean, "--preclean ", ""),
     env$compfile
   )
-
+  
   return(env)
   
 }
@@ -179,11 +184,31 @@ mgsub <- function(pattern,replacement,x,...) {
   )
 }
 
+
+build_exec <- function(build) {
+  status <- system2(
+    build$cmd,
+    args = build$args,
+    stdout = build[["stdout"]],
+    stderr = build[["stderr"]]
+  )
+  list(status = status, stdout = "", stderr = "")
+}
+
 build_output_cleanup <- function(x,build) {
-  x[["stdout"]] <- rawToChar(x[["stdout"]])
+  if(file.exists(build[["stdout"]])) {
+    x[["stdout"]] <- readLines(build[["stdout"]])  
+    if(length(x[["stdout"]])==0) x[["stdout"]] <- ""
+  } else {
+    x[["stdout"]] <- "could not find build output"
+  }
+  if(file.exists(build[["stderr"]])) {
+    errr <- readLines(build[["stderr"]])
+    if(length(errr)==0) errr <- ""
+  } else {
+    errr <- "could not find build error"
+  }
   x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
-  errr <- rawToChar(x[["stderr"]])
-  errr <- strsplit(errr, "\n|\r\n")[[1]]
   patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
   patt <- "^ *In function 'void _model.*:$"
@@ -195,8 +220,7 @@ build_output_cleanup <- function(x,build) {
 }
 
 build_failed <- function(out,build) {
-  out <- build_output_cleanup(out,build) 
-  message("error.", appendLF=FALSE)
+  out <- build_output_cleanup(out,build)
   msg <- divider_msg("stdout")
   cat("\n\n", msg, "\n", sep="")
   cat(out[["stdout"]],sep="\n")
@@ -212,7 +236,7 @@ build_failed <- function(out,build) {
   saveRDS(out,file.path(tempdir(),"build_error.RDS"))
   build_handle_127(out)
   stop(
-    "There was a problem building the model.",
+    "The model build step failed.",
     call.=FALSE
   )
 }
@@ -230,11 +254,9 @@ build_get_output <- function() {
 build_handle_127 <- function(out) {
   found127 <- any(grepl("Error +127", out[["stderr"]]))
   if(found127) {
-    message("NOTE: 'Error 127' was detected in the above message.")
-    message("This possibly indicates that the build toolchain could not be found.")
-    message("Please check for proper compiler installation ('Rtools.exe' on Windows).")
-    message("Try 'pkgbuild::check_build_tools(debug=TRUE)' to assist\nin diagnosing this issue.")
+    msg <- readLines(system.file("msg", "error127.txt", package="mrgsolve"))
+    null <- lapply(msg,message)
+    cat(divider_msg(),"\n")
   }
   return(invisible(NULL))  
 }
-

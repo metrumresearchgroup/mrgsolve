@@ -13,7 +13,7 @@ ev(x, ...)
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
 
 \S4method{ev}{missing}(time = 0, amt, evid = 1, cmt = 1,
-  ID = numeric(0), replicate = TRUE, until = NULL,
+  ID = numeric(0), replicate = TRUE, until = NULL, tinf = NULL,
   realize_addl = FALSE, ...)
 
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
@@ -21,7 +21,8 @@ ev(x, ...)
 \arguments{
 \item{x}{a model object}
 
-\item{...}{other items to be incorporated into the event object}
+\item{...}{other items to be incorporated into the event object; see 
+details}
 
 \item{object}{passed to show}
 
@@ -39,6 +40,9 @@ ev(x, ...)
 each individual in \code{ID}}
 
 \item{until}{the expected maximum \bold{observation} time for this regimen}
+
+\item{tinf}{infusion time; if greater than zero, then the \code{rate} item 
+will be derived as \code{amt/tinf}}
 
 \item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} 
 doses.  If \code{TRUE}, \code{addl} doses are made explicit with 

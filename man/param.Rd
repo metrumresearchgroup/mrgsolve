@@ -55,7 +55,7 @@ the parameters in a model object.  For both uses, the return value
 is a \code{parameter_list} object.
 For the former use, \code{param} is usually called to print
 the parameters to the screen, but the \code{parameter_list} object can also 
-be coreced to a list or numeric R object.
+be coerced to a list or numeric R object.
 
 Use \code{allparam} to get a \code{parameter_list} object including 
 both model parameters and data items listed in \code{$FIXED}.

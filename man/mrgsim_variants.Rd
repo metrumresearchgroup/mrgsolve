@@ -40,7 +40,7 @@ These functions are called by \code{\link{mrgsim}} and have
 explicit input requirements written into the function name.  The motivation
 behind these variants is to give the user a clear workflow with specific,
 required inputs as indicated by the function name. Use 
-\code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
+\code{\link{mrgsim_q}} instead to benchmark mrgsolve or to do repeated quick
 simulation for tasks like parameter optimization,  sensitivity analyses, 
 or optimal design.
 }

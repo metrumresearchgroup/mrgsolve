@@ -115,7 +115,6 @@ test_that("Run with data set - tbl", {
   expect_equal(nrow(out),nrow(data))
 })
 
-
 data(exidata)
 
 test_that("Run idata set", {
@@ -126,7 +125,6 @@ test_that("Run idata set", {
 })
 
 test_that("Run idata set with ev", {
-  
   e <- ev(amt=100)
   N <- length(unique(exidata$ID))
   N <- N*n + N
@@ -136,13 +134,7 @@ test_that("Run idata set with ev", {
   expect_equal(length(unique(out$ID)),nrow(exidata))
 })
 
-
 test_that("Duplicate ID in idata_set gives error", {
-  idata <- tibble(ID=rep(1:10,each=5),CL=2)    
-  expect_error(mod %>% idata_set(idata) %>% mrgsim)
+  idata <- dplyr::mutate(tibble(ID=rep(seq(10),each=5)),CL=2)
   expect_error(mrgsim(mod,idata=idata_set))
 })
-
-
-
-

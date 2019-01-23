@@ -41,7 +41,7 @@ to use for the data set}
 }
 \description{
 The input data set (\code{data_set}) is a data frame that specifies
-observations, model events, and / or paramter values for a population
+observations, model events, and / or parameter values for a population
 of individuals.
 }
 \details{

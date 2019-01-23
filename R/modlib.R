@@ -54,6 +54,7 @@
 ##' mod <- mread("viral1", modlib())
 ##' mod <- mread("viral2", modlib())
 ##' mod <- mread("pred1",  modlib())
+##' mod <- mread("pbpk",   modlib())
 ##' 
 ##' mrgsolve:::code(mod)
 ##' }
@@ -86,7 +87,7 @@ modlib_list <- function() {
 ##'
 ##' @section Compartments:
 ##' \itemize{
-##' \item{\code{EV1}, \code{EV2}}: extravasular dosing compartments
+##' \item{\code{EV1}, \code{EV2}}: extravascular dosing compartments
 ##' \item{\code{CENT}}: central PK compartment
 ##' \item{\code{PERIPH}}: peripheral PK compartment
 ##' \item{\code{PERIPH2}}: peripheral PK compartment 2
@@ -190,7 +191,7 @@ NULL
 ##' parameters and compartments.
 ##'
 ##' All PK/PD models include 2-compartment PK model with absorption from 
-##' 2 extravasular compartments and linear + nonlinear clearance.  The 
+##' 2 extravascular compartments and linear + nonlinear clearance.  The 
 ##' PK models are parameterized with \code{CL}, \code{VC}, \code{Q}, 
 ##' \code{VMAX}, \code{KM}, \code{KA1} and \code{KA2} and implement 
 ##' compartments \code{EV1}, \code{EV2}, \code{CENT}, \code{PERIPH} .  
@@ -230,7 +231,7 @@ NULL
 ##' \item{\code{KINT}}: internalization rate constant
 ##' \item{\code{KON}}: association rate constant
 ##' \item{\code{KOFF}}: dissociation rate constant
-##' \item{\code{KSYN}}: target systhesis rate
+##' \item{\code{KSYN}}: target synthesis rate
 ##' \item{\code{KDEG}}: target degredation rate constant
 ##' }
 ##'

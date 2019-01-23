@@ -9,16 +9,16 @@ simargs(x, which = NULL, clear = FALSE, ...)
 \arguments{
 \item{x}{model object}
 
-\item{which}{character with lenght 1 naming a single arg to get}
+\item{which}{character with length 1 naming a single arg to get}
 
-\item{clear}{logical indicating whether or not clear args from 
+\item{clear}{logical indicating whether or not to clear \code{args} from
 the model object}
 
 \item{...}{passed along}
 }
 \value{
-If \code{clear} is \code{TRUE}, the argument list is 
-cleared and the model object is returned.  Otherwise, the argument 
+If \code{clear} is \code{TRUE}, the argument list is
+cleared and the model object is returned.  Otherwise, the argument
 list is returned.
 }
 \description{

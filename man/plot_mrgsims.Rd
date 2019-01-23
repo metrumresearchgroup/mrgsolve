@@ -11,7 +11,8 @@
 
 \S4method{plot}{mrgsims,formula}(x, y, limit = 16, show.grid = TRUE,
   outer = TRUE, type = "l", lwd = 2, ylab = "value", groups = ID,
-  scales = list(y = list(relation = "free")), ...)
+  scales = list(y = list(relation = "free")), logy = FALSE,
+  logbr = 3, ...)
 }
 \arguments{
 \item{x}{mrgsims object}
@@ -35,6 +36,12 @@
 \item{groups}{passed to xyplot}
 
 \item{scales}{passed to xyplot}
+
+\item{logy}{plot the y variables on log scale}
+
+\item{logbr}{log scale breaks indicator; use \code{1} for breaks every log
+unit; use \code{3} for breaks every half log unit; use \code{0} for default
+breaks}
 }
 \description{
 Generate a quick plot of simulated data

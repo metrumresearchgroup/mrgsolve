@@ -84,10 +84,10 @@ validate_idata <- function(idata) {
 ##'
 ##' This function sets up the simulation run from data stored in the model
 ##' object as well as arguments passed in.  Use \code{\link{mrgsim_q}} instead 
-##' to benchark mrgsolve or to do repeated quick simulation for tasks like 
+##' to benchmark mrgsolve or to do repeated quick simulation for tasks like 
 ##' parameter optimization, sensitivity analyses, or optimal design.  See
 ##' \code{\link{mrgsim_variants}} for other mrgsim-like functions that have 
-##' more focused inputs. \code{mrgsim_df} coreces output to data.frame 
+##' more focused inputs. \code{mrgsim_df} coerces output to data.frame 
 ##' prior to returning.
 ##'
 ##' @param x the model object
@@ -110,7 +110,7 @@ validate_idata <- function(idata) {
 ##' \item Use \code{mrgsim_df} to return a data frame rather than 
 ##' \code{mrgsims} object.
 ##' 
-##' \item{Both \code{data} and \code{idata} will be coreced to numeric matrix}
+##' \item{Both \code{data} and \code{idata} will be coerced to numeric matrix}
 ##' 
 ##' \item{\code{carry_out} can be used to insert data columns into the output 
 ##' data set.  This is partially dependent on the nature of the data brought 
@@ -125,7 +125,7 @@ validate_idata <- function(idata) {
 ##'  
 ##'  \item \code{carry_out}: \code{idata} is assumed to be 
 ##' individual-level and variables that are carried from \code{idata} 
-##' are repeated throughout the invidivual's simulated data.  Variables 
+##' are repeated throughout the individual's simulated data.  Variables 
 ##' carried from \code{data} are carried via last-observation carry forward.  
 ##' \code{NA} is returned from observations that are inserted into 
 ##' simulated output that occur prior to the first record in \code{data}.
@@ -237,7 +237,7 @@ mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 ##' explicit input requirements written into the function name.  The motivation
 ##' behind these variants is to give the user a clear workflow with specific,
 ##' required inputs as indicated by the function name. Use 
-##' \code{\link{mrgsim_q}} instead to benchark mrgsolve or to do repeated quick
+##' \code{\link{mrgsim_q}} instead to benchmark mrgsolve or to do repeated quick
 ##' simulation for tasks like parameter optimization,  sensitivity analyses, 
 ##' or optimal design.
 ##' 

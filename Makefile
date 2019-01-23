@@ -9,11 +9,22 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
 
+testing:
+	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
+	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
+	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
+	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master
+
 covr: 
 	Rscript "inst/maintenance/covr.R"
 
 house: 
 	Rscript "inst/maintenance/build_housemodel.R"
+
+no-test:
+	make build
+	R CMD check ${TARBALL} --no-tests
+	
 
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
@@ -110,4 +121,8 @@ check-devel:
 
 check-win:
 	Rscript -e 'devtools::check_win_devel()'
+
+check-winhub:
+	Rscript -e 'rhub::check_on_windows()'
+
 

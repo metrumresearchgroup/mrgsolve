@@ -35,8 +35,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo syms !!!
-##' @importFrom sys exec_internal
+##' @importFrom rlang quos enquo syms !!! quo_name
 ##' 
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
@@ -66,7 +65,6 @@ GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRA
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 GLOBALS$TRAN_UPPER <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 GLOBALS$TRAN_LOWER <- tolower(GLOBALS$TRAN_UPPER)
-
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",

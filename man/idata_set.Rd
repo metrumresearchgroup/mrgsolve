@@ -20,7 +20,7 @@ idata_set(x, data, ...)
 \arguments{
 \item{x}{model object}
 
-\item{data}{a data set coercable to data.frame}
+\item{data}{a data set that can be coerced to data.frame}
 
 \item{...}{passed along}
 
@@ -57,7 +57,7 @@ this initial condition will be over-ridden if you also set the \code{CMT_0}
 in \code{$MAIN}.
 
 The most common application of \code{idata_set} is to specify a population
-or bach of simulations to do.  We commonly use \code{idata_set} with an 
+or batch of simulations to do.  We commonly use \code{idata_set} with an 
 event object (see \code{\link{ev}}).  In that case, the event gets applied
 to each individual in the \code{\link{idata_set}}.  
 
