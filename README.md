@@ -126,8 +126,10 @@ mod %>%
 ### Sensitivity analysis with PBPK model
 
 ``` r
-mod <- mread("pbcsa", modlib())
+mod <- modlib("pbpk")
 ```
+
+    . Building pbpk ... done.
 
 Reference
 
@@ -137,16 +139,14 @@ blocks(mod,PROB)
 
 ``` 
   
-  Model file: pbcsa.cpp 
+  Model file: pbpk.cpp 
   
   $PROB
-  # Yoshikado et al. (2016)
-  - Title: __Quantitative Analyses of Hepatic OATP-Mediated
-  Interactions Between Statins and Inhibitors Using PBPK
-  Modeling With a Parameter Optimiaztion Method__
-  - Reference: CP\&T vol. 100 no. 5 pp. 513-23 11/2016
-  - Parameters: 40
-  - Compartments: 31
+  # HUMAN PBPK MODEL
+  1: Jones H, Rowland-Yeo K. Basic concepts in physiologically based
+  pharmacokinetic modeling in drug discovery and development. CPT Pharmacometrics
+  Syst Pharmacol. 2013 Aug 14;2:e63. doi: 10.1038/psp.2013.41. PubMed PMID:
+  23945604; PubMed Central PMCID: PMC3828005.
 ```
 
 Model parameters
@@ -156,47 +156,52 @@ param(mod)
 ```
 
     . 
-    .  Model parameters (N=26):
-    .  name    value   . name  value 
-    .  Clr     0       | PSadi 0.17  
-    .  exFadi  0.145   | PSmus 4.08  
-    .  exFliv  0.278   | PSski 0.623 
-    .  exFmus  0.146   | Qadi  0.223 
-    .  exFski  0.321   | Qh    1.2   
-    .  fafg    0.572   | Qmus  0.642 
-    .  fb      0.06    | Qski  0.257 
-    .  fhCLint 0.00978 | tlag  0.254 
-    .  ka      0.999   | Vadi  0.143 
-    .  Kp_adi  17.3    | Vcent 0.075 
-    .  Kp_liv  16.7    | Vliv  0.0241
-    .  Kp_mus  2.98    | Vmus  0.429 
-    .  Kp_ski  13.6    | Vski  0.111
+    .  Model parameters (N=52):
+    .  name    value  . name  value  . name      value 
+    .  BP      0.98   | fumic 1      | FVve      0.0514
+    .  BW      70     | fup   0.681  | HLM_CLint 8     
+    .  CLrenal 0      | FVad  0.213  | Ka        2.18  
+    .  CO      108    | FVar  0.0257 | Kpad      0.191 
+    .  F       1      | FVbo  0.0856 | Kpbo      0.374 
+    .  FQad    0.05   | FVbr  0.02   | Kpbr      0.606 
+    .  FQbo    0.05   | FVgu  0.0171 | Kpgu      0.578 
+    .  FQbr    0.12   | FVhe  0.0047 | Kphe      0.583 
+    .  FQgu    0.146  | FVki  0.0044 | Kpki      0.597 
+    .  FQh     0.215  | FVli  0.021  | Kpli      0.57  
+    .  FQhe    0.04   | FVlu  0.0076 | Kplu      0.62  
+    .  FQki    0.19   | FVmu  0.4    | Kpmu      0.622 
+    .  FQlu    1      | FVpl  0.0424 | Kpre      0.6   
+    .  FQmu    0.17   | FVrb  0.0347 | Kpsk      0.6   
+    .  FQre    0.104  | FVre  0.0998 | Kpsp      0.591 
+    .  FQsk    0.05   | FVsk  0.0371 | Kpte      0.6   
+    .  FQsp    0.0172 | FVsp  0.0026 | .         .     
+    .  FQte    0.0108 | FVte  0.01   | .         .
 
 Set up a batch to simulate
 
 ``` r
-idata <- expand.idata(Kp_liv = seq(4,20,2))
+idata <- expand.idata(Kpli = seq(4,20,2))
 
 idata
 ```
 
-    .   ID Kp_liv
-    . 1  1      4
-    . 2  2      6
-    . 3  3      8
-    . 4  4     10
-    . 5  5     12
-    . 6  6     14
-    . 7  7     16
-    . 8  8     18
-    . 9  9     20
+    .   ID Kpli
+    . 1  1    4
+    . 2  2    6
+    . 3  3    8
+    . 4  4   10
+    . 5  5   12
+    . 6  6   14
+    . 7  7   16
+    . 8  8   18
+    . 9  9   20
 
 ``` r
 mod %>% 
-  ev(amt = 2000) %>% 
+  ev(amt = 150) %>% 
   idata_set(idata) %>%
-  mrgsim(end = 24, delta = 0.1) %>%
-  plot(CSA~time, scale = list(y = list(log =TRUE, at = 10^seq(-4,4))))
+  mrgsim(end = 6, delta = 0.1) %>%
+  plot(Cp~time)
 ```
 
 <img src="inst/maintenance/img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />

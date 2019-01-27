@@ -129,7 +129,7 @@ mod %>%
 ### Sensitivity analysis with PBPK model
 
 ```{r}
-mod <- mread("pbcsa", modlib())
+mod <- modlib("pbpk")
 ```
 
 Reference
@@ -147,7 +147,7 @@ param(mod)
 
 Set up a  batch to simulate
 ```{r}
-idata <- expand.idata(Kp_liv = seq(4,20,2))
+idata <- expand.idata(Kpli = seq(4,20,2))
 
 idata
 ```
@@ -155,10 +155,10 @@ idata
 
 ```{r}
 mod %>% 
-  ev(amt = 2000) %>% 
+  ev(amt = 150) %>% 
   idata_set(idata) %>%
-  mrgsim(end = 24, delta = 0.1) %>%
-  plot(CSA~time, scale = list(y = list(log =TRUE, at = 10^seq(-4,4))))
+  mrgsim(end = 6, delta = 0.1) %>%
+  plot(Cp~time)
 ```
 
 
