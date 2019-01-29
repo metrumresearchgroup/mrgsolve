@@ -90,8 +90,7 @@ mrgsim_q <- function(x,
                      recsort = 1,
                      stime = numeric(0),
                      output = NULL,
-                     skip_init_calc = FALSE, 
-                     simcall = 1) {
+                     skip_init_calc = FALSE) {
   
   ## data
   if(!is.valid_data_set(data)) {
@@ -126,7 +125,6 @@ mrgsim_q <- function(x,
   # already took intersect
   parin$request <- as.integer(seq_along(compartments)-1);
   
-  if(simcall==1) {
   out <- .Call(
     `_mrgsolve_MRGSIMQ`,
     parin,
@@ -141,34 +139,6 @@ mrgsim_q <- function(x,
     as.matrix(smat(x)),
     x@envir
   )
-  
-  } else {
-    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
-    parin[["whichtg"]] <- integer(0)
-    parin[["carry_data"]] <- character(0)
-    parin[["carry_idata"]] <- character(0)
-    parin[["carry_tran"]] <- character(0)
-    parin[["obsonly"]] <- FALSE
-    parin[["filbak"]] <- TRUE
-    parin[["tad"]] <- FALSE
-    parin[["nocb"]] <- TRUE
-    parin[["obsaug"]] <- FALSE
-
-    out <- .Call(
-      `_mrgsolve_DEVTRAN`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      capt_pos,
-      pointers(x),
-      data,null_idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )[["data"]]
-  }
   
   cnames <- c("ID", tcol, compartments, capt)
   
