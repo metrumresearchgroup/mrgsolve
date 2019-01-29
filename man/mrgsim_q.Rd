@@ -5,7 +5,7 @@
 \title{Simulate from a model object with quicker turnaround}
 \usage{
 mrgsim_q(x, data, recsort = 1, stime = numeric(0), output = NULL,
-  skip_init_calc = FALSE)
+  skip_init_calc = FALSE, simcall = 1)
 }
 \arguments{
 \item{x}{a model object}
