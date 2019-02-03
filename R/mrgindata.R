@@ -135,7 +135,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   # special case
   if(ncol(x)==1) {
     x <- numeric_data_matrix(x,quiet)
-    return(structure(x, class = "valid_data_set"))
+    return(structure(x, class = c("valid_data_set", "matrix")))
   }
   
   
@@ -183,7 +183,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
   
-  structure(x, class = "valid_data_set")
+  structure(x, class = c("valid_data_set", "matrix"))
 }
 
 ##' Validate and prepare idata data sets for simulation
@@ -216,7 +216,7 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
   
   check_data_set_na(x,m)
   
-  structure(x, class="valid_idata_set")
+  structure(x, class=c("valid_idata_set", "matrix"))
 }
 
 ##' @rdname valid_data_set
