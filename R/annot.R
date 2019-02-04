@@ -47,10 +47,10 @@ gmatch <- function(what,x) as.integer(gregexpr(what,x,fixed=TRUE)[[1]])
 
 parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given") {
   
-  if(nchar(x)==0) return(NULL)
-  
   x <- mytriml(x)
   
+  if(nchar(x)==0) return(NULL)
+
   col <- charcount(x,":")[1]
   
   if(col != (2-noname-novalue)) {
