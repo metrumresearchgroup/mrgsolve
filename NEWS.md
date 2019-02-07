@@ -1,3 +1,14 @@
+# mrgsolve 0.9.0.9000
+
+- Fixed bug in TAD plugin where time of last dose never moved from default
+- Added option in `mrgsolve_q` to call the standard mrgsolve simulation 
+rather than the streamlined function; a decision will have to be made about 
+whether or not the streamlined function will be retained
+- Fixed a bug in the model parser where commented lines with (all) leading
+spaces were not handled properly #450
+- Objects of class `valid_data_set` now retain the matrix attribute #448
+- Block names are now coreced to upper case letters
+
 # mrgsolve 0.9.0
 - Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis
 outputs can easily be plotted on log scale

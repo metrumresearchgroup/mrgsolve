@@ -19,7 +19,7 @@
 # @include complog.R nmxml.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
-block_re <-  "^\\s*\\$[A-Z]\\w*|\\s*\\[+\\s*[A-Z]\\w*\\s*\\]+"
+block_re <-  "^\\s*\\$[A-Za-z]\\w*|\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -189,9 +189,9 @@ modelparse <- function(txt,
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
-  names(spec) <- labs
+  names(spec) <- toupper(labs)
   
-  for(i in which(labs %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
+  for(i in which(names(spec) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
   
