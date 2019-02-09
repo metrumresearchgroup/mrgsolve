@@ -9,7 +9,7 @@ spaces were not handled properly #450
 - Objects of class `valid_data_set` now retain the matrix attribute #448
 - Block names are now coreced to upper case letters
 - Change default for simcall to 0 in mrgsim_q
-
+- Added recover argument to mread
 
 # mrgsolve 0.9.0
 - Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis
