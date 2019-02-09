@@ -48,6 +48,8 @@ NULL
 ##' @param quiet don't print messages when compiling
 ##' @param preclean logical; if \code{TRUE}, compilation artifacts are 
 ##' cleaned up first
+##' @param recover if \code{TRUE}, an object will be returned in case
+##' the model shared object fails to build
 ##' @param ... passed to \code{\link[mrgsolve]{update}}
 ##' 
 ##' @details
@@ -149,7 +151,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
                   quiet = getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds = FALSE, warn = TRUE, 
                   soloc = getOption("mrgsolve.soloc",tempdir()),
-                  preclean = FALSE, ...) {
+                  preclean = FALSE, recover=FALSE, ...) {
   
   if(charthere(model, "/")) {
     project <- dirname(model)
@@ -167,7 +169,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   build <- new_build(
     file = file, model = model, project = project, 
     soloc = soloc, code = code, preclean = preclean, 
-    udll = udll
+    udll = udll, recover = recover
   )
   
   model <- build$model
@@ -442,23 +444,23 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   out <- suppressWarnings(build_exec(build))
 
-  comp_success <- out$status==0 & file.exists(build$compout)
+  comp_success <- out[["status"]]==0 & file.exists(build[["compout"]])
   
   if(!comp_success) {
     if(ignore.stdout) message("error.", appendLF=FALSE)
-    return(build_failed(out,build))
+    return(build_failed(out,build,x))
   } 
   
   if(ignore.stdout) {
     if(!quiet) message("done.\n", appendLF=FALSE)
   }  else {
     out <- build_output_cleanup(out,build) 
-    cat(out$stdout,sep="\n")
+    cat(out[["stdout"]],sep="\n")
   }
   
   ## Rename the shared object to unique name
   ## e.g model2340239403.so
-  z <- file.copy(build$compout,sodll(x))
+  z <- file.copy(build[["compout"]],sodll(x))
   
   dyn.load(sodll(x))
   

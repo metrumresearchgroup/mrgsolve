@@ -113,7 +113,11 @@ build_version <- function(x) {
   x@shlib[["version"]] 
 }
 
-compiled <- function(x,status=NULL) {
+compiled <- function(x,...) UseMethod("compiled")
+#' @export
+compiled.default <- function(x,...) return(FALSE)
+#' @export
+compiled.mrgmod <- function(x,status=NULL) {
     if(is.null(status)) return(x@shlib$compiled)
     x@shlib$compiled <- status
     return(x)
