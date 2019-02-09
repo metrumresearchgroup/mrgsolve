@@ -91,7 +91,7 @@ mrgsim_q <- function(x,
                      stime = numeric(0),
                      output = NULL,
                      skip_init_calc = FALSE, 
-                     simcall = 1) {
+                     simcall = 0) {
   
   ## data
   if(!is.valid_data_set(data)) {
