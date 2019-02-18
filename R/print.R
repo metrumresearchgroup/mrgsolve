@@ -19,11 +19,13 @@
 print_leading <- "%-17s"
 parheader <- c("  parameters: ", rep("    ", 6))
 initheader <- gsub("parameters", "compartments", parheader)
+captheader <- gsub("parameters", "captures", parheader)
 parheader <- sprintf(print_leading, parheader)
 initheader <- sprintf(print_leading, initheader)
-timeheader <- sprintf(print_leading,c("  time: ", "    ", "    "))
+captheader <- sprintf(print_leading, captheader)
+timeheader <- sprintf(print_leading,c("  time: ", "    "))
 print.os.header <- sprintf(print_leading, "  OS type: ")
-print.solver.header <- sprintf(print_leading, c("  solver:", "    "))
+print.solver.header <- sprintf(print_leading, c("  solver:"))
 
 
 print.mrgmod <- function(x,verbose=FALSE,...) {
@@ -46,7 +48,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   add <- paste0("add: " , paste0(add,add_suffix))
   
   if(nadd ==0) add <- "add: <none>"
-  tt <- c(tt1,add, paste0("tscale: ", x@tscale))
+  tt <- c(tt1,add)
   tt <- paste0(timeheader,tt)
   
   
@@ -79,13 +81,25 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
     inittxt <- paste0(initheader[1],"<none>")
   }
   
+  capt <- x@capture
+  ncapt <- length(capt)
+  if(ncapt > 0) {
+    capttext <- strwrap(paste0(capt,collapse=" "),width = 40)
+    if(length(capttext) > 4) {
+      capttext <- capttext[1:4]
+      capttext[5] <- "..."
+    }
+    capttext[length(capttext)] <- paste0(capttext[length(capttext)], " [", ncapt,"]")
+    capttext <- paste0(captheader[1:length(capttext)],capttext)
+    
+  } else {
+    capttext <- paste(captheader[1],"<none>")  
+  }
   
-  solvertxt <- list(
-    atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps,hmin=x@hmin, 
-    hmax=x@hmax
-  )
+  
+  solvertxt <- list(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps)
   solvertxt <- paste(names(solvertxt), unlist(solvertxt), sep=": ")
-  solvertxt <- list(solvertxt[1:2], solvertxt[3:5])
+  solvertxt <- list(solvertxt[1:3])
   solvertxt <- sapply(solvertxt, function(i) paste(i, collapse= " "))
   solvertxt <- paste0(print.solver.header, solvertxt)
   
@@ -101,11 +115,16 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   
   loaded <- ifelse(model_loaded(x),"", "<not loaded>")
   
-  header <- paste0("\n\n------------ mrgsolve model object (", 
-                   .Platform$OS.type, ") ------------\n")
+  src <- paste0("source: ", basename(cfile(x)))
+  nsrc <- nchar(src)
+  nside <- (52-nsrc)/2 - 2
+  side <- paste0(rep("-", nside),collapse="")
+
+  header <- paste0("\n\n",side, "  ", src, "  ", side, "\n\n")
+  
   cat(header)
+  
   cat("  project: ",proj,"\n", sep="")
-  cat("  source:        ", basename(cfile(x)), "\n", sep="")
   cat("  shared object: ", dllname(x), " ",loaded,"\n\n", sep="")
 
   cat(tt, sep="\n")
@@ -113,6 +132,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   
   cat(inittxt, sep="\n")
   cat(partxt, sep="\n")
+  cat(capttext,sep="\n")
   cat("  omega:        ", osig, "\n")
   cat("  sigma:        ", ssig, "\n")
   

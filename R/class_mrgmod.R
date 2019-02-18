@@ -368,6 +368,7 @@ setMethod("names", "mrgmod", function(x) {
   ans <- list()
   ans$param <- Pars(x)
   ans$init <- Cmt(x)
+  ans$capture <- unname(x@capture)
   ans$omega <- names(omat(x))
   ans$sigma <- names(smat(x))
   ans$omega_labels <- labels(omat(x))
@@ -596,6 +597,30 @@ setMethod("blocks", "mrgmod", function(x,...) {
 setMethod("blocks", "character", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(x,what)
+})
+
+prvec <- function(x, ...) {
+  x <- strwrap(paste0(x,collapse=", "),...)    
+  x
+}
+
+#' @export
+setMethod("summary", "mrgmod", function(object,...) {
+  l <- as.list(object)
+  
+  message("Model: ", l$model)
+  
+  message("- Parameters:")
+  message(prvec(l$pars,prefix="  "))
+  
+  message("- Compartments:")
+  message(prvec(l$cmt,prefix="  "))
+  
+  message("- Captured:")
+  o <- l$capture
+  if(length(o)==0) o <- "<none>"
+  message(prvec(o,prefix="  "))
+  return(invisible(NULL))
 })
 
 blocks_ <- function(file,what) {
