@@ -159,7 +159,7 @@ test_that("at options are parsed", {
   expect_identical(x$state,"mn")  
   expect_identical(x$town,"minneapolis")
   expect_equal(x$x,2)
-  expect_warning(ats(" @ ' a b c'"))  
-  expect_warning(ats('@ "a b c"'))  
+  expect_warning(ats(" @hrm ' a b c'"))  
+  expect_warning(ats('@foo "a b c"'))  
 })
 

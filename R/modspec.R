@@ -706,9 +706,9 @@ handle_spec_block.specINIT <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-CMT <- function(x,env,annotated=FALSE,pos=1,expr=NULL,...) {
+CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   
-  if(is.null(expr)) check_block_data(x,env$ENV,pos)
+ check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
@@ -716,7 +716,6 @@ CMT <- function(x,env,annotated=FALSE,pos=1,expr=NULL,...) {
     x <- names(l[["v"]])
   } else {
     x <- cvec_cs(x)
-    x <- c(eval(parse(text=expr)),x)
   }
   
   l <- rep(0,length(x))

@@ -19,7 +19,7 @@ THETA(x, env, annotated = FALSE, pos = 1, name = "THETA",
 
 INIT(x, env, annotated = FALSE, pos = 1, ...)
 
-CMT(x, env, annotated = FALSE, pos = 1, ...)
+CMT(x, env, annotated = FALSE, pos = 1, expr = NULL, ...)
 
 CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 }
