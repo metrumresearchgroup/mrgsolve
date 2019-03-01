@@ -143,7 +143,9 @@ slots <- sapply(protomod, class)
 names(slots) <- names(protomod)
 
 valid.mrgmod <- function(object) {
-  tags <- unlist(names(object), use.names=FALSE)
+  tags <- names(object)
+  tags[["capture"]] <- NULL
+  tags <- unlist(tags, use.names=FALSE)
   x <- check_names(tags,Pars(object),Cmt(object))
   x1 <- length(x)==0
   x2 <- object@advan %in% c(0,1,2,3,4,13)
