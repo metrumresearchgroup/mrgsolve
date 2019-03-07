@@ -5,7 +5,7 @@
 \title{Scrape options from a code block}
 \usage{
 scrape_opts(x, envir = list(), def = list(), all = TRUE,
-  marker = "=", narrow = TRUE)
+  marker = "=", allow_multiple = FALSE, narrow = TRUE)
 }
 \arguments{
 \item{x}{data}
@@ -17,6 +17,9 @@ scrape_opts(x, envir = list(), def = list(), all = TRUE,
 \item{all}{return all options, even those that are not in \code{def}}
 
 \item{marker}{assignment operator; used to locate lines with options}
+
+\item{allow_multiple}{if \code{TRUE}, the list with replicate names
+will be reduced}
 
 \item{narrow}{logical; if \code{TRUE}, only get options on lines starting 
 with \code{>>}}

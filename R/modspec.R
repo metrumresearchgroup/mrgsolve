@@ -368,11 +368,13 @@ parse_ats <- function(x) {
 ##' @param narrow logical; if \code{TRUE}, only get options on lines starting 
 ##' with \code{>>}
 ##' @param envir environment from \code{$ENV}
-##' 
+##' @param allow_multiple if \code{TRUE}, the list with replicate names
+##' will be reduced
 ##' @return list with elements \code{x} (the data without options) and named 
 ##' options  as specified in the block.
 ##' @keywords internal
-scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRUE) {
+scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
+                        allow_multiple = FALSE, narrow=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
   
@@ -394,6 +396,10 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
                      open=all,warn=FALSE,context="opts")
   
   opts <- c(opts,at)
+  
+  if(allow_multiple) {
+    opts <- collect_opts(opts)  
+  }
   
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
@@ -657,9 +663,9 @@ THETA <- function(x, env, annotated=FALSE, pos=1,
   if(!is.null(fill)) {
     x <- eval(parse(text = fill))   
   }
-    
+  
   check_block_data(x,env$ENV,pos)
-
+  
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
@@ -708,7 +714,7 @@ handle_spec_block.specINIT <- function(x,...) {
 ##' @rdname BLOCK_PARSE
 CMT <- function(x,env,annotated=FALSE,pos=1,...) {
   
- check_block_data(x,env$ENV,pos)
+  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
@@ -728,6 +734,7 @@ CMT <- function(x,env,annotated=FALSE,pos=1,...) {
 handle_spec_block.specCMT <- function(x,...) {
   scrape_and_call(x,pass="CMT",narrow=FALSE,...)
 }
+
 ##' @export
 handle_spec_block.specVCMT <- handle_spec_block.specCMT
 
@@ -800,16 +807,7 @@ PRED <- function(x,env,...) {
   return(x)
 }
 
-
-##' @export
-handle_spec_block.specPKMODEL <- function(x,env,...) {
-  x <- scrape_opts(x, narrow=FALSE)
-  x$env <- env
-  x$pos <-  attr(x,"pos")
-  do.call("PKMODEL",x)
-}
-
-##' @export
+#' @export
 handle_spec_block.specINCLUDE <- function(x,env,...) {
   
   x <- cvec_c_tr(dump_opts(x))
@@ -859,6 +857,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   check_block_data(x,env$ENV,pos)
   
   if(length(x) ==0) return(list())
+  
   return(x)
 }
 
@@ -921,6 +920,14 @@ PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
+##' @export
+handle_spec_block.specPKMODEL <- function(x,env,...) {
+  x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
+  do.call("PKMODEL",x)
+}
+
 NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
   if(unnamed) name <-  NULL
   env[["namespace"]][[pos]] <- wrap_namespace(x,name)
@@ -942,6 +949,20 @@ handle_spec_block.specODE <- function(x,...) {
     stop(er1,er2,call.=FALSE)
   }
   return(x)
+}
+
+#' @export
+handle_spec_block.specBLOCK <- function(x,env,...) {
+  a <- tolist(x)
+  x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
+  do.call("BLOCK",x)
+}
+
+BLOCK <- function(x,env,type,code=NULL,get=NULL,...) {
+  x <- structure(.Data=code, class=paste0("spec",type),pos=1)
+  handle_spec_block(x,env)
 }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
@@ -1049,20 +1070,21 @@ expand_seq <- function(ex){
                                regexec("(\\w+?)(\\d+):(\\d+):(\\d+)",
                                        ex)
   ), use.names = F)
-  return(paste0(matches[[2]],
-                seq(as.numeric(matches[[3]]),
-                    as.numeric(matches[[4]]),
-                    as.numeric(matches[[5]])
-                )
-  )
+  return(
+    paste0(
+      matches[[2]],
+      seq(as.numeric(matches[[3]]),
+          as.numeric(matches[[4]]),
+          as.numeric(matches[[5]])
+      )
+    )
   )
 }
 
 expand <- function(ex){
-  matches <- unlist(regmatches(ex,
-                               regexec("(\\w+?)(\\d+):(\\d+)",
-                                       ex)
-  ), use.names = F)
+  matches <- unlist(
+    regmatches(ex,regexec("(\\w+?)(\\d+):(\\d+)",)
+    ), use.names = F)
   return(paste0(matches[[2]],
                 as.numeric(matches[[3]]):as.numeric(matches[[4]])
   )

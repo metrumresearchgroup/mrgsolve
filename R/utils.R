@@ -596,3 +596,12 @@ reg_exec_match <- function(x, pattern) {
   regmatches(x,m)
 }
 
+collect_opts <- function(x) {
+  un <- unique(names(x))
+  ans <- lapply(un, function(y) {
+    unlist(x[names(x)==y],use.names=FALSE)
+  })
+  names(ans) <- un
+  ans
+}
+
