@@ -19,7 +19,7 @@
 # @include complog.R nmxml.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
-block_re <-  "^\\s*\\$[A-Za-z]\\w*|\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
+block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -148,8 +148,8 @@ modelparse <- function(txt,
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
   # Activate code hidden in comment
-  re <- "^ *// *\\[ *(\\$\\w+) *\\]"
-  txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
+  #re <- "^ *// *\\[ *(\\$\\w+) *\\]"
+  #txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
   
   # Take out comments
   for(comment in comment_re) {
@@ -189,7 +189,7 @@ modelparse <- function(txt,
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
-  names(spec) <- toupper(labs)
+  names(spec) <- labs##stoupper(labs)
   
   for(i in which(names(spec) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  

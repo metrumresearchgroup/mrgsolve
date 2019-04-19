@@ -363,6 +363,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     check.bounds = check.bounds
   )
   
+  dbug <- NULL
+  if(!is.null(SET$debug)) dbug <- debug_symbols(names(init(x)))
+  
   ## Write the model code to temporary file
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
@@ -399,6 +402,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
+    dbug,
     spec[["ODE"]],
     "__END_ode__",
     "\n// TABLE CODE BLOCK:",

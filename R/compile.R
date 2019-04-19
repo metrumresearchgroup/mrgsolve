@@ -229,3 +229,13 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   out
 }
 
+debug_symbols <- function(cmt) {
+  cmts <- seq_along(cmt)
+  sym1 <- paste0("const localdouble& ", cmt, "_ = _A_[", cmts-1, "];")
+  sym2 <- paste0("const localdouble& dxdt_", cmt, "_ = _DADT_[", cmts-1, "];")
+  c(sym1,sym2)
+}
+
+
+
+
