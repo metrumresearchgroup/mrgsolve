@@ -332,7 +332,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Next, update with what the user passed in as arguments
   args <- list(...)
   
-  x <- update(x, data=args,open=TRUE)
+  x <- update(x, data=args, open=TRUE)
   
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
@@ -361,15 +361,26 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     smats = smat(x),
     set = SET,
     check.bounds = check.bounds, 
-    debug = SET$debug
+    dbsyms = args[["dbsyms"]]
   )
+
+  ## IN soloc directory
+  cwd <- getwd()
+  setwd(build$soloc)
+  to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
+  on.exit({
+    setwd(cwd)
+    do_restore(to_restore)
+  })
   
-  dbug <- NULL
-  if(!is.null(SET$debug)) dbug <- debug_symbols(names(init(x)))
+  incl <- function(x) paste0('#include "', x, '"')
+  header_file <- paste0(build$model, "-mread-header.h")
+
+  dbs <- NULL
+  if(isTRUE(args[["dbsyms"]])) {
+    dbs <- debug_symbols(names(init(x)))
+  }
   
-  ## Write the model code to temporary file
-  temp_write <- tempfile()
-  def.con <- file(temp_write, open="w")
   cat(
     paste0("// Source MD5: ", build$md5, "\n"),
     plugin_code(plugin),
@@ -381,52 +392,49 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// NAMESPACES:",
     namespace,
     "\n// MODEL HEADER FILES:",
-    "#include \"mrgsolv.h\"",
-    "#include \"modelheader.h\"",
+    incl("mrgsolv.h"), 
+    incl("modelheader.h"),
     "\n//INCLUDE databox functions:",
-    "#include \"databox_cpp.h\"",
+    incl("databox_cpp.h"),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
     "\n// DEFS:",
-    rd, 
+    rd,
+    sep="\n", file = header_file)
+  
+  ## Write the model code to temporary file
+  temp_write <- tempfile()
+  def.con <- file(temp_write, open="w")
+  cat(
+    paste0("// Source MD5: ", build$md5, "\n"),
+    incl(header_file),
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
     spec[["PREAMBLE"]],
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
-    dbug$cmt,
+    dbs[["cmt"]],
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
-    dbug$cmt,
-    dbug$dxdt,
+    dbs[["ode"]],
     spec[["ODE"]],
     "__END_ode__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
-    dbug$cmt,
+    dbs[["cmt"]],
     table,
     spec[["PRED"]],
     write_capture(.ren.old(capture)),
     "__END_table__",
     sep="\n", file=def.con)
   close(def.con)
-  
-  ## IN soloc directory
-  cwd <- getwd()
-  setwd(build$soloc)
-  
-  to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
-  on.exit({
-    setwd(cwd)
-    do_restore(to_restore)
-  })
   
   ## this gets written in soloc
   #write_build_env(build)
@@ -451,7 +459,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## The shared object is model-mread-source.cpp
   
   out <- suppressWarnings(build_exec(build))
-
+  
   comp_success <- out[["status"]]==0 & file.exists(build[["compout"]])
   
   if(!comp_success) {

@@ -28,9 +28,9 @@ fun <- function() {
   source("R/update.R")
   proj <- file.path("inst", "project")
   mod <- mread("housemodel", proj, compile = FALSE, udll=FALSE, ns = FALSE)
-  cpp <- normalizePath(mod@shlib$source)
+  cpp <- normalizePath(list.files(mod@soloc, full.names=TRUE))
   x <- file.copy(cpp, "src", overwrite=TRUE)
-  if(!x) stop("Failed to build house model")
+  if(!all(x)) stop("Failed to build house model")
 }
 
 fun()

@@ -22,7 +22,7 @@ generate_rdefs <- function(pars,
                            table_fun="",
                            config_fun="",
                            model="",omats,smats,
-                           set=list(),debug=FALSE, ...) {
+                           set=list(), dbsyms = FALSE, ...) {
 
     npar <- length(pars)
     ncmt <- length(cmt)
@@ -37,12 +37,9 @@ generate_rdefs <- function(pars,
     initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
     dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
     pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
-    
-    if(!is.null(debug)) {
-      cmtdef <- NULL
-      dxdef <- NULL
-    }
 
+    if(isTRUE(dbsyms)) cmtdef <- dxdef <- NULL
+    
     etal <- epsl <- NULL
 
     if(sum(nrow(omats)) > 0) {
@@ -98,8 +95,8 @@ generate_rdefs <- function(pars,
           Adef,
           Rdef,
           Ddef,
-          cmtdef,
           initdef,
+          cmtdef,
           dxdef,
           pardef,
           etal,
@@ -112,7 +109,7 @@ debug_symbols <- function(cmt) {
   cmts <- seq_along(cmt)
   sym1 <- paste0("const double& ", cmt, " = _A_[", cmts-1, "];")
   sym2 <- paste0("double& dxdt_", cmt, " = _DADT_[", cmts-1, "];")
-  list(cmt = sym1, dxdt=sym2)
+  list(cmt = sym1, ode=c(sym1,sym2))
 }
 
 relocate_funs <- function(x,PACKAGE) {
