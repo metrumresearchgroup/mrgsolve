@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.9.0
+Version: 0.9.0.9000
 Title: Simulate from ODE-Based Models
 Authors@R: c(
     person("Kyle T", "Baron", email = "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
