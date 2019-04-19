@@ -10,7 +10,7 @@
 \alias{names,mrgsims-method}
 \alias{as.data.frame,mrgsims-method}
 \alias{as.matrix,mrgsims-method}
-\alias{summary,mrgsims-method}
+\alias{summary.mrgsims}
 \alias{show,mrgsims-method}
 \title{Methods for working with \code{mrgsims} objects}
 \usage{
@@ -29,7 +29,7 @@
 
 \S4method{as.matrix}{mrgsims}(x, ...)
 
-\S4method{summary}{mrgsims}(object, ...)
+\method{summary}{mrgsims}(object, ...)
 
 \S4method{show}{mrgsims}(object)
 }

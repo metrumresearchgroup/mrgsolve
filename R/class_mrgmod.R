@@ -603,27 +603,28 @@ setMethod("blocks", "character", function(x,...) {
 
 prvec <- function(x, ...) {
   x <- strwrap(paste0(x,collapse=", "),...)    
-  x
+  paste0(x,collapse="\n")
 }
 
+#' Print summary of a mrgmod object
+#' @param object a mrgmod object
+#' @param ... not used
 #' @export
-setMethod("summary", "mrgmod", function(object,...) {
+summary.mrgmod <- function(object,...) {
   l <- as.list(object)
-  
+  ncmt <- l[["neq"]]
+  npar <- l[["npar"]]
   message("Model: ", l$model)
-  
-  message("- Parameters:")
-  message(prvec(l$pars,prefix="  "))
-  
-  message("- Compartments:")
-  message(prvec(l$cmt,prefix="  "))
-  
-  message("- Captured:")
+  message("- Parameters: [", npar, "]")
+  message(prvec(l$pars,width = 50,prefix="  "))
+  message("- Compartments: [", ncmt, "]")
+  message(prvec(l$cmt,width = 50, prefix = "  "))
+  message("- Captured: [", length(l[["capture"]]), "]")
   o <- l$capture
   if(length(o)==0) o <- "<none>"
-  message(prvec(o,prefix="  "))
+  message(prvec(o, width = 50, prefix = "  "))
   return(invisible(NULL))
-})
+}
 
 blocks_ <- function(file,what) {
   if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
