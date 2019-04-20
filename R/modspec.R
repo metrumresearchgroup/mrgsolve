@@ -53,9 +53,9 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   if(sum("MAIN"  == x) > 1){
     stop("Only one $MAIN block allowed in the model.",call.=FALSE)
   }
-  if(sum("ODE"   == x) > 1) {
-    stop("Only one $ODE block allowed in the model.",call.=FALSE)
-  }
+  # if(sum("ODE"   == x) > 1) {
+  #   stop("Only one $ODE block allowed in the model.",call.=FALSE)
+  # }
   if(sum("SET"   == x) > 1) {
     stop("Only one $SET block allowed in the model.",call.=FALSE)
   }
@@ -459,14 +459,29 @@ handle_spec_block.default <- function(x,...) {
   return(dump_opts(x))
 }
 
+
+
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
-                       env, pos=1,
+                       env, pos=1, code = FALSE,
                        name="...", prefix="", labels=NULL,
                        object=NULL, unlinked=FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    expect <- paste0(type, "list")
+    expect <- c("matrix",expect)
+    if(type=="omega") {
+      fun <- omat  
+    } else {
+      fun <- smat  
+    }
+    x <- evaluate_at_code(x, expect, toupper(type), pos, env, fun)
+    env[[type]][[pos]] <- x
+    return(NULL)
+  }
   
   anl <- grepl(":",x,fixed=TRUE)
   if(annotated) {
@@ -607,9 +622,15 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 NULL
 
 ##' @rdname BLOCK_PARSE
-PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,...) {
+PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1, code=FALSE,...) {
   
   check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, env)
+    env[["param"]][[pos]] <- x
+    return(NULL)
+  }
   
   if(annotated) {
     l <- parse_annot(x,block="PARAM",envir=env$ENV)
@@ -690,9 +711,15 @@ handle_spec_block.specTHETA <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-INIT <- function(x,env,annotated=FALSE,pos=1,...) {
+INIT <- function(x,env,annotated=FALSE,pos=1,code=FALSE,...) {
   
   check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    x <- evaluate_at_code(x, "list", "INIT", pos, env, as.list)
+    env[["init"]][[pos]] <- x
+    return(NULL)
+  }
   
   if(annotated) {
     l <- parse_annot(x,block="INIT",envir=env$ENV)
@@ -712,9 +739,16 @@ handle_spec_block.specINIT <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-CMT <- function(x,env,annotated=FALSE,pos=1,...) {
+CMT <- function(x,env,annotated=FALSE,pos=1, code = FALSE, ...) {
   
   check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    x <- evaluate_at_code(x, "character", "CMT", pos, env, as.character)
+    x <- setNames(rep(0,length(x)), x)
+    env[["init"]][[pos]] <- x
+    return(NULL)
+  }
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
@@ -1136,5 +1170,37 @@ capture_param <- function(annot,.capture) {
   
   annot <- dplyr::filter(annot, !(block=="CAPTURE" & name %in% .capture))
   bind_rows(annot,what)
+}
+
+include_rfile <- function(rfile) {
+  rfile <- normalizePath(rfile)
+  if(!file.exists(rfile)) {
+    msg <- c(
+      basename(rfile), 
+      " is required to compile this model, but cound not be found ", 
+      "in the directory",
+      dirname(rfile)
+    )
+    stop(msg, call.=FALSE)
+  }
+  source(rfile, local = parent.frame())
+}
+
+evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
+  x <- try(eval(parse(text = x), envir = env$ENV))
+  if(inherits(x, "try-error")) {
+    message("Block no: ", pos)
+    message("Block type: ", block)
+    stop("Failed to parse block code.", call.=FALSE)
+  }
+  right_type <- inherits(x, cl)
+  if(!right_type) {
+    message("Block no: ", pos)
+    message("Block type: ", block)
+    message("Expected class: ", paste0(cl, collapse = " or "))
+    got <- paste0(class(x), collapse = ", ")
+    stop("Code returned the incorrect class: ", got, call.=FALSE) 
+  }
+  fun(x)
 }
 

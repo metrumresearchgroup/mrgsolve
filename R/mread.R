@@ -252,7 +252,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   subr  <- collect_subr(spec)
   table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
-  
+  spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names=FALSE)
   
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
@@ -424,7 +424,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
     dbs[["ode"]],
-    spec[["ODE"]],
+    spec[["ODE"]], 
     "__END_ode__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
