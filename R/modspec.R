@@ -53,9 +53,6 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   if(sum("MAIN"  == x) > 1){
     stop("Only one $MAIN block allowed in the model.",call.=FALSE)
   }
-  # if(sum("ODE"   == x) > 1) {
-  #   stop("Only one $ODE block allowed in the model.",call.=FALSE)
-  # }
   if(sum("SET"   == x) > 1) {
     stop("Only one $SET block allowed in the model.",call.=FALSE)
   }
@@ -139,7 +136,7 @@ fixed_parameters <- function(x,fixed_type) {
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
-                       comment_re=c("//", "##")) {
+                       comment_re=c("//")) {
   
   ## Take in model text and parse it out
   
@@ -157,7 +154,7 @@ modelparse <- function(txt,
     w <- m > 0
     txt[w] <- substr(txt[w],1,m[w]-1)
   }
-  
+
   # Look for block lines
   m <- regexec(block_re,txt)
   
@@ -189,7 +186,7 @@ modelparse <- function(txt,
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
-  names(spec) <- labs##stoupper(labs)
+  names(spec) <- toupper(labs)
   
   for(i in which(names(spec) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
@@ -974,7 +971,12 @@ handle_spec_block.specNAMESPACE <- function(x,...) {
 }
 
 ##' @export
-handle_spec_block.specODE <- function(x,...) {
+handle_spec_block.specODE <- function(x,env, ...) {
+  con <- scrape_opts(x) 
+  x <- con[["x"]]
+  if(isTRUE(con[["code"]])) {
+    x <- eval(parse(text = x), envir=env$ENV)   
+  }
   re <- "\\bETA\\([0-9]+\\)"
   chk <- grepl(re,x)
   if(any(chk)) {
