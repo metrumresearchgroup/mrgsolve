@@ -136,7 +136,7 @@ fixed_parameters <- function(x,fixed_type) {
 modelparse <- function(txt, 
                        split=FALSE,
                        drop_blank = TRUE, 
-                       comment_re=c("//")) {
+                       comment_re=c("//", "##")) {
   
   ## Take in model text and parse it out
   

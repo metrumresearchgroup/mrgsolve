@@ -487,7 +487,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   return(x)
 }
 
-##' @export
+#' @rdname mread
+#' @export
 mread_cache <- function(model = NULL, 
                         project = getOption("mrgsolve.project", getwd()), 
                         file = paste0(model, ".cpp"),
@@ -536,6 +537,3 @@ mread_file <- function(file, ...) {
   model <- tools::file_path_sans_ext(file)
   mread(model = model, file = file, ...)
 }
-
-
-
