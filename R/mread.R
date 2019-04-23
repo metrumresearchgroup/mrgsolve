@@ -487,7 +487,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   return(x)
 }
 
-##' @rdname mread 
 ##' @export
 mread_cache <- function(model = NULL, 
                         project = getOption("mrgsolve.project", getwd()), 
