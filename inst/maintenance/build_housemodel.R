@@ -1,7 +1,7 @@
 
 .libPaths("~/Rlibs")
-library(dplyr)
-library(methods)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(methods))
 fun <- function() {
   setClass("mrgsims")
   source("R/utils.R")
