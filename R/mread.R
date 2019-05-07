@@ -225,6 +225,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
+  ode <- do.call("c", unname(mread.env$ode))
   annot_list_maybe <- nonull.list(mread.env$annot)
   
   if (!length(annot_list_maybe)) {
@@ -317,6 +318,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
   } else if(audit) {
+    spec[["ODE"]] <- c(spec[["ODE"]],ode)
     audit_spec(x,spec,warn=warn)
   }
   

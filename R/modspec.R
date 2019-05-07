@@ -539,7 +539,7 @@ specMATRIX <- function(x,
   d <- setNames(list(d),name)
   
   x <- create_matlist(d,class=oclass,labels=list(labels))
-  
+
   env[[type]][[pos]] <- x
   
   return(NULL)
@@ -739,7 +739,7 @@ handle_spec_block.specINIT <- function(x,...) {
 CMT <- function(x,env,annotated=FALSE,pos=1, code = FALSE, ...) {
   
   check_block_data(x,env$ENV,pos)
-  
+
   if(code) {
     x <- evaluate_at_code(x, "character", "CMT", pos, env, as.character)
     x <- setNames(rep(0,length(x)), x)
@@ -891,6 +891,42 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   
   return(x)
 }
+
+
+
+##' @export
+handle_spec_block.specTRANSIT <- function(x,env,...) {
+  x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
+  do.call("TRANSIT",x)
+}
+
+TRANSIT <- function(x,env, n, tr, name = "TRANSIT", pos=1) {
+  nto <- get_length(env$init)
+  cmtn <- nto  + seq(n)
+  init <- as.list(vector("numeric", n))
+  cmt <- paste0(name, cmtn)
+  cmt[1] <- paste0("a",name)
+  cmt[length(cmt)] <- paste0("z",name)
+  names(init) <- cmt
+  dx <- paste0("dxdt_", cmt, " = ")
+  eq <- c()
+  for(i in seq_along(cmt)) {
+    if(i==1) {
+      a <- "0.0"
+    } else {
+      a <- cmt[i-1]
+    }
+    b <- cmt[i]
+    this_rhs <- paste0(tr, "*(", a, "-", b,");")
+    eq <- c(eq,this_rhs)
+  }
+  env[["ode"]][[pos]] <- paste0(dx,eq)
+  env[["init"]][[pos]] <- init
+  return(NULL)
+}
+
 
 ##' Parse PKMODEL BLOCK data
 ##' @param cmt compartment names as comma-delimited character
@@ -1091,6 +1127,7 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env$omega <- vector("list",n)
   mread.env$sigma <- vector("list",n)
   mread.env$annot <- vector("list",n)
+  mread.env$ode   <- vector("list", n)
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list",n)
   mread.env$error <- character(0)
@@ -1204,5 +1241,9 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
     stop("Code returned the incorrect class: ", got, call.=FALSE) 
   }
   fun(x)
+}
+
+get_length <- function(what) {
+  sum(sapply(what,length))
 }
 

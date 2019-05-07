@@ -605,3 +605,22 @@ collect_opts <- function(x) {
   ans
 }
 
+make_matrix_labels <- function(mat,lab,diag=TRUE) {
+  n <- nrow(mat)
+  cmat <- matrix(NA_character_, n, n)
+  for(i in seq(n)) {
+    for(j in seq(n)) {
+      if(i > j) next
+      if(i==j) {
+        val <- lab[i] 
+      } else {
+        val <- paste0(c(lab[i],lab[j]),collapse='-')
+      }
+      cmat[i,j] <- val
+    }
+  }
+  ans <- mat[upper.tri(mat,diag=diag)]
+  lab <- cmat[upper.tri(cmat,diag = diag)]
+  names(ans) <- lab
+  ans
+}

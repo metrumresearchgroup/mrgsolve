@@ -22,7 +22,6 @@ render_annot <- function(x,block,...) {
   as.data.frame(x)
 }
 
-
 parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,
                         context="not given",...) {
   ## x is a list
@@ -140,12 +139,23 @@ cobble_details <- function(x) {
   }
   fx <- as.numeric(x@fixed)
   if(length(fx)>0) {
-    ans[[3]] <- tibble(block="FIXED", name=names(fx)) 
+    ans[[2]] <- tibble(block="FIXED", name=names(fx)) 
   }
   cmt <- as.numeric(init(x))
   if(length(cmt)>0) {
     ans[[3]] <- tibble(block="CMT", name=names(cmt)) 
   }
+  om <- as.list(omat(x))
+  if(length(om) > 0) {
+    lab <- labels(omat(x))
+    mat <- as.list(omat(x))
+    for(i in seq_along(mat)) {
+      this_mat <- make_matrix_labels(mat[[i]],lab[[i]])
+      ans[[3+i]] <- tibble(block="OMEGA", name = names(this_mat), 
+                           value = unname(this_ma))
+    }
+  }
+  
   
   ans <- dplyr::bind_rows(ans)
   ans <- dplyr::mutate(ans,descr='.', units='.', options='.')
