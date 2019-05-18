@@ -93,7 +93,32 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
   x@n <- dim_matlist(x)
   return(x)
 }
+# 
+# 
+# new_omat <- function(matrix, labels=NULL, name="...") {
+#   matrix <- setNames(list(matrix), name)
+#   m <- omat(matrix, labels = list(labels))
+#   m@labels <- list(labels)
+#   m
+# }
+# 
+# new_smat <- function(matrix, labels=NULL, name="...") {
+#   matrix <- setNames(list(matrix), name)
+#   m <- smat(matrix, labels = list(labels))
+#   m@labels <- list(labels)
+#   m
+# }
+# 
 
 
+new_omat <- function(mat, label=list(), name="...") {
+  mat <- setNames(list(mat), name)
+  m <- omat(mat, labels = list(label))
+  m
+}
 
-
+new_smat <- function(mat, label=list(), name="...") {
+  mat <- setNames(list(mat), name)
+  m <- smat(mat, labels = list(label))
+  m
+}

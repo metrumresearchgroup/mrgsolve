@@ -37,6 +37,7 @@
 ##' @importFrom tibble tibble as_tibble
 ##' @importFrom rlang quos enquo syms !!! quo_name
 ##' 
+##' @include Aaaa.R
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -65,13 +66,14 @@ GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRA
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 GLOBALS$TRAN_UPPER <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 GLOBALS$TRAN_LOWER <- tolower(GLOBALS$TRAN_UPPER)
+GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "PREAMBLE", "PRED")
+                "PREAMBLE", "PRED", "BLOCK", "TRANSIT")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
@@ -91,7 +93,7 @@ globalVariables(c("test_package","time", "ID","block", "descr",
                   "func", "loaded", "name", "not_found"))
 
 
-VERSION <- packageDescription("mrgsolve")$Version
+VERSION <- utils::packageVersion("mrgsolve")
 
 #' Forward pipe
 #' 

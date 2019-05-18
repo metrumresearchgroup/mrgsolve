@@ -56,11 +56,13 @@ e2 <- ev(amt=200)
 
 seq(e1, e2)
 
+seq(e1, .ii = 8, e2)
+
 seq(e1, wait = 8, e2)
 
-seq(e1, wait = 8, e2, ID = 1:10)
+seq(e1, .ii = 8, e2, ID = 1:10)
 
-ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
+ev_seq(.ii = 12, e1, .ii = 120, e2, .ii = 120, e1)
 
 seq(ev(amt=100, ii=12), ev(time=8, amt=200))
 

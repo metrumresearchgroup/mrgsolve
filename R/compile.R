@@ -22,7 +22,7 @@ generate_rdefs <- function(pars,
                            table_fun="",
                            config_fun="",
                            model="",omats,smats,
-                           set=list(),...) {
+                           set=list(), dbsyms = FALSE, ...) {
 
     npar <- length(pars)
     ncmt <- length(cmt)
@@ -37,6 +37,8 @@ generate_rdefs <- function(pars,
     initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
     dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
     pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
+
+    if(isTRUE(dbsyms)) cmtdef <- dxdef <- NULL
     
     etal <- epsl <- NULL
 
@@ -93,8 +95,8 @@ generate_rdefs <- function(pars,
           Adef,
           Rdef,
           Ddef,
-          cmtdef,
           initdef,
+          cmtdef,
           dxdef,
           pardef,
           etal,
@@ -103,6 +105,12 @@ generate_rdefs <- function(pars,
         )
 }
 
+debug_symbols <- function(cmt) {
+  cmts <- seq_along(cmt)
+  sym1 <- paste0("const double& ", cmt, " = _A_[", cmts-1, "];")
+  sym2 <- paste0("double& dxdt_", cmt, " = _DADT_[", cmts-1, "];")
+  list(cmt = sym1, ode=c(sym1,sym2))
+}
 
 relocate_funs <- function(x,PACKAGE) {
     x@package <- PACKAGE
@@ -113,7 +121,11 @@ build_version <- function(x) {
   x@shlib[["version"]] 
 }
 
-compiled <- function(x,status=NULL) {
+compiled <- function(x,...) UseMethod("compiled")
+#' @export
+compiled.default <- function(x,...) return(FALSE)
+#' @export
+compiled.mrgmod <- function(x,status=NULL) {
     if(is.null(status)) return(x@shlib$compiled)
     x@shlib$compiled <- status
     return(x)
@@ -224,4 +236,3 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   }
   out
 }
-

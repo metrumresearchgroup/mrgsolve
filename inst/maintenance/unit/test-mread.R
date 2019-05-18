@@ -133,7 +133,6 @@ test_that("Model name with spaces is error", {
 })
 
 test_that("Error with duplicate blocks", {
-  expect_error(mcode("a", "$ODE \n $ODE",compile = FALSE))
   expect_error(mcode("a", "$MAIN \n $MAIN",compile = FALSE))
   expect_error(mcode("a", "$SET \n $SET",compile = FALSE))
 })

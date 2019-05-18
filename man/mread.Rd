@@ -12,7 +12,7 @@ mread(model, project = getOption("mrgsolve.project", getwd()),
   quiet = getOption("mrgsolve_mread_quiet", FALSE),
   check.bounds = FALSE, warn = TRUE,
   soloc = getOption("mrgsolve.soloc", tempdir()), preclean = FALSE,
-  ...)
+  recover = FALSE, ...)
 
 mread_cache(model = NULL, project = getOption("mrgsolve.project",
   getwd()), file = paste0(model, ".cpp"), code = NULL,
@@ -57,6 +57,9 @@ if the directory does not exist, `mread` will attempt to create it.}
 
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
 cleaned up first}
+
+\item{recover}{if \code{TRUE}, an object will be returned in case
+the model shared object fails to build}
 
 \item{...}{passed to \code{\link[mrgsolve]{update}}}
 }

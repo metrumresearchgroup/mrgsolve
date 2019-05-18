@@ -19,7 +19,7 @@
 # @include complog.R nmxml.R annot.R
 
 globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
-block_re <-  "^\\s*\\$[A-Za-z]\\w*|\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
+block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -52,9 +52,6 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
   
   if(sum("MAIN"  == x) > 1){
     stop("Only one $MAIN block allowed in the model.",call.=FALSE)
-  }
-  if(sum("ODE"   == x) > 1) {
-    stop("Only one $ODE block allowed in the model.",call.=FALSE)
   }
   if(sum("SET"   == x) > 1) {
     stop("Only one $SET block allowed in the model.",call.=FALSE)
@@ -148,8 +145,8 @@ modelparse <- function(txt,
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
   # Activate code hidden in comment
-  re <- "^ *// *\\[ *(\\$\\w+) *\\]"
-  txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
+  #re <- "^ *// *\\[ *(\\$\\w+) *\\]"
+  #txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
   
   # Take out comments
   for(comment in comment_re) {
@@ -157,7 +154,7 @@ modelparse <- function(txt,
     w <- m > 0
     txt[w] <- substr(txt[w],1,m[w]-1)
   }
-  
+
   # Look for block lines
   m <- regexec(block_re,txt)
   
@@ -348,9 +345,11 @@ parse_ats <- function(x) {
   b <- substr(x,sp+1,nchar(x))
   
   # Warn if quotes
-  if(any(charthere(b,"\"") | charthere(b,"'"))) {
+  #if(any(charthere(b,"\"") | charthere(b,"'"))) {
+  if(any(substr(b,1,1) %in% c("\"","\'"))) {
     warning("Found quotation mark in option value.",call.=FALSE) 
   }
+  
   # Convert type
   b <- setNames(lapply(b,type.convert,as.is=TRUE),a)
   
@@ -366,11 +365,13 @@ parse_ats <- function(x) {
 ##' @param narrow logical; if \code{TRUE}, only get options on lines starting 
 ##' with \code{>>}
 ##' @param envir environment from \code{$ENV}
-##' 
+##' @param allow_multiple if \code{TRUE}, the list with replicate names
+##' will be reduced
 ##' @return list with elements \code{x} (the data without options) and named 
 ##' options  as specified in the block.
 ##' @keywords internal
-scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRUE) {
+scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
+                        allow_multiple = FALSE, narrow=TRUE) {
   
   x <- unlist(strsplit(x, "\n",fixed=TRUE))
   
@@ -392,6 +393,10 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",narrow=TRU
                      open=all,warn=FALSE,context="opts")
   
   opts <- c(opts,at)
+  
+  if(allow_multiple) {
+    opts <- collect_opts(opts)  
+  }
   
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
@@ -451,14 +456,29 @@ handle_spec_block.default <- function(x,...) {
   return(dump_opts(x))
 }
 
+
+
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
-                       env, pos=1,
+                       env, pos=1, code = FALSE,
                        name="...", prefix="", labels=NULL,
                        object=NULL, unlinked=FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    expect <- paste0(type, "list")
+    expect <- c("matrix",expect)
+    if(type=="omega") {
+      fun <- omat  
+    } else {
+      fun <- smat  
+    }
+    x <- evaluate_at_code(x, expect, toupper(type), pos, env, fun)
+    env[[type]][[pos]] <- x
+    return(NULL)
+  }
   
   anl <- grepl(":",x,fixed=TRUE)
   if(annotated) {
@@ -519,7 +539,7 @@ specMATRIX <- function(x,
   d <- setNames(list(d),name)
   
   x <- create_matlist(d,class=oclass,labels=list(labels))
-  
+
   env[[type]][[pos]] <- x
   
   return(NULL)
@@ -599,9 +619,15 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 NULL
 
 ##' @rdname BLOCK_PARSE
-PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,...) {
+PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1, code=FALSE,...) {
   
   check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, env)
+    env[["param"]][[pos]] <- x
+    return(NULL)
+  }
   
   if(annotated) {
     l <- parse_annot(x,block="PARAM",envir=env$ENV)
@@ -655,9 +681,9 @@ THETA <- function(x, env, annotated=FALSE, pos=1,
   if(!is.null(fill)) {
     x <- eval(parse(text = fill))   
   }
-    
+  
   check_block_data(x,env$ENV,pos)
-
+  
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
     x <- as.numeric(l[["v"]])
@@ -682,9 +708,15 @@ handle_spec_block.specTHETA <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-INIT <- function(x,env,annotated=FALSE,pos=1,...) {
+INIT <- function(x,env,annotated=FALSE,pos=1,code=FALSE,...) {
   
   check_block_data(x,env$ENV,pos)
+  
+  if(code) {
+    x <- evaluate_at_code(x, "list", "INIT", pos, env, as.list)
+    env[["init"]][[pos]] <- x
+    return(NULL)
+  }
   
   if(annotated) {
     l <- parse_annot(x,block="INIT",envir=env$ENV)
@@ -704,9 +736,16 @@ handle_spec_block.specINIT <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-CMT <- function(x,env,annotated=FALSE,pos=1,...) {
+CMT <- function(x,env,annotated=FALSE,pos=1, code = FALSE, ...) {
   
   check_block_data(x,env$ENV,pos)
+
+  if(code) {
+    x <- evaluate_at_code(x, "character", "CMT", pos, env, as.character)
+    x <- setNames(rep(0,length(x)), x)
+    env[["init"]][[pos]] <- x
+    return(NULL)
+  }
   
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
@@ -726,6 +765,7 @@ CMT <- function(x,env,annotated=FALSE,pos=1,...) {
 handle_spec_block.specCMT <- function(x,...) {
   scrape_and_call(x,pass="CMT",narrow=FALSE,...)
 }
+
 ##' @export
 handle_spec_block.specVCMT <- handle_spec_block.specCMT
 
@@ -798,16 +838,7 @@ PRED <- function(x,env,...) {
   return(x)
 }
 
-
-##' @export
-handle_spec_block.specPKMODEL <- function(x,env,...) {
-  x <- scrape_opts(x, narrow=FALSE)
-  x$env <- env
-  x$pos <-  attr(x,"pos")
-  do.call("PKMODEL",x)
-}
-
-##' @export
+#' @export
 handle_spec_block.specINCLUDE <- function(x,env,...) {
   
   x <- cvec_c_tr(dump_opts(x))
@@ -857,8 +888,45 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   check_block_data(x,env$ENV,pos)
   
   if(length(x) ==0) return(list())
+  
   return(x)
 }
+
+
+
+##' @export
+handle_spec_block.specTRANSIT <- function(x,env,...) {
+  x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
+  do.call("TRANSIT",x)
+}
+
+TRANSIT <- function(x,env, n, tr, name = "TRANSIT", pos=1) {
+  nto <- get_length(env$init)
+  cmtn <- nto  + seq(n)
+  init <- as.list(vector("numeric", n))
+  cmt <- paste0(name, cmtn)
+  cmt[1] <- paste0("a",name)
+  cmt[length(cmt)] <- paste0("z",name)
+  names(init) <- cmt
+  dx <- paste0("dxdt_", cmt, " = ")
+  eq <- c()
+  for(i in seq_along(cmt)) {
+    if(i==1) {
+      a <- "0.0"
+    } else {
+      a <- cmt[i-1]
+    }
+    b <- cmt[i]
+    this_rhs <- paste0(tr, "*(", a, "-", b,");")
+    eq <- c(eq,this_rhs)
+  }
+  env[["ode"]][[pos]] <- paste0(dx,eq)
+  env[["init"]][[pos]] <- init
+  return(NULL)
+}
+
 
 ##' Parse PKMODEL BLOCK data
 ##' @param cmt compartment names as comma-delimited character
@@ -919,6 +987,14 @@ PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
+##' @export
+handle_spec_block.specPKMODEL <- function(x,env,...) {
+  x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
+  do.call("PKMODEL",x)
+}
+
 NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
   if(unnamed) name <-  NULL
   env[["namespace"]][[pos]] <- wrap_namespace(x,name)
@@ -931,7 +1007,12 @@ handle_spec_block.specNAMESPACE <- function(x,...) {
 }
 
 ##' @export
-handle_spec_block.specODE <- function(x,...) {
+handle_spec_block.specODE <- function(x,env, ...) {
+  con <- scrape_opts(x) 
+  x <- con[["x"]]
+  if(isTRUE(con[["code"]])) {
+    x <- eval(parse(text = x), envir=env$ENV)   
+  }
   re <- "\\bETA\\([0-9]+\\)"
   chk <- grepl(re,x)
   if(any(chk)) {
@@ -940,6 +1021,20 @@ handle_spec_block.specODE <- function(x,...) {
     stop(er1,er2,call.=FALSE)
   }
   return(x)
+}
+
+#' @export
+handle_spec_block.specBLOCK <- function(x,env,...) {
+  a <- tolist(x)
+  x <- scrape_opts(x, narrow=FALSE)
+  x$env <- env
+  x$pos <-  attr(x,"pos")
+  do.call("BLOCK",x)
+}
+
+BLOCK <- function(x,env,type,code=NULL,get=NULL,...) {
+  x <- structure(.Data=code, class=paste0("spec",type),pos=1)
+  handle_spec_block(x,env)
 }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon
@@ -1032,6 +1127,7 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env$omega <- vector("list",n)
   mread.env$sigma <- vector("list",n)
   mread.env$annot <- vector("list",n)
+  mread.env$ode   <- vector("list", n)
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list",n)
   mread.env$error <- character(0)
@@ -1047,20 +1143,21 @@ expand_seq <- function(ex){
                                regexec("(\\w+?)(\\d+):(\\d+):(\\d+)",
                                        ex)
   ), use.names = F)
-  return(paste0(matches[[2]],
-                seq(as.numeric(matches[[3]]),
-                    as.numeric(matches[[4]]),
-                    as.numeric(matches[[5]])
-                )
-  )
+  return(
+    paste0(
+      matches[[2]],
+      seq(as.numeric(matches[[3]]),
+          as.numeric(matches[[4]]),
+          as.numeric(matches[[5]])
+      )
+    )
   )
 }
 
 expand <- function(ex){
-  matches <- unlist(regmatches(ex,
-                               regexec("(\\w+?)(\\d+):(\\d+)",
-                                       ex)
-  ), use.names = F)
+  matches <- unlist(
+    regmatches(ex,regexec("(\\w+?)(\\d+):(\\d+)",)
+    ), use.names = F)
   return(paste0(matches[[2]],
                 as.numeric(matches[[3]]):as.numeric(matches[[4]])
   )
@@ -1112,5 +1209,41 @@ capture_param <- function(annot,.capture) {
   
   annot <- dplyr::filter(annot, !(block=="CAPTURE" & name %in% .capture))
   bind_rows(annot,what)
+}
+
+include_rfile <- function(rfile) {
+  rfile <- normalizePath(rfile)
+  if(!file.exists(rfile)) {
+    msg <- c(
+      basename(rfile), 
+      " is required to compile this model, but cound not be found ", 
+      "in the directory",
+      dirname(rfile)
+    )
+    stop(msg, call.=FALSE)
+  }
+  source(rfile, local = parent.frame())
+}
+
+evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
+  x <- try(eval(parse(text = x), envir = env$ENV))
+  if(inherits(x, "try-error")) {
+    message("Block no: ", pos)
+    message("Block type: ", block)
+    stop("Failed to parse block code.", call.=FALSE)
+  }
+  right_type <- inherits(x, cl)
+  if(!right_type) {
+    message("Block no: ", pos)
+    message("Block type: ", block)
+    message("Expected class: ", paste0(cl, collapse = " or "))
+    got <- paste0(class(x), collapse = ", ")
+    stop("Code returned the incorrect class: ", got, call.=FALSE) 
+  }
+  fun(x)
+}
+
+get_length <- function(what) {
+  sum(sapply(what,length))
 }
 

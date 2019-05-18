@@ -25,6 +25,7 @@
 #include "dataobject.h"
 #include "mrgsolve.h"
 #include "mrgsolv.h"
+#include <boost/format.hpp>
 
 #define _COL_amt_   0u
 #define _COL_ii_    1u
@@ -331,7 +332,10 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       // Check that cmt is valid:
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
         throw Rcpp::exception(
-            "Compartment number in dosing record out of range",
+            tfm::format(
+              "event record cmt must be between 1 and %i: \n ID %d, row: %i, cmt: %i, evid: %i", 
+              neq, Data(j,Idcol), j+1, this_cmt, Data(j,col[_COL_evid_])
+            ).c_str(),
             false
         );
       }

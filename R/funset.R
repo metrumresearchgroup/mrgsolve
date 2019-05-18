@@ -83,7 +83,7 @@ funset <- function(x) {
       info <- getNativeSymbolInfo(w,pkg)
       name <- info$name
     } else {
-      name <- as.character(NA)
+      name <- w
     }
     tibble(name=name,loaded=loaded)
   }) 

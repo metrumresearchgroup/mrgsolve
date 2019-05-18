@@ -72,6 +72,13 @@ set_clink <- function(x,clink=NULL) {
   Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
 }
 
+set_pkg_cxxflags <- function(x) {
+  if(is.null(x)) return(NULL)
+  cxx <- s_pick(x, "pkg_cxxflags")
+  if(is.null(cxx)) return(NULL)
+  Sys.setenv(PKG_CXXFLAGS = paste0(cxx, collapse=" "))
+}
+
 make_libs <- function(x) {
   if(is.null(x)) return(NULL)
   libs <- unique(s_pick(x,"libs"))
@@ -92,12 +99,13 @@ set_up_env <- function(x,...) {
   set_nodos()
   if(!is.null(x)) {
     set_clink(x,...)
-    set_libs(x)
+    set_libs(x) 
+    set_pkg_cxxflags(x)
   }
   return(restore)
 }
 
-get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS")) {
+get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS", "PKG_CXXFLAGS")) {
   as.list(Sys.getenv(what, unset=NA)) 
 }
 
@@ -137,6 +145,10 @@ plugins[["BH"]] <- list(
   linkto="BH/include", name="BH"
 )
 
+plugins[["CXX11"]] <- list(
+  pkg_cxxflags = "-std=c++11", name="CXX11"    
+)
+
 plugins[["TAD"]] <- list(
   name = "TAD",
   code = "#define __MRGSOLVE_USE_PLUGIN_TAD__"
@@ -145,13 +157,6 @@ plugins[["TAD"]] <- list(
 read_lines_from_base <- function(file) {
   readLines(mrgsolve_file("base", file))
 }
-
-
-# 
-# plugins[["REPORT"]] <- list(
-#   name = "REPORT", 
-#   code = c("#define __MRGSOLVE_USE_PLUGIN_REPORT__", '#include "mrgsolve_plugin_report.h"')
-# )
 
 # @param x the build object
 # 

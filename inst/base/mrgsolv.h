@@ -101,6 +101,7 @@ public:
   void stop_id_cf(){SYSTEMOFF=2;}
   std::vector<mrgsolve::evdata> mevector;
   void mevent(double time, int evid);
+  double mtime(double time);
   double tad();
 }; 
 

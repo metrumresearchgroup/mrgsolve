@@ -254,9 +254,9 @@ setMethod("as.matrix", "mrgsims", function(x,...) {
 ##' @param object passed to show
 ##' @rdname mrgsims
 ##' @export
-setMethod("summary", "mrgsims", function(object,...) {
+summary.mrgsims <- function(object,...) {
   summary(as.data.frame(object))
-})
+}
 
 ##' @rdname mrgsims
 ##' @export

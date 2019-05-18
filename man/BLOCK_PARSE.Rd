@@ -10,16 +10,17 @@
 \alias{CAPTURE}
 \title{Functions to parse code blocks}
 \usage{
-PARAM(x, env, annotated = FALSE, covariates = FALSE, pos = 1, ...)
+PARAM(x, env, annotated = FALSE, covariates = FALSE, pos = 1,
+  code = FALSE, ...)
 
 FIXED(x, env, annotated = FALSE, pos = 1, ...)
 
 THETA(x, env, annotated = FALSE, pos = 1, name = "THETA",
   fill = NULL, ...)
 
-INIT(x, env, annotated = FALSE, pos = 1, ...)
+INIT(x, env, annotated = FALSE, pos = 1, code = FALSE, ...)
 
-CMT(x, env, annotated = FALSE, pos = 1, ...)
+CMT(x, env, annotated = FALSE, pos = 1, code = FALSE, ...)
 
 CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 }
