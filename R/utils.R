@@ -235,8 +235,6 @@ expand.ev <- function(...) {
   shuffle(ans,"ID")
 }
 
-is.numeric.data.frame <- function(x) sapply(x, is.numeric)
-
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())
   x <- gsub("(,|\\s)+$", "",x,perl=TRUE)
@@ -259,7 +257,6 @@ tovec <- function(x,concat=TRUE) {
   x <- type.convert(unlist(strsplit(x,split="\\,|\n|\\s+",perl=TRUE)), as.is=TRUE)
   x[nchar(x)>0]
 }
-
 
 ##' Create create character vectors
 ##'
@@ -323,12 +320,10 @@ build_path <- function(x) {
   return(x)
 }
 
-
 ##' Set RNG to use L'Ecuyer-CMRG
 ##'
 ##' @export
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
-
 
 if.file.remove <- function(x) {
   if(file_exists(x)) file.remove(x)
@@ -370,39 +365,21 @@ s_pick <- function(x,name) {
   nonull(unlist(sapply(x,"[[",name)))
 }
 
-ll_pick <- function(x,name) {
-  stopifnot(is.list(x))
-  lapply(x,"[[",name)
-}
+# ll_pick <- function(x,name) {
+#   stopifnot(is.list(x))
+#   lapply(x,"[[",name)
+# }
+# 
+# l_pick <- function(x,name) {
+#   stopifnot(is.list(x))
+#   lapply(x,"[",name)
+# }
 
-l_pick <- function(x,name) {
-  stopifnot(is.list(x))
-  lapply(x,"[",name)
-}
-s_quote <- function(x) paste0("\'",x,"\'")
-d_quote <- function(x) paste0("\"",x,"\"")
+# s_quote <- function(x) paste0("\'",x,"\'")
+# d_quote <- function(x) paste0("\"",x,"\"")
 
-mapvalues <- function (x, from, to, warn_missing = FALSE) {
-  if (length(from) != length(to)) {
-    stop("`from` and `to` vectors are not the same length.")
-  }
-  if (!is.atomic(x)) {
-    stop("`x` must be an atomic vector.")
-  }
-  if (is.factor(x)) {
-    levels(x) <- mapvalues(levels(x), from, to, warn_missing)
-    return(x)
-  }
-  mapidx <- match(x, from)
-  mapidxNA <- is.na(mapidx)
-  from_found <- sort(unique(mapidx))
-  if (warn_missing && length(from_found) != length(from)) {
-    message("The following `from` values were not present in `x`: ",
-            paste(from[!(1:length(from) %in% from_found)], collapse = ", "))
-  }
-  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
-  x
-}
+
+
 
 
 shuffle <- function (x, who, after = NA)  {
@@ -444,17 +421,17 @@ single.number <- function(x) length(x)==1 & is.numeric(x)
 
 
 # 15 sept 2016
-installed_models <- function() {
-  file.path(system.file(package="mrgsolve"), "inst", "models")
-}
+# installed_models <- function() {
+#   file.path(system.file(package="mrgsolve"), "inst", "models")
+# }
 
-get_option <- function(what,opt,default=FALSE) {
-  if(is.element(what,names(opt))) {
-    opt[[what]]
-  } else {
-    return(default) 
-  }
-}
+# get_option <- function(what,opt,default=FALSE) {
+#   if(is.element(what,names(opt))) {
+#     opt[[what]]
+#   } else {
+#     return(default) 
+#   }
+# }
 
 has_name <- function(name,object) {
   is.element(name,names(object))
@@ -476,18 +453,18 @@ file_readable <- function(x) {
   file.access(x,4)==0 
 }
 
-mrgnorm <- function(n,sigma) {
-  ncols <- ncol(sigma)
-  matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
-}
+# mrgnorm <- function(n,sigma) {
+#   ncols <- ncol(sigma)
+#   matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
+# }
 
 where_is <- function(what,x) {
   as.integer(unlist(gregexpr(what,x,fixed=TRUE)))
 }
 
-where_first <- function(what,x) {
-  as.integer(unlist(regexpr(what,x,fixed=TRUE)))
-}
+# where_first <- function(what,x) {
+#   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
+# }
 
 object_exists <- function(name,envir,mode="any",inherits=FALSE) {
   if(!exists(name,envir=envir,mode=mode,inherits=inherits)) {
@@ -503,26 +480,26 @@ call_system <- function(args) {
   suppressWarnings(do.call(system,args))
 }
 
-build_error <- function(args,compfile) {
-  if(.Platform$OS.type=="windows" & args$ignore.stdout) {
-    
-    args$show.output.on.console <- FALSE 
-    args$intern <- TRUE
-    err <- call_system(args)
-    
-    errors <- grepl(paste0("^",compfile),err)
-    
-    for(i in seq_along(errors)) {
-      if(errors[i]) {
-        message(err[i]) 
-      } else {
-        cat(err[i],"\n")
-      }
-    }
-  }
-  cat("-------------\n")
-  stop("there was a problem building the model.",call.=FALSE)
-}
+# build_error <- function(args,compfile) {
+#   if(.Platform$OS.type=="windows" & args$ignore.stdout) {
+#     
+#     args$show.output.on.console <- FALSE 
+#     args$intern <- TRUE
+#     err <- call_system(args)
+#     
+#     errors <- grepl(paste0("^",compfile),err)
+#     
+#     for(i in seq_along(errors)) {
+#       if(errors[i]) {
+#         message(err[i]) 
+#       } else {
+#         cat(err[i],"\n")
+#       }
+#     }
+#   }
+#   cat("-------------\n")
+#   stop("there was a problem building the model.",call.=FALSE)
+# }
 
 na2zero <- function(x) {
   x[is.na(x)] <- 0
@@ -624,3 +601,30 @@ make_matrix_labels <- function(mat,lab,diag=TRUE) {
   names(ans) <- lab
   ans
 }
+
+
+
+# nocov start
+is.numeric.data.frame <- function(x) sapply(x, is.numeric)
+
+mapvalues <- function (x, from, to, warn_missing = FALSE) { 
+  if (length(from) != length(to)) {
+    stop("`from` and `to` vectors are not the same length.")
+  }
+  if (!is.atomic(x)) {
+    stop("`x` must be an atomic vector.")
+  }
+  if (is.factor(x)) {
+    levels(x) <- mapvalues(levels(x), from, to, warn_missing)
+    return(x)
+  }
+  mapidx <- match(x, from)
+  mapidxNA <- is.na(mapidx)
+  from_found <- sort(unique(mapidx))
+  if (warn_missing && length(from_found) != length(from)) {
+    message("The following `from` values were not present in `x`: ",
+            paste(from[!(1:length(from) %in% from_found)], collapse = ", "))
+  }
+  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
+  x
+} # nocov end

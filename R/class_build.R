@@ -180,15 +180,15 @@ msub <- function(pattern,replacement,x,...) {
   )
 }
 
-mgsub <- function(pattern,replacement,x,...) {
-  sapply(
-    x, 
-    pattern = pattern, 
-    replacement = replacement, 
-    FUN = gsub,
-    USE.NAMES = FALSE
-  )
-}
+# mgsub <- function(pattern,replacement,x,...) {
+#   sapply(
+#     x, 
+#     pattern = pattern, 
+#     replacement = replacement, 
+#     FUN = gsub,
+#     USE.NAMES = FALSE
+#   )
+# }
 
 
 build_exec <- function(build) {

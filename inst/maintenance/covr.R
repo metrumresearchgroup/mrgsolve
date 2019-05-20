@@ -25,6 +25,10 @@ x <- package_coverage(file.path(tgt), quiet=FALSE, line_exclusions=ln)
 
 y <- coverage_to_list(x)
 
+z <- zero_coverage(x)
+write.csv(z, file = "inst/maintenance/unit/zero.md")
+
+
 df <- data.frame(file = names(y$filecoverage), coverage = y$filecoverage, row.names=NULL)
 df <- df[order(as.numeric(df$coverage)),]
 

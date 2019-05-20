@@ -75,6 +75,10 @@ test_that("Update a model matrix", {
   expect_error(omat(mod, dmat(1)))  
 })
 
+# test_that("Eerror when determinate is negative", {
+#   m <- bmat(1,3,3)
+#   expect_error(x <- omat(m))
+# })
 
 
 

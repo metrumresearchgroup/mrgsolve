@@ -51,7 +51,6 @@ valid.matlist <- function(object) {
     out <- c(out, "Invalid matrix: determinant is less than 0.")
   }
   if(!x5) {
-    
     n1 <- paste(sapply(object@data,   nrow),collapse=",")
     n2 <- paste(sapply(object@labels, length),collapse=',')
     out <- c(
@@ -78,7 +77,6 @@ setClass("matlist",
 
 is.matlist <- function(x) inherits(x,"matlist")
 
-
 dim_matlist <- function(x) {
   if(length(x@data)==0) return(0)
   unname(sapply(x@data,nrow))
@@ -93,23 +91,6 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
   x@n <- dim_matlist(x)
   return(x)
 }
-# 
-# 
-# new_omat <- function(matrix, labels=NULL, name="...") {
-#   matrix <- setNames(list(matrix), name)
-#   m <- omat(matrix, labels = list(labels))
-#   m@labels <- list(labels)
-#   m
-# }
-# 
-# new_smat <- function(matrix, labels=NULL, name="...") {
-#   matrix <- setNames(list(matrix), name)
-#   m <- smat(matrix, labels = list(labels))
-#   m@labels <- list(labels)
-#   m
-# }
-# 
-
 
 new_omat <- function(mat, label=list(), name="...") {
   mat <- setNames(list(mat), name)

@@ -60,4 +60,8 @@ test_that("params are updated", {
   expect_error(param(mod, KA = "A"))
 })
 
-
+test_that("params are shown", {
+  mod <- mrgsolve:::house()
+  x <- capture.output(param(mod))
+  expect_match(x[2], "Model parameters")
+})
