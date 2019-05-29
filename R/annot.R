@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+#nocov start
 render_annot <- function(x,block,...) {
   x <- dplyr::bind_rows(lapply(x,tibble::as_tibble))
   x <- dplyr::mutate(x,block=block) 
@@ -40,9 +41,6 @@ parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,
   an <-  render_annot(an,block)
   list(v=v,an=an,nm=nm)
 }
-
-## Convenience; keep around for a little bot
-gmatch <- function(what,x) as.integer(gregexpr(what,x,fixed=TRUE)[[1]])
 
 parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given") {
   
@@ -215,4 +213,5 @@ add_detail_values <- function(annot,x) {
   
 }
 
+#nocov end
 

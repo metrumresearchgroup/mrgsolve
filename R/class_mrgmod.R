@@ -452,8 +452,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     maxsteps <- x@maxsteps
     rtol <- x@rtol
     atol <- x@atol
-    if(deep) {
-      trans <- x@trans
+    if(deep) { 
+      trans <- x@trans 
       advan <- x@advan
       functions <- funset(x)
     }

@@ -36,7 +36,6 @@
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
 ##' @importFrom rlang quos enquo syms !!! quo_name
-##' @importFrom processx run
 ##' 
 ##' @include Aaaa.R
 ##' @include class_mrgsims.R

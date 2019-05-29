@@ -150,4 +150,12 @@ test_that("missing value in time/rate/ID is error", {
                regexp="Found missing values in input data.")
 })
 
-
+test_that("observations expand", {
+  e <- ev(amt = 100)
+  dat <- expand_observations(e, c(1,2,3))
+  dose <- filter(dat,evid==1)
+  expect_equal(nrow(dose),1)
+  obs <- filter(dat, evid==0)
+  expect_equal(nrow(obs),3)
+  expect_equal(obs[["time"]],c(1,2,3))
+})

@@ -1,18 +1,14 @@
-# coverage: 63%
+# coverage: 66.02%
 
 |file                  | coverage|
 |:---------------------|--------:|
-|R/workflows.R         |     0.00|
 |R/class_mrgsims.R     |    14.29|
+|R/modlib.R            |    20.00|
 |R/class_matlist.R     |    21.28|
-|R/modlib.R            |    23.53|
+|R/funset.R            |    31.43|
 |R/class_numericlist.R |    32.26|
-|R/knobs.R             |    33.64|
-|R/funset.R            |    37.50|
-|R/class_build.R       |    45.45|
-|R/class_ev.R          |    45.83|
 |R/utils.R             |    46.51|
-|R/annot.R             |    47.00|
+|R/class_build.R       |    47.62|
 |R/generics.R          |    50.00|
 |R/matlist.R           |    50.57|
 |R/class_tgrid.R       |    52.31|
@@ -20,15 +16,18 @@
 |R/mrgsims.R           |    53.47|
 |R/matrix.R            |    54.17|
 |R/class_mrgmod.R      |    54.37|
-|R/model_include.R     |    56.45|
-|R/data_set.R          |    57.03|
 |R/env.R               |    57.69|
 |R/chain.R             |    57.89|
 |R/events.R            |    61.11|
-|R/modspec.R           |    62.61|
+|R/modspec.R           |    63.49|
+|R/knobs.R             |    64.76|
+|R/data_set.R          |    64.84|
+|R/class_ev.R          |    66.67|
 |R/mrgsolve.R          |    70.18|
+|R/model_include.R     |    71.43|
 |R/realize_addl.R      |    80.95|
 |R/init.R              |    81.25|
+|R/workflows.R         |    81.25|
 |R/param.R             |    81.94|
 |R/relabel.R           |    84.78|
 |R/mrgindata.R         |    84.96|
