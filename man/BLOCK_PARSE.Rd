@@ -35,6 +35,8 @@ CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 
 \item{pos}{block position}
 
+\item{code}{indicates that object code is being provided}
+
 \item{...}{passed}
 
 \item{name}{block name}

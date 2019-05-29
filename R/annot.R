@@ -152,7 +152,7 @@ cobble_details <- function(x) {
     for(i in seq_along(mat)) {
       this_mat <- make_matrix_labels(mat[[i]],lab[[i]])
       ans[[3+i]] <- tibble(block="OMEGA", name = names(this_mat), 
-                           value = unname(this_ma))
+                           value = unname(this_mat))
     }
   }
   

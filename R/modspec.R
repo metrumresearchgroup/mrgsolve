@@ -610,6 +610,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 ##' @param name block name
 ##' @param pos block position
 ##' @param fill data to use for block contents
+##' @param code indicates that object code is being provided
 ##' @param ... passed
 ##' 
 ##' @rdname BLOCK_PARSE
