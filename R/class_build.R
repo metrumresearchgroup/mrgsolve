@@ -170,6 +170,7 @@ setup_soloc <- function(build_loc) {
   }
 }
 
+# nocov start
 msub <- function(pattern,replacement,x,...) {
   sapply(
     x, 
@@ -225,6 +226,7 @@ build_output_cleanup <- function(x,build) {
   x
 }
 
+
 build_failed <- function(out,build,mod) {
   out <- build_output_cleanup(out,build)
   build_save_output(out)
@@ -246,6 +248,7 @@ build_failed <- function(out,build,mod) {
   build_handle_127(out)
   stop("The model build step failed.",call.=FALSE)
 }
+
 
 build_save_output <- function(out) {
   out[["date"]] <- date()
@@ -273,3 +276,4 @@ build_handle_127 <- function(out) {
   }
   return(invisible(NULL))  
 }
+# nocov end

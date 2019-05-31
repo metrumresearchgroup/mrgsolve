@@ -840,7 +840,7 @@ PRED <- function(x,env,...) {
 }
 
 #' @export
-handle_spec_block.specINCLUDE <- function(x,env,...) {
+handle_spec_block.specINCLUDE <- function(x,env,...) { 
   
   x <- cvec_c_tr(dump_opts(x))
   
@@ -1139,44 +1139,44 @@ parse_env <- function(spec,project,ENV=new.env()) {
 }
 
 
-expand_seq <- function(ex){
-  matches <- unlist(regmatches(ex,
-                               regexec("(\\w+?)(\\d+):(\\d+):(\\d+)",
-                                       ex)
-  ), use.names = F)
-  return(
-    paste0(
-      matches[[2]],
-      seq(as.numeric(matches[[3]]),
-          as.numeric(matches[[4]]),
-          as.numeric(matches[[5]])
-      )
-    )
-  )
-}
-
-expand <- function(ex){
-  matches <- unlist(
-    regmatches(ex,regexec("(\\w+?)(\\d+):(\\d+)",)
-    ), use.names = F)
-  return(paste0(matches[[2]],
-                as.numeric(matches[[3]]):as.numeric(matches[[4]])
-  )
-  )
-}
-
-expand_maybe <- function(ex){
-  colons <- charcount(ex, ":")
-  if (colons) {
-    if(colons == 2) {
-      return(expand_seq(ex))
-    } else {
-      return(expand(ex) )
-    }
-  }
-  return(ex)
-  
-}
+# expand_seq <- function(ex){
+#   matches <- unlist(regmatches(ex,
+#                                regexec("(\\w+?)(\\d+):(\\d+):(\\d+)",
+#                                        ex)
+#   ), use.names = F)
+#   return(
+#     paste0(
+#       matches[[2]],
+#       seq(as.numeric(matches[[3]]),
+#           as.numeric(matches[[4]]),
+#           as.numeric(matches[[5]])
+#       )
+#     )
+#   )
+# }
+# 
+# expand <- function(ex){
+#   matches <- unlist(
+#     regmatches(ex,regexec("(\\w+?)(\\d+):(\\d+)",)
+#     ), use.names = F)
+#   return(paste0(matches[[2]],
+#                 as.numeric(matches[[3]]):as.numeric(matches[[4]])
+#   )
+#   )
+# }
+# 
+# expand_maybe <- function(ex){
+#   colons <- charcount(ex, ":")
+#   if (colons) {
+#     if(colons == 2) {
+#       return(expand_seq(ex))
+#     } else {
+#       return(expand(ex) )
+#     }
+#   }
+#   return(ex)
+#   
+# }
 
 deparens <- function(x,what=c(")", "(")) {
   for(w in what) {

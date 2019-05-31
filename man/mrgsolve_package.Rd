@@ -25,14 +25,6 @@ A Systematized Collection of ODE Solvers.
 }
 }
 
-\section{Also see}{
-
-\itemize{
- \item  Package \href{00Index.html}{index}, including a listing 
- of all functions
-}
-}
-
 \examples{
 
 ## example("mrgsolve")

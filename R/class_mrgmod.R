@@ -669,12 +669,12 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-re_build <- function(x,model=model(x),temp = FALSE) {
-  if(temp) {
-    model <- basename(tempfile(pattern="mod", tmpdir='.'))
-  }
-  mcode(model,x@code)
-}
+# re_build <- function(x,model=model(x),temp = FALSE) {
+#   if(temp) {
+#     model <- basename(tempfile(pattern="mod", tmpdir='.'))
+#   }
+#   mcode(model,x@code)
+# }
 
 ##' @export
 all.equal.mrgmod <- function(target, current,...) {
@@ -686,9 +686,9 @@ all.equal.mrgmod <- function(target, current,...) {
   all(t1,t2)
 }
 
-get_model_md5 <- function(x) {
-  files <- c(cfile(x),x@shlib[["include"]])
-  tools::md5sum(files)
-}
+# get_model_md5 <- function(x) {
+#   files <- c(cfile(x),x@shlib[["include"]])
+#   tools::md5sum(files)
+# }
 
 

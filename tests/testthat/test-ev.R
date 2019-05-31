@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -165,4 +165,11 @@ test_that("as.ev", {
 
   expect_equal(d$evid,1)
 
+})
+
+test_that("ev_repeat", {
+  n <- 3
+  e <- ev(amt = 100, ii = 24, addl = 9)
+  e <- ev_repeat(e,n) %>% realize_addl()
+  expect_equal(nrow(e),n*10) 
 })

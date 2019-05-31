@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -44,25 +44,24 @@
 ##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
 ##'
 ##' @export
-setGeneric("Req", function(x,...) standardGeneric("Req"))
+Req <- function(x,...) UseMethod("Req")
 
-##' @export
-##' @rdname Req
-setMethod("Req", "mrgmod", function(x,...) {
+#' @export
+Req.mrgmod <- function(x,...) {
   x@args[["Request"]] <- as_character_args(match.call()[-1])
-  x
-})
+  x  
+}
 
 ##' @rdname Req
 ##' @export
-setGeneric("req", function(x,...) standardGeneric("req"))
+req <- function(x,...) UseMethod("req")
 
 ##' @export
 ##' @rdname Req
-setMethod("req", "mrgmod", function(x,...) {
+req.mrgmod <- function(x,...) {
   x@args[["request"]] <- as.character(match.call()[-1])
   x
-})
+}
 
 ##' Select items to carry into simulated output
 ##' 

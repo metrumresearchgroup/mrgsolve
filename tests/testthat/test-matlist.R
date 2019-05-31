@@ -80,5 +80,9 @@ test_that("Update a model matrix", {
 #   expect_error(x <- omat(m))
 # })
 
+test_that("valid matlist", {
+  x <- omat(dmat(1,2,3))
+  expect_true(mrgsolve:::valid.matlist(x))
+})
 
 
