@@ -645,6 +645,7 @@ do_mrgsim <- function(x,
       mod=x)
 }
 
+#nocov start
 do_mrgsimple <- function(x,
                          data,
                          idata = no_idata_set(),
@@ -752,6 +753,7 @@ do_mrgsimple <- function(x,
       outnames=capt,
       mod=x)
 }
+#nocov end
 
 param_as_parent <- function(x) {
   e <- as.environment(as.list(param(x)))

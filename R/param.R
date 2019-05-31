@@ -133,8 +133,6 @@ setMethod("param", "ANY", function(.x,...) {
 })
 
 
-
-
 showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {
   pattern <- x@pattern
   ini <- as.list(x)

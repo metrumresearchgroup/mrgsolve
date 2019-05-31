@@ -1,4 +1,4 @@
-# coverage: 70.8%
+# coverage: 71.97%
 
 |file                  | coverage|
 |:---------------------|--------:|
@@ -19,7 +19,6 @@
 |R/class_ev.R          |    66.67|
 |R/events.R            |    68.06|
 |R/class_mrgmod.R      |    69.77|
-|R/mrgsolve.R          |    70.18|
 |R/model_include.R     |    71.43|
 |R/class_build.R       |    76.83|
 |R/env.R               |    78.95|
@@ -29,6 +28,7 @@
 |R/param.R             |    81.94|
 |R/relabel.R           |    84.78|
 |R/mrgindata.R         |    84.96|
+|R/mrgsolve.R          |    87.34|
 |R/compile.R           |    87.72|
 |R/nmxml.R             |    87.80|
 |R/funset.R            |    88.57|
