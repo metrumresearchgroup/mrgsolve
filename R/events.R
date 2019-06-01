@@ -166,9 +166,9 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
       }
       data[["ID"]] <- ID
     }
-    data <- shuffle(data,c("ID", "time", "cmt"))
+    data <- dplyr::select(data,c("ID", "time", "cmt"),everything())
   } else {
-    data <- shuffle(data,c("time", "cmt"))
+    data <- dplyr::select(data,c("time", "cmt"),everything())
   }
   
   if(realize_addl) data <- realize_addl(data)

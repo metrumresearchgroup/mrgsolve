@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+# this won't get included in coverage since it's copied into the class def
+# nocov start
 valid.matlist <- function(object) {
   
   labels <- names(object@data)[names(object@data) != "..."]
@@ -60,19 +62,20 @@ valid.matlist <- function(object) {
   }
   return(out)
 }
-
+# nocov end
 
 ##' S4 class matlist
 ##'
 ##' @rdname matlist-class
-setClass("matlist", 
-         slots=c(
-           data="list",
-           n="numeric", 
-           labels="list"
-         ),
-         prototype=list(data=list(), labels=list()),
-         validity=valid.matlist
+setClass(
+  "matlist", 
+  slots=c(
+    data="list",
+    n="numeric", 
+    labels="list"
+  ),
+  prototype=list(data=list(), labels=list()),
+  validity=valid.matlist
 )
 
 is.matlist <- function(x) inherits(x,"matlist")

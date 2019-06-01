@@ -193,50 +193,42 @@ msub <- function(pattern,replacement,x,...) {
 
 
 build_exec <- function(build) {
-  status <- system2(
-    build$cmd,
+  system4(
+    build$cmd, 
     args = build$args,
-    stdout = build[["stdout"]],
-    stderr = build[["stderr"]]
+    pattern = build$model,
+    path = build$soloc
   )
-  list(status = status, stdout = "", stderr = "")
 }
 
 build_output_cleanup <- function(x,build) {
-  if(file.exists(build[["stdout"]])) {
-    x[["stdout"]] <- readLines(build[["stdout"]])  
-    if(length(x[["stdout"]])==0) x[["stdout"]] <- ""
-  } else {
-    x[["stdout"]] <- "could not find build output"
-  }
-  if(file.exists(build[["stderr"]])) {
-    errr <- readLines(build[["stderr"]])
-    if(length(errr)==0) errr <- ""
-  } else {
-    errr <- "could not find build error"
-  }
   x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
+  errr <- x[["stderr"]]
   patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
-  patt <- "^ *In function 'void _model.*:$"
+  patt <- "^ *In function .*void _model.*:$"
   errr <- msub(pattern = patt, replacement = "", x = errr)
   x[["stderr"]] <- errr
-  x <- c(list(build = build), x)
   x <- structure(x, class = "mrgsolve-build-error")
   x
 }
 
 
-build_failed <- function(out,build,mod) {
+build_failed <- function(out,build,mod,ignore.stdout) {
+  outt <- list(out)
+  names(outt) <- paste0("mrgsolve.build.", build[["model"]])
+  options(outt)
   out <- build_output_cleanup(out,build)
-  build_save_output(out)
   if(build[["recover"]]) {
-    ans <- list(build = build, mod = mod,shlib=list(compiled=FALSE))
+    warning("returning object for debugging purposes only.")
+    ans <- list(build = build, mod = as.list(mod), shlib=list(compiled=FALSE), out=out)
     return(structure(ans,class = "mrgsolve-build-recover"))
   }
-  msg <- divider_msg("stdout")
-  cat("\n\n", msg, "\n", sep="")
-  cat(out[["stdout"]],sep="\n")
+  if(!ignore.stdout) {
+    msg <- divider_msg("stdout")
+    cat("\n", msg, "\n", sep="")
+    cat(out[["stdout"]],sep="\n")
+  }
   header <- "\n---:: stderr ::---------------------"
   footer <- paste0(rep("-",nchar(header)),collapse = "")
   msg <- divider_msg("stderr")
@@ -246,7 +238,7 @@ build_failed <- function(out,build,mod) {
   msg <- divider_msg()
   cat("\n",msg,"\n",sep="")
   build_handle_127(out)
-  stop("The model build step failed.",call.=FALSE)
+  stop("the model build step failed.",call.=FALSE)
 }
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,6 +17,7 @@
 
 null_list <- setNames(list(), character(0))
 
+#nocov start
 valid.numericlist <- function(object) {
   x1 <- all(sapply(object@data,single.number))
   x2 <- all(names(object@data) !="")
@@ -44,16 +45,14 @@ valid.numericlist <- function(object) {
   if(!x1) {
     out <- c(out, "all parameters must be single numbers") 
   }
-  
   return(out)
-  
 }
+# nocov end
 
 create_numeric_list <- function(x,class,...) {
   if(length(x) ==0) return(new(class))
   new(class, data=x)
 }
-
 
 ##' S4 class numeric list
 ##'
@@ -65,13 +64,14 @@ create_numeric_list <- function(x,class,...) {
 ##' console
 ##' @keywords internal
 ##' @export
-setClass("numericlist", 
-         slots=c(
-           data="list", 
-           pattern="character"
-         ),
-         validity=valid.numericlist, 
-         prototype=list(data=null_list, pattern="*")
+setClass(
+  "numericlist", 
+  slots=c(
+    data="list", 
+    pattern="character"
+  ),
+  validity=valid.numericlist, 
+  prototype=list(data=null_list, pattern="*")
 )
 
 ##' Methods for numericlist

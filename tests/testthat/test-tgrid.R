@@ -18,17 +18,20 @@
 library(testthat)
 library(mrgsolve)
 library(dplyr)
+
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("test-numericlist")
+context("test-tgrid")
 
-test_that("numericlist", {
-  valid <- mrgsolve:::valid.numericlist
-  x <- param(A = 1, B = 2)
-  expect_true(valid(x))
-  capture.output(expect_error(param(A.2 = 1)))
-  expect_error(param(A = c(1,2,3)))
-  x <- mrgsolve:::create_numeric_list(list(A = 1, B = 2), "parameter_list")
-  expect_is(x,"parameter_list")
+test_that("tgrid", {
+  x <- tgrid(0,24,1)
+  expect_is(x,"tgrid")
+  expect_length(stime(x),25)
+  x <- c(x,x+100)
+  expect_is(x,"tgrids")
+  expect_length(stime(x),50)
+  x <- c(1,2,3,4,5)
+  expect_identical(stime(x),x)
 })
+

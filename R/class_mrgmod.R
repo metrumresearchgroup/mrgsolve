@@ -142,6 +142,8 @@ slot.names <- names(protomod)
 slots <- sapply(protomod, class)
 names(slots) <- names(protomod)
 
+# this will never get counted as covered; copied into class
+# nocov start
 valid.mrgmod <- function(object) {
   tags <- names(object)
   tags[["capture"]] <- NULL
@@ -156,6 +158,7 @@ valid.mrgmod <- function(object) {
   if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, or 13")
   return(x)
 }
+# nocov end
 
 ##' S4 class for mrgsolve model object
 ##'

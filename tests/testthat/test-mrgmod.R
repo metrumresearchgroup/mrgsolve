@@ -36,5 +36,10 @@ test_that("methods", {
   expect_message(summary(mod), "Model: housemodel")
   expect_true(mrgsolve:::valid.mrgmod(mod))
   expect_true(all.equal(mod, mrgsolve:::house()))
+  l <- mod[c("CL", "VC")]
+  expect_identical(l, list(CL = mod$CL, VC = mod$VC))
+  x <- capture.output(see(mod))
+  expect_true(grepl("Model file", x[2]))
+  expect_true(grepl("housemodel\\.cpp", x[2]))
 })
 

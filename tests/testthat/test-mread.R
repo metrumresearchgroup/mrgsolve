@@ -33,3 +33,8 @@ test_that("Warning with no $CMT or $INIT", {
   expect_warning(mcode("test-mread-cmt", code,quiet=FALSE,compile=FALSE))
 })
 
+test_that("sys", {
+  x <- sys::r_internal(c("CMD", "SHLIB", "-v"))
+  expect_is(x,"list")
+})
+
