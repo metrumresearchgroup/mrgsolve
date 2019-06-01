@@ -32,6 +32,11 @@ test_that("doses are required", {
   expect_error(ev(time=24), "amt")
 })
 
+test_that("ev.ev", {
+  x <- ev(ev(amt=100))
+  expect_is(x,"ev")
+})
+
 test_that("event requirements and defaults", {
   expect_is(ev(amt=100), "ev")
   df <- as.data.frame(ev(amt=100))

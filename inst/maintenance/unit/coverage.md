@@ -1,4 +1,4 @@
-# coverage: 74.02%
+# coverage: 74.05%
 
 |file                  | coverage|
 |:---------------------|--------:|
@@ -15,7 +15,7 @@
 |R/data_set.R          |    64.84|
 |R/modspec.R           |    66.54|
 |R/class_ev.R          |    66.67|
-|R/events.R            |    68.06|
+|R/events.R            |    68.52|
 |R/model_include.R     |    71.43|
 |R/class_mrgmod.R      |    72.76|
 |R/class_build.R       |    76.83|

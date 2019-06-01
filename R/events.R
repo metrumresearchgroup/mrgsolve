@@ -161,7 +161,7 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
       
     } else {
       if(length(ID)!=nrow(data)) { 
-        stop("Length of ID does not match number of events while replicate = FALSE",
+        stop("length of ID does not match number of events while replicate = FALSE",
              call.=FALSE)
       }
       data[["ID"]] <- ID
@@ -248,9 +248,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     keep <- intersect(keep, names(x))
     x <- x[,keep]
   }
-  
   new("ev", data=x)
-  
 })
 
 ##' @rdname as.ev
@@ -284,7 +282,7 @@ collect_ev <- function(...) {
   na.check <- which(!what)
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
-      warning("Missing values in some columns.",call.=FALSE)
+      warning("missing values in some columns.",call.=FALSE)
     }
   }
   x <- dplyr::select(x,c(match(tran,names(x)),seq_along(names(x))))
@@ -334,7 +332,7 @@ setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
   if(!has_name("ii",left) | !has_name("addl",left)) {
-    stop("Both ii and addl are required in lhs",call.=FALSE)
+    stop("both ii and addl are required in lhs",call.=FALSE)
   }
   y <- max(with(left, time + ii*addl + ii))
   e2@data$time <- y
@@ -601,6 +599,3 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
 seq.ev <- function(...) {
   ev_seq(...) 
 }
-
-
-
