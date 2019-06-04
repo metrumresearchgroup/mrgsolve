@@ -10,6 +10,7 @@ Authors@R: c(
     person("Charles", "Margossian", role = "ctb"),
     person("Devin", "Pastoor", role = "ctb"),
     person("Bill", "Denney", role = "ctb", comment=c(ORCID="0000-0002-5759-428X")),
+    person("odepack authors", role = "cph"),
     person("Metrum Research Group", role = "cph")
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
