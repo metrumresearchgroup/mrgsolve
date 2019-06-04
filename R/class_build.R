@@ -61,7 +61,7 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
     } else {
       stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE) 
     }
-  }
+  } 
   
   soloc <- normalizePath(soloc, mustWork=TRUE, winslash="/")
   
