@@ -16,6 +16,11 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
+document <- function(number_sections = TRUE, highlight = "pygments", ...) {
+    rmarkdown::html_document(..., number_sections = number_sections, highlight = highlight)
+}
+
+
 ##' Render a model to a document
 ##' 
 ##' @param x model object or the model name

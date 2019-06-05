@@ -11,16 +11,16 @@
 \title{Functions to parse code blocks}
 \usage{
 PARAM(x, env, annotated = FALSE, covariates = FALSE, pos = 1,
-  code = FALSE, ...)
+  as_object = FALSE, ...)
 
 FIXED(x, env, annotated = FALSE, pos = 1, ...)
 
 THETA(x, env, annotated = FALSE, pos = 1, name = "THETA",
   fill = NULL, ...)
 
-INIT(x, env, annotated = FALSE, pos = 1, code = FALSE, ...)
+INIT(x, env, annotated = FALSE, pos = 1, as_object = FALSE, ...)
 
-CMT(x, env, annotated = FALSE, pos = 1, code = FALSE, ...)
+CMT(x, env, annotated = FALSE, pos = 1, as_object = FALSE, ...)
 
 CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 }
@@ -35,7 +35,7 @@ CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
 
 \item{pos}{block position}
 
-\item{code}{indicates that object code is being provided}
+\item{as_object}{indicates that object code is being provided}
 
 \item{...}{passed}
 

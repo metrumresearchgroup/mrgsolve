@@ -2,10 +2,14 @@
 % Please edit documentation in R/modspec.R
 \name{modelparse}
 \alias{modelparse}
+\alias{modelparse_rmd}
 \title{Parse model specification text}
 \usage{
 modelparse(txt, split = FALSE, drop_blank = TRUE,
   comment_re = c("//", "##"))
+
+modelparse_rmd(txt, split = FALSE, drop_blank = TRUE,
+  comment_re = "//")
 }
 \arguments{
 \item{txt}{model specification text}

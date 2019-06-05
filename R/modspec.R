@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -133,9 +133,7 @@ fixed_parameters <- function(x,fixed_type) {
 ##' 
 ##' @export
 ##' @keywords internal
-modelparse <- function(txt, 
-                       split=FALSE,
-                       drop_blank = TRUE, 
+modelparse <- function(txt, split=FALSE, drop_blank = TRUE, 
                        comment_re=c("//", "##")) {
   
   ## Take in model text and parse it out
@@ -144,17 +142,13 @@ modelparse <- function(txt,
   
   if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
   
-  # Activate code hidden in comment
-  #re <- "^ *// *\\[ *(\\$\\w+) *\\]"
-  #txt <- sapply(txt, gsub, pattern=re, replacement="\\1", USE.NAMES=FALSE)
-  
   # Take out comments
   for(comment in comment_re) {
     m <- as.integer(regexpr(comment,txt,fixed=TRUE))
     w <- m > 0
     txt[w] <- substr(txt[w],1,m[w]-1)
   }
-
+  
   # Look for block lines
   m <- regexec(block_re,txt)
   
@@ -196,6 +190,57 @@ modelparse <- function(txt,
   
 }
 
+#' @rdname modelparse
+#' @keywords internal
+#' @export
+modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE, 
+                           comment_re = "//") {
+  
+  if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
+  
+  if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
+  
+  for(comment in comment_re) {
+    m <- as.integer(regexpr(comment,txt,fixed=TRUE))
+    w <- m > 0
+    txt[w] <- substr(txt[w],1,m[w]-1)
+  }
+  start_re <- "^```\\{.*\\}\\s*"
+  end_re <- "^\\s*```\\s*$"
+  start <- grep(start_re,txt)
+  end <- grep(end_re,txt)
+  ans <- vector("list", length(start))
+  for(i in seq_along(start)) {
+    ans[[i]] <- trimws(txt[seq(start[i],end[i])])
+    ans[[i]] <- gsub("^```\\{\\s*(r|c) +", "\\{", ans[[i]])
+    ans[[i]] <- sub("^```\\{", "\\{", ans[[i]])
+    ans[[i]] <- sub("```", "", ans[[i]])
+  }
+  chunk <- sapply(ans, "[[", 1)
+  lab <- gsub("\\{|\\}", "",chunk) %>% trimws
+  sp <- strsplit(lab, "\\s+|\\,")
+  label <- sapply(sp, "[", 1L)
+  label <- strsplit(label, "-", fixed = TRUE)
+  label <- sapply(label, "[",1L)
+  opts <- lapply(sp, "[", -1L)
+  for(i in seq_along(opts)) {
+    ans[[i]] <- ans[[i]][-length(ans[[i]])]
+    if(length(opts[[i]])==0) {
+      ans[[i]] <- ans[[i]][-1] 
+      next
+    }
+    ans[[i]][1] <- paste0(opts[[i]],collapse=" ")
+  }
+  names(ans) <- toupper(label)
+  dropR <- names(ans)=="R"
+  if(any(dropR)) {
+    ans <- ans[!dropR]  
+  }
+  return(ans)
+}
+
+
+
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
 ## and moving to global
@@ -204,6 +249,7 @@ move_global_rcpp_re_find <- "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
 move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
 local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
+param_re_find <- "\\bparam\\s+\\w+\\s*="
 
 move_global <- function(x,env) {
   
@@ -446,7 +492,6 @@ parseLIST <- function(x,where,env,...) {
   return(NULL)
 }
 
-
 ## S3 methods for processing code blocks
 ## All of these need to be exported
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
@@ -461,13 +506,13 @@ handle_spec_block.default <- function(x,...) {
 ## Used to parse OMEGA and SIGMA matrix blocks
 specMATRIX <- function(x,
                        oclass,type, annotated = FALSE,
-                       env, pos=1, code = FALSE,
+                       env, pos=1, as_object = FALSE,
                        name="...", prefix="", labels=NULL,
                        object=NULL, unlinked=FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
-  if(code) {
+  if(as_object) {
     expect <- paste0(type, "list")
     expect <- c("matrix",expect)
     if(type=="omega") {
@@ -539,7 +584,7 @@ specMATRIX <- function(x,
   d <- setNames(list(d),name)
   
   x <- create_matlist(d,class=oclass,labels=list(labels))
-
+  
   env[[type]][[pos]] <- x
   
   return(NULL)
@@ -578,6 +623,8 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   return(envir)
 }  
 
+param_re_find <- "\\b(param|parameter)\\s+\\w+\\s*="
+
 ##' @export 
 handle_spec_block.specTABLE <- function(x,env,...) {
   
@@ -610,7 +657,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 ##' @param name block name
 ##' @param pos block position
 ##' @param fill data to use for block contents
-##' @param code indicates that object code is being provided
+##' @param as_object indicates that object code is being provided
 ##' @param ... passed
 ##' 
 ##' @rdname BLOCK_PARSE
@@ -620,11 +667,11 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 NULL
 
 ##' @rdname BLOCK_PARSE
-PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1, code=FALSE,...) {
+PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,as_object=FALSE,...) {
   
   check_block_data(x,env$ENV,pos)
   
-  if(code) {
+  if(as_object) {
     x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, env)
     env[["param"]][[pos]] <- x
     return(NULL)
@@ -677,8 +724,8 @@ handle_spec_block.specFIXED <- function(x,...) {
 
 
 ##' @rdname BLOCK_PARSE
-THETA <- function(x, env, annotated=FALSE, pos=1,
-                  name="THETA", fill = NULL,...) {
+THETA <- function(x, env, annotated=FALSE, pos=1, name="THETA", fill = NULL,
+                  ...) {
   if(!is.null(fill)) {
     x <- eval(parse(text = fill))   
   }
@@ -709,11 +756,11 @@ handle_spec_block.specTHETA <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-INIT <- function(x,env,annotated=FALSE,pos=1,code=FALSE,...) {
+INIT <- function(x,env,annotated=FALSE,pos=1,as_object=FALSE,...) {
   
   check_block_data(x,env$ENV,pos)
   
-  if(code) {
+  if(as_object) {
     x <- evaluate_at_code(x, "list", "INIT", pos, env, as.list)
     env[["init"]][[pos]] <- x
     return(NULL)
@@ -737,17 +784,14 @@ handle_spec_block.specINIT <- function(x,...) {
 }
 
 ##' @rdname BLOCK_PARSE
-CMT <- function(x,env,annotated=FALSE,pos=1, code = FALSE, ...) {
-  
+CMT <- function(x,env,annotated=FALSE,pos=1, as_object = FALSE, ...) {
   check_block_data(x,env$ENV,pos)
-
-  if(code) {
+  if(as_object) {
     x <- evaluate_at_code(x, "character", "CMT", pos, env, as.character)
     x <- setNames(rep(0,length(x)), x)
     env[["init"]][[pos]] <- x
     return(NULL)
   }
-  
   if(annotated) {
     l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
     env[["annot"]][[pos]] <- l[["an"]]
@@ -815,7 +859,6 @@ handle_spec_block.specPRED <- function(x,env,...) {
   x$pos <- attr(x,"pos")
   do.call("PRED",x)
 }
-
 
 PRED <- function(x,env,...) {
   if(any("MAIN"==env[["blocks"]])) {
@@ -892,8 +935,6 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   
   return(x)
 }
-
-
 
 ##' @export
 handle_spec_block.specTRANSIT <- function(x,env,...) {
@@ -996,6 +1037,49 @@ handle_spec_block.specPKMODEL <- function(x,env,...) {
   do.call("PKMODEL",x)
 }
 
+#' @export
+handle_spec_block.specYAML <- function(x,env,...) {
+  
+  if(!requireNamespace("yaml")) {
+    stop("the yaml package must be installed to process YAML blocks.",
+         call.=FALSE)
+  }
+  
+  pos <- attr(x,"pos")
+    
+  x <- yaml::yaml.load(x, eval.expr=TRUE)
+  
+  annotated3 <- function(value=0, descr = '.', unit = '.') {
+    tibble(value = value, descr = descr, unit = unit)
+  }
+  annotated2 <- function(descr = '.', unit = '.') {
+    annotated3(value = NA_real_,descr,unit)
+  }
+  handle_annotated <- function(data,what,block) {
+    x <- lapply(data,as.list)
+    x <- lapply(x,FUN=do.call,what = what) %>% bind_rows()
+    mutate(x, block=block, name = names(data))
+  }
+  
+  names(x) <- tolower(names(x))
+  pars <- handle_annotated(x$param, annotated3, "PARAM")
+  cmt <- handle_annotated(x$cmt, annotated2,"CMT")
+  cmt <- mutate(cmt, value = 0)
+  init <- handle_annotated(x$init, annotated3, "INIT")
+  out <- handle_annotated(x$capture, annotated2, "CAPTURE")
+  ann <- bind_rows(pars,cmt,init,out) %>% select(c("block","name","descr","value","unit"))
+  parameters <- setNames(as.list(pars[["value"]]),pars[["name"]])
+  compartments <- setNames(as.list(cmt[["value"]]),cmt[["name"]])
+  initials <- setNames(as.list(init[["value"]]),init[["name"]])
+  initials <- c(compartments,initials)
+  outputs <- out[["name"]]
+  env[["annot"]][[pos]] <- ann
+  if(nrow(pars) > 0) env[["param"]][[pos]] <- parameters
+  if(length(initials) > 0) env[["init"]][[pos]] <- initials
+  if(nrow(out) > 0) env[["capture"]][[pos]] <- outputs
+  return(invisible(NULL))
+}
+
 NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
   if(unnamed) name <-  NULL
   env[["namespace"]][[pos]] <- wrap_namespace(x,name)
@@ -1008,8 +1092,9 @@ handle_spec_block.specNAMESPACE <- function(x,...) {
 }
 
 ##' @export
-handle_spec_block.specODE <- function(x,env, ...) {
-  con <- scrape_opts(x) 
+handle_spec_block.specODE <- function(x,env,...) {
+  pos <- attr(x,"pos")
+  con <- scrape_opts(x,allow_multiple = TRUE) 
   x <- con[["x"]]
   if(isTRUE(con[["code"]])) {
     x <- eval(parse(text = x), envir=env$ENV)   
@@ -1020,6 +1105,9 @@ handle_spec_block.specODE <- function(x,env, ...) {
     er1 <- "ETA(n) is not allowed in ODE block:"
     er2 <- paste0("\n * ", x[which(chk)])
     stop(er1,er2,call.=FALSE)
+  }
+  if("param" %in% names(con)) {
+    env[["param"]][[pos]] <- tolist(con[["param"]])
   }
   return(x)
 }
@@ -1138,46 +1226,6 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env
 }
 
-
-# expand_seq <- function(ex){
-#   matches <- unlist(regmatches(ex,
-#                                regexec("(\\w+?)(\\d+):(\\d+):(\\d+)",
-#                                        ex)
-#   ), use.names = F)
-#   return(
-#     paste0(
-#       matches[[2]],
-#       seq(as.numeric(matches[[3]]),
-#           as.numeric(matches[[4]]),
-#           as.numeric(matches[[5]])
-#       )
-#     )
-#   )
-# }
-# 
-# expand <- function(ex){
-#   matches <- unlist(
-#     regmatches(ex,regexec("(\\w+?)(\\d+):(\\d+)",)
-#     ), use.names = F)
-#   return(paste0(matches[[2]],
-#                 as.numeric(matches[[3]]):as.numeric(matches[[4]])
-#   )
-#   )
-# }
-# 
-# expand_maybe <- function(ex){
-#   colons <- charcount(ex, ":")
-#   if (colons) {
-#     if(colons == 2) {
-#       return(expand_seq(ex))
-#     } else {
-#       return(expand(ex) )
-#     }
-#   }
-#   return(ex)
-#   
-# }
-
 deparens <- function(x,what=c(")", "(")) {
   for(w in what) {
     x <- gsub(w,"",x,fixed=TRUE) 
@@ -1247,4 +1295,3 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
 get_length <- function(what) {
   sum(sapply(what,length))
 }
-

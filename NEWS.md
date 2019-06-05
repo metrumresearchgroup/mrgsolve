@@ -1,20 +1,24 @@
-# mrgsolve 0.9.0.9000
+# mrgsolve 0.9.1
 
 - Fixed bug in TAD plugin where time of last dose never moved from default
 - Added option in `mrgsolve_q` to call the standard mrgsolve simulation 
-rather than the streamlined function; a decision will have to be made about 
-whether or not the streamlined function will be retained
+  rather than the streamlined function; a decision will have to be made about 
+  whether or not the streamlined function will be retained
 - Fixed a bug in the model parser where commented lines with (all) leading
-spaces were not handled properly #450
+  spaces were not handled properly #450
 - Objects of class `valid_data_set` now retain the matrix attribute #448
 - Block names are now coreced to upper case letters
 - Change default for simcall to 0 in mrgsim_q
 - Added recover argument to mread
-- Add `@code` option to the following blocks: PARAM, INIT, CMT, 
-  OMEGA, SIGMA
+- Add `@as_object` option to the following blocks: PARAM, INIT, CMT, 
+  OMEGA, SIGMA; experimental 
 - Allow multiple `ODE` blocks
 - Add `mtime` function to `self` object for simpler mtime implementation
-
+- Add `@param` block option for ODE blocks; use comma-separated name=value
+  pairs to add to the parameter list from within ODE
+- When the model filename ends in `.Rmd`, `mread` will expect blocks code
+  to be inside Rmarkdown code chunks and will parse accordingly; this 
+  is an experimental feature and is subject to change
 
 # mrgsolve 0.9.0
 - Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis

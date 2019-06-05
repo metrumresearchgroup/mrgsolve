@@ -37,7 +37,8 @@ Suggests:
     lattice,
     testthat,
     xml2 (>= 1.2.0),
-    rmarkdown
+    rmarkdown, 
+    yaml
 LazyLoad: yes
 NeedsCompilation: yes
 Encoding: UTF-8

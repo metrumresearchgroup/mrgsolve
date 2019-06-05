@@ -175,7 +175,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   model <- build$model
   
   ## Read the model spec and parse:
-  spec  <- modelparse(readLines(build$modfile,warn=FALSE))
+  is_rmd <- grepl("\\.[rR]md$", build$modfile)[1]
+  if(is_rmd) {
+    spec <- modelparse_rmd(readLines(build$modfile,warn=FALSE))
+  } else {
+    spec  <- modelparse(readLines(build$modfile,warn=FALSE))
+  }
   
   ## Block name aliases
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)

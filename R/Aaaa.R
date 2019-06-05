@@ -19,9 +19,7 @@
 ##' 
 ##' @importFrom utils capture.output example str type.convert 
 ##' @importFrom utils packageVersion assignInMyNamespace read.table
-##' @importFrom stats as.formula
-##' @importFrom stats setNames
-##' @importFrom stats rnorm 
+##' @importFrom stats as.formula setNames rnorm
 ##' @importFrom dplyr filter filter_
 ##' @importFrom dplyr mutate slice as.tbl pull
 ##' @importFrom dplyr bind_rows arrange summarise summarise_at
@@ -73,7 +71,7 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "PREAMBLE", "PRED", "BLOCK", "TRANSIT")
+                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
