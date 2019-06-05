@@ -16,9 +16,6 @@
 - Add `mtime` function to `self` object for simpler mtime implementation
 - Add `@param` block option for ODE blocks; use comma-separated name=value
   pairs to add to the parameter list from within ODE
-- When the model filename ends in `.Rmd`, `mread` will expect blocks code
-  to be inside Rmarkdown code chunks and will parse accordingly; this 
-  is an experimental feature and is subject to change
 
 # mrgsolve 0.9.0
 - Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis

@@ -211,7 +211,7 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
   end <- grep(end_re,txt)
   ans <- vector("list", length(start))
   for(i in seq_along(start)) {
-    ans[[i]] <- trimws(txt[seq(start[i],end[i])])
+    ans[[i]] <- txt[seq(start[i],end[i])]
     ans[[i]] <- gsub("^```\\{\\s*(r|c) +", "\\{", ans[[i]])
     ans[[i]] <- sub("^```\\{", "\\{", ans[[i]])
     ans[[i]] <- sub("```", "", ans[[i]])
@@ -1046,7 +1046,7 @@ handle_spec_block.specYAML <- function(x,env,...) {
   }
   
   pos <- attr(x,"pos")
-    
+  x <- paste0(x, collapse = "\n")  
   x <- yaml::yaml.load(x, eval.expr=TRUE)
   
   annotated3 <- function(value=0, descr = '.', unit = '.') {
