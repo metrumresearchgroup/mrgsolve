@@ -222,14 +222,10 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
   label <- sapply(sp, "[", 1L)
   label <- strsplit(label, "-", fixed = TRUE)
   label <- sapply(label, "[",1L)
-  opts <- lapply(sp, "[", -1L)
-  for(i in seq_along(opts)) {
+  #opts <- lapply(sp, "[", -1L)
+  for(i in seq_along(label)) {
     ans[[i]] <- ans[[i]][-length(ans[[i]])]
-    if(length(opts[[i]])==0) {
-      ans[[i]] <- ans[[i]][-1] 
-      next
-    }
-    ans[[i]][1] <- paste0(opts[[i]],collapse=" ")
+    ans[[i]] <- ans[[i]][-1]
   }
   names(ans) <- toupper(label)
   dropR <- names(ans)=="R"
@@ -1014,8 +1010,8 @@ TRANSIT <- function(x,env, n, tr, name = "TRANSIT", pos=1) {
 ##' }
 ##' 
 ##' @seealso \code{\link{BLOCK_PARSE}}
-PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
-                    env=list(),pos=1,...) {
+PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans=pick_trans(ncmt,depot),
+                    env=list(), pos=1,...) {
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
     ncmt <- length(cmt)
@@ -1026,14 +1022,16 @@ PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans = pick_trans(ncmt,depot),
   }
   stopifnot(ncmt %in% c(1,2))
   advan <- pick_advan(ncmt,depot)
+
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
 ##' @export
 handle_spec_block.specPKMODEL <- function(x,env,...) {
+  pos <- attr(x,"pos")
   x <- scrape_opts(x, narrow=FALSE)
   x$env <- env
-  x$pos <-  attr(x,"pos")
+  x$pos <-  pos
   do.call("PKMODEL",x)
 }
 

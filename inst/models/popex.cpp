@@ -18,9 +18,9 @@ $OMEGA @labels ECL EV EKA
 $SIGMA 0
 
 $TABLE
-double IPRED = CENT/V;
-double DV = IPRED*exp(EPS(1));
+capture IPRED = CENT/V;
+capture DV = IPRED*exp(EPS(1));
 
-$CAPTURE CL V IPRED DV ECL
+$CAPTURE CL V ECL
 
   
