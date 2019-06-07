@@ -18,7 +18,11 @@
 ## S3 methods for processing code blocks
 ## All of these need to be exported
 
-# GENERIC ------------------------
+
+# UTILS ------------------------------------------------------------------------
+get_length <- function(what) sum(sapply(what,length))
+
+# GENERIC ----------------------------------------------------------------------
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 
 #' @export
@@ -26,7 +30,7 @@ handle_spec_block.default <- function(x,...) {
   return(dump_opts(x))
 }
 
-# OMEGA /SIGMA -----------------------------
+# OMEGA /SIGMA -----------------------------------------------------------------
 
 #' @export
 handle_spec_block.specOMEGA <- function(x,...) {
@@ -134,7 +138,7 @@ specMATRIX <- function(x,
   return(NULL)
 }
 
-# specTABLE  -----------------------------
+# specTABLE --------------------------------------------------------------------
 
 #' @export 
 handle_spec_block.specTABLE <- function(x,env,...) {
@@ -176,7 +180,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
 #' @seealso \code{\link{PKMODEL}}
 NULL
 
-# PARAM / FIXED ---------------------
+# PARAM / FIXED ----------------------------------------------------------------
 
 #' @export
 handle_spec_block.specPARAM <- function(x,...) {
@@ -234,7 +238,7 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   return(NULL)
 }
 
-# THETA --------------------------
+# THETA ------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specTHETA <- function(x,...) {
@@ -268,7 +272,7 @@ THETA <- function(x, env, annotated=FALSE, pos=1, name="THETA", fill = NULL,
   return(NULL)
 }
 
-# INIT /CMT ------------------------
+# INIT /CMT --------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specINIT <- function(x,...) {
@@ -334,7 +338,7 @@ handle_spec_block.specCMTN <- function(x,...) {
   cvec_cs(dump_opts(x))
 }
 
-# SET ---------------------------
+# SET --------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specSET <- function(x,...) {
@@ -346,7 +350,18 @@ handle_spec_block.specNMXML <- function(x,...) {
   parseNMXML(dump_opts(x),...)
 }
 
-# CAPTURE ----------------------
+## Functions for handling code blocks
+parseNMXML <- function(x,env,...) {
+  pos <- attr(x,"pos")
+  x <- tolist(x,envir=env$ENV)
+  xml <- do.call(nmxml,x)
+  env[["param"]][[pos]] <- xml$theta
+  env[["omega"]][[pos]] <- xml$omega
+  env[["sigma"]][[pos]] <- xml$sigma
+  return(NULL)
+}
+
+# CAPTURE ----------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specCAPTURE <- function(x,...) {
@@ -371,7 +386,7 @@ CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   return(NULL)
 }
 
-# PRED ----------------------------
+# PRED -------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specPRED <- function(x,env,...) {
@@ -403,7 +418,7 @@ PRED <- function(x,env,...) {
   return(x)
 }
 
-# INCLUDE --------------------------
+# INCLUDE ----------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specINCLUDE <- function(x,env,...) { 
@@ -445,7 +460,7 @@ form_includes <- function(files) {
   paste0("#include \"", files, "\" // ", md)
 }
 
-# PLUGIN ------------------------
+# PLUGIN -----------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specPLUGIN <- function(x,env,...) {
@@ -461,7 +476,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
   return(x)
 }
 
-# TRANSIT -------------------
+# TRANSIT ----------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specTRANSIT <- function(x,env,...) {
@@ -496,7 +511,7 @@ TRANSIT <- function(x,env, n, tr, name = "TRANSIT", pos=1) {
   return(NULL)
 }
 
-# PKMODEL ----------------------
+# PKMODEL ----------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specPKMODEL <- function(x,env,...) {
@@ -642,7 +657,7 @@ check_pred_symbols <- function(x,code) {
   return(invisible(NULL))
 }
 
-# YAML --------------------
+# YAML -------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specYAML <- function(x,env,...) {
@@ -687,7 +702,7 @@ handle_spec_block.specYAML <- function(x,env,...) {
   return(invisible(NULL))
 }
 
-# NAMESPACE --------------
+# NAMESPACE --------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specNAMESPACE <- function(x,...) {
@@ -700,7 +715,7 @@ NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
   return(NULL)
 }
 
-# ODE --------------------
+# ODE --------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specODE <- function(x,env,...) {
@@ -723,7 +738,7 @@ handle_spec_block.specODE <- function(x,env,...) {
   return(x)
 }
 
-# BLOCK ---------------
+# BLOCK ------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specBLOCK <- function(x,env,...) {

@@ -18,7 +18,7 @@
 
 # @include complog.R nmxml.R annot.R
 
-globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+#globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
 block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
@@ -313,6 +313,7 @@ get_c_vars <- function(y) {
          perl=TRUE)
 }
 
+# nocov start
 get_rcpp_vars <- function(y) {
   m <- gregexpr(move_global_rcpp_re_find,y,perl=TRUE)
   regmatches(y,m) %>%
@@ -321,6 +322,7 @@ get_rcpp_vars <- function(y) {
          replacement=";",
          perl=TRUE)
 }
+# nocov end
 
 check_block_data <- function(x,env,pos) {
   if(length(x)==0) {
@@ -330,14 +332,12 @@ check_block_data <- function(x,env,pos) {
 }
 
 # Code for relocating Rcpp objects in PREAMBLE
-global_rcpp_reg <- "\\s*global\\s+(Rcpp::)?(Logical|Integer|Character|Numeric)(Vector|Matrix)\\s+(\\w+?)\\s*(=.*;)"
-global_rcpp_sub <- "\\s*global\\s+(Rcpp::)?(Logical|Integer|Character|Numeric)(Vector|Matrix)\\s+"
-
-declare_rcpp_globals <- function(x) {
-  paste0("Rcpp::", x[3], x[4], " ", x[5], ";")
-}
-
 get_rcpp_globals <- function(x) {
+  global_rcpp_reg <- "\\s*global\\s+(Rcpp::)?(Logical|Integer|Character|Numeric)(Vector|Matrix)\\s+(\\w+?)\\s*(=.*;)"
+  global_rcpp_sub <- "\\s*global\\s+(Rcpp::)?(Logical|Integer|Character|Numeric)(Vector|Matrix)\\s+"
+  declare_rcpp_globals <- function(x) {
+    paste0("Rcpp::", x[3], x[4], " ", x[5], ";")
+  }
   m <- regmatches(x,regexec(global_rcpp_reg, x, perl = TRUE))
   w <- which(sapply(m,length) > 0)
   vars <- declare <-  character(0)
@@ -472,21 +472,10 @@ dump_opts <- function(x,env,block,...) {
   x[-hasopt]
 }
 
-## Functions for handling code blocks
-parseNMXML <- function(x,env,...) {
-  pos <- attr(x,"pos")
-  x <- tolist(x,envir=env$ENV)
-  xml <- do.call(nmxml,x)
-  env[["param"]][[pos]] <- xml$theta
-  env[["omega"]][[pos]] <- xml$omega
-  env[["sigma"]][[pos]] <- xml$sigma
-  return(NULL)
-}
-
-parseLIST <- function(x,where,env,...) {
-  env[[where]][[attr(x,"pos")]] <- tolist(x)
-  return(NULL)
-}
+# parseLIST <- function(x,where,env,...) {
+#   env[[where]][[attr(x,"pos")]] <- tolist(x)
+#   return(NULL)
+# }
 
 eval_ENV_block <- function(x,where,envir=new.env(),...) {
   cwd <- getwd()
@@ -500,7 +489,6 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   envir$.code <- x
   return(envir)
 }  
-
 
 parse_env <- function(spec,project,ENV=new.env()) {
   n <- length(spec)
@@ -522,12 +510,12 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env
 }
 
-deparens <- function(x,what=c(")", "(")) {
-  for(w in what) {
-    x <- gsub(w,"",x,fixed=TRUE) 
-  }
-  return(x)
-}
+# deparens <- function(x,what=c(")", "(")) {
+#   for(w in what) {
+#     x <- gsub(w,"",x,fixed=TRUE) 
+#   }
+#   return(x)
+# }
 
 wrap_namespace <- function(x,name) {
   paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
@@ -588,6 +576,4 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
   fun(x)
 }
 
-get_length <- function(what) {
-  sum(sapply(what,length))
-}
+
