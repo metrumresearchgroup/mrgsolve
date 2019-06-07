@@ -14,6 +14,7 @@ fun <- function() {
   source("R/class_derived.R")
   source("R/class_mrgmod.R")
   source("R/mread.R")
+  source("R/handle_spec_block.R")
   source("R/modspec.R")
   source("R/compile.R")
   source("R/Aaaa.R")

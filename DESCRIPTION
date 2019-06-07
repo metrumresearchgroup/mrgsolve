@@ -66,6 +66,7 @@ Collate:
     'datasets.R'
     'env.R'
     'funset.R'
+    'handle_spec_block.R'
     'idata_set.R'
     'init.R'
     'inven.R'
