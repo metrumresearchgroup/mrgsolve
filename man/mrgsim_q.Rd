@@ -67,8 +67,8 @@ should be joined onto the data set prior to simulation.  Otherwise
 \code{\link{mrgsim_i}} or \code{\link{mrgsim_ei}} should be used.
 
 By default, a mrgsims object is returned (as with \code{\link{mrgsim}}). 
-Use the \code{matrix_return} argument to request a plain 
-matrix of simulated data on return.
+Use the \code{output="df"} argument to request a plain 
+data.frame of simulated data on return.
 }
 \examples{
 
