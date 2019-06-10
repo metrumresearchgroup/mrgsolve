@@ -116,6 +116,8 @@ travis:
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
 	
+check-fedora:
+	Rscript -e 'rhub::check_on_fedora(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
 check-devel: 
 	Rscript -e 'rhub::check_with_rdevel()'
 

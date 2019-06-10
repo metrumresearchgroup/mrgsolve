@@ -132,11 +132,11 @@ test_that("numerics_only", {
 
 test_that("missing value in param column is message", {
   data <- expand.ev(amt = 100, ii = 24, addl = 2, WT = NA_real_, FOO = 2)
-  expect_warning(mrgsim_d(mod,data), 
+  expect_warning(valid_data_set(data,mod), 
                  regexp="Parameter column WT must not contain missing values.")
   
   idata <- dplyr::select(data, ID,WT)
-  expect_warning(mrgsim_i(mod,idata), 
+  expect_warning(valid_idata_set(idata,mod), 
                  regexp="Parameter column WT must not contain missing values.")
 })
 
