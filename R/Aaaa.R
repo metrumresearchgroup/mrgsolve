@@ -20,7 +20,7 @@
 ##' @importFrom utils capture.output example str type.convert 
 ##' @importFrom utils packageVersion assignInMyNamespace read.table
 ##' @importFrom stats as.formula setNames rnorm
-##' @importFrom dplyr filter filter_
+##' @importFrom dplyr filter 
 ##' @importFrom dplyr mutate slice as.tbl pull
 ##' @importFrom dplyr bind_rows arrange summarise summarise_at
 ##' @importFrom dplyr intersect select rename slice distinct do
@@ -29,11 +29,12 @@
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 ##' @importFrom dplyr mutate_all group_by ungroup n
 ##' @importFrom dplyr data_frame as_data_frame
+##' @importFrom tidyselect vars_select
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo syms !!! quo_name
+##' @importFrom rlang quos enquo quo_name syms !!! !! 
 ##' 
 ##' @include Aaaa.R
 ##' @include class_mrgsims.R
@@ -49,6 +50,9 @@
 ##' @include RcppExports.R  
 ##' 
 NULL
+
+##' @export
+dplyr::filter
 
 GLOBALS <- new.env()
 

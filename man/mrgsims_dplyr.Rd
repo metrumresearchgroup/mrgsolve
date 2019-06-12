@@ -4,7 +4,7 @@
 \alias{mrgsims_dplyr}
 \alias{as.tbl.mrgsims}
 \alias{pull.mrgsims}
-\alias{filter_.mrgsims}
+\alias{filter.mrgsims}
 \alias{filter_sims}
 \alias{group_by.mrgsims}
 \alias{distinct.mrgsims}
@@ -23,7 +23,7 @@
 
 \method{pull}{mrgsims}(.data, ...)
 
-\method{filter_}{mrgsims}(.data, ...)
+\method{filter}{mrgsims}(.data, ...)
 
 filter_sims(.data, ...)
 

@@ -277,7 +277,7 @@ collect_ev <- function(...) {
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
-  x <- mutate_at(x,which(what),dplyr::funs(na2zero))
+  x <- mutate_at(x,which(what),list(~na2zero(.)))
   
   na.check <- which(!what)
   if(length(na.check) > 0) {

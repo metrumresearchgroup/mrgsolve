@@ -511,14 +511,14 @@ bakfor <- function(x)locf(nocb(x))
 nocb <- function(x)rev(locf(rev(x)))
 
 locf_tibble <- function(x) {
-  mutate_all(x, .funs = funs__("locf"))
+  mutate_all(x, .funs = ~ locf(.))
 }
 
 locf_ev <- function(x) {
   if(!is.ev(x)) {
     stop("x is not an event object") 
   }
-  x@data <- mutate_all(x@data, funs__("locf"))
+  x@data <- mutate_all(x@data, .funs = ~locf(.))
   x
 }
 
@@ -532,9 +532,9 @@ select__ <- function(df, .dots) {
 group_by__ <- function(df,.dots, add = FALSE) {
   group_by(df, `!!!`(syms(.dots)), add = add)
 }
-funs__ <- function(...) {
-  dplyr::funs(`!!!`(syms(...)))  
-}
+# funs__ <- function(...) {
+#   dplyr::funs(`!!!`(syms(...)))  
+# }
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
   dplyr::distinct(df, `!!!`(syms(.dots)), .keep_all = .keep_all)  
 }
