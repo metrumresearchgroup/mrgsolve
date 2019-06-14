@@ -24,11 +24,11 @@ Depends:
     methods
 Imports:
     Rcpp (>= 0.12.12),
-    dplyr (>= 0.8.0.1),
+    dplyr (>= 0.8.1),
     magrittr (>= 1.5),
     RcppArmadillo (>= 0.7.900.2.0),
-    tibble (>= 1.2),
-    rlang (>= 0.3.0.1), 
+    tibble (>= 2.1.1),
+    rlang (>= 0.3.4), 
     tidyselect (>= 0.2.5)
 LinkingTo: 
     Rcpp (>= 0.12.12), 
