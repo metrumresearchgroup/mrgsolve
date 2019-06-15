@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,13 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+#nocov start
 render_annot <- function(x,block,...) {
   x <- dplyr::bind_rows(lapply(x,tibble::as_tibble))
   x <- dplyr::mutate(x,block=block) 
   x <- x[,unique(c("block", names(x))),drop=FALSE]
   as.data.frame(x)
 }
-
 
 parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,
                         context="not given",...) {
@@ -42,15 +42,12 @@ parse_annot <- function(x,noname=FALSE,novalue=FALSE,block='.',name_value=TRUE,
   list(v=v,an=an,nm=nm)
 }
 
-## Convenience; keep around for a little bot
-gmatch <- function(what,x) as.integer(gregexpr(what,x,fixed=TRUE)[[1]])
-
 parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given") {
-  
-  if(nchar(x)==0) return(NULL)
   
   x <- mytriml(x)
   
+  if(nchar(x)==0) return(NULL)
+
   col <- charcount(x,":")[1]
   
   if(col != (2-noname-novalue)) {
@@ -140,12 +137,23 @@ cobble_details <- function(x) {
   }
   fx <- as.numeric(x@fixed)
   if(length(fx)>0) {
-    ans[[3]] <- tibble(block="FIXED", name=names(fx)) 
+    ans[[2]] <- tibble(block="FIXED", name=names(fx)) 
   }
   cmt <- as.numeric(init(x))
   if(length(cmt)>0) {
     ans[[3]] <- tibble(block="CMT", name=names(cmt)) 
   }
+  om <- as.list(omat(x))
+  if(length(om) > 0) {
+    lab <- labels(omat(x))
+    mat <- as.list(omat(x))
+    for(i in seq_along(mat)) {
+      this_mat <- make_matrix_labels(mat[[i]],lab[[i]])
+      ans[[3+i]] <- tibble(block="OMEGA", name = names(this_mat), 
+                           value = unname(this_mat))
+    }
+  }
+  
   
   ans <- dplyr::bind_rows(ans)
   ans <- dplyr::mutate(ans,descr='.', units='.', options='.')
@@ -205,4 +213,5 @@ add_detail_values <- function(annot,x) {
   
 }
 
+#nocov end
 

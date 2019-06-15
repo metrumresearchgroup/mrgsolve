@@ -15,21 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+#' @include Aaaa.R
 
 # @param model model name
 # @param project project directory; where the model is read from
 # @param soloc the build directory
 # @param code model code
 # @param udll logical; if FALSE, a random dll name is generated
-new_build <- function(file, model, project, soloc, code = NULL, 
-                      preclean = FALSE, udll = FALSE) {
+new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL, 
+                      preclean = FALSE, udll = FALSE, recover=FALSE) {
   
   if(length(model) == 0 | nchar(model)==0) {
-    stop("invalid model name", call. = FALSE)
+    stop("Invalid model name.", call. = FALSE)
   }
   
   if(charthere(model," ")) {
-    stop("model name cannot contain spaces.", call. = FALSE)
+    stop("Model name cannot contain spaces.", call. = FALSE)
   }
   
   if(is.null(file)) {
@@ -60,7 +61,7 @@ new_build <- function(file, model, project, soloc, code = NULL,
     } else {
       stop("soloc directory '",soloc,"' must exist and be writeable.",call.=FALSE) 
     }
-  }
+  } 
   
   soloc <- normalizePath(soloc, mustWork=TRUE, winslash="/")
   
@@ -99,11 +100,11 @@ new_build <- function(file, model, project, soloc, code = NULL,
   env$compfile <- compfile(new_model)
   env$compbase <- compbase(new_model)
   env$compout <- compout(new_model)
-  env$compdir <- compdir()
   env$cachfile <- cachefile()
   env$model <- new_model
   env$stdout <- "build_exec_std_out"
   env$stderr <- "build_exec_std_err"
+  env$recover <- recover
   env$cmd <- paste0(
     R.home(component="bin"),
     .Platform$file.sep,
@@ -130,24 +131,29 @@ so_stem <- function(x) paste0(x,"-so-")
 ## Form a file name / path for the file that is actually compiled
 comppart <- "-mread-source"
 
+compdir <- function(loc,model) {
+  compversion <- as.character(GLOBALS[["version"]])
+  compplat <- paste0(
+    c("mrgsolve","so",
+      compversion,
+      R.version$platform
+    ),
+    collapse="-"
+  )
+  file.path(loc,compplat,model)
+}
+
 compbase <- function(model) paste0(model, comppart)
 
 compfile <- function(model) paste0(model, comppart,".cpp")
 
 compout  <- function(model) paste0(model, comppart, .Platform$dynlib.ext)
 
-compdir <- function() {
-  paste0(
-    c("mrgsolve","so",as.character(GLOBALS[["version"]]),R.version$platform),
-    collapse="-"
-  )
-}
-
 cachefile <- function(model) "model-cache.RDS"
 
 create_soloc <- function(loc,model,preclean) {
   
-  soloc <- file.path(loc,compdir(),model)
+  soloc <- compdir(loc,model)
   
   if(preclean) unlink(soloc,recursive=TRUE)
   
@@ -164,6 +170,7 @@ setup_soloc <- function(build_loc) {
   }
 }
 
+# nocov start
 msub <- function(pattern,replacement,x,...) {
   sapply(
     x, 
@@ -174,56 +181,54 @@ msub <- function(pattern,replacement,x,...) {
   )
 }
 
-mgsub <- function(pattern,replacement,x,...) {
-  sapply(
-    x, 
-    pattern = pattern, 
-    replacement = replacement, 
-    FUN = gsub,
-    USE.NAMES = FALSE
-  )
-}
+# mgsub <- function(pattern,replacement,x,...) {
+#   sapply(
+#     x, 
+#     pattern = pattern, 
+#     replacement = replacement, 
+#     FUN = gsub,
+#     USE.NAMES = FALSE
+#   )
+# }
 
 
 build_exec <- function(build) {
-  status <- system2(
-    build$cmd,
+  system4(
+    build$cmd, 
     args = build$args,
-    stdout = build[["stdout"]],
-    stderr = build[["stderr"]]
+    pattern = build$model,
+    path = build$soloc
   )
-  list(status = status, stdout = "", stderr = "")
 }
 
 build_output_cleanup <- function(x,build) {
-  if(file.exists(build[["stdout"]])) {
-    x[["stdout"]] <- readLines(build[["stdout"]])  
-    if(length(x[["stdout"]])==0) x[["stdout"]] <- ""
-  } else {
-    x[["stdout"]] <- "could not find build output"
-  }
-  if(file.exists(build[["stderr"]])) {
-    errr <- readLines(build[["stderr"]])
-    if(length(errr)==0) errr <- ""
-  } else {
-    errr <- "could not find build error"
-  }
   x[["stdout"]] <- strwrap(x[["stdout"]],width=60)
+  errr <- x[["stderr"]]
   patt <- paste0("^", build[["compfile"]], ":")
   errr <- msub(pattern = patt, replacement = "", x = errr)
-  patt <- "^ *In function 'void _model.*:$"
+  patt <- "^ *In function .*void _model.*:$"
   errr <- msub(pattern = patt, replacement = "", x = errr)
   x[["stderr"]] <- errr
-  x <- c(list(build = build), x)
   x <- structure(x, class = "mrgsolve-build-error")
   x
 }
 
-build_failed <- function(out,build) {
+
+build_failed <- function(out,build,mod,ignore.stdout) {
+  outt <- list(out)
+  names(outt) <- paste0("mrgsolve.build.", build[["model"]])
+  options(outt)
   out <- build_output_cleanup(out,build)
-  msg <- divider_msg("stdout")
-  cat("\n\n", msg, "\n", sep="")
-  cat(out[["stdout"]],sep="\n")
+  if(build[["recover"]]) {
+    warning("returning object for debugging purposes only.")
+    ans <- list(build = build, mod = as.list(mod), shlib=list(compiled=FALSE), out=out)
+    return(structure(ans,class = "mrgsolve-build-recover"))
+  }
+  if(!ignore.stdout) {
+    msg <- divider_msg("stdout")
+    cat("\n", msg, "\n", sep="")
+    cat(out[["stdout"]],sep="\n")
+  }
   header <- "\n---:: stderr ::---------------------"
   footer <- paste0(rep("-",nchar(header)),collapse = "")
   msg <- divider_msg("stderr")
@@ -232,17 +237,20 @@ build_failed <- function(out,build) {
   message(xx,appendLF=FALSE)
   msg <- divider_msg()
   cat("\n",msg,"\n",sep="")
-  out[["date"]] <- date()
-  saveRDS(out,file.path(tempdir(),"build_error.RDS"))
   build_handle_127(out)
-  stop(
-    "The model build step failed.",
-    call.=FALSE
-  )
+  stop("the model build step failed.",call.=FALSE)
+}
+
+
+build_save_output <- function(out) {
+  out[["date"]] <- date()
+  path <- file.path(tempdir(), "mrgsolve-build-result.RDS")
+  saveRDS(out, file=path)
+  return(invisible(path))
 }
 
 build_get_output <- function() {
-  file <- file.path(tempdir(),"build_error.RDS")
+  file <- file.path(tempdir(),"mrgsolve-build-result.RDS")
   file <- normalizePath(file,mustWork=FALSE)
   if(!file.exists(file)) {
     message("No build output was found.")
@@ -260,3 +268,4 @@ build_handle_127 <- function(out) {
   }
   return(invisible(NULL))  
 }
+# nocov end

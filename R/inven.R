@@ -41,7 +41,7 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   
   oname <- as.character(as.list(match.call())$obj)
   
-  need <- select_vars(Pars(x),...)
+  need <- vars_select(Pars(x),...)
   
   if(!length(need)) {
     need <- Pars(x)

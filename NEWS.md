@@ -1,3 +1,23 @@
+# mrgsolve 0.9.1
+
+- Fix bug in TAD plugin where time of last dose never moved from default
+- Add option in `mrgsolve_q` to call the standard mrgsolve simulation 
+  rather than the streamlined function; a decision will have to be made about 
+  whether or not the streamlined function will be retained
+- Fix bug in the model parser where commented lines with (all) leading
+  spaces were not handled properly #450
+- Objects of class `valid_data_set` now retain the matrix attribute #448
+- Block names are now coerced to upper case letters
+- Change default for simcall to 0 in mrgsim_q
+- Add recover argument to mread
+- Add `@as_object` option to the following blocks: PARAM, INIT, CMT, 
+  OMEGA, SIGMA; experimental 
+- Allow multiple `ODE` blocks
+- Add `mtime` function to `self` object for simpler mtime implementation
+- Add `@param` block option for ODE blocks; use comma-separated name=value
+  pairs to add to the parameter list from within ODE
+- Remove BLAS code embedded in ODEPACK fortran files per CRAN request
+
 # mrgsolve 0.9.0
 - Added `logy` and `logbr` arguments to `plot.mrgsims` so results y-axis
 outputs can easily be plotted on log scale

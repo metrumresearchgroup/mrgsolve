@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+# this won't get included in coverage since it's copied into the class def
+# nocov start
 valid.matlist <- function(object) {
   
   labels <- names(object@data)[names(object@data) != "..."]
@@ -51,7 +53,6 @@ valid.matlist <- function(object) {
     out <- c(out, "Invalid matrix: determinant is less than 0.")
   }
   if(!x5) {
-    
     n1 <- paste(sapply(object@data,   nrow),collapse=",")
     n2 <- paste(sapply(object@labels, length),collapse=',')
     out <- c(
@@ -61,23 +62,23 @@ valid.matlist <- function(object) {
   }
   return(out)
 }
-
+# nocov end
 
 ##' S4 class matlist
 ##'
 ##' @rdname matlist-class
-setClass("matlist", 
-         slots=c(
-           data="list",
-           n="numeric", 
-           labels="list"
-         ),
-         prototype=list(data=list(), labels=list()),
-         validity=valid.matlist
+setClass(
+  "matlist", 
+  slots=c(
+    data="list",
+    n="numeric", 
+    labels="list"
+  ),
+  prototype=list(data=list(), labels=list()),
+  validity=valid.matlist
 )
 
 is.matlist <- function(x) inherits(x,"matlist")
-
 
 dim_matlist <- function(x) {
   if(length(x@data)==0) return(0)
@@ -94,6 +95,14 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
   return(x)
 }
 
+new_omat <- function(mat, label=list(), name="...") {
+  mat <- setNames(list(mat), name)
+  m <- omat(mat, labels = list(label))
+  m
+}
 
-
-
+new_smat <- function(mat, label=list(), name="...") {
+  mat <- setNames(list(mat), name)
+  m <- smat(mat, labels = list(label))
+  m
+}

@@ -98,7 +98,7 @@ setMethod("idata_set", c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.
   if(is.character(need)) suppressMessages(inventory(x,data,need))
   
   if(!missing(.subset)) {
-    data <- filter(data,`!!!`(enquo(.subset)))
+    data <- filter(data,`!!`(enquo(.subset)))
   }
   if(!missing(.select)) {
     data <- select(data,`!!!`(.select))

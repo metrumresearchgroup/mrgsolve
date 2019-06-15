@@ -142,8 +142,12 @@ slot.names <- names(protomod)
 slots <- sapply(protomod, class)
 names(slots) <- names(protomod)
 
+# this will never get counted as covered; copied into class
+# nocov start
 valid.mrgmod <- function(object) {
-  tags <- unlist(names(object), use.names=FALSE)
+  tags <- names(object)
+  tags[["capture"]] <- NULL
+  tags <- unlist(tags, use.names=FALSE)
   x <- check_names(tags,Pars(object),Cmt(object))
   x1 <- length(x)==0
   x2 <- object@advan %in% c(0,1,2,3,4,13)
@@ -154,6 +158,7 @@ valid.mrgmod <- function(object) {
   if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, or 13")
   return(x)
 }
+# nocov end
 
 ##' S4 class for mrgsolve model object
 ##'
@@ -368,6 +373,7 @@ setMethod("names", "mrgmod", function(x) {
   ans <- list()
   ans$param <- Pars(x)
   ans$init <- Cmt(x)
+  ans$capture <- unname(x@capture)
   ans$omega <- names(omat(x))
   ans$sigma <- names(smat(x))
   ans$omega_labels <- labels(omat(x))
@@ -449,8 +455,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     maxsteps <- x@maxsteps
     rtol <- x@rtol
     atol <- x@atol
-    if(deep) {
-      trans <- x@trans
+    if(deep) { 
+      trans <- x@trans 
       advan <- x@advan
       functions <- funset(x)
     }
@@ -598,6 +604,31 @@ setMethod("blocks", "character", function(x,...) {
   blocks_(x,what)
 })
 
+prvec <- function(x, ...) {
+  x <- strwrap(paste0(x,collapse=", "),...)    
+  paste0(x,collapse="\n")
+}
+
+#' Print summary of a mrgmod object
+#' @param object a mrgmod object
+#' @param ... not used
+#' @export
+summary.mrgmod <- function(object,...) {
+  l <- as.list(object)
+  ncmt <- l[["neq"]]
+  npar <- l[["npar"]]
+  message("Model: ", l$model)
+  message("- Parameters: [", npar, "]")
+  message(prvec(l$pars,width = 50,prefix="  "))
+  message("- Compartments: [", ncmt, "]")
+  message(prvec(l$cmt,width = 50, prefix = "  "))
+  message("- Captured: [", length(l[["capture"]]), "]")
+  o <- l$capture
+  if(length(o)==0) o <- "<none>"
+  message(prvec(o, width = 50, prefix = "  "))
+  return(invisible(NULL))
+}
+
 blocks_ <- function(file,what) {
   if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
   if(!file_exists(file)) stop("Can't find model file", call.=FALSE)
@@ -641,12 +672,12 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-re_build <- function(x,model=model(x),temp = FALSE) {
-  if(temp) {
-    model <- basename(tempfile(pattern="mod", tmpdir='.'))
-  }
-  mcode(model,x@code)
-}
+# re_build <- function(x,model=model(x),temp = FALSE) {
+#   if(temp) {
+#     model <- basename(tempfile(pattern="mod", tmpdir='.'))
+#   }
+#   mcode(model,x@code)
+# }
 
 ##' @export
 all.equal.mrgmod <- function(target, current,...) {
@@ -658,9 +689,9 @@ all.equal.mrgmod <- function(target, current,...) {
   all(t1,t2)
 }
 
-get_model_md5 <- function(x) {
-  files <- c(cfile(x),x@shlib[["include"]])
-  tools::md5sum(files)
-}
+# get_model_md5 <- function(x) {
+#   files <- c(cfile(x),x@shlib[["include"]])
+#   tools::md5sum(files)
+# }
 
 

@@ -1,0 +1,47 @@
+---
+title: "Test Rmd model spec"
+output: mrgsolve:::document
+---
+
+```{R setup, echo=FALSE}
+knitr::opts_chunk$set(eval=FALSE)
+```
+
+# Parameters
+```{param}
+TVKA = 0.5, TVCL = 1, TVV = 24, WT=70
+```
+
+# OMEGA
+```{omega}
+@labels ECL EV EKA
+0.3 0.1 0.5
+```
+
+# SIGMA
+```{sigma}
+0
+```
+
+# Main block
+```{main}
+double CL = exp(log(TVCL) + 0.75*log(WT/70) + ECL);
+double V  = exp(log(TVV)  +      log(WT/70) + EV );
+double KA = exp(log(TVKA)                   + EKA);
+```
+
+# Model
+```{pkmodel}
+cmt = "GUT CENT", depot = TRUE
+```
+
+# Table
+```{table}
+capture IPRED = CENT/V;
+capture DV = IPRED*exp(EPS(1));
+```
+
+# Outputs
+```{capture}
+CL V ECL
+```

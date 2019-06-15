@@ -3,14 +3,14 @@
 \name{mutate.ev}
 \alias{mutate.ev}
 \alias{select.ev}
-\alias{filter_.ev}
+\alias{filter.ev}
 \title{dplyr verbs for event objects}
 \usage{
 \method{mutate}{ev}(.data, ...)
 
 \method{select}{ev}(.data, ...)
 
-\method{filter_}{ev}(.data, ...)
+\method{filter}{ev}(.data, ...)
 }
 \arguments{
 \item{.data}{the event object}

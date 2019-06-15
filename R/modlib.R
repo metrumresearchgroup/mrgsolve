@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -69,15 +69,17 @@ modlib <- function(model = NULL,...,list=FALSE)  {
   return(object_dir())
 }
 
+#nocov start
 modlib_models <- c("pk1cmt", "pk2cmt", "pk3cmt",
                    "pk", "pk1", "pk2", "popex",
                    "irm1", "irm2", "irm3", "pred1", 
                    "emax", "tmdd", "viral1", "viral2", "effect")
+#nocov end
 
 modlib_list <- function() {
   message("mrgsolve internal library:")
   models <- readLines(pfile("mrgsolve", "models", "MODLIST"))
-  cat(paste0("  ",models),sep="\n")
+  message(paste0("  ",models),sep="\n")
   return(invisible(NULL))
 }
 
@@ -137,7 +139,7 @@ modlib_list <- function() {
 ##' }
 NULL
 
-
+#nocov start
 cfile_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
@@ -145,6 +147,7 @@ cfile_dir <- function() {
 object_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }
+#nocov end
 
 ##' modlib: Pharmacokinetic models
 ##' 

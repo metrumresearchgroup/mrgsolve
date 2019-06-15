@@ -19,10 +19,8 @@
 ##' 
 ##' @importFrom utils capture.output example str type.convert 
 ##' @importFrom utils packageVersion assignInMyNamespace read.table
-##' @importFrom stats as.formula
-##' @importFrom stats setNames
-##' @importFrom stats rnorm 
-##' @importFrom dplyr filter filter_
+##' @importFrom stats as.formula setNames rnorm
+##' @importFrom dplyr filter 
 ##' @importFrom dplyr mutate slice as.tbl pull
 ##' @importFrom dplyr bind_rows arrange summarise summarise_at
 ##' @importFrom dplyr intersect select rename slice distinct do
@@ -31,12 +29,14 @@
 ##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 ##' @importFrom dplyr mutate_all group_by ungroup n
 ##' @importFrom dplyr data_frame as_data_frame
+##' @importFrom tidyselect vars_select
 ##' @importFrom magrittr %>% %T>%
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo syms !!! quo_name
+##' @importFrom rlang quos enquo quo_name syms !!! !! 
 ##' 
+##' @include Aaaa.R
 ##' @include class_mrgsims.R
 ##' @include class_mrgmod.R
 ##' @include class_derived.R
@@ -50,6 +50,9 @@
 ##' @include RcppExports.R  
 ##' 
 NULL
+
+##' @export
+dplyr::filter
 
 GLOBALS <- new.env()
 
@@ -65,13 +68,14 @@ GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRA
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 GLOBALS$TRAN_UPPER <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 GLOBALS$TRAN_LOWER <- tolower(GLOBALS$TRAN_UPPER)
+GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "PREAMBLE", "PRED")
+                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
@@ -91,7 +95,7 @@ globalVariables(c("test_package","time", "ID","block", "descr",
                   "func", "loaded", "name", "not_found"))
 
 
-VERSION <- packageDescription("mrgsolve")$Version
+VERSION <- utils::packageVersion("mrgsolve")
 
 #' Forward pipe
 #' 

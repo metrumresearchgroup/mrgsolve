@@ -147,11 +147,11 @@ void datarecord::implement(odeproblem* prob) {
   if(this->infusion()) evid = 5;
   
   int eq_n = this->cmtn();
-
+  
   double Fn = prob->fbio(eq_n);
   
   if(Ss > 0) this->steady(prob, Fn);
-
+  
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
@@ -386,16 +386,21 @@ void datarecord::steady_infusion(odeproblem *prob) {
   if(lagt > 0) {
     if(lagt >= Ii) {
       throw Rcpp::exception(
-          "ALAG(n) greater than ii on ss record.",false
+          "ALAG(n) greater than ii on ss record.",
+          false
       );
     }
     if((duration + lagt) >= Ii) {
       throw Rcpp::exception(
-          "Infusion duration + ALAG(n) greater than ii on ss record.",false
+          "Infusion duration + ALAG(n) greater than ii on ss record.",
+          false
       );
     }
     if(Ss==2) {
-      throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
+      throw Rcpp::exception(
+          "Ss == 2 with lag time is not currently supported.",
+          false
+      );
     }
     evon->time(tfrom);
     evon->implement(prob);
@@ -416,8 +421,6 @@ void datarecord::steady_infusion(odeproblem *prob) {
   prob->lsoda_init();
 }
 
-
-
 /** 
  * Schedule out doses.  If the dose was an infusion, schedule the 
  * off infusion event.  If the dose included additional doses, 
@@ -434,10 +437,8 @@ void datarecord::steady_infusion(odeproblem *prob) {
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, double Fn) {
   
-  if(Fn==0) return;
-  
   // Steady state intermittent infusion
-  if(this->ss_int_infusion()) {
+  if(this->ss_int_infusion() & (Fn > 0)) {
     
     double duration = this->dur(Fn);
     
@@ -458,7 +459,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
   } // end if ss
   
-  
+  // Additional doses
   if(Addl > 0) {
     
     unsigned int this_evid = Evid;
@@ -486,7 +487,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
       rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
       
       thisi.push_back(evon);
+      
     }
   } // end addl
 }  
-

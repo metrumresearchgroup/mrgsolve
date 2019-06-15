@@ -159,7 +159,13 @@ test_that("at options are parsed", {
   expect_identical(x$state,"mn")  
   expect_identical(x$town,"minneapolis")
   expect_equal(x$x,2)
-  expect_warning(ats(" @ ' a b c'"))  
-  expect_warning(ats('@ "a b c"'))  
+  expect_warning(ats(" @hrm ' a b c'"))  
+  expect_warning(ats('@foo "a b c"'))  
 })
 
+test_that("specMATRIX", {
+  code <- "$OMEGA 1,2,3"
+  mod <- mcode("test-spec-matrix", code, compile = FALSE)
+  mat <- unname(as.matrix(omat(mod)))
+  expect_true(all.equal(mat, dmat(1,2,3)))
+})

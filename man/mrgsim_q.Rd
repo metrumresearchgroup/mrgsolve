@@ -5,7 +5,7 @@
 \title{Simulate from a model object with quicker turnaround}
 \usage{
 mrgsim_q(x, data, recsort = 1, stime = numeric(0), output = NULL,
-  skip_init_calc = FALSE)
+  skip_init_calc = FALSE, simcall = 0)
 }
 \arguments{
 \item{x}{a model object}
@@ -22,6 +22,10 @@ records in \code{data}}
 object is returned; if \code{"df"} then a data frame is returned}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
+
+\item{simcall}{the default value \code{1} will invoke use of a streamlined
+version of \code{DEVTRAN} to be use for the simulation; \code{0} revets
+back to the same \code{DEVTRAN} code that is used by \code{\link{mrgsim}}}
 }
 \description{
 Use the function when you would usually use \code{\link{mrgsim_d}}, 
@@ -63,8 +67,8 @@ should be joined onto the data set prior to simulation.  Otherwise
 \code{\link{mrgsim_i}} or \code{\link{mrgsim_ei}} should be used.
 
 By default, a mrgsims object is returned (as with \code{\link{mrgsim}}). 
-Use the \code{matrix_return} argument to request a plain 
-matrix of simulated data on return.
+Use the \code{output="df"} argument to request a plain 
+data.frame of simulated data on return.
 }
 \examples{
 

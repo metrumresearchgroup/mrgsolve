@@ -104,6 +104,24 @@ test_that("If no simulation times can be rendered time=0 only is simulated", {
   expect_equal(unique(out$time),0)
 })
 
+test_that("expand.ev", {
+  df <- expand.ev(amt = c(1,2,3))
+  expect_is(df,"data.frame")
+  expect_identical(df[["amt"]],c(1,2,3))
+  df <- expand.ev(amt = 100, ii = 24, total = 20)
+  expect_identical(df[["addl"]],19)
+  df <- expand.ev(amt = 100, tinf = 2)
+  expect_identical(df[["rate"]], 100/2)
+})
 
+test_that("tovec", {
+  x <- mrgsolve:::tovec("a,b,c")
+  expect_identical(x, c("a", "b", "c"))
+  x <- mrgsolve:::tovec("1,2,3,4")
+  expect_identical(x, c(1L,2L,3L,4L))
+})
 
+test_that("cvec", {
+  expect_identical(cvec("a, b  , c"),letters[1:3])  
+})
 

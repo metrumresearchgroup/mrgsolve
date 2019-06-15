@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -131,8 +131,6 @@ setMethod("param", "list", function(.x,...) {
 setMethod("param", "ANY", function(.x,...) {
   param(as.list(.x),...)
 })
-
-
 
 
 showparam <- function(x,right=FALSE,digits=3,ncols=NULL,...) {

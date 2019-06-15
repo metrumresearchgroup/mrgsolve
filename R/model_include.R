@@ -72,6 +72,13 @@ set_clink <- function(x,clink=NULL) {
   Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
 }
 
+set_pkg_cxxflags <- function(x) {
+  if(is.null(x)) return(NULL)
+  cxx <- s_pick(x, "pkg_cxxflags")
+  if(is.null(cxx)) return(NULL)
+  Sys.setenv(PKG_CXXFLAGS = paste0(cxx, collapse=" "))
+}
+
 make_libs <- function(x) {
   if(is.null(x)) return(NULL)
   libs <- unique(s_pick(x,"libs"))
@@ -92,12 +99,13 @@ set_up_env <- function(x,...) {
   set_nodos()
   if(!is.null(x)) {
     set_clink(x,...)
-    set_libs(x)
+    set_libs(x) 
+    set_pkg_cxxflags(x)
   }
   return(restore)
 }
 
-get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS")) {
+get_restore <- function(what=c("PKG_LIBS", "CYGWIN", "CLINK_CPPFLAGS", "PKG_CXXFLAGS")) {
   as.list(Sys.getenv(what, unset=NA)) 
 }
 
@@ -120,7 +128,7 @@ plugins[["Rcpp"]] <- list(
   code = "#include <Rcpp.h>\n",
   linkto = "Rcpp/include", name="Rcpp"
 )
-
+# nocov start
 plugins[["RcppEigen"]] <- list(
   code = "#include <RcppEigen.h>\n",
   linkto = c("Rcpp/include","RcppEigen/include"), name="RcppEigen"
@@ -137,44 +145,38 @@ plugins[["BH"]] <- list(
   linkto="BH/include", name="BH"
 )
 
+plugins[["CXX11"]] <- list(
+  pkg_cxxflags = "-std=c++11", name="CXX11"    
+)
+
 plugins[["TAD"]] <- list(
   name = "TAD",
   code = "#define __MRGSOLVE_USE_PLUGIN_TAD__"
 )
+# nocov end
 
-read_lines_from_base <- function(file) {
-  readLines(mrgsolve_file("base", file))
-}
+# read_lines_from_base <- function(file) {
+#   readLines(mrgsolve_file("base", file))
+# }
 
 
-# 
-# plugins[["REPORT"]] <- list(
-#   name = "REPORT", 
-#   code = c("#define __MRGSOLVE_USE_PLUGIN_REPORT__", '#include "mrgsolve_plugin_report.h"')
-# )
-
-# @param x the build object
-# 
-# @details
-# We write a Makevars file in the soloc
-# Also, copy required headers (from mrgsolve base) there as well
-write_build_env <- function(x) {
-  
-  mkv <- file.path(x$soloc,"Makevars")
-  
-  clink <- paste0("PKG_CPPFLAGS=",paste(Sys.getenv("CLINK_CPPFLAGS"), collapse=" "))
-  libs <- paste0("PKG_LIBS=",paste(Sys.getenv("PKG_LIBS"),collapse=" "))
-  
-  cat(file=mkv, "# from write_make_vars", "\n")
-  cat(file=mkv, clink, "\n", append=TRUE)
-  cat(file=mkv, libs,  "\n", append=TRUE)
-  
-  headers <- file.path(
-    system.file("base",package="mrgsolve"),
-    c("modelheader.h", "mrgsolv.h")
-  )
-  
-  if(!all(file.copy(headers, x$soloc, overwrite=TRUE))) {
-    stop("Couldn't find mrgsolve install location.", call.=FALSE) 
-  }
-}
+# write_build_env <- function(x) {
+#   
+#   mkv <- file.path(x$soloc,"Makevars")
+#   
+#   clink <- paste0("PKG_CPPFLAGS=",paste(Sys.getenv("CLINK_CPPFLAGS"), collapse=" "))
+#   libs <- paste0("PKG_LIBS=",paste(Sys.getenv("PKG_LIBS"),collapse=" "))
+#   
+#   cat(file=mkv, "# from write_make_vars", "\n")
+#   cat(file=mkv, clink, "\n", append=TRUE)
+#   cat(file=mkv, libs,  "\n", append=TRUE)
+#   
+#   headers <- file.path(
+#     system.file("base",package="mrgsolve"),
+#     c("modelheader.h", "mrgsolv.h")
+#   )
+#   
+#   if(!all(file.copy(headers, x$soloc, overwrite=TRUE))) {
+#     stop("Couldn't find mrgsolve install location.", call.=FALSE) 
+#   }
+# }

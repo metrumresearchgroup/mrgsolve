@@ -1,0 +1,24 @@
+---
+title: "Untitled"
+output: mrgsolve:::document
+---
+
+```{R setup, echo=FALSE}
+knitr::opts_chunk$set(eval=FALSE)
+```
+
+# Parameters
+```{param}
+CL = 1, V = 20, KA = 1.2
+```
+
+# Model
+```{pkmodel}
+cmt = "GUT CENT", depot = TRUE
+```
+
+# Outputs
+```{table}
+capture DV = CENT/V;
+```
+

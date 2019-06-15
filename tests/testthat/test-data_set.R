@@ -132,11 +132,11 @@ test_that("numerics_only", {
 
 test_that("missing value in param column is message", {
   data <- expand.ev(amt = 100, ii = 24, addl = 2, WT = NA_real_, FOO = 2)
-  expect_warning(mrgsim_d(mod,data), 
+  expect_warning(valid_data_set(data,mod), 
                  regexp="Parameter column WT must not contain missing values.")
   
   idata <- dplyr::select(data, ID,WT)
-  expect_warning(mrgsim_i(mod,idata), 
+  expect_warning(valid_idata_set(idata,mod), 
                  regexp="Parameter column WT must not contain missing values.")
 })
 
@@ -150,4 +150,12 @@ test_that("missing value in time/rate/ID is error", {
                regexp="Found missing values in input data.")
 })
 
-
+test_that("observations expand", {
+  e <- ev(amt = 100)
+  dat <- expand_observations(e, c(1,2,3))
+  dose <- filter(dat,evid==1)
+  expect_equal(nrow(dose),1)
+  obs <- filter(dat, evid==0)
+  expect_equal(nrow(obs),3)
+  expect_equal(obs[["time"]],c(1,2,3))
+})

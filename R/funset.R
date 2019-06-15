@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-
+# nocov start
 FUNSET_ERROR__ <- 
   '
 There was a problem accessing the model shared object.
@@ -24,11 +24,13 @@ There was a problem accessing the model shared object.
 Check mrgsolve:::funset(mod) for more information.
 '
 
+
 main_func   <- function(x) x@funs["main"]
 ode_func    <- function(x) x@funs["ode"]
 table_func  <- function(x) x@funs["table"] 
 config_func <- function(x) x@funs["config"]
 info_func   <- function(x) x@funs["info"]
+#nocov end
 
 main_loaded <- function(x) {
   is.loaded(main_func(x),PACKAGE=dllname(x)) 
@@ -83,7 +85,7 @@ funset <- function(x) {
       info <- getNativeSymbolInfo(w,pkg)
       name <- info$name
     } else {
-      name <- as.character(NA)
+      name <- w
     }
     tibble(name=name,loaded=loaded)
   }) 

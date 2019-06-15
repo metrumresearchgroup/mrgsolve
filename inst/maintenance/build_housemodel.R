@@ -1,7 +1,7 @@
 
 .libPaths("~/Rlibs")
-library(dplyr)
-library(methods)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(methods))
 fun <- function() {
   setClass("mrgsims")
   source("R/utils.R")
@@ -14,6 +14,7 @@ fun <- function() {
   source("R/class_derived.R")
   source("R/class_mrgmod.R")
   source("R/mread.R")
+  source("R/handle_spec_block.R")
   source("R/modspec.R")
   source("R/compile.R")
   source("R/Aaaa.R")
@@ -28,9 +29,9 @@ fun <- function() {
   source("R/update.R")
   proj <- file.path("inst", "project")
   mod <- mread("housemodel", proj, compile = FALSE, udll=FALSE, ns = FALSE)
-  cpp <- normalizePath(mod@shlib$source)
+  cpp <- normalizePath(list.files(mod@soloc, full.names=TRUE))
   x <- file.copy(cpp, "src", overwrite=TRUE)
-  if(!x) stop("Failed to build house model")
+  if(!all(x)) stop("Failed to build house model")
 }
 
 fun()

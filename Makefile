@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-#LIBDIR=${HOME}/Rlibs/lib
+LIBDIR=${HOME}/Rlibs/lib
 PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
@@ -39,7 +39,7 @@ pkgdown:
 	touch ../../mrgsolve/docs/.nojekyll
 
 test-all:
-	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")' -e 'test_dir("inst/maintenance/unit")'
+	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")' -e 'test_dir("inst/maintenance/unit/")'
 
 unit:
 	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
@@ -116,6 +116,8 @@ travis:
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
 	
+check-fedora:
+	Rscript -e 'rhub::check_on_fedora(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
 check-devel: 
 	Rscript -e 'rhub::check_with_rdevel()'
 

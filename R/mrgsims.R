@@ -152,10 +152,11 @@ pull.mrgsims <- function(.data, ...) {
   dplyr::pull(as_tibble.mrgsims(.data), ...)
 }
 
+##' @method filter mrgsims
 ##' @rdname mrgsims_dplyr
-##' @export
-filter_.mrgsims <- function(.data,...) {
-  dplyr::filter_(as_tibble.mrgsims(.data),...)
+##' @export 
+filter.mrgsims <- function(.data,...) {
+  dplyr::filter(as_tibble.mrgsims(.data),...)
 }
 
 ##' @rdname mrgsims_dplyr
@@ -254,9 +255,9 @@ setMethod("as.matrix", "mrgsims", function(x,...) {
 ##' @param object passed to show
 ##' @rdname mrgsims
 ##' @export
-setMethod("summary", "mrgsims", function(object,...) {
+summary.mrgsims <- function(object,...) {
   summary(as.data.frame(object))
-})
+}
 
 ##' @rdname mrgsims
 ##' @export
@@ -434,7 +435,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
 plot_sims <- function(.data, ..., .f = NULL, .dots = list()) {
   .data <- as.data.frame(.data)
   vars <- quos(...)
-  vars <- select_vars(names(.data), `!!!`(vars))
+  vars <- vars_select(names(.data), `!!!`(vars))
   .dots$x <- new("mrgsims", data = .data, outnames = vars)
   if(rlang::is_formula(.f)) {
     if(length(.f)==2) .f[[3]] <- as.symbol(".")

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -14,6 +14,47 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
+
+eng_mrgsolve_c <- function(options) {
+  code <- options$code
+  options$eval <- FALSE
+  options$engine <- "c"
+  knitr::engine_output(options, code, '')
+}
+
+eng_mrgsolve_r <- function(options) {
+  code <- options$code
+  options$eval <- FALSE
+  options$engine <- "r"
+  knitr::engine_output(options, code, '')
+}
+
+document <- function(number_sections = TRUE, highlight = "pygments", 
+                     output = "html", ...) {
+  if(!requireNamespace("knitr")) {
+    stop("the knitr package is required to use mrgsolve:::document.", 
+         call.=FALSE)  
+  }
+  if(!requireNamespace("rmarkdown")) {
+    stop("the rmarkdown package is required to use mrgsolve:::document.", 
+         call.=FALSE)  
+  }
+  
+  knitr::knit_engines$set(
+    ode = eng_mrgsolve_c, param=eng_mrgsolve_c,
+    cmt = eng_mrgsolve_c, capture = eng_mrgsolve_c, 
+    main = eng_mrgsolve_c, set = eng_mrgsolve_r, 
+    omega = eng_mrgsolve_c, sigma = eng_mrgsolve_c, 
+    table = eng_mrgsolve_c, include = eng_mrgsolve_c, 
+    global = eng_mrgsolve_r, env = eng_mrgsolve_r, 
+    preamble = eng_mrgsolve_c, pkmodel = eng_mrgsolve_r, 
+    theta = eng_mrgsolve_c, yaml = eng_mrgsolve_c, 
+    pred = eng_mrgsolve_c, init = eng_mrgsolve_c
+  )
+  fun <- rmarkdown::html_document
+  if(output=="pdf") fun <- rmarkdown::pdf_document
+  fun(..., number_sections = number_sections, highlight = highlight)
+}
 
 
 ##' Render a model to a document

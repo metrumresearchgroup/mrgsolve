@@ -44,3 +44,9 @@ test_that("dosing with ss", {
   expect_true(identical(out1, out2))
 })
 
+test_that("data frame", {
+  data <- realize_addl(as.data.frame(ev(amt = 100, ii = 24, addl = 9))) 
+  expect_equal(nrow(data),10)
+  expect_true(all(data[["addl"]]==0))
+  expect_true(all(data[["ii"]]==0))
+})

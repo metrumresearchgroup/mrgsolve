@@ -32,5 +32,10 @@ test_that("inits are constructed", {
   expect_error(init(A = "B"))
 })
 
+test_that("inits are shown", {
+  mod <- mrgsolve:::house()
+  x <- capture.output(init(mod))
+  expect_match(x[2], "Model initial conditions")
+})
 
 

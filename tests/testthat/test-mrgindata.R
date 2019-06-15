@@ -136,5 +136,5 @@ test_that("Run idata set with ev", {
 
 test_that("Duplicate ID in idata_set gives error", {
   idata <- dplyr::mutate(tibble(ID=rep(seq(10),each=5)),CL=2)
-  expect_error(mrgsim(mod,idata=idata_set))
+  expect_error(valid_idata_set(idata))
 })

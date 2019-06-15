@@ -27,13 +27,6 @@
 ##' \item Vignettes: \href{https://mrgsolve.github.io/vignettes}{https://mrgsolve/github.io/vignettes}
 ##' }
 ##' 
-##' 
-##' @section Also see:
-##' \itemize{
-##'  \item  Package \href{00Index.html}{index}, including a listing 
-##'  of all functions
-##' }
-##' 
 ##' @description
 ##' mrgsolve is an R package maintained under the auspices of 
 ##' Metrum Research Group that facilitates simulation from 

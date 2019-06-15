@@ -35,10 +35,16 @@ test_that("knobs() returns object of class batch_mrgsims", {
   expect_is(out, "batch_mrgsims")
 })
 
+test_that("plotting batch_mrgsims objects", {
+  p <- plot(out)  
+  expect_is(p,"trellis")
+  p <- plot(out, CP~time|CL*amt) 
+  expect_is(p,"trellis")
+})
+
 test_that("Moving knobs are correctly identified", {
   expect_identical(mrgsolve:::moving(out), c("CL", "amt"))
 })
-
 
 test_that("CL knob is correctly captured in output as CL", {
   expect_true(is.element("CL", names(out)))

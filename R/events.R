@@ -161,14 +161,14 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
       
     } else {
       if(length(ID)!=nrow(data)) { 
-        stop("Length of ID does not match number of events while replicate = FALSE",
+        stop("length of ID does not match number of events while replicate = FALSE",
              call.=FALSE)
       }
       data[["ID"]] <- ID
     }
-    data <- shuffle(data,c("ID", "time", "cmt"))
+    data <- dplyr::select(data,c("ID", "time", "cmt"),everything())
   } else {
-    data <- shuffle(data,c("time", "cmt"))
+    data <- dplyr::select(data,c("time", "cmt"),everything())
   }
   
   if(realize_addl) data <- realize_addl(data)
@@ -248,9 +248,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     keep <- intersect(keep, names(x))
     x <- x[,keep]
   }
-  
   new("ev", data=x)
-  
 })
 
 ##' @rdname as.ev
@@ -279,12 +277,12 @@ collect_ev <- function(...) {
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
-  x <- mutate_at(x,which(what),dplyr::funs(na2zero))
+  x <- mutate_at(x,which(what),list(~na2zero(.)))
   
   na.check <- which(!what)
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
-      warning("Missing values in some columns.",call.=FALSE)
+      warning("missing values in some columns.",call.=FALSE)
     }
   }
   x <- dplyr::select(x,c(match(tran,names(x)),seq_along(names(x))))
@@ -334,7 +332,7 @@ setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 setMethod("%then%",c("ev", "ev"), function(e1,e2) {
   left <- as.data.frame(e1)
   if(!has_name("ii",left) | !has_name("addl",left)) {
-    stop("Both ii and addl are required in lhs",call.=FALSE)
+    stop("both ii and addl are required in lhs",call.=FALSE)
   }
   y <- max(with(left, time + ii*addl + ii))
   e2@data$time <- y
@@ -363,48 +361,6 @@ setMethod("c", "ev", function(x,...,recursive=TRUE) {
   }
   return(x)
 })
-
-# plus.ev <- function(e1,e2) {
-#   
-#   data1 <- as.data.frame(events(e1))
-#   data2 <- as.data.frame(e2)
-#   
-#   if(nrow(data1)==0) {
-#     e1@events <- e2
-#     return(e1)
-#   }
-#   
-#   short <- setdiff(names(data1), names(data2))
-#   long <- setdiff(names(data2), names(data1))
-#   
-#   if(any(short=="ID") | any(long=="ID")) {
-#     stop("ID found in one object but not the other")
-#   }
-#   
-#   if(length(short)>0) {
-#     add <- as.list(rep(0,length(short)))
-#     names(add) <- short
-#     data2 <- cbind(data2, add)
-#   }
-#   
-#   if(length(long) > 0) {
-#     add <- as.list(rep(0, length(long)))
-#     names(add) <- long
-#     data1 <- cbind(data1, add)
-#   }
-#   
-#   data1 <- as.data.frame(dplyr::bind_rows(data1, data2))
-#   
-#   if(has_name("ID", data1)) {
-#     data1<- data1[order(data1$ID, data1$time),]
-#   } else {
-#     data1<- data1[order(data1$time),]
-#   }
-#   
-#   e1@events <- as.ev(data1)
-#   
-#   return(e1)
-# }
 
 add.ev <- function(e1,e2) {
   
@@ -553,11 +509,13 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 ##' 
 ##' seq(e1, e2)
 ##' 
+##' seq(e1, .ii = 8, e2)
+##' 
 ##' seq(e1, wait = 8, e2)
 ##' 
-##' seq(e1, wait = 8, e2, ID = 1:10)
+##' seq(e1, .ii = 8, e2, ID = 1:10)
 ##' 
-##' ev_seq(wait = 12, e1, wait = 120, e2, wait = 120, e1)
+##' ev_seq(.ii = 12, e1, .ii = 120, e2, .ii = 120, e1)
 ##' 
 ##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
 ##'
@@ -591,9 +549,16 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     names(evs) <- rep(".", length(evs))
   }
   start <- 0
+  .ii <- 0
+  ii <- 0
   for(i in seq_along(out)) {
+    if(names(evs)[i]==".ii") {
+      .ii <- evs[[i]]
+      evs[[i]] <- list()
+      next
+    }
     if(names(evs)[i]=="wait") {
-      start <- start + evs[[i]]
+      start <- start + eval(evs[[i]])
       evs[[i]] <- list()
       next
     }
@@ -605,14 +570,15 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
       e[["addl"]] <- 0
     }
     after <-  ifelse(is.null(e[[".after"]]), 0, e[[".after"]])
-    e[["time"]] <- e[["time"]] + start
+    e[["time"]] <- e[["time"]] + start + ifelse(.ii > 0, .ii, ii)
     elast <- slice(e, nrow(e))
     start <- 
       elast[["time"]] + 
       after + 
-      elast[["ii"]]*elast[["addl"]] + 
-      elast[["ii"]]
+      elast[["ii"]]*elast[["addl"]] 
     out[[i]] <- e
+    .ii <- 0
+    ii <- elast[["ii"]]
   }
   out <- bind_rows(out) 
   out[[".after"]] <- NULL

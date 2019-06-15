@@ -645,6 +645,7 @@ do_mrgsim <- function(x,
       mod=x)
 }
 
+#nocov start
 do_mrgsimple <- function(x,
                          data,
                          idata = no_idata_set(),
@@ -746,20 +747,23 @@ do_mrgsimple <- function(x,
     }
   }
   
-  new("mrgsims",
-      request=cmt(x),
-      data=as.data.frame(out[["data"]]),
-      outnames=capt,
-      mod=x)
+  new(
+    "mrgsims",
+    request=cmt(x),
+    data=as.data.frame(out[["data"]]),
+    outnames=capt,
+    mod=x
+  )
 }
+#nocov end
 
-param_as_parent <- function(x) {
-  e <- as.environment(as.list(param(x)))
-  parent.env(e) <- .GlobalEnv
-  parent.env(x@envir) <- e
-}
+# param_as_parent <- function(x) {
+#   e <- as.environment(as.list(param(x)))
+#   parent.env(e) <- .GlobalEnv
+#   parent.env(x@envir) <- e
+# }
 
-global_as_parent <- function(x) {
-  parent.env(x@envir) <- .GlobalEnv 
-}
+# global_as_parent <- function(x) {
+#   parent.env(x@envir) <- .GlobalEnv 
+# }
 

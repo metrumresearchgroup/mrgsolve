@@ -114,7 +114,7 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.se
     suppressMessages(inventory(x,data,need))
   }
   if(!missing(.subset)) {
-    data <- dplyr::filter(data,`!!!`(enquo(.subset)))
+    data <- dplyr::filter(data,`!!`(enquo(.subset)))
   }
   if(!missing(.select)) {
     data <- dplyr::select(data,`!!!`(.select))

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-batch <- function(x) x@batch
-moving <- function(x) x@moving
+
+batch <- function(x) x@batch   #nocov
+moving <- function(x) x@moving #nocov
 
 ##' Run sensitivity analysis on model settings
 ##'

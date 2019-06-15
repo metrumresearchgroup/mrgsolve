@@ -37,6 +37,9 @@
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
 ##' @param output output data type; if \code{NULL}, then an \code{mrgsims}
 ##' object is returned; if \code{"df"} then a data frame is returned
+##' @param simcall the default value \code{1} will invoke use of a streamlined
+##' version of \code{DEVTRAN} to be use for the simulation; \code{0} revets
+##' back to the same \code{DEVTRAN} code that is used by \code{\link{mrgsim}}
 ##' 
 ##' @details
 ##' 
@@ -69,8 +72,8 @@
 ##' \code{\link{mrgsim_i}} or \code{\link{mrgsim_ei}} should be used.
 ##' 
 ##' By default, a mrgsims object is returned (as with \code{\link{mrgsim}}). 
-##' Use the \code{matrix_return} argument to request a plain 
-##' matrix of simulated data on return.
+##' Use the \code{output="df"} argument to request a plain 
+##' data.frame of simulated data on return.
 ##' 
 ##' 
 ##' @examples
@@ -90,7 +93,8 @@ mrgsim_q <- function(x,
                      recsort = 1,
                      stime = numeric(0),
                      output = NULL,
-                     skip_init_calc = FALSE) {
+                     skip_init_calc = FALSE, 
+                     simcall = 0) {
   
   ## data
   if(!is.valid_data_set(data)) {
@@ -111,7 +115,7 @@ mrgsim_q <- function(x,
   if(any(is.element(capt,compartments))) {
     stop("Compartment names should not be used in $CAPTURE.", call.=FALSE)  
   }
-
+  
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
   capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
@@ -125,20 +129,49 @@ mrgsim_q <- function(x,
   # already took intersect
   parin$request <- as.integer(seq_along(compartments)-1);
   
-  out <- .Call(
-    `_mrgsolve_MRGSIMQ`,
-    parin,
-    param,
-    Pars(x),
-    init,
-    compartments,
-    capt_pos,
-    pointers(x),
-    data,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir
-  )
+  if(simcall==1) {
+    out <- .Call(
+      `_mrgsolve_MRGSIMQ`,
+      parin,
+      param,
+      Pars(x),
+      init,
+      compartments,
+      capt_pos,
+      pointers(x),
+      data,
+      as.matrix(omat(x)),
+      as.matrix(smat(x)),
+      x@envir
+    )
+    
+  } else {
+    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
+    parin[["whichtg"]] <- integer(0)
+    parin[["carry_data"]] <- character(0)
+    parin[["carry_idata"]] <- character(0)
+    parin[["carry_tran"]] <- character(0)
+    parin[["obsonly"]] <- FALSE
+    parin[["filbak"]] <- TRUE
+    parin[["tad"]] <- FALSE
+    parin[["nocb"]] <- TRUE
+    parin[["obsaug"]] <- FALSE
+    
+    out <- .Call(
+      `_mrgsolve_DEVTRAN`,
+      parin,
+      param,
+      names(param(x)),
+      init,
+      names(Init(x)),
+      capt_pos,
+      pointers(x),
+      data,null_idata,
+      as.matrix(omat(x)),
+      as.matrix(smat(x)),
+      x@envir
+    )[["data"]]
+  }
   
   cnames <- c("ID", tcol, compartments, capt)
   
@@ -153,9 +186,11 @@ mrgsim_q <- function(x,
     }
   }
   
-  new("mrgsims",
-      request=compartments,
-      data=as.data.frame(out),
-      outnames=capt,
-      mod=x)
+  new(
+    "mrgsims",
+    request=compartments,
+    data=as.data.frame(out),
+    outnames=capt,
+    mod=x
+  )
 }

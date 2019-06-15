@@ -1,6 +1,6 @@
 Package: mrgsolve
 Type: Package
-Version: 0.9.0
+Version: 0.9.1
 Title: Simulate from ODE-Based Models
 Authors@R: c(
     person("Kyle T", "Baron", email = "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
@@ -10,6 +10,7 @@ Authors@R: c(
     person("Charles", "Margossian", role = "ctb"),
     person("Devin", "Pastoor", role = "ctb"),
     person("Bill", "Denney", role = "ctb", comment=c(ORCID="0000-0002-5759-428X")),
+    person("odepack authors", role = "cph"),
     person("Metrum Research Group", role = "cph")
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
@@ -23,11 +24,12 @@ Depends:
     methods
 Imports:
     Rcpp (>= 0.12.12),
-    dplyr (>= 0.7.8),
+    dplyr (>= 0.8.1),
     magrittr (>= 1.5),
     RcppArmadillo (>= 0.7.900.2.0),
-    tibble (>= 1.2),
-    rlang (>= 0.3.0.1)
+    tibble (>= 2.1.1),
+    rlang (>= 0.3.4), 
+    tidyselect (>= 0.2.5)
 LinkingTo: 
     Rcpp (>= 0.12.12), 
     RcppArmadillo (>= 0.7.900.2.0), 
@@ -36,7 +38,9 @@ Suggests:
     lattice,
     testthat,
     xml2 (>= 1.2.0),
-    rmarkdown
+    rmarkdown, 
+    yaml, 
+    knitr
 LazyLoad: yes
 NeedsCompilation: yes
 Encoding: UTF-8
@@ -63,6 +67,7 @@ Collate:
     'datasets.R'
     'env.R'
     'funset.R'
+    'handle_spec_block.R'
     'idata_set.R'
     'init.R'
     'inven.R'
@@ -82,6 +87,7 @@ Collate:
     'param.R'
     'print.R'
     'qsim.R'
+    'r_to_cpp.R'
     'realize_addl.R'
     'relabel.R'
     'render.R'

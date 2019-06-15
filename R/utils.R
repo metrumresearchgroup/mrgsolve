@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -87,8 +87,6 @@ update_list <- function(left, right) {
   left
 }
 
-
-
 ##' Simulate from a multivariate normal distribution with mean zero
 ##'
 ##' @param mat a positive-definite matrix
@@ -101,7 +99,7 @@ mvgauss <- function(mat, n=10, seed=NULL) {
   .Call(`_mrgsolve_MVGAUSS`, mat, n)
 }
 
-
+# nocov start
 pfile <- function(package,dir,file,ext=NULL) {
   ans <- file.path(system.file(package=package),dir,file)
   if(is.character(ext)) {
@@ -113,6 +111,7 @@ pfile <- function(package,dir,file,ext=NULL) {
 mrgsolve_file <- function(..., package="mrgsolve") {
   system.file(..., package = package)
 }
+# nocov end
 
 cropstr <- function(string, prefix, suffix, bump= "...") {
   nc <- nchar(string)
@@ -164,17 +163,17 @@ cvec_c_tr <- function(x) {
 
 ## Create a character vector 
 ## Split on comma and rm whitespace
-cvec_c_nws <- function(x) {
-  if(is.null(x) | length(x)==0) return(character(0))
-  x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
-  x <- gsub(" ", "",x, fixed=TRUE)
-  x <- x[x!=""]
-  if(length(x)==0) {
-    return(character(0))
-  } else {
-    return(x) 
-  }
-}
+# cvec_c_nws <- function(x) {
+#   if(is.null(x) | length(x)==0) return(character(0))
+#   x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
+#   x <- gsub(" ", "",x, fixed=TRUE)
+#   x <- x[x!=""]
+#   if(length(x)==0) {
+#     return(character(0))
+#   } else {
+#     return(x) 
+#   }
+# }
 
 
 ## Old
@@ -209,7 +208,7 @@ as.cvec <- function(x) {
 expand.idata <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
   ans$ID <- seq_len(nrow(ans))
-  shuffle(ans,"ID")
+  dplyr::select(ans, "ID", everything())
 }
 
 ##' @export
@@ -232,10 +231,8 @@ expand.ev <- function(...) {
     )
     ans[["tinf"]] <- NULL
   }
-  shuffle(ans,"ID")
+  dplyr::select(ans,"ID",everything())
 }
-
-is.numeric.data.frame <- function(x) sapply(x, is.numeric)
 
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())
@@ -246,10 +243,8 @@ tolist <- function(x,concat=TRUE,envir=list()) {
   return(eval(parse(text=paste0("list(", x, ")")),envir=envir))
 }
 
-
 tovec <- function(x,concat=TRUE) {
   if(is.null(x)) return(numeric(0))
-  ##x <- gsub(eol.comment, "\\1", x)
   x <- gsub("(,|\\s)+$", "", x)
   if(concat) {
     x <- x[!(grepl("^\\s*$",x,perl=TRUE))]
@@ -259,7 +254,6 @@ tovec <- function(x,concat=TRUE) {
   x <- type.convert(unlist(strsplit(x,split="\\,|\n|\\s+",perl=TRUE)), as.is=TRUE)
   x[nchar(x)>0]
 }
-
 
 ##' Create create character vectors
 ##'
@@ -271,17 +265,17 @@ tovec <- function(x,concat=TRUE) {
 ##' s_(A,B,C)
 ##' @export
 ##' @keywords internal
-setGeneric("cvec", function(x,...) standardGeneric("cvec"))
+cvec <- function(x) UseMethod("cvec")
 
 ##' @export
 ##' @rdname cvec
 ##' @keywords internal
-setMethod("cvec", "character", as.cvec)
+cvec.character <- as.cvec
 
 ##' @export
 ##' @rdname cvec
 ##' @keywords internal
-s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1]
+s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 
 ##' Access or clear arguments for calls to mrgsim
 ##'
@@ -323,16 +317,14 @@ build_path <- function(x) {
   return(x)
 }
 
-
 ##' Set RNG to use L'Ecuyer-CMRG
 ##'
 ##' @export
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
-
-if.file.remove <- function(x) {
-  if(file_exists(x)) file.remove(x)
-}
+# if.file.remove <- function(x) {
+#   if(file_exists(x)) file.remove(x)
+# }
 
 as_character_args <- function(x) {
   x <- deparse(x,width.cutoff=500)
@@ -370,60 +362,42 @@ s_pick <- function(x,name) {
   nonull(unlist(sapply(x,"[[",name)))
 }
 
-ll_pick <- function(x,name) {
-  stopifnot(is.list(x))
-  lapply(x,"[[",name)
-}
+# ll_pick <- function(x,name) {
+#   stopifnot(is.list(x))
+#   lapply(x,"[[",name)
+# }
+# 
+# l_pick <- function(x,name) {
+#   stopifnot(is.list(x))
+#   lapply(x,"[",name)
+# }
 
-l_pick <- function(x,name) {
-  stopifnot(is.list(x))
-  lapply(x,"[",name)
-}
-s_quote <- function(x) paste0("\'",x,"\'")
-d_quote <- function(x) paste0("\"",x,"\"")
-
-mapvalues <- function (x, from, to, warn_missing = FALSE) {
-  if (length(from) != length(to)) {
-    stop("`from` and `to` vectors are not the same length.")
-  }
-  if (!is.atomic(x)) {
-    stop("`x` must be an atomic vector.")
-  }
-  if (is.factor(x)) {
-    levels(x) <- mapvalues(levels(x), from, to, warn_missing)
-    return(x)
-  }
-  mapidx <- match(x, from)
-  mapidxNA <- is.na(mapidx)
-  from_found <- sort(unique(mapidx))
-  if (warn_missing && length(from_found) != length(from)) {
-    message("The following `from` values were not present in `x`: ",
-            paste(from[!(1:length(from) %in% from_found)], collapse = ", "))
-  }
-  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
-  x
-}
+# s_quote <- function(x) paste0("\'",x,"\'")
+# d_quote <- function(x) paste0("\"",x,"\"")
 
 
-shuffle <- function (x, who, after = NA)  {
-  names(x) <- make.unique(names(x))
-  who <- names(x[, who, drop = FALSE])
-  nms <- names(x)[!names(x) %in% who]
-  if (is.null(after))
-    after <- length(nms)
-  if (is.na(after))
-    after <- 0
-  if (length(after) == 0)
-    after <- length(nms)
-  if (is.character(after))
-    after <- match(after, nms, nomatch = 0)
-  if (after < 0)
-    after <- length(nms)
-  if (after > length(nms))
-    after <- length(nms)
-  nms <- append(nms, who, after = after)
-  x[nms]
-}
+
+
+
+# shuffle <- function (x, who, after = NA)  {
+#   names(x) <- make.unique(names(x))
+#   who <- names(x[, who, drop = FALSE])
+#   nms <- names(x)[!names(x) %in% who]
+#   if (is.null(after))
+#     after <- length(nms)
+#   if (is.na(after))
+#     after <- 0
+#   if (length(after) == 0)
+#     after <- length(nms)
+#   if (is.character(after))
+#     after <- match(after, nms, nomatch = 0)
+#   if (after < 0)
+#     after <- length(nms)
+#   if (after > length(nms))
+#     after <- length(nms)
+#   nms <- append(nms, who, after = after)
+#   x[nms]
+# }
 
 filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
   if(short) dir <- build_path(dir)
@@ -438,23 +412,9 @@ charthere <- function(x,w,fx=TRUE) {
   grepl(w,x,fixed=fx)
 }
 
-
 null_list <- setNames(list(), character(0))
+
 single.number <- function(x) length(x)==1 & is.numeric(x)
-
-
-# 15 sept 2016
-installed_models <- function() {
-  file.path(system.file(package="mrgsolve"), "inst", "models")
-}
-
-get_option <- function(what,opt,default=FALSE) {
-  if(is.element(what,names(opt))) {
-    opt[[what]]
-  } else {
-    return(default) 
-  }
-}
 
 has_name <- function(name,object) {
   is.element(name,names(object))
@@ -476,53 +436,53 @@ file_readable <- function(x) {
   file.access(x,4)==0 
 }
 
-mrgnorm <- function(n,sigma) {
-  ncols <- ncol(sigma)
-  matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
-}
+# mrgnorm <- function(n,sigma) {
+#   ncols <- ncol(sigma)
+#   matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
+# }
 
 where_is <- function(what,x) {
   as.integer(unlist(gregexpr(what,x,fixed=TRUE)))
 }
 
-where_first <- function(what,x) {
-  as.integer(unlist(regexpr(what,x,fixed=TRUE)))
-}
+# where_first <- function(what,x) {
+#   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
+# }
 
 object_exists <- function(name,envir,mode="any",inherits=FALSE) {
   if(!exists(name,envir=envir,mode=mode,inherits=inherits)) {
-    stop("Couldn't find object ", name, call.=FALSE) 
+    stop("couldn't find object ", name, call.=FALSE) 
   }
 }
 
 tparse <- function(x,...) parse(text=x,...)
 
-mt_fun <- function(){}
+#mt_fun <- function(){}
 
-call_system <- function(args) {
-  suppressWarnings(do.call(system,args))
-}
+# call_system <- function(args) {
+#   suppressWarnings(do.call(system,args))
+# }
 
-build_error <- function(args,compfile) {
-  if(.Platform$OS.type=="windows" & args$ignore.stdout) {
-    
-    args$show.output.on.console <- FALSE 
-    args$intern <- TRUE
-    err <- call_system(args)
-    
-    errors <- grepl(paste0("^",compfile),err)
-    
-    for(i in seq_along(errors)) {
-      if(errors[i]) {
-        message(err[i]) 
-      } else {
-        cat(err[i],"\n")
-      }
-    }
-  }
-  cat("-------------\n")
-  stop("there was a problem building the model.",call.=FALSE)
-}
+# build_error <- function(args,compfile) {
+#   if(.Platform$OS.type=="windows" & args$ignore.stdout) {
+#     
+#     args$show.output.on.console <- FALSE 
+#     args$intern <- TRUE
+#     err <- call_system(args)
+#     
+#     errors <- grepl(paste0("^",compfile),err)
+#     
+#     for(i in seq_along(errors)) {
+#       if(errors[i]) {
+#         message(err[i]) 
+#       } else {
+#         cat(err[i],"\n")
+#       }
+#     }
+#   }
+#   cat("-------------\n")
+#   stop("there was a problem building the model.",call.=FALSE)
+# }
 
 na2zero <- function(x) {
   x[is.na(x)] <- 0
@@ -551,14 +511,14 @@ bakfor <- function(x)locf(nocb(x))
 nocb <- function(x)rev(locf(rev(x)))
 
 locf_tibble <- function(x) {
-  mutate_all(x, .funs = funs__("locf"))
+  mutate_all(x, .funs = ~ locf(.))
 }
 
 locf_ev <- function(x) {
   if(!is.ev(x)) {
     stop("x is not an event object") 
   }
-  x@data <- mutate_all(x@data, funs__("locf"))
+  x@data <- mutate_all(x@data, .funs = ~locf(.))
   x
 }
 
@@ -572,9 +532,9 @@ select__ <- function(df, .dots) {
 group_by__ <- function(df,.dots, add = FALSE) {
   group_by(df, `!!!`(syms(.dots)), add = add)
 }
-funs__ <- function(...) {
-  dplyr::funs(`!!!`(syms(...)))  
-}
+# funs__ <- function(...) {
+#   dplyr::funs(`!!!`(syms(...)))  
+# }
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
   dplyr::distinct(df, `!!!`(syms(.dots)), .keep_all = .keep_all)  
 }
@@ -596,3 +556,67 @@ reg_exec_match <- function(x, pattern) {
   regmatches(x,m)
 }
 
+collect_opts <- function(x) {
+  un <- unique(names(x))
+  ans <- lapply(un, function(y) {
+    unlist(x[names(x)==y],use.names=FALSE)
+  })
+  names(ans) <- un
+  ans
+}
+
+make_matrix_labels <- function(mat,lab,diag=TRUE) {
+  n <- nrow(mat)
+  cmat <- matrix(NA_character_, n, n)
+  for(i in seq(n)) {
+    for(j in seq(n)) {
+      if(i > j) next
+      if(i==j) {
+        val <- lab[i] 
+      } else {
+        val <- paste0(c(lab[i],lab[j]),collapse='-')
+      }
+      cmat[i,j] <- val
+    }
+  }
+  ans <- mat[upper.tri(mat,diag=diag)]
+  lab <- cmat[upper.tri(cmat,diag = diag)]
+  names(ans) <- lab
+  ans
+}
+
+
+
+# nocov start
+is.numeric.data.frame <- function(x) sapply(x, is.numeric)
+
+mapvalues <- function (x, from, to, warn_missing = FALSE) { 
+  if (length(from) != length(to)) {
+    stop("`from` and `to` vectors are not the same length.")
+  }
+  if (!is.atomic(x)) {
+    stop("`x` must be an atomic vector.")
+  }
+  if (is.factor(x)) {
+    levels(x) <- mapvalues(levels(x), from, to, warn_missing)
+    return(x)
+  }
+  mapidx <- match(x, from)
+  mapidxNA <- is.na(mapidx)
+  from_found <- sort(unique(mapidx))
+  if (warn_missing && length(from_found) != length(from)) {
+    message("The following `from` values were not present in `x`: ",
+            paste(from[!(1:length(from) %in% from_found)], collapse = ", "))
+  }
+  x[!mapidxNA] <- to[mapidx[!mapidxNA]]
+  x
+} # nocov end
+
+
+system4 <- function(cmd, args=character(0), pattern, path) {
+  files <- file.path(path, paste0("system4__",c("stdout","stderr"),"__", pattern))
+  x <- list(status=system2(cmd, args, stdout = files[1], stderr = files[2]))
+  x[["stdout"]] <- readLines(files[1])
+  x[["stderr"]] <- readLines(files[2])
+  x
+}
