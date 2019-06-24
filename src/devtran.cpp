@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -474,8 +474,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob->set_d(this_rec);
         prob->init_call_record(tto);
       }
-      
-      
+
       // Some non-observation event happening
       if(this_rec->is_event()) {
         
@@ -496,8 +495,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
           
           if(prob->alag(this_cmtn) > mindt) { // there is a valid lagtime
+            
             if(this_rec->ss() > 0) {
               this_rec->steady(prob, Fn);
+              tfrom = tto;
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
