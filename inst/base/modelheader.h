@@ -77,6 +77,10 @@ typedef bool   local_bool;
 #define EVID self.evid
 // Data set individual
 #define ID self.id
+// Data set amt
+#define AMT self.amt
+// Data set cmt
+# define CMT self.cmt
 
 
 // These are the fundamental macros for
