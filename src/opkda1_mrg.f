@@ -564,8 +564,8 @@ C
       RETURN
 C----------------------- END OF SUBROUTINE DSOLSY ----------------------
       END
-*DECK DSRCOM
-      SUBROUTINE DSRCOM (RSAV, ISAV, JOB)
+C*DECK DSRCOM
+C      SUBROUTINE DSRCOM (RSAV, ISAV, JOB)
 C***BEGIN PROLOGUE  DSRCOM
 C***SUBSIDIARY
 C***PURPOSE  Save/restore ODEPACK COMMON blocks.
@@ -600,32 +600,32 @@ C           enable interrupt/restart feature. (ACH)
 C   031112  Added SAVE statement for data-loaded constants.
 C***END PROLOGUE  DSRCOM
 C**End
-      INTEGER ISAV, JOB
-      INTEGER ILS
-      INTEGER I, LENILS, LENRLS
-      DOUBLE PRECISION RSAV,   RLS
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS
-      COMMON /DLS001/ RLS(218), ILS(37)
-      DATA LENRLS/218/, LENILS/37/
+C      INTEGER ISAV, JOB
+C      INTEGER ILS
+C      INTEGER I, LENILS, LENRLS
+C      DOUBLE PRECISION RSAV,   RLS
+C      DIMENSION RSAV(*), ISAV(*)
+C      SAVE LENRLS, LENILS
+C      COMMON /DLS001/ RLS(218), ILS(37)
+C      DATA LENRLS/218/, LENILS/37/
 C
 C***FIRST EXECUTABLE STATEMENT  DSRCOM
-      IF (JOB .EQ. 2) GO TO 100
+C      IF (JOB .EQ. 2) GO TO 100
 C
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      RETURN
+C      DO 10 I = 1,LENRLS
+C 10     RSAV(I) = RLS(I)
+C      DO 20 I = 1,LENILS
+C 20     ISAV(I) = ILS(I)
+C      RETURN
 C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      RETURN
+C 100  CONTINUE
+C      DO 110 I = 1,LENRLS
+C 110     RLS(I) = RSAV(I)
+C      DO 120 I = 1,LENILS
+C 120     ILS(I) = ISAV(I)
+C      RETURN
 C----------------------- END OF SUBROUTINE DSRCOM ----------------------
-      END
+C      END
 *DECK DSTODE
       SUBROUTINE DSTODE (NEQ, Y, YH, NYH, YH1, EWT, SAVF, ACOR,
      1   WM, IWM, F, JAC, PJAC, SLVS)
@@ -1942,8 +1942,8 @@ C
 C
 C----------------------- End of Subroutine DSOLSS ----------------------
       END
-*DECK DSRCMS
-      SUBROUTINE DSRCMS (RSAV, ISAV, JOB)
+C*DECK DSRCMS
+C      SUBROUTINE DSRCMS (RSAV, ISAV, JOB)
 C-----------------------------------------------------------------------
 C This routine saves or restores (depending on JOB) the contents of
 C the Common blocks DLS001, DLSS01, which are used
@@ -1956,43 +1956,43 @@ C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
 C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
 C        A call with JOB = 2 presumes a prior call with JOB = 1.
 C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSS
-      INTEGER I, LENILS, LENISS, LENRLS, LENRSS
-      DOUBLE PRECISION RSAV,   RLS, RLSS
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRSS, LENISS
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLSS01/ RLSS(6), ILSS(34)
-      DATA LENRLS/218/, LENILS/37/, LENRSS/6/, LENISS/34/
+C      INTEGER ISAV, JOB
+C      INTEGER ILS, ILSS
+C      INTEGER I, LENILS, LENISS, LENRLS, LENRSS
+C      DOUBLE PRECISION RSAV,   RLS, RLSS
+C      DIMENSION RSAV(*), ISAV(*)
+C      SAVE LENRLS, LENILS, LENRSS, LENISS
+C      COMMON /DLS001/ RLS(218), ILS(37)
+C      COMMON /DLSS01/ RLSS(6), ILSS(34)
+C      DATA LENRLS/218/, LENILS/37/, LENRSS/6/, LENISS/34/
 C
-      IF (JOB .EQ. 2) GO TO 100
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-      DO 15 I = 1,LENRSS
- 15     RSAV(LENRLS+I) = RLSS(I)
+C      IF (JOB .EQ. 2) GO TO 100
+C      DO 10 I = 1,LENRLS
+C 10     RSAV(I) = RLS(I)
+C      DO 15 I = 1,LENRSS
+C 15     RSAV(LENRLS+I) = RLSS(I)
 C
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      DO 25 I = 1,LENISS
- 25     ISAV(LENILS+I) = ILSS(I)
+C      DO 20 I = 1,LENILS
+C 20     ISAV(I) = ILS(I)
+C      DO 25 I = 1,LENISS
+C 25     ISAV(LENILS+I) = ILSS(I)
 C
-      RETURN
+C      RETURN
 C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 115 I = 1,LENRSS
- 115     RLSS(I) = RSAV(LENRLS+I)
+C 100  CONTINUE
+C      DO 110 I = 1,LENRLS
+C 110     RLS(I) = RSAV(I)
+C      DO 115 I = 1,LENRSS
+C 115     RLSS(I) = RSAV(LENRLS+I)
 C
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      DO 125 I = 1,LENISS
- 125     ILSS(I) = ISAV(LENILS+I)
+C      DO 120 I = 1,LENILS
+C 120     ILS(I) = ISAV(I)
+C      DO 125 I = 1,LENISS
+C 125     ILSS(I) = ISAV(LENILS+I)
 C
-      RETURN
+C      RETURN
 C----------------------- End of Subroutine DSRCMS ----------------------
-      END
+C      END
 *DECK ODRV
       subroutine odrv
      *     (n, ia,ja,a, p,ip, nsp,isp, path, flag)
@@ -4692,8 +4692,8 @@ C-----------------------------------------------------------------------
       RETURN
 C----------------------- End of Function DBNORM ------------------------
       END
-*DECK DSRCMA
-      SUBROUTINE DSRCMA (RSAV, ISAV, JOB)
+C*DECK DSRCMA
+C      SUBROUTINE DSRCMA (RSAV, ISAV, JOB)
 C-----------------------------------------------------------------------
 C This routine saves or restores (depending on JOB) the contents of
 C the Common blocks DLS001, DLSA01, which are used
@@ -4706,69 +4706,69 @@ C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
 C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
 C        A call with JOB = 2 presumes a prior call with JOB = 1.
 C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSA
-      INTEGER I, LENRLS, LENILS, LENRLA, LENILA
-      DOUBLE PRECISION RSAV
-      DOUBLE PRECISION RLS, RLSA
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLA, LENILA
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLSA01/ RLSA(22), ILSA(9)
-      DATA LENRLS/218/, LENILS/37/, LENRLA/22/, LENILA/9/
+C      INTEGER ISAV, JOB
+C      INTEGER ILS, ILSA
+C      INTEGER I, LENRLS, LENILS, LENRLA, LENILA
+C      DOUBLE PRECISION RSAV
+C      DOUBLE PRECISION RLS, RLSA
+C      DIMENSION RSAV(*), ISAV(*)
+C      SAVE LENRLS, LENILS, LENRLA, LENILA
+C      COMMON /DLS001/ RLS(218), ILS(37)
+C      COMMON /DLSA01/ RLSA(22), ILSA(9)
+C      DATA LENRLS/218/, LENILS/37/, LENRLA/22/, LENILA/9/
 C
-      IF (JOB .EQ. 2) GO TO 100
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-      DO 15 I = 1,LENRLA
- 15     RSAV(LENRLS+I) = RLSA(I)
+C      IF (JOB .EQ. 2) GO TO 100
+C      DO 10 I = 1,LENRLS
+C 10     RSAV(I) = RLS(I)
+C      DO 15 I = 1,LENRLA
+C 15     RSAV(LENRLS+I) = RLSA(I)
 C
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      DO 25 I = 1,LENILA
- 25     ISAV(LENILS+I) = ILSA(I)
+C      DO 20 I = 1,LENILS
+C 20     ISAV(I) = ILS(I)
+C      DO 25 I = 1,LENILA
+C 25     ISAV(LENILS+I) = ILSA(I)
 C
-      RETURN
+C      RETURN
 C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 115 I = 1,LENRLA
- 115     RLSA(I) = RSAV(LENRLS+I)
+C 100  CONTINUE
+C      DO 110 I = 1,LENRLS
+C 110     RLS(I) = RSAV(I)
+C      DO 115 I = 1,LENRLA
+C 115     RLSA(I) = RSAV(LENRLS+I)
 C
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      DO 125 I = 1,LENILA
- 125     ILSA(I) = ISAV(LENILS+I)
+C      DO 120 I = 1,LENILS
+C 120     ILS(I) = ISAV(I)
+C      DO 125 I = 1,LENILA
+C 125     ILSA(I) = ISAV(LENILS+I)
 C
-      RETURN
+C      RETURN
 C----------------------- End of Subroutine DSRCMA ----------------------
-      END
-*DECK DRCHEK
-      SUBROUTINE DRCHEK (JOB, G, NEQ, Y, YH,NYH, G0, G1, GX, JROOT, IRT)
-      EXTERNAL G
-      INTEGER JOB, NEQ, NYH, JROOT, IRT
-      DOUBLE PRECISION Y, YH, G0, G1, GX
-      DIMENSION NEQ(*), Y(*), YH(NYH,*), G0(*), G1(*), GX(*), JROOT(*)
-      INTEGER IOWND, IOWNS,
-     1   ICF, IERPJ, IERSL, JCUR, JSTART, KFLAG, L,
-     2   LYH, LEWT, LACOR, LSAVF, LWM, LIWM, METH, MITER,
-     3   MAXORD, MAXCOR, MSBP, MXNCF, N, NQ, NST, NFE, NJE, NQU
-      INTEGER IOWND3, IOWNR3, IRFND, ITASKC, NGC, NGE
-      DOUBLE PRECISION ROWNS,
-     1   CCMAX, EL0, H, HMIN, HMXI, HU, RC, TN, UROUND
-      DOUBLE PRECISION ROWNR3, T0, TLAST, TOUTC
-      COMMON /DLS001/ ROWNS(209),
-     1   CCMAX, EL0, H, HMIN, HMXI, HU, RC, TN, UROUND,
-     2   IOWND(6), IOWNS(6),
-     3   ICF, IERPJ, IERSL, JCUR, JSTART, KFLAG, L,
-     4   LYH, LEWT, LACOR, LSAVF, LWM, LIWM, METH, MITER,
-     5   MAXORD, MAXCOR, MSBP, MXNCF, N, NQ, NST, NFE, NJE, NQU
-      COMMON /DLSR01/ ROWNR3(2), T0, TLAST, TOUTC,
-     1   IOWND3(3), IOWNR3(2), IRFND, ITASKC, NGC, NGE
-      INTEGER I, IFLAG, JFLAG
-      DOUBLE PRECISION HMING, T1, TEMP1, TEMP2, X
-      LOGICAL ZROOT
+C      END
+C*DECK DRCHEK
+C      SUBROUTINE DRCHEK (JOB, G, NEQ, Y, YH,NYH, G0, G1, GX, JROOT, IRT)
+C      EXTERNAL G
+C      INTEGER JOB, NEQ, NYH, JROOT, IRT
+C      DOUBLE PRECISION Y, YH, G0, G1, GX
+C      DIMENSION NEQ(*), Y(*), YH(NYH,*), G0(*), G1(*), GX(*), JROOT(*)
+C      INTEGER IOWND, IOWNS,
+C     1   ICF, IERPJ, IERSL, JCUR, JSTART, KFLAG, L,
+C     2   LYH, LEWT, LACOR, LSAVF, LWM, LIWM, METH, MITER,
+C     3   MAXORD, MAXCOR, MSBP, MXNCF, N, NQ, NST, NFE, NJE, NQU
+C      INTEGER IOWND3, IOWNR3, IRFND, ITASKC, NGC, NGE
+C      DOUBLE PRECISION ROWNS,
+C     1   CCMAX, EL0, H, HMIN, HMXI, HU, RC, TN, UROUND
+C      DOUBLE PRECISION ROWNR3, T0, TLAST, TOUTC
+C      COMMON /DLS001/ ROWNS(209),
+C     1   CCMAX, EL0, H, HMIN, HMXI, HU, RC, TN, UROUND,
+C     2   IOWND(6), IOWNS(6),
+C     3   ICF, IERPJ, IERSL, JCUR, JSTART, KFLAG, L,
+C     4   LYH, LEWT, LACOR, LSAVF, LWM, LIWM, METH, MITER,
+C     5   MAXORD, MAXCOR, MSBP, MXNCF, N, NQ, NST, NFE, NJE, NQU
+C      COMMON /DLSR01/ ROWNR3(2), T0, TLAST, TOUTC,
+C     1   IOWND3(3), IOWNR3(2), IRFND, ITASKC, NGC, NGE
+C      INTEGER I, IFLAG, JFLAG
+C      DOUBLE PRECISION HMING, T1, TEMP1, TEMP2, X
+C      LOGICAL ZROOT
 C-----------------------------------------------------------------------
 C This routine checks for the presence of a root in the vicinity of
 C the current T, in a manner depending on the input flag JOB.  It calls
@@ -4804,110 +4804,110 @@ C          IRFND = 1 if it did, = 0 if not.
 C ITASKC = copy of ITASK (input only).
 C NGC    = copy of NG (input only).
 C-----------------------------------------------------------------------
-      IRT = 0
-      DO 10 I = 1,NGC
- 10     JROOT(I) = 0
-      HMING = (ABS(TN) + ABS(H))*UROUND*100.0D0
+C      IRT = 0
+C      DO 10 I = 1,NGC
+C 10     JROOT(I) = 0
+C      HMING = (ABS(TN) + ABS(H))*UROUND*100.0D0
 C
-      GO TO (100, 200, 300), JOB
+C     GO TO (100, 200, 300), JOB
 C
 C Evaluate g at initial T, and check for zero values. ------------------
- 100  CONTINUE
-      T0 = TN
-      CALL G (NEQ, T0, Y, NGC, G0)
-      NGE = 1
-      ZROOT = .FALSE.
-      DO 110 I = 1,NGC
- 110    IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
-      IF (.NOT. ZROOT) GO TO 190
+C 100  CONTINUE
+C      T0 = TN
+C      CALL G (NEQ, T0, Y, NGC, G0)
+C      NGE = 1
+C      ZROOT = .FALSE.
+C      DO 110 I = 1,NGC
+C 110    IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
+C      IF (.NOT. ZROOT) GO TO 190
 C g has a zero at T.  Look at g at T + (small increment). --------------
-      TEMP2 = MAX(HMING/ABS(H), 0.1D0)
-      TEMP1 = TEMP2*H
-      T0 = T0 + TEMP1
-      DO 120 I = 1,N
- 120    Y(I) = Y(I) + TEMP2*YH(I,2)
-      CALL G (NEQ, T0, Y, NGC, G0)
-      NGE = NGE + 1
-      ZROOT = .FALSE.
-      DO 130 I = 1,NGC
- 130    IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
-      IF (.NOT. ZROOT) GO TO 190
+C      TEMP2 = MAX(HMING/ABS(H), 0.1D0)
+C      TEMP1 = TEMP2*H
+C      T0 = T0 + TEMP1
+C      DO 120 I = 1,N
+C 120    Y(I) = Y(I) + TEMP2*YH(I,2)
+C      CALL G (NEQ, T0, Y, NGC, G0)
+C      NGE = NGE + 1
+C      ZROOT = .FALSE.
+C      DO 130 I = 1,NGC
+C 130    IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
+C      IF (.NOT. ZROOT) GO TO 190
 C g has a zero at T and also close to T.  Take error return. -----------
-      IRT = -1
-      RETURN
+C      IRT = -1
+C      RETURN
 C
- 190  CONTINUE
-      RETURN
+C 190  CONTINUE
+C      RETURN
 C
 C
- 200  CONTINUE
-      IF (IRFND .EQ. 0) GO TO 260
+C 200  CONTINUE
+C      IF (IRFND .EQ. 0) GO TO 260
 C If a root was found on the previous step, evaluate G0 = g(T0). -------
-      CALL DINTDY (T0, 0, YH, NYH, Y, IFLAG)
-      CALL G (NEQ, T0, Y, NGC, G0)
-      NGE = NGE + 1
-      ZROOT = .FALSE.
-      DO 210 I = 1,NGC
- 210    IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
-      IF (.NOT. ZROOT) GO TO 260
+C      CALL DINTDY (T0, 0, YH, NYH, Y, IFLAG)
+C      CALL G (NEQ, T0, Y, NGC, G0)
+C      NGE = NGE + 1
+C      ZROOT = .FALSE.
+C      DO 210 I = 1,NGC
+C 210    IF (ABS(G0(I)) .LE. 0.0D0) ZROOT = .TRUE.
+C      IF (.NOT. ZROOT) GO TO 260
 C g has a zero at T0.  Look at g at T + (small increment). -------------
-      TEMP1 = SIGN(HMING,H)
-      T0 = T0 + TEMP1
-      IF ((T0 - TN)*H .LT. 0.0D0) GO TO 230
-      TEMP2 = TEMP1/H
-      DO 220 I = 1,N
- 220    Y(I) = Y(I) + TEMP2*YH(I,2)
-      GO TO 240
- 230  CALL DINTDY (T0, 0, YH, NYH, Y, IFLAG)
- 240  CALL G (NEQ, T0, Y, NGC, G0)
-      NGE = NGE + 1
-      ZROOT = .FALSE.
-      DO 250 I = 1,NGC
-        IF (ABS(G0(I)) .GT. 0.0D0) GO TO 250
-        JROOT(I) = 1
-        ZROOT = .TRUE.
- 250    CONTINUE
-      IF (.NOT. ZROOT) GO TO 260
+C      TEMP1 = SIGN(HMING,H)
+C      T0 = T0 + TEMP1
+C      IF ((T0 - TN)*H .LT. 0.0D0) GO TO 230
+C      TEMP2 = TEMP1/H
+C      DO 220 I = 1,N
+C 220    Y(I) = Y(I) + TEMP2*YH(I,2)
+C      GO TO 240
+C 230  CALL DINTDY (T0, 0, YH, NYH, Y, IFLAG)
+C 240  CALL G (NEQ, T0, Y, NGC, G0)
+C      NGE = NGE + 1
+C      ZROOT = .FALSE.
+C      DO 250 I = 1,NGC
+C        IF (ABS(G0(I)) .GT. 0.0D0) GO TO 250
+C        JROOT(I) = 1
+C        ZROOT = .TRUE.
+C 250    CONTINUE
+C      IF (.NOT. ZROOT) GO TO 260
 C g has a zero at T0 and also close to T0.  Return root. ---------------
-      IRT = 1
-      RETURN
+C      IRT = 1
+C      RETURN
 C G0 has no zero components.  Proceed to check relevant interval. ------
- 260  IF (TN .EQ. TLAST) GO TO 390
+C 260  IF (TN .EQ. TLAST) GO TO 390
 C
- 300  CONTINUE
+C 300  CONTINUE
 C Set T1 to TN or TOUTC, whichever comes first, and get g at T1. -------
-      IF (ITASKC.EQ.2 .OR. ITASKC.EQ.3 .OR. ITASKC.EQ.5) GO TO 310
-      IF ((TOUTC - TN)*H .GE. 0.0D0) GO TO 310
-      T1 = TOUTC
-      IF ((T1 - T0)*H .LE. 0.0D0) GO TO 390
-      CALL DINTDY (T1, 0, YH, NYH, Y, IFLAG)
-      GO TO 330
- 310  T1 = TN
-      DO 320 I = 1,N
- 320    Y(I) = YH(I,1)
- 330  CALL G (NEQ, T1, Y, NGC, G1)
-      NGE = NGE + 1
+C      IF (ITASKC.EQ.2 .OR. ITASKC.EQ.3 .OR. ITASKC.EQ.5) GO TO 310
+C      IF ((TOUTC - TN)*H .GE. 0.0D0) GO TO 310
+C      T1 = TOUTC
+C      IF ((T1 - T0)*H .LE. 0.0D0) GO TO 390
+C      CALL DINTDY (T1, 0, YH, NYH, Y, IFLAG)
+C      GO TO 330
+C 310  T1 = TN
+C      DO 320 I = 1,N
+C 320    Y(I) = YH(I,1)
+C 330  CALL G (NEQ, T1, Y, NGC, G1)
+C      NGE = NGE + 1
 C Call DROOTS to search for root in interval from T0 to T1. ------------
-      JFLAG = 0
- 350  CONTINUE
-      CALL DROOTS (NGC, HMING, JFLAG, T0, T1, G0, G1, GX, X, JROOT)
-      IF (JFLAG .GT. 1) GO TO 360
-      CALL DINTDY (X, 0, YH, NYH, Y, IFLAG)
-      CALL G (NEQ, X, Y, NGC, GX)
-      NGE = NGE + 1
-      GO TO 350
- 360  T0 = X
-      CALL DCOPY (NGC, GX, 1, G0, 1)
-      IF (JFLAG .EQ. 4) GO TO 390
+C      JFLAG = 0
+C 350  CONTINUE
+C      CALL DROOTS (NGC, HMING, JFLAG, T0, T1, G0, G1, GX, X, JROOT)
+C      IF (JFLAG .GT. 1) GO TO 360
+C      CALL DINTDY (X, 0, YH, NYH, Y, IFLAG)
+C      CALL G (NEQ, X, Y, NGC, GX)
+C      NGE = NGE + 1
+C      GO TO 350
+C 360  T0 = X
+C      CALL DCOPY (NGC, GX, 1, G0, 1)
+C      IF (JFLAG .EQ. 4) GO TO 390
 C Found a root.  Interpolate to X and return. --------------------------
-      CALL DINTDY (X, 0, YH, NYH, Y, IFLAG)
-      IRT = 1
-      RETURN
+C      CALL DINTDY (X, 0, YH, NYH, Y, IFLAG)
+C      IRT = 1
+C      RETURN
 C
- 390  CONTINUE
-      RETURN
+C 390  CONTINUE
+C      RETURN
 C----------------------- End of Subroutine DRCHEK ----------------------
-      END
+C      END
 *DECK DROOTS
       SUBROUTINE DROOTS (NG, HMIN, JFLAG, X0, X1, G0, G1, GX, X, JROOT)
       INTEGER NG, JFLAG, JROOT
@@ -5128,8 +5128,8 @@ C No sign changes in this interval.  Set X = X1, return JFLAG = 4. -----
       RETURN
 C----------------------- End of Subroutine DROOTS ----------------------
       END
-*DECK DSRCAR
-      SUBROUTINE DSRCAR (RSAV, ISAV, JOB)
+C*DECK DSRCAR
+C      SUBROUTINE DSRCAR (RSAV, ISAV, JOB)
 C-----------------------------------------------------------------------
 C This routine saves or restores (depending on JOB) the contents of
 C the Common blocks DLS001, DLSA01, DLSR01, which are used
@@ -5142,58 +5142,58 @@ C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
 C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
 C        A call with JOB = 2 presumes a prior call with JOB = 1.
 C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSA, ILSR
-      INTEGER I, IOFF, LENRLS, LENILS, LENRLA, LENILA, LENRLR, LENILR
-      DOUBLE PRECISION RSAV
-      DOUBLE PRECISION RLS, RLSA, RLSR
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLA, LENILA, LENRLR, LENILR
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLSA01/ RLSA(22), ILSA(9)
-      COMMON /DLSR01/ RLSR(5), ILSR(9)
-      DATA LENRLS/218/, LENILS/37/, LENRLA/22/, LENILA/9/
-      DATA LENRLR/5/, LENILR/9/
+C      INTEGER ISAV, JOB
+C      INTEGER ILS, ILSA, ILSR
+C      INTEGER I, IOFF, LENRLS, LENILS, LENRLA, LENILA, LENRLR, LENILR
+C      DOUBLE PRECISION RSAV
+C      DOUBLE PRECISION RLS, RLSA, RLSR
+C      DIMENSION RSAV(*), ISAV(*)
+C      SAVE LENRLS, LENILS, LENRLA, LENILA, LENRLR, LENILR
+C      COMMON /DLS001/ RLS(218), ILS(37)
+C      COMMON /DLSA01/ RLSA(22), ILSA(9)
+C      COMMON /DLSR01/ RLSR(5), ILSR(9)
+C      DATA LENRLS/218/, LENILS/37/, LENRLA/22/, LENILA/9/
+C      DATA LENRLR/5/, LENILR/9/
 C
-      IF (JOB .EQ. 2) GO TO 100
-      DO 10 I = 1,LENRLS
- 10     RSAV(I) = RLS(I)
-       DO 15 I = 1,LENRLA
- 15     RSAV(LENRLS+I) = RLSA(I)
-      IOFF = LENRLS + LENRLA
-      DO 20 I = 1,LENRLR
- 20     RSAV(IOFF+I) = RLSR(I)
+C      IF (JOB .EQ. 2) GO TO 100
+C      DO 10 I = 1,LENRLS
+C 10     RSAV(I) = RLS(I)
+C       DO 15 I = 1,LENRLA
+C 15     RSAV(LENRLS+I) = RLSA(I)
+C      IOFF = LENRLS + LENRLA
+C      DO 20 I = 1,LENRLR
+C 20     RSAV(IOFF+I) = RLSR(I)
 C
-      DO 30 I = 1,LENILS
- 30     ISAV(I) = ILS(I)
-      DO 35 I = 1,LENILA
- 35     ISAV(LENILS+I) = ILSA(I)
-      IOFF = LENILS + LENILA
-      DO 40 I = 1,LENILR
- 40     ISAV(IOFF+I) = ILSR(I)
+C      DO 30 I = 1,LENILS
+C 30     ISAV(I) = ILS(I)
+C      DO 35 I = 1,LENILA
+C 35     ISAV(LENILS+I) = ILSA(I)
+C      IOFF = LENILS + LENILA
+C      DO 40 I = 1,LENILR
+C 40     ISAV(IOFF+I) = ILSR(I)
 C
-      RETURN
+C      RETURN
 C
- 100  CONTINUE
-      DO 110 I = 1,LENRLS
- 110     RLS(I) = RSAV(I)
-      DO 115 I = 1,LENRLA
- 115     RLSA(I) = RSAV(LENRLS+I)
-      IOFF = LENRLS + LENRLA
-      DO 120 I = 1,LENRLR
- 120     RLSR(I) = RSAV(IOFF+I)
+C 100  CONTINUE
+C      DO 110 I = 1,LENRLS
+C 110     RLS(I) = RSAV(I)
+C      DO 115 I = 1,LENRLA
+C 115     RLSA(I) = RSAV(LENRLS+I)
+C      IOFF = LENRLS + LENRLA
+C      DO 120 I = 1,LENRLR
+C 120     RLSR(I) = RSAV(IOFF+I)
 C
-      DO 130 I = 1,LENILS
- 130     ILS(I) = ISAV(I)
-      DO 135 I = 1,LENILA
- 135     ILSA(I) = ISAV(LENILS+I)
-      IOFF = LENILS + LENILA
-      DO 140 I = 1,LENILR
- 140     ILSR(I) = ISAV(IOFF+I)
+C      DO 130 I = 1,LENILS
+C 130     ILS(I) = ISAV(I)
+C      DO 135 I = 1,LENILA
+C 135     ILSA(I) = ISAV(LENILS+I)
+C      IOFF = LENILS + LENILA
+C      DO 140 I = 1,LENILR
+C 140     ILSR(I) = ISAV(IOFF+I)
 C
-      RETURN
+C      RETURN
 C----------------------- End of Subroutine DSRCAR ----------------------
-      END
+C      END
 *DECK DSTODPK
       SUBROUTINE DSTODPK (NEQ, Y, YH, NYH, YH1, EWT, SAVF, SAVX, ACOR,
      1   WM, IWM, F, JAC, PSOL)
@@ -7037,8 +7037,8 @@ C-----------------------------------------------------------------------
       RETURN
 C----------------------- End of Subroutine DUSOL -----------------------
       END
-*DECK DSRCPK
-      SUBROUTINE DSRCPK (RSAV, ISAV, JOB)
+C*DECK DSRCPK
+C      SUBROUTINE DSRCPK (RSAV, ISAV, JOB)
 C-----------------------------------------------------------------------
 C This routine saves or restores (depending on JOB) the contents of
 C the Common blocks DLS001, DLPK01, which are used
@@ -7051,35 +7051,35 @@ C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
 C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
 C        A call with JOB = 2 presumes a prior call with JOB = 1.
 C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILSP
-      INTEGER I, LENILP, LENRLP, LENILS, LENRLS
-      DOUBLE PRECISION RSAV,   RLS, RLSP
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLP, LENILP
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLPK01/ RLSP(4), ILSP(13)
-      DATA LENRLS/218/, LENILS/37/, LENRLP/4/, LENILP/13/
+C      INTEGER ISAV, JOB
+C      INTEGER ILS, ILSP
+C      INTEGER I, LENILP, LENRLP, LENILS, LENRLS
+C      DOUBLE PRECISION RSAV,   RLS, RLSP
+C      DIMENSION RSAV(*), ISAV(*)
+C      SAVE LENRLS, LENILS, LENRLP, LENILP
+C      COMMON /DLS001/ RLS(218), ILS(37)
+C      COMMON /DLPK01/ RLSP(4), ILSP(13)
+C      DATA LENRLS/218/, LENILS/37/, LENRLP/4/, LENILP/13/
 C
-      IF (JOB .EQ. 2) GO TO 100
-      CALL DCOPY (LENRLS, RLS, 1, RSAV, 1)
-      CALL DCOPY (LENRLP, RLSP, 1, RSAV(LENRLS+1), 1)
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      DO 40 I = 1,LENILP
- 40     ISAV(LENILS+I) = ILSP(I)
-      RETURN
+C      IF (JOB .EQ. 2) GO TO 100
+C      CALL DCOPY (LENRLS, RLS, 1, RSAV, 1)
+C      CALL DCOPY (LENRLP, RLSP, 1, RSAV(LENRLS+1), 1)
+C      DO 20 I = 1,LENILS
+C 20     ISAV(I) = ILS(I)
+C      DO 40 I = 1,LENILP
+C 40     ISAV(LENILS+I) = ILSP(I)
+C      RETURN
 C
- 100  CONTINUE
-      CALL DCOPY (LENRLS, RSAV, 1, RLS, 1)
-      CALL DCOPY (LENRLP, RSAV(LENRLS+1), 1, RLSP, 1)
-      DO 120 I = 1,LENILS
- 120     ILS(I) = ISAV(I)
-      DO 140 I = 1,LENILP
- 140     ILSP(I) = ISAV(LENILS+I)
-      RETURN
+C 100  CONTINUE
+C      CALL DCOPY (LENRLS, RSAV, 1, RLS, 1)
+C      CALL DCOPY (LENRLP, RSAV(LENRLS+1), 1, RLSP, 1)
+C      DO 120 I = 1,LENILS
+C 120     ILS(I) = ISAV(I)
+C      DO 140 I = 1,LENILP
+C 140     ILSP(I) = ISAV(LENILS+I)
+C      RETURN
 C----------------------- End of Subroutine DSRCPK ----------------------
-      END
+C      END
 *DECK DHEFA
       SUBROUTINE DHEFA (A, LDA, N, IPVT, INFO, JOB)
       INTEGER LDA, N, IPVT(*), INFO, JOB
@@ -8308,8 +8308,8 @@ C
       RETURN
 C----------------------- End of Subroutine DSETPK ----------------------
       END
-*DECK DSRCKR
-      SUBROUTINE DSRCKR (RSAV, ISAV, JOB)
+C*DECK DSRCKR
+C      SUBROUTINE DSRCKR (RSAV, ISAV, JOB)
 C-----------------------------------------------------------------------
 C This routine saves or restores (depending on JOB) the contents of
 C the Common blocks DLS001, DLS002, DLSR01, DLPK01, which
@@ -8322,58 +8322,58 @@ C        JOB  = 1 if Common is to be saved (written to RSAV/ISAV)
 C        JOB  = 2 if Common is to be restored (read from RSAV/ISAV)
 C        A call with JOB = 2 presumes a prior call with JOB = 1.
 C-----------------------------------------------------------------------
-      INTEGER ISAV, JOB
-      INTEGER ILS, ILS2, ILSR, ILSP
-      INTEGER I, IOFF, LENILP, LENRLP, LENILS, LENRLS, LENILR, LENRLR
-      DOUBLE PRECISION RSAV,   RLS, RLS2, RLSR, RLSP
-      DIMENSION RSAV(*), ISAV(*)
-      SAVE LENRLS, LENILS, LENRLP, LENILP, LENRLR, LENILR
-      COMMON /DLS001/ RLS(218), ILS(37)
-      COMMON /DLS002/ RLS2, ILS2(4)
-      COMMON /DLSR01/ RLSR(5), ILSR(9)
-      COMMON /DLPK01/ RLSP(4), ILSP(13)
-      DATA LENRLS/218/, LENILS/37/, LENRLP/4/, LENILP/13/
-      DATA LENRLR/5/, LENILR/9/
+C      INTEGER ISAV, JOB
+C      INTEGER ILS, ILS2, ILSR, ILSP
+C      INTEGER I, IOFF, LENILP, LENRLP, LENILS, LENRLS, LENILR, LENRLR
+C      DOUBLE PRECISION RSAV,   RLS, RLS2, RLSR, RLSP
+C      DIMENSION RSAV(*), ISAV(*)
+C      SAVE LENRLS, LENILS, LENRLP, LENILP, LENRLR, LENILR
+C      COMMON /DLS001/ RLS(218), ILS(37)
+C      COMMON /DLS002/ RLS2, ILS2(4)
+C      COMMON /DLSR01/ RLSR(5), ILSR(9)
+C      COMMON /DLPK01/ RLSP(4), ILSP(13)
+C      DATA LENRLS/218/, LENILS/37/, LENRLP/4/, LENILP/13/
+C      DATA LENRLR/5/, LENILR/9/
 C
-      IF (JOB .EQ. 2) GO TO 100
-      CALL DCOPY (LENRLS, RLS, 1, RSAV, 1)
-      RSAV(LENRLS+1) = RLS2
-      CALL DCOPY (LENRLR, RLSR, 1, RSAV(LENRLS+2), 1)
-      CALL DCOPY (LENRLP, RLSP, 1, RSAV(LENRLS+LENRLR+2), 1)
-      DO 20 I = 1,LENILS
- 20     ISAV(I) = ILS(I)
-      ISAV(LENILS+1) = ILS2(1)
-      ISAV(LENILS+2) = ILS2(2)
-      ISAV(LENILS+3) = ILS2(3)
-      ISAV(LENILS+4) = ILS2(4)
-      IOFF = LENILS + 2
-      DO 30 I = 1,LENILR
- 30     ISAV(IOFF+I) = ILSR(I)
-      IOFF = IOFF + LENILR
-      DO 40 I = 1,LENILP
- 40     ISAV(IOFF+I) = ILSP(I)
-      RETURN
+C      IF (JOB .EQ. 2) GO TO 100
+C      CALL DCOPY (LENRLS, RLS, 1, RSAV, 1)
+C      RSAV(LENRLS+1) = RLS2
+C      CALL DCOPY (LENRLR, RLSR, 1, RSAV(LENRLS+2), 1)
+C      CALL DCOPY (LENRLP, RLSP, 1, RSAV(LENRLS+LENRLR+2), 1)
+C      DO 20 I = 1,LENILS
+C 20     ISAV(I) = ILS(I)
+C      ISAV(LENILS+1) = ILS2(1)
+C      ISAV(LENILS+2) = ILS2(2)
+C      ISAV(LENILS+3) = ILS2(3)
+C      ISAV(LENILS+4) = ILS2(4)
+C      IOFF = LENILS + 2
+C      DO 30 I = 1,LENILR
+C 30     ISAV(IOFF+I) = ILSR(I)
+C      IOFF = IOFF + LENILR
+C      DO 40 I = 1,LENILP
+C 40     ISAV(IOFF+I) = ILSP(I)
+C      RETURN
 C
- 100  CONTINUE
-      CALL DCOPY (LENRLS, RSAV, 1, RLS, 1)
-      RLS2 = RSAV(LENRLS+1)
-      CALL DCOPY (LENRLR, RSAV(LENRLS+2), 1, RLSR, 1)
-      CALL DCOPY (LENRLP, RSAV(LENRLS+LENRLR+2), 1, RLSP, 1)
-      DO 120 I = 1,LENILS
- 120    ILS(I) = ISAV(I)
-      ILS2(1) = ISAV(LENILS+1)
-      ILS2(2) = ISAV(LENILS+2)
-      ILS2(3) = ISAV(LENILS+3)
-      ILS2(4) = ISAV(LENILS+4)
-      IOFF = LENILS + 2
-      DO 130 I = 1,LENILR
- 130    ILSR(I) = ISAV(IOFF+I)
-      IOFF = IOFF + LENILR
-      DO 140 I = 1,LENILP
- 140    ILSP(I) = ISAV(IOFF+I)
-      RETURN
+C 100  CONTINUE
+C      CALL DCOPY (LENRLS, RSAV, 1, RLS, 1)
+C      RLS2 = RSAV(LENRLS+1)
+C      CALL DCOPY (LENRLR, RSAV(LENRLS+2), 1, RLSR, 1)
+C      CALL DCOPY (LENRLP, RSAV(LENRLS+LENRLR+2), 1, RLSP, 1)
+C      DO 120 I = 1,LENILS
+C 120    ILS(I) = ISAV(I)
+C      ILS2(1) = ISAV(LENILS+1)
+C      ILS2(2) = ISAV(LENILS+2)
+C      ILS2(3) = ISAV(LENILS+3)
+C      ILS2(4) = ISAV(LENILS+4)
+C      IOFF = LENILS + 2
+C      DO 130 I = 1,LENILR
+C 130    ILSR(I) = ISAV(IOFF+I)
+C      IOFF = IOFF + LENILR
+C      DO 140 I = 1,LENILP
+C 140    ILSP(I) = ISAV(IOFF+I)
+C      RETURN
 C----------------------- End of Subroutine DSRCKR ----------------------
-      END
+C      END
 *DECK DAINVG
       SUBROUTINE DAINVG (RES, ADDA, NEQ, T, Y, YDOT, MITER,
      1                   ML, MU, PW, IPVT, IER )
