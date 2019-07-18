@@ -84,3 +84,14 @@ test_that("Error lagtime+duration >= ii for infusion", {
   expect_error(mrgsim(mod, ev = e))
 })
 
+# Issue 484
+test_that("ss dose with lag time, different arrangements", {
+  data1 <- 
+    ev(amt = 100,time=240,ss=1,ii=12) %>% 
+    expand_observations(c(0,seq(240,264,4)))
+  data2 <- dplyr::arrange(data1, time, 1-evid)
+  out1 <- mrgsim_d(mod,data1) %>% slice(-c(1,2))
+  out2 <- mrgsim_d(mod,data2) %>% slice(-c(1,2))
+  expect_identical(out1,out2)
+})
+
