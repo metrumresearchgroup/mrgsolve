@@ -40,3 +40,9 @@ test_that("simulation with a dosing data set", {
   expect_identical(out1,out2)
 })
 
+test_that("qsim", {
+  out1 <- mrgsim_df(mod,temp)
+  out2 <- qsim(mod,temp,output="df")
+  expect_identical(out1,out2)
+})
+

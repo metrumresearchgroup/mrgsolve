@@ -1,9 +1,15 @@
+# mrgsolve 0.9.2.9000
 
-# mrgsolve 0.9.1.9000
+- Remove `qsim` and all associated functions
+- Export new function / workflow as `qsim` as a simpler, quicker simulation
+routine #490
+
+# mrgsolve 0.9.2
 - Fix bug where system advanced to next time after advancing to steady state
   on a dosing record with ss=1 with no observation record at the same time
   but preceeding the dosing record #484
 - Add AMT and CMT macros for self.amt and self.cmt, respectively #354
+- Re-organize `DLSODA` code to avoid CRAN LTO warning
 
 # mrgsolve 0.9.1
 
