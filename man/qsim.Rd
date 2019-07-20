@@ -46,13 +46,14 @@ implementations.}
 \item{skip_init_calc}{don't use \code{$MAIN} to 
 calculate initial conditions}
 
-\item{output}{if \code{NULL} (the default) a mrgsims object is returned; 
-otherwise, pass \code{df} to return a data.frame or \code{matrix} to 
-return a matrix}
+\item{output}{output data type; the default is \code{mrgsims}, which returns the
+default output object; other options include \code{df} (for data.frame) or
+\code{matrix}}
 }
 \description{
-This is just a lighter version of \link{mrgsim}.  You
-can't \code{carry_out} or \code{Request} specific columns.
+This is just a lighter version of \link{mrgsim}.  You can't \code{carry_out}, \code{Request}
+specific columns, or pass itaems in for update.  Some other limitations, but
+only convenience-related.  See \code{Arguments} for available options.
 }
 \examples{
 

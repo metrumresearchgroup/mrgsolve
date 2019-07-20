@@ -647,13 +647,17 @@ do_mrgsim <- function(x,
 
 #' Basic, simple simulation from model object
 #' 
-#' This is just a lighter version of [mrgsim].  You 
-#' can't `carry_out` or `Request` specific columns. 
+#' This is just a lighter version of [mrgsim].  You can't `carry_out`, `Request` 
+#' specific columns, or pass itaems in for update.  Some other limitations, but 
+#' only convenience-related.  See `Arguments` for available options.
 #' 
 #' 
 #' @inheritParams mrgsim
 #' 
 #' @param data can be either event object or data set
+#' @param output output data type; the default is `mrgsims`, which returns the 
+#' default output object; other options include `df` (for data.frame) or 
+#' `matrix`
 #' 
 #' @examples
 #' 

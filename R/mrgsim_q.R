@@ -35,7 +35,7 @@
 ##' times will only be added to the output if there are no observation
 ##' records in \code{data}
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param output output data type; if \code{NULL}, then an \code{mrgsims}
+##' @param output output data type; if \code{mrgsims}, then the default output
 ##' object is returned; if \code{"df"} then a data frame is returned
 ##' @param simcall the default value \code{1} will invoke use of a streamlined
 ##' version of \code{DEVTRAN} to be use for the simulation; \code{0} revets

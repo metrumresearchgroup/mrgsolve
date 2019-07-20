@@ -18,7 +18,7 @@ mrgsim_q(x, data, recsort = 1, stime = numeric(0),
 times will only be added to the output if there are no observation
 records in \code{data}}
 
-\item{output}{output data type; if \code{NULL}, then an \code{mrgsims}
+\item{output}{output data type; if \code{mrgsims}, then the default output
 object is returned; if \code{"df"} then a data frame is returned}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
