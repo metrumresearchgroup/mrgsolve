@@ -551,7 +551,7 @@ do_mrgsim <- function(x,
   }
   
   # already took intersect
-  parin$request <- as.integer(match(request, cmt(x))-1);
+  parin$request <- match(request, cmt(x))-1L;
   
   # What to carry
   parin$carry_data <- carry.data 
@@ -645,87 +645,93 @@ do_mrgsim <- function(x,
       mod=x)
 }
 
-#nocov start
-do_mrgsimple <- function(x,
-                         data,
-                         idata = no_idata_set(),
-                         obsonly = FALSE,
-                         obsaug = FALSE,
-                         tgrid = NULL,
-                         recsort = 1,
-                         deslist = list(),
-                         descol = character(0),
-                         tad = FALSE,
-                         skip_init_calc = FALSE,
-                         output = NULL,
-                         ...) {
-  
-  verbose <- x@verbose
+#' Basic, simple simulation from model object
+#' 
+#' This is just a lighter version of [mrgsim].  You 
+#' can't `carry_out` or `Request` specific columns. 
+#' 
+#' 
+#' @inheritParams mrgsim
+#' 
+#' @param data can be either event object or data set
+#' 
+#' @examples
+#' 
+#' mod <- mrgsolve:::house()
+#' 
+#' dose <- ev(amt = 100)
+#' 
+#' out <- qsim(mod,dose)
+#' 
+#' @md
+#' 
+#' @export
+qsim <- function(x,
+                 data,
+                 idata = no_idata_set(),
+                 obsonly = FALSE,
+                 tgrid = NULL,
+                 recsort = 1,
+                 tad = FALSE,
+                 skip_init_calc = FALSE,
+                 output = "mrgsims") {
   
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
+  if(is.ev(data)) {
+    data <- as.data.frame.ev(data, add_ID = 1)
+  }
   
   ## data
   if(!is.valid_data_set(data)) {
-    data <- valid_data_set(data,x,verbose)
+    data <- valid_data_set(data,x,verbose=FALSE)
   } 
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,x,verbose=verbose)
+    idata <- valid_idata_set(idata,x,verbose=FALSE)
   }
   
   tcol <- timename(data)
-  tcol <- if_else(is.na(tcol), "time", tcol)
-  
-  param <- as.numeric(param(x))
-  init <-  as.numeric(Init(x))
-  
-  # capture items; will work on this
-  capt <- x@capture
+  if(is.na(tcol)) tcol <- "time"
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
+  capt_pos <- c(length(x@capture),seq_along(x@capture)-1)
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
   parin$obsonly <- obsonly
-  parin$obsaug <- obsaug
+  parin$obsaug <- FALSE
   parin$filbak <- TRUE
   parin$tad <- tad
   parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  parin$request <- as.integer(seq_along(cmt(x))-1)
+  parin$request <- seq_along(cmt(x))-1L
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
   parin$carry_tran <- character(0)
   
   # Derive stime vector either from tgrid or from the object
   if(!is.null(tgrid)) {
-    stime <- stime(tgrid)
+    timev <- stime(tgrid)
   } else {
-    stime <- stime(x)  
+    timev <- stime(x)  
   }
   
   # Look for a deslist; if so, use that instead
-  if(length(deslist) > 0) {
-    parin[["tgridmatrix"]] <- tgrid_matrix(deslist)
-    parin[["whichtg"]] <- tgrid_id(descol, idata)
-  } else {
-    parin[["tgridmatrix"]] <- tgrid_matrix(list(stime))
-    parin[["whichtg"]] <- integer(0)
-  }
+  parin[["tgridmatrix"]] <- matrix(timev,ncol=1)
+  parin[["whichtg"]] <- integer(0)
   
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    param,
+    as.numeric(Param(x)),
     Pars(x),
-    init,
+    as.numeric(Init(x)),
     names(Init(x)),
     capt_pos,
     pointers(x),
@@ -737,24 +743,21 @@ do_mrgsimple <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  cnames <- c("ID", tcol, cmt(x), capt)
+  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol, cmt(x), x@capture))
   
-  dimnames(out[["data"]]) <- list(NULL, cnames)
-  
-  if(!is.null(output)) {
-    if(output=="df") {
-      return(as.data.frame(out[["data"]]))  
-    }
+  if(output=="df") {
+    return(as.data.frame.matrix(out[["data"]]))
   }
   
   new(
     "mrgsims",
     request=cmt(x),
-    data=as.data.frame(out[["data"]]),
-    outnames=capt,
+    data=as.data.frame.matrix(out[["data"]]),
+    outnames=x@capture,
     mod=x
   )
 }
+
 #nocov end
 
 # param_as_parent <- function(x) {

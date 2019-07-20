@@ -92,17 +92,22 @@ mrgsim_q <- function(x,
                      data,
                      recsort = 1,
                      stime = numeric(0),
-                     output = NULL,
+                     output = "mrgsims",
                      skip_init_calc = FALSE, 
                      simcall = 0) {
   
   ## data
+  
+  if(is.ev(data)) {
+    data <- as.data.frame.ev(data, add_ID = 1)  
+  }
+  
   if(!is.valid_data_set(data)) {
     data <- valid_data_set(data,x,x@verbose)
   } 
   
   tcol <- timename(data)
-  tcol <- if_else(is.na(tcol), "time", tcol)
+  if(is.na(tcol)) tcol <- "time"
   
   param <- as.numeric(Param(x))
   init <-  as.numeric(Init(x))
@@ -118,7 +123,7 @@ mrgsim_q <- function(x,
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
+  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1L))
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
@@ -127,7 +132,7 @@ mrgsim_q <- function(x,
   parin$do_init_calc <- !skip_init_calc
   
   # already took intersect
-  parin$request <- as.integer(seq_along(compartments)-1);
+  parin$request <- seq_along(compartments)-1L;
   
   if(simcall==1) {
     out <- .Call(
@@ -146,7 +151,12 @@ mrgsim_q <- function(x,
     )
     
   } else {
-    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
+    if(length(stime) == 0) {
+      parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
+    } else {
+      parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
+    }
+    
     parin[["whichtg"]] <- integer(0)
     parin[["carry_data"]] <- character(0)
     parin[["carry_idata"]] <- character(0)
@@ -173,18 +183,16 @@ mrgsim_q <- function(x,
     )[["data"]]
   }
   
-  cnames <- c("ID", tcol, compartments, capt)
+  dimnames(out) <- list(NULL, c("ID", tcol, compartments, capt))
   
-  dimnames(out) <- list(NULL, cnames)
   
-  if(!is.null(output)) {
-    if(output=="df") {
-      return(as.data.frame(out))  
-    }
-    if(output=="matrix") {
-      return(out)  
-    }
+  if(output=="df") {
+    return(as.data.frame(out))  
   }
+  if(output=="matrix") {
+    return(out)  
+  }
+  
   
   new(
     "mrgsims",
