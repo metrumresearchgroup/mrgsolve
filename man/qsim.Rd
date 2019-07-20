@@ -64,3 +64,6 @@ dose <- ev(amt = 100)
 out <- qsim(mod,dose)
 
 }
+\seealso{
+\link{mrgsim_q}, \link{mrgsim}, \link{mrgsim_variants}
+}

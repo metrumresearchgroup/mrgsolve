@@ -263,7 +263,7 @@ mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 ##'   turnaround (see \code{\link{mrgsim_q}})
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_q}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_q}}, \code{\link{qsim}}
 ##' @name mrgsim_variants
 ##' @rdname mrgsim_variants
 ##' @export
@@ -666,6 +666,8 @@ do_mrgsim <- function(x,
 #' dose <- ev(amt = 100)
 #' 
 #' out <- qsim(mod,dose)
+#' 
+#' @seealso [mrgsim_q], [mrgsim], [mrgsim_variants]
 #' 
 #' @md
 #' 

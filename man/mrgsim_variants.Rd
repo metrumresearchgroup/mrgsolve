@@ -64,5 +64,5 @@ inputs from a pipeline.
 }
 }
 \seealso{
-\code{\link{mrgsim}}, \code{\link{mrgsim_q}}
+\code{\link{mrgsim}}, \code{\link{mrgsim_q}}, \code{\link{qsim}}
 }

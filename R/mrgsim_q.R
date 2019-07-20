@@ -86,7 +86,7 @@
 ##' 
 ##' out
 ##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}, \code{\link{qsim}}
 ##' @export
 mrgsim_q <- function(x,
                      data,

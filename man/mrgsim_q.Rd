@@ -82,5 +82,5 @@ out
 
 }
 \seealso{
-\code{\link{mrgsim}}, \code{\link{mrgsim_variants}}
+\code{\link{mrgsim}}, \code{\link{mrgsim_variants}}, \code{\link{qsim}}
 }
