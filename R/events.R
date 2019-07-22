@@ -273,13 +273,14 @@ collect_ev <- function(...) {
   mx <- cumsum(c(0,mx[-length(mx)]))
   y <- mapply(y,mx, FUN=function(yi,mxi) return(yi+mxi), SIMPLIFY=FALSE)
   x <- bind_rows(x)
-  x <- mutate(x,ID = unlist(y,use.names=FALSE))
+  x[["ID"]] <- unlist(y,use.names=FALSE)
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
   x <- mutate_at(x,which(what),list(~na2zero(.)))
   
   na.check <- which(!what)
+  
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
       warning("missing values in some columns.",call.=FALSE)
@@ -292,7 +293,7 @@ collect_ev <- function(...) {
   }
   
   if(!any(c("cmt", "CMT") %in% names(x))) {
-    stop("No cmt or CMT column", call. = FALSE) 
+    stop("No cmt or CMT column in the data set", call. = FALSE) 
   }
   
   if(!has_ID(x)) {
