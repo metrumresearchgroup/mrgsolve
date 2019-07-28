@@ -135,53 +135,39 @@ mrgsim_q <- function(x,
   parin$request <- seq_along(compartments)-1L;
   
   if(simcall==1) {
-    out <- .Call(
-      `_mrgsolve_MRGSIMQ`,
-      parin,
-      param,
-      Pars(x),
-      init,
-      compartments,
-      capt_pos,
-      pointers(x),
-      data,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-    
-  } else {
-    if(length(stime) == 0) {
-      parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
-    } else {
-      parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
-    }
-    
-    parin[["whichtg"]] <- integer(0)
-    parin[["carry_data"]] <- character(0)
-    parin[["carry_idata"]] <- character(0)
-    parin[["carry_tran"]] <- character(0)
-    parin[["obsonly"]] <- FALSE
-    parin[["filbak"]] <- TRUE
-    parin[["tad"]] <- FALSE
-    parin[["nocb"]] <- TRUE
-    parin[["obsaug"]] <- FALSE
-    
-    out <- .Call(
-      `_mrgsolve_DEVTRAN`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      capt_pos,
-      pointers(x),
-      data,null_idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )[["data"]]
+    stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
   }
+  
+  if(length(stime) == 0) {
+    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
+  } else {
+    parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
+  }
+  
+  parin[["whichtg"]] <- integer(0)
+  parin[["carry_data"]] <- character(0)
+  parin[["carry_idata"]] <- character(0)
+  parin[["carry_tran"]] <- character(0)
+  parin[["obsonly"]] <- FALSE
+  parin[["filbak"]] <- TRUE
+  parin[["tad"]] <- FALSE
+  parin[["nocb"]] <- TRUE
+  parin[["obsaug"]] <- FALSE
+  
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    names(param(x)),
+    init,
+    names(Init(x)),
+    capt_pos,
+    pointers(x),
+    data,null_idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir
+  )[["data"]]
   
   dimnames(out) <- list(NULL, c("ID", tcol, compartments, capt))
   
