@@ -37,9 +37,7 @@
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
 ##' @param output output data type; if \code{mrgsims}, then the default output
 ##' object is returned; if \code{"df"} then a data frame is returned
-##' @param simcall the default value \code{1} will invoke use of a streamlined
-##' version of \code{DEVTRAN} to be use for the simulation; \code{0} revets
-##' back to the same \code{DEVTRAN} code that is used by \code{\link{mrgsim}}
+##' @param simcall not used; only the default value of 0 is allowed
 ##' 
 ##' @details
 ##' 
@@ -134,8 +132,11 @@ mrgsim_q <- function(x,
   # already took intersect
   parin$request <- seq_along(compartments)-1L;
   
-  if(simcall==1) {
-    stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
+  if(simcall!=0) {
+    if(simcal==1) {
+      stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
+    }
+    stop("simcall values other than 0 are prohibited.", call.=FALSE)
   }
   
   if(length(stime) == 0) {

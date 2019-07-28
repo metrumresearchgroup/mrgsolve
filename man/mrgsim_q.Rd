@@ -23,9 +23,7 @@ object is returned; if \code{"df"} then a data frame is returned}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
-\item{simcall}{the default value \code{1} will invoke use of a streamlined
-version of \code{DEVTRAN} to be use for the simulation; \code{0} revets
-back to the same \code{DEVTRAN} code that is used by \code{\link{mrgsim}}}
+\item{simcall}{not used; only the default value of 0 is allowed}
 }
 \description{
 Use the function when you would usually use \code{\link{mrgsim_d}}, 
