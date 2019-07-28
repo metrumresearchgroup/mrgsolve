@@ -51,9 +51,15 @@ default output object; other options include \code{df} (for data.frame) or
 \code{matrix}}
 }
 \description{
-This is just a lighter version of \link{mrgsim}.  You can't \code{carry_out}, \code{Request}
-specific columns, or pass itaems in for update.  Some other limitations, but
-only convenience-related.  See \code{Arguments} for available options.
+This is just a lighter version of \link{mrgsim}, with fewer options.  See \code{Details}.
+}
+\details{
+There is no pipeline interface for this function; all configuration options
+(see \code{Arguments}) must be passed as formal arguments to the function.
+You can't \code{carry_out}, \code{Request} specific columns, or pass items in for update.
+Some other limitations, but only convenience-related.  See \code{Arguments} for
+available options.  Specifically, there is no \code{...} argument for this function.
+Use the \link[mrgsolve:update]{mrgsolve::update} method to update the model object.
 }
 \examples{
 

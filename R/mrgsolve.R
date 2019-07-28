@@ -647,10 +647,7 @@ do_mrgsim <- function(x,
 
 #' Basic, simple simulation from model object
 #' 
-#' This is just a lighter version of [mrgsim].  You can't `carry_out`, `Request` 
-#' specific columns, or pass itaems in for update.  Some other limitations, but 
-#' only convenience-related.  See `Arguments` for available options.
-#' 
+#' This is just a lighter version of [mrgsim], with fewer options.  See `Details`.  
 #' 
 #' @inheritParams mrgsim
 #' 
@@ -658,6 +655,14 @@ do_mrgsim <- function(x,
 #' @param output output data type; the default is `mrgsims`, which returns the 
 #' default output object; other options include `df` (for data.frame) or 
 #' `matrix`
+#' 
+#' @details
+#' There is no pipeline interface for this function; all configuration options 
+#' (see `Arguments`) must be passed as formal arguments to the function.  
+#' You can't `carry_out`, `Request` specific columns, or pass items in for update.  
+#' Some other limitations, but only convenience-related.  See `Arguments` for 
+#' available options.  Specifically, there is no `...` argument for this function.
+#' Use the [mrgsolve::update] method to update the model object. 
 #' 
 #' @examples
 #' 
