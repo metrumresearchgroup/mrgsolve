@@ -280,9 +280,9 @@ void datarecord::steady_bolus(odeproblem* prob) {
   // and advance to tto - lagtime.
   double lagt = prob->alag(this->cmtn());
   if(lagt > 0) {
-    if(lagt >= Ii) {
-      throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
-    }
+    // if(lagt >= Ii) {
+    //   throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
+    // }
     if(Ss==2) {
       throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
     }
