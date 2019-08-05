@@ -209,13 +209,13 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, double Fn) {
+void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn) {
   if(Ss > 0) {
     if(Fn==0) {
       throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
     }
     if(Rate == 0) this->steady_bolus(prob);
-    if(Rate >  0) this->steady_infusion(prob);
+    if(Rate >  0) this->steady_infusion(prob,thisi);
   }
 }
 
@@ -302,7 +302,7 @@ void datarecord::steady_bolus(odeproblem* prob) {
 } 
 
 
-void datarecord::steady_infusion(odeproblem *prob) {
+void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   dvec state_incoming;
   
@@ -422,46 +422,23 @@ void datarecord::steady_infusion(odeproblem *prob) {
     }
   }
   
+  // Add on infusion off events
+  int ninf_ss = floor(duration/this->ii());
+  double first_off = duration - double(ninf_ss)*Ii + Time;
+  if(first_off == Time) {
+    first_off = duration - Ii + Time;
+    --ninf_ss;
+  }
+  for(int k=0; k < ninf_ss; ++k) {
+    double offtime = first_off + double(k)*double(Ii);
+    rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
+    thisi.push_back(evoff);
+  } 
   prob->lsoda_init();
 }
 
-/** 
- * Schedule out doses.  If the dose was an infusion, schedule the 
- * off infusion event.  If the dose included additional doses, 
- * create those events and add them to the stack.  No doses
- * will be scheduled beyond the maximum time for that individual.
- * 
- * @param thisi the record stack for this individual
- * @param maxtime the last time already in the record for the individual
- * @param put_ev_first logical; if true, the position of the event is -600; 
- * otherwise, it is beyond the last record of the stack.  But records
- * are always sorted first by time, then by position.
- * 
- */
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, double Fn) {
-  
-  // Steady state intermittent infusion
-  if(this->ss_int_infusion() & (Fn > 0)) {
-    
-    double duration = this->dur(Fn);
-    
-    int ninf_ss = floor(duration/this->ii());
-    
-    double first_off = duration - double(ninf_ss)*Ii + Time;
-    
-    if(first_off == Time) {
-      first_off = duration - Ii + Time;
-      --ninf_ss;
-    }
-    
-    for(int k=0; k < ninf_ss; ++k) {
-      double offtime = first_off + double(k)*double(Ii);
-      rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
-      thisi.push_back(evoff);
-    } 
-    
-  } // end if ss
   
   // Additional doses
   if(Addl > 0) {

@@ -497,7 +497,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->alag(this_cmtn) > mindt) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(prob, Fn);
+              this_rec->steady(prob, a[i], Fn);
               tfrom = tto;
             }
             rec_ptr newev = NEWREC(*this_rec);
@@ -551,7 +551,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob->advance(tfrom,tto);
       
       if(this_rec->evid() != 2) {
-        this_rec->steady(prob,Fn);
+        this_rec->steady(prob,a[i],Fn);
         this_rec->implement(prob);
       }
       

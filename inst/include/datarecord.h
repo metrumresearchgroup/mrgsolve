@@ -88,9 +88,9 @@ public:
   
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, double Fn);
   void implement(odeproblem* prob);
-  void steady_infusion(odeproblem* prob);
+  void steady_infusion(odeproblem* prob,reclist& thisi);
   void steady_bolus(odeproblem* prob);
-  void steady(odeproblem* prob, double Fn);
+  void steady(odeproblem* prob, reclist& thisi,double Fn);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}
