@@ -9,10 +9,6 @@ EXPAND_OBSERVATIONS <- function(data, times, to_copy) {
     .Call(`_mrgsolve_EXPAND_OBSERVATIONS`, data, times, to_copy)
 }
 
-MRGSIMQ <- function(parin, inpar, parnames, init, cmtnames, capture, funs, data, OMEGA, SIGMA, envir) {
-    .Call(`_mrgsolve_MRGSIMQ`, parin, inpar, parnames, init, cmtnames, capture, funs, data, OMEGA, SIGMA, envir)
-}
-
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }
