@@ -255,6 +255,7 @@ setMethod("as.list", "matlist", function(x, ...) x@data)
 ##' @export
 ##' @rdname matlist
 setMethod("as.matrix", "matlist", function(x,...) {
+  if(length(x@data)==0) return(matrix(nrow=0,ncol=0))
   SUPERMATRIX(x@data,...)
 })
 

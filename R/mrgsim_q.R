@@ -35,11 +35,9 @@
 ##' times will only be added to the output if there are no observation
 ##' records in \code{data}
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param output output data type; if \code{NULL}, then an \code{mrgsims}
+##' @param output output data type; if \code{mrgsims}, then the default output
 ##' object is returned; if \code{"df"} then a data frame is returned
-##' @param simcall the default value \code{1} will invoke use of a streamlined
-##' version of \code{DEVTRAN} to be use for the simulation; \code{0} revets
-##' back to the same \code{DEVTRAN} code that is used by \code{\link{mrgsim}}
+##' @param simcall not used; only the default value of 0 is allowed
 ##' 
 ##' @details
 ##' 
@@ -86,23 +84,28 @@
 ##' 
 ##' out
 ##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}, \code{\link{qsim}}
 ##' @export
 mrgsim_q <- function(x,
                      data,
                      recsort = 1,
                      stime = numeric(0),
-                     output = NULL,
+                     output = "mrgsims",
                      skip_init_calc = FALSE, 
                      simcall = 0) {
   
   ## data
+  
+  if(is.ev(data)) {
+    data <- as.data.frame.ev(data, add_ID = 1)  
+  }
+  
   if(!is.valid_data_set(data)) {
     data <- valid_data_set(data,x,x@verbose)
   } 
   
   tcol <- timename(data)
-  tcol <- if_else(is.na(tcol), "time", tcol)
+  if(is.na(tcol)) tcol <- "time"
   
   param <- as.numeric(Param(x))
   init <-  as.numeric(Init(x))
@@ -118,7 +121,7 @@ mrgsim_q <- function(x,
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
+  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1L))
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
@@ -127,64 +130,56 @@ mrgsim_q <- function(x,
   parin$do_init_calc <- !skip_init_calc
   
   # already took intersect
-  parin$request <- as.integer(seq_along(compartments)-1);
+  parin$request <- seq_along(compartments)-1L;
   
-  if(simcall==1) {
-    out <- .Call(
-      `_mrgsolve_MRGSIMQ`,
-      parin,
-      param,
-      Pars(x),
-      init,
-      compartments,
-      capt_pos,
-      pointers(x),
-      data,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-    
-  } else {
+  if(simcall!=0) {
+    if(simcall==1) {
+      stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
+    }
+    stop("simcall values other than 0 are prohibited.", call.=FALSE)
+  }
+  
+  if(length(stime) == 0) {
     parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
-    parin[["whichtg"]] <- integer(0)
-    parin[["carry_data"]] <- character(0)
-    parin[["carry_idata"]] <- character(0)
-    parin[["carry_tran"]] <- character(0)
-    parin[["obsonly"]] <- FALSE
-    parin[["filbak"]] <- TRUE
-    parin[["tad"]] <- FALSE
-    parin[["nocb"]] <- TRUE
-    parin[["obsaug"]] <- FALSE
-    
-    out <- .Call(
-      `_mrgsolve_DEVTRAN`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      capt_pos,
-      pointers(x),
-      data,null_idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )[["data"]]
+  } else {
+    parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
   }
   
-  cnames <- c("ID", tcol, compartments, capt)
+  parin[["whichtg"]] <- integer(0)
+  parin[["carry_data"]] <- character(0)
+  parin[["carry_idata"]] <- character(0)
+  parin[["carry_tran"]] <- character(0)
+  parin[["obsonly"]] <- FALSE
+  parin[["filbak"]] <- TRUE
+  parin[["tad"]] <- FALSE
+  parin[["nocb"]] <- TRUE
+  parin[["obsaug"]] <- FALSE
   
-  dimnames(out) <- list(NULL, cnames)
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    names(param(x)),
+    init,
+    names(Init(x)),
+    capt_pos,
+    pointers(x),
+    data,null_idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir
+  )[["data"]]
   
-  if(!is.null(output)) {
-    if(output=="df") {
-      return(as.data.frame(out))  
-    }
-    if(output=="matrix") {
-      return(out)  
-    }
+  dimnames(out) <- list(NULL, c("ID", tcol, compartments, capt))
+  
+  
+  if(output=="df") {
+    return(as.data.frame(out))  
   }
+  if(output=="matrix") {
+    return(out)  
+  }
+  
   
   new(
     "mrgsims",

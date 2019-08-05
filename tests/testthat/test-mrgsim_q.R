@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -34,9 +34,13 @@ test_that("simulation with a complete data set", {
   expect_identical(out1,out2)
 })
 
-test_that("simulation with a dosing data set", {
-  out1 <- mrgsim_d(mod,temp)
-  out2 <- mrgsim_q(mod,temp,stime=stime(mod),simcall=1)
+test_that("simcall=1 is deprecated", {
+  expect_error(mrgsim_q(mod,temp,stime=stime(mod),simcall=1))
+})
+
+test_that("qsim", {
+  out1 <- mrgsim_df(mod,temp)
+  out2 <- qsim(mod,temp,output="df")
   expect_identical(out1,out2)
 })
 
