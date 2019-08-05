@@ -133,7 +133,7 @@ mrgsim_q <- function(x,
   parin$request <- seq_along(compartments)-1L;
   
   if(simcall!=0) {
-    if(simcal==1) {
+    if(simcall==1) {
       stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
     }
     stop("simcall values other than 0 are prohibited.", call.=FALSE)
