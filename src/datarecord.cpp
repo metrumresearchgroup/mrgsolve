@@ -150,8 +150,6 @@ void datarecord::implement(odeproblem* prob) {
   
   double Fn = prob->fbio(eq_n);
   
-  if(Ss > 0) this->steady(prob, Fn);
-  
   switch (evid) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
@@ -212,9 +210,13 @@ void datarecord::implement(odeproblem* prob) {
  * Brings system to steady state if appropriate.
  */
 void datarecord::steady(odeproblem* prob, double Fn) {
-  if(Fn==0) throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
-  if(Rate == 0) this->steady_bolus(prob);
-  if(Rate >  0) this->steady_infusion(prob);
+  if(Ss > 0) {
+    if(Fn==0) {
+      throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
+    }
+    if(Rate == 0) this->steady_bolus(prob);
+    if(Rate >  0) this->steady_infusion(prob);
+  }
 }
 
 void datarecord::steady_bolus(odeproblem* prob) {

@@ -504,7 +504,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->time(this_rec->time() + prob->alag(this_cmtn));
-            newev->ss(0);
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
             a[i].insert(it,newev);
@@ -552,6 +551,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob->advance(tfrom,tto);
       
       if(this_rec->evid() != 2) {
+        this_rec->steady(prob,Fn);
         this_rec->implement(prob);
       }
       
