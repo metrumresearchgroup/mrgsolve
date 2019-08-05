@@ -424,6 +424,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   // Add on infusion off events
   int ninf_ss = floor(duration/this->ii());
+  Rcpp::Rcout << "ninf_ss " << ninf_ss << std::endl;
+  Rcpp::Rcout << "length toff " << offs.size() << std::endl;
   double first_off = duration - double(ninf_ss)*Ii + Time;
   if(first_off == Time) {
     first_off = duration - Ii + Time;
@@ -440,35 +442,33 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, double Fn) {
   
-  // Additional doses
-  if(Addl > 0) {
+  if(Addl ==0) return;
+  
+  unsigned int this_evid = Evid;
+  
+  if(this_evid == 4) {
+    this_evid = Rate > 0 ? 5 : 1;
+  }
+  
+  if(this->int_infusion()) {
+    thisi.reserve(thisi.size() + 2*Addl);  
+  } else {
+    thisi.reserve(thisi.size() + Addl); 
+  }
+  
+  double ontime = 0;
+  
+  int nextpos = addl_ev_first ?  (this->pos() - 600) : (thisi.size() + 10);
+  
+  for(unsigned int k=1; k<=Addl; ++k) {
     
-    unsigned int this_evid = Evid;
+    ontime = Time + Ii*double(k);
     
-    if(this_evid == 4) {
-      this_evid = Rate > 0 ? 5 : 1;
-    }
+    if(ontime > maxtime) break;
     
-    if(this->int_infusion()) {
-      thisi.reserve(thisi.size() + 2*Addl);  
-    } else {
-      thisi.reserve(thisi.size() + Addl); 
-    }
+    rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
     
-    double ontime = 0;
+    thisi.push_back(evon);
     
-    int nextpos = addl_ev_first ?  (this->pos() - 600) : (thisi.size() + 10);
-    
-    for(unsigned int k=1; k<=Addl; ++k) {
-      
-      ontime = Time + Ii*double(k);
-      
-      if(ontime > maxtime) break;
-      
-      rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
-      
-      thisi.push_back(evon);
-      
-    }
-  } // end addl
+  }
 }  
