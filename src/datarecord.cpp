@@ -424,8 +424,6 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   // Add on infusion off events
   int ninf_ss = floor(duration/this->ii());
-  Rcpp::Rcout << "ninf_ss " << ninf_ss << std::endl;
-  Rcpp::Rcout << "length toff " << offs.size() << std::endl;
   double first_off = duration - double(ninf_ss)*Ii + Time;
   if(first_off == Time) {
     first_off = duration - Ii + Time;
@@ -436,6 +434,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
     rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
     thisi.push_back(evoff);
   } 
+  std::sort(thisi.begin(),thisi.end(),CompRec());
   prob->lsoda_init();
 }
 
