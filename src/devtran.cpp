@@ -499,6 +499,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             if(this_rec->ss() > 0) {
               this_rec->steady(prob, a[i], Fn);
               tfrom = tto;
+              this_rec->ss(0);
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);

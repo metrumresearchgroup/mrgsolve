@@ -304,7 +304,10 @@ void datarecord::steady_bolus(odeproblem* prob) {
 
 void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
-  dvec state_incoming;
+  Rcpp::Rcout << "steady infusion " << std::endl;
+  
+  std::vector<double> state_incoming;
+  Rcpp::Rcout << "Incoming : " <<prob->y(1)/(20/1000.0) << std::endl;
   
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
@@ -312,6 +315,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
       state_incoming[i] = prob->y(i);
     }
   }
+  double lagt = prob->alag(this->cmtn());
   
   double Fn = prob->fbio(this->cmtn());
   
@@ -328,16 +332,19 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   double this_sum = 0.0;
   double last_sum = 1E-6;
+  int start = 0;
+  int end = 0;
   
   double diff = 1E6;
   double nexti, toff;
   prob->rate_reset();
   
   // We only need one of these; it gets updated and re-used immediately
-  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate);
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
+    ++start;
     evon->implement(prob);
     prob->lsoda_init();
     toff = tfrom + duration;
@@ -355,6 +362,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
       
       toff = offs[0]->time();
       prob->advance(tfrom,toff);
+      ++end;
       offs[0]->implement(prob);
       prob->lsoda_init();
       tfrom = toff;
@@ -372,6 +380,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
     }
     
     this_sum = std::accumulate(res.begin(), res.end(), 0.0);
+    Rcpp::Rcout << "CP : " << prob->y(1)/(20/1000.0) << std::endl;
     
     if(i>10) {
       diff = std::abs(this_sum - last_sum);
@@ -386,26 +395,27 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   // If we need a lagtime, give one more dose
   // and advance to tto - lagtime.
-  double lagt = prob->alag(this->cmtn());
+    Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
   if(lagt > 0) {
-    if(lagt >= Ii) {
-      throw Rcpp::exception(
-          "ALAG(n) greater than ii on ss record.",
-          false
-      );
-    }
-    if((duration + lagt) >= Ii) {
-      throw Rcpp::exception(
-          "Infusion duration + ALAG(n) greater than ii on ss record.",
-          false
-      );
-    }
+    // if(lagt >= Ii) {
+    //   throw Rcpp::exception(
+    //       "ALAG(n) greater than ii on ss record.",
+    //       false
+    //   );
+    // }
+    // if((duration + lagt) >= Ii) {
+    //   throw Rcpp::exception(
+    //       "Infusion duration + ALAG(n) greater than ii on ss record.",
+    //       false
+    //   );
+    // }
     if(Ss==2) {
       throw Rcpp::exception(
           "Ss == 2 with lag time is not currently supported.",
           false
       );
     }
+    if(lagt <= Ii) {
     evon->time(tfrom);
     evon->implement(prob);
     toff  = tfrom + duration;
@@ -414,8 +424,9 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
     evoff->implement(prob);
     prob->lsoda_init();
     prob->advance(toff, (nexti - lagt));
+    }
   }
-  
+  Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
   if(Ss == 2) {
     for(size_t i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
@@ -424,18 +435,34 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   // Add on infusion off events
   int ninf_ss = floor(duration/this->ii());
-  double first_off = duration - double(ninf_ss)*Ii + Time;
+  
+  
+  double first_off = Time + duration - double(ninf_ss)*Ii - lagt;
   if(first_off == Time) {
-    first_off = duration - Ii + Time;
+    first_off = duration - Ii + Time + lagt;
     --ninf_ss;
   }
-  for(int k=0; k < ninf_ss; ++k) {
-    double offtime = first_off + double(k)*double(Ii);
-    rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
-    thisi.push_back(evoff);
-  } 
+  Rcpp::Rcout << "ninfss " << ninf_ss << std::endl;
+  Rcpp::Rcout << "length offs " << offs.size() << std::endl;
+  Rcpp::Rcout << "Started " << start << std::endl;
+  Rcpp::Rcout << "Ended " << end << std::endl;
+  Rcpp::Rcout << "infusions " << prob->rate_count(1) << std::endl;
+    Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
+  // for(int k=0; k < ninf_ss; ++k) {
+  //   double offtime = first_off + double(k)*double(Ii);
+  //   rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
+  //   thisi.push_back(evoff);
+  // } 
+  
+  Rcpp::Rcout << "Time " << Time << std::endl;
+  for(size_t k = 0; k < offs.size(); ++k) {
+    offs.at(k)->time(first_off + double(k)*double(Ii));
+    Rcpp::Rcout << "off at " << k << " " << offs.at(k)->time() << std::endl;
+    thisi.push_back(offs.at(k)); 
+  }
   std::sort(thisi.begin(),thisi.end(),CompRec());
   prob->lsoda_init();
+  Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
