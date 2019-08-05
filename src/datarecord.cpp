@@ -288,7 +288,9 @@ void datarecord::steady_bolus(odeproblem* prob) {
     }
     evon->implement(prob); 
     prob->lsoda_init();
-    prob->advance(tfrom, (tto - lagt));
+    if(lagt <= Ii) {
+      prob->advance(tfrom, (tto - lagt));
+    }
   }
   
   if(Ss == 2) {
