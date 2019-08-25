@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -53,7 +53,6 @@ test_that("Very small lag time doesn't crash", {
   
 })
 
-
 test_that("Lag time on SS record - bolus", {
   e <- ev(amt=100, ii = 12, LAGT = 5, addl = 10, ss = 1)
   out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
@@ -95,4 +94,3 @@ test_that("ss dose with lag time, different arrangements", {
   out2 <- mrgsim_d(mod,data2) %>% slice(-c(1,2))
   expect_identical(out1,out2)
 })
-
