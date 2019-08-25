@@ -446,11 +446,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   //   rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
   //   thisi.push_back(evoff);
   // } 
-  
-  Rcpp::Rcout << "Time " << Time << std::endl;
   for(size_t k = 0; k < offs.size(); ++k) {
     offs.at(k)->time(first_off + double(k)*double(Ii));
-    Rcpp::Rcout << "off at " << k << " " << offs.at(k)->time() << std::endl;
     thisi.push_back(offs.at(k)); 
   }
   std::sort(thisi.begin(),thisi.end(),CompRec());

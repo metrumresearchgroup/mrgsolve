@@ -74,10 +74,11 @@ test_that("Lag time on SS record - infusion", {
   expect_true(all(cent2==cent2[1]))
 })
 
-test_that("Error lagtime >= ii for bolus", {
-  e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
-  expect_error(mrgsim(mod, ev = e))
-})
+# No longer an error
+# test_that("Error lagtime >= ii for bolus", {
+#   e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
+#   expect_error(mrgsim(mod, ev = e))
+# })
 
 test_that("Error lagtime+duration >= ii for infusion", {
   e <- ev(amt=100, ii = 12, LAG = 3, rate = 100/10, ss = 1)
