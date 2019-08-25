@@ -304,10 +304,7 @@ void datarecord::steady_bolus(odeproblem* prob) {
 
 void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
-  Rcpp::Rcout << "steady infusion " << std::endl;
-  
   std::vector<double> state_incoming;
-  Rcpp::Rcout << "Incoming : " <<prob->y(1)/(20/1000.0) << std::endl;
   
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
@@ -380,8 +377,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
     }
     
     this_sum = std::accumulate(res.begin(), res.end(), 0.0);
-    Rcpp::Rcout << "CP : " << prob->y(1)/(20/1000.0) << std::endl;
-    
+
     if(i>10) {
       diff = std::abs(this_sum - last_sum);
       if(diff < CRIT_DIFF_SS) {
@@ -395,20 +391,19 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   // If we need a lagtime, give one more dose
   // and advance to tto - lagtime.
-    Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
   if(lagt > 0) {
-    // if(lagt >= Ii) {
-    //   throw Rcpp::exception(
-    //       "ALAG(n) greater than ii on ss record.",
-    //       false
-    //   );
-    // }
-    // if((duration + lagt) >= Ii) {
-    //   throw Rcpp::exception(
-    //       "Infusion duration + ALAG(n) greater than ii on ss record.",
-    //       false
-    //   );
-    // }
+    if(lagt >= Ii) {
+      throw Rcpp::exception(
+          "ALAG_CMT greater than ii on ss record.",
+          false
+      );
+    }
+    if((duration + lagt) >= Ii) {
+      throw Rcpp::exception(
+          "Infusion duration + ALAG_CMT greater than ii on ss record.",
+          false
+      );
+    }
     if(Ss==2) {
       throw Rcpp::exception(
           "Ss == 2 with lag time is not currently supported.",
@@ -416,17 +411,16 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
       );
     }
     if(lagt <= Ii) {
-    evon->time(tfrom);
-    evon->implement(prob);
-    toff  = tfrom + duration;
-    prob->advance(tfrom,toff);
-    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
-    evoff->implement(prob);
-    prob->lsoda_init();
-    prob->advance(toff, (nexti - lagt));
+      evon->time(tfrom);
+      evon->implement(prob);
+      toff  = tfrom + duration;
+      prob->advance(tfrom,toff);
+      rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+      evoff->implement(prob);
+      prob->lsoda_init();
+      prob->advance(toff, (nexti - lagt));
     }
   }
-  Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
   if(Ss == 2) {
     for(size_t i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
@@ -435,19 +429,18 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   
   // Add on infusion off events
   int ninf_ss = floor(duration/this->ii());
-  
-  
+
   double first_off = Time + duration - double(ninf_ss)*Ii - lagt;
   if(first_off == Time) {
     first_off = duration - Ii + Time + lagt;
     --ninf_ss;
   }
-  Rcpp::Rcout << "ninfss " << ninf_ss << std::endl;
-  Rcpp::Rcout << "length offs " << offs.size() << std::endl;
-  Rcpp::Rcout << "Started " << start << std::endl;
-  Rcpp::Rcout << "Ended " << end << std::endl;
-  Rcpp::Rcout << "infusions " << prob->rate_count(1) << std::endl;
-    Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
+  // Rcpp::Rcout << "ninfss " << ninf_ss << std::endl;
+  // Rcpp::Rcout << "length offs " << offs.size() << std::endl;
+  // Rcpp::Rcout << "Started " << start << std::endl;
+  // Rcpp::Rcout << "Ended " << end << std::endl;
+  // Rcpp::Rcout << "infusions " << prob->rate_count(1) << std::endl;
+  // Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
   // for(int k=0; k < ninf_ss; ++k) {
   //   double offtime = first_off + double(k)*double(Ii);
   //   rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
@@ -462,7 +455,6 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
   }
   std::sort(thisi.begin(),thisi.end(),CompRec());
   prob->lsoda_init();
-  Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
