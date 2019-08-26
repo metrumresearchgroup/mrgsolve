@@ -86,7 +86,8 @@ public:
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
   
-  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, double Fn);
+  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
+                const unsigned int maxpos, double Fn);
   void implement(odeproblem* prob);
   void steady_infusion(odeproblem* prob,reclist& thisi);
   void steady_bolus(odeproblem* prob);

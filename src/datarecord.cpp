@@ -455,7 +455,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
-                          bool addl_ev_first, double Fn) {
+                          bool addl_ev_first, const unsigned int maxpos, double Fn) {
   
   if(Addl ==0) return;
   
@@ -472,8 +472,8 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   }
   
   double ontime = 0;
-  
-  int nextpos = addl_ev_first ?  (this->pos() - 600) : (thisi.size() + 10);
+
+  int nextpos = addl_ev_first ?  (this->pos() - 600) : (maxpos + 10);
   
   for(unsigned int k=1; k<=Addl; ++k) {
     

@@ -177,7 +177,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  
+
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
@@ -509,11 +509,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
             a[i].insert(it,newev);
-            newev->schedule(a[i], maxtime, addl_ev_first, Fn);
+            newev->schedule(a[i], maxtime, addl_ev_first, NN, Fn);
             this_rec->unarm();
             sort_recs = true;
           } else { // no valid lagtime
-            this_rec->schedule(a[i], maxtime, addl_ev_first, Fn);
+            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, Fn);
             sort_recs = this_rec->needs_sorting();
           }
         } // from data
