@@ -268,7 +268,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       
       it->reserve((it->size() + n));
-      for(h=0; h < n; h++) {
+      for(h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
       } 
