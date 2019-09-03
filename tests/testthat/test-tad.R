@@ -48,3 +48,11 @@ test_that("tad", {
   expect_equal(out$tad,c(-3,-2,-1,0,1,2,0,1,2,0,1,2))
 })
 
+test_that("tad recognizes evid 1 and 4", {
+  d1 <- ev(amt = 100, time = 12, evid = 4, addl=2, ii = 4)
+  d2 <- ev(amt = 100, time = 12, addl = 2, ii = 4)
+  out1 <- mrgsim(mod,d1,tad=TRUE)
+  out2 <- mrgsim(mod,d2,tad=TRUE)
+  expect_identical(out1,out2)
+})
+
