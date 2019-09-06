@@ -1,20 +1,17 @@
-# Copyright (C) 2013 - 2017  Metrum Research Group, LLC
-#
-# This file is part of mrgsolve.
-#
-# mrgsolve is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# mrgsolve is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 library(mrgsolve)
+library(testthat)
+library(dplyr)
+library(readr)
 
-mrgsolve:::tests()
+a <- test_dir("tests/testthat")
+a$result <- NULL
+b <- test_dir("inst/maintenance/unit/")
+b$result <- NULL
+results <- dplyr::bind_rows(as_tibble(a),as_tibble(b))
+results$user <- NULL
+results$system <- NULL
+results$real <- NULL
+results$result <- NULL
+tab <- knitr::kable(results, format="markdown")
+cat(file="inst/maintenance/unit/tests.md", tab, sep="\n")

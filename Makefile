@@ -24,7 +24,6 @@ house:
 no-test:
 	make build
 	R CMD check ${TARBALL} --no-tests
-	
 
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
@@ -39,7 +38,7 @@ pkgdown:
 	touch ../../mrgsolve/docs/.nojekyll
 
 test-all:
-	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")' -e 'test_dir("inst/maintenance/unit/")'
+	Rscript inst/maintenance/tests.R
 
 unit:
 	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
@@ -63,7 +62,6 @@ all:
 	make doc
 	make build
 	make install
-
 
 .PHONY: doc
 doc:
