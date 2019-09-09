@@ -117,7 +117,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   
   src <- paste0("source: ", basename(cfile(x)))
   nsrc <- nchar(src)
-  nside <- (52-nsrc)/2 - 2
+  nside <- max((52-nsrc)/2 - 2, 0)
   side <- paste0(rep("-", nside),collapse="")
 
   header <- paste0("\n\n",side, "  ", src, "  ", side, "\n\n")
