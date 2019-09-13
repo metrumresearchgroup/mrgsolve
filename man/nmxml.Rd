@@ -8,7 +8,8 @@
 nmxml(run = numeric(0), project = character(0), file = character(0),
   theta = TRUE, omega = TRUE, sigma = TRUE, olabels = NULL,
   slabels = NULL, oprefix = "", sprefix = "", tname = "THETA",
-  oname = "...", sname = "...", index = "last", ...)
+  oname = "...", sname = "...", index = "last",
+  xpath = ".//nm:estimation", ...)
 }
 \arguments{
 \item{run}{run number}
@@ -41,6 +42,9 @@ nmxml(run = numeric(0), project = character(0), file = character(0),
 last estimation results; otherwise, pass an integer indicating which 
 estimation results to return}
 
+\item{xpath}{xml path containing run results; if the default doesn't work, 
+consider using \code{.//estimation} as an alternative; see details}
+
 \item{...}{not used}
 }
 \value{
@@ -58,7 +62,13 @@ off the \code{project} directory.  If \code{file} is supplied,
 
 This function requires that the \code{xml2} package 
 be installed and loadable.  If \code{requireNamespace("xml2")}
-fails, an error will be generated.
+fails, an error will be generated. 
+
+\code{nmxml} usually expects to find run results in the xpath called
+\code{.//nm:estimation}.  Occasionally, the run results are not stored in 
+this namespace but no namespaces are found in the xml file.  In this case, 
+the user can specify the xpath containing run results.  Consider trying 
+\code{.//estimation} as an alternative if the default fails.
 }
 \examples{
 
