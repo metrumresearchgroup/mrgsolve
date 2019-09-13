@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -34,7 +34,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo quo_name syms !!! !! 
+##' @importFrom rlang quos enquo quo_name syms !!! !! eval_tidy
 ##' 
 ##' @include Aaaa.R
 ##' @include class_mrgsims.R

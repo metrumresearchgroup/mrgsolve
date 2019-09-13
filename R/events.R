@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -113,7 +113,17 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
     stop("argument \"amt\" is missing, with no default.", call.=FALSE)  
   }
   
-  data <- as_tibble(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
+  l <- list(time=time, cmt=cmt, amt=amt, evid=evid)
+  qu <- quos(...)
+  na1 <- names(l)
+  na2 <- names(qu)
+  j <- length(l)
+  for(i in seq_along(qu)) {
+    l[[j+i]] <- eval_tidy(qu[[i]], l)
+  }
+  names(l) <- c(na1,na2)
+  
+  data <- as_tibble(l)
   
   data <- as.data.frame(data)
   

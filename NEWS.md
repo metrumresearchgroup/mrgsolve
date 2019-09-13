@@ -6,6 +6,7 @@
 - tad calculation (when called through `mrgsim()` and variants) recognizes
   evid 4 in addition to evid 1 #502
 - Fix bug where `$NMXML` fails when `nm` namespace not found in xml file #510
+- Arguments to `ev` constructor are now evaluated #512
 
 # mrgsolve 0.9.2
 - Fix bug where system advanced to next time after advancing to steady state

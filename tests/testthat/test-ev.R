@@ -178,3 +178,14 @@ test_that("ev_repeat", {
   e <- ev_repeat(e,n) %>% realize_addl()
   expect_equal(nrow(e),n*10) 
 })
+
+test_that("create ev with evaluation issue-512", {
+  a <- ev(amt = 100, rate = amt/10) %>% as.data.frame()
+  expect_true(exists("rate", a))
+  expect_identical(a[["rate"]], 10)
+  b <- ev(amt = 100, foo = amt/c(10,20,50)) %>% as.data.frame()
+  expect_identical(b[["foo"]], 100/c(10,20,50))
+  x <- 200
+  c <- ev(amt = 100, foo = amt/x) %>% as.data.frame()
+  expect_identical(c[["foo"]], 100/x)
+})
