@@ -114,6 +114,8 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
   }
   
   l <- list(time=time, cmt=cmt, amt=amt, evid=evid)
+  if(is.numeric(tinf) && length(tinf) > 0) l[["tinf"]] <- tinf
+  if(is.numeric(until) && length(until) > 0) l[["until"]] <- until
   qu <- quos(...)
   na1 <- names(l)
   na2 <- names(qu)
@@ -123,28 +125,10 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
   }
   names(l) <- c(na1,na2)
   
-  data <- as_tibble(l)
-  
-  data <- as.data.frame(data)
-  
-  if("total" %in% names(data)) {
-    data[["addl"]] <- data[["total"]]-1
-    data[["total"]] <- NULL
-  }
-  
-  if(is.numeric(tinf)) {
-    if(tinf > 0) {
-      data[["rate"]] <- data[["amt"]]/tinf  
-    }
-  }
-  
-  if(!missing(until)) {
-    if(!has_name("ii", data)) {
-      stop("ii is required when until is specified", call.=FALSE)
-    }
-    data[["addl"]] <- ceiling((data[["time"]] + until)/data[["ii"]])-1
-  }
-  
+  data <- as.data.frame(as_tibble(l))
+
+  data <- finalize_ev(data)
+
   if(length(ID) > 0) {
     
     ID <- unique(ID)
@@ -176,13 +160,9 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
       }
       data[["ID"]] <- ID
     }
-    data <- dplyr::select(data,c("ID", "time", "cmt"),everything())
-  } else {
-    data <- dplyr::select(data,c("time", "cmt"),everything())
   }
   
   if(realize_addl) data <- realize_addl(data)
-  
   return(new("ev", data=data))
 })
 
@@ -245,7 +225,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     x[["evid"]] <- 1 
   } else {
     x[["evid"]] <- na2zero(x[["evid"]])
-    x <- x[x$evid != 0,] 
+    x <- x[x[["evid"]] != 0,] 
     if(nrow(x)==0) {
       stop("no dosing events found", call. = FALSE) 
     }
@@ -258,6 +238,9 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     keep <- intersect(keep, names(x))
     x <- x[,keep]
   }
+  
+  x <- finalize_ev(x)
+  
   new("ev", data=x)
 })
 
