@@ -3,11 +3,14 @@
 \name{expand.idata}
 \alias{expand.idata}
 \alias{expand.ev}
+\alias{ev_expand}
 \title{Create template data sets for simulation}
 \usage{
 expand.idata(...)
 
 expand.ev(...)
+
+ev_expand(...)
 }
 \arguments{
 \item{...}{passed to \link{expand.grid}}

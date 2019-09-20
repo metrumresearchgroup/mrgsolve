@@ -177,14 +177,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  
+
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
     tofd.reserve(a.size());
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if((*itt)->evid()==1) {
+        if(((*itt)->evid()==1) || ((*itt)->evid()==4)) {
           tofd.push_back((*itt)->time());
           break;
         }
@@ -268,7 +268,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       
       it->reserve((it->size() + n));
-      for(h=0; h < n; h++) {
+      for(h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
       } 
@@ -497,8 +497,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->alag(this_cmtn) > mindt) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(prob, Fn);
+              this_rec->steady(prob, a[i], Fn);
               tfrom = tto;
+              this_rec->ss(0);
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
@@ -508,11 +509,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
             a[i].insert(it,newev);
-            newev->schedule(a[i], maxtime, addl_ev_first, Fn);
+            newev->schedule(a[i], maxtime, addl_ev_first, NN, Fn);
             this_rec->unarm();
             sort_recs = true;
           } else { // no valid lagtime
-            this_rec->schedule(a[i], maxtime, addl_ev_first, Fn);
+            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, Fn);
             sort_recs = this_rec->needs_sorting();
           }
         } // from data
@@ -541,7 +542,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         if(tad) {
-          if((this_rec->evid()==1)) {
+          if((this_rec->evid()==1) || (this_rec->evid()==4)) {
             if(this_rec->armed()) {
               told = tto - prob->alag(this_cmtn);  
             }
@@ -552,6 +553,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob->advance(tfrom,tto);
       
       if(this_rec->evid() != 2) {
+        this_rec->steady(prob,a[i],Fn);
         this_rec->implement(prob);
       }
       

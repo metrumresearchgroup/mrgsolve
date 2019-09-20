@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -49,7 +49,6 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
   CALLDEF(_model_housemodel_config__,MRGSOLVE_CONFIG_SIGNATURE_N),
-  
   {NULL, NULL, 0}
 };
 

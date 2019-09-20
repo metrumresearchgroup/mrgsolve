@@ -104,7 +104,7 @@ test_that("If no simulation times can be rendered time=0 only is simulated", {
   expect_equal(unique(out$time),0)
 })
 
-test_that("expand.ev", {
+test_that("expand.ev issue-513", {
   df <- expand.ev(amt = c(1,2,3))
   expect_is(df,"data.frame")
   expect_identical(df[["amt"]],c(1,2,3))
@@ -112,6 +112,8 @@ test_that("expand.ev", {
   expect_identical(df[["addl"]],19)
   df <- expand.ev(amt = 100, tinf = 2)
   expect_identical(df[["rate"]], 100/2)
+  df <- expand.ev(amt = 100, ii = 24, until = 168)
+  expect_identical(df[["addl"]], 6)
 })
 
 test_that("tovec", {

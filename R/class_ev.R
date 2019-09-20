@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -33,6 +33,7 @@ is.ev <- function(x) {
 ##' @export
 mutate.ev <- function(.data, ...) {
   .data@data <- as.data.frame(mutate(.data@data, ...))
+  .data@data <- finalize_ev(.data@data)
   .data
 }
 
@@ -118,6 +119,25 @@ setMethod("show", "ev", function(object) {
   return(invisible(NULL))
 })
 
+#' Select columns from an ev object
+#' 
+#' 
+#' @param x ev object
+#' @param name column to select
+#' @param i an element to select
+#' @param exact not used
+#' @rdname ev_extract
+#' @export
+setMethod("$", "ev", function(x, name){
+  x@data[[name]]
+})
+
+#' @rdname ev_extract
+#' @export
+setMethod("[[", "ev", function(x, i, exact=TRUE) {
+  x@data[[i]] 
+})
+
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {
     if(is.ev(x)) {
@@ -131,6 +151,57 @@ As_data_set <- function(x) {
   return(x)
 }
 
+finalize_ev_data <- function(data) {
+  if("tinf" %in% names(data)) {
+    tinf <- data[["tinf"]]
+    data[["tinf"]] <- NULL
+    if(any(tinf < 0)) {
+      stop("tinf must be greater than or equal to zero", call.=FALSE)
+    }
+    if(any(tinf > 0)) {
+      i <- tinf > 0
+      data[["rate"]] <- 0
+      data[["rate"]][i] <- data[["amt"]][i]/tinf[i]
+    }
+  }
+  if("total" %in% names(data)) {
+    total <- data[["total"]]
+    data[["total"]] <- NULL
+    if(any(total > 0)) {
+      if(any(total > 1)) {
+        data[["addl"]] <- total - 1
+      }
+    } else {
+      stop("total required to be greater than zero", call.=FALSE)
+    }
+  }
+  if("until" %in% names(data)) {
+    if(!("ii" %in% names(data))) {
+      stop("ii is required when until is specified", call.=FALSE)
+    }
+    until <- data[["until"]]
+    data[["until"]] <- NULL
+    i <- data[["ii"]] > 0
+    data[["addl"]] <- 0
+    data[["addl"]][i] <- ceiling((data[["time"]][i] + until[i])/data[["ii"]][i]) - 1
+  }
+  ev_cols <- c("ID", "time", "amt", "rate", "ii", "addl", "cmt", "evid", "ss")
+  match_cols <- intersect(ev_cols,names(data))
+  other_cols <- setdiff(names(data),match_cols)
+  data <- data[,c(match_cols,other_cols)]
+  data
+}
+
+finalize_ev <- function(x) {
+  if(is.data.frame(x)) {
+    x <- finalize_ev_data(x)
+  } else if(is.ev(x)) {
+    x@data <- finalize_ev_data(x@data)
+  } else {
+    stop("object must be a data frame or class ev", call.=FALSE)  
+  }
+  x
+}
 
 
 

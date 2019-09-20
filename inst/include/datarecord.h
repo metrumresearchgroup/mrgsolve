@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -86,11 +86,12 @@ public:
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
   
-  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, double Fn);
+  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
+                const unsigned int maxpos, double Fn);
   void implement(odeproblem* prob);
-  void steady_infusion(odeproblem* prob);
+  void steady_infusion(odeproblem* prob,reclist& thisi);
   void steady_bolus(odeproblem* prob);
-  void steady(odeproblem* prob, double Fn);
+  void steady(odeproblem* prob, reclist& thisi,double Fn);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}

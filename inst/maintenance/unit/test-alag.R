@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -53,7 +53,6 @@ test_that("Very small lag time doesn't crash", {
   
 })
 
-
 test_that("Lag time on SS record - bolus", {
   e <- ev(amt=100, ii = 12, LAGT = 5, addl = 10, ss = 1)
   out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
@@ -74,10 +73,11 @@ test_that("Lag time on SS record - infusion", {
   expect_true(all(cent2==cent2[1]))
 })
 
-test_that("Error lagtime >= ii for bolus", {
-  e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
-  expect_error(mrgsim(mod, ev = e))
-})
+# No longer an error
+# test_that("Error lagtime >= ii for bolus", {
+#   e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
+#   expect_error(mrgsim(mod, ev = e))
+# })
 
 test_that("Error lagtime+duration >= ii for infusion", {
   e <- ev(amt=100, ii = 12, LAG = 3, rate = 100/10, ss = 1)
@@ -94,4 +94,3 @@ test_that("ss dose with lag time, different arrangements", {
   out2 <- mrgsim_d(mod,data2) %>% slice(-c(1,2))
   expect_identical(out1,out2)
 })
-

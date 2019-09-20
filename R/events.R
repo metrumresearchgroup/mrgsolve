@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -73,9 +73,10 @@
 ##' 
 ##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
 ##' 
-##' loading + maint
-##'
-##'
+##' c(loading, maint)
+##' 
+##' loading$time
+##' 
 ##' @export
 setGeneric("ev", function(x,...) {
   standardGeneric("ev")
@@ -113,28 +114,22 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
     stop("argument \"amt\" is missing, with no default.", call.=FALSE)  
   }
   
-  data <- as_tibble(list(time=time, cmt=cmt, amt=amt, evid=evid, ...))
-  
-  data <- as.data.frame(data)
-  
-  if("total" %in% names(data)) {
-    data[["addl"]] <- data[["total"]]-1
-    data[["total"]] <- NULL
+  l <- list(time=time, cmt=cmt, amt=amt, evid=evid)
+  if(is.numeric(tinf) && length(tinf) > 0) l[["tinf"]] <- tinf
+  if(is.numeric(until) && length(until) > 0) l[["until"]] <- until
+  qu <- quos(...)
+  na1 <- names(l)
+  na2 <- names(qu)
+  j <- length(l)
+  for(i in seq_along(qu)) {
+    l[[j+i]] <- eval_tidy(qu[[i]], l)
   }
+  names(l) <- c(na1,na2)
   
-  if(is.numeric(tinf)) {
-    if(tinf > 0) {
-      data[["rate"]] <- data[["amt"]]/tinf  
-    }
-  }
-  
-  if(!missing(until)) {
-    if(!has_name("ii", data)) {
-      stop("ii is required when until is specified", call.=FALSE)
-    }
-    data[["addl"]] <- ceiling((data[["time"]] + until)/data[["ii"]])-1
-  }
-  
+  data <- as.data.frame(as_tibble(l))
+
+  data <- finalize_ev(data)
+
   if(length(ID) > 0) {
     
     ID <- unique(ID)
@@ -166,13 +161,9 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
       }
       data[["ID"]] <- ID
     }
-    data <- dplyr::select(data,c("ID", "time", "cmt"),everything())
-  } else {
-    data <- dplyr::select(data,c("time", "cmt"),everything())
   }
   
   if(realize_addl) data <- realize_addl(data)
-  
   return(new("ev", data=data))
 })
 
@@ -235,7 +226,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     x[["evid"]] <- 1 
   } else {
     x[["evid"]] <- na2zero(x[["evid"]])
-    x <- x[x$evid != 0,] 
+    x <- x[x[["evid"]] != 0,] 
     if(nrow(x)==0) {
       stop("no dosing events found", call. = FALSE) 
     }
@@ -248,6 +239,9 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     keep <- intersect(keep, names(x))
     x <- x[,keep]
   }
+  
+  x <- finalize_ev(x)
+  
   new("ev", data=x)
 })
 
@@ -273,13 +267,14 @@ collect_ev <- function(...) {
   mx <- cumsum(c(0,mx[-length(mx)]))
   y <- mapply(y,mx, FUN=function(yi,mxi) return(yi+mxi), SIMPLIFY=FALSE)
   x <- bind_rows(x)
-  x <- mutate(x,ID = unlist(y,use.names=FALSE))
+  x[["ID"]] <- unlist(y,use.names=FALSE)
   tran <- intersect(tran,names(x))
   what <- names(x) %in% tran
   
   x <- mutate_at(x,which(what),list(~na2zero(.)))
   
   na.check <- which(!what)
+  
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
       warning("missing values in some columns.",call.=FALSE)
@@ -292,7 +287,7 @@ collect_ev <- function(...) {
   }
   
   if(!any(c("cmt", "CMT") %in% names(x))) {
-    stop("No cmt or CMT column", call. = FALSE) 
+    stop("No cmt or CMT column in the data set", call. = FALSE) 
   }
   
   if(!has_ID(x)) {
