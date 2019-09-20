@@ -73,9 +73,10 @@
 ##' 
 ##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
 ##' 
-##' loading + maint
-##'
-##'
+##' c(loading, maint)
+##' 
+##' loading$time
+##' 
 ##' @export
 setGeneric("ev", function(x,...) {
   standardGeneric("ev")

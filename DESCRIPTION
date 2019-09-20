@@ -44,6 +44,7 @@ Suggests:
 LazyLoad: yes
 NeedsCompilation: yes
 Encoding: UTF-8
+Language: en-US
 Collate: 
     'RcppExports.R'
     'utils.R'

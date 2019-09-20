@@ -9,6 +9,9 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
 
+spelling:
+	Rscript -e 'spelling::spell_check_package(".")'
+
 testing:
 	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
 	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}

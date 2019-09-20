@@ -15,7 +15,7 @@
 # mrgsolve 0.9.2
 - Fix bug where system advanced to next time after advancing to steady state
   on a dosing record with ss=1 with no observation record at the same time
-  but preceeding the dosing record #484
+  but preceding the dosing record #484
 - Add AMT and CMT macros for self.amt and self.cmt, respectively #354
 - Re-organize `DLSODA` code to avoid CRAN LTO warning
 
@@ -29,7 +29,7 @@
   spaces were not handled properly #450
 - Objects of class `valid_data_set` now retain the matrix attribute #448
 - Block names are now coerced to upper case letters
-- Change default for simcall to 0 in mrgsim_q
+- Change default for `simcall` to 0 in mrgsim_q
 - Add recover argument to mread
 - Add `@as_object` option to the following blocks: PARAM, INIT, CMT, 
   OMEGA, SIGMA; experimental 

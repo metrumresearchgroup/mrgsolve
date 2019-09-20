@@ -211,8 +211,8 @@ expand.idata <- function(...) {
   dplyr::select(ans, "ID", everything())
 }
 
-##' @export
-##' @rdname expand.idata
+#' @export
+#' @rdname expand.idata
 expand.ev <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
   ans[["ID"]] <- seq_len(nrow(ans))
@@ -222,6 +222,10 @@ expand.ev <- function(...) {
   if(!has_name("amt", ans)) ans[["amt"]] <- 0
   finalize_ev(ans)
 }
+
+#' @export
+#' @rdname expand.idata
+ev_expand <- expand.ev
 
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())

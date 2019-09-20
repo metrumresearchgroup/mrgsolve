@@ -83,8 +83,9 @@ loading <- ev(time=0, cmt=1, amt=1000)
 
 maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
 
-loading + maint
+c(loading, maint)
 
+loading$time
 
 }
 \seealso{
