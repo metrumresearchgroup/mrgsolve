@@ -2,7 +2,7 @@
 library(mrgsolve)
 library(testthat)
 library(dplyr)
-library(readr)
+
 
 a <- test_dir("tests/testthat")
 a$result <- NULL
