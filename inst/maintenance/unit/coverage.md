@@ -1,19 +1,19 @@
-# coverage: 73.39%
+# coverage: 74.39%
 
 |file                  | coverage|
 |:---------------------|--------:|
 |R/modlib.R            |    20.00|
 |R/matlist.R           |    51.14|
-|R/handle_spec_block.R |    53.06|
 |R/idata_set.R         |    53.33|
 |R/mrgsims.R           |    53.47|
 |R/matrix.R            |    54.17|
 |R/class_tgrid.R       |    55.38|
 |R/chain.R             |    57.89|
 |R/generics.R          |    60.00|
+|R/utils.R             |    60.87|
+|R/handle_spec_block.R |    63.64|
 |R/knobs.R             |    64.76|
 |R/data_set.R          |    64.84|
-|R/utils.R             |    65.24|
 |R/model_include.R     |    71.43|
 |R/events.R            |    71.63|
 |R/modspec.R           |    71.81|

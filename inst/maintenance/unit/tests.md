@@ -150,6 +150,7 @@
 |test-modspec.R        |test-modspec                         |specMATRIX                                                                |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mread.R          |test-mread                           |ETA(n) in $ODE is error                                                   |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mread.R          |test-mread                           |Warning with no $CMT or $INIT                                             |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mread.R          |test-mread                           |read in rmd file                                                          |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgindata.R      |test-mrgindata                       |valid_data_set warns for character columns                                |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgindata.R      |test-mrgindata                       |valid_data_set subs character cmt                                         |  2|      0|FALSE   |FALSE |       0|      2|
 |test-mrgindata.R      |test-mrgindata                       |Run with no input                                                         |  2|      0|FALSE   |FALSE |       0|      2|
