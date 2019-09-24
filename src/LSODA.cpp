@@ -43,7 +43,7 @@ void myassert(bool value) {
 
 LSODA::~LSODA() {}
 
-LSODA::LSODA(int neq_, double rtol, double atol) 
+LSODA::LSODA(int neq_) 
 {
   // Initialize arrays.
   mord = {{12, 5}};
@@ -55,15 +55,12 @@ LSODA::LSODA(int neq_, double rtol, double atol)
   el = {{0}};
   cm1 = {{0}};
   cm2 = {{0}};
-  rtol_.resize(neq_ + 1, rtol);
-  atol_.resize(neq_ + 1, atol);
-  rtol_[0] = 0;
-  atol_[0] = 0;
   iworks = {{0}};
   rworks = {{0.0}};
   itask = 1;
   iopt = 0;
   jt = 2;
+  Neq = neq_;
   if(neq_ <  0) {
     REprintf("[lsoda] neq = %i is less than 0.", neq_);
     Rcpp::stop("[lsoda] neq is less than 0.");
@@ -637,7 +634,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
           {
             // cerr << "[lsoda] " << mxstep << " steps taken before reaching tout"
             //      << endl;
-            REprintf("[lsoda] %i steps taken before reaching tout; consider increasing mxstep", 
+            REprintf("[lsoda] %i steps taken before reaching tout; consider increasing maxsteps.\n", 
                      mxstep);
             *istate = -1;
             terminate2(y, t);

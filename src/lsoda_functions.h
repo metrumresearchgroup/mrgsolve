@@ -6,6 +6,45 @@
 #define ETA 2.2204460492503131e-16
 
 
+void LSODA::hmax_(const double value) {
+  rworks[2] = value;
+  if(value !=0) iopt = 1;  
+}
+
+void LSODA::hmin_(const double value) {
+  rworks[3] = value;
+  if(value !=0) iopt = 1;  
+}
+
+void LSODA::maxsteps_(const int value) {
+  iworks[3] = value;
+  if(value !=0) iopt=1;
+}
+
+void LSODA::ixpr_(const int value) {
+  iworks[2] = value;
+  if(value!=0) iopt = 1;
+}
+
+void LSODA::mxhnil_(const int value) {
+  iworks[4] = value;
+  if(value!=0) iopt = 1;
+}
+
+void LSODA::copy_parin(const Rcpp::List& parin) {
+  hmax_(Rcpp::as<double>(parin["hmax"]));
+  hmin_(Rcpp::as<double>(parin["hmin"]));
+  maxsteps_(Rcpp::as<int>(parin["maxsteps"]));
+  ixpr_(Rcpp::as<int>(parin["ixpr"]));
+  mxhnil_(Rcpp::as<int>(parin["mxhnil"]));
+  rtol_.resize(Neq+1, Rcpp::as<double>(parin["rtol"]));
+  atol_.resize(Neq+1, Rcpp::as<double>(parin["atol"]));
+  // rtol_.resize(neq_ + 1, 1e);
+  // atol_.resize(neq_ + 1, atol);
+  rtol_[0] = 0;
+  atol_[0] = 0;
+}
+
 bool LSODA::abs_compare(double a, double b)
 {
     return (std::abs(a) < std::abs(b));
@@ -200,6 +239,12 @@ void LSODA::terminate(int *istate)
         illin++;
         *istate = -3;
     }
+    throw Rcpp::exception(
+        tfm::format(
+          "the integration failed with istate = %i.", istate
+        ).c_str(),
+        false
+    );
 }
 
 /* Terminate lsoda due to various error conditions. */
@@ -209,6 +254,12 @@ void LSODA::terminate2(vector<double> &y, double *t)
         y[i] = yh_[1][i];
     *t = tn_;
     illin = 0;
+    throw Rcpp::exception(
+        tfm::format(
+          "the integration failed."
+        ).c_str(),
+        false
+    );
     return;
 }
 

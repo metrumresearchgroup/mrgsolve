@@ -352,19 +352,21 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   //                        void *_data)
   solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,(void*) this);
 
-  //Rcpp::Rcout << " TRying to advance" << std::endl;
   //this->call_derivs(&Neq, &tto, Y, Ydot);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
   
-  unsigned int neq = this->neq();
-  
+
   double dt = tto-tfrom;
   
-  if(MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
-  if(MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
-  
+  if(MRGSOLVE_GET_PRED_CL <= 0) {
+    Rcpp::stop("pred_CL has a 0 or negative value.");
+  }
+  if(MRGSOLVE_GET_PRED_VC <= 0) {
+    Rcpp::stop("pred_VC has a 0 or negative value.");
+  }
+
   double k10 = MRGSOLVE_GET_PRED_K10;
   double ka =  MRGSOLVE_GET_PRED_KA;
   
@@ -380,19 +382,20 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   double init0 = 0, init1 = 0;
   int eqoffset = 0;
   
-  if(neq==1) {
+  if(Neq==1) {
     init0 = 0;
     init1 = this->y(0);
     eqoffset = 1;
   }
-  if(neq==2) {
+  if(Neq==2) {
     init0 = this->y(0);
     init1 = this->y(1);
   }
+
   
   double pred0 = 0, pred1 = 0;
   
-  if(neq ==2) {
+  if(Neq ==2) {
     if((init0!=0) || (R0[0]!=0)) {
       
       pred0 = init0*exp(-ka*dt);//+ R0[0]*(1-exp(-ka*dt))/ka;
@@ -415,11 +418,11 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
       PolyExp(dt,0.0  ,R0[1-eqoffset],dt ,0.0,false,a,alpha,1);
   }
   
-  if(neq==2) {
+  if(Neq==2) {
     this->y(0,pred0);
     this->y(1,pred1);
   }
-  if(neq==1) {
+  if(Neq==1) {
     this->y(0,pred1);
   }
 }
@@ -428,8 +431,6 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
 void odeproblem::advan4(const double& tfrom, const double& tto) {
   
   double dt = tto - tfrom;
-  
-  unsigned int neq = this->neq();
   
   // Make sure parameters are valid
   if (MRGSOLVE_GET_PRED_VC <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
@@ -448,11 +449,11 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   
   int eqoffset = 0;
   
-  if(neq == 2) {
+  if(Neq == 2) {
     init0 = 0; init1 = this->y(0); init2 = this->y(1);
     eqoffset = 1;
   }
-  if(neq ==3) {
+  if(Neq ==3) {
     init0 = this->y(0); init1 = this->y(1); init2 = this->y(2);
   }
   
@@ -462,7 +463,7 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   alpha[1] = (ksum - sqrt(ksum*ksum-4.0*k10*k21))/2.0;
   alpha[2] = ka;
   
-  if(neq==3) { // only do the absorption compartment if we have 3
+  if(Neq==3) { // only do the absorption compartment if we have 3
     if((init0 != 0) || (R0[0] != 0)) {
       
       pred0 = init0*exp(-ka*dt);// + R0[0]*(1.0-exp(-ka*dt))/ka;
@@ -524,11 +525,11 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
       PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,2);
   }
   
-  if(neq ==2) {
+  if(Neq ==2) {
     this->y(0,pred1);
     this->y(1,pred2);
   }
-  if(neq ==3) {
+  if(Neq ==3) {
     this->y(0,pred0);
     this->y(1,pred1);
     this->y(2,pred2);
@@ -650,13 +651,13 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   // this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
   // this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
   // this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
-  Atol = Rcpp::as<double>(parin["atol"]); 
-  Rtol = Rcpp::as<double>(parin["rtol"]);
-  Hmax = Rcpp::as<double>(parin["hmax"]);
-  Maxsteps = Rcpp::as<double>  (parin["maxsteps"]);
-  Ixpr = Rcpp::as<double>  (parin["ixpr"]);
-  Mxhnil = Rcpp::as<double>  (parin["mxhnil"]);
-  Advan = Rcpp::as<int>(parin["advan"]);
+  // Atol = Rcpp::as<double>(parin["atol"]); 
+  // Rtol = Rcpp::as<double>(parin["rtol"]);
+  // Hmax = Rcpp::as<double>(parin["hmax"]);
+  // Maxsteps = Rcpp::as<double>  (parin["maxsteps"]);
+  // Ixpr = Rcpp::as<double>  (parin["ixpr"]);
+  // Mxhnil = Rcpp::as<double>  (parin["mxhnil"]);
+  advan(Rcpp::as<int>(parin["advan"]));
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
 

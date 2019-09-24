@@ -173,7 +173,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob->copy_parin(parin);
   prob->pass_envir(&envir);
   const unsigned int neq = prob->neq();
-  LSODA solver(neq, 1E-6, 1e-8);
+  LSODA solver(neq);
+  solver.copy_parin(parin);
   
   recstack a(NID);
   

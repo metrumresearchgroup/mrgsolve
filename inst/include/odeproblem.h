@@ -190,12 +190,11 @@ public:
   int npar() {return Npar;}
   int neq() {return Neq;}
   void tol(double atol, double rtol);
-  void hmax(double value){Hmax = value; if(value !=0) Iopt=1;}
-  void hmin(double value){Hmin = value;  if(value !=0) Iopt=1;}
-  void ixpr(int value){Ixpr = value; if(value !=0) Iopt=1;}
-  void maxsteps(int value){Maxsteps = value; if(value !=0) Iopt=1;}
-  void mxhnil(int value){Mxhnil = value; if (value !=0) Iopt=1;}
-  //double* ydot(){return Ydot;}
+  // void hmax(double value){Hmax = value; if(value !=0) Iopt=1;}
+  // void hmin(double value){Hmin = value;  if(value !=0) Iopt=1;}
+  // void ixpr(int value){Ixpr = value; if(value !=0) Iopt=1;}
+  // void maxsteps(int value){Maxsteps = value; if(value !=0) Iopt=1;}
+  // void mxhnil(int value){Mxhnil = value; if (value !=0) Iopt=1;}
   std::vector<double> Y;
   std::vector<double> Ydot;
   std::vector<double> Yout;
@@ -205,17 +204,7 @@ public:
   int Npar;
   int Neq;
   int Istate; ///< istate value
-  int Itask; ///< itask value
-  int Iopt; ///< iopt value
-  int Itol; ///< itol value
-  int Mxhnil;
-  int Ixpr;
-  int Maxsteps;
-  double Hmax;
-  double Hmin;
 
-
-  
 protected:
 
   std::vector<double> R0; ///< acutal current infusion rate
