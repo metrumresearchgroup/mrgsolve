@@ -721,16 +721,18 @@ void LSODA::intdy(double t, int k, vector<double> &dky, int *iflag)
     *iflag = 0;
     if (k < 0 || k > (int)nq)
     {
-        fprintf(stderr, "[intdy] k = %d illegal\n", k);
+        //fprintf(stderr, "[intdy] k = %d illegal\n", k);
+        REprintf("[intdy] k = %d illegal\n", k);
         *iflag = -1;
         return;
     }
     tp = tn_ - hu - 100. * ETA * (tn_ + hu);
     if ((t - tp) * (t - tn_) > 0.)
     {
-        fprintf(stderr,
-                "intdy -- t = %g illegal. t not in interval tcur - hu to tcur\n",
-                t);
+        // fprintf(stderr,
+        //         "intdy -- t = %g illegal. t not in interval tcur - hu to tcur\n",
+        //         t);
+      REprintf("intdy -- t = %g illegal. t not in interval tcur - hu to tcur\n",t);
         *iflag = -2;
         return;
     }
@@ -957,7 +959,8 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
     */
     if (miter != 2)
     {
-        fprintf(stderr, "[prja] miter != 2\n");
+        //fprintf(stderr, "[prja] miter != 2\n");
+        REprintf("[prja] miter != 2\n");
         return;
     }
     if (miter == 2)
@@ -1237,7 +1240,8 @@ void LSODA::solsy(vector<double> &y)
     iersl = 0;
     if (miter != 2)
     {
-        printf("solsy -- miter != 2\n");
+        //printf("solsy -- miter != 2\n");
+        REprintf("solsy -- miter != 2\n");
         return;
     }
     if (miter == 2)
