@@ -1,4 +1,23 @@
 /*
+ * Please see the full history of this code, including below. 
+ * 
+ * LSODA.cpp and LSODA.h were obtained from
+ * https://github.com/dilawar/libsoda
+ * in September, 2019 and incorporated into mrgsolve with 
+ * minor modifications. 
+ * 
+ * Modifications: 
+ * - Added several members that were previously being passed in to 
+ *   lsoda_update().
+ * - Replaced fprint statements to REfprint for CRAN compliance
+ * - Replaced output to cerr with REfprint
+ * - Added Rcpp::exception when terminate or terminate2 are called  
+ * - Removed assert stataements for CRAN compliance
+ * 
+ */
+
+
+/*
  * HISTORY:
  * This is a CPP version of the LSODA library for integration into MOOSE
  somulator.
@@ -21,7 +40,6 @@
 #include <R.h>
 #include <Rcpp.h>
 #include <algorithm>
-//#include <cassert>
 #include <cmath>
 #include <iostream>
 #include <memory>
