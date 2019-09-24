@@ -23,6 +23,7 @@
 #define DATARECORD_H
 #include <boost/shared_ptr.hpp>
 #include "mrgsolv.h"
+#include "LSODA.h"
 
 class odeproblem;
 class datarecord;
@@ -89,9 +90,9 @@ public:
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
                 const unsigned int maxpos, double Fn);
   void implement(odeproblem* prob);
-  void steady_infusion(odeproblem* prob,reclist& thisi);
-  void steady_bolus(odeproblem* prob);
-  void steady(odeproblem* prob, reclist& thisi,double Fn);
+  void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
+  void steady_bolus(odeproblem* prob,LSODA& solver);
+  void steady(odeproblem* prob, reclist& thisi,double Fn,LSODA& solver);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}

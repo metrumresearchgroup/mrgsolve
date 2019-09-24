@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -52,24 +52,32 @@ void dosimeps(void* prob_) {
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
                        Rcpp::List funs,
-                       int n_capture_) : odepack_dlsoda(param.size(),init.size()) {
+                       int n_capture_) {
   
   int npar_ = int(param.size());
   int neq_ = int(init.size());
+  Neq = neq_;
+  Npar = npar_;
+  Istate = 1;
+  
   Advan = 13;
   
-  Param = new double[npar_]();
-  Init_value.assign(neq_,0.0);
-  Init_dummy.assign(neq_,0.0);
+  //Param = new double[npar_]();
+  Param.assign(Npar,0.0);
+  Y.assign(Neq,0.0);
+  Yout.assign(Neq+1,0.0);
+  Ydot.assign(Neq,0.0);
+  Init_value.assign(Neq,0.0);
+  Init_dummy.assign(Neq,0.0);
   
-  R0.assign(neq_,0.0);
-  infusion_count.assign(neq_,0);
-  R.assign(neq_,0.0);
-  D.assign(neq_,0.0);
-  F.assign(neq_,1.0);
-  Alag.assign(neq_,0.0);
+  R0.assign(Neq,0.0);
+  infusion_count.assign(Neq,0);
+  R.assign(Neq,0.0);
+  D.assign(Neq,0.0);
+  F.assign(Neq,1.0);
+  Alag.assign(Neq,0.0);
   
-  On.assign(neq_,1);
+  On.assign(Neq,1);
   
   d.evid = 0;
   d.newind = 0;
@@ -85,8 +93,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   pred.assign(5,0.0);
   
-  for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
-  for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
+  for(int i=0; i < Npar; ++i) Param[i] =       double(param[i]);
+  for(int i=0; i < Neq;  ++i) Init_value[i] =  double(init[i]);
   
   *reinterpret_cast<void**>(&Inits)  = R_ExternalPtrAddr(funs["main"]);
   *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
@@ -109,7 +117,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
  
  */
 odeproblem::~odeproblem(){
-  delete [] Param;
+
 }
 
 double odeproblem::fbio(unsigned int pos) {
@@ -131,6 +139,11 @@ void odeproblem::neta(int n) {
 //! set number of <code>EPSs</code> in the model
 void odeproblem::neps(int n) {
   if(n > 25) d.EPS.assign(n,0.0);
+}
+
+void odeproblem::tol(double atol, double rtol) {
+  Atol = atol;
+  Rtol = rtol;
 }
 
 /** 
@@ -170,8 +183,9 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param ydot left hand side of differential equations
  * @param prob an odeproblem object
  */
-void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
-  prob->call_derivs(neq,t,y,ydot);  
+void main_derivs(double t, double *y, double *ydot, void *data) {
+  odeproblem *prob = reinterpret_cast<odeproblem *>(data);
+  prob->call_derivs(&(prob->Neq),&t,y,ydot);  
 }
 
 void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
@@ -310,30 +324,8 @@ void odeproblem::off(const unsigned short int eq_n) {
   this->y(eq_n,0.0);
 }
 
-extern "C" {
-  void F77_NAME(dlsoda) (
-      main_deriv_func *derivs,
-      int             *neq,
-      double          *y,
-      const double    *tfrom,
-      const double    *tto,
-      int             *itol,
-      double          *rtol,
-      double          *atol,
-      int             *itask,
-      int             *istate,
-      int             *iopt,
-      double          *rwork,
-      int             *lrwork,
-      int             *iwork,
-      int             *liwork,
-      int             *dum, // dummy jacobian
-      int             *jt, // jacobian type
-      odeproblem      *prob
-  );
-}
 
-void odeproblem::advance(double tfrom, double tto) {
+void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   
   if(Neq == 0) return;
   
@@ -350,29 +342,18 @@ void odeproblem::advance(double tfrom, double tto) {
     // If Advan isn't 13, it needs to be 0/1/2/3/4
     Rcpp::stop("mrgsolve: advan has invalid value.");
   }
- 
-  F77_CALL(dlsoda)(
-      &main_derivs,
-      &Neq,
-      Y,
-      &tfrom,
-      &tto,
-      &xitol,
-      &xrtol,
-      &xatol,
-      &xitask,
-      &xistate,
-      &xiopt,
-      xrwork,
-      &xlrwork,
-      xiwork,
-      &xliwork,
-      &Neq,
-      &xjt,
-      this
-  );
-  
-  this->call_derivs(&Neq, &tto, Y, Ydot);
+  // void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f, 
+  //                        const int neq,
+  //                        vector<double>& y, 
+  //                        vector<double>& yout, 
+  //                        double *t,
+  //                        const double tout, 
+  //                        int *istate,
+  //                        void *_data)
+  solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,(void*) this);
+
+  //Rcpp::Rcout << " TRying to advance" << std::endl;
+  //this->call_derivs(&Neq, &tto, Y, Ydot);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
@@ -664,12 +645,18 @@ double PolyExp(const double& x,
 }
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
-  this->tol(Rcpp::as<double>(parin["atol"]),Rcpp::as<double>(parin["rtol"]));
-  this->hmax(Rcpp::as<double>(parin["hmax"]));
-  this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
-  this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
-  this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
-  this->advan(Rcpp::as<int>(parin["advan"]));
+  //this->tol);
+  // this->hmax(Rcpp::as<double>(parin["hmax"]));
+  // this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
+  // this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
+  // this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
+  Atol = Rcpp::as<double>(parin["atol"]); 
+  Rtol = Rcpp::as<double>(parin["rtol"]);
+  Hmax = Rcpp::as<double>(parin["hmax"]);
+  Maxsteps = Rcpp::as<double>  (parin["maxsteps"]);
+  Ixpr = Rcpp::as<double>  (parin["ixpr"]);
+  Mxhnil = Rcpp::as<double>  (parin["mxhnil"]);
+  Advan = Rcpp::as<int>(parin["advan"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
 

@@ -209,17 +209,17 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn) {
+void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solver) {
   if(Ss > 0) {
     if(Fn==0) {
       throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
     }
-    if(Rate == 0) this->steady_bolus(prob);
-    if(Rate >  0) this->steady_infusion(prob,thisi);
+    if(Rate == 0) this->steady_bolus(prob,solver);
+    if(Rate >  0) this->steady_infusion(prob,thisi,solver);
   }
 }
 
-void datarecord::steady_bolus(odeproblem* prob) {
+void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
   dvec state_incoming;
   
@@ -255,7 +255,7 @@ void datarecord::steady_bolus(odeproblem* prob) {
     
     evon->implement(prob);
     prob->lsoda_init();
-    prob->advance(tfrom,tto);
+    prob->advance(tfrom,tto,solver);
     
     for(j=0; j < prob->neq(); ++j) {
       res[j]  = pow(prob->y(j) - last[j], 2.0);
@@ -289,7 +289,7 @@ void datarecord::steady_bolus(odeproblem* prob) {
     evon->implement(prob); 
     prob->lsoda_init();
     if(lagt <= Ii) {
-      prob->advance(tfrom, (tto - lagt));
+      prob->advance(tfrom, (tto - lagt), solver);
     }
   }
   
@@ -302,7 +302,7 @@ void datarecord::steady_bolus(odeproblem* prob) {
 } 
 
 
-void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
+void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver) {
   
   std::vector<double> state_incoming;
   
@@ -358,7 +358,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
     while((!offs.empty()) && (offs[0]->time()  <= nexti)) {
       
       toff = offs[0]->time();
-      prob->advance(tfrom,toff);
+      prob->advance(tfrom,toff,solver);
       ++end;
       offs[0]->implement(prob);
       prob->lsoda_init();
@@ -367,7 +367,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
     }
     
     prob->lsoda_init();
-    prob->advance(tfrom,nexti);
+    prob->advance(tfrom,nexti,solver);
     
     tfrom = nexti;
     
@@ -414,11 +414,11 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi) {
       evon->time(tfrom);
       evon->implement(prob);
       toff  = tfrom + duration;
-      prob->advance(tfrom,toff);
+      prob->advance(tfrom,toff,solver);
       rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
       evoff->implement(prob);
       prob->lsoda_init();
-      prob->advance(toff, (nexti - lagt));
+      prob->advance(toff, (nexti - lagt),solver);
     }
   }
   if(Ss == 2) {

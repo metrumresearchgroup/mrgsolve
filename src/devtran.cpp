@@ -41,6 +41,7 @@
 #include "odeproblem.h"
 #include "dataobject.h"
 #include "RcppInclude.h"
+#include "LSODA.h"
 
 
 #define CRUMP(a) throw Rcpp::exception(a,false)
@@ -165,12 +166,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int n_capture  = capture.size()-1;
   
   // Create odeproblem object
+
   odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
   prob->omega(OMEGA);
   prob->sigma(SIGMA);
   prob->copy_parin(parin);
   prob->pass_envir(&envir);
   const unsigned int neq = prob->neq();
+  LSODA solver(neq, 1E-6, 1e-8);
   
   recstack a(NID);
   
@@ -497,7 +500,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob->alag(this_cmtn) > mindt) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(prob, a[i], Fn);
+              this_rec->steady(prob, a[i], Fn,solver);
               tfrom = tto;
               this_rec->ss(0);
             }
@@ -550,10 +553,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       } // is_dose
       
-      prob->advance(tfrom,tto);
+      prob->advance(tfrom,tto,solver);
       
       if(this_rec->evid() != 2) {
-        this_rec->steady(prob,a[i],Fn);
+        this_rec->steady(prob,a[i],Fn,solver);
         this_rec->implement(prob);
       }
       

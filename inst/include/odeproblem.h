@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -28,6 +28,7 @@
 #include "odepack_dlsoda.h"
 #include "mrgsolv.h"
 #include "datarecord.h"
+#include "LSODA.h"
 
 // 
 // resim functor comes from mrgsolv.h
@@ -55,7 +56,12 @@ typedef void (*deriv_func)(MRGSOLVE_ODE_SIGNATURE);
 typedef void (*config_func)(MRGSOLVE_CONFIG_SIGNATURE);
 
 //! function to hand off to <code>DLSODA</code>
-typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot,odeproblem* prob);
+//typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot, void* prob);
+typedef void (*LSODA_ODE_SYSTEM_TYPE)(double t, double *y, double *dydt, void* _data);
+typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot);
+//typedef void (*ODE_FUNC)(double t, double *y, double *dydt, double*);
+typedef void (*MRGSOLVE_ODE_FUNC)(int neq, double* t, double* y, double* ydot, std::vector<double>& param);
+
 
 #define MRGSOLVE_GET_PRED_CL  (pred[0]) ///< map CL to pred position 0 for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_VC  (pred[1]) ///< map VC to pred position 1 for <code>$PKMODEL</code>
@@ -78,7 +84,7 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
 void dosimeta(void*);
 void dosimeps(void*);
 
-class odeproblem : public odepack_dlsoda {
+class odeproblem {
 
 public:
   odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, Rcpp::List funs,
@@ -87,7 +93,7 @@ public:
   virtual ~odeproblem();
   
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
-  void advance(double tfrom, double tto);
+  void advance(double tfrom, double tto, LSODA& solver);
   void call_derivs(int *neq, double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
@@ -115,7 +121,7 @@ public:
   
   bool CFONSTOP(){return d.CFONSTOP;}
   
-  const double* param() const {return Param;}
+  const std::vector<double>& param() {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
   
   void rate(unsigned int pos, double value) {R[pos] = value;}
@@ -175,9 +181,43 @@ public:
   std::vector<mrgsolve::evdata> mtimes(){return d.mevector;}
   void clear_mtime(){d.mevector.clear();}
   
-protected:
+  //double* y(){return Y;}
+  void    y(const int pos, const double value){Y[pos] = value;}
+  double  y(const int pos){return Y[pos];}
+  int  istate(){return Istate;}
+  void istate(int value){Istate = value;}
+  void lsoda_init(){Istate=1;}
+  int npar() {return Npar;}
+  int neq() {return Neq;}
+  void tol(double atol, double rtol);
+  void hmax(double value){Hmax = value; if(value !=0) Iopt=1;}
+  void hmin(double value){Hmin = value;  if(value !=0) Iopt=1;}
+  void ixpr(int value){Ixpr = value; if(value !=0) Iopt=1;}
+  void maxsteps(int value){Maxsteps = value; if(value !=0) Iopt=1;}
+  void mxhnil(int value){Mxhnil = value; if (value !=0) Iopt=1;}
+  //double* ydot(){return Ydot;}
+  std::vector<double> Y;
+  std::vector<double> Ydot;
+  std::vector<double> Yout;
+  std::vector<double> Param;
+  double Atol;
+  double Rtol;
+  int Npar;
+  int Neq;
+  int Istate; ///< istate value
+  int Itask; ///< itask value
+  int Iopt; ///< iopt value
+  int Itol; ///< itol value
+  int Mxhnil;
+  int Ixpr;
+  int Maxsteps;
+  double Hmax;
+  double Hmin;
+
+
   
-  double* Param; ///< model parameters
+protected:
+
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions
   std::vector<double> R; ///< receive user input for infusion rate
