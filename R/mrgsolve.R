@@ -424,10 +424,10 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' prior to the last dose in the \code{addl} sequence.  This known limitation
 ##' shouldn't affect \code{tad} calculation in most common dosing lag time
 ##' implementations.  
-##' @param nocb if \code{TRUE}, use next observation carry 
-##' backward method; otherwise, use \code{locf}.  
-##' @param skip_init_calc don't use \code{$MAIN} to 
-##' calculate initial conditions
+##' @param nocb if \code{TRUE}, use next observation carry backward method; 
+##' otherwise, use \code{locf}.  
+##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
+##' @param n_cores experimental
 ##' 
 ##' @rdname mrgsim
 ##' @export
@@ -450,7 +450,7 @@ do_mrgsim <- function(x,
                       tad = FALSE,
                       nocb = TRUE,
                       skip_init_calc = FALSE, 
-                      n_cores = 1,
+                      n_cores = -1,
                       ...) {
   
   verbose <- x@verbose
@@ -476,10 +476,10 @@ do_mrgsim <- function(x,
   init <-  as.numeric(Init(x))
   
   if(!identical(Pars(x),x@shlib$par)) {
-    stop("The parameter list has changed since the model was compiled.")
+    wstop("the parameter list has changed since the model was compiled.")
   }
   if(!identical(Cmt(x), x@shlib$cmt)) {
-    stop("The compartment list has changed since the model was compiled.")
+    wstop("the compartment list has changed since the model was compiled.")
   }
   
   ## request is stored in the model object
@@ -550,7 +550,7 @@ do_mrgsim <- function(x,
   parin$n_cores <- n_cores
   
   if(any(x@capture =="tad") & tad) {
-    stop("tad argument is true and 'tad' found in $CAPTURE",call.=FALSE) 
+    wstop("tad argument is true and 'tad' found in $CAPTURE") 
   }
   
   # already took intersect
@@ -598,7 +598,7 @@ do_mrgsim <- function(x,
          call. = FALSE)
   }
   
-  #if(getOption("mrgsolve.devtran2", FALSE)) {
+  if(n_cores  > 0) {
     out <- .Call(
       `_mrgsolve_DEVTRAN2`,
       parin,
@@ -613,27 +613,22 @@ do_mrgsim <- function(x,
       as.matrix(smat(x)),
       x@envir
     )
-    #return(out[["data"]])
-
-  # } else {
-  #   out <- .Call(
-  #     `_mrgsolve_DEVTRAN`,
-  #     parin,
-  #     param,
-  #     names(param(x)),
-  #     init,
-  #     names(Init(x)),
-  #     capt_pos,
-  #     pointers(x),
-  #     data,idata,
-  #     as.matrix(omat(x)),
-  #     as.matrix(smat(x)),
-  #     x@envir
-  #   )
-  #   
-  #   
-  # }
-  # 
+  } else {
+    out <- .Call(
+      `_mrgsolve_DEVTRAN`,
+      parin,
+      param,
+      names(param(x)),
+      init,
+      names(Init(x)),
+      capt_pos,
+      pointers(x),
+      data,idata,
+      as.matrix(omat(x)),
+      as.matrix(smat(x)),
+      x@envir
+    )
+  }
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case

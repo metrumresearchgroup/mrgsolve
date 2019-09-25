@@ -449,7 +449,7 @@ Rcpp::List DEVTRAN2(const Rcpp::List parin,
         if(status==999) CRUMP("999 sent from the model");
         if(this_rec->output()) {
           if(status==1) {
-            ans(crow,0) = this_rec->id();
+            ans(crow,0) = id;
             ans(crow,1) = this_rec->time();
             for(unsigned int k=0; k < n_capture; ++k) {
               ans(crow,(k+capture_start)) = iprob.capture(capture[k+1]);
