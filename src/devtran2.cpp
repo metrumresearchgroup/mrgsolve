@@ -32,6 +32,8 @@
  *
  */
 
+
+
 #include <boost/shared_ptr.hpp>
 #include <boost/pointer_cast.hpp>
 #include <string>
@@ -40,12 +42,17 @@
 #include "dataobject.h"
 #include "RcppInclude.h"
 #include "LSODA.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #define CRUMP(a) throw Rcpp::exception(a,false)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
 #define __ALAG_POS -1200
+
+
 
 /** Perform a simulation run.
  *
@@ -66,20 +73,22 @@
  *
  */
 // [[Rcpp::export]]
-Rcpp::List DEVTRAN(const Rcpp::List parin,
-                   const Rcpp::NumericVector& inpar,
-                   const Rcpp::CharacterVector& parnames,
-                   const Rcpp::NumericVector& init,
-                   Rcpp::CharacterVector& cmtnames,
-                   Rcpp::NumericVector& vars, 
-                   const Rcpp::IntegerVector& capture,
-                   const Rcpp::List& funs,
-                   const Rcpp::NumericMatrix& data,
-                   const Rcpp::NumericMatrix& idata,
-                   Rcpp::NumericMatrix& OMEGA,
-                   Rcpp::NumericMatrix& SIGMA,
-                   Rcpp::Environment envir) {
-  
+Rcpp::List DEVTRAN2(const Rcpp::List parin,
+                    const Rcpp::NumericVector& inpar,
+                    const Rcpp::CharacterVector& parnames,
+                    const Rcpp::NumericVector& init,
+                    Rcpp::CharacterVector& cmtnames,
+                    Rcpp::NumericVector& vars, 
+                    const Rcpp::IntegerVector& capture,
+                    const Rcpp::List& funs,
+                    const Rcpp::NumericMatrix& data,
+                    const Rcpp::NumericMatrix& idata,
+                    Rcpp::NumericMatrix& OMEGA,
+                    Rcpp::NumericMatrix& SIGMA,
+                    Rcpp::Environment envir) {
+
+  //say("DEVTRAN v2");
+
   //const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   const bool debug            = Rcpp::as<bool>   (parin["debug"]);
   const int digits            = Rcpp::as<int>    (parin["digits"]);
@@ -92,27 +101,27 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
-  
+  int n_cores                 = Rcpp::as<int>    (parin["n_cores"]);
+
   // Create data objects from data and idata
   dataobject dat(data,parnames);
   dat.map_uid();
   dat.locate_tran();
-  
+
   dataobject idat(idata, parnames, cmtnames);
   idat.idata_row();
-  
+
   // Number of individuals in the data set
   const int NID = dat.nid();
   const int nidata = idat.nrow();
-  
+
   int j = 0;
-  unsigned int k = 0;
   unsigned int crow = 0;
   size_t h = 0;
-  
+
   bool put_ev_first = false;
   bool addl_ev_first = true;
-  
+
   switch (recsort) {
   case 1:
     break;
@@ -131,36 +140,36 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   default:
     CRUMP("recsort must be 1, 2, 3, or 4.");
   }
-  
+
   // Requested compartments
   Rcpp::IntegerVector request = parin["request"];
   const unsigned int nreq = request.size();
-  
+
   // Columns from the data set to carry:
-  Rcpp::CharacterVector data_carry_ = 
+  Rcpp::CharacterVector data_carry_ =
     Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
   const Rcpp::IntegerVector data_carry =  dat.get_col_n(data_carry_);
   const unsigned int n_data_carry = data_carry.size();
-  
+
   // Columns from the idata set to carry:
   unsigned int n_idata_carry=0;
   Rcpp::IntegerVector idata_carry;
   if(nidata > 0) {
-    Rcpp::CharacterVector idata_carry_ = 
+    Rcpp::CharacterVector idata_carry_ =
       Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
     idata_carry =  idat.get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
     dat.check_idcol(idat);
   }
-  
+
   // Tran Items to carry:
-  Rcpp::CharacterVector tran_carry = 
+  Rcpp::CharacterVector tran_carry =
     Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const unsigned int n_tran_carry = tran_carry.size();
-  
+
   // Captures
   const unsigned int n_capture  = capture.size()-1;
-  
+
   // Create odeproblem object
 
   odeproblem prob(inpar, init, vars, funs, capture.at(0));
@@ -171,9 +180,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neq = prob.neq();
   LSODA solver(neq);
   solver.copy_parin(parin);
-  
+
   recstack a(NID);
-  
+
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
@@ -197,31 +206,31 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       CRUMP("There was a problem finding time of first dose.");
     }
   }
-  
+
   // Need this for later
   int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
-  
+
   if((obscount == 0) || (obsaug)) {
-    
-    Rcpp::NumericMatrix tgrid = 
+
+    Rcpp::NumericMatrix tgrid =
       Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
-    
+
     bool multiple_tgrid = tgrid.ncol() > 1;
-    
+
     // Already has C indexing
-    Rcpp::IntegerVector tgridi = 
+    Rcpp::IntegerVector tgridi =
       Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
-    
+
     // Number of non-na times in each design
     std::vector<int> tgridn;
-    
+
     if(multiple_tgrid) {
       if(tgridi.size() < idata.nrow()) {
         CRUMP("Length of design indicator less than NID.");
       }
       if(max(tgridi) >= tgrid.ncol()) {
         CRUMP("Insufficient number of designs specified for this problem.");
-      } 
+      }
       for(int i = 0; i < tgrid.ncol(); ++i) {
         tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
       }
@@ -231,31 +240,31 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         tgridi = Rcpp::rep(0,NID);
       }
     }
-    
+
     // Create a common dictionary of observation events
     // Vector of vectors
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
     std::vector<std::vector<rec_ptr> > designs;
-    
+
     designs.reserve(tgridn.size());
-    
+
     for(size_t i = 0; i < tgridn.size(); ++i) {
-      
+
       std::vector<rec_ptr> z;
-      
+
       z.reserve(tgridn[i]);
-      
+
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
         z.push_back(obs);
       }
       designs.push_back(z);
     }
-    
+
     double id;
     size_t n;
-    
+
     // We have to look up the design from the idata set
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
       if(multiple_tgrid) {
@@ -265,18 +274,18 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } else {
         j = 0;
         n = tgridn.at(0);
-      } 
-      
+      }
+
       it->reserve((it->size() + n));
       for(h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
-      } 
+      }
       std::sort(it->begin(), it->end(), CompRec());
     }
   }
-  
-  
+
+
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
@@ -290,27 +299,27 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int idata_carry_start = data_carry_start + n_data_carry;
   const unsigned int req_start = idata_carry_start+n_idata_carry;
   const unsigned int capture_start = req_start+nreq;
-  
+
   const unsigned int neta = OMEGA.nrow();
   arma::mat eta;
   if(neta > 0) {
     eta = prob.mv_omega(NID);
     prob.neta(neta);
   }
-  
+
   const unsigned int neps = SIGMA.nrow();
   arma::mat eps;
   if(neps > 0) {
     eps = prob.mv_sigma(NN);
     prob.neps(neps);
   }
-  
+
   Rcpp::CharacterVector tran_names;
   if(n_tran_carry > 0) {
-    
+
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
     Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
-    
+
     const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
     const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
     const bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
@@ -319,7 +328,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     const bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
     const bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
     const bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
-    
+
     if(carry_evid) tran_names.push_back("evid");
     if(carry_amt)  tran_names.push_back("amt");
     if(carry_cmt)  tran_names.push_back("cmt");
@@ -328,8 +337,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     if(carry_addl) tran_names.push_back("addl");
     if(carry_rate) tran_names.push_back("rate");
     if(carry_aug)  tran_names.push_back("a.u.g");
-    
-    
+
+
     crow = 0;
     int n = 0;
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
@@ -348,93 +357,112 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
     }
   }
-  
+
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
     dat.carry_out(a,ans,idat,data_carry,data_carry_start,
                   idata_carry,idata_carry_start);
   }
-  
-  double tto, tfrom;
-  crow = 0;
-  int this_cmtn = 0;
-  double dt = 0;
-  double id = 0;
-  double maxtime = 0;
-  double Fn = 1.0;
-  int this_idata_row = 0;
-  double told = -1;
-  bool locf = false;
-  
+
   prob.nid(dat.nid());
   prob.nrow(NN);
   prob.idn(0);
   prob.rown(0);
-  
+  bool has_idat = nidata > 0;
+
   prob.config_call();
-  reclist mtimehx;
-  
-  // i is indexing the subject, j is the record
+
+  std::vector<int> starts;
+  starts.resize(a.size());
+  int xrow = 0;
+  for(size_t i = 0; i < a.size(); ++i) {
+    for(size_t j = 0; j < a[i].size(); ++j) {
+      if(j==0) starts[i] = xrow;
+      if(a[i][j]->output()) ++xrow;
+    }
+  }
+
+#ifdef _OPENMP
+  omp_set_num_threads(n_cores);
+#pragma omp parallel for
+#endif
   for(size_t i=0; i < a.size(); ++i) {
-    
+
+    double tto, tfrom;
+    int crow = starts[i];
+    int this_cmtn = 0;
+    double dt = 0;
+    double id = 0;
+    double maxtime = 0;
+    double Fn = 1.0;
+    int this_idata_row = 0;
+    double told = -1;
+    bool locf = false;
+    int k = 0;
+    reclist mtimehx;
+
+    odeproblem iprob(prob);
+    LSODA isolver(solver);
+
     told = -1;
-    
-    prob.idn(i);
-    
+
+    iprob.idn(i);
+
     tfrom = a[i].front()->time();
     maxtime = a[i].back()->time();
-    
+
     id = dat.get_uid(i);
-    
-    this_idata_row  = idat.get_idata_row(id);
-    
-    prob.reset_newid(id);
-    
+
+    iprob.reset_newid(id);
+
     if(i==0) {
-      prob.newind(0);
+      iprob.newind(0);
     }
-    
-    for(k=0; k < neta; ++k) prob.eta(k,eta(i,k));
-    for(k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
-    
-    idat.copy_parameters(this_idata_row,&prob);
-    
+
+    for(k=0; k < neta; ++k) iprob.eta(k,eta(i,k));
+    for(k=0; k < neps; ++k) iprob.eps(k,eps(crow,k));
+
+    iprob.y_init(init);
+
+    if(has_idat) {
+      this_idata_row  = idat.get_idata_row(id);
+      idat.copy_parameters(this_idata_row,&iprob);
+      idat.copy_inits(this_idata_row,&iprob);
+    }
+
     if(a[i][0]->from_data()) {
-      dat.copy_parameters(a[i][0]->pos(),&prob);
+      dat.copy_parameters(a[i][0]->pos(), &iprob);
     } else {
       if(filbak) {
-        dat.copy_parameters(dat.start(i),&prob);
+        dat.copy_parameters(dat.start(i), &iprob);
       }
     }
-    
-    prob.y_init(init);
-    
-    idat.copy_inits(this_idata_row,&prob);
-    prob.set_d(a[i][0]);
-    prob.init_call(tfrom);
-    
+
+    iprob.set_d(a[i][0]);
+    iprob.init_call(tfrom);
+
     for(size_t j=0; j < a[i].size(); ++j) {
-      
-      if(crow == NN) continue;
-      
-      prob.rown(crow);
-      
+
       rec_ptr this_rec = a[i][j];
-      
+
+      if(crow == NN) continue;
+
+      iprob.rown(crow);
+
       this_rec->id(id);
-      
-      if(prob.systemoff()) {
-        unsigned short int status = prob.systemoff();
+
+      if(iprob.systemoff()) {
+        unsigned short int status = iprob.systemoff();
         if(status==9) CRUMP("the problem was stopped at user request.");
         if(status==999) CRUMP("999 sent from the model");
         if(this_rec->output()) {
           if(status==1) {
-            ans(crow,0) = this_rec->id();
+            ans(crow,0) = id;
             ans(crow,1) = this_rec->time();
             for(unsigned int k=0; k < n_capture; ++k) {
-              ans(crow,(k+capture_start)) = prob.capture(capture[k+1]);
+              ans(crow,(k+capture_start)) = iprob.capture(capture[k+1]);
             }
             for(unsigned int k=0; k < nreq; ++k) {
-              ans(crow,(k+req_start)) = prob.y(request[k]);
+              ans(crow,(k+req_start)) = iprob.y(request[k]);
             }
           } else {
             for(int k=0; k < ans.ncol(); ++k) {
@@ -445,66 +473,66 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         continue;
       }
-      
+
       locf = false;
       if(this_rec->from_data()) {
         if(nocb) {
-          dat.copy_parameters(this_rec->pos(),&prob);
+          dat.copy_parameters(this_rec->pos(), &iprob);
         } else {
           locf = true;
         }
       }
-      
+
       tto = this_rec->time();
-      
+
       dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
-      
+
       if((dt > 0.0) && (dt < mindt)) {
         tto = tfrom;
       }
-      
+
       if(tto > tfrom) {
-        for(k = 0; k < neps; ++k) {
-          prob.eps(k,eps(crow,k));
+        for(int k = 0; k < neps; ++k) {
+          iprob.eps(k,eps(crow,k));
         }
       }
-      
+
       if(j != 0) {
-        prob.newind(2);
-        prob.set_d(this_rec);
-        prob.init_call_record(tto);
+        iprob.newind(2);
+        iprob.set_d(this_rec);
+        iprob.init_call_record(tto);
       }
 
       // Some non-observation event happening
       if(this_rec->is_event()) {
-        
+
         this_cmtn = this_rec->cmtn();
-        
-        Fn = prob.fbio(this_cmtn);
-        
+
+        Fn = iprob.fbio(this_cmtn);
+
         if(Fn < 0) {
           CRUMP("mrgsolve: bioavailability fraction is less than zero.");
         }
-        
+
         bool sort_recs = false;
-        
+
         if(this_rec->from_data()) {
-          
+
           if(this_rec->rate() < 0) {
-            prob.rate_main(this_rec);
+            iprob.rate_main(this_rec);
           }
-          
-          if(prob.alag(this_cmtn) > mindt) { // there is a valid lagtime
-            
+
+          if(iprob.alag(this_cmtn) > mindt) { // there is a valid lagtime
+
             if(this_rec->ss() > 0) {
-              this_rec->steady(&prob, a[i], Fn,solver);
+              this_rec->steady(&iprob, a[i], Fn,isolver);
               tfrom = tto;
               this_rec->ss(0);
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
-            newev->time(this_rec->time() + prob.alag(this_cmtn));
+            newev->time(this_rec->time() + iprob.alag(this_cmtn));
             newev->ss(0);
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
@@ -517,7 +545,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             sort_recs = this_rec->needs_sorting();
           }
         } // from data
-        
+
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
@@ -530,42 +558,42 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  -299,
                                  this_rec->id());
           if(this_rec->from_data()) {
-            evoff->time(evoff->time() + prob.alag(this_cmtn));
+            evoff->time(evoff->time() + iprob.alag(this_cmtn));
           }
           a[i].push_back(evoff);
           sort_recs = true;
         }
-        
+
         // SORT
         if(sort_recs) {
           std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
         }
-        
+
         if(tad) {
           if((this_rec->evid()==1) || (this_rec->evid()==4)) {
             if(this_rec->armed()) {
-              told = tto - prob.alag(this_cmtn);  
+              told = tto - iprob.alag(this_cmtn);
             }
           }
         }
       } // is_dose
-      
-      prob.advance(tfrom,tto,solver);
-      
+
+      iprob.advance(tfrom,tto,isolver);
+
       if(this_rec->evid() != 2) {
-        this_rec->steady(&prob,a[i],Fn,solver);
-        this_rec->implement(&prob);
+        this_rec->steady(&iprob,a[i],Fn,isolver);
+        this_rec->implement(&iprob);
       }
-      
+
       if(locf) {
-        dat.copy_parameters(this_rec->pos(),&prob);
+        dat.copy_parameters(this_rec->pos(), &iprob);
       }
-      
-      prob.table_call();
-      
-      if(prob.any_mtime()) {
-        if(prob.newind() <=1) mtimehx.clear();  
-        std::vector<mrgsolve::evdata> mt  = prob.mtimes();
+
+      iprob.table_call();
+
+      if(iprob.any_mtime()) {
+        if(iprob.newind() <=1) mtimehx.clear();
+        std::vector<mrgsolve::evdata> mt  = iprob.mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           double this_time = (mt[mti]).time;
           if(this_time < tto) continue;
@@ -581,40 +609,41 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,0.0);
           new_ev->phantom_rec();
           if(mt[mti].now) {
-            new_ev->implement(&prob);
+            new_ev->implement(&iprob);
           } else {
             bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
             if(!foo) {
               a[i].push_back(new_ev);
               std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
               mtimehx.push_back(new_ev);
-            } 
+            }
           }
         }
-        prob.clear_mtime();
+        iprob.clear_mtime();
       }
       if(this_rec->output()) {
-        ans(crow,0) = this_rec->id();
+        ans(crow,0) = id;
         ans(crow,1) = this_rec->time();
         if(tad) {
           ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
-        k = 0;
+        int k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
-          ans(crow,k+capture_start) = prob.capture(capture[i+1]);
+          ans(crow,k+capture_start) = iprob.capture(capture[i+1]);
           ++k;
         }
         for(k=0; k < nreq; ++k) {
-          ans(crow,(k+req_start)) = prob.y(request[k]);
+          ans(crow,(k+req_start)) = iprob.y(request[k]);
         }
         ++crow;
-      } 
+      }
       if(this_rec->evid()==2) {
-        this_rec->implement(&prob);
+        this_rec->implement(&iprob);
       }
       tfrom = tto;
     }
   }
+
   if(digits > 0) {
     for(int i=req_start; i < ans.ncol(); ++i) {
       ans(Rcpp::_, i) = signif(ans(Rcpp::_,i), digits);
@@ -625,92 +654,4 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
-}
-
-// [[Rcpp::export]]
-Rcpp::List EXPAND_OBSERVATIONS(
-    const Rcpp::NumericMatrix& data,
-    const Rcpp::NumericVector& times,
-    const Rcpp::IntegerVector& to_copy) {
-  
-  Rcpp::CharacterVector parnames;
-  // Create data objects from data and idata
-  dataobject dat(data,parnames);
-  dat.map_uid();
-  dat.locate_tran();
-  
-  const int NID = dat.nid();
-  
-  // Create odeproblem object
-  
-  recstack a(NID);
-  
-  unsigned int obscount = 0;
-  unsigned int evcount = 0;
-  unsigned int neq = 10000;
-  bool obsonly = false;
-  bool debug = false;
-  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  int nextpos = -1;
-  obscount = 0;
-  
-  std::vector<rec_ptr> z;
-  
-  z.reserve(times.size());
-  
-  for(int j = 0; j < times.size(); ++j) {
-    rec_ptr obs = NEWREC(times[j],nextpos,true);
-    z.push_back(obs);
-  }
-  
-  size_t n = z.size();
-  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    it->reserve((it->size() + n));
-    for(size_t h=0; h < n; h++) {
-      it->push_back(z.at(h));
-      ++obscount;
-    } 
-    std::sort(it->begin(), it->end(), CompRec());
-  }
-  
-  const int recs = (data.nrow()) + obscount;
-  
-  Rcpp::NumericMatrix d(recs,data.ncol());
-  
-  int crow = 0;
-  int last_data_row = -1;
-  
-  int Idcol = find_position("ID", dat.Data_names);
-  if(Idcol < 0) {
-    throw Rcpp::exception("Could not find ID column in data set.",false);
-  }
-  
-  Rcpp::LogicalVector index(recs);
-  
-  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    int i = it - a.begin();
-    double id = dat.get_uid(i);
-    last_data_row = dat.start(i);
-    for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-      if((*itt)->from_data()) {
-        last_data_row = (*itt)->pos();    
-        for(int i = 0; i < data.ncol(); i++) {
-          d(crow,i) = data(last_data_row,i);  
-          index[crow] = false;
-        }
-      }  else {
-        d(crow,dat.col.at(7)) = (*itt)->time();
-        d(crow,Idcol) = id;
-        for(int k=0; k < to_copy.size(); k++) {
-          d(crow,to_copy[k]) = data(last_data_row,to_copy[k]);  
-        }
-        index[crow] = true;
-      }
-      ++crow;
-    }
-  }
-  Rcpp::List ans;
-  ans["data"] = d;
-  ans["index"] = index;
-  return ans;
 }

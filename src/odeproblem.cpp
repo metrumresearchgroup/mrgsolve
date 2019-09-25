@@ -51,18 +51,24 @@ void dosimeps(void* prob_) {
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
+                       Rcpp::NumericVector vars,
                        Rcpp::List funs,
                        int n_capture_) {
   
   int npar_ = int(param.size());
   int neq_ = int(init.size());
+  int nvar_ = int(vars.size());
+  
   Neq = neq_;
   Npar = npar_;
+  Nvar = nvar_;
+
   Istate = 1;
   
   Advan = 13;
   
   Param.assign(Npar,0.0);
+  Vars.assign(Nvar,0.0);
   Y.assign(Neq,0.0);
   Yout.assign(Neq+1,0.0);
   Ydot.assign(Neq,0.0);
@@ -176,7 +182,7 @@ void main_derivs(double t, double *y, double *ydot, void *data) {
 }
 
 void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
-  Derivs(t,y,ydot,Init_value,Param);
+  Derivs(t,y,ydot,Init_value,Param,Vars);
   for(int i = 0; i < Neq; ++i) {
     ydot[i] = (ydot[i] + R0[i])*On[i]; 
   }
@@ -687,6 +693,7 @@ void odeproblem::advan(int x) {
 // [[Rcpp::export]]
 Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
                       const Rcpp::NumericVector& linit,
+                      Rcpp::NumericVector& vars, 
                       int Neta, int Neps,
                       const Rcpp::CharacterVector& capture,
                       const Rcpp::List& funs,
@@ -694,7 +701,7 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   
   Rcpp::List ans;
   
-  odeproblem prob(lparam, linit, funs, capture.size());
+  odeproblem prob(lparam, linit, vars, funs, capture.size());
   prob.neta(Neta);
   prob.neps(Neps);
   prob.pass_envir(&envir);

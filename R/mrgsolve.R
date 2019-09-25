@@ -448,7 +448,8 @@ do_mrgsim <- function(x,
                       filbak = TRUE,
                       tad = FALSE,
                       nocb = TRUE,
-                      skip_init_calc = FALSE,
+                      skip_init_calc = FALSE, 
+                      n_cores = -1,
                       ...) {
   
   verbose <- x@verbose
@@ -545,6 +546,7 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
+  parin$n_cores <- n_cores
   
   if(any(x@capture =="tad") & tad) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
@@ -594,21 +596,40 @@ do_mrgsim <- function(x,
     stop("the seed argument is deprecated; use set.seed(seed) instead", 
          call. = FALSE)
   }
-
-  out <- .Call(
-    `_mrgsolve_DEVTRAN`,
-    parin,
-    param,
-    names(param(x)),
-    init,
-    names(Init(x)),
-    capt_pos,
-    pointers(x),
-    data,idata,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir
-  )
+  
+  if(n_cores  > 0) {
+    out <- .Call(
+      `_mrgsolve_DEVTRAN2`,
+      parin,
+      param,
+      names(param(x)),
+      init,
+      names(Init(x)),
+      numeric(100),
+      capt_pos,
+      pointers(x),
+      data,idata,
+      as.matrix(omat(x)),
+      as.matrix(smat(x)),
+      x@envir
+    )
+  } else {
+    out <- .Call(
+      `_mrgsolve_DEVTRAN`,
+      parin,
+      param,
+      names(param(x)),
+      init,
+      names(Init(x)),
+      numeric(100),
+      capt_pos,
+      pointers(x),
+      data,idata,
+      as.matrix(omat(x)),
+      as.matrix(smat(x)),
+      x@envir
+    )
+  }
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case

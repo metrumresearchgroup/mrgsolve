@@ -86,7 +86,9 @@ void dosimeps(void*);
 class odeproblem {
 
 public:
-  odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, Rcpp::List funs,
+  odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, 
+             Rcpp::NumericVector vars,
+             Rcpp::List funs,
              int n_capture_);
 
   odeproblem(){};
@@ -180,8 +182,6 @@ public:
   bool any_mtime() {return d.mevector.size() > 0;}
   std::vector<mrgsolve::evdata> mtimes(){return d.mevector;}
   void clear_mtime(){d.mevector.clear();}
-  
-  //double* y(){return Y;}
   void    y(const int pos, const double value){Y[pos] = value;}
   double  y(const int pos){return Y[pos];}
   int  istate(){return Istate;}
@@ -190,19 +190,16 @@ public:
   int npar() {return Npar;}
   int neq() {return Neq;}
   void tol(double atol, double rtol);
-  // void hmax(double value){Hmax = value; if(value !=0) Iopt=1;}
-  // void hmin(double value){Hmin = value;  if(value !=0) Iopt=1;}
-  // void ixpr(int value){Ixpr = value; if(value !=0) Iopt=1;}
-  // void maxsteps(int value){Maxsteps = value; if(value !=0) Iopt=1;}
-  // void mxhnil(int value){Mxhnil = value; if (value !=0) Iopt=1;}
   std::vector<double> Y;
   std::vector<double> Ydot;
   std::vector<double> Yout;
   std::vector<double> Param;
+  std::vector<double> Vars;
   double Atol;
   double Rtol;
   int Npar;
   int Neq;
+  int Nvar;
   int Istate; ///< istate value
 
 protected:
