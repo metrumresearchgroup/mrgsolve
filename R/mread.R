@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -200,14 +200,16 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   spec[["SET"]] <- spec[["ENV"]] <-  NULL
   
-  
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- parse_env(spec,project=build$project,ENV)
   
+  # Safe mode?
+  found_safe <- exists("SAFE", spec)
+  
   ## The main sections that need R processing:
-  spec <- move_global(spec,mread.env)
+  if(!found_safe) spec <- move_global(spec,mread.env)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
@@ -225,6 +227,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
+  
+  # pull out safe
+  safe <- character(0)
+  if(found_safe) {
+    message("Safe mode")
+    safe <- mread.env[["safe"]]
+  }
   
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))
@@ -354,11 +363,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["include"]] <- inc
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
   x@shlib[["md5"]] <- build$md5
+  x@shlib[["safe"]] <- found_safe
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(
     pars = names(param),
+    safe = safe,
     cmt = names(init),
     ode_func(x),
     main_func(x),

@@ -206,7 +206,7 @@ void odeproblem::init_call(const double& time) {
   d.time = time;
   
   if(Do_Init_Calc) {
-    Inits(Init_value,Y,Param,F,Alag,R,D,d,pred,simeta);
+    Inits(Init_value,Y,Param,Vars,F,Alag,R,D,d,pred,simeta);
     for(int i=0; i < Neq; ++i) {
       Y[i] = Init_value[i];
       Init_dummy[i] = Init_value[i];
@@ -215,7 +215,7 @@ void odeproblem::init_call(const double& time) {
     for(int i=0; i < Neq; ++i) {
       Init_dummy[i] = Init_value[i];
     }
-    Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
+    Inits(Init_dummy,Y,Param,Vars,F,Alag,R,D,d,pred,simeta);
   }
 }
 
@@ -227,17 +227,17 @@ void odeproblem::init_call(const double& time) {
  */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
-  Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
+  Inits(Init_dummy,Y,Param,Vars,F,Alag,R,D,d,pred,simeta);
 }
 
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
-  Table(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
+  Table(Y,Init_value,Param,Vars,F,R,d,pred,Capture,simeps);  
 }
 
 //! Call <code>$PREAMBLE</code> function.
 void odeproblem::config_call() {
-  Config(d,Param,Neq,Npar);
+  Config(d,Param,Vars,Neq,Npar);
 }
 
 //! Reset all infusion rates.

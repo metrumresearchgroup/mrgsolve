@@ -15,7 +15,8 @@ do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
   Request = character(0), output = NULL, capture = NULL,
   obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
   deslist = list(), descol = character(0), filbak = TRUE,
-  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ...)
+  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, n_cores = -1,
+  ...)
 }
 \arguments{
 \item{x}{the model object}

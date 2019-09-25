@@ -238,6 +238,15 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   return(NULL)
 }
 
+
+# SAFE -------------------
+#' @export
+handle_spec_block.specSAFE <- function(x,env,...) {
+  check_block_data(x,env$ENV,pos)
+  x <- cvec_cs(x)
+  env[["safe"]] <- x
+}
+
 # THETA ------------------------------------------------------------------------
 
 #' @export
