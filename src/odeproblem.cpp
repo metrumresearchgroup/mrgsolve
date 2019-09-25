@@ -62,7 +62,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   Advan = 13;
   
-  //Param = new double[npar_]();
   Param.assign(Npar,0.0);
   Y.assign(Neq,0.0);
   Yout.assign(Neq+1,0.0);
@@ -106,18 +105,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));
   simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
   
-}
-
-
-/**
- @brief Destructor for odeproblem object.
- 
- Upon object construction, odeproblem dynamically allocates the Param 
- array.
- 
- */
-odeproblem::~odeproblem(){
-
 }
 
 double odeproblem::fbio(unsigned int pos) {

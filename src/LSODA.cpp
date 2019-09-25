@@ -9,10 +9,11 @@
  * Modifications: 
  * - Added several members that were previously being passed in to 
  *   lsoda_update().
- * - Replaced fprint statements to REfprint for CRAN compliance
- * - Replaced output to cerr with REfprint
- * - Added Rcpp::exception when terminate or terminate2 are called  
- * - Removed assert stataements for CRAN compliance
+ * - Added several functions for setting new members.
+ * - Replaced fprint statements to REfprint for CRAN compliance.
+ * - Replaced output to cerr with REfprint.
+ * - Added Rcpp::exception when terminate or terminate2 are called. 
+ * - Removed assert stataements for CRAN compliance.
  * 
  */
 

@@ -25,7 +25,6 @@
 #include <math.h>
 #include <vector>
 #include "RcppInclude.h"
-#include "odepack_dlsoda.h"
 #include "mrgsolv.h"
 #include "datarecord.h"
 #include "LSODA.h"
@@ -89,9 +88,10 @@ class odeproblem {
 public:
   odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, Rcpp::List funs,
              int n_capture_);
-  
-  virtual ~odeproblem();
-  
+
+  odeproblem(){};
+  ~odeproblem(){};
+
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
   void call_derivs(int *neq, double *t, double *y, double *ydot);

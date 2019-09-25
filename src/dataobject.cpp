@@ -91,14 +91,13 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
 dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
-  
-  int i=0;
+
   int n = Data.nrow();
   
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
   
-  for(i=1; i < n; ++i) {
+  for(int i=1; i < n; ++i) {
     if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
       Startrow.push_back(i);
@@ -399,6 +398,7 @@ void dataobject::get_ids(uidtype* ids) {
 }
 
 unsigned int dataobject::get_idata_row(const double ID) {
+  if(idmap.size()==0) return 0;
   return idmap[ID];
 }
 

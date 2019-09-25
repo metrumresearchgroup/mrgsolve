@@ -84,16 +84,16 @@ public:
   
 protected:
   
-  uidtype Uid;  ///< unique IDs in the data set
-  datarowtype Startrow;  ///< start row for each ID
-  datarowtype Endrow; ///< data set end row for each ID
+  std::deque<double> Uid;  ///< unique IDs in the data set
+  std::deque<int> Startrow;  ///< start row for each ID
+  std::deque<int> Endrow; ///< data set end row for each ID
   int Idcol; ///< which column holds ID
   
 
   Rcpp::IntegerVector par_from;  ///< index for parameters in data set
   Rcpp::IntegerVector par_to;    ///< index for parameters in param list
   Rcpp::CharacterVector parnames; ///< names of model parameters
-  idat_map idmap; ///< map to get 
+  std::map<double,int> idmap; ///< map to get 
   
   Rcpp::IntegerVector cmt_from; ///< index for compartments in data set
   Rcpp::IntegerVector cmt_to;  ///< index for compartments in init list

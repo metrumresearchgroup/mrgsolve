@@ -42,6 +42,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// DEVTRAN2
+Rcpp::List DEVTRAN2(const Rcpp::List parin, const Rcpp::NumericVector& inpar, const Rcpp::CharacterVector& parnames, const Rcpp::NumericVector& init, Rcpp::CharacterVector& cmtnames, const Rcpp::IntegerVector& capture, const Rcpp::List& funs, const Rcpp::NumericMatrix& data, const Rcpp::NumericMatrix& idata, Rcpp::NumericMatrix& OMEGA, Rcpp::NumericMatrix& SIGMA, Rcpp::Environment envir);
+RcppExport SEXP _mrgsolve_DEVTRAN2(SEXP parinSEXP, SEXP inparSEXP, SEXP parnamesSEXP, SEXP initSEXP, SEXP cmtnamesSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP OMEGASEXP, SEXP SIGMASEXP, SEXP envirSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type parin(parinSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type inpar(inparSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type parnames(parnamesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type init(initSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector& >::type cmtnames(cmtnamesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type capture(captureSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type idata(idataSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type OMEGA(OMEGASEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type SIGMA(SIGMASEXP);
+    Rcpp::traits::input_parameter< Rcpp::Environment >::type envir(envirSEXP);
+    rcpp_result_gen = Rcpp::wrap(DEVTRAN2(parin, inpar, parnames, init, cmtnames, capture, funs, data, idata, OMEGA, SIGMA, envir));
+    return rcpp_result_gen;
+END_RCPP
+}
 // MVGAUSS
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 RcppExport SEXP _mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {

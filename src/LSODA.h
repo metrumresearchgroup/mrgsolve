@@ -39,7 +39,7 @@ class LSODA
     
 public:
     LSODA(int neq);
-    LSODA();
+    LSODA(){};
     ~LSODA();
     MRGSOLVE_ODE_FUNC odes;
     int iopt; 
