@@ -32,8 +32,6 @@
  *
  */
 
-
-
 #include <boost/shared_ptr.hpp>
 #include <boost/pointer_cast.hpp>
 #include <string>
@@ -43,14 +41,11 @@
 #include "RcppInclude.h"
 #include "LSODA.h"
 
-
 #define CRUMP(a) throw Rcpp::exception(a,false)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
 #define __ALAG_POS -1200
-
-
 
 /** Perform a simulation run.
  *
@@ -167,12 +162,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Create odeproblem object
 
-  odeproblem *prob  = new odeproblem(inpar, init, funs, capture.at(0));
-  prob->omega(OMEGA);
-  prob->sigma(SIGMA);
-  prob->copy_parin(parin);
-  prob->pass_envir(&envir);
-  const unsigned int neq = prob->neq();
+  odeproblem prob(inpar, init, funs, capture.at(0));
+  prob.omega(OMEGA);
+  prob.sigma(SIGMA);
+  prob.copy_parin(parin);
+  prob.pass_envir(&envir);
+  const unsigned int neq = prob.neq();
   LSODA solver(neq);
   solver.copy_parin(parin);
   
@@ -298,15 +293,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neta = OMEGA.nrow();
   arma::mat eta;
   if(neta > 0) {
-    eta = prob->mv_omega(NID);
-    prob->neta(neta);
+    eta = prob.mv_omega(NID);
+    prob.neta(neta);
   }
   
   const unsigned int neps = SIGMA.nrow();
   arma::mat eps;
   if(neps > 0) {
-    eps = prob->mv_sigma(NN);
-    prob->neps(neps);
+    eps = prob.mv_sigma(NN);
+    prob.neps(neps);
   }
   
   Rcpp::CharacterVector tran_names;
@@ -369,12 +364,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   double told = -1;
   bool locf = false;
   
-  prob->nid(dat.nid());
-  prob->nrow(NN);
-  prob->idn(0);
-  prob->rown(0);
+  prob.nid(dat.nid());
+  prob.nrow(NN);
+  prob.idn(0);
+  prob.rown(0);
   
-  prob->config_call();
+  prob.config_call();
   reclist mtimehx;
   
   // i is indexing the subject, j is the record
@@ -382,7 +377,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     told = -1;
     
-    prob->idn(i);
+    prob.idn(i);
     
     tfrom = a[i].front()->time();
     maxtime = a[i].back()->time();
@@ -391,43 +386,43 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     this_idata_row  = idat.get_idata_row(id);
     
-    prob->reset_newid(id);
+    prob.reset_newid(id);
     
     if(i==0) {
-      prob->newind(0);
+      prob.newind(0);
     }
     
-    for(k=0; k < neta; ++k) prob->eta(k,eta(i,k));
-    for(k=0; k < neps; ++k) prob->eps(k,eps(crow,k));
+    for(k=0; k < neta; ++k) prob.eta(k,eta(i,k));
+    for(k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
     
-    idat.copy_parameters(this_idata_row,prob);
+    idat.copy_parameters(this_idata_row,&prob);
     
     if(a[i][0]->from_data()) {
-      dat.copy_parameters(a[i][0]->pos(), prob);
+      dat.copy_parameters(a[i][0]->pos(),&prob);
     } else {
       if(filbak) {
-        dat.copy_parameters(dat.start(i),prob);
+        dat.copy_parameters(dat.start(i),&prob);
       }
     }
     
-    prob->y_init(init);
+    prob.y_init(init);
     
-    idat.copy_inits(this_idata_row,prob);
-    prob->set_d(a[i][0]);
-    prob->init_call(tfrom);
+    idat.copy_inits(this_idata_row,&prob);
+    prob.set_d(a[i][0]);
+    prob.init_call(tfrom);
     
     for(size_t j=0; j < a[i].size(); ++j) {
       
       if(crow == NN) continue;
       
-      prob->rown(crow);
+      prob.rown(crow);
       
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
       
-      if(prob->systemoff()) {
-        unsigned short int status = prob->systemoff();
+      if(prob.systemoff()) {
+        unsigned short int status = prob.systemoff();
         if(status==9) CRUMP("the problem was stopped at user request.");
         if(status==999) CRUMP("999 sent from the model");
         if(this_rec->output()) {
@@ -435,10 +430,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
             for(unsigned int k=0; k < n_capture; ++k) {
-              ans(crow,(k+capture_start)) = prob->capture(capture[k+1]);
+              ans(crow,(k+capture_start)) = prob.capture(capture[k+1]);
             }
             for(unsigned int k=0; k < nreq; ++k) {
-              ans(crow,(k+req_start)) = prob->y(request[k]);
+              ans(crow,(k+req_start)) = prob.y(request[k]);
             }
           } else {
             for(int k=0; k < ans.ncol(); ++k) {
@@ -453,7 +448,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       locf = false;
       if(this_rec->from_data()) {
         if(nocb) {
-          dat.copy_parameters(this_rec->pos(), prob);
+          dat.copy_parameters(this_rec->pos(),&prob);
         } else {
           locf = true;
         }
@@ -469,14 +464,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(tto > tfrom) {
         for(k = 0; k < neps; ++k) {
-          prob->eps(k,eps(crow,k));
+          prob.eps(k,eps(crow,k));
         }
       }
       
       if(j != 0) {
-        prob->newind(2);
-        prob->set_d(this_rec);
-        prob->init_call_record(tto);
+        prob.newind(2);
+        prob.set_d(this_rec);
+        prob.init_call_record(tto);
       }
 
       // Some non-observation event happening
@@ -484,7 +479,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         this_cmtn = this_rec->cmtn();
         
-        Fn = prob->fbio(this_cmtn);
+        Fn = prob.fbio(this_cmtn);
         
         if(Fn < 0) {
           CRUMP("mrgsolve: bioavailability fraction is less than zero.");
@@ -495,20 +490,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(this_rec->from_data()) {
           
           if(this_rec->rate() < 0) {
-            prob->rate_main(this_rec);
+            prob.rate_main(this_rec);
           }
           
-          if(prob->alag(this_cmtn) > mindt) { // there is a valid lagtime
+          if(prob.alag(this_cmtn) > mindt) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(prob, a[i], Fn,solver);
+              this_rec->steady(&prob, a[i], Fn,solver);
               tfrom = tto;
               this_rec->ss(0);
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
-            newev->time(this_rec->time() + prob->alag(this_cmtn));
+            newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
@@ -534,7 +529,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  -299,
                                  this_rec->id());
           if(this_rec->from_data()) {
-            evoff->time(evoff->time() + prob->alag(this_cmtn));
+            evoff->time(evoff->time() + prob.alag(this_cmtn));
           }
           a[i].push_back(evoff);
           sort_recs = true;
@@ -548,28 +543,28 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(tad) {
           if((this_rec->evid()==1) || (this_rec->evid()==4)) {
             if(this_rec->armed()) {
-              told = tto - prob->alag(this_cmtn);  
+              told = tto - prob.alag(this_cmtn);  
             }
           }
         }
       } // is_dose
       
-      prob->advance(tfrom,tto,solver);
+      prob.advance(tfrom,tto,solver);
       
       if(this_rec->evid() != 2) {
-        this_rec->steady(prob,a[i],Fn,solver);
-        this_rec->implement(prob);
+        this_rec->steady(&prob,a[i],Fn,solver);
+        this_rec->implement(&prob);
       }
       
       if(locf) {
-        dat.copy_parameters(this_rec->pos(), prob);
+        dat.copy_parameters(this_rec->pos(),&prob);
       }
       
-      prob->table_call();
+      prob.table_call();
       
-      if(prob->any_mtime()) {
-        if(prob->newind() <=1) mtimehx.clear();  
-        std::vector<mrgsolve::evdata> mt  = prob->mtimes();
+      if(prob.any_mtime()) {
+        if(prob.newind() <=1) mtimehx.clear();  
+        std::vector<mrgsolve::evdata> mt  = prob.mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           double this_time = (mt[mti]).time;
           if(this_time < tto) continue;
@@ -585,7 +580,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,0.0);
           new_ev->phantom_rec();
           if(mt[mti].now) {
-            new_ev->implement(prob);
+            new_ev->implement(&prob);
           } else {
             bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
             if(!foo) {
@@ -595,10 +590,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             } 
           }
         }
-        prob->clear_mtime();
+        prob.clear_mtime();
       }
-      
-      
       if(this_rec->output()) {
         ans(crow,0) = this_rec->id();
         ans(crow,1) = this_rec->time();
@@ -607,16 +600,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
-          ans(crow,k+capture_start) = prob->capture(capture[i+1]);
+          ans(crow,k+capture_start) = prob.capture(capture[i+1]);
           ++k;
         }
         for(k=0; k < nreq; ++k) {
-          ans(crow,(k+req_start)) = prob->y(request[k]);
+          ans(crow,(k+req_start)) = prob.y(request[k]);
         }
         ++crow;
       } 
       if(this_rec->evid()==2) {
-        this_rec->implement(prob);
+        this_rec->implement(&prob);
       }
       tfrom = tto;
     }
@@ -629,7 +622,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if((tscale != 1) && (tscale >= 0)) {
     ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   }
-  delete prob;
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
 }

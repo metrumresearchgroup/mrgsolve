@@ -652,7 +652,7 @@ parin <- function(x) {
     maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
-    mindt=x@mindt, advan=x@advan, n_cores = 1
+    mindt=x@mindt, advan=x@advan
   )
 }
 

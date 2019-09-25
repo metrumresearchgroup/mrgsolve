@@ -43,8 +43,7 @@ prior to the last dose in the \code{addl} sequence.  This known limitation
 shouldn't affect \code{tad} calculation in most common dosing lag time
 implementations.}
 
-\item{skip_init_calc}{don't use \code{$MAIN} to 
-calculate initial conditions}
+\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
 \item{output}{output data type; the default is \code{mrgsims}, which returns the
 default output object; other options include \code{df} (for data.frame) or

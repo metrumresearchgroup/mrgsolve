@@ -90,11 +90,10 @@ prior to the last dose in the \code{addl} sequence.  This known limitation
 shouldn't affect \code{tad} calculation in most common dosing lag time
 implementations.}
 
-\item{nocb}{if \code{TRUE}, use next observation carry 
-backward method; otherwise, use \code{locf}.}
+\item{nocb}{if \code{TRUE}, use next observation carry backward method; 
+otherwise, use \code{locf}.}
 
-\item{skip_init_calc}{don't use \code{$MAIN} to 
-calculate initial conditions}
+\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 }
 \value{
 An object of class \code{\link{mrgsims}}

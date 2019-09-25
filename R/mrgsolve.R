@@ -427,7 +427,6 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param nocb if \code{TRUE}, use next observation carry backward method; 
 ##' otherwise, use \code{locf}.  
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param n_cores experimental
 ##' 
 ##' @rdname mrgsim
 ##' @export
@@ -449,8 +448,7 @@ do_mrgsim <- function(x,
                       filbak = TRUE,
                       tad = FALSE,
                       nocb = TRUE,
-                      skip_init_calc = FALSE, 
-                      n_cores = -1,
+                      skip_init_calc = FALSE,
                       ...) {
   
   verbose <- x@verbose
@@ -547,7 +545,6 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
-  parin$n_cores <- n_cores
   
   if(any(x@capture =="tad") & tad) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
@@ -597,38 +594,21 @@ do_mrgsim <- function(x,
     stop("the seed argument is deprecated; use set.seed(seed) instead", 
          call. = FALSE)
   }
-  
-  if(n_cores  > 0) {
-    out <- .Call(
-      `_mrgsolve_DEVTRAN2`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      capt_pos,
-      pointers(x),
-      data,idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-  } else {
-    out <- .Call(
-      `_mrgsolve_DEVTRAN`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      capt_pos,
-      pointers(x),
-      data,idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-  }
+
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    names(param(x)),
+    init,
+    names(Init(x)),
+    capt_pos,
+    pointers(x),
+    data,idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir
+  )
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
