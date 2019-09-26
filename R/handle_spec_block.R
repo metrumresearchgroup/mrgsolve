@@ -239,12 +239,12 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
 }
 
 
-# SAFE -------------------
+# USING_VARS -------------------
 #' @export
-handle_spec_block.specSAFE <- function(x,env,...) {
-  check_block_data(x,env$ENV,pos)
+handle_spec_block.specUSING_VARS <- function(x,env,...) {
+  #check_block_data(x,env$ENV,pos)
   x <- cvec_cs(x)
-  env[["safe"]] <- x
+  env[["vars"]] <- c(env[["vars"]],x)
 }
 
 # THETA ------------------------------------------------------------------------

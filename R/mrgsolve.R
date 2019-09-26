@@ -598,6 +598,9 @@ do_mrgsim <- function(x,
   }
   
   if(n_cores  > 0) {
+    if(isFALSE(x@shlib[["using_vars"]])) {
+      wstop("cannot do multi-thread simulation with this model object.")  
+    }
     out <- .Call(
       `_mrgsolve_DEVTRAN2`,
       parin,
@@ -605,7 +608,7 @@ do_mrgsim <- function(x,
       names(param(x)),
       init,
       names(Init(x)),
-      numeric(100),
+      numeric(x@shlib[["n_vars"]]+10L),
       capt_pos,
       pointers(x),
       data,idata,
@@ -621,7 +624,7 @@ do_mrgsim <- function(x,
       names(param(x)),
       init,
       names(Init(x)),
-      numeric(100),
+      numeric(x@shlib[["n_vars"]]+10L),
       capt_pos,
       pointers(x),
       data,idata,

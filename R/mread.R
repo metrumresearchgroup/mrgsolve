@@ -206,10 +206,15 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   mread.env <- parse_env(spec,project=build$project,ENV)
   
   # Safe mode?
-  found_safe <- exists("SAFE", spec)
+  using_vars <- exists("USING_VARS", spec) || isTRUE(SET[["using_vars"]])
+  if(using_vars) {
+    if(exists("GLOBAL",spec)) {
+      wstop("$GLOBAL block is prohibited in safe models")  
+    }
+  }
   
   ## The main sections that need R processing:
-  if(!found_safe) spec <- move_global(spec,mread.env)
+  spec <- move_global(spec,mread.env,using_vars)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
@@ -228,19 +233,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Call the handler for each block
   spec <- lapply(spec,handle_spec_block,env=mread.env)
   
-  # pull out safe
-  safe <- character(0)
-  if(found_safe) {
-    message("Safe mode")
-    safe <- mread.env[["safe"]]
-  }
-  
   ## Collect the results
   param <- as.list(do.call("c",unname(mread.env$param)))
   fixed <- as.list(do.call("c",unname(mread.env$fixed)))
   init <-  as.list(do.call("c",unname(mread.env$init)))
   ode <- do.call("c", unname(mread.env$ode))
   annot_list_maybe <- nonull.list(mread.env$annot)
+  vars <- mread.env[["vars"]]
   
   if (!length(annot_list_maybe)) {
     annot <- tibble()
@@ -356,20 +355,22 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["cmt"]] <- names(Init(x))
   x@shlib[["par"]] <- names(param(x))
   x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
-  x@shlib[["covariates"]] <- mread.env$covariates
+  x@shlib[["covariates"]] <- mread.env[["covariates"]]
   x@shlib[["version"]] <- GLOBALS[["version"]]
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
-  x@shlib[["md5"]] <- build$md5
-  x@shlib[["safe"]] <- found_safe
+  x@shlib[["md5"]] <- build[["md5"]]
+  x@shlib[["using_vars"]] <- using_vars
+  x@shlib[["vars"]] <- vars
+  x@shlib[["n_vars"]] <- ifelse(using_vars, length(vars), 0L)
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(
     pars = names(param),
-    safe = safe,
+    vars = vars,
     cmt = names(init),
     ode_func(x),
     main_func(x),
@@ -467,7 +468,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
-    message("Building ", model(x)," ... ", appendLF=FALSE)
+    message("Building ", model(x), ifelse(using_vars, " <using_vars> ", ""), " ... ", appendLF=FALSE)
   }
   
   # Wait at least 2 sec since last compile

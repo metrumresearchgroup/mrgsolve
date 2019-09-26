@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 generate_rdefs <- function(pars,
-                           safe, 
+                           vars, 
                            cmt,
                            func,
                            init_fun="",
@@ -27,11 +27,11 @@ generate_rdefs <- function(pars,
 
     npar <- length(pars)
     ncmt <- length(cmt)
-    nsafe <- length(safe)
-    safedef <- NULL
-    if(nsafe > 0) {
-      safeindex <- seq_along(safe)-1L
-      safedef <- paste0("#define ", safe, " (_VARS_[", safeindex,"])")  
+    nvars <- length(vars)
+    varsdef <- NULL
+    if(nvars > 0) {
+      varsindex <- seq_along(vars)-1L
+      varsdef <- paste0("#define ", vars, " _VARS_[", varsindex,"]")  
     }
 
     dxdt <- paste0("dxdt_",cmt)
@@ -106,7 +106,7 @@ generate_rdefs <- function(pars,
           cmtdef,
           dxdef,
           pardef,
-          safedef,
+          varsdef,
           etal,
           epsl
           )
