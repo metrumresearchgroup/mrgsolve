@@ -39,10 +39,12 @@
 
 dataobject::dataobject(Rcpp::NumericMatrix _data, 
                        Rcpp::CharacterVector _parnames) {
-  Data = _data;
+  //Data = _data;
+  arma::mat dat(_data.begin(), _data.nrow(), _data.ncol(), false );
+  Data = dat; 
   parnames = _parnames;
   
-  Rcpp::List dimnames = Data.attr("dimnames");
+  Rcpp::List dimnames = _data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
@@ -60,11 +62,13 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
 dataobject::dataobject(Rcpp::NumericMatrix _data,
                        Rcpp::CharacterVector _parnames,
                        Rcpp::CharacterVector _cmtnames) {
-  Data = _data;
+  //Data = _data;
+  arma::mat dat(_data.begin(), _data.nrow(), _data.ncol(), false );
+  Data = dat;
   parnames = _parnames;
   cmtnames = Rcpp::clone(_cmtnames);
   
-  Rcpp::List dimnames = Data.attr("dimnames");
+  Rcpp::List dimnames = _data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
@@ -91,8 +95,8 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
 dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
-
-  int n = Data.nrow();
+  
+  int n = Data.n_rows;
   
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
@@ -117,7 +121,7 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
 
 void dataobject::locate_tran() {
   
-  unsigned int zeros = Data.ncol()-1;
+  unsigned int zeros = Data.n_cols-1;
   
   if(zeros==0) {
     col[_COL_amt_]  = 0;
@@ -176,7 +180,7 @@ void dataobject::locate_tran() {
 }
 
 void dataobject::idata_row() {
-  for(int i=0; i < Data.nrow(); ++i) {
+  for(int i=0; i < Data.n_rows; ++i) {
     idmap[Data(i,Idcol)] = i;
   }
 }
@@ -211,7 +215,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
   
   int j=0;
   double lastime = 0;
-  if(Data.ncol() <=1) {
+  if(Data.n_cols <=1) {
     return;  
   }
   for(int h=0; h < NID; ++h) {
@@ -283,7 +287,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   int this_cmt;
   double lastime = 0;
   
-  if(Data.ncol() <= 1) {
+  if(Data.n_cols <= 1) {
     return;
   }
   
@@ -392,7 +396,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 }
 
 void dataobject::get_ids(uidtype* ids) {
-  for(int i = 0; i < Data.nrow(); ++i) {
+  for(int i = 0; i < Data.n_rows; ++i) {
     ids->push_back(Data(i,Idcol)); 
   }
 }

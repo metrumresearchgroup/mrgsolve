@@ -50,8 +50,8 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
 
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b, 
-             Rcpp::IntegerVector& ai,
-             Rcpp::IntegerVector& bi);
+             std::vector<int>& ai,
+             std::vector<int>& bi);
 
 Rcpp::List get_tokens(const Rcpp::CharacterVector& code);
 

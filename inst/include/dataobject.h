@@ -46,12 +46,12 @@ public:
              Rcpp::CharacterVector _parnames, 
              Rcpp::CharacterVector _initnames);
   
-  Rcpp::NumericMatrix Data;
+  arma::mat Data;
   
   virtual ~dataobject();
   
-  unsigned int nrow() const {return Data.nrow();}
-  unsigned int ncol() const {return Data.ncol();}
+  unsigned int nrow() const  {return Data.n_rows;}
+  unsigned int ncol() const {return Data.n_cols;}
   unsigned int nid() const {return Uid.size();}
   unsigned int idcol() const {return Idcol;}
   int start(int i) const {return Startrow.at(i);}
@@ -89,14 +89,20 @@ protected:
   std::deque<int> Endrow; ///< data set end row for each ID
   int Idcol; ///< which column holds ID
   
+// 
+  std::vector<int> par_from;  ///< index for parameters in data set
+  std::vector<int>  par_to;    ///< index for parameters in param list
+//   std::vector<std::string> parnames; ///< names of model parameters
 
-  Rcpp::IntegerVector par_from;  ///< index for parameters in data set
-  Rcpp::IntegerVector par_to;    ///< index for parameters in param list
+  // Rcpp::IntegerVector par_from;  ///< index for parameters in data set
+  // Rcpp::IntegerVector par_to;    ///< index for parameters in param list
   Rcpp::CharacterVector parnames; ///< names of model parameters
+
+    
   std::map<double,int> idmap; ///< map to get 
   
-  Rcpp::IntegerVector cmt_from; ///< index for compartments in data set
-  Rcpp::IntegerVector cmt_to;  ///< index for compartments in init list
+  std::vector<int> cmt_from; ///< index for compartments in data set
+  std::vector<int> cmt_to;  ///< index for compartments in init list
   Rcpp::CharacterVector cmtnames; ///< names of model compartments
 };
 

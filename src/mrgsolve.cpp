@@ -241,14 +241,21 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
 
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b,
-             Rcpp::IntegerVector& ai,
-             Rcpp::IntegerVector& bi) {
+             std::vector<int>& ai,
+             std::vector<int>& bi) {
   
-  ai = Rcpp::match(b,a)-1;
-  bi = Rcpp::match(a,b)-1;
+  Rcpp::IntegerVector aa = Rcpp::match(b,a)-1;
+  Rcpp::IntegerVector bb = Rcpp::match(a,b)-1;
   
-  ai = na_omit(ai);
-  bi = na_omit(bi);
+  aa = na_omit(aa);
+  bb = na_omit(bb);
+  
+  for(int i = 0; i < aa.size(); ++i) {
+    ai.push_back(aa[i]);  
+  }
+  for(int i = 0; i < bb.size(); ++i) {
+    bi.push_back(bb[i]);  
+  }
   
   std::sort(bi.begin(), bi.end());
   
