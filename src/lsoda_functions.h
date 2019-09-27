@@ -239,12 +239,12 @@ void LSODA::terminate(int *istate)
         illin++;
         *istate = -3;
     }
-    throw Rcpp::exception(
-        tfm::format(
-          "the integration failed with istate = %i.", istate
-        ).c_str(),
-        false
-    );
+    // throw Rcpp::exception(
+    //     tfm::format(
+    //       "the integration failed with istate = %i.", istate
+    //     ).c_str(),
+    //     false
+    // );
 }
 
 /* Terminate lsoda due to various error conditions. */
@@ -254,12 +254,12 @@ void LSODA::terminate2(vector<double> &y, double *t)
         y[i] = yh_[1][i];
     *t = tn_;
     illin = 0;
-    throw Rcpp::exception(
-        tfm::format(
-          "the integration failed."
-        ).c_str(),
-        false
-    );
+    // throw Rcpp::exception(
+    //     tfm::format(
+    //       "the integration failed."
+    //     ).c_str(),
+    //     false
+    // );
     return;
 }
 

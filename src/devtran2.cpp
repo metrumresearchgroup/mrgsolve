@@ -459,7 +459,7 @@ Rcpp::List DEVTRAN2(const Rcpp::List parin,
       
       iprob.rown(crow);
       
-      this_rec->id(id);
+      //this_rec->id(id);
       
       if(iprob.systemoff()) {
         unsigned short int status = iprob.systemoff();
