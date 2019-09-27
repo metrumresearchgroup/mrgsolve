@@ -238,17 +238,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Inner vector: length = number of times in that design
     std::vector<std::vector<rec_ptr> > designs;
     
-    designs.reserve(tgridn.size());
+    //designs.reserve(tgridn.size());
     
     for(size_t i = 0; i < tgridn.size(); ++i) {
       
       std::vector<rec_ptr> z;
       
-      z.reserve(tgridn[i]);
+      //z.reserve(tgridn[i]);
+      z.resize(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
-        z.push_back(obs);
+        //z.push_back(obs);
+        z[j] = obs;
       }
       designs.push_back(z);
     }
@@ -258,6 +260,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     // We have to look up the design from the idata set
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+      int  j, n;
+      double id;
       if(multiple_tgrid) {
         id = dat.get_uid(it-a.begin());
         j  = idat.get_idata_row(id);
@@ -267,9 +271,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         n = tgridn.at(0);
       } 
       
-      it->reserve((it->size() + n));
-      for(h=0; h < n; ++h) {
-        it->push_back(designs[tgridi[j]][h]);
+      //it->reserve((it->size() + n));
+      int k = it->size();
+      int jj = it - a.begin();
+      it->resize((it->size() + n));
+      for(int h=0; h < n; ++h) {
+        //it->push_back(designs[tgridi[j]][h]);
+        (*it)[h+k] = designs[tgridi[j]][h];
         ++obscount;
       } 
       std::sort(it->begin(), it->end(), CompRec());
@@ -653,18 +661,23 @@ Rcpp::List EXPAND_OBSERVATIONS(
   
   std::vector<rec_ptr> z;
   
-  z.reserve(times.size());
+  z.resize(times.size());
   
   for(int j = 0; j < times.size(); ++j) {
     rec_ptr obs = NEWREC(times[j],nextpos,true);
-    z.push_back(obs);
+    z[j] = obs;
   }
   
   size_t n = z.size();
+  std::vector<int> obsc;
+  
   for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    it->reserve((it->size() + n));
+    int k = it->size();
+    it->resize(k + n);
+    //it->reserve((it->size() + n));
     for(size_t h=0; h < n; h++) {
-      it->push_back(z.at(h));
+      //it->push_back(z[h]);
+      (*it)[h+k] = z[h];
       ++obscount;
     } 
     std::sort(it->begin(), it->end(), CompRec());
