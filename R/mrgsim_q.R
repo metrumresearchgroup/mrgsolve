@@ -180,8 +180,7 @@ mrgsim_q <- function(x,
   if(output=="matrix") {
     return(out)  
   }
-  
-  
+
   new(
     "mrgsims",
     request=compartments,

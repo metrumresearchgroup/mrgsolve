@@ -354,17 +354,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                   idata_carry,idata_carry_start);
   }
   
-  double tto, tfrom;
   crow = 0;
-  int this_cmtn = 0;
-  double dt = 0;
-  double id = 0;
-  double maxtime = 0;
-  double Fn = 1.0;
-  int this_idata_row = 0;
-  double told = -1;
-  bool locf = false;
-  
+
   prob.nid(dat.nid());
   prob.nrow(NN);
   prob.idn(0);
@@ -376,16 +367,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
-    told = -1;
+    double Fn = 1.0;
+    int this_cmtn = 0;
+    double told = -1;
     
     prob.idn(i);
+    double tfrom = a[i].front()->time();
+    double tto = tfrom;
+    double maxtime = a[i].back()->time();
     
-    tfrom = a[i].front()->time();
-    maxtime = a[i].back()->time();
-    
-    id = dat.get_uid(i);
-    
-    this_idata_row  = idat.get_idata_row(id);
+    double id = dat.get_uid(i);
     
     prob.reset_newid(id);
     
@@ -393,9 +384,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob.newind(0);
     }
     
-    for(k=0; k < neta; ++k) prob.eta(k,eta(i,k));
-    for(k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
+    for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
+    for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
     
+    int this_idata_row  = idat.get_idata_row(id);
     idat.copy_parameters(this_idata_row,&prob);
     
     if(a[i][0]->from_data()) {
@@ -446,7 +438,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      locf = false;
+      bool locf = false;
       if(this_rec->from_data()) {
         if(nocb) {
           dat.copy_parameters(this_rec->pos(),&prob);
@@ -457,8 +449,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       tto = this_rec->time();
       
-      dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
-      
+      double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
+    
       if((dt > 0.0) && (dt < mindt)) {
         tto = tfrom;
       }
@@ -599,12 +591,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(tad) {
           ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
-        k = 0;
+        int k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
           ans(crow,k+capture_start) = prob.capture(capture[i+1]);
           ++k;
         }
-        for(k=0; k < nreq; ++k) {
+        for(int k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob.y(request[k]);
         }
         ++crow;

@@ -25,7 +25,7 @@
 #include "dataobject.h"
 #include "mrgsolve.h"
 #include "mrgsolv.h"
-#include <boost/format.hpp>
+//#include <boost/format.hpp>
 
 #define _COL_amt_   0u
 #define _COL_ii_    1u
@@ -39,9 +39,7 @@
 
 dataobject::dataobject(Rcpp::NumericMatrix _data, 
                        Rcpp::CharacterVector _parnames) {
-  //Data = _data;
-  arma::mat dat(_data.begin(), _data.nrow(), _data.ncol(), false );
-  Data = dat; 
+  Data = _data;
   parnames = _parnames;
   
   Rcpp::List dimnames = _data.attr("dimnames");
@@ -53,7 +51,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   }
   
   // Connect Names in the data set with positions in the parameter list
-  from_to(Data_names,parnames, par_from, par_to);
+  from_to(Data_names, parnames, par_from, par_to);
   
   col.resize(8,0);
   
@@ -62,9 +60,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
 dataobject::dataobject(Rcpp::NumericMatrix _data,
                        Rcpp::CharacterVector _parnames,
                        Rcpp::CharacterVector _cmtnames) {
-  //Data = _data;
-  arma::mat dat(_data.begin(), _data.nrow(), _data.ncol(), false );
-  Data = dat;
+  Data = _data;
   parnames = _parnames;
   cmtnames = Rcpp::clone(_cmtnames);
   
@@ -96,7 +92,7 @@ dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
   
-  int n = Data.n_rows;
+  int n = Data.nrow();
   
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
@@ -121,7 +117,7 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
 
 void dataobject::locate_tran() {
   
-  unsigned int zeros = Data.n_cols-1;
+  unsigned int zeros = Data.ncol()-1;
   
   if(zeros==0) {
     col[_COL_amt_]  = 0;
@@ -180,18 +176,17 @@ void dataobject::locate_tran() {
 }
 
 void dataobject::idata_row() {
-  for(int i=0; i < Data.n_rows; ++i) {
+  for(int i=0; i < Data.nrow(); ++i) {
     idmap[Data(i,Idcol)] = i;
   }
 }
 
-void dataobject::copy_parameters(int this_row, odeproblem *prob) {
+void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t n = par_from.size();
   for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
-
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
@@ -215,7 +210,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
   
   int j=0;
   double lastime = 0;
-  if(Data.n_cols <=1) {
+  if(Data.ncol() <=1) {
     return;  
   }
   for(int h=0; h < NID; ++h) {
@@ -287,7 +282,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   int this_cmt;
   double lastime = 0;
   
-  if(Data.n_cols <= 1) {
+  if(Data.ncol() <= 1) {
     return;
   }
   
@@ -301,7 +296,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
-            "The data set is not sorted by time or time is negative.",
+            "the data set is not sorted by time or time is negative.",
             false
         );
       }
@@ -315,7 +310,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
-              "Compartment number in observation record out of range.",
+              "compartment number in observation record out of range.",
               false
           );
         }
@@ -396,7 +391,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
 }
 
 void dataobject::get_ids(uidtype* ids) {
-  for(int i = 0; i < Data.n_rows; ++i) {
+  for(int i = 0; i < Data.nrow(); ++i) {
     ids->push_back(Data(i,Idcol)); 
   }
 }

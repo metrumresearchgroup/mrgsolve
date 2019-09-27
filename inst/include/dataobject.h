@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -46,12 +46,12 @@ public:
              Rcpp::CharacterVector _parnames, 
              Rcpp::CharacterVector _initnames);
   
-  arma::mat Data;
+  Rcpp::NumericMatrix Data;
   
   virtual ~dataobject();
   
-  unsigned int nrow() const  {return Data.n_rows;}
-  unsigned int ncol() const {return Data.n_cols;}
+  unsigned int nrow() const  {return Data.nrow();}
+  unsigned int ncol() const {return Data.ncol();}
   unsigned int nid() const {return Uid.size();}
   unsigned int idcol() const {return Idcol;}
   int start(int i) const {return Startrow.at(i);}
@@ -88,18 +88,11 @@ protected:
   std::deque<int> Startrow;  ///< start row for each ID
   std::deque<int> Endrow; ///< data set end row for each ID
   int Idcol; ///< which column holds ID
+  std::map<double,int> idmap; ///< map to get 
   
-// 
   std::vector<int> par_from;  ///< index for parameters in data set
   std::vector<int>  par_to;    ///< index for parameters in param list
-//   std::vector<std::string> parnames; ///< names of model parameters
-
-  // Rcpp::IntegerVector par_from;  ///< index for parameters in data set
-  // Rcpp::IntegerVector par_to;    ///< index for parameters in param list
   Rcpp::CharacterVector parnames; ///< names of model parameters
-
-    
-  std::map<double,int> idmap; ///< map to get 
   
   std::vector<int> cmt_from; ///< index for compartments in data set
   std::vector<int> cmt_to;  ///< index for compartments in init list

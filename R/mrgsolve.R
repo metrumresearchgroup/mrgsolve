@@ -448,8 +448,7 @@ do_mrgsim <- function(x,
                       filbak = TRUE,
                       tad = FALSE,
                       nocb = TRUE,
-                      skip_init_calc = FALSE, 
-                      n_cores = -1,
+                      skip_init_calc = FALSE,
                       ...) {
   
   verbose <- x@verbose
@@ -546,7 +545,6 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
-  parin$n_cores <- n_cores
   
   if(any(x@capture =="tad") & tad) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
@@ -597,42 +595,22 @@ do_mrgsim <- function(x,
          call. = FALSE)
   }
   
-  if(n_cores  > 0) {
-    if(isFALSE(x@shlib[["using_vars"]])) {
-      wstop("cannot do multi-thread simulation with this model object.")  
-    }
-    out <- .Call(
-      `_mrgsolve_DEVTRAN2`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      numeric(x@shlib[["n_vars"]]+10L),
-      capt_pos,
-      pointers(x),
-      data,idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-  } else {
-    out <- .Call(
-      `_mrgsolve_DEVTRAN`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      numeric(x@shlib[["n_vars"]]+10L),
-      capt_pos,
-      pointers(x),
-      data,idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-  }
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    names(param(x)),
+    init,
+    names(Init(x)),
+    numeric(x@shlib[["n_vars"]]+10L),
+    capt_pos,
+    pointers(x),
+    data,idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir
+  )
+  
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
@@ -768,6 +746,7 @@ qsim <- function(x,
     Pars(x),
     as.numeric(Init(x)),
     names(Init(x)),
+    numeric(length(x@shlib[["vars"]])),
     capt_pos,
     pointers(x),
     data,idata,

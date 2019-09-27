@@ -17,6 +17,7 @@ void LSODA::hmin_(const double value) {
 }
 
 void LSODA::maxsteps_(const int value) {
+  Maxsteps = value;
   iworks[3] = value;
   if(value !=0) iopt=1;
 }
@@ -39,8 +40,8 @@ void LSODA::copy_parin(const Rcpp::List& parin) {
   mxhnil_(Rcpp::as<int>(parin["mxhnil"]));
   rtol_.resize(Neq+1, Rcpp::as<double>(parin["rtol"]));
   atol_.resize(Neq+1, Rcpp::as<double>(parin["atol"]));
-  // rtol_.resize(neq_ + 1, 1e);
-  // atol_.resize(neq_ + 1, atol);
+  Rtol = rtol_[1];
+  Atol = atol_[1];
   rtol_[0] = 0;
   atol_[0] = 0;
 }
@@ -732,7 +733,7 @@ void LSODA::intdy(double t, int k, vector<double> &dky, int *iflag)
         // fprintf(stderr,
         //         "intdy -- t = %g illegal. t not in interval tcur - hu to tcur\n",
         //         t);
-      REprintf("intdy -- t = %g illegal. t not in interval tcur - hu to tcur\n",t);
+      REprintf("[intdy]  t = %g illegal. t not in interval tcur - hu to tcur\n\n",t);
         *iflag = -2;
         return;
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -52,8 +52,9 @@ int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector
   return(ma[0]-1);
 }
 
-void neg_istate(int istate) {
-  Rcpp::Rcout << std::endl << "mrgsolve: DLSODA returned with istate " << istate << std::endl;
+void negative_istate(int istate, double maxsteps, double rtol, double atol) {
+  
+  Rcpp::Rcerr << std::endl << "[mrgsolve] LSODA returned with negative istate: " << istate << std::endl;
   /*
    ISTATE = 2  if DLSODA was successful, negative otherwise.
    -1 means excess work done on this call (perhaps wrong JT).
@@ -69,24 +70,25 @@ void neg_istate(int istate) {
   
   switch (istate) {
   case -1:
-    Rcpp::Rcout << "  excess work done on this call; check the model or increase maxsteps." << std::endl << std::endl;
+    Rcpp::Rcerr << "  excess work done on this call; check the model or increase maxsteps." << std::endl;
+    Rcpp::Rcerr << "  current value of maxsteps: " << maxsteps << std::endl << std::endl;
     break;
   case -2:
-    Rcpp::Rcout << "  excess accuracy requested; reduce atol and/or rtol." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  excess accuracy requested; reduce rtol and/or atol." << std::endl;
+    Rcpp::Rcerr << "  current value of rtol / atol: " << atol << " / " <<  rtol << std::endl << std::endl; 
     break;
   case -3:
-    Rcpp::Rcout << "  illegal input detected (see printed message)." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  illegal input detected (see printed message)." << std::endl  << std::endl;
     break;
   case -4:
-    Rcpp::Rcout << "  repeated error test failures (check all inputs)." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  repeated error test failures (check all inputs)." << std::endl  << std::endl;
     break;
   case -5:
-    Rcpp::Rcout << "  means repeated convergence failures "<< std::endl;
-    Rcpp::Rcout << "  (perhaps bad Jacobian supplied or wrong choice of JT or tolerances)." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  means repeated convergence failures; "<< std::endl;
+    Rcpp::Rcerr << "  perhaps wrong choice of tolerances." << std::endl  << std::endl;
     break;
   case -6:
-    Rcpp::Rcout << "  error weight became zero during problem." << std::endl  << std::endl;
-    Rcpp::Rcout << "  (Solution component i vanished, and ATOL or ATOL(i) = 0.)" << std::endl  << std::endl;
+    Rcpp::Rcerr << "  error weight became zero during problem." << std::endl  << std::endl;
     break;
     //   case -7:
     // Rcpp::Rcout << "  work space insufficient to finish (see messages)." << std::endl;
@@ -94,9 +96,8 @@ void neg_istate(int istate) {
   default:
     break;
   }
+  throw Rcpp::exception("simulation terminated.",false);
 }
-
-
 
 
 /** 

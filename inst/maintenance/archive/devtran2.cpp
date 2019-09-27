@@ -397,31 +397,25 @@ Rcpp::List DEVTRAN2(const Rcpp::List parin,
 #endif
   for(size_t i=0; i < a.size(); ++i) {
     
-    double tto, tfrom;
+    double tto;
     int crow = starts[i];
     int trow = 0;
     int this_cmtn = 0;
     double dt = 0;
-    double id = 0;
-    double maxtime = 0;
     double Fn = 1.0;
-    int this_idata_row = 0;
     double told = -1;
-    bool locf = false;
     int k = 0;
     reclist mtimehx;
     
     odeproblem iprob(prob);
     LSODA isolver(solver);
-    
-    told = -1;
-    
+
     iprob.idn(i);
     
-    tfrom = a[i].front()->time();
-    maxtime = a[i].back()->time();
+    double tfrom = a[i].front()->time();
+    double maxtime = a[i].back()->time();
     
-    id = dat.get_uid(i);
+    double id = dat.get_uid(i);
     
     iprob.reset_newid(id);
     
@@ -429,13 +423,13 @@ Rcpp::List DEVTRAN2(const Rcpp::List parin,
       iprob.newind(0);
     }
     
-    for(k=0; k < neta; ++k) iprob.eta(k,eta(i,k));
-    for(k=0; k < neps; ++k) iprob.eps(k,eps(crow,k));
+    for(int k=0; k < neta; ++k) iprob.eta(k,eta(i,k));
+    for(int k=0; k < neps; ++k) iprob.eps(k,eps(crow,k));
     
     iprob.y_init(init);
     
     if(has_idat) {
-      this_idata_row  = idat.get_idata_row(id);
+      int this_idata_row = this_idata_row  = idat.get_idata_row(id);
       idat.copy_parameters(this_idata_row,&iprob);
       idat.copy_inits(this_idata_row,&iprob);
     }
@@ -461,31 +455,31 @@ Rcpp::List DEVTRAN2(const Rcpp::List parin,
       
       //this_rec->id(id);
       
-      if(iprob.systemoff()) {
-        unsigned short int status = iprob.systemoff();
-        if(status==9) CRUMP("the problem was stopped at user request.");
-        if(status==999) CRUMP("999 sent from the model");
-        if(this_rec->output()) {
-          if(status==1) {
-            ans(crow,0) = id;
-            ans(crow,1) = this_rec->time();
-            for(unsigned int k=0; k < n_capture; ++k) {
-              ans(crow,(k+capture_start)) = iprob.capture(capture[k+1]);
-            }
-            for(unsigned int k=0; k < nreq; ++k) {
-              ans(crow,(k+req_start)) = iprob.y(request[k]);
-            }
-          } else {
-            for(int k=0; k < ans.ncol(); ++k) {
-              ans(crow,k) = NA_REAL;
-            }
-          }
-          ++crow;
-        }
-        continue;
-      }
+      // if(iprob.systemoff()) {
+      //   unsigned short int status = iprob.systemoff();
+      //   if(status==9) CRUMP("the problem was stopped at user request.");
+      //   if(status==999) CRUMP("999 sent from the model");
+      //   if(this_rec->output()) {
+      //     if(status==1) {
+      //       ans(crow,0) = id;
+      //       ans(crow,1) = this_rec->time();
+      //       for(unsigned int k=0; k < n_capture; ++k) {
+      //         ans(crow,(k+capture_start)) = iprob.capture(capture[k+1]);
+      //       }
+      //       for(unsigned int k=0; k < nreq; ++k) {
+      //         ans(crow,(k+req_start)) = iprob.y(request[k]);
+      //       }
+      //     } else {
+      //       for(int k=0; k < ans.ncol(); ++k) {
+      //         ans(crow,k) = NA_REAL;
+      //       }
+      //     }
+      //     ++crow;
+      //   }
+      //   continue;
+      // }
       
-      locf = false;
+      bool locf = false;
       if(this_rec->from_data()) {
         if(nocb) {
           dat.copy_parameters(this_rec->pos(), &iprob);

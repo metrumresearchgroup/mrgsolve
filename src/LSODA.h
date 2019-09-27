@@ -55,6 +55,7 @@ public:
     void copy_parin(const Rcpp::List& parin);
     double Atol; 
     double Rtol;
+    int Maxsteps;
     int Neq;
 
     array<int, 7> iworks;// iworks = {{0}};

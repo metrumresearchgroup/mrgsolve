@@ -74,7 +74,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Ydot.assign(Neq,0.0);
   Init_value.assign(Neq,0.0);
   Init_dummy.assign(Neq,0.0);
-  
   R0.assign(Neq,0.0);
   infusion_count.assign(Neq,0);
   R.assign(Neq,0.0);
@@ -153,12 +152,11 @@ void odeproblem::y_init(int pos, double value) {
   Init_dummy[pos] = value;
 }
 
-void odeproblem::y_init(Rcpp::NumericVector x) {
-  if(x.size() != Neq) Rcpp::stop("Initial vector is wrong size");
-  for(int i = 0; i < x.size(); ++i) {
-    Y[i] = x[i];
-    Init_value[i] = x[i];
-    Init_dummy[i] = x[i];
+void odeproblem::y_init(Rcpp::NumericVector init) {
+  for(int i = 0; i < Neq; ++i) {
+    Y[i] = init[i];
+    Init_value[i] = init[i];
+    Init_dummy[i] = init[i];
   }
 }
 
@@ -166,7 +164,6 @@ void odeproblem::y_init(Rcpp::NumericVector x) {
 void odeproblem::y_add(const unsigned int pos, const double& value) {
   Y[pos] = Y[pos] + value; 
 }
-
 
 /** Derivative function that gets called by the solver. 
  * 
@@ -311,12 +308,11 @@ void odeproblem::on(const unsigned short int eq_n) {
 
 void odeproblem::off(const unsigned short int eq_n) {
   if(infusion_count[eq_n]>0) {
-    Rcpp::stop("Attempting to turn compartment off when infusion is on.");
+    Rcpp::stop("attempting to turn compartment off when infusion is on.");
   }
   On[eq_n] = 0;
   this->y(eq_n,0.0);
 }
-
 
 void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   
@@ -333,17 +329,12 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
       return;
     }
     // If Advan isn't 13, it needs to be 0/1/2/3/4
-    Rcpp::stop("mrgsolve: advan has invalid value.");
+    Rcpp::stop("[mrgsolve] advan has invalid value.");
   }
-  // void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f, 
-  //                        const int neq,
-  //                        vector<double>& y, 
-  //                        vector<double>& yout, 
-  //                        double *t,
-  //                        const double tout, 
-  //                        int *istate,
-  //                        void *_data)
   solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,(void*) this);
+  if(Istate < 0) {
+    negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
+  }
 
   //this->call_derivs(&Neq, &tto, Y, Ydot);
 }
@@ -639,17 +630,6 @@ double PolyExp(const double& x,
 }
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
-  //this->tol);
-  // this->hmax(Rcpp::as<double>(parin["hmax"]));
-  // this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
-  // this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
-  // this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
-  // Atol = Rcpp::as<double>(parin["atol"]); 
-  // Rtol = Rcpp::as<double>(parin["rtol"]);
-  // Hmax = Rcpp::as<double>(parin["hmax"]);
-  // Maxsteps = Rcpp::as<double>  (parin["maxsteps"]);
-  // Ixpr = Rcpp::as<double>  (parin["ixpr"]);
-  // Mxhnil = Rcpp::as<double>  (parin["mxhnil"]);
   advan(Rcpp::as<int>(parin["advan"]));
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
