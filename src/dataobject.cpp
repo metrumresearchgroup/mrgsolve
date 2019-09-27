@@ -25,7 +25,6 @@
 #include "dataobject.h"
 #include "mrgsolve.h"
 #include "mrgsolv.h"
-//#include <boost/format.hpp>
 
 #define _COL_amt_   0u
 #define _COL_ii_    1u
@@ -226,7 +225,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         );
       }
       lastime = Data(j,col[_COL_time_]);        
-      rec_ptr obs = boost::make_shared<datarecord>(
+      rec_ptr obs = std::make_shared<datarecord>(
         Data(j,col[_COL_time_]),
         Data(j,col[_COL_cmt_]),
         j,
@@ -315,7 +314,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
           );
         }
         
-        rec_ptr obs = boost::make_shared<datarecord>(
+        rec_ptr obs = std::make_shared<datarecord>(
           Data(j,col[_COL_time_]),
           Data(j,col[_COL_cmt_]),
           j,
@@ -340,7 +339,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ++evcount;
       
-      rec_ptr ev = boost::make_shared<datarecord>(
+      rec_ptr ev = std::make_shared<datarecord>(
         Data(j,col[_COL_cmt_]),
         Data(j,col[_COL_evid_]),
         Data(j,col[_COL_amt_]),

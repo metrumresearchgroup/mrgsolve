@@ -24,7 +24,7 @@
 #include "RcppInclude.h"
 #include "datarecord.h"
 #include "odeproblem.h"
-#include <boost/make_shared.hpp>
+//#include <boost/make_shared.hpp>
 #include <functional>
 #include <algorithm>
 

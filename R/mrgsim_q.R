@@ -162,7 +162,7 @@ mrgsim_q <- function(x,
     names(param(x)),
     init,
     names(Init(x)),
-    numeric(x@shlib[["n_vars"]] + 10L),
+    x@vars,
     capt_pos,
     pointers(x),
     data,null_idata,
@@ -180,7 +180,7 @@ mrgsim_q <- function(x,
   if(output=="matrix") {
     return(out)  
   }
-
+  
   new(
     "mrgsims",
     request=compartments,

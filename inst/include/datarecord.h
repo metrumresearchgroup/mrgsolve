@@ -21,16 +21,16 @@
 
 #ifndef DATARECORD_H
 #define DATARECORD_H
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include "mrgsolv.h"
 #include "LSODA.h"
 
 class odeproblem;
 class datarecord;
-typedef boost::shared_ptr<datarecord> rec_ptr;
+typedef std::shared_ptr<datarecord> rec_ptr;
 typedef std::vector<rec_ptr> reclist;
 
-#define NEWREC boost::make_shared<datarecord>
+#define NEWREC std::make_shared<datarecord>
 
 class datarecord {
   

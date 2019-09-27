@@ -19,6 +19,9 @@
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:
 typedef double capture;
+typedef double localdouble;
+typedef int localint;
+typedef bool localbool;
 namespace {
   double CLi;
   double VCi;
@@ -26,9 +29,6 @@ namespace {
   double KOUTi;
   double DV;
 }
-typedef double localdouble;
-typedef int localint;
-typedef bool localbool;
 
 // GLOBAL START USER CODE:
 #define CP (CENT/VCi)

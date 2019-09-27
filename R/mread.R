@@ -315,6 +315,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     modfile = basename(build$modfile)
   )
   
+  x@vars <- vars
+  
   x <- store_annot(x,annot)
   
   ## ADVAN 13 is the ODEs
@@ -362,9 +364,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["include"]] <- inc
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
   x@shlib[["md5"]] <- build[["md5"]]
-  x@shlib[["using_vars"]] <- using_vars
-  x@shlib[["vars"]] <- vars
-  x@shlib[["n_vars"]] <- ifelse(using_vars, length(vars), 0L)
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file

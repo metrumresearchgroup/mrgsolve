@@ -51,18 +51,14 @@ void dosimeps(void* prob_) {
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
-                       Rcpp::NumericVector vars,
+                       Rcpp::CharacterVector vars,
                        Rcpp::List funs,
                        int n_capture_) {
   
-  int npar_ = int(param.size());
-  int neq_ = int(init.size());
-  int nvar_ = int(vars.size());
-  
-  Neq = neq_;
-  Npar = npar_;
-  Nvar = nvar_;
-
+  Npar = int(param.size());
+  Neq = int(init.size());
+  Nvar = int(vars.size());
+    
   Istate = 1;
   
   Advan = 13;
@@ -673,7 +669,7 @@ void odeproblem::advan(int x) {
 // [[Rcpp::export]]
 Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
                       const Rcpp::NumericVector& linit,
-                      Rcpp::NumericVector& vars, 
+                      Rcpp::CharacterVector& vars, 
                       int Neta, int Neps,
                       const Rcpp::CharacterVector& capture,
                       const Rcpp::List& funs,

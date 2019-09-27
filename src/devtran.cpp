@@ -32,8 +32,8 @@
  *
  */
 
-#include <boost/shared_ptr.hpp>
-#include <boost/pointer_cast.hpp>
+// #include <boost/shared_ptr.hpp>
+// #include <boost/pointer_cast.hpp>
 #include <string>
 #include "mrgsolve.h"
 #include "odeproblem.h"
@@ -71,7 +71,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::CharacterVector& parnames,
                    const Rcpp::NumericVector& init,
                    Rcpp::CharacterVector& cmtnames,
-                   Rcpp::NumericVector& vars, 
+                   Rcpp::CharacterVector& vars, 
                    const Rcpp::IntegerVector& capture,
                    const Rcpp::List& funs,
                    const Rcpp::NumericMatrix& data,
@@ -162,7 +162,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int n_capture  = capture.size()-1;
   
   // Create odeproblem object
-
+  
   odeproblem prob(inpar, init, vars, funs, capture.at(0));
   prob.omega(OMEGA);
   prob.sigma(SIGMA);
@@ -177,7 +177,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-
+  
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
@@ -355,7 +355,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   crow = 0;
-
+  
   prob.nid(dat.nid());
   prob.nrow(NN);
   prob.idn(0);
@@ -363,6 +363,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   prob.config_call();
   reclist mtimehx;
+  
+  bool has_idata = idat.nrow() > 0;
+  int this_idata_row = 0;
   
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
@@ -387,8 +390,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
     
-    int this_idata_row  = idat.get_idata_row(id);
-    idat.copy_parameters(this_idata_row,&prob);
+    prob.y_init(init);
+    
+    if(has_idata) {
+      this_idata_row = idat.get_idata_row(id);
+      idat.copy_parameters(this_idata_row,&prob);
+      idat.copy_inits(this_idata_row,&prob);
+    }
     
     if(a[i][0]->from_data()) {
       dat.copy_parameters(a[i][0]->pos(),&prob);
@@ -398,9 +406,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
     }
     
-    prob.y_init(init);
-    
-    idat.copy_inits(this_idata_row,&prob);
     prob.set_d(a[i][0]);
     prob.init_call(tfrom);
     
@@ -412,7 +417,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       rec_ptr this_rec = a[i][j];
       
-      this_rec->id(id);
+      //this_rec->id(id);
       
       if(prob.systemoff()) {
         unsigned short int status = prob.systemoff();
@@ -450,7 +455,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       tto = this_rec->time();
       
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
-    
+      
       if((dt > 0.0) && (dt < mindt)) {
         tto = tfrom;
       }
@@ -466,7 +471,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob.set_d(this_rec);
         prob.init_call_record(tto);
       }
-
+      
       // Some non-observation event happening
       if(this_rec->is_event()) {
         
@@ -475,7 +480,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         Fn = prob.fbio(this_cmtn);
         
         if(Fn < 0) {
-          CRUMP("mrgsolve: bioavailability fraction is less than zero.");
+          CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
         
         bool sort_recs = false;
@@ -586,13 +591,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob.clear_mtime();
       }
       if(this_rec->output()) {
-        ans(crow,0) = this_rec->id();
-        ans(crow,1) = this_rec->time();
+        ans(crow,0) = id;
+        ans(crow,1) = tto;
         if(tad) {
           ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
         int k = 0;
-        for(unsigned int i=0; i < n_capture; ++i) {
+        for(int i=0; i < n_capture; ++i) {
           ans(crow,k+capture_start) = prob.capture(capture[i+1]);
           ++k;
         }

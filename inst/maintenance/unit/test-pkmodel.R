@@ -25,7 +25,7 @@ project <- file.path(system.file(package="mrgsolve"), "models")
 
 context("Compare PKMODEL with equivalent ODEs")
 
-ode <- mrgsolve:::house() %>% param(CL=1,VC=20,KA=1.1)
+ode <- mrgsolve:::house(rtol = 1E-9, atol = 1E-9) %>% param(CL=1,VC=20,KA=1.1)
 
 code1 <- '
 $PARAM CL=1, V=20, KA=1.1
@@ -39,7 +39,7 @@ $PARAM CL = 1, V = 20, KA = 1.1
 $CMT CENT
 $ODE
 dxdt_CENT = -(CL/V)*CENT;
-'})
+'}, rtol = 1E-9, atol = 1E-9)
 
 test_that("ADVAN2 same as ODE - initial condition", {
   out1 <- ode  %>% init(CENT=1000) %>%
@@ -129,8 +129,8 @@ $PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300
 $PKMODEL cmt = "GUT CENT PER", depot = TRUE
 '
 
-ode <- mcode("test13_3",ode_code) 
-pred2 <- mcode("test13_5",pred2)
+ode <- mcode("test13_3",ode_code, rtol = 1E-9, atol = 1E-9) 
+pred2 <- mcode("test13_5",pred2, rtol = 1E-9, atol = 1E-9)
 
 test_that("ADVAN4 same as ODE - initial condition", {
   out1 <- ode  %>% init(GUT=1000) %>%

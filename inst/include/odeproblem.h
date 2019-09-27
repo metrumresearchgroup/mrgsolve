@@ -87,7 +87,7 @@ class odeproblem {
 
 public:
   odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, 
-             Rcpp::NumericVector vars,
+             Rcpp::CharacterVector vars,
              Rcpp::List funs,
              int n_capture_);
 
