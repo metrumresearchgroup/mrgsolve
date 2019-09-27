@@ -84,6 +84,9 @@ effects}
 \item{\code{capture}}{a character vector of variables that are captured from 
 the simulation \code{<character>}}
 
+\item{\code{vars}}{model C++ variable names handled by the vars system 
+\code{<character>}}
+
 \item{\code{mindt}}{minimum time between simulation records \code{<numeric>}}
 
 \item{\code{envir}}{internal model environment \code{<environment>}}
