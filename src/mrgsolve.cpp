@@ -23,6 +23,7 @@
 
 #include "RcppInclude.h"
 #include "mrgsolve.h"
+#include "dataobject.h"
 #include <vector>
 #include <string>
 #include "boost/tokenizer.hpp"
@@ -299,7 +300,93 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
 }
 
 
+#ifndef EXPAND_OBSERVATIONS_FUNC
+#define EXPAND_OBSERVATIONS_FUNC
+// [[Rcpp::export]]
+Rcpp::List EXPAND_OBSERVATIONS(
+    const Rcpp::NumericMatrix& data,
+    const Rcpp::NumericVector& times,
+    const Rcpp::IntegerVector& to_copy) {
+  
+  Rcpp::CharacterVector parnames;
+  
+  // Create data objects from data and idata
+  dataobject dat(data,parnames);
+  dat.map_uid();
+  dat.locate_tran();
+  
+  const int NID = dat.nid();
+  
+  // Create odeproblem object
+  recstack a(NID);
+  
+  unsigned int obscount = 0;
+  unsigned int evcount = 0;
+  unsigned int neq = 1000000;
+  bool obsonly = false;
+  bool debug = false;
+  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+  int nextpos = -1;
+  obscount = 0;
+  
+  std::vector<rec_ptr> z(times.size());
+  
+  for(size_t j = 0; j < times.size(); ++j) {
+    rec_ptr obs = NEWREC(times[j],nextpos,true);
+    z[j] = obs;
+  }
+  
+  size_t n = z.size();
+  
+  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+    it->reserve((it->size() + n));
+    for(size_t h=0; h < n; h++) {
+      it->push_back(z[h]);
+      ++obscount;
+    } 
+    std::sort(it->begin(), it->end(), CompRec());
+  }
+  
+  const int recs = (data.nrow()) + obscount;
+  
+  Rcpp::NumericMatrix d(recs,data.ncol());
+  
+  int crow = 0;
+  int last_data_row = -1;
+  
+  int Idcol = find_position("ID", dat.Data_names);
+  if(Idcol < 0) {
+    throw Rcpp::exception("Could not find ID column in data set.",false);
+  }
+  
+  Rcpp::LogicalVector index(recs);
+  
+  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+    int i = it - a.begin();
+    double id = dat.get_uid(i);
+    last_data_row = dat.start(i);
+    for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
+      if((*itt)->from_data()) {
+        last_data_row = (*itt)->pos();    
+        for(int i = 0; i < data.ncol(); i++) {
+          d(crow,i) = data(last_data_row,i);  
+          index[crow] = false;
+        }
+      }  else {
+        d(crow,dat.col.at(7)) = (*itt)->time();
+        d(crow,Idcol) = id;
+        for(int k=0; k < to_copy.size(); k++) {
+          d(crow,to_copy[k]) = data(last_data_row,to_copy[k]);  
+        }
+        index[crow] = true;
+      }
+      ++crow;
+    }
+  }
+  return Rcpp::List::create(Rcpp::Named("data") = d,
+                            Rcpp::Named("index") = index);
+}
 
-
+#endif
 
 

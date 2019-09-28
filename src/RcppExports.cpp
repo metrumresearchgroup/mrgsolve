@@ -30,19 +30,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// EXPAND_OBSERVATIONS
-Rcpp::List EXPAND_OBSERVATIONS(const Rcpp::NumericMatrix& data, const Rcpp::NumericVector& times, const Rcpp::IntegerVector& to_copy);
-RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP dataSEXP, SEXP timesSEXP, SEXP to_copySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type times(timesSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type to_copy(to_copySEXP);
-    rcpp_result_gen = Rcpp::wrap(EXPAND_OBSERVATIONS(data, times, to_copy));
-    return rcpp_result_gen;
-END_RCPP
-}
 // MVGAUSS
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 RcppExport SEXP _mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {
@@ -98,6 +85,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type events(eventsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type id(idSEXP);
     rcpp_result_gen = Rcpp::wrap(EXPAND_EVENTS(idcol_, events, id));
+    return rcpp_result_gen;
+END_RCPP
+}
+// EXPAND_OBSERVATIONS
+Rcpp::List EXPAND_OBSERVATIONS(const Rcpp::NumericMatrix& data, const Rcpp::NumericVector& times, const Rcpp::IntegerVector& to_copy);
+RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP dataSEXP, SEXP timesSEXP, SEXP to_copySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type to_copy(to_copySEXP);
+    rcpp_result_gen = Rcpp::wrap(EXPAND_OBSERVATIONS(data, times, to_copy));
     return rcpp_result_gen;
 END_RCPP
 }

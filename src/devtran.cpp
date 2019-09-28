@@ -93,7 +93,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   const double ss_tol         = Rcpp::as<double> (parin["ss_tol"]);
-
+  
   if(verbose) say("unpacking data");
   
   // Create data objects from data and idata
@@ -107,7 +107,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Number of individuals in the data set
   const int NID = dat.nid();
   const int nidata = idat.nrow();
-
+  
   unsigned int k = 0;
   unsigned int crow = 0;
   
@@ -374,7 +374,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
   
-
+  
   if(verbose) say("starting the simulation ...");
   
   // i is indexing the subject, j is the record
@@ -389,7 +389,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     double tfrom = a[i].front()->time();
     double tto = tfrom;
     double maxtime = a[i].back()->time();
-  
+    
     prob.reset_newid(id);
     
     if(i==0) {
@@ -631,97 +631,4 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
-}
-
-// [[Rcpp::export]]
-Rcpp::List EXPAND_OBSERVATIONS(
-    const Rcpp::NumericMatrix& data,
-    const Rcpp::NumericVector& times,
-    const Rcpp::IntegerVector& to_copy) {
-  
-  Rcpp::CharacterVector parnames;
-  // Create data objects from data and idata
-  dataobject dat(data,parnames);
-  dat.map_uid();
-  dat.locate_tran();
-  
-  const int NID = dat.nid();
-  
-  // Create odeproblem object
-  
-  recstack a(NID);
-  
-  unsigned int obscount = 0;
-  unsigned int evcount = 0;
-  unsigned int neq = 10000;
-  bool obsonly = false;
-  bool debug = false;
-  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  int nextpos = -1;
-  obscount = 0;
-  
-  std::vector<rec_ptr> z;
-  
-  z.resize(times.size());
-  
-  for(int j = 0; j < times.size(); ++j) {
-    rec_ptr obs = NEWREC(times[j],nextpos,true);
-    z[j] = obs;
-  }
-  
-  size_t n = z.size();
-  std::vector<int> obsc;
-  
-  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    //int k = it->size();
-    //it->resize(k + n);
-    it->reserve((it->size() + n));
-    for(size_t h=0; h < n; h++) {
-      it->push_back(z[h]);
-      //(*it)[h+k] = z[h];
-      ++obscount;
-    } 
-    std::sort(it->begin(), it->end(), CompRec());
-  }
-  
-  const int recs = (data.nrow()) + obscount;
-  
-  Rcpp::NumericMatrix d(recs,data.ncol());
-  
-  int crow = 0;
-  int last_data_row = -1;
-  
-  int Idcol = find_position("ID", dat.Data_names);
-  if(Idcol < 0) {
-    throw Rcpp::exception("Could not find ID column in data set.",false);
-  }
-  
-  Rcpp::LogicalVector index(recs);
-  
-  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    int i = it - a.begin();
-    double id = dat.get_uid(i);
-    last_data_row = dat.start(i);
-    for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-      if((*itt)->from_data()) {
-        last_data_row = (*itt)->pos();    
-        for(int i = 0; i < data.ncol(); i++) {
-          d(crow,i) = data(last_data_row,i);  
-          index[crow] = false;
-        }
-      }  else {
-        d(crow,dat.col.at(7)) = (*itt)->time();
-        d(crow,Idcol) = id;
-        for(int k=0; k < to_copy.size(); k++) {
-          d(crow,to_copy[k]) = data(last_data_row,to_copy[k]);  
-        }
-        index[crow] = true;
-      }
-      ++crow;
-    }
-  }
-  Rcpp::List ans;
-  ans["data"] = d;
-  ans["index"] = index;
-  return ans;
 }

@@ -257,8 +257,6 @@ move_global <- function(x,env,using_vars=FALSE) {
   l <- lapply(x[what], get_c_vars)
   ll <- unlist(l, use.names=FALSE)
   
-  #env[["global"]] <- c("typedef double capture;",local_var_typedef)
-  
   if(!using_vars) {
     env[["global"]] <- c(env[["global"]], "namespace {", paste0("  ", ll), "}")  
   }
@@ -362,7 +360,6 @@ global_rcpp <- function(spec) {
   spec
 }
 
-
 parse_ats <- function(x) {
   
   if(length(x)==0) return(list())
@@ -397,7 +394,6 @@ parse_ats <- function(x) {
   
   # Convert type
   b <- setNames(lapply(b,type.convert,as.is=TRUE),a)
-  
   b
 }
 
@@ -475,11 +471,6 @@ dump_opts <- function(x,env,block,...) {
   x[-hasopt]
 }
 
-# parseLIST <- function(x,where,env,...) {
-#   env[[where]][[attr(x,"pos")]] <- tolist(x)
-#   return(NULL)
-# }
-
 eval_ENV_block <- function(x,where,envir=new.env(),...) {
   cwd <- getwd()
   on.exit(setwd(cwd))
@@ -513,7 +504,6 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env$blocks <- names(spec)
   mread.env
 }
-
 
 wrap_namespace <- function(x,name) {
   paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
@@ -561,7 +551,7 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
   if(inherits(x, "try-error")) {
     message("Block no: ", pos)
     message("Block type: ", block)
-    stop("Failed to parse block code.", call.=FALSE)
+    stop("failed to parse block code.", call.=FALSE)
   }
   right_type <- inherits(x, cl)
   if(!right_type) {
@@ -569,7 +559,7 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
     message("Block type: ", block)
     message("Expected class: ", paste0(cl, collapse = " or "))
     got <- paste0(class(x), collapse = ", ")
-    stop("Code returned the incorrect class: ", got, call.=FALSE) 
+    stop("code returned the incorrect class: ", got, call.=FALSE) 
   }
   fun(x)
 }
