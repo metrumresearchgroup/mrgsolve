@@ -427,6 +427,7 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param nocb if \code{TRUE}, use next observation carry backward method; 
 ##' otherwise, use \code{locf}.  
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
+##' @param ss_tol tolerance for determining steady state for PK system
 ##' 
 ##' @rdname mrgsim
 ##' @export
@@ -449,6 +450,7 @@ do_mrgsim <- function(x,
                       tad = FALSE,
                       nocb = TRUE,
                       skip_init_calc = FALSE,
+                      ss_tol = 1E-12,
                       ...) {
   
   verbose <- x@verbose
@@ -546,6 +548,7 @@ do_mrgsim <- function(x,
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
   parin$verbose <- verbose
+  parin$ss_tol <- ss_tol
   
   if(any(x@capture =="tad") & tad) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
@@ -658,6 +661,8 @@ do_mrgsim <- function(x,
 #' @param output output data type; the default is `mrgsims`, which returns the 
 #' default output object; other options include `df` (for data.frame) or 
 #' `matrix`
+#' @param Req output items to request; if missing, then only captured items 
+#' will be returned in the output
 #' 
 #' @details
 #' There is no pipeline interface for this function; all configuration options 
@@ -687,6 +692,7 @@ qsim <- function(x,
                  tgrid = NULL,
                  recsort = 1,
                  tad = FALSE,
+                 Req = NULL,
                  skip_init_calc = FALSE,
                  output = "mrgsims") {
   
@@ -712,8 +718,16 @@ qsim <- function(x,
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),seq_along(x@capture)-1)
+  if(is.null(Req)) {
+    cap <- x@capture
+    req <- character(0)
+  } else {
+    cap <- intersect(Req,x@capture)    
+    req <- intersect(Req,Cmt(x))
+  }
   
+  capt_pos <- c(length(cap),seq_along(cap)-1L)
+
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
@@ -724,7 +738,7 @@ qsim <- function(x,
   parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  parin$request <- seq_along(cmt(x))-1L
+  parin$request <- seq_along(req)-1L
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
   parin$carry_tran <- character(0)
@@ -746,7 +760,7 @@ qsim <- function(x,
     as.numeric(Param(x)),
     Pars(x),
     as.numeric(Init(x)),
-    names(Init(x)),
+    Cmt(x),
     x@vars,
     capt_pos,
     pointers(x),
@@ -758,7 +772,7 @@ qsim <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol, cmt(x), x@capture))
+  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol, req, cap))
   
   if(output=="df") {
     return(as.data.frame.matrix(out[["data"]]))

@@ -350,6 +350,10 @@
 |test-pred.R           |test-pred                            |rate with pred is zero                                                    |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pred.R           |test-pred                            |ss with pred is zero                                                      |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pred.R           |test-pred                            |amt is ok                                                                 |  1|      0|FALSE   |FALSE |       0|      1|
+|test-recsort.R        |test-recsort                         |recsort 1 and 2, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-recsort.R        |test-recsort                         |recsort 3 and 4, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-recsort.R        |test-recsort                         |recsort 2 and 4, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-recsort.R        |test-recsort                         |recsort 1 and 3, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-request.R        |test-request                         |Req gets the right variables                                              |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R        |test-request                         |Req gets the right variables, with request                                |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R        |Testing various request settings     |Testing request setting                                                   |  2|      0|FALSE   |FALSE |       0|      2|

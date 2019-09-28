@@ -29,7 +29,7 @@
 #include <algorithm>
 
 #define N_SS 1000
-#define CRIT_DIFF_SS 1E-12
+//#define CRIT_DIFF_SS 1E-12
 
 // Tgrid Observations that need to get output
 // And Ptime observations
@@ -232,6 +232,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
   prob->rate_reset();
   
+  double CRIT_DIFF_SS = prob->ss_tol;
   double tfrom = 0.0;
   double tto = 0.0;
   int i;
@@ -322,6 +323,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   
   int i;
   int j;
+  double CRIT_DIFF_SS = prob->ss_tol;
   std::vector<double> res(prob->neq(), 0.0);
   std::vector<double> last(prob->neq(),1E-10);
   

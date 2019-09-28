@@ -128,10 +128,7 @@ mrgsim_q <- function(x,
   parin$recsort <- recsort
   parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
-  
-  # already took intersect
-  parin$request <- seq_along(compartments)-1L;
-  
+
   if(simcall!=0) {
     if(simcall==1) {
       stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
@@ -140,7 +137,7 @@ mrgsim_q <- function(x,
   }
   
   if(length(stime) == 0) {
-    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
+    parin[["tgridmatrix"]] <- matrix(stime(x),ncol=1)
   } else {
     parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
   }
@@ -154,7 +151,8 @@ mrgsim_q <- function(x,
   parin[["tad"]] <- FALSE
   parin[["nocb"]] <- TRUE
   parin[["obsaug"]] <- FALSE
-  
+  parin[["request"]] <- integer(0)
+    
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
@@ -171,7 +169,7 @@ mrgsim_q <- function(x,
     x@envir
   )[["data"]]
   
-  dimnames(out) <- list(NULL, c("ID", tcol, compartments, capt))
+  dimnames(out) <- list(NULL, c("ID", tcol, capt))
   
   
   if(output=="df") {

@@ -90,6 +90,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.amt = 0;
   
   Do_Init_Calc = true;
+  ss_tol = 1e-12;
   
   pred.assign(5,0.0);
   

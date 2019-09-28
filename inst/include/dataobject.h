@@ -29,9 +29,9 @@
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-typedef std::map<double,int> idat_map;
+//typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
-typedef std::deque<int> datarowtype;
+//typedef std::deque<int> datarowtype;
 
 
 class dataobject {

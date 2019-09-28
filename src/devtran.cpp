@@ -92,7 +92,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
-  
+  const double ss_tol         = Rcpp::as<double> (parin["ss_tol"]);
+
   if(verbose) say("unpacking data");
   
   // Create data objects from data and idata
@@ -168,6 +169,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.sigma(SIGMA);
   prob.copy_parin(parin);
   prob.pass_envir(&envir);
+  prob.ss_tol = ss_tol;
   const unsigned int neq = prob.neq();
   LSODA solver(neq);
   solver.copy_parin(parin);
@@ -372,11 +374,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
   
+
   if(verbose) say("starting the simulation ...");
   
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
+    double id = dat.get_uid(i);
     double Fn = 1.0;
     int this_cmtn = 0;
     double told = -1;
@@ -385,9 +389,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     double tfrom = a[i].front()->time();
     double tto = tfrom;
     double maxtime = a[i].back()->time();
-    
-    double id = dat.get_uid(i);
-    
+  
     prob.reset_newid(id);
     
     if(i==0) {
@@ -532,7 +534,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  this_rec->time() + this_rec->dur(Fn),
                                  this_rec->rate(),
                                  -299,
-                                 this_rec->id());
+                                 id);
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
           }

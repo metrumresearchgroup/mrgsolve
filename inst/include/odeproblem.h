@@ -202,6 +202,7 @@ public:
   int Neq;
   int Nvar;
   int Istate; ///< istate value
+  double ss_tol;
 
 protected:
 
@@ -236,6 +237,7 @@ protected:
   config_func Config; ///< <code>$PREAMBLE</code> function
   
   bool Do_Init_Calc;
+
   
 };
 

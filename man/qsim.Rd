@@ -5,7 +5,7 @@
 \title{Basic, simple simulation from model object}
 \usage{
 qsim(x, data, idata = no_idata_set(), obsonly = FALSE, tgrid = NULL,
-  recsort = 1, tad = FALSE, skip_init_calc = FALSE,
+  recsort = 1, tad = FALSE, Req = NULL, skip_init_calc = FALSE,
   output = "mrgsims")
 }
 \arguments{
@@ -42,6 +42,9 @@ change over time.  But it might (possibly) not hold if the lag time changes
 prior to the last dose in the \code{addl} sequence.  This known limitation
 shouldn't affect \code{tad} calculation in most common dosing lag time
 implementations.}
+
+\item{Req}{output items to request; if missing, then only captured items
+will be returned in the output}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
