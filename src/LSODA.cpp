@@ -125,7 +125,12 @@ void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f,
   for (size_t i = 1; i <= neq; ++i) {
     yout[i] = y[i - 1];
   }
+  //std::copy(y.begin(), y.end(), 1+yout.begin());
+  
   lsoda(f, neq, yout, t, tout, itask, istate, iopt, jt, _data);
+  
+  //std::copy(1+yout.begin(), yout.end(), y.begin());
+  // 
   for(size_t i = 1; i <= neq; ++i) {
     y[i - 1] = yout[i];
   }

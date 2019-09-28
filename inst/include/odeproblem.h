@@ -195,6 +195,7 @@ public:
   std::vector<double> Yout;
   std::vector<double> Param;
   std::vector<double> Vars;
+  std::vector<double> Capture; ///< captured data items
   double Atol;
   double Rtol;
   int Npar;
@@ -227,7 +228,7 @@ protected:
   arma::mat Sigma; ///< variance/covariance matrix for within-subject variability
     
   std::vector<double> pred; ///< brings clearances, volumes, and & for advan 1/2/3/4
-  std::vector<double> Capture; ///< captured data items
+
   
   deriv_func Derivs; ///< <code>$ODE</code> function
   init_func Inits; ///< <code>$MAIN</code> function

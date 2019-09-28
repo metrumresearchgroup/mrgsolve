@@ -234,19 +234,19 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_cmt_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have cmt set to zero.",
+            "all records must have cmt set to zero.",
             false
         ); 
       }
       if(Data(j,col[_COL_rate_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have rate set to zero.",
+            "all records must have rate set to zero.",
             false
         ); 
       }
       if(Data(j,col[_COL_ss_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have ss set to zero.",
+            "all records must have ss set to zero.",
             false
         ); 
       }

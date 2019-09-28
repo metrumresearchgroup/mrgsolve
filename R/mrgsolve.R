@@ -545,6 +545,7 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
+  parin$verbose <- verbose
   
   if(any(x@capture =="tad") & tad) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 

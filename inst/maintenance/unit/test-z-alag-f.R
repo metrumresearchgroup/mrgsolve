@@ -79,12 +79,13 @@ context("Set ALAG via ALAG_CMT")
 test_that("ALAG is set for compartment 1 and 2", {
   
   expect_true(lim(out10, CENT>0)$time[1]==0)
-  expect_true(lim(out13, CENT>0)$time[1]==1)
-  expect_true(lim(out14, CENT>0)$time[1]==0.5)
+  # 1 and 2 put doses in a data set after padded observations at the same time;
+  expect_true(lim(out13, CENT>0)$time[1]==2)
+  expect_true(lim(out14, CENT>0)$time[1]==1)
   
   expect_true(lim(out20, DEPOT>0)$time[1]==1)
-  expect_true(lim(out23, DEPOT>0)$time[1]==1.3)
-  expect_true(lim(out24, DEPOT>0)$time[1]==3)
+  expect_true(lim(out23, DEPOT>0)$time[1]==2)
+  expect_true(lim(out24, DEPOT>0)$time[1]==4)
 })
 
 
@@ -109,11 +110,12 @@ test_that("F is set for multiple doses", {
 test_that("F and ALAG are set from idata", {
   idata <- mrgsolve:::expand.idata(ID=1:3, F1=c(0.2, 0.5), ALAG1=c(0.2, 0.5,0.7,0.99))
   out1 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim()
-  out2 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim(add=1+idata$ALAG1,recsort=1)
-  out2 <- out2 %>% lim(CENT > 0) %>% as.tbl %>% group_by(ID)%>% slice(1)
+  # 1 and 2 put doses in a data set after padded observations at the same time;
+  out2 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim(add=1+idata$ALAG1,recsort=3)
+  out2b <- out2 %>% lim(CENT > 0) %>% as.tbl %>% group_by(ID)%>% slice(1)
   
   expect_equivalent(lim(out1, time==2)$CENT, 100*idata$F1)
-  expect_equivalent(out2$time, 1+idata$ALAG1)
+  expect_equivalent(out2b$time, 1+idata$ALAG1)
 })
 
 data(exTheoph)
@@ -130,18 +132,18 @@ test_that("F  is set from data", {
 
 
 test_that("ALAG is set from data", {
-  
+  # 1 and 2 put doses in a data set after padded observations at the same time;
   out2 <- 
     mod %>% 
     data_set(exTheoph) %>% 
-    mrgsim(recsort=1,add=c(doses$ALAG1),obsaug=TRUE) 
+    mrgsim(recsort=3,add=c(doses$ALAG1),obsaug=TRUE) 
   
-  out2 <- 
+  out2b <- 
     out2 %>% 
     dplyr::filter(CENT > 0) %>% 
     group_by(ID) %>% slice(1)
   
-  expect_equivalent(out2$time, doses$ALAG1)
+  expect_equivalent(out2b$time, doses$ALAG1)
   
 })
 

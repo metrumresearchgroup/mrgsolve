@@ -80,7 +80,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    Rcpp::NumericMatrix& SIGMA,
                    Rcpp::Environment envir) {
   
-  //const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
+  const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
   const bool debug            = Rcpp::as<bool>   (parin["debug"]);
   const int digits            = Rcpp::as<int>    (parin["digits"]);
   const double tscale         = Rcpp::as<double> (parin["tscale"]);
@@ -93,6 +93,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   
+  if(verbose) say("unpacking data");
+  
   // Create data objects from data and idata
   dataobject dat(data,parnames);
   dat.map_uid();
@@ -104,11 +106,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Number of individuals in the data set
   const int NID = dat.nid();
   const int nidata = idat.nrow();
-  
-  int j = 0;
+
   unsigned int k = 0;
   unsigned int crow = 0;
-  size_t h = 0;
   
   bool put_ev_first = false;
   bool addl_ev_first = true;
@@ -199,7 +199,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   // Need this for later
-  int nextpos = put_ev_first ?  (data.nrow() + 10) : -100;
+  int nextpos = put_ev_first ?  (1000000) : -10000;
   
   if((obscount == 0) || (obsaug)) {
     
@@ -244,19 +244,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       std::vector<rec_ptr> z;
       
-      //z.reserve(tgridn[i]);
-      z.resize(tgridn[i]);
+      z.reserve(tgridn[i]);
+      //z.resize(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
-        //z.push_back(obs);
-        z[j] = obs;
+        z.push_back(obs);
+        //z[j] = obs;
       }
       designs.push_back(z);
     }
-    
-    double id;
-    size_t n;
     
     // We have to look up the design from the idata set
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
@@ -271,13 +268,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         n = tgridn.at(0);
       } 
       
-      //it->reserve((it->size() + n));
-      int k = it->size();
-      int jj = it - a.begin();
-      it->resize((it->size() + n));
+      it->reserve((it->size() + n));
+      //int k = it->size();
+      //int jj = it - a.begin();
+      //it->resize((it->size() + n));
       for(int h=0; h < n; ++h) {
-        //it->push_back(designs[tgridi[j]][h]);
-        (*it)[h+k] = designs[tgridi[j]][h];
+        it->push_back(designs[tgridi[j]][h]);
+        //(*it)[h+k] = designs[tgridi[j]][h];
         ++obscount;
       } 
       std::sort(it->begin(), it->end(), CompRec());
@@ -375,6 +372,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
   
+  if(verbose) say("starting the simulation ...");
+  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
@@ -425,7 +424,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       rec_ptr this_rec = a[i][j];
       
-      //this_rec->id(id);
+      this_rec->id(id);
       
       if(prob.systemoff()) {
         unsigned short int status = prob.systemoff();
@@ -514,7 +513,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             reclist::iterator it = a[i].begin()+j;
             advance(it,1);
             a[i].insert(it,newev);
-            newev->schedule(a[i], maxtime, addl_ev_first, NN, Fn);
+            newev->schedule(a[i], maxtime, put_ev_first, NN, Fn);
             this_rec->unarm();
             sort_recs = true;
           } else { // no valid lagtime
@@ -672,12 +671,12 @@ Rcpp::List EXPAND_OBSERVATIONS(
   std::vector<int> obsc;
   
   for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    int k = it->size();
-    it->resize(k + n);
-    //it->reserve((it->size() + n));
+    //int k = it->size();
+    //it->resize(k + n);
+    it->reserve((it->size() + n));
     for(size_t h=0; h < n; h++) {
-      //it->push_back(z[h]);
-      (*it)[h+k] = z[h];
+      it->push_back(z[h]);
+      //(*it)[h+k] = z[h];
       ++obscount;
     } 
     std::sort(it->begin(), it->end(), CompRec());

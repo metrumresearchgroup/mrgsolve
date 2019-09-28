@@ -45,12 +45,17 @@ test_that("Very small lag time doesn't crash", {
   expect_is(out, "mrgsims")
   expect_equal(out$time[which.max(out$CENT)],0)
   
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
+  # 1 and 3 put doses scheduled through addl before observations at the same time.
+  # if the lag time is at 2, then the dose should be after the observation
+  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim(recsort=1)
+  expect_is(out, "mrgsims")
+  expect_equal(out$time[which.max(out$CENT)],3)
+  # 3 and 4 put those doses before padded observations at the same time. 
+  # recsort 2 would be showing the dose 
+  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim(recsort=3)
   expect_is(out, "mrgsims")
   expect_equal(out$time[which.max(out$CENT)],2)
-  
   out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-  
 })
 
 test_that("Lag time on SS record - bolus", {

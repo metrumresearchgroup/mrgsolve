@@ -270,7 +270,7 @@
 |test-utils.R          |test-utils                           |cvec                                                                      |  1|      0|FALSE   |FALSE |       0|      1|
 |test-workflow.R       |test-workflow                        |workflow                                                                  |  3|      0|FALSE   |FALSE |       0|      3|
 |test-alag.R           |test-alag                            |Lagged bolus                                                              |  1|      0|FALSE   |FALSE |       0|      1|
-|test-alag.R           |test-alag                            |Very small lag time doesn't crash                                         |  4|      0|FALSE   |FALSE |       0|      4|
+|test-alag.R           |test-alag                            |Very small lag time doesn't crash                                         |  6|      0|FALSE   |FALSE |       0|      6|
 |test-alag.R           |test-alag                            |Lag time on SS record - bolus                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-alag.R           |test-alag                            |Lag time on SS record - infusion                                          |  2|      0|FALSE   |FALSE |       0|      2|
 |test-alag.R           |test-alag                            |Error lagtime+duration >= ii for infusion                                 |  1|      0|FALSE   |FALSE |       0|      1|

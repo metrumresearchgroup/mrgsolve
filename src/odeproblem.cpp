@@ -36,7 +36,7 @@ static arma::mat OMGADEF(1,1,arma::fill::zeros);
 void dosimeta(void* prob_) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eta = prob->mv_omega(1);
-  for(unsigned int i=0; i < eta.n_cols; ++i) {
+  for(int i=0; i < eta.n_cols; ++i) {
     prob->eta(i,eta(0,i)); 
   }
 }
@@ -44,7 +44,7 @@ void dosimeta(void* prob_) {
 void dosimeps(void* prob_) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eps = prob->mv_sigma(1);
-  for(unsigned int i=0; i < eps.n_cols; ++i) {
+  for(int i=0; i < eps.n_cols; ++i) {
     prob->eps(i,eps(0,i)); 
   }
 }

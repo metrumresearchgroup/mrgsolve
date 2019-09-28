@@ -466,14 +466,16 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   }
   
   if(this->int_infusion()) {
-    thisi.reserve(thisi.size() + 2*Addl);  
+    thisi.reserve(thisi.size() + Addl);  
   } else {
     thisi.reserve(thisi.size() + Addl); 
   }
   
   double ontime = 0;
 
-  int nextpos = addl_ev_first ?  (this->pos() - 600) : (maxpos + 10);
+  int mp = 1000000000;
+  
+  int nextpos = addl_ev_first ?  -1000000000 : mp;
   
   for(unsigned int k=1; k<=Addl; ++k) {
     
