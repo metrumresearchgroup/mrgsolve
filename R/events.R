@@ -148,10 +148,9 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
         rownames(data) <- NULL
       } else {
         data <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
-                                 PACKAGE="mrgsolve", 
                                  match("ID", colnames(data),0), 
                                  data.matrix(data), 
-                                 ID))
+                                 ID, PACKAGE="mrgsolve" ))
       }
       
     } else {

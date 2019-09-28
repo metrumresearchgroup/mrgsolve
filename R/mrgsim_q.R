@@ -166,7 +166,8 @@ mrgsim_q <- function(x,
     data,null_idata,
     as.matrix(omat(x)),
     as.matrix(smat(x)),
-    x@envir
+    x@envir, 
+    PACKAGE = "mrgsolve"
   )[["data"]]
   
   dimnames(out) <- list(NULL, c("ID", tcol, capt))

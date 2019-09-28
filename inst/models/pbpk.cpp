@@ -205,9 +205,9 @@ dxdt_Aar = Qlu*(Clung/Kplu*BP) - Qlu*Carterial;   // arterial blood
 dxdt_Are = Qre*(Carterial - Crest/Kpre*BP);       // rest of body
 dxdt_D   = - Absorption;                          // oral dosing
 
-[ CAPTURE ] Cvenous = Ave/Vve
-
 [ TABLE ] 
+Cvenous = Ave/Vve;
 capture Cp = Cvenous/BP	; // venous plasma 
 
+[ CAPTURE ] Cvenous
   

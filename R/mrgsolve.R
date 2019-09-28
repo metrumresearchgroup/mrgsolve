@@ -612,7 +612,8 @@ do_mrgsim <- function(x,
     data,idata,
     as.matrix(omat(x)),
     as.matrix(smat(x)),
-    x@envir
+    x@envir, 
+    PACKAGE = "mrgsolve"
   )
   
   
@@ -767,7 +768,8 @@ qsim <- function(x,
     data,idata,
     as.matrix(omat(x)),
     as.matrix(smat(x)),
-    x@envir
+    x@envir, 
+    PACKAGE = "mrgsolve"
   )
   
   if(tad) tcol <- c(tcol,"tad")

@@ -75,6 +75,8 @@ LSODA::LSODA(int neq_)
   cm1 = {{0}};
   cm2 = {{0}};
   iworks = {{0}};
+  iworks[6] = 12;
+  iworks[5] = 5;
   rworks = {{0.0}};
   itask = 1;
   iopt = 0;
@@ -291,15 +293,16 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         mxordn = iworks[5];
         
         if (mxordn == 0)
-          mxordn = 100;
+          mxordn = 12;
+          //mxordn = 100;
         
         mxordn = min(mxordn, mord[0]);
         mxords = iworks[6];
         
         // if mxords is not given use 100.
         if (mxords == 0)
-          mxords = 100;
-        
+          mxords = 5;
+          //mxords = 100;
         mxords = min(mxords, mord[1]);
         
         if ((tout - *t) * h0 < 0.)
@@ -758,11 +761,11 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
               if (meth_ == 2)
                 // cerr << "[lsoda] a switch to the stiff method has occurred "
                 //      << endl;
-                REprintf("[lsoda] a switch to the stiff method has occurred");
+                REprintf("[lsoda] a switch to the stiff method has occurred\n");
               if (meth_ == 1)
                 // cerr << "[lsoda] a switch to the nonstiff method has occurred"
                 //      << endl;
-                REprintf("[lsoda] a switch to the nonstiff method has occurred");
+                REprintf("[lsoda] a switch to the nonstiff method has occurred\n");
             }
           } /* end if ( meth_ != mused )   */
           /*

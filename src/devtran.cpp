@@ -379,7 +379,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-    
+
     double id = dat.get_uid(i);
     double Fn = 1.0;
     int this_cmtn = 0;

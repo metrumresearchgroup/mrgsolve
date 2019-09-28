@@ -237,7 +237,7 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,
                numeric(length(x@shlib[["vars"]])+10L),
                neta,neps,x@capture,funp,
-               x@envir)
+               x@envir, PACKAGE = "mrgsolve")
   
   names(out$init) <- names(init)
   
