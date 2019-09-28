@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -269,6 +269,13 @@ mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 ##' @export
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   if(!is.ev(events)) {
+    if(is.data.frame(events)) {
+       events <- as.ev(events) 
+       return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
+    }
+    if(is.valid_data_set(events)) {
+      return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
+    }
     stop("invalid 'events' argument") 
   }
   events <- as.data.frame(events, add_ID = 1)
@@ -297,7 +304,14 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
 ##' @export
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   if(!is.ev(events)) {
-    stop("invalid 'events' argument", call. = FALSE) 
+    if(is.data.frame(events)) {
+       events <- as.ev(events) 
+       return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
+    }
+    if(is.valid_data_set(events)) {
+      return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
+    }
+    stop("invalid 'events' argument") 
   }
   expand <- !has_ID(events) & nrow(idata) > 0
   events <- as.data.frame(events, add_ID = 1)
