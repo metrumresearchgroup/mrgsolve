@@ -231,8 +231,7 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
     }
     ret[i] = tokens;
   }
-  
-  
+
   Rcpp::List ans;
   
   ans["tokens"] = ret;

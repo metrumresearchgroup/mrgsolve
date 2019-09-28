@@ -244,7 +244,7 @@ move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
 move_global_rcpp_re_find <- "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+\\w+\\s*="
 move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
 move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
-local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
+#local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
 
 move_global <- function(x,env,using_vars=FALSE) {
@@ -257,7 +257,7 @@ move_global <- function(x,env,using_vars=FALSE) {
   l <- lapply(x[what], get_c_vars)
   ll <- unlist(l, use.names=FALSE)
   
-  env[["global"]] <- c("typedef double capture;",local_var_typedef)
+  #env[["global"]] <- c("typedef double capture;",local_var_typedef)
   
   if(!using_vars) {
     env[["global"]] <- c(env[["global"]], "namespace {", paste0("  ", ll), "}")  
