@@ -108,6 +108,10 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data
     }
   }
   
+  if(is.element("cols", a)) {
+    object <- update_outputs(object,cvec_cs(args[["cols"]]))  
+  }
+  
   ## Initial conditions list:
   if(is.element("init", a)) {
     i <- object@init@data
@@ -146,6 +150,21 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data
   
   return(object)
 })
+
+update_outputs <- function(mod, outputs = character(0)) {
+  if(length(outputs)==0) return(mod)
+  ren <- .ren.create(outputs)
+  mod@cmti <- which(Cmt(mod) %in% ren$old)
+  names(mod@cmti) <- .ren.rename(ren,Cmt(mod)[mod@cmti])
+  mod@capturei <- which(mod@capture %in% ren$old)
+  names(mod@capturei) <- .ren.rename(ren,mod@capture[mod@capturei])
+  diff <- setdiff(ren$old,c(Cmt(mod),mod@capture))
+  if(length(diff) > 0) {
+    warning(paste0("Invalid outputs: ",   paste0(diff,collapse = ",")),call.=FALSE)
+  }
+  mod
+}
+
 
 same_sig <- function(x,y) {
   return(identical(unname(nrow(x)), unname(nrow(y))))
@@ -223,6 +242,7 @@ setMethod("update", "parameter_list", function(object,.y,...) {
 setMethod("update", "ev", function(object,y,...) {
   
 })
+
 
 
 # Update model or project in an model object

@@ -270,8 +270,8 @@ mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   if(!is.ev(events)) {
     if(is.data.frame(events)) {
-       events <- as.ev(events) 
-       return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
+      events <- as.ev(events) 
+      return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
     }
     if(is.valid_data_set(events)) {
       return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
@@ -308,8 +308,8 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   if(!is.ev(events)) {
     if(is.data.frame(events)) {
-       events <- as.ev(events) 
-       return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
+      events <- as.ev(events) 
+      return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
     }
     if(is.valid_data_set(events)) {
       return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
@@ -472,6 +472,10 @@ do_mrgsim <- function(x,
   
   verbose <- x@verbose
   
+  if(length(Request) > 0) {
+    x <- update_outputs(x, outputs=Request)  
+  }
+  
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
@@ -508,30 +512,30 @@ do_mrgsim <- function(x,
   }
   
   # capture items; will work on this
-  capt <- x@capture
+  #capt <- x@capture
   
   # Requested
-  has_Request <- !missing(Request)
+  #has_Request <- !missing(Request)
   
   # comma-separated
-  rename.Request <- .ren.create(Request)
-  Request <- rename.Request$old
+  #rename.Request <- .ren.create(Request)
+  #Request <- rename.Request$old
   
   # request is only for compartments
   # restrict captures and request if Req is specified
-  if(has_Request) {
-    request <- intersect(Request,cmt(x))
-    capt    <- intersect(Request,capt)
-  } else {
-    request <- intersect(request,cmt(x)) 
-  }
+  #if(has_Request) {
+  #  request <- intersect(Request,cmt(x))
+  #  capt    <- intersect(Request,capt)
+  #} else {
+  #  request <- intersect(request,cmt(x)) 
+  #}
   
   # Non-compartment names in capture
-  capt <- unique(setdiff(capt,cmt(x)))
+  #capt <- unique(setdiff(capt,cmt(x)))
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
+  #capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
   
   ## carry can be tran/data/idata
   # Items to carry out from the data set
@@ -566,14 +570,12 @@ do_mrgsim <- function(x,
   parin$do_init_calc <- !skip_init_calc
   parin$verbose <- verbose
   parin$ss_tol <- ss_tol
+  parin$request <- x@cmti-1L#match(request, cmt(x))-1L;
   
   if(any(x@capture =="tad") & tad) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
   }
-  
-  # already took intersect
-  parin$request <- match(request, cmt(x))-1L;
-  
+
   # What to carry
   parin$carry_data <- carry.data 
   parin$carry_idata <- carry.idata 
@@ -610,12 +612,6 @@ do_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(list(capt_pos,capt)))
   }
   
-  ## Set the seed:
-  if(!is.na(seed)) {
-    stop("the seed argument is deprecated; use set.seed(seed) instead", 
-         call. = FALSE)
-  }
-  
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
@@ -624,7 +620,7 @@ do_mrgsim <- function(x,
     init,
     names(Init(x)),
     x@vars,
-    capt_pos,
+    c(length(x@capture),x@capturei-1L),
     pointers(x),
     data,idata,
     as.matrix(omat(x)),
@@ -647,8 +643,9 @@ do_mrgsim <- function(x,
     .ren.rename(rename.carry,carry.tran), ## First tran
     .ren.rename(rename.carry,carry.data), ## Then carry data 
     .ren.rename(rename.carry,carry.idata), ## Then carry idata
-    .ren.rename(rename.Request,request),   ## Then compartments
-    .ren.rename(rename.Request,capt) ## Then captures
+    #.ren.rename(rename.Request,request),   ## Then compartments
+    names(x@cmti),
+    names(x@capturei)
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
@@ -662,11 +659,15 @@ do_mrgsim <- function(x,
     }
   }
   
-  new("mrgsims",
-      request=.ren.rename(rename.Request,request),
-      data=as.data.frame(out[["data"]]),
-      outnames=.ren.rename(rename.Request,capt),
-      mod=x)
+  new(
+    "mrgsims",
+    #request=.ren.rename(rename.Request,request),
+    request = c(names(x@cmti),names(x@capturei)),
+    data=as.data.frame(out[["data"]]),
+    #outnames=.ren.rename(rename.Request,capt),
+    outnames=names(x@capturei),
+    mod=x
+  )
 }
 
 #' Basic, simple simulation from model object
@@ -745,7 +746,7 @@ qsim <- function(x,
   }
   
   capt_pos <- c(length(cap),seq_along(cap)-1L)
-
+  
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort

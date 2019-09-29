@@ -23,7 +23,7 @@
 |test-carry-out.R      |test-carry-out                       |carry_out mixed                                                           |  2|      0|FALSE   |FALSE |       0|      2|
 |test-carry-out.R      |test-carry-out                       |carry_out mixed, rename                                                   |  2|      0|FALSE   |FALSE |       0|      2|
 |test-carry-out.R      |test-carry-out                       |carry_out mixed, some rename                                              |  2|      0|FALSE   |FALSE |       0|      2|
-|test-data_set.R       |test-data_set                        |Same result from upper and lower case names                               | 10|      0|FALSE   |FALSE |       0|     10|
+|test-data_set.R       |test-data_set                        |Same result from upper and lower case names                               |  2|      0|FALSE   |TRUE  |       0|      2|
 |test-data_set.R       |test-data_set                        |Warning is generated when mixed upper/lower names                         |  1|      0|FALSE   |FALSE |       0|      1|
 |test-data_set.R       |test-data_set                        |Filter out ID                                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-data_set.R       |test-data_set                        |ID is required                                                            |  1|      0|FALSE   |FALSE |       0|      1|
@@ -117,7 +117,7 @@
 |test-iv-po.R          |test-iv-po                           |CP from iv model is identical to closed form result                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-iv-po.R          |test-iv-po                           |Error on dosing into non-existant compartment                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-knobs.R          |test-knobs                           |knobs() returns object of class batch_mrgsims                             |  1|      0|FALSE   |FALSE |       0|      1|
-|test-knobs.R          |test-knobs                           |plotting batch_mrgsims objects                                            |  2|      0|FALSE   |FALSE |       0|      2|
+|test-knobs.R          |test-knobs                           |plotting batch_mrgsims objects                                            |  0|      0|FALSE   |TRUE  |       0|      0|
 |test-knobs.R          |test-knobs                           |Moving knobs are correctly identified                                     |  1|      0|FALSE   |FALSE |       0|      1|
 |test-knobs.R          |test-knobs                           |CL knob is correctly captured in output as CL                             |  2|      0|FALSE   |FALSE |       0|      2|
 |test-knobs.R          |test-knobs                           |A false knob does not appear in simulated output                          |  1|      0|FALSE   |FALSE |       0|      1|
@@ -325,8 +325,8 @@
 |test-pk.R             |Multiple dosing - 2 cmt              |two-compartment, bolus, multiple                                          |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pk.R             |Multiple dosing - 2 cmt              |two-compartment, infusion, multiple                                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pk.R             |Multiple dosing - 2 cmt              |two-compartment, oral, multiple                                           |  1|      0|FALSE   |FALSE |       0|      1|
-|test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - initial condition                                    |  2|      0|FALSE   |FALSE |       0|      2|
-|test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - GUT,bolus,addl                                       |  1|      0|FALSE   |FALSE |       0|      1|
+|test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - initial condition                                    |  4|      0|FALSE   |FALSE |       2|      2|
+|test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - GUT,bolus,addl                                       |  3|      0|FALSE   |FALSE |       2|      1|
 |test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - GUT,infus,addl                                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - CENT,infus,addl                                      |  2|      0|FALSE   |FALSE |       0|      2|
 |test-pkmodel.R        |Compare PKMODEL with equivalent ODEs |ADVAN2 same as ODE - CENT,infus,ss,addl                                   |  1|      0|FALSE   |FALSE |       0|      1|
@@ -354,10 +354,10 @@
 |test-recsort.R        |test-recsort                         |recsort 3 and 4, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-recsort.R        |test-recsort                         |recsort 2 and 4, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-recsort.R        |test-recsort                         |recsort 1 and 3, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
-|test-request.R        |test-request                         |Req gets the right variables                                              |  4|      0|FALSE   |FALSE |       0|      4|
-|test-request.R        |test-request                         |Req gets the right variables, with request                                |  4|      0|FALSE   |FALSE |       0|      4|
-|test-request.R        |Testing various request settings     |Testing request setting                                                   |  2|      0|FALSE   |FALSE |       0|      2|
-|test-request.R        |Testing various request settings     |Testing that request is properly set in $SET                              |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R        |test-request                         |Req gets the right variables                                              |  4|      1|FALSE   |FALSE |       0|      3|
+|test-request.R        |test-request                         |Req gets the right variables, with request                                |  4|      3|FALSE   |FALSE |       0|      1|
+|test-request.R        |Testing various request settings     |Testing request setting                                                   |  2|      2|FALSE   |FALSE |       0|      0|
+|test-request.R        |Testing various request settings     |Testing that request is properly set in $SET                              |  4|      1|FALSE   |FALSE |       0|      3|
 |test-request.R        |Testing various request settings     |Testing that request is (all) by default                                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-request.R        |Testing various request settings     |Typedef capture                                                           |  5|      0|FALSE   |FALSE |       0|      5|
 |test-update.R         |test-update                          |Update parameter - via param                                              |  7|      0|FALSE   |FALSE |       0|      7|

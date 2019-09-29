@@ -315,6 +315,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     modfile = basename(build$modfile)
   )
   
+  x <- update_outputs(x, c(Cmt(x),x@capture))
+  
   x@vars <- vars
   
   x <- store_annot(x,annot)
