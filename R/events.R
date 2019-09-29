@@ -227,7 +227,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     x[["evid"]] <- na2zero(x[["evid"]])
     x <- x[x[["evid"]] != 0,] 
     if(nrow(x)==0) {
-      stop("no dosing events found", call. = FALSE) 
+      wstop("no dosing events found; could not coerce to ev object") 
     }
   }
   

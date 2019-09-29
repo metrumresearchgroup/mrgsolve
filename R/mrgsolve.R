@@ -291,6 +291,9 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
+  if(is.ev(data)) {
+    data <- as_data_set(data)  
+  }
   args <- list(...)
   x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)

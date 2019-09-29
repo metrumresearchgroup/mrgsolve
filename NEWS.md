@@ -13,6 +13,8 @@
 - Standardize column order for event objects #513
 - `mrgsim_e` and `mrgsim_ei` will try to accept data frame and validated data
   sets
+- Drop ODEPACK solver and implement lsoda in C++
+- Add C++11 as system requirement
 
 # mrgsolve 0.9.2
 - Fix bug where system advanced to next time after advancing to steady state
