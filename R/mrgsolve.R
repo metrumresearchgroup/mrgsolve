@@ -188,10 +188,6 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
     events <- x@args$events
   }
   
-  if(nid > 1) {
-    return(mrgsim_nid(x, nid, events, ...))
-  } 
-  
   have_data <- !is.null(data)
   have_idata <- !is.null(idata)
   have_events <- !is.null(events)
@@ -200,6 +196,10 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   x@args$idata <- NULL
   x@args$data <- NULL
   x@args$events <- NULL
+  
+  if(nid > 1) {
+    return(mrgsim_nid(x, nid, events, ...))
+  } 
   
   if(have_events & !have_data) {
     if(have_idata) {
@@ -280,7 +280,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   }
   events <- as.data.frame(events, add_ID = 1)
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  # x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -295,7 +295,7 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
     data <- as_data_set(data)  
   }
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -330,7 +330,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
                     idata[,"ID"])
   }
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -347,7 +347,7 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -364,7 +364,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   }
   data <- matrix(idata[["ID"]], ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -377,7 +377,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
 mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -470,6 +470,8 @@ do_mrgsim <- function(x,
                       ss_tol = 1E-12,
                       ...) {
   
+  x <- update(x,...,strict=TRUE)
+  
   verbose <- x@verbose
   
   if(length(Request) > 0) {
@@ -498,7 +500,7 @@ do_mrgsim <- function(x,
   if(!identical(Cmt(x), x@shlib[["cmt"]])) {
     wstop("the compartment list has changed since the model was compiled.")
   }
-
+  
   ## carry can be tran/data/idata
   # Items to carry out from the data set
   if(length(carry_out) > 0) {

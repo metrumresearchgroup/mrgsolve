@@ -105,8 +105,9 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   
   if(strict && anyNA(m)) {
     bad <- a[is.na(m)]
-    wstop("cannot update this item in the model object: ", 
-          paste0(bad,collapse=","))
+    bad <- paste0(bad,collapse=", ")
+    mesg <- paste0("invalid item for model object update: ", bad)
+    warning(mesg, call.=FALSE, immediate.=TRUE)
   }
   
   notna <- !is.na(m)
