@@ -29,16 +29,17 @@ ode <- mrgsolve:::house(rtol = 1E-9, atol = 1E-9) %>% param(CL=1,VC=20,KA=1.1)
 
 code1 <- '
 $PARAM CL=1, V=20, KA=1.1
-$PKMODEL cmt = "CENT"
+$PKMODEL cmt = "GUT CENT", depot = TRUE
 '
 
 pred1 <- mcode("test13.2", code1)
 
 ode <- mcode("pkmodel_1", {'
 $PARAM CL = 1, V = 20, KA = 1.1
-$CMT CENT
+$CMT GUT CENT
 $ODE
-dxdt_CENT = -(CL/V)*CENT;
+dxdt_GUT = -KA*GUT;
+dxdt_CENT = KA*GUT-(CL/V)*CENT;
 '}, rtol = 1E-9, atol = 1E-9)
 
 test_that("ADVAN2 same as ODE - initial condition", {

@@ -315,8 +315,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     modfile = basename(build$modfile)
   )
   
-  x <- update_outputs(x, c(Cmt(x),x@capture))
-  
   x@vars <- vars
   
   x <- store_annot(x,annot)
@@ -351,16 +349,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
-  
   x <- update(x, data=args, open=TRUE)
   
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib[["cmt"]] <- names(Init(x))
-  x@shlib[["par"]] <- names(param(x))
-  x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
   x@shlib[["covariates"]] <- mread.env[["covariates"]]
-  x@shlib[["version"]] <- GLOBALS[["version"]]
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc

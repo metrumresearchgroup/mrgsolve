@@ -163,6 +163,8 @@ valid.mrgmod <- function(object) {
 }
 # nocov end
 
+
+
 ##' S4 class for mrgsolve model object
 ##'
 ##' @section Notes:
@@ -220,6 +222,8 @@ valid.mrgmod <- function(object) {
 ##' @slot funs symbol names for model functions in the shared object
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
+##' @slot capturei capture indices to recover in the simulation
+##' @slot cmti compartment indices to recover in the simulation
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
@@ -236,6 +240,18 @@ setClass("packmod",
            header="character"
          )
 )
+
+initialize_mrgmod <- function(.Object, ...) {
+  .Object <- callNextMethod()
+  .Object@shlib[["cmt"]] <- Cmt(.Object)
+  .Object@shlib[["par"]] <- Pars(.Object)
+  .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
+  .Object@shlib[["version"]] <- GLOBALS[["version"]]
+  .Object <- default_outputs(.Object)
+  .Object
+}
+setMethod("initialize", "mrgmod", initialize_mrgmod)
+
 
 ##' Return a pre-compiled, PK/PD model
 ##' 

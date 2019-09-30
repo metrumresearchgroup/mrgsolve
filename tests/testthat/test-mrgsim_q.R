@@ -40,7 +40,7 @@ test_that("simcall=1 is deprecated", {
 })
 
 test_that("qsim", {
-  out1 <- mrgsim_df(mod,temp,Req = cap)
+  out1 <- mrgsim_df(mod,temp, Req = cap)
   out2 <- qsim(mod,temp,output="df")
   expect_identical(out1,out2)
 })

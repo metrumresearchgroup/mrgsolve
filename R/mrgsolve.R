@@ -229,7 +229,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
 
 ##' @rdname mrgsim
 ##' @export
-mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
+mrgsim_df <- function(...,output="df") mrgsim(...,output=output)
 
 ##' mrgsim variant functions
 ##' 
@@ -476,10 +476,6 @@ do_mrgsim <- function(x,
     x <- update_outputs(x, outputs=Request)  
   }
   
-  ## ODE and init functions:
-  ## This both touches the functions as well as
-  ## gets the function pointers
-  
   ## data
   if(!is.valid_data_set(data)) {
     data <- valid_data_set(data,x,verbose)
@@ -496,68 +492,41 @@ do_mrgsim <- function(x,
   param <- as.numeric(param(x))
   init <-  as.numeric(Init(x))
   
-  if(!identical(Pars(x),x@shlib$par)) {
+  if(!identical(Pars(x),x@shlib[["par"]])) {
     wstop("the parameter list has changed since the model was compiled.")
   }
-  if(!identical(Cmt(x), x@shlib$cmt)) {
+  if(!identical(Cmt(x), x@shlib[["cmt"]])) {
     wstop("the compartment list has changed since the model was compiled.")
   }
-  
-  ## request is stored in the model object
-  ## if request is (all) take all compartments
-  if(x@request[1]=="(all)") {
-    request <- cmt(x)
-  } else {
-    request <- cvec_cs(x@request)
-  }
-  
-  # capture items; will work on this
-  #capt <- x@capture
-  
-  # Requested
-  #has_Request <- !missing(Request)
-  
-  # comma-separated
-  #rename.Request <- .ren.create(Request)
-  #Request <- rename.Request$old
-  
-  # request is only for compartments
-  # restrict captures and request if Req is specified
-  #if(has_Request) {
-  #  request <- intersect(Request,cmt(x))
-  #  capt    <- intersect(Request,capt)
-  #} else {
-  #  request <- intersect(request,cmt(x)) 
-  #}
-  
-  # Non-compartment names in capture
-  #capt <- unique(setdiff(capt,cmt(x)))
-  
-  # First spot is the number of capture.items, followed by integer positions
-  # Important to use the total length of x@capture
-  #capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
-  
+
   ## carry can be tran/data/idata
   # Items to carry out from the data set
-  rename.carry <- .ren.create(carry_out)
-  carry_out <- rename.carry$old
-  
-  # Don't take ID,time,TIME
-  carry_out <- setdiff(carry_out, c("ID", "time", "TIME"))
-  
-  # Only take names in GLOBALS$CARRY_TRAN
-  carry.tran <- intersect(carry_out,GLOBALS[["CARRY_TRAN"]])
-  carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
-  
-  # Non-tran items to carry out from data and idata
-  carry_out <- setdiff(carry_out,carry.tran)
-  
-  # What to carry out from data and idata
-  carry.data  <- intersect(carry_out, colnames(data))
-  carry.idata <- intersect(carry_out, colnames(idata))
-  
-  # Carry from data_set if name is in idata_set too
-  carry.idata <- setdiff(carry.idata, carry.data)
+  if(length(carry_out) > 0) {
+    rename.carry <- .ren.create(carry_out)
+    carry_out <- rename.carry$old
+    
+    # Don't take ID,time,TIME
+    carry_out <- setdiff(carry_out, c("ID", "time", "TIME"))
+    
+    # Only take names in GLOBALS$CARRY_TRAN
+    carry.tran <- intersect(carry_out,GLOBALS[["CARRY_TRAN"]])
+    carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
+    
+    # Non-tran items to carry out from data and idata
+    carry_out <- setdiff(carry_out,carry.tran)
+    
+    # What to carry out from data and idata
+    carry.data  <- intersect(carry_out, colnames(data))
+    carry.idata <- intersect(carry_out, colnames(idata))
+    
+    # Carry from data_set if name is in idata_set too
+    carry.idata <- setdiff(carry.idata, carry.data)
+  } else {
+    rename.carry <- .ren.create(carry_out)
+    carry.data <- character(0)
+    carry.idata <- character(0)
+    carry.tran <- character(0)
+  }
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
@@ -570,12 +539,12 @@ do_mrgsim <- function(x,
   parin$do_init_calc <- !skip_init_calc
   parin$verbose <- verbose
   parin$ss_tol <- ss_tol
-  parin$request <- x@cmti-1L#match(request, cmt(x))-1L;
+  parin$request <- x@cmti-1L
   
-  if(any(x@capture =="tad") & tad) {
+  if(tad && any(x@capture =="tad")) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
   }
-
+  
   # What to carry
   parin$carry_data <- carry.data 
   parin$carry_idata <- carry.idata 
@@ -609,7 +578,6 @@ do_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(idata))
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry_out))
-    capture.output(file=capture, append=TRUE, print(list(capt_pos,capt)))
   }
   
   out <- .Call(
@@ -643,9 +611,8 @@ do_mrgsim <- function(x,
     .ren.rename(rename.carry,carry.tran), ## First tran
     .ren.rename(rename.carry,carry.data), ## Then carry data 
     .ren.rename(rename.carry,carry.idata), ## Then carry idata
-    #.ren.rename(rename.Request,request),   ## Then compartments
-    names(x@cmti),
-    names(x@capturei)
+    names(x@cmti), # already re-named
+    names(x@capturei) # already re-named
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
@@ -661,10 +628,8 @@ do_mrgsim <- function(x,
   
   new(
     "mrgsims",
-    #request=.ren.rename(rename.Request,request),
-    request = c(names(x@cmti),names(x@capturei)),
+    request = names(x@cmti),
     data=as.data.frame(out[["data"]]),
-    #outnames=.ren.rename(rename.Request,capt),
     outnames=names(x@capturei),
     mod=x
   )
