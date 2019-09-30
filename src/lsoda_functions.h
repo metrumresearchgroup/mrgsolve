@@ -232,8 +232,8 @@ void LSODA::terminate(int *istate)
         // cerr << "[lsoda] repeated occurrence of illegal input. run aborted.. "
         //         "apparent infinite loop."
         //      << endl;
-        REprintf("[lsoda] repeated occurrence of illegal input. run aborted.. ");
-        REprintf("apparent infinite loop.");
+        REprintf("[lsoda] repeated occurrence of illegal input. run aborted;\n");
+        REprintf("        apparent infinite loop.\n");
     } else
     {
         illin++;
@@ -722,7 +722,7 @@ void LSODA::intdy(double t, int k, vector<double> &dky, int *iflag)
     if (k < 0 || k > (int)nq)
     {
         //fprintf(stderr, "[intdy] k = %d illegal\n", k);
-        REprintf("[intdy] k = %d illegal\n", k);
+        REprintf("[intdy] k = %d illegal.\n", k);
         *iflag = -1;
         return;
     }
@@ -732,7 +732,7 @@ void LSODA::intdy(double t, int k, vector<double> &dky, int *iflag)
         // fprintf(stderr,
         //         "intdy -- t = %g illegal. t not in interval tcur - hu to tcur\n",
         //         t);
-      REprintf("[intdy]  t = %g illegal. t not in interval tcur - hu to tcur\n\n",t);
+      REprintf("[intdy]  t = %g illegal. t not in interval tcur - hu to tcur.\n\n",t);
         *iflag = -2;
         return;
     }
@@ -960,7 +960,7 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
     if (miter != 2)
     {
         //fprintf(stderr, "[prja] miter != 2\n");
-        REprintf("[prja] miter != 2\n");
+        REprintf("[prja] miter != 2.\n");
         return;
     }
     if (miter == 2)
@@ -1241,7 +1241,7 @@ void LSODA::solsy(vector<double> &y)
     if (miter != 2)
     {
         //printf("solsy -- miter != 2\n");
-        REprintf("solsy -- miter != 2\n");
+        REprintf("solsy -- miter != 2.\n");
         return;
     }
     if (miter == 2)
