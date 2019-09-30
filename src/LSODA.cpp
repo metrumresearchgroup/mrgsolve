@@ -691,18 +691,18 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             // fprintf(stderr, "lsoda -- at start of problem, too much accuracy\n");
             // fprintf(stderr, "         requested for precision of machine,\n");
             // fprintf(stderr, "         suggested scaling factor = %g\n", tolsf);
-            REprintf("lsoda -- at start of problem, too much accuracy\n");
-            REprintf("         requested for precision of machine,\n");
-            REprintf("         suggested scaling factor = %g\n", tolsf);
+            REprintf("[lsoda] at start of problem, too much accuracy\n");
+            REprintf("        requested for precision of machine,\n");
+            REprintf("        suggested scaling factor = %g\n", tolsf);
             terminate(istate);
             return;
           }
           // fprintf(stderr, "lsoda -- at t = %g, too much accuracy requested\n", *t);
           // fprintf(stderr, "         for precision of machine, suggested\n");
           // fprintf(stderr, "         scaling factor = %g\n", tolsf);
-          REprintf("lsoda -- at t = %g, too much accuracy requested\n", *t);
-          REprintf("         for precision of machine, suggested\n");
-          REprintf("         scaling factor = %g\n", tolsf);
+          REprintf("[lsoda] at t = %g, too much accuracy requested\n", *t);
+          REprintf("        for precision of machine, suggested\n");
+          REprintf("        scaling factor = %g\n", tolsf);
           *istate = -2;
           terminate2(y, t);
           return;
@@ -719,9 +719,9 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             //     stderr,
             //     "         such that in the machine, t + h_ = t on the next step\n");
             // fprintf(stderr, "         solver will continue anyway.\n");
-            REprintf("[lsoda] -- warning..internal t = %g and h_ = %g are\n",  tn_, h_);
-            REprintf("           such that in the machine, t + h_ = t on the next step\n");
-            REprintf("           solver will continue anyway.\n");
+            REprintf("[lsoda] warning..internal t = %g and h_ = %g are\n",  tn_, h_);
+            REprintf("        such that in the machine, t + h_ = t on the next step\n");
+            REprintf("        solver will continue anyway.\n");
             
             
             if (nhnil == mxhnil)
@@ -853,15 +853,15 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
            */
           if (kflag == -1 || kflag == -2)
           {
-            REprintf("lsoda -- at t = %g and step size h_ = %g, the\n", tn_, h_);
+            REprintf("[lsoda] at t = %g and step size h_ = %g, the\n", tn_, h_);
             // fprintf(stderr, "lsoda -- at t = %g and step size h_ = %g, the\n", tn_,
             //        h_);
             if (kflag == -1)
             {
               // fprintf(stderr, "         error test failed repeatedly or\n");
               // fprintf(stderr, "         with fabs(h_) = hmin\n");
-              REprintf("         error test failed repeatedly or\n");
-              REprintf("         with fabs(h_) = hmin.\n");
+              REprintf("      error test failed repeatedly or\n");
+              REprintf("      with fabs(h_) = hmin.\n");
               *istate = -4;
             }
             if (kflag == -2)
@@ -869,8 +869,8 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
               // fprintf(stderr,
               //         "         corrector convergence failed repeatedly or\n");
               // fprintf(stderr, "         with fabs(h_) = hmin\n");
-              REprintf("         corrector convergence failed repeatedly or\n");
-              REprintf("         with fabs(h_) = hmin.\n");
+              REprintf("      corrector convergence failed repeatedly or\n");
+              REprintf("      with fabs(h_) = hmin.\n");
               *istate = -5;
             }
             big = 0.;
