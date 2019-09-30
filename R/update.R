@@ -87,7 +87,7 @@ all_updatable <- c(sval,other_val)
 ##' @export
 ##'  
 setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, 
-                                       data=NULL, strict=FALSE) {
+                                       data=NULL, strict=TRUE) {
   
   args <- list(...)
   
@@ -104,16 +104,17 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   m <- charmatch(a,all_updatable)
   
   if(strict && anyNA(m)) {
-    bad <- a[is.na(m)]
-    bad <- paste0(bad,collapse=", ")
-    mesg <- paste0("invalid item for model object update: ", bad)
-    warning(mesg, call.=FALSE, immediate.=TRUE)
+    if(getOption("mrgsolve.update.strict", FALSE)) {
+      bad <- a[is.na(m)]
+      for(b in bad) {
+        mesg <- paste0("invalid item for model object update: ", b)
+        warning(mesg, call.=FALSE, immediate.=TRUE) 
+      }
+    }
   }
-  
-  notna <- !is.na(m)
-  a[notna] <- all_updatable[m[notna]]
+  valid <- !is.na(m)
+  a[valid] <- all_updatable[m[valid]]
   names(args) <- a
-  
   valid.in <- which(a %in% sval)
   if(length(valid.in) > 0) {
     for(i in seq_along(valid.in)) {
@@ -130,14 +131,14 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   }
   
   ## Initial conditions list:
-  if(is.element("init", a)) {
+  if("init" %in%  a) {
     i <- object@init@data
     i <- merge.list(i, args$init, context="init", open=open)
     slot(object, "init") <- as.init(i)
   }
   
   ## Parameter update:
-  if(is.element("param", a)) {
+  if("param" %in% a) {
     if(length(object@fixed)>0) {
       if(any(is.element(names(args$param),names(object@fixed)))) {
         warning("attempted update of a $FIXED parameter.", 
@@ -152,14 +153,14 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   }
   
   ## OMEGA
-  if(is.element("omega", a)) {
+  if("omega" %in% a) {
     object@omega <- update_matlist(
       object@omega,omat(args$omega),open=open, context="omat"
     )
   }
   
   ## SIGMA
-  if(is.element("sigma", a)) {
+  if("sigma" %in% a) {
     object@sigma <- update_matlist(
       object@sigma,smat(args$sigma), open=open, context="smat"
     )

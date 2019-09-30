@@ -11,7 +11,7 @@
 \title{Update the model object}
 \usage{
 \S4method{update}{mrgmod}(object, ..., merge = TRUE, open = FALSE,
-  data = NULL, strict = FALSE)
+  data = NULL, strict = TRUE)
 
 \S4method{update}{omegalist}(object, y, ...)
 

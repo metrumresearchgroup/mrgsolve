@@ -61,7 +61,8 @@ cleaned up first}
 \item{recover}{if \code{TRUE}, an object will be returned in case
 the model shared object fails to build}
 
-\item{...}{passed to \code{\link[mrgsolve]{update}}}
+\item{...}{passed to \code{\link[mrgsolve]{update}}; also arguments passed
+to mread from \code{\link{mread_cache}}.}
 }
 \description{
 \code{mread} reads and parses the \code{mrgsolve} model specification file,
