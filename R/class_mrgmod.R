@@ -646,18 +646,18 @@ summary.mrgmod <- function(object,...) {
   l <- as.list(object)
   ncmt <- l[["neq"]]
   npar <- l[["npar"]]
-  cat("Model: ", l$model, "\n")
-  cat("- Parameters: [", npar, "]", "\n")
-  cat(prvec(l$pars,width = 50,prefix="  "), "\n")
-  cat("- Compartments: [", ncmt, "]", "\n")
-  cat(prvec(l$cmt,width = 50, prefix = "  "), "\n")
-  cat("- Captured: [", length(l[["capture"]]), "]", "\n")
+  cat("Model: ", l$model, "\n",sep="")
+  cat("- Parameters: [", npar, "]", "\n",sep="")
+  cat(prvec(l$pars,width = 50,prefix="  "), "\n",sep="")
+  cat("- Compartments: [", ncmt, "]", "\n",sep="")
+  cat(prvec(l$cmt,width = 50, prefix = "  "), "\n",sep="")
+  cat("- Captured: [", length(l[["capture"]]), "]", "\n",sep="")
   o <- l$capture
   if(length(o)==0) o <- "<none>"
-  cat(prvec(o, width = 50, prefix = "  "), "\n")
+  cat(prvec(o, width = 50, prefix = "  "), "\n",sep="")
   outputs <- names(c(l$cmti,l$capturei))
-  cat("- Outputs: [",length(outputs),"]", "\n")
-  cat(prvec(outputs,width = 50, prefix="  "), "\n")
+  cat("- Outputs: [",length(outputs),"]", "\n",sep="")
+  cat(prvec(outputs,width = 50, prefix="  "), "\n",sep="")
   return(invisible(NULL))
 }
 
