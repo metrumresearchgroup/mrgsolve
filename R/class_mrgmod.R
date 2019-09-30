@@ -646,18 +646,18 @@ summary.mrgmod <- function(object,...) {
   l <- as.list(object)
   ncmt <- l[["neq"]]
   npar <- l[["npar"]]
-  message("Model: ", l$model)
-  message("- Parameters: [", npar, "]")
-  message(prvec(l$pars,width = 50,prefix="  "))
-  message("- Compartments: [", ncmt, "]")
-  message(prvec(l$cmt,width = 50, prefix = "  "))
-  message("- Captured: [", length(l[["capture"]]), "]")
+  cat("Model: ", l$model, "\n")
+  cat("- Parameters: [", npar, "]", "\n")
+  cat(prvec(l$pars,width = 50,prefix="  "), "\n")
+  cat("- Compartments: [", ncmt, "]", "\n")
+  cat(prvec(l$cmt,width = 50, prefix = "  "), "\n")
+  cat("- Captured: [", length(l[["capture"]]), "]", "\n")
   o <- l$capture
   if(length(o)==0) o <- "<none>"
-  message(prvec(o, width = 50, prefix = "  "))
+  cat(prvec(o, width = 50, prefix = "  "), "\n")
   outputs <- names(c(l$cmti,l$capturei))
-  message("- Outputs: [",length(outputs),"]")
-  message(prvec(outputs,width = 50, prefix="  "))
+  cat("- Outputs: [",length(outputs),"]", "\n")
+  cat(prvec(outputs,width = 50, prefix="  "), "\n")
   return(invisible(NULL))
 }
 
