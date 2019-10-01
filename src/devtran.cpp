@@ -478,10 +478,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_cmtn = this_rec->cmtn();
         
         Fn = prob.fbio(this_cmtn);
-        
+      
         if(Fn < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
+        
+        if(Fn==0) this_rec->unarm();
         
         bool sort_recs = false;
         

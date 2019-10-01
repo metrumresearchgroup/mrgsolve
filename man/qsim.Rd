@@ -43,7 +43,9 @@ prior to the last dose in the \code{addl} sequence.  This known limitation
 shouldn't affect \code{tad} calculation in most common dosing lag time
 implementations.}
 
-\item{Req}{output items to request; if missing, then only captured items
+\item{Req}{synonym for outvars}
+
+\item{outvars}{output items to request; if missing, then only captured items
 will be returned in the output}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}

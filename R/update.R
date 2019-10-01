@@ -41,7 +41,7 @@ all_updatable <- c(sval,other_val)
 ##' @param data a list of items to update; this list is combined 
 ##' with any items passed in via \code{...}
 ##' @param strict if \code{TRUE}, then an error will be generated if there is 
-##' attempt to update a non-existant item
+##' attempt to update a non-existent item
 ##' 
 ##' @return The updated model object is returned.
 ##' 

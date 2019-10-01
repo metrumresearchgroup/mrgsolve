@@ -38,7 +38,7 @@ added; if \code{TRUE}, the parameter list may expand.}
 with any items passed in via \code{...}}
 
 \item{strict}{if \code{TRUE}, then an error will be generated if there is 
-attempt to update a non-existant item}
+attempt to update a non-existent item}
 
 \item{y}{another object involved in update}
 

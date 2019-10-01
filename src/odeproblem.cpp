@@ -58,7 +58,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Npar = int(param.size());
   Neq = int(init.size());
   Nvar = int(vars.size());
-    
+  
   Istate = 1;
   
   Advan = 13;
@@ -245,13 +245,25 @@ void odeproblem::rate_reset() {
 void odeproblem::rate_main(rec_ptr rec) {
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("Invalid infusion setting: rate (R_CMT).", false);
+      throw Rcpp::exception(
+          tfm::format(
+            "invalid infusion rate \n R_CMT: %d", 
+            this->rate(rec->cmtn())
+          ).c_str(),
+          false
+      );
     }
     rec->rate(this->rate(rec->cmtn()));
   }
   if(rec->rate() == -2) {
     if(this->dur(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("Invalid infusion setting: duration (D_CMT).",false);
+      throw Rcpp::exception(
+          tfm::format(
+            "invalid infusion duration \n D_CMT: %d", 
+            this->dur(rec->cmtn())
+          ).c_str(),
+          false
+      );
     }
     rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
   }
@@ -332,13 +344,13 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   if(Istate < 0) {
     negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
   }
-
+  
   //this->call_derivs(&Neq, &tto, Y, Ydot);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
   
-
+  
   double dt = tto-tfrom;
   
   if(MRGSOLVE_GET_PRED_CL <= 0) {
@@ -347,7 +359,7 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   if(MRGSOLVE_GET_PRED_VC <= 0) {
     Rcpp::stop("pred_VC has a 0 or negative value.");
   }
-
+  
   double k10 = MRGSOLVE_GET_PRED_K10;
   double ka =  MRGSOLVE_GET_PRED_KA;
   
@@ -372,7 +384,7 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
     init0 = this->y(0);
     init1 = this->y(1);
   }
-
+  
   
   double pred0 = 0, pred1 = 0;
   

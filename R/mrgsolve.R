@@ -647,8 +647,9 @@ do_mrgsim <- function(x,
 #' @param output output data type; the default is `mrgsims`, which returns the 
 #' default output object; other options include `df` (for data.frame) or 
 #' `matrix`
-#' @param Req output items to request; if missing, then only captured items 
+#' @param outvars output items to request; if missing, then only captured items 
 #' will be returned in the output
+#' @param Req synonym for outvars
 #' 
 #' @details
 #' There is no pipeline interface for this function; all configuration options 

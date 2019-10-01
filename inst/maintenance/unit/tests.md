@@ -254,7 +254,7 @@
 |test-update.R         |test-update                          |Solver setting rtol updates                                               |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |bad update gives warning                                                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |update outvars issue-483                                                  |  6|      0|FALSE   |FALSE |       0|      6|
-|test-update.R         |test-update                          |update req issue-483                                                      |  4|      0|FALSE   |FALSE |       0|      4|
+|test-update.R         |test-update                          |update req issue-483                                                      |  6|      0|FALSE   |FALSE |       0|      6|
 |test-update.R         |test-update                          |Recover items from simulated data when passed in as idata                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |Recover items from simulated data when passed in as data                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |CP is equal when simulating from events or data                           |  1|      0|FALSE   |FALSE |       0|      1|
