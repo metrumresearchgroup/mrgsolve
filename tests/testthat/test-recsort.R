@@ -74,7 +74,7 @@ test_that("recsort 2 and 4, addl", {
 })
 
 # 1 and 3 put
-# doses scheduled through addl before observations at the same time. r
+# doses scheduled through addl before observations at the same time. 
 test_that("recsort 1 and 3, addl", {
   mod <- update(mod, add = c(0.999,1,1.0001))
   e <- ev(amt = 1, ii=0.5, addl = 1, time = 0.5)
