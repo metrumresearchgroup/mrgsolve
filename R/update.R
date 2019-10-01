@@ -170,10 +170,10 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
 })
 
 default_outputs <- function(mod) {
-  mod@Icmt <- seq_along(Cmt(mod))
   mod@cmtL <- Cmt(mod)
-  mod@Icap <- seq_along(mod@capture)
+  mod@Icmt <- seq_along(mod@cmtL)
   mod@capL <- unname(mod@capture)
+  mod@Icap <- seq_along(mod@capL)
   mod
 }
 
@@ -299,28 +299,3 @@ setMethod("update", "parameter_list", function(object,.y,...) {
 setMethod("update", "ev", function(object,y,...) {
   
 })
-
-
-
-# Update model or project in an model object
-#
-# @param x mrgmod object
-# @param model model name
-# @param project project directory
-# @param ... passed along
-# @return updated model object
-# @export
-# @keywords internal
-# setGeneric("relocate", function(x,...) standardGeneric("relocate"))
-# 
-# setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
-#   if(!missing(model)) x@model <- model
-#   if(!missing(project)) x@project <- normalizePath(project,winslash=.Platform$file.sep)
-#   validObject(x)
-#   return(x)
-# })
-
-
-
-
-

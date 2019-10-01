@@ -99,9 +99,13 @@ the simulation \code{<character>}}
 
 \item{\code{plugin}}{model plugins \code{<character>}}
 
-\item{\code{capturei}}{capture indices to recover in the simulation}
+\item{\code{Icap}}{capture indices to recover in the simulation}
 
-\item{\code{cmti}}{compartment indices to recover in the simulation}
+\item{\code{capL}}{lables for \code{Icap}}
+
+\item{\code{Icmt}}{compartment indices to recover in the simulation}
+
+\item{\code{cmtL}}{labels for \code{Icmt}}
 }}
 
 \section{Notes}{

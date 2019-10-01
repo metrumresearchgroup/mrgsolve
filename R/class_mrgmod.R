@@ -224,8 +224,10 @@ valid.mrgmod <- function(object) {
 ##' @slot funs symbol names for model functions in the shared object
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
-##' @slot capturei capture indices to recover in the simulation
-##' @slot cmti compartment indices to recover in the simulation
+##' @slot Icap capture indices to recover in the simulation
+##' @slot capL labels for \code{Icap}
+##' @slot Icmt compartment indices to recover in the simulation
+##' @slot cmtL labels for \code{Icmt}
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
