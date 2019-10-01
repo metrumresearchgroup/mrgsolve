@@ -106,6 +106,7 @@
 |test-infusion.R           |test-infusion                        |Infusion with no obs overlap                                              |  1|      0|FALSE   |FALSE |       0|      1|
 |test-infusion.R           |test-infusion                        |Infusion with obs overlap                                                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-infusion.R           |test-infusion                        |Infusion executes with ss flag and ii==dur                                |  1|      0|FALSE   |FALSE |       0|      1|
+|test-infusion.R           |test-infusion                        |ss infusion issue-249                                                     |  1|      0|FALSE   |FALSE |       0|      1|
 |test-init.R               |init                                 |inits are constructed                                                     |  5|      0|FALSE   |FALSE |       0|      5|
 |test-init.R               |init                                 |inits are shown                                                           |  1|      0|FALSE   |FALSE |       0|      1|
 |test-inventory-too.R      |test-inventory-too                   |inventory conditions                                                      |  8|      0|FALSE   |FALSE |       0|      8|
@@ -297,8 +298,8 @@
 |test-D-R-F.R              |test-D-R-F                           |Infusion duration when R_CMT and F_CMT are set                            |  6|      0|FALSE   |FALSE |       0|      6|
 |test-D-R-F.R              |test-D-R-F                           |Infusion duration (R_) lag time, multiple                                 |  3|      0|FALSE   |FALSE |       0|      3|
 |test-D-R-F.R              |test-D-R-F                           |Infusion duration (R_) with lag time and F                                |  3|      0|FALSE   |FALSE |       0|      3|
-|test-event-combinations.R |tran-inputs                          |good events                                                               |  7|      0|FALSE   |FALSE |       0|      7|
-|test-event-combinations.R |tran-inputs                          |bad events                                                                |  8|      0|FALSE   |FALSE |       0|      8|
+|test-event-combinations.R |tran-inputs                          |good events issue-249                                                     |  7|      0|FALSE   |FALSE |       0|      7|
+|test-event-combinations.R |tran-inputs                          |bad events issue-249                                                      |  8|      0|FALSE   |FALSE |       0|      8|
 |test-fail.R               |test-fail                            |build_fails                                                               |  1|      0|FALSE   |FALSE |       0|      1|
 |test-initials.R           |test-initials                        |Set initials via init                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-initials.R           |test-initials                        |Set initials via $MAIN                                                    |  9|      0|FALSE   |FALSE |       0|      9|

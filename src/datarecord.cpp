@@ -142,7 +142,7 @@ bool datarecord::ss_infusion() {
 
 void datarecord::implement(odeproblem* prob) {
   
-  if(Evid==0 || (!Armed) || (prob->neq()==0)){
+  if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
   }
   
@@ -198,6 +198,7 @@ void datarecord::implement(odeproblem* prob) {
       prob->rate0(i,0.0);
     } {
       prob->init_call(Time);
+      if(!Armed) break;
       if(Rate > 0) {
         this->evid(5);
       } else {
