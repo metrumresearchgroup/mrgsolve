@@ -137,7 +137,7 @@ double datarecord::dur(double b) {
 }
 
 bool datarecord::ss_infusion() {
-  return (Evid==1) && (Amt==0) && (Ss==1) && ((Rate > 0) || Rate == -1);  
+  return (Evid==1) && (Amt==0) && (Ss==1) && ((Rate > 0) || (Rate == -1));  
 }
 
 void datarecord::implement(odeproblem* prob) {
