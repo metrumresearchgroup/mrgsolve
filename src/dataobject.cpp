@@ -354,6 +354,35 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         j, 
         Data(j,Idcol)
       );
+      ev->ss(Data(j,col[_COL_ss_]));
+      ev->addl(Data(j,col[_COL_addl_]));
+      ev->ii(Data(j,col[_COL_ii_]));
+      ev->from_data(true);
+      if(!obsonly) ev->output(true);
+      
+      bool zero_inf = ev->ss_infusion();
+      
+      if(zero_inf) {
+        if(ev->ii() <= 0) {
+          throw Rcpp::exception(
+              tfm::format(
+                "ii must be greater than zero for ss infusion \n ID: %d, row: %i, ii: %d", 
+                ev->id(), j+1,  ev->ii()
+              ).c_str(),
+              false
+          );
+        }
+        
+        if(ev->addl() !=0) {
+          throw Rcpp::exception(
+              tfm::format(
+                "addl must be zero for ss infusion \n ID: %d, row: %i, ii: %d", 
+                ev->id(), j+1,  ev->addl()
+              ).c_str(),
+              false
+          );
+        }
+      }
       
       if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
         throw Rcpp::exception(
@@ -365,7 +394,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         );
       }
       
-      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1)) {
+      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1) && !zero_inf) {
         throw Rcpp::exception(
             tfm::format(
               "non-zero rate requires positive amt \n ID: %d, row: %i, rate: %d, amt: %d", 
@@ -374,13 +403,6 @@ void dataobject::get_records(recstack& a, int NID, int neq,
             false
         );
       }
-      
-      ev->from_data(true);
-      if(!obsonly) ev->output(true);
-      
-      ev->ss(Data(j,col[_COL_ss_]));
-      ev->addl(Data(j,col[_COL_addl_]));
-      ev->ii(Data(j,col[_COL_ii_]));
       
       if(ev->ii() <= 0) {
         if(ev->addl() > 0) {
@@ -395,13 +417,14 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if(ev->ss()) {
           throw Rcpp::exception(
               tfm::format(
-                "dosing record with ss==1 and ii <= 0 \n ID: %d, row: %i, addl: %i", 
-                ev->id(), j+1, ev->addl()
+                "dosing record with ss > 0 and ii <= 0 \n ID: %d, row: %i", 
+                ev->id(), j+1
               ).c_str(),
               false
           );
         }
-      }
+      } // ii <=0
+      
       a[h].push_back(ev);
     }
   }

@@ -136,6 +136,10 @@ double datarecord::dur(double b) {
   return(b*Amt/Rate);
 }
 
+bool datarecord::ss_infusion() {
+  return (Evid==1) && (Amt==0) && (Ss==1) && ((Rate > 0) || Rate == -1);  
+}
+
 void datarecord::implement(odeproblem* prob) {
   
   if(Evid==0 || (!Armed) || (prob->neq()==0)){
@@ -310,6 +314,11 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     return;
   }
   
+  if(this->ss_infusion()) {
+    this->steady_zero(prob,solver);
+    return;
+  }
+  
   std::vector<double> state_incoming;
   
   if(Ss == 2) {
@@ -384,7 +393,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     }
     
     this_sum = std::accumulate(res.begin(), res.end(), 0.0);
-
+    
     if(i>10) {
       diff = std::abs(this_sum - last_sum);
       if(diff < CRIT_DIFF_SS) {
@@ -436,7 +445,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   
   // Add on infusion off events
   int ninf_ss = floor(duration/this->ii());
-
+  
   double first_off = Time + duration - double(ninf_ss)*Ii - lagt;
   if(first_off == Time) {
     first_off = duration - Ii + Time + lagt;
@@ -461,6 +470,64 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   prob->lsoda_init();
 }
 
+void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
+  
+  if(this->unarmed()) {
+    this->steady_bolus(prob,solver);
+    return;
+  }
+  
+  if(Ii <= 0) {
+    throw Rcpp::exception(
+        tfm::format(
+          "ii must be > 0 to simulate ss infusion"
+        ).c_str(),
+        false
+    );
+  }
+  
+  double tfrom = 0.0;
+  double tto = 0.0;
+  
+  int i;
+  int j;
+  double CRIT_DIFF_SS = prob->ss_tol;
+  std::vector<double> res(prob->neq(), 0.0);
+  std::vector<double> last(prob->neq(),1E-10);
+  
+  double this_sum = 0.0;
+  double last_sum = 1E-6;
+  
+  double diff = 1E6;
+  prob->rate_reset();
+  rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
+  evon->implement(prob);
+  prob->lsoda_init();
+  
+  for(i=1; i < N_SS ; ++i) {
+    prob->lsoda_init();
+    tto = tfrom + Ii;
+    prob->advance(tfrom,tto,solver);
+    
+    for(j=0; j < prob->neq(); ++j) {
+      res[j]  = pow((prob->y(j)  - last[j]), 2.0);
+      last[j] = prob->y(j);
+    }
+    this_sum = std::accumulate(res.begin(), res.end(), 0.0);
+    tfrom = tto;
+    if(i > 10) {
+      diff = std::abs(this_sum - last_sum);
+      if(diff < CRIT_DIFF_SS) {
+        break;
+      }
+    }
+    last_sum = this_sum;
+  }
+  prob->rate_reset();
+  prob->lsoda_init();
+  this->unarm();
+}
+
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, const unsigned int maxpos, double Fn) {
   
@@ -479,7 +546,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   }
   
   double ontime = 0;
-
+  
   int mp = 1000000000;
   
   int nextpos = addl_ev_first ?  -1000000000 : mp;
