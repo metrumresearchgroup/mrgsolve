@@ -122,10 +122,10 @@ test_that("bad update gives warning", {
 
 test_that("update outvars issue-483", {
   x <- update(mod, outvars = "RESP,CP,CENT")
-  expect_equal(names(x@cmti), c("CENT", "RESP"))
-  expect_equal(names(x@capturei), "CP")
-  expect_equivalent(x@cmti, c(2,3))
-  expect_equivalent(x@capturei, 2)
+  expect_equal(x@cmtL, c("CENT", "RESP"))
+  expect_equal(x@capL, "CP")
+  expect_equal(x@Icmt, c(2,3))
+  expect_equal(x@Icap, 2)
   mod <- update(mod, add = c(0,1), end = -1)
   out <- mrgsim_df(mod, outvars="CP,RESP,CENT")
   expect_equal(names(out[,3:5]), c("CENT", "RESP", "CP"))
@@ -134,15 +134,14 @@ test_that("update outvars issue-483", {
 
 test_that("update req issue-483", {
   x <- update(mod, req = "RESP,CENT")
-  expect_equal(names(x@cmti), c("CENT", "RESP"))
-  expect_equal(names(x@capturei), c("DV","CP"))
-  expect_equivalent(x@cmti, c(2,3))
-  expect_equivalent(x@capturei, c(1,2))
+  expect_equal(x@cmtL, c("CENT", "RESP"))
+  expect_equal(x@capL, c("DV","CP"))
+  expect_equal(x@Icmt, c(2,3))
+  expect_equal(x@Icap, c(1,2))
   x <- update(mod, request = "RESP,CENT")
-  expect_equal(names(x@cmti), c("CENT", "RESP"))
-  expect_equal(names(x@capturei), c("DV","CP"))
+  expect_equal(x@cmtL, c("CENT", "RESP"))
+  expect_equal(x@capL, c("DV","CP"))
 })
-
 
 CL <- exp(rnorm(100, log(3),  sqrt(0.5)))
 VC <- exp(rnorm(100, log(30), sqrt(0.5))) 

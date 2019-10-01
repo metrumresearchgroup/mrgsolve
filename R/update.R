@@ -170,8 +170,10 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
 })
 
 default_outputs <- function(mod) {
-  mod@cmti <- setNames(seq_along(Cmt(mod)),Cmt(mod))
-  mod@capturei <- setNames(seq_along(mod@capture),mod@capture)
+  mod@Icmt <- seq_along(Cmt(mod))
+  mod@cmtL <- Cmt(mod)
+  mod@Icap <- seq_along(mod@capture)
+  mod@capL <- unname(mod@capture)
   mod
 }
 
@@ -184,16 +186,16 @@ update_outputs <- function(mod, outputs = character(0)) {
   if(identical(outputs, "(reset)")) {
     mod <- update_request(mod,mod@request)
     if(identical(mod@request,"(all)")) {
-      outputs <- c(Cmt(mod),mod@capture)  
+      outputs <- c(Cmt(mod),mod@capture)
     } else {
       outputs <- c(mod@request,mod@capture)      
     }
   }
-  ren <- .ren.create(outputs)
-  mod@cmti <- which(Cmt(mod) %in% ren$old)
-  names(mod@cmti) <- .ren.rename(ren,Cmt(mod)[mod@cmti])
-  mod@capturei <- which(mod@capture %in% ren$old)
-  names(mod@capturei) <- .ren.rename(ren,mod@capture[mod@capturei])
+  ren <- .ren.create(unname(outputs))
+  mod@Icmt <- which(Cmt(mod) %in% ren$old)
+  mod@cmtL <- unname(.ren.rename(ren,Cmt(mod)[mod@Icmt]))
+  mod@Icap <- which(mod@capture %in% ren$old)
+  mod@capL <- unname(.ren.rename(ren,mod@capture[mod@Icap]))
   diff <- setdiff(ren$old,c(Cmt(mod),mod@capture))
   if(length(diff) > 0) {
     diff <- paste0(diff,collapse=',')
@@ -205,16 +207,17 @@ update_outputs <- function(mod, outputs = character(0)) {
 update_request <- function(mod, request = NULL) {
   if(is.null(request)) return(mod)
   if(identical(request,"")) {
-    mod@cmti <- integer(0)
+    mod@Icmt <- integer(0)
+    mod@cmtL <- character(0)
     return(mod)
   }
   if(identical(request,"(all)")) {
-    mod@cmti <- seq_along(Cmt(mod))
-    names(mod@cmti) <- Cmt(mod)
+    mod@Icmt <- seq_along(Cmt(mod))
+    mod@cmtL <- Cmt(mod)
   } else {
-    ren <- .ren.create(request)
-    mod@cmti <- which(Cmt(mod) %in% ren$old)
-    names(mod@cmti) <- .ren.rename(ren,Cmt(mod)[mod@cmti])
+    ren <- .ren.create(unname(request))
+    mod@Icmt <- which(Cmt(mod) %in% ren$old)
+    mod@cmtL <- .ren.rename(ren,Cmt(mod)[mod@Icmt])
   }
   return(mod)
 }

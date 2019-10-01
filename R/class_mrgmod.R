@@ -128,8 +128,10 @@ protomod <- list(model=character(0),
                  init=new("cmt_list"),
                  capture=character(0),
                  vars=character(0),
-                 capturei = integer(0),
-                 cmti = integer(0), 
+                 Icap = integer(0),
+                 capL = character(0),
+                 Icmt = integer(0), 
+                 cmtL = character(0),
                  args = list(),
                  fixed  = list(),
                  advan=13,
@@ -346,9 +348,9 @@ Param_list <- function(x) x@param@data
 Pars <-  function(x) names(x@param@data)
 Init <- function(x) x@init
 Cmt <-  function(x) names(x@init@data)
-Cmti <- function(x) x@cmti
-Capturei <- function(x) x@capturei
-CAPTUREI <- function(x) c(length(x@capture),x@capturei-1L)
+Cmti <- function(x) x@Icmt
+Capturei <- function(x) x@Icap
+CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 
 ##' Return the location of the model shared object
 ##'
@@ -490,8 +492,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
-    cmti <- Cmti(x)
-    capturei <- Capturei(x)
+    out_cmt <- x@cmtL
+    out_cap <- x@capL
     request <- x@request
     capture <- x@capture
     add <- x@add
@@ -657,7 +659,7 @@ summary.mrgmod <- function(object,...) {
   o <- l$capture
   if(length(o)==0) o <- "<none>"
   cat(prvec(o, width = 50, prefix = "  "), "\n",sep="")
-  outputs <- names(c(l$cmti,l$capturei))
+  outputs <- c(l$out_cmt,l$out_cap)
   cat("- Outputs: [",length(outputs),"]", "\n",sep="")
   cat(prvec(outputs,width = 50, prefix="  "), "\n",sep="")
   return(invisible(NULL))

@@ -613,8 +613,8 @@ do_mrgsim <- function(x,
     .ren.rename(rename.carry,carry.tran), ## First tran
     .ren.rename(rename.carry,carry.data), ## Then carry data 
     .ren.rename(rename.carry,carry.idata), ## Then carry idata
-    names(Cmti(x)), # already re-named
-    names(Capturei(x)) # already re-named
+    x@cmtL, # already re-named
+    x@capL # already re-named
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
@@ -630,9 +630,9 @@ do_mrgsim <- function(x,
   
   new(
     "mrgsims",
-    request = names(Cmti(x)),
+    request = x@cmtL,
     data=as.data.frame(out[["data"]]),
-    outnames=names(Capturei(x)),
+    outnames=x@capL,
     mod=x
   )
 }
@@ -755,7 +755,7 @@ qsim <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol, names(Cmti(x)), names(Capturei(x))))
+  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol,  x@cmtL, x@capL))
   
   if(output=="df") {
     return(as.data.frame.matrix(out[["data"]]))
@@ -763,9 +763,9 @@ qsim <- function(x,
   
   new(
     "mrgsims",
-    request=cmt(x),
+    request=x@cmtL,
     data=as.data.frame.matrix(out[["data"]]),
-    outnames=x@capture,
+    outnames=x@capL,
     mod=x
   )
 }
