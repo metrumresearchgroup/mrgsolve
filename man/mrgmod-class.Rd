@@ -98,6 +98,10 @@ the simulation \code{<character>}}
 \item{\code{annot}}{model annotations \code{<list>}}
 
 \item{\code{plugin}}{model plugins \code{<character>}}
+
+\item{\code{capturei}}{capture indices to recover in the simulation}
+
+\item{\code{cmti}}{compartment indices to recover in the simulation}
 }}
 
 \section{Notes}{

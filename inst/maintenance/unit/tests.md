@@ -356,7 +356,6 @@
 |test-recsort.R        |test-recsort                         |recsort 1 and 3, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-request.R        |test-request                         |Req gets the right variables                                              |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R        |test-request                         |Req gets the right variables, with request                                |  4|      0|FALSE   |FALSE |       0|      4|
-|test-request.R        |Testing various request settings     |Testing request setting                                                   |  2|      0|FALSE   |FALSE |       0|      2|
 |test-request.R        |Testing various request settings     |Testing that request is properly set in $SET                              |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R        |Testing various request settings     |Testing that request is (all) by default                                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-request.R        |Testing various request settings     |Typedef capture                                                           |  5|      0|FALSE   |FALSE |       0|      5|

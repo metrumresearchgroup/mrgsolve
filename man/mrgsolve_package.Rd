@@ -6,21 +6,32 @@
 \alias{mrgsolve-package}
 \title{mrgsolve}
 \description{
-mrgsolve is an R package maintained under the auspices of 
-Metrum Research Group that facilitates simulation from 
-models based on systems of ordinary differential equations (ODE) 
-that are typically employed for understanding pharmacokinetics, 
-pharmacodynamics, and systems biology and pharmacology. mrgsolve 
-consists of computer code written in the R and C++ languages, 
-providing an interface to a C++ translation of the DLSODA differential 
+mrgsolve is an R package maintained under the auspices of
+Metrum Research Group that facilitates simulation from
+models based on systems of ordinary differential equations (ODE)
+that are typically employed for understanding pharmacokinetics,
+pharmacodynamics, and systems biology and pharmacology. mrgsolve
+consists of computer code written in the R and C++ languages,
+providing an interface to a C++ translation of the DLSODA differential
 equation solver.
 }
 \section{Resources}{
 
 \itemize{
-\item Main mrgsolve resource page: \href{https://mrgsolve.github.io}{https://mrgsolve.github.io}
-\item User guide: \href{https://mrgsolve.github.io/user_guide}{https://mrgsolve.github.io/user_guide}
-\item Vignettes: \href{https://mrgsolve.github.io/vignettes}{https://mrgsolve/github.io/vignettes}
+\item Main mrgsolve resource page: \url{https://mrgsolve.github.io}
+\item User guide: \url{https://mrgsolve.github.io/user_guide}
+\item Vignettes: \url{https://mrgsolve.github.io/vignettes}
+}
+}
+
+\section{Package-wide options}{
+
+\itemize{
+\item \code{mrgolve.project}: sets the default project director (\link{mread})
+\item \code{mrgsolve.soloc}: sets the default package build directory (\link{mread})
+\item \code{mrgsolve_mread_quiet}: don't print messages during \link{mread}
+\item \code{mrgsolve.update.strict}: if \code{TRUE}, print warning when trying to update
+an item in the model object that doesn't exist
 }
 }
 

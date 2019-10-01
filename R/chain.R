@@ -48,7 +48,7 @@ Req <- function(x,...) UseMethod("Req")
 
 #' @export
 Req.mrgmod <- function(x,...) {
-  x@args[["Request"]] <- as_character_args(match.call()[-1])
+  x <- update_outputs(x,as_character_args(match.call()[-1]))
   x  
 }
 
@@ -59,7 +59,7 @@ req <- function(x,...) UseMethod("req")
 ##' @export
 ##' @rdname Req
 req.mrgmod <- function(x,...) {
-  x@args[["request"]] <- as.character(match.call()[-1])
+  x <- update_request(x,as.character(match.call()[-1]))
   x
 }
 

@@ -240,19 +240,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Inner vector: length = number of times in that design
     std::vector<std::vector<rec_ptr> > designs;
     
-    //designs.reserve(tgridn.size());
-    
     for(size_t i = 0; i < tgridn.size(); ++i) {
       
       std::vector<rec_ptr> z;
       
       z.reserve(tgridn[i]);
-      //z.resize(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
         z.push_back(obs);
-        //z[j] = obs;
       }
       designs.push_back(z);
     }
@@ -271,19 +267,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       
       it->reserve((it->size() + n));
-      //int k = it->size();
-      //int jj = it - a.begin();
-      //it->resize((it->size() + n));
       for(int h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
-        //(*it)[h+k] = designs[tgridi[j]][h];
         ++obscount;
       } 
       std::sort(it->begin(), it->end(), CompRec());
     }
   }
-  
-  
+
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...

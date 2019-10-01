@@ -42,6 +42,9 @@ pkgdown:
 
 test-all:
 	Rscript inst/maintenance/tests.R
+	
+test2: 
+	Rscript -e 'testthat::test_file("inst/maintenance/unit/test-capture.R")'
 
 unit:
 	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'

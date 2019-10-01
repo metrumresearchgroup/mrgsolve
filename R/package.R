@@ -21,11 +21,19 @@
 #' 
 #'
 #' @section Resources:
-#' \itemize{
-#' \item Main mrgsolve resource page: \href{https://mrgsolve.github.io}{https://mrgsolve.github.io}
-#' \item User guide: \href{https://mrgsolve.github.io/user_guide}{https://mrgsolve.github.io/user_guide}
-#' \item Vignettes: \href{https://mrgsolve.github.io/vignettes}{https://mrgsolve/github.io/vignettes}
-#' }
+#' 
+#' - Main mrgsolve resource page: [https://mrgsolve.github.io](https://mrgsolve.github.io)
+#' - User guide: [https://mrgsolve.github.io/user_guide](https://mrgsolve.github.io/user_guide)
+#' - Vignettes: [https://mrgsolve.github.io/vignettes](https://mrgsolve.github.io/vignettes)
+#' 
+#' @section Package-wide options:
+#' 
+#' - `mrgolve.project`: sets the default project director ([mread])
+#' - `mrgsolve.soloc`: sets the default package build directory ([mread])
+#' - `mrgsolve_mread_quiet`: don't print messages during [mread]
+#' - `mrgsolve.update.strict`: if `TRUE`, print warning when trying to update 
+#'   an item in the model object that doesn't exist
+#' 
 #' 
 #' @description
 #' mrgsolve is an R package maintained under the auspices of 
@@ -41,6 +49,7 @@
 #' @docType package
 #' @useDynLib mrgsolve, .registration=TRUE
 #' @aliases mrgsolve
+#' @md
 #' @examples
 #'
 #' ## example("mrgsolve")

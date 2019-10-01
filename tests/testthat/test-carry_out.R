@@ -43,7 +43,7 @@ out <-
   mod %>% 
   data_set(exTheoph, ID <=2) %>% 
   carry_out(WT,evid,ROW) %>%
-  mrgsim(obsfirst=FALSE,obsonly=TRUE)
+  mrgsim(obsonly=TRUE)
 
 
 out <- mod %>% 

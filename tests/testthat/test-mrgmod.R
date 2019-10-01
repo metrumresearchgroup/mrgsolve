@@ -33,7 +33,7 @@ test_that("methods", {
   expect_error(mod$kylebaron) 
   expect_error(mod[["kylebaron"]])
   expect_is(as.list(mod), "list")
-  expect_message(summary(mod), "Model: housemodel")
+  expect_output(summary(mod), "Model: housemodel")
   expect_true(mrgsolve:::valid.mrgmod(mod))
   expect_true(all.equal(mod, mrgsolve:::house()))
   l <- mod[c("CL", "VC")]

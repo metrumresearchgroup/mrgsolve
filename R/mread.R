@@ -50,7 +50,8 @@ NULL
 #' cleaned up first
 #' @param recover if \code{TRUE}, an object will be returned in case
 #' the model shared object fails to build
-#' @param ... passed to \code{\link[mrgsolve]{update}}
+#' @param ... passed to \code{\link[mrgsolve]{update}}; also arguments passed
+#' to mread from \code{\link{mread_cache}}.
 #' 
 #' @details
 #' The \code{model} argument is required.  For typical use, 
@@ -339,7 +340,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   ## First update with what we found in the model specification file
-  x <- update(x, data=SET, open=TRUE)
+  x <- update(x, data=SET, open=TRUE, strict = FALSE)
   
   ## Arguments in $SET that will be passed to mrgsim
   simargs <- SET[is.element(names(SET),set_args)]
@@ -349,16 +350,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
-  
-  x <- update(x, data=args, open=TRUE)
+  x <- update(x, data=args, open=TRUE, strict = FALSE)
   
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib[["cmt"]] <- names(Init(x))
-  x@shlib[["par"]] <- names(param(x))
-  x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
   x@shlib[["covariates"]] <- mread.env[["covariates"]]
-  x@shlib[["version"]] <- GLOBALS[["version"]]
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc
@@ -537,7 +533,7 @@ mread_cache <- function(model = NULL,
   if(all(t0,t1,t2,t3,t4,te)) {
     if(!quiet) message("Loading model from cache.")
     loadso(x)
-    return(update(x,...))
+    return(update(x,...,strict=FALSE))
   }
   
   x <- mread(

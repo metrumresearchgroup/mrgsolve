@@ -83,7 +83,7 @@ LSODA::LSODA(int neq_)
   jt = 2;
   Neq = neq_;
   if(neq_ <  0) {
-    REprintf("[lsoda] neq = %i is less than 0.", neq_);
+    REprintf("[lsoda] neq = %i is less than 0.\n", neq_);
     Rcpp::stop("[lsoda] neq is less than 0.");
   }
 }
@@ -199,14 +199,14 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
     if (neq <= 0)
     {
       //cerr << "[lsoda] neq = " << neq << " is less than 1." << endl;
-      REprintf("[lsoda] neq = %i is less than 1.", neq);
+      REprintf("[lsoda] neq = %i is less than 1.\n", neq);
       terminate(istate);
       return;
     }
     if (*istate == 3 && neq > n)
     {
       //cerr << "[lsoda] istate = 3 and neq increased" << endl;
-      REprintf("[lsoda] istate = 3 and neq increased");
+      REprintf("[lsoda] istate = 3 and neq increased.\n");
       terminate(istate);
       return;
     }
@@ -214,21 +214,21 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
     if (itol_ < 1 || itol_ > 4)
     {
       //cerr << "[lsoda] itol = " << itol_ << " illegal" << endl;
-      REprintf("[lsoda] itol = %i illegal", itol_);
+      REprintf("[lsoda] itol = %i illegal.\n", itol_);
       terminate(istate);
       return;
     }
     if (iopt < 0 || iopt > 1)
     {
       //cerr << "[lsoda] iopt = " << iopt << " illegal" << endl;
-      REprintf("[lsoda] iopt = %i illegal", iopt);
+      REprintf("[lsoda] iopt = %i illegal.\n", iopt);
       terminate(istate);
       return;
     }
     if (jt == 3 || jt < 1 || jt > 5)
     {
       //cerr << "[lsoda] jt = " << jt << " illegal" << endl;
-      REprintf("[lsoda] jt = %i illegal", jt);
+      REprintf("[lsoda] jt = %i illegal.\n", jt);
       terminate(istate);
       return;
     }
@@ -240,14 +240,14 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       if (ml >= n)
       {
         //cerr << "[lsoda] ml = " << ml << " not between 1 and neq" << endl;
-        REprintf("[lsoda] ml = %i not between 1 and neq", ml);
+        REprintf("[lsoda] ml = %i not between 1 and neq.\n", ml);
         terminate(istate);
         return;
       }
       if (mu >= n)
       {
         //cerr << "[lsoda] mu = " << mu << " not between 1 and neq" << endl;
-        REprintf("[lsoda] mu = %i not between 1 and neq", mu);
+        REprintf("[lsoda] mu = %i not between 1 and neq.\n", mu);
         terminate(istate);
         return;
       }
@@ -277,7 +277,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       if (ixpr > 1)
       {
         //cerr << "[lsoda] ixpr = " << ixpr << " is illegal" << endl;
-        REprintf("[lsoda] ixpr =%i is illegal", ixpr);
+        REprintf("[lsoda] ixpr =%i is illegal.\n", ixpr);
         terminate(istate);
         return;
       }
@@ -309,7 +309,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         {
           // cerr << "[lsoda] tout = " << tout << " behind t = " << *t
           //      << ". integration direction is given by " << h0 << endl;
-          REprintf("[lsoda] tout = %d behind t = %d. integration direction is given by %d", 
+          REprintf("[lsoda] tout = %d behind t = %d. integration direction is given by %d.\n", 
                    tout, *t, h0);
           terminate(istate);
           return;
@@ -319,7 +319,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       if (hmax < 0.)
       {
         //cerr << "[lsoda] hmax < 0." << endl;
-        REprintf("[lsoda] hmax < 0.");
+        REprintf("[lsoda] hmax < 0.\n");
         terminate(istate);
         return;
       }
@@ -331,7 +331,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       if (hmin < 0.)
       {
         //cerr << "[lsoda] hmin < 0." << endl;
-        REprintf("[lsoda] hmin < 0.");
+        REprintf("[lsoda] hmin < 0.\n");
         terminate(istate);
         return;
       }
@@ -674,7 +674,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             if (ewt[i] <= 0.)
             {
               //cerr << "[lsoda] ewt[" << i << "] = " << ewt[i] << " <= 0." << endl;
-              REprintf("[lsoda] ewt[%i] = %g <= 0.", i, ewt[i]);
+              REprintf("[lsoda] ewt[%i] = %g <= 0.\n", i, ewt[i]);
               *istate = -6;
               terminate2(y, t);
               return;
@@ -691,18 +691,18 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             // fprintf(stderr, "lsoda -- at start of problem, too much accuracy\n");
             // fprintf(stderr, "         requested for precision of machine,\n");
             // fprintf(stderr, "         suggested scaling factor = %g\n", tolsf);
-            REprintf("lsoda -- at start of problem, too much accuracy\n");
-            REprintf("         requested for precision of machine,\n");
-            REprintf("         suggested scaling factor = %g\n", tolsf);
+            REprintf("[lsoda] at start of problem, too much accuracy\n");
+            REprintf("        requested for precision of machine,\n");
+            REprintf("        suggested scaling factor = %g\n", tolsf);
             terminate(istate);
             return;
           }
           // fprintf(stderr, "lsoda -- at t = %g, too much accuracy requested\n", *t);
           // fprintf(stderr, "         for precision of machine, suggested\n");
           // fprintf(stderr, "         scaling factor = %g\n", tolsf);
-          REprintf("lsoda -- at t = %g, too much accuracy requested\n", *t);
-          REprintf("         for precision of machine, suggested\n");
-          REprintf("         scaling factor = %g\n", tolsf);
+          REprintf("[lsoda] at t = %g, too much accuracy requested\n", *t);
+          REprintf("        for precision of machine, suggested\n");
+          REprintf("        scaling factor = %g\n", tolsf);
           *istate = -2;
           terminate2(y, t);
           return;
@@ -719,9 +719,9 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             //     stderr,
             //     "         such that in the machine, t + h_ = t on the next step\n");
             // fprintf(stderr, "         solver will continue anyway.\n");
-            REprintf("[lsoda] -- warning..internal t = %g and h_ = %g are\n",  tn_, h_);
-            REprintf("           such that in the machine, t + h_ = t on the next step\n");
-            REprintf("           solver will continue anyway.\n");
+            REprintf("[lsoda] warning..internal t = %g and h_ = %g are\n",  tn_, h_);
+            REprintf("        such that in the machine, t + h_ = t on the next step\n");
+            REprintf("        solver will continue anyway.\n");
             
             
             if (nhnil == mxhnil)
@@ -729,8 +729,8 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
               // cerr << "lsoda -- above warning has been issued " << nhnil
               //      << " times, " << endl
               //      << "       it will not be issued again for this problem" << endl;
-              REprintf("[lsoda] above warning has been issued %i times", nhnil);
-              REprintf("        it will not be issued again for this problem");
+              REprintf("[lsoda] above warning has been issued %i times\n", nhnil);
+              REprintf("        it will not be issued again for this problem.\n");
             }
           }
         }
@@ -761,11 +761,11 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
               if (meth_ == 2)
                 // cerr << "[lsoda] a switch to the stiff method has occurred "
                 //      << endl;
-                REprintf("[lsoda] a switch to the stiff method has occurred\n");
+                REprintf("[lsoda] a switch to the stiff method has occurred.\n");
               if (meth_ == 1)
                 // cerr << "[lsoda] a switch to the nonstiff method has occurred"
                 //      << endl;
-                REprintf("[lsoda] a switch to the nonstiff method has occurred\n");
+                REprintf("[lsoda] a switch to the nonstiff method has occurred.\n");
             }
           } /* end if ( meth_ != mused )   */
           /*
@@ -853,15 +853,15 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
            */
           if (kflag == -1 || kflag == -2)
           {
-            REprintf("lsoda -- at t = %g and step size h_ = %g, the\n", tn_, h_);
+            REprintf("[lsoda] at t = %g and step size h_ = %g, the\n", tn_, h_);
             // fprintf(stderr, "lsoda -- at t = %g and step size h_ = %g, the\n", tn_,
             //        h_);
             if (kflag == -1)
             {
               // fprintf(stderr, "         error test failed repeatedly or\n");
               // fprintf(stderr, "         with fabs(h_) = hmin\n");
-              REprintf("         error test failed repeatedly or\n");
-              REprintf("         with fabs(h_) = hmin\n");
+              REprintf("      error test failed repeatedly or\n");
+              REprintf("      with fabs(h_) = hmin.\n");
               *istate = -4;
             }
             if (kflag == -2)
@@ -869,8 +869,8 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
               // fprintf(stderr,
               //         "         corrector convergence failed repeatedly or\n");
               // fprintf(stderr, "         with fabs(h_) = hmin\n");
-              REprintf("         corrector convergence failed repeatedly or\n");
-              REprintf("         with fabs(h_) = hmin\n");
+              REprintf("      corrector convergence failed repeatedly or\n");
+              REprintf("      with fabs(h_) = hmin.\n");
               *istate = -5;
             }
             big = 0.;

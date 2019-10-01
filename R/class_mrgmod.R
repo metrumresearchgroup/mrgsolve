@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -110,11 +110,11 @@ protomod <- list(model=character(0),
                  preclean=FALSE,
                  atol=1E-8,
                  rtol=1E-8,
-                 maxsteps=5000,
+                 maxsteps=20000,
                  hmin=0,
                  hmax=0,
                  ixpr=0,
-                 mxhnil=0,
+                 mxhnil=2,
                  shlib=list(date="",par="", cmt="", compiled=FALSE, 
                             version=NULL, source=""),
                  funs = c(main=character(0),
@@ -128,6 +128,8 @@ protomod <- list(model=character(0),
                  init=new("cmt_list"),
                  capture=character(0),
                  vars=character(0),
+                 capturei = integer(0),
+                 cmti = integer(0), 
                  args = list(),
                  fixed  = list(),
                  advan=13,
@@ -160,6 +162,8 @@ valid.mrgmod <- function(object) {
   return(x)
 }
 # nocov end
+
+
 
 ##' S4 class for mrgsolve model object
 ##'
@@ -218,6 +222,8 @@ valid.mrgmod <- function(object) {
 ##' @slot funs symbol names for model functions in the shared object
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
+##' @slot capturei capture indices to recover in the simulation
+##' @slot cmti compartment indices to recover in the simulation
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
@@ -234,6 +240,17 @@ setClass("packmod",
            header="character"
          )
 )
+
+initialize_mrgmod <- function(.Object, ...) {
+  .Object <- callNextMethod()
+  .Object@shlib[["cmt"]] <- Cmt(.Object)
+  .Object@shlib[["par"]] <- Pars(.Object)
+  .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
+  .Object@shlib[["version"]] <- GLOBALS[["version"]]
+  .Object <- default_outputs(.Object)
+  .Object
+}
+setMethod("initialize", "mrgmod", initialize_mrgmod)
 
 ##' Return a pre-compiled, PK/PD model
 ##' 
@@ -421,6 +438,9 @@ setMethod("names", "mrgmod", function(x) {
 ##' - `delta`: simulation time step
 ##' - `add`: additional simulation times
 ##' - `capture`: names of captured data items
+##' - `request`: compartments requested upon simulation
+##' - `cmti`: named indices for current output compartments
+##' - `capturei`: named indices for current output capture
 ##' - `random`: names and labels of `$OMEGA` and `$SIGMA`
 ##' - `code`: model source code from `cfile`
 ##' - `details`: model details data frame
@@ -432,7 +452,7 @@ setMethod("names", "mrgmod", function(x) {
 ##' - `envir`: the model environment
 ##' - `plugins`: plugins invoked in the model
 ##' - `digits`: number of digits to request in simulated data
-##' - `request`: compartments requested upon simulation
+
 ##' - `tscale`: multiplicative scalar for time in results only
 ##' - `mindt`: simulation output time below which there model will assume to 
 ##'   have not advanced
@@ -468,6 +488,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
+    cmti <- x@cmti
+    capturei <- x@capturei
     request <- x@request
     capture <- x@capture
     add <- x@add
@@ -486,6 +508,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
+    
     covariates <- as.character(x@shlib$covariates)
     vars <- x@vars
     pars <- pars(x)
@@ -623,15 +646,18 @@ summary.mrgmod <- function(object,...) {
   l <- as.list(object)
   ncmt <- l[["neq"]]
   npar <- l[["npar"]]
-  message("Model: ", l$model)
-  message("- Parameters: [", npar, "]")
-  message(prvec(l$pars,width = 50,prefix="  "))
-  message("- Compartments: [", ncmt, "]")
-  message(prvec(l$cmt,width = 50, prefix = "  "))
-  message("- Captured: [", length(l[["capture"]]), "]")
+  cat("Model: ", l$model, "\n",sep="")
+  cat("- Parameters: [", npar, "]", "\n",sep="")
+  cat(prvec(l$pars,width = 50,prefix="  "), "\n",sep="")
+  cat("- Compartments: [", ncmt, "]", "\n",sep="")
+  cat(prvec(l$cmt,width = 50, prefix = "  "), "\n",sep="")
+  cat("- Captured: [", length(l[["capture"]]), "]", "\n",sep="")
   o <- l$capture
   if(length(o)==0) o <- "<none>"
-  message(prvec(o, width = 50, prefix = "  "))
+  cat(prvec(o, width = 50, prefix = "  "), "\n",sep="")
+  outputs <- names(c(l$cmti,l$capturei))
+  cat("- Outputs: [",length(outputs),"]", "\n",sep="")
+  cat(prvec(outputs,width = 50, prefix="  "), "\n",sep="")
   return(invisible(NULL))
 }
 
@@ -678,12 +704,6 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-# re_build <- function(x,model=model(x),temp = FALSE) {
-#   if(temp) {
-#     model <- basename(tempfile(pattern="mod", tmpdir='.'))
-#   }
-#   mcode(model,x@code)
-# }
 
 ##' @export
 all.equal.mrgmod <- function(target, current,...) {
@@ -694,10 +714,3 @@ all.equal.mrgmod <- function(target, current,...) {
   t2 <- identical(target.env, current.env)
   all(t1,t2)
 }
-
-# get_model_md5 <- function(x) {
-#   files <- c(cfile(x),x@shlib[["include"]])
-#   tools::md5sum(files)
-# }
-
-

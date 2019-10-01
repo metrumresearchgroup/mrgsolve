@@ -66,5 +66,3 @@ test_that("carry_out mixed, some rename", {
   expect_equal(names(out), c("ID", "time","d", "s", "ii", "a", "rate", "CP"))
   expect_equivalent(as.data.frame(out)[2,2:7], list(0,200,1,14,99,11))
 })
-
-
