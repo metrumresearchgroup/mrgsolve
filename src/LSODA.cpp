@@ -98,9 +98,8 @@ LSODA::LSODA(int neq_)
  * @Param yout, results vector for size neq+1, ignore yout[0]
  * @Param t, start time.
  * @Param tout, stop time.
+ * @Param istate state of the system
  * @Param _data
- * @Param rtol, relative tolerance.
- * @Param atol, absolute tolerance.
  */
 /* ----------------------------------------------------------------------------*/
 void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f, 

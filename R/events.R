@@ -98,7 +98,7 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 
 ##' @rdname ev
 ##' @export
-setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0), 
+setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0), 
                                     replicate=TRUE, until=NULL, tinf=NULL,
                                     realize_addl=FALSE, ...) {
   

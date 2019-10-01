@@ -45,7 +45,6 @@ public:
     int iopt; 
     int jt;
     int itask;
-    int itol;
     
     void hmax_(const double value);
     void hmin_(const double value);
