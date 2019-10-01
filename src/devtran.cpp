@@ -274,7 +274,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       std::sort(it->begin(), it->end(), CompRec());
     }
   }
-
+  
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
@@ -370,7 +370,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-
+    
     double id = dat.get_uid(i);
     double Fn = 1.0;
     int this_cmtn = 0;
@@ -478,12 +478,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_cmtn = this_rec->cmtn();
         
         Fn = prob.fbio(this_cmtn);
-      
+        
         if(Fn < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
         
-        if(Fn==0) this_rec->unarm();
+        if(Fn==0) {
+          if(this_rec->evid()==1 || this_rec->evid()==4) {
+            this_rec->unarm();
+          }
+        }
         
         bool sort_recs = false;
         
