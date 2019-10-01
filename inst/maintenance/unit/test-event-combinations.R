@@ -37,7 +37,7 @@ mod <- mcode("context_tran_inputs", code)
 tr <- function(e) mrgsim(mod,e)
 err <- function(e) inherits(try(tr(e),silent=TRUE), "try-error")
 
-test_that("good events", {
+test_that("good events issue-249", {
   # Good
   a <- ev(amt = 100)
   expect_false(err(a))
@@ -55,7 +55,7 @@ test_that("good events", {
   expect_false(err(n))
 })
 
-test_that("bad events", {
+test_that("bad events issue-249", {
   # Bad
   c <- ev(amt = 100, addl = 4)
   expect_error(tr(c))

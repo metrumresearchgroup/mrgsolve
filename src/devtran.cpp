@@ -186,7 +186,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     tofd.reserve(a.size());
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if(((*itt)->evid()==1) || ((*itt)->evid()==4)) {
+        if((*itt)->is_dose()) {
           tofd.push_back((*itt)->time());
           break;
         }
@@ -484,7 +484,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         if(Fn==0) {
-          if(this_rec->evid()==1 || this_rec->evid()==4) {
+          if(this_rec->is_dose()) {
             this_rec->unarm();
           }
         }
@@ -545,7 +545,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         if(tad) {
-          if((this_rec->evid()==1) || (this_rec->evid()==4)) {
+          if(this_rec->is_dose()) {
             if(this_rec->armed()) {
               told = tto - prob.alag(this_cmtn);  
             }
