@@ -127,7 +127,7 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   }
   
   if("outvars" %in% a) {
-    object <- update_outputs(object,cvec_cs(args[["outputs"]]))  
+    object <- update_outputs(object,cvec_cs(args[["outvars"]]))  
   }
   
   ## Initial conditions list:
