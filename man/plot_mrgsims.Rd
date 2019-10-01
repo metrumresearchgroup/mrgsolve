@@ -12,7 +12,7 @@
 \S4method{plot}{mrgsims,formula}(x, y, limit = 16, show.grid = TRUE,
   outer = TRUE, type = "l", lwd = 2, ylab = "value", groups = ID,
   scales = list(y = list(relation = "free")), logy = FALSE,
-  logbr = 3, ...)
+  logbr = 1, ...)
 }
 \arguments{
 \item{x}{mrgsims object}

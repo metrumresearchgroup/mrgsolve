@@ -352,7 +352,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
                                                    groups=ID,
                                                    scales=list(y=list(relation='free')),
                                                    logy = FALSE,
-                                                   logbr = 3,
+                                                   logbr = 1,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
