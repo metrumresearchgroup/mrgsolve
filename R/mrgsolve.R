@@ -541,7 +541,7 @@ do_mrgsim <- function(x,
   parin$do_init_calc <- !skip_init_calc
   parin$verbose <- verbose
   parin$ss_tol <- ss_tol
-  parin$request <- x@cmti-1L
+  parin$request <- Cmti(x)-1L
   
   if(tad && any(x@capture =="tad")) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
@@ -590,7 +590,7 @@ do_mrgsim <- function(x,
     init,
     names(Init(x)),
     x@vars,
-    c(length(x@capture),x@capturei-1L),
+    CAPTUREI(x),
     pointers(x),
     data,idata,
     as.matrix(omat(x)),
@@ -613,8 +613,8 @@ do_mrgsim <- function(x,
     .ren.rename(rename.carry,carry.tran), ## First tran
     .ren.rename(rename.carry,carry.data), ## Then carry data 
     .ren.rename(rename.carry,carry.idata), ## Then carry idata
-    names(x@cmti), # already re-named
-    names(x@capturei) # already re-named
+    names(Cmti(x)), # already re-named
+    names(Capturei(x)) # already re-named
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
@@ -630,9 +630,9 @@ do_mrgsim <- function(x,
   
   new(
     "mrgsims",
-    request = names(x@cmti),
+    request = names(Cmti(x)),
     data=as.data.frame(out[["data"]]),
-    outnames=names(x@capturei),
+    outnames=names(Capturei(x)),
     mod=x
   )
 }
@@ -679,6 +679,7 @@ qsim <- function(x,
                  recsort = 1,
                  tad = FALSE,
                  Req = NULL,
+                 outvars = Req,
                  skip_init_calc = FALSE,
                  output = "mrgsims") {
   
@@ -704,16 +705,10 @@ qsim <- function(x,
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  if(is.null(Req)) {
-    cap <- x@capture
-    req <- character(0)
-  } else {
-    cap <- intersect(Req,x@capture)    
-    req <- intersect(Req,Cmt(x))
+  if(!is.null(outvars)) {
+    x <- update_outputs(x,outvars)
   }
-  
-  capt_pos <- c(length(cap),seq_along(cap)-1L)
-  
+
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
@@ -724,7 +719,7 @@ qsim <- function(x,
   parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  parin$request <- seq_along(req)-1L
+  parin$request <- Cmti(x)-1L
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
   parin$carry_tran <- character(0)
@@ -748,7 +743,7 @@ qsim <- function(x,
     as.numeric(Init(x)),
     Cmt(x),
     x@vars,
-    capt_pos,
+    CAPTUREI(x),
     pointers(x),
     data,idata,
     as.matrix(omat(x)),
@@ -759,7 +754,7 @@ qsim <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol, req, cap))
+  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol, names(Cmti(x)), names(Capturei(x))))
   
   if(output=="df") {
     return(as.data.frame.matrix(out[["data"]]))
@@ -775,14 +770,4 @@ qsim <- function(x,
 }
 
 #nocov end
-
-# param_as_parent <- function(x) {
-#   e <- as.environment(as.list(param(x)))
-#   parent.env(e) <- .GlobalEnv
-#   parent.env(x@envir) <- e
-# }
-
-# global_as_parent <- function(x) {
-#   parent.env(x@envir) <- .GlobalEnv 
-# }
 

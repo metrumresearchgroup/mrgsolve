@@ -95,7 +95,6 @@ mrgsim_q <- function(x,
                      simcall = 0) {
   
   ## data
-  
   if(is.ev(data)) {
     data <- as.data.frame.ev(data, add_ID = 1)  
   }
@@ -110,30 +109,18 @@ mrgsim_q <- function(x,
   param <- as.numeric(Param(x))
   init <-  as.numeric(Init(x))
   
-  compartments <- Cmt(x)
-  
-  capt <- unname(x@capture)
-  
-  # Non-compartment names in capture
-  if(any(is.element(capt,compartments))) {
-    stop("Compartment names should not be used in $CAPTURE.", call.=FALSE)  
-  }
-  
-  # First spot is the number of capture.items, followed by integer positions
-  # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1L))
-  
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
   parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
+  parin$request <- Cmti(x)-1L
 
   if(simcall!=0) {
     if(simcall==1) {
-      stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
+      wstop("the interface with simcall=1 is no longer available; please use simcall=0 instead.")
     }
-    stop("simcall values other than 0 are prohibited.", call.=FALSE)
+    wstop("simcall values other than 0 are prohibited.")
   }
   
   if(length(stime) == 0) {
@@ -151,7 +138,6 @@ mrgsim_q <- function(x,
   parin[["tad"]] <- FALSE
   parin[["nocb"]] <- TRUE
   parin[["obsaug"]] <- FALSE
-  parin[["request"]] <- integer(0)
     
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
@@ -161,7 +147,7 @@ mrgsim_q <- function(x,
     init,
     names(Init(x)),
     x@vars,
-    capt_pos,
+    CAPTUREI(x),
     pointers(x),
     data,null_idata,
     as.matrix(omat(x)),
@@ -170,8 +156,7 @@ mrgsim_q <- function(x,
     PACKAGE = "mrgsolve"
   )[["data"]]
   
-  dimnames(out) <- list(NULL, c("ID", tcol, capt))
-  
+  dimnames(out) <- list(NULL, c("ID", tcol, names(Cmti(x)), names(Capturei(x))))
   
   if(output=="df") {
     return(as.data.frame(out))  
@@ -182,9 +167,9 @@ mrgsim_q <- function(x,
   
   new(
     "mrgsims",
-    request=compartments,
+    request=names(Cmti(x)),
     data=as.data.frame(out),
-    outnames=capt,
+    outnames=names(Capturei(x)),
     mod=x
   )
 }

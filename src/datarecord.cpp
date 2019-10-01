@@ -212,7 +212,7 @@ void datarecord::implement(odeproblem* prob) {
 void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solver) {
   if(Ss > 0) {
     if(Fn==0) {
-      throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
+      throw Rcpp::exception("cannot use ss flag when F_CMT is zero.",false);
     }
     if(Rate == 0) this->steady_bolus(prob,solver);
     if(Rate >  0) this->steady_infusion(prob,thisi,solver);

@@ -114,7 +114,13 @@ test_that("Solver setting rtol updates", {
   expect_equal(mod7@rtol,1E-88)
 })
 
-test_that("Update outvars", {
+test_that("bad update gives warning", {
+  options(mrgsolve.update.strict=TRUE)  
+  expect_warning(update(mod, kyle = 1), "invalid item for model object update")
+  options(mrgsolve.update.strict=FALSE)
+})
+
+test_that("update outvars issue-483", {
   x <- update(mod, outvars = "RESP,CP,CENT")
   expect_equal(names(x@cmti), c("CENT", "RESP"))
   expect_equal(names(x@capturei), "CP")
@@ -123,7 +129,20 @@ test_that("Update outvars", {
   mod <- update(mod, add = c(0,1), end = -1)
   out <- mrgsim_df(mod, outvars="CP,RESP,CENT")
   expect_equal(names(out[,3:5]), c("CENT", "RESP", "CP"))
+  expect_error(update(mod, outvars = "KYLE"))
 })
+
+test_that("update req issue-483", {
+  x <- update(mod, req = "RESP,CENT")
+  expect_equal(names(x@cmti), c("CENT", "RESP"))
+  expect_equal(names(x@capturei), c("DV","CP"))
+  expect_equivalent(x@cmti, c(2,3))
+  expect_equivalent(x@capturei, c(1,2))
+  x <- update(mod, request = "RESP,CENT")
+  expect_equal(names(x@cmti), c("CENT", "RESP"))
+  expect_equal(names(x@capturei), c("DV","CP"))
+})
+
 
 CL <- exp(rnorm(100, log(3),  sqrt(0.5)))
 VC <- exp(rnorm(100, log(30), sqrt(0.5))) 

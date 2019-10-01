@@ -165,6 +165,7 @@
 |test-mrgindata.R      |test-mrgindata                       |Run idata set with ev                                                     |  2|      0|FALSE   |FALSE |       0|      2|
 |test-mrgindata.R      |test-mrgindata                       |Duplicate ID in idata_set gives error                                     |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgmod.R         |test-mrgmod                          |methods                                                                   | 11|      0|FALSE   |FALSE |       0|     11|
+|test-mrgmod.R         |test-mrgmod                          |defaults                                                                  |  3|      0|FALSE   |FALSE |       0|      3|
 |test-mrgsim_q.R       |test-mrgsim_q                        |simulation with a complete data set                                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R       |test-mrgsim_q                        |simcall=1 is deprecated                                                   |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R       |test-mrgsim_q                        |qsim                                                                      |  1|      0|FALSE   |FALSE |       0|      1|
@@ -219,6 +220,10 @@
 |test-realize.R        |test-ev                              |dosing with ss                                                            |  1|      0|FALSE   |FALSE |       0|      1|
 |test-realize.R        |test-ev                              |data frame                                                                |  3|      0|FALSE   |FALSE |       0|      3|
 |test-records.R        |test-records                         |Run via idata and separate                                                |  2|      0|FALSE   |FALSE |       0|      2|
+|test-recsort.R        |test-recsort                         |recsort 1 and 2, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-recsort.R        |test-recsort                         |recsort 3 and 4, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-recsort.R        |test-recsort                         |recsort 2 and 4, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-recsort.R        |test-recsort                         |recsort 1 and 3, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-relabel.R        |test-relabel                         |rename, from vector                                                       |  3|      0|FALSE   |FALSE |       0|      3|
 |test-relabel.R        |test-relabel                         |rename, from string                                                       |  3|      0|FALSE   |FALSE |       0|      3|
 |test-relabel.R        |test-relabel                         |ren rename                                                                |  2|      0|FALSE   |FALSE |       0|      2|
@@ -247,6 +252,9 @@
 |test-update.R         |test-update                          |Solver setting mxhnil updates                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |Solver setting atol updates                                               |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |Solver setting rtol updates                                               |  1|      0|FALSE   |FALSE |       0|      1|
+|test-update.R         |test-update                          |bad update gives warning                                                  |  1|      0|FALSE   |FALSE |       0|      1|
+|test-update.R         |test-update                          |update outvars issue-483                                                  |  6|      0|FALSE   |FALSE |       0|      6|
+|test-update.R         |test-update                          |update req issue-483                                                      |  4|      0|FALSE   |FALSE |       0|      4|
 |test-update.R         |test-update                          |Recover items from simulated data when passed in as idata                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |Recover items from simulated data when passed in as data                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R         |test-update                          |CP is equal when simulating from events or data                           |  1|      0|FALSE   |FALSE |       0|      1|
@@ -270,11 +278,12 @@
 |test-utils.R          |test-utils                           |cvec                                                                      |  1|      0|FALSE   |FALSE |       0|      1|
 |test-workflow.R       |test-workflow                        |workflow                                                                  |  3|      0|FALSE   |FALSE |       0|      3|
 |test-alag.R           |test-alag                            |Lagged bolus                                                              |  1|      0|FALSE   |FALSE |       0|      1|
-|test-alag.R           |test-alag                            |Very small lag time doesn't crash                                         |  6|      0|FALSE   |FALSE |       0|      6|
+|test-alag.R           |test-alag                            |Very small lag time doesn't crash issue-109                               |  6|      0|FALSE   |FALSE |       0|      6|
 |test-alag.R           |test-alag                            |Lag time on SS record - bolus                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-alag.R           |test-alag                            |Lag time on SS record - infusion                                          |  2|      0|FALSE   |FALSE |       0|      2|
+|test-alag.R           |test-alag                            |Error lagtime >= ii for bolus                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-alag.R           |test-alag                            |Error lagtime+duration >= ii for infusion                                 |  1|      0|FALSE   |FALSE |       0|      1|
-|test-alag.R           |test-alag                            |ss dose with lag time, different arrangements                             |  1|      0|FALSE   |FALSE |       0|      1|
+|test-alag.R           |test-alag                            |ss dose with lag time issue-484                                           |  1|      0|FALSE   |FALSE |       0|      1|
 |test-bioav.R          |test-bioav                           |Bioav test with doses at time=0                                           |  3|      0|FALSE   |FALSE |       0|      3|
 |test-capture.R        |test-request                         |Renamed captured items are properly named                                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-D-R-F.R          |test-D-R-F                           |Infusion rate is set by R_CMT                                             |  1|      0|FALSE   |FALSE |       0|      1|
@@ -350,12 +359,9 @@
 |test-pred.R           |test-pred                            |rate with pred is zero                                                    |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pred.R           |test-pred                            |ss with pred is zero                                                      |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pred.R           |test-pred                            |amt is ok                                                                 |  1|      0|FALSE   |FALSE |       0|      1|
-|test-recsort.R        |test-recsort                         |recsort 1 and 2, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
-|test-recsort.R        |test-recsort                         |recsort 3 and 4, data                                                     |  3|      0|FALSE   |FALSE |       0|      3|
-|test-recsort.R        |test-recsort                         |recsort 2 and 4, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
-|test-recsort.R        |test-recsort                         |recsort 1 and 3, addl                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-request.R        |test-request                         |Req gets the right variables                                              |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R        |test-request                         |Req gets the right variables, with request                                |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R        |Testing various request settings     |Testing request setting                                                   |  2|      0|FALSE   |FALSE |       0|      2|
 |test-request.R        |Testing various request settings     |Testing that request is properly set in $SET                              |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R        |Testing various request settings     |Testing that request is (all) by default                                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-request.R        |Testing various request settings     |Typedef capture                                                           |  5|      0|FALSE   |FALSE |       0|      5|

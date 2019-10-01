@@ -104,6 +104,9 @@ test:
 	R CMD INSTALL ${PKGDIR}
 	make test-all
 
+test1:
+	Rscript -e 'testthat::test_file("tests/testthat.R")'
+
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
 	rm src/*.o

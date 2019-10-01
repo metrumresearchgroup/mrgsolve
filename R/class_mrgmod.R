@@ -346,7 +346,9 @@ Param_list <- function(x) x@param@data
 Pars <-  function(x) names(x@param@data)
 Init <- function(x) x@init
 Cmt <-  function(x) names(x@init@data)
-
+Cmti <- function(x) x@cmti
+Capturei <- function(x) x@capturei
+CAPTUREI <- function(x) c(length(x@capture),x@capturei-1L)
 
 ##' Return the location of the model shared object
 ##'
@@ -488,8 +490,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
-    cmti <- x@cmti
-    capturei <- x@capturei
+    cmti <- Cmti(x)
+    capturei <- Capturei(x)
     request <- x@request
     capture <- x@capture
     add <- x@add

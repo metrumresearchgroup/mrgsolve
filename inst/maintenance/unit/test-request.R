@@ -51,11 +51,8 @@ test_that("Req gets the right variables", {
   expect_identical(x4,s_(ID,time,b,z))
 })
 
-
-
-mod <- update(mod, request="CENT")
-
 test_that("Req gets the right variables, with request", {
+  mod <- update(mod, request="CENT")
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
@@ -65,7 +62,6 @@ test_that("Req gets the right variables, with request", {
   expect_identical(x3,s_(ID,time,PERIPH,b))
   expect_identical(x4,s_(ID,time,b,z))
 })
-
 
 context("Testing various request settings")
 
@@ -88,15 +84,15 @@ double EPS1 = 1.2;
 $CAPTURE CP FLAG ETA1 EPS1
 '
 
-# mod <- suppressWarnings(mcode("test3tga", code))
+mod <- suppressWarnings(mcode("test3tga", code))
 
-# test_that("Testing request setting", {
-#   out <- mrgsim(mod, request="PERIPH,CENT")
-#   out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
-#   expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP", "FLAG","ETA1", "EPS1"))
-#   expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","FLAG","ETA1", "EPS1"))
-# })
-
+test_that("Testing request setting", {
+  out <- mrgsim(mod, request="PERIPH,CENT", end = 1)
+  out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"),end=1)
+  
+  expect_equal(names(out),c("ID", "time","CENT","PERIPH","CP", "FLAG","ETA1", "EPS1"))
+  expect_equal(names(out2),c("ID", "time", "GUT","CENT","PERIPH","CP","FLAG","ETA1", "EPS1"))
+})
 
 code <- '
 $PARAM CL=1
