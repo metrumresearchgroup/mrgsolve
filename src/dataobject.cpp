@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -34,7 +34,7 @@
 #define _COL_evid_  5u
 #define _COL_cmt_   6u
 #define _COL_time_  7u
-
+#define say(a) Rcpp::Rcout << a << std::endl;
 
 dataobject::dataobject(Rcpp::NumericMatrix _data, 
                        Rcpp::CharacterVector _parnames) {
@@ -201,6 +201,83 @@ void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM,
   for(size_t i = 0; i < n; ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
+}
+
+void dataobject::expand_records(recstack& a, 
+                                dataobject& idat,
+                                int& NID, 
+                                unsigned int& obscount, 
+                                unsigned int& evcount,
+                                bool debug) {
+  
+  if(idat.nrow()==0) {
+    Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
+    return;
+  }
+  
+  //Rcpp::Rcout << " Returning to be safe" << std::endl;
+  //return;
+  
+  if(a.size() > 1) {
+    throw Rcpp::exception("data size isn't 1",false);
+  }
+  if(!Uid.size()==1) {
+    throw Rcpp::exception("more than 1 found in the data set",false);  
+  }
+  
+  int idcol = idat.Idcol;
+  int nid = idat.nrow();
+  int nrec = a.at(0).size();
+  int start = Startrow.at(0);
+  int end = Endrow.at(0);
+  Startrow.resize(nid);
+  Endrow.resize(nid);
+  Uid.resize(nid);
+  a.resize(nid);
+  
+  NID = nid;
+  // say("uid size " << Uid.size())
+  // say("Startrow size " << Startrow.size())
+  // say("Endrow size " << Endrow.size())
+  for(int i = 0; i < nid; ++i) {
+    double this_id = idat.Data(i,idcol); 
+    // say("PRocessing id");
+    // say(this_id);
+    // say("ID col");
+    // say(idat.Idcol);
+    
+    Startrow.at(i) = start;
+    Endrow.at(i) = end;
+    Uid.at(i) = this_id;
+    a.at(i).reserve(nrec);
+    
+    for(int j = 0; j < nrec; ++j) {
+      rec_ptr src = a.at(0).at(j);
+      rec_ptr rec = std::make_shared<datarecord>(
+        src->cmt(),
+        src->evid(), 
+        src->amt(),
+        src->time(),
+        src->rate(),
+        src->pos(),
+        this_id
+      );
+      rec->Ss = src->Ss;
+      rec->Ii = src->Ii;
+      rec->Addl = src->Addl;
+      rec->Output = src->Output;
+      rec->Fromdata = src->Fromdata;
+      if(i > 0) {
+        if(rec->Evid==0) {
+          ++obscount;
+        } else {
+          ++evcount;
+        }
+      }
+      a.at(i).push_back(rec);
+    }
+  }
+  return;
 }
 
 void dataobject:: get_records_pred(recstack& a, int NID, int neq,

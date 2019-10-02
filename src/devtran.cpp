@@ -104,7 +104,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   idat.idata_row();
   
   // Number of individuals in the data set
-  const int NID = dat.nid();
+  int NID = dat.nid();
   const int nidata = idat.nrow();
   
   unsigned int k = 0;
@@ -162,7 +162,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int n_capture  = capture.size()-1;
   
   // Create odeproblem object
-  
   odeproblem prob(inpar, init, vars, funs, capture.at(0));
   prob.omega(OMEGA);
   prob.sigma(SIGMA);
@@ -177,6 +176,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+  dat.expand_records(a, idat, NID, obscount, evcount,  debug);
+  NID = dat.nid();
+  
   
   // Find tofd
   std::vector<double> tofd;
@@ -363,12 +365,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
   
-  
   if(verbose) say("starting the simulation ...");
-  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-    
+
     double id = dat.get_uid(i);
     double Fn = 1.0;
     int this_cmtn = 0;
