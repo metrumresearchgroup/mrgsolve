@@ -249,6 +249,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   double this_sum = 0.0;
   double last_sum = 1E-6;
   double diff = 1E6;
+  bool made_it = false;
   
   prob->lsoda_init();
   
@@ -275,11 +276,18 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
       if((diff < CRIT_DIFF_SS)){
         tfrom = double(i-1)*Ii;
         tto  = double(i)*Ii;
+        made_it = true;
         break;
       }
     }
     tfrom = tto;
     last_sum = this_sum;
+  }
+  if(!made_it) {
+    throw Rcpp::exception(
+        "[steady_bolus] bolus doses failed to reach steady state.",
+        false
+    );
   }
   
   // If we need a lagtime, give one more dose
@@ -348,6 +356,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   double last_sum = 1E-6;
   int start = 0;
   int end = 0;
+  bool made_it = false;
   
   double diff = 1E6;
   double nexti, toff;
@@ -400,12 +409,18 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
       if(diff < CRIT_DIFF_SS) {
         tfrom = nexti;
         nexti  = double(i+1)*Ii;
+        made_it = true;
         break;
       }
     }
     last_sum = this_sum;
   }
-  
+  if(!made_it) {
+    throw Rcpp::exception(
+        "[steady_infusion] intermittent infusion doses failed to reach steady state.",
+        false
+    );
+  }
   // If we need a lagtime, give one more dose
   // and advance to tto - lagtime.
   if(lagt > 0) {
@@ -417,7 +432,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     }
     if((duration + lagt) >= Ii) {
       throw Rcpp::exception(
-          "Infusion duration + ALAG_CMT greater than ii on ss record.",
+          "infusion duration + ALAG_CMT greater than ii on ss record.",
           false
       );
     }
@@ -478,24 +493,16 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     return;
   }
   
-  if(Ii <= 0) {
-    throw Rcpp::exception(
-        tfm::format(
-          "ii must be > 0 to simulate ss infusion"
-        ).c_str(),
-        false
-    );
-  }
-  
   double tfrom = 0.0;
   double tto = 0.0;
+  double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
   
   int i;
   int j;
   double CRIT_DIFF_SS = prob->ss_tol;
   std::vector<double> res(prob->neq(), 0.0);
   std::vector<double> last(prob->neq(),1E-10);
-  
+  bool made_it = false;
   double this_sum = 0.0;
   double last_sum = 1E-6;
   
@@ -504,10 +511,10 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
   evon->implement(prob);
   prob->lsoda_init();
-  
+  double duration = 5;
   for(i=1; i < N_SS ; ++i) {
     prob->lsoda_init();
-    tto = tfrom + Ii;
+    tto = tfrom + duration;
     prob->advance(tfrom,tto,solver);
     
     for(j=0; j < prob->neq(); ++j) {
@@ -519,11 +526,29 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     if(i > 10) {
       diff = std::abs(this_sum - last_sum);
       if(diff < CRIT_DIFF_SS) {
+        made_it = true;
         break;
+      }
+      if(i==15) {
+        a1 = prob->y(Cmt);
+        t1 = tto;
+        duration = 10;
+      }
+      if(i==20) {
+        a2 = prob->y(Cmt);
+        t2 = tto;
+        double k_ = Rate/(a1+a2) + (a1-a2)/((a1+a2)*(t2-t1));
+        duration = 0.693/k_; // 2*thalf Chiou
       }
     }
     last_sum = this_sum;
   }
+  if(!made_it) {
+    throw Rcpp::exception(
+        "[steady_zero] zero order infusion failed to reach steady state.",
+        false
+    );
+  } 
   prob->rate_reset();
   prob->lsoda_init();
   this->unarm();

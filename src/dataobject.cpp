@@ -363,16 +363,6 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       bool zero_inf = ev->ss_infusion();
       
       if(zero_inf) {
-        if(ev->ii() <= 0) {
-          throw Rcpp::exception(
-              tfm::format(
-                "ii must be greater than zero for ss infusion \n ID: %d, row: %i, ii: %d", 
-                ev->id(), j+1,  ev->ii()
-              ).c_str(),
-              false
-          );
-        }
-        
         if(ev->addl() !=0) {
           throw Rcpp::exception(
               tfm::format(
