@@ -208,12 +208,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Safe mode?
   using_vars <- exists("USING_VARS", spec) || isTRUE(SET[["using_vars"]])
-  if(using_vars) {
-    if(exists("GLOBAL",spec)) {
-      wstop("$GLOBAL block is prohibited in safe models")  
-    }
-  }
-  
+  # if(using_vars) {
+  #   if(exists("GLOBAL",spec)) {
+  #     wstop("$GLOBAL block is prohibited in safe models")  
+  #   }
+  # }
+  # 
+
   ## The main sections that need R processing:
   spec <- move_global(spec,mread.env,using_vars)
   
