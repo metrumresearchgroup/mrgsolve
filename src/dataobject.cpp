@@ -211,20 +211,20 @@ void dataobject::expand_records(recstack& a,
                                 bool debug) {
   
   if(idat.nrow()==0) {
-    Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
+    //Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
     return;
   }
-  
-  //Rcpp::Rcout << " Returning to be safe" << std::endl;
-  //return;
   
   if(a.size() > 1) {
     throw Rcpp::exception("data size isn't 1",false);
   }
-  if(!Uid.size()==1) {
+  
+  if(!(Uid.size()==1)) {
     throw Rcpp::exception("more than 1 found in the data set",false);  
   }
   
+  obscount = 0;
+  evcount = 0;
   int idcol = idat.Idcol;
   int nid = idat.nrow();
   int nrec = a.at(0).size();
@@ -236,30 +236,22 @@ void dataobject::expand_records(recstack& a,
   a.resize(nid);
   
   NID = nid;
-  // say("uid size " << Uid.size())
-  // say("Startrow size " << Startrow.size())
-  // say("Endrow size " << Endrow.size())
+  
   for(int i = 0; i < nid; ++i) {
     double this_id = idat.Data(i,idcol); 
-    // say("PRocessing id");
-    // say(this_id);
-    // say("ID col");
-    // say(idat.Idcol);
-    
     Startrow.at(i) = start;
     Endrow.at(i) = end;
     Uid.at(i) = this_id;
-    a.at(i).reserve(nrec);
-    
+    a.at(i).resize(nrec);
     for(int j = 0; j < nrec; ++j) {
       rec_ptr src = a.at(0).at(j);
       rec_ptr rec = std::make_shared<datarecord>(
-        src->cmt(),
-        src->evid(), 
-        src->amt(),
-        src->time(),
-        src->rate(),
-        src->pos(),
+        src->Cmt,
+        src->Evid, 
+        src->Amt,
+        src->Time,
+        src->Rate,
+        src->Pos,
         this_id
       );
       rec->Ss = src->Ss;
@@ -267,14 +259,13 @@ void dataobject::expand_records(recstack& a,
       rec->Addl = src->Addl;
       rec->Output = src->Output;
       rec->Fromdata = src->Fromdata;
-      if(i > 0) {
-        if(rec->Evid==0) {
-          ++obscount;
-        } else {
-          ++evcount;
-        }
+      rec->Armed = src->Armed;
+      if(rec->Evid==0) {
+        ++obscount;
+      } else {
+        ++evcount;
       }
-      a.at(i).push_back(rec);
+      a.at(i).at(j) = rec;
     }
   }
   return;
