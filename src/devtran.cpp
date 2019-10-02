@@ -176,9 +176,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  dat.expand_records(a, idat, NID, obscount, evcount,  debug);
-  NID = dat.nid();
-  
+  if(NID==1) {
+    dat.expand_records(a, idat, NID, obscount, evcount,  debug);
+  }
   
   // Find tofd
   std::vector<double> tofd;
@@ -368,7 +368,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if(verbose) say("starting the simulation ...");
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-
+    
     double id = dat.get_uid(i);
     double Fn = 1.0;
     int this_cmtn = 0;

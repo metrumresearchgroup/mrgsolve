@@ -210,26 +210,29 @@ void dataobject::expand_records(recstack& a,
                                 unsigned int& evcount,
                                 bool debug) {
   
+  //Rcpp::Rcout << "Checking idata" << std::endl; 
+  
   if(idat.nrow()==0) {
     //Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
     return;
   }
   
   if(a.size() > 1) {
+    return;
     throw Rcpp::exception("data size isn't 1",false);
   }
   
   if(!(Uid.size()==1)) {
     throw Rcpp::exception("more than 1 found in the data set",false);  
   }
-  
+
   obscount = 0;
   evcount = 0;
   int idcol = idat.Idcol;
   int nid = idat.nrow();
-  int nrec = a.at(0).size();
-  int start = Startrow.at(0);
-  int end = Endrow.at(0);
+  int nrec = a[0].size();
+  int start = Startrow[0];
+  int end = Endrow[0];
   Startrow.resize(nid);
   Endrow.resize(nid);
   Uid.resize(nid);
@@ -238,34 +241,32 @@ void dataobject::expand_records(recstack& a,
   NID = nid;
   
   for(int i = 0; i < nid; ++i) {
-    double this_id = idat.Data(i,idcol); 
-    Startrow.at(i) = start;
-    Endrow.at(i) = end;
-    Uid.at(i) = this_id;
-    a.at(i).resize(nrec);
+    Startrow[i] = start;
+    Endrow[i]= end;
+    Uid[i] = idat.Data(i,idcol);
+    a[i].resize(nrec);
     for(int j = 0; j < nrec; ++j) {
-      rec_ptr src = a.at(0).at(j);
       rec_ptr rec = std::make_shared<datarecord>(
-        src->Cmt,
-        src->Evid, 
-        src->Amt,
-        src->Time,
-        src->Rate,
-        src->Pos,
-        this_id
+        a[0][j]->Cmt,
+        a[0][j]->Evid, 
+        a[0][j]->Amt,
+        a[0][j]->Time,
+        a[0][j]->Rate,
+        a[0][j]->Pos,
+        idat.Data(i,idcol)
       );
-      rec->Ss = src->Ss;
-      rec->Ii = src->Ii;
-      rec->Addl = src->Addl;
-      rec->Output = src->Output;
-      rec->Fromdata = src->Fromdata;
-      rec->Armed = src->Armed;
+      rec->Ss = a[0][j]->Ss;
+      rec->Ii = a[0][j]->Ii;
+      rec->Addl = a[0][j]->Addl;
+      rec->Output = true;
+      rec->Fromdata = true;
+      rec->Armed = a[0][j]->Armed;
       if(rec->Evid==0) {
         ++obscount;
       } else {
         ++evcount;
       }
-      a.at(i).at(j) = rec;
+      a[i][j] = rec;
     }
   }
   return;
