@@ -16,7 +16,7 @@ do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
   obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
   deslist = list(), descol = character(0), filbak = TRUE,
   tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ss_tol = 1e-12,
-  ...)
+  ss_n = 1000, ...)
 }
 \arguments{
 \item{x}{the model object}
@@ -96,7 +96,10 @@ otherwise, use \code{locf}.}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
-\item{ss_tol}{tolerance for determining steady state for PK system}
+\item{ss_tol}{tolerance for determining steady state for the PK system}
+
+\item{ss_n}{maximum number of iterations for determining steady state for 
+the PK system}
 }
 \value{
 An object of class \code{\link{mrgsims}}

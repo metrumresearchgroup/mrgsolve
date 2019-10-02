@@ -203,6 +203,7 @@ public:
   int Nvar;
   int Istate; ///< istate value
   double ss_tol;
+  double ss_n;
 
 protected:
 

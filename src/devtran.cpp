@@ -92,7 +92,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
-  const double ss_tol         = Rcpp::as<double> (parin["ss_tol"]);
   
   if(verbose) say("unpacking data");
   
@@ -169,7 +168,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.sigma(SIGMA);
   prob.copy_parin(parin);
   prob.pass_envir(&envir);
-  prob.ss_tol = ss_tol;
   const unsigned int neq = prob.neq();
   LSODA solver(neq);
   solver.copy_parin(parin);
@@ -186,7 +184,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     tofd.reserve(a.size());
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if(((*itt)->evid()==1) || ((*itt)->evid()==4)) {
+        if((*itt)->is_dose()) {
           tofd.push_back((*itt)->time());
           break;
         }
@@ -274,7 +272,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       std::sort(it->begin(), it->end(), CompRec());
     }
   }
-
+  
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
@@ -370,7 +368,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-
+    
     double id = dat.get_uid(i);
     double Fn = 1.0;
     int this_cmtn = 0;
@@ -478,12 +476,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_cmtn = this_rec->cmtn();
         
         Fn = prob.fbio(this_cmtn);
-      
+        
         if(Fn < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
         
-        if(Fn==0) this_rec->unarm();
+        if(Fn==0) {
+          if(this_rec->is_dose()) {
+            this_rec->unarm();
+          }
+        }
         
         bool sort_recs = false;
         
@@ -541,7 +543,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         if(tad) {
-          if((this_rec->evid()==1) || (this_rec->evid()==4)) {
+          if(this_rec->is_dose()) {
             if(this_rec->armed()) {
               told = tto - prob.alag(this_cmtn);  
             }

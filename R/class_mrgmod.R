@@ -690,7 +690,8 @@ parin <- function(x) {
     maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
-    mindt=x@mindt, advan=x@advan, ss_tol = 1E-12
+    mindt=x@mindt, advan=x@advan, 
+    ss_tol = 1E-12, ss_n = 1000
   )
 }
 
