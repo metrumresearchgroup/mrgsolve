@@ -1,20 +1,20 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
-#
-# This file is part of mrgsolve.
-#
-# mrgsolve is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# mrgsolve is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
-
+# # Copyright (C) 2013 - 2019  Metrum Research Group
+# #
+# # This file is part of mrgsolve.
+# #
+# # mrgsolve is free software: you can redistribute it and/or modify it
+# # under the terms of the GNU General Public License as published by
+# # the Free Software Foundation, either version 2 of the License, or
+# # (at your option) any later version.
+# #
+# # mrgsolve is distributed in the hope that it will be useful, but
+# # WITHOUT ANY WARRANTY; without even the implied warranty of
+# # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# # GNU General Public License for more details.
+# #
+# # You should have received a copy of the GNU General Public License
+# # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
+# 
 library(testthat)
 library(mrgsolve)
 library(dplyr)
@@ -39,33 +39,29 @@ mod <- mcode("req1", code)
 
 context("test-request")
 
-
+#
 test_that("Req gets the right variables", {
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
   x4 <- names(mod %>% Req(b,z) %>% mrgsim)
   expect_identical(x1,s_(ID,time,GUT,CENT,PERIPH,b,z))
-  expect_identical(x2,s_(ID,time,PERIPH,GUT))
+  expect_identical(x2,s_(ID,time,GUT,PERIPH))
   expect_identical(x3,s_(ID,time,PERIPH,b))
   expect_identical(x4,s_(ID,time,b,z))
 })
 
-
-
-mod <- update(mod, request="CENT")
-
 test_that("Req gets the right variables, with request", {
+  mod <- update(mod, request="CENT")
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
   x4 <- names(mod %>% Req(z,b) %>% mrgsim)
   expect_identical(x1,s_(ID,time,CENT,b,z))
-  expect_identical(x2,s_(ID,time,PERIPH,GUT))
+  expect_identical(x2,s_(ID,time,GUT,PERIPH))
   expect_identical(x3,s_(ID,time,PERIPH,b))
-  expect_identical(x4,s_(ID,time,z,b))
+  expect_identical(x4,s_(ID,time,b,z))
 })
-
 
 context("Testing various request settings")
 
@@ -91,12 +87,12 @@ $CAPTURE CP FLAG ETA1 EPS1
 mod <- suppressWarnings(mcode("test3tga", code))
 
 test_that("Testing request setting", {
-  out <- mrgsim(mod, request="PERIPH,CENT")
-  out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"))
-  expect_equal(names(out),c("ID", "time","PERIPH","CENT","CP", "FLAG","ETA1", "EPS1"))
-  expect_equal(names(out2),c("ID", "time","CENT","PERIPH","GUT","CP","FLAG","ETA1", "EPS1"))
+  out <- mrgsim(mod, request="PERIPH,CENT", end = 1)
+  out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"),end=1)
+  
+  expect_equal(names(out),c("ID", "time","CENT","PERIPH","CP", "FLAG","ETA1", "EPS1"))
+  expect_equal(names(out2),c("ID", "time", "GUT","CENT","PERIPH","CP","FLAG","ETA1", "EPS1"))
 })
-
 
 code <- '
 $PARAM CL=1
@@ -116,7 +112,6 @@ double ETA1 = ETA(1);
 double EPS1 = EPS(1);
 '
 
-
 test_that("Testing that request is properly set in $SET", {
   mod <- suppressWarnings(mcode("test3bqea",code))
   cols <- names(mrgsim(mod))
@@ -131,8 +126,6 @@ test_that("Testing that request is (all) by default", {
   expect_identical(mod@request, "(all)")
 })
 
-
-
 test_that("Typedef capture", {
   code <- '
   $MAIN
@@ -141,7 +134,7 @@ test_that("Typedef capture", {
   capture b = 2;
 
   $CMT CM_T
-  
+
   $ODE
   int c = 3;
   double cc = 33;
@@ -153,16 +146,16 @@ test_that("Typedef capture", {
   capture capture_y = 1234;
   double capture_n = 999;
   '
-  
+
   mod <- mcode("test3dbbae", code)
-  
+
   out <- mod %>% mrgsim(end=3)
-  
+
   expect_true(all(out$a == 1))
   expect_true(all(out$b == 2))
   expect_true(all(out$d == 4))
   expect_false("capture_n" %in% names(out))
-  
+
   code <- '
   $CMT CM_T
   $ODE

@@ -22,6 +22,7 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 mod <- mrgsolve:::house() %>% update(end=240)
+cap <- as.list(mod)$capture
 
 context("test-mrgsim_q")
 
@@ -29,8 +30,8 @@ data(exTheoph)
 temp <- expand.ev(amt = c(100,300,100), rate = 100, F1 = 0.2, WT = 120)
 
 test_that("simulation with a complete data set", {
-  out1 <- mrgsim_d(mod,exTheoph)
-  out2 <- mrgsim_q(mod,exTheoph)
+  out1 <- mrgsim_d(mod,exTheoph)@data
+  out2 <- mrgsim_q(mod,exTheoph)@data
   expect_identical(out1,out2)
 })
 

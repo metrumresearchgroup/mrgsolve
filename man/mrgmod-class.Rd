@@ -84,6 +84,9 @@ effects}
 \item{\code{capture}}{a character vector of variables that are captured from 
 the simulation \code{<character>}}
 
+\item{\code{vars}}{model C++ variable names handled by the vars system 
+\code{<character>}}
+
 \item{\code{mindt}}{minimum time between simulation records \code{<numeric>}}
 
 \item{\code{envir}}{internal model environment \code{<environment>}}
@@ -95,6 +98,14 @@ the simulation \code{<character>}}
 \item{\code{annot}}{model annotations \code{<list>}}
 
 \item{\code{plugin}}{model plugins \code{<character>}}
+
+\item{\code{Icap}}{capture indices to recover in the simulation}
+
+\item{\code{capL}}{labels for \code{Icap}}
+
+\item{\code{Icmt}}{compartment indices to recover in the simulation}
+
+\item{\code{cmtL}}{labels for \code{Icmt}}
 }}
 
 \section{Notes}{

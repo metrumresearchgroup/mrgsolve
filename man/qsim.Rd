@@ -5,8 +5,8 @@
 \title{Basic, simple simulation from model object}
 \usage{
 qsim(x, data, idata = no_idata_set(), obsonly = FALSE, tgrid = NULL,
-  recsort = 1, tad = FALSE, skip_init_calc = FALSE,
-  output = "mrgsims")
+  recsort = 1, tad = FALSE, Req = NULL, outvars = Req,
+  skip_init_calc = FALSE, output = "mrgsims")
 }
 \arguments{
 \item{x}{the model object}
@@ -43,8 +43,12 @@ prior to the last dose in the \code{addl} sequence.  This known limitation
 shouldn't affect \code{tad} calculation in most common dosing lag time
 implementations.}
 
-\item{skip_init_calc}{don't use \code{$MAIN} to 
-calculate initial conditions}
+\item{Req}{synonym for outvars}
+
+\item{outvars}{output items to request; if missing, then only captured items
+will be returned in the output}
+
+\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
 \item{output}{output data type; the default is \code{mrgsims}, which returns the
 default output object; other options include \code{df} (for data.frame) or

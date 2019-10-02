@@ -4,13 +4,11 @@ Version: 0.9.2.9000
 Title: Simulate from ODE-Based Models
 Authors@R: c(
     person("Kyle T", "Baron", email = "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
-    person("Alan C", "Hindmarsh", role = "ctb"),
-    person("Linda R", "Petzold", role = "ctb"),
     person("Bill", "Gillespie", role = "ctb"),
     person("Charles", "Margossian", role = "ctb"),
     person("Devin", "Pastoor", role = "ctb"),
     person("Bill", "Denney", role = "ctb", comment=c(ORCID="0000-0002-5759-428X")),
-    person("odepack authors", role = "cph"),
+    person("Dilawar", "Singh", role = "ctb"), 
     person("Metrum Research Group", role = "cph")
     )
 Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
@@ -45,6 +43,7 @@ LazyLoad: yes
 NeedsCompilation: yes
 Encoding: UTF-8
 Language: en-US
+SystemRequirements: C++11
 Collate: 
     'RcppExports.R'
     'utils.R'

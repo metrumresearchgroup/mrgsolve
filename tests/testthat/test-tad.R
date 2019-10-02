@@ -45,7 +45,10 @@ test_that("tad", {
   e <- ev(amt=100, time=3, ii=3, addl=2)
   out <- mrgsim(mod, events=e, end=11, obsonly=TRUE,tad=TRUE)
   expect_equal(out$time, seq(0,11))
+  
+  # recsort 1 put addl doses before observations
   expect_equal(out$tad,c(-3,-2,-1,0,1,2,0,1,2,0,1,2))
+  #expect_equal(out$tad,c(-3,-2,-1,0,1,2,3,1,2,3,1,2))
 })
 
 test_that("tad recognizes evid 1 and 4 issue-502", {

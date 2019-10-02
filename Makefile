@@ -42,6 +42,9 @@ pkgdown:
 
 test-all:
 	Rscript inst/maintenance/tests.R
+	
+test2: 
+	Rscript -e 'testthat::test_file("inst/maintenance/unit/test-capture.R")'
 
 unit:
 	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
@@ -100,6 +103,9 @@ check-cran:
 test:
 	R CMD INSTALL ${PKGDIR}
 	make test-all
+
+test1:
+	Rscript -e 'testthat::test_file("tests/testthat.R")'
 
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi

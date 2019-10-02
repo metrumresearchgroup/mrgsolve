@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -31,5 +31,10 @@ test_that("ETA(n) in $ODE is error", {
 test_that("Warning with no $CMT or $INIT", {
   code <- '$OMEGA 1\n$ODE double a = 2;'  
   expect_warning(mcode("test-mread-cmt", code,quiet=FALSE,compile=FALSE))
+})
+
+test_that("read in rmd file", {
+  mod <- mread("popex.Rmd", modlib(), compile = FALSE) 
+  expect_is(mod, "mrgmod")
 })
 

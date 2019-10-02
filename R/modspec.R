@@ -244,10 +244,10 @@ move_global_re_find <- "\\b(double|int|bool|capture)\\s+\\w+\\s*="
 move_global_rcpp_re_find <- "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+\\w+\\s*="
 move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
 move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
-local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
+#local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
 
-move_global <- function(x,env) {
+move_global <- function(x,env,using_vars=FALSE) {
   
   what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
   
@@ -257,23 +257,25 @@ move_global <- function(x,env) {
   l <- lapply(x[what], get_c_vars)
   ll <- unlist(l, use.names=FALSE)
   
-  env[["global"]] <- c("typedef double capture;",
-                       "namespace {",
-                       paste0("  ",ll),
-                       "}",
-                       local_var_typedef)
+  if(!using_vars) {
+    env[["global"]] <- c(env[["global"]], "namespace {", paste0("  ", ll), "}")  
+  }
   
   ll <- cvec_cs(unlist(ll,use.names=FALSE))
   ll <- gsub(";","",ll,fixed=TRUE)
   ll <- setdiff(ll, c("double", "int", "bool", "capture"))
-  env[["move_global"]] <- ll
+  
+  if(using_vars) {
+    env[["vars"]] <- c(env[["vars"]], ll)
+  } else {
+    env[["move_global"]] <- ll  
+  }
   
   cap <- vector("list")
   
   for(w in what) {
     
-    x[[w]] <- gsub(move_global_re_sub,
-                   "\\2",x[[w]],perl=TRUE)
+    x[[w]] <- gsub(move_global_re_sub,"\\2",x[[w]],perl=TRUE)
     
     # **************************
     # Search for capture 
@@ -291,7 +293,7 @@ move_global <- function(x,env) {
       ll <- ll[substr(ll,1,8) == "capture "]
       cap[[w]] <- substr(ll,9,nchar(ll)-1)
     }
-    # **************************
+    # --------------------------------
     
   } # <-- End for(w in what)
   
@@ -299,8 +301,7 @@ move_global <- function(x,env) {
     # must trim this
     x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
   }
-  # **************************
-  
+  # -------------------------
   return(x)
 }
 
@@ -359,7 +360,6 @@ global_rcpp <- function(spec) {
   spec
 }
 
-
 parse_ats <- function(x) {
   
   if(length(x)==0) return(list())
@@ -394,7 +394,6 @@ parse_ats <- function(x) {
   
   # Convert type
   b <- setNames(lapply(b,type.convert,as.is=TRUE),a)
-  
   b
 }
 
@@ -472,11 +471,6 @@ dump_opts <- function(x,env,block,...) {
   x[-hasopt]
 }
 
-# parseLIST <- function(x,where,env,...) {
-#   env[[where]][[attr(x,"pos")]] <- tolist(x)
-#   return(NULL)
-# }
-
 eval_ENV_block <- function(x,where,envir=new.env(),...) {
   cwd <- getwd()
   on.exit(setwd(cwd))
@@ -505,17 +499,11 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env$capture <- vector("list",n)
   mread.env$error <- character(0)
   mread.env$covariates <- character(0)
+  mread.env$vars <- character(0)
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
   mread.env
 }
-
-# deparens <- function(x,what=c(")", "(")) {
-#   for(w in what) {
-#     x <- gsub(w,"",x,fixed=TRUE) 
-#   }
-#   return(x)
-# }
 
 wrap_namespace <- function(x,name) {
   paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
@@ -563,7 +551,7 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
   if(inherits(x, "try-error")) {
     message("Block no: ", pos)
     message("Block type: ", block)
-    stop("Failed to parse block code.", call.=FALSE)
+    stop("failed to parse block code.", call.=FALSE)
   }
   right_type <- inherits(x, cl)
   if(!right_type) {
@@ -571,7 +559,7 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
     message("Block type: ", block)
     message("Expected class: ", paste0(cl, collapse = " or "))
     got <- paste0(class(x), collapse = ", ")
-    stop("Code returned the incorrect class: ", got, call.=FALSE) 
+    stop("code returned the incorrect class: ", got, call.=FALSE) 
   }
   fun(x)
 }

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -95,7 +95,6 @@ mrgsim_q <- function(x,
                      simcall = 0) {
   
   ## data
-  
   if(is.ev(data)) {
     data <- as.data.frame.ev(data, add_ID = 1)  
   }
@@ -110,37 +109,22 @@ mrgsim_q <- function(x,
   param <- as.numeric(Param(x))
   init <-  as.numeric(Init(x))
   
-  compartments <- Cmt(x)
-  
-  capt <- unname(x@capture)
-  
-  # Non-compartment names in capture
-  if(any(is.element(capt,compartments))) {
-    stop("Compartment names should not be used in $CAPTURE.", call.=FALSE)  
-  }
-  
-  # First spot is the number of capture.items, followed by integer positions
-  # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1L))
-  
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
   parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
-  
-  # already took intersect
-  parin$request <- seq_along(compartments)-1L;
-  
+  parin$request <- Cmti(x)-1L
+
   if(simcall!=0) {
     if(simcall==1) {
-      stop("the interface with simcall=1 is no longer available; please use simcall=0 instead.", call.=FALSE)
+      wstop("the interface with simcall=1 is no longer available; please use simcall=0 instead.")
     }
-    stop("simcall values other than 0 are prohibited.", call.=FALSE)
+    wstop("simcall values other than 0 are prohibited.")
   }
   
   if(length(stime) == 0) {
-    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
+    parin[["tgridmatrix"]] <- matrix(stime(x),ncol=1)
   } else {
     parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
   }
@@ -154,7 +138,7 @@ mrgsim_q <- function(x,
   parin[["tad"]] <- FALSE
   parin[["nocb"]] <- TRUE
   parin[["obsaug"]] <- FALSE
-  
+    
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
@@ -162,16 +146,17 @@ mrgsim_q <- function(x,
     names(param(x)),
     init,
     names(Init(x)),
-    capt_pos,
+    x@vars,
+    CAPTUREI(x),
     pointers(x),
     data,null_idata,
     as.matrix(omat(x)),
     as.matrix(smat(x)),
-    x@envir
+    x@envir, 
+    PACKAGE = "mrgsolve"
   )[["data"]]
   
-  dimnames(out) <- list(NULL, c("ID", tcol, compartments, capt))
-  
+  dimnames(out) <- list(NULL, c("ID", tcol,x@cmtL,x@capL))
   
   if(output=="df") {
     return(as.data.frame(out))  
@@ -180,12 +165,11 @@ mrgsim_q <- function(x,
     return(out)  
   }
   
-  
   new(
     "mrgsims",
-    request=compartments,
+    request=x@cmtL,
     data=as.data.frame(out),
-    outnames=capt,
+    outnames=x@capL,
     mod=x
   )
 }

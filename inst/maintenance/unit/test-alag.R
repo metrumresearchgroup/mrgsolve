@@ -38,19 +38,23 @@ test_that("Lagged bolus", {
     expect_equal(first,2.8)
 })
 
-## Issue #109
-test_that("Very small lag time doesn't crash", {
+test_that("Very small lag time doesn't crash issue-109", {
 
   out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
   expect_is(out, "mrgsims")
   expect_equal(out$time[which.max(out$CENT)],0)
   
-  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim
+  # 1 and 3 put doses scheduled through addl before observations at the same time.
+  # if the lag time is at 2, then the dose should be after the observation
+  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim(recsort=1)
+  expect_is(out, "mrgsims")
+  expect_equal(out$time[which.max(out$CENT)],3)
+  # 3 and 4 put those doses before padded observations at the same time. 
+  # recsort 2 would be showing the dose 
+  out <- mod %>% ev(amt=100) %>% param(LAG = 2) %>% mrgsim(recsort=3)
   expect_is(out, "mrgsims")
   expect_equal(out$time[which.max(out$CENT)],2)
-  
   out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
-  
 })
 
 test_that("Lag time on SS record - bolus", {
@@ -73,19 +77,18 @@ test_that("Lag time on SS record - infusion", {
   expect_true(all(cent2==cent2[1]))
 })
 
-# No longer an error
-# test_that("Error lagtime >= ii for bolus", {
-#   e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
-#   expect_error(mrgsim(mod, ev = e))
-# })
+#No longer an error
+test_that("Error lagtime >= ii for bolus", {
+  e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
+  expect_is(mrgsim(mod, ev = e), "mrgsims")
+})
 
 test_that("Error lagtime+duration >= ii for infusion", {
   e <- ev(amt=100, ii = 12, LAG = 3, rate = 100/10, ss = 1)
   expect_error(mrgsim(mod, ev = e))
 })
 
-# Issue 484
-test_that("ss dose with lag time, different arrangements", {
+test_that("ss dose with lag time issue-484", {
   data1 <- 
     ev(amt = 100,time=240,ss=1,ii=12) %>% 
     expand_observations(c(0,seq(240,264,4)))

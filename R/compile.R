@@ -16,6 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 generate_rdefs <- function(pars,
+                           vars, 
                            cmt,
                            func,
                            init_fun="",
@@ -26,12 +27,18 @@ generate_rdefs <- function(pars,
 
     npar <- length(pars)
     ncmt <- length(cmt)
+    nvars <- length(vars)
+    varsdef <- NULL
+    if(nvars > 0) {
+      varsindex <- seq_along(vars)-1L
+      varsdef <- paste0("#define ", vars, " _VARS_[", varsindex,"]")  
+    }
 
     dxdt <- paste0("dxdt_",cmt)
     init <- paste0(cmt, "_0")
 
-    cmtindex <- seq_along(cmt)-1
-    parsindex <- seq_along(pars)-1
+    cmtindex <- seq_along(cmt)-1L
+    parsindex <- seq_along(pars)-1L
 
     cmtdef <-  paste0("#define ", cmt,  " _A_[",    cmtindex,"]")
     initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
@@ -99,6 +106,7 @@ generate_rdefs <- function(pars,
           cmtdef,
           dxdef,
           pardef,
+          varsdef,
           etal,
           epsl
           )
@@ -226,8 +234,10 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   neta <- sum(nrow(omat(x)))
   neps <- sum(nrow(smat(x)))
   
-  out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,neta,neps,x@capture,funp,
-               x@envir)
+  out <- .Call(`_mrgsolve_TOUCH_FUNS`,param,init,
+               numeric(length(x@shlib[["vars"]])+10L),
+               neta,neps,x@capture,funp,
+               x@envir, PACKAGE = "mrgsolve")
   
   names(out$init) <- names(init)
   

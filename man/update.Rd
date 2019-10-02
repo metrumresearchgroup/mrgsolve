@@ -11,7 +11,7 @@
 \title{Update the model object}
 \usage{
 \S4method{update}{mrgmod}(object, ..., merge = TRUE, open = FALSE,
-  data = NULL)
+  data = NULL, strict = TRUE)
 
 \S4method{update}{omegalist}(object, y, ...)
 
@@ -36,6 +36,9 @@ added; if \code{TRUE}, the parameter list may expand.}
 
 \item{data}{a list of items to update; this list is combined 
 with any items passed in via \code{...}}
+
+\item{strict}{if \code{TRUE}, then an error will be generated if there is 
+attempt to update a non-existent item}
 
 \item{y}{another object involved in update}
 
@@ -70,6 +73,7 @@ Slots that can be updated:
 \item init
 \item omega
 \item sigma
+\item outvars
 }
 }
 \examples{

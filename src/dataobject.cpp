@@ -25,7 +25,6 @@
 #include "dataobject.h"
 #include "mrgsolve.h"
 #include "mrgsolv.h"
-#include <boost/format.hpp>
 
 #define _COL_amt_   0u
 #define _COL_ii_    1u
@@ -42,7 +41,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   Data = _data;
   parnames = _parnames;
   
-  Rcpp::List dimnames = Data.attr("dimnames");
+  Rcpp::List dimnames = _data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
@@ -51,7 +50,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   }
   
   // Connect Names in the data set with positions in the parameter list
-  from_to(Data_names,parnames, par_from, par_to);
+  from_to(Data_names, parnames, par_from, par_to);
   
   col.resize(8,0);
   
@@ -64,7 +63,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   parnames = _parnames;
   cmtnames = Rcpp::clone(_cmtnames);
   
-  Rcpp::List dimnames = Data.attr("dimnames");
+  Rcpp::List dimnames = _data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
@@ -92,13 +91,12 @@ dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
   
-  int i=0;
   int n = Data.nrow();
   
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
   
-  for(i=1; i < n; ++i) {
+  for(int i=1; i < n; ++i) {
     if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
       Startrow.push_back(i);
@@ -182,13 +180,12 @@ void dataobject::idata_row() {
   }
 }
 
-void dataobject::copy_parameters(int this_row, odeproblem *prob) {
+void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t n = par_from.size();
   for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
-
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
@@ -223,12 +220,12 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
       if(Data(j,col[_COL_time_]) < lastime) {
         Rcpp::Rcout << lastime << std::endl;
         throw Rcpp::exception(
-            "The data set is not sorted by time.",
+            "the data set is not sorted by time.",
             false
         );
       }
       lastime = Data(j,col[_COL_time_]);        
-      rec_ptr obs = boost::make_shared<datarecord>(
+      rec_ptr obs = std::make_shared<datarecord>(
         Data(j,col[_COL_time_]),
         Data(j,col[_COL_cmt_]),
         j,
@@ -237,19 +234,19 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_cmt_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have cmt set to zero.",
+            "all records must have cmt set to zero.",
             false
         ); 
       }
       if(Data(j,col[_COL_rate_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have rate set to zero.",
+            "all records must have rate set to zero.",
             false
         ); 
       }
       if(Data(j,col[_COL_ss_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have ss set to zero.",
+            "all records must have ss set to zero.",
             false
         ); 
       }
@@ -298,7 +295,10 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
-            "The data set is not sorted by time or time is negative.",
+            tfm::format(
+              "the data set is not sorted by time or time is negative \n ID: %d, row: %i, time: %d", 
+              Data(j,Idcol), j+1, Data(j,col[_COL_time_])
+            ).c_str(),
             false
         );
       }
@@ -312,12 +312,15 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
-              "Compartment number in observation record out of range.",
+              tfm::format(
+                "cmt number in observation record out of range \n ID: %d, row: %i, cmt: %i, neq: %i", 
+                Data(j,Idcol), j+1, this_cmt, neq
+              ).c_str(),
               false
           );
         }
         
-        rec_ptr obs = boost::make_shared<datarecord>(
+        rec_ptr obs = std::make_shared<datarecord>(
           Data(j,col[_COL_time_]),
           Data(j,col[_COL_cmt_]),
           j,
@@ -333,7 +336,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
         throw Rcpp::exception(
             tfm::format(
-              "event record cmt must be between 1 and %i: \n ID %d, row: %i, cmt: %i, evid: %i", 
+              "event record cmt must be between 1 and %i: \n ID: %d, row: %i, cmt: %i, evid: %i", 
               neq, Data(j,Idcol), j+1, this_cmt, Data(j,col[_COL_evid_])
             ).c_str(),
             false
@@ -342,7 +345,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ++evcount;
       
-      rec_ptr ev = boost::make_shared<datarecord>(
+      rec_ptr ev = std::make_shared<datarecord>(
         Data(j,col[_COL_cmt_]),
         Data(j,col[_COL_evid_]),
         Data(j,col[_COL_amt_]),
@@ -351,42 +354,67 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         j, 
         Data(j,Idcol)
       );
-      
-      if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
-        throw Rcpp::exception(
-            "non-zero rate must be positive or equal to -1 or -2",
-            false
-        );
-      }
-      
-      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1)) {
-        throw Rcpp::exception(
-            "non-zero rate requires positive amt.",
-            false
-        );
-      }
-      
-      ev->from_data(true);
-      if(!obsonly) ev->output(true);
-      
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
+      ev->from_data(true);
+      if(!obsonly) ev->output(true);
+      
+      bool zero_inf = ev->ss_infusion();
+      
+      if(zero_inf) {
+        if(ev->addl() !=0) {
+          throw Rcpp::exception(
+              tfm::format(
+                "addl must be zero for ss infusion \n ID: %d, row: %i, ii: %d", 
+                ev->id(), j+1,  ev->addl()
+              ).c_str(),
+              false
+          );
+        }
+      }
+      
+      if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
+        throw Rcpp::exception(
+            tfm::format(
+              "non-zero rate must be positive or -1 or -2 \n ID: %d, row: %i, rate: %d", 
+              ev->id(), j+1,  ev->rate()
+            ).c_str(),
+            false
+        );
+      }
+      
+      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1) && !zero_inf) {
+        throw Rcpp::exception(
+            tfm::format(
+              "non-zero rate requires positive amt \n ID: %d, row: %i, rate: %d, amt: %d", 
+              ev->id(), j+1,  ev->rate(), ev->amt()
+            ).c_str(),
+            false
+        );
+      }
       
       if(ev->ii() <= 0) {
         if(ev->addl() > 0) {
           throw Rcpp::exception(
-              "found dosing record with addl > 0 and ii <= 0.",
+              tfm::format(
+                "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, addl: %i", 
+                ev->id(), j+1, ev->addl()
+              ).c_str(),
               false
           );
         }
-        if(ev->ss()) {
+        if(ev->ss() && (!zero_inf)) {
           throw Rcpp::exception(
-              "found dosing record with ss==1 and ii <= 0.",
+              tfm::format(
+                "dosing record with ss > 0 and ii <= 0 \n ID: %d, row: %i", 
+                ev->id(), j+1
+              ).c_str(),
               false
           );
         }
-      }
+      } // ii <=0
+      
       a[h].push_back(ev);
     }
   }
@@ -399,6 +427,7 @@ void dataobject::get_ids(uidtype* ids) {
 }
 
 unsigned int dataobject::get_idata_row(const double ID) {
+  if(idmap.size()==0) return 0;
   return idmap[ID];
 }
 

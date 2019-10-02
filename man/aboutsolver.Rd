@@ -2,49 +2,31 @@
 % Please edit documentation in R/package.R
 \name{aboutsolver}
 \alias{aboutsolver}
-\title{About the ODEPACK differential equation solver used by mrgsolve}
+\title{About the DLSODA differential equation solver used by mrgsolve}
 \description{
-About the ODEPACK differential equation solver used by mrgsolve
+About the DLSODA differential equation solver used by mrgsolve
 }
 \section{DLSODA}{
 
 \preformatted{
-C----------------------------------------------------------------------
-C This is the 12 November 2003 version of
-C DLSODA: Livermore Solver for Ordinary Differential Equations, with
-C         Automatic method switching for stiff and nonstiff problems.
-C
-C This version is in double precision.
-C
-C DLSODA solves the initial value problem for stiff or nonstiff
-C systems of first order ODEs,
-C     dy/dt = f(t,y) ,  or, in component form,
-C     dy(i)/dt = f(i) = f(i,t,y(1),y(2),...,y(NEQ)) (i = 1,...,NEQ).
-C
-C This a variant version of the DLSODE package.
-C It switches automatically between stiff and nonstiff methods.
-C This means that the user does not have to determine whether the
-C problem is stiff or not, and the solver will automatically choose the
-C appropriate method.  It always starts with the nonstiff method.
-C
-C Authors:       Alan C. Hindmarsh
-C                Center for Applied Scientific Computing, L-561
-C                Lawrence Livermore National Laboratory
-C                Livermore, CA 94551
-C and
-C                Linda R. Petzold
-C                Univ. of California at Santa Barbara
-C                Dept. of Computer Science
-C                Santa Barbara, CA 93106
-C
-C References:
-C 1.  Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
-C     Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),
-C     North-Holland, Amsterdam, 1983, pp. 55-64.
-C 2.  Linda R. Petzold, Automatic Selection of Methods for Solving
-C     Stiff and Nonstiff Systems of Ordinary Differential Equations,
-C     Siam J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
-C----------------------------------------------------------------------
+/*
+* HISTORY:
+* This is a CPP version of the LSODA library for integration into MOOSE
+somulator.
+* The original was aquired from
+* http://www.ccl.net/cca/software/SOURCES/C/kinetics2/index.shtml and modified
+by
+* Heng Li <lh3lh3@gmail.com>. Heng merged several C files into one and added a
+* simpler interface. [Available
+here](http://lh3lh3.users.sourceforge.net/download/lsoda.c)
+
+* The original source code came with no license or copyright
+* information. Heng Li released his modification under the MIT/X11 license. I
+* maintain the same license. I have removed quite a lot of text/comments from
+* this library. Please refer to the standard documentation.
+*
+* Contact: Dilawar Singh <dilawars@ncbs.res.in>
+*/
 }
 }
 

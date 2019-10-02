@@ -98,7 +98,7 @@ setMethod("ev", "mrgmod", function(x,object=NULL,...) {
 
 ##' @rdname ev
 ##' @export
-setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0), 
+setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0), 
                                     replicate=TRUE, until=NULL, tinf=NULL,
                                     realize_addl=FALSE, ...) {
   
@@ -148,10 +148,9 @@ setMethod("ev", "missing", function(time=0, amt, evid=1, cmt=1, ID=numeric(0),
         rownames(data) <- NULL
       } else {
         data <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
-                                 PACKAGE="mrgsolve", 
                                  match("ID", colnames(data),0), 
                                  data.matrix(data), 
-                                 ID))
+                                 ID, PACKAGE="mrgsolve" ))
       }
       
     } else {
@@ -228,7 +227,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     x[["evid"]] <- na2zero(x[["evid"]])
     x <- x[x[["evid"]] != 0,] 
     if(nrow(x)==0) {
-      stop("no dosing events found", call. = FALSE) 
+      wstop("no dosing events found; could not coerce to ev object") 
     }
   }
   

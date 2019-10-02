@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -110,11 +110,11 @@ protomod <- list(model=character(0),
                  preclean=FALSE,
                  atol=1E-8,
                  rtol=1E-8,
-                 maxsteps=5000,
+                 maxsteps=20000,
                  hmin=0,
                  hmax=0,
                  ixpr=0,
-                 mxhnil=0,
+                 mxhnil=2,
                  shlib=list(date="",par="", cmt="", compiled=FALSE, 
                             version=NULL, source=""),
                  funs = c(main=character(0),
@@ -127,6 +127,11 @@ protomod <- list(model=character(0),
                  param = new("parameter_list"),
                  init=new("cmt_list"),
                  capture=character(0),
+                 vars=character(0),
+                 Icap = integer(0),
+                 capL = character(0),
+                 Icmt = integer(0), 
+                 cmtL = character(0),
                  args = list(),
                  fixed  = list(),
                  advan=13,
@@ -159,6 +164,8 @@ valid.mrgmod <- function(object) {
   return(x)
 }
 # nocov end
+
+
 
 ##' S4 class for mrgsolve model object
 ##'
@@ -209,12 +216,18 @@ valid.mrgmod <- function(object) {
 ##' @slot code a character vector of the model code
 ##' @slot capture a character vector of variables that are captured from 
 ##' the simulation \code{<character>}
+##' @slot vars model C++ variable names handled by the vars system 
+##' \code{<character>}
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 ##' @slot envir internal model environment \code{<environment>}
 ##' @slot shlib a list of data related to build outcome \code{<list>}
 ##' @slot funs symbol names for model functions in the shared object
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
+##' @slot Icap capture indices to recover in the simulation
+##' @slot capL labels for \code{Icap}
+##' @slot Icmt compartment indices to recover in the simulation
+##' @slot cmtL labels for \code{Icmt}
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
@@ -231,6 +244,17 @@ setClass("packmod",
            header="character"
          )
 )
+
+initialize_mrgmod <- function(.Object, ...) {
+  .Object <- callNextMethod()
+  .Object@shlib[["cmt"]] <- Cmt(.Object)
+  .Object@shlib[["par"]] <- Pars(.Object)
+  .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
+  .Object@shlib[["version"]] <- GLOBALS[["version"]]
+  .Object <- default_outputs(.Object)
+  .Object
+}
+setMethod("initialize", "mrgmod", initialize_mrgmod)
 
 ##' Return a pre-compiled, PK/PD model
 ##' 
@@ -326,7 +350,9 @@ Param_list <- function(x) x@param@data
 Pars <-  function(x) names(x@param@data)
 Init <- function(x) x@init
 Cmt <-  function(x) names(x@init@data)
-
+Cmti <- function(x) x@Icmt
+Capturei <- function(x) x@Icap
+CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 
 ##' Return the location of the model shared object
 ##'
@@ -374,6 +400,7 @@ setMethod("names", "mrgmod", function(x) {
   ans$param <- Pars(x)
   ans$init <- Cmt(x)
   ans$capture <- unname(x@capture)
+  ans$vars <- x@vars
   ans$omega <- names(omat(x))
   ans$sigma <- names(smat(x))
   ans$omega_labels <- labels(omat(x))
@@ -398,6 +425,7 @@ setMethod("names", "mrgmod", function(x) {
 ##' - `npar`: number of parameters
 ##' - `neq`: number of compartments or differential equations
 ##' - `pars`: names of model parameters
+##' - `vars`: names of C++ variables handled by the vars system
 ##' - `covariates`: names of parameters identified as covariates
 ##' - `cmt`: names of model compartments
 ##' - `param`: the parameter list
@@ -416,6 +444,9 @@ setMethod("names", "mrgmod", function(x) {
 ##' - `delta`: simulation time step
 ##' - `add`: additional simulation times
 ##' - `capture`: names of captured data items
+##' - `request`: compartments requested upon simulation
+##' - `cmti`: named indices for current output compartments
+##' - `capturei`: named indices for current output capture
 ##' - `random`: names and labels of `$OMEGA` and `$SIGMA`
 ##' - `code`: model source code from `cfile`
 ##' - `details`: model details data frame
@@ -427,7 +458,7 @@ setMethod("names", "mrgmod", function(x) {
 ##' - `envir`: the model environment
 ##' - `plugins`: plugins invoked in the model
 ##' - `digits`: number of digits to request in simulated data
-##' - `request`: compartments requested upon simulation
+
 ##' - `tscale`: multiplicative scalar for time in results only
 ##' - `mindt`: simulation output time below which there model will assume to 
 ##'   have not advanced
@@ -463,6 +494,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
+    out_cmt <- x@cmtL
+    out_cap <- x@capL
     request <- x@request
     capture <- x@capture
     add <- x@add
@@ -481,7 +514,9 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
+    
     covariates <- as.character(x@shlib$covariates)
+    vars <- x@vars
     pars <- pars(x)
     neq <- neq(x)
     npar <- npar(x)
@@ -617,15 +652,18 @@ summary.mrgmod <- function(object,...) {
   l <- as.list(object)
   ncmt <- l[["neq"]]
   npar <- l[["npar"]]
-  message("Model: ", l$model)
-  message("- Parameters: [", npar, "]")
-  message(prvec(l$pars,width = 50,prefix="  "))
-  message("- Compartments: [", ncmt, "]")
-  message(prvec(l$cmt,width = 50, prefix = "  "))
-  message("- Captured: [", length(l[["capture"]]), "]")
+  cat("Model: ", l$model, "\n",sep="")
+  cat("- Parameters: [", npar, "]", "\n",sep="")
+  cat(prvec(l$pars,width = 50,prefix="  "), "\n",sep="")
+  cat("- Compartments: [", ncmt, "]", "\n",sep="")
+  cat(prvec(l$cmt,width = 50, prefix = "  "), "\n",sep="")
+  cat("- Captured: [", length(l[["capture"]]), "]", "\n",sep="")
   o <- l$capture
   if(length(o)==0) o <- "<none>"
-  message(prvec(o, width = 50, prefix = "  "))
+  cat(prvec(o, width = 50, prefix = "  "), "\n",sep="")
+  outputs <- c(l$out_cmt,l$out_cap)
+  cat("- Outputs: [",length(outputs),"]", "\n",sep="")
+  cat(prvec(outputs,width = 50, prefix="  "), "\n",sep="")
   return(invisible(NULL))
 }
 
@@ -652,7 +690,8 @@ parin <- function(x) {
     maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
-    mindt=x@mindt, advan=x@advan
+    mindt=x@mindt, advan=x@advan, 
+    ss_tol = 1E-12, ss_n = 1000
   )
 }
 
@@ -672,12 +711,6 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-# re_build <- function(x,model=model(x),temp = FALSE) {
-#   if(temp) {
-#     model <- basename(tempfile(pattern="mod", tmpdir='.'))
-#   }
-#   mcode(model,x@code)
-# }
 
 ##' @export
 all.equal.mrgmod <- function(target, current,...) {
@@ -688,10 +721,3 @@ all.equal.mrgmod <- function(target, current,...) {
   t2 <- identical(target.env, current.env)
   all(t1,t2)
 }
-
-# get_model_md5 <- function(x) {
-#   files <- c(cfile(x),x@shlib[["include"]])
-#   tools::md5sum(files)
-# }
-
-

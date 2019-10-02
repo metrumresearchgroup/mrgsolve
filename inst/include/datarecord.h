@@ -21,15 +21,16 @@
 
 #ifndef DATARECORD_H
 #define DATARECORD_H
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include "mrgsolv.h"
+#include "LSODA.h"
 
 class odeproblem;
 class datarecord;
-typedef boost::shared_ptr<datarecord> rec_ptr;
+typedef std::shared_ptr<datarecord> rec_ptr;
 typedef std::vector<rec_ptr> reclist;
 
-#define NEWREC boost::make_shared<datarecord>
+#define NEWREC std::make_shared<datarecord>
 
 class datarecord {
   
@@ -89,16 +90,18 @@ public:
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
                 const unsigned int maxpos, double Fn);
   void implement(odeproblem* prob);
-  void steady_infusion(odeproblem* prob,reclist& thisi);
-  void steady_bolus(odeproblem* prob);
-  void steady(odeproblem* prob, reclist& thisi,double Fn);
+  void steady_zero(odeproblem* prob, LSODA& solver);
+  void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
+  void steady_bolus(odeproblem* prob,LSODA& solver);
+  void steady(odeproblem* prob, reclist& thisi,double Fn,LSODA& solver);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}
-  bool ss_int_infusion(){return (Evid==1 || Evid ==4 || Evid==5) && (Rate > 0) && (Amt > 0) && (Ss > 0);}
+  bool ss_int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0) && (Ss > 0);}
   bool const_infusion(){return (Evid==1) && (Rate > 0) && (Amt == 0);}
+  bool ss_infusion();
   bool is_event() {return (Evid > 0);}
-  bool is_dose(){return Evid==1;}
+  bool is_dose(){return (Evid==1) || (Evid==4);}
   bool is_event_data() {return (Evid != 0) && (Evid != 2) && Fromdata;}
   bool needs_sorting(){return ((Addl > 0) || (Ss == 1));}
   
