@@ -404,7 +404,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
               false
           );
         }
-        if(ev->ss()) {
+        if(ev->ss() && (!zero_inf)) {
           throw Rcpp::exception(
               tfm::format(
                 "dosing record with ss > 0 and ii <= 0 \n ID: %d, row: %i", 

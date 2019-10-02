@@ -444,7 +444,9 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param nocb if \code{TRUE}, use next observation carry backward method; 
 ##' otherwise, use \code{locf}.  
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param ss_tol tolerance for determining steady state for PK system
+##' @param ss_tol tolerance for determining steady state for the PK system
+##' @param ss_n maximum number of iterations for determining steady state for 
+##' the PK system
 ##' 
 ##' @rdname mrgsim
 ##' @export
@@ -468,6 +470,7 @@ do_mrgsim <- function(x,
                       nocb = TRUE,
                       skip_init_calc = FALSE,
                       ss_tol = 1E-12,
+                      ss_n = 1000,
                       ...) {
   
   x <- update(x,...,strict=TRUE)
@@ -541,6 +544,7 @@ do_mrgsim <- function(x,
   parin$do_init_calc <- !skip_init_calc
   parin$verbose <- verbose
   parin$ss_tol <- ss_tol
+  parin$ss_n <- ss_n
   parin$request <- Cmti(x)-1L
   
   if(tad && any(x@capture =="tad")) {

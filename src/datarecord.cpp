@@ -28,9 +28,6 @@
 #include <functional>
 #include <algorithm>
 
-#define N_SS 1000
-//#define CRIT_DIFF_SS 1E-12
-
 // Tgrid Observations that need to get output
 // And Ptime observations
 // Need to say if it is output (stime) or not (ptime)
@@ -236,7 +233,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   }
   
   prob->rate_reset();
-  
+  double N_SS = prob->ss_n;  
   double CRIT_DIFF_SS = prob->ss_tol;
   double tfrom = 0.0;
   double tto = 0.0;
@@ -347,6 +344,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   int i;
   int j;
   double CRIT_DIFF_SS = prob->ss_tol;
+  double N_SS = prob->ss_n;  
   std::vector<double> res(prob->neq(), 0.0);
   std::vector<double> last(prob->neq(),1E-10);
   
@@ -496,10 +494,8 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   double tfrom = 0.0;
   double tto = 0.0;
   double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
-  
-  int i;
-  int j;
   double CRIT_DIFF_SS = prob->ss_tol;
+  double N_SS = prob->ss_n;  
   std::vector<double> res(prob->neq(), 0.0);
   std::vector<double> last(prob->neq(),1E-10);
   bool made_it = false;
@@ -511,34 +507,35 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
   evon->implement(prob);
   prob->lsoda_init();
-  double duration = 5;
-  for(i=1; i < N_SS ; ++i) {
+  double duration = 10;
+  for(int i=1; i < N_SS ; ++i) {
     prob->lsoda_init();
     tto = tfrom + duration;
     prob->advance(tfrom,tto,solver);
-    
-    for(j=0; j < prob->neq(); ++j) {
+    tfrom = tto;
+    if(i < 8) continue;
+    for(int j=0; j < prob->neq(); ++j) {
       res[j]  = pow((prob->y(j)  - last[j]), 2.0);
       last[j] = prob->y(j);
     }
     this_sum = std::accumulate(res.begin(), res.end(), 0.0);
-    tfrom = tto;
-    if(i > 10) {
+    if(i >= 10) {
       diff = std::abs(this_sum - last_sum);
       if(diff < CRIT_DIFF_SS) {
         made_it = true;
         break;
       }
-      if(i==15) {
+      duration = 15;
+      if(i==12) {
         a1 = prob->y(Cmt);
         t1 = tto;
-        duration = 10;
+        duration = 20;
       }
-      if(i==20) {
+      if(i==25) {
         a2 = prob->y(Cmt);
         t2 = tto;
         double k_ = Rate/(a1+a2) + (a1-a2)/((a1+a2)*(t2-t1));
-        duration = 0.693/k_; // 2*thalf Chiou
+        duration = std::max(duration,0.693/k_); // 2*thalf Chiou
       }
     }
     last_sum = this_sum;

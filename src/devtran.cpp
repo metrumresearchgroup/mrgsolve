@@ -92,7 +92,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
-  const double ss_tol         = Rcpp::as<double> (parin["ss_tol"]);
   
   if(verbose) say("unpacking data");
   
@@ -169,7 +168,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.sigma(SIGMA);
   prob.copy_parin(parin);
   prob.pass_envir(&envir);
-  prob.ss_tol = ss_tol;
   const unsigned int neq = prob.neq();
   LSODA solver(neq);
   solver.copy_parin(parin);
