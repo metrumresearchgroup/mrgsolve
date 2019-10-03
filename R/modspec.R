@@ -247,7 +247,7 @@ move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 #local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
 
-move_global <- function(x,env,using_vars=FALSE) {
+move_global <- function(x,env) {
   
   what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
   
@@ -257,25 +257,21 @@ move_global <- function(x,env,using_vars=FALSE) {
   l <- lapply(x[what], get_c_vars)
   ll <- unlist(l, use.names=FALSE)
   
-  if(!using_vars) {
-    env[["global"]] <- c(env[["global"]], "namespace {", paste0("  ", ll), "}")  
-  }
+  env[["global"]] <- c("typedef double capture;",
+                       "namespace {",
+                       paste0("  ",ll),
+                       "}")
   
   ll <- cvec_cs(unlist(ll,use.names=FALSE))
   ll <- gsub(";","",ll,fixed=TRUE)
   ll <- setdiff(ll, c("double", "int", "bool", "capture"))
-  
-  if(using_vars) {
-    env[["vars"]] <- c(env[["vars"]], ll)
-  } else {
-    env[["move_global"]] <- ll  
-  }
+  env[["move_global"]] <- ll
   
   cap <- vector("list")
   
   for(w in what) {
     
-    x[[w]] <- gsub(move_global_re_sub,"\\2",x[[w]],perl=TRUE)
+    x[[w]] <- gsub(move_global_re_sub, "\\2",x[[w]],perl=TRUE)
     
     # **************************
     # Search for capture 
@@ -293,7 +289,7 @@ move_global <- function(x,env,using_vars=FALSE) {
       ll <- ll[substr(ll,1,8) == "capture "]
       cap[[w]] <- substr(ll,9,nchar(ll)-1)
     }
-    # --------------------------------
+    # **************************
     
   } # <-- End for(w in what)
   
@@ -301,9 +297,11 @@ move_global <- function(x,env,using_vars=FALSE) {
     # must trim this
     x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
   }
-  # -------------------------
+  # **************************
+  
   return(x)
 }
+
 
 get_c_vars <- function(y) {
   m <- gregexpr(move_global_re_find,y,perl=TRUE)
@@ -499,7 +497,6 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env$capture <- vector("list",n)
   mread.env$error <- character(0)
   mread.env$covariates <- character(0)
-  mread.env$vars <- character(0)
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
   mread.env

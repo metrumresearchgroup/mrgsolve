@@ -127,7 +127,6 @@ protomod <- list(model=character(0),
                  param = new("parameter_list"),
                  init=new("cmt_list"),
                  capture=character(0),
-                 vars=character(0),
                  Icap = integer(0),
                  capL = character(0),
                  Icmt = integer(0), 
@@ -216,8 +215,6 @@ valid.mrgmod <- function(object) {
 ##' @slot code a character vector of the model code
 ##' @slot capture a character vector of variables that are captured from 
 ##' the simulation \code{<character>}
-##' @slot vars model C++ variable names handled by the vars system 
-##' \code{<character>}
 ##' @slot mindt minimum time between simulation records \code{<numeric>}
 ##' @slot envir internal model environment \code{<environment>}
 ##' @slot shlib a list of data related to build outcome \code{<list>}
@@ -400,7 +397,6 @@ setMethod("names", "mrgmod", function(x) {
   ans$param <- Pars(x)
   ans$init <- Cmt(x)
   ans$capture <- unname(x@capture)
-  ans$vars <- x@vars
   ans$omega <- names(omat(x))
   ans$sigma <- names(smat(x))
   ans$omega_labels <- labels(omat(x))
@@ -425,7 +421,6 @@ setMethod("names", "mrgmod", function(x) {
 ##' - `npar`: number of parameters
 ##' - `neq`: number of compartments or differential equations
 ##' - `pars`: names of model parameters
-##' - `vars`: names of C++ variables handled by the vars system
 ##' - `covariates`: names of parameters identified as covariates
 ##' - `cmt`: names of model compartments
 ##' - `param`: the parameter list
@@ -516,7 +511,6 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     cmt <- cmt(x)
     
     covariates <- as.character(x@shlib$covariates)
-    vars <- x@vars
     pars <- pars(x)
     neq <- neq(x)
     npar <- npar(x)

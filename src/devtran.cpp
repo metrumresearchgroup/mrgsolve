@@ -71,7 +71,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::CharacterVector& parnames,
                    const Rcpp::NumericVector& init,
                    Rcpp::CharacterVector& cmtnames,
-                   Rcpp::CharacterVector& vars, 
                    const Rcpp::IntegerVector& capture,
                    const Rcpp::List& funs,
                    const Rcpp::NumericMatrix& data,
@@ -133,7 +132,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   // Create odeproblem object
-  odeproblem prob(inpar, init, vars, funs, capture.at(0));
+  odeproblem prob(inpar, init, funs, capture.at(0));
   prob.omega(OMEGA);
   prob.sigma(SIGMA);
   prob.copy_parin(parin);

@@ -30,7 +30,6 @@ functions (with a call to \code{mrgsolve:::funset}).
 \item \code{npar}: number of parameters
 \item \code{neq}: number of compartments or differential equations
 \item \code{pars}: names of model parameters
-\item \code{vars}: names of C++ variables handled by the vars system
 \item \code{covariates}: names of parameters identified as covariates
 \item \code{cmt}: names of model compartments
 \item \code{param}: the parameter list

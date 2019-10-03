@@ -238,15 +238,6 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   return(NULL)
 }
 
-
-# USING_VARS -------------------
-#' @export
-handle_spec_block.specUSING_VARS <- function(x,env,...) {
-  #check_block_data(x,env$ENV,pos)
-  x <- cvec_cs(x)
-  env[["vars"]] <- c(env[["vars"]],x)
-}
-
 # THETA ------------------------------------------------------------------------
 
 #' @export
