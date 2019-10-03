@@ -89,7 +89,6 @@ class odeproblem {
 
 public:
   odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, 
-             Rcpp::CharacterVector vars,
              Rcpp::List funs,
              int n_capture_);
 
@@ -196,13 +195,11 @@ public:
   std::vector<double> Ydot;
   std::vector<double> Yout;
   std::vector<double> Param;
-  std::vector<double> Vars;
   std::vector<double> Capture; ///< captured data items
   double Atol;
   double Rtol;
   int Npar;
   int Neq;
-  int Nvar;
   int Istate; ///< istate value
   double ss_tol;
   double ss_n;

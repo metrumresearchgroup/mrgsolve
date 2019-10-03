@@ -205,18 +205,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- parse_env(spec,project=build$project,ENV)
-  
-  # Safe mode?
-  using_vars <- exists("USING_VARS", spec) || isTRUE(SET[["using_vars"]])
-  # if(using_vars) {
-  #   if(exists("GLOBAL",spec)) {
-  #     wstop("$GLOBAL block is prohibited in safe models")  
-  #   }
-  # }
-  # 
 
   ## The main sections that need R processing:
-  spec <- move_global(spec,mread.env,using_vars)
+  spec <- move_global(spec,mread.env)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
@@ -241,8 +232,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   init <-  as.list(do.call("c",unname(mread.env$init)))
   ode <- do.call("c", unname(mread.env$ode))
   annot_list_maybe <- nonull.list(mread.env$annot)
-  vars <- mread.env[["vars"]]
-  
+
   if (!length(annot_list_maybe)) {
     annot <- tibble()
   } else {
@@ -317,8 +307,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     modfile = basename(build$modfile)
   )
   
-  x@vars <- vars
-  
   x <- store_annot(x,annot)
   
   ## ADVAN 13 is the ODEs
@@ -366,7 +354,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(
     pars = names(param),
-    vars = vars,
     cmt = names(init),
     ode_func(x),
     main_func(x),
@@ -464,7 +451,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
-    message("Building ", model(x), ifelse(using_vars, " <using_vars> ", ""), " ... ", appendLF=FALSE)
+    message("Building ", model(x), " ... ", appendLF=FALSE)
   }
   
   # Wait at least 2 sec since last compile

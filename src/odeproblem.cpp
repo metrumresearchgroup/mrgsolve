@@ -51,20 +51,17 @@ void dosimeps(void* prob_) {
 
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
-                       Rcpp::CharacterVector vars,
                        Rcpp::List funs,
                        int n_capture_) {
   
   Npar = int(param.size());
   Neq = int(init.size());
-  Nvar = int(vars.size());
-  
+ 
   Istate = 1;
   
   Advan = 13;
   
   Param.assign(Npar,0.0);
-  Vars.assign(Nvar,0.0);
   Y.assign(Neq,0.0);
   Yout.assign(Neq+1,0.0);
   Ydot.assign(Neq,0.0);
@@ -201,7 +198,7 @@ void odeproblem::init_call(const double& time) {
   d.time = time;
   
   if(Do_Init_Calc) {
-    Inits(Init_value,Y,Param,Vars,F,Alag,R,D,d,pred,simeta);
+    Inits(Init_value,Y,Param,F,Alag,R,D,d,pred,simeta);
     for(int i=0; i < Neq; ++i) {
       Y[i] = Init_value[i];
       Init_dummy[i] = Init_value[i];
@@ -210,7 +207,7 @@ void odeproblem::init_call(const double& time) {
     for(int i=0; i < Neq; ++i) {
       Init_dummy[i] = Init_value[i];
     }
-    Inits(Init_dummy,Y,Param,Vars,F,Alag,R,D,d,pred,simeta);
+    Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
   }
 }
 
@@ -222,17 +219,17 @@ void odeproblem::init_call(const double& time) {
  */
 void odeproblem::init_call_record(const double& time) {
   d.time = time;
-  Inits(Init_dummy,Y,Param,Vars,F,Alag,R,D,d,pred,simeta);
+  Inits(Init_dummy,Y,Param,F,Alag,R,D,d,pred,simeta);
 }
 
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
-  Table(Y,Init_value,Param,Vars,F,R,d,pred,Capture,simeps);  
+  Table(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
 }
 
 //! Call <code>$PREAMBLE</code> function.
 void odeproblem::config_call() {
-  Config(d,Param,Vars,Neq,Npar);
+  Config(d,Param,Neq,Npar);
 }
 
 //! Reset all infusion rates.
@@ -686,7 +683,6 @@ void odeproblem::advan(int x) {
 // [[Rcpp::export]]
 Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
                       const Rcpp::NumericVector& linit,
-                      Rcpp::CharacterVector& vars, 
                       int Neta, int Neps,
                       const Rcpp::CharacterVector& capture,
                       const Rcpp::List& funs,
@@ -694,7 +690,7 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   
   Rcpp::List ans;
   
-  odeproblem prob(lparam, linit, vars, funs, capture.size());
+  odeproblem prob(lparam, linit, funs, capture.size());
   prob.neta(Neta);
   prob.neps(Neps);
   prob.pass_envir(&envir);

@@ -18,6 +18,7 @@
 
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:
+typedef double capture;
 namespace {
   double CLi;
   double VCi;
