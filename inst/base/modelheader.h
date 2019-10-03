@@ -82,7 +82,6 @@ typedef double capture;
 #define AMT self.amt
 // Data set cmt
 #define CMT self.cmt
-#define VARS _VARS_
 
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration
