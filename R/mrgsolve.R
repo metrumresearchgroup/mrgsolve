@@ -75,7 +75,7 @@ tgrid_id <- function(col,idata) {
 validate_idata <- function(idata) {
   if(is.null(idata)) return(invisible(TRUE))
   if(!(is.data.frame(idata) | is.matrix(idata)))
-    stop("idata needs to be either NULL, data.frame, or matrix.")
+    wstop("idata needs to be either NULL, data.frame, or matrix.")
   return(invisible(TRUE))
 }
 
@@ -276,7 +276,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
     if(is.valid_data_set(events)) {
       return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
     }
-    stop("invalid 'events' argument") 
+    wstop("invalid 'events' argument") 
   }
   events <- as.data.frame(events, add_ID = 1)
   args <- list(...)
@@ -314,20 +314,20 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
     if(is.valid_data_set(events)) {
       return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
     }
-    stop("invalid 'events' argument") 
+    wstop("invalid 'events' argument") 
   }
   expand <- !has_ID(events) & nrow(idata) > 0
   events <- as.data.frame(events, add_ID = 1)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
-    idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
+    idata[["ID"]] <- seq_len(nrow(idata))
   } 
   if(expand) {
     events <- convert_character_cmt(events,x)
     events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
                     match("ID",colnames(events),0),
                     numeric_data_matrix(events),
-                    idata[,"ID"])
+                    idata[["ID"]])
   }
   args <- list(...)
   #x <- do.call(update, c(x,args))
@@ -389,8 +389,7 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   nid <- max(nid,1)
   idata <- data.frame(ID = seq_len(nid))
   if(has_ID(events)) {
-    stop("event object cannot contain 'ID' when using 'nid' argument",
-         call. = FALSE)
+    wstop("event object cannot contain 'ID' when using 'nid' argument")
   } 
   if(is.ev(events)) {
     return(mrgsim_ei(x, events, idata, ...) )

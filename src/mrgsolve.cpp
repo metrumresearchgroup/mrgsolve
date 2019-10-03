@@ -53,9 +53,9 @@ int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector
   return(ma[0]-1);
 }
 
-void negative_istate(int istate, double maxsteps, double rtol, double atol) {
+void negative_istate(int istate, int maxsteps, double rtol, double atol) {
   
-  Rcpp::Rcerr << std::endl << "[mrgsolve] LSODA returned with negative istate: " << istate << std::endl;
+  Rcpp::Rcerr << std::endl << "[mrgsolve] lsoda returned with negative istate: " << istate << std::endl;
   /*
    ISTATE = 2  if DLSODA was successful, negative otherwise.
    -1 means excess work done on this call (perhaps wrong JT).

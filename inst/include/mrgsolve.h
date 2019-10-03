@@ -26,7 +26,7 @@
 extern "C"{DL_FUNC tofun(SEXP a);}
 
 // Send report to console when istate returns negative after dlsoda call
-void negative_istate(int istate, double maxsteps, double rtol, double atol);
+void negative_istate(int istate, int maxsteps, double rtol, double atol);
 
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 
