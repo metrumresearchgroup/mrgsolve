@@ -90,12 +90,9 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
 dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
-  
   int n = Data.nrow();
-  
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
-  
   for(int i=1; i < n; ++i) {
     if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
@@ -175,8 +172,10 @@ void dataobject::locate_tran() {
 }
 
 void dataobject::idata_row() {
+  Uid.resize(Data.nrow());
   for(int i=0; i < Data.nrow(); ++i) {
     idmap[Data(i,Idcol)] = i;
+    Uid[i] = Data(i,Idcol);
   }
 }
 
@@ -201,75 +200,6 @@ void dataobject::reload_parameters(const Rcpp::NumericVector& PARAM,
   for(size_t i = 0; i < n; ++i) {
     prob->param(par_to[i],PARAM[par_to[i]]);
   }
-}
-
-void dataobject::expand_records(recstack& a, 
-                                dataobject& idat,
-                                int& NID, 
-                                unsigned int& obscount, 
-                                unsigned int& evcount,
-                                bool debug) {
-  
-  //Rcpp::Rcout << "Checking idata" << std::endl; 
-  
-  if(idat.nrow()==0) {
-    //Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
-    return;
-  }
-  
-  if(a.size() > 1) {
-    return;
-    throw Rcpp::exception("data size isn't 1",false);
-  }
-  
-  if(!(Uid.size()==1)) {
-    throw Rcpp::exception("more than 1 found in the data set",false);  
-  }
-
-  obscount = 0;
-  evcount = 0;
-  int idcol = idat.Idcol;
-  int nid = idat.nrow();
-  int nrec = a[0].size();
-  int start = Startrow[0];
-  int end = Endrow[0];
-  Startrow.resize(nid);
-  Endrow.resize(nid);
-  Uid.resize(nid);
-  a.resize(nid);
-  
-  NID = nid;
-  
-  for(int i = 0; i < nid; ++i) {
-    Startrow[i] = start;
-    Endrow[i]= end;
-    Uid[i] = idat.Data(i,idcol);
-    a[i].resize(nrec);
-    for(int j = 0; j < nrec; ++j) {
-      rec_ptr rec = std::make_shared<datarecord>(
-        a[0][j]->Cmt,
-        a[0][j]->Evid, 
-        a[0][j]->Amt,
-        a[0][j]->Time,
-        a[0][j]->Rate,
-        a[0][j]->Pos,
-        idat.Data(i,idcol)
-      );
-      rec->Ss = a[0][j]->Ss;
-      rec->Ii = a[0][j]->Ii;
-      rec->Addl = a[0][j]->Addl;
-      rec->Output = true;
-      rec->Fromdata = true;
-      rec->Armed = a[0][j]->Armed;
-      if(rec->Evid==0) {
-        ++obscount;
-      } else {
-        ++evcount;
-      }
-      a[i][j] = rec;
-    }
-  }
-  return;
 }
 
 void dataobject:: get_records_pred(recstack& a, int NID, int neq,
@@ -489,12 +419,6 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   }
 }
 
-void dataobject::get_ids(uidtype* ids) {
-  for(int i = 0; i < Data.nrow(); ++i) {
-    ids->push_back(Data(i,Idcol)); 
-  }
-}
-
 unsigned int dataobject::get_idata_row(const double ID) {
   if(idmap.size()==0) return 0;
   return idmap[ID];
@@ -504,16 +428,12 @@ void dataobject::check_idcol(dataobject& idat) {
   
   if(idat.ncol() == 0) {return;}
   
-  uidtype uidata;
-  idat.get_ids(&uidata);
-  
-  // Uids from data
-  uidtype uthis  = this->return_uid();
-  
-  sort_unique(uthis);
+  uidtype uidata = idat.Uid;
+  uidtype udata = Uid;
   sort_unique(uidata);
+  sort_unique(udata);
   
-  if(!std::includes(uidata.begin(),uidata.end(),uthis.begin(),uthis.end())) {
+  if(!std::includes(uidata.begin(),uidata.end(),udata.begin(),udata.end())) {
     throw Rcpp::exception(
         "ID found in the data set, but not in idata.",
         false);
@@ -581,3 +501,70 @@ void dataobject::carry_out(const recstack& a,
   }
 }
 
+// SAVE FOR LATER
+// void dataobject::expand_records(recstack& a, 
+//                                 dataobject& idat,
+//                                 int& NID, 
+//                                 unsigned int& obscount, 
+//                                 unsigned int& evcount,
+//                                 bool debug) {
+//   
+//   if(idat.nrow()==0) {
+//     //Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
+//     return;
+//   }
+//   
+//   if(a.size() > 1) {
+//     return;
+//     throw Rcpp::exception("data size isn't 1",false);
+//   }
+//   
+//   if(!(Uid.size()==1)) {
+//     throw Rcpp::exception("more than 1 found in the data set",false);  
+//   }
+//   
+//   obscount = 0;
+//   evcount = 0;
+//   int idcol = idat.Idcol;
+//   int nid = idat.nrow();
+//   int nrec = a[0].size();
+//   int start = Startrow[0];
+//   int end = Endrow[0];
+//   Startrow.resize(nid);
+//   Endrow.resize(nid);
+//   Uid.resize(nid);
+//   a.resize(nid);
+//   
+//   NID = nid;
+//   
+//   for(int i = 0; i < nid; ++i) {
+//     Startrow[i] = start;
+//     Endrow[i]= end;
+//     Uid[i] = idat.Data(i,idcol);
+//     a[i].resize(nrec);
+//     for(int j = 0; j < nrec; ++j) {
+//       rec_ptr rec = std::make_shared<datarecord>(
+//         a[0][j]->Cmt,
+//         a[0][j]->Evid, 
+//         a[0][j]->Amt,
+//         a[0][j]->Time,
+//         a[0][j]->Rate,
+//         a[0][j]->Pos,
+//         Uid[i]
+//       );
+//       rec->Ss = a[0][j]->Ss;
+//       rec->Ii = a[0][j]->Ii;
+//       rec->Addl = a[0][j]->Addl;
+//       rec->Output = true;
+//       rec->Fromdata = true;
+//       rec->Armed = a[0][j]->Armed;
+//       if(rec->Evid==0) {
+//         ++obscount;
+//       } else {
+//         ++evcount;
+//       }
+//       a[i][j] = rec;
+//     }
+//   }
+//   return;
+// }

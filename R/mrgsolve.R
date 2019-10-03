@@ -322,14 +322,13 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   } 
-  # if(expand) {
-  #   events <- convert_character_cmt(events,x)
-  #   events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
-  #                   match("ID",colnames(events),0),
-  #                   numeric_data_matrix(events),
-  #                   idata[,"ID"])
-  # }
-  
+  if(expand) {
+    events <- convert_character_cmt(events,x)
+    events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
+                    match("ID",colnames(events),0),
+                    numeric_data_matrix(events),
+                    idata[,"ID"])
+  }
   args <- list(...)
   #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)

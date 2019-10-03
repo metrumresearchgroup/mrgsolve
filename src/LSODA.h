@@ -6,6 +6,8 @@
  *        License:  MIT License
  */
 
+#include <RcppArmadillo.h>
+
 #ifndef LSODE_H
 #define LSODE_H
 
@@ -13,6 +15,8 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+class odeproblem;
+typedef odeproblem*  dtype;
 
 using namespace std;
 
@@ -24,15 +28,17 @@ using namespace std;
  * @Param time, double
  * @Param y, array of double.
  * @Param dydt, array of double
- * @Param data, void*
+ * @Param data, dtype 
  *
  * @Returns void
  */
 /* ----------------------------------------------------------------------------*/
-typedef void (*LSODA_ODE_SYSTEM_TYPE)(double t, double *y, double *dydt, void* _data);
+typedef void (*LSODA_ODE_SYSTEM_TYPE)(double t, double *y, double *dydt, 
+              dtype _data);
 typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot);
 //typedef void (*ODE_FUNC)(double t, double *y, double *dydt, double*);
-typedef void (*MRGSOLVE_ODE_FUNC)(int neq, double* t, double* y, double* ydot, std::vector<double>& param);
+typedef void (*MRGSOLVE_ODE_FUNC)(int neq, double* t, double* y, double* 
+              ydot, std::vector<double>& param);
 
 class LSODA
 {
@@ -79,20 +85,20 @@ public:
                size_t *const info);
     
     void prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
-              void *_data);
+              dtype _data);
     
     void lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
                double *t, double tout, int itask, int *istate, int iopt, int jt,
                //array<int, 7> &iworks, array<double, 4> &rworks,
-               void *_data);
+               dtype _data);
     
     void correction(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                     size_t *corflag, double pnorm, double *del, double *delp,
                     double *told, size_t *ncf, double *rh, size_t *m,
-                    void *_data);
+                    dtype _data);
     
     void stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
-               void *_data);
+               dtype _data);
     
     // We call this function in VoxelPools::
     void lsoda_update(LSODA_ODE_SYSTEM_TYPE f, 
@@ -102,7 +108,8 @@ public:
                       double *t,
                       const double tout, 
                       int *istate,
-                      void *const _data
+                      //dtype const _data
+                      dtype const _data
     );
     
     void terminate(int *istate);
@@ -126,9 +133,9 @@ public:
                   const vector<double> &w);
     
     static bool abs_compare(double a, double b);
-    
+    // WAS PRIVATE    
     // const size_t neq;
-    
+    int kflag, jstart;
 private:
     size_t ml, mu, imxer;
     double sqrteta;
@@ -147,8 +154,7 @@ private:
     array<array<double, 4>, 13> tesco;
     
     size_t illin, init, ierpj, iersl, jcur, l, miter, maxord, maxcor, msbp, mxncf;
-    
-    int kflag, jstart;
+
     
     size_t ixpr=0, jtyp, mused, mxordn, mxords = 12;
     size_t meth_;
@@ -181,7 +187,7 @@ private:
     std::vector<double> atol_;
     
     // public:
-    //     void *param = nullptr;
+    //     dtype param = nullptr;
 };
 
 #endif /* end of include guard: LSODE_H */
