@@ -27,7 +27,8 @@
 #include "RcppInclude.h"
 #include "mrgsolv.h"
 #include "datarecord.h"
-#include "LSODA.h"
+//#include "LSODA.h"
+
 
 // 
 // resim functor comes from mrgsolv.h
@@ -56,7 +57,8 @@ typedef void (*config_func)(MRGSOLVE_CONFIG_SIGNATURE);
 
 //! function to hand off to <code>DLSODA</code>
 //typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot, void* prob);
-typedef void (*LSODA_ODE_SYSTEM_TYPE)(double t, double *y, double *dydt, void* _data);
+typedef void (*LSODA_ODE_SYSTEM_TYPE)(double t, double *y, double *dydt, 
+              odeproblem* _data);
 typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot);
 //typedef void (*ODE_FUNC)(double t, double *y, double *dydt, double*);
 typedef void (*MRGSOLVE_ODE_FUNC)(int neq, double* t, double* y, double* ydot, std::vector<double>& param);
@@ -96,7 +98,7 @@ public:
 
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
-  void call_derivs(int *neq, double *t, double *y, double *ydot);
+  void call_derivs(double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
   
@@ -204,8 +206,6 @@ public:
   int Istate; ///< istate value
   double ss_tol;
   double ss_n;
-
-protected:
 
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions

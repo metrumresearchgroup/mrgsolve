@@ -37,9 +37,6 @@
  * Contact: Dilawar Singh <dilawars@ncbs.res.in>
  */
 
-
-#include <R.h>
-#include <Rcpp.h>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -75,8 +72,8 @@ LSODA::LSODA(int neq_)
   cm1 = {{0}};
   cm2 = {{0}};
   iworks = {{0}};
-  iworks[6] = 12;
-  iworks[5] = 5;
+  iworks[6] = 5;
+  iworks[5] = 12;
   rworks = {{0.0}};
   itask = 1;
   iopt = 0;
@@ -109,7 +106,7 @@ void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f,
                          double *t,
                          const double tout, 
                          int *istate,
-                         void *_data)
+                         dtype const _data)
 {
   // array<int, 7> iworks = {{0}};
   // array<double, 4> rworks = {{0.0}};
@@ -123,23 +120,23 @@ void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f,
   // jt = 2;
   
   // Fill-in values.
-  for (size_t i = 1; i <= neq; ++i) {
-    yout[i] = y[i - 1];
-  }
-  //std::copy(y.begin(), y.end(), 1+yout.begin());
+  // for (size_t i = 1; i <= neq; ++i) {
+  //   yout[i] = y[i - 1];
+  // }
+  std::copy(y.begin(), y.end(), 1+yout.begin());
   
   lsoda(f, neq, yout, t, tout, itask, istate, iopt, jt, _data);
   
-  //std::copy(1+yout.begin(), yout.end(), y.begin());
+  std::copy(1+yout.begin(), yout.end(), y.begin());
   // 
-  for(size_t i = 1; i <= neq; ++i) {
-    y[i - 1] = yout[i];
-  }
+  // for(size_t i = 1; i <= neq; ++i) {
+  //   y[i - 1] = yout[i];
+  // }
 }
 
 void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
                   double *t, double tout, int itask, int *istate, int iopt,
-                  int jt, void *_data)
+                  int jt, dtype _data)
 {
   //assert(tout > *t);
   
@@ -292,7 +289,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         mxordn = iworks[5];
         
         if (mxordn == 0)
-          mxordn = 12;
+          mxordn = 100; // 12
           //mxordn = 100;
         
         mxordn = min(mxordn, mord[0]);
@@ -300,7 +297,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         
         // if mxords is not given use 100.
         if (mxords == 0)
-          mxords = 5;
+          mxords = 100; // 5
           //mxords = 100;
         mxords = min(mxords, mord[1]);
         

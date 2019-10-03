@@ -171,15 +171,15 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param ydot left hand side of differential equations
  * @param prob an odeproblem object
  */
-void main_derivs(double t, double *y, double *ydot, void *data) {
-  odeproblem *prob = reinterpret_cast<odeproblem *>(data);
-  prob->call_derivs(&(prob->Neq),&t,y,ydot);  
+void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
+  //odeproblem *prob = reinterpret_cast<odeproblem *>(data);
+   data->call_derivs(&t,y,ydot);  
 }
 
-void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
-  Derivs(t,y,ydot,Init_value,Param,Vars);
+void odeproblem::call_derivs(double *t, double *y, double *ydot) {
+  Derivs(t,y,ydot,Init_value,Param);
   for(int i = 0; i < Neq; ++i) {
-    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+    ydot[i] = (ydot[i] + R0[i])*On[i];
   }
 }
 
@@ -341,7 +341,8 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
     // If Advan isn't 13, it needs to be 0/1/2/3/4
     Rcpp::stop("[mrgsolve] advan has invalid value.");
   }
-  solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,(void*) this);
+  
+  solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
   if(Istate < 0) {
     negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
   }

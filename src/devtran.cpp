@@ -104,7 +104,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   idat.idata_row();
   
   // Number of individuals in the data set
-  const int NID = dat.nid();
+  int NID = dat.nid();
   const int nidata = idat.nrow();
   
   unsigned int k = 0;
@@ -132,6 +132,22 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     CRUMP("recsort must be 1, 2, 3, or 4.");
   }
   
+  // Create odeproblem object
+  odeproblem prob(inpar, init, vars, funs, capture.at(0));
+  prob.omega(OMEGA);
+  prob.sigma(SIGMA);
+  prob.copy_parin(parin);
+  prob.pass_envir(&envir);
+  const unsigned int neq = prob.neq();
+  LSODA solver(neq);
+  solver.copy_parin(parin);
+  
+  recstack a(NID);
+  
+  unsigned int obscount = 0;
+  unsigned int evcount = 0;
+  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+
   // Requested compartments
   Rcpp::IntegerVector request = parin["request"];
   const unsigned int nreq = request.size();
@@ -161,22 +177,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Captures
   const unsigned int n_capture  = capture.size()-1;
   
-  // Create odeproblem object
-  
-  odeproblem prob(inpar, init, vars, funs, capture.at(0));
-  prob.omega(OMEGA);
-  prob.sigma(SIGMA);
-  prob.copy_parin(parin);
-  prob.pass_envir(&envir);
-  const unsigned int neq = prob.neq();
-  LSODA solver(neq);
-  solver.copy_parin(parin);
-  
-  recstack a(NID);
-  
-  unsigned int obscount = 0;
-  unsigned int evcount = 0;
-  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
   
   // Find tofd
   std::vector<double> tofd;
@@ -363,9 +363,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
   
-  
   if(verbose) say("starting the simulation ...");
-  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     

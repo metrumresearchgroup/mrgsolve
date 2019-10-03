@@ -112,9 +112,7 @@ public:
   
   void phantom_rec() {Output=false; Fromdata=false;}
   bool is_phantom() {return !Output && !Fromdata;}
-  
-protected:
-  
+
   double Time; ///< record time
   double Id; ///< record ID value
   int Pos; ///< record position number

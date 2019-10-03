@@ -1,6 +1,6 @@
 #include <R.h>
-#include <Rcpp.h>
-
+typedef odeproblem* dtype;
+  
 #ifndef LSODA_FUNCTIONS_H
 #define LSODA_FUNCTIONS_H
 #define ETA 2.2204460492503131e-16
@@ -298,7 +298,7 @@ c-----------------------------------------------------------------------
 */
 
 void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
-                  void *_data)
+                  dtype _data)
 {
     assert(neq + 1 == y.size());
 
@@ -938,7 +938,7 @@ void LSODA::scaleh(double *rh, double *pdh)
 } /* end scaleh   */
 
 void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
-                 void *_data)
+                 dtype _data)
 {
     size_t i = 0, ier = 0, j = 0;
     double fac = 0.0, hl0 = 0.0, r = 0.0, r0 = 0.0, yj = 0.0;
@@ -1051,7 +1051,7 @@ double LSODA::fnorm(int n, const vector<vector<double>> &a,
 void LSODA::correction(const size_t neq, vector<double> &y,
                        LSODA_ODE_SYSTEM_TYPE f, size_t *corflag, double pnorm,
                        double *del, double *delp, double *told, size_t *ncf,
-                       double *rh, size_t *m, void *_data)
+                       double *rh, size_t *m, dtype _data)
 {
     double rm = 0.0, rate = 0.0, dcon = 0.0;
 
@@ -1256,7 +1256,7 @@ void LSODA::methodswitch(double dsm, double pnorm, double *pdh, double *rh)
 {
     int lm1, lm1p1, lm2, lm2p1, nqm1, nqm2;
     double rh1, rh2, rh1it, exm2, dm2, exm1, dm1, alpha, exsm;
-
+    
     /*
        We are current using an Adams method.  Consider switching to bdf.
        If the current order is greater than 5, assume the problem is

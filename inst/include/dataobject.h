@@ -48,7 +48,7 @@ public:
   
   Rcpp::NumericMatrix Data;
   
-  virtual ~dataobject();
+  ~dataobject();
   
   unsigned int nrow() const  {return Data.nrow();}
   unsigned int ncol() const {return Data.ncol();}
@@ -58,19 +58,24 @@ public:
   int end(int i) const {return Endrow.at(i);}
   void map_uid();
   double get_uid(int i) const {return Uid.at(i);}
-  uidtype return_uid() const {return Uid;}
+  uidtype return_uid()  {return Uid;}
   void copy_parameters(int this_row,odeproblem *prob);
   void copy_inits(int this_row,odeproblem *prob);
   void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);
   void idata_row();
   unsigned int get_idata_row(const double ID);  
   void locate_tran();
-  void get_records(recstack& a, int NID, int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
-  void get_records_pred(recstack& a, int NID, int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
+  void get_records(recstack& a, int NID, int neq, 
+                   unsigned int& obscount, unsigned int& evcount, bool obsonly,
+                   bool debug);
+  void get_records_pred(recstack& a, int NID, int neq, unsigned int& obscount, 
+                        unsigned int& evcount, bool obsonly,bool debug);
+  // Function commented in dataobject.cpp
+  // void expand_records(recstack& a, dataobject& idat, int& NID, 
+  //                     unsigned int& obscount, unsigned int& evcount, bool debug);
   void check_idcol(dataobject& data);
   double get_value(const int row, const int col) const {return Data(row,col);}
   double get_id_value(const int row) const {return Data(row,Idcol);}
-  void get_ids(uidtype* ids);
   Rcpp::IntegerVector get_col_n(const Rcpp::CharacterVector& what);
   void carry_out(const recstack& a, 
                  Rcpp::NumericMatrix& ans,
@@ -81,8 +86,6 @@ public:
                  const unsigned int idata_carry_start);
   std::vector<unsigned int> col;
   Rcpp::CharacterVector Data_names;
-  
-protected:
   
   std::deque<double> Uid;  ///< unique IDs in the data set
   std::deque<int> Startrow;  ///< start row for each ID

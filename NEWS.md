@@ -15,8 +15,12 @@
   sets
 - Drop ODEPACK solver and implement lsoda in C++
 - Add C++11 as system requirement
+- Add constant infusion at steady state #249
+- Add `outvars` argument to update method; this will replace `Req`
+- Now using C++ version of lsoda; this replaces the ODEPACK fortran code #504
 
 # mrgsolve 0.9.2
+
 - Fix bug where system advanced to next time after advancing to steady state
   on a dosing record with ss=1 with no observation record at the same time
   but preceding the dosing record #484
