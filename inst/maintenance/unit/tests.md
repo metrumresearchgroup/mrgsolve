@@ -169,7 +169,7 @@
 |test-mrgmod.R             |test-mrgmod                          |defaults                                                                  |  3|      0|FALSE   |FALSE |       0|      3|
 |test-mrgsim_q.R           |test-mrgsim_q                        |simulation with a complete data set                                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R           |test-mrgsim_q                        |simcall=1 is deprecated                                                   |  1|      0|FALSE   |FALSE |       0|      1|
-|test-mrgsim_q.R           |test-mrgsim_q                        |qsim                                                                      |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mrgsim_q.R           |test-mrgsim_q                        |qsim issue-490                                                            |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim.R             |test-mrgsim                          |mrgsim_df                                                                 |  2|      0|FALSE   |FALSE |       0|      2|
 |test-mrgsim.R             |test-mrgsim                          |mrgsim with ev                                                            |  4|      0|FALSE   |FALSE |       0|      4|
 |test-mrgsim.R             |test-mrgsim                          |mrgsim with ev and idata                                                  |  3|      0|FALSE   |FALSE |       0|      3|
@@ -300,7 +300,7 @@
 |test-D-R-F.R              |test-D-R-F                           |Infusion duration (R_) lag time, multiple                                 |  3|      0|FALSE   |FALSE |       0|      3|
 |test-D-R-F.R              |test-D-R-F                           |Infusion duration (R_) with lag time and F                                |  3|      0|FALSE   |FALSE |       0|      3|
 |test-event-combinations.R |tran-inputs                          |good events issue-249                                                     |  7|      0|FALSE   |FALSE |       0|      7|
-|test-event-combinations.R |tran-inputs                          |bad events issue-249                                                      |  8|      0|FALSE   |FALSE |       0|      8|
+|test-event-combinations.R |tran-inputs                          |bad events issue-249                                                      |  9|      0|FALSE   |FALSE |       0|      9|
 |test-fail.R               |test-fail                            |build_fails                                                               |  1|      0|FALSE   |FALSE |       0|      1|
 |test-initials.R           |test-initials                        |Set initials via init                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-initials.R           |test-initials                        |Set initials via $MAIN                                                    |  9|      0|FALSE   |FALSE |       0|      9|
@@ -364,15 +364,18 @@
 |test-pred.R               |test-pred                            |ss with pred is zero                                                      |  1|      0|FALSE   |FALSE |       0|      1|
 |test-pred.R               |test-pred                            |amt is ok                                                                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-request.R            |test-request                         |Req gets the right variables                                              |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R            |test-request                         |Req with rename                                                           |  2|      0|FALSE   |FALSE |       0|      2|
+|test-request.R            |test-request                         |request with rename                                                       |  2|      0|FALSE   |FALSE |       0|      2|
 |test-request.R            |test-request                         |Req gets the right variables, with request                                |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R            |Testing various request settings     |Testing request setting                                                   |  2|      0|FALSE   |FALSE |       0|      2|
-|test-request.R            |Testing various request settings     |Testing that request is properly set in $SET                              |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R            |Testing various request settings     |Request is properly set in $SET                                           |  4|      0|FALSE   |FALSE |       0|      4|
 |test-request.R            |Testing various request settings     |Testing that request is (all) by default                                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-request.R            |Testing various request settings     |Typedef capture                                                           |  5|      0|FALSE   |FALSE |       0|      5|
 |test-update.R             |test-update                          |Update parameter - via param                                              |  7|      0|FALSE   |FALSE |       0|      7|
 |test-update.R             |test-update                          |Update parameter - via idata                                              |  2|      0|FALSE   |FALSE |       0|      2|
 |test-update.R             |test-update                          |Update parameter - via data, not-time-varying                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R             |test-update                          |Update parameter - via data, time-varying                                 |  1|      0|FALSE   |FALSE |       0|      1|
+|test-z-alag-f.R           |Set F via F_CMT                      |ss=1 and F_CMT =0 issue-497                                               |  2|      0|FALSE   |FALSE |       0|      2|
 |test-z-alag-f.R           |Set F via F_CMT                      |F is set for compartment 1 and 2                                          |  6|      0|FALSE   |FALSE |       0|      6|
 |test-z-alag-f.R           |Set ALAG via ALAG_CMT                |ALAG is set for compartment 1 and 2                                       |  6|      0|FALSE   |FALSE |       0|      6|
 |test-z-alag-f.R           |Set ALAG via ALAG_CMT                |F is set for multiple doses                                               |  2|      0|FALSE   |FALSE |       0|      2|
