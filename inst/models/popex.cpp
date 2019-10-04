@@ -1,7 +1,10 @@
 $PROB
 # Example population PK model
 
-$PARAM TVKA = 0.5, TVCL = 1, TVV = 24, WT=70
+$PARAM TVKA = 0.5, TVCL = 1, TVV = 24
+
+$PARAM @covariates
+WT = 70
 
 $PKMODEL cmt="GUT CENT", depot=TRUE
 

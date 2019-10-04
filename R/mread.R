@@ -176,11 +176,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   model <- build$model
   
   ## Read the model spec and parse:
-  is_rmd <- grepl("\\.[rR]md$", build$modfile)[1]
+  is_rmd <- grepl("\\.[rR]md$", build[["modfile"]])[1]
   if(is_rmd) {
-    spec <- modelparse_rmd(readLines(build$modfile,warn=FALSE))
+    spec <- modelparse_rmd(readLines(build[["modfile"]],warn=FALSE))
   } else {
-    spec  <- modelparse(readLines(build$modfile,warn=FALSE))
+    spec  <- modelparse(readLines(build[["modfile"]],warn=FALSE))
   }
   
   ## Block name aliases
@@ -198,7 +198,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
-  ENV <- eval_ENV_block(spec[["ENV"]],build$project)
+  ENV <- eval_ENV_block(spec[["ENV"]],build[["project"]])
   spec[["SET"]] <- spec[["ENV"]] <-  NULL
   
   # Make a list of NULL equal to length of spec
@@ -227,11 +227,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   spec <- lapply(spec,handle_spec_block,env=mread.env)
   
   ## Collect the results
-  param <- as.list(do.call("c",unname(mread.env$param)))
-  fixed <- as.list(do.call("c",unname(mread.env$fixed)))
-  init <-  as.list(do.call("c",unname(mread.env$init)))
-  ode <- do.call("c", unname(mread.env$ode))
-  annot_list_maybe <- nonull.list(mread.env$annot)
+  param <- as.list(do.call("c",unname(mread.env[["param"]])))
+  fixed <- as.list(do.call("c",unname(mread.env[["fixed"]])))
+  init <-  as.list(do.call("c",unname(mread.env[["init"]])))
+  ode <- do.call("c", unname(mread.env[["ode"]]))
+  annot_list_maybe <- nonull.list(mread.env[["annot"]])
 
   if (!length(annot_list_maybe)) {
     annot <- tibble()
@@ -239,20 +239,20 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     annot <- dplyr::bind_rows(annot_list_maybe)
   }
 
-  omega <- omat(do.call("c", nonull.list(mread.env$omega)))
-  sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
-  namespace <- do.call("c", mread.env$namespace)
+  omega <- omat(do.call("c", nonull.list(mread.env[["omega"]])))
+  sigma <- smat(do.call("c", nonull.list(mread.env[["sigma"]])))
+  namespace <- do.call("c", mread.env[["namespace"]])
   
   # capture is a vector that may be name or to_name = from_name
   # capture will be to_names and it's names are from names 
-  capture <- unlist(do.call("c", nonull.list(mread.env$capture)))
+  capture <- unlist(do.call("c", nonull.list(mread.env[["capture"]])))
   capture <- .ren.create(as.character(capture))
   
   annot <- capture_param(annot,.ren.new(capture))
   
   check_globals_err <- check_globals(mread.env$move_global,names(init))
   if(length(check_globals_err) > 0) {
-    stop(check_globals_err, call.=FALSE)
+    wstop(check_globals_err)
   }
   
   ## Collect potential multiples
@@ -271,7 +271,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Virtual compartments
   if(any(is.element("VCMT", names(spec)))) {
     what <- which(names(spec)=="VCMT")
-    vcmt <- unique(names(unlist(mread.env$init[what])))
+    vcmt <- unique(names(unlist(mread.env[["init"]][what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
   
@@ -290,9 +290,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x <- new(
     "mrgmod",
     model = model,
-    soloc = build$soloc,
-    package = build$package,
-    project = build$project,
+    soloc = build[["soloc"]],
+    package = build$[["package"]],
+    project = build[["project"]],
     fixed = fixed,
     advan = subr[["advan"]],
     trans = subr[["trans"]],
@@ -304,18 +304,20 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     capture = .ren.chr(capture),
     envir = ENV, 
     plugin = names(plugin),
-    modfile = basename(build$modfile)
+    modfile = basename(build[["modfile"]]), 
+    annot = list(data = annot, embedded = TRUE), 
+    .build = build, 
+    .include = spec[["INCLUDE"]], 
+    .env = mread.env
   )
-  
-  x <- store_annot(x,annot)
   
   ## ADVAN 13 is the ODEs
   ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   ## Check $MAIN for the proper symbols
   if(x@advan %in% c(1,2,3,4)) {
     if(subr[["n"]] != neq(x)) {
-      stop("$PKMODEL requires  ", subr[["n"]] , 
-           " compartments in $CMT or $INIT.",call.=FALSE)
+      wstop("$PKMODEL requires  ", subr[["n"]] , 
+           " compartments in $CMT or $INIT.")
     }
     check_pred_symbols(x,spec[["MAIN"]])
   }
@@ -342,13 +344,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x <- update(x, data=args, open=TRUE, strict = FALSE)
   
   ## lock some of this down so we can check order later
-  x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib[["covariates"]] <- mread.env[["covariates"]]
-  inc <- spec[["INCLUDE"]]
-  if(is.null(inc)) inc <- character(0)
-  x@shlib[["include"]] <- inc
-  x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
-  x@shlib[["md5"]] <- build[["md5"]]
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
@@ -369,15 +364,15 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
 
   ## IN soloc directory
   cwd <- getwd()
-  setwd(build$soloc)
-  to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
+  setwd(build[["soloc"]])
+  to_restore <- set_up_env(plugin,clink=c(project(x),SET[["clink"]]))
   on.exit({
     setwd(cwd)
     do_restore(to_restore)
   })
   
   incl <- function(x) paste0('#include "', x, '"')
-  header_file <- paste0(build$model, "-mread-header.h")
+  header_file <- paste0(build[["model"]], "-mread-header.h")
 
   dbs <- NULL
   if(isTRUE(args[["dbsyms"]])) {
@@ -385,7 +380,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   cat(
-    paste0("// Source MD5: ", build$md5, "\n"),
+    paste0("// Source MD5: ", build[["md5"]], "\n"),
     plugin_code(plugin),
     ## This should get moved to rd
     "\n// FIXED:",
@@ -412,7 +407,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
-    paste0("// Source MD5: ", build$md5, "\n"),
+    paste0("// Source MD5: ", build[["md5"]], "\n"),
     incl(header_file),
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
@@ -445,7 +440,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   same <- check_and_copy(
     from = temp_write,
-    to = build$compfile
+    to = build[["compfile"]]
   )
   
   if(!compile) return(x)
@@ -502,7 +497,7 @@ mread_cache <- function(model = NULL,
   
   build <- new_build(file, model, project, soloc, code, preclean) 
   
-  cache_file <- file.path(build$soloc, "mrgmod_cache.RDS")
+  cache_file <- file.path(build[["soloc"]], "mrgmod_cache.RDS")
   
   ## If the cache file doesn't exist, build and return
   te <- file.exists(cache_file) & !preclean
@@ -511,8 +506,8 @@ mread_cache <- function(model = NULL,
   if(te) {
     x <- readRDS(cache_file)
     t0 <- is.mrgmod(x)
-    if(t1 <- is.character(x@shlib$md5)) {
-      t2 <- x@shlib$md5 == build$md5
+    if(t1 <- is.character(x@shlib[["md5"]])) {
+      t2 <- x@shlib[["md5"]] == build[["md5"]]
     }
     t3 <- file.exists(sodll(x))
     t4 <- length(x@shlib[["include"]])==0
@@ -525,8 +520,8 @@ mread_cache <- function(model = NULL,
   }
   
   x <- mread(
-    build$model, project, soloc=soloc, quiet=quiet, 
-    file = basename(build$modfile), ...
+    build[["model"]], project, soloc=soloc, quiet=quiet, 
+    file = basename(build[["modfile"]]), ...
   )
   
   saveRDS(x,file=cache_file)

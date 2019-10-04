@@ -164,7 +164,26 @@ valid.mrgmod <- function(object) {
 }
 # nocov end
 
-
+initialize.mrgmod <- function(.Object, ..., .build=NULL,.include=NULL,
+                              .env = NULL) {
+  .Object <- callNextMethod(.Object,...)
+  if(!is.null(.build)) {
+    .Object@code <- readLines(.build[["modfile"]],warn=FALSE)
+    .Object@shlib[["source"]] <- file.path(.build[["soloc"]],.build[["compfile"]])
+    .Object@shlib[["md5"]] <- .build[["md5"]]
+  }
+  if(!is.null(.env)) {
+    .Object@shlib[["covariates"]] <- .env[["covariates"]]
+  }
+  if(is.null(.include)) .include <- character(0)
+  .Object@shlib[["include"]] <- .include
+  .Object@shlib[["cmt"]] <- Cmt(.Object)
+  .Object@shlib[["par"]] <- Pars(.Object)
+  .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
+  .Object@shlib[["version"]] <- GLOBALS[["version"]]
+  .Object <- default_outputs(.Object)
+  .Object
+}
 
 ##' S4 class for mrgsolve model object
 ##'
@@ -229,7 +248,7 @@ valid.mrgmod <- function(object) {
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
 ##' @export
-setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
+setClass("mrgmod",slots=slots, prototype=protomod)
 
 setClass("packmod",
          prototype = list(shlib=list(compiled=TRUE, date="date of package compile"),
@@ -242,16 +261,9 @@ setClass("packmod",
          )
 )
 
-initialize_mrgmod <- function(.Object, ...) {
-  .Object <- callNextMethod()
-  .Object@shlib[["cmt"]] <- Cmt(.Object)
-  .Object@shlib[["par"]] <- Pars(.Object)
-  .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
-  .Object@shlib[["version"]] <- GLOBALS[["version"]]
-  .Object <- default_outputs(.Object)
-  .Object
-}
-setMethod("initialize", "mrgmod", initialize_mrgmod)
+setValidity("mrgmod", valid.mrgmod)
+setMethod("initialize", "mrgmod", initialize.mrgmod)
+
 
 ##' Return a pre-compiled, PK/PD model
 ##' 
