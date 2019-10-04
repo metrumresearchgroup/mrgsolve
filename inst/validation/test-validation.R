@@ -35,3 +35,10 @@ test_that("stiff problem", {
   auc <- summarise(out, auc = auc_partial(time,Cp)) %>% pull(auc) %>% unname
   expect_equal(round(auc), round(dose/(clmet*p$Kpli*p$fup)))
 })
+
+test_that("read xml with no namespace", {
+  nmx <- mrgsolve:::nmxml
+  expect_is(x1 <- nmx(file = "1.xml") ,"NMXMLDATA")
+  expect_is(x2 <- nmx(file = "211.xml", xpath = ".//estimation"),"NMXMLDATA")
+  expect_identical(names(x1),names(x2))
+})
