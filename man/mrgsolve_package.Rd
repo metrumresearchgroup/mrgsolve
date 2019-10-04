@@ -12,7 +12,7 @@ models based on systems of ordinary differential equations (ODE)
 that are typically employed for understanding pharmacokinetics,
 pharmacodynamics, and systems biology and pharmacology. mrgsolve
 consists of computer code written in the R and C++ languages,
-providing an interface to a C++ translation of the DLSODA differential
+providing an interface to a C++ translation of the lsoda differential
 equation solver.
 }
 \section{Resources}{

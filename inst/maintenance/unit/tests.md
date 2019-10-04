@@ -182,6 +182,7 @@
 |test-mrgsim.R             |test-mrgsim                          |update arguments are passed                                               |  6|      0|FALSE   |FALSE |       0|      6|
 |test-mrgsim.R             |test-mrgsim                          |no data generates error                                                   |  2|      0|FALSE   |FALSE |       0|      2|
 |test-mrgsim.R             |test-mrgsim                          |no idata no problem generates error                                       |  2|      0|FALSE   |FALSE |       0|      2|
+|test-mrgsim.R             |test-mrgsim                          |negative istate is reported issue-457                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-mrgsims.R            |test-mrgsims                         |mrgsims class                                                             |  2|      0|FALSE   |FALSE |       0|      2|
 |test-nmxml.R              |test-nmxml                           |Model spec with $NMXML block can be parsed                                |  1|      0|FALSE   |FALSE |       0|      1|
 |test-nmxml.R              |test-nmxml                           |THETAS are imported into the parameter list                               |  3|      0|FALSE   |FALSE |       0|      3|
@@ -286,6 +287,7 @@
 |test-alag.R               |test-alag                            |Error lagtime+duration >= ii for infusion                                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-alag.R               |test-alag                            |ss dose with lag time issue-484                                           |  1|      0|FALSE   |FALSE |       0|      1|
 |test-bioav.R              |test-bioav                           |Bioav test with doses at time=0                                           |  3|      0|FALSE   |FALSE |       0|      3|
+|test-capture.R            |test-request                         |Renamed captured items are properly named                                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-D-R-F.R              |test-D-R-F                           |Infusion rate is set by R_CMT                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-D-R-F.R              |test-D-R-F                           |Error when rate = -2 and R_CMT set instead of D_CMT                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-D-R-F.R              |test-D-R-F                           |Infusion rate is set by D_CMT                                             |  1|      0|FALSE   |FALSE |       0|      1|
@@ -303,8 +305,19 @@
 |test-initials.R           |test-initials                        |Set initials via init                                                     |  3|      0|FALSE   |FALSE |       0|      3|
 |test-initials.R           |test-initials                        |Set initials via $MAIN                                                    |  9|      0|FALSE   |FALSE |       0|      9|
 |test-initials.R           |test-initials                        |Set initials via idata                                                    |  2|      0|FALSE   |FALSE |       0|      2|
-|test-mevent.R             |mevent                               |mevent - time-varying KA                                                  |  0|      0|FALSE   |TRUE  |       0|      0|
-|test-modlib.R             |test-modlib models                   |Lagged bolus                                                              | 20|      0|FALSE   |TRUE  |       0|     20|
+|test-mevent.R             |mevent                               |mevent - time-varying KA                                                  |  4|      0|FALSE   |FALSE |       0|      4|
+|test-modlib.R             |test-modlib models                   |Lagged bolus                                                              | 32|      0|FALSE   |FALSE |       0|     32|
+|test-mread.R              |test-mread                           |Parameters are parsed properly with mread                                 |  3|      0|FALSE   |FALSE |       0|      3|
+|test-mread.R              |test-mread                           |Compartments are parsed properly with mread                               |  3|      0|FALSE   |FALSE |       0|      3|
+|test-mread.R              |test-mread                           |Settings are parsed properly with mread                                   |  4|      0|FALSE   |FALSE |       0|      4|
+|test-mread.R              |test-mread                           |mread output had class mrgmod                                             |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mread.R              |test-mread                           |Tabled items are in simulated data                                        |  2|      0|FALSE   |FALSE |       0|      2|
+|test-mread.R              |test-mread                           |Omega matrices are properly parsed                                        |  4|      0|FALSE   |FALSE |       0|      4|
+|test-mread.R              |test-mread                           |Sigma matrices are properly parsed                                        |  3|      0|FALSE   |FALSE |       0|      3|
+|test-mread.R              |test-mread                           |EPS values have proper variance                                           |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mread.R              |test-mread                           |Error when code is passed as project                                      |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mread.R              |test-mread                           |Model name with spaces is error                                           |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mread.R              |test-mread                           |Error with duplicate blocks                                               |  2|      0|FALSE   |FALSE |       0|      2|
 |test-nocb.R               |test-nocb                            |simulation with nocb                                                      |  2|      0|FALSE   |FALSE |       0|      2|
 |test-nocb.R               |test-nocb                            |simulation with locf                                                      |  2|      0|FALSE   |FALSE |       0|      2|
 |test-pk.R                 |One compartment model tests          |one-compartment, bolus                                                    |  1|      0|FALSE   |FALSE |       0|      1|
@@ -339,8 +352,23 @@
 |test-pkmodel.R            |Compare PKMODEL with equivalent ODEs |ADVAN4 same as ODE - CENT,infus,ss,addl                                   |  2|      0|FALSE   |FALSE |       0|      2|
 |test-pkmodel.R            |Compare PKMODEL with equivalent ODEs |ADVAN4 same as ODE - GUT,bolus,ss,addl                                    |  2|      0|FALSE   |FALSE |       0|      2|
 |test-pkmodel.R            |Compare PKMODEL with equivalent ODEs |Incorrect number of compartments causes error                             |  1|      0|FALSE   |FALSE |       0|      1|
-|test-plugin.R             |PLUGIN: Rcpp                         |Rcpp all distributions                                                    |  0|      0|FALSE   |TRUE  |       0|      0|
-|test-plugin.R             |PLUGIN: simeta                       |resimulate ETAs                                                           |  0|      0|FALSE   |TRUE  |       0|      0|
+|test-plugin.R             |PLUGIN: Rcpp                         |Rcpp all distributions                                                    |  3|      0|FALSE   |FALSE |       0|      3|
+|test-plugin.R             |PLUGIN: simeta                       |resimulate ETAs                                                           |  3|      0|FALSE   |FALSE |       0|      3|
+|test-pred.R               |test-pred                            |with no data set                                                          |  3|      0|FALSE   |FALSE |       0|      3|
+|test-pred.R               |test-pred                            |data_set with no time                                                     |  3|      0|FALSE   |FALSE |       0|      3|
+|test-pred.R               |test-pred                            |data_set with negative times                                              |  4|      0|FALSE   |FALSE |       0|      4|
+|test-pred.R               |test-pred                            |time/TIME required when neq > 0                                           |  1|      0|FALSE   |FALSE |       0|      1|
+|test-pred.R               |test-pred                            |time/TIME not required when neq > 0                                       |  1|      0|FALSE   |FALSE |       0|      1|
+|test-pred.R               |test-pred                            |cmt with pred is zero                                                     |  1|      0|FALSE   |FALSE |       0|      1|
+|test-pred.R               |test-pred                            |rate with pred is zero                                                    |  1|      0|FALSE   |FALSE |       0|      1|
+|test-pred.R               |test-pred                            |ss with pred is zero                                                      |  1|      0|FALSE   |FALSE |       0|      1|
+|test-pred.R               |test-pred                            |amt is ok                                                                 |  1|      0|FALSE   |FALSE |       0|      1|
+|test-request.R            |test-request                         |Req gets the right variables                                              |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R            |test-request                         |Req gets the right variables, with request                                |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R            |Testing various request settings     |Testing request setting                                                   |  2|      0|FALSE   |FALSE |       0|      2|
+|test-request.R            |Testing various request settings     |Testing that request is properly set in $SET                              |  4|      0|FALSE   |FALSE |       0|      4|
+|test-request.R            |Testing various request settings     |Testing that request is (all) by default                                  |  1|      0|FALSE   |FALSE |       0|      1|
+|test-request.R            |Testing various request settings     |Typedef capture                                                           |  5|      0|FALSE   |FALSE |       0|      5|
 |test-update.R             |test-update                          |Update parameter - via param                                              |  7|      0|FALSE   |FALSE |       0|      7|
 |test-update.R             |test-update                          |Update parameter - via idata                                              |  2|      0|FALSE   |FALSE |       0|      2|
 |test-update.R             |test-update                          |Update parameter - via data, not-time-varying                             |  1|      0|FALSE   |FALSE |       0|      1|

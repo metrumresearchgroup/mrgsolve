@@ -80,7 +80,7 @@ test_that("mrgsim with ev and ID and idata", {
   out <- mrgsim(mod, idata=idata, events = e_id)
   
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
-
+  
   expect_identical(out,out_pipe)
   expect_equal(length(unique(out$ID)),3)  
 })
@@ -178,4 +178,15 @@ test_that("no idata no problem generates error", {
   idata <- as.data.frame(e)[0,]
   expect_is(mrgsim(mod, events = e, idata = idata, end = -1), "mrgsims")
   expect_is(mrgsim(mod, data = data, idata = idata, end = -1), "mrgsims")
+})
+
+test_that("negative istate is reported issue-457", {
+  mod <- update(mod, maxsteps = 1)
+  x <- capture.output(
+    expect_error(mrgsim(mod), "simulation terminated"), 
+    type = "message"
+  )
+  x <- capture.output(try(mrgsim(mod)), type = "message")
+  expect_true(grepl("consider increasing maxsteps", x[1]))
+  expect_true(grepl("lsoda returned with negative istate: -1", x[3]))
 })

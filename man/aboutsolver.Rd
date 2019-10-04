@@ -2,11 +2,22 @@
 % Please edit documentation in R/package.R
 \name{aboutsolver}
 \alias{aboutsolver}
-\title{About the DLSODA differential equation solver used by mrgsolve}
+\title{About the lsoda differential equation solver used by mrgsolve}
 \description{
-About the DLSODA differential equation solver used by mrgsolve
+About the lsoda differential equation solver used by mrgsolve
 }
-\section{DLSODA}{
+\section{Attribution}{
+
+
+The differential equation solver is a C++ translation of DLSODA from 
+ODEPACK.  The C++ translation was created by Dilawar Singh and hosted 
+here [https://github.com/dilawar/libsoda](https://github.com/dilawar/libsoda). 
+As I understand the history of the code, Heng Li was also involved in early 
+versions of the code written in C.  There was a potentially-related 
+project hosted here [https://github.com/sdwfrost/liblsoda](https://github.com/sdwfrost/liblsoda).
+
+The following history was recorded in the source code published by 
+Dilawar Singh:
 
 \preformatted{
 /*
