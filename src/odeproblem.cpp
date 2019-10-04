@@ -169,7 +169,6 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param prob an odeproblem object
  */
 void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
-  //odeproblem *prob = reinterpret_cast<odeproblem *>(data);
    data->call_derivs(&t,y,ydot);  
 }
 
