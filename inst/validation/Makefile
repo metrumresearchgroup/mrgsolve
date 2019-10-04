@@ -1,2 +1,2 @@
 all:
-	Rscript -e 'testthat::test_file("test-validation.R")'
+	Rscript -e 'testthat::test_dir(".")'
