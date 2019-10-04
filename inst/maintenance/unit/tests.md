@@ -235,6 +235,7 @@
 |test-rng.R                |test-rng                             |Different seeds give different results without call to set.seed()         |  1|      0|FALSE   |FALSE |       0|      1|
 |test-rng.R                |test-rng                             |Different seeds give different results with different calls to set.seed() |  1|      0|FALSE   |FALSE |       0|      1|
 |test-rng.R                |test-rng                             |Same seeds give same results with call to set.seed()                      |  1|      0|FALSE   |FALSE |       0|      1|
+|test-ss.R                 |test-ss                              |ss_n and ss_tol                                                           |  3|      0|FALSE   |FALSE |       0|      3|
 |test-tad.R                |test-tad                             |tad                                                                       |  7|      0|FALSE   |FALSE |       0|      7|
 |test-tad.R                |test-tad                             |tad recognizes evid 1 and 4 issue-502                                     |  1|      0|FALSE   |FALSE |       0|      1|
 |test-tgrid.R              |test-tgrid                           |tgrid                                                                     |  5|      0|FALSE   |FALSE |       0|      5|
