@@ -48,6 +48,14 @@ mod <-
   carry_out(evid) %>% 
   update(end=2)
 
+test_that("ss=1 and F_CMT =0 issue-497", {
+  mod <- param(mod, F1 = 0)
+  out <- mrgsim(mod, ev(amt = 100, ii = 24, ss=1), delta=1,end=6)
+  expect_is(out, "mrgsims")
+  expect_true(all(out$CENT==0))
+})
+
+
 mod1 <- mod %>% ev(ev1)
 mod2 <- mod %>% ev(ev2)
 

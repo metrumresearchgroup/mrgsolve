@@ -39,7 +39,7 @@ test_that("simcall=1 is deprecated", {
   expect_error(mrgsim_q(mod,temp,stime=stime(mod),simcall=1))
 })
 
-test_that("qsim", {
+test_that("qsim issue-490", {
   out1 <- mrgsim_df(mod,temp)
   out2 <- qsim(mod,temp,output="df")
   expect_identical(out1,out2)
