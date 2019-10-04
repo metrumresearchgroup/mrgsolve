@@ -51,6 +51,19 @@ test_that("Req gets the right variables", {
   expect_identical(x4,s_(ID,time,b,z))
 })
 
+test_that("Req with rename", {
+  x2 <- names(mod %>% Req(R1 = PERIPH,R2 = GUT) %>% mrgsim)
+  expect_identical(x2,s_(ID,time,R2, R1))
+  expect_error(mod %>% Req(R1 = PERIPH, R1 = GUT) %>% mrgsim)
+})
+
+test_that("request with rename", {
+  mod2 <- update(mod, req = "R1 = PERIPH, R2 = GUT")
+  x2 <- names(mrgsim(mod2))
+  expect_identical(x2,s_(ID,time,R2, R1,b,z))
+  expect_error(update(mod, req="R1 = PERIPH, R1 = GUT"))
+})
+
 test_that("Req gets the right variables, with request", {
   mod <- update(mod, request="CENT")
   x1 <- names(mod %>% mrgsim)
@@ -112,7 +125,7 @@ double ETA1 = ETA(1);
 double EPS1 = EPS(1);
 '
 
-test_that("Testing that request is properly set in $SET", {
+test_that("Request is properly set in $SET", {
   mod <- suppressWarnings(mcode("test3bqea",code))
   cols <- names(mrgsim(mod))
   expect_identical(mod@request, "CENT")
@@ -146,16 +159,16 @@ test_that("Typedef capture", {
   capture capture_y = 1234;
   double capture_n = 999;
   '
-
+  
   mod <- mcode("test3dbbae", code)
-
+  
   out <- mod %>% mrgsim(end=3)
-
+  
   expect_true(all(out$a == 1))
   expect_true(all(out$b == 2))
   expect_true(all(out$d == 4))
   expect_false("capture_n" %in% names(out))
-
+  
   code <- '
   $CMT CM_T
   $ODE
@@ -164,7 +177,7 @@ test_that("Typedef capture", {
   dxdt_CM_T = 0;
   '
   expect_error(mod <- mcode("test3ewerw", code))
-
+  
 })
 
 

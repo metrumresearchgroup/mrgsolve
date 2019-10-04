@@ -52,13 +52,13 @@
   list(Old = from, New = to)
 }
 
-.ren.create <- function(x, y = NULL, sanitize = "sanitize_capture") {
+.ren.create <- function(x, y = NULL, sanitize = "sanitize_capture",unique=TRUE) {
   self <- list(identical = FALSE, old = character(0), new = character(0)) 
   if(length(x)==0 & is.null(y)) {
     self[["identical"]] <- TRUE
     return(self)
   }
-  x <- .ren.parse(x,y) 
+  x <- .ren.parse(x,y,unique=unique) 
   self$old <- x$Old
   self$new <- x$New
   if(!is.null(sanitize)) {

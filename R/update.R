@@ -191,7 +191,12 @@ update_outputs <- function(mod, outputs = character(0)) {
       outputs <- c(mod@request,mod@capture)      
     }
   }
-  ren <- .ren.create(unname(outputs))
+  ren <- .ren.create(unname(outputs),unique=FALSE)
+  if(any(duplicated(ren$new))) {
+    dup <- ren$new[duplicated(ren$new)]
+    dup <- paste0(dup,collapse=",")
+    wstop("duplicate names in outvars: ",dup)
+  }
   mod@Icmt <- which(Cmt(mod) %in% ren$old)
   mod@cmtL <- unname(.ren.rename(ren,Cmt(mod)[mod@Icmt]))
   mod@Icap <- which(mod@capture %in% ren$old)
@@ -215,7 +220,12 @@ update_request <- function(mod, request = NULL) {
     mod@Icmt <- seq_along(Cmt(mod))
     mod@cmtL <- Cmt(mod)
   } else {
-    ren <- .ren.create(unname(request))
+    ren <- .ren.create(unname(request),unique=FALSE)
+    if(any(duplicated(ren$new))) {
+      dup <- ren$new[duplicated(ren$new)]
+      dup <- paste0(dup,collapse=",")
+      wstop("duplicate names in request: ", dup)
+    }
     mod@Icmt <- which(Cmt(mod) %in% ren$old)
     mod@cmtL <- .ren.rename(ren,Cmt(mod)[mod@Icmt])
   }
