@@ -1,8 +1,8 @@
-# coverage: 74.39%
+# coverage: 74.3%
 
 |file                  | coverage|
 |:---------------------|--------:|
-|R/modlib.R            |    20.00|
+|R/modlib.R            |    26.67|
 |R/matlist.R           |    51.14|
 |R/idata_set.R         |    53.33|
 |R/mrgsims.R           |    53.47|
@@ -10,16 +10,17 @@
 |R/class_tgrid.R       |    55.38|
 |R/chain.R             |    57.89|
 |R/generics.R          |    60.00|
-|R/utils.R             |    60.87|
 |R/handle_spec_block.R |    63.64|
+|R/utils.R             |    64.13|
 |R/knobs.R             |    64.76|
 |R/data_set.R          |    64.84|
 |R/model_include.R     |    71.43|
-|R/events.R            |    71.63|
-|R/modspec.R           |    71.81|
-|R/class_mrgmod.R      |    72.76|
+|R/events.R            |    71.50|
+|R/modspec.R           |    71.60|
+|R/class_mrgmod.R      |    74.05|
 |R/class_build.R       |    76.83|
 |R/env.R               |    78.95|
+|R/update.R            |    80.00|
 |R/class_ev.R          |    80.65|
 |R/realize_addl.R      |    80.95|
 |R/init.R              |    81.25|
@@ -27,15 +28,14 @@
 |R/nmxml.R             |    81.32|
 |R/param.R             |    81.94|
 |R/class_numericlist.R |    83.33|
-|R/relabel.R           |    84.78|
+|R/mrgsolve.R          |    83.93|
+|R/relabel.R           |    85.71|
 |R/mrgindata.R         |    85.84|
-|R/mrgsolve.R          |    86.96|
-|R/compile.R           |    87.72|
-|R/mrgsim_q.R          |    88.33|
+|R/compile.R           |    87.83|
 |R/funset.R            |    88.57|
+|R/mrgsim_q.R          |    89.29|
 |R/class_rx.R          |    91.43|
-|R/update.R            |    92.06|
-|R/mread.R             |    92.95|
+|R/mread.R             |    92.83|
 |R/class_matlist.R     |   100.00|
 |R/class_mrgsims.R     |   100.00|
 |R/inven.R             |   100.00|
