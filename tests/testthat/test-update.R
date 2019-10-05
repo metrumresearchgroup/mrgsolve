@@ -130,6 +130,10 @@ test_that("update outvars issue-483", {
   out <- mrgsim_df(mod, outvars="CP,RESP,CENT")
   expect_equal(names(out[,3:5]), c("CENT", "RESP", "CP"))
   expect_error(update(mod, outvars = "KYLE"))
+  x <- update(x, outvars="(all)")
+  ref <- c(names(init(x)),x@capture)
+  tst <- c(x@cmtL,x@capL)
+  expect_equivalent(ref,tst)
 })
 
 test_that("update req issue-483", {
@@ -141,6 +145,11 @@ test_that("update req issue-483", {
   x <- update(mod, request = "RESP,CENT")
   expect_equal(x@cmtL, c("CENT", "RESP"))
   expect_equal(x@capL, c("DV","CP"))
+  x <- update(x, outvars="CP")
+  x <- update(x, request = "(all)")
+  ref <- c(names(init(x)),"CP")
+  tst <- c(x@cmtL,x@capL)
+  expect_equivalent(ref,tst)
 })
 
 CL <- exp(rnorm(100, log(3),  sqrt(0.5)))

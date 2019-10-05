@@ -43,7 +43,7 @@ test_that("methods", {
   expect_true(grepl("housemodel\\.cpp", x[2]))
 })
 
-test_that("defaults", {
+test_that("defaults issue-540", {
   mod <- modlib("pk1", compile = FALSE)  
   expect_equal(mod@mxhnil,2)
   expect_equal(mod@maxsteps,20000)
