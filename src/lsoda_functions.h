@@ -1211,7 +1211,7 @@ void LSODA::correction(const size_t neq, vector<double> &y,
 
 void LSODA::corfailure(double *told, double *rh, size_t *ncf, size_t *corflag)
 {
-    ncf++;
+    (*ncf)++;
     rmax = 2.;
     tn_ = *told;
     for (size_t j = nq; j >= 1; j--)
