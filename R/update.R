@@ -203,8 +203,10 @@ update_outputs <- function(mod, outputs = character(0)) {
   mod@capL <- unname(.ren.rename(ren,mod@capture[mod@Icap]))
   diff <- setdiff(ren$old,c(Cmt(mod),mod@capture))
   if(length(diff) > 0) {
-    diff <- paste0(diff,collapse=',')
-    wstop("requested output (", diff, ") is not a compartment or captured value")
+    for(d in diff) {
+      message(" ", d, " is not a compartment or captured item")  
+    }
+    wstop("invalid item in requested output")
   }
   mod
 }
@@ -223,8 +225,10 @@ update_request <- function(mod, request = NULL) {
     ren <- .ren.create(unname(request),unique=FALSE)
     if(any(duplicated(ren$new))) {
       dup <- ren$new[duplicated(ren$new)]
-      dup <- paste0(dup,collapse=",")
-      wstop("duplicate names in request: ", dup)
+      for(d in dup) {
+        message("duplicate name: ", d)  
+      }
+      wstop("duplicate names found in request")
     }
     mod@Icmt <- which(Cmt(mod) %in% ren$old)
     mod@cmtL <- .ren.rename(ren,Cmt(mod)[mod@Icmt])
