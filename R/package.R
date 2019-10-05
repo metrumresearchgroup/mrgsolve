@@ -43,7 +43,7 @@
 #' pharmacodynamics, and systems biology and pharmacology. mrgsolve 
 #' consists of computer code written in the R and C++ languages, 
 #' providing an interface to a C++ translation of the lsoda differential 
-#' equation solver.
+#' equation solver. See [aboutsolver] for more information.
 #' 
 #' @rdname mrgsolve_package
 #' @docType package
@@ -67,11 +67,10 @@
 #' stime(mod)
 #'
 #' param(mod)
+#' 
 #' init(mod)
 #'
 #' out <- mod %>% ev(events) %>% mrgsim(end=168)
-#'
-#' out
 #' 
 #' head(out)
 #' tail(out)
@@ -82,6 +81,7 @@
 #' sims <- as.data.frame(out)
 #'
 #' t72 <- dplyr::filter(sims, time==72)
+#' 
 #' str(t72)
 #' 
 #' idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
@@ -102,10 +102,10 @@
 #'
 #' ev1 <- ev(amt=500, cmt=2,rate=10)
 #' ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
-#' events <- ev1+ev2
+#' events <- c(ev1+ev2)
 #' events
 #'
-#' out <- mod %>% ev(ev1+ev2) %>% mrgsim(end=180, req="")
+#' out <- mod %>% ev(events) %>% mrgsim(end=180, req="")
 #' plot(out)
 #'
 #'
@@ -121,7 +121,6 @@
 #'
 #' ## idata
 #' data(exidata)
-#' exidata
 #'
 #' out <- 
 #'   mod %>% 
@@ -129,7 +128,7 @@
 #'   idata_set(exidata) %>%  
 #'   mrgsim(end=72)
 #'
-#' plot(out, CP~., as="log10")
+#' p <- plot(out, CP~., as="log10")
 #'
 #'
 #' # Internal model library
@@ -138,7 +137,7 @@
 #' 
 #' mod
 #' 
-#' mod %>% ev(amt=300, ii=12, addl=3) %>% mrgsim
+#' x <- mod %>% ev(amt=300, ii=12, addl=3) %>% mrgsim
 #' 
 #' }
 #'
@@ -146,11 +145,6 @@ NULL
 
 #' About the lsoda differential equation solver used by mrgsolve
 #'
-#' @name aboutsolver
-#' @rdname aboutsolver
-#' 
-#' @section Attribution:
-#' 
 #' The differential equation solver is a C++ translation of DLSODA from 
 #' ODEPACK.  The C++ translation was created by Dilawar Singh and hosted 
 #' here [https://github.com/dilawar/libsoda](https://github.com/dilawar/libsoda). 
@@ -158,6 +152,7 @@ NULL
 #' versions of the code written in C.  There was a potentially-related 
 #' project hosted here [https://github.com/sdwfrost/liblsoda](https://github.com/sdwfrost/liblsoda).
 #' 
+#' @section History: 
 #' The following history was recorded in the source code published by 
 #' Dilawar Singh:
 #' 
@@ -181,6 +176,10 @@ NULL
 #' * Contact: Dilawar Singh <dilawars@ncbs.res.in>
 #' */
 #' }
+#' @name aboutsolver
+#' @rdname aboutsolver
+#' @md
+#' 
 NULL
 
 #' Optional inputs for lsoda

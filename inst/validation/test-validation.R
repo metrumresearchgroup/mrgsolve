@@ -18,7 +18,7 @@ test_that("non-stiff problem", {
 
 test_that("stiff problem", {
   mod <- modlib("pbpk", end = 48, delta = 0.001, rtol = 1e-12)
-  p <- list(Kpli = 0.4573, fup = 0.6453)
+  p <- list(Kpli = 0.4573, fup = 0.352)
   dose <- 89.123
   e <- ev(amt = dose) 
   cl <- mod$HLM_CLint
@@ -36,7 +36,7 @@ test_that("stiff problem", {
   expect_equal(round(auc), round(dose/(clmet*p$Kpli*p$fup)))
 })
 
-test_that("read xml with no namespace", {
+test_that("nm xml with no namespace issue-510", {
   nmx <- mrgsolve:::nmxml
   expect_is(x1 <- nmx(file = "1.xml") ,"NMXMLDATA")
   expect_is(x2 <- nmx(file = "211.xml", xpath = ".//estimation"),"NMXMLDATA")

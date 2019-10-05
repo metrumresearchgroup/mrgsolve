@@ -13,7 +13,7 @@ that are typically employed for understanding pharmacokinetics,
 pharmacodynamics, and systems biology and pharmacology. mrgsolve
 consists of computer code written in the R and C++ languages,
 providing an interface to a C++ translation of the lsoda differential
-equation solver.
+equation solver. See \link{aboutsolver} for more information.
 }
 \section{Resources}{
 
@@ -52,11 +52,10 @@ see(mod)
 stime(mod)
 
 param(mod)
+
 init(mod)
 
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168)
-
-out
 
 head(out)
 tail(out)
@@ -67,6 +66,7 @@ plot(out, GUT+CP~.)
 sims <- as.data.frame(out)
 
 t72 <- dplyr::filter(sims, time==72)
+
 str(t72)
 
 idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
@@ -87,10 +87,10 @@ plot(out, RESP+CP~time|amt,groups=CL)
 
 ev1 <- ev(amt=500, cmt=2,rate=10)
 ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
-events <- ev1+ev2
+events <- c(ev1+ev2)
 events
 
-out <- mod \%>\% ev(ev1+ev2) \%>\% mrgsim(end=180, req="")
+out <- mod \%>\% ev(events) \%>\% mrgsim(end=180, req="")
 plot(out)
 
 
@@ -106,7 +106,6 @@ plot(out,CP~time|factor(ID))
 
 ## idata
 data(exidata)
-exidata
 
 out <- 
   mod \%>\% 
@@ -114,7 +113,7 @@ out <-
   idata_set(exidata) \%>\%  
   mrgsim(end=72)
 
-plot(out, CP~., as="log10")
+p <- plot(out, CP~., as="log10")
 
 
 # Internal model library
@@ -123,7 +122,7 @@ mod <- mread("irm1", modlib())
 
 mod
 
-mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
+x <- mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
 
 }
 
