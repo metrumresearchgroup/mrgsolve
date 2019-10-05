@@ -166,7 +166,7 @@
 |test-mrgindata.R          |test-mrgindata                       |Run idata set with ev                                                     |  2|      0|FALSE   |FALSE |       0|      2|
 |test-mrgindata.R          |test-mrgindata                       |Duplicate ID in idata_set gives error                                     |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgmod.R             |test-mrgmod                          |methods                                                                   | 11|      0|FALSE   |FALSE |       0|     11|
-|test-mrgmod.R             |test-mrgmod                          |defaults                                                                  |  3|      0|FALSE   |FALSE |       0|      3|
+|test-mrgmod.R             |test-mrgmod                          |defaults issue-540                                                        |  3|      0|FALSE   |FALSE |       0|      3|
 |test-mrgsim_q.R           |test-mrgsim_q                        |simulation with a complete data set                                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R           |test-mrgsim_q                        |simcall=1 is deprecated                                                   |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R           |test-mrgsim_q                        |qsim issue-490                                                            |  1|      0|FALSE   |FALSE |       0|      1|
@@ -256,8 +256,8 @@
 |test-update.R             |test-update                          |Solver setting atol updates                                               |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R             |test-update                          |Solver setting rtol updates                                               |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R             |test-update                          |bad update gives warning                                                  |  1|      0|FALSE   |FALSE |       0|      1|
-|test-update.R             |test-update                          |update outvars issue-483                                                  |  6|      0|FALSE   |FALSE |       0|      6|
-|test-update.R             |test-update                          |update req issue-483                                                      |  6|      0|FALSE   |FALSE |       0|      6|
+|test-update.R             |test-update                          |update outvars issue-483                                                  |  7|      0|FALSE   |FALSE |       0|      7|
+|test-update.R             |test-update                          |update req issue-483                                                      |  7|      0|FALSE   |FALSE |       0|      7|
 |test-update.R             |test-update                          |Recover items from simulated data when passed in as idata                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R             |test-update                          |Recover items from simulated data when passed in as data                  |  1|      0|FALSE   |FALSE |       0|      1|
 |test-update.R             |test-update                          |CP is equal when simulating from events or data                           |  1|      0|FALSE   |FALSE |       0|      1|
