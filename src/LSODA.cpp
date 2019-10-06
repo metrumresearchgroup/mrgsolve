@@ -51,11 +51,11 @@ using namespace std;
 
 #define ETA 2.2204460492503131e-16
 
-void myassert(bool value) {
-  if(!value) {
-    throw Rcpp::exception("assert failed", false);
-  }
-}
+// void myassert(bool value) {
+//   if(!value) {
+//     throw Rcpp::exception("assert failed", false);
+//   }
+// }
 
 LSODA::~LSODA() {}
 
@@ -290,7 +290,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         
         if (mxordn == 0)
           mxordn = 100; // 12
-          //mxordn = 100;
+        //mxordn = 100;
         
         mxordn = min(mxordn, mord[0]);
         mxords = iworks[6];
@@ -298,7 +298,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         // if mxords is not given use 100.
         if (mxords == 0)
           mxords = 100; // 5
-          //mxords = 100;
+        //mxords = 100;
         mxords = min(mxords, mord[1]);
         
         if ((tout - *t) * h0 < 0.)
@@ -433,9 +433,13 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       mxncf = 10;
       
       /* Initial call to f.  */
-      myassert(yh_.size() == lenyh + 1);
-      myassert(yh_[0].size() == nyh + 1);
-      
+      if(int(yh_.size()) != (lenyh + 1)) {
+        Rcpp::stop("[lsoda] inputs are not the right size.");  
+      }
+      if(yh_[0].size() != (nyh + 1)) {
+        Rcpp::stop("[lsoda] inputs are not the right size."); 
+      }
+
       (*f)(*t, &y[1], &yh_[2][1], _data);
       nfe = 1;
       

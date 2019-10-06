@@ -1050,7 +1050,7 @@ double LSODA::fnorm(int n, const vector<vector<double>> &a,
 */
 void LSODA::correction(const size_t neq, vector<double> &y,
                        LSODA_ODE_SYSTEM_TYPE f, size_t *corflag, double pnorm,
-                       double *del, double *delp, double *told, size_t *ncf,
+                       double *del, double *delp, double *told,size_t *ncf,
                        double *rh, size_t *m, dtype _data)
 {
     double rm = 0.0, rate = 0.0, dcon = 0.0;

@@ -106,7 +106,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int NID = dat.nid();
   const int nidata = idat.nrow();
   
-  unsigned int k = 0;
   unsigned int crow = 0;
   
   bool put_ev_first = false;
@@ -286,14 +285,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int req_start = idata_carry_start+n_idata_carry;
   const unsigned int capture_start = req_start+nreq;
   
-  const unsigned int neta = OMEGA.nrow();
+  const int neta = OMEGA.nrow();
   arma::mat eta;
   if(neta > 0) {
     eta = prob.mv_omega(NID);
     prob.neta(neta);
   }
   
-  const unsigned int neps = SIGMA.nrow();
+  const int neps = SIGMA.nrow();
   arma::mat eps;
   if(neps > 0) {
     eps = prob.mv_sigma(NN);
@@ -456,7 +455,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       if(tto > tfrom) {
-        for(k = 0; k < neps; ++k) {
+        for(int k = 0; k < neps; ++k) {
           prob.eps(k,eps(crow,k));
         }
       }
@@ -598,11 +597,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
         int k = 0;
-        for(int i=0; i < n_capture; ++i) {
+        for(unsigned int i=0; i < n_capture; ++i) {
           ans(crow,k+capture_start) = prob.capture(capture[i+1]);
           ++k;
         }
-        for(int k=0; k < nreq; ++k) {
+        for(unsigned int k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob.y(request[k]);
         }
         ++crow;

@@ -166,8 +166,8 @@ public:
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
   
-  void neta(int n);
-  void neps(int n);
+  void neta(const int n);
+  void neps(const int n);
   
   void nid(int n) {d.nid = n;}
   void nrow(int n) {d.nrow = n;}
