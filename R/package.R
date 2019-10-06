@@ -88,7 +88,7 @@
 #' out <- mod %>% ev(events) %>% mrgsim(end=168, idata=idata, req="")
 #' plot(out)
 #'
-#' out <- mod %>% ev(events) %>% mrgsim(carry.out="amt,evid,cmt,CL")
+#' out <- mod %>% ev(events) %>% mrgsim(carry_out="amt,evid,cmt,CL")
 #' head(out)
 #'
 #' out <- 
