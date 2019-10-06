@@ -170,14 +170,14 @@ private:
     size_t mxstep=0, mxhnil=0;
     size_t nslast=0, nhnil=0, ntrep=0, nyh=0;
     
-    double ccmax=0, el0=0, h_ = .0;
-    double hmin=0, hmxi=0, hu=0, rc=0, tn_ = 0.0;
-    double tsw=0, pdnorm=0;
-    double conit=0, crate=0, hold=0, rmax=0;
+    double ccmax=0.0, el0=0.0, h_ = .0;
+    double hmin=0.0, hmxi=0.0, hu=0.0, rc=0.0, tn_ = 0.0;
+    double tsw=0.0, pdnorm=0.0;
+    double conit=0.0, crate=0.0, hold=0.0, rmax=0.0;
     
     size_t ialth=0, ipup=0, lmax=0;
     size_t nslp=0;
-    double pdest=0, pdlast=0, ratio=0;
+    double pdest=0.0, pdlast=0.0, ratio=0.0;
     int icount=0, irflag=0;
     
 private:
