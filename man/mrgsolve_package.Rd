@@ -49,8 +49,9 @@ mod
 
 see(mod)
 
+\dontrun{
 stime(mod)
-
+}
 param(mod)
 
 init(mod)
@@ -73,17 +74,8 @@ idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168, idata=idata, req="")
 plot(out)
 
-out <- mod \%>\% ev(events) \%>\% mrgsim(carry.out="amt,evid,cmt,CL")
+out <- mod \%>\% ev(events) \%>\% mrgsim(carry_out="amt,evid,cmt,CL")
 head(out)
-
-out <- 
-  mod \%>\% 
-  ev() \%>\% 
-  knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
-
-plot(out, CP~., scales="same")
-plot(out, RESP+CP~time|amt,groups=CL)
-
 
 ev1 <- ev(amt=500, cmt=2,rate=10)
 ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
@@ -113,7 +105,7 @@ out <-
   idata_set(exidata) \%>\%  
   mrgsim(end=72)
 
-p <- plot(out, CP~., as="log10")
+plot(out, CP~., as="log10")
 
 
 # Internal model library
