@@ -13,10 +13,12 @@
  * - Replaced fprint statements to REfprint for CRAN compliance.
  * - Replaced output to cerr with REfprint.
  * - Added Rcpp::exception when terminate or terminate2 are called. 
- * - Removed assert stataements for CRAN compliance.
+ * - Removed assert stataements for CRAN compliance
+ * - int and double members explicitly initialized mrgsolve #546
+ * - changed dgesl to dgesl1 and dgefa to dgefa1
+ * - fixed a big where pointer to ncf got incremented mrgsolve #542
  * 
  */
-
 
 /*
  * HISTORY:
@@ -51,12 +53,6 @@ using namespace std;
 
 #define ETA 2.2204460492503131e-16
 
-// void myassert(bool value) {
-//   if(!value) {
-//     throw Rcpp::exception("assert failed", false);
-//   }
-// }
-
 LSODA::~LSODA() {}
 
 LSODA::LSODA(int neq_) 
@@ -80,8 +76,12 @@ LSODA::LSODA(int neq_)
   jt = 2;
   Neq = neq_;
   if(neq_ <  0) {
-    REprintf("[lsoda] neq = %i is less than 0.\n", neq_);
-    Rcpp::stop("[lsoda] neq is less than 0.");
+    throw Rcpp::exception(
+        tfm::format(
+          "[lsoda] neq = %i is less than zero.\n", neq_
+        ).c_str(),
+        false
+    );
   }
 }
 

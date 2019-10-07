@@ -54,7 +54,7 @@ bool LSODA::abs_compare(double a, double b)
 }
 
 /* Purpose : Find largest component of double vector dx */
-size_t LSODA::idamax1L(const vector<double> &dx, const size_t n, const size_t offset = 0)
+size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0)
 {
 
     size_t v = 0, vmax = 0;
@@ -77,7 +77,7 @@ size_t LSODA::idamax1L(const vector<double> &dx, const size_t n, const size_t of
 /* Purpose : scalar vector multiplication
    dx = da * dx
 */
-void LSODA::dscal1L(const double da, vector<double> &dx, const size_t n,
+void LSODA::dscal1(const double da, vector<double> &dx, const size_t n,
                    const size_t offset = 0)
 {
     std::transform(dx.begin() + 1 + offset, dx.end(), dx.begin() + 1 + offset,
@@ -85,7 +85,7 @@ void LSODA::dscal1L(const double da, vector<double> &dx, const size_t n,
 }
 
 /* Purpose : Inner product dx . dy */
-double LSODA::ddot1L(const vector<double> &a, const vector<double> &b,
+double LSODA::ddot1(const vector<double> &a, const vector<double> &b,
                     const size_t n, const size_t offsetA = 0,
                     const size_t offsetB = 0)
 {
@@ -95,7 +95,7 @@ double LSODA::ddot1L(const vector<double> &a, const vector<double> &b,
     return sum;
 }
 
-void LSODA::daxpy1L(const double da, const vector<double> &dx,
+void LSODA::daxpy1(const double da, const vector<double> &dx,
                    vector<double> &dy, const size_t n, const size_t offsetX = 0,
                    const size_t offsetY = 0)
 {
@@ -105,7 +105,7 @@ void LSODA::daxpy1L(const double da, const vector<double> &dx,
 }
 
 // See BLAS documentation. The first argument has been changed to vector.
-void LSODA::dgeslL(const vector<vector<double>> &a, const size_t n,
+void LSODA::dgesl1(const vector<vector<double>> &a, const size_t n,
                   vector<int> &ipvt, vector<double> &b, const size_t job)
 {
     size_t k, j;
@@ -121,7 +121,7 @@ void LSODA::dgeslL(const vector<vector<double>> &a, const size_t n,
         */
         for (k = 1; k <= n; ++k)
         {
-            t = ddot1L(a[k], b, k - 1);
+            t = ddot1(a[k], b, k - 1);
             b[k] = (b[k] - t) / a[k][k];
         }
         /*
@@ -129,7 +129,7 @@ void LSODA::dgeslL(const vector<vector<double>> &a, const size_t n,
         */
         for (k = n - 1; k >= 1; k--)
         {
-            b[k] = b[k] + ddot1L(a[k], b, n - k, k, k);
+            b[k] = b[k] + ddot1(a[k], b, n - k, k, k);
             j = ipvt[k];
             if (j != k)
             {
@@ -154,7 +154,7 @@ void LSODA::dgeslL(const vector<vector<double>> &a, const size_t n,
             b[j] = b[k];
             b[k] = t;
         }
-        daxpy1L(t, a[k], b, n - k, k, k);
+        daxpy1(t, a[k], b, n - k, k, k);
     }
     /*
        Now solve Transpose(L) * x = y.
@@ -163,12 +163,12 @@ void LSODA::dgeslL(const vector<vector<double>> &a, const size_t n,
     {
         b[k] = b[k] / a[k][k];
         t = -b[k];
-        daxpy1L(t, a[k], b, k - 1);
+        daxpy1(t, a[k], b, k - 1);
     }
 }
 
 // See BLAS documentation. All double* has been changed to std::vector .
-void LSODA::dgefaL(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
+void LSODA::dgefa1(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
                   size_t *const info)
 {
     size_t j = 0, k = 0, i = 0;
@@ -183,7 +183,7 @@ void LSODA::dgefaL(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
            Find j = pivot index.  Note that a[k]+k-1 is the address of
            the 0-th element of the row vector whose 1st element is a[k][k].
         */
-        j = idamax1L(a[k], n - k + 1, k - 1) + k - 1;
+        j = idamax1(a[k], n - k + 1, k - 1) + k - 1;
         ipvt[k] = j;
         /*
            Zero pivot implies this row already triangularized.
@@ -206,7 +206,7 @@ void LSODA::dgefaL(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
            Compute multipliers.
         */
         t = -1. / a[k][k];
-        dscal1L(t, a[k], n - k, k);
+        dscal1(t, a[k], n - k, k);
 
         /*
            Column elimination with row indexing.
@@ -219,7 +219,7 @@ void LSODA::dgefaL(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
                 a[i][j] = a[i][k];
                 a[i][k] = t;
             }
-            daxpy1L(t, a[k], a[i], n - k, k, k);
+            daxpy1(t, a[k], a[i], n - k, k, k);
         }
     } /* end k-loop  */
 
@@ -242,12 +242,7 @@ void LSODA::terminate(int *istate)
         illin++;
         *istate = -3;
     }
-    // throw Rcpp::exception(
-    //     tfm::format(
-    //       "the integration failed with istate = %i.", istate
-    //     ).c_str(),
-    //     false
-    // );
+    return;
 }
 
 /* Terminate lsoda due to various error conditions. */
@@ -257,12 +252,6 @@ void LSODA::terminate2(vector<double> &y, double *t)
         y[i] = yh_[1][i];
     *t = tn_;
     illin = 0;
-    // throw Rcpp::exception(
-    //     tfm::format(
-    //       "the integration failed."
-    //     ).c_str(),
-    //     false
-    // );
     return;
 }
 
@@ -951,7 +940,7 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
        by vmnorm ) is computed, and J is overwritten by P.  P is then
        subjected to LU decomposition in preparation for later solution
        of linear systems with p as coefficient matrix.  This is done
-       by dgefa if miter = 2, and by dgbfa if miter = 5.
+       by dgefa1 if miter = 2, and by dgbfa if miter = 5.
     */
     nje++;
     ierpj = 0;
@@ -996,7 +985,7 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
         /*
            Do LU decomposition on P.
         */
-        dgefaL(wm_, n, ipvt, &ier);
+        dgefa1(wm_, n, ipvt, &ier);
         if (ier != 0)
             ierpj = 1;
         return;
@@ -1232,7 +1221,7 @@ void LSODA::corfailure(double *told, double *rh, size_t *ncf, size_t *corflag)
 /*
    This routine manages the solution of the linear system arising from
    a chord iteration.  It is called if miter != 0.
-   If miter is 2, it calls dgesl to accomplish this.
+   If miter is 2, it calls dgesl1 to accomplish this.
    If miter is 5, it calls dgbsl.
 
    y = the right-hand side vector on input, and the solution vector
@@ -1248,7 +1237,7 @@ void LSODA::solsy(vector<double> &y)
         return;
     }
     if (miter == 2)
-        dgeslL(wm_, n, ipvt, y, 0);
+        dgesl1(wm_, n, ipvt, y, 0);
     return;
 }
 
