@@ -47,21 +47,21 @@ public:
     LSODA(int neq);
     LSODA(){};
     ~LSODA();
-    MRGSOLVE_ODE_FUNC odes;
+
     int iopt; 
     int jt;
     int itask;
-    
+    double Atol; 
+    double Rtol;
+    int Maxsteps;
+    int Neq;
+
     void hmax_(const double value);
     void hmin_(const double value);
     void maxsteps_(const int value);
     void ixpr_(const int value);
     void mxhnil_(const int value);
     void copy_parin(const Rcpp::List& parin);
-    double Atol; 
-    double Rtol;
-    int Maxsteps;
-    int Neq;
 
     array<int, 7> iworks;// iworks = {{0}};
     array<double, 4> rworks;// = {{0.0}};
@@ -135,10 +135,10 @@ public:
     static bool abs_compare(double a, double b);
     // WAS PRIVATE    
     // const size_t neq;
-    int kflag, jstart;
+    int kflag=0, jstart=0;
 private:
-    size_t ml, mu, imxer;
-    double sqrteta;
+    size_t ml=0, mu=0, imxer=0;
+    double sqrteta=0.0;
     
     // NOTE: initialize in default constructor. Older compiler e.g. 4.8.4 would
     // produce error if these are initialized here. With newer compiler,
@@ -153,33 +153,32 @@ private:
     array<array<double, 14>, 13> elco;
     array<array<double, 4>, 13> tesco;
     
-    size_t illin, init, ierpj, iersl, jcur, l, miter, maxord, maxcor, msbp, mxncf;
-
-    
-    size_t ixpr=0, jtyp, mused, mxordn, mxords = 12;
-    size_t meth_;
-    
-    size_t n, nq, nst, nfe, nje, nqu;
-    size_t mxstep, mxhnil;
-    size_t nslast, nhnil, ntrep, nyh;
-    
-    double ccmax, el0, h_ = .0;
-    double hmin, hmxi, hu, rc, tn_ = 0.0;
-    double tsw, pdnorm;
-    double conit, crate, hold, rmax;
-    
-    size_t ialth, ipup, lmax;
-    size_t nslp;
-    double pdest, pdlast, ratio;
-    int icount, irflag;
-    
     vector<double> ewt;
     vector<double> savf;
     vector<double> acor;
     vector<vector<double>> yh_;
     vector<vector<double>> wm_;
-    
     vector<int> ipvt;
+    
+    size_t illin=0, init=0, ierpj=0, iersl=0, jcur=0; 
+    size_t l=0, miter=0, maxord=0, maxcor=0, msbp=0, mxncf=0;
+
+    size_t ixpr=0, jtyp=0, mused=0, mxordn=0, mxords = 12;
+    size_t meth_=0;
+    
+    size_t n=0, nq=0, nst=0, nfe=0, nje=0, nqu=0;
+    size_t mxstep=0, mxhnil=0;
+    size_t nslast=0, nhnil=0, ntrep=0, nyh=0;
+    
+    double ccmax=0.0, el0=0.0, h_ = .0;
+    double hmin=0.0, hmxi=0.0, hu=0.0, rc=0.0, tn_ = 0.0;
+    double tsw=0.0, pdnorm=0.0;
+    double conit=0.0, crate=0.0, hold=0.0, rmax=0.0;
+    
+    size_t ialth=0, ipup=0, lmax=0;
+    size_t nslp=0;
+    double pdest=0.0, pdlast=0.0, ratio=0.0;
+    int icount=0, irflag=0;
     
 private:
     int itol_ = 2;
