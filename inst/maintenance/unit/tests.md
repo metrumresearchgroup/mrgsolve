@@ -290,6 +290,7 @@
 |test-alag.R               |test-alag                            |ss dose with lag time issue-484                                           |  1|      0|FALSE   |FALSE |       0|      1|
 |test-bioav.R              |test-bioav                           |Bioav test with doses at time=0                                           |  3|      0|FALSE   |FALSE |       0|      3|
 |test-capture.R            |test-request                         |Renamed captured items are properly named                                 |  1|      0|FALSE   |FALSE |       0|      1|
+|test-capture.R            |test-request                         |error if cmt in capture issue-555                                         |  2|      0|FALSE   |FALSE |       0|      2|
 |test-D-R-F.R              |test-D-R-F                           |Infusion rate is set by R_CMT                                             |  1|      0|FALSE   |FALSE |       0|      1|
 |test-D-R-F.R              |test-D-R-F                           |Error when rate = -2 and R_CMT set instead of D_CMT                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-D-R-F.R              |test-D-R-F                           |Infusion rate is set by D_CMT                                             |  1|      0|FALSE   |FALSE |       0|      1|

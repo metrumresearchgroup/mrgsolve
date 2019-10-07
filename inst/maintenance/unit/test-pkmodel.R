@@ -93,13 +93,12 @@ test_that("ADVAN2 same as ODE - CENT,infus,addl", {
 test_that("ADVAN2 same as ODE - CENT,infus,ss,addl", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1,ss=1)
   out1 <- ode  %>% ev(e) %>%
-    Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+    mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12, 
+          recsort=3)
   out2 <- pred1 %>% ev(e) %>%
-    Req(CENT) %>% mrgsim(end=264,delta=0.1,digits=5)
+   mrgsim(end=264,delta=0.1,digits=5,recsort=3)
   expect_equal(out1$CENT,out2$CENT)
 })
-
-
 
 test_that("ADVAN2 same as ODE - GUT,bolus,ss,addl", {
   e <- ev(amt=1000,ii=12,addl=16,cmt=1,ss=1)

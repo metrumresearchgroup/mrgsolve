@@ -42,3 +42,12 @@ test_that("Renamed captured items are properly named", {
   )
 })
 
+test_that("error if cmt in capture issue-555", {
+  code <- "$CMT A\n$CAPTURE A"
+  expect_error(mcode("cmt-in-capture",code,compile=FALSE), 
+               "compartment should not be in")
+  code <- "$CMT A\n$CAPTURE B=A"
+  expect_is(mcode("rename-cmt-in-capture",code,compile=FALSE),"mrgmod")
+})
+
+

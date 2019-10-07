@@ -29,7 +29,7 @@ test_that("ss_n and ss_tol", {
   dose <- ev(amt = 100, ii = 24, ss=1,cmt=2, addl=2)
   out <- mrgsim_e(mod,dose)
   expect_is(out,"mrgsims")
-  expect_error(mrgsim_e(mod,dose,ss_n = 2), "failed to reach steady state")
+  expect_warning(mrgsim_e(mod,dose,ss_n = 2), "failed to reach steady state")
   out2 <- mrgsim_e(mod,dose,ss_tol = 100,recsort=3)
   expect_true(all(out2$CP != out$CP))
 })

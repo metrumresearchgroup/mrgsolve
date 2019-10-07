@@ -475,7 +475,7 @@ do_mrgsim <- function(x,
                       tad = FALSE,
                       nocb = TRUE,
                       skip_init_calc = FALSE,
-                      ss_tol = 1E-12,
+                      ss_tol = 1E-8,
                       ss_n = 1000,
                       ...) {
   

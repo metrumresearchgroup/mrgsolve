@@ -46,7 +46,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   Idcol = find_position("ID", Data_names);
   if(Idcol < 0) {
-    throw Rcpp::exception("Could not find ID column in data set.",false);
+    throw Rcpp::exception("could not find ID column in data set.",false);
   }
   
   // Connect Names in the data set with positions in the parameter list
@@ -70,7 +70,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   if(Idcol < 0) {
     throw Rcpp::exception(
-        "Could not find ID column in data set.",false
+        "could not find ID column in data set.",false
     );
   }
   

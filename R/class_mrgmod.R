@@ -18,7 +18,7 @@
 valid_funs <- function(x) {
   x1 <- length(x)==4
   x2 <- identical(names(x), c("main", "ode", "table", "config"))
-  if(x1 & x2) return(list(TRUE,""))
+  if(x1 & x2) return(list(TRUE,NULL))
   msg <- c(
     "Invalid functions specification.",
     "This model object is not compatible with the current mrgsolve version.",
@@ -35,7 +35,6 @@ check_names <- function(x,par,cmt) {
   us <-  any(charthere(x,"_"))
   res <- any(is.element(x,Reserved))
   alph <- !all(grepl("^[[:alpha:]]",x))
-  
   ans <- character(0)
   
   ## Duplicate names are not allowed
@@ -67,14 +66,14 @@ check_us <- function(x,cmt,ans) {
   leading <- x[substr(x,1,1)=="_"]
   if(length(leading) > 0) {
     ans <- c(ans, 
-             paste0("Leading underscore not allowed: ", 
+             paste0("leading underscore not allowed: ", 
                     paste(leading, collapse=" "))) 
   }
   check <- as.character(sapply(c("F_", "ALAG_", "D_", "R_"),paste0,cmt))
   iv_name <- intersect(x,check)
   if(length(iv_name) > 0) {
     ans <- c(ans, 
-             paste0("Reserved symbols in model names: ", iv_name))
+             paste0("reserved symbols in model names: ", iv_name))
   } 
   return(ans)
 }
@@ -155,11 +154,18 @@ valid.mrgmod <- function(object) {
   x <- check_names(tags,Pars(object),Cmt(object))
   x1 <- length(x)==0
   x2 <- object@advan %in% c(0,1,2,3,4,13)
+  x3 <- !any(object@capture %in% Cmt(object))
   fun <- valid_funs(object@funs)
-  cool <- x1 & x2 & fun[[1]]
+  cool <- x1 & x2 & fun[[1]] & x3
   if(cool) return(TRUE)
   x <- c(x,fun[[2]])
   if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, or 13")
+  if(!x3) {
+    invalid <- intersect(object@capture,Cmt(object))
+    invalid <- paste0(invalid,collapse=",")
+    invalid <- paste0("compartment should not be in $CAPTURE: ", invalid)
+    x <- c(x,invalid)
+  }
   return(x)
 }
 # nocov end
