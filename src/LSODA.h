@@ -66,22 +66,22 @@ public:
     array<int, 7> iworks;// iworks = {{0}};
     array<double, 4> rworks;// = {{0.0}};
     
-    size_t idamax1(const vector<double> &dx, const size_t n, const size_t offset);
+    size_t idamax1L(const vector<double> &dx, const size_t n, const size_t offset);
     
-    void dscal1(const double da, vector<double> &dx, const size_t n,
+    void dscal1L(const double da, vector<double> &dx, const size_t n,
                 const size_t offset);
     
-    double ddot1(const vector<double> &a, const vector<double> &b, const size_t n,
+    double ddot1L(const vector<double> &a, const vector<double> &b, const size_t n,
                  const size_t offsetA, const size_t offsetB);
     
-    void daxpy1(const double da, const vector<double> &dx, vector<double> &dy,
+    void daxpy1L(const double da, const vector<double> &dx, vector<double> &dy,
                 const size_t n, const size_t offsetX,
                 const size_t offsetY);
     
-    void dgesl(const vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
+    void dgeslL(const vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
                vector<double> &b, const size_t job);
     
-    void dgefa(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
+    void dgefaL(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
                size_t *const info);
     
     void prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
