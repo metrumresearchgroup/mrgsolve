@@ -94,6 +94,8 @@ mrgsim_q <- function(x,
                      skip_init_calc = FALSE, 
                      simcall = 0) {
   
+  if(!is.mrgmod(x)) mod_first()
+  
   ## data
   if(is.ev(data)) {
     data <- as.data.frame.ev(data, add_ID = 1)  

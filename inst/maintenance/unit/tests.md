@@ -170,6 +170,7 @@
 |test-mrgsim_q.R           |test-mrgsim_q                        |simulation with a complete data set                                       |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R           |test-mrgsim_q                        |simcall=1 is deprecated                                                   |  1|      0|FALSE   |FALSE |       0|      1|
 |test-mrgsim_q.R           |test-mrgsim_q                        |qsim issue-490                                                            |  1|      0|FALSE   |FALSE |       0|      1|
+|test-mrgsim.R             |test-mrgsim                          |error to not pass model object issue-547                                  |  7|      0|FALSE   |FALSE |       0|      7|
 |test-mrgsim.R             |test-mrgsim                          |mrgsim_df                                                                 |  2|      0|FALSE   |FALSE |       0|      2|
 |test-mrgsim.R             |test-mrgsim                          |mrgsim with ev                                                            |  4|      0|FALSE   |FALSE |       0|      4|
 |test-mrgsim.R             |test-mrgsim                          |mrgsim with ev and idata                                                  |  3|      0|FALSE   |FALSE |       0|      3|

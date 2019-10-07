@@ -44,6 +44,16 @@ idata <- expand.idata(CL = runif(10, 0.2,2)) %>%
 
 context("test-mrgsim")
 
+test_that("error to not pass model object issue-547", {
+  expect_error(mrgsim(dose), "the first argument to mrgsim")
+  expect_error(mrgsim_d(dose), "the first argument to mrgsim_d ")
+  expect_error(mrgsim_ei(dose), "the first argument to mrgsim_ei ")
+  expect_error(mrgsim_e(dose), "the first argument to mrgsim_e ")
+  expect_error(mrgsim_di(dose), "the first argument to mrgsim_di ")
+  expect_error(mrgsim_q(dose), "the first argument to mrgsim_q ")
+  expect_error(qsim(dose), "the first argument to qsim ")
+})
+
 test_that("mrgsim_df", {
   out <- mrgsim_df(mod, events = ev(amt=100))
   out2 <- mrgsim_e(mod,ev(amt = 100))
