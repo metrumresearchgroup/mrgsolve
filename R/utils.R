@@ -553,3 +553,10 @@ wstop <- function(..., width = getOption("width", 60), call.=FALSE) {
   stop(x, call.=call.)
 }
 
+mod_first <- function(cl) {
+  fun <- deparse(match.call(sys.function(-1),sys.call(-1))[1])
+  fun <- substr(fun,1,(nchar(fun)-2L))
+  msg <- sprintf("the first argument to %s must be a model object",fun)
+  wstop(msg)
+}
+

@@ -177,7 +177,7 @@ validate_idata <- function(idata) {
 ##' 
 ##' @export
 mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
-  
+  if(!is.mrgmod(x)) mod_first()
   if(is.null(data)) {
     data <- x@args$data
   }  
@@ -268,6 +268,7 @@ mrgsim_df <- function(...,output="df") mrgsim(...,output=output)
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   if(!is.ev(events)) {
     if(is.data.frame(events)) {
       events <- as.ev(events) 
@@ -291,6 +292,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   if(is.ev(data)) {
     data <- as_data_set(data)  
   }
@@ -306,6 +308,7 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   if(!is.ev(events)) {
     if(is.data.frame(events)) {
       events <- as.ev(events) 
@@ -341,6 +344,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   data <- as.data.frame(data, add_ID = 1)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
@@ -358,6 +362,7 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
@@ -375,6 +380,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
   #x <- do.call(update, c(x,args))
@@ -386,6 +392,7 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
 }
 
 mrgsim_nid <- function(x, nid, events = ev(), ...) {
+  if(!is.mrgmod(x)) mod_first()
   nid <- max(nid,1)
   idata <- data.frame(ID = seq_len(nid))
   if(has_ID(events)) {
@@ -689,6 +696,8 @@ qsim <- function(x,
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
+  if(!is.mrgmod(x)) mod_first()
+  
   if(is.ev(data)) {
     data <- as.data.frame.ev(data, add_ID = 1)
   }
@@ -711,7 +720,7 @@ qsim <- function(x,
   if(!is.null(outvars)) {
     x <- update_outputs(x,outvars)
   }
-
+  
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
