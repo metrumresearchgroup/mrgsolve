@@ -201,8 +201,8 @@ public:
   int Npar;
   int Neq;
   int Istate; ///< istate value
-  double ss_tol;
-  double ss_n;
+  bool ss_fixed = false;
+  int ss_n = 500;
 
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions

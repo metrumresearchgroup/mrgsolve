@@ -87,7 +87,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.amt = 0;
   
   Do_Init_Calc = true;
-  ss_tol = 1e-8;
+  ss_fixed = false;
   ss_n = 1000;
   
   pred.assign(5,0.0);
@@ -638,8 +638,8 @@ double PolyExp(const double& x,
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
   advan(Rcpp::as<int>(parin["advan"]));
-  ss_n = Rcpp::as<double>(parin["ss_n"]);
-  ss_tol = Rcpp::as<double>(parin["ss_tol"]);
+  ss_n = Rcpp::as<int>(parin["ss_n"]);
+  ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
   Rtol = Rcpp::as<double>(parin["rtol"]);
   Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);

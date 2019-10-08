@@ -15,8 +15,8 @@ do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
   Request = character(0), output = NULL, capture = NULL,
   obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
   deslist = list(), descol = character(0), filbak = TRUE,
-  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ss_tol = 1e-08,
-  ss_n = 500, ...)
+  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ss_n = 500,
+  ss_fixed = FALSE, ...)
 }
 \arguments{
 \item{x}{the model object}
@@ -96,10 +96,15 @@ otherwise, use \code{locf}.}
 
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
-\item{ss_tol}{tolerance for determining steady state for the PK system}
-
 \item{ss_n}{maximum number of iterations for determining steady state for 
-the PK system}
+the PK system; a warning will be issued if steady state is not achieved 
+within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}}
+
+\item{ss_fixed}{if \code{TRUE}, then a fixed number of iterations are 
+performed (determined by \code{ss_n}) for determining steady state without
+regard to model tolerances; to silence warnings related to steady state, 
+set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the number of 
+iterations to advance the system for steady state determination}
 }
 \value{
 An object of class \code{\link{mrgsims}}

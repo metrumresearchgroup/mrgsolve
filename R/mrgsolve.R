@@ -450,9 +450,15 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' @param nocb if \code{TRUE}, use next observation carry backward method; 
 ##' otherwise, use \code{locf}.  
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param ss_tol tolerance for determining steady state for the PK system
 ##' @param ss_n maximum number of iterations for determining steady state for 
-##' the PK system
+##' the PK system; a warning will be issued if steady state is not achieved 
+##' within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}
+##' @param ss_fixed if \code{TRUE}, then a fixed number of iterations are 
+##' performed (determined by \code{ss_n}) for determining steady state without
+##' regard to model tolerances; to silence warnings related to steady state, 
+##' set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the number of 
+##' iterations to advance the system for steady state determination
+##' 
 ##' 
 ##' @rdname mrgsim
 ##' @export
@@ -475,8 +481,8 @@ do_mrgsim <- function(x,
                       tad = FALSE,
                       nocb = TRUE,
                       skip_init_calc = FALSE,
-                      ss_tol = 1e-8,
                       ss_n = 500,
+                      ss_fixed = FALSE,
                       ...) {
   
   x <- update(x,...,strict=TRUE)
@@ -549,7 +555,7 @@ do_mrgsim <- function(x,
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
   parin$verbose <- verbose
-  parin$ss_tol <- ss_tol
+  parin$ss_fixed <- ss_fixed
   parin$ss_n <- ss_n
   parin$request <- Cmti(x)-1L
   
