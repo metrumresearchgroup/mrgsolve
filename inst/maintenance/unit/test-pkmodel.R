@@ -208,14 +208,13 @@ test_that("ADVAN4 same as ODE - CENT,infus,ss,addl", {
 })
 
 test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
+  ode <- update(ode, rtol = 1e-8, atol = 1e-15)
+  pred2 <- update(pred2, rtol = 1e-8, atol = 1e-15)
   e <- ev(amt=100,ii=12,addl=16,cmt=1,ss=1)
   out1<- ode  %>% ev(e) %>%
-    Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,
-                             hmax=0.1,atol=1E-12,rtol=1E-12)
+    mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1)
   out2 <- pred2 %>% ev(e) %>%
-    Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
-
-
+     mrgsim(end=264,delta=0.1,digits=5)
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })

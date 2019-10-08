@@ -640,6 +640,8 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   advan(Rcpp::as<int>(parin["advan"]));
   ss_n = Rcpp::as<double>(parin["ss_n"]);
   ss_tol = Rcpp::as<double>(parin["ss_tol"]);
+  Rtol = Rcpp::as<double>(parin["rtol"]);
+  Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
 

@@ -230,9 +230,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   }
   
   prob->rate_reset();
-  double N_SS = prob->ss_n;  
-  double CRIT_DIFF_SS = prob->ss_tol;
-  bool warn = CRIT_DIFF_SS ==0 ? false : true;
+  int N_SS = prob->ss_n;  
+  bool warn = prob->ss_tol > 0;
   double tfrom = 0.0;
   double tto = 0.0;
   
@@ -240,10 +239,9 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   int j;
   
   std::vector<double> last(prob->neq(), -1E9);
-  double diff = 1E6;
+  double diff = 0, err = 0;
   bool made_it = false;
-  int min_check = N_SS < 10 ? N_SS : 10; 
-  double zero = prob->Rtol / 10.0;
+  int min_check = N_SS < 10 ? N_SS : 10;
   
   prob->lsoda_init();
   
@@ -260,15 +258,10 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     
     int ngood = 0;
     for(j=0; j < prob->neq(); ++j) {
-      if(i < (min_check -1)) {
-        last[j]  = prob->y(j);
-        continue;
-      }
-      diff = prob->y(j) - last[j];
-      if(diff < zero) {
-        ++ngood;
-      } else {
-        if(fabs(diff/last[j]) < CRIT_DIFF_SS) ++ngood;
+      if(i >= min_check) {
+        diff = fabs(prob->y(j) - last[j]);
+        err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+        if(diff < err ) ++ngood;
       }
       last[j] = prob->y(j);
     } 
@@ -286,8 +279,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_bolus] dosing failed to reach steady state with settings\n  ss_n: %d ss_tol: %d",
-        N_SS, CRIT_DIFF_SS
+        "[steady_bolus] dosing failed to reach steady state with settings\n  ss_n: %d rtol: %d",
+        N_SS,solver.Rtol
       ).c_str()
     );
   }
@@ -348,9 +341,9 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   
   int i;
   int j;
-  double CRIT_DIFF_SS = prob->ss_tol;
-  double N_SS = prob->ss_n;  
-  bool warn = CRIT_DIFF_SS ==0 ? false : true;
+  int N_SS = prob->ss_n;  
+  int min_check = N_SS < 10 ? N_SS : 10;
+  bool warn = prob->ss_tol > 0;
   std::vector<double> last(prob->neq(),-1e9);
   
   reclist offs;
@@ -358,9 +351,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   int start = 0;
   int end = 0;
   bool made_it = false;  
-  int min_check = N_SS < 10 ? N_SS : 10; 
-  double zero = prob->Rtol / 10.0;
-  double diff = 0;
+  double diff = 0, err = 0;
   double nexti = 0.0, toff = 0.0;
   prob->rate_reset();
   
@@ -400,18 +391,13 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     
     int ngood = 0;
     for(j=0; j < prob->neq(); ++j) {
-      if(i < min_check) {
-        last[j] = prob->y(j);
-        continue;
-      }
-      diff = prob->y(j) - last[j];
-      if(diff < zero) {
-        ++ngood;
-      } else {
-        if(fabs(diff/last[j]) < CRIT_DIFF_SS) ++ngood;  
+      if(i >= min_check) {
+        diff = fabs(prob->y(j) - last[j]);
+        err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+        if(diff < err ) ++ngood;
       }
       last[j] = prob->y(j);
-    }
+    } 
     if(i > min_check) {
       if(ngood == prob->neq()) {
         tfrom = nexti;
@@ -424,8 +410,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_infusion]  dosing failed to reach steady state with settings\n  ss_n: %d ss_tol: %d", 
-        N_SS, CRIT_DIFF_SS
+        "[steady_infusion]  dosing failed to reach steady state with settings\n  ss_n: %d rtol: %d", 
+        N_SS, solver.Rtol
       ).c_str()
     );
   }
@@ -504,14 +490,13 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   double tfrom = 0.0;
   double tto = 0.0;
   double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
-  double CRIT_DIFF_SS = prob->ss_tol;
+  bool warn = prob->ss_tol > 0;
   double N_SS = prob->ss_n;  
-  bool warn = CRIT_DIFF_SS == 0 ? false : true;
-  double zero = prob->Rtol;
+  int min_check = N_SS < 10 ? N_SS : 10;
   std::vector<double> last(prob->neq(),-1e9);
   bool made_it = false;
-
-  double diff = 0;
+  
+  double diff = 0.0, err = 0.0;
   prob->rate_reset();
   rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
   evon->implement(prob);
@@ -522,18 +507,16 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     tto = tfrom + duration;
     prob->advance(tfrom,tto,solver);
     tfrom = tto;
-    if(i < 8) continue;
     int ngood = 0;
     for(int j=0; j < prob->neq(); ++j) {
-      diff = prob->y(j) - last[j];
-      if(diff < zero) {
-        ++ngood;  
-      } else {
-        if(fabs(diff/last[j]) < CRIT_DIFF_SS) ++ngood;
+      if(i >= min_check) {
+        diff = fabs(prob->y(j) - last[j]);
+        err = solver.Rtol*fabs(prob->y(j)) + solver.Atol;
+        if(diff < err) ++ngood;
       }
       last[j] = prob->y(j);
     }
-    if(i >= 10) {
+    if(i > min_check) {
       if(ngood == prob->neq()) {
         made_it = true;
         break;
@@ -555,8 +538,8 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_zero]  dosing failed to reach steady state with settings\n  ss_n: %d ss_tol: %d", 
-        N_SS, CRIT_DIFF_SS
+        "[steady_zero]  dosing failed to reach steady state with settings\n  ss_n: %d rtol: %d", 
+        N_SS, solver.Rtol
       ).c_str()
     );
   }

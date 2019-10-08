@@ -40,8 +40,8 @@ void LSODA::copy_parin(const Rcpp::List& parin) {
   itol_ = 1;
   // rtol_.resize(Neq+1, Rcpp::as<double>(parin["rtol"]));
   // atol_.resize(Neq+1, Rcpp::as<double>(parin["atol"]));
-  rtol_.resize(2, Rcpp::as<double>(parin["rtol"]));
-  atol_.resize(2, Rcpp::as<double>(parin["atol"]));
+  rtol_.assign(2, Rcpp::as<double>(parin["rtol"]));
+  atol_.assign(2, Rcpp::as<double>(parin["atol"]));
   Rtol = rtol_[1];
   Atol = atol_[1];
   rtol_[0] = 0;

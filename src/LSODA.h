@@ -51,8 +51,8 @@ public:
     int iopt; 
     int jt;
     int itask;
-    double Atol; 
-    double Rtol;
+    double Atol=1e-8; 
+    double Rtol=1e-8;
     int Maxsteps;
     int Neq;
 
