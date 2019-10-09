@@ -111,20 +111,23 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
   }
   
   if(missing(amt)) {
-    wstop("argument \"amt\" is missing, with no default.")  
+    wstop("argument \"amt\" is missing")
   }
   
   l <- list(time=time, cmt=cmt, amt=amt, evid=evid)
   if(is.numeric(tinf) && length(tinf) > 0) l[["tinf"]] <- tinf
   if(is.numeric(until) && length(until) > 0) l[["until"]] <- until
+  
   qu <- quos(...)
-  na1 <- names(l)
-  na2 <- names(qu)
-  j <- length(l)
-  for(i in seq_along(qu)) {
-    l[[j+i]] <- eval_tidy(qu[[i]], l)
+  if(length(qu) > 0) {
+    na1 <- names(l)
+    na2 <- names(qu)
+    j <- length(l)
+    for(i in seq_along(qu)) {
+      l[[j+i]] <- eval_tidy(qu[[i]], l)
+    }
+    names(l) <- c(na1,na2)
   }
-  names(l) <- c(na1,na2)
   
   data <- as.data.frame(as_tibble(l))
   
