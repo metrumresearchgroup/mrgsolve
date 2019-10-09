@@ -55,15 +55,21 @@ using namespace std;
 
 LSODA::~LSODA() {}
 
-LSODA::LSODA(int neq_) 
-{
+LSODA::LSODA(int neq_, const Rcpp::List& parin) {
+  if(neq_ <  0) {
+    throw Rcpp::exception(
+        tfm::format(
+          "[lsoda] neq = %i is less than zero.\n", neq_
+        ).c_str(),
+        false
+    );
+  }
   // Initialize arrays.
   mord = {{12, 5}};
   sm1 = {{
     0., 0.5, 0.575, 0.55, 0.45, 0.35, 0.25, 0.2, 0.15, 0.1, 0.075, 0.05,
     0.025
-    }
-    };
+    }};
   el = {{0}};
   cm1 = {{0}};
   cm2 = {{0}};
@@ -75,14 +81,18 @@ LSODA::LSODA(int neq_)
   iopt = 0;
   jt = 2;
   Neq = neq_;
-  if(neq_ <  0) {
-    throw Rcpp::exception(
-        tfm::format(
-          "[lsoda] neq = %i is less than zero.\n", neq_
-        ).c_str(),
-        false
-    );
-  }
+  hmax_(Rcpp::as<double>(parin["hmax"]));
+  hmin_(Rcpp::as<double>(parin["hmin"]));
+  maxsteps_(Rcpp::as<int>(parin["maxsteps"]));
+  ixpr_(Rcpp::as<int>(parin["ixpr"]));
+  mxhnil_(Rcpp::as<int>(parin["mxhnil"]));
+  itol_ = 1;
+  rtol_.assign(2, Rcpp::as<double>(parin["rtol"]));
+  atol_.assign(2, Rcpp::as<double>(parin["atol"]));
+  Rtol = rtol_[1];
+  Atol = atol_[1];
+  rtol_[0] = 0;
+  atol_[0] = 0;
 }
 
 /* --------------------------------------------------------------------------*/
@@ -439,7 +449,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       if(yh_[0].size() != (nyh + 1)) {
         Rcpp::stop("[lsoda] inputs are not the right size."); 
       }
-
+      
       (*f)(*t, &y[1], &yh_[2][1], _data);
       nfe = 1;
       

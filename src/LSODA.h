@@ -44,15 +44,15 @@ class LSODA
 {
     
 public:
-    LSODA(int neq);
-    LSODA(){};
+    LSODA(int neq, const Rcpp::List& parin);
+    
     ~LSODA();
 
     int iopt; 
     int jt;
     int itask;
-    double Atol=1e-8; 
-    double Rtol=1e-8;
+    double Atol; 
+    double Rtol;
     int Maxsteps;
     int Neq;
 
@@ -61,7 +61,6 @@ public:
     void maxsteps_(const int value);
     void ixpr_(const int value);
     void mxhnil_(const int value);
-    void copy_parin(const Rcpp::List& parin);
 
     array<int, 7> iworks;// iworks = {{0}};
     array<double, 4> rworks;// = {{0.0}};

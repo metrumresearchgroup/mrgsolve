@@ -31,23 +31,6 @@ void LSODA::mxhnil_(const int value) {
   if(value!=0) iopt = 1;
 }
 
-void LSODA::copy_parin(const Rcpp::List& parin) {
-  hmax_(Rcpp::as<double>(parin["hmax"]));
-  hmin_(Rcpp::as<double>(parin["hmin"]));
-  maxsteps_(Rcpp::as<int>(parin["maxsteps"]));
-  ixpr_(Rcpp::as<int>(parin["ixpr"]));
-  mxhnil_(Rcpp::as<int>(parin["mxhnil"]));
-  itol_ = 1;
-  // rtol_.resize(Neq+1, Rcpp::as<double>(parin["rtol"]));
-  // atol_.resize(Neq+1, Rcpp::as<double>(parin["atol"]));
-  rtol_.assign(2, Rcpp::as<double>(parin["rtol"]));
-  atol_.assign(2, Rcpp::as<double>(parin["atol"]));
-  Rtol = rtol_[1];
-  Atol = atol_[1];
-  rtol_[0] = 0;
-  atol_[0] = 0;
-}
-
 bool LSODA::abs_compare(double a, double b)
 {
     return (std::abs(a) < std::abs(b));
