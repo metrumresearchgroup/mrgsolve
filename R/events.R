@@ -127,9 +127,19 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
   names(l) <- c(na1,na2)
   
   data <- as.data.frame(as_tibble(l))
-
-  data <- finalize_ev(data, names(l))
-
+  
+  if(all(c("rate", "tinf") %in% names(data))) {
+    wstop("input can include either rate or tinf, not both")
+  }
+  if(all(c("addl", "until") %in% names(data))) {
+    wstop("input can include either addl or until, not both")
+  }
+  if(all(c("addl", "total") %in% names(data))) {
+    wstop("input can include either addl or total, not both")
+  }
+  
+  data <- finalize_ev(data)
+  
   if(length(ID) > 0) {
     
     ID <- unique(ID)

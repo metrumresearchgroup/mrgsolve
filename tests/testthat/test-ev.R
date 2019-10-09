@@ -200,7 +200,8 @@ test_that("tinf issue-513", {
   e <- mutate(e, tinf = 20)
   expect_identical(e$rate,5)
   expect_error(ev(amt=100,tinf=2,rate=5), "input can include either")
-  expect_error(mutate(e, rate = 5), "cannot set rate when tinf")
+  expect_error(mutate(e,rate=5), "cannot set rate when tinf")
+  expect_silent(mutate(ev(amt=100,tinf=5),tinf=NULL,rate=2))
 })
 
 test_that("total  issue-513", {
@@ -213,6 +214,7 @@ test_that("total  issue-513", {
   e <- mutate(e, total = 20)
   expect_identical(e$addl,19)
   expect_error(ev(amt=100,addl=5,total=4), "input can include either")
+  expect_silent(mutate(ev(amt = 100, total = 10),total=NULL,addl=4))
 })
 
 test_that("until  issue-513", {
@@ -223,4 +225,5 @@ test_that("until  issue-513", {
   e <- mutate(e, ii = 24, until = 168)
   expect_identical(e$addl,6)
   expect_error(ev(amt=100,addl=5,until=100), "input can include either")
+  expect_silent(mutate(ev(amt=100,ii=2,until=168),until=NULL,addl=5))
 })
