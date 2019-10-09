@@ -691,7 +691,7 @@ parin <- function(x) {
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 
-    ss_n = 1000, ss_fixed = FALSE
+    ss_n = 500, ss_fixed = FALSE
   )
 }
 
