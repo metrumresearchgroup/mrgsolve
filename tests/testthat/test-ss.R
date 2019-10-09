@@ -24,12 +24,14 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-ss")
 
-test_that("ss_n and ss_tol", {
-  mod <- mrgsolve:::house(end = 72,delta=4)
-  dose <- ev(amt = 100, ii = 24, ss=1,cmt=2, addl=2)
-  out <- mrgsim_e(mod,dose)
+test_that("ss_n and ss_fixed issue-533", {
+  mod <- mrgsolve:::house(end = 72,delta=4) %>% param(VC = 50)
+  dose <- ev(amt = 100, ii = 24, ss=1, cmt=2, addl=2)
+  out <- mrgsim_e(mod,dose,recsort=3)
   expect_is(out,"mrgsims")
-  expect_error(mrgsim_e(mod,dose,ss_n = 2), "failed to reach steady state")
-  out2 <- mrgsim_e(mod,dose,ss_tol = 100,recsort=3)
+  expect_warning(out2 <-mrgsim_e(mod,dose, ss_n = 3,recsort=3), 
+                 "failed to reach steady state")
   expect_true(all(out2$CP != out$CP))
+  expect_silent(out3 <- mrgsim_e(mod,dose, ss_n = 3, ss_fixed=TRUE, recsort=3))
+  expect_true(all(out3$CP != out$CP))
 })

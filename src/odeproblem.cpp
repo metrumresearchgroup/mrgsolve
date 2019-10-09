@@ -30,9 +30,6 @@
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
 
-//! the maximum number of iterations for steady-state calculation
-#define MRGSOLVE_MAX_SS_ITER 1000
-
 void dosimeta(void* prob_) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eta = prob->mv_omega(1);
@@ -87,8 +84,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.amt = 0;
   
   Do_Init_Calc = true;
-  ss_tol = 1e-12;
-  ss_n = 1000;
+  ss_fixed = false;
+  ss_n = 500;
   
   pred.assign(5,0.0);
   
@@ -638,8 +635,10 @@ double PolyExp(const double& x,
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
   advan(Rcpp::as<int>(parin["advan"]));
-  ss_n = Rcpp::as<double>(parin["ss_n"]);
-  ss_tol = Rcpp::as<double>(parin["ss_tol"]);
+  ss_n = Rcpp::as<int>(parin["ss_n"]);
+  ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
+  Rtol = Rcpp::as<double>(parin["rtol"]);
+  Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
 

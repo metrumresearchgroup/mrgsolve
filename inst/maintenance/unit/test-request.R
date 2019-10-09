@@ -125,7 +125,7 @@ double ETA1 = ETA(1);
 double EPS1 = EPS(1);
 '
 
-test_that("Request is properly set in $SET", {
+test_that("request is made in SET block", {
   mod <- suppressWarnings(mcode("test3bqea",code))
   cols <- names(mrgsim(mod))
   expect_identical(mod@request, "CENT")
@@ -134,7 +134,7 @@ test_that("Request is properly set in $SET", {
   expect_identical(intersect(cols,mrgsolve:::cmt(mod)), "CENT")
 })
 
-test_that("Testing that request is (all) by default", {
+test_that("request is (all) by default", {
   mod <- mcode("test3c",'$CMT CENT\n$PARAM CL=1', compile=FALSE)
   expect_identical(mod@request, "(all)")
 })
