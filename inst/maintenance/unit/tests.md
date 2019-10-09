@@ -87,9 +87,9 @@
 |test-ev.R                 |test-ev                              |as.ev                                                                     |  6|      0|FALSE   |FALSE |       0|      6|
 |test-ev.R                 |test-ev                              |ev_repeat                                                                 |  1|      0|FALSE   |FALSE |       0|      1|
 |test-ev.R                 |test-ev                              |create ev with evaluation issue-512                                       |  4|      0|FALSE   |FALSE |       0|      4|
-|test-ev.R                 |test-ev                              |tinf issue-513                                                            |  4|      0|FALSE   |FALSE |       0|      4|
-|test-ev.R                 |test-ev                              |total  issue-513                                                          |  4|      0|FALSE   |FALSE |       0|      4|
-|test-ev.R                 |test-ev                              |until  issue-513                                                          |  3|      0|FALSE   |FALSE |       0|      3|
+|test-ev.R                 |test-ev                              |tinf issue-513                                                            |  6|      0|FALSE   |FALSE |       0|      6|
+|test-ev.R                 |test-ev                              |total  issue-513                                                          |  5|      0|FALSE   |FALSE |       0|      5|
+|test-ev.R                 |test-ev                              |until  issue-513                                                          |  4|      0|FALSE   |FALSE |       0|      4|
 |test-evid4.R              |test-evid4                           |evid4 bolus dosing is the same as evid1                                   |  1|      0|FALSE   |FALSE |       0|      1|
 |test-evid4.R              |test-evid4                           |evid4 infusion dosing is the same as evid1                                |  1|      0|FALSE   |FALSE |       0|      1|
 |test-fixed-cmtn.R         |test-fixed-cmtn                      |FIXED items are excluded from param                                       |  2|      0|FALSE   |FALSE |       0|      2|

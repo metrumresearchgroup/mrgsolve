@@ -107,11 +107,11 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
   }
   
   if(any(evid==0)) {
-    stop("evid cannot be 0 (observation)")
+    wstop("evid cannot be 0 (observation)")
   }
   
   if(missing(amt)) {
-    stop("argument \"amt\" is missing, with no default.", call.=FALSE)  
+    wstop("argument \"amt\" is missing, with no default.")  
   }
   
   l <- list(time=time, cmt=cmt, amt=amt, evid=evid)
@@ -128,7 +128,7 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
   
   data <- as.data.frame(as_tibble(l))
 
-  data <- finalize_ev(data)
+  data <- finalize_ev(data, names(l))
 
   if(length(ID) > 0) {
     
@@ -213,6 +213,8 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     names(x)[where] <- tolower(names(x)[where])
   }
   
+  input_cols <- names(x)
+  
   if(!has_name("cmt",x)) {
     x[["cmt"]] <- 1 
   }
@@ -239,7 +241,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     x <- x[,keep]
   }
   
-  x <- finalize_ev(x)
+  x <- finalize_ev(x,input_cols)
   
   new("ev", data=x)
 })
@@ -276,21 +278,21 @@ collect_ev <- function(...) {
   
   if(length(na.check) > 0) {
     if(any(is.na(unlist(x[,na.check])))) {
-      warning("missing values in some columns.",call.=FALSE)
+      warning("missing values in some columns",call.=FALSE)
     }
   }
   x <- dplyr::select(x,c(match(tran,names(x)),seq_along(names(x))))
   
   if(!any(c("time", "TIME") %in% names(x))) {
-    stop("No time or TIME column in the data set", call. = FALSE) 
+    wstop("no time or TIME column in the data set") 
   }
   
   if(!any(c("cmt", "CMT") %in% names(x))) {
-    stop("No cmt or CMT column in the data set", call. = FALSE) 
+    wstop("no cmt or CMT column in the data set") 
   }
   
   if(!has_ID(x)) {
-    stop("No ID column in the data set", call. = FALSE)
+    wstop("no ID column in the data set")
   }
   return(x)
 }
