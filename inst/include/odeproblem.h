@@ -92,7 +92,6 @@ public:
              Rcpp::List funs,
              int n_capture_);
 
-  odeproblem(){};
   ~odeproblem(){};
 
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
@@ -201,8 +200,8 @@ public:
   int Npar;
   int Neq;
   int Istate; ///< istate value
-  bool ss_fixed = false;
-  int ss_n = 500;
+  bool ss_fixed;
+  int ss_n;
 
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions

@@ -30,9 +30,6 @@
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
 
-//! the maximum number of iterations for steady-state calculation
-#define MRGSOLVE_MAX_SS_ITER 1000
-
 void dosimeta(void* prob_) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eta = prob->mv_omega(1);
@@ -88,7 +85,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   Do_Init_Calc = true;
   ss_fixed = false;
-  ss_n = 1000;
+  ss_n = 500;
   
   pred.assign(5,0.0);
   
