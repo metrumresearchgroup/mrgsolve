@@ -154,7 +154,6 @@ As_data_set <- function(x) {
 finalize_ev_data <- function(data) {
   if("tinf" %in% names(data)) {
     tinf <- data[["tinf"]]
-    data[["tinf"]] <- NULL
     if(any(tinf < 0)) {
       stop("tinf must be greater than or equal to zero", call.=FALSE)
     }
@@ -198,10 +197,7 @@ finalize_ev <- function(x) {
   } else if(is.ev(x)) {
     x@data <- finalize_ev_data(x@data)
   } else {
-    stop("object must be a data frame or class ev", call.=FALSE)  
+    wstop("object must be a data frame or class ev")  
   }
   x
 }
-
-
-
