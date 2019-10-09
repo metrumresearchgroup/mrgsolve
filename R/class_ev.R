@@ -32,8 +32,9 @@ is.ev <- function(x) {
 ##' @rdname ev_dplyr
 ##' @export
 mutate.ev <- function(.data, ...) {
+  input_cols <- names(match.call(expand.dots=TRUE))
   .data@data <- as.data.frame(mutate(.data@data, ...))
-  .data@data <- finalize_ev(.data@data)
+  .data@data <- finalize_ev(.data@data,input_cols)
   .data
 }
 
@@ -151,16 +152,31 @@ As_data_set <- function(x) {
   return(x)
 }
 
-finalize_ev_data <- function(data) {
-  if("tinf" %in% names(data)) {
-    tinf <- data[["tinf"]]
-    data[["tinf"]] <- NULL
-    if(any(tinf < 0)) {
-      stop("tinf must be greater than or equal to zero", call.=FALSE)
+finalize_ev_data <- function(data,input_cols=NULL) {
+  if(is.character(input_cols)) {
+    if(any(c("tinf", "total", "until") %in% input_cols)) {
+      if(all(c("rate", "tinf") %in% input_cols)) {
+        wstop("input can include either rate or input, not both")
+      }
+      if(all(c("total", "addl") %in% input_cols)) {
+        wstop("input can include either total or addl, not both")
+      }
+      if(all(c("until", "addl") %in% input_cols)) {
+        wstop("input can include either until or addl, not both")
+      }
     }
+  }
+  if("tinf" %in% names(data)) {
+    if("rate" %in% input_cols) {
+      wstop("cannot set rate when tinf already exists")  
+    }
+    tinf <- data[["tinf"]]
+    if(any(tinf < 0)) {
+      wstop("tinf must be greater than or equal to zero")
+    }
+    data[["rate"]] <- 0    
     if(any(tinf > 0)) {
       i <- tinf > 0
-      data[["rate"]] <- 0
       data[["rate"]][i] <- data[["amt"]][i]/tinf[i]
     }
   }
@@ -172,12 +188,12 @@ finalize_ev_data <- function(data) {
         data[["addl"]] <- total - 1
       }
     } else {
-      stop("total required to be greater than zero", call.=FALSE)
+      wstop("total required to be greater than zero")
     }
   }
   if("until" %in% names(data)) {
     if(!("ii" %in% names(data))) {
-      stop("ii is required when until is specified", call.=FALSE)
+      wstop("ii is required when until is specified")
     }
     until <- data[["until"]]
     data[["until"]] <- NULL
@@ -192,16 +208,13 @@ finalize_ev_data <- function(data) {
   data
 }
 
-finalize_ev <- function(x) {
+finalize_ev <- function(x,...) {
   if(is.data.frame(x)) {
-    x <- finalize_ev_data(x)
+    x <- finalize_ev_data(x,...)
   } else if(is.ev(x)) {
-    x@data <- finalize_ev_data(x@data)
+    x@data <- finalize_ev_data(x@data,...)
   } else {
-    stop("object must be a data frame or class ev", call.=FALSE)  
+    wstop("object must be a data frame or class ev")  
   }
   x
 }
-
-
-

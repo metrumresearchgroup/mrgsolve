@@ -220,7 +220,7 @@ expand.ev <- function(...) {
   if(!has_name("cmt", ans)) ans[["cmt"]] <- 1
   if(!has_name("time", ans)) ans[["time"]] <- 0
   if(!has_name("amt", ans)) ans[["amt"]] <- 0
-  finalize_ev(ans)
+  finalize_ev(ans,input_cols = names(ans))
 }
 
 #' @export
