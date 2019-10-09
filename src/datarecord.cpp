@@ -277,7 +277,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_bolus] dosing failed to reach steady state with settings\n  ss_n: %d, rtol: %d, atol: %d", 
+        "[steady_bolus] failed to reach steady state with settings\n  ss_n: %d, rtol: %d, atol: %d", 
         N_SS, solver.Rtol, solver.Atol
       ).c_str()
     );
@@ -408,7 +408,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_infusion] dosing failed to reach steady state with settings\n  ss_n: %d, rtol: %d, atol: %d", 
+        "[steady_infusion] failed to reach steady state with settings\n  ss_n: %d, rtol: %d, atol: %d", 
         N_SS, solver.Rtol, solver.Atol
       ).c_str()
     );
@@ -536,7 +536,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_zero]  dosing failed to reach steady state with settings\n  ss_n: %d, rtol: %d, atol: %d", 
+        "[steady_zero] failed to reach steady state with settings\n  ss_n: %d, rtol: %d, atol: %d", 
         N_SS, solver.Rtol, solver.Atol
       ).c_str()
     );
