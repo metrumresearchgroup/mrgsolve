@@ -213,8 +213,6 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     names(x)[where] <- tolower(names(x)[where])
   }
   
-  input_cols <- names(x)
-  
   if(!has_name("cmt",x)) {
     x[["cmt"]] <- 1 
   }
@@ -241,7 +239,7 @@ setMethod("as.ev", "data.frame", function(x,keep_id=TRUE,clean = FALSE,...) {
     x <- x[,keep]
   }
   
-  x <- finalize_ev(x,input_cols)
+  x <- finalize_ev(x)
   
   new("ev", data=x)
 })
