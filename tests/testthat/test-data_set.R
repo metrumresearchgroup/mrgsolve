@@ -159,3 +159,13 @@ test_that("observations expand", {
   expect_equal(nrow(obs),3)
   expect_equal(obs[["time"]],c(1,2,3))
 })
+
+test_that("expand observations bug issue-563", {
+  e1 <- ev(amt = 100, cmt=1,LAGT=1,ID=15)
+  e2 <- ev(time=4,amt=50,cmt=1,LAGT=0,rate=24,addl=2,ii=24,ID=15)
+  e <- c(e1,e2)
+  expect_silent(d <- expand_observations(e,seq(1,10)))
+  expect_is(d,"data.frame")
+})
+
+

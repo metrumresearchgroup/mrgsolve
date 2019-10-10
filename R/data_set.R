@@ -447,7 +447,6 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' @param unique `logical`; if `TRUE` then values for `time` are 
 ##' dropped if they are found anywhere in `data`
 ##'
-##' 
 ##' @details
 ##' Non-numeric columns will be dropped with a warning.
 ##' 
@@ -476,7 +475,6 @@ expand_observations <- function(data, times, unique = FALSE) {
   copy <- which(!is.element(colnames(dat),dont_copy))-1
   a <- EXPAND_OBSERVATIONS(dat,times,copy)
   ans <- as.data.frame(a$data)
-
   names(ans) <- colnames(dat)
   ans[["..zeros.."]] <- NULL
   ans
