@@ -35,6 +35,10 @@ for event object construction: `rate/tinf`, `addl/total`, `addl/until` #513
 - When `tinf` is used to create event object, that item is retained and used
 to set the infusion rate (along with dose) until it is removed; it is an 
 error to try to set `rate` when `tinf` is in the event object #513
+- Fix bug related to column identification in `expand_observations` #563
+- Add record position argument to `expand_observations` to allow control 
+record sort order #565
+
 
 # mrgsolve 0.9.2
 
