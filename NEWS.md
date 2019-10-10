@@ -29,7 +29,7 @@ sets #534
 - When there is a problem when the ODE system is advanced, informative error
 messages from both lsoda and mrgsolve will be issued along with the value
 of `istate` #457
-- Add ability to have `ss=1` in a dosing record with bioavibility is zero #497
+- Add ability to have `ss=1` in a dosing record with bioavailability is zero #497
 - Error messages will be issued when both of the following are found in input 
 for event object construction: `rate/tinf`, `addl/total`, `addl/until` #513
 - When `tinf` is used to create event object, that item is retained and used
