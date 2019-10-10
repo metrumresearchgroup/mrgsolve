@@ -466,12 +466,18 @@ expand_observations <- function(data, times, unique = FALSE) {
     tcol <- timename(data)
     times <- times[!times %in% unique(data[[tcol]])]
   }
-  dont_copy <- c("ID", "amt", "cmt", "evid", "ii", "ss", "rate","time","addl")
+  dont_copy <- c("ID", "amt", "cmt", "evid", "ii", "ss", "rate","time","addl","..zeros..")
   dont_copy <- unique(c(dont_copy,toupper(dont_copy)))
   dat <- data.matrix(numerics_only(data))
+  dat <- cbind(dat, matrix(0,
+                           ncol=1,
+                           nrow=nrow(dat),
+                           dimnames=list(NULL,"..zeros..")))
   copy <- which(!is.element(colnames(dat),dont_copy))-1
   a <- EXPAND_OBSERVATIONS(dat,times,copy)
   ans <- as.data.frame(a$data)
+
   names(ans) <- colnames(dat)
+  ans[["..zeros.."]] <- NULL
   ans
 }
