@@ -306,7 +306,8 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
 Rcpp::List EXPAND_OBSERVATIONS(
     const Rcpp::NumericMatrix& data,
     const Rcpp::NumericVector& times,
-    const Rcpp::IntegerVector& to_copy) {
+    const Rcpp::IntegerVector& to_copy, 
+    const Rcpp::IntegerVector& next_pos) {
   
   Rcpp::CharacterVector parnames;
   
@@ -326,7 +327,7 @@ Rcpp::List EXPAND_OBSERVATIONS(
   bool obsonly = false;
   bool debug = false;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  int nextpos = -1;
+  int nextpos = next_pos[0];
   obscount = 0;
   
   int n_time = int(times.size());
