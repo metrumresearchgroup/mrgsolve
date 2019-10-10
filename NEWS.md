@@ -1,4 +1,4 @@
-# mrgsolve 0.9.2.9000
+# mrgsolve 0.10.0
 
 - Remove `qsim` and all associated functions
 - Export new function / workflow as `qsim` as a simpler, quicker simulation

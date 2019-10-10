@@ -192,11 +192,7 @@ test_that("no idata no problem generates error", {
 
 test_that("negative istate is reported issue-457", {
   mod <- update(mod, maxsteps = 1)
-  x <- utils::capture.output(
-    expect_error(mrgsim(mod), "simulation terminated"), 
-    type = "message"
-  )
-  x <- utils::capture.output(try(mrgsim(mod)), type = "message")
+  x <- utils::capture.output(try(mrgsim(mod),silent=TRUE), type = "message")
   expect_true(grepl("consider increasing maxsteps", x[1]))
   expect_true(grepl("lsoda returned with negative istate: -1", x[3]))
 })
