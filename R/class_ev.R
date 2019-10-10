@@ -34,7 +34,28 @@ is.ev <- function(x) {
 mutate.ev <- function(.data, ...) {
   input_cols <- names(match.call(expand.dots=TRUE))
   .data@data <- as.data.frame(mutate(.data@data, ...))
-  .data@data <- finalize_ev(.data@data,input_cols)
+  data_cols <- names(.data@data)
+  if(any(c("tinf", "total", "until") %in% input_cols)) {
+    if(all(c("rate", "tinf") %in% input_cols)) {
+      if(all(c("rate", "tinf") %in% data_cols)) {
+        wstop("input can include either rate or tinf, not both")
+      }
+    }
+    if(all(c("total", "addl") %in% input_cols)) {
+      if(all(c("total", "addl") %in% data_cols)) {
+        wstop("input can include either total or addl, not both")
+      }
+    }
+    if(all(c("until", "addl") %in% input_cols)) {
+      if(all(c("until", "addl") %in% data_cols)) {
+        wstop("input can include either until or addl, not both")
+      }
+    }
+  }
+  if("rate" %in% input_cols && "tinf" %in% data_cols) {
+    wstop("cannot set rate when tinf exists")  
+  }
+  .data@data <- finalize_ev(.data@data)
   .data
 }
 
@@ -152,24 +173,8 @@ As_data_set <- function(x) {
   return(x)
 }
 
-finalize_ev_data <- function(data,input_cols=NULL) {
-  if(is.character(input_cols)) {
-    if(any(c("tinf", "total", "until") %in% input_cols)) {
-      if(all(c("rate", "tinf") %in% input_cols)) {
-        wstop("input can include either rate or input, not both")
-      }
-      if(all(c("total", "addl") %in% input_cols)) {
-        wstop("input can include either total or addl, not both")
-      }
-      if(all(c("until", "addl") %in% input_cols)) {
-        wstop("input can include either until or addl, not both")
-      }
-    }
-  }
+finalize_ev_data <- function(data) {
   if("tinf" %in% names(data)) {
-    if("rate" %in% input_cols) {
-      wstop("cannot set rate when tinf already exists")  
-    }
     tinf <- data[["tinf"]]
     if(any(tinf < 0)) {
       wstop("tinf must be greater than or equal to zero")
