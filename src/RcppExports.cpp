@@ -88,15 +88,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // EXPAND_OBSERVATIONS
-Rcpp::List EXPAND_OBSERVATIONS(const Rcpp::NumericMatrix& data, const Rcpp::NumericVector& times, const Rcpp::IntegerVector& to_copy);
-RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP dataSEXP, SEXP timesSEXP, SEXP to_copySEXP) {
+Rcpp::List EXPAND_OBSERVATIONS(const Rcpp::NumericMatrix& data, const Rcpp::NumericVector& times, const Rcpp::IntegerVector& to_copy, const Rcpp::IntegerVector& next_pos);
+RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP dataSEXP, SEXP timesSEXP, SEXP to_copySEXP, SEXP next_posSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type times(timesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type to_copy(to_copySEXP);
-    rcpp_result_gen = Rcpp::wrap(EXPAND_OBSERVATIONS(data, times, to_copy));
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type next_pos(next_posSEXP);
+    rcpp_result_gen = Rcpp::wrap(EXPAND_OBSERVATIONS(data, times, to_copy, next_pos));
     return rcpp_result_gen;
 END_RCPP
 }
