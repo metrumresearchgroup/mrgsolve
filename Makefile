@@ -107,7 +107,6 @@ test1:
 test2:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
-
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
 	rm src/*.o
@@ -118,8 +117,8 @@ datasets:
 
 travis:
 	make build
-	#R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
-	make test
+	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
+	make test2
 
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
