@@ -1,0 +1,124 @@
+---
+title: ""
+output: 
+  pdf_document: 
+    number_sections: true
+---
+
+```{r,include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+# Validation Testing: mrgsolve v0.10.0
+
+## Scope
+
+The purpose of this Validation Testing document is to define the conditions for
+test execution. All tests are specified and linked to release candidate user
+stories as numbered issues in the Requirements Specification-Validation Plan
+document.
+
+----------------
+
+```{r, message=FALSE, warning = FALSE}
+library(dplyr)
+library(readr)
+library(testthat)
+```
+
+
+## Test locations
+
+Tests are in three locations
+
+1. `tests/testthat` 
+1. `inst/maintenance/unit` 
+1. `inst/validation`
+
+
+## Test candidate
+
+Showing md5 checksum
+```{r}
+tarball <- "../../mrgsolve_0.10.0.tar.gz"
+tools::md5sum(tarball)
+```
+
+
+```{r,output="hide", message=FALSE,warning=FALSE}
+install.packages(tarball, repos=NULL)
+```
+
+
+```{r}
+run_test <- function(dir,d) {
+ cwd <- getwd()
+ on.exit(setwd(cwd))
+ setwd("../../")
+ x <- test_dir(dir, reporter="check") %>% as_tibble
+ x$result <- NULL
+ x$location <- dir
+ x$date <- d
+ x
+}
+```
+
+```{r}
+d  <- Sys.time()
+```
+
+## Run tests
+
+Tests specified in the Requirements Specification-Validation Plan document are
+executed using the `run_test()` function, which calls `testthat::test_dir`.
+
+### tests/testthat
+
+```{r, echo=FALSE}
+y <- run_test("tests/testthat",d) 
+```
+
+
+### inst/maintenance/unit
+
+```{r, echo=FALSE}
+z <- run_test("inst/maintenance/unit/",d)
+```
+
+
+### inst/validation
+
+```{r, echo=FALSE}
+x <- run_test("inst/validation",d)
+```
+
+```{r}
+df <- bind_rows(x,y,z)
+```
+
+## Comprehensive summary
+
+Summarizes the number of contexts, tests, and expectations and counts number
+of tests and test failures.
+
+```{r}
+summarise(
+        df,
+        contexts = n_distinct(context),
+        tests = n_distinct(test), 
+        number = sum(nb), 
+        failed = sum(failed)
+)
+```
+
+```{r}
+readr::write_csv(path="all_tests.csv", df)
+```
+
+## Session
+
+Testing session information is captured.
+
+```{r}
+devtools::session_info()
+```
