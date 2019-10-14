@@ -232,7 +232,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   prob->rate_reset();
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-  int min_check = (N_SS < 10) ? N_SS : 10;
+  int min_check = std::min(10, N_SS);
   double tfrom = 0.0;
   double tto = 0.0;
   
@@ -340,7 +340,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   int j;
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-  int min_check = (N_SS < 10) ? N_SS : 10;
+  int min_check = std::min(10, N_SS);
   std::vector<double> last(prob->neq(),-1e9);
   
   reclist offs;
@@ -489,7 +489,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-  int min_check = (N_SS < 10) ? N_SS : 10;
+  int min_check = std::min(10, N_SS);
   std::vector<double> last(prob->neq(),-1e9);
   bool made_it = false;
   
