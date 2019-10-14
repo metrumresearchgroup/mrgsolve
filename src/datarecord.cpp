@@ -232,7 +232,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   prob->rate_reset();
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-
+  int min_check = (N_SS < 10) ? N_SS : 10;
   double tfrom = 0.0;
   double tto = 0.0;
   
