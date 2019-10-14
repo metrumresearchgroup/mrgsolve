@@ -232,7 +232,6 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   prob->rate_reset();
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-  int min_check = std::min(10, N_SS);
   double tfrom = 0.0;
   double tto = 0.0;
   
@@ -255,20 +254,16 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     
     int ngood = 0;
     for(int j=0; j < prob->neq(); ++j) {
-      if(i >= min_check) {
-        diff = fabs(prob->y(j) - last[j]);
-        err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
-        if(diff < err ) ++ngood;
-      }
+      diff = fabs(prob->y(j) - last[j]);
+      err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+      if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
-    if(i > min_check) {
-      if(ngood == prob->neq()) {
-        tfrom = double(i-1)*Ii;
-        tto  = double(i)*Ii;
-        made_it = true;
-        break;
-      }
+    if(ngood == prob->neq()) {
+      tfrom = double(i-1)*Ii;
+      tto  = double(i)*Ii;
+      made_it = true;
+      break;
     }
     tfrom = tto;
   }
@@ -340,7 +335,6 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   int j;
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-  int min_check = std::min(10, N_SS);
   std::vector<double> last(prob->neq(),-1e9);
   
   reclist offs;
@@ -388,20 +382,16 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     
     int ngood = 0;
     for(j=0; j < prob->neq(); ++j) {
-      if(i >= min_check) {
-        diff = fabs(prob->y(j) - last[j]);
-        err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
-        if(diff < err ) ++ngood;
-      }
+      diff = fabs(prob->y(j) - last[j]);
+      err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+      if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
-    if(i > min_check) {
-      if(ngood == prob->neq()) {
-        tfrom = nexti;
-        nexti  = double(i+1)*Ii;
-        made_it = true;
-        break;
-      }
+    if(ngood == prob->neq()) {
+      tfrom = nexti;
+      nexti  = double(i+1)*Ii;
+      made_it = true;
+      break;
     }
   }
   if((!made_it) && warn) {
@@ -489,7 +479,6 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
-  int min_check = std::min(10, N_SS);
   std::vector<double> last(prob->neq(),-1e9);
   bool made_it = false;
   
@@ -506,30 +495,26 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     tfrom = tto;
     int ngood = 0;
     for(int j=0; j < prob->neq(); ++j) {
-      if(i >= min_check) {
-        diff = fabs(prob->y(j) - last[j]);
-        err = solver.Rtol*fabs(prob->y(j)) + solver.Atol;
-        if(diff < err) ++ngood;
-      }
+      diff = fabs(prob->y(j) - last[j]);
+      err = solver.Rtol*fabs(prob->y(j)) + solver.Atol;
+      if(diff < err) ++ngood;
       last[j] = prob->y(j);
     }
-    if(i > min_check) {
-      if(ngood == prob->neq()) {
-        made_it = true;
-        break;
-      }
-      duration = 15;
-      if(i==12) {
-        a1 = prob->y(Cmt);
-        t1 = tto;
-        duration = 20;
-      }
-      if(i==25) {
-        a2 = prob->y(Cmt);
-        t2 = tto;
-        double k_ = Rate/(a1+a2) + (a1-a2)/((a1+a2)*(t2-t1));
-        duration = std::max(duration,0.693/k_); // 2*thalf Chiou
-      }
+    if(ngood == prob->neq()) {
+      made_it = true;
+      break;
+    }
+    if(i==10) duration = 15;
+    if(i==15) {
+      a1 = prob->y(Cmt);
+      t1 = tto;
+      duration = 20;
+    }
+    if(i==25) {
+      a2 = prob->y(Cmt);
+      t2 = tto;
+      double k_ = Rate/(a1+a2) + (a1-a2)/((a1+a2)*(t2-t1));
+      duration = std::max(duration,0.693/k_); // 2*thalf Chiou
     }
   }
   if((!made_it) && warn) {
