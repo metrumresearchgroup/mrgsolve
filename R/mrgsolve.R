@@ -454,15 +454,15 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' the PK system; a warning will be issued if steady state is not achieved 
 ##' within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}
 ##' @param ss_fixed if \code{FALSE} (the default), then a warning will be issued
-##' if the system does not advance to steady state within \code{ss_n} iterations
+##' if the system does not reach steady state within \code{ss_n} iterations
 ##' given the model tolerances \code{rtol} and \code{atol}; if \code{TRUE}, 
-##' then a fixed number of iterations are 
-##' performed (determined by \code{ss_n}) for determining steady state without
-##' regard to model tolerances; to silence warnings related to steady state, 
-##' set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the number of 
-##' iterations to advance the system for steady state determination. If 
-##' \code{ss_n} is \code{FALSE} a warning will be issued 
-##' 
+##' the number of iterations for determining steady state are capped at 
+##' \code{ss_n} and no warning will be issued if steady state 
+##' has not been reached within \code{ss_n} dosing iterations.
+##' To silence warnings related to steady state, 
+##' set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the maximum number 
+##' of iterations to try when advancing the system for steady state 
+##' determination.
 ##' 
 ##' @rdname mrgsim
 ##' @export
