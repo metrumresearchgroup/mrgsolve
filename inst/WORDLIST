@@ -1,3 +1,10 @@
+evid
+fortran
+io
+tinf
+BLAS
+xpath
+LTO
 PBPK
 QSP
 PK
@@ -110,3 +117,10 @@ variates
 un
 signifier
 updatable
+lsoda
+outvars
+dilawar   
+Heng       
+liblsoda   
+libsoda    
+sdwfrost  

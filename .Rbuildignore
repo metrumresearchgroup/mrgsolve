@@ -1,6 +1,7 @@
 README.html
 DOCS/
 mrgsolve/
+inst/validation
 cran-comments.md
 Rchecks
 .github

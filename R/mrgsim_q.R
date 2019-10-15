@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -35,11 +35,9 @@
 ##' times will only be added to the output if there are no observation
 ##' records in \code{data}
 ##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param output output data type; if \code{NULL}, then an \code{mrgsims}
+##' @param output output data type; if \code{mrgsims}, then the default output
 ##' object is returned; if \code{"df"} then a data frame is returned
-##' @param simcall the default value \code{1} will invoke use of a streamlined
-##' version of \code{DEVTRAN} to be use for the simulation; \code{0} revets
-##' back to the same \code{DEVTRAN} code that is used by \code{\link{mrgsim}}
+##' @param simcall not used; only the default value of 0 is allowed
 ##' 
 ##' @details
 ##' 
@@ -86,111 +84,93 @@
 ##' 
 ##' out
 ##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}, \code{\link{qsim}}
 ##' @export
 mrgsim_q <- function(x,
                      data,
                      recsort = 1,
                      stime = numeric(0),
-                     output = NULL,
+                     output = "mrgsims",
                      skip_init_calc = FALSE, 
                      simcall = 0) {
   
+  if(!is.mrgmod(x)) mod_first()
+  
   ## data
+  if(is.ev(data)) {
+    data <- as.data.frame.ev(data, add_ID = 1)  
+  }
+  
   if(!is.valid_data_set(data)) {
     data <- valid_data_set(data,x,x@verbose)
   } 
   
   tcol <- timename(data)
-  tcol <- if_else(is.na(tcol), "time", tcol)
+  if(is.na(tcol)) tcol <- "time"
   
   param <- as.numeric(Param(x))
   init <-  as.numeric(Init(x))
-  
-  compartments <- Cmt(x)
-  
-  capt <- unname(x@capture)
-  
-  # Non-compartment names in capture
-  if(any(is.element(capt,compartments))) {
-    stop("Compartment names should not be used in $CAPTURE.", call.=FALSE)  
-  }
-  
-  # First spot is the number of capture.items, followed by integer positions
-  # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
   parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
-  
-  # already took intersect
-  parin$request <- as.integer(seq_along(compartments)-1);
-  
-  if(simcall==1) {
-    out <- .Call(
-      `_mrgsolve_MRGSIMQ`,
-      parin,
-      param,
-      Pars(x),
-      init,
-      compartments,
-      capt_pos,
-      pointers(x),
-      data,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )
-    
-  } else {
-    parin[["tgridmatrix"]] <- matrix(0,nrow=0,ncol=0)
-    parin[["whichtg"]] <- integer(0)
-    parin[["carry_data"]] <- character(0)
-    parin[["carry_idata"]] <- character(0)
-    parin[["carry_tran"]] <- character(0)
-    parin[["obsonly"]] <- FALSE
-    parin[["filbak"]] <- TRUE
-    parin[["tad"]] <- FALSE
-    parin[["nocb"]] <- TRUE
-    parin[["obsaug"]] <- FALSE
-    
-    out <- .Call(
-      `_mrgsolve_DEVTRAN`,
-      parin,
-      param,
-      names(param(x)),
-      init,
-      names(Init(x)),
-      capt_pos,
-      pointers(x),
-      data,null_idata,
-      as.matrix(omat(x)),
-      as.matrix(smat(x)),
-      x@envir
-    )[["data"]]
+  parin$request <- Cmti(x)-1L
+
+  if(simcall!=0) {
+    if(simcall==1) {
+      wstop("the interface with simcall=1 is no longer available; please use simcall=0 instead.")
+    }
+    wstop("simcall values other than 0 are prohibited.")
   }
   
-  cnames <- c("ID", tcol, compartments, capt)
+  if(length(stime) == 0) {
+    parin[["tgridmatrix"]] <- matrix(stime(x),ncol=1)
+  } else {
+    parin[["tgridmatrix"]] <- matrix(stime,ncol=1)
+  }
   
-  dimnames(out) <- list(NULL, cnames)
+  parin[["whichtg"]] <- integer(0)
+  parin[["carry_data"]] <- character(0)
+  parin[["carry_idata"]] <- character(0)
+  parin[["carry_tran"]] <- character(0)
+  parin[["obsonly"]] <- FALSE
+  parin[["filbak"]] <- TRUE
+  parin[["tad"]] <- FALSE
+  parin[["nocb"]] <- TRUE
+  parin[["obsaug"]] <- FALSE
+    
+  out <- .Call(
+    `_mrgsolve_DEVTRAN`,
+    parin,
+    param,
+    names(param(x)),
+    init,
+    names(Init(x)),
+    CAPTUREI(x),
+    pointers(x),
+    data,null_idata,
+    as.matrix(omat(x)),
+    as.matrix(smat(x)),
+    x@envir, 
+    PACKAGE = "mrgsolve"
+  )[["data"]]
   
-  if(!is.null(output)) {
-    if(output=="df") {
-      return(as.data.frame(out))  
-    }
-    if(output=="matrix") {
-      return(out)  
-    }
+  dimnames(out) <- list(NULL, c("ID", tcol,x@cmtL,x@capL))
+  
+  if(output=="df") {
+    return(as.data.frame(out))  
+  }
+  if(output=="matrix") {
+    return(out)  
   }
   
   new(
     "mrgsims",
-    request=compartments,
+    request=x@cmtL,
     data=as.data.frame(out),
-    outnames=capt,
+    outnames=x@capL,
     mod=x
   )
 }

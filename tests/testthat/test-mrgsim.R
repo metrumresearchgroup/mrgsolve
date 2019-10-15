@@ -44,6 +44,16 @@ idata <- expand.idata(CL = runif(10, 0.2,2)) %>%
 
 context("test-mrgsim")
 
+test_that("error to not pass model object issue-547", {
+  expect_error(mrgsim(dose), "the first argument to mrgsim")
+  expect_error(mrgsim_d(dose), "the first argument to mrgsim_d ")
+  expect_error(mrgsim_ei(dose), "the first argument to mrgsim_ei ")
+  expect_error(mrgsim_e(dose), "the first argument to mrgsim_e ")
+  expect_error(mrgsim_di(dose), "the first argument to mrgsim_di ")
+  expect_error(mrgsim_q(dose), "the first argument to mrgsim_q ")
+  expect_error(qsim(dose), "the first argument to qsim ")
+})
+
 test_that("mrgsim_df", {
   out <- mrgsim_df(mod, events = ev(amt=100))
   out2 <- mrgsim_e(mod,ev(amt = 100))
@@ -80,7 +90,7 @@ test_that("mrgsim with ev and ID and idata", {
   out <- mrgsim(mod, idata=idata, events = e_id)
   
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
-
+  
   expect_identical(out,out_pipe)
   expect_equal(length(unique(out$ID)),3)  
 })
@@ -178,4 +188,11 @@ test_that("no idata no problem generates error", {
   idata <- as.data.frame(e)[0,]
   expect_is(mrgsim(mod, events = e, idata = idata, end = -1), "mrgsims")
   expect_is(mrgsim(mod, data = data, idata = idata, end = -1), "mrgsims")
+})
+
+test_that("negative istate is reported issue-457", {
+  mod <- update(mod, maxsteps = 1)
+  x <- utils::capture.output(try(mrgsim(mod),silent=TRUE), type = "message")
+  expect_true(grepl("consider increasing maxsteps", x[1]))
+  expect_true(grepl("lsoda returned with negative istate: -1", x[3]))
 })

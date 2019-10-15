@@ -2,12 +2,12 @@
 % Please edit documentation in R/package.R
 \name{solversettings}
 \alias{solversettings}
-\title{Optional inputs for DLSODA}
+\title{Optional inputs for lsoda}
 \description{
 These are settings for the differential equation 
-solver (\code{DLSODA}) that can be accessed via
+solver (\code{lsoda}) that can be accessed via
 the R interface.  The code listing below is taken directly
-from the \code{DLSODA} source code.
+from the \code{lsoda} source code.
 }
 \details{
 The following items can be set
@@ -37,53 +37,6 @@ number when you want a more precise solution.  However be aware
 that more precision here will result in longer run times.
 }
 }
-\section{Solver Settings}{
-
-\preformatted{
-C-----------------------------------------------------------------------
-C Optional Inputs.
-C
-C The following is a list of the optional inputs provided for in the
-C call sequence.  (See also Part 2.)  For each such input variable,
-C this table lists its name as used in this documentation, its
-C location in the call sequence, its meaning, and the default value.
-C The use of any of these inputs requires IOPT = 1, and in that
-C case all of these inputs are examined.  A value of zero for any
-C of these optional inputs will cause the default value to be used.
-C Thus to use a subset of the optional inputs, simply preload
-C locations 5 to 10 in RWORK and IWORK to 0.0 and 0 respectively, and
-C then set those of interest to nonzero values.
-C
-C Name    Location      Meaning and Default Value
-C
-C
-C HMAX    RWORK(6)  the maximum absolute step size allowed.
-C                   The default value is infinite.
-C
-C HMIN    RWORK(7)  the minimum absolute step size allowed.
-C                   The default value is 0.  (This lower bound is not
-C                   enforced on the final step before reaching TCRIT
-C                   when ITASK = 4 or 5.)
-C
-C IXPR    IWORK(5)  flag to generate extra printing at method switches.
-C                   IXPR = 0 means no extra printing (the default).
-C                   IXPR = 1 means print data on each switch.
-C                   T, H, and NST will be printed on the same logical
-C                   unit as used for error messages.
-C
-C MXSTEP  IWORK(6)  maximum number of (internally defined) steps
-C                   allowed during one call to the solver.
-C                   The default value is 500.
-C
-C MXHNIL  IWORK(7)  maximum number of messages printed (per problem)
-C                   warning that T + H = T on a step (H = step size).
-C                   This must be positive to result in a non-default
-C                   value.  The default value is 10.
-C
-C-----------------------------------------------------------------------
-}
-}
-
 \seealso{
 \code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
 }

@@ -6,22 +6,32 @@
 \alias{mrgsolve-package}
 \title{mrgsolve}
 \description{
-mrgsolve is an R package maintained under the auspices of 
-Metrum Research Group that facilitates simulation from 
-models based on systems of ordinary differential equations (ODE) 
-that are typically employed for understanding pharmacokinetics, 
-pharmacodynamics, and systems biology and pharmacology. mrgsolve 
-consists of computer code written in the R and C++ languages, 
-providing an interface to the DLSODA differential equation solver 
-(written in FORTRAN) provided through ODEPACK -
-A Systematized Collection of ODE Solvers.
+mrgsolve is an R package maintained under the auspices of
+Metrum Research Group that facilitates simulation from
+models based on systems of ordinary differential equations (ODE)
+that are typically employed for understanding pharmacokinetics,
+pharmacodynamics, and systems biology and pharmacology. mrgsolve
+consists of computer code written in the R and C++ languages,
+providing an interface to a C++ translation of the lsoda differential
+equation solver. See \link{aboutsolver} for more information.
 }
 \section{Resources}{
 
 \itemize{
-\item Main mrgsolve resource page: \href{https://mrgsolve.github.io}{https://mrgsolve.github.io}
-\item User guide: \href{https://mrgsolve.github.io/user_guide}{https://mrgsolve.github.io/user_guide}
-\item Vignettes: \href{https://mrgsolve.github.io/vignettes}{https://mrgsolve/github.io/vignettes}
+\item Main mrgsolve resource page: \url{https://mrgsolve.github.io}
+\item User guide: \url{https://mrgsolve.github.io/user_guide}
+\item Vignettes: \url{https://mrgsolve.github.io/vignettes}
+}
+}
+
+\section{Package-wide options}{
+
+\itemize{
+\item \code{mrgolve.project}: sets the default project director (\link{mread})
+\item \code{mrgsolve.soloc}: sets the default package build directory (\link{mread})
+\item \code{mrgsolve_mread_quiet}: don't print messages during \link{mread}
+\item \code{mrgsolve.update.strict}: if \code{TRUE}, print warning when trying to update
+an item in the model object that doesn't exist
 }
 }
 
@@ -39,14 +49,14 @@ mod
 
 see(mod)
 
+\dontrun{
 stime(mod)
-
+}
 param(mod)
+
 init(mod)
 
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168)
-
-out
 
 head(out)
 tail(out)
@@ -57,30 +67,22 @@ plot(out, GUT+CP~.)
 sims <- as.data.frame(out)
 
 t72 <- dplyr::filter(sims, time==72)
+
 str(t72)
 
 idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=168, idata=idata, req="")
 plot(out)
 
-out <- mod \%>\% ev(events) \%>\% mrgsim(carry.out="amt,evid,cmt,CL")
+out <- mod \%>\% ev(events) \%>\% mrgsim(carry_out="amt,evid,cmt,CL")
 head(out)
-
-out <- 
-  mod \%>\% 
-  ev() \%>\% 
-  knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
-
-plot(out, CP~., scales="same")
-plot(out, RESP+CP~time|amt,groups=CL)
-
 
 ev1 <- ev(amt=500, cmt=2,rate=10)
 ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
-events <- ev1+ev2
+events <- c(ev1+ev2)
 events
 
-out <- mod \%>\% ev(ev1+ev2) \%>\% mrgsim(end=180, req="")
+out <- mod \%>\% ev(events) \%>\% mrgsim(end=180, req="")
 plot(out)
 
 
@@ -96,7 +98,6 @@ plot(out,CP~time|factor(ID))
 
 ## idata
 data(exidata)
-exidata
 
 out <- 
   mod \%>\% 
@@ -113,7 +114,7 @@ mod <- mread("irm1", modlib())
 
 mod
 
-mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
+x <- mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
 
 }
 

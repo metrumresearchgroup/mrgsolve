@@ -96,8 +96,8 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
     capttext <- paste(captheader[1],"<none>")  
   }
   
-  
-  solvertxt <- list(atol=x@atol,rtol=x@rtol,maxsteps=x@maxsteps)
+  maxs <- paste0(floor(x@maxsteps/1000), "k")
+  solvertxt <- list(atol=x@atol,rtol=x@rtol,maxsteps=maxs)
   solvertxt <- paste(names(solvertxt), unlist(solvertxt), sep=": ")
   solvertxt <- list(solvertxt[1:3])
   solvertxt <- sapply(solvertxt, function(i) paste(i, collapse= " "))
@@ -117,7 +117,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   
   src <- paste0("source: ", basename(cfile(x)))
   nsrc <- nchar(src)
-  nside <- (52-nsrc)/2 - 2
+  nside <- max((54-nsrc)/2 - 2, 0)
   side <- paste0(rep("-", nside),collapse="")
 
   header <- paste0("\n\n",side, "  ", src, "  ", side, "\n\n")
@@ -141,8 +141,9 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   
   cat(solvertxt, sep="\n")
   
-  cat("\n")
   
+  cat(paste0(rep('-',54),collapse=""))
+  cat("\n")
 }
 
 ##' Print model details

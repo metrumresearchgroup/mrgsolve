@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -41,4 +41,13 @@ test_that("Renamed captured items are properly named", {
     c("ID", "time", "evid", "CL", "VP", "ETA_1", "ka", "b")
   )
 })
+
+test_that("error if cmt in capture issue-555", {
+  code <- "$CMT A\n$CAPTURE A"
+  expect_error(mcode("cmt-in-capture",code,compile=FALSE), 
+               "compartment should not be in")
+  code <- "$CMT A\n$CAPTURE B=A"
+  expect_is(mcode("rename-cmt-in-capture",code,compile=FALSE),"mrgmod")
+})
+
 

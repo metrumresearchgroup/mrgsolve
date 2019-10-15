@@ -126,10 +126,10 @@ test_that("coerce to data frame", {
 })
 
 test_that("get names", {
-  e <- ev(amt = 100, time = 0, evid = 1, ii = 12, addl = 24)
+  e <- ev(amt = 100, ii = 12, addl = 24)
   expect_equal(
     names(e),
-    c("time", "cmt", "amt", "evid", "ii", "addl")
+    c("time", "amt", "ii", "addl", "cmt", "evid")
   )
 })
 
@@ -177,4 +177,53 @@ test_that("ev_repeat", {
   e <- ev(amt = 100, ii = 24, addl = 9)
   e <- ev_repeat(e,n) %>% realize_addl()
   expect_equal(nrow(e),n*10) 
+})
+
+test_that("create ev with evaluation issue-512", {
+  a <- ev(amt = 100, rate = amt/10) %>% as.data.frame()
+  expect_true(exists("rate", a))
+  expect_identical(a[["rate"]], 10)
+  b <- ev(amt = 100, foo = amt/c(10,20,50)) %>% as.data.frame()
+  expect_identical(b[["foo"]], 100/c(10,20,50))
+  x <- 200
+  c <- ev(amt = 100, foo = amt/x) %>% as.data.frame()
+  expect_identical(c[["foo"]], 100/x)
+})
+
+test_that("tinf issue-513", {
+  e <- ev(amt = 100, tinf = 10)
+  expect_identical(e$rate, 10)
+  e <- ev(amt = 100, tinf = 0)
+  expect_identical(e$rate, 0)
+  expect_error(ev(amt = 100, tinf = -1))
+  e <- ev(amt = 100)
+  e <- mutate(e, tinf = 20)
+  expect_identical(e$rate,5)
+  expect_error(ev(amt=100,tinf=2,rate=5), "input can include either")
+  expect_error(mutate(e,rate=5), "cannot set rate when tinf")
+  expect_silent(mutate(ev(amt=100,tinf=5),tinf=NULL,rate=2))
+})
+
+test_that("total  issue-513", {
+  e <- ev(amt = 100, ii=2, total = 10)
+  expect_identical(e$addl, 9)
+  expect_error(ev(amt = 100, total = 0))
+  e <- ev(amt = 100, total = 1)
+  expect_identical(e$addl, NULL)
+  e <- ev(amt = 100, ii = 12)
+  e <- mutate(e, total = 20)
+  expect_identical(e$addl,19)
+  expect_error(ev(amt=100,addl=5,total=4), "input can include either")
+  expect_silent(mutate(ev(amt = 100, total = 10),total=NULL,addl=4))
+})
+
+test_that("until  issue-513", {
+  e <- ev(amt = 100, ii=24, until = 168)
+  expect_identical(e$addl, 6)
+  expect_error(ev(amt = 100, until = 24))
+  e <- ev(amt = 100)
+  e <- mutate(e, ii = 24, until = 168)
+  expect_identical(e$addl,6)
+  expect_error(ev(amt=100,addl=5,until=100), "input can include either")
+  expect_silent(mutate(ev(amt=100,ii=2,until=168),until=NULL,addl=5))
 })

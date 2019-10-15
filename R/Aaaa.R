@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -34,7 +34,7 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom RcppArmadillo armadillo_version
 ##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo quo_name syms !!! !! 
+##' @importFrom rlang quos enquo quo_name syms !!! !! eval_tidy
 ##' 
 ##' @include Aaaa.R
 ##' @include class_mrgsims.R
@@ -81,7 +81,7 @@ Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
-                   "SETINIT", "report")
+                   "SETINIT", "report", "_VARS_", "VARS")
 
 Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "addl", "rate","time", Reserved_cvar,

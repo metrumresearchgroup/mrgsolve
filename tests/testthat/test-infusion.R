@@ -121,4 +121,11 @@ test_that("Infusion executes with ss flag and ii==dur", {
   
 })
 
-
+test_that("ss infusion issue-249", {
+  cl <- 1.3
+  r <- 25
+  mod <- mrgsolve:::house(end=1,outvars="CP") %>% param(CL = cl)
+  ss <- ev(amt = 0, rate = r, ii =10,ss=1)
+  out <- mrgsim(mod,ss)
+  expect_equal(out$CP[2],r/cl)
+})

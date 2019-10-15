@@ -1,9 +1,52 @@
+# mrgsolve 0.10.0
 
-# mrgsolve 0.9.1.9000
+- Remove `qsim` and all associated functions
+- Export new function / workflow as `qsim` as a simpler, quicker simulation
+  routine #490
+- tad calculation (when called through `mrgsim()` and variants) recognizes
+  evid 4 in addition to evid 1 #502
+- Fix bug where `$NMXML` fails when `nm` namespace not found in xml file #510
+- Arguments to `ev` constructor are now evaluated; for example, 
+  `ev(amt = 100, rate = amt/2)` #512
+- Add `$` and `[[` operators for event objects #513
+- Recalculate rate (from tinf), addl (from total or until) upon mutate #513
+- Standardize column order for event objects #513
+- `mrgsim_e` and `mrgsim_ei` will try to accept data frame and validated data
+  sets
+- Drop ODEPACK solver and implement lsoda in C++ #504
+- Add C++11 as system requirement
+- Add constant infusion at steady state #249
+- Add `outvars` argument to update method; this will replace `Req`
+- Add two arguments to mrgsim: `ss_n` and `ss_fixed` to control advance to
+steady state; a warning will be issued when `ss_fixed` is `FALSE` and the system
+doesn't reach steady state within `ss_n` iterations #533
+- An error is issued when the first argument to mrgsim and variants is not 
+a model object #547
+- Argument `xpath` is added to `nmxml()` to handle cases where the `nm` namespace
+is not found in the xml file #510
+- More informative error messages are included when processing input data 
+sets #534
+- When there is a problem when the ODE system is advanced, informative error
+messages from both lsoda and mrgsolve will be issued along with the value
+of `istate` #457
+- Add ability to have `ss=1` in a dosing record with bioavailability is zero #497
+- Error messages will be issued when both of the following are found in input 
+for event object construction: `rate/tinf`, `addl/total`, `addl/until` #513
+- When `tinf` is used to create event object, that item is retained and used
+to set the infusion rate (along with dose) until it is removed; it is an 
+error to try to set `rate` when `tinf` is in the event object #513
+- Fix bug related to column identification in `expand_observations` #563
+- Add record position argument to `expand_observations` to allow control 
+record sort order #565
+
+
+# mrgsolve 0.9.2
+
 - Fix bug where system advanced to next time after advancing to steady state
   on a dosing record with ss=1 with no observation record at the same time
-  but preceeding the dosing record #484
+  but preceding the dosing record #484
 - Add AMT and CMT macros for self.amt and self.cmt, respectively #354
+- Re-organize `DLSODA` code to avoid CRAN LTO warning
 
 # mrgsolve 0.9.1
 
@@ -15,7 +58,7 @@
   spaces were not handled properly #450
 - Objects of class `valid_data_set` now retain the matrix attribute #448
 - Block names are now coerced to upper case letters
-- Change default for simcall to 0 in mrgsim_q
+- Change default for `simcall` to 0 in mrgsim_q
 - Add recover argument to mread
 - Add `@as_object` option to the following blocks: PARAM, INIT, CMT, 
   OMEGA, SIGMA; experimental 

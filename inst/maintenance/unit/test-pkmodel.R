@@ -25,21 +25,22 @@ project <- file.path(system.file(package="mrgsolve"), "models")
 
 context("Compare PKMODEL with equivalent ODEs")
 
-ode <- mrgsolve:::house() %>% param(CL=1,VC=20,KA=1.1)
+ode <- mrgsolve:::house(rtol = 1E-9, atol = 1E-9) %>% param(CL=1,VC=20,KA=1.1)
 
 code1 <- '
 $PARAM CL=1, V=20, KA=1.1
-$PKMODEL cmt = "CENT"
+$PKMODEL cmt = "GUT CENT", depot = TRUE
 '
 
 pred1 <- mcode("test13.2", code1)
 
 ode <- mcode("pkmodel_1", {'
 $PARAM CL = 1, V = 20, KA = 1.1
-$CMT CENT
+$CMT GUT CENT
 $ODE
-dxdt_CENT = -(CL/V)*CENT;
-'})
+dxdt_GUT = -KA*GUT;
+dxdt_CENT = KA*GUT-(CL/V)*CENT;
+'}, rtol = 1E-9, atol = 1E-9)
 
 test_that("ADVAN2 same as ODE - initial condition", {
   out1 <- ode  %>% init(CENT=1000) %>%
@@ -92,13 +93,12 @@ test_that("ADVAN2 same as ODE - CENT,infus,addl", {
 test_that("ADVAN2 same as ODE - CENT,infus,ss,addl", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1,ss=1)
   out1 <- ode  %>% ev(e) %>%
-    Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+    mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12, 
+          recsort=3)
   out2 <- pred1 %>% ev(e) %>%
-    Req(CENT) %>% mrgsim(end=264,delta=0.1,digits=5)
+   mrgsim(end=264,delta=0.1,digits=5,recsort=3)
   expect_equal(out1$CENT,out2$CENT)
 })
-
-
 
 test_that("ADVAN2 same as ODE - GUT,bolus,ss,addl", {
   e <- ev(amt=1000,ii=12,addl=16,cmt=1,ss=1)
@@ -129,8 +129,8 @@ $PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300
 $PKMODEL cmt = "GUT CENT PER", depot = TRUE
 '
 
-ode <- mcode("test13_3",ode_code) 
-pred2 <- mcode("test13_5",pred2)
+ode <- mcode("test13_3",ode_code, rtol = 1E-9, atol = 1E-9) 
+pred2 <- mcode("test13_5",pred2, rtol = 1E-9, atol = 1E-9)
 
 test_that("ADVAN4 same as ODE - initial condition", {
   out1 <- ode  %>% init(GUT=1000) %>%
@@ -208,14 +208,13 @@ test_that("ADVAN4 same as ODE - CENT,infus,ss,addl", {
 })
 
 test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
+  ode <- update(ode, rtol = 1e-8, atol = 1e-15)
+  pred2 <- update(pred2, rtol = 1e-8, atol = 1e-15)
   e <- ev(amt=100,ii=12,addl=16,cmt=1,ss=1)
   out1<- ode  %>% ev(e) %>%
-    Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,
-                             hmax=0.1,atol=1E-12,rtol=1E-12)
+    mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1)
   out2 <- pred2 %>% ev(e) %>%
-    Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
-
-
+     mrgsim(end=264,delta=0.1,digits=5)
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })

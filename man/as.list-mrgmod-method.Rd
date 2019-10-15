@@ -48,6 +48,9 @@ functions (with a call to \code{mrgsolve:::funset}).
 \item \code{delta}: simulation time step
 \item \code{add}: additional simulation times
 \item \code{capture}: names of captured data items
+\item \code{request}: compartments requested upon simulation
+\item \code{cmti}: named indices for current output compartments
+\item \code{capturei}: named indices for current output capture
 \item \code{random}: names and labels of \code{$OMEGA} and \code{$SIGMA}
 \item \code{code}: model source code from \code{cfile}
 \item \code{details}: model details data frame
@@ -59,7 +62,6 @@ functions (with a call to \code{mrgsolve:::funset}).
 \item \code{envir}: the model environment
 \item \code{plugins}: plugins invoked in the model
 \item \code{digits}: number of digits to request in simulated data
-\item \code{request}: compartments requested upon simulation
 \item \code{tscale}: multiplicative scalar for time in results only
 \item \code{mindt}: simulation output time below which there model will assume to
 have not advanced

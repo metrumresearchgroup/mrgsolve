@@ -83,9 +83,12 @@ commonly used in R (e.g. head, tail, as.data.frame, etc ...)
 mod <- mrgsolve:::house() \%>\% init(GUT=100)
 
 out <- mrgsim(mod)
+
 class(out)
 
+\dontrun{
 out
+}
 head(out)
 tail(out)
 
@@ -96,12 +99,15 @@ names(out)
 mat <- as.matrix(out)
 df <- as.data.frame(out)
 
+\dontrun{
 out$CP
+}
 
 plot(out)
+\dontrun{
 plot(out, CP~.)
 plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
-
+}
 }
 \seealso{
 \code{\link{stime}}

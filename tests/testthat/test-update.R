@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -114,13 +114,51 @@ test_that("Solver setting rtol updates", {
   expect_equal(mod7@rtol,1E-88)
 })
 
+test_that("bad update gives warning", {
+  options(mrgsolve.update.strict=TRUE)  
+  expect_warning(update(mod, kyle = 1), "invalid item for model object update")
+  options(mrgsolve.update.strict=FALSE)
+})
+
+test_that("update outvars issue-483", {
+  x <- update(mod, outvars = "RESP,CP,CENT")
+  expect_equal(x@cmtL, c("CENT", "RESP"))
+  expect_equal(x@capL, "CP")
+  expect_equal(x@Icmt, c(2,3))
+  expect_equal(x@Icap, 2)
+  mod <- update(mod, add = c(0,1), end = -1)
+  out <- mrgsim_df(mod, outvars="CP,RESP,CENT")
+  expect_equal(names(out[,3:5]), c("CENT", "RESP", "CP"))
+  expect_error(update(mod, outvars = "KYLE"))
+  x <- update(x, outvars="(all)")
+  ref <- c(names(init(x)),x@capture)
+  tst <- c(x@cmtL,x@capL)
+  expect_equivalent(ref,tst)
+})
+
+test_that("update req issue-483", {
+  x <- update(mod, req = "RESP,CENT")
+  expect_equal(x@cmtL, c("CENT", "RESP"))
+  expect_equal(x@capL, c("DV","CP"))
+  expect_equal(x@Icmt, c(2,3))
+  expect_equal(x@Icap, c(1,2))
+  x <- update(mod, request = "RESP,CENT")
+  expect_equal(x@cmtL, c("CENT", "RESP"))
+  expect_equal(x@capL, c("DV","CP"))
+  x <- update(x, outvars="CP")
+  x <- update(x, request = "(all)")
+  ref <- c(names(init(x)),"CP")
+  tst <- c(x@cmtL,x@capL)
+  expect_equivalent(ref,tst)
+})
+
 CL <- exp(rnorm(100, log(3),  sqrt(0.5)))
 VC <- exp(rnorm(100, log(30), sqrt(0.5))) 
 pars <- signif(data.frame(CL=CL,VC=VC),6)
 pars$ID <- seq(nrow(pars))
 
 out <- mrgsim(mod, idata=pars, end=8, carry_out="CL,VC")
-out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
+out <- distinct(out, ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out[,c("CL", "VC", "ID")]),6)
 
 test_that("Recover items from simulated data when passed in as idata",{

@@ -4,7 +4,7 @@
 \alias{expand_observations}
 \title{Insert observations into a data set}
 \usage{
-expand_observations(data, times, unique = FALSE)
+expand_observations(data, times, unique = FALSE, obs_pos = -1L)
 }
 \arguments{
 \item{data}{a data set or event object}
@@ -13,6 +13,10 @@ expand_observations(data, times, unique = FALSE)
 
 \item{unique}{`logical`; if `TRUE` then values for `time` are 
 dropped if they are found anywhere in `data`}
+
+\item{obs_pos}{determines sorting order for observations; use `-1` (default)
+to put observations first; otherwise, use large integer to ensure 
+observations are placed after doses}
 }
 \value{
 A data frame

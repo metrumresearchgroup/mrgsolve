@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -25,7 +25,6 @@
 #include "dataobject.h"
 #include "mrgsolve.h"
 #include "mrgsolv.h"
-#include <boost/format.hpp>
 
 #define _COL_amt_   0u
 #define _COL_ii_    1u
@@ -35,23 +34,23 @@
 #define _COL_evid_  5u
 #define _COL_cmt_   6u
 #define _COL_time_  7u
-
+#define say(a) Rcpp::Rcout << a << std::endl;
 
 dataobject::dataobject(Rcpp::NumericMatrix _data, 
                        Rcpp::CharacterVector _parnames) {
   Data = _data;
   parnames = _parnames;
   
-  Rcpp::List dimnames = Data.attr("dimnames");
+  Rcpp::List dimnames = _data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
   if(Idcol < 0) {
-    throw Rcpp::exception("Could not find ID column in data set.",false);
+    throw Rcpp::exception("could not find ID column in data set.",false);
   }
   
   // Connect Names in the data set with positions in the parameter list
-  from_to(Data_names,parnames, par_from, par_to);
+  from_to(Data_names, parnames, par_from, par_to);
   
   col.resize(8,0);
   
@@ -64,14 +63,14 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   parnames = _parnames;
   cmtnames = Rcpp::clone(_cmtnames);
   
-  Rcpp::List dimnames = Data.attr("dimnames");
+  Rcpp::List dimnames = _data.attr("dimnames");
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
   
   if(Idcol < 0) {
     throw Rcpp::exception(
-        "Could not find ID column in data set.",false
+        "could not find ID column in data set.",false
     );
   }
   
@@ -91,14 +90,10 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
 dataobject::~dataobject(){}
 
 void dataobject::map_uid() {
-  
-  int i=0;
   int n = Data.nrow();
-  
   Uid.push_back(Data(0,Idcol));
   Startrow.push_back(0);
-  
-  for(i=1; i < n; ++i) {
+  for(int i=1; i < n; ++i) {
     if(Data(i-1,Idcol) != Data(i, Idcol)) {
       Uid.push_back(Data(i,Idcol));
       Startrow.push_back(i);
@@ -177,18 +172,19 @@ void dataobject::locate_tran() {
 }
 
 void dataobject::idata_row() {
+  Uid.resize(Data.nrow());
   for(int i=0; i < Data.nrow(); ++i) {
     idmap[Data(i,Idcol)] = i;
+    Uid[i] = Data(i,Idcol);
   }
 }
 
-void dataobject::copy_parameters(int this_row, odeproblem *prob) {
+void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t n = par_from.size();
   for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
 }
-
 
 void dataobject::copy_inits(int this_row, odeproblem *prob) {
   // this should only be done from idata sets
@@ -223,12 +219,12 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
       if(Data(j,col[_COL_time_]) < lastime) {
         Rcpp::Rcout << lastime << std::endl;
         throw Rcpp::exception(
-            "The data set is not sorted by time.",
+            "the data set is not sorted by time.",
             false
         );
       }
       lastime = Data(j,col[_COL_time_]);        
-      rec_ptr obs = boost::make_shared<datarecord>(
+      rec_ptr obs = std::make_shared<datarecord>(
         Data(j,col[_COL_time_]),
         Data(j,col[_COL_cmt_]),
         j,
@@ -237,19 +233,19 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_cmt_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have cmt set to zero.",
+            "all records must have cmt set to zero.",
             false
         ); 
       }
       if(Data(j,col[_COL_rate_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have rate set to zero.",
+            "all records must have rate set to zero.",
             false
         ); 
       }
       if(Data(j,col[_COL_ss_]) != 0.0) {
         throw Rcpp::exception(
-            "All records must have ss set to zero.",
+            "all records must have ss set to zero.",
             false
         ); 
       }
@@ -298,7 +294,10 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
-            "The data set is not sorted by time or time is negative.",
+            tfm::format(
+              "the data set is not sorted by time or time is negative \n ID: %d, row: %i, time: %d", 
+              Data(j,Idcol), j+1, Data(j,col[_COL_time_])
+            ).c_str(),
             false
         );
       }
@@ -312,12 +311,15 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
-              "Compartment number in observation record out of range.",
+              tfm::format(
+                "cmt number in observation record out of range \n ID: %d, row: %i, cmt: %i, neq: %i", 
+                Data(j,Idcol), j+1, this_cmt, neq
+              ).c_str(),
               false
           );
         }
         
-        rec_ptr obs = boost::make_shared<datarecord>(
+        rec_ptr obs = std::make_shared<datarecord>(
           Data(j,col[_COL_time_]),
           Data(j,col[_COL_cmt_]),
           j,
@@ -333,7 +335,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
         throw Rcpp::exception(
             tfm::format(
-              "event record cmt must be between 1 and %i: \n ID %d, row: %i, cmt: %i, evid: %i", 
+              "event record cmt must be between 1 and %i: \n ID: %d, row: %i, cmt: %i, evid: %i", 
               neq, Data(j,Idcol), j+1, this_cmt, Data(j,col[_COL_evid_])
             ).c_str(),
             false
@@ -342,7 +344,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ++evcount;
       
-      rec_ptr ev = boost::make_shared<datarecord>(
+      rec_ptr ev = std::make_shared<datarecord>(
         Data(j,col[_COL_cmt_]),
         Data(j,col[_COL_evid_]),
         Data(j,col[_COL_amt_]),
@@ -351,54 +353,74 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         j, 
         Data(j,Idcol)
       );
-      
-      if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
-        throw Rcpp::exception(
-            "non-zero rate must be positive or equal to -1 or -2",
-            false
-        );
-      }
-      
-      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1)) {
-        throw Rcpp::exception(
-            "non-zero rate requires positive amt.",
-            false
-        );
-      }
-      
-      ev->from_data(true);
-      if(!obsonly) ev->output(true);
-      
       ev->ss(Data(j,col[_COL_ss_]));
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
+      ev->from_data(true);
+      if(!obsonly) ev->output(true);
+      
+      bool zero_inf = ev->ss_infusion();
+      
+      if(zero_inf) {
+        if(ev->addl() !=0) {
+          throw Rcpp::exception(
+              tfm::format(
+                "addl must be zero for ss infusion \n ID: %d, row: %i, ii: %d", 
+                ev->id(), j+1,  ev->addl()
+              ).c_str(),
+              false
+          );
+        }
+      }
+      
+      if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
+        throw Rcpp::exception(
+            tfm::format(
+              "non-zero rate must be positive or -1 or -2 \n ID: %d, row: %i, rate: %d", 
+              ev->id(), j+1,  ev->rate()
+            ).c_str(),
+            false
+        );
+      }
+      
+      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1) && !zero_inf) {
+        throw Rcpp::exception(
+            tfm::format(
+              "non-zero rate requires positive amt \n ID: %d, row: %i, rate: %d, amt: %d", 
+              ev->id(), j+1,  ev->rate(), ev->amt()
+            ).c_str(),
+            false
+        );
+      }
       
       if(ev->ii() <= 0) {
         if(ev->addl() > 0) {
           throw Rcpp::exception(
-              "found dosing record with addl > 0 and ii <= 0.",
+              tfm::format(
+                "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, addl: %i", 
+                ev->id(), j+1, ev->addl()
+              ).c_str(),
               false
           );
         }
-        if(ev->ss()) {
+        if(ev->ss() && (!zero_inf)) {
           throw Rcpp::exception(
-              "found dosing record with ss==1 and ii <= 0.",
+              tfm::format(
+                "dosing record with ss > 0 and ii <= 0 \n ID: %d, row: %i", 
+                ev->id(), j+1
+              ).c_str(),
               false
           );
         }
-      }
+      } // ii <=0
+      
       a[h].push_back(ev);
     }
   }
 }
 
-void dataobject::get_ids(uidtype* ids) {
-  for(int i = 0; i < Data.nrow(); ++i) {
-    ids->push_back(Data(i,Idcol)); 
-  }
-}
-
 unsigned int dataobject::get_idata_row(const double ID) {
+  if(idmap.size()==0) return 0;
   return idmap[ID];
 }
 
@@ -406,16 +428,12 @@ void dataobject::check_idcol(dataobject& idat) {
   
   if(idat.ncol() == 0) {return;}
   
-  uidtype uidata;
-  idat.get_ids(&uidata);
-  
-  // Uids from data
-  uidtype uthis  = this->return_uid();
-  
-  sort_unique(uthis);
+  uidtype uidata = idat.Uid;
+  uidtype udata = Uid;
   sort_unique(uidata);
+  sort_unique(udata);
   
-  if(!std::includes(uidata.begin(),uidata.end(),uthis.begin(),uthis.end())) {
+  if(!std::includes(uidata.begin(),uidata.end(),udata.begin(),udata.end())) {
     throw Rcpp::exception(
         "ID found in the data set, but not in idata.",
         false);
@@ -483,3 +501,70 @@ void dataobject::carry_out(const recstack& a,
   }
 }
 
+// SAVE FOR LATER
+// void dataobject::expand_records(recstack& a, 
+//                                 dataobject& idat,
+//                                 int& NID, 
+//                                 unsigned int& obscount, 
+//                                 unsigned int& evcount,
+//                                 bool debug) {
+//   
+//   if(idat.nrow()==0) {
+//     //Rcpp::Rcout << "Returning ... no idata rows" << std::endl;  
+//     return;
+//   }
+//   
+//   if(a.size() > 1) {
+//     return;
+//     throw Rcpp::exception("data size isn't 1",false);
+//   }
+//   
+//   if(!(Uid.size()==1)) {
+//     throw Rcpp::exception("more than 1 found in the data set",false);  
+//   }
+//   
+//   obscount = 0;
+//   evcount = 0;
+//   int idcol = idat.Idcol;
+//   int nid = idat.nrow();
+//   int nrec = a[0].size();
+//   int start = Startrow[0];
+//   int end = Endrow[0];
+//   Startrow.resize(nid);
+//   Endrow.resize(nid);
+//   Uid.resize(nid);
+//   a.resize(nid);
+//   
+//   NID = nid;
+//   
+//   for(int i = 0; i < nid; ++i) {
+//     Startrow[i] = start;
+//     Endrow[i]= end;
+//     Uid[i] = idat.Data(i,idcol);
+//     a[i].resize(nrec);
+//     for(int j = 0; j < nrec; ++j) {
+//       rec_ptr rec = std::make_shared<datarecord>(
+//         a[0][j]->Cmt,
+//         a[0][j]->Evid, 
+//         a[0][j]->Amt,
+//         a[0][j]->Time,
+//         a[0][j]->Rate,
+//         a[0][j]->Pos,
+//         Uid[i]
+//       );
+//       rec->Ss = a[0][j]->Ss;
+//       rec->Ii = a[0][j]->Ii;
+//       rec->Addl = a[0][j]->Addl;
+//       rec->Output = true;
+//       rec->Fromdata = true;
+//       rec->Armed = a[0][j]->Armed;
+//       if(rec->Evid==0) {
+//         ++obscount;
+//       } else {
+//         ++evcount;
+//       }
+//       a[i][j] = rec;
+//     }
+//   }
+//   return;
+// }

@@ -9,6 +9,9 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
 
+spelling:
+	Rscript -e 'spelling::spell_check_package(".")'
+
 testing:
 	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
 	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
@@ -24,7 +27,6 @@ house:
 no-test:
 	make build
 	R CMD check ${TARBALL} --no-tests
-	
 
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
@@ -39,7 +41,7 @@ pkgdown:
 	touch ../../mrgsolve/docs/.nojekyll
 
 test-all:
-	Rscript -e 'library(testthat)' -e 'test_dir("tests/testthat")' -e 'test_dir("inst/maintenance/unit/")'
+	Rscript inst/maintenance/tests.R
 
 unit:
 	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
@@ -63,7 +65,6 @@ all:
 	make doc
 	make build
 	make install
-
 
 .PHONY: doc
 doc:
@@ -100,6 +101,12 @@ test:
 	R CMD INSTALL ${PKGDIR}
 	make test-all
 
+test1:
+	Rscript -e 'testthat::test_file("tests/testthat.R")'
+
+test2:
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
+
 clean:
 	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
 	rm src/*.o
@@ -110,8 +117,8 @@ datasets:
 
 travis:
 	make build
-	#R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
-	make test
+	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
+	make test2
 
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'

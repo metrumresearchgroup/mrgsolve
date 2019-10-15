@@ -15,7 +15,8 @@ do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
   Request = character(0), output = NULL, capture = NULL,
   obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
   deslist = list(), descol = character(0), filbak = TRUE,
-  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ...)
+  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ss_n = 500,
+  ss_fixed = FALSE, ...)
 }
 \arguments{
 \item{x}{the model object}
@@ -90,11 +91,25 @@ prior to the last dose in the \code{addl} sequence.  This known limitation
 shouldn't affect \code{tad} calculation in most common dosing lag time
 implementations.}
 
-\item{nocb}{if \code{TRUE}, use next observation carry 
-backward method; otherwise, use \code{locf}.}
+\item{nocb}{if \code{TRUE}, use next observation carry backward method; 
+otherwise, use \code{locf}.}
 
-\item{skip_init_calc}{don't use \code{$MAIN} to 
-calculate initial conditions}
+\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
+
+\item{ss_n}{maximum number of iterations for determining steady state for 
+the PK system; a warning will be issued if steady state is not achieved 
+within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}}
+
+\item{ss_fixed}{if \code{FALSE} (the default), then a warning will be issued
+if the system does not reach steady state within \code{ss_n} iterations
+given the model tolerances \code{rtol} and \code{atol}; if \code{TRUE}, 
+the number of iterations for determining steady state are capped at 
+\code{ss_n} and no warning will be issued if steady state 
+has not been reached within \code{ss_n} dosing iterations.
+To silence warnings related to steady state, 
+set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the maximum number 
+of iterations to try when advancing the system for steady state 
+determination.}
 }
 \value{
 An object of class \code{\link{mrgsims}}

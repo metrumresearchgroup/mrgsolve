@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -75,7 +75,7 @@ tgrid_id <- function(col,idata) {
 validate_idata <- function(idata) {
   if(is.null(idata)) return(invisible(TRUE))
   if(!(is.data.frame(idata) | is.matrix(idata)))
-    stop("idata needs to be either NULL, data.frame, or matrix.")
+    wstop("idata needs to be either NULL, data.frame, or matrix.")
   return(invisible(TRUE))
 }
 
@@ -177,7 +177,7 @@ validate_idata <- function(idata) {
 ##' 
 ##' @export
 mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
-  
+  if(!is.mrgmod(x)) mod_first()
   if(is.null(data)) {
     data <- x@args$data
   }  
@@ -188,10 +188,6 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
     events <- x@args$events
   }
   
-  if(nid > 1) {
-    return(mrgsim_nid(x, nid, events, ...))
-  } 
-  
   have_data <- !is.null(data)
   have_idata <- !is.null(idata)
   have_events <- !is.null(events)
@@ -200,6 +196,10 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   x@args$idata <- NULL
   x@args$data <- NULL
   x@args$events <- NULL
+  
+  if(nid > 1) {
+    return(mrgsim_nid(x, nid, events, ...))
+  } 
   
   if(have_events & !have_data) {
     if(have_idata) {
@@ -229,7 +229,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
 
 ##' @rdname mrgsim
 ##' @export
-mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
+mrgsim_df <- function(...,output="df") mrgsim(...,output=output)
 
 ##' mrgsim variant functions
 ##' 
@@ -263,17 +263,25 @@ mrgsim_df <- function(...,output="df") mrgsim(..., output=output)
 ##'   turnaround (see \code{\link{mrgsim_q}})
 ##' }
 ##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_q}}
+##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_q}}, \code{\link{qsim}}
 ##' @name mrgsim_variants
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   if(!is.ev(events)) {
-    stop("invalid 'events' argument") 
+    if(is.data.frame(events)) {
+      events <- as.ev(events) 
+      return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
+    }
+    if(is.valid_data_set(events)) {
+      return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
+    }
+    wstop("invalid 'events' argument") 
   }
   events <- as.data.frame(events, add_ID = 1)
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  # x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -284,8 +292,12 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
+  if(is.ev(data)) {
+    data <- as_data_set(data)  
+  }
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -296,24 +308,32 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   if(!is.ev(events)) {
-    stop("invalid 'events' argument", call. = FALSE) 
+    if(is.data.frame(events)) {
+      events <- as.ev(events) 
+      return(mrgsim_e(x=x,events=events,idata=idata,data=data,...))
+    }
+    if(is.valid_data_set(events)) {
+      return(mrgsim_d(x=x,data=events,idata=idata,events=NULL,...)) 
+    }
+    wstop("invalid 'events' argument") 
   }
   expand <- !has_ID(events) & nrow(idata) > 0
   events <- as.data.frame(events, add_ID = 1)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
-    idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
+    idata[["ID"]] <- seq_len(nrow(idata))
   } 
   if(expand) {
     events <- convert_character_cmt(events,x)
     events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
-                    match("ID",colnames(events),0), 
-                    numeric_data_matrix(events), 
-                    idata[,"ID"])
+                    match("ID",colnames(events),0),
+                    numeric_data_matrix(events),
+                    idata[["ID"]])
   }
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -324,13 +344,14 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   data <- as.data.frame(data, add_ID = 1)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -341,13 +362,14 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
   data <- matrix(idata[["ID"]], ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -358,9 +380,10 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
 ##' @rdname mrgsim_variants
 ##' @export
 mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
+  if(!is.mrgmod(x)) mod_first()
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
-  x <- do.call(update, c(x,args))
+  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -369,11 +392,11 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
 }
 
 mrgsim_nid <- function(x, nid, events = ev(), ...) {
+  if(!is.mrgmod(x)) mod_first()
   nid <- max(nid,1)
   idata <- data.frame(ID = seq_len(nid))
   if(has_ID(events)) {
-    stop("event object cannot contain 'ID' when using 'nid' argument",
-         call. = FALSE)
+    wstop("event object cannot contain 'ID' when using 'nid' argument")
   } 
   if(is.ev(events)) {
     return(mrgsim_ei(x, events, idata, ...) )
@@ -424,10 +447,22 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 ##' prior to the last dose in the \code{addl} sequence.  This known limitation
 ##' shouldn't affect \code{tad} calculation in most common dosing lag time
 ##' implementations.  
-##' @param nocb if \code{TRUE}, use next observation carry 
-##' backward method; otherwise, use \code{locf}.  
-##' @param skip_init_calc don't use \code{$MAIN} to 
-##' calculate initial conditions
+##' @param nocb if \code{TRUE}, use next observation carry backward method; 
+##' otherwise, use \code{locf}.  
+##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
+##' @param ss_n maximum number of iterations for determining steady state for 
+##' the PK system; a warning will be issued if steady state is not achieved 
+##' within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}
+##' @param ss_fixed if \code{FALSE} (the default), then a warning will be issued
+##' if the system does not reach steady state within \code{ss_n} iterations
+##' given the model tolerances \code{rtol} and \code{atol}; if \code{TRUE}, 
+##' the number of iterations for determining steady state are capped at 
+##' \code{ss_n} and no warning will be issued if steady state 
+##' has not been reached within \code{ss_n} dosing iterations.
+##' To silence warnings related to steady state, 
+##' set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the maximum number 
+##' of iterations to try when advancing the system for steady state 
+##' determination.
 ##' 
 ##' @rdname mrgsim
 ##' @export
@@ -449,13 +484,18 @@ do_mrgsim <- function(x,
                       filbak = TRUE,
                       tad = FALSE,
                       nocb = TRUE,
-                      skip_init_calc = FALSE, ...) {
+                      skip_init_calc = FALSE,
+                      ss_n = 500,
+                      ss_fixed = FALSE,
+                      ...) {
+  
+  x <- update(x,...,strict=TRUE)
   
   verbose <- x@verbose
   
-  ## ODE and init functions:
-  ## This both touches the functions as well as
-  ## gets the function pointers
+  if(length(Request) > 0) {
+    x <- update_outputs(x, outputs=Request)  
+  }
   
   ## data
   if(!is.valid_data_set(data)) {
@@ -473,68 +513,41 @@ do_mrgsim <- function(x,
   param <- as.numeric(param(x))
   init <-  as.numeric(Init(x))
   
-  if(!identical(Pars(x),x@shlib$par)) {
-    stop("The parameter list has changed since the model was compiled.")
+  if(!identical(Pars(x),x@shlib[["par"]])) {
+    wstop("the parameter list has changed since the model was compiled.")
   }
-  if(!identical(Cmt(x), x@shlib$cmt)) {
-    stop("The compartment list has changed since the model was compiled.")
+  if(!identical(Cmt(x), x@shlib[["cmt"]])) {
+    wstop("the compartment list has changed since the model was compiled.")
   }
-  
-  ## request is stored in the model object
-  ## if request is (all) take all compartments
-  if(x@request[1]=="(all)") {
-    request <- cmt(x)
-  } else {
-    request <- cvec_cs(x@request)
-  }
-  
-  # capture items; will work on this
-  capt <- x@capture
-  
-  # Requested
-  has_Request <- !missing(Request)
-  
-  # comma-separated
-  rename.Request <- .ren.create(Request)
-  Request <- rename.Request$old
-  
-  # request is only for compartments
-  # restrict captures and request if Req is specified
-  if(has_Request) {
-    request <- intersect(Request,cmt(x))
-    capt    <- intersect(Request,capt)
-  } else {
-    request <- intersect(request,cmt(x)) 
-  }
-  
-  # Non-compartment names in capture
-  capt <- unique(setdiff(capt,cmt(x)))
-  
-  # First spot is the number of capture.items, followed by integer positions
-  # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
   
   ## carry can be tran/data/idata
   # Items to carry out from the data set
-  rename.carry <- .ren.create(carry_out)
-  carry_out <- rename.carry$old
-  
-  # Don't take ID,time,TIME
-  carry_out <- setdiff(carry_out, c("ID", "time", "TIME"))
-  
-  # Only take names in GLOBALS$CARRY_TRAN
-  carry.tran <- intersect(carry_out,GLOBALS[["CARRY_TRAN"]])
-  carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
-  
-  # Non-tran items to carry out from data and idata
-  carry_out <- setdiff(carry_out,carry.tran)
-  
-  # What to carry out from data and idata
-  carry.data  <- intersect(carry_out, colnames(data))
-  carry.idata <- intersect(carry_out, colnames(idata))
-  
-  # Carry from data_set if name is in idata_set too
-  carry.idata <- setdiff(carry.idata, carry.data)
+  if(length(carry_out) > 0) {
+    rename.carry <- .ren.create(carry_out)
+    carry_out <- rename.carry$old
+    
+    # Don't take ID,time,TIME
+    carry_out <- setdiff(carry_out, c("ID", "time", "TIME"))
+    
+    # Only take names in GLOBALS$CARRY_TRAN
+    carry.tran <- intersect(carry_out,GLOBALS[["CARRY_TRAN"]])
+    carry.tran <- carry.tran[!duplicated(tolower(carry.tran))]
+    
+    # Non-tran items to carry out from data and idata
+    carry_out <- setdiff(carry_out,carry.tran)
+    
+    # What to carry out from data and idata
+    carry.data  <- intersect(carry_out, colnames(data))
+    carry.idata <- intersect(carry_out, colnames(idata))
+    
+    # Carry from data_set if name is in idata_set too
+    carry.idata <- setdiff(carry.idata, carry.data)
+  } else {
+    rename.carry <- .ren.create(carry_out)
+    carry.data <- character(0)
+    carry.idata <- character(0)
+    carry.tran <- character(0)
+  }
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
@@ -545,13 +558,14 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
+  parin$verbose <- verbose
+  parin$ss_fixed <- ss_fixed
+  parin$ss_n <- ss_n
+  parin$request <- Cmti(x)-1L
   
-  if(any(x@capture =="tad") & tad) {
-    stop("tad argument is true and 'tad' found in $CAPTURE",call.=FALSE) 
+  if(tad && any(x@capture =="tad")) {
+    wstop("tad argument is true and 'tad' found in $CAPTURE") 
   }
-  
-  # already took intersect
-  parin$request <- as.integer(match(request, cmt(x))-1);
   
   # What to carry
   parin$carry_data <- carry.data 
@@ -586,13 +600,6 @@ do_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(idata))
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry_out))
-    capture.output(file=capture, append=TRUE, print(list(capt_pos,capt)))
-  }
-  
-  ## Set the seed:
-  if(!is.na(seed)) {
-    stop("the seed argument is deprecated; use set.seed(seed) instead", 
-         call. = FALSE)
   }
   
   out <- .Call(
@@ -602,13 +609,15 @@ do_mrgsim <- function(x,
     names(param(x)),
     init,
     names(Init(x)),
-    capt_pos,
+    CAPTUREI(x),
     pointers(x),
     data,idata,
     as.matrix(omat(x)),
     as.matrix(smat(x)),
-    x@envir
+    x@envir, 
+    PACKAGE = "mrgsolve"
   )
+  
   
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
@@ -623,8 +632,8 @@ do_mrgsim <- function(x,
     .ren.rename(rename.carry,carry.tran), ## First tran
     .ren.rename(rename.carry,carry.data), ## Then carry data 
     .ren.rename(rename.carry,carry.idata), ## Then carry idata
-    .ren.rename(rename.Request,request),   ## Then compartments
-    .ren.rename(rename.Request,capt) ## Then captures
+    x@cmtL, # already re-named
+    x@capL # already re-named
   )
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
@@ -638,132 +647,148 @@ do_mrgsim <- function(x,
     }
   }
   
-  new("mrgsims",
-      request=.ren.rename(rename.Request,request),
-      data=as.data.frame(out[["data"]]),
-      outnames=.ren.rename(rename.Request,capt),
-      mod=x)
+  new(
+    "mrgsims",
+    request = x@cmtL,
+    data=as.data.frame(out[["data"]]),
+    outnames=x@capL,
+    mod=x
+  )
 }
 
-#nocov start
-do_mrgsimple <- function(x,
-                         data,
-                         idata = no_idata_set(),
-                         obsonly = FALSE,
-                         obsaug = FALSE,
-                         tgrid = NULL,
-                         recsort = 1,
-                         deslist = list(),
-                         descol = character(0),
-                         tad = FALSE,
-                         skip_init_calc = FALSE,
-                         output = NULL,
-                         ...) {
-  
-  verbose <- x@verbose
+#' Basic, simple simulation from model object
+#' 
+#' This is just a lighter version of [mrgsim], with fewer options.  See `Details`.  
+#' 
+#' @inheritParams mrgsim
+#' 
+#' @param data can be either event object or data set
+#' @param output output data type; the default is `mrgsims`, which returns the 
+#' default output object; other options include `df` (for data.frame) or 
+#' `matrix`
+#' @param outvars output items to request; if missing, then only captured items 
+#' will be returned in the output
+#' @param Req synonym for outvars
+#' 
+#' @details
+#' There is no pipeline interface for this function; all configuration options 
+#' (see `Arguments`) must be passed as formal arguments to the function.  
+#' You can't `carry_out`, `Request` specific columns, or pass items in for update.  
+#' Some other limitations, but only convenience-related.  See `Arguments` for 
+#' available options.  Specifically, there is no `...` argument for this function.
+#' Use the [mrgsolve::update] method to update the model object. 
+#' 
+#' @examples
+#' 
+#' mod <- mrgsolve:::house()
+#' 
+#' dose <- ev(amt = 100)
+#' 
+#' out <- qsim(mod,dose)
+#' 
+#' @seealso [mrgsim_q], [mrgsim], [mrgsim_variants]
+#' 
+#' @md
+#' 
+#' @export
+qsim <- function(x,
+                 data,
+                 idata = no_idata_set(),
+                 obsonly = FALSE,
+                 tgrid = NULL,
+                 recsort = 1,
+                 tad = FALSE,
+                 Req = NULL,
+                 outvars = Req,
+                 skip_init_calc = FALSE,
+                 output = "mrgsims") {
   
   ## ODE and init functions:
   ## This both touches the functions as well as
   ## gets the function pointers
+  if(!is.mrgmod(x)) mod_first()
+  
+  if(is.ev(data)) {
+    data <- as.data.frame.ev(data, add_ID = 1)
+  }
   
   ## data
   if(!is.valid_data_set(data)) {
-    data <- valid_data_set(data,x,verbose)
+    data <- valid_data_set(data,x,verbose=FALSE)
   } 
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,x,verbose=verbose)
+    idata <- valid_idata_set(idata,x,verbose=FALSE)
   }
   
   tcol <- timename(data)
-  tcol <- if_else(is.na(tcol), "time", tcol)
-  
-  param <- as.numeric(param(x))
-  init <-  as.numeric(Init(x))
-  
-  # capture items; will work on this
-  capt <- x@capture
+  if(is.na(tcol)) tcol <- "time"
   
   # First spot is the number of capture.items, followed by integer positions
   # Important to use the total length of x@capture
-  capt_pos <- c(length(x@capture),(match(capt,x@capture)-1))
+  if(!is.null(outvars)) {
+    x <- update_outputs(x,outvars)
+  }
   
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
   parin$obsonly <- obsonly
-  parin$obsaug <- obsaug
+  parin$obsaug <- FALSE
   parin$filbak <- TRUE
   parin$tad <- tad
   parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  parin$request <- as.integer(seq_along(cmt(x))-1)
+  parin$request <- Cmti(x)-1L
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
   parin$carry_tran <- character(0)
   
   # Derive stime vector either from tgrid or from the object
   if(!is.null(tgrid)) {
-    stime <- stime(tgrid)
+    timev <- stime(tgrid)
   } else {
-    stime <- stime(x)  
+    timev <- stime(x)  
   }
   
   # Look for a deslist; if so, use that instead
-  if(length(deslist) > 0) {
-    parin[["tgridmatrix"]] <- tgrid_matrix(deslist)
-    parin[["whichtg"]] <- tgrid_id(descol, idata)
-  } else {
-    parin[["tgridmatrix"]] <- tgrid_matrix(list(stime))
-    parin[["whichtg"]] <- integer(0)
-  }
+  parin[["tgridmatrix"]] <- matrix(timev,ncol=1)
+  parin[["whichtg"]] <- integer(0)
   
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    param,
+    as.numeric(Param(x)),
     Pars(x),
-    init,
-    names(Init(x)),
-    capt_pos,
+    as.numeric(Init(x)),
+    Cmt(x),
+    CAPTUREI(x),
     pointers(x),
     data,idata,
     as.matrix(omat(x)),
     as.matrix(smat(x)),
-    x@envir
+    x@envir, 
+    PACKAGE = "mrgsolve"
   )
   
   if(tad) tcol <- c(tcol,"tad")
   
-  cnames <- c("ID", tcol, cmt(x), capt)
+  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol,  x@cmtL, x@capL))
   
-  dimnames(out[["data"]]) <- list(NULL, cnames)
-  
-  if(!is.null(output)) {
-    if(output=="df") {
-      return(as.data.frame(out[["data"]]))  
-    }
+  if(output=="df") {
+    return(as.data.frame.matrix(out[["data"]]))
   }
   
   new(
     "mrgsims",
-    request=cmt(x),
-    data=as.data.frame(out[["data"]]),
-    outnames=capt,
+    request=x@cmtL,
+    data=as.data.frame.matrix(out[["data"]]),
+    outnames=x@capL,
     mod=x
   )
 }
+
 #nocov end
-
-# param_as_parent <- function(x) {
-#   e <- as.environment(as.list(param(x)))
-#   parent.env(e) <- .GlobalEnv
-#   parent.env(x@envir) <- e
-# }
-
-# global_as_parent <- function(x) {
-#   parent.env(x@envir) <- .GlobalEnv 
-# }
 

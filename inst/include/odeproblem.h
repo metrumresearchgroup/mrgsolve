@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -25,9 +25,10 @@
 #include <math.h>
 #include <vector>
 #include "RcppInclude.h"
-#include "odepack_dlsoda.h"
 #include "mrgsolv.h"
 #include "datarecord.h"
+//#include "LSODA.h"
+
 
 // 
 // resim functor comes from mrgsolv.h
@@ -55,7 +56,13 @@ typedef void (*deriv_func)(MRGSOLVE_ODE_SIGNATURE);
 typedef void (*config_func)(MRGSOLVE_CONFIG_SIGNATURE);
 
 //! function to hand off to <code>DLSODA</code>
-typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot,odeproblem* prob);
+//typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot, void* prob);
+typedef void (*LSODA_ODE_SYSTEM_TYPE)(double t, double *y, double *dydt, 
+              odeproblem* _data);
+typedef void main_deriv_func(int* neq, double* t,double* y,double* ydot);
+//typedef void (*ODE_FUNC)(double t, double *y, double *dydt, double*);
+typedef void (*MRGSOLVE_ODE_FUNC)(int neq, double* t, double* y, double* ydot, std::vector<double>& param);
+
 
 #define MRGSOLVE_GET_PRED_CL  (pred[0]) ///< map CL to pred position 0 for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_VC  (pred[1]) ///< map VC to pred position 1 for <code>$PKMODEL</code>
@@ -78,17 +85,18 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
 void dosimeta(void*);
 void dosimeps(void*);
 
-class odeproblem : public odepack_dlsoda {
+class odeproblem {
 
 public:
-  odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, Rcpp::List funs,
+  odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, 
+             Rcpp::List funs,
              int n_capture_);
-  
-  virtual ~odeproblem();
-  
+
+  ~odeproblem(){};
+
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
-  void advance(double tfrom, double tto);
-  void call_derivs(int *neq, double *t, double *y, double *ydot);
+  void advance(double tfrom, double tto, LSODA& solver);
+  void call_derivs(double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
   
@@ -96,7 +104,7 @@ public:
   void init_call_record(const double& time);
 
   void y_init(int pos, double value);
-  void y_init(Rcpp::NumericVector x);
+  void y_init(Rcpp::NumericVector init);
   void y_add(const unsigned int pos, const double& value);
   
   void table_call();
@@ -115,7 +123,7 @@ public:
   
   bool CFONSTOP(){return d.CFONSTOP;}
   
-  const double* param() const {return Param;}
+  const std::vector<double>& param() {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
   
   void rate(unsigned int pos, double value) {R[pos] = value;}
@@ -157,8 +165,8 @@ public:
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
   
-  void neta(int n);
-  void neps(int n);
+  void neta(const int n);
+  void neps(const int n);
   
   void nid(int n) {d.nid = n;}
   void nrow(int n) {d.nrow = n;}
@@ -174,10 +182,27 @@ public:
   bool any_mtime() {return d.mevector.size() > 0;}
   std::vector<mrgsolve::evdata> mtimes(){return d.mevector;}
   void clear_mtime(){d.mevector.clear();}
-  
-protected:
-  
-  double* Param; ///< model parameters
+  void    y(const int pos, const double value){Y[pos] = value;}
+  double  y(const int pos){return Y[pos];}
+  int  istate(){return Istate;}
+  void istate(int value){Istate = value;}
+  void lsoda_init(){Istate=1;}
+  int npar() {return Npar;}
+  int neq() {return Neq;}
+  void tol(double atol, double rtol);
+  std::vector<double> Y;
+  std::vector<double> Ydot;
+  std::vector<double> Yout;
+  std::vector<double> Param;
+  std::vector<double> Capture; ///< captured data items
+  double Atol;
+  double Rtol;
+  int Npar;
+  int Neq;
+  int Istate; ///< istate value
+  bool ss_fixed;
+  int ss_n;
+
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions
   std::vector<double> R; ///< receive user input for infusion rate
@@ -201,7 +226,7 @@ protected:
   arma::mat Sigma; ///< variance/covariance matrix for within-subject variability
     
   std::vector<double> pred; ///< brings clearances, volumes, and & for advan 1/2/3/4
-  std::vector<double> Capture; ///< captured data items
+
   
   deriv_func Derivs; ///< <code>$ODE</code> function
   init_func Inits; ///< <code>$MAIN</code> function
@@ -209,6 +234,7 @@ protected:
   config_func Config; ///< <code>$PREAMBLE</code> function
   
   bool Do_Init_Calc;
+
   
 };
 

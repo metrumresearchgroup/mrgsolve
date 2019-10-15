@@ -61,7 +61,7 @@ data <- extran1 \%>\% distinct(ID) \%>\% select(ID) \%>\%
   
 data
 
-out <- mod \%>\% data_set(data) \%>\% carry.out(CL) \%>\%  mrgsim
+out <- mod \%>\% data_set(data) \%>\% carry_out(CL) \%>\%  mrgsim
 out
 plot(out)
 

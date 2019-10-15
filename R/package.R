@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,270 +16,230 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' @title mrgsolve
-##' @name mrgsolve
-##' 
-##'
-##' @section Resources:
-##' \itemize{
-##' \item Main mrgsolve resource page: \href{https://mrgsolve.github.io}{https://mrgsolve.github.io}
-##' \item User guide: \href{https://mrgsolve.github.io/user_guide}{https://mrgsolve.github.io/user_guide}
-##' \item Vignettes: \href{https://mrgsolve.github.io/vignettes}{https://mrgsolve/github.io/vignettes}
-##' }
-##' 
-##' @description
-##' mrgsolve is an R package maintained under the auspices of 
-##' Metrum Research Group that facilitates simulation from 
-##' models based on systems of ordinary differential equations (ODE) 
-##' that are typically employed for understanding pharmacokinetics, 
-##' pharmacodynamics, and systems biology and pharmacology. mrgsolve 
-##' consists of computer code written in the R and C++ languages, 
-##' providing an interface to the DLSODA differential equation solver 
-##' (written in FORTRAN) provided through ODEPACK -
-##' A Systematized Collection of ODE Solvers.
-##' 
-##' @rdname mrgsolve_package
-##' @docType package
-##' @useDynLib mrgsolve, .registration=TRUE
-##' @aliases mrgsolve
-##' @examples
-##'
-##' ## example("mrgsolve")
-##'
-##' mod <- mrgsolve:::house(delta=0.1)  %>% param(CL=0.5)
-##'
-##' events <-  ev(amt=1000, cmt=1, addl=5, ii=24)
-##' 
-##' events
-##' 
-##' mod
-##'
-##' see(mod)
-##' 
-##' stime(mod)
-##'
-##' param(mod)
-##' init(mod)
-##'
-##' out <- mod %>% ev(events) %>% mrgsim(end=168)
-##'
-##' out
-##' 
-##' head(out)
-##' tail(out)
-##' dim(out)
-##'
-##' plot(out, GUT+CP~.)
-##'
-##' sims <- as.data.frame(out)
-##'
-##' t72 <- dplyr::filter(sims, time==72)
-##' str(t72)
-##' 
-##' idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
-##' out <- mod %>% ev(events) %>% mrgsim(end=168, idata=idata, req="")
-##' plot(out)
-##'
-##' out <- mod %>% ev(events) %>% mrgsim(carry.out="amt,evid,cmt,CL")
-##' head(out)
-##'
-##' out <- 
-##'   mod %>% 
-##'   ev() %>% 
-##'   knobs(CL=c(0.5, 1,2), amt=c(100,300,1000), cmt=1,end=48)
-##' 
-##' plot(out, CP~., scales="same")
-##' plot(out, RESP+CP~time|amt,groups=CL)
-##'
-##'
-##' ev1 <- ev(amt=500, cmt=2,rate=10)
-##' ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
-##' events <- ev1+ev2
-##' events
-##'
-##' out <- mod %>% ev(ev1+ev2) %>% mrgsim(end=180, req="")
-##' plot(out)
-##'
-##'
-##'
-##' ## "Condensed" data set
-##' data(extran1)
-##' extran1
-##'
-##' out <- mod %>% data_set(extran1) %>% mrgsim(end=200)
-##'
-##' plot(out,CP~time|factor(ID))
-##'
-##'
-##' ## idata
-##' data(exidata)
-##' exidata
-##'
-##' out <- 
-##'   mod %>% 
-##'   ev(amt=1000, cmt=1) %>% 
-##'   idata_set(exidata) %>%  
-##'   mrgsim(end=72)
-##'
-##' plot(out, CP~., as="log10")
-##'
-##'
-##' # Internal model library
-##' \dontrun{
-##' mod <- mread("irm1", modlib())
-##' 
-##' mod
-##' 
-##' mod %>% ev(amt=300, ii=12, addl=3) %>% mrgsim
-##' 
-##' }
-##'
+#' @title mrgsolve
+#' @name mrgsolve
+#' 
+#'
+#' @section Resources:
+#' 
+#' - Main mrgsolve resource page: [https://mrgsolve.github.io](https://mrgsolve.github.io)
+#' - User guide: [https://mrgsolve.github.io/user_guide](https://mrgsolve.github.io/user_guide)
+#' - Vignettes: [https://mrgsolve.github.io/vignettes](https://mrgsolve.github.io/vignettes)
+#' 
+#' @section Package-wide options:
+#' 
+#' - `mrgolve.project`: sets the default project director ([mread])
+#' - `mrgsolve.soloc`: sets the default package build directory ([mread])
+#' - `mrgsolve_mread_quiet`: don't print messages during [mread]
+#' - `mrgsolve.update.strict`: if `TRUE`, print warning when trying to update 
+#'   an item in the model object that doesn't exist
+#' 
+#' 
+#' @description
+#' mrgsolve is an R package maintained under the auspices of 
+#' Metrum Research Group that facilitates simulation from 
+#' models based on systems of ordinary differential equations (ODE) 
+#' that are typically employed for understanding pharmacokinetics, 
+#' pharmacodynamics, and systems biology and pharmacology. mrgsolve 
+#' consists of computer code written in the R and C++ languages, 
+#' providing an interface to a C++ translation of the lsoda differential 
+#' equation solver. See [aboutsolver] for more information.
+#' 
+#' @rdname mrgsolve_package
+#' @docType package
+#' @useDynLib mrgsolve, .registration=TRUE
+#' @aliases mrgsolve
+#' @md
+#' @examples
+#'
+#' ## example("mrgsolve")
+#'
+#' mod <- mrgsolve:::house(delta=0.1)  %>% param(CL=0.5)
+#'
+#' events <-  ev(amt=1000, cmt=1, addl=5, ii=24)
+#' 
+#' events
+#' 
+#' mod
+#'
+#' see(mod)
+#' 
+#' \dontrun{
+#' stime(mod)
+#' }
+#' param(mod)
+#' 
+#' init(mod)
+#'
+#' out <- mod %>% ev(events) %>% mrgsim(end=168)
+#' 
+#' head(out)
+#' tail(out)
+#' dim(out)
+#'
+#' plot(out, GUT+CP~.)
+#'
+#' sims <- as.data.frame(out)
+#'
+#' t72 <- dplyr::filter(sims, time==72)
+#' 
+#' str(t72)
+#' 
+#' idata <- data.frame(ID=c(1,2,3), CL=c(0.5,1,2),VC=12)
+#' out <- mod %>% ev(events) %>% mrgsim(end=168, idata=idata, req="")
+#' plot(out)
+#'
+#' out <- mod %>% ev(events) %>% mrgsim(carry_out="amt,evid,cmt,CL")
+#' head(out)
+#' 
+#' ev1 <- ev(amt=500, cmt=2,rate=10)
+#' ev2 <- ev(amt=100, cmt=1, time=54, ii=8, addl=10)
+#' events <- c(ev1+ev2)
+#' events
+#'
+#' out <- mod %>% ev(events) %>% mrgsim(end=180, req="")
+#' plot(out)
+#'
+#'
+#'
+#' ## "Condensed" data set
+#' data(extran1)
+#' extran1
+#'
+#' out <- mod %>% data_set(extran1) %>% mrgsim(end=200)
+#'
+#' plot(out,CP~time|factor(ID))
+#'
+#'
+#' ## idata
+#' data(exidata)
+#'
+#' out <- 
+#'   mod %>% 
+#'   ev(amt=1000, cmt=1) %>% 
+#'   idata_set(exidata) %>%  
+#'   mrgsim(end=72)
+#'
+#' plot(out, CP~., as="log10")
+#'
+#'
+#' # Internal model library
+#' \dontrun{
+#' mod <- mread("irm1", modlib())
+#' 
+#' mod
+#' 
+#' x <- mod %>% ev(amt=300, ii=12, addl=3) %>% mrgsim
+#' 
+#' }
+#'
 NULL
 
-##' About the ODEPACK differential equation solver used by mrgsolve
-##'
-##' @name aboutsolver
-##' @rdname aboutsolver
-##'
-##' @section DLSODA:
-##' \preformatted{
-##'C----------------------------------------------------------------------
-##'C This is the 12 November 2003 version of
-##'C DLSODA: Livermore Solver for Ordinary Differential Equations, with
-##'C         Automatic method switching for stiff and nonstiff problems.
-##'C
-##'C This version is in double precision.
-##'C
-##'C DLSODA solves the initial value problem for stiff or nonstiff
-##'C systems of first order ODEs,
-##'C     dy/dt = f(t,y) ,  or, in component form,
-##'C     dy(i)/dt = f(i) = f(i,t,y(1),y(2),...,y(NEQ)) (i = 1,...,NEQ).
-##'C
-##'C This a variant version of the DLSODE package.
-##'C It switches automatically between stiff and nonstiff methods.
-##'C This means that the user does not have to determine whether the
-##'C problem is stiff or not, and the solver will automatically choose the
-##'C appropriate method.  It always starts with the nonstiff method.
-##'C
-##'C Authors:       Alan C. Hindmarsh
-##'C                Center for Applied Scientific Computing, L-561
-##'C                Lawrence Livermore National Laboratory
-##'C                Livermore, CA 94551
-##'C and
-##'C                Linda R. Petzold
-##'C                Univ. of California at Santa Barbara
-##'C                Dept. of Computer Science
-##'C                Santa Barbara, CA 93106
-##'C
-##'C References:
-##'C 1.  Alan C. Hindmarsh,  ODEPACK, A Systematized Collection of ODE
-##'C     Solvers, in Scientific Computing, R. S. Stepleman et al. (Eds.),
-##'C     North-Holland, Amsterdam, 1983, pp. 55-64.
-##'C 2.  Linda R. Petzold, Automatic Selection of Methods for Solving
-##'C     Stiff and Nonstiff Systems of Ordinary Differential Equations,
-##'C     Siam J. Sci. Stat. Comput. 4 (1983), pp. 136-148.
-##'C----------------------------------------------------------------------
-##' }
+#' About the lsoda differential equation solver used by mrgsolve
+#'
+#' The differential equation solver is a C++ translation of DLSODA from 
+#' ODEPACK.  The C++ translation was created by Dilawar Singh and hosted 
+#' here [https://github.com/dilawar/libsoda](https://github.com/dilawar/libsoda). 
+#' As we understand the history of the code, Heng Li was also involved in early 
+#' versions of the code written in C.  There was a potentially-related 
+#' project hosted here [https://github.com/sdwfrost/liblsoda](https://github.com/sdwfrost/liblsoda).
+#' 
+#' The C++ translation by Dilawar Singh contains functions that appear to be 
+#' based on BLAS and LAPACK routines.  These functions have been renamed to be
+#' distinct from the respective BLAS and LAPACK function names.  References
+#' are given in the section below.   
+#' 
+#' @section History: 
+#' The following history was recorded in the source code published by 
+#' Dilawar Singh:
+#' 
+#' \preformatted{
+#' /*
+#' * HISTORY:
+#' * This is a CPP version of the LSODA library for integration into MOOSE
+#' somulator.
+#' * The original was aquired from
+#' * http://www.ccl.net/cca/software/SOURCES/C/kinetics2/index.shtml and modified
+#' by
+#' * Heng Li <lh3lh3@gmail.com>. Heng merged several C files into one and added a
+#' * simpler interface. [Available
+#' here](http://lh3lh3.users.sourceforge.net/download/lsoda.c)
+#' 
+#' * The original source code came with no license or copyright
+#' * information. Heng Li released his modification under the MIT/X11 license. I
+#' * maintain the same license. I have removed quite a lot of text/comments from
+#' * this library. Please refer to the standard documentation.
+#' *
+#' * Contact: Dilawar Singh <dilawars@ncbs.res.in>
+#' */
+#' }
+#' 
+#' @references
+#' 
+#' 1. LAPACK: [https://netlib.org/lapack](https://netlib.org/lapack)
+#' 1. BLAS: [https://netlib.org/blas](https://netlib.org/blas)
+#' 
+#' 
+#' @name aboutsolver
+#' @rdname aboutsolver
+#' @md
+#' 
 NULL
 
-##' Optional inputs for DLSODA
-##' 
-##' These are settings for the differential equation 
-##' solver (\code{DLSODA}) that can be accessed via
-##' the R interface.  The code listing below is taken directly
-##' from the \code{DLSODA} source code.  
-##'
-##' @name solversettings
-##' @rdname solversettings
-##' @seealso \code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
-##' 
-##' @details
-##' 
-##' The following items can be set
-##' 
-##' \itemize{
-##' \item \code{hmax} (\code{HMAX} below); decrease \code{hmax} when 
-##' you want to limit how big of a step the solver can take when 
-##' integrating from one time to the next time. However be aware
-##' that smaller \code{hmax} will result in longer run times.
-##' \item \code{hmin} (\code{HMIN} below); don't fiddle with this
-##' unless you know what you're doing.  
-##' \item \code{ixpr} (\code{IXPR} below)
-##' \item \code{maxsteps} (\code{MXSTEP} below); increase this 
-##' number when the solver has a long interval between 
-##' two integration times (e.g. when observation records are 
-##' far apart). 
-##' \item \code{mxhnil} (\code{MXHNIL below}); don't usually 
-##' modify this one
-##' \item \code{atol} - the absolute solver tolerance; decrease
-##' this number (e.g. to 1E-10 or 1E-20 or 1E-50) when the 
-##' value in a compartment can get extremely small; without this 
-##' extra (lower) tolerance, the value can get so low that the number
-##' can randomly become negative.  However be aware that more precision
-##' here will result in longer run times. 
-##' \item \code{rtol} - the relative solver tolerances; decrease this 
-##' number when you want a more precise solution.  However be aware 
-##' that more precision here will result in longer run times.
-##' }
-##' 
-##' 
-##' 
-##'
-##' @section Solver Settings:
-##' \preformatted{
-##'C-----------------------------------------------------------------------
-##'C Optional Inputs.
-##'C
-##'C The following is a list of the optional inputs provided for in the
-##'C call sequence.  (See also Part 2.)  For each such input variable,
-##'C this table lists its name as used in this documentation, its
-##'C location in the call sequence, its meaning, and the default value.
-##'C The use of any of these inputs requires IOPT = 1, and in that
-##'C case all of these inputs are examined.  A value of zero for any
-##'C of these optional inputs will cause the default value to be used.
-##'C Thus to use a subset of the optional inputs, simply preload
-##'C locations 5 to 10 in RWORK and IWORK to 0.0 and 0 respectively, and
-##'C then set those of interest to nonzero values.
-##'C
-##'C Name    Location      Meaning and Default Value
-##'C
-##'C
-##'C HMAX    RWORK(6)  the maximum absolute step size allowed.
-##'C                   The default value is infinite.
-##'C
-##'C HMIN    RWORK(7)  the minimum absolute step size allowed.
-##'C                   The default value is 0.  (This lower bound is not
-##'C                   enforced on the final step before reaching TCRIT
-##'C                   when ITASK = 4 or 5.)
-##'C
-##'C IXPR    IWORK(5)  flag to generate extra printing at method switches.
-##'C                   IXPR = 0 means no extra printing (the default).
-##'C                   IXPR = 1 means print data on each switch.
-##'C                   T, H, and NST will be printed on the same logical
-##'C                   unit as used for error messages.
-##'C
-##'C MXSTEP  IWORK(6)  maximum number of (internally defined) steps
-##'C                   allowed during one call to the solver.
-##'C                   The default value is 500.
-##'C
-##'C MXHNIL  IWORK(7)  maximum number of messages printed (per problem)
-##'C                   warning that T + H = T on a step (H = step size).
-##'C                   This must be positive to result in a non-default
-##'C                   value.  The default value is 10.
-##'C
-##'C-----------------------------------------------------------------------
-##' }
+#' Optional inputs for lsoda
+#' 
+#' These are settings for the differential equation 
+#' solver (\code{lsoda}) that can be accessed via
+#' the R interface.  The code listing below is taken directly
+#' from the \code{lsoda} source code.  
+#'
+#' @name solversettings
+#' @rdname solversettings
+#' @seealso \code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
+#' 
+#' @details
+#' 
+#' The following items can be set
+#' 
+#' \itemize{
+#' \item \code{hmax} (\code{HMAX} below); decrease \code{hmax} when 
+#' you want to limit how big of a step the solver can take when 
+#' integrating from one time to the next time. However be aware
+#' that smaller \code{hmax} will result in longer run times.
+#' \item \code{hmin} (\code{HMIN} below); don't fiddle with this
+#' unless you know what you're doing.  
+#' \item \code{ixpr} (\code{IXPR} below)
+#' \item \code{maxsteps} (\code{MXSTEP} below); increase this 
+#' number when the solver has a long interval between 
+#' two integration times (e.g. when observation records are 
+#' far apart). 
+#' \item \code{mxhnil} (\code{MXHNIL below}); don't usually 
+#' modify this one
+#' \item \code{atol} - the absolute solver tolerance; decrease
+#' this number (e.g. to 1E-10 or 1E-20 or 1E-50) when the 
+#' value in a compartment can get extremely small; without this 
+#' extra (lower) tolerance, the value can get so low that the number
+#' can randomly become negative.  However be aware that more precision
+#' here will result in longer run times. 
+#' \item \code{rtol} - the relative solver tolerances; decrease this 
+#' number when you want a more precise solution.  However be aware 
+#' that more precision here will result in longer run times.
+#' }
+#' 
+#' 
+#' 
+#'
 NULL
 
-##' Reserved words
-##'
-##' @name reserved
-##' @details
-##' Note: this function is not exported; you must go into the 
-##' \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
-##' @examples
-##' mrgsolve:::reserved()
-##'
+#' Reserved words
+#'
+#' @name reserved
+#' @details
+#' Note: this function is not exported; you must go into the 
+#' \code{mrgsolve} namespace by using the \code{mrgsolve:::} prefix.
+#' @examples
+#' mrgsolve:::reserved()
+#'
 reserved <- function() {
   cat(paste(" ", Reserved), sep="\n")
 }
@@ -308,9 +268,3 @@ models <- function() {
 .onLoad <- function(libname, pkgname) {
   GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 }
-
-# .onAttach <- function(libname,pkgname) {
-#   base::packageStartupMessage("mrgsolve: Community Edition")
-# }
-
-

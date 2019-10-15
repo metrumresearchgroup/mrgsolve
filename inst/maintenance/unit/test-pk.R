@@ -102,7 +102,7 @@ test_that("two-compartment, bolus", {
 
 test_that("two-compartment, bolus, ss", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, ss = 1, ii = 24)
-  out <- dosim(mod,e)
+  out <- dosim(mod,e, rtol = 1e-10)
   out <- docalc2(out,e,calc_ss_2cmt_linear_bolus, tau=24)
   expect_true(dotest(out))
 })
@@ -116,7 +116,7 @@ test_that("two-compartment, bolus, first", {
 
 test_that("two-compartment, bolus, first, ss", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V2=.v1, V3=.v2, Q = .q, KA = .ka, ss=1, ii = 24)
-  out <- dosim(mod,e)
+  out <- dosim(mod,e,rtol = 1e-10)
   out <- docalc2(out,e,calc_ss_2cmt_linear_oral_1, ka = .ka, tau=24 )
   expect_true(dotest(out))
 })
@@ -130,7 +130,7 @@ test_that("two-compartment, infusion", {
 
 test_that("two-compartment, infusion, ss", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, rate = 10, ss=1, ii = 24)
-  out <- dosim(mod,e)
+  out <- dosim(mod,e, rtol = 1e-10)
   out <- docalc2(out,e,calc_ss_2cmt_linear_infusion, tinf=10, tau = 24)
   expect_true(dotest(out))
 })

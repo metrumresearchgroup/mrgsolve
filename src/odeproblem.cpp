@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -30,9 +30,6 @@
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
 
-//! the maximum number of iterations for steady-state calculation
-#define MRGSOLVE_MAX_SS_ITER 1000
-
 void dosimeta(void* prob_) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eta = prob->mv_omega(1);
@@ -52,24 +49,29 @@ void dosimeps(void* prob_) {
 odeproblem::odeproblem(Rcpp::NumericVector param,
                        Rcpp::NumericVector init,
                        Rcpp::List funs,
-                       int n_capture_) : odepack_dlsoda(param.size(),init.size()) {
+                       int n_capture_) {
   
-  int npar_ = int(param.size());
-  int neq_ = int(init.size());
+  Npar = int(param.size());
+  Neq = int(init.size());
+ 
+  Istate = 1;
+  
   Advan = 13;
   
-  Param = new double[npar_]();
-  Init_value.assign(neq_,0.0);
-  Init_dummy.assign(neq_,0.0);
+  Param.assign(Npar,0.0);
+  Y.assign(Neq,0.0);
+  Yout.assign(Neq+1,0.0);
+  Ydot.assign(Neq,0.0);
+  Init_value.assign(Neq,0.0);
+  Init_dummy.assign(Neq,0.0);
+  R0.assign(Neq,0.0);
+  infusion_count.assign(Neq,0);
+  R.assign(Neq,0.0);
+  D.assign(Neq,0.0);
+  F.assign(Neq,1.0);
+  Alag.assign(Neq,0.0);
   
-  R0.assign(neq_,0.0);
-  infusion_count.assign(neq_,0);
-  R.assign(neq_,0.0);
-  D.assign(neq_,0.0);
-  F.assign(neq_,1.0);
-  Alag.assign(neq_,0.0);
-  
-  On.assign(neq_,1);
+  On.assign(Neq,1);
   
   d.evid = 0;
   d.newind = 0;
@@ -82,11 +84,13 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   d.amt = 0;
   
   Do_Init_Calc = true;
+  ss_fixed = false;
+  ss_n = 500;
   
   pred.assign(5,0.0);
   
-  for(int i=0; i < npar_; ++i) Param[i] =       double(param[i]);
-  for(int i=0; i < neq_;  ++i) Init_value[i] =  double(init[i]);
+  for(int i=0; i < Npar; ++i) Param[i] =       double(param[i]);
+  for(int i=0; i < Neq;  ++i) Init_value[i] =  double(init[i]);
   
   *reinterpret_cast<void**>(&Inits)  = R_ExternalPtrAddr(funs["main"]);
   *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
@@ -98,18 +102,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));
   simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
   
-}
-
-
-/**
- @brief Destructor for odeproblem object.
- 
- Upon object construction, odeproblem dynamically allocates the Param 
- array.
- 
- */
-odeproblem::~odeproblem(){
-  delete [] Param;
 }
 
 double odeproblem::fbio(unsigned int pos) {
@@ -124,13 +116,18 @@ double odeproblem::alag(int cmt){
 
 
 //! set number of <code>ETAs</code> in the model
-void odeproblem::neta(int n) {
+void odeproblem::neta(const int n) {
   if(n > 25) d.ETA.assign(n,0.0);
 }
 
 //! set number of <code>EPSs</code> in the model
-void odeproblem::neps(int n) {
+void odeproblem::neps(const int n) {
   if(n > 25) d.EPS.assign(n,0.0);
+}
+
+void odeproblem::tol(double atol, double rtol) {
+  Atol = atol;
+  Rtol = rtol;
 }
 
 /** 
@@ -147,12 +144,11 @@ void odeproblem::y_init(int pos, double value) {
   Init_dummy[pos] = value;
 }
 
-void odeproblem::y_init(Rcpp::NumericVector x) {
-  if(x.size() != Neq) Rcpp::stop("Initial vector is wrong size");
-  for(int i = 0; i < x.size(); ++i) {
-    Y[i] = x[i];
-    Init_value[i] = x[i];
-    Init_dummy[i] = x[i];
+void odeproblem::y_init(Rcpp::NumericVector init) {
+  for(int i = 0; i < Neq; ++i) {
+    Y[i] = init[i];
+    Init_value[i] = init[i];
+    Init_dummy[i] = init[i];
   }
 }
 
@@ -160,7 +156,6 @@ void odeproblem::y_init(Rcpp::NumericVector x) {
 void odeproblem::y_add(const unsigned int pos, const double& value) {
   Y[pos] = Y[pos] + value; 
 }
-
 
 /** Derivative function that gets called by the solver. 
  * 
@@ -170,14 +165,14 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param ydot left hand side of differential equations
  * @param prob an odeproblem object
  */
-void main_derivs(int *neq, double *t, double *y, double *ydot, odeproblem *prob) {
-  prob->call_derivs(neq,t,y,ydot);  
+void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
+   data->call_derivs(&t,y,ydot);  
 }
 
-void odeproblem::call_derivs(int *neq, double *t, double *y, double *ydot) {
+void odeproblem::call_derivs(double *t, double *y, double *ydot) {
   Derivs(t,y,ydot,Init_value,Param);
   for(int i = 0; i < Neq; ++i) {
-    ydot[i] = (ydot[i] + R0[i])*On[i]; 
+    ydot[i] = (ydot[i] + R0[i])*On[i];
   }
 }
 
@@ -244,13 +239,25 @@ void odeproblem::rate_reset() {
 void odeproblem::rate_main(rec_ptr rec) {
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("Invalid infusion setting: rate (R_CMT).", false);
+      throw Rcpp::exception(
+          tfm::format(
+            "invalid infusion rate \n R_CMT: %d", 
+            this->rate(rec->cmtn())
+          ).c_str(),
+          false
+      );
     }
     rec->rate(this->rate(rec->cmtn()));
   }
   if(rec->rate() == -2) {
     if(this->dur(rec->cmtn()) <= 0) {
-      throw Rcpp::exception("Invalid infusion setting: duration (D_CMT).",false);
+      throw Rcpp::exception(
+          tfm::format(
+            "invalid infusion duration \n D_CMT: %d", 
+            this->dur(rec->cmtn())
+          ).c_str(),
+          false
+      );
     }
     rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
   }
@@ -304,36 +311,13 @@ void odeproblem::on(const unsigned short int eq_n) {
 
 void odeproblem::off(const unsigned short int eq_n) {
   if(infusion_count[eq_n]>0) {
-    Rcpp::stop("Attempting to turn compartment off when infusion is on.");
+    Rcpp::stop("attempting to turn compartment off when infusion is on.");
   }
   On[eq_n] = 0;
   this->y(eq_n,0.0);
 }
 
-extern "C" {
-  void F77_NAME(dlsoda) (
-      main_deriv_func *derivs,
-      int             *neq,
-      double          *y,
-      const double    *tfrom,
-      const double    *tto,
-      int             *itol,
-      double          *rtol,
-      double          *atol,
-      int             *itask,
-      int             *istate,
-      int             *iopt,
-      double          *rwork,
-      int             *lrwork,
-      int             *iwork,
-      int             *liwork,
-      int             *dum, // dummy jacobian
-      int             *jt, // jacobian type
-      odeproblem      *prob
-  );
-}
-
-void odeproblem::advance(double tfrom, double tto) {
+void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   
   if(Neq == 0) return;
   
@@ -348,41 +332,28 @@ void odeproblem::advance(double tfrom, double tto) {
       return;
     }
     // If Advan isn't 13, it needs to be 0/1/2/3/4
-    Rcpp::stop("mrgsolve: advan has invalid value.");
+    Rcpp::stop("[mrgsolve] advan has invalid value.");
   }
- 
-  F77_CALL(dlsoda)(
-      &main_derivs,
-      &Neq,
-      Y,
-      &tfrom,
-      &tto,
-      &xitol,
-      &xrtol,
-      &xatol,
-      &xitask,
-      &xistate,
-      &xiopt,
-      xrwork,
-      &xlrwork,
-      xiwork,
-      &xliwork,
-      &Neq,
-      &xjt,
-      this
-  );
   
-  this->call_derivs(&Neq, &tto, Y, Ydot);
+  solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
+  if(Istate < 0) {
+    negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
+  }
+  
+  //this->call_derivs(&Neq, &tto, Y, Ydot);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
   
-  unsigned int neq = this->neq();
   
   double dt = tto-tfrom;
   
-  if(MRGSOLVE_GET_PRED_CL <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
-  if(MRGSOLVE_GET_PRED_VC <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_CL <= 0) {
+    Rcpp::stop("pred_CL has a 0 or negative value.");
+  }
+  if(MRGSOLVE_GET_PRED_VC <= 0) {
+    Rcpp::stop("pred_VC has a 0 or negative value.");
+  }
   
   double k10 = MRGSOLVE_GET_PRED_K10;
   double ka =  MRGSOLVE_GET_PRED_KA;
@@ -399,19 +370,20 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   double init0 = 0, init1 = 0;
   int eqoffset = 0;
   
-  if(neq==1) {
+  if(Neq==1) {
     init0 = 0;
     init1 = this->y(0);
     eqoffset = 1;
   }
-  if(neq==2) {
+  if(Neq==2) {
     init0 = this->y(0);
     init1 = this->y(1);
   }
   
+  
   double pred0 = 0, pred1 = 0;
   
-  if(neq ==2) {
+  if(Neq ==2) {
     if((init0!=0) || (R0[0]!=0)) {
       
       pred0 = init0*exp(-ka*dt);//+ R0[0]*(1-exp(-ka*dt))/ka;
@@ -434,11 +406,11 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
       PolyExp(dt,0.0  ,R0[1-eqoffset],dt ,0.0,false,a,alpha,1);
   }
   
-  if(neq==2) {
+  if(Neq==2) {
     this->y(0,pred0);
     this->y(1,pred1);
   }
-  if(neq==1) {
+  if(Neq==1) {
     this->y(0,pred1);
   }
 }
@@ -447,8 +419,6 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
 void odeproblem::advan4(const double& tfrom, const double& tto) {
   
   double dt = tto - tfrom;
-  
-  unsigned int neq = this->neq();
   
   // Make sure parameters are valid
   if (MRGSOLVE_GET_PRED_VC <=  0) Rcpp::stop("pred_VC has a 0 or negative  value.");
@@ -467,11 +437,11 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   
   int eqoffset = 0;
   
-  if(neq == 2) {
+  if(Neq == 2) {
     init0 = 0; init1 = this->y(0); init2 = this->y(1);
     eqoffset = 1;
   }
-  if(neq ==3) {
+  if(Neq ==3) {
     init0 = this->y(0); init1 = this->y(1); init2 = this->y(2);
   }
   
@@ -481,7 +451,7 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   alpha[1] = (ksum - sqrt(ksum*ksum-4.0*k10*k21))/2.0;
   alpha[2] = ka;
   
-  if(neq==3) { // only do the absorption compartment if we have 3
+  if(Neq==3) { // only do the absorption compartment if we have 3
     if((init0 != 0) || (R0[0] != 0)) {
       
       pred0 = init0*exp(-ka*dt);// + R0[0]*(1.0-exp(-ka*dt))/ka;
@@ -543,11 +513,11 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
       PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,2);
   }
   
-  if(neq ==2) {
+  if(Neq ==2) {
     this->y(0,pred1);
     this->y(1,pred2);
   }
-  if(neq ==3) {
+  if(Neq ==3) {
     this->y(0,pred0);
     this->y(1,pred1);
     this->y(2,pred2);
@@ -664,12 +634,11 @@ double PolyExp(const double& x,
 }
 
 void odeproblem::copy_parin(const Rcpp::List& parin) {
-  this->tol(Rcpp::as<double>(parin["atol"]),Rcpp::as<double>(parin["rtol"]));
-  this->hmax(Rcpp::as<double>(parin["hmax"]));
-  this->maxsteps(Rcpp::as<double>  (parin["maxsteps"]));
-  this->ixpr(Rcpp::as<double>  (parin["ixpr"]));
-  this->mxhnil(Rcpp::as<double>  (parin["mxhnil"]));
-  this->advan(Rcpp::as<int>(parin["advan"]));
+  advan(Rcpp::as<int>(parin["advan"]));
+  ss_n = Rcpp::as<int>(parin["ss_n"]);
+  ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
+  Rtol = Rcpp::as<double>(parin["rtol"]);
+  Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
 }
 
