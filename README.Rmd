@@ -9,10 +9,19 @@ output: github_document
 ```{r,echo=FALSE}
 library(lattice)
 library(knitr)
-opts_chunk$set(comment='.', fig.align="center", fig.path="inst/maintenance/img/README-")
 ```
 
-# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png" width="135px">
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  comment = ".",
+  fig.path = "man/figures/README-"
+)
+options(tibble.print_min = 5, tibble.print_max = 5)
+```
+
+
+
+# mrgsolve <img align="right" src = "man/figures/mrgsolve_sticker_812418_1.png" width="135px">
 
 [![Build Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
@@ -39,12 +48,7 @@ resources, including:
 
 ## Installation
 
-We recommend staying up to date with the development version
-```{r,eval=FALSE}
-devtools::install_github("metrumresearchgroup/mrgsolve")
-```
-
-Otherwise, install the latest release on CRAN
+Install the latest release on CRAN
 ```{r,eval=FALSE}
 install.packages("mrgsolve")
 ```
@@ -70,7 +74,7 @@ options(mrgsolve_mread_quiet = TRUE)
 ```
 
 
-```{r}
+```{r,message=FALSE}
 library(mrgsolve)
 ```
 
@@ -80,7 +84,7 @@ mod <- mread("pk1", modlib())
 ```
 
 Simulate a simple regimen
-```{r}
+```{r,pk-figure}
 mod %>% 
   ev(amt = 100, ii = 24, addl = 9) %>%
   mrgsim(end = 300, delta = 0.1) %>% 
@@ -91,7 +95,7 @@ mod %>%
 A more complicated regimen: 100 mg infusions over 2 hours every 24 hours
 for one week, followed by 50 mg boluses every 12 hours for 10 days:
 
-```{r}
+```{r,regimen-figure}
 mod %>% 
   ev_rx("100 over 2h q 24 x 7 then 50 q 12 x 20") %>%
   mrgsim(end = 600, delta = 0.1) %>% 
@@ -117,7 +121,7 @@ head(data)
 ```
 
 Simulate
-```{r}
+```{r, population-figure}
 mod %>% 
   data_set(data) %>% 
   carry_out(dose,WT) %>%
@@ -134,7 +138,7 @@ mod <- modlib("pbpk")
 
 Reference
 
-```{r, comment = " "}
+```{r, comment = " ", echo=FALSE}
 blocks(mod,PROB) 
 ```
 
@@ -153,7 +157,7 @@ idata
 ```
 
 
-```{r}
+```{r, pbpk-figure}
 mod %>% 
   ev(amt = 150) %>% 
   idata_set(idata) %>%
