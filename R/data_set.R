@@ -446,8 +446,10 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' @param times a vector of observation times
 ##' @param unique `logical`; if `TRUE` then values for `time` are 
 ##' dropped if they are found anywhere in `data`
+##' @param obs_pos determines sorting order for observations; use `-1` (default)
+##' to put observations first; otherwise, use large integer to ensure 
+##' observations are placed after doses
 ##'
-##' 
 ##' @details
 ##' Non-numeric columns will be dropped with a warning.
 ##' 
@@ -459,19 +461,24 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' expand_observations(data, times = seq(0,48,2))
 ##' 
 ##' @export
-expand_observations <- function(data, times, unique = FALSE) {
+expand_observations <- function(data, times, unique = FALSE, obs_pos = -1L) {
   
   data <- As_data_set(data)
   if(unique) {
     tcol <- timename(data)
     times <- times[!times %in% unique(data[[tcol]])]
   }
-  dont_copy <- c("ID", "amt", "cmt", "evid", "ii", "ss", "rate","time","addl")
+  dont_copy <- c("ID", "amt", "cmt", "evid", "ii", "ss", "rate","time","addl","..zeros..")
   dont_copy <- unique(c(dont_copy,toupper(dont_copy)))
   dat <- data.matrix(numerics_only(data))
+  dat <- cbind(dat, matrix(0,
+                           ncol=1,
+                           nrow=nrow(dat),
+                           dimnames=list(NULL,"..zeros..")))
   copy <- which(!is.element(colnames(dat),dont_copy))-1
-  a <- EXPAND_OBSERVATIONS(dat,times,copy)
+  a <- EXPAND_OBSERVATIONS(dat,times,copy,as.integer(obs_pos))
   ans <- as.data.frame(a$data)
   names(ans) <- colnames(dat)
+  ans[["..zeros.."]] <- NULL
   ans
 }

@@ -159,3 +159,23 @@ test_that("observations expand", {
   expect_equal(nrow(obs),3)
   expect_equal(obs[["time"]],c(1,2,3))
 })
+
+test_that("expand observations bug issue-563", {
+  e1 <- ev(amt = 100, cmt=1,LAGT=1,ID=15)
+  e2 <- ev(time=4,amt=50,cmt=1,LAGT=0,rate=24,addl=2,ii=24,ID=15)
+  e <- c(e1,e2)
+  expect_silent(d <- expand_observations(e,seq(1,10)))
+  expect_is(d,"data.frame")
+})
+
+test_that("add position argument to expand observations issue-565", {
+  e1 <- ev(amt = 100, ii = 4, addl = 1) %>% realize_addl
+  dat1 <- expand_observations(e1,c(0,4))
+  dat2 <- expand_observations(e1,c(0,4),obs_pos=13)
+  expect_equal(dat1$amt, c(0,100,0,100))
+  expect_equal(dat2$amt, c(100,0,100,0))
+  expect_equal(dat1$time,c(0,0,4,4))
+  expect_equal(dat1$time,dat2$time)
+})
+
+

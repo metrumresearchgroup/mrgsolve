@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -50,7 +50,8 @@ NULL
 #' cleaned up first
 #' @param recover if \code{TRUE}, an object will be returned in case
 #' the model shared object fails to build
-#' @param ... passed to \code{\link[mrgsolve]{update}}
+#' @param ... passed to \code{\link[mrgsolve]{update}}; also arguments passed
+#' to mread from \code{\link{mread_cache}}.
 #' 
 #' @details
 #' The \code{model} argument is required.  For typical use, 
@@ -200,12 +201,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   spec[["SET"]] <- spec[["ENV"]] <-  NULL
   
-  
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- parse_env(spec,project=build$project,ENV)
-  
+
   ## The main sections that need R processing:
   spec <- move_global(spec,mread.env)
   
@@ -232,7 +232,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   init <-  as.list(do.call("c",unname(mread.env$init)))
   ode <- do.call("c", unname(mread.env$ode))
   annot_list_maybe <- nonull.list(mread.env$annot)
-  
+
   if (!length(annot_list_maybe)) {
     annot <- tibble()
   } else {
@@ -329,7 +329,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   ## First update with what we found in the model specification file
-  x <- update(x, data=SET, open=TRUE)
+  x <- update(x, data=SET, open=TRUE, strict = FALSE)
   
   ## Arguments in $SET that will be passed to mrgsim
   simargs <- SET[is.element(names(SET),set_args)]
@@ -339,21 +339,16 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Next, update with what the user passed in as arguments
   args <- list(...)
-  
-  x <- update(x, data=args, open=TRUE)
+  x <- update(x, data=args, open=TRUE, strict = FALSE)
   
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib[["cmt"]] <- names(Init(x))
-  x@shlib[["par"]] <- names(param(x))
-  x@shlib[["neq"]] <- length(x@shlib[["cmt"]])
-  x@shlib[["covariates"]] <- mread.env$covariates
-  x@shlib[["version"]] <- GLOBALS[["version"]]
+  x@shlib[["covariates"]] <- mread.env[["covariates"]]
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
-  x@shlib[["md5"]] <- build$md5
+  x@shlib[["md5"]] <- build[["md5"]]
   
   ## These are the various #define statements
   ## that go at the top of the .cpp.cpp file
@@ -456,7 +451,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
-    message("Building ", model(x)," ... ", appendLF=FALSE)
+    message("Building ", model(x), " ... ", appendLF=FALSE)
   }
   
   # Wait at least 2 sec since last compile
@@ -526,7 +521,7 @@ mread_cache <- function(model = NULL,
   if(all(t0,t1,t2,t3,t4,te)) {
     if(!quiet) message("Loading model from cache.")
     loadso(x)
-    return(update(x,...))
+    return(update(x,...,strict=FALSE))
   }
   
   x <- mread(

@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 setAs("NULL", "character", function(from) character(0))
 
 sval <- unique(c("atol","rtol",
@@ -24,7 +22,7 @@ sval <- unique(c("atol","rtol",
                  "digits", "ixpr", "mxhnil","start", "end", "add", "delta",
                  "maxsteps", "hmin", "hmax","tscale", "request"))
 
-other_val <- c("param", "init", "omega", "sigma")
+other_val <- c("param", "init", "omega", "sigma", "outvars")
 
 all_updatable <- c(sval,other_val)
 
@@ -42,6 +40,8 @@ all_updatable <- c(sval,other_val)
 ##' added; if \code{TRUE}, the parameter list may expand.
 ##' @param data a list of items to update; this list is combined 
 ##' with any items passed in via \code{...}
+##' @param strict if \code{TRUE}, then an error will be generated if there is 
+##' attempt to update a non-existent item
 ##' 
 ##' @return The updated model object is returned.
 ##' 
@@ -68,6 +68,7 @@ all_updatable <- c(sval,other_val)
 ##' \item init
 ##' \item omega
 ##' \item sigma
+##' \item outvars
 ##' } 
 ##'  
 ##' @name update
@@ -85,7 +86,8 @@ all_updatable <- c(sval,other_val)
 ##'  
 ##' @export
 ##'  
-setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data=NULL) {
+setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, 
+                                       data=NULL, strict=TRUE) {
   
   args <- list(...)
   
@@ -99,24 +101,44 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data
   
   a <- names(args)
   
-  valid.in <- which(charmatch(a, sval, nomatch=0) > 0)
+  m <- charmatch(a,all_updatable)
   
+  if(strict && anyNA(m)) {
+    if(getOption("mrgsolve.update.strict", FALSE)) {
+      bad <- a[is.na(m)]
+      for(b in bad) {
+        mesg <- paste0("invalid item for model object update: ", b)
+        warning(mesg, call.=FALSE, immediate.=TRUE) 
+      }
+    }
+  }
+  valid <- !is.na(m)
+  a[valid] <- all_updatable[m[valid]]
+  names(args) <- a
+  valid.in <- which(a %in% sval)
   if(length(valid.in) > 0) {
-    valid.full <- charmatch(a[valid.in], sval, nomatch=0)
     for(i in seq_along(valid.in)) {
-      slot(object, sval[valid.full[i]]) <- args[[valid.in[i]]]
+      slot(object, a[valid.in[i]]) <- args[[a[valid.in[i]]]]
     }
   }
   
+  if("request" %in% a) {
+    object <- update_request(object,cvec_cs(args[["request"]]))  
+  }
+  
+  if("outvars" %in% a) {
+    object <- update_outputs(object,cvec_cs(args[["outvars"]]))  
+  }
+  
   ## Initial conditions list:
-  if(is.element("init", a)) {
+  if("init" %in%  a) {
     i <- object@init@data
     i <- merge.list(i, args$init, context="init", open=open)
     slot(object, "init") <- as.init(i)
   }
   
   ## Parameter update:
-  if(is.element("param", a)) {
+  if("param" %in% a) {
     if(length(object@fixed)>0) {
       if(any(is.element(names(args$param),names(object@fixed)))) {
         warning("attempted update of a $FIXED parameter.", 
@@ -131,14 +153,14 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data
   }
   
   ## OMEGA
-  if(is.element("omega", a)) {
+  if("omega" %in% a) {
     object@omega <- update_matlist(
       object@omega,omat(args$omega),open=open, context="omat"
     )
   }
   
   ## SIGMA
-  if(is.element("sigma", a)) {
+  if("sigma" %in% a) {
     object@sigma <- update_matlist(
       object@sigma,smat(args$sigma), open=open, context="smat"
     )
@@ -146,6 +168,74 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, data
   
   return(object)
 })
+
+default_outputs <- function(mod) {
+  mod@cmtL <- Cmt(mod)
+  mod@Icmt <- seq_along(mod@cmtL)
+  mod@capL <- unname(mod@capture)
+  mod@Icap <- seq_along(mod@capL)
+  mod
+}
+
+update_outputs <- function(mod, outputs = character(0)) {
+  if(length(outputs)==0) return(mod)
+  outputs <- unique(outputs)
+  if(identical(outputs,"(all)")) {
+    return(default_outputs(mod))
+  }
+  if(identical(outputs, "(reset)")) {
+    mod <- update_request(mod,mod@request)
+    if(identical(mod@request,"(all)")) {
+      outputs <- c(Cmt(mod),mod@capture)
+    } else {
+      outputs <- c(mod@request,mod@capture)      
+    }
+  }
+  ren <- .ren.create(unname(outputs),unique=FALSE)
+  if(any(duplicated(ren$new))) {
+    dup <- ren$new[duplicated(ren$new)]
+    dup <- paste0(dup,collapse=",")
+    wstop("duplicate names in outvars: ",dup)
+  }
+  mod@Icmt <- which(Cmt(mod) %in% ren$old)
+  mod@cmtL <- unname(.ren.rename(ren,Cmt(mod)[mod@Icmt]))
+  mod@Icap <- which(mod@capture %in% ren$old)
+  mod@capL <- unname(.ren.rename(ren,mod@capture[mod@Icap]))
+  diff <- setdiff(ren$old,c(Cmt(mod),mod@capture))
+  if(length(diff) > 0) {
+    for(d in diff) {
+      message(" ", d, " is not a compartment or captured item")  
+    }
+    wstop("invalid item in requested output")
+  }
+  mod
+}
+
+update_request <- function(mod, request = NULL) {
+  if(is.null(request)) return(mod)
+  if(identical(request,"")) {
+    mod@Icmt <- integer(0)
+    mod@cmtL <- character(0)
+    return(mod)
+  }
+  if(identical(request,"(all)")) {
+    mod@Icmt <- seq_along(Cmt(mod))
+    mod@cmtL <- Cmt(mod)
+  } else {
+    ren <- .ren.create(unname(request),unique=FALSE)
+    if(any(duplicated(ren$new))) {
+      dup <- ren$new[duplicated(ren$new)]
+      for(d in dup) {
+        message("duplicate name: ", d)  
+      }
+      wstop("duplicate names found in request")
+    }
+    mod@Icmt <- which(Cmt(mod) %in% ren$old)
+    mod@cmtL <- .ren.rename(ren,Cmt(mod)[mod@Icmt])
+  }
+  return(mod)
+}
+
 
 same_sig <- function(x,y) {
   return(identical(unname(nrow(x)), unname(nrow(y))))
@@ -223,27 +313,3 @@ setMethod("update", "parameter_list", function(object,.y,...) {
 setMethod("update", "ev", function(object,y,...) {
   
 })
-
-
-# Update model or project in an model object
-#
-# @param x mrgmod object
-# @param model model name
-# @param project project directory
-# @param ... passed along
-# @return updated model object
-# @export
-# @keywords internal
-# setGeneric("relocate", function(x,...) standardGeneric("relocate"))
-# 
-# setMethod("relocate", "mrgmod", function(x,model=NULL, project=NULL) {
-#   if(!missing(model)) x@model <- model
-#   if(!missing(project)) x@project <- normalizePath(project,winslash=.Platform$file.sep)
-#   validObject(x)
-#   return(x)
-# })
-
-
-
-
-

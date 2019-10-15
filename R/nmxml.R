@@ -34,6 +34,8 @@
 ##' @param index the estimation number to return;  "last" will return the 
 ##' last estimation results; otherwise, pass an integer indicating which 
 ##' estimation results to return
+##' @param xpath xml path containing run results; if the default doesn't work, 
+##' consider using \code{.//estimation} as an alternative; see details
 ##' @param ... not used
 ##' @aliases NMXML
 ##' @details
@@ -45,6 +47,12 @@
 ##' This function requires that the \code{xml2} package 
 ##' be installed and loadable.  If \code{requireNamespace("xml2")}
 ##' fails, an error will be generated. 
+##' 
+##' \code{nmxml} usually expects to find run results in the xpath called
+##' \code{.//nm:estimation}.  Occasionally, the run results are not stored in 
+##' this namespace but no namespaces are found in the xml file.  In this case, 
+##' the user can specify the xpath containing run results.  Consider trying 
+##' \code{.//estimation} as an alternative if the default fails. 
 ##' 
 ##' @return A list with theta, omega and sigma elements, 
 ##' depending on what was requested
@@ -62,8 +70,10 @@ nmxml <- function(run=numeric(0), project=character(0),
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
                   tname="THETA", oname="...", sname="...",
-                  index = "last", ...) {
-
+                  index = "last",
+                  xpath = ".//nm:estimation",
+                  ...) {
+  
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
   sigma <- sigma | !missing(sname)
@@ -81,8 +91,21 @@ nmxml <- function(run=numeric(0), project=character(0),
     stop("Could not load namespace for package xml2.", call.=FALSE)
   }
   tree <- xml2::read_xml(target)
-  tree <- xml2::xml_find_all(tree,'.//nm:estimation')
+  tree <- try(xml2::xml_find_all(tree,xpath))
+  if(inherits(tree, "try-error")) {
+    msg <- sprintf(
+      c("failed to parse xml from nonmem run with xpath", 
+        " %s,\n  See the xpath argument under ?nmxml for help."), 
+      xpath
+    )
+    stop(msg, call.=FALSE) 
+  }
+  
   tree <- xml2::as_list(tree)
+  
+  if(length(tree)==0) {
+    stop("could not recover any data from the xml file", call.=FALSE)
+  }
   
   if(index=="last") index <- length(tree)
   
@@ -94,13 +117,6 @@ nmxml <- function(run=numeric(0), project=character(0),
   }
   
   tree <- tree[[index]]
-  
-  # https://github.com/r-lib/xml2/blob/master/NEWS.md#xml2-120
-  # if(packageVersion("xml2") >= "1.2.0") {
-  #   tree <- tree[["output"]][["nonmem"]][["problem"]][["estimation"]]      
-  # } else {
-  #   tree <- tree[["nonmem"]][["problem"]][["estimation"]]
-  # }
   
   th <- list()
   om <- matrix(0,0,0)
@@ -221,4 +237,3 @@ read_nmext <- function(run, project = getwd(), file = paste0(run, ".ext"),
   )
   return(ans)
 }
-

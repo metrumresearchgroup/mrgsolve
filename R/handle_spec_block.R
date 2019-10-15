@@ -477,7 +477,7 @@ handle_spec_block.specPLUGIN <- function(x,env,...) {
 }
 
 # TRANSIT ----------------------------------------------------------------------
-
+# nocov start
 #' @export
 handle_spec_block.specTRANSIT <- function(x,env,...) {
   x <- scrape_opts(x, narrow=FALSE)
@@ -510,6 +510,7 @@ TRANSIT <- function(x,env, n, tr, name = "TRANSIT", pos=1) {
   env[["init"]][[pos]] <- init
   return(NULL)
 }
+# nocov end
 
 # PKMODEL ----------------------------------------------------------------------
 
@@ -658,7 +659,7 @@ check_pred_symbols <- function(x,code) {
 }
 
 # YAML -------------------------------------------------------------------------
-
+# nocov start
 #' @export
 handle_spec_block.specYAML <- function(x,env,...) {
   
@@ -701,6 +702,7 @@ handle_spec_block.specYAML <- function(x,env,...) {
   if(nrow(out) > 0) env[["capture"]][[pos]] <- outputs
   return(invisible(NULL))
 }
+# nocov end
 
 # NAMESPACE --------------------------------------------------------------------
 

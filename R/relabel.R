@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -52,9 +52,13 @@
   list(Old = from, New = to)
 }
 
-.ren.create <- function(x, y = NULL, sanitize = "sanitize_capture") {
-  x <- .ren.parse(x,y) 
-  self <- list(identical = FALSE, old = character(0), new = character(0))
+.ren.create <- function(x, y = NULL, sanitize = "sanitize_capture",unique=TRUE) {
+  self <- list(identical = FALSE, old = character(0), new = character(0)) 
+  if(length(x)==0 & is.null(y)) {
+    self[["identical"]] <- TRUE
+    return(self)
+  }
+  x <- .ren.parse(x,y,unique=unique) 
   self$old <- x$Old
   self$new <- x$New
   if(!is.null(sanitize)) {
@@ -85,7 +89,3 @@
   if(named) return(setNames(self$new,self$old))
   return(self$new)
 }
-
-
-
-

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -33,7 +33,7 @@ test_that("methods", {
   expect_error(mod$kylebaron) 
   expect_error(mod[["kylebaron"]])
   expect_is(as.list(mod), "list")
-  expect_message(summary(mod), "Model: housemodel")
+  expect_output(summary(mod), "Model: housemodel")
   expect_true(mrgsolve:::valid.mrgmod(mod))
   expect_true(all.equal(mod, mrgsolve:::house()))
   l <- mod[c("CL", "VC")]
@@ -41,5 +41,12 @@ test_that("methods", {
   x <- capture.output(see(mod))
   expect_true(grepl("Model file", x[2]))
   expect_true(grepl("housemodel\\.cpp", x[2]))
+})
+
+test_that("defaults issue-540", {
+  mod <- modlib("pk1", compile = FALSE)  
+  expect_equal(mod@mxhnil,2)
+  expect_equal(mod@maxsteps,20000)
+  expect_equal(mod@rtol,1e-8)
 })
 

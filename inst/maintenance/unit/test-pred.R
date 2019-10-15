@@ -84,21 +84,21 @@ test_that("time/TIME not required when neq > 0", {
 test_that("cmt with pred is zero", {
   expect_error(
     mod %>% ev(amt = 100) %>% mrgsim, 
-    regexp="All records must have cmt set to zero"
+    regexp="all records must have cmt set to zero"
   )
 })
 
 test_that("rate with pred is zero", {
   expect_error(
     mod %>% ev(amt = 0,cmt = 0, rate = 2) %>% mrgsim, 
-    regexp="All records must have rate set to zero"
+    regexp="all records must have rate set to zero"
   )
 })
 
 test_that("ss with pred is zero", {
   expect_error(
     mod %>% ev(amt = 0, cmt = 0, ss = 1) %>% mrgsim, 
-    regexp="All records must have ss set to zero"
+    regexp="all records must have ss set to zero"
   )
 })
 

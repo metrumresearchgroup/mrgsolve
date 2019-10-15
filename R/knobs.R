@@ -106,7 +106,7 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   
   data <- do.call("expand.ev", input)
   
-  x <- do.call("update", c(list(x),toupdate))
+  x <- do.call("update", c(list(x),toupdate,list(strict=FALSE)))
   
   if(has.amt) {
     x <- x %>% data_set(data)

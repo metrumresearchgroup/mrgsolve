@@ -75,9 +75,6 @@ template <class type1, class type2> void report(type1 a, type2 b) {
 }
 namespace mrg = mrgsolve;
 
-
-
-
 //! member functions mevent and tad come in via housemodel; see inst/base/databox.cpp
 class databox {
 public: 
@@ -109,19 +106,19 @@ public:
 typedef std::vector<double> dvec;
 
 //! signature for <code>$MAIN</code>
-#define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const double* _A_, const double* _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& self, dvec& _pred_, mrgsolve::resim& simeta
+#define MRGSOLVE_INIT_SIGNATURE  dvec& _A_0_,const dvec& _A_, const dvec& _THETA_,  dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_,  databox& self, dvec& _pred_, mrgsolve::resim& simeta
 #define MRGSOLVE_INIT_SIGNATURE_N 10
 
 //! signature for <code>$TABLE</code>
-#define MRGSOLVE_TABLE_SIGNATURE const double* _A_, const dvec& _A_0_,  const double* _THETA_,  const dvec& _F_, const dvec& _R_,  databox& self, const dvec& _pred_, dvec& _capture_, mrgsolve::resim& simeps
+#define MRGSOLVE_TABLE_SIGNATURE const dvec& _A_, const dvec& _A_0_,  dvec& _THETA_,  const dvec& _F_, const dvec& _R_,  databox& self, const dvec& _pred_, dvec& _capture_, mrgsolve::resim& simeps
 #define MRGSOLVE_TABLE_SIGNATURE_N 9
 
 //! signature for <code>$ODE</code>
-#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const double* _THETA_
+#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const dvec& _THETA_
 #define MRGSOLVE_ODE_SIGNATURE_N 5
 
 //! signature for <code>$PREAMBLE</code>
-#define MRGSOLVE_CONFIG_SIGNATURE databox& self, const double* _THETA_, const double neq, const double npar
+#define MRGSOLVE_CONFIG_SIGNATURE databox& self, const dvec& _THETA_, const double neq, const double npar
 #define MRGSOLVE_CONFIG_SIGNATURE_N 4
 
 #endif

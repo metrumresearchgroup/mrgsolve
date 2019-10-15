@@ -211,28 +211,21 @@ expand.idata <- function(...) {
   dplyr::select(ans, "ID", everything())
 }
 
-##' @export
-##' @rdname expand.idata
+#' @export
+#' @rdname expand.idata
 expand.ev <- function(...) {
   ans <- expand.grid(...,stringsAsFactors=FALSE)
-  ans$ID <- seq_len(nrow(ans))
+  ans[["ID"]] <- seq_len(nrow(ans))
   if(!has_name("evid", ans)) ans[["evid"]] <- 1
   if(!has_name("cmt", ans)) ans[["cmt"]] <- 1
   if(!has_name("time", ans)) ans[["time"]] <- 0
-  if(has_name("total",ans)) {
-    ans[["addl"]] <- ans[["total"]]-1
-    ans[["total"]] <- NULL
-  }
-  if(has_name("tinf", ans)) {
-    ans[["rate"]] <- ifelse(
-      ans[["tinf"]] > 0, 
-      ans[["amt"]]/ans[["tinf"]],
-      0
-    )
-    ans[["tinf"]] <- NULL
-  }
-  dplyr::select(ans,"ID",everything())
+  if(!has_name("amt", ans)) ans[["amt"]] <- 0
+  finalize_ev(ans)
 }
+
+#' @export
+#' @rdname expand.idata
+ev_expand <- expand.ev
 
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())
@@ -322,10 +315,6 @@ build_path <- function(x) {
 ##' @export
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
-# if.file.remove <- function(x) {
-#   if(file_exists(x)) file.remove(x)
-# }
-
 as_character_args <- function(x) {
   x <- deparse(x,width.cutoff=500)
   x <- gsub("^.*\\(|\\)$", "", x)
@@ -372,33 +361,6 @@ s_pick <- function(x,name) {
 #   lapply(x,"[",name)
 # }
 
-# s_quote <- function(x) paste0("\'",x,"\'")
-# d_quote <- function(x) paste0("\"",x,"\"")
-
-
-
-
-
-# shuffle <- function (x, who, after = NA)  {
-#   names(x) <- make.unique(names(x))
-#   who <- names(x[, who, drop = FALSE])
-#   nms <- names(x)[!names(x) %in% who]
-#   if (is.null(after))
-#     after <- length(nms)
-#   if (is.na(after))
-#     after <- 0
-#   if (length(after) == 0)
-#     after <- length(nms)
-#   if (is.character(after))
-#     after <- match(after, nms, nomatch = 0)
-#   if (after < 0)
-#     after <- length(nms)
-#   if (after > length(nms))
-#     after <- length(nms)
-#   nms <- append(nms, who, after = after)
-#   x[nms]
-# }
-
 filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
   if(short) dir <- build_path(dir)
   file.path(dir, paste0(run, ext))
@@ -436,53 +398,17 @@ file_readable <- function(x) {
   file.access(x,4)==0 
 }
 
-# mrgnorm <- function(n,sigma) {
-#   ncols <- ncol(sigma)
-#   matrix(rnorm(n * ncols), ncol = ncols) %*% chol(sigma)
-# }
-
 where_is <- function(what,x) {
   as.integer(unlist(gregexpr(what,x,fixed=TRUE)))
 }
 
-# where_first <- function(what,x) {
-#   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
-# }
-
 object_exists <- function(name,envir,mode="any",inherits=FALSE) {
   if(!exists(name,envir=envir,mode=mode,inherits=inherits)) {
-    stop("couldn't find object ", name, call.=FALSE) 
+    wstop("couldn't find object ", name) 
   }
 }
 
 tparse <- function(x,...) parse(text=x,...)
-
-#mt_fun <- function(){}
-
-# call_system <- function(args) {
-#   suppressWarnings(do.call(system,args))
-# }
-
-# build_error <- function(args,compfile) {
-#   if(.Platform$OS.type=="windows" & args$ignore.stdout) {
-#     
-#     args$show.output.on.console <- FALSE 
-#     args$intern <- TRUE
-#     err <- call_system(args)
-#     
-#     errors <- grepl(paste0("^",compfile),err)
-#     
-#     for(i in seq_along(errors)) {
-#       if(errors[i]) {
-#         message(err[i]) 
-#       } else {
-#         cat(err[i],"\n")
-#       }
-#     }
-#   }
-#   cat("-------------\n")
-#   stop("there was a problem building the model.",call.=FALSE)
-# }
 
 na2zero <- function(x) {
   x[is.na(x)] <- 0
@@ -516,12 +442,11 @@ locf_tibble <- function(x) {
 
 locf_ev <- function(x) {
   if(!is.ev(x)) {
-    stop("x is not an event object") 
+    wstop("x is not an event object") 
   }
   x@data <- mutate_all(x@data, .funs = ~locf(.))
   x
 }
-
 
 arrange__ <- function(df, .dots) {
   arrange(df, `!!!`(syms(.dots)))
@@ -532,9 +457,7 @@ select__ <- function(df, .dots) {
 group_by__ <- function(df,.dots, add = FALSE) {
   group_by(df, `!!!`(syms(.dots)), add = add)
 }
-# funs__ <- function(...) {
-#   dplyr::funs(`!!!`(syms(...)))  
-# }
+
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
   dplyr::distinct(df, `!!!`(syms(.dots)), .keep_all = .keep_all)  
 }
@@ -620,3 +543,20 @@ system4 <- function(cmd, args=character(0), pattern, path) {
   x[["stderr"]] <- readLines(files[2])
   x
 }
+
+wstop <- function(..., width = getOption("width", 60), call.=FALSE) {
+  x <- unlist(list(...))
+  x <- paste0(x,collapse="")
+  x <- sub(" *\n *", " ", x)
+  x <- strwrap(x, exdent = 7)
+  x <- paste0(x,collapse="\n")
+  stop(x, call.=call.)
+}
+
+mod_first <- function(cl) {
+  fun <- deparse(match.call(sys.function(-1),sys.call(-1))[1])
+  fun <- substr(fun,1,(nchar(fun)-2L))
+  msg <- sprintf("the first argument to %s must be a model object",fun)
+  wstop(msg)
+}
+

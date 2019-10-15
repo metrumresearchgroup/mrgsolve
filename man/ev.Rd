@@ -12,7 +12,7 @@ ev(x, ...)
 
 \S4method{ev}{mrgmod}(x, object = NULL, ...)
 
-\S4method{ev}{missing}(time = 0, amt, evid = 1, cmt = 1,
+\S4method{ev}{missing}(time = 0, amt = 0, evid = 1, cmt = 1,
   ID = numeric(0), replicate = TRUE, until = NULL, tinf = NULL,
   realize_addl = FALSE, ...)
 
@@ -83,8 +83,9 @@ loading <- ev(time=0, cmt=1, amt=1000)
 
 maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
 
-loading + maint
+c(loading, maint)
 
+loading$time
 
 }
 \seealso{

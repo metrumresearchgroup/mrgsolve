@@ -26,9 +26,6 @@ namespace {
   double KOUTi;
   double DV;
 }
-typedef double localdouble;
-typedef int localint;
-typedef bool localbool;
 
 // GLOBAL START USER CODE:
 #define CP (CENT/VCi)

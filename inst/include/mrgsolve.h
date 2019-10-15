@@ -26,7 +26,7 @@
 extern "C"{DL_FUNC tofun(SEXP a);}
 
 // Send report to console when istate returns negative after dlsoda call
-void neg_istate(int);
+void negative_istate(int istate, int maxsteps, double rtol, double atol);
 
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 
@@ -50,8 +50,8 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a);
 
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b, 
-             Rcpp::IntegerVector& ai,
-             Rcpp::IntegerVector& bi);
+             std::vector<int>& ai,
+             std::vector<int>& bi);
 
 Rcpp::List get_tokens(const Rcpp::CharacterVector& code);
 
@@ -61,13 +61,13 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
                                   const Rcpp::NumericMatrix& events,
                                   const Rcpp::NumericVector& id); 
 
-Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
-                            Rcpp::NumericMatrix& obs,
-                            Rcpp::IntegerVector& cols,
-                            const int n_out_col,const int n_out_row,
-                            const Rcpp::NumericVector& addl_,
-                            const Rcpp::NumericVector& ii_,
-                            const int nid, const int ntime,
-                            const int namt, const int nevid, 
-                            const int ncmt, const int nrate);
+// Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
+//                             Rcpp::NumericMatrix& obs,
+//                             Rcpp::IntegerVector& cols,
+//                             const int n_out_col,const int n_out_row,
+//                             const Rcpp::NumericVector& addl_,
+//                             const Rcpp::NumericVector& ii_,
+//                             const int nid, const int ntime,
+//                             const int namt, const int nevid, 
+//                             const int ncmt, const int nrate);
 

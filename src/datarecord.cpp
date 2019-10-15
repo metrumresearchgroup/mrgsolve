@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -24,12 +24,9 @@
 #include "RcppInclude.h"
 #include "datarecord.h"
 #include "odeproblem.h"
-#include <boost/make_shared.hpp>
+//#include <boost/make_shared.hpp>
 #include <functional>
 #include <algorithm>
-
-#define N_SS 1000
-#define CRIT_DIFF_SS 1E-12
 
 // Tgrid Observations that need to get output
 // And Ptime observations
@@ -136,9 +133,13 @@ double datarecord::dur(double b) {
   return(b*Amt/Rate);
 }
 
+bool datarecord::ss_infusion() {
+  return (Evid==1) && (Amt==0) && (Ss==1) && ((Rate > 0) || (Rate == -1));  
+}
+
 void datarecord::implement(odeproblem* prob) {
   
-  if(Evid==0 || (!Armed) || (prob->neq()==0)){
+  if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
   }
   
@@ -149,8 +150,6 @@ void datarecord::implement(odeproblem* prob) {
   int eq_n = this->cmtn();
   
   double Fn = prob->fbio(eq_n);
-  
-  if(Ss > 0) this->steady(prob, Fn);
   
   switch (evid) {
   case 1: // Dosing event record
@@ -196,6 +195,7 @@ void datarecord::implement(odeproblem* prob) {
       prob->rate0(i,0.0);
     } {
       prob->init_call(Time);
+      if(!Armed) break;
       if(Rate > 0) {
         this->evid(5);
       } else {
@@ -211,13 +211,14 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, double Fn) {
-  if(Fn==0) throw Rcpp::exception("Cannot use ss flag when F(n) is zero.",false);
-  if(Rate == 0) this->steady_bolus(prob);
-  if(Rate >  0) this->steady_infusion(prob);
+void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solver) {
+  if(Ss > 0) {
+    if(Rate == 0) this->steady_bolus(prob,solver);
+    if(Rate >  0) this->steady_infusion(prob,thisi,solver);
+  }
 }
 
-void datarecord::steady_bolus(odeproblem* prob) {
+void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
   dvec state_incoming;
   
@@ -229,64 +230,68 @@ void datarecord::steady_bolus(odeproblem* prob) {
   }
   
   prob->rate_reset();
-  
+  bool warn = !prob->ss_fixed;
+  int N_SS = prob->ss_n;  
   double tfrom = 0.0;
   double tto = 0.0;
-  int i;
-  int j;
   
-  std::vector<double> res(prob->neq(),  1E-9);
-  std::vector<double> last(prob->neq(), 1E-9);
-  
-  double this_sum = 0.0;
-  double last_sum = 1E-6;
-  double diff = 1E6;
+  std::vector<double> last(prob->neq(), -1E9);
+  double diff = 0, err = 0;
+  bool made_it = false;
   
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
   
-  for(i=1; i < N_SS; ++i) {
+  for(int i=1; i < N_SS; ++i) {
     
     tfrom = double(i-1)*Ii;
     tto = double(i)*Ii;
     
     evon->implement(prob);
     prob->lsoda_init();
-    prob->advance(tfrom,tto);
+    prob->advance(tfrom,tto,solver);
     
-    for(j=0; j < prob->neq(); ++j) {
-      res[j]  = pow(prob->y(j) - last[j], 2.0);
+    int ngood = 0;
+    for(int j=0; j < prob->neq(); ++j) {
+      diff = fabs(prob->y(j) - last[j]);
+      err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+      if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
-    
-    this_sum = std::accumulate(res.begin(), res.end(), 0.0);
-    
-    if(i > 10) {
-      diff = std::abs(this_sum - last_sum);
-      if((diff < CRIT_DIFF_SS)){
-        tfrom = double(i-1)*Ii;
-        tto  = double(i)*Ii;
-        break;
-      }
+    if(ngood == prob->neq()) {
+      tfrom = double(i-1)*Ii;
+      tto  = double(i)*Ii;
+      made_it = true;
+      break;
     }
     tfrom = tto;
-    last_sum = this_sum;
+  }
+  
+  if((!made_it) && warn) {
+    Rcpp::warning(
+      tfm::format(
+        "[steady_bolus] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
+        this->id(),N_SS, solver.Rtol, solver.Atol
+      ).c_str()
+    );
   }
   
   // If we need a lagtime, give one more dose
   // and advance to tto - lagtime.
   double lagt = prob->alag(this->cmtn());
   if(lagt > 0) {
-    if(lagt >= Ii) {
-      throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
-    }
+    // if(lagt >= Ii) {
+    //   throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
+    // }
     if(Ss==2) {
       throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
     }
     evon->implement(prob); 
     prob->lsoda_init();
-    prob->advance(tfrom, (tto - lagt));
+    if(lagt <= Ii) {
+      prob->advance(tfrom, (tto - lagt), solver);
+    }
   }
   
   if(Ss == 2) {
@@ -298,9 +303,19 @@ void datarecord::steady_bolus(odeproblem* prob) {
 } 
 
 
-void datarecord::steady_infusion(odeproblem *prob) {
+void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver) {
   
-  dvec state_incoming;
+  if(this->unarmed()) {
+    this->steady_bolus(prob,solver);
+    return;
+  }
+  
+  if(this->ss_infusion()) {
+    this->steady_zero(prob,solver);
+    return;
+  }
+  
+  std::vector<double> state_incoming;
   
   if(Ss == 2) {
     state_incoming.resize(prob->neq());
@@ -308,6 +323,7 @@ void datarecord::steady_infusion(odeproblem *prob) {
       state_incoming[i] = prob->y(i);
     }
   }
+  double lagt = prob->alag(this->cmtn());
   
   double Fn = prob->fbio(this->cmtn());
   
@@ -317,23 +333,25 @@ void datarecord::steady_infusion(odeproblem *prob) {
   
   int i;
   int j;
-  std::vector<double> res(prob->neq(), 0.0);
-  std::vector<double> last(prob->neq(),1E-10);
+  bool warn = !prob->ss_fixed;
+  int N_SS = prob->ss_n;  
+  std::vector<double> last(prob->neq(),-1e9);
   
   reclist offs;
   
-  double this_sum = 0.0;
-  double last_sum = 1E-6;
-  
-  double diff = 1E6;
-  double nexti, toff;
+  int start = 0;
+  int end = 0;
+  bool made_it = false;  
+  double diff = 0, err = 0;
+  double nexti = 0.0, toff = 0.0;
   prob->rate_reset();
   
   // We only need one of these; it gets updated and re-used immediately
-  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate);
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
+    ++start;
     evon->implement(prob);
     prob->lsoda_init();
     toff = tfrom + duration;
@@ -348,9 +366,9 @@ void datarecord::steady_infusion(odeproblem *prob) {
     // As long as there are infusions to turn off and the
     // first one is before or at the next infusion start time
     while((!offs.empty()) && (offs[0]->time()  <= nexti)) {
-      
       toff = offs[0]->time();
-      prob->advance(tfrom,toff);
+      prob->advance(tfrom,toff,solver);
+      ++end;
       offs[0]->implement(prob);
       prob->lsoda_init();
       tfrom = toff;
@@ -358,41 +376,44 @@ void datarecord::steady_infusion(odeproblem *prob) {
     }
     
     prob->lsoda_init();
-    prob->advance(tfrom,nexti);
+    prob->advance(tfrom,nexti,solver);
     
     tfrom = nexti;
     
+    int ngood = 0;
     for(j=0; j < prob->neq(); ++j) {
-      res[j]  = pow((prob->y(j)  - last[j]), 2.0);
+      diff = fabs(prob->y(j) - last[j]);
+      err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+      if(diff < err ) ++ngood;
       last[j] = prob->y(j);
+    } 
+    if(ngood == prob->neq()) {
+      tfrom = nexti;
+      nexti  = double(i+1)*Ii;
+      made_it = true;
+      break;
     }
-    
-    this_sum = std::accumulate(res.begin(), res.end(), 0.0);
-    
-    if(i>10) {
-      diff = std::abs(this_sum - last_sum);
-      if(diff < CRIT_DIFF_SS) {
-        tfrom = nexti;
-        nexti  = double(i+1)*Ii;
-        break;
-      }
-    }
-    last_sum = this_sum;
   }
-  
+  if((!made_it) && warn) {
+    Rcpp::warning(
+      tfm::format(
+        "[steady_infusion] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
+        this->id(),N_SS, solver.Rtol, solver.Atol
+      ).c_str()
+    );
+  }
   // If we need a lagtime, give one more dose
   // and advance to tto - lagtime.
-  double lagt = prob->alag(this->cmtn());
   if(lagt > 0) {
     if(lagt >= Ii) {
       throw Rcpp::exception(
-          "ALAG(n) greater than ii on ss record.",
+          "ALAG_CMT greater than ii on ss record.",
           false
       );
     }
     if((duration + lagt) >= Ii) {
       throw Rcpp::exception(
-          "Infusion duration + ALAG(n) greater than ii on ss record.",
+          "infusion duration + ALAG_CMT greater than ii on ss record.",
           false
       );
     }
@@ -402,92 +423,145 @@ void datarecord::steady_infusion(odeproblem *prob) {
           false
       );
     }
-    evon->time(tfrom);
-    evon->implement(prob);
-    toff  = tfrom + duration;
-    prob->advance(tfrom,toff);
-    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
-    evoff->implement(prob);
-    prob->lsoda_init();
-    prob->advance(toff, (nexti - lagt));
+    if(lagt <= Ii) {
+      evon->time(tfrom);
+      evon->implement(prob);
+      toff  = tfrom + duration;
+      prob->advance(tfrom,toff,solver);
+      rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+      evoff->implement(prob);
+      prob->lsoda_init();
+      prob->advance(toff, (nexti - lagt),solver);
+    }
   }
-  
   if(Ss == 2) {
     for(size_t i=0; i < state_incoming.size(); i++) {
       prob->y(i,prob->y(i) + state_incoming[i]); 
     }
   }
   
+  // Add on infusion off events
+  int ninf_ss = floor(duration/this->ii());
+  
+  double first_off = Time + duration - double(ninf_ss)*Ii - lagt;
+  if(first_off == Time) {
+    first_off = duration - Ii + Time + lagt;
+    --ninf_ss;
+  }
+  // Rcpp::Rcout << "ninfss " << ninf_ss << std::endl;
+  // Rcpp::Rcout << "length offs " << offs.size() << std::endl;
+  // Rcpp::Rcout << "Started " << start << std::endl;
+  // Rcpp::Rcout << "Ended " << end << std::endl;
+  // Rcpp::Rcout << "infusions " << prob->rate_count(1) << std::endl;
+  // Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
+  // for(int k=0; k < ninf_ss; ++k) {
+  //   double offtime = first_off + double(k)*double(Ii);
+  //   rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
+  //   thisi.push_back(evoff);
+  // } 
+  for(size_t k = 0; k < offs.size(); ++k) {
+    offs.at(k)->time(first_off + double(k)*double(Ii));
+    thisi.push_back(offs.at(k)); 
+  }
+  std::sort(thisi.begin(),thisi.end(),CompRec());
   prob->lsoda_init();
 }
 
-/** 
- * Schedule out doses.  If the dose was an infusion, schedule the 
- * off infusion event.  If the dose included additional doses, 
- * create those events and add them to the stack.  No doses
- * will be scheduled beyond the maximum time for that individual.
- * 
- * @param thisi the record stack for this individual
- * @param maxtime the last time already in the record for the individual
- * @param put_ev_first logical; if true, the position of the event is -600; 
- * otherwise, it is beyond the last record of the stack.  But records
- * are always sorted first by time, then by position.
- * 
- */
+void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
+  
+  if(this->unarmed()) {
+    this->steady_bolus(prob,solver);
+    return;
+  }
+  
+  double tfrom = 0.0;
+  double tto = 0.0;
+  double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
+  bool warn = !prob->ss_fixed;
+  int N_SS = prob->ss_n;  
+  std::vector<double> last(prob->neq(),-1e9);
+  bool made_it = false;
+  
+  double diff = 0.0, err = 0.0;
+  prob->rate_reset();
+  rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
+  evon->implement(prob);
+  prob->lsoda_init();
+  double duration = 10;
+  for(int i=1; i < N_SS ; ++i) {
+    prob->lsoda_init();
+    tto = tfrom + duration;
+    prob->advance(tfrom,tto,solver);
+    tfrom = tto;
+    int ngood = 0;
+    for(int j=0; j < prob->neq(); ++j) {
+      diff = fabs(prob->y(j) - last[j]);
+      err = solver.Rtol*fabs(prob->y(j)) + solver.Atol;
+      if(diff < err) ++ngood;
+      last[j] = prob->y(j);
+    }
+    if(ngood == prob->neq()) {
+      made_it = true;
+      break;
+    }
+    if(i==10) duration = 15;
+    if(i==15) {
+      a1 = prob->y(Cmt);
+      t1 = tto;
+      duration = 20;
+    }
+    if(i==25) {
+      a2 = prob->y(Cmt);
+      t2 = tto;
+      double k_ = Rate/(a1+a2) + (a1-a2)/((a1+a2)*(t2-t1));
+      duration = std::max(duration,0.693/k_); // 2*thalf Chiou
+    }
+  }
+  if((!made_it) && warn) {
+    Rcpp::warning(
+      tfm::format(
+        "[steady_zero] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
+        this->id(),N_SS, solver.Rtol, solver.Atol
+      ).c_str()
+    );
+  }
+  prob->rate_reset();
+  prob->lsoda_init();
+  this->unarm();
+}
+
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
-                          bool addl_ev_first, double Fn) {
+                          bool addl_ev_first, const unsigned int maxpos, double Fn) {
   
-  // Steady state intermittent infusion
-  if(this->ss_int_infusion() & (Fn > 0)) {
-    
-    double duration = this->dur(Fn);
-    
-    int ninf_ss = floor(duration/this->ii());
-    
-    double first_off = duration - double(ninf_ss)*Ii + Time;
-    
-    if(first_off == Time) {
-      first_off = duration - Ii + Time;
-      --ninf_ss;
-    }
-    
-    for(int k=0; k < ninf_ss; ++k) {
-      double offtime = first_off + double(k)*double(Ii);
-      rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
-      thisi.push_back(evoff);
-    } 
-    
-  } // end if ss
+  if(Addl ==0) return;
   
-  // Additional doses
-  if(Addl > 0) {
+  unsigned int this_evid = Evid;
+  
+  if(this_evid == 4) {
+    this_evid = Rate > 0 ? 5 : 1;
+  }
+  
+  if(this->int_infusion()) {
+    thisi.reserve(thisi.size() + Addl);  
+  } else {
+    thisi.reserve(thisi.size() + Addl); 
+  }
+  
+  double ontime = 0;
+  
+  int mp = 1000000000;
+  
+  int nextpos = addl_ev_first ?  -1000000000 : mp;
+  
+  for(unsigned int k=1; k<=Addl; ++k) {
     
-    unsigned int this_evid = Evid;
+    ontime = Time + Ii*double(k);
     
-    if(this_evid == 4) {
-      this_evid = Rate > 0 ? 5 : 1;
-    }
+    if(ontime > maxtime) break;
     
-    if(this->int_infusion()) {
-      thisi.reserve(thisi.size() + 2*Addl);  
-    } else {
-      thisi.reserve(thisi.size() + Addl); 
-    }
+    rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
     
-    double ontime = 0;
+    thisi.push_back(evon);
     
-    int nextpos = addl_ev_first ?  (this->pos() - 600) : (thisi.size() + 10);
-    
-    for(unsigned int k=1; k<=Addl; ++k) {
-      
-      ontime = Time + Ii*double(k);
-      
-      if(ontime > maxtime) break;
-      
-      rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
-      
-      thisi.push_back(evon);
-      
-    }
-  } // end addl
+  }
 }  

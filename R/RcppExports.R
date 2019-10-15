@@ -5,14 +5,6 @@ DEVTRAN <- function(parin, inpar, parnames, init, cmtnames, capture, funs, data,
     .Call(`_mrgsolve_DEVTRAN`, parin, inpar, parnames, init, cmtnames, capture, funs, data, idata, OMEGA, SIGMA, envir)
 }
 
-EXPAND_OBSERVATIONS <- function(data, times, to_copy) {
-    .Call(`_mrgsolve_EXPAND_OBSERVATIONS`, data, times, to_copy)
-}
-
-MRGSIMQ <- function(parin, inpar, parnames, init, cmtnames, capture, funs, data, OMEGA, SIGMA, envir) {
-    .Call(`_mrgsolve_MRGSIMQ`, parin, inpar, parnames, init, cmtnames, capture, funs, data, OMEGA, SIGMA, envir)
-}
-
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }
@@ -31,6 +23,10 @@ get_tokens <- function(code) {
 
 EXPAND_EVENTS <- function(idcol_, events, id) {
     .Call(`_mrgsolve_EXPAND_EVENTS`, idcol_, events, id)
+}
+
+EXPAND_OBSERVATIONS <- function(data, times, to_copy, next_pos) {
+    .Call(`_mrgsolve_EXPAND_OBSERVATIONS`, data, times, to_copy, next_pos)
 }
 
 TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs, envir) {

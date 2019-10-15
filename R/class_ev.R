@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2019  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -32,7 +32,30 @@ is.ev <- function(x) {
 ##' @rdname ev_dplyr
 ##' @export
 mutate.ev <- function(.data, ...) {
+  input_cols <- names(match.call(expand.dots=TRUE))
   .data@data <- as.data.frame(mutate(.data@data, ...))
+  data_cols <- names(.data@data)
+  if(any(c("tinf", "total", "until") %in% input_cols)) {
+    if(all(c("rate", "tinf") %in% input_cols)) {
+      if(all(c("rate", "tinf") %in% data_cols)) {
+        wstop("input can include either rate or tinf, not both")
+      }
+    }
+    if(all(c("total", "addl") %in% input_cols)) {
+      if(all(c("total", "addl") %in% data_cols)) {
+        wstop("input can include either total or addl, not both")
+      }
+    }
+    if(all(c("until", "addl") %in% input_cols)) {
+      if(all(c("until", "addl") %in% data_cols)) {
+        wstop("input can include either until or addl, not both")
+      }
+    }
+  }
+  if("rate" %in% input_cols && "tinf" %in% data_cols) {
+    wstop("cannot set rate when tinf exists")  
+  }
+  .data@data <- finalize_ev(.data@data)
   .data
 }
 
@@ -118,6 +141,25 @@ setMethod("show", "ev", function(object) {
   return(invisible(NULL))
 })
 
+#' Select columns from an ev object
+#' 
+#' 
+#' @param x ev object
+#' @param name column to select
+#' @param i an element to select
+#' @param exact not used
+#' @rdname ev_extract
+#' @export
+setMethod("$", "ev", function(x, name){
+  x@data[[name]]
+})
+
+#' @rdname ev_extract
+#' @export
+setMethod("[[", "ev", function(x, i, exact=TRUE) {
+  x@data[[i]] 
+})
+
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {
     if(is.ev(x)) {
@@ -131,6 +173,53 @@ As_data_set <- function(x) {
   return(x)
 }
 
+finalize_ev_data <- function(data) {
+  if("tinf" %in% names(data)) {
+    tinf <- data[["tinf"]]
+    if(any(tinf < 0)) {
+      wstop("tinf must be greater than or equal to zero")
+    }
+    data[["rate"]] <- 0    
+    if(any(tinf > 0)) {
+      i <- tinf > 0
+      data[["rate"]][i] <- data[["amt"]][i]/tinf[i]
+    }
+  }
+  if("total" %in% names(data)) {
+    total <- data[["total"]]
+    data[["total"]] <- NULL
+    if(any(total > 0)) {
+      if(any(total > 1)) {
+        data[["addl"]] <- total - 1
+      }
+    } else {
+      wstop("total required to be greater than zero")
+    }
+  }
+  if("until" %in% names(data)) {
+    if(!("ii" %in% names(data))) {
+      wstop("ii is required when until is specified")
+    }
+    until <- data[["until"]]
+    data[["until"]] <- NULL
+    i <- data[["ii"]] > 0
+    data[["addl"]] <- 0
+    data[["addl"]][i] <- ceiling((data[["time"]][i] + until[i])/data[["ii"]][i]) - 1
+  }
+  ev_cols <- c("ID", "time", "amt", "rate", "ii", "addl", "cmt", "evid", "ss")
+  match_cols <- intersect(ev_cols,names(data))
+  other_cols <- setdiff(names(data),match_cols)
+  data <- data[,c(match_cols,other_cols)]
+  data
+}
 
-
-
+finalize_ev <- function(x,...) {
+  if(is.data.frame(x)) {
+    x <- finalize_ev_data(x,...)
+  } else if(is.ev(x)) {
+    x@data <- finalize_ev_data(x@data,...)
+  } else {
+    wstop("object must be a data frame or class ev")  
+  }
+  x
+}

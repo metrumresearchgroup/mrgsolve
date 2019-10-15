@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -25,6 +25,7 @@
 typedef double local_double;
 typedef int    local_int;
 typedef bool   local_bool;
+typedef double capture;
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct
@@ -80,8 +81,7 @@ typedef bool   local_bool;
 // Data set amt
 #define AMT self.amt
 // Data set cmt
-# define CMT self.cmt
-
+#define CMT self.cmt
 
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration

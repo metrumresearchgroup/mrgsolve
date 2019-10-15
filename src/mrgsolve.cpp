@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -23,6 +23,7 @@
 
 #include "RcppInclude.h"
 #include "mrgsolve.h"
+#include "dataobject.h"
 #include <vector>
 #include <string>
 #include "boost/tokenizer.hpp"
@@ -52,8 +53,9 @@ int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector
   return(ma[0]-1);
 }
 
-void neg_istate(int istate) {
-  Rcpp::Rcout << std::endl << "mrgsolve: DLSODA returned with istate " << istate << std::endl;
+void negative_istate(int istate, int maxsteps, double rtol, double atol) {
+  
+  Rcpp::Rcerr << std::endl << "[mrgsolve] lsoda returned with negative istate: " << istate << std::endl;
   /*
    ISTATE = 2  if DLSODA was successful, negative otherwise.
    -1 means excess work done on this call (perhaps wrong JT).
@@ -69,24 +71,25 @@ void neg_istate(int istate) {
   
   switch (istate) {
   case -1:
-    Rcpp::Rcout << "  excess work done on this call; check the model or increase maxsteps." << std::endl << std::endl;
+    Rcpp::Rcerr << "  excess work done on this call; check the model or increase maxsteps." << std::endl;
+    Rcpp::Rcerr << "  current value of maxsteps: " << maxsteps << std::endl << std::endl;
     break;
   case -2:
-    Rcpp::Rcout << "  excess accuracy requested; reduce atol and/or rtol." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  excess accuracy requested; reduce rtol and/or atol." << std::endl;
+    Rcpp::Rcerr << "  current value of rtol / atol: " << atol << " / " <<  rtol << std::endl << std::endl; 
     break;
   case -3:
-    Rcpp::Rcout << "  illegal input detected (see printed message)." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  illegal input detected (see printed message)." << std::endl  << std::endl;
     break;
   case -4:
-    Rcpp::Rcout << "  repeated error test failures (check all inputs)." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  repeated error test failures (check all inputs)." << std::endl  << std::endl;
     break;
   case -5:
-    Rcpp::Rcout << "  means repeated convergence failures "<< std::endl;
-    Rcpp::Rcout << "  (perhaps bad Jacobian supplied or wrong choice of JT or tolerances)." << std::endl  << std::endl;
+    Rcpp::Rcerr << "  means repeated convergence failures; "<< std::endl;
+    Rcpp::Rcerr << "  perhaps wrong choice of tolerances." << std::endl  << std::endl;
     break;
   case -6:
-    Rcpp::Rcout << "  error weight became zero during problem." << std::endl  << std::endl;
-    Rcpp::Rcout << "  (Solution component i vanished, and ATOL or ATOL(i) = 0.)" << std::endl  << std::endl;
+    Rcpp::Rcerr << "  error weight became zero during problem." << std::endl  << std::endl;
     break;
     //   case -7:
     // Rcpp::Rcout << "  work space insufficient to finish (see messages)." << std::endl;
@@ -94,9 +97,8 @@ void neg_istate(int istate) {
   default:
     break;
   }
+  throw Rcpp::exception("simulation terminated.",false);
 }
-
-
 
 
 /** 
@@ -230,8 +232,7 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
     }
     ret[i] = tokens;
   }
-  
-  
+
   Rcpp::List ans;
   
   ans["tokens"] = ret;
@@ -241,14 +242,21 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
 
 void from_to(const Rcpp::CharacterVector& a, 
              const Rcpp::CharacterVector& b,
-             Rcpp::IntegerVector& ai,
-             Rcpp::IntegerVector& bi) {
+             std::vector<int>& ai,
+             std::vector<int>& bi) {
   
-  ai = Rcpp::match(b,a)-1;
-  bi = Rcpp::match(a,b)-1;
+  Rcpp::IntegerVector aa = Rcpp::match(b,a)-1;
+  Rcpp::IntegerVector bb = Rcpp::match(a,b)-1;
   
-  ai = na_omit(ai);
-  bi = na_omit(bi);
+  aa = na_omit(aa);
+  bb = na_omit(bb);
+  
+  for(int i = 0; i < aa.size(); ++i) {
+    ai.push_back(aa[i]);  
+  }
+  for(int i = 0; i < bb.size(); ++i) {
+    bi.push_back(bb[i]);  
+  }
   
   std::sort(bi.begin(), bi.end());
   
@@ -292,7 +300,94 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
 }
 
 
+#ifndef EXPAND_OBSERVATIONS_FUNC
+#define EXPAND_OBSERVATIONS_FUNC
+// [[Rcpp::export]]
+Rcpp::List EXPAND_OBSERVATIONS(
+    const Rcpp::NumericMatrix& data,
+    const Rcpp::NumericVector& times,
+    const Rcpp::IntegerVector& to_copy, 
+    const Rcpp::IntegerVector& next_pos) {
+  
+  Rcpp::CharacterVector parnames;
+  
+  // Create data objects from data and idata
+  dataobject dat(data,parnames);
+  dat.map_uid();
+  dat.locate_tran();
+  
+  const int NID = dat.nid();
+  
+  // Create odeproblem object
+  recstack a(NID);
+  
+  unsigned int obscount = 0;
+  unsigned int evcount = 0;
+  unsigned int neq = 1000000;
+  bool obsonly = false;
+  bool debug = false;
+  dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
+  int nextpos = next_pos[0];
+  obscount = 0;
+  
+  int n_time = int(times.size());
+  std::vector<rec_ptr> z(n_time);
+  for(int j = 0; j < n_time; ++j) {
+    rec_ptr obs = NEWREC(times[j],nextpos,true);
+    z[j] = obs;
+  }
+  
+  size_t n = z.size();
+  
+  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+    it->reserve((it->size() + n));
+    for(size_t h=0; h < n; h++) {
+      it->push_back(z[h]);
+      ++obscount;
+    } 
+    std::sort(it->begin(), it->end(), CompRec());
+  }
+  
+  const int recs = (data.nrow()) + obscount;
+  
+  Rcpp::NumericMatrix d(recs,data.ncol());
+  
+  int crow = 0;
+  int last_data_row = -1;
+  
+  int Idcol = find_position("ID", dat.Data_names);
+  if(Idcol < 0) {
+    throw Rcpp::exception("Could not find ID column in data set.",false);
+  }
+  
+  Rcpp::LogicalVector index(recs);
+  
+  for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
+    int i = it - a.begin();
+    double id = dat.get_uid(i);
+    last_data_row = dat.start(i);
+    for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
+      if((*itt)->from_data()) {
+        last_data_row = (*itt)->pos();    
+        for(int i = 0; i < data.ncol(); i++) {
+          d(crow,i) = data(last_data_row,i);  
+          index[crow] = false;
+        }
+      }  else {
+        d(crow,dat.col.at(7)) = (*itt)->time();
+        d(crow,Idcol) = id;
+        for(int k=0; k < to_copy.size(); k++) {
+          d(crow,to_copy[k]) = data(last_data_row,to_copy[k]);  
+        }
+        index[crow] = true;
+      }
+      ++crow;
+    }
+  }
+  return Rcpp::List::create(Rcpp::Named("data") = d,
+                            Rcpp::Named("index") = index);
+}
 
-
+#endif
 
 

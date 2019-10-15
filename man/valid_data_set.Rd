@@ -36,7 +36,7 @@ mod <- mrgsolve:::house()
 
 data(exTheoph)
 
-valid_data_set(exTheoph,mod)
+d <- valid_data_set(exTheoph,mod)
 
 }
 \seealso{

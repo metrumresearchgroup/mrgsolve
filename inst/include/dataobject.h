@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2019  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -24,14 +24,14 @@
 #define DATAOBJECT_H
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+//#include <boost/shared_ptr.hpp>
+//#include <boost/make_shared.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-typedef std::map<double,int> idat_map;
+//typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
-typedef std::deque<int> datarowtype;
+//typedef std::deque<int> datarowtype;
 
 
 class dataobject {
@@ -48,9 +48,9 @@ public:
   
   Rcpp::NumericMatrix Data;
   
-  virtual ~dataobject();
+  ~dataobject();
   
-  unsigned int nrow() const {return Data.nrow();}
+  unsigned int nrow() const  {return Data.nrow();}
   unsigned int ncol() const {return Data.ncol();}
   unsigned int nid() const {return Uid.size();}
   unsigned int idcol() const {return Idcol;}
@@ -58,19 +58,24 @@ public:
   int end(int i) const {return Endrow.at(i);}
   void map_uid();
   double get_uid(int i) const {return Uid.at(i);}
-  uidtype return_uid() const {return Uid;}
+  uidtype return_uid()  {return Uid;}
   void copy_parameters(int this_row,odeproblem *prob);
   void copy_inits(int this_row,odeproblem *prob);
   void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);
   void idata_row();
   unsigned int get_idata_row(const double ID);  
   void locate_tran();
-  void get_records(recstack& a, int NID, int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
-  void get_records_pred(recstack& a, int NID, int neq, unsigned int& obscount, unsigned int& evcount, bool obsonly,bool debug);
+  void get_records(recstack& a, int NID, int neq, 
+                   unsigned int& obscount, unsigned int& evcount, bool obsonly,
+                   bool debug);
+  void get_records_pred(recstack& a, int NID, int neq, unsigned int& obscount, 
+                        unsigned int& evcount, bool obsonly,bool debug);
+  // Function commented in dataobject.cpp
+  // void expand_records(recstack& a, dataobject& idat, int& NID, 
+  //                     unsigned int& obscount, unsigned int& evcount, bool debug);
   void check_idcol(dataobject& data);
   double get_value(const int row, const int col) const {return Data(row,col);}
   double get_id_value(const int row) const {return Data(row,Idcol);}
-  void get_ids(uidtype* ids);
   Rcpp::IntegerVector get_col_n(const Rcpp::CharacterVector& what);
   void carry_out(const recstack& a, 
                  Rcpp::NumericMatrix& ans,
@@ -82,21 +87,18 @@ public:
   std::vector<unsigned int> col;
   Rcpp::CharacterVector Data_names;
   
-protected:
-  
-  uidtype Uid;  ///< unique IDs in the data set
-  datarowtype Startrow;  ///< start row for each ID
-  datarowtype Endrow; ///< data set end row for each ID
+  std::deque<double> Uid;  ///< unique IDs in the data set
+  std::deque<int> Startrow;  ///< start row for each ID
+  std::deque<int> Endrow; ///< data set end row for each ID
   int Idcol; ///< which column holds ID
+  std::map<double,int> idmap; ///< map to get 
   
-
-  Rcpp::IntegerVector par_from;  ///< index for parameters in data set
-  Rcpp::IntegerVector par_to;    ///< index for parameters in param list
+  std::vector<int> par_from;  ///< index for parameters in data set
+  std::vector<int>  par_to;    ///< index for parameters in param list
   Rcpp::CharacterVector parnames; ///< names of model parameters
-  idat_map idmap; ///< map to get 
   
-  Rcpp::IntegerVector cmt_from; ///< index for compartments in data set
-  Rcpp::IntegerVector cmt_to;  ///< index for compartments in init list
+  std::vector<int> cmt_from; ///< index for compartments in data set
+  std::vector<int> cmt_to;  ///< index for compartments in init list
   Rcpp::CharacterVector cmtnames; ///< names of model compartments
 };
 

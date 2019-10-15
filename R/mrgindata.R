@@ -107,7 +107,7 @@ convert_character_cmt <- function(data, mod) {
 ##' 
 ##' data(exTheoph)
 ##' 
-##' valid_data_set(exTheoph,mod)
+##' d <- valid_data_set(exTheoph,mod)
 ##' 
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
