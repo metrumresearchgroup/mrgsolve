@@ -41,3 +41,4 @@ _config.yml
 Makefile
 docs
 ^DOCS$
+^_pkgdown\.yml$
