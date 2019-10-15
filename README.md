@@ -1,5 +1,5 @@
 
-# mrgsolve <img align="right" src = "inst/maintenance/img/mrgsolve_sticker_812418_1.png" width="135px">
+# mrgsolve <img align="right" src = "man/figures/mrgsolve_sticker_812418_1.png" width="135px">
 
 [![Build
 Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
@@ -24,13 +24,7 @@ additional resources, including:
 
 ## Installation
 
-We recommend staying up to date with the development version
-
-``` r
-devtools::install_github("metrumresearchgroup/mrgsolve")
-```
-
-Otherwise, install the latest release on CRAN
+Install the latest release on CRAN
 
 ``` r
 install.packages("mrgsolve")
@@ -73,7 +67,7 @@ mod %>%
   plot(CP~time)
 ```
 
-<img src="inst/maintenance/img/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+![](man/figures/README-pk-figure-1.png)<!-- -->
 
 A more complicated regimen: 100 mg infusions over 2 hours every 24 hours
 for one week, followed by 50 mg boluses every 12 hours for 10 days:
@@ -85,7 +79,7 @@ mod %>%
   plot(CP~time)
 ```
 
-<img src="inst/maintenance/img/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+![](man/figures/README-regimen-figure-1.png)<!-- -->
 
 ### Population simulation
 
@@ -103,13 +97,13 @@ data <- expand.ev(amt = c(100,150), WT = seq(40,140,20)) %>% mutate(dose = amt)
 head(data)
 ```
 
-    .   ID amt WT evid cmt time dose
-    . 1  1 100 40    1   1    0  100
-    . 2  2 150 40    1   1    0  150
-    . 3  3 100 60    1   1    0  100
-    . 4  4 150 60    1   1    0  150
-    . 5  5 100 80    1   1    0  100
-    . 6  6 150 80    1   1    0  150
+    .   ID time amt cmt evid WT dose
+    . 1  1    0 100   1    1 40  100
+    . 2  2    0 150   1    1 40  150
+    . 3  3    0 100   1    1 60  100
+    . 4  4    0 150   1    1 60  150
+    . 5  5    0 100   1    1 80  100
+    . 6  6    0 150   1    1 80  150
 
 Simulate
 
@@ -121,7 +115,7 @@ mod %>%
   plot(IPRED~time|factor(dose),scales = "same")
 ```
 
-<img src="inst/maintenance/img/README-unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
+![](man/figures/README-population-figure-1.png)<!-- -->
 
 ### Sensitivity analysis with PBPK model
 
@@ -132,10 +126,6 @@ mod <- modlib("pbpk")
     . Building pbpk ... done.
 
 Reference
-
-``` r
-blocks(mod,PROB) 
-```
 
 ``` 
   
@@ -204,4 +194,4 @@ mod %>%
   plot(Cp~time)
 ```
 
-<img src="inst/maintenance/img/README-unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+![](man/figures/README-pbpk-figure-1.png)<!-- -->
