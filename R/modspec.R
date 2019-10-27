@@ -416,12 +416,13 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   
   ## Get lines starting with >>
   opts <- grepl("^\\s*>>",x,perl=TRUE)
+    
+  has_at <- grepl("^\\s*@", x, perl=TRUE) 
   
-  if(!narrow) {
+  if((!narrow) && (!any(has_at))) {
     opts <- opts | grepl(marker,x,fixed=TRUE)
   }
-  
-  has_at <- grepl("^\\s*@", x, perl=TRUE) 
+
   at <- parse_ats(x[has_at])
   
   data <- x[!(opts | has_at)]
@@ -430,7 +431,6 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   
   opts <- merge.list(def, tolist(opts,envir=envir),
                      open=all,warn=FALSE,context="opts")
-  
   opts <- c(opts,at)
   
   if(allow_multiple) {

@@ -5,40 +5,19 @@ stopifnot(require(PKPDmisc))
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE, mgsolve.soloc = "build")
 
-context("new ODE solver")
-
-test_that("non-stiff problem", {
-  mod <- modlib("pk2cmt", end = 240, delta=0.001)
-  d <- 331.234
-  dose <- ev(amt = d)
-  expect_silent(out <- mrgsim_e(mod,dose,ixpr=1))
-  auc <- summarise(out, auc= auc_partial(time,CP)) %>% pull(auc) %>% unname
-  expect_equal(round(auc),round(d/mod$CL))
+test_that("equal sign in annotation issue-576", {
+  code <- '
+# Compartments
+```{cmt}
+@annotated
+FOO : bar
+BAR : baz = zot
+```
+'
+  out <- tempfile(fileext=".Rmd")
+  writeLines(code, con = out)
+  mod <- mread(out,compile=FALSE)
+  expect_is(mod, "mrgmod")
 })
 
-test_that("stiff problem", {
-  mod <- modlib("pbpk", end = 48, delta = 0.001, rtol = 1e-12)
-  p <- list(Kpli = 0.4573, fup = 0.352)
-  dose <- 89.123
-  e <- ev(amt = dose) 
-  cl <- mod$HLM_CLint
-  MPPGL <- 45.0
-  Vli <- mod$BW * mod$FVli
-  fumic <- 1
-  clmet <- (cl/fumic)*MPPGL*Vli*60/1000
-  mod <- param(mod,p)
-  msg <- capture.output(
-    out <- mrgsim_e(mod,e,ixpr=1), 
-    type = "message"
-    )
-  expect_true(grepl("a switch to the stiff method has occurred", msg))
-  auc <- summarise(out, auc = auc_partial(time,Cp)) %>% pull(auc) %>% unname
-  expect_equal(round(auc), round(dose/(clmet*p$Kpli*p$fup)))
-})
 
-test_that("nm xml with no namespace issue-510", {
-  nmx <- mrgsolve:::nmxml
-  expect_is(x1 <- nmx(file = "1.xml") ,"NMXMLDATA")
-  expect_is(x2 <- nmx(file = "211.xml", xpath = ".//estimation"),"NMXMLDATA")
-  expect_identical(names(x1),names(x2))
-})

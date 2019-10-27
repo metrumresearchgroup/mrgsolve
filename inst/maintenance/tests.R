@@ -3,12 +3,16 @@ library(mrgsolve)
 library(testthat)
 library(dplyr)
 
-
+message("tests/testthat")
 a <- test_dir("tests/testthat")
 a$result <- NULL
+message("\ninst/maintenance/unit")
 b <- test_dir("inst/maintenance/unit/")
 b$result <- NULL
-results <- dplyr::bind_rows(as_tibble(a),as_tibble(b))
+message("\ninst/validation")
+c <- test_dir("inst/validation/")
+c$result <- NULL
+results <- dplyr::bind_rows(as_tibble(a),as_tibble(b),as_tibble(c))
 results$user <- NULL
 results$system <- NULL
 results$real <- NULL
