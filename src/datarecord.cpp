@@ -260,12 +260,9 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
       last[j] = prob->y(j);
     } 
     if(ngood == prob->neq()) {
-      tfrom = double(i-1)*Ii;
-      tto  = double(i)*Ii;
       made_it = true;
       break;
     }
-    tfrom = tto;
   }
   
   if((!made_it) && warn) {
@@ -290,7 +287,12 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     prob->lsoda_init();
     evon->implement(prob); 
     if(lagt <= Ii) {
-      prob->advance(tfrom, (tto - lagt), solver);
+      tfrom = tto;
+      tto = tfrom + Ii - lagt;
+      if(tto <= tfrom) {
+        throw Rcpp::exception("tto <= tfrom in seady_bolus with lag time.",false);  
+      }
+      prob->advance(tfrom, tto, solver);
     }
   }
   
