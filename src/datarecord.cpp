@@ -287,8 +287,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     if(Ss==2) {
       throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
     }
-    evon->implement(prob); 
     prob->lsoda_init();
+    evon->implement(prob); 
     if(lagt <= Ii) {
       prob->advance(tfrom, (tto - lagt), solver);
     }

@@ -139,6 +139,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neq = prob.neq();
   LSODA solver(neq, parin);
   
+  
   recstack a(NID);
   
   unsigned int obscount = 0;
