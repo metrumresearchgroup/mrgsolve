@@ -2,9 +2,12 @@
 % Please edit documentation in R/inven.R
 \name{inventory}
 \alias{inventory}
+\alias{inventory_pool}
 \title{Check whether all required parameters needed in a model are present in an object}
 \usage{
 inventory(x, obj, ..., .strict = FALSE)
+
+inventory_pool(x, obj, both = FALSE)
 }
 \arguments{
 \item{x}{model object}
@@ -16,6 +19,9 @@ inventory(x, obj, ..., .strict = FALSE)
 \item{.strict}{whether to stop execution if all requirements are present
  (\code{TRUE}) 
 or just warn (\code{FALSE}); see details}
+
+\item{both}{if \code{TRUE}, parameters common to the data set and parameter
+list are also shown}
 }
 \value{
 original mrgmod

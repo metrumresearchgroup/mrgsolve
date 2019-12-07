@@ -48,10 +48,20 @@ test_that("inventory works", {
 })
 
 test_that("inventory errors when missing required params", {
-
   expect_error(inventory(mod, missing_obj, dplyr::everything()))
   expect_error(inventory(mod, missing_obj, dplyr::contains("OCC")))
   expect_error(inventory(mod, missing_obj, V:F))
   expect_error(inventory(mod, missing_obj, OCC2))
-
 })
+
+test_that("inventory_pool", {
+  data <- tibble(ID = 1, AMT = 100, II = 12, CL = 4, KA = 3, OCC2=3, FOO =1)
+  x <- inventory_pool(mod,data)
+  expect_equal(length(x),2)
+  expect_equal(sort(x[[1]]), sort(c("V", "OCC1", "F")))
+  expect_identical(x[[2]], "FOO")
+  y <- inventory_pool(mod,data,both = TRUE)
+  expect_equal(length(y),3)
+  expect_identical(sort(y[[3]]), sort(c("CL", "KA", "OCC2")))
+})
+

@@ -51,7 +51,7 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   
   missing <- setdiff(need,names(obj))
   miss <- length(missing) 
-
+  
   if(!miss) {
     message("Found all required parameters in ", sQuote(oname),".")
     return(invisible(x))
@@ -67,3 +67,26 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   
   return(invisible(x))
 }
+
+#' @param both if \code{TRUE}, parameters common to the data set and parameter
+#' list are also shown
+#' @rdname inventory
+#' @export
+inventory_pool <- function(x,obj,both = FALSE) {
+  pars <- names(param(x))
+  data <- colnames(obj)
+  ig <- c("ID",GLOBALS[["TRAN_UPPER"]],GLOBALS[["TRAN_LOWER"]])
+  data <- setdiff(data,ig)
+  x <- setdiff(pars,data)
+  y <- setdiff(data,pars)
+  ans <- list(
+    in_mod_not_data = x, 
+    in_data_not_mod = y
+  )
+  if(both) ans[["in_both"]] <- intersect(data,pars)
+  ans
+}
+
+
+
+
