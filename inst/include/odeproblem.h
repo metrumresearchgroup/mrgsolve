@@ -202,6 +202,8 @@ public:
   int Istate; ///< istate value
   bool ss_fixed;
   int ss_n;
+  bool ss_flag;
+  std::vector<int> Ss_cmt;
 
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions
@@ -227,7 +229,6 @@ public:
     
   std::vector<double> pred; ///< brings clearances, volumes, and & for advan 1/2/3/4
 
-  
   deriv_func Derivs; ///< <code>$ODE</code> function
   init_func Inits; ///< <code>$MAIN</code> function
   table_func Table; ///< <code>$TABLE</code> function

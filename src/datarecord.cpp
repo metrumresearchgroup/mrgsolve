@@ -220,6 +220,8 @@ void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solv
 
 void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
+  prob->ss_flag = true;
+  
   dvec state_incoming;
   
   if(Ss == 2) {
@@ -238,7 +240,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   std::vector<double> last(prob->neq(), -1E9);
   double diff = 0, err = 0;
   bool made_it = false;
-  
+  size_t n_cmt = prob->Ss_cmt.size();
+
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
@@ -252,14 +255,15 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     prob->lsoda_init();
     prob->advance(tfrom,tto,solver);
     
-    int ngood = 0;
-    for(int j=0; j < prob->neq(); ++j) {
+    size_t ngood = 0, j = 0;
+    for(size_t jj=0; jj < n_cmt; ++jj) {
+      j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
       err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
       if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
-    if(ngood == prob->neq()) {
+    if(ngood == n_cmt) {
       made_it = true;
       break;
     }
@@ -302,6 +306,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     }
   } 
   prob->lsoda_init();
+  prob->ss_flag = false;
 } 
 
 
@@ -316,6 +321,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     this->steady_zero(prob,solver);
     return;
   }
+  
+  prob->ss_flag = true;
   
   std::vector<double> state_incoming;
   
@@ -467,6 +474,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   }
   std::sort(thisi.begin(),thisi.end(),CompRec());
   prob->lsoda_init();
+  prob->ss_flag = false;
 }
 
 void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
@@ -475,6 +483,8 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     this->steady_bolus(prob,solver);
     return;
   }
+  
+  prob->ss_flag = true;
   
   double tfrom = 0.0;
   double tto = 0.0;
@@ -530,6 +540,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->rate_reset();
   prob->lsoda_init();
   this->unarm();
+  prob->ss_flag = false;
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
