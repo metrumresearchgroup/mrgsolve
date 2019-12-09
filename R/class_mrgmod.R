@@ -138,7 +138,8 @@ protomod <- list(model=character(0),
                  code = character(0),
                  annot = list(),
                  envir = new.env(),
-                 plugin = character(0)
+                 plugin = character(0), 
+                 ss_cmt = integer(0)
 )
 
 slot.names <- names(protomod)
@@ -227,10 +228,12 @@ valid.mrgmod <- function(object) {
 ##' @slot funs symbol names for model functions in the shared object
 ##' @slot annot model annotations \code{<list>}
 ##' @slot plugin model plugins \code{<character>}
-##' @slot Icap capture indices to recover in the simulation
-##' @slot capL labels for \code{Icap}
-##' @slot Icmt compartment indices to recover in the simulation
-##' @slot cmtL labels for \code{Icmt}
+##' @slot Icap capture indices to recover in the simulation \code{<integer>}
+##' @slot capL labels for \code{Icap};  \code{<character>}
+##' @slot Icmt compartment indices to recover in the simulation \code{<integer>}
+##' @slot cmtL labels for \code{Icmt}; \code{<character>}
+##' @slot SScmt compartments numbers to be considered when advancing the system
+##' to steady state \code{<integer>}
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
 ##' @keywords internal
@@ -255,6 +258,7 @@ initialize_mrgmod <- function(.Object, ...) {
   .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
   .Object@shlib[["version"]] <- GLOBALS[["version"]]
   .Object <- default_outputs(.Object)
+  .Object@ss_cmt <- seq_along(Cmt(.Object)) - 1L
   .Object
 }
 setMethod("initialize", "mrgmod", initialize_mrgmod)
@@ -692,7 +696,7 @@ parin <- function(x) {
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 
     ss_n = 500, ss_fixed = FALSE, 
-    ss_compartments = seq(2,2)-1L
+    ss_cmt = x@ss_cmt
   )
 }
 

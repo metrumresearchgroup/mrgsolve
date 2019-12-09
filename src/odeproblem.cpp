@@ -640,7 +640,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   Rtol = Rcpp::as<double>(parin["rtol"]);
   Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
-  Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_compartments"]);
+  Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {
