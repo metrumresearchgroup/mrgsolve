@@ -104,7 +104,7 @@ the simulation \code{<character>}}
 
 \item{\code{cmtL}}{labels for \code{Icmt}; \code{<character>}}
 
-\item{\code{SScmt}}{compartments numbers to be considered when advancing the system
+\item{\code{ss_cmt}}{compartments numbers to be considered when advancing the system
 to steady state \code{<integer>}}
 }}
 

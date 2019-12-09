@@ -232,7 +232,7 @@ valid.mrgmod <- function(object) {
 ##' @slot capL labels for \code{Icap};  \code{<character>}
 ##' @slot Icmt compartment indices to recover in the simulation \code{<integer>}
 ##' @slot cmtL labels for \code{Icmt}; \code{<character>}
-##' @slot SScmt compartments numbers to be considered when advancing the system
+##' @slot ss_cmt compartments numbers to be considered when advancing the system
 ##' to steady state \code{<integer>}
 ##' 
 ##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
