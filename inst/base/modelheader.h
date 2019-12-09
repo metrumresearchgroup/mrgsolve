@@ -82,6 +82,8 @@ typedef double capture;
 #define AMT self.amt
 // Data set cmt
 #define CMT self.cmt
+// Bool flag indicating that the system is advancing to steady-state
+#define SS_ADVANCE _ss_flag_
 
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration
