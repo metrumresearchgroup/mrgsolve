@@ -23,13 +23,19 @@ BAR : baz = zot
 
 
 code <- '
-$PARAM CL = 1, V =20, KA = 1.488,LAG = 1
+$PARAM CL = 1, V =20, KA = 1.488,LAG = 1, advance_auc = 1
 $CMT DEPOT CENT AUC
-$MAIN ALAG_DEPOT = LAG;
+$MAIN 
+ALAG_DEPOT = LAG;
+double SS_FL = 0;
+
 $ODE
 dxdt_DEPOT = -KA*DEPOT;
 dxdt_CENT =   KA*DEPOT - (CL/V)*CENT;
 dxdt_AUC = CENT/V;
+if(advance_auc==0) dxdt_AUC = 0;
+
+$CAPTURE SS_FL
 '
 
 test_that("ss bolus with lag and AUC issue-596", {
@@ -37,6 +43,19 @@ test_that("ss bolus with lag and AUC issue-596", {
   mod <- mcode_cache("issue_596",code) %>% param(LAG = 13)
   out <- expect_warning(mrgsim_df(mod,first))
   expect_true(all(out[["CENT"]] >=0))
+})
+
+test_that("control ss advance issue-598", {
+  first <- ev(amt = 100, ii = 24, ss=1, cmt =1) 
+  mod <- mcode_cache("issue_596",code) 
+  out <- expect_warning(mrgsim(mod,first))
+  auci <- out$AUC[2]
+  out <- expect_silent(mrgsim(mod,first, param = list(advance_auc = 0)))
+  expect_true(all(out$AUC==0))
+  mod <- mrgsolve:::set_ss_cmt(mod, "CENT")
+  expect_identical(mod@ss_cmt, 1L)
+  out <- expect_silent(mrgsim(mod,first))
+  expect_true(out$AUC[2] < auci/10)
 })
 
 
