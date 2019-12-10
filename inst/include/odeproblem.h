@@ -190,20 +190,20 @@ public:
   int npar() {return Npar;}
   int neq() {return Neq;}
   void tol(double atol, double rtol);
-  std::vector<double> Y;
-  std::vector<double> Ydot;
-  std::vector<double> Yout;
-  std::vector<double> Param;
+  std::vector<double> Y; ///< compartment amounts
+  std::vector<double> Ydot;  ///< dxdt values
+  std::vector<double> Yout; ///< used to hold Y values during solving
+  std::vector<double> Param; ///< parameter vector
   std::vector<double> Capture; ///< captured data items
-  double Atol;
-  double Rtol;
-  int Npar;
-  int Neq;
+  double Atol; ///< absolute tolerance
+  double Rtol; ///< relative tolerance
+  int Npar; ///< number of parameters
+  int Neq; ///< number of equations
   int Istate; ///< istate value
-  bool ss_fixed;
-  int ss_n;
-  bool ss_flag;
-  std::vector<int> Ss_cmt;
+  bool ss_fixed; ///< If true, then no warning is issued if SS not reached in ss_n doses
+  int ss_n; ///< Max number of doses during SS advance before warning is issued
+  bool ss_flag; ///< flag indicating when the system is advancing to SS
+  std::vector<int> Ss_cmt; ///< vector of compartments to consider for SS
 
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions
@@ -234,7 +234,7 @@ public:
   table_func Table; ///< <code>$TABLE</code> function
   config_func Config; ///< <code>$PREAMBLE</code> function
   
-  bool Do_Init_Calc;
+  bool Do_Init_Calc; ///< Flag regulating whether or not initials are taken from <code>$MAIN</code>
 
   
 };
