@@ -114,8 +114,8 @@ typedef std::vector<double> dvec;
 #define MRGSOLVE_TABLE_SIGNATURE_N 9
 
 //! signature for <code>$ODE</code>
-#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const dvec& _THETA_
-#define MRGSOLVE_ODE_SIGNATURE_N 5
+#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const dvec& _THETA_, const bool _ss_flag_
+#define MRGSOLVE_ODE_SIGNATURE_N 6
 
 //! signature for <code>$PREAMBLE</code>
 #define MRGSOLVE_CONFIG_SIGNATURE databox& self, const dvec& _THETA_, const double neq, const double npar

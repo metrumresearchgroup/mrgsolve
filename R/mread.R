@@ -341,6 +341,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   args <- list(...)
   x <- update(x, data=args, open=TRUE, strict = FALSE)
   
+  ## Modify SS compartments
+  x <- set_ss_cmt(x,SET[["ss_cmt"]])
+  
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib[["covariates"]] <- mread.env[["covariates"]]

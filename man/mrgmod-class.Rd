@@ -96,13 +96,16 @@ the simulation \code{<character>}}
 
 \item{\code{plugin}}{model plugins \code{<character>}}
 
-\item{\code{Icap}}{capture indices to recover in the simulation}
+\item{\code{Icap}}{capture indices to recover in the simulation \code{<integer>}}
 
-\item{\code{capL}}{labels for \code{Icap}}
+\item{\code{capL}}{labels for \code{Icap};  \code{<character>}}
 
-\item{\code{Icmt}}{compartment indices to recover in the simulation}
+\item{\code{Icmt}}{compartment indices to recover in the simulation \code{<integer>}}
 
-\item{\code{cmtL}}{labels for \code{Icmt}}
+\item{\code{cmtL}}{labels for \code{Icmt}; \code{<character>}}
+
+\item{\code{ss_cmt}}{compartments numbers to be considered when advancing the system
+to steady state \code{<integer>}}
 }}
 
 \section{Notes}{

@@ -313,3 +313,24 @@ setMethod("update", "parameter_list", function(object,.y,...) {
 setMethod("update", "ev", function(object,y,...) {
   
 })
+
+
+set_ss_cmt <- function(x,ss_cmt) {
+  if(!is.character(ss_cmt)) return(x)
+  ss_cmt <- cvec_cs(ss_cmt)
+  if(length(ss_cmt)==0) return(x)
+  ss_exclude <- grepl("^-", ss_cmt[1])
+  ss_cmt[1] <- gsub("^-", "", ss_cmt[1])
+  ss_cmt <- ss_cmt[nzchar(ss_cmt)]
+  if(length(ss_cmt)==0) return(x)
+  if(any(!is.element(ss_cmt, Cmt(x)))) {
+    diff <- setdiff(ss_cmt, Cmt(x)) 
+    diff <- paste0(" - ", diff, "\n")
+    stop("invalid cmt names found in ss_cmt\n", diff, call.=FALSE)
+  }
+  if(ss_exclude) ss_cmt <- setdiff(Cmt(x),ss_cmt)  
+  x@ss_cmt <- match(ss_cmt, Cmt(x)) - 1L
+  ss_cmt_check <- range(x@ss_cmt) 
+  stopifnot(ss_cmt_check[1] >= 0 && ss_cmt_check[2] < neq(x))
+  x
+}

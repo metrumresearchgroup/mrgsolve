@@ -86,6 +86,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Do_Init_Calc = true;
   ss_fixed = false;
   ss_n = 500;
+  ss_flag = false;
   
   pred.assign(5,0.0);
   
@@ -101,7 +102,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));
   simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
-  
 }
 
 double odeproblem::fbio(unsigned int pos) {
@@ -170,7 +170,7 @@ void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
 }
 
 void odeproblem::call_derivs(double *t, double *y, double *ydot) {
-  Derivs(t,y,ydot,Init_value,Param);
+  Derivs(t,y,ydot,Init_value,Param,ss_flag);
   for(int i = 0; i < Neq; ++i) {
     ydot[i] = (ydot[i] + R0[i])*On[i];
   }
@@ -640,6 +640,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   Rtol = Rcpp::as<double>(parin["rtol"]);
   Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
+  Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {
