@@ -34,6 +34,7 @@ dxdt_DEPOT = -KA*DEPOT;
 dxdt_CENT =   KA*DEPOT - (CL/V)*CENT;
 dxdt_AUC = CENT/V;
 if(advance_auc==0) dxdt_AUC = 0;
+SS_FL = SS_ADVANCE;
 
 $CAPTURE SS_FL
 '
@@ -56,6 +57,7 @@ test_that("control ss advance issue-598", {
   expect_identical(mod@ss_cmt, 1L)
   out <- expect_silent(mrgsim(mod,first))
   expect_true(out$AUC[2] < auci/10)
+  expect_equal(out$SS_FL[2],1)
 })
 
 
