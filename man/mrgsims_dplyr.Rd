@@ -14,6 +14,7 @@
 \alias{summarise.mrgsims}
 \alias{do.mrgsims}
 \alias{select.mrgsims}
+\alias{select_sims}
 \alias{slice.mrgsims}
 \alias{as_data_frame.mrgsims}
 \alias{as_tibble.mrgsims}
@@ -43,6 +44,8 @@ mutate_sims(.data, ...)
 
 \method{select}{mrgsims}(.data, ...)
 
+select_sims(.data, ...)
+
 \method{slice}{mrgsims}(.data, ...)
 
 as_data_frame.mrgsims(.data_, ...)
@@ -68,4 +71,10 @@ as_data_frame.mrgsims(.data_, ...)
 }
 \description{
 Methods for handling output with dplyr verbs
+}
+\details{
+For the \code{select_sims} function, the dots \code{...} must be either 
+compartment names or variables in \code{$CAPTURE}.  An error will be
+generated if no valid names are selected or the names for selection are 
+not found in the simulated output.
 }

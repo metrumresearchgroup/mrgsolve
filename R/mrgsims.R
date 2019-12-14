@@ -146,6 +146,14 @@ NULL
 ##' @param .keep_all passed to \code{dplyr::distinct}
 ##' @param funs passed to \code{dplyr::summarise_each}
 ##' @param ... passed to other methods
+##' 
+##' @details
+##' 
+##' For the \code{select_sims} function, the dots \code{...} must be either 
+##' compartment names or variables in \code{$CAPTURE}.  An error will be
+##' generated if no valid names are selected or the names for selection are 
+##' not found in the simulated output.
+##' 
 ##' @rdname mrgsims_dplyr
 ##' @export
 as.tbl.mrgsims <- function(x,...) {
@@ -220,6 +228,24 @@ do.mrgsims <- function(.data,...,.dots) {
 ##' @export
 select.mrgsims <- function(.data,...) {
   dplyr::select(as_tibble.mrgsims(.data),...)
+}
+
+#' @rdname mrgsims_dplyr
+#' @export
+select_sims <- function(.data, ...) {
+  all_names <- names(.data)
+  outputs <- c(.data@request,.data@outnames)
+  retain <- setdiff(all_names,outputs)
+  vars <- vars_select(all_names, !!!enquos(...))
+  vars <- intersect(vars,outputs)
+  if(length(vars)==0) {
+    wstop("no output variables (compartments or captures) were selected.")  
+  }
+  vars <- unique(c(retain,vars))
+  .data@data <- dplyr::select(.data@data,vars)
+  .data@request <- intersect(.data@request,names(.data))
+  .data@outnames <- intersect(.data@outnames,names(.data))
+  return(.data)
 }
 
 ##' @rdname mrgsims_dplyr

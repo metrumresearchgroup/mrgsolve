@@ -82,3 +82,9 @@ test_that("mutate_mrgsims", {
   expect_is(x, "mrgsims")
   expect_true(all(x$foo == chk))
 })
+
+test_that("select_mrgsims", {
+  x <- select_sims(out, RESP)
+  expect_is(x, "mrgsims")
+  expect_identical(names(x), c("ID", "time", "RESP"))
+})
