@@ -69,4 +69,7 @@ setMethod("as.list", "mrgsims", function(x, ...) {
   structure(out, class = "mrgsims_list")
 })
 
-
+#' @export
+.DollarNames.mrgsims <- function(x, pattern){
+  grep(pattern, names(x), value=TRUE)
+}

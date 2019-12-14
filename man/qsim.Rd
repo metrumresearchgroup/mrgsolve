@@ -4,9 +4,19 @@
 \alias{qsim}
 \title{Basic, simple simulation from model object}
 \usage{
-qsim(x, data, idata = no_idata_set(), obsonly = FALSE, tgrid = NULL,
-  recsort = 1, tad = FALSE, Req = NULL, outvars = Req,
-  skip_init_calc = FALSE, output = "mrgsims")
+qsim(
+  x,
+  data,
+  idata = no_idata_set(),
+  obsonly = FALSE,
+  tgrid = NULL,
+  recsort = 1,
+  tad = FALSE,
+  Req = NULL,
+  outvars = Req,
+  skip_init_calc = FALSE,
+  output = "mrgsims"
+)
 }
 \arguments{
 \item{x}{the model object}

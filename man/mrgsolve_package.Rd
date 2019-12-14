@@ -3,7 +3,6 @@
 \docType{package}
 \name{mrgsolve}
 \alias{mrgsolve}
-\alias{mrgsolve-package}
 \title{mrgsolve}
 \description{
 mrgsolve is an R package maintained under the auspices of

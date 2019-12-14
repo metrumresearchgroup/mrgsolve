@@ -5,11 +5,14 @@
 \alias{mcode_cache}
 \title{Write, compile, and load model code}
 \usage{
-mcode(model, code, project = getOption("mrgsolve.project", tempdir()),
-  ...)
+mcode(model, code, project = getOption("mrgsolve.project", tempdir()), ...)
 
-mcode_cache(model, code, project = getOption("mrgsolve.project",
-  tempdir()), ...)
+mcode_cache(
+  model,
+  code,
+  project = getOption("mrgsolve.project", tempdir()),
+  ...
+)
 }
 \arguments{
 \item{model}{model name}

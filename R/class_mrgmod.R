@@ -726,3 +726,8 @@ all.equal.mrgmod <- function(target, current,...) {
   t2 <- identical(target.env, current.env)
   all(t1,t2)
 }
+
+#' @export
+.DollarNames.mrgmod <- function(x, pattern){
+  grep(pattern, names(param(x)), value=TRUE)
+}

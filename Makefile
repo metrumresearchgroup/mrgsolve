@@ -134,4 +134,7 @@ check-win:
 check-winhub:
 	Rscript -e 'rhub::check_on_windows()'
 
+.PHONY: doxygen
+doxygen: 
+	doxygen doxyfile
 

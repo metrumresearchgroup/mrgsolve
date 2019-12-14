@@ -4,8 +4,15 @@
 \alias{mrgsim_q}
 \title{Simulate from a model object with quicker turnaround}
 \usage{
-mrgsim_q(x, data, recsort = 1, stime = numeric(0),
-  output = "mrgsims", skip_init_calc = FALSE, simcall = 0)
+mrgsim_q(
+  x,
+  data,
+  recsort = 1,
+  stime = numeric(0),
+  output = "mrgsims",
+  skip_init_calc = FALSE,
+  simcall = 0
+)
 }
 \arguments{
 \item{x}{a model object}

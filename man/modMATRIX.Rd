@@ -4,8 +4,15 @@
 \alias{modMATRIX}
 \title{Create a matrix}
 \usage{
-modMATRIX(x, use = TRUE, block = FALSE, correlation = FALSE,
-  digits = -1, context = "matlist", ...)
+modMATRIX(
+  x,
+  use = TRUE,
+  block = FALSE,
+  correlation = FALSE,
+  digits = -1,
+  context = "matlist",
+  ...
+)
 }
 \arguments{
 \item{x}{data for building the matrix.  Data in \code{x} are assumed to be

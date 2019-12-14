@@ -19,6 +19,7 @@
 ##' 
 ##' @importFrom utils capture.output example str type.convert 
 ##' @importFrom utils packageVersion assignInMyNamespace read.table
+##' @importFrom utils .DollarNames
 ##' @importFrom stats as.formula setNames rnorm
 ##' @importFrom dplyr filter 
 ##' @importFrom dplyr mutate slice as.tbl pull

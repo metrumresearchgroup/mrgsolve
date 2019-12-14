@@ -4,8 +4,7 @@
 \alias{read_nmext}
 \title{Extract estimates from NONMEM ext file}
 \usage{
-read_nmext(run, project = getwd(), file = paste0(run, ".ext"),
-  path = NULL)
+read_nmext(run, project = getwd(), file = paste0(run, ".ext"), path = NULL)
 }
 \arguments{
 \item{run}{a run number or run identifier}
