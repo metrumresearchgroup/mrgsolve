@@ -367,6 +367,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     smats = smat(x),
     set = SET,
     check.bounds = check.bounds, 
+    plugin = plugin,
     dbsyms = args[["dbsyms"]]
   )
   
