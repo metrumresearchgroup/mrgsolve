@@ -60,11 +60,20 @@ test_that("control ss advance issue-598", {
   expect_equal(out$SS_FL[2],1)
 })
 
+
 test_that("PKG_CXXFLAGS is set issue-603", {
   code <- '$ENV PKG_CXXFLAGS = "-Wbadflag"'
   expect_output(
     mcode("cxxflags", code, ignore.stdout = FALSE,preclean=TRUE), 
     regexp = "Wbadflag"
   )
+})
+
+test_that("Add N_CMT as plugin issue-606", {
+  code <- '$CMT A B\n$PLUGIN N_CMT\n$CAPTURE N_A'
+  mod <- mcode("N_CMT_TEST", code)
+  expect_is(mod, "mrgmod")
+  out <- mrgsim(mod, end = -1)
+  expect_true(all(out$N_A==1))
 })
 

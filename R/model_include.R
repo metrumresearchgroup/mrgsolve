@@ -149,10 +149,10 @@ plugins[["CXX11"]] <- list(
   pkg_cxxflags = "-std=c++11", name="CXX11"    
 )
 
-plugins[["TAD"]] <- list(
-  name = "TAD",
-  code = "#define __MRGSOLVE_USE_PLUGIN_TAD__"
+plugins[["N_CMT"]] <- list(
+  all = TRUE, name = "N_CMT"  
 )
+
 # nocov end
 
 # read_lines_from_base <- function(file) {

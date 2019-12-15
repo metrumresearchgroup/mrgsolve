@@ -22,7 +22,9 @@ generate_rdefs <- function(pars,
                            table_fun="",
                            config_fun="",
                            model="",omats,smats,
-                           set=list(), dbsyms = FALSE, ...) {
+                           set=list(), 
+                           plugin = NULL,
+                           dbsyms = FALSE, ...) {
 
     npar <- length(pars)
     ncmt <- length(cmt)
@@ -69,7 +71,9 @@ generate_rdefs <- function(pars,
     Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
 
     cmtn <- unique(intersect(cvec_cs(set$CMTN),cmt))
-
+    
+    if(!is.null(plugin[["N_CMT"]])) cmtn <- cmt  
+    
     if(length(cmtn) > 0) {
         cmtnindex <- match(cmtn,cmt)-1
         cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)
