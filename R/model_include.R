@@ -39,7 +39,7 @@ get_depends <- function(what) {
 
 get_plugin <- function(what) {
   if(!exists(what,plugins)) {
-    stop("Plugin ", what, " could not be found.")
+    wstop("plugin ", what, " could not be found.")
   }
   plugins[[what]]
 }
@@ -67,14 +67,14 @@ make_clink <- function(x,clink) {
   paste(paste0("-I\"",unique(link), "\""),collapse=" ")
 }
 
-set_clink <- function(x,clink=NULL) {
+set_clink <- function(x,clink=NULL,...) {
   if(is.null(x) & is.null(clink)) return(invisible(NULL))
   Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
 }
 
-set_pkg_cxxflags <- function(x) {
+set_pkg_cxxflags <- function(x,CXX = NULL,...) {
   if(is.null(x)) return(NULL)
-  cxx <- s_pick(x, "pkg_cxxflags")
+  cxx <- c(s_pick(x, "pkg_cxxflags"),CXX)
   if(is.null(cxx)) return(NULL)
   Sys.setenv(PKG_CXXFLAGS = paste0(cxx, collapse=" "))
 }
@@ -100,7 +100,7 @@ set_up_env <- function(x,...) {
   if(!is.null(x)) {
     set_clink(x,...)
     set_libs(x) 
-    set_pkg_cxxflags(x)
+    set_pkg_cxxflags(x,...)
   }
   return(restore)
 }

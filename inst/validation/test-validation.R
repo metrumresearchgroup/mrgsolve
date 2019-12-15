@@ -60,4 +60,11 @@ test_that("control ss advance issue-598", {
   expect_equal(out$SS_FL[2],1)
 })
 
+test_that("PKG_CXXFLAGS is set issue-603", {
+  code <- '$ENV PKG_CXXFLAGS = "-Wbadflag"'
+  expect_output(
+    mcode("cxxflags", code, ignore.stdout = FALSE,preclean=TRUE), 
+    regexp = "Wbadflag"
+  )
+})
 
