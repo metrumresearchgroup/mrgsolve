@@ -77,3 +77,11 @@ test_that("Add N_CMT as plugin issue-606", {
   expect_true(all(out$N_A==1))
 })
 
+test_that("call blocks on model from Rmd issue-608", {
+  mod <- modlib("popex.Rmd",compile=FALSE)
+  expect_output(
+    blocks(mod), 
+    regexp = "popex\\.Rmd"
+  )
+})
+
