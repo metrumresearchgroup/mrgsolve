@@ -673,8 +673,12 @@ summary.mrgmod <- function(object,...) {
 
 blocks_ <- function(file,what) {
   if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
-  if(!file_exists(file)) stop("Can't find model file", call.=FALSE)
-  bl <- modelparse(readLines(file, warn=FALSE))
+  if(!file_exists(file)) wstop("can't find model file.")
+  if(grepl("\\.Rmd$", file)) {
+      bl <- modelparse_rmd(readLines(file, warn=FALSE))
+  } else {
+    bl <- modelparse(readLines(file, warn=FALSE))    
+  }
   if(!any(what == "all")) bl <- bl[names(bl) %in% what]
   if(length(bl)==0) {
     message("No blocks found.")
