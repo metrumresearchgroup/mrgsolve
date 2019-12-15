@@ -85,6 +85,12 @@ template<typename T,typename type2> void tofunptr(T b, type2 a) {
 void dosimeta(void*);
 void dosimeps(void*);
 
+
+/**
+ * 
+ * 
+ * 
+ */
 class odeproblem {
 
 public:
@@ -168,14 +174,15 @@ public:
   void neta(const int n);
   void neps(const int n);
   
-  void nid(int n) {d.nid = n;}
-  void nrow(int n) {d.nrow = n;}
-  void idn(int n) {d.idn = n;}
-  void rown(int n) {d.rown=n;}
+  void nid(int n) {d.nid = n;}///< sets the number of IDs
+  void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
+  void idn(int n) {d.idn = n;}///< sets the current ID number
+  void rown(int n) {d.rown=n;}///< sets the currenw data set row number
   
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}
   
+  /// copies items passed in through parin into the odeproblem object
   void copy_parin(const Rcpp::List& parin);
   void copy_funs(const Rcpp::List& funs);
   
@@ -187,9 +194,14 @@ public:
   int  istate(){return Istate;}
   void istate(int value){Istate = value;}
   void lsoda_init(){Istate=1;}
+  /// returns the number of parameters
   int npar() {return Npar;}
+  /// returns the number of state variables
   int neq() {return Neq;}
+  /// sets the absolute and relative tolerances
   void tol(double atol, double rtol);
+  
+  
   std::vector<double> Y; ///< compartment amounts
   std::vector<double> Ydot;  ///< dxdt values
   std::vector<double> Yout; ///< used to hold Y values during solving
@@ -221,11 +233,11 @@ public:
   std::vector<double> a;     ///< used for advan 1/2/3/4 calculations
   std::vector<double> alpha; ///< used for advan 1/2/3/4 calculation
   
-  mrgsolve::resim simeta;  ///< functor for resimulating etas
-  mrgsolve::resim simeps; ///< functor for resimulating epsilons
+  mrgsolve::resim simeta;///< functor for resimulating etas
+  mrgsolve::resim simeps;///< functor for resimulating epsilons
 
-  arma::mat Omega; ///< variance/covariance matrix for between-subject variability
-  arma::mat Sigma; ///< variance/covariance matrix for within-subject variability
+  arma::mat Omega;///< variance/covariance matrix for between-subject variability
+  arma::mat Sigma;///< variance/covariance matrix for within-subject variability
     
   std::vector<double> pred; ///< brings clearances, volumes, and & for advan 1/2/3/4
 
@@ -235,17 +247,9 @@ public:
   config_func Config; ///< <code>$PREAMBLE</code> function
   
   bool Do_Init_Calc; ///< Flag regulating whether or not initials are taken from <code>$MAIN</code>
-
-  
 };
 
 
-/**
- * Calculate PK model polyexponentials.
- * 
- * 
- * 
- */
 double PolyExp(const double& x,
                const double& dose,
                const double& rate,

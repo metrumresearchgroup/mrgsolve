@@ -524,7 +524,12 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   }
 }
 
-
+/**
+ * Calculate PK model polyexponentials.
+ * 
+ * 
+ * 
+ */
 double PolyExp(const double& x,
                const double& dose,
                const double& rate,
@@ -669,8 +674,8 @@ void odeproblem::advan(int x) {
 /**
  * Call the <code>$MAIN</code> function from a model object.
  * 
- * @param lparam model parameters
- * @param linit model initial contitions
+ * @param lparam model parameter value
+ * @param linit model initial contition values
  * @param Neta number of rows in <code>OMEGA</code>
  * @param Neps number of rows in <code>SIGMA</code>
  * @param capture vector of capture names

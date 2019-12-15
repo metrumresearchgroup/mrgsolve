@@ -76,6 +76,14 @@ template <class type1, class type2> void report(type1 a, type2 b) {
 namespace mrg = mrgsolve;
 
 //! member functions mevent and tad come in via housemodel; see inst/base/databox.cpp
+
+/**
+ * Model data passed to the model.  
+ * 
+ * This data is passed to PREAMBLE, MAIN, and TABLE but not ODE.
+ * 
+ * 
+ */
 class databox {
 public: 
   std::vector<double> ETA; ///< vector of ETA values
@@ -93,13 +101,13 @@ public:
   int rown; ///< current output row number
   bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
-  void stop() {SYSTEMOFF=9;}
-  void stop_id() {SYSTEMOFF=1;}
-  void stop_id_cf(){SYSTEMOFF=2;}
-  std::vector<mrgsolve::evdata> mevector;
-  void mevent(double time, int evid);
-  double mtime(double time);
-  double tad();
+  void stop() {SYSTEMOFF=9;}///< stops the problem when the next record is started
+  void stop_id() {SYSTEMOFF=1;}///< stops solving for the current id, filling with NA
+  void stop_id_cf(){SYSTEMOFF=2;}///< stops solving for the current id, filling last value
+  std::vector<mrgsolve::evdata> mevector;///< a collection of model events to pass back
+  void mevent(double time, int evid);///< constructor for evdata objects
+  double mtime(double time);///< creates evdata object for simple model event time
+  double tad();///< calculates time after dose
 }; 
 
 //! vector of doubles

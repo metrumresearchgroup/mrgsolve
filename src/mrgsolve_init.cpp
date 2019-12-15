@@ -15,6 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @mainpage
+ *
+ * Documentation for `mrgsolve` `C++` code.
+ *
+ * To see functions available in the `mrgx` plugin, see the
+ * `mrgx` module <a href="group__mrgx.html">here</a>.
+ * 
+ * The main simulation function is DEVTRAN().
+ *
+ *
+ */
+
+
+
 #include "RcppInclude.h"
 #include "mrgsolv.h"
 
