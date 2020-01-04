@@ -26,18 +26,22 @@ context("test-mrgmod")
 
 mod <- mrgsolve:::house()
 
-
 test_that("methods", {
   expect_equal(mod$CL,1)
   expect_equal(mod$VC,20)
+  expect_equal(mod$RESP,50)
+  expect_equal(mod[["RESP"]],50)
+  expect_equal(mod$end,120)
+  expect_equal(mod[["end"]],mod@end)
   expect_error(mod$kylebaron) 
-  expect_error(mod[["kylebaron"]])
+  expect_error(mod[["kylebaron"]],regexp = "not found or not extractable")
   expect_is(as.list(mod), "list")
   expect_output(summary(mod), "Model: housemodel")
   expect_true(mrgsolve:::valid.mrgmod(mod))
   expect_true(all.equal(mod, mrgsolve:::house()))
-  l <- mod[c("CL", "VC")]
-  expect_identical(l, list(CL = mod$CL, VC = mod$VC))
+  l <- mod[c("CL", "VC", "CENT", "end")]
+  expect_identical(l, list(CL = mod$CL, VC = mod$VC, CENT = mod$CENT, end = mod$end))
+  expect_error(mod[c("CL", "Kyle")],regexp = "not found or not extractable")
   x <- capture.output(see(mod))
   expect_true(grepl("Model file", x[2]))
   expect_true(grepl("housemodel\\.cpp", x[2]))

@@ -544,46 +544,45 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 #' @rdname mrgmod_extract
 #' @export
 setMethod("$", "mrgmod", function(x, name) {
-  
-  if(name %in% Pars(x)) {
-    return(unname(as.numeric(allparam(x))[name]))  
-  }
-  if(name %in% Cmt(x)) {
-    return(unname(as.numeric(init(x))[name]))  
-  }
-  l <- as.list(x)
-  if(exists(name,l)) {
-    return(unname(l[[name]]))  
-  }
-  wstop(
-    "item '", name, "' is not found or cannot be extracted with $ operator."
-  )
+  x[[name]]
 })
 
 #' @rdname mrgmod_extract
 #' @export
 setMethod("[[", "mrgmod", function(x, i, exact=TRUE) {
-  if(!i %in% Pars(x)) {
-    stop(
-      "Parameter ", i, " not found in the parameter list.", 
-      call.=FALSE
-    )  
+  if(i %in% Pars(x)) {
+    return(unname(as.numeric(allparam(x))[i]))  
   }
-  unname(as.list(allparam(x))[[i]])  
+  if(i %in% Cmt(x)) {
+    return(unname(as.numeric(init(x))[i]))  
+  }
+  l <- as.list(x)
+  if(exists(i,l)) {
+    return(unname(l[[i]]))  
+  }
+  wstop(
+    "item '", i, "' not found or not extractable with $ or [[ operator."
+  )
 })
 
 #' @rdname mrgmod_extract
 #' @export
 setMethod("[", "mrgmod", function(x, i) {
-  if(!all(i %in% Pars(x))) {
-    wrong <- paste0(setdiff(i, Pars(x)),collapse=',')
-    stop(
-      "Parameter(s) ", wrong, " not found in the parameter list.", 
-      call.=FALSE
-    )  
+  env <- as.environment(x)
+  if(!all(i %in% names(env))) {
+    wrong <- shQuote(setdiff(i, names(env)))
+    for(j in seq_along(wrong)) {
+      message(" Problem: item ", wrong[j], " not found")    
+    }
+    wstop("requested items(s) not found or not extractable with [ operator.")      
   }
-  as.list(allparam(x))[i]
+  mget(i,envir = env)
 })
+
+#' @export
+as.environment.mrgmod <- function(x) {
+  list2env(c(as.list(param(x)),as.list(init(x)),as.list(x)))  
+}
 
 #' @rdname see
 #' @export
@@ -684,7 +683,7 @@ blocks_ <- function(file,what) {
   if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
   if(!file_exists(file)) wstop("can't find model file.")
   if(grepl("\\.Rmd$", file)) {
-      bl <- modelparse_rmd(readLines(file, warn=FALSE))
+    bl <- modelparse_rmd(readLines(file, warn=FALSE))
   } else {
     bl <- modelparse(readLines(file, warn=FALSE))    
   }
