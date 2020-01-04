@@ -6,7 +6,6 @@
 \alias{update,omegalist-method}
 \alias{update,sigmalist-method}
 \alias{update,parameter_list-method}
-\alias{update,ev-method}
 \title{Update the model object}
 \usage{
 \S4method{update}{mrgmod}(object, ..., merge = TRUE, open = FALSE, data = NULL, strict = TRUE)
@@ -16,8 +15,6 @@
 \S4method{update}{sigmalist}(object, y, ...)
 
 \S4method{update}{parameter_list}(object, .y, ...)
-
-\S4method{update}{ev}(object, y, ...)
 }
 \arguments{
 \item{object}{a model object}
@@ -83,5 +80,6 @@ Slots that can be updated:
  
 }
 \seealso{
-\code{\link{update}}, \code{\link{mrgmod-class}}
+\code{\link{update}}, \code{\link{mrgmod-class}}, 
+\code{\link{within}}
 }
