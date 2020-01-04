@@ -14,6 +14,8 @@
 \item{expr}{expressions evaluated in an environment containing various model
 object components, including parameters, initial conditions, and others
 (see details)}
+
+\item{...}{not used}
 }
 \description{
 The main use case for using \link{within} rather than \link{update} or \link{param} or
