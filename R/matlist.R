@@ -235,7 +235,6 @@ zero_re <- function(...) zero.re(...)
 
 #' Deprecated: drop random effect matrices from model object
 #' 
-#' \lifecycle{deprecated} 
 #' 
 #' @param .x not used
 #' @param ... not used

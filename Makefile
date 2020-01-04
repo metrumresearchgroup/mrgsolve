@@ -71,7 +71,7 @@ doc:
 	Rscript inst/maintenance/doc_mrgsolve.R
 
 build:
-	R CMD build --md5 $(PKGDIR)
+	R CMD build --md5 $(PKGDIR) --no-manual
 
 install:
 	R CMD INSTALL --install-tests ${TARBALL} -l ~/Rlibs
@@ -83,7 +83,7 @@ check:
 	make house
 	make doc
 	make build
-	R CMD check ${TARBALL} -o ${CHKDIR}
+	R CMD check ${TARBALL} -o ${CHKDIR} --no-manual
 	make unit
 
 qcheck: 

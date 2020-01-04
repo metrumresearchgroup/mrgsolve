@@ -15,7 +15,7 @@ drop.re(...)
 \item{...}{not used}
 }
 \description{
-\lifecycle{deprecated}
+Deprecated: drop random effect matrices from model object
 }
 \details{
 Users are no longer allowed to remove random effect matrices from the model
