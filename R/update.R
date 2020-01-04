@@ -325,6 +325,7 @@ setMethod("update", "parameter_list", function(object,.y,...) {
 #' @param expr expressions evaluated in an environment containing various model
 #' object components, including parameters, initial conditions, and others 
 #' (see details)
+#' @param ... not used
 #' 
 #' @examples
 #' mod <- mrgsolve:::house()
