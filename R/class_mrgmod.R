@@ -543,14 +543,21 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 #' @param exact not used
 #' @rdname mrgmod_extract
 #' @export
-setMethod("$", "mrgmod", function(x, name){
-  if(! name %in% Pars(x)) {
-    stop(
-      "Parameter ", name, " not found in the parameter list.", 
-      call.=FALSE
-    )  
+setMethod("$", "mrgmod", function(x, name) {
+  
+  if(name %in% Pars(x)) {
+    return(unname(as.numeric(allparam(x))[name]))  
   }
-  unname(as.numeric(allparam(x))[name])
+  if(name %in% Cmt(x)) {
+    return(unname(as.numeric(init(x))[name]))  
+  }
+  l <- as.list(x)
+  if(exists(name,l)) {
+    return(unname(l[[name]]))  
+  }
+  wstop(
+    "item '", name, "' is not found or cannot be extracted with $ operator."
+  )
 })
 
 #' @rdname mrgmod_extract
