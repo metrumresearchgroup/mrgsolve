@@ -87,3 +87,17 @@ test_that("call blocks on model from Rmd issue-608", {
   )
 })
 
+
+test_that("update model object with within issue-616", {
+  mod <- mrgsolve:::house()
+  mod2 <- within(mod, {
+    CL = CL*1.5
+    CENT = 101
+    end  = 72
+  })
+  expect_identical(mod2$CL,1.5*mod$CL)
+  expect_identical(init(mod2)[["CENT"]],101)
+  expect_identical(mod2@end,72)
+})
+
+  
