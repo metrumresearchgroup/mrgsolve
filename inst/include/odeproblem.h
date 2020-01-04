@@ -108,6 +108,7 @@ public:
   
   void init_call(const double& time);
   void init_call_record(const double& time);
+  void init_derivs(double time);
 
   void y_init(int pos, double value);
   void y_init(Rcpp::NumericVector init);

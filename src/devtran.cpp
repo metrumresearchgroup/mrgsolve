@@ -391,7 +391,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     prob.set_d(a[i][0]);
     prob.init_call(tfrom);
-    
+
     for(size_t j=0; j < a[i].size(); ++j) {
       
       if(crow == NN) continue;

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -176,6 +176,9 @@ void odeproblem::call_derivs(double *t, double *y, double *ydot) {
   }
 }
 
+void odeproblem::init_derivs(double time) {
+  this->call_derivs(&time,&Y[0],&Yout[1]);  
+}
 
 void odeproblem::set_d(rec_ptr this_rec) {
   d.time = this_rec->time();
@@ -336,11 +339,12 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   }
   
   solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
+  
   if(Istate < 0) {
     negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
   }
   
-  //this->call_derivs(&Neq, &tto, Y, Ydot);
+  this->init_derivs(tto);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {

@@ -25,16 +25,19 @@ BAR : baz = zot
 code <- '
 $PARAM CL = 1, V =20, KA = 1.488,LAG = 1, advance_auc = 1
 $CMT DEPOT CENT AUC
+
+$PREAMBLE
+double SS_FL  = 0;
+
 $MAIN 
 ALAG_DEPOT = LAG;
-double SS_FL = 0;
 
 $ODE
 dxdt_DEPOT = -KA*DEPOT;
 dxdt_CENT =   KA*DEPOT - (CL/V)*CENT;
 dxdt_AUC = CENT/V;
 if(advance_auc==0) dxdt_AUC = 0;
-SS_FL = SS_ADVANCE;
+if(SS_ADVANCE) ++SS_FL;
 
 $CAPTURE SS_FL
 '
@@ -57,9 +60,8 @@ test_that("control ss advance issue-598", {
   expect_identical(mod@ss_cmt, 1L)
   out <- expect_silent(mrgsim(mod,first))
   expect_true(out$AUC[2] < auci/10)
-  expect_equal(out$SS_FL[2],1)
+  expect_true(out$SS_FL[2] > 0)
 })
-
 
 test_that("PKG_CXXFLAGS is set issue-603", {
   code <- '$ENV PKG_CXXFLAGS = "-Wbadflag"'
