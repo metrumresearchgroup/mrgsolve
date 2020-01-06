@@ -568,7 +568,10 @@ setMethod("[[", "mrgmod", function(x, i, exact=TRUE) {
 #' @rdname mrgmod_extract
 #' @export
 setMethod("[", "mrgmod", function(x, i) {
-  env <- as.environment(x)
+  env <- c(as.list(param(x)),as.list(init(x)))
+  if(!all(i %in% names(env))) {
+    env <- c(env,as.list(x))  
+  }
   if(!all(i %in% names(env))) {
     wrong <- shQuote(setdiff(i, names(env)))
     for(j in seq_along(wrong)) {
@@ -576,7 +579,7 @@ setMethod("[", "mrgmod", function(x, i) {
     }
     wstop("requested items(s) not found or not extractable with [ operator.")      
   }
-  mget(i,envir = env)
+  env[i]
 })
 
 #' @export
