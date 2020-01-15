@@ -199,7 +199,8 @@ PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,as_object=FALSE,.
   }
   
   if(annotated) {
-    l <- parse_annot(x,block="PARAM",envir=env$ENV)
+    context <- glue("parse annotated parameter block ({pos})")
+    l <- parse_annot(x,block="PARAM",envir=env$ENV,context = context)
     env[["param"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -227,7 +228,8 @@ FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
   check_block_data(x,env$ENV,pos)
   
   if(annotated) {
-    l <- parse_annot(x,block="FIXED",envir=env$ENV)
+    context <- glue("parse annotated fixed block ({pos})")
+    l <- parse_annot(x,block="FIXED",envir=env$ENV,context=context)
     env[["fixed"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -291,7 +293,8 @@ INIT <- function(x,env,annotated=FALSE,pos=1,as_object=FALSE,...) {
   }
   
   if(annotated) {
-    l <- parse_annot(x,block="INIT",envir=env$ENV)
+    context <- glue("parse annotated init block ({pos})")
+    l <- parse_annot(x,block="INIT",envir=env$ENV,context=context)
     env[["init"]][[pos]] <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
@@ -316,7 +319,8 @@ CMT <- function(x,env,annotated=FALSE,pos=1, as_object = FALSE, ...) {
     return(NULL)
   }
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV)
+    context <- glue("parse annotated compartment block ({pos})")
+    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV,context=context)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
@@ -372,7 +376,8 @@ handle_spec_block.specCAPTURE <- function(x,...) {
 CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
   
   if(annotated) {
-    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV)
+    context <- glue("parse annotated capture block ({pos})")
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV,context=context)
     env[["annot"]][[pos]] <- l[["an"]]
     x <- names(l[["v"]])
   } else {
