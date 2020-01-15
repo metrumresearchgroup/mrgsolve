@@ -45,7 +45,8 @@ Imports:
     tibble (>= 2.1.1),
     rlang (>= 0.3.4),
     tidyselect (>= 0.2.5),
-    lifecycle
+    lifecycle, 
+    glue
 Suggests:
     lattice,
     testthat,

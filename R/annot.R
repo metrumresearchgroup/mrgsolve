@@ -47,12 +47,16 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
   x <- mytriml(x)
   
   if(nchar(x)==0) return(NULL)
-
+  
   col <- charcount(x,":")[1]
   
   if(col != (2-noname-novalue)) {
-    stop("improper annotation format ", x,"\n", 
-         "  Context: ", context, call.=FALSE) 
+    stop(
+      "improper annotation format\n",
+      " input: ", x, "\n",
+      " context: ", context, 
+      call.=FALSE
+    ) 
   }
   
   ## Fix up line if not name : value : other
