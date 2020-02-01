@@ -278,6 +278,8 @@ setMethod("initialize", "mrgmod", initialize_mrgmod)
 #' 
 #' mod %>% ev(amt=100) %>% mrgsim %>% plot
 #' 
+#' @keywords internal
+#' @export
 house <- function(...) {
   project <- mrgsolve_file("project")
   att <- as_pack_mod("housemodel", project, "mrgsolve")
