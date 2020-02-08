@@ -31,3 +31,10 @@ test_that("mrgsims class", {
   expect_is(as.list(out), "mrgsims_list")
 })
 
+test_that("plot from character", {
+  out <- mrgsolve:::house() %>% mrgsim()
+  pl1 <- out %>%  plot(" CENT DV, CP")
+  pl2 <- out %>% plot(CENT+DV+CP~time)
+  expect_equal(pl1,pl2)
+})
+

@@ -346,6 +346,10 @@ setMethod("show", "mrgsims", function(object) {
 ##'
 ##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
 ##' 
+##' \dontrun{
+##' plot(out, "CP RESP, GUT")
+##' }
+##' 
 ##' @md
 ##' @export
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
@@ -436,6 +440,17 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   ans
 })
 
+#' @rdname plot_mrgsims
+#' @aliases plot,mrgsims,formula-method
+#' @export
+setMethod("plot", c("mrgsims","character"), function(x,y,...) {
+  y <- gsub("\n+", " ", y)
+  y <- cvec_cs(y)
+  time <- timename(x@data)
+  lhs <- paste0(y,collapse="+")
+  fm <- as.formula(paste0(lhs,"~",time))
+  plot(x,fm,...)
+})
 
 ##' Plot data as an mrgsims object
 ##' 
