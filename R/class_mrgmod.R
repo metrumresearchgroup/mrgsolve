@@ -748,3 +748,26 @@ all.equal.mrgmod <- function(target, current,...) {
 .DollarNames.mrgmod <- function(x, pattern){
   grep(pattern, names(param(x)), value=TRUE)
 }
+
+#' Show names of current output variables
+#' 
+#' @param x mrgmod object
+#' @param unlist if `TRUE` then a character vector (rather than list) is 
+#' returned
+#' 
+#' @return
+#' When `unlist` is `FALSE` (default) : a named list, with `cmt` showing names 
+#' of output compartments and `capture` giving names of output variables in 
+#' capture.  When `unlist` is `TRUE`, then a single, unnamed character vector
+#' of outvar names is returned.
+#' 
+#' @examples
+#' 
+#' outvars(mrgsolve:::house())
+#' 
+#' @export
+outvars <- function(x, unlist = FALSE) {
+  ans <- list(cmt = x@cmtL, capture = x@capL)
+  if(unlist) unlist(ans, use.names=FALSE)
+  ans
+}
