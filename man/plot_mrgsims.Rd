@@ -4,6 +4,7 @@
 \alias{plot_mrgsims}
 \alias{plot,mrgsims,missing-method}
 \alias{plot,mrgsims,formula-method}
+\alias{plot,mrgsims,character-method}
 \title{Generate a quick plot of simulated data}
 \usage{
 \S4method{plot}{mrgsims,missing}(x, limit = 16, ...)
@@ -23,6 +24,8 @@
   logbr = 1,
   ...
 )
+
+\S4method{plot}{mrgsims,character}(x, y, ...)
 }
 \arguments{
 \item{x}{mrgsims object}
@@ -69,5 +72,9 @@ plot(out, subset=time <=24)
 plot(out, GUT+CP~.)
 
 plot(out, CP+RESP~time, col="black", scales="same", lty=2)
+
+\dontrun{
+plot(out, "CP RESP, GUT")
+}
 
 }
