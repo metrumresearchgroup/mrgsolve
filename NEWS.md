@@ -14,7 +14,7 @@
   operator for `mrgmod` #620
 - Add plot method for signature `c("mrgsims", "character")`; pass in a character
   vector of outputs to plot #630
-
+- Now importing lifecycle and glue packages
 
 # mrgsolve 0.10.0
 
