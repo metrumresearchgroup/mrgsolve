@@ -765,6 +765,7 @@ all.equal.mrgmod <- function(target, current,...) {
 #' 
 #' outvars(mrgsolve:::house())
 #' 
+#' @md
 #' @export
 outvars <- function(x, unlist = FALSE) {
   ans <- list(cmt = x@cmtL, capture = x@capL)
