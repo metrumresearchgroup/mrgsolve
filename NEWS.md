@@ -1,4 +1,19 @@
-# mrgsolve 0.10.0.9000
+# mrgsolve 0.10.1
+- Add `select_sims` method for selecting columns in `mrgsims` object #585
+- Fix bug where system was improperly advanced on steady state dosing record 
+  with a lag time when the system failed to reach steady state #596
+- Add better compartment level control for advancing system to steady state #598
+- Allow user to set `CXX_FLAGS` in `$ENV` block #603
+- Add `N_CMT` plugin so that the number (index) of every compartment is available
+  by name (e.g. `N_CENT` for the number index of the central compartment) #606
+- Fix bug where `blocks()` failed when the model was defined in `Rmd` file #608
+- Call ODE block every time the system tries to advance so that variables 
+  calculated in ODE are properly calculated in output #613
+- Add `within` method for mrgmod #616
+- Access initial compartment values and other model object items with `$` 
+  operator for `mrgmod` #620
+- Add plot method for signature `c("mrgsims", "character")`; pass in a character
+  vector of outputs to plot #630
 
 
 # mrgsolve 0.10.0
