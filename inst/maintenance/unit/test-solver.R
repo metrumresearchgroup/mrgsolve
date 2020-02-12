@@ -23,23 +23,23 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-solver")
 
-
 test_that("ode variables are initialized issue-613", {
   code <- '
 [cmt] CENT
 
 [ ode ] 
+double number = 2;
 double CP = CENT/10;
 dxdt_CENT  = -0.1*CENT;
 
-[ capture ] CP
+[ capture ] CP number
 '
   mod <- mcode("issue-613", code)
   dose <- ev(amt = 100) %>% ev_rep(ID = 1:4)
   out1 <- mrgsim(mod,dose)
   out2 <- mrgsim(mod,dose)
   expect_identical(out1,out2)
-  
+  expect_true(all(out1$number==2))
 })
 
 
