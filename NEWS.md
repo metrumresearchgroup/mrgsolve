@@ -1,4 +1,5 @@
 # mrgsolve 0.10.1
+
 - Add `select_sims` method for selecting columns in `mrgsims` object #585
 - Fix bug where system was improperly advanced on steady state dosing record 
   with a lag time when the system failed to reach steady state #596
