@@ -104,7 +104,7 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
 ##' with \code{mrgsolve:::details()}. 
 ##' 
 ##' @examples
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' 
 ##' mrgsolve:::details(mod)
 ##' 

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -42,7 +42,7 @@
 ##'
 ##' @examples
 ##' ## example("init")
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##'
 ##' init(mod)
 ##' init(mod, .pat="^C") ## may be useful for large models

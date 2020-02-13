@@ -272,7 +272,7 @@ setMethod("initialize", "mrgmod", initialize_mrgmod)
 #' 
 #' @examples
 #' 
-#' mod <- mrgsolve:::house()
+#' mod <- mrgsolve::house()
 #' 
 #' see(mod)
 #' 
@@ -372,7 +372,7 @@ CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 #' @rdname soloc
 #' 
 #' @examples
-#' mod <- mrgsolve:::house()
+#' mod <- mrgsolve::house()
 #' soloc(mod)
 #' 
 #' @export
@@ -400,7 +400,7 @@ setMethod("sodll", "packmod", function(x,...) {
 #' @aliases names,mrgmod-method
 #' 
 #' @examples
-#' mod <- mrgsolve:::house()
+#' mod <- mrgsolve::house()
 #' names(mod)
 #' 
 #' @export
@@ -763,7 +763,7 @@ all.equal.mrgmod <- function(target, current,...) {
 #' 
 #' @examples
 #' 
-#' outvars(mrgsolve:::house())
+#' outvars(mrgsolve::house())
 #' 
 #' @md
 #' @export

@@ -77,7 +77,7 @@ all_updatable <- c(sval,other_val)
 #' 
 #' @examples
 #' \dontrun{
-#'  mod <- mrgsolve:::house()
+#'  mod <- mrgsolve::house()
 ##'
 #'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
 #' }
@@ -328,7 +328,7 @@ setMethod("update", "parameter_list", function(object,.y,...) {
 #' @param ... not used
 #' 
 #' @examples
-#' mod <- mrgsolve:::house()
+#' mod <- mrgsolve::house()
 #' 
 #' mod2 <- within(mod, {CL <- CL * 1.5})
 #' 

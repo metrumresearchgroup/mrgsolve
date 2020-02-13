@@ -39,7 +39,7 @@
 ##' strictly for compartments.
 ##' 
 ##' @examples
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##'
 ##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
 ##'
@@ -108,7 +108,7 @@ carry.out <- function(x,...) {
 ##' 
 ##' @examples
 ##' # The model is in hours:
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' 
 ##' # The output is in days:
 ##' mod %>% tscale(1/24) %>% mrgsim
@@ -187,7 +187,7 @@ obsaug <- function(x,value=TRUE,...) {
 ##' 
 ##' idata <- data[,c("ID", "amt")]
 ##' 
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' 
 ##' mod %>%
 ##'   omat(dmat(1,1,1,1)) %>%

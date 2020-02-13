@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -50,7 +50,7 @@
 ##' @examples
 ##' ## example("param")
 ##' 
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##'
 ##' param(mod)
 ##' 

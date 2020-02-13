@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@
 ##' @param ... passed along
 ##'
 ##' @examples
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' mod %>% cmtn("CENT")
 ##' @export
 setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
@@ -86,7 +86,7 @@ unloadso <- function(x,...) UseMethod("unloadso")
 ##'
 ##' ## example("stime", package="mrgsolve")
 ##'
-##' mod <- mrgsolve:::house(end=12, delta=2, add=c(11,13,15))
+##' mod <- mrgsolve::house(end=12, delta=2, add=c(11,13,15))
 ##'
 ##' stime(mod)
 ##' 
@@ -108,7 +108,7 @@ setGeneric("revar", function(x,...) standardGeneric("revar"))
 ##' @param ... passed along
 ##'
 ##' @examples
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' mod %>% blocks
 ##' mod %>% blocks(PARAM,TABLE)
 ##'

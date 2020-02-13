@@ -44,7 +44,7 @@
 ##' omat(mat1, mat2, mat3)
 ##' omat(A=mat1, B=mat2, C=mat3)
 ##'
-##' mod <- mrgsolve:::house() %>% omat(mat4)
+##' mod <- mrgsolve::house() %>% omat(mat4)
 ##'
 ##' omat(mod)
 ##' omat(mod, make=TRUE)
@@ -147,7 +147,7 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
 ##' smat(mat1, mat2, mat3)
 ##' smat(A=mat1, B=mat2, C=mat3)
 ##'
-##' mod <- mrgsolve:::house() %>% smat(mat1)
+##' mod <- mrgsolve::house() %>% smat(mat1)
 ##'
 ##' smat(mod)
 ##' smat(mod, make=TRUE)

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -41,7 +41,7 @@ moving <- function(x) x@moving #nocov
 ##' @examples
 ##' ## example("knobs")
 ##'
-##' mod <- mrgsolve:::house(end=72)
+##' mod <- mrgsolve::house(end=72)
 ##'
 ##' events <- ev(amt=1000, cmt=1, addl=3, ii=12)
 ##'

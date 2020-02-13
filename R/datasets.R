@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -36,7 +36,7 @@
 ##'
 ##' @examples
 ##'
-##' mod <- mrgsolve:::house() %>% update(end=240) %>% Req(CP)
+##' mod <- mrgsolve::house() %>% update(end=240) %>% Req(CP)
 ##'
 ##' ## Full data set
 ##' data(exTheoph)

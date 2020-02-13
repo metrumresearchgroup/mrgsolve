@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -140,7 +140,7 @@ validate_idata <- function(idata) {
 ##' 
 ##' e <- ev(amt = 1000)
 ##' 
-##' mod <- mrgsolve:::house() 
+##' mod <- mrgsolve::house() 
 ##' 
 ##' out <- mod %>% ev(e) %>% mrgsim()
 ##' 
@@ -680,7 +680,7 @@ do_mrgsim <- function(x,
 #' 
 #' @examples
 #' 
-#' mod <- mrgsolve:::house()
+#' mod <- mrgsolve::house()
 #' 
 #' dose <- ev(amt = 100)
 #' 

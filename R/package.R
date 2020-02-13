@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -54,7 +54,7 @@
 #'
 #' ## example("mrgsolve")
 #'
-#' mod <- mrgsolve:::house(delta=0.1)  %>% param(CL=0.5)
+#' mod <- mrgsolve::house(delta=0.1)  %>% param(CL=0.5)
 #'
 #' events <-  ev(amt=1000, cmt=1, addl=5, ii=24)
 #' 

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -66,7 +66,7 @@ document <- function(number_sections = TRUE, highlight = "pygments",
 ##' 
 ##' @examples
 ##' \dontrun{
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' mrgsolve:::render(mod)
 ##' mrgsolve:::render("irm2", modlib())
 ##' }

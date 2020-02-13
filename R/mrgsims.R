@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -56,7 +56,7 @@
 ##'
 ##' ## example("mrgsims")
 ##'
-##' mod <- mrgsolve:::house() %>% init(GUT=100)
+##' mod <- mrgsolve::house() %>% init(GUT=100)
 ##'
 ##' out <- mrgsim(mod)
 ##' 
@@ -334,7 +334,7 @@ setMethod("show", "mrgsims", function(object) {
 ##' 
 ##' @examples
 ##'
-##' mod <- mrgsolve:::house(end=48, delta=0.2) %>% init(GUT=1000)
+##' mod <- mrgsolve::house(end=48, delta=0.2) %>% init(GUT=1000)
 ##'
 ##' out <- mrgsim(mod)
 ##'
@@ -465,7 +465,7 @@ setMethod("plot", c("mrgsims","character"), function(x,y,...) {
 ##' 
 ##' @examples
 ##'
-##' mod <- mrgsolve:::house() %>% ev(amt = 100)
+##' mod <- mrgsolve::house() %>% ev(amt = 100)
 ##' 
 ##' out <- mrgsim(mod) 
 ##' out_df <- dplyr::mutate(out, time <= 72)
