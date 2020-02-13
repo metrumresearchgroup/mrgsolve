@@ -39,7 +39,7 @@ Example input data sets
 }
 \examples{
 
-mod <- mrgsolve:::house() \%>\% update(end=240) \%>\% Req(CP)
+mod <- mrgsolve::house() \%>\% update(end=240) \%>\% Req(CP)
 
 ## Full data set
 data(exTheoph)

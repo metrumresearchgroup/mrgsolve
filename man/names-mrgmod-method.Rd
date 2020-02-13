@@ -13,7 +13,7 @@
 Get all names from a model object
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 names(mod)
 
 }

@@ -59,7 +59,7 @@ omat(mat1)
 omat(mat1, mat2, mat3)
 omat(A=mat1, B=mat2, C=mat3)
 
-mod <- mrgsolve:::house() \%>\% omat(mat4)
+mod <- mrgsolve::house() \%>\% omat(mat4)
 
 omat(mod)
 omat(mod, make=TRUE)

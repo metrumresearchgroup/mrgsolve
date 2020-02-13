@@ -174,7 +174,7 @@ simulated output that occur prior to the first record in \code{data}.
 
 e <- ev(amt = 1000)
 
-mod <- mrgsolve:::house() 
+mod <- mrgsolve::house() 
 
 out <- mod \%>\% ev(e) \%>\% mrgsim()
 

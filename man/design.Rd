@@ -45,7 +45,7 @@ data$GRP <- data$amt/100
 
 idata <- data[,c("ID", "amt")]
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 mod \%>\%
   omat(dmat(1,1,1,1)) \%>\%

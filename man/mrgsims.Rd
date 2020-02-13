@@ -78,7 +78,7 @@ commonly used in R (e.g. head, tail, as.data.frame, etc ...)
 
 ## example("mrgsims")
 
-mod <- mrgsolve:::house() \%>\% init(GUT=100)
+mod <- mrgsolve::house() \%>\% init(GUT=100)
 
 out <- mrgsim(mod)
 

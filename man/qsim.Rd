@@ -77,7 +77,7 @@ Use the \link[mrgsolve:update]{mrgsolve::update} method to update the model obje
 }
 \examples{
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 dose <- ev(amt = 100)
 

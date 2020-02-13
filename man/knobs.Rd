@@ -53,7 +53,7 @@ time variables (\code{start}, \code{end}, \code{delta}), PK dosing items
 \examples{
 ## example("knobs")
 
-mod <- mrgsolve:::house(end=72)
+mod <- mrgsolve::house(end=72)
 
 events <- ev(amt=1000, cmt=1, addl=3, ii=12)
 

@@ -52,7 +52,7 @@ to a list or numeric R object.
 }
 \examples{
 ## example("init")
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 init(mod)
 init(mod, .pat="^C") ## may be useful for large models

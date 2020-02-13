@@ -61,7 +61,7 @@ Generate a quick plot of simulated data
 }
 \examples{
 
-mod <- mrgsolve:::house(end=48, delta=0.2) \%>\% init(GUT=1000)
+mod <- mrgsolve::house(end=48, delta=0.2) \%>\% init(GUT=1000)
 
 out <- mrgsim(mod)
 

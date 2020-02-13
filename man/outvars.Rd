@@ -23,6 +23,6 @@ Show names of current output variables
 }
 \examples{
 
-outvars(mrgsolve:::house())
+outvars(mrgsolve::house())
 
 }

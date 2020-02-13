@@ -60,7 +60,7 @@ smat(mat1)
 smat(mat1, mat2, mat3)
 smat(A=mat1, B=mat2, C=mat3)
 
-mod <- mrgsolve:::house() \%>\% smat(mat1)
+mod <- mrgsolve::house() \%>\% smat(mat1)
 
 smat(mod)
 smat(mod, make=TRUE)

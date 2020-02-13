@@ -21,7 +21,7 @@ blocks(x, ...)
 Return the code blocks from a model specification file
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 mod \%>\% blocks
 mod \%>\% blocks(PARAM,TABLE)
 

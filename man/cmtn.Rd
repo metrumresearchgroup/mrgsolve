@@ -20,6 +20,6 @@ cmtn(x, ...)
 Get the compartment number from a compartment name
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 mod \%>\% cmtn("CENT")
 }

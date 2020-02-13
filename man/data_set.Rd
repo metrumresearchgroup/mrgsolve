@@ -102,7 +102,7 @@ See \code{\link{exdatasets}} for different example data sets.
 }
 \examples{
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data <- expand.ev(ID=1:3, amt=c(10,20))
 

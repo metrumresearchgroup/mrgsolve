@@ -36,7 +36,7 @@ all of the captured items are returned.  Remember that \code{req} is
 strictly for compartments.
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 mod \%>\% Req(CP,RESP) \%>\% ev(amt=1000) \%>\%  mrgsim
 

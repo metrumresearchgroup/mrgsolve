@@ -77,7 +77,7 @@ An error will be generated if any parameter columns in the
 input idata set contain \code{NA}.
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data(exidata)
 

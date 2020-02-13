@@ -33,7 +33,7 @@ Render a model to a document
 }
 \examples{
 \dontrun{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 mrgsolve:::render(mod)
 mrgsolve:::render("irm2", modlib())
 }

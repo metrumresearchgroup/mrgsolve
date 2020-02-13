@@ -61,7 +61,7 @@ both model parameters and data items listed in \code{$FIXED}.
 \examples{
 ## example("param")
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 param(mod)
 

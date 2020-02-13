@@ -29,7 +29,7 @@ but we expect that most of the time these will get updated through the
 update method.
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 mod2 <- within(mod, {CL <- CL * 1.5})
 

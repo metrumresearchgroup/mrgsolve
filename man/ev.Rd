@@ -83,7 +83,7 @@ event rows must match the number of \code{ID}s entered
 }
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 mod <- mod \%>\% ev(amt=1000, time=0, cmt=1)
 

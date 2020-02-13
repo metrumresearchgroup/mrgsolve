@@ -38,7 +38,7 @@ an item in the model object that doesn't exist
 
 ## example("mrgsolve")
 
-mod <- mrgsolve:::house(delta=0.1)  \%>\% param(CL=0.5)
+mod <- mrgsolve::house(delta=0.1)  \%>\% param(CL=0.5)
 
 events <-  ev(amt=1000, cmt=1, addl=5, ii=24)
 

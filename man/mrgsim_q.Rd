@@ -77,7 +77,7 @@ data.frame of simulated data on return.
 }
 \examples{
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data <- expand.ev(amt = c(100,300,1000))
 

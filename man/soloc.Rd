@@ -16,7 +16,7 @@ be rendered  with a short path name}
 Return the location of the model shared object
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 soloc(mod)
 
 }
