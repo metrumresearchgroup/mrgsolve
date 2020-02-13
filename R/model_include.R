@@ -67,7 +67,7 @@ make_clink <- function(x,clink) {
   paste(paste0("-I\"",unique(link), "\""),collapse=" ")
 }
 
-set_clink <- function(x,clink=NULL) {
+set_clink <- function(x,clink=NULL,...) {
   if(is.null(x) & is.null(clink)) return(invisible(NULL))
   Sys.setenv(CLINK_CPPFLAGS = make_clink(x,clink)) 
 }
