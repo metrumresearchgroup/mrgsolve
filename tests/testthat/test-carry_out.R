@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-carry_out")
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data(exTheoph)
 
@@ -31,7 +31,7 @@ exTheoph <-
   mutate(exTheoph, ROW=1:nrow(exTheoph)) %>%
   filter(ID <=10)
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data <- 
   expand.idata(ID=1:5,amt=c(200,300)) %>%

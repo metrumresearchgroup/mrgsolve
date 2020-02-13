@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-funset")
 
 test_that("funset", {
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   a <- mrgsolve:::funset(mod)
   expect_identical(names(a), c("symbols", "shlib"))
   expect_true(a$shlib$compiled)

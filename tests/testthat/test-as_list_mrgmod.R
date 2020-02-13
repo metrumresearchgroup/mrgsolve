@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -26,7 +26,7 @@ context("test-as_list_mrgmod")
 options(mrgsolve_mread_quiet=TRUE)
 
 test_that("check items in as.list output", {
-  x <- as.list(mrgsolve:::house())  
+  x <- as.list(mrgsolve::house())  
   x_names <- names(x)
   expect_true("start" %in% x_names)
   expect_true("end" %in% x_names)

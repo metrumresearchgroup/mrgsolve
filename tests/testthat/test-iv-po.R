@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -35,7 +35,7 @@ iv <- function(dose,par,time) {
 }
 
 context("test-iv-po")
-mod <- mrgsolve:::house() %>% 
+mod <- mrgsolve::house() %>% 
   update(atol = 1E-20, rtol = 1E-12, digits = 8)
 
 out <- mrgsim(mod)

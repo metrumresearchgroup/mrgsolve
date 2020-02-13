@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -37,7 +37,7 @@ test_that("as_deslist", {
   ##' ID 33
   expect_equal(max(stime(des[[2]])),1)
   
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   
   out <- 
     mod %>%

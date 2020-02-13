@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -33,7 +33,7 @@ test_that("inits are constructed", {
 })
 
 test_that("inits are shown", {
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   x <- capture.output(init(mod))
   expect_match(x[2], "Model initial conditions")
 })

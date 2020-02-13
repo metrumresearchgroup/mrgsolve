@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-tad")
 
-mod <- mrgsolve:::house(end=5, delta=1) %>% Req() 
+mod <- mrgsolve::house(end=5, delta=1) %>% Req() 
 
 test_that("tad", {
   out <- mrgsim(mod)

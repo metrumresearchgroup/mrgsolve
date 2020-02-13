@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mod <- mrgsolve:::house() %>% update(end=240)
+mod <- mrgsolve::house() %>% update(end=240)
 cap <- as.list(mod)$capture
 
 context("test-mrgsim_q")

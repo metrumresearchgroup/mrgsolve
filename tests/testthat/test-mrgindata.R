@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -26,7 +26,7 @@ context("test-mrgindata")
 end <- 60
 delta <- 3
 n <- length(seq(0,end,delta))
-mod <- mrgsolve:::house() %>% update(end=end, delta=delta)
+mod <- mrgsolve::house() %>% update(end=end, delta=delta)
 data(extran3)
 
 test_that("valid_data_set warns for character columns", {

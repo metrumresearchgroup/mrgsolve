@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mod <- mrgsolve:::house() %>% update(atol = 1E-20, rtol = 1E-12, digits = 8)
+mod <- mrgsolve::house() %>% update(atol = 1E-20, rtol = 1E-12, digits = 8)
 mod1 <- update(mod %>% param(CL=12, VC=220), delta=33, end=222)
 mod2 <- update(mod, param=list(CL=12, VC=220), delta=33, end=222)
 x <- sort(runif(100, 0,300))

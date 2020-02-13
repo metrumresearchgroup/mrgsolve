@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,7 +25,7 @@ context("test-dplyr-generics")
 
 project <- file.path(system.file(package="mrgsolve"), "models")
 
-out  <- mrgsolve:::house() %>% ev(amt=100) %>% mrgsim(end=122)
+out  <- mrgsolve::house() %>% ev(amt=100) %>% mrgsim(end=122)
 
 test_that("Pipe to tibble", {
   expect_is(out %>% as.tbl, "tbl_df")

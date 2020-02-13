@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-mrgmod")
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 test_that("methods", {
   expect_equal(mod$CL,1)
@@ -38,7 +38,7 @@ test_that("methods", {
   expect_is(as.list(mod), "list")
   expect_output(summary(mod), "Model: housemodel")
   expect_true(mrgsolve:::valid.mrgmod(mod))
-  expect_true(all.equal(mod, mrgsolve:::house()))
+  expect_true(all.equal(mod, mrgsolve::house()))
   l <- mod[c("CL", "VC", "CENT", "end")]
   expect_identical(l, list(CL = mod$CL, VC = mod$VC, CENT = mod$CENT, end = mod$end))
   expect_error(mod[c("CL", "Kyle")],regexp = "not found or not extractable")
