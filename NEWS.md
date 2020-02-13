@@ -15,6 +15,10 @@
   operator for `mrgmod` #620
 - Add plot method for signature `c("mrgsims", "character")`; pass in a character
   vector of outputs to plot #630
+- The house model, previously accessible by `mrgsolve:::house()` is now an 
+  exported function #625
+- Exporting outvars function to extract names of current output variables from
+  the model object
 - Now importing lifecycle and glue packages
 
 # mrgsolve 0.10.0
