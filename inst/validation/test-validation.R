@@ -64,10 +64,10 @@ test_that("control ss advance issue-598", {
 })
 
 test_that("PKG_CXXFLAGS is set issue-603", {
-  code <- '$ENV PKG_CXXFLAGS = "-Wbadflag"'
+  code <- '$ENV PKG_CXXFLAGS = "-Wdiv-by-zero"'
   expect_output(
     mcode("cxxflags", code, ignore.stdout = FALSE,preclean=TRUE), 
-    regexp = "Wbadflag"
+    regexp = "Wdiv-by-zero"
   )
 })
 
