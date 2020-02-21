@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -56,7 +56,7 @@
 ##'
 ##' ## example("mrgsims")
 ##'
-##' mod <- mrgsolve:::house() %>% init(GUT=100)
+##' mod <- mrgsolve::house() %>% init(GUT=100)
 ##'
 ##' out <- mrgsim(mod)
 ##' 
@@ -146,6 +146,14 @@ NULL
 ##' @param .keep_all passed to \code{dplyr::distinct}
 ##' @param funs passed to \code{dplyr::summarise_each}
 ##' @param ... passed to other methods
+##' 
+##' @details
+##' 
+##' For the \code{select_sims} function, the dots \code{...} must be either 
+##' compartment names or variables in \code{$CAPTURE}.  An error will be
+##' generated if no valid names are selected or the names for selection are 
+##' not found in the simulated output.
+##' 
 ##' @rdname mrgsims_dplyr
 ##' @export
 as.tbl.mrgsims <- function(x,...) {
@@ -220,6 +228,24 @@ do.mrgsims <- function(.data,...,.dots) {
 ##' @export
 select.mrgsims <- function(.data,...) {
   dplyr::select(as_tibble.mrgsims(.data),...)
+}
+
+#' @rdname mrgsims_dplyr
+#' @export
+select_sims <- function(.data, ...) {
+  all_names <- names(.data)
+  outputs <- c(.data@request,.data@outnames)
+  retain <- setdiff(all_names,outputs)
+  vars <- vars_select(all_names, !!!enquos(...))
+  vars <- intersect(vars,outputs)
+  if(length(vars)==0) {
+    wstop("no output variables (compartments or captures) were selected.")  
+  }
+  vars <- unique(c(retain,vars))
+  .data@data <- dplyr::select(.data@data,vars)
+  .data@request <- intersect(.data@request,names(.data))
+  .data@outnames <- intersect(.data@outnames,names(.data))
+  return(.data)
 }
 
 ##' @rdname mrgsims_dplyr
@@ -308,7 +334,7 @@ setMethod("show", "mrgsims", function(object) {
 ##' 
 ##' @examples
 ##'
-##' mod <- mrgsolve:::house(end=48, delta=0.2) %>% init(GUT=1000)
+##' mod <- mrgsolve::house(end=48, delta=0.2) %>% init(GUT=1000)
 ##'
 ##' out <- mrgsim(mod)
 ##'
@@ -319,6 +345,10 @@ setMethod("show", "mrgsims", function(object) {
 ##' plot(out, GUT+CP~.)
 ##'
 ##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
+##' 
+##' \dontrun{
+##' plot(out, "CP RESP, GUT")
+##' }
 ##' 
 ##' @md
 ##' @export
@@ -410,6 +440,17 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   ans
 })
 
+#' @rdname plot_mrgsims
+#' @aliases plot,mrgsims,formula-method
+#' @export
+setMethod("plot", c("mrgsims","character"), function(x,y,...) {
+  y <- gsub("\n+", " ", y)
+  y <- cvec_cs(y)
+  time <- timename(x@data)
+  lhs <- paste0(y,collapse="+")
+  fm <- as.formula(paste0(lhs,"~",time))
+  plot(x,fm,...)
+})
 
 ##' Plot data as an mrgsims object
 ##' 
@@ -424,7 +465,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
 ##' 
 ##' @examples
 ##'
-##' mod <- mrgsolve:::house() %>% ev(amt = 100)
+##' mod <- mrgsolve::house() %>% ev(amt = 100)
 ##' 
 ##' out <- mrgsim(mod) 
 ##' out_df <- dplyr::mutate(out, time <= 72)

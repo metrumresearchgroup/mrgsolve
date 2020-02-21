@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mod <- mrgsolve:::house() %>% update(end=240)
+mod <- mrgsolve::house() %>% update(end=240)
 
 context("test-data_set")
 
@@ -78,7 +78,7 @@ test_that("time is required", {
   expect_error(mod %>% data_set(df) %>% mrgsim)
 })
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data(exTheoph)
 
@@ -95,7 +95,7 @@ test_that("Properly sorted records produces no error", {
 })
 
 test_that("Data set column order gives same answer", {
-  mod <- mrgsolve:::house() %>% omat(dmat(1,1,1,1))
+  mod <- mrgsolve::house() %>% omat(dmat(1,1,1,1))
   data(extran3)
   set.seed(9923403)
   extran3 <- extran3 %>% mutate(a=-10, Z = -11, M = -22, h = -33)

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mod <- mrgsolve:::house()  
+mod <- mrgsolve::house()  
 
 test_that("params are constructed", {
   x <- param(A = 1, B = 2)  
@@ -41,7 +41,7 @@ test_that("params are accessed", {
 })
 
 test_that("params are updated", {
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   mod2 <- param(mod, CL = 55, VC = 111)
   expect_equal(mod2$CL,55)
   expect_equal(mod2$VC,111)
@@ -61,7 +61,7 @@ test_that("params are updated", {
 })
 
 test_that("params are shown", {
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   x <- capture.output(param(mod))
   expect_match(x[2], "Model parameters")
 })

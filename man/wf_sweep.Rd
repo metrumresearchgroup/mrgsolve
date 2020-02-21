@@ -28,7 +28,7 @@ This function is experimental and may change or go away at any time without
 notice.
 }
 \examples{
-mod <- mrgsolve:::house() \%>\% zero_re()
+mod <- mrgsolve::house() \%>\% zero_re()
 
 mod \%>\% 
   ev(amt = 100) \%>\% 

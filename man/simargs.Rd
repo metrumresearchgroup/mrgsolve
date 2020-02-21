@@ -25,7 +25,7 @@ list is returned.
 Access or clear arguments for calls to mrgsim
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 mod \%>\% Req(CP,RESP) \%>\% carry_out(evid,WT,FLAG) \%>\% simargs
 
 }

@@ -5,11 +5,9 @@
 \alias{modelparse_rmd}
 \title{Parse model specification text}
 \usage{
-modelparse(txt, split = FALSE, drop_blank = TRUE,
-  comment_re = c("//", "##"))
+modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = c("//", "##"))
 
-modelparse_rmd(txt, split = FALSE, drop_blank = TRUE,
-  comment_re = "//")
+modelparse_rmd(txt, split = FALSE, drop_blank = TRUE, comment_re = "//")
 }
 \arguments{
 \item{txt}{model specification text}

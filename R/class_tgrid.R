@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -134,7 +134,7 @@ as_deslist <- function(data, descol="ID") {
 ##' design <- c(day1, day1+72, day1+240)
 ##' 
 ##' \dontrun{
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##'
 ##' out <- mod %>% ev(amt=1000, ii=24, addl=10) %>% mrgsim(tgrid=design)
 ##'

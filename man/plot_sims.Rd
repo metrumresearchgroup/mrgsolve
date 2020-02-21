@@ -24,7 +24,7 @@ were created by modifying an \code{mrgsims} object.
 }
 \examples{
 
-mod <- mrgsolve:::house() \%>\% ev(amt = 100)
+mod <- mrgsolve::house() \%>\% ev(amt = 100)
 
 out <- mrgsim(mod) 
 out_df <- dplyr::mutate(out, time <= 72)

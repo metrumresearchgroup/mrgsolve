@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-carry-out")
 
-mod <- mrgsolve:::house() %>% update(end=5, delta=1) %>% Req(CP)
+mod <- mrgsolve::house() %>% update(end=5, delta=1) %>% Req(CP)
 
 ex <- rep(0,7)
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -86,6 +86,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   Do_Init_Calc = true;
   ss_fixed = false;
   ss_n = 500;
+  ss_flag = false;
   
   pred.assign(5,0.0);
   
@@ -101,7 +102,6 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));
   simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
-  
 }
 
 double odeproblem::fbio(unsigned int pos) {
@@ -170,12 +170,15 @@ void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
 }
 
 void odeproblem::call_derivs(double *t, double *y, double *ydot) {
-  Derivs(t,y,ydot,Init_value,Param);
+  Derivs(t,y,ydot,Init_value,Param,ss_flag);
   for(int i = 0; i < Neq; ++i) {
     ydot[i] = (ydot[i] + R0[i])*On[i];
   }
 }
 
+void odeproblem::init_derivs(double time) {
+  this->call_derivs(&time,&Y[0],&Yout[1]);  
+}
 
 void odeproblem::set_d(rec_ptr this_rec) {
   d.time = this_rec->time();
@@ -336,11 +339,12 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   }
   
   solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
+  
   if(Istate < 0) {
     negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
   }
   
-  //this->call_derivs(&Neq, &tto, Y, Ydot);
+  this->init_derivs(tto);
 }
 
 void odeproblem::advan2(const double& tfrom, const double& tto) {
@@ -524,7 +528,12 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   }
 }
 
-
+/**
+ * Calculate PK model polyexponentials.
+ * 
+ * 
+ * 
+ */
 double PolyExp(const double& x,
                const double& dose,
                const double& rate,
@@ -640,6 +649,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   Rtol = Rcpp::as<double>(parin["rtol"]);
   Atol = Rcpp::as<double>(parin["atol"]);
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
+  Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {
@@ -668,8 +678,8 @@ void odeproblem::advan(int x) {
 /**
  * Call the <code>$MAIN</code> function from a model object.
  * 
- * @param lparam model parameters
- * @param linit model initial contitions
+ * @param lparam model parameter value
+ * @param linit model initial contition values
  * @param Neta number of rows in <code>OMEGA</code>
  * @param Neps number of rows in <code>SIGMA</code>
  * @param capture vector of capture names

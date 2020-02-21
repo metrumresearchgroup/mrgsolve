@@ -4,8 +4,15 @@
 \alias{mrgsim_q}
 \title{Simulate from a model object with quicker turnaround}
 \usage{
-mrgsim_q(x, data, recsort = 1, stime = numeric(0),
-  output = "mrgsims", skip_init_calc = FALSE, simcall = 0)
+mrgsim_q(
+  x,
+  data,
+  recsort = 1,
+  stime = numeric(0),
+  output = "mrgsims",
+  skip_init_calc = FALSE,
+  simcall = 0
+)
 }
 \arguments{
 \item{x}{a model object}
@@ -70,7 +77,7 @@ data.frame of simulated data on return.
 }
 \examples{
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data <- expand.ev(amt = c(100,300,1000))
 

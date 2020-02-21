@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -138,7 +138,8 @@ protomod <- list(model=character(0),
                  code = character(0),
                  annot = list(),
                  envir = new.env(),
-                 plugin = character(0)
+                 plugin = character(0), 
+                 ss_cmt = integer(0)
 )
 
 slot.names <- names(protomod)
@@ -172,69 +173,71 @@ valid.mrgmod <- function(object) {
 
 
 
-##' S4 class for mrgsolve model object
+#' S4 class for mrgsolve model object
 ##'
-##' @section Notes:
-##' \itemize{
-##' \item Spaces in paths (\code{project} and \code{soloc}) are prohibited.
+#' @section Notes:
+#' \itemize{
+#' \item Spaces in paths (\code{project} and \code{soloc}) are prohibited.
 ##'
-##' }
+#' }
 ##'
-##' @slot model model name \code{<character>}
-##' @slot modfile source model specification file name \code{<character>}
-##' @slot package the shared object file name \code{character>}
-##' @slot project working directory; must be writeable with no spaces 
-##' \code{<character>}
-##' @slot start simulation start time \code{<numeric>}
-##' @slot end simulation end time \code{<numeric>}
-##' @slot delta simulation time interval \code{<numeric>}
-##' @slot add additional simulation times \code{<numeric-vector>}
-##' @slot param \code{<parameter_list>}
-##' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
-##' these are not updatable from \code{R}
-##' @slot init \code{<cmt_list>}
-##' @slot digits significant digits in simulated output; negative integer means 
-##' ignore \code{<numeric>}
-##' @slot hmin passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}
-##' @slot hmax passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-##' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} 
-##' \code{<numeric>}
-##' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-##' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-##' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-##' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} 
-##' \code{<numeric>}
-##' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
-##' @slot verbose print run information to screen \code{<logical>}
-##' @slot quiet print various information to screen \code{<logical>}
-##' @slot debug not used
-##' @slot tscale used to scale time in simulated output \code{<numeric>}
-##' @slot omega \code{\link{matlist}} for simulating individual-level random 
-##' effects
-##' @slot sigma \code{\link{matlist}} for simulating residual error variates
-##' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
-##' @slot advan either 2, 4, or 13 \code{<numeric>}
-##' @slot trans either 1, 2, 4, or 11 \code{<numeric>}
-##' @slot request  vector of compartments to request \code{<character>}
-##' @slot soloc directory path for storing the model shared object 
-##' \code{<character>}
-##' @slot code a character vector of the model code
-##' @slot capture a character vector of variables that are captured from 
-##' the simulation \code{<character>}
-##' @slot mindt minimum time between simulation records \code{<numeric>}
-##' @slot envir internal model environment \code{<environment>}
-##' @slot shlib a list of data related to build outcome \code{<list>}
-##' @slot funs symbol names for model functions in the shared object
-##' @slot annot model annotations \code{<list>}
-##' @slot plugin model plugins \code{<character>}
-##' @slot Icap capture indices to recover in the simulation
-##' @slot capL labels for \code{Icap}
-##' @slot Icmt compartment indices to recover in the simulation
-##' @slot cmtL labels for \code{Icmt}
-##' 
-##' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
-##' @keywords internal
-##' @export
+#' @slot model model name \code{<character>}
+#' @slot modfile source model specification file name \code{<character>}
+#' @slot package the shared object file name \code{character>}
+#' @slot project working directory; must be writeable with no spaces 
+#' \code{<character>}
+#' @slot start simulation start time \code{<numeric>}
+#' @slot end simulation end time \code{<numeric>}
+#' @slot delta simulation time interval \code{<numeric>}
+#' @slot add additional simulation times \code{<numeric-vector>}
+#' @slot param \code{<parameter_list>}
+#' @slot fixed a \code{<parameter_list>} of fixed value parameters; 
+#' these are not updatable from \code{R}
+#' @slot init \code{<cmt_list>}
+#' @slot digits significant digits in simulated output; negative integer means 
+#' ignore \code{<numeric>}
+#' @slot hmin passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}
+#' @slot hmax passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} 
+#' \code{<numeric>}
+#' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} 
+#' \code{<numeric>}
+#' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
+#' @slot verbose print run information to screen \code{<logical>}
+#' @slot quiet print various information to screen \code{<logical>}
+#' @slot debug not used
+#' @slot tscale used to scale time in simulated output \code{<numeric>}
+#' @slot omega \code{\link{matlist}} for simulating individual-level random 
+#' effects
+#' @slot sigma \code{\link{matlist}} for simulating residual error variates
+#' @slot args \code{<list>} of arguments to be passed to \code{\link{mrgsim}}
+#' @slot advan either 2, 4, or 13 \code{<numeric>}
+#' @slot trans either 1, 2, 4, or 11 \code{<numeric>}
+#' @slot request  vector of compartments to request \code{<character>}
+#' @slot soloc directory path for storing the model shared object 
+#' \code{<character>}
+#' @slot code a character vector of the model code
+#' @slot capture a character vector of variables that are captured from 
+#' the simulation \code{<character>}
+#' @slot mindt minimum time between simulation records \code{<numeric>}
+#' @slot envir internal model environment \code{<environment>}
+#' @slot shlib a list of data related to build outcome \code{<list>}
+#' @slot funs symbol names for model functions in the shared object
+#' @slot annot model annotations \code{<list>}
+#' @slot plugin model plugins \code{<character>}
+#' @slot Icap capture indices to recover in the simulation \code{<integer>}
+#' @slot capL labels for \code{Icap};  \code{<character>}
+#' @slot Icmt compartment indices to recover in the simulation \code{<integer>}
+#' @slot cmtL labels for \code{Icmt}; \code{<character>}
+#' @slot ss_cmt compartments numbers to be considered when advancing the system
+#' to steady state \code{<integer>}
+#' 
+#' @seealso \code{\link[mrgsolve]{update}}, \code{\link{solversettings}}
+#' @keywords internal
+#' @export
 setClass("mrgmod",slots=slots, validity=valid.mrgmod, prototype=protomod)
 
 setClass("packmod",
@@ -255,25 +258,28 @@ initialize_mrgmod <- function(.Object, ...) {
   .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
   .Object@shlib[["version"]] <- GLOBALS[["version"]]
   .Object <- default_outputs(.Object)
+  .Object@ss_cmt <- seq_along(Cmt(.Object)) - 1L
   .Object
 }
 setMethod("initialize", "mrgmod", initialize_mrgmod)
 
-##' Return a pre-compiled, PK/PD model
-##' 
-##' @param ... passed to \code{\link[mrgsolve]{update}}
-##' 
-##' @return 
-##' A \code{packmod} object, ready to simulate.
-##' 
-##' @examples
-##' 
-##' mod <- mrgsolve:::house()
-##' 
-##' see(mod)
-##' 
-##' mod %>% ev(amt=100) %>% mrgsim %>% plot
-##' 
+#' Return a pre-compiled, PK/PD model
+#' 
+#' @param ... passed to \code{\link[mrgsolve]{update}}
+#' 
+#' @return 
+#' A \code{packmod} object, ready to simulate.
+#' 
+#' @examples
+#' 
+#' mod <- mrgsolve::house()
+#' 
+#' see(mod)
+#' 
+#' mod %>% ev(amt=100) %>% mrgsim %>% plot
+#' 
+#' @keywords internal
+#' @export
 house <- function(...) {
   project <- mrgsolve_file("project")
   att <- as_pack_mod("housemodel", project, "mrgsolve")
@@ -307,14 +313,14 @@ as_pack_mod <- function(model, project, PACKAGE) {
   return(list(mod=x, soloc=soloc, source=source))
 }
 
-##' Check if an object is a model object 
-##' 
-##' The function checks to see if the object is either
-##'  \code{mrgmod} or \code{packmod}.
-##' 
-##' @param x any object
-##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
-##' @export
+#' Check if an object is a model object 
+#' 
+#' The function checks to see if the object is either
+#'  \code{mrgmod} or \code{packmod}.
+#' 
+#' @param x any object
+#' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
+#' @export
 is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
 
 see_compfile <- function(x) {
@@ -333,9 +339,9 @@ setMethod("project", "packmod", function(x,...) {
   return(file.path(path.package(x@package),"project"))
 })
 
-##' @rdname cmtn
-##' @param tag compartment name
-##' @export
+#' @rdname cmtn
+#' @param tag compartment name
+#' @export
 setMethod("cmtn", "mrgmod", function(x,tag,...) {
   return(which(cmt(x)==tag))
 })
@@ -357,19 +363,19 @@ Cmti <- function(x) x@Icmt
 Capturei <- function(x) x@Icap
 CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 
-##' Return the location of the model shared object
+#' Return the location of the model shared object
 ##'
-##' @param x model object
-##' @param short logical; if \code{TRUE}, \code{soloc} will
-##'  be rendered  with a short path name
-##' 
-##' @rdname soloc
-##' 
-##' @examples
-##' mod <- mrgsolve:::house()
-##' soloc(mod)
-##' 
-##' @export
+#' @param x model object
+#' @param short logical; if \code{TRUE}, \code{soloc} will
+#'  be rendered  with a short path name
+#' 
+#' @rdname soloc
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' soloc(mod)
+#' 
+#' @export
 soloc <- function(x,short=FALSE) {
   if(short) return(build_path(x@soloc))
   return(x@soloc)
@@ -387,17 +393,17 @@ setMethod("sodll", "packmod", function(x,...) {
   return(pathfun(getLoadedDLLs()[[x@package]][["path"]]))
 })
 
-##' Get all names from a model object
-##' 
-##' @param x the model object
-##' 
-##' @aliases names,mrgmod-method
-##' 
-##' @examples
-##' mod <- mrgsolve:::house()
-##' names(mod)
-##' 
-##' @export
+#' Get all names from a model object
+#' 
+#' @param x the model object
+#' 
+#' @aliases names,mrgmod-method
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' names(mod)
+#' 
+#' @export
 setMethod("names", "mrgmod", function(x) {
   ans <- list()
   ans$param <- Pars(x)
@@ -410,66 +416,68 @@ setMethod("names", "mrgmod", function(x) {
   return(ans)
 })
 
-##' Coerce a model object to list
-##' 
-##' @param x mrgmod object
-##' @param deep if `TRUE`, extra information is returned
-##' (see details). 
-##' @param ... not used
-##' 
-##' @details 
-##' If `deep` is `TRUE`, then the values for
-##' `trans`,`advan`, and `mindt` are
-##' returned as well as a summary of internal model 
-##' functions (with a call to `mrgsolve:::funset`).
-##' 
-##' @section Slots:
-##' - `npar`: number of parameters
-##' - `neq`: number of compartments or differential equations
-##' - `pars`: names of model parameters
-##' - `covariates`: names of parameters identified as covariates
-##' - `cmt`: names of model compartments
-##' - `param`: the parameter list
-##' - `init`: initial condition list
-##' - `omega`: `$OMEGA` matrices, as a `matlist` object
-##' - `sigma`: `$SIGMA` matrices, as a `matlist` object
-##' - `fixed`: named list of `$FIXED` values
-##' - `model`: model name
-##' - `project`: model project directory
-##' - `soloc`: directory where the model is being built
-##' - `sodll`: complete path to the model shared object
-##' - `cfile`: path for the model source code file 
-##' - `shlib`: list of compilation information
-##' - `start`: simulation start time
-##' - `end`: simulation end time
-##' - `delta`: simulation time step
-##' - `add`: additional simulation times
-##' - `capture`: names of captured data items
-##' - `request`: compartments requested upon simulation
-##' - `cmti`: named indices for current output compartments
-##' - `capturei`: named indices for current output capture
-##' - `random`: names and labels of `$OMEGA` and `$SIGMA`
-##' - `code`: model source code from `cfile`
-##' - `details`: model details data frame
-##' - `atol`: see [solversettings]
-##' - `rtol`: see [solversettings]
-##' - `maxsteps`: see [solversettings]
-##' - `hmin`: see [solversettings]
-##' - `hmax`: see [solversettings]
-##' - `envir`: the model environment
-##' - `plugins`: plugins invoked in the model
-##' - `digits`: number of digits to request in simulated data
 
-##' - `tscale`: multiplicative scalar for time in results only
-##' - `mindt`: simulation output time below which there model will assume to 
-##'   have not advanced
-##' - `preclean`: logical indicating to clean up compilation artifacts prior
-##'   to compiling
-##' - `debug`: print debugging information during simulation run
-##' - `verbose`: print extra information during setup for model run
-##' 
-##' @md
-##' @export
+
+#' Coerce a model object to list
+#' 
+#' @param x mrgmod object
+#' @param deep if `TRUE`, extra information is returned
+#' (see details). 
+#' @param ... not used
+#' 
+#' @details 
+#' If `deep` is `TRUE`, then the values for
+#' `trans`,`advan`, and `mindt` are
+#' returned as well as a summary of internal model 
+#' functions (with a call to `mrgsolve:::funset`).
+#' 
+#' @section Slots:
+#' - `npar`: number of parameters
+#' - `neq`: number of compartments or differential equations
+#' - `pars`: names of model parameters
+#' - `covariates`: names of parameters identified as covariates
+#' - `cmt`: names of model compartments
+#' - `param`: the parameter list
+#' - `init`: initial condition list
+#' - `omega`: `$OMEGA` matrices, as a `matlist` object
+#' - `sigma`: `$SIGMA` matrices, as a `matlist` object
+#' - `fixed`: named list of `$FIXED` values
+#' - `model`: model name
+#' - `project`: model project directory
+#' - `soloc`: directory where the model is being built
+#' - `sodll`: complete path to the model shared object
+#' - `cfile`: path for the model source code file 
+#' - `shlib`: list of compilation information
+#' - `start`: simulation start time
+#' - `end`: simulation end time
+#' - `delta`: simulation time step
+#' - `add`: additional simulation times
+#' - `capture`: names of captured data items
+#' - `request`: compartments requested upon simulation
+#' - `cmti`: named indices for current output compartments
+#' - `capturei`: named indices for current output capture
+#' - `random`: names and labels of `$OMEGA` and `$SIGMA`
+#' - `code`: model source code from `cfile`
+#' - `details`: model details data frame
+#' - `atol`: see [solversettings]
+#' - `rtol`: see [solversettings]
+#' - `maxsteps`: see [solversettings]
+#' - `hmin`: see [solversettings]
+#' - `hmax`: see [solversettings]
+#' - `envir`: the model environment
+#' - `plugins`: plugins invoked in the model
+#' - `digits`: number of digits to request in simulated data
+
+#' - `tscale`: multiplicative scalar for time in results only
+#' - `mindt`: simulation output time below which there model will assume to 
+#'   have not advanced
+#' - `preclean`: logical indicating to clean up compilation artifacts prior
+#'   to compiling
+#' - `debug`: print debugging information during simulation run
+#' - `verbose`: print extra information during setup for model run
+#' 
+#' @md
+#' @export
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
   
   within(list(), {
@@ -524,56 +532,65 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
 })
 
 
-##' Select parameter values from a model object
-##' 
-##' The \code{$} and \code{[[} operators get the value 
-##' of a single parameter in the model.  The 
-##' \code{[} gets several values, returning a 
-##' named list.  
-##' 
-##' @param x mrgmod object
-##' @param name parameter to take
-##' @param i an element to select
-##' @param exact not used
-##' @rdname mrgmod_extract
-##' @export
-setMethod("$", "mrgmod", function(x, name){
-  if(! name %in% Pars(x)) {
-    stop(
-      "Parameter ", name, " not found in the parameter list.", 
-      call.=FALSE
-    )  
-  }
-  unname(as.numeric(allparam(x))[name])
+#' Select parameter values from a model object
+#' 
+#' The \code{$} and \code{[[} operators get the value 
+#' of a single parameter in the model.  The 
+#' \code{[} gets several values, returning a 
+#' named list.  
+#' 
+#' @param x mrgmod object
+#' @param name parameter to take
+#' @param i an element to select
+#' @param exact not used
+#' @rdname mrgmod_extract
+#' @export
+setMethod("$", "mrgmod", function(x, name) {
+  x[[name]]
 })
 
-##' @rdname mrgmod_extract
-##' @export
+#' @rdname mrgmod_extract
+#' @export
 setMethod("[[", "mrgmod", function(x, i, exact=TRUE) {
-  if(!i %in% Pars(x)) {
-    stop(
-      "Parameter ", i, " not found in the parameter list.", 
-      call.=FALSE
-    )  
+  if(i %in% Pars(x)) {
+    return(unname(as.numeric(allparam(x))[i]))  
   }
-  unname(as.list(allparam(x))[[i]])  
+  if(i %in% Cmt(x)) {
+    return(unname(as.numeric(init(x))[i]))  
+  }
+  l <- as.list(x)
+  if(exists(i,l)) {
+    return(unname(l[[i]]))  
+  }
+  wstop(
+    "item '", i, "' not found or not extractable with $ or [[ operator."
+  )
 })
 
-##' @rdname mrgmod_extract
-##' @export
+#' @rdname mrgmod_extract
+#' @export
 setMethod("[", "mrgmod", function(x, i) {
-  if(!all(i %in% Pars(x))) {
-    wrong <- paste0(setdiff(i, Pars(x)),collapse=',')
-    stop(
-      "Parameter(s) ", wrong, " not found in the parameter list.", 
-      call.=FALSE
-    )  
+  env <- c(as.list(param(x)),as.list(init(x)))
+  if(!all(i %in% names(env))) {
+    env <- c(env,as.list(x))  
   }
-  as.list(allparam(x))[i]
+  if(!all(i %in% names(env))) {
+    wrong <- shQuote(setdiff(i, names(env)))
+    for(j in seq_along(wrong)) {
+      message(" Problem: item ", wrong[j], " not found")    
+    }
+    wstop("requested items(s) not found or not extractable with [ operator.")      
+  }
+  env[i]
 })
 
-##' @rdname see
-##' @export
+#' @export
+as.environment.mrgmod <- function(x) {
+  list2env(c(as.list(param(x)),as.list(init(x)),as.list(x)))  
+}
+
+#' @rdname see
+#' @export
 setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
   if(raw) return(x@code)
   what <- x@code
@@ -589,8 +606,8 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
   return(invisible(NULL))
 })
 
-##' @rdname loadso
-##' @export
+#' @rdname loadso
+#' @export
 loadso.mrgmod <- function(x,...) {
   if(.Platform$OS.type!="unix") {
     try(dyn.unload(sodll(x)),silent=TRUE)
@@ -613,27 +630,27 @@ unloadso.mrgmod <- function(x, ...) {
   return(invisible(NULL))
 }
 
-##' @rdname tgrid
-##' @export
+#' @rdname tgrid
+#' @export
 setMethod("stime", "mrgmod",  function(x,...) {
   render_time(x)
 })
 
-##' @rdname revar
-##' @export
+#' @rdname revar
+#' @export
 setMethod("revar", "mrgmod", function(x,...) {
   return(list(omega=x@omega,sigma=x@sigma))
 })
 
-##' @rdname blocks
-##' @export
+#' @rdname blocks
+#' @export
 setMethod("blocks", "mrgmod", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(cfile(x),what)
 })
 
-##' @rdname blocks
-##' @export
+#' @rdname blocks
+#' @export
 setMethod("blocks", "character", function(x,...) {
   what <- as.character(match.call()[-1])[-1]
   blocks_(x,what)
@@ -669,8 +686,12 @@ summary.mrgmod <- function(object,...) {
 
 blocks_ <- function(file,what) {
   if(length(what)==0) what <- c("PARAM","MAIN", "ODE","DES", "TABLE")
-  if(!file_exists(file)) stop("Can't find model file", call.=FALSE)
-  bl <- modelparse(readLines(file, warn=FALSE))
+  if(!file_exists(file)) wstop("can't find model file.")
+  if(grepl("\\.Rmd$", file)) {
+    bl <- modelparse_rmd(readLines(file, warn=FALSE))
+  } else {
+    bl <- modelparse(readLines(file, warn=FALSE))    
+  }
   if(!any(what == "all")) bl <- bl[names(bl) %in% what]
   if(length(bl)==0) {
     message("No blocks found.")
@@ -691,18 +712,19 @@ parin <- function(x) {
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 
-    ss_n = 500, ss_fixed = FALSE
+    ss_n = 500, ss_fixed = FALSE, 
+    ss_cmt = x@ss_cmt
   )
 }
 
-##' Show model specification and C++ files
-##' 
-##' @param x model object
-##' @param spec logical; show the model specification file
-##' @param source logical; show the C++ file that is actually compiled
-##' @param ... not used
-##' @export
-##' @keywords internal
+#' Show model specification and C++ files
+#' 
+#' @param x model object
+#' @param spec logical; show the model specification file
+#' @param source logical; show the C++ file that is actually compiled
+#' @param ... not used
+#' @export
+#' @keywords internal
 file_show <- function(x,spec=TRUE,source=TRUE,...) {
   stopifnot(is.mrgmod(x))
   what <- list()
@@ -712,7 +734,7 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
 }
 
 
-##' @export
+#' @export
 all.equal.mrgmod <- function(target, current,...) {
   target.env <- as.list(target@envir)
   current.env <- as.list(current@envir)
@@ -720,4 +742,33 @@ all.equal.mrgmod <- function(target, current,...) {
   t1 <- isTRUE(identical(target,current))
   t2 <- identical(target.env, current.env)
   all(t1,t2)
+}
+
+#' @export
+.DollarNames.mrgmod <- function(x, pattern){
+  grep(pattern, names(param(x)), value=TRUE)
+}
+
+#' Show names of current output variables
+#' 
+#' @param x mrgmod object
+#' @param unlist if `TRUE` then a character vector (rather than list) is 
+#' returned
+#' 
+#' @return
+#' When `unlist` is `FALSE` (default) : a named list, with `cmt` showing names 
+#' of output compartments and `capture` giving names of output variables in 
+#' capture.  When `unlist` is `TRUE`, then a single, unnamed character vector
+#' of outvar names is returned.
+#' 
+#' @examples
+#' 
+#' outvars(mrgsolve::house())
+#' 
+#' @md
+#' @export
+outvars <- function(x, unlist = FALSE) {
+  ans <- list(cmt = x@cmtL, capture = x@capL)
+  if(unlist) unlist(ans, use.names=FALSE)
+  ans
 }

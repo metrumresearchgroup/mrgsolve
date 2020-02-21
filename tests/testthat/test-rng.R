@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-rng")
 
-mod <- mrgsolve:::house(omega=diag(c(1,1,1,1)))
+mod <- mrgsolve::house(omega=diag(c(1,1,1,1)))
 
 ident <- function(x,y,...) {
   identical(x,y) 

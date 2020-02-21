@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -26,6 +26,13 @@ double databox::mtime(double time) {
   return time;
 }
 
+/**
+ * Calculates time after dose.
+ * 
+ * @return the calculated time after dose; if no dose has been given for the 
+ * current individual, then -1 is returned.
+ * 
+ */
 double databox::tad() {
   static double told = -1.;
   if(newind <= 1) told = -1.0;

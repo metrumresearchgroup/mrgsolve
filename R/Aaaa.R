@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,43 +15,46 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' @import methods
-##' 
-##' @importFrom utils capture.output example str type.convert 
-##' @importFrom utils packageVersion assignInMyNamespace read.table
-##' @importFrom stats as.formula setNames rnorm
-##' @importFrom dplyr filter 
-##' @importFrom dplyr mutate slice as.tbl pull
-##' @importFrom dplyr bind_rows arrange summarise summarise_at
-##' @importFrom dplyr intersect select rename slice distinct do
-##' @importFrom dplyr distinct first select_vars_ 
-##' @importFrom dplyr select_vars everything 
-##' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
-##' @importFrom dplyr mutate_all group_by ungroup n
-##' @importFrom dplyr data_frame as_data_frame
-##' @importFrom tidyselect vars_select
-##' @importFrom magrittr %>% %T>%
-##' @importFrom Rcpp evalCpp
-##' @importFrom RcppArmadillo armadillo_version
-##' @importFrom tibble tibble as_tibble
-##' @importFrom rlang quos enquo quo_name syms !!! !! eval_tidy
-##' 
-##' @include Aaaa.R
-##' @include class_mrgsims.R
-##' @include class_mrgmod.R
-##' @include class_derived.R
-##' @include class_ev.R
-##' @include class_matlist.R
-##' @include class_numericlist.R
-##' @include class_tgrid.R  
-##' @include generics.R
-##' @include package.R
-##' @include utils.R 
-##' @include RcppExports.R  
-##' 
+#' @import methods
+#' 
+#' @importFrom utils capture.output example str type.convert 
+#' @importFrom utils packageVersion assignInMyNamespace read.table
+#' @importFrom utils .DollarNames
+#' @importFrom stats as.formula setNames rnorm
+#' @importFrom dplyr filter 
+#' @importFrom dplyr mutate slice as.tbl pull
+#' @importFrom dplyr bind_rows arrange summarise summarise_at
+#' @importFrom dplyr intersect select rename slice distinct do
+#' @importFrom dplyr distinct first select_vars_ 
+#' @importFrom dplyr select_vars everything 
+#' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
+#' @importFrom dplyr mutate_all group_by ungroup n
+#' @importFrom dplyr data_frame as_data_frame
+#' @importFrom tidyselect vars_select
+#' @importFrom magrittr %>% %T>%
+#' @importFrom Rcpp evalCpp
+#' @importFrom RcppArmadillo armadillo_version
+#' @importFrom tibble tibble as_tibble
+#' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy
+#' @importFrom lifecycle deprecate_soft
+#' @importFrom glue glue
+#' 
+#' @include Aaaa.R
+#' @include class_mrgsims.R
+#' @include class_mrgmod.R
+#' @include class_derived.R
+#' @include class_ev.R
+#' @include class_matlist.R
+#' @include class_numericlist.R
+#' @include class_tgrid.R  
+#' @include generics.R
+#' @include package.R
+#' @include utils.R 
+#' @include RcppExports.R  
+#' 
 NULL
 
-##' @export
+#' @export
 dplyr::filter
 
 GLOBALS <- new.env()

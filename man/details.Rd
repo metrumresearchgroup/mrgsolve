@@ -25,7 +25,7 @@ This function is not exported.  You will have to call it
 with \code{mrgsolve:::details()}.
 }
 \examples{
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 mrgsolve:::details(mod)
 

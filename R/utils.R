@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -283,7 +283,7 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 ##' list is returned.
 ##' 
 ##' @examples
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
 ##' 
 ##' @md

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -26,7 +26,7 @@ project <- file.path(system.file(package="mrgsolve"), "models")
 
 context("test-knobs")
 
-mod <- mrgsolve:::house(atol=1E-20,rtol=1E-12,digits=8)
+mod <- mrgsolve::house(atol=1E-20,rtol=1E-12,digits=8)
 
 out <- knobs(mod %>% init(GUT=0), CL=c(1,2,3), foo=c(2,3,4),fooo=1, amt=c(100,200), cmt=1)
 dfout <- as.data.frame(out)

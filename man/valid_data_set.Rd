@@ -32,7 +32,7 @@ simulation.
 }
 \examples{
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 data(exTheoph)
 

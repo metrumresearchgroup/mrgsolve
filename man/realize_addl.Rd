@@ -8,8 +8,13 @@
 \usage{
 realize_addl(x, ...)
 
-\method{realize_addl}{data.frame}(x, warn = FALSE, mark_new = FALSE,
-  fill = c("inherit", "na", "locf"), ...)
+\method{realize_addl}{data.frame}(
+  x,
+  warn = FALSE,
+  mark_new = FALSE,
+  fill = c("inherit", "na", "locf"),
+  ...
+)
 
 \method{realize_addl}{ev}(x, ...)
 }

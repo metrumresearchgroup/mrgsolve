@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,9 +25,16 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-mrgsims")
 
 test_that("mrgsims class", {
-  mod <- mrgsolve:::house()   
+  mod <- mrgsolve::house()   
   out <- mrgsim(mod)
   expect_true(is.mrgsims(out))
   expect_is(as.list(out), "mrgsims_list")
+})
+
+test_that("plot from character", {
+  out <- mrgsolve::house() %>% mrgsim()
+  pl1 <- out %>%  plot(" CENT DV, CP")
+  pl2 <- out %>% plot(CENT+DV+CP~time)
+  expect_equal(pl1,pl2)
 })
 

@@ -5,11 +5,24 @@
 \alias{NMXML}
 \title{Get THETA, OMEGA and SIGMA from a completed NONMEM run}
 \usage{
-nmxml(run = numeric(0), project = character(0), file = character(0),
-  theta = TRUE, omega = TRUE, sigma = TRUE, olabels = NULL,
-  slabels = NULL, oprefix = "", sprefix = "", tname = "THETA",
-  oname = "...", sname = "...", index = "last",
-  xpath = ".//nm:estimation", ...)
+nmxml(
+  run = numeric(0),
+  project = character(0),
+  file = character(0),
+  theta = TRUE,
+  omega = TRUE,
+  sigma = TRUE,
+  olabels = NULL,
+  slabels = NULL,
+  oprefix = "",
+  sprefix = "",
+  tname = "THETA",
+  oname = "...",
+  sname = "...",
+  index = "last",
+  xpath = ".//nm:estimation",
+  ...
+)
 }
 \arguments{
 \item{run}{run number}

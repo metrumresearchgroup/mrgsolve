@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=FALSE)
 context("test-workflow")
 
 test_that("workflow", {
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   e <- ev(amt = 100)
   out <- mod %>% ev(e) %>% wf_sweep(CL)
   expect_is(out, "mrgsims")

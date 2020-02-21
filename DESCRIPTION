@@ -1,22 +1,39 @@
-Package: mrgsolve
 Type: Package
-Version: 0.10.0
+Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Authors@R: c(
-    person("Kyle T", "Baron", email = "kyleb@metrumrg.com", role=c("aut", "cre"), comment=c(ORCID="0000-0001-7252-5656")),
-    person("Bill", "Gillespie", role = "ctb"),
-    person("Charles", "Margossian", role = "ctb"),
-    person("Devin", "Pastoor", role = "ctb"),
-    person("Bill", "Denney", role = "ctb", comment=c(ORCID="0000-0002-5759-428X")),
-    person("Dilawar", "Singh", role = "ctb"), 
-    person("Metrum Research Group", role = "cph")
-    )
-Maintainer: Kyle T Baron  <kyleb@metrumrg.com>
-URL: https://github.com/metrumresearchgroup/mrgsolve
-BugReports: https://github.com/metrumresearchgroup/mrgsolve/issues
-Description: Fast simulation from ordinary differential equation (ODE) based 
-    models typically employed in quantitative pharmacology and systems biology.  
+Version: 0.10.1
+Authors@R: 
+    c(person(given = "Kyle T",
+             family = "Baron",
+             role = c("aut", "cre"),
+             email = "kyleb@metrumrg.com",
+             comment = c(ORCID = "0000-0001-7252-5656")),
+      person(given = "Bill",
+             family = "Gillespie",
+             role = "ctb"),
+      person(given = "Charles",
+             family = "Margossian",
+             role = "ctb"),
+      person(given = "Devin",
+             family = "Pastoor",
+             role = "ctb"),
+      person(given = "Bill",
+             family = "Denney",
+             role = "ctb",
+             comment = c(ORCID = "0000-0002-5759-428X")),
+      person(given = "Dilawar",
+             family = "Singh",
+             role = "ctb"),
+      person(given = "Metrum Research Group",
+             role = "cph"))
+Maintainer: Kyle T Baron <kyleb@metrumrg.com>
+Description: Fast simulation from ordinary differential equation
+    (ODE) based models typically employed in quantitative pharmacology and
+    systems biology.
 License: GPL (>=2)
+URL: https://github.com/metrumresearchgroup/mrgsolve
+BugReports: 
+    https://github.com/metrumresearchgroup/mrgsolve/issues
 Depends:
     R (>= 3.1.2),
     methods
@@ -26,23 +43,28 @@ Imports:
     magrittr (>= 1.5),
     RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 2.1.1),
-    rlang (>= 0.3.4), 
-    tidyselect (>= 0.2.5)
-LinkingTo: 
-    Rcpp (>= 0.12.12), 
-    RcppArmadillo (>= 0.7.900.2.0), 
-    BH (>= 1.62.0-1)
+    rlang (>= 0.3.4),
+    tidyselect (>= 0.2.5),
+    lifecycle, 
+    glue
 Suggests:
     lattice,
     testthat,
     xml2 (>= 1.2.0),
-    rmarkdown, 
-    yaml, 
+    rmarkdown,
+    yaml,
     knitr
-LazyLoad: yes
-NeedsCompilation: yes
+LinkingTo: 
+    Rcpp (>= 0.12.12),
+    RcppArmadillo (>= 0.7.900.2.0),
+    BH (>= 1.62.0-1)
+RdMacros: 
+    lifecycle
 Encoding: UTF-8
 Language: en-US
+LazyLoad: yes
+NeedsCompilation: yes
+RoxygenNote: 7.0.2
 SystemRequirements: C++11
 Collate: 
     'RcppExports.R'
@@ -92,4 +114,3 @@ Collate:
     'render.R'
     'update.R'
     'workflows.R'
-RoxygenNote: 6.1.1

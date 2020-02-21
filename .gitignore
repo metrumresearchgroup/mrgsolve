@@ -1,3 +1,4 @@
+Doxygen
 DOCS
 mrgsolve.Rcheck
 .DS_store
@@ -11,3 +12,4 @@ Rchecks
 *.tar.gz
 !package/*.tar.gz
 *00_pkg_src
+inst/maintenance/unit/tests.md

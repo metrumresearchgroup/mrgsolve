@@ -205,7 +205,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- parse_env(spec,project=build$project,ENV)
-
+  
   ## The main sections that need R processing:
   spec <- move_global(spec,mread.env)
   
@@ -232,13 +232,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   init <-  as.list(do.call("c",unname(mread.env$init)))
   ode <- do.call("c", unname(mread.env$ode))
   annot_list_maybe <- nonull.list(mread.env$annot)
-
+  
   if (!length(annot_list_maybe)) {
     annot <- tibble()
   } else {
     annot <- dplyr::bind_rows(annot_list_maybe)
   }
-
+  
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   namespace <- do.call("c", mread.env$namespace)
@@ -341,6 +341,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   args <- list(...)
   x <- update(x, data=args, open=TRUE, strict = FALSE)
   
+  ## Modify SS compartments
+  x <- set_ss_cmt(x,SET[["ss_cmt"]])
+  
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib[["covariates"]] <- mread.env[["covariates"]]
@@ -364,13 +367,18 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     smats = smat(x),
     set = SET,
     check.bounds = check.bounds, 
+    plugin = plugin,
     dbsyms = args[["dbsyms"]]
   )
-
+  
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
-  to_restore <- set_up_env(plugin,clink=c(project(x),SET$clink))
+  to_restore <- set_up_env(
+    x=plugin,
+    clink=c(project(x),SET$clink), 
+    CXX = ENV$PKG_CXXFLAGS
+  )
   on.exit({
     setwd(cwd)
     do_restore(to_restore)
@@ -378,7 +386,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   incl <- function(x) paste0('#include "', x, '"')
   header_file <- paste0(build$model, "-mread-header.h")
-
+  
   dbs <- NULL
   if(isTRUE(args[["dbsyms"]])) {
     dbs <- debug_symbols(names(init(x)))

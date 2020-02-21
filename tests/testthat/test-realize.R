@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-ev")
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 test_that("dosing without ss", {
   e <- ev(amt = 100, ii = 24, addl = 3)

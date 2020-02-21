@@ -10,13 +10,30 @@ mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
 
 mrgsim_df(..., output = "df")
 
-do_mrgsim(x, data, idata = no_idata_set(), carry_out = carry.out,
-  carry.out = character(0), seed = as.integer(NA),
-  Request = character(0), output = NULL, capture = NULL,
-  obsonly = FALSE, obsaug = FALSE, tgrid = NULL, recsort = 1,
-  deslist = list(), descol = character(0), filbak = TRUE,
-  tad = FALSE, nocb = TRUE, skip_init_calc = FALSE, ss_n = 500,
-  ss_fixed = FALSE, ...)
+do_mrgsim(
+  x,
+  data,
+  idata = no_idata_set(),
+  carry_out = carry.out,
+  carry.out = character(0),
+  seed = as.integer(NA),
+  Request = character(0),
+  output = NULL,
+  capture = NULL,
+  obsonly = FALSE,
+  obsaug = FALSE,
+  tgrid = NULL,
+  recsort = 1,
+  deslist = list(),
+  descol = character(0),
+  filbak = TRUE,
+  tad = FALSE,
+  nocb = TRUE,
+  skip_init_calc = FALSE,
+  ss_n = 500,
+  ss_fixed = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{the model object}
@@ -157,7 +174,7 @@ simulated output that occur prior to the first record in \code{data}.
 
 e <- ev(amt = 1000)
 
-mod <- mrgsolve:::house() 
+mod <- mrgsolve::house() 
 
 out <- mod \%>\% ev(e) \%>\% mrgsim()
 

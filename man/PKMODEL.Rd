@@ -4,8 +4,15 @@
 \alias{PKMODEL}
 \title{Parse PKMODEL BLOCK data}
 \usage{
-PKMODEL(ncmt = 1, depot = FALSE, cmt = NULL,
-  trans = pick_trans(ncmt, depot), env = list(), pos = 1, ...)
+PKMODEL(
+  ncmt = 1,
+  depot = FALSE,
+  cmt = NULL,
+  trans = pick_trans(ncmt, depot),
+  env = list(),
+  pos = 1,
+  ...
+)
 }
 \arguments{
 \item{ncmt}{number of compartments; must be 1 (one-compartment, 

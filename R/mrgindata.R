@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -103,7 +103,7 @@ convert_character_cmt <- function(data, mod) {
 ##' 
 ##' @examples
 ##' 
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' 
 ##' data(exTheoph)
 ##' 

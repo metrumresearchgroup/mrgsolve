@@ -17,10 +17,11 @@ Return a pre-compiled, PK/PD model
 }
 \examples{
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 see(mod)
 
 mod \%>\% ev(amt=100) \%>\% mrgsim \%>\% plot
 
 }
+\keyword{internal}

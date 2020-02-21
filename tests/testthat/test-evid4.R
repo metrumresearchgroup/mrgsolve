@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 # Issue 299
 context("test-evid4")
 
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 test_that("evid4 bolus dosing is the same as evid1", {
   e1 <- ev(amt = 100, ii = 24, addl = 3)

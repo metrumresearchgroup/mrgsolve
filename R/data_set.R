@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -88,7 +88,7 @@
 ##'
 ##' @examples
 ##'
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' 
 ##' data <- expand.ev(ID=1:3, amt=c(10,20))
 ##'

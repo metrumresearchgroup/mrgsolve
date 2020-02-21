@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -44,7 +44,7 @@
 ##' omat(mat1, mat2, mat3)
 ##' omat(A=mat1, B=mat2, C=mat3)
 ##'
-##' mod <- mrgsolve:::house() %>% omat(mat4)
+##' mod <- mrgsolve::house() %>% omat(mat4)
 ##'
 ##' omat(mod)
 ##' omat(mod, make=TRUE)
@@ -147,7 +147,7 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
 ##' smat(mat1, mat2, mat3)
 ##' smat(A=mat1, B=mat2, C=mat3)
 ##'
-##' mod <- mrgsolve:::house() %>% smat(mat1)
+##' mod <- mrgsolve::house() %>% smat(mat1)
 ##'
 ##' smat(mod)
 ##' smat(mod, make=TRUE)
@@ -233,20 +233,35 @@ setMethod("zero.re", "mrgmod", function(.x,...,.drop=FALSE) {
 ##' @export
 zero_re <- function(...) zero.re(...)
 
-##' @rdname matlist
-##' @export
+#' Deprecated: drop random effect matrices from model object
+#' 
+#' 
+#' @param .x not used
+#' @param ... not used
+#' 
+#' @details 
+#' Users are no longer allowed to remove random effect matrices from the model 
+#' object.  Use [zero_re] instead to convert the matrix to all zeros.
+#' 
+#' 
+#' @seealso [zero_re]
+#' @md
+#' @export
 drop_re <- function(.x,...) {
-  .Deprecated(msg="drop.re and drop_re are deprecated.  Use zero_re instead.")
-  what <- as.character(eval(substitute(alist(...))))
-  if(length(what)==0) what <- c("omega", "sigma")
-  if(is.element("omega", what)) .x@omega <- new("omegalist")
-  if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
-  return(.x)
+  lifecycle::deprecate_stop("0.10.1", "drop_re()", "zero_re()")
+  # .Deprecated(msg="drop.re and drop_re are deprecated.  Use zero_re instead.")
+  # what <- as.character(eval(substitute(alist(...))))
+  # if(length(what)==0) what <- c("omega", "sigma")
+  # if(is.element("omega", what)) .x@omega <- new("omegalist")
+  # if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
+  # return(.x)
 }
 
-##' @rdname matlist
-##' @export
-drop.re <- function(...) drop_re(...)
+#' @rdname drop_re
+#' @export
+drop.re <- function(...) {
+  lifecycle::deprecate_stop("0.10.1", "drop.re()", "zero_re()")
+}
 
 ##' @export
 ##' @rdname matlist

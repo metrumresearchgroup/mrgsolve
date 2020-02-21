@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -26,66 +26,67 @@ other_val <- c("param", "init", "omega", "sigma", "outvars")
 
 all_updatable <- c(sval,other_val)
 
-##' Update the model object
+#' Update the model object
+#'
+#' After the model object is created, update various attributes.
+#'
+#' @param object a model object
+#' @param ... named items to update
+#' @param merge logical indicating to merge (rather than replace) 
+#' new and existing attributes
+#' @param open logical; used only when merge is \code{TRUE} and 
+#' parameter list or initial conditions
+#' list is being updated; if \code{FALSE}, no new items will be 
+#' added; if \code{TRUE}, the parameter list may expand.
+#' @param data a list of items to update; this list is combined 
+#' with any items passed in via \code{...}
+#' @param strict if \code{TRUE}, then an error will be generated if there is 
+#' attempt to update a non-existent item
+#' 
+#' @return The updated model object is returned.
+#' 
+#' @details
+#' Slots that can be updated: 
+#' 
+#' \itemize{
+#' \item verbose
+#' \item debug
+#' \item preclean
+#' \item mindt
+#' \item digits
+#' \item atol - absolute solver tolerance; see \code{\link{solversettings}}
+#' \item rtol - relative solver tolerance; see \code{\link{solversettings}}
+#' \item ixpr - see \code{IXPR} in \code{\link{solversettings}}
+#' \item mxhnil - see \code{MXHNIL} in \code{\link{solversettings}}
+#' \item hmin - see \code{HMIN} in \code{\link{solversettings}}
+#' \item hmax - see \code{HMAX} in \code{\link{solversettings}}
+#' \item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
+#' \item start, end, delta, add
+#' \item tscale
+#' \item request
+#' \item param
+#' \item init
+#' \item omega
+#' \item sigma
+#' \item outvars
+#' } 
+#'  
+#' @name update
+#' 
+#' @aliases update,mrgmod-method
+#' 
+#' @examples
+#' \dontrun{
+#'  mod <- mrgsolve::house()
 ##'
-##' After the model object is created, update various attributes.
-##'
-##' @param object a model object
-##' @param ... named items to update
-##' @param merge logical indicating to merge (rather than replace) 
-##' new and existing attributes
-##' @param open logical; used only when merge is \code{TRUE} and 
-##' parameter list or initial conditions
-##' list is being updated; if \code{FALSE}, no new items will be 
-##' added; if \code{TRUE}, the parameter list may expand.
-##' @param data a list of items to update; this list is combined 
-##' with any items passed in via \code{...}
-##' @param strict if \code{TRUE}, then an error will be generated if there is 
-##' attempt to update a non-existent item
-##' 
-##' @return The updated model object is returned.
-##' 
-##' @details
-##' Slots that can be updated: 
-##' 
-##' \itemize{
-##' \item verbose
-##' \item debug
-##' \item preclean
-##' \item mindt
-##' \item digits
-##' \item atol - absolute solver tolerance; see \code{\link{solversettings}}
-##' \item rtol - relative solver tolerance; see \code{\link{solversettings}}
-##' \item ixpr - see \code{IXPR} in \code{\link{solversettings}}
-##' \item mxhnil - see \code{MXHNIL} in \code{\link{solversettings}}
-##' \item hmin - see \code{HMIN} in \code{\link{solversettings}}
-##' \item hmax - see \code{HMAX} in \code{\link{solversettings}}
-##' \item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
-##' \item start, end, delta, add
-##' \item tscale
-##' \item request
-##' \item param
-##' \item init
-##' \item omega
-##' \item sigma
-##' \item outvars
-##' } 
-##'  
-##' @name update
-##' 
-##' @aliases update,mrgmod-method
-##' 
-##' @examples
-##' \dontrun{
-##'  mod <- mrgsolve:::house()
-##'
-##'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
-##' }
-##'  
-##' @seealso \code{\link{update}}, \code{\link{mrgmod-class}}
-##'  
-##' @export
-##'  
+#'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
+#' }
+#'  
+#' @seealso \code{\link{update}}, \code{\link{mrgmod-class}}, 
+#' \code{\link{within}}
+#'  
+#' @export
+#'  
 setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, 
                                        data=NULL, strict=TRUE) {
   
@@ -283,22 +284,22 @@ update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
   return(x)
 }
 
-##' @rdname update
-##' @export
-##' @param y another object involved in update
+#' @rdname update
+#' @export
+#' @param y another object involved in update
 setMethod("update", "omegalist", function(object,y,...) {
   update_matlist(object, omat(y),context="omat",...)
 })
 
-##' @rdname update
-##' @export
+#' @rdname update
+#' @export
 setMethod("update", "sigmalist", function(object,y,...) {
   update_matlist(object, smat(y),context="smat",...)
 })
 
-##' @rdname update
-##' @param .y data to update
-##' @export
+#' @rdname update
+#' @param .y data to update
+#' @export
 setMethod("update", "parameter_list", function(object,.y,...) {
   object <- as.param(
     merge.list(
@@ -308,8 +309,77 @@ setMethod("update", "parameter_list", function(object,.y,...) {
   object
 })
 
-##' @export
-##' @rdname update
-setMethod("update", "ev", function(object,y,...) {
-  
-})
+
+#' Update parameters, initials, and settings within a model object
+#' 
+#' The main use case for using [within] rather than [update] or [param] or
+#' [init] is when you want to update to a new value that is calculated from 
+#' the existing value.  See the example in details
+#' 
+#' Other model object slots that can be updated: `start`, `end`, `delta`, 
+#' `add`, `rtol`, `atol`, `hmax`, `maxsteps`.  These are include for convenience, 
+#' but we expect that most of the time these will get updated through the 
+#' update method.
+#' 
+#' @param data an object with class mrgmod
+#' @param expr expressions evaluated in an environment containing various model
+#' object components, including parameters, initial conditions, and others 
+#' (see details)
+#' @param ... not used
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' 
+#' mod2 <- within(mod, {CL <- CL * 1.5})
+#' 
+#' mod$CL
+#' mod2$CL
+#' 
+#' @seealso [update]
+#' @name within
+#' @aliases within,mrgmod-method
+#' @md
+#' @export
+within.mrgmod <- function(data,expr,...) {
+  p <- as.list(param(data))
+  i <- as.list(init(data))
+  up <- list(
+    start = data@start, end = data@end, delta = data@delta, 
+    atol = data@atol, rtol = data@rtol, hmax = data@hmax,
+    maxsteps = data@maxsteps
+  )
+  up <- up[which(!(names(up) %in% c(names(p),names(i))))]
+  parent <- parent.frame()
+  env <- list2env(c(p,i,up),parent = parent)
+  eval(substitute(expr),env)
+  if(length(up) > 0) {
+    data <- update(data,data = mget(names(up),env))  
+  }
+  if(length(p) > 0) {
+    data <- param(data,mget(names(p),env))  
+  }
+  if(length(i) > 0) {
+    data <- init(data,mget(names(i),env))
+  }
+  data
+}
+
+set_ss_cmt <- function(x,ss_cmt) {
+  if(!is.character(ss_cmt)) return(x)
+  ss_cmt <- cvec_cs(ss_cmt)
+  if(length(ss_cmt)==0) return(x)
+  ss_exclude <- grepl("^-", ss_cmt[1])
+  ss_cmt[1] <- gsub("^-", "", ss_cmt[1])
+  ss_cmt <- ss_cmt[nzchar(ss_cmt)]
+  if(length(ss_cmt)==0) return(x)
+  if(any(!is.element(ss_cmt, Cmt(x)))) {
+    diff <- setdiff(ss_cmt, Cmt(x)) 
+    diff <- paste0(" - ", diff, "\n")
+    stop("invalid cmt names found in ss_cmt\n", diff, call.=FALSE)
+  }
+  if(ss_exclude) ss_cmt <- setdiff(Cmt(x),ss_cmt)  
+  x@ss_cmt <- match(ss_cmt, Cmt(x)) - 1L
+  ss_cmt_check <- range(x@ss_cmt) 
+  stopifnot(ss_cmt_check[1] >= 0 && ss_cmt_check[2] < neq(x))
+  x
+}

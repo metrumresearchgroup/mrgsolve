@@ -23,7 +23,7 @@ the pipeline.
 }
 \examples{
 # The model is in hours:
-mod <- mrgsolve:::house()
+mod <- mrgsolve::house()
 
 # The output is in days:
 mod \%>\% tscale(1/24) \%>\% mrgsim

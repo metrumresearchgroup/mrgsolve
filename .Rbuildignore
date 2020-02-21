@@ -1,3 +1,5 @@
+Doxygen
+doxyfile
 man/figures/README-.*\.png$
 README.html
 DOCS/

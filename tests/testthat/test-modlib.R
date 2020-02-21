@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-modlib")
 
 test_that("code extraction", {
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   x <- mrgsolve:::code(mod)
   expect_is(x, "character")
   expect_error(mrgsolve:::code(letters))

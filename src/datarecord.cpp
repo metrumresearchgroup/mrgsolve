@@ -220,6 +220,8 @@ void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solv
 
 void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
+  prob->ss_flag = true;
+  
   dvec state_incoming;
   
   if(Ss == 2) {
@@ -238,7 +240,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   std::vector<double> last(prob->neq(), -1E9);
   double diff = 0, err = 0;
   bool made_it = false;
-  
+  size_t n_cmt = prob->Ss_cmt.size();
+
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
@@ -252,20 +255,18 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     prob->lsoda_init();
     prob->advance(tfrom,tto,solver);
     
-    int ngood = 0;
-    for(int j=0; j < prob->neq(); ++j) {
+    size_t ngood = 0, j = 0;
+    for(size_t jj=0; jj < n_cmt; ++jj) {
+      j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
       err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
       if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
-    if(ngood == prob->neq()) {
-      tfrom = double(i-1)*Ii;
-      tto  = double(i)*Ii;
+    if(ngood == n_cmt) {
       made_it = true;
       break;
     }
-    tfrom = tto;
   }
   
   if((!made_it) && warn) {
@@ -281,16 +282,18 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   // and advance to tto - lagtime.
   double lagt = prob->alag(this->cmtn());
   if(lagt > 0) {
-    // if(lagt >= Ii) {
-    //   throw Rcpp::exception("ALAG(n) greater than ii on ss record.",false);
-    // }
     if(Ss==2) {
       throw Rcpp::exception("Ss == 2 with lag time is not currently supported.",false);
     }
-    evon->implement(prob); 
     prob->lsoda_init();
+    evon->implement(prob); 
     if(lagt <= Ii) {
-      prob->advance(tfrom, (tto - lagt), solver);
+      tfrom = tto;
+      tto = tfrom + Ii - lagt;
+      if(tto <= tfrom) {
+        throw Rcpp::exception("tto <= tfrom in seady_bolus with lag time.",false);  
+      }
+      prob->advance(tfrom, tto, solver);
     }
   }
   
@@ -300,6 +303,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     }
   } 
   prob->lsoda_init();
+  prob->ss_flag = false;
 } 
 
 
@@ -314,6 +318,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     this->steady_zero(prob,solver);
     return;
   }
+  
+  prob->ss_flag = true;
   
   std::vector<double> state_incoming;
   
@@ -332,9 +338,10 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   double tfrom = 0.0;
   
   int i;
-  int j;
+
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
+  size_t n_cmt = prob->Ss_cmt.size();
   std::vector<double> last(prob->neq(),-1e9);
   
   reclist offs;
@@ -380,14 +387,15 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     
     tfrom = nexti;
     
-    int ngood = 0;
-    for(j=0; j < prob->neq(); ++j) {
+    size_t ngood = 0, j = 0;
+    for(size_t jj=0; jj < n_cmt; ++jj) {
+      j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
       err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
       if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
-    if(ngood == prob->neq()) {
+    if(ngood == n_cmt) {
       tfrom = nexti;
       nexti  = double(i+1)*Ii;
       made_it = true;
@@ -448,23 +456,13 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     first_off = duration - Ii + Time + lagt;
     --ninf_ss;
   }
-  // Rcpp::Rcout << "ninfss " << ninf_ss << std::endl;
-  // Rcpp::Rcout << "length offs " << offs.size() << std::endl;
-  // Rcpp::Rcout << "Started " << start << std::endl;
-  // Rcpp::Rcout << "Ended " << end << std::endl;
-  // Rcpp::Rcout << "infusions " << prob->rate_count(1) << std::endl;
-  // Rcpp::Rcout << "Steady: " << prob->y(1) << std::endl;
-  // for(int k=0; k < ninf_ss; ++k) {
-  //   double offtime = first_off + double(k)*double(Ii);
-  //   rec_ptr evoff = NEWREC(Cmt, 9, Amt, offtime, Rate, -300, Id);
-  //   thisi.push_back(evoff);
-  // } 
   for(size_t k = 0; k < offs.size(); ++k) {
     offs.at(k)->time(first_off + double(k)*double(Ii));
     thisi.push_back(offs.at(k)); 
   }
   std::sort(thisi.begin(),thisi.end(),CompRec());
   prob->lsoda_init();
+  prob->ss_flag = false;
 }
 
 void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
@@ -474,11 +472,14 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     return;
   }
   
+  prob->ss_flag = true;
+  
   double tfrom = 0.0;
   double tto = 0.0;
   double a1 = 0, a2 = 0, t1 = 0, t2 = 0;
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
+  size_t n_cmt = prob->Ss_cmt.size();
   std::vector<double> last(prob->neq(),-1e9);
   bool made_it = false;
   
@@ -493,14 +494,15 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     tto = tfrom + duration;
     prob->advance(tfrom,tto,solver);
     tfrom = tto;
-    int ngood = 0;
-    for(int j=0; j < prob->neq(); ++j) {
+    size_t ngood = 0, j = 0;
+    for(size_t jj=0; jj < n_cmt; ++jj) {
+      j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
       err = solver.Rtol*fabs(prob->y(j)) + solver.Atol;
       if(diff < err) ++ngood;
       last[j] = prob->y(j);
     }
-    if(ngood == prob->neq()) {
+    if(ngood == n_cmt) {
       made_it = true;
       break;
     }
@@ -528,6 +530,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->rate_reset();
   prob->lsoda_init();
   this->unarm();
+  prob->ss_flag = false;
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 

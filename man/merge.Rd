@@ -4,8 +4,7 @@
 \alias{merge.list}
 \title{Merge two lists}
 \usage{
-\method{merge}{list}(x, y, ..., open = FALSE, warn = TRUE,
-  context = "object", wild = "...")
+\method{merge}{list}(x, y, ..., open = FALSE, warn = TRUE, context = "object", wild = "...")
 }
 \arguments{
 \item{x}{the original list}

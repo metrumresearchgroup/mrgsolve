@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -26,7 +26,7 @@ context("test-inventory-too")
 
 test_that("inventory conditions", {
     
-  mod <- mrgsolve:::house()
+  mod <- mrgsolve::house()
   
   data <- expand.ev(amt=100,CL=1, SEX=0)
   idata <- data.frame(ID=1, CL=1, SEX=0)

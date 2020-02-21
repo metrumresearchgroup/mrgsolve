@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -65,7 +65,7 @@
 ##' \code{\link{as.ev}}, \code{\link{ev_methods}}
 ##' 
 ##' @examples
-##' mod <- mrgsolve:::house()
+##' mod <- mrgsolve::house()
 ##' 
 ##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
 ##'
