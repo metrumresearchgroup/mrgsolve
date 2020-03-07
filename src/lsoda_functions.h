@@ -15,6 +15,11 @@ void LSODA::hmin_(const double value) {
   if(value !=0) iopt = 1;  
 }
 
+void LSODA::hinitial_(const double value) {
+  rworks[1] = value;
+  if(value !=0) iopt = 1;
+}
+
 void LSODA::maxsteps_(const int value) {
   Maxsteps = value;
   iworks[3] = value;

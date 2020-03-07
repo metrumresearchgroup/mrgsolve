@@ -58,6 +58,7 @@ public:
 
     void hmax_(const double value);
     void hmin_(const double value);
+    void hinitial_(const double value);
     void maxsteps_(const int value);
     void ixpr_(const int value);
     void mxhnil_(const int value);

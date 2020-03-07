@@ -112,6 +112,7 @@ protomod <- list(model=character(0),
                  maxsteps=20000,
                  hmin=0,
                  hmax=0,
+                 h0 = 0,
                  ixpr=0,
                  mxhnil=2,
                  shlib=list(date="",par="", cmt="", compiled=FALSE, 
@@ -707,7 +708,7 @@ blocks_ <- function(file,what) {
 parin <- function(x) {
   list(
     rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), 
-    hmax=as.double(x@hmax), ixpr=x@ixpr, 
+    hmax=as.double(x@hmax), h0 = as.double(x@h0), ixpr=x@ixpr, 
     maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,

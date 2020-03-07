@@ -83,6 +83,7 @@ LSODA::LSODA(int neq_, const Rcpp::List& parin) {
   Neq = neq_;
   hmax_(Rcpp::as<double>(parin["hmax"]));
   hmin_(Rcpp::as<double>(parin["hmin"]));
+  hinitial_(Rcpp::as<double>(parin["h0"]));
   maxsteps_(Rcpp::as<int>(parin["maxsteps"]));
   ixpr_(Rcpp::as<int>(parin["ixpr"]));
   mxhnil_(Rcpp::as<int>(parin["mxhnil"]));

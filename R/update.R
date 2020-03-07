@@ -20,7 +20,7 @@ setAs("NULL", "character", function(from) character(0))
 sval <- unique(c("atol","rtol",
                  "verbose","debug","preclean","mindt",
                  "digits", "ixpr", "mxhnil","start", "end", "add", "delta",
-                 "maxsteps", "hmin", "hmax","tscale", "request"))
+                 "maxsteps", "hmin", "hmax", "h0","tscale", "request"))
 
 other_val <- c("param", "init", "omega", "sigma", "outvars")
 
