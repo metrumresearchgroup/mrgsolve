@@ -404,8 +404,10 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   return(mrgsim_i(x, idata, ...))
 }
 
-##' @param carry_out data items to copy into the output
+##' @param carry_out numeric data items to copy into the output
 ##' @param carry.out soon to be deprecated; use \code{carry_out} instead
+##' @param recover columns in either \code{data} or \code{idata} to join back
+##' to simulated data; may be any class (e.g. numeric, character, factor, etc)
 ##' @param seed deprecated
 ##' @param Request compartments or captured variables to retain
 ##' in the simulated output; this is different than the \code{request}
@@ -471,6 +473,7 @@ do_mrgsim <- function(x,
                       idata = no_idata_set(),
                       carry_out = carry.out,
                       carry.out = character(0),
+                      recover = character(0),
                       seed = as.integer(NA),
                       Request = character(0),
                       output = NULL,
@@ -495,6 +498,34 @@ do_mrgsim <- function(x,
   
   if(length(Request) > 0) {
     x <- update_outputs(x, outputs=Request)  
+  }
+  
+  do_recover_data <- do_recover_idata <-  FALSE
+  if(length(recover) > 0) {
+    recover <- cvec_cs(recover)
+    rename.recov <- .ren.create(recover)
+    recover <- rename.recov$old
+    if(any(recover %in% carry_out)) {
+      stop("names in 'recover' cannot also be in 'carry_out'",call.=FALSE)  
+    }
+    recover_data <- intersect(recover,names(data))
+    do_recover_data  <- length(recover_data) > 0
+    if(do_recover_data) {
+      join_data <- data[,recover_data,drop=FALSE]
+      join_data$.data_row. <- seq_len(nrow(data))
+      data$.data_row. <- join_data$.data_row.
+      carry_out <- c(carry_out,".data_row.") 
+      drop <- names(which(vapply(join_data, function(x) !is.numeric(x), TRUE)))
+      data <- data[,setdiff(names(data),drop),drop=FALSE]
+    }
+    recover_idata <- intersect(recover,names(idata))
+    recover_idata <- setdiff(recover_idata,recover_data)
+    do_recover_idata <- length(recover_idata) > 0
+    if(do_recover_idata) {
+      join_idata <- idata[,unique(c("ID", recover_idata)),drop=FALSE]
+      drop <- names(which(vapply(join_idata, function(x) !is.numeric(x),TRUE)))
+      idata <- idata[,setdiff(names(idata),drop),drop=FALSE]
+    } 
   }
   
   ## data
@@ -638,9 +669,23 @@ do_mrgsim <- function(x,
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
   
+  ans <- as.data.frame(out[["data"]])
+  
+  if(do_recover_data || do_recover_idata) {
+    if(do_recover_data) {
+      if(!rename.recov$identical) names(join_data) <- .ren.rename(rename.recov,names(join_data))
+      ans <- left_join(ans,join_data,by=".data_row.",suffix=c("", ".recov"))  
+      ans$.data_row. <- NULL
+    }
+    if(do_recover_idata) {
+      if(!rename.recov$identical) names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
+      ans <- left_join(ans,join_idata,by="ID",suffix=c("", ".recov"))
+    }
+  }
+  
   if(!is.null(output)) {
     if(output=="df") {
-      return(as.data.frame(out[["data"]]))  
+      return(ans)  
     }
     if(output=="matrix") {
       return(out[["data"]])  
@@ -650,7 +695,7 @@ do_mrgsim <- function(x,
   new(
     "mrgsims",
     request = x@cmtL,
-    data=as.data.frame(out[["data"]]),
+    data=ans,
     outnames=x@capL,
     mod=x
   )

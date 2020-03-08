@@ -16,6 +16,7 @@ do_mrgsim(
   idata = no_idata_set(),
   carry_out = carry.out,
   carry.out = character(0),
+  recover = character(0),
   seed = as.integer(NA),
   Request = character(0),
   output = NULL,
@@ -55,9 +56,12 @@ idata and data are missing}
 otherwise, pass \code{df} to return a data.frame or \code{matrix} to 
 return a matrix}
 
-\item{carry_out}{data items to copy into the output}
+\item{carry_out}{numeric data items to copy into the output}
 
 \item{carry.out}{soon to be deprecated; use \code{carry_out} instead}
+
+\item{recover}{columns in either \code{data} or \code{idata} to join back
+to simulated data; may be any class (e.g. numeric, character, factor, etc)}
 
 \item{seed}{deprecated}
 
