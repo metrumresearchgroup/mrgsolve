@@ -29,7 +29,7 @@
 #' @importFrom dplyr select_vars everything 
 #' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 #' @importFrom dplyr mutate_all group_by ungroup n
-#' @importFrom dplyr data_frame as_data_frame
+#' @importFrom dplyr data_frame as_data_frame left_join
 #' @importFrom tidyselect vars_select
 #' @importFrom magrittr %>% %T>%
 #' @importFrom Rcpp evalCpp

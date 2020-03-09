@@ -120,7 +120,7 @@ test_that("numerics_only", {
     INT = as.integer(ID),
     BOOL = INT > 6
   )
-  df <- numerics_only(data)
+  df <- numerics_only(data, convert_lgl=TRUE)
   expect_equal(names(df), c("ID", "INT", "BOOL"))
   expect_true(all(mrgsolve:::is.numeric.data.frame(df)))
   expect_message(numerics_only(data))

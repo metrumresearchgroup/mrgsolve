@@ -13,7 +13,6 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 dllfile <- function(x) paste0(dllname(x),.Platform$dynlib.ext)
 pathfun <- function(...) path.expand(...) #,mustWork=FALSE,winslash=.Platform$file.sep
@@ -511,7 +510,7 @@ make_matrix_labels <- function(mat,lab,diag=TRUE) {
 
 
 # nocov start
-is.numeric.data.frame <- function(x) sapply(x, is.numeric)
+is.numeric.data.frame <- function(x) vapply(x,is.numeric,TRUE)
 
 mapvalues <- function (x, from, to, warn_missing = FALSE) { 
   if (length(from) != length(to)) {

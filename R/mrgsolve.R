@@ -505,7 +505,7 @@ do_mrgsim <- function(x,
     recover <- cvec_cs(recover)
     rename.recov <- .ren.create(recover)
     recover <- rename.recov$old
-    if(any(recover %in% carry_out)) {
+    if(any(rename.recov$new %in% carry_out)) {
       stop("names in 'recover' cannot also be in 'carry_out'",call.=FALSE)  
     }
     recover_data <- intersect(recover,names(data))
@@ -515,7 +515,7 @@ do_mrgsim <- function(x,
       join_data$.data_row. <- seq_len(nrow(data))
       data$.data_row. <- join_data$.data_row.
       carry_out <- c(carry_out,".data_row.") 
-      drop <- names(which(vapply(join_data, function(x) !is.numeric(x), TRUE)))
+      drop <- names(which(!is.numeric(join_data)))
       data <- data[,setdiff(names(data),drop),drop=FALSE]
     }
     recover_idata <- intersect(recover,names(idata))
@@ -523,7 +523,7 @@ do_mrgsim <- function(x,
     do_recover_idata <- length(recover_idata) > 0
     if(do_recover_idata) {
       join_idata <- idata[,unique(c("ID", recover_idata)),drop=FALSE]
-      drop <- names(which(vapply(join_idata, function(x) !is.numeric(x),TRUE)))
+      drop <- names(which(!is.numeric(join_idata)))
       idata <- idata[,setdiff(names(idata),drop),drop=FALSE]
     } 
   }
@@ -673,12 +673,16 @@ do_mrgsim <- function(x,
   
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
-      if(!rename.recov$identical) names(join_data) <- .ren.rename(rename.recov,names(join_data))
+      if(!rename.recov$identical) {
+        names(join_data) <- .ren.rename(rename.recov,names(join_data))
+      }
       ans <- left_join(ans,join_data,by=".data_row.",suffix=c("", ".recov"))  
       ans$.data_row. <- NULL
     }
     if(do_recover_idata) {
-      if(!rename.recov$identical) names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
+      if(!rename.recov$identical) {
+        names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
+      }
       ans <- left_join(ans,join_idata,by="ID",suffix=c("", ".recov"))
     }
   }
