@@ -217,11 +217,15 @@ out <- mod \%>\% mrgsim(data=exTheoph, obsaug=TRUE, carry_out="a.u.g")
 
 out
 
-out <- mod \%>\% ev(e) \%>\% mrgsim(req="CENT")
+out <- mod \%>\% ev(e) \%>\% mrgsim(outvars="CP,RESP")
 
 out
 
-out <- mrgsim(mod, Req="CP,RESP", events = e)
+a <- ev(amt = 1000, group = 'a')
+b <- ev(amt = 750, group = 'b')
+data <- as_data_set(a,b)
+
+out <- mrgsim_d(mod, data, recover="group")
 
 out
 
