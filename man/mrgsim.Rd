@@ -60,8 +60,9 @@ return a matrix}
 
 \item{carry.out}{soon to be deprecated; use \code{carry_out} instead}
 
-\item{recover}{columns in either \code{data} or \code{idata} to join back
-to simulated data; may be any class (e.g. numeric, character, factor, etc)}
+\item{recover}{character column names in either \code{data} or \code{idata} 
+to join back (recover) to simulated data; may be any class (e.g. numeric, 
+character, factor, etc)}
 
 \item{seed}{deprecated}
 
@@ -148,28 +149,40 @@ prior to returning.
 \itemize{
 
 \item Use \code{mrgsim_df} to return a data frame rather than 
-\code{mrgsims} object.
+\code{mrgsims} object
 
 \item{Both \code{data} and \code{idata} will be coerced to numeric matrix}
 
 \item{\code{carry_out} can be used to insert data columns into the output 
 data set.  This is partially dependent on the nature of the data brought 
-into the problem.}
+into the problem}
 
 \item When using \code{data} and \code{idata} together, an error is 
 generated if an  ID occurs in \code{data} but not \code{idata}.  
 Also, when looking up data in \code{idata}, ID in \code{idata} is 
 assumed to be uniquely keyed to ID in \code{data}.  No error is 
 generated if ID is duplicated in \code{data}; parameters will be used 
-from the first occurrence found in \code{idata}.
+from the first occurrence found in \code{idata}
  
- \item \code{carry_out}: \code{idata} is assumed to be 
+\item \code{carry_out}: \code{idata} is assumed to be 
 individual-level and variables that are carried from \code{idata} 
 are repeated throughout the individual's simulated data.  Variables 
 carried from \code{data} are carried via last-observation carry forward.  
 \code{NA} is returned from observations that are inserted into 
-simulated output that occur prior to the first record in \code{data}.
+simulated output that occur prior to the first record in \code{data}
 
+\item \code{recover}: this is similar to \code{carry_out} with respect to 
+end result, but it uses a different process.  Columns to be recovered are 
+cached prior to running the simuilation, and then joined back on to the 
+simulated data.  So, whereas \code{carry_out} will only accept numeric 
+data items, \code{recover} can handle data frame columns of any type.  There
+is a small decrease in performance with \code{recover} compared to 
+\code{carry_out}, but it is likely that the performance difference is 
+difficult to perceive (when the simulation runs very fast) or only a small
+fractional increase in run time when the simulation is very large.  And any
+performance hit is likely to be well worth it in light of the convenience 
+gain.  Just think carefully about using this feature when every millisecond
+counts.
 
 }
 }
@@ -211,7 +224,6 @@ out
 out <- mrgsim(mod, Req="CP,RESP", events = e)
 
 out
-
 
 }
 \seealso{
