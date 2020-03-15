@@ -72,7 +72,16 @@ nmxml <- function(run=numeric(0), project=character(0),
                   tname="THETA", oname="...", sname="...",
                   index = "last",
                   xpath = ".//nm:estimation",
-                  ...) {
+                  read_ext = FALSE, ...) {
+  
+  if(read_ext) {
+    ans <- import_nm_ext(
+      file=file,theta=theta,omega=omega,sigma=sigma,
+      olabels=olabels,slabels=slabels,oprefix=oprefix,sprefix=sprefix,
+      tname=tname,oname="...",sname="..."
+    )
+    return(ans)
+  }
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
@@ -173,6 +182,81 @@ nmxml <- function(run=numeric(0), project=character(0),
   
 }
 
+import_nm_ext <- function(file=character(0),
+                          theta=TRUE, omega=TRUE, sigma=TRUE,
+                          olabels = NULL, slabels = NULL,
+                          oprefix = "", sprefix="",
+                          tname="THETA", oname="...", sname="...") {
+  
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
+  
+  stopifnot(requireNamespace("readr"))
+  
+  data <- suppressMessages(readr::read_table(file, na = '.', skip = 1))
+  data <- as.data.frame(data)
+  est <- data[data$ITERATION == -1e9,]
+  
+  if(nrow(data)==0) stop("could not find final estiamtes",call.=FALSE)
+  
+  th <- list()
+  om <- matrix(0,0,0)
+  sg <- matrix(0,0,0)
+  
+  if(theta) {
+    th <- grepl("THETA", names(est),fixed=TRUE)
+    th <- as.list(est[,th])
+    th <- as.numeric(th)
+    names(th) <- paste0(tname, seq(length(th)))
+  }
+  
+  if(omega) {
+    stopifnot(nchar(oname) > 0)
+    om <- grepl("OMEGA", names(est), fixed = TRUE)
+    om <- as.numeric(est[,om])
+    om <- lower2matrix(om)
+    if(is.null(olabels)) {
+      olabels <- rep('.', nrow(om))
+    } else {
+      olabels <- paste0(oprefix,olabels)
+    }
+    olabels <- list(olabels)
+  } else {
+    olabels <- list()
+  }
+  
+  if(sigma) {
+    stopifnot(nchar(sname) > 0)
+    sg <- grepl("SIGMA", names(est), fixed = TRUE)
+    sg <- as.numeric(est[,sg])
+    sg <- lower2matrix(sg)
+    if(is.null(slabels)) {
+      slabels <- rep('.', nrow(sg))
+    } else {
+      slabels <- paste0(sprefix,slabels)
+    }
+    slabels <- list(slabels)
+  } else {
+    slabels <- list()
+  }
+  
+  om <- create_matlist(
+    setNames(list(om),oname), 
+    labels=olabels, 
+    class="omegalist"
+  )
+  
+  sg <- create_matlist(
+    setNames(list(sg),sname), 
+    labels=slabels, 
+    class="sigmalist"
+  )
+  
+  ans <- list(theta = th, omega = om, sigma = sg)
+  
+  return(structure(ans,class="NMXMLDATA"))
+}
 
 nm_xml_matrix <- function(x) {
   m <- matrix(0,nrow = length(x), ncol = length(x))
