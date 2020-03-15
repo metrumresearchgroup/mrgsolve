@@ -163,12 +163,16 @@ setMethod("stime", "tgrids", function(x,...) {
 })
 
 render_time <- function(x) {
-  add <- times <- numeric(0)
-  #if(!is.mt(x@add)){add <- x@add}
-  if(x@end >= 0){times <-seq(x@start,x@end,x@delta)}
-  times <- invisible(as.numeric(unique(c(times,x@add))))
-  if(is.mt(times)) {return(0)}
-  sort(times[times>=0])
+  if(x@end < x@start) {
+    times <- sort(x@add)
+    if(length(times)==0) times <- 0
+    return(times)
+  }
+  times <- seq(x@start,x@end,x@delta) 
+  if(length(x@add) > 0) {
+    times <- sort(as.numeric(unique(c(times,x@add))))
+  }
+  times[times>=0]
 }
 
 ##' @rdname tgrid
