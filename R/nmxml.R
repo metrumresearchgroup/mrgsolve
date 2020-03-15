@@ -36,7 +36,9 @@
 ##' estimation results to return
 ##' @param xpath xml path containing run results; if the default doesn't work, 
 ##' consider using \code{.//estimation} as an alternative; see details
-##' @param ... not used
+##' @param read_ext if \code{TRUE}, then the \code{file} argument is assumed
+##' to be the \code{.ext} file and estimates are read from there rather than 
+##' the \code{.xml} file
 ##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is 
@@ -72,7 +74,7 @@ nmxml <- function(run=numeric(0), project=character(0),
                   tname="THETA", oname="...", sname="...",
                   index = "last",
                   xpath = ".//nm:estimation",
-                  read_ext = FALSE, ...) {
+                  read_ext = FALSE) {
   
   if(read_ext) {
     ans <- import_nm_ext(

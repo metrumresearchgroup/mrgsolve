@@ -21,7 +21,7 @@ nmxml(
   sname = "...",
   index = "last",
   xpath = ".//nm:estimation",
-  ...
+  read_ext = FALSE
 )
 }
 \arguments{
@@ -58,7 +58,9 @@ estimation results to return}
 \item{xpath}{xml path containing run results; if the default doesn't work, 
 consider using \code{.//estimation} as an alternative; see details}
 
-\item{...}{not used}
+\item{read_ext}{if \code{TRUE}, then the \code{file} argument is assumed
+to be the \code{.ext} file and estimates are read from there rather than 
+the \code{.xml} file}
 }
 \value{
 A list with theta, omega and sigma elements, 
