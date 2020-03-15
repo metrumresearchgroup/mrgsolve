@@ -193,6 +193,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     Rcpp::NumericMatrix tgrid = 
       Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
     
+    if((tgrid.nrow() == 0) && (obscount==0) && (evcount==0)) {
+      tgrid = Rcpp::NumericMatrix(1,1);  
+    }
     
     bool multiple_tgrid = tgrid.ncol() > 1;
     
@@ -268,7 +271,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int precol = 2 + int(tad);
   const unsigned int n_out_col  = precol + n_tran_carry
     + n_data_carry + n_idata_carry + nreq + n_capture;
-  if(NN==0) CRUMP("There are zero rows in output.");
   Rcpp::NumericMatrix ans(NN,n_out_col);
   const unsigned int tran_carry_start = precol;
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
