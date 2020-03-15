@@ -79,11 +79,11 @@ setGeneric("param", function(.x,...) {
 
 ##' @export
 ##' @rdname param
-setMethod("param", c("mrgmod"), function(.x,.y=list(),...,.pat="*",.strict=FALSE) {
+setMethod("param", c("mrgmod"), function(.x,.y = NULL,...,.pat="*",.strict=FALSE) {
   
   .dots <- list(...)
   
-  if(length(.y) == 0 & length(.dots) == 0) {
+  if(is.null(.y) & length(.dots) == 0) {
     slot(.x@param, "pattern")  <- .pat
     return(.x@param)
   }
