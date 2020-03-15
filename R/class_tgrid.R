@@ -164,9 +164,7 @@ setMethod("stime", "tgrids", function(x,...) {
 
 render_time <- function(x) {
   if(x@end < x@start) {
-    times <- sort(x@add)
-    if(length(times)==0) times <- 0
-    return(times)
+    return(sort(x@add))
   }
   times <- seq(x@start,x@end,x@delta) 
   if(length(x@add) > 0) {

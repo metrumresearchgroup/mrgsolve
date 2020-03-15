@@ -134,7 +134,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-
+  
   // Requested compartments
   Rcpp::IntegerVector request = parin["request"];
   const unsigned int nreq = request.size();
@@ -192,6 +192,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     Rcpp::NumericMatrix tgrid = 
       Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
+    
     
     bool multiple_tgrid = tgrid.ncol() > 1;
     
@@ -267,6 +268,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int precol = 2 + int(tad);
   const unsigned int n_out_col  = precol + n_tran_carry
     + n_data_carry + n_idata_carry + nreq + n_capture;
+  if(NN==0) CRUMP("There are zero rows in output.");
   Rcpp::NumericMatrix ans(NN,n_out_col);
   const unsigned int tran_carry_start = precol;
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
@@ -391,7 +393,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     prob.set_d(a[i][0]);
     prob.init_call(tfrom);
-
+    
     for(size_t j=0; j < a[i].size(); ++j) {
       
       if(crow == NN) continue;
