@@ -1,3 +1,12 @@
+# mrgsolve 0.10.1.9000
+
+- The simulation time grid was adjusted so that rendering the grid coudl result
+  in no times (length 0 vector of times); this is a breaking change from 
+  previous behavior where the time grid resolved to 0 when there were no 
+  observations to be found.  While this is a breaking change, the old behavior
+  was almost always wrong when the desired output was a series of
+  non-observation records #640
+
 # mrgsolve 0.10.1
 
 - Add `select_sims` method for selecting columns in `mrgsims` object #585
