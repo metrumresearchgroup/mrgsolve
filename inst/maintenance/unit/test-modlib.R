@@ -25,7 +25,6 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-modlib models")
 
 test_that("Lagged bolus", {
-  
   test_lib <- function(x) {
     mod <- mread(x,modlib())
     out <- mrgsim(mod)
