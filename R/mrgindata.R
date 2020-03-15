@@ -46,13 +46,13 @@ numeric_data_matrix <- function(x,quiet=FALSE) {
 ##' @param x a input data set
 ##' @param quiet logical indicating whether or not warnings 
 ##' should be printed
-##' @param convert_lgl by default, convert logical 
+##' @param convert_lgl if \code{TRUE}, convert logical 
 ##' columns with \code{\link{as.integer}}
 ##' 
 ##' @export
-numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
+numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
   if(convert_lgl) {
-    if(any(sapply(x,is.logical))) {
+    if(any(vapply(x,is.logical,TRUE))) {
       x <- dplyr::mutate_if(x, is.logical, as.integer)
     }
   }
@@ -64,11 +64,10 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=TRUE) {
         paste(names(x)[!nu], collapse=" ")
       )
     }
-    x <- dplyr::select(x,which(nu))
+    x <- x[,which(nu),drop=FALSE]
   } 
   x
 }
-
 
 convert_character_cmt <- function(data, mod) {
   cmtcol <- intersect(c("cmt", "CMT"), names(data))
@@ -117,19 +116,19 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   if(verbose) quiet <- FALSE
   
   if(!is.mrgmod(m)) {
-    stop("A valid model object is required to validate the data set.", 
+    stop("a valid model object is required to validate the data set.", 
          call. = FALSE)
   }
   
   x <- as.data.frame(x)
   
   if(nrow(x)==0) {
-    stop("Input data event object has zero rows", call. = FALSE)  
+    stop("input data event object has zero rows", call. = FALSE)  
   }
   
   # check for ID column
   if(!has_ID(x)) {
-    stop("Could not find ID column in data set", call. = FALSE)
+    stop("could not find ID column in data set", call. = FALSE)
   }
   
   # special case

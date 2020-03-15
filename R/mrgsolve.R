@@ -108,29 +108,41 @@ validate_idata <- function(idata) {
 ##' \itemize{
 ##' 
 ##' \item Use \code{mrgsim_df} to return a data frame rather than 
-##' \code{mrgsims} object.
+##' \code{mrgsims} object
 ##' 
 ##' \item{Both \code{data} and \code{idata} will be coerced to numeric matrix}
 ##' 
 ##' \item{\code{carry_out} can be used to insert data columns into the output 
 ##' data set.  This is partially dependent on the nature of the data brought 
-##' into the problem.}
+##' into the problem}
 ##' 
 ##' \item When using \code{data} and \code{idata} together, an error is 
 ##' generated if an  ID occurs in \code{data} but not \code{idata}.  
 ##' Also, when looking up data in \code{idata}, ID in \code{idata} is 
 ##' assumed to be uniquely keyed to ID in \code{data}.  No error is 
 ##' generated if ID is duplicated in \code{data}; parameters will be used 
-##' from the first occurrence found in \code{idata}.
+##' from the first occurrence found in \code{idata}
 ##'  
-##'  \item \code{carry_out}: \code{idata} is assumed to be 
+##' \item \code{carry_out}: \code{idata} is assumed to be 
 ##' individual-level and variables that are carried from \code{idata} 
 ##' are repeated throughout the individual's simulated data.  Variables 
 ##' carried from \code{data} are carried via last-observation carry forward.  
 ##' \code{NA} is returned from observations that are inserted into 
-##' simulated output that occur prior to the first record in \code{data}.
+##' simulated output that occur prior to the first record in \code{data}
 ##' 
-##'
+##' \item \code{recover}: this is similar to \code{carry_out} with respect to 
+##' end result, but it uses a different process.  Columns to be recovered are 
+##' cached prior to running the simuilation, and then joined back on to the 
+##' simulated data.  So, whereas \code{carry_out} will only accept numeric 
+##' data items, \code{recover} can handle data frame columns of any type.  There
+##' is a small decrease in performance with \code{recover} compared to 
+##' \code{carry_out}, but it is likely that the performance difference is 
+##' difficult to perceive (when the simulation runs very fast) or only a small
+##' fractional increase in run time when the simulation is very large.  And any
+##' performance hit is likely to be well worth it in light of the convenience 
+##' gain.  Just think carefully about using this feature when every millisecond
+##' counts.
+##' 
 ##' }
 ##' 
 ##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}
@@ -166,14 +178,17 @@ validate_idata <- function(idata) {
 ##' 
 ##' out
 ##'
-##' out <- mod %>% ev(e) %>% mrgsim(req="CENT")
-##' 
-##' out
-##'
-##' out <- mrgsim(mod, Req="CP,RESP", events = e)
+##' out <- mod %>% ev(e) %>% mrgsim(outvars="CP,RESP")
 ##' 
 ##' out
 ##' 
+##' a <- ev(amt = 1000, group = 'a')
+##' b <- ev(amt = 750, group = 'b')
+##' data <- as_data_set(a,b)
+##' 
+##' out <- mrgsim_d(mod, data, recover="group")
+##' 
+##' out
 ##' 
 ##' @export
 mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
@@ -404,8 +419,11 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   return(mrgsim_i(x, idata, ...))
 }
 
-##' @param carry_out data items to copy into the output
+##' @param carry_out numeric data items to copy into the output
 ##' @param carry.out soon to be deprecated; use \code{carry_out} instead
+##' @param recover character column names in either \code{data} or \code{idata} 
+##' to join back (recover) to simulated data; may be any class (e.g. numeric, 
+##' character, factor, etc)
 ##' @param seed deprecated
 ##' @param Request compartments or captured variables to retain
 ##' in the simulated output; this is different than the \code{request}
@@ -471,6 +489,7 @@ do_mrgsim <- function(x,
                       idata = no_idata_set(),
                       carry_out = carry.out,
                       carry.out = character(0),
+                      recover = character(0),
                       seed = as.integer(NA),
                       Request = character(0),
                       output = NULL,
@@ -495,6 +514,35 @@ do_mrgsim <- function(x,
   
   if(length(Request) > 0) {
     x <- update_outputs(x, outputs=Request)  
+  }
+  
+  do_recover_data <- do_recover_idata <-  FALSE
+  carry.recover <- character(0)
+  if(length(recover) > 0) {
+    recover <- cvec_cs(recover)
+    rename.recov <- .ren.create(recover)
+    recover <- rename.recov$old
+    if(any(rename.recov$new %in% carry_out)) {
+      stop("names in 'recover' cannot also be in 'carry_out'",call.=FALSE)  
+    }
+    recover_data <- intersect(recover,names(data))
+    do_recover_data  <- length(recover_data) > 0
+    if(do_recover_data) {
+      join_data <- data[,recover_data,drop=FALSE]
+      join_data$.data_row. <- seq_len(nrow(data))
+      data$.data_row. <- join_data$.data_row.
+      carry.recover <- ".data_row."
+      drop <- names(which(!is.numeric(join_data)))
+      data <- data[,setdiff(names(data),drop),drop=FALSE]
+    }
+    recover_idata <- intersect(recover,names(idata))
+    recover_idata <- setdiff(recover_idata,recover_data)
+    do_recover_idata <- length(recover_idata) > 0
+    if(do_recover_idata) {
+      join_idata <- idata[,unique(c("ID", recover_idata)),drop=FALSE]
+      drop <- names(which(!is.numeric(join_idata)))
+      idata <- idata[,setdiff(names(idata),drop),drop=FALSE]
+    } 
   }
   
   ## data
@@ -568,7 +616,8 @@ do_mrgsim <- function(x,
   }
   
   # What to carry
-  parin$carry_data <- carry.data 
+  carry.data <- c(carry.data,carry.recover)
+  parin$carry_data <- carry.data
   parin$carry_idata <- carry.idata 
   
   # This has to be lower case; that's all we're looking for
@@ -638,9 +687,27 @@ do_mrgsim <- function(x,
   
   dimnames(out[["data"]]) <- list(NULL, cnames)
   
+  ans <- as.data.frame(out[["data"]])
+  
+  if(do_recover_data || do_recover_idata) {
+    if(do_recover_data) {
+      if(!rename.recov$identical) {
+        names(join_data) <- .ren.rename(rename.recov,names(join_data))
+      }
+      ans <- left_join(ans,join_data,by=".data_row.",suffix=c("", ".recov"))  
+      ans$.data_row. <- NULL
+    }
+    if(do_recover_idata) {
+      if(!rename.recov$identical) {
+        names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
+      }
+      ans <- left_join(ans,join_idata,by="ID",suffix=c("", ".recov"))
+    }
+  }
+  
   if(!is.null(output)) {
     if(output=="df") {
-      return(as.data.frame(out[["data"]]))  
+      return(ans)  
     }
     if(output=="matrix") {
       return(out[["data"]])  
@@ -650,7 +717,7 @@ do_mrgsim <- function(x,
   new(
     "mrgsims",
     request = x@cmtL,
-    data=as.data.frame(out[["data"]]),
+    data=ans,
     outnames=x@capL,
     mod=x
   )

@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("test-carry_out")
+context("test-carry_out_recover")
 
 mod <- mrgsolve::house()
 
@@ -67,9 +67,6 @@ test_that("carry_out from idata set",{
   expect_identical(x,y)
 })
 
-
-
-
 test_that("carry_out from condensed data set", {
   
   out <- mod %>%
@@ -92,3 +89,20 @@ test_that("carry_out from condensed data set", {
   expect_identical(x2,y2)
 })
 
+test_that("recover input data-set items", {
+  dose <- seq(ev(amt=100,time=5,a=33,b="aa"),ev(amt=200,a=44,b="bb",time=10))
+  out <- mrgsim(mod,dose,recover="A=a,b", carry_out = "a")
+  expect_is(out$A,"numeric")
+  expect_is(out$b,"character")
+  expect_true(all(out$a==out$A))
+  expect_message(mrgsim(mod,dose,recover="A=a"),"Dropping non-numeric columns")
+  expect_error(mrgsim(mod,recover="a",carry_out="a"))
+})
+ 
+test_that("recover input idata-set items", {
+  idata <- expand.idata(a = c(33,44), b = c("aa", "bb")) 
+  out <- mrgsim_ei(mod,ev(amt = 100),idata,recover ="a,b")
+  expect_is(out$a,"numeric")
+  expect_is(out$b,"character")
+  expect_error(mrgsim_e(mod,idata,recover="b",carry_out="b"))
+})

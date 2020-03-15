@@ -164,7 +164,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Captures
   const unsigned int n_capture  = capture.size()-1;
   
-  
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
