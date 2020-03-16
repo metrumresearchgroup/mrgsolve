@@ -206,8 +206,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- parse_env(spec,project=build$project,ENV)
   
+  #return(list(spec = spec, env = mread.env, build = build))
+  
+  spec <- move_global2(spec,mread.env,build)
+
   ## The main sections that need R processing:
-  spec <- move_global(spec,mread.env)
+  #spec <- move_global(spec,mread.env)
   
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
