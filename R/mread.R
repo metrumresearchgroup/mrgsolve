@@ -243,6 +243,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
+  if(isTRUE(SET[["collapse_omega"]])) {
+    omega <- collapse_matrix(omega,"omegalist")  
+  }
+  if(isTRUE(SET[["collapse_sigma"]])) {
+    sigma <- collapse_matrix(sigma,"sigmalist")  
+  }
   namespace <- do.call("c", mread.env$namespace)
   
   # capture is a vector that may be name or to_name = from_name
