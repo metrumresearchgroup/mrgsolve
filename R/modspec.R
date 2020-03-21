@@ -247,6 +247,7 @@ move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 #local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
 
+# please-deprecate
 move_global <- function(x,env) {
   
   what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))

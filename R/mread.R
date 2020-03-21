@@ -208,11 +208,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   #return(list(spec = spec, env = mread.env, build = build))
   
+  ## The main sections that need R processing:  
   spec <- move_global2(spec,mread.env,build)
 
-  ## The main sections that need R processing:
-  #spec <- move_global(spec,mread.env)
-  
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
   ## Also, we use a position attribute so we know 
