@@ -138,3 +138,5 @@ check-winhub:
 doxygen: 
 	doxygen doxyfile
 
+bump_dev:
+	Rscript -e 'usethis::version("dev")'
