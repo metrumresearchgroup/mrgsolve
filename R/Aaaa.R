@@ -80,7 +80,7 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
                 "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML")
 
-Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
+Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
