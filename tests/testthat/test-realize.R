@@ -50,3 +50,9 @@ test_that("data frame", {
   expect_true(all(data[["addl"]]==0))
   expect_true(all(data[["ii"]]==0))
 })
+
+test_that("addl column is all zeros", {
+  data <- realize_addl(ev(amt = 100, addl = 0, ii = 1))
+  expect_is(data,"ev")
+})
+
