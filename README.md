@@ -33,6 +33,12 @@ install.packages("mrgsolve")
 **Please** be sure to see important install-related information
 [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/mrgsolve-Installation).
 
+Install the current development version
+
+``` r
+remotes::install_github("metrumresearchgroup/mrgsolve@dev")
+```
+
 ## Interaction
 
 We welcome **questions** about anything mrgsolve: installation, getting
