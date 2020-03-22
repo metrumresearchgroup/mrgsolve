@@ -45,3 +45,4 @@ Makefile
 docs
 ^DOCS$
 ^_pkgdown\.yml$
+^\.drone\.yml$
