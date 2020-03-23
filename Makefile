@@ -13,8 +13,7 @@ export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
 drone:
 	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
-	make install
-	Rscript -e 'testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
+	Rscript -e 'library(mrgsolve, lib.loc="mrgsolve.Rcheck"); testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
