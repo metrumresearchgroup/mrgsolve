@@ -18,6 +18,8 @@ steps:
   environment:
     R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-07"
   commands:
+  # uses .libPaths("~/Rlibs") that causes failure so lets symlink it
+  - ln -s /opt/rpkgs/3.6/2020-03-07 ~/Rlibs
   - R_LIBS=/opt/rpkgs/3.6/2020-03-07 make check
 
 
