@@ -18,12 +18,6 @@ drone:
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
 
-testing:
-	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
-	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
-	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
-	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master
-
 covr: 
 	Rscript "inst/maintenance/covr.R"
 
@@ -66,7 +60,7 @@ all:
 
 .PHONY: doc
 doc:
-	Rscript inst/maintenance/doc_mrgsolve.R
+	Rscript -e "roxygen2::roxygenize()"
 
 build:
 	R CMD build --md5 $(PKGDIR) --no-manual
@@ -139,3 +133,9 @@ doxygen:
 
 bump_dev:
 	Rscript -e 'usethis::use_version("dev")'
+
+testing:
+	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
+	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
+	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
+	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master
