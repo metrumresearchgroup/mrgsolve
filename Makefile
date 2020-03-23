@@ -122,7 +122,7 @@ travis:
 
 drone:
 	make build
-	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
+	R CMD check --as-cran --no-manual ${TARBALL}
 
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
