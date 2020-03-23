@@ -17,7 +17,9 @@ steps:
   pull: never
   environment:
     R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-07"
+    _MRGSOLVE_SKIP_MODLIB_BUILD_=false
   commands:
+  - 
   - make drone
   
 - name: release
