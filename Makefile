@@ -6,9 +6,8 @@ TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
 CHKDIR=Rchecks
 export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
-
-## Set libPaths:
-## export R_LIBS=${LIBDIR}
+LOAD_CANDIDATE=library(mrgsolve, lib.loc="mrgsolve.Rcheck")
+RUN_SECOND_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
 
 all:
 	make doc
@@ -19,8 +18,7 @@ drone:
 	make house
 	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
-	Rscript -e 'library(mrgsolve, lib.loc="mrgsolve.Rcheck");\
-	testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
+	Rscript -e '$(LOAD_CANDIDATE); $(RUN_SECOND_UNIT)'
 	make spelling
 
 spelling:
