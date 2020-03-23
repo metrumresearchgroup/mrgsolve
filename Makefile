@@ -16,13 +16,12 @@ all:
 	make install
 
 drone:
-	make check
-
-droneA:
-	make doc
+	make house
 	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
-	Rscript -e 'library(mrgsolve, lib.loc="mrgsolve.Rcheck"); testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
+	Rscript -e 'library(mrgsolve, lib.loc="mrgsolve.Rcheck");\
+	 testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
+	make spelling
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
@@ -57,7 +56,7 @@ cran:
 	make doc
 	make build
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
-	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
+	R CMD CHECK --as-cran ${TARBALL}
 
 readme:
 	Rscript -e 'rmarkdown::render("README.Rmd")'
@@ -85,7 +84,7 @@ check:
 qcheck: 
 	make doc
 	make build 
-	R CMD check ${TARBALL} -o ${CHKDIR} --no-manual --no-codoc
+	R CMD check ${TARBALL} --no-manual --no-codoc
 
 check-cran:
 	make house
@@ -110,11 +109,6 @@ clean:
 
 datasets:
 	Rscript inst/maintenance/datasets.R
-
-travis:
-	make build
-	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
-	make test2
 
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
