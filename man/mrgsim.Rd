@@ -173,7 +173,7 @@ simulated output that occur prior to the first record in \code{data}
 
 \item \code{recover}: this is similar to \code{carry_out} with respect to 
 end result, but it uses a different process.  Columns to be recovered are 
-cached prior to running the simuilation, and then joined back on to the 
+cached prior to running the simulation, and then joined back on to the 
 simulated data.  So, whereas \code{carry_out} will only accept numeric 
 data items, \code{recover} can handle data frame columns of any type.  There
 is a small decrease in performance with \code{recover} compared to 

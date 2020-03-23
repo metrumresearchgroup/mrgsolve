@@ -20,7 +20,7 @@ drone:
 	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
 	Rscript -e 'library(mrgsolve, lib.loc="mrgsolve.Rcheck");\
-	 testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
+	testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
 	make spelling
 
 spelling:
