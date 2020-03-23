@@ -77,10 +77,19 @@ nmxml <- function(run=numeric(0), project=character(0),
                   read_ext = FALSE) {
   
   if(read_ext) {
+    if(missing(file)) {
+      wstop(
+        "[nmxml] the 'file' argument must be used when reading", 
+        "model results from the 'ext' file"
+      )
+    }
+    if(!file.exists(file)) {
+      wstop("[nmxml] could not find the requested 'ext' file")
+    }
     ans <- import_nm_ext(
       file=file,theta=theta,omega=omega,sigma=sigma,
       olabels=olabels,slabels=slabels,oprefix=oprefix,sprefix=sprefix,
-      tname=tname,oname="...",sname="..."
+      tname=tname,oname=oname,sname=oname
     )
     return(ans)
   }
@@ -189,7 +198,7 @@ import_nm_ext <- function(file=character(0),
                           olabels = NULL, slabels = NULL,
                           oprefix = "", sprefix="",
                           tname="THETA", oname="...", sname="...") {
-  
+
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
   sigma <- sigma | !missing(sname)
