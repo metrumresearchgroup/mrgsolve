@@ -5,6 +5,7 @@ VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
 CHKDIR=Rchecks
+export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
 
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
@@ -24,9 +25,12 @@ covr:
 house: 
 	Rscript "inst/maintenance/build_housemodel.R"
 
+test-all:
+	Rscript inst/maintenance/tests.R
+
 no-test:
 	make build
-	R CMD check ${TARBALL} --no-tests
+	R CMD check ${TARBALL} --no-tests --no-manual
 
 gut_check:
 	Rscript "inst/maintenance/gut_check.R"
@@ -40,16 +44,14 @@ pkgdown:
 	cp -r DOCS/ ../../mrgsolve/docs/
 	touch ../../mrgsolve/docs/.nojekyll
 
-test-all:
-	Rscript inst/maintenance/tests.R
-
 unit:
-	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 cran:
 	make house
 	make doc
 	make build
+	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
 
 travis_build:
@@ -59,7 +61,7 @@ travis_build:
 	make install
 
 readme:
-	Rscript -e 'library(rmarkdown); render("README.Rmd")'
+	Rscript -e 'rmarkdown::render("README.Rmd")'
 
 all:
 	make doc
@@ -125,6 +127,7 @@ rhub:
 	
 check-fedora:
 	Rscript -e 'rhub::check_on_fedora(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
+
 check-devel: 
 	Rscript -e 'rhub::check_with_rdevel()'
 
