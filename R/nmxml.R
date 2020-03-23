@@ -198,10 +198,26 @@ import_nm_ext <- function(file=character(0),
                           olabels = NULL, slabels = NULL,
                           oprefix = "", sprefix="",
                           tname="THETA", oname="...", sname="...") {
-
-  stopifnot(requireNamespace("readr"))
   
-  data <- suppressMessages(readr::read_table(file, na = '.', skip = 1))
+  ignore_data_table <- getOption("mrgsolve.ignore.data.table",FALSE)
+  
+  if(requireNamespace("data.table") & !ignore_data_table) {
+    data <- data.table::fread(
+      file=file, 
+      na.strings = '.', 
+      data.table=FALSE,
+      skip=1
+    )
+  } else {
+    data <- read.table(
+      file=file,
+      na.strings='.',
+      stringsAsFactors=FALSE,
+      skip=1, 
+      header=TRUE
+    )
+  }
+  
   data <- as.data.frame(data)
   est <- data[data$ITERATION == -1e9,]
   
