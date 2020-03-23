@@ -121,8 +121,9 @@ travis:
 	make test2
 
 drone:
-	make build
+	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
