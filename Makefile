@@ -4,10 +4,9 @@ PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
-CHKDIR=Rchecks
 export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
 LOAD_CANDIDATE=library(mrgsolve, lib.loc="mrgsolve.Rcheck")
-RUN_SECOND_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
+TEST_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
 
 all:
 	make doc
@@ -18,7 +17,7 @@ drone:
 	make house
 	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
-	Rscript -e '$(LOAD_CANDIDATE); $(RUN_SECOND_UNIT)'
+	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
 	make spelling
 
 spelling:
@@ -88,7 +87,7 @@ check-cran:
 	make house
 	make doc
 	make build
-	R CMD check --as-cran ${TARBALL} -o ${CHKDIR}
+	R CMD check --as-cran ${TARBALL}
 
 test:
 	R CMD INSTALL ${PKGDIR}
@@ -101,7 +100,6 @@ test2:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 clean:
-	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
 	rm src/*.o
 	rm src/*.so
 
