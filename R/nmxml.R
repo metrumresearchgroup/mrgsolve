@@ -200,7 +200,12 @@ import_nm_ext <- function(file=character(0),
   data <- as.data.frame(data)
   est <- data[data$ITERATION == -1e9,]
   
-  if(nrow(data)==0) stop("could not find final estiamtes",call.=FALSE)
+  if(nrow(data)==0) {
+    wstop(
+      "could not find final estimates",
+      "while reading 'ext' file from NMXML"
+    )
+  }
   
   th <- list()
   om <- matrix(0,0,0)
