@@ -1,0 +1,43 @@
+kind: pipeline
+type: docker
+name: mrgsolve
+
+steps:
+- name: Pull mpn container from ECR
+  image: omerxx/drone-ecr-auth
+  volumes:
+  - name: docker.sock
+    path: /var/run/docker.sock
+  commands:
+  - $(aws ecr get-login --no-include-email --region us-east-1)
+  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-07
+
+- name: R36
+  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-07"
+  pull: never
+  environment:
+    R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-07"
+  commands:
+  - make drone
+  
+- name: release
+  when:
+    event:
+    - tag
+    status:
+    - success
+  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-07"
+  pull: never
+  environment:
+    R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-07"
+  commands:
+  - git config --global user.email "drone@metrumrg.com"
+  - git config --global user.name "Drony"
+  - git fetch --tags
+  - R -e "pkgpub::create_tagged_repo()"
+  - aws s3 sync /tmp/${DRONE_TAG} s3://mpn.metworx.dev/releases/${DRONE_REPO_NAME}/${DRONE_TAG}
+
+volumes:
+- name: docker.sock
+  host:
+    path: /var/run/docker.sock

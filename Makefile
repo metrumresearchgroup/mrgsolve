@@ -10,6 +10,11 @@ export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
 
+drone:
+	R CMD build --md5 $(PKGDIR) --no-manual
+	R CMD check --as-cran --no-manual ${TARBALL}
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
+
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
 
@@ -32,9 +37,6 @@ no-test:
 	make build
 	R CMD check ${TARBALL} --no-tests --no-manual
 
-gut_check:
-	Rscript "inst/maintenance/gut_check.R"
-
 everything:
 	make all
 	make pkgdown
@@ -53,12 +55,6 @@ cran:
 	make build
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
-
-travis_build:
-	make housemodel
-	make doc
-	make build
-	make install
 
 readme:
 	Rscript -e 'rmarkdown::render("README.Rmd")'
