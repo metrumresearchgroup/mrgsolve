@@ -76,6 +76,10 @@ nmxml <- function(run=numeric(0), project=character(0),
                   xpath = ".//nm:estimation",
                   read_ext = FALSE) {
   
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
+  
   if(read_ext) {
     if(missing(file)) {
       wstop(
@@ -93,10 +97,6 @@ nmxml <- function(run=numeric(0), project=character(0),
     )
     return(ans)
   }
-  
-  theta <- theta | !missing(tname)
-  omega <- omega | !missing(oname)
-  sigma <- sigma | !missing(sname)
   
   if(!missing(file)) {
     target <- file
@@ -199,10 +199,6 @@ import_nm_ext <- function(file=character(0),
                           oprefix = "", sprefix="",
                           tname="THETA", oname="...", sname="...") {
 
-  theta <- theta | !missing(tname)
-  omega <- omega | !missing(oname)
-  sigma <- sigma | !missing(sname)
-  
   stopifnot(requireNamespace("readr"))
   
   data <- suppressMessages(readr::read_table(file, na = '.', skip = 1))
