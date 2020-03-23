@@ -9,6 +9,11 @@ CHKDIR=Rchecks
 ## Set libPaths:
 ## export R_LIBS=${LIBDIR}
 
+drone:
+	R CMD build --md5 $(PKGDIR) --no-manual
+	R CMD check --as-cran --no-manual ${TARBALL}
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit",stop_on_failure = )'
+
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
 
@@ -27,9 +32,6 @@ house:
 no-test:
 	make build
 	R CMD check ${TARBALL} --no-tests
-
-gut_check:
-	Rscript "inst/maintenance/gut_check.R"
 
 everything:
 	make all
@@ -51,12 +53,6 @@ cran:
 	make doc
 	make build
 	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
-
-travis_build:
-	make housemodel
-	make doc
-	make build
-	make install
 
 readme:
 	Rscript -e 'library(rmarkdown); render("README.Rmd")'
@@ -120,16 +116,12 @@ travis:
 	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
 	make test2
 
-drone:
-	R CMD build --md5 $(PKGDIR) --no-manual
-	R CMD check --as-cran --no-manual ${TARBALL}
-	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
-
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
 	
 check-fedora:
 	Rscript -e 'rhub::check_on_fedora(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
+
 check-devel: 
 	Rscript -e 'rhub::check_with_rdevel()'
 
