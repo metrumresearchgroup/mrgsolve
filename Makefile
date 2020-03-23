@@ -12,7 +12,7 @@ CHKDIR=Rchecks
 drone:
 	R CMD build --md5 $(PKGDIR) --no-manual
 	R CMD check --as-cran --no-manual ${TARBALL}
-	Rscript -e 'testthat::test_dir("inst/maintenance/unit",stop_on_failure = )'
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit",stop_on_failure = TRUE)'
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
