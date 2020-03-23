@@ -138,4 +138,4 @@ doxygen:
 	doxygen doxyfile
 
 bump_dev:
-	Rscript -e 'usethis::version("dev")'
+	Rscript -e 'usethis::use_version("dev")'
