@@ -4,19 +4,25 @@ PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
-CHKDIR=Rchecks
+export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
+LOAD_CANDIDATE=library(mrgsolve, lib.loc="mrgsolve.Rcheck")
+TEST_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
 
-## Set libPaths:
-## export R_LIBS=${LIBDIR}
+all:
+	make doc
+	make build
+	make install
+
+drone:
+	make house
+	R CMD build --md5 $(PKGDIR) --no-manual
+	R CMD check --as-cran --no-manual ${TARBALL}
+	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
+	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
+	make spelling
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
-
-testing:
-	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
-	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
-	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
-	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master
 
 covr: 
 	Rscript "inst/maintenance/covr.R"
@@ -24,12 +30,12 @@ covr:
 house: 
 	Rscript "inst/maintenance/build_housemodel.R"
 
+test-all:
+	Rscript inst/maintenance/tests.R
+
 no-test:
 	make build
-	R CMD check ${TARBALL} --no-tests
-
-gut_check:
-	Rscript "inst/maintenance/gut_check.R"
+	R CMD check ${TARBALL} --no-tests --no-manual
 
 everything:
 	make all
@@ -40,35 +46,22 @@ pkgdown:
 	cp -r DOCS/ ../../mrgsolve/docs/
 	touch ../../mrgsolve/docs/.nojekyll
 
-test-all:
-	Rscript inst/maintenance/tests.R
-
 unit:
-	Rscript -e 'library(testthat)' -e 'test_dir("inst/maintenance/unit")'
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 cran:
 	make house
 	make doc
 	make build
-	R CMD CHECK --as-cran ${TARBALL} -o ${CHKDIR}
-
-travis_build:
-	make housemodel
-	make doc
-	make build
-	make install
+	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
+	R CMD CHECK --as-cran ${TARBALL}
 
 readme:
-	Rscript -e 'library(rmarkdown); render("README.Rmd")'
-
-all:
-	make doc
-	make build
-	make install
+	Rscript -e 'rmarkdown::render("README.Rmd")'
 
 .PHONY: doc
 doc:
-	Rscript inst/maintenance/doc_mrgsolve.R
+	Rscript -e "roxygen2::roxygenize()"
 
 build:
 	R CMD build --md5 $(PKGDIR) --no-manual
@@ -83,19 +76,19 @@ check:
 	make house
 	make doc
 	make build
-	R CMD check ${TARBALL} -o ${CHKDIR} --no-manual
+	R CMD check ${TARBALL} --no-manual
 	make unit
 
 qcheck: 
 	make doc
 	make build 
-	R CMD check ${TARBALL} -o ${CHKDIR} --no-manual --no-codoc
+	R CMD check ${TARBALL} --no-manual --no-codoc
 
 check-cran:
 	make house
 	make doc
 	make build
-	R CMD check --as-cran ${TARBALL} -o ${CHKDIR}
+	R CMD check --as-cran ${TARBALL}
 
 test:
 	R CMD INSTALL ${PKGDIR}
@@ -108,23 +101,18 @@ test2:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 clean:
-	if test -d ${CHKDIR}/mrgsolve.Rcheck; then rm -rf ${CHKDIR}/mrgsolve.Rcheck;fi
 	rm src/*.o
 	rm src/*.so
 
 datasets:
 	Rscript inst/maintenance/datasets.R
 
-travis:
-	make build
-	R CMD check --as-cran --no-manual ${TARBALL} -o ${CHKDIR}
-	make test2
-
 rhub:
 	Rscript -e 'rhub::check_for_cran(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
 	
 check-fedora:
 	Rscript -e 'rhub::check_on_fedora(env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "false"))'
+
 check-devel: 
 	Rscript -e 'rhub::check_with_rdevel()'
 
@@ -138,3 +126,11 @@ check-winhub:
 doxygen: 
 	doxygen doxyfile
 
+bump_dev:
+	Rscript -e 'usethis::use_version("dev")'
+
+testing:
+	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
+	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
+	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
+	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master

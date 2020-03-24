@@ -69,7 +69,12 @@ check_us <- function(x,cmt,ans) {
              paste0("leading underscore not allowed: ", 
                     paste(leading, collapse=" "))) 
   }
-  check <- as.character(sapply(c("F_", "ALAG_", "D_", "R_"),paste0,cmt))
+  check <- sapply(
+    c("F_", "ALAG_", "D_", "R_", "N_"), 
+    paste0,
+    cmt, 
+    simplify=TRUE
+  )
   iv_name <- intersect(x,check)
   if(length(iv_name) > 0) {
     ans <- c(ans, 

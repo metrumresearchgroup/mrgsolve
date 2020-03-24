@@ -1,6 +1,6 @@
-# mrgsolve 0.10.1.9000
+# mrgsolve (development version)
 
-- The simulation time grid was adjusted so that rendering the grid coudl result
+- The simulation time grid was adjusted so that rendering the grid could result
   in no times (length 0 vector of times); this is a breaking change from 
   previous behavior where the time grid resolved to 0 when there were no 
   observations to be found.  While this is a breaking change, the old behavior

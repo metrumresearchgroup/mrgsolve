@@ -21,15 +21,20 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-
 context("test-modlib models")
 
 test_that("Lagged bolus", {
+  
   test_lib <- function(x) {
     mod <- mread(x,modlib())
     out <- mrgsim(mod)
     return(list(mod,out))
   }
+  
+  skip_if(
+    identical(Sys.getenv("_MRGSOLVE_SKIP_MODLIB_BUILD_"),"true"), 
+    message = "skipping modlib builds"
+  )
   
   x <- test_lib("pk1cmt")
   expect_is(x[[1]],"mrgmod")

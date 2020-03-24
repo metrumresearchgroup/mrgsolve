@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -206,9 +206,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # slot for each of param/fixed/init/omega/sigma
   mread.env <- parse_env(spec,project=build$project,ENV)
   
-  ## The main sections that need R processing:
-  spec <- move_global(spec,mread.env)
+  #return(list(spec = spec, env = mread.env, build = build))
   
+  ## The main sections that need R processing:  
+  spec <- move_global2(spec,mread.env,build)
+
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
   ## Also, we use a position attribute so we know 
@@ -241,6 +243,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
+  if(isTRUE(SET[["collapse_omega"]])) {
+    omega <- collapse_matrix(omega,"omegalist")  
+  }
+  if(isTRUE(SET[["collapse_sigma"]])) {
+    sigma <- collapse_matrix(sigma,"sigmalist")  
+  }
   namespace <- do.call("c", mread.env$namespace)
   
   # capture is a vector that may be name or to_name = from_name
