@@ -3,7 +3,7 @@
 \name{nmxml}
 \alias{nmxml}
 \alias{NMXML}
-\title{Get THETA, OMEGA and SIGMA from a completed NONMEM run}
+\title{Import model estimates from a NONMEM xml file}
 \usage{
 nmxml(
   run = numeric(0),
@@ -20,8 +20,7 @@ nmxml(
   oname = "...",
   sname = "...",
   index = "last",
-  xpath = ".//nm:estimation",
-  read_ext = FALSE
+  xpath = ".//nm:estimation"
 )
 }
 \arguments{
@@ -57,17 +56,13 @@ estimation results to return}
 
 \item{xpath}{xml path containing run results; if the default doesn't work, 
 consider using \code{.//estimation} as an alternative; see details}
-
-\item{read_ext}{if \code{TRUE}, then the \code{file} argument is assumed
-to be the \code{.ext} file and estimates are read from there rather than 
-the \code{.xml} file}
 }
 \value{
 A list with theta, omega and sigma elements, 
 depending on what was requested
 }
 \description{
-Get THETA, OMEGA and SIGMA from a completed NONMEM run
+Import model estimates from a NONMEM xml file
 }
 \details{
 If \code{run} and \code{project} are supplied, the .xml file is 
@@ -92,4 +87,7 @@ if(requireNamespace("xml2")) {
   mrgsolve:::nmxml(run = 1005, project = proj)
 }
 
+}
+\seealso{
+nmext
 }

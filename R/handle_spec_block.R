@@ -349,6 +349,7 @@ handle_spec_block.specSET <- function(x,...) {
   tolist(dump_opts(x))
 }
 
+# NMXML --------------------------------
 #' @export
 handle_spec_block.specNMXML <- function(x,...) {
   parseNMXML(dump_opts(x),...)
@@ -362,6 +363,19 @@ parseNMXML <- function(x,env,...) {
   env[["param"]][[pos]] <- xml$theta
   env[["omega"]][[pos]] <- xml$omega
   env[["sigma"]][[pos]] <- xml$sigma
+  return(NULL)
+}
+
+# NMEXT --------------------------------
+#' @export
+handle_spec_block.specNMEXT <- function(x,env,...) {
+  x <- dump_opts(x)
+  pos <- attr(x,"pos")
+  x <- tolist(x,envir=env$ENV)
+  ext <- do.call(nmext,x)
+  env[["param"]][[pos]] <- ext$theta
+  env[["omega"]][[pos]] <- ext$omega
+  env[["sigma"]][[pos]] <- ext$sigma
   return(NULL)
 }
 

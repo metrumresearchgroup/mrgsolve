@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Get THETA, OMEGA and SIGMA from a completed NONMEM run
+##' Import model estimates from a NONMEM xml file
 ##'
 ##' @param run run number
 ##' @param project project directory
@@ -36,9 +36,6 @@
 ##' estimation results to return
 ##' @param xpath xml path containing run results; if the default doesn't work, 
 ##' consider using \code{.//estimation} as an alternative; see details
-##' @param read_ext if \code{TRUE}, then the \code{file} argument is assumed
-##' to be the \code{.ext} file and estimates are read from there rather than 
-##' the \code{.xml} file
 ##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is 
@@ -58,7 +55,9 @@
 ##' 
 ##' @return A list with theta, omega and sigma elements, 
 ##' depending on what was requested
-##' 
+##'  
+##' @seealso nmext
+##'  
 ##' @examples
 ##' 
 ##' if(requireNamespace("xml2")) {
@@ -73,30 +72,11 @@ nmxml <- function(run=numeric(0), project=character(0),
                   oprefix = "", sprefix="",
                   tname="THETA", oname="...", sname="...",
                   index = "last",
-                  xpath = ".//nm:estimation",
-                  read_ext = FALSE) {
+                  xpath = ".//nm:estimation") {
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
   sigma <- sigma | !missing(sname)
-  
-  if(read_ext) {
-    if(missing(file)) {
-      wstop(
-        "[nmxml] the 'file' argument must be used when reading", 
-        "model results from the 'ext' file"
-      )
-    }
-    if(!file.exists(file)) {
-      wstop("[nmxml] could not find the requested 'ext' file")
-    }
-    ans <- import_nm_ext(
-      file=file,theta=theta,omega=omega,sigma=sigma,
-      olabels=olabels,slabels=slabels,oprefix=oprefix,sprefix=sprefix,
-      tname=tname,oname=oname,sname=oname
-    )
-    return(ans)
-  }
   
   if(!missing(file)) {
     target <- file
@@ -193,13 +173,27 @@ nmxml <- function(run=numeric(0), project=character(0),
   
 }
 
-import_nm_ext <- function(file=character(0),
-                          theta=TRUE, omega=TRUE, sigma=TRUE,
-                          olabels = NULL, slabels = NULL,
-                          oprefix = "", sprefix="",
-                          tname="THETA", oname="...", sname="...") {
+#' Import model estimates from a NONMEM ext file
+#' 
+#' @inheritParams nmxml
+#' 
+#' @seealso nmxml
+#' 
+nmext <- function(file,
+                  theta=TRUE, omega=TRUE, sigma=TRUE,
+                  olabels = NULL, slabels = NULL,
+                  oprefix = "", sprefix="",
+                  tname="THETA", oname="...", sname="...") {
   
-  ignore_data_table <- getOption("mrgsolve.ignore.data.table",FALSE)
+  ignore_data_table <- getOption("mrgsolve.nmext.read.csv",FALSE)
+  
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
+  
+  if(!file.exists(file)) {
+    wstop("[nmxml] could not find the requested 'ext' file")
+  }
   
   if(requireNamespace("data.table") & !ignore_data_table) {
     data <- data.table::fread(
@@ -224,7 +218,7 @@ import_nm_ext <- function(file=character(0),
   if(nrow(data)==0) {
     wstop(
       "could not find final estimates",
-      "while reading 'ext' file from NMXML"
+      "while reading 'ext' file from NMEXT"
     )
   }
   
