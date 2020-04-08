@@ -5,7 +5,10 @@
 \title{Import model estimates from a NONMEM ext file}
 \usage{
 nmext(
-  file,
+  run = NA_real_,
+  project = getwd(),
+  file = paste0(run, ".ext"),
+  path = NULL,
   theta = TRUE,
   omega = TRUE,
   sigma = TRUE,
@@ -15,11 +18,18 @@ nmext(
   sprefix = "",
   tname = "THETA",
   oname = "...",
-  sname = "..."
+  sname = "...",
+  read_fun = "data.table"
 )
 }
 \arguments{
-\item{file}{the complete path to the \code{run.xml} file}
+\item{run}{run number}
+
+\item{project}{project directory}
+
+\item{file}{deprecated; use \code{path} instead}
+
+\item{path}{full path to NONMEM \code{ext} file}
 
 \item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
 
@@ -40,10 +50,12 @@ nmext(
 \item{oname}{name for \code{$OMEGA}}
 
 \item{sname}{name for \code{$SIGMA}}
+
+\item{read_fun}{function to use when reading the \code{ext} file}
 }
 \description{
 Import model estimates from a NONMEM ext file
 }
 \seealso{
-nmxml
+\link{nmxml}, \link{read_nmext}
 }

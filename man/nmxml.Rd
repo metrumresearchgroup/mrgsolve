@@ -9,6 +9,7 @@ nmxml(
   run = numeric(0),
   project = character(0),
   file = character(0),
+  path = character(0),
   theta = TRUE,
   omega = TRUE,
   sigma = TRUE,
@@ -28,7 +29,9 @@ nmxml(
 
 \item{project}{project directory}
 
-\item{file}{the complete path to the \code{run.xml} file}
+\item{file}{deprecated; use \code{path} instead}
+
+\item{path}{the complete path to the \code{run.xml} file}
 
 \item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
 

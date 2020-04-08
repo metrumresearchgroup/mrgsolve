@@ -20,7 +20,8 @@
 ##'
 ##' @param run run number
 ##' @param project project directory
-##' @param file the complete path to the \code{run.xml} file
+##' @param path the complete path to the \code{run.xml} file
+##' @param file deprecated; use \code{path} instead
 ##' @param theta logical; if TRUE, the \code{$THETA} vector is returned
 ##' @param omega logical; if TRUE, the \code{$OMEGA} matrix is returned
 ##' @param sigma logical; if TRUE, the \code{$SIGMA} matrix is returned
@@ -66,7 +67,7 @@
 ##' }
 ##' 
 nmxml <- function(run=numeric(0), project=character(0),
-                  file=character(0),
+                  file=character(0), path = character(0),
                   theta=TRUE, omega=TRUE, sigma=TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
@@ -79,10 +80,19 @@ nmxml <- function(run=numeric(0), project=character(0),
   sigma <- sigma | !missing(sname)
   
   if(!missing(file)) {
-    target <- file
+    lifecycle::deprecate_soft(
+      "0.10.2", 
+      "mrgsolve::nmxml(file = )", 
+      "nmxml(path = )"
+    )
+    path <- file
+  }
+  
+  if(!missing(path)) {
+    target <- path
   } else {
     if(missing(run) | missing(project)) {
-      stop("Both file and run/project are missing.", call.=FALSE)
+      wstop("both file and run or project are missing")
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
@@ -176,68 +186,44 @@ nmxml <- function(run=numeric(0), project=character(0),
 #' Import model estimates from a NONMEM ext file
 #' 
 #' @inheritParams nmxml
+#' @param path full path to NONMEM `ext` file
+#' @param read_fun function to use when reading the `ext` file
 #' 
-#' @seealso nmxml
+#' @seealso [nmxml], [read_nmext]
 #' 
-nmext <- function(file,
+#' @md
+nmext <- function(run=NA_real_, project=getwd(), 
+                  file=paste0(run,".ext"), path = NULL,
                   theta=TRUE, omega=TRUE, sigma=TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...") {
+                  tname="THETA", oname="...", sname="...", 
+                  read_fun = "data.table") {
   
-  ignore_data_table <- getOption("mrgsolve.nmext.read.csv",FALSE)
+  if(missing(run) && !is.character(path)) {
+    wstop("either 'run' or 'path' argument must be specified")  
+  }
+  
+  ans <- read_nmext(run,project,file,path,read_fun)
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
   sigma <- sigma | !missing(sname)
-  
-  if(!file.exists(file)) {
-    wstop("[nmxml] could not find the requested 'ext' file")
-  }
-  
-  if(requireNamespace("data.table") & !ignore_data_table) {
-    data <- data.table::fread(
-      file=file, 
-      na.strings = '.', 
-      data.table=FALSE,
-      skip=1
-    )
-  } else {
-    data <- read.table(
-      file=file,
-      na.strings='.',
-      stringsAsFactors=FALSE,
-      skip=1, 
-      header=TRUE
-    )
-  }
-  
-  data <- as.data.frame(data)
-  est <- data[data$ITERATION == -1e9,]
-  
-  if(nrow(data)==0) {
-    wstop(
-      "could not find final estimates",
-      "while reading 'ext' file from NMEXT"
-    )
-  }
   
   th <- list()
   om <- matrix(0,0,0)
   sg <- matrix(0,0,0)
   
   if(theta) {
-    th <- grepl("THETA", names(est),fixed=TRUE)
-    th <- as.list(est[,th])
-    th <- as.numeric(th)
-    names(th) <- paste0(tname, seq(length(th)))
+    th <- ans[["param"]]
+    if(tname!="THETA") {
+      names(th) <- sub("THETA", tname, names(th), fixed = TRUE)  
+    }
   }
   
   if(omega) {
     stopifnot(nchar(oname) > 0)
-    om <- grepl("OMEGA", names(est), fixed = TRUE)
-    om <- as.numeric(est[,om])
-    om <- lower2matrix(om)
+    om <- ans[["omega"]]
     if(is.null(olabels)) {
       olabels <- rep('.', nrow(om))
     } else {
@@ -250,9 +236,7 @@ nmext <- function(file,
   
   if(sigma) {
     stopifnot(nchar(sname) > 0)
-    sg <- grepl("SIGMA", names(est), fixed = TRUE)
-    sg <- as.numeric(est[,sg])
-    sg <- lower2matrix(sg)
+    sg <- ans[["sigma"]]
     if(is.null(slabels)) {
       slabels <- rep('.', nrow(sg))
     } else {
@@ -300,6 +284,7 @@ nm_xml_matrix <- function(x) {
 ##' @param project the NONMEM project directory
 ##' @param file the `ext` file name
 ##' @param path full path and file name for `ext` file
+##' @param read_fun function to read the `ext` file
 ##' 
 ##' @return A list with param, omega, and sigma in a format
 ##' ready to be used to update a model object.
@@ -317,22 +302,50 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' @md
 ##' @export 
-read_nmext <- function(run, project = getwd(), file = paste0(run, ".ext"), 
-                       path=NULL) {
+read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"), 
+                       path=NULL, read_fun = c("data.table","read.table")) {
+  
   if(is.character(path)) {
-    file <- path
+    extfile <- path  
   } else {
-    file <- file.path(project, run, file)  
+    extfile <- file.path(project,run,file)
   }
-  if(!file.exists(file)) {
-    stop("The file ", file, " does not exist.", call. = FALSE)
+  
+  if(!file.exists(extfile)) {
+    wstop("[read_nmext] could not find the requested 'ext' file ", 
+          shQuote(basename(extfile)))
   }
-  df <- read.table(file, skip = 1, header = TRUE)
+  
+  read_fun <- match.arg(read_fun)
+  
+  use_dt <- requireNamespace("data.table",quietly=TRUE) & read_fun=="data.table"
+  
+  if(use_dt) {
+    df <- data.table::fread(
+      file=extfile, 
+      na.strings = '.', 
+      data.table=FALSE,
+      skip=1
+    )
+  } else {
+    df <- read.table(
+      file=extfile,
+      na.strings='.',
+      stringsAsFactors=FALSE,
+      skip=1, 
+      header=TRUE
+    )
+  }
+  
   ans <- df[df[["ITERATION"]] == -1E9,]
-  if(nrow(ans) != 1) {
-    stop("Could not find estimates in the file: ", basename(file), 
-         call. = FALSE)
+  
+  if(nrow(ans)==0) {
+    wstop(
+      "[read_nmext] could not find final estimates",
+      " while reading 'ext' file ", shQuote(basename(extfile))
+    )
   }
+  
   ans <- as.list(ans)
   names(ans) <- gsub("[[:punct:]]", "", names(ans))
   ans <- list(
