@@ -156,6 +156,9 @@ void datarecord::implement(odeproblem* prob) {
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     prob->y_add(eq_n, Amt * Fn);
     break;
+  case 11: // Dosing event record with log_sum_exp
+    if(!prob->is_on(eq_n)) prob->on(eq_n);
+    prob->y_log_sum_exp(eq_n, Amt);
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     if(Fn == 0) break;

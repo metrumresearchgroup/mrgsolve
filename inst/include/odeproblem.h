@@ -113,6 +113,7 @@ public:
   void y_init(int pos, double value);
   void y_init(Rcpp::NumericVector init);
   void y_add(const unsigned int pos, const double& value);
+  void y_log_sum_exp(const unsigned int pos, const double& value);
   
   void table_call();
   void table_init_call();

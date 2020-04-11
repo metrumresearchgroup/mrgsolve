@@ -157,6 +157,10 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
   Y[pos] = Y[pos] + value; 
 }
 
+void odeproblem::y_log_sum_exp(const unsigned int pos, const double& value) {
+  Y[pos] = std::max(Y[pos], value) + log(exp(Y[pos] - std::max(Y[pos], value)) + exp(value  - std::max(Y[pos], value) ) );
+}
+
 /** Derivative function that gets called by the solver. 
  * 
  * @param neq number of equations
