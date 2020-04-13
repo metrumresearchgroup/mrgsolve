@@ -78,7 +78,7 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML")
+                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML", "NMEXT")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
