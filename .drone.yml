@@ -10,13 +10,13 @@ steps:
     path: /var/run/docker.sock
   commands:
   - $(aws ecr get-login --no-include-email --region us-east-1)
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-07
+  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-24
 
 - name: R36
-  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-07"
+  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-24"
   pull: never
   environment:
-    R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-07"
+    R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-24"
     _MRGSOLVE_SKIP_MODLIB_BUILD_: false
   commands:
   - make drone
@@ -27,16 +27,17 @@ steps:
     - tag
     status:
     - success
-  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-07"
+  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-24"
   pull: never
   environment:
-    R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-07"
+    R_LIBS_USER: "/opt/rpkgs/3.6/2020-03-24"
   commands:
   - git config --global user.email "drone@metrumrg.com"
   - git config --global user.name "Drony"
   - git fetch --tags
   - R -e "pkgpub::create_tagged_repo()"
   - aws s3 sync /tmp/${DRONE_TAG} s3://mpn.metworx.dev/releases/${DRONE_REPO_NAME}/${DRONE_TAG}
+  - aws s3 sync /tmp/${DRONE_TAG} s3://mpn.metworx.dev/releases/${DRONE_REPO_NAME}/latest_tag
 
 volumes:
 - name: docker.sock
