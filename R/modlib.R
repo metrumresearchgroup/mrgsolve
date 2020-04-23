@@ -71,11 +71,11 @@ modlib <- function(model = NULL,...,list=FALSE)  {
 }
 
 #nocov start
-modlib_models <- c("pk1cmt", "pk2cmt", "pk3cmt",
-                   "pk", "pk1", "pk2", "popex",
-                   "irm1", "irm2", "irm3", "pred1", 
-                   "emax", "tmdd", "viral1", "viral2", "effect", 
-                   "1005")
+modlib_models <- c(
+  "pk1cmt", "pk2cmt", "pk3cmt", "pk", "pk1", "pk2", "popex",
+  "irm1", "irm2", "irm3", "pred1", "emax", "tmdd", "viral1", 
+  "viral2", "effect", "1005"
+)
 #nocov end
 
 modlib_list <- function() {
