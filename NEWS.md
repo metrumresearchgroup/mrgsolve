@@ -6,7 +6,7 @@
   observations to be found.  While this is a breaking change, the old behavior
   was almost always wrong when the desired output was a series of
   non-observation records #640
-- Added 1005 model    
+- Added 1005 model
 
 # mrgsolve 0.10.1
 
