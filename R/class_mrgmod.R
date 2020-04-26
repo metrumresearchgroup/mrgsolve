@@ -210,8 +210,8 @@ valid.mrgmod <- function(object) {
 #' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-#' @slot ss_rtol relative tolerance to use when finding steady state \code{<numeric}
-#' @slot ss_atol absolute tolerance to use when finding steady state \code{<numeric>}
+#' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
+#' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} 
 #' \code{<numeric>}
 #' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
@@ -717,7 +717,6 @@ parin <- function(x) {
   list(
     rtol=x@rtol,atol=x@atol,ss_rtol=x@ss_rtol,ss_atol=x@ss_atol,
     hmin=as.double(x@hmin), hmax=as.double(x@hmax), 
-    ixpr=x@ixpr,maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 
