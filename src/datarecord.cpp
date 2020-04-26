@@ -498,7 +498,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     for(size_t jj=0; jj < n_cmt; ++jj) {
       j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
-      err = prob->ssAtol*fabs(prob->y(j)) + prob->ssAtol;
+      err = prob->ssRtol*fabs(prob->y(j)) + prob->ssAtol;
       if(diff < err) ++ngood;
       last[j] = prob->y(j);
     }
