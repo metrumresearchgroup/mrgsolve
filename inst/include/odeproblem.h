@@ -210,6 +210,8 @@ public:
   std::vector<double> Capture; ///< captured data items
   double Atol; ///< absolute tolerance
   double Rtol; ///< relative tolerance
+  double ssAtol; ///< absolute tolerance when finding steady state
+  double ssRtol; //< absolute tolerance when finding steady state
   int Npar; ///< number of parameters
   int Neq; ///< number of equations
   int Istate; ///< istate value

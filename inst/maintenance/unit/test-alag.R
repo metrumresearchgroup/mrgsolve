@@ -67,7 +67,7 @@ test_that("Lag time on SS record - bolus", {
 
 test_that("Lag time on SS record - infusion", {
   e <- ev(amt=100, ii = 12, LAGT = 3, addl = 10, ss = 1, rate = 100/2)
-  out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
+  out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3,ss_rtol = 1e-8)
   pick <- filter(out, time %in% seq(0,240,12))
   cent <- round(pick$CENT,4)
   expect_true(all(cent==cent[1]))

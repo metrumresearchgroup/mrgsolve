@@ -648,6 +648,12 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
   Rtol = Rcpp::as<double>(parin["rtol"]);
   Atol = Rcpp::as<double>(parin["atol"]);
+  ssRtol = Rcpp::as<double>(parin["ss_rtol"]);
+  ssAtol = Rcpp::as<double>(parin["ss_atol"]);
+  if(Advan==13) {
+    ssRtol = std::max(ssRtol,Rtol);
+    ssAtol = std::max(ssAtol,Atol);
+  }
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
   Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
 }

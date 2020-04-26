@@ -50,6 +50,10 @@ ignore \code{<numeric>}}
 
 \item{\code{rtol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
+\item{\code{ss_rtol}}{relative tolerance to use when finding steady state \code{<numeric}}
+
+\item{\code{ss_atol}}{absolute tolerance to use when finding steady state \code{<numeric>}}
+
 \item{\code{maxsteps}}{passed to \code{\link[=solversettings]{dlsoda}} 
 \code{<numeric>}}
 

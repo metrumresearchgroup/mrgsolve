@@ -114,6 +114,8 @@ protomod <- list(model=character(0),
                  preclean=FALSE,
                  atol=1E-8,
                  rtol=1E-8,
+                 ss_rtol=1e-6, 
+                 ss_atol=1e-8,
                  maxsteps=20000,
                  hmin=0,
                  hmax=0,
@@ -208,6 +210,8 @@ valid.mrgmod <- function(object) {
 #' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot ss_rtol relative tolerance to use when finding steady state \code{<numeric}
+#' @slot ss_atol absolute tolerance to use when finding steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} 
 #' \code{<numeric>}
 #' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
@@ -711,9 +715,9 @@ blocks_ <- function(file,what) {
 
 parin <- function(x) {
   list(
-    rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), 
-    hmax=as.double(x@hmax), ixpr=x@ixpr, 
-    maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
+    rtol=x@rtol,atol=x@atol,ss_rtol=x@ss_rtol,ss_atol=x@ss_atol,
+    hmin=as.double(x@hmin), hmax=as.double(x@hmax), 
+    ixpr=x@ixpr,maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 

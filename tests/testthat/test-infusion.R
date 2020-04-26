@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -115,7 +115,7 @@ test_that("Infusion executes with ss flag and ii==dur", {
     mod %>% 
     Req(CP) %>% obsonly %>%
     ev(amt=100,rate=100,ii=1,addl=10,ss=1) %>% 
-    mrgsim(end=10,digits=5) %>% filter(time>0)
+    mrgsim(end=10,digits=4) %>% filter(time>0)
   
   expect_true(all(out$CP==100))
   
