@@ -53,7 +53,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   Npar = int(param.size());
   Neq = int(init.size());
- 
+  
   Istate = 1;
   
   Advan = 13;
@@ -168,7 +168,7 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param prob an odeproblem object
  */
 void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
-   data->call_derivs(&t,y,ydot);  
+  data->call_derivs(&t,y,ydot);  
 }
 
 void odeproblem::call_derivs(double *t, double *y, double *ydot) {
