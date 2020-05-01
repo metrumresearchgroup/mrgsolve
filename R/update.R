@@ -17,7 +17,7 @@
 
 setAs("NULL", "character", function(from) character(0))
 
-sval <- unique(c("atol","rtol",
+sval <- unique(c("atol","rtol","ss_rtol", "ss_atol",
                  "verbose","debug","preclean","mindt",
                  "digits", "ixpr", "mxhnil","start", "end", "add", "delta",
                  "maxsteps", "hmin", "hmax","tscale", "request"))
@@ -56,6 +56,8 @@ all_updatable <- c(sval,other_val)
 #' \item digits
 #' \item atol - absolute solver tolerance; see \code{\link{solversettings}}
 #' \item rtol - relative solver tolerance; see \code{\link{solversettings}}
+#' \item ss_rtol - relative tolerance when finding steady state
+#' \item ss_atol - absolute tolerance when finding steady state
 #' \item ixpr - see \code{IXPR} in \code{\link{solversettings}}
 #' \item mxhnil - see \code{MXHNIL} in \code{\link{solversettings}}
 #' \item hmin - see \code{HMIN} in \code{\link{solversettings}}

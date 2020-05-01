@@ -41,3 +41,16 @@ test_that("ss_n and ss_fixed issue-533", {
   expect_warning(mrgsim_e(mod,e, ss_n=3), 
                  "\\[steady_zero\\] ID 246 failed to reach steady state")
 })
+
+test_that("ss tolerances", {
+  mod <- house()
+  expect_is(mod@ss_rtol,"numeric")
+  expect_is(mod@ss_atol,"numeric")
+  dose <- ev(amt = 100, ii = 24, addl = 0, ss = 1)
+  out0 <- mrgsim_e(mod,dose)
+  out1 <- mrgsim_e(mod,dose,ss_rtol = 1e-3)
+  out2 <- mrgsim_e(mod,dose,ss_rtol = 1e-8)
+  expect_false(identical(out1,out2))  
+  expect_identical(out0,out2)
+})
+

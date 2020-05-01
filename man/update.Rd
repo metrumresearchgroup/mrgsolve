@@ -56,6 +56,8 @@ Slots that can be updated:
 \item digits
 \item atol - absolute solver tolerance; see \code{\link{solversettings}}
 \item rtol - relative solver tolerance; see \code{\link{solversettings}}
+\item ss_rtol - relative tolerance when finding steady state
+\item ss_atol - absolute tolerance when finding steady state
 \item ixpr - see \code{IXPR} in \code{\link{solversettings}}
 \item mxhnil - see \code{MXHNIL} in \code{\link{solversettings}}
 \item hmin - see \code{HMIN} in \code{\link{solversettings}}

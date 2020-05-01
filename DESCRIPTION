@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 0.10.1.9006-3
+Version: 0.10.1.9010
 Authors@R: 
     c(person(given = "Kyle T",
              family = "Baron",

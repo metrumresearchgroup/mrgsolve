@@ -66,7 +66,7 @@ dotest <- function(out) {
   return(ans$status)
 }
 
-mod <- mread("pk1", modlib(), end = 48, delta=0.1)
+mod <- modlib("pk1",end=48,delta=0.1,ss_rtol=1e-10)
 mod1 <- mod
 
 context("One compartment model tests")
@@ -114,7 +114,7 @@ test_that("one-compartment, infusion", {
 
 context("Two compartment model tests")
 
-mod <- mread("pk2", modlib(), end = 48, delta=0.1)
+mod <- modlib("pk2",end = 48, delta=0.1,ss_rtol = 1e-10)
 
 test_that("two-compartment, bolus", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V2=.v1, V3=.v2, Q = .q)
