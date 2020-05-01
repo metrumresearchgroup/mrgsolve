@@ -87,6 +87,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   ss_fixed = false;
   ss_n = 500;
   ss_flag = false;
+  ssRtol = 0;
+  ssAtol = 0;
   
   pred.assign(5,0.0);
   

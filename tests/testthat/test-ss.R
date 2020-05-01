@@ -49,10 +49,8 @@ test_that("ss tolerances", {
   dose <- ev(amt = 100, ii = 24, addl = 0, ss = 1)
   out0 <- mrgsim_e(mod,dose)
   out1 <- mrgsim_e(mod,dose,ss_rtol = 1e-3)
-  out2 <- mrgsim_e(mod,dose,ss_rtol = 1e-6)
-  out3 <- mrgsim_e(mod,dose,ss_rtol = 1e-6)
+  out2 <- mrgsim_e(mod,dose,ss_rtol = 1e-8)
   expect_false(identical(out1,out2))  
-  expect_identical(out2,out3)
   expect_identical(out0,out2)
 })
 
