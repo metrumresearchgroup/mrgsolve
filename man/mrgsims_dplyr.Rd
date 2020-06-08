@@ -28,7 +28,7 @@ as.tbl.mrgsims(x, ...)
 
 filter_sims(.data, ...)
 
-\method{group_by}{mrgsims}(.data, ..., add = FALSE)
+\method{group_by}{mrgsims}(.data, ..., add = FALSE, .add = FALSE)
 
 \method{distinct}{mrgsims}(.data, ..., .keep_all = FALSE)
 
@@ -59,7 +59,9 @@ as_data_frame.mrgsims(.data_, ...)
 
 \item{.data}{passed to various \code{dplyr} functions}
 
-\item{add}{passed to \code{dplyr::group_by}}
+\item{add}{passed to \code{dplyr::group_by} (for dplyr < 1.0.0)}
+
+\item{.add}{passed to \code{dplyr::group_by} (for dplyr >= 1.0.0)}
 
 \item{.keep_all}{passed to \code{dplyr::distinct}}
 

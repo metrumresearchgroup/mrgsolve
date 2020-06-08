@@ -467,8 +467,8 @@ select__ <- function(df, .dots) {
   select(df, `!!!`(syms(.dots)))
 }
 
-group_by__ <- function(df,.dots, add = FALSE) {
-  group_by(df, `!!!`(syms(.dots)), add = add)
+group_by__ <- function(df,.dots) {
+  group_by(df, `!!!`(syms(.dots)))
 }
 
 distinct__ <- function(df, .dots, .keep_all = FALSE) {

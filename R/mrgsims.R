@@ -142,7 +142,8 @@ NULL
 ##' @param x mrgsims object
 ##' @param .dots passed to various \code{dplyr} functions
 ##' @param .data passed to various \code{dplyr} functions
-##' @param add passed to \code{dplyr::group_by}
+##' @param add passed to \code{dplyr::group_by} (for dplyr < 1.0.0)
+##' @param .add passed to \code{dplyr::group_by} (for dplyr >= 1.0.0)
 ##' @param .keep_all passed to \code{dplyr::distinct}
 ##' @param funs passed to \code{dplyr::summarise_each}
 ##' @param ... passed to other methods
@@ -182,8 +183,12 @@ filter_sims <- function(.data, ... ) {
 
 ##' @rdname mrgsims_dplyr
 ##' @export
-group_by.mrgsims <- function(.data,...,add=FALSE) {
-  dplyr::group_by(as_tibble.mrgsims(.data),...,add = add)
+group_by.mrgsims <- function(.data,...,add=FALSE,.add=FALSE) {
+  if(DPLYR_1_0_0) {
+    return(dplyr::group_by(as_tibble.mrgsims(.data), ..., .add = .add))
+  } else {
+    return(dplyr::group_by(as_tibble.mrgsims(.data), ..., add = add))
+  }
 }
 
 ##' @rdname mrgsims_dplyr
@@ -417,7 +422,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
       scales[["y"]][["at"]] <- breaks
     }
   }
-
+  
   y <- structure(y, .Environment=environment())
   gr <- eval(substitute(groups),data)
   ans <- lattice::xyplot(

@@ -100,6 +100,8 @@ globalVariables(c("test_package","time", "ID","block", "descr",
 
 VERSION <- utils::packageVersion("mrgsolve")
 
+DPLYR_1_0_0 <- packageVersion("dplyr") >= '0.8.99.9000'
+
 #' Forward pipe
 #' 
 #' 
