@@ -40,7 +40,7 @@
 ##'   \item{\code{as.data.frame}} coerces simulated data to data.frame 
 ##'   and returns the data.frame
 ##'   \item{\code{as.matrix}} returns matrix of simulated data
-##'   \item{\code{as.tbl}} coerces simulated to \code{tbl_df}; 
+##'   \item{\code{as.tbl}} coerces simulated to \code{tibble}; 
 ##'   requires \code{dplyr}
 ##'   \item{\code{summary}} coerces simulated data to data.frame 
 ##'   and passes to \code{\link{summary.data.frame}}
@@ -157,7 +157,7 @@ NULL
 ##' @rdname mrgsims_dplyr
 ##' @export
 as.tbl.mrgsims <- function(x,...) {
-  as.tbl(as.data.frame(x))
+  as_tibble(as.data.frame(x))
 }
 
 ##' @rdname mrgsims_dplyr
@@ -189,8 +189,7 @@ group_by.mrgsims <- function(.data,...,add=FALSE) {
 ##' @rdname mrgsims_dplyr
 ##' @export
 distinct.mrgsims <- function(.data,...,.keep_all=FALSE) {
-  dplyr::distinct(as_tibble.mrgsims(.data),...,
-                  .keep_all=.keep_all)
+  dplyr::distinct(as_tibble.mrgsims(.data),...,.keep_all=.keep_all)
 }
 
 ##' @rdname mrgsims_dplyr
@@ -266,7 +265,6 @@ as_data_frame.mrgsims <- function(.data_,...) {
 as_tibble.mrgsims <- function(.data_,...) {
   as_tibble(as.data.frame(.data_),...)  
 }
-
 
 ##' @rdname mrgsims
 ##' @param row.names passed to \code{\link{as.data.frame}}

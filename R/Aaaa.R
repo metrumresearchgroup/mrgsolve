@@ -22,7 +22,7 @@
 #' @importFrom utils .DollarNames
 #' @importFrom stats as.formula setNames rnorm
 #' @importFrom dplyr filter 
-#' @importFrom dplyr mutate slice as.tbl pull
+#' @importFrom dplyr mutate slice pull
 #' @importFrom dplyr bind_rows arrange summarise summarise_at
 #' @importFrom dplyr intersect select rename slice distinct do
 #' @importFrom dplyr distinct first select_vars_ 

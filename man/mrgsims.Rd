@@ -67,7 +67,7 @@ commonly used in R (e.g. head, tail, as.data.frame, etc ...)
   \item{\code{as.data.frame}} coerces simulated data to data.frame 
   and returns the data.frame
   \item{\code{as.matrix}} returns matrix of simulated data
-  \item{\code{as.tbl}} coerces simulated to \code{tbl_df}; 
+  \item{\code{as.tbl}} coerces simulated to \code{tibble}; 
   requires \code{dplyr}
   \item{\code{summary}} coerces simulated data to data.frame 
   and passes to \code{\link{summary.data.frame}}

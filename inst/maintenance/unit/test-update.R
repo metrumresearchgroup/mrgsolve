@@ -53,7 +53,7 @@ test_that("Update parameter - via param", {
 
 test_that("Update parameter - via idata", {
   idata <- expand.idata(ID=1, A=c(4,5,6),B=c(7,8,9),C=c(11,12,13,14))  
-  out <- mod1 %>% idata_set(idata) %>% mrgsim %>% as.tbl %>% distinct(ID,A,B,C)
+  out <- mod1 %>% idata_set(idata) %>% mrgsim %>% as_tibble %>% distinct(ID,A,B,C)
   expect_equal(unlist(out),unlist(idata))
   expect_identical(param(param(mod1,B = 2))$B,2)
 })
@@ -62,7 +62,7 @@ test_that("Update parameter - via idata", {
 test_that("Update parameter - via data, not-time-varying", {
   data <- expand.ev(ID=1, A=c(4,5,6),B=c(7,8,9),C=c(11,12,13,14),amt=2)
   out <- mod1 %>% data_set(data) %>% carry_out(amt,evid,cmt,time) %>%
-    mrgsim() %>% as.tbl %>% filter(evid==1) %>% mutate(CM=NULL)
+    mrgsim() %>% as_tibble %>% filter(evid==1) %>% mutate(CM=NULL)
   expect_equal(unlist(out),unlist(data[,names(out)]))
   
 })

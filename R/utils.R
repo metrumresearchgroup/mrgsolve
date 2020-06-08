@@ -462,9 +462,11 @@ locf_ev <- function(x) {
 arrange__ <- function(df, .dots) {
   arrange(df, `!!!`(syms(.dots)))
 }
+
 select__ <- function(df, .dots) {
   select(df, `!!!`(syms(.dots)))
 }
+
 group_by__ <- function(df,.dots, add = FALSE) {
   group_by(df, `!!!`(syms(.dots)), add = add)
 }
@@ -570,4 +572,7 @@ mod_first <- function(cl) {
   msg <- sprintf("the first argument to %s must be a model object",fun)
   wstop(msg)
 }
+
+
+
 

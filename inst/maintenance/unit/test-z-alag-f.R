@@ -120,7 +120,7 @@ test_that("F and ALAG are set from idata", {
   out1 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim()
   # 1 and 2 put doses in a data set after padded observations at the same time;
   out2 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim(add=1+idata$ALAG1,recsort=3)
-  out2b <- out2 %>% lim(CENT > 0) %>% as.tbl %>% group_by(ID)%>% slice(1)
+  out2b <- out2 %>% lim(CENT > 0) %>% as_tibble %>% group_by(ID)%>% slice(1)
   
   expect_equivalent(lim(out1, time==2)$CENT, 100*idata$F1)
   expect_equivalent(out2b$time, 1+idata$ALAG1)

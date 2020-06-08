@@ -20,7 +20,7 @@
 \alias{as_tibble.mrgsims}
 \title{Methods for handling output with dplyr verbs}
 \usage{
-\method{as.tbl}{mrgsims}(x, ...)
+as.tbl.mrgsims(x, ...)
 
 \method{pull}{mrgsims}(.data, ...)
 

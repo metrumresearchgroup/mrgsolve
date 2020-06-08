@@ -169,7 +169,7 @@ data <- expand.grid(time=seq(0,12,1), ID=1:100, cmt=1)
 data <- merge(data, pars, sort=FALSE)
 
 out <- mrgsim(mod, data=data, carry_out="CL,VC")
-out <- out %>% as.tbl %>% distinct(ID, .keep_all=TRUE)
+out <- out %>% as_tibble %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out)[,c("CL", "VC", "ID")], 6)
 
 test_that("Recover items from simulated data when passed in as data", {
