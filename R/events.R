@@ -160,10 +160,11 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
         data <- arrange__(data,.dots=c("ID", "time"))
         rownames(data) <- NULL
       } else {
-        data <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
-                                 match("ID", colnames(data),0), 
-                                 data.matrix(data), 
-                                 ID, PACKAGE="mrgsolve" ))
+        # data <- data.frame(.Call(`_mrgsolve_EXPAND_EVENTS`, 
+        #                          match("ID", colnames(data),0), 
+        #                          data.matrix(data), 
+        #                          ID, PACKAGE="mrgsolve" ))
+        data <- expand_event_object(data,ID)
       }
       
     } else {
@@ -431,9 +432,7 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
     warning("id argument is deprecated; use ID instead")
     ID <- id
   }
-  x <- as.data.frame(x) 
-  x <- EXPAND_EVENTS(0,numeric_data_matrix(x),as.numeric(ID))
-  x <- as.data.frame(x)
+  x <- expand_event_object(as.data.frame(x),ID)
   if(!is.null(n)) {
     if(n  > 1) {
       x <- ev_repeat(x,n=n,wait=wait)

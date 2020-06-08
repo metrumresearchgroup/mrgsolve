@@ -226,6 +226,18 @@ expand.ev <- function(...) {
 #' @rdname expand.idata
 ev_expand <- expand.ev
 
+#' Expand an event data frame across multiple ID
+#' 
+#' @noRd
+expand_event_object <- function(event,ID) {
+  event <- as.data.frame(event)
+  out_names <- unique(c("ID", names(event)))
+  ind <- rep(seq(nrow(event)), times=length(ID))
+  big <- dplyr::slice(event, ind)
+  big[["ID"]] <- rep(ID, each=nrow(event))
+  big[,out_names]
+} 
+
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())
   x <- gsub("(,|\\s)+$", "",x,perl=TRUE)
