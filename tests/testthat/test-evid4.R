@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -42,5 +42,15 @@ test_that("evid4 infusion dosing is the same as evid1", {
   expect_identical(out1, out4)
 })
 
-
+test_that("evid4 reset with infusion", {
+  dose1 <- ev(amt = 100, rate = 1)
+  dose2 <- ev(amt = 200, time = 3, evid = 4, rate = 1)
+  dose <- c(dose1,dose2)
+  out <- mrgsim_df(mod,dose, end = 4,carry_out = "evid",delta=1)
+  expect_identical(out$evid[c(1,2,6)],c(0,1,4))
+  expect_identical(out$GUT[6],0)
+  expect_identical(out$CENT[6],0)
+  expect_identical(out$DV[6],0)
+  expect_identical(out$RESP[6],mod$KIN/mod$KOUT)
+})
 

@@ -145,7 +145,7 @@ void datarecord::implement(odeproblem* prob) {
   
   unsigned int evid = Evid;
   
-  if(this->infusion()) evid = 5;
+  if(this->infusion() && Evid != 4) evid = 5;
   
   int eq_n = this->cmtn();
   
