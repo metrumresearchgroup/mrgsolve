@@ -621,6 +621,9 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
 #' @rdname loadso
 #' @export
 loadso.mrgmod <- function(x,...) {
+  if(inherits(x,"packmod")) {
+    return(invisible(x))  
+  }
   if(.Platform$OS.type!="unix") {
     try(dyn.unload(sodll(x)),silent=TRUE)
   }
