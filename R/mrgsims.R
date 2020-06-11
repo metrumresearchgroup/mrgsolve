@@ -409,7 +409,7 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   
   if(y[[3]] == '.')  y[[3]] <- quote(time)
   
-  if(length(y[[2]])==1) ylab <- deparse(y[[2]])
+  if(length(y[[2]])==1 & missing(ylab)) ylab <- deparse(y[[2]])
   
   if(logy) {
     scales[["y"]][["log"]] <- TRUE
