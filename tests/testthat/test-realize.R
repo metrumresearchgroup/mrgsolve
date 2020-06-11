@@ -22,7 +22,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("test-ev")
+context("test-realize")
 
 mod <- mrgsolve::house()
 

@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 mod <- mrgsolve::house() %>% update(end=240)
 
-context("test-data_set")
+context("test-idata_set")
 
 test_that("event with idata set", {
   idata <- data.frame(ID = c(11,33,55), CL = 2)
