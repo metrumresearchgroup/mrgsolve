@@ -130,46 +130,47 @@ setMethod("names", "mrgsims", function(x) {
   return(colnames(x@data))
 })
 
-##' Methods for handling output with dplyr verbs
-##' 
-##' These methods modify the data in a mrgsims object and return a data frame.
-##' Contrast with the functions in [mrgsims_modify].
-##' 
-##' @rdname mrgsims_dplyr
-##' @name mrgsims_dplyr
-##' 
+#' Methods for handling output with dplyr verbs
+#' 
+#' These methods modify the data in a mrgsims object and return a data frame.
+#' Contrast with the functions in [mrgsims_modify].
+#' 
+#' @rdname mrgsims_dplyr
+#' @name mrgsims_dplyr
+#' @md
+#' 
 NULL
 
-##' @param .dots passed to various `dplyr` functions
-##' @param .data an mrgsims object; passed to various `dplyr` functions
-##' @param x passed to [dplyr::as.tbl]
-##' @param add passed to [dplyr::group_by] (for dplyr < `1.0.0`)
-##' @param .add passed to [dplyr::group_by] (for dplyr >= `1.0.0`)
-##' @param .keep_all passed to [dplyr::distinct]
-##' @param funs passed to [dplyr::summarise_each]
-##' @param ... passed to other methods
-##' 
-##' @details
-##' 
-##' For the `select_sims` function, the dots `...` must be either 
-##' compartment names or variables in `$CAPTURE`.  An error will be
-##' generated if no valid names are selected or the names for selection are 
-##' not found in the simulated output.
-##' 
-##' @examples
-##' 
-##' out <- mrgsim(house(), events = ev(amt = 100), end = 5, delta=1)
-##' 
-##' dplyr::filter(out, time==2)
-##' 
-##' dplyr::mutate(out, label = "abc")
-##' 
-##' dplyr::select(out, time, RESP, CP)
-##' 
-##' @seealso [mrgsims_modify]
-##' @md
-##' @rdname mrgsims_dplyr
-##' @export
+#' @param .dots passed to various `dplyr` functions
+#' @param .data an mrgsims object; passed to various `dplyr` functions
+#' @param x passed to [dplyr::as.tbl]
+#' @param add passed to [dplyr::group_by] (for dplyr < `1.0.0`)
+#' @param .add passed to [dplyr::group_by] (for dplyr >= `1.0.0`)
+#' @param .keep_all passed to [dplyr::distinct]
+#' @param funs passed to [dplyr::summarise_each]
+#' @param ... passed to other methods
+#' 
+#' @details
+#' 
+#' For the `select_sims` function, the dots `...` must be either 
+#' compartment names or variables in `$CAPTURE`.  An error will be
+#' generated if no valid names are selected or the names for selection are 
+#' not found in the simulated output.
+#' 
+#' @examples
+#' 
+#' out <- mrgsim(house(), events = ev(amt = 100), end = 5, delta=1)
+#' 
+#' dplyr::filter(out, time==2)
+#' 
+#' dplyr::mutate(out, label = "abc")
+#' 
+#' dplyr::select(out, time, RESP, CP)
+#' 
+#' @seealso [mrgsims_modify]
+#' @md
+#' @rdname mrgsims_dplyr
+#' @export
 pull.mrgsims <- function(.data, ...) {
   dplyr::pull(as_tibble.mrgsims(.data), ...)
 }
@@ -271,7 +272,7 @@ as.tbl.mrgsims <- function(x,...) {
 #' select_sims(out, RESP, CP)
 #' 
 #' @rdname mrgsims_modify
-#' @name mrgsims_modify
+#' @name   mrgsims_modify
 #' @seealso [mrgsims_dplyr]
 #' @md
 #' @export

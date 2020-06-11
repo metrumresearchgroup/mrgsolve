@@ -64,7 +64,7 @@ as.tbl.mrgsims(x, ...)
 }
 \description{
 These methods modify the data in a mrgsims object and return a data frame.
-Contrast with the functions in [mrgsims_modify].
+Contrast with the functions in \link{mrgsims_modify}.
 }
 \details{
 For the \code{select_sims} function, the dots \code{...} must be either
