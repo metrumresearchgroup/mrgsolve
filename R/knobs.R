@@ -73,10 +73,10 @@ setGeneric("knobs", function(x,y,...) standardGeneric("knobs"))
 ##' @export
 setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   
-  lifecycle::deprecate_soft(
-    when = "0.10.2",
-    what = "mrgsolve::knobs()"
-  )
+  # lifecycle::deprecate_soft(
+  #   when = "0.10.2",
+  #   what = "mrgsolve::knobs()"
+  # )
   
   input <- list(...)
   

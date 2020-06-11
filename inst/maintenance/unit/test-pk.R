@@ -105,7 +105,7 @@ test_that("one-compartment, infusion", {
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, infusion", {
+test_that("one-compartment, infusion tau", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V=.v, rate = 100/8, ss=1, ii = 24)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_ss_1cmt_linear_infusion,tinf=8, tau = 24)

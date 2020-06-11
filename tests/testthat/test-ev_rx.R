@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -88,12 +88,6 @@ test_that("dose can be in decimal or scientific", {
 
   a <- ev_rx("1.23E+4")
   b <- ev(amt = 1.23E+4)
-  expect_identical(a,b)
-})
-
-test_that("infusion duration can be decimal", {
-  a <- ev_rx("1000 over 1.3")
-  b <- ev(amt = 1000, rate = 1000/1.3)
   expect_identical(a,b)
 })
 

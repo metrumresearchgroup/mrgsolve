@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -28,7 +28,7 @@ context("test-ev_days")
 e <- ev(amt=100)
 b <- ev(amt=200)
 
-test_that("Input error", {
+test_that("input error - ev days", {
   expect_error(ev_days(e,"abc"))
   expect_error(ev_days(e))
 })

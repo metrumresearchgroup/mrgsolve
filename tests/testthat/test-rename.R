@@ -46,20 +46,7 @@ test_that("Item carried from data set is renamed", {
   out <- mod %>% carry_out(Dose,WEIGHT = WT) %>% mrgsim
   expect_true(all(is.element(s_(RESP,CENT,WEIGHT), names(out))))
   expect_true(all(is.element(s_(Dose,WEIGHT), names(out))))
-})
-
-
-test_that("Item carried from data set is renamed", {
   out <- mod %>% carry_out(FOO=BAR) %>% mrgsim
   expect_equal(c("ID","time","CENT","RESP"), names(out))
 })
-
-
-
-
-
-
-
-
-
 
