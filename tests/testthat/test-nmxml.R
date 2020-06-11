@@ -279,3 +279,12 @@ test_that("NONMEM estimates from nmext", {
                "'arg' should be one of ")
 })
 
+test_that("custom labeled THETA", {
+  project <- system.file("nonmem", package = "mrgsolve")
+  a <- mrgsolve:::nmxml(run = 1005, project = project)
+  b <- mrgsolve:::nmxml(run = 1005, project = project, tname = letters[1:7])
+  expect_identical(names(a$theta), paste0("THETA", 1:7))
+  expect_identical(names(b$theta), letters[1:7])
+  expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
+})
+

@@ -136,7 +136,25 @@ nmxml <- function(run=numeric(0), project=character(0),
     stopifnot(nchar(tname) > 0)
     th <- sapply(tree$theta, "[", USE.NAMES=FALSE)
     th <- as.list(as.numeric(th))
-    names(th) <- paste0(tname, seq(length(th)))
+    
+    if(length(tname) > 1) {
+      if(length(tname) != length(th)) {
+        wstop(
+          "'tname' length (", 
+          length(tname), 
+          ") is not equal to ",
+          "number of THETAs (", 
+          length(th), 
+          ")"
+        )
+      }
+    }
+    
+    if(length(th) == length(tname)) {
+      names(th) <- tname
+    } else {
+      names(th) <- paste0(tname, seq(length(th)))
+    }
   }
   
   if(omega) {
