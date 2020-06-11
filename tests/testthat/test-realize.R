@@ -55,4 +55,3 @@ test_that("addl column is all zeros", {
   data <- realize_addl(ev(amt = 100, addl = 0, ii = 1))
   expect_is(data,"ev")
 })
-
