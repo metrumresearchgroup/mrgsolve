@@ -455,7 +455,7 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
 ##' 
 ##' @export
 ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
-  x <- as.data.frame(x)
+  x <- As_data_set(x)
   if(!exists("ii", x)) {
     x["ii"] <- 0
   }
@@ -474,6 +474,7 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
   out <- bind_rows(out)
   if(exists("ID", out)) {
     out <- arrange__(out, c("ID", "time")) 
+    out <- select__(out, unique(c("ID",colnames(out))))
   }
   if(as.ev) {
     return(as.ev(out))
