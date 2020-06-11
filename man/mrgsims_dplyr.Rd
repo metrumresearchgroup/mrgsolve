@@ -2,39 +2,30 @@
 % Please edit documentation in R/mrgsims.R
 \name{mrgsims_dplyr}
 \alias{mrgsims_dplyr}
-\alias{as.tbl.mrgsims}
 \alias{pull.mrgsims}
 \alias{filter.mrgsims}
-\alias{filter_sims}
 \alias{group_by.mrgsims}
 \alias{distinct.mrgsims}
 \alias{mutate.mrgsims}
-\alias{mutate_sims}
 \alias{summarise.each}
 \alias{summarise.mrgsims}
 \alias{do.mrgsims}
 \alias{select.mrgsims}
-\alias{select_sims}
 \alias{slice.mrgsims}
 \alias{as_data_frame.mrgsims}
 \alias{as_tibble.mrgsims}
+\alias{as.tbl.mrgsims}
 \title{Methods for handling output with dplyr verbs}
 \usage{
-as.tbl.mrgsims(x, ...)
-
 \method{pull}{mrgsims}(.data, ...)
 
 \method{filter}{mrgsims}(.data, ...)
-
-filter_sims(.data, ...)
 
 \method{group_by}{mrgsims}(.data, ..., add = FALSE, .add = FALSE)
 
 \method{distinct}{mrgsims}(.data, ..., .keep_all = FALSE)
 
 \method{mutate}{mrgsims}(.data, ...)
-
-mutate_sims(.data, ...)
 
 \method{summarise}{each}(.data, funs, ...)
 
@@ -44,39 +35,54 @@ mutate_sims(.data, ...)
 
 \method{select}{mrgsims}(.data, ...)
 
-select_sims(.data, ...)
-
 \method{slice}{mrgsims}(.data, ...)
 
 as_data_frame.mrgsims(.data_, ...)
 
 \method{as_tibble}{mrgsims}(.data_, ...)
+
+as.tbl.mrgsims(x, ...)
 }
 \arguments{
-\item{x}{mrgsims object}
+\item{.data}{an mrgsims object; passed to various \code{dplyr} functions}
 
 \item{...}{passed to other methods}
 
-\item{.data}{passed to various \code{dplyr} functions}
+\item{add}{passed to \link[dplyr:group_by]{dplyr::group_by} (for dplyr < \verb{1.0.0})}
 
-\item{add}{passed to \code{dplyr::group_by} (for dplyr < 1.0.0)}
+\item{.add}{passed to \link[dplyr:group_by]{dplyr::group_by} (for dplyr >= \verb{1.0.0})}
 
-\item{.add}{passed to \code{dplyr::group_by} (for dplyr >= 1.0.0)}
+\item{.keep_all}{passed to \link[dplyr:distinct]{dplyr::distinct}}
 
-\item{.keep_all}{passed to \code{dplyr::distinct}}
-
-\item{funs}{passed to \code{dplyr::summarise_each}}
+\item{funs}{passed to \link[dplyr:summarise_each]{dplyr::summarise_each}}
 
 \item{.dots}{passed to various \code{dplyr} functions}
 
 \item{.data_}{mrgsims object}
+
+\item{x}{passed to \link[dplyr:as.tbl]{dplyr::as.tbl}}
 }
 \description{
-Methods for handling output with dplyr verbs
+These methods modify the data in a mrgsims object and return a data frame.
+Contrast with the functions in [mrgsims_modify].
 }
 \details{
-For the \code{select_sims} function, the dots \code{...} must be either 
-compartment names or variables in \code{$CAPTURE}.  An error will be
-generated if no valid names are selected or the names for selection are 
+For the \code{select_sims} function, the dots \code{...} must be either
+compartment names or variables in \verb{$CAPTURE}.  An error will be
+generated if no valid names are selected or the names for selection are
 not found in the simulated output.
+}
+\examples{
+
+out <- mrgsim(house(), events = ev(amt = 100), end = 5, delta=1)
+
+dplyr::filter(out, time==2)
+
+dplyr::mutate(out, label = "abc")
+
+dplyr::select(out, time, RESP, CP)
+
+}
+\seealso{
+\link{mrgsims_modify}
 }

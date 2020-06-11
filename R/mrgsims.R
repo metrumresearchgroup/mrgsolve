@@ -40,8 +40,6 @@
 ##'   \item{\code{as.data.frame}} coerces simulated data to data.frame 
 ##'   and returns the data.frame
 ##'   \item{\code{as.matrix}} returns matrix of simulated data
-##'   \item{\code{as.tbl}} coerces simulated to \code{tibble}; 
-##'   requires \code{dplyr}
 ##'   \item{\code{summary}} coerces simulated data to data.frame 
 ##'   and passes to \code{\link{summary.data.frame}}
 ##'   \item{\code{plot}} plots simulated data; see \code{\link{plot_mrgsims}}
@@ -134,33 +132,42 @@ setMethod("names", "mrgsims", function(x) {
 
 ##' Methods for handling output with dplyr verbs
 ##' 
+##' These methods modify the data in a mrgsims object and return a data frame.
+##' Contrast with the functions in [mrgsims_modify].
+##' 
 ##' @rdname mrgsims_dplyr
 ##' @name mrgsims_dplyr
 ##' 
 NULL
 
-##' @param x mrgsims object
-##' @param .dots passed to various \code{dplyr} functions
-##' @param .data passed to various \code{dplyr} functions
-##' @param add passed to \code{dplyr::group_by} (for dplyr < 1.0.0)
-##' @param .add passed to \code{dplyr::group_by} (for dplyr >= 1.0.0)
-##' @param .keep_all passed to \code{dplyr::distinct}
-##' @param funs passed to \code{dplyr::summarise_each}
+##' @param .dots passed to various `dplyr` functions
+##' @param .data an mrgsims object; passed to various `dplyr` functions
+##' @param x passed to [dplyr::as.tbl]
+##' @param add passed to [dplyr::group_by] (for dplyr < `1.0.0`)
+##' @param .add passed to [dplyr::group_by] (for dplyr >= `1.0.0`)
+##' @param .keep_all passed to [dplyr::distinct]
+##' @param funs passed to [dplyr::summarise_each]
 ##' @param ... passed to other methods
 ##' 
 ##' @details
 ##' 
-##' For the \code{select_sims} function, the dots \code{...} must be either 
-##' compartment names or variables in \code{$CAPTURE}.  An error will be
+##' For the `select_sims` function, the dots `...` must be either 
+##' compartment names or variables in `$CAPTURE`.  An error will be
 ##' generated if no valid names are selected or the names for selection are 
 ##' not found in the simulated output.
 ##' 
-##' @rdname mrgsims_dplyr
-##' @export
-as.tbl.mrgsims <- function(x,...) {
-  as_tibble(as.data.frame(x))
-}
-
+##' @examples
+##' 
+##' out <- mrgsim(house(), events = ev(amt = 100), end = 5, delta=1)
+##' 
+##' dplyr::filter(out, time==2)
+##' 
+##' dplyr::mutate(out, label = "abc")
+##' 
+##' dplyr::select(out, time, RESP, CP)
+##' 
+##' @seealso [mrgsims_modify]
+##' @md
 ##' @rdname mrgsims_dplyr
 ##' @export
 pull.mrgsims <- function(.data, ...) {
@@ -172,13 +179,6 @@ pull.mrgsims <- function(.data, ...) {
 ##' @export 
 filter.mrgsims <- function(.data,...) {
   dplyr::filter(as_tibble.mrgsims(.data),...)
-}
-
-##' @rdname mrgsims_dplyr
-##' @export
-filter_sims <- function(.data, ... ) {
-  .data@data <- dplyr::filter(.data@data, ...)
-  .data
 }
 
 ##' @rdname mrgsims_dplyr
@@ -205,13 +205,6 @@ mutate.mrgsims <- function(.data,...) {
 
 ##' @rdname mrgsims_dplyr
 ##' @export
-mutate_sims <- function(.data, ...) {
-  .data@data <- dplyr::mutate(.data@data, ...)
-  .data
-}
-
-##' @rdname mrgsims_dplyr
-##' @export
 summarise.each <- function(.data,funs,...) {
   dplyr::summarise_each(as_tibble.mrgsims(.data),funs,...)
 }
@@ -234,24 +227,6 @@ select.mrgsims <- function(.data,...) {
   dplyr::select(as_tibble.mrgsims(.data),...)
 }
 
-#' @rdname mrgsims_dplyr
-#' @export
-select_sims <- function(.data, ...) {
-  all_names <- names(.data)
-  outputs <- c(.data@request,.data@outnames)
-  retain <- setdiff(all_names,outputs)
-  vars <- vars_select(all_names, !!!enquos(...))
-  vars <- intersect(vars,outputs)
-  if(length(vars)==0) {
-    wstop("no output variables (compartments or captures) were selected.")  
-  }
-  vars <- unique(c(retain,vars))
-  .data@data <- dplyr::select(.data@data,vars)
-  .data@request <- intersect(.data@request,names(.data))
-  .data@outnames <- intersect(.data@outnames,names(.data))
-  return(.data)
-}
-
 ##' @rdname mrgsims_dplyr
 ##' @export
 slice.mrgsims <- function(.data,...) {
@@ -269,6 +244,66 @@ as_data_frame.mrgsims <- function(.data_,...) {
 ##' @export
 as_tibble.mrgsims <- function(.data_,...) {
   as_tibble(as.data.frame(.data_),...)  
+}
+
+#' @rdname mrgsims_dplyr
+#' @export
+as.tbl.mrgsims <- function(x,...) {
+  as_tibble(as.data.frame(x))
+}
+
+#' Methods for modifying mrgsims objects
+#' 
+#' These functions modify the simulated data in an mrgsims object and return 
+#' the modified object.  Contrast with the functions in [mrgsims_dplyr].
+#' 
+#' @param .data a mrgsims object
+#' @param ... other arguments passed to the `dplyr` functions
+#' 
+#' @examples
+#' 
+#' out <- mrgsim(house(), events = ev(amt = 100))
+#' 
+#' filter_sims(out, time > 2)
+#' 
+#' mutate_sims(out, label = "abc")
+#' 
+#' select_sims(out, RESP, CP)
+#' 
+#' @rdname mrgsims_modify
+#' @name mrgsims_modify
+#' @seealso [mrgsims_dplyr]
+#' @md
+#' @export
+#' 
+mutate_sims <- function(.data, ...) {
+  .data@data <- dplyr::mutate(.data@data, ...)
+  .data
+}
+
+#' @rdname mrgsims_modify
+#' @export
+select_sims <- function(.data, ...) {
+  all_names <- names(.data)
+  outputs <- c(.data@request,.data@outnames)
+  retain <- setdiff(all_names,outputs)
+  vars <- vars_select(all_names, !!!enquos(...))
+  vars <- intersect(vars,outputs)
+  if(length(vars)==0) {
+    wstop("no output variables (compartments or captures) were selected.")  
+  }
+  vars <- unique(c(retain,vars))
+  .data@data <- dplyr::select(.data@data,vars)
+  .data@request <- intersect(.data@request,names(.data))
+  .data@outnames <- intersect(.data@outnames,names(.data))
+  return(.data)
+}
+
+#' @rdname mrgsims_modify
+#' @export
+filter_sims <- function(.data, ... ) {
+  .data@data <- dplyr::filter(.data@data, ...)
+  .data
 }
 
 ##' @rdname mrgsims
