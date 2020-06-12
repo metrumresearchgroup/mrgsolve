@@ -312,7 +312,6 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
     data <- as_data_set(data)  
   }
   args <- list(...)
-  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -341,11 +340,6 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
     idata[["ID"]] <- seq_len(nrow(idata))
   } 
   if(expand) {
-    # events <- convert_character_cmt(events,x)
-    # events <- .Call(`_mrgsolve_EXPAND_EVENTS`,
-    #                 match("ID",colnames(events),0),
-    #                 numeric_data_matrix(events),
-    #                 idata[["ID"]])
     events <- expand_event_object(events,idata[["ID"]])
   }
   args <- list(...)
@@ -366,7 +360,6 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
   args <- list(...)
-  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -384,7 +377,6 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   }
   data <- matrix(idata[["ID"]], ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
-  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -398,7 +390,6 @@ mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
-  #x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
