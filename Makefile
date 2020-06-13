@@ -15,8 +15,8 @@ all:
 
 drone:
 	make house
-	R CMD build --md5 $(PKGDIR) --no-manual
-	R CMD check --as-cran --no-manual ${TARBALL}
+	R CMD build --md5 $(PKGDIR) 
+	R CMD check --as-cran ${TARBALL}
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
 	make spelling
