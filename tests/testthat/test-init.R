@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-init")
+
 test_that("inits are constructed", {
   x <- init(A = 1, B = 2)  
   expect_is(x, "cmt_list")
