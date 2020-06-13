@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-mevent")
+
 code <- '
 $PARAM CL = 1, V = 20, KA1 = 0.1, KA2 = 2
 $PKMODEL cmt = "GUT CENT", depot = TRUE
