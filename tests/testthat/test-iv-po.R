@@ -21,6 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-iv-po")
 
 oral <- function(dose,par,time) {
   par <- as.list(par)
@@ -34,7 +35,7 @@ iv <- function(dose,par,time) {
   
 }
 
-context("test-iv-po")
+
 mod <- mrgsolve::house() %>% 
   update(atol = 1E-20, rtol = 1E-12, digits = 8)
 

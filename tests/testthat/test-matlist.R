@@ -75,11 +75,6 @@ test_that("Update a model matrix", {
   expect_error(omat(mod, dmat(1)))  
 })
 
-# test_that("Eerror when determinate is negative", {
-#   m <- bmat(1,3,3)
-#   expect_error(x <- omat(m))
-# })
-
 test_that("valid matlist", {
   x <- omat(dmat(1,2,3))
   expect_true(mrgsolve:::valid.matlist(x))

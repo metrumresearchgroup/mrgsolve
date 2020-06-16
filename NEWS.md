@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 0.10.2
 
 - The simulation time grid was adjusted so that rendering the grid could result
   in no times (length 0 vector of times); this is a breaking change from 
@@ -6,7 +6,21 @@
   observations to be found.  While this is a breaking change, the old behavior
   was almost always wrong when the desired output was a series of
   non-observation records #640
-- Added 1005 model    
+- Added 1005 model 
+- Added `recover` mechanism to join items in input data sets to the output 
+  #646
+- Allow simulation from empty time grid; this would potentially break some 
+  existing code; but not common #648
+- Add collapse_omega and collapse_sigma arguments to [ set ] block #651
+- Add separate tolerances (`ss_rtol` and `ss_atol`) to control advance to 
+  steady state #652
+- Fix bug in `realize_addl` when `addl` is zero by `ii` is not #653
+- Fix bug where system did not reset with EVID 4 and infusion dose #683
+- NMXML will now take vector for `tname` to add custom names to imported
+  THETAs #687
+- Add NMEXT block that works similar (not identical) to NMXML, but reads from 
+  the `run.ext` file #509
+  
 
 # mrgsolve 0.10.1
 

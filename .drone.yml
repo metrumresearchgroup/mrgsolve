@@ -12,6 +12,15 @@ steps:
   - $(aws ecr get-login --no-include-email --region us-east-1)
   - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-24
 
+- name: R40-new
+  image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn-complete:2020-06-08"
+  pull: never
+  environment:
+    R_LIBS_USER: "/opt/rpkgs/4.0"
+    _MRGSOLVE_SKIP_MODLIB_BUILD_: false
+  commands:
+  - make drone
+
 - name: R36
   image: "906087756158.dkr.ecr.us-east-1.amazonaws.com/mpn:2020-03-24"
   pull: never

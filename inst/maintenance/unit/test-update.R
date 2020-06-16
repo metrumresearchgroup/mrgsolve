@@ -30,7 +30,7 @@ $CAPTURE A B C
 
 mod1 <- mcode("code1eekd", code1, warn=FALSE)
 
-context("test-update")
+context("test-update-unit")
 
 
 test_that("Update parameter - via param", {
