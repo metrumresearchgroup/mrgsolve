@@ -41,7 +41,7 @@ as_data_frame.mrgsims(.data_, ...)
 
 \method{as_tibble}{mrgsims}(.data_, ...)
 
-as.tbl.mrgsims(x, ...)
+\method{as.tbl}{mrgsims}(x, ...)
 }
 \arguments{
 \item{.data}{an mrgsims object; passed to various \code{dplyr} functions}
