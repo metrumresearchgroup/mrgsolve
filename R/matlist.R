@@ -271,7 +271,7 @@ setMethod("as.list", "matlist", function(x, ...) x@data)
 ##' @rdname matlist
 setMethod("as.matrix", "matlist", function(x,...) {
   if(length(x@data)==0) return(matrix(nrow=0,ncol=0))
-  SUPERMATRIX(x@data,...)
+  SUPERMATRIX(x@data, ..., mat_names=x@labels)
 })
 
 ##' @export

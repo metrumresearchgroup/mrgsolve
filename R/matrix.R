@@ -16,10 +16,15 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-SUPERMATRIX <- function(x,keep_names=FALSE) {
+SUPERMATRIX <- function(x, keep_names=FALSE, mat_names=NULL) {
+  x_orig <- x
   x <- .Call(`_mrgsolve_SUPERMATRIX`,x,keep_names,PACKAGE="mrgsolve")
   if(nrow(x) > 0 & !keep_names) {
-    dimnames(x) <- list(paste0(seq_len(nrow(x)), ": "), NULL)
+    if (!is.null(mat_names)) {
+      dimnames(x) <- list(unlist(mat_names), unlist(mat_names))
+    } else {
+      dimnames(x) <- list(paste0(seq_len(nrow(x)), ": "), NULL)
+    }
   }
   x
 }
@@ -39,8 +44,8 @@ decorr <- function(x) {
 ##' @return a square symmetric numeric matrix with column names
 ##' @keywords internal
 lower2matrix <- function(x, context=NULL) {
-  x <- as.numeric(x)
-  if(length(x)==1) return(matrix(x,nrow=1, ncol=1 ))
+  x <- setNames(as.numeric(x), names(x))
+  if(length(x)==1) return(matrix(x, nrow=1, ncol=1, dimnames=list(names(x), names(x))))
   n <- 0.5*(sqrt(1-4*(-2*length(x)))-1)
   if(!n==as.integer(n)) {
     stop(paste0("Block matrix has invalid specification (", context, ")."),call.=FALSE)
@@ -48,6 +53,10 @@ lower2matrix <- function(x, context=NULL) {
   mat <- diag(n)
   mat[upper.tri(mat,diag=TRUE)] <- x
   mat <- mat+t(mat) - diag(diag(mat))
+  if (!is.null(names(x))) {
+    names_to_use <- names(x)[cumsum(seq_len(n))]
+    dimnames(mat) <- list(names_to_use, names_to_use)
+  }
   mat
 }
 
@@ -154,7 +163,8 @@ Diag <- function(x) {
 ##' @name matrix_helpers
 ##' @export
 bmat <- function(...,correlation=FALSE, digits=-1) {
-  x <- lower2matrix(unlist(list(...)),context="bmat")
+  args <- list(...)
+  x <- lower2matrix(unlist(args), context="bmat")
   if(correlation) decorr(x)
   if(digits>0) x <- signif(x,digits=digits)
   return(x)
@@ -170,7 +180,11 @@ cmat <- function(...,digits=-1) {
 ##' @seealso \code{\link{as_dmat}}
 ##' @export
 dmat <- function(...) {
-  Diag(as.numeric(unlist(list(...))))
+  args <- list(...)
+  ret <- Diag(as.numeric(unlist(args)))
+  matrix_names <- names(unlist(args))
+  dimnames(ret) <- list(matrix_names, matrix_names)
+  ret
 }
 
 ##' Coerce R objects to block or diagonal matrices
@@ -262,7 +276,7 @@ setGeneric("as_dmat", function(x,...) standardGeneric("as_dmat"))
 ##' @rdname matrix_converters
 ##' @export
 setMethod("as_dmat", "list", function(x,...) {
-  as_dmat(unlist(x),...)
+  as_dmat(setNames(unlist(x), names(x)),...)
 })
 
 ##' @rdname matrix_converters
@@ -274,7 +288,7 @@ setMethod("as_dmat", "ANY", function(x,...) {
 ##' @rdname matrix_converters
 ##' @export
 setMethod("as_dmat", "numeric", function(x,pat="*",...) {
-  x <- grepn(x,pat, !missing(pat))
+  x <- grepn(x, pat, !missing(pat))
   do.call("dmat", list(x,...))
 })
 
