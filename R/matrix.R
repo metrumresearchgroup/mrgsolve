@@ -67,12 +67,13 @@ lower2matrix <- function(x, context=NULL) {
 ##' @return a numeric diagonal matrix
 ##' @keywords internal
 numeric2diag <- function(x,context=NULL) {
-  x <- as.numeric(x)
+  x <- setNames(as.numeric(x), names(x))
   if(length(x)==1) {
     mat <- matrix(x)
   } else {
     mat <- diag(x)
   }
+  dimnames(mat) <- list(names(x), names(x))
   mat
 }
 
@@ -135,7 +136,9 @@ modMATRIX <- function(x,
 
 Diag <- function(x) {
   if(is.matrix(x)) return(x)
-  diag(x, nrow=length(x),ncol=length(x))
+  ret <- diag(x, nrow=length(x), ncol=length(x))
+  dimnames(ret) <- list(names(x), names(x))
+  ret
 }
 
 ##' Create matrices from vector input
