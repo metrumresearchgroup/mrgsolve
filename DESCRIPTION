@@ -53,7 +53,8 @@ Suggests:
     xml2 (>= 1.2.0),
     rmarkdown,
     yaml,
-    knitr
+    knitr, 
+    data.table
 LinkingTo: 
     Rcpp (>= 0.12.12),
     RcppArmadillo (>= 0.7.900.2.0),
