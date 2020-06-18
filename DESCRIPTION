@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 0.10.3
+Version: 0.10.4
 Authors@R: 
     c(person(given = "Kyle T",
              family = "Baron",
@@ -53,8 +53,7 @@ Suggests:
     xml2 (>= 1.2.0),
     rmarkdown,
     yaml,
-    knitr, 
-    data.table
+    knitr
 LinkingTo: 
     Rcpp (>= 0.12.12),
     RcppArmadillo (>= 0.7.900.2.0),
