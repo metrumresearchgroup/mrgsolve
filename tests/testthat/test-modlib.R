@@ -34,4 +34,3 @@ test_that("list models", {
   expect_message(modlib(list = TRUE))
 })
 
-

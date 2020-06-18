@@ -143,20 +143,6 @@ test_that("ADVAN4 same as ODE - initial condition", {
   expect_equal(names(out1),names(out2))
 })
 
-test_that("ADVAN4 same as ODE - initial condition", {
-  out1 <- ode  %>% init(CENT=1000) %>%
-    Req(GUT,CENT) %>% mrgsim(end=24,delta=0.1 ,digits=5)
-  
-  out2 <- pred2 %>% init(CENT=1000) %>% 
-    Req(GUT,CENT) %>% mrgsim(end = 24, delta=0.1, digits=5)
-  
-  expect_equal(out1$CENT,out2$CENT)
-  expect_equal(names(out1),names(out2))
-})
-
-
-
-
 test_that("ADVAN4 same as ODE - GUT,bolus,addl", {
   e <- ev(amt=100,ii=48,addl=4)
   out1 <- ode  %>% ev(e) %>%
@@ -167,8 +153,6 @@ test_that("ADVAN4 same as ODE - GUT,bolus,addl", {
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })
-
-
 
 test_that("ADVAN4 same as ODE - GUT,infus,addl", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4)

@@ -176,7 +176,7 @@ test_that("Typedef capture", {
   double cc = 33;
   dxdt_CM_T = 0;
   '
-  expect_error(mod <- mcode("test3ewerw", code))
+  expect_silent(mod <- mcode("test3ewerw", code))
   
 })
 

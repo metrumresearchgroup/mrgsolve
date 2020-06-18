@@ -208,8 +208,10 @@ public:
   std::vector<double> Yout; ///< used to hold Y values during solving
   std::vector<double> Param; ///< parameter vector
   std::vector<double> Capture; ///< captured data items
-  double Atol; ///< absolute tolerance
-  double Rtol; ///< relative tolerance
+  double Atol; ///< absolute tolerance used by ODE solver
+  double Rtol; ///< relative tolerance used by ODE solver
+  double ssAtol; ///< absolute tolerance when finding steady state
+  double ssRtol; //<  relative tolerance when finding steady state
   int Npar; ///< number of parameters
   int Neq; ///< number of equations
   int Istate; ///< istate value

@@ -55,6 +55,8 @@ functions (with a call to \code{mrgsolve:::funset}).
 \item \code{details}: model details data frame
 \item \code{atol}: see \link{solversettings}
 \item \code{rtol}: see \link{solversettings}
+\item \code{ss_atol}: absolute tolerance to use when advancing to PK steady state
+\item \code{ss_rtol}: relative tolerance to use when advancing to PK steady state
 \item \code{maxsteps}: see \link{solversettings}
 \item \code{hmin}: see \link{solversettings}
 \item \code{hmax}: see \link{solversettings}

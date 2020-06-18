@@ -23,7 +23,7 @@ Sys.setenv(R_TESTS="")
 
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("test-request")
+context("test-capture")
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1

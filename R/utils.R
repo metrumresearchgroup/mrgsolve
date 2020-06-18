@@ -13,7 +13,6 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 dllfile <- function(x) paste0(dllname(x),.Platform$dynlib.ext)
 pathfun <- function(...) path.expand(...) #,mustWork=FALSE,winslash=.Platform$file.sep
@@ -226,6 +225,18 @@ expand.ev <- function(...) {
 #' @export
 #' @rdname expand.idata
 ev_expand <- expand.ev
+
+#' Expand an event data frame across multiple ID
+#' 
+#' @noRd
+expand_event_object <- function(event,ID) {
+  event <- as.data.frame(event)
+  out_names <- unique(c("ID", names(event)))
+  ind <- rep(seq(nrow(event)), times=length(ID))
+  big <- dplyr::slice(event, ind)
+  big[["ID"]] <- rep(ID, each=nrow(event))
+  big[,out_names]
+} 
 
 tolist <- function(x,concat=TRUE,envir=list()) {
   if(is.null(x)) return(list())
@@ -451,11 +462,13 @@ locf_ev <- function(x) {
 arrange__ <- function(df, .dots) {
   arrange(df, `!!!`(syms(.dots)))
 }
+
 select__ <- function(df, .dots) {
   select(df, `!!!`(syms(.dots)))
 }
-group_by__ <- function(df,.dots, add = FALSE) {
-  group_by(df, `!!!`(syms(.dots)), add = add)
+
+group_by__ <- function(df,.dots) {
+  group_by(df, `!!!`(syms(.dots)))
 }
 
 distinct__ <- function(df, .dots, .keep_all = FALSE) {
@@ -511,7 +524,7 @@ make_matrix_labels <- function(mat,lab,diag=TRUE) {
 
 
 # nocov start
-is.numeric.data.frame <- function(x) sapply(x, is.numeric)
+is.numeric.data.frame <- function(x) vapply(x,is.numeric,TRUE)
 
 mapvalues <- function (x, from, to, warn_missing = FALSE) { 
   if (length(from) != length(to)) {
@@ -559,4 +572,7 @@ mod_first <- function(cl) {
   msg <- sprintf("the first argument to %s must be a model object",fun)
   wstop(msg)
 }
+
+
+
 

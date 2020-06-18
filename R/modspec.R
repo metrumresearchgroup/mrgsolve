@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -247,6 +247,7 @@ move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 #local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
 
+# please-deprecate
 move_global <- function(x,env) {
   
   what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
@@ -302,24 +303,86 @@ move_global <- function(x,env) {
   return(x)
 }
 
-
 get_c_vars <- function(y) {
   m <- gregexpr(move_global_re_find,y,perl=TRUE)
-  regmatches(y,m) %>%
-    unlist %>%
-    gsub(pattern="\\s*=$",
-         replacement=";",
-         perl=TRUE)
+  regm <- unlist(regmatches(y,m))
+  gsub(pattern="\\s*=$", replacement = ";", x = regm, perl=TRUE)
 }
+
+token_space <- function(x) {
+  x <- strsplit(x, " ",fixed=TRUE)
+  lapply(x, function(xx) xx[xx!=""])
+}
+
+get_c_vars2 <- function(y,context) {
+  m <- gregexpr(move_global_re_find,y,perl=TRUE)
+  regm <- unlist(regmatches(y,m))
+  if(length(regm)==0) return(data.frame())
+  vars <- gsub(pattern="\\s*=$", replacement = "", x = regm, perl=TRUE)
+  vars <- token_space(vars)
+  ans <- as.data.frame(do.call(rbind,vars),stringsAsFactors = FALSE)
+  names(ans) <- c("type", "var")
+  if(nrow(ans) > 0) ans$context <- context
+  ans
+}
+
+scrub_c_vars <- function(x) {
+  gsub(pattern = move_global_re_sub, replacement = "\\2", x = x)
+}
+
+c_vars <- function(x,context) {
+  if(is.null(x)) return(list(vars = data.frame(), code = NULL))
+  list(vars = get_c_vars2(x,context), code = scrub_c_vars(x))
+}
+
+move_global2 <- function(spec,env,build) {
+  pream <- c_vars(spec$PREAMBLE,context="preamble")
+  if(!is.null(pream$code)) {
+    spec$PREAMBLE <- pream$code
+  }
+  pred <- c_vars(spec$PRED,context="pred")
+  if(!is.null(pred$code)) {
+    spec$PRED <- pred$code  
+  }
+  main  <- c_vars(spec$MAIN,context="main")
+  if(!is.null(main$code)) {
+    spec$MAIN <- main$code  
+  }
+  ode   <- c_vars(spec[["ODE"]],context="ode")
+  if(!is.null(ode$code)) {
+    spec$ODE <- ode$code
+  }
+  table <- c_vars(spec[["TABLE"]],context="table")  
+  if(!is.null(table$code)) {
+    spec$TABLE <- table$code
+  }
+  vars <- bind_rows(pream$vars,pred$vars,main$vars,ode$vars,table$vars)
+  if(any(cap <- vars$type=="capture")) {
+    captures <- vars[cap,"var"]
+    spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
+  }
+  build$global_vars <- vars
+  ns <- c(
+    "typedef double capture;",
+    "namespace {",
+    paste0("  ",vars$type, " ", vars$var, ";"),
+    "}")
+  env[["global"]] <- ns
+  if(nrow(vars)  > 0) {
+    env[["move_global"]] <- vars$var
+  } else {
+    env[["move_global"]] <- character(0)  
+  }
+  spec
+}
+
 
 # nocov start
 get_rcpp_vars <- function(y) {
   m <- gregexpr(move_global_rcpp_re_find,y,perl=TRUE)
-  regmatches(y,m) %>%
-    unlist %>%
-    gsub(pattern="\\s*=$",
-         replacement=";",
-         perl=TRUE)
+  regm <- regmatches(y,m)
+  regm <- unlist(regm)
+  gsub(pattern = "\\s*=$", replacement = ';', x = regm, perl = TRUE)
 }
 # nocov end
 
@@ -416,13 +479,13 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   
   ## Get lines starting with >>
   opts <- grepl("^\\s*>>",x,perl=TRUE)
-    
+  
   has_at <- grepl("^\\s*@", x, perl=TRUE) 
   
   if((!narrow) && (!any(has_at))) {
     opts <- opts | grepl(marker,x,fixed=TRUE)
   }
-
+  
   at <- parse_ats(x[has_at])
   
   data <- x[!(opts | has_at)]

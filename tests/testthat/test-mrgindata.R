@@ -107,10 +107,8 @@ test_that("Run with data set - data.frame", {
     expect_equal(nrow(out),nrow(extran3))
 })
 
-test_that("Run with data set - tbl", {
+test_that("Run with data set - tibble", {
   data <- filter(extran3, ID <= 3)
-  out <- mod %>% data_set(dplyr::tbl_df(data)) %>% mrgsim
-  expect_equal(nrow(out),nrow(data))
   out <- mod %>% data_set(as_tibble(data)) %>% mrgsim
   expect_equal(nrow(out),nrow(data))
 })

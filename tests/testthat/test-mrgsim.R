@@ -22,6 +22,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-mrgsim")
+
 mod <- mrgsolve::house() 
 mod <- update(mod, end = 84, atol = 1E-30)
 
@@ -41,8 +43,6 @@ dose <- distinct(data, ID,amt)
 ## ten individuals
 idata <- expand.idata(CL = runif(10, 0.2,2)) %>% 
   mutate(V = runif(10, 5, 50))
-
-context("test-mrgsim")
 
 test_that("error to not pass model object issue-547", {
   expect_error(mrgsim(dose), "the first argument to mrgsim")

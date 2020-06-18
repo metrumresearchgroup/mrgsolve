@@ -53,7 +53,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   
   Npar = int(param.size());
   Neq = int(init.size());
- 
+  
   Istate = 1;
   
   Advan = 13;
@@ -87,6 +87,8 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   ss_fixed = false;
   ss_n = 500;
   ss_flag = false;
+  ssRtol = 0;
+  ssAtol = 0;
   
   pred.assign(5,0.0);
   
@@ -166,7 +168,7 @@ void odeproblem::y_add(const unsigned int pos, const double& value) {
  * @param prob an odeproblem object
  */
 void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
-   data->call_derivs(&t,y,ydot);  
+  data->call_derivs(&t,y,ydot);  
 }
 
 void odeproblem::call_derivs(double *t, double *y, double *ydot) {
@@ -648,6 +650,12 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
   Rtol = Rcpp::as<double>(parin["rtol"]);
   Atol = Rcpp::as<double>(parin["atol"]);
+  ssRtol = Rcpp::as<double>(parin["ss_rtol"]);
+  ssAtol = Rcpp::as<double>(parin["ss_atol"]);
+  if(Advan==13) {
+    ssRtol = std::max(ssRtol,Rtol);
+    ssAtol = std::max(ssAtol,Atol);
+  }
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
   Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
 }

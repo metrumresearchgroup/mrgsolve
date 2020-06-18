@@ -22,14 +22,14 @@
 #' @importFrom utils .DollarNames
 #' @importFrom stats as.formula setNames rnorm
 #' @importFrom dplyr filter 
-#' @importFrom dplyr mutate slice as.tbl pull
+#' @importFrom dplyr mutate slice pull
 #' @importFrom dplyr bind_rows arrange summarise summarise_at
 #' @importFrom dplyr intersect select rename slice distinct do
 #' @importFrom dplyr distinct first select_vars_ 
 #' @importFrom dplyr select_vars everything 
 #' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
 #' @importFrom dplyr mutate_all group_by ungroup n
-#' @importFrom dplyr data_frame as_data_frame
+#' @importFrom dplyr data_frame as_data_frame left_join
 #' @importFrom tidyselect vars_select
 #' @importFrom magrittr %>% %T>%
 #' @importFrom Rcpp evalCpp
@@ -78,9 +78,9 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML")
+                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML", "NMEXT")
 
-Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS",
+Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
@@ -99,6 +99,8 @@ globalVariables(c("test_package","time", "ID","block", "descr",
 
 
 VERSION <- utils::packageVersion("mrgsolve")
+
+DPLYR_1_0_0 <- packageVersion("dplyr") >= '0.8.99.9000'
 
 #' Forward pipe
 #' 

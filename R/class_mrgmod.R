@@ -69,7 +69,12 @@ check_us <- function(x,cmt,ans) {
              paste0("leading underscore not allowed: ", 
                     paste(leading, collapse=" "))) 
   }
-  check <- as.character(sapply(c("F_", "ALAG_", "D_", "R_"),paste0,cmt))
+  check <- sapply(
+    c("F_", "ALAG_", "D_", "R_", "N_"), 
+    paste0,
+    cmt, 
+    simplify=TRUE
+  )
   iv_name <- intersect(x,check)
   if(length(iv_name) > 0) {
     ans <- c(ans, 
@@ -109,6 +114,8 @@ protomod <- list(model=character(0),
                  preclean=FALSE,
                  atol=1E-8,
                  rtol=1E-8,
+                 ss_rtol=1e-8, 
+                 ss_atol=1e-8,
                  maxsteps=20000,
                  hmin=0,
                  hmax=0,
@@ -203,8 +210,9 @@ valid.mrgmod <- function(object) {
 #' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-#' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} 
-#' \code{<numeric>}
+#' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
+#' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
+#' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 #' @slot verbose print run information to screen \code{<logical>}
 #' @slot quiet print various information to screen \code{<logical>}
@@ -461,6 +469,8 @@ setMethod("names", "mrgmod", function(x) {
 #' - `details`: model details data frame
 #' - `atol`: see [solversettings]
 #' - `rtol`: see [solversettings]
+#' - `ss_atol`: absolute tolerance to use when advancing to PK steady state
+#' - `ss_rtol`: relative tolerance to use when advancing to PK steady state
 #' - `maxsteps`: see [solversettings]
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
@@ -493,6 +503,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     hmax <- x@hmax
     hmin <- x@hmin
     maxsteps <- x@maxsteps
+    ss_atol <- x@ss_atol
+    ss_rtol <- x@ss_rtol
     rtol <- x@rtol
     atol <- x@atol
     if(deep) { 
@@ -609,6 +621,9 @@ setMethod("see", "mrgmod", function(x,raw=FALSE, ...) {
 #' @rdname loadso
 #' @export
 loadso.mrgmod <- function(x,...) {
+  if(inherits(x,"packmod")) {
+    return(invisible(x))  
+  }
   if(.Platform$OS.type!="unix") {
     try(dyn.unload(sodll(x)),silent=TRUE)
   }
@@ -706,9 +721,9 @@ blocks_ <- function(file,what) {
 
 parin <- function(x) {
   list(
-    rtol=x@rtol,atol=x@atol, hmin=as.double(x@hmin), 
-    hmax=as.double(x@hmax), ixpr=x@ixpr, 
-    maxsteps=as.integer(x@maxsteps),mxhnil=x@mxhnil,
+    rtol=x@rtol,atol=x@atol,ss_rtol=x@ss_rtol,ss_atol=x@ss_atol,
+    hmin=as.double(x@hmin), hmax=as.double(x@hmax),
+    maxsteps=x@maxsteps,ixpr=x@ixpr,mxhnil=x@mxhnil,
     verbose=as.integer(x@verbose),debug=x@debug,
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 

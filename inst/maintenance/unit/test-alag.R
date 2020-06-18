@@ -34,7 +34,7 @@ context("test-alag")
 
 test_that("Lagged bolus", {
     out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
-    first <- with(as.tbl(out),time[which(CENT > 0)[1]])
+    first <- with(as_tibble(out),time[which(CENT > 0)[1]])
     expect_equal(first,2.8)
 })
 
@@ -67,7 +67,7 @@ test_that("Lag time on SS record - bolus", {
 
 test_that("Lag time on SS record - infusion", {
   e <- ev(amt=100, ii = 12, LAGT = 3, addl = 10, ss = 1, rate = 100/2)
-  out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
+  out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3,ss_rtol = 1e-8)
   pick <- filter(out, time %in% seq(0,240,12))
   cent <- round(pick$CENT,4)
   expect_true(all(cent==cent[1]))

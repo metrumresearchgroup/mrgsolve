@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -145,7 +145,7 @@ void datarecord::implement(odeproblem* prob) {
   
   unsigned int evid = Evid;
   
-  if(this->infusion()) evid = 5;
+  if(this->infusion() && Evid != 4) evid = 5;
   
   int eq_n = this->cmtn();
   
@@ -259,7 +259,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     for(size_t jj=0; jj < n_cmt; ++jj) {
       j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
-      err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+      err = prob->ssRtol * fabs(prob->y(j)) + prob->ssAtol;
       if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
@@ -273,7 +273,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
     Rcpp::warning(
       tfm::format(
         "[steady_bolus] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
-        this->id(),N_SS, solver.Rtol, solver.Atol
+        this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
   }
@@ -391,7 +391,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     for(size_t jj=0; jj < n_cmt; ++jj) {
       j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
-      err = solver.Rtol * fabs(prob->y(j)) + solver.Atol;
+      err = prob->ssRtol * fabs(prob->y(j)) + prob->ssAtol;
       if(diff < err ) ++ngood;
       last[j] = prob->y(j);
     } 
@@ -406,7 +406,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     Rcpp::warning(
       tfm::format(
         "[steady_infusion] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
-        this->id(),N_SS, solver.Rtol, solver.Atol
+        this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
   }
@@ -498,7 +498,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     for(size_t jj=0; jj < n_cmt; ++jj) {
       j = prob->Ss_cmt[jj];
       diff = fabs(prob->y(j) - last[j]);
-      err = solver.Rtol*fabs(prob->y(j)) + solver.Atol;
+      err = prob->ssRtol*fabs(prob->y(j)) + prob->ssAtol;
       if(diff < err) ++ngood;
       last[j] = prob->y(j);
     }
@@ -523,7 +523,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
     Rcpp::warning(
       tfm::format(
         "[steady_zero] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
-        this->id(),N_SS, solver.Rtol, solver.Atol
+        this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
   }

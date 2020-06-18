@@ -28,7 +28,6 @@ project <- file.path(system.file(package="mrgsolve"), "models")
 out  <- mrgsolve::house() %>% ev(amt=100) %>% mrgsim(end=122)
 
 test_that("Pipe to tibble", {
-  expect_is(out %>% as.tbl, "tbl_df")
   expect_is(out %>% as_tibble, "tbl_df")
 })
 

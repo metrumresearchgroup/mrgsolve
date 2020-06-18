@@ -73,6 +73,11 @@ setGeneric("knobs", function(x,y,...) standardGeneric("knobs"))
 ##' @export
 setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   
+  # lifecycle::deprecate_soft(
+  #   when = "0.10.2",
+  #   what = "mrgsolve::knobs()"
+  # )
+  
   input <- list(...)
   
   if(is.element("time", names(input))) stop("time cannot be a knob", call.=FALSE)

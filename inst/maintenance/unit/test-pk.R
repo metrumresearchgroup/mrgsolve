@@ -66,7 +66,7 @@ dotest <- function(out) {
   return(ans$status)
 }
 
-mod <- mread("pk1", modlib(), end = 48, delta=0.1)
+mod <- modlib("pk1",end=48,delta=0.1,ss_rtol=1e-10)
 mod1 <- mod
 
 context("One compartment model tests")
@@ -105,7 +105,7 @@ test_that("one-compartment, infusion", {
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, infusion", {
+test_that("one-compartment, infusion tau", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V=.v, rate = 100/8, ss=1, ii = 24)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_ss_1cmt_linear_infusion,tinf=8, tau = 24)
@@ -114,7 +114,7 @@ test_that("one-compartment, infusion", {
 
 context("Two compartment model tests")
 
-mod <- mread("pk2", modlib(), end = 48, delta=0.1)
+mod <- modlib("pk2",end = 48, delta=0.1,ss_rtol = 1e-10)
 
 test_that("two-compartment, bolus", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V2=.v1, V3=.v2, Q = .q)

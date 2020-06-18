@@ -7,6 +7,7 @@ mrgsolve/
 inst/validation
 cran-comments.md
 Rchecks
+mrgsolve\.Rcheck
 .github
 inst/doc
 Doxyfile
@@ -45,3 +46,4 @@ Makefile
 docs
 ^DOCS$
 ^_pkgdown\.yml$
+^\.drone\.yml$

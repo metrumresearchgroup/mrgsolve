@@ -41,13 +41,6 @@ test_that("carry_out rate", {
   expect_equal(out$ss,ex)
 })
 
-test_that("carry_out rate", {
-  out <- mod %>% ev(amt=800, rate=2) %>% carry_out(amt,rate,ss) %>% mrgsim
-  ex[2] <- 2
-  expect_equal(out$rate, ex)
-
-})
-
 test_that("carry_out mixed", {
   out <- mod %>% ev(amt=800, rate=2, ii=12, addl=22) %>% carry_out(addl,ii,amt,rate,ss) %>% mrgsim
   expect_equal(names(out), c("ID", "time","amt", "ss", "ii", "addl", "rate", "CP"))
