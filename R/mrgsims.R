@@ -143,7 +143,7 @@ NULL
 
 #' @param .dots passed to various `dplyr` functions
 #' @param .data an mrgsims object; passed to various `dplyr` functions
-#' @param x passed to [dplyr::as.tbl]
+#' @param x passed to `dplyr::as.tbl`
 #' @param add passed to [dplyr::group_by] (for dplyr < `1.0.0`)
 #' @param .add passed to [dplyr::group_by] (for dplyr >= `1.0.0`)
 #' @param .keep_all passed to [dplyr::distinct]
