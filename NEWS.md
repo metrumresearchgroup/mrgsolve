@@ -1,4 +1,4 @@
-# mrgsolve 0.10.2
+# mrgsolve 0.10.3
 
 - The simulation time grid was adjusted so that rendering the grid could result
   in no times (length 0 vector of times); this is a breaking change from 
