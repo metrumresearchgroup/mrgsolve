@@ -1,3 +1,7 @@
+# mrgsolve 0.10.4
+
+- This version fixes a minor documentation issue in an Rd file #699
+
 # mrgsolve 0.10.3
 
 - The simulation time grid was adjusted so that rendering the grid could result
