@@ -20,6 +20,7 @@ mread(
   check.bounds = FALSE,
   warn = TRUE,
   soloc = getOption("mrgsolve.soloc", tempdir()),
+  capture = NULL,
   preclean = FALSE,
   recover = FALSE,
   ...
@@ -71,6 +72,10 @@ where the model is specified}
 \item{soloc}{the directory location where the model shared object is built
 and stored; see details; this argument can be set via \code{options()}; 
 if the directory does not exist, `mread` will attempt to create it.}
+
+\item{capture}{a character vector or comma-separated string of additional 
+model variables to capture; these variables will be added to the capture 
+list for the current call to \code{\link{mread}} only}
 
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
 cleaned up first}
