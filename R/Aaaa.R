@@ -35,7 +35,7 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom RcppArmadillo armadillo_version
 #' @importFrom tibble tibble as_tibble
-#' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy
+#' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
 #' @importFrom lifecycle deprecate_soft
 #' @importFrom glue glue
 #' 

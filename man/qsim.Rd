@@ -73,7 +73,7 @@ There is no pipeline interface for this function; all configuration options
 You can't \code{carry_out}, \code{Request} specific columns, or pass items in for update.
 Some other limitations, but only convenience-related.  See \code{Arguments} for
 available options.  Specifically, there is no \code{...} argument for this function.
-Use the \link[mrgsolve:update]{mrgsolve::update} method to update the model object.
+Use the \link{update} method to update the model object.
 }
 \examples{
 
