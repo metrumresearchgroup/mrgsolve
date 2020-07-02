@@ -50,4 +50,21 @@ test_that("error if cmt in capture issue-555", {
   expect_is(mcode("rename-cmt-in-capture",code,compile=FALSE),"mrgmod")
 })
 
+code <- '
+$PARAM CL=1, V2=20,Q=30,V3=200,KA=1
+$MAIN  double b = 2;
+$OMEGA 1
+$OMEGA @labels OGA2
+2
+$CAPTURE CL VP = V2
+'
 
+test_that("capture via mread", {
+  mod <- mcode("capture-mread", code, capture = "Q,a=b,OGA2") 
+  out <- outvars(mod)
+  expect_equal(out$capture, c("CL", "VP", "Q", "a", "OGA2"))
+  expect_error(mread("pk1",modlib(),capture = "mrgsolve"))
+  mod <- mcode("capture-mread", code, capture="(everything)", compile=FALSE)
+  res <- c("CL","VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "b")
+  expect_equal(outvars(mod)$capture, res)
+})

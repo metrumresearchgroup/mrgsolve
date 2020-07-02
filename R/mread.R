@@ -598,38 +598,37 @@ mread_file <- function(file, ...) {
   mread(model = model, file = file, ...)
 }
 
-#' Capture additional model outputs
-#' 
-#' 
-#' @param x a model object
-#' @param ... unquoted names to capture
-#' @param vars character vector or comma-separated string of names
-#' to capture
-#' @md
-#' @export
-capture_more <- function(x,...,vars = NULL) {
-  vars <- .ren.dots(...,vars = vars)
-  vars <- paste0(vars$new,"=",vars$old)
-  l <- as.list(x)
-  mod_new <- mread(
-    file = l$modfile, 
-    model  = l$model,
-    project = l$project, 
-    capture = vars
-  )
-  for(s in sval) {
-    slot(mod_new,s) <- slot(x,s)   
-  }
-  out <- outvars(mod_new)
-  out$cmt <- outvars(x)$cmt
-  mod_new <- update(
-    mod_new, 
-    param = l$param, 
-    init = l$init,
-    omega = omat(x), 
-    sigma = smat(x), 
-    outvars = unlist(out)
-  )
-  mod_new
-}
+# Capture additional model outputs
+# 
+# 
+# @param x a model object
+# @param ... unquoted names to capture
+# @param vars character vector or comma-separated string of names
+# to capture
+# @noRd
+# capture_more <- function(x,...,vars = NULL) {
+#   vars <- .ren.dots(...,vars = vars)
+#   vars <- paste0(vars$new,"=",vars$old)
+#   l <- as.list(x)
+#   mod_new <- mread(
+#     file = l$modfile, 
+#     model  = l$model,
+#     project = l$project, 
+#     capture = vars
+#   )
+#   for(s in sval) {
+#     slot(mod_new,s) <- slot(x,s)   
+#   }
+#   out <- outvars(mod_new)
+#   out$cmt <- outvars(x)$cmt
+#   mod_new <- update(
+#     mod_new, 
+#     param = l$param, 
+#     init = l$init,
+#     omega = omat(x), 
+#     sigma = smat(x), 
+#     outvars = unlist(out)
+#   )
+#   mod_new
+# }
 
