@@ -354,8 +354,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int this_idata_row = 0;
   
   if(verbose) say("starting the simulation ...");
+  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
+    
+    //if((i % 128)==0) Rcpp::checkUserInterrupt();
     
     double id = dat.get_uid(i);
     double Fn = 1.0;
