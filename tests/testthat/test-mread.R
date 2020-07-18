@@ -38,3 +38,8 @@ test_that("read in rmd file", {
   expect_is(mod, "mrgmod")
 })
 
+test_that("ERROR is alias for TABLE", {
+  code <- "$ERROR double x=2;"
+  expect_is(mcode("error-is-table", code), "mrgmod")
+})
+

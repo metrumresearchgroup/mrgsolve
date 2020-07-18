@@ -190,6 +190,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Block name aliases
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
   names(spec) <- gsub("POST", "TABLE", names(spec), fixed=TRUE)
+  names(spec) <- gsub("ERROR", "TABLE", names(spec), fixed = TRUE)
   names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
   
   ## Expand partial matches
