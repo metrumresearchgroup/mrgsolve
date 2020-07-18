@@ -295,7 +295,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
             tfm::format(
-              "the data set is not sorted by time or time is negative \n ID: %d, row: %i, time: %d", 
+              "the data set is not sorted by time or time is negative \n"
+              "ID: %d, row: %i, time: %d", 
               Data(j,Idcol), j+1, Data(j,col[_COL_time_])
             ).c_str(),
             false
@@ -312,7 +313,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
               tfm::format(
-                "cmt number in observation record out of range \n ID: %d, row: %i, cmt: %i, neq: %i", 
+                "cmt number in observation record out of range \n ID: %d, "
+                "row: %i, cmt: %i, neq: %i", 
                 Data(j,Idcol), j+1, this_cmt, neq
               ).c_str(),
               false
@@ -335,7 +337,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
         throw Rcpp::exception(
             tfm::format(
-              "event record cmt must be between 1 and %i: \n ID: %d, row: %i, cmt: %i, evid: %i", 
+              "event record cmt must be between 1 and %i: \n ID: %d, "
+              "row: %i, cmt: %i, evid: %i", 
               neq, Data(j,Idcol), j+1, this_cmt, Data(j,col[_COL_evid_])
             ).c_str(),
             false
@@ -376,7 +379,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
         throw Rcpp::exception(
             tfm::format(
-              "non-zero rate must be positive or -1 or -2 \n ID: %d, row: %i, rate: %d", 
+              "non-zero rate must be positive or -1 or -2 \n ID: %d, "
+              "row: %i, rate: %d", 
               ev->id(), j+1,  ev->rate()
             ).c_str(),
             false
@@ -386,7 +390,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1) && !zero_inf) {
         throw Rcpp::exception(
             tfm::format(
-              "non-zero rate requires positive amt \n ID: %d, row: %i, rate: %d, amt: %d", 
+              "non-zero rate requires positive amt \n ID: %d, row: %i, "
+              "rate: %d, amt: %d", 
               ev->id(), j+1,  ev->rate(), ev->amt()
             ).c_str(),
             false
@@ -397,7 +402,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if(ev->addl() > 0) {
           throw Rcpp::exception(
               tfm::format(
-                "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, addl: %i", 
+                "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, "
+                "addl: %i", 
                 ev->id(), j+1, ev->addl()
               ).c_str(),
               false
