@@ -33,12 +33,12 @@
 #' @importFrom tidyselect vars_select
 #' @importFrom magrittr %>% %T>%
 #' @importFrom Rcpp evalCpp
-#' @importFrom RcppArmadillo armadillo_version
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
 #' @importFrom lifecycle deprecate_soft
 #' @importFrom glue glue
-#' 
+#  @importFrom RcppArmadillo armadillo_version
+
 #' @include Aaaa.R
 #' @include class_mrgsims.R
 #' @include class_mrgmod.R
