@@ -5,7 +5,6 @@ mrgsolve.Rcheck
 test.R
 *.o
 *.so
-*.Rproj
 Rchecks
 .Rproj.user
 .Rhistory
