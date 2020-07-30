@@ -624,13 +624,16 @@ loadso.mrgmod <- function(x,...) {
   if(inherits(x,"packmod")) {
     return(invisible(x))  
   }
-  if(.Platform$OS.type!="unix") {
-    try(dyn.unload(sodll(x)),silent=TRUE)
+  sofile <- sodll(x)
+  if(!file.exists(sofile)) {
+    wstop("[loadso] the model dll file doesn't exist")  
   }
-  foo <- try(dyn.load(sodll(x)))
+  if(.Platform$OS.type!="unix") {
+    try(dyn.unload(sofile),silent=TRUE)
+  }
+  foo <- try(dyn.load(sofile))
   if(class(foo)=="try-catch") {
-    message(foo)
-    return(invisible(FALSE))
+    wstop("[loadso] failed to load the model dll file")
   }
   return(invisible(x))
 }
