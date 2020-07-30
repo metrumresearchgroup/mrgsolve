@@ -73,7 +73,13 @@ funs_loaded <- function(x,crump=TRUE) {
 all_loaded <- function(x) all(which_loaded(x))  
 
 pointers <- function(x) {
-  if(!funs_loaded(x)) stop(FUNSET_ERROR__)
+  if(!funs_loaded(x)) {
+    try_load <- try(loadso(x), silent = TRUE)
+    if(inherits(try_load, "try-error") || !funs_loaded(x)) {
+      message(try_load)
+      stop(FUNSET_ERROR__)
+    }
+  }
   what <- funs(x)
   ans <- getNativeSymbolInfo(what,PACKAGE=dllname(x))
   setNames(lapply(ans, "[[","address"),names(what))
