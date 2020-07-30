@@ -461,7 +461,6 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 #' To silence warnings related to steady state, set `ss_fixed` to `TRUE` and 
 #' set `ss_n` as the maximum number of iterations to try when advancing the 
 #' system for steady state determination.
-#' @param loadso if `TRUE` then [loadso()] is called prior to simulation
 #' 
 #' @md
 #' @rdname mrgsim
@@ -488,7 +487,6 @@ do_mrgsim <- function(x,
                       skip_init_calc = FALSE,
                       ss_n = 500,
                       ss_fixed = FALSE,
-                      loadso = FALSE, 
                       ...) {
   
   x <- update(x,...,strict=TRUE)

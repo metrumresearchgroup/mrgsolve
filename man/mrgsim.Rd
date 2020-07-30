@@ -33,7 +33,6 @@ do_mrgsim(
   skip_init_calc = FALSE,
   ss_n = 500,
   ss_fixed = FALSE,
-  loadso = FALSE,
   ...
 )
 }
@@ -131,8 +130,6 @@ has not been reached within \code{ss_n} dosing iterations.
 To silence warnings related to steady state, set \code{ss_fixed} to \code{TRUE} and
 set \code{ss_n} as the maximum number of iterations to try when advancing the
 system for steady state determination.}
-
-\item{loadso}{if \code{TRUE} then \code{\link[=loadso]{loadso()}} is called prior to simulation}
 }
 \value{
 An object of class \link{mrgsims}
