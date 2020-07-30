@@ -30,11 +30,23 @@ mod <- mrgsolve::house() %>% update(end=end, delta=delta)
 data(extran3)
 
 test_that("valid_data_set warns for character columns", {
-  dat <- expand.ev(amt=100,ID=1:4, CL = "A")
-  expect_message(valid_data_set(dat,m=mod), regexp="dropped non-numeric:")
-  dat <- expand.ev(amt=100,ID=1:4,X="A")
-  expect_silent(valid_data_set(dat,m=mod))
+  chr_param <- expand.ev(amt=100,ID=1:4, CL = "A")
+  expect_message(valid_data_set(chr_param,m=mod), regexp="dropped non-numeric:")
+  chr_X <- expand.ev(amt=100,ID=1:4,X="A")
+  expect_silent(valid_data_set(chr_X,m=mod))
+  chr_rate <- expand.ev(amt=100,rate="A")
+  expect_message(valid_data_set(chr_rate,m=mod), "dropped non-numeric:")
+  chr_cmt <- expand.ev(amt=100,cmt="GUT")
+  expect_silent(valid_data_set(chr_cmt,m=mod))
 })
+
+test_that("valid_idata_set warns for character columns", {
+  chr_param <- expand.idata(FOO = 1, CL = "A")
+  expect_message(valid_idata_set(chr_param,m=mod), regexp="dropped non-numeric:")
+  chr_X <- expand.idata(FOO = 1, X = "A")
+  expect_silent(valid_idata_set(chr_X,m=mod))
+})
+
 
 test_that("valid_data_set subs character cmt", {
   dat <- expand.ev(amt=100,ID=1:4,cmt="RESP")
