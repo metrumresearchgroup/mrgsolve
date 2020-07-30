@@ -126,8 +126,12 @@ check-winhub:
 doxygen: 
 	doxygen doxyfile
 
-bump_dev:
+bump-dev:
 	Rscript -e 'usethis::use_version("dev")'
+
+tag-version:
+	git tag $(VERSION)
+	git push origin $(VERSION)
 
 testing:
 	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
