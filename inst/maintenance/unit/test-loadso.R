@@ -30,3 +30,13 @@ test_that("try loading model object if it is not loaded", {
     "There was a problem accessing the model shared object."
   )
 })
+
+test_that("loadso fails if shared object file doesn't exist", {
+  mod <- mcode("loadso-bad","$PARAM CL = 1", compile = FALSE)
+  expect_error(
+    loadso(mod), 
+    "the model dll file doesn't exist"
+  )
+})
+
+
