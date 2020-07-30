@@ -30,16 +30,29 @@ mod <- mrgsolve::house() %>% update(end=end, delta=delta)
 data(extran3)
 
 test_that("valid_data_set warns for character columns", {
-  dat <- expand.ev(amt=100,ID=1:4,X="A")
-  expect_message(valid_data_set(dat,m=mod), regexp="^Dropping")
-  
+  chr_param <- expand.ev(amt=100,ID=1:4, CL = "A")
+  expect_message(valid_data_set(chr_param,m=mod), regexp="dropped non-numeric:")
+  chr_X <- expand.ev(amt=100,ID=1:4,X="A")
+  expect_silent(valid_data_set(chr_X,m=mod))
+  chr_rate <- expand.ev(amt=100,rate="A")
+  expect_message(valid_data_set(chr_rate,m=mod), "dropped non-numeric:")
+  chr_cmt <- expand.ev(amt=100,cmt="GUT")
+  expect_silent(valid_data_set(chr_cmt,m=mod))
 })
+
+test_that("valid_idata_set warns for character columns", {
+  chr_param <- expand.idata(FOO = 1, CL = "A")
+  expect_message(valid_idata_set(chr_param,m=mod), regexp="dropped non-numeric:")
+  chr_X <- expand.idata(FOO = 1, X = "A")
+  expect_silent(valid_idata_set(chr_X,m=mod))
+})
+
 
 test_that("valid_data_set subs character cmt", {
   dat <- expand.ev(amt=100,ID=1:4,cmt="RESP")
   x <- valid_data_set(dat,mod)
   expect_true(all(x[,"cmt"] ==3))
-
+  
   dat$cmt <- "GUT"
   x <- valid_data_set(dat,mod)
   expect_true(all(x[,"cmt"] ==1))
@@ -47,8 +60,8 @@ test_that("valid_data_set subs character cmt", {
 })
 
 test_that("Run with no input", {
-    expect_equal(length(stime(mod)),n)
-    expect_equal(nrow(mrgsim(mod)),n)
+  expect_equal(length(stime(mod)),n)
+  expect_equal(nrow(mrgsim(mod)),n)
 })
 
 test_that("Run with no input - and nid", {
@@ -103,8 +116,8 @@ test_that("Run ev event - and nid", {
 
 
 test_that("Run with data set - data.frame", {
-    out <- mod %>% data_set(extran3) %>% mrgsim
-    expect_equal(nrow(out),nrow(extran3))
+  out <- mod %>% data_set(extran3) %>% mrgsim
+  expect_equal(nrow(out),nrow(extran3))
 })
 
 test_that("Run with data set - tibble", {

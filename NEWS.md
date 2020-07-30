@@ -1,3 +1,7 @@
+# mrgsolve (development version)
+- `valid_data_set` and `valid_idata_set` only warn when non-numeric columns are
+dropped when the columns correspond to parameters or NMTRAN data items
+
 # mrgsolve 0.10.3
 
 - The simulation time grid was adjusted so that rendering the grid could result

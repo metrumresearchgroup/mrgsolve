@@ -1,3 +1,5 @@
+run-*.R
+./test-*.R
 Doxygen
 DOCS
 mrgsolve.Rcheck

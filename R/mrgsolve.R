@@ -538,12 +538,12 @@ do_mrgsim <- function(x,
   
   ## data
   if(!is.valid_data_set(data)) {
-    data <- valid_data_set(data,x,verbose)
+    data <- valid_data_set(data,x,verbose = verbose)
   } 
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,x,verbose=verbose)
+    idata <- valid_idata_set(idata,x,verbose = verbose)
   }
   
   tcol <- timename(data)
@@ -576,8 +576,8 @@ do_mrgsim <- function(x,
     carry_out <- setdiff(carry_out,carry.tran)
     
     # What to carry out from data and idata
-    carry.data  <- intersect(carry_out, colnames(data))
-    carry.idata <- intersect(carry_out, colnames(idata))
+    carry.data  <- intersect(carry_out, dimnames(data)[[2]])
+    carry.idata <- intersect(carry_out, dimnames(idata)[[2]])
     
     # Carry from data_set if name is in idata_set too
     carry.idata <- setdiff(carry.idata, carry.data)
