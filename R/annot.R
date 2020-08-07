@@ -50,7 +50,9 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
   
   col <- charcount(x,":")[1]
   
-  if(col != (2-noname-novalue)) {
+  nsep <- 2-noname-novalue
+  
+  if(col < nsep) {
     stop(
       "improper annotation format\n",
       " input: ", x, "\n",
@@ -63,8 +65,8 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
   if(noname) x <- paste0(". :",x)
   if(novalue) x <- gsub(":",": 0 :",x,fixed=TRUE)
   
-  a <- strsplit(x,"\\s*:\\s*",perl=TRUE)[[1]]
-  
+  a <- my_str_split(string = x, pattern = ":", n = 3)[[1]]
+  a <- mytrim(a)
   b <- a[3]
   
   ## grep out units and options
