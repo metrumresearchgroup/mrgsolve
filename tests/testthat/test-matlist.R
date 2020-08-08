@@ -106,7 +106,7 @@ test_that("collapse_sigma", {
   expect_identical(dim(mat),c(3L,3L))
 })
 
-test_that("duplicate labels", {
+test_that("test-matlist duplicate labels", {
   expect_error(c(omat(house()), omat(house())))  
 })
 
