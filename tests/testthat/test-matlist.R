@@ -105,3 +105,9 @@ test_that("collapse_sigma", {
   mat <- as.matrix(smat(mod))
   expect_identical(dim(mat),c(3L,3L))
 })
+
+test_that("duplicate labels", {
+  expect_error(c(omat(house()), omat(house())))  
+})
+
+
