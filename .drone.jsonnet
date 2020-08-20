@@ -268,7 +268,8 @@ local check_step(r_major_minor, image, volumes=[]) = {
         [
           "ver <- desc::desc_get('Version')",
           "pkg <- paste0('mrgsolve_', ver, '.tar.gz')",
-          "devtools::install(pkg)",
+          "install.packages(pkg, repos = NULL)",
+          "library(mrgsolve)",
           "testthat::test_dir('inst/maintenance/unit', stop_on_failure = TRUE)",
         ]
       ),
