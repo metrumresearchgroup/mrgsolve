@@ -236,9 +236,29 @@ local check_step(r_major_minor, image, volumes=[]) = {
       r_bin_var,
       "devtools::install_deps(upgrade = 'never')"
     ),
+    # use the build()-check_built() pattern so that we have a tarball that can
+    # subsequently be installed
     run_r_expression(
       r_bin_var,
-      "devtools::check(env_vars = c(" + concat_kvs(r_env_vars) + "))"
+      "devtools::build(path = '.')"
+    ),
+    run_r_expression(
+      r_bin_var,
+      std.join(
+        "; ",
+        [
+          "ver <- desc::desc_get('Version')",
+          "path <- paste0('mrgsolve_', ver, '.tar.gz')",
+          std.join(
+            "",
+            [
+              "devtools::check_built(path, env_vars = c(",
+              concat_kvs(r_env_vars),
+              "))"
+            ]
+          ),
+        ]
+      )
     ),
     # run additional tests
     run_r_expression(
@@ -246,7 +266,9 @@ local check_step(r_major_minor, image, volumes=[]) = {
       std.join(
         "; ",
         [
-          "devtools::load_all()",
+          "ver <- desc::desc_get('Version')",
+          "pkg <- paste0('mrgsolve_', ver, '.tar.gz')",
+          "devtools::install(pkg)",
           "testthat::test_dir('inst/maintenance/unit', stop_on_failure = TRUE)",
         ]
       ),
