@@ -53,7 +53,8 @@ Suggests:
     rmarkdown,
     yaml,
     knitr, 
-    data.table
+    data.table,
+    spelling
 LinkingTo: 
     Rcpp (>= 0.12.12),
     RcppArmadillo (>= 0.7.900.2.0),
