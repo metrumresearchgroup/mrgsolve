@@ -13,6 +13,7 @@ local temp_volume_dir = "/ephemeral";
 # variables to pass
 local r_env_vars = {
   "NOT_CRAN": "true",  # you almost certainly want this
+  "_MRGSOLVE_SKIP_MODLIB_BUILD_": "false",
 };
 
 # images specified as repo:tag; first element will be used to build release
@@ -229,13 +230,53 @@ local check_step(r_major_minor, image, volumes=[]) = {
     # https://docs.drone.io/pipeline/environment/syntax/#common-problems
     "export PATH=" + volumes[0].path + ":$PATH",
     source_env(),
+    # build the House model
+    std.join(" ", [r_bin_var, "-f", "inst/maintenance/build_housemodel.R"]),
     run_r_expression(
       r_bin_var,
-      "devtools::install_deps(upgrade = 'never')"
+      "devtools::install_deps(dependencies = TRUE, upgrade = 'never')"
+    ),
+    # use the build()-check_built() pattern so that we have a tarball that can
+    # subsequently be installed
+    run_r_expression(
+      r_bin_var,
+      "devtools::build(path = '.')"
     ),
     run_r_expression(
       r_bin_var,
-      "devtools::check(env_vars = c(" + concat_kvs(r_env_vars) + "))"
+      std.join(
+        "; ",
+        [
+          "ver <- desc::desc_get('Version')",
+          "path <- paste0('mrgsolve_', ver, '.tar.gz')",
+          std.join(
+            "",
+            [
+              "devtools::check_built(path, env_vars = c(",
+              concat_kvs(r_env_vars),
+              "))"
+            ]
+          ),
+        ]
+      )
+    ),
+    # run additional tests
+    run_r_expression(
+      r_bin_var,
+      std.join(
+        "; ",
+        [
+          "ver <- desc::desc_get('Version')",
+          "pkg <- paste0('mrgsolve_', ver, '.tar.gz')",
+          "install.packages(pkg, repos = NULL)",
+          "library(mrgsolve)",
+          "testthat::test_dir('inst/maintenance/unit', stop_on_failure = TRUE)",
+        ]
+      ),
+    ),
+    run_r_expression(
+      r_bin_var, 
+      "spelling::spell_check_package()"
     ),
   ],
 };

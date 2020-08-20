@@ -50,3 +50,4 @@ docs
 ^DOCS$
 ^_pkgdown\.yml$
 ^\.drone\.yml$
+^\.drone\.jsonnet$
