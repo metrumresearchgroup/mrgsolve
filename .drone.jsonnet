@@ -234,7 +234,7 @@ local check_step(r_major_minor, image, volumes=[]) = {
     std.join(" ", [r_bin_var, "-f", "inst/maintenance/build_housemodel.R"]),
     run_r_expression(
       r_bin_var,
-      "devtools::install_deps(upgrade = 'never')"
+      "devtools::install_deps(dependencies = TRUE, upgrade = 'never')"
     ),
     # use the build()-check_built() pattern so that we have a tarball that can
     # subsequently be installed
