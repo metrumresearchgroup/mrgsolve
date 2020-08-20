@@ -54,6 +54,7 @@ Suggests:
     yaml,
     knitr, 
     data.table,
+    pmxTools,
     spelling
 LinkingTo: 
     Rcpp (>= 0.12.12),
