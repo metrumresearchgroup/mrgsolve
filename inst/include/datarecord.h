@@ -22,7 +22,6 @@
 #ifndef DATARECORD_H
 #define DATARECORD_H
 //#include <boost/shared_ptr.hpp>
-#include <algorithm>
 #include "mrgsolv.h"
 #include "LSODA.h"
 
