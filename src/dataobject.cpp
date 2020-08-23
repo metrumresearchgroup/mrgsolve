@@ -356,7 +356,25 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         j, 
         Data(j,Idcol)
       );
+      if(Data(j,col[_COL_ss_]) < 0) {
+        throw Rcpp::exception(
+            tfm::format(
+              "ss must not be negative \n ID: %d, row: %i, ss: %d", 
+              ev->id(), j+1, Data(j,col[_COL_ss_])
+            ).c_str(),
+            false
+        );
+      }
       ev->ss(Data(j,col[_COL_ss_]));
+      if(Data(j,col[_COL_addl_]) < 0) {
+        throw Rcpp::exception(
+            tfm::format(
+              "addl must not be negative \n ID: %d, row: %i, addl: %d", 
+              ev->id(), j+1, Data(j,col[_COL_addl_])
+            ).c_str(),
+            false
+        );
+      }
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
       ev->from_data(true);
@@ -368,7 +386,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if(ev->addl() !=0) {
           throw Rcpp::exception(
               tfm::format(
-                "addl must be zero for ss infusion \n ID: %d, row: %i, ii: %d", 
+                "addl must be zero for ss infusion \n ID: %d, row: %i, addl: %d", 
                 ev->id(), j+1,  ev->addl()
               ).c_str(),
               false
