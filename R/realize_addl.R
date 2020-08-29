@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -80,6 +80,10 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
     return(x)
   }
   
+  if(all(x[[addlcol]] <= 0)) {
+    return(x)  
+  }
+  
   iicol <- which(names(x) %in% c("II", "ii"))[1]
   evidcol <- which(names(x) %in% c("evid", "EVID"))[1]
   timecol <- which(names(x) %in% c("TIME", "time"))[1]
@@ -90,11 +94,10 @@ realize_addl.data.frame <- function(x, warn = FALSE, mark_new = FALSE,
   time_name <- names(x)[timecol]
   
   rown <- seq(nrow(x))
+  
   add <- x[[addlcol]]
   
-  expand <- lapply(rown, function(i) {
-    rep(i, add[i])
-  })
+  expand <- lapply(rown, function(i) rep(i, add[i]))
   
   addl <- mutate(x, ..rown_  = rown)
   

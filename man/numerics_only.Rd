@@ -4,7 +4,7 @@
 \alias{numerics_only}
 \title{Prepare data.frame for input to mrgsim}
 \usage{
-numerics_only(x, quiet = FALSE, convert_lgl = TRUE)
+numerics_only(x, quiet = FALSE, convert_lgl = FALSE)
 }
 \arguments{
 \item{x}{a input data set}
@@ -12,7 +12,7 @@ numerics_only(x, quiet = FALSE, convert_lgl = TRUE)
 \item{quiet}{logical indicating whether or not warnings 
 should be printed}
 
-\item{convert_lgl}{by default, convert logical 
+\item{convert_lgl}{if \code{TRUE}, convert logical 
 columns with \code{\link{as.integer}}}
 }
 \description{

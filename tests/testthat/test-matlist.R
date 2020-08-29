@@ -75,11 +75,6 @@ test_that("Update a model matrix", {
   expect_error(omat(mod, dmat(1)))  
 })
 
-# test_that("Eerror when determinate is negative", {
-#   m <- bmat(1,3,3)
-#   expect_error(x <- omat(m))
-# })
-
 test_that("valid matlist", {
   x <- omat(dmat(1,2,3))
   expect_true(mrgsolve:::valid.matlist(x))
@@ -95,4 +90,18 @@ test_that("new_smat", {
   x <- mrgsolve:::new_smat(dmat(1,2,3,4))
   expect_is(x,"sigmalist")
   expect_equal(dim(x), list(`...`=c(4,4)))
+})
+
+test_that("collapse_omega", {
+  code <- "$omega 1 2 3\n$omega 4 5\n$set collapse_omega=TRUE"  
+  mod <- mcode("collapse_omega", code, compile=FALSE)
+  mat <- as.matrix(omat(mod))
+  expect_identical(dim(mat),c(5L,5L))
+})
+
+test_that("collapse_sigma", {
+  code <- "$sigma 1 2 \n$sigma 4 \n$set collapse_sigma=TRUE"  
+  mod <- mcode("collapse_sigma", code, compile=FALSE)
+  mat <- as.matrix(smat(mod))
+  expect_identical(dim(mat),c(3L,3L))
 })

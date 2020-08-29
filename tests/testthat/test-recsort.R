@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-recsort")
+
 mod <- mrgsolve::house() %>% update(end = -1) %>% param(CL = 0, KA = 0)
 mod <- carry_out(mod, evid)
 
@@ -37,7 +39,6 @@ mod <- carry_out(mod, evid)
 # will not change the order of your input data set if both doses and
 # observations are given.
 
-context("test-recsort")
 
 # 1 and 2
 # put doses in a data set after padded observations at the same time; 

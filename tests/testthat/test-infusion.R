@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -115,7 +115,7 @@ test_that("Infusion executes with ss flag and ii==dur", {
     mod %>% 
     Req(CP) %>% obsonly %>%
     ev(amt=100,rate=100,ii=1,addl=10,ss=1) %>% 
-    mrgsim(end=10,digits=5) %>% filter(time>0)
+    mrgsim(end=10,digits=4) %>% filter(time>0)
   
   expect_true(all(out$CP==100))
   
@@ -124,7 +124,7 @@ test_that("Infusion executes with ss flag and ii==dur", {
 test_that("ss infusion issue-249", {
   cl <- 1.3
   r <- 25
-  mod <- mrgsolve::house(end=1,outvars="CP") %>% param(CL = cl)
+  mod <- mrgsolve::house(end=1,outvars="CP",ss_rtol=1e-8) %>% param(CL = cl)
   ss <- ev(amt = 0, rate = r, ii =10,ss=1)
   out <- mrgsim(mod,ss)
   expect_equal(out$CP[2],r/cl)

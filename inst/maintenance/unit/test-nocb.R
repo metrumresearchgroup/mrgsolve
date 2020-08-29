@@ -43,13 +43,13 @@ mod <- mcode("mypk",code)
 
 test_that("simulation with nocb", {
   out <- mod %>% mrgsim(data = e, nocb = TRUE, end = -1)
-  expect_true(out$foo[4] < 1)
-  expect_true(out$foo[3] == 100)
+  expect_true(out$foo[3] < 1)
+  expect_true(out$foo[2] == 100)
 })
 
 test_that("simulation with locf", {
   out <- mod %>% mrgsim(data = e, nocb = FALSE, end = -1)
-  expect_true(out$foo[4] == 100)
-  expect_true(out$foo[5] < 50)
+  expect_true(out$foo[3] == 100)
+  expect_true(out$foo[4] < 50)
 })
 

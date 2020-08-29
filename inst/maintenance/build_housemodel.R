@@ -1,5 +1,4 @@
 
-.libPaths("~/Rlibs")
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(methods))
 suppressPackageStartupMessages(library(glue))

@@ -198,3 +198,12 @@ test_that("Full specification - $CAPTURE", {
   expect_equivalent(an$descr, c("first", "second", "third"))
   expect_true(all(an$block =="CAPTURE"))
 })
+
+test_that("test-annot semicolons", {
+  annot <- c("CL : 2 : l/hr", "VC : 20 : l doi://123.245 2:2")
+  x <- mrgsolve:::parse_annot(annot)
+  expect_equal(x$nm, c("CL", "VC"))
+  expect_equal(x$v$CL, 2)
+  expect_equal(x$v$VC, 20)
+  expect_equal(x$an$descr[2], "l doi://123.245 2:2")
+})

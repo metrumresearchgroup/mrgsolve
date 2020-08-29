@@ -71,6 +71,16 @@
   return(self)
 }
 
+.ren.dots <- function(..., vars = NULL) {
+  ans <- rlang::enquos(...)
+  ans <- sapply(ans, rlang::as_label)
+  ans <- noquote(ans)
+  ans <- c(ans,vars)
+  no_names <- names(ans) == ""
+  names(ans)[no_names] <- ans[no_names]
+  .ren.create(ans, names(ans))
+}
+
 .ren.rename <- function(self,y) {
   if(self$identical) return(y)
   old <- match(y,self$old)

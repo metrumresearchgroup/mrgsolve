@@ -47,6 +47,7 @@ mod <- mread("viral1", modlib())
 mod <- mread("viral2", modlib())
 mod <- mread("pred1",  modlib())
 mod <- mread("pbpk",   modlib())
+mod <- mread("1005",   modlib()) # embedded NONMEM result
 
 mrgsolve:::code(mod)
 }

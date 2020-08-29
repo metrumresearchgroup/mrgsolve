@@ -4,7 +4,13 @@
 \alias{read_nmext}
 \title{Extract estimates from NONMEM ext file}
 \usage{
-read_nmext(run, project = getwd(), file = paste0(run, ".ext"), path = NULL)
+read_nmext(
+  run = NA_real_,
+  project = getwd(),
+  file = paste0(run, ".ext"),
+  path = NULL,
+  read_fun = c("data.table", "read.table")
+)
 }
 \arguments{
 \item{run}{a run number or run identifier}
@@ -14,6 +20,8 @@ read_nmext(run, project = getwd(), file = paste0(run, ".ext"), path = NULL)
 \item{file}{the \code{ext} file name}
 
 \item{path}{full path and file name for \code{ext} file}
+
+\item{read_fun}{function to read the \code{ext} file}
 }
 \value{
 A list with param, omega, and sigma in a format
