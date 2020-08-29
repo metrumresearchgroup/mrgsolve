@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,16 +21,20 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-
 context("test-modlib models")
 
-test_that("Lagged bolus", {
+test_that("all modlib models", {
   
   test_lib <- function(x) {
     mod <- mread(x,modlib())
     out <- mrgsim(mod)
     return(list(mod,out))
   }
+  
+  skip_if(
+    identical(Sys.getenv("_MRGSOLVE_SKIP_MODLIB_BUILD_"),"true"), 
+    message = "skipping modlib builds"
+  )
   
   x <- test_lib("pk1cmt")
   expect_is(x[[1]],"mrgmod")
@@ -96,20 +100,3 @@ test_that("Lagged bolus", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

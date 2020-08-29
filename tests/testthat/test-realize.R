@@ -22,7 +22,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("test-ev")
+context("test-realize")
 
 mod <- mrgsolve::house()
 
@@ -49,4 +49,9 @@ test_that("data frame", {
   expect_equal(nrow(data),10)
   expect_true(all(data[["addl"]]==0))
   expect_true(all(data[["ii"]]==0))
+})
+
+test_that("addl column is all zeros", {
+  data <- realize_addl(ev(amt = 100, addl = 0, ii = 1))
+  expect_is(data,"ev")
 })

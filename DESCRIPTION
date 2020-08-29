@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 0.10.1.9000
+Version: 0.10.4.9005
 Authors@R: 
     c(person(given = "Kyle T",
              family = "Baron",
@@ -41,7 +41,6 @@ Imports:
     Rcpp (>= 0.12.12),
     dplyr (>= 0.8.1),
     magrittr (>= 1.5),
-    RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 2.1.1),
     rlang (>= 0.3.4),
     tidyselect (>= 0.2.5),
@@ -53,7 +52,10 @@ Suggests:
     xml2 (>= 1.2.0),
     rmarkdown,
     yaml,
-    knitr
+    knitr, 
+    data.table,
+    pmxTools,
+    spelling
 LinkingTo: 
     Rcpp (>= 0.12.12),
     RcppArmadillo (>= 0.7.900.2.0),
@@ -64,7 +66,7 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 NeedsCompilation: yes
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 SystemRequirements: C++11
 Collate: 
     'RcppExports.R'

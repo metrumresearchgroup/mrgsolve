@@ -134,7 +134,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-
+  
   // Requested compartments
   Rcpp::IntegerVector request = parin["request"];
   const unsigned int nreq = request.size();
@@ -164,7 +164,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Captures
   const unsigned int n_capture  = capture.size()-1;
   
-  
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
@@ -192,6 +191,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     Rcpp::NumericMatrix tgrid = 
       Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
+    
+    if((tgrid.nrow() == 0) && (obscount==0) && (evcount==0)) {
+      tgrid = Rcpp::NumericMatrix(1,1);  
+    }
     
     bool multiple_tgrid = tgrid.ncol() > 1;
     
@@ -391,7 +394,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     prob.set_d(a[i][0]);
     prob.init_call(tfrom);
-
+    
     for(size_t j=0; j < a[i].size(); ++j) {
       
       if(crow == NN) continue;

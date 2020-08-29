@@ -12,7 +12,7 @@
 \usage{
 param(.x, ...)
 
-\S4method{param}{mrgmod}(.x, .y = list(), ..., .pat = "*", .strict = FALSE)
+\S4method{param}{mrgmod}(.x, .y = NULL, ..., .pat = "*", .strict = FALSE)
 
 \S4method{param}{mrgsims}(.x, ...)
 

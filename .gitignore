@@ -1,3 +1,5 @@
+run-*.R
+./test-*.R
 Doxygen
 DOCS
 mrgsolve.Rcheck
@@ -5,7 +7,6 @@ mrgsolve.Rcheck
 test.R
 *.o
 *.so
-*.Rproj
 Rchecks
 .Rproj.user
 .Rhistory

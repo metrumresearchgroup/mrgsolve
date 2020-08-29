@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -23,12 +23,12 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-env")
 
-test_that("$ENV", {
+test_that("ENV", {
   mod <- mcode("test_env_1", "$ENV a <- 1\nb <- 2",compile=FALSE)
   expect_is(mod, "mrgmod")
 })  
 
-test_that("$ENV sub into $PARAM", {
+test_that("ENV sub into $PARAM", {
   code <- '
   $ENV a <- 1; b <- 2
   $PARAM A = a, B = b
@@ -39,7 +39,7 @@ test_that("$ENV sub into $PARAM", {
   expect_equivalent(as.numeric(param(mod)), c(1,2))
 })
 
-test_that("$ENV sub into $INIT", {
+test_that("ENV sub into $INIT", {
   code <- '
   $ENV a <- 1\n b <- 2
   $INIT A = a, B = b
@@ -49,20 +49,6 @@ test_that("$ENV sub into $INIT", {
   expect_identical(mrgsolve:::cmt(mod),c("A", "B"))
   expect_equivalent(as.numeric(init(mod)), c(1,2))
 })
-
-# test_that("$ENV sub into block option", {
-#   code <- '
-#   $ENV yes <- TRUE; a <- 1; b <- 2
-#   $INIT >> annotated=yes
-#   A: a : A
-#   B: b : B
-#   '
-#   mod <- mcode("test-env-4", code, compile=FALSE)
-#   expect_is(mod, "mrgmod")
-#   expect_identical(cmt(mod),c("A", "B"))
-#   expect_equivalent(as.numeric(init(mod)), c(1,2))
-#   
-# })
 
 test_that("Get $OMEGA matrix from $ENV", {
   code <- '
@@ -79,7 +65,7 @@ test_that("Get $OMEGA matrix from $ENV", {
 })
 
 
-test_that("$ENV sub into $FIXED", {
+test_that("ENV sub into $FIXED", {
   code <- '
   $ENV a <- 1\n b <- 2
   $FIXED A = a, B = b

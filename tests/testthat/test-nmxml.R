@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -267,5 +267,24 @@ test_that("read_nmext returns estimates", {
   expect_identical(x,x2)
 })
 
+test_that("NONMEM estimates from nmext", {
+  project <- system.file("nonmem", package="mrgsolve")
+  a <- mrgsolve:::nmext(run = 1005, project = project)
+  expect_is(a$theta, "list")
+  expect_is(a$omega, "omegalist")
+  expect_is(a$sigma, "sigmalist")
+  expect_error(mrgsolve:::nmext(run = 10051, project = project), 
+               "could not find the requested")
+  expect_error(mrgsolve:::nmext(run = 1005, project = project,read_fun = "foo"),
+               "'arg' should be one of ")
+})
 
+test_that("custom labeled THETA", {
+  project <- system.file("nonmem", package = "mrgsolve")
+  a <- mrgsolve:::nmxml(run = 1005, project = project)
+  b <- mrgsolve:::nmxml(run = 1005, project = project, tname = letters[1:7])
+  expect_identical(names(a$theta), paste0("THETA", 1:7))
+  expect_identical(names(b$theta), letters[1:7])
+  expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
+})
 

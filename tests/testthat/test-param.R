@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-param")
+
 mod <- mrgsolve::house()  
 
 test_that("params are constructed", {
