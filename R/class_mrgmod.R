@@ -199,6 +199,7 @@ valid.mrgmod <- function(object) {
 #' ignore \code{<numeric>}
 #' @slot hmin passed to \code{\link[=solversettings]{dlsoda}}  \code{<numeric>}
 #' @slot hmax passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot h0 passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} 
 #' \code{<numeric>}
 #' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}

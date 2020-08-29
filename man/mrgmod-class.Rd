@@ -41,6 +41,8 @@ ignore \code{<numeric>}}
 
 \item{\code{hmax}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
+\item{\code{h0}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
+
 \item{\code{mxhnil}}{passed to \code{\link[=solversettings]{dlsoda}} 
 \code{<numeric>}}
 
