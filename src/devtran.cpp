@@ -430,16 +430,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      bool locf = !nocb;
-      // if(this_rec->from_data()) {
-      //   if(nocb) {
-      //     dat.copy_parameters(this_rec->pos(),&prob);
-      //   } else {
-      //     locf = true;
-      //   }
-      // }
-      // 
-      if(dat.any_copy) {
+      if(nocb && dat.any_copy) {
         dat.advance_parameters(
           i, 
           this_rec->from_data(), 
@@ -447,11 +438,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           &prob
         );  
       }
-      
-      // say("time: "); 
-      // say(this_rec->time());
-      // say(prob.Param.at(6));
-      // 
+
       tto = this_rec->time();
       
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
@@ -561,18 +548,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_rec->implement(&prob);
       }
       
-      // if(locf) {
-      //   dat.copy_parameters(this_rec->pos(),&prob);
-      // }
-      if(dat.any_copy && locf) {
-        dat.advance_parameters(
-          i, 
-          this_rec->from_data(), 
-          this_rec->pos(), 
-          &prob
-        );  
+      if(!nocb && this_rec->from_data()) {
+        dat.copy_parameters(this_rec->pos(),&prob);
       }
-      
+
       prob.table_call();
       
       if(prob.any_mtime()) {
