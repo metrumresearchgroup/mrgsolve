@@ -129,22 +129,22 @@ test_that("cvec", {
 
 test_that("my_str_split", {
   x <- "ab:cd:ef:gh"
-  ans <- my_str_split(x,":",n = 1)
+  ans <- mrgsolve:::my_str_split(x,":",n = 1)
   expect_is(ans, "list")
   expect_length(ans,1)
   expect_length(ans[[1]],1)
-  ans <- my_str_split(x,":",n = 3)
+  ans <- mrgsolve:::my_str_split(x,":",n = 3)
   expect_length(ans,1)
   expect_length(ans[[1]],3)
-  ans <- my_str_split(x,":",n = 5)
+  ans <- mrgsolve:::my_str_split(x,":",n = 5)
   expect_length(ans,1)
   expect_length(ans[[1]],4)
   x <- "ab:cd"
-  ans <- my_str_split(x, ":", 1)
+  ans <- mrgsolve:::my_str_split(x, ":", 1)
   expect_length(ans[[1]],1)
-  ans <- my_str_split(x, ":", 2)
+  ans <- mrgsolve:::my_str_split(x, ":", 2)
   expect_length(ans[[1]],2)
-  ans <- my_str_split(x, ":", 3)
+  ans <- mrgsolve:::my_str_split(x, ":", 3)
   expect_length(ans[[1]],2)
 })
 
