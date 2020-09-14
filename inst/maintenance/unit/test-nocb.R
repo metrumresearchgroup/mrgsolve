@@ -53,3 +53,22 @@ test_that("simulation with locf", {
   expect_true(out$foo[4] < 50)
 })
 
+test_that("correct update with infusion #741", {
+  a <- ev(amt = 100)
+  b <- ev(amt = 100, cmt = 2, tinf = 3)
+  data1 <- as.data.frame(c(a,b), add_ID = 1)
+  data1$KA <- 0.02
+  data2 <- data1
+  data2$KA <- 0.04
+  data2$time <- 24
+  data3 <- slice(data2, 2)
+  data3$time <- 49
+  data3$amt <- data3$rate <- data3$evid <- 0
+  data <- rbind(data1,data2,data3)
+  bol <- filter(data, cmt==1 | evid==0)
+  mod <- house()
+  out1 <- mrgsim(mod, data)
+  out2 <- mrgsim(mod, bol)
+  expect_equal(unique(out1$GUT), out2$GUT)
+})
+
