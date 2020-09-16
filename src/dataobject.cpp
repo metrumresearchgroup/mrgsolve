@@ -55,7 +55,6 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   col.resize(8,0);
   
   any_copy = parnames.size() > 0;
-  
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -87,9 +86,7 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   col.resize(8,0);
   
   any_copy = parnames.size() > 0;
-  
 }
-
 
 dataobject::~dataobject(){}
 
@@ -112,7 +109,6 @@ Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
   ret = Rcpp::na_omit(ret);
   return(ret-1);
 }
-
 
 void dataobject::locate_tran() {
   
