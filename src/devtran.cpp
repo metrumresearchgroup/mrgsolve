@@ -549,7 +549,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_rec->implement(&prob);
       }
       
-      if(!nocb) {
+      if(!nocb && dat.any_copy) {
         if(this_rec->from_data()) {
           dat.copy_parameters(this_rec->pos(),&prob);
         }
