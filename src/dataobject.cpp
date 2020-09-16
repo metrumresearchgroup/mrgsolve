@@ -191,8 +191,8 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
 
 void dataobject::next_id(int id_n) {
   done_copying = false;
-  next_copy_row = Startrow.at(id_n);
   last_copy_row = -1;
+  next_copy_row = Startrow.at(id_n);
 }
 
 void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row, 

@@ -360,20 +360,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     double id = dat.get_uid(i);
     dat.next_id(i);
-    double Fn = 1.0;
-    int this_cmtn = 0;
-    double told = -1;
-    
     prob.idn(i);
-    double tfrom = a[i].front()->time();
-    double tto = tfrom;
-    double maxtime = a[i].back()->time();
-    
     prob.reset_newid(id);
     
     if(i==0) {
       prob.newind(0);
     }
+    
+    double Fn = 1.0;
+    int this_cmtn = 0;
+    double told = -1;
+    
+    double tfrom = a[i].front()->time();
+    double tto = tfrom;
+    double maxtime = a[i].back()->time();
     
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
@@ -439,7 +439,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           &prob
         );  
       }
-
+      
       tto = this_rec->time();
       
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
@@ -549,10 +549,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_rec->implement(&prob);
       }
       
-      if(!nocb && this_rec->from_data()) {
-        dat.copy_parameters(this_rec->pos(),&prob);
+      if(!nocb) {
+        if(this_rec->from_data()) {
+          dat.copy_parameters(this_rec->pos(),&prob);
+        }
       }
-
+      
       prob.table_call();
       
       if(prob.any_mtime()) {

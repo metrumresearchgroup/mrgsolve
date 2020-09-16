@@ -72,3 +72,37 @@ test_that("correct update with infusion #741", {
   expect_equal(unique(out1$GUT), out2$GUT)
 })
 
+test_that("test-nocb: time-varying covariates #741", {
+  code <- '
+$PARAM TVKA = 0.05, CL = 1, VC = 10, COV = 100
+$TABLE
+capture DV  = CENTRAL / VC;
+$MAIN
+double V = VC;
+capture KA = TVKA * (COV / 100) ;
+ALAG_DEPOT = 0.52340;
+$PKMODEL cmt = "DEPOT CENTRAL", depot = TRUE
+'
+  
+  mod <- mcode_cache("foo", code)
+  
+  id1 <- tibble::tribble(
+    ~ID, ~TIME, ~EVID, ~CMT, ~AMT, ~RATE,
+    1,  0, 1, 1, 80, 8,
+    1, 24, 1, 2, 60, 0, 
+    1, 48, 1, 2, 40, 8,
+    1, 72, 1, 1, 60, 0
+  )
+  id2 <- dplyr::mutate(id1, ID = 2)
+  data <- dplyr::bind_rows(id1,id2)
+  data2 <- expand_observations(data, c(12,22.2,36.234,42.5,55,60.001))
+  data2 <- dplyr::mutate(data2, COV = ifelse(TIME <= 48, 80, 60))
+  data2 <- dplyr::mutate(data2, COV = ifelse(TIME <= 24, 40, COV))
+  data1 <- dplyr::filter(data2, EVID==1)
+  set.seed(11010)
+  x <- mrgsim(mod,data2) 
+  set.seed(11010)
+  b <- mrgsim(mod,data1,end=-1)
+  a <- filter_sims(x, TIME %in% b$TIME)
+  all.equal(a,b)
+})
