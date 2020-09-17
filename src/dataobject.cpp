@@ -55,6 +55,9 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   col.resize(8,0);
   
   any_copy = parnames.size() > 0;
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = 0;
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -86,6 +89,9 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   col.resize(8,0);
   
   any_copy = parnames.size() > 0;
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = 0;
 }
 
 dataobject::~dataobject(){}
