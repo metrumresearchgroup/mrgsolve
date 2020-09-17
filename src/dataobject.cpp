@@ -54,6 +54,10 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   col.resize(8,0);
   
+  any_copy = parnames.size() > 0;
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = 0;
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -84,8 +88,11 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   col.resize(8,0);
   
+  any_copy = parnames.size() > 0;
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = 0;
 }
-
 
 dataobject::~dataobject(){}
 
@@ -103,13 +110,11 @@ void dataobject::map_uid() {
   Endrow.push_back(n-1);
 }
 
-
 Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
   Rcpp::IntegerVector ret = Rcpp::match(what, Data_names);
   ret = Rcpp::na_omit(ret);
   return(ret-1);
 }
-
 
 void dataobject::locate_tran() {
   
@@ -183,6 +188,30 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t n = par_from.size();
   for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
+  }
+}
+
+void dataobject::next_id(int id_n) {
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = Startrow.at(id_n);
+}
+
+void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row, 
+                                      odeproblem* prob) {
+  if(done_copying) return;
+  if(from_data) {
+    copy_parameters(this_row, prob);
+    if(this_row >= Endrow.at(id_n)) {
+      done_copying = true;  
+      return;
+    }
+    next_copy_row = ++this_row;
+    return;
+  }
+  if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow.at(id_n))) {
+    copy_parameters(next_copy_row, prob); 
+    last_copy_row = next_copy_row;
   }
 }
 

@@ -24,15 +24,10 @@
 #define DATAOBJECT_H
 
 #include <vector>
-//#include <boost/shared_ptr.hpp>
-//#include <boost/make_shared.hpp>
 #include "odeproblem.h"
 #include "RcppInclude.h"
 
-//typedef std::map<double,int> idat_map;
 typedef std::deque<double> uidtype;
-//typedef std::deque<int> datarowtype;
-
 
 class dataobject {
   
@@ -60,6 +55,8 @@ public:
   double get_uid(int i) const {return Uid.at(i);}
   uidtype return_uid()  {return Uid;}
   void copy_parameters(int this_row,odeproblem *prob);
+  void copy_next_parameters(int id_n, bool from_data, int this_row, odeproblem *prob);
+  void next_id(int id_n);
   void copy_inits(int this_row,odeproblem *prob);
   void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);
   void idata_row();
@@ -100,6 +97,12 @@ public:
   std::vector<int> cmt_from; ///< index for compartments in data set
   std::vector<int> cmt_to;  ///< index for compartments in init list
   Rcpp::CharacterVector cmtnames; ///< names of model compartments
+  
+  bool any_copy; ///< are there any parameter columns for copy / update?
+  bool done_copying; ///< have we reached the last data record for this ID?
+  int next_copy_row; ///< tracking current actual data row
+  int last_copy_row; ///< tracking previous actual data row
+  
 };
 
 

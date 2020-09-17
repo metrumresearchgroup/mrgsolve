@@ -354,24 +354,26 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   int this_idata_row = 0;
   
   if(verbose) say("starting the simulation ...");
+  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
     double id = dat.get_uid(i);
-    double Fn = 1.0;
-    int this_cmtn = 0;
-    double told = -1;
-    
+    dat.next_id(i);
     prob.idn(i);
-    double tfrom = a[i].front()->time();
-    double tto = tfrom;
-    double maxtime = a[i].back()->time();
-    
     prob.reset_newid(id);
     
     if(i==0) {
       prob.newind(0);
     }
+    
+    double Fn = 1.0;
+    int this_cmtn = 0;
+    double told = -1;
+    
+    double tfrom = a[i].front()->time();
+    double tto = tfrom;
+    double maxtime = a[i].back()->time();
     
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
@@ -429,13 +431,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      bool locf = false;
-      if(this_rec->from_data()) {
-        if(nocb) {
-          dat.copy_parameters(this_rec->pos(),&prob);
-        } else {
-          locf = true;
-        }
+      if(nocb && dat.any_copy) {
+        dat.copy_next_parameters(
+          i, 
+          this_rec->from_data(), 
+          this_rec->pos(), 
+          &prob
+        );  
       }
       
       tto = this_rec->time();
@@ -518,6 +520,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  this_rec->rate(),
                                  -299,
                                  id);
+          
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
           }
@@ -546,8 +549,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_rec->implement(&prob);
       }
       
-      if(locf) {
-        dat.copy_parameters(this_rec->pos(),&prob);
+      if(!nocb && dat.any_copy) {
+        if(this_rec->from_data()) {
+          dat.copy_parameters(this_rec->pos(),&prob);
+        }
       }
       
       prob.table_call();
