@@ -89,7 +89,17 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
   x <- x[!sapply(x,nrow)==0]
   if(is.null(names(x))) names(x) <- rep("...", length(x))
   names(x)[nchar(names(x))==0] <- "..."
-  if(is.null(unlist(labels))) labels <- lapply(x, function(y) rep('.',nrow(y)))
+  if(is.null(unlist(labels))) {
+    labels <- lapply(x, function(y) rep('.',nrow(y)))
+  } 
+  all <- unlist(labels, use.names=FALSE)
+  all <- all[all != "."]
+  if(any(duplicated(all))) {
+      dup <- all[duplicated(all)]
+      dup <- paste0(dup, collapse = ", ")
+      stop("duplicate labels found when creating matlist object: ", dup,
+           call.=FALSE)  
+  }
   x <- new(class, data=x, labels=labels)
   x@n <- dim_matlist(x)
   return(x)
