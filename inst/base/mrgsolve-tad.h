@@ -39,7 +39,7 @@ namespace mrgsolve {
  * mrg::tadose obj;
  * 
  * [ preamble ] 
- * obj.cmt  = 2;
+ * obj.cmt = 2;
  * 
  * [ main ] 
  * capture time_after_dose = obj.tad(self);
