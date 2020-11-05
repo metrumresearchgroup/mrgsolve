@@ -48,14 +48,15 @@ namespace mrgsolve {
  */
 class tadose {
 public: 
-  int cmt; ///< dosing compartment number to follow 
-  double told; ///< time of last dose
-  bool had_dose; ///< has the current individual received a dose yet?
+  int cmt = -1e9; ///< dosing compartment number to follow 
+  double told = -1e9; ///< time of last dose
+  bool had_dose = false; ///< has the current individual received a dose yet?
   tadose(int cmt_);
-  tadose();
+  tadose(){};
   double tad(databox& self);
   void reset();
 };
+
 /**
  * Constructor.
  * 
@@ -63,15 +64,7 @@ public:
  * 
  */
 tadose::tadose(int cmt_) {
-  cmt = cmt_;  
-  told = -1e9;
-}
-/**
- * Default constructor. 
- * 
- */
-tadose::tadose() {
-  told = -1e9;  
+  cmt = cmt_;
 }
 
 /**

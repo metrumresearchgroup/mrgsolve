@@ -11,6 +11,12 @@ $plugin tad
 
 $pkmodel depot = TRUE
 
+$global
+mrg::tadose z;
+
+$preamble
+z.cmt = 2;
+
 $main
 static mrg::tadose x(2);
 static mrg::tadose y(1);
@@ -19,6 +25,7 @@ capture tady = y.tad(self);
 capture tadose1 = self.tad();
 
 $table
+capture tadz = z.tad(self);
 capture tados = self.tad();
 '
 
@@ -32,9 +39,13 @@ a <- mrgsim(mod, ev1,  carry_out = "evid", tad = TRUE)
 b <- mrgsim(mod, ev2,  carry_out = "evid", tad = TRUE)
 c <- mrgsim(mod, dose, carry_out = "evid", tad = TRUE)
 
-aa <- dplyr::filter(a, evid==0) %>% dplyr::slice(-2)
-bb <- dplyr::filter(b, evid==0) %>% dplyr::slice(-2)
-cc <- dplyr::filter(c, evid==0) %>% dplyr::slice(-2)
+aa <- dplyr::filter(a, evid == 0) %>% dplyr::slice(-2)
+bb <- dplyr::filter(b, evid == 0) %>% dplyr::slice(-2)
+cc <- dplyr::filter(c, evid == 0) %>% dplyr::slice(-2)
+
+test_that("tad-cmt with default initialization", {
+  expect_equal(c$tadz, c$tadx)  
+})
 
 test_that("tad-cmt matches tad-no-cmt", {
   # check tad x and y
