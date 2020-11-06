@@ -107,7 +107,7 @@ $PKMODEL cmt = "DEPOT CENTRAL", depot = TRUE
   expect_true(all.equal(a,b))
 })
 
-test_that("unit carry_out with obsaub", {
+test_that("loc:unit carry_out with obsaug", {
   code <- "
 $PARAM CL0 = .1, V = 10, COV = 100
 $CMT CENT
