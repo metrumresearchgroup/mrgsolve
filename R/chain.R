@@ -42,56 +42,95 @@
 ##' mod <- mrgsolve::house()
 ##'
 ##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
-##'
+##' 
 ##' @export
-Req <- function(x,...) UseMethod("Req")
-
-#' @export
-Req.mrgmod <- function(x,...) {
+Req <- function(x,...) {
   x <- update_outputs(x,as_character_args(match.call()[-1]))
   x  
 }
 
 ##' @rdname Req
 ##' @export
-req <- function(x,...) UseMethod("req")
-
-##' @export
-##' @rdname Req
-req.mrgmod <- function(x,...) {
+req <- function(x,...) function(x,...) {
   x <- update_request(x,as.character(match.call()[-1]))
   x
 }
 
-##' Select items to carry into simulated output
-##' 
-##' When items named in this function are found in the input data set (either 
-##' \code{\link{data_set}} or \code{\link{idata_set}}), they are copied
-##' into the simulated output.  Special items like \code{evid} or \code{amt} or
-##' the like are not copied from the data set per se, but they are copied from
-##' \code{datarecord} objects that are created during the simulation.
-##'
-##' @param x model object
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{carry_out} in 
-##' the pipeline.
-##' 
-##' \code{carry.out} and \code{carry_out}.  Using the underscore version is 
-##' now preferred.
-##' 
-##' @export
+#' Select output variables
+#' 
+#' This function selects compartments or capture items to appear in simulated
+#' output. It is currently identical to `request`ing items via [Req()] and 
+#' accomplishes the same thing as passing a character vector to the `Request`
+#' argument to [mrgsim()] or setting `outvars` in [mrgsolve::update()].
+#' 
+#' @param x a model object
+#' @param ... unquoted compartment or capture names that will appear in 
+#' simulated output
+#' 
+#' @seealso [carry_out()], [recover_out()]
+#' 
+#' @md
+#' @export
+vars_out <- function(x, ... ) {
+  x <- update_outputs(x, as_character_args(match.call()[-1]))    
+  x
+}
+
+#' Select items to carry into simulated output
+#' 
+#' When items named in this function are found in the input data set (either 
+#' [data_set()] or [idata_set()]), they are copied into the simulated output.  
+#' Special items like `evid` or `amt` or the like are not copied from the data 
+#' set per se, but they are copied from `datarecord` objects that are created 
+#' during the simulation.
+#'
+#' @param x model object
+#' @param ... not used
+#' 
+#' @details
+#' There is also a `carry_out` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `carry_out` in 
+#' the pipeline.
+#' 
+#' @seealso [recover_out()], [vars_out()]
+#' @md
+#' @export
 carry_out <- function(x,...) {
   x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
-##' @export
-##' @rdname carry_out
+#' @export
+#' @rdname carry_out
 carry.out <- function(x,...) {
-  x@args[["carry_out"]] <- as_character_args(match.call()[-1])
+  lifecycle::deprecate_warn("0.10.5", "mrgsolve:::carry.out()", "mrgsolve::carry_out()")
+  carry_out(x,...)
+}
+
+#' Select items to recover into simulated output
+#' 
+#' This function is similar to [carry_out()], in that it copies data set 
+#' items into your simulated output without having to interact with it inside
+#' the model.  The difference is that [recover()] will copy any data type:
+#' `character`, `factors`, etc. 
+#' 
+#' @param x model object
+#' @param ... unquoted data set names to recover
+#' 
+#' @examples
+#' data <- data.frame(amt = 100, CL = 5, group = "100 mg")
+#' 
+#' house() %>% recover_out(group) %>% mrgsim()
+#' 
+#' @details
+#' `recover_out` should not be used when benchmarking `mrgsolve`.
+#' 
+#' @seealso [carry_out()], [vars_out()]
+#' 
+#' @md
+#' @export
+recover_out <- function(x, ...) {
+  x@args[["recover"]] <- as_character_args(match.call()[-1])
   x
 }
 

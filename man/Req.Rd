@@ -3,14 +3,11 @@
 \name{Req}
 \alias{Req}
 \alias{req}
-\alias{req.mrgmod}
 \title{Request simulated output}
 \usage{
 Req(x, ...)
 
 req(x, ...)
-
-\method{req}{mrgmod}(x, ...)
 }
 \arguments{
 \item{x}{model object}
