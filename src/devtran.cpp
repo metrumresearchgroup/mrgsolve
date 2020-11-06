@@ -336,8 +336,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
-    dat.carry_out(a,ans,idat,data_carry,data_carry_start,
-                  idata_carry,idata_carry_start);
+    dat.carry_out(a,ans,idat,data_carry,data_carry_start,idata_carry,
+                  idata_carry_start);
   }
   
   crow = 0;

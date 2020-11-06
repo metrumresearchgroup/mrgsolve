@@ -516,19 +516,26 @@ void dataobject::carry_out(const recstack& a,
   
   for(recstack::const_iterator it=a.begin(); it!=a.end(); ++it) {
     
-    j = it-a.begin();
+    j = it - a.begin();
     
     if(carry_from_idata) {
       idatarow = idat.get_idata_row(this->get_uid(j));
     }
     
     lastpos = -1;
+    int maxpos = Endrow.at(j);
+    int nextpos = 0;
     
     for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
       
       // Get the last valid data set position to carry from
       if(carry_from_data) {
-        if((*itt)->from_data()) lastpos = (*itt)->pos();
+        if((*itt)->from_data()) {
+          lastpos = (*itt)->pos();
+          nextpos = lastpos;
+        } else {
+          nextpos = std::min(lastpos + 1, maxpos);
+        }
       }
       
       if(!(*itt)->output()) continue;
@@ -539,9 +546,9 @@ void dataobject::carry_out(const recstack& a,
       }
       
       if(carry_from_data) {
-        if(lastpos >=0) {
+        if(lastpos >= 0) {
           for(k=0; k < n_data_carry; ++k) {
-            ans(crow, data_carry_start+k)  = Data(lastpos,data_carry[k]);
+            ans(crow, data_carry_start+k)  = Data(nextpos,data_carry[k]);
           }
         } else {
           for(k=0; k < n_data_carry; ++k) {

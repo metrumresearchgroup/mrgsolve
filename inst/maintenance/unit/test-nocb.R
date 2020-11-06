@@ -84,7 +84,7 @@ ALAG_DEPOT = 0.52340;
 $PKMODEL cmt = "DEPOT CENTRAL", depot = TRUE
 '
   
-  mod <- mcode_cache("foo", code)
+  mod <- mcode("foo2934934", code)
   
   id1 <- tibble::tribble(
     ~ID, ~TIME, ~EVID, ~CMT, ~AMT, ~RATE,
@@ -104,5 +104,42 @@ $PKMODEL cmt = "DEPOT CENTRAL", depot = TRUE
   set.seed(11010)
   b <- mrgsim(mod,data1,end=-1)
   a <- filter_sims(x, TIME %in% b$TIME)
-  all.equal(a,b)
+  expect_true(all.equal(a,b))
 })
+
+test_that("unit carry_out with obsaub", {
+  code <- "
+$PARAM CL0 = .1, V = 10, COV = 100
+$CMT CENT
+$PKMODEL ncmt = 1
+$TABLE
+double DV  = CENT / V  ;
+$MAIN
+double CL = CL0 / V * COV ;
+$CAPTURE DV, CL, COV2 = COV
+"
+  modelobsaug <- mread("testobsaug",code = code)
+  
+  dat1 <- data.frame(
+    ID = 1, 
+    time = c(0, 12.1, 24),
+    evid = c(1, 0, 0),
+    amt = c(100, 0, 0), 
+    cmt = 1, 
+    COV = c(100, 100, 50)
+  )
+  
+  dat2 <- mutate(dat1, ID = 2)
+  data <- bind_rows(dat1,dat2)
+  
+  out <- 
+    modelobsaug %>%
+    obsaug() %>% 
+    data_set(data) %>%
+    mrgsim_df(carry_out = "COV") 
+  
+  expect_true(all(out$COV==out$COV2))
+
+})
+
+
