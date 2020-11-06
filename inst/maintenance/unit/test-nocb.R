@@ -118,7 +118,7 @@ $MAIN
 double CL = CL0 / V * COV ;
 $CAPTURE DV, CL, COV2 = COV
 "
-  modelobsaug <- mread("testobsaug",code = code)
+  modelobsaug <- mcode("testobsaug", code)
   
   dat1 <- data.frame(
     ID = 1, 
