@@ -500,7 +500,8 @@ void dataobject::carry_out(const recstack& a,
                            const Rcpp::IntegerVector& data_carry,
                            const unsigned int data_carry_start,
                            const Rcpp::IntegerVector& idata_carry,
-                           const unsigned int idata_carry_start) {
+                           const unsigned int idata_carry_start, 
+                           const bool nocb) {
   
   int crow = 0;
   int j = 0;
@@ -523,7 +524,8 @@ void dataobject::carry_out(const recstack& a,
     }
     
     lastpos = -1;
-    int maxpos = Endrow.at(j);
+    const int pos_offset = nocb ? 1 : 0;
+    const int maxpos = Endrow.at(j);
     int nextpos = 0;
     
     for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
@@ -534,7 +536,7 @@ void dataobject::carry_out(const recstack& a,
           lastpos = (*itt)->pos();
           nextpos = lastpos;
         } else {
-          nextpos = std::min(lastpos + 1, maxpos);
+          nextpos = std::min(lastpos + pos_offset, maxpos);
         }
       }
       

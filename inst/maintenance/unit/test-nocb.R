@@ -139,7 +139,15 @@ $CAPTURE DV, CL, COV2 = COV
     mrgsim_df(carry_out = "COV") 
   
   expect_true(all(out$COV==out$COV2))
-
+  
+  out <- 
+    modelobsaug %>%
+    obsaug() %>% 
+    data_set(data) %>%
+    mrgsim_df(carry_out = "COV", nocb = FALSE)
+  
+  expect_true(all(out$COV==out$COV2))
+  
 })
 
 
