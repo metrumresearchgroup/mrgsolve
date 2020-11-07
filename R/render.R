@@ -76,11 +76,13 @@ setGeneric("render", function(x,...) standardGeneric("render"))
 
 ##' @rdname render
 setMethod("render", "character", function(x,project=NULL,...) {
+  lifecycle::deprecate_warn("v0.10.5", "mrgsolve:::render()")
   dorender(x,project,...)
 })
 
 ##' @rdname render
 setMethod("render", "mrgmod", function(x,...) {
+  lifecycle::deprecate_warn("v0.10.5", "mrgsolve:::render()")
   project <- tempdir()
   file <- basename(cfile(x))
   cat(code(x), file=filename(project,file),sep="\n")
