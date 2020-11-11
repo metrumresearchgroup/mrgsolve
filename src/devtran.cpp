@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -431,15 +431,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      if(nocb && dat.any_copy) {
+      if(dat.any_copy && nocb) {
+        // this will call lsoda_init if parameters are copied
         dat.copy_next_parameters(
           i, 
           this_rec->from_data(), 
           this_rec->pos(), 
           &prob
-        );  
+        );
       }
-      
+
       tto = this_rec->time();
       
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
@@ -497,9 +498,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->phantom_rec();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
-            reclist::iterator it = a[i].begin()+j;
-            advance(it,1);
-            a[i].insert(it,newev);
+            reclist::iterator alagit = a[i].begin()+j;
+            advance(alagit,1);
+            a[i].insert(alagit,newev);
             newev->schedule(a[i], maxtime, put_ev_first, NN, Fn);
             this_rec->unarm();
             sort_recs = true;
@@ -552,6 +553,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(!nocb && dat.any_copy) {
         if(this_rec->from_data()) {
           dat.copy_parameters(this_rec->pos(),&prob);
+          prob.lsoda_init();
         }
       }
       
