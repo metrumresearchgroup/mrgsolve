@@ -189,7 +189,7 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   for(size_t i = 0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
-  if(n > 0) prob->lsoda_init();
+  prob->lsoda_init();
 }
 
 void dataobject::next_id(int id_n) {
