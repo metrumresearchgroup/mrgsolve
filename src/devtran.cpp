@@ -432,7 +432,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       if(dat.any_copy && nocb) {
-        // this will call lsoda_init if parameters are copied
+        // will call lsoda_init if parameters are copied
         dat.copy_next_parameters(
           i, 
           this_rec->from_data(), 
@@ -552,8 +552,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(!nocb && dat.any_copy) {
         if(this_rec->from_data()) {
+          // will call lsoda_init
           dat.copy_parameters(this_rec->pos(),&prob);
-          prob.lsoda_init();
         }
       }
       

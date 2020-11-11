@@ -189,6 +189,7 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   for(size_t i=0; i < n; ++i) {
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
+  prob->lsoda_init();
 }
 
 void dataobject::next_id(int id_n) {
@@ -202,7 +203,6 @@ void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row,
   if(done_copying) return;
   if(from_data) {
     copy_parameters(this_row, prob);
-    prob->lsoda_init();
     if(this_row >= Endrow.at(id_n)) {
       done_copying = true;  
       return;
@@ -213,7 +213,6 @@ void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row,
   if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow.at(id_n))) {
     copy_parameters(next_copy_row, prob); 
     last_copy_row = next_copy_row;
-    prob->lsoda_init();
   }
 }
 
