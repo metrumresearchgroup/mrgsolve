@@ -386,11 +386,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       idat.copy_inits(this_idata_row,&prob);
     }
     
-    if(a[i][0]->from_data()) {
-      dat.copy_parameters(a[i][0]->pos(),&prob);
-    } else {
-      if(filbak) {
-        dat.copy_parameters(dat.start(i),&prob);
+    if(dat.any_copy) {
+      if(a[i][0]->from_data()) {
+        dat.copy_parameters(a[i][0]->pos(),&prob);
+      } else {
+        if(filbak) {
+          dat.copy_parameters(dat.start(i),&prob);
+        }
       }
     }
     
@@ -440,7 +442,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           &prob
         );
       }
-
+      
       tto = this_rec->time();
       
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
