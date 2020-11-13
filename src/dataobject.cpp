@@ -186,10 +186,13 @@ void dataobject::idata_row() {
 
 void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t n = par_from.size();
+  bool call_lsoda_init = false;
   for(size_t i = 0; i < n; ++i) {
+    call_lsoda_init = call_lsoda_init || 
+      (prob->Param[par_to[i]] != Data(this_row,par_from[i]));
     prob->param(par_to[i],Data(this_row,par_from[i]));
   }
-  prob->lsoda_init();
+  if(call_lsoda_init) prob->lsoda_init();
 }
 
 void dataobject::next_id(int id_n) {
