@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -386,11 +386,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       idat.copy_inits(this_idata_row,&prob);
     }
     
-    if(a[i][0]->from_data()) {
-      dat.copy_parameters(a[i][0]->pos(),&prob);
-    } else {
-      if(filbak) {
-        dat.copy_parameters(dat.start(i),&prob);
+    if(dat.any_copy) {
+      if(a[i][0]->from_data()) {
+        dat.copy_parameters(a[i][0]->pos(),&prob);
+      } else {
+        if(filbak) {
+          dat.copy_parameters(dat.start(i),&prob);
+        }
       }
     }
     
@@ -431,13 +433,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      if(nocb && dat.any_copy) {
+      if(dat.any_copy && nocb) {
+        // will call lsoda_init if parameters are copied
         dat.copy_next_parameters(
           i, 
           this_rec->from_data(), 
           this_rec->pos(), 
           &prob
-        );  
+        );
       }
       
       tto = this_rec->time();
@@ -497,9 +500,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->phantom_rec();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
-            reclist::iterator it = a[i].begin()+j;
-            advance(it,1);
-            a[i].insert(it,newev);
+            reclist::iterator alagit = a[i].begin()+j;
+            advance(alagit,1);
+            a[i].insert(alagit,newev);
             newev->schedule(a[i], maxtime, put_ev_first, NN, Fn);
             this_rec->unarm();
             sort_recs = true;
@@ -551,6 +554,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(!nocb && dat.any_copy) {
         if(this_rec->from_data()) {
+          // will call lsoda_init
           dat.copy_parameters(this_rec->pos(),&prob);
         }
       }
