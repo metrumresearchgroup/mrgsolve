@@ -1,23 +1,23 @@
 # mrgsolve (development version)
 - Suppress warnings when non-numeric columns are dropped when those columns are
   not relevant to the simulation #709
-- Added `$ERROR` as an alias for `$TABLE` in the model file #710
+- Add `$ERROR` as an alias for `$TABLE` in the model file #710
 - Fix bug where warning messages during steady-state finding referenced `rtol` 
   and `atol` rather than `ss_rtol` and `ss_atol` #703
 - Fix annotation parsing bug when the description included semi-colon #696
+- `loadso` issues a proper error when the model dll doesn't exist #724
 - Try loading the model with loadso once of the model isn't loaded at the time
   of simulation #725
 - Throw an error when `addl` or `ss` are negative #733
 - Internal refactoring so that there is a hard solver reset when parameters that
   are copied from data change #744
-- Added `tad` plugin to calculate time after dose in a specific compartment
+- Add `tad` plugin to calculate time after dose in a specific compartment
   #702
 - Internal refactor `carry_out` to respect default `nocb` behavior #759; see 
   also #744
 - Throw an error when matlist labels are duplicated #730
 - Add `capture` argument to `mread` to add to `$CAPTURE` when compiling the 
   model #704
-- `loadso` issues a proper error when the model dll doesn't exist #724
 
 # mrgsolve 0.10.3
 
