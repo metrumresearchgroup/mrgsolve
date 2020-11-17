@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-request")
+
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
 $CMT GUT CENT
@@ -36,8 +38,6 @@ $CAPTURE b  z
 '
 
 mod <- mcode("req1", code)
-
-context("test-request")
 
 #
 test_that("Req gets the right variables", {

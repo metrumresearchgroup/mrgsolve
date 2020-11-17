@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+context("test-update-unit")
+
 code1 <- '
 $SET request=""
 $CMT CM
@@ -29,9 +31,6 @@ $CAPTURE A B C
 ' 
 
 mod1 <- mcode("code1eekd", code1, warn=FALSE)
-
-context("test-update-unit")
-
 
 test_that("Update parameter - via param", {
   expect_equal(param(param(mod1,B = 2))$B,2)

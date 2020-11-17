@@ -38,5 +38,3 @@ test_that("loadso fails if shared object file doesn't exist", {
     "the model dll file doesn't exist"
   )
 })
-
-
