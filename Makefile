@@ -19,7 +19,6 @@ drone:
 	R CMD check --as-cran ${TARBALL}
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
-	make spelling
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'

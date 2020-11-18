@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 0.10.4.9101
+Version: 0.10.5
 Authors@R: 
     c(person(given = "Kyle T", family = "Baron",
              role = c("aut", "cre"),
@@ -51,8 +51,7 @@ Suggests:
     yaml,
     knitr, 
     data.table,
-    pmxTools,
-    spelling
+    pmxTools
 LinkingTo: 
     Rcpp (>= 0.12.12),
     RcppArmadillo (>= 0.7.900.2.0),
