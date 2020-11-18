@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 0.10.5
 - Suppress warnings when non-numeric columns are dropped when those columns are
   not relevant to the simulation #709
 - Add `$ERROR` as an alias for `$TABLE` in the model file #710
