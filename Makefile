@@ -19,7 +19,6 @@ drone:
 	R CMD check --as-cran ${TARBALL}
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
-	make spelling
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
@@ -63,6 +62,7 @@ readme:
 doc:
 	Rscript -e "roxygen2::roxygenize()"
 
+.PHONY: build
 build:
 	R CMD build --md5 $(PKGDIR) --no-manual
 
@@ -126,8 +126,12 @@ check-winhub:
 doxygen: 
 	doxygen doxyfile
 
-bump_dev:
+bump-dev:
 	Rscript -e 'usethis::use_version("dev")'
+
+tag-version:
+	git tag $(VERSION)
+	git push origin $(VERSION)
 
 testing:
 	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}

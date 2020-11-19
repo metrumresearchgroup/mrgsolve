@@ -72,7 +72,21 @@ test_that("bad events issue-249", {
   m <- ev(amt = 0, ss=1, rate = -2, ii = 24)
   expect_error(tr(m), "rate: -2")
   o <- ev(amt = 0, ss=1, ii = 24, addl = 5, rate = 3)
-  expect_error(tr(o), "ii: 5")
+  expect_error(tr(o), "addl must be zero for ss infusion")
   p <- ev(amt = 100, cmt = 1E5)
   expect_error(tr(p), "cmt: 100000")
+  p <- ev(amt = 100, addl = -1)
+  expect_error(tr(p), "must not be negative")
+  p <- ev(amt = 100, ss = -1)
+  expect_error(tr(p), "must not be negative")
 })
+
+test_that("addl or ss are passed as negative numbers", {
+  # Bad
+  p <- ev(amt = 100, addl = -1)
+  expect_error(tr(p), "must not be negative")
+  p <- ev(amt = 100, ss = -1)
+  expect_error(tr(p), "must not be negative")
+})
+
+

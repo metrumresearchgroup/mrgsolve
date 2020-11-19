@@ -23,7 +23,7 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 # mrgsolve <img align="right" src = "man/figures/mrgsolve_sticker_812418_1.png" width="135px">
 
-[![Build Status](https://travis-ci.org/metrumresearchgroup/mrgsolve.svg?branch=master)](https://travis-ci.org/metrumresearchgroup/mrgsolve)
+[![Build Status](https://github-drone.metrumrg.com/api/badges/metrumresearchgroup/mrgsolve/status.svg)](https://github-drone.metrumrg.com/metrumresearchgroup/mrgsolve)
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![questions](https://img.shields.io/badge/ask_for-Help-brightgreen.svg)](https://github.com/metrumresearchgroup/mrgsolve/issues)

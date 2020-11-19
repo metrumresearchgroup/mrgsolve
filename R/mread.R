@@ -50,6 +50,9 @@ NULL
 #' cleaned up first
 #' @param recover if \code{TRUE}, an object will be returned in case
 #' the model shared object fails to build
+#' @param capture a character vector or comma-separated string of additional 
+#' model variables to capture; these variables will be added to the capture 
+#' list for the current call to \code{\link{mread}} only
 #' @param ... passed to \code{\link[mrgsolve]{update}}; also arguments passed
 #' to mread from \code{\link{mread_cache}}.
 #' 
@@ -152,6 +155,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
                   quiet = getOption("mrgsolve_mread_quiet",FALSE),
                   check.bounds = FALSE, warn = TRUE, 
                   soloc = getOption("mrgsolve.soloc",tempdir()),
+                  capture = NULL,
                   preclean = FALSE, recover=FALSE, ...) {
   
   if(charthere(model, "/")) {
@@ -186,6 +190,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Block name aliases
   names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
   names(spec) <- gsub("POST", "TABLE", names(spec), fixed=TRUE)
+  names(spec) <- gsub("ERROR", "TABLE", names(spec), fixed = TRUE)
   names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
   
   ## Expand partial matches
@@ -210,7 +215,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## The main sections that need R processing:  
   spec <- move_global2(spec,mread.env,build)
-
+  
   ## Parse blocks
   ## Each block gets assigned a class to dispatch the handler function
   ## Also, we use a position attribute so we know 
@@ -253,7 +258,44 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # capture is a vector that may be name or to_name = from_name
   # capture will be to_names and it's names are from names 
+  capture_more <- capture
+  
   capture <- unlist(do.call("c", nonull.list(mread.env$capture)))
+  
+  get_valid_capture <- function() {
+    n_omega <- sum(nrow(omega))
+    if(n_omega > 0) {
+      .eta <- paste0("ETA(",seq_len(n_omega),")")  
+    } else {
+      .eta <- NULL  
+    }
+    n_sigma <- sum(nrow(sigma))
+    if(n_sigma > 0) {
+      .eps <- paste0("EPS(",seq_len(n_sigma),")")
+    } else {
+      .eps <- NULL  
+    }
+    ans <- c(
+      names(param), 
+      unlist(labels(omega)), 
+      unlist(labels(sigma)),
+      .eta,
+      .eps,
+      mread.env[["move_global"]]
+    )
+    unique(ans)
+  }
+  
+  if(is.character(capture_more)) {
+    valid_capture <- get_valid_capture()
+    if(identical(capture_more, "(everything)")) {
+      capture_more <- valid_capture[valid_capture != "."]  
+    }
+    capture_vars <- .ren.create(capture_more)
+    stopifnot(all(capture_vars$old %in% valid_capture))
+    capture <- unique(c(capture,capture_more))
+  }
+  
   capture <- .ren.create(as.character(capture))
   
   annot <- capture_param(annot,.ren.new(capture))
@@ -415,6 +457,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     incl("modelheader.h"),
     "\n//INCLUDE databox functions:",
     incl("databox_cpp.h"),
+    "\n//USING plugins",
+    plugin_using(plugin),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
@@ -556,3 +600,38 @@ mread_file <- function(file, ...) {
   model <- tools::file_path_sans_ext(file)
   mread(model = model, file = file, ...)
 }
+
+# Capture additional model outputs
+# 
+# 
+# @param x a model object
+# @param ... unquoted names to capture
+# @param vars character vector or comma-separated string of names
+# to capture
+# @noRd
+# capture_more <- function(x,...,vars = NULL) {
+#   vars <- .ren.dots(...,vars = vars)
+#   vars <- paste0(vars$new,"=",vars$old)
+#   l <- as.list(x)
+#   mod_new <- mread(
+#     file = l$modfile, 
+#     model  = l$model,
+#     project = l$project, 
+#     capture = vars
+#   )
+#   for(s in sval) {
+#     slot(mod_new,s) <- slot(x,s)   
+#   }
+#   out <- outvars(mod_new)
+#   out$cmt <- outvars(x)$cmt
+#   mod_new <- update(
+#     mod_new, 
+#     param = l$param, 
+#     init = l$init,
+#     omega = omat(x), 
+#     sigma = smat(x), 
+#     outvars = unlist(out)
+#   )
+#   mod_new
+# }
+

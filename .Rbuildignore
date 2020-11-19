@@ -1,3 +1,6 @@
+^run-*\.R$
+^test-*\.R$
+^test\.R$
 Doxygen
 doxyfile
 man/figures/README-.*\.png$
@@ -45,5 +48,7 @@ _config.yml
 Makefile
 docs
 ^DOCS$
+^build$
 ^_pkgdown\.yml$
 ^\.drone\.yml$
+^\.drone\.jsonnet$

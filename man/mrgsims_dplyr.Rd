@@ -60,7 +60,7 @@ as.tbl.mrgsims(x, ...)
 
 \item{.data_}{mrgsims object}
 
-\item{x}{passed to \link[dplyr:as.tbl]{dplyr::as.tbl}}
+\item{x}{passed to \link[dplyr:tbl_df]{dplyr::as.tbl}}
 }
 \description{
 These methods modify the data in a mrgsims object and return a data frame.

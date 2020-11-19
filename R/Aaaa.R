@@ -17,28 +17,23 @@
 
 #' @import methods
 #' 
-#' @importFrom utils capture.output example str type.convert 
+#' @importFrom utils capture.output example str type.convert .DollarNames
 #' @importFrom utils packageVersion assignInMyNamespace read.table
-#' @importFrom utils .DollarNames
 #' @importFrom stats as.formula setNames rnorm
-#' @importFrom dplyr filter 
-#' @importFrom dplyr mutate slice pull
+#' @importFrom dplyr filter mutate mutate_at mutate_all distinct first
 #' @importFrom dplyr bind_rows arrange summarise summarise_at
-#' @importFrom dplyr intersect select rename slice distinct do
-#' @importFrom dplyr distinct first select_vars_ 
-#' @importFrom dplyr select_vars everything 
-#' @importFrom dplyr if_else mutate_at summarise_each is.tbl select
-#' @importFrom dplyr mutate_all group_by ungroup n
-#' @importFrom dplyr data_frame as_data_frame left_join
-#' @importFrom tidyselect vars_select
-#' @importFrom magrittr %>% %T>%
-#' @importFrom Rcpp evalCpp
-#' @importFrom RcppArmadillo armadillo_version
+#' @importFrom dplyr intersect select rename do slice pull
+#' @importFrom dplyr if_else summarise_each is.tbl select
+#' @importFrom dplyr group_by ungroup n left_join
+#' @importFrom tidyselect vars_select everything
+#' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
-#' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy
+#' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
 #' @importFrom lifecycle deprecate_soft
 #' @importFrom glue glue
-#' 
+#' @importFrom Rcpp evalCpp
+#  @importFrom RcppArmadillo armadillo_version
+
 #' @include Aaaa.R
 #' @include class_mrgsims.R
 #' @include class_mrgmod.R

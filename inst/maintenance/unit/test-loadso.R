@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,25 +21,20 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-context("test-mread")
+context("test-loadso")
 
-test_that("ETA(n) in $ODE is error", {
-  code <- '$OMEGA 1\n$ODE double a = ETA(1);'  
-  expect_error(mcode("test-mread-eta", code, compile = FALSE))
+test_that("try loading model object if it is not loaded", {
+  mod <- mcode("loadso-bad","$PARAM CL = 1", compile = FALSE)
+  expect_error(
+    suppressMessages(mrgsim(mod)), 
+    "There was a problem accessing the model shared object."
+  )
 })
 
-test_that("Warning with no $CMT or $INIT", {
-  code <- '$OMEGA 1\n$ODE double a = 2;'  
-  expect_warning(mcode("test-mread-cmt", code,quiet=FALSE,compile=FALSE))
+test_that("loadso fails if shared object file doesn't exist", {
+  mod <- mcode("loadso-bad","$PARAM CL = 1", compile = FALSE)
+  expect_error(
+    loadso(mod), 
+    "the model dll file doesn't exist"
+  )
 })
-
-test_that("read in rmd file", {
-  mod <- mread("popex.Rmd", modlib(), compile = FALSE) 
-  expect_is(mod, "mrgmod")
-})
-
-test_that("ERROR is alias for TABLE", {
-  code <- "$ERROR double x=2;"
-  expect_is(mcode("error-is-table", code), "mrgmod")
-})
-

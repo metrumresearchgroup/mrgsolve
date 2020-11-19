@@ -272,7 +272,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_bolus] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
+        "[steady_bolus] ID %d failed to reach steady state\n  ss_n: %d, "
+        "ss_rtol: %d, ss_atol: %d", 
         this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
@@ -405,7 +406,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_infusion] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
+        "[steady_infusion] ID %d failed to reach steady state\n  ss_n: %d, "
+        "ss_rtol: %d, ss_atol: %d", 
         this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
@@ -522,7 +524,8 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_zero] ID %d failed to reach steady state\n  ss_n: %d, rtol: %d, atol: %d", 
+        "[steady_zero] ID %d failed to reach steady state\n  ss_n: %d, "
+        "ss_rtol: %d, ss_atol: %d", 
         this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );

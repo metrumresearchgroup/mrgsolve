@@ -80,117 +80,112 @@ validate_idata <- function(idata) {
 }
 
 
-##' Simulate from a model object
-##'
-##' This function sets up the simulation run from data stored in the model
-##' object as well as arguments passed in.  Use \code{\link{mrgsim_q}} instead 
-##' to benchmark mrgsolve or to do repeated quick simulation for tasks like 
-##' parameter optimization, sensitivity analyses, or optimal design.  See
-##' \code{\link{mrgsim_variants}} for other mrgsim-like functions that have 
-##' more focused inputs. \code{mrgsim_df} coerces output to data.frame 
-##' prior to returning.
-##'
-##' @param x the model object
-##' @param data NMTRAN-like data set (see \code{\link{data_set}})
-##' @param idata a matrix or data frame of model parameters, 
-##' one parameter per row (see \code{\link{idata_set}})
-##' @param events an event object
-##' @param nid integer number of individuals to simulate; only used if 
-##' idata and data are missing
-##' @param ... passed to \code{\link[mrgsolve]{update}} and 
-##' \code{\link{do_mrgsim}}
-##' 
-##' @return An object of class \code{\link{mrgsims}}
-##' 
-##' 
-##' @details
-##' 
-##' \itemize{
-##' 
-##' \item Use \code{mrgsim_df} to return a data frame rather than 
-##' \code{mrgsims} object
-##' 
-##' \item{Both \code{data} and \code{idata} will be coerced to numeric matrix}
-##' 
-##' \item{\code{carry_out} can be used to insert data columns into the output 
-##' data set.  This is partially dependent on the nature of the data brought 
-##' into the problem}
-##' 
-##' \item When using \code{data} and \code{idata} together, an error is 
-##' generated if an  ID occurs in \code{data} but not \code{idata}.  
-##' Also, when looking up data in \code{idata}, ID in \code{idata} is 
-##' assumed to be uniquely keyed to ID in \code{data}.  No error is 
-##' generated if ID is duplicated in \code{data}; parameters will be used 
-##' from the first occurrence found in \code{idata}
-##'  
-##' \item \code{carry_out}: \code{idata} is assumed to be 
-##' individual-level and variables that are carried from \code{idata} 
-##' are repeated throughout the individual's simulated data.  Variables 
-##' carried from \code{data} are carried via last-observation carry forward.  
-##' \code{NA} is returned from observations that are inserted into 
-##' simulated output that occur prior to the first record in \code{data}
-##' 
-##' \item \code{recover}: this is similar to \code{carry_out} with respect to 
-##' end result, but it uses a different process.  Columns to be recovered are 
-##' cached prior to running the simulation, and then joined back on to the 
-##' simulated data.  So, whereas \code{carry_out} will only accept numeric 
-##' data items, \code{recover} can handle data frame columns of any type.  There
-##' is a small decrease in performance with \code{recover} compared to 
-##' \code{carry_out}, but it is likely that the performance difference is 
-##' difficult to perceive (when the simulation runs very fast) or only a small
-##' fractional increase in run time when the simulation is very large.  And any
-##' performance hit is likely to be well worth it in light of the convenience 
-##' gain.  Just think carefully about using this feature when every millisecond
-##' counts.
-##' 
-##' }
-##' 
-##' @seealso \code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}
-##' 
-##' @examples
-##' ## example("mrgsim")
-##' 
-##' e <- ev(amt = 1000)
-##' 
-##' mod <- mrgsolve::house() 
-##' 
-##' out <- mod %>% ev(e) %>% mrgsim()
-##' 
-##' plot(out)
-##'
-##' out <- mod %>% ev(e) %>% mrgsim(end=22)
-##' 
-##' out
-##'
-##' data(exTheoph)
-##'
-##' out <- mod %>% data_set(exTheoph) %>% mrgsim()
-##' 
-##' out
-##' 
-##' out <- mod %>% mrgsim(data=exTheoph)
-##'
-##' out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
-##' 
-##' out
-##'
-##' out <- mod %>% mrgsim(data=exTheoph, obsaug=TRUE, carry_out="a.u.g")
-##' 
-##' out
-##'
-##' out <- mod %>% ev(e) %>% mrgsim(outvars="CP,RESP")
-##' 
-##' out
-##' 
-##' a <- ev(amt = 1000, group = 'a')
-##' b <- ev(amt = 750, group = 'b')
-##' data <- as_data_set(a,b)
-##' 
-##' out <- mrgsim_d(mod, data, recover="group")
-##' 
-##' out
-##' 
-##' @export
+#' Simulate from a model object
+#'
+#' This function sets up the simulation run from data stored in the model
+#' object as well as arguments passed in.  Use [mrgsim_q()] instead 
+#' to benchmark mrgsolve or to do repeated quick simulation for tasks like 
+#' parameter optimization, sensitivity analyses, or optimal design.  See
+#' [mrgsim_variants] for other mrgsim-like functions that have more focused 
+#' inputs. `mrgsim_df` coerces output to data.frame prior to returning.
+#'
+#' @param x the model object
+#' @param data NMTRAN-like data set (see [data_set()])
+#' @param idata a matrix or data frame of model parameters, 
+#' one parameter per row (see [idata_set()])
+#' @param events an event object
+#' @param nid integer number of individuals to simulate; only used if 
+#' idata and data are missing
+#' @param ... passed to [mrgsolve::update()] and 
+#' [do_mrgsim()]
+#' 
+#' @return An object of class [mrgsims]
+#' 
+#' 
+#' @details
+#' 
+#' - Use [mrgsim_df()] to return a data frame rather than 
+#' `mrgsims` object
+#' 
+#' - Both `data` and `idata` will be coerced to numeric matrix
+#' 
+#' - `carry_out` can be used to insert data columns into the output 
+#' data set. This is partially dependent on the nature of the data brought 
+#' into the problem
+#' 
+#' - When using `data` and `idata` together, an error is 
+#' generated if an  ID occurs in `data` but not `idata`.  
+#' Also, when looking up data in `idata`, ID in `idata` is 
+#' assumed to be uniquely keyed to ID in `data`.  No error is 
+#' generated if ID is duplicated in `data`; parameters will be used 
+#' from the first occurrence found in `idata`
+#'  
+#' - `carry_out`: `idata` is assumed to be individual-level and variables that 
+#' are carried from `idata` are repeated throughout the individual's simulated 
+#' data.  Variables carried from `data` are carried via last-observation carry 
+#' forward.  `NA` is returned from observations that are inserted into 
+#' simulated output that occur prior to the first record in `data`
+#' 
+#' - `recover`: this is similar to `carry_out` with respect to 
+#' end result, but it uses a different process.  Columns to be recovered are 
+#' cached prior to running the simulation, and then joined back on to the 
+#' simulated data.  So, whereas `carry_out` will only accept numeric 
+#' data items, `recover` can handle data frame columns of any type.  There
+#' is a small decrease in performance with `recover` compared to 
+#' `carry_out`, but it is likely that the performance difference is 
+#' difficult to perceive (when the simulation runs very fast) or only a small
+#' fractional increase in run time when the simulation is very large.  And any
+#' performance hit is likely to be well worth it in light of the convenience 
+#' gain.  Just think carefully about using this feature when every millisecond
+#' counts.
+#' 
+#' 
+#' @seealso [mrgsim_variants], [mrgsim_q()]
+#' 
+#' @examples
+#' ## example("mrgsim")
+#' 
+#' e <- ev(amt = 1000)
+#' 
+#' mod <- mrgsolve::house() 
+#' 
+#' out <- mod %>% ev(e) %>% mrgsim()
+#' 
+#' plot(out)
+#'
+#' out <- mod %>% ev(e) %>% mrgsim(end=22)
+#' 
+#' out
+#'
+#' data(exTheoph)
+#'
+#' out <- mod %>% data_set(exTheoph) %>% mrgsim()
+#' 
+#' out
+#' 
+#' out <- mod %>% mrgsim(data=exTheoph)
+#'
+#' out <- mrgsim(mod, data=exTheoph, obsonly=TRUE)
+#' 
+#' out
+#'
+#' out <- mod %>% mrgsim(data=exTheoph, obsaug=TRUE, carry_out="a.u.g")
+#' 
+#' out
+#'
+#' out <- mod %>% ev(e) %>% mrgsim(outvars="CP,RESP")
+#' 
+#' out
+#' 
+#' a <- ev(amt = 1000, group = 'a')
+#' b <- ev(amt = 750, group = 'b')
+#' data <- as_data_set(a,b)
+#' 
+#' out <- mrgsim_d(mod, data, recover="group")
+#' 
+#' out
+#' @md
+#' @export
 mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   if(!is.mrgmod(x)) mod_first()
   if(is.null(data)) {
@@ -242,46 +237,42 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   }
 } 
 
-##' @rdname mrgsim
-##' @export
+#' @rdname mrgsim
+#' @export
 mrgsim_df <- function(...,output="df") mrgsim(...,output=output)
 
-##' mrgsim variant functions
-##' 
-##' These functions are called by \code{\link{mrgsim}} and have
-##' explicit input requirements written into the function name.  The motivation
-##' behind these variants is to give the user a clear workflow with specific,
-##' required inputs as indicated by the function name. Use 
-##' \code{\link{mrgsim_q}} instead to benchmark mrgsolve or to do repeated quick
-##' simulation for tasks like parameter optimization,  sensitivity analyses, 
-##' or optimal design.
-##' 
-##' @inheritParams mrgsim
-##' 
-##' @details
-##' 
-##' \bold{Important:} all of these functions require that 
-##' \code{data}, \code{idata}, and/or \code{events} be pass
-##' directly to the functions.  They will not recognize these
-##' inputs from a pipeline. 
-##' 
-##' \itemize{
-##'   \item \code{mrgsim_e} simulate using an event object
-##'   \item \code{mrgsim_ei} simulate using an event object and 
-##'     \code{idata_set}
-##'   \item \code{mrgsim_d} simulate using a \code{data_set}
-##'   \item \code{mrgsim_di} simulate using a \code{data_set} and  
-##'     \code{idata_set}
-##'   \item \code{mrgsim_i} simulate using a \code{idata_set}
-##'   \item \code{mrgsim_0} simulate using just the model
-##'   \item \code{mrgsim_q} simulate from a data set with quicker 
-##'   turnaround (see \code{\link{mrgsim_q}})
-##' }
-##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_q}}, \code{\link{qsim}}
-##' @name mrgsim_variants
-##' @rdname mrgsim_variants
-##' @export
+#' mrgsim variant functions
+#' 
+#' These functions are called by [mrgsim()] and have
+#' explicit input requirements written into the function name.  The motivation
+#' behind these variants is to give the user a clear workflow with specific,
+#' required inputs as indicated by the function name. Use 
+#' [mrgsim_q()] instead to benchmark mrgsolve or to do repeated quick
+#' simulation for tasks like parameter optimization,  sensitivity analyses, 
+#' or optimal design.
+#' 
+#' @inheritParams mrgsim
+#' 
+#' @details
+#' 
+#' **Important**: all of these functions require that 
+#' `data`, `idata`, and/or `events` be pass directly to the functions.  They 
+#' will not recognize these inputs from a pipeline. 
+#' 
+#' - `mrgsim_e` simulate using an event object
+#' - `mrgsim_ei` simulate using an event object and `idata_set`
+#' - `mrgsim_d` simulate using a `data_set`
+#' - `mrgsim_di` simulate using a `data_set` and  `idata_set`
+#' - `mrgsim_i` simulate using a `idata_set`
+#' - `mrgsim_0` simulate using just the model
+#' - `mrgsim_q` simulate from a data set with quicker turnaround (see 
+#'   [mrgsim_q()])
+#' 
+#' @seealso [mrgsim()], [mrgsim_q()], [qsim()]
+#' @name mrgsim_variants
+#' @rdname mrgsim_variants
+#' @md
+#' @export
 mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   if(!is.ev(events)) {
@@ -304,8 +295,8 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
   )
 } 
 
-##' @rdname mrgsim_variants
-##' @export
+#' @rdname mrgsim_variants
+#' @export
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   if(is.ev(data)) {
@@ -319,8 +310,8 @@ mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   )
 } 
 
-##' @rdname mrgsim_variants
-##' @export
+#' @rdname mrgsim_variants
+#' @export
 mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   if(!is.ev(events)) {
@@ -350,8 +341,8 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim_variants
-##' @export
+#' @rdname mrgsim_variants
+#' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   data <- as.data.frame(data, add_ID = 1)
@@ -367,8 +358,8 @@ mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim_variants
-##' @export
+#' @rdname mrgsim_variants
+#' @export
 mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   idata <- as.data.frame(idata)
@@ -384,8 +375,8 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   )
 }
 
-##' @rdname mrgsim_variants
-##' @export
+#' @rdname mrgsim_variants
+#' @export
 mrgsim_0 <- function(x, idata = NULL, data = NULL, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   data <- matrix(1, ncol = 1, dimnames = list(NULL, "ID"))
@@ -410,71 +401,70 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   return(mrgsim_i(x, idata, ...))
 }
 
-##' @param carry_out numeric data items to copy into the output
-##' @param carry.out soon to be deprecated; use \code{carry_out} instead
-##' @param recover character column names in either \code{data} or \code{idata} 
-##' to join back (recover) to simulated data; may be any class (e.g. numeric, 
-##' character, factor, etc)
-##' @param seed deprecated
-##' @param Request compartments or captured variables to retain
-##' in the simulated output; this is different than the \code{request}
-##' slot in the model object, which refers only to model compartments
-##' @param output  if \code{NULL} (the default) a mrgsims object is returned; 
-##' otherwise, pass \code{df} to return a data.frame or \code{matrix} to 
-##' return a matrix
-##' @param capture character file name used for debugging (not related
-##' to \code{$CAPTURE})
-##' @param obsonly if \code{TRUE}, dosing records are not included
-##' in the output
-##' @param obsaug augment the data set with time grid observations; when 
-##' \code{TRUE} and a full data set is used, the simulated output is augmented 
-##' with an observation at each time in \code{\link{stime}}().  When using
-##' \code{obsaug}, a flag indicating augmented observations can be requested by
-##' including \code{a.u.g} in  \code{carry_out}
-##' @param tgrid a tgrid object; or a numeric vector of simulation times
-##' or another object with an \code{stime} method
-##' @param recsort record sorting flag.  Default value is 1.  Possible values 
-##' are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
-##' the same time; 3 and 4 put those doses before padded observations at the 
-##' same time.  2 and 4 will put doses scheduled through \code{addl} after 
-##' observations at the same time; 1 and 3 put doses scheduled through 
-##' \code{addl} before observations at the same time. \code{recsort} will 
-##' not change the order of your input data set if both doses and observations 
-##' are given.
-##' @param deslist a list of tgrid objects
-##' @param descol the name of a column for assigning designs
-##' @param filbak carry data items backward when the first 
-##' data set row has time greater than zero
-##' @param tad when \code{TRUE} a column is added to simulated 
-##' output is added showing the time since the last dose.  Only data records 
-##' with \code{evid == 1} will be considered doses for the purposes of 
-##' \code{tad} calculation. The \code{tad} can be properly calculated with 
-##' a dosing lag time in the model as long as the dosing lag time (specified 
-##' in \code{$MAIN})  is always  appropriate for any subsequent doses scheduled 
-##' through \code{addl}.  This will always be true if the lag time doesn't 
-##' change over time.  But it might (possibly) not hold if the lag time changes
-##' prior to the last dose in the \code{addl} sequence.  This known limitation
-##' shouldn't affect \code{tad} calculation in most common dosing lag time
-##' implementations.  
-##' @param nocb if \code{TRUE}, use next observation carry backward method; 
-##' otherwise, use \code{locf}.  
-##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
-##' @param ss_n maximum number of iterations for determining steady state for 
-##' the PK system; a warning will be issued if steady state is not achieved 
-##' within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}
-##' @param ss_fixed if \code{FALSE} (the default), then a warning will be issued
-##' if the system does not reach steady state within \code{ss_n} iterations
-##' given the model tolerances \code{rtol} and \code{atol}; if \code{TRUE}, 
-##' the number of iterations for determining steady state are capped at 
-##' \code{ss_n} and no warning will be issued if steady state 
-##' has not been reached within \code{ss_n} dosing iterations.
-##' To silence warnings related to steady state, 
-##' set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the maximum number 
-##' of iterations to try when advancing the system for steady state 
-##' determination.
-##' 
-##' @rdname mrgsim
-##' @export
+#' @param carry_out numeric data items to copy into the output
+#' @param carry.out soon to be deprecated; use `carry_out` instead
+#' @param recover character column names in either `data` or `idata` 
+#' to join back (recover) to simulated data; may be any class (e.g. numeric, 
+#' character, factor, etc)
+#' @param seed deprecated
+#' @param Request compartments or captured variables to retain
+#' in the simulated output; this is different than the `request`
+#' slot in the model object, which refers only to model compartments
+#' @param output  if `NULL` (the default) a mrgsims object is returned; 
+#' otherwise, pass `df` to return a data.frame or `matrix` to 
+#' return a matrix
+#' @param capture character file name used for debugging (not related
+#' to `$CAPTURE`)
+#' @param obsonly if `TRUE`, dosing records are not included
+#' in the output
+#' @param obsaug augment the data set with time grid observations; when 
+#' `TRUE` and a full data set is used, the simulated output is augmented 
+#' with an observation at each time in [stime()].  When using
+#' `obsaug`, a flag indicating augmented observations can be requested by
+#' including `a.u.g` in  `carry_out`
+#' @param tgrid a tgrid object; or a numeric vector of simulation times
+#' or another object with an `stime` method
+#' @param recsort record sorting flag.  Default value is 1.  Possible values 
+#' are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
+#' the same time; 3 and 4 put those doses before padded observations at the 
+#' same time.  2 and 4 will put doses scheduled through `addl` after 
+#' observations at the same time; 1 and 3 put doses scheduled through 
+#' `addl` before observations at the same time. `recsort` will 
+#' not change the order of your input data set if both doses and observations 
+#' are given.
+#' @param deslist a list of tgrid objects
+#' @param descol the name of a column for assigning designs
+#' @param filbak carry data items backward when the first 
+#' data set row has time greater than zero
+#' @param tad when `TRUE` a column is added to simulated 
+#' output is added showing the time since the last dose.  Only data records 
+#' with `evid == 1` will be considered doses for the purposes of `tad` 
+#' calculation. The `tad` can be properly calculated with a dosing lag time in 
+#' the model as long as the dosing lag time (specified in `$MAIN`)  is always  
+#' appropriate for any subsequent doses scheduled through `addl`.  This will 
+#' always be true if the lag time doesn't change over time.  But it might 
+#' (possibly) not hold if the lag time changes prior to the last dose in the 
+#' `addl` sequence.  This known limitation shouldn't affect `tad` calculation 
+#' in most common dosing lag time implementations.  
+#' @param nocb if `TRUE`, use next observation carry backward method; 
+#' otherwise, use `locf`.  
+#' @param skip_init_calc don't use `$MAIN` to calculate initial conditions
+#' @param ss_n maximum number of iterations for determining steady state for 
+#' the PK system; a warning will be issued if steady state is not achieved 
+#' within `ss_n` iterations when `ss_fixed` is `TRUE`
+#' @param ss_fixed if `FALSE` (the default), then a warning will be issued
+#' if the system does not reach steady state within `ss_n` iterations
+#' given the model tolerances `rtol` and `atol`; if `TRUE`, 
+#' the number of iterations for determining steady state are capped at 
+#' `ss_n` and no warning will be issued if steady state 
+#' has not been reached within `ss_n` dosing iterations.
+#' To silence warnings related to steady state, set `ss_fixed` to `TRUE` and 
+#' set `ss_n` as the maximum number of iterations to try when advancing the 
+#' system for steady state determination.
+#' 
+#' @md
+#' @rdname mrgsim
+#' @export
 do_mrgsim <- function(x,
                       data,
                       idata = no_idata_set(),
@@ -538,12 +528,12 @@ do_mrgsim <- function(x,
   
   ## data
   if(!is.valid_data_set(data)) {
-    data <- valid_data_set(data,x,verbose)
+    data <- valid_data_set(data,x,verbose = verbose)
   } 
   
   ## "idata"
   if(!is.valid_idata_set(idata)) {
-    idata <- valid_idata_set(idata,x,verbose=verbose)
+    idata <- valid_idata_set(idata,x,verbose = verbose)
   }
   
   tcol <- timename(data)
@@ -576,8 +566,8 @@ do_mrgsim <- function(x,
     carry_out <- setdiff(carry_out,carry.tran)
     
     # What to carry out from data and idata
-    carry.data  <- intersect(carry_out, colnames(data))
-    carry.idata <- intersect(carry_out, colnames(idata))
+    carry.data  <- intersect(carry_out, dimnames(data)[[2]])
+    carry.idata <- intersect(carry_out, dimnames(idata)[[2]])
     
     # Carry from data_set if name is in idata_set too
     carry.idata <- setdiff(carry.idata, carry.data)
@@ -734,7 +724,7 @@ do_mrgsim <- function(x,
 #' You can't `carry_out`, `Request` specific columns, or pass items in for update.  
 #' Some other limitations, but only convenience-related.  See `Arguments` for 
 #' available options.  Specifically, there is no `...` argument for this function.
-#' Use the [mrgsolve::update] method to update the model object. 
+#' Use the [mrgsolve::update()] method to update the model object. 
 #' 
 #' @examples
 #' 

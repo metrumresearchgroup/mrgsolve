@@ -54,3 +54,15 @@ test_that("ss tolerances", {
   expect_identical(out0,out2)
 })
 
+test_that("reference ss_rtol and ss_atol in failure warnings", {
+  mod <- house()
+  dose <- ev(amt = 100, ii = 24, addl = 0, ss = 1)
+  expect_warning(mrgsim(mod,dose,ss_n=3), "ss_rtol")
+  expect_warning(mrgsim(mod,dose,ss_n=3), "ss_atol")
+  dose <- ev(amt = 100, ii = 24, addl = 0, ss = 1, rate = 1)
+  expect_warning(mrgsim(mod,dose,ss_n=3), "ss_rtol")
+  expect_warning(mrgsim(mod,dose,ss_n=3), "ss_atol")
+  dose <- ev(amt = 0, ii = 24, addl = 0, ss = 1, rate = 1)
+  expect_warning(mrgsim(mod,dose,ss_n=3), "ss_rtol")
+  expect_warning(mrgsim(mod,dose,ss_n=3), "ss_atol")
+})

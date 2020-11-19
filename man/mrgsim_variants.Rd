@@ -27,42 +27,38 @@ mrgsim_0(x, idata = NULL, data = NULL, events = NULL, ...)
 
 \item{events}{an event object}
 
-\item{idata}{a matrix or data frame of model parameters, 
-one parameter per row (see \code{\link{idata_set}})}
+\item{idata}{a matrix or data frame of model parameters,
+one parameter per row (see \code{\link[=idata_set]{idata_set()}})}
 
-\item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
+\item{data}{NMTRAN-like data set (see \code{\link[=data_set]{data_set()}})}
 
-\item{...}{passed to \code{\link[mrgsolve]{update}} and 
-\code{\link{do_mrgsim}}}
+\item{...}{passed to \code{\link[=update]{update()}} and
+\code{\link[=do_mrgsim]{do_mrgsim()}}}
 }
 \description{
-These functions are called by \code{\link{mrgsim}} and have
+These functions are called by \code{\link[=mrgsim]{mrgsim()}} and have
 explicit input requirements written into the function name.  The motivation
 behind these variants is to give the user a clear workflow with specific,
-required inputs as indicated by the function name. Use 
-\code{\link{mrgsim_q}} instead to benchmark mrgsolve or to do repeated quick
-simulation for tasks like parameter optimization,  sensitivity analyses, 
+required inputs as indicated by the function name. Use
+\code{\link[=mrgsim_q]{mrgsim_q()}} instead to benchmark mrgsolve or to do repeated quick
+simulation for tasks like parameter optimization,  sensitivity analyses,
 or optimal design.
 }
 \details{
-\bold{Important:} all of these functions require that 
-\code{data}, \code{idata}, and/or \code{events} be pass
-directly to the functions.  They will not recognize these
-inputs from a pipeline. 
-
+\strong{Important}: all of these functions require that
+\code{data}, \code{idata}, and/or \code{events} be pass directly to the functions.  They
+will not recognize these inputs from a pipeline.
 \itemize{
-  \item \code{mrgsim_e} simulate using an event object
-  \item \code{mrgsim_ei} simulate using an event object and 
-    \code{idata_set}
-  \item \code{mrgsim_d} simulate using a \code{data_set}
-  \item \code{mrgsim_di} simulate using a \code{data_set} and  
-    \code{idata_set}
-  \item \code{mrgsim_i} simulate using a \code{idata_set}
-  \item \code{mrgsim_0} simulate using just the model
-  \item \code{mrgsim_q} simulate from a data set with quicker 
-  turnaround (see \code{\link{mrgsim_q}})
+\item \code{mrgsim_e} simulate using an event object
+\item \code{mrgsim_ei} simulate using an event object and \code{idata_set}
+\item \code{mrgsim_d} simulate using a \code{data_set}
+\item \code{mrgsim_di} simulate using a \code{data_set} and  \code{idata_set}
+\item \code{mrgsim_i} simulate using a \code{idata_set}
+\item \code{mrgsim_0} simulate using just the model
+\item \code{mrgsim_q} simulate from a data set with quicker turnaround (see
+\code{\link[=mrgsim_q]{mrgsim_q()}})
 }
 }
 \seealso{
-\code{\link{mrgsim}}, \code{\link{mrgsim_q}}, \code{\link{qsim}}
+\code{\link[=mrgsim]{mrgsim()}}, \code{\link[=mrgsim_q]{mrgsim_q()}}, \code{\link[=qsim]{qsim()}}
 }
