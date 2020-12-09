@@ -35,6 +35,7 @@ test_that("plot from character", {
   out <- mrgsolve::house() %>% mrgsim()
   pl1 <- plot(out, " CENT DV, CP")
   pl2 <- plot(out, CENT+DV+CP~time)
-  expect_equal(pl1,pl2, check.environments = FALSE)
+  expect_is(pl1,"trellis")
+  expect_is(pl2,"trellis")
 })
 

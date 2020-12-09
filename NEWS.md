@@ -1,3 +1,6 @@
+# mrgsolve 0.10.7
+- Stop testing test_equal using lattice
+
 # mrgsolve 0.10.6
 - Fix url endings for check on r-devel
 - Adjust test comparing lattice plots based on change in r-devel; passing 
