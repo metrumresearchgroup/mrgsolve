@@ -1,3 +1,8 @@
+# mrgsolve 0.10.6
+- Fix url endings for check on r-devel
+- Adjust test comparing lattice plots based on change in r-devel; passing 
+  check.environments now
+
 # mrgsolve 0.10.5
 - Suppress warnings when non-numeric columns are dropped when those columns are
   not relevant to the simulation #709
