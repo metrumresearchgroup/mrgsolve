@@ -335,6 +335,18 @@ c_vars <- function(x,context) {
   list(vars = get_c_vars2(x,context), code = scrub_c_vars(x))
 }
 
+pp_defs <- function(x,context) {
+  w <- grep("#define ", x, fixed = TRUE)
+  if(length(w)==0) {
+    return(list(vars = NULL, code = NULL, n = 0))  
+  }
+  x <- trimws(x[w])
+  x <- my_str_split(x, " +", n = 3, collapse = " ")
+  vars <- s_pick(x, 2)
+  code <- s_pick(x, 3)
+  list(vars = vars, code = code, n = length(x))
+}
+
 move_global2 <- function(spec,env,build) {
   pream <- c_vars(spec$PREAMBLE,context="preamble")
   if(!is.null(pream$code)) {
@@ -362,6 +374,8 @@ move_global2 <- function(spec,env,build) {
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
   }
   build$global_vars <- vars
+  defines <- pp_defs(spec[["GLOBAL"]], context = "global")
+  build$defines <- defines$vars
   ns <- c(
     "typedef double capture;",
     "namespace {",
@@ -373,9 +387,13 @@ move_global2 <- function(spec,env,build) {
   } else {
     env[["move_global"]] <- character(0)  
   }
+  if(defines$n > 0) {
+    env[["defines"]] <- defines$vars  
+  } else {
+    env[["defines"]] <- character(0)  
+  }
   spec
 }
-
 
 # nocov start
 get_rcpp_vars <- function(y) {

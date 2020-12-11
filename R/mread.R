@@ -281,7 +281,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       unlist(labels(sigma)),
       .eta,
       .eps,
-      mread.env[["move_global"]]
+      mread.env[["move_global"]], 
+      mread.env[["defines"]]
     )
     unique(ans)
   }
@@ -292,8 +293,16 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       capture_more <- valid_capture[valid_capture != "."]  
     }
     capture_vars <- .ren.create(capture_more)
-    stopifnot(all(capture_vars$old %in% valid_capture))
+    if(!all(capture_vars$old %in% valid_capture)) {
+      bad <- setdiff(capture_vars$old, valid_capture)
+      for(b in bad) {
+        msg <- glue(" - item `{b}` does not exist in model `{build$model}`")
+        message(msg)
+      }
+      stop("all requested `capture` variables must exist in the model", call.=FALSE)
+    }
     capture <- unique(c(capture,capture_more))
+    build$preclean <- TRUE
   }
   
   capture <- .ren.create(as.character(capture))
@@ -558,7 +567,10 @@ mread_cache <- function(model = NULL,
                         code = NULL, 
                         soloc = getOption("mrgsolve.soloc", tempdir()), 
                         quiet = FALSE, 
-                        preclean = FALSE, ...) {
+                        preclean = FALSE, 
+                        capture = NULL, ...) {
+  
+  if(is.character(capture)) preclean <- TRUE
   
   build <- new_build(file, model, project, soloc, code, preclean) 
   
@@ -586,7 +598,7 @@ mread_cache <- function(model = NULL,
   
   x <- mread(
     build$model, project, soloc=soloc, quiet=quiet, 
-    file = basename(build$modfile), ...
+    file = basename(build$modfile), capture = capture, ...
   )
   
   saveRDS(x,file=cache_file)
@@ -600,38 +612,3 @@ mread_file <- function(file, ...) {
   model <- tools::file_path_sans_ext(file)
   mread(model = model, file = file, ...)
 }
-
-# Capture additional model outputs
-# 
-# 
-# @param x a model object
-# @param ... unquoted names to capture
-# @param vars character vector or comma-separated string of names
-# to capture
-# @noRd
-# capture_more <- function(x,...,vars = NULL) {
-#   vars <- .ren.dots(...,vars = vars)
-#   vars <- paste0(vars$new,"=",vars$old)
-#   l <- as.list(x)
-#   mod_new <- mread(
-#     file = l$modfile, 
-#     model  = l$model,
-#     project = l$project, 
-#     capture = vars
-#   )
-#   for(s in sval) {
-#     slot(mod_new,s) <- slot(x,s)   
-#   }
-#   out <- outvars(mod_new)
-#   out$cmt <- outvars(x)$cmt
-#   mod_new <- update(
-#     mod_new, 
-#     param = l$param, 
-#     init = l$init,
-#     omega = omat(x), 
-#     sigma = smat(x), 
-#     outvars = unlist(out)
-#   )
-#   mod_new
-# }
-
