@@ -1,3 +1,6 @@
+# mrgsolve (development version)
+- Allow simulation from compartmental models with negative times #778
+
 # mrgsolve 0.10.7
 - Stop testing test_equal using lattice
 
