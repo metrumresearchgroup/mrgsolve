@@ -1,3 +1,16 @@
+# mrgsolve 0.10.8
+- Allow simulation from compartmental models with negative times #778
+- Enable dynamic capture of pre-processor directives at compile time #776
+- Fix error message when requesting invalid items during dynamic capture #776
+
+# mrgsolve 0.10.7
+- Stop testing test_equal using lattice
+
+# mrgsolve 0.10.6
+- Fix url endings for check on r-devel
+- Adjust test comparing lattice plots based on change in r-devel; passing 
+  check.environments now
+
 # mrgsolve 0.10.5
 - Suppress warnings when non-numeric columns are dropped when those columns are
   not relevant to the simulation #709

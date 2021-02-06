@@ -170,7 +170,7 @@ render_time <- function(x) {
   if(length(x@add) > 0) {
     times <- sort(as.numeric(unique(c(times,x@add))))
   }
-  times[times>=0]
+  times
 }
 
 ##' @rdname tgrid

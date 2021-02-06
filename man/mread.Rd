@@ -34,6 +34,7 @@ mread_cache(
   soloc = getOption("mrgsolve.soloc", tempdir()),
   quiet = FALSE,
   preclean = FALSE,
+  capture = NULL,
   ...
 )
 
