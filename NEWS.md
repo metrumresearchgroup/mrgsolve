@@ -1,5 +1,7 @@
 # mrgsolve (development version)
 - Allow simulation from compartmental models with negative times #778
+- Enable dynamic capture of pre-processor directives at compile time #776
+- Fix error message when requesting invalid items during dynamic capture #776
 
 # mrgsolve 0.10.7
 - Stop testing test_equal using lattice
