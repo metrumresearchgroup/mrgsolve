@@ -84,9 +84,7 @@ similarly to other non-linear mixed effects modeling
 software. 
 
 An error will be generated when mrgsolve detects that the data set
-is not sorted by \code{time} within an individual.  Also, an error 
-will be generated in case mrgsolve finds negative values for 
-\code{time}, unless \code{$PRED} is in use.
+is not sorted by \code{time} within an individual.  
 
 Only numeric data can be brought in to the problem.  
 Any non-numeric data columns will be dropped with warning.  
