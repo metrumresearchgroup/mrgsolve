@@ -212,9 +212,9 @@ test_that("simulate non-pred with negative times is allowed", {
   
   out3 <- filter_sims(out2, time >= 0)
   out4 <- mrgsim(mod, events = dose, end = 10, obsonly=TRUE)
+  expect_is(out4, "mrgsims")
   expect_equal(out3$DV,out4$DV)
   
-  bad_times <- c(-9,times)
   data$time[1] <- -8
   expect_error(mrgsim(mod, data), "the data set is not sorted by time")
 })
