@@ -319,7 +319,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   
   for(int h=0; h < NID; ++h) {
     
-    lastime = 0;
+    lastime = Data(this->start(h),col[_COL_time_]);
     
     a[h].reserve(this->end(h) - this->start(h) + 5);
     
@@ -328,7 +328,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
             tfm::format(
-              "the data set is not sorted by time or time is negative \n"
+              "the data set is not sorted by time\n"
               "ID: %d, row: %i, time: %d", 
               Data(j,Idcol), j+1, Data(j,col[_COL_time_])
             ).c_str(),

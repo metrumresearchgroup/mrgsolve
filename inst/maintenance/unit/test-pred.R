@@ -59,10 +59,8 @@ test_that("data_set with negative times", {
   expect_is(out, "mrgsims")
   expect_true("time" %in% names(out))
   expect_equal(out$time,d[["time"]])
-  expect_error(
-    mrgsim_d(modd,d), 
-    "not sorted by time or time is negative"
-  )
+  out2 <- mrgsim_d(modd,d)
+  expect_equal(out2$time,d[["time"]])
 })
 
 test_that("time/TIME required when neq > 0", {
