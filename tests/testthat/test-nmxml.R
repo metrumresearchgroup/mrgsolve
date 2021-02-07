@@ -283,24 +283,24 @@ test_that("NONMEM estimates from nmext - multiple tables", {
   project <- system.file("nonmem", package="mrgsolve")
   
   a <- mrgsolve:::nmext(run = 2005, project = project, index = "last")
-  aa <- attributes(read_nmext(run = 2005, project = project, index = "last"))
-  expect_equal(aa$index,5)
-  expect_match(aa$table, "First Order Conditional")
+  a_att <- attributes(read_nmext(run = 2005, project = project, index = "last"))
+  expect_equal(a_att$index,5)
+  expect_match(a_att$table, "First Order Conditional")
   
   b <- mrgsolve:::nmext(run = 2005, project = project, index = 2)
-  ab <- attributes(read_nmext(run = 2005, project = project, index = 2))
-  expect_equal(ab$index,2)
-  expect_match(ab$table, "Importance Sampling")
+  b_att <- attributes(read_nmext(run = 2005, project = project, index = 2))
+  expect_equal(b_att$index,2)
+  expect_match(b_att$table, "Importance Sampling")
   
-  expect_true(a$theta$THETA3 != b$theta$THETA1)
+  expect_true(a$theta$THETA3 != b$theta$THETA3)
   
-  rcsv <- read_nmext(
+  rtab <- read_nmext(
     run = 2005, project = project, index = 3,  
     read_fun = "read.table"
     )
-  expect_is(rcsv, "list")
-  at <- attributes(rcsv)
-  expect_match(at$table, "Stochastic Approximation")
+  expect_is(rtab, "list")
+  rtab_att <- attributes(rtab)
+  expect_match(rtab_att$table, "Stochastic Approximation")
   
   expect_error(
     mrgsolve:::nmext(run = 2005, project = project, index = 333), 
