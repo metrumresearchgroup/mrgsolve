@@ -66,12 +66,12 @@
 ##'   mrgsolve:::nmxml(run = 1005, project = proj)
 ##' }
 ##' 
-nmxml <- function(run=numeric(0), project=character(0),
-                  file=character(0), path = character(0),
-                  theta=TRUE, omega=TRUE, sigma=TRUE,
+nmxml <- function(run = numeric(0), project = character(0),
+                  file = character(0), path = character(0),
+                  theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...",
+                  tname = "THETA", oname = "...", sname = "...",
                   index = "last",
                   xpath = ".//nm:estimation") {
   
@@ -210,13 +210,13 @@ nmxml <- function(run=numeric(0), project=character(0),
 #' @seealso [nmxml], [read_nmext]
 #' 
 #' @md
-nmext <- function(run=NA_real_, project=getwd(), 
-                  file=paste0(run,".ext"), path = NULL,
+nmext <- function(run=NA_real_, project = getwd(), 
+                  file = paste0(run,".ext"), path = NULL,
                   index = "last",
-                  theta=TRUE, omega=TRUE, sigma=TRUE,
+                  theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
-                  oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...", 
+                  oprefix = "", sprefix = "",
+                  tname = "THETA", oname = "...", sname = "...", 
                   read_fun = "data.table") {
   
   if(missing(run) && !is.character(path)) {
@@ -326,9 +326,11 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' @md
 ##' @export 
-read_nmext <- function(run = NA_real_, project = getwd(), 
-                       file=paste0(run,".ext"), 
-                       path = NULL, read_fun = c("data.table","read.table"), 
+read_nmext <- function(run = NA_real_, 
+                       project = getwd(), 
+                       file = paste0(run,".ext"), 
+                       path = NULL, 
+                       read_fun = c("data.table","read.table"), 
                        index = "last") {
   
   if(is.character(path)) {
