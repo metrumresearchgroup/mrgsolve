@@ -347,7 +347,7 @@ read_nmext <- function(run = NA_real_, project = getwd(),
   use_dt <- requireNamespace("data.table",quietly=TRUE) & read_fun=="data.table"
   
   m <- map_ext_file(extfile)
-  if(index=="last") index <- length(m)
+  if(index == "last") index <- length(m)
   if(index > length(m)) {
     msg <- c(glue("[read_nmext] table {index} was requested, "), 
              glue("but only {length(m)} tables were found in the ext file"))
@@ -357,20 +357,20 @@ read_nmext <- function(run = NA_real_, project = getwd(),
   
   if(use_dt) {
     df <- data.table::fread(
-      file=extfile, 
+      file = extfile, 
       na.strings = '.', 
-      data.table=FALSE,
-      skip=m$skip, 
-      nrows=m$nrows
+      data.table = FALSE,
+      skip = m$skip, 
+      nrows = m$nrows
     )
   } else {
     df <- read.table(
-      file=extfile,
-      na.strings='.',
-      stringsAsFactors=FALSE,
-      skip=m$skip,
-      nrows=m$nrows,
-      header=TRUE
+      file = extfile,
+      na.strings = '.',
+      stringsAsFactors = FALSE,
+      skip = m$skip,
+      nrows = m$nrows,
+      header = TRUE
     )
   }
   
@@ -396,8 +396,8 @@ read_nmext <- function(run = NA_real_, project = getwd(),
 
 map_ext_file <- function(file) {
   x <- readLines(file, warn = FALSE)
-  start <- which(substr(x, 1, 5)=="TABLE")
-  if(length(start)==1) {
+  start <- which(substr(x, 1, 5) == "TABLE")
+  if(length(start) == 1) {
     ans <- list(list(skip = 1, nrows = Inf, table = x[start[1]]))
     return(ans)
   }
