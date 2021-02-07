@@ -25,8 +25,12 @@ read_nmext(
 \item{read_fun}{function to read the \code{ext} file}
 
 \item{index}{selects the table number whose results will be returned;
-this should be an integer value or use "last" to indicate the last
-table}
+use value "last" to select the last table in the \code{.ext} file; or pass an
+integer specifying the table number; in case there is exactly
+one table in the \code{.ext} file, pass the value "single" to bypass parsing
+the file to look for sub tables (this might be useful when BAYES analysis
+was performed as the only estimation method and there are 10000s of
+posterior samples in the file)}
 }
 \value{
 A list with param, omega, and sigma in a format ready to be used to

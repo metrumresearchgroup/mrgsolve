@@ -305,8 +305,12 @@ nm_xml_matrix <- function(x) {
 ##' @param path full path and file name for `ext` file
 ##' @param read_fun function to read the `ext` file
 ##' @param index selects the table number whose results will be returned;
-##' this should be an integer value or use "last" to indicate the last 
-##' table
+##' use value "last" to select the last table in the `.ext` file; or pass an 
+##' integer specifying the table number; in case there is exactly
+##' one table in the `.ext` file, pass the value "single" to bypass parsing 
+##' the file to look for sub tables (this might be useful when BAYES analysis 
+##' was performed as the only estimation method and there are 10000s of 
+##' posterior samples in the file)
 ##' 
 ##' @return A list with param, omega, and sigma in a format ready to be used to 
 ##' update a model object.
@@ -348,8 +352,17 @@ read_nmext <- function(run = NA_real_,
   
   use_dt <- requireNamespace("data.table",quietly=TRUE) & read_fun=="data.table"
   
-  m <- map_ext_file(extfile)
+  all_rows <- FALSE
+  if(index == "single") {
+    index <- 1
+    all_rows <- TRUE
+  }
+  
+  m <- map_ext_file(extfile, all_rows = all_rows)
+  
   if(index == "last") index <- length(m)
+  if(!is.numeric(index)) wstop("index did not resolve to a numeric value")
+  if(index < 1) wstop("index must resolve to a value that is at least 1")
   if(index > length(m)) {
     msg <- c(glue("[read_nmext] table {index} was requested, "), 
              glue("but only {length(m)} tables were found in the ext file"))
@@ -396,7 +409,11 @@ read_nmext <- function(run = NA_real_,
   return(structure(ans, table = m$table, index = index))
 }
 
-map_ext_file <- function(file) {
+map_ext_file <- function(file, all_rows = FALSE) {
+  if(isTRUE(all_rows)) {
+    ans <- list(list(skip = 1, nrows = Inf, table = "single table"))
+    return(ans)
+  }
   x <- readLines(file, warn = FALSE)
   start <- which(substr(x, 1, 5) == "TABLE")
   if(length(start) == 1) {
