@@ -279,6 +279,27 @@ test_that("NONMEM estimates from nmext", {
                "'arg' should be one of ")
 })
 
+test_that("NONMEM estimates from nmext - multiple tables", {
+  project <- system.file("nonmem", package="mrgsolve")
+  
+  a <- mrgsolve:::nmext(run = 2005, project = project, index = "last")
+  aa <- attributes(read_nmext(run = 2005, project = project, index = "last"))
+  expect_equal(aa$index,5)
+  expect_match(aa$table, "First Order Conditional")
+  
+  b <- mrgsolve:::nmext(run = 2005, project = project, index = 2)
+  ab <- attributes(read_nmext(run = 2005, project = project, index = 2))
+  expect_equal(ab$index,2)
+  expect_match(ab$table, "Importance Sampling")
+  
+  expect_true(a$theta$THETA3 != b$theta$THETA1)
+  
+  expect_error(
+    mrgsolve:::nmext(run = 2005, project = project, index = 333), 
+    regexpr = "table 333 requested but only 5 tables"
+    )
+})
+
 test_that("custom labeled THETA", {
   project <- system.file("nonmem", package = "mrgsolve")
   a <- mrgsolve:::nmxml(run = 1005, project = project)
@@ -287,4 +308,3 @@ test_that("custom labeled THETA", {
   expect_identical(names(b$theta), letters[1:7])
   expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
 })
-

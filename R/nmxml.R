@@ -308,8 +308,8 @@ nm_xml_matrix <- function(x) {
 ##' this should be an integer value or use "last" to indicate the last 
 ##' table
 ##' 
-##' @return A list with param, omega, and sigma in a format
-##' ready to be used to update a model object.
+##' @return A list with param, omega, and sigma in a format ready to be used to 
+##' update a model object.
 ##' 
 ##' @examples
 ##' project <- system.file("nonmem", package = "mrgsolve")
@@ -322,10 +322,13 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' est$sigma
 ##' 
+##' est <- read_nmext(2005, project = project, index = 3)
+##' 
 ##' @md
 ##' @export 
-read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"), 
-                       path=NULL, read_fun = c("data.table","read.table"), 
+read_nmext <- function(run = NA_real_, project = getwd(), 
+                       file=paste0(run,".ext"), 
+                       path = NULL, read_fun = c("data.table","read.table"), 
                        index = "last") {
   
   if(is.character(path)) {

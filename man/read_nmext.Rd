@@ -29,8 +29,8 @@ this should be an integer value or use "last" to indicate the last
 table}
 }
 \value{
-A list with param, omega, and sigma in a format
-ready to be used to update a model object.
+A list with param, omega, and sigma in a format ready to be used to
+update a model object.
 }
 \description{
 Extract estimates from NONMEM ext file
@@ -45,5 +45,7 @@ est$param
 est$omega
 
 est$sigma
+
+est <- read_nmext(2005, project = project, index = 3)
 
 }
