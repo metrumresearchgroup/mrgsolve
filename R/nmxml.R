@@ -212,6 +212,7 @@ nmxml <- function(run=numeric(0), project=character(0),
 #' @md
 nmext <- function(run=NA_real_, project=getwd(), 
                   file=paste0(run,".ext"), path = NULL,
+                  index = "last",
                   theta=TRUE, omega=TRUE, sigma=TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
@@ -222,7 +223,7 @@ nmext <- function(run=NA_real_, project=getwd(),
     wstop("either 'run' or 'path' argument must be specified")  
   }
   
-  ans <- read_nmext(run,project,file,path,read_fun)
+  ans <- read_nmext(run,project,file,path,read_fun,index=index)
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
@@ -303,6 +304,9 @@ nm_xml_matrix <- function(x) {
 ##' @param file the `ext` file name
 ##' @param path full path and file name for `ext` file
 ##' @param read_fun function to read the `ext` file
+##' @param index selects the table number whose results will be returned;
+##' this should be an integer value or use "last" to indicate the last 
+##' table
 ##' 
 ##' @return A list with param, omega, and sigma in a format
 ##' ready to be used to update a model object.
@@ -321,7 +325,8 @@ nm_xml_matrix <- function(x) {
 ##' @md
 ##' @export 
 read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"), 
-                       path=NULL, read_fun = c("data.table","read.table")) {
+                       path=NULL, read_fun = c("data.table","read.table"), 
+                       index = "last") {
   
   if(is.character(path)) {
     extfile <- path  
@@ -338,19 +343,30 @@ read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"),
   
   use_dt <- requireNamespace("data.table",quietly=TRUE) & read_fun=="data.table"
   
+  m <- map_ext_file(extfile)
+  if(index=="last") index <- length(m)
+  if(index > length(m)) {
+    msg <- c(glue("[read_nmext] table {index} was requested, "), 
+             glue("but only {length(m)} tables were found in the ext file"))
+    stop(msg,call.=FALSE)
+  }
+  m <- m[[index]]
+  
   if(use_dt) {
     df <- data.table::fread(
       file=extfile, 
       na.strings = '.', 
       data.table=FALSE,
-      skip=1
+      skip=m$skip, 
+      nrows=m$nrows
     )
   } else {
     df <- read.table(
       file=extfile,
       na.strings='.',
       stringsAsFactors=FALSE,
-      skip=1, 
+      skip=m$skip,
+      nrows=m$nrows,
       header=TRUE
     )
   }
@@ -370,7 +386,26 @@ read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"),
     param = ans[grepl("THETA", names(ans))],
     omega = as_bmat(ans, "OMEGA"), 
     sigma = as_bmat(ans, "SIGMA"),
-    raw = ans  
+    raw = ans
   )
-  return(ans)
+  return(structure(ans, table = m$table, index = index))
+}
+
+map_ext_file <- function(file) {
+  x <- readLines(file, warn = FALSE)
+  start <- which(substr(x, 1, 5)=="TABLE")
+  if(length(start)==1) {
+    ans <- list(list(skip = 1, nrows = Inf, table = x[start[1]]))
+    return(ans)
+  }
+  end <- c(start[-1]-1,length(x))
+  ans <- vector(mode = "list", length = length(start))
+  for(i in seq_along(start)) {
+    ans[[i]] <- list(
+      skip  = start[i], 
+      nrows = end[i] - start[i] - 1, 
+      table = x[start[i]]
+    )
+  }
+  ans
 }

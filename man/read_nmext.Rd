@@ -9,7 +9,8 @@ read_nmext(
   project = getwd(),
   file = paste0(run, ".ext"),
   path = NULL,
-  read_fun = c("data.table", "read.table")
+  read_fun = c("data.table", "read.table"),
+  index = "last"
 )
 }
 \arguments{
@@ -22,6 +23,10 @@ read_nmext(
 \item{path}{full path and file name for \code{ext} file}
 
 \item{read_fun}{function to read the \code{ext} file}
+
+\item{index}{selects the table number whose results will be returned;
+this should be an integer value or use "last" to indicate the last
+table}
 }
 \value{
 A list with param, omega, and sigma in a format
