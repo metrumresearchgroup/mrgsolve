@@ -294,6 +294,14 @@ test_that("NONMEM estimates from nmext - multiple tables", {
   
   expect_true(a$theta$THETA3 != b$theta$THETA1)
   
+  rcsv <- read_nmext(
+    run = 2005, project = project, index = 3,  
+    read_fun = "read.table"
+    )
+  expect_is(rcsv, "list")
+  at <- attributes(rcsv)
+  expect_match(at$table, "Stochastic Approximation")
+  
   expect_error(
     mrgsolve:::nmext(run = 2005, project = project, index = 333), 
     regexpr = "table 333 requested but only 5 tables"
