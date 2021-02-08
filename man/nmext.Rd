@@ -9,6 +9,7 @@ nmext(
   project = getwd(),
   file = paste0(run, ".ext"),
   path = NULL,
+  index = "last",
   theta = TRUE,
   omega = TRUE,
   sigma = TRUE,
@@ -30,6 +31,10 @@ nmext(
 \item{file}{deprecated; use \code{path} instead}
 
 \item{path}{full path to NONMEM \code{ext} file}
+
+\item{index}{the estimation number to return;  "last" will return the 
+last estimation results; otherwise, pass an integer indicating which 
+estimation results to return}
 
 \item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
 

@@ -9,7 +9,8 @@ read_nmext(
   project = getwd(),
   file = paste0(run, ".ext"),
   path = NULL,
-  read_fun = c("data.table", "read.table")
+  read_fun = c("data.table", "read.table"),
+  index = "last"
 )
 }
 \arguments{
@@ -22,10 +23,18 @@ read_nmext(
 \item{path}{full path and file name for \code{ext} file}
 
 \item{read_fun}{function to read the \code{ext} file}
+
+\item{index}{selects the table number whose results will be returned;
+use value "last" to select the last table in the \code{.ext} file; or pass an
+integer specifying the table number; in case there is exactly
+one table in the \code{.ext} file, pass the value "single" to bypass parsing
+the file to look for sub tables (this might be useful when BAYES analysis
+was performed as the only estimation method and there are 10000s of
+posterior samples in the file)}
 }
 \value{
-A list with param, omega, and sigma in a format
-ready to be used to update a model object.
+A list with param, omega, and sigma in a format ready to be used to
+update a model object.
 }
 \description{
 Extract estimates from NONMEM ext file
@@ -40,5 +49,7 @@ est$param
 est$omega
 
 est$sigma
+
+est <- read_nmext(2005, project = project, index = 3)
 
 }
