@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 0.10.8
 - Allow simulation from compartmental models with negative times #778
 - Enable dynamic capture of pre-processor directives at compile time #776
