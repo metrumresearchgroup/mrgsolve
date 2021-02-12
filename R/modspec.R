@@ -338,13 +338,16 @@ c_vars <- function(x,context) {
 pp_defs <- function(x,context) {
   w <- grep("#define ", x, fixed = TRUE)
   if(length(w)==0) {
-    return(list(vars = NULL, code = NULL, n = 0))  
+    return(list(vars = NULL, code = NULL, n = 0, tab = data.frame()))  
   }
   x <- trimws(x[w])
   x <- my_str_split(x, " +", n = 3, collapse = " ")
   vars <- s_pick(x, 2)
   code <- s_pick(x, 3)
-  list(vars = vars, code = code, n = length(x))
+  list(
+    vars = vars, code = code, n = length(x), 
+    tab = data.frame(var = vars, type = "define", context = "global")
+  )
 }
 
 move_global2 <- function(spec,env,build) {
@@ -356,6 +359,7 @@ move_global2 <- function(spec,env,build) {
   if(!is.null(pred$code)) {
     spec$PRED <- pred$code  
   }
+  glob <- c_vars(spec$GLOBAL,context = "global")
   main  <- c_vars(spec$MAIN,context="main")
   if(!is.null(main$code)) {
     spec$MAIN <- main$code  
@@ -368,7 +372,14 @@ move_global2 <- function(spec,env,build) {
   if(!is.null(table$code)) {
     spec$TABLE <- table$code
   }
-  vars <- bind_rows(pream$vars,pred$vars,main$vars,ode$vars,table$vars)
+  vars <- bind_rows(
+    glob$vars,
+    pream$vars,
+    pred$vars,
+    main$vars,
+    ode$vars,
+    table$vars
+  )
   if(any(cap <- vars$type=="capture")) {
     captures <- vars[cap,"var"]
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
@@ -376,6 +387,7 @@ move_global2 <- function(spec,env,build) {
   build$global_vars <- vars
   defines <- pp_defs(spec[["GLOBAL"]], context = "global")
   build$defines <- defines$vars
+  build$variables <- bind_rows(defines$tab,vars)
   ns <- c(
     "typedef double capture;",
     "namespace {",

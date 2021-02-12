@@ -406,6 +406,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib[["covariates"]] <- mread.env[["covariates"]]
+  x@shlib[["variables"]] <- build$variables
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc
