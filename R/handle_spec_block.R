@@ -53,22 +53,22 @@ handle_spec_block.specSIGMA <- function(x,...) {
 }
 
 specMATRIX <- function(x,
-                       oclass,type, annotated = FALSE,
-                       env, pos=1, as_object = FALSE,
-                       name="...", prefix="", labels=NULL,
-                       object=NULL, unlinked=FALSE,...) {
+                       oclass, type, annotated = FALSE,
+                       env, pos = 1, as_object = FALSE,
+                       name = "...", prefix="", labels = NULL,
+                       object = NULL, unlinked = FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
   if(as_object) {
     expect <- paste0(type, "list")
     expect <- c("matrix",expect)
-    if(type=="omega") {
-      fun <- omat  
-    } else {
-      fun <- smat  
+    x <- evaluate_at_code(x, expect, toupper(type), pos, env$ENV)
+    if(is.null(labels)) {
+      labels <- rownames(x)  
     }
-    x <- evaluate_at_code(x, expect, toupper(type), pos, env, fun)
+    x <- setNames(list(x), name)
+    x <- create_matlist(x,  class = oclass, labels = list(labels))
     env[[type]][[pos]] <- x
     return(NULL)
   }
@@ -118,6 +118,9 @@ specMATRIX <- function(x,
       d <- modMATRIX(x,context=oclass,...) 
     } else {
       d <- get(object,env$ENV)
+      if(is.null(labels)) {
+        labels <- rownames(d)  
+      }
     }
   }
   
@@ -193,7 +196,7 @@ PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,as_object=FALSE,.
   check_block_data(x,env$ENV,pos)
   
   if(as_object) {
-    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, env)
+    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, env$ENV)
     env[["param"]][[pos]] <- x
     return(NULL)
   }
@@ -287,7 +290,8 @@ INIT <- function(x,env,annotated=FALSE,pos=1,as_object=FALSE,...) {
   check_block_data(x,env$ENV,pos)
   
   if(as_object) {
-    x <- evaluate_at_code(x, "list", "INIT", pos, env, as.list)
+    x <- evaluate_at_code(x, "list", "INIT", pos, env$ENV)
+    #x <- as.list(x)
     env[["init"]][[pos]] <- x
     return(NULL)
   }
@@ -313,7 +317,8 @@ handle_spec_block.specCMT <- function(x,...) {
 CMT <- function(x,env,annotated=FALSE,pos=1, as_object = FALSE, ...) {
   check_block_data(x,env$ENV,pos)
   if(as_object) {
-    x <- evaluate_at_code(x, "character", "CMT", pos, env, as.character)
+    x <- evaluate_at_code(x, "character", "CMT", pos, env$ENV)
+    #x <- as.character(x)
     x <- setNames(rep(0,length(x)), x)
     env[["init"]][[pos]] <- x
     return(NULL)

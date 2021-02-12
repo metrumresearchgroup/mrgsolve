@@ -624,8 +624,8 @@ include_rfile <- function(rfile) {
   source(rfile, local = parent.frame())
 }
 
-evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
-  x <- try(eval(parse(text = x), envir = env$ENV))
+evaluate_at_code <- function(x, cl, block, pos, env) {
+  x <- try(eval(parse(text = x), envir = env))
   if(inherits(x, "try-error")) {
     message("Block no: ", pos)
     message("Block type: ", block)
@@ -639,7 +639,7 @@ evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
     got <- paste0(class(x), collapse = ", ")
     stop("code returned the incorrect class: ", got, call.=FALSE) 
   }
-  fun(x)
+  x
 }
 
 
