@@ -163,7 +163,7 @@ test_that("at options are parsed", {
   expect_warning(ats('@foo "a b c"'))  
 })
 
-test_that("specMATRIX", {
+test_that("MATRIXBLOCK", {
   code <- "$OMEGA 1,2,3"
   mod <- mcode("test-spec-matrix", code, compile = FALSE)
   mat <- unname(as.matrix(omat(mod)))

@@ -8,46 +8,86 @@
 \alias{INIT}
 \alias{CMT}
 \alias{CAPTURE}
+\alias{HANDLEMATRIX}
 \title{Functions to parse code blocks}
 \usage{
 PARAM(
   x,
   env,
-  annotated = FALSE,
-  covariates = FALSE,
   pos = 1,
+  annotated = FALSE,
+  object = NULL,
   as_object = FALSE,
+  covariates = FALSE,
   ...
 )
 
-FIXED(x, env, annotated = FALSE, pos = 1, ...)
+FIXED(x, env, pos = 1, annotated = FALSE, ...)
 
-THETA(x, env, annotated = FALSE, pos = 1, name = "THETA", fill = NULL, ...)
+THETA(
+  x,
+  env,
+  pos = 1,
+  annotated = FALSE,
+  object = NULL,
+  as_object = FALSE,
+  name = "THETA",
+  fill = NULL,
+  ...
+)
 
-INIT(x, env, annotated = FALSE, pos = 1, as_object = FALSE, ...)
+INIT(x, env, pos = 1, annotated = FALSE, object = NULL, as_object = FALSE, ...)
 
-CMT(x, env, annotated = FALSE, pos = 1, as_object = FALSE, ...)
+CMT(x, env, pos = 1, annotated = FALSE, object = NULL, as_object = FALSE, ...)
 
-CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
+CAPTURE(x, env, pos = 1, annotated = FALSE, ...)
+
+HANDLEMATRIX(
+  x,
+  env,
+  pos = 1,
+  annotated = FALSE,
+  object = NULL,
+  as_object = FALSE,
+  name = "...",
+  type = NULL,
+  oclass = "",
+  prefix = "",
+  labels = NULL,
+  unlinked = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{data}
 
 \item{env}{parse environment}
 
-\item{annotated}{logical}
-
-\item{covariates}{logical}
-
 \item{pos}{block position}
 
+\item{annotated}{logical}
+
+\item{object}{the name of an object in \code{ENV}}
+
 \item{as_object}{indicates that object code is being provided}
+
+\item{covariates}{logical}
 
 \item{...}{passed}
 
 \item{name}{block name}
 
-\item{fill}{data to use for block contents}
+\item{fill}{deprecated; not used}
+
+\item{type}{internal use}
+
+\item{oclass}{internal use}
+
+\item{prefix}{a prefix to add to the label}
+
+\item{labels}{aliases to use for simulated ETA values}
+
+\item{unlinked}{internal use}
 }
 \description{
 Most of the basic blocks are listed in this help topic.  

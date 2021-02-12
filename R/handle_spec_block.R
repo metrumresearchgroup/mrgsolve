@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2021 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,9 +25,282 @@ get_length <- function(what) sum(sapply(what,length))
 # GENERIC ----------------------------------------------------------------------
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 
+#' Functions to parse code blocks
+#' 
+#' Most of the basic blocks are listed in this help topic.  
+#' But see also \code{\link{PKMODEL}} which has more-involved 
+#' options and is documented separately.
+#' 
+#' @param x data
+#' @param env parse environment
+#' @param pos block position
+#' @param annotated logical
+#' @param object the name of an object in \code{ENV}
+#' @param as_object indicates that object code is being provided
+#' @param covariates logical
+#' @param name block name
+#' @param labels aliases to use for simulated ETA values
+#' @param prefix a prefix to add to the label
+#' @param type internal use
+#' @param oclass internal use
+#' @param unlinked internal use
+#' @param fill deprecated; not used
+#' @param ... passed
+#' 
+#' @name BLOCK_PARSE
+#' @rdname BLOCK_PARSE
+#' 
+#' @seealso \code{\link{PKMODEL}}
+NULL
+
+# PARAM / FIXED ----------------------------------------------------------------
+
+#' @export
+handle_spec_block.specPARAM <- function(x,...) {
+  scrape_and_call(x,pass="PARAM",...)
+}
+
+#' @rdname BLOCK_PARSE
+PARAM <- function(x, 
+                  env, 
+                  pos = 1, 
+                  annotated = FALSE,
+                  object = NULL, 
+                  as_object = FALSE,
+                  covariates = FALSE, ...) {
+  
+  if(is.character(object)) {
+    x <- evaluate_at_code(
+      object, 
+      c("list", "parameter_list"), 
+      "PARAM", pos, env$ENV
+    )
+    env[["param"]][[pos]] <- x
+    return(NULL)
+  }
+  
+  check_block_data(x,env$ENV,pos)
+  
+  if(as_object) {
+    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos)
+    env[["param"]][[pos]] <- x
+    return(NULL)
+  }
+  
+  if(annotated) {
+    context <- glue("parse annotated parameter block ({pos})")
+    l <- parse_annot(x,block="PARAM",envir=env$ENV,context = context)
+    env[["param"]][[pos]] <- l[["v"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+  } else {
+    x <- tolist(x,envir=env$ENV) 
+    env[["param"]][[pos]] <- x
+  }
+  
+  if(covariates) {
+    env[["covariates"]] <- c(
+      env[["covariates"]], names(env[["param"]][[pos]])
+    )
+  }
+  
+  return(NULL)
+}
+
+#' @export
+handle_spec_block.specFIXED <- function(x,...) {
+  scrape_and_call(x,pass="FIXED",...)
+}
+
+#' @rdname BLOCK_PARSE
+FIXED <- function(x, env, pos = 1, annotated = FALSE, ...) {
+  
+  check_block_data(x,env$ENV,pos)
+  
+  if(annotated) {
+    context <- glue("parse annotated fixed block ({pos})")
+    l <- parse_annot(x,block="FIXED",envir=env$ENV,context=context)
+    env[["fixed"]][[pos]] <- l[["v"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+  } else {
+    x <- tolist(x,envir=env$ENV) 
+    env[["fixed"]][[pos]] <- x
+  }
+  
+  return(NULL)
+}
+
+# THETA ------------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specTHETA <- function(x,...) {
+  scrape_and_call(x,pass="THETA",narrow=FALSE,...)
+}
+
+#' @rdname BLOCK_PARSE
+THETA <- function(x, 
+                  env, 
+                  pos = 1, 
+                  annotated=FALSE, 
+                  object = NULL, 
+                  as_object = FALSE, 
+                  name="THETA", 
+                  fill = NULL, ...) {
+  
+  if(!is.null(fill)) {
+    x <- fill
+    as_object <- TRUE
+    #x <- eval(parse(text = fill))   
+  }
+  
+  if(is.character(object)) {
+    x <- object  
+    as_object <- TRUE
+  }
+  
+  if(isTRUE(as_object)) {
+    x <- evaluate_at_code(x, c("numeric", "integer"), "THETA", pos)
+  }
+  
+  check_block_data(x,env$ENV,pos)
+  
+  if(annotated) {
+    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
+    x <- as.numeric(l[["v"]])
+  } else {
+    x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
+  }
+  
+  x <- x[!is.na(x)]
+  
+  if(length(x)==0) name <- character(0)
+  
+  names(x) <- paste0(name, seq_along(x))
+  
+  env[["param"]][[pos]] <- x
+  
+  return(NULL)
+}
+
+# INIT /CMT --------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specINIT <- function(x,...) {
+  scrape_and_call(x,pass="INIT",...)
+}
+
+#' @rdname BLOCK_PARSE
+INIT <- function(x, 
+                 env, 
+                 pos = 1, 
+                 annotated = FALSE, 
+                 object = NULL, 
+                 as_object = FALSE, ...) {
+  
+  if(is.character(object)) {
+    x <- object
+    as_object <- TRUE
+  }
+  
+  check_block_data(x,env$ENV,pos)
+  
+  if(as_object) {
+    x <- evaluate_at_code(x, "list", "INIT", pos)
+    #x <- as.list(x)
+    env[["init"]][[pos]] <- x
+    return(NULL)
+  }
+  
+  if(annotated) {
+    context <- glue("parse annotated init block ({pos})")
+    l <- parse_annot(x,block="INIT",envir=env$ENV,context=context)
+    env[["init"]][[pos]] <- l[["v"]]
+    env[["annot"]][[pos]] <- l[["an"]]
+  } else {
+    x <- tolist(x,envir=env$ENV) 
+    env[["init"]][[pos]] <- x
+  }
+  return(NULL)
+}
+
+#' @export
+handle_spec_block.specCMT <- function(x,...) {
+  scrape_and_call(x,pass="CMT",narrow=FALSE,...)
+}
+
+#' @rdname BLOCK_PARSE
+CMT <- function(x, 
+                env, 
+                pos = 1, 
+                annotated = FALSE, 
+                object = NULL, 
+                as_object = FALSE, ...) {
+  
+  if(is.character(object)) {
+    x <- object 
+    as_object <- TRUE
+  }
+  
+  check_block_data(x,env$ENV,pos)
+  
+  if(as_object) {
+    x <- evaluate_at_code(x, "character", "CMT", pos)
+    #x <- as.character(x)
+    x <- setNames(rep(0, length(x)), x)
+    env[["init"]][[pos]] <- x
+    return(NULL)
+  }
+  if(annotated) {
+    context <- glue("parse annotated compartment block ({pos})")
+    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV,context=context)
+    env[["annot"]][[pos]] <- l[["an"]]
+    x <- names(l[["v"]])
+  } else {
+    x <- cvec_cs(x)
+  }
+  
+  l <- rep(0,length(x))
+  names(l) <- x
+  env[["init"]][[pos]] <- as.list(l)
+  return(NULL)
+}
+
+#' @export
+handle_spec_block.specVCMT <- handle_spec_block.specCMT
+
+#' @export
+handle_spec_block.specCMTN <- function(x,...) {
+  cvec_cs(dump_opts(x))
+}
+
 #' @export
 handle_spec_block.default <- function(x,...) {
   return(dump_opts(x))
+}
+
+# CAPTURE ----------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specCAPTURE <- function(x,...) {
+  scrape_and_call(x,pass="CAPTURE",narrow=TRUE,...)
+}
+
+#' @rdname BLOCK_PARSE
+CAPTURE <- function(x, env, pos = 1, annotated = FALSE, ...) {
+  
+  if(annotated) {
+    context <- glue("parse annotated capture block ({pos})")
+    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV,context=context)
+    env[["annot"]][[pos]] <- l[["an"]]
+    x <- names(l[["v"]])
+  } else {
+    x <- cvec_cs(x)
+  }
+  
+  check_block_data(x,env$ENV,pos)
+  
+  env[["capture"]][[pos]] <- x
+  
+  return(NULL)
 }
 
 # OMEGA /SIGMA -----------------------------------------------------------------
@@ -36,7 +309,7 @@ handle_spec_block.default <- function(x,...) {
 handle_spec_block.specOMEGA <- function(x,...) {
   scrape_and_call(
     x,
-    pass="specMATRIX",
+    pass="HANDLEMATRIX",
     def=list(oclass="omegalist",type="omega"),
     narrow=FALSE,...
   )
@@ -46,24 +319,32 @@ handle_spec_block.specOMEGA <- function(x,...) {
 handle_spec_block.specSIGMA <- function(x,...) {
   scrape_and_call(
     x,
-    pass="specMATRIX",
+    pass="HANDLEMATRIX",
     def=list(oclass="sigmalist",type="sigma"),
     narrow=FALSE,...
   )
 }
 
-specMATRIX <- function(x,
-                       oclass, type, annotated = FALSE,
-                       env, pos = 1, as_object = FALSE,
-                       name = "...", prefix="", labels = NULL,
-                       object = NULL, unlinked = FALSE,...) {
+#' @rdname BLOCK_PARSE
+HANDLEMATRIX <- function(x,
+                         env,
+                         pos = 1, 
+                         annotated = FALSE,
+                         object = NULL, 
+                         as_object = FALSE,
+                         name = "...",
+                         type = NULL,
+                         oclass = "", 
+                         prefix = "", 
+                         labels = NULL,
+                         unlinked = FALSE,...) {
   
   if(is.null(object)) check_block_data(x,env$ENV,pos)
   
   if(as_object) {
     expect <- paste0(type, "list")
     expect <- c("matrix",expect)
-    x <- evaluate_at_code(x, expect, toupper(type), pos, env$ENV)
+    x <- evaluate_at_code(x, expect, toupper(type), pos)
     if(is.null(labels)) {
       labels <- rownames(x)  
     }
@@ -161,191 +442,7 @@ handle_spec_block.specTABLE <- function(x,env,...) {
   return(x)
 }
 
-#' Functions to parse code blocks
-#' 
-#' Most of the basic blocks are listed in this help topic.  
-#' But see also \code{\link{PKMODEL}} which has more-involved 
-#' options and is documented separately.
-#' 
-#' @param x data
-#' @param env parse environment
-#' @param annotated logical
-#' @param covariates logical
-#' @param name block name
-#' @param pos block position
-#' @param fill data to use for block contents
-#' @param as_object indicates that object code is being provided
-#' @param ... passed
-#' 
-#' @name BLOCK_PARSE
-#' @rdname BLOCK_PARSE
-#' 
-#' @seealso \code{\link{PKMODEL}}
-NULL
 
-# PARAM / FIXED ----------------------------------------------------------------
-
-#' @export
-handle_spec_block.specPARAM <- function(x,...) {
-  scrape_and_call(x,pass="PARAM",...)
-}
-
-#' @rdname BLOCK_PARSE
-PARAM <- function(x,env,annotated=FALSE,covariates=FALSE,pos=1,as_object=FALSE,...) {
-  
-  check_block_data(x,env$ENV,pos)
-  
-  if(as_object) {
-    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, env$ENV)
-    env[["param"]][[pos]] <- x
-    return(NULL)
-  }
-  
-  if(annotated) {
-    context <- glue("parse annotated parameter block ({pos})")
-    l <- parse_annot(x,block="PARAM",envir=env$ENV,context = context)
-    env[["param"]][[pos]] <- l[["v"]]
-    env[["annot"]][[pos]] <- l[["an"]]
-  } else {
-    x <- tolist(x,envir=env$ENV) 
-    env[["param"]][[pos]] <- x
-  }
-  
-  if(covariates) {
-    env[["covariates"]] <- c(
-      env[["covariates"]], names(env[["param"]][[pos]])
-    )
-  }
-  
-  return(NULL)
-}
-
-#' @export
-handle_spec_block.specFIXED <- function(x,...) {
-  scrape_and_call(x,pass="FIXED",...)
-}
-
-#' @rdname BLOCK_PARSE
-FIXED <- function(x,env,annotated=FALSE,pos=1,...) {
-  
-  check_block_data(x,env$ENV,pos)
-  
-  if(annotated) {
-    context <- glue("parse annotated fixed block ({pos})")
-    l <- parse_annot(x,block="FIXED",envir=env$ENV,context=context)
-    env[["fixed"]][[pos]] <- l[["v"]]
-    env[["annot"]][[pos]] <- l[["an"]]
-  } else {
-    x <- tolist(x,envir=env$ENV) 
-    env[["fixed"]][[pos]] <- x
-  }
-  
-  return(NULL)
-}
-
-# THETA ------------------------------------------------------------------------
-
-#' @export
-handle_spec_block.specTHETA <- function(x,...) {
-  scrape_and_call(x,pass="THETA",narrow=FALSE,...)
-}
-
-#' @rdname BLOCK_PARSE
-THETA <- function(x, env, annotated=FALSE, pos=1, name="THETA", fill = NULL,
-                  ...) {
-  if(!is.null(fill)) {
-    x <- eval(parse(text = fill))   
-  }
-  
-  check_block_data(x,env$ENV,pos)
-  
-  if(annotated) {
-    l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
-    x <- as.numeric(l[["v"]])
-  } else {
-    x <- tolist(paste0(cvec_cs(x),collapse=','),envir=env$ENV)
-  }
-  
-  x <- x[!is.na(x)]
-  
-  if(length(x)==0) name <- character(0)
-  
-  names(x) <- paste0(name, seq_along(x))
-  
-  env[["param"]][[pos]] <- x
-  
-  return(NULL)
-}
-
-# INIT /CMT --------------------------------------------------------------------
-
-#' @export
-handle_spec_block.specINIT <- function(x,...) {
-  scrape_and_call(x,pass="INIT",...)
-}
-
-#' @rdname BLOCK_PARSE
-INIT <- function(x,env,annotated=FALSE,pos=1,as_object=FALSE,...) {
-  
-  check_block_data(x,env$ENV,pos)
-  
-  if(as_object) {
-    x <- evaluate_at_code(x, "list", "INIT", pos, env$ENV)
-    #x <- as.list(x)
-    env[["init"]][[pos]] <- x
-    return(NULL)
-  }
-  
-  if(annotated) {
-    context <- glue("parse annotated init block ({pos})")
-    l <- parse_annot(x,block="INIT",envir=env$ENV,context=context)
-    env[["init"]][[pos]] <- l[["v"]]
-    env[["annot"]][[pos]] <- l[["an"]]
-  } else {
-    x <- tolist(x,envir=env$ENV) 
-    env[["init"]][[pos]] <- x
-  }
-  return(NULL)
-}
-
-#' @export
-handle_spec_block.specCMT <- function(x,...) {
-  scrape_and_call(x,pass="CMT",narrow=FALSE,...)
-}
-
-#' @rdname BLOCK_PARSE
-CMT <- function(x,env,annotated=FALSE,pos=1, as_object = FALSE, ...) {
-  check_block_data(x,env$ENV,pos)
-  if(as_object) {
-    x <- evaluate_at_code(x, "character", "CMT", pos, env$ENV)
-    #x <- as.character(x)
-    x <- setNames(rep(0,length(x)), x)
-    env[["init"]][[pos]] <- x
-    return(NULL)
-  }
-  if(annotated) {
-    context <- glue("parse annotated compartment block ({pos})")
-    l <- parse_annot(x,novalue=TRUE,block="CMT",envir=env$ENV,context=context)
-    env[["annot"]][[pos]] <- l[["an"]]
-    x <- names(l[["v"]])
-  } else {
-    x <- cvec_cs(x)
-  }
-  
-  l <- rep(0,length(x))
-  names(l) <- x
-  env[["init"]][[pos]] <- as.list(l)
-  return(NULL)
-}
-
-#' @export
-handle_spec_block.specVCMT <- handle_spec_block.specCMT
-
-
-#' @export
-handle_spec_block.specCMTN <- function(x,...) {
-  cvec_cs(dump_opts(x))
-}
 
 # SET --------------------------------------------------------------------------
 
@@ -384,31 +481,6 @@ handle_spec_block.specNMEXT <- function(x,env,...) {
   return(NULL)
 }
 
-# CAPTURE ----------------------------------------------------------------------
-
-#' @export
-handle_spec_block.specCAPTURE <- function(x,...) {
-  scrape_and_call(x,pass="CAPTURE",narrow=TRUE,...)
-}
-
-#' @rdname BLOCK_PARSE
-CAPTURE <- function(x,env,annotated=FALSE,pos=1,...) {
-  
-  if(annotated) {
-    context <- glue("parse annotated capture block ({pos})")
-    l <- parse_annot(x,novalue=TRUE,block="CAPTURE",envir=env$ENV,context=context)
-    env[["annot"]][[pos]] <- l[["an"]]
-    x <- names(l[["v"]])
-  } else {
-    x <- cvec_cs(x)
-  }
-  
-  check_block_data(x,env$ENV,pos)
-  
-  env[["capture"]][[pos]] <- x
-  
-  return(NULL)
-}
 
 # PRED -------------------------------------------------------------------------
 
@@ -603,7 +675,7 @@ PKMODEL <- function(ncmt=1,depot=FALSE,cmt=NULL, trans=pick_trans(ncmt,depot),
   }
   stopifnot(ncmt %in% c(1,2))
   advan <- pick_advan(ncmt,depot)
-
+  
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 

@@ -624,7 +624,7 @@ include_rfile <- function(rfile) {
   source(rfile, local = parent.frame())
 }
 
-evaluate_at_code <- function(x, cl, block, pos, env) {
+evaluate_at_code <- function(x, cl, block, pos, env = list()) {
   x <- try(eval(parse(text = x), envir = env))
   if(inherits(x, "try-error")) {
     message("Block no: ", pos)
