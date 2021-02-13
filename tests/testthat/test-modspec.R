@@ -121,7 +121,7 @@ test_that("Commented model", {
   $CAPTURE 
     kaya = KA // Capturing KA
   ' 
-
+  
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
@@ -168,4 +168,62 @@ test_that("MATRIXBLOCK", {
   mod <- mcode("test-spec-matrix", code, compile = FALSE)
   mat <- unname(as.matrix(omat(mod)))
   expect_true(all.equal(mat, dmat(1,2,3)))
+})
+
+
+
+
+test_that("programmatic initialization", {
+  code <- '
+$ENV
+mat1 <- matrix(0,1,1)
+mat2 <- matrix(0,2,2)
+mat3 <- matrix(0,3,3)
+rownames(mat3) <- letters[1:3]
+mat4 <- matrix(0,4,4)
+par <- list(z = 777)
+pcmt <- c("t", "u", "v")
+
+$OMEGA
+1
+
+$OMEGA @object mat2 @name omega2
+
+$OMEGA @as_object 
+m <- matrix(0,3,3)
+rownames(m) <- LETTERS[1:3]
+m
+
+$SIGMA
+11
+
+$SIGMA @object mat4
+$SIGMA @as_object
+matrix(0,5,5)
+
+$PARAM @as_object
+list(a = 1, b = 2)
+
+$THETA @as_object @name theta
+rep(0,2)
+
+$PARAM @object par
+
+$CMT @as_object
+c("gg", "hh", "iii")
+
+$CMT @object pcmt
+'
+  
+  mod <- mcode("foo", code, compile = FALSE)
+  x <- labels(mod)
+  expect_equal(x$param, c("a", "b", "theta1", "theta2", "z"))
+  expect_equal(mod$z, 777)
+  expect_equal(x$omega_labels[[3]], c("A", "B", "C"))
+  expect_equal(x$omega[2], "omega2")
+  d <- nrow(omat(mod))
+  expect_equal(unname(nrow(omat(mod))), c(1,2,3))
+  expect_equal(unname(nrow(smat(mod))), c(1,4,5))
+  expect_equal(x$init, c("gg", "hh", "iii", "t", "u", "v"))
+  
 })
