@@ -90,10 +90,22 @@ HANDLEMATRIX(
 \item{unlinked}{internal use}
 }
 \description{
-Most of the basic blocks are listed in this help topic.  
-But see also \code{\link{PKMODEL}} which has more-involved 
+Most of the basic blocks are listed in this help topic.
+But see also \code{\link[=PKMODEL]{PKMODEL()}} which has more-involved
 options and is documented separately.
 }
+\details{
+When using \code{object} or \code{as_object} populate the block contents, the following
+types are required
+\itemize{
+\item \code{PARAM}: list
+\item \code{INIT} : list
+\item \code{THETA} : numeric
+\item \code{CMT}: character
+\item \code{OMEGA}: matrix; set rownames on the matrix to create ETA labels
+\item \code{SIGMA}: matrix; set rownames on the matrix to create EPS labels
+}
+}
 \seealso{
-\code{\link{PKMODEL}}
+\code{\link[=PKMODEL]{PKMODEL()}}
 }

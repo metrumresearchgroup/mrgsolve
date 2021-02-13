@@ -28,14 +28,14 @@ handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 #' Functions to parse code blocks
 #' 
 #' Most of the basic blocks are listed in this help topic.  
-#' But see also \code{\link{PKMODEL}} which has more-involved 
+#' But see also [PKMODEL()] which has more-involved 
 #' options and is documented separately.
 #' 
 #' @param x data
 #' @param env parse environment
 #' @param pos block position
 #' @param annotated logical
-#' @param object the name of an object in \code{ENV}
+#' @param object the name of an object in `ENV`
 #' @param as_object indicates that object code is being provided
 #' @param covariates logical
 #' @param name block name
@@ -47,10 +47,23 @@ handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 #' @param fill deprecated; not used
 #' @param ... passed
 #' 
+#' @details
+#' 
+#' When using `object` or `as_object` populate the block contents, the following
+#' types are required
+#' 
+#' - `PARAM`: list
+#' - `INIT` : list
+#' - `THETA` : numeric
+#' - `CMT`: character
+#' - `OMEGA`: matrix; set rownames on the matrix to create ETA labels
+#' - `SIGMA`: matrix; set rownames on the matrix to create EPS labels
+#' 
 #' @name BLOCK_PARSE
 #' @rdname BLOCK_PARSE
 #' 
-#' @seealso \code{\link{PKMODEL}}
+#' @md
+#' @seealso [PKMODEL()]
 NULL
 
 # PARAM / FIXED ----------------------------------------------------------------
