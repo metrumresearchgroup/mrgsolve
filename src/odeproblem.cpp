@@ -30,10 +30,10 @@
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
 
-void dosimeta(void* prob_, unsigned int n) {
+void dosimeta(void* prob_, int n) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eta = prob->mv_omega(1);
-  if(n > eta.n_cols) {
+  if(n > int(eta.n_cols)) {
     throw Rcpp::exception("simeta index out of bounds", false);
   }
   if(n > 0) {
@@ -45,10 +45,10 @@ void dosimeta(void* prob_, unsigned int n) {
   }
 }
 
-void dosimeps(void* prob_, unsigned int n) {
+void dosimeps(void* prob_, int n) {
   odeproblem* prob = reinterpret_cast<odeproblem*>(prob_);
   arma::mat eps = prob->mv_sigma(1);
-  if(n > eps.n_cols) {
+  if(n > int(eps.n_cols)) {
     throw Rcpp::exception("simeps index out of bounds", false);
   }
   if(n > 0) {

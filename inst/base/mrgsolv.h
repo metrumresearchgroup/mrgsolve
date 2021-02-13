@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-typedef void (*refun)(void*, unsigned int n);
+typedef void (*refun)(void*, int n);
 
 namespace mrgsolve {
 /**
