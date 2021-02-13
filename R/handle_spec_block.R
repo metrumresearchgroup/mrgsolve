@@ -70,19 +70,16 @@ PARAM <- function(x,
                   covariates = FALSE, ...) {
   
   if(is.character(object)) {
-    x <- evaluate_at_code(
-      object, 
-      c("list", "parameter_list"), 
-      "PARAM", pos, env$ENV
-    )
-    env[["param"]][[pos]] <- x
-    return(NULL)
+    x <- object
+    as_object <- TRUE
+    envir <- env$ENV
+  } else {
+    check_block_data(x, env$ENV, pos)
+    envir <- list()
   }
   
-  check_block_data(x,env$ENV,pos)
-  
   if(as_object) {
-    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos)
+    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, envir)
     env[["param"]][[pos]] <- x
     return(NULL)
   }
@@ -149,19 +146,20 @@ THETA <- function(x,
   if(!is.null(fill)) {
     x <- fill
     as_object <- TRUE
-    #x <- eval(parse(text = fill))   
   }
   
   if(is.character(object)) {
     x <- object  
     as_object <- TRUE
+    envir <- env$ENV
+  } else {
+    check_block_data(x,env$ENV,pos)
+    envir <- list()
   }
   
   if(isTRUE(as_object)) {
-    x <- evaluate_at_code(x, c("numeric", "integer"), "THETA", pos)
+    x <- evaluate_at_code(x, c("numeric", "integer"), "THETA", pos, envir)
   }
-  
-  check_block_data(x,env$ENV,pos)
   
   if(annotated) {
     l <- parse_annot(x,noname=TRUE,block="THETA",envir=env$ENV)
@@ -199,13 +197,14 @@ INIT <- function(x,
   if(is.character(object)) {
     x <- object
     as_object <- TRUE
+    envir <- env$ENV
+  } else {
+    check_block_data(x,env$ENV,pos)  
+    envir <- list()
   }
   
-  check_block_data(x,env$ENV,pos)
-  
   if(as_object) {
-    x <- evaluate_at_code(x, "list", "INIT", pos)
-    #x <- as.list(x)
+    x <- evaluate_at_code(x, "list", "INIT", pos, envir)
     env[["init"]][[pos]] <- x
     return(NULL)
   }
@@ -238,13 +237,14 @@ CMT <- function(x,
   if(is.character(object)) {
     x <- object 
     as_object <- TRUE
+    envir <- env$ENV
+  } else {
+    check_block_data(x,env$ENV,pos)
+    envir <- list()
   }
   
-  check_block_data(x,env$ENV,pos)
-  
   if(as_object) {
-    x <- evaluate_at_code(x, "character", "CMT", pos)
-    #x <- as.character(x)
+    x <- evaluate_at_code(x, "character", "CMT", pos, envir)
     x <- setNames(rep(0, length(x)), x)
     env[["init"]][[pos]] <- x
     return(NULL)
@@ -339,23 +339,17 @@ HANDLEMATRIX <- function(x,
                          labels = NULL,
                          unlinked = FALSE,...) {
   
-  if(is.null(object)) check_block_data(x,env$ENV,pos)
-  
-  if(as_object) {
-    expect <- paste0(type, "list")
-    expect <- c("matrix",expect)
-    x <- evaluate_at_code(x, expect, toupper(type), pos)
-    if(is.null(labels)) {
-      labels <- rownames(x)  
-    }
-    x <- setNames(list(x), name)
-    x <- create_matlist(x,  class = oclass, labels = list(labels))
-    env[[type]][[pos]] <- x
-    return(NULL)
+  if(is.character(object)) {
+    x <- object
+    as_object <- TRUE
+    envir <- env$ENV
+  } else {
+    check_block_data(x, env$ENV, pos)
+    envir <- list()
   }
   
   anl <- grepl(":",x,fixed=TRUE)
-  if(annotated) {
+  if(annotated & !as_object) {
     types <- charcount(x[anl],":")
     if(all(types==1)) {
       unlinked <- TRUE 
@@ -394,14 +388,17 @@ HANDLEMATRIX <- function(x,
     }
     
   } else {
-    if(any(anl)) x <- x[!anl]
-    if(is.null(object)) {
-      d <- modMATRIX(x,context=oclass,...) 
-    } else {
-      d <- get(object,env$ENV)
+    
+    if(isTRUE(as_object)) {
+      expect <- paste0(type, "list")
+      expect <- c("matrix", expect)
+      d <- evaluate_at_code(x, expect, toupper(type), pos, envir)
       if(is.null(labels)) {
         labels <- rownames(d)  
       }
+    } else {
+      if(any(anl)) x <- x[!anl]
+      d <- modMATRIX(x, context = oclass, ...)
     }
   }
   
@@ -410,12 +407,12 @@ HANDLEMATRIX <- function(x,
   if(is.null(labels)) {
     labels <- rep(".", nrow(d))
   } else {
-    labels <- paste0(prefix,cvec_cs(labels))
+    labels <- paste0(prefix, cvec_cs(labels))
   }
   
-  d <- setNames(list(d),name)
+  d <- setNames(list(d), name)
   
-  x <- create_matlist(d,class=oclass,labels=list(labels))
+  x <- create_matlist(d, class = oclass, labels = list(labels))
   
   env[[type]][[pos]] <- x
   
