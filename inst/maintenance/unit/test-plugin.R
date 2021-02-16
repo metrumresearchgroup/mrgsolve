@@ -56,7 +56,6 @@ $OMEGA 1 1 3
 
 $MAIN
 
-
 if(NEWIND <= 1) {
 
   double a = ETA(1);
@@ -69,6 +68,7 @@ if(NEWIND <= 1) {
     b = ETA(2);
     i++;
   }
+  
 }
 
 double c = ETA(3);
