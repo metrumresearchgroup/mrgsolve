@@ -467,7 +467,8 @@ setMethod("names", "mrgmod", function(x) {
 #' - `random`: names and labels of `$OMEGA` and `$SIGMA`
 #' - `code`: model source code from `cfile`
 #' - `details`: model details data frame
-#' - `variables`: a data frame listing internal variables 
+#' - `cpp_variables`: a data frame listing variables internal to the model 
+#'   cpp file
 #' - `atol`: see [solversettings]
 #' - `rtol`: see [solversettings]
 #' - `ss_atol`: absolute tolerance to use when advancing to PK steady state
@@ -512,7 +513,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
       advan <- x@advan
       functions <- funset(x)
     }
-    variables <- x@shlib[["variables"]]
+    cpp_variables <- x@shlib[["cpp_variables"]]
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]

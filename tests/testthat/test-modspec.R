@@ -189,9 +189,9 @@ bool e = true;
 [ cmt ] f; 
 '
   mod <- mcode("test-variables", code, compile = FALSE)
-  ans <- as.list(mod)$variables
+  ans <- as.list(mod)$cpp_variables
   expect_is(ans, "data.frame")
-  expect_equal(names(ans), c("var", "type", "context"))
+  expect_equal(names(ans), c("type", "var", "context"))
   expect_equal(ans$var, letters[1:5])
   expect_equal(
     ans$type, 

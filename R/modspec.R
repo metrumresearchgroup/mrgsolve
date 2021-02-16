@@ -346,7 +346,7 @@ pp_defs <- function(x,context) {
   code <- s_pick(x, 3)
   list(
     vars = vars, code = code, n = length(x), 
-    tab = data.frame(var = vars, type = "define", context = "global")
+    tab = data.frame(type = "define", var = vars, context = "global")
   )
 }
 
@@ -372,30 +372,31 @@ move_global2 <- function(spec,env,build) {
   if(!is.null(table$code)) {
     spec$TABLE <- table$code
   }
-  vars <- bind_rows(
-    glob$vars,
+  to_ns <- bind_rows(
     pream$vars,
     pred$vars,
     main$vars,
     ode$vars,
     table$vars
   )
-  if(any(cap <- vars$type=="capture")) {
-    captures <- vars[cap,"var"]
+  vars <- bind_rows(glob$vars, to_ns)
+  if(any(cap <- to_ns$type=="capture")) {
+    captures <- to_ns[cap,"var"]
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
   }
-  build$global_vars <- vars
-  defines <- pp_defs(spec[["GLOBAL"]], context = "global")
-  build$defines <- defines$vars
-  build$variables <- bind_rows(defines$tab, vars)
   ns <- c(
     "typedef double capture;",
     "namespace {",
-    paste0("  ", vars$type, " ", vars$var, ";"),
+    paste0("  ", to_ns$type, " ", to_ns$var, ";"),
     "}")
+  build$global_vars <- vars
+  defines <- pp_defs(spec[["GLOBAL"]], context = "global")
+  build$defines <- defines$vars
+  build$cpp_variables <- bind_rows(defines$tab,vars)
+  
   env[["global"]] <- ns
-  if(nrow(vars)  > 0) {
-    env[["move_global"]] <- vars$var
+  if(nrow(to_ns)  > 0) {
+    env[["move_global"]] <- to_ns$var
   } else {
     env[["move_global"]] <- character(0)  
   }
