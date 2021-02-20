@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -188,10 +188,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   ## Block name aliases
-  names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
-  names(spec) <- gsub("POST", "TABLE", names(spec), fixed=TRUE)
+  incoming_block_names <- names(spec)
+  names(spec) <- toupper(names(spec))
+  names(spec) <- gsub("DES",   "ODE",   names(spec), fixed = TRUE)
+  names(spec) <- gsub("POST",  "TABLE", names(spec), fixed = TRUE)
   names(spec) <- gsub("ERROR", "TABLE", names(spec), fixed = TRUE)
-  names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
+  names(spec) <- gsub("^PK$",  "MAIN",  names(spec), fixed = FALSE)
   
   ## Expand partial matches
   index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)
@@ -209,7 +211,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(spec,project=build$project,ENV)
+  mread.env <- parse_env(spec,incoming_block_names,project=build$project,ENV)
   
   #return(list(spec = spec, env = mread.env, build = build))
   
@@ -316,9 +318,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
+  table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
-  spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names=FALSE)
+  spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
   
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN

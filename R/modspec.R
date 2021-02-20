@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,10 +25,10 @@ block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 advtr <- function(advan,trans) {
   if(advan==13 | trans %in% c(0,1)) return(NULL)
   if((advan %in% c(1,2)) & !(trans %in% c(2,11))) {
-    stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call.=FALSE)
+    stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call. = FALSE)
   }
   if((advan %in% c(3,4)) & !(trans %in% c(4,11))) {
-    stop("ADVAN 3 and 4 can only use trans 1, 4, or 11", call.=FALSE)
+    stop("ADVAN 3 and 4 can only use trans 1, 4, or 11", call. = FALSE)
   }
   return(paste0("__ADVAN", advan, "_TRANS", trans, "__"))
 }
@@ -46,15 +46,16 @@ set_args <- c(
   "carry.out","Trequest","trequest"
 )
 
-check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
+check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
   
   if(sum("MAIN"  == x) > 1){
     stop("Only one $MAIN block allowed in the model.",call.=FALSE)
   }
-  if(sum("SET"   == x) > 1) {
-    stop("Only one $SET block allowed in the model.",call.=FALSE)
+  
+  if(sum("SET" == x) > 1) {
+    stop("Only one $SET block allowed in the model.", call.=FALSE)
   }
   
   if(warn) {
@@ -70,11 +71,18 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     
     if(length(invalid) > 0) {
       warning(
-        paste0("Invalid blocks found: ", paste(invalid, collapse=" "), "."), call.=FALSE
+        paste0(
+          "invalid blocks found: ", 
+          paste(invalid, collapse=" ")
+        ), 
+        call. = FALSE, immediate. = TRUE
       )
     }
   }
+  
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
+  
+  return(invisible(NULL))
 }
 
 audit_spec <- function(x,spec,warn=TRUE) {
@@ -180,9 +188,9 @@ modelparse <- function(txt, split=FALSE, drop_blank = TRUE,
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
-  names(spec) <- toupper(labs)
+  names(spec) <- labs
   
-  for(i in which(names(spec) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
+  for(i in which(toupper(names(spec)) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
   
@@ -406,7 +414,8 @@ get_rcpp_vars <- function(y) {
 
 check_block_data <- function(x,env,pos) {
   if(length(x)==0) {
-    warning("Block no. ", pos, ": no data was found.", call.=FALSE)
+    name <- env$incoming_names[pos]
+    warning("Block no. ", pos, " [", name, "]: no data was found.", call.=FALSE)
   }
   return(NULL)
 }
@@ -563,7 +572,7 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   return(envir)
 }  
 
-parse_env <- function(spec,project,ENV=new.env()) {
+parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
   mread.env$project <- project
@@ -580,6 +589,7 @@ parse_env <- function(spec,project,ENV=new.env()) {
   mread.env$covariates <- character(0)
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
+  mread.env$incoming_names <- incoming_names
   mread.env
 }
 
