@@ -73,7 +73,7 @@ check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
       warning(
         paste0(
           "invalid blocks found: ", 
-          paste(invalid, collapse=" ")
+          paste(invalid, collapse = " ")
         ), 
         call. = FALSE, immediate. = TRUE
       )
