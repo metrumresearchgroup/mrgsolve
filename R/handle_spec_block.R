@@ -780,36 +780,39 @@ check_pred_symbols <- function(x,code) {
 # YAML -------------------------------------------------------------------------
 # nocov start
 #' @export
-handle_spec_block.specYAML <- function(x,env,...) {
+handle_spec_block.specYAML <- function(x, env, ...) {
   
-  if(!requireNamespace("yaml")) {
-    stop("the yaml package must be installed to process YAML blocks.",
-         call.=FALSE)
+  if(!requireNamespace("yaml", quietly = TRUE)) {
+    stop(
+      "the yaml package must be installed to process YAML blocks.",
+      call.=FALSE
+    )
   }
-  
   pos <- attr(x,"pos")
   x <- paste0(x, collapse = "\n")  
-  x <- yaml::yaml.load(x, eval.expr=TRUE)
-  
-  annotated3 <- function(value=0, descr = '.', unit = '.') {
+  x <- yaml::yaml.load(x, eval.expr = TRUE)
+  annotated3 <- function(value = 0, descr = '.', unit = '.') {
     tibble(value = value, descr = descr, unit = unit)
   }
   annotated2 <- function(descr = '.', unit = '.') {
-    annotated3(value = NA_real_,descr,unit)
+    annotated3(value = NA_real_, descr, unit)
   }
-  handle_annotated <- function(data,what,block) {
-    x <- lapply(data,as.list)
-    x <- lapply(x,FUN=do.call,what = what) %>% bind_rows()
-    mutate(x, block=block, name = names(data))
+  handle_annotated <- function(data, what, block) {
+    x <- lapply(data, as.list)
+    x <- lapply(x, FUN = do.call, what = what) 
+    x <- bind_rows(x)
+    label <-  names(data) 
+    if(is.null(labels) & is.character(data)) label <- data
+    mutate(x, block = block, name = label)
   }
-  
   names(x) <- tolower(names(x))
   pars <- handle_annotated(x$param, annotated3, "PARAM")
   cmt <- handle_annotated(x$cmt, annotated2,"CMT")
   cmt <- mutate(cmt, value = 0)
   init <- handle_annotated(x$init, annotated3, "INIT")
   out <- handle_annotated(x$capture, annotated2, "CAPTURE")
-  ann <- bind_rows(pars,cmt,init,out) %>% select(c("block","name","descr","value","unit"))
+  ann <- bind_rows(pars,cmt,init,out)
+  ann <- select(ann, c("block","name","descr","unit"))
   parameters <- setNames(as.list(pars[["value"]]),pars[["name"]])
   compartments <- setNames(as.list(cmt[["value"]]),cmt[["name"]])
   initials <- setNames(as.list(init[["value"]]),init[["name"]])
@@ -849,7 +852,9 @@ handle_spec_block.specODE <- function(x,env,...) {
   re <- "\\bETA\\([0-9]+\\)"
   chk <- grepl(re,x)
   if(any(chk)) {
-    er1 <- "ETA(n) is not allowed in ODE block:"
+    ode <- env$incoming_names[pos]
+    er1 <- "ETA(n) is not allowed in {ode} block:"
+    er1 <- as.character(glue(er1))
     er2 <- paste0("\n * ", x[which(chk)])
     stop(er1,er2,call.=FALSE)
   }
@@ -870,7 +875,7 @@ handle_spec_block.specBLOCK <- function(x,env,...) {
   do.call("BLOCK",x)
 }
 
-BLOCK <- function(x,env,type,code=NULL,get=NULL,...) {
+BLOCK <- function(x, env, type, code = NULL, get = NULL, ...) {
   x <- structure(.Data=code, class=paste0("spec",type),pos=1)
   handle_spec_block(x,env)
 }
