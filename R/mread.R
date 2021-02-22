@@ -206,7 +206,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## We might be passing parse settings in here ...
   SET <- tolist(spec[["SET"]])
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
-  # spec[["SET"]] <- spec[["ENV"]] <-  NULL
+  spec[["SET"]] <- spec[["ENV"]] <-  ""
   
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
