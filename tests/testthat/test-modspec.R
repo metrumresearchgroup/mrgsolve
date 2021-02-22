@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -38,40 +38,30 @@ test_that("matrix data is parsed", {
   code <- "$OMEGA \n @block \n 1 0.002 \n 3"
   mod <- mtemp(code)
   expect_equal(dim(omat(mod))[[1]],c(2,2))  
-  
 })
 
-
-
 test_that("capture data is parsed", {
-  
   code <- "$CAPTURE\n  \n banana = b z apple = a"
   mod <- mtemp(code)
   expect_equal(mod@capture, c(b = "banana", z = "z", a = "apple"))
   
   code <- "$CAPTURE\n  z a \n\n\n d\n e, f"
   mod <- mtemp(code)
-  
   expect_equal(
     mod@capture, 
     c(z = "z", a = "a", d = "d", e = "e", f = "f")
   )
-  
   code <- "$CAPTURE \n"
   expect_warning(mod <- mtemp(code))
   expect_equivalent(mod@capture, character(0))
-  
 })
 
 
 test_that("cmt block is parsed", {
-  
   code <- "$CMT\n yes=TRUE \n first \n \n \n second third \n \n"
   mod <- mtemp(code)
   expect_equal(mrgsolve:::cmt(mod), c("first", "second", "third"))
-  
 })
-
 
 test_that("theta block is parsed", {
   code <- "$THETA\n  0.1 0.2 \n 0.3"
@@ -85,14 +75,12 @@ test_that("theta block is parsed", {
   code <- "$THETA >> name='theta' \n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
-  
 })
 
 test_that("Using table macro generates error", {
   code <- "$TABLE\n table(CP) = 1; \n double x=3; \n table(Y) = 1;"
   expect_error(mod <- mtemp(code))
 })
-
 
 for(what in c("THETA", "PARAM", "CMT", 
               "FIXED", "CAPTURE", "INIT",
@@ -121,12 +109,10 @@ test_that("Commented model", {
   $CAPTURE 
     kaya = KA // Capturing KA
   ' 
-  
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
   expect_identical(mod@capture, c(KA = "kaya",a = "a"))
-  
 })
 
 
@@ -169,9 +155,6 @@ test_that("MATRIXBLOCK", {
   mat <- unname(as.matrix(omat(mod)))
   expect_true(all.equal(mat, dmat(1,2,3)))
 })
-
-
-
 
 test_that("programmatic initialization", {
   code <- '
@@ -225,7 +208,6 @@ $CMT @object pcmt
   expect_equal(unname(nrow(omat(mod))), c(1,2,3))
   expect_equal(unname(nrow(smat(mod))), c(1,4,5))
   expect_equal(x$init, c("gg", "hh", "iii", "t", "u", "v"))
-  
 })
 
 test_that("parse content using low-level handlers - PARAM", {
@@ -247,7 +229,6 @@ test_that("parse content using low-level handlers - PARAM", {
   ans <- mrgsolve:::PARAM(x = input, object = "parameters", env = env, pos = 8)
   expect_is(env$param[[8]], "list")
   expect_named(env$param[[8]])
-
 })
 
 test_that("parse content using low-level handlers - THETA", {
