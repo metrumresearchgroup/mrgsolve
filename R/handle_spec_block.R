@@ -52,12 +52,16 @@ handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 #' When using `object` or `as_object` populate the block contents, the following
 #' types are required
 #' 
-#' - `PARAM`: list
-#' - `INIT` : list
-#' - `THETA` : numeric
-#' - `CMT`: character
-#' - `OMEGA`: matrix; set rownames on the matrix to create ETA labels
-#' - `SIGMA`: matrix; set rownames on the matrix to create EPS labels
+#' - `PARAM`: a named list
+#' - `INIT` : a named list
+#' - `THETA` : a numeric vector; names are ignored
+#' - `CMT`: a character vector
+#' - `OMEGA`: matrix; set rownames on the matrix to create ETA labels; setting 
+#'   rownames is the only way to specify `labels` when working through the 
+#'   `object` or `as_object` directives
+#' - `SIGMA`: matrix; set rownames on the matrix to create EPS labels; setting 
+#'   rownames is the only way to specify `labels` when working through the 
+#'   `object` or `as_object` directives
 #' 
 #' @name BLOCK_PARSE
 #' @rdname BLOCK_PARSE

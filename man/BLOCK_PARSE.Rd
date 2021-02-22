@@ -98,12 +98,16 @@ options and is documented separately.
 When using \code{object} or \code{as_object} populate the block contents, the following
 types are required
 \itemize{
-\item \code{PARAM}: list
-\item \code{INIT} : list
-\item \code{THETA} : numeric
-\item \code{CMT}: character
-\item \code{OMEGA}: matrix; set rownames on the matrix to create ETA labels
-\item \code{SIGMA}: matrix; set rownames on the matrix to create EPS labels
+\item \code{PARAM}: a named list
+\item \code{INIT} : a named list
+\item \code{THETA} : a numeric vector; names are ignored
+\item \code{CMT}: a character vector
+\item \code{OMEGA}: matrix; set rownames on the matrix to create ETA labels; setting
+rownames is the only way to specify \code{labels} when working through the
+\code{object} or \code{as_object} directives
+\item \code{SIGMA}: matrix; set rownames on the matrix to create EPS labels; setting
+rownames is the only way to specify \code{labels} when working through the
+\code{object} or \code{as_object} directives
 }
 }
 \seealso{
