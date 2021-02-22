@@ -25,6 +25,11 @@ get_length <- function(what) sum(sapply(what,length))
 # GENERIC ----------------------------------------------------------------------
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 
+#' @export
+handle_spec_block.default <- function(x, ...) {
+  return(dump_opts(x))
+}
+
 #' Functions to parse code blocks
 #' 
 #' Most of the basic blocks are listed in this help topic.  
@@ -294,11 +299,6 @@ handle_spec_block.specVCMT <- handle_spec_block.specCMT
 #' @export
 handle_spec_block.specCMTN <- function(x, ...) {
   cvec_cs(dump_opts(x))
-}
-
-#' @export
-handle_spec_block.default <- function(x, ...) {
-  return(dump_opts(x))
 }
 
 # CAPTURE ----------------------------------------------------------------------
