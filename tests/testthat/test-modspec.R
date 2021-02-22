@@ -227,3 +227,133 @@ $CMT @object pcmt
   expect_equal(x$init, c("gg", "hh", "iii", "t", "u", "v"))
   
 })
+
+test_that("parse content using low-level handlers - PARAM", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(1,2,3)"
+  expect_error(
+    sup(mrgsolve:::PARAM(x = input, as_object = TRUE)), 
+    "code returned the incorrect class: numeric"
+  )
+  input <- "list(a = 1, b = 2)"
+  ans <- mrgsolve:::PARAM(x = input, as_object = TRUE, env = env, pos = 3)
+  expect_is(env$param[[3]], "list")
+  expect_named(env$param[[3]])
+  
+  expect_null(env$param[[8]])  
+  env$ENV$parameters <- list(mm = 1, nn = 2)
+  ans <- mrgsolve:::PARAM(x = input, object = "parameters", env = env, pos = 8)
+  expect_is(env$param[[8]], "list")
+  expect_named(env$param[[8]])
+
+})
+
+test_that("parse content using low-level handlers - THETA", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "list(1,2,3)"
+  expect_error(
+    sup(mrgsolve:::THETA(x = input, as_object = TRUE)), 
+    "code returned the incorrect class: list"
+  )
+  input <- "c(3,4,5,6)"
+  ans <- mrgsolve:::THETA(x = input, as_object = TRUE, env = env, pos = 10)
+  expect_is(env$param[[10]], "list")
+  expect_named(env$param[[10]])
+  
+  expect_null(env$param[[2]])  
+  env$ENV$thetas <- c(9,8,7,6,5)
+  ans <- mrgsolve:::THETA(x = "", object = "thetas", env = env, pos = 2)
+  expect_is(env$param[[2]], "list")
+  expect_named(env$param[[2]])
+})
+
+test_that("parse content using low-level handlers - CMT", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(2,2,3)"
+  expect_error(
+    sup(mrgsolve:::CMT(x = input, as_object = TRUE)), 
+    "code returned the incorrect class: numeric"
+  )
+  input <- "letters[1:3]"
+  ans <- mrgsolve:::CMT(x = input, as_object = TRUE, env = env, pos = 8)
+  expect_is(env$init[[8]], "numeric")
+  expect_named(env$init[[8]])
+  
+  expect_null(env$param[[2]])  
+  env$ENV$compartments <- letters[8:12]
+  ans <- mrgsolve:::CMT(x = "", object = "compartments", env = env, pos = 2)
+  expect_is(env$init[[2]], "numeric")
+  expect_named(env$init[[2]])
+})
+
+test_that("parse content using low-level handlers - INIT", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(2,2,3)"
+  expect_error(
+    sup(mrgsolve:::INIT(x = input, as_object = TRUE)), 
+    "code returned the incorrect class: numeric"
+  )
+  
+  input <- "list(z = 5, w = 8, h = 100)"
+  ans <- mrgsolve:::INIT(x = input, as_object = TRUE, env = env, pos = 8)
+  expect_is(env$init[[8]], "list")
+  expect_named(env$init[[8]])
+  
+  expect_null(env$init[[2]])  
+  env$ENV$initials <- list(u = 9, z = 10, y = 99)
+  ans <- mrgsolve:::INIT(x = input, object = "initials", env = env, pos = 2)
+  expect_is(env$init[[2]], "list")
+  expect_named(env$init[[2]])
+})
+
+test_that("parse content using low-level handlers - OMEGA, SIGMA", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(1,2,3)"
+  expect_error(
+    sup(mrgsolve:::HANDLEMATRIX(x = input, as_object = TRUE)), 
+    "code returned the incorrect class: numeric"
+  )
+  
+  input <- "matrix(0, 6, 6)"
+  ans <- mrgsolve:::HANDLEMATRIX(
+    oclass = "omegalist", type = "omega",
+    x = input, as_object = TRUE, env = env, pos = 8
+  )
+  expect_is(env$omega[[8]], "matlist")
+  
+  input <- "
+  m <- matrix(0, 6, 6)
+  dimnames(m) <- list(letters[1:6], NULL)
+  m
+  "
+  ans <- mrgsolve:::HANDLEMATRIX(
+    oclass = "omegalist", type = "omega",
+    x = input, as_object = TRUE, env = env, pos = 4
+  )
+  expect_is(env$omega[[4]], "matlist")
+  ans <- labels(env$omega[[4]])[[1]]
+  expect_equal(ans, letters[1:6])
+  
+  input <- ""
+  expect_null(env$omega[[12]])
+  dnames <-c("j", "k", "l")
+  env$ENV$omga <- matrix(0, 3, 3, dimnames = list(dnames, dnames))
+  ans <- mrgsolve:::HANDLEMATRIX(
+    oclass = "omegalist", type = "omega",
+    x = input, object = "omga", env = env, pos = 12
+  )
+  expect_is(env$omega[[12]], "matlist")
+  ans <- labels(env$omega[[12]])[[1]]
+  expect_equal(ans, dnames)
+})
+
