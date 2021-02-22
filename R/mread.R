@@ -204,10 +204,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
-  SET <- tolist(spec[["SET"]])
+  SET <- tolist(dump_opts(spec[["SET"]]))
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
-  spec[["SET"]] <- spec[["ENV"]] <-  ""
-  
+  if("SET" %in% names(spec)) spec[["SET"]] <- ""
+  if("ENV" %in% names(spec)) spec[["ENV"]] <- ""
+
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma

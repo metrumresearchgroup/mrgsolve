@@ -25,6 +25,7 @@ get_length <- function(what) sum(sapply(what,length))
 # GENERIC ----------------------------------------------------------------------
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
 
+# DEFAULT ------
 #' @export
 handle_spec_block.default <- function(x, ...) {
   return(dump_opts(x))
@@ -468,14 +469,6 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
   return(x)
 }
 
-
-
-# SET --------------------------------------------------------------------------
-
-#' @export
-handle_spec_block.specSET <- function(x, ...) {
-  tolist(dump_opts(x))
-}
 
 # NMXML --------------------------------
 #' @export
