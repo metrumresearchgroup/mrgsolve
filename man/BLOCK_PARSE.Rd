@@ -8,52 +8,108 @@
 \alias{INIT}
 \alias{CMT}
 \alias{CAPTURE}
+\alias{HANDLEMATRIX}
 \title{Functions to parse code blocks}
 \usage{
 PARAM(
   x,
   env,
-  annotated = FALSE,
-  covariates = FALSE,
   pos = 1,
+  annotated = FALSE,
+  object = NULL,
   as_object = FALSE,
+  covariates = FALSE,
   ...
 )
 
-FIXED(x, env, annotated = FALSE, pos = 1, ...)
+FIXED(x, env, pos = 1, annotated = FALSE, ...)
 
-THETA(x, env, annotated = FALSE, pos = 1, name = "THETA", fill = NULL, ...)
+THETA(
+  x,
+  env,
+  pos = 1,
+  annotated = FALSE,
+  object = NULL,
+  as_object = FALSE,
+  name = "THETA",
+  fill = NULL,
+  ...
+)
 
-INIT(x, env, annotated = FALSE, pos = 1, as_object = FALSE, ...)
+INIT(x, env, pos = 1, annotated = FALSE, object = NULL, as_object = FALSE, ...)
 
-CMT(x, env, annotated = FALSE, pos = 1, as_object = FALSE, ...)
+CMT(x, env, pos = 1, annotated = FALSE, object = NULL, as_object = FALSE, ...)
 
-CAPTURE(x, env, annotated = FALSE, pos = 1, ...)
+CAPTURE(x, env, pos = 1, annotated = FALSE, ...)
+
+HANDLEMATRIX(
+  x,
+  env,
+  pos = 1,
+  annotated = FALSE,
+  object = NULL,
+  as_object = FALSE,
+  name = "...",
+  type = NULL,
+  oclass = "",
+  prefix = "",
+  labels = NULL,
+  unlinked = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{data}
 
 \item{env}{parse environment}
 
-\item{annotated}{logical}
-
-\item{covariates}{logical}
-
 \item{pos}{block position}
 
+\item{annotated}{logical}
+
+\item{object}{the name of an object in \code{ENV}}
+
 \item{as_object}{indicates that object code is being provided}
+
+\item{covariates}{logical}
 
 \item{...}{passed}
 
 \item{name}{block name}
 
-\item{fill}{data to use for block contents}
+\item{fill}{deprecated; not used}
+
+\item{type}{internal use}
+
+\item{oclass}{internal use}
+
+\item{prefix}{a prefix to add to the label}
+
+\item{labels}{aliases to use for simulated ETA values}
+
+\item{unlinked}{internal use}
 }
 \description{
-Most of the basic blocks are listed in this help topic.  
-But see also \code{\link{PKMODEL}} which has more-involved 
+Most of the basic blocks are listed in this help topic.
+But see also \code{\link[=PKMODEL]{PKMODEL()}} which has more-involved
 options and is documented separately.
 }
+\details{
+When using \code{object} or \code{as_object} populate the block contents, the following
+types are required
+\itemize{
+\item \code{PARAM}: a named list
+\item \code{INIT} : a named list
+\item \code{THETA} : a numeric vector; names are ignored
+\item \code{CMT}: a character vector
+\item \code{OMEGA}: matrix; set rownames on the matrix to create ETA labels; setting
+rownames is the only way to specify \code{labels} when working through the
+\code{object} or \code{as_object} directives
+\item \code{SIGMA}: matrix; set rownames on the matrix to create EPS labels; setting
+rownames is the only way to specify \code{labels} when working through the
+\code{object} or \code{as_object} directives
+}
+}
 \seealso{
-\code{\link{PKMODEL}}
+\code{\link[=PKMODEL]{PKMODEL()}}
 }

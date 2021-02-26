@@ -87,11 +87,14 @@ dim_matlist <- function(x) {
 
 create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
   x <- x[!sapply(x,nrow)==0]
+  # names ---
   if(is.null(names(x))) names(x) <- rep("...", length(x))
   names(x)[nchar(names(x))==0] <- "..."
+  # end names ---
   if(is.null(unlist(labels))) {
     labels <- lapply(x, function(y) rep('.',nrow(y)))
   } 
+  # check for duplicates ----
   all <- unlist(labels, use.names=FALSE)
   all <- all[all != "."]
   if(any(duplicated(all))) {
@@ -100,6 +103,7 @@ create_matlist <- function(x=list(),class,labels=list(),signature=NULL,...) {
       stop("duplicate labels found when creating matlist object: ", dup,
            call.=FALSE)  
   }
+  # done check for duplicates ---
   x <- new(class, data=x, labels=labels)
   x@n <- dim_matlist(x)
   return(x)

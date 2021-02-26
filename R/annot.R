@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -110,12 +110,9 @@ parse_annot_line <- function(x, novalue=FALSE, noname=FALSE,context="not given")
 ##' 
 ##' mrgsolve:::details(mod)
 ##' 
-details <- function(x,complete=FALSE,values=TRUE,...) {
-  
+details <- function(x, complete = FALSE, values = TRUE,...) {
   stopifnot(is.mrgmod(x))
-  
   ans <- x@annot[["data"]]
-  
   if(nrow(ans)==0) {
     ans <- cobble_details(x)
   } else {
@@ -134,9 +131,7 @@ store_annot <- function(x,what,loc=soloc(x),...) {
 }
 
 cobble_details <- function(x) {
-  
   ans <- list()
-  
   par <- as.numeric(param(x))
   if(length(par) > 0) {
     ans[[1]] <- tibble(block="PARAM",name=names(par))  
@@ -159,23 +154,18 @@ cobble_details <- function(x) {
                            value = unname(this_mat))
     }
   }
-  
-  
   ans <- dplyr::bind_rows(ans)
   ans <- dplyr::mutate(ans,descr='.', units='.', options='.')
   ans <- ans[,c("block","name","descr","units","options"),drop=FALSE]
   as.data.frame(ans)
-  
 }
 
 complete_details <- function(annot,x) {
-  
   par <- as.numeric(param(x))
   cmt <- as.numeric(init(x))
   fx <- as.numeric(x@fixed)
   name <- unique(annot[annot$block %in% c("PARAM", "CMT", "FIXED"),"name"])
   dum <- annot[0,]
-  
   if(length(par) > 0) {
     miss <- setdiff(names(par),name)
     if(length(miss) > 0) {
@@ -185,7 +175,6 @@ complete_details <- function(annot,x) {
     }
     annot <- dplyr::bind_rows(annot,par)
   }
-  
   if(length(cmt) > 0) {
     miss <- setdiff(names(cmt),name)
     if(length(miss) > 0) {
@@ -195,7 +184,6 @@ complete_details <- function(annot,x) {
     }
     annot <- dplyr::bind_rows(annot,cmt)
   }
-  
   if(length(fx) > 0) {
     miss <- setdiff(names(fx),name)
     if(length(miss) > 0) {
@@ -216,7 +204,6 @@ add_detail_values <- function(annot,x) {
   x <- tibble(name=names(x),value=x)
   annot <- dplyr::left_join(annot,x,by="name")
   return(annot)
-  
 }
 
 #nocov end
