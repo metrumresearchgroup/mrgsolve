@@ -316,7 +316,7 @@ test_that("parse content using low-level handlers - INIT", {
   expect_named(env$init[[2]])
   
   expect_error(
-    mrgsolve:::PARAM(x = "123", object = "parameters", as_object = TRUE), 
+    mrgsolve:::INIT(x = "123", object = "parameters", as_object = TRUE), 
     "cannot have both @object and @as_object in a block"
   )
 })
@@ -364,7 +364,7 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
   expect_equal(ans, dnames)
   
   expect_error(
-    mrgsolve:::PARAM(x = "123", object = "parameters", as_object = TRUE), 
+    mrgsolve:::HANDLEMATRIX(x = "123", object = "parameters", as_object = TRUE), 
     "cannot have both @object and @as_object in a block"
   )
 })
