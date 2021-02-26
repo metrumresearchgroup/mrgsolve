@@ -217,18 +217,29 @@ test_that("parse content using low-level handlers - PARAM", {
   input <- "c(1,2,3)"
   expect_error(
     sup(mrgsolve:::PARAM(x = input, as_object = TRUE)), 
-    "code returned the incorrect class: numeric"
+    "the returned object was the wrong type"
   )
   input <- "list(a = 1, b = 2)"
   ans <- mrgsolve:::PARAM(x = input, as_object = TRUE, env = env, pos = 3)
   expect_is(env$param[[3]], "list")
   expect_named(env$param[[3]])
   
+  input <- "list(1,2,3)"
+  expect_error(
+    mrgsolve:::PARAM(x = input, as_object = TRUE, env = env, pos = 3), 
+    "the returned object must have names"
+  )
+  
   expect_null(env$param[[8]])  
   env$ENV$parameters <- list(mm = 1, nn = 2)
   ans <- mrgsolve:::PARAM(x = input, object = "parameters", env = env, pos = 8)
   expect_is(env$param[[8]], "list")
   expect_named(env$param[[8]])
+  
+  expect_error(
+    mrgsolve:::PARAM(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
 })
 
 test_that("parse content using low-level handlers - THETA", {
@@ -238,7 +249,7 @@ test_that("parse content using low-level handlers - THETA", {
   input <- "list(1,2,3)"
   expect_error(
     sup(mrgsolve:::THETA(x = input, as_object = TRUE)), 
-    "code returned the incorrect class: list"
+    "the returned object was the wrong type"
   )
   input <- "c(3,4,5,6)"
   ans <- mrgsolve:::THETA(x = input, as_object = TRUE, env = env, pos = 10)
@@ -250,6 +261,11 @@ test_that("parse content using low-level handlers - THETA", {
   ans <- mrgsolve:::THETA(x = "", object = "thetas", env = env, pos = 2)
   expect_is(env$param[[2]], "list")
   expect_named(env$param[[2]])
+  
+  expect_error(
+    mrgsolve:::THETA(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
 })
 
 test_that("parse content using low-level handlers - CMT", {
@@ -259,7 +275,7 @@ test_that("parse content using low-level handlers - CMT", {
   input <- "c(2,2,3)"
   expect_error(
     sup(mrgsolve:::CMT(x = input, as_object = TRUE)), 
-    "code returned the incorrect class: numeric"
+    "the returned object was the wrong type"
   )
   input <- "letters[1:3]"
   ans <- mrgsolve:::CMT(x = input, as_object = TRUE, env = env, pos = 8)
@@ -271,6 +287,11 @@ test_that("parse content using low-level handlers - CMT", {
   ans <- mrgsolve:::CMT(x = "", object = "compartments", env = env, pos = 2)
   expect_is(env$init[[2]], "numeric")
   expect_named(env$init[[2]])
+  
+  expect_error(
+    mrgsolve:::CMT(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
 })
 
 test_that("parse content using low-level handlers - INIT", {
@@ -280,7 +301,7 @@ test_that("parse content using low-level handlers - INIT", {
   input <- "c(2,2,3)"
   expect_error(
     sup(mrgsolve:::INIT(x = input, as_object = TRUE)), 
-    "code returned the incorrect class: numeric"
+    "the returned object was the wrong type"
   )
   
   input <- "list(z = 5, w = 8, h = 100)"
@@ -293,6 +314,11 @@ test_that("parse content using low-level handlers - INIT", {
   ans <- mrgsolve:::INIT(x = input, object = "initials", env = env, pos = 2)
   expect_is(env$init[[2]], "list")
   expect_named(env$init[[2]])
+  
+  expect_error(
+    mrgsolve:::PARAM(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
 })
 
 test_that("parse content using low-level handlers - OMEGA, SIGMA", {
@@ -302,7 +328,7 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
   input <- "c(1,2,3)"
   expect_error(
     sup(mrgsolve:::HANDLEMATRIX(x = input, as_object = TRUE)), 
-    "code returned the incorrect class: numeric"
+    "the returned object was the wrong type"
   )
   
   input <- "matrix(0, 6, 6)"
@@ -336,5 +362,10 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
   expect_is(env$omega[[12]], "matlist")
   ans <- labels(env$omega[[12]])[[1]]
   expect_equal(ans, dnames)
+  
+  expect_error(
+    mrgsolve:::PARAM(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
 })
 

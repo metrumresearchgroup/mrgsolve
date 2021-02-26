@@ -634,7 +634,7 @@ include_rfile <- function(rfile) {
   source(rfile, local = parent.frame())
 }
 
-evaluate_at_code <- function(x, cl, block, pos, env = list()) {
+evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
   x <- try(eval(parse(text = x), envir = env))
   if(inherits(x, "try-error")) {
     message("Block no: ", pos)
@@ -642,12 +642,21 @@ evaluate_at_code <- function(x, cl, block, pos, env = list()) {
     stop("failed to parse block code.", call.=FALSE)
   }
   right_type <- inherits(x, cl)
-  if(!right_type) {
+  names_missing <- isTRUE(named) && !is_named(x)
+  if(!right_type | names_missing) {
     message("Block no: ", pos)
-    message("Block type: ", block)
-    message("Expected class: ", paste0(cl, collapse = " or "))
-    got <- paste0(class(x), collapse = ", ")
-    stop("code returned the incorrect class: ", got, call.=FALSE) 
+    message(" Block type: ", block)
+    if(names_missing) {
+      message(" Expected names: yes") 
+      message(" Returned named object: no")
+      msg <- "the returned object must have names"
+    }
+    if(!right_type) {
+      message(" Expected class: ", paste0(cl, collapse = " or "))
+      message(" Returned class: ", paste0(class(x), collapse = ", "))
+      msg <- "the returned object was the wrong type"
+    }
+    stop(msg, call.=FALSE) 
   }
   x
 }

@@ -93,6 +93,9 @@ PARAM <- function(x,
                   covariates = FALSE, ...) {
   
   if(is.character(object)) {
+    if(isTRUE(as_object)) {
+      wstop("cannot have both @object and @as_object in a block")  
+    }
     x <- object
     as_object <- TRUE
     envir <- env$ENV
@@ -102,7 +105,13 @@ PARAM <- function(x,
   }
   
   if(as_object) {
-    x <- evaluate_at_code(x, c("list", "parameter_list"), "PARAM", pos, envir)
+    x <- evaluate_at_code(
+      x, c("list", "parameter_list"), 
+      "PARAM", 
+      pos, 
+      envir, 
+      named = TRUE
+    )
     env[["param"]][[pos]] <- x
     return(NULL)
   }
@@ -115,6 +124,14 @@ PARAM <- function(x,
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
     x <- tolist(x,envir=env$ENV) 
+    if(length(x) > 0 & !is_named(x)) {
+      msg <- " invalid model specification
+       Block no: {pos}
+       Block type: {env$incoming_names[pos]}
+       Some parameters are missing names
+      "
+      stop(glue(msg), call. = FALSE)
+    }
     env[["param"]][[pos]] <- x
   }
   
@@ -174,6 +191,9 @@ THETA <- function(x,
   }
   
   if(is.character(object)) {
+    if(isTRUE(as_object)) {
+      wstop("cannot have both @object and @as_object in a block")  
+    }
     x <- object  
     as_object <- TRUE
     envir <- env$ENV
@@ -220,6 +240,9 @@ INIT <- function(x,
                  as_object = FALSE, ...) {
   
   if(is.character(object)) {
+    if(isTRUE(as_object)) {
+      wstop("cannot have both @object and @as_object in a block")  
+    }
     x <- object
     as_object <- TRUE
     envir <- env$ENV
@@ -229,7 +252,7 @@ INIT <- function(x,
   }
   
   if(as_object) {
-    x <- evaluate_at_code(x, "list", "INIT", pos, envir)
+    x <- evaluate_at_code(x, "list", "INIT", pos, envir, named = TRUE)
     env[["init"]][[pos]] <- x
     return(NULL)
   }
@@ -242,6 +265,14 @@ INIT <- function(x,
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
     x <- tolist(x,envir=env$ENV) 
+    if(length(x) > 0 & !is_named(x)) {
+      msg <- " invalid model specification
+       Block no: {pos}
+       Block type: {env$incoming_names[pos]}
+       Some initials are missing names
+      "
+      stop(glue(msg), call. = FALSE)
+    }
     env[["init"]][[pos]] <- x
   }
   return(NULL)
@@ -261,6 +292,9 @@ CMT <- function(x,
                 as_object = FALSE, ...) {
   
   if(is.character(object)) {
+    if(isTRUE(as_object)) {
+      wstop("cannot have both @object and @as_object in a block")  
+    }
     x <- object 
     as_object <- TRUE
     envir <- env$ENV
@@ -369,6 +403,9 @@ HANDLEMATRIX <- function(x,
                          unlinked = FALSE, ...) {
   
   if(is.character(object)) {
+    if(isTRUE(as_object)) {
+      wstop("cannot have both @object and @as_object in a block")  
+    }
     x <- object
     as_object <- TRUE
     envir <- env$ENV
