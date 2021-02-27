@@ -109,6 +109,7 @@ test_that("Commented model", {
   $CAPTURE 
     kaya = KA // Capturing KA
   ' 
+
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
@@ -154,6 +155,39 @@ test_that("HANDLEMATRIX", {
   mod <- mcode("test-spec-matrix", code, compile = FALSE)
   mat <- unname(as.matrix(omat(mod)))
   expect_true(all.equal(mat, dmat(1,2,3)))
+})
+
+test_that("inventory of internal variables", {
+code <- '
+[ global ] 
+#define a 1
+int b = 2; 
+
+[ main ] 
+double c = 3;
+
+[ ode ] 
+double d = 4;
+dxdt_f = 0;
+
+[ table ] 
+bool e = true;
+
+[ cmt ] f; 
+'
+  mod <- mcode("test-variables", code, compile = FALSE)
+  ans <- as.list(mod)$cpp_variables
+  expect_is(ans, "data.frame")
+  expect_equal(names(ans), c("type", "var", "context"))
+  expect_equal(ans$var, letters[1:5])
+  expect_equal(
+    ans$type, 
+    c("define", "int", "double", "double", "bool")
+  )
+  expect_equal(
+    ans$context, 
+    c("global", "global", "main", "ode", "table")
+  )
 })
 
 test_that("programmatic initialization", {
@@ -368,4 +402,3 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
     "cannot have both @object and @as_object in a block"
   )
 })
-

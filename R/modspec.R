@@ -346,52 +346,65 @@ c_vars <- function(x,context) {
 pp_defs <- function(x,context) {
   w <- grep("#define ", x, fixed = TRUE)
   if(length(w)==0) {
-    return(list(vars = NULL, code = NULL, n = 0))  
+    return(list(vars = NULL, code = NULL, n = 0, tab = data.frame()))  
   }
   x <- trimws(x[w])
   x <- my_str_split(x, " +", n = 3, collapse = " ")
   vars <- s_pick(x, 2)
   code <- s_pick(x, 3)
-  list(vars = vars, code = code, n = length(x))
+  list(
+    vars = vars, code = code, n = length(x), 
+    tab = data.frame(type = "define", var = vars, context = "global")
+  )
 }
 
 move_global2 <- function(spec,env,build) {
-  pream <- c_vars(spec$PREAMBLE,context="preamble")
+  pream <- c_vars(spec$PREAMBLE, context = "preamble")
   if(!is.null(pream$code)) {
     spec$PREAMBLE <- pream$code
   }
-  pred <- c_vars(spec$PRED,context="pred")
+  pred <- c_vars(spec$PRED, context = "pred")
   if(!is.null(pred$code)) {
     spec$PRED <- pred$code  
   }
-  main  <- c_vars(spec$MAIN,context="main")
+  glob <- c_vars(spec$GLOBAL, context = "global")
+  main <- c_vars(spec$MAIN, context = "main")
   if(!is.null(main$code)) {
     spec$MAIN <- main$code  
   }
-  ode   <- c_vars(spec[["ODE"]],context="ode")
+  ode   <- c_vars(spec[["ODE"]], context = "ode")
   if(!is.null(ode$code)) {
     spec$ODE <- ode$code
   }
-  table <- c_vars(spec[["TABLE"]],context="table")  
+  table <- c_vars(spec[["TABLE"]], context = "table")  
   if(!is.null(table$code)) {
     spec$TABLE <- table$code
   }
-  vars <- bind_rows(pream$vars,pred$vars,main$vars,ode$vars,table$vars)
-  if(any(cap <- vars$type=="capture")) {
-    captures <- vars[cap,"var"]
+  to_ns <- bind_rows(
+    pream$vars,
+    pred$vars,
+    main$vars,
+    ode$vars,
+    table$vars
+  )
+  vars <- bind_rows(glob$vars, to_ns)
+  if(any(cap <- to_ns$type=="capture")) {
+    captures <- to_ns[cap,"var"]
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
   }
-  build$global_vars <- vars
-  defines <- pp_defs(spec[["GLOBAL"]], context = "global")
-  build$defines <- defines$vars
   ns <- c(
     "typedef double capture;",
     "namespace {",
-    paste0("  ",vars$type, " ", vars$var, ";"),
+    paste0("  ", to_ns$type, " ", to_ns$var, ";"),
     "}")
+  build$global_vars <- vars
+  defines <- pp_defs(spec[["GLOBAL"]], context = "global")
+  build$defines <- defines$vars
+  build$cpp_variables <- bind_rows(defines$tab,vars)
+  
   env[["global"]] <- ns
-  if(nrow(vars)  > 0) {
-    env[["move_global"]] <- vars$var
+  if(nrow(to_ns)  > 0) {
+    env[["move_global"]] <- to_ns$var
   } else {
     env[["move_global"]] <- character(0)  
   }
