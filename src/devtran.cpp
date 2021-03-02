@@ -476,6 +476,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         if(Fn==0) {
           if(this_rec->is_dose()) {
+            prob.on(this_cmtn);
             this_rec->unarm();
           }
         }
