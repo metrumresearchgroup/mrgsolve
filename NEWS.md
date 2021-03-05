@@ -1,18 +1,21 @@
 # mrgsolve (development version)
 
-- Fix bug where compartment is not turned on when dosing with zero
-  bioavailability #800
-- Add optional integer argument to simeta and simeps to limit re-simulation to 
-  the (single) corresponding ETA or EPS #789
-- Save a data frame of model C++ variables and pre-processor definitions in the  
-  model object and let it be accessed by coercing the model object to list 
-  #780
-- Refactor programmatic initialization of select model blocks, including 
-  PARAM, THETA, INIT, CMT, OMEGA and SIGMA; each block now has an `@object`
-  directive to pull an object from `ENV` or `@as_object` to parse and evaluate
-  the block contents and take the result as input for that block #783
-- Add ability to select from multiple tables when reading NM results with 
-  NMEXT #782
+- Dosing into a compartment that is off at the time of the dose turns the 
+  compartment back on regardless of whether bioavailability is zero or non-zero 
+  (this is a bug fix where the compartment was not turned on when 
+  bioavailability was zero). (#800)
+- `simeta()` and `simeps()` now accept an (optional) integer argument to limit
+  re-simulation to single ETA or EPS values (#789)
+- `as.list(mod)` output now includes a data frame of `C++` variables and 
+  pre-processor definitions in the `cpp_variables` slot. (#780)
+- `$PARAM`, `$THETA`, `$CMT`, `$INIT`, `$OMEGA` and `$SIGMA` blocks all include 
+  the directives `@object` and `@as_object` so that block contents can be 
+  specified programmatically. `@object` names an object that was coded into
+  `$ENV` and `@as_object` indicates that the block contains code to realize
+  the object.  See `?BLOCK_PARSE` help topic for more information on how this
+  all works. (#783)
+- `$NMEXT` now lets the user select between multiple tables for scraping 
+  parameter estimates. (#782)
 
 # mrgsolve 0.10.8
 - Allow simulation from compartmental models with negative times #778
