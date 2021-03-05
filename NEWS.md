@@ -2,9 +2,9 @@
 
 - Fix bug where compartment is not turned on when dosing with zero
   bioavailability #800
-- Add optional integer argument to simeta and simeps to limit resimulation to 
-  the corresponding ETA or EPS #789
-- Save a data frame of model C++ variables and preprocesor definitions in the  
+- Add optional integer argument to simeta and simeps to limit re-simulation to 
+  the (single) corresponding ETA or EPS #789
+- Save a data frame of model C++ variables and pre-processor definitions in the  
   model object and let it be accessed by coercing the model object to list 
   #780
 - Refactor programmatic initialization of select model blocks, including 
