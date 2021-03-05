@@ -1,5 +1,19 @@
 # mrgsolve (development version)
 
+- Fix bug where compartment is not turned on when dosing with zero
+  bioavailability #800
+- Add optional integer argument to simeta and simeps to limit resimulation to 
+  the corresponding ETA or EPS #789
+- Save a data frame of model C++ variables and preprocesor definitions in the  
+  model object and let it be accessed by coercing the model object to list 
+  #780
+- Refactor programmatic initialization of select model blocks, including 
+  PARAM, THETA, INIT, CMT, OMEGA and SIGMA; each block now has an `@object`
+  directive to pull an object from `ENV` or `@as_object` to parse and evaluate
+  the block contents and take the result as input for that block #783
+- Add ability to select from multiple tables when reading NM results with 
+  NMEXT #782
+
 # mrgsolve 0.10.8
 - Allow simulation from compartmental models with negative times #778
 - Enable dynamic capture of pre-processor directives at compile time #776
