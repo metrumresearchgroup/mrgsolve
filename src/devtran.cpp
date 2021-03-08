@@ -611,6 +611,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       if(this_rec->evid()==2) {
         this_rec->implement(&prob);
+        if(this_rec->cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
+          int n_inf = prob.infusion_count[this_cmtn];
+          for(int ii = j; ii < a[i].size() && n_inf > 0; ++ii) {
+            if(a[i].at(ii)->evid()==9) {
+              prob.rate_rm(this_cmtn, a[i].at(ii)->rate());
+              a[i].erase(a[i].begin() + ii);
+              --n_inf;
+            }
+          }
+        }
       }
       tfrom = tto;
     }
