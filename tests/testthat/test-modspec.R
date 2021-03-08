@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -38,40 +38,30 @@ test_that("matrix data is parsed", {
   code <- "$OMEGA \n @block \n 1 0.002 \n 3"
   mod <- mtemp(code)
   expect_equal(dim(omat(mod))[[1]],c(2,2))  
-  
 })
 
-
-
 test_that("capture data is parsed", {
-  
   code <- "$CAPTURE\n  \n banana = b z apple = a"
   mod <- mtemp(code)
   expect_equal(mod@capture, c(b = "banana", z = "z", a = "apple"))
   
   code <- "$CAPTURE\n  z a \n\n\n d\n e, f"
   mod <- mtemp(code)
-  
   expect_equal(
     mod@capture, 
     c(z = "z", a = "a", d = "d", e = "e", f = "f")
   )
-  
   code <- "$CAPTURE \n"
   expect_warning(mod <- mtemp(code))
   expect_equivalent(mod@capture, character(0))
-  
 })
 
 
 test_that("cmt block is parsed", {
-  
   code <- "$CMT\n yes=TRUE \n first \n \n \n second third \n \n"
   mod <- mtemp(code)
   expect_equal(mrgsolve:::cmt(mod), c("first", "second", "third"))
-  
 })
-
 
 test_that("theta block is parsed", {
   code <- "$THETA\n  0.1 0.2 \n 0.3"
@@ -85,14 +75,12 @@ test_that("theta block is parsed", {
   code <- "$THETA >> name='theta' \n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
-  
 })
 
 test_that("Using table macro generates error", {
   code <- "$TABLE\n table(CP) = 1; \n double x=3; \n table(Y) = 1;"
   expect_error(mod <- mtemp(code))
 })
-
 
 for(what in c("THETA", "PARAM", "CMT", 
               "FIXED", "CAPTURE", "INIT",
@@ -126,7 +114,6 @@ test_that("Commented model", {
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
   expect_identical(mod@capture, c(KA = "kaya",a = "a"))
-  
 })
 
 
@@ -163,9 +150,255 @@ test_that("at options are parsed", {
   expect_warning(ats('@foo "a b c"'))  
 })
 
-test_that("specMATRIX", {
+test_that("HANDLEMATRIX", {
   code <- "$OMEGA 1,2,3"
   mod <- mcode("test-spec-matrix", code, compile = FALSE)
   mat <- unname(as.matrix(omat(mod)))
   expect_true(all.equal(mat, dmat(1,2,3)))
+})
+
+test_that("inventory of internal variables", {
+code <- '
+[ global ] 
+#define a 1
+int b = 2; 
+
+[ main ] 
+double c = 3;
+
+[ ode ] 
+double d = 4;
+dxdt_f = 0;
+
+[ table ] 
+bool e = true;
+
+[ cmt ] f; 
+'
+  mod <- mcode("test-variables", code, compile = FALSE)
+  ans <- as.list(mod)$cpp_variables
+  expect_is(ans, "data.frame")
+  expect_equal(names(ans), c("type", "var", "context"))
+  expect_equal(ans$var, letters[1:5])
+  expect_equal(
+    ans$type, 
+    c("define", "int", "double", "double", "bool")
+  )
+  expect_equal(
+    ans$context, 
+    c("global", "global", "main", "ode", "table")
+  )
+})
+
+test_that("programmatic initialization", {
+  code <- '
+$ENV
+mat1 <- matrix(0,1,1)
+mat2 <- matrix(0,2,2)
+mat3 <- matrix(0,3,3)
+rownames(mat3) <- letters[1:3]
+mat4 <- matrix(0,4,4)
+par <- list(z = 777)
+pcmt <- c("t", "u", "v")
+
+$OMEGA
+1
+
+$OMEGA @object mat2 @name omega2
+
+$OMEGA @as_object 
+m <- matrix(0,3,3)
+rownames(m) <- LETTERS[1:3]
+m
+
+$SIGMA
+11
+
+$SIGMA @object mat4
+$SIGMA @as_object
+matrix(0,5,5)
+
+$PARAM @as_object
+list(a = 1, b = 2)
+
+$THETA @as_object @name theta
+rep(0,2)
+
+$PARAM @object par
+
+$CMT @as_object
+c("gg", "hh", "iii")
+
+$CMT @object pcmt
+'
+  
+  mod <- mcode("foo", code, compile = FALSE)
+  x <- labels(mod)
+  expect_equal(x$param, c("a", "b", "theta1", "theta2", "z"))
+  expect_equal(mod$z, 777)
+  expect_equal(x$omega_labels[[3]], c("A", "B", "C"))
+  expect_equal(x$omega[2], "omega2")
+  d <- nrow(omat(mod))
+  expect_equal(unname(nrow(omat(mod))), c(1,2,3))
+  expect_equal(unname(nrow(smat(mod))), c(1,4,5))
+  expect_equal(x$init, c("gg", "hh", "iii", "t", "u", "v"))
+})
+
+test_that("parse content using low-level handlers - PARAM", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(1,2,3)"
+  expect_error(
+    sup(mrgsolve:::PARAM(x = input, as_object = TRUE)), 
+    "the returned object was the wrong type"
+  )
+  input <- "list(a = 1, b = 2)"
+  ans <- mrgsolve:::PARAM(x = input, as_object = TRUE, env = env, pos = 3)
+  expect_is(env$param[[3]], "list")
+  expect_named(env$param[[3]])
+  
+  input <- "list(1,2,3)"
+  expect_error(
+    mrgsolve:::PARAM(x = input, as_object = TRUE, env = env, pos = 3), 
+    "the returned object must have names"
+  )
+  
+  expect_null(env$param[[8]])  
+  env$ENV$parameters <- list(mm = 1, nn = 2)
+  ans <- mrgsolve:::PARAM(x = input, object = "parameters", env = env, pos = 8)
+  expect_is(env$param[[8]], "list")
+  expect_named(env$param[[8]])
+  
+  expect_error(
+    mrgsolve:::PARAM(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
+})
+
+test_that("parse content using low-level handlers - THETA", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "list(1,2,3)"
+  expect_error(
+    sup(mrgsolve:::THETA(x = input, as_object = TRUE)), 
+    "the returned object was the wrong type"
+  )
+  input <- "c(3,4,5,6)"
+  ans <- mrgsolve:::THETA(x = input, as_object = TRUE, env = env, pos = 10)
+  expect_is(env$param[[10]], "list")
+  expect_named(env$param[[10]])
+  
+  expect_null(env$param[[2]])  
+  env$ENV$thetas <- c(9,8,7,6,5)
+  ans <- mrgsolve:::THETA(x = "", object = "thetas", env = env, pos = 2)
+  expect_is(env$param[[2]], "list")
+  expect_named(env$param[[2]])
+  
+  expect_error(
+    mrgsolve:::THETA(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
+})
+
+test_that("parse content using low-level handlers - CMT", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(2,2,3)"
+  expect_error(
+    sup(mrgsolve:::CMT(x = input, as_object = TRUE)), 
+    "the returned object was the wrong type"
+  )
+  input <- "letters[1:3]"
+  ans <- mrgsolve:::CMT(x = input, as_object = TRUE, env = env, pos = 8)
+  expect_is(env$init[[8]], "numeric")
+  expect_named(env$init[[8]])
+  
+  expect_null(env$param[[2]])  
+  env$ENV$compartments <- letters[8:12]
+  ans <- mrgsolve:::CMT(x = "", object = "compartments", env = env, pos = 2)
+  expect_is(env$init[[2]], "numeric")
+  expect_named(env$init[[2]])
+  
+  expect_error(
+    mrgsolve:::CMT(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
+})
+
+test_that("parse content using low-level handlers - INIT", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(2,2,3)"
+  expect_error(
+    sup(mrgsolve:::INIT(x = input, as_object = TRUE)), 
+    "the returned object was the wrong type"
+  )
+  
+  input <- "list(z = 5, w = 8, h = 100)"
+  ans <- mrgsolve:::INIT(x = input, as_object = TRUE, env = env, pos = 8)
+  expect_is(env$init[[8]], "list")
+  expect_named(env$init[[8]])
+  
+  expect_null(env$init[[2]])  
+  env$ENV$initials <- list(u = 9, z = 10, y = 99)
+  ans <- mrgsolve:::INIT(x = input, object = "initials", env = env, pos = 2)
+  expect_is(env$init[[2]], "list")
+  expect_named(env$init[[2]])
+  
+  expect_error(
+    mrgsolve:::INIT(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
+})
+
+test_that("parse content using low-level handlers - OMEGA, SIGMA", {
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  sup <- suppressMessages  
+  
+  input <- "c(1,2,3)"
+  expect_error(
+    sup(mrgsolve:::HANDLEMATRIX(x = input, as_object = TRUE)), 
+    "the returned object was the wrong type"
+  )
+  
+  input <- "matrix(0, 6, 6)"
+  ans <- mrgsolve:::HANDLEMATRIX(
+    oclass = "omegalist", type = "omega",
+    x = input, as_object = TRUE, env = env, pos = 8
+  )
+  expect_is(env$omega[[8]], "matlist")
+  
+  input <- "
+  m <- matrix(0, 6, 6)
+  dimnames(m) <- list(letters[1:6], NULL)
+  m
+  "
+  ans <- mrgsolve:::HANDLEMATRIX(
+    oclass = "omegalist", type = "omega",
+    x = input, as_object = TRUE, env = env, pos = 4
+  )
+  expect_is(env$omega[[4]], "matlist")
+  ans <- labels(env$omega[[4]])[[1]]
+  expect_equal(ans, letters[1:6])
+  
+  input <- ""
+  expect_null(env$omega[[12]])
+  dnames <-c("j", "k", "l")
+  env$ENV$omga <- matrix(0, 3, 3, dimnames = list(dnames, dnames))
+  ans <- mrgsolve:::HANDLEMATRIX(
+    oclass = "omegalist", type = "omega",
+    x = input, object = "omga", env = env, pos = 12
+  )
+  expect_is(env$omega[[12]], "matlist")
+  ans <- labels(env$omega[[12]])[[1]]
+  expect_equal(ans, dnames)
+  
+  expect_error(
+    mrgsolve:::HANDLEMATRIX(x = "123", object = "parameters", as_object = TRUE), 
+    "cannot have both @object and @as_object in a block"
+  )
 })

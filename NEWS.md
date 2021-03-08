@@ -1,3 +1,22 @@
+# mrgsolve 0.10.9
+
+- Dosing into a compartment that is off at the time of the dose turns the 
+  compartment back on regardless of whether bioavailability is zero or non-zero 
+  (this is a bug fix where the compartment was not turned on when 
+  bioavailability was zero). (#800)
+- `simeta()` and `simeps()` now accept an (optional) integer argument to limit
+  re-simulation to single ETA or EPS values (#789)
+- `as.list(mod)` output now includes a data frame of `C++` variables and 
+  pre-processor definitions in the `cpp_variables` slot. (#780)
+- `$PARAM`, `$THETA`, `$CMT`, `$INIT`, `$OMEGA` and `$SIGMA` blocks all include 
+  the directives `@object` and `@as_object` so that block contents can be 
+  specified programmatically. `@object` names an object that was coded into
+  `$ENV` and `@as_object` indicates that the block contains code to realize
+  the object.  See `?BLOCK_PARSE` help topic for more information on how this
+  all works. (#783)
+- `$NMEXT` now lets the user select between multiple tables for scraping 
+  parameter estimates. (#782)
+
 # mrgsolve 0.10.8
 - Allow simulation from compartmental models with negative times #778
 - Enable dynamic capture of pre-processor directives at compile time #776
