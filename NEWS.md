@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 0.10.9
 
 - Dosing into a compartment that is off at the time of the dose turns the 
   compartment back on regardless of whether bioavailability is zero or non-zero 
