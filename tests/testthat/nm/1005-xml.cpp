@@ -1,4 +1,4 @@
 [ nmxml ] 
 run = 1005
-project = '.'
+project = 'nonmem'
 root = "cppfile"

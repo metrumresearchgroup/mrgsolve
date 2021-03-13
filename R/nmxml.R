@@ -79,16 +79,6 @@ nmxml <- function(run = numeric(0), project = character(0),
                   tname = "THETA", oname = "...", sname = "...",
                   index = "last", xpath = ".//nm:estimation", env = NULL) {
   
-  root <- match.arg(root)
-  if(root == "cppfile") {
-    cwd <- getwd()
-    on.exit(setwd(cwd))
-    setwd(env[["project"]])
-  }
-  
-  theta <- theta | !missing(tname)
-  omega <- omega | !missing(oname)
-  sigma <- sigma | !missing(sname)
   
   if(!missing(file)) {
     lifecycle::deprecate_soft(
@@ -99,6 +89,13 @@ nmxml <- function(run = numeric(0), project = character(0),
     path <- file
   }
   
+  root <- match.arg(root)
+  if(root == "cppfile" & !is.null(env)) {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
+  }
+  
   if(!missing(path)) {
     target <- path
   } else {
@@ -107,9 +104,9 @@ nmxml <- function(run = numeric(0), project = character(0),
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
-  
+
   if(!requireNamespace("xml2")) {
-    stop("Could not load namespace for package xml2.", call.=FALSE)
+    stop("could not load namespace for package xml2.", call. = FALSE)
   }
   tree <- xml2::read_xml(target)
   tree <- try(xml2::xml_find_all(tree,xpath))
@@ -138,6 +135,10 @@ nmxml <- function(run = numeric(0), project = character(0),
   }
   
   tree <- tree[[index]]
+  
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
   
   th <- list()
   om <- matrix(0,0,0)
@@ -242,7 +243,14 @@ nmext <- function(run = NA_real_, project = getwd(),
     setwd(env[["project"]])
   }
   
-  ans <- read_nmext(run,project,file,path,read_fun,index=index)
+  ans <- read_nmext(
+    run = run,
+    project = project,
+    file = file,
+    path = path,
+    read_fun = read_fun,
+    index = index
+  )
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
