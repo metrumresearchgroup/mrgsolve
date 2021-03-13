@@ -22,6 +22,9 @@
 ##' @param project project directory
 ##' @param path the complete path to the \code{run.xml} file
 ##' @param file deprecated; use \code{path} instead
+##' @param root the directory that `path` and `project` are relative to; this is
+##' currently limited to the `working` directory or `cppdir`, the directory 
+##' where the model file is located
 ##' @param theta logical; if TRUE, the \code{$THETA} vector is returned
 ##' @param omega logical; if TRUE, the \code{$OMEGA} matrix is returned
 ##' @param sigma logical; if TRUE, the \code{$SIGMA} matrix is returned
@@ -37,6 +40,7 @@
 ##' estimation results to return
 ##' @param xpath xml path containing run results; if the default doesn't work, 
 ##' consider using \code{.//estimation} as an alternative; see details
+##' @param env internal
 ##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is 
@@ -68,12 +72,19 @@
 ##' 
 nmxml <- function(run = numeric(0), project = character(0),
                   file = character(0), path = character(0),
+                  root = c("working", "cppfile"), 
                   theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
                   tname = "THETA", oname = "...", sname = "...",
-                  index = "last",
-                  xpath = ".//nm:estimation") {
+                  index = "last", xpath = ".//nm:estimation", env = NULL) {
+  
+  root <- match.arg(root)
+  if(root == "cppfile") {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
+  }
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
@@ -210,17 +221,25 @@ nmxml <- function(run = numeric(0), project = character(0),
 #' @seealso [nmxml], [read_nmext]
 #' 
 #' @md
-nmext <- function(run=NA_real_, project = getwd(), 
+nmext <- function(run = NA_real_, project = getwd(), 
                   file = paste0(run,".ext"), path = NULL,
+                  root = c("working", "cppfile"),
                   index = "last",
                   theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix = "",
                   tname = "THETA", oname = "...", sname = "...", 
-                  read_fun = "data.table") {
+                  read_fun = "data.table", env = NULL) {
   
   if(missing(run) && !is.character(path)) {
     wstop("either 'run' or 'path' argument must be specified")  
+  }
+  
+  root <- match.arg(root)
+  if(root == "cppfile" & !is.null(env)) {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
   }
   
   ans <- read_nmext(run,project,file,path,read_fun,index=index)

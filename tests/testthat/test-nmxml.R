@@ -323,3 +323,11 @@ test_that("custom labeled THETA", {
   expect_identical(names(b$theta), letters[1:7])
   expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
 })
+
+test_that("read relative to cpp file not working directory", {
+  skip_if_not(file.exists("nm/1005-ext.cpp"))
+  mod <- mread("1005-ext", project = "nm")
+  expect_is(mod, "mrgmod") 
+  mod <- mread("1005-xml", project = "nm")
+  expect_is(mod, "mrgmod") 
+})
