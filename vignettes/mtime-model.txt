@@ -1,0 +1,17 @@
+[ param ]
+CL = 1, V = 20, KA1 = 0.1, KA2 = 2.5, change_t = 2.1
+
+[ pkmodel ] 
+cmt = "GUT,CENT", depot = TRUE
+
+[ main ] 
+double mt = self.mtime(change_t);
+
+capture KA = KA1;
+
+if(TIME > mt) KA = KA2;
+
+if(TIME == change_t) {
+  mrg::report("wait a minute ... time is 2.1?");  
+}
+

@@ -1,0 +1,151 @@
+---
+title: "Modeled events"
+author: ""
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette: 
+    toc: true
+    toc_depth: 1
+    number_sections: true
+    keep_md: true
+    fig_height: 4
+    fig_width: 5
+vignette: >
+  %\VignetteIndexEntry{Modeled events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+source("global.R")
+set.seed(10023)
+```
+
+A modeled event is a discontinuity introduced into the simulation at a time
+and with characteristics that are determined within the model itself, rather
+than the standard setup of specifying these events via the data set.  
+
+In this vignette, we'll focus on creating a discontinuity in the simulation so 
+that the value of a parameter can change at a specific time that is not 
+necessarily chosen prior to the run time. 
+
+# Concept: mevent
+
+This toy model shows how you can use `mevent()` to schedule a discontinuity into 
+the simulation.  This model doesn't do anything, but will help us see what parts 
+are in play. 
+
+```{Rcpp, eval = FALSE, code = readLines("mevent_0.cpp")}
+
+```
+
+In contrast to the NONMEM `MTIME()` functionality, we have to do a little more 
+work keeping track of the status of the system.  There are multiple ways to 
+organize this.  I'm going to show you one way that tries to minimize the amount
+of this book keeping work. 
+
+In the first part of `[ MAIN ]`, I will create a variable called `mtime` and 
+initialize it to some large, arbitrary value.  This is the time of the modeled
+event and we will eventually want to check to see if we are past this time. 
+Initializing to this large .value will ensure we aren't past `mtime` when the 
+problem starts. This is Part A.
+
+```{c, eval=FALSE}
+// Part A
+if(NEWIND <=1 ) capture mtime  = 1E10;
+```
+
+Next, we'll come up with some condition that will trigger the creation of 
+the future discontinuity.  In this example, we'll check to see when a dose
+was given and schedule the event `1.23` hours into the future.  We keep track 
+of that future time in the `mtime` variable.  That's Part B.
+
+```{c, eval=FALSE}
+// Part B
+if(EVID==1) {
+  mtime = TIME + 1.23;
+  self.mevent(mtime, 33);
+}
+```
+
+There is a function in the `self` object called `mevent()` that takes two 
+arguments: first the `TIME` of the event and second the `EVID`.  In this 
+example, we create a record with `EVID` of 33 at 1.23 hours after the dose. We 
+pick `EVID` 33 as a unique flag for this event. But beyond that, the specific
+value isn't important.
+
+The final piece of this toy model is to check to see if the system has been 
+advanced past `mtime`.
+
+```{c, eval=FALSE}
+// Part C
+capture past = TIME >= mtime;
+```
+
+To put it all back together
+
+```{Rcpp, eval = FALSE, code = readLines("mevent_0.cpp")}
+
+```
+
+Now run this model to check the output.  We want to see when the `past` variable
+switches to 1.
+
+```{r, message = FALSE}
+library(dplyr)
+library(mrgsolve)
+
+mod <- mread_cache("mevent-0")
+```
+
+```{r}
+mod %>% ev(amt = 1, cmt=0) %>% mrgsim()
+```
+
+
+The switch happens at time 1.23, between time 1 and time 2.  You can use the 
+`mrgsolve::report()` function to check that the `EVID==33` event happens 
+at the proper time (not able to display this inside the vignette).  This 
+is an optional Part D.
+
+```{c, eval=FALSE}
+// Part D
+if(EVID==33) mrgsolve::report(TIME);  
+```
+
+So we can check that the model is actually stopping at this point (TIME 1.23). 
+Note that this time is not included in the simulation time grid.
+
+# Application: time-varying KA
+
+We can put this principle into action with a PK model where KA changes (increases)
+some time after the administration of the dose. Here's the model
+
+```{Rcpp, eval = FALSE, code = readLines("mevent_1.cpp")}
+
+```
+
+We have pretty much the same setup as the toy example above, but now including 
+a PK model where KA changes from `KA1` to `KA2` at `mtime`
+
+```{r, message = FALSE}
+mod <- mread_cache("mevent-1", req = "CENT", end = 12, delta = 0.1)
+
+```
+
+When we simulate, we see KA increase at the change point as well as 
+the rate of increase in the `CENT` compartment
+```{r}
+mod %>% 
+  ev(amt = 100) %>%
+  mrgsim() %>% 
+  plot()
+```
+
+We can also run this model for several doses
+```{r}
+mod %>% 
+  ev(amt = 100, ii = 12, total = 4) %>%
+  mrgsim(end = 48) %>% 
+  plot()
+```

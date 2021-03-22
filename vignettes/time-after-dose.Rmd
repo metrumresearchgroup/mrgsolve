@@ -1,0 +1,105 @@
+---
+title: "Time after dose"
+author: ""
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette: 
+    toc: true
+    toc_depth: 1
+    number_sections: true
+    keep_md: true
+    fig_width: 5
+    fig_height: 4
+vignette: >
+  %\VignetteIndexEntry{Time after dose}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+source("global.R")
+set.seed(10072)
+```
+
+# Introduction
+
+`TAD` stands for time after dose.  In mrgsolve, any time `TAD` is calculated
+automatically, a dose is a record in the input data set where `EVID` is set to 
+either 1 or 4. 
+
+# TAD calculated as runtime argument
+
+For a while, you've been able to get time after dose in your simulated output
+
+```{r, message = FALSE, warning=FALSE}
+library(mrgsolve)
+library(dplyr)
+
+mod <- modlib("pk1", req = "")
+
+mod %>% 
+  ev(amt = 100, ii = 4, addl = 3, time = 2) %>%
+  mrgsim(tad = TRUE, add = c(3.888,5.91)) %>% 
+  as_tibble() %>% 
+  head(n = 10)
+  
+```
+
+This is convenient because you can choose the output at run time, 
+we give you the negative numbers prior to the first dose etc.  This 
+sort of calculation is possible because we let mrgsolve know 
+ahead of time that we want this calculation done and mrgsolve
+makes an extra pass through the records to find when is the 
+first dose for each individual.
+
+# TAD calculated in the model
+Sometimes you would like to work with time after dose in
+your model.  This isn't super-complicated to do but does 
+require some programming and setup and all of that. As of 
+mrgsolve 0.9.1, there is a special function to do these 
+calculations for you.
+
+```{r,message=FALSE}
+mod <- mread("time-after-dose.txt",req = "")
+```
+
+```{r, echo=FALSE}
+x <- readLines("time-after-dose.txt",warn=FALSE) %>% modelparse()
+```
+
+Looking at the `[MAIN]` block:
+```{c,eval=FALSE, code = x$MAIN}
+
+```
+
+When you call `self.tad()` you will get the time after dose.  It's
+important that this gets called on every record ... specifically every dosing 
+record.  It will not work properly if it is not called every record and there 
+is no check at this time to make sure you follow that rule.  So please follow 
+the rule.
+
+To see an example:
+
+```{c, eval=FALSE, code = mod@code}
+```
+
+```{r}
+mod %>% 
+  ev(amt = 100, ii = 4, addl = 3, time = 2) %>%
+  mrgsim(tad = TRUE, add = c(3.888, 5.91)) %>% 
+  as_tibble() %>% 
+  head(n = 10)
+```
+
+You will notice two differences between `tad` (output requested at 
+run time) and `tadose` (values calculated in the model itself) in the 
+output listing above:  
+
+1. `tadose` is -1 before the first dose
+1. specifically, `tadose` is -1 at the 2 hour observation record
+   that occurs that the same time as the dose, but happens before 
+   the dose in record order
+
+The main point if this is that you can easily obtain time after 
+dose in the problem (model) itself to use as you program the model
+and also output the number into the simulated output.

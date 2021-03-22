@@ -8,10 +8,36 @@ export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
 LOAD_CANDIDATE=library(mrgsolve, lib.loc="mrgsolve.Rcheck")
 TEST_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
 
+bump-dev:
+	Rscript -e 'usethis::use_version("dev")'
+
+tag-version:
+	git tag $(VERSION)
+	git push origin $(VERSION)
+
 all:
 	make doc
 	make build
 	make install
+
+package:
+	make house
+	make doc
+	make build-vignettes
+
+check:
+	make house
+	make doc
+	make build
+	R CMD check --ignore-vignettes ${TARBALL} --no-manual
+	make unit
+
+cran:
+	make house
+	make doc
+	make build-vignettes
+	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
+	R CMD CHECK --as-cran ${TARBALL}
 
 drone:
 	make house
@@ -42,18 +68,11 @@ everything:
 
 pkgdown:
 	Rscript "inst/maintenance/pkgdown.R"
-	cp -r DOCS/ ../../mrgsolve/docs/
-	touch ../../mrgsolve/docs/.nojekyll
+	cp -r DOCS/ ../mrgsolve/docs/
+	touch ../mrgsolve/docs/.nojekyll
 
 unit:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
-
-cran:
-	make house
-	make doc
-	make build
-	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
-	R CMD CHECK --as-cran ${TARBALL}
 
 readme:
 	Rscript -e 'rmarkdown::render("README.Rmd")'
@@ -62,8 +81,10 @@ readme:
 doc:
 	Rscript -e "roxygen2::roxygenize()"
 
-.PHONY: build
 build:
+	R CMD build --no-build-vignettes --md5 $(PKGDIR) --no-manual
+
+build-vignettes:
 	R CMD build --md5 $(PKGDIR) --no-manual
 
 install:
@@ -71,13 +92,6 @@ install:
 
 install-build:
 	R CMD INSTALL --build --install-tests ${TARBALL}
-
-check:
-	make house
-	make doc
-	make build
-	R CMD check ${TARBALL} --no-manual
-	make unit
 
 qcheck: 
 	make doc
@@ -87,7 +101,7 @@ qcheck:
 check-cran:
 	make house
 	make doc
-	make build
+	make build-vignettes
 	R CMD check --as-cran ${TARBALL}
 
 test:
@@ -125,13 +139,6 @@ check-winhub:
 .PHONY: doxygen
 doxygen: 
 	doxygen doxyfile
-
-bump-dev:
-	Rscript -e 'usethis::use_version("dev")'
-
-tag-version:
-	git tag $(VERSION)
-	git push origin $(VERSION)
 
 testing:
 	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
