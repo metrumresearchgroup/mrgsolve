@@ -17,6 +17,7 @@ Doxyfile
 doxydoc
 ^.*\.Rproj$
 ^\.Rproj\.user$
+vignettes
 vignettes/.*[.]toc$
 vignettes/.*[.]log$
 vignettes/.*[.]o$
