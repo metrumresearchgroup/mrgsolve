@@ -16,8 +16,6 @@ vignette: >
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE, code = readLines("global.R")}
-mod <- mread_cache("pk1", modlib())
-mod <- mread_cache("pk2", modlib())
 set.seed(20202)
 ```
 

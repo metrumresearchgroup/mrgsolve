@@ -17,3 +17,6 @@ Rchecks
 inst/maintenance/unit/tests.md
 doc
 Meta
+inst/maintenance/unit/mrgsolve-so*
+vignettes/mrgsolve-builds
+vignettes/extra/mrgsolve-builds/

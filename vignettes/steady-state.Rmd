@@ -57,7 +57,7 @@ Let's load a PK model
 library(dplyr)
 library(mrgsolve)
 
-mod <- modlib("pk2")
+mod <- house(end = 24, delta = 1)
 ```
 
 And let's imagine a 100 mg QD dosing regimen
@@ -75,7 +75,7 @@ Let's just look at trough concentrations and see how the trough develops over
 the dosing period
 
 ```{r}
-mod <- update(mod, delta = 24, end = 24*20, outvars = "CENT, PERIPH")
+mod <- update(mod, delta = 24, end = 24*20, outvars = "CENT, RESP")
 ```
 
 And simulate that out

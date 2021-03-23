@@ -49,9 +49,8 @@ docs
 ^\.drone\.jsonnet$
 ^doc$
 ^Meta$
-vignettes/mevent\.Rmd
-vignettes/mevent-0\.cpp
-vignettes/mevent-1\.cpp
+vignettes/extra
 vignettes/build
-vignettes/mrgsolve_builds
 vignettes/mrgsolve-builds
+vignettes/extra/mrgsolve-builds/
+

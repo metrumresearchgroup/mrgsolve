@@ -24,6 +24,8 @@ package:
 	make house
 	make doc
 	make build-vignettes
+	make vignettes2
+	make install
 
 check:
 	make house
@@ -35,9 +37,13 @@ check:
 cran:
 	make house
 	make doc
+	make vignettes2
 	make build-vignettes
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	R CMD CHECK --as-cran ${TARBALL}
+
+vignettes2:
+	Rscript vignettes/extra/make.R
 
 drone:
 	make house

@@ -35,7 +35,7 @@ Let's illustrate event objects with a one-compartment, PK model.  We read this
 model from the `mrgsolve` internal model library.
 
 ```{r,message=FALSE}
-mod <- modlib("pk1cmt", end = 216, delta = 0.1)
+mod <- house(end = 216, delta = 0.1)
 ```
 
 # Events
@@ -61,7 +61,7 @@ We can implement this series of doses by passing `e` in as the `events` argument
 to `mrgsim`
 
 ```{r}
-mod %>% mrgsim(events = e) %>% plot(EV1 + CP ~ time)
+mod %>% mrgsim(events = e) %>% plot(GUT + CP ~ time)
 ```
 
 
@@ -105,10 +105,10 @@ We can combine `e1` and `e3` with a collection operator
 c(e1, e4)
 ```
 
-`mrgsolve` also defines a `%then$` operator that lets you execute one event and 
-`%then%` a second event
+`mrgsolve` also defines a `seq()` method that lets you execute one event and 
+then a second event
 ```{r}
-e3 %then% e2
+seq(e3, e2)
 ```
 
 Notice that `e3` has both `ii` and `addl` defined.  This is required for 
@@ -138,10 +138,10 @@ data
 ```
 
 To simulate from this data set, we use the `data_set` function.  First, let's 
-load a population PK model
+add an OMEGA matrix to this model:
 
 ```{r,message=FALSE}
-mod <- modlib("popex")
+mod <- omat(mod, as_dmat(c(0.1, 0.1, 0.1, 0.1)))
 ```
 ```{r}
 mod %>% data_set(data) %>% mrgsim(end=336) %>% plot("GUT, DV")
