@@ -1,0 +1,73 @@
+---
+title: "Modeled events"
+author: ""
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette: 
+    toc: true
+    number_sections: true
+    keep_md: true
+    fig_width: 5
+    fig_height: 4
+vignette: >
+  %\VignetteIndexEntry{Modeled events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+source("global.R")
+set.seed(23421)
+```
+
+# Introduction
+A modeled event is a discontinuity introduced into the simulation at a time
+and with characteristics that are determined within the model itself, rather
+than the standard setup of specifying these events via the data set.  
+
+In this vignette, we'll focus on creating a discontinuity in the simulation so 
+that the value of a parameter can change at a specific time that is not 
+necessarily chosen prior to the run time. 
+
+
+# Example with single mtime
+For example, we might wish a rate constant to change at some time 
+that is not found in a record in the input data set.  We can make this happen
+from the model code itself using `mtime()`. 
+
+Let's make KA change at 2.1 hours (`change_t` parameter in the example below).
+```{r, comment = '.', eval=FALSE, code = readLines("mtime-model.txt")}
+
+```
+
+Again, the main motivation for this is just convenience and economy of code:
+we register the event time and get that time returned into a variable that 
+we can reference later on, checking if we are past that time or not.
+
+
+```{r, message = FALSE, warning = FALSE}
+library(mrgsolve)
+library(dplyr)
+
+mod <- mread_cache("mtime-model.txt")
+
+mod %>% ev(amt=100) %>% mrgsim(delta = 0.222) %>% plot(CENT+KA~time)
+```
+
+You won't see the message that we actually stumbled on `2.1` hours in the 
+simulation even though it was not in the lineup when the simulation started. 
+
+# Example with several mtimes
+
+We could keep track of several mtimes like this
+
+```{r,eval=FALSE,code = readLines("mtime-model-2.txt")}
+
+```
+
+```{r, message = FALSE}
+mod <- mread_cache("mtime-model-2.txt")
+
+mod %>% ev(amt=100) %>% mrgsim() %>% plot(CENT + KA ~ time)
+```
+

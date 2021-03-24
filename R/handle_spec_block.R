@@ -509,14 +509,11 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
 
 # NMXML --------------------------------
 #' @export
-handle_spec_block.specNMXML <- function(x, ...) {
-  parseNMXML(dump_opts(x), ...)
-}
-
-## Functions for handling code blocks
-parseNMXML <- function(x, env, ...) {
-  pos <- attr(x,"pos")
+handle_spec_block.specNMXML <- function(x, env, ...) {
+  x <- dump_opts(x)
+  pos <- attr(x, "pos")
   x <- tolist(x, envir = env$ENV)
+  x$env <- env
   xml <- do.call(nmxml, x)
   env[["param"]][[pos]] <- xml$theta
   env[["omega"]][[pos]] <- xml$omega
@@ -530,6 +527,7 @@ handle_spec_block.specNMEXT <- function(x, env, ...) {
   x <- dump_opts(x)
   pos <- attr(x, "pos")
   x <- tolist(x, envir = env$ENV)
+  x$env <- env
   ext <- do.call(nmext, x)
   env[["param"]][[pos]] <- ext$theta
   env[["omega"]][[pos]] <- ext$omega

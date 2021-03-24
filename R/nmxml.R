@@ -22,6 +22,9 @@
 ##' @param project project directory
 ##' @param path the complete path to the \code{run.xml} file
 ##' @param file deprecated; use \code{path} instead
+##' @param root the directory that `path` and `project` are relative to; this is
+##' currently limited to the `working` directory or `cppdir`, the directory 
+##' where the model file is located
 ##' @param theta logical; if TRUE, the \code{$THETA} vector is returned
 ##' @param omega logical; if TRUE, the \code{$OMEGA} matrix is returned
 ##' @param sigma logical; if TRUE, the \code{$SIGMA} matrix is returned
@@ -37,6 +40,7 @@
 ##' estimation results to return
 ##' @param xpath xml path containing run results; if the default doesn't work, 
 ##' consider using \code{.//estimation} as an alternative; see details
+##' @param env internal
 ##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is 
@@ -68,16 +72,13 @@
 ##' 
 nmxml <- function(run = numeric(0), project = character(0),
                   file = character(0), path = character(0),
+                  root = c("working", "cppfile"), 
                   theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
                   tname = "THETA", oname = "...", sname = "...",
-                  index = "last",
-                  xpath = ".//nm:estimation") {
+                  index = "last", xpath = ".//nm:estimation", env = NULL) {
   
-  theta <- theta | !missing(tname)
-  omega <- omega | !missing(oname)
-  sigma <- sigma | !missing(sname)
   
   if(!missing(file)) {
     lifecycle::deprecate_soft(
@@ -88,6 +89,13 @@ nmxml <- function(run = numeric(0), project = character(0),
     path <- file
   }
   
+  root <- match.arg(root)
+  if(root == "cppfile" & !is.null(env)) {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
+  }
+  
   if(!missing(path)) {
     target <- path
   } else {
@@ -96,9 +104,9 @@ nmxml <- function(run = numeric(0), project = character(0),
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
-  
+
   if(!requireNamespace("xml2")) {
-    stop("Could not load namespace for package xml2.", call.=FALSE)
+    stop("could not load namespace for package xml2.", call. = FALSE)
   }
   tree <- xml2::read_xml(target)
   tree <- try(xml2::xml_find_all(tree,xpath))
@@ -127,6 +135,10 @@ nmxml <- function(run = numeric(0), project = character(0),
   }
   
   tree <- tree[[index]]
+  
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
   
   th <- list()
   om <- matrix(0,0,0)
@@ -210,20 +222,35 @@ nmxml <- function(run = numeric(0), project = character(0),
 #' @seealso [nmxml], [read_nmext]
 #' 
 #' @md
-nmext <- function(run=NA_real_, project = getwd(), 
+nmext <- function(run = NA_real_, project = getwd(), 
                   file = paste0(run,".ext"), path = NULL,
+                  root = c("working", "cppfile"),
                   index = "last",
                   theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix = "",
                   tname = "THETA", oname = "...", sname = "...", 
-                  read_fun = "data.table") {
+                  read_fun = "data.table", env = NULL) {
   
   if(missing(run) && !is.character(path)) {
     wstop("either 'run' or 'path' argument must be specified")  
   }
   
-  ans <- read_nmext(run,project,file,path,read_fun,index=index)
+  root <- match.arg(root)
+  if(root == "cppfile" & !is.null(env)) {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
+  }
+  
+  ans <- read_nmext(
+    run = run,
+    project = project,
+    file = file,
+    path = path,
+    read_fun = read_fun,
+    index = index
+  )
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)

@@ -297,7 +297,7 @@ test_that("NONMEM estimates from nmext - multiple tables", {
   rtab <- read_nmext(
     run = 2005, project = project, index = 3,  
     read_fun = "read.table"
-    )
+  )
   expect_is(rtab, "list")
   rtab_att <- attributes(rtab)
   expect_match(rtab_att$table, "Stochastic Approximation")
@@ -312,7 +312,7 @@ test_that("NONMEM estimates from nmext - multiple tables", {
   expect_error(
     mrgsolve:::nmext(run = 2005, project = project, index = 333), 
     regexpr = "table 333 requested but only 5 tables"
-    )
+  )
 })
 
 test_that("custom labeled THETA", {
@@ -322,4 +322,17 @@ test_that("custom labeled THETA", {
   expect_identical(names(a$theta), paste0("THETA", 1:7))
   expect_identical(names(b$theta), letters[1:7])
   expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
+})
+
+test_that("read nm estimates relative to cpp file", {
+  skip_if_not(
+    all(
+      file.exists("nm/1005-ext.cpp"), 
+      file.exists("nm/1005-xml.cpp")
+    )
+  )
+  mod <- mread("1005-ext", project = "nm", compile = FALSE)
+  expect_is(mod, "mrgmod") 
+  mod <- mread("1005-xml", project = "nm", compile = FALSE)
+  expect_is(mod, "mrgmod") 
 })
