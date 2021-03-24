@@ -43,7 +43,7 @@ _config.yml
 Makefile
 docs
 ^DOCS$
-^build$
+^./build$
 ^_pkgdown\.yml$
 ^\.drone\.yml$
 ^\.drone\.jsonnet$

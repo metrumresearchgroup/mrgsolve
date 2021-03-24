@@ -24,7 +24,7 @@ package:
 	make house
 	make doc
 	make build-vignettes
-	make vignettes2
+	#make vignettes2
 	make install
 
 check:
@@ -34,10 +34,12 @@ check:
 	R CMD check --ignore-vignettes ${TARBALL} --no-manual
 	make unit
 
+check-only:
+	R CMD check --as-cran ${TARBALL} 
+
 cran:
 	make house
 	make doc
-	make vignettes2
 	make build-vignettes
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	R CMD CHECK --as-cran ${TARBALL}
