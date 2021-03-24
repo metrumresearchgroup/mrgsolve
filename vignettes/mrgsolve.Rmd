@@ -7,8 +7,8 @@ output:
     toc: true
     number_sections: true
     keep_md: true
-    fig_width: 5
-    fig_height: 4
+    fig_width: 6
+    fig_height: 3
 vignette: >
   %\VignetteIndexEntry{Get started}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,7 +20,10 @@ source("global.R")
 set.seed(20202)
 ```
 
-This vignette shows the user how to do their first simulation with mrgsolve.
+This is a simple vignette to help you get your first simulation done with 
+mrgsolve. Check out https://github.com/metrumresearchgroup/mrgsolve for links 
+to other resources including the user guide, blog, vignettes, pkgdown 
+documentation and more.
 
 # Load a model
 
@@ -70,8 +73,8 @@ evnt <- ev(amt = 100, ii = 24, addl = 9)
 evnt
 ```
 
-We'll see in other vignettes how to create more-complicated events as 
-well as how to create larger data sets with many individuals in them.
+We'll see in other vignettes how to create more-complicated events as well as 
+how to create larger data sets with many individuals in them.
 
 For now, the event object is just an intervention that we can combine
 with a model.
