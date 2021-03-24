@@ -19,7 +19,7 @@ equation solver. See \link{aboutsolver} for more information.
 \itemize{
 \item Main mrgsolve resource page: \url{https://mrgsolve.github.io}
 \item User guide: \url{https://mrgsolve.github.io/user_guide/}
-\item Vignettes: \url{https://mrgsolve.github.io/vignettes/}
+\item Web vignettes: \url{https://mrgsolve.github.io/vignettes/}
 }
 }
 

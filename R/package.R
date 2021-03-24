@@ -24,7 +24,7 @@
 #' 
 #' - Main mrgsolve resource page: [https://mrgsolve.github.io](https://mrgsolve.github.io)
 #' - User guide: [https://mrgsolve.github.io/user_guide/](https://mrgsolve.github.io/user_guide/)
-#' - Vignettes: [https://mrgsolve.github.io/vignettes/](https://mrgsolve.github.io/vignettes/)
+#' - Web vignettes: [https://mrgsolve.github.io/vignettes/](https://mrgsolve.github.io/vignettes/)
 #' 
 #' @section Package-wide options:
 #' 
