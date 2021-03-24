@@ -20,7 +20,6 @@ source("global.R")
 set.seed(23421)
 ```
 
-
 # Introduction
 A modeled event is a discontinuity introduced into the simulation at a time
 and with characteristics that are determined within the model itself, rather
