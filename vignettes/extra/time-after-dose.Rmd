@@ -103,3 +103,57 @@ output listing above:
 The main point if this is that you can easily obtain time after 
 dose in the problem (model) itself to use as you program the model
 and also output the number into the simulated output.
+
+# Time after dose in specific compartment
+
+Version 0.10.7 adds a new plugin with the ability to calculate time after dose 
+in any compartment. 
+
+We write a model using the `tad` plugin to track time after dose in 
+compartments `one` and `two`.  We create `tadose` objects to track 
+this and we can call the `tad()` method on these objects, passing 
+in the `self` data item.
+
+```{r}
+code <- '
+
+[plugin] tad
+
+[ global ] 
+mrg::tadose tad_cmt_1(1); 
+mrg::tadose tad_cmt_2(2);
+
+[ pkmodel ] cmt = "GUT,CENT", depot = TRUE
+
+[ param ] CL = 1, V = 20, KA = 1
+
+[ main ] 
+capture tad1 = tad_cmt_1.tad(self); 
+capture tad2 = tad_cmt_2.tad(self);
+
+'
+  
+mod <- mcode("tad", code, soloc = '.')
+
+
+data <- c(
+  ev(amt = 100, cmt = 1, time = 1), 
+  ev(amt = 200, cmt = 2, time = 3)
+)
+
+mrgsim(mod, data)
+
+```
+
+Note that time after dose is -1 until a dose is administered. 
+
+Recall also that time after dose can be calculated more simply if there is 
+only one dose type by passing the `tad` argument:
+
+```{r}
+data1 <- filter(data, cmt ==1) %>% mutate(time = 3)
+mod %>% mrgsim(data1, tad = TRUE)
+```
+
+This is a little nicer because it will fill in negative `tad` values for you.
+ 
