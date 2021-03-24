@@ -1,5 +1,5 @@
 ---
-title: Models without compartments (dollar-PRED)
+title: Models without compartments
 author: ""
 date: "`r Sys.Date()`"
 output: 
@@ -11,7 +11,7 @@ output:
     fig_width: 5
     fig_height: 4
 vignette: >
-  %\VignetteIndexEntry{Models without compartments (dollar-PRED)}
+  %\VignetteIndexEntry{Models without compartments}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,6 +23,9 @@ set.seed(10202)
 
 ```{r pred_setup}
 library(mrgsolve)
+library(ggplot2)
+library(dplyr)
+library(purrr)
 ```
 
 This vignette introduces a new formal code block for writing models
@@ -39,8 +42,7 @@ models are invoked.
 As a most-basic model, we look at the `pred1` model in `modlib()`
 
 ```{r}
-library(mrgsolve)
-mod <- mread_cache("pred1", modlib())
+mod <- modlib("pred1")
 ```
 
 
@@ -61,15 +63,14 @@ When mrgsolve finds `$PRED`, it will generate an error if it also finds
 In the example model, the response is a function of the parameter `B`, 
 so we'll generate an input data set with some values of `B`
 
-```{r,message = FALSE}
-library(dplyr)
+```{r, message = FALSE}
 data <- tibble(ID = 1, B = exp(rnorm(100, 0,2)))
 
 head(data)
 ```
 
 ```{r}
-out <- mrgsim_d(mod,data,carry.out="B")
+out <- mrgsim_d(mod, data, carry_out = "B")
 
 plot(out, Y~B)
 ```
@@ -78,15 +79,13 @@ plot(out, Y~B)
 Like other models, we can simulate from a population
 
 ```{r}
-library(purrr)
-set.seed(223)
 df <- map_df(1:30, ~ tibble(ID = .x, B = seq(0,30,1)))
 
 head(df)
 
 mod %>% 
   data_set(df) %>% 
-  mrgsim(carry.out="B") %>%
+  mrgsim(carry_out = "B") %>%
   plot(Y ~ B)
 ```
 
@@ -124,15 +123,17 @@ mod <- mcode_cache("pkpd", code)
 
 To simulate, look at 50 subjects at each of 5 doses
 ```{r}
+set.seed(8765)
+
 data <- 
-  expand.idata(DOSE = c(30,50,80,110,200),ID = 1:50) %>% 
+  expand.idata(DOSE = c(30,50,80,110,200), ID = 1:50) %>% 
   mutate(WT = exp(rnorm(n(),log(80),1)))
 
 head(data)
 ```
 
 ```{r}
-out <- mrgsim_d(mod,data,carry.out="WT,DOSE") %>% as.data.frame()
+out <- mrgsim_df(mod, data, carry_out="WT,DOSE") 
 
 head(out)
 ```
@@ -140,12 +141,10 @@ head(out)
 
 Plot the response (`Y`) versus `AUC`, colored by dose
 ```{r}
-library(ggplot2)
-
-ggplot(out, aes(AUC,Y,col =factor(DOSE))) + 
+ggplot(out, aes(AUC, Y, col =factor(DOSE))) + 
   geom_point() + 
-  scale_x_continuous(trans = "log", breaks = 10^seq(-4,4)) + 
-  geom_smooth(aes(AUC,Y),se = FALSE,col="darkgrey") + theme_bw() + 
+  scale_x_log10(breaks = 10^seq(-4, 4)) + 
+  geom_smooth(aes(AUC,Y), se = FALSE, col="darkgrey") + theme_bw() + 
   scale_color_brewer(palette = "Set2", name = "") + 
   theme(legend.position = "top")
 ```

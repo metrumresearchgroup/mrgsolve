@@ -525,6 +525,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     delta <- x@delta
     end <- x@end
     start <- x@start
+    nm_import <- shlib(x)[["nm_import"]]
     shlib <- shlib(x)
     cfile <- cfile(x)
     sodll <- sodll(x)

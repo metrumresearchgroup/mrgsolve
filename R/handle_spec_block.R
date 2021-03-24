@@ -518,6 +518,7 @@ handle_spec_block.specNMXML <- function(x, env, ...) {
   env[["param"]][[pos]] <- xml$theta
   env[["omega"]][[pos]] <- xml$omega
   env[["sigma"]][[pos]] <- xml$sigma
+  env[["nm_import"]] <- c(env[["nm_import"]], xml[["file"]])
   return(NULL)
 }
 
@@ -532,6 +533,7 @@ handle_spec_block.specNMEXT <- function(x, env, ...) {
   env[["param"]][[pos]] <- ext$theta
   env[["omega"]][[pos]] <- ext$omega
   env[["sigma"]][[pos]] <- ext$sigma
+  env[["nm_import"]] <- c(env[["nm_import"]], ext[["file"]])
   return(NULL)
 }
 

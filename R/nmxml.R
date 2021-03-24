@@ -207,9 +207,9 @@ nmxml <- function(run = numeric(0), project = character(0),
     class="sigmalist"
   )
   
-  ans <- list(theta=th, omega=om, sigma=sg)
+  ans <- list(theta = th, omega = om, sigma = sg, file = target)
   
-  return(structure(ans,class="NMXMLDATA"))
+  return(structure(ans, class = "NMXMLDATA"))
   
 }
 
@@ -294,18 +294,19 @@ nmext <- function(run = NA_real_, project = getwd(),
   }
   
   om <- create_matlist(
-    setNames(list(om),oname), 
-    labels=olabels, 
-    class="omegalist"
+    setNames(list(om), oname), 
+    labels = olabels, 
+    class = "omegalist"
   )
   
   sg <- create_matlist(
-    setNames(list(sg),sname), 
-    labels=slabels, 
-    class="sigmalist"
+    setNames(list(sg), sname), 
+    labels = slabels, 
+    class = "sigmalist"
   )
   
-  ans <- list(theta = th, omega = om, sigma = sg)
+  file <- attributes(ans)[["file"]]
+  ans <- list(theta = th, omega = om, sigma = sg, file = file)
   
   return(structure(ans,class="NMXMLDATA"))
 }
@@ -428,12 +429,12 @@ read_nmext <- function(run = NA_real_,
   ans <- as.list(ans)
   names(ans) <- gsub("[[:punct:]]", "", names(ans))
   ans <- list(
+    raw = ans,
     param = ans[grepl("THETA", names(ans))],
     omega = as_bmat(ans, "OMEGA"), 
-    sigma = as_bmat(ans, "SIGMA"),
-    raw = ans
+    sigma = as_bmat(ans, "SIGMA")
   )
-  return(structure(ans, table = m$table, index = index))
+  return(structure(ans, table = m$table, index = index, file = extfile))
 }
 
 map_ext_file <- function(file, all_rows = FALSE) {

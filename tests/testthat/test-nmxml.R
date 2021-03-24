@@ -258,7 +258,7 @@ test_that("Mixed labels / no labels and prefix", {
 test_that("read_nmext returns estimates", {
   project <- system.file("nonmem", package="mrgsolve")
   x <- read_nmext(1005, project)   
-  expect_equal(names(x), c("param", "omega", "sigma", "raw"))
+  expect_equal(names(x), c("raw", "param", "omega", "sigma"))
   expect_is(x$param, "list")
   expect_is(x$omega, "matrix")
   expect_is(x$sigma, "matrix")
@@ -335,4 +335,17 @@ test_that("read nm estimates relative to cpp file", {
   expect_is(mod, "mrgmod") 
   mod <- mread("1005-xml", project = "nm", compile = FALSE)
   expect_is(mod, "mrgmod") 
+})
+
+test_that("nm source file is available via as.list", {
+  skip_if_not(
+    all(
+      file.exists("nm/1005-ext.cpp"), 
+      file.exists("nm/1005-xml.cpp")
+    )
+  )
+  list1 <- as.list(mread("1005-ext", project = "nm", compile = FALSE))
+  list2 <- as.list(mread("1005-xml", project = "nm", compile = FALSE))
+  expect_equal(basename(list1[["nm_import"]]), "1005.ext")
+  expect_equal(basename(list2[["nm_import"]]), "1005.xml")
 })

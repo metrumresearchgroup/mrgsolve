@@ -31,7 +31,7 @@ check:
 	make house
 	make doc
 	make build
-	R CMD check --ignore-vignettes ${TARBALL} --no-manual
+	R CMD check ${TARBALL} --no-manual
 	make unit
 
 check-only:
