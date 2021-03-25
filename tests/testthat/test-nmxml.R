@@ -341,11 +341,15 @@ test_that("nm source file is available via as.list", {
   skip_if_not(
     all(
       file.exists("nm/1005-ext.cpp"), 
-      file.exists("nm/1005-xml.cpp")
+      file.exists("nm/1005-xml.cpp"), 
+      file.exists("nm/1005-both.cpp")
     )
   )
   list1 <- as.list(mread("1005-ext", project = "nm", compile = FALSE))
   list2 <- as.list(mread("1005-xml", project = "nm", compile = FALSE))
-  expect_equal(basename(list1[["nm_import"]]), "1005.ext")
-  expect_equal(basename(list2[["nm_import"]]), "1005.xml")
+  list3 <- as.list(mread("1005-both", project = "nm", compile = FALSE))
+  ans <- c("1005.ext", "1005.xml")
+  expect_equal(basename(list1[["nm_import"]]), ans[1])
+  expect_equal(basename(list2[["nm_import"]]), ans[2])
+  expect_equal(basename(list3[["nm_import"]]), ans)
 })
