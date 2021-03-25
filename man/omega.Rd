@@ -70,7 +70,7 @@ omat(mod, make=TRUE)
 $OMEGA
 1 2 3
 
-$OMEGA @block
+$OMEGA \@block
 1 0.1 2
 
 $OMEGA \@cor
