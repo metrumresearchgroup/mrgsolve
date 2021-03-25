@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-LIBDIR=${HOME}/Rlibs/lib
 PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
