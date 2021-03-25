@@ -61,8 +61,8 @@ no-test:
 
 pkgdown:
 	Rscript "inst/maintenance/pkgdown.R"
-	cp -r DOCS/ ../mrgsolve/docs/
-	touch ../mrgsolve/docs/.nojekyll
+	#cp -r DOCS/ ../mrgsolve/docs/
+	#touch ../mrgsolve/docs/.nojekyll
 
 unit:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
