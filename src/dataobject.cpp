@@ -173,7 +173,7 @@ void dataobject::locate_tran() {
   if(col[_COL_ss_]   > zeros) col[_COL_ss_]   = zeros;
   if(col[_COL_rate_] > zeros) col[_COL_rate_] = zeros;
   if(col[_COL_evid_] > zeros) col[_COL_evid_] = zeros;
-  if(col[_COL_cmt_] > zeros) col[_COL_cmt_] = zeros;
+  if(col[_COL_cmt_]  > zeros) col[_COL_cmt_]  = zeros;
 }
 
 void dataobject::idata_row() {
@@ -295,7 +295,6 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
     }
   }
 }
-
 
 void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
