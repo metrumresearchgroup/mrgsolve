@@ -33,7 +33,6 @@
 // Need to say if it is output (stime) or not (ptime)
 
 datarecord::datarecord(double time_, int pos_, bool output_) {
-  
   Time = time_;
   Pos = pos_;
   Output = output_;
@@ -64,7 +63,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Addl = 0;
   Output = true;
   Armed = false;
-  Fromdata=true;
+  Fromdata = true;
 }
 
 // Data set event

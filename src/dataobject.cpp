@@ -173,7 +173,7 @@ void dataobject::locate_tran() {
   if(col[_COL_ss_]   > zeros) col[_COL_ss_]   = zeros;
   if(col[_COL_rate_] > zeros) col[_COL_rate_] = zeros;
   if(col[_COL_evid_] > zeros) col[_COL_evid_] = zeros;
-  if(col[_COL_cmt_] > zeros) col[_COL_cmt_] = zeros;
+  if(col[_COL_cmt_]  > zeros) col[_COL_cmt_]  = zeros;
 }
 
 void dataobject::idata_row() {
@@ -263,7 +263,6 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         j,
         Data(j,Idcol)
       );
-      
       if(Data(j,col[_COL_cmt_]) != 0.0) {
         throw Rcpp::exception(
             "all records must have cmt set to zero.",
@@ -282,21 +281,20 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
             false
         ); 
       }
-      
       obs->evid(Data(j,col[_COL_evid_]));
       obs->addl(Data(j,col[_COL_addl_]));
       obs->ii(Data(j,col[_COL_ii_]));
       obs->unarm();
       a[h].push_back(obs);
-      if(obs->evid() ==0) {
+      if(obs->evid()==0) {
         ++obscount;
       } else {
-        ++evcount;  
+        ++evcount;
+        if(obsonly) obs->output(false);
       }
     }
   }
 }
-
 
 void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
