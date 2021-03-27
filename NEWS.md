@@ -1,5 +1,16 @@
 # mrgsolve (development version)
 
+- The absolute paths to nonmem output files (`root.xml` or `root.ext`) are now 
+  saved in the model object when nonmem results are imported via `$NMEXT` or 
+  `$NMXML`; paths are accessible by coercing the model object with `as.list()`
+  and looking at the `nm_import` item (#802)
+- Add Tim Waterhouse as contributor (#809)
+- Add `root` argument to `$NMEXT` and `$NMXML` so that the nonmem output files
+  are located relative to the `working` directory (default, previous behavior)
+  or the directory where the `cppfile` is stored; `cppfile` will eventually 
+  replace `working` as the default (#803)
+- Models based on `$PRED` now respect the `obsonly` option (#811)
+
 # mrgsolve 0.10.9
 
 - Dosing into a compartment that is off at the time of the dose turns the 
