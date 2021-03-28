@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 0.11.0
 
 - The absolute paths to nonmem output files (`root.xml` or `root.ext`) are now 
   saved in the model object when nonmem results are imported via `$NMEXT` or 
