@@ -15,3 +15,8 @@ Rchecks
 !package/*.tar.gz
 *00_pkg_src
 inst/maintenance/unit/tests.md
+doc
+Meta
+inst/maintenance/unit/mrgsolve-so*
+vignettes/mrgsolve-builds
+vignettes/extra/mrgsolve-builds/

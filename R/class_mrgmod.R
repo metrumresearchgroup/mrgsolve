@@ -467,6 +467,8 @@ setMethod("names", "mrgmod", function(x) {
 #' - `random`: names and labels of `$OMEGA` and `$SIGMA`
 #' - `code`: model source code from `cfile`
 #' - `details`: model details data frame
+#' - `nm_import`: a character vector listing the names of nonmem output files
+#'   that were read to import estimates from a completed nonmem run
 #' - `cpp_variables`: a data frame listing variables internal to the model 
 #'   cpp file
 #' - `atol`: see [solversettings]
@@ -513,7 +515,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
       advan <- x@advan
       functions <- funset(x)
     }
-    cpp_variables <- x@shlib[["cpp_variables"]]
+    cpp_variables <- shlib(x)[["cpp_variables"]]
+    nm_import <- shlib(x)[["nm_import"]]
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
@@ -537,14 +540,12 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
-    
-    covariates <- as.character(x@shlib$covariates)
+    covariates <- as.character(shlib(x)[["covariates"]])
     pars <- pars(x)
     neq <- neq(x)
     npar <- npar(x)
   })
 })
-
 
 #' Select parameter values from a model object
 #' 

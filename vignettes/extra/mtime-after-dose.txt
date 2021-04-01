@@ -1,0 +1,11 @@
+[ param ] CL = 1, V = 20, KA = 1
+
+[ pkmodel ] cmt = "GUT,CENT", depot = TRUE
+
+[ main ] 
+capture tad = self.tad();
+
+double mt1 = self.mtime(tad + 
+
+[ table]
+capture CP  = CENT/V;

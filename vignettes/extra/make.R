@@ -1,0 +1,7 @@
+message("making secondary vignettes")
+stopifnot(`rmarkdown is required` = require(rmarkdown))
+render("vignettes/extra/time-after-dose.Rmd", output_dir = "inst/doc", quiet = TRUE)
+render("vignettes/extra/modeled-event-time.Rmd", output_dir = "inst/doc", quiet = TRUE)
+res <- file.remove(list.files("inst/doc", pattern = "\\.md*", full.names=TRUE))
+res <- unlink("inst/doc/*_files", recursive = TRUE)
+res <- unlink("inst/doc/modeled-event-time_files", recursive = TRUE)

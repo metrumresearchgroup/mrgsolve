@@ -81,10 +81,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   
-  if(verbose) say("unpacking data");
-  
   // Create data objects from data and idata
-  dataobject dat(data,parnames);
+  dataobject dat(data, parnames);
   dat.map_uid();
   dat.locate_tran();
   
@@ -127,7 +125,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
   LSODA solver(neq, parin);
-  
   
   recstack a(NID);
   

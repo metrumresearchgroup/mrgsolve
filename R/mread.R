@@ -411,6 +411,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc
+  x@shlib[["nm_import"]] <- mread.env[["nm_import"]]
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
   x@shlib[["md5"]] <- build[["md5"]]
   
