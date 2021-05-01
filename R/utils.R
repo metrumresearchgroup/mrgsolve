@@ -589,5 +589,3 @@ mod_first <- function(cl) {
   msg <- sprintf("the first argument to %s must be a model object",fun)
   wstop(msg)
 }
-
-

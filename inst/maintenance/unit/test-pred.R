@@ -107,5 +107,10 @@ test_that("amt is ok", {
   )
 })
 
-
-
+test_that("obsonly works with dollar-pred", {
+  data <- tibble(time = c(0,1,2,3,4), evid = c(0,2,1,0,0), ID = 1)
+  out1 <- mrgsim(mod, data)
+  out2 <- mrgsim(mod, data, obsonly = TRUE)
+  expect_equal(nrow(out1), nrow(data))
+  expect_equal(out2$time, c(0,3,4))
+})

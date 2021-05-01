@@ -106,7 +106,4 @@ public:
   
 };
 
-
 #endif
-
-

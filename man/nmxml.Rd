@@ -10,6 +10,7 @@ nmxml(
   project = character(0),
   file = character(0),
   path = character(0),
+  root = c("working", "cppfile"),
   theta = TRUE,
   omega = TRUE,
   sigma = TRUE,
@@ -21,7 +22,8 @@ nmxml(
   oname = "...",
   sname = "...",
   index = "last",
-  xpath = ".//nm:estimation"
+  xpath = ".//nm:estimation",
+  env = NULL
 )
 }
 \arguments{
@@ -32,6 +34,10 @@ nmxml(
 \item{file}{deprecated; use \code{path} instead}
 
 \item{path}{the complete path to the \code{run.xml} file}
+
+\item{root}{the directory that `path` and `project` are relative to; this is
+currently limited to the `working` directory or `cppdir`, the directory 
+where the model file is located}
 
 \item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
 
@@ -59,6 +65,8 @@ estimation results to return}
 
 \item{xpath}{xml path containing run results; if the default doesn't work, 
 consider using \code{.//estimation} as an alternative; see details}
+
+\item{env}{internal}
 }
 \value{
 A list with theta, omega and sigma elements, 
