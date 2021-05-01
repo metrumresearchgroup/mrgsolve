@@ -222,7 +222,7 @@ my_str_split <- function(string,pattern,n=3,fixed=FALSE,collapse=pattern) {
 ##' @md
 ##' @export
 expand.idata <- function(...) {
-  ans <- expand.grid(...,stringsAsFactors=FALSE)
+  ans <- expand.grid(...,stringsAsFactors=FALSE, KEEP.OUT.ATTRS = FALSE)
   ans$ID <- seq_len(nrow(ans))
   dplyr::select(ans, "ID", everything())
 }
