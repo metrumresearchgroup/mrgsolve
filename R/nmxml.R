@@ -22,6 +22,9 @@
 ##' @param project project directory
 ##' @param path the complete path to the \code{run.xml} file
 ##' @param file deprecated; use \code{path} instead
+##' @param root the directory that `path` and `project` are relative to; this is
+##' currently limited to the `working` directory or `cppdir`, the directory 
+##' where the model file is located
 ##' @param theta logical; if TRUE, the \code{$THETA} vector is returned
 ##' @param omega logical; if TRUE, the \code{$OMEGA} matrix is returned
 ##' @param sigma logical; if TRUE, the \code{$SIGMA} matrix is returned
@@ -37,6 +40,7 @@
 ##' estimation results to return
 ##' @param xpath xml path containing run results; if the default doesn't work, 
 ##' consider using \code{.//estimation} as an alternative; see details
+##' @param env internal
 ##' @aliases NMXML
 ##' @details
 ##' If \code{run} and \code{project} are supplied, the .xml file is 
@@ -66,18 +70,15 @@
 ##'   mrgsolve:::nmxml(run = 1005, project = proj)
 ##' }
 ##' 
-nmxml <- function(run=numeric(0), project=character(0),
-                  file=character(0), path = character(0),
-                  theta=TRUE, omega=TRUE, sigma=TRUE,
+nmxml <- function(run = numeric(0), project = character(0),
+                  file = character(0), path = character(0),
+                  root = c("working", "cppfile"), 
+                  theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...",
-                  index = "last",
-                  xpath = ".//nm:estimation") {
+                  tname = "THETA", oname = "...", sname = "...",
+                  index = "last", xpath = ".//nm:estimation", env = NULL) {
   
-  theta <- theta | !missing(tname)
-  omega <- omega | !missing(oname)
-  sigma <- sigma | !missing(sname)
   
   if(!missing(file)) {
     lifecycle::deprecate_soft(
@@ -88,6 +89,13 @@ nmxml <- function(run=numeric(0), project=character(0),
     path <- file
   }
   
+  root <- match.arg(root)
+  if(root == "cppfile" & !is.null(env)) {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
+  }
+  
   if(!missing(path)) {
     target <- path
   } else {
@@ -96,9 +104,9 @@ nmxml <- function(run=numeric(0), project=character(0),
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
-  
+
   if(!requireNamespace("xml2")) {
-    stop("Could not load namespace for package xml2.", call.=FALSE)
+    stop("could not load namespace for package xml2.", call. = FALSE)
   }
   tree <- xml2::read_xml(target)
   tree <- try(xml2::xml_find_all(tree,xpath))
@@ -127,6 +135,10 @@ nmxml <- function(run=numeric(0), project=character(0),
   }
   
   tree <- tree[[index]]
+  
+  theta <- theta | !missing(tname)
+  omega <- omega | !missing(oname)
+  sigma <- sigma | !missing(sname)
   
   th <- list()
   om <- matrix(0,0,0)
@@ -195,9 +207,9 @@ nmxml <- function(run=numeric(0), project=character(0),
     class="sigmalist"
   )
   
-  ans <- list(theta=th, omega=om, sigma=sg)
+  ans <- list(theta = th, omega = om, sigma = sg, file = target)
   
-  return(structure(ans,class="NMXMLDATA"))
+  return(structure(ans, class = "NMXMLDATA"))
   
 }
 
@@ -210,19 +222,35 @@ nmxml <- function(run=numeric(0), project=character(0),
 #' @seealso [nmxml], [read_nmext]
 #' 
 #' @md
-nmext <- function(run=NA_real_, project=getwd(), 
-                  file=paste0(run,".ext"), path = NULL,
-                  theta=TRUE, omega=TRUE, sigma=TRUE,
+nmext <- function(run = NA_real_, project = getwd(), 
+                  file = paste0(run,".ext"), path = NULL,
+                  root = c("working", "cppfile"),
+                  index = "last",
+                  theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
-                  oprefix = "", sprefix="",
-                  tname="THETA", oname="...", sname="...", 
-                  read_fun = "data.table") {
+                  oprefix = "", sprefix = "",
+                  tname = "THETA", oname = "...", sname = "...", 
+                  read_fun = "data.table", env = NULL) {
   
   if(missing(run) && !is.character(path)) {
     wstop("either 'run' or 'path' argument must be specified")  
   }
   
-  ans <- read_nmext(run,project,file,path,read_fun)
+  root <- match.arg(root)
+  if(root == "cppfile" & !is.null(env)) {
+    cwd <- getwd()
+    on.exit(setwd(cwd))
+    setwd(env[["project"]])
+  }
+  
+  ans <- read_nmext(
+    run = run,
+    project = project,
+    file = file,
+    path = path,
+    read_fun = read_fun,
+    index = index
+  )
   
   theta <- theta | !missing(tname)
   omega <- omega | !missing(oname)
@@ -266,18 +294,19 @@ nmext <- function(run=NA_real_, project=getwd(),
   }
   
   om <- create_matlist(
-    setNames(list(om),oname), 
-    labels=olabels, 
-    class="omegalist"
+    setNames(list(om), oname), 
+    labels = olabels, 
+    class = "omegalist"
   )
   
   sg <- create_matlist(
-    setNames(list(sg),sname), 
-    labels=slabels, 
-    class="sigmalist"
+    setNames(list(sg), sname), 
+    labels = slabels, 
+    class = "sigmalist"
   )
   
-  ans <- list(theta = th, omega = om, sigma = sg)
+  file <- attributes(ans)[["file"]]
+  ans <- list(theta = th, omega = om, sigma = sg, file = file)
   
   return(structure(ans,class="NMXMLDATA"))
 }
@@ -303,9 +332,16 @@ nm_xml_matrix <- function(x) {
 ##' @param file the `ext` file name
 ##' @param path full path and file name for `ext` file
 ##' @param read_fun function to read the `ext` file
+##' @param index selects the table number whose results will be returned;
+##' use value "last" to select the last table in the `.ext` file; or pass an 
+##' integer specifying the table number; in case there is exactly
+##' one table in the `.ext` file, pass the value "single" to bypass parsing 
+##' the file to look for sub tables (this might be useful when BAYES analysis 
+##' was performed as the only estimation method and there are 10000s of 
+##' posterior samples in the file)
 ##' 
-##' @return A list with param, omega, and sigma in a format
-##' ready to be used to update a model object.
+##' @return A list with param, omega, and sigma in a format ready to be used to 
+##' update a model object.
 ##' 
 ##' @examples
 ##' project <- system.file("nonmem", package = "mrgsolve")
@@ -318,10 +354,16 @@ nm_xml_matrix <- function(x) {
 ##' 
 ##' est$sigma
 ##' 
+##' est <- read_nmext(2005, project = project, index = 3)
+##' 
 ##' @md
 ##' @export 
-read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"), 
-                       path=NULL, read_fun = c("data.table","read.table")) {
+read_nmext <- function(run = NA_real_, 
+                       project = getwd(), 
+                       file = paste0(run,".ext"), 
+                       path = NULL, 
+                       read_fun = c("data.table","read.table"), 
+                       index = "last") {
   
   if(is.character(path)) {
     extfile <- path  
@@ -338,20 +380,40 @@ read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"),
   
   use_dt <- requireNamespace("data.table",quietly=TRUE) & read_fun=="data.table"
   
+  all_rows <- FALSE
+  if(index == "single") {
+    index <- 1
+    all_rows <- TRUE
+  }
+  
+  m <- map_ext_file(extfile, all_rows = all_rows)
+  
+  if(index == "last") index <- length(m)
+  if(!is.numeric(index)) wstop("index did not resolve to a numeric value")
+  if(index < 1) wstop("index must resolve to a value that is at least 1")
+  if(index > length(m)) {
+    msg <- c(glue("[read_nmext] table {index} was requested, "), 
+             glue("but only {length(m)} tables were found in the ext file"))
+    stop(msg,call.=FALSE)
+  }
+  m <- m[[index]]
+  
   if(use_dt) {
     df <- data.table::fread(
-      file=extfile, 
+      file = extfile, 
       na.strings = '.', 
-      data.table=FALSE,
-      skip=1
+      data.table = FALSE,
+      skip = m$skip, 
+      nrows = m$nrows
     )
   } else {
     df <- read.table(
-      file=extfile,
-      na.strings='.',
-      stringsAsFactors=FALSE,
-      skip=1, 
-      header=TRUE
+      file = extfile,
+      na.strings = '.',
+      stringsAsFactors = FALSE,
+      skip = m$skip,
+      nrows = m$nrows,
+      header = TRUE
     )
   }
   
@@ -367,10 +429,33 @@ read_nmext <- function(run=NA_real_, project = getwd(), file=paste0(run,".ext"),
   ans <- as.list(ans)
   names(ans) <- gsub("[[:punct:]]", "", names(ans))
   ans <- list(
+    raw = ans,
     param = ans[grepl("THETA", names(ans))],
     omega = as_bmat(ans, "OMEGA"), 
-    sigma = as_bmat(ans, "SIGMA"),
-    raw = ans  
+    sigma = as_bmat(ans, "SIGMA")
   )
-  return(ans)
+  return(structure(ans, table = m$table, index = index, file = extfile))
+}
+
+map_ext_file <- function(file, all_rows = FALSE) {
+  if(isTRUE(all_rows)) {
+    ans <- list(list(skip = 1, nrows = Inf, table = "single table"))
+    return(ans)
+  }
+  x <- readLines(file, warn = FALSE)
+  start <- which(substr(x, 1, 5) == "TABLE")
+  if(length(start) == 1) {
+    ans <- list(list(skip = 1, nrows = Inf, table = x[start[1]]))
+    return(ans)
+  }
+  end <- c(start[-1]-1,length(x))
+  ans <- vector(mode = "list", length = length(start))
+  for(i in seq_along(start)) {
+    ans[[i]] <- list(
+      skip  = start[i], 
+      nrows = end[i] - start[i] - 1, 
+      table = x[start[i]]
+    )
+  }
+  ans
 }

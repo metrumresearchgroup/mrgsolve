@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,10 +25,10 @@ block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 advtr <- function(advan,trans) {
   if(advan==13 | trans %in% c(0,1)) return(NULL)
   if((advan %in% c(1,2)) & !(trans %in% c(2,11))) {
-    stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call.=FALSE)
+    stop("ADVAN 1 and 2 can only use trans 1, 2, or 11", call. = FALSE)
   }
   if((advan %in% c(3,4)) & !(trans %in% c(4,11))) {
-    stop("ADVAN 3 and 4 can only use trans 1, 4, or 11", call.=FALSE)
+    stop("ADVAN 3 and 4 can only use trans 1, 4, or 11", call. = FALSE)
   }
   return(paste0("__ADVAN", advan, "_TRANS", trans, "__"))
 }
@@ -46,15 +46,16 @@ set_args <- c(
   "carry.out","Trequest","trequest"
 )
 
-check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
+check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
   
   if(sum("MAIN"  == x) > 1){
     stop("Only one $MAIN block allowed in the model.",call.=FALSE)
   }
-  if(sum("SET"   == x) > 1) {
-    stop("Only one $SET block allowed in the model.",call.=FALSE)
+  
+  if(sum("SET" == x) > 1) {
+    stop("Only one $SET block allowed in the model.", call.=FALSE)
   }
   
   if(warn) {
@@ -70,11 +71,18 @@ check_spec_contents <- function(x,crump=TRUE,warn=TRUE,...) {
     
     if(length(invalid) > 0) {
       warning(
-        paste0("Invalid blocks found: ", paste(invalid, collapse=" "), "."), call.=FALSE
+        paste0(
+          "invalid blocks found: ", 
+          paste(invalid, collapse = " ")
+        ), 
+        call. = FALSE, immediate. = TRUE
       )
     }
   }
+  
   if(length(valid)==0) stop("No valid blocks found.", call.=FALSE)
+  
+  return(invisible(NULL))
 }
 
 audit_spec <- function(x,spec,warn=TRUE) {
@@ -180,9 +188,9 @@ modelparse <- function(txt, split=FALSE, drop_blank = TRUE,
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
-  names(spec) <- toupper(labs)
+  names(spec) <- labs
   
-  for(i in which(names(spec) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
+  for(i in which(toupper(names(spec)) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
   
@@ -335,47 +343,78 @@ c_vars <- function(x,context) {
   list(vars = get_c_vars2(x,context), code = scrub_c_vars(x))
 }
 
+pp_defs <- function(x,context) {
+  w <- grep("#define ", x, fixed = TRUE)
+  if(length(w)==0) {
+    return(list(vars = NULL, code = NULL, n = 0, tab = data.frame()))  
+  }
+  x <- trimws(x[w])
+  x <- my_str_split(x, " +", n = 3, collapse = " ")
+  vars <- s_pick(x, 2)
+  code <- s_pick(x, 3)
+  list(
+    vars = vars, code = code, n = length(x), 
+    tab = data.frame(type = "define", var = vars, context = "global")
+  )
+}
+
 move_global2 <- function(spec,env,build) {
-  pream <- c_vars(spec$PREAMBLE,context="preamble")
+  pream <- c_vars(spec$PREAMBLE, context = "preamble")
   if(!is.null(pream$code)) {
     spec$PREAMBLE <- pream$code
   }
-  pred <- c_vars(spec$PRED,context="pred")
+  pred <- c_vars(spec$PRED, context = "pred")
   if(!is.null(pred$code)) {
     spec$PRED <- pred$code  
   }
-  main  <- c_vars(spec$MAIN,context="main")
+  glob <- c_vars(spec$GLOBAL, context = "global")
+  main <- c_vars(spec$MAIN, context = "main")
   if(!is.null(main$code)) {
     spec$MAIN <- main$code  
   }
-  ode   <- c_vars(spec[["ODE"]],context="ode")
+  ode   <- c_vars(spec[["ODE"]], context = "ode")
   if(!is.null(ode$code)) {
     spec$ODE <- ode$code
   }
-  table <- c_vars(spec[["TABLE"]],context="table")  
+  table <- c_vars(spec[["TABLE"]], context = "table")  
   if(!is.null(table$code)) {
     spec$TABLE <- table$code
   }
-  vars <- bind_rows(pream$vars,pred$vars,main$vars,ode$vars,table$vars)
-  if(any(cap <- vars$type=="capture")) {
-    captures <- vars[cap,"var"]
+  to_ns <- bind_rows(
+    pream$vars,
+    pred$vars,
+    main$vars,
+    ode$vars,
+    table$vars
+  )
+  vars <- bind_rows(glob$vars, to_ns)
+  if(any(cap <- to_ns$type=="capture")) {
+    captures <- to_ns[cap,"var"]
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
   }
-  build$global_vars <- vars
   ns <- c(
     "typedef double capture;",
     "namespace {",
-    paste0("  ",vars$type, " ", vars$var, ";"),
+    paste0("  ", to_ns$type, " ", to_ns$var, ";"),
     "}")
+  build$global_vars <- vars
+  defines <- pp_defs(spec[["GLOBAL"]], context = "global")
+  build$defines <- defines$vars
+  build$cpp_variables <- bind_rows(defines$tab,vars)
+  
   env[["global"]] <- ns
-  if(nrow(vars)  > 0) {
-    env[["move_global"]] <- vars$var
+  if(nrow(to_ns)  > 0) {
+    env[["move_global"]] <- to_ns$var
   } else {
     env[["move_global"]] <- character(0)  
   }
+  if(defines$n > 0) {
+    env[["defines"]] <- defines$vars  
+  } else {
+    env[["defines"]] <- character(0)  
+  }
   spec
 }
-
 
 # nocov start
 get_rcpp_vars <- function(y) {
@@ -388,7 +427,8 @@ get_rcpp_vars <- function(y) {
 
 check_block_data <- function(x,env,pos) {
   if(length(x)==0) {
-    warning("Block no. ", pos, ": no data was found.", call.=FALSE)
+    name <- env$incoming_names[pos]
+    warning("Block no. ", pos, " [", name, "]: no data was found.", call.=FALSE)
   }
   return(NULL)
 }
@@ -545,23 +585,25 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   return(envir)
 }  
 
-parse_env <- function(spec,project,ENV=new.env()) {
+parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
   mread.env$project <- project
-  mread.env$param <- vector("list",n)
-  mread.env$fixed <- vector("list",n)
-  mread.env$init  <- vector("list",n)
-  mread.env$omega <- vector("list",n)
-  mread.env$sigma <- vector("list",n)
-  mread.env$annot <- vector("list",n)
+  mread.env$param <- vector("list", n)
+  mread.env$fixed <- vector("list", n)
+  mread.env$init  <- vector("list", n)
+  mread.env$omega <- vector("list", n)
+  mread.env$sigma <- vector("list", n)
+  mread.env$annot <- vector("list", n)
   mread.env$ode   <- vector("list", n)
   mread.env$namespace <- vector("list", n)
-  mread.env$capture <- vector("list",n)
+  mread.env$capture <- vector("list", n)
   mread.env$error <- character(0)
   mread.env$covariates <- character(0)
+  mread.env$nm_import <- character(0)
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
+  mread.env$incoming_names <- incoming_names
   mread.env
 }
 
@@ -606,22 +648,31 @@ include_rfile <- function(rfile) {
   source(rfile, local = parent.frame())
 }
 
-evaluate_at_code <- function(x, cl, block, pos, env, fun = function(x) x) {
-  x <- try(eval(parse(text = x), envir = env$ENV))
+evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
+  x <- try(eval(parse(text = x), envir = env))
   if(inherits(x, "try-error")) {
     message("Block no: ", pos)
     message("Block type: ", block)
     stop("failed to parse block code.", call.=FALSE)
   }
   right_type <- inherits(x, cl)
-  if(!right_type) {
+  names_missing <- isTRUE(named) && !is_named(x)
+  if(!right_type | names_missing) {
     message("Block no: ", pos)
-    message("Block type: ", block)
-    message("Expected class: ", paste0(cl, collapse = " or "))
-    got <- paste0(class(x), collapse = ", ")
-    stop("code returned the incorrect class: ", got, call.=FALSE) 
+    message(" Block type: ", block)
+    if(names_missing) {
+      message(" Expected names: yes") 
+      message(" Returned named object: no")
+      msg <- "the returned object must have names"
+    }
+    if(!right_type) {
+      message(" Expected class: ", paste0(cl, collapse = " or "))
+      message(" Returned class: ", paste0(class(x), collapse = ", "))
+      msg <- "the returned object was the wrong type"
+    }
+    stop(msg, call.=FALSE) 
   }
-  fun(x)
+  x
 }
 
 

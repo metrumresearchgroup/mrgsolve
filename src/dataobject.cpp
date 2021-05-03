@@ -54,6 +54,10 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   col.resize(8,0);
   
+  any_copy = par_from.size() > 0;
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = 0;
 }
 
 dataobject::dataobject(Rcpp::NumericMatrix _data,
@@ -84,8 +88,11 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   
   col.resize(8,0);
   
+  any_copy = par_from.size() > 0;
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = 0;
 }
-
 
 dataobject::~dataobject(){}
 
@@ -103,13 +110,11 @@ void dataobject::map_uid() {
   Endrow.push_back(n-1);
 }
 
-
 Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
   Rcpp::IntegerVector ret = Rcpp::match(what, Data_names);
   ret = Rcpp::na_omit(ret);
   return(ret-1);
 }
-
 
 void dataobject::locate_tran() {
   
@@ -168,7 +173,7 @@ void dataobject::locate_tran() {
   if(col[_COL_ss_]   > zeros) col[_COL_ss_]   = zeros;
   if(col[_COL_rate_] > zeros) col[_COL_rate_] = zeros;
   if(col[_COL_evid_] > zeros) col[_COL_evid_] = zeros;
-  if(col[_COL_cmt_] > zeros) col[_COL_cmt_] = zeros;
+  if(col[_COL_cmt_]  > zeros) col[_COL_cmt_]  = zeros;
 }
 
 void dataobject::idata_row() {
@@ -181,8 +186,36 @@ void dataobject::idata_row() {
 
 void dataobject::copy_parameters(int this_row, odeproblem* prob) {
   size_t n = par_from.size();
-  for(size_t i=0; i < n; ++i) {
+  bool call_lsoda_init = false;
+  for(size_t i = 0; i < n; ++i) {
+    call_lsoda_init = call_lsoda_init || 
+      (prob->Param[par_to[i]] != Data(this_row,par_from[i]));
     prob->param(par_to[i],Data(this_row,par_from[i]));
+  }
+  if(call_lsoda_init) prob->lsoda_init();
+}
+
+void dataobject::next_id(int id_n) {
+  done_copying = false;
+  last_copy_row = -1;
+  next_copy_row = Startrow.at(id_n);
+}
+
+void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row, 
+                                      odeproblem* prob) {
+  if(done_copying) return;
+  if(from_data) {
+    copy_parameters(this_row, prob);
+    if(this_row >= Endrow.at(id_n)) {
+      done_copying = true;  
+      return;
+    }
+    next_copy_row = ++this_row;
+    return;
+  }
+  if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow.at(id_n))) {
+    copy_parameters(next_copy_row, prob); 
+    last_copy_row = next_copy_row;
   }
 }
 
@@ -230,7 +263,6 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         j,
         Data(j,Idcol)
       );
-      
       if(Data(j,col[_COL_cmt_]) != 0.0) {
         throw Rcpp::exception(
             "all records must have cmt set to zero.",
@@ -249,21 +281,20 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
             false
         ); 
       }
-      
       obs->evid(Data(j,col[_COL_evid_]));
       obs->addl(Data(j,col[_COL_addl_]));
       obs->ii(Data(j,col[_COL_ii_]));
       obs->unarm();
       a[h].push_back(obs);
-      if(obs->evid() ==0) {
+      if(obs->evid()==0) {
         ++obscount;
       } else {
-        ++evcount;  
+        ++evcount;
+        if(obsonly) obs->output(false);
       }
     }
   }
 }
-
 
 void dataobject::get_records(recstack& a, int NID, int neq,
                              unsigned int& obscount, unsigned int& evcount,
@@ -286,7 +317,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
   
   for(int h=0; h < NID; ++h) {
     
-    lastime = 0;
+    lastime = Data(this->start(h),col[_COL_time_]);
     
     a[h].reserve(this->end(h) - this->start(h) + 5);
     
@@ -295,7 +326,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if(Data(j,col[_COL_time_]) < lastime) {
         throw Rcpp::exception(
             tfm::format(
-              "the data set is not sorted by time or time is negative \n ID: %d, row: %i, time: %d", 
+              "the data set is not sorted by time\n"
+              "ID: %d, row: %i, time: %d", 
               Data(j,Idcol), j+1, Data(j,col[_COL_time_])
             ).c_str(),
             false
@@ -312,7 +344,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if((this_cmt < 0) || (this_cmt > neq)) {
           throw Rcpp::exception(
               tfm::format(
-                "cmt number in observation record out of range \n ID: %d, row: %i, cmt: %i, neq: %i", 
+                "cmt number in observation record out of range \n ID: %d, "
+                "row: %i, cmt: %i, neq: %i", 
                 Data(j,Idcol), j+1, this_cmt, neq
               ).c_str(),
               false
@@ -335,7 +368,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((this_cmt==0) || (abs(this_cmt) > neq)) {
         throw Rcpp::exception(
             tfm::format(
-              "event record cmt must be between 1 and %i: \n ID: %d, row: %i, cmt: %i, evid: %i", 
+              "event record cmt must be between 1 and %i: \n ID: %d, "
+              "row: %i, cmt: %i, evid: %i", 
               neq, Data(j,Idcol), j+1, this_cmt, Data(j,col[_COL_evid_])
             ).c_str(),
             false
@@ -353,7 +387,25 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         j, 
         Data(j,Idcol)
       );
+      if(Data(j,col[_COL_ss_]) < 0) {
+        throw Rcpp::exception(
+            tfm::format(
+              "ss must not be negative \n ID: %d, row: %i, ss: %d", 
+              ev->id(), j+1, Data(j,col[_COL_ss_])
+            ).c_str(),
+            false
+        );
+      }
       ev->ss(Data(j,col[_COL_ss_]));
+      if(Data(j,col[_COL_addl_]) < 0) {
+        throw Rcpp::exception(
+            tfm::format(
+              "addl must not be negative \n ID: %d, row: %i, addl: %d", 
+              ev->id(), j+1, Data(j,col[_COL_addl_])
+            ).c_str(),
+            false
+        );
+      }
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
       ev->from_data(true);
@@ -365,7 +417,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if(ev->addl() !=0) {
           throw Rcpp::exception(
               tfm::format(
-                "addl must be zero for ss infusion \n ID: %d, row: %i, ii: %d", 
+                "addl must be zero for ss infusion \n ID: %d, row: %i, addl: %d", 
                 ev->id(), j+1,  ev->addl()
               ).c_str(),
               false
@@ -376,7 +428,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
         throw Rcpp::exception(
             tfm::format(
-              "non-zero rate must be positive or -1 or -2 \n ID: %d, row: %i, rate: %d", 
+              "non-zero rate must be positive or -1 or -2 \n ID: %d, "
+              "row: %i, rate: %d", 
               ev->id(), j+1,  ev->rate()
             ).c_str(),
             false
@@ -386,7 +439,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1) && !zero_inf) {
         throw Rcpp::exception(
             tfm::format(
-              "non-zero rate requires positive amt \n ID: %d, row: %i, rate: %d, amt: %d", 
+              "non-zero rate requires positive amt \n ID: %d, row: %i, "
+              "rate: %d, amt: %d", 
               ev->id(), j+1,  ev->rate(), ev->amt()
             ).c_str(),
             false
@@ -397,7 +451,8 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         if(ev->addl() > 0) {
           throw Rcpp::exception(
               tfm::format(
-                "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, addl: %i", 
+                "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, "
+                "addl: %i", 
                 ev->id(), j+1, ev->addl()
               ).c_str(),
               false
@@ -447,7 +502,8 @@ void dataobject::carry_out(const recstack& a,
                            const Rcpp::IntegerVector& data_carry,
                            const unsigned int data_carry_start,
                            const Rcpp::IntegerVector& idata_carry,
-                           const unsigned int idata_carry_start) {
+                           const unsigned int idata_carry_start, 
+                           const bool nocb) {
   
   int crow = 0;
   int j = 0;
@@ -463,19 +519,27 @@ void dataobject::carry_out(const recstack& a,
   
   for(recstack::const_iterator it=a.begin(); it!=a.end(); ++it) {
     
-    j = it-a.begin();
+    j = it - a.begin();
     
     if(carry_from_idata) {
       idatarow = idat.get_idata_row(this->get_uid(j));
     }
     
     lastpos = -1;
+    const int pos_offset = nocb ? 1 : 0;
+    const int maxpos = Endrow.at(j);
+    int nextpos = 0;
     
     for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
       
       // Get the last valid data set position to carry from
       if(carry_from_data) {
-        if((*itt)->from_data()) lastpos = (*itt)->pos();
+        if((*itt)->from_data()) {
+          lastpos = (*itt)->pos();
+          nextpos = lastpos;
+        } else {
+          nextpos = std::min(lastpos + pos_offset, maxpos);
+        }
       }
       
       if(!(*itt)->output()) continue;
@@ -486,9 +550,9 @@ void dataobject::carry_out(const recstack& a,
       }
       
       if(carry_from_data) {
-        if(lastpos >=0) {
+        if(lastpos >= 0) {
           for(k=0; k < n_data_carry; ++k) {
-            ans(crow, data_carry_start+k)  = Data(lastpos,data_carry[k]);
+            ans(crow, data_carry_start+k)  = Data(nextpos,data_carry[k]);
           }
         } else {
           for(k=0; k < n_data_carry; ++k) {

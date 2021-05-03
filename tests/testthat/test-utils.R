@@ -127,3 +127,24 @@ test_that("cvec", {
   expect_identical(cvec("a, b  , c"),letters[1:3])  
 })
 
+test_that("my_str_split", {
+  x <- "ab:cd:ef:gh"
+  ans <- mrgsolve:::my_str_split(x,":",n = 1)
+  expect_is(ans, "list")
+  expect_length(ans,1)
+  expect_length(ans[[1]],1)
+  ans <- mrgsolve:::my_str_split(x,":",n = 3)
+  expect_length(ans,1)
+  expect_length(ans[[1]],3)
+  ans <- mrgsolve:::my_str_split(x,":",n = 5)
+  expect_length(ans,1)
+  expect_length(ans[[1]],4)
+  x <- "ab:cd"
+  ans <- mrgsolve:::my_str_split(x, ":", 1)
+  expect_length(ans[[1]],1)
+  ans <- mrgsolve:::my_str_split(x, ":", 2)
+  expect_length(ans[[1]],2)
+  ans <- mrgsolve:::my_str_split(x, ":", 3)
+  expect_length(ans[[1]],2)
+})
+

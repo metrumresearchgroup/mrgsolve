@@ -39,29 +39,29 @@ do_mrgsim(
 \arguments{
 \item{x}{the model object}
 
-\item{data}{NMTRAN-like data set (see \code{\link{data_set}})}
+\item{data}{NMTRAN-like data set (see \code{\link[=data_set]{data_set()}})}
 
-\item{idata}{a matrix or data frame of model parameters, 
-one parameter per row (see \code{\link{idata_set}})}
+\item{idata}{a matrix or data frame of model parameters,
+one parameter per row (see \code{\link[=idata_set]{idata_set()}})}
 
 \item{events}{an event object}
 
-\item{nid}{integer number of individuals to simulate; only used if 
+\item{nid}{integer number of individuals to simulate; only used if
 idata and data are missing}
 
-\item{...}{passed to \code{\link[mrgsolve]{update}} and 
-\code{\link{do_mrgsim}}}
+\item{...}{passed to \code{\link[=update]{update()}} and
+\code{\link[=do_mrgsim]{do_mrgsim()}}}
 
-\item{output}{if \code{NULL} (the default) a mrgsims object is returned; 
-otherwise, pass \code{df} to return a data.frame or \code{matrix} to 
+\item{output}{if \code{NULL} (the default) a mrgsims object is returned;
+otherwise, pass \code{df} to return a data.frame or \code{matrix} to
 return a matrix}
 
 \item{carry_out}{numeric data items to copy into the output}
 
 \item{carry.out}{soon to be deprecated; use \code{carry_out} instead}
 
-\item{recover}{character column names in either \code{data} or \code{idata} 
-to join back (recover) to simulated data; may be any class (e.g. numeric, 
+\item{recover}{character column names in either \code{data} or \code{idata}
+to join back (recover) to simulated data; may be any class (e.g. numeric,
 character, factor, etc)}
 
 \item{seed}{deprecated}
@@ -71,119 +71,108 @@ in the simulated output; this is different than the \code{request}
 slot in the model object, which refers only to model compartments}
 
 \item{capture}{character file name used for debugging (not related
-to \code{$CAPTURE})}
+to \verb{$CAPTURE})}
 
 \item{obsonly}{if \code{TRUE}, dosing records are not included
 in the output}
 
-\item{obsaug}{augment the data set with time grid observations; when 
-\code{TRUE} and a full data set is used, the simulated output is augmented 
-with an observation at each time in \code{\link{stime}}().  When using
+\item{obsaug}{augment the data set with time grid observations; when
+\code{TRUE} and a full data set is used, the simulated output is augmented
+with an observation at each time in \code{\link[=stime]{stime()}}.  When using
 \code{obsaug}, a flag indicating augmented observations can be requested by
 including \code{a.u.g} in  \code{carry_out}}
 
 \item{tgrid}{a tgrid object; or a numeric vector of simulation times
 or another object with an \code{stime} method}
 
-\item{recsort}{record sorting flag.  Default value is 1.  Possible values 
-are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
-the same time; 3 and 4 put those doses before padded observations at the 
-same time.  2 and 4 will put doses scheduled through \code{addl} after 
-observations at the same time; 1 and 3 put doses scheduled through 
-\code{addl} before observations at the same time. \code{recsort} will 
-not change the order of your input data set if both doses and observations 
+\item{recsort}{record sorting flag.  Default value is 1.  Possible values
+are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at
+the same time; 3 and 4 put those doses before padded observations at the
+same time.  2 and 4 will put doses scheduled through \code{addl} after
+observations at the same time; 1 and 3 put doses scheduled through
+\code{addl} before observations at the same time. \code{recsort} will
+not change the order of your input data set if both doses and observations
 are given.}
 
 \item{deslist}{a list of tgrid objects}
 
 \item{descol}{the name of a column for assigning designs}
 
-\item{filbak}{carry data items backward when the first 
+\item{filbak}{carry data items backward when the first
 data set row has time greater than zero}
 
-\item{tad}{when \code{TRUE} a column is added to simulated 
-output is added showing the time since the last dose.  Only data records 
-with \code{evid == 1} will be considered doses for the purposes of 
-\code{tad} calculation. The \code{tad} can be properly calculated with 
-a dosing lag time in the model as long as the dosing lag time (specified 
-in \code{$MAIN})  is always  appropriate for any subsequent doses scheduled 
-through \code{addl}.  This will always be true if the lag time doesn't 
-change over time.  But it might (possibly) not hold if the lag time changes
-prior to the last dose in the \code{addl} sequence.  This known limitation
-shouldn't affect \code{tad} calculation in most common dosing lag time
-implementations.}
+\item{tad}{when \code{TRUE} a column is added to simulated
+output is added showing the time since the last dose.  Only data records
+with \code{evid == 1} will be considered doses for the purposes of \code{tad}
+calculation. The \code{tad} can be properly calculated with a dosing lag time in
+the model as long as the dosing lag time (specified in \verb{$MAIN})  is always
+appropriate for any subsequent doses scheduled through \code{addl}.  This will
+always be true if the lag time doesn't change over time.  But it might
+(possibly) not hold if the lag time changes prior to the last dose in the
+\code{addl} sequence.  This known limitation shouldn't affect \code{tad} calculation
+in most common dosing lag time implementations.}
 
-\item{nocb}{if \code{TRUE}, use next observation carry backward method; 
+\item{nocb}{if \code{TRUE}, use next observation carry backward method;
 otherwise, use \code{locf}.}
 
-\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
+\item{skip_init_calc}{don't use \verb{$MAIN} to calculate initial conditions}
 
-\item{ss_n}{maximum number of iterations for determining steady state for 
-the PK system; a warning will be issued if steady state is not achieved 
+\item{ss_n}{maximum number of iterations for determining steady state for
+the PK system; a warning will be issued if steady state is not achieved
 within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}}
 
 \item{ss_fixed}{if \code{FALSE} (the default), then a warning will be issued
 if the system does not reach steady state within \code{ss_n} iterations
-given the model tolerances \code{rtol} and \code{atol}; if \code{TRUE}, 
-the number of iterations for determining steady state are capped at 
-\code{ss_n} and no warning will be issued if steady state 
+given the model tolerances \code{rtol} and \code{atol}; if \code{TRUE},
+the number of iterations for determining steady state are capped at
+\code{ss_n} and no warning will be issued if steady state
 has not been reached within \code{ss_n} dosing iterations.
-To silence warnings related to steady state, 
-set \code{ss_fixed} to \code{TRUE} and set \code{ss_n} as the maximum number 
-of iterations to try when advancing the system for steady state 
-determination.}
+To silence warnings related to steady state, set \code{ss_fixed} to \code{TRUE} and
+set \code{ss_n} as the maximum number of iterations to try when advancing the
+system for steady state determination.}
 }
 \value{
-An object of class \code{\link{mrgsims}}
+An object of class \link{mrgsims}
 }
 \description{
 This function sets up the simulation run from data stored in the model
-object as well as arguments passed in.  Use \code{\link{mrgsim_q}} instead 
-to benchmark mrgsolve or to do repeated quick simulation for tasks like 
+object as well as arguments passed in.  Use \code{\link[=mrgsim_q]{mrgsim_q()}} instead
+to benchmark mrgsolve or to do repeated quick simulation for tasks like
 parameter optimization, sensitivity analyses, or optimal design.  See
-\code{\link{mrgsim_variants}} for other mrgsim-like functions that have 
-more focused inputs. \code{mrgsim_df} coerces output to data.frame 
-prior to returning.
+\link{mrgsim_variants} for other mrgsim-like functions that have more focused
+inputs. \code{mrgsim_df} coerces output to data.frame prior to returning.
 }
 \details{
 \itemize{
-
-\item Use \code{mrgsim_df} to return a data frame rather than 
+\item Use \code{\link[=mrgsim_df]{mrgsim_df()}} to return a data frame rather than
 \code{mrgsims} object
-
-\item{Both \code{data} and \code{idata} will be coerced to numeric matrix}
-
-\item{\code{carry_out} can be used to insert data columns into the output 
-data set.  This is partially dependent on the nature of the data brought 
-into the problem}
-
-\item When using \code{data} and \code{idata} together, an error is 
-generated if an  ID occurs in \code{data} but not \code{idata}.  
-Also, when looking up data in \code{idata}, ID in \code{idata} is 
-assumed to be uniquely keyed to ID in \code{data}.  No error is 
-generated if ID is duplicated in \code{data}; parameters will be used 
+\item Both \code{data} and \code{idata} will be coerced to numeric matrix
+\item \code{carry_out} can be used to insert data columns into the output
+data set. This is partially dependent on the nature of the data brought
+into the problem
+\item When using \code{data} and \code{idata} together, an error is
+generated if an  ID occurs in \code{data} but not \code{idata}.
+Also, when looking up data in \code{idata}, ID in \code{idata} is
+assumed to be uniquely keyed to ID in \code{data}.  No error is
+generated if ID is duplicated in \code{data}; parameters will be used
 from the first occurrence found in \code{idata}
- 
-\item \code{carry_out}: \code{idata} is assumed to be 
-individual-level and variables that are carried from \code{idata} 
-are repeated throughout the individual's simulated data.  Variables 
-carried from \code{data} are carried via last-observation carry forward.  
-\code{NA} is returned from observations that are inserted into 
+\item \code{carry_out}: \code{idata} is assumed to be individual-level and variables that
+are carried from \code{idata} are repeated throughout the individual's simulated
+data.  Variables carried from \code{data} are carried via last-observation carry
+forward.  \code{NA} is returned from observations that are inserted into
 simulated output that occur prior to the first record in \code{data}
-
-\item \code{recover}: this is similar to \code{carry_out} with respect to 
-end result, but it uses a different process.  Columns to be recovered are 
-cached prior to running the simulation, and then joined back on to the 
-simulated data.  So, whereas \code{carry_out} will only accept numeric 
+\item \code{recover}: this is similar to \code{carry_out} with respect to
+end result, but it uses a different process.  Columns to be recovered are
+cached prior to running the simulation, and then joined back on to the
+simulated data.  So, whereas \code{carry_out} will only accept numeric
 data items, \code{recover} can handle data frame columns of any type.  There
-is a small decrease in performance with \code{recover} compared to 
-\code{carry_out}, but it is likely that the performance difference is 
+is a small decrease in performance with \code{recover} compared to
+\code{carry_out}, but it is likely that the performance difference is
 difficult to perceive (when the simulation runs very fast) or only a small
 fractional increase in run time when the simulation is very large.  And any
-performance hit is likely to be well worth it in light of the convenience 
+performance hit is likely to be well worth it in light of the convenience
 gain.  Just think carefully about using this feature when every millisecond
 counts.
-
 }
 }
 \examples{
@@ -228,8 +217,7 @@ data <- as_data_set(a,b)
 out <- mrgsim_d(mod, data, recover="group")
 
 out
-
 }
 \seealso{
-\code{\link{mrgsim_variants}}, \code{\link{mrgsim_q}}
+\link{mrgsim_variants}, \code{\link[=mrgsim_q]{mrgsim_q()}}
 }

@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-typedef void (*refun)(void*);
+typedef void (*refun)(void*, int n);
 
 namespace mrgsolve {
 /**
@@ -39,8 +39,8 @@ struct resim {
   //! resim constructor
   resim(refun x, void* y) : fun(x), prob(y){}
   resim(){}
-  void operator()() {
-    return fun(prob);
+  void operator()(int n = 0) {
+    return fun(prob, n);
   }
   
 protected: 

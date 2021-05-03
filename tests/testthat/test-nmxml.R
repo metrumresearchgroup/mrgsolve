@@ -258,7 +258,7 @@ test_that("Mixed labels / no labels and prefix", {
 test_that("read_nmext returns estimates", {
   project <- system.file("nonmem", package="mrgsolve")
   x <- read_nmext(1005, project)   
-  expect_equal(names(x), c("param", "omega", "sigma", "raw"))
+  expect_equal(names(x), c("raw", "param", "omega", "sigma"))
   expect_is(x$param, "list")
   expect_is(x$omega, "matrix")
   expect_is(x$sigma, "matrix")
@@ -279,6 +279,42 @@ test_that("NONMEM estimates from nmext", {
                "'arg' should be one of ")
 })
 
+test_that("NONMEM estimates from nmext - multiple tables", {
+  project <- system.file("nonmem", package="mrgsolve")
+  
+  a <- mrgsolve:::nmext(run = 2005, project = project, index = "last")
+  a_att <- attributes(read_nmext(run = 2005, project = project, index = "last"))
+  expect_equal(a_att$index,5)
+  expect_match(a_att$table, "First Order Conditional")
+  
+  b <- mrgsolve:::nmext(run = 2005, project = project, index = 2)
+  b_att <- attributes(read_nmext(run = 2005, project = project, index = 2))
+  expect_equal(b_att$index,2)
+  expect_match(b_att$table, "Importance Sampling")
+  
+  expect_true(a$theta$THETA3 != b$theta$THETA3)
+  
+  rtab <- read_nmext(
+    run = 2005, project = project, index = 3,  
+    read_fun = "read.table"
+  )
+  expect_is(rtab, "list")
+  rtab_att <- attributes(rtab)
+  expect_match(rtab_att$table, "Stochastic Approximation")
+  
+  d <- read_nmext(run = 1005, project = project, index = "single")
+  e <- read_nmext(run = 1005, project = project, index = 1)
+  d_attr <- attributes(d)
+  expect_match(d_attr$table, "single")
+  expect_equivalent(d,e)
+  expect_identical(d$raw, e$raw)
+  
+  expect_error(
+    mrgsolve:::nmext(run = 2005, project = project, index = 333), 
+    regexpr = "table 333 requested but only 5 tables"
+  )
+})
+
 test_that("custom labeled THETA", {
   project <- system.file("nonmem", package = "mrgsolve")
   a <- mrgsolve:::nmxml(run = 1005, project = project)
@@ -288,3 +324,32 @@ test_that("custom labeled THETA", {
   expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
 })
 
+test_that("read nm estimates relative to cpp file", {
+  skip_if_not(
+    all(
+      file.exists("nm/1005-ext.cpp"), 
+      file.exists("nm/1005-xml.cpp")
+    )
+  )
+  mod <- mread("1005-ext", project = "nm", compile = FALSE)
+  expect_is(mod, "mrgmod") 
+  mod <- mread("1005-xml", project = "nm", compile = FALSE)
+  expect_is(mod, "mrgmod") 
+})
+
+test_that("nm source file is available via as.list", {
+  skip_if_not(
+    all(
+      file.exists("nm/1005-ext.cpp"), 
+      file.exists("nm/1005-xml.cpp"), 
+      file.exists("nm/1005-both.cpp")
+    )
+  )
+  list1 <- as.list(mread("1005-ext", project = "nm", compile = FALSE))
+  list2 <- as.list(mread("1005-xml", project = "nm", compile = FALSE))
+  list3 <- as.list(mread("1005-both", project = "nm", compile = FALSE))
+  ans <- c("1005.ext", "1005.xml")
+  expect_equal(basename(list1[["nm_import"]]), ans[1])
+  expect_equal(basename(list2[["nm_import"]]), ans[2])
+  expect_equal(basename(list3[["nm_import"]]), ans)
+})

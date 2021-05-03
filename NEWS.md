@@ -1,3 +1,71 @@
+# mrgsolve (development version)
+
+# mrgsolve 0.11.0
+
+- The absolute paths to nonmem output files (`root.xml` or `root.ext`) are now 
+  saved in the model object when nonmem results are imported via `$NMEXT` or 
+  `$NMXML`; paths are accessible by coercing the model object with `as.list()`
+  and looking at the `nm_import` item (#802)
+- Add Tim Waterhouse as contributor (#809)
+- Add `root` argument to `$NMEXT` and `$NMXML` so that the nonmem output files
+  are located relative to the `working` directory (default, previous behavior)
+  or the directory where the `cppfile` is stored; `cppfile` will eventually 
+  replace `working` as the default (#803)
+- Models based on `$PRED` now respect the `obsonly` option (#811)
+
+# mrgsolve 0.10.9
+
+- Dosing into a compartment that is off at the time of the dose turns the 
+  compartment back on regardless of whether bioavailability is zero or non-zero 
+  (this is a bug fix where the compartment was not turned on when 
+  bioavailability was zero). (#800)
+- `simeta()` and `simeps()` now accept an (optional) integer argument to limit
+  re-simulation to single ETA or EPS values (#789)
+- `as.list(mod)` output now includes a data frame of `C++` variables and 
+  pre-processor definitions in the `cpp_variables` slot. (#780)
+- `$PARAM`, `$THETA`, `$CMT`, `$INIT`, `$OMEGA` and `$SIGMA` blocks all include 
+  the directives `@object` and `@as_object` so that block contents can be 
+  specified programmatically. `@object` names an object that was coded into
+  `$ENV` and `@as_object` indicates that the block contains code to realize
+  the object.  See `?BLOCK_PARSE` help topic for more information on how this
+  all works. (#783)
+- `$NMEXT` now lets the user select between multiple tables for scraping 
+  parameter estimates. (#782)
+
+# mrgsolve 0.10.8
+- Allow simulation from compartmental models with negative times #778
+- Enable dynamic capture of pre-processor directives at compile time #776
+- Fix error message when requesting invalid items during dynamic capture #776
+
+# mrgsolve 0.10.7
+- Stop testing test_equal using lattice
+
+# mrgsolve 0.10.6
+- Fix url endings for check on r-devel
+- Adjust test comparing lattice plots based on change in r-devel; passing 
+  check.environments now
+
+# mrgsolve 0.10.5
+- Suppress warnings when non-numeric columns are dropped when those columns are
+  not relevant to the simulation #709
+- Add `$ERROR` as an alias for `$TABLE` in the model file #710
+- Fix bug where warning messages during steady-state finding referenced `rtol` 
+  and `atol` rather than `ss_rtol` and `ss_atol` #703
+- Fix annotation parsing bug when the description included semi-colon #696
+- `loadso` issues a proper error when the model dll doesn't exist #724
+- Try loading the model with loadso once of the model isn't loaded at the time
+  of simulation #725
+- Throw an error when `addl` or `ss` are negative #733
+- Internal refactoring so that there is a hard solver reset when parameters that
+  are copied from data change #744
+- Add `tad` plugin to calculate time after dose in a specific compartment
+  #702
+- Internal refactor `carry_out` to respect default `nocb` behavior #759; see 
+  also #744
+- Throw an error when matlist labels are duplicated #730
+- Add `capture` argument to `mread` to add to `$CAPTURE` when compiling the 
+  model #704
+
 # mrgsolve 0.10.3
 
 - The simulation time grid was adjusted so that rendering the grid could result

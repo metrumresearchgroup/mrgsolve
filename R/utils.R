@@ -182,6 +182,23 @@ as.cvec <- function(x) {
   unlist(strsplit(as.character(x),"\\s*(\n|,|\\s+)\\s*",perl=TRUE))
 }
 
+# collapse a character vector back to length n (undo strsplit)
+collapsen <- function(string,collapse,n=3) {
+    if(length(string) <= n) return(string)
+    if(n==1) return(paste0(string, collapse = collapse))
+    ans <- string[seq(1,(n-1))]
+    if(n >= 2) {
+      remainder <- paste0(string[seq(n,length(string))],collapse=collapse)
+      ans <- c(ans, remainder)  
+    }
+    ans
+}
+
+# replica str_split; to be replace if / when we take up stringr
+my_str_split <- function(string,pattern,n=3,fixed=FALSE,collapse=pattern) {
+  m <- strsplit(string, pattern, fixed = fixed)
+  lapply(m,collapsen,collapse=collapse,n=n)
+}
 
 ##' Create template data sets for simulation
 ##'
@@ -572,7 +589,3 @@ mod_first <- function(cl) {
   msg <- sprintf("the first argument to %s must be a model object",fun)
   wstop(msg)
 }
-
-
-
-

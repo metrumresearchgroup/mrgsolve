@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-LIBDIR=${HOME}/Rlibs/lib
 PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
@@ -13,13 +12,36 @@ all:
 	make build
 	make install
 
-drone:
+bump-dev:
+	Rscript -e 'usethis::use_version("dev")'
+
+tag-version:
+	git tag $(VERSION)
+	git push origin $(VERSION)
+
+package:
 	make house
-	R CMD build --md5 $(PKGDIR) 
-	R CMD check --as-cran ${TARBALL}
+	make doc
+	make build
+	make install
+	make pkgdown
+
+check:
+	make house
+	make doc
+	make build
+	R CMD check ${TARBALL} --no-manual
+	make unit
+
+check-only:
+	R CMD check --as-cran ${TARBALL} 
+
+cran:
+	make house
+	make doc
+	make build
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
-	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
-	make spelling
+	R CMD CHECK --as-cran ${TARBALL}
 
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
@@ -37,24 +59,13 @@ no-test:
 	make build
 	R CMD check ${TARBALL} --no-tests --no-manual
 
-everything:
-	make all
-	make pkgdown
-
 pkgdown:
 	Rscript "inst/maintenance/pkgdown.R"
-	cp -r DOCS/ ../../mrgsolve/docs/
-	touch ../../mrgsolve/docs/.nojekyll
+	#cp -r DOCS/ ../mrgsolve/docs/
+	#touch ../mrgsolve/docs/.nojekyll
 
 unit:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
-
-cran:
-	make house
-	make doc
-	make build
-	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
-	R CMD CHECK --as-cran ${TARBALL}
 
 readme:
 	Rscript -e 'rmarkdown::render("README.Rmd")'
@@ -71,24 +82,6 @@ install:
 
 install-build:
 	R CMD INSTALL --build --install-tests ${TARBALL}
-
-check:
-	make house
-	make doc
-	make build
-	R CMD check ${TARBALL} --no-manual
-	make unit
-
-qcheck: 
-	make doc
-	make build 
-	R CMD check ${TARBALL} --no-manual --no-codoc
-
-check-cran:
-	make house
-	make doc
-	make build
-	R CMD check --as-cran ${TARBALL}
 
 test:
 	R CMD INSTALL ${PKGDIR}
@@ -126,11 +119,10 @@ check-winhub:
 doxygen: 
 	doxygen doxyfile
 
-bump_dev:
-	Rscript -e 'usethis::use_version("dev")'
-
-testing:
-	cp ${TARBALL} ${MRGSOLVE_TEST_LOC}
-	touch ${MRGSOLVE_TEST_LOC}/${TARBALL}
-	cp -r inst/maintenance/unit ${MRGSOLVE_TEST_LOC}
-	cd ${MRGSOLVE_TEST_LOC} && git commit -am "testing release" && git push -u origin master
+# possibly no longer in use
+drone:
+	make house
+	R CMD build --md5 $(PKGDIR) 
+	R CMD check --as-cran ${TARBALL}
+	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
+	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'

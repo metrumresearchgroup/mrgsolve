@@ -28,6 +28,13 @@
  * See the <a href="classdatabox.html">databox</a> class for documentation 
  * around the <code>self</code> object.
  * 
+ * See the <a href="classmrgsolve_1_1tadose.html">tadose</a> class for
+ * documentation around using `tadose` objects to calculate time after dose
+ * for specific dosing compartments. 
+ * 
+ * The <a href="modelheader_8h.html">modelheader.h</a> file is included at the 
+ * top of every model as well as <a href="mrgsolv_8h.html">mrgsolv.h</a>. 
+ * 
  * @section technical Technical Documentation
  * 
  * The main simulation function is DEVTRAN().

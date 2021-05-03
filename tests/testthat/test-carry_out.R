@@ -95,7 +95,7 @@ test_that("recover input data-set items", {
   expect_is(out$A,"numeric")
   expect_is(out$b,"character")
   expect_true(all(out$a==out$A))
-  expect_message(mrgsim(mod,dose,recover="A=a"),"Dropping non-numeric columns")
+  expect_silent(mrgsim(mod,dose,recover="A=a"))
   expect_error(mrgsim(mod,recover="a",carry_out="a"))
 })
  

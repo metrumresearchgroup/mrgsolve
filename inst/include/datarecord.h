@@ -78,10 +78,10 @@ public:
   
   double dur(double b);
   
-  void addl(unsigned int addl_){Addl = addl_;}
+  void addl(int addl_){Addl = std::max(0,addl_);}
   unsigned int addl(){return Addl;}
   
-  void ss(unsigned short int ss_){Ss = ss_;}
+  void ss(int ss_){Ss = std::max(0,ss_);}
   unsigned short ss(){return Ss;}
   
   void ii(double ii_){Ii = ii_;}

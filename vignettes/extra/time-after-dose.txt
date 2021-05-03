@@ -1,0 +1,9 @@
+[ param ] CL = 1, V = 20, KA = 1
+
+[ pkmodel ] cmt = "GUT,CENT", depot = TRUE
+
+[ main ] 
+capture tadose = self.tad();
+
+[ table]
+capture CP  = CENT/V;

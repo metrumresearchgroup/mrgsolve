@@ -60,7 +60,7 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
   if(!all(nu)) {
     if(!quiet) {
       message(
-        "Dropping non-numeric columns: \n  ", 
+        "Dropping non-numeric columns: \n  ",
         paste(names(x)[!nu], collapse=" ")
       )
     }
@@ -110,9 +110,9 @@ convert_character_cmt <- function(data, mod) {
 ##' 
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
-
+  
   if(is.valid_data_set(x)) return(x)
-    
+  
   if(verbose) quiet <- FALSE
   
   if(!is.mrgmod(m)) {
@@ -133,10 +133,9 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
   # special case
   if(ncol(x)==1) {
-    x <- numeric_data_matrix(x,quiet)
+    x <- numeric_data_matrix(x,quiet=TRUE)
     return(structure(x, class = c("valid_data_set", "matrix")))
   }
-  
   
   # First, check for compartment
   cmtcol <- cmtname(x)
@@ -161,18 +160,26 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   }
   
   # Drop character columns
-  x <- numeric_data_matrix(x,quiet)
+  dm <- numeric_data_matrix(x,quiet=TRUE)
   
-  check_data_set_na(x,m)
+  if((ncol(dm) != ncol(x)) && !quiet) {
+    drop <- setdiff(names(x), dimnames(dm)[[2]])
+    drop <- intersect(drop, c(Pars(m),GLOBALS$CARRY_TRAN))
+    for(d in drop) {
+      message("[data-set] dropped non-numeric: ", d)  
+    }
+  }
   
-  x <- cbind(x, matrix(0,
-                       ncol=1,
-                       nrow=nrow(x), 
-                       dimnames=list(NULL, "..zeros..")))
+  check_data_set_na(dm,m)
+  
+  dm <- cbind(dm, matrix(0,
+                         ncol=1,
+                         nrow=nrow(dm), 
+                         dimnames=list(NULL, "..zeros..")))
   
   # Look for both upper and lower case column names
-  uc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_UC"]])
-  lc <- any(colnames(x) %in% GLOBALS[["CARRY_TRAN_LC"]])
+  uc <- any(colnames(dm) %in% GLOBALS[["CARRY_TRAN_UC"]])
+  lc <- any(colnames(dm) %in% GLOBALS[["CARRY_TRAN_LC"]])
   
   if(uc & lc) {
     warning("Both lower- & upper-case names found in the data set.\n",
@@ -182,7 +189,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
   
-  structure(x, class = c("valid_data_set", "matrix"))
+  structure(dm, class = c("valid_data_set", "matrix"))
 }
 
 ##' Validate and prepare idata data sets for simulation
@@ -211,11 +218,19 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
     stop("Duplicate IDs not allowed in idata_set.",call.=FALSE) 
   }
   
-  x <- numeric_data_matrix(x,quiet)
+  dm <- numeric_data_matrix(x,quiet=TRUE)
   
-  check_data_set_na(x,m)
+  if((ncol(dm) != ncol(x)) && !quiet) {
+    drop <- setdiff(names(x), dimnames(dm)[[2]])
+    drop <- intersect(drop, Pars(m))
+    for(d in drop) {
+      message("[idata-set] dropped non-numeric: ", d)  
+    }
+  }
   
-  structure(x, class=c("valid_idata_set", "matrix"))
+  check_data_set_na(dm,m)
+  
+  structure(dm, class=c("valid_idata_set", "matrix"))
 }
 
 ##' @rdname valid_data_set

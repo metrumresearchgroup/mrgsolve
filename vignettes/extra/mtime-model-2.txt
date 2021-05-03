@@ -1,0 +1,20 @@
+[ set ] end=8, delta=0.1
+
+[ param ]
+CL = 1, V = 20, KA1 = 0.1, KA2 = 0.5, KA3 = 5, change_t = 1
+
+[ pkmodel ] 
+cmt = "GUT,CENT", depot = TRUE
+
+[ main ] 
+double mt = self.mtime(change_t);
+
+double mt2 = self.mtime(change_t + 1);
+
+capture KA = KA1;
+
+if(TIME > mt) KA = KA2;
+
+if(TIME > mt2) KA = KA3;
+
+

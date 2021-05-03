@@ -33,7 +33,6 @@
 // Need to say if it is output (stime) or not (ptime)
 
 datarecord::datarecord(double time_, int pos_, bool output_) {
-  
   Time = time_;
   Pos = pos_;
   Output = output_;
@@ -64,7 +63,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Addl = 0;
   Output = true;
   Armed = false;
-  Fromdata=true;
+  Fromdata = true;
 }
 
 // Data set event
@@ -272,7 +271,8 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_bolus] ID %d failed to reach steady state\n  ss_n: %d, ss_rtol: %d, ss_atol: %d", 
+        "[steady_bolus] ID %d failed to reach steady state\n  ss_n: %d, "
+        "ss_rtol: %d, ss_atol: %d", 
         this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
@@ -405,7 +405,8 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_infusion] ID %d failed to reach steady state\n  ss_n: %d, ss_rtol: %d, ss_atol: %d", 
+        "[steady_infusion] ID %d failed to reach steady state\n  ss_n: %d, "
+        "ss_rtol: %d, ss_atol: %d", 
         this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );
@@ -522,7 +523,8 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   if((!made_it) && warn) {
     Rcpp::warning(
       tfm::format(
-        "[steady_zero] ID %d failed to reach steady state\n  ss_n: %d, ss_rtol: %d, ss_atol: %d", 
+        "[steady_zero] ID %d failed to reach steady state\n  ss_n: %d, "
+        "ss_rtol: %d, ss_atol: %d", 
         this->id(),N_SS, prob->ssRtol, prob->ssAtol
       ).c_str()
     );

@@ -59,10 +59,8 @@ test_that("data_set with negative times", {
   expect_is(out, "mrgsims")
   expect_true("time" %in% names(out))
   expect_equal(out$time,d[["time"]])
-  expect_error(
-    mrgsim_d(modd,d), 
-    "not sorted by time or time is negative"
-  )
+  out2 <- mrgsim_d(modd,d)
+  expect_equal(out2$time,d[["time"]])
 })
 
 test_that("time/TIME required when neq > 0", {
@@ -109,5 +107,10 @@ test_that("amt is ok", {
   )
 })
 
-
-
+test_that("obsonly works with dollar-pred", {
+  data <- tibble(time = c(0,1,2,3,4), evid = c(0,2,1,0,0), ID = 1)
+  out1 <- mrgsim(mod, data)
+  out2 <- mrgsim(mod, data, obsonly = TRUE)
+  expect_equal(nrow(out1), nrow(data))
+  expect_equal(out2$time, c(0,3,4))
+})

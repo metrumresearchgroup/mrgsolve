@@ -467,6 +467,10 @@ setMethod("names", "mrgmod", function(x) {
 #' - `random`: names and labels of `$OMEGA` and `$SIGMA`
 #' - `code`: model source code from `cfile`
 #' - `details`: model details data frame
+#' - `nm_import`: a character vector listing the names of nonmem output files
+#'   that were read to import estimates from a completed nonmem run
+#' - `cpp_variables`: a data frame listing variables internal to the model 
+#'   cpp file
 #' - `atol`: see [solversettings]
 #' - `rtol`: see [solversettings]
 #' - `ss_atol`: absolute tolerance to use when advancing to PK steady state
@@ -477,7 +481,6 @@ setMethod("names", "mrgmod", function(x) {
 #' - `envir`: the model environment
 #' - `plugins`: plugins invoked in the model
 #' - `digits`: number of digits to request in simulated data
-
 #' - `tscale`: multiplicative scalar for time in results only
 #' - `mindt`: simulation output time below which there model will assume to 
 #'   have not advanced
@@ -512,6 +515,8 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
       advan <- x@advan
       functions <- funset(x)
     }
+    cpp_variables <- shlib(x)[["cpp_variables"]]
+    nm_import <- shlib(x)[["nm_import"]]
     details <- x@annot
     code <- x@code
     random <- names(x)[c("omega", "sigma", "omega_labels", "sigma_labels")]
@@ -535,14 +540,12 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
-    
-    covariates <- as.character(x@shlib$covariates)
+    covariates <- as.character(shlib(x)[["covariates"]])
     pars <- pars(x)
     neq <- neq(x)
     npar <- npar(x)
   })
 })
-
 
 #' Select parameter values from a model object
 #' 
@@ -624,13 +627,16 @@ loadso.mrgmod <- function(x,...) {
   if(inherits(x,"packmod")) {
     return(invisible(x))  
   }
-  if(.Platform$OS.type!="unix") {
-    try(dyn.unload(sodll(x)),silent=TRUE)
+  sofile <- sodll(x)
+  if(!file.exists(sofile)) {
+    wstop("[loadso] the model dll file doesn't exist")  
   }
-  foo <- try(dyn.load(sodll(x)))
+  if(.Platform$OS.type!="unix") {
+    try(dyn.unload(sofile),silent=TRUE)
+  }
+  foo <- try(dyn.load(sofile))
   if(class(foo)=="try-catch") {
-    message(foo)
-    return(invisible(FALSE))
+    wstop("[loadso] failed to load the model dll file")
   }
   return(invisible(x))
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2020  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -81,10 +81,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   
-  if(verbose) say("unpacking data");
-  
   // Create data objects from data and idata
-  dataobject dat(data,parnames);
+  dataobject dat(data, parnames);
   dat.map_uid();
   dat.locate_tran();
   
@@ -127,7 +125,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
   LSODA solver(neq, parin);
-  
   
   recstack a(NID);
   
@@ -336,8 +333,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
-    dat.carry_out(a,ans,idat,data_carry,data_carry_start,
-                  idata_carry,idata_carry_start);
+    dat.carry_out(a,ans,idat,data_carry,data_carry_start,idata_carry,
+                  idata_carry_start,nocb);
   }
   
   crow = 0;
@@ -361,20 +358,21 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     //if((i % 128)==0) Rcpp::checkUserInterrupt();
     
     double id = dat.get_uid(i);
-    double Fn = 1.0;
-    int this_cmtn = 0;
-    double told = -1;
-    
+    dat.next_id(i);
     prob.idn(i);
-    double tfrom = a[i].front()->time();
-    double tto = tfrom;
-    double maxtime = a[i].back()->time();
-    
     prob.reset_newid(id);
     
     if(i==0) {
       prob.newind(0);
     }
+    
+    double Fn = 1.0;
+    int this_cmtn = 0;
+    double told = -1;
+    
+    double tfrom = a[i].front()->time();
+    double tto = tfrom;
+    double maxtime = a[i].back()->time();
     
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
@@ -387,11 +385,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       idat.copy_inits(this_idata_row,&prob);
     }
     
-    if(a[i][0]->from_data()) {
-      dat.copy_parameters(a[i][0]->pos(),&prob);
-    } else {
-      if(filbak) {
-        dat.copy_parameters(dat.start(i),&prob);
+    if(dat.any_copy) {
+      if(a[i][0]->from_data()) {
+        dat.copy_parameters(a[i][0]->pos(),&prob);
+      } else {
+        if(filbak) {
+          dat.copy_parameters(dat.start(i),&prob);
+        }
       }
     }
     
@@ -432,13 +432,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      bool locf = false;
-      if(this_rec->from_data()) {
-        if(nocb) {
-          dat.copy_parameters(this_rec->pos(),&prob);
-        } else {
-          locf = true;
-        }
+      if(dat.any_copy && nocb) {
+        // will call lsoda_init if parameters are copied
+        dat.copy_next_parameters(
+          i, 
+          this_rec->from_data(), 
+          this_rec->pos(), 
+          &prob
+        );
       }
       
       tto = this_rec->time();
@@ -474,6 +475,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         if(Fn==0) {
           if(this_rec->is_dose()) {
+            prob.on(this_cmtn);
+            prob.lsoda_init();
             this_rec->unarm();
           }
         }
@@ -498,9 +501,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->phantom_rec();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
-            reclist::iterator it = a[i].begin()+j;
-            advance(it,1);
-            a[i].insert(it,newev);
+            reclist::iterator alagit = a[i].begin()+j;
+            advance(alagit,1);
+            a[i].insert(alagit,newev);
             newev->schedule(a[i], maxtime, put_ev_first, NN, Fn);
             this_rec->unarm();
             sort_recs = true;
@@ -521,6 +524,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  this_rec->rate(),
                                  -299,
                                  id);
+          
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
           }
@@ -549,8 +553,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         this_rec->implement(&prob);
       }
       
-      if(locf) {
-        dat.copy_parameters(this_rec->pos(),&prob);
+      if(!nocb && dat.any_copy) {
+        if(this_rec->from_data()) {
+          // will call lsoda_init
+          dat.copy_parameters(this_rec->pos(),&prob);
+        }
       }
       
       prob.table_call();
@@ -603,6 +610,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       if(this_rec->evid()==2) {
         this_rec->implement(&prob);
+        if(this_rec->cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
+          int n_inf = prob.infusion_count[this_cmtn];
+          int n_end = a[i].size();
+          for(int ii = j; (n_inf > 0 && ii < n_end); ++ii) {
+            if(a[i].at(ii)->evid()==9) {
+              prob.rate_rm(this_cmtn, a[i].at(ii)->rate());
+              a[i].erase(a[i].begin() + ii);
+              --n_inf;
+              --n_end;
+              --ii;
+            }
+          }
+        }
       }
       tfrom = tto;
     }

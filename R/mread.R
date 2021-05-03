@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -188,9 +188,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   ## Block name aliases
-  names(spec) <- gsub("DES", "ODE",  names(spec), fixed=TRUE)
-  names(spec) <- gsub("POST", "TABLE", names(spec), fixed=TRUE)
-  names(spec) <- gsub("^PK$",  "MAIN", names(spec), fixed=FALSE)
+  incoming_block_names <- names(spec)
+  names(spec) <- toupper(names(spec))
+  names(spec) <- gsub("DES",   "ODE",   names(spec), fixed = TRUE)
+  names(spec) <- gsub("POST",  "TABLE", names(spec), fixed = TRUE)
+  names(spec) <- gsub("ERROR", "TABLE", names(spec), fixed = TRUE)
+  names(spec) <- gsub("^PK$",  "MAIN",  names(spec), fixed = FALSE)
   
   ## Expand partial matches
   index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)
@@ -201,16 +204,15 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
-  SET <- tolist(spec[["SET"]])
+  SET <- tolist(dump_opts(spec[["SET"]]))
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
-  spec[["SET"]] <- spec[["ENV"]] <-  NULL
-  
+  if("SET" %in% names(spec)) spec[["SET"]] <- ""
+  if("ENV" %in% names(spec)) spec[["ENV"]] <- ""
+
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(spec,project=build$project,ENV)
-  
-  #return(list(spec = spec, env = mread.env, build = build))
+  mread.env <- parse_env(spec,incoming_block_names,project=build$project,ENV)
   
   ## The main sections that need R processing:  
   spec <- move_global2(spec,mread.env,build)
@@ -280,7 +282,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       unlist(labels(sigma)),
       .eta,
       .eps,
-      mread.env[["move_global"]]
+      mread.env[["move_global"]], 
+      mread.env[["defines"]]
     )
     unique(ans)
   }
@@ -291,8 +294,16 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       capture_more <- valid_capture[valid_capture != "."]  
     }
     capture_vars <- .ren.create(capture_more)
-    stopifnot(all(capture_vars$old %in% valid_capture))
+    if(!all(capture_vars$old %in% valid_capture)) {
+      bad <- setdiff(capture_vars$old, valid_capture)
+      for(b in bad) {
+        msg <- glue(" - item `{b}` does not exist in model `{build$model}`")
+        message(msg)
+      }
+      stop("all requested `capture` variables must exist in the model", call.=FALSE)
+    }
     capture <- unique(c(capture,capture_more))
+    build$preclean <- TRUE
   }
   
   capture <- .ren.create(as.character(capture))
@@ -306,9 +317,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"], use.names=FALSE)
+  table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
   plugin <- get_plugins(spec[["PLUGIN"]])
-  spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names=FALSE)
+  spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
   
   ## Look for compartments we're dosing into: F/ALAG/D/R
   ## and add them to CMTN
@@ -396,9 +407,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)
   x@shlib[["covariates"]] <- mread.env[["covariates"]]
+  x@shlib[["cpp_variables"]] <- build$cpp_variables
   inc <- spec[["INCLUDE"]]
   if(is.null(inc)) inc <- character(0)
   x@shlib[["include"]] <- inc
+  x@shlib[["nm_import"]] <- mread.env[["nm_import"]]
   x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
   x@shlib[["md5"]] <- build[["md5"]]
   
@@ -456,6 +469,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     incl("modelheader.h"),
     "\n//INCLUDE databox functions:",
     incl("databox_cpp.h"),
+    "\n//USING plugins",
+    plugin_using(plugin),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
@@ -555,7 +570,10 @@ mread_cache <- function(model = NULL,
                         code = NULL, 
                         soloc = getOption("mrgsolve.soloc", tempdir()), 
                         quiet = FALSE, 
-                        preclean = FALSE, ...) {
+                        preclean = FALSE, 
+                        capture = NULL, ...) {
+  
+  if(is.character(capture)) preclean <- TRUE
   
   build <- new_build(file, model, project, soloc, code, preclean) 
   
@@ -583,7 +601,7 @@ mread_cache <- function(model = NULL,
   
   x <- mread(
     build$model, project, soloc=soloc, quiet=quiet, 
-    file = basename(build$modfile), ...
+    file = basename(build$modfile), capture = capture, ...
   )
   
   saveRDS(x,file=cache_file)
@@ -597,38 +615,3 @@ mread_file <- function(file, ...) {
   model <- tools::file_path_sans_ext(file)
   mread(model = model, file = file, ...)
 }
-
-# Capture additional model outputs
-# 
-# 
-# @param x a model object
-# @param ... unquoted names to capture
-# @param vars character vector or comma-separated string of names
-# to capture
-# @noRd
-# capture_more <- function(x,...,vars = NULL) {
-#   vars <- .ren.dots(...,vars = vars)
-#   vars <- paste0(vars$new,"=",vars$old)
-#   l <- as.list(x)
-#   mod_new <- mread(
-#     file = l$modfile, 
-#     model  = l$model,
-#     project = l$project, 
-#     capture = vars
-#   )
-#   for(s in sval) {
-#     slot(mod_new,s) <- slot(x,s)   
-#   }
-#   out <- outvars(mod_new)
-#   out$cmt <- outvars(x)$cmt
-#   mod_new <- update(
-#     mod_new, 
-#     param = l$param, 
-#     init = l$init,
-#     omega = omat(x), 
-#     sigma = smat(x), 
-#     outvars = unlist(out)
-#   )
-#   mod_new
-# }
-

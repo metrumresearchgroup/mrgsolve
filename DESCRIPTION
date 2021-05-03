@@ -1,28 +1,28 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 0.10.4.9001
+Version: 0.11.0.9000
 Authors@R: 
-    c(person(given = "Kyle T",
-             family = "Baron",
+    c(person(given = "Kyle T", family = "Baron",
              role = c("aut", "cre"),
              email = "kyleb@metrumrg.com",
              comment = c(ORCID = "0000-0001-7252-5656")),
-      person(given = "Bill",
-             family = "Gillespie",
+      person(given = "Bill", family = "Gillespie",
              role = "ctb"),
-      person(given = "Charles",
-             family = "Margossian",
+      person(given = "Charles", family = "Margossian",
              role = "ctb"),
-      person(given = "Devin",
-             family = "Pastoor",
+      person(given = "Devin", family = "Pastoor",
              role = "ctb"),
-      person(given = "Bill",
-             family = "Denney",
+      person(given = "Bill", family = "Denney",
              role = "ctb",
              comment = c(ORCID = "0000-0002-5759-428X")),
-      person(given = "Dilawar",
-             family = "Singh",
+      person(given = "Dilawar", family = "Singh",
+             role = "ctb"),
+      person(given = "Felicien", family = "Le Louedec",
+             comment = c(ORCID = "0000-0003-3699-2729"),
+             role = "ctb"),
+      person(given = "Timothy", family = "Waterhouse",
+             comment = c(ORCID = "0000-0002-0954-9660"),
              role = "ctb"),
       person(given = "Metrum Research Group",
              role = "cph"))
@@ -41,7 +41,6 @@ Imports:
     Rcpp (>= 0.12.12),
     dplyr (>= 0.8.1),
     magrittr (>= 1.5),
-    RcppArmadillo (>= 0.7.900.2.0),
     tibble (>= 2.1.1),
     rlang (>= 0.3.4),
     tidyselect (>= 0.2.5),
@@ -54,7 +53,8 @@ Suggests:
     rmarkdown,
     yaml,
     knitr, 
-    data.table
+    data.table,
+    pmxTools
 LinkingTo: 
     Rcpp (>= 0.12.12),
     RcppArmadillo (>= 0.7.900.2.0),

@@ -53,6 +53,10 @@ functions (with a call to \code{mrgsolve:::funset}).
 \item \code{random}: names and labels of \verb{$OMEGA} and \verb{$SIGMA}
 \item \code{code}: model source code from \code{cfile}
 \item \code{details}: model details data frame
+\item \code{nm_import}: a character vector listing the names of nonmem output files
+that were read to import estimates from a completed nonmem run
+\item \code{cpp_variables}: a data frame listing variables internal to the model
+cpp file
 \item \code{atol}: see \link{solversettings}
 \item \code{rtol}: see \link{solversettings}
 \item \code{ss_atol}: absolute tolerance to use when advancing to PK steady state

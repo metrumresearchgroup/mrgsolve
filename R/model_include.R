@@ -49,6 +49,11 @@ plugin_code <- function(x) {
   s_pick(x,"code") 
 }
 
+plugin_using <- function(x) {
+  if(is.null(x)) return(NULL)
+  s_pick(x, "using")
+}
+
 plugin_names <- function(x) {
   if(is.null(x)) return("// NO PLUGINS")
   x <- s_pick(x,"name")
@@ -124,6 +129,10 @@ plugins[["mrgx"]] <- list(
   code='#include "mrgx.h"\n',name="mrgx"
 )
 
+plugins[["tad"]] <- list( 
+  using = '#include "mrgsolve-tad.h"\n', name = "tad"  
+)
+
 plugins[["Rcpp"]] <- list(
   code = "#include <Rcpp.h>\n",
   linkto = "Rcpp/include", name="Rcpp"
@@ -154,29 +163,3 @@ plugins[["N_CMT"]] <- list(
 )
 
 # nocov end
-
-# read_lines_from_base <- function(file) {
-#   readLines(mrgsolve_file("base", file))
-# }
-
-
-# write_build_env <- function(x) {
-#   
-#   mkv <- file.path(x$soloc,"Makevars")
-#   
-#   clink <- paste0("PKG_CPPFLAGS=",paste(Sys.getenv("CLINK_CPPFLAGS"), collapse=" "))
-#   libs <- paste0("PKG_LIBS=",paste(Sys.getenv("PKG_LIBS"),collapse=" "))
-#   
-#   cat(file=mkv, "# from write_make_vars", "\n")
-#   cat(file=mkv, clink, "\n", append=TRUE)
-#   cat(file=mkv, libs,  "\n", append=TRUE)
-#   
-#   headers <- file.path(
-#     system.file("base",package="mrgsolve"),
-#     c("modelheader.h", "mrgsolv.h")
-#   )
-#   
-#   if(!all(file.copy(headers, x$soloc, overwrite=TRUE))) {
-#     stop("Couldn't find mrgsolve install location.", call.=FALSE) 
-#   }
-# }

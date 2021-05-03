@@ -9,6 +9,8 @@ nmext(
   project = getwd(),
   file = paste0(run, ".ext"),
   path = NULL,
+  root = c("working", "cppfile"),
+  index = "last",
   theta = TRUE,
   omega = TRUE,
   sigma = TRUE,
@@ -19,7 +21,8 @@ nmext(
   tname = "THETA",
   oname = "...",
   sname = "...",
-  read_fun = "data.table"
+  read_fun = "data.table",
+  env = NULL
 )
 }
 \arguments{
@@ -30,6 +33,14 @@ nmext(
 \item{file}{deprecated; use \code{path} instead}
 
 \item{path}{full path to NONMEM \code{ext} file}
+
+\item{root}{the directory that `path` and `project` are relative to; this is
+currently limited to the `working` directory or `cppdir`, the directory 
+where the model file is located}
+
+\item{index}{the estimation number to return;  "last" will return the 
+last estimation results; otherwise, pass an integer indicating which 
+estimation results to return}
 
 \item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
 
@@ -52,6 +63,8 @@ nmext(
 \item{sname}{name for \code{$SIGMA}}
 
 \item{read_fun}{function to use when reading the \code{ext} file}
+
+\item{env}{internal}
 }
 \description{
 Import model estimates from a NONMEM ext file
