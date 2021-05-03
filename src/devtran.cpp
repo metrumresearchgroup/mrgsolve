@@ -337,7 +337,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                   idata_carry_start,nocb);
   }
   
-  crow = 0;
+  crow = 0; // current output row
+  int crec = 0; // current record number
   
   prob.nid(dat.nid());
   prob.nrow(NN);
@@ -349,13 +350,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
+  const bool do_interrupt = prob.interrupt > 0;
   
   if(verbose) say("starting the simulation ...");
   
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-    
-    //if((i % 128)==0) Rcpp::checkUserInterrupt();
     
     double id = dat.get_uid(i);
     dat.next_id(i);
@@ -399,6 +399,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob.init_call(tfrom);
     
     for(size_t j=0; j < a[i].size(); ++j) {
+      
+      if(do_interrupt && ((crec % prob.interrupt)==0)) {
+        Rcpp::checkUserInterrupt();
+        ++crec;
+      }
       
       if(crow == NN) continue;
       

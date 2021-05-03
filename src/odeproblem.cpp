@@ -103,6 +103,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   ss_flag = false;
   ssRtol = 0;
   ssAtol = 0;
+  interrupt = -4321;
   
   pred.assign(5,0.0);
   
@@ -669,6 +670,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   }
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
   Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
+  interrupt = Rcpp::as<int>(parin["interrupt"]);
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {

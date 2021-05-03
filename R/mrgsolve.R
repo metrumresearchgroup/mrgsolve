@@ -461,6 +461,10 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 #' To silence warnings related to steady state, set `ss_fixed` to `TRUE` and 
 #' set `ss_n` as the maximum number of iterations to try when advancing the 
 #' system for steady state determination.
+#' @param interrupt integer check user interrupt interval; when `interrupt` is a 
+#' positive integer, the simulation will check for the user interrupt signal
+#' every `interrupt` simulation records; pass a negative number to never check
+#' for the user interrupt interval.
 #' 
 #' @md
 #' @rdname mrgsim
@@ -487,6 +491,7 @@ do_mrgsim <- function(x,
                       skip_init_calc = FALSE,
                       ss_n = 500,
                       ss_fixed = FALSE,
+                      interrupt = 256,
                       ...) {
   
   x <- update(x,...,strict=TRUE)
@@ -591,6 +596,7 @@ do_mrgsim <- function(x,
   parin$ss_fixed <- ss_fixed
   parin$ss_n <- ss_n
   parin$request <- Cmti(x)-1L
+  parin$interrupt <- interrupt
   
   if(tad && any(x@capture =="tad")) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 

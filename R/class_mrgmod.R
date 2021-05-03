@@ -734,7 +734,7 @@ parin <- function(x) {
     digits=x@digits, tscale=x@tscale,
     mindt=x@mindt, advan=x@advan, 
     ss_n = 500, ss_fixed = FALSE, 
-    ss_cmt = x@ss_cmt
+    ss_cmt = x@ss_cmt, interrupt = -1
   )
 }
 
