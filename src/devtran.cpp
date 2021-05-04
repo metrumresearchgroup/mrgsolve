@@ -400,9 +400,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     for(size_t j=0; j < a[i].size(); ++j) {
       
+      ++crec;
       if(do_interrupt && ((crec % prob.interrupt)==0)) {
         Rcpp::checkUserInterrupt();
-        ++crec;
       }
       
       if(crow == NN) continue;
