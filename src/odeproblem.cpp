@@ -103,7 +103,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   ss_flag = false;
   ssRtol = 0;
   ssAtol = 0;
-  interrupt = -4321;
+  interrupt = -1;
   
   pred.assign(5,0.0);
   
