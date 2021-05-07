@@ -337,7 +337,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                   idata_carry_start,nocb);
   }
   
-  crow = 0;
+  crow = 0; // current output row
+  int crec = 0; // current record number
   
   prob.nid(dat.nid());
   prob.nrow(NN);
@@ -349,6 +350,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
+  const bool do_interrupt = prob.interrupt > 0;
   
   if(verbose) say("starting the simulation ...");
   
@@ -397,6 +399,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob.init_call(tfrom);
     
     for(size_t j=0; j < a[i].size(); ++j) {
+      
+      ++crec;
+      if(do_interrupt && ((crec % prob.interrupt)==0)) {
+        Rcpp::checkUserInterrupt();
+      }
       
       if(crow == NN) continue;
       
@@ -608,6 +615,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } 
       if(this_rec->evid()==2) {
         this_rec->implement(&prob);
+        if(this_rec->cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
+          int n_inf = prob.infusion_count[this_cmtn];
+          int n_end = a[i].size();
+          for(int ii = j; (n_inf > 0 && ii < n_end); ++ii) {
+            if(a[i].at(ii)->evid()==9) {
+              prob.rate_rm(this_cmtn, a[i].at(ii)->rate());
+              a[i].erase(a[i].begin() + ii);
+              --n_inf;
+              --n_end;
+              --ii;
+            }
+          }
+        }
       }
       tfrom = tto;
     }

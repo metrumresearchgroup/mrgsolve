@@ -52,3 +52,39 @@ test_that("compartment is turned on when F is zero", {
   expect_equal(ans[7:9], c(0,0,0))
   expect_equal(ans[10:27], seq(1,24-t2))
 })
+
+test_that("compartment with active infusion can be turned off", {
+  mod <- house(end = 96)
+  data1 <- c(
+    # start a bunch of infusions into 2nd cmt
+    # then off at time 20
+    # then dose again 
+    ev(amt = 100, rate = 1,  cmt =  2), 
+    ev(amt = 500, rate = 1,  cmt =  2, time = 2),
+    ev(amt = 50,  rate = 1,  cmt =  2, time = 5),
+    ev(amt = 5,   rate = 1,  cmt =  2, time = 10),
+    ev(amt = 0,   evid = 2,  cmt = -2, time = 20),
+    ev(amt = 10,  time = 40, cmt =  2, rate = 10)
+  ) %>% mutate(ID = 1) %>% as.data.frame()
+  data2 <- c(
+    # same thing, just one infusion
+    ev(amt = 100, rate = 1,  cmt =  2), 
+    ev(amt = 0,   evid = 2,  cmt = -2, time = 20), 
+    ev(amt = 10,  time = 40, cmt =  2, rate = 10)
+  ) %>% mutate(ID = 2) %>% as.data.frame()
+  data3 <- c(
+    # same thing, just do the test dose
+    ev(amt = 10,  time = 40, cmt =  2, rate = 10)
+  ) %>% mutate(ID = 3) %>% as.data.frame()
+  data <- bind_rows(data1,data2,data3)
+  out <- mrgsim_df(mod, data, end = 60) 
+  ans <- filter(out, time >= 40)
+  id <- ans$ID
+  ans$ID <- NULL
+  comp <- split(ans, id)
+  for(i in 1:3) {
+    rownames(comp[[i]]) <- NULL  
+  }
+  expect_equal(comp[[1]], comp[[2]])
+  expect_equal(comp[[1]], comp[[3]])
+})

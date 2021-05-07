@@ -33,6 +33,7 @@ do_mrgsim(
   skip_init_calc = FALSE,
   ss_n = 500,
   ss_fixed = FALSE,
+  interrupt = 256,
   ...
 )
 }
@@ -130,6 +131,11 @@ has not been reached within \code{ss_n} dosing iterations.
 To silence warnings related to steady state, set \code{ss_fixed} to \code{TRUE} and
 set \code{ss_n} as the maximum number of iterations to try when advancing the
 system for steady state determination.}
+
+\item{interrupt}{integer check user interrupt interval; when \code{interrupt} is a
+positive integer, the simulation will check for the user interrupt signal
+every \code{interrupt} simulation records; pass a negative number to never check
+for the user interrupt interval.}
 }
 \value{
 An object of class \link{mrgsims}
