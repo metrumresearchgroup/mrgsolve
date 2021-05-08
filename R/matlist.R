@@ -218,9 +218,13 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 #' revar(mod)
 #' mod <- zero_re(mod)
 #' revar(mod)
+#' revar(zero_re(omega))
 #' 
+#' @md
+#' @export
 setGeneric("zero_re", function(.x, ...) standardGeneric("zero_re"))
 
+#' @rdname zero_re
 #' @export
 setMethod("zero_re", "mrgmod", function(.x, ...) {
   what <- as.character(eval(substitute(alist(...))))
@@ -242,47 +246,51 @@ setMethod("zero_re", "mrgmod", function(.x, ...) {
 #' @param ... passed through to other methods
 #'
 #' @name matlist
-#' @export
 #' @rdname matlist
+NULL
+
+#' @rdname matlist
+#' @export
 setMethod("as.list", "matlist", function(x, ...) x@data)
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("as.matrix", "matlist", function(x, ...) {
   if(length(x@data)==0) return(matrix(nrow=0,ncol=0))
-  SUPERMATRIX(x@data,...)
+  SUPERMATRIX(x@data, ...)
 })
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 names.matlist <- function(x) {
   names(x@data)  
 }
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 length.matlist <- function(x) {
   length(x@data)  
 }
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("labels", "matlist", function(object,...) {
   object@labels
 })
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("dim", "matlist", function(x)  lapply(x@data, dim))
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("nrow", "matlist", function(x) unlist(lapply(x@data, nrow)))
 
-##' @rdname matlist
-##' @param object passed to showmatlist
-##' @export
-##' @keywords internal
+
+#' @param object passed to showmatlist
+#' @rdname matlist
+#' @keywords internal
+#' @export
 setMethod("show", "matlist", function(object) showmatlist(object))
 showmatlist <- function(x,...) {
   

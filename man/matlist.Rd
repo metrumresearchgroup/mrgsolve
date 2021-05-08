@@ -2,6 +2,7 @@
 % Please edit documentation in R/matlist.R
 \name{matlist}
 \alias{matlist}
+\alias{as.list,matlist-method}
 \alias{as.matrix,matlist-method}
 \alias{names.matlist}
 \alias{length.matlist}
