@@ -218,7 +218,7 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 #' revar(mod)
 #' mod <- zero_re(mod)
 #' revar(mod)
-#' revar(zero_re(omega))
+#' revar(zero_re(mod, omega))
 #' 
 #' @md
 #' @export
