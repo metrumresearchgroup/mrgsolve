@@ -672,9 +672,26 @@ do_mrgsim <- function(x,
     x@capL # already re-named
   )
   
+  if(anyDuplicated.default(cnames)) {
+    dups <- duplicated(cnames)
+    new_names <- make.names(cnames, unique = TRUE)
+    for(dup in which(dups)) {
+      prev <- cnames[dup]
+      updated <- new_names[dup]
+      warning(
+        glue("duplicate output name: `{prev}`-->`{updated}`"),
+        call. = FALSE
+      )
+    }
+    cnames <- new_names
+  }
+  
   dimnames(out[["data"]]) <- list(NULL, cnames)
   
-  ans <- as.data.frame(out[["data"]])
+  ans <- as.data.frame.matrix(
+    out[["data"]], 
+    stringsAsFactors = FALSE
+  )
   
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {

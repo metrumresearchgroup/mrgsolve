@@ -27,6 +27,10 @@ mod <- house()
 revar(mod)
 mod <- zero_re(mod)
 revar(mod)
-revar(zero_re(mod, omega))
 
+\dontrun{
+mod <- modlib("popex", compile = FALSE)
+mod <- zero_re(mod, omega)
+revar(mod)
+}
 }

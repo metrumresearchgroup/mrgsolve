@@ -218,8 +218,12 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 #' revar(mod)
 #' mod <- zero_re(mod)
 #' revar(mod)
-#' revar(zero_re(mod, omega))
-#' 
+#'
+#' \dontrun{
+#' mod <- modlib("popex", compile = FALSE)
+#' mod <- zero_re(mod, omega)
+#' revar(mod)
+#' }
 #' @md
 #' @export
 setGeneric("zero_re", function(.x, ...) standardGeneric("zero_re"))
