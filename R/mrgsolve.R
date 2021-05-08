@@ -675,11 +675,12 @@ do_mrgsim <- function(x,
   if(anyDuplicated.default(cnames)) {
     dups <- duplicated(cnames)
     new_names <- make.names(cnames, unique = TRUE)
+    warning("duplicate output columns found; these will be renamed", call.=FALSE)
     for(dup in which(dups)) {
       prev <- cnames[dup]
       updated <- new_names[dup]
       warning(
-        glue("duplicate output name: `{prev}`-->`{updated}`"),
+        glue("duplicate renamed: {prev} -> {updated}"),
         call. = FALSE
       )
     }
