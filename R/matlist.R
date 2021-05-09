@@ -200,24 +200,37 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
   as.matrix(mod(.x)@sigma)
 })
 
-##' Methods for working with matrix-list objects
-##'
-##' @param .x a matlist object
-##' @param x a matlist object
-##' @param .drop if \code{TRUE}, \code{zero_re} will drop \code{omega}
-##' or \code{sigma} or both entirely
-##' @param ... passed along
-##'
-##' @export
-##' @aliases zero.re 
-##' @name matlist
-##' @rdname matlist
-setGeneric("zero.re", function(.x,...) standardGeneric("zero.re"))
 
-##' @export
-##' @rdname matlist
-setMethod("zero.re", "mrgmod", function(.x,...,.drop=FALSE) {
-  if(.drop) return(drop_re(.x,...))
+#' Zero out random effects in a model object
+#' 
+#' Sets all elements of the OMEGA or SIGMA matrix to zero
+#' 
+#' @param .x a model object
+#' @param ... which matrix to zero out; pass `omega` to just zero out `omega`, 
+#' `sigma` to just zero out `sigma`; passing nothing will zero out both
+#' 
+#' @return 
+#' An updated object.
+#' 
+#' @examples
+#' 
+#' mod <- house()
+#' revar(mod)
+#' mod <- zero_re(mod)
+#' revar(mod)
+#'
+#' \dontrun{
+#' mod <- modlib("popex", compile = FALSE)
+#' mod <- zero_re(mod, omega)
+#' revar(mod)
+#' }
+#' @md
+#' @export
+setGeneric("zero_re", function(.x, ...) standardGeneric("zero_re"))
+
+#' @rdname zero_re
+#' @export
+setMethod("zero_re", "mrgmod", function(.x, ...) {
   what <- as.character(eval(substitute(alist(...))))
   if(length(what)==0) what <- c("omega", "sigma")
   if(is.element("omega", what) & !is.null(nrow(omat(.x)))) {
@@ -229,81 +242,59 @@ setMethod("zero.re", "mrgmod", function(.x,...,.drop=FALSE) {
   return(.x)
 })
 
-##' @rdname matlist
-##' @export
-zero_re <- function(...) zero.re(...)
 
-#' Deprecated: drop random effect matrices from model object
-#' 
-#' 
-#' @param .x not used
-#' @param ... not used
-#' 
-#' @details 
-#' Users are no longer allowed to remove random effect matrices from the model 
-#' object.  Use [zero_re] instead to convert the matrix to all zeros.
-#' 
-#' 
-#' @seealso [zero_re]
-#' @md
+#' Methods for working with matrix-list objects
+#'
+#' @param .x a matlist object
+#' @param x a matlist object
+#' @param ... passed through to other methods
+#'
+#' @name matlist
+#' @rdname matlist
+NULL
+
+#' @rdname matlist
 #' @export
-drop_re <- function(.x,...) {
-  lifecycle::deprecate_stop("0.10.1", "drop_re()", "zero_re()")
-  # .Deprecated(msg="drop.re and drop_re are deprecated.  Use zero_re instead.")
-  # what <- as.character(eval(substitute(alist(...))))
-  # if(length(what)==0) what <- c("omega", "sigma")
-  # if(is.element("omega", what)) .x@omega <- new("omegalist")
-  # if(is.element("sigma", what)) .x@sigma <- new("sigmalist")
-  # return(.x)
-}
-
-#' @rdname drop_re
-#' @export
-drop.re <- function(...) {
-  lifecycle::deprecate_stop("0.10.1", "drop.re()", "zero_re()")
-}
-
-##' @export
-##' @rdname matlist
 setMethod("as.list", "matlist", function(x, ...) x@data)
 
-##' @export
-##' @rdname matlist
-setMethod("as.matrix", "matlist", function(x,...) {
+#' @rdname matlist
+#' @export
+setMethod("as.matrix", "matlist", function(x, ...) {
   if(length(x@data)==0) return(matrix(nrow=0,ncol=0))
-  SUPERMATRIX(x@data,...)
+  SUPERMATRIX(x@data, ...)
 })
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 names.matlist <- function(x) {
   names(x@data)  
 }
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 length.matlist <- function(x) {
   length(x@data)  
 }
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("labels", "matlist", function(object,...) {
   object@labels
 })
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("dim", "matlist", function(x)  lapply(x@data, dim))
 
-##' @export
-##' @rdname matlist
+#' @rdname matlist
+#' @export
 setMethod("nrow", "matlist", function(x) unlist(lapply(x@data, nrow)))
 
-##' @rdname matlist
-##' @param object passed to showmatlist
-##' @export
-##' @keywords internal
+
+#' @param object passed to showmatlist
+#' @rdname matlist
+#' @keywords internal
+#' @export
 setMethod("show", "matlist", function(object) showmatlist(object))
 showmatlist <- function(x,...) {
   

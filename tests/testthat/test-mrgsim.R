@@ -218,3 +218,13 @@ test_that("simulate non-pred with negative times is allowed", {
   data$time[1] <- -8
   expect_error(mrgsim(mod, data), "the data set is not sorted by time")
 })
+
+test_that("warning for duplicate output names and rename", {
+  mod <- house(end = -1)
+  dose <- ev(amt = 100, CP = 999)
+  expect_warning(
+    out <- mrgsim(mod, events = dose, carry_out = "CP"), 
+    regexp = "duplicate output columns found; these will be renamed"
+  )
+  expect_true(all(c("CP", "CP.1") %in% names(out)))
+})
