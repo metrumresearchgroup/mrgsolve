@@ -115,7 +115,7 @@ test_that("mrgsim with data and idata", {
   expect_false(any(x[2:length(x)] == first(x)))
   out_pars <- distinct(out, ID,CL,V) %>% as.data.frame
   idata_cut <- filter(idata, ID <= 7)
-  expect_identical(round(out_pars,6), round(idata_cut,6))
+  expect_equal(round(out_pars,6), round(idata_cut,6))
 })
 
 test_that("mrgsim with ev and ID", {
