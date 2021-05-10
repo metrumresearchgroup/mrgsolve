@@ -1,5 +1,16 @@
 # mrgsolve (development version)
 
+- `mrgsim()` will now periodically check for user interrupt signal so that 
+  long-running simulations can be stopped using `Esc` and / or `Control-C`; 
+  the check interval can be modified through the `interrupt` argument to 
+  `mrgsim()`, but for most applications, this shouldn't need to be changed 
+  (#823)
+- `mrgsim()` will issue a warning if duplicate columns are found in simulated
+  output and rename duplicates using `make.names()`; thanks @FelicienLL
+  for the report (#827, #828)
+- Users can now turn compartments to `OFF` when they have active infusions 
+  running; this was previously an error (#822)
+
 # mrgsolve 0.11.0
 
 - The absolute paths to nonmem output files (`root.xml` or `root.ext`) are now 
