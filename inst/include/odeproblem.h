@@ -250,6 +250,7 @@ public:
   config_func Config; ///< <code>$PREAMBLE</code> function
   
   bool Do_Init_Calc; ///< Flag regulating whether or not initials are taken from <code>$MAIN</code>
+  int interrupt; ///< Check User Interrupt interval (number of simulation records)
 };
 
 

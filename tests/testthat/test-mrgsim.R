@@ -113,8 +113,8 @@ test_that("mrgsim with data and idata", {
   sims <- mutate(sims, CENT_amt = CENT/amt)
   x <- round(sims$CENT_amt,6)
   expect_false(any(x[2:length(x)] == first(x)))
-  out_pars <- distinct(out, ID,CL,V) %>% as.data.frame
-  idata_cut <- filter(idata, ID <= 7)
+  out_pars <- as.data.frame(distinct(out, ID,CL,V))
+  idata_cut <- as.data.frame(filter(idata, ID <= 7))
   expect_identical(round(out_pars,6), round(idata_cut,6))
 })
 
@@ -217,4 +217,14 @@ test_that("simulate non-pred with negative times is allowed", {
   
   data$time[1] <- -8
   expect_error(mrgsim(mod, data), "the data set is not sorted by time")
+})
+
+test_that("warning for duplicate output names and rename", {
+  mod <- house(end = -1)
+  dose <- ev(amt = 100, CP = 999)
+  expect_warning(
+    out <- mrgsim(mod, events = dose, carry_out = "CP"), 
+    regexp = "duplicate output columns found; these will be renamed"
+  )
+  expect_true(all(c("CP", "CP.1") %in% names(out)))
 })

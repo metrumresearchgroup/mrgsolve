@@ -103,6 +103,7 @@ odeproblem::odeproblem(Rcpp::NumericVector param,
   ss_flag = false;
   ssRtol = 0;
   ssAtol = 0;
+  interrupt = -1;
   
   pred.assign(5,0.0);
   
@@ -329,9 +330,6 @@ void odeproblem::on(const unsigned short int eq_n) {
 }
 
 void odeproblem::off(const unsigned short int eq_n) {
-  if(infusion_count[eq_n]>0) {
-    Rcpp::stop("attempting to turn compartment off when infusion is on.");
-  }
   On[eq_n] = 0;
   this->y(eq_n,0.0);
 }
@@ -672,6 +670,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin) {
   }
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
   Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
+  interrupt = Rcpp::as<int>(parin["interrupt"]);
 }
 
 void odeproblem::copy_funs(const Rcpp::List& funs) {

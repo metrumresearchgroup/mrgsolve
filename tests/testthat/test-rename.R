@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -40,7 +40,6 @@ test_that("tran item is renamed", {
   out <- mod %>% carry_out(EVID=evid,addl) %>% mrgsim
   expect_false(all(is.element("evid", names(out))))
 })
-
 
 test_that("Item carried from data set is renamed", {
   out <- mod %>% carry_out(Dose,WEIGHT = WT) %>% mrgsim

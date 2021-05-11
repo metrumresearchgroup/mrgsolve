@@ -2,9 +2,6 @@
 % Please edit documentation in R/matlist.R
 \name{matlist}
 \alias{matlist}
-\alias{zero.re}
-\alias{zero.re,mrgmod-method}
-\alias{zero_re}
 \alias{as.list,matlist-method}
 \alias{as.matrix,matlist-method}
 \alias{names.matlist}
@@ -15,12 +12,6 @@
 \alias{show,matlist-method}
 \title{Methods for working with matrix-list objects}
 \usage{
-zero.re(.x, ...)
-
-\S4method{zero.re}{mrgmod}(.x, ..., .drop = FALSE)
-
-zero_re(...)
-
 \S4method{as.list}{matlist}(x, ...)
 
 \S4method{as.matrix}{matlist}(x, ...)
@@ -38,16 +29,13 @@ zero_re(...)
 \S4method{show}{matlist}(object)
 }
 \arguments{
-\item{.x}{a matlist object}
-
-\item{...}{passed along}
-
-\item{.drop}{if \code{TRUE}, \code{zero_re} will drop \code{omega}
-or \code{sigma} or both entirely}
-
 \item{x}{a matlist object}
 
+\item{...}{passed through to other methods}
+
 \item{object}{passed to showmatlist}
+
+\item{.x}{a matlist object}
 }
 \description{
 Methods for working with matrix-list objects
