@@ -1,5 +1,8 @@
 # mrgsolve (development version)
 
+- In `pk2iv`, change scaling volume for `CENT` from `V2` (incorrect) to 
+  `V1` (#831, #832, #833)
+
 # mrgsolve 0.11.1
 
 - `mrgsim()` will now periodically check for user interrupt signal so that 
