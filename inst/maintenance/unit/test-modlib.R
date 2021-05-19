@@ -100,3 +100,8 @@ test_that("all modlib models", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
 })
+
+test_that("pk2iv uses V1 to scale CENT", {
+  x <- readLines(file.path(modlib(), "pk2iv.cpp"))
+  expect_match(x, "#define CP (CENT/V1)", fixed = TRUE, all = FALSE)
+})
