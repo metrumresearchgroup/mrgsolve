@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -116,13 +116,11 @@ test_that("Sigma matrices are properly parsed", {
   expect_equivalent(mat[3,2],0.002)
 })
 
-
 test_that("EPS values have proper variance", {
   set.seed(8282)
   out <- mrgsim(mod,end=100000, delta=1, init = list(GUT = 0, CENT = 0))
   expect_equal(round(var(out$EPS1),2),0.55)
 })
-
 
 test_that("Error when code is passed as project", {
   expect_error(suppressWarnings(mread("hey",code)))
@@ -136,4 +134,3 @@ test_that("Error with duplicate blocks", {
   expect_error(mcode("a", "$MAIN \n $MAIN",compile = FALSE))
   expect_error(mcode("a", "$SET \n $SET",compile = FALSE))
 })
-
