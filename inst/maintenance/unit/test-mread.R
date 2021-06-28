@@ -70,7 +70,7 @@ $SIGMA @block
 
 '
 
-mod <- suppressWarnings(mcode("test2",code, warn=TRUE, soloc = '.'))
+mod <- suppressWarnings(mcode("test2",code, warn=TRUE))
 
 test_that("Parameters are parsed properly with mread", {
   expect_equal(param(mod)$CL,1)
