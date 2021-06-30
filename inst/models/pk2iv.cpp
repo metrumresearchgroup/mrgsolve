@@ -9,10 +9,9 @@ CENT   : Central compartment (mass)
 PERIPH : Peripheral compartment (mass) 
 
 $GLOBAL
-#define CP (CENT/V2)
+#define CP (CENT/V1)
 
 $PKMODEL ncmt = 2, depot = FALSE
 
 $CAPTURE @annotated
 CP : Plasma concentration (mass/time)
-  
