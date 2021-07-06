@@ -459,3 +459,43 @@ map_ext_file <- function(file, all_rows = FALSE) {
   }
   ans
 }
+
+
+#' Create a list of parameters
+#' 
+#' @param x a data frame of NONMEM estimates, with one set per row
+#' @param tpat a regular expression for detecting names in `x` to use for 
+#' parameters
+#' @param opat a regular expression for detecting names in `x` to use for 
+#' the omega matrix
+#' @param spat a regular expression for detecting names in `x` to use for 
+#' the sigma matrix
+#' 
+#' @return An unnamed list with length equal to the number of rows in `x`; each
+#' item in the list will be a list with the following data items:
+#' 
+#' - `param`: a named list 
+#' - `omega`: a matrix
+#' - `sigma`: a matrix
+#' - `row`: an integer specifying the row number
+#' 
+#' @md
+#' @export
+split_nm_post <- function(x, tpat = "THETA", opat = "OMEGA", spat = "SIGMA") {
+  nr <- nrow(x)
+  ans <- vector(mod = "list", length = nr)
+  theta_c <- grepl(tpat, names(x))
+  omega_c <- grepl(opat, names(x))
+  sigma_c <- grepl(spat, names(x))
+  for(i in seq(nr)) {
+    ans[[i]] <- list(
+      param = as.list(x[i, theta_c]), 
+      omega = as_bmat(x[i, omega_c]), 
+      sigma = as_bmat(x[i, sigma_c]), 
+      row = i
+    )
+  }
+  ans
+}
+
+
