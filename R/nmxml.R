@@ -481,13 +481,20 @@ map_ext_file <- function(file, all_rows = FALSE) {
 #' 
 #' @md
 #' @export
-split_nm_post <- function(x, tpat = "THETA", opat = "OMEGA", spat = "SIGMA") {
+split_nm_post <- function(x, rows = NULL, tpat = "THETA", opat = "OMEGA", spat = "SIGMA") {
   nr <- nrow(x)
+  if(is.numeric(rows)) {
+    to_scan <- rows  
+    if(!is.integer(row)) warning("not integer")
+  } else {
+    to_scan <- seq(nr)  
+  }
+  
   ans <- vector(mod = "list", length = nr)
   theta_c <- grepl(tpat, names(x))
   omega_c <- grepl(opat, names(x))
   sigma_c <- grepl(spat, names(x))
-  for(i in seq(nr)) {
+  for(i in to_scan) {
     ans[[i]] <- list(
       param = as.list(x[i, theta_c]), 
       omega = as_bmat(x[i, omega_c]), 
