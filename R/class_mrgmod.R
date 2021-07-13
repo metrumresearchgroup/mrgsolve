@@ -565,8 +565,11 @@ setMethod("$", "mrgmod", function(x, name) {
 })
 
 #' @rdname mrgmod_extract
-#' @export
 setMethod("[[", "mrgmod", function(x, i, exact=TRUE) {
+  if(!is.atomic(i)) return(NULL)
+  if(length(i) != 1) {
+    return(x[i])  
+  }
   if(i %in% Pars(x)) {
     return(unname(as.numeric(allparam(x))[i]))  
   }
@@ -577,6 +580,7 @@ setMethod("[[", "mrgmod", function(x, i, exact=TRUE) {
   if(exists(i,l)) {
     return(unname(l[[i]]))  
   }
+  return(NULL)
   wstop(
     "item '", i, "' not found or not extractable with $ or [[ operator."
   )
@@ -590,6 +594,7 @@ setMethod("[", "mrgmod", function(x, i) {
     env <- c(env,as.list(x))  
   }
   if(!all(i %in% names(env))) {
+    return(NULL)
     wrong <- shQuote(setdiff(i, names(env)))
     for(j in seq_along(wrong)) {
       message(" Problem: item ", wrong[j], " not found")    
