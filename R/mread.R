@@ -539,7 +539,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   if(!comp_success) {
     if(ignore.stdout) message("error.\n", appendLF=FALSE)
-    return(build_failed(out,build,x,ignore.stdout))
+    return(build_failed(out,build,x,spec,ignore.stdout))
   } 
   
   if(ignore.stdout) {
