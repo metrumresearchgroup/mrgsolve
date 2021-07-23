@@ -48,8 +48,9 @@ NULL
 #' @param quiet don't print messages when compiling
 #' @param preclean logical; if \code{TRUE}, compilation artifacts are 
 #' cleaned up first
-#' @param recover if \code{TRUE}, an object will be returned in case
-#' the model shared object fails to build
+#' @param recover if \code{TRUE}, a list of build will be returned in case
+#' the model shared object fails to compile; use this option to and 
+#' the returned object to collect information assist in debugging
 #' @param capture a character vector or comma-separated string of additional 
 #' model variables to capture; these variables will be added to the capture 
 #' list for the current call to \code{\link{mread}} only
