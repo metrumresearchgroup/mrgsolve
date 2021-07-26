@@ -48,8 +48,9 @@ NULL
 #' @param quiet don't print messages when compiling
 #' @param preclean logical; if \code{TRUE}, compilation artifacts are 
 #' cleaned up first
-#' @param recover if \code{TRUE}, an object will be returned in case
-#' the model shared object fails to build
+#' @param recover if \code{TRUE}, a list of build will be returned in case
+#' the model shared object fails to compile; use this option to and 
+#' the returned object to collect information assist in debugging
 #' @param capture a character vector or comma-separated string of additional 
 #' model variables to capture; these variables will be added to the capture 
 #' list for the current call to \code{\link{mread}} only
@@ -539,7 +540,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   if(!comp_success) {
     if(ignore.stdout) message("error.\n", appendLF=FALSE)
-    return(build_failed(out,build,x,ignore.stdout))
+    return(build_failed(out,build,x,spec,ignore.stdout))
   } 
   
   if(ignore.stdout) {

@@ -127,10 +127,28 @@ test_that("Error when code is passed as project", {
 })
 
 test_that("Model name with spaces is error", {
-    expect_error(mcode("ab cd", ""))
+  expect_error(mcode("ab cd", ""))
 })
 
 test_that("Error with duplicate blocks", {
   expect_error(mcode("a", "$MAIN \n $MAIN",compile = FALSE))
   expect_error(mcode("a", "$SET \n $SET",compile = FALSE))
+})
+
+test_that("Recover data when compile fails", {
+  code <- '[main] double a = 2\n[param] b = 5\n'
+  expect_warning(
+    mod <- mcode("fail", code, recover = TRUE), 
+    regexp = "returning object for debugging purposes only"
+  )
+  expect_is(mod, "list")
+  expect_named(mod)
+  expect_true("mod" %in% names(mod))
+  expect_true("build" %in% names(mod))
+  expect_true("out" %in% names(mod))
+  expect_true("spec" %in% names(mod))
+  recov <- mrgsolve:::build_format_recover(mod)
+  expect_is(recov, "character")
+  recov_list <- yaml::yaml.load(recov)
+  expect_is(recov_list, "list")
 })

@@ -81,8 +81,9 @@ list for the current call to \code{\link{mread}} only}
 \item{preclean}{logical; if \code{TRUE}, compilation artifacts are 
 cleaned up first}
 
-\item{recover}{if \code{TRUE}, an object will be returned in case
-the model shared object fails to build}
+\item{recover}{if \code{TRUE}, a list of build will be returned in case
+the model shared object fails to compile; use this option to and 
+the returned object to collect information assist in debugging}
 
 \item{...}{passed to \code{\link[mrgsolve]{update}}; also arguments passed
 to mread from \code{\link{mread_cache}}.}
