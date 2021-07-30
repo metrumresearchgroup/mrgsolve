@@ -687,12 +687,7 @@ do_mrgsim <- function(x,
     cnames <- new_names
   }
   
-  dimnames(out[["data"]]) <- list(NULL, cnames)
-  
-  ans <- as.data.frame.matrix(
-    out[["data"]], 
-    stringsAsFactors = FALSE
-  )
+  ans <- setNames(out[["data"]], cnames)
   
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
@@ -730,7 +725,8 @@ do_mrgsim <- function(x,
 
 #' Basic, simple simulation from model object
 #' 
-#' This is just a lighter version of [mrgsim], with fewer options.  See `Details`.  
+#' This is just a lighter version of [mrgsim()], with fewer options.  
+#' See `Details`.  
 #' 
 #' @inheritParams mrgsim
 #' 
@@ -758,7 +754,7 @@ do_mrgsim <- function(x,
 #' 
 #' out <- qsim(mod,dose)
 #' 
-#' @seealso [mrgsim_q], [mrgsim], [mrgsim_variants]
+#' @seealso [mrgsim_q()], [mrgsim()], [mrgsim_variants]
 #' 
 #' @md
 #' 
@@ -846,17 +842,17 @@ qsim <- function(x,
   )
   
   if(tad) tcol <- c(tcol,"tad")
-  
-  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol,  x@cmtL, x@capL))
+
+  names(out[["data"]]) <- c("ID", tcol,  x@cmtL, x@capL)
   
   if(output=="df") {
-    return(as.data.frame.matrix(out[["data"]]))
+    return(out[["data"]])
   }
   
   new(
     "mrgsims",
     request=x@cmtL,
-    data=as.data.frame.matrix(out[["data"]]),
+    data=out[["data"]],
     outnames=x@capL,
     mod=x
   )

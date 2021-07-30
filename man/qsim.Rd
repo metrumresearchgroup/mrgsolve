@@ -64,7 +64,8 @@ default output object; other options include \code{df} (for data.frame) or
 \code{matrix}}
 }
 \description{
-This is just a lighter version of \link{mrgsim}, with fewer options.  See \code{Details}.
+This is just a lighter version of \code{\link[=mrgsim]{mrgsim()}}, with fewer options.
+See \code{Details}.
 }
 \details{
 There is no pipeline interface for this function; all configuration options
@@ -84,5 +85,5 @@ out <- qsim(mod,dose)
 
 }
 \seealso{
-\link{mrgsim_q}, \link{mrgsim}, \link{mrgsim_variants}
+\code{\link[=mrgsim_q]{mrgsim_q()}}, \code{\link[=mrgsim]{mrgsim()}}, \link{mrgsim_variants}
 }
