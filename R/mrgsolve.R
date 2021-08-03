@@ -717,9 +717,9 @@ do_mrgsim <- function(x,
   new(
     "mrgsims",
     request = x@cmtL,
-    data=ans,
-    outnames=x@capL,
-    mod=x
+    data = ans,
+    outnames = x@capL,
+    mod = x
   )
 }
 
@@ -851,10 +851,10 @@ qsim <- function(x,
   
   new(
     "mrgsims",
-    request=x@cmtL,
-    data=out[["data"]],
-    outnames=x@capL,
-    mod=x
+    request = x@cmtL,
+    data = out[["data"]],
+    outnames = x@capL,
+    mod = x
   )
 }
 
