@@ -106,3 +106,12 @@ test_that("recover input idata-set items", {
   expect_is(out$b,"character")
   expect_error(mrgsim_e(mod,idata,recover="b",carry_out="b"))
 })
+
+test_that("error to request matrix and recover character data", {
+  data <- expand.ev(amt = 100, group = "A")
+  expect_is(mrgsim(mod, data, recover = "group"), "mrgsims")
+  expect_error(
+    mrgsim(mod, data, recover = "group", output = "matrix"), 
+    msg = "can't return matrix because non-numeric data was found"
+  )
+})

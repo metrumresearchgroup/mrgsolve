@@ -686,38 +686,40 @@ do_mrgsim <- function(x,
     cnames <- new_names
   }
 
-  ans <- out[["data"]]
-  names(ans) <- cnames
+  names(out[["data"]]) <- cnames
   
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
       if(!rename.recov$identical) {
         names(join_data) <- .ren.rename(rename.recov,names(join_data))
       }
-      ans <- left_join(ans,join_data,by=".data_row.",suffix=c("", ".recov"))  
-      ans$.data_row. <- NULL
+      out[["data"]] <- left_join(out[["data"]],join_data,by=".data_row.",suffix=c("", ".recov"))  
+      out[["data"]][[".data_row."]] <- NULL
     }
     if(do_recover_idata) {
       if(!rename.recov$identical) {
         names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
       }
-      ans <- left_join(ans,join_idata,by="ID",suffix=c("", ".recov"))
+      out[["data"]] <- left_join(out[["data"]],join_idata,by="ID",suffix=c("", ".recov"))
     }
   }
   
   if(!is.null(output)) {
     if(output=="df") {
-      return(ans)  
+      return(out[["data"]])  
     }
     if(output=="matrix") {
-      return(out[["data"]])  
+      if(!all(sapply(out[["data"]], is.numeric))) {
+        stop("can't return matrix because non-numeric data was found.", call.=FALSE)  
+      }
+      return(data.matrix(out[["data"]]))
     }
   }
   
   new(
     "mrgsims",
     request = x@cmtL,
-    data = ans,
+    data = out[["data"]],
     outnames = x@capL,
     mod = x
   )
