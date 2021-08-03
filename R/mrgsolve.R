@@ -637,7 +637,7 @@ do_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry_out))
   }
-  
+
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
@@ -654,11 +654,10 @@ do_mrgsim <- function(x,
     PACKAGE = "mrgsolve"
   )
   
-  
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
   # Then, rename again for user-supplied renaming
-  carry.tran <- .ren.rename(rename.carry.tran,out[["trannames"]])
+  carry.tran <- .ren.rename(rename.carry.tran, out[["trannames"]])
   
   if(tad) tcol <- c(tcol,"tad")
   
@@ -686,8 +685,9 @@ do_mrgsim <- function(x,
     }
     cnames <- new_names
   }
-  
-  ans <- setNames(out[["data"]], cnames)
+
+  ans <- out[["data"]]
+  names(ans) <- cnames
   
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
