@@ -388,7 +388,7 @@ Rcpp::List EXPAND_OBSERVATIONS(
                             Rcpp::Named("index") = index);
 }
 
-Rcpp::List mat2df(Rcpp::NumericMatrix& x) {
+Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
   Rcpp::List ret(x.ncol());
   for(int i = 0; i < x.ncol(); ++i) {
     ret[i] = x(Rcpp::_,i);

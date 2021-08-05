@@ -61,7 +61,7 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
                                   const Rcpp::NumericMatrix& events,
                                   const Rcpp::NumericVector& id); 
 
-Rcpp::List mat2df(Rcpp::NumericMatrix& x);
+Rcpp::List mat2df(Rcpp::NumericMatrix const& x);
   
 // Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
 //                             Rcpp::NumericMatrix& obs,
