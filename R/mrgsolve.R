@@ -637,7 +637,7 @@ do_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry_out))
   }
-  
+
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
@@ -654,11 +654,10 @@ do_mrgsim <- function(x,
     PACKAGE = "mrgsolve"
   )
   
-  
   # out$trannames always comes back lower case in a specific order
   # need to rename to get back to requested case
   # Then, rename again for user-supplied renaming
-  carry.tran <- .ren.rename(rename.carry.tran,out[["trannames"]])
+  carry.tran <- .ren.rename(rename.carry.tran, out[["trannames"]])
   
   if(tad) tcol <- c(tcol,"tad")
   
@@ -686,51 +685,50 @@ do_mrgsim <- function(x,
     }
     cnames <- new_names
   }
-  
-  dimnames(out[["data"]]) <- list(NULL, cnames)
-  
-  ans <- as.data.frame.matrix(
-    out[["data"]], 
-    stringsAsFactors = FALSE
-  )
+
+  names(out[["data"]]) <- cnames
   
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
       if(!rename.recov$identical) {
         names(join_data) <- .ren.rename(rename.recov,names(join_data))
       }
-      ans <- left_join(ans,join_data,by=".data_row.",suffix=c("", ".recov"))  
-      ans$.data_row. <- NULL
+      out[["data"]] <- left_join(out[["data"]],join_data,by=".data_row.",suffix=c("", ".recov"))  
+      out[["data"]][[".data_row."]] <- NULL
     }
     if(do_recover_idata) {
       if(!rename.recov$identical) {
         names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
       }
-      ans <- left_join(ans,join_idata,by="ID",suffix=c("", ".recov"))
+      out[["data"]] <- left_join(out[["data"]],join_idata,by="ID",suffix=c("", ".recov"))
     }
   }
   
   if(!is.null(output)) {
     if(output=="df") {
-      return(ans)  
+      return(out[["data"]])  
     }
     if(output=="matrix") {
-      return(out[["data"]])  
+      if(!all(sapply(out[["data"]], is.numeric))) {
+        stop("can't return matrix because non-numeric data was found.", call.=FALSE)  
+      }
+      return(data.matrix(out[["data"]]))
     }
   }
   
   new(
     "mrgsims",
     request = x@cmtL,
-    data=ans,
-    outnames=x@capL,
-    mod=x
+    data = out[["data"]],
+    outnames = x@capL,
+    mod = x
   )
 }
 
 #' Basic, simple simulation from model object
 #' 
-#' This is just a lighter version of [mrgsim], with fewer options.  See `Details`.  
+#' This is just a lighter version of [mrgsim()], with fewer options.  
+#' See `Details`.  
 #' 
 #' @inheritParams mrgsim
 #' 
@@ -758,7 +756,7 @@ do_mrgsim <- function(x,
 #' 
 #' out <- qsim(mod,dose)
 #' 
-#' @seealso [mrgsim_q], [mrgsim], [mrgsim_variants]
+#' @seealso [mrgsim_q()], [mrgsim()], [mrgsim_variants]
 #' 
 #' @md
 #' 
@@ -846,19 +844,19 @@ qsim <- function(x,
   )
   
   if(tad) tcol <- c(tcol,"tad")
-  
-  dimnames(out[["data"]]) <- list(NULL, c("ID", tcol,  x@cmtL, x@capL))
+
+  names(out[["data"]]) <- c("ID", tcol,  x@cmtL, x@capL)
   
   if(output=="df") {
-    return(as.data.frame.matrix(out[["data"]]))
+    return(out[["data"]])
   }
   
   new(
     "mrgsims",
-    request=x@cmtL,
-    data=as.data.frame.matrix(out[["data"]]),
-    outnames=x@capL,
-    mod=x
+    request = x@cmtL,
+    data = out[["data"]],
+    outnames = x@capL,
+    mod = x
   )
 }
 

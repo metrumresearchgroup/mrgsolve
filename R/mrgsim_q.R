@@ -157,20 +157,21 @@ mrgsim_q <- function(x,
     PACKAGE = "mrgsolve"
   )[["data"]]
   
-  dimnames(out) <- list(NULL, c("ID", tcol,x@cmtL,x@capL))
+  names(out) <- c("ID", tcol, x@cmtL, x@capL)
   
   if(output=="df") {
-    return(as.data.frame(out))  
-  }
-  if(output=="matrix") {
     return(out)  
+  }
+  
+  if(output=="matrix") {
+    return(as.matrix(out))  
   }
   
   new(
     "mrgsims",
-    request=x@cmtL,
-    data=as.data.frame(out),
-    outnames=x@capL,
-    mod=x
+    request = x@cmtL,
+    data = out,
+    outnames = x@capL,
+    mod = x
   )
 }
