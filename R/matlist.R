@@ -200,7 +200,6 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
   as.matrix(mod(.x)@sigma)
 })
 
-
 #' Zero out random effects in a model object
 #' 
 #' Sets all elements of the OMEGA or SIGMA matrix to zero
@@ -261,7 +260,7 @@ setMethod("as.list", "matlist", function(x, ...) x@data)
 #' @export
 setMethod("as.matrix", "matlist", function(x, ...) {
   if(length(x@data)==0) return(matrix(nrow=0,ncol=0))
-  SUPERMATRIX(x@data, ...)
+  SUPERMATRIX(x@data, ..., keep_names = FALSE)
 })
 
 #' @rdname matlist
@@ -335,13 +334,14 @@ cumoffset <- function(x) {
 ##' @rdname matlist_ops
 ##' @export
 setMethod("c", "matlist", function(x,...,recursive=FALSE) {
-  what <- c(list(x),list(...))
-  stopifnot(all(sapply(what,is.matlist)))
+  what <- c(list(x), list(...))
+  stopifnot(all(sapply(what, is.matlist)))
+  what <- what[sapply(what, slot, name = "n") > 0]
   if(length(what)==1) return(x)
-  d <- lapply(what,as.matrix)
-  d <- setNames(d,sapply(what,names))
+  d <- lapply(what, as.matrix)
+  d <- setNames(d, sapply(what, names))
   l <- sapply(unname(what), labels)
-  create_matlist(d,labels=l, class=class(x)[1])
+  create_matlist(d, labels = l, class = class(x)[1])
 })
 
 collapse_matrix <- function(x,class) {

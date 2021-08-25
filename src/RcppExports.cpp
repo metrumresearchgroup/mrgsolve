@@ -7,6 +7,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // DEVTRAN
 Rcpp::List DEVTRAN(const Rcpp::List parin, const Rcpp::NumericVector& inpar, const Rcpp::CharacterVector& parnames, const Rcpp::NumericVector& init, Rcpp::CharacterVector& cmtnames, const Rcpp::IntegerVector& capture, const Rcpp::List& funs, const Rcpp::NumericMatrix& data, const Rcpp::NumericMatrix& idata, Rcpp::NumericMatrix& OMEGA, Rcpp::NumericMatrix& SIGMA, Rcpp::Environment envir);
 RcppExport SEXP _mrgsolve_DEVTRAN(SEXP parinSEXP, SEXP inparSEXP, SEXP parnamesSEXP, SEXP initSEXP, SEXP cmtnamesSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP OMEGASEXP, SEXP SIGMASEXP, SEXP envirSEXP) {
