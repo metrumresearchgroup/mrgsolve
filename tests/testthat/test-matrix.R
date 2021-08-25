@@ -31,7 +31,18 @@ test_that("Testing modMATRIX", {
     expect_equal(modMATRIX("0 0 0", use=FALSE), matrix(0,nrow=3,ncol=3))
 })
 
-
-
-
-
+test_that("SUPERMATRIX", {
+    ml <- list(matrix(1, 2, 2), matrix(3, 4, 4))
+    dimnames(ml[[1]]) <- list(c("a", "b"), c("A", "B"))
+    ans <- mrgsolve:::SUPERMATRIX(ml)
+    expect_is(ans, "matrix")
+    expect_equal(dim(ans), c(6, 6))
+    ml$a <- "a"
+    expect_error(mrgsolve:::SUPERMATRIX(ml), msg = "is not TRUE")
+    expect_error(mrgsolve:::SUPERMATRIX(ml[[1]]), msg = "is not TRUE")
+    ml$a <- NULL
+    ans <- mrgsolve:::SUPERMATRIX(ml[2])
+    expect_identical(unname(ml[[2]]),unname(ans))
+    ans <- mrgsolve:::SUPERMATRIX(ml[1], keep_names=TRUE)
+    expect_identical(ans, ml[[1]])
+})

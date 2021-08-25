@@ -1,5 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
-#
+# Copyright (C) 2013 - 2021  Metrum Research Group
 # This file is part of mrgsolve.
 #
 # mrgsolve is free software: you can redistribute it and/or modify it
@@ -17,6 +16,8 @@
 
 
 SUPERMATRIX <- function(x,keep_names=FALSE) {
+  stopifnot(is.list(x))
+  stopifnot(all(sapply(x, is.matrix)))
   x <- .Call(`_mrgsolve_SUPERMATRIX`,x,keep_names,PACKAGE="mrgsolve")
   if(nrow(x) > 0 & !keep_names) {
     dimnames(x) <- list(paste0(seq_len(nrow(x)), ": "), NULL)
