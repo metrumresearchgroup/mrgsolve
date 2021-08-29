@@ -49,10 +49,10 @@ test_that("Indexing SIGMA matrix elements", {
   expect_equivalent(as.matrix(smat(mod))[3,3],0.3)
 })
 
-o1 <- 
-  omat(diag(c(1.1, 2.2, 3.3)), 
-       diag(c(4.4, 5.5, 6.6)), 
-       matrix(seq(91,99),nrow=3, byrow=TRUE))
+a <- diag(c(1.1, 2.2, 3.3))
+b <- diag(c(4.4, 5.5, 6.6))
+c <- matrix(seq(91,99),nrow = 3, byrow = TRUE)
+o1 <- omat(a,b,c)
 
 mat <- as.matrix(o1)
 

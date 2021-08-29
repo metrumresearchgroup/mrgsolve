@@ -45,4 +45,8 @@ test_that("SUPERMATRIX", {
     expect_identical(unname(ml[[2]]),unname(ans))
     ans <- mrgsolve:::SUPERMATRIX(ml[1], keep_names=TRUE)
     expect_identical(ans, ml[[1]])
+    ans1 <- mrgsolve:::SUPERMATRIX(list())
+    expect_identical(ans1, matrix(0, nrow = 0, ncol = 0))
+    ans2 <- mrgsolve:::SUPERMATRIX(omat()@data)
+    expect_identical(ans1, ans2)
 })

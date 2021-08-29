@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-
 SUPERMATRIX <- function(x,keep_names=FALSE) {
   stopifnot(is.list(x))
   stopifnot(all(sapply(x, is.matrix)))
