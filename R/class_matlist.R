@@ -47,7 +47,7 @@ valid.matlist <- function(object) {
   }
   
   if(!x4) {
-    y <- which(sapply(object@data, det) < 0)
+    y <- which(!sapply(object@data, det) > 0)
     message("Problem with this matrix:")
     print(object@data[y])
     out <- c(out, "Invalid matrix: determinant is less than 0.")

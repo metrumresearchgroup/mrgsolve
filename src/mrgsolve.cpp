@@ -150,6 +150,10 @@ void dcorr(Rcpp::NumericMatrix& x) {
 //[[Rcpp::export]]
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   
+  if(a.size()==1) {
+    return a[0];  
+  }
+  
   int j,k;
   Rcpp::NumericMatrix mat;
   
