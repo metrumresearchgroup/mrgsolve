@@ -2,6 +2,12 @@
 
 - In `pk2iv`, change scaling volume for `CENT` from `V2` (incorrect) to 
   `V1` (#831, #832, #833)
+  
+- Fix bug collating multiple `$OMEGA` or `$SIGMA` matrices when parsing a 
+  model (#863)
+  
+- Refactor how debugging information is processed when using the `recover` 
+  argument to `mread()` (#853)
 
 # mrgsolve 0.11.1
 

@@ -132,7 +132,7 @@ Diag <- function(x) {
 ##' Create matrices from vector input
 ##'
 ##' @param ... matrix data
-##' @param correlation logical; if TRUE, off diagonal elements are assumed 
+##' @param correlation logical; if TRUE, off-diagonal elements are assumed 
 ##' to be correlations and converted to covariances
 ##' @param digits if greater than zero, matrix is passed to signif (along 
 ##' with digits) prior to returning
@@ -192,7 +192,7 @@ dmat <- function(...) {
 ##' @details
 ##' Use \code{as_dmat} to create a diagonal matrix, \code{as_bmat}
 ##' to create a block matrix, and \code{as_cmat} to create a block 
-##' matrix where diagonal elements are understood to be correlations
+##' matrix where off-diagonal elements are understood to be correlations
 ##' rather than covariances. \code{as_cmat} uses \code{as_bmat} to 
 ##' form the matrix and then converts off-diagonal elements to 
 ##' covariances before returning.
