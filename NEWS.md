@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 0.11.2
 
 - In `pk2iv`, change scaling volume for `CENT` from `V2` (incorrect) to 
   `V1` (#831, #832, #833)
@@ -11,6 +11,9 @@
   
 - Fix typo in documentation for `as_cmat()`; the off-diagonals are assumed
   to contain correlations (#856)
+
+- Wrote a `as.data.frame.matrix()` function in Rcpp; all simulation results
+  return from the C++ simulation code as a data frame (#857)
 
 # mrgsolve 0.11.1
 
