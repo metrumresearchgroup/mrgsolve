@@ -8,6 +8,9 @@
   
 - Refactor how debugging information is processed when using the `recover` 
   argument to `mread()` (#853)
+  
+- Fix typo in documentation for `as_cmat()`; the off-diagonals are assumed
+  to contain correlations (#856)
 
 # mrgsolve 0.11.1
 
