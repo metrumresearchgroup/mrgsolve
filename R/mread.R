@@ -283,8 +283,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       unlist(labels(sigma)),
       .eta,
       .eps,
-      mread.env[["move_global"]], 
-      mread.env[["defines"]]
+      build[["cpp_variables"]][["var"]]
     )
     unique(ans)
   }
