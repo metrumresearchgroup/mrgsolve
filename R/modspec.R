@@ -328,7 +328,7 @@ get_c_vars2 <- function(y,context) {
   if(length(regm)==0) return(data.frame())
   vars <- gsub(pattern="\\s*=$", replacement = "", x = regm, perl=TRUE)
   vars <- token_space(vars)
-  ans <- as.data.frame(do.call(rbind,vars),stringsAsFactors = FALSE)
+  ans <- as.data.frame(do.call(rbind,vars), stringsAsFactors = FALSE)
   names(ans) <- c("type", "var")
   if(nrow(ans) > 0) ans$context <- context
   ans
@@ -354,7 +354,12 @@ pp_defs <- function(x,context) {
   code <- s_pick(x, 3)
   list(
     vars = vars, code = code, n = length(x), 
-    tab = data.frame(type = "define", var = vars, context = "global")
+    tab = data.frame(
+      type = "define", 
+      var = vars, 
+      context = "global", 
+      stringsAsFactors = FALSE
+    )
   )
 }
 
