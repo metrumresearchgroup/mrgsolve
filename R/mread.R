@@ -277,13 +277,17 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     } else {
       .eps <- NULL  
     }
+    cppv <- NULL
+    if(is.data.frame(build[["cpp_variables"]])) {
+      cppv <-  build[["cpp_variables"]][["var"]] 
+    }
     ans <- c(
       names(param), 
       unlist(labels(omega)), 
       unlist(labels(sigma)),
       .eta,
       .eps,
-      build[["cpp_variables"]][["var"]]
+      cppv
     )
     unique(ans)
   }
