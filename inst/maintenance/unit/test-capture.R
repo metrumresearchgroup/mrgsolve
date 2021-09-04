@@ -76,5 +76,5 @@ test_that("capture via mread", {
 
 test_that("capture pp directive via mread", {
   mod <- modlib("irm3", capture = "STIM", compile = FALSE)  
-  expect_equal(sort(outvars(mod)$capture), sort(c("CP", "STIM")))
+  expect_equal(outvars(mod)$capture, c("CP", "STIM"))
 })
