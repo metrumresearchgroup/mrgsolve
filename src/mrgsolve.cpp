@@ -150,6 +150,10 @@ void dcorr(Rcpp::NumericMatrix& x) {
 //[[Rcpp::export]]
 Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   
+  if(a.size()==1) {
+    return a[0];  
+  }
+  
   int j,k;
   Rcpp::NumericMatrix mat;
   
@@ -386,6 +390,19 @@ Rcpp::List EXPAND_OBSERVATIONS(
   }
   return Rcpp::List::create(Rcpp::Named("data") = d,
                             Rcpp::Named("index") = index);
+}
+
+Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
+  Rcpp::List ret(x.ncol());
+  for(int i = 0; i < x.ncol(); ++i) {
+    ret[i] = x(Rcpp::_,i);
+  }
+  Rcpp::IntegerVector rn(2);
+  rn[0] = NA_INTEGER;
+  rn[1] = x.nrow()*-1;
+  ret.attr("class")  = "data.frame";
+  ret.attr("row.names") = rn;
+  return ret;
 }
 
 #endif

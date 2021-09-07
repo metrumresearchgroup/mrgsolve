@@ -58,7 +58,7 @@ matrix (\code{c}).
 \details{
 Use \code{as_dmat} to create a diagonal matrix, \code{as_bmat}
 to create a block matrix, and \code{as_cmat} to create a block 
-matrix where diagonal elements are understood to be correlations
+matrix where off-diagonal elements are understood to be correlations
 rather than covariances. \code{as_cmat} uses \code{as_bmat} to 
 form the matrix and then converts off-diagonal elements to 
 covariances before returning.

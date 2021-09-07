@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -70,7 +70,7 @@ $SIGMA @block
 
 '
 
-mod <- suppressWarnings(mcode("test2",code, warn=TRUE, soloc = '.'))
+mod <- suppressWarnings(mcode("test2",code, warn=TRUE))
 
 test_that("Parameters are parsed properly with mread", {
   expect_equal(param(mod)$CL,1)
@@ -116,20 +116,18 @@ test_that("Sigma matrices are properly parsed", {
   expect_equivalent(mat[3,2],0.002)
 })
 
-
 test_that("EPS values have proper variance", {
   set.seed(8282)
   out <- mrgsim(mod,end=100000, delta=1, init = list(GUT = 0, CENT = 0))
   expect_equal(round(var(out$EPS1),2),0.55)
 })
 
-
 test_that("Error when code is passed as project", {
   expect_error(suppressWarnings(mread("hey",code)))
 })
 
 test_that("Model name with spaces is error", {
-    expect_error(mcode("ab cd", ""))
+  expect_error(mcode("ab cd", ""))
 })
 
 test_that("Error with duplicate blocks", {
@@ -137,3 +135,20 @@ test_that("Error with duplicate blocks", {
   expect_error(mcode("a", "$SET \n $SET",compile = FALSE))
 })
 
+test_that("Recover data when compile fails", {
+  code <- '[main] double a = 2\n[param] b = 5\n'
+  expect_warning(
+    mod <- mcode("fail", code, recover = TRUE), 
+    regexp = "returning object for debugging purposes only"
+  )
+  expect_is(mod, "list")
+  expect_named(mod)
+  expect_true("mod" %in% names(mod))
+  expect_true("build" %in% names(mod))
+  expect_true("out" %in% names(mod))
+  expect_true("spec" %in% names(mod))
+  recov <- mrgsolve:::build_format_recover(mod)
+  expect_is(recov, "character")
+  recov_list <- yaml::yaml.load(recov)
+  expect_is(recov_list, "list")
+})

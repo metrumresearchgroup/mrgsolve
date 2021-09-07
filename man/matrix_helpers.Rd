@@ -16,7 +16,7 @@ dmat(...)
 \arguments{
 \item{...}{matrix data}
 
-\item{correlation}{logical; if TRUE, off diagonal elements are assumed 
+\item{correlation}{logical; if TRUE, off-diagonal elements are assumed 
 to be correlations and converted to covariances}
 
 \item{digits}{if greater than zero, matrix is passed to signif (along 

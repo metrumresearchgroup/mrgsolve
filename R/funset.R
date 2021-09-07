@@ -19,10 +19,10 @@
 FUNSET_ERROR__ <- 
   '
 There was a problem accessing the model shared object.
-  Either the model object is corrupted or the model was 
+  Either the model object was corrupted or the model was 
   not properly compiled and/or loaded. If the model is 
-  not loaded, use loadso(mod) to do so. This is usually 
-  required for parallel simuilation on a worker node that
+  not loaded, use `loadso(mod)` to do so. This is usually 
+  required for parallel simulation on a worker node that
   was not forked (e.g. when using future::multisession).
   Also check mrgsolve:::funset(mod) for more information.
 '

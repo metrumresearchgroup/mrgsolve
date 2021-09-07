@@ -570,7 +570,13 @@ system4 <- function(cmd, args=character(0), pattern, path) {
   files <- file.path(path, paste0("system4__",c("stdout","stderr"),"__", pattern))
   x <- list(status=system2(cmd, args, stdout = files[1], stderr = files[2]))
   x[["stdout"]] <- readLines(files[1])
+  if(length(x[["stdout"]])==0) {
+    x[["stdout"]] <- "stdout could not be recovered after system4 call"  
+  }
   x[["stderr"]] <- readLines(files[2])
+  if(length(x[["stderr"]])==0) {
+    x[["stderr"]] <- "stderr could not be recovered after system4 call"  
+  }
   x
 }
 
