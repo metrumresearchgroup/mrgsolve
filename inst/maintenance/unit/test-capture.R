@@ -52,6 +52,8 @@ test_that("error if cmt in capture issue-555", {
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
+$GLOBAL
+double z = 5;
 $MAIN  double b = 2;
 $OMEGA 1
 $OMEGA @labels OGA2
@@ -60,15 +62,15 @@ $CAPTURE CL VP = V2
 '
 
 test_that("capture via mread", {
-  mod <- mcode("capture-mread", code, capture = "Q,a=b,OGA2") 
+  mod <- mcode("capture-mread", code, capture = "Q,a=b,OGA2,z") 
   out <- outvars(mod)
-  expect_equal(out$capture, c("CL", "VP", "Q", "a", "OGA2"))
+  expect_equal(out$capture, c("CL", "VP", "Q", "a", "OGA2", "z"))
   expect_error(
-    mread("pk1",modlib(),capture = "mrgsolve"),
+    mread("pk1", modlib(), capture = "mrgsolve"),
     msg = "all requested `capture` variables must exist in the model"
   )
-  mod <- mcode("capture-mread", code, capture="(everything)", compile=FALSE)
-  res <- c("CL","VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "b")
+  mod <- mcode("capture-mread", code, capture="(everything)", compile = FALSE)
+  res <- c("CL","VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "z", "b")
   expect_equal(outvars(mod)$capture, res)
 })
 
@@ -76,4 +78,3 @@ test_that("capture pp directive via mread", {
   mod <- modlib("irm3", capture = "STIM", compile = FALSE)  
   expect_equal(outvars(mod)$capture, c("CP", "STIM"))
 })
-

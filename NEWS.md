@@ -14,6 +14,9 @@
 
 - Wrote a `as.data.frame.matrix()` function in Rcpp; all simulation results
   return from the C++ simulation code as a data frame (#857)
+  
+- Fix bug where dynamic capture (via `mread()`) was not allowed for variables
+  declared in `$GLOBAL` (#868)
 
 # mrgsolve 0.11.1
 
