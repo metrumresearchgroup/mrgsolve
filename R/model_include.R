@@ -162,4 +162,8 @@ plugins[["N_CMT"]] <- list(
   all = TRUE, name = "N_CMT"  
 )
 
+plugins[["nonmem"]] <- list(
+  code  = "#define A(n) _A_[n-1]\n#define DADT(n) _DADT_[n-1]\n", name = "nonmem"  
+)
+
 # nocov end
