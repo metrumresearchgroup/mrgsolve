@@ -16,11 +16,11 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 is.valid_data_set <- function(x) {
-  inherits(x,"valid_data_set")
+  inherits(x, "valid_data_set")
 }
 
 is.valid_idata_set <- function(x) {
-  inherits(x,"valid_idata_set")
+  inherits(x, "valid_idata_set")
 }
 
 idcol <- function(x) {
@@ -28,16 +28,18 @@ idcol <- function(x) {
 }
 
 timename <- function(x) {
-  intersect(c("time", "TIME"), colnames(x))[1]
+  y <- c("time", "TIME")
+  y[match(y,colnames(x),0L) > 0][1]
 }
 
 cmtname <- function(x) {
-  intersect(c("cmt", "CMT"), colnames(x))[1] 
+  y <- c("cmt", "CMT")
+  y[match(y,colnames(x),0L)>0][1]
 }
 
-numeric_data_matrix <- function(x,quiet=FALSE) {
-  x <- do.call(cbind,numerics_only(x,quiet)) 
-  if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
+numeric_data_matrix <- function(x, quiet = FALSE) {
+  x <- do.call(cbind, numerics_only(x, quiet)) 
+  if(ncol(x)==0) stop("invalid data set.", call.=FALSE)
   return(x)
 }
 
@@ -70,7 +72,7 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
 }
 
 convert_character_cmt <- function(data, mod) {
-  cmtcol <- intersect(c("cmt", "CMT"), names(data))
+  cmtcol <- cmtname(data)
   for(cm in cmtcol) {
     if(is.character(data[[cm]])) {
       data[[cm]] <- match(data[[cm]], cmt(mod),0)  
