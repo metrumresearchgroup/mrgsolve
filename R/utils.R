@@ -406,12 +406,12 @@ null_list <- setNames(list(), character(0))
 
 single.number <- function(x) length(x)==1 & is.numeric(x)
 
-has_name <- function(name,object) {
-  is.element(name,names(object))
+has_name <- function(name, object) {
+  name[1] %in% names(object)
 }
 
 has_ID <- function(object) {
-  is.element("ID", names(object)) 
+  "ID" %in% names(object)
 }
 
 file_exists <- function(x) {

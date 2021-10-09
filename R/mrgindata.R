@@ -29,12 +29,12 @@ idcol <- function(x) {
 
 timename <- function(x) {
   y <- c("time", "TIME")
-  y[match(y,colnames(x),0L) > 0][1]
+  y[match(y, colnames(x), 0L) > 0][1]
 }
 
 cmtname <- function(x) {
   y <- c("cmt", "CMT")
-  y[match(y,colnames(x),0L)>0][1]
+  y[match(y, colnames(x), 0L)>0][1]
 }
 
 numeric_data_matrix <- function(x, quiet = FALSE) {
@@ -58,15 +58,15 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
       x <- dplyr::mutate_if(x, is.logical, as.integer)
     }
   }
-  nu <- is.numeric(x)
+  nu <- vapply(x, is.numeric, TRUE)
   if(!all(nu)) {
     if(!quiet) {
       message(
         "Dropping non-numeric columns: \n  ",
-        paste(names(x)[!nu], collapse=" ")
+        paste(names(x)[!nu], collapse = " ")
       )
     }
-    x <- x[,which(nu),drop=FALSE]
+    x <- x[, which(nu), drop = FALSE]
   } 
   x
 }
@@ -75,7 +75,7 @@ convert_character_cmt <- function(data, mod) {
   cmtcol <- cmtname(data)
   for(cm in cmtcol) {
     if(is.character(data[[cm]])) {
-      data[[cm]] <- match(data[[cm]], cmt(mod),0)  
+      data[[cm]] <- match(data[[cm]], cmt(mod), 0L)  
     }
   }
   return(data)
@@ -148,7 +148,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
     }
     if(is.character(x[[cmtcol]])) {
       if(verbose) message("Converting cmt to integer")
-      x[[cmtcol]] <- match(x[[cmtcol]], cmt(m),0)
+      x[[cmtcol]] <- match(x[[cmtcol]], cmt(m), 0)
     }
   }
   
@@ -288,6 +288,4 @@ check_column_na <- function(data,cols) {
   }
   return(flagged)
 }
-
-
 
