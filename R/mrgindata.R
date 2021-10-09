@@ -36,7 +36,7 @@ cmtname <- function(x) {
 }
 
 numeric_data_matrix <- function(x,quiet=FALSE) {
-  x <- data.matrix(numerics_only(x,quiet)) 
+  x <- do.call(cbind,numerics_only(x,quiet)) 
   if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
   return(x)
 }
@@ -134,7 +134,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   # special case
   if(ncol(x)==1) {
     x <- numeric_data_matrix(x,quiet=TRUE)
-    return(structure(x, class = c("valid_data_set", "matrix")))
+    class(x) <- c("valid_data_set", "matrix")
+    return(x)
   }
   
   # First, check for compartment
@@ -188,8 +189,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
             "or:\n",
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
-  
-  structure(dm, class = c("valid_data_set", "matrix"))
+  class(dm) <- c("valid_data_set", "matrix")
+  dm
 }
 
 ##' Validate and prepare idata data sets for simulation
@@ -202,7 +203,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 ##' \code{\link{data_set}}
 ##' 
 ##' @export
-valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
+valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   if(verbose) quiet <- FALSE
   
@@ -218,7 +219,7 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
     stop("Duplicate IDs not allowed in idata_set.",call.=FALSE) 
   }
   
-  dm <- numeric_data_matrix(x,quiet=TRUE)
+  dm <- numeric_data_matrix(x, quiet = TRUE)
   
   if((ncol(dm) != ncol(x)) && !quiet) {
     drop <- setdiff(names(x), dimnames(dm)[[2]])
@@ -228,9 +229,10 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
     }
   }
   
-  check_data_set_na(dm,m)
+  check_data_set_na(dm, m)
+  class(dm) <- c("valid_idata_set", "matrix")
   
-  structure(dm, class=c("valid_idata_set", "matrix"))
+  dm
 }
 
 ##' @rdname valid_data_set
