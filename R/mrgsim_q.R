@@ -107,10 +107,7 @@ mrgsim_q <- function(x,
   
   tcol <- timename(data)
   if(is.na(tcol)) tcol <- "time"
-  
-  param <- as.numeric(Param(x))
-  init <-  as.numeric(Init(x))
-  
+
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
@@ -144,9 +141,9 @@ mrgsim_q <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    param,
+    as.numeric(Param(x)),
     Pars(x),
-    init,
+    as.numeric(Init(x)),
     Cmt(x),
     CAPTUREI(x),
     pointers(x),
