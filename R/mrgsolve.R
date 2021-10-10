@@ -543,10 +543,7 @@ do_mrgsim <- function(x,
   
   tcol <- timename(data)
   tcol <- ifelse(is.na(tcol), "time", tcol)
-  
-  param <- as.numeric(Param(x))
-  init <-  as.numeric(Init(x))
-  
+
   if(!identical(Pars(x), x@shlib[["par"]])) {
     wstop("the parameter list has changed since the model was compiled.")
   }
@@ -641,9 +638,9 @@ do_mrgsim <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    param,
+    as.numeric(Param(x)),
     Pars(x),
-    init,
+    as.numeric(Init(x)),
     Cmt(x),
     CAPTUREI(x),
     pointers(x),
