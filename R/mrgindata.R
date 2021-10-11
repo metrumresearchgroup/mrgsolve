@@ -276,8 +276,8 @@ check_data_set_na <- function(data,m) {
   return(invisible(NULL))
 }
 
-check_column_na <- function(data,cols) {
-  check <- intersect(colnames(data),cols)
+check_column_na <- function(data, cols) {
+  check <- unique(cols[cols %in% dimnames(data)[[2]]])
   if(length(check)==0) return(character(0))
   if(!anyNA(data[,check])) return(character(0))
   flagged <- character(0)
