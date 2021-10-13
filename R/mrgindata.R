@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -29,12 +29,12 @@ idcol <- function(x) {
 
 timename <- function(x) {
   y <- c("time", "TIME")
-  y[match(y, colnames(x), 0L) > 0][1]
+  y[y %in% .colnames(x)][1]
 }
 
 cmtname <- function(x) {
   y <- c("cmt", "CMT")
-  y[match(y, colnames(x), 0L)>0][1]
+  y[y %in% .colnames(x)][1]
 }
 
 numeric_data_matrix <- function(x, quiet = FALSE) {
@@ -75,12 +75,11 @@ convert_character_cmt <- function(data, mod) {
   cmtcol <- cmtname(data)
   for(cm in cmtcol) {
     if(is.character(data[[cm]])) {
-      data[[cm]] <- match(data[[cm]], cmt(mod), 0L)  
+      data[[cm]] <- match(data[[cm]], Cmt(mod), 0L)  
     }
   }
   return(data)
 }
-
 
 ##' Validate and prepare a data sets for simulation
 ##'
@@ -148,7 +147,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
     }
     if(is.character(x[[cmtcol]])) {
       if(verbose) message("Converting cmt to integer")
-      x[[cmtcol]] <- match(x[[cmtcol]], cmt(m), 0)
+      x[[cmtcol]] <- match(x[[cmtcol]], Cmt(m), 0)
     }
   }
   
@@ -181,8 +180,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
                          dimnames=list(NULL, "..zeros..")))
   
   # Look for both upper and lower case column names
-  uc <- any(colnames(dm) %in% GLOBALS[["CARRY_TRAN_UC"]])
-  lc <- any(colnames(dm) %in% GLOBALS[["CARRY_TRAN_LC"]])
+  uc <- any(dimnames(dm)[[2]] %in% GLOBALS[["CARRY_TRAN_UC"]])
+  lc <- any(dimnames(dm)[[2]] %in% GLOBALS[["CARRY_TRAN_LC"]])
   
   if(uc & lc) {
     warning("Both lower- & upper-case names found in the data set.\n",

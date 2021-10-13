@@ -414,6 +414,17 @@ has_ID <- function(object) {
   "ID" %in% names(object)
 }
 
+.colnames <- function(x) {
+  if(is.matrix(x)) {
+    return(dimnames(x)[[2]])  
+  }
+  if(is.data.frame(x)) {
+    return(names(x))  
+  }
+  colnames(x)
+}
+
+
 file_exists <- function(x) {
   file.exists(x)
 }
