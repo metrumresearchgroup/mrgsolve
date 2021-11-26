@@ -65,7 +65,7 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 NeedsCompilation: yes
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 SystemRequirements: C++11
 Collate: 
     'RcppExports.R'
@@ -106,6 +106,7 @@ Collate:
     'mrgsim_q.R'
     'mrgsims.R'
     'mrgsolve.R'
+    'nm-mode.R'
     'nmxml.R'
     'param.R'
     'print.R'
