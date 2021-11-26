@@ -247,7 +247,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   } else {
     annot <- dplyr::bind_rows(annot_list_maybe)
   }
-  
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
   if(isTRUE(SET[["collapse_omega"]])) {
