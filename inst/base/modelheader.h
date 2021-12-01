@@ -103,6 +103,9 @@ typedef double capture;
 #define _xETA(a) self.ETA[a-1]
 #define _xEPS(a) self.EPS[a-1]
 
+// Handle THETA(n)
+#define THETA(a) THETA##a
+
 // Number of equations
 #define _NEQ (_A_0_.size())
 
