@@ -163,7 +163,8 @@ plugins[["N_CMT"]] <- list(
 )
 
 plugins[["nm-vars"]] <- list(
-  code  = "// USING NONMEM STYLE DEFS", name = "nm-vars"  
+  name = "nm-vars",
+  code  = c("// nm-vars plugin", "#define _MRGSOLVE_USING_NM_VARS_")
 )
 
 # nocov end

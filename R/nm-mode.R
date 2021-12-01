@@ -70,18 +70,12 @@ generate_nmdefs <- function(x) {
     x[["frda"]][["cmt"]] - 1, 
     "]"
   )
-  ans <- c(
-    "#define A(a) _A_[a-1]", 
-    "#define A_0(a) _A_0_[a-1]",
-    "#define DADT(a) _DADT_[a-1]",
-    ans  
-  )
   ans
 }
 
 any_nm_vars <- function(x) {
   m1 <- regmatches(x, gregexpr("\\b(F|R|D|ALAG)[0-9]+\\b", x))
-  m2 <- x[x %in% c("A", "A_0", "DADT")]
+  m2 <- x[x %in% c("A", "A_0", "DADT", "T")]
   ans <- unlist(c(m1, m2), use.names=FALSE)
   list(found_any = length(ans) > 0, match = ans)
 }
