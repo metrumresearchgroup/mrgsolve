@@ -19,19 +19,22 @@ new_nm_obj <- function() {
 find_nm_vars <- function(code) {
   FRDA <- c("F", "R", "D", "ALAG")
   PREFIX <- c("A", "A_0", "DADT")
-  blocks_to_check <- c("PREAMBLE", "MAIN", "ODE", "TABLE")
-  code <- unlist(code[blocks_to_check], use.names = FALSE)
-  m <- find_nm_vars_impl(code)
+  blocks_to_check <- c("PREAMBLE", "MAIN", "TABLE")
+  pmt <- unlist(code[blocks_to_check], use.names = FALSE)
+  m1 <- find_nm_vars_impl(pmt)
+  m2 <- find_nm_vars_impl(code[["ODE"]])
+  m <- rbind(m1, m2)
   ans <- new_nm_obj()
   if(ans[["found_any"]] <- nrow(m) > 0) {
     names(m) <- names(ans[["match"]])
+    names(m2) <- names(ans[["match"]])
     m <- m[!duplicated(m[["match"]]),]
     m[["type"]] <- as.integer(m[["prefix"]] %in% FRDA)
     m[["cmt"]] <- as.numeric(m[["cmt"]])
     m <- m[order(m[["type"]], m[["prefix"]], m[["cmt"]]),, drop = FALSE]
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
-    ans[["ddt"]] <- filter(m, .data[["prefix"]] == "DADT")
+    ans[["ddt"]] <- filter(m2, .data[["prefix"]] == "DADT")
     ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
     ans[["frda"]] <- filter(m, .data[["prefix"]] %in% FRDA)
   } 
@@ -44,7 +47,11 @@ find_nm_vars_impl <- function(code) {
   re2 <- "\\b(F|R|D|ALAG)([0-9]+)\\b"
   m1 <- regmatches(code, gregexec(re1, code))
   m2 <- regmatches(code, gregexec(re2, code))
-  as.data.frame(t(do.call(cbind,c(m1, m2))), stringsAsFactors = FALSE)
+  m <- do.call(cbind, c(m1, m2))
+  if(ncol(m)==0) {
+    return(data.frame(V1 = 0, V2 = 0, V3 = 0)[0,])  
+  }
+  as.data.frame(t(m), stringsAsFactors = FALSE)
 }
 
 generate_nmdefs <- function(x) {
@@ -110,6 +117,7 @@ audit_nm_vars <- function(x, param, init, build, nmv) {
 
 audit_nm_vars_range <- function(x, cmtn) {
   err <- c()
+  # Look for compartment indices out of range
   m <- x[["match"]]
   if(!all(m[["cmt"]] %in% cmtn)) {
     bad <- filter(m, !(.data[["cmt"]] %in% cmtn))
@@ -119,7 +127,14 @@ audit_nm_vars_range <- function(x, cmtn) {
     for(b in seq(nrow(bad))) {
       err <- c(err, paste0(" [nm-vars] out of range: ", bad[b, "match"]))
     }
-    return(err)
   }
-  return(NULL)
+  # Make sure there are ODEs for every compartment
+  bad <- setdiff(cmtn, x[["ddt"]][["cmt"]])
+  if(length(bad) > 0) {
+    err <- c(err, "Missing differential equation(s):")
+    for(b in bad) {
+      err <- c(err, paste0(" [nm-vars] missing: DADT(", b, ")"))   
+    }
+  }
+  return(err)
 }
