@@ -1,4 +1,3 @@
-
 new_nm_obj <- function() {
   data <- data.frame(match = 0, prefix = 0, cmt = 0)[0,]
   list(
@@ -32,9 +31,9 @@ find_nm_vars <- function(code) {
     m <- m[order(m[["type"]], m[["prefix"]], m[["cmt"]]),, drop = FALSE]
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
-    ans[["ddt"]] <- filter(m, prefix == "DADT")
+    ans[["ddt"]] <- filter(m, .data[["prefix"]] == "DADT")
     ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
-    ans[["frda"]] <- filter(m, prefix %in% FRDA)
+    ans[["frda"]] <- filter(m, .data[["prefix"]] %in% FRDA)
   } 
   return(ans)
 }
@@ -113,7 +112,7 @@ audit_nm_vars_range <- function(x, cmtn) {
   err <- c()
   m <- x[["match"]]
   if(!all(m[["cmt"]] %in% cmtn)) {
-    bad <- filter(m, !(cmt %in% cmtn))
+    bad <- filter(m, !(.data[["cmt"]] %in% cmtn))
     valid <- paste0(range(cmtn), collapse = " to ")
     valid <- paste0("Valid compartment range: ", valid)
     err <- c(err, valid)

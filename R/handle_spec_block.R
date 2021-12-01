@@ -289,7 +289,19 @@ CMT <- function(x,
                 pos = 1, 
                 annotated = FALSE, 
                 object = NULL, 
-                as_object = FALSE, ...) {
+                as_object = FALSE,
+                n = NULL, 
+                prefix = "A", ...) {
+  
+  if(is.numeric(n)) {
+    if(!is.character(prefix)) {
+      stop("compartment prefix nust be character", call. = FALSE)  
+    }
+    init <- as.list(vector(mode = "numeric", length = n))
+    names(init) <- paste0(prefix, seq(n))
+    env[["init"]][[pos]] <- init
+    return(NULL)
+  }
   
   if(is.character(object)) {
     if(isTRUE(as_object)) {
