@@ -1,41 +1,126 @@
 
+new_nm_obj <- function() {
+  data <- data.frame(match = 0, prefix = 0, cmt = 0)[0,]
+  list(
+    found_any = FALSE, 
+    found_frda = FALSE, 
+    reserved = character(0),
+    match = data, 
+    frda = data, 
+    ddt = data, 
+    cmtn = integer(0), 
+    dcmtn = integer(0)
+  )
+}
+
 #' Scan model code for nonmem-style variables
 #' 
 #' @keywords internal
 #' @noRd
-audit_nm_vars <- function(code) {
-  re1 <- "(DADT|A|A_0)\\(([0-9]+)\\)"
-  re2 <- "\\b(F|ALAG|D|R)([0-9]+)\\b"
-  m1 <- regmatches(code, gregexec(re1, code, perl = TRUE))
-  m2 <- regmatches(code, gregexec(re2, code, perl = TRUE))
-  m <- do.call(cbind,c(m1, m2))
-  if(found_any <- nrow(m) > 0) {
-    ddt <- m[,which(m[2,]=="DADT")]
-    range <- sort(unique(as.numeric(m[3, ])))
-    ddt_range <- sort(unique(as.numeric(ddt[3, ])))
-  } else {
-    ddt <- range <- ddt_range <- integer(0)
+find_nm_vars <- function(code) {
+  FRDA <- c("F", "R", "D", "ALAG")
+  PREFIX <- c("A", "A_0", "DADT")
+  blocks_to_check <- c("PREAMBLE", "MAIN", "ODE", "TABLE")
+  code <- unlist(code[blocks_to_check], use.names = FALSE)
+  m <- find_nm_vars_impl(code)
+  ans <- new_nm_obj()
+  if(ans[["found_any"]] <- nrow(m) > 0) {
+    names(m) <- names(ans[["match"]])
+    m <- m[!duplicated(m[["match"]]),]
+    m[["type"]] <- as.integer(m[["prefix"]] %in% FRDA)
+    m[["cmt"]] <- as.numeric(m[["cmt"]])
+    m <- m[order(m[["type"]], m[["prefix"]], m[["cmt"]]),, drop = FALSE]
+    ans[["match"]] <- m
+    ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
+    ans[["ddt"]] <- filter(m, prefix == "DADT")
+    ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
+    ans[["frda"]] <- filter(m, prefix %in% FRDA)
+  } 
+  return(ans)
+}
+
+find_nm_vars_impl <- function(code) {
+  if(!is.character(code)) return(data.frame())
+  re1 <- "(A|A_0|DADT)\\(([0-9]+)\\)"
+  re2 <- "\\b(F|R|D|ALAG)([0-9]+)\\b"
+  m1 <- regmatches(code, gregexec(re1, code))
+  m2 <- regmatches(code, gregexec(re2, code))
+  as.data.frame(t(do.call(cbind,c(m1, m2))), stringsAsFactors = FALSE)
+}
+
+generate_nmdefs <- function(x) {
+  if(isFALSE(x[["found_any"]])) return(NULL)
+  ans <- paste0(
+    "#define ", 
+    x[["frda"]][["match"]],
+    " ", 
+    "_", 
+    x[["frda"]][["prefix"]], 
+    "_[", 
+    x[["frda"]][["cmt"]] - 1, 
+    "]"
+  )
+  ans <- c(
+    "#define A(a) _A_[a-1]", 
+    "#define A_0(a) _A_0_[a-1]",
+    "#define DADT(a) _DADT_[a-1]",
+    ans  
+  )
+  ans
+}
+
+any_frda <- function(x) {
+  m <- regmatches(x, gregexpr("\\b(F|R|D|ALAG)[0-9]+\\b", x))  
+  ans <- unlist(m, use.names=FALSE)
+  list(found_any = length(ans) > 0, match = ans)
+}
+
+audit_nm_vars <- function(x, param, init, build, nmv) {
+  bad_param <- any_frda(names(param))
+  bad_init <- any_frda(names(init))
+  bad_cpp <- any_frda(build[["cpp_variables"]][["var"]])
+  err <- c()
+  if(bad_param[["found_any"]]) {
+    err <- c(err, "Reserved names in parameter list:")
+    msg <- paste0(" [nm-vars] reserved: ", bad_param[["match"]])
+    err <- c(err, msg)
   }
-  list(
-    found_any = found_any,
-    match = m, 
-    ddt = ddt, 
-    range = range, 
-    ddt_range = ddt_range
-  )
+  if(bad_init[["found_any"]]) {
+    err <- c(err, "Reserved names in compartment list:")
+    msg <- paste0(" [nm-vars] reserved: ", bad_init[["match"]])
+    err <- c(err, msg)
+  }
+  if(bad_cpp[["found_any"]]) {
+    err <- c(err, "Reserved names in cpp variable list:")
+    msg <- paste0(" [nm-vars] reserved: ", bad_cpp[["match"]])
+    err <- c(err, msg)
+  }
+  cmtn <- seq_along(init)
+  if(length(cmtn) > 0) {
+    err <- c(err, audit_nm_vars_range(nmv, cmtn))
+  }
+  if(length(err) > 0) {
+    tmp <- sapply(err, message)
+    stop(
+      "improper use of special variables with nm-vars plugin", 
+      call. = FALSE
+    )  
+  }
+  return(invisible(TRUE))
 }
 
-nm_pp_defs <- function(cmt) {
-  i <- seq_along(cmt)
-  c( 
-    paste0("#define DADT(", i, ")  _DADT_[", i-1, "]"), 
-    paste0("#define A(", i,    ")     _A_[", i-1, "]"),
-    paste0("#define A_0(", i,  ")   _A_0_[", i-1, "]"),
-    paste0("#define F", i,     "      _F_[", i-1, "]"),
-    paste0("#define D", i,     "      _D_[", i-1, "]"),
-    paste0("#define R", i,     "      _R_[", i-1, "]"),
-    paste0("#define ALAG", i,  "   _ALAG_[", i-1, "]")
-  )
+audit_nm_vars_range <- function(x, cmtn) {
+  err <- c()
+  m <- x[["match"]]
+  if(!all(m[["cmt"]] %in% cmtn)) {
+    bad <- filter(m, !(cmt %in% cmtn))
+    valid <- paste0(range(cmtn), collapse = " to ")
+    valid <- paste0("Valid compartment range: ", valid)
+    err <- c(err, valid)
+    for(b in seq(nrow(bad))) {
+      err <- c(err, paste0(" [nm-vars] out of range: ", bad[b, "match"]))
+    }
+    return(err)
+  }
+  return(NULL)
 }
-
-

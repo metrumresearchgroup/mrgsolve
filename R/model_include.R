@@ -151,19 +151,19 @@ plugins[["RcppArmadillo"]] <- list(
 )
 
 plugins[["BH"]] <- list(
-  linkto="BH/include", name="BH"
+  linkto = "BH/include", name = "BH"
 )
 
 plugins[["CXX11"]] <- list(
-  pkg_cxxflags = "-std=c++11", name="CXX11"    
+  pkg_cxxflags = "-std=c++11", name = "CXX11"    
 )
 
 plugins[["N_CMT"]] <- list(
   all = TRUE, name = "N_CMT"  
 )
 
-plugins[["nonmem"]] <- list(
-  code  = "#define A(n) _A_[n-1]\n#define DADT(n) _DADT_[n-1]\n", name = "nonmem"  
+plugins[["nm-vars"]] <- list(
+  code  = "// USING NONMEM STYLE DEFS", name = "nm-vars"  
 )
 
 # nocov end
