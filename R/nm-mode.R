@@ -3,6 +3,7 @@ new_nm_obj <- function() {
   list(
     found_any = FALSE, 
     found_frda = FALSE, 
+    has_ode = FALSE,
     reserved = character(0),
     match = data, 
     frda = data, 
@@ -16,26 +17,29 @@ new_nm_obj <- function() {
 #' 
 #' @keywords internal
 #' @noRd
-find_nm_vars <- function(code) {
+find_nm_vars <- function(spec) {
   FRDA <- c("F", "R", "D", "ALAG")
   PREFIX <- c("A", "A_0", "DADT")
   blocks_to_check <- c("PREAMBLE", "MAIN", "TABLE")
-  pmt <- unlist(code[blocks_to_check], use.names = FALSE)
+  pmt <- unlist(spec[blocks_to_check], use.names = FALSE)
   m1 <- find_nm_vars_impl(pmt)
-  m2 <- find_nm_vars_impl(code[["ODE"]])
+  m2 <- find_nm_vars_impl(spec[["ODE"]])
   m <- rbind(m1, m2)
   ans <- new_nm_obj()
+  ans[["has_ode"]] <- "ODE" %in% names(spec)
   if(ans[["found_any"]] <- nrow(m) > 0) {
     names(m) <- names(ans[["match"]])
-    names(m2) <- names(ans[["match"]])
     m <- m[!duplicated(m[["match"]]),]
     m[["type"]] <- as.integer(m[["prefix"]] %in% FRDA)
     m[["cmt"]] <- as.numeric(m[["cmt"]])
     m <- m[order(m[["type"]], m[["prefix"]], m[["cmt"]]),, drop = FALSE]
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
-    ans[["ddt"]] <- filter(m2, .data[["prefix"]] == "DADT")
-    ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
+    if(nrow(m2) > 0) {
+      names(m2) <- names(ans[["match"]])
+      ans[["ddt"]] <- filter(m2, .data[["prefix"]] == "DADT")
+      ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
+    }
     ans[["frda"]] <- filter(m, .data[["prefix"]] %in% FRDA)
   } 
   return(ans)
@@ -129,11 +133,13 @@ audit_nm_vars_range <- function(x, cmtn) {
     }
   }
   # Make sure there are ODEs for every compartment
-  bad <- setdiff(cmtn, x[["ddt"]][["cmt"]])
-  if(length(bad) > 0) {
-    err <- c(err, "Missing differential equation(s):")
-    for(b in bad) {
-      err <- c(err, paste0(" [nm-vars] missing: DADT(", b, ")"))   
+  if(x[["has_ode"]]) {
+    bad <- setdiff(cmtn, x[["ddt"]][["cmt"]])
+    if(length(bad) > 0) {
+      err <- c(err, "Missing differential equation(s):")
+      for(b in bad) {
+        err <- c(err, paste0(" [nm-vars] missing: DADT(", b, ")"))   
+      }
     }
   }
   return(err)
