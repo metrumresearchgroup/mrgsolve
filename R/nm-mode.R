@@ -79,16 +79,17 @@ generate_nmdefs <- function(x) {
   ans
 }
 
-any_frda <- function(x) {
-  m <- regmatches(x, gregexpr("\\b(F|R|D|ALAG)[0-9]+\\b", x))  
-  ans <- unlist(m, use.names=FALSE)
+any_nm_vars <- function(x) {
+  m1 <- regmatches(x, gregexpr("\\b(F|R|D|ALAG)[0-9]+\\b", x))
+  m2 <- x[x %in% c("A", "A_0", "DADT")]
+  ans <- unlist(c(m1, m2), use.names=FALSE)
   list(found_any = length(ans) > 0, match = ans)
 }
 
 audit_nm_vars <- function(x, param, init, build, nmv) {
-  bad_param <- any_frda(names(param))
-  bad_init <- any_frda(names(init))
-  bad_cpp <- any_frda(build[["cpp_variables"]][["var"]])
+  bad_param <- any_nm_vars(names(param))
+  bad_init <- any_nm_vars(names(init))
+  bad_cpp <- any_nm_vars(build[["cpp_variables"]][["var"]])
   err <- c()
   if(bad_param[["found_any"]]) {
     err <- c(err, "Reserved names in parameter list:")
