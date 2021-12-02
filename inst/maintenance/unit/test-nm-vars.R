@@ -186,3 +186,30 @@ test_that("Compartment number bounds checking", {
     regexp = "out of range: DADT\\(5\\)"
   )
 })
+
+test_that("functional test", {
+  mod1 <- house(param = list(F1 = 0.8))
+  code2 <- '
+  [ plugin ] nm-vars
+  [ param ] CL = 1, VC = 20, KA = 1.2, F1I = 0.8
+  [ cmt ] @number 3
+  [ main ] 
+  F1 = F1I;
+  A_0(3) = 50;
+  [ ode ] 
+  DADT(1) = -KA * A(1); 
+  DADT(2) =  KA * A(1) - (CL/VC) * A(2);
+  DADT(3) =  0;
+  [ table ] 
+  capture CP = A(2) / VC;
+  '
+  mod2 <- mcode("nmv-functional", code2, preclean = TRUE)
+  dose <- ev(amt = 100)
+  out1 <- mrgsim(mod1, dose, end = 48, delta = 1)
+  out2 <- mrgsim(mod2, dose, end = 48, delta = 1)
+  tol <- 0.01
+  expect_equal(out1$CP, out2$CP, tolerance = tol)
+  expect_equal(out1$GUT, out2$A1, tolerance = tol)
+  expect_equal(out1$CENT, out2$A2, tolerance = tol)
+  expect_equal(out1$RESP[1], out2$A3[1], tol = tol)
+})

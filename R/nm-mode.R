@@ -34,13 +34,13 @@ find_nm_vars <- function(spec) {
     m[["cmt"]] <- as.numeric(m[["cmt"]])
     is_frda <- as.integer(m[["prefix"]] %in% FRDA)
     m <- m[order(is_frda, m[["prefix"]], m[["cmt"]]),, drop = FALSE]
+    ans[["frda"]] <- m[m[["prefix"]] %in% FRDA,,drop=FALSE]    
     rownames(m) <- NULL
-    ans[["frda"]] <- filter(m, is_frda==1)
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
     if(nrow(m2) > 0) {
       names(m2) <- names(ans[["match"]])
-      ans[["ddt"]] <- filter(m2, .data[["prefix"]] == "DADT")
+      ans[["ddt"]] <- m2[m2[["prefix"]] == "DADT",,drop = FALSE]
       ans[["ddt"]][["cmt"]] <- as.numeric(ans[["ddt"]][["cmt"]])
       ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
     }
@@ -123,7 +123,7 @@ audit_nm_vars_range <- function(x, cmtn, audit_dadt) {
   # Look for compartment indices out of range
   m <- x[["match"]]
   if(!all(m[["cmt"]] %in% cmtn)) {
-    bad <- filter(m, !(.data[["cmt"]] %in% cmtn))
+    bad <- m[!(m[["cmt"]] %in% cmtn),,drop = FALSE]
     valid <- paste0(range(cmtn), collapse = " to ")
     valid <- paste0("Valid compartment range: ", valid)
     err <- c(err, valid)
