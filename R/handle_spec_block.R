@@ -52,7 +52,6 @@ handle_spec_block.default <- function(x, ...) {
 #' @param unlinked internal use
 #' @param fill deprecated; not used
 #' @param number number of compartments to create
-#' @param n something n-like
 #' @param ... passed
 #' 
 #' @details

@@ -37,10 +37,10 @@ find_nm_vars <- function(spec) {
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
     if(nrow(m2) > 0) {
-      ans[["ddt"]] <- filter(m2, rlang::.data[["prefix"]] == "DADT")
+      ans[["ddt"]] <- filter(m2, .data[["prefix"]] == "DADT")
       ans[["dcmtn"]] <- as.numeric(sort(unique(ans[["ddt"]][["cmt"]])))
     }
-    ans[["frda"]] <- filter(m, rlang::.data[["prefix"]] %in% FRDA)
+    ans[["frda"]] <- filter(m, .data[["prefix"]] %in% FRDA)
   } 
   return(ans)
 }
@@ -118,7 +118,7 @@ audit_nm_vars_range <- function(x, cmtn, audit_dadt) {
   # Look for compartment indices out of range
   m <- x[["match"]]
   if(!all(m[["cmt"]] %in% cmtn)) {
-    bad <- filter(m, !(rlang::.data[["cmt"]] %in% cmtn))
+    bad <- filter(m, !(.data[["cmt"]] %in% cmtn))
     valid <- paste0(range(cmtn), collapse = " to ")
     valid <- paste0("Valid compartment range: ", valid)
     err <- c(err, valid)
