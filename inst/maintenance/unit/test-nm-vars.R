@@ -148,4 +148,3 @@ test_that("Compartment number bounds checking", {
     regexp = "out of range: DADT\\(5\\)"
   )
 })
-

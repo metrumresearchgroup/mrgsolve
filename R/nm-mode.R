@@ -17,6 +17,7 @@ new_nm_obj <- function() {
 #' @keywords internal
 #' @noRd
 find_nm_vars <- function(spec) {
+  stopifnot(is.list(spec))
   ans <- new_nm_obj()
   ans[["has_ode"]] <- "ODE" %in% names(spec)
   FRDA <- c("F", "R", "D", "ALAG")
@@ -52,13 +53,14 @@ find_nm_vars_impl <- function(code) {
   if(!is.character(code)) return(nul)
   re1 <- "(A|A_0|DADT)\\(([0-9]+)\\)"
   re2 <- "\\b(F|R|D|ALAG)([0-9]+)\\b"
-  m1 <- regmatches(code, gregexec(re1, code))
-  m2 <- regmatches(code, gregexec(re2, code))
-  m <- do.call(cbind, c(m1, m2))
-  if(ncol(m)==0) {
+  # gregexec exists in R 4.1; rolling my own for now
+  m1 <- gregexecdf(re1, code) 
+  m2 <- gregexecdf(re2, code) 
+  m <- rbind(m1, m2)
+  if(nrow(m)==0) {
     return(nul)  
   }
-  as.data.frame(t(m), stringsAsFactors = FALSE)
+  m
 }
 
 generate_nmdefs <- function(x) {
