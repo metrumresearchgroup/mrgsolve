@@ -4,7 +4,6 @@ new_nm_obj <- function() {
     found_any = FALSE, 
     found_frda = FALSE, 
     has_ode = FALSE,
-    reserved = character(0),
     match = data, 
     frda = data, 
     ddt = data, 
@@ -18,42 +17,46 @@ new_nm_obj <- function() {
 #' @keywords internal
 #' @noRd
 find_nm_vars <- function(spec) {
+  ans <- new_nm_obj()
+  ans[["has_ode"]] <- "ODE" %in% names(spec)
   FRDA <- c("F", "R", "D", "ALAG")
-  PREFIX <- c("A", "A_0", "DADT")
+  # CHeck non-ODE
   blocks_to_check <- c("PREAMBLE", "MAIN", "TABLE")
   pmt <- unlist(spec[blocks_to_check], use.names = FALSE)
   m1 <- find_nm_vars_impl(pmt)
+  # Check ODE
   m2 <- find_nm_vars_impl(spec[["ODE"]])
   m <- rbind(m1, m2)
-  ans <- new_nm_obj()
-  ans[["has_ode"]] <- "ODE" %in% names(spec)
   if(ans[["found_any"]] <- nrow(m) > 0) {
     names(m) <- names(ans[["match"]])
-    if(nrow(m2) > 0) names(m2) <- names(m)
     m <- m[!duplicated(m[["match"]]),]
-    m[["type"]] <- as.integer(m[["prefix"]] %in% FRDA)
     m[["cmt"]] <- as.numeric(m[["cmt"]])
-    m <- m[order(m[["type"]], m[["prefix"]], m[["cmt"]]),, drop = FALSE]
+    is_frda <- as.integer(m[["prefix"]] %in% FRDA)
+    m <- m[order(is_frda, m[["prefix"]], m[["cmt"]]),, drop = FALSE]
+    rownames(m) <- NULL
+    ans[["frda"]] <- filter(m, is_frda==1)
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
     if(nrow(m2) > 0) {
+      names(m2) <- names(ans[["match"]])
       ans[["ddt"]] <- filter(m2, .data[["prefix"]] == "DADT")
-      ans[["dcmtn"]] <- as.numeric(sort(unique(ans[["ddt"]][["cmt"]])))
+      ans[["ddt"]][["cmt"]] <- as.numeric(ans[["ddt"]][["cmt"]])
+      ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
     }
-    ans[["frda"]] <- filter(m, .data[["prefix"]] %in% FRDA)
   } 
   return(ans)
 }
 
 find_nm_vars_impl <- function(code) {
-  if(!is.character(code)) return(data.frame())
+  nul <- data.frame(V1 = 0, V2 = 0, V3 = 0)[0,]
+  if(!is.character(code)) return(nul)
   re1 <- "(A|A_0|DADT)\\(([0-9]+)\\)"
   re2 <- "\\b(F|R|D|ALAG)([0-9]+)\\b"
   m1 <- regmatches(code, gregexec(re1, code))
   m2 <- regmatches(code, gregexec(re2, code))
   m <- do.call(cbind, c(m1, m2))
   if(ncol(m)==0) {
-    return(data.frame(V1 = 0, V2 = 0, V3 = 0)[0,])  
+    return(nul)  
   }
   as.data.frame(t(m), stringsAsFactors = FALSE)
 }

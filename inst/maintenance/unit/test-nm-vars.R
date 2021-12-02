@@ -1,20 +1,3 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
-#
-# This file is part of mrgsolve.
-#
-# mrgsolve is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# mrgsolve is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
-
 library(testthat)
 library(mrgsolve)
 library(dplyr)
@@ -25,6 +8,89 @@ options("mrgsolve_mread_quiet"=TRUE)
 nmv <- function(x) {
   paste0("[ plugin ] nm-vars \n ", x) 
 }
+
+test_that("find nm vars - frda only", {
+  code <- '
+  [ MAIN ] 
+  F2 = 2;
+  D1 = 1;
+  [ TABLE ] 
+  ALAG3 = 3;
+  '
+  spec <- modelparse(code, split = TRUE)
+  ans <- mrgsolve:::find_nm_vars(spec)
+  expect_true(ans$found_any)
+  expect_false(ans$has_ode)
+  expect_length(ans$cmtn, 3)
+  expect_equal(nrow(ans$match), 3)
+  expect_equivalent(ans$match, ans$frda)
+  prefixes <- c("ALAG", "D", "F")
+  prefixes <- prefixes[order(prefixes)]
+  expect_equal(ans$frda$prefix,  prefixes)
+  expect_equal(ans$frda$cmt, c(3, 1 , 2))
+  expect_equal(nrow(ans$ddt), 0)
+})
+
+test_that("find nm vars - A/A_0/DADT only", {
+  code <- '
+  [ MAIN ] 
+  A_0(2) = 1;
+  [ ODE] 
+  DADT(1) = -A(1);
+  DADT(2) = A(1) + A(2);
+  DADT(3) = A(3);
+  DADT(4) = 0;
+  '
+  spec <- modelparse(code, split = TRUE)
+  ans <- mrgsolve:::find_nm_vars(spec)
+  expect_true(ans$found_any)
+  expect_true(ans$has_ode)
+  expect_length(ans$cmtn, 4)
+  expect_equal(nrow(ans$match), 8)
+  prefixes <- c("A", "A_0", "DADT")
+  prefixes <- prefixes[order(prefixes)]
+  expect_equal(unique(ans$match$prefix), prefixes)
+  expect_true(all(ans$ddt$prefix == 'DADT'))
+  expect_equal(ans$dcmtn, seq(4))
+  expect_equal(ans$ddt$cmt, ans$dcmtn)
+  expect_equal(nrow(ans$frda), 0)
+  expect_is(ans$cmtn, "numeric")
+  expect_is(ans$dcmtn, "numeric")
+})
+
+test_that("find nm vars - both", {
+  code <- '
+  [ PREAMBLE ] 
+  F1 = 1;
+  [ MAIN ] 
+  A_0(2) = 1;
+  R2 = 2;
+  ALAG1 = 1;
+  [ ODE] 
+  DADT(1) = -A(1);
+  DADT(2) = A(1) + A(2);
+  [ TABLE ] 
+  D1 = 1;
+  CP = A(2) / FOO;
+  GUT  = A(1);
+  '
+  spec <- modelparse(code, split = TRUE)
+  ans <- mrgsolve:::find_nm_vars(spec)
+  expect_true(ans$found_any)
+  expect_true(ans$has_ode)
+  expect_length(ans$cmtn, 2)
+  expect_equal(nrow(ans$match), 9)
+  prefixes <- c("A", "A_0", "DADT", "ALAG", "D", "F", "R")
+  frda <- prefixes %in% c("F", "R", "D", "ALAG")
+  prefixes <- prefixes[order(frda,prefixes)]
+  expect_equal(unique(ans$match$prefix), prefixes)
+  expect_true(all(ans$ddt$prefix == 'DADT'))
+  expect_equal(ans$dcmtn, seq(2))
+  expect_equal(ans$ddt$cmt, ans$dcmtn)
+  expect_equal(nrow(ans$frda), 4)
+  expect_is(ans$cmtn, "numeric")
+  expect_is(ans$dcmtn, "numeric")
+})
 
 test_that("FRDA in param is error", {
   expect_error(
@@ -82,3 +148,4 @@ test_that("Compartment number bounds checking", {
     regexp = "out of range: DADT\\(5\\)"
   )
 })
+
