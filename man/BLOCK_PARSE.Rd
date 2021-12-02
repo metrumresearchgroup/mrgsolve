@@ -45,7 +45,7 @@ CMT(
   annotated = FALSE,
   object = NULL,
   as_object = FALSE,
-  n = NULL,
+  number = NULL,
   prefix = "A",
   ...
 )
@@ -88,6 +88,8 @@ HANDLEMATRIX(
 \item{name}{block name}
 
 \item{fill}{deprecated; not used}
+
+\item{number}{number of compartments to create}
 
 \item{prefix}{a prefix to add to the label}
 

@@ -351,7 +351,14 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     nmv  <- find_nm_vars(spec)
     plugin[["nm-vars"]][["nm-def"]] <- generate_nmdefs(nmv)
     build[["nm-vars"]] <- nmv
-    audit_nm_vars(param = param, init = init, build = build, nmv = nmv)
+    audit_nm_vars(
+      spec,
+      param = param, 
+      init = init, 
+      build = build, 
+      nmv = nmv, 
+      env = mread.env
+    )
     audit <- FALSE
   }
   
