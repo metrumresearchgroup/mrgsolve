@@ -211,5 +211,5 @@ test_that("functional test", {
   expect_equal(out1$CP, out2$CP, tolerance = tol)
   expect_equal(out1$GUT, out2$A1, tolerance = tol)
   expect_equal(out1$CENT, out2$A2, tolerance = tol)
-  expect_equal(out1$RESP[1], out2$A3[1], tol = tol)
+  expect_equal(out1$RESP[1], out2$A3[1], tolerance = tol)
 })
