@@ -130,6 +130,44 @@ test_that("FRDA in cmt is error", {
   )
 })
 
+test_that("NM Reserved in param is error", {
+  expect_error(
+    mcode("nmres1", nmv("[ param ] A = 1, CL = 2, WT = 70")), 
+    regexp = "reserved: A"
+  )
+  expect_error(
+    mcode("nmres2", nmv("[ param ] CL = 1, V = 2, A_0 = 70")), 
+    regexp = "reserved: A_0"
+  )
+  expect_error(
+    mcode("nmres3", nmv("[ param ] CL = 1, DADT = 2, WT = 70")), 
+    regexp = "reserved: DADT"
+  ) 
+  expect_error(
+    mcode("nmres4", nmv("[ param ] CL = 1, V = 2, T = 70")), 
+    regexp = "reserved: T"
+  )
+})
+
+test_that("NM Reserved in init is error", {
+  expect_error(
+    mcode("nmres5", nmv("[ cmt ] GUT CENT A")), 
+    msg = "reserved: A"
+  )
+  expect_error(
+    mcode("nmres6", nmv("[ cmt ] GUT A_0 CENT")), 
+    regexp = "reserved: A_0"
+  )
+  expect_error(
+    mcode("nmres7", nmv("[ cmt ] X GUT DADT")), 
+    regexp = "reserved: DADT"
+  )
+  expect_error(
+    mcode("nmres8", nmv("[ cmt  ] B C  T D")), 
+    regexp = "reserved: T"
+  ) 
+})
+
 test_that("Compartment number bounds checking", {
   expect_error(
     mcode("frda8", nmv("[ cmt ] B C D \n [ main ] F5 = 2;")), 

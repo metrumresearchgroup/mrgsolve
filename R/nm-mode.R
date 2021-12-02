@@ -80,7 +80,7 @@ generate_nmdefs <- function(x) {
 
 any_nm_vars <- function(x) {
   m1 <- regmatches(x, gregexpr("\\b(F|R|D|ALAG)[0-9]+\\b", x))
-  m2 <- x[x %in% c("A", "A_0", "DADT", "T")]
+  m2 <- x[x %in% Reserved_nm]
   ans <- unlist(c(m1, m2), use.names=FALSE)
   list(found_any = length(ans) > 0, match = ans)
 }

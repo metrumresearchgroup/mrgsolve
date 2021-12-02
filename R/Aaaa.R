@@ -88,6 +88,8 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
               "double", "int", "bool", "capture")
 
+Reserved_nm <- c("A", "DADT", "A_0", "T")
+
 globalVariables(c("test_package","time", "ID","block", "descr",
                   "everything", "TIME", "address","x", 
                   "self",
