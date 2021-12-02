@@ -100,6 +100,8 @@ HANDLEMATRIX(
 \item{labels}{aliases to use for simulated ETA values}
 
 \item{unlinked}{internal use}
+
+\item{n}{something n-like}
 }
 \description{
 Most of the basic blocks are listed in this help topic.
