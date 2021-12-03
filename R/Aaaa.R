@@ -29,7 +29,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
-#' @importFrom rlang is_named
+#' @importFrom rlang is_named .data
 #' @importFrom lifecycle deprecate_soft
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
@@ -84,9 +84,11 @@ Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
 
 Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
               "addl", "rate","time", Reserved_cvar,
-              "AMT", "CMT", "II", "SS", "ADDL", "RATE",
+              "AMT", "CMT", "II", "SS", "ADDL", "RATE", "THETA",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
               "double", "int", "bool", "capture")
+
+Reserved_nm <- c("A", "DADT", "A_0", "T")
 
 globalVariables(c("test_package","time", "ID","block", "descr",
                   "everything", "TIME", "address","x", 

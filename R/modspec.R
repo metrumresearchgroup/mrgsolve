@@ -476,11 +476,12 @@ parse_ats <- function(x) {
   x <- x[x!=""]
   
   # Name/value lines will have spaces but not lists
-  nv <- grepl(" ", x, fixed=TRUE) 
+  nv <- grepl(" ", x, fixed = TRUE)
   
   # Boolean are not Name/value
   if(any(!nv)) {
-    x[!nv] <- paste0(cvec_cs(x[!nv]), " TRUE")
+    negate <- substr(x[!nv], 1, 1) == "!"
+    x[!nv] <- paste0(cvec_cs(x[!nv]), " ",  !negate)
   }
   
   # find the first space
@@ -488,6 +489,9 @@ parse_ats <- function(x) {
   
   # The names
   a <- substr(x, 1,sp-1)
+  
+  # drop ! from names globally
+  a <- gsub("!", "", a, fixed = TRUE)
   
   # The values
   b <- substr(x,sp+1,nchar(x))
@@ -537,14 +541,16 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   
   opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
-  opts <- merge.list(def, tolist(opts,envir=envir),
-                     open=all,warn=FALSE,context="opts")
+  opts <- tolist(opts,envir=envir)
+  
   opts <- c(opts,at)
   
   if(allow_multiple) {
     opts <- collect_opts(opts)  
   }
   
+  opts <- merge.list(def, opts, open=all,warn=FALSE,context="opts")
+
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
   }
@@ -601,6 +607,7 @@ parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) 
   mread.env$sigma <- vector("list", n)
   mread.env$annot <- vector("list", n)
   mread.env$ode   <- vector("list", n)
+  mread.env$audit_dadt <- FALSE
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list", n)
   mread.env$error <- character(0)

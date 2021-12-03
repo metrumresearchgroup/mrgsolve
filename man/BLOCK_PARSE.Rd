@@ -38,7 +38,17 @@ THETA(
 
 INIT(x, env, pos = 1, annotated = FALSE, object = NULL, as_object = FALSE, ...)
 
-CMT(x, env, pos = 1, annotated = FALSE, object = NULL, as_object = FALSE, ...)
+CMT(
+  x,
+  env,
+  pos = 1,
+  annotated = FALSE,
+  object = NULL,
+  as_object = FALSE,
+  number = NULL,
+  prefix = "A",
+  ...
+)
 
 CAPTURE(x, env, pos = 1, annotated = FALSE, ...)
 
@@ -79,11 +89,13 @@ HANDLEMATRIX(
 
 \item{fill}{deprecated; not used}
 
+\item{number}{number of compartments to create}
+
+\item{prefix}{a prefix to add to the label}
+
 \item{type}{internal use}
 
 \item{oclass}{internal use}
-
-\item{prefix}{a prefix to add to the label}
 
 \item{labels}{aliases to use for simulated ETA values}
 

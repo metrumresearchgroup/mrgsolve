@@ -151,15 +151,20 @@ plugins[["RcppArmadillo"]] <- list(
 )
 
 plugins[["BH"]] <- list(
-  linkto="BH/include", name="BH"
+  linkto = "BH/include", name = "BH"
 )
 
 plugins[["CXX11"]] <- list(
-  pkg_cxxflags = "-std=c++11", name="CXX11"    
+  pkg_cxxflags = "-std=c++11", name = "CXX11"    
 )
 
 plugins[["N_CMT"]] <- list(
   all = TRUE, name = "N_CMT"  
+)
+
+plugins[["nm-vars"]] <- list(
+  name = "nm-vars",
+  code  = c("// nm-vars plugin", "#define _MRGSOLVE_USING_NM_VARS_")
 )
 
 # nocov end

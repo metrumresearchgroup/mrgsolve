@@ -148,3 +148,29 @@ test_that("my_str_split", {
   expect_length(ans[[1]],2)
 })
 
+test_that("gregexecdf", {
+  
+  pattern <- "(F|R|A)[0-9]+"
+  text <- c("A", "F1", "B", "R12")
+  ans <- mrgsolve:::gregexecdf(pattern = pattern, text = text)
+  expect_is(ans, "data.frame")
+  expect_equal(nrow(ans), 2)
+  expect_equal(ncol(ans), 2)
+  expect_equal(ans[["V1"]], c("F1", "R12"))
+  expect_equal(ans[["V2"]], c("F", "R"))
+  
+  pattern <- "F[0-9]+"
+  text <- c("A", "F1", "B", "R12", "F12", "F22")
+  ans <- mrgsolve:::gregexecdf(pattern = pattern, text = text)
+  expect_is(ans, "data.frame")
+  expect_equal(nrow(ans), 3)
+  expect_equal(ncol(ans), 1)
+  expect_equal(ans[["V1"]], c("F1", "F12", "F22"))
+
+  pattern <- "F[0-9]+"
+  text <- letters[1:4]
+  ans <- mrgsolve:::gregexecdf(pattern = pattern, text = text)
+  expect_is(ans, "data.frame")
+  expect_equal(nrow(ans), 0)
+  expect_equal(ncol(ans), 0)
+})

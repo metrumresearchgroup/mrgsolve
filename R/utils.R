@@ -515,9 +515,18 @@ divider_msg <- function(msg = "", width = 60) {
   return(msg)
 }
 
-reg_exec_match <- function(x, pattern) {
-  m <- regexec(pattern,x)
-  regmatches(x,m)
+reg_exec_match <- function(text, pattern, ...) {
+  regmatches(text, regexec(pattern, text, ...))
+}
+
+# TODO: gregexec is now in base R as of 4.1.0
+gregexecdf <- function(pattern, text, fixed = FALSE) {
+  x <- regmatches(text, gregexpr(pattern, text, fixed = fixed))
+  x <- x[lengths(x) > 0]
+  x <- lapply(x, reg_exec_match, pattern = pattern, fixed = fixed)
+  x <- lapply(x, do.call, what = rbind)
+  x <- do.call(rbind, x)
+  as.data.frame(x, stringsAsFactors = FALSE)
 }
 
 collect_opts <- function(x) {

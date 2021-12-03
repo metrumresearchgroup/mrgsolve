@@ -34,7 +34,8 @@ check:
 	make unit
 
 check-only:
-	R CMD check --as-cran ${TARBALL} 
+	make doc
+	R CMD check  ${TARBALL} --no-manual --no-test
 
 cran:
 	make house

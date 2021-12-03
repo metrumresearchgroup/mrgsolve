@@ -84,6 +84,16 @@ typedef double capture;
 #define CMT self.cmt
 // Bool flag indicating that the system is advancing to steady-state
 #define SS_ADVANCE _ss_flag_
+// Always accept THETA(n) as THETAn
+#define THETA(a) THETA##a
+
+// NMVARS
+#ifdef _MRGSOLVE_USING_NM_VARS_
+#define A(a) _A_[a-1]
+#define A_0(a) _A_0_[a-1]
+#define DADT(a) _DADT_[a-1]
+#define T _ODETIME_[0]
+#endif
 
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration
