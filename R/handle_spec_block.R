@@ -51,6 +51,7 @@ handle_spec_block.default <- function(x, ...) {
 #' @param oclass internal use
 #' @param unlinked internal use
 #' @param fill deprecated; not used
+#' @param number number of compartments to create
 #' @param ... passed
 #' 
 #' @details
@@ -289,7 +290,19 @@ CMT <- function(x,
                 pos = 1, 
                 annotated = FALSE, 
                 object = NULL, 
-                as_object = FALSE, ...) {
+                as_object = FALSE,
+                number = NULL, 
+                prefix = "A", ...) {
+  
+  if(is.numeric(number)) {
+    if(!is.character(prefix)) {
+      stop("compartment prefix nust be character", call. = FALSE)  
+    }
+    init <- as.list(vector(mode = "numeric", length = number))
+    names(init) <- paste0(prefix, seq(number))
+    env[["init"]][[pos]] <- init
+    return(NULL)
+  }
   
   if(is.character(object)) {
     if(isTRUE(as_object)) {
@@ -876,25 +889,30 @@ NAMESPACE <- function(x,env,name,unnamed=FALSE,pos=1,...) {
 # ODE --------------------------------------------------------------------------
 
 #' @export
-handle_spec_block.specODE <- function(x,env,...) {
+handle_spec_block.specODE <- function(x, env, ...) {
   pos <- attr(x,"pos")
-  con <- scrape_opts(x,allow_multiple = TRUE) 
+  con <- scrape_opts(
+    x,
+    def = list(audit = TRUE),
+    allow_multiple = TRUE
+  ) 
   x <- con[["x"]]
   if(isTRUE(con[["code"]])) {
-    x <- eval(parse(text = x), envir=env$ENV)   
+    x <- eval(parse(text = x), envir = env$ENV)   
   }
   re <- "\\bETA\\([0-9]+\\)"
-  chk <- grepl(re,x)
+  chk <- grepl(re, x)
   if(any(chk)) {
     ode <- env$incoming_names[pos]
     er1 <- "ETA(n) is not allowed in {ode} block:"
     er1 <- as.character(glue(er1))
     er2 <- paste0("\n * ", x[which(chk)])
-    stop(er1,er2,call.=FALSE)
+    stop(er1, er2, call.=FALSE)
   }
   if("param" %in% names(con)) {
     env[["param"]][[pos]] <- tolist(con[["param"]])
   }
+  env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   return(x)
 }
 

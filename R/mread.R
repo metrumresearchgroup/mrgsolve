@@ -329,21 +329,37 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # This section checks the contents of the spec and makes some special 
   # interventions
   # Virtual compartments
-  if(any(is.element("VCMT", names(spec)))) {
+  if("VCMT" %in% names(spec)) {
     what <- which(names(spec)=="VCMT")
     vcmt <- unique(names(unlist(mread.env$init[what])))
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
   }
   
-  if(is.element("Rcpp", names(plugin))) {
+  if("Rcpp" %in% names(plugin)) {
     spec <- global_rcpp(spec)
   }
   
-  if(is.element("mrgx", names(plugin))) {
+  if("mrgx" %in% names(plugin)) {
     toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
     topream <- "_env = mrgx::get_envir(self);"
     spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
     spec[["GLOBAL"]] <-   c(toglob, spec[["GLOBAL"]])
+  }
+  
+  ## Handle nm-vars plugin
+  if("nm-vars" %in% names(plugin)) {
+    nmv  <- find_nm_vars(spec)
+    plugin[["nm-vars"]][["nm-def"]] <- generate_nmdefs(nmv)
+    build[["nm-vars"]] <- nmv
+    audit_nm_vars(
+      spec,
+      param = param, 
+      init = init, 
+      build = build, 
+      nmv = nmv, 
+      env = mread.env
+    )
+    audit <- FALSE
   }
   
   ## Constructor for model object:
@@ -375,7 +391,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   if(x@advan %in% c(1,2,3,4)) {
     if(subr[["n"]] != neq(x)) {
       stop("$PKMODEL requires  ", subr[["n"]] , 
-           " compartments in $CMT or $INIT.",call.=FALSE)
+           " compartments in $CMT or $INIT.", call.=FALSE)
     }
     check_pred_symbols(x,spec[["MAIN"]])
   }
@@ -383,16 +399,16 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## This must come after audit
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
-  } else if(audit) {
-    spec[["ODE"]] <- c(spec[["ODE"]],ode)
-    audit_spec(x,spec,warn=warn)
+  } else if(isTRUE(audit)) {
+    spec[["ODE"]] <- c(spec[["ODE"]], ode)
+    audit_spec(x, spec, warn = warn)
   }
   
   ## First update with what we found in the model specification file
-  x <- update(x, data=SET, open=TRUE, strict = FALSE)
+  x <- update(x, data = SET, open = TRUE, strict = FALSE)
   
   ## Arguments in $SET that will be passed to mrgsim
-  simargs <- SET[is.element(names(SET),set_args)]
+  simargs <- SET[is.element(names(SET), set_args)]
   if(length(simargs) > 0) {
     x@args <- combine_list(x@args,simargs)
   }
@@ -402,7 +418,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x <- update(x, data=args, open=TRUE, strict = FALSE)
   
   ## Modify SS compartments
-  x <- set_ss_cmt(x,SET[["ss_cmt"]])
+  x <- set_ss_cmt(x, SET[["ss_cmt"]])
   
   ## lock some of this down so we can check order later
   x@code <- readLines(build$modfile, warn=FALSE)

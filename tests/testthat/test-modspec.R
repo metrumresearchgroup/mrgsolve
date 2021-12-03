@@ -129,13 +129,16 @@ test_that("at options are parsed", {
   @name some person
   @  zip   55455 @town minneapolis @city
   @ state mn @midwest @x 2
+  
+  @!yellow
   '
   
   x <- unlist(strsplit(code, "\n"))
   x <- ats(x)
   expect_equal(
     names(x), 
-    c("bool1", "bool2", "name", "zip", "town", "city", "state", "midwest", "x")
+    c("bool1", "bool2", "name", "zip", "town", "city", "state", "midwest", "x", 
+      "yellow")
   )
   expect_is(x,"list")
   expect_identical(x$bool1,TRUE)
@@ -146,6 +149,7 @@ test_that("at options are parsed", {
   expect_identical(x$state,"mn")  
   expect_identical(x$town,"minneapolis")
   expect_equal(x$x,2)
+  expect_equal(x$yellow, FALSE)
   expect_warning(ats(" @hrm ' a b c'"))  
   expect_warning(ats('@foo "a b c"'))  
 })
