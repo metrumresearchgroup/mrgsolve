@@ -84,6 +84,8 @@ typedef double capture;
 #define CMT self.cmt
 // Bool flag indicating that the system is advancing to steady-state
 #define SS_ADVANCE _ss_flag_
+// Always accept THETA(n) as THETAn
+#define THETA(a) THETA##a
 
 // NMVARS
 #ifdef _MRGSOLVE_USING_NM_VARS_
