@@ -109,7 +109,7 @@ test_that("Commented model", {
   $CAPTURE 
     kaya = KA // Capturing KA
   ' 
-
+  
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
@@ -162,7 +162,7 @@ test_that("HANDLEMATRIX", {
 })
 
 test_that("inventory of internal variables", {
-code <- '
+  code <- '
 [ global ] 
 #define a 1
 int b = 2; 
@@ -405,4 +405,28 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
     mrgsolve:::HANDLEMATRIX(x = "123", object = "parameters", as_object = TRUE), 
     "cannot have both @object and @as_object in a block"
   )
+})
+
+test_that("autodec", {
+  a <- mrgsolve:::autodec_find("a = 1;")  
+  expect_equal(a, "a")
+  b <- mrgsolve:::autodec_find("a == 1;")  
+  expect_equal(b, character(0))
+  c <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
+  expect_equal(c, "y")
+  d <- mrgsolve:::autodec_find("if(NEWIND <=1 ) {")  
+  expect_equal(d, character(0))
+  code <- strsplit(split = "\n", '
+    double a = 2;
+    b = 3;
+    if(c==2) d = 1;
+    b=(123);
+    k = 
+  ')[[1]]
+  e <- mrgsolve:::autodec_vars(
+    code, 
+    rdefs = "#define h j", 
+    build = new.env()
+  )
+  expect_equal(e, c("a", "b", "d", "k"))
 })

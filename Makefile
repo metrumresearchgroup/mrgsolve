@@ -97,6 +97,7 @@ test2:
 clean:
 	rm src/*.o
 	rm src/*.so
+	if [ -e mrgsolve.Rcheck ] rm -rf mrgsolve.Rchecks
 
 datasets:
 	Rscript inst/maintenance/datasets.R
