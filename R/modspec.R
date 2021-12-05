@@ -687,4 +687,23 @@ evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
   x
 }
 
+find_autodec <- function(code) {
+  keep <- grep("=", code, fixed = TRUE)
+  code <- code[keep]
+  if(length(code)==0) return(NULL)
+  ans <- regmatches(code, regexpr("[_[:alnum:]]+ *=[^=]?", code, perl = TRUE))
+  unique(sub(" *=.?$", "", ans, perl = TRUE))
+}
 
+autodec_namespace <- function(plugin, code, rdefs, build) {
+  if(!("autodec" %in% names(plugin))) {
+    return(NULL)  
+  }
+  vars <- find_autodec(code)
+  rdefs <- strsplit(rdefs, " ", fixed = TRUE)
+  rdefs <- s_pick(rdefs, 2)
+  cpp <- build[["cpp_variables"]][["var"]]
+  vars <- setdiff(vars, c(Reserved, rdefs, Reserved_nm, cpp))
+  ans <- paste0("  double ", vars, ";")
+  wrap_namespace(ans, "")
+}

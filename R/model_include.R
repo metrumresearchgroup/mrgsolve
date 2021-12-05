@@ -167,4 +167,8 @@ plugins[["nm-vars"]] <- list(
   code  = c("// nm-vars plugin", "#define _MRGSOLVE_USING_NM_VARS_")
 )
 
+plugins[["autodec"]] <- list(
+  name = "autodec", code = "// auto-dec plugin"
+)
+
 # nocov end

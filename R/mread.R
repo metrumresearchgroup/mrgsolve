@@ -209,7 +209,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ENV <- eval_ENV_block(spec[["ENV"]],build$project)
   if("SET" %in% names(spec)) spec[["SET"]] <- ""
   if("ENV" %in% names(spec)) spec[["ENV"]] <- ""
-
+  
   # Make a list of NULL equal to length of spec
   # Each code block can contribute to / occupy one
   # slot for each of param/fixed/init/omega/sigma
@@ -449,6 +449,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     dbsyms = args[["dbsyms"]]
   )
   
+  autodec_reals <- autodec_namespace(
+    plugin, 
+    code = unlist(spec[c("PREAMBLE", "MAIN", "ODE", "TABLE")], use.names=FALSE),
+    rdefs = rd, 
+    build = build
+  )
+  
   ## IN soloc directory
   cwd <- getwd()
   setwd(build$soloc)
@@ -490,6 +497,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
     mread.env[["global"]],
+    autodec_reals,
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
     "\n// DEFS:",
