@@ -690,9 +690,12 @@ evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
 autodec_find <- function(code) {
   keep <- grep("=", code, fixed = TRUE)
   code <- code[keep]
-  if(length(code)==0) return(NULL)
-  ans <- regmatches(code, regexpr("[_[:alnum:]]+ *=([^=]|$)", code, perl = TRUE))
-  unique(sub(" *=.?$", "", ans, perl = TRUE))
+  if(length(code)==0) {
+    return(NULL)
+  }
+  ans <- regmatches(code, regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE))
+  ans <- unique(sub(" *=.?$", "", ans, perl = TRUE))
+  ans[!grepl(".", ans, fixed = TRUE)]
 }
 
 autodec_vars <- function(code, rdefs, build) {

@@ -408,14 +408,23 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
 })
 
 test_that("autodec", {
-  a <- mrgsolve:::autodec_find("a = 1;")  
-  expect_equal(a, "a")
-  b <- mrgsolve:::autodec_find("a == 1;")  
-  expect_equal(b, character(0))
-  c <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
-  expect_equal(c, "y")
-  d <- mrgsolve:::autodec_find("if(NEWIND <=1 ) {")  
-  expect_equal(d, character(0))
+  x <- mrgsolve:::autodec_find("a = 1;")  
+  expect_equal(x, "a")
+  x <- mrgsolve:::autodec_find("a == 1;")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
+  expect_equal(x, "y")
+  x <- mrgsolve:::autodec_find("if(NEWIND <= 1 ) {")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(NEWIND >= 1 ) {")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(NEWIND != 1 ) {")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("double a_2 = 1;")
+  expect_equal(x, "a_2")
+  x <- mrgsolve:::autodec_find("self.foo = 1;")
+  expect_equal(x, character(0))
+  
   code <- strsplit(split = "\n", '
     double a = 2;
     b = 3;
@@ -423,10 +432,10 @@ test_that("autodec", {
     b=(123);
     k = 
   ')[[1]]
-  e <- mrgsolve:::autodec_vars(
+  x <- mrgsolve:::autodec_vars(
     code, 
     rdefs = "#define h j", 
     build = new.env()
   )
-  expect_equal(e, c("a", "b", "d", "k"))
+  expect_equal(x, c("a", "b", "d", "k"))
 })

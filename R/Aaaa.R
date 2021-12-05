@@ -80,9 +80,10 @@ Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
-                   "SETINIT", "report", "_VARS_", "VARS")
+                   "SETINIT", "report", "_VARS_", "VARS", 
+                   "SS_ADVANCE")
 
-Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
+Reserved <- c("ID", "amt", "cmt", "ii", "ss", "evid",
               "addl", "rate","time", Reserved_cvar,
               "AMT", "CMT", "II", "SS", "ADDL", "RATE", "THETA",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),

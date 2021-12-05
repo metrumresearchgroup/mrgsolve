@@ -97,7 +97,10 @@ test2:
 clean:
 	rm src/*.o
 	rm src/*.so
-	if [ -e mrgsolve.Rcheck ] rm -rf mrgsolve.Rchecks
+	if [ -d mrgsolve.Rcheck ]; then 
+	  rm -rf mrgsolve.Rcheck
+	fi
+	R CMD REMOVE mrgsolve
 
 datasets:
 	Rscript inst/maintenance/datasets.R
