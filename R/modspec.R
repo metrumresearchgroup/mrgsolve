@@ -687,6 +687,10 @@ evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
   x
 }
 
+#' Find assignments and capture lhs
+#' 
+#' @keywords internal
+#' @noRd
 autodec_find <- function(code) {
   keep <- grep("=", code, fixed = TRUE)
   code <- code[keep]
@@ -698,7 +702,11 @@ autodec_find <- function(code) {
   ans[!grepl(".", ans, fixed = TRUE)]
 }
 
-autodec_vars <- function(code, rdefs, build, blocks = NULL) {
+#' Call `autodec_find` ona list of code chunks
+#' 
+#' @keywords internal
+#' @noRd
+autodec_vars <- function(code, blocks = NULL) {
   if(is.null(code)) return(NULL)
   if(is.list(code)) {
     code <- unlist(code[blocks], use.names = FALSE)  
@@ -706,6 +714,19 @@ autodec_vars <- function(code, rdefs, build, blocks = NULL) {
   autodec_find(code)
 }
 
+#' Clean up `autodec` candidates
+#' 
+#' @details 
+#' 
+#' Remove
+#' 
+#' - Anything already showing up as a pre-processor definition
+#' - Anyting that is in a reserved word list
+#' - Anything that already was declared with a type
+#' 
+#' @md
+#' @keywords internal
+#' @noRd
 autodec_clean <- function(vars, rdefs, build) {
   rdefs <- strsplit(rdefs, " ", fixed = TRUE)
   rdefs <- s_pick(rdefs, 2)
@@ -714,6 +735,10 @@ autodec_clean <- function(vars, rdefs, build) {
   vars
 }
 
+#' Format and save `autodec` to be used later
+#' 
+#' @keywords internal
+#' @noRd
 autodec_save <- function(vars, build, env) {
   if(length(vars) ==0) {
     env[["autov"]] <- NULL
@@ -730,6 +755,10 @@ autodec_save <- function(vars, build, env) {
   return(invisible(NULL))
 }
 
+#' Format `autodec` as an unnamed namespace 
+#' 
+#' @keywords internal
+#' @noRd
 autodec_namespace <- function(build, env) {
   if(length(env[["autov"]])==0) {
     return(NULL)      
