@@ -363,7 +363,7 @@ pp_defs <- function(x,context) {
   )
 }
 
-move_global2 <- function(spec,env,build) {
+move_global2 <- function(spec, env, build) {
   pream <- c_vars(spec$PREAMBLE, context = "preamble")
   if(!is.null(pream$code)) {
     spec$PREAMBLE <- pream$code
@@ -550,7 +550,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   }
   
   opts <- merge.list(def, opts, open=all,warn=FALSE,context="opts")
-
+  
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
   }
@@ -698,8 +698,15 @@ autodec_find <- function(code) {
   ans[!grepl(".", ans, fixed = TRUE)]
 }
 
-autodec_vars <- function(code, rdefs, build) {
-  vars <- autodec_find(code)
+autodec_vars <- function(code, rdefs, build, blocks = NULL) {
+  if(is.null(code)) return(NULL)
+  if(is.list(code)) {
+    code <- unlist(code[blocks], use.names = FALSE)  
+  }
+  autodec_find(code)
+}
+
+autodec_clean <- function(vars, rdefs, build) {
   rdefs <- strsplit(rdefs, " ", fixed = TRUE)
   rdefs <- s_pick(rdefs, 2)
   cpp <- build[["cpp_variables"]][["var"]]
@@ -707,11 +714,26 @@ autodec_vars <- function(code, rdefs, build) {
   vars
 }
 
-autodec_namespace <- function(plugin, code, rdefs, build) {
-  if(!("autodec" %in% names(plugin))) {
-    return(NULL)  
+autodec_save <- function(vars, build, env) {
+  if(length(vars) ==0) {
+    env[["autov"]] <- NULL
+    return(invisible(NULL))
   }
-  vars <- autodec_vars(code, rdefs, build)
-  ans <- paste0("  double ", vars, ";")
-  wrap_namespace(ans, "")
+  ans <- data.frame(
+    type = "double", 
+    var = vars, 
+    context = "auto", 
+    stringsAsFactors = FALSE
+  )
+  build[["cpp_variables"]] <- rbind(build[["cpp_variables"]], ans)
+  env[["autov"]] <- vars
+  return(invisible(NULL))
+}
+
+autodec_namespace <- function(build, env) {
+  if(length(env[["autov"]])==0) {
+    return(NULL)      
+  }
+  ans <- wrap_namespace(paste0("  double ", env[["autov"]], ";"), "")
+  ans
 }

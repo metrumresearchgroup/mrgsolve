@@ -104,7 +104,6 @@ generate_rdefs <- function(pars,
           cmtdef,
           dxdef,
           pardef,
-          plugin[["nm-vars"]][["nm-def"]],
           etal,
           epsl
           )
