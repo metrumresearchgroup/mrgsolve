@@ -433,20 +433,21 @@ test_that("autodec", {
     b=(123);
     k = 
   ')[[1]]
-  x <- mrgsolve:::autodec_vars(
-    code, 
-    rdefs = "#define h j", 
-    build = new.env()
-  )
+  x <- mrgsolve:::autodec_vars(code)
   expect_equal(x, c("a", "b", "d", "k"))
   
   code <- '
   [ param ] tvcl = 1, tvvc = 2
+  [ cmt ] GUT CENT
   [ plugin ] autodec
   [ main ] 
   cl = tvcl;
   v2 = tvvc;
   ka = 1;
+  F_CENT = 1;
+  if(NEWIND <=1 ) {
+    D_CENT = 4;  
+  }
   double F1 = 0.9;
   [ table ] 
   double err = EPS(1);
