@@ -439,4 +439,21 @@ test_that("autodec", {
     build = new.env()
   )
   expect_equal(x, c("a", "b", "d", "k"))
+  
+  code <- '
+  [ param ] tvcl = 1, tvvc = 2
+  [ plugin ] autodec
+  [ main ] 
+  cl = tvcl;
+  v2 = tvvc;
+  ka = 1;
+  double F1 = 0.9;
+  [ table ] 
+  double err = EPS(1);
+  CP = cent/v2;
+  '
+  mod <- mcode("autodec1", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("F1", "err", "cl", "v2", "ka", "CP"))
+  expect_equal(cpp$context, c("main", "table", rep("auto", 4)))
 })
