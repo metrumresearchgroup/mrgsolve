@@ -51,7 +51,7 @@ find_nm_vars <- function(spec) {
 find_nm_vars_impl <- function(code) {
   nul <- data.frame(V1 = 0, V2 = 0, V3 = 0)[0,]
   if(!is.character(code)) return(nul)
-  re1 <- "(A|A_0|DADT)\\(([0-9]+)\\)"
+  re1 <- "\\b(A|A_0|DADT)\\(([0-9]+)\\)"
   re2 <- "\\b(F|R|D|ALAG)([0-9]+)\\b"
   # gregexec exists in R 4.1; rolling my own for now
   m1 <- gregexecdf(re1, code) 

@@ -123,6 +123,10 @@ check-winhub:
 .PHONY: doxygen
 doxygen: 
 	doxygen doxyfile
+	
+modlib: 
+	export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 # possibly no longer in use
 drone:

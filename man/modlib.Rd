@@ -28,28 +28,3 @@ Call \code{modlib(list=TRUE)} to list available models.  Once the model
 is loaded (see examples below), call \code{as.list(mod)$code} to see
 model code and equations.
 }
-\examples{
-\dontrun{
-mod <- mread("pk1cmt", modlib())
-mod <- mread("pk2cmt", modlib()) 
-mod <- mread("pk3cmt", modlib()) 
-mod <- mread("pk1",    modlib())
-mod <- mread("pk2",    modlib())
-mod <- mread("popex",  modlib())
-mod <- mread("irm1",   modlib()) 
-mod <- mread("irm2",   modlib()) 
-mod <- mread("irm3",   modlib()) 
-mod <- mread("irm4",   modlib())
-mod <- mread("emax",   modlib())
-mod <- mread("effect", modlib())
-mod <- mread("tmdd",   modlib())
-mod <- mread("viral1", modlib())
-mod <- mread("viral2", modlib())
-mod <- mread("pred1",  modlib())
-mod <- mread("pbpk",   modlib())
-mod <- mread("1005",   modlib()) # embedded NONMEM result
-
-mrgsolve:::code(mod)
-}
-
-}

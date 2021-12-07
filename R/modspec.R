@@ -687,6 +687,31 @@ evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
   x
 }
 
+get_valid_capture <- function(param, omega, sigma, build, mread.env) {
+  n_omega <- sum(nrow(omega))
+  if(n_omega > 0) {
+    .eta <- paste0("ETA(",seq_len(n_omega),")")  
+  } else {
+    .eta <- NULL  
+  }
+  n_sigma <- sum(nrow(sigma))
+  if(n_sigma > 0) {
+    .eps <- paste0("EPS(",seq_len(n_sigma),")")
+  } else {
+    .eps <- NULL  
+  }
+  ans <- c(
+    names(param), 
+    unlist(labels(omega)), 
+    unlist(labels(sigma)),
+    .eta,
+    .eps,
+    build[["cpp_variables"]][["var"]], 
+    mread.env[["autov"]]
+  )
+  unique(ans)
+}
+
 #' Find assignments and capture lhs
 #' 
 #' @keywords internal

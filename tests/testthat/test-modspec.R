@@ -436,6 +436,36 @@ test_that("autodec", {
   x <- mrgsolve:::autodec_vars(code)
   expect_equal(x, c("a", "b", "d", "k"))
   
+  code <- ' 
+  [ plugin ] autodec
+  [ param ] a = 1, b = 2
+  '
+  expect_s4_class(mod <- mcode("autodec2", code, compile = FALSE), "mrgmod")
+  l <- as.list(mod)
+  expect_equal(nrow(l$cpp_variables), 0)
+  
+  code <- ' 
+  [ plugin ] autodec
+  [ param ] a = 1, b = 2
+  [ main ] 
+  double c = 3;
+  '
+  expect_s4_class(mod <- mcode("autodec3", code, compile = FALSE), "mrgmod")
+  l <- as.list(mod)
+  expect_equal(l$cpp_variables$var, "c")
+  
+  code <- ' 
+  [ plugin ] autodec
+  [ param ] a = 1, b = 2
+  [ main ] 
+  double c = 3;
+  d = 4;
+  '
+  expect_s4_class(mod <- mcode("autodec4", code, compile = FALSE), "mrgmod")
+  l <- as.list(mod)
+  expect_equal(l$cpp_variables$var, c("c", "d"))
+  
+
   code <- '
   [ param ] tvcl = 1, tvvc = 2
   [ cmt ] GUT CENT
@@ -453,8 +483,9 @@ test_that("autodec", {
   double err = EPS(1);
   CP = cent/v2;
   '
-  mod <- mcode("autodec1", code, compile = FALSE)
+  mod <- mcode("autodec5", code, compile = FALSE)
   cpp <- as.list(mod)$cpp_variables
   expect_equal(cpp$var, c("F1", "err", "cl", "v2", "ka", "CP"))
   expect_equal(cpp$context, c("main", "table", rep("auto", 4)))
+
 })
