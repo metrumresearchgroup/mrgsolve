@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -56,7 +56,7 @@
 ##' mod <- mread("pred1",  modlib())
 ##' mod <- mread("pbpk",   modlib())
 ##' mod <- mread("1005",   modlib())      # embedded NONMEM result
-##' mod <- mread('nm-example", moodlib()) # model with nonmem-like syntax
+##' mod <- mread("nm-like", moodlib()) # model with nonmem-like syntax
 ##' 
 ##' mrgsolve:::code(mod)
 ##' }
@@ -75,7 +75,7 @@ modlib <- function(model = NULL,...,list=FALSE)  {
 modlib_models <- c(
   "pk1cmt", "pk2cmt", "pk3cmt", "pk", "pk1", "pk2", "popex",
   "irm1", "irm2", "irm3", "pred1", "emax", "tmdd", "viral1", 
-  "viral2", "effect", "1005", "nm-example"
+  "viral2", "effect", "1005", "nm-like"
 )
 #nocov end
 
