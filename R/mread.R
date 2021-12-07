@@ -354,10 +354,13 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
   }
   
-  ## Handle nm-vars plugin
+  # Handle nm-vars plugin
+  # This needs to happen before rdefs
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
-    plugin[["nm-vars"]][["nm-def"]] <- generate_nmdefs(nmv)
+    dfs <- generate_nmdefs(nmv)
+    rd <- c(rd, dfs)
+    plugin[["nm-vars"]][["nm-def"]] <- dfs
     build[["nm-vars"]] <- nmv
     audit_nm_vars(
       spec,
@@ -369,6 +372,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     )
     audit <- FALSE
   }
+
   # autodec
   if("autodec" %in% names(plugin)) {
     auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE")
