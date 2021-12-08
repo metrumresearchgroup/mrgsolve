@@ -43,8 +43,31 @@ write_capture <- function(x) {
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c(
   "Req", "obsonly", "recsort",
-  "carry.out","Trequest","trequest"
+  "carry.out","Trequest","trequest", 
+  "carry_out", "Request"
 )
+
+set_simargs <- function(x, SET) {
+  simargs <- SET[is.element(names(SET), set_args)]
+  if(length(simargs) > 0) {
+    x@args <- combine_list(x@args, simargs)
+  }   
+  x
+}
+
+check_pkmodel <- function(x, subr, spec) {
+  # ADVAN 13 is the ODEs
+  # Two compartments for ADVAN 2, 3 compartments for ADVAN 4
+  # Check $MAIN for the proper symbols
+  if(x@advan %in% c(1,2,3,4)) {
+    if(subr[["n"]] != neq(x)) {
+      stop("$PKMODEL requires  ", subr[["n"]] , 
+           " compartments in $CMT or $INIT.", call. = FALSE)
+    }
+    check_pred_symbols(x, spec[["MAIN"]])
+  }
+  return(invisible(NULL))
+}
 
 check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   invalid <- setdiff(x,block_list)
