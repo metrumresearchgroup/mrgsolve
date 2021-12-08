@@ -407,7 +407,7 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
   )
 })
 
-test_that("autodec", {
+test_that("autodec parsing", {
   x <- mrgsolve:::autodec_find("a = 1;")  
   expect_equal(x, "a")
   x <- mrgsolve:::autodec_find("a=1;")  
@@ -436,6 +436,9 @@ test_that("autodec", {
   x <- mrgsolve:::autodec_vars(code)
   expect_equal(x, c("a", "b", "d", "k"))
   
+})
+
+test_that("autodec models", {
   code <- ' 
   [ plugin ] autodec
   [ param ] a = 1, b = 2
@@ -465,7 +468,6 @@ test_that("autodec", {
   l <- as.list(mod)
   expect_equal(l$cpp_variables$var, c("c", "d"))
   
-
   code <- '
   [ param ] tvcl = 1, tvvc = 2
   [ cmt ] GUT CENT
@@ -488,4 +490,34 @@ test_that("autodec", {
   expect_equal(cpp$var, c("F1", "err", "cl", "v2", "ka", "CP"))
   expect_equal(cpp$context, c("main", "table", rep("auto", 4)))
 
+})
+
+test_that("autodec models with nm-vars", {
+  code <- '
+  [ param ] tvcl = 1, tvvc = 2
+  [ cmt ] GUT CENT
+  [ plugin ] autodec nm-vars
+  [ main ] 
+  double km = 2.5;
+  cl = tvcl;
+  v2 = tvvc;
+  ka = 1;
+  F_GUT = 1.2;
+  F1 = 1.2;
+  if(NEWIND<=1) {
+    D2 = 4;  
+  }
+  ALAG2 = 0.2;
+  A_0(2) = 5;
+  [ table ] 
+  double err = EPS(1);
+  CP = cent/v2;
+  [ ode ] 
+  DADT(1) = 0;
+  DADT(2) = 1; 
+  '
+  mod <- mcode("autodec5", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("km","err", "cl", "v2", "ka", "CP"))
+  expect_equal(cpp$context, c("main", "table",  rep("auto", 4)))
 })
