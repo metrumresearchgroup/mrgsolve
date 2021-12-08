@@ -17,11 +17,11 @@ F1 = F1I;
 A_0(3) = KIN / KOUT;
 
 $DES 
-DADT(1) = -KA*A(1);
-DADT(2) =  KA*A(1) - (CL/V)*A(2);
-
 CP = A(2)/V;
 INH = IMAX*CP/(IC50 + CP);
+  
+DADT(1) = -KA*A(1);
+DADT(2) =  KA*A(1) - (CL/V)*A(2);
 DADT(3) = KIN * (1-INH) - KOUT * A(3);
 
 $ERROR
