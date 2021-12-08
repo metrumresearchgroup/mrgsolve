@@ -22,7 +22,7 @@ INH = IMAX*CP/(IC50 + CP);
   
 DADT(1) = -KA*A(1);
 DADT(2) =  KA*A(1) - (CL/V)*A(2);
-DADT(3) = KIN * (1-INH) - KOUT * A(3);
+DADT(3) =  KIN * (1-INH) - KOUT * A(3);
 
 $ERROR
 CP = A(2)/V;
