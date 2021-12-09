@@ -100,7 +100,7 @@ test_that("all modlib models", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
-  x <- test_lib("nm-example")
+  x <- test_lib("nm-like")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
 
