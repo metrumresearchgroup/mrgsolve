@@ -3,3 +3,5 @@ navbar:
   right:
   - icon: fa-github fa-lg
     href: https://github.com/metrumresearchgroup/mrgsolve
+template:
+  bootstrap: 5
