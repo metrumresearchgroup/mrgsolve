@@ -16,7 +16,6 @@
 
 SUPERMATRIX <- function(x, keep_names = FALSE, no_names = TRUE) {
   stopifnot(is.list(x))
-  stopifnot(all(sapply(x, is.matrix)))
   no_names <- isTRUE(no_names)
   keep_names <- isTRUE(keep_names) && no_names
   x <- .Call(`_mrgsolve_SUPERMATRIX`, x, keep_names, PACKAGE = "mrgsolve")
