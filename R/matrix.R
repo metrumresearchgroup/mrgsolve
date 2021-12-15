@@ -14,11 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-SUPERMATRIX <- function(x, keep_names = FALSE) {
+SUPERMATRIX <- function(x, keep_names = FALSE, no_names = TRUE) {
   stopifnot(is.list(x))
   stopifnot(all(sapply(x, is.matrix)))
+  no_names <- isTRUE(no_names)
+  keep_names <- isTRUE(keep_names) && no_names
   x <- .Call(`_mrgsolve_SUPERMATRIX`, x, keep_names, PACKAGE = "mrgsolve")
-  if(nrow(x) > 0 & !keep_names) {
+  if(no_names) return(x)
+  if((nrow(x) > 0) && (!keep_names)) {
     dimnames(x) <- list(paste0(seq_len(nrow(x)), ": "), NULL)
   }
   x

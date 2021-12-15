@@ -252,9 +252,34 @@ setMethod("zero_re", "mrgmod", function(.x, ...) {
 #' @rdname matlist
 NULL
 
+#' @param detailed if `TRUE`, then a simple list of matrices is returned; 
+#' otherwise, then entire `matlist` object data is returned along with the 
+#' name of the `class` (e.g. either `omegalist` or `sigmalist`) as well 
+#' as the `names` of the matrices
+#' @md
 #' @rdname matlist
 #' @export
-setMethod("as.list", "matlist", function(x, ...) x@data)
+setMethod("as.list", "matlist", function(x, detailed = FALSE, ...) {
+  if(isTRUE(detailed)) {
+    return(
+      list(
+        data = unname(x@data),
+        n = x@n, 
+        names = names(x@data),
+        labels = x@labels, 
+        class = as.character(class(x))
+      )
+    )
+  }
+  ans <- x@data
+  for(i in seq_along(ans)) {
+    if(any(x@labels[[i]] != ".")) {
+      dimnames(ans[[i]]) <- list(x@labels[[i]], NULL)
+    }
+  }
+  ans
+})
+
 
 #' @rdname matlist
 #' @export
