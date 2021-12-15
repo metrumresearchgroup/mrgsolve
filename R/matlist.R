@@ -339,7 +339,6 @@ showmatlist <- function(x,...) {
     }
     if(nrow(out) > 0) dimnames(out) <- list(index,colnames(out))
     return(out)
-    
   })
   print(out)
   return(invisible(NULL))
@@ -371,17 +370,135 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
   create_matlist(d, labels = l, class = class(x)[1])
 })
 
-collapse_matrix <- function(x,class) {
-  l <- list(unlist(labels(x)))
-  m <- list(as.matrix(x))
-  create_matlist(m,l,class=class)
+
+#' Collapse OMEGA or SIGMA matrix lists
+#' 
+#' If multiple `OMEGA` (or `SIGMA`) blocks were written into the model, 
+#' these can be collapsed into a single matrix. This will not change the 
+#' functionality of the model, but will alter how `OMEGA` (or `SIGMA`) are 
+#' updated, usually making it easier. 
+#' 
+#' @param x a `mrgmod` object
+#' @param name a new name for the colllapsed matrix; note that this is the 
+#' matrix name, not the labels which alias `ETA(n)` or `EPS(n)`; specifying a 
+#' name will only alter how this matrix is potentially updated in the future
+#' @param range numeric vector of length 2 specifying the range of matrices 
+#' to collapse in case there are more than 2
+#' 
+#' @examples
+#' code <- '
+#' $OMEGA 1 2 3
+#' $OMEGA 4 5
+#' $OMEGA 6 7 8 9
+#' '
+#' 
+#' mod <- mcode("collapse-example", code, compile = FALSE)
+#' revar(mod)
+#' collapse_omega(mod)
+#' collapse_omega(mod, range = c(2,3), name = "new_matrix")
+#' 
+#' @seealso [collapse_matrix()]
+#' @md
+#' @rdname collapse_matrices
+#' @export
+collapse_omega <- function(x, range = NULL, name = NULL) {
+  stopifnot(is.mrgmod(x))
+  x@omega <- collapse_matrix(
+    omat(x), 
+    range = range, 
+    name = name
+  )
+  x
 }
 
-collapse_sigma <- function(x) {
-  x@sigma <- collapse_matrix(smat(x),class="sigmalist")
+#' @md
+#' @rdname collapse_matrices
+#' @export
+collapse_sigma <- function(x, range = NULL, name = NULL) {
+  stopifnot(is.mrgmod(x))
+  x@sigma <- collapse_matrix(
+    smat(x), 
+    range = range, 
+    name = name
+  )
   x
 }
-collapse_omega <- function(x) {
-  x@omega <- collapse_matrix(omat(x),class="omegalist")
-  x
+
+
+#' Collapse the matrices of a matlist object
+#' 
+#' This funciton is called by [collapse_omega()] and [collapse_sigma()]. 
+#' 
+#' @inheritParams collapse_omega
+#' @param x an object that inherits from `matlist`
+#' 
+#' @examples
+#' omega <- omat(list(dmat(1,2), dmat(3,4,5)))
+#' omega
+#' collapse_matrix(omega)
+#' 
+#' @seealso [collapse_omega()], [collapse_sigma()]
+#' @md
+#' @export
+collapse_matrix <- function(x, range = NULL, name = NULL) {
+  
+  if(!inherits(x, "matlist")) {
+    stop("x must be a `matlist` object")  
+  }
+  
+  if(length(x) <= 1) return(x)
+  
+  .class <- class(x)[1]
+  
+  update_name <- is.character(name) && length(name)==1
+  
+  if(is.null(range)) {  
+    l <- list(unlist(labels(x)))
+    m <- list(as.matrix(x))
+    if(update_name) {
+      names(m) <- name  
+    }
+    return(create_matlist(m, l, class = .class))
+  }
+  
+  if(length(range) != 2) {
+    stop("`range` must be length 2") 
+  }
+  if(!is.numeric(range)) {
+    stop("`range` must numeric") 
+  }
+  if(range[1] <= 0) {
+    stop("`range[1]` must be > 0")
+  }
+  if(range[2] > length(x)) {
+    stop("`range[2]` must be <= length(x)")
+  }
+  if(range[2] <= range[1]) {
+    stop("`range[2]` must be > `range[1]`")  
+  }
+  
+  l <- labels(x)
+  m <- as.list(x)
+  
+  start <- range[1]
+  end <- range[2]
+  second <- seq(start, end, by = 1)
+  matc <- list(SUPERMATRIX(m[second]))
+  labc <- list(unlist(l[second]))
+  if(update_name) {
+    names(matc) <- name  
+  }
+  
+  if(start != 1) {
+    first <- seq(1, start-1)
+    matc <- c(m[first], matc)
+    labc <- c(l[first], labc)
+  }
+  if(end < length(x)) {
+    last <- seq(end + 1, length(x))
+    matc <- c(matc, m[last])
+    labc <- c(labc, l[last])
+  }
+  
+  create_matlist(x = matc, labels = labc, class = .class)
 }
