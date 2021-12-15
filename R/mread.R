@@ -249,6 +249,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   omega <- omat(do.call("c", nonull.list(mread.env$omega)))
   sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
+  
   if(isTRUE(SET[["collapse_omega"]])) {
     omega <- collapse_matrix(omega,"omegalist")  
   }
