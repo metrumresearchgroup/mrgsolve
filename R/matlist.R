@@ -328,16 +328,14 @@ showmatlist <- function(x,...) {
     cat("No matrices found\n")
     return(invisible(NULL))
   }
-  
-  tot <- cumsum(unlist(lapply(x@data, ncol)))
+
+  tot <- cumsum(vapply(x@data, ncol, 1L))
   
   out <- mapply(x@data,tot,x@labels,SIMPLIFY=FALSE, FUN=function(out,y,l) {
-    if(all(l=='.')) {
-      index <- paste0((y-ncol(out)+(1:ncol(out))),": ")
-    } else {
-      index <- paste0(l, ": ")
-    }
-    if(nrow(out) > 0) dimnames(out) <- list(index,colnames(out))
+    index <- (y-ncol(out)+(seq(ncol(out))))
+    rname <- paste0(l, ": ")
+    rname[l=='.'] <- paste0(index[l=='.'], ": ")
+    if(nrow(out) > 0) dimnames(out) <- list(rname, colnames(out))
     return(out)
   })
   print(out)
@@ -376,14 +374,16 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' If multiple `OMEGA` (or `SIGMA`) blocks were written into the model, 
 #' these can be collapsed into a single matrix. This will not change the 
 #' functionality of the model, but will alter how `OMEGA` (or `SIGMA`) are 
-#' updated, usually making it easier. 
+#' updated, usually making it easier. This "collapsing" of the matrix list 
+#' is irreversible. 
 #' 
 #' @param x a `mrgmod` object
-#' @param name a new name for the colllapsed matrix; note that this is the 
+#' @param name a new name for the collapsed matrix; note that this is the 
 #' matrix name, not the labels which alias `ETA(n)` or `EPS(n)`; specifying a 
 #' name will only alter how this matrix is potentially updated in the future
 #' @param range numeric vector of length 2 specifying the range of matrices 
-#' to collapse in case there are more than 2
+#' to collapse in case there are more than 2. The second element may be `NA` 
+#' to indicate the length of the list of matrices. 
 #' 
 #' @examples
 #' code <- '
@@ -394,8 +394,9 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' 
 #' mod <- mcode("collapse-example", code, compile = FALSE)
 #' revar(mod)
-#' collapse_omega(mod)
-#' collapse_omega(mod, range = c(2,3), name = "new_matrix")
+#' collapse_omega(mod) %>% omat()
+#' collapse_omega(mod, range = c(2,3), name = "new_matrix") %>% omat()
+#' collapse_omega(mod, range = c(2,NA), name = "new_matrix") %>% omat()
 #' 
 #' @seealso [collapse_matrix()]
 #' @md
@@ -427,7 +428,9 @@ collapse_sigma <- function(x, range = NULL, name = NULL) {
 
 #' Collapse the matrices of a matlist object
 #' 
-#' This funciton is called by [collapse_omega()] and [collapse_sigma()]. 
+#' This function is called by [collapse_omega()] and [collapse_sigma()] to 
+#' convert multiple matrix blocks into a single matrix block. This "collapsing"
+#' of the matrix list is irreversible. 
 #' 
 #' @inheritParams collapse_omega
 #' @param x an object that inherits from `matlist`
@@ -467,6 +470,7 @@ collapse_matrix <- function(x, range = NULL, name = NULL) {
   if(!is.numeric(range)) {
     stop("`range` must numeric") 
   }
+  if(is.na(range[2])) range[2] <- length(x)
   if(range[1] <= 0) {
     stop("`range[1]` must be > 0")
   }

@@ -13,9 +13,10 @@ collapse_sigma(x, range = NULL, name = NULL)
 \item{x}{a \code{mrgmod} object}
 
 \item{range}{numeric vector of length 2 specifying the range of matrices
-to collapse in case there are more than 2}
+to collapse in case there are more than 2. The second element may be \code{NA}
+to indicate the length of the list of matrices.}
 
-\item{name}{a new name for the colllapsed matrix; note that this is the
+\item{name}{a new name for the collapsed matrix; note that this is the
 matrix name, not the labels which alias \code{ETA(n)} or \code{EPS(n)}; specifying a
 name will only alter how this matrix is potentially updated in the future}
 }
@@ -23,7 +24,8 @@ name will only alter how this matrix is potentially updated in the future}
 If multiple \code{OMEGA} (or \code{SIGMA}) blocks were written into the model,
 these can be collapsed into a single matrix. This will not change the
 functionality of the model, but will alter how \code{OMEGA} (or \code{SIGMA}) are
-updated, usually making it easier.
+updated, usually making it easier. This "collapsing" of the matrix list
+is irreversible.
 }
 \examples{
 code <- '
@@ -34,8 +36,9 @@ $OMEGA 6 7 8 9
 
 mod <- mcode("collapse-example", code, compile = FALSE)
 revar(mod)
-collapse_omega(mod)
-collapse_omega(mod, range = c(2,3), name = "new_matrix")
+collapse_omega(mod) \%>\% omat()
+collapse_omega(mod, range = c(2,3), name = "new_matrix") \%>\% omat()
+collapse_omega(mod, range = c(2,NA), name = "new_matrix") \%>\% omat()
 
 }
 \seealso{

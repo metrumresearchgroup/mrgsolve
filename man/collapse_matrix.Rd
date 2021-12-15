@@ -10,14 +10,17 @@ collapse_matrix(x, range = NULL, name = NULL)
 \item{x}{an object that inherits from \code{matlist}}
 
 \item{range}{numeric vector of length 2 specifying the range of matrices
-to collapse in case there are more than 2}
+to collapse in case there are more than 2. The second element may be \code{NA}
+to indicate the length of the list of matrices.}
 
-\item{name}{a new name for the colllapsed matrix; note that this is the
+\item{name}{a new name for the collapsed matrix; note that this is the
 matrix name, not the labels which alias \code{ETA(n)} or \code{EPS(n)}; specifying a
 name will only alter how this matrix is potentially updated in the future}
 }
 \description{
-This funciton is called by \code{\link[=collapse_omega]{collapse_omega()}} and \code{\link[=collapse_sigma]{collapse_sigma()}}.
+This function is called by \code{\link[=collapse_omega]{collapse_omega()}} and \code{\link[=collapse_sigma]{collapse_sigma()}} to
+convert multiple matrix blocks into a single matrix block. This "collapsing"
+of the matrix list is irreversible.
 }
 \examples{
 omega <- omat(list(dmat(1,2), dmat(3,4,5)))
