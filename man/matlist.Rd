@@ -12,7 +12,7 @@
 \alias{show,matlist-method}
 \title{Methods for working with matrix-list objects}
 \usage{
-\S4method{as.list}{matlist}(x, simplify = TRUE, ...)
+\S4method{as.list}{matlist}(x, detailed = FALSE, ...)
 
 \S4method{as.matrix}{matlist}(x, ...)
 
@@ -31,8 +31,10 @@
 \arguments{
 \item{x}{a matlist object}
 
-\item{simplify}{if \code{TRUE}, then a simple list of matrices is returned;
-otherwise, then entire \code{matlist} object data is returned}
+\item{detailed}{if \code{TRUE}, then a simple list of matrices is returned;
+otherwise, then entire \code{matlist} object data is returned along with the
+name of the \code{class} (e.g. either \code{omegalist} or \code{sigmalist}) as well
+as the \code{names} of the matrices}
 
 \item{...}{passed through to other methods}
 
