@@ -468,9 +468,12 @@ collapse_matrix <- function(x, range = NULL, name = NULL) {
     stop("`range` must be length 2") 
   }
   if(!is.numeric(range)) {
-    stop("`range` must numeric") 
+    stop("`range` must be numeric type") 
   }
   if(is.na(range[2])) range[2] <- length(x)
+  if(is.na(range[1])) {
+    stop("`range[1]` must not be NA")  
+  }
   if(range[1] <= 0) {
     stop("`range[1]` must be > 0")
   }
@@ -492,7 +495,6 @@ collapse_matrix <- function(x, range = NULL, name = NULL) {
   if(update_name) {
     names(matc) <- name  
   }
-  
   if(start != 1) {
     first <- seq(1, start-1)
     matc <- c(m[first], matc)
@@ -503,6 +505,5 @@ collapse_matrix <- function(x, range = NULL, name = NULL) {
     matc <- c(matc, m[last])
     labc <- c(labc, l[last])
   }
-  
   create_matlist(x = matc, labels = labc, class = .class)
 }
