@@ -274,7 +274,7 @@ setMethod("as.list", "matlist", function(x, detailed = FALSE, ...) {
   ans <- x@data
   for(i in seq_along(ans)) {
     if(any(x@labels[[i]] != ".")) {
-      dimnames(ans[[i]]) <- list(x@labels[[i]], NULL)
+      dimnames(ans[[i]]) <- list(x@labels[[i]], x@labels[[i]])
     }
   }
   ans

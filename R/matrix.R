@@ -15,9 +15,8 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 SUPERMATRIX <- function(x, keep_names = FALSE, no_names = TRUE) {
-  stopifnot(is.list(x))
-  no_names <- isTRUE(no_names)
-  keep_names <- isTRUE(keep_names) && no_names
+  if(!is.list(x)) stop("x must be a list")
+  keep_names <- keep_names & no_names
   x <- .Call(`_mrgsolve_SUPERMATRIX`, x, keep_names, PACKAGE = "mrgsolve")
   if(no_names) return(x)
   if((nrow(x) > 0) && (!keep_names)) {
