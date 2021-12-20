@@ -567,16 +567,28 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     names(evs) <- rep(".", length(evs))
   }
   start <- 0
-  .ii <- 0
+  .ii <- NA_real_
   ii <- 0
   for(i in seq_along(out)) {
-    # TODO: deprecated .ii
-    if(names(evs)[i] %in% c("ii", ".ii") & is.numeric(evs[[i]])) {
+    this_name <- names(evs)[i]
+    spacer <- is.numeric(evs[[i]])
+    # TODO: deprecate .ii
+    if(this_name == ".ii" & spacer) {
+      deprecate_warn(
+        when = "0.11.3", 
+        what = "mrgsolve::ev_seq(.ii)", 
+        details = c(
+         i = "Use `ii` instead of `.ii` to set time between doses." 
+        )
+      )
+      this_name <- "ii"
+    }
+    if(this_name=="ii" & spacer) {
       .ii <- evs[[i]]
       evs[[i]] <- list()
       next
     }
-    if(names(evs)[i]=="wait" & is.numeric(evs[[i]])) {
+    if(this_name=="wait" & spacer) {
       start <- start + eval(evs[[i]])
       evs[[i]] <- list()
       next
@@ -589,14 +601,14 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
       e[["addl"]] <- 0
     }
     after <-  ifelse(is.null(e[[".after"]]), 0, e[[".after"]])
-    e[["time"]] <- e[["time"]] + start + ifelse(.ii > 0, .ii, ii)
+    e[["time"]] <- e[["time"]] + start + ifelse(!is.na(.ii), .ii, ii)
     elast <- slice(e, nrow(e))
     start <- 
       elast[["time"]] + 
       after + 
       elast[["ii"]]*elast[["addl"]] 
     out[[i]] <- e
-    .ii <- 0
+    .ii <- NA_real_
     ii <- elast[["ii"]]
   }
   out <- bind_rows(out) 
@@ -610,7 +622,10 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   if(is.numeric(ID)) {
     out <- ev_rep(out,ID)
   }
-  as.ev(as.data.frame(out))
+  ans <- as.data.frame(out, stringsAsFactors = FALSE)
+  ans <- ans[order(ans$time),,drop=FALSE]
+  rownames(ans) <- NULL
+  as.ev(ans)
 }
 
 ##' @export
