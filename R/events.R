@@ -583,7 +583,7 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     if(this_name == ".ii" & spacer) {
       deprecate_warn(
         when = "0.11.3", 
-        what = "mrgsolve::ev_seq(.ii)", 
+        what = "ev_seq(.ii='has been renamed to ii')", 
         details = c(
          i = "Use `ii` instead of `.ii` to set time between doses." 
         )
