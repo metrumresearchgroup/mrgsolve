@@ -485,60 +485,71 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 
 
 
-##' Schedule a series of event objects
-##' 
-##' @param ... event objects or numeric arguments named \code{wait}
-##' @param ID numeric vector of subject IDs
-##' @param .dots a list of event objects that replaces \code{...}
-##' @param id deprecated; use \code{ID}
-##' 
-##' @details
-##' The doses for the next event line start after 
-##' all of the doses from the previous event line plus 
-##' one dosing interval from the previous event line (see
-##' examples).  
-##' 
-##' When numerics named \code{wait} are mixed in with the 
-##' event objects, a period with no dosing activity is 
-##' incorporated into the sequence, between the adjacent 
-##' dosing event objects.  Values for \code{wait} can
-##' be negative.
-##' 
-##' Values for \code{time} in any event object act like
-##' a prefix time spacer wherever that event 
-##' occurs in the event sequence (see examples).
-##' 
-##' @examples
-##' 
-##' e1 <- ev(amt=100, ii=12, addl=1)
-##' 
-##' e2 <- ev(amt=200)
-##' 
-##' seq(e1, e2)
-##' 
-##' seq(e1, .ii = 8, e2)
-##' 
-##' seq(e1, wait = 8, e2)
-##' 
-##' seq(e1, .ii = 8, e2, ID = 1:10)
-##' 
-##' ev_seq(.ii = 12, e1, .ii = 120, e2, .ii = 120, e1)
-##' 
-##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
-##'
-##' @details
-##' Use the generic \code{\link{seq}} when the first argument 
-##' is an event object.  If a waiting period is the 
-##' first event, you will need to use \code{ev_seq}.  When 
-##' an event object has multiple rows, the end time for 
-##' that sequence is taken to be one dosing interval 
-##' after the event that takes place on the last 
-##' row of the event object. 
-##' 
-##' @return
-##' A single event object.
-##' 
-##' @export
+#' Schedule a series of event objects
+#' 
+#' @param ... event objects or numeric arguments named `wait` or `ii`
+#' (see details)
+#' @param ID numeric vector of subject IDs
+#' @param .dots a list of event objects that replaces `...`
+#' @param id deprecated; use `ID`
+#' 
+#' @details
+#' The doses for the next event line start after all of the doses from the 
+#' previous event line plus one dosing interval from the previous event line 
+#' (see examples).  
+#' 
+##' When numerics named `wait` or `ii` are mixed in with the event objects, 
+#' a period with no dosing activity is incorporated into the sequence,
+#' between the adjacent dosing event objects. Use `wait` to schedule the next
+#' dose relative to the _end of the dosing interval for the previous dose_. Use
+#' `ii` to schedule the next dose relative to the _time of the the previous dose_.
+#' So `wait` acts like similar to an event object, by starting the waiting 
+#' period from one dosing interval after the last dose while `ii` starts the 
+#' waiting period from the time of the last dose itself. Both `wait` and `ii` 
+#' can accomplish identical behavior depending on whether the last dosing 
+#' interval is included (or not) in the value. Values for `wait` or `ii` can 
+#' be negative.
+#' 
+#' __NOTE__: `.ii` had been available historically as an undocumented feature. 
+#' Starting with mrgsolve version `0.11.3`, the argument will be called `ii`. 
+#' For now, both `ii` and `.ii` will be accepted. Eventually, `.ii` will be 
+#' deprecated.
+#' 
+#' Values for `time` in any event object act like a prefix time spacer wherever 
+#' that event occurs in the event sequence (see examples).
+#' 
+#' @examples
+#' 
+#' e1 <- ev(amt = 100, ii = 12, addl = 1)
+#' 
+#' e2 <- ev(amt = 200)
+#' 
+#' seq(e1, e2)
+#' 
+#' seq(e1, ii = 8, e2)
+#' 
+#' seq(e1, wait = 8, e2)
+#' 
+#' seq(e1, ii = 8, e2, ID = seq(10))
+#' 
+#' ev_seq(ii = 12, e1, ii = 120, e2, ii = 120, e1)
+#' 
+#' seq(ev(amt = 100, ii = 12), ev(time = 8, amt = 200))
+#'
+#' @details
+#' Use the generic [seq()] when the first argument 
+#' is an event object.  If a waiting period is the 
+#' first event, you will need to use [ev_seq()].  When 
+#' an event object has multiple rows, the end time for 
+#' that sequence is taken to be one dosing interval 
+#' after the event that takes place on the last 
+#' row of the event object. 
+#' 
+#' @return
+#' A single event object.
+#' 
+#' @md
+#' @export
 ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   
   if(!missing(id)) {
@@ -559,12 +570,13 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   .ii <- 0
   ii <- 0
   for(i in seq_along(out)) {
-    if(names(evs)[i]==".ii") {
+    # TODO: deprecated .ii
+    if(names(evs)[i] %in% c("ii", ".ii") & is.numeric(evs[[i]])) {
       .ii <- evs[[i]]
       evs[[i]] <- list()
       next
     }
-    if(names(evs)[i]=="wait") {
+    if(names(evs)[i]=="wait" & is.numeric(evs[[i]])) {
       start <- start + eval(evs[[i]])
       evs[[i]] <- list()
       next
