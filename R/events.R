@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -487,22 +487,37 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 
 #' Schedule a series of event objects
 #' 
-#' @param ... event objects or numeric arguments named `wait` or `ii`
-#' (see details)
+#' Use this function when you want to schedule two or more event objects in time
+#' according the dosing interval (`ii`) and additional doses (`addl`).
+#' 
+#' @param ... event objects or numeric arguments named `wait` or `ii` to 
+#' implement a period of no-dosing activity in the sequence (see details)
 #' @param ID numeric vector of subject IDs
 #' @param .dots a list of event objects that replaces `...`
 #' @param id deprecated; use `ID`
 #' 
 #' @details
+#' 
+#' Use the generic [seq()] when the first argument is an event object.  If a 
+#' waiting period (`wait` or `ii`) is the first event, you will need to use 
+#' [ev_seq()].  When an event object has multiple rows, the end time for that 
+#' sequence is taken to be one dosing interval after the event that takes place
+#' on the last row of the event object. 
+#' 
 #' The doses for the next event line start after all of the doses from the 
 #' previous event line plus one dosing interval from the previous event line 
 #' (see examples).  
 #' 
-##' When numerics named `wait` or `ii` are mixed in with the event objects, 
+#' When numerics named `wait` or `ii` are mixed in with the event objects, 
 #' a period with no dosing activity is incorporated into the sequence,
-#' between the adjacent dosing event objects. Use `wait` to schedule the next
-#' dose relative to the _end of the dosing interval for the previous dose_. Use
-#' `ii` to schedule the next dose relative to the _time of the the previous dose_.
+#' between the adjacent dosing event objects. `wait` and `ii` accomplish a 
+#' similar result, but differ by the starting point for the inactive period.
+#' 
+#' - Use `wait` to schedule the next dose relative to the end of the dosing 
+#'   interval for the previous dose. 
+#' - Use `ii` to schedule the next dose relative to the time of the the previous 
+#'   dose.
+#' 
 #' So `wait` acts like similar to an event object, by starting the waiting 
 #' period from one dosing interval after the last dose while `ii` starts the 
 #' waiting period from the time of the last dose itself. Both `wait` and `ii` 
@@ -512,8 +527,8 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 #' 
 #' __NOTE__: `.ii` had been available historically as an undocumented feature. 
 #' Starting with mrgsolve version `0.11.3`, the argument will be called `ii`. 
-#' For now, both `ii` and `.ii` will be accepted. Eventually, `.ii` will be 
-#' deprecated.
+#' For now, both `ii` and `.ii` will be accepted but you will get a deprecation
+#' warning if you use `.ii`. Please use `ii` instead.
 #' 
 #' Values for `time` in any event object act like a prefix time spacer wherever 
 #' that event occurs in the event sequence (see examples).
@@ -536,17 +551,9 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 #' 
 #' seq(ev(amt = 100, ii = 12), ev(time = 8, amt = 200))
 #'
-#' @details
-#' Use the generic [seq()] when the first argument 
-#' is an event object.  If a waiting period is the 
-#' first event, you will need to use [ev_seq()].  When 
-#' an event object has multiple rows, the end time for 
-#' that sequence is taken to be one dosing interval 
-#' after the event that takes place on the last 
-#' row of the event object. 
 #' 
 #' @return
-#' A single event object.
+#' A single event object sorted by `time`.
 #' 
 #' @md
 #' @export
@@ -628,8 +635,8 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   as.ev(ans)
 }
 
-##' @export
-##' @rdname ev_seq
+#' @export
+#' @rdname ev_seq
 seq.ev <- function(...) {
   ev_seq(...) 
 }
