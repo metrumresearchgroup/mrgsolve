@@ -630,7 +630,7 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     out <- ev_rep(out,ID)
   }
   ans <- as.data.frame(out, stringsAsFactors = FALSE)
-  ans <- ans[order(ans$time),,drop=FALSE]
+  ans <- ans[order(ans$time),, drop = FALSE]
   rownames(ans) <- NULL
   as.ev(ans)
 }

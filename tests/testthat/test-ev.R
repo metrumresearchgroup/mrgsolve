@@ -103,8 +103,9 @@ test_that("sequence of event objects", {
 })
 
 test_that(".ii is deprecated", {
+  e1 <- ev(amt = 100, ii = 24, addl = 1)
   expect_warning(
-    ev_seq(e1, .ii = 12, e2), 
+    ev_seq(e1, .ii = 12, e1), 
     regexp = "`.ii` argument of `ev_seq()` is deprecated", 
     fixed = TRUE
   )
