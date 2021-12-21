@@ -476,6 +476,7 @@ locf_ev <- function(x) {
   x
 }
 
+# TODO: refactor these; probably not needed anymore
 arrange__ <- function(df, .dots) {
   arrange(df, `!!!`(syms(.dots)))
 }
@@ -550,6 +551,7 @@ make_matrix_labels <- function(mat,lab,diag=TRUE) {
 
 
 # nocov start
+# TODO: give up on this
 is.numeric.data.frame <- function(x) vapply(x,is.numeric,TRUE)
 
 mapvalues <- function (x, from, to, warn_missing = FALSE) { 
