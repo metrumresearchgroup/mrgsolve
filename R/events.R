@@ -578,7 +578,8 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   ii <- 0
   for(i in seq_along(out)) {
     this_name <- names(evs)[i]
-    spacer <- base::is.numeric(evs[[i]]) && length(evs[[i]])==1
+    # TODO: refactor once is.numeric is handled
+    spacer <- is.atomic(evs[[i]]) && is.numeric(evs[[i]]) && length(evs[[i]])==1
     # TODO: deprecate .ii
     if(this_name == ".ii" & spacer) {
       deprecate_warn(
