@@ -600,6 +600,27 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
       evs[[i]] <- list()
       next
     }
+    if(is.data.frame(evs[[i]])) {
+      err <- c(
+        "\n", 
+        "found object with class: data.frame", 
+        "\n",
+        "please coerce to event object with `as.ev()`",
+        "\n",
+        "ev_seq() requires event objects"
+      )
+      stop(err)
+    }
+    if(!inherits(evs[[i]], "ev")) {
+      err <- c(
+        "\n",
+        "found object with class: ", 
+        paste0(class(evs[[i]]), collapse = ", "),
+        "\n",
+        "ev_seq() requires event objects"
+      )
+      stop(err)  
+    }
     e <- as.data.frame(evs[[i]])
     if(is.null(e[["ii"]])) {
       e[["ii"]] <- 0

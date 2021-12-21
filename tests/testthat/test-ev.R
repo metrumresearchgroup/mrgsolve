@@ -102,6 +102,20 @@ test_that("sequence of event objects", {
   expect_equal(d$amt, c(4, 2))
 })
 
+test_that("ev_seq requires event objects or spacer", {
+  e1 <- ev(amt = 100)
+  expect_error(
+    ev_seq(e1, iii = 4, e1),
+    regexp = "found object with class: numeric", 
+    fixed = TRUE
+  )
+  expect_error(
+    ev_seq(e1, as.data.frame(e1), e1),
+    regexp = "please coerce to event object with `as.ev()`", 
+    fixed = TRUE
+  )
+})
+
 test_that(".ii is deprecated", {
   e1 <- ev(amt = 100, ii = 24, addl = 1)
   expect_warning(
