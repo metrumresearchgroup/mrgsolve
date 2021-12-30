@@ -32,7 +32,7 @@ test_that("all modlib models", {
   }
   
   skip_if(
-    identical(Sys.getenv("_MRGSOLVE_SKIP_MODLIB_BUILD_"),"true"),
+    Sys.getenv("_MRGSOLVE_SKIP_MODLIB_BUILD_") == "yes",
     message = "skipping modlib builds"
   )
   

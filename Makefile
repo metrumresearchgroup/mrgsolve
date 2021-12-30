@@ -3,7 +3,7 @@ PACKAGE=mrgsolve
 VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=.
-export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
+export _MRGSOLVE_SKIP_MODLIB_BUILD_=yes
 LOAD_CANDIDATE=library(mrgsolve, lib.loc="mrgsolve.Rcheck")
 TEST_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
 
@@ -37,11 +37,11 @@ check-only:
 	make doc
 	R CMD check  ${TARBALL} --no-manual --no-test
 
+cran: export _MRGSOLVE_SKIP_MODLIB_BUILD_=no
 cran:
 	make house
 	make doc
 	make build
-	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	R CMD CHECK --as-cran ${TARBALL}
 
 spelling:
@@ -124,9 +124,9 @@ check-winhub:
 doxygen: 
 	doxygen doxyfile
 	
+modlib: export _MRGSOLVE_SKIP_MODLIB_BUILD_=no
 modlib: 
-	export _MRGSOLVE_SKIP_MODLIB_BUILD_=true
-	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
+	Rscript -e 'testthat::test_file("inst/maintenance/unit/test-modlib.R")'
 
 # possibly no longer in use
 drone:
