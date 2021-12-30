@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,11 +16,11 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 is.valid_data_set <- function(x) {
-  inherits(x,"valid_data_set")
+  inherits(x, "valid_data_set")
 }
 
 is.valid_idata_set <- function(x) {
-  inherits(x,"valid_idata_set")
+  inherits(x, "valid_idata_set")
 }
 
 idcol <- function(x) {
@@ -28,16 +28,18 @@ idcol <- function(x) {
 }
 
 timename <- function(x) {
-  intersect(c("time", "TIME"), colnames(x))[1]
+  y <- c("time", "TIME")
+  y[y %in% .colnames(x)][1]
 }
 
 cmtname <- function(x) {
-  intersect(c("cmt", "CMT"), colnames(x))[1] 
+  y <- c("cmt", "CMT")
+  y[y %in% .colnames(x)][1]
 }
 
-numeric_data_matrix <- function(x,quiet=FALSE) {
-  x <- data.matrix(numerics_only(x,quiet)) 
-  if(ncol(x)==0) stop("invalid data set.",call.=FALSE)
+numeric_data_matrix <- function(x, quiet = FALSE) {
+  x <- do.call(cbind, numerics_only(x, quiet)) 
+  if(ncol(x)==0) stop("invalid data set.", call.=FALSE)
   return(x)
 }
 
@@ -56,29 +58,28 @@ numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
       x <- dplyr::mutate_if(x, is.logical, as.integer)
     }
   }
-  nu <- is.numeric(x)
+  nu <- vapply(x, is.numeric, TRUE)
   if(!all(nu)) {
     if(!quiet) {
       message(
         "Dropping non-numeric columns: \n  ",
-        paste(names(x)[!nu], collapse=" ")
+        paste(names(x)[!nu], collapse = " ")
       )
     }
-    x <- x[,which(nu),drop=FALSE]
+    x <- x[, which(nu), drop = FALSE]
   } 
   x
 }
 
 convert_character_cmt <- function(data, mod) {
-  cmtcol <- intersect(c("cmt", "CMT"), names(data))
+  cmtcol <- cmtname(data)
   for(cm in cmtcol) {
     if(is.character(data[[cm]])) {
-      data[[cm]] <- match(data[[cm]], cmt(mod),0)  
+      data[[cm]] <- match(data[[cm]], Cmt(mod), 0L)  
     }
   }
   return(data)
 }
-
 
 ##' Validate and prepare a data sets for simulation
 ##'
@@ -134,7 +135,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   # special case
   if(ncol(x)==1) {
     x <- numeric_data_matrix(x,quiet=TRUE)
-    return(structure(x, class = c("valid_data_set", "matrix")))
+    class(x) <- c("valid_data_set", "matrix")
+    return(x)
   }
   
   # First, check for compartment
@@ -145,7 +147,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
     }
     if(is.character(x[[cmtcol]])) {
       if(verbose) message("Converting cmt to integer")
-      x[[cmtcol]] <- match(x[[cmtcol]], cmt(m),0)
+      x[[cmtcol]] <- match(x[[cmtcol]], Cmt(m), 0)
     }
   }
   
@@ -178,8 +180,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
                          dimnames=list(NULL, "..zeros..")))
   
   # Look for both upper and lower case column names
-  uc <- any(colnames(dm) %in% GLOBALS[["CARRY_TRAN_UC"]])
-  lc <- any(colnames(dm) %in% GLOBALS[["CARRY_TRAN_LC"]])
+  uc <- any(dimnames(dm)[[2]] %in% GLOBALS[["CARRY_TRAN_UC"]])
+  lc <- any(dimnames(dm)[[2]] %in% GLOBALS[["CARRY_TRAN_LC"]])
   
   if(uc & lc) {
     warning("Both lower- & upper-case names found in the data set.\n",
@@ -188,8 +190,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
             "or:\n",
             "  TIME,AMT,CMT,EVID,II,ADDL,SS,RATE\n", call.=FALSE)
   }
-  
-  structure(dm, class = c("valid_data_set", "matrix"))
+  class(dm) <- c("valid_data_set", "matrix")
+  dm
 }
 
 ##' Validate and prepare idata data sets for simulation
@@ -202,7 +204,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 ##' \code{\link{data_set}}
 ##' 
 ##' @export
-valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
+valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   if(verbose) quiet <- FALSE
   
@@ -218,7 +220,7 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
     stop("Duplicate IDs not allowed in idata_set.",call.=FALSE) 
   }
   
-  dm <- numeric_data_matrix(x,quiet=TRUE)
+  dm <- numeric_data_matrix(x, quiet = TRUE)
   
   if((ncol(dm) != ncol(x)) && !quiet) {
     drop <- setdiff(names(x), dimnames(dm)[[2]])
@@ -228,9 +230,10 @@ valid_idata_set <- function(x, m, verbose=FALSE, quiet=FALSE) {
     }
   }
   
-  check_data_set_na(dm,m)
+  check_data_set_na(dm, m)
+  class(dm) <- c("valid_idata_set", "matrix")
   
-  structure(dm, class=c("valid_idata_set", "matrix"))
+  dm
 }
 
 ##' @rdname valid_data_set
@@ -272,8 +275,8 @@ check_data_set_na <- function(data,m) {
   return(invisible(NULL))
 }
 
-check_column_na <- function(data,cols) {
-  check <- intersect(colnames(data),cols)
+check_column_na <- function(data, cols) {
+  check <- unique(cols[cols %in% dimnames(data)[[2]]])
   if(length(check)==0) return(character(0))
   if(!anyNA(data[,check])) return(character(0))
   flagged <- character(0)
@@ -284,6 +287,4 @@ check_column_na <- function(data,cols) {
   }
   return(flagged)
 }
-
-
 

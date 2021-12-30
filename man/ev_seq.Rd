@@ -10,7 +10,8 @@ ev_seq(..., ID = NULL, .dots = NULL, id = NULL)
 \method{seq}{ev}(...)
 }
 \arguments{
-\item{...}{event objects or numeric arguments named \code{wait}}
+\item{...}{event objects or numeric arguments named \code{wait} or \code{ii}
+(see details)}
 
 \item{ID}{numeric vector of subject IDs}
 
@@ -25,45 +26,54 @@ A single event object.
 Schedule a series of event objects
 }
 \details{
-The doses for the next event line start after 
-all of the doses from the previous event line plus 
-one dosing interval from the previous event line (see
-examples).  
+The doses for the next event line start after all of the doses from the
+previous event line plus one dosing interval from the previous event line
+(see examples).
 
-When numerics named \code{wait} are mixed in with the 
-event objects, a period with no dosing activity is 
-incorporated into the sequence, between the adjacent 
-dosing event objects.  Values for \code{wait} can
+When numerics named \code{wait} or \code{ii} are mixed in with the event objects,
+a period with no dosing activity is incorporated into the sequence,
+between the adjacent dosing event objects. Use \code{wait} to schedule the next
+dose relative to the \emph{end of the dosing interval for the previous dose}. Use
+\code{ii} to schedule the next dose relative to the \emph{time of the the previous dose}.
+So \code{wait} acts like similar to an event object, by starting the waiting
+period from one dosing interval after the last dose while \code{ii} starts the
+waiting period from the time of the last dose itself. Both \code{wait} and \code{ii}
+can accomplish identical behavior depending on whether the last dosing
+interval is included (or not) in the value. Values for \code{wait} or \code{ii} can
 be negative.
 
-Values for \code{time} in any event object act like
-a prefix time spacer wherever that event 
-occurs in the event sequence (see examples).
+\strong{NOTE}: \code{.ii} had been available historically as an undocumented feature.
+Starting with mrgsolve version \verb{0.11.3}, the argument will be called \code{ii}.
+For now, both \code{ii} and \code{.ii} will be accepted. Eventually, \code{.ii} will be
+deprecated.
 
-Use the generic \code{\link{seq}} when the first argument 
-is an event object.  If a waiting period is the 
-first event, you will need to use \code{ev_seq}.  When 
-an event object has multiple rows, the end time for 
-that sequence is taken to be one dosing interval 
-after the event that takes place on the last 
+Values for \code{time} in any event object act like a prefix time spacer wherever
+that event occurs in the event sequence (see examples).
+
+Use the generic \code{\link[=seq]{seq()}} when the first argument
+is an event object.  If a waiting period is the
+first event, you will need to use \code{\link[=ev_seq]{ev_seq()}}.  When
+an event object has multiple rows, the end time for
+that sequence is taken to be one dosing interval
+after the event that takes place on the last
 row of the event object.
 }
 \examples{
 
-e1 <- ev(amt=100, ii=12, addl=1)
+e1 <- ev(amt = 100, ii = 12, addl = 1)
 
-e2 <- ev(amt=200)
+e2 <- ev(amt = 200)
 
 seq(e1, e2)
 
-seq(e1, .ii = 8, e2)
+seq(e1, ii = 8, e2)
 
 seq(e1, wait = 8, e2)
 
-seq(e1, .ii = 8, e2, ID = 1:10)
+seq(e1, ii = 8, e2, ID = seq(10))
 
-ev_seq(.ii = 12, e1, .ii = 120, e2, .ii = 120, e1)
+ev_seq(ii = 12, e1, ii = 120, e2, ii = 120, e1)
 
-seq(ev(amt=100, ii=12), ev(time=8, amt=200))
+seq(ev(amt = 100, ii = 12), ev(time = 8, amt = 200))
 
 }

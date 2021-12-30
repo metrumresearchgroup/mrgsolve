@@ -164,9 +164,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     model <- basename(model)
   }
   
-  quiet <- as.logical(quiet)
+  quiet <- isTRUE(quiet)
   
-  warn <- warn & (!quiet)
+  warn <- isTRUE(warn) & (!quiet)
   
   if(missing(model) & !missing(file)) {
     model <- file  
@@ -233,6 +233,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Each block gets assigned a class to dispatch the handler function
   # Also, we use a position attribute so we know 
   # where we are when we're handling the block
+  
   specClass <- paste0("spec", names(spec))
   
   for(i in seq_along(spec)) {
@@ -278,6 +279,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   subr  <- collect_subr(spec)
   table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
   spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
+
+  # TODO: deprecate audit argument
+  mread.env[["audit_dadt"]] <- 
+    isTRUE(audit) && isTRUE(mread.env[["audit_dadt"]])
   
   # Look for compartments we're dosing into: F/ALAG/D/R
   # and add them to CMTN
@@ -363,7 +368,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       nmv = nmv, 
       env = mread.env
     )
-    audit <- FALSE
   }
   
   # autodec
@@ -421,7 +425,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # This must come after audit
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
-  } else if(isTRUE(audit)) {
+  } else if(mread.env[["audit_dadt"]]) {
     spec[["ODE"]] <- c(spec[["ODE"]], ode)
     audit_spec(x, spec, warn = warn)
   }

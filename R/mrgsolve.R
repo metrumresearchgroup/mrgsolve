@@ -499,7 +499,7 @@ do_mrgsim <- function(x,
   verbose <- x@verbose
   
   if(length(Request) > 0) {
-    x <- update_outputs(x, outputs=Request)  
+    x <- update_outputs(x, outputs = Request)  
   }
   
   do_recover_data <- do_recover_idata <-  FALSE
@@ -542,12 +542,9 @@ do_mrgsim <- function(x,
   }
   
   tcol <- timename(data)
-  tcol <- if_else(is.na(tcol), "time", tcol)
-  
-  param <- as.numeric(param(x))
-  init <-  as.numeric(Init(x))
-  
-  if(!identical(Pars(x),x@shlib[["par"]])) {
+  tcol <- ifelse(is.na(tcol), "time", tcol)
+
+  if(!identical(Pars(x), x@shlib[["par"]])) {
     wstop("the parameter list has changed since the model was compiled.")
   }
   if(!identical(Cmt(x), x@shlib[["cmt"]])) {
@@ -641,10 +638,10 @@ do_mrgsim <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    param,
-    names(param(x)),
-    init,
-    names(Init(x)),
+    as.numeric(Param(x)),
+    Pars(x),
+    as.numeric(Init(x)),
+    Cmt(x),
     CAPTUREI(x),
     pointers(x),
     data,idata,

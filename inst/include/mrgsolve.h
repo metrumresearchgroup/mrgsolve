@@ -39,8 +39,8 @@ void sort_unique(T& a) {
   a.erase(last, a.end());
 }
 
-int find_position(const Rcpp::CharacterVector& what,  
-                  const Rcpp::CharacterVector& table);
+int find_position(const std::string what,  
+                  Rcpp::CharacterVector& table);
 
 double digits(const double& a, const double& b);
 

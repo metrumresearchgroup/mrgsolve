@@ -108,23 +108,23 @@ check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   return(invisible(NULL))
 }
 
-audit_spec <- function(x,spec,warn=TRUE) {
-  
+audit_spec <- function(x, spec, warn = TRUE) {
   cmt <- names(init(x))
-  
   if(!has_name("ODE", spec) | !warn | length(cmt) ==0) {
     return(invisible(NULL))
   }
-  
   z <- sapply(paste0("dxdt_",cmt), function(dx) {
-    !any(grepl(dx,spec[["ODE"]],fixed=TRUE))
+    !any(grepl(dx, spec[["ODE"]], fixed = TRUE))
   })
-  
   if(any(z)) {
-    ans <- paste(cmt[z], collapse=',')
-    warning(paste0("Audit: missing differential equation(s) for ", ans), call.=FALSE)
+    bad <- cmt[z]
+    err <- "Missing differential equation(s):"
+    for(b in bad) {
+      err <- c(err, paste0("--| missing: ", b))  
+    }
+    err <- c(err, "--| suppress with @!audit block option")
+    warning(paste0(err, collapse = "\n"), call.=FALSE)
   }
-  
   return(invisible(NULL))
 }
 
