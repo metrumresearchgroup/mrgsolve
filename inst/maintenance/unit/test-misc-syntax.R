@@ -26,10 +26,10 @@ test_that("autodec + nm-vars functional test2", {
   dose <- ev(amt = 100, D2I = 2, cmt = 2, rate = -2)
   out <- mrgsim(mod, dose)
   tmax <- out$time[which.max(out$A2)]
-  expect_true((tmax-2) < eps)
+  expect_true(abs(tmax-2) < eps)
   expect_true(all(out$KA==mod$THETA3))
   expect_true("INH" %in% names(out))
   dose <- ev(amt = 100, cmt = 1, F1I = 0.81)
   out <- mrgsim(mod, dose)
-  expect_true((out$A1[2]-0.81*dose$amt[1]) < eps)
+  expect_true(abs(out$A1[2]-0.81*dose$amt[1]) < eps)
 })

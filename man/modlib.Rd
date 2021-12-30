@@ -48,7 +48,7 @@ mod <- mread("viral2", modlib())
 mod <- mread("pred1",  modlib())
 mod <- mread("pbpk",   modlib())
 mod <- mread("1005",   modlib())      # embedded NONMEM result
-mod <- mread("nm-like", moodlib()) # model with nonmem-like syntax
+mod <- mread("nm-like", modlib()) # model with nonmem-like syntax
 
 mrgsolve:::code(mod)
 }
