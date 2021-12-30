@@ -47,10 +47,19 @@ double digits(const double& a, const double& b) {
  * -1 otherwise
  * 
  */
-int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector& table) {
-  Rcpp::IntegerVector ma = Rcpp::match(what,table);
-  if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
-  return(ma[0]-1);
+int find_position(const std::string what, Rcpp::CharacterVector& table) {
+  // Rcpp::IntegerVector ma = Rcpp::match(what,table);
+  // if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
+  // return(ma[0]-1);
+
+  Rcpp::CharacterVector::iterator it = std::find(
+    table.begin(), table.end(), what
+  ); 
+  if(it != table.end()) {
+    return it - table.begin();
+  } else {
+    return -1; 
+  }
 }
 
 void negative_istate(int istate, int maxsteps, double rtol, double atol) {
