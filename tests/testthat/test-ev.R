@@ -79,6 +79,7 @@ test_that("sequence of event objects", {
   e1 <- ev(amt=1, ii=24, addl=3)
   e2 <- ev(amt=2, ii=24, addl=1)
   e3 <- ev(amt=3, ii=12, addl=4)
+  e4 <- mutate(e2, amt = 4)
 
   e <- as.data.frame(ev_seq(e1,e2,e3))
   expect_equal(nrow(e), 3)
@@ -89,7 +90,39 @@ test_that("sequence of event objects", {
   expect_equal(nrow(e), 3)
   expect_equal(e$time, c(0,116,154))
   expect_is(ev_seq(e2, e1, wait=2, e1),"ev")
+  
+  a <- ev_seq(e2, wait = 24, e4)
+  b <- ev_seq(e2, ii   = 48, e4)
+  expect_identical(a, b)
 
+  # these are equivalent; result is sorted by time
+  c <- ev_seq(e2, wait =  -72, e4)
+  d <- ev_seq(e2, ii   =  -48, e4)
+  expect_identical(c, d)
+  expect_equal(d$amt, c(4, 2))
+})
+
+test_that("ev_seq requires event objects or spacer", {
+  e1 <- ev(amt = 100)
+  expect_error(
+    ev_seq(e1, iii = 4, e1),
+    regexp = "found object with class: numeric", 
+    fixed = TRUE
+  )
+  expect_error(
+    ev_seq(e1, as.data.frame(e1), e1),
+    regexp = "please coerce to event object with `as.ev()`", 
+    fixed = TRUE
+  )
+})
+
+test_that(".ii is deprecated", {
+  e1 <- ev(amt = 100, ii = 24, addl = 1)
+  expect_warning(
+    ev_seq(e1, .ii = 12, e1), 
+    regexp = "has been renamed to", 
+    fixed = TRUE
+  )
 })
 
 test_that("replicate an event object", {
