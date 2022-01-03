@@ -19,3 +19,17 @@ test_that("THETA(n) is allowed", {
     regexp="Reserved words in model names: THETA"
   )
 })
+
+test_that("autodec + nm-vars functional test2", {
+  eps <- 1e-4
+  mod <- modlib("nm-like", delta = 0.1, preclean = TRUE, capture = "KA,INH")  
+  dose <- ev(amt = 100, D2I = 2, cmt = 2, rate = -2)
+  out <- mrgsim(mod, dose)
+  tmax <- out$time[which.max(out$A2)]
+  expect_true(abs(tmax-2) < eps)
+  expect_true(all(out$KA==mod$THETA3))
+  expect_true("INH" %in% names(out))
+  dose <- ev(amt = 100, cmt = 1, F1I = 0.81)
+  out <- mrgsim(mod, dose)
+  expect_true(abs(out$A1[2]-0.81*dose$amt[1]) < eps)
+})

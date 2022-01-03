@@ -32,7 +32,7 @@ test_that("all modlib models", {
   }
   
   skip_if(
-    identical(Sys.getenv("_MRGSOLVE_SKIP_MODLIB_BUILD_"),"true"), 
+    Sys.getenv("_MRGSOLVE_SKIP_MODLIB_BUILD_") == "yes",
     message = "skipping modlib builds"
   )
   
@@ -99,6 +99,11 @@ test_that("all modlib models", {
   x <- test_lib("pred1")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
+  
+  x <- test_lib("nm-like")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+
 })
 
 test_that("pk2iv uses V1 to scale CENT", {

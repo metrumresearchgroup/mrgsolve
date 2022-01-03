@@ -86,15 +86,18 @@ check_us <- function(x,cmt,ans) {
 check_globals <- function(x,cmt) {
   ans <- character(0)
   us <-  any(charthere(x,"_"))
-  res <- any(is.element(x,Reserved_cvar))
+  res <- any(is.element(x, Reserved_cvar))
   if(res) {
-    tmp <- paste(x[is.element(x,Reserved_cvar)],collapse=" ")
-    ans <- c(ans,paste0("Reserved words in model names: ",tmp))
+    tmp <- paste(x[is.element(x, Reserved_cvar)],collapse=" ")
+    ans <- c(ans, paste0("Reserved words in model names: ",tmp))
   }
   if(us) {
     ans <- check_us(x,cmt,ans) 
   }
-  return(ans)
+  if(length(ans) > 0) {
+    stop(ans, call. = FALSE)
+  }
+  return(invisible(NULL))
 }
 
 protomod <- list(model=character(0),

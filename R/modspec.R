@@ -43,8 +43,31 @@ write_capture <- function(x) {
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c(
   "Req", "obsonly", "recsort",
-  "carry.out","Trequest","trequest"
+  "carry.out","Trequest","trequest", 
+  "carry_out", "Request"
 )
+
+set_simargs <- function(x, SET) {
+  simargs <- SET[is.element(names(SET), set_args)]
+  if(length(simargs) > 0) {
+    x@args <- combine_list(x@args, simargs)
+  }   
+  x
+}
+
+check_pkmodel <- function(x, subr, spec) {
+  # ADVAN 13 is the ODEs
+  # Two compartments for ADVAN 2, 3 compartments for ADVAN 4
+  # Check $MAIN for the proper symbols
+  if(x@advan %in% c(1,2,3,4)) {
+    if(subr[["n"]] != neq(x)) {
+      stop("$PKMODEL requires  ", subr[["n"]] , 
+           " compartments in $CMT or $INIT.", call. = FALSE)
+    }
+    check_pred_symbols(x, spec[["MAIN"]])
+  }
+  return(invisible(NULL))
+}
 
 check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   invalid <- setdiff(x,block_list)
@@ -363,7 +386,7 @@ pp_defs <- function(x,context) {
   )
 }
 
-move_global2 <- function(spec,env,build) {
+move_global2 <- function(spec, env, build) {
   pream <- c_vars(spec$PREAMBLE, context = "preamble")
   if(!is.null(pream$code)) {
     spec$PREAMBLE <- pream$code
@@ -550,7 +573,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   }
   
   opts <- merge.list(def, opts, open=all,warn=FALSE,context="opts")
-
+  
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
   }
@@ -687,4 +710,107 @@ evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
   x
 }
 
+get_valid_capture <- function(param, omega, sigma, build, mread.env) {
+  n_omega <- sum(nrow(omega))
+  if(n_omega > 0) {
+    .eta <- paste0("ETA(",seq_len(n_omega),")")  
+  } else {
+    .eta <- NULL  
+  }
+  n_sigma <- sum(nrow(sigma))
+  if(n_sigma > 0) {
+    .eps <- paste0("EPS(",seq_len(n_sigma),")")
+  } else {
+    .eps <- NULL  
+  }
+  ans <- c(
+    names(param), 
+    unlist(labels(omega)), 
+    unlist(labels(sigma)),
+    .eta,
+    .eps,
+    build[["cpp_variables"]][["var"]], 
+    mread.env[["autov"]]
+  )
+  unique(ans)
+}
 
+#' Find assignments and capture lhs
+#' 
+#' @keywords internal
+#' @noRd
+autodec_find <- function(code) {
+  keep <- grep("=", code, fixed = TRUE)
+  code <- code[keep]
+  if(length(code)==0) {
+    return(NULL)
+  }
+  ans <- regmatches(code, regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE))
+  ans <- unique(sub(" *=.?$", "", ans, perl = TRUE))
+  ans[!grepl(".", ans, fixed = TRUE)]
+}
+
+#' Call `autodec_find` ona list of code chunks
+#' 
+#' @keywords internal
+#' @noRd
+autodec_vars <- function(code, blocks = NULL) {
+  if(is.null(code)) return(NULL)
+  if(is.list(code)) {
+    code <- unlist(code[blocks], use.names = FALSE)  
+  }
+  autodec_find(code)
+}
+
+#' Clean up `autodec` candidates
+#' 
+#' @details 
+#' 
+#' Remove
+#' 
+#' - Anything already showing up as a pre-processor definition
+#' - Anyting that is in a reserved word list
+#' - Anything that already was declared with a type
+#' 
+#' @md
+#' @keywords internal
+#' @noRd
+autodec_clean <- function(vars, rdefs, build) {
+  rdefs <- strsplit(rdefs, " ", fixed = TRUE)
+  rdefs <- s_pick(rdefs, 2)
+  cpp <- build[["cpp_variables"]][["var"]]
+  vars <- setdiff(vars, c(Reserved, rdefs, Reserved_nm, cpp))  
+  vars
+}
+
+#' Format and save `autodec` to be used later
+#' 
+#' @keywords internal
+#' @noRd
+autodec_save <- function(vars, build, env) {
+  if(length(vars) ==0) {
+    env[["autov"]] <- NULL
+    return(invisible(NULL))
+  }
+  ans <- data.frame(
+    type = "double", 
+    var = vars, 
+    context = "auto", 
+    stringsAsFactors = FALSE
+  )
+  build[["cpp_variables"]] <- rbind(build[["cpp_variables"]], ans)
+  env[["autov"]] <- vars
+  return(invisible(NULL))
+}
+
+#' Format `autodec` as an unnamed namespace 
+#' 
+#' @keywords internal
+#' @noRd
+autodec_namespace <- function(build, env) {
+  if(length(env[["autov"]])==0) {
+    return(NULL)      
+  }
+  ans <- wrap_namespace(paste0("  double ", env[["autov"]], ";"), "")
+  ans
+}
