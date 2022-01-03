@@ -257,10 +257,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   omega <- omat(do.call("c", nonull.list(mread.env[["omega"]])))
   sigma <- smat(do.call("c", nonull.list(mread.env[["sigma"]])))
   if(isTRUE(SET[["collapse_omega"]])) {
-    omega <- collapse_matrix(omega,"omegalist")  
+    omega <- collapse_matrix(omega)  
   }
   if(isTRUE(SET[["collapse_sigma"]])) {
-    sigma <- collapse_matrix(sigma,"sigmalist")  
+    sigma <- collapse_matrix(sigma)  
   }
   annot_list_maybe <- nonull.list(mread.env$annot)
   if (!length(annot_list_maybe)) {

@@ -93,21 +93,82 @@ test_that("new_smat", {
 })
 
 test_that("collapse_omega", {
-  code <- "$omega 1 2 3\n$omega 4 5\n$set collapse_omega=TRUE"  
-  mod <- mcode("collapse_omega", code, compile=FALSE)
+  code <- '
+  $OMEGA @labels a b
+  1 2
+  $OMEGA @labels c d e
+  3 4 5
+  $OMEGA @labels f
+  6
+  '
+  mod <- mcode("collapse1", code, compile = FALSE)
+  expect_equal(length(omat(mod)), 3)
+  mod2 <- collapse_omega(mod)
+  omat2 <- omat(mod2)
+  expect_equal(length(omat2), 1)
+  expect_equal(labels(omat2), list(c("a", "b", "c", "d", "e", "f")))
+  mod3 <- collapse_omega(mod, range = c(2,3), name = "foo")
+  omat3 <- omat(mod3)
+  expect_equal(length(omat3), 2)
+  expect_equal(names(omat3)[2], "foo")
+  lab3 <- list(c("a", "b"), c("c", "d", "e", "f"))
+  expect_equal(labels(omat3),lab3)
+  mod4 <- collapse_omega(mod, range = c(2,NA), name = "foo")
+  expect_identical(omat(mod4), omat3)
+  expect_identical(as.matrix(omat2), as.matrix(omat(mod)))
+  expect_identical(as.matrix(omat3), as.matrix(omat(mod)))
+  expect_identical(as.matrix(omat(mod4)), as.matrix(omat(mod)))
+  expect_error(
+    collapse_omega(mod, range = c("a", "b")), 
+    regexp = "must be numeric type"
+  )
+  expect_error(
+    collapse_omega(mod, range = 1), 
+    regexp = "length 2"
+  )
+  expect_error(
+    collapse_omega(mod, range = c(3,2)), 
+    regexp = "`range\\[2\\]` must be >"
+  )
+  expect_error(
+    collapse_omega(mod, range = c(-1, 2)), 
+    regexp = "must be > 0"
+  )
+  expect_error(
+    collapse_omega(mod, range = c(1 , 100)), 
+    regexp = "must be <= length\\(x\\)", 
+  )
+  expect_error(
+    collapse_matrix(list(a = 1)), 
+    regexp = "must be a `matlist` object"
+  )
+  code <- paste0(code, "\n", "$set collapse_omega = TRUE")  
+  mod <- mcode("collapse_omega", code, compile = FALSE)
   mat <- as.matrix(omat(mod))
-  expect_identical(dim(mat),c(5L,5L))
+  expect_identical(dim(mat), c(6L,6L))
 })
 
 test_that("collapse_sigma", {
+  code <- '
+  $SIGMA @labels a b
+  1 2
+  $SIGMA @labels c d e
+  3 4 5
+  $OMEGA @labels f
+  6
+  '
+  mod <- mcode("collapse2", code, compile = FALSE)
+  expect_equal(length(smat(mod)), 2)
+  mod2 <- collapse_sigma(mod)
+  smat2 <- smat(mod2)
+  expect_equal(nrow(as.matrix(smat2)), 5)
+  expect_equal(length(smat2), 1)
   code <- "$sigma 1 2 \n$sigma 4 \n$set collapse_sigma=TRUE"  
-  mod <- mcode("collapse_sigma", code, compile=FALSE)
+  mod <- mcode("collapse_sigma", code, compile = FALSE)
   mat <- as.matrix(smat(mod))
-  expect_identical(dim(mat),c(3L,3L))
+  expect_identical(dim(mat), c(3L,3L))
 })
 
 test_that("test-matlist duplicate labels", {
   expect_error(c(omat(house()), omat(house())))  
 })
-
-
