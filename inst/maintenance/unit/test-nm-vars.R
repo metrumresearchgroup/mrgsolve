@@ -187,7 +187,7 @@ test_that("Compartment number bounds checking", {
   )
 })
 
-test_that("functional test", {
+test_that("nm-vars functional test", {
   mod1 <- house(param = list(F1 = 0.8))
   code2 <- '
   [ plugin ] nm-vars
