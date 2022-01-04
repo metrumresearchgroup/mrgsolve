@@ -631,6 +631,8 @@ parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) 
   mread.env$annot <- vector("list", n)
   mread.env$ode   <- vector("list", n)
   mread.env$audit_dadt <- FALSE
+  mread.env$using_autodec <- FALSE
+  mread.env$`using_nm-vars` <- FALSE
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list", n)
   mread.env$error <- character(0)
@@ -764,6 +766,13 @@ autodec_vars <- function(code, blocks = NULL) {
 
 #' Clean up `autodec` candidates
 #' 
+#' @param vars candidates
+#' @param rdefs compartments and parameters that will be implemented with 
+#' C++ pre-processor defines
+#' @param build the model `build` object; this contains variables that will 
+#' be globally declared
+#' @param skip additional names to scrub
+#' 
 #' @details 
 #' 
 #' Remove
@@ -775,11 +784,12 @@ autodec_vars <- function(code, blocks = NULL) {
 #' @md
 #' @keywords internal
 #' @noRd
-autodec_clean <- function(vars, rdefs, build) {
+autodec_clean <- function(vars, rdefs, build, skip = NULL) {
   rdefs <- strsplit(rdefs, " ", fixed = TRUE)
   rdefs <- s_pick(rdefs, 2)
   cpp <- build[["cpp_variables"]][["var"]]
-  vars <- setdiff(vars, c(Reserved, rdefs, Reserved_nm, cpp))  
+  vars <- setdiff(vars, c(Reserved, rdefs, Reserved_nm, cpp))
+  vars <- setdiff(vars, skip)
   vars
 }
 

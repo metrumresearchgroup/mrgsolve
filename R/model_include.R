@@ -21,7 +21,7 @@ plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
-get_plugins <- function(what) {
+get_plugins <- function(what, env) {
   what <- c(cvec_cs(what), "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
@@ -29,6 +29,8 @@ get_plugins <- function(what) {
   }
   x <- lapply(what,get_plugin)
   names(x) <- s_pick(x,"name")
+  env[["using_autodec"]] <- "autodec" %in% names(x)
+  env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
   x
 }
 
