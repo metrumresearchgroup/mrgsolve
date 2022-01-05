@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2022 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -29,6 +29,7 @@ get_plugins <- function(what, env) {
   }
   x <- lapply(what,get_plugin)
   names(x) <- s_pick(x,"name")
+  # TODO: register other plugins if needed
   env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
   x
 }
