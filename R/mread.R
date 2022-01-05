@@ -354,7 +354,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   # Handle nm-vars plugin
-  # This needs to happen before rdefs
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
     dfs <- generate_nmdefs(nmv)
@@ -375,10 +374,17 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE")
     auto_skip <- cvec_cs(ENV[["MRGSOLVE_AUTODEC_SKIP"]])
     autov <- autodec_vars(spec, blocks = auto_blocks)
-    autov <- autodec_clean(autov, rdefs = rd, build = build, skip = auto_skip)
+    autov <- autodec_clean(
+      autov, 
+      rdefs = rd, 
+      build = build, 
+      skip = auto_skip
+    )
+    autodec_nm_vars(autov, mread.env)
     autodec_save(autov, build, mread.env)
     mread.env[["autodec"]] <- autodec_namespace(build, mread.env)
   }
+
   # Rcpp
   if("Rcpp" %in% names(plugin)) {
     spec <- global_rcpp(spec)

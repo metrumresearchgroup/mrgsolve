@@ -118,6 +118,22 @@ audit_nm_vars <- function(x, param, init, build, nmv, env) {
   return(invisible(TRUE))
 }
 
+autodec_nm_vars <- function(x, env) {
+  if(!env[["using_nm-vars"]]) return(invisible(TRUE))
+  err <- c()
+  if(any(x %in% Reserved_nm)) {
+    bad <- intersect(x, Reserved_nm)
+    err <- c(err, "Reserved names found via autodec:")
+    err <- c(err, paste0("--| reserved: ", bad))
+  }
+  if(length(err) > 0) {
+    msg <- "improper use of special variables with [nm-vars] plugin\n"
+    err <- paste0(c(msg, err), collapse = "\n")
+    stop(err, call. = FALSE)  
+  }
+  return(invisible(TRUE))
+}
+
 audit_nm_vars_range <- function(x, cmtn, audit_dadt) {
   err <- c()
   # Look for compartment indices out of range

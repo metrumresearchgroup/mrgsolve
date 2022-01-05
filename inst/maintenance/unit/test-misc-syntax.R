@@ -20,7 +20,7 @@ test_that("THETA(n) is allowed", {
   )
 })
 
-test_that("autodec + nm-vars functional test2", {
+test_that("autodec + nm-vars functional test", {
   eps <- 1e-4
   mod <- modlib("nm-like", delta = 0.1, preclean = TRUE, capture = "KA,INH")  
   dose <- ev(amt = 100, D2I = 2, cmt = 2, rate = -2)
@@ -32,4 +32,18 @@ test_that("autodec + nm-vars functional test2", {
   dose <- ev(amt = 100, cmt = 1, F1I = 0.81)
   out <- mrgsim(mod, dose)
   expect_true(abs(out$A1[2]-0.81*dose$amt[1]) < eps)
+})
+
+test_that("autodec + nm-vars using nm reserved", {
+  code <- '
+  $PLUGIN autodec nm-vars
+  $MAIN 
+  A = 1; 
+  B = 2;
+  F1 = 5;
+  '
+  expect_error(
+    mcode("auto-nm-reserved", code, compile = FALSE), 
+    regexp="reserved: A", fixed = TRUE
+  )
 })
