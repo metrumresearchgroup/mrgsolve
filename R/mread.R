@@ -421,6 +421,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
+  check_sim_eta_eps_n(x, spec)
   
   # This must come after audit
   if(!has_name("ODE", spec)) {
