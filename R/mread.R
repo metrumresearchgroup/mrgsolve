@@ -424,6 +424,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   check_globals(mread.env[["move_global"]], Cmt(x))
   
   # This must come after audit
+  # TODO: harmonize with other audit process
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
   } else {

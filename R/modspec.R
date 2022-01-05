@@ -631,8 +631,9 @@ parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) 
   mread.env$annot <- vector("list", n)
   mread.env$ode   <- vector("list", n)
   mread.env$audit_dadt <- FALSE
-  mread.env$using_autodec <- FALSE
   mread.env$`using_nm-vars` <- FALSE
+  # TODO:
+  #mread.env$using_autodec <- FALSE
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list", n)
   mread.env$error <- character(0)
