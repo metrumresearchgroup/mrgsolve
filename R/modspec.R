@@ -71,10 +71,12 @@ check_pkmodel <- function(x, subr, spec) {
 
 check_sim_eta_eps_n <- function(x, spec) {
   main <- spec[["MAIN"]]
+  tab <- spec[["TABLE"]]
   has_simeta_n <- any(grepl("simeta\\(\\s*[0-9]+\\s*\\)", main))
+  has_simeps_n <- any(grepl("simeps\\(\\s*[0-9]+\\s*\\)", tab))
   if(has_simeta_n) {
     omega <- as.matrix(omat(x))
-    offd <- omega[lower.tri(omega, diag=FALSE)]
+    offd <- as.double(omega[lower.tri(omega, diag = FALSE)])
     if(any(abs(offd) > 1e-12)) {
       warning(
         "simeta(n) was requested, but ETA are correlated; ", 
@@ -82,12 +84,10 @@ check_sim_eta_eps_n <- function(x, spec) {
       )
     }
   }
-  tab <- spec[["TABLE"]]
-  has_simeps_n <- any(grepl("simeps\\(\\s*[0-9]+\\s*\\)", tab))
   if(has_simeps_n) {
     sigma <- as.matrix(smat(x))
     if(nrow(sigma) > 0) {
-      offd <- sigma[lower.tri(sigma, diag=FALSE)]
+      offd <- as.double(sigma[lower.tri(sigma, diag = FALSE)])
       if(any(abs(offd) > 1e-12)) {
         warning(
           "simeps(n) was requested, but EPS are correlated; ", 
