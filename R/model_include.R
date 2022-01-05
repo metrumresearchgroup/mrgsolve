@@ -29,7 +29,6 @@ get_plugins <- function(what, env) {
   }
   x <- lapply(what,get_plugin)
   names(x) <- s_pick(x,"name")
-  env[["using_autodec"]] <- "autodec" %in% names(x)
   env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
   x
 }
