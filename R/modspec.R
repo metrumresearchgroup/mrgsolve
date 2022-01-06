@@ -72,8 +72,8 @@ check_pkmodel <- function(x, subr, spec) {
 check_sim_eta_eps_n <- function(x, spec) {
   main <- spec[["MAIN"]]
   tab <- spec[["TABLE"]]
-  simeta_n <- grep("simeta\\(\\s*[0-9]+\\s*\\)", main, perl = TRUE)
-  simeps_n <- grep("simeps\\(\\s*[0-9]+\\s*\\)", tab, perl = TRUE)
+  simeta_n <- grep("\\bsimeta\\(\\s*[0-9]+\\s*\\)", main, perl = TRUE)
+  simeps_n <- grep("\\bsimeps\\(\\s*[0-9]+\\s*\\)", tab,  perl = TRUE)
   has_off_diag <- function(mat) {
     if(nrow(mat)==0) return(FALSE)
     offd <- as.double(mat[lower.tri(mat, diag = FALSE)])
