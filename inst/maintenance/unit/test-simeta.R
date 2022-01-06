@@ -140,3 +140,59 @@ test_that("invalid value for n when calling simeta or simeps", {
     "simeps index out of bounds"
   )
 })
+
+test_that("warn when simeta(n) is called with off diagonals", {
+  code <- '
+  $OMEGA @block 
+  1 0.1 2
+  $MAIN 
+  simeta(2);
+  ' 
+  expect_warning(
+    mcode("simeta-n-warn", code, compile = FALSE), 
+    regexp = "ETA are correlated", 
+    fixed  = TRUE
+  )
+  code <- '
+  $OMEGA  
+  1 0.1 2
+  $MAIN 
+  simeta(2);
+  ' 
+  expect_silent(mcode("simeta-n-nowarn", code, compile = FALSE))
+  code <- '
+  $OMEGA @block 
+  1 0.1 2
+  $MAIN 
+  simeta();
+  ' 
+  expect_silent(mcode("simeta-n-nowarn-2", code, compile = FALSE))
+})
+
+test_that("warn when simeps(n) is called with off diagonals", {
+  code <- '
+  $SIGMA @block 
+  1 0.1 2
+  $TABLE
+  simeps(2);
+  ' 
+  expect_warning(
+    mcode("simeps-n-warn", code, compile = FALSE), 
+    regexp = "EPS are correlated", 
+    fixed  = TRUE
+  )
+  code <- '
+  $SIGMA
+  1 0.1 2
+  $TABLE
+  simeps(2);
+  ' 
+  expect_silent(mcode("simeps-n-nowarn", code, compile = FALSE))
+  code <- '
+  $SIGMA @block 
+  1 0.1 2
+  $TABLE
+  simeta();
+  ' 
+  expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
+})
