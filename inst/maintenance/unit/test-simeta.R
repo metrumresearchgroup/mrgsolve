@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -87,7 +87,7 @@ test_that("resimulate all eta", {
 })
 
 test_that("resimulate specific eta", {
-  
+  skip_if(TRUE, message="resim(n) is deprecated")
   set.seed(5678)
   # simeta with n = 1 (simeta(3))
   n1 <-  mrgsim_df(mod, param = list(n = 1, mode = 2)) 
@@ -125,12 +125,14 @@ test_that("resimulate all or specific eps", {
   expect_false(any(duplicated(unlist(all))))
   
   # simeps with n = 2 (simeps(2))
+  skip_if(TRUE, message="resim(n) is deprecated")
   n <-  mrgsim(mod, data = data, param = list(n = 2, mode = 5))
   expect_true(all(n$a==n$a[1]))
   expect_false(any(duplicated(n$b)))
 })
 
 test_that("invalid value for n when calling simeta or simeps", {
+  skip_if(TRUE, message="resim(n) is deprecated")
   expect_error(
     mrgsim(mod, param = list(mode = 2, n = 100)), 
     "simeta index out of bounds"
@@ -150,21 +152,22 @@ test_that("warn when simeta(n) is called with off diagonals", {
   ' 
   expect_warning(
     mcode("simeta-n-warn", code, compile = FALSE), 
-    regexp = "ETA are correlated", 
+    regexp = "values is now discouraged and will soon be deprecated", 
     fixed  = TRUE
   )
-  code <- '
-  $OMEGA  
-  1 0.1 2
-  $MAIN 
-  simeta(2);
-  ' 
-  expect_silent(mcode("simeta-n-nowarn", code, compile = FALSE))
   code <- '
   $OMEGA @block 
   1 0.1 2
   $MAIN 
   simeta();
+  ' 
+  expect_silent(mcode("simeta-n-nowarn-1", code, compile = FALSE))
+  code <- '
+  $ENV MRGSOLVE_RESIM_N_WARN = FALSE
+  $OMEGA @block 
+  1 0.1 2
+  $MAIN 
+  simeta(2);
   ' 
   expect_silent(mcode("simeta-n-nowarn-2", code, compile = FALSE))
 })
@@ -178,21 +181,22 @@ test_that("warn when simeps(n) is called with off diagonals", {
   ' 
   expect_warning(
     mcode("simeps-n-warn", code, compile = FALSE), 
-    regexp = "EPS are correlated", 
+    regexp = "values is now discouraged and will soon be deprecated", 
     fixed  = TRUE
   )
-  code <- '
-  $SIGMA
-  1 0.1 2
-  $TABLE
-  simeps(2);
-  ' 
-  expect_silent(mcode("simeps-n-nowarn", code, compile = FALSE))
   code <- '
   $SIGMA @block 
   1 0.1 2
   $TABLE
   simeta();
+  ' 
+  expect_silent(mcode("simeps-n-nowarn", code, compile = FALSE))
+  code <- '
+  $ENV MRGSOLVE_RESIM_N_WARN = FALSE
+  $SIGMA @block 
+  1 0.1 2
+  $TABLE
+  simeps(1);
   ' 
   expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
 })
