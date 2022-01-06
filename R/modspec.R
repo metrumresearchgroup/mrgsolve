@@ -69,6 +69,37 @@ check_pkmodel <- function(x, subr, spec) {
   return(invisible(NULL))
 }
 
+check_sim_eta_eps_n <- function(x, spec) {
+  main <- spec[["MAIN"]]
+  tab <- spec[["TABLE"]]
+  simeta_n <- grep("\\bsimeta\\(\\s*[0-9]+\\s*\\)", main, perl = TRUE)
+  simeps_n <- grep("\\bsimeps\\(\\s*[0-9]+\\s*\\)", tab,  perl = TRUE)
+  has_off_diag <- function(mat) {
+    if(nrow(mat)==0) return(FALSE)
+    offd <- as.double(mat[lower.tri(mat, diag = FALSE)])
+    any(abs(offd) > 1e-12)
+  }
+  if(length(simeta_n) > 0) {
+    omega <- as.matrix(omat(x))
+    if(has_off_diag(omega)) {
+      warning(
+        "simeta(n) was requested, but ETA are correlated; ", 
+        "use simeta() to resimulate all ETA."
+      )
+    }
+  }
+  if(length(simeps_n) > 0) {
+    sigma <- as.matrix(smat(x))
+    if(has_off_diag(sigma)) {
+      warning(
+        "simeps(n) was requested, but EPS are correlated; ", 
+        "use simeps() to resimulate all EPS."
+      )
+    }
+  }
+  return(invisible(NULL))
+}
+
 check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   invalid <- setdiff(x,block_list)
   valid <- intersect(x,block_list)
