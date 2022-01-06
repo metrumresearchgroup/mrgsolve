@@ -72,30 +72,29 @@ check_pkmodel <- function(x, subr, spec) {
 check_sim_eta_eps_n <- function(x, spec) {
   main <- spec[["MAIN"]]
   tab <- spec[["TABLE"]]
-  has_simeta_n <- any(grepl("simeta\\(\\s*[0-9]+\\s*\\)", main))
-  has_simeps_n <- any(grepl("simeps\\(\\s*[0-9]+\\s*\\)", tab))
-  if(has_simeta_n) {
+  simeta_n <- grep("simeta\\(\\s*[0-9]+\\s*\\)", main, perl = TRUE)
+  simeps_n <- grep("simeps\\(\\s*[0-9]+\\s*\\)", tab, perl = TRUE)
+  has_off_diag <- function(mat) {
+    if(nrow(mat)==0) return(FALSE)
+    offd <- as.double(mat[lower.tri(mat, diag = FALSE)])
+    any(abs(offd) > 1e-12)
+  }
+  if(length(simeta_n) > 0) {
     omega <- as.matrix(omat(x))
-    if(nrow(omega) > 0) {
-      offd <- as.double(omega[lower.tri(omega, diag = FALSE)])
-      if(any(abs(offd) > 1e-12)) {
-        warning(
-          "simeta(n) was requested, but ETA are correlated; ", 
-          "use simeta() to resimulate all ETA."
-        )
-      }
+    if(has_off_diag(omega)) {
+      warning(
+        "simeta(n) was requested, but ETA are correlated; ", 
+        "use simeta() to resimulate all ETA."
+      )
     }
   }
-  if(has_simeps_n) {
+  if(length(simeps_n) > 0) {
     sigma <- as.matrix(smat(x))
-    if(nrow(sigma) > 0) {
-      offd <- as.double(sigma[lower.tri(sigma, diag = FALSE)])
-      if(any(abs(offd) > 1e-12)) {
-        warning(
-          "simeps(n) was requested, but EPS are correlated; ", 
-          "use simeps() to resimulate all EPS."
-        )
-      }
+    if(has_off_diag(sigma)) {
+      warning(
+        "simeps(n) was requested, but EPS are correlated; ", 
+        "use simeps() to resimulate all EPS."
+      )
     }
   }
   return(invisible(NULL))
