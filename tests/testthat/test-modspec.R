@@ -521,3 +521,19 @@ test_that("autodec models with nm-vars", {
   expect_equal(cpp$var, c("km","err", "cl", "v2", "ka", "CP"))
   expect_equal(cpp$context, c("main", "table",  rep("auto", 4)))
 })
+
+test_that("autodec variables can be skipped", {
+  code <- '
+  [ plugin ] autodec
+  [ env ] MRGSOLVE_AUTODEC_SKIP = "a, c"
+  [ main ] 
+  a = 1; 
+  b = 2; 
+  c = 3; 
+  d = 4;
+  double e = 5;
+  '
+  mod <- mcode("autodec-skip", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("e", "b", "d"))
+})
