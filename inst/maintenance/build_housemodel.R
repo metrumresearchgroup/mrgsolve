@@ -27,6 +27,7 @@ fun <- function() {
   source("R/init.R")
   source("R/funset.R")
   source("R/update.R")
+  source("R/env.R")
   proj <- file.path("inst", "project")
   mod <- mread("housemodel", proj, compile = FALSE, udll=FALSE, ns = FALSE)
   cpp <- normalizePath(list.files(mod@soloc, full.names=TRUE))
