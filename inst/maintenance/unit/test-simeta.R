@@ -188,7 +188,7 @@ test_that("warn when simeps(n) is called with off diagonals", {
   $SIGMA @block 
   1 0.1 2
   $TABLE
-  simeta();
+  simeps();
   ' 
   expect_silent(mcode("simeps-n-nowarn", code, compile = FALSE))
   code <- '

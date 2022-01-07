@@ -81,7 +81,7 @@ check_sim_eta_eps_n <- function(x, spec) {
     warning(
       "simeta(n) was requested; ", 
       "resimulating single ETA values is now discouraged and will soon be deprecated; ", 
-      "use simeps() to resimulate all ETA; ",
+      "use simeta() to resimulate all ETA; ",
       "silence this warning by setting MRGSOLVE_RESIM_N_WARN to FALSE in $ENV."
     )
   }
