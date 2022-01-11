@@ -2,10 +2,10 @@
 1005 phase1 2 CMT like 1004 but diff. initial on V3
 
 Run 
-
 file.show(system.file("nonmem", "1005", "1005.ctl", package = "mrgsolve")) 
+for equivalent NONMEM control stream. 
 
-for equivalent NONMEM control stream
+Updated 10 Jan 2022 to use autodec and nm-vars plugins.
 
 [ PLUGIN ] autodec nm-vars
   
