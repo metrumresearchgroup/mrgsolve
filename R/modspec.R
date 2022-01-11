@@ -447,17 +447,21 @@ move_global2 <- function(spec, env, build) {
     captures <- to_ns[cap,"var"]
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
   }
-  ns <- c(
-    "typedef double capture;",
-    "namespace {",
-    paste0("  ", to_ns$type, " ", to_ns$var, ";"),
-    "}")
+  to_global <- "typedef double capture;"
+  if(nrow(to_ns)  > 0) {
+    to_global <- c(
+      to_global,
+      "namespace {",
+      paste0("  ", to_ns$type, " ", to_ns$var, ";"),
+      "}"
+    ) 
+  }
   build$global_vars <- vars
   defines <- pp_defs(spec[["GLOBAL"]], context = "global")
   build$defines <- defines$vars
-  build$cpp_variables <- bind_rows(defines$tab,vars)
+  build$cpp_variables <- bind_rows(defines$tab, vars)
   
-  env[["global"]] <- ns
+  env[["global"]] <- to_global
   if(nrow(to_ns)  > 0) {
     env[["move_global"]] <- to_ns$var
   } else {
@@ -673,7 +677,8 @@ parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) 
 }
 
 wrap_namespace <- function(x,name) {
-  paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
+  if(length(x)==0) return(character(0))
+  paste0(c(paste0("namespace ", name, " {"), paste0("  ", x),"}"), collapse="\n")
 }
 
 # For captured items, copy annotation
@@ -851,6 +856,6 @@ autodec_namespace <- function(build, env) {
   if(length(env[["autov"]])==0) {
     return(NULL)      
   }
-  ans <- wrap_namespace(paste0("  double ", env[["autov"]], ";"), "")
+  ans <- wrap_namespace(paste0("double ", env[["autov"]], ";"), "")
   ans
 }

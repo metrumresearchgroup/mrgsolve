@@ -494,13 +494,14 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     plugin_using(plugin),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
+    "// DECLARED BY USER", 
     mread.env[["global"]],
+    "// DECLARED VIA AUTODEC",
     mread.env[["autodec"]],
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
     "\n// DEFS:",
     rd,
-    plugin[["nm-vars"]][["nm-def"]],
     sep="\n", file = header_file)
   
   ## Write the model code to temporary file
