@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -22,15 +22,15 @@
 #'
 #' @section Resources:
 #' 
-#' - Main mrgsolve resource page: [https://mrgsolve.github.io](https://mrgsolve.github.io)
-#' - User guide: [https://mrgsolve.github.io/user_guide/](https://mrgsolve.github.io/user_guide/)
-#' - Web vignettes: [https://mrgsolve.github.io/vignettes/](https://mrgsolve.github.io/vignettes/)
+#' - Main mrgsolve resource page: [https://mrgsolve.org](https://mrgsolve.org)
+#' - User guide: [https://mrgsolve.org/user_guide/](https://mrgsolve.org/user_guide/)
+#' - Package documentation and vignettes: [https://mrgsolve.org/docs/](https://mrgsolve.org/docs/)
 #' 
 #' @section Package-wide options:
 #' 
-#' - `mrgolve.project`: sets the default project director ([mread])
-#' - `mrgsolve.soloc`: sets the default package build directory ([mread])
-#' - `mrgsolve_mread_quiet`: don't print messages during [mread]
+#' - `mrgolve.project`: sets the default project director ([mread()])
+#' - `mrgsolve.soloc`: sets the default package build directory ([mread()])
+#' - `mrgsolve_mread_quiet`: don't print messages during [mread()]
 #' - `mrgsolve.update.strict`: if `TRUE`, print warning when trying to update 
 #'   an item in the model object that doesn't exist
 #' 
@@ -139,7 +139,7 @@ NULL
 #'
 #' The differential equation solver is a C++ translation of DLSODA from 
 #' ODEPACK.  The C++ translation was created by Dilawar Singh and hosted 
-#' here [https://github.com/dilawar/libsoda/](https://github.com/dilawar/libsoda/). 
+#' here [https://github.com/dilawar/libsoda-cxx/](https://github.com/dilawar/libsoda-cxx/). 
 #' As we understand the history of the code, Heng Li was also involved in early 
 #' versions of the code written in C.  There was a potentially-related 
 #' project hosted here [https://github.com/sdwfrost/liblsoda/](https://github.com/sdwfrost/liblsoda/).

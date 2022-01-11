@@ -6,7 +6,7 @@
 \description{
 The differential equation solver is a C++ translation of DLSODA from
 ODEPACK.  The C++ translation was created by Dilawar Singh and hosted
-here \url{https://github.com/dilawar/libsoda/}.
+here \url{https://github.com/dilawar/libsoda-cxx/}.
 As we understand the history of the code, Heng Li was also involved in early
 versions of the code written in C.  There was a potentially-related
 project hosted here \url{https://github.com/sdwfrost/liblsoda/}.
