@@ -449,12 +449,12 @@ move_global2 <- function(spec, env, build) {
   }
   to_global <- "typedef double capture;"
   if(nrow(to_ns)  > 0) {
-    ns <- c(
+    to_global <- c(
+      to_global,
       "namespace {",
       paste0("  ", to_ns$type, " ", to_ns$var, ";"),
       "}"
     ) 
-    to_global <- c(to_global, ns)
   }
   build$global_vars <- vars
   defines <- pp_defs(spec[["GLOBAL"]], context = "global")
