@@ -45,11 +45,6 @@
 #' providing an interface to a C++ translation of the lsoda differential 
 #' equation solver. See [aboutsolver] for more information.
 #' 
-#' @rdname mrgsolve_package
-#' @docType package
-#' @useDynLib mrgsolve, .registration=TRUE
-#' @aliases mrgsolve
-#' @md
 #' @examples
 #'
 #' ## example("mrgsolve")
@@ -101,7 +96,6 @@
 #' plot(out)
 #'
 #'
-#'
 #' ## "Condensed" data set
 #' data(extran1)
 #' extran1
@@ -132,7 +126,13 @@
 #' x <- mod %>% ev(amt=300, ii=12, addl=3) %>% mrgsim
 #' 
 #' }
-#'
+#' 
+#' @rdname mrgsolve_package
+#' @docType package
+#' @useDynLib mrgsolve, .registration=TRUE
+#' @aliases mrgsolve
+#' @md
+#' 
 NULL
 
 #' About the lsoda differential equation solver used by mrgsolve
@@ -193,10 +193,6 @@ NULL
 #' the R interface.  The code listing below is taken directly
 #' from the \code{lsoda} source code.  
 #'
-#' @name solversettings
-#' @rdname solversettings
-#' @seealso \code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
-#' 
 #' @details
 #' 
 #' The following items can be set
@@ -226,9 +222,10 @@ NULL
 #' that more precision here will result in longer run times.
 #' }
 #' 
+#' @name solversettings
+#' @rdname solversettings
+#' @seealso \code{\link{aboutsolver}}, \code{\link[mrgsolve]{update}}
 #' 
-#' 
-#'
 NULL
 
 #' Reserved words
@@ -251,8 +248,6 @@ examples <- function(...) {
   example("init", package="mrgsolve",...)
   example("mrgsim", package="mrgsolve",...)
   example("mrgsims", package="mrgsolve",...)
-  example("mrgsolve_example", package="mrgsolve",...)
-  example("mrgsolve_utils", package="mrgsolve",...)
   example("plot_mrgsims", package="mrgsolve",...)
 }
 

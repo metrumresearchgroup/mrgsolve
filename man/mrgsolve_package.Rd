@@ -85,7 +85,6 @@ out <- mod \%>\% ev(events) \%>\% mrgsim(end=180, req="")
 plot(out)
 
 
-
 ## "Condensed" data set
 data(extran1)
 extran1
