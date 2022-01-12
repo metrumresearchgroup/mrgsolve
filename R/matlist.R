@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -398,6 +398,9 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' collapse_omega(mod, range = c(2,3), name = "new_matrix") %>% omat()
 #' collapse_omega(mod, range = c(2,NA), name = "new_matrix") %>% omat()
 #' 
+#' @return
+#' A model object with updated `OMEGA` or `SIGMA` matrix lists.
+#' 
 #' @seealso [collapse_matrix()]
 #' @md
 #' @rdname collapse_matrices
@@ -433,14 +436,19 @@ collapse_sigma <- function(x, range = NULL, name = NULL) {
 #' of the matrix list is irreversible. 
 #' 
 #' @inheritParams collapse_omega
-#' @param x an object that inherits from `matlist`
+#' @param x an object that inherits from `matlist`; this object is most
+#' frequently extracted from a model object using [omat()] or [smat()] for 
+#' `OMEGA` and `SIGMA`, respectively
 #' 
 #' @examples
-#' omega <- omat(list(dmat(1,2), dmat(3,4,5)))
+#' omega <- omat(list(dmat(1, 2), dmat(3, 4, 5)))
 #' omega
 #' collapse_matrix(omega)
 #' 
-#' @seealso [collapse_omega()], [collapse_sigma()]
+#' @return
+#' An update `matlist` object (either `omegalist` or `sigmalist`).
+#' 
+#' @seealso [collapse_omega()], [collapse_sigma()], [omat()], [smat()]
 #' @md
 #' @export
 collapse_matrix <- function(x, range = NULL, name = NULL) {

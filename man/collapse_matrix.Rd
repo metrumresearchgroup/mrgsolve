@@ -7,7 +7,9 @@
 collapse_matrix(x, range = NULL, name = NULL)
 }
 \arguments{
-\item{x}{an object that inherits from \code{matlist}}
+\item{x}{an object that inherits from \code{matlist}; this object is most
+frequently extracted from a model object using \code{\link[=omat]{omat()}} or \code{\link[=smat]{smat()}} for
+\code{OMEGA} and \code{SIGMA}, respectively}
 
 \item{range}{numeric vector of length 2 specifying the range of matrices
 to collapse in case there are more than 2. The second element may be \code{NA}
@@ -17,17 +19,20 @@ to indicate the length of the list of matrices.}
 matrix name, not the labels which alias \code{ETA(n)} or \code{EPS(n)}; specifying a
 name will only alter how this matrix is potentially updated in the future}
 }
+\value{
+An update \code{matlist} object (either \code{omegalist} or \code{sigmalist}).
+}
 \description{
 This function is called by \code{\link[=collapse_omega]{collapse_omega()}} and \code{\link[=collapse_sigma]{collapse_sigma()}} to
 convert multiple matrix blocks into a single matrix block. This "collapsing"
 of the matrix list is irreversible.
 }
 \examples{
-omega <- omat(list(dmat(1,2), dmat(3,4,5)))
+omega <- omat(list(dmat(1, 2), dmat(3, 4, 5)))
 omega
 collapse_matrix(omega)
 
 }
 \seealso{
-\code{\link[=collapse_omega]{collapse_omega()}}, \code{\link[=collapse_sigma]{collapse_sigma()}}
+\code{\link[=collapse_omega]{collapse_omega()}}, \code{\link[=collapse_sigma]{collapse_sigma()}}, \code{\link[=omat]{omat()}}, \code{\link[=smat]{smat()}}
 }

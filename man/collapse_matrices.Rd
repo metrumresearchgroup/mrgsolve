@@ -20,6 +20,9 @@ to indicate the length of the list of matrices.}
 matrix name, not the labels which alias \code{ETA(n)} or \code{EPS(n)}; specifying a
 name will only alter how this matrix is potentially updated in the future}
 }
+\value{
+A model object with updated \code{OMEGA} or \code{SIGMA} matrix lists.
+}
 \description{
 If multiple \code{OMEGA} (or \code{SIGMA}) blocks were written into the model,
 these can be collapsed into a single matrix. This will not change the
