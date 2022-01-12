@@ -19,7 +19,7 @@ realize_addl(x, ...)
 \method{realize_addl}{ev}(x, ...)
 }
 \arguments{
-\item{x}{a \code{data_set} data frame or an \code{ev} object (see details)}
+\item{x}{a \code{data_set} data frame or an event object (see details)}
 
 \item{...}{not used}
 
@@ -29,36 +29,59 @@ realize_addl(x, ...)
 \item{mark_new}{if \code{TRUE}, a flag is added to indicate new columns}
 
 \item{fill}{specifies how to handle non-dose related data columns
-in new data set records; this option is critical when handling 
+in new data set records; this option is critical when handling
 data sets with time-varying, non-dose-related data items; see details}
 }
+\value{
+A \code{data_set} data.frame or event object, consistent with the type of \code{x}.
+The \code{ii} and \code{addl} columns will all be set to zero. The result is always
+ungrouped.
+}
 \description{
-Make addl doses explicit in an event object or data set
+When doses are scheduled with \code{ii} and \code{addl}, the object is expanded to
+include one record for every dose. In the result, no record with have
+\code{ii} or \code{addl} set to non-zero value.
 }
 \details{
-If no \code{addl} column is found the data frame is returned and 
-a warning is issued if \code{warn} is true. If \code{ii}, 
+If no \code{addl} column is found the data frame is returned and
+a warning is issued if \code{warn} is true. If \code{ii},
 \code{time}, or \code{evid} are missing, an error is generated.
 
-Use caution when passing in data that has non-dose-related data 
+If a grouped data.frame (via \code{\link[dplyr:group_by]{dplyr::group_by()}}) is passed, it will be
+ungrouped.
+
+Use caution when passing in data that has non-dose-related data
 columns that vary within a subject and pay special attention
-to the \code{fill} argument.  By definition, \code{realize_addl}
-will add new rows to your data frame and it is not obvious 
-how the non-dose-related data should be handled in these new 
+to the \code{fill} argument. By definition, \code{realize_addl}
+will add new rows to your data frame and it is not obvious
+how the non-dose-related data should be handled in these new
 rows.  When \code{inherit} is chosen, the new records have
-non-dose-related data that is identical to the originating 
-dose record.  This should be fine when these data items are not 
+non-dose-related data that is identical to the originating
+dose record. This should be fine when these data items are not
 varying with time, but will present a problem when the data
-are varying with time.  When \code{locf} is chosen, 
+are varying with time.  When \code{locf} is chosen,
 the missing data are filled in with \code{NA} and an
-last observation carry forward operation is applied to 
-\bold{every} column in the data set.  This may not be what 
-you want if you already had missing values in the input 
+last observation carry forward operation is applied to
+\strong{every} column in the data set.  This may not be what
+you want if you already had missing values in the input
 data set and want to preserve that missingness. When \code{na}
-is chosen, the missing data are filled in with \code{NA} and 
+is chosen, the missing data are filled in with \code{NA} and
 no \code{locf} operation is applied.  But note that these
-missing values may be problematic for a mrgsolve simulation 
+missing values may be problematic for a mrgsolve simulation
 run. If you have any time-varying columns or missing data
-in your data set, be sure to check that the output from 
+in your data set, be sure to check that the output from
 this function is what you were expecting.
+}
+\examples{
+e <- ev(amt = 100, ii = 12, addl = 3)
+
+realize_addl(e)
+
+a <- ev(amt = 100, ii = 12, addl = 2, WT = 69)
+b <- ev(amt = 200, ii = 24, addl = 2, WT = 70)
+c <- ev(amt =  50, ii =  6, addl = 2, WT = 71) 
+
+e <- ev_seq(a,b,c)
+realize_addl(e, mark_new = TRUE)
+
 }
