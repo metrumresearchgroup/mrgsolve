@@ -18,31 +18,29 @@ as_data_set(x, ...)
 \item{...}{more ev objects}
 }
 \value{
-a data frame suitable for passing into \code{\link{data_set}}
+A data frame suitable for passing into \code{\link[=data_set]{data_set()}}.
 }
 \description{
-Create a simulation data set from ev objects
+The goal is to take a series of event objects and combine them
+into a single data set that can be passed to \code{\link[=data_set]{data_set()}}.
 }
 \details{
-The goal is to take a series of event objects and combine them 
-into a single data set that can be passed to \code{\link{data_set}}.  
-Each event object is added to the data frame as an \code{ID} 
-or set of \code{ID}s  that are distinct from the  \code{ID}s 
-in the other event objects. Note that including \code{ID} 
-argument to the \code{\link{ev}} call where \code{length(ID)} 
-is greater than one will render that set of 
+Each event object is added to the data frame as an \code{ID}
+or set of \code{ID}s  that are distinct from the \code{ID}s
+in the other event objects. Note that including \code{ID}
+argument to the \code{\link[=ev]{ev()}} call where \code{length(ID)}
+is greater than one will render that set of
 events for all of \code{ID}s that are requested.
 
-To get a data frame with one row (event) per \code{ID} 
-look at \code{\link{expand.ev}}.
+To get a data frame with one row (event) per \code{ID}, look at \code{\link[=expand.ev]{expand.ev()}}.
 }
 \examples{
 
-as_data_set(ev(amt=c(100,200), cmt=1, ID=1:3),
-            ev(amt=300, time=24, ID=1:2),
-            ev(amt=1000, ii=8, addl=10, ID=1:3))
+as_data_set(ev(amt = c(100,200), cmt=1, ID = seq(3)),
+            ev(amt = 300, time = 24, ID = seq(2)),
+            ev(amt = 1000, ii = 8, addl = 10, ID = seq(3)))
 
 # Instead of this, use expand.ev
-as_data_set(ev(amt=100), ev(amt=200),ev(amt=300))
+as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
 
 }

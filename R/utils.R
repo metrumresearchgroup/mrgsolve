@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -299,6 +299,10 @@ cvec.character <- as.cvec
 s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 
 ##' Access or clear arguments for calls to mrgsim
+##' 
+##' As a model object navigates a pipeline prior to simulation, arguments are
+##' collected to eventually be passed to [mrgsim()]. `simargs` lets you 
+##' intercept and possibly clear those arguments.
 ##'
 ##' @param x model object
 ##' @param clear logical indicating whether or not to clear `args` from 
@@ -312,11 +316,11 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 ##' 
 ##' @examples
 ##' mod <- mrgsolve::house()
-##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
+##' mod %>% Req(CP, RESP) %>% carry_out(evid, WT, FLAG) %>% simargs()
 ##' 
 ##' @md
 ##' @export
-simargs <- function(x, which = NULL, clear=FALSE,...) {
+simargs <- function(x, which = NULL, clear = FALSE,...) {
   
   if(clear) {
     x@args <- list()

@@ -32,6 +32,10 @@ object is returned; if \code{"df"} then a data frame is returned}
 
 \item{simcall}{not used; only the default value of 0 is allowed}
 }
+\value{
+By default, an object of class `mrgsims`. Use `output = "df"` to return 
+a data frame.
+}
 \description{
 Use the function when you would usually use \code{\link{mrgsim_d}}, 
 but you need a quicker turnaround time.  The timing differences 
@@ -79,9 +83,9 @@ data.frame of simulated data on return.
 
 mod <- mrgsolve::house()
 
-data <- expand.ev(amt = c(100,300,1000))
+data <- expand.ev(amt = c(100, 300, 1000))
 
-out <- mrgsim_q(mod,data)
+out <- mrgsim_q(mod, data)
 
 out
 

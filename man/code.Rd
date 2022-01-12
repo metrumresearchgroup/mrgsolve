@@ -10,8 +10,14 @@ code(x)
 \item{x}{an mrgsolve model object}
 }
 \value{
-a character vector of model code
+A character vector of model code.
 }
 \description{
-Extract the code from a model
+This function is currently not exported, so be sure to call it with
+\code{mrgsolve:::code(...)}.
+}
+\examples{
+mod <- mrgsolve::house()
+mrgsolve:::code(mod)
+
 }

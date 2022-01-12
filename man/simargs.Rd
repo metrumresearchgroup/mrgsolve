@@ -22,10 +22,12 @@ cleared and the model object is returned.  Otherwise, the argument
 list is returned.
 }
 \description{
-Access or clear arguments for calls to mrgsim
+As a model object navigates a pipeline prior to simulation, arguments are
+collected to eventually be passed to \code{\link[=mrgsim]{mrgsim()}}. \code{simargs} lets you
+intercept and possibly clear those arguments.
 }
 \examples{
 mod <- mrgsolve::house()
-mod \%>\% Req(CP,RESP) \%>\% carry_out(evid,WT,FLAG) \%>\% simargs
+mod \%>\% Req(CP, RESP) \%>\% carry_out(evid, WT, FLAG) \%>\% simargs()
 
 }

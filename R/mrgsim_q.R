@@ -73,14 +73,17 @@
 ##' Use the \code{output="df"} argument to request a plain 
 ##' data.frame of simulated data on return.
 ##' 
+##' @return
+##' By default, an object of class `mrgsims`. Use `output = "df"` to return 
+##' a data frame.
 ##' 
 ##' @examples
 ##' 
 ##' mod <- mrgsolve::house()
 ##' 
-##' data <- expand.ev(amt = c(100,300,1000))
+##' data <- expand.ev(amt = c(100, 300, 1000))
 ##' 
-##' out <- mrgsim_q(mod,data)
+##' out <- mrgsim_q(mod, data)
 ##' 
 ##' out
 ##' 
