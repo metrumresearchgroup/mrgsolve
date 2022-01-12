@@ -70,5 +70,5 @@ estimation results to return}
 Import model estimates from a NONMEM ext file
 }
 \seealso{
-\link{nmxml}, \link{read_nmext}
+\code{\link[=nmxml]{nmxml()}}, \code{\link[=read_nmext]{read_nmext()}}
 }

@@ -22,7 +22,8 @@ read_nmext(
 
 \item{path}{full path and file name for \code{ext} file}
 
-\item{read_fun}{function to read the \code{ext} file}
+\item{read_fun}{function to read the \code{ext} file; \code{\link[data.table:fread]{data.table::fread()}} will
+be used if available; otherwise \code{\link[utils:read.table]{utils::read.table()}} is used.}
 
 \item{index}{selects the table number whose results will be returned;
 use value "last" to select the last table in the \code{.ext} file; or pass an
@@ -37,7 +38,8 @@ A list with param, omega, and sigma in a format ready to be used to
 update a model object.
 }
 \description{
-Extract estimates from NONMEM ext file
+This function retrieves NONMEM estimates for use in the mrgsolve model when
+\verb{$NMEXT} is invoked. See \code{\link[=nmext]{nmext()}}.
 }
 \examples{
 project <- system.file("nonmem", package = "mrgsolve")
