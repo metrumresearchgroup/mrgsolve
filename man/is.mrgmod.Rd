@@ -10,9 +10,13 @@ is.mrgmod(x)
 \item{x}{any object}
 }
 \value{
-\code{TRUE} if \code{x} inherits \code{mrgsims}.
+\code{TRUE} if the object inherits from either \code{mrgmod} or \code{packmod} class.
 }
 \description{
 The function checks to see if the object is either
- \code{mrgmod} or \code{packmod}.
+\code{mrgmod} or \code{packmod}.
+}
+\examples{
+is.mrgmod(house())
+
 }

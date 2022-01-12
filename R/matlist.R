@@ -209,7 +209,7 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 #' `sigma` to just zero out `sigma`; passing nothing will zero out both
 #' 
 #' @return 
-#' An updated object.
+#' An updated object with elements of OMEGA and / or SIGMA set to zero..
 #' 
 #' @examples
 #' 

@@ -16,7 +16,7 @@ zero_re(.x, ...)
 \code{sigma} to just zero out \code{sigma}; passing nothing will zero out both}
 }
 \value{
-An updated object.
+An updated object with elements of OMEGA and / or SIGMA set to zero..
 }
 \description{
 Sets all elements of the OMEGA or SIGMA matrix to zero

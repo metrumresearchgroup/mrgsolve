@@ -19,7 +19,8 @@ capture.  When \code{unlist} is \code{TRUE}, then a single, unnamed character ve
 of outvar names is returned.
 }
 \description{
-Show names of current output variables
+Outputs can include model compartments or variables defined in the model
+that have been marked to \code{capture} in simulated output.
 }
 \examples{
 
