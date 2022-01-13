@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -267,5 +267,29 @@ build_handle_127 <- function(out) {
     cat(divider_msg(),"\n")
   }
   return(invisible(NULL))  
+}
+
+build_source_code <- function(x, cache = TRUE) {
+  stopifnot(is.mrgmod(x))
+  if(inherits(x, "packmod")) {
+    stop("x is a packmod object")  
+  }
+  if(!dir.exists(soloc(x))) {
+    stop("could not find build directory.")  
+  }
+  cwd <- getwd()
+  on.exit(setwd(cwd))
+  setwd(soloc(x))
+  h <- list.files(pattern = "\\.h$")
+  h <- lapply(h, readLines)
+  names(h) <- paste0("h", seq_along(h))
+  cpp <- list.files(pattern = "\\.cpp$")
+  cpp <- lapply(cpp, readLines)
+  names(cpp) <- paste0("cpp", seq_along(cpp))
+  sources <- list(h = h, cpp = cpp)
+  if(file.exists(rds <- "mrgmod_cache.RDS") && isTRUE(cache)) {
+    sources$cache <- as.list(readRDS(rds))  
+  }
+  sources
 }
 # nocov end

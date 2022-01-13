@@ -384,7 +384,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     autodec_save(autov, build, mread.env)
     mread.env[["autodec"]] <- autodec_namespace(build, mread.env)
   }
-
+  
   # Rcpp
   if("Rcpp" %in% names(plugin)) {
     spec <- global_rcpp(spec)
@@ -502,6 +502,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["GLOBAL"]],
     "\n// DEFS:",
     rd,
+    "",
     sep="\n", file = header_file)
   
   ## Write the model code to temporary file
@@ -532,6 +533,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["PRED"]],
     write_capture(.ren.old(capture)),
     "__END_table__",
+    "", 
     sep="\n", file=def.con)
   close(def.con)
   
@@ -543,7 +545,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     from = temp_write,
     to = build[["compfile"]]
   )
-  
+
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
