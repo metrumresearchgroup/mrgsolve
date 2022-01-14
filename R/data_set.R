@@ -461,7 +461,7 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' Non-numeric columns will be dropped with a warning.
 ##' 
 ##' @return 
-##' A data frame with additonal rows for added observation records.
+##' A data frame with additional rows for added observation records.
 ##' 
 ##' @examples
 ##' data <- expand.ev(amt = c(100, 200, 300))

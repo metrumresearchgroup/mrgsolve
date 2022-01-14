@@ -1,5 +1,29 @@
 # mrgsolve (development version)
 
+# mrgsolve 1.0.0
+
+- New model syntax: `THETA(n)` is interpreted as `THETAn` in the model code;
+  `THETA` is now a reserved word (#837, #891, #892).
+
+- New functions `collapse_omega()`, `collapse_sigma()` and `collapse_matrix()` 
+  added which help to reshape OMEGA and SIGMA matrix objects with multiple 
+  blocks (#897, #900).
+
+- New plugin `nm-vars` which implements NONMEM-like syntax for referring to 
+  compartments, differential equations, bioavailability factor, infusion 
+  duration and rate, and lag time (#904, #891).
+
+- New plugin `autodec` which will find user-defined variables in the model 
+  code and automatically declare them as type `double` (#905, #893). 
+
+- Use `ii` as spacer for setting the between-dose interval when putting event
+  objects in a sequence (c.f. `wait`) (#906, #901). 
+
+- Start deprecating `simeta(n)` and `simeps(n)`; use in model code will 
+  generate warning when loading the model (#908, #909). 
+
+
+
 # mrgsolve 0.11.2
 
 - In `pk2iv`, change scaling volume for `CENT` from `V2` (incorrect) to 

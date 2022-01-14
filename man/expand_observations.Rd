@@ -19,7 +19,7 @@ to put observations first; otherwise, use large integer to ensure
 observations are placed after doses}
 }
 \value{
-A data frame with additonal rows for added observation records.
+A data frame with additional rows for added observation records.
 }
 \description{
 Insert observations into a data set
