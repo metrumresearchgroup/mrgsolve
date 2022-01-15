@@ -221,7 +221,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   
   if(have_data) {
     if(is.ev(data)) {
-      data <- as.data.frame(data, add_ID = 1)  
+      data <- as.data.frame(data, add_ID = 1, final = TRUE)  
     }
     if(have_idata) {
       return(mrgsim_di(x, data = data, idata = idata, ...)) 
@@ -239,7 +239,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
 
 #' @rdname mrgsim
 #' @export
-mrgsim_df <- function(...,output="df") mrgsim(...,output=output)
+mrgsim_df <- function(...,output="df") mrgsim(..., output = output)
 
 #' mrgsim variant functions
 #' 
@@ -285,7 +285,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
     }
     wstop("invalid 'events' argument") 
   }
-  events <- as.data.frame(events, add_ID = 1)
+  events <- as.data.frame(events, add_ID = 1, final = TRUE)
   args <- list(...)
   # x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
@@ -325,7 +325,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
     wstop("invalid 'events' argument") 
   }
   expand <- !has_ID(events) & nrow(idata) > 0
-  events <- as.data.frame(events, add_ID = 1)
+  events <- as.data.frame(events, add_ID = 1, final = TRUE)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata[["ID"]] <- seq_len(nrow(idata))
@@ -345,7 +345,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
 #' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
-  data <- as.data.frame(data, add_ID = 1)
+  data <- as.data.frame(data, add_ID = 1, final = TRUE)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
@@ -776,7 +776,7 @@ qsim <- function(x,
   if(!is.mrgmod(x)) mod_first()
   
   if(is.ev(data)) {
-    data <- as.data.frame.ev(data, add_ID = 1)
+    data <- as.data.frame.ev(data, add_ID = 1, final = TRUE)
   }
   
   ## data

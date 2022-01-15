@@ -78,7 +78,7 @@
 ##' reduced_load <- dplyr::mutate(loading, amt = 750)
 ##' 
 ##' @export
-setGeneric("ev", function(x,...) {
+setGeneric("ev", function(x, ...) {
   standardGeneric("ev")
 })
 
