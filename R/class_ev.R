@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,14 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+ev_proto <- list(data = data.frame(), case = 0L)
+ev_slots <- c(data = "data.frame", case = "integer")
+ev_initialize <- function(.Object, case = 0L, ...) {
+  .Object <- callNextMethod()
+  if(!case %in% c(0, 1)) {
+    stop("Event object case must be either 0 or 1.")
+  }
+  .Object@case <- case
+  .Object
+}
+
 ##' S4 events class
 ##' @slot data a data frame of events
+##' @slot case indicates how to handle column naming upon coerce to data.frame
 ##' @export
 ##' @keywords internal
-setClass("ev", slots=c(data="data.frame"))
+setClass("ev", prototype = ev_proto, slots = ev_slots)
+setMethod("initialize", "ev", ev_initialize)
 
 is.ev <- function(x) {
-  inherits(x,"ev")  
+  inherits(x, "ev")  
 }
 
 ##' dplyr verbs for event objects
@@ -62,14 +75,14 @@ mutate.ev <- function(.data, ...) {
 ##' @rdname ev_dplyr
 ##' @export
 select.ev <- function(.data, ...) {
-  .data@data <- as.data.frame(dplyr::select(.data@data,...))
+  .data@data <- as.data.frame(dplyr::select(.data@data, ...))
   .data 
 }
 
 ##' @rdname ev_dplyr
 ##' @export
 filter.ev <-  function(.data, ...) {
-  .data@data <- as.data.frame(dplyr::filter(.data@data,...))
+  .data@data <- as.data.frame(dplyr::filter(.data@data, ...))
   .data
 }
 
@@ -129,15 +142,27 @@ as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE,
   if(is.numeric(add_ID) & !has_ID(ans) & nrow(ans) > 0) {
     ans[["ID"]] <- add_ID[1]
   } 
-  return(ans)
+  if(x@case==0) return(ans)
+  recase_ev(ans, x@case)
 }
 
-##' @rdname ev_methods
-##' @export
-##' @keywords internal
+recase_ev <- function(data, case = 0) {
+  if(case==0) return(data)
+  convert <- names(data) %in% GLOBALS$TRAN_LOWER
+  names(data)[convert] <- toupper(names(data)[convert]) 
+  data
+}
+
+#' @rdname ev_methods
+#' @export
+#' @keywords internal
 setMethod("show", "ev", function(object) {
-  cat("Events:\n")
-  print(as.data.frame(object))
+  header <- "Events:\n"
+  if(object@case==1) {
+    header <- "Events Data:\n"  
+  }
+  cat(header)
+  print(object@data)
   return(invisible(NULL))
 })
 

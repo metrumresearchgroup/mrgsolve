@@ -11,6 +11,8 @@ S4 events class
 
 \describe{
 \item{\code{data}}{a data frame of events}
+
+\item{\code{case}}{indicates how to handle column naming upon coerce to data.frame}
 }}
 
 \keyword{internal}

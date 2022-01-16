@@ -83,7 +83,7 @@ Collate:
     'annot.R'
     'chain.R'
     'class_build.R'
-    'class_evdata.R'
+    'class_evd.R'
     'events.R'
     'class_rx.R'
     'compile.R'
