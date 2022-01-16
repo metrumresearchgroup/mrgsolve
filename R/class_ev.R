@@ -23,6 +23,25 @@ to_data_frame <- function(x) {
   }
 }
 
+as_sim_data <- function(x, add_ID = 1) {
+  ans <- As_data_set(x)
+  if(x@case==0) return(ans)
+  recase_ev(ans, x@case)
+}
+
+As_data_set <- function(x) {
+  if(!is.data.frame(x)) {
+    if(is.ev(x)) {
+      x <- x@data
+    } else {
+      x <- as.data.frame(x) 
+    } 
+  }
+  if(nrow(x)==0) return(x)
+  if(!"ID" %in% names(x)) x$ID <- 1
+  return(x)
+}
+
 ev_proto <- list(data = data.frame(), case = 0L)
 ev_slots <- c(data = "data.frame", case = "integer")
 ev_initialize <- function(.Object, case = 0L, ...) {
@@ -147,8 +166,8 @@ as.matrix.ev <- function(x,...) {
 as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, 
                              add_ID = NULL, ...) {
   ans <- x@data
-  if(is.numeric(add_ID) & !has_ID(ans) & nrow(ans) > 0) {
-    ans[["ID"]] <- add_ID[1]
+  if(is.numeric(add_ID) & !("ID" %in% names(ans)) & nrow(ans) > 0) {
+    ans$ID <- add_ID[1]
   } 
   if(x@case==0) return(ans)
   recase_ev(ans, x@case)
@@ -192,19 +211,6 @@ setMethod("$", "ev", function(x, name){
 setMethod("[[", "ev", function(x, i, exact=TRUE) {
   x@data[[i]] 
 })
-
-As_data_set <- function(x) {
-  if(!is.data.frame(x)) {
-    if(is.ev(x)) {
-      x <- x@data
-    } else {
-      x <- as.data.frame(x) 
-    } 
-  }
-  if(nrow(x)==0) return(x)
-  if(!has_ID(x)) x[["ID"]] <- 1
-  return(x)
-}
 
 finalize_ev_data <- function(data) {
   if("tinf" %in% names(data)) {
