@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+to_data_frame <- function(x) {
+  if(is.ev(x)) {
+    x@data
+  } else {
+    as.data.frame(x)
+  }
+}
+
 ev_proto <- list(data = data.frame(), case = 0L)
 ev_slots <- c(data = "data.frame", case = "integer")
 ev_initialize <- function(.Object, case = 0L, ...) {

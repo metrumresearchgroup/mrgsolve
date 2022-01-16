@@ -264,7 +264,7 @@ setMethod("as.ev", "ev", function(x, ...) {
 })
 
 check_ev <- function(x) {
-  if(is.ev(x)) x <- x@data
+  x <- to_data_frame(x)
   if(!"ID" %in% names(x)) x[["ID"]] <- 1
   return(x)
 }
@@ -274,12 +274,12 @@ collect_ev <- function(...) {
   tran <- c("ID","time", "cmt", "evid",  
             "amt", "ii", "addl", "rate", "ss")
   x <- lapply(x, check_ev)
-  y <- lapply(x, "[[", "ID")
-  mx <- sapply(y, function(xx) length(unique(xx)))
-  mx <- cumsum(c(0, mx[-length(mx)]))
-  y <- Map(f = `+`, y, mx)
+  ids <- lapply(x, "[[", "ID")
+  nid <- sapply(ids, function(tid) length(unique(tid)))
+  idn <- cumsum(c(0, nid[-length(nid)]))
+  new_ids <- Map(f = `+`, ids, idn)
   x <- bind_rows(x)
-  x[["ID"]] <- unlist(y, use.names = FALSE)
+  x[["ID"]] <- unlist(new_ids, use.names = FALSE)
   tran <- intersect(tran, names(x))
   what <- names(x) %in% tran
   for(col in which(what)) {
@@ -435,22 +435,17 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
   if(!inherits(x, c("data.frame", "ev"))) {
     stop("x must be a data.frame or ev object.")
   }
-  case <- 0
-  data <- x
-  if(is.ev(x)) {
-    case <- x@case
-    data <- x@data
-  }
-  data <- expand_event_object(x@data, ID)
+  case <- ifelse(is.ev(x), x@case, 0)
+  data <- expand_event_object(to_data_frame(x), ID)
   if(!is.null(n)) {
     if(n  > 1) {
       data <- ev_repeat(data, n = n, wait = wait)
     }
   }
   if(isTRUE(as.ev)) {
-    set_ev_case(as.ev(data), x@case)
+    set_ev_case(as.ev(data), case)
   } else {
-    recase_ev(data, x@case)
+    recase_ev(data, case)
   }
 } 
 
@@ -470,13 +465,8 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
   if(!inherits(x, c("data.frame", "ev"))) {
     stop("x must be a data frame or ev object.")  
   }
-  case <- 0
-  if(is.ev(x)) {
-    case <- x@case
-    x <- x@data
-  } else {
-    x <- as.ev(x)@data  
-  }
+  case <- ifelse(is.ev(x), x@case, 1)
+  x <- to_data_frame(x)
   if(!exists("ii", x)) {
     x["ii"] <- 0
   }
