@@ -195,7 +195,7 @@ obsaug <- function(x,value=TRUE,...) {
 ##'   idata_set(idata) %>%
 ##'   design(list(des1, des2),"amt") %>%
 ##'   data_set(data) %>%
-##'   mrgsim %>% 
+##'   mrgsim() %>% 
 ##'   plot(RESP~time|GRP)
 ##' 
 ##' @export

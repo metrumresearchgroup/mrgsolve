@@ -209,7 +209,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   
   if(have_data) {
     if(is.ev(data)) {
-      data <- as.data.frame(data, add_ID = 1, final = TRUE)  
+      data <- ev_to_ds(data)
     }
     if(have_idata) {
       return(mrgsim_di(x, data = data, idata = idata, ...)) 

@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-#' @export
 to_data_frame <- function(x) {
   if(is.ev(x)) {
     x@data
@@ -24,7 +23,6 @@ to_data_frame <- function(x) {
   }
 }
 
-#' @export
 ev_to_ds <- function(x, id = 1) {
   ans <- x@data
   if(nrow(ans)==0) return(ans)
@@ -33,17 +31,18 @@ ev_to_ds <- function(x, id = 1) {
   recase_ev(ans, x@case)
 }
 
-#' @export
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {
     if(is.ev(x)) {
       ans <- x@data
       if(x@case > 0) {
-        ans <- recase_ev(ans, cx@ase)
+        ans <- recase_ev(ans, x@case)
       }
     } else {
       ans <- as.data.frame(x) 
     } 
+  } else {
+    ans <- x  
   }
   if(nrow(ans)==0) return(ans)
   if(match("ID", names(ans), 0) ==0) ans$ID <- 1

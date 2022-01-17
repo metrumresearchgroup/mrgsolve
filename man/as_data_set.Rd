@@ -47,7 +47,6 @@ d <- evd(amt = 500)
 
 as_data_set(d, a)
             
-
 # Instead of this, use expand.ev
 as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
 

@@ -35,7 +35,7 @@ check:
 
 check-only:
 	make doc
-	R CMD check  ${TARBALL} --no-manual --no-test
+	R CMD check  ${TARBALL} --no-manual --no-tests --no-install
 
 cran: export _MRGSOLVE_SKIP_MODLIB_BUILD_=no
 cran:
