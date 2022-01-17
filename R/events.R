@@ -203,9 +203,6 @@ setGeneric("as.ev", function(x,...) {
   standardGeneric("as.ev")
 })
 
-#setAs("ev", "ev",  def = function(from) from)
-#setAs("data.frame", "ev",  def = as.ev.data.frame(from))
-
 df_to_ev <- function(x, keep_id = TRUE, clean = FALSE, ...) {
   
   if(nrow(x) == 0) {

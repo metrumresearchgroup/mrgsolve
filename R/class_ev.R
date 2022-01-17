@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# A series of functions for dealing with ev/data.frame
+
 to_data_frame <- function(x) {
+  # Just return the data frame
   if(is.ev(x)) {
     x@data
   } else {
@@ -24,28 +28,19 @@ to_data_frame <- function(x) {
 }
 
 ev_to_ds <- function(x, id = 1) {
+  # Specifically for simulating a (known) ev object
   ans <- x@data
   if(nrow(ans)==0) return(ans)
-  if(match("ID", names(ans), 0) ==0) ans$ID <- id
-  if(x@case==0) return(ans)
+  if(match("ID", names(ans), 0)==0) ans$ID <- id
   recase_ev(ans, x@case)
 }
 
-As_data_set <- function(x) {
-  if(!is.data.frame(x)) {
-    if(is.ev(x)) {
-      ans <- x@data
-      if(x@case > 0) {
-        ans <- recase_ev(ans, x@case)
-      }
-    } else {
-      ans <- as.data.frame(x) 
-    } 
-  } else {
-    ans <- x  
-  }
+As_data_set <- function(x, id = 1) {
+  # Possibly handle data.frame or 
+  if(is.ev(x)) return(ev_to_ds(x, id = id))
+  ans <- as.data.frame(x)
   if(nrow(ans)==0) return(ans)
-  if(match("ID", names(ans), 0) ==0) ans$ID <- 1
+  if(match("ID", names(ans), 0) ==0) ans$ID <- id
   ans
 }
 
@@ -172,19 +167,7 @@ as.matrix.ev <- function(x,...) {
 ##' @export
 as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, 
                              add_ID = NULL, ...) {
-  ans <- x@data
-  if(is.numeric(add_ID) & !("ID" %in% names(ans)) & nrow(ans) > 0) {
-    ans$ID <- add_ID[1]
-  } 
-  if(x@case==0) return(ans)
-  recase_ev(ans, x@case)
-}
-
-recase_ev <- function(data, case = 0) {
-  if(case==0) return(data)
-  convert <- names(data) %in% GLOBALS$TRAN_LOWER
-  names(data)[convert] <- toupper(names(data)[convert]) 
-  data
+  ev_to_ds(x, id = add_ID)
 }
 
 #' @rdname ev_methods
