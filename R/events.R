@@ -264,6 +264,9 @@ setMethod("as.ev", "ev", function(x, ...) {
 })
 
 check_ev <- function(x) {
+  if(!inherits(x, c("ev", "data.frame"))) {
+    stop("All items must have class ev or data.frame.")  
+  }
   x <- to_data_frame(x)
   if(!"ID" %in% names(x)) x[["ID"]] <- 1
   return(x)
@@ -271,8 +274,14 @@ check_ev <- function(x) {
 
 collect_ev <- function(...) {
   x <- list(...)
-  tran <- c("ID","time", "cmt", "evid",  
-            "amt", "ii", "addl", "rate", "ss")
+  tran <- c("ID","time", "cmt", "evid", "amt", "ii", "addl", "rate", "ss")
+  is_evnt <- vapply(x, is.ev, TRUE)
+  if(any(is_evnt)) {
+    w <- which(is_evnt)[1]
+    case <- x[[w]]@case
+  } else {
+    case <- 0  
+  }
   x <- lapply(x, check_ev)
   ids <- lapply(x, "[[", "ID")
   nid <- sapply(ids, function(tid) length(unique(tid)))
@@ -301,6 +310,9 @@ collect_ev <- function(...) {
   }
   if(!"ID" %in% names(x)) {
     wstop("no ID column in the data set")
+  }
+  if(case > 0) {
+    x <- recase_ev(x, case)  
   }
   return(x)
 }

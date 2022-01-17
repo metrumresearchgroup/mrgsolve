@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+#' @export
 to_data_frame <- function(x) {
   if(is.ev(x)) {
     x@data
@@ -23,23 +24,30 @@ to_data_frame <- function(x) {
   }
 }
 
-as_sim_data <- function(x, add_ID = 1) {
-  ans <- As_data_set(x)
+#' @export
+ev_to_ds <- function(x, id = 1) {
+  ans <- x@data
+  if(nrow(ans)==0) return(ans)
+  if(match("ID", names(ans), 0) ==0) ans$ID <- id
   if(x@case==0) return(ans)
   recase_ev(ans, x@case)
 }
 
+#' @export
 As_data_set <- function(x) {
   if(!is.data.frame(x)) {
     if(is.ev(x)) {
-      x <- x@data
+      ans <- x@data
+      if(x@case > 0) {
+        ans <- recase_ev(ans, cx@ase)
+      }
     } else {
-      x <- as.data.frame(x) 
+      ans <- as.data.frame(x) 
     } 
   }
-  if(nrow(x)==0) return(x)
-  if(!"ID" %in% names(x)) x$ID <- 1
-  return(x)
+  if(nrow(ans)==0) return(ans)
+  if(match("ID", names(ans), 0) ==0) ans$ID <- 1
+  ans
 }
 
 ev_proto <- list(data = data.frame(), case = 0L)

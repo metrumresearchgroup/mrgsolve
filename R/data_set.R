@@ -103,13 +103,12 @@ setGeneric("data_set", function(x,data,...) {
   standardGeneric("data_set")
 })
 
-
 ##' @rdname data_set
 ##' @export
 setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
   
   if(is.character(need)) {
-    suppressMessages(inventory(x,data,need))
+    suppressMessages(inventory(x, data, need))
   }
   if(!missing(.subset)) {
     data <- dplyr::filter(data,`!!`(enquo(.subset)))
@@ -118,10 +117,10 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.se
     data <- dplyr::select(data,`!!!`(.select))
   }
   if(nrow(data) ==0) {
-    stop("Zero rows in data after filtering.", call.=FALSE)
+    stop("Zero rows in data after filtering.", call. = FALSE)
   }
   if(is.character(object)) {
-    data <- data_hooks(data,object,x@envir,param(x),...) 
+    data <- data_hooks(data, object, x@envir, param(x), ...) 
   }
   x@args[["data"]] <- data
   return(x)
@@ -129,21 +128,21 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.se
 
 ##' @rdname data_set
 ##' @export
-setMethod("data_set",c("mrgmod", "ANY"), function(x,data,...) {
-  return(data_set(x,as.data.frame(data),...))
+setMethod("data_set",c("mrgmod", "ANY"), function(x, data, ...) {
+  return(data_set(x, as.data.frame(data), ...))
 })
 
 ##' @rdname data_set
 ##' @export
-setMethod("data_set", c("mrgmod", "ev"), function(x,data,...) {
-  return(data_set(x,As_data_set(data),...))
+setMethod("data_set", c("mrgmod", "ev"), function(x, data, ...) {
+  return(data_set(x, As_data_set(data), ...))
 })
 
 ##' @rdname data_set
 ##' @export
-setMethod("data_set", c("mrgmod", "missing"), function(x, object,...) {
+setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
-  return(data_set(x,as.data.frame(object),...))
+  return(data_set(x, as.data.frame(object) ,...))
 })
 
 
@@ -180,74 +179,81 @@ lctran <- function(data) {
   data
 }
 
-
-data_hooks <- function(data,object,envir,param=list(),...) {
+data_hooks <- function(data, object, envir, param = list(), ...) {
   param <- as.list(param)
-  envir <- combine_list(as.list(param),as.list(envir))
+  envir <- combine_list(as.list(param), as.list(envir))
   objects <- cvec_cs(object)
   args <- list(...)
   if(missing(data)) {
-    data <- eval(tparse(objects[1]),envir=envir)
+    data <- eval(tparse(objects[1]), envir = envir)
     if(is.function(data)) {
-      data <- do.call(data,args,envir=as.environment(envir))
+      data <- do.call(data, args, envir = as.environment(envir))
     } 
     objects <- objects[-1]
   } 
   for(f in objects) {
     args$data <- data
-    data <- do.call(f,args,envir=as.environment(envir))
+    data <- do.call(f, args, envir = as.environment(envir))
   }
   return(data)
 }
 
-
-##' Create a simulation data set from ev objects
-##' 
-##' The goal is to take a series of event objects and combine them 
-##' into a single data set that can be passed to [data_set()]. 
-##'
-##' @param x ev objects
-##' @param ... more ev objects
-##' 
-##' @details
-##' Each event object is added to the data frame as an `ID` 
-##' or set of `ID`s  that are distinct from the `ID`s 
-##' in the other event objects. Note that including `ID` 
-##' argument to the [ev()] call where `length(ID)` 
-##' is greater than one will render that set of 
-##' events for all of `ID`s that are requested.
-##'
-##' To get a data frame with one row (event) per `ID`, look at [expand.ev()].
-##' 
-##' @return 
-##' A data frame suitable for passing into [data_set()].
-##'
-##' @examples
-##'
-##' as_data_set(ev(amt = c(100,200), cmt=1, ID = seq(3)),
-##'             ev(amt = 300, time = 24, ID = seq(2)),
-##'             ev(amt = 1000, ii = 8, addl = 10, ID = seq(3)))
-##'
-##' # Instead of this, use expand.ev
-##' as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
-##'
-##' @md
-##' @rdname as_data_set
-##' @export
+#' Create a simulation data set from ev objects
+#' 
+#' The goal is to take a series of event objects and combine them 
+#' into a single data set that can be passed to [data_set()]. 
+#'
+#' @param x ev objects
+#' @param ... more ev objects
+#' 
+#' @details
+#' Each event object is added to the data frame as an `ID` or set of `ID`s  
+#' that are distinct from the `ID`s in the other event objects. Note that 
+#' including `ID` argument to the [ev()] call where `length(ID)` is greater 
+#' than one will render that set of events for all of `ID`s that are requested.
+#' 
+#' When determining the case for output names, the `case` attribute for
+#' the first `ev` object passed will be used to set the case for the output
+#' data.frame.
+#'
+#' To get a data frame with one row (event) per `ID`, look at [expand.ev()].
+#' 
+#' @return 
+#' A data frame suitable for passing into [data_set()].
+#'
+#' @examples
+#' a <- ev(amt = c(100,200), cmt=1, ID = seq(3))
+#' b <- ev(amt = 300, time = 24, ID = seq(2))
+#' c <- ev(amt = 1000, ii = 8, addl = 10, ID = seq(3))
+#' 
+#' as_data_set(a, b, c)
+#' 
+#' d <- evd(amt = 500)
+#' 
+#' as_data_set(d, a)
+#'             
+#' # Instead of this, use expand.ev
+#' as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
+#' 
+#' @seealso [expand.ev()], [ev()]
+#'
+#' @md
+#' @rdname as_data_set
+#' @export
 setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 
-##' @rdname as_data_set
-setMethod("as_data_set","ev", function(x,...) {
+#' @rdname as_data_set
+setMethod("as_data_set", "ev", function(x, ...) {
   other_ev <- list(...)
   if(length(other_ev)==0) {
     return(check_ev(x)) 
   }
-  do.call(collect_ev,c(list(x),other_ev))
+  do.call(collect_ev, c(list(x), other_ev))
 })
 
-##' @rdname as_data_set
-setMethod("as_data_set","data.frame", function(x,...) {
-  as_data_set(as.ev(x),...)
+#' @rdname as_data_set
+setMethod("as_data_set","data.frame", function(x, ...) {
+  as_data_set(as.ev(x) ,...)
 })
 
 ##' Replicate a list of events into a data set
@@ -283,7 +289,7 @@ setMethod("as_data_set","data.frame", function(x,...) {
 ##' 
 ##' 
 ##' @export
-ev_assign <- function(l,idata,evgroup,join=FALSE) {
+ev_assign <- function(l, idata, evgroup, join = FALSE) {
   
   idata <- as.data.frame(idata)
   
@@ -314,12 +320,12 @@ ev_assign <- function(l,idata,evgroup,join=FALSE) {
   }
   
   l <- lapply(l,function(x) {
-    x[,colnames(l[[1]]),drop=FALSE]
+    x[,colnames(l[[1]]), drop=FALSE]
   })
   
   evgroup <- idata[,evgroup]
   uevgroup <- sort(unique(evgroup))
-  evgroup <- match(evgroup,uevgroup)
+  evgroup <- match(evgroup, uevgroup)
   
   if(length(l) != length(uevgroup)) {
     stop("For this idata set, please provide exactly ", 
@@ -328,20 +334,18 @@ ev_assign <- function(l,idata,evgroup,join=FALSE) {
   }
   
   x <- do.call(rbind,l[evgroup]) 
-  dimnames(x) <- list(NULL,colnames(x))
+  dimnames(x) <- list(NULL, colnames(x))
   x <- as.data.frame(x)
   
   n <- (sapply(l,nrow))[evgroup]
-  ID <- rep(idata[["ID"]],times=n)
+  ID <- rep(idata[["ID"]], times = n)
   x[["ID"]] <- ID
   
   if(join) {
-    nu <- sapply(idata,is.numeric)
-    x <- dplyr::left_join(x,idata[,nu,drop=FALSE],by="ID") 
+    nu <- sapply(idata, is.numeric)
+    x <- left_join(x,idata[,nu,drop=FALSE],by="ID") 
   }
-  
   return(x)
-  
 }
 
 ##' @param ... used to pass arguments from \code{assign_ev}
