@@ -4,6 +4,7 @@
 \alias{evd}
 \alias{evd,mrgmod-method}
 \alias{evd,missing-method}
+\alias{evd,ev-method}
 \alias{as.evd}
 \title{Create an event object with data-like names}
 \usage{
@@ -12,6 +13,8 @@ evd(x, ...)
 \S4method{evd}{mrgmod}(x, ...)
 
 \S4method{evd}{missing}(x, ...)
+
+\S4method{evd}{ev}(x, ...)
 
 as.evd(x)
 }

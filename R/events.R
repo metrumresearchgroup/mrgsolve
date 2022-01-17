@@ -179,6 +179,7 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
 #' @rdname ev
 #' @export
 setMethod("ev", "ev", function(x, realize_addl = FALSE, ...) {
+  x <- set_ev_case(x, 0L)
   if(realize_addl) {
     return(realize_addl(x))
   } 
@@ -187,19 +188,23 @@ setMethod("ev", "ev", function(x, realize_addl = FALSE, ...) {
 
 #' Coerce an object to class ev
 #' 
-#' @param x an object to coerce
-#' @param keep_id if \code{TRUE}, \code{ID} column is retained if it exists
-#' @param clean if \code{TRUE}, only dosing or ID information is retained in
-#' the result
-#' @param ... not used
+#' @param x An object to coerce.
+#' @param keep_id If `TRUE`, `ID` column is retained if it exists.
+#' @param clean If `TRUE`, only dosing or ID information is retained in
+#' the result.
+#' @param ... Not used.
 #' 
 #' @examples
 #' data <- data.frame(amt = 100) 
 #' 
 #' as.ev(data)
 #' 
+#' @return 
+#' An object with class ev.
+#' 
+#' @md
 #' @export
-setGeneric("as.ev", function(x,...) {
+setGeneric("as.ev", function(x, ...) {
   standardGeneric("as.ev")
 })
 

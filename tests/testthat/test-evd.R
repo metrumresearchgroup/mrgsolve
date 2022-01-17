@@ -35,6 +35,13 @@ test_that("create evd object", {
   mod <- evd(mod, amt = 100)
   expect_identical(mod@args$events, a)
   
+  c <- ev(a)
+  expect_is(c, "ev")
+  expect_equal(c@case, 0L)
+  
+  d <- evd(b)
+  expect_is(d, "ev")
+  expect_equal(d@case, 1L)
 })
 
 test_that("evd object has all lower case names", {

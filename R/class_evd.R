@@ -38,8 +38,15 @@ setMethod("evd", "mrgmod", function(x, ...) {
 #' @rdname evd
 #' @export
 setMethod("evd", "missing", function(...) {
-  set_ev_case(ev(...), case = 1L)
+  set_ev_case(ev(...), 1L)
 })
+
+#' @rdname evd
+#' @export
+setMethod("evd", "ev", function(x, ...) {
+  set_ev_case(x, 1L)
+})
+
 
 #' @param x An event object.
 #' @rdname evd
