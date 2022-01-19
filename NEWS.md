@@ -1,5 +1,3 @@
-# mrgsolve (development version)
-
 # mrgsolve 1.0.0
 
 - New model syntax: `THETA(n)` is interpreted as `THETAn` in the model code;
