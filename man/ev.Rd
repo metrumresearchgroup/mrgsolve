@@ -85,15 +85,15 @@ event rows must match the number of \code{ID}s entered
 \examples{
 mod <- mrgsolve::house()
 
-mod <- mod \%>\% ev(amt=1000, time=0, cmt=1)
+mod <- mod \%>\% ev(amt = 1000, time = 0, cmt = 1)
 
-loading <- ev(time=0, cmt=1, amt=1000)
+loading <- ev(time = 0, cmt = 1, amt = 1000)
 
-maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
+maint <- ev(time = 12, cmt = 1, amt = 500, ii = 12, addl = 10)
 
 c(loading, maint)
 
-loading$time
+reduced_load <- dplyr::mutate(loading, amt = 750)
 
 }
 \seealso{

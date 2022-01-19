@@ -20,6 +20,7 @@
 
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:
+// DECLARED BY USER
 typedef double capture;
 namespace {
   double CLi;
@@ -28,6 +29,7 @@ namespace {
   double KOUTi;
   double DV;
 }
+// DECLARED VIA AUTODEC
 
 // GLOBAL START USER CODE:
 #define CP (CENT/VCi)
@@ -80,3 +82,4 @@ typedef double localdouble;
 #define EKA _xETA(3)
 #define EKOUT _xETA(4)
 #define EXPO _xEPS(1)
+

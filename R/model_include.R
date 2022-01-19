@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2022 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@ plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
-get_plugins <- function(what) {
+get_plugins <- function(what, env) {
   what <- c(cvec_cs(what), "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
@@ -29,6 +29,8 @@ get_plugins <- function(what) {
   }
   x <- lapply(what,get_plugin)
   names(x) <- s_pick(x,"name")
+  # TODO: register other plugins if needed
+  env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
   x
 }
 
@@ -151,15 +153,24 @@ plugins[["RcppArmadillo"]] <- list(
 )
 
 plugins[["BH"]] <- list(
-  linkto="BH/include", name="BH"
+  linkto = "BH/include", name = "BH"
 )
 
 plugins[["CXX11"]] <- list(
-  pkg_cxxflags = "-std=c++11", name="CXX11"    
+  pkg_cxxflags = "-std=c++11", name = "CXX11"    
 )
 
 plugins[["N_CMT"]] <- list(
   all = TRUE, name = "N_CMT"  
+)
+
+plugins[["nm-vars"]] <- list(
+  name = "nm-vars",
+  code  = c("// nm-vars plugin", "#define _MRGSOLVE_USING_NM_VARS_")
+)
+
+plugins[["autodec"]] <- list(
+  name = "autodec", code = "// auto-dec plugin"
 )
 
 # nocov end

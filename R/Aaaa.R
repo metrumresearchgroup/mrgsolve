@@ -29,8 +29,8 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
-#' @importFrom rlang is_named
-#' @importFrom lifecycle deprecate_soft
+#' @importFrom rlang is_named .data
+#' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
 #  @importFrom RcppArmadillo armadillo_version
@@ -80,13 +80,16 @@ Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
-                   "SETINIT", "report", "_VARS_", "VARS")
+                   "SETINIT", "report", "_VARS_", "VARS", 
+                   "SS_ADVANCE")
 
-Reserved <- c("ID", "amt", "cmt", "ii", "ss","evid",
+Reserved <- c("ID", "amt", "cmt", "ii", "ss", "evid",
               "addl", "rate","time", Reserved_cvar,
-              "AMT", "CMT", "II", "SS", "ADDL", "RATE",
+              "AMT", "CMT", "II", "SS", "ADDL", "RATE", "THETA",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
               "double", "int", "bool", "capture")
+
+Reserved_nm <- c("A", "DADT", "A_0", "T")
 
 globalVariables(c("test_package","time", "ID","block", "descr",
                   "everything", "TIME", "address","x", 

@@ -43,8 +43,58 @@ write_capture <- function(x) {
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c(
   "Req", "obsonly", "recsort",
-  "carry.out","Trequest","trequest"
+  "carry.out","Trequest","trequest", 
+  "carry_out", "Request"
 )
+
+set_simargs <- function(x, SET) {
+  simargs <- SET[is.element(names(SET), set_args)]
+  if(length(simargs) > 0) {
+    x@args <- combine_list(x@args, simargs)
+  }   
+  x
+}
+
+check_pkmodel <- function(x, subr, spec) {
+  # ADVAN 13 is the ODEs
+  # Two compartments for ADVAN 2, 3 compartments for ADVAN 4
+  # Check $MAIN for the proper symbols
+  if(x@advan %in% c(1,2,3,4)) {
+    if(subr[["n"]] != neq(x)) {
+      stop("$PKMODEL requires  ", subr[["n"]] , 
+           " compartments in $CMT or $INIT.", call. = FALSE)
+    }
+    check_pred_symbols(x, spec[["MAIN"]])
+  }
+  return(invisible(NULL))
+}
+
+check_sim_eta_eps_n <- function(x, spec) {
+  if(isFALSE(env_get_env(x)$MRGSOLVE_RESIM_N_WARN)) {
+    return(invisible(NULL))  
+  }
+  main <- spec[["MAIN"]]
+  tab <- spec[["TABLE"]]
+  simeta_n <- grep("\\bsimeta\\(\\s*[0-9]+\\s*\\)", main, perl = TRUE)
+  simeps_n <- grep("\\bsimeps\\(\\s*[0-9]+\\s*\\)", tab,  perl = TRUE)
+  if(length(simeta_n) > 0) {
+    warning(
+      "simeta(n) was requested; ", 
+      "resimulating single ETA values is now discouraged and will soon be deprecated; ", 
+      "use simeta() to resimulate all ETA; ",
+      "silence this warning by setting MRGSOLVE_RESIM_N_WARN to FALSE in $ENV."
+    )
+  }
+  if(length(simeps_n) > 0) {
+    warning(
+      "simeps(n) was requested; ", 
+      "resimulating single EPS values is now discouraged and will soon be deprecated; ", 
+      "use simeps() to resimulate all EPS; ",
+      "silence this warning by setting MRGSOLVE_RESIM_N_WARN to FALSE in $ENV."
+    )
+  }
+  return(invisible(NULL))
+}
 
 check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   invalid <- setdiff(x,block_list)
@@ -85,23 +135,23 @@ check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   return(invisible(NULL))
 }
 
-audit_spec <- function(x,spec,warn=TRUE) {
-  
+audit_spec <- function(x, spec, warn = TRUE) {
   cmt <- names(init(x))
-  
   if(!has_name("ODE", spec) | !warn | length(cmt) ==0) {
     return(invisible(NULL))
   }
-  
   z <- sapply(paste0("dxdt_",cmt), function(dx) {
-    !any(grepl(dx,spec[["ODE"]],fixed=TRUE))
+    !any(grepl(dx, spec[["ODE"]], fixed = TRUE))
   })
-  
   if(any(z)) {
-    ans <- paste(cmt[z], collapse=',')
-    warning(paste0("Audit: missing differential equation(s) for ", ans), call.=FALSE)
+    bad <- cmt[z]
+    err <- "Missing differential equation(s):"
+    for(b in bad) {
+      err <- c(err, paste0("--| missing: ", b))  
+    }
+    err <- c(err, "--| suppress with @!audit block option")
+    warning(paste0(err, collapse = "\n"), call.=FALSE)
   }
-  
   return(invisible(NULL))
 }
 
@@ -363,7 +413,7 @@ pp_defs <- function(x,context) {
   )
 }
 
-move_global2 <- function(spec,env,build) {
+move_global2 <- function(spec, env, build) {
   pream <- c_vars(spec$PREAMBLE, context = "preamble")
   if(!is.null(pream$code)) {
     spec$PREAMBLE <- pream$code
@@ -397,17 +447,21 @@ move_global2 <- function(spec,env,build) {
     captures <- to_ns[cap,"var"]
     spec <- c(spec,list(CAPTURE=mytrim(unlist(captures, use.names=FALSE))))
   }
-  ns <- c(
-    "typedef double capture;",
-    "namespace {",
-    paste0("  ", to_ns$type, " ", to_ns$var, ";"),
-    "}")
+  to_global <- "typedef double capture;"
+  if(nrow(to_ns)  > 0) {
+    to_global <- c(
+      to_global,
+      "namespace {",
+      paste0("  ", to_ns$type, " ", to_ns$var, ";"),
+      "}"
+    ) 
+  }
   build$global_vars <- vars
   defines <- pp_defs(spec[["GLOBAL"]], context = "global")
   build$defines <- defines$vars
-  build$cpp_variables <- bind_rows(defines$tab,vars)
+  build$cpp_variables <- bind_rows(defines$tab, vars)
   
-  env[["global"]] <- ns
+  env[["global"]] <- to_global
   if(nrow(to_ns)  > 0) {
     env[["move_global"]] <- to_ns$var
   } else {
@@ -476,11 +530,12 @@ parse_ats <- function(x) {
   x <- x[x!=""]
   
   # Name/value lines will have spaces but not lists
-  nv <- grepl(" ", x, fixed=TRUE) 
+  nv <- grepl(" ", x, fixed = TRUE)
   
   # Boolean are not Name/value
   if(any(!nv)) {
-    x[!nv] <- paste0(cvec_cs(x[!nv]), " TRUE")
+    negate <- substr(x[!nv], 1, 1) == "!"
+    x[!nv] <- paste0(cvec_cs(x[!nv]), " ",  !negate)
   }
   
   # find the first space
@@ -488,6 +543,9 @@ parse_ats <- function(x) {
   
   # The names
   a <- substr(x, 1,sp-1)
+  
+  # drop ! from names globally
+  a <- gsub("!", "", a, fixed = TRUE)
   
   # The values
   b <- substr(x,sp+1,nchar(x))
@@ -537,13 +595,15 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   
   opts <- c(gsub(">>","", x[opts], fixed=TRUE))
   
-  opts <- merge.list(def, tolist(opts,envir=envir),
-                     open=all,warn=FALSE,context="opts")
+  opts <- tolist(opts,envir=envir)
+  
   opts <- c(opts,at)
   
   if(allow_multiple) {
     opts <- collect_opts(opts)  
   }
+  
+  opts <- merge.list(def, opts, open=all,warn=FALSE,context="opts")
   
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
@@ -601,6 +661,10 @@ parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) 
   mread.env$sigma <- vector("list", n)
   mread.env$annot <- vector("list", n)
   mread.env$ode   <- vector("list", n)
+  mread.env$audit_dadt <- FALSE
+  mread.env$`using_nm-vars` <- FALSE
+  # TODO:
+  #mread.env$using_autodec <- FALSE
   mread.env$namespace <- vector("list", n)
   mread.env$capture <- vector("list", n)
   mread.env$error <- character(0)
@@ -613,7 +677,8 @@ parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) 
 }
 
 wrap_namespace <- function(x,name) {
-  paste(c(paste0("namespace ", name, " {"),paste("  ",x),"}"), collapse="\n")
+  if(length(x)==0) return(character(0))
+  paste0(c(paste0("namespace ", name, " {"), paste0("  ", x),"}"), collapse="\n")
 }
 
 # For captured items, copy annotation
@@ -680,4 +745,117 @@ evaluate_at_code <- function(x, cl, block, pos, env = list(), named = FALSE) {
   x
 }
 
+get_valid_capture <- function(param, omega, sigma, build, mread.env) {
+  n_omega <- sum(nrow(omega))
+  if(n_omega > 0) {
+    .eta <- paste0("ETA(",seq_len(n_omega),")")  
+  } else {
+    .eta <- NULL  
+  }
+  n_sigma <- sum(nrow(sigma))
+  if(n_sigma > 0) {
+    .eps <- paste0("EPS(",seq_len(n_sigma),")")
+  } else {
+    .eps <- NULL  
+  }
+  ans <- c(
+    names(param), 
+    unlist(labels(omega)), 
+    unlist(labels(sigma)),
+    .eta,
+    .eps,
+    build[["cpp_variables"]][["var"]], 
+    mread.env[["autov"]]
+  )
+  unique(ans)
+}
 
+#' Find assignments and capture lhs
+#' 
+#' @keywords internal
+#' @noRd
+autodec_find <- function(code) {
+  keep <- grep("=", code, fixed = TRUE)
+  code <- code[keep]
+  if(length(code)==0) {
+    return(NULL)
+  }
+  ans <- regmatches(code, regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE))
+  ans <- unique(sub(" *=.?$", "", ans, perl = TRUE))
+  ans[!grepl(".", ans, fixed = TRUE)]
+}
+
+#' Call `autodec_find` ona list of code chunks
+#' 
+#' @keywords internal
+#' @noRd
+autodec_vars <- function(code, blocks = NULL) {
+  if(is.null(code)) return(NULL)
+  if(is.list(code)) {
+    code <- unlist(code[blocks], use.names = FALSE)  
+  }
+  autodec_find(code)
+}
+
+#' Clean up `autodec` candidates
+#' 
+#' @param vars candidates
+#' @param rdefs compartments and parameters that will be implemented with 
+#' C++ pre-processor defines
+#' @param build the model `build` object; this contains variables that will 
+#' be globally declared
+#' @param skip additional names to scrub
+#' 
+#' @details 
+#' 
+#' Remove
+#' 
+#' - Anything already showing up as a pre-processor definition
+#' - Anyting that is in a reserved word list
+#' - Anything that already was declared with a type
+#' 
+#' @md
+#' @keywords internal
+#' @noRd
+autodec_clean <- function(vars, rdefs, build, skip = NULL) {
+  rdefs <- strsplit(rdefs, " ", fixed = TRUE)
+  rdefs <- s_pick(rdefs, 2)
+  cpp <- build[["cpp_variables"]][["var"]]
+  vars <- setdiff(vars, c(Reserved, rdefs, cpp))
+  # We are not cleaning Reserved_nm here; this will be checked in  
+  # autodec_nm_vars
+  vars <- setdiff(vars, skip)
+  vars
+}
+
+#' Format and save `autodec` to be used later
+#' 
+#' @keywords internal
+#' @noRd
+autodec_save <- function(vars, build, env) {
+  if(length(vars) ==0) {
+    env[["autov"]] <- NULL
+    return(invisible(NULL))
+  }
+  ans <- data.frame(
+    type = "double", 
+    var = vars, 
+    context = "auto", 
+    stringsAsFactors = FALSE
+  )
+  build[["cpp_variables"]] <- rbind(build[["cpp_variables"]], ans)
+  env[["autov"]] <- vars
+  return(invisible(NULL))
+}
+
+#' Format `autodec` as an unnamed namespace 
+#' 
+#' @keywords internal
+#' @noRd
+autodec_namespace <- function(build, env) {
+  if(length(env[["autov"]])==0) {
+    return(NULL)      
+  }
+  ans <- wrap_namespace(paste0("double ", env[["autov"]], ";"), "")
+  ans
+}

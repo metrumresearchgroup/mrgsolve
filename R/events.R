@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2021  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -67,15 +67,15 @@
 ##' @examples
 ##' mod <- mrgsolve::house()
 ##' 
-##' mod <- mod %>% ev(amt=1000, time=0, cmt=1)
+##' mod <- mod %>% ev(amt = 1000, time = 0, cmt = 1)
 ##'
-##' loading <- ev(time=0, cmt=1, amt=1000)
+##' loading <- ev(time = 0, cmt = 1, amt = 1000)
 ##' 
-##' maint <- ev(time=12, cmt=1, amt=500, ii=12, addl=10)
+##' maint <- ev(time = 12, cmt = 1, amt = 500, ii = 12, addl = 10)
 ##' 
 ##' c(loading, maint)
 ##' 
-##' loading$time
+##' reduced_load <- dplyr::mutate(loading, amt = 750)
 ##' 
 ##' @export
 setGeneric("ev", function(x,...) {
@@ -485,60 +485,78 @@ ev_repeat <- function(x,n,wait=0,as.ev=FALSE) {
 
 
 
-##' Schedule a series of event objects
-##' 
-##' @param ... event objects or numeric arguments named \code{wait}
-##' @param ID numeric vector of subject IDs
-##' @param .dots a list of event objects that replaces \code{...}
-##' @param id deprecated; use \code{ID}
-##' 
-##' @details
-##' The doses for the next event line start after 
-##' all of the doses from the previous event line plus 
-##' one dosing interval from the previous event line (see
-##' examples).  
-##' 
-##' When numerics named \code{wait} are mixed in with the 
-##' event objects, a period with no dosing activity is 
-##' incorporated into the sequence, between the adjacent 
-##' dosing event objects.  Values for \code{wait} can
-##' be negative.
-##' 
-##' Values for \code{time} in any event object act like
-##' a prefix time spacer wherever that event 
-##' occurs in the event sequence (see examples).
-##' 
-##' @examples
-##' 
-##' e1 <- ev(amt=100, ii=12, addl=1)
-##' 
-##' e2 <- ev(amt=200)
-##' 
-##' seq(e1, e2)
-##' 
-##' seq(e1, .ii = 8, e2)
-##' 
-##' seq(e1, wait = 8, e2)
-##' 
-##' seq(e1, .ii = 8, e2, ID = 1:10)
-##' 
-##' ev_seq(.ii = 12, e1, .ii = 120, e2, .ii = 120, e1)
-##' 
-##' seq(ev(amt=100, ii=12), ev(time=8, amt=200))
-##'
-##' @details
-##' Use the generic \code{\link{seq}} when the first argument 
-##' is an event object.  If a waiting period is the 
-##' first event, you will need to use \code{ev_seq}.  When 
-##' an event object has multiple rows, the end time for 
-##' that sequence is taken to be one dosing interval 
-##' after the event that takes place on the last 
-##' row of the event object. 
-##' 
-##' @return
-##' A single event object.
-##' 
-##' @export
+#' Schedule a series of event objects
+#' 
+#' Use this function when you want to schedule two or more event objects in time
+#' according the dosing interval (`ii`) and additional doses (`addl`).
+#' 
+#' @param ... event objects or numeric arguments named `wait` or `ii` to 
+#' implement a period of no-dosing activity in the sequence (see details)
+#' @param ID numeric vector of subject IDs
+#' @param .dots a list of event objects that replaces `...`
+#' @param id deprecated; use `ID`
+#' 
+#' @details
+#' 
+#' Use the generic [seq()] when the first argument is an event object.  If a 
+#' waiting period (`wait` or `ii`) is the first event, you will need to use 
+#' [ev_seq()].  When an event object has multiple rows, the end time for that 
+#' sequence is taken to be one dosing interval after the event that takes place
+#' on the last row of the event object. 
+#' 
+#' The doses for the next event line start after all of the doses from the 
+#' previous event line plus one dosing interval from the previous event line 
+#' (see examples).  
+#' 
+#' When numerics named `wait` or `ii` are mixed in with the event objects, 
+#' a period with no dosing activity is incorporated into the sequence,
+#' between the adjacent dosing event objects. `wait` and `ii` accomplish a 
+#' similar result, but differ by the starting point for the inactive period.
+#' 
+#' - Use `wait` to schedule the next dose relative to the end of the dosing 
+#'   interval for the previous dose. 
+#' - Use `ii` to schedule the next dose relative to the time of the the previous 
+#'   dose.
+#' 
+#' So `wait` acts like similar to an event object, by starting the waiting 
+#' period from one dosing interval after the last dose while `ii` starts the 
+#' waiting period from the time of the last dose itself. Both `wait` and `ii` 
+#' can accomplish identical behavior depending on whether the last dosing 
+#' interval is included (or not) in the value. Values for `wait` or `ii` can 
+#' be negative.
+#' 
+#' __NOTE__: `.ii` had been available historically as an undocumented feature. 
+#' Starting with mrgsolve version `0.11.3`, the argument will be called `ii`. 
+#' For now, both `ii` and `.ii` will be accepted but you will get a deprecation
+#' warning if you use `.ii`. Please use `ii` instead.
+#' 
+#' Values for `time` in any event object act like a prefix time spacer wherever 
+#' that event occurs in the event sequence (see examples).
+#' 
+#' @examples
+#' 
+#' e1 <- ev(amt = 100, ii = 12, addl = 1)
+#' 
+#' e2 <- ev(amt = 200)
+#' 
+#' seq(e1, e2)
+#' 
+#' seq(e1, ii = 8, e2)
+#' 
+#' seq(e1, wait = 8, e2)
+#' 
+#' seq(e1, ii = 8, e2, ID = seq(10))
+#' 
+#' ev_seq(ii = 12, e1, ii = 120, e2, ii = 120, e1)
+#' 
+#' seq(ev(amt = 100, ii = 12), ev(time = 8, amt = 200))
+#'
+#' 
+#' @return
+#' A single event object sorted by `time`.
+#' 
+#' @md
+#' @export
 ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   
   if(!missing(id)) {
@@ -556,18 +574,53 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
     names(evs) <- rep(".", length(evs))
   }
   start <- 0
-  .ii <- 0
+  .ii <- NA_real_
   ii <- 0
   for(i in seq_along(out)) {
-    if(names(evs)[i]==".ii") {
+    this_name <- names(evs)[i]
+    # TODO: refactor once is.numeric is handled
+    spacer <- is.atomic(evs[[i]]) && is.numeric(evs[[i]]) && length(evs[[i]])==1
+    # TODO: deprecate .ii
+    if(this_name == ".ii" & spacer) {
+      deprecate_warn(
+        when = "0.11.3", 
+        what = "ev_seq(.ii='has been renamed to ii')", 
+        details = c(
+         i = "Use `ii` instead of `.ii` to set time between doses." 
+        )
+      )
+      this_name <- "ii"
+    }
+    if(this_name=="ii" & spacer) {
       .ii <- evs[[i]]
       evs[[i]] <- list()
       next
     }
-    if(names(evs)[i]=="wait") {
+    if(this_name=="wait" & spacer) {
       start <- start + eval(evs[[i]])
       evs[[i]] <- list()
       next
+    }
+    if(is.data.frame(evs[[i]])) {
+      err <- c(
+        "\n", 
+        "found object with class: data.frame", 
+        "\n",
+        "please coerce to event object with `as.ev()`",
+        "\n",
+        "ev_seq() requires event objects"
+      )
+      stop(err)
+    }
+    if(!is.ev(evs[[i]])) {
+      err <- c(
+        "\n",
+        "found object with class: ", 
+        paste0(class(evs[[i]]), collapse = ", "),
+        "\n",
+        "ev_seq() requires event objects"
+      )
+      stop(err)  
     }
     e <- as.data.frame(evs[[i]])
     if(is.null(e[["ii"]])) {
@@ -577,14 +630,14 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
       e[["addl"]] <- 0
     }
     after <-  ifelse(is.null(e[[".after"]]), 0, e[[".after"]])
-    e[["time"]] <- e[["time"]] + start + ifelse(.ii > 0, .ii, ii)
+    e[["time"]] <- e[["time"]] + start + ifelse(!is.na(.ii), .ii, ii)
     elast <- slice(e, nrow(e))
     start <- 
       elast[["time"]] + 
       after + 
       elast[["ii"]]*elast[["addl"]] 
     out[[i]] <- e
-    .ii <- 0
+    .ii <- NA_real_
     ii <- elast[["ii"]]
   }
   out <- bind_rows(out) 
@@ -598,11 +651,14 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
   if(is.numeric(ID)) {
     out <- ev_rep(out,ID)
   }
-  as.ev(as.data.frame(out))
+  ans <- as.data.frame(out, stringsAsFactors = FALSE)
+  ans <- ans[order(ans$time),, drop = FALSE]
+  rownames(ans) <- NULL
+  as.ev(ans)
 }
 
-##' @export
-##' @rdname ev_seq
+#' @export
+#' @rdname ev_seq
 seq.ev <- function(...) {
   ev_seq(...) 
 }

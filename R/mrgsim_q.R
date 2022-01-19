@@ -73,14 +73,17 @@
 ##' Use the \code{output="df"} argument to request a plain 
 ##' data.frame of simulated data on return.
 ##' 
+##' @return
+##' By default, an object of class `mrgsims`. Use `output = "df"` to return 
+##' a data frame.
 ##' 
 ##' @examples
 ##' 
 ##' mod <- mrgsolve::house()
 ##' 
-##' data <- expand.ev(amt = c(100,300,1000))
+##' data <- expand.ev(amt = c(100, 300, 1000))
 ##' 
-##' out <- mrgsim_q(mod,data)
+##' out <- mrgsim_q(mod, data)
 ##' 
 ##' out
 ##' 
@@ -107,10 +110,7 @@ mrgsim_q <- function(x,
   
   tcol <- timename(data)
   if(is.na(tcol)) tcol <- "time"
-  
-  param <- as.numeric(Param(x))
-  init <-  as.numeric(Init(x))
-  
+
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
@@ -144,10 +144,10 @@ mrgsim_q <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    param,
-    names(param(x)),
-    init,
-    names(Init(x)),
+    as.numeric(Param(x)),
+    Pars(x),
+    as.numeric(Init(x)),
+    Cmt(x),
     CAPTUREI(x),
     pointers(x),
     data,null_idata,

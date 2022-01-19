@@ -72,8 +72,9 @@ generate_rdefs <- function(pars,
 
     cmtn <- unique(intersect(cvec_cs(set$CMTN),cmt))
     
+    # Handle plugins; note plugin[["nm-defs"]] are punched in below     
     if(!is.null(plugin[["N_CMT"]])) cmtn <- cmt  
-    
+
     if(length(cmtn) > 0) {
         cmtnindex <- match(cmtn,cmt)-1
         cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -86,15 +86,18 @@ check_us <- function(x,cmt,ans) {
 check_globals <- function(x,cmt) {
   ans <- character(0)
   us <-  any(charthere(x,"_"))
-  res <- any(is.element(x,Reserved_cvar))
+  res <- any(is.element(x, Reserved_cvar))
   if(res) {
-    tmp <- paste(x[is.element(x,Reserved_cvar)],collapse=" ")
-    ans <- c(ans,paste0("Reserved words in model names: ",tmp))
+    tmp <- paste(x[is.element(x, Reserved_cvar)],collapse=" ")
+    ans <- c(ans, paste0("Reserved words in model names: ",tmp))
   }
   if(us) {
     ans <- check_us(x,cmt,ans) 
   }
-  return(ans)
+  if(length(ans) > 0) {
+    stop(ans, call. = FALSE)
+  }
+  return(invisible(NULL))
 }
 
 protomod <- list(model=character(0),
@@ -273,10 +276,13 @@ setMethod("initialize", "mrgmod", initialize_mrgmod)
 
 #' Return a pre-compiled, PK/PD model
 #' 
-#' @param ... passed to \code{\link[mrgsolve]{update}}
+#' This model is used in a lot of package tests, but it can be useful to 
+#' support user experimentation as well.
+#' 
+#' @param ... passed to [mrgsolve::update()].
 #' 
 #' @return 
-#' A \code{packmod} object, ready to simulate.
+#' A `packmod` object, ready to simulate.
 #' 
 #' @examples
 #' 
@@ -284,9 +290,10 @@ setMethod("initialize", "mrgmod", initialize_mrgmod)
 #' 
 #' see(mod)
 #' 
-#' mod %>% ev(amt=100) %>% mrgsim %>% plot
+#' mod %>% ev(amt = 100) %>% mrgsim() %>% plot()
 #' 
 #' @keywords internal
+#' @md
 #' @export
 house <- function(...) {
   project <- mrgsolve_file("project")
@@ -324,10 +331,17 @@ as_pack_mod <- function(model, project, PACKAGE) {
 #' Check if an object is a model object 
 #' 
 #' The function checks to see if the object is either
-#'  \code{mrgmod} or \code{packmod}.
+#'  `mrgmod` or `packmod`.
 #' 
 #' @param x any object
-#' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
+#' 
+#' @examples
+#' is.mrgmod(house())
+#' 
+#' @return 
+#' `TRUE` if the object inherits from either `mrgmod` or `packmod` class.
+#' 
+#' @md
 #' @export
 is.mrgmod <- function(x) inherits(x,c("mrgmod","packmod"))
 
@@ -372,17 +386,22 @@ Capturei <- function(x) x@Icap
 CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 
 #' Return the location of the model shared object
-##'
-#' @param x model object
-#' @param short logical; if \code{TRUE}, \code{soloc} will
-#'  be rendered  with a short path name
 #' 
-#' @rdname soloc
+#' This is also the directory where the model is built, which could be the 
+#' value of [tempdir()].
+#'
+#' @param x model object
+#' @param short logical; if `TRUE`, `soloc`s will
+#'  be rendered  with a short path name
 #' 
 #' @examples
 #' mod <- mrgsolve::house()
 #' soloc(mod)
 #' 
+#' @return A string containing the full path to the model shared object.
+#' 
+#' @rdname soloc
+#' @md
 #' @export
 soloc <- function(x,short=FALSE) {
   if(short) return(build_path(x@soloc))
@@ -771,6 +790,9 @@ all.equal.mrgmod <- function(target, current,...) {
 }
 
 #' Show names of current output variables
+#' 
+#' Outputs can include model compartments or variables defined in the model 
+#' that have been marked to `capture` in simulated output.
 #' 
 #' @param x mrgmod object
 #' @param unlist if `TRUE` then a character vector (rather than list) is 

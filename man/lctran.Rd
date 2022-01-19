@@ -2,8 +2,7 @@
 % Please edit documentation in R/data_set.R
 \name{lctran}
 \alias{lctran}
-\title{Convert select upper case column names to lower case to conform 
-to mrgsolve data expectations}
+\title{Convert select upper case column names to lower case}
 \usage{
 lctran(data)
 }
@@ -12,14 +11,21 @@ lctran(data)
 }
 \value{
 A data.frame with renamed columns
+
+The input data set, with select columns made lower case.
 }
 \description{
-Convert select upper case column names to lower case to conform 
-to mrgsolve data expectations
+Previous data set requirements included lower case names for data items
+like \code{AMT} and \code{EVID}. Lower case is no longer required.
 }
 \details{
-Columns that will be renamed with lower case versions: \code{AMT}, 
-\code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, 
-\code{TIME}.  If a lower case version of these names exist in the data 
+Columns that will be renamed with lower case versions: \code{AMT},
+\code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID},
+\code{TIME}.  If a lower case version of these names exist in the data
 set, the column will not be renamed.
+}
+\examples{
+data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2)
+lctran(data)
+
 }

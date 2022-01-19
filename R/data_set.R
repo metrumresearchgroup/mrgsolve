@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -88,15 +88,15 @@
 ##'
 ##' mod <- mrgsolve::house()
 ##' 
-##' data <- expand.ev(ID=1:3, amt=c(10,20))
+##' data <- expand.ev(ID=seq(3), amt=c(10, 20))
 ##'
-##' mod %>% data_set(data, ID > 1) %>% mrgsim
+##' mod %>% data_set(data, ID > 1) %>% mrgsim()
 ##' 
 ##' data(extran1)
 ##' head(extran1)
 ##' 
-##' mod %>% data_set(extran1) %>% mrgsim
-##' mod %>% mrgsim(data=extran1)
+##' mod %>% data_set(extran1) %>% mrgsim()
+##' mod %>% mrgsim(data = extran1)
 ##' 
 ##' @export
 setGeneric("data_set", function(x,data,...) {
@@ -147,19 +147,29 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object,...) {
 })
 
 
-##' Convert select upper case column names to lower case to conform 
-##' to mrgsolve data expectations
-##'
+##' Convert select upper case column names to lower case 
+##' 
+##' Previous data set requirements included lower case names for data items 
+##' like `AMT` and `EVID`. Lower case is no longer required. 
+##' 
 ##' @param data an nmtran-like data frame
 ##' 
 ##' @return A data.frame with renamed columns
 ##'
 ##' @details
-##' Columns that will be renamed with lower case versions: \code{AMT}, 
-##' \code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID}, 
-##' \code{TIME}.  If a lower case version of these names exist in the data 
+##' Columns that will be renamed with lower case versions: `AMT`, 
+##' `II`, `SS`, `CMT`, `ADDL`, `RATE`, `EVID`, 
+##' `TIME`.  If a lower case version of these names exist in the data 
 ##' set, the column will not be renamed.
 ##' 
+##' @examples
+##' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2)
+##' lctran(data)
+##' 
+##' @return 
+##' The input data set, with select columns made lower case.
+##' 
+##' @md
 ##' @export
 lctran <- function(data) {
   n <- names(data)
@@ -192,35 +202,36 @@ data_hooks <- function(data,object,envir,param=list(),...) {
 
 
 ##' Create a simulation data set from ev objects
-##'
+##' 
+##' The goal is to take a series of event objects and combine them 
+##' into a single data set that can be passed to [data_set()]. 
 ##'
 ##' @param x ev objects
 ##' @param ... more ev objects
 ##' 
 ##' @details
-##' The goal is to take a series of event objects and combine them 
-##' into a single data set that can be passed to \code{\link{data_set}}.  
-##' Each event object is added to the data frame as an \code{ID} 
-##' or set of \code{ID}s  that are distinct from the  \code{ID}s 
-##' in the other event objects. Note that including \code{ID} 
-##' argument to the \code{\link{ev}} call where \code{length(ID)} 
+##' Each event object is added to the data frame as an `ID` 
+##' or set of `ID`s  that are distinct from the `ID`s 
+##' in the other event objects. Note that including `ID` 
+##' argument to the [ev()] call where `length(ID)` 
 ##' is greater than one will render that set of 
-##' events for all of \code{ID}s that are requested.
+##' events for all of `ID`s that are requested.
 ##'
-##' To get a data frame with one row (event) per \code{ID} 
-##' look at \code{\link{expand.ev}}.
+##' To get a data frame with one row (event) per `ID`, look at [expand.ev()].
 ##' 
-##' @return a data frame suitable for passing into \code{\link{data_set}}
+##' @return 
+##' A data frame suitable for passing into [data_set()].
 ##'
 ##' @examples
 ##'
-##' as_data_set(ev(amt=c(100,200), cmt=1, ID=1:3),
-##'             ev(amt=300, time=24, ID=1:2),
-##'             ev(amt=1000, ii=8, addl=10, ID=1:3))
+##' as_data_set(ev(amt = c(100,200), cmt=1, ID = seq(3)),
+##'             ev(amt = 300, time = 24, ID = seq(2)),
+##'             ev(amt = 1000, ii = 8, addl = 10, ID = seq(3)))
 ##'
 ##' # Instead of this, use expand.ev
-##' as_data_set(ev(amt=100), ev(amt=200),ev(amt=300))
+##' as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
 ##'
+##' @md
 ##' @rdname as_data_set
 ##' @export
 setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
@@ -250,15 +261,13 @@ setMethod("as_data_set","data.frame", function(x,...) {
 ##' 
 ##' 
 ##' @examples
-##' ev1 <- ev(amt=100)
-##' ev2 <- ev(amt=300, rate=100, ii=12, addl=10)
+##' ev1 <- ev(amt = 100)
+##' ev2 <- ev(amt = 300, rate = 100, ii = 12, addl = 10)
 ##' 
-##' idata <- data.frame(ID=1:10) 
+##' idata <- data.frame(ID = seq(10)) 
 ##' idata$arm <- 1+(idata$ID %%2)
 ##' 
-##' ev_assign(list(ev1,ev2), idata, "arm", join=TRUE)
-##' 
-##' 
+##' ev_assign(list(ev1, ev2), idata, "arm", join = TRUE)
 ##' 
 ##' @details
 ##' \code{ev_assign} connects events in a list passed in as the
@@ -451,12 +460,13 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 ##' @details
 ##' Non-numeric columns will be dropped with a warning.
 ##' 
-##' @return A data frame
+##' @return 
+##' A data frame with additional rows for added observation records.
 ##' 
 ##' @examples
-##' data <- expand.ev(amt = c(100,200,300))
+##' data <- expand.ev(amt = c(100, 200, 300))
 ##' 
-##' expand_observations(data, times = seq(0,48,2))
+##' expand_observations(data, times = seq(0, 48, 2))
 ##' 
 ##' @export
 expand_observations <- function(data, times, unique = FALSE, obs_pos = -1L) {

@@ -17,18 +17,18 @@ equation solver. See \link{aboutsolver} for more information.
 \section{Resources}{
 
 \itemize{
-\item Main mrgsolve resource page: \url{https://mrgsolve.github.io}
-\item User guide: \url{https://mrgsolve.github.io/user_guide/}
-\item Web vignettes: \url{https://mrgsolve.github.io/vignettes/}
+\item Main mrgsolve resource page: \url{https://mrgsolve.org}
+\item User guide: \url{https://mrgsolve.org/user_guide/}
+\item Package documentation and vignettes: \url{https://mrgsolve.org/docs/}
 }
 }
 
 \section{Package-wide options}{
 
 \itemize{
-\item \code{mrgolve.project}: sets the default project director (\link{mread})
-\item \code{mrgsolve.soloc}: sets the default package build directory (\link{mread})
-\item \code{mrgsolve_mread_quiet}: don't print messages during \link{mread}
+\item \code{mrgolve.project}: sets the default project director (\code{\link[=mread]{mread()}})
+\item \code{mrgsolve.soloc}: sets the default package build directory (\code{\link[=mread]{mread()}})
+\item \code{mrgsolve_mread_quiet}: don't print messages during \code{\link[=mread]{mread()}}
 \item \code{mrgsolve.update.strict}: if \code{TRUE}, print warning when trying to update
 an item in the model object that doesn't exist
 }
@@ -83,7 +83,6 @@ events
 
 out <- mod \%>\% ev(events) \%>\% mrgsim(end=180, req="")
 plot(out)
-
 
 
 ## "Condensed" data set

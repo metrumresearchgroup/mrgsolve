@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -219,7 +219,7 @@ nmxml <- function(run = numeric(0), project = character(0),
 #' @param path full path to NONMEM `ext` file
 #' @param read_fun function to use when reading the `ext` file
 #' 
-#' @seealso [nmxml], [read_nmext]
+#' @seealso [nmxml()], [read_nmext()]
 #' 
 #' @md
 nmext <- function(run = NA_real_, project = getwd(), 
@@ -326,12 +326,15 @@ nm_xml_matrix <- function(x) {
 
 ##' Extract estimates from NONMEM ext file
 ##' 
+##' This function retrieves NONMEM estimates for use in the mrgsolve model when 
+##' `$NMEXT` is invoked. See [nmext()].
 ##' 
 ##' @param run a run number or run identifier
 ##' @param project the NONMEM project directory
 ##' @param file the `ext` file name
 ##' @param path full path and file name for `ext` file
-##' @param read_fun function to read the `ext` file
+##' @param read_fun function to read the `ext` file; [data.table::fread()] will 
+##' be used if available; otherwise [utils::read.table()] is used. 
 ##' @param index selects the table number whose results will be returned;
 ##' use value "last" to select the last table in the `.ext` file; or pass an 
 ##' integer specifying the table number; in case there is exactly

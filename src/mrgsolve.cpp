@@ -47,10 +47,19 @@ double digits(const double& a, const double& b) {
  * -1 otherwise
  * 
  */
-int find_position(const Rcpp::CharacterVector& what, const Rcpp::CharacterVector& table) {
-  Rcpp::IntegerVector ma = Rcpp::match(what,table);
-  if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
-  return(ma[0]-1);
+int find_position(const std::string what, Rcpp::CharacterVector& table) {
+  // Rcpp::IntegerVector ma = Rcpp::match(what,table);
+  // if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
+  // return(ma[0]-1);
+
+  Rcpp::CharacterVector::iterator it = std::find(
+    table.begin(), table.end(), what
+  ); 
+  if(it != table.end()) {
+    return it - table.begin();
+  } else {
+    return -1; 
+  }
 }
 
 void negative_istate(int istate, int maxsteps, double rtol, double atol) {
@@ -153,17 +162,12 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   if(a.size()==1) {
     return a[0];  
   }
-  
-  int j,k;
+
   Rcpp::NumericMatrix mat;
-  
-  int tot=0;
-  
   Rcpp::CharacterVector rnam;
   Rcpp::CharacterVector cnam;
   
-  Rcpp::CharacterVector this_nam;
-  Rcpp::List dnames(2);
+  int tot=0;
   
   for(int i=0, n = a.size(); i < n; ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
@@ -174,10 +178,10 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
     
     if(!keep_names) continue;
     
-    dnames = mat.attr("dimnames");
+    Rcpp::List dnames = mat.attr("dimnames");
     
     if(dnames.size()==0) {
-      for(j=0; j < mat.nrow(); ++j) {
+      for(int j=0; j < mat.nrow(); ++j) {
         rnam.push_back(".");
         cnam.push_back(".");
       }
@@ -185,19 +189,18 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
     }
     
     if(!Rf_isNull(dnames[0])) {
-      this_nam = dnames[0];
+      Rcpp::CharacterVector this_nam = dnames[0];
       for(int j=0, n=this_nam.size(); j < n; ++j) rnam.push_back(this_nam[j]);
     } else {
-      for(j=0; j < mat.nrow(); ++j) rnam.push_back(".");
+      for(int j=0; j < mat.nrow(); ++j) rnam.push_back(".");
     }
     if(!Rf_isNull(dnames[1])) {
-      this_nam = dnames[1];
+      Rcpp::CharacterVector this_nam = dnames[1];
       for(int j=0, n=this_nam.size(); j < n; ++j) cnam.push_back(this_nam[j]);
     } else {
-      for(j=0; j < mat.ncol(); ++j) cnam.push_back(".");
+      for(int j=0; j < mat.ncol(); ++j) cnam.push_back(".");
     }
   }
-  
   
   int totrow = 0;
   int totcol = 0;
@@ -206,8 +209,8 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   for(int i=0, n=a.size(); i < n; ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     
-    for(j=0; j < mat.nrow(); ++j) {
-      for(k=0; k < mat.ncol(); ++k) {
+    for(int j=0; j < mat.nrow(); ++j) {
+      for(int k=0; k < mat.ncol(); ++k) {
         ret(totrow+j,totcol+k) = mat(j,k);
       }
     }

@@ -109,7 +109,7 @@ test_that("Commented model", {
   $CAPTURE 
     kaya = KA // Capturing KA
   ' 
-
+  
   expect_is(mod <- mcode("commented", code,compile=FALSE),"mrgmod")
   expect_identical(param(mod),param(CL=2,VC=10,KA=3))
   expect_identical(init(mod),init(x=0,y=3,h=3))
@@ -129,13 +129,16 @@ test_that("at options are parsed", {
   @name some person
   @  zip   55455 @town minneapolis @city
   @ state mn @midwest @x 2
+  
+  @!yellow
   '
   
   x <- unlist(strsplit(code, "\n"))
   x <- ats(x)
   expect_equal(
     names(x), 
-    c("bool1", "bool2", "name", "zip", "town", "city", "state", "midwest", "x")
+    c("bool1", "bool2", "name", "zip", "town", "city", "state", "midwest", "x", 
+      "yellow")
   )
   expect_is(x,"list")
   expect_identical(x$bool1,TRUE)
@@ -146,6 +149,7 @@ test_that("at options are parsed", {
   expect_identical(x$state,"mn")  
   expect_identical(x$town,"minneapolis")
   expect_equal(x$x,2)
+  expect_equal(x$yellow, FALSE)
   expect_warning(ats(" @hrm ' a b c'"))  
   expect_warning(ats('@foo "a b c"'))  
 })
@@ -158,7 +162,7 @@ test_that("HANDLEMATRIX", {
 })
 
 test_that("inventory of internal variables", {
-code <- '
+  code <- '
 [ global ] 
 #define a 1
 int b = 2; 
@@ -401,4 +405,135 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
     mrgsolve:::HANDLEMATRIX(x = "123", object = "parameters", as_object = TRUE), 
     "cannot have both @object and @as_object in a block"
   )
+})
+
+test_that("autodec parsing", {
+  x <- mrgsolve:::autodec_find("a = 1;")  
+  expect_equal(x, "a")
+  x <- mrgsolve:::autodec_find("a=1;")  
+  expect_equal(x, "a")
+  x <- mrgsolve:::autodec_find("double a_2 = 1;")
+  expect_equal(x, "a_2")
+  x <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
+  expect_equal(x, "y")
+  x <- mrgsolve:::autodec_find("a == 1;")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(NEWIND <= 1 ) {")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(EVID >= 1 ) {")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(TIME != 1 ) {")  
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("self.foo = 1;")
+  expect_equal(x, character(0))
+  code <- strsplit(split = "\n", '
+    double a = 2;
+    b = 3;
+    if(c==2) d = 1;
+    b=(123);
+    k = 
+  ')[[1]]
+  x <- mrgsolve:::autodec_vars(code)
+  expect_equal(x, c("a", "b", "d", "k"))
+  
+})
+
+test_that("autodec models", {
+  code <- ' 
+  [ plugin ] autodec
+  [ param ] a = 1, b = 2
+  '
+  expect_s4_class(mod <- mcode("autodec2", code, compile = FALSE), "mrgmod")
+  l <- as.list(mod)
+  expect_equal(nrow(l$cpp_variables), 0)
+  
+  code <- ' 
+  [ plugin ] autodec
+  [ param ] a = 1, b = 2
+  [ main ] 
+  double c = 3;
+  '
+  expect_s4_class(mod <- mcode("autodec3", code, compile = FALSE), "mrgmod")
+  l <- as.list(mod)
+  expect_equal(l$cpp_variables$var, "c")
+  
+  code <- ' 
+  [ plugin ] autodec
+  [ param ] a = 1, b = 2
+  [ main ] 
+  double c = 3;
+  d = 4;
+  '
+  expect_s4_class(mod <- mcode("autodec4", code, compile = FALSE), "mrgmod")
+  l <- as.list(mod)
+  expect_equal(l$cpp_variables$var, c("c", "d"))
+  
+  code <- '
+  [ param ] tvcl = 1, tvvc = 2
+  [ cmt ] GUT CENT
+  [ plugin ] autodec
+  [ main ] 
+  cl = tvcl;
+  v2 = tvvc;
+  ka = 1;
+  F_CENT = 1;
+  if(NEWIND <=1 ) {
+    D_CENT = 4;  
+  }
+  double F1 = 0.9;
+  [ table ] 
+  double err = EPS(1);
+  CP = cent/v2;
+  '
+  mod <- mcode("autodec5", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("F1", "err", "cl", "v2", "ka", "CP"))
+  expect_equal(cpp$context, c("main", "table", rep("auto", 4)))
+
+})
+
+test_that("autodec models with nm-vars", {
+  code <- '
+  [ param ] tvcl = 1, tvvc = 2
+  [ cmt ] GUT CENT
+  [ plugin ] autodec nm-vars
+  [ main ] 
+  double km = 2.5;
+  cl = tvcl;
+  v2 = tvvc;
+  ka = 1;
+  F_GUT = 1.2;
+  F1 = 1.2;
+  if(NEWIND<=1) {
+    D2 = 4;  
+  }
+  ALAG2 = 0.2;
+  A_0(2) = 5;
+  [ table ] 
+  double err = EPS(1);
+  CP = cent/v2;
+  [ ode ] 
+  DADT(1) = 0;
+  DADT(2) = 1; 
+  '
+  mod <- mcode("autodec5", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("km","err", "cl", "v2", "ka", "CP"))
+  expect_equal(cpp$context, c("main", "table",  rep("auto", 4)))
+})
+
+test_that("autodec variables can be skipped", {
+  code <- '
+  [ plugin ] autodec
+  [ env ] MRGSOLVE_AUTODEC_SKIP = "a, c"
+  [ main ] 
+  a = 1; 
+  b = 2; 
+  c = 3; 
+  d = 4;
+  double e = 5;
+  '
+  mod <- mcode("autodec-skip", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("e", "b", "d"))
 })

@@ -7,13 +7,14 @@
 house(...)
 }
 \arguments{
-\item{...}{passed to \code{\link[mrgsolve]{update}}}
+\item{...}{passed to \code{\link[=update]{update()}}.}
 }
 \value{
 A \code{packmod} object, ready to simulate.
 }
 \description{
-Return a pre-compiled, PK/PD model
+This model is used in a lot of package tests, but it can be useful to
+support user experimentation as well.
 }
 \examples{
 
@@ -21,7 +22,7 @@ mod <- mrgsolve::house()
 
 see(mod)
 
-mod \%>\% ev(amt=100) \%>\% mrgsim \%>\% plot
+mod \%>\% ev(amt = 100) \%>\% mrgsim() \%>\% plot()
 
 }
 \keyword{internal}

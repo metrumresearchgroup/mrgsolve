@@ -151,22 +151,22 @@ NULL
 #' @export
 mread <- function(model, project = getOption("mrgsolve.project", getwd()), 
                   code = NULL, file = NULL, 
-                  udll = TRUE, ignore.stdout=TRUE,
+                  udll = TRUE, ignore.stdout = TRUE,
                   raw = FALSE, compile = TRUE, audit = TRUE,
-                  quiet = getOption("mrgsolve_mread_quiet",FALSE),
+                  quiet = getOption("mrgsolve_mread_quiet", FALSE),
                   check.bounds = FALSE, warn = TRUE, 
-                  soloc = getOption("mrgsolve.soloc",tempdir()),
+                  soloc = getOption("mrgsolve.soloc", tempdir()),
                   capture = NULL,
-                  preclean = FALSE, recover=FALSE, ...) {
+                  preclean = FALSE, recover = FALSE, ...) {
   
   if(charthere(model, "/")) {
     project <- dirname(model)
     model <- basename(model)
   }
   
-  quiet <- as.logical(quiet)
+  quiet <- isTRUE(quiet)
   
-  warn <- warn & (!quiet)
+  warn <- isTRUE(warn) & (!quiet)
   
   if(missing(model) & !missing(file)) {
     model <- file  
@@ -178,14 +178,14 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     udll = udll, recover = recover
   )
   
-  model <- build$model
+  model <- build[["model"]]
   
   ## Read the model spec and parse:
-  is_rmd <- grepl("\\.[rR]md$", build$modfile)[1]
+  is_rmd <- grepl("\\.[rR]md$", build[["modfile"]])[1]
   if(is_rmd) {
-    spec <- modelparse_rmd(readLines(build$modfile,warn=FALSE))
+    spec <- modelparse_rmd(readLines(build[["modfile"]],warn = FALSE))
   } else {
-    spec  <- modelparse(readLines(build$modfile,warn=FALSE))
+    spec  <- modelparse(readLines(build[["modfile"]], warn = FALSE))
   }
   
   ## Block name aliases
@@ -197,162 +197,106 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   names(spec) <- gsub("^PK$",  "MAIN",  names(spec), fixed = FALSE)
   
   ## Expand partial matches
-  index <- pmatch(names(spec),block_list,duplicates.ok=TRUE)
-  names(spec) <- ifelse(is.na(index),names(spec),block_list[index])
+  index <- pmatch(names(spec), block_list, duplicates.ok = TRUE)
+  names(spec) <- ifelse(is.na(index), names(spec), block_list[index])
   
   ## Do a check on what we found in the spec
-  check_spec_contents(names(spec), warn=warn,...)
+  check_spec_contents(names(spec), warn = warn,...)
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
   SET <- tolist(dump_opts(spec[["SET"]]))
-  ENV <- eval_ENV_block(spec[["ENV"]],build$project)
+  ENV <- eval_ENV_block(spec[["ENV"]],build[["project"]])
   if("SET" %in% names(spec)) spec[["SET"]] <- ""
   if("ENV" %in% names(spec)) spec[["ENV"]] <- ""
-
-  # Make a list of NULL equal to length of spec
-  # Each code block can contribute to / occupy one
-  # slot for each of param/fixed/init/omega/sigma
-  mread.env <- parse_env(spec,incoming_block_names,project=build$project,ENV)
   
-  ## The main sections that need R processing:  
-  spec <- move_global2(spec,mread.env,build)
+  # mread parse env ----
+  mread.env <- parse_env(
+    spec,
+    incoming_block_names,
+    project = build[["project"]], 
+    ENV
+  )
   
-  ## Parse blocks
-  ## Each block gets assigned a class to dispatch the handler function
-  ## Also, we use a position attribute so we know 
-  ## where we are when we're handling the block
+  # Find globals  ----
+  # The main sections that need R processing:  
+  # NOTE: this must happen prior to handling the various blocks
+  # `captured` items are injected into `$CAPTURE`; this can be changed but 
+  # for now leave this here
+  spec <- move_global2(
+    spec, 
+    mread.env, 
+    build
+  )
+  
+  # Parse blocks ----
+  # Each block gets assigned a class to dispatch the handler function
+  # Also, we use a position attribute so we know 
+  # where we are when we're handling the block
+  
   specClass <- paste0("spec", names(spec))
   
   for(i in seq_along(spec)) {
     spec[[i]] <- structure(
-      .Data=spec[[i]],
-      class=specClass[i],
-      pos=i
+      .Data = spec[[i]],
+      class = specClass[i],
+      pos = i
     )
   }
   
-  ## Call the handler for each block
-  spec <- lapply(spec,handle_spec_block,env=mread.env)
+  # Call the handler for each block
+  spec <- lapply(spec, handle_spec_block, env = mread.env)
   
-  ## Collect the results
-  param <- as.list(do.call("c",unname(mread.env$param)))
-  fixed <- as.list(do.call("c",unname(mread.env$fixed)))
-  init <-  as.list(do.call("c",unname(mread.env$init)))
-  ode <- do.call("c", unname(mread.env$ode))
+  # collect -----
+  # TODO: move this to the plugin handler
+  plugin <- get_plugins(spec[["PLUGIN"]], mread.env)
+  param <- as.list(do.call("c",unname(mread.env[["param"]])))
+  fixed <- as.list(do.call("c",unname(mread.env[["fixed"]])))
+  init <-  as.list(do.call("c",unname(mread.env[["init"]])))
+  ode <- do.call("c", unname(mread.env[["ode"]]))
+  namespace <- do.call("c", mread.env[["namespace"]])
+  omega <- omat(do.call("c", nonull.list(mread.env[["omega"]])))
+  sigma <- smat(do.call("c", nonull.list(mread.env[["sigma"]])))
+  if(isTRUE(SET[["collapse_omega"]])) {
+    omega <- collapse_matrix(omega)  
+  }
+  if(isTRUE(SET[["collapse_sigma"]])) {
+    sigma <- collapse_matrix(sigma)  
+  }
   annot_list_maybe <- nonull.list(mread.env$annot)
-  
   if (!length(annot_list_maybe)) {
     annot <- tibble()
   } else {
-    annot <- dplyr::bind_rows(annot_list_maybe)
+    annot <- bind_rows(annot_list_maybe)
   }
   
-  omega <- omat(do.call("c", nonull.list(mread.env$omega)))
-  sigma <- smat(do.call("c", nonull.list(mread.env$sigma)))
-  if(isTRUE(SET[["collapse_omega"]])) {
-    omega <- collapse_matrix(omega,"omegalist")  
-  }
-  if(isTRUE(SET[["collapse_sigma"]])) {
-    sigma <- collapse_matrix(sigma,"sigmalist")  
-  }
-  namespace <- do.call("c", mread.env$namespace)
-  
-  # capture is a vector that may be name or to_name = from_name
-  # capture will be to_names and it's names are from names 
+  # capture  ----
   capture_more <- capture
-  
-  capture <- unlist(do.call("c", nonull.list(mread.env$capture)))
-  
-  get_valid_capture <- function() {
-    n_omega <- sum(nrow(omega))
-    if(n_omega > 0) {
-      .eta <- paste0("ETA(",seq_len(n_omega),")")  
-    } else {
-      .eta <- NULL  
-    }
-    n_sigma <- sum(nrow(sigma))
-    if(n_sigma > 0) {
-      .eps <- paste0("EPS(",seq_len(n_sigma),")")
-    } else {
-      .eps <- NULL  
-    }
-    ans <- c(
-      names(param), 
-      unlist(labels(omega)), 
-      unlist(labels(sigma)),
-      .eta,
-      .eps,
-      build[["cpp_variables"]][["var"]]
-    )
-    unique(ans)
-  }
-  
-  if(is.character(capture_more)) {
-    valid_capture <- get_valid_capture()
-    if(identical(capture_more, "(everything)")) {
-      capture_more <- valid_capture[valid_capture != "."]  
-    }
-    capture_vars <- .ren.create(capture_more)
-    if(!all(capture_vars$old %in% valid_capture)) {
-      bad <- setdiff(capture_vars$old, valid_capture)
-      for(b in bad) {
-        msg <- glue(" - item `{b}` does not exist in model `{build$model}`")
-        message(msg)
-      }
-      stop("all requested `capture` variables must exist in the model", call.=FALSE)
-    }
-    capture <- unique(c(capture,capture_more))
-    build$preclean <- TRUE
-  }
-  
-  capture <- .ren.create(as.character(capture))
-  
+  capture_code <- unlist(do.call("c", nonull.list(mread.env[["capture"]])))
+  capture <- .ren.create(as.character(capture_code))
   annot <- capture_param(annot,.ren.new(capture))
   
-  check_globals_err <- check_globals(mread.env$move_global,names(init))
-  if(length(check_globals_err) > 0) {
-    stop(check_globals_err, call.=FALSE)
-  }
-  
-  ## Collect potential multiples
+  # Collect potential multiples
   subr  <- collect_subr(spec)
   table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
-  plugin <- get_plugins(spec[["PLUGIN"]])
   spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
   
-  ## Look for compartments we're dosing into: F/ALAG/D/R
-  ## and add them to CMTN
+  # TODO: deprecate audit argument
+  mread.env[["audit_dadt"]] <- 
+    isTRUE(audit) && isTRUE(mread.env[["audit_dadt"]])
+  
+  # Look for compartments we're dosing into: F/ALAG/D/R
+  # and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
   SET[["CMTN"]] <- c(spec[["CMTN"]], dosing)
   
-  # This section checks the contents of the spec and makes some special 
-  # interventions
-  # Virtual compartments
-  if(any(is.element("VCMT", names(spec)))) {
-    what <- which(names(spec)=="VCMT")
-    vcmt <- unique(names(unlist(mread.env$init[what])))
-    spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_",vcmt,"=0;"))
-  }
-  
-  if(is.element("Rcpp", names(plugin))) {
-    spec <- global_rcpp(spec)
-  }
-  
-  if(is.element("mrgx", names(plugin))) {
-    toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
-    topream <- "_env = mrgx::get_envir(self);"
-    spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
-    spec[["GLOBAL"]] <-   c(toglob, spec[["GLOBAL"]])
-  }
-  
-  ## Constructor for model object:
+  # new model object ----
   x <- new(
     "mrgmod",
     model = model,
-    soloc = build$soloc,
-    package = build$package,
-    project = build$project,
+    soloc = build[["soloc"]],
+    package = build[["package"]],
+    project = build[["project"]],
     fixed = fixed,
     advan = subr[["advan"]],
     trans = subr[["trans"]],
@@ -361,65 +305,33 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     param = as.param(param),
     init = as.init(init),
     funs = funs_create(model),
-    capture = .ren.chr(capture),
     envir = ENV, 
+    capture = .ren.chr(capture),
     plugin = names(plugin),
-    modfile = basename(build$modfile)
+    modfile = basename(build[["modfile"]])
   )
   
-  x <- store_annot(x,annot)
+  # updates -----
+  # First update with what we found in the model specification file
+  x <- update(x, data = SET, open = TRUE, strict = FALSE)
   
-  ## ADVAN 13 is the ODEs
-  ## Two compartments for ADVAN 2, 3 compartments for ADVAN 4
-  ## Check $MAIN for the proper symbols
-  if(x@advan %in% c(1,2,3,4)) {
-    if(subr[["n"]] != neq(x)) {
-      stop("$PKMODEL requires  ", subr[["n"]] , 
-           " compartments in $CMT or $INIT.",call.=FALSE)
-    }
-    check_pred_symbols(x,spec[["MAIN"]])
-  }
-  
-  ## This must come after audit
-  if(!has_name("ODE", spec)) {
-    spec[["ODE"]] <- "DXDTZERO();"
-  } else if(audit) {
-    spec[["ODE"]] <- c(spec[["ODE"]],ode)
-    audit_spec(x,spec,warn=warn)
-  }
-  
-  ## First update with what we found in the model specification file
-  x <- update(x, data=SET, open=TRUE, strict = FALSE)
-  
-  ## Arguments in $SET that will be passed to mrgsim
-  simargs <- SET[is.element(names(SET),set_args)]
-  if(length(simargs) > 0) {
-    x@args <- combine_list(x@args,simargs)
-  }
-  
-  ## Next, update with what the user passed in as arguments
+  # Next, update with what the user passed in as arguments
   args <- list(...)
-  x <- update(x, data=args, open=TRUE, strict = FALSE)
+  x <- update(x, data = args, open = TRUE, strict = FALSE)
+  x <- store_annot(x, annot)
   
-  ## Modify SS compartments
-  x <- set_ss_cmt(x,SET[["ss_cmt"]])
+  # Arguments in $SET that will be passed to mrgsim
+  x <- set_simargs(x, SET)
   
-  ## lock some of this down so we can check order later
-  x@code <- readLines(build$modfile, warn=FALSE)
-  x@shlib[["covariates"]] <- mread.env[["covariates"]]
-  x@shlib[["cpp_variables"]] <- build$cpp_variables
-  inc <- spec[["INCLUDE"]]
-  if(is.null(inc)) inc <- character(0)
-  x@shlib[["include"]] <- inc
-  x@shlib[["nm_import"]] <- mread.env[["nm_import"]]
-  x@shlib[["source"]] <- file.path(build$soloc,build$compfile)
-  x@shlib[["md5"]] <- build[["md5"]]
+  # Modify SS compartments
+  x <- set_ss_cmt(x, SET[["ss_cmt"]])
   
-  ## These are the various #define statements
-  ## that go at the top of the .cpp.cpp file
+  # model r defs ----
+  # These are the various #define statements
+  # that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(
-    pars = names(param),
-    cmt = names(init),
+    pars = Pars(x),
+    cmt = Cmt(x),
     ode_func(x),
     main_func(x),
     table_func(x),
@@ -433,13 +345,122 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     dbsyms = args[["dbsyms"]]
   )
   
-  ## IN soloc directory
+  # Handle plugins ----
+  # Virtual compartments
+  if("VCMT" %in% names(spec)) {
+    what <- which(names(spec)=="VCMT")
+    vcmt <- unique(names(unlist(mread.env[["init"]][what])))
+    spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
+  }
+  
+  # Handle nm-vars plugin
+  if("nm-vars" %in% names(plugin)) {
+    nmv  <- find_nm_vars(spec)
+    dfs <- generate_nmdefs(nmv)
+    rd <- c(rd, dfs)
+    plugin[["nm-vars"]][["nm-def"]] <- dfs
+    build[["nm-vars"]] <- nmv
+    audit_nm_vars(
+      spec,
+      param = param, 
+      init = init, 
+      build = build, 
+      nmv = nmv, 
+      env = mread.env
+    )
+  }
+  # autodec
+  if("autodec" %in% names(plugin)) {
+    auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE")
+    auto_skip <- cvec_cs(ENV[["MRGSOLVE_AUTODEC_SKIP"]])
+    autov <- autodec_vars(spec, blocks = auto_blocks)
+    autov <- autodec_clean(
+      autov, 
+      rdefs = rd, 
+      build = build, 
+      skip = auto_skip
+    )
+    autodec_nm_vars(autov, mread.env)
+    autodec_save(autov, build, mread.env)
+    mread.env[["autodec"]] <- autodec_namespace(build, mread.env)
+  }
+  
+  # Rcpp
+  if("Rcpp" %in% names(plugin)) {
+    spec <- global_rcpp(spec)
+  }
+  # mrgx  
+  if("mrgx" %in% names(plugin)) {
+    toglob <- wrap_namespace("Rcpp::Environment _env;", NULL)
+    topream <- "_env = mrgx::get_envir(self);"
+    spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
+    spec[["GLOBAL"]] <-   c(toglob, spec[["GLOBAL"]])
+  }
+  
+  # more captures ----
+  if(is.character(capture_more)) {
+    valid_capture <- get_valid_capture(
+      param = param, omega = omega, sigma = sigma, build = build, 
+      mread.env = mread.env
+    )
+    if(identical(capture_more, "(everything)")) {
+      capture_more <- valid_capture[valid_capture != "."]  
+    }
+    capture_vars <- .ren.create(capture_more)
+    if(!all(capture_vars[["old"]] %in% valid_capture)) {
+      bad <- setdiff(capture_vars[["old"]], valid_capture)
+      for(b in bad) {
+        msg <- glue(" - item `{b}` does not exist in model `{build$model}`")
+        message(msg)
+      }
+      stop(
+        "all requested `capture` variables must exist in the model",
+        call. = FALSE
+      )
+    }
+    capture_code <- unique(c(capture_code, capture_more))
+    capture <- .ren.create(capture_code)
+    x@capture <- .ren.chr(capture)
+    x <- default_outputs(x)
+    build$preclean <- TRUE
+  }
+  
+  # Check mod ----
+  check_pkmodel(x, subr, spec)
+  check_globals(mread.env[["move_global"]], Cmt(x))
+  check_sim_eta_eps_n(x, spec)
+  
+  # This must come after audit
+  # TODO: harmonize with other audit process
+  if(!has_name("ODE", spec)) {
+    spec[["ODE"]] <- "DXDTZERO();"
+  } else {
+    if(mread.env[["audit_dadt"]] && !mread.env[["using_nm-vars"]]) {
+      spec[["ODE"]] <- c(spec[["ODE"]], ode)
+      audit_spec(x, spec, warn = warn)
+    }
+  }
+  
+  # set up shlib ----
+  # lock some of this down so we can check order later
+  x@code <- readLines(build[["modfile"]], warn=FALSE)
+  x@shlib[["covariates"]] <- mread.env[["covariates"]]
+  x@shlib[["cpp_variables"]] <- build$cpp_variables
+  inc <- spec[["INCLUDE"]]
+  if(is.null(inc)) inc <- character(0)
+  x@shlib[["include"]] <- inc
+  x@shlib[["nm_import"]] <- mread.env[["nm_import"]]
+  x@shlib[["source"]] <- file.path(build[["soloc"]],build[["compfile"]])
+  x@shlib[["md5"]] <- build[["md5"]]
+  
+  # build----
+  # In soloc directory
   cwd <- getwd()
-  setwd(build$soloc)
+  setwd(build[["soloc"]])
   to_restore <- set_up_env(
-    x=plugin,
-    clink=c(project(x),SET$clink), 
-    CXX = ENV$PKG_CXXFLAGS
+    x = plugin,
+    clink = c(project(x), SET[["clink"]]), 
+    CXX = ENV[["PKG_CXXFLAGS"]]
   )
   on.exit({
     setwd(cwd)
@@ -447,7 +468,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   })
   
   incl <- function(x) paste0('#include "', x, '"')
-  header_file <- paste0(build$model, "-mread-header.h")
+  header_file <- paste0(build[["model"]], "-mread-header.h")
   
   dbs <- NULL
   if(isTRUE(args[["dbsyms"]])) {
@@ -455,11 +476,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   cat(
-    paste0("// Source MD5: ", build$md5, "\n"),
+    paste0("// Source MD5: ", build[["md5"]], "\n"),
     plugin_code(plugin),
     ## This should get moved to rd
     "\n// FIXED:",
-    fixed_parameters(fixed,SET[["fixed_type"]]),
+    fixed_parameters(fixed, SET[["fixed_type"]]),
     "\n// INCLUDES:",
     form_includes(spec[["INCLUDE"]]),
     "\n// NAMESPACES:",
@@ -473,18 +494,22 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     plugin_using(plugin),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
+    "// DECLARED BY USER", 
     mread.env[["global"]],
+    "// DECLARED VIA AUTODEC",
+    mread.env[["autodec"]],
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
     "\n// DEFS:",
     rd,
+    "",
     sep="\n", file = header_file)
   
   ## Write the model code to temporary file
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
-    paste0("// Source MD5: ", build$md5, "\n"),
+    paste0("// Source MD5: ", build[["md5"]], "\n"),
     incl(header_file),
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
@@ -508,6 +533,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["PRED"]],
     write_capture(.ren.old(capture)),
     "__END_table__",
+    "", 
     sep="\n", file=def.con)
   close(def.con)
   
@@ -517,41 +543,41 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   same <- check_and_copy(
     from = temp_write,
-    to = build$compfile
+    to = build[["compfile"]]
   )
-  
+
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
-    message("Building ", model(x), " ... ", appendLF=FALSE)
+    message("Building ", model(x), " ... ", appendLF = FALSE)
   }
   
   # Wait at least 2 sec since last compile
   safe_wait(x)
   cleanso(x)
   
-  ## Compile the model
-  ## The shared object is model-mread-source.cpp
+  # Compile the model
+  # The shared object is model-mread-source.cpp
   
   out <- suppressWarnings(build_exec(build))
   
   comp_success <- out[["status"]]==0 & file.exists(build[["compout"]])
   
   if(!comp_success) {
-    if(ignore.stdout) message("error.\n", appendLF=FALSE)
-    return(build_failed(out,build,x,spec,ignore.stdout))
+    if(ignore.stdout) message("error.\n", appendLF = FALSE)
+    return(build_failed(out, build, x, spec, ignore.stdout))
   } 
   
   if(ignore.stdout) {
-    if(!quiet) message("done.\n", appendLF=FALSE)
+    if(!quiet) message("done.\n", appendLF = FALSE)
   }  else {
-    out <- build_output_cleanup(out,build) 
-    cat(out[["stdout"]],sep="\n")
+    out <- build_output_cleanup(out, build) 
+    cat(out[["stdout"]], sep = "\n")
   }
   
-  ## Rename the shared object to unique name
-  ## e.g model2340239403.so
-  z <- file.copy(build[["compout"]],sodll(x))
+  # Rename the shared object to unique name
+  # e.g model2340239403.so
+  z <- file.copy(build[["compout"]], sodll(x))
   
   dyn.load(sodll(x))
   

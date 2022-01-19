@@ -102,15 +102,15 @@ See \code{\link{exdatasets}} for different example data sets.
 
 mod <- mrgsolve::house()
 
-data <- expand.ev(ID=1:3, amt=c(10,20))
+data <- expand.ev(ID=seq(3), amt=c(10, 20))
 
-mod \%>\% data_set(data, ID > 1) \%>\% mrgsim
+mod \%>\% data_set(data, ID > 1) \%>\% mrgsim()
 
 data(extran1)
 head(extran1)
 
-mod \%>\% data_set(extran1) \%>\% mrgsim
-mod \%>\% mrgsim(data=extran1)
+mod \%>\% data_set(extran1) \%>\% mrgsim()
+mod \%>\% mrgsim(data = extran1)
 
 }
 \seealso{

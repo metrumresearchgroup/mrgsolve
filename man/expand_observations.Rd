@@ -19,7 +19,7 @@ to put observations first; otherwise, use large integer to ensure
 observations are placed after doses}
 }
 \value{
-A data frame
+A data frame with additional rows for added observation records.
 }
 \description{
 Insert observations into a data set
@@ -28,8 +28,8 @@ Insert observations into a data set
 Non-numeric columns will be dropped with a warning.
 }
 \examples{
-data <- expand.ev(amt = c(100,200,300))
+data <- expand.ev(amt = c(100, 200, 300))
 
-expand_observations(data, times = seq(0,48,2))
+expand_observations(data, times = seq(0, 48, 2))
 
 }

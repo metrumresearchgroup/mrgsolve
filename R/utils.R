@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -299,6 +299,10 @@ cvec.character <- as.cvec
 s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 
 ##' Access or clear arguments for calls to mrgsim
+##' 
+##' As a model object navigates a pipeline prior to simulation, arguments are
+##' collected to eventually be passed to [mrgsim()]. `simargs` lets you 
+##' intercept and possibly clear those arguments.
 ##'
 ##' @param x model object
 ##' @param clear logical indicating whether or not to clear `args` from 
@@ -312,11 +316,11 @@ s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 ##' 
 ##' @examples
 ##' mod <- mrgsolve::house()
-##' mod %>% Req(CP,RESP) %>% carry_out(evid,WT,FLAG) %>% simargs
+##' mod %>% Req(CP, RESP) %>% carry_out(evid, WT, FLAG) %>% simargs()
 ##' 
 ##' @md
 ##' @export
-simargs <- function(x, which = NULL, clear=FALSE,...) {
+simargs <- function(x, which = NULL, clear = FALSE,...) {
   
   if(clear) {
     x@args <- list()
@@ -406,13 +410,24 @@ null_list <- setNames(list(), character(0))
 
 single.number <- function(x) length(x)==1 & is.numeric(x)
 
-has_name <- function(name,object) {
-  is.element(name,names(object))
+has_name <- function(name, object) {
+  name[1] %in% names(object)
 }
 
 has_ID <- function(object) {
-  is.element("ID", names(object)) 
+  "ID" %in% names(object)
 }
+
+.colnames <- function(x) {
+  if(is.matrix(x)) {
+    return(dimnames(x)[[2]])  
+  }
+  if(is.data.frame(x)) {
+    return(names(x))  
+  }
+  colnames(x)
+}
+
 
 file_exists <- function(x) {
   file.exists(x)
@@ -476,6 +491,7 @@ locf_ev <- function(x) {
   x
 }
 
+# TODO: refactor these; probably not needed anymore
 arrange__ <- function(df, .dots) {
   arrange(df, `!!!`(syms(.dots)))
 }
@@ -504,9 +520,18 @@ divider_msg <- function(msg = "", width = 60) {
   return(msg)
 }
 
-reg_exec_match <- function(x, pattern) {
-  m <- regexec(pattern,x)
-  regmatches(x,m)
+reg_exec_match <- function(text, pattern, ...) {
+  regmatches(text, regexec(pattern, text, ...))
+}
+
+# TODO: gregexec is now in base R as of 4.1.0
+gregexecdf <- function(pattern, text, fixed = FALSE) {
+  x <- regmatches(text, gregexpr(pattern, text, fixed = fixed))
+  x <- x[lengths(x) > 0]
+  x <- lapply(x, reg_exec_match, pattern = pattern, fixed = fixed)
+  x <- lapply(x, do.call, what = rbind)
+  x <- do.call(rbind, x)
+  as.data.frame(x, stringsAsFactors = FALSE)
 }
 
 collect_opts <- function(x) {
@@ -541,6 +566,7 @@ make_matrix_labels <- function(mat,lab,diag=TRUE) {
 
 
 # nocov start
+# TODO: give up on this
 is.numeric.data.frame <- function(x) vapply(x,is.numeric,TRUE)
 
 mapvalues <- function (x, from, to, warn_missing = FALSE) { 
