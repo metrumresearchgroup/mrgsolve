@@ -173,4 +173,8 @@ plugins[["autodec"]] <- list(
   name = "autodec", code = "// auto-dec plugin"
 )
 
+plugins[["evtools"]] <- list(
+  name = "evtools", code = "#define _MRGSOLVE_USING_EVTOOLS_"  
+)
+
 # nocov end
