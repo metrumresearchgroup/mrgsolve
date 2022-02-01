@@ -582,7 +582,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               CRUMP("Compartment number in modeled event out of range.");
             }
           }
-          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,0.0);
+          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
           new_ev->phantom_rec();
           if(mt[mti].now) {
             new_ev->implement(&prob);
