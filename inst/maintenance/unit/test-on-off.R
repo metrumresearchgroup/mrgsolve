@@ -25,10 +25,12 @@ context("test-on-off")
 
 ode_on_off_1 <- '
 [ param ] R = 1, F1 = 1
-[ cmt   ] A
+[ cmt   ] A 
 [ main  ] F_A = F1; 
 [ ode   ] dxdt_A = R;
+[ capture ] NEWIND
 '
+mod <- mcode("ode_on_off_1", ode_on_off_1)
 
 test_that("compartment is turned on when F is zero", {
   data <- c(
@@ -40,7 +42,7 @@ test_that("compartment is turned on when F is zero", {
   # run out to 24 hours
   # with events at time 4 and 6, there would be duplicate records at 
   # those times
-  mod <- mcode("ode_on_off_1", ode_on_off_1)  
+    
   out <- mrgsim(mod, data)
   ans <- out$A
   time <- out$time
@@ -87,4 +89,15 @@ test_that("compartment with active infusion can be turned off", {
   }
   expect_equal(comp[[1]], comp[[2]])
   expect_equal(comp[[1]], comp[[3]])
+})
+
+test_that("evid 3 doesn't change NEWIND", {
+  dose <- ev(amt = 0, evid = 3, cmt = 1, time = 5)
+  out <- mrgsim(mod, dose, output = "df")
+  expect_equal(out$NEWIND[1], 0)
+  out <- out[-1,]
+  expect_true(all(out$NEWIND==2))
+  expect_equal(out$A[5], 5)
+  expect_equal(out$A[6], 0)
+  expect_equal(out$A[7], 1)
 })
