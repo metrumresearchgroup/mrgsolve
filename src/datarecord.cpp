@@ -179,10 +179,7 @@ void datarecord::implement(odeproblem* prob) {
       prob->on(i);
       prob->rate0(i,0.0);
     }
-    {
-      prob->newind(1);
-      prob->init_call(Time);
-    }
+    prob->init_call(Time);
     break;
   case 8: // replace
     prob->y(eq_n, Amt);
