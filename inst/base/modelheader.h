@@ -128,10 +128,11 @@ typedef double capture;
 #define CFONSTOP() (self.CFONSTOP = true); // Carry forward on stop
 #define SYSTEMNOTADVANCING (self.SYSTEMOFF)
 #define SOLVINGPROBLEM (self.solving)
-#define _SETINIT if(self.newind <=1) // Convenience
-#define _STOP_ID() (self.SYSTEMOFF=2);
-#define _STOP_ID_CF() (self.SYSTEMOFF=1);
-#define _STOP_ERROR() (self.SYSTEMOFF=9);
+#define _SETINIT if(self.newind <= 1) // Convenience
+#define _STOP_ID() (self.SYSTEMOFF = 1); // Stop this ID, log record, and fill NA after that
+#define _STOP_ID_CF() (self.SYSTEMOFF = 2); // Stop this ID and carry forward
+#define _STOP_ID_NA() (self.SYSTEMOFF = 3); // Fill na
+#define _STOP_ERROR() (self.SYSTEMOFF = 9); // CRUMP
 
 // Macro to insert dxdt_CMT = 0; for all compartments
 #define DXDTZERO() for(int _i_ = 0; _i_ < _nEQ; ++_i_) _DADT_[_i_] = 0;
