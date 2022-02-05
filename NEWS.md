@@ -19,8 +19,10 @@
 - Use `ii` as spacer for setting the between-dose interval when putting event
   objects in a sequence (c.f. `wait`) (#906, #901). 
 
-- Start deprecating `simeta(n)` and `simeps(n)`; use in model code will 
-  generate warning when loading the model (#908, #909). 
+- Start deprecating`simeta(n)` and `simeps(n)`, calls to `simeta()` or 
+  `simeps()` with an integer argument thus limiting the update to just a single 
+  `ETA(n)` or `EPS(n)`; use in model code will generate warning when loading 
+  the model that contains the `n` integer value (#908, #909). 
 
 
 
