@@ -146,36 +146,85 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 })
 
 
-##' Convert select upper case column names to lower case 
-##' 
-##' Previous data set requirements included lower case names for data items 
-##' like `AMT` and `EVID`. Lower case is no longer required. 
-##' 
-##' @param data an nmtran-like data frame
-##' 
-##' @return A data.frame with renamed columns
-##'
-##' @details
-##' Columns that will be renamed with lower case versions: `AMT`, 
-##' `II`, `SS`, `CMT`, `ADDL`, `RATE`, `EVID`, 
-##' `TIME`.  If a lower case version of these names exist in the data 
-##' set, the column will not be renamed.
-##' 
-##' @examples
-##' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2)
-##' lctran(data)
-##' 
-##' @return 
-##' The input data set, with select columns made lower case.
-##' 
-##' @md
-##' @export
-lctran <- function(data) {
+#' Change the case of nmtran-like data items
+#' 
+#' Previous data set requirements included lower case names for data items 
+#' like `AMT` and `EVID`. Lower case is no longer required. However, it is still
+#' a requirement that nm-tran like data column names are either all lower case
+#' or all upper case. 
+#' 
+#' Columns that will be renamed with lower or upper case versions: 
+#' 
+#' - `AMT  / amt`
+#' - `II   / ii`
+#' - `SS   / ss`
+#' - `CMT  / cmt`
+#' - `ADDL / addl`
+#' - `RATE / rate`
+#' - `EVID / evid`
+#' - `TIME / time`
+#' 
+#' If both lower and upper case versions of the name are present in the data 
+#' frame, no changes will be made. 
+#' 
+#' @param data A data set with nmtran-like format.
+#' @param warn If `TRUE`, a warning will be issued when there are both upper
+#' and lower case versions of any nmtran-like column in the data frame.
+#' 
+#' @return 
+#' A data frame with possibly renamed columns.
+#' 
+#' @examples
+#' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, WT = 80)
+#' lctran(data)
+#' 
+#' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, wt = 80)
+#' uctran(data)
+#' 
+#' # warning
+#' data <- data.frame(TIME = 1, time = 2, CMT = 5)
+#' lctran(data)
+#' 
+#' @return 
+#' The input data set, with select columns made lower case.
+#' 
+#' @md
+#' @export
+lctran <- function(data, warn = TRUE) {
+  if(!is.data.frame(data)) {
+    stop("`data` must be a data.frame.") 
+  }
   n <- names(data)
-  infrom <- is.element(n,tran_upper)
-  haslower <- is.element(tolower(n),n)
+  infrom <- n %in% GLOBALS$TRAN_UPPER
+  haslower <- tolower(n) %in% n
   change <- infrom & !haslower
-  if(sum(change) > 0) names(data)[change] <- tolower(n[change])
+  if(any(change)) names(data)[change] <- tolower(n[change])
+  if(isTRUE(warn) && any(dup <- infrom & haslower)) {
+    warning(
+      "There are both upper and lower case versions ", 
+      "of some nmtran names in the data set"
+    )
+  }
+  data
+}
+
+#' @rdname lctran
+#' @export
+uctran <- function(data, warn = TRUE) {
+  if(!is.data.frame(data)) {
+    stop("`data` must be a data.frame.") 
+  }
+  n <- names(data)
+  infrom <- n %in% GLOBALS$TRAN_LOWER
+  hasupper <- toupper(n) %in% n
+  change <- infrom & !hasupper
+  if(any(change)) names(data)[change] <- toupper(n[change])
+  if(isTRUE(warn) && any(dup <- infrom & hasupper)) {
+    warning(
+      "There are both upper and lower case versions ", 
+      "of some nmtran names in the data set."
+    )
+  }
   data
 }
 
