@@ -25,11 +25,13 @@ as.evd(x)
 }
 \description{
 This function calls \code{\link[=ev]{ev()}} to create an event object and then sets the
-case attribute so that it renders as upper case tran names.
+case attribute so that it renders nntran data names in upper case. An
+object created with \code{\link[=evd]{evd()}} can be used in the same way as an object
+created with \code{\link[=ev]{ev()}}.
 }
 \details{
 Note that \code{evd} isn't a separate class; it is just an \code{ev} object with
-a specific \code{case} attribute.
+a specific \code{case} attribute. See examples which illustrate the difference.
 }
 \examples{
 a <- evd(amt = 100)
@@ -40,4 +42,7 @@ as_data_set(a, b)
 as_data_set(b, a)
 as.data.frame(seq(a, b))
 
+}
+\seealso{
+\code{\link[=ev]{ev()}}, \code{\link[=lctran]{lctran()}}, \code{\link[=uctran]{uctran()}}
 }

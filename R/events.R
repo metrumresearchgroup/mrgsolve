@@ -59,7 +59,7 @@
 #' }
 #' @return events object
 #' 
-#' @seealso \code{\link{ev_rep}}, \code{\link{ev_days}}, 
+#' @seealso \code{\link{evd}}, \code{\link{ev_rep}}, \code{\link{ev_days}}, 
 #' \code{\link{ev_repeat}}, \code{\link{ev_assign}},
 #' \code{\link{ev_seq}}, \code{\link{mutate.ev}},
 #' \code{\link{as.ev}}, \code{\link{ev_methods}}

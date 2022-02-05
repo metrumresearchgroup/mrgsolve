@@ -6,10 +6,12 @@
 #' Create an event object with data-like names
 #' 
 #' This function calls [ev()] to create an event object and then sets the 
-#' case attribute so that it renders as upper case tran names.
+#' case attribute so that it renders nntran data names in upper case. An 
+#' object created with [evd()] can be used in the same way as an object
+#' created with [ev()].
 #' 
 #' Note that `evd` isn't a separate class; it is just an `ev` object with 
-#' a specific `case` attribute.
+#' a specific `case` attribute. See examples which illustrate the difference.
 #' 
 #' @param x An mrgmod object.
 #' @param ... Arguments passed to [ev()].
@@ -22,6 +24,8 @@
 #' as_data_set(a, b)
 #' as_data_set(b, a)
 #' as.data.frame(seq(a, b))
+#' 
+#' @seealso [ev()], [lctran()], [uctran()]
 #' 
 #' @md
 #' @export
