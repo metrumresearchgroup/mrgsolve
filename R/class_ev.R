@@ -16,8 +16,18 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# A series of functions for dealing with ev/data.frame
+# A series of functions for dealing with ev/data.frame -------
 
+#' Just get the data.frame part
+#' 
+#' This is an internal function. 
+#' 
+#' If an event object, return `data` slot; otherwise, call as.data.frame. This 
+#' is supposed to be optimized for handling event objects. 
+#' 
+#' @param x An R object. 
+#' 
+#' @noRd
 to_data_frame <- function(x) {
   # Just return the data frame
   if(is.ev(x)) {
@@ -27,6 +37,14 @@ to_data_frame <- function(x) {
   }
 }
 
+#' Convert an event object to data set
+#' 
+#' Call this function when `x` is already known to be an event object. 
+#' 
+#' @param x An event object.
+#' @param id The subject ID. 
+#' 
+#' @noRd
 ev_to_ds <- function(x, id = 1) {
   # Specifically for simulating a (known) ev object
   ans <- x@data
@@ -35,6 +53,11 @@ ev_to_ds <- function(x, id = 1) {
   recase_ev(ans, x@case)
 }
 
+#' Create a data set from and event object or data frame
+#' 
+#' This is more general applicability. 
+#' 
+#' @noRd
 As_data_set <- function(x, id = 1) {
   # Possibly handle data.frame or 
   if(is.ev(x)) return(ev_to_ds(x, id = id))
