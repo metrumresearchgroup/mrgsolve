@@ -751,18 +751,17 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
 void odeproblem::omega(const Rcpp::S4& mod) {
   const Rcpp::S4 omega = mod.slot("omega");
   Omega = MAKEMATRIX(omega);
-  //Omega = 0.5 * (Omega + Omega.t());
-  if(!(Omega.is_symmetric())) {
-    Rcpp::stop("OMEGA is not symmetric");  
-  }
+  // if(!(Omega.is_symmetric())) {
+  //   Rcpp::stop("OMEGA is not symmetric");  
+  // }
 }
 
 void odeproblem::sigma(const Rcpp::S4& mod) {
   const Rcpp::S4 sigma = mod.slot("sigma");
   Sigma = MAKEMATRIX(sigma);
-  if(!(Sigma.is_symmetric())) {
-    Rcpp::stop("SIGMA is not symmetric");  
-  }
+  // if(!(Sigma.is_symmetric())) {
+  //   Rcpp::stop("SIGMA is not symmetric");  
+  // }
 }
 
 arma::mat odeproblem::mv_omega(int n) {
