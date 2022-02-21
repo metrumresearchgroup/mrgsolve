@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2022  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -42,11 +42,8 @@
  *
  */
 
-
-
 #include "RcppInclude.h"
 #include "mrgsolv.h"
-
 
 #define CALLDEF(name, n)  {#name, (DL_FUNC) &name, n}
 
