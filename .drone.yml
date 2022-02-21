@@ -12,30 +12,30 @@ steps:
   image: omerxx/drone-ecr-auth
   commands:
   - $(aws ecr get-login --no-include-email --region us-east-1)
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:2022-02-11
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:2022-02-11
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:2022-02-11
+  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:latest
+  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:latest
+  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:latest
   volumes:
   - name: docker.sock
     path: /var/run/docker.sock
 
 - name: "Check package: R 4.1"
   pull: never
-  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:2022-02-11
+  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:latest
   commands:
   - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
   - make drone
 
 - name: "Check package: R 4.0"
   pull: never
-  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:2022-02-11
+  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:latest
   commands:
   - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
   - make drone
 
 - name: "Check package: R 3.6"
   pull: never
-  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:2022-02-11
+  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:latest
   commands:
   - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
   - make drone
