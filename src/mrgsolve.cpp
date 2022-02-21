@@ -245,7 +245,9 @@ Rcpp::NumericMatrix MAKEMATRIX(const Rcpp::S4& matlist) {
     tot = tot + n[i];  
   }
   
+  // to assign when reading in 
   Rcpp::NumericMatrix mat;  
+  // the result
   Rcpp::NumericMatrix ret(tot,tot);
   
   tot = 0;
