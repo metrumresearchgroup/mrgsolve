@@ -723,7 +723,7 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
   for(int i = 0; i < linit.size(); ++i) { 
     init[i] = linit[i];
   }
-
+  
   odeproblem prob(lparam, init, funs, capture.size());
   prob.omega(mod);
   prob.sigma(mod);
@@ -751,14 +751,17 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
 void odeproblem::omega(const Rcpp::S4& mod) {
   Omega = MAKEMATRIX(mod.slot("omega"));
   if(!Omega.is_symmetric()) {
-    Rcpp::stop("OMEGA is not symmetic");  
+    Omega = 0.5 * (Omega + Omega.t());
+    if(!Omega.is_symmetric()) {
+      Rcpp::stop("OMEGA is not symmetric");  
+    }
   }
 }
 
 void odeproblem::sigma(const Rcpp::S4& mod) {
   Sigma = MAKEMATRIX(mod.slot("sigma"));
   if(!Sigma.is_symmetric()) {
-    Rcpp::stop("SIGMA is not symmetic");  
+    Rcpp::stop("SIGMA is not symmetric.");  
   }
 }
 

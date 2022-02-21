@@ -229,13 +229,13 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   Rcpp::List a = matlist.slot("data");
   
   if(a.size()==0) {
-    arma::mat ret(0,0); 
+    arma::mat ret(0, 0); 
     return ret;
   }
   
   if(a.size()==1) {
     Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(a[0]);
-    arma::mat ret(mat.begin(), mat.nrow(), mat.ncol(), false );
+    arma::mat ret(mat.begin(), mat.nrow(), mat.ncol(), false);
     return ret;  
   }
   
