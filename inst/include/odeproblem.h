@@ -119,10 +119,7 @@ public:
   void config_call();
   
   void set_d(rec_ptr this_rec);
-  
-  void omega(const arma::mat& x);
-  void sigma(const arma::mat& x);
-  
+
   void omega(const Rcpp::S4& mod);
   void sigma(const Rcpp::S4& mod);
 
@@ -207,7 +204,7 @@ public:
   /// sets the absolute and relative tolerances
   void tol(double atol, double rtol);
   
-  
+
   std::vector<double> Y; ///< compartment amounts
   std::vector<double> Ydot;  ///< dxdt values
   std::vector<double> Yout; ///< used to hold Y values during solving
@@ -268,10 +265,5 @@ double PolyExp(const double& x,
                const std::vector<double>& a,
                const std::vector<double>& alpha,
                const int n);
-
-// Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
-//                       const Rcpp::NumericVector& linit,
-//                       const Rcpp::CharacterVector& capture,
-//                       const Rcpp::List& funs);
 
 #endif

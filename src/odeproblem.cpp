@@ -748,16 +748,8 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
   return(ans);
 }
 
-void odeproblem::omega(const arma::mat& x) {
-  Omega = x;
-}
-
 void odeproblem::omega(const Rcpp::S4& mod) {
   Omega = MAKEMATRIX(mod.slot("omega"));
-}
-
-void odeproblem::sigma(const arma::mat& x) {
-  Sigma = x;
 }
 
 void odeproblem::sigma(const Rcpp::S4& mod) {
@@ -771,4 +763,3 @@ arma::mat odeproblem::mv_omega(int n) {
 arma::mat odeproblem::mv_sigma(int n) {
   return MVGAUSS(Sigma, n);
 }
-

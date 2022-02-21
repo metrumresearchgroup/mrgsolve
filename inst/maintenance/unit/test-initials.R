@@ -40,15 +40,12 @@ mod <- mcode("test-init", code1, warn=FALSE)
 
 context("test-initials")
 
-
 test_that("Set initials via init", {
   out <- mod %>% init(A=1, B=2, C=3) %>% mrgsim %>% filter(time==0)
   expect_equal(out$A,1)
   expect_equal(out$B,2)
   expect_equal(out$C,3)
-  
 })
-
 
 test_that("Set initials via $MAIN", {
   
@@ -75,12 +72,10 @@ test_that("Set initials via $MAIN", {
 
 test_that("Set initials via idata", {
   id <- tibble(ID=1:3, C_0 = c(99,88,77), B_0 = c(6,7,8))
+  pre <- mrgsolve:::Cmt(mod)
   out <- mod %>% idata_set(id) %>% mrgsim %>% filter(time==0)
   expect_equal(out$B,c(6,7,8))
   expect_equal(out$C,c(99,88,77))
+  post <- mrgsolve:::Cmt(mod)
+  expect_identical(pre, post)
 })
-
-
-
-
-
