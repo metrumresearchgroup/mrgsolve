@@ -239,10 +239,10 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
     return ret;  
   }
   
-  Rcpp::IntegerVector n = matlist.slot("n");
+  Rcpp::IntegerVector nn = matlist.slot("n");
   int tot = 0;
-  for(int i = 0; i < n.size(); ++i) {
-    tot = tot + n[i];  
+  for(int i = 0; i < nn.size(); ++i) {
+    tot = tot + nn[i];  
   }
   
   // to assign when reading in 
@@ -252,7 +252,7 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   
   tot = 0;
   
-  for(int i = 0, n = a.size(); i < n; ++i) {
+  for(int i = 0; i < a.size(); ++i) {
     mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
     for(int j = 0; j < mat.nrow(); ++j) {
       for(int k = 0; k < mat.ncol(); ++k) {
