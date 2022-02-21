@@ -94,7 +94,7 @@ void dosimeps(void*);
 class odeproblem {
 
 public:
-  odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, 
+  odeproblem(Rcpp::List param,Rcpp::NumericVector init, 
              Rcpp::List funs,
              int n_capture_);
 
@@ -184,7 +184,7 @@ public:
   double capture(int i) {return Capture[i];}
   
   /// copies items passed in through parin into the odeproblem object
-  void copy_parin(const Rcpp::List& parin);
+  void copy_parin(const Rcpp::List& parin, const Rcpp::S4& mod);
   void copy_funs(const Rcpp::List& funs);
   
   bool any_mtime() {return d.mevector.size() > 0;}

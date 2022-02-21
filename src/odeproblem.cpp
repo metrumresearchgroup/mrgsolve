@@ -60,7 +60,7 @@ void dosimeps(void* prob_, int n) {
   }
 }
 
-odeproblem::odeproblem(Rcpp::NumericVector param,
+odeproblem::odeproblem(Rcpp::List param,
                        Rcpp::NumericVector init,
                        Rcpp::List funs,
                        int n_capture_) {
@@ -656,20 +656,20 @@ double PolyExp(const double& x,
   return bolusResult + rate*result;
 }
 
-void odeproblem::copy_parin(const Rcpp::List& parin) {
-  advan(Rcpp::as<int>(parin["advan"]));
+void odeproblem::copy_parin(const Rcpp::List& parin, const Rcpp::S4& mod) {
+  advan(Rcpp::as<int>(mod.slot("advan")));
   ss_n = Rcpp::as<int>(parin["ss_n"]);
   ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
-  Rtol = Rcpp::as<double>(parin["rtol"]);
-  Atol = Rcpp::as<double>(parin["atol"]);
-  ssRtol = Rcpp::as<double>(parin["ss_rtol"]);
-  ssAtol = Rcpp::as<double>(parin["ss_atol"]);
+  Rtol = Rcpp::as<double>(mod.slot("rtol"));
+  Atol = Rcpp::as<double>(mod.slot("atol"));
+  ssRtol = Rcpp::as<double>(mod.slot("ss_rtol"));
+  ssAtol = Rcpp::as<double>(mod.slot("ss_atol"));
   if(Advan==13) {
     ssRtol = std::max(ssRtol,Rtol);
     ssAtol = std::max(ssAtol,Atol);
   }
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
-  Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
+  Ss_cmt = Rcpp::as<std::vector<int>>(mod.slot("ss_cmt"));
   interrupt = Rcpp::as<int>(parin["interrupt"]);
 }
 
@@ -710,7 +710,7 @@ void odeproblem::advan(int x) {
  * 
  */
 // [[Rcpp::export]]
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+Rcpp::List TOUCH_FUNS(const Rcpp::List& lparam, 
                       const Rcpp::NumericVector& linit,
                       int Neta, int Neps,
                       const Rcpp::CharacterVector& capture,

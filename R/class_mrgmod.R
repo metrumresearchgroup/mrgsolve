@@ -746,14 +746,17 @@ blocks_ <- function(file,what) {
 
 parin <- function(x) {
   list(
-    rtol=x@rtol,atol=x@atol,ss_rtol=x@ss_rtol,ss_atol=x@ss_atol,
-    hmin=as.double(x@hmin), hmax=as.double(x@hmax),
-    maxsteps=x@maxsteps,ixpr=x@ixpr,mxhnil=x@mxhnil,
-    verbose=as.integer(x@verbose),debug=x@debug,
-    digits=x@digits, tscale=x@tscale,
-    mindt=x@mindt, advan=x@advan, 
+    #rtol=x@rtol,atol=x@atol,
+    #ss_rtol=x@ss_rtol,
+    #ss_atol=x@ss_atol,
+    #hmin=as.double(x@hmin), hmax=as.double(x@hmax),
+    #maxsteps=x@maxsteps,ixpr=x@ixpr,mxhnil=x@mxhnil,
+    verbose=as.integer(x@verbose),
+    #debug=x@debug,
+    # advan=x@advan, 
     ss_n = 500, ss_fixed = FALSE, 
-    ss_cmt = x@ss_cmt, interrupt = -1
+    #ss_cmt = x@ss_cmt, 
+    interrupt = -1
   )
 }
 

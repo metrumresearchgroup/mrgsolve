@@ -638,16 +638,10 @@ do_mrgsim <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    as.numeric(Param(x)),
-    Pars(x),
-    as.numeric(Init(x)),
-    Cmt(x),
-    CAPTUREI(x),
     pointers(x),
-    data,idata,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir, 
+    data,
+    idata,
+    x,
     PACKAGE = "mrgsolve"
   )
   
@@ -827,16 +821,9 @@ qsim <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    as.numeric(Param(x)),
-    Pars(x),
-    as.numeric(Init(x)),
-    Cmt(x),
-    CAPTUREI(x),
     pointers(x),
     data,idata,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir, 
+    x,
     PACKAGE = "mrgsolve"
   )
   

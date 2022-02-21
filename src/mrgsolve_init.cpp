@@ -53,9 +53,9 @@
 RcppExport SEXP _mrgsolve_dcorr(SEXP);
 RcppExport SEXP _mrgsolve_get_tokens(SEXP);
 RcppExport SEXP _mrgsolve_MVGAUSS(SEXP,SEXP);
-RcppExport SEXP _mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,
-                                  SEXP,SEXP,SEXP,SEXP);
+RcppExport SEXP _mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP);
 RcppExport SEXP _mrgsolve_SUPERMATRIX(SEXP,SEXP);
+RcppExport SEXP _mrgsolve_MAKEMATRIX(SEXP);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
 RcppExport SEXP _mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
 RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP,SEXP,SEXP,SEXP);
@@ -68,8 +68,9 @@ RcppExport void _model_housemodel_config__(MRGSOLVE_CONFIG_SIGNATURE);
 static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_get_tokens,1),
   CALLDEF(_mrgsolve_MVGAUSS,2),
-  CALLDEF(_mrgsolve_DEVTRAN,12),
+  CALLDEF(_mrgsolve_DEVTRAN,5),
   CALLDEF(_mrgsolve_SUPERMATRIX,2),
+  CALLDEF(_mrgsolve_MAKEMATRIX,1),
   CALLDEF(_mrgsolve_TOUCH_FUNS,7),
   CALLDEF(_mrgsolve_EXPAND_EVENTS,3),
   CALLDEF(_mrgsolve_EXPAND_OBSERVATIONS,4),

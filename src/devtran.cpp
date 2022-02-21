@@ -56,37 +56,56 @@
  */
 // [[Rcpp::export]]
 Rcpp::List DEVTRAN(const Rcpp::List parin,
-                   const Rcpp::NumericVector& inpar,
-                   const Rcpp::CharacterVector& parnames,
-                   const Rcpp::NumericVector& init,
-                   Rcpp::CharacterVector& cmtnames,
-                   const Rcpp::IntegerVector& capture,
                    const Rcpp::List& funs,
                    const Rcpp::NumericMatrix& data,
                    const Rcpp::NumericMatrix& idata,
-                   Rcpp::NumericMatrix& OMEGA,
-                   Rcpp::NumericMatrix& SIGMA,
-                   Rcpp::Environment envir) {
+                   const Rcpp::S4& mod) {
   
   const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
-  const bool debug            = Rcpp::as<bool>   (parin["debug"]);
-  const int digits            = Rcpp::as<int>    (parin["digits"]);
-  const double tscale         = Rcpp::as<double> (parin["tscale"]);
   const bool obsonly          = Rcpp::as<bool>   (parin["obsonly"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
   obsaug = obsaug & (data.nrow() > 0);
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
-  const double mindt          = Rcpp::as<double> (parin["mindt"]);
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
+
+  // Grab items from the model object --------------------
+  const double digits = Rcpp::as<double>(mod.slot("digits"));
+  const double tscale = Rcpp::as<double>(mod.slot("tscale"));
+  const double mindt  = Rcpp::as<double>(mod.slot("mindt"));
+  const bool   debug  = Rcpp::as<bool>(mod.slot("debug"));
+
+  Rcpp::Environment envir = mod.slot("envir");
+  // We need to decrement capture indices; this needs to be cloned
+  const Rcpp::CharacterVector cap = mod.slot("capture");
+  Rcpp::IntegerVector capture = mod.slot("Icap");
+  capture = Rcpp::clone(capture); 
+  capture = capture - 1;
+  // Model matrices
+  const Rcpp::S4 omega = mod.slot("omega");
+  const Rcpp::S4 sigma = mod.slot("sigma");
+  Rcpp::NumericMatrix OMEGA = MAKEMATRIX(mod.slot("omega"));
+  Rcpp::NumericMatrix SIGMA = MAKEMATRIX(mod.slot("sigma"));
+  // Parameters
+  const Rcpp::List Param = mod.slot("param");
+  Rcpp::CharacterVector paramnames(Param.names());
+  paramnames = Rcpp::clone(paramnames);
+  // Compartments
+  const Rcpp::List Init = mod.slot("init");
+  Rcpp::CharacterVector cmtnames(Init.names());
+  cmtnames = Rcpp::clone(cmtnames);
+  Rcpp::NumericVector init(Init.size());
+  for(int i = 0; i < init.size(); ++i) {
+    init[i] = Init[i];  
+  }
   
   // Create data objects from data and idata
-  dataobject dat(data, parnames);
+  dataobject dat(data, paramnames);
   dat.map_uid();
   dat.locate_tran();
   
-  dataobject idat(idata, parnames, cmtnames);
+  dataobject idat(idata, paramnames, cmtnames);
   idat.idata_row();
   
   // Number of individuals in the data set
@@ -118,13 +137,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   // Create odeproblem object
-  odeproblem prob(inpar, init, funs, capture.at(0));
+  odeproblem prob(Param, init, funs, cap.size());
   prob.omega(OMEGA);
   prob.sigma(SIGMA);
-  prob.copy_parin(parin);
+  prob.copy_parin(parin, mod);
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
-  LSODA solver(neq, parin);
+  LSODA solver(neq, mod);
   
   recstack a(NID);
   
@@ -159,7 +178,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int n_tran_carry = tran_carry.size();
   
   // Captures
-  const unsigned int n_capture  = capture.size()-1;
+  const unsigned int n_capture  = capture.size();
   
   // Find tofd
   std::vector<double> tofd;
@@ -422,7 +441,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             ans(crow,0) = this_rec->id();
             ans(crow,1) = this_rec->time();
             for(unsigned int k=0; k < n_capture; ++k) {
-              ans(crow,(k+capture_start)) = prob.capture(capture[k+1]);
+              ans(crow,(k+capture_start)) = prob.capture(capture[k]);
             }
             for(unsigned int k=0; k < nreq; ++k) {
               ans(crow,(k+req_start)) = prob.y(request[k]);
@@ -605,7 +624,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         int k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
-          ans(crow,k+capture_start) = prob.capture(capture[i+1]);
+          ans(crow,k+capture_start) = prob.capture(capture[i]);
           ++k;
         }
         for(unsigned int k=0; k < nreq; ++k) {

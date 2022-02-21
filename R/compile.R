@@ -226,7 +226,7 @@ touch_funs <- function(x,keep_pointers=TRUE) {
   
   funp <- pointers(x)
   
-  param <- as.numeric(param(x))
+  param <- as.list(param(x))
   init <- as.numeric(x@init)
   neta <- sum(nrow(omat(x)))
   neps <- sum(nrow(smat(x)))

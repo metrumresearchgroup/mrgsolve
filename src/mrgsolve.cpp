@@ -226,6 +226,44 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
 }
 
 //[[Rcpp::export]]
+Rcpp::NumericMatrix MAKEMATRIX(const Rcpp::S4& matlist) {
+  
+  Rcpp::List a = matlist.slot("data");
+  
+  if(a.size()==0) {
+    Rcpp::NumericMatrix ans; 
+    return ans;
+  }
+  
+  if(a.size()==1) {
+    return a[0];  
+  }
+  
+  Rcpp::IntegerVector n = matlist.slot("n");
+  int tot = 0;
+  for(int i = 0; i < n.size(); ++i) {
+    tot = tot + n[i];  
+  }
+  
+  Rcpp::NumericMatrix mat;  
+  Rcpp::NumericMatrix ret(tot,tot);
+  
+  tot = 0;
+  
+  for(int i = 0, n = a.size(); i < n; ++i) {
+    mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
+    for(int j = 0; j < mat.nrow(); ++j) {
+      for(int k = 0; k < mat.ncol(); ++k) {
+        ret(tot+j, tot+k) = mat(j, k);
+      }
+    }
+    tot = tot + mat.nrow();
+  }
+  return(ret);
+}
+
+
+//[[Rcpp::export]]
 Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
   
   Rcpp::List ret(code.size());
