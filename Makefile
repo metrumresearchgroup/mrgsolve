@@ -97,9 +97,7 @@ test2:
 clean:
 	rm src/*.o
 	rm src/*.so
-	if [ -d mrgsolve.Rcheck ]; then 
-	  rm -rf mrgsolve.Rcheck
-	fi
+	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
 	R CMD REMOVE mrgsolve
 
 datasets:
