@@ -60,8 +60,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::NumericMatrix& data,
                    const Rcpp::NumericMatrix& idata,
                    const Rcpp::S4& mod) {
-  
-  const unsigned int verbose  = Rcpp::as<int>    (parin["verbose"]);
+
   const bool obsonly          = Rcpp::as<bool>   (parin["obsonly"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
   obsaug = obsaug & (data.nrow() > 0);
@@ -78,6 +77,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double tscale = Rcpp::as<double>(mod.slot("tscale"));
   const double mindt  = Rcpp::as<double>(mod.slot("mindt"));
   const bool   debug  = Rcpp::as<bool>(mod.slot("debug"));
+  const bool  verbose = Rcpp::as<bool>(mod.slot("verbose")); 
   // passed along
   Rcpp::Environment envir = mod.slot("envir");
   // We need to decrement capture indices; this needs to be cloned
@@ -85,6 +85,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   Rcpp::IntegerVector capture = mod.slot("Icap");
   capture = Rcpp::clone(capture); 
   capture = capture - 1;
+  // requet is compartments to bring into output; decrement --> clone
+  Rcpp::IntegerVector request = mod.slot("Icmt");
+  request = Rcpp::clone(request);
+  request = request - 1;
   // Parameters; clone names
   const Rcpp::List Param = mod.slot("param");
   Rcpp::CharacterVector paramnames(Param.names());
@@ -150,7 +154,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
   
   // Requested compartments
-  Rcpp::IntegerVector request = parin["request"];
   const unsigned int nreq = request.size();
   
   // Columns from the data set to carry:

@@ -589,10 +589,8 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
-  parin$verbose <- verbose
   parin$ss_fixed <- ss_fixed
   parin$ss_n <- ss_n
-  parin$request <- Cmti(x)-1L
   parin$interrupt <- interrupt
   
   if(tad && any(x@capture =="tad")) {
@@ -802,7 +800,6 @@ qsim <- function(x,
   parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  parin$request <- Cmti(x)-1L
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
   parin$carry_tran <- character(0)

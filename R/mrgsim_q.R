@@ -116,7 +116,6 @@ mrgsim_q <- function(x,
   parin$recsort <- recsort
   parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
-  parin$request <- Cmti(x)-1L
 
   if(simcall!=0) {
     if(simcall==1) {
