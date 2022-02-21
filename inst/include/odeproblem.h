@@ -120,9 +120,12 @@ public:
   
   void set_d(rec_ptr this_rec);
   
-  void omega(Rcpp::NumericMatrix& x);
-  void sigma(Rcpp::NumericMatrix& x);
+  void omega(const arma::mat& x);
+  void sigma(const arma::mat& x);
   
+  void omega(const Rcpp::S4& mod);
+  void sigma(const Rcpp::S4& mod);
+
   arma::mat mv_omega(int n);
   arma::mat mv_sigma(int n);
 
@@ -172,8 +175,10 @@ public:
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
   
-  void neta(const int n);
-  void neps(const int n);
+  void set_eta();
+  void set_eps();
+  int neta(){return Omega.n_rows;}
+  int neps(){return Sigma.n_rows;}
   
   void nid(int n) {d.nid = n;}///< sets the number of IDs
   void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
@@ -264,9 +269,9 @@ double PolyExp(const double& x,
                const std::vector<double>& alpha,
                const int n);
 
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
-                      const Rcpp::NumericVector& linit,
-                      const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs);
+// Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
+//                       const Rcpp::NumericVector& linit,
+//                       const Rcpp::CharacterVector& capture,
+//                       const Rcpp::List& funs);
 
 #endif

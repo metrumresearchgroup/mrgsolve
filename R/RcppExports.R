@@ -33,7 +33,7 @@ EXPAND_OBSERVATIONS <- function(data, times, to_copy, next_pos) {
     .Call(`_mrgsolve_EXPAND_OBSERVATIONS`, data, times, to_copy, next_pos)
 }
 
-TOUCH_FUNS <- function(lparam, linit, Neta, Neps, capture, funs, envir) {
-    .Call(`_mrgsolve_TOUCH_FUNS`, lparam, linit, Neta, Neps, capture, funs, envir)
+TOUCH_FUNS <- function(funs, mod) {
+    .Call(`_mrgsolve_TOUCH_FUNS`, funs, mod)
 }
 

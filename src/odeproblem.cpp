@@ -133,13 +133,13 @@ double odeproblem::alag(int cmt){
 
 
 //! set number of <code>ETAs</code> in the model
-void odeproblem::neta(const int n) {
-  if(n > 25) d.ETA.assign(n,0.0);
+void odeproblem::set_eta() {
+  if(neta() > 25) d.ETA.assign(neta(),0.0);
 }
 
 //! set number of <code>EPSs</code> in the model
-void odeproblem::neps(const int n) {
-  if(n > 25) d.EPS.assign(n,0.0);
+void odeproblem::set_eps() {
+  if(neps() > 25) d.EPS.assign(neps(),0.0);
 }
 
 void odeproblem::tol(double atol, double rtol) {
@@ -710,18 +710,25 @@ void odeproblem::advan(int x) {
  * 
  */
 // [[Rcpp::export]]
-Rcpp::List TOUCH_FUNS(const Rcpp::List& lparam, 
-                      const Rcpp::NumericVector& linit,
-                      int Neta, int Neps,
-                      const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs,
-                      Rcpp::Environment envir) {
+Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
+                      const Rcpp::S4 mod) {
   
   Rcpp::List ans;
   
-  odeproblem prob(lparam, linit, funs, capture.size());
-  prob.neta(Neta);
-  prob.neps(Neps);
+  Rcpp::Environment envir = mod.slot("envir");
+  Rcpp::List lparam = mod.slot("param");
+  Rcpp::List linit = mod.slot("init");
+  Rcpp::CharacterVector capture = mod.slot("capture");
+  Rcpp::NumericVector init(linit.size());
+  for(int i = 0; i < linit.size(); ++i) { 
+    init[i] = linit[i];
+  }
+
+  odeproblem prob(lparam, init, funs, capture.size());
+  prob.omega(mod);
+  prob.sigma(mod);
+  prob.set_eta();
+  prob.set_eps();
   prob.pass_envir(&envir);
   prob.newind(0);
   
@@ -741,19 +748,27 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& lparam,
   return(ans);
 }
 
-void odeproblem::omega(Rcpp::NumericMatrix& x) {
-  Omega = Rcpp::as<arma::mat>(x);
+void odeproblem::omega(const arma::mat& x) {
+  Omega = x;
 }
 
-void odeproblem::sigma(Rcpp::NumericMatrix& x) {
-  Sigma = Rcpp::as<arma::mat>(x);
+void odeproblem::omega(const Rcpp::S4& mod) {
+  Omega = MAKEMATRIX(mod.slot("omega"));
+}
+
+void odeproblem::sigma(const arma::mat& x) {
+  Sigma = x;
+}
+
+void odeproblem::sigma(const Rcpp::S4& mod) {
+  Sigma = MAKEMATRIX(mod.slot("sigma"));
 }
 
 arma::mat odeproblem::mv_omega(int n) {
-  return MVGAUSS(Omega,n);
+  return MVGAUSS(Omega, n);
 }
 
 arma::mat odeproblem::mv_sigma(int n) {
-  return MVGAUSS(Sigma,n);
+  return MVGAUSS(Sigma, n);
 }
 

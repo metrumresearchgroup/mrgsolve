@@ -226,12 +226,12 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
 }
 
 //[[Rcpp::export]]
-Rcpp::NumericMatrix MAKEMATRIX(const Rcpp::S4& matlist) {
+arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   
   Rcpp::List a = matlist.slot("data");
   
   if(a.size()==0) {
-    Rcpp::NumericMatrix ans; 
+    arma::mat ans; 
     return ans;
   }
   
@@ -248,7 +248,7 @@ Rcpp::NumericMatrix MAKEMATRIX(const Rcpp::S4& matlist) {
   // to assign when reading in 
   Rcpp::NumericMatrix mat;  
   // the result
-  Rcpp::NumericMatrix ret(tot,tot);
+  arma::mat ret(tot,tot);
   
   tot = 0;
   

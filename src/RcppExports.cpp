@@ -62,7 +62,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // MAKEMATRIX
-Rcpp::NumericMatrix MAKEMATRIX(const Rcpp::S4& matlist);
+arma::mat MAKEMATRIX(const Rcpp::S4& matlist);
 RcppExport SEXP _mrgsolve_MAKEMATRIX(SEXP matlistSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -111,19 +111,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // TOUCH_FUNS
-Rcpp::List TOUCH_FUNS(const Rcpp::List& lparam, const Rcpp::NumericVector& linit, int Neta, int Neps, const Rcpp::CharacterVector& capture, const Rcpp::List& funs, Rcpp::Environment envir);
-RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP lparamSEXP, SEXP linitSEXP, SEXP NetaSEXP, SEXP NepsSEXP, SEXP captureSEXP, SEXP funsSEXP, SEXP envirSEXP) {
+Rcpp::List TOUCH_FUNS(const Rcpp::List& funs, const Rcpp::S4 mod);
+RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP funsSEXP, SEXP modSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type lparam(lparamSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type linit(linitSEXP);
-    Rcpp::traits::input_parameter< int >::type Neta(NetaSEXP);
-    Rcpp::traits::input_parameter< int >::type Neps(NepsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type capture(captureSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Environment >::type envir(envirSEXP);
-    rcpp_result_gen = Rcpp::wrap(TOUCH_FUNS(lparam, linit, Neta, Neps, capture, funs, envir));
+    Rcpp::traits::input_parameter< const Rcpp::S4 >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(TOUCH_FUNS(funs, mod));
     return rcpp_result_gen;
 END_RCPP
 }

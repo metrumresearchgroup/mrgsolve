@@ -71,27 +71,25 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
 
   // Grab items from the model object --------------------
+  // No code for Model Matrices here; mod gets passed to odeproblem methods
+  
+  // Used here 
   const double digits = Rcpp::as<double>(mod.slot("digits"));
   const double tscale = Rcpp::as<double>(mod.slot("tscale"));
   const double mindt  = Rcpp::as<double>(mod.slot("mindt"));
   const bool   debug  = Rcpp::as<bool>(mod.slot("debug"));
-
+  // passed along
   Rcpp::Environment envir = mod.slot("envir");
   // We need to decrement capture indices; this needs to be cloned
   const Rcpp::CharacterVector cap = mod.slot("capture");
   Rcpp::IntegerVector capture = mod.slot("Icap");
   capture = Rcpp::clone(capture); 
   capture = capture - 1;
-  // Model matrices
-  const Rcpp::S4 omega = mod.slot("omega");
-  const Rcpp::S4 sigma = mod.slot("sigma");
-  Rcpp::NumericMatrix OMEGA = MAKEMATRIX(mod.slot("omega"));
-  Rcpp::NumericMatrix SIGMA = MAKEMATRIX(mod.slot("sigma"));
-  // Parameters
+  // Parameters; clone names
   const Rcpp::List Param = mod.slot("param");
   Rcpp::CharacterVector paramnames(Param.names());
   paramnames = Rcpp::clone(paramnames);
-  // Compartments
+  // Compartments; clone names
   const Rcpp::List Init = mod.slot("init");
   Rcpp::CharacterVector cmtnames(Init.names());
   cmtnames = Rcpp::clone(cmtnames);
@@ -138,8 +136,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   // Create odeproblem object
   odeproblem prob(Param, init, funs, cap.size());
-  prob.omega(OMEGA);
-  prob.sigma(SIGMA);
+  prob.omega(mod);
+  prob.sigma(mod);
   prob.copy_parin(parin, mod);
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
@@ -293,18 +291,18 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int req_start = idata_carry_start+n_idata_carry;
   const unsigned int capture_start = req_start+nreq;
   
-  const int neta = OMEGA.nrow();
   arma::mat eta;
+  const int neta = prob.neta();
   if(neta > 0) {
+    prob.set_eta();
     eta = prob.mv_omega(NID);
-    prob.neta(neta);
   }
-  
-  const int neps = SIGMA.nrow();
-  arma::mat eps;
+
+  arma::mat eps;  
+  const int neps = prob.neps();
   if(neps > 0) {
+    prob.set_eps();
     eps = prob.mv_sigma(NN);
-    prob.neps(neps);
   }
   
   Rcpp::CharacterVector tran_names;
