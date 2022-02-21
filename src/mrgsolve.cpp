@@ -229,12 +229,14 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   Rcpp::List a = matlist.slot("data");
   
   if(a.size()==0) {
-    arma::mat ans(0,0); 
-    return ans;
+    arma::mat ret(0,0); 
+    return ret;
   }
   
   if(a.size()==1) {
-    return a[0];  
+    Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(a[0]);
+    arma::mat ret(mat.begin(), mat.nrow(), mat.ncol(), false );
+    return ret;  
   }
   
   Rcpp::IntegerVector n = matlist.slot("n");
@@ -246,7 +248,7 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   // to assign when reading in 
   Rcpp::NumericMatrix mat;  
   // the result
-  arma::mat ret(tot,tot);
+  arma::mat ret(tot, tot);
   
   tot = 0;
   
@@ -259,7 +261,6 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
     }
     tot = tot + mat.nrow();
   }
-  
   return ret;
 }
 
