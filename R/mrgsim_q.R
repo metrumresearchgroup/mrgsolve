@@ -114,7 +114,6 @@ mrgsim_q <- function(x,
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
-  parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
 
   if(simcall!=0) {
