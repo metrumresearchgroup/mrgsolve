@@ -130,11 +130,9 @@ arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
   
   arma::vec eigval;
   arma::mat eigvec;
-  arma::eig_sym(eigval,eigvec, OMEGA);
+  arma::eig_sym(eigval, eigvec, OMEGA);
   
-  int ncol = OMEGA.n_cols;
-  
-  arma::mat X = arma::randn<arma::mat>(n,ncol);
+  arma::mat X = arma::randn<arma::mat>(n, OMEGA.n_cols);
   
   eigval = arma::sqrt(eigval);
   
@@ -222,7 +220,7 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
     Rcpp::List dn = Rcpp::List::create(rnam,cnam);
     ret.attr("dimnames") = dn;
   }
-  return(ret);
+  return ret;
 }
 
 //[[Rcpp::export]]
@@ -261,7 +259,8 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
     }
     tot = tot + mat.nrow();
   }
-  return(ret);
+  
+  return ret;
 }
 
 

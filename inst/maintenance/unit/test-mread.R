@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -70,12 +70,12 @@ $SIGMA @block
 
 '
 
-mod <- suppressWarnings(mcode("test2",code, warn=TRUE))
+mod <- mcode("test2",code, warn=TRUE)
 
 test_that("Parameters are parsed properly with mread", {
   expect_equal(param(mod)$CL,1)
   expect_equal(param(mod)$VC,20)
-  expect_equal(mrgsolve:::Pars(mod), c("CL", "VC","VMAX", "KM"))
+  expect_equal(mrgsolve:::Pars(mod), c("CL", "VC", "VMAX", "KM"))
 })
 
 test_that("Compartments are parsed properly with mread", {

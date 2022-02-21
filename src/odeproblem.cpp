@@ -750,10 +750,16 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
 
 void odeproblem::omega(const Rcpp::S4& mod) {
   Omega = MAKEMATRIX(mod.slot("omega"));
+  if(!Omega.is_symmetric()) {
+    Rcpp::stop("OMEGA is not symmetic");  
+  }
 }
 
 void odeproblem::sigma(const Rcpp::S4& mod) {
   Sigma = MAKEMATRIX(mod.slot("sigma"));
+  if(!Sigma.is_symmetric()) {
+    Rcpp::stop("SIGMA is not symmetic");  
+  }
 }
 
 arma::mat odeproblem::mv_omega(int n) {
