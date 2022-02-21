@@ -761,7 +761,10 @@ void odeproblem::omega(const Rcpp::S4& mod) {
 void odeproblem::sigma(const Rcpp::S4& mod) {
   Sigma = MAKEMATRIX(mod.slot("sigma"));
   if(!Sigma.is_symmetric()) {
-    Rcpp::stop("SIGMA is not symmetric.");  
+    Sigma = 0.5 * (Sigma + Sigma.t());
+    if(!Sigma.is_symmetric()) {
+      Rcpp::stop("SIGMA is not symmetric");  
+    }
   }
 }
 
