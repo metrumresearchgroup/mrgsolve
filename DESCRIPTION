@@ -38,11 +38,11 @@ Depends:
     R (>= 3.1.2),
     methods
 Imports:
-    Rcpp (>= 0.12.12),
-    dplyr (>= 0.8.1),
+    Rcpp (>= 1.0.4),
+    dplyr (>= 1.0.2),
     magrittr (>= 1.5),
     tibble (>= 2.1.1),
-    rlang (>= 0.3.4),
+    rlang (>= 0.4.10),
     tidyselect (>= 0.2.5),
     lifecycle, 
     glue
@@ -56,8 +56,8 @@ Suggests:
     data.table,
     pmxTools
 LinkingTo: 
-    Rcpp (>= 0.12.12),
-    RcppArmadillo (>= 0.7.900.2.0),
+    Rcpp (>= 1.0.4),
+    RcppArmadillo (>= 0.10.7.0.0),
     BH (>= 1.62.0-1)
 RdMacros: 
     lifecycle
