@@ -50,3 +50,24 @@ test_that("SUPERMATRIX", {
     ans2 <- mrgsolve:::SUPERMATRIX(omat()@data)
     expect_identical(ans1, ans2)
 })
+
+test_that("MAKEMATRIX", {
+  a <- dmat(1,2,3)
+  b <- cmat(0.1, 0.5, 0.2)
+  c <- dmat(0.55)
+  d <- bmat(0.1, 0.002, 0.3)
+  
+  omega <- omat(list(A = a,  B = b))
+  mat <- mrgsolve:::MAKEMATRIX(omega)
+  chk <- mrgsolve:::SUPERMATRIX(omega@data)
+  expect_identical(mat, chk)
+  expect_true(isSymmetric(mat))
+  expect_true(isSymmetric(chk))
+
+  sigma <- omat(list(c, d))
+  mat <- mrgsolve:::MAKEMATRIX(sigma)
+  chk <- mrgsolve:::SUPERMATRIX(sigma@data)
+  expect_identical(mat, chk)
+  expect_true(isSymmetric(mat))
+  expect_true(isSymmetric(chk))
+})
