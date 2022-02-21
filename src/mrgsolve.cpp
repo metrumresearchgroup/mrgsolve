@@ -229,7 +229,7 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   Rcpp::List a = matlist.slot("data");
   
   if(a.size()==0) {
-    arma::mat ans; 
+    arma::mat ans(0,0); 
     return ans;
   }
   
