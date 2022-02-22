@@ -1,5 +1,5 @@
 ^run-*\.R$
-^test-*\.R$
+^./test-.*\.R$
 ^test\.R$
 Doxygen
 doxyfile

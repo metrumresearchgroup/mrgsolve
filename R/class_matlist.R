@@ -16,6 +16,10 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 # this won't get included in coverage since it's copied into the class def
+
+
+checkSymmetric <- function(h) isSymmetric(unname(h))
+
 # nocov start
 valid.matlist <- function(object) {
   
@@ -30,10 +34,11 @@ valid.matlist <- function(object) {
   
   x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
     nrow(x) == length(y)
-  }) %>% all
+  })
+  x5 <- all(x5)
+  x6 <- vapply(object@data, FUN = checkSymmetric, FUN.VALUE=TRUE)
   
-  
-  x <- x1 & x2 & x3 & x4 & x5
+  x <- x1 & x2 & x3 & x4 & x5 & x6
   
   if(all(x)) return(TRUE)
   out <- c()
@@ -59,6 +64,12 @@ valid.matlist <- function(object) {
       out, 
       paste0("Length of labels (", n2, ") does not match the matrix rows (", n1, ").")
     )
+  }
+  if(!x6) {
+    y <- which(!sapply(object@data, isSymmetric))
+    message("Problem with this matrix:")
+    print(object@data[y])
+    out <- c(out, "Invalid matrix: matrix must be symmetric.")
   }
   return(out)
 }
