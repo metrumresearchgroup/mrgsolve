@@ -95,10 +95,10 @@ test2:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
 clean:
-	rm src/*.o
-	rm src/*.so
+	rm -rf  src/*.o
+	rm -rf src/*.so
 	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
-	R CMD REMOVE mrgsolve
+	if [ -d ~/Rlibs/mrgsolve ]; then R CMD REMOVE mrgsolve; fi
 
 datasets:
 	Rscript inst/maintenance/datasets.R
