@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,20 +25,19 @@ valid.matlist <- function(object) {
   
   labels <- names(object@data)[names(object@data) != "..."]
   
-  x1 <- all(sapply(object@data, is.matrix))
-  x2 <- all(sapply(object@data, is.numeric))
+  x1 <- all(vapply(object@data, is.matrix, TRUE))
+  x2 <- all(vapply(object@data, is.numeric, TRUE))
   
   x3 <- (!any(duplicated(labels))) | length(labels)==0
   
-  x4 <- all(sapply(object@data, det)>=0)
+  x4 <- all(vapply(object@data, det, 1.00)>=0)
   
   x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
     nrow(x) == length(y)
   })
   x5 <- all(x5)
-  x6 <- vapply(object@data, FUN = checkSymmetric, FUN.VALUE=TRUE)
   
-  x <- x1 & x2 & x3 & x4 & x5 & x6
+  x <- x1 & x2 & x3 & x4 & x5
   
   if(all(x)) return(TRUE)
   out <- c()
@@ -52,24 +51,18 @@ valid.matlist <- function(object) {
   }
   
   if(!x4) {
-    y <- which(!sapply(object@data, det) > 0)
+    y <- which(!vapply(object@data, det, 1.23) > 0)
     message("Problem with this matrix:")
     print(object@data[y])
     out <- c(out, "Invalid matrix: determinant is less than 0.")
   }
   if(!x5) {
-    n1 <- paste(sapply(object@data,   nrow),collapse=",")
-    n2 <- paste(sapply(object@labels, length),collapse=',')
+    n1 <- paste(vapply(object@data,   nrow, 1L), collapse = ",")
+    n2 <- paste(vapply(object@labels, length, 1L), collapse = ',')
     out <- c(
       out, 
       paste0("Length of labels (", n2, ") does not match the matrix rows (", n1, ").")
     )
-  }
-  if(!x6) {
-    y <- which(!sapply(object@data, isSymmetric))
-    message("Problem with this matrix:")
-    print(object@data[y])
-    out <- c(out, "Invalid matrix: matrix must be symmetric.")
   }
   return(out)
 }
