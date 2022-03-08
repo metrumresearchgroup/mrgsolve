@@ -418,7 +418,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // for an individual; no other calls to any model functions will
         // be made
         // SYSTEMOFF = 1 --> copy model results to the line
-        // SYSTEMOFF != 1 --> fill NA
+        // SYSTEMOFF != 0, !=1 --> fill NA
         unsigned short int status = prob.systemoff();
         if(status==9) CRUMP("the problem was stopped at user request.");
         if(status==999) CRUMP("999 sent from the model.");
