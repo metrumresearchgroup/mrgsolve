@@ -128,9 +128,10 @@ modlib: export _MRGSOLVE_SKIP_MODLIB_BUILD_=no
 modlib: 
 	Rscript -e 'testthat::test_file("inst/maintenance/unit/test-modlib.R")'
 
-# possibly no longer in use
+# this is in use
 drone:
 	make house
+	R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies=TRUE)'
 	R CMD build --md5 $(PKGDIR) 
 	R CMD check --as-cran ${TARBALL}
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
