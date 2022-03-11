@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 1.0.0.9000
+Version: 1.0.0.9001
 Authors@R: 
     c(person(given = "Kyle T", family = "Baron",
              role = c("aut", "cre"),
@@ -83,6 +83,7 @@ Collate:
     'annot.R'
     'chain.R'
     'class_build.R'
+    'class_evd.R'
     'events.R'
     'class_rx.R'
     'compile.R'

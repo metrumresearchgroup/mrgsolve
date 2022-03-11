@@ -20,33 +20,21 @@
 
 tran_upper <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 
-nodataset <- matrix(
-  0, nrow=0, ncol=8, 
-  dimnames=list(
-    NULL,
-    c("ID", "time", "evid", "amt", "cmt","addl", "ii", "ss")
-  )
-)
-
 null_idata <- matrix(
   0, 
-  nrow=0, ncol=1, 
-  dimnames=list(NULL, c("ID"))
+  nrow = 0, ncol = 1, 
+  dimnames = list(NULL, c("ID"))
 )
-
-no_idata_set <- function() {
-  structure(null_idata,class="valid_idata_set")  
-}
-
 null_data <-  matrix(
   0,  
-  nrow=0, ncol=3, 
+  nrow = 0, ncol = 3, 
   dimnames=list(NULL, c("ID", "time", "cmt"))
 )
 
-no_data_set <- function() {
-  structure(matrix(1,dimnames=list(NULL, "ID")), class="valid_data_set")
-}
+class(null_idata) <- c("valid_idata_set", "matrix")
+class(null_data) <- c("valid_data_set", "matrix")
+no_idata_set <- function() null_idata
+no_data_set <- function() null_data
 
 tgrid_matrix <- function(x) {
   n <- length(x)
@@ -71,13 +59,13 @@ tgrid_id <- function(col,idata) {
   return(match(col,sort(unique(col)))-1)
 }
 
-
-validate_idata <- function(idata) {
-  if(is.null(idata)) return(invisible(TRUE))
-  if(!(is.data.frame(idata) | is.matrix(idata)))
-    wstop("idata needs to be either NULL, data.frame, or matrix.")
-  return(invisible(TRUE))
-}
+# TODO: remove
+# validate_idata <- function(idata) {
+#   if(is.null(idata)) return(invisible(TRUE))
+#   if(!(is.data.frame(idata) | is.matrix(idata)))
+#     wstop("idata needs to be either NULL, data.frame, or matrix.")
+#   return(invisible(TRUE))
+# }
 
 
 #' Simulate from a model object
@@ -221,7 +209,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   
   if(have_data) {
     if(is.ev(data)) {
-      data <- as.data.frame(data, add_ID = 1)  
+      data <- ev_to_ds(data)
     }
     if(have_idata) {
       return(mrgsim_di(x, data = data, idata = idata, ...)) 
@@ -239,7 +227,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
 
 #' @rdname mrgsim
 #' @export
-mrgsim_df <- function(...,output="df") mrgsim(...,output=output)
+mrgsim_df <- function(...,output="df") mrgsim(..., output = output)
 
 #' mrgsim variant functions
 #' 
@@ -285,9 +273,8 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
     }
     wstop("invalid 'events' argument") 
   }
-  events <- as.data.frame(events, add_ID = 1)
+  events <- ev_to_ds(events)
   args <- list(...)
-  # x <- do.call(update, c(x,args))
   args <- combine_list(x@args,args)
   do.call(
     do_mrgsim, 
@@ -300,7 +287,7 @@ mrgsim_e <- function(x, events, idata = NULL, data = NULL, ...) {
 mrgsim_d <- function(x, data, idata = NULL, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   if(is.ev(data)) {
-    data <- as_data_set(data)  
+    data <- ev_to_ds(data)  
   }
   args <- list(...)
   args <- combine_list(x@args,args)
@@ -325,13 +312,13 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
     wstop("invalid 'events' argument") 
   }
   expand <- !has_ID(events) & nrow(idata) > 0
-  events <- as.data.frame(events, add_ID = 1)
+  events <- ev_to_ds(events)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
-    idata[["ID"]] <- seq_len(nrow(idata))
+    idata$ID <- seq_len(nrow(idata))
   } 
   if(expand) {
-    events <- expand_event_object(events,idata[["ID"]])
+    events <- expand_event_object(events, idata[["ID"]])
   }
   args <- list(...)
   args <- combine_list(x@args,args)
@@ -345,7 +332,7 @@ mrgsim_ei <- function(x, events, idata, data = NULL, ...) {
 #' @export
 mrgsim_di <- function(x, data, idata, events = NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
-  data <- as.data.frame(data, add_ID = 1)
+  data <- As_data_set(data)
   idata <- as.data.frame(idata)
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
@@ -366,7 +353,7 @@ mrgsim_i <- function(x, idata, data = NULL, events = NULL, ...) {
   if(!has_ID(idata)) {
     idata <- bind_col(idata, "ID", seq_len(nrow(idata)))
   }
-  data <- matrix(idata[["ID"]], ncol = 1, dimnames = list(NULL, "ID"))
+  data <- matrix(idata$ID, ncol = 1, dimnames = list(NULL, "ID"))
   args <- list(...)
   args <- combine_list(x@args,args)
   do.call(
@@ -776,7 +763,7 @@ qsim <- function(x,
   if(!is.mrgmod(x)) mod_first()
   
   if(is.ev(data)) {
-    data <- as.data.frame.ev(data, add_ID = 1)
+    data <- as.data.frame.ev(data, add_ID = 1, final = TRUE)
   }
   
   ## data

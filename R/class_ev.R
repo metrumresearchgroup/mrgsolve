@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,14 +15,79 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# A series of functions for dealing with ev/data.frame -------
+
+#' Just get the data.frame part
+#' 
+#' This is an internal function. 
+#' 
+#' If an event object, return `data` slot; otherwise, call as.data.frame. This 
+#' is supposed to be optimized for handling event objects. 
+#' 
+#' @param x An R object. 
+#' 
+#' @noRd
+to_data_frame <- function(x) {
+  # Just return the data frame
+  if(is.ev(x)) {
+    x@data
+  } else {
+    as.data.frame(x)
+  }
+}
+
+#' Convert an event object to data set
+#' 
+#' Call this function when `x` is already known to be an event object. 
+#' 
+#' @param x An event object.
+#' @param id The subject ID. 
+#' 
+#' @noRd
+ev_to_ds <- function(x, id = 1) {
+  # Specifically for simulating a (known) ev object
+  ans <- x@data
+  if(nrow(ans)==0) return(ans)
+  if(match("ID", names(ans), 0)==0) ans$ID <- id
+  recase_ev(ans, x@case)
+}
+
+#' Create a data set from and event object or data frame
+#' 
+#' This is more general applicability. 
+#' 
+#' @noRd
+As_data_set <- function(x, id = 1) {
+  # Possibly handle data.frame or 
+  if(is.ev(x)) return(ev_to_ds(x, id = id))
+  ans <- as.data.frame(x)
+  if(nrow(ans)==0) return(ans)
+  if(match("ID", names(ans), 0) ==0) ans$ID <- id
+  ans
+}
+
+ev_proto <- list(data = data.frame(), case = 0L)
+ev_slots <- c(data = "data.frame", case = "integer")
+ev_initialize <- function(.Object, case = 0L, ...) {
+  .Object <- callNextMethod()
+  if(!case %in% c(0, 1)) {
+    stop("Event object case must be either 0 or 1.")
+  }
+  .Object@case <- case
+  .Object
+}
+
 ##' S4 events class
 ##' @slot data a data frame of events
+##' @slot case indicates how to handle column naming upon coerce to data.frame
 ##' @export
 ##' @keywords internal
-setClass("ev", slots=c(data="data.frame"))
+setClass("ev", prototype = ev_proto, slots = ev_slots)
+setMethod("initialize", "ev", ev_initialize)
 
 is.ev <- function(x) {
-  inherits(x,"ev")  
+  inherits(x, "ev")  
 }
 
 ##' dplyr verbs for event objects
@@ -62,14 +127,14 @@ mutate.ev <- function(.data, ...) {
 ##' @rdname ev_dplyr
 ##' @export
 select.ev <- function(.data, ...) {
-  .data@data <- as.data.frame(dplyr::select(.data@data,...))
+  .data@data <- as.data.frame(dplyr::select(.data@data, ...))
   .data 
 }
 
 ##' @rdname ev_dplyr
 ##' @export
 filter.ev <-  function(.data, ...) {
-  .data@data <- as.data.frame(dplyr::filter(.data@data,...))
+  .data@data <- as.data.frame(dplyr::filter(.data@data, ...))
   .data
 }
 
@@ -125,19 +190,19 @@ as.matrix.ev <- function(x,...) {
 ##' @export
 as.data.frame.ev <- function(x, row.names = NULL, optional = FALSE, 
                              add_ID = NULL, ...) {
-  ans <- x@data
-  if(is.numeric(add_ID) & !has_ID(ans) & nrow(ans) > 0) {
-    ans[["ID"]] <- add_ID[1]
-  } 
-  return(ans)
+  ev_to_ds(x, id = add_ID)
 }
 
-##' @rdname ev_methods
-##' @export
-##' @keywords internal
+#' @rdname ev_methods
+#' @export
+#' @keywords internal
 setMethod("show", "ev", function(object) {
-  cat("Events:\n")
-  print(as.data.frame(object))
+  header <- "Events:\n"
+  if(object@case==1) {
+    header <- "Events Data:\n"  
+  }
+  cat(header)
+  print(object@data)
   return(invisible(NULL))
 })
 
@@ -159,19 +224,6 @@ setMethod("$", "ev", function(x, name){
 setMethod("[[", "ev", function(x, i, exact=TRUE) {
   x@data[[i]] 
 })
-
-As_data_set <- function(x) {
-  if(!is.data.frame(x)) {
-    if(is.ev(x)) {
-      x <- x@data
-    } else {
-      x <- as.data.frame(x) 
-    } 
-  }
-  if(nrow(x)==0) return(x)
-  if(!has_ID(x)) x[["ID"]] <- 1
-  return(x)
-}
 
 finalize_ev_data <- function(data) {
   if("tinf" %in% names(data)) {
