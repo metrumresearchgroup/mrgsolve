@@ -98,6 +98,11 @@ typedef double capture;
 #define SQRT(a) sqrt(a)
 #endif
 
+// EVTOOLS PLUGIN
+#ifdef _MRGSOLVE_USING_EVTOOLS_
+#include "mrgsolve-evtools.h"
+#endif
+
 // These are the fundamental macros for
 // bioavailability, infusion rate, infusion duration
 // and dose lag time.  Keep these here, but
