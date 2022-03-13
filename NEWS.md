@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 1.0.1
 
 - Add `LOG()`, `EXP()`, `SQRT()` macros when `nm-vars` plugin is invoked 
   #931, #936.
