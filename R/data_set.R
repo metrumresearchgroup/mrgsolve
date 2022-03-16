@@ -150,7 +150,7 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' 
 #' Previous data set requirements included lower case names for data items 
 #' like `AMT` and `EVID`. Lower case is no longer required. However, it is still
-#' a requirement that nm-tran like data column names are either all lower case
+#' a requirement that nmtran like data column names are either all lower case
 #' or all upper case. 
 #' 
 #' Columns that will be renamed with lower or upper case versions: 

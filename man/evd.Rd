@@ -25,7 +25,7 @@ as.evd(x)
 }
 \description{
 This function calls \code{\link[=ev]{ev()}} to create an event object and then sets the
-case attribute so that it renders nntran data names in upper case. An
+case attribute so that it renders nmtran data names in upper case. An
 object created with \code{\link[=evd]{evd()}} can be used in the same way as an object
 created with \code{\link[=ev]{ev()}}.
 }

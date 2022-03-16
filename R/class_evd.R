@@ -6,7 +6,7 @@
 #' Create an event object with data-like names
 #' 
 #' This function calls [ev()] to create an event object and then sets the 
-#' case attribute so that it renders nntran data names in upper case. An 
+#' case attribute so that it renders nmtran data names in upper case. An 
 #' object created with [evd()] can be used in the same way as an object
 #' created with [ev()].
 #' 

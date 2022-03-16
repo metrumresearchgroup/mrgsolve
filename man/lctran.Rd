@@ -23,7 +23,7 @@ The input data set, with select columns made lower case.
 \description{
 Previous data set requirements included lower case names for data items
 like \code{AMT} and \code{EVID}. Lower case is no longer required. However, it is still
-a requirement that nm-tran like data column names are either all lower case
+a requirement that nmtran like data column names are either all lower case
 or all upper case.
 }
 \details{
