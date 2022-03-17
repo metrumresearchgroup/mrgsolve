@@ -1,3 +1,19 @@
+# mrgsolve 1.0.1
+
+- Add `LOG()`, `EXP()`, `SQRT()` macros when `nm-vars` plugin is invoked 
+  #931, #936.
+
+- Use `evd()` to create an event object which renders nmtran names 
+  in upper case (e.g. `TIME` rather than `time`) #935, #919.
+
+- Fixed bug where `rate` was not getting set for modeled events #934.
+
+- Fixed bug where `self.stop_id()` and `self.stop_id_cf()` had reversed
+  behavior as documented #927, #928.
+
+- Refactored EVID=3 behavior to leave `NEWIND` as-is #934.
+
+
 # mrgsolve 1.0.0
 
 - New model syntax: `THETA(n)` is interpreted as `THETAn` in the model code;

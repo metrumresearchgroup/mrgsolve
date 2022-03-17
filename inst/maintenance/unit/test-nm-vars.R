@@ -196,6 +196,9 @@ test_that("nm-vars functional test", {
   [ main ] 
   F1 = F1I;
   A_0(3) = 50;
+  capture a = EXP(CL);
+  capture b = LOG(VC);
+  capture c = SQRT(KA);
   [ ode ] 
   DADT(1) = -KA * A(1); 
   DADT(2) =  KA * A(1) - (CL/VC) * A(2);
@@ -212,4 +215,7 @@ test_that("nm-vars functional test", {
   expect_equal(out1$GUT, out2$A1, tolerance = tol)
   expect_equal(out1$CENT, out2$A2, tolerance = tol)
   expect_equal(out1$RESP[1], out2$A3[1], tolerance = tol)
+  expect_equal(out2$a[1], exp(mod2$CL), tolerance = 1e-3)
+  expect_equal(out2$b[1], log(mod2$VC), tolerance = 1e-3)
+  expect_equal(out2$c[1], sqrt(mod2$KA), tolerance = 1e-3)
 })

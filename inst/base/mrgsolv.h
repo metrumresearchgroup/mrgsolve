@@ -102,8 +102,8 @@ public:
   bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
   void stop() {SYSTEMOFF=9;}///< stops the problem when the next record is started
-  void stop_id() {SYSTEMOFF=1;}///< stops solving for the current id, filling with NA
-  void stop_id_cf(){SYSTEMOFF=2;}///< stops solving for the current id, filling last value
+  void stop_id() {SYSTEMOFF=2;}///< stops solving for the current id, filling with NA
+  void stop_id_cf(){SYSTEMOFF=1;}///< stops solving for the current id, filling last value
   std::vector<mrgsolve::evdata> mevector;///< a collection of model events to pass back
   void mevent(double time, int evid);///< constructor for evdata objects
   double mtime(double time);///< creates evdata object for simple model event time

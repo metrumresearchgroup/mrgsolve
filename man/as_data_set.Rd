@@ -25,22 +25,32 @@ The goal is to take a series of event objects and combine them
 into a single data set that can be passed to \code{\link[=data_set]{data_set()}}.
 }
 \details{
-Each event object is added to the data frame as an \code{ID}
-or set of \code{ID}s  that are distinct from the \code{ID}s
-in the other event objects. Note that including \code{ID}
-argument to the \code{\link[=ev]{ev()}} call where \code{length(ID)}
-is greater than one will render that set of
-events for all of \code{ID}s that are requested.
+Each event object is added to the data frame as an \code{ID} or set of \code{ID}s
+that are distinct from the \code{ID}s in the other event objects. Note that
+including \code{ID} argument to the \code{\link[=ev]{ev()}} call where \code{length(ID)} is greater
+than one will render that set of events for all of \code{ID}s that are requested.
+
+When determining the case for output names, the \code{case} attribute for
+the first \code{ev} object passed will be used to set the case for the output
+data.frame.
 
 To get a data frame with one row (event) per \code{ID}, look at \code{\link[=expand.ev]{expand.ev()}}.
 }
 \examples{
+a <- ev(amt = c(100,200), cmt=1, ID = seq(3))
+b <- ev(amt = 300, time = 24, ID = seq(2))
+c <- ev(amt = 1000, ii = 8, addl = 10, ID = seq(3))
 
-as_data_set(ev(amt = c(100,200), cmt=1, ID = seq(3)),
-            ev(amt = 300, time = 24, ID = seq(2)),
-            ev(amt = 1000, ii = 8, addl = 10, ID = seq(3)))
+as_data_set(a, b, c)
 
+d <- evd(amt = 500)
+
+as_data_set(d, a)
+            
 # Instead of this, use expand.ev
 as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
 
+}
+\seealso{
+\code{\link[=expand.ev]{expand.ev()}}, \code{\link[=ev]{ev()}}
 }

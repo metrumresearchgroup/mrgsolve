@@ -2,30 +2,55 @@
 % Please edit documentation in R/data_set.R
 \name{lctran}
 \alias{lctran}
-\title{Convert select upper case column names to lower case}
+\alias{uctran}
+\title{Change the case of nmtran-like data items}
 \usage{
-lctran(data)
+lctran(data, warn = TRUE)
+
+uctran(data, warn = TRUE)
 }
 \arguments{
-\item{data}{an nmtran-like data frame}
+\item{data}{A data set with nmtran-like format.}
+
+\item{warn}{If \code{TRUE}, a warning will be issued when there are both upper
+and lower case versions of any nmtran-like column in the data frame.}
 }
 \value{
-A data.frame with renamed columns
+A data frame with possibly renamed columns.
 
 The input data set, with select columns made lower case.
 }
 \description{
 Previous data set requirements included lower case names for data items
-like \code{AMT} and \code{EVID}. Lower case is no longer required.
+like \code{AMT} and \code{EVID}. Lower case is no longer required. However, it is still
+a requirement that nmtran like data column names are either all lower case
+or all upper case.
 }
 \details{
-Columns that will be renamed with lower case versions: \code{AMT},
-\code{II}, \code{SS}, \code{CMT}, \code{ADDL}, \code{RATE}, \code{EVID},
-\code{TIME}.  If a lower case version of these names exist in the data
-set, the column will not be renamed.
+Columns that will be renamed with lower or upper case versions:
+\itemize{
+\item \code{AMT  / amt}
+\item \code{II   / ii}
+\item \code{SS   / ss}
+\item \code{CMT  / cmt}
+\item \code{ADDL / addl}
+\item \code{RATE / rate}
+\item \code{EVID / evid}
+\item \code{TIME / time}
+}
+
+If both lower and upper case versions of the name are present in the data
+frame, no changes will be made.
 }
 \examples{
-data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2)
+data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, WT = 80)
+lctran(data)
+
+data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, wt = 80)
+uctran(data)
+
+# warning
+data <- data.frame(TIME = 1, time = 2, CMT = 5)
 lctran(data)
 
 }

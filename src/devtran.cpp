@@ -414,9 +414,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       this_rec->id(id);
       
       if(prob.systemoff()) {
+        // This starts a loop that will finish the remaining records 
+        // for an individual; no other calls to any model functions will
+        // be made
+        // SYSTEMOFF = 1 --> copy model results to the line
+        // SYSTEMOFF != 0, !=1 --> fill NA
         unsigned short int status = prob.systemoff();
         if(status==9) CRUMP("the problem was stopped at user request.");
-        if(status==999) CRUMP("999 sent from the model");
+        if(status==999) CRUMP("999 sent from the model.");
         if(this_rec->output()) {
           if(status==1) {
             ans(crow,0) = this_rec->id();
@@ -430,7 +435,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           } else {
             for(int k=0; k < ans.ncol(); ++k) {
               ans(crow,k) = NA_REAL;
-            }
+            } 
           }
           ++crow;
         }
@@ -582,7 +587,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               CRUMP("Compartment number in modeled event out of range.");
             }
           }
-          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,0.0);
+          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
           new_ev->phantom_rec();
           if(mt[mti].now) {
             new_ev->implement(&prob);
