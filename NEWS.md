@@ -1,4 +1,10 @@
-# mrgsolve (development version)
+# mrgsolve 1.0.3
+
+- Removed `assert()` statement in LSODA code found by CRAN check.
+
+# mrgsolve 1.0.2
+
+- Test class using `inherits()` not `class()` from CRAN check.
 
 # mrgsolve 1.0.1
 
