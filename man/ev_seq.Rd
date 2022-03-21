@@ -10,14 +10,14 @@ ev_seq(..., ID = NULL, .dots = NULL, id = NULL)
 \method{seq}{ev}(...)
 }
 \arguments{
-\item{...}{event objects or numeric arguments named \code{wait} or \code{ii} to
-implement a period of no-dosing activity in the sequence (see details)}
+\item{...}{Event objects or numeric arguments named \code{wait} or \code{ii} to
+implement a period of no-dosing activity in the sequence (see details).}
 
-\item{ID}{numeric vector of subject IDs}
+\item{ID}{Numeric vector of subject IDs.}
 
-\item{.dots}{a list of event objects that replaces \code{...}}
+\item{.dots}{A list of event objects that replaces \code{...}.}
 
-\item{id}{deprecated; use \code{ID}}
+\item{id}{Deprecated; use \code{ID}.}
 }
 \value{
 A single event object sorted by \code{time}.

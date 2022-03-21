@@ -13,14 +13,17 @@ as.ev(x, ...)
 \S4method{as.ev}{ev}(x, ...)
 }
 \arguments{
-\item{x}{an object to coerce}
+\item{x}{An object to coerce.}
 
-\item{...}{not used}
+\item{...}{Not used.}
 
-\item{keep_id}{if \code{TRUE}, \code{ID} column is retained if it exists}
+\item{keep_id}{If \code{TRUE}, \code{ID} column is retained if it exists.}
 
-\item{clean}{if \code{TRUE}, only dosing or ID information is retained in
-the result}
+\item{clean}{If \code{TRUE}, only dosing or ID information is retained in
+the result.}
+}
+\value{
+An object with class ev.
 }
 \description{
 Coerce an object to class ev

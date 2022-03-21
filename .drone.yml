@@ -1,103 +1,8 @@
 ---
 kind: pipeline
 type: docker
-name: mpn:latest
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: pull
-  image: omerxx/drone-ecr-auth
-  commands:
-  - $(aws ecr get-login --no-include-email --region us-east-1)
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:latest
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:latest
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:latest
-  volumes:
-  - name: docker.sock
-    path: /var/run/docker.sock
-
-- name: "Check package: R 4.1"
-  pull: never
-  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:latest
-  commands:
-  - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
-  - make drone
-
-- name: "Check package: R 4.0"
-  pull: never
-  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:latest
-  commands:
-  - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
-  - make drone
-
-- name: "Check package: R 3.6"
-  pull: never
-  image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:latest
-  commands:
-  - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
-  - make drone
-
-volumes:
-- name: docker.sock
-  host:
-    path: /var/run/docker.sock
-
-trigger:
-  event:
-    exclude:
-    - promote
-
-# ---
-# kind: pipeline
-# type: docker
-# name: mpn:oldest
-# 
-# platform:
-#   os: linux
-#   arch: amd64
-# 
-# steps:
-# - name: pull
-#   image: omerxx/drone-ecr-auth
-#   commands:
-#   - $(aws ecr get-login --no-include-email --region us-east-1)
-#   - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:2020-06-08
-#   - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:2020-06-08
-#   volumes:
-#   - name: docker.sock
-#     path: /var/run/docker.sock
-# 
-# - name: "Check package: R 4.0"
-#   pull: never
-#   image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:2020-06-08
-#   commands:
-#   - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
-#   - make drone
-# 
-# - name: "Check package: R 3.6"
-#   pull: never
-#   image: 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-3.6:2020-06-08
-#   commands:
-#   - R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies = TRUE)'
-#   - make drone
-# 
-# volumes:
-# - name: docker.sock
-#   host:
-#     path: /var/run/docker.sock
-# 
-# trigger:
-#   event:
-#     exclude:
-#     - promote
-
----
-kind: pipeline
-type: docker
 name: cran-latest
+
 
 platform:
   os: linux
@@ -160,7 +65,7 @@ steps:
   image: omerxx/drone-ecr-auth
   commands:
   - $(aws ecr get-login --no-include-email --region us-east-1)
-  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.0:latest
+  - docker pull 906087756158.dkr.ecr.us-east-1.amazonaws.com/r-dev-ci-mpn-4.1:latest
   volumes:
   - name: docker.sock
     path: /var/run/docker.sock
@@ -178,8 +83,8 @@ trigger:
     - promote
 
 depends_on:
-- mpn:latest
 - cran-latest
+
 ---
 kind: pipeline
 type: docker
@@ -249,6 +154,4 @@ trigger:
   - tag
 
 depends_on:
-- mpn:latest
-#- mpn:oldest
 - cran-latest

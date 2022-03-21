@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 1.0.0.9000
+Version: 1.0.3.9000
 Authors@R: 
     c(person(given = "Kyle T", family = "Baron",
              role = c("aut", "cre"),
@@ -39,10 +39,10 @@ Depends:
     methods
 Imports:
     Rcpp (>= 1.0.7),
-    dplyr (>= 1.0.7),
+    dplyr (>= 1.0.8),
     magrittr (>= 2.0.1),
     tibble (>= 3.1.6),
-    rlang (>= 0.4.12),
+    rlang (>= 1.0.1),
     tidyselect (>= 1.1.1),
     lifecycle, 
     glue
@@ -83,6 +83,7 @@ Collate:
     'annot.R'
     'chain.R'
     'class_build.R'
+    'class_evd.R'
     'events.R'
     'class_rx.R'
     'compile.R'

@@ -272,7 +272,10 @@ c-----------------------------------------------------------------------
 void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                   dtype _data)
 {
-    assert(neq + 1 == y.size());
+    //assert(neq + 1 == y.size());
+    if((neq+1) != y.size()) {
+      Rcpp::stop("[lsoda] y is not the right size in stoda.");    
+    }
 
     size_t corflag = 0, orderflag = 0;
     size_t i = 0, i1 = 0, j = 0, m = 0, ncf = 0;

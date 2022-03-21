@@ -654,7 +654,7 @@ loadso.mrgmod <- function(x,...) {
     try(dyn.unload(sofile),silent=TRUE)
   }
   foo <- try(dyn.load(sofile))
-  if(class(foo)=="try-catch") {
+  if(inherits(foo, "try-error")) {
     wstop("[loadso] failed to load the model dll file")
   }
   return(invisible(x))
