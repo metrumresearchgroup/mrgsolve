@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.0.3
 
 - Removed `assert()` statement in LSODA code found by CRAN check (#943).
