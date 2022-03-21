@@ -1,3 +1,11 @@
+# mrgsolve 1.0.3
+
+- Removed `assert()` statement in LSODA code found by CRAN check (#943).
+
+# mrgsolve 1.0.2
+
+- Test class using `inherits()` not `class()` from CRAN check (#943).
+
 # mrgsolve 1.0.1
 
 - Add `LOG()`, `EXP()`, `SQRT()` macros when `nm-vars` plugin is invoked 
