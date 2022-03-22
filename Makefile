@@ -99,6 +99,7 @@ clean:
 	rm -rf src/*.so
 	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
 	if [ -d ~/Rlibs/mrgsolve ]; then R CMD REMOVE mrgsolve; fi
+	if [ -d mrgsolve ]; then rm -Rf mrgsolve; fi
 
 datasets:
 	Rscript inst/maintenance/datasets.R

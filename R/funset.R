@@ -42,8 +42,8 @@ clean_symbol <- function(x) {
   gsub("[[:punct:]]", "__", x)
 }
 
-funs_create <- function(model,what=c("main", "ode", "table", "config")) {
-  setNames(paste0("_model_", clean_symbol(model), "_",what ,"__"),what)
+funs_create <- function(model, what = c("main", "ode", "table", "config")) {
+  setNames(paste0("_model_", clean_symbol(model), "_", what ,"__"),what)
 }
 
 register_fun <- function(model) {
@@ -67,7 +67,7 @@ which_loaded <- function(x) {
 }
 
 funs_loaded <- function(x,crump=TRUE) {
-  all(which_loaded(x)) & compiled(x)
+  main_loaded(x) && compiled.mrgmod(x)
 }
 
 all_loaded <- function(x) all(which_loaded(x))  
@@ -82,7 +82,7 @@ pointers <- function(x) {
   }
   what <- funs(x)
   ans <- getNativeSymbolInfo(what,PACKAGE=dllname(x))
-  setNames(lapply(ans, "[[","address"),names(what))
+  setNames(lapply(ans, "[[", "address"), names(what))
 }
 
 funset <- function(x) {
