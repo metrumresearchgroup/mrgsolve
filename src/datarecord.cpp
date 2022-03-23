@@ -316,6 +316,21 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     return;
   }
   
+  double Fn = prob->fbio(this->cmtn());
+  double duration = this->dur(Fn);
+  double lagt = prob->alag(this->cmtn());
+  
+  // if(fabs(duration - Ii) < 1e-14) {
+  //   this->steady_zero(prob, solver);
+  //   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
+  //   rec_ptr evoff = NEWREC(Cmt, 9, Amt, Time + duration, Rate);
+  //   thisi.push_back(evon); 
+  //   thisi.push_back(evoff);
+  //   std::sort(thisi.begin(), thisi.end(), CompRec());
+  //   prob->lsoda_init();
+  //   return;
+  // }
+  
   prob->ss_flag = true;
   
   std::vector<double> state_incoming;
@@ -326,16 +341,9 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
       state_incoming[i] = prob->y(i);
     }
   }
-  double lagt = prob->alag(this->cmtn());
-  
-  double Fn = prob->fbio(this->cmtn());
-  
-  double duration = this->dur(Fn);
-  
-  double tfrom = 0.0;
-  
-  int i;
 
+  int i;
+  double tfrom = 0.0;  
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
   size_t n_cmt = prob->Ss_cmt.size();
