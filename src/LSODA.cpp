@@ -500,7 +500,8 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         if (tdist < 2. * ETA * w0)
         {
           //fprintf(stderr, "[lsoda] tout too close to t to start integration\n ");
-          REprintf("[lsoda] tout too close to t to start integration\n ");
+          REprintf("[lsoda] tout = %g too close to t = %g to start integration\n ",
+                   tout, *t);
           terminate(istate);
           return;
         }
