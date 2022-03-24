@@ -320,6 +320,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   double duration = this->dur(Fn);
   double lagt = prob->alag(this->cmtn());
   
+  // TODO: think about refactoring when infusion duration==Ii
   // if(fabs(duration - Ii) < 1e-14) {
   //   this->steady_zero(prob, solver);
   //   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
