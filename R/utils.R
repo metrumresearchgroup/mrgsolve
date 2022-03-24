@@ -200,38 +200,42 @@ my_str_split <- function(string,pattern,n=3,fixed=FALSE,collapse=pattern) {
   lapply(m,collapsen,collapse=collapse,n=n)
 }
 
-##' Create template data sets for simulation
-##'
-##' @param ... passed to [expand.grid]
-##' 
-##' @details
-##' An ID column is added as `seq(nrow(ans))` if not supplied by the user.  
-##' For `expand.ev`, defaults also added include `cmt = 1`, 
-##' `time = 0`, `evid = 1`.  If `total` is included, 
-##' then `addl` is derived as `total` - 1. If `tinf` is included, then 
-##' an infusion rate is derived for row where `tinf` is greater than 
-##' zero.
-##'
-##' @examples
-##' idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))
-##'
-##' doses <- expand.ev(amt = c(300,100), ii = c(12,24), cmt = 1)
-##' 
-##' infusion <- expand.ev(amt = 100, tinf = 2)
-##' 
-##' @md
-##' @export
+#' Create template data sets for simulation
+#' 
+#' These functions expand all combinations of arguments using 
+#' [expand.grid()]. The result always has only one row for one individual.
+#' Use [expand.evd()] or [evd_expand()] to convert nmtran names (e.g. AMT
+#' or CMT) to upper case (see [uctran()]).
+#'
+#' @param ... passed to [expand.grid()]
+#' 
+#' @details
+#' An ID column is added as `seq(nrow(ans))` if not supplied by the user. For 
+#' `expand.ev`, defaults also added include `cmt = 1`, `time = 0`, `evid = 1`.  
+#' If `total` is included, then `addl` is derived as `total` - 1. If `tinf` is 
+#' included, then an infusion rate is derived for row where `tinf` is greater 
+#' than zero.
+#'
+#' @examples
+#' idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))
+#'
+#' doses <- expand.ev(amt = c(300,100), ii = c(12,24), cmt = 1)
+#' 
+#' infusion <- expand.ev(amt = 100, tinf = 2)
+#' 
+#' @md
+#' @export
 expand.idata <- function(...) {
-  ans <- expand.grid(...,stringsAsFactors=FALSE, KEEP.OUT.ATTRS = FALSE)
-  ans$ID <- seq_len(nrow(ans))
-  dplyr::select(ans, "ID", everything())
+  ans <- expand.grid(..., stringsAsFactors = FALSE, KEEP.OUT.ATTRS = FALSE)
+  ans$ID <- seq(nrow(ans))
+  ans[, unique(c("ID", names(ans))), drop = FALSE]
 }
 
 #' @export
 #' @rdname expand.idata
 expand.ev <- function(...) {
-  ans <- expand.grid(...,stringsAsFactors=FALSE)
-  ans[["ID"]] <- seq_len(nrow(ans))
+  ans <- expand.grid(..., stringsAsFactors = FALSE)
+  ans[["ID"]] <- seq(nrow(ans))
   if(!has_name("evid", ans)) ans[["evid"]] <- 1
   if(!has_name("cmt", ans)) ans[["cmt"]] <- 1
   if(!has_name("time", ans)) ans[["time"]] <- 0
@@ -239,20 +243,30 @@ expand.ev <- function(...) {
   finalize_ev(ans)
 }
 
+#' @rdname expand.idata
+#' @export
+expand.evd <- function(...) {
+  uctran(expand.ev(...))  
+}
+
+#' @rdname expand.idata
+#' @export
+ev_expand <- expand.ev
+
 #' @export
 #' @rdname expand.idata
-ev_expand <- expand.ev
+evd_expand <- expand.evd
 
 #' Expand an event data frame across multiple ID
 #' 
 #' @noRd
-expand_event_object <- function(event,ID) {
+expand_event_object <- function(event, ID) {
   event <- as.data.frame(event)
   out_names <- unique(c("ID", names(event)))
-  ind <- rep(seq(nrow(event)), times=length(ID))
-  big <- dplyr::slice(event, ind)
-  big[["ID"]] <- rep(ID, each=nrow(event))
-  big[,out_names]
+  ind <- rep(seq(nrow(event)), times = length(ID))
+  big <- event[ind, , drop = FALSE]
+  big[["ID"]] <- rep(ID, each = nrow(event))
+  big[, out_names, drop = FALSE]
 } 
 
 tolist <- function(x,concat=TRUE,envir=list()) {

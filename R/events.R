@@ -269,7 +269,9 @@ check_ev <- function(x) {
   if(!inherits(x, c("ev", "data.frame"))) {
     stop("All items must have class ev or data.frame.")  
   }
-  x <- to_data_frame(x)
+  if(is.ev(x)) {
+    x <- recase_ev(x@data, x@case)  
+  }
   if(!"ID" %in% names(x)) x[["ID"]] <- 1
   return(x)
 }

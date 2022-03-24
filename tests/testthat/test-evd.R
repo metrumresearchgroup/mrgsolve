@@ -134,7 +134,7 @@ test_that("ev operations with evd objects", {
   d2 <- ev_rep(a, seq(3), n = 2)
   expect_is(d2, "data.frame")
   expect_equal(names(d2), toupper(names(d2)))
-  
+
   d3 <- as_data_set(a, b, c)
   expect_is(d3, "data.frame")
   expect_equal(names(d3), toupper(names(d3)))
@@ -144,5 +144,9 @@ test_that("ev operations with evd objects", {
   check <- names(d4)[-1]
   expect_equal(check, tolower(check))
   expect_equal(names(d4)[1], "ID")
-
+  
+  d5 <- as_data_set(a)
+  expect_is(d5, "data.frame")
+  check <- names(d5)[-1]
+  expect_equal(check, toupper(check))
 })

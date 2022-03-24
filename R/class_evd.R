@@ -51,7 +51,6 @@ setMethod("evd", "ev", function(x, ...) {
   set_ev_case(x, 1L)
 })
 
-
 #' @param x An event object.
 #' @rdname evd
 #' @export
