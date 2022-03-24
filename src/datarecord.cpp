@@ -362,7 +362,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   // We only need one of these; it gets updated and re-used immediately
   rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate);
   
-  for(i=1; i < N_SS ; ++i) {
+  for(int i = 1; i < N_SS; ++i) {
     evon->time(tfrom);
     ++start;
     evon->implement(prob);
