@@ -295,7 +295,7 @@ setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 setMethod("as_data_set", "ev", function(x, ...) {
   other_ev <- list(...)
   if(length(other_ev)==0) {
-    return(check_ev(x)) 
+    return(ev_to_ds(x)) 
   }
   do.call(collect_ev, c(list(x), other_ev))
 })
