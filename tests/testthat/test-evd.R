@@ -150,3 +150,13 @@ test_that("ev operations with evd objects", {
   check <- names(d5)[-1]
   expect_equal(check, toupper(check))
 })
+
+test_that("test-evd expand.evd and evd_expand", {
+  data1 <- expand.ev(amt = 100, ii = 12, addl = 5, ss = 2)
+  data2 <- expand.evd(amt = 100, ii = 12, addl = 5, ss = 2)
+  a <- evd(amt = 100) 
+  b <- ev(amt = 200)
+  c <- evd(amt = 300)
+  expect_identical(data2, uctran(data1))
+  expect_identical(data3, data2)
+})
