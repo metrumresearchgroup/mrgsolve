@@ -154,9 +154,13 @@ test_that("ev operations with evd objects", {
 test_that("test-evd expand.evd and evd_expand", {
   data1 <- expand.ev(amt = 100, ii = 12, addl = 5, ss = 2)
   data2 <- expand.evd(amt = 100, ii = 12, addl = 5, ss = 2)
-  a <- evd(amt = 100) 
-  b <- ev(amt = 200)
-  c <- evd(amt = 300)
+  data3 <- evd_expand(amt = 100, ii = 12, addl = 5, ss = 2)
   expect_identical(data2, uctran(data1))
   expect_identical(data3, data2)
+})
+
+test_that("test-evd coerce to ev", {
+  x <- evd(amt = 100, cmt = 5)
+  y <- as.ev(x)
+  expect_identical(y, ev(amt = 100, cmt = 5))
 })

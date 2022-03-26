@@ -19,9 +19,9 @@ evd(x, ...)
 as.evd(x)
 }
 \arguments{
-\item{x}{An event object.}
+\item{x}{an event object.}
 
-\item{...}{Arguments passed to \code{\link[=ev]{ev()}}.}
+\item{...}{arguments passed to \code{\link[=ev]{ev()}}.}
 }
 \description{
 This function calls \code{\link[=ev]{ev()}} to create an event object and then sets the
