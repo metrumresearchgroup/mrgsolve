@@ -515,7 +515,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob.alag(this_cmtn) > mindt) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(&prob, a[i], Fn,solver);
+              this_rec->steady(&prob, a[i], Fn, solver);
               tfrom = tto;
               this_rec->ss(0);
             }
@@ -548,7 +548,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  -299,
                                  id);
           
-          if(this_rec->from_data()) {
+          if(this_rec->from_data() && prob.alag(this_cmtn) > mindt) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
           }
           a[i].push_back(evoff);
