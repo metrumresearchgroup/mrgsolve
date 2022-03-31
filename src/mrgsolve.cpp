@@ -132,13 +132,17 @@ arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
   arma::mat eigvec;
   arma::eig_sym(eigval, eigvec, OMEGA);
   
+  if(arma::min(eigval) < 0.0) {
+    for(unsigned int i = 0; i < eigval.size(); ++i) {
+      eigval[i] = std::max(0.0, eigval[i]);
+    }  
+  }
+  
   arma::mat X = arma::randn<arma::mat>(n, OMEGA.n_cols);
   
   eigval = arma::sqrt(eigval);
-  
-  arma::mat Z = arma::diagmat(eigval);
-  
-  X = eigvec * Z * X.t();
+
+  X = eigvec * arma::diagmat(eigval) * X.t();
   
   return X.t();
 }
