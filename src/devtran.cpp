@@ -41,7 +41,7 @@
  *   getNativeSymbolInfo()
  * @param data the main data set
  * @param idata the idata data set
- * @param mod teh model object for simulating
+ * @param mod the model object for simulating
  * 
  * @return list containing matrix of simulated data and a character vector of
  * tran names that may have been carried into the output
