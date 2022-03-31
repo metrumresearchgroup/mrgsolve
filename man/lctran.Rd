@@ -26,7 +26,7 @@ uctran(data, ...)
 
 \item{...}{for potential future use.}
 
-\item{warn}{ff \code{TRUE}, a warning will be issued when there are both upper
+\item{warn}{if \code{TRUE}, a warning will be issued when there are both upper
 and lower case versions of any nmtran-like column in the data frame.}
 }
 \value{

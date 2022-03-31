@@ -168,7 +168,7 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' frame, no changes will be made. 
 #' 
 #' @param data a data set with nmtran-like format.
-#' @param warn ff `TRUE`, a warning will be issued when there are both upper
+#' @param warn if `TRUE`, a warning will be issued when there are both upper
 #' and lower case versions of any nmtran-like column in the data frame.
 #' @param ... for potential future use.
 #' 
