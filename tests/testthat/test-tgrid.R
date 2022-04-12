@@ -26,7 +26,7 @@ context("test-tgrid")
 
 mod <- house()
 
-test_that("tgrid", {
+test_that("tgrid [MRGSOLVE-TEST-0277]", {
   x <- tgrid(0,24,1)
   expect_is(x,"tgrid")
   expect_length(stime(x),25)
@@ -37,13 +37,13 @@ test_that("tgrid", {
   expect_identical(stime(x),x)
 })
 
-test_that("stime can render length 0", {
+test_that("stime can render length 0 [MRGSOLVE-TEST-0278]", {
   expect_length(stime(numeric(0)), 0)
   mod <- update(mod, end = -1, add = numeric(0))
   expect_length(stime(mod),0)
 })
 
-test_that("no extra time 0 record when no observations", {
+test_that("no extra time 0 record when no observations [MRGSOLVE-TEST-0279]", {
   data <- ev(amt = 0, ii = 24, addl = 5) %>% realize_addl()
   out <- mrgsim(house(),data=data, end = -1)
   expect_identical(data$time,out$time)

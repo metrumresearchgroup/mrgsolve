@@ -32,12 +32,12 @@ data0 <- tibble(ID = c(1,2,3), COV = c(1,2,3))
 data <-tibble(ID = c(1,2,3,4), COV = c(2,1,1,2))
 
 
-test_that("Input error", {
+test_that("Input error [MRGSOLVE-TEST-0063]", {
   expect_error(ev_assign(list(e,b), data0, "COV"))
   expect_is(ev_assign(list(e,b), data, "COV"), "data.frame")
 })
 
-test_that("Assignment on sorted values", {
+test_that("Assignment on sorted values [MRGSOLVE-TEST-0064]", {
   df <- ev_assign(list(b,e), data, "COV")
   expect_equal(df$amt, c(100, 200, 200, 100))
 })

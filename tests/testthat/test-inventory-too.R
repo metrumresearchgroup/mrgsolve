@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-inventory-too")
 
-test_that("inventory conditions", {
+test_that("inventory conditions [MRGSOLVE-TEST-0127]", {
     
   mod <- mrgsolve::house()
   

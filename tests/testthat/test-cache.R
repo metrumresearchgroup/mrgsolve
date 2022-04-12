@@ -25,7 +25,7 @@ context("test-cache")
 
 mrgsolve:::update_wait_time(0)
 
-test_that("model caches via mread_cache", {
+test_that("model caches via mread_cache [MRGSOLVE-TEST-0014]", {
   
   mod <- mread_cache("pk1", modlib())
   
@@ -46,7 +46,7 @@ test_that("model caches via mread_cache", {
 
 
 
-test_that("model caches via mcode_cache", {
+test_that("model caches via mcode_cache [MRGSOLVE-TEST-0015]", {
   code <- '
   $PARAM A = 1 
   $CMT B

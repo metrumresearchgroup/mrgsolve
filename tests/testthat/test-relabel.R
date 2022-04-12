@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-relabel")
 
-test_that("rename, from vector", {
+test_that("rename, from vector [MRGSOLVE-TEST-0263]", {
   x <- mrgsolve:::cvec_cs("a b = boy, cat = c, z, y = yak")
   obj <- mrgsolve:::.ren.create(x)
   a <- c("a", "b", "cat", "z", "y")
@@ -33,7 +33,7 @@ test_that("rename, from vector", {
   expect_equal(setNames(a,b),mrgsolve:::.ren.chr(obj))
 })
 
-test_that("rename, from string", {
+test_that("rename, from string [MRGSOLVE-TEST-0264]", {
   x <- "a b = boy cat = c z y = yak"
   obj <- mrgsolve:::.ren.create(x)
   a <- c("a", "b", "cat", "z", "y")
@@ -44,7 +44,7 @@ test_that("rename, from string", {
 })
 
 
-test_that("ren rename", {
+test_that("ren rename [MRGSOLVE-TEST-0265]", {
   
   x <- mrgsolve:::.ren.create("a = apple b c = Cat")
   out <- mrgsolve:::.ren.rename(x,c("fiddle", "apple", "Cat", "toothpick", "a"))

@@ -26,7 +26,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-as_data_set")
 
 
-test_that("as_data_set basic", {
+test_that("as_data_set basic [MRGSOLVE-TEST-0012]", {
   e1 <- ev(amt = 100, ID = 1:2)
   e2 <- ev(amt = 200, ID = 1:3)
   data <- as_data_set(e1,e2)

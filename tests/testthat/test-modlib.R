@@ -23,14 +23,14 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-modlib")
 
-test_that("code extraction", {
+test_that("code extraction [MRGSOLVE-TEST-0153]", {
   mod <- mrgsolve::house()
   x <- mrgsolve:::code(mod)
   expect_is(x, "character")
   expect_error(mrgsolve:::code(letters))
 })
 
-test_that("list models", {
+test_that("list models [MRGSOLVE-TEST-0154]", {
   expect_message(modlib(list = TRUE))
 })
 

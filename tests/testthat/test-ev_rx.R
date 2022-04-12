@@ -33,13 +33,13 @@ all.equal.ev <- function(a,b) {
   return(identical(a,b))
 }
 
-test_that("parse dose only - bolus", {
+test_that("parse dose only - bolus [MRGSOLVE-TEST-0068]", {
   a <- ev_rx("100")
   b <- ev(amt = 100)
   expect_identical(a,b)
 })
 
-test_that("parse dose only - infusion", {
+test_that("parse dose only - infusion [MRGSOLVE-TEST-0069]", {
   a <- ev_rx("100 over 2")
   b <- ev(amt = 100, rate = 100/2)
   expect_identical(a,b)
@@ -48,19 +48,19 @@ test_that("parse dose only - infusion", {
   expect_identical(a,b)
 })
 
-test_that("parse dose plus additional - bolus", {
+test_that("parse dose plus additional - bolus [MRGSOLVE-TEST-0070]", {
   a <- ev_rx("100 q 12 x 3")
   b <- ev(amt = 100,  ii = 12, addl = 2)
   expect_identical(a,b)
 })
 
-test_that("parse dose plus additional - infusion", {
+test_that("parse dose plus additional - infusion [MRGSOLVE-TEST-0071]", {
   a <- ev_rx("100 over 10 q 12 x 3")
   b <- ev(amt = 100,  ii = 12, addl = 2, rate = 100/10)
   expect_identical(a,b)
 })
 
-test_that("parse multiple - infusion / bolus", {
+test_that("parse multiple - infusion / bolus [MRGSOLVE-TEST-0072]", {
   a <- ev_rx("100 over 10 q 12 x 3 then 200 q 24 x 2")
   b <- ev(amt = 100, ii = 12, addl = 2, rate = 100/10, )
   c <- ev(amt = 200, ii = 24, addl = 1)
@@ -71,13 +71,13 @@ test_that("parse multiple - infusion / bolus", {
   expect_identical(a,d)
 })
 
-test_that("parse dose into compartment", {
+test_that("parse dose into compartment [MRGSOLVE-TEST-0073]", {
   a <- ev_rx("100 over 10 in 4 q 12 x 3")
   b <- ev(amt = 100, cmt = 4, ii = 12, addl = 2,  rate = 100/10, )
   expect_identical(a,b)
 })
 
-test_that("dose can be in decimal or scientific", {
+test_that("dose can be in decimal or scientific [MRGSOLVE-TEST-0074]", {
   a <- ev_rx("1.23E4")
   b <- ev(amt = 1.23E4)
   expect_identical(a,b)
@@ -91,13 +91,13 @@ test_that("dose can be in decimal or scientific", {
   expect_identical(a,b)
 })
 
-test_that("infusion duration can be decimal", {
+test_that("infusion duration can be decimal [MRGSOLVE-TEST-0075]", {
   a <- ev_rx("1000 over 1.3")
   b <- ev(amt = 1000, rate = 1000/1.3)
   expect_identical(a,b)
 })
 
-test_that("after parameter can be decimal", {
+test_that("after parameter can be decimal [MRGSOLVE-TEST-0076]", {
   a <- ev_rx("1000 after 2")
   b <- ev(amt = 1000, time =2)
   expect_identical(a,b)

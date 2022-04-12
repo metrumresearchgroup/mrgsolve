@@ -31,13 +31,13 @@ out1 <- mrgsim(mod, obsonly=TRUE, data=exTheoph, carry_out="evid")
 out2 <- mrgsim(mod, obsonly=TRUE, data=exTheoph)
 out3 <- mrgsim(mod, obsaug=TRUE,  data=exTheoph, carry_out="a.u.g")
 
-test_that("Using of obsonly with data set", {
+test_that("Using of obsonly with data set [MRGSOLVE-TEST-0243]", {
   expect_true(all(out1$evid==0))
   expect_true(all(sort(unique(exTheoph$evid)) == c(0,1)))
   expect_true(all(out2$time==exTheoph$time[exTheoph$evid==0]))
 })
 
-test_that("Using obsonly with events object", {
+test_that("Using obsonly with events object [MRGSOLVE-TEST-0244]", {
   expect_identical(mrgsim(mod %>% ev(amt=100, cmt=1), obsonly=TRUE)$time,stime(mod))
 })
 
@@ -48,7 +48,7 @@ alltimes <- lapply(split(exTheoph, exTheoph$ID), function(x){
 })
 
 
-test_that("Use of obsaug returns augmented set of observations", {
+test_that("Use of obsaug returns augmented set of observations [MRGSOLVE-TEST-0245]", {
   alltimes <- unlist(alltimes)
   expect_true(sum(names(out3) %in% "a.u.g")==1)
   expect_identical(augtimes, rep(stime(mod), length(unique(exTheoph$ID))))    
@@ -58,7 +58,7 @@ test_that("Use of obsaug returns augmented set of observations", {
 
 
 
-test_that("Use of obsaug doesn't affect simulation without data", {
+test_that("Use of obsaug doesn't affect simulation without data [MRGSOLVE-TEST-0246]", {
   out4 <- mrgsim(mod, obsaug=TRUE)
   expect_identical(out4$time, stime(mod))
 })

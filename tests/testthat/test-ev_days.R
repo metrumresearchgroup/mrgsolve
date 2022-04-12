@@ -28,19 +28,19 @@ context("test-ev_days")
 e <- ev(amt=100)
 b <- ev(amt=200)
 
-test_that("input error - ev days", {
+test_that("input error - ev days [MRGSOLVE-TEST-0065]", {
   expect_error(ev_days(e,"abc"))
   expect_error(ev_days(e))
 })
 
-test_that("Schedule with days argument", {
+test_that("Schedule with days argument [MRGSOLVE-TEST-0066]", {
   x <- as.data.frame(ev_days(e,"m,w,f"))
   expect_identical(x$time,c(0,48,96))
   x <- as.data.frame(ev_days(e,"m,t,w"))
   expect_identical(x$time,c(0,24,48))
 })
 
-test_that("Schedule with missing arguments", {
+test_that("Schedule with missing arguments [MRGSOLVE-TEST-0067]", {
   x <- as.data.frame(ev_days(t=e, th=e, s=e))
   expect_identical(x$time, c(24,72,144))
   x <- as.data.frame(ev_days(f=e,sa=b))

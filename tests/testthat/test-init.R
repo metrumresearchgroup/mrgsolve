@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-init")
 
-test_that("inits are constructed", {
+test_that("inits are constructed [MRGSOLVE-TEST-0125]", {
   x <- init(A = 1, B = 2)  
   expect_is(x, "cmt_list")
   x <- init(list(A = 1, B = 2))
@@ -34,7 +34,7 @@ test_that("inits are constructed", {
   expect_error(init(A = "B"))
 })
 
-test_that("inits are shown", {
+test_that("inits are shown [MRGSOLVE-TEST-0126]", {
   mod <- mrgsolve::house()
   x <- capture.output(init(mod))
   expect_match(x[2], "Model initial conditions")

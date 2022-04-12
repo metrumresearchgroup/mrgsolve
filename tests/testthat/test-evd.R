@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-evd")
 
-test_that("create evd object", {
+test_that("create evd object [MRGSOLVE-TEST-0100]", {
   a <- evd(amt = 100)
   expect_is(a, "ev")
   expect_equal(a@case, 1)
@@ -44,14 +44,14 @@ test_that("create evd object", {
   expect_equal(d@case, 1L)
 })
 
-test_that("evd object has all lower case names", {
+test_that("evd object has all lower case names [MRGSOLVE-TEST-0101]", {
   a <- ev(amt = 100, ii = 12, addl = 23)
   b <- evd(amt = 100, ii = 12, addl = 23)
   expect_identical(names(a), names(b))
   expect_identical(names(a), tolower(names(b)))
 })
 
-test_that("evd object realize names", {
+test_that("evd object realize names [MRGSOLVE-TEST-0102]", {
   a <- evd(amt = 100, ii = 12, addl = 23, ss = 1, rate = 2, 
           cmt = 5, time = 12, evid = 3, kyle = 0)
   
@@ -63,7 +63,7 @@ test_that("evd object realize names", {
   expect_identical(names(b)[tnames], toupper(names(a))[tnames])
 })
 
-test_that("evd object simulated names", {
+test_that("evd object simulated names [MRGSOLVE-TEST-0103]", {
   a <- evd(amt = 100)
   idata <- data.frame(ID = 1)
   mod <- update(house(), end = -1)
@@ -84,7 +84,7 @@ test_that("evd object simulated names", {
   expect_equal(x, names(out7))
 })
 
-test_that("evd object carry out tran names", {
+test_that("evd object carry out tran names [MRGSOLVE-TEST-0104]", {
   a <- evd(amt = 100, ii = 12, addl = 2, rate = 1)
   mod <- update(house(), end = -1)
   out1 <- mrgsim(mod, a, carry_out = "AMT, II, ADDL, RATE,CMT")
@@ -95,14 +95,14 @@ test_that("evd object carry out tran names", {
   expect_equal(carried, tolower(carried))
 })
 
-test_that("coerce ev object to evd", {
+test_that("coerce ev object to evd [MRGSOLVE-TEST-0105]", {
   a <- ev(amt = 100)
   b <- as.evd(a)
   expect_identical(a@case, 0L)
   expect_identical(b@case, 1L)
 })
 
-test_that("ev operations with evd objects", {
+test_that("ev operations with evd objects [MRGSOLVE-TEST-0106]", {
   a <- evd(amt = 100) 
   b <- ev(amt = 200)
   c <- evd(amt = 300)

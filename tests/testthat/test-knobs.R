@@ -31,26 +31,26 @@ mod <- mrgsolve::house(atol=1E-20,rtol=1E-12,digits=8)
 out <- knobs(mod %>% init(GUT=0), CL=c(1,2,3), foo=c(2,3,4),fooo=1, amt=c(100,200), cmt=1)
 dfout <- as.data.frame(out)
 
-test_that("knobs() returns object of class batch_mrgsims", {
+test_that("knobs() returns object of class batch_mrgsims [MRGSOLVE-TEST-0135]", {
   expect_is(out, "batch_mrgsims")
 })
 
-test_that("plotting batch_mrgsims objects", {
+test_that("plotting batch_mrgsims objects [MRGSOLVE-TEST-0136]", {
   p <- plot(out)  
   expect_is(p,"trellis")
   p <- plot(out, CP~time|CL*amt) 
   expect_is(p,"trellis")
 })
 
-test_that("Moving knobs are correctly identified", {
+test_that("Moving knobs are correctly identified [MRGSOLVE-TEST-0137]", {
   expect_identical(mrgsolve:::moving(out), c("CL", "amt"))
 })
 
-test_that("CL knob is correctly captured in output as CL", {
+test_that("CL knob is correctly captured in output as CL [MRGSOLVE-TEST-0138]", {
   expect_true(is.element("CL", names(out)))
   expect_identical(unique(dfout$CL),c(1,2,3))
 })
 
-test_that("A false knob does not appear in simulated output", {
+test_that("A false knob does not appear in simulated output [MRGSOLVE-TEST-0139]", {
   expect_false(is.element("foo", names(out)))
 })

@@ -28,7 +28,7 @@ mod <- mrgsolve::house() %>% Req(CENT,RESP)
 data(exidata) 
 
 
-test_that("Run via idata and separate", {
+test_that("Run via idata and separate [MRGSOLVE-TEST-0258]", {
   
   e <- ev(amt=100,ii=8,addl=3)
   

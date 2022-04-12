@@ -26,7 +26,7 @@ context("test-evid4")
 
 mod <- mrgsolve::house()
 
-test_that("evid4 bolus dosing is the same as evid1", {
+test_that("evid4 bolus dosing is the same as evid1 [MRGSOLVE-TEST-0107]", {
   e1 <- ev(amt = 100, ii = 24, addl = 3)
   e4 <- ev(amt = 100, ii = 24, addl = 3, evid = 4)
   out1 <- mrgsim(mod, events = e1) %>% as.data.frame
@@ -34,7 +34,7 @@ test_that("evid4 bolus dosing is the same as evid1", {
   expect_identical(out1, out4)
 })
 
-test_that("evid4 infusion dosing is the same as evid1", {
+test_that("evid4 infusion dosing is the same as evid1 [MRGSOLVE-TEST-0108]", {
   e1 <- ev(amt = 100, ii = 24, addl = 3, rate = 10)
   e4 <- ev(amt = 100, ii = 24, addl = 3, rate = 10, evid = 4)
   out1 <- mrgsim(mod, events = e1) %>% as.data.frame
@@ -42,7 +42,7 @@ test_that("evid4 infusion dosing is the same as evid1", {
   expect_identical(out1, out4)
 })
 
-test_that("evid4 reset with infusion", {
+test_that("evid4 reset with infusion [MRGSOLVE-TEST-0109]", {
   dose1 <- ev(amt = 100, rate = 1)
   dose2 <- ev(amt = 200, time = 3, evid = 4, rate = 1)
   dose <- c(dose1,dose2)

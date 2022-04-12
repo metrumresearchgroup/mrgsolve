@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-opts")
 
-test_that("Options where they don't belong", {
+test_that("Options where they don't belong [MRGSOLVE-TEST-0247]", {
   code <- '
   $PARAM CL = 1
   $ODE >> annotated=TRUE
@@ -40,7 +40,7 @@ test_that("Options where they don't belong", {
 })
 
 
-test_that("Scrape and call", {
+test_that("Scrape and call [MRGSOLVE-TEST-0248]", {
   code <- '
   >> d = 2
   CL=1, V=2, KA=3

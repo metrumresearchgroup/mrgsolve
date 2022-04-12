@@ -30,7 +30,7 @@ lo <- extran1
 up <- extran1
 names(up) <- toupper(names(up))
 
-test_that("Same result from upper and lower case names", {
+test_that("Same result from upper and lower case names [MRGSOLVE-TEST-0027]", {
   what <- c(1,5:7)
   a <- mod %>% data_set(up) %>% mrgsim
   b <- mod %>% data_set(lo) %>% mrgsim
@@ -53,27 +53,27 @@ test_that("Same result from upper and lower case names", {
   expect_identical(as.matrix(a)[,what],as.matrix(b)[,what])
 })
 
-test_that("Warning is generated when mixed upper/lower names", {
+test_that("Warning is generated when mixed upper/lower names [MRGSOLVE-TEST-0028]", {
   mix <-  dplyr::rename(lo, EVID = evid) 
   expect_warning(mrgsim(data_set(mod,mix)))
 })
 
-test_that("Filter out ID", {
+test_that("Filter out ID [MRGSOLVE-TEST-0029]", {
   out <- mod %>% data_set(up, ID > 4) %>% mrgsim
   expect_true(all(out$ID > 4))
 })
 
-test_that("ID is required", {
+test_that("ID is required [MRGSOLVE-TEST-0030]", {
   df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-ID)
   expect_error(mod %>% data_set(df) %>% mrgsim)
 })
 
-test_that("cmt is required", {
+test_that("cmt is required [MRGSOLVE-TEST-0031]", {
   df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-cmt)
   expect_error(mod %>% data_set(df) %>% mrgsim)
 })
 
-test_that("time is required", {
+test_that("time is required [MRGSOLVE-TEST-0032]", {
   df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-time)
   expect_error(mod %>% data_set(df) %>% mrgsim)
 })
@@ -86,15 +86,15 @@ dd1 <- exTheoph %>% bind_rows(., group_by(.,ID) %>% slice(5)) %>% arrange(ID)
 dd2 <- dd1 %>% arrange(ID,time)
 
 
-test_that("Improperly sorted records produces error", {
+test_that("Improperly sorted records produces error [MRGSOLVE-TEST-0033]", {
   expect_error(mod %>% data_set(dd1) %>% mrgsim)
 })
 
-test_that("Properly sorted records produces no error", {
+test_that("Properly sorted records produces no error [MRGSOLVE-TEST-0034]", {
   expect_is((mod %>% data_set(dd2) %>% mrgsim),"mrgsims")
 })
 
-test_that("Data set column order gives same answer", {
+test_that("Data set column order gives same answer [MRGSOLVE-TEST-0035]", {
   mod <- mrgsolve::house() %>% omat(dmat(1,1,1,1))
   data(extran3)
   set.seed(9923403)
@@ -110,7 +110,7 @@ test_that("Data set column order gives same answer", {
   rm(mod)
 })
 
-test_that("numerics_only", {
+test_that("numerics_only [MRGSOLVE-TEST-0036]", {
   n <- 10
   data <- tibble(
     ID = as.numeric(seq(n)), 
@@ -130,7 +130,7 @@ test_that("numerics_only", {
   expect_silent(numerics_only(data,quiet=TRUE))
 })
 
-test_that("missing value in param column is message", {
+test_that("missing value in param column is message [MRGSOLVE-TEST-0037]", {
   data <- expand.ev(amt = 100, ii = 24, addl = 2, WT = NA_real_, FOO = 2)
   expect_warning(valid_data_set(data,mod), 
                  regexp="Parameter column WT must not contain missing values.")
@@ -140,7 +140,7 @@ test_that("missing value in param column is message", {
                  regexp="Parameter column WT must not contain missing values.")
 })
 
-test_that("missing value in time/rate/ID is error", {
+test_that("missing value in time/rate/ID is error [MRGSOLVE-TEST-0038]", {
   data <- data.frame(ID = 1, time = NA_real_, amt = 100, cmt = 1, evid=1)
   expect_error(mrgsim_d(mod,data), 
                regexp="Found missing values in input data.")
@@ -150,7 +150,7 @@ test_that("missing value in time/rate/ID is error", {
                regexp="Found missing values in input data.")
 })
 
-test_that("observations expand", {
+test_that("observations expand [MRGSOLVE-TEST-0039]", {
   e <- ev(amt = 100)
   dat <- expand_observations(e, c(1,2,3))
   dose <- filter(dat,evid==1)
@@ -160,7 +160,7 @@ test_that("observations expand", {
   expect_equal(obs[["time"]],c(1,2,3))
 })
 
-test_that("expand observations bug issue-563", {
+test_that("expand observations bug issue-563 [MRGSOLVE-TEST-0040]", {
   e1 <- ev(amt = 100, cmt=1,LAGT=1,ID=15)
   e2 <- ev(time=4,amt=50,cmt=1,LAGT=0,rate=24,addl=2,ii=24,ID=15)
   e <- c(e1,e2)
@@ -168,7 +168,7 @@ test_that("expand observations bug issue-563", {
   expect_is(d,"data.frame")
 })
 
-test_that("add position argument to expand observations issue-565", {
+test_that("add position argument to expand observations issue-565 [MRGSOLVE-TEST-0041]", {
   e1 <- ev(amt = 100, ii = 4, addl = 1) %>% realize_addl
   dat1 <- expand_observations(e1,c(0,4))
   dat2 <- expand_observations(e1,c(0,4),obs_pos=13)
@@ -178,7 +178,7 @@ test_that("add position argument to expand observations issue-565", {
   expect_equal(dat1$time,dat2$time)
 })
 
-test_that("Convert names to lower case with lctran", {
+test_that("Convert names to lower case with lctran [MRGSOLVE-TEST-0042]", {
   data <- data.frame(time = 1, EVID = 2, ss = 2, foo = 5, BAR = 2)
   ans <- lctran(data)
   expect_equal(
@@ -192,7 +192,7 @@ test_that("Convert names to lower case with lctran", {
   )
 })
 
-test_that("Convert names to upper case with uctran", {
+test_that("Convert names to upper case with uctran [MRGSOLVE-TEST-0043]", {
   data <- data.frame(time = 1, EVID = 2, ss = 2, foo = 5, BAR = 2)
   ans <- uctran(data)
   expect_equal(

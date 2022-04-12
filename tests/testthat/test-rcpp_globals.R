@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-rcpp_globals")
 
-test_that("rcpp_globals", {
+test_that("rcpp_globals [MRGSOLVE-TEST-0253]", {
   pream <- c("global CharacterVector x = asdfasdf;", "Rcpp::IntegerVector z = 123;")
   spec <- list(PREAMBLE = pream)
   x <- mrgsolve:::global_rcpp(spec)

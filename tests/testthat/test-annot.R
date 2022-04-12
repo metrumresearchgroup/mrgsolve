@@ -27,7 +27,7 @@ cmt <- mrgsolve:::cmt
 
 context("test-annot")
 
-test_that("parse line - name : value : text", {
+test_that("parse line - name : value : text [MRGSOLVE-TEST-0001]", {
     
     x <- "CL: 2 : Clearance (L/hr)"
     y <- mrgsolve:::parse_annot_line(x)
@@ -91,7 +91,7 @@ test_that("parse line - value  : text", {
   
 })
 
-test_that("Full specification - $PARAM", {
+test_that("Full specification - $PARAM [MRGSOLVE-TEST-0004]", {
   
   code <- '
     $PARAM @annotated
@@ -103,7 +103,7 @@ test_that("Full specification - $PARAM", {
   expect_equivalent(as.numeric(param((mod))), c(2,12))
 })
 
-test_that("Full specification - $THETA", {
+test_that("Full specification - $THETA [MRGSOLVE-TEST-0005]", {
   
   code <- '
   $THETA  @annotated @name TH
@@ -116,7 +116,7 @@ test_that("Full specification - $THETA", {
 })
 
 
-test_that("Full specification - $CMT", {
+test_that("Full specification - $CMT [MRGSOLVE-TEST-0006]", {
   
   code <- '
     $CMT @annotated
@@ -130,7 +130,7 @@ test_that("Full specification - $CMT", {
   expect_equivalent(an$descr, c("Dosing", "Central"))
 })
 
-test_that("Full specification - $INIT", {
+test_that("Full specification - $INIT [MRGSOLVE-TEST-0007]", {
   
   code <- '
   $INIT @annotated
@@ -147,7 +147,7 @@ test_that("Full specification - $INIT", {
 })
 
 
-test_that("Full specification - $FIXED", {
+test_that("Full specification - $FIXED [MRGSOLVE-TEST-0008]", {
   
   code <- '
   $FIXED @annotated
@@ -163,7 +163,7 @@ test_that("Full specification - $FIXED", {
   expect_equivalent(an$descr, c("Letter-A", "Letter-B", "Letter-C"))
 })
 
-test_that("Full specification - $VCMT", {
+test_that("Full specification - $VCMT [MRGSOLVE-TEST-0009]", {
   
   code <- '
   $VCMT @annotated
@@ -178,7 +178,7 @@ test_that("Full specification - $VCMT", {
   expect_equivalent(an$descr, c("123", "456", "789"))
 })
 
-test_that("Full specification - $CAPTURE", {
+test_that("Full specification - $CAPTURE [MRGSOLVE-TEST-0010]", {
   
   code <- '
   $MAIN
@@ -199,7 +199,7 @@ test_that("Full specification - $CAPTURE", {
   expect_true(all(an$block =="CAPTURE"))
 })
 
-test_that("test-annot semicolons", {
+test_that("test-annot semicolons [MRGSOLVE-TEST-0011]", {
   annot <- c("CL : 2 : l/hr", "VC : 20 : l doi://123.245 2:2")
   x <- mrgsolve:::parse_annot(annot)
   expect_equal(x$nm, c("CL", "VC"))

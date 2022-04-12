@@ -29,13 +29,13 @@ ident <- function(x,y,...) {
   identical(x,y) 
 }
 
-test_that("Different seeds give different results without call to set.seed()", {
+test_that("Different seeds give different results without call to set.seed() [MRGSOLVE-TEST-0268]", {
   out1 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20))
   out2 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20))
   expect_false(ident(out1,out2))
 })
 
-test_that("Different seeds give different results with different calls to set.seed()", {
+test_that("Different seeds give different results with different calls to set.seed() [MRGSOLVE-TEST-0269]", {
   set.seed(112)
   out1 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20))
   set.seed(333)
@@ -43,7 +43,7 @@ test_that("Different seeds give different results with different calls to set.se
   expect_false(ident(out1,out2))
 })
 
-test_that("Same seeds give same results with call to set.seed()", {
+test_that("Same seeds give same results with call to set.seed() [MRGSOLVE-TEST-0270]", {
   set.seed(112)
   out1 <- mrgsim(mod %>% init(GUT=100), idata=data.frame(ID=1:20))
   set.seed(112)
@@ -51,7 +51,7 @@ test_that("Same seeds give same results with call to set.seed()", {
   expect_true(ident(out1,out1))
 })
 
-test_that("test-rng mrgsolve simulated with negative eigenvalue", {
+test_that("test-rng mrgsolve simulated with negative eigenvalue [MRGSOLVE-TEST-0271]", {
   mat <- bmat(
     1.53394, 
     1.22232, 0.974014,

@@ -1,0 +1,794 @@
+MRGSOLVE-S001:
+  name: '[F] Steady-State with Constant Infusion'
+  description: "- Advance the system to steady state with an infusion with given rate\r\n-
+    Require ss=1\r\n- Require Rate > 0 or == -1\r\n- Error if Rate == -2\r\n- Error
+    if ADDL > 0\r\n- Allow amt==0 to event object creator\r\n\r\n`AMT = 0, RATE >
+    0,  II = 0, SS=1`\r\n\r\n\r\nSee PR #524 \r\n\r\nReference: nm-help guide, `SS
+    DOSE EVENT RECORD`.\r\n```\r\nValues of AMT, RATE, II data items:\r\n\r\n AMT
+    \  RATE      II\r\n\r\n 0     0,>0,-1   0    Steady-state with constant infusion.\r\n
+    \                     The infusion terminates at the event time  of  the\r\n                      SS
+    dose record.  The ADDL data item cannot be used\r\n                      to specify
+    additional transient doses.  Doses with\r\n                      rate  0 are useful
+    when the differential equations\r\n                      coded by the user explicitly
+    provide  for  endoge-\r\n                      nous drug production.\r\n```\r\nThis
+    is a general target to aim at.  We do not have to match ever aspect of this implementation."
+  ProductRisk: medium-risk
+  tests:
+  - good events issue-249
+  - bad events issue-249
+  - MRGSOLVE-TEST-0124
+MRGSOLVE-S002:
+  name: '[R] Proper handling of negative istate'
+  description: "When lsoda returns with negative istate, issue a message saying what
+    is the value of istate and a brief description of what that means.  Throw an exception
+    at that time. \r\n\r\nThe `istate` messages come from ODEPACK DLSODA code and
+    are found in `./src/mrgsolve.cpp`.\r\n\r\nSee https://github.com/metrumresearchgroup/mrgsolve/commit/84f43b8dddb244afc4873c12dea9db07292aa633\r\n\r\nSee
+    https://github.com/metrumresearchgroup/mrgsolve/commit/386ee929fed841edc88108a668c2c38386a81e1d"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0210
+MRGSOLVE-S003:
+  name: '[R] Simplify request / Request'
+  description: "See PR #523 \r\n\r\n- Adds two integer members: one indexing the currently
+    requested compartments, the other indexing the currently requested captures\r\n-
+    Two character vectors are kept: (re)names for compartments and (re)names for captures\r\n-
+    The  calculation of the integer vectors is now done by the update method rather
+    than on the fly as the simulation goes\r\n- Rather than \"Request\" we'll update
+    `outvars`, listing both compartments and captures\r\n- Added initialize method
+    to set this up along with some other parts of the model object\r\n- Two new functions:
+    one to update these new indices; the other to handle updates through `request`
+    (working only on the compartment index)\r\n- Add strict argument to model update
+    method; when an option is turned on, the update will generate a warning if the
+    user tries to update a non-existent member\r\n- Don't allow duplicate names in
+    `outvars` and `request`\r\n- Output variables in the simulated data will be ordered
+    as they are in the model: first, compartments according to compartment number,
+    then captures according to capture number\r\n- The user can ask for `outvars=\"(all)\"`
+    to get all compartments and captures in the simulated \r\noutput\r\n- The user
+    can ask for `request=(all)` to get all compartments"
+  ProductRisk: medium-risk
+  tests:
+  - MRGSOLVE-TEST-0297
+  - MRGSOLVE-TEST-0298
+  - request is made in SET block
+  - request is (all) by default
+MRGSOLVE-S004:
+  name: '[R] Remove qsim and re-implement from mrgsimple'
+  description: "There is some significant overhead to calling mrgsim that is very
+    noticeable when running short problems.  We created these functions to have a
+    streamlined simulation sequence for these cases.  \r\n\r\n- Remove qsim.R\r\n-
+    Re-factor `to_mrgsimple` (previously unexported) and re-brand as `qsim`\r\n- Various
+    minor efficiency gains targeted to this quick turnaround scenario\r\n\r\nSee #523
+    for request refactor.  This eliminates a lot of that overhead. \r\n\r\n\r\nSee
+    \ https://github.com/metrumresearchgroup/mrgsolve/commit/8c20fca9eb94297b67961e526a9fd71558e2ecb5"
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0196
+  - MRGSOLVE-TEST-0195
+MRGSOLVE-S005:
+  name: '[R] Refactor SS'
+  description: "The code for when to advance to steady state was re-factored.  The
+    reason for refactoring is that there are currently some steady state scenarios
+    that mrgsolve can't do (mainly SS when infusion time is greater than the dosing
+    interval and there is a lag time).\r\n\r\nThere is no user-facing change associated
+    with this.\r\n\r\n__External tests__\r\n- https://github.com/mrgsolve/nmtests\r\n-
+    pdf attached\r\n\r\n[nmtest7_20191004.pdf](https://github.com/metrumresearchgroup/mrgsolve/files/3692727/nmtest7_20191004.pdf)"
+  ProductRisk: high-risk
+  tests:
+  - one-compartment
+  - bolus
+  - ss
+  - one-compartment
+  - oral
+  - first
+  - ss
+  - two-compartment
+  - bolus
+  - ss
+  - two-compartment
+  - bolus
+  - first
+  - ss
+  - two-compartment
+  - infusion
+  - ss
+MRGSOLVE-S006:
+  name: '[F] SS=1 and F_CMT is 0'
+  description: "The user should be able to run the system to steady state when `F_CMT`
+    is zero. \r\n\r\nAlso, better error message:\r\n`“Error: Cannot use ss flag when
+    F(n) is zero.`\r\n\r\nSee 510b78a\r\n\r\nSee b778070e4725251611bc2974e3843e583d95a139"
+  ProductRisk: low-risk
+  tests: ss=1 and F_CMT =0 issue-497
+MRGSOLVE-S007:
+  name: '[BUG] Fix position for additional doses'
+  description: "They need to get positioned relative to absolute location in the data
+    set; for large data sets, can't currently force additional doses to happen after
+    observations at the same time.  \r\n\r\nThe only way to do this is to make the
+    position greater than the number of rows in the data set; that needs to get passed
+    into `schedule`.\r\n\r\nComprehensive testing for this issue as well as all 4
+    recsort values are in \r\n`tests/testthat/test-recsort.R`\r\n\r\nSee 3fb45ab263c9d68aa47aa3963f109cd110f4499b\r\nSee
+    f84b0fb0b4ed13a7806e9f09a6299dc45e91aa48"
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0259
+  - MRGSOLVE-TEST-0260
+  - MRGSOLVE-TEST-0261
+  - MRGSOLVE-TEST-0262
+MRGSOLVE-S008:
+  name: '[BUG] tad calculation doesn''t recognize evid 4'
+  description: "The bug is that records are only checked for evid 1\r\n\r\n- Look
+    for both evid 1 and 4 when looking for first dose\r\n- Reset time of dose when
+    evid is 1 or 4\r\n- Add test to make sure tad is calculated the same with evid
+    1 or 4\r\n\r\nSee 8a66ffac8b89de0dd2f34456b7779825ec6de3a9"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0276
+MRGSOLVE-S009:
+  name: '[F] Implement libsoda ode solver'
+  description: "Replace ODEPACK ode solver with lsoda solver written in C++\r\n\r\nhttps://github.com/dilawar/libsoda\r\n\r\nFIrst
+    step is to just get the simulation going with the new solver.  I'd like to get
+    it implemented alongside ODEPACK so we can still easily benchmark; but if it does
+    well, tempted to just leave the FORTRAN code behind. \r\n\r\nSee pull request
+    #519 \r\n\r\n- The odepack fortran code has been removed\r\n- The only available
+    solver is the C++ lsoda\r\n- All of the same options can be passed through\r\n
+    \ - hmax\r\n  - hmin\r\n  - atol and rtol (both implemented as scalar values for
+    now)\r\n  - maxsteps\r\n- I refactored part of the LSODA object\r\n  - Changed
+    printf statements (and other message printing) to REprintf\r\n  - Moved certain
+    data items to be members of LSODA\r\n  - Moved certain members to public for ease
+    of access\r\n\r\n\r\n\r\nThe switch and code were discussed briefly with @chousand-metrum
+    and @dpastoor \r\n\r\nThe switch was necessary due to repeated compiler warnings
+    coming from the old ODEPACK code as CRAN moves to newer fortran compilers."
+  ProductRisk: high-risk
+  tests:
+  - MRGSOLVE-TEST-0132
+  - MRGSOLVE-TEST-0133
+  - non-stiff problem
+  - stiff problem
+MRGSOLVE-S010:
+  name: '[F] Get NONMEM output from ext file'
+  description: "- Add NMEXT block\r\n- Reference run / proj or file to read the nonmem
+    EXT output\r\n\r\nPR #662 \r\nLots of discussion and motivation in #589"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0237
+MRGSOLVE-S011:
+  name: '[BUG] NMXML needs to check for nm namespace'
+  description: "A user reported NONMEM output in xml file that didn't have the `nm`
+    namespace and this causes `nmxml()` to break.  It is not clear how or why nonmem
+    writes the xml file with nm namespace some time and without the nm namespace other
+    times.\r\n\r\nPut in code that checks for `nm` namespace and works as is if found.
+    \ If the `nm` namespace is not found, the user can use a new argument to `nmxml()`
+    called `xpath` for addressing where the `estimation` block is in the xml file.\r\n\r\nA
+    test has been added to inst/validation with the example `.xml` files shared by
+    the user reporting this issue.\r\n\r\nSee PR #511"
+  ProductRisk: low-risk
+  tests: nm xml with no namespace issue-510
+MRGSOLVE-S012:
+  name: '[F] Evaluate arguments to ev constructor'
+  description: "For example, we want some items to be a function of other items.  We
+    commonly do this:\r\n\r\n`ev(amt = 100, rate = amt/2)`\r\n\r\nSee PR #515 \r\n\r\nSee
+    https://github.com/metrumresearchgroup/mrgsolve/commit/b31f011e288b05d51b187501297b9587926c35d2"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0096
+MRGSOLVE-S013:
+  name: '[R] Event object constructor and update'
+  description: "Adds operators and standardized processing of event objects\r\n\r\n-
+    Add `$` and `[[` operators\r\n- Standard column ordering\r\n- Recalculate upon
+    mutate or coersion\r\n  - tinf / rate\r\n  - addl / total\r\n  - addl / until\r\n-
+    The tinf column is retained in result 4dc1926\r\n  - This means that, as long
+    as tinf is in the event object, it will always control the rate; \r\n    the *only*
+    way to control rate is via tinf until tinf is removed from the object\r\n- Add
+    tests\r\n- Standardize column order, recalculate rate (tinf), addl (total), addl
+    (until) for \r\n  data sets created through `expand.ev` as well\r\n- Error faab13c\r\n
+    \ - attempt to update rate when tinf exists\r\n  - attempt to include both rate
+    and tinf\r\n  - attempt to include both addl and total \r\n  - attempt to include
+    both addl and until\r\n\r\nPR #558 \r\nPR #559 \r\n\r\nSee `finalize_ev`"
+  ProductRisk: medium-risk
+  tests:
+  - MRGSOLVE-TEST-0097
+  - total  issue-513
+  - until  issue-513
+  - MRGSOLVE-TEST-0317
+MRGSOLVE-S014:
+  name: '[R] Switch to C++ 11'
+  description: "See pull request #519 \r\n\r\nSince we are no-longer using fortran
+    code via ODEPACK, we can change to C++ 11.\r\n\r\n- Using C++11 now with shared
+    pointer\r\n- There are possibly code in the new ODE solver that requires C++11\r\n-
+    Best to set this as a System Requirement in addition to setting in Makevars\r\n\r\nI
+    believe the switch is desired in order to take advantage of more-modern features
+    of C++11. \r\n\r\nAlso, I believe the lsoda source code was developed using modern
+    compiler and there is some chance that, without the C++11 requirement, some of
+    the code may not be compatible with older compilers.  Rather than trying to obtain
+    and test on a slew of old compilers I believe it would be better to just modernize
+    with C++11.\r\n\r\n\r\n### From the Rcpp FAQ:\r\n\r\n> 3.13. Can I use C++11,
+    C++14, C++17, . . . with Rcpp. But of course.\r\n> In a nutshell, this boils down
+    to what your compiler supports, and\r\n> also what R supports. We expanded a little
+    on this in Rcpp Gallery\r\n> article providing more detail. What follows in an
+    abridged summary.\r\n> You can always locally set appropriate PKG_CXXFLAGS as
+    an\r\n> environment variable, or via ~/.R/Makevars. You can also plugins\r\n>
+    and/or R support from src/Makevars:\r\n>   - C++11: has been supported since early
+    2013 via a plugin selecting \r\n> the language standard which is useful for sourceCpp()\r\n>
+    etc. For packages, R has supported it since R 3.1.0 which\r\n> added the option
+    to select the language standard via CXX_STD\r\n> = CXX11. As of early 2017, over
+    120 packages on CRAN use\r\n> this.\r\n\r\n### From Writing R Extensions \r\n\r\n>
+    1.2.4 Using C++11 code\r\n> \r\n> As from version 3.6.0, R selects a default C++
+    compiler with options that conform as far as possible42 to C++11\r\n\r\n### Kevin
+    Ushey from 2016\r\nhttps://kevinushey.github.io/blog/2016/09/14/pitfalls-in-writing-portable-c++98-code/\r\n>
+    C++11\r\n> If you can use C++11 (or greater) when compiling your package’s C++
+    code, just do it. The C++11 standard adds a slew of excellent features, while
+    fixing a few omissions of the C++98 standard. Overall, C++11 makes it easier to
+    write cross-platform, portable C++ programs. All of the platforms used on CRAN
+    support C++11 now – most recently, Windows joined the club with the toolchain
+    update spearheaded by Jeroen Ooms et. al, and with much help from Duncan Murdoch
+    + others.\r\n> \r\n\r\n> The only reason not to use C++11 nowadays is if your
+    package needs to build on older machines"
+  ProductRisk: low-risk
+  tests:
+  - Check that C++11 is listed as a SystemRequirement in the DESCRIPTION file
+  - This is also set in the Makevars
+MRGSOLVE-S015:
+  name: '[F] Refactor control of advance to ss'
+  description: "New arguments for mrgsim to control how the PK system is advanced
+    to steady state.  The basic process is the same for bolus, intermittent infusion,
+    or ss infusion, but these parameters can expose some control over determining
+    ss.\r\n\r\n- `ss_n` max number of iterations (doses to administer) to try\r\n-
+    `ss_fixed` assume ss is achieved after `ss_n` iterations\r\n- a warning is generated
+    if the PK system does not advance to steady state with specified tolerance within
+    specified maximum number of iterations unless `ss_fixed` is true\r\n- ss is achieved
+    when the difference between the current trough and the previous trough is less
+    than the local error estimate based on model atol and rtol\r\n\r\nSee PR #557\r\n\r\n\r\nSee
+    https://github.com/metrumresearchgroup/mrgsolve/commit/450d97ce14334aee0f548754067c793a2228e8dd\r\n\r\n\r\n\r\nFrom:
+    http://www.netlib.no/netlib/alliant/ode/prog/lsoda.f\r\n```\r\nc rtol   = relative
+    tolerance parameter (scalar).\r\nc atol   = absolute tolerance parameter (scalar
+    or array).\r\nc          the estimated local error in y(i) will be controlled
+    so as\r\nc          to be less than\r\nc             ewt(i) = rtol*abs(y(i)) +
+    atol     if itol = 1, or\r\nc             ewt(i) = rtol*abs(y(i)) + atol(i)  if
+    itol = 2.\r\nc          thus the local error test passes if, in each component,\r\nc
+    \         either the absolute error is less than atol (or atol(i)),\r\nc          or
+    the relative error is less than rtol.\r\n```"
+  ProductRisk: medium-risk
+  tests:
+  - MRGSOLVE-TEST-0272
+  - one-compartment
+  - bolus
+  - ss
+  - one-compartment
+  - oral
+  - first
+  - ss
+  - two-compartment
+  - bolus
+  - ss
+  - two-compartment
+  - bolus
+  - first
+  - ss
+  - two-compartment
+  - infusion
+  - ss
+MRGSOLVE-S016:
+  name: '[F] Add more informative error messages when parsing data set'
+  description: "The details vary with the error message, but try to print the ID,
+    the data set row and the relevant value (e.g. for `cmt` out of range, give the
+    value of cmt in the data set).\r\n\r\nSee dbf4c8556e756d1154a4195b45e4df548d74ce77"
+  ProductRisk: low-risk
+  tests: bad events issue-249
+MRGSOLVE-S017:
+  name: '[BUG] REFERENCE 484: SS with ALAG and no prior observation'
+  description: "This issue is a reference to #484 \r\n\r\n>I've found that SS doses
+    with an ALAG model are only working for me when there is an observation immediately
+    prior to the dose (or at the same time, but sorted so that the observation occurs
+    first in the data frame).\r\n\r\n>In this example, the doses at 0 and 168 h show
+    what concentrations look like after a single dose and with 1-week washout, and
+    then there's a SS dose at 336 h. If the data frame is sorted by evid (i.e. observation
+    first at 336 h), it looks like the SS dose works as expected. But if I sort by
+    desc(evid) (dose first) the dose isn't at steady state.\r\n\r\nThis bug was fixed.
+    \ See #484"
+  ProductRisk: medium-risk
+  tests: ss dose with lag time issue-484
+MRGSOLVE-S018:
+  name: '[R] Update default solver settings'
+  description: "Changing the default values of these solver settings\r\n\r\n- Increase
+    default maxsteps to 20K f80993cda6965988c67ef29774656556f9a4045b \r\n- Set initial
+    mxhnil to 2 f80993cda6965988c67ef29774656556f9a4045b\r\n- The default `rtol` will
+    remain at `1e-08`"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0193
+MRGSOLVE-S021:
+  name: '[BUG] Need to check that mod is there'
+  description: "There needs to be an error if the model object isn't passed.  \r\n\r\nCreate
+    a function that tests and reports; this will get used in several functions\r\n\r\n\r\n```\r\n>
+    out <- mrgsim_ei(d, idata)\r\nError in combine_list(x@args, args) :\r\n  trying
+    to get slot \"args\" from an object (class \"data.frame\") that is not an S4 object\r\nCalls:
+    mrgsim_ei -> mrgsim_e -> combine_list\r\n```\r\n\r\nSee PR #549"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0197
+MRGSOLVE-S022:
+  name: '[R] Error if compartment is listed in capture'
+  description: "Generate an error if a compartment name is found as a capture name\r\n\r\n-
+    Do this in mread for nicer error\r\n- Also check this in the valid object method\r\n\r\nSee
+    PR #556 \r\n\r\n<hr>\r\n\r\nExample:\r\n\r\nError:\r\n```r\r\n$CMT A\r\n$CAPTURE
+    A\r\n```\r\n\r\nNot an error:\r\n```r\r\n$CMT A\r\n$CAPTURE B = A\r\n```"
+  ProductRisk: low-risk
+  tests: error if cmt in capture issue-555
+MRGSOLVE-S023:
+  name: '[BUG] expand_observations finds ss column in input'
+  description: "Extra columns are not correctly identified in certain cases when calling
+    `expand_observations`.\r\n\r\n`expand_observations` seems to think there is ss
+    here; but mrgsim does not.\r\n\r\n```\r\n> x\r\nEvents:\r\n  time amt rate ii
+    addl cmt evid LAGT ID\r\n1    0 100    0  0    0   2    1    1 15\r\n2   13  50
+    \  24 24    2   1    1    0 15\r\n> expand_observations(as.data.frame(x),obs)\r\nError:
+    dosing record with ss > 0 and ii <= 0 \r\n ID: 15, row: 1\r\n> mrgsim_d(mod,x)\r\nModel:
+    \ housemodel \r\nDim:    483 x 7 \r\nTime:   0 to 120 \r\nID:     1 \r\n    ID
+    time GUT   CENT  RESP    DV    CP\r\n1:  15 0.00   0   0.00 50.00 0.000 0.000\r\n2:
+    \ 15 0.00   0 100.00 50.00 5.000 5.000\r\n3:  15 0.25   0  98.76 43.47 4.938 4.938\r\n4:
+    \ 15 0.50   0  97.53 39.57 4.877 4.877\r\n5:  15 0.75   0  96.32 37.25 4.816 4.816\r\n6:
+    \ 15 1.00   0  95.12 35.90 4.756 4.756\r\n7:  15 1.25   0  93.94 35.14 4.697 4.697\r\n8:
+    \ 15 1.50   0  92.77 34.73 4.639 4.639\r\n```\r\n\r\nThe fix is to add `..zeros..`
+    column at the end of the input data frame consistent with what `valid_data_set`
+    does. \r\n\r\nSee PR #564"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0040
+MRGSOLVE-S024:
+  name: '[F] Add position argument to expand_observations'
+  description: "- Add integer argument to expand_observations that says how records
+    are to be sorted; the user can control if new observations happen before or after
+    existing records at the same time\r\n- A negative integer will put additional
+    observations prior to existing records at the same time\r\n- User controlled integer
+    - usually large - ensure that additional observations are placed after existing
+    records at the same time; the user determines appropriate value given the input\r\n\r\nSee
+    PR #566"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0041
+MRGSOLVE-S025:
+  name: '[F] stop iterating if ss is reached when ss_fixed is true'
+  description: "This modifies #533 \r\n\r\nStop steady state iterations if steady
+    state is reached per `rtol` and `atol`  when fixed is `TRUE`"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0272
+MRGSOLVE-S026:
+  name: '[F] Add ID number to SS fail message'
+  description: Print out ID number in warning message when system fails to advance
+    to steady state
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0272
+MRGSOLVE-S027:
+  name: Add select_sims method
+  description: "- Only names that are compartments or captured output may be selected\r\n-
+    Error is generated if no valid names are given or if an invalid name is given"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0056
+MRGSOLVE-S028:
+  name: Improper advance with ss bolus and lag time
+  description: The system doesn't properly advance for steady state bolus dosing with
+    lag time
+  ProductRisk: low-risk
+  tests: ss bolus with lag and AUC issue-596
+MRGSOLVE-S029:
+  name: Compartment-level control for advance to steady state
+  description: "- Pass a flag to ODE function so that the user can check if the system
+    is advancing to steady state\r\n  - The flag gets set from \r\n    - `steady_bolus`,
+    `steady_infusion`, and `steady_zero`\r\n  - The macro for this flag is `SS_ADVANCE`\r\n-
+    Keep track of compartments (as integer positions) to consider when advancing to
+    steady state\r\n  - Add slot `mrgmod` / `ss_cmt`\r\n  - Default to all compartments
+    (0 to NEQ-1)\r\n  - User can select either compartments to look at or compartments
+    to ignore\r\n  - Set `ss_cmt` in `$SET` (e.g. `$SET ss_cmt = \"CENT,PERIPH\"`)\r\n
+    \ - Include a leading `-` (minus-sign) to exclude compartments (`$SET ss_cmt =
+    \"-AUC\"`)\r\n\r\n\r\nUse case:\r\n\r\n```\r\n$ODE\r\n...\r\ndxdt_AUC = CENT/V;\r\nif(SS_ADVANCE)
+    dxdt_AUC = 0;\r\n\r\n```\r\nIn this case, AUC will not advance while dosing is
+    happening during advance to steady state.\r\n\r\n\r\nor\r\n\r\n```\r\n$SET ss_cmt
+    = \"CENT\"\r\n\r\n$CMT GUT CENT AUC\r\n\r\n$ODE\r\ndxdt_GUT = ...\r\ndxdt_CENT
+    \ = ...\r\ndxdt_AUC = CENT/V;\r\n```\r\n\r\nIn this case, AUC will advance during
+    advance to steady state."
+  ProductRisk: low-risk
+  tests: control ss advance issue-598
+MRGSOLVE-S030:
+  name: Allow CXX flags to get passed as environment variable
+  description: "- The user can set `PKG_CXXFLAGS` during model build in `$ENV`\r\n\r\nFor
+    example, \r\n\r\n```c\r\n$ENV\r\nPKG_CXXFLAGS = \"-Wbitwise-op-parentheses\"\r\n```\r\n\r\nYou
+    can check this with\r\n\r\n```r\r\n\r\n> test_that(\"PKG_CXXFLAGS is set issue-603\",
+    {\r\n+   code <- '$ENV PKG_CXXFLAGS = \"-Wbadflag\"'\r\n+   expect_output(\r\n+
+    \    mcode(\"cxxflags\", code, ignore.stdout = FALSE,preclean=TRUE), \r\n+     regexp
+    = \"Wbadflag\"\r\n+   )\r\n+ })\r\n> mcode(\"cxxflags\", code, ignore.stdout =
+    FALSE,preclean=TRUE)\r\nccache /usr/local/clang6/bin/clang++ -Wsign-compare\r\n-Wpedantic
+    -Wall\r\n-I\"/Library/Frameworks/R.framework/Resources/include\"\r\n-DNDEBUG -I\"/Users/kyleb/Rlibs/mrgsolve/base\"\r\n-I\"/private/var/folders/xb/hqmfzgl95fq8mx6tjxkzb71r0000gn/T/RtmpcfhqSa\"\r\n-isysroot\r\n/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\r\n-I/usr/local/include
+    -Wbadflag -fPIC -Wall -g -O2 -c\r\n```"
+  ProductRisk: low-risk
+  tests: PKG_CXXFLAGS is set issue-603
+MRGSOLVE-S031:
+  name: Add N_CMT plugin
+  description: "- See #582 \r\n- Add a plugin so that compartment names are aliased
+    during  model build\r\n\r\nExample:\r\n\r\n```c\r\n$PLUGIN N_CMT\r\n\r\n$CMT CENTRAL
+    PERIPHERAL\r\n\r\n$CAPTURE N_PERIPHERAL\r\n\r\n```"
+  ProductRisk: low-risk
+  tests: Add N_CMT as plugin issue-606
+MRGSOLVE-S032:
+  name: 'blocks() does not work with Rmd files '
+  description: "This issue came from user report in #588 \r\n\r\nBUG: The blocks function
+    doesn't work when the model was from `.Rmd` file"
+  ProductRisk: low-risk
+  tests: call blocks on model from Rmd issue-608
+MRGSOLVE-S033:
+  name: Call ODE block for first record
+  description: "The ODE block code is not called prior to calling TABLE block.  When
+    users try to capture items calculated in ODE, it will not be using the compartment
+    value calculated at the time the system was integrated to, but rather the last
+    value that the solver looked at. \r\n\r\nThe user must re-calculate all output
+    variables that depend on compartment in the table block before output. \r\n\r\nIf
+    you are using `0.10.0`, this will not work:\r\n```r\r\n$ODE\r\ndouble CP = CENT/V;\r\n\r\n$TABLE\r\ncapture
+    DV = CP;\r\n```\r\n\r\nThis will not work either:\r\n```r\r\n$ODE\r\ndouble CP
+    = CENT/V;\r\n\r\n$CAPTURE CP\r\n```\r\n\r\nYou must do this when using `0.10.0`\r\n\r\n```r\r\n\r\n$ODE\r\ndouble
+    CP = CENT/V;\r\n\r\n$TABLE\r\ncapture DV = CENT/V;\r\n```\r\n\r\nThe work done
+    on this issue will patch the code so that this re-calculation will not be needed."
+  ProductRisk: low-risk
+  tests: ode variables are initialized issue-613
+MRGSOLVE-S034:
+  name: within method for mrgmod
+  description: "Update the following elements of model object\r\n\r\n- parameters\r\n-
+    initial conditions (via init)\r\n- various other model object slots (like start,
+    end, delta, tolerances etc); see the Rd \r\n  documentation for definitive list
+    of what can be updated"
+  ProductRisk: low-risk
+  tests: update model object with within issue-616
+MRGSOLVE-S035:
+  name: Access compartments and slots with $ operator
+  description: "- First check parameters\r\n- Then check compartments\r\n- Finally,
+    coerce to list and check names there\r\n- Otherwise, issue error"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0192
+MRGSOLVE-S036:
+  name: 'Plot method that dispatches on character '
+  description: "- Plot method with signature `mrgsims`, `character`\r\n- Split the
+    input on space, comma or newline\r\n- Look for `time` or `TIME` for x-axis\r\n\r\n```r\r\nout
+    <- mrgsim(...) \r\n\r\nplot(out, \"DV RESP, FOO\")\r\n\r\nvars <- \"DV RESP\r\nFOO\r\n\"\r\n\r\nplot(out,
+    vars)\r\n\r\n```"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0214
+MRGSOLVE-S037:
+  name: 'feature/recover: join input data / idata columns onto output'
+  description: "- Similar functionality as carry_out, but any data type is supported\r\n-
+    Implementing this rather than #644"
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0019
+  - MRGSOLVE-TEST-0020
+MRGSOLVE-S038:
+  name: Allow simulation from completely empty time grid
+  description: "- Issue: rendering the time grid gives the value `0` when there are
+    not times (add is `numeric(0)` and end is `-1`.  That was originally done for
+    safety, but it really isn't the behavior we want in certain cases\r\n- See also
+    #476 \r\n\r\nSOLUTION:\r\n\r\n- refactor `render_time` so that it is more efficient
+    and can return `numeric(0)` if there are really no times\r\n- We will still simulate
+    a minimum time 0 record for each person by only if not doing so would result in
+    zero rows in the output"
+  ProductRisk: medium-risk
+  tests:
+  - MRGSOLVE-TEST-0278
+  - MRGSOLVE-TEST-0279
+MRGSOLVE-S039:
+  name: Optional single-matrix mode
+  description: "- Collapse matrices into single at build time\r\n  - Enter `collapse_omega=TRUE`
+    in `$set` to collapse omega matrices into single\r\n  - Enter `collapse_sigma=TRUE`
+    in `$set` to collapse sigma matrices into single"
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0148
+  - MRGSOLVE-TEST-0149
+MRGSOLVE-S040:
+  name: Separate tolerances can be set for advance to SS
+  description: "- Separate rtol and atol can be set for advance to steady state\r\n-
+    When the model uses ODE, the tolerances will be set to the larger value between
+    rtol/ss_rtol and atol ss_atol\r\n\r\n```\r\n SSTOL=n\r\n      Specifies  the  relative
+    \ tolerance  for Steady State evaluation.\r\n      Optional. Default is TOL.\r\n\r\n
+    SSATOL=n\r\n      Specifies the absolute tolerance  for  Steady  State  evaluation.\r\n
+    \     Optional. Default is ATOL.\r\n```"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0273
+MRGSOLVE-S041:
+  name: Error in realize_addl when addl is zero but ii is not
+  description: "``` r\r\nlibrary(mrgsolve)\r\n#> \r\n#> Attaching package: 'mrgsolve'\r\n#>
+    The following object is masked from 'package:stats':\r\n#> \r\n#>     filter\r\n\r\nev(amt
+    = 100, addl = 0, ii=12) %>% realize_addl()\r\n#> Error: Column `..dosen_` must
+    be length 0 (the number of rows) or one, not 2\r\n```\r\n\r\n<sup>Created on 2020-03-20
+    by the [reprex package](https://reprex.tidyverse.org) (v0.3.0)</sup>"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0257
+MRGSOLVE-S042:
+  name: System does not reset for evid 4 and infusion
+  description: "- the system doesn't reset with evid 4 when there is infusion (rate
+    > 0 or rate = -2)\r\n- system does reset with bolus  dose(rate = 0)"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0109
+MRGSOLVE-S043:
+  name: 'Feature: custom theta labels for $NMXML'
+  description: "- the user can pass a vector of theta labels to use when loading via
+    nmxml\r\n- an error is generated if the length of tname doesn't match number of
+    thetas"
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0239
+MRGSOLVE-S044:
+  name: Allow semicolon in annotations
+  description: As a user, I want to be able to use semi colons in the description
+    portion of a model annotation
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0011
+MRGSOLVE-S045:
+  name: 'Feature: return time after dose in a specific compartment'
+  description: As a user, I want to be able to calculate the time after a dose to
+    a specific compartment
+  ProductRisk: low-risk
+  tests:
+  - tad-cmt matches tad-no-cmt
+  - check against tad
+  - tad-cmt with default initialization
+MRGSOLVE-S046:
+  name: Make sure SS warning messages reference ss_rtol and ss_atol
+  description: As a user, I want warning messages to reference the steady state tolerances
+    when the system is advancing to steady state.
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0274
+MRGSOLVE-S047:
+  name: Option to capture additional items via mread
+  description: As a user, I want to have the option to capture additional variables
+    from a model simulation run which are defined in the model but not included in
+    `$CAPTURE`..  I would like to opt into this functionality on loading / compiling
+    the model.
+  ProductRisk: low-risk
+  tests: capture via mread
+MRGSOLVE-S048:
+  name: Only warn when dropping character columns is meaningful
+  description: As a user, I only want to be warned if character columns in input data
+    sets are dropped and they correspond to parameter names or any NMTRAN data item
+    that is not CMT/cmt
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0178
+  - MRGSOLVE-TEST-0179
+MRGSOLVE-S049:
+  name: Add $ERROR as ailas for $TABLE
+  description: As a user, I want to use ERROR as alias for TABLE
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0177
+MRGSOLVE-S050:
+  name: loadso should fail if the shared object file doesn't exist
+  description: As a user, I want loadso to check if the dll file exists and will issue
+    error if it doesn't exist
+  ProductRisk: low-risk
+  tests: loadso fails if shared object file doesn't exist
+MRGSOLVE-S051:
+  name: Try loading shared object when pointers fails
+  description: As a user, I want mrgsolve to try to load the model shared object when
+    the model functions are not loaded at the time of simulation
+  ProductRisk: low-risk
+  tests: try loading model object if it is not loaded
+MRGSOLVE-S052:
+  name: Generate error if matlist labels are duplicated
+  description: As a user, I want an error generated on object creation if omegalist
+    or sigmalist labels are duplicated
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0150
+MRGSOLVE-S053:
+  name: Stop when addl or ss are negative numbers
+  description: As a user, I want mrgsolve to issue and error when addl or ss are negative
+    numbers
+  ProductRisk: low-risk
+  tests: addl or ss are passed as negative numbers
+MRGSOLVE-S054:
+  name: Refactor nocb time-varying covariates
+  description: As a user, I want to be able to simulate with infusion doses in between
+    time-varying covariates.
+  ProductRisk: low-risk
+  tests:
+  - 'correct update with infusion #741'
+  - 'test-nocb: time-varying covariates #741'
+MRGSOLVE-S055:
+  name: Re-factor carry_out for use with obsaug and nocb
+  description: As a user, I want to be able to use carry_out with obsaug and with
+    or without nocb
+  ProductRisk: low-risk
+  tests: loc:unit carry_out with obsaug
+MRGSOLVE-S056:
+  name: Fix error message when `capture` variable doesn't exist
+  description: As a user, I want an informative error message when I request invalid
+    capture items at compile time
+  ProductRisk: low-risk
+  tests: capture via mread
+MRGSOLVE-S057:
+  name: Capture pp-defs by request at compile time
+  description: As a user, I want to be able to list pre-processor defined items for
+    capture at compile time
+  ProductRisk: low-risk
+  tests: capture pp directive via mread
+MRGSOLVE-S058:
+  name: Handle negative times
+  description: As a user, I want mrgsolve to accept negative input times for simulations
+    from compartmental models
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0211
+  - data_set with negative times
+MRGSOLVE-S059:
+  name: Save list of capture-able variables in model object and provide access function
+  description: As a user, I want to be able to get a listing of internal model variables
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0163
+MRGSOLVE-S060:
+  name: Select table number in nmext
+  description: As a user, I want to be able to select a specific table number by index
+    when using nmext
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0238
+MRGSOLVE-S061:
+  name: Harmonize and process for initializing by program
+  description: 'As a user, I want a consistent interface for programmatically initializing
+    the following blocks: param, cmt, init, theta, omega, sigma'
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0164
+  - MRGSOLVE-TEST-0165
+  - MRGSOLVE-TEST-0168
+  - MRGSOLVE-TEST-0166
+  - MRGSOLVE-TEST-0167
+  - MRGSOLVE-TEST-0169
+  - MRGSOLVE-TEST-0162
+MRGSOLVE-S062:
+  name: Call simeta for single eta
+  description: As a user, I want to be able to call simeta or simeps and re-simulate
+    a single variate
+  ProductRisk: low-risk
+  tests:
+  - resimulate all eta
+  - resimulate specific eta
+MRGSOLVE-S063:
+  name: 'Dosing into off compartment with zero bioav does not turn it back on '
+  description: As a user, I want to be able to turn compartments back on with doses
+    that have zero bioavailability
+  ProductRisk: low-risk
+  tests: compartment is turned on when F is zero
+MRGSOLVE-S064:
+  name: Keep NM sources from NMEXT and NMXML
+  description: As a user, I want to be able to check source file names used to read
+    in estimates form NMEXT and NMXML
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0241
+MRGSOLVE-S065:
+  name: Read NMEXT and NMXML relative to project directory
+  description: As a user, I want NMXML and NMEXT to find nonmem results relative to
+    the project directory, not the working directory.
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0240
+MRGSOLVE-S066:
+  name: Bug when using obsonly with $PRED
+  description: As a user, I want to implement the obsonly option with `$PRED` models
+  ProductRisk: low-risk
+  tests: obsonly works with dollar-pred
+MRGSOLVE-S067:
+  name: Stop infusions when compartment is turned off
+  description: As a user, I want mrgsolve to terminate all active infusions into a
+    compartment when that compartment is turned off.
+  ProductRisk: low-risk
+  tests: compartment with active infusion can be turned off
+MRGSOLVE-S068:
+  name: Duplicate names for capture and carry_out
+  description: As a user, I want mrgsolve to warn me when there are duplicate names
+    in the output and modify duplicates so that all names are unique.
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0212
+MRGSOLVE-S069:
+  name: Scale pk2iv model has wrong scaling volume
+  description: As a user, I want CENT to be scaled by V1 in pk2iv.cpp
+  ProductRisk: low-risk
+  tests: pk2iv uses V1 to scale CENT
+MRGSOLVE-S070:
+  name: 'Feature: handle THETA(n)'
+  description: As a user, I want to use `THETA(n)` in my model code and have mrgsolve
+    interpret that as `THETAn`
+  ProductRisk: low-risk
+  tests: THETA(n) is allowed
+MRGSOLVE-S071:
+  name: Recover after failed build
+  description: As a user, I want mrgsolve to return build details after build failure
+  ProductRisk: low-risk
+  tests: Recover data when compile fails
+MRGSOLVE-S072:
+  name: Using $OMEGA with NMXML
+  description: As a user, I want mrgsolve to properly deal with dropped OMEGA matrix
+    read in by nmxml or nmet
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0152
+MRGSOLVE-S073:
+  name: Fix dynamic capture check to include variables declared in global
+  description: As a user, I want to be able to dynamically capture items declared
+    in $GLOBAL
+  ProductRisk: low-risk
+  tests: capture via mread
+MRGSOLVE-S074:
+  name: More flexible update of OMEGA and SIGMA
+  description: As a user, I want to be able to update OMEGA or SIGMA with a single
+    matrix, regardless of the underlying block structure.
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0148
+  - MRGSOLVE-TEST-0149
+MRGSOLVE-S075:
+  name: Plugin to allow nonmem-like variables
+  description: As a user, I would like to use a more NONMEM-like style for writing
+    my model.
+  ProductRisk: low-risk
+  tests:
+  - find nm vars - frda only
+  - find nm vars - A/A_0/DADT only
+  - find nm vars - both
+  - FRDA in param is error
+  - FRDA in cmt is error
+  - NM Reserved in param is error
+  - NM Reserved in init is error
+  - Compartment number bounds checking
+  - nm-vars functional test
+  - THETA(n) is allowed
+MRGSOLVE-S076:
+  name: Auto-declare variables
+  description: As a user, I want to ask mrgsolve to find and declare variables for
+    me.
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0170
+  - MRGSOLVE-TEST-0171
+  - MRGSOLVE-TEST-0172
+  - MRGSOLVE-TEST-0173
+  - autodec + nm-vars functional test
+  - grep code autodec and nm-vars
+  - grep code autodec
+MRGSOLVE-S077:
+  name: Use ii to separate events in a sequence
+  description: As a user, I want to use `ii` to time event objects in a sequence.
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0084
+  - MRGSOLVE-TEST-0085
+MRGSOLVE-S078:
+  name: Warn when using `simeta(n)` and `simeps(n)`
+  description: As a user, I want mrgsolve to warn when a single ETA or EPS are simulated
+    but ETA or EPS are correlated.
+  ProductRisk: low-risk
+  tests:
+  - warn when simeta(n) is called with off diagonals
+  - warn when simeps(n) is called with off diagonals
+MRGSOLVE-S079:
+  name: EVID 3 causes NEWIND flag to get set
+  description: As a user, I don't want mrgsolve to set NEWIND to 1 when executing
+    EVID 3.
+  ProductRisk: low-risk
+  tests: evid 3 doesn't change NEWIND
+MRGSOLVE-S080:
+  name: self.stop_id() should fill NA; self.stop_id_cf() should carry forward
+  description: As a user, I want mrgsolve to stop the simulation for a given id and
+    fill with either NA or the last value, as directed.
+  ProductRisk: low-risk
+  tests:
+  - Stop the current ID and carry forward
+  - Stop the current ID and fill NA
+  - Stop the entire simulation
+MRGSOLVE-S081:
+  name: NONMEM math
+  description: As a user, I want mrgsolve to recognize `EXP`, `LOG`, `SQRT` when writing
+    models with `nm-vars`
+  ProductRisk: low-risk
+  tests: nm-vars functional test
+MRGSOLVE-S082:
+  name: Data like event objects
+  description: As a user, I want mrgsolve to render names in event objects in a data-like
+    manner - with all caps for NMTRAN data items
+  ProductRisk: low-risk
+  tests:
+  - MRGSOLVE-TEST-0100
+  - MRGSOLVE-TEST-0101
+  - MRGSOLVE-TEST-0102
+  - MRGSOLVE-TEST-0103
+  - MRGSOLVE-TEST-0104
+  - MRGSOLVE-TEST-0105
+  - MRGSOLVE-TEST-0106
+  - MRGSOLVE-TEST-0042
+  - MRGSOLVE-TEST-0043
+MRGSOLVE-S083:
+  name: Deal with negative eigenvalue in model matrix
+  description: As a user, I want mrgsolve to handle small negative eigenvalues when
+    simulating from model matrices
+  ProductRisk: low-risk
+  tests: MRGSOLVE-TEST-0271

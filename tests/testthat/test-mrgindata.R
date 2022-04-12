@@ -29,7 +29,7 @@ n <- length(seq(0,end,delta))
 mod <- mrgsolve::house() %>% update(end=end, delta=delta)
 data(extran3)
 
-test_that("valid_data_set warns for character columns", {
+test_that("valid_data_set warns for character columns [MRGSOLVE-TEST-0178]", {
   chr_param <- expand.ev(amt=100,ID=1:4, CL = "A")
   expect_message(valid_data_set(chr_param,m=mod), regexp="dropped non-numeric:")
   chr_X <- expand.ev(amt=100,ID=1:4,X="A")
@@ -40,7 +40,7 @@ test_that("valid_data_set warns for character columns", {
   expect_silent(valid_data_set(chr_cmt,m=mod))
 })
 
-test_that("valid_idata_set warns for character columns", {
+test_that("valid_idata_set warns for character columns [MRGSOLVE-TEST-0179]", {
   chr_param <- expand.idata(FOO = 1, CL = "A")
   expect_message(valid_idata_set(chr_param,m=mod), regexp="dropped non-numeric:")
   chr_X <- expand.idata(FOO = 1, X = "A")
@@ -48,7 +48,7 @@ test_that("valid_idata_set warns for character columns", {
 })
 
 
-test_that("valid_data_set subs character cmt", {
+test_that("valid_data_set subs character cmt [MRGSOLVE-TEST-0180]", {
   dat <- expand.ev(amt=100,ID=1:4,cmt="RESP")
   x <- valid_data_set(dat,mod)
   expect_true(all(x[,"cmt"] ==3))
@@ -59,17 +59,17 @@ test_that("valid_data_set subs character cmt", {
   
 })
 
-test_that("Run with no input", {
+test_that("Run with no input [MRGSOLVE-TEST-0181]", {
   expect_equal(length(stime(mod)),n)
   expect_equal(nrow(mrgsim(mod)),n)
 })
 
-test_that("Run with no input - and nid", {
+test_that("Run with no input - and nid [MRGSOLVE-TEST-0182]", {
   out <- mrgsim(mod, nid=31)
   expect_equal(nrow(out),n*31)
 })
 
-test_that("Run ev event", {
+test_that("Run ev event [MRGSOLVE-TEST-0183]", {
   e <- ev(amt=100)
   out <- mod %>% ev(e) %>% mrgsim
   expect_equal(nrow(out),n+1)
@@ -79,14 +79,14 @@ test_that("Run ev event", {
   expect_equal(nrow(out),3*n+3)
 })
 
-test_that("Run ev event - character cmt", {
+test_that("Run ev event - character cmt [MRGSOLVE-TEST-0184]", {
   e <- ev(amt=100,cmt="CENT")
   out <- mod %>% ev(e) %>% mrgsim
   expect_equal(nrow(out),n+1)
   expect_equal(out$CENT[2],100)
 })
 
-test_that("Run bad data sets", {
+test_that("Run bad data sets [MRGSOLVE-TEST-0185]", {
   d <- data.frame(amt=100)
   expect_error(mrgsim(mod,data=d))
   d$cmt <- "FOO"
@@ -104,7 +104,7 @@ test_that("Run bad data sets", {
   
 })
 
-test_that("Run ev event - and nid", {
+test_that("Run ev event - and nid [MRGSOLVE-TEST-0186]", {
   e <- ev(amt=100)
   out <- mod %>% ev(e) %>% mrgsim(nid=7)
   expect_equal(nrow(out),7*n+7)
@@ -115,12 +115,12 @@ test_that("Run ev event - and nid", {
 })
 
 
-test_that("Run with data set - data.frame", {
+test_that("Run with data set - data.frame [MRGSOLVE-TEST-0187]", {
   out <- mod %>% data_set(extran3) %>% mrgsim
   expect_equal(nrow(out),nrow(extran3))
 })
 
-test_that("Run with data set - tibble", {
+test_that("Run with data set - tibble [MRGSOLVE-TEST-0188]", {
   data <- filter(extran3, ID <= 3)
   out <- mod %>% data_set(as_tibble(data)) %>% mrgsim
   expect_equal(nrow(out),nrow(data))
@@ -128,14 +128,14 @@ test_that("Run with data set - tibble", {
 
 data(exidata)
 
-test_that("Run idata set", {
+test_that("Run idata set [MRGSOLVE-TEST-0189]", {
   out <- mod %>% idata_set(exidata) %>% mrgsim
   expect_equal(nrow(out), length(unique(exidata$ID))*n) 
   expect_equal(length(unique(out$ID)),nrow(exidata))
   
 })
 
-test_that("Run idata set with ev", {
+test_that("Run idata set with ev [MRGSOLVE-TEST-0190]", {
   e <- ev(amt=100)
   N <- length(unique(exidata$ID))
   N <- N*n + N
@@ -145,7 +145,7 @@ test_that("Run idata set with ev", {
   expect_equal(length(unique(out$ID)),nrow(exidata))
 })
 
-test_that("Duplicate ID in idata_set gives error", {
+test_that("Duplicate ID in idata_set gives error [MRGSOLVE-TEST-0191]", {
   idata <- dplyr::mutate(tibble(ID=rep(seq(10),each=5)),CL=2)
   expect_error(valid_idata_set(idata))
 })

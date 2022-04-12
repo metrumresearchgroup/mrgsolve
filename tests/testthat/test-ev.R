@@ -24,20 +24,20 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-ev")
 
-test_that("observations are not allowed", {
+test_that("observations are not allowed [MRGSOLVE-TEST-0077]", {
   expect_error(ev(amt=100, evid=0))
 })
 
-test_that("doses are required", {
+test_that("doses are required [MRGSOLVE-TEST-0078]", {
   expect_error(ev(time=24), "amt")
 })
 
-test_that("ev.ev", {
+test_that("ev.ev [MRGSOLVE-TEST-0079]", {
   x <- ev(ev(amt=100))
   expect_is(x,"ev")
 })
 
-test_that("event requirements and defaults", {
+test_that("event requirements and defaults [MRGSOLVE-TEST-0080]", {
   expect_is(ev(amt=100), "ev")
   df <- as.data.frame(ev(amt=100))
   expect_equal(df$time, 0)
@@ -45,7 +45,7 @@ test_that("event requirements and defaults", {
   expect_equal(df$cmt,1)
 })
 
-test_that("collection of events", {
+test_that("collection of events [MRGSOLVE-TEST-0081]", {
   e1 <- ev(amt=200)
   e2 <- ev(amt=100,time=1)
   e <- c(e1,e2)
@@ -55,7 +55,7 @@ test_that("collection of events", {
   expect_equal(e$amt, c(200,100))
 })
 
-test_that("realized events", {
+test_that("realized events [MRGSOLVE-TEST-0082]", {
   e <- as.data.frame(ev(amt=100, ii=24, addl=4))
   expect_equal(nrow(e),1)
   e <- as.data.frame(ev(amt=100, ii=24, addl=4,realize=TRUE))
@@ -70,11 +70,11 @@ test_that("realized events", {
   expect_equal(e$time, c(0,1,24,25,49,73))
 })
 
-test_that("realized event error", {
+test_that("realized event error [MRGSOLVE-TEST-0083]", {
   expect_error(ev(amt=100, addl=24, realize_addl=TRUE))
 })
 
-test_that("sequence of event objects", {
+test_that("sequence of event objects [MRGSOLVE-TEST-0084]", {
 
   e1 <- ev(amt=1, ii=24, addl=3)
   e2 <- ev(amt=2, ii=24, addl=1)
@@ -102,7 +102,7 @@ test_that("sequence of event objects", {
   expect_equal(d$amt, c(4, 2))
 })
 
-test_that("ev_seq requires event objects or spacer", {
+test_that("ev_seq requires event objects or spacer [MRGSOLVE-TEST-0085]", {
   e1 <- ev(amt = 100)
   expect_error(
     ev_seq(e1, iii = 4, e1),
@@ -116,7 +116,7 @@ test_that("ev_seq requires event objects or spacer", {
   )
 })
 
-test_that(".ii is deprecated", {
+test_that(".ii is deprecated [MRGSOLVE-TEST-0086]", {
   e1 <- ev(amt = 100, ii = 24, addl = 1)
   expect_warning(
     ev_seq(e1, .ii = 12, e1), 
@@ -125,14 +125,14 @@ test_that(".ii is deprecated", {
   )
 })
 
-test_that("replicate an event object", {
+test_that("replicate an event object [MRGSOLVE-TEST-0087]", {
   e1 <- ev(amt=1, ii=24, addl=3)
   df <- ev_rep(e1, 11:14)
   expect_is(df, "data.frame")
   expect_equal(df$ID, 11:14)
 })
 
-test_that("events with without rate" , {
+test_that("events with without rate [MRGSOLVE-TEST-0088]" , {
   e1 <- ev(amt=1, ii=12)
   e2 <- ev(amt=2, ii=24, rate=1)
   e <- ev_seq(e1,e2)
@@ -141,7 +141,7 @@ test_that("events with without rate" , {
   expect_equal(e$rate,c(0,1))
 })
 
-test_that("coerce to data frame", {
+test_that("coerce to data frame [MRGSOLVE-TEST-0089]", {
   e <- ev(amt = 100)
 
   ans <- as.data.frame(e)
@@ -158,7 +158,7 @@ test_that("coerce to data frame", {
   expect_equal(ans$ID, 4)
 })
 
-test_that("get names", {
+test_that("get names [MRGSOLVE-TEST-0090]", {
   e <- ev(amt = 100, ii = 12, addl = 24)
   expect_equal(
     names(e),
@@ -166,7 +166,7 @@ test_that("get names", {
   )
 })
 
-test_that("mutate an ev object", {
+test_that("mutate an ev object [MRGSOLVE-TEST-0091]", {
   e <- ev(amt = 100, cmt = 1)
   e2 <- mutate(e, cmt = 2)
   expect_is(e2, "ev")
@@ -174,20 +174,20 @@ test_that("mutate an ev object", {
   expect_equal(df$cmt, 2)
 })
 
-test_that("filter an ev object", {
+test_that("filter an ev object [MRGSOLVE-TEST-0092]", {
   e <- ev(amt = 100, cmt = 1, ii = 24, addl = 13)
   e <- realize_addl(e)
   e2 <- filter(e, time > 100) %>% as.data.frame()
   expect_true(all(e2[["time"]] > 100))
 })
 
-test_that("misc methods", {
+test_that("misc methods [MRGSOLVE-TEST-0093]", {
   e <- ev(amt = 100)
   expect_true(mrgsolve:::is.ev(e))
   expect_false(mrgsolve:::is.ev(as.data.frame(e)))
 })
 
-test_that("as.ev", {
+test_that("as.ev [MRGSOLVE-TEST-0094]", {
   df <- tibble(amt = 100, foo = 5)
   d <- as.data.frame(as.ev(df))
   expect_equal(d$cmt,1)
@@ -205,14 +205,14 @@ test_that("as.ev", {
 
 })
 
-test_that("ev_repeat", {
+test_that("ev_repeat [MRGSOLVE-TEST-0095]", {
   n <- 3
   e <- ev(amt = 100, ii = 24, addl = 9)
   e <- ev_repeat(e,n) %>% realize_addl()
   expect_equal(nrow(e),n*10) 
 })
 
-test_that("create ev with evaluation issue-512", {
+test_that("create ev with evaluation issue-512 [MRGSOLVE-TEST-0096]", {
   a <- ev(amt = 100, rate = amt/10) %>% as.data.frame()
   expect_true(exists("rate", a))
   expect_identical(a[["rate"]], 10)
@@ -223,7 +223,7 @@ test_that("create ev with evaluation issue-512", {
   expect_identical(c[["foo"]], 100/x)
 })
 
-test_that("tinf issue-513", {
+test_that("tinf issue-513 [MRGSOLVE-TEST-0097]", {
   e <- ev(amt = 100, tinf = 10)
   expect_identical(e$rate, 10)
   e <- ev(amt = 100, tinf = 0)

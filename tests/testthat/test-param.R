@@ -25,7 +25,7 @@ context("test-param")
 
 mod <- mrgsolve::house()  
 
-test_that("params are constructed", {
+test_that("params are constructed [MRGSOLVE-TEST-0249]", {
   x <- param(A = 1, B = 2)  
   expect_is(x, "parameter_list")
   x <- param(list(A = 1, B = 2))
@@ -37,12 +37,12 @@ test_that("params are constructed", {
   capture.output(expect_error(param(A.2 = 3)))
 })
 
-test_that("params are accessed", {
+test_that("params are accessed [MRGSOLVE-TEST-0250]", {
   expect_identical(mod$CL, unname(mod@param@data$CL))
   expect_identical(mod[["KA"]], unname(mod@param@data$KA))
 })
 
-test_that("params are updated", {
+test_that("params are updated [MRGSOLVE-TEST-0251]", {
   mod <- mrgsolve::house()
   mod2 <- param(mod, CL = 55, VC = 111)
   expect_equal(mod2$CL,55)
@@ -62,7 +62,7 @@ test_that("params are updated", {
   expect_error(param(mod, KA = "A"))
 })
 
-test_that("params are shown", {
+test_that("params are shown [MRGSOLVE-TEST-0252]", {
   mod <- mrgsolve::house()
   x <- capture.output(param(mod))
   expect_match(x[2], "Model parameters")

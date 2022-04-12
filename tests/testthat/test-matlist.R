@@ -37,13 +37,13 @@ mod <- mod %>%
   omat(diag(c(1.2, 2.3,3.4))) %>% 
   smat(diag(c(0.1, 0.2, 0.3)))
 
-test_that("Indexing OMEGA matrix elements", {
+test_that("Indexing OMEGA matrix elements [MRGSOLVE-TEST-0140]", {
   expect_equivalent(as.matrix(omat(mod))[2,2],2.3)
   expect_equivalent(as.matrix(omat(mod))[2,1],0)
   expect_equivalent(as.matrix(omat(mod))[3,3],3.4)
 })
 
-test_that("Indexing SIGMA matrix elements", {
+test_that("Indexing SIGMA matrix elements [MRGSOLVE-TEST-0141]", {
   expect_equivalent(as.matrix(smat(mod))[2,2],0.2)
   expect_equivalent(as.matrix(smat(mod))[2,1],0)
   expect_equivalent(as.matrix(smat(mod))[3,3],0.3)
@@ -56,43 +56,43 @@ o1 <- omat(a,b,c)
 
 mat <- as.matrix(o1)
 
-test_that("Indexing OMEGA matrix elements with multiple matrices", {
+test_that("Indexing OMEGA matrix elements with multiple matrices [MRGSOLVE-TEST-0142]", {
     expect_equivalent(mat[3,3],3.3)
     expect_equivalent(mat[7,2],0)
     expect_equivalent(mat[7,7],91)
     expect_equivalent(mat[9,8],98)
 })
 
-test_that("Update a model with no matrix", {
+test_that("Update a model with no matrix [MRGSOLVE-TEST-0143]", {
   mod@omega <- omat()
   expect_is(omat(mod, list()), "mrgmod")
   expect_is(omat(mod, matrix(0,0,0)), "mrgmod")  
   expect_error(omat(mod, dmat(1,2,3)), "improper signature")
 })
 
-test_that("Update a model matrix", {
+test_that("Update a model matrix [MRGSOLVE-TEST-0144]", {
   expect_is(omat(mod, dmat(55,66,77)), "mrgmod")  
   expect_error(omat(mod, dmat(1)))  
 })
 
-test_that("valid matlist", {
+test_that("valid matlist [MRGSOLVE-TEST-0145]", {
   x <- omat(dmat(1,2,3))
   expect_true(mrgsolve:::valid.matlist(x))
 })
 
-test_that("new_omat", {
+test_that("new_omat [MRGSOLVE-TEST-0146]", {
   x <- mrgsolve:::new_omat(dmat(1,2,3))
   expect_is(x,"omegalist")
   expect_equal(dim(x), list(`...`=c(3,3)))
 })
 
-test_that("new_smat", {
+test_that("new_smat [MRGSOLVE-TEST-0147]", {
   x <- mrgsolve:::new_smat(dmat(1,2,3,4))
   expect_is(x,"sigmalist")
   expect_equal(dim(x), list(`...`=c(4,4)))
 })
 
-test_that("collapse_omega", {
+test_that("collapse_omega [MRGSOLVE-TEST-0148]", {
   code <- '
   $OMEGA @labels a b
   1 2
@@ -148,7 +148,7 @@ test_that("collapse_omega", {
   expect_identical(dim(mat), c(6L,6L))
 })
 
-test_that("collapse_sigma", {
+test_that("collapse_sigma [MRGSOLVE-TEST-0149]", {
   code <- '
   $SIGMA @labels a b
   1 2
@@ -169,6 +169,6 @@ test_that("collapse_sigma", {
   expect_identical(dim(mat), c(3L,3L))
 })
 
-test_that("test-matlist duplicate labels", {
+test_that("test-matlist duplicate labels [MRGSOLVE-TEST-0150]", {
   expect_error(c(omat(house()), omat(house())))  
 })

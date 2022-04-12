@@ -27,21 +27,21 @@ context("test-utils")
 a <- list(a = 1, b = 2, c = 3)
 b <- list(b = 4, c = 5, d = 6)
 
-test_that("merge two lists, open", {
+test_that("merge two lists, open [MRGSOLVE-TEST-0303]", {
   ans <- merge(a,b, open = TRUE)  
   expect_equal(names(ans), c("a", "b", "c", "d"))
   expect_equal(ans$b,4)
   expect_equal(ans$d, 6)
 })
 
-test_that("merge two lists, closed", {
+test_that("merge two lists, closed [MRGSOLVE-TEST-0304]", {
   ans <- merge(a,b, open = FALSE)  
   expect_equal(names(ans), c("a", "b", "c"))
   expect_equal(ans$b,4)
   expect_equal(ans$c, 5)
 })
 
-test_that("combine_list", {
+test_that("combine_list [MRGSOLVE-TEST-0305]", {
     ans <- merge(a,b, open = TRUE)
     ans_combined <- mrgsolve:::combine_list(a,b)
     expect_identical(ans,ans_combined)
@@ -65,46 +65,46 @@ test_that("combine_list", {
 mod <- mrgsolve::house()
 out <- mrgsim(mod)
 
-test_that("Corecing simulated output to data.frame", {
+test_that("Corecing simulated output to data.frame [MRGSOLVE-TEST-0306]", {
   expect_is(as.data.frame(out), "data.frame")
 })
-test_that("Corecing simulated output to matrix", {
+test_that("Corecing simulated output to matrix [MRGSOLVE-TEST-0307]", {
   expect_is(as.matrix(out), "matrix")
 })
-test_that("Corecing parameters to list", {
+test_that("Corecing parameters to list [MRGSOLVE-TEST-0308]", {
   expect_is(as.list(param(mod)), "list")
 })
-test_that("Corecing parameters to numeric", {
+test_that("Corecing parameters to numeric [MRGSOLVE-TEST-0309]", {
   expect_is(as.numeric(param(mod)), "numeric")
 })
-test_that("Corecing initials to list", {
+test_that("Corecing initials to list [MRGSOLVE-TEST-0310]", {
   expect_is(as.list(init(mod)), "list")
 })
-test_that("Corecing initials to numeric", {
+test_that("Corecing initials to numeric [MRGSOLVE-TEST-0311]", {
   expect_is(as.numeric(init(mod)), "numeric")
 })
-test_that("Corecing parameters to data.frame", {
+test_that("Corecing parameters to data.frame [MRGSOLVE-TEST-0312]", {
   expect_is(as.data.frame(param(mod)), "data.frame")
   
 })
-test_that("Corecing initials to data.frame", {
+test_that("Corecing initials to data.frame [MRGSOLVE-TEST-0313]", {
   expect_is(as.data.frame(init(mod)), "data.frame")
 })
-test_that("stime correctly generates simulation times", {
+test_that("stime correctly generates simulation times [MRGSOLVE-TEST-0314]", {
   expect_equal(stime(mod), seq(0,mod@end, mod@delta))
   expect_equal(stime(update(mod, end=-1, add=c(1,6,9))), c(1,6,9))
   expect_error(stime(update(mod, end=-1, add=c())))
 })
-test_that("Negative end time gives simulations at add only", {
+test_that("Negative end time gives simulations at add only [MRGSOLVE-TEST-0315]", {
   expect_equal(stime(update(mod, end=-1, add=c(1,6,9))), c(1,6,9))
   expect_error(stime(update(mod, end=-1, add=c())))
 })
-test_that("If no simulation times can be rendered time=0 only is simulated", {
+test_that("If no simulation times can be rendered time=0 only is simulated [MRGSOLVE-TEST-0316]", {
   out <- mrgsim(mod, end=-1, add=numeric(0))
   expect_equal(unique(out$time),0)
 })
 
-test_that("expand.ev issue-513", {
+test_that("expand.ev issue-513 [MRGSOLVE-TEST-0317]", {
   df <- expand.ev(amt = c(1,2,3))
   expect_is(df,"data.frame")
   expect_identical(df[["amt"]],c(1,2,3))
@@ -116,18 +116,18 @@ test_that("expand.ev issue-513", {
   expect_identical(df[["addl"]], 6)
 })
 
-test_that("tovec", {
+test_that("tovec [MRGSOLVE-TEST-0318]", {
   x <- mrgsolve:::tovec("a,b,c")
   expect_identical(x, c("a", "b", "c"))
   x <- mrgsolve:::tovec("1,2,3,4")
   expect_identical(x, c(1L,2L,3L,4L))
 })
 
-test_that("cvec", {
+test_that("cvec [MRGSOLVE-TEST-0319]", {
   expect_identical(cvec("a, b  , c"),letters[1:3])  
 })
 
-test_that("my_str_split", {
+test_that("my_str_split [MRGSOLVE-TEST-0320]", {
   x <- "ab:cd:ef:gh"
   ans <- mrgsolve:::my_str_split(x,":",n = 1)
   expect_is(ans, "list")
@@ -148,7 +148,7 @@ test_that("my_str_split", {
   expect_length(ans[[1]],2)
 })
 
-test_that("gregexecdf", {
+test_that("gregexecdf [MRGSOLVE-TEST-0321]", {
   
   pattern <- "(F|R|A)[0-9]+"
   text <- c("A", "F1", "B", "R12")

@@ -44,7 +44,7 @@ dose <- distinct(data, ID,amt)
 idata <- expand.idata(CL = runif(10, 0.2,2)) %>% 
   mutate(V = runif(10, 5, 50))
 
-test_that("error to not pass model object issue-547", {
+test_that("error to not pass model object issue-547 [MRGSOLVE-TEST-0197]", {
   expect_error(mrgsim(dose), "the first argument to mrgsim")
   expect_error(mrgsim_d(dose), "the first argument to mrgsim_d ")
   expect_error(mrgsim_ei(dose), "the first argument to mrgsim_ei ")
@@ -54,14 +54,14 @@ test_that("error to not pass model object issue-547", {
   expect_error(qsim(dose), "the first argument to qsim ")
 })
 
-test_that("mrgsim_df", {
+test_that("mrgsim_df [MRGSOLVE-TEST-0198]", {
   out <- mrgsim_df(mod, events = ev(amt=100))
   out2 <- mrgsim_e(mod,ev(amt = 100))
   expect_is(out, "data.frame")
   expect_identical(out, as.data.frame(out2))
 })
 
-test_that("mrgsim with ev", {
+test_that("mrgsim with ev [MRGSOLVE-TEST-0199]", {
   
   out_pipe <- mod %>% ev(e) %>% mrgsim()
   out <- mrgsim(mod, events = e)
@@ -74,7 +74,7 @@ test_that("mrgsim with ev", {
   expect_equal(length(unique(out$ID)),1)
 })
 
-test_that("mrgsim with ev and idata", {
+test_that("mrgsim with ev and idata [MRGSOLVE-TEST-0200]", {
   out_pipe <- mod %>% ev(e) %>% idata_set(idata) %>% mrgsim()
   out <- mrgsim(mod, idata=idata, events = e)
   out_quick <- mrgsim_ei(mod, e, idata)
@@ -85,7 +85,7 @@ test_that("mrgsim with ev and idata", {
   expect_equal(length(unique(out$ID)),10)
 })
 
-test_that("mrgsim with ev and ID and idata", {
+test_that("mrgsim with ev and ID and idata [MRGSOLVE-TEST-0201]", {
   out_pipe <- mod %>% ev(e_id) %>% idata_set(idata) %>% mrgsim()
   out <- mrgsim(mod, idata=idata, events = e_id)
   
@@ -95,7 +95,7 @@ test_that("mrgsim with ev and ID and idata", {
   expect_equal(length(unique(out$ID)),3)  
 })
 
-test_that("mrgsim with data and idata", {
+test_that("mrgsim with data and idata [MRGSOLVE-TEST-0202]", {
   out <- mrgsim(mod, data = data, idata = idata, carry_out = "CL,V")
   out_pipe <- mod %>% data_set(data) %>% idata_set(idata) %>% 
     carry_out(CL,V) %>%
@@ -118,7 +118,7 @@ test_that("mrgsim with data and idata", {
   expect_identical(round(out_pars,6), round(idata_cut,6))
 })
 
-test_that("mrgsim with ev and ID", {
+test_that("mrgsim with ev and ID [MRGSOLVE-TEST-0203]", {
   out <- mrgsim(mod, events = e_id)
   out_pipe <- mod %>% ev(e_id) %>% mrgsim
   out_quick <- mrgsim_e(mod, e_id)
@@ -130,7 +130,7 @@ test_that("mrgsim with ev and ID", {
   expect_equal(length(unique(out$ID)),3)
 })
 
-test_that("mrgsim with data", {
+test_that("mrgsim with data [MRGSOLVE-TEST-0204]", {
   out <- mod %>% mrgsim(data = data)
   out_pipe <- mod %>% data_set(data) %>% mrgsim
   out_quick <- mrgsim_d(mod,data)
@@ -147,7 +147,7 @@ test_that("mrgsim with data", {
   expect_true(all(x == first(x)))
 })
 
-test_that("mrgsim with data and ev", {
+test_that("mrgsim with data and ev [MRGSOLVE-TEST-0205]", {
   out <- mod %>% mrgsim(data = data, events = e)
   out_pipe <- mod %>% data_set(data) %>% ev(e) %>% mrgsim()
   out_pipe@mod <- simargs(out_pipe@mod,clear = TRUE)
@@ -156,13 +156,13 @@ test_that("mrgsim with data and ev", {
   expect_equal(length(unique(out$ID)),7)
 })
 
-test_that("mrgsim with nid", {
+test_that("mrgsim with nid [MRGSOLVE-TEST-0206]", {
   out <- mod %>% mrgsim(nid = 5, end = 2)
   expect_is(out, "mrgsims")
   expect_equal(length(unique(out$ID)),5)
 })
 
-test_that("update arguments are passed", {
+test_that("update arguments are passed [MRGSOLVE-TEST-0207]", {
   out <- mrgsim(mod, atol = 1E-4, rtol = 1E-3, 
                 add = c(12,13,14),
                 end = 11, delta = 2, maxsteps = 5000)
@@ -175,28 +175,28 @@ test_that("update arguments are passed", {
   expect_equal(mod@maxsteps, 5000)
 })
 
-test_that("no data generates error", {
+test_that("no data generates error [MRGSOLVE-TEST-0208]", {
   e <- ev()
   data <- as.data.frame(e)
   expect_error(mrgsim(mod, events = e))
   expect_error(mrgsim(mod, data = data))
 })
 
-test_that("no idata no problem generates error", {
+test_that("no idata no problem generates error [MRGSOLVE-TEST-0209]", {
   e <- ev(amt = 100)
   idata <- as.data.frame(e)[0,]
   expect_is(mrgsim(mod, events = e, idata = idata, end = -1), "mrgsims")
   expect_is(mrgsim(mod, data = data, idata = idata, end = -1), "mrgsims")
 })
 
-test_that("negative istate is reported issue-457", {
+test_that("negative istate is reported issue-457 [MRGSOLVE-TEST-0210]", {
   mod <- update(mod, maxsteps = 1)
   x <- utils::capture.output(try(mrgsim(mod),silent=TRUE), type = "message")
   expect_true(grepl("consider increasing maxsteps", x[1]))
   expect_true(grepl("lsoda returned with negative istate: -1", x[3]))
 })
 
-test_that("simulate non-pred with negative times is allowed", {
+test_that("simulate non-pred with negative times is allowed [MRGSOLVE-TEST-0211]", {
   mod <- house(delta=1)
   dose <- ev(amt = 100, time = 4)
   times <- seq(-10,10)
@@ -219,7 +219,7 @@ test_that("simulate non-pred with negative times is allowed", {
   expect_error(mrgsim(mod, data), "the data set is not sorted by time")
 })
 
-test_that("warning for duplicate output names and rename", {
+test_that("warning for duplicate output names and rename [MRGSOLVE-TEST-0212]", {
   mod <- house(end = -1)
   dose <- ev(amt = 100, CP = 999)
   expect_warning(
