@@ -5,7 +5,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-test_that("THETA(n) is allowed", {
+test_that("THETA(n) is allowed [MRGSOLVE-TEST-0357]", {
   code <- '
   [ param ] THETA1 = 1.2;
   [ main ] 
@@ -20,7 +20,7 @@ test_that("THETA(n) is allowed", {
   )
 })
 
-test_that("autodec + nm-vars functional test", {
+test_that("autodec + nm-vars functional test [MRGSOLVE-TEST-0358]", {
   eps <- 1e-4
   mod <- modlib("nm-like", delta = 0.1, preclean = TRUE, capture = "KA,INH")  
   dose <- ev(amt = 100, D2I = 2, cmt = 2, rate = -2)
@@ -34,7 +34,7 @@ test_that("autodec + nm-vars functional test", {
   expect_true(abs(out$A1[2]-0.81*dose$amt[1]) < eps)
 })
 
-test_that("autodec + nm-vars using nm reserved", {
+test_that("autodec + nm-vars using nm reserved [MRGSOLVE-TEST-0359]", {
   code <- '
   $PLUGIN autodec nm-vars
   $MAIN 
@@ -48,7 +48,7 @@ test_that("autodec + nm-vars using nm reserved", {
   )
 })
 
-test_that("grep code autodec and nm-vars", {
+test_that("grep code autodec and nm-vars [MRGSOLVE-TEST-0360]", {
   code <- '
 $PLUGIN autodec nm-vars
 $PARAM CL = 1, BC = 2
@@ -91,7 +91,7 @@ Z = 5;
   expect_equal(sum(cl), 1)
 })
 
-test_that("grep code autodec", {
+test_that("grep code autodec [MRGSOLVE-TEST-0361]", {
   code <- '
 $PLUGIN autodec
 $PARAM CL = 1, BC = 2
@@ -132,7 +132,7 @@ Z = 5;
   expect_equal(sum(cl), 1)
 })
 
-test_that("grep code nm-vars", {
+test_that("grep code nm-vars [MRGSOLVE-TEST-0362]", {
   code <- '
 $PLUGIN  nm-vars
 $PARAM CL = 1, BC = 2

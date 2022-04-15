@@ -38,89 +38,89 @@ mod11 <- mrgsolve:::mod(mrgsim(mod  %>% param(CL=12, VC=220)))
 
 context("test-update")
 
-test_that("model object updates through update and %>% operator", {
+test_that("model object updates through update and %>% operator [MRGSOLVE-TEST-0280]", {
   expect_true(identical(mod1, mod2))
   expect_true(!identical(mod1, mod))
 })
 
-test_that("Simulation times update properly via update",{
+test_that("Simulation times update properly via update [MRGSOLVE-TEST-0281]",{
   expect_equal(stime(mod1), seq(0,mod1@end, mod2@delta))
   expect_equal(stime(mod3), sort(unique(c(x,seq(0,mod3@end, mod3@delta)))))
 })
 
-test_that("Simulation times update when passed into mrgsim",{
+test_that("Simulation times update when passed into mrgsim [MRGSOLVE-TEST-0282]",{
   expect_identical(mod8,mod9)
 })
 
-test_that("Parameter updates when passed to mrgsim",{
+test_that("Parameter updates when passed to mrgsim [MRGSOLVE-TEST-0283]",{
   expect_equal(param(mod10)$CL, param(mod2)$CL)
   expect_equal(param(mod10)$VC, param(mod2)$VC)
 })
 
-test_that("Parameter updates when added inside mrgsim call",{
+test_that("Parameter updates when added inside mrgsim call [MRGSOLVE-TEST-0284]",{
   expect_equal(param(mod11)$CL, param(mod1)$CL)
   expect_equal(param(mod11)$VC, param(mod1)$VC)
 })
 
 rm(mod8,mod9,mod10,mod11)
 
-test_that("Initials update via init and list",{
+test_that("Initials update via init and list [MRGSOLVE-TEST-0285]",{
   mod1 <- mod %>% init(list(CENT=123,GUT=456))
   expect_equal(init(mod1)$CENT, 123)
   expect_equal(init(mod1)$GUT, 456)
 })
 
-test_that("Initials update via init ",{
+test_that("Initials update via init [MRGSOLVE-TEST-0286] ",{
   mod1 <- mod %>% init(CENT=1123, GUT=1456)
   expect_equal(init(mod1)$CENT, 1123)
   expect_equal(init(mod1)$GUT, 1456)
 })
 
-test_that("Initials update via init and data.frame ",{
+test_that("Initials update via init and data.frame [MRGSOLVE-TEST-0287] ",{
   mod1 <- mod %>% init(data.frame(CENT=987,GUT=654))
   expect_equal(init(mod1)$CENT, 987)
   expect_equal(init(mod1)$GUT, 654)
 })
 
-test_that("Initial conditions update via update()",{
+test_that("Initial conditions update via update() [MRGSOLVE-TEST-0288]",{
   expect_equal(init(mod6)$GUT,5566)
 })
 
-test_that("Solver setting hmin updates", {
+test_that("Solver setting hmin updates [MRGSOLVE-TEST-0289]", {
   expect_equal(mod7@hmin,111)
 })
 
-test_that("Solver setting hmax updates", {
+test_that("Solver setting hmax updates [MRGSOLVE-TEST-0290]", {
   expect_equal(mod7@hmax,222)
 })
 
-test_that("Solver setting maxsteps updates", {
+test_that("Solver setting maxsteps updates [MRGSOLVE-TEST-0291]", {
   expect_equal(mod7@maxsteps,333)
 })
 
-test_that("Solver setting ixpr updates", {
+test_that("Solver setting ixpr updates [MRGSOLVE-TEST-0292]", {
   expect_equal(mod7@ixpr,444)
 })
 
-test_that("Solver setting mxhnil updates", {
+test_that("Solver setting mxhnil updates [MRGSOLVE-TEST-0293]", {
   expect_equal(mod7@mxhnil,555)
 })
 
-test_that("Solver setting atol updates", {
+test_that("Solver setting atol updates [MRGSOLVE-TEST-0294]", {
   expect_equal(mod7@atol,1E-99)
 })
 
-test_that("Solver setting rtol updates", {
+test_that("Solver setting rtol updates [MRGSOLVE-TEST-0295]", {
   expect_equal(mod7@rtol,1E-88)
 })
 
-test_that("bad update gives warning", {
+test_that("bad update gives warning [MRGSOLVE-TEST-0296]", {
   options(mrgsolve.update.strict=TRUE)  
   expect_warning(update(mod, kyle = 1), "invalid item for model object update")
   options(mrgsolve.update.strict=FALSE)
 })
 
-test_that("update outvars issue-483", {
+test_that("update outvars issue-483 [MRGSOLVE-TEST-0297]", {
   x <- update(mod, outvars = "RESP,CP,CENT")
   expect_equal(x@cmtL, c("CENT", "RESP"))
   expect_equal(x@capL, "CP")
@@ -136,7 +136,7 @@ test_that("update outvars issue-483", {
   expect_equivalent(ref,tst)
 })
 
-test_that("update req issue-483", {
+test_that("update req issue-483 [MRGSOLVE-TEST-0298]", {
   x <- update(mod, req = "RESP,CENT")
   expect_equal(x@cmtL, c("CENT", "RESP"))
   expect_equal(x@capL, c("DV","CP"))
@@ -161,7 +161,7 @@ out <- mrgsim(mod, idata=pars, end=8, carry_out="CL,VC")
 out <- distinct(out, ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out[,c("CL", "VC", "ID")]),6)
 
-test_that("Recover items from simulated data when passed in as idata",{
+test_that("Recover items from simulated data when passed in as idata [MRGSOLVE-TEST-0299]",{
   expect_equivalent(out,pars)
 })
 
@@ -172,7 +172,7 @@ out <- mrgsim(mod, data=data, carry_out="CL,VC")
 out <- out %>% as_tibble %>% distinct(ID, .keep_all=TRUE)
 out <- signif(as.data.frame(out)[,c("CL", "VC", "ID")], 6)
 
-test_that("Recover items from simulated data when passed in as data", {
+test_that("Recover items from simulated data when passed in as data [MRGSOLVE-TEST-0300]", {
   expect_equivalent(out,pars)
 })
 
@@ -187,7 +187,7 @@ out2 <- mrgsim(mod, data=data1,
                carry_out="evid,amt,rate,addl,ii,cmt", req="")
 data2 <- as.data.frame(out2)
 
-test_that("CP is equal when simulating from events or data", {
+test_that("CP is equal when simulating from events or data [MRGSOLVE-TEST-0301]", {
   expect_identical(data1$CP, data2$CP)
 })
 
@@ -196,6 +196,6 @@ data1$ROW <- sample(1:nrow(data1))
 
 out <- mrgsim(mod, data=data1, carry_out="ROW")
 
-test_that("Time-varying data items in data are properly carried into output", {
+test_that("Time-varying data items in data are properly carried into output [MRGSOLVE-TEST-0302]", {
   expect_true(all(data1$ROW == out$ROW))
 })

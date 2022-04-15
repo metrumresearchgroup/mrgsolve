@@ -32,7 +32,7 @@ ode_on_off_1 <- '
 '
 mod <- mcode("ode_on_off_1", ode_on_off_1)
 
-test_that("compartment is turned on when F is zero", {
+test_that("compartment is turned on when F is zero [MRGSOLVE-TEST-0391]", {
   data <- c(
     ev(amt = 0, cmt = -1, evid = 2, time = 4,  F1 = 1), 
     ev(amt = 1, cmt =  1, evid = 1, time = 6,  F1 = 0)
@@ -55,7 +55,7 @@ test_that("compartment is turned on when F is zero", {
   expect_equal(ans[10:27], seq(1,24-t2))
 })
 
-test_that("compartment with active infusion can be turned off", {
+test_that("compartment with active infusion can be turned off [MRGSOLVE-TEST-0392]", {
   mod <- house(end = 96)
   data1 <- c(
     # start a bunch of infusions into 2nd cmt
@@ -91,7 +91,7 @@ test_that("compartment with active infusion can be turned off", {
   expect_equal(comp[[1]], comp[[3]])
 })
 
-test_that("evid 3 doesn't change NEWIND", {
+test_that("evid 3 doesn't change NEWIND [MRGSOLVE-TEST-0393]", {
   dose <- ev(amt = 0, evid = 3, cmt = 1, time = 5)
   out <- mrgsim(mod, dose, output = "df")
   expect_equal(out$NEWIND[1], 0)

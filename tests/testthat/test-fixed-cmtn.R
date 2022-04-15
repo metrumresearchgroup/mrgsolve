@@ -47,12 +47,12 @@ $CAPTURE cmtn
 
 mod <- try(suppressWarnings(mcode("FOO",code, audit=FALSE,compile=FALSE)))
 
-test_that("FIXED items are excluded from param", {
+test_that("FIXED items are excluded from param [MRGSOLVE-TEST-0110]", {
     expect_identical(names(param(mod)),c("CL", "VC", "KM", "VMAX"))
     expect_identical(names(mod@fixed),c("A", "B", "C", "D", "E"))
 })
 
-test_that("FIXED items can be recovered", {
+test_that("FIXED items can be recovered [MRGSOLVE-TEST-0111]", {
     expect_identical(names(as.list(allparam(mod))),c("CL", "VC", "KM", "VMAX","A","B","C","D","E"))
 })
 

@@ -23,22 +23,22 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-mread")
 
-test_that("ETA(n) in $ODE is error", {
+test_that("ETA(n) in $ODE is error [MRGSOLVE-TEST-0174]", {
   code <- '$OMEGA 1\n$ODE double a = ETA(1);'  
   expect_error(mcode("test-mread-eta", code, compile = FALSE))
 })
 
-test_that("Warning with no $CMT or $INIT", {
+test_that("Warning with no $CMT or $INIT [MRGSOLVE-TEST-0175]", {
   code <- '$OMEGA 1\n$ODE double a = 2;'  
   expect_warning(mcode("test-mread-cmt", code,quiet=FALSE,compile=FALSE))
 })
 
-test_that("read in rmd file", {
+test_that("read in rmd file [MRGSOLVE-TEST-0176]", {
   mod <- mread("popex.Rmd", modlib(), compile = FALSE) 
   expect_is(mod, "mrgmod")
 })
 
-test_that("ERROR is alias for TABLE", {
+test_that("ERROR is alias for TABLE [MRGSOLVE-TEST-0177]", {
   code <- "$ERROR double x=2;"
   expect_is(mcode("error-is-table", code), "mrgmod")
 })

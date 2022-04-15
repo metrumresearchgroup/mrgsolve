@@ -40,7 +40,7 @@ mod <- mcode("bioav1",code) %>% carry_out(evid)
 
 context("test-bioav")
 
-test_that("Bioav test with doses at time=0", {
+test_that("Bioav test with doses at time=0 [MRGSOLVE-TEST-0331]", {
   data <- expand.ev(ID=1:2,amt=100,FORM=c(1,2))
   out <- mod %>% data_set(data) %>%
     mrgsim() %>% filter(evid==1)

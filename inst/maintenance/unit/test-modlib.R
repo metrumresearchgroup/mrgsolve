@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-modlib models")
 
-test_that("all modlib models", {
+test_that("all modlib models [MRGSOLVE-TEST-0363]", {
   
   test_lib <- function(x) {
     mod <- mread(x,modlib())
@@ -106,7 +106,7 @@ test_that("all modlib models", {
 
 })
 
-test_that("pk2iv uses V1 to scale CENT", {
+test_that("pk2iv uses V1 to scale CENT [MRGSOLVE-TEST-0364]", {
   x <- readLines(file.path(modlib(), "pk2iv.cpp"))
   expect_match(x, "#define CP (CENT/V1)", fixed = TRUE, all = FALSE)
 })

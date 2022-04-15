@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-loadso")
 
-test_that("try loading model object if it is not loaded", {
+test_that("try loading model object if it is not loaded [MRGSOLVE-TEST-0354]", {
   mod <- mcode("loadso-bad","$PARAM CL = 1", compile = FALSE)
   expect_error(
     suppressMessages(mrgsim(mod)), 
@@ -31,7 +31,7 @@ test_that("try loading model object if it is not loaded", {
   )
 })
 
-test_that("loadso fails if shared object file doesn't exist", {
+test_that("loadso fails if shared object file doesn't exist [MRGSOLVE-TEST-0355]", {
   mod <- mcode("loadso-bad","$PARAM CL = 1", compile = FALSE)
   expect_error(
     loadso(mod), 

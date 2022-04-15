@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-deslist")
 
-test_that("as_deslist", {
+test_that("as_deslist [MRGSOLVE-TEST-0044]", {
 
   idata <- tibble(ID=c(33,11,88), start=0, end=c(1,2,3))
   des <- as_deslist(idata,descol="ID")
@@ -53,13 +53,13 @@ test_that("as_deslist", {
   
 })
 
-test_that("tgrid_id", {
+test_that("tgrid_id [MRGSOLVE-TEST-0045]", {
    idata <- data.frame(ID=c(3,1,2,4))
    ans <- mrgsolve:::tgrid_id("ID",idata)
    expect_equal(ans,c(2,0,1,3))
 })
 
-test_that("tgrid_matrix", {
+test_that("tgrid_matrix [MRGSOLVE-TEST-0046]", {
   l <- list(seq(1,3),tgrid(0,4,1),c(tgrid(0,2,1),tgrid(6,12,3)))
   ans <- mrgsolve:::tgrid_matrix(l)
   expect_equal(ans[,1],c(1,2,3,NA,NA,NA))

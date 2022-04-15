@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-matrix")
 
-test_that("Testing modMATRIX", {
+test_that("Testing modMATRIX [MRGSOLVE-TEST-0151]", {
     expect_equal(dim(modMATRIX("  0 0 0   0")), c(4,4))
     expect_equal(dim(modMATRIX("  0\n 0\n 0   0")), c(4,4))
     expect_equal(dim(modMATRIX("  0 0 0   ", block=TRUE)), c(2,2))
@@ -31,7 +31,7 @@ test_that("Testing modMATRIX", {
     expect_equal(modMATRIX("0 0 0", use=FALSE), matrix(0,nrow=3,ncol=3))
 })
 
-test_that("SUPERMATRIX", {
+test_that("SUPERMATRIX [MRGSOLVE-TEST-0152]", {
     ml <- list(matrix(1, 2, 2), matrix(3, 4, 4))
     dimnames(ml[[1]]) <- list(c("a", "b"), c("A", "B"))
     ans <- mrgsolve:::SUPERMATRIX(ml)

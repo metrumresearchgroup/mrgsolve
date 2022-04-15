@@ -52,14 +52,14 @@ out <- mod %>%
   idata_set(idata) %>%
   mrgsim(end=3,delta=1)
 
-test_that("carry_out from complete data set",{
+test_that("carry_out from complete data set [MRGSOLVE-TEST-0016]",{
   expect_equal(out$WT,exTheoph$WT)
   expect_equal(out$ROW,exTheoph$ROW)
 })
 
 
 
-test_that("carry_out from idata set",{
+test_that("carry_out from idata set [MRGSOLVE-TEST-0017]",{
   x <- out %>% as.data.frame %>% distinct(ID, .keep_all=TRUE)
   y <- out %>% as.data.frame %>% distinct(ID,FOO, .keep_all=TRUE)
   
@@ -67,7 +67,7 @@ test_that("carry_out from idata set",{
   expect_identical(x,y)
 })
 
-test_that("carry_out from condensed data set", {
+test_that("carry_out from condensed data set [MRGSOLVE-TEST-0018]", {
   
   out <- mod %>%
     data_set(data) %>%
@@ -89,7 +89,7 @@ test_that("carry_out from condensed data set", {
   expect_identical(x2,y2)
 })
 
-test_that("recover input data-set items", {
+test_that("recover input data-set items [MRGSOLVE-TEST-0019]", {
   dose <- seq(ev(amt=100,time=5,a=33,b="aa"),ev(amt=200,a=44,b="bb",time=10))
   out <- mrgsim(mod,dose,recover="A=a,b", carry_out = "a")
   expect_is(out$A,"numeric")
@@ -99,7 +99,7 @@ test_that("recover input data-set items", {
   expect_error(mrgsim(mod,recover="a",carry_out="a"))
 })
  
-test_that("recover input idata-set items", {
+test_that("recover input idata-set items [MRGSOLVE-TEST-0020]", {
   idata <- expand.idata(a = c(33,44), b = c("aa", "bb")) 
   out <- mrgsim_ei(mod,ev(amt = 100),idata,recover ="a,b")
   expect_is(out$a,"numeric")
@@ -107,7 +107,7 @@ test_that("recover input idata-set items", {
   expect_error(mrgsim_e(mod,idata,recover="b",carry_out="b"))
 })
 
-test_that("error to request matrix and recover character data", {
+test_that("error to request matrix and recover character data [MRGSOLVE-TEST-0021]", {
   data <- expand.ev(amt = 100, group = "A")
   expect_is(mrgsim(mod, data, recover = "group"), "mrgsims")
   expect_error(

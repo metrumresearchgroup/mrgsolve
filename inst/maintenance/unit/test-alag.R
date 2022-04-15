@@ -32,13 +32,13 @@ mod <- mcode("alag1", code)
 
 context("test-alag")
 
-test_that("Lagged bolus", {
+test_that("Lagged bolus [MRGSOLVE-TEST-0323]", {
     out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
     first <- with(as_tibble(out),time[which(CENT > 0)[1]])
     expect_equal(first,2.8)
 })
 
-test_that("Very small lag time doesn't crash issue-109", {
+test_that("Very small lag time doesn't crash issue-109 [MRGSOLVE-TEST-0324]", {
 
   out <- mod %>% ev(amt=100) %>% param(LAG = 1E-30) %>% mrgsim
   expect_is(out, "mrgsims")
@@ -57,7 +57,7 @@ test_that("Very small lag time doesn't crash issue-109", {
   out <- mod %>% ev(amt=100) %>% param(LAG = 1.5) %>% mrgsim
 })
 
-test_that("Lag time on SS record - bolus", {
+test_that("Lag time on SS record - bolus [MRGSOLVE-TEST-0325]", {
   e <- ev(amt=100, ii = 12, LAGT = 5, addl = 10, ss = 1)
   out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3)
   pick <- filter(out, time %in% seq(0,240,12))
@@ -65,7 +65,7 @@ test_that("Lag time on SS record - bolus", {
   expect_true(all(cent==cent[1]))
 })
 
-test_that("Lag time on SS record - infusion", {
+test_that("Lag time on SS record - infusion [MRGSOLVE-TEST-0326]", {
   e <- ev(amt=100, ii = 12, LAGT = 3, addl = 10, ss = 1, rate = 100/2)
   out <- mrgsim(mod, ev = e, obsonly = TRUE, end=96, recsort = 3,ss_rtol = 1e-8)
   pick <- filter(out, time %in% seq(0,240,12))
@@ -78,17 +78,17 @@ test_that("Lag time on SS record - infusion", {
 })
 
 #No longer an error
-test_that("Error lagtime >= ii for bolus", {
+test_that("Error lagtime >= ii for bolus [MRGSOLVE-TEST-0327]", {
   e <- ev(amt = 100, ii = 12, LAG = 20, ss = 1)
   expect_is(mrgsim(mod, ev = e), "mrgsims")
 })
 
-test_that("Error lagtime+duration >= ii for infusion", {
+test_that("Error lagtime+duration >= ii for infusion [MRGSOLVE-TEST-0328]", {
   e <- ev(amt=100, ii = 12, LAG = 3, rate = 100/10, ss = 1)
   expect_error(mrgsim(mod, ev = e))
 })
 
-test_that("ss dose with lag time issue-484", {
+test_that("ss dose with lag time issue-484 [MRGSOLVE-TEST-0329]", {
   data1 <- 
     ev(amt = 100,time=240,ss=1,ii=12) %>% 
     expand_observations(c(0,seq(240,264,4)))

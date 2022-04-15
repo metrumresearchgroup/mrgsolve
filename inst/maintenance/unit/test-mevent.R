@@ -37,7 +37,7 @@ if(self.evid==33) {
 }
 
 '
-test_that("mevent - time-varying KA", {
+test_that("mevent - time-varying KA [MRGSOLVE-TEST-0356]", {
   mod <- mcode("mevent", code)
   expect_is(mod, "mrgmod")
   out <- mod %>% ev(amt = 100) %>% mrgsim()

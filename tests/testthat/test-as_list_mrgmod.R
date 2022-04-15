@@ -25,7 +25,7 @@ context("test-as_list_mrgmod")
 
 options(mrgsolve_mread_quiet=TRUE)
 
-test_that("check items in as.list output", {
+test_that("check items in as.list output [MRGSOLVE-TEST-0013]", {
   x <- as.list(mrgsolve::house())  
   x_names <- names(x)
   expect_true("start" %in% x_names)

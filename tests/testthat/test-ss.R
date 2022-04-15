@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-ss")
 
-test_that("ss_n and ss_fixed issue-533", {
+test_that("ss_n and ss_fixed issue-533 [MRGSOLVE-TEST-0272]", {
   mod <- mrgsolve::house(end = 72,delta=4) %>% param(VC = 50)
   dose <- ev(amt = 100, ii = 24, ss=1, cmt=2, addl=2, ID=123)
   out <- mrgsim_e(mod,dose,recsort=3)
@@ -42,7 +42,7 @@ test_that("ss_n and ss_fixed issue-533", {
                  "\\[steady_zero\\] ID 246 failed to reach steady state")
 })
 
-test_that("ss tolerances", {
+test_that("ss tolerances [MRGSOLVE-TEST-0273]", {
   mod <- house()
   expect_is(mod@ss_rtol,"numeric")
   expect_is(mod@ss_atol,"numeric")
@@ -54,7 +54,7 @@ test_that("ss tolerances", {
   expect_identical(out0,out2)
 })
 
-test_that("reference ss_rtol and ss_atol in failure warnings", {
+test_that("reference ss_rtol and ss_atol in failure warnings [MRGSOLVE-TEST-0274]", {
   mod <- house()
   dose <- ev(amt = 100, ii = 24, addl = 0, ss = 1)
   expect_warning(mrgsim(mod,dose,ss_n=3), "ss_rtol")

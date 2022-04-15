@@ -26,7 +26,7 @@ context("test-mrgmod")
 
 mod <- mrgsolve::house()
 
-test_that("methods", {
+test_that("methods [MRGSOLVE-TEST-0192]", {
   expect_equal(mod$CL,1)
   expect_equal(mod$VC,20)
   expect_equal(mod$RESP,50)
@@ -47,7 +47,7 @@ test_that("methods", {
   expect_true(grepl("housemodel\\.cpp", x[2]))
 })
 
-test_that("defaults issue-540", {
+test_that("defaults issue-540 [MRGSOLVE-TEST-0193]", {
   mod <- modlib("pk1", compile = FALSE)  
   expect_equal(mod@mxhnil,2)
   expect_equal(mod@maxsteps,20000)

@@ -30,7 +30,7 @@ df <- exTheoph %>% mutate(KYLE=7)
 mod <- mod %>% data_set(df) 
 
 ## "Rename via carry_out #30"
-test_that("tran item is renamed", {
+test_that("tran item is renamed [MRGSOLVE-TEST-0266]", {
   out <- mod %>% carry_out(EVID=evid) %>% mrgsim
   expect_true(all(is.element(c("RESP","CENT","EVID"), names(out))))
   out <- mod %>% carry_out(EVID=evid,addl) %>% mrgsim
@@ -41,7 +41,7 @@ test_that("tran item is renamed", {
   expect_false(all(is.element("evid", names(out))))
 })
 
-test_that("Item carried from data set is renamed", {
+test_that("Item carried from data set is renamed [MRGSOLVE-TEST-0267]", {
   out <- mod %>% carry_out(Dose,WEIGHT = WT) %>% mrgsim
   expect_true(all(is.element(s_(RESP,CENT,WEIGHT), names(out))))
   expect_true(all(is.element(s_(Dose,WEIGHT), names(out))))

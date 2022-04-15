@@ -70,7 +70,7 @@ if(mode==5) {
 '
 mod <- mcode("simeta-n", code, end = 6, delta = 2)
 
-test_that("resimulate all eta", {
+test_that("resimulate all eta [MRGSOLVE-TEST-0445]", {
   
   # simeta with no argument
   set.seed(1234)
@@ -86,7 +86,7 @@ test_that("resimulate all eta", {
   
 })
 
-test_that("resimulate specific eta", {
+test_that("resimulate specific eta [MRGSOLVE-TEST-0446]", {
   skip_if(TRUE, message="resim(n) is deprecated")
   set.seed(5678)
   # simeta with n = 1 (simeta(3))
@@ -115,7 +115,7 @@ test_that("resimulate specific eta", {
   
 })
 
-test_that("resimulate all or specific eps", {
+test_that("resimulate all or specific eps [MRGSOLVE-TEST-0447]", {
   data <- data.frame(amt = 0, evid = 0, time = c(0,0,0), cmt = 0, ID = 1)
   set.seed(87654)
   all <- mrgsim_df(mod, data = data, param = list(mode = 4))
@@ -131,7 +131,7 @@ test_that("resimulate all or specific eps", {
   expect_false(any(duplicated(n$b)))
 })
 
-test_that("invalid value for n when calling simeta or simeps", {
+test_that("invalid value for n when calling simeta or simeps [MRGSOLVE-TEST-0448]", {
   skip_if(TRUE, message="resim(n) is deprecated")
   expect_error(
     mrgsim(mod, param = list(mode = 2, n = 100)), 
@@ -143,7 +143,7 @@ test_that("invalid value for n when calling simeta or simeps", {
   )
 })
 
-test_that("warn when simeta(n) is called with off diagonals", {
+test_that("warn when simeta(n) is called with off diagonals [MRGSOLVE-TEST-0449]", {
   code <- '
   $OMEGA @block 
   1 0.1 2
@@ -172,7 +172,7 @@ test_that("warn when simeta(n) is called with off diagonals", {
   expect_silent(mcode("simeta-n-nowarn-2", code, compile = FALSE))
 })
 
-test_that("warn when simeps(n) is called with off diagonals", {
+test_that("warn when simeps(n) is called with off diagonals [MRGSOLVE-TEST-0450]", {
   code <- '
   $SIGMA @block 
   1 0.1 2

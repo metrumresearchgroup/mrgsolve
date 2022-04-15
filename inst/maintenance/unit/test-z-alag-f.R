@@ -48,7 +48,7 @@ mod <-
   carry_out(evid) %>% 
   update(end=2)
 
-test_that("ss=1 and F_CMT =0 issue-497", {
+test_that("ss=1 and F_CMT =0 issue-497 [MRGSOLVE-TEST-0462]", {
   mod <- param(mod, F1 = 0)
   out <- mrgsim(mod, ev(amt = 100, ii = 24, ss=1), delta=1,end=6)
   expect_is(out, "mrgsims")
@@ -72,7 +72,7 @@ out23 <- mod2 %>% param(ALAG2 = 0.3) %>% mrgsim(recsort=1,add=1.3)
 out24 <- mod2 %>% param(ALAG2 = 2) %>% mrgsim(end=5,recsort=1)
 
 
-test_that("F is set for compartment 1 and 2", {
+test_that("F is set for compartment 1 and 2 [MRGSOLVE-TEST-0463]", {
   expect_true(lim(out10,time==2)$CENT==100)
   expect_true(lim(out11,time==2)$CENT==20)
   expect_true(lim(out12,time==2)$CENT==80)
@@ -84,7 +84,7 @@ test_that("F is set for compartment 1 and 2", {
 
 
 context("Set ALAG via ALAG_CMT")
-test_that("ALAG is set for compartment 1 and 2", {
+test_that("ALAG is set for compartment 1 and 2 [MRGSOLVE-TEST-0464]", {
   
   expect_true(lim(out10, CENT>0)$time[1]==0)
   # 1 and 2 put doses in a data set after padded observations at the same time;
@@ -98,7 +98,7 @@ test_that("ALAG is set for compartment 1 and 2", {
 
 
 
-test_that("F is set for multiple doses", {
+test_that("F is set for multiple doses [MRGSOLVE-TEST-0465]", {
   out1 <- 
     mod1 %>% ev(amt=100, cmt=1, addl=3, ii=1) %>% 
     param(F1 = 1) %>% 
@@ -115,7 +115,7 @@ test_that("F is set for multiple doses", {
 
 
 
-test_that("F and ALAG are set from idata", {
+test_that("F and ALAG are set from idata [MRGSOLVE-TEST-0466]", {
   idata <- mrgsolve:::expand.idata(ID=1:3, F1=c(0.2, 0.5), ALAG1=c(0.2, 0.5,0.7,0.99))
   out1 <- mod1 %>% ev(amt=100, cmt=1, time=1) %>% idata_set(idata) %>% mrgsim()
   # 1 and 2 put doses in a data set after padded observations at the same time;
@@ -139,7 +139,7 @@ test_that("F  is set from data", {
 })
 
 
-test_that("ALAG is set from data", {
+test_that("ALAG is set from data [MRGSOLVE-TEST-0468]", {
   # 1 and 2 put doses in a data set after padded observations at the same time;
   out2 <- 
     mod %>% 

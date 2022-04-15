@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=FALSE)
 
 context("test-workflow")
 
-test_that("workflow", {
+test_that("workflow [MRGSOLVE-TEST-0322]", {
   mod <- mrgsolve::house()
   e <- ev(amt = 100)
   out <- mod %>% ev(e) %>% wf_sweep(CL)

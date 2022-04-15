@@ -26,7 +26,7 @@ context("test-realize")
 
 mod <- mrgsolve::house()
 
-test_that("dosing without ss", {
+test_that("dosing without ss [MRGSOLVE-TEST-0254]", {
   e <- ev(amt = 100, ii = 24, addl = 3)
   d <- realize_addl(e)
   mod <- obsonly(mod) %>% update(end = 96, atol = 1E-20)
@@ -35,7 +35,7 @@ test_that("dosing without ss", {
   expect_true(identical(out1, out2))
 })
 
-test_that("dosing with ss", {
+test_that("dosing with ss [MRGSOLVE-TEST-0255]", {
   e <- ev(amt = 100, ii = 24, addl = 3, ss = 1)
   d <- realize_addl(e)
   mod <- obsonly(mod) %>% update(end = 96, atol = 1E-20)
@@ -44,14 +44,14 @@ test_that("dosing with ss", {
   expect_true(identical(out1, out2))
 })
 
-test_that("data frame", {
+test_that("data frame [MRGSOLVE-TEST-0256]", {
   data <- realize_addl(as.data.frame(ev(amt = 100, ii = 24, addl = 9))) 
   expect_equal(nrow(data),10)
   expect_true(all(data[["addl"]]==0))
   expect_true(all(data[["ii"]]==0))
 })
 
-test_that("addl column is all zeros", {
+test_that("addl column is all zeros [MRGSOLVE-TEST-0257]", {
   data <- realize_addl(ev(amt = 100, addl = 0, ii = 1))
   expect_is(data,"ev")
 })

@@ -34,7 +34,7 @@ $CAPTURE CL VP = V2, ETA(1) ka = KA
 
 mod <- mcode("test-capture", code)
 
-test_that("Renamed captured items are properly named", {
+test_that("Renamed captured items are properly named [MRGSOLVE-TEST-0332]", {
   out <- mrgsim(mod, carry_out = "evid")
   expect_identical(
     names(out), 
@@ -42,7 +42,7 @@ test_that("Renamed captured items are properly named", {
   )
 })
 
-test_that("error if cmt in capture issue-555", {
+test_that("error if cmt in capture issue-555 [MRGSOLVE-TEST-0333]", {
   code <- "$CMT A\n$CAPTURE A"
   expect_error(mcode("cmt-in-capture",code,compile=FALSE), 
                "compartment should not be in")
@@ -61,7 +61,7 @@ $OMEGA @labels OGA2
 $CAPTURE CL VP = V2
 '
 
-test_that("capture via mread", {
+test_that("capture via mread [MRGSOLVE-TEST-0334]", {
   mod <- mcode("capture-mread", code, capture = "Q,a=b,OGA2,z") 
   out <- outvars(mod)
   expect_equal(out$capture, c("CL", "VP", "Q", "a", "OGA2", "z"))
@@ -74,7 +74,7 @@ test_that("capture via mread", {
   expect_equal(outvars(mod)$capture, res)
 })
 
-test_that("capture pp directive via mread", {
+test_that("capture pp directive via mread [MRGSOLVE-TEST-0335]", {
   mod <- modlib("irm3", capture = "STIM", compile = FALSE)  
   expect_equal(outvars(mod)$capture, c("CP", "STIM"))
 })

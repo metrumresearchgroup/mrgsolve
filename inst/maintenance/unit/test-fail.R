@@ -24,7 +24,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-fail")
 
-test_that("build_fails", {
+test_that("build_fails [MRGSOLVE-TEST-0350]", {
 code <- '
 $MAIN foo =2;
 '

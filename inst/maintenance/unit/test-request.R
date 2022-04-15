@@ -40,7 +40,7 @@ $CAPTURE b  z
 mod <- mcode("req1", code)
 
 #
-test_that("Req gets the right variables", {
+test_that("Req gets the right variables [MRGSOLVE-TEST-0437]", {
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
   x3 <- names(mod %>% Req(PERIPH,b) %>% mrgsim)
@@ -51,20 +51,20 @@ test_that("Req gets the right variables", {
   expect_identical(x4,s_(ID,time,b,z))
 })
 
-test_that("Req with rename", {
+test_that("Req with rename [MRGSOLVE-TEST-0438]", {
   x2 <- names(mod %>% Req(R1 = PERIPH,R2 = GUT) %>% mrgsim)
   expect_identical(x2,s_(ID,time,R2, R1))
   expect_error(mod %>% Req(R1 = PERIPH, R1 = GUT) %>% mrgsim)
 })
 
-test_that("request with rename", {
+test_that("request with rename [MRGSOLVE-TEST-0439]", {
   mod2 <- update(mod, req = "R1 = PERIPH, R2 = GUT")
   x2 <- names(mrgsim(mod2))
   expect_identical(x2,s_(ID,time,R2, R1,b,z))
   expect_error(update(mod, req="R1 = PERIPH, R1 = GUT"))
 })
 
-test_that("Req gets the right variables, with request", {
+test_that("Req gets the right variables, with request [MRGSOLVE-TEST-0440]", {
   mod <- update(mod, request="CENT")
   x1 <- names(mod %>% mrgsim)
   x2 <- names(mod %>% Req(PERIPH,GUT) %>% mrgsim)
@@ -99,7 +99,7 @@ $CAPTURE CP FLAG ETA1 EPS1
 
 mod <- suppressWarnings(mcode("test3tga", code))
 
-test_that("Testing request setting", {
+test_that("Testing request setting [MRGSOLVE-TEST-0441]", {
   out <- mrgsim(mod, request="PERIPH,CENT", end = 1)
   out2 <- mrgsim(update(mod, request="CENT,PERIPH,GUT"),end=1)
   
@@ -125,7 +125,7 @@ double ETA1 = ETA(1);
 double EPS1 = EPS(1);
 '
 
-test_that("request is made in SET block", {
+test_that("request is made in SET block [MRGSOLVE-TEST-0442]", {
   mod <- suppressWarnings(mcode("test3bqea",code))
   cols <- names(mrgsim(mod))
   expect_identical(mod@request, "CENT")
@@ -134,12 +134,12 @@ test_that("request is made in SET block", {
   expect_identical(intersect(cols,mrgsolve:::cmt(mod)), "CENT")
 })
 
-test_that("request is (all) by default", {
+test_that("request is (all) by default [MRGSOLVE-TEST-0443]", {
   mod <- mcode("test3c",'$CMT CENT\n$PARAM CL=1', compile=FALSE)
   expect_identical(mod@request, "(all)")
 })
 
-test_that("Typedef capture", {
+test_that("Typedef capture [MRGSOLVE-TEST-0444]", {
   code <- '
   $MAIN
   capture a = 1;

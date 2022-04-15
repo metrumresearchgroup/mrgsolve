@@ -42,7 +42,7 @@ dxdt_GUT = -KA*GUT;
 dxdt_CENT = KA*GUT-(CL/V)*CENT;
 '}, rtol = 1E-9, atol = 1E-9)
 
-test_that("ADVAN2 same as ODE - initial condition", {
+test_that("ADVAN2 same as ODE - initial condition [MRGSOLVE-TEST-0412]", {
   out1 <- ode  %>% init(CENT=1000) %>%
     Req(GUT,CENT) %>% mrgsim(end=24,delta=0.1 ,digits=5, rtol = 1E-12)
   
@@ -54,7 +54,7 @@ test_that("ADVAN2 same as ODE - initial condition", {
 })
 
 
-test_that("ADVAN2 same as ODE - GUT,bolus,addl", {
+test_that("ADVAN2 same as ODE - GUT,bolus,addl [MRGSOLVE-TEST-0413]", {
   e <- ev(amt=100,ii=48,addl=4)
   out1 <- ode  %>% ev(e) %>%
     Req(GUT,CENT) %>% mrgsim(end=264,delta=0.1,rtol = 1E-12)
@@ -65,7 +65,7 @@ test_that("ADVAN2 same as ODE - GUT,bolus,addl", {
 })
 
 
-test_that("ADVAN2 same as ODE - GUT,infus,addl", {
+test_that("ADVAN2 same as ODE - GUT,infus,addl [MRGSOLVE-TEST-0414]", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out1 <- ode  %>% ev(e) %>%
     Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
@@ -75,7 +75,7 @@ test_that("ADVAN2 same as ODE - GUT,infus,addl", {
   expect_equal(out1$CENT,out2$CENT)
 })
 
-test_that("ADVAN2 same as ODE - CENT,infus,addl", {
+test_that("ADVAN2 same as ODE - CENT,infus,addl [MRGSOLVE-TEST-0415]", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out1 <- ode  %>% ev(e) %>% 
     Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
@@ -90,7 +90,7 @@ test_that("ADVAN2 same as ODE - CENT,infus,addl", {
 })
 
 
-test_that("ADVAN2 same as ODE - CENT,infus,ss,addl", {
+test_that("ADVAN2 same as ODE - CENT,infus,ss,addl [MRGSOLVE-TEST-0416]", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1,ss=1)
   out1 <- ode  %>% ev(e) %>%
     mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12, 
@@ -100,7 +100,7 @@ test_that("ADVAN2 same as ODE - CENT,infus,ss,addl", {
   expect_equal(out1$CENT,out2$CENT)
 })
 
-test_that("ADVAN2 same as ODE - GUT,bolus,ss,addl", {
+test_that("ADVAN2 same as ODE - GUT,bolus,ss,addl [MRGSOLVE-TEST-0417]", {
   e <- ev(amt=1000,ii=12,addl=16,cmt=1,ss=1)
   out1 <- ode  %>% ev(e) %>%
     Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,
@@ -132,7 +132,7 @@ $PKMODEL cmt = "GUT CENT PER", depot = TRUE
 ode <- mcode("test13_3",ode_code, rtol = 1E-9, atol = 1E-9) 
 pred2 <- mcode("test13_5",pred2, rtol = 1E-9, atol = 1E-9)
 
-test_that("ADVAN4 same as ODE - initial condition", {
+test_that("ADVAN4 same as ODE - initial condition [MRGSOLVE-TEST-0418]", {
   out1 <- ode  %>% init(GUT=1000) %>%
     Req(GUT,CENT) %>% mrgsim(end=24,delta=0.1 ,digits=5)
   out2 <- pred2 %>% init(GUT=1000) %>%
@@ -143,7 +143,7 @@ test_that("ADVAN4 same as ODE - initial condition", {
   expect_equal(names(out1),names(out2))
 })
 
-test_that("ADVAN4 same as ODE - GUT,bolus,addl", {
+test_that("ADVAN4 same as ODE - GUT,bolus,addl [MRGSOLVE-TEST-0419]", {
   e <- ev(amt=100,ii=48,addl=4)
   out1 <- ode  %>% ev(e) %>%
     Req(GUT,CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5)
@@ -154,7 +154,7 @@ test_that("ADVAN4 same as ODE - GUT,bolus,addl", {
   expect_equal(out1$PER,out2$PER)
 })
 
-test_that("ADVAN4 same as ODE - GUT,infus,addl", {
+test_that("ADVAN4 same as ODE - GUT,infus,addl [MRGSOLVE-TEST-0420]", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4)
   out1 <- ode  %>% ev(e) %>%
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
@@ -165,7 +165,7 @@ test_that("ADVAN4 same as ODE - GUT,infus,addl", {
   expect_equal(out1$PER,out2$PER)
 })
 
-test_that("ADVAN4 same as ODE - CENT,infus,addl", {
+test_that("ADVAN4 same as ODE - CENT,infus,addl [MRGSOLVE-TEST-0421]", {
   
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out1 <- ode  %>% ev(e) %>% 
@@ -180,7 +180,7 @@ test_that("ADVAN4 same as ODE - CENT,infus,addl", {
 })
 
 
-test_that("ADVAN4 same as ODE - CENT,infus,ss,addl", {
+test_that("ADVAN4 same as ODE - CENT,infus,ss,addl [MRGSOLVE-TEST-0422]", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=2,ss=1)
   out1 <- ode  %>% ev(e) %>%
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
@@ -191,7 +191,7 @@ test_that("ADVAN4 same as ODE - CENT,infus,ss,addl", {
   expect_equal(out1$PER,out2$PER)
 })
 
-test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
+test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl [MRGSOLVE-TEST-0423]", {
   ode <- update(ode, rtol = 1e-8, atol = 1e-15)
   pred2 <- update(pred2, rtol = 1e-8, atol = 1e-15)
   e <- ev(amt=100,ii=12,addl=16,cmt=1,ss=1)
@@ -203,7 +203,7 @@ test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
   expect_equal(out1$PER,out2$PER)
 })
 
-test_that("Incorrect number of compartments causes error", {
+test_that("Incorrect number of compartments causes error [MRGSOLVE-TEST-0424]", {
   code <- '$PKMODEL cmt="GUT CENT OTHER PERIPH", depot = TRUE'
   expect_error(mod <- mcode("a2error3",code))
 })

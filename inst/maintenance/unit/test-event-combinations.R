@@ -37,7 +37,7 @@ mod <- mcode("context_tran_inputs", code)
 tr <- function(e) mrgsim(mod,e)
 err <- function(e) inherits(try(tr(e),silent=TRUE), "try-error")
 
-test_that("good events issue-249", {
+test_that("good events issue-249 [MRGSOLVE-TEST-0347]", {
   # Good
   a <- ev(amt = 100)
   expect_false(err(a))
@@ -55,7 +55,7 @@ test_that("good events issue-249", {
   expect_false(err(n))
 })
 
-test_that("bad events issue-249", {
+test_that("bad events issue-249 [MRGSOLVE-TEST-0348]", {
   # Bad
   c <- ev(amt = 100, addl = 4)
   expect_error(tr(c), "addl: 4")
@@ -81,7 +81,7 @@ test_that("bad events issue-249", {
   expect_error(tr(p), "must not be negative")
 })
 
-test_that("addl or ss are passed as negative numbers", {
+test_that("addl or ss are passed as negative numbers [MRGSOLVE-TEST-0349]", {
   # Bad
   p <- ev(amt = 100, addl = -1)
   expect_error(tr(p), "must not be negative")

@@ -37,7 +37,7 @@ mod <- mcode(
 modd <- mrgsolve:::house()
 
 ##' The model time grid is used
-test_that("with no data set", {
+test_that("with no data set [MRGSOLVE-TEST-0427]", {
   out <- mrgsim(mod)
   expect_is(out, "mrgsims")
   expect_true("time" %in% names(out))
@@ -45,7 +45,7 @@ test_that("with no data set", {
 })
 
 ##' Time is assumed to be zero
-test_that("data_set with no time", {
+test_that("data_set with no time [MRGSOLVE-TEST-0428]", {
   d <- data.frame(ID = 1, A = seq(0,10), tyme = 1)
   out <- mrgsim_d(mod,d)
   expect_is(out, "mrgsims")
@@ -53,7 +53,7 @@ test_that("data_set with no time", {
   expect_true(all(out$time==0))
 })
 
-test_that("data_set with negative times", {
+test_that("data_set with negative times [MRGSOLVE-TEST-0429]", {
   d <- data.frame(ID = 1, A = 2, time = seq(-10,10))
   out <- mrgsim_d(mod,d)
   expect_is(out, "mrgsims")
@@ -63,7 +63,7 @@ test_that("data_set with negative times", {
   expect_equal(out2$time,d[["time"]])
 })
 
-test_that("time/TIME required when neq > 0", {
+test_that("time/TIME required when neq > 0 [MRGSOLVE-TEST-0430]", {
   data <- data.frame(A = 1, B = 2, ID = 1)
   expect_error(
     mrgsim_d(modd,data), 
@@ -71,7 +71,7 @@ test_that("time/TIME required when neq > 0", {
   )
 })
 
-test_that("time/TIME not required when neq > 0", {
+test_that("time/TIME not required when neq > 0 [MRGSOLVE-TEST-0431]", {
   data <- data.frame(A = 1, B = 2, ID = 1)
   expect_is(
     mrgsim_d(mod,data), 
@@ -79,35 +79,35 @@ test_that("time/TIME not required when neq > 0", {
   )
 })
 
-test_that("cmt with pred is zero", {
+test_that("cmt with pred is zero [MRGSOLVE-TEST-0432]", {
   expect_error(
     mod %>% ev(amt = 100) %>% mrgsim, 
     regexp="all records must have cmt set to zero"
   )
 })
 
-test_that("rate with pred is zero", {
+test_that("rate with pred is zero [MRGSOLVE-TEST-0433]", {
   expect_error(
     mod %>% ev(amt = 0,cmt = 0, rate = 2) %>% mrgsim, 
     regexp="all records must have rate set to zero"
   )
 })
 
-test_that("ss with pred is zero", {
+test_that("ss with pred is zero [MRGSOLVE-TEST-0434]", {
   expect_error(
     mod %>% ev(amt = 0, cmt = 0, ss = 1) %>% mrgsim, 
     regexp="all records must have ss set to zero"
   )
 })
 
-test_that("amt is ok", {
+test_that("amt is ok [MRGSOLVE-TEST-0435]", {
   expect_is(
     mod %>% ev(amt = 100, cmt = 0) %>% mrgsim, 
     "mrgsims"
   )
 })
 
-test_that("obsonly works with dollar-pred", {
+test_that("obsonly works with dollar-pred [MRGSOLVE-TEST-0436]", {
   data <- tibble(time = c(0,1,2,3,4), evid = c(0,2,1,0,0), ID = 1)
   out1 <- mrgsim(mod, data)
   out2 <- mrgsim(mod, data, obsonly = TRUE)

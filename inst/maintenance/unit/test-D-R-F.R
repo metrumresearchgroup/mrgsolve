@@ -51,12 +51,12 @@ data <- data %>% mutate(R1 = rate, rate=-1, mode = 1)
 set.seed(1212)
 out <- mod %>% data_set(data) %>% mrgsim
 
-test_that("Infusion rate is set by R_CMT", {
+test_that("Infusion rate is set by R_CMT [MRGSOLVE-TEST-0336]", {
     expect_identical(out0$CENT, out$CENT)
 })
 
 data$rate <- -2
-test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
+test_that("Error when rate = -2 and R_CMT set instead of D_CMT [MRGSOLVE-TEST-0337]", {
     expect_error(mod %>% data_set(data) %>% mrgsim)
 })
 
@@ -70,12 +70,12 @@ data <- data0 %>% mutate(D1 = dur, rate=-2, mode = 2)
 set.seed(1212)
 out <- mod %>% data_set(data) %>% mrgsim
 
-test_that("Infusion rate is set by D_CMT", {
+test_that("Infusion rate is set by D_CMT [MRGSOLVE-TEST-0338]", {
   expect_identical(out0$CENT, out$CENT)
 })
 
 data$rate <- -1
-test_that("Error when rate = -1 and D_CMT set instead of R_CMT", {
+test_that("Error when rate = -1 and D_CMT set instead of R_CMT [MRGSOLVE-TEST-0339]", {
   expect_error(mod %>% data_set(data) %>% mrgsim)
 })
 
@@ -85,7 +85,7 @@ out2 <- mod %>% ev(amt=1000, rate=-2, F1=0.5, mode = 2) %>% mrgsim
 out3 <- mod %>% ev(amt=1000, rate=-2, D1 = 10, mode = 2) %>% mrgsim
 out4 <- mod %>% ev(amt=1000, rate=-2, D1 = 10,F1=1.5, mode = 2) %>% mrgsim
 
-test_that("Infusion duration when D_CMT and F_CMT are set", {
+test_that("Infusion duration when D_CMT and F_CMT are set [MRGSOLVE-TEST-0340]", {
   expect_true(out$time[which.max(out$CENT)] ==2)
   expect_true(out2$time[which.max(out2$CENT)]==2)
   expect_true(round(max(out$CENT)/max(out2$CENT),3) == 2)
@@ -96,7 +96,7 @@ test_that("Infusion duration when D_CMT and F_CMT are set", {
 
 
 ## Issue 267
-test_that("Infusion duration (D_) with lag", {
+test_that("Infusion duration (D_) with lag [MRGSOLVE-TEST-0341]", {
   mod <- param(mod, mode = 2)
   out <- 
     mod %>% 
@@ -127,7 +127,7 @@ test_that("Infusion duration (D_) with lag", {
 })
 
 ## Issue 267
-test_that("Infusion duration (D_) with lag, multiple", {
+test_that("Infusion duration (D_) with lag, multiple [MRGSOLVE-TEST-0342]", {
   mod <- param(mod, mode = 2)
   out <- 
     mod %>% 
@@ -148,7 +148,7 @@ test_that("Infusion duration (D_) with lag, multiple", {
   
 })
 
-test_that("Infusion duration (D_) with lag and F", {
+test_that("Infusion duration (D_) with lag and F [MRGSOLVE-TEST-0343]", {
   mod <- param(mod, LAGT = 5, D1 = 10, F1 = 0.5, mode = 2)
   out <- 
     mod %>% 
@@ -174,7 +174,7 @@ out2 <- mod %>% ev(amt=1000, rate = -1, R1 = 100, F1 = 0.5, mode = 1) %>% mrgsim
 out3 <- mod %>% ev(amt=1000, rate = -1, R1 = 50, mode = 1) %>% mrgsim
 out4 <- mod %>% ev(amt=1000, rate = -1, R1 = 200, F1 = 1.5, mode = 1) %>% mrgsim
 
-test_that("Infusion duration when R_CMT and F_CMT are set", {
+test_that("Infusion duration when R_CMT and F_CMT are set [MRGSOLVE-TEST-0344]", {
   expect_true(out$time[which.max(out$CENT)] == 10)
   expect_true(out2$time[which.max(out2$CENT)]==5)
   expect_true(round(max(out$CENT)/max(out2$CENT),3) > 1)
@@ -184,7 +184,7 @@ test_that("Infusion duration when R_CMT and F_CMT are set", {
 })
 
 ## Issue 267
-test_that("Infusion duration (R_) lag time, multiple", {
+test_that("Infusion duration (R_) lag time, multiple [MRGSOLVE-TEST-0345]", {
   mod <- param(mod, mode = 1)
   out <- 
     mod %>% 
@@ -205,7 +205,7 @@ test_that("Infusion duration (R_) lag time, multiple", {
   
 })
 
-test_that("Infusion duration (R_) with lag time and F", {
+test_that("Infusion duration (R_) with lag time and F [MRGSOLVE-TEST-0346]", {
   mod <- param(mod, LAGT = 5, R1 = 1000/10, F1 = 0.5, mode = 1)
   out <- 
     mod %>% 

@@ -25,14 +25,14 @@ mod <- mrgsolve::house() %>% update(end=240)
 
 context("test-idata_set")
 
-test_that("event with idata set", {
+test_that("event with idata set [MRGSOLVE-TEST-0113]", {
   idata <- data.frame(ID = c(11,33,55), CL = 2)
   e <- ev(amt = 100)
   out <- mrgsim(mod, idata = idata, events = e)
   expect_identical(unique(idata$ID), unique(out$ID))
 })
 
-test_that("data set with idata", {
+test_that("data set with idata [MRGSOLVE-TEST-0114]", {
   data(exTheoph)
   idata <- exTheoph %>% distinct(ID,WT)
   data <- mutate(exTheoph, WT = NULL, amt = ifelse(evid==1,4, 0))

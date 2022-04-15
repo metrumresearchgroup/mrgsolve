@@ -29,17 +29,17 @@ context("test-mrgsim_q")
 data(exTheoph)
 temp <- expand.ev(amt = c(100,300,100), rate = 100, F1 = 0.2, WT = 120)
 
-test_that("simulation with a complete data set", {
+test_that("simulation with a complete data set [MRGSOLVE-TEST-0194]", {
   out1 <- mrgsim_d(mod,exTheoph)@data
   out2 <- mrgsim_q(mod,exTheoph)@data
   expect_identical(out1,out2)
 })
 
-test_that("simcall=1 is deprecated", {
+test_that("simcall=1 is deprecated [MRGSOLVE-TEST-0195]", {
   expect_error(mrgsim_q(mod,temp,stime=stime(mod),simcall=1))
 })
 
-test_that("qsim issue-490", {
+test_that("qsim issue-490 [MRGSOLVE-TEST-0196]", {
   out1 <- mrgsim_df(mod,temp)
   out2 <- qsim(mod,temp,output="df")
   expect_identical(out1,out2)

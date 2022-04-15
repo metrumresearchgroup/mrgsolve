@@ -47,24 +47,24 @@ outiv <- mrgsim(modiv)
 compareiv <- signif(iv(as.list(init(modiv))$CENT, param(modiv), stime(modiv)), digits=8)
 
 
-test_that("Simulation output is of class mrgsims", {
+test_that("Simulation output is of class mrgsims [MRGSOLVE-TEST-0130]", {
   expect_is(out, "mrgsims")
 })
 
-test_that("The simulation model can be recovered from output", {
+test_that("The simulation model can be recovered from output [MRGSOLVE-TEST-0131]", {
   expect_identical(mod, mrgsolve:::mod(out))
   expect_is(mrgsolve:::mod(out), "mrgmod")
 })
 
-test_that("CP from oral model is identical to closed form result", {
+test_that("CP from oral model is identical to closed form result [MRGSOLVE-TEST-0132]", {
   expect_true(all(comparepo ==out$CP))
 })
 
-test_that("CP from iv model is identical to closed form result", {
+test_that("CP from iv model is identical to closed form result [MRGSOLVE-TEST-0133]", {
   expect_true(all(compareiv == outiv$CP))
 })
 
-test_that("Error on dosing into non-existant compartment", {
+test_that("Error on dosing into non-existant compartment [MRGSOLVE-TEST-0134]", {
   expect_error(mod %>% ev(amt = 100, cmt = 1000) %>% mrgsim())
 })
 

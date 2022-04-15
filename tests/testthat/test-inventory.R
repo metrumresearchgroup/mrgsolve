@@ -37,7 +37,7 @@ mod <- mcode("test", "$PARAM KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1",c
 all_obj <- data.frame(KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1)
 missing_obj <- data.frame(KA = 1, CL = 1, V = 1, OCC1 = 1, F = 1)
 
-test_that("inventory works", {
+test_that("inventory works [MRGSOLVE-TEST-0128]", {
   # no requirements gives back model 
   expect_s4_class(inventory(mod, all_obj), "mrgmod")
   
@@ -47,7 +47,7 @@ test_that("inventory works", {
   
 })
 
-test_that("inventory errors when missing required params", {
+test_that("inventory errors when missing required params [MRGSOLVE-TEST-0129]", {
 
   expect_error(inventory(mod, missing_obj, dplyr::everything()))
   expect_error(inventory(mod, missing_obj, dplyr::contains("OCC")))

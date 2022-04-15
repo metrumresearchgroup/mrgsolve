@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-numericlist")
 
-test_that("numericlist", {
+test_that("numericlist [MRGSOLVE-TEST-0242]", {
   valid <- mrgsolve:::valid.numericlist
   x <- param(A = 1, B = 2)
   expect_true(valid(x))

@@ -9,7 +9,7 @@ nmv <- function(x) {
   paste0("[ plugin ] nm-vars \n ", x) 
 }
 
-test_that("find nm vars - frda only", {
+test_that("find nm vars - frda only [MRGSOLVE-TEST-0377]", {
   code <- '
   [ MAIN ] 
   F2 = 2;
@@ -31,7 +31,7 @@ test_that("find nm vars - frda only", {
   expect_equal(nrow(ans$ddt), 0)
 })
 
-test_that("find nm vars - A/A_0/DADT only", {
+test_that("find nm vars - A/A_0/DADT only [MRGSOLVE-TEST-0378]", {
   code <- '
   [ MAIN ] 
   A_0(2) = 1;
@@ -58,7 +58,7 @@ test_that("find nm vars - A/A_0/DADT only", {
   expect_is(ans$dcmtn, "numeric")
 })
 
-test_that("find nm vars - both", {
+test_that("find nm vars - both [MRGSOLVE-TEST-0379]", {
   code <- '
   [ PREAMBLE ] 
   F1 = 1;
@@ -92,7 +92,7 @@ test_that("find nm vars - both", {
   expect_is(ans$dcmtn, "numeric")
 })
 
-test_that("FRDA in param is error", {
+test_that("FRDA in param is error [MRGSOLVE-TEST-0380]", {
   expect_error(
     mcode("frda1", nmv("[ param ] CL = 1, F1 = 5")), 
     regexp = "reserved: F1"
@@ -111,7 +111,7 @@ test_that("FRDA in param is error", {
   )
 })
 
-test_that("FRDA in cmt is error", {
+test_that("FRDA in cmt is error [MRGSOLVE-TEST-0381]", {
   expect_error(
     mcode("frda5", nmv("[ cmt ] GUT CENT F1")), 
     msg = "reserved: F1"
@@ -130,7 +130,7 @@ test_that("FRDA in cmt is error", {
   )
 })
 
-test_that("NM Reserved in param is error", {
+test_that("NM Reserved in param is error [MRGSOLVE-TEST-0382]", {
   expect_error(
     mcode("nmres1", nmv("[ param ] A = 1, CL = 2, WT = 70")), 
     regexp = "reserved: A"
@@ -149,7 +149,7 @@ test_that("NM Reserved in param is error", {
   )
 })
 
-test_that("NM Reserved in init is error", {
+test_that("NM Reserved in init is error [MRGSOLVE-TEST-0383]", {
   expect_error(
     mcode("nmres5", nmv("[ cmt ] GUT CENT A")), 
     msg = "reserved: A"
@@ -168,7 +168,7 @@ test_that("NM Reserved in init is error", {
   ) 
 })
 
-test_that("Compartment number bounds checking", {
+test_that("Compartment number bounds checking [MRGSOLVE-TEST-0384]", {
   expect_error(
     mcode("frda8", nmv("[ cmt ] B C D \n [ main ] F5 = 2;")), 
     regexp = "out of range: F5"
@@ -187,7 +187,7 @@ test_that("Compartment number bounds checking", {
   )
 })
 
-test_that("nm-vars functional test", {
+test_that("nm-vars functional test [MRGSOLVE-TEST-0385]", {
   mod1 <- house(param = list(F1 = 0.8))
   code2 <- '
   [ plugin ] nm-vars

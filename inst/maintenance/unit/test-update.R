@@ -32,7 +32,7 @@ $CAPTURE A B C
 
 mod1 <- mcode("code1eekd", code1, warn=FALSE)
 
-test_that("Update parameter - via param", {
+test_that("Update parameter - via param [MRGSOLVE-TEST-0458]", {
   expect_equal(param(param(mod1,B = 2))$B,2)
   expect_equal(as.list(param(param(mod1,A=11,C=22))),list(A=11,B=0,C=22))
 
@@ -50,7 +50,7 @@ test_that("Update parameter - via param", {
 
 
 
-test_that("Update parameter - via idata", {
+test_that("Update parameter - via idata [MRGSOLVE-TEST-0459]", {
   idata <- expand.idata(ID=1, A=c(4,5,6),B=c(7,8,9),C=c(11,12,13,14))  
   out <- mod1 %>% idata_set(idata) %>% mrgsim %>% as_tibble %>% distinct(ID,A,B,C)
   expect_equal(unlist(out),unlist(idata))
@@ -58,7 +58,7 @@ test_that("Update parameter - via idata", {
 })
 
 
-test_that("Update parameter - via data, not-time-varying", {
+test_that("Update parameter - via data, not-time-varying [MRGSOLVE-TEST-0460]", {
   data <- expand.ev(ID=1, A=c(4,5,6),B=c(7,8,9),C=c(11,12,13,14),amt=2)
   out <- mod1 %>% data_set(data) %>% carry_out(amt,evid,cmt,time) %>%
     mrgsim() %>% as_tibble %>% filter(evid==1) %>% mutate(CM=NULL)
@@ -66,7 +66,7 @@ test_that("Update parameter - via data, not-time-varying", {
   
 })
 
-test_that("Update parameter - via data, time-varying", {
+test_that("Update parameter - via data, time-varying [MRGSOLVE-TEST-0461]", {
   ## data with time-varying covariate
   data <- 
     bind_rows(

@@ -48,11 +48,11 @@ aa <- dplyr::filter(a, evid == 0) %>% dplyr::slice(-2)
 bb <- dplyr::filter(b, evid == 0) %>% dplyr::slice(-2)
 cc <- dplyr::filter(c, evid == 0) %>% dplyr::slice(-2)
 
-test_that("tad-cmt with default initialization", {
+test_that("tad-cmt with default initialization [MRGSOLVE-TEST-0455]", {
   expect_equal(c$tadz, c$tadx)  
 })
 
-test_that("tad-cmt matches tad-no-cmt", {
+test_that("tad-cmt matches tad-no-cmt [MRGSOLVE-TEST-0456]", {
   # check tad x and y
   check_x <- aa$tadx - cc$tadx
   check_y <- bb$tady - cc$tady
@@ -60,7 +60,7 @@ test_that("tad-cmt matches tad-no-cmt", {
   expect_true(all(check_y==0))
 })
 
-test_that("check against tad", {
+test_that("check against tad [MRGSOLVE-TEST-0457]", {
   # check against tad
   aaa <- filter(aa, tad >= 0)
   bbb <- filter(bb, tad >= 0)

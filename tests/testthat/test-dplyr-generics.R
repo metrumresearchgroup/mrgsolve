@@ -27,62 +27,62 @@ project <- file.path(system.file(package="mrgsolve"), "models")
 
 out  <- mrgsolve::house() %>% ev(amt=100) %>% mrgsim(end=122)
 
-test_that("Pipe to tibble", {
+test_that("Pipe to tibble [MRGSOLVE-TEST-0047]", {
   expect_is(out %>% as_tibble, "tbl_df")
 })
 
-test_that("Pipe to mutate", {
+test_that("Pipe to mutate [MRGSOLVE-TEST-0048]", {
   x <- out %>% mutate(test=2)
   expect_is(x, "tbl_df")
   expect_true(exists("test", x))
   expect_true(all(x$test==2))
 })
 
-test_that("Pipe to filter", {
+test_that("Pipe to filter [MRGSOLVE-TEST-0049]", {
   x <- out %>% filter(time <=10)
   expect_is(x, "tbl_df")
   expect_true(max(x$time)==10)
 })
 
-test_that("Pipe to summarise", {
+test_that("Pipe to summarise [MRGSOLVE-TEST-0050]", {
   x <- out %>% summarise(max=max(time))
   expect_is(x, "tbl_df")
   expect_true(nrow(x)==1)
   expect_true(x$max==122)
 })
 
-test_that("Pipe to select", {
+test_that("Pipe to select [MRGSOLVE-TEST-0051]", {
   x <- out %>% dplyr::select(ID,RESP,time)
   expect_is(x, "tbl_df")
   expect_identical(names(x),c("ID","RESP", "time"))
 })
 
-test_that("Pipe to group_by", {
+test_that("Pipe to group_by [MRGSOLVE-TEST-0052]", {
   x <- out %>% group_by(ID,RESP)
   expect_is(x, "tbl_df")
   expect_identical(as.character(groups(x)),c("ID","RESP"))
 })
 
-test_that("Pipe to slice", {
+test_that("Pipe to slice [MRGSOLVE-TEST-0053]", {
   x <- out %>% slice(c(6,11))
   expect_is(x, "data.frame")
   expect_true(all(x$time %in% c(1,2.25)))
 })
 
-test_that("filter_mrgsims", {
+test_that("filter_mrgsims [MRGSOLVE-TEST-0054]", {
   x <- out %>% filter_sims(time > 30)
   expect_is(x, "mrgsims")
   expect_true(all(x$time > 30))
 })
 
-test_that("mutate_mrgsims", {
+test_that("mutate_mrgsims [MRGSOLVE-TEST-0055]", {
   chk <- out$CENT + out$RESP
   x <- out %>% mutate_sims(foo = CENT + RESP)
   expect_is(x, "mrgsims")
   expect_true(all(x$foo == chk))
 })
 
-test_that("select_mrgsims", {
+test_that("select_mrgsims [MRGSOLVE-TEST-0056]", {
   x <- select_sims(out, RESP)
   expect_is(x, "mrgsims")
   expect_identical(names(x), c("ID", "time", "RESP"))

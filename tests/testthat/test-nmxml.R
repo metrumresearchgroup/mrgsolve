@@ -40,7 +40,7 @@ $ODE dxdt_CENT=0;
 
 tmp <- tempdir()
 
-test_that("Model spec with $NMXML block can be parsed", {
+test_that("Model spec with $NMXML block can be parsed [MRGSOLVE-TEST-0215]", {
   expect_is(mcode("nmxml1", code, warn=FALSE, compile = FALSE),"mrgmod")
 })
 
@@ -48,21 +48,21 @@ mod <- mcode("test6", code, compile = FALSE)
 
 par <- lapply(as.list(param(mod)), round, digits=3)
 
-test_that("THETAS are imported into the parameter list", {
+test_that("THETAS are imported into the parameter list [MRGSOLVE-TEST-0216]", {
   expect_identical(mrgsolve:::pars(mod), c(paste0("THETA", 1:7),"CL"))
   expect_identical(par$THETA6, 1.024)
   expect_identical(par$THETA2, 22.791)
 })
 
 mat <- signif(as.matrix(omat(mod)), 3)
-test_that("OMEGAS are imported into the omega list", {
+test_that("OMEGAS are imported into the omega list [MRGSOLVE-TEST-0217]", {
   expect_equivalent(mat[1,1],0.214)
   expect_equivalent(mat[1,2],0.121)
   expect_equivalent(mat[3,2],-0.0372)
 })
 
 mat <- signif(as.matrix(smat(mod)), 3)
-test_that("SIGMA are imported into the sigma list", {
+test_that("SIGMA are imported into the sigma list [MRGSOLVE-TEST-0218]", {
   expect_equivalent(mat[1,1],0.0492)
   expect_equivalent(mat[2,2],0.202)
   expect_equivalent(mat[1,2],0)
@@ -97,30 +97,30 @@ mod <- mcode("test6b",code, compile = FALSE)
 
 mat <- signif(as.matrix(omat(mod)),3)
 
-test_that("Loading OMEGA from multiple sources", {
+test_that("Loading OMEGA from multiple sources [MRGSOLVE-TEST-0219]", {
   expect_equivalent(dim(mat), c(11,11))
   expect_equivalent(mat[2,2],2)
   expect_equivalent(mat[4,4],0.214)
   expect_equivalent(mat[6,5],-0.0372)
 })
 
-test_that("Correlation in corr matrix is converted to covariance", {
+test_that("Correlation in corr matrix is converted to covariance [MRGSOLVE-TEST-0220]", {
   expect_equivalent(mat[8,7],0.548)
 })
 
-test_that("When use=FALSE, variance is 0", {
+test_that("When use=FALSE, variance is 0 [MRGSOLVE-TEST-0221]", {
   expect_true(all(mat[9:11,9:11]==0))
 })
 
 matl <- as.list(omat(mod))
 mat <- signif(as.list(omat(mod))$OM,3)
-test_that("Matrices are properly named", {
+test_that("Matrices are properly named [MRGSOLVE-TEST-0222]", {
   expect_identical(names(matl), c("...", "OMGA", "OM", "..."))
   expect_equivalent(mat[2,1], 0.548)
 })
 
 mat <- signif(as.matrix(smat(mod)),3)
-test_that("Loading SIGMA from multiple sources", {
+test_that("Loading SIGMA from multiple sources [MRGSOLVE-TEST-0223]", {
   expect_equivalent(dim(mat), c(5,5))
   expect_equivalent(mat[2,2], 0.0492)
   expect_equivalent(mat[5,5], 8)
@@ -131,23 +131,23 @@ test_that("Loading SIGMA from multiple sources", {
 a <- bmat(c(1,0.1,3))
 b <- as.list(omat(update(mod, omega=list(OM=a))))$OM
 
-test_that("update OMEGA by name", {
+test_that("update OMEGA by name [MRGSOLVE-TEST-0224]", {
   expect_identical(a, b)
 })
 
 a <- dmat(5,5)
 b <- as.list(smat(mod %>% smat(sg=a)))$sg
-test_that("Update SIGMA by name", {
+test_that("Update SIGMA by name [MRGSOLVE-TEST-0225]", {
   expect_identical(a, b)
 })
 
-test_that("error is generated for incompatible dimensions",{
+test_that("error is generated for incompatible dimensions [MRGSOLVE-TEST-0226]",{
   expect_error(mod %>% omat(OM=matrix(1)))
   expect_error(mod %>% omat(OM=dmat(1,2,3,4,5,6)))
   expect_error(mod %>% smat(sg=dmat(1,2,3)))
 })
 
-test_that("A warning is generated when nothing is updated",{
+test_that("A warning is generated when nothing is updated [MRGSOLVE-TEST-0227]",{
   expect_warning(mod %>% omat(O=matrix(1)))
   expect_warning(mod %>% smat(S=matrix(1)))
 })
@@ -170,11 +170,11 @@ mod <- mcode("tst_mat_update",code, compile = FALSE)
 
 a <- dmat(1,2,3)
 b <- dmat(4,5,6)
-test_that("A single unnamed matrix is updated", {
+test_that("A single unnamed matrix is updated [MRGSOLVE-TEST-0228]", {
   expect_equivalent(a, as.matrix(omat(mod)))
   expect_equivalent(b, as.matrix(omat(mod %>% omat(b))))
 })
-test_that("Warning issued if updating unnamed matrix with named matrix", {
+test_that("Warning issued if updating unnamed matrix with named matrix [MRGSOLVE-TEST-0229]", {
   expect_warning(mod %>% omat(a=b))
 })
 
@@ -186,7 +186,7 @@ omega = FALSE, sigma = FALSE
 '
 mod <- mcode("nmxml512", code, warn=FALSE, compile = FALSE)
 
-test_that("No matrices when name not given", {
+test_that("No matrices when name not given [MRGSOLVE-TEST-0230]", {
   expect_null(nrow(omat(mod)))
   expect_null(nrow(smat(mod)))
 })
@@ -199,7 +199,7 @@ sigma = FALSE
 '
 mod <- mcode("nmxml2231",code,warn=FALSE, compile = FALSE)
 
-test_that("Get theta and omega", {
+test_that("Get theta and omega [MRGSOLVE-TEST-0231]", {
   expect_true(nrow(omat(mod))==3)
   expect_identical(names(omat(mod)),"...")
   expect_null(nrow(smat(mod)))
@@ -223,16 +223,16 @@ $SIGMA @labels h i j k l
 '
 mod <- mcode("label1", code, warn=FALSE, compile = FALSE)
 
-test_that("Model compiles", {
+test_that("Model compiles [MRGSOLVE-TEST-0232]", {
   expect_is(mod,"mrgmod")
 })
 
-test_that("Labels are assigned to $OMEGA and $SIGMA", {
+test_that("Labels are assigned to $OMEGA and $SIGMA [MRGSOLVE-TEST-0233]", {
   expect_equivalent(mod@omega@labels, list(s_(a,b,c,d),s_(x,y,z)))
   expect_equivalent(mod@sigma@labels, list(s_(e,f), s_(h,i,j,k,l)))
 })
 
-test_that("zero_re zeros all matrices", {
+test_that("zero_re zeros all matrices [MRGSOLVE-TEST-0234]", {
   x <- mod %>% zero_re %>% omat %>% as.matrix
   expect_true(all(as.numeric(x)==0))
   x <- mod %>% zero_re %>% smat %>% as.matrix
@@ -251,11 +251,11 @@ $OMEGA
 '
 mod <- mcode("label2", code,warn=FALSE, compile = FALSE)
 
-test_that("Mixed labels / no labels and prefix", {
+test_that("Mixed labels / no labels and prefix [MRGSOLVE-TEST-0235]", {
   expect_equivalent(mod@omega@labels, list(s_(x_a,x_b),s_(.,.,.)))
 })
 
-test_that("read_nmext returns estimates", {
+test_that("read_nmext returns estimates [MRGSOLVE-TEST-0236]", {
   project <- system.file("nonmem", package="mrgsolve")
   x <- read_nmext(1005, project)   
   expect_equal(names(x), c("raw", "param", "omega", "sigma"))
@@ -267,7 +267,7 @@ test_that("read_nmext returns estimates", {
   expect_identical(x,x2)
 })
 
-test_that("NONMEM estimates from nmext", {
+test_that("NONMEM estimates from nmext [MRGSOLVE-TEST-0237]", {
   project <- system.file("nonmem", package="mrgsolve")
   a <- mrgsolve:::nmext(run = 1005, project = project)
   expect_is(a$theta, "list")
@@ -279,7 +279,7 @@ test_that("NONMEM estimates from nmext", {
                "'arg' should be one of ")
 })
 
-test_that("NONMEM estimates from nmext - multiple tables", {
+test_that("NONMEM estimates from nmext - multiple tables [MRGSOLVE-TEST-0238]", {
   project <- system.file("nonmem", package="mrgsolve")
   
   a <- mrgsolve:::nmext(run = 2005, project = project, index = "last")
@@ -315,7 +315,7 @@ test_that("NONMEM estimates from nmext - multiple tables", {
   )
 })
 
-test_that("custom labeled THETA", {
+test_that("custom labeled THETA [MRGSOLVE-TEST-0239]", {
   project <- system.file("nonmem", package = "mrgsolve")
   a <- mrgsolve:::nmxml(run = 1005, project = project)
   b <- mrgsolve:::nmxml(run = 1005, project = project, tname = letters[1:7])
@@ -324,7 +324,7 @@ test_that("custom labeled THETA", {
   expect_error(mrgsolve:::nmxml(run=1005,project=project,tname=letters[1:6]))
 })
 
-test_that("read nm estimates relative to cpp file", {
+test_that("read nm estimates relative to cpp file [MRGSOLVE-TEST-0240]", {
   skip_if_not(
     all(
       file.exists("nm/1005-ext.cpp"), 
@@ -337,7 +337,7 @@ test_that("read nm estimates relative to cpp file", {
   expect_is(mod, "mrgmod") 
 })
 
-test_that("nm source file is available via as.list", {
+test_that("nm source file is available via as.list [MRGSOLVE-TEST-0241]", {
   skip_if_not(
     all(
       file.exists("nm/1005-ext.cpp"), 

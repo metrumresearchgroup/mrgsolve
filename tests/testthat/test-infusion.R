@@ -27,12 +27,12 @@ mod <- mrgsolve::house()
 context("test-infusion")
 
 ## Issue 43
-test_that("Infusion with amt == 0", {
+test_that("Infusion with amt == 0 [MRGSOLVE-TEST-0115]", {
   expect_error(mod %>% ev(amt=0,rate=1000) %>% mrgsim)
 })
 
 ## Issue 43
-test_that("Infusion with large rate and small amount", {
+test_that("Infusion with large rate and small amount [MRGSOLVE-TEST-0116]", {
   out <- try(mod %>% ev(amt=0.00000001,rate=1000000) %>% mrgsim(atol=1E-25,end=12))
   expect_is(out,"mrgsims")
   sims <- out %>% filter(time > 0)
@@ -41,14 +41,14 @@ test_that("Infusion with large rate and small amount", {
 })
 
 ## Issue 43
-test_that("Infusion ends at the proper time", {
+test_that("Infusion ends at the proper time [MRGSOLVE-TEST-0117]", {
   out <- mod %>% ev(amt=3000, rate=30,cmt=2) %>% mrgsim(end=200, delta=0.01)
   tmax <- with(as.data.frame(out), time[which(CENT == max(CENT))])
   expect_equal(tmax,100)
 })
 
 
-test_that("Consecutive infusions act as one long infusion",{
+test_that("Consecutive infusions act as one long infusion [MRGSOLVE-TEST-0118]",{
   b <- ev(amt=200,cmt=2,time=0)
   i <-  ev(amt=1000, ii=100, rate=10,addl=9,cmt=2)
   d <- b+i
@@ -72,7 +72,7 @@ test_that("Consecutive infusions act as one long infusion",{
 
 })
 
-test_that("Same results from addl and explicit doses",{
+test_that("Same results from addl and explicit doses [MRGSOLVE-TEST-0119]",{
   i <-  ev(amt=1000, ii=24, rate=100,addl=9,cmt=2)
   out1 <- 
     mod %>% 
@@ -92,25 +92,25 @@ test_that("Same results from addl and explicit doses",{
 })
 
 
-test_that("Infusion with duration a multiple of ii", {
+test_that("Infusion with duration a multiple of ii [MRGSOLVE-TEST-0120]", {
     out <- try(mod %>% ev(amt=100,rate=10,ii=1,addl=200,cmt=2) %>% mrgsim(delta=0.5))
     expect_is(out, "mrgsims")
 })
 
 mod  <- mrgsolve::house()
 
-test_that("Infusion with no obs overlap", {
+test_that("Infusion with no obs overlap [MRGSOLVE-TEST-0121]", {
   mod <- mod %>% ev(amt=6, rate=5)
   expect_is(mod %>% mrgsim, "mrgsims")
 })
 
-test_that("Infusion with obs overlap", {
+test_that("Infusion with obs overlap [MRGSOLVE-TEST-0122]", {
   mod <- mod %>% ev(amt=6, rate=5)
   expect_is(mod %>% mrgsim(delta=0.1), "mrgsims")
   #expect_error(mod %>% update(mindt=0) %>% mrgsim(delta=0.1))
 })
 
-test_that("Infusion executes with ss flag and ii==dur", {
+test_that("Infusion executes with ss flag and ii==dur [MRGSOLVE-TEST-0123]", {
   out <- 
     mod %>% 
     Req(CP) %>% obsonly %>%
@@ -121,7 +121,7 @@ test_that("Infusion executes with ss flag and ii==dur", {
   
 })
 
-test_that("ss infusion issue-249", {
+test_that("ss infusion issue-249 [MRGSOLVE-TEST-0124]", {
   cl <- 1.3
   r <- 25
   mod <- mrgsolve::house(end=1,outvars="CP",ss_rtol=1e-8) %>% param(CL = cl)

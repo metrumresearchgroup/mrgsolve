@@ -40,7 +40,7 @@ $CAPTURE a b c d e f g
 
 context("PLUGIN: Rcpp")
 
-test_that("Rcpp all distributions", {
+test_that("Rcpp all distributions [MRGSOLVE-TEST-0425]", {
   mod <- mcode("test_plugin-1", code, warn=FALSE)
   out <- mod %>% mrgsim(end=1000)
   expect_true(all(out$f > 25 & out$f < 70))
@@ -79,7 +79,7 @@ $CAPTURE a b c
 
 context("PLUGIN: simeta")
 
-test_that("resimulate ETAs", {
+test_that("resimulate ETAs [MRGSOLVE-TEST-0426]", {
     mod <- mcode("test_plugin-2", code)
     out <- mod %>% mrgsim(end=-1, nid=1000)
     expect_true(var(out$a) > var(out$b))

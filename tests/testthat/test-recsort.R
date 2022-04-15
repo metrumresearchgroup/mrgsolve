@@ -42,7 +42,7 @@ mod <- carry_out(mod, evid)
 
 # 1 and 2
 # put doses in a data set after padded observations at the same time; 
-test_that("recsort 1 and 2, data", {
+test_that("recsort 1 and 2, data [MRGSOLVE-TEST-0259]", {
   mod <- update(mod, add = c(1,1.0001), end = -1)
   out <- mrgsim_df(mod, ev(amt = 1, time = 1),recsort = 1)
   expect_equal(out$evid, c(0,1,0))
@@ -53,7 +53,7 @@ test_that("recsort 1 and 2, data", {
 
 # 3 and 4
 # put those doses before padded observations at the same time.
-test_that("recsort 3 and 4, data", {
+test_that("recsort 3 and 4, data [MRGSOLVE-TEST-0260]", {
   mod <- update(mod, add = c(1,1.0001), end = -1)
   out <- mrgsim_df(mod, ev(amt = 1, time = 1), recsort = 3)  
   expect_equal(out$evid, c(1,0,0))
@@ -64,7 +64,7 @@ test_that("recsort 3 and 4, data", {
 
 # 2 and 4 will put
 # doses scheduled through addl after observations at the same time; 
-test_that("recsort 2 and 4, addl", {
+test_that("recsort 2 and 4, addl [MRGSOLVE-TEST-0261]", {
   mod <- update(mod, add = c(1,1.0001))
   e <- ev(amt = 1, ii=0.5, addl = 1, time = 0.5)
   out <- mrgsim_df(mod,ev = e, recsort=2)
@@ -76,7 +76,7 @@ test_that("recsort 2 and 4, addl", {
 
 # 1 and 3 put
 # doses scheduled through addl before observations at the same time. 
-test_that("recsort 1 and 3, addl", {
+test_that("recsort 1 and 3, addl [MRGSOLVE-TEST-0262]", {
   mod <- update(mod, add = c(0.999,1,1.0001))
   e <- ev(amt = 1, ii=0.5, addl = 1, time = 0.5)
   out <- mrgsim_df(mod,ev = e, recsort=1)

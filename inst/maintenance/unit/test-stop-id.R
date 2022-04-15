@@ -35,7 +35,7 @@ if(STOP_CRUMP==1) {
 
 mod <- mcode("test-stop-id", code, end = 6)
 
-test_that("Stop the current ID and carry forward", {
+test_that("Stop the current ID and carry forward [MRGSOLVE-TEST-0452]", {
   mod <- param(mod, STOP_CF = 1, STOP_NA = 0, STOP_CRUMP = 0)
   out <- mrgsim_df(mod)  
   pre <- out[out$time <= 3,,drop=FALSE]
@@ -46,7 +46,7 @@ test_that("Stop the current ID and carry forward", {
   expect_true(all(post$A==4))
 })
 
-test_that("Stop the current ID and fill NA", {
+test_that("Stop the current ID and fill NA [MRGSOLVE-TEST-0453]", {
   mod <- param(mod, STOP_NA = 1, STOP_CF = 0, STOP_CRUMP = 0)
   out <- mrgsim_df(mod)  
   pre <- out[!is.na(out$time),,drop=FALSE]
@@ -58,7 +58,7 @@ test_that("Stop the current ID and fill NA", {
   expect_true(all(is.na(post)))
 })
 
-test_that("Stop the entire simulation", {
+test_that("Stop the entire simulation [MRGSOLVE-TEST-0454]", {
   mod <- param(mod, STOP_NA = 0, STOP_CF = 0, STOP_CRUMP = 1)
   expect_error(mrgsim_df(mod), regexp="the problem was stopped at user request.")
 })

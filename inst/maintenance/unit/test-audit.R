@@ -6,7 +6,7 @@ Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
 
-test_that("test audit ode block dadt", {
+test_that("test audit ode block dadt [MRGSOLVE-TEST-0330]", {
   code1 <- "$CMT A B C  \n $ODE \n dxdt_A  = 0;"
   expect_warning(
     mcode("audit1", code1, compile = FALSE, quiet = FALSE), 

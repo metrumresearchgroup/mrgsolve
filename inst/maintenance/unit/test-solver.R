@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-solver")
 
-test_that("ode variables are initialized issue-613", {
+test_that("ode variables are initialized issue-613 [MRGSOLVE-TEST-0451]", {
   code <- '
 [cmt] CENT
 

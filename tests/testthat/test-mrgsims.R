@@ -24,14 +24,14 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-mrgsims")
 
-test_that("mrgsims class", {
+test_that("mrgsims class [MRGSOLVE-TEST-0213]", {
   mod <- mrgsolve::house()   
   out <- mrgsim(mod)
   expect_true(is.mrgsims(out))
   expect_is(as.list(out), "mrgsims_list")
 })
 
-test_that("plot from character", {
+test_that("plot from character [MRGSOLVE-TEST-0214]", {
   out <- mrgsolve::house() %>% mrgsim()
   pl1 <- plot(out, " CENT DV, CP")
   pl2 <- plot(out, CENT+DV+CP~time)

@@ -70,42 +70,42 @@ mod <- modlib("pk1",end=48,delta=0.1,ss_rtol=1e-10)
 mod1 <- mod
 
 context("One compartment model tests")
-test_that("one-compartment, bolus", {
+test_that("one-compartment, bolus [MRGSOLVE-TEST-0394]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V=.v)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_sd_1cmt_linear_bolus)
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, bolus, ss", {
+test_that("one-compartment, bolus, ss [MRGSOLVE-TEST-0395]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V=.v, ss = 1, ii = 24)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_ss_1cmt_linear_bolus, tau=24)
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, oral, first", {
+test_that("one-compartment, oral, first [MRGSOLVE-TEST-0396]", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V =.v, KA = .ka)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_sd_1cmt_linear_oral_1, ka = .ka)
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, oral, first, ss", {
+test_that("one-compartment, oral, first, ss [MRGSOLVE-TEST-0397]", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V =.v, KA = .ka, ss=1, ii = 24)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_ss_1cmt_linear_oral_1, ka = .ka, tau=24 )
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, infusion", {
+test_that("one-compartment, infusion [MRGSOLVE-TEST-0398]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V=.v, rate = 10)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_sd_1cmt_linear_infusion,tinf=10)
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, infusion tau", {
+test_that("one-compartment, infusion tau [MRGSOLVE-TEST-0399]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V=.v, rate = 100/8, ss=1, ii = 24)
   out <- dosim(mod,e)
   out <- docalc(out,e,calc_ss_1cmt_linear_infusion,tinf=8, tau = 24)
@@ -116,42 +116,42 @@ context("Two compartment model tests")
 
 mod <- modlib("pk2",end = 48, delta=0.1,ss_rtol = 1e-10)
 
-test_that("two-compartment, bolus", {
+test_that("two-compartment, bolus [MRGSOLVE-TEST-0400]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl,V2=.v1, V3=.v2, Q = .q)
   out <- dosim(mod,e)
   out <- docalc2(out,e,calc_sd_2cmt_linear_bolus)
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, bolus, ss", {
+test_that("two-compartment, bolus, ss [MRGSOLVE-TEST-0401]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, ss = 1, ii = 24)
   out <- dosim(mod,e, rtol = 1e-10)
   out <- docalc2(out,e,calc_ss_2cmt_linear_bolus, tau=24)
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, bolus, first", {
+test_that("two-compartment, bolus, first [MRGSOLVE-TEST-0402]", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V2=.v1, V3=.v2, Q = .q, KA = .ka)
   out <- dosim(mod,e)
   out <- docalc2(out,e,calc_sd_2cmt_linear_oral_1, ka = .ka)
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, bolus, first, ss", {
+test_that("two-compartment, bolus, first, ss [MRGSOLVE-TEST-0403]", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V2=.v1, V3=.v2, Q = .q, KA = .ka, ss=1, ii = 24)
   out <- dosim(mod,e,rtol = 1e-10)
   out <- docalc2(out,e,calc_ss_2cmt_linear_oral_1, ka = .ka, tau=24 )
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, infusion", {
+test_that("two-compartment, infusion [MRGSOLVE-TEST-0404]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, rate = 10)
   out <- dosim(mod,e)
   out <- docalc2(out,e,calc_sd_2cmt_linear_infusion,tinf=10)
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, infusion, ss", {
+test_that("two-compartment, infusion, ss [MRGSOLVE-TEST-0405]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, rate = 10, ss=1, ii = 24)
   out <- dosim(mod,e, rtol = 1e-10)
   out <- docalc2(out,e,calc_ss_2cmt_linear_infusion, tinf=10, tau = 24)
@@ -164,7 +164,7 @@ parspo <- list(CL = .cl, V = .v, ka = .ka)
 parsiv <- list(CL = .cl, V = .v)
 parsivi <- list(CL = .cl, V = .v, tinf=10)
 
-test_that("one-compartment, bolus, multiple", {
+test_that("one-compartment, bolus, multiple [MRGSOLVE-TEST-0406]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V = .v, ii = 24, addl=3)
   out <- dosim(mod1,e, end = 120, delta = 1)
   calc <- pk_curve(seq(0,120), model = "1cmt_bolus", params = parsiv, dose=100, ii =24, addl=3)
@@ -172,7 +172,7 @@ test_that("one-compartment, bolus, multiple", {
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, infusion, multiple", {
+test_that("one-compartment, infusion, multiple [MRGSOLVE-TEST-0407]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V=.v, ii = 24, addl=3, rate=10)
   out <- dosim(mod1,e, end = 180, delta = 0.25)
   calc <- pk_curve(seq(0,180,0.25), model = "1cmt_infusion", params = parsivi, dose=100, ii =24, addl=3)
@@ -180,7 +180,7 @@ test_that("one-compartment, infusion, multiple", {
   expect_true(dotest(out))
 })
 
-test_that("one-compartment, oral, multiple", {
+test_that("one-compartment, oral, multiple [MRGSOLVE-TEST-0408]", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V=.v, KA = .ka, ii = 24, addl=3)
   out <- dosim(mod1,e, end = 180, delta = 0.25)
   calc <- pk_curve(seq(0,180,0.25), model = "1cmt_oral", params = parspo, dose=100, ii=24, addl=3)
@@ -194,7 +194,7 @@ parspo <- list(CL = .cl, V1 = .v1, V2 = .v2, Q = .q, ka = .ka)
 parsiv <- list(CL = .cl, V1 = .v1, V2 = .v2, Q = .q)
 parsivi <- list(CL = .cl, V1 = .v1, V2 = .v2, Q = .q,tinf=10)
 
-test_that("two-compartment, bolus, multiple", {
+test_that("two-compartment, bolus, multiple [MRGSOLVE-TEST-0409]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, ii = 24, addl=3)
   out <- dosim(mod,e, end = 120, delta = 1)
   calc <- pk_curve(seq(0,120), model = "2cmt_bolus", params = parsiv, dose=100, ii =24, addl=3)
@@ -202,7 +202,7 @@ test_that("two-compartment, bolus, multiple", {
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, infusion, multiple", {
+test_that("two-compartment, infusion, multiple [MRGSOLVE-TEST-0410]", {
   e <- ev(amt = 100, cmt = 2, CL=.cl, V2=.v1, V3=.v2, Q = .q, ii = 24, addl=3, rate=10)
   out <- dosim(mod,e, end = 180, delta = 0.25)
   calc <- pk_curve(seq(0,180,0.25), model = "2cmt_infusion", params = parsivi, dose=100, ii =24, addl=3)
@@ -210,7 +210,7 @@ test_that("two-compartment, infusion, multiple", {
   expect_true(dotest(out))
 })
 
-test_that("two-compartment, oral, multiple", {
+test_that("two-compartment, oral, multiple [MRGSOLVE-TEST-0411]", {
   e <- ev(amt = 100, cmt = 1, CL=.cl, V2=.v1, V3=.v2, Q = .q, KA = .ka, 
           ii = 24, addl=3)
   out <- dosim(mod,e, end = 180, delta = 0.25)

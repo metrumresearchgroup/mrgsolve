@@ -41,19 +41,19 @@ e <- as.data.frame(c(e1,e2, e3, e4)) %>% mutate(ID = 1)
 
 mod <- mcode("mypk",code)
 
-test_that("simulation with nocb", {
+test_that("simulation with nocb [MRGSOLVE-TEST-0386]", {
   out <- mod %>% mrgsim(data = e, nocb = TRUE, end = -1)
   expect_true(out$foo[3] < 1)
   expect_true(out$foo[2] == 100)
 })
 
-test_that("simulation with locf", {
+test_that("simulation with locf [MRGSOLVE-TEST-0387]", {
   out <- mod %>% mrgsim(data = e, nocb = FALSE, end = -1)
   expect_true(out$foo[3] == 100)
   expect_true(out$foo[4] < 50)
 })
 
-test_that("correct update with infusion #741", {
+test_that("correct update with infusion #741 [MRGSOLVE-TEST-0388]", {
   a <- ev(amt = 100)
   b <- ev(amt = 100, cmt = 2, tinf = 3)
   data1 <- as.data.frame(c(a,b), add_ID = 1)
@@ -72,7 +72,7 @@ test_that("correct update with infusion #741", {
   expect_equal(unique(out1$GUT), out2$GUT)
 })
 
-test_that("test-nocb: time-varying covariates #741", {
+test_that("test-nocb: time-varying covariates #741 [MRGSOLVE-TEST-0389]", {
   code <- '
 $PARAM TVKA = 0.05, CL = 1, VC = 10, COV = 100
 $TABLE
@@ -107,7 +107,7 @@ $PKMODEL cmt = "DEPOT CENTRAL", depot = TRUE
   expect_true(all.equal(a,b))
 })
 
-test_that("loc:unit carry_out with obsaug", {
+test_that("loc:unit carry_out with obsaug [MRGSOLVE-TEST-0390]", {
   code <- "
 $PARAM CL0 = .1, V = 10, COV = 100
 $CMT CENT

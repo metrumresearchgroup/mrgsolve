@@ -29,7 +29,7 @@ mtemp <- function(...) {
   mcode(model=basename(tempfile()),..., compile=FALSE)
 }
 
-test_that("matrix data is parsed", {
+test_that("matrix data is parsed [MRGSOLVE-TEST-0155]", {
   
   code <- "$OMEGA \n 1 2 \n 3"
   mod <- mtemp(code)
@@ -40,7 +40,7 @@ test_that("matrix data is parsed", {
   expect_equal(dim(omat(mod))[[1]],c(2,2))  
 })
 
-test_that("capture data is parsed", {
+test_that("capture data is parsed [MRGSOLVE-TEST-0156]", {
   code <- "$CAPTURE\n  \n banana = b z apple = a"
   mod <- mtemp(code)
   expect_equal(mod@capture, c(b = "banana", z = "z", a = "apple"))
@@ -57,13 +57,13 @@ test_that("capture data is parsed", {
 })
 
 
-test_that("cmt block is parsed", {
+test_that("cmt block is parsed [MRGSOLVE-TEST-0157]", {
   code <- "$CMT\n yes=TRUE \n first \n \n \n second third \n \n"
   mod <- mtemp(code)
   expect_equal(mrgsolve:::cmt(mod), c("first", "second", "third"))
 })
 
-test_that("theta block is parsed", {
+test_that("theta block is parsed [MRGSOLVE-TEST-0158]", {
   code <- "$THETA\n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(THETA1=0.1, THETA2=0.2, THETA3=0.3))
@@ -77,7 +77,7 @@ test_that("theta block is parsed", {
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
 })
 
-test_that("Using table macro generates error", {
+test_that("Using table macro generates error [MRGSOLVE-TEST-0159]", {
   code <- "$TABLE\n table(CP) = 1; \n double x=3; \n table(Y) = 1;"
   expect_error(mod <- mtemp(code))
 })
@@ -91,7 +91,7 @@ for(what in c("THETA", "PARAM", "CMT",
   })
 }
 
-test_that("Commented model", {
+test_that("Commented model [MRGSOLVE-TEST-0160]", {
   code <- '
   // A comment
   $PARAM CL = 2## comment
@@ -117,7 +117,7 @@ test_that("Commented model", {
 })
 
 
-test_that("at options are parsed", {
+test_that("at options are parsed [MRGSOLVE-TEST-0161]", {
   
   ats <- mrgsolve:::parse_ats
   
@@ -154,14 +154,14 @@ test_that("at options are parsed", {
   expect_warning(ats('@foo "a b c"'))  
 })
 
-test_that("HANDLEMATRIX", {
+test_that("HANDLEMATRIX [MRGSOLVE-TEST-0162]", {
   code <- "$OMEGA 1,2,3"
   mod <- mcode("test-spec-matrix", code, compile = FALSE)
   mat <- unname(as.matrix(omat(mod)))
   expect_true(all.equal(mat, dmat(1,2,3)))
 })
 
-test_that("inventory of internal variables", {
+test_that("inventory of internal variables [MRGSOLVE-TEST-0163]", {
   code <- '
 [ global ] 
 #define a 1
@@ -194,7 +194,7 @@ bool e = true;
   )
 })
 
-test_that("programmatic initialization", {
+test_that("programmatic initialization [MRGSOLVE-TEST-0164]", {
   code <- '
 $ENV
 mat1 <- matrix(0,1,1)
@@ -248,7 +248,7 @@ $CMT @object pcmt
   expect_equal(x$init, c("gg", "hh", "iii", "t", "u", "v"))
 })
 
-test_that("parse content using low-level handlers - PARAM", {
+test_that("parse content using low-level handlers - PARAM [MRGSOLVE-TEST-0165]", {
   env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
   sup <- suppressMessages  
   
@@ -280,7 +280,7 @@ test_that("parse content using low-level handlers - PARAM", {
   )
 })
 
-test_that("parse content using low-level handlers - THETA", {
+test_that("parse content using low-level handlers - THETA [MRGSOLVE-TEST-0166]", {
   env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
   sup <- suppressMessages  
   
@@ -306,7 +306,7 @@ test_that("parse content using low-level handlers - THETA", {
   )
 })
 
-test_that("parse content using low-level handlers - CMT", {
+test_that("parse content using low-level handlers - CMT [MRGSOLVE-TEST-0167]", {
   env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
   sup <- suppressMessages  
   
@@ -332,7 +332,7 @@ test_that("parse content using low-level handlers - CMT", {
   )
 })
 
-test_that("parse content using low-level handlers - INIT", {
+test_that("parse content using low-level handlers - INIT [MRGSOLVE-TEST-0168]", {
   env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
   sup <- suppressMessages  
   
@@ -359,7 +359,7 @@ test_that("parse content using low-level handlers - INIT", {
   )
 })
 
-test_that("parse content using low-level handlers - OMEGA, SIGMA", {
+test_that("parse content using low-level handlers - OMEGA, SIGMA [MRGSOLVE-TEST-0169]", {
   env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
   sup <- suppressMessages  
   
@@ -407,7 +407,7 @@ test_that("parse content using low-level handlers - OMEGA, SIGMA", {
   )
 })
 
-test_that("autodec parsing", {
+test_that("autodec parsing [MRGSOLVE-TEST-0170]", {
   x <- mrgsolve:::autodec_find("a = 1;")  
   expect_equal(x, "a")
   x <- mrgsolve:::autodec_find("a=1;")  
@@ -438,7 +438,7 @@ test_that("autodec parsing", {
   
 })
 
-test_that("autodec models", {
+test_that("autodec models [MRGSOLVE-TEST-0171]", {
   code <- ' 
   [ plugin ] autodec
   [ param ] a = 1, b = 2
@@ -492,7 +492,7 @@ test_that("autodec models", {
 
 })
 
-test_that("autodec models with nm-vars", {
+test_that("autodec models with nm-vars [MRGSOLVE-TEST-0172]", {
   code <- '
   [ param ] tvcl = 1, tvvc = 2
   [ cmt ] GUT CENT
@@ -522,7 +522,7 @@ test_that("autodec models with nm-vars", {
   expect_equal(cpp$context, c("main", "table",  rep("auto", 4)))
 })
 
-test_that("autodec variables can be skipped", {
+test_that("autodec variables can be skipped [MRGSOLVE-TEST-0173]", {
   code <- '
   [ plugin ] autodec
   [ env ] MRGSOLVE_AUTODEC_SKIP = "a, c"

@@ -72,36 +72,36 @@ $SIGMA @block
 
 mod <- suppressWarnings(mcode("test2",code, warn=TRUE))
 
-test_that("Parameters are parsed properly with mread", {
+test_that("Parameters are parsed properly with mread [MRGSOLVE-TEST-0365]", {
   expect_equal(param(mod)$CL,1)
   expect_equal(param(mod)$VC,20)
   expect_equal(mrgsolve:::Pars(mod), c("CL", "VC","VMAX", "KM"))
 })
 
-test_that("Compartments are parsed properly with mread", {
+test_that("Compartments are parsed properly with mread [MRGSOLVE-TEST-0366]", {
   expect_equal(init(mod)$GUT,100)
   expect_equal(init(mod)$CENT,5)
   expect_equal(mrgsolve:::cmt(mod), c("GUT", "CENT"))
 })
 
-test_that("Settings are parsed properly with mread", {
+test_that("Settings are parsed properly with mread [MRGSOLVE-TEST-0367]", {
   expect_equal(mod@end,111)
   expect_equal(mod@delta,1.1)
   expect_equal(mod@hmax,10)
   expect_equal(mod@maxsteps,22334)  
 })
 
-test_that("mread output had class mrgmod", {
+test_that("mread output had class mrgmod [MRGSOLVE-TEST-0368]", {
   expect_is(mod, "mrgmod")
 })
 
-test_that("Tabled items are in simulated data", {
+test_that("Tabled items are in simulated data [MRGSOLVE-TEST-0369]", {
   out <- mrgsim(mod)
   expect_true("CP" %in% names(out))
   expect_true(all(out$FLAG==2))
 })
 
-test_that("Omega matrices are properly parsed", {
+test_that("Omega matrices are properly parsed [MRGSOLVE-TEST-0370]", {
   mat <- as.matrix(omat(mod))
   expect_equivalent(mat[2,2],2)
   expect_equivalent(mat[4,4],0.1)
@@ -109,33 +109,33 @@ test_that("Omega matrices are properly parsed", {
   expect_equivalent(signif(mat[5,4],4),signif(0.07071068,4))
 })
 
-test_that("Sigma matrices are properly parsed", {
+test_that("Sigma matrices are properly parsed [MRGSOLVE-TEST-0371]", {
   mat <- as.matrix(smat(mod))
   expect_equivalent(mat[1,1],0.55)
   expect_equivalent(mat[3,3],0.3)
   expect_equivalent(mat[3,2],0.002)
 })
 
-test_that("EPS values have proper variance", {
+test_that("EPS values have proper variance [MRGSOLVE-TEST-0372]", {
   set.seed(8282)
   out <- mrgsim(mod,end=100000, delta=1, init = list(GUT = 0, CENT = 0))
   expect_equal(round(var(out$EPS1),2),0.55)
 })
 
-test_that("Error when code is passed as project", {
+test_that("Error when code is passed as project [MRGSOLVE-TEST-0373]", {
   expect_error(suppressWarnings(mread("hey",code)))
 })
 
-test_that("Model name with spaces is error", {
+test_that("Model name with spaces is error [MRGSOLVE-TEST-0374]", {
   expect_error(mcode("ab cd", ""))
 })
 
-test_that("Error with duplicate blocks", {
+test_that("Error with duplicate blocks [MRGSOLVE-TEST-0375]", {
   expect_error(mcode("a", "$MAIN \n $MAIN",compile = FALSE))
   expect_error(mcode("a", "$SET \n $SET",compile = FALSE))
 })
 
-test_that("Recover data when compile fails", {
+test_that("Recover data when compile fails [MRGSOLVE-TEST-0376]", {
   code <- '[main] double a = 2\n[param] b = 5\n'
   expect_warning(
     mod <- mcode("fail", code, recover = TRUE), 

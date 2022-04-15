@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-funset")
 
-test_that("funset", {
+test_that("funset [MRGSOLVE-TEST-0112]", {
   mod <- mrgsolve::house()
   a <- mrgsolve:::funset(mod)
   expect_identical(names(a), c("symbols", "shlib"))
