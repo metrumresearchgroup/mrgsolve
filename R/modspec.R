@@ -248,48 +248,90 @@ modelparse <- function(txt, split=FALSE, drop_blank = TRUE,
   
 }
 
+block_split_rmd <- function(code, split = FALSE) {
+  if(isTRUE(split)) {
+    code <- strsplit(code, split = "\n", perl = TRUE)[[1]]
+  }
+  code <- code[code != ""]
+  re <- "^\\s*\\#\\s*([[:alnum:]_]+)\\s*--+\\s*$"
+  mat <- regmatches(code, regexec(re, code))
+  splits <- vapply(mat, length, 1L)==2
+  start <- which(splits)
+  end <- c(start[-1]-1, length(code))
+  ans <- vector("list", length(start))
+  for(i in seq_along(start)) {
+    ans[[i]] <- code[seq(start[i]+1, end[i])]  
+  }
+  mat <- mat[lengths(mat) == 2]
+  block_names <- vapply(mat, "[[", 2,  FUN.VALUE = "a")
+  names(ans) <- block_names
+  ans
+}
+
 #' @rdname modelparse
 #' @keywords internal
 #' @export
 modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE, 
                            comment_re = "//") {
   
-  if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
+  if(split) txt <- strsplit(txt,"\n", perl = TRUE)[[1]]
   
-  if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
+  if(drop_blank) txt <- txt[!grepl("^\\s*$", txt, perl = TRUE)]
   
   for(comment in comment_re) {
-    m <- as.integer(regexpr(comment,txt,fixed=TRUE))
+    m <- as.integer(regexpr(comment, txt, fixed = TRUE))
     w <- m > 0
-    txt[w] <- substr(txt[w],1,m[w]-1)
+    txt[w] <- substr(txt[w], 1, m[w]-1)
   }
   start_re <- "^```\\{.*\\}\\s*"
   end_re <- "^\\s*```\\s*$"
-  start <- grep(start_re,txt)
-  end <- grep(end_re,txt)
+  start <- grep(start_re, txt)
+  end <- grep(end_re, txt, perl = TRUE)
   ans <- vector("list", length(start))
   for(i in seq_along(start)) {
-    ans[[i]] <- txt[seq(start[i],end[i])]
+    ans[[i]] <- txt[seq(start[i], end[i])]
     ans[[i]] <- gsub("^```\\{\\s*(r|c) +", "\\{", ans[[i]])
     ans[[i]] <- sub("^```\\{", "\\{", ans[[i]])
     ans[[i]] <- sub("```", "", ans[[i]])
   }
   chunk <- sapply(ans, "[[", 1)
-  lab <- gsub("\\{|\\}", "",chunk) %>% trimws
+  lab <- trimws(gsub("\\{|\\}", "", chunk))
   sp <- strsplit(lab, "\\s+|\\,")
   label <- sapply(sp, "[", 1L)
   label <- strsplit(label, "-", fixed = TRUE)
-  label <- sapply(label, "[",1L)
-  #opts <- lapply(sp, "[", -1L)
+  label <- sapply(label, "[", 1L)
   for(i in seq_along(label)) {
     ans[[i]] <- ans[[i]][-length(ans[[i]])]
     ans[[i]] <- ans[[i]][-1]
   }
+  
   names(ans) <- toupper(label)
-  dropR <- names(ans)=="R"
-  if(any(dropR)) {
-    ans <- ans[!dropR]  
+  handle_sub <- label=='r' | names(ans)=="MODEL"
+
+  # handle model blocks
+  if(any(handle_sub)) {
+    subparse <- which(handle_sub)
+    notparse <- which(!handle_sub)
+    lbl <- as.list(names(ans))
+    for(i in subparse) {
+      ans[[i]] <- block_split_rmd(ans[[i]])
+      lbl[[i]] <- toupper(names(ans[[i]]))
+    }
+    for(i in notparse) {
+      ans[[i]] <- list(ans[[i]])
+    }
+    lbl <- unlist(lbl, use.names = FALSE)
+    ans <- unlist(ans, use.names = FALSE, recursive = FALSE)
+    names(ans) <- lbl
   }
+
+  # Strip out knitr comments
+  ans <- lapply(ans, function(x) {
+    sub("^\\s*#'\\s*", "", x, perl = TRUE)  
+  })
+  
+  ans <- ans[names(ans) != "R"]
+  
   return(ans)
 }
 

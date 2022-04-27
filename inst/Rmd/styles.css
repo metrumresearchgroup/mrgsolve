@@ -1,0 +1,60 @@
+
+.spacer {
+  min-height: 150px;
+}
+.spacersm {
+  min-height: 30px;
+}
+
+body{ /* Normal  */
+    font-family: Helvetica, arial, sans-serif;
+    font-size: 24;
+    line-height: 1.45;
+}
+
+pre {
+  font:  Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+code {
+  font-size: 85%;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: auto;
+  font-size: 100%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 5px;
+  color: black;
+  font-family:  Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+pre {
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: auto;
+  font-size: 100%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border: 0;
+  padding: 16px;
+  border-radius: 5px;
+  margin-top: 16px;
+  margin-bottom: 18px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  color: black;
+}
+
+pre:not([class]) {
+  background-color: #f6f8fa;
+}
+
+kbd {
+  display: inline-block;
+  font:  Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.main-container {
+  max-width: 1300px;
+}

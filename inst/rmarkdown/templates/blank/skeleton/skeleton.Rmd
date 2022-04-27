@@ -1,10 +1,31 @@
 ---
 title: "Untitled"
-output: mrgsolve:::document
+output: 
+  mrgsolve:::document: 
+    toc: FALSE
 ---
 
-```{R}
-knitr::chunk_opts$set(eval=FALSE)
+```{R, include = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
+```{set}
+
+```
+
+```{param}
+
+```
+
+```{cmt}
+
+```
+
+```{des}
+
+```
+
+```{error}
+
+```
 

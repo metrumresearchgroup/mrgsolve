@@ -19,6 +19,7 @@ eng_mrgsolve_c <- function(options) {
   code <- options$code
   options$eval <- FALSE
   options$engine <- "c"
+  code <- options$code <-  code[!grepl("#' @", code, fixed = TRUE)]
   knitr::engine_output(options, code, '')
 }
 
@@ -26,11 +27,18 @@ eng_mrgsolve_r <- function(options) {
   code <- options$code
   options$eval <- FALSE
   options$engine <- "r"
+  code <- options$code <-  code[!grepl("#' @", code, fixed = TRUE)]
   knitr::engine_output(options, code, '')
 }
 
+rmd_specification_css <- function() {
+  system.file("Rmd", "styles-big.css", package = "mrgsolve")  
+}
+
+
 document <- function(number_sections = TRUE, highlight = "pygments", 
-                     output = "html", ...) {
+                     output = "html",  theme = "flatly", 
+                     css = rmd_specification_css(), ...) {
   if(!requireNamespace("knitr")) {
     stop("the knitr package is required to use mrgsolve:::document.", 
          call.=FALSE)  
@@ -49,11 +57,21 @@ document <- function(number_sections = TRUE, highlight = "pygments",
     global = eng_mrgsolve_r, env = eng_mrgsolve_r, 
     preamble = eng_mrgsolve_c, pkmodel = eng_mrgsolve_r, 
     theta = eng_mrgsolve_c, yaml = eng_mrgsolve_c, 
-    pred = eng_mrgsolve_c, init = eng_mrgsolve_c
+    pred = eng_mrgsolve_c, init = eng_mrgsolve_c, 
+    model  = eng_mrgsolve_r, r = eng_mrgsolve_r
   )
-  fun <- rmarkdown::html_document
-  if(output=="pdf") fun <- rmarkdown::pdf_document
-  fun(..., number_sections = number_sections, highlight = highlight)
+
+  args <- list(...) 
+  args$number_sections <- number_sections
+  args$highlight <- highlight
+  
+  if(output=="html") {
+    fun <- rmarkdown::html_document
+    args$css <- css    
+  } else {
+    run <- rmarkdown:::pdf_document  
+  }
+  do.call(fun, args)
 }
 
 
