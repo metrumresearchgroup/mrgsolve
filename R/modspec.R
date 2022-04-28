@@ -253,7 +253,7 @@ block_split_rmd <- function(code, split = FALSE) {
     code <- strsplit(code, split = "\n", perl = TRUE)[[1]]
   }
   code <- code[code != ""]
-  re <- "^\\s*\\#\\s*([[:alnum:]_]+)\\s*--+\\s*$"
+  re <- "^\\s*\\#'?\\s*([[:alnum:]_]+)\\s*--+\\s*$"
   mat <- regmatches(code, regexec(re, code))
   splits <- vapply(mat, length, 1L)==2
   start <- which(splits)
@@ -285,7 +285,7 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
   }
   start_re <- "^```\\{.*\\}\\s*"
   end_re <- "^\\s*```\\s*$"
-  start <- grep(start_re, txt)
+  start <- grep(start_re, txt, perl = TRUE)
   end <- grep(end_re, txt, perl = TRUE)
   ans <- vector("list", length(start))
   for(i in seq_along(start)) {
@@ -327,15 +327,17 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
 
   # Strip out knitr comments
   ans <- lapply(ans, function(x) {
-    sub("^\\s*#'\\s*", "", x, perl = TRUE)  
+    # Drop #' @ or # @
+    # Convert remaining leading hashes to //
+    x <- sub("^\\s*#'*\\s*\\@", "@", x, perl = TRUE)  
+    x <- sub("^\\s*#", "// ", x, perl = TRUE)
+    x
   })
   
   ans <- ans[names(ans) != "R"]
   
   return(ans)
 }
-
-
 
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
