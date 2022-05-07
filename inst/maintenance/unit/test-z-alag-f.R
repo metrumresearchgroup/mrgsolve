@@ -155,7 +155,7 @@ test_that("ALAG is set from data", {
   
 })
 
-test_that("ALAG does not change records with EVID 3", {
+test_that("ALAG does not change records with EVID 3 [SLV-00777-01]", {
   data1 <- c(
     ev(amt = 100), 
     ev(amt = 0, evid = 3, time = 8), 
