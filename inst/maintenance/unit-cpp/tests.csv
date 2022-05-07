@@ -1,2 +1,0 @@
-result,call,diff,short,file,first,last
-TRUE,expect_inherits(mod, "mrgmod"),,,test-cpp.R,22,24
