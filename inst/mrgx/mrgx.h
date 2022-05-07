@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2022  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -128,8 +128,8 @@ double rlognorm(const double mean, const double sd, const double lower,
  * @param self the model data object
  * @return an object from the model environment
  */
-template<typename T>
-T get(const std::string name, const databox& self) {
+template<typename _T___>
+_T___ get(const std::string name, const databox& self) {
   Rcpp::Environment env = get_envir(self);
   return env[name];
 }
@@ -147,8 +147,8 @@ T get(const std::string name, const databox& self) {
  * @param name name of the R object to get
  * @return an object from the global environment
  */
-template<typename T>
-T get(const std::string name) {
+template<typename _T___>
+_T___ get(const std::string name) {
   Rcpp::Environment env = Rcpp::Environment::global_env();
   return env[name];
 } 
@@ -180,10 +180,10 @@ T get(const std::string name) {
  * @param name name of the object to get
  * @return an object from the package namespace
  */
-template<typename T>
-T get(const std::string package, const std::string name) {
+template<typename _T___>
+_T___ get(const std::string package, const std::string name) {
   Rcpp::Environment env = Rcpp::Environment::namespace_env(package);
-  T ans = env[name];
+  _T___ ans = env[name];
   return ans;
 }
 
@@ -194,8 +194,8 @@ T get(const std::string package, const std::string name) {
  * @param filename the name of the RDS file to read
  * @return an object saved in the RDS file
  */
-template<typename T>
-T readRDS(const std::string filename) {
+template<typename _T___>
+_T___ readRDS(const std::string filename) {
   Rcpp::Function readRDS = get<Rcpp::Function>("base", "readRDS");
   return readRDS(filename);
 }
