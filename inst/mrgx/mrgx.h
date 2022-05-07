@@ -47,6 +47,12 @@ Rcpp::Environment get_envir(const databox& self) {
   return (*(reinterpret_cast<Rcpp::Environment*>(self.envir)));
 }
 
+template<typename _T___>
+void assign(const std::string& x, const _T___& value, const databox& self) {
+  mrgx::get_envir(self).assign(x, value);
+  return;
+}
+
 /**
  * Simulate random normal variate between lower and upper boundaries.  An 
  * error is generated if a variate between lower and upper bounds cannot be
@@ -93,6 +99,7 @@ double rnorm(const double mean, const double sd, const double lower,
  * @param lower lower bound for variates
  * @param upper upper bound for variates
  * @return the simulated variate
+ * 
  */
 double rlognorm(const double mean, const double sd, const double lower, 
                 const double upper) {
