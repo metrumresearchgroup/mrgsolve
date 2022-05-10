@@ -94,6 +94,9 @@ test1:
 test2:
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 
+test-cpp: 
+	Rscript -e 'testthat::test_dir("inst/maintenance/unit-cpp")'
+
 clean:
 	rm src/*.o
 	rm src/*.so
