@@ -30,7 +30,6 @@ SLV-S001:
     As a user, I want to convert nmtran data items to upper or lower case.
   ProductRisk: low-risk
   tests:
-  - SLV-TEST-0001
   - SLV-TEST-0004
   - SLV-TEST-0005
   - SLV-TEST-0006
