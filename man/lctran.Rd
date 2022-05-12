@@ -2,21 +2,35 @@
 % Please edit documentation in R/data_set.R
 \name{lctran}
 \alias{lctran}
+\alias{lctran.data.frame}
+\alias{lctran.ev}
 \alias{uctran}
+\alias{uctran.data.frame}
+\alias{uctran.ev}
 \title{Change the case of nmtran-like data items}
 \usage{
-lctran(data, warn = TRUE)
+lctran(data, ...)
 
-uctran(data, warn = TRUE)
+\method{lctran}{data.frame}(data, warn = TRUE, ...)
+
+\method{lctran}{ev}(data, ...)
+
+uctran(data, ...)
+
+\method{uctran}{data.frame}(data, warn = TRUE, ...)
+
+\method{uctran}{ev}(data, ...)
 }
 \arguments{
-\item{data}{A data set with nmtran-like format.}
+\item{data}{a data set with nmtran-like format.}
 
-\item{warn}{If \code{TRUE}, a warning will be issued when there are both upper
+\item{...}{for potential future use.}
+
+\item{warn}{if \code{TRUE}, a warning will be issued when there are both upper
 and lower case versions of any nmtran-like column in the data frame.}
 }
 \value{
-A data frame with possibly renamed columns.
+A data frame or event object with possibly renamed columns.
 
 The input data set, with select columns made lower case.
 }
@@ -48,6 +62,9 @@ lctran(data)
 
 data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, wt = 80)
 uctran(data)
+
+ev <- evd(amt = 100, evid = 3)
+uctran(ev)
 
 # warning
 data <- data.frame(TIME = 1, time = 2, CMT = 5)

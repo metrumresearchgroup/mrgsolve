@@ -3,28 +3,36 @@
 \name{expand.idata}
 \alias{expand.idata}
 \alias{expand.ev}
+\alias{expand.evd}
 \alias{ev_expand}
+\alias{evd_expand}
 \title{Create template data sets for simulation}
 \usage{
 expand.idata(...)
 
 expand.ev(...)
 
+expand.evd(...)
+
 ev_expand(...)
+
+evd_expand(...)
 }
 \arguments{
-\item{...}{passed to \link{expand.grid}}
+\item{...}{passed to \code{\link[=expand.grid]{expand.grid()}}}
 }
 \description{
-Create template data sets for simulation
+These functions expand all combinations of arguments using
+\code{\link[=expand.grid]{expand.grid()}}. The result always has only one row for one individual.
+Use \code{\link[=expand.evd]{expand.evd()}} or \code{\link[=evd_expand]{evd_expand()}} to convert nmtran names (e.g. AMT
+or CMT) to upper case (see \code{\link[=uctran]{uctran()}}).
 }
 \details{
-An ID column is added as \code{seq(nrow(ans))} if not supplied by the user.
-For \code{expand.ev}, defaults also added include \code{cmt = 1},
-\code{time = 0}, \code{evid = 1}.  If \code{total} is included,
-then \code{addl} is derived as \code{total} - 1. If \code{tinf} is included, then
-an infusion rate is derived for row where \code{tinf} is greater than
-zero.
+An ID column is added as \code{seq(nrow(ans))} if not supplied by the user. For
+\code{expand.ev}, defaults also added include \code{cmt = 1}, \code{time = 0}, \code{evid = 1}.
+If \code{total} is included, then \code{addl} is derived as \code{total} - 1. If \code{tinf} is
+included, then an infusion rate is derived for row where \code{tinf} is greater
+than zero.
 }
 \examples{
 idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))

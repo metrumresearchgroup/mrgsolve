@@ -13,8 +13,8 @@
 #' Note that `evd` isn't a separate class; it is just an `ev` object with 
 #' a specific `case` attribute. See examples which illustrate the difference.
 #' 
-#' @param x An mrgmod object.
-#' @param ... Arguments passed to [ev()].
+#' @param x an mrgmod object.
+#' @param ... arguments passed to [ev()].
 #' 
 #' @examples
 #' a <- evd(amt = 100)
@@ -51,8 +51,7 @@ setMethod("evd", "ev", function(x, ...) {
   set_ev_case(x, 1L)
 })
 
-
-#' @param x An event object.
+#' @param x an event object.
 #' @rdname evd
 #' @export
 as.evd <- function(x) {
