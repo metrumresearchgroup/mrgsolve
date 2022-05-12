@@ -51,7 +51,7 @@ test_that("Same seeds give same results with call to set.seed()", {
   expect_true(ident(out1,out1))
 })
 
-test_that("test-rng mrgsolve simulated with negative eigenvalue", {
+test_that("mrgsolve simulate negative eigenvalue [SLV-TEST-0002]", {
   mat <- bmat(
     1.53394, 
     1.22232, 0.974014,

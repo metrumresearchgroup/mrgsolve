@@ -1,5 +1,24 @@
 # mrgsolve (development version)
 
+- Fix bug where `as_data_frame()` was not properly working when leading event
+  object was `evd` type (#948, #955).
+
+- Add `uctran()` to convert nmtran data names to upper case (#955). 
+
+- Both `lctran()` and `uctran()` are generic and work on `data.frame` or 
+  event (`ev`) objects (#949, #955). 
+
+- Fix bug where data records with `EVID = 3` were getting shifted in time by
+  `ALAG` (#964, #969).
+
+- Small negative eigenvalues from `OMEGA` or `SIGMA` are set to zero in 
+  multivariate normal simulation of `ETA` and `EPS`, following the pattern
+  seen in `MASS::mvrnorm()` (#956, #957).
+
+- Fixed bug where template parameters (`T`) were getting modified when `nm-vars`
+  plugin was used in conjunction with `mrgx` plugin (#965, #968).
+
+
 # mrgsolve 1.0.3
 
 - Removed `assert()` statement in LSODA code found by CRAN check (#943).

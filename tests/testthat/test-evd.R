@@ -151,7 +151,7 @@ test_that("ev operations with evd objects", {
   expect_equal(check, toupper(check))
 })
 
-test_that("test-evd expand.evd and evd_expand", {
+test_that("test-evd expand.evd and evd_expand [SLV-TEST-0003]", {
   data1 <- expand.ev(amt = 100, ii = 12, addl = 5, ss = 2)
   data2 <- expand.evd(amt = 100, ii = 12, addl = 5, ss = 2)
   data3 <- evd_expand(amt = 100, ii = 12, addl = 5, ss = 2)
