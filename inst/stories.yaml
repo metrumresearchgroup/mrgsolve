@@ -1,0 +1,35 @@
+# Please add stories at the top ------------------------------------------
+
+SLV-S004: 
+  name: evid 3 with lag time
+  description: > 
+    As a user, I want mrgsolve to run evid=3 reset at the given time, regardless
+    of the value of ALAG.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0007
+SLV-S003: 
+  name: expand.evd
+  description: > 
+    As a user, I want to call expand / event to make data set input with all
+    upper case nmtran names.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0003
+SLV-S002: 
+  name: Handle small, negative eigenvalue
+  description: > 
+    As a user, I want mrgsolve to allow small, negative eigenvalues in 
+    OMEGA or SIGMA matrices.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0002
+SLV-S001:
+  name: Change case for nmtran-specific data items
+  description: >
+    As a user, I want to convert nmtran data items to upper or lower case.
+  ProductRisk: low-risk
+  tests:
+  - SLV-TEST-0004
+  - SLV-TEST-0005
+  - SLV-TEST-0006

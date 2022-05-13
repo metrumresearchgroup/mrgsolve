@@ -178,7 +178,7 @@ test_that("add position argument to expand observations issue-565", {
   expect_equal(dat1$time,dat2$time)
 })
 
-test_that("Convert names to lower case with lctran", {
+test_that("Convert names to lower case with lctran [SLV-TEST-0004]", {
   data <- data.frame(time = 1, EVID = 2, ss = 2, foo = 5, BAR = 2)
   ans <- lctran(data)
   expect_equal(
@@ -192,7 +192,7 @@ test_that("Convert names to lower case with lctran", {
   )
 })
 
-test_that("Convert names to upper case with uctran", {
+test_that("Convert names to upper case with uctran  [SLV-TEST-0005]", {
   data <- data.frame(time = 1, EVID = 2, ss = 2, foo = 5, BAR = 2)
   ans <- uctran(data)
   expect_equal(
@@ -204,4 +204,13 @@ test_that("Convert names to upper case with uctran", {
     uctran(data), 
     regexp = "There are both upper and lower case"
   )
+})
+
+test_that("Convert event to upper or lower case  [SLV-TEST-0006]", {
+  x <- uctran(ev(amt = 100, ii = 5))
+  expect_equal(x@case, 1L)
+  expect_is(x, "ev")
+  x <- lctran(ev(amt = 100, ii = 5))
+  expect_equal(x@case, 0L)
+  expect_is(x, "ev")
 })

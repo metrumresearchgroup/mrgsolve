@@ -134,7 +134,7 @@ test_that("ev operations with evd objects", {
   d2 <- ev_rep(a, seq(3), n = 2)
   expect_is(d2, "data.frame")
   expect_equal(names(d2), toupper(names(d2)))
-  
+
   d3 <- as_data_set(a, b, c)
   expect_is(d3, "data.frame")
   expect_equal(names(d3), toupper(names(d3)))
@@ -144,5 +144,23 @@ test_that("ev operations with evd objects", {
   check <- names(d4)[-1]
   expect_equal(check, tolower(check))
   expect_equal(names(d4)[1], "ID")
+  
+  d5 <- as_data_set(a)
+  expect_is(d5, "data.frame")
+  check <- names(d5)[-1]
+  expect_equal(check, toupper(check))
+})
 
+test_that("test-evd expand.evd and evd_expand [SLV-TEST-0003]", {
+  data1 <- expand.ev(amt = 100, ii = 12, addl = 5, ss = 2)
+  data2 <- expand.evd(amt = 100, ii = 12, addl = 5, ss = 2)
+  data3 <- evd_expand(amt = 100, ii = 12, addl = 5, ss = 2)
+  expect_identical(data2, uctran(data1))
+  expect_identical(data3, data2)
+})
+
+test_that("test-evd coerce to ev", {
+  x <- evd(amt = 100, cmt = 5)
+  y <- as.ev(x)
+  expect_identical(y, ev(amt = 100, cmt = 5))
 })

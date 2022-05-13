@@ -262,6 +262,7 @@ setMethod("as.ev", "data.frame",  df_to_ev)
 #' @rdname as.ev
 #' @export
 setMethod("as.ev", "ev", function(x, ...) {
+  x@case <- 0L
   x
 })
 

@@ -499,7 +499,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             prob.rate_main(this_rec);
           }
           
-          if(prob.alag(this_cmtn) > mindt) { // there is a valid lagtime
+          if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
               this_rec->steady(&prob, a[i], Fn,solver);

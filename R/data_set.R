@@ -167,12 +167,13 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' If both lower and upper case versions of the name are present in the data 
 #' frame, no changes will be made. 
 #' 
-#' @param data A data set with nmtran-like format.
-#' @param warn If `TRUE`, a warning will be issued when there are both upper
+#' @param data a data set with nmtran-like format.
+#' @param warn if `TRUE`, a warning will be issued when there are both upper
 #' and lower case versions of any nmtran-like column in the data frame.
+#' @param ... for potential future use.
 #' 
 #' @return 
-#' A data frame with possibly renamed columns.
+#' A data frame or event object with possibly renamed columns.
 #' 
 #' @examples
 #' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, WT = 80)
@@ -180,6 +181,9 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' 
 #' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, wt = 80)
 #' uctran(data)
+#' 
+#' ev <- evd(amt = 100, evid = 3)
+#' uctran(ev)
 #' 
 #' # warning
 #' data <- data.frame(TIME = 1, time = 2, CMT = 5)
@@ -190,10 +194,10 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' 
 #' @md
 #' @export
-lctran <- function(data, warn = TRUE) {
-  if(!is.data.frame(data)) {
-    stop("`data` must be a data.frame.") 
-  }
+lctran <- function(data, ...) UseMethod("lctran")
+#' @rdname lctran
+#' @export
+lctran.data.frame <- function(data, warn = TRUE, ...) {
   n <- names(data)
   infrom <- n %in% GLOBALS$TRAN_UPPER
   haslower <- tolower(n) %in% n
@@ -207,13 +211,17 @@ lctran <- function(data, warn = TRUE) {
   }
   data
 }
-
 #' @rdname lctran
 #' @export
-uctran <- function(data, warn = TRUE) {
-  if(!is.data.frame(data)) {
-    stop("`data` must be a data.frame.") 
-  }
+lctran.ev <- function(data, ...) {
+  as.ev(data)
+}
+#' @rdname lctran
+#' @export
+uctran <- function(data, ...) UseMethod("uctran")
+#' @rdname lctran
+#' @export
+uctran.data.frame <- function(data, warn = TRUE, ...) {
   n <- names(data)
   infrom <- n %in% GLOBALS$TRAN_LOWER
   hasupper <- toupper(n) %in% n
@@ -226,6 +234,11 @@ uctran <- function(data, warn = TRUE) {
     )
   }
   data
+}
+#' @rdname lctran
+#' @export
+uctran.ev <- function(data, ...) {
+  as.evd(data)
 }
 
 data_hooks <- function(data, object, envir, param = list(), ...) {
@@ -295,7 +308,7 @@ setGeneric("as_data_set", function(x,...) standardGeneric("as_data_set"))
 setMethod("as_data_set", "ev", function(x, ...) {
   other_ev <- list(...)
   if(length(other_ev)==0) {
-    return(check_ev(x)) 
+    return(ev_to_ds(x)) 
   }
   do.call(collect_ev, c(list(x), other_ev))
 })

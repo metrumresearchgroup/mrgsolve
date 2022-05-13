@@ -51,5 +51,14 @@ test_that("Same seeds give same results with call to set.seed()", {
   expect_true(ident(out1,out1))
 })
 
-
-
+test_that("mrgsolve simulate negative eigenvalue [SLV-TEST-0002]", {
+  mat <- bmat(
+    1.53394, 
+    1.22232, 0.974014,
+    2.78342 , 2.211570, 9.86881
+  )
+  eig <- eigen(mat)
+  expect_true(min(eig$value) < 0)
+  out <- mvgauss(mat, 1000)
+  expect_true(all(is.finite(out)))
+})
