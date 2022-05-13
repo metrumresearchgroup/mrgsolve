@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 1.0.4
 
 - Fix bug where `as_data_frame()` was not properly working when leading event
   object was `evd` type (#948, #955).

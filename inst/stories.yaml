@@ -4,7 +4,7 @@ SLV-S004:
   name: evid 3 with lag time
   description: > 
     As a user, I want mrgsolve to run evid=3 reset at the given time, regardless
-    of teh value of ALAG.
+    of the value of ALAG.
   ProductRisk: low-risk
   tests: 
   - SLV-TEST-0007
