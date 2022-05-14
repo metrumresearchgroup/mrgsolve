@@ -19,7 +19,7 @@ null_list <- setNames(list(), character(0))
 
 #nocov start
 valid.numericlist <- function(object) {
-  x1 <- all(sapply(object@data,single.number))
+  x1 <- all(sapply(object@data, single.number))
   x2 <- all(names(object@data) !="")
   x2 <- rlang::is_named(object@data)
   x3 <- !any(grepl("=|\\.",names(object),perl=TRUE))
