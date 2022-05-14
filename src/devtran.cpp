@@ -71,21 +71,26 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt  = Rcpp::as<double>(mod.slot("mindt"));
   const bool   debug  = Rcpp::as<bool>(mod.slot("debug"));
   const bool  verbose = Rcpp::as<bool>(mod.slot("verbose")); 
+
   // passed along
   Rcpp::Environment envir = mod.slot("envir");
+  
   // We need to decrement capture indices; this needs to be cloned
   const Rcpp::CharacterVector cap = mod.slot("capture");
   Rcpp::IntegerVector capture = mod.slot("Icap");
   capture = Rcpp::clone(capture); 
   capture = capture - 1;
-  // requet is compartments to bring into output; decrement --> clone
+  
+  // request is compartments to bring into output; decrement --> clone
   Rcpp::IntegerVector request = mod.slot("Icmt");
   request = Rcpp::clone(request);
   request = request - 1;
+  
   // Parameters; clone names
   const Rcpp::List Param = mod.slot("param");
   Rcpp::CharacterVector paramnames(Param.names());
   paramnames = Rcpp::clone(paramnames);
+  
   // Compartments; clone names
   const Rcpp::List Init = mod.slot("init");
   Rcpp::CharacterVector cmtnames(Init.names());

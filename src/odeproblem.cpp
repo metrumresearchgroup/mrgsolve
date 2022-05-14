@@ -719,6 +719,11 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
   Rcpp::List lparam = mod.slot("param");
   Rcpp::List linit = mod.slot("init");
   Rcpp::CharacterVector capture = mod.slot("capture");
+  
+  lparam = Rcpp::clone(lparam);
+  linit = Rcpp::clone(linit);
+  capture = Rcpp::clone(capture);
+  
   Rcpp::NumericVector init(linit.size());
   for(int i = 0; i < linit.size(); ++i) { 
     init[i] = linit[i];
