@@ -15,23 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Check whether all required parameters needed in a model are present in an object
+#' Reconcile candidate parameters in an object with model parameter list
 #' 
-#' @param x model object.
-#' @param obj an object with names which potentially represent model parameters.
-#' @param ... capture tidy-select parameter requirements.
-#' @param .strict whether to stop execution if all requirements are present
-#'  (`TRUE`) or just warn (`FALSE`); see details.
-#' 
-#' @examples \dontrun{
-#' inventory(mod, idata, CL:V)            # parameters defined, inclusively, CL through Volume 
-#' inventory(mod, idata, everything())    # all parameters
-#' inventory(mod, idata, contains("OCC")) # all parameters containing OCC
-#' inventory(mod, idata, -F)              # all parameters except F
-#' }
-#' 
-#' @return
-#' `x` is returned invisibly.
+#' Use this with a model object and any other object that might be used to 
+#' update the parameter list and get a report to see what parameters are 
+#' missing from the candidate object.
 #' 
 #' @details 
 #' If parameter requirements are not explicitly stated, the requirement defaults 
@@ -40,6 +28,23 @@
 #' is, if parameter requirements are explicitly stated, `.strict` will be set 
 #' to `TRUE` if a value `.strict` was not passed.
 #' 
+#' @param x model object.
+#' @param obj an object with names which potentially represent model parameters.
+#' @param ... capture tidy-select parameter requirements.
+#' @param .strict whether to stop execution if all requirements are present
+#' (`TRUE`) or just warn (`FALSE`); see details.
+#' 
+#' @examples \dontrun{
+#' inventory(mod, data)                  # all parameters
+#' inventory(mod, data, CL:V)            # CL through Volume 
+#' inventory(mod, data, contains("OCC")) # all parameters containing OCC
+#' inventory(mod, data, -F)              # all parameters except F
+#' }
+#' 
+#' @return
+#' `x` is returned invisibly.
+#' 
+#' 
 #' @md
 #' @export
 inventory <- function(x, obj, ..., .strict = FALSE) {
@@ -47,7 +52,6 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   if(!is.mrgmod(x)) {
     wstop("`x` must be a model object; pass that first.")
   }
-  
   if(!is_named(obj)) {
     wstop("`obj` must be named.")  
   }
@@ -62,7 +66,6 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   
   missing <- setdiff(need, names(obj))
   nmiss <- length(missing) 
-
   if(nmiss == 0) {
     message("Found all required parameters in candidate obj.")
     return(invisible(x))
