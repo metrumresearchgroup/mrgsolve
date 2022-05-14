@@ -49,8 +49,22 @@
 #' Use `allparam()` to get a `parameter_list` object including 
 #' both model parameters and data items listed in `$FIXED`.
 #' 
+#' The update to parameters can be permissive (candidates with names that don't
+#' exist in the parameter list are sliently ignored) or strict (all candndates
+#' must already exist in the parameter list). When passing candidate values
+#' via `...`, the update is strict and an error is generated if you pass a 
+#' name that isn't found in the parameter list. When candidate values 
+#' are passed as a named object via `.y`, then the update is permissive. Any 
+#' permissive update can be made strict (error if foreign names are found in 
+#' the candidates) by passing `.strict = TRUE`. 
+#' 
+#' An alternative is to assess the incoming names using [inventory()]. 
+#' 
 #' @return 
 #' An object of class `parameter_list` (see [numericlist]).
+#' 
+#' @seealso 
+#' [inventory()]
 #' 
 #' @examples
 #' ## example("param")

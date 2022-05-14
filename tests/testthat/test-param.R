@@ -104,6 +104,15 @@ test_that("non-parameter character values are ignored  [SLV-TEST-0012]", {
   expect_s4_class(mod, class="mrgmod")
 })
 
+test_that("param update can be strict  [SLV-TEST-0013]", {
+  mod <- house()
+  expect_error(
+    param(mod, list(CL = 1, KYLE = 2), .strict = TRUE), 
+    regexp = "[param-update] not a model parameter", 
+    fixed = TRUE
+  )
+})
+
 test_that("params are shown", {
   mod <- house()
   x <- capture.output(param(mod))

@@ -11,6 +11,7 @@ SLV-S005:
   - SLV-TEST-0010
   - SLV-TEST-0011
   - SLV-TEST-0012
+  - SLV-TEST-0013
 SLV-S004: 
   name: evid 3 with lag time
   description: > 

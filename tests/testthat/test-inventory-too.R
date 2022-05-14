@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,18 +25,15 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-inventory-too")
 
 test_that("inventory conditions", {
-    
-  mod <- mrgsolve::house()
-  
+  mod <- house()
   data <- expand.ev(amt=100,CL=1, SEX=0)
   idata <- data.frame(ID=1, CL=1, SEX=0)
-  
   expect_error(inventory(mod,data,everything()))
   expect_warning(inventory(mod,data))
   expect_error(inventory(mod,data,c("CL", "VC")))
   expect_message(inventory(mod,data,c("CL", "SEX")))
   expect_message(inventory(mod,data,CL,SEX))
-  expect_error(mod %>% data_set(data,need=c("CL", "VC")))
-  expect_error(mod %>% idata_set(data,need=c("CL", "WTCL")))
-  expect_is(mod %>% data_set(data,need="CL") %>% mrgsim(end=1),"mrgsims")
+  expect_error(data_set(mod, data,need=c("CL", "VC")))
+  expect_error(idata_set(mod,data,need=c("CL", "WTCL")))
+  expect_is(data_set(mod,data,need="CL") %>% mrgsim(end=1),"mrgsims")
 })

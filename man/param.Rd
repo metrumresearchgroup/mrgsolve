@@ -60,6 +60,17 @@ or numeric R object.
 
 Use \code{allparam()} to get a \code{parameter_list} object including
 both model parameters and data items listed in \verb{$FIXED}.
+
+The update to parameters can be permissive (candidates with names that don't
+exist in the parameter list are sliently ignored) or strict (all candndates
+must already exist in the parameter list). When passing candidate values
+via \code{...}, the update is strict and an error is generated if you pass a
+name that isn't found in the parameter list. When candidate values
+are passed as a named object via \code{.y}, then the update is permissive. Any
+permissive update can be made strict (error if foreign names are found in
+the candidates) by passing \code{.strict = TRUE}.
+
+An alternative is to assess the incoming names using \code{\link[=inventory]{inventory()}}.
 }
 \examples{
 ## example("param")
@@ -86,5 +97,8 @@ new_values <- list(CL = 1.3, VC = 20.5)
 
 param(mod, new_values)
 
+}
+\seealso{
+\code{\link[=inventory]{inventory()}}
 }
 \keyword{param}
