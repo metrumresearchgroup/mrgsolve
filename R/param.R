@@ -20,37 +20,42 @@
 
 #' Create and work with parameter objects
 #'
-#' See \code{\link{numericlist}} for methods to deal with 
-#' \code{parameter_list} objects.
+#' See [numericlist] for methods to deal with `parameter_list` objects.
 #'
 #'
-#' @param .x the model object
-#' @param .y list to be merged into parameter list
+#' @param .x the model object.
+#' @param .y an object to be merged into parameter list; non-`NULL` values 
+#' must be named list, data.frame, or numeric vector; named items that do 
+#' not exist in the parameter list are allowed and will be silently ignored; 
+#' use the `.strict` argument to require that all names in `.y` exist already
+#' in the parameter list.
 #' @param .pat a regular expression (character) to be applied as a filter 
-#' for which parameters to show when printing
-#' @param .strict if \code{TRUE}, all names to be updated must be found 
-#' in the parameter list
+#' for which parameters to show when printing.
+#' @param .strict if `TRUE`, all names to be updated must be found 
+#' in the parameter list.
 #' @param ... passed along or name/value pairs to update the parameters 
-#' in a model object
+#' in a model object; when passing new values this way, all values 
+#' must be numeric and all all names must exist in the parameter list
+#' for `.x`.
 #' 
-#' @return An object of class \code{parameter_list} (see 
-#' \code{\link{numericlist}}).
-#'
-#' @details Can be used to either get a parameter list object from a 
-#' \code{mrgmod} model object or to update
-#' the parameters in a model object.  For both uses, the return value 
-#' is a \code{parameter_list} object.
-#' For the former use, \code{param} is usually called to print
-#' the parameters to the screen, but the \code{parameter_list} object can also 
-#' be coerced to a list or numeric R object.
+#' @details 
+#' Can be used to either get a parameter list object from a `mrgmod` 
+#' model object or to update the parameters in a model object.  
+#' For both uses, the return value is a `parameter_list` object. For the 
+#' former use, `param` is usually called to print the parameters to the 
+#' screen, but the `parameter_list` object can also be coerced to a list 
+#' or numeric R object.
 #' 
-#' Use \code{allparam} to get a \code{parameter_list} object including 
-#' both model parameters and data items listed in \code{$FIXED}.
-#'
+#' Use `allparam()` to get a `parameter_list` object including 
+#' both model parameters and data items listed in `$FIXED`.
+#' 
+#' @return 
+#' An object of class `parameter_list` (see [numericlist]).
+#' 
 #' @examples
 #' ## example("param")
 #' 
-#' mod <- mrgsolve::house()
+#' mod <- house()
 #'
 #' param(mod)
 #' 
@@ -71,7 +76,8 @@
 #' new_values <- list(CL = 1.3, VC = 20.5)
 #' 
 #' param(mod, new_values)
-#'
+#' 
+#' @md
 #' @keywords param
 setGeneric("param", function(.x, ...) {
   standardGeneric("param")
@@ -98,8 +104,11 @@ setMethod("param", "mrgmod", function(.x, .y = NULL, ..., .pat="*", .strict=FALS
     wstop("[param-update] invalid object to update parameter list.")
   }
   
-  if(is.data.frame(.y) && nrow(.y) > 1) {
-    .y <- .y[1,, drop = FALSE]
+  if(is.data.frame(.y) && nrow(.y) != 1) {
+    stop(
+      "[param-update] data.frame input should have exactly one row.", 
+      call.=FALSE
+    )
   } else {
     .y <- as.list(.y)  
   }
