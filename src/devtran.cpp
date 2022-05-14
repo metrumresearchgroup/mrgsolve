@@ -76,7 +76,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   Rcpp::Environment envir = mod.slot("envir");
   
   // We need to decrement capture indices; this needs to be cloned
-  const Rcpp::CharacterVector cap = mod.slot("capture");
+  Rcpp::CharacterVector cap = mod.slot("capture");
   Rcpp::IntegerVector capture = mod.slot("Icap");
   capture = Rcpp::clone(capture); 
   capture = capture - 1;
