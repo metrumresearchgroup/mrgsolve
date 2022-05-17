@@ -17,9 +17,6 @@
 
 # this won't get included in coverage since it's copied into the class def
 
-
-checkSymmetric <- function(h) isSymmetric(unname(h))
-
 # nocov start
 valid.matlist <- function(object) {
   
@@ -30,7 +27,7 @@ valid.matlist <- function(object) {
   
   x3 <- (!any(duplicated(labels))) | length(labels)==0
   
-  x4 <- all(vapply(object@data, det, 1.00)>=0)
+  x4 <- all(vapply(object@data, det, 1.23)>=0)
   
   x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
     nrow(x) == length(y)
