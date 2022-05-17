@@ -27,7 +27,7 @@ valid.matlist <- function(object) {
   
   x3 <- (!any(duplicated(labels))) | length(labels)==0
   
-  x4 <- all(vapply(object@data, det, 1.23)>=0)
+  x4 <- all(vapply(object@data, FUN = det, FUN.VALUE = 1.23) >= 0)
   
   x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
     nrow(x) == length(y)
@@ -48,7 +48,7 @@ valid.matlist <- function(object) {
   }
   
   if(!x4) {
-    y <- which(!vapply(object@data, det, 1.23) > 0)
+    y <- which(!vapply(object@data, FUN = det, FUN.VALUE = 1.23) >= 0)
     message("Problem with this matrix:")
     print(object@data[y])
     out <- c(out, "Invalid matrix: determinant is less than 0.")
