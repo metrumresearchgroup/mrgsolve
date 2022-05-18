@@ -1,5 +1,5 @@
 
-# mrgsolve <img align="right" src = "man/figures/mrgsolve_sticker_812418_1.png" width="135px">
+# mrgsolve <img align="right" src = "man/figures/MRG-Solve-Hex.png" width="135px">
 
 [![Build
 Status](https://github-drone.metrumrg.com/api/badges/metrumresearchgroup/mrgsolve/status.svg)](https://github-drone.metrumrg.com/metrumresearchgroup/mrgsolve)
@@ -17,10 +17,10 @@ development. mrgsolve is free and open-source software.
 Please see [mrgsolve.github.io](https://mrgsolve.github.io) for
 additional resources, including:
 
-  - [User Guide](https://mrgsolve.github.io/user_guide)
-  - [R Documentation](https://mrgsolve.github.io/docs)
-  - [Vignettes](https://mrgsolve.github.io/vignettes)
-  - [Gallery](https://github.com/mrgsolve/gallery)
+-   [User Guide](https://mrgsolve.github.io/user_guide)
+-   [R Documentation](https://mrgsolve.github.io/docs)
+-   [Vignettes](https://mrgsolve.github.io/vignettes)
+-   [Gallery](https://github.com/mrgsolve/gallery)
 
 ## Installation
 
@@ -133,17 +133,15 @@ mod <- modlib("pbpk")
 
 Reference
 
-``` 
-  
-  Model file: pbpk.cpp 
-  
-  $PROB
-  # HUMAN PBPK MODEL
-  1: Jones H, Rowland-Yeo K. Basic concepts in physiologically based
-  pharmacokinetic modeling in drug discovery and development. CPT Pharmacometrics
-  Syst Pharmacol. 2013 Aug 14;2:e63. doi: 10.1038/psp.2013.41. PubMed PMID:
-  23945604; PubMed Central PMCID: PMC3828005.
-```
+      
+      Model file: pbpk.cpp 
+      
+      $PROB
+      # HUMAN PBPK MODEL
+      1: Jones H, Rowland-Yeo K. Basic concepts in physiologically based
+      pharmacokinetic modeling in drug discovery and development. CPT Pharmacometrics
+      Syst Pharmacol. 2013 Aug 14;2:e63. doi: 10.1038/psp.2013.41. PubMed PMID:
+      23945604; PubMed Central PMCID: PMC3828005.
 
 Model parameters
 
