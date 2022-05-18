@@ -21,7 +21,7 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 
 
-# mrgsolve <img align="right" src = "man/figures/mrgsolve_sticker_812418_1.png" width="135px">
+# mrgsolve <img align="right" src = "man/figures/MRG-Solve-Hex.png" width="135px">
 
 [![Build Status](https://github-drone.metrumrg.com/api/badges/metrumresearchgroup/mrgsolve/status.svg)](https://github-drone.metrumrg.com/metrumresearchgroup/mrgsolve)
 [![CRAN](http://www.r-pkg.org/badges/version/mrgsolve)](https://cran.r-project.org/package=mrgsolve)
