@@ -51,7 +51,7 @@ test_that("Indexing SIGMA matrix elements", {
 
 a <- diag(c(1.1, 2.2, 3.3))
 b <- diag(c(4.4, 5.5, 6.6))
-c <- matrix(seq(91,99),nrow = 3, byrow = TRUE)
+c <- bmat(seq(91, 96))
 o1 <- omat(a,b,c)
 
 mat <- as.matrix(o1)
@@ -60,7 +60,7 @@ test_that("Indexing OMEGA matrix elements with multiple matrices", {
     expect_equivalent(mat[3,3],3.3)
     expect_equivalent(mat[7,2],0)
     expect_equivalent(mat[7,7],91)
-    expect_equivalent(mat[9,8],98)
+    expect_equivalent(mat[9,8],95)
 })
 
 test_that("Update a model with no matrix", {

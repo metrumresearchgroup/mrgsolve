@@ -55,7 +55,7 @@ using namespace std;
 
 LSODA::~LSODA() {}
 
-LSODA::LSODA(int neq_, const Rcpp::List& parin) {
+LSODA::LSODA(int neq_, const Rcpp::S4& mod) {
   if(neq_ <  0) {
     throw Rcpp::exception(
         tfm::format(
@@ -81,14 +81,14 @@ LSODA::LSODA(int neq_, const Rcpp::List& parin) {
   iopt = 0;
   jt = 2;
   Neq = neq_;
-  hmax_(Rcpp::as<double>(parin["hmax"]));
-  hmin_(Rcpp::as<double>(parin["hmin"]));
-  maxsteps_(Rcpp::as<int>(parin["maxsteps"]));
-  ixpr_(Rcpp::as<int>(parin["ixpr"]));
-  mxhnil_(Rcpp::as<int>(parin["mxhnil"]));
+  hmax_(Rcpp::as<double>(mod.slot("hmax")));
+  hmin_(Rcpp::as<double>(mod.slot("hmin")));
+  maxsteps_(Rcpp::as<int>(mod.slot("maxsteps")));
+  ixpr_(Rcpp::as<int>(mod.slot("ixpr")));
+  mxhnil_(Rcpp::as<int>(mod.slot("mxhnil")));
   itol_ = 1;
-  rtol_.assign(2, Rcpp::as<double>(parin["rtol"]));
-  atol_.assign(2, Rcpp::as<double>(parin["atol"]));
+  rtol_.assign(2, Rcpp::as<double>(mod.slot("rtol")));
+  atol_.assign(2, Rcpp::as<double>(mod.slot("atol")));
   Rtol = rtol_[1];
   Atol = atol_[1];
   rtol_[0] = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2022  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -94,7 +94,7 @@ void dosimeps(void*);
 class odeproblem {
 
 public:
-  odeproblem(Rcpp::NumericVector param,Rcpp::NumericVector init, 
+  odeproblem(Rcpp::List param,Rcpp::NumericVector init, 
              Rcpp::List funs,
              int n_capture_);
 
@@ -119,10 +119,10 @@ public:
   void config_call();
   
   void set_d(rec_ptr this_rec);
-  
-  void omega(Rcpp::NumericMatrix& x);
-  void sigma(Rcpp::NumericMatrix& x);
-  
+
+  void omega(const Rcpp::S4& mod);
+  void sigma(const Rcpp::S4& mod);
+
   arma::mat mv_omega(int n);
   arma::mat mv_sigma(int n);
 
@@ -172,8 +172,10 @@ public:
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
   
-  void neta(const int n);
-  void neps(const int n);
+  void set_eta();
+  void set_eps();
+  int neta(){return Omega.n_rows;}
+  int neps(){return Sigma.n_rows;}
   
   void nid(int n) {d.nid = n;}///< sets the number of IDs
   void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
@@ -184,7 +186,7 @@ public:
   double capture(int i) {return Capture[i];}
   
   /// copies items passed in through parin into the odeproblem object
-  void copy_parin(const Rcpp::List& parin);
+  void copy_parin(const Rcpp::List& parin, const Rcpp::S4& mod);
   void copy_funs(const Rcpp::List& funs);
   
   bool any_mtime() {return d.mevector.size() > 0;}
@@ -202,7 +204,7 @@ public:
   /// sets the absolute and relative tolerances
   void tol(double atol, double rtol);
   
-  
+
   std::vector<double> Y; ///< compartment amounts
   std::vector<double> Ydot;  ///< dxdt values
   std::vector<double> Yout; ///< used to hold Y values during solving
@@ -263,10 +265,5 @@ double PolyExp(const double& x,
                const std::vector<double>& a,
                const std::vector<double>& alpha,
                const int n);
-
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
-                      const Rcpp::NumericVector& linit,
-                      const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs);
 
 #endif

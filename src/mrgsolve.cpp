@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2022  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -224,8 +224,50 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
     Rcpp::List dn = Rcpp::List::create(rnam,cnam);
     ret.attr("dimnames") = dn;
   }
-  return(ret);
+  return ret;
 }
+
+//[[Rcpp::export]]
+arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
+  
+  Rcpp::List a = matlist.slot("data");
+  
+  if(a.size()==0) {
+    arma::mat ret(0, 0); 
+    return ret;
+  }
+  
+  if(a.size()==1) {
+    Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(a[0]);
+    arma::mat ret(mat.begin(), mat.nrow(), mat.ncol(), false);
+    return ret;  
+  }
+  
+  Rcpp::IntegerVector nn = matlist.slot("n");
+  int tot = 0;
+  for(int i = 0; i < nn.size(); ++i) {
+    tot = tot + nn[i];  
+  }
+  
+  // to assign when reading in 
+  Rcpp::NumericMatrix mat;  
+  // the result
+  arma::mat ret(tot, tot);
+  
+  tot = 0;
+  
+  for(int i = 0; i < a.size(); ++i) {
+    mat = Rcpp::as<Rcpp::NumericMatrix>(a[i]);
+    for(int j = 0; j < mat.nrow(); ++j) {
+      for(int k = 0; k < mat.ncol(); ++k) {
+        ret(tot+j, tot+k) = mat(j, k);
+      }
+    }
+    tot = tot + mat.nrow();
+  }
+  return ret;
+}
+
 
 //[[Rcpp::export]]
 Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
