@@ -1,5 +1,16 @@
 # Please add stories at the top ------------------------------------------
 
+SLV-S005: 
+  name: dynamic capture
+  description: > 
+    As a user, I want to name model variables for capture at 
+    compile time in the mread call.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0008
+  - SLV-TEST-0009
+  - SLV-TEST-0010
+
 SLV-S004: 
   name: evid 3 with lag time
   description: > 

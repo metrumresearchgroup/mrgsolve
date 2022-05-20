@@ -61,7 +61,7 @@ $OMEGA @labels OGA2
 $CAPTURE CL VP = V2
 '
 
-test_that("capture via mread", {
+test_that("capture via mread [SLV-TEST-0008]", {
   mod <- mcode("capture-mread", code, capture = "Q,a=b,OGA2,z") 
   out <- outvars(mod)
   expect_equal(out$capture, c("CL", "VP", "Q", "a", "OGA2", "z"))
@@ -74,7 +74,23 @@ test_that("capture via mread", {
   expect_equal(outvars(mod)$capture, res)
 })
 
-test_that("capture pp directive via mread", {
+test_that("dynamic capture under nm-vars [SLV-TEST-0009]", {
+  code <- '
+  $plugin nm-vars
+  $cmt @number 1
+  $main F1 = 1.23;
+  '
+  mod <- mcode(
+    "dynamic-capture-f1", 
+    code, 
+    compile = FALSE, 
+    capture = "F1"
+  )
+  expect_is(mod, "mrgmod")
+  expect_equal(mod@capture, c(F1 = "F1"))
+})
+
+test_that("capture pp directive via mread [SLV-TEST-0010]", {
   mod <- modlib("irm3", capture = "STIM", compile = FALSE)  
   expect_equal(outvars(mod)$capture, c("CP", "STIM"))
 })
