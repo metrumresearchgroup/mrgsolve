@@ -53,7 +53,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::NumericMatrix& data,
                    const Rcpp::NumericMatrix& idata,
                    const Rcpp::S4& mod) {
-
+  
   const bool obsonly          = Rcpp::as<bool>   (parin["obsonly"]);
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
@@ -71,7 +71,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const double mindt  = Rcpp::as<double>(mod.slot("mindt"));
   const bool   debug  = Rcpp::as<bool>(mod.slot("debug"));
   const bool  verbose = Rcpp::as<bool>(mod.slot("verbose")); 
-
+  
   // passed along
   Rcpp::Environment envir = mod.slot("envir");
   
@@ -298,7 +298,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob.set_eta();
     eta = prob.mv_omega(NID);
   }
-
+  
   arma::mat eps;  
   const int neps = prob.neps();
   if(neps > 0) {
@@ -520,23 +520,24 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(&prob, a[i], Fn,solver);
+              this_rec->steady(&prob, a[i], Fn, solver);
               tfrom = tto;
               this_rec->ss(0);
             }
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
+            newev->Lagged = true;
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
             reclist::iterator alagit = a[i].begin()+j;
             advance(alagit,1);
             a[i].insert(alagit,newev);
-            newev->schedule(a[i], maxtime, put_ev_first, NN, Fn);
+            newev->schedule(a[i], maxtime, put_ev_first, NN, Fn, prob.alag(this_cmtn));
             this_rec->unarm();
             sort_recs = true;
           } else { // no valid lagtime
-            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, Fn);
+            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, Fn, 0.0);
             sort_recs = this_rec->needs_sorting();
           }
         } // from data
@@ -565,12 +566,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
         }
         
-        if(tad) {
-          if(this_rec->is_dose()) {
-            if(this_rec->armed()) {
-              told = tto - prob.alag(this_cmtn);  
-            }
+        if(tad) { // Adjusts told for lagtime
+          if(!this_rec->Lagged && this_rec->is_dose()) {
+            say(tto);
+            say(this_rec->Lagged);
+            told = tto;
           }
+          // if(this_rec->is_dose()) {
+          //   if(this_rec->armed() && !this_rec->Lagged) {
+          //     told = tto - prob.alag(this_cmtn);  
+          //   }
+          //   if(!this_rec->armed() && !this_rec->Lagged) {
+          //     told = tto;  
+          //   }
+          //}
         }
       } // is_dose
       

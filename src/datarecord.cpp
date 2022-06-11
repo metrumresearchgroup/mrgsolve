@@ -46,6 +46,7 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Id = 1;
   Fromdata=false;
   Armed = false;
+  Lagged = false;
 }
 
 
@@ -64,6 +65,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Output = true;
   Armed = false;
   Fromdata = true;
+  Lagged = false;
 }
 
 // Data set event
@@ -84,6 +86,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
   Output = false;
   Armed = true;
   Fromdata = false;
+  Lagged = false;
 }
 
 
@@ -106,6 +109,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_,
   Output = false;
   Armed = true;
   Fromdata = false;
+  Lagged = false;
 }
 
 
@@ -533,7 +537,9 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
-                          bool addl_ev_first, const unsigned int maxpos, double Fn) {
+                          bool addl_ev_first, 
+                          const unsigned int maxpos, double Fn, 
+                          double lagt) {
   
   if(Addl ==0) return;
   
@@ -562,6 +568,8 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     if(ontime > maxtime) break;
     
     rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
+    
+    evon->Lagged = Lagged;
     
     thisi.push_back(evon);
     

@@ -88,7 +88,7 @@ public:
   double ii(){return Ii;}
   
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
-                const unsigned int maxpos, double Fn);
+                const unsigned int maxpos, double Fn, double lagt);
   void implement(odeproblem* prob);
   void steady_zero(odeproblem* prob, LSODA& solver);
   void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
@@ -119,6 +119,7 @@ public:
   unsigned short int Evid; ///< record event ID
   bool Output; ///< should this record be included in output?
   bool Fromdata; ///< is this record from the original data set?
+  bool Lagged; ///< this record was added as result of ALAG
   short int Cmt; ///< record compartment number
   unsigned int Addl; ///< number of additional doses
   unsigned short int Ss; ///< record steady-state indicator
