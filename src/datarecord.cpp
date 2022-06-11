@@ -541,7 +541,15 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
                           const unsigned int maxpos, double Fn, 
                           double lagt) {
   
-  if(Addl ==0) return;
+  if(Addl==0) return;
+  
+  bool add_parent_doses = lagt > 1e-12;
+  
+  int n_dose = Addl;
+  
+  if(add_parent_doses) {
+    n_dose = n_dose + n_dose;
+  }
   
   unsigned int this_evid = Evid;
   
@@ -550,9 +558,9 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   }
   
   if(this->int_infusion()) {
-    thisi.reserve(thisi.size() + Addl);  
+    thisi.reserve(thisi.size() + n_dose);  
   } else {
-    thisi.reserve(thisi.size() + Addl); 
+    thisi.reserve(thisi.size() + n_dose); 
   }
   
   double ontime = 0;
@@ -561,17 +569,21 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   
   int nextpos = addl_ev_first ?  -1000000000 : mp;
   
-  for(unsigned int k=1; k<=Addl; ++k) {
+  for(unsigned int k = 1; k <= Addl; ++k) {
     
     ontime = Time + Ii*double(k);
     
     if(ontime > maxtime) break;
     
+    if(add_parent_doses) {
+      rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, ontime-lagt, Rate, nextpos, Id);
+      ev_parent -> unarm(); 
+      ev_parent -> phantom_rec();
+      thisi.push_back(ev_parent);      
+    }
+    
     rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
-    
     evon->Lagged = Lagged;
-    
     thisi.push_back(evon);
-    
   }
 }  

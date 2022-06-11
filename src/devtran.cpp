@@ -568,18 +568,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         if(tad) { // Adjusts told for lagtime
           if(!this_rec->Lagged && this_rec->is_dose()) {
-            say(tto);
-            say(this_rec->Lagged);
             told = tto;
           }
-          // if(this_rec->is_dose()) {
-          //   if(this_rec->armed() && !this_rec->Lagged) {
-          //     told = tto - prob.alag(this_cmtn);  
-          //   }
-          //   if(!this_rec->armed() && !this_rec->Lagged) {
-          //     told = tto;  
-          //   }
-          //}
         }
       } // is_dose
       
