@@ -112,6 +112,8 @@ public:
   
   void phantom_rec() {Output=false; Fromdata=false;}
   bool is_phantom() {return !Output && !Fromdata;}
+  bool is_lagged() {return Lagged;}
+  void lagged() {Lagged = true;}
 
   double Time; ///< record time
   double Id; ///< record ID value

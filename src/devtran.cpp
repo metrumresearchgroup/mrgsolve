@@ -487,7 +487,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(j != 0) {
         prob.newind(2);
         prob.set_d(this_rec);
-        prob.init_call_record(tto);
+        if(!this_rec->is_lagged()) {
+          // TODO: what other records should we skip?
+          prob.init_call_record(tto);
+        }
       }
       
       // Some non-observation event happening
@@ -527,7 +530,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             rec_ptr newev = NEWREC(*this_rec);
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
-            newev->Lagged = true;
+            newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
             reclist::iterator alagit = a[i].begin()+j;
@@ -567,7 +570,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         if(tad) { // Adjusts told for lagtime
-          if(!this_rec->Lagged && this_rec->is_dose()) {
+          if(!this_rec->is_lagged() && this_rec->is_dose()) {
             told = tto;
           }
         }
@@ -587,7 +590,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       }
       
-      prob.table_call();
+      if(!this_rec->is_lagged()) {
+        prob.table_call();
+      }
       
       if(prob.any_mtime()) {
         if(prob.newind() <=1) mtimehx.clear();  
