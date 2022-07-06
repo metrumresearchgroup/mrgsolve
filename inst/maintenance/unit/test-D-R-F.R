@@ -225,6 +225,27 @@ test_that("Infusion duration (R_) with lag time and F", {
   
 })
 
-
-
-
+# Issue #991
+test_that("tad is correctly calculated for addl doses with lag", {
+  # the start time is after the first dose record 
+  # so all dosing records are additional doses
+  dose <- ev(amt = 100, ii = 10, addl = 10,  time = 160) 
+  out <- mrgsim(
+    mod, dose, 
+    delta = 2, end = 3,
+    tad = TRUE, recsort = 1, 
+    start = 200,  end = 200+46, add = 199.999, 
+    output = "df"
+  )
+  # there was a dose at 160, 170, ... [200, 210, 220, 230, 240]
+  # and observation records every 2 hours 
+  doses <- seq(200, 240, 10) 
+  dose_rec <- which(out$time %in% doses)
+  expect_true(all(out$tad[dose_rec]==0))
+  expect_true(all(out$tad[dose_rec+1]==2))
+  expect_true(all(out$tad[dose_rec+3]==6))
+  
+  # The most recent dose when we started was  at 190
+  # The first observation time was at 199.999
+  expect_true(abs(out$tad[1] - 9.999) < 1e-10)
+})
