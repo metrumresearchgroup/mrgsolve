@@ -40,6 +40,7 @@ cmtname <- function(x) {
 numeric_data_matrix <- function(x, quiet = FALSE) {
   x <- do.call(cbind, numerics_only(x, quiet)) 
   if(ncol(x)==0) stop("invalid data set.", call.=FALSE)
+  if(!is.numeric(x)) x <- as.numeric(x)
   return(x)
 }
 
@@ -55,7 +56,7 @@ numeric_data_matrix <- function(x, quiet = FALSE) {
 numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
   if(convert_lgl) {
     if(any(vapply(x,is.logical,TRUE))) {
-      x <- dplyr::mutate_if(x, is.logical, as.integer)
+      x <- mutate_if(x, is.logical, as.integer)
     }
   }
   nu <- vapply(x, is.numeric, TRUE)
