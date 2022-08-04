@@ -56,10 +56,11 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
     wstop("`obj` must be named.")  
   }
 
-  need <- names(eval_select(expr(c(...)), as.list(Param(x))))
+  p_list <- as.list(Param(x))
+  need <- names(eval_select(expr(c(...)), p_list))
   
   if(!length(need)) {
-    need <- Pars(x)
+    need <- names(p_list)
   } else {
     if(missing(.strict)) .strict <- TRUE 
   }
@@ -77,9 +78,9 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   )
 
   if(.strict) {
-    stop(msg, call.=FALSE)
+    stop(msg, call. = FALSE)
   } else {
-    warning(msg, call.=FALSE)
+    warning(msg, call. = FALSE)
   }
   
   return(invisible(x))
