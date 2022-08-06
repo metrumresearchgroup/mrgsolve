@@ -1,14 +1,4 @@
 # Please add stories at the top ------------------------------------------
-SLV-S006: 
-  name: inventory parameter list
-  description: > 
-    As a user, I want to check candidate parameters for update against the 
-    parameter names in the model object. 
-  ProductRisk: low-risk
-  tests: 
-  - SLV-TEST-0014
-  - SLV-TEST-0015
-  - SLV-TEST-0016
 SLV-S005: 
   name: update parameter list
   description: > 
