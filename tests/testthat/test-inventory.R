@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,37 +21,49 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-
 context("test-inventory")
 
-# test_that("inven_report displays warns and missing items", {
-#   obj <- data.frame(KA = 1, CL = 1, V = 1, OCC = 1, F = 1)
-#   inven_report <- mrgsolve:::inven_report
-#   expect_equal(inven_report(obj, c("KA", "CL")), vector(mode = "character"))
-#   expect_equal(inven_report(obj, c("KA", "OCC2")), c("OCC2"))
-#   expect_warning(inven_report(obj, c("KA", "OCC2")), "The object is missing these parameters:\\n - OCC2")
-# })
-
-
-mod <- mcode("test", "$PARAM KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1",compile = FALSE)
+mod <- mcode(
+  "test", 
+  "$PARAM KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1",
+  compile = FALSE
+)
 all_obj <- data.frame(KA = 1, CL = 1, V = 1, OCC1 = 1, OCC2 = 1, F = 1)
 missing_obj <- data.frame(KA = 1, CL = 1, V = 1, OCC1 = 1, F = 1)
 
-test_that("inventory works", {
+test_that("test-inventory check candidate parameters [SLV-TEST-0014]", {
   # no requirements gives back model 
-  expect_s4_class(inventory(mod, all_obj), "mrgmod")
+  expect_message(result <- inventory(mod, all_obj))
+  expect_s4_class(result, "mrgmod")
   
   # everything says it found all and returns original model 
-  expect_message(inventory(mod, all_obj, dplyr::everything()), "Found all required parameters")
-  expect_s4_class(inventory(mod, all_obj, dplyr::everything()), "mrgmod")
-  
+  expect_message(
+    inventory(mod, all_obj, dplyr::everything()), 
+    "Found all required parameters"
+  )
+  expect_s4_class(
+    inventory(mod, all_obj, dplyr::everything()), 
+    "mrgmod"
+  )
 })
 
-test_that("inventory errors when missing required params", {
-
+test_that("test-inventory error when missing required names [SLV-TEST-0015]", {
   expect_error(inventory(mod, missing_obj, dplyr::everything()))
   expect_error(inventory(mod, missing_obj, dplyr::contains("OCC")))
   expect_error(inventory(mod, missing_obj, V:F))
   expect_error(inventory(mod, missing_obj, OCC2))
+})
 
+test_that("inventory conditions [SLV-TEST-0016]", {
+  mod <- house()
+  data <- expand.ev(amt=100,CL=1, SEX=0)
+  idata <- data.frame(ID=1, CL=1, SEX=0)
+  expect_error(inventory(mod,data,everything()))
+  expect_warning(inventory(mod,data))
+  expect_error(inventory(mod,data,c("CL", "VC")))
+  expect_message(inventory(mod,data,c("CL", "SEX")))
+  expect_message(inventory(mod,data,CL,SEX))
+  expect_error(data_set(mod, data,need=c("CL", "VC")))
+  expect_error(idata_set(mod,data,need=c("CL", "WTCL")))
+  expect_is(data_set(mod,data, need="CL") %>% mrgsim(end=1),"mrgsims")
 })

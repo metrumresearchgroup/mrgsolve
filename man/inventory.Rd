@@ -2,40 +2,41 @@
 % Please edit documentation in R/inven.R
 \name{inventory}
 \alias{inventory}
-\title{Check whether all required parameters needed in a model are present in an object}
+\title{Reconcile candidate parameters in an object with model parameter list}
 \usage{
 inventory(x, obj, ..., .strict = FALSE)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{obj}{data.frame to pass to \code{\link{idata_set}} or \code{\link{data_set}}}
+\item{obj}{an object with names which potentially represent model parameters.}
 
-\item{...}{capture dplyr-style parameter requirements}
+\item{...}{capture tidy-select parameter requirements.}
 
 \item{.strict}{whether to stop execution if all requirements are present
- (\code{TRUE}) 
-or just warn (\code{FALSE}); see details}
+(\code{TRUE}) or just warn (\code{FALSE}); see details.}
 }
 \value{
-original mrgmod
+\code{x} is returned invisibly.
 }
 \description{
-Check whether all required parameters needed in a model are present in an object
+Use this with a model object and any other object that might be used to
+update the parameter list and get a report to see what parameters are
+missing from the candidate object.
 }
 \details{
-If parameter requirements are not explicitly stated, the requirement defaults to 
-all parameter names in \code{x}.  Note that, by default,
-the inventory is not \code{.strict} unless the user explicitly
-states the parameter requirement. That is, if parameter requirements are explicitly 
-stated, \code{.strict} will be set to \code{TRUE} if a value \code{.strict} was not
-passed in the call.
+If parameter requirements are not explicitly stated, the requirement defaults
+to all parameter names in \code{x}.  Note that, by default, the inventory is not
+\code{.strict} unless the user explicitly states the parameter requirement. That
+is, if parameter requirements are explicitly stated, \code{.strict} will be set
+to \code{TRUE} if a value \code{.strict} was not passed.
 }
 \examples{
 \dontrun{
-inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
-inventory(mod, idata, everything()) # all parameters
-inventory(mod, idata, contains("OCC")) # all parameters containing OCC
-inventory(mod, idata, -F) # all parameters except F
+inventory(mod, data)                  # all parameters
+inventory(mod, data, CL:V)            # CL through Volume 
+inventory(mod, data, contains("OCC")) # all parameters containing OCC
+inventory(mod, data, -F)              # all parameters except F
 }
+
 }
