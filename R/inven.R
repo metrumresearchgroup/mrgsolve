@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2020  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,72 +15,54 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Reconcile candidate parameters in an object with model parameter list
-#' 
-#' Use this with a model object and any other object that might be used to 
-#' update the parameter list and get a report to see what parameters are 
-#' missing from the candidate object.
-#' 
-#' @details 
-#' If parameter requirements are not explicitly stated, the requirement defaults 
-#' to all parameter names in `x`.  Note that, by default, the inventory is not 
-#' `.strict` unless the user explicitly states the parameter requirement. That 
-#' is, if parameter requirements are explicitly stated, `.strict` will be set 
-#' to `TRUE` if a value `.strict` was not passed.
-#' 
-#' @param x model object.
-#' @param obj an object with names which potentially represent model parameters.
-#' @param ... capture tidy-select parameter requirements.
+#' Check whether all required parameters needed in a model are present in an object
+#' @param x model object
+#' @param obj data.frame to pass to \code{\link{idata_set}} or \code{\link{data_set}}
+#' @param ... capture dplyr-style parameter requirements
 #' @param .strict whether to stop execution if all requirements are present
-#' (`TRUE`) or just warn (`FALSE`); see details.
-#' 
+#'  (\code{TRUE}) 
+#' or just warn (\code{FALSE}); see details
 #' @examples \dontrun{
-#' inventory(mod, data)                  # all parameters
-#' inventory(mod, data, CL:V)            # CL through Volume 
-#' inventory(mod, data, contains("OCC")) # all parameters containing OCC
-#' inventory(mod, data, -F)              # all parameters except F
+#' inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
+#' inventory(mod, idata, everything()) # all parameters
+#' inventory(mod, idata, contains("OCC")) # all parameters containing OCC
+#' inventory(mod, idata, -F) # all parameters except F
 #' }
-#' 
-#' @return
-#' `x` is returned invisibly.
-#' 
-#' 
-#' @md
+#' @return original mrgmod
+#' @details 
+#' If parameter requirements are not explicitly stated, the requirement defaults to 
+#' all parameter names in \code{x}.  Note that, by default,
+#' the inventory is not \code{.strict} unless the user explicitly
+#' states the parameter requirement. That is, if parameter requirements are explicitly 
+#' stated, \code{.strict} will be set to \code{TRUE} if a value \code{.strict} was not
+#' passed in the call.
 #' @export
-inventory <- function(x, obj, ..., .strict = FALSE) {
+inventory <- function(x,obj,..., .strict = FALSE) {
   
-  if(!is.mrgmod(x)) {
-    wstop("`x` must be a model object; pass that first.")
-  }
-  if(!is_named(obj)) {
-    wstop("`obj` must be named.")  
-  }
-
-  p_list <- as.list(Param(x))
-  need <- names(eval_select(expr(c(...)), p_list))
+  oname <- as.character(as.list(match.call())$obj)
   
-  if(length(need)) {
-    if(missing(.strict)) .strict <- TRUE 
+  need <- vars_select(Pars(x),...)
+  
+  if(!length(need)) {
+    need <- Pars(x)
   } else {
-    need <- names(p_list)
+    if(missing(.strict)) .strict <- TRUE 
   }
   
-  missing <- setdiff(need, names(obj))
+  missing <- setdiff(need,names(obj))
+  miss <- length(missing) 
 
-  if(length(missing)==0) {
-    message("Found all required parameters in candidate obj.")
+  if(!miss) {
+    message("Found all required parameters in ", sQuote(oname),".")
     return(invisible(x))
   }
   
-  msg <- c(
-    "missing parameters in candidate obj\n", 
-    paste0("   --| ", missing, "\n")
-  )
-
   if(.strict) {
-    stop(msg, call. = FALSE)
+    stop("missing parameters in ", sQuote(oname), "\n", 
+         paste(paste0(" - ", missing, collapse="\n")), call.=FALSE)
   } else {
-    warning(msg, call. = FALSE)
+    warning("Missing parameters in ", shQuote(oname), "\n", 
+            paste(paste0(" - ", missing, collapse="\n")), call.=FALSE)
   }
   
   return(invisible(x))
