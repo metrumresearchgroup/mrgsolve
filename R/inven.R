@@ -59,15 +59,15 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   p_list <- as.list(Param(x))
   need <- names(eval_select(expr(c(...)), p_list))
   
-  if(!length(need)) {
-    need <- names(p_list)
-  } else {
+  if(length(need)) {
     if(missing(.strict)) .strict <- TRUE 
+  } else {
+    need <- names(p_list)
   }
   
   missing <- setdiff(need, names(obj))
-  nmiss <- length(missing) 
-  if(nmiss == 0) {
+
+  if(length(missing)==0) {
     message("Found all required parameters in candidate obj.")
     return(invisible(x))
   }
