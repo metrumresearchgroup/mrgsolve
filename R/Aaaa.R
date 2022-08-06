@@ -25,11 +25,11 @@
 #' @importFrom dplyr intersect select rename do slice pull
 #' @importFrom dplyr if_else summarise_each is.tbl select
 #' @importFrom dplyr group_by ungroup n left_join
-#' @importFrom tidyselect vars_select everything eval_select
+#' @importFrom tidyselect vars_select everything
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
-#' @importFrom rlang is_named .data expr
+#' @importFrom rlang is_named .data 
 #' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
