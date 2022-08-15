@@ -423,6 +423,7 @@ charthere <- function(x,w,fx=TRUE) {
 null_list <- setNames(list(), character(0))
 
 single.number <- function(x) length(x)==1 & is.numeric(x)
+bare_numeric <- function(x) is.numeric(x) && !is.object(x)
 
 has_name <- function(name, object) {
   name[1] %in% names(object)
