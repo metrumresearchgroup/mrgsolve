@@ -37,7 +37,7 @@ cmtname <- function(x) {
   y[y %in% .colnames(x)][1]
 }
 
-numeric_data_matrix <- function(x, quiet = TRUE) {
+numeric_data_matrix <- function(x, quiet = FALSE) {
   x <- do.call(cbind, numerics_only(x, quiet)) 
   if(ncol(x)==0) stop("invalid data set.", call.=FALSE)
   x
@@ -52,7 +52,7 @@ numeric_data_matrix <- function(x, quiet = TRUE) {
 ##' columns with \code{\link{as.integer}}
 ##' 
 ##' @export
-numerics_only <- function(x, quiet = TRUE, convert_lgl = FALSE) {
+numerics_only <- function(x, quiet = FALSE, convert_lgl = FALSE) {
   if(convert_lgl) {
     if(any(vapply(x,is.logical,TRUE))) {
       x <- mutate_if(x, is.logical, as.integer)

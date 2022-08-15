@@ -1,5 +1,13 @@
 # Please add stories at the top ------------------------------------------
-
+SLV-S005:
+  name: Columns with class atrribute are dropped from input data.
+  description: > 
+    As a user, I want mrgsolve to drop columns in input data frames which 
+    have a class attribute. 
+  ProductRisk: low-risk
+  tests: 
+    - SLV-TEST-0008
+    - SLV-TEST-0009
 SLV-S004: 
   name: evid 3 with lag time
   description: > 

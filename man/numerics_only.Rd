@@ -4,7 +4,7 @@
 \alias{numerics_only}
 \title{Prepare data.frame for input to mrgsim}
 \usage{
-numerics_only(x, quiet = TRUE, convert_lgl = FALSE)
+numerics_only(x, quiet = FALSE, convert_lgl = FALSE)
 }
 \arguments{
 \item{x}{a input data set}
