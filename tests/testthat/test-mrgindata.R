@@ -162,7 +162,7 @@ test_that("Duplicate ID in idata_set gives error", {
   expect_error(valid_idata_set(idata))
 })
 
-test_that("integer64 columns are dropped from data_set [SLV-TEST-008]", {
+test_that("integer64 columns are dropped from data_set [SLV-TEST-0011]", {
   skip_if_not_installed("bit64")  
   skip_if_not_installed("data.table")
   data <- data.table::fread("ID,KA\n1,100000020200")
@@ -182,7 +182,7 @@ test_that("integer64 columns are dropped from data_set [SLV-TEST-008]", {
   )
 })
 
-test_that("integer64 columns are dropped from idata_set  [SLV-TEST-009]", {
+test_that("integer64 columns are dropped from idata_set  [SLV-TEST-0012]", {
   skip_if_not_installed("bit64")  
   skip_if_not_installed("data.table")
   data <- data.table::fread("ID,KA\n1,100000020200")
