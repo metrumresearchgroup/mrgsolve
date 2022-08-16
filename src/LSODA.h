@@ -44,7 +44,7 @@ class LSODA
 {
     
 public:
-    LSODA(int neq, const Rcpp::List& parin);
+    LSODA(int neq, const Rcpp::S4& parin);
     
     ~LSODA();
 

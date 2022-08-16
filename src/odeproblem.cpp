@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2020  Metrum Research Group
+// Copyright (C) 2013 - 2022  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -60,7 +60,7 @@ void dosimeps(void* prob_, int n) {
   }
 }
 
-odeproblem::odeproblem(Rcpp::NumericVector param,
+odeproblem::odeproblem(Rcpp::List param,
                        Rcpp::NumericVector init,
                        Rcpp::List funs,
                        int n_capture_) {
@@ -133,13 +133,13 @@ double odeproblem::alag(int cmt){
 
 
 //! set number of <code>ETAs</code> in the model
-void odeproblem::neta(const int n) {
-  if(n > 25) d.ETA.assign(n,0.0);
+void odeproblem::set_eta() {
+  if(neta() > 25) d.ETA.assign(neta(),0.0);
 }
 
 //! set number of <code>EPSs</code> in the model
-void odeproblem::neps(const int n) {
-  if(n > 25) d.EPS.assign(n,0.0);
+void odeproblem::set_eps() {
+  if(neps() > 25) d.EPS.assign(neps(),0.0);
 }
 
 void odeproblem::tol(double atol, double rtol) {
@@ -656,20 +656,20 @@ double PolyExp(const double& x,
   return bolusResult + rate*result;
 }
 
-void odeproblem::copy_parin(const Rcpp::List& parin) {
-  advan(Rcpp::as<int>(parin["advan"]));
+void odeproblem::copy_parin(const Rcpp::List& parin, const Rcpp::S4& mod) {
+  advan(Rcpp::as<int>(mod.slot("advan")));
   ss_n = Rcpp::as<int>(parin["ss_n"]);
   ss_fixed = Rcpp::as<bool>(parin["ss_fixed"]);
-  Rtol = Rcpp::as<double>(parin["rtol"]);
-  Atol = Rcpp::as<double>(parin["atol"]);
-  ssRtol = Rcpp::as<double>(parin["ss_rtol"]);
-  ssAtol = Rcpp::as<double>(parin["ss_atol"]);
+  Rtol = Rcpp::as<double>(mod.slot("rtol"));
+  Atol = Rcpp::as<double>(mod.slot("atol"));
+  ssRtol = Rcpp::as<double>(mod.slot("ss_rtol"));
+  ssAtol = Rcpp::as<double>(mod.slot("ss_atol"));
   if(Advan==13) {
     ssRtol = std::max(ssRtol,Rtol);
     ssAtol = std::max(ssAtol,Atol);
   }
   Do_Init_Calc = Rcpp::as<bool>(parin["do_init_calc"]);
-  Ss_cmt = Rcpp::as<std::vector<int>>(parin["ss_cmt"]);
+  Ss_cmt = Rcpp::as<std::vector<int>>(mod.slot("ss_cmt"));
   interrupt = Rcpp::as<int>(parin["interrupt"]);
 }
 
@@ -710,18 +710,30 @@ void odeproblem::advan(int x) {
  * 
  */
 // [[Rcpp::export]]
-Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam, 
-                      const Rcpp::NumericVector& linit,
-                      int Neta, int Neps,
-                      const Rcpp::CharacterVector& capture,
-                      const Rcpp::List& funs,
-                      Rcpp::Environment envir) {
+Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
+                      const Rcpp::S4 mod) {
   
   Rcpp::List ans;
   
-  odeproblem prob(lparam, linit, funs, capture.size());
-  prob.neta(Neta);
-  prob.neps(Neps);
+  Rcpp::Environment envir = mod.slot("envir");
+  Rcpp::List lparam = mod.slot("param");
+  Rcpp::List linit = mod.slot("init");
+  Rcpp::CharacterVector capture = mod.slot("capture");
+  
+  lparam = Rcpp::clone(lparam);
+  linit = Rcpp::clone(linit);
+  capture = Rcpp::clone(capture);
+  
+  Rcpp::NumericVector init(linit.size());
+  for(int i = 0; i < linit.size(); ++i) { 
+    init[i] = linit[i];
+  }
+  
+  odeproblem prob(lparam, init, funs, capture.size());
+  prob.omega(mod);
+  prob.sigma(mod);
+  prob.set_eta();
+  prob.set_eps();
   prob.pass_envir(&envir);
   prob.newind(0);
   
@@ -741,19 +753,26 @@ Rcpp::List TOUCH_FUNS(const Rcpp::NumericVector& lparam,
   return(ans);
 }
 
-void odeproblem::omega(Rcpp::NumericMatrix& x) {
-  Omega = Rcpp::as<arma::mat>(x);
+void odeproblem::omega(const Rcpp::S4& mod) {
+  const Rcpp::S4 omega = mod.slot("omega");
+  Omega = MAKEMATRIX(omega);
+  // if(!(Omega.is_symmetric())) {
+  //   Omega  = symmatl(Omega);
+  // }
 }
 
-void odeproblem::sigma(Rcpp::NumericMatrix& x) {
-  Sigma = Rcpp::as<arma::mat>(x);
+void odeproblem::sigma(const Rcpp::S4& mod) {
+  const Rcpp::S4 sigma = mod.slot("sigma");
+  Sigma = MAKEMATRIX(sigma);
+  // if(!(Sigma.is_symmetric())) {
+  //   Sigma  = symmatl(Sigma);
+  // }
 }
 
 arma::mat odeproblem::mv_omega(int n) {
-  return MVGAUSS(Omega,n);
+  return MVGAUSS(Omega, n);
 }
 
 arma::mat odeproblem::mv_sigma(int n) {
-  return MVGAUSS(Sigma,n);
+  return MVGAUSS(Sigma, n);
 }
-

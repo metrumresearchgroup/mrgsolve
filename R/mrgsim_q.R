@@ -114,9 +114,7 @@ mrgsim_q <- function(x,
   # Big list of stuff to pass to DEVTRAN
   parin <- parin(x)
   parin$recsort <- recsort
-  parin$stime <- stime
   parin$do_init_calc <- !skip_init_calc
-  parin$request <- Cmti(x)-1L
 
   if(simcall!=0) {
     if(simcall==1) {
@@ -144,16 +142,9 @@ mrgsim_q <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    as.numeric(Param(x)),
-    Pars(x),
-    as.numeric(Init(x)),
-    Cmt(x),
-    CAPTUREI(x),
     pointers(x),
     data,null_idata,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir, 
+    x, 
     PACKAGE = "mrgsolve"
   )[["data"]]
   

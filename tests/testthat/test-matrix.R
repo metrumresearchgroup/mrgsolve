@@ -23,7 +23,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-matrix")
 
-test_that("Testing modMATRIX", {
+test_that("test-matrix modMATRIX", {
     expect_equal(dim(modMATRIX("  0 0 0   0")), c(4,4))
     expect_equal(dim(modMATRIX("  0\n 0\n 0   0")), c(4,4))
     expect_equal(dim(modMATRIX("  0 0 0   ", block=TRUE)), c(2,2))
@@ -31,7 +31,7 @@ test_that("Testing modMATRIX", {
     expect_equal(modMATRIX("0 0 0", use=FALSE), matrix(0,nrow=3,ncol=3))
 })
 
-test_that("SUPERMATRIX", {
+test_that("test-matrix SUPERMATRIX", {
     ml <- list(matrix(1, 2, 2), matrix(3, 4, 4))
     dimnames(ml[[1]]) <- list(c("a", "b"), c("A", "B"))
     ans <- mrgsolve:::SUPERMATRIX(ml)
@@ -49,4 +49,34 @@ test_that("SUPERMATRIX", {
     expect_identical(ans1, matrix(0, nrow = 0, ncol = 0))
     ans2 <- mrgsolve:::SUPERMATRIX(omat()@data)
     expect_identical(ans1, ans2)
+})
+
+test_that("test-matrix MAKEMATRIX", {
+  a <- dmat(1,2,3)
+  b <- cmat(0.1, 0.5, 0.2)
+  c <- dmat(0.55)
+  d <- bmat(0.1, 0.002, 0.3)
+  
+  omega <- omat(list(A = a,  B = b))
+  mat <- mrgsolve:::MAKEMATRIX(omega)
+  chk <- mrgsolve:::SUPERMATRIX(omega@data)
+  expect_identical(mat, chk)
+  expect_true(isSymmetric(mat))
+  expect_true(isSymmetric(chk))
+
+  sigma <- omat(list(c, d))
+  mat <- mrgsolve:::MAKEMATRIX(sigma)
+  chk <- mrgsolve:::SUPERMATRIX(sigma@data)
+  expect_identical(mat, chk)
+  expect_true(isSymmetric(mat))
+  expect_true(isSymmetric(chk))
+})
+
+test_that("test-matrix matrix is unaltered after simulation", {
+  mod <- house()
+  omd <- omat(mod, dmat(1,2,3,4))
+  om1 <- omat(mod)
+  out <- mrgsim(mod)
+  om2 <- omat(mod)
+  expect_identical(om1, om2)
 })
