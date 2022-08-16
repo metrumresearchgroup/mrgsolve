@@ -557,12 +557,8 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  if(this->int_infusion()) {
-    thisi.reserve(thisi.size() + n_dose);  
-  } else {
-    thisi.reserve(thisi.size() + n_dose); 
-  }
-  
+  thisi.reserve(thisi.size() + n_dose); 
+
   double ontime = 0;
   
   int mp = 1000000000;
