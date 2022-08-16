@@ -233,7 +233,7 @@ test_that("tad is correctly calculated for addl doses with lag", {
   dose <- ev(amt = 100, ii = 10, addl = 10,  time = 160) 
   out <- mrgsim(
     mod, dose, 
-    delta = 1, recsort = 3,
+    delta = 1, 
     tad = TRUE, 
     start = 200,  end = 224, add = 199.999, 
     output = "df"
