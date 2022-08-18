@@ -189,21 +189,22 @@ void datarecord::implement(odeproblem* prob) {
     prob->y(eq_n, Amt);
     break;
   case 4:
-    for(int i=0; i < prob->neq(); ++i) {
-      prob->y(i,0.0);
-      prob->on(i);
-      prob->rate0(i,0.0);
-    } {
-      prob->init_call(Time);
-      if(!Armed) break;
-      if(Rate > 0) {
-        this->evid(5);
-      } else {
-        this->evid(1);
+    if(this->ss()==0) {
+      for(int i=0; i < prob->neq(); ++i) {
+        prob->y(i,0.0);
+        prob->on(i);
+        prob->rate0(i,0.0);
       }
-      this-> implement(prob);
-      return;
+      prob->init_call(Time);
     }
+    if(!Armed) break;
+    if(Rate > 0) {
+      this->evid(5);
+    } else {
+      this->evid(1);
+    }
+    this-> implement(prob);
+    return;
   }
   prob->lsoda_init();
 }
