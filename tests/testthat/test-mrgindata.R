@@ -170,7 +170,7 @@ test_that("integer64 columns are dropped from data_set [SLV-TEST-0011]", {
   data$CMT <- 1
   expect_message(
     valid_data_set(data, mod), 
-    regexp="dropped column: KA (integer64)", 
+    regexp = "dropped column: KA (integer64)", 
     fixed = TRUE
   )
   data$KA <- as.double(data$KA)
@@ -190,7 +190,7 @@ test_that("integer64 columns are dropped from idata_set  [SLV-TEST-0012]", {
   data$CMT <- 1
   expect_message(
     valid_idata_set(data, mod), 
-    regexp="dropped column: KA (integer64)", 
+    regexp = "dropped column: KA (integer64)", 
     fixed = TRUE
   )
 })
