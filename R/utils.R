@@ -82,7 +82,7 @@ update_list <- function(left, right, context = NULL) {
     msg <- "input are not lists"
     context <- paste0("[", context, "]")
     msg <- paste(context, msg)
-    stop("msg")
+    stop(msg)
   }
   common <- intersect(names(left), names(right))
   if(is.character(context) && length(common)==0) {

@@ -62,7 +62,7 @@ Use \code{allparam()} to get a \code{parameter_list} object including
 both model parameters and data items listed in \verb{$FIXED}.
 
 The update to parameters can be permissive (candidates with names that don't
-exist in the parameter list are sliently ignored) or strict (all candndates
+exist in the parameter list are sliently ignored) or strict (all candidates
 must already exist in the parameter list). When passing candidate values
 via \code{...}, the update is strict and an error is generated if you pass a
 name that isn't found in the parameter list. When candidate values
