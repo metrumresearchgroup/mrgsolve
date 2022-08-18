@@ -1,4 +1,11 @@
 # Please add stories at the top ------------------------------------------
+SLV-0008: 
+  name: Dose and reset
+  description: > 
+    As a user, I want mrgsovle to dose and reset using evid 4.
+  ProductRisk: low-risk
+  tests:
+  - SLV-TEST-0019
 SLV-S007: 
   name: update parameter list
   description: > 

@@ -54,3 +54,15 @@ test_that("evid4 reset with infusion", {
   expect_identical(out$RESP[6],mod$KIN/mod$KOUT)
 })
 
+test_that("evid==4 with ss==1 [SLV-TEST-0019]", {
+  mod <- house()
+  dat <- as_data_set(
+    evd(amt = 100, evid = 4, ss = 1, ii = 12), 
+    evd(amt = 100, evid = 1, ss = 1, ii = 12),
+    evd(amt = 100, evid = 4, ss = 0, ii = 0),
+    evd(amt = 100, evid = 1, ss = 0, ii = 0)
+  )
+  sim <- mrgsim(mod, dat, end = 5, output = "df")
+  expect_true(all(sim$CP[sim$ID==1] == sim$CP[sim$ID==2]))
+  expect_true(all(sim$CP[sim$ID==3] == sim$CP[sim$ID==4]))
+})
