@@ -50,7 +50,7 @@
 #' both model parameters and data items listed in `$FIXED`.
 #' 
 #' The update to parameters can be permissive (candidates with names that don't
-#' exist in the parameter list are sliently ignored) or strict (all candidates
+#' exist in the parameter list are silently ignored) or strict (all candidates
 #' must already exist in the parameter list). When passing candidate values
 #' via `...`, the update is strict and an error is generated if you pass a 
 #' name that isn't found in the parameter list. When candidate values 
