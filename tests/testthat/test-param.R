@@ -41,20 +41,20 @@ test_that("params are accessed", {
   expect_identical(mod[["KA"]], unname(mod@param@data$KA))
 })
 
-test_that("params are updated from dots [SLV-TEST-0008]", {
+test_that("params are updated from dots [SLV-TEST-0013]", {
   mod <- house()
   mod2 <- param(mod, CL = 55, VC = 111)
   expect_equal(mod2$CL,55)
   expect_equal(mod2$VC,111)
 })
   
-test_that("params are updated from list [SLV-TEST-0009]", {
+test_that("params are updated from list [SLV-TEST-0014]", {
   mod2 <- update(house(), param = list(CL=99, KA = 9))
   expect_equal(mod2$CL,99)
   expect_equal(mod2$KA,9)
 })
 
-test_that("params are update from data frame [SLV-TEST-0010]", {
+test_that("params are update from data frame [SLV-TEST-0015]", {
   data <- data.frame(CL = 44, D1 = 999)
   mod <- house()
   mod2 <- param(mod, data)
@@ -63,7 +63,7 @@ test_that("params are update from data frame [SLV-TEST-0010]", {
   expect_equal(mod$VC, mod2$VC)
 })
   
-test_that("param update errors or warnings [SLV-TEST-0011]", {
+test_that("param update errors or warnings [SLV-TEST-0016]", {
   mod <- house()
   expect_error(
     param(mod, KYLE = 2, CL = 5), 
@@ -98,13 +98,13 @@ test_that("param update errors or warnings [SLV-TEST-0011]", {
   )
 })
 
-test_that("non-parameter character values are ignored  [SLV-TEST-0012]", {
+test_that("non-parameter character values are ignored  [SLV-TEST-0017]", {
   mod <- house()
   expect_silent(mod <- param(mod, list(CL = 5, ABC = "abc")))
   expect_s4_class(mod, class="mrgmod")
 })
 
-test_that("param update can be strict  [SLV-TEST-0013]", {
+test_that("param update can be strict  [SLV-TEST-0018]", {
   mod <- house()
   expect_error(
     param(mod, list(CL = 1, KYLE = 2), .strict = TRUE), 
