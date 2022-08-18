@@ -1,4 +1,14 @@
 # Please add stories at the top ------------------------------------------
+SLV-S005: 
+  name: update parameter list
+  description: > 
+    As a user, I want to update the parameter list in a model object.
+  - SLV-TEST-0008
+  - SLV-TEST-0009
+  - SLV-TEST-0010
+  - SLV-TEST-0011
+  - SLV-TEST-0012
+  - SLV-TEST-0013
 SLV-S006:
   name: Columns with class atrribute are dropped from input data.
   description: > 
