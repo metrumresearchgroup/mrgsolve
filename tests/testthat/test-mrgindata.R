@@ -31,18 +31,30 @@ data(extran3)
 
 test_that("valid_data_set warns for character columns", {
   chr_param <- expand.ev(amt=100,ID=1:4, CL = "A")
-  expect_message(valid_data_set(chr_param,m=mod), regexp="dropped non-numeric:")
+  expect_message(
+    valid_data_set(chr_param,m=mod), 
+    regexp = "dropped column: CL (character)", 
+    fixed = TRUE
+  )
   chr_X <- expand.ev(amt=100,ID=1:4,X="A")
   expect_silent(valid_data_set(chr_X,m=mod))
   chr_rate <- expand.ev(amt=100,rate="A")
-  expect_message(valid_data_set(chr_rate,m=mod), "dropped non-numeric:")
+  expect_message(
+    valid_data_set(chr_rate,m=mod), 
+    regexp = "dropped column: rate (character)", 
+    fixed = TRUE
+  )
   chr_cmt <- expand.ev(amt=100,cmt="GUT")
   expect_silent(valid_data_set(chr_cmt,m=mod))
 })
 
 test_that("valid_idata_set warns for character columns", {
   chr_param <- expand.idata(FOO = 1, CL = "A")
-  expect_message(valid_idata_set(chr_param,m=mod), regexp="dropped non-numeric:")
+  expect_message(
+    valid_idata_set(chr_param,m=mod), 
+    regexp = "dropped column: CL (character)", 
+    fixed = TRUE
+  )
   chr_X <- expand.idata(FOO = 1, X = "A")
   expect_silent(valid_idata_set(chr_X,m=mod))
 })
@@ -148,4 +160,37 @@ test_that("Run idata set with ev", {
 test_that("Duplicate ID in idata_set gives error", {
   idata <- dplyr::mutate(tibble(ID=rep(seq(10),each=5)),CL=2)
   expect_error(valid_idata_set(idata))
+})
+
+test_that("integer64 columns are dropped from data_set [SLV-TEST-0011]", {
+  skip_if_not_installed("bit64")  
+  skip_if_not_installed("data.table")
+  data <- data.table::fread("ID,KA\n1,100000020200")
+  data$TIME <- 1
+  data$CMT <- 1
+  expect_message(
+    valid_data_set(data, mod), 
+    regexp = "dropped column: KA (integer64)", 
+    fixed = TRUE
+  )
+  data$KA <- as.double(data$KA)
+  class(data$KA) <- "object"
+  expect_message(
+    valid_data_set(data, mod), 
+    regexp = "dropped column: KA (object)", 
+    fixed = TRUE
+  )
+})
+
+test_that("integer64 columns are dropped from idata_set  [SLV-TEST-0012]", {
+  skip_if_not_installed("bit64")  
+  skip_if_not_installed("data.table")
+  data <- data.table::fread("ID,KA\n1,100000020200")
+  data$TIME <- 1
+  data$CMT <- 1
+  expect_message(
+    valid_idata_set(data, mod), 
+    regexp = "dropped column: KA (integer64)", 
+    fixed = TRUE
+  )
 })
