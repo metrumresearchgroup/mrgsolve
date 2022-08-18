@@ -40,7 +40,7 @@ cmtname <- function(x) {
 numeric_data_matrix <- function(x, quiet = FALSE) {
   x <- do.call(cbind, numerics_only(x, quiet)) 
   if(ncol(x)==0) stop("invalid data set.", call.=FALSE)
-  return(x)
+  x
 }
 
 ##' Prepare data.frame for input to mrgsim
@@ -52,13 +52,13 @@ numeric_data_matrix <- function(x, quiet = FALSE) {
 ##' columns with \code{\link{as.integer}}
 ##' 
 ##' @export
-numerics_only <- function(x,quiet=FALSE,convert_lgl=FALSE) {
+numerics_only <- function(x, quiet = FALSE, convert_lgl = FALSE) {
   if(convert_lgl) {
     if(any(vapply(x,is.logical,TRUE))) {
-      x <- dplyr::mutate_if(x, is.logical, as.integer)
+      x <- mutate_if(x, is.logical, as.integer)
     }
   }
-  nu <- vapply(x, is.numeric, TRUE)
+  nu <- vapply(x, bare_numeric, TRUE)
   if(!all(nu)) {
     if(!quiet) {
       message(
@@ -79,6 +79,17 @@ convert_character_cmt <- function(data, mod) {
     }
   }
   return(data)
+}
+
+signal_drop <- function(dm, x, to_signal, context) {
+  drop <- setdiff(names(x), dimnames(dm)[[2]])
+  drop <- intersect(drop, to_signal)
+  for(d in drop) {
+    type <- paste0(class(x[[d]]), collapse = ",")
+    msg <- c(context, " dropped column: ", d, " (", type, ")")
+    message(msg)  
+  }
+  invisible(NULL)
 }
 
 ##' Validate and prepare a data sets for simulation
@@ -165,11 +176,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   dm <- numeric_data_matrix(x,quiet=TRUE)
   
   if((ncol(dm) != ncol(x)) && !quiet) {
-    drop <- setdiff(names(x), dimnames(dm)[[2]])
-    drop <- intersect(drop, c(Pars(m),GLOBALS$CARRY_TRAN))
-    for(d in drop) {
-      message("[data-set] dropped non-numeric: ", d)  
-    }
+    to_signal <- c(Pars(m), GLOBALS$CARRY_TRAN)
+    signal_drop(dm, x, to_signal, context = "[data-set]")
   }
   
   check_data_set_na(dm,m)
@@ -223,11 +231,8 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   dm <- numeric_data_matrix(x, quiet = TRUE)
   
   if((ncol(dm) != ncol(x)) && !quiet) {
-    drop <- setdiff(names(x), dimnames(dm)[[2]])
-    drop <- intersect(drop, Pars(m))
-    for(d in drop) {
-      message("[idata-set] dropped non-numeric: ", d)  
-    }
+    to_signal <- Pars(m)
+    signal_drop(dm, x, to_signal, context = "[idata-set]")
   }
   
   check_data_set_na(dm, m)

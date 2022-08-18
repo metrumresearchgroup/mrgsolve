@@ -21,7 +21,7 @@
 #' @importFrom utils packageVersion assignInMyNamespace read.table
 #' @importFrom stats as.formula setNames rnorm
 #' @importFrom dplyr filter mutate mutate_at mutate_all distinct first
-#' @importFrom dplyr bind_rows arrange summarise summarise_at
+#' @importFrom dplyr bind_rows arrange summarise summarise_at mutate_if
 #' @importFrom dplyr intersect select rename do slice pull
 #' @importFrom dplyr if_else summarise_each is.tbl select
 #' @importFrom dplyr group_by ungroup n left_join
