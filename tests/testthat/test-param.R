@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -23,8 +23,6 @@ options("mrgsolve_mread_quiet"=TRUE)
 
 context("test-param")
 
-mod <- mrgsolve::house()  
-
 test_that("params are constructed", {
   x <- param(A = 1, B = 2)  
   expect_is(x, "parameter_list")
@@ -38,32 +36,85 @@ test_that("params are constructed", {
 })
 
 test_that("params are accessed", {
+  mod <- house()
   expect_identical(mod$CL, unname(mod@param@data$CL))
   expect_identical(mod[["KA"]], unname(mod@param@data$KA))
 })
 
-test_that("params are updated", {
-  mod <- mrgsolve::house()
+test_that("params are updated from dots [SLV-TEST-0013]", {
+  mod <- house()
   mod2 <- param(mod, CL = 55, VC = 111)
   expect_equal(mod2$CL,55)
   expect_equal(mod2$VC,111)
+})
   
-  mod2 <- update(mod, param = list(CL=99, KA = 9))
+test_that("params are updated from list [SLV-TEST-0014]", {
+  mod2 <- update(house(), param = list(CL=99, KA = 9))
   expect_equal(mod2$CL,99)
   expect_equal(mod2$KA,9)
-  
+})
+
+test_that("params are update from data frame [SLV-TEST-0015]", {
   data <- data.frame(CL = 44, D1 = 999)
+  mod <- house()
   mod2 <- param(mod, data)
   expect_equal(mod2$CL,44)
   expect_equal(mod2$D1,999)
-  expect_equal(mod$VC,mod2$VC)
+  expect_equal(mod$VC, mod2$VC)
+})
   
-  expect_error(param(mod, KYLE = 2))
-  expect_error(param(mod, KA = "A"))
+test_that("param update errors or warnings [SLV-TEST-0016]", {
+  mod <- house()
+  expect_error(
+    param(mod, KYLE = 2, CL = 5), 
+    regexp = "[param-update] not a model parameter", 
+    fixed = TRUE
+  )
+  expect_error(
+    param(mod, KA = "A", CL = 1), 
+    regexp = "[param-update] parameters must be single numeric values.", 
+    fixed = TRUE
+  )
+  expect_warning(
+    param(mod, list(ABC = 123)), 
+    regexp="[param-update] no matching items to update", 
+    fixed = TRUE
+  )
+  expect_error(
+    param(mod, list()), 
+    regexp ="[param-update] all parameters must have names",
+    fixed = TRUE
+  )
+  expect_error(
+    param(mod, list(CL = 5, 2)), 
+    regexp ="[param-update] all parameters must have names",
+    fixed = TRUE
+  )
+  expect_silent(param(mod, NULL))
+  expect_error(
+    param(mod, list(CL = factor(5))), 
+    regexp ="[param-update] parameters must be single numeric values", 
+    fixed = TRUE
+  )
+})
+
+test_that("non-parameter character values are ignored  [SLV-TEST-0017]", {
+  mod <- house()
+  expect_silent(mod <- param(mod, list(CL = 5, ABC = "abc")))
+  expect_s4_class(mod, class="mrgmod")
+})
+
+test_that("param update can be strict  [SLV-TEST-0018]", {
+  mod <- house()
+  expect_error(
+    param(mod, list(CL = 1, KYLE = 2), .strict = TRUE), 
+    regexp = "[param-update] not a model parameter", 
+    fixed = TRUE
+  )
 })
 
 test_that("params are shown", {
-  mod <- mrgsolve::house()
+  mod <- house()
   x <- capture.output(param(mod))
   expect_match(x[2], "Model parameters")
 })

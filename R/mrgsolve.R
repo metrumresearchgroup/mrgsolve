@@ -576,10 +576,8 @@ do_mrgsim <- function(x,
   parin$tad <- tad
   parin$nocb <- nocb
   parin$do_init_calc <- !skip_init_calc
-  parin$verbose <- verbose
   parin$ss_fixed <- ss_fixed
   parin$ss_n <- ss_n
-  parin$request <- Cmti(x)-1L
   parin$interrupt <- interrupt
   
   if(tad && any(x@capture =="tad")) {
@@ -625,16 +623,10 @@ do_mrgsim <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    as.numeric(Param(x)),
-    Pars(x),
-    as.numeric(Init(x)),
-    Cmt(x),
-    CAPTUREI(x),
     pointers(x),
-    data,idata,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir, 
+    data,
+    idata,
+    x,
     PACKAGE = "mrgsolve"
   )
   
@@ -795,7 +787,6 @@ qsim <- function(x,
   parin$nocb <- TRUE
   parin$do_init_calc <- !skip_init_calc
   
-  parin$request <- Cmti(x)-1L
   parin$carry_data <- character(0)
   parin$carry_idata <- character(0)
   parin$carry_tran <- character(0)
@@ -814,16 +805,9 @@ qsim <- function(x,
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
-    as.numeric(Param(x)),
-    Pars(x),
-    as.numeric(Init(x)),
-    Cmt(x),
-    CAPTUREI(x),
     pointers(x),
     data,idata,
-    as.matrix(omat(x)),
-    as.matrix(smat(x)),
-    x@envir, 
+    x,
     PACKAGE = "mrgsolve"
   )
   

@@ -32,6 +32,8 @@ arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 
 arma::mat MVGAUSS(arma::mat& OMEGA_,int n);
 
+arma::mat MAKEMATRIX(const Rcpp::S4& matlist);
+
 template <class T>
 void sort_unique(T& a) {
   std::sort(a.begin(), a.end());

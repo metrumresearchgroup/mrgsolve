@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,22 +16,23 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 # this won't get included in coverage since it's copied into the class def
+
 # nocov start
 valid.matlist <- function(object) {
   
   labels <- names(object@data)[names(object@data) != "..."]
   
-  x1 <- all(sapply(object@data, is.matrix))
-  x2 <- all(sapply(object@data, is.numeric))
+  x1 <- all(vapply(object@data, is.matrix, TRUE))
+  x2 <- all(vapply(object@data, is.numeric, TRUE))
   
   x3 <- (!any(duplicated(labels))) | length(labels)==0
   
-  x4 <- all(sapply(object@data, det)>=0)
+  x4 <- all(vapply(object@data, FUN = det, FUN.VALUE = 1.23) >= 0)
   
   x5 <- mapply(object@data, object@labels, FUN=function(x,y) {
     nrow(x) == length(y)
-  }) %>% all
-  
+  })
+  x5 <- all(x5)
   
   x <- x1 & x2 & x3 & x4 & x5
   
@@ -47,14 +48,14 @@ valid.matlist <- function(object) {
   }
   
   if(!x4) {
-    y <- which(!sapply(object@data, det) > 0)
+    y <- which(!vapply(object@data, FUN = det, FUN.VALUE = 1.23) >= 0)
     message("Problem with this matrix:")
     print(object@data[y])
     out <- c(out, "Invalid matrix: determinant is less than 0.")
   }
   if(!x5) {
-    n1 <- paste(sapply(object@data,   nrow),collapse=",")
-    n2 <- paste(sapply(object@labels, length),collapse=',')
+    n1 <- paste(vapply(object@data,   nrow, 1L), collapse = ",")
+    n2 <- paste(vapply(object@labels, length, 1L), collapse = ',')
     out <- c(
       out, 
       paste0("Length of labels (", n2, ") does not match the matrix rows (", n1, ").")

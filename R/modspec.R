@@ -767,6 +767,9 @@ get_valid_capture <- function(param, omega, sigma, build, mread.env) {
     build[["cpp_variables"]][["var"]], 
     mread.env[["autov"]]
   )
+  if(isTRUE(mread.env[["using_nm-vars"]])) {
+    ans <- c(ans, build[["nm-vars"]][["match"]][["match"]])  
+  }
   unique(ans)
 }
 

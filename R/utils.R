@@ -77,11 +77,20 @@ combine_list <- function(left, right) {
   left
 }
 
-update_list <- function(left, right) {
+update_list <- function(left, right, context = NULL) {
   if(!all(is.list(left),is.list(right))) {
-    stop("input are not lists")
+    msg <- "input are not lists"
+    context <- paste0("[", context, "]")
+    msg <- paste(context, msg)
+    stop(msg)
   }
   common <- intersect(names(left), names(right))
+  if(is.character(context) && length(common)==0) {
+    msg <- "no matching items to update."
+    context <- paste0("[", context, "]")
+    msg <- paste(context, msg)
+    warning(msg)
+  }
   left[common] <-  right[common]
   left
 }
@@ -423,6 +432,7 @@ charthere <- function(x,w,fx=TRUE) {
 null_list <- setNames(list(), character(0))
 
 single.number <- function(x) length(x)==1 & is.numeric(x)
+bare_numeric <- function(x) is.numeric(x) && !is.object(x)
 
 has_name <- function(name, object) {
   name[1] %in% names(object)

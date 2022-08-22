@@ -1,5 +1,42 @@
 # Please add stories at the top ------------------------------------------
-
+SLV-0008: 
+  name: Dose and reset
+  description: > 
+    As a user, I want mrgsolve to dose and reset using evid 4.
+  ProductRisk: low-risk
+  tests:
+  - SLV-TEST-0019
+SLV-S007: 
+  name: update parameter list
+  description: > 
+    As a user, I want to update the parameter list in a model object.
+  ProductRisk: low-risk
+  tests:
+  - SLV-TEST-0013
+  - SLV-TEST-0014
+  - SLV-TEST-0015
+  - SLV-TEST-0016
+  - SLV-TEST-0017
+  - SLV-TEST-0018
+SLV-S006:
+  name: Columns with class attribute are dropped from input data.
+  description: > 
+    As a user, I want mrgsolve to drop columns in input data frames which 
+    have a class attribute. 
+  ProductRisk: low-risk
+  tests: 
+    - SLV-TEST-0011
+    - SLV-TEST-0012
+SLV-S005: 
+  name: dynamic capture
+  description: > 
+    As a user, I want to name model variables for capture at 
+    compile time in the mread call.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0008
+  - SLV-TEST-0009
+  - SLV-TEST-0010
 SLV-S004: 
   name: evid 3 with lag time
   description: > 

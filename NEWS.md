@@ -1,3 +1,38 @@
+# mrgsolve 1.0.5
+
+- Changed behavior for dosing records where EVID = 4 and SS != 0 
+  to match what is done by NONMEM: the system will be advanced to 
+  steady-state but will not be reset; behavior prior to 1.0.5 
+  release was to advance to steady-state and then reset (#1011).
+
+- Any column in an input data set that has a class attribute will
+  now be dropped in addition to non-numeric columns; this includes
+  columns that are `integer64` which can be present in data frames
+  derived from `data.table::fread()` or other `.csv` readers 
+  (#1008).
+
+- The `$MAIN` and `$TABLE` blocks will no longer get called for 
+  _actual_ dose administration records with lag times; this could 
+  change time after dose calculations or other calculations that 
+  could be happening in those blocks when the _actual_ administration 
+  is taking place (#992). 
+
+- Code to update the parameter list was re-factored to be much more 
+  efficient (#978).
+
+## Bugs Fixed
+
+- Fix bug where apparent dosing events for additional doses with lag
+  times were not getting scheduled (only records for the _actual_ 
+  administration); this doesn't change the simulated output but could
+  change time after dose calculation (#992).
+
+- Fix bug where special `nm-vars` variables were not getting recognized 
+  as valid capture items during dynamic capture (#987).
+
+- Fix bug when updating the parameter list with a data frame that included
+  non-numeric columns that were not parameters (#978). 
+
 # mrgsolve 1.0.4
 
 - Fix bug where `as_data_frame()` was not properly working when leading event

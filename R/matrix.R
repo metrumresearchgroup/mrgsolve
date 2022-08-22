@@ -33,6 +33,7 @@ decorr <- function(x) {
   return(invisible(.Call(`_mrgsolve_dcorr`, x)))
 }
 
+
 ##' Create a square numeric matrix from the lower-triangular elements
 ##'
 ##' @param x numeric data

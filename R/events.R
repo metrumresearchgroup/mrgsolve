@@ -161,6 +161,7 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
         rownames(data) <- NULL
       } else {
         data <- expand_event_object(data,ID)
+        rownames(data) <- NULL
       }
       
     } else {

@@ -46,6 +46,7 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Id = 1;
   Fromdata=false;
   Armed = false;
+  Lagged = false;
 }
 
 
@@ -64,6 +65,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Output = true;
   Armed = false;
   Fromdata = true;
+  Lagged = false;
 }
 
 // Data set event
@@ -84,6 +86,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
   Output = false;
   Armed = true;
   Fromdata = false;
+  Lagged = false;
 }
 
 
@@ -106,6 +109,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_,
   Output = false;
   Armed = true;
   Fromdata = false;
+  Lagged = false;
 }
 
 
@@ -185,21 +189,22 @@ void datarecord::implement(odeproblem* prob) {
     prob->y(eq_n, Amt);
     break;
   case 4:
-    for(int i=0; i < prob->neq(); ++i) {
-      prob->y(i,0.0);
-      prob->on(i);
-      prob->rate0(i,0.0);
-    } {
-      prob->init_call(Time);
-      if(!Armed) break;
-      if(Rate > 0) {
-        this->evid(5);
-      } else {
-        this->evid(1);
+    if(this->ss()==0) {
+      for(int i=0; i < prob->neq(); ++i) {
+        prob->y(i,0.0);
+        prob->on(i);
+        prob->rate0(i,0.0);
       }
-      this-> implement(prob);
-      return;
+      prob->init_call(Time);
     }
+    if(!Armed) break;
+    if(Rate > 0) {
+      this->evid(5);
+    } else {
+      this->evid(1);
+    }
+    this-> implement(prob);
+    return;
   }
   prob->lsoda_init();
 }
@@ -533,9 +538,19 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
 }
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
-                          bool addl_ev_first, const unsigned int maxpos, double Fn) {
+                          bool addl_ev_first, 
+                          const unsigned int maxpos, double Fn, 
+                          double lagt) {
   
-  if(Addl ==0) return;
+  if(Addl==0) return;
+  
+  bool add_parent_doses = lagt > 1e-12;
+  
+  int n_dose = Addl;
+  
+  if(add_parent_doses) {
+    n_dose = n_dose + n_dose;
+  }
   
   unsigned int this_evid = Evid;
   
@@ -543,27 +558,29 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  if(this->int_infusion()) {
-    thisi.reserve(thisi.size() + Addl);  
-  } else {
-    thisi.reserve(thisi.size() + Addl); 
-  }
-  
+  thisi.reserve(thisi.size() + n_dose); 
+
   double ontime = 0;
   
   int mp = 1000000000;
   
   int nextpos = addl_ev_first ?  -1000000000 : mp;
   
-  for(unsigned int k=1; k<=Addl; ++k) {
+  for(unsigned int k = 1; k <= Addl; ++k) {
     
     ontime = Time + Ii*double(k);
     
     if(ontime > maxtime) break;
     
+    if(add_parent_doses) {
+      rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, ontime-lagt, Rate, nextpos, Id);
+      ev_parent -> unarm(); 
+      ev_parent -> phantom_rec();
+      thisi.push_back(ev_parent);      
+    }
+    
     rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
-    
+    evon->Lagged = Lagged;
     thisi.push_back(evon);
-    
   }
 }  

@@ -290,27 +290,42 @@ update_matlist <-  function(x,y,open=FALSE,context="update_matlist",...) {
 #' @export
 #' @param y another object involved in update
 setMethod("update", "omegalist", function(object,y,...) {
-  update_matlist(object, omat(y),context="omat",...)
+  update_matlist(object, omat(y), context = "omat",...)
 })
 
 #' @rdname update
 #' @export
-setMethod("update", "sigmalist", function(object,y,...) {
-  update_matlist(object, smat(y),context="smat",...)
+setMethod("update", "sigmalist", function(object,y, ...) {
+  update_matlist(object, smat(y), context = "smat", ...)
 })
 
 #' @rdname update
 #' @param .y data to update
 #' @export
-setMethod("update", "parameter_list", function(object,.y,...) {
-  object <- as.param(
-    merge.list(
-      object@data, as.param(.y)@data, context="param"
-    )
+setMethod("update", "parameter_list", function(object, .y, ...) {
+  
+  # parameter update: must have names
+  if(!is_named(.y)) {
+    wstop("[param-update] all parameters must have names.")  
+  }
+  
+  # parameter update: must be numeric
+  non_nu <- !vapply(.y, FUN = single.number, TRUE)
+  if(any(non_nu)) {
+    w <- names(.y)[non_nu]
+    w <- w[w %in% names(object@data)]
+    if(length(w) > 0) {
+      wstop("[param-update] parameters must be single numeric values.")  
+    }
+  }
+
+  object@data <- update_list(
+    object@data, 
+    .y, 
+    context = "param-update"
   )
   object
 })
-
 
 #' Update parameters, initials, and settings within a model object
 #' 
