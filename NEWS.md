@@ -8,7 +8,8 @@
 - Any column in an input data set that has a class attribute will be
   now be dropped in addition to non-numeric columns; this includes
   columns that are `integer64` which can be present in data frames
-  derived from `data.table::fread()` (#1008).
+  derived from `data.table::fread()` or other `.csv` readers 
+  (#1008).
 
 - The `$MAIN` and `$TABLE` blocks will no longer get called for 
   _actual_ dose administration records with lag times; this could 
@@ -22,9 +23,9 @@
 ## Bugs Fixed
 
 - Fix bug where apparent dosing events for additional doses with lag
-  times were not getting scheduled (only records the _actual_ administration);
-  this doesn't change the simulated output but could change time after dose
-  calculation (#992).
+  times were not getting scheduled (only records for the _actual_ 
+  administration); this doesn't change the simulated output but could
+  change time after dose calculation (#992).
 
 - Fix bug where special `nm-vars` variables were not getting recognized 
   as valid capture items during dynamic capture (#987).
