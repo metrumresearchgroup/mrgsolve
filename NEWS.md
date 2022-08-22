@@ -5,7 +5,7 @@
   steady-state but will not be reset; behavior prior to 1.0.5 
   release was to advance to steady-state and then reset (#1011).
 
-- Any column in an input data set that has a class attribute will be
+- Any column in an input data set that has a class attribute will
   now be dropped in addition to non-numeric columns; this includes
   columns that are `integer64` which can be present in data frames
   derived from `data.table::fread()` or other `.csv` readers 
