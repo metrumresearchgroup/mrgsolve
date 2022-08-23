@@ -2,7 +2,7 @@
 
 ## Bugs Fixed
 
-- Fix bug where parameter and compartments lists were not getting generated 
+- Fix bug where parameter and compartment lists were not getting generated 
   properly when `mrgsolve` was not loaded (#1013).
 
 # mrgsolve 1.0.5
