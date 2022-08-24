@@ -1,3 +1,10 @@
+# mrgsolve (development version)
+
+## Bugs Fixed
+
+- Fix bug where parameter and compartment lists were not getting generated 
+  properly when `mrgsolve` was not loaded (#1013).
+
 # mrgsolve 1.0.5
 
 - Changed behavior for dosing records where EVID = 4 and SS != 0 
