@@ -716,8 +716,10 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
   Rcpp::List ans;
   
   Rcpp::Environment envir = mod.slot("envir");
-  Rcpp::List lparam = mod.slot("param");
-  Rcpp::List linit = mod.slot("init");
+  Rcpp::S4 paramS4 = mod.slot("param");
+  Rcpp::List lparam = paramS4.slot("data");
+  Rcpp::S4 initS4 = mod.slot("init");
+  Rcpp::List linit = initS4.slot("data");
   Rcpp::CharacterVector capture = mod.slot("capture");
   
   lparam = Rcpp::clone(lparam);

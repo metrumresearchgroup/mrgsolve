@@ -87,12 +87,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   request = request - 1;
   
   // Parameters; clone names
-  const Rcpp::List Param = mod.slot("param");
+  const Rcpp::S4 ParamS4 = mod.slot("param");
+  const Rcpp::List Param = ParamS4.slot("data");
   Rcpp::CharacterVector paramnames(Param.names());
   paramnames = Rcpp::clone(paramnames);
   
   // Compartments; clone names
-  const Rcpp::List Init = mod.slot("init");
+  const Rcpp::S4 InitS4 = mod.slot("init");
+  const Rcpp::List Init = InitS4.slot("data");
   Rcpp::CharacterVector cmtnames(Init.names());
   cmtnames = Rcpp::clone(cmtnames);
   Rcpp::NumericVector init(Init.size());
