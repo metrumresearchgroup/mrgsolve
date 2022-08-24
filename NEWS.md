@@ -1,9 +1,10 @@
-# mrgsolve (development version)
+# mrgsolve 1.0.6
 
 ## Bugs Fixed
 
-- Fix bug where parameter and compartment lists were not getting generated 
-  properly when `mrgsolve` was not loaded (#1013).
+- Fix bug in `TOUCH_FUNS` where parameter and compartment lists were not 
+  getting generated properly when `mrgsolve` was not loaded; bug was
+  detected and fixed prior to any release (#1013).
 
 # mrgsolve 1.0.5
 
