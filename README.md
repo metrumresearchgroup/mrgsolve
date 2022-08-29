@@ -36,7 +36,7 @@ install.packages("mrgsolve")
 Install the current development version
 
 ``` r
-remotes::install_github("metrumresearchgroup/mrgsolve@dev")
+remotes::install_github("metrumresearchgroup/mrgsolve@develop")
 ```
 
 ## Interaction
