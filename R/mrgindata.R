@@ -180,7 +180,11 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
     signal_drop(dm, x, to_signal, context = "[data-set]")
   }
   
-  check_data_set_na(dm,m)
+  has_na <- check_data_set_na(dm,m)
+  
+  if(has_na) {
+    dm <- fill_tran_na(dm)  
+  }
   
   dm <- cbind(dm, matrix(0,
                          ncol=1,
@@ -252,7 +256,7 @@ valid_data_set.matrix <- function(x,verbose=FALSE) {
 }
 
 check_data_set_na <- function(data,m) {
-  if(!anyNA(data)) return(invisible(NULL))
+  if(!anyNA(data)) return(invisible(FALSE))
   err <- FALSE
   flagged <- check_column_na(
     data,
@@ -266,7 +270,7 @@ check_data_set_na <- function(data,m) {
   }
   flagged <- check_column_na(
     data,
-    c("ID","TIME", "time", "RATE", "rate")
+    c("ID", "TIME", "time", "cmt", "CMT")
   )
   for(col in flagged) {
     message(
@@ -277,7 +281,7 @@ check_data_set_na <- function(data,m) {
     err <- TRUE
   }  
   if(err) stop("Found missing values in input data.", call.=FALSE)
-  return(invisible(NULL))
+  return(invisible(TRUE))
 }
 
 check_column_na <- function(data, cols) {
@@ -287,9 +291,19 @@ check_column_na <- function(data, cols) {
   flagged <- character(0)
   for(col in check) {
     if(anyNA(data[,col])) {
-      flagged <- c(flagged,col)
+      flagged <- c(flagged, col)
     }
   }
   return(flagged)
 }
 
+fill_tran_na <- function(data) {
+  cols <- c("amt", "ii", "ss", "addl", "rate", "evid")
+  cols <- c(cols, toupper(cols))
+  to_zero <- check_column_na(data, cols)
+  for(col in to_zero) {
+    to_replace <- is.na(data[,col])
+    data[to_replace, col] <- 0
+  }
+  data
+}

@@ -194,3 +194,11 @@ test_that("integer64 columns are dropped from idata_set  [SLV-TEST-0012]", {
     fixed = TRUE
   )
 })
+
+test_that("NA in nm-tran data items are converted to zeros [SLV-TEST-0013]", {
+  data <- expand.ev(amt = 100, ii = 12, addl = 2, rate = 5, ss = 1, ID = 1:2)  
+  
+  
+  
+})
+
