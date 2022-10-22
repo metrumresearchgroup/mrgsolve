@@ -276,12 +276,25 @@ check_data_set_na <- function(data,m) {
     message(
       col, 
       " column must not contain missing values.", 
-      call.=FALSE,immediate.=TRUE
+      call.=FALSE, immediate.=TRUE
     ) 
     err <- TRUE
   }  
   if(err) stop("Found missing values in input data.", call.=FALSE)
   return(invisible(TRUE))
+}
+
+#' Look for TRAN columns replace NA with 0
+#' Columns to scan are found in `GLOBALS$TRAN_FILL_NA`
+#' @keywords internal
+#' @noRd
+fill_tran_na <- function(data) {
+  cols_to_zero <- check_column_na(data, GLOBALS[["TRAN_FILL_NA"]])
+  for(col in cols_to_zero) {
+    to_zero <- is.na(data[,col])
+    data[to_zero, col] <- 0
+  }
+  data
 }
 
 check_column_na <- function(data, cols) {
@@ -295,15 +308,4 @@ check_column_na <- function(data, cols) {
     }
   }
   return(flagged)
-}
-
-fill_tran_na <- function(data) {
-  cols <- c("amt", "ii", "ss", "addl", "rate", "evid")
-  cols <- c(cols, toupper(cols))
-  to_zero <- check_column_na(data, cols)
-  for(col in to_zero) {
-    to_replace <- is.na(data[,col])
-    data[to_replace, col] <- 0
-  }
-  data
 }
