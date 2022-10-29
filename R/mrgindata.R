@@ -245,8 +245,8 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   dm
 }
 
-##' @rdname valid_data_set
-##' @export
+#' @rdname valid_data_set
+#' @export
 valid_data_set.matrix <- function(x,verbose=FALSE) {
   if(is.valid_data_set(x)) return(x)
   if(is.numeric(x)) {
