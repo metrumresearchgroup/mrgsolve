@@ -50,6 +50,7 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
   
   env$win <- .Platform$OS.type=="windows"
   
+  
   ## Both project and soloc get normalized
   if(!file_writeable(soloc)) {
     if(file_writeable(dirname(soloc))) {
@@ -93,7 +94,11 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
     }
   }
   
-  env$md5 <- tools::md5sum(env$modfile)
+  env$md5 <- md5sum(env$modfile)
+  
+  parts <- file_name_parts(env$modfile)
+  env$root <- parts$root
+  env$ext <- parts$ext
   
   env$package <- ifelse(udll, rfile(model), new_model)
   

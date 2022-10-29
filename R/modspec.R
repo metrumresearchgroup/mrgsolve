@@ -650,10 +650,12 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   return(envir)
 }  
 
-parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) {
+parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
-  mread.env$project <- project
+  mread.env$project <- build[["project"]]
+  mread.env$model <- build[["model"]]
+  mread.env$root <- build[["root"]]
   mread.env$param <- vector("list", n)
   mread.env$fixed <- vector("list", n)
   mread.env$init  <- vector("list", n)

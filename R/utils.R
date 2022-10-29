@@ -645,3 +645,19 @@ mod_first <- function(cl) {
   msg <- sprintf("the first argument to %s must be a model object",fun)
   wstop(msg)
 }
+
+#' Look at a file name and get the parts ... root and extension 
+file_name_parts <- function(x) {
+  x <- basename(x)
+  ans <- list()
+  pos <- regexpr("\\.([A-Za-z]+)$", x)
+  ans$has_ext <- TRUE
+  if(pos > -1L) {
+    ans$ext <- substring(x, pos + 1L)
+  } else {
+    ans$ext <- ""
+    ans$has_ext <- FALSE
+  }
+  ans$root <- substring(x, 1, pos - 1L)
+  ans
+}

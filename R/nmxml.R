@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2022  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #

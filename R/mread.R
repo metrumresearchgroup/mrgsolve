@@ -214,7 +214,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   mread.env <- parse_env(
     spec,
     incoming_block_names,
-    project = build[["project"]], 
+    build,
     ENV
   )
   
