@@ -654,8 +654,8 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
   mread.env$project <- build[["project"]]
-  mread.env$model <- build[["model"]]
   mread.env$root <- build[["root"]]
+  mread.env$ext <- build[["ext"]]
   mread.env$param <- vector("list", n)
   mread.env$fixed <- vector("list", n)
   mread.env$init  <- vector("list", n)

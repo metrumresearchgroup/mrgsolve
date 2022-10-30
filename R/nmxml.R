@@ -95,13 +95,14 @@ nmxml <- function(run = numeric(0), project = character(0),
     on.exit(setwd(cwd))
     setwd(env[["project"]])
   }
-  
+
   if(!missing(path)) {
     target <- path
   } else {
     if(missing(run) | missing(project)) {
       wstop("both file and run or project are missing")
     }
+    if(run=="cppstem") run <- env$root      
     target <- file.path(project, run, paste0(run, ".xml"))
   }
 

@@ -37,7 +37,7 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
     file <- paste0(model,".cpp")
   }
   
-  new_model <- gsub(".", "_", model, fixed = TRUE)
+  new_model <- gsub(".", "-", model, fixed = TRUE)
   
   if(any(charthere(project,"\n"))) {
     stop(
