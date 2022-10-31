@@ -353,3 +353,19 @@ test_that("nm source file is available via as.list", {
   expect_equal(basename(list2[["nm_import"]]), ans[2])
   expect_equal(basename(list3[["nm_import"]]), ans)
 })
+
+test_that("use cpp file stem as nm run number nmext", {
+  skip_if_not(file.exists("nm/cppstem-nmext/1005.cpp"))
+  mod <- mread("1005", project = "nm/cppstem-nmext")
+  expect_is(mod, "mrgmod")
+  nmext_file <- basename(as.list(mod)[["nm_import"]])
+  expect_equal(nmext_file, "1005.ext")
+})
+
+test_that("use cpp file stem as nm run number nmxml", {
+  skip_if_not(file.exists("nm/cppstem-nmxml/1005.cpp"))
+  mod <- mread("1005", project = "nm/cppstem-nmxml")
+  expect_is(mod, "mrgmod")
+  nmext_file <- basename(as.list(mod)[["nm_import"]])
+  expect_equal(nmext_file, "1005.xml")
+})

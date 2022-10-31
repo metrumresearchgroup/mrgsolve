@@ -646,7 +646,12 @@ mod_first <- function(cl) {
   wstop(msg)
 }
 
-#' Look at a file name and get the parts ... root and extension 
+#' Parse a file name
+#' @param x a file name to parse.
+#' @return 
+#' A list with `ext`, `root` and `has_ext`.
+#' @keywords internal
+#' @noRd
 file_name_parts <- function(x) {
   x <- basename(x)
   ans <- list()
