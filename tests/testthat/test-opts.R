@@ -21,6 +21,8 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+source("helper-build.R")
+
 context("test-opts")
 
 test_that("Options where they don't belong", {

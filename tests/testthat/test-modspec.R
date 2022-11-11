@@ -25,6 +25,8 @@ context("test-modspec")
 
 options(mrgsolve_mread_quiet=TRUE)
 
+source("helper-build.R")
+
 mtemp <- function(...) {
   mcode(model=basename(tempfile()),..., compile=FALSE)
 }

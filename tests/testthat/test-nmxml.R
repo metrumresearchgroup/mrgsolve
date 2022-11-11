@@ -28,7 +28,7 @@ if(!requireNamespace("xml2",quietly=TRUE)) skip("xml2 is not installed.")
 
 code <- '
 $NMXML
-project=file.path(path.package("mrgsolve"), "nonmem")
+project = file.path(path.package("mrgsolve"), "nonmem")
 run  = 1005
 oname="OMEGA", sname="SIGMA"
 sigma=TRUE

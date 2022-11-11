@@ -1,4 +1,4 @@
 [ nmxml ] 
-run = "cppstem"
-project = "nonmem"
+run = "@cppstem"
+project = "../nonmem"
 root = "cppfile"
