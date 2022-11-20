@@ -1,4 +1,13 @@
 # Please add stories at the top ------------------------------------------
+SLV-0010: 
+  name: share root with NONMEM
+  description: > 
+    As a user, I want to ask NMXML and NMEXT blocks to infer the root of the
+    NONMEM control stream from the root of the mrgsolve file. 
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0021
+  - SLV-TEST-0022
 SLV-0008: 
   name: Dose and reset
   description: > 
