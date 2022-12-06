@@ -22,7 +22,10 @@
 #ifndef MRGX_H
 #define MRGX_H
 
-#include "modelheader.h"
+
+//#include "modelheader.h"
+//#include "databox_cpp.h"
+#include "mrgsolv.h"
 
 /** 
  * @defgroup mrgx mrgx functions

@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifndef DATABOX_CPP_H
+#define DATABOX_CPP_H
+
 void databox::mevent(double time, int evid) {
   mrgsolve::evdata ev(time,evid);
   mevector.push_back(ev);
@@ -39,3 +43,5 @@ double databox::tad() {
   if((evid == 1) || (evid == 4)) told = time;
   return told < 0 ? -1.0 : time - told;
 }
+
+#endif
