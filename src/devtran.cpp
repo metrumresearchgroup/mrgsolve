@@ -299,6 +299,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if(neta > 0) {
     prob.set_eta();
     eta = prob.mv_omega(NID);
+    //eta = dat.get_etas(neta);
   }
   
   arma::mat eps;  

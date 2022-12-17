@@ -565,6 +565,39 @@ void dataobject::carry_out(const recstack& a,
   }
 }
 
+
+// Looks at `Data` and finds ETA1, ETA2, ETA3 etc and forms matrix of 
+// ETA to use in place of ETAS simulated from OMEGA.
+arma::mat dataobject::get_etas(const int n) {
+  
+  Rcpp::CharacterVector::iterator bg = Data_names.begin();
+  Rcpp::CharacterVector::iterator ed = Data_names.end();
+  
+  Rcpp::IntegerVector ret(n);
+  unsigned int column_index; 
+  for(int i = 1; i <= n; ++i) {
+    std::string eta_label = "ETA" + std::to_string(i);
+    column_index = std::find(bg, ed, eta_label) - bg;
+    if(column_index < (Data_names.size())) {
+      ret[i-1] = column_index;
+    } else {
+     ret[i-1] = Data.ncol()-1; 
+    }
+  }
+  
+  Rcpp::NumericMatrix ans(Uid.size(), n); 
+  for(size_t i = 0; i < Uid.size(); ++i) {
+    int start_row = Startrow[i];
+    for(int j = 0; j < ret.size(); ++j) {
+      ans(i, j) = Data(start_row, ret[j]);    
+    }
+  }
+  
+  arma::mat ans_mat(ans.begin(), ans.nrow(), ans.ncol(), false );
+  return ans_mat;
+}
+
+
 // SAVE FOR LATER
 // void dataobject::expand_records(recstack& a, 
 //                                 dataobject& idat,
