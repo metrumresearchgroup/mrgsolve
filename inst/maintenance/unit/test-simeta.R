@@ -30,12 +30,17 @@ $OMEGA 2 2 2
 $SIGMA 2 2
 
 $MAIN
+if(mode==0) {
+  capture a = ETA(1); 
+  capture b = ETA(2); 
+  capture c = ETA(3);  
+}
 
 if(mode==1) { 
   simeta();
-  capture a = ETA(1); 
-  capture b = ETA(2); 
-  capture c = ETA(3);
+  a = ETA(1); 
+  b = ETA(2); 
+  c = ETA(3);
 }
 
 if(mode==2) {
@@ -66,8 +71,8 @@ if(mode==5) {
   b = EPS(2);
   c = 9;
 }
-
 '
+
 mod <- mcode("simeta-n", code, end = 6, delta = 2)
 
 test_that("resimulate all eta", {
@@ -199,4 +204,36 @@ test_that("warn when simeps(n) is called with off diagonals", {
   simeps(1);
   ' 
   expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
+})
+
+test_that("pass ETAn on the data set", {
+  mod <- param(mod, mode = 0)
+  data <- expand.ev(amt = 100, ID = 1:4, cmt = 1)  
+  data <- mutate(
+    data, 
+    ETA1 = rev(ID)/10, 
+    ETA3 = ETA1
+  )
+  data <- expand_observations(data, times = 1:5)
+  data <- mutate(data, ETA3 = ifelse(time > 0, -1, ETA3))
+  data <- mutate(data, cmt = 0)
+  
+  set.seed(9812)
+  out <- mrgsim(mod, data, eta_source = 2)
+  expect_true(all(out$b==0))
+  expect_true(all(out$a==out$c))
+  summ_out <- count(as.data.frame(out), ID, a, b, c)
+  summ_dat <- count(data, ID, ETA1)
+  expect_equivalent(summ_out$a, summ_dat$ETA1)
+  
+  set.seed(123)
+  out1 <- mrgsim(mod, data, eta_source = 2)
+  set.seed(456)
+  out2 <- mrgsim(mod, data, eta_source = 2)
+  expect_identical(out1, out2)
+  
+  expect_error(
+    mrgsim(mod, data, eta_source = 3), 
+    regexp="eta_source must be either"
+  )
 })

@@ -568,32 +568,36 @@ void dataobject::carry_out(const recstack& a,
 
 // Looks at `Data` and finds ETA1, ETA2, ETA3 etc and forms matrix of 
 // ETA to use in place of ETAS simulated from OMEGA.
-arma::mat dataobject::get_etas(const int n) {
+arma::mat dataobject::get_etas(const int n_eta) {
   
   Rcpp::CharacterVector::iterator bg = Data_names.begin();
   Rcpp::CharacterVector::iterator ed = Data_names.end();
   
-  Rcpp::IntegerVector ret(n);
+  std::vector<int> eta_location(n_eta);
+  
   unsigned int column_index; 
-  for(int i = 1; i <= n; ++i) {
+  for(int i = 1; i <= n_eta; ++i) {
     std::string eta_label = "ETA" + std::to_string(i);
     column_index = std::find(bg, ed, eta_label) - bg;
-    if(column_index < (Data_names.size())) {
-      ret[i-1] = column_index;
+    if(column_index < Data_names.size()) {
+      eta_location[i-1] = column_index;
     } else {
-     ret[i-1] = Data.ncol()-1; 
+      eta_location[i-1] = -1;  
     }
   }
   
-  Rcpp::NumericMatrix ans(Uid.size(), n); 
+  Rcpp::NumericMatrix ans(Uid.size(), n_eta); 
   for(size_t i = 0; i < Uid.size(); ++i) {
     int start_row = Startrow[i];
-    for(int j = 0; j < ret.size(); ++j) {
-      ans(i, j) = Data(start_row, ret[j]);    
+    for(int j = 0; j < n_eta; ++j) {
+      if(eta_location[j] > 0) {
+        ans(i, j) = Data(start_row, eta_location[j]);
+      }
     }
   }
   
   arma::mat ans_mat(ans.begin(), ans.nrow(), ans.ncol(), false );
+  
   return ans_mat;
 }
 
