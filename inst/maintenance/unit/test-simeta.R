@@ -206,7 +206,7 @@ test_that("warn when simeps(n) is called with off diagonals", {
   expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
 })
 
-test_that("pass ETAn on the data set", {
+test_that("pass ETA on the data set", {
   mod <- param(mod, mode = 0)
   data <- expand.ev(amt = 100, ID = 1:4, cmt = 1)  
   data <- mutate(
@@ -231,6 +231,11 @@ test_that("pass ETAn on the data set", {
   set.seed(456)
   out2 <- mrgsim(mod, data, eta_source = 2)
   expect_identical(out1, out2)
+  
+  out <- mrgsim(mod, data, eta_source = 0)
+  expect_true(all(out$a==0))
+  expect_true(all(out$b==0))
+  expect_true(all(out$c==0))
   
   expect_error(
     mrgsim(mod, data, eta_source = 3), 

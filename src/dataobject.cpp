@@ -586,7 +586,7 @@ arma::mat dataobject::get_etas(const int n_eta) {
     }
   }
   
-  Rcpp::NumericMatrix ans(Uid.size(), n_eta); 
+  arma::mat ans(Uid.size(), n_eta); 
   for(size_t i = 0; i < Uid.size(); ++i) {
     int start_row = Startrow[i];
     for(int j = 0; j < n_eta; ++j) {
@@ -596,9 +596,7 @@ arma::mat dataobject::get_etas(const int n_eta) {
     }
   }
   
-  arma::mat ans_mat(ans.begin(), ans.nrow(), ans.ncol(), false );
-  
-  return ans_mat;
+  return ans;
 }
 
 

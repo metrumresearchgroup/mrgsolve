@@ -297,12 +297,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   arma::mat eta;
   const int neta = prob.neta();
-  if(neta > 0 && eta_source > 0) {
+  if(neta > 0) {
     prob.set_eta();
     if(eta_source==1) {
       eta = prob.mv_omega(NID);  
     } else if(eta_source==2) {
       eta = dat.get_etas(neta);
+    } else if(eta_source==0) {
+      eta = arma::mat(NID,neta);
     } else {
       std::string msg = 
         R"(eta_source must be either:
