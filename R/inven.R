@@ -85,3 +85,11 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   
   return(invisible(x))
 }
+
+find_similar <- function(ref, test) {
+  x <- gsub("[[:punct:]]", "", tolower(ref))
+  y <- gsub("[[:punct:]]", "", tolower(test))
+  ref <- data.frame(ref = ref, join = x)
+  test <- data.frame(test = test, join = y, stringsAsFactors = FALSE)
+  merge(ref, test,  by = "join", sort = FALSE)
+}
