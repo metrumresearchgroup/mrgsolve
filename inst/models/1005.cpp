@@ -17,7 +17,7 @@ Updated 10 Jan 2022 to use autodec and nm-vars plugins.
 
 [ NMXML ] 
 project = system.file("nonmem", package = "mrgsolve")
-run = "cppstem"
+run = "@cppstem"
 
 [ PK ] 
 CL = THETA(1)*exp(ETA(1)) * pow(THETA(6),SEX) * pow(WT/70.0,THETA(7));

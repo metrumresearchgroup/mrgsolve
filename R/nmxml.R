@@ -244,7 +244,9 @@ nmext <- function(run = NA_real_, project = getwd(),
     setwd(env[["project"]])
   }
   
-  if(run=="@cppstem") run <- env$root      
+  if(run=="@cppstem") {
+    run <- env$root
+  }
 
   ans <- read_nmext(
     run = run,

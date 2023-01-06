@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -650,19 +650,22 @@ mod_first <- function(cl) {
 #' @param x a file name to parse.
 #' @return 
 #' A list with `ext`, `root` and `has_ext`.
+#' @details
+#' This follows the approach used in [tools::file_path_sans_ext].
 #' @keywords internal
 #' @noRd
 file_name_parts <- function(x) {
   x <- basename(x)
   ans <- list()
-  pos <- regexpr("\\.([A-Za-z]+)$", x)
-  ans$has_ext <- TRUE
+  pos <- regexpr("\\.([A-Za-z0-9]+)$", x)
   if(pos > -1L) {
+    ans$root <- substring(x, 1, pos - 1L)
     ans$ext <- substring(x, pos + 1L)
+    ans$has_ext <- TRUE
   } else {
+    ans$root <- x
     ans$ext <- ""
     ans$has_ext <- FALSE
   }
-  ans$root <- substring(x, 1, pos - 1L)
   ans
 }

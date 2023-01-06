@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -173,4 +173,16 @@ test_that("gregexecdf", {
   expect_is(ans, "data.frame")
   expect_equal(nrow(ans), 0)
   expect_equal(ncol(ans), 0)
+})
+
+test_that("file_name_parts", {
+  x <- mrgsolve:::file_name_parts("123.abcd")
+  expect_true(x$has_ext)
+  expect_equal(x$ext, "abcd")
+  expect_equal(x$root, "123")
+  
+  x <- mrgsolve:::file_name_parts("123abcd")
+  expect_false(x$has_ext)
+  expect_equal(x$ext, "")
+  expect_equal(x$root, "123abcd")
 })
