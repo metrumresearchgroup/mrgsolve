@@ -260,6 +260,10 @@ block_split_rmd <- function(code, split = FALSE) {
   end <- c(start[-1]-1, length(code))
   ans <- vector("list", length(start))
   for(i in seq_along(start)) {
+    if(start[i] == end[i]) {
+      ans[[i]] <- character(0)
+      next
+    }
     ans[[i]] <- code[seq(start[i]+1, end[i])]  
   }
   mat <- mat[lengths(mat) == 2]
