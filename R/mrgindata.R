@@ -228,7 +228,7 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
     stop("ID is a required column for idata_set.",call.=FALSE)
   }
   
-  if(any(duplicated(x[["ID"]]))) {
+  if(anyDuplicated(x[["ID"]])) {
     stop("Duplicate IDs not allowed in idata_set.",call.=FALSE) 
   }
   
@@ -258,20 +258,14 @@ valid_data_set.matrix <- function(x,verbose=FALSE) {
 check_data_set_na <- function(data,m) {
   if(!anyNA(data)) return(invisible(FALSE))
   err <- FALSE
-  flagged <- check_column_na(
-    data,
-    Pars(m)
-  )
+  flagged <- check_column_na(data, Pars(m))
   for(col in flagged) {
     warning(
       "Parameter column ", col, " must not contain missing values.", 
       call.=FALSE, immediate.=TRUE
     ) 
   }
-  flagged <- check_column_na(
-    data,
-    c("ID", "TIME", "time", "cmt", "CMT")
-  )
+  flagged <- check_column_na(data, c("ID", "TIME", "time"))
   for(col in flagged) {
     message(
       col, 
@@ -298,11 +292,11 @@ fill_tran_na <- function(data) {
 }
 
 check_column_na <- function(data, cols) {
-  check <- unique(cols[cols %in% dimnames(data)[[2]]])
-  if(length(check)==0) return(character(0))
-  if(!anyNA(data[,check])) return(character(0))
+  to_check <- unique(cols[cols %in% dimnames(data)[[2L]]])
+  if(length(to_check)==0L) return(character(0))
+  if(!anyNA(data[,to_check])) return(character(0))
   flagged <- character(0)
-  for(col in check) {
+  for(col in to_check) {
     if(anyNA(data[,col])) {
       flagged <- c(flagged, col)
     }

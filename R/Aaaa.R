@@ -67,8 +67,10 @@ GLOBALS$CARRY_TRAN <- c("a.u.g", GLOBALS[["CARRY_TRAN_UC"]], GLOBALS[["CARRY_TRA
 GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 GLOBALS$TRAN_UPPER <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 GLOBALS$TRAN_LOWER <- tolower(GLOBALS$TRAN_UPPER)
-GLOBALS$TRAN_FILL_NA <- c("AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS")
-GLOBALS$TRAN_FILL_NA <- c(GLOBALS$TRAN_FILL_NA, tolower(GLOBALS$TRAN_FILL_NA))
+GLOBALS$TRAN_FILL_NA <- c(
+  "AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS", 
+  "amt", "cmt", "evid", "ii", "addl", "rate", "ss"
+)
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
