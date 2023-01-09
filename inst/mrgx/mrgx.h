@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2022  Metrum Research Group
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -22,7 +22,7 @@
 #ifndef MRGX_H
 #define MRGX_H
 
-#include "modelheader.h"
+#include "mrgsolv.h"
 
 /** 
  * @defgroup mrgx mrgx functions
@@ -216,4 +216,3 @@ Rcpp::Function mt_fun() {
 }
 
 #endif
-
