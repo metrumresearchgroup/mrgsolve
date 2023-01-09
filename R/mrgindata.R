@@ -301,5 +301,5 @@ check_column_na <- function(data, cols) {
       flagged <- c(flagged, col)
     }
   }
-  return(flagged)
+  flagged
 }
