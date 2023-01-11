@@ -280,14 +280,10 @@ check_data_set_na <- function(data,m) {
 
 #' Look for TRAN columns replace NA with 0
 #' Columns to scan are found in `GLOBALS$TRAN_FILL_NA`
-#' @keywords internal
 #' @noRd
 fill_tran_na <- function(data) {
   cols_to_zero <- check_column_na(data, GLOBALS[["TRAN_FILL_NA"]])
-  for(col in cols_to_zero) {
-    to_zero <- is.na(data[,col])
-    data[to_zero, col] <- 0
-  }
+  data[, cols_to_zero][is.na(data[, cols_to_zero])] <- 0
   data
 }
 

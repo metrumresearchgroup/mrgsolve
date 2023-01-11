@@ -209,6 +209,7 @@ test_that("NA in nm-tran data items are converted to zeros [SLV-TEST-0020]", {
   tmp2 <- tmp
   tmp2$FOO <- NA_real_
   flagged <- mrgsolve:::check_column_na(tmp2, mrgsolve:::GLOBALS$TRAN_FILL_NA)
+  expect_equal(flagged, "ss")
 
   for(col in c("AMT", "cmt", "ii", "SS", "RATE", "evid")) {
     tmp <- data
