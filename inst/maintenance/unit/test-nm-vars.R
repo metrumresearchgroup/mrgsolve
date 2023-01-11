@@ -226,7 +226,7 @@ test_that("nm-vars no frda items", {
   $cmt A1
   $main A_0(1) = 1;
 '
-  mod <- mcode("test nmvars with no frda", code, compile = FALSE)
-  a <- readLines(file.path(soloc(mod), "foo-mread-header.h"))
+  mod <- mcode("u229", code, compile = FALSE)
+  a <- readLines(file.path(soloc(mod), "u229-mread-header.h"))
   expect_false(any(grepl("#define  __[]", a, fixed = TRUE)))
 })
