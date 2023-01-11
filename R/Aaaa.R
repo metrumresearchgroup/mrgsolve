@@ -68,6 +68,7 @@ GLOBALS$PKMODEL_NOT_FOUND <- "Required PK parameters not found: "
 GLOBALS$TRAN_UPPER <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 GLOBALS$TRAN_LOWER <- tolower(GLOBALS$TRAN_UPPER)
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
+GLOBALS$ETA_SOURCE <- c(omega = 1, data = 2, data_strict = 3, zero = 0)
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",

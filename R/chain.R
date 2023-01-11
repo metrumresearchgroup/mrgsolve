@@ -241,3 +241,17 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
   x
 }
 
+#' Manipulate how ETA are generated
+#' 
+#' @param x model object.
+#' @param source the source for ETA in the simulation; see details.
+#' 
+#' @return 
+#' The updated model object is returned. 
+#' 
+#' @export
+eta_source <- function(x, source = c("omega", "data", "data_strict", "zero")) {
+  source <- match.arg(source)
+  x@args[["eta_source"]] <- GLOBALS$ETA_SOURCE[source]
+  x
+}

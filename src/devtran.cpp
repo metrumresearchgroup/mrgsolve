@@ -60,7 +60,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
-  const int eta_source        = Rcpp::as<int>    (parin["eta_source"]);
   obsaug = obsaug & (data.nrow() > 0);
   
   // Grab items from the model object --------------------
@@ -298,11 +297,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat eta;
   const int neta = prob.neta();
   if(neta > 0) {
+    const int eta_source = Rcpp::as<int> (parin["eta_source"]);
     prob.set_eta();
     if(eta_source==1) {
       eta = prob.mv_omega(NID);  
     } else if(eta_source==2) {
-      eta = dat.get_etas(neta);
+      eta = dat.get_etas(neta, false);
+    } else if(eta_source==3) {
+      eta = dat.get_etas(neta, true);
     } else if(eta_source==0) {
       eta = arma::mat(NID,neta);
     } else {
@@ -310,7 +312,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         R"(eta_source must be either:
              0 - all etas set to 0
              1 - simulated from OMEGA
-             2 - imported from data set)";
+             2 - imported from data set
+             3 - imported from data set - strict)";
       CRUMP(msg.c_str());  
     }
   }
