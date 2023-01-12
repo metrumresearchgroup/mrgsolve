@@ -8,6 +8,14 @@ SLV-0010:
   tests: 
   - SLV-TEST-0021
   - SLV-TEST-0022
+SLV-0009:
+  name: Convert NMTRAN colums to NA
+  description: > 
+    As a user, I want mrgsolve to convert NA values in select input data set 
+    columns to 0.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0020
 SLV-0008: 
   name: Dose and reset
   description: > 

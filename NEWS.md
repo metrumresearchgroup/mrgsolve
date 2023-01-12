@@ -1,5 +1,9 @@
 # mrgsolve (development version)
 
+- Refactored include order when building a model; this is an internal update and
+  not expected to be visible to the user (#1038).
+
+
 # mrgsolve 1.0.6
 
 ## Bugs Fixed
