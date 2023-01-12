@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -19,6 +19,6 @@ Sys.setenv("R_TESTS" = "")
 library(magrittr)
 library(mrgsolve)
 library(testthat)
-test_check("mrgsolve", reporter="summary")
 
+test_check("mrgsolve", reporter="summary")
 

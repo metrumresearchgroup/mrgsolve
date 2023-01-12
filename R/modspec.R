@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -630,10 +630,9 @@ scrape_and_call <- function(x,env,pass,...) {
   do.call(pass,o)
 }
 
-dump_opts <- function(x,env,block,...) {
-  hasopt <- unique(c(grep(">>", x, fixed=TRUE),grep("@", x, fixed=TRUE))) 
+dump_opts <- function(x, env, block, ...) {
+  hasopt <- grep("^\\s*(>>|@)", x, perl = TRUE)
   if(length(hasopt)==0) return(x)
-  hasopt <- grep("^\\s*(>>|@)", x[hasopt], perl=TRUE)
   x[-hasopt]
 }
 
@@ -650,10 +649,12 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   return(envir)
 }  
 
-parse_env <- function(spec, incoming_names = names(spec),project,ENV=new.env()) {
+parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   n <- length(spec)
   mread.env <- new.env()
-  mread.env$project <- project
+  mread.env$project <- build[["project"]]
+  mread.env$root <- build[["root"]]
+  mread.env$ext <- build[["ext"]]
   mread.env$param <- vector("list", n)
   mread.env$fixed <- vector("list", n)
   mread.env$init  <- vector("list", n)

@@ -21,6 +21,11 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+new_test_build <- function(model = "pk1", project = tempdir()) {
+  file.copy(file.path(modlib(), paste0(model, ".cpp")), project, overwrite = TRUE)
+  mrgsolve:::new_build(model = model, project = project)
+}
+
 context("test-opts")
 
 test_that("Options where they don't belong", {
@@ -45,7 +50,8 @@ test_that("Scrape and call", {
   >> d = 2
   CL=1, V=2, KA=3
   '
-  e <- mrgsolve:::parse_env(spec=1,project=tempdir())
+
+  e <- mrgsolve:::parse_env(spec=1, build = new_test_build())
   
   code <- trimws(unlist(strsplit(code, "\n")))
   
@@ -58,4 +64,12 @@ test_that("Scrape and call", {
 
 })
 
-
+test_that("dump options from block code", {
+  code <- c("foo", "@bar")
+  ans <- mrgsolve:::dump_opts(code)
+  expect_equal(ans, "foo")
+  
+  code <- c("foo", "bar @yak")
+  ans <- mrgsolve:::dump_opts(code)
+  expect_equal(ans, code)
+})

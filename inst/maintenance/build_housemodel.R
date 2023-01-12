@@ -2,6 +2,7 @@
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(methods))
 suppressPackageStartupMessages(library(glue))
+suppressPackageStartupMessages(library(tools))
 fun <- function() {
   setClass("mrgsims")
   source("R/utils.R")
