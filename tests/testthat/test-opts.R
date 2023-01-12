@@ -64,4 +64,12 @@ test_that("Scrape and call", {
 
 })
 
-
+test_that("dump options from block code", {
+  code <- c("foo", "@bar")
+  ans <- mrgsolve:::dump_opts(code)
+  expect_equal(ans, "foo")
+  
+  code <- c("foo", "bar @yak")
+  ans <- mrgsolve:::dump_opts(code)
+  expect_equal(ans, code)
+})
