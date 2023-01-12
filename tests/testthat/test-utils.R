@@ -175,14 +175,3 @@ test_that("gregexecdf", {
   expect_equal(ncol(ans), 0)
 })
 
-test_that("file_name_parts", {
-  x <- mrgsolve:::file_name_parts("123.abcd")
-  expect_true(x$has_ext)
-  expect_equal(x$ext, "abcd")
-  expect_equal(x$root, "123")
-  
-  x <- mrgsolve:::file_name_parts("123abcd")
-  expect_false(x$has_ext)
-  expect_equal(x$ext, "")
-  expect_equal(x$root, "123abcd")
-})

@@ -366,6 +366,6 @@ test_that("use cpp file stem as nm run number nmxml [SLV-TEST-0022]", {
   skip_if_not(file.exists("nm/cppstem-nmxml/1005.cpp"))
   mod <- mread("1005", project = "nm/cppstem-nmxml")
   expect_is(mod, "mrgmod")
-  nmext_file <- basename(as.list(mod)[["nm_import"]])
-  expect_equal(nmext_file, "1005.xml")
+  nmxml_file <- basename(as.list(mod)[["nm_import"]])
+  expect_equal(nmxml_file, "1005.xml")
 })

@@ -96,10 +96,8 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
   
   env$md5 <- md5sum(env$modfile)
   
-  parts <- file_name_parts(env$modfile)
-  env$root <- parts$root
-  env$ext <- parts$ext
-  
+  env$root <- file_path_sans_ext(basename(env$modfile))
+
   env$package <- ifelse(udll, rfile(model), new_model)
   
   env$compfile <- compfile(new_model)

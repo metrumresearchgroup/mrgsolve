@@ -630,10 +630,8 @@ scrape_and_call <- function(x,env,pass,...) {
   do.call(pass,o)
 }
 
-dump_opts <- function(x,env,block,...) {
-  hasopt <- unique(c(grep(">>", x, fixed = TRUE), grep("@", x, fixed = TRUE))) 
-  if(length(hasopt)==0) return(x)
-  hasopt <- grep("^\\s*(>>|@)", x[hasopt], perl = TRUE)
+dump_opts <- function(x, env, block, ...) {
+  hasopt <- grep("^\\s*(>>|@)", x, perl = TRUE)
   if(length(hasopt)==0) return(x)
   x[-hasopt]
 }

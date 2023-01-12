@@ -33,7 +33,7 @@
 #' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
-#' @importFrom tools md5sum
+#' @importFrom tools md5sum file_path_sans_ext
 #  @importFrom RcppArmadillo armadillo_version
 
 #' @include Aaaa.R

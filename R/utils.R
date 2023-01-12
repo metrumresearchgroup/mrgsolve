@@ -645,27 +645,3 @@ mod_first <- function(cl) {
   msg <- sprintf("the first argument to %s must be a model object",fun)
   wstop(msg)
 }
-
-#' Parse a file name
-#' @param x a file name to parse.
-#' @return 
-#' A list with `ext`, `root` and `has_ext`.
-#' @details
-#' This follows the approach used in [tools::file_path_sans_ext].
-#' @keywords internal
-#' @noRd
-file_name_parts <- function(x) {
-  x <- basename(x)
-  ans <- list()
-  pos <- regexpr("\\.([A-Za-z0-9]+)$", x)
-  if(pos > -1L) {
-    ans$root <- substring(x, 1, pos - 1L)
-    ans$ext <- substring(x, pos + 1L)
-    ans$has_ext <- TRUE
-  } else {
-    ans$root <- x
-    ans$ext <- ""
-    ans$has_ext <- FALSE
-  }
-  ans
-}
