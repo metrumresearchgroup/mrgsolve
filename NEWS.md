@@ -1,8 +1,21 @@
-# mrgsolve (development version)
+# mrgsolve 1.0.7
+
+- `$NMXML` and `$NMEXT` now accept the `run` argument set to `"@cppstem"` (i.e  
+  `run = "@cppstem"`); in this case, the stem of the NONMEM run will be assumed
+  to be the same as the stem of the mrgsolve model file (#1025).
+
+- Missing values (`NA`) in input data sets will be replaced with 0 for the
+  following columns: `AMT`, `CMT`, `EVID`, `II`, `ADDL`, `RATE`, `SS` as well as
+  their lower case counterparts (#1030).
 
 - Refactored include order when building a model; this is an internal update and
   not expected to be visible to the user (#1038).
 
+## Bugs Fixed
+
+- Fix bug in generating certain model definitions when using the `nm-vars`
+  plugin; the bug would have resulted in a warning from the pre-processor and
+  did not affect function of the model (#1039).
 
 # mrgsolve 1.0.6
 
