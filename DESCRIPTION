@@ -1,7 +1,7 @@
 Type: Package
 Package: mrgsolve
 Title: Simulate from ODE-Based Models
-Version: 1.0.6.9000
+Version: 1.0.7
 Authors@R: 
     c(person(given = "Kyle T", family = "Baron",
              role = c("aut", "cre"),
@@ -65,7 +65,7 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 NeedsCompilation: yes
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 SystemRequirements: C++11
 Collate: 
     'RcppExports.R'
