@@ -35,6 +35,7 @@ find_nm_vars <- function(spec) {
     is_frda <- as.integer(m[["prefix"]] %in% FRDA)
     m <- m[order(is_frda, m[["prefix"]], m[["cmt"]]),, drop = FALSE]
     ans[["frda"]] <- m[m[["prefix"]] %in% FRDA,,drop=FALSE]    
+    ans[["found_frda"]] <- nrow(ans[["frda"]]) > 0
     rownames(m) <- NULL
     ans[["match"]] <- m
     ans[["cmtn"]] <- sort(unique(m[["cmt"]]))
@@ -64,7 +65,7 @@ find_nm_vars_impl <- function(code) {
 }
 
 generate_nmdefs <- function(x) {
-  if(isFALSE(x[["found_any"]])) return(NULL)
+  if(isFALSE(x[["found_frda"]])) return(NULL)
   ans <- paste0(
     "#define ", 
     x[["frda"]][["match"]],

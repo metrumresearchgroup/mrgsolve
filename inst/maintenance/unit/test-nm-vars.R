@@ -219,3 +219,14 @@ test_that("nm-vars functional test", {
   expect_equal(out2$b[1], log(mod2$VC), tolerance = 1e-3)
   expect_equal(out2$c[1], sqrt(mod2$KA), tolerance = 1e-3)
 })
+
+test_that("nm-vars no frda items", {
+  code <- '
+  $plugin nm-vars
+  $cmt A1
+  $main A_0(1) = 1;
+'
+  mod <- mcode("u229", code, compile = FALSE)
+  a <- readLines(file.path(soloc(mod), "u229-mread-header.h"))
+  expect_false(any(grepl("#define  __[]", a, fixed = TRUE)))
+})
