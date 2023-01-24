@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -174,3 +174,4 @@ test_that("gregexecdf", {
   expect_equal(nrow(ans), 0)
   expect_equal(ncol(ans), 0)
 })
+

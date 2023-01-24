@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021 Metrum Research Group
+# Copyright (C) 2013 - 2023 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -214,7 +214,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   mread.env <- parse_env(
     spec,
     incoming_block_names,
-    project = build[["project"]], 
+    build,
     ENV
   )
   
@@ -476,7 +476,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   cat(
-    paste0("// Source MD5: ", build[["md5"]], "\n"),
+    paste0("// Source MD5: ", build[["md5"]]),
+    "\n// PLUGINS:",
     plugin_code(plugin),
     ## This should get moved to rd
     "\n// FIXED:",
@@ -488,9 +489,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// MODEL HEADER FILES:",
     incl("mrgsolv.h"), 
     incl("modelheader.h"),
-    "\n//INCLUDE databox functions:",
+    "\n// INCLUDE databox functions:",
     incl("databox_cpp.h"),
-    "\n//USING plugins",
+    "\n// USING plugins:",
     plugin_using(plugin),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",

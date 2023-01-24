@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -95,12 +95,15 @@ nmxml <- function(run = numeric(0), project = character(0),
     on.exit(setwd(cwd))
     setwd(env[["project"]])
   }
-  
+
   if(!missing(path)) {
     target <- path
   } else {
     if(missing(run) | missing(project)) {
       wstop("both file and run or project are missing")
+    }
+    if(run=="@cppstem") {
+      run <- env$root
     }
     target <- file.path(project, run, paste0(run, ".xml"))
   }
@@ -243,6 +246,10 @@ nmext <- function(run = NA_real_, project = getwd(),
     setwd(env[["project"]])
   }
   
+  if(run=="@cppstem") {
+    run <- env$root
+  }
+
   ans <- read_nmext(
     run = run,
     project = project,

@@ -1,5 +1,6 @@
 // Source MD5: 509e24de6401c4c7d8c72c3487b55e52
 
+// PLUGINS:
 
 // FIXED:
 // No fixed parameters.
@@ -13,10 +14,10 @@
 #include "mrgsolv.h"
 #include "modelheader.h"
 
-//INCLUDE databox functions:
+// INCLUDE databox functions:
 #include "databox_cpp.h"
 
-//USING plugins
+// USING plugins:
 
 // GLOBAL CODE BLOCK:
 // GLOBAL VARS FROM BLOCKS & TYPEDEFS:

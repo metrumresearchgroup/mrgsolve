@@ -25,6 +25,11 @@ context("test-modspec")
 
 options(mrgsolve_mread_quiet=TRUE)
 
+new_test_build <- function(model = "pk1", project = tempdir()) {
+  file.copy(file.path(modlib(), paste0(model, ".cpp")), project, overwrite = TRUE)
+  mrgsolve:::new_build(model = model, project = project)
+}
+
 mtemp <- function(...) {
   mcode(model=basename(tempfile()),..., compile=FALSE)
 }
@@ -249,7 +254,8 @@ $CMT @object pcmt
 })
 
 test_that("parse content using low-level handlers - PARAM", {
-  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  build <- new_test_build()
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), build = build)
   sup <- suppressMessages  
   
   input <- "c(1,2,3)"
@@ -281,7 +287,8 @@ test_that("parse content using low-level handlers - PARAM", {
 })
 
 test_that("parse content using low-level handlers - THETA", {
-  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  build <- new_test_build()
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), build = build)
   sup <- suppressMessages  
   
   input <- "list(1,2,3)"
@@ -307,7 +314,8 @@ test_that("parse content using low-level handlers - THETA", {
 })
 
 test_that("parse content using low-level handlers - CMT", {
-  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  build <- new_test_build()
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), build = build)
   sup <- suppressMessages  
   
   input <- "c(2,2,3)"
@@ -333,7 +341,8 @@ test_that("parse content using low-level handlers - CMT", {
 })
 
 test_that("parse content using low-level handlers - INIT", {
-  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  build <- new_test_build()
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), build = build)
   sup <- suppressMessages  
   
   input <- "c(2,2,3)"
@@ -360,7 +369,8 @@ test_that("parse content using low-level handlers - INIT", {
 })
 
 test_that("parse content using low-level handlers - OMEGA, SIGMA", {
-  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), project = '.')
+  build <- new_test_build()
+  env <- mrgsolve:::parse_env(vector(mode = "list", length = 20), build = build)
   sup <- suppressMessages  
   
   input <- "c(1,2,3)"

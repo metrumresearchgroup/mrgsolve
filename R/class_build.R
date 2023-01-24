@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -50,6 +50,7 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
   
   env$win <- .Platform$OS.type=="windows"
   
+  
   ## Both project and soloc get normalized
   if(!file_writeable(soloc)) {
     if(file_writeable(dirname(soloc))) {
@@ -93,8 +94,10 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
     }
   }
   
-  env$md5 <- tools::md5sum(env$modfile)
+  env$md5 <- md5sum(env$modfile)
   
+  env$root <- file_path_sans_ext(basename(env$modfile))
+
   env$package <- ifelse(udll, rfile(model), new_model)
   
   env$compfile <- compfile(new_model)
