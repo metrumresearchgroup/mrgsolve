@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -76,6 +76,7 @@ template <class type1, class type2> void report(type1 a, type2 b) {
 namespace mrg = mrgsolve;
 
 //! member functions mevent and tad come in via housemodel; see inst/base/databox.cpp
+
 
 /**
  * Model data passed to the model.  
