@@ -250,8 +250,8 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
 #' The updated model object is returned. 
 #' 
 #' @export
-eta_source <- function(x, source = c("omega", "data", "data_strict", "zero")) {
+etas_from <- function(x, source = c("omega", "data", "data.all")) {
   source <- match.arg(source)
-  x@args[["eta_source"]] <- GLOBALS$ETA_SOURCE[source]
+  x@etas_from <- GLOBALS$ETAS_FROM[source]
   x
 }

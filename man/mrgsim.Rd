@@ -24,7 +24,6 @@ do_mrgsim(
   obsonly = FALSE,
   obsaug = FALSE,
   tgrid = NULL,
-  eta_source = 1,
   recsort = 1,
   deslist = list(),
   descol = character(0),

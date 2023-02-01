@@ -297,23 +297,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat eta;
   const int neta = prob.neta();
   if(neta > 0) {
-    const int eta_source = Rcpp::as<int> (parin["eta_source"]);
+    const int etas_from = Rcpp::as<int> (mod.slot("etas_from"));
     prob.set_eta();
-    if(eta_source==1) {
-      eta = prob.mv_omega(NID);  
-    } else if(eta_source==2) {
-      eta = dat.get_etas(neta, false);
-    } else if(eta_source==3) {
-      eta = dat.get_etas(neta, true);
-    } else if(eta_source==0) {
-      eta = arma::mat(NID,neta);
+    if(etas_from==1) {
+      eta = prob.mv_omega(NID); 
+    } else if(etas_from==2) {
+      eta = dat.get_etas(neta, false, etas_from);
+    } else if(etas_from==3) {
+      eta = dat.get_etas(neta, true, etas_from);
     } else {
       std::string msg = 
-        R"(eta_source must be either:
-             0 - all etas set to 0
-             1 - simulated from OMEGA
-             2 - imported from data set
-             3 - imported from data set - strict)";
+        R"(etas_from must be either:
+             1 - omega    - simulated from OMEGA
+             2 - data     - import from data set
+             3 - data.all - strict import from data set)";
       CRUMP(msg.c_str());  
     }
   }

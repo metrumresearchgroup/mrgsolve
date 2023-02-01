@@ -568,13 +568,16 @@ void dataobject::carry_out(const recstack& a,
 
 // Looks at `Data` and finds ETA1, ETA2, ETA3 etc and forms matrix of 
 // ETA to use in place of ETAS simulated from OMEGA.
-arma::mat dataobject::get_etas(const int n_eta, const bool strict) {
+arma::mat dataobject::get_etas(const int n_eta, const bool strict, 
+                               const int value) {
   
   Rcpp::CharacterVector::iterator bg = Data_names.begin();
   Rcpp::CharacterVector::iterator ed = Data_names.end();
   
   std::vector<int> eta_location(n_eta);
-  
+
+  int n_found = 0; 
+  int n_missing = 0;
   unsigned int column_index;
   
   for(int i = 1; i <= n_eta; ++i) {
@@ -582,20 +585,33 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict) {
     column_index = std::find(bg, ed, eta_label) - bg;
     if(column_index < Data_names.size()) {
       eta_location[i-1] = column_index;
+      ++n_found;
     } else {
       eta_location[i-1] = -1;  
-      if(strict) {
-        throw Rcpp::exception(
-            tfm::format(
-              "all %i ETAs must be provided with this eta_source setting.", 
-              n_eta
-            ).c_str(),
-            false
-        );
-      }
+      ++n_missing;
     }
   }
-
+  
+  if(strict && n_missing > 0) {
+    throw Rcpp::exception(
+        tfm::format(
+          "all %i ETAs must be provided when eta_from is %i; see ?etas_from.", 
+          n_eta, value
+        ).c_str(),
+        false
+    );
+  }
+  
+  if(n_found==0) {
+    throw Rcpp::exception(
+        tfm::format(
+          "at least one ETA must be provided when eta_from is %i; see ?etas_from.", 
+          value
+        ).c_str(),
+        false
+    );
+  }
+  
   arma::mat ans(Uid.size(), n_eta); 
   for(size_t i = 0; i < Uid.size(); ++i) {
     int start_row = Startrow[i];
