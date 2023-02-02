@@ -1,4 +1,11 @@
 # Please add stories at the top ------------------------------------------
+SLV-0011: 
+  name: import estimates from NONMEM
+  description: > 
+    As a user, I want to import parameter estimates from a NONMEM run.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0023
 SLV-0010: 
   name: share root with NONMEM
   description: > 

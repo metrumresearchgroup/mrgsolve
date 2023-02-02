@@ -102,7 +102,7 @@ nmxml <- function(run = numeric(0), project = character(0),
     if(missing(run) | missing(project)) {
       wstop("both file and run or project are missing")
     }
-    if(run=="@cppstem") {
+    if(identical(run, "@cppstem")) {
       run <- env$root
     }
     target <- file.path(project, run, paste0(run, ".xml"))
@@ -246,7 +246,7 @@ nmext <- function(run = NA_real_, project = getwd(),
     setwd(env[["project"]])
   }
   
-  if(run=="@cppstem") {
+  if(identical(run, "@cppstem")) {
     run <- env$root
   }
 
