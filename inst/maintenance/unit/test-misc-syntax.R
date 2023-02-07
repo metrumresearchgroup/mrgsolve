@@ -25,7 +25,7 @@ test_that("THETA(n) is allowed", {
   )
 })
 
-test_that("Access SIGMA(n)", {
+test_that("Access SIGMA(n) [SLV-TEST-0090]", {
   out <- mrgsim(mod_th_sg_n, end = -1, param = list(SN = 2))
   expect_equal(out$SIGMA2, 2.2)
   out <- mrgsim(mod_th_sg_n, end = -1, param = list(SN = 4))

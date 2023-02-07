@@ -1,4 +1,11 @@
 # Please add stories at the top ------------------------------------------
+SLV-0011: 
+  name: access SIGMA(n) in the model
+  description: > 
+    As a user, I want to access on-diagonal elements of SIGMA inside the model.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0090
 SLV-0010: 
   name: share root with NONMEM
   description: > 
