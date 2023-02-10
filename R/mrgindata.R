@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -180,7 +180,11 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
     signal_drop(dm, x, to_signal, context = "[data-set]")
   }
   
-  check_data_set_na(dm,m)
+  has_na <- check_data_set_na(dm,m)
+  
+  if(has_na) {
+    dm <- fill_tran_na(dm)  
+  }
   
   dm <- cbind(dm, matrix(0,
                          ncol=1,
@@ -224,7 +228,7 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
     stop("ID is a required column for idata_set.",call.=FALSE)
   }
   
-  if(any(duplicated(x[["ID"]]))) {
+  if(anyDuplicated(x[["ID"]])) {
     stop("Duplicate IDs not allowed in idata_set.",call.=FALSE) 
   }
   
@@ -241,8 +245,8 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   dm
 }
 
-##' @rdname valid_data_set
-##' @export
+#' @rdname valid_data_set
+#' @export
 valid_data_set.matrix <- function(x,verbose=FALSE) {
   if(is.valid_data_set(x)) return(x)
   if(is.numeric(x)) {
@@ -252,44 +256,46 @@ valid_data_set.matrix <- function(x,verbose=FALSE) {
 }
 
 check_data_set_na <- function(data,m) {
-  if(!anyNA(data)) return(invisible(NULL))
+  if(!anyNA(data)) return(invisible(FALSE))
   err <- FALSE
-  flagged <- check_column_na(
-    data,
-    Pars(m)
-  )
+  flagged <- check_column_na(data, Pars(m))
   for(col in flagged) {
     warning(
       "Parameter column ", col, " must not contain missing values.", 
       call.=FALSE, immediate.=TRUE
     ) 
   }
-  flagged <- check_column_na(
-    data,
-    c("ID","TIME", "time", "RATE", "rate")
-  )
+  flagged <- check_column_na(data, c("ID", "TIME", "time"))
   for(col in flagged) {
     message(
       col, 
       " column must not contain missing values.", 
-      call.=FALSE,immediate.=TRUE
+      call.=FALSE, immediate.=TRUE
     ) 
     err <- TRUE
   }  
   if(err) stop("Found missing values in input data.", call.=FALSE)
-  return(invisible(NULL))
+  return(invisible(TRUE))
+}
+
+#' Look for TRAN columns replace NA with 0
+#' Columns to scan are found in `GLOBALS$TRAN_FILL_NA`
+#' @noRd
+fill_tran_na <- function(data) {
+  cols_to_zero <- check_column_na(data, GLOBALS[["TRAN_FILL_NA"]])
+  data[, cols_to_zero][is.na(data[, cols_to_zero])] <- 0
+  data
 }
 
 check_column_na <- function(data, cols) {
-  check <- unique(cols[cols %in% dimnames(data)[[2]]])
-  if(length(check)==0) return(character(0))
-  if(!anyNA(data[,check])) return(character(0))
+  to_check <- unique(cols[cols %in% dimnames(data)[[2L]]])
+  if(length(to_check)==0L) return(character(0))
+  if(!anyNA(data[,to_check])) return(character(0))
   flagged <- character(0)
-  for(col in check) {
+  for(col in to_check) {
     if(anyNA(data[,col])) {
-      flagged <- c(flagged,col)
+      flagged <- c(flagged, col)
     }
   }
-  return(flagged)
+  flagged
 }
-

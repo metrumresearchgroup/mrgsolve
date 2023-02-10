@@ -320,6 +320,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if(neps > 0) {
     prob.set_eps();
     eps = prob.mv_sigma(NN);
+    prob.copy_sigma_diagonals();
   }
   
   Rcpp::CharacterVector tran_names;

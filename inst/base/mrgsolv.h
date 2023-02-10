@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -77,6 +77,7 @@ namespace mrg = mrgsolve;
 
 //! member functions mevent and tad come in via housemodel; see inst/base/databox.cpp
 
+
 /**
  * Model data passed to the model.  
  * 
@@ -88,6 +89,7 @@ class databox {
 public: 
   std::vector<double> ETA; ///< vector of ETA values
   std::vector<double> EPS; ///< vector of EPS values
+  std::vector<double> SIGMA; ///< vector of on-diagonal sigma elements
   unsigned int newind; ///< new individual flag
   double time; ///< current simulation time
   int evid;  ///< event ID flag

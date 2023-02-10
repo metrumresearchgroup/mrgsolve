@@ -194,3 +194,27 @@ test_that("integer64 columns are dropped from idata_set  [SLV-TEST-0012]", {
     fixed = TRUE
   )
 })
+
+test_that("NA in nm-tran data items are converted to zeros [SLV-TEST-0020]", {
+  data <- expand.ev(amt = 100, ii = 12, addl = 2, rate = 5, ss = 1, ID = 1:2) 
+  tmp <- data
+  tmp$ss[2] <- NA_real_
+
+  flagged <- mrgsolve:::check_column_na(tmp, c("ss", "aa", "II", "SS"))
+  expect_equal(flagged, "ss")
+
+  tst <- valid_data_set(tmp, house())
+  expect_equal(tst[, "ss"], c(1, 0))
+    
+  tmp2 <- tmp
+  tmp2$FOO <- NA_real_
+  flagged <- mrgsolve:::check_column_na(tmp2, mrgsolve:::GLOBALS$TRAN_FILL_NA)
+  expect_equal(flagged, "ss")
+
+  for(col in c("AMT", "cmt", "ii", "SS", "RATE", "evid")) {
+    tmp <- data
+    tmp[[col]] <- c(1, NA_real_)
+    ans <- mrgsolve:::fill_tran_na(tmp)
+    expect_equal(ans[[col]], c(1, 0))
+  }
+})

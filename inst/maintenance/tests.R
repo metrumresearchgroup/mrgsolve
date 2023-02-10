@@ -9,10 +9,7 @@ a$result <- NULL
 message("\ninst/maintenance/unit")
 b <- test_dir("inst/maintenance/unit/")
 b$result <- NULL
-message("\ninst/validation")
-c <- test_dir("inst/validation/")
-c$result <- NULL
-results <- dplyr::bind_rows(as_tibble(a),as_tibble(b),as_tibble(c))
+results <- dplyr::bind_rows(as_tibble(a),as_tibble(b))
 results$user <- NULL
 results$system <- NULL
 results$real <- NULL
