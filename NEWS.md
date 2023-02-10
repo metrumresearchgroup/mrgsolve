@@ -1,5 +1,8 @@
 # mrgsolve (development version)
 
+- New model macro called `SIGMA()` which allows the user to access on-diagonal 
+  elements of `SIGMA` in the model (e.g. `SIGMA(2)`) (#1051, #1052).
+
 # mrgsolve 1.0.7
 
 - `$NMXML` and `$NMEXT` now accept the `run` argument set to `"@cppstem"` (i.e  
