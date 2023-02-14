@@ -60,6 +60,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
+  const int eta_source        = Rcpp::as<int>    (parin["eta_source"]);
   obsaug = obsaug & (data.nrow() > 0);
   
   // Grab items from the model object --------------------

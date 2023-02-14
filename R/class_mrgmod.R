@@ -750,7 +750,8 @@ parin <- function(x) {
   list(
     ss_n = 500, 
     ss_fixed = FALSE, 
-    interrupt = -1
+    interrupt = -1, 
+    eta_source = 1
   )
 }
 
