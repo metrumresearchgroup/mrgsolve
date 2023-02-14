@@ -73,6 +73,7 @@ GLOBALS$TRAN_FILL_NA <- c(
   "amt", "cmt", "evid", "ii", "addl", "rate", "ss"
 )
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
+GLOBALS$ETA_SOURCE <- c(omega = 1, data = 2, data.all = 3)
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",

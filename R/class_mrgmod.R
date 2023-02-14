@@ -132,6 +132,7 @@ protomod <- list(model=character(0),
                           config=character(0)),
                  omega=new("omegalist"),
                  sigma = new("sigmalist"),
+                 eta_source  = c(omega = 1), 
                  request="(all)",
                  param = new("parameter_list"),
                  init=new("cmt_list"),
@@ -534,6 +535,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
       advan <- x@advan
       functions <- funset(x)
     }
+    eta_source <- x@eta_source
     cpp_variables <- shlib(x)[["cpp_variables"]]
     nm_import <- shlib(x)[["nm_import"]]
     details <- x@annot

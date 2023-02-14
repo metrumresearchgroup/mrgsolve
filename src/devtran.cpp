@@ -298,19 +298,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat eta;
   const int neta = prob.neta();
   if(neta > 0) {
+    const int eta_source = Rcpp::as<int> (mod.slot("eta_source"));
     prob.set_eta();
     if(eta_source==1) {
-      eta = prob.mv_omega(NID);  
+      eta = prob.mv_omega(NID); 
     } else if(eta_source==2) {
-      eta = dat.get_etas(neta);
-    } else if(eta_source==0) {
-      eta = arma::mat(NID,neta);
+      eta = dat.get_etas(neta, false, eta_source);
+    } else if(eta_source==3) {
+      eta = dat.get_etas(neta, true, eta_source);
     } else {
       std::string msg = 
         R"(eta_source must be either:
-             0 - all etas set to 0
-             1 - simulated from OMEGA
-             2 - imported from data set)";
+             1 - omega    - simulated from OMEGA
+             2 - data     - import from data set
+             3 - data.all - strict import from data set)";
       CRUMP(msg.c_str());  
     }
   }
@@ -320,6 +321,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if(neps > 0) {
     prob.set_eps();
     eps = prob.mv_sigma(NN);
+    prob.copy_sigma_diagonals();
   }
   
   Rcpp::CharacterVector tran_names;
