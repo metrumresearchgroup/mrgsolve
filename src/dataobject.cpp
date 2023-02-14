@@ -579,11 +579,23 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   int n_found = 0; 
   int n_missing = 0;
   unsigned int column_index;
+  unsigned int end_index = Data_names.size()-1;
+  
+  std::string prefix = "ETA";
   
   for(int i = 1; i <= n_eta; ++i) {
-    std::string eta_label = "ETA" + std::to_string(i);
+    
+    prefix = i >= 10 ? "ET" : "ETA";
+
+    std::string eta_label = prefix + std::to_string(i);
     column_index = std::find(bg, ed, eta_label) - bg;
-    if(column_index < Data_names.size()) {
+    
+    if(i >= 10 && column_index > end_index) {
+      eta_label = "ETA" + std::to_string(i);
+      column_index = std::find(bg, ed, eta_label) - bg;
+    }
+    
+    if(column_index <= end_index) {
       eta_location[i-1] = column_index;
       ++n_found;
     } else {
@@ -595,7 +607,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   if(strict && n_missing > 0) {
     throw Rcpp::exception(
         tfm::format(
-          "all %i ETAs must be provided when eta_from is %i; see ?etas_from.", 
+          "all %i ETAs must be provided when eta_source is %i; see ?eta_source.", 
           n_eta, value
         ).c_str(),
         false
@@ -605,7 +617,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   if(n_found==0) {
     throw Rcpp::exception(
         tfm::format(
-          "at least one ETA must be provided when eta_from is %i; see ?etas_from.", 
+          "at least one ETA must be provided when eta_source is %i; see ?eta_source.", 
           value
         ).c_str(),
         false
