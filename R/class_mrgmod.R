@@ -534,7 +534,6 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
       advan <- x@advan
       functions <- funset(x)
     }
-    eta_source <- x@eta_source
     cpp_variables <- shlib(x)[["cpp_variables"]]
     nm_import <- shlib(x)[["nm_import"]]
     details <- x@annot
@@ -750,7 +749,7 @@ parin <- function(x) {
     ss_n = 500, 
     ss_fixed = FALSE, 
     interrupt = -1, 
-    eta_source = "omega"
+    etasrc = "omega"
   )
 }
 

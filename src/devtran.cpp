@@ -307,7 +307,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       eta = dat.get_etas(neta, true, etasrc);
     } else {
       std::string msg = 
-        R"(eta_source must be either:
+        R"(etasrc must be either:
              omega    - simulated from OMEGA
              data     - import from data set
              data.all - strict import from data set)";
