@@ -111,13 +111,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
   osig <- paste(osig,osig, sep="x", collapse=',')
   ssig <- dim_matlist(x@sigma)
   ssig <- paste(ssig,ssig, sep="x", collapse=',')
-  
-  ef <- NULL
-  if(x@eta_source != 1) {
-    ef <- paste0("eta source: ", names(GLOBALS$ETA_SOURCE)[x@eta_source])
-    osig <- paste0(osig, " (", ef, ")")
-  }
-  
+ 
   loaded <- ifelse(model_loaded(x),"", "<not loaded>")
   
   src <- paste0("source: ", basename(cfile(x)))

@@ -85,7 +85,8 @@ install-build:
 	R CMD INSTALL --build --install-tests ${TARBALL}
 
 test:
-	R CMD INSTALL ${PKGDIR}
+	#R CMD INSTALL ${PKGDIR}
+	make install
 	make test-all
 
 test1:

@@ -60,7 +60,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
-  const int eta_source        = Rcpp::as<int>    (parin["eta_source"]);
   obsaug = obsaug & (data.nrow() > 0);
   
   // Grab items from the model object --------------------
@@ -298,20 +297,21 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   arma::mat eta;
   const int neta = prob.neta();
   if(neta > 0) {
-    const int eta_source = Rcpp::as<int> (mod.slot("eta_source"));
+    const std::string etasrc = Rcpp::as<std::string> (parin["etasrc"]);
     prob.set_eta();
-    if(eta_source==1) {
+    if(etasrc=="omega") {
       eta = prob.mv_omega(NID); 
-    } else if(eta_source==2) {
-      eta = dat.get_etas(neta, false, eta_source);
-    } else if(eta_source==3) {
-      eta = dat.get_etas(neta, true, eta_source);
+    } else if(etasrc=="data") {
+      eta = dat.get_etas(neta, false, etasrc);
+    } else if(etasrc=="data.all") {
+      eta = dat.get_etas(neta, true, etasrc);
     } else {
       std::string msg = 
         R"(eta_source must be either:
-             1 - omega    - simulated from OMEGA
-             2 - data     - import from data set
-             3 - data.all - strict import from data set)";
+             omega    - simulated from OMEGA
+             data     - import from data set
+             data.all - strict import from data set)";
+      
       CRUMP(msg.c_str());  
     }
   }

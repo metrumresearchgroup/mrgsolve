@@ -132,7 +132,6 @@ protomod <- list(model=character(0),
                           config=character(0)),
                  omega=new("omegalist"),
                  sigma = new("sigmalist"),
-                 eta_source  = c(omega = 1), 
                  request="(all)",
                  param = new("parameter_list"),
                  init=new("cmt_list"),
@@ -751,7 +750,7 @@ parin <- function(x) {
     ss_n = 500, 
     ss_fixed = FALSE, 
     interrupt = -1, 
-    eta_source = 1
+    eta_source = "omega"
   )
 }
 

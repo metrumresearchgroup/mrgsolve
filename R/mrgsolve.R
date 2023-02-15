@@ -469,7 +469,7 @@ do_mrgsim <- function(x,
                       obsonly = FALSE,
                       obsaug = FALSE,
                       tgrid = NULL,
-                      eta_source = 1,
+                      etasrc = "omega",
                       recsort = 1,
                       deslist = list(),
                       descol = character(0),
@@ -580,7 +580,7 @@ do_mrgsim <- function(x,
   parin$ss_fixed <- ss_fixed
   parin$ss_n <- ss_n
   parin$interrupt <- interrupt
-  parin$eta_source <- eta_source
+  parin$etasrc <- etasrc
   
   if(tad && any(x@capture =="tad")) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 

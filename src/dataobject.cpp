@@ -569,7 +569,7 @@ void dataobject::carry_out(const recstack& a,
 // Looks at `Data` and finds ETA1, ETA2, ETA3 etc and forms matrix of 
 // ETA to use in place of ETAS simulated from OMEGA.
 arma::mat dataobject::get_etas(const int n_eta, const bool strict, 
-                               const int value) {
+                               const std::string& value) {
   
   Rcpp::CharacterVector::iterator bg = Data_names.begin();
   Rcpp::CharacterVector::iterator ed = Data_names.end();
@@ -607,7 +607,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   if(strict && n_missing > 0) {
     throw Rcpp::exception(
         tfm::format(
-          "all %i ETAs must be provided when eta_source is %i; see ?eta_source.", 
+          "all %i ETAs must be provided when etasrc is %s.", 
           n_eta, value
         ).c_str(),
         false
@@ -617,7 +617,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   if(n_found==0) {
     throw Rcpp::exception(
         tfm::format(
-          "at least one ETA must be provided when eta_source is %i; see ?eta_source.", 
+          "at least one ETA must be provided when etasrc is %s.", 
           value
         ).c_str(),
         false
