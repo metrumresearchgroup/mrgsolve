@@ -238,7 +238,7 @@ test_that("pass ETA on the data set", {
 
   expect_error(
     mrgsim(mod, data, etasrc = "foo"),
-    regexp="etasrc must be either"
+    regexp="`etasrc` must be either"
   )
   
   expect_error(
@@ -255,8 +255,12 @@ test_that("pass ETA on the data set", {
   )
 
   data$ETA11 <- 11
-  
   out <- mrgsim(mod, data, etasrc = "data")
+  expect_true(all(out$d==11))
   
-  
+  data$ET11 <- 1111
+  expect_error(
+    mrgsim(mod, data, etasrc = "data"), 
+    regexp = "Ambiguous ETA names"
+  )
 })

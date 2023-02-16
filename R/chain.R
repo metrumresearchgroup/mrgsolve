@@ -240,3 +240,4 @@ design <- function(x, deslist=list(), descol = character(0), ...) {
   
   x
 }
+

@@ -586,11 +586,18 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   for(int i = 1; i <= n_eta; ++i) {
     
     prefix = i >= 10 ? "ET" : "ETA";
-
+    
+    if(i == 10) {
+      Rcpp::Function asNamespace("asNamespace");
+      Rcpp::Environment mrgsolve_ns = asNamespace("mrgsolve");
+      Rcpp::Function check_names = mrgsolve_ns["check_etasrc_names"];
+      check_names(Data_names, n_eta, value); 
+    }
+    
     std::string eta_label = prefix + std::to_string(i);
     column_index = std::find(bg, ed, eta_label) - bg;
     
-    if(i >= 10 && column_index > end_index) {
+    if(i >= 10) {
       eta_label = "ETA" + std::to_string(i);
       column_index = std::find(bg, ed, eta_label) - bg;
     }
@@ -607,7 +614,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   if(strict && n_missing > 0) {
     throw Rcpp::exception(
         tfm::format(
-          "all %i ETAs must be provided when etasrc is %s.", 
+          "all %i ETAs must be provided when `etasrc` is \"%s\".", 
           n_eta, value
         ).c_str(),
         false
@@ -617,7 +624,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   if(n_found==0) {
     throw Rcpp::exception(
         tfm::format(
-          "at least one ETA must be provided when etasrc is %s.", 
+          "at least one ETA must be provided when `etasrc` is \"%s\".", 
           value
         ).c_str(),
         false
