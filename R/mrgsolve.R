@@ -153,28 +153,27 @@ tgrid_id <- function(col,idata) {
 #' simulated from a multivariate normal distribution defined by the `$OMEGA`
 #' blocks in the model. When `etasrc` is set to `"data"` or `"data.all"`, 
 #' the input data set will be scanned for columns called `ETA1`, `ETA2`, ..., 
-#' `ETAn` and will 
-#' copy those values into the appropriate slot in the `ETA()` vector. Only 
-#' the first record for each individual will be copied into `ETA()`; all 
-#' records after the first will be ignored. When there are more than `9` `ETAs` 
-#' in a model, NONMEM will start naming the outputs `ET10`, `ET11` etc rather 
-#' than `ETA10` and `ETA11`. When mrgsolve is looking for these columns, it will 
-#' first search, for example, `ET10` and use that value if it is found. If 
-#' `ET10` isn't found and there are more than `9` `ETAs`, then it will _also_ 
-#' search for `ETA10`. An error will be generated in case mrgsolve finds both 
-#' the `ETA` and `ET` name variant for the tenth and higher `ETA` (e.g. it is 
-#' an error to have both `ETA10` and `ET10` in the data set).  When 
-#' mrgsolve is searching for `ETA` columns in the data set, it will _only_ look 
-#' for `ETAn` up to the number of rows (or columns) in all the model `$OMEGA` 
-#' blocks. For example, if `$OMEGA` is 5x5, only `ETA1` through `ETA5` will be 
-#' searched. An error will be generated in case mrgsolve finds _no_ columns with 
-#' `ETAn` names and something other than `etasrc="omega"` was passed.
-#' When `etasrc = "data"` and an `ETAn` column is missing from the data set, 
-#' the missing `ETA()` will be set to `0`.  Alternatively, the user can pass 
-#' `etasrc = "data.all"` which cause an error to be generated if any `ETAn` is 
-#' missing from the data set. Use this option when you intend to have _all_ 
-#' `ETAs` attached to the data set and want an error generated if mrgsolve
-#' finds one of them is missing.
+#' `ETAn` and will copy those values into the appropriate slot in the `ETA()` 
+#' vector. Only the first record for each individual will be copied into 
+#' `ETA()`; all records after the first will be ignored. When there are more 
+#' than `9` `ETAs` in a model, NONMEM will start naming the outputs `ET10`, 
+#' `ET11` etc rather than `ETA10` and `ETA11`. When mrgsolve is looking for 
+#' these columns, it will first search, for example, `ET10` and use that value 
+#' if it is found. If `ET10` isn't found and there are more than `9` `ETAs`, 
+#' then it will _also_ search for `ETA10`. An error will be generated in case 
+#' mrgsolve finds both the `ETA` and `ET` name variant for the tenth and higher 
+#' `ETA` (e.g. it is an error to have both `ETA10` and `ET10` in the data set). 
+#' When mrgsolve is searching for `ETA` columns in the data set, it will 
+#' _only_ look for `ETAn` up to the number of rows (or columns) in all the 
+#' model `$OMEGA` blocks. For example, if `$OMEGA` is 5x5, only `ETA1` through 
+#' `ETA5` will be searched. An error will be generated in case mrgsolve finds 
+#' _no_ columns with `ETAn` names and something other than `etasrc="omega"` was 
+#' passed. When `etasrc = "data"` and an `ETAn` column is missing from the data 
+#' set, the missing `ETA()` will be set to `0`.  Alternatively, the user can 
+#' pass `etasrc = "data.all"` which cause an error to be generated if any `ETAn` 
+#' is missing from the data set. Use this option when you intend to have _all_ 
+#' `ETAs` attached to the data set and want an error generated if mrgsolve finds 
+#' one of them is missing.
 #' 
 #' 
 #' @seealso [mrgsim_variants], [mrgsim_q()]

@@ -597,7 +597,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
     std::string eta_label = prefix + std::to_string(i);
     column_index = std::find(bg, ed, eta_label) - bg;
     
-    if(i >= 10) {
+    if(i >= 10 && column_index > end_index) {
       eta_label = "ETA" + std::to_string(i);
       column_index = std::find(bg, ed, eta_label) - bg;
     }

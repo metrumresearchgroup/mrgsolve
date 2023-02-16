@@ -188,28 +188,27 @@ model. When \code{etasrc} is set to \code{"omega"} (the default), \code{ETAs} wi
 simulated from a multivariate normal distribution defined by the \verb{$OMEGA}
 blocks in the model. When \code{etasrc} is set to \code{"data"} or \code{"data.all"},
 the input data set will be scanned for columns called \code{ETA1}, \code{ETA2}, ...,
-\code{ETAn} and will
-copy those values into the appropriate slot in the \code{ETA()} vector. Only
-the first record for each individual will be copied into \code{ETA()}; all
-records after the first will be ignored. When there are more than \code{9} \code{ETAs}
-in a model, NONMEM will start naming the outputs \code{ET10}, \code{ET11} etc rather
-than \code{ETA10} and \code{ETA11}. When mrgsolve is looking for these columns, it will
-first search, for example, \code{ET10} and use that value if it is found. If
-\code{ET10} isn't found and there are more than \code{9} \code{ETAs}, then it will \emph{also}
-search for \code{ETA10}. An error will be generated in case mrgsolve finds both
-the \code{ETA} and \code{ET} name variant for the tenth and higher \code{ETA} (e.g. it is
-an error to have both \code{ETA10} and \code{ET10} in the data set).  When
-mrgsolve is searching for \code{ETA} columns in the data set, it will \emph{only} look
-for \code{ETAn} up to the number of rows (or columns) in all the model \verb{$OMEGA}
-blocks. For example, if \verb{$OMEGA} is 5x5, only \code{ETA1} through \code{ETA5} will be
-searched. An error will be generated in case mrgsolve finds \emph{no} columns with
-\code{ETAn} names and something other than \code{etasrc="omega"} was passed.
-When \code{etasrc = "data"} and an \code{ETAn} column is missing from the data set,
-the missing \code{ETA()} will be set to \code{0}.  Alternatively, the user can pass
-\code{etasrc = "data.all"} which cause an error to be generated if any \code{ETAn} is
-missing from the data set. Use this option when you intend to have \emph{all}
-\code{ETAs} attached to the data set and want an error generated if mrgsolve
-finds one of them is missing.
+\code{ETAn} and will copy those values into the appropriate slot in the \code{ETA()}
+vector. Only the first record for each individual will be copied into
+\code{ETA()}; all records after the first will be ignored. When there are more
+than \code{9} \code{ETAs} in a model, NONMEM will start naming the outputs \code{ET10},
+\code{ET11} etc rather than \code{ETA10} and \code{ETA11}. When mrgsolve is looking for
+these columns, it will first search, for example, \code{ET10} and use that value
+if it is found. If \code{ET10} isn't found and there are more than \code{9} \code{ETAs},
+then it will \emph{also} search for \code{ETA10}. An error will be generated in case
+mrgsolve finds both the \code{ETA} and \code{ET} name variant for the tenth and higher
+\code{ETA} (e.g. it is an error to have both \code{ETA10} and \code{ET10} in the data set).
+When mrgsolve is searching for \code{ETA} columns in the data set, it will
+\emph{only} look for \code{ETAn} up to the number of rows (or columns) in all the
+model \verb{$OMEGA} blocks. For example, if \verb{$OMEGA} is 5x5, only \code{ETA1} through
+\code{ETA5} will be searched. An error will be generated in case mrgsolve finds
+\emph{no} columns with \code{ETAn} names and something other than \code{etasrc="omega"} was
+passed. When \code{etasrc = "data"} and an \code{ETAn} column is missing from the data
+set, the missing \code{ETA()} will be set to \code{0}.  Alternatively, the user can
+pass \code{etasrc = "data.all"} which cause an error to be generated if any \code{ETAn}
+is missing from the data set. Use this option when you intend to have \emph{all}
+\code{ETAs} attached to the data set and want an error generated if mrgsolve finds
+one of them is missing.
 }
 }
 \examples{
