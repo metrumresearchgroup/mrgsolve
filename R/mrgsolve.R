@@ -18,13 +18,20 @@
 
 # @include mrgindata.R
 
+#' Check ETA names in the data set
+#' 
+#' This function checks to see if there are both `ETAn` and `ETn` in the data
+#' set when `n` is greater than 9. For example, when both `ETA12` and `ET12` 
+#' are found, an error is generated. This funciton is only use for its 
+#' side-effects. 
+#' @noRd
 check_etasrc_names <- function(data_names, neta, etasrc) {
   eta_check <- paste0("ETA", seq(10, neta))
   et_check <- paste0("ET", seq(10, neta))
   found_eta <- match(eta_check, data_names, nomatch = 0L)
   found_et <- match(et_check, data_names, nomatch = 0L)
   common <- which(found_eta > 0 & found_et > 0)
-  if(length(common)==0) return()
+  if(length(common)==0) return(NULL)
   dups <- paste0(
     "Found both ", 
     eta_check[common], " and ", et_check[common], 
@@ -148,13 +155,13 @@ tgrid_id <- function(col,idata) {
 #' gain.  Just think carefully about using this feature when every millisecond
 #' counts.
 #' 
-#' - `etasrc`: this argument lets you control there `ETA(n)` come from in the 
+#' - `etasrc`: this argument lets you control where `ETA(n)` come from in the 
 #' model. When `etasrc` is set to `"omega"` (the default), `ETAs` will be 
 #' simulated from a multivariate normal distribution defined by the `$OMEGA`
 #' blocks in the model. When `etasrc` is set to `"data"` or `"data.all"`, 
 #' the input data set will be scanned for columns called `ETA1`, `ETA2`, ..., 
-#' `ETAn` and will copy those values into the appropriate slot in the `ETA()` 
-#' vector. Only the first record for each individual will be copied into 
+#' `ETAn` and those values will be copied into the appropriate slot in the 
+#' `ETA()` vector. Only the first record for each individual will be copied into 
 #' `ETA()`; all records after the first will be ignored. When there are more 
 #' than `9` `ETAs` in a model, NONMEM will start naming the outputs `ET10`, 
 #' `ET11` etc rather than `ETA10` and `ETA11`. When mrgsolve is looking for 
@@ -167,13 +174,13 @@ tgrid_id <- function(col,idata) {
 #' _only_ look for `ETAn` up to the number of rows (or columns) in all the 
 #' model `$OMEGA` blocks. For example, if `$OMEGA` is 5x5, only `ETA1` through 
 #' `ETA5` will be searched. An error will be generated in case mrgsolve finds 
-#' _no_ columns with `ETAn` names and something other than `etasrc="omega"` was 
-#' passed. When `etasrc = "data"` and an `ETAn` column is missing from the data 
-#' set, the missing `ETA()` will be set to `0`.  Alternatively, the user can 
-#' pass `etasrc = "data.all"` which cause an error to be generated if any `ETAn` 
-#' is missing from the data set. Use this option when you intend to have _all_ 
-#' `ETAs` attached to the data set and want an error generated if mrgsolve finds 
-#' one of them is missing.
+#' _no_ columns with `ETAn` names and something other than `etasrc = "omega"` 
+#' was passed. When `etasrc = "data"` and an `ETAn` column is missing from the 
+#' data set, the missing `ETA()` will be set to `0`.  Alternatively, the user 
+#' can pass `etasrc = "data.all"` which cause an error to be generated if any 
+#' `ETAn` is missing from the data set. Use this option when you intend to have 
+#' _all_ `ETAs` attached to the data set and want an error generated if mrgsolve 
+#' finds one or more of them is missing.
 #' 
 #' 
 #' @seealso [mrgsim_variants], [mrgsim_q()]
