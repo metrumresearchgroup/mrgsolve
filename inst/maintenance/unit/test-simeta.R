@@ -25,7 +25,6 @@ context("test-simeta.R")
 
 code <- '
 $PARAM n = 0, m = 0, mode = 1
-
 $OMEGA 2 2 2 1 1 1 1 1 1 1 1
 $SIGMA 2 2
 
@@ -212,13 +211,13 @@ test_that("warn when simeps(n) is called with off diagonals", {
 
 test_that("pass ETA on the data set", {
   mod <- param(mod, mode = 0)
-  data <- expand.ev(amt = 100, ID = 1:4, cmt = 1)
+  data <- expand.ev(amt = 100, ID = seq(4), cmt = 1)
   data <- mutate(
     data,
     ETA1 = rev(ID)/10,
     ETA3 = ETA1
   )
-  data <- expand_observations(data, times = 1:5)
+  data <- expand_observations(data, times = seq(5))
   data <- mutate(data, ETA3 = ifelse(time > 0, -1, ETA3))
   data <- mutate(data, cmt = 0)
   
@@ -229,21 +228,21 @@ test_that("pass ETA on the data set", {
   summ_out <- count(as.data.frame(out), ID, a, b, c)
   summ_dat <- count(data, ID, ETA1)
   expect_equivalent(summ_out$a, summ_dat$ETA1)
-
+  
   set.seed(123)
   out1 <- mrgsim(mod, data, etasrc = "data")
   set.seed(456)
   out2 <- mrgsim(mod, data, etasrc = "data")
   expect_identical(out1, out2)
-
+  
   expect_error(
     mrgsim(mod, data, etasrc = "foo"),
-    regexp="`etasrc` must be either"
+    regexp = "`etasrc` must be either"
   )
   
   expect_error(
     mrgsim(mod, data, etasrc = "data.all"), 
-    regexp="all 11 ETAs"
+    regexp = "all 11 ETAs"
   )
   
   data2 <- data
@@ -251,9 +250,9 @@ test_that("pass ETA on the data set", {
   
   expect_error(
     mrgsim(mod, data2, etasrc = "data"), 
-    regexp="at least one ETA must"
+    regexp = "at least one ETA must"
   )
-
+  
   data$ETA11 <- 11
   out <- mrgsim(mod, data, etasrc = "data")
   expect_true(all(out$d==11))
@@ -263,4 +262,16 @@ test_that("pass ETA on the data set", {
     mrgsim(mod, data, etasrc = "data"), 
     regexp = "Ambiguous ETA names"
   )
+  
+  data <- data.frame(
+    amt = 10, evid = 2, time = 0, cmt = 0,
+    ID = c(1,2,3), 
+    ETA1 = c(1,2,3)/10,
+    ETA2 = c(1,2,3)*2,
+    mode = 0
+  )
+  out <- mrgsim(mod, data, etasrc = "data", end = 2, delta = 1, start = 1)
+  expect_equal(nrow(out), 9)
+  expect_true(all(out$a == out$ID/10))
+  expect_true(all(out$b == out$ID*2))
 })
