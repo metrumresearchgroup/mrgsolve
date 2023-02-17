@@ -406,6 +406,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       capture_more <- valid_capture[valid_capture != "."]  
     }
     capture_vars <- .ren.create(capture_more)
+    capture_vars <- .ren.sanitize(capture_vars, fun = sanitize_capture)
     if(!all(capture_vars[["old"]] %in% valid_capture)) {
       bad <- setdiff(capture_vars[["old"]], valid_capture)
       for(b in bad) {
@@ -417,7 +418,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
         call. = FALSE
       )
     }
-    capture <- .ren.collect(list(capture_vars, capture))
+    capture <- .ren.collect(list(capture, capture_vars))
     x@capture <- .ren.chr(capture)
     x <- default_outputs(x)
     build$preclean <- TRUE
