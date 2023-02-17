@@ -193,14 +193,14 @@ as.cvec <- function(x) {
 
 # collapse a character vector back to length n (undo strsplit)
 collapsen <- function(string,collapse,n=3) {
-    if(length(string) <= n) return(string)
-    if(n==1) return(paste0(string, collapse = collapse))
-    ans <- string[seq(1,(n-1))]
-    if(n >= 2) {
-      remainder <- paste0(string[seq(n,length(string))],collapse=collapse)
-      ans <- c(ans, remainder)  
-    }
-    ans
+  if(length(string) <= n) return(string)
+  if(n==1) return(paste0(string, collapse = collapse))
+  ans <- string[seq(1,(n-1))]
+  if(n >= 2) {
+    remainder <- paste0(string[seq(n,length(string))],collapse=collapse)
+    ans <- c(ans, remainder)  
+  }
+  ans
 }
 
 # replica str_split; to be replace if / when we take up stringr
@@ -482,11 +482,9 @@ na2zero <- function(x) {
   x
 }
 
-sanitize_capture <- function(x) {
-  for(i in seq_along(x)) {
-    x[i] <- gsub("\\[|\\(", "_", x[i])
-    x[i] <- gsub("\\]|\\)", "",  x[i])
-  }
+sanitize_capture <- function(x, sep = "_") {
+  x <- gsub("\\[|\\(", sep, x, perl = TRUE)
+  x <- gsub("\\]|\\)", "",  x, perl = TRUE)
   x
 }
 

@@ -272,8 +272,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # capture  ----
   capture_more <- capture
-  capture_code <- unlist(do.call("c", nonull.list(mread.env[["capture"]])))
-  capture <- .ren.create(as.character(capture_code))
+  capture <- .ren.collect(mread.env[["capture"]])
   annot <- capture_param(annot,.ren.new(capture))
   
   # Collect potential multiples
@@ -418,8 +417,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
         call. = FALSE
       )
     }
-    capture_code <- unique(c(capture_code, capture_more))
-    capture <- .ren.create(capture_code)
+    capture <- .ren.collect(list(capture_vars, capture))
     x@capture <- .ren.chr(capture)
     x <- default_outputs(x)
     build$preclean <- TRUE
