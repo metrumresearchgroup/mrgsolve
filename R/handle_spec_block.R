@@ -357,8 +357,8 @@ handle_spec_block.specCAPTURE <- function(x, ...) {
 }
 
 #' @rdname BLOCK_PARSE
-CAPTURE <- function(x, env, pos = 1, annotated = FALSE, ...) {
-  
+CAPTURE <- function(x, env, pos = 1, annotated = FALSE, 
+                    etas = NULL, ...) {
   if(annotated) {
     context <- env[["incoming_names"]][pos]
     context <- glue("parse annotated capture block ({context})")
@@ -372,7 +372,13 @@ CAPTURE <- function(x, env, pos = 1, annotated = FALSE, ...) {
     x <- cvec_cs(x)
   }
   
-  check_block_data(x, env, pos)
+  if(is.character(etas)) {
+    if(is.null(env[["capture_etas"]])) {
+      env[["capture_etas"]] <- etas  
+    }
+  } else {
+    check_block_data(x, env, pos)  
+  }
   
   x <- .ren.create(x)
   x <- .ren.sanitize(x, fun = sanitize_capture)

@@ -419,10 +419,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       )
     }
     capture <- .ren.collect(list(capture, capture_vars))
-    x@capture <- .ren.chr(capture)
-    x <- default_outputs(x)
     build$preclean <- TRUE
   }
+  
+  capture <- capture_etas(mread.env, capture, x)
+  x@capture <- .ren.chr(capture)
+  x <- default_outputs(x)
   
   # Check mod ----
   check_pkmodel(x, subr, spec)

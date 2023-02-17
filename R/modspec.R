@@ -39,6 +39,34 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
+capture_etas <- function(env, capture, mod) {
+  if(!is.character(env[["capture_etas"]])) return(capture)
+  n <- last <- LAST <- dim_matlist(omat(mod))
+  if(last==0) return(capture)
+  etan <- try(eval(parse(text = env[["capture_etas"]])))
+  if(inherits(etan, "try-error")) {
+    abort("could not parse expression for `etas`")  
+  }
+  if(!is.integer(etan)) {
+    abort("`etas` must resolve to an integer value.")    
+  }
+  if(length(etan)==0) {
+    abort("`etas` has length 0.")  
+  }
+  if(any(etan > last)) {
+    abort(
+      message = c(
+        "some values in `etas` were out of bounds", 
+        i = glue("number of rows in $OMEGA: {last}"), 
+        i = glue("maximum value in `etas`: {max(etan)}")
+      )
+    )
+  }
+  old <- paste0("ETA(", etan, ")")
+  new <- paste0("ETA", etan)
+  .ren.collect(list(capture, .ren.create(old, new)))
+}
+
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c(

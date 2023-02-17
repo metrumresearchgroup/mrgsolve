@@ -50,7 +50,7 @@ CMT(
   ...
 )
 
-CAPTURE(x, env, pos = 1, annotated = FALSE, ...)
+CAPTURE(x, env, pos = 1, annotated = FALSE, etas = NULL, ...)
 
 HANDLEMATRIX(
   x,
