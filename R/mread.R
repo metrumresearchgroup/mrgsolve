@@ -423,9 +423,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   capture <- capture_etas(mread.env, capture, x)
-  x@capture <- .ren.chr(capture)
-  x <- default_outputs(x)
-  
+  x <- update_capture(x, .ren.chr(capture))
+
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
