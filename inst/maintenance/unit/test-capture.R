@@ -52,7 +52,6 @@ test_that("error if cmt in capture issue-555", {
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
-$ENV asdk = seq(1,3)
 $GLOBAL
 double z = 5;
 $MAIN  double b = 2;
@@ -97,7 +96,7 @@ test_that("capture pp directive via mread [SLV-TEST-0010]", {
 })
 
 test_that("capture with @etas directive", {
-  base <- "$OMEGA 1 1 1 1 1\n$CAPTURE @etas "
+  base <- "$OMEGA 1 1 1 1 1\n$ENV asdk = seq(1,3)\n$CAPTURE @etas "
   
   code <- paste0(base, "1:2")
   mod <- mcode("capture-at-etas-1", code, compile = FALSE)
@@ -106,6 +105,11 @@ test_that("capture with @etas directive", {
   code <- paste0(base, "c(1,2)")
   mod2 <- mcode("capture-at-etas-1b", code, compile = FALSE)
   expect_identical(mod@capture, mod2@capture)
+  
+  code <- paste0(base, "asdk")
+  mod <- mcode("capture-at-etas-1c", code, compile = FALSE)
+  expect_equal(mod@capture,   c(`ETA(1)` = "ETA1", `ETA(2)` = "ETA2", 
+                                `ETA(3)` = "ETA3"))
   
   expect_error(
     mcode("capture-at-etas-2", base),
@@ -135,4 +139,7 @@ test_that("capture with @etas directive", {
     mcode("capture-at-etas-7", code), 
     regexp = "has length 0"
   )
+  
+
+  
 })

@@ -372,7 +372,7 @@ CAPTURE <- function(x, env, pos = 1, annotated = FALSE,
     x <- cvec_cs(x)
   }
   
-  if(!missing(etas)) {
+  if(!is.null(etas)) {
     if(is.logical(etas)) {
       abort("`etas` must be text, not a logical value.")  
     }
