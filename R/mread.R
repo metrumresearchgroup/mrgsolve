@@ -399,6 +399,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   # more captures ----
+  
+  # Process @etas 1:n -----
+  x <- capture_etas(x, mread.env)
+  
+  # Process capture passed into mread -----
   if(is.character(capture_more)) {
     valid_capture <- get_valid_capture(
       param = param, omega = omega, sigma = sigma, build = build, 
@@ -408,7 +413,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       capture_more <- valid_capture[valid_capture != "."]  
     }
     capture_vars <- .ren.create(capture_more)
-    capture_vars <- .ren.sanitize(capture_vars, fun = sanitize_capture)
+    capture_vars <- .ren.sanitize(capture_vars)
     if(!all(capture_vars[["old"]] %in% valid_capture)) {
       bad <- setdiff(capture_vars[["old"]], valid_capture)
       for(b in bad) {
@@ -423,8 +428,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     x <- update_capture(x, .ren.chr(capture_vars))
     build$preclean <- TRUE
   }
-  
-  x <- capture_etas(x, mread.env)
 
   # Check mod ----
   check_pkmodel(x, subr, spec)

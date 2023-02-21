@@ -104,21 +104,3 @@
   if(named) return(setNames(self$new,self$old))
   return(self$new)
 }
-
-.ren.collect <- function(x, unique = TRUE) {
-  self <- .ren.init()
-  x <- nonull.list(x)
-  if(length(x)==0) return(self)
-  Old <- unlist(sapply(x, "[[", "old", simplify = FALSE))
-  if(length(Old)==0) return(.ren.init())
-  New <- unlist(sapply(x, "[[", "new", simplify = FALSE))
-  if(anyDuplicated(Old)) {
-    duplicates <- duplicated(Old)
-    Old <- Old[!duplicates]
-    New <- New[!duplicates]
-  }
-  self$old <- Old
-  self$new <- New
-  self$identical <- all(self$old==self$new)
-  self
-}

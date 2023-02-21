@@ -374,7 +374,7 @@ CAPTURE <- function(x, env, pos = 1, annotated = FALSE,
   
   if(is.character(etas)) {
     if(is.null(env[["capture_etas"]])) {
-      env[["capture_etas"]] <- etas  
+      env[["capture_etas"]] <- c(env[["capture_etas"]], etas)
     }
   } else {
     check_block_data(x, env, pos)  

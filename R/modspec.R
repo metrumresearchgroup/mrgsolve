@@ -43,28 +43,31 @@ capture_etas <- function(x, env) {
   if(!is.character(env[["capture_etas"]])) return(x)
   n <- last <- LAST <- dim_matlist(omat(x))
   if(last==0) return(x)
-  etan <- try(eval(parse(text = env[["capture_etas"]])))
-  if(inherits(etan, "try-error")) {
-    abort("could not parse expression for `etas`")  
-  }
-  if(!is.integer(etan)) {
-    abort("`etas` must resolve to an integer value.")    
-  }
-  if(length(etan)==0) {
-    abort("`etas` has length 0.")  
-  }
-  if(any(etan > last)) {
-    abort(
-      message = c(
-        "some values in `etas` were out of bounds", 
-        i = glue("number of rows in $OMEGA: {last}"), 
-        i = glue("maximum value in `etas`: {max(etan)}")
+  for(eta_txt in env[["capture_etas"]]) {
+    etan <- try(eval(parse(text = eta_txt)))
+    if(inherits(etan, "try-error")) {
+      abort(glue("could not parse expression for `etas`: {etas_txt}."))
+    }
+    if(!is.integer(etan)) {
+      abort("`etas` must resolve to an integer value.")    
+    }
+    if(length(etan)==0) {
+      abort("`etas` has length 0.")  
+    }
+    if(any(etan > last)) {
+      abort(
+        message = c(
+          "some values in `etas` were out of bounds", 
+          i = glue("number of rows in $OMEGA: {last}"), 
+          i = glue("maximum value in `etas`: {max(etan)}")
+        )
       )
-    )
+    }
+    old <- paste0("ETA(", etan, ")")
+    new <- paste0("ETA", etan)
+    x <- update_capture(x, .ren.chr(.ren.create(old, new)))
   }
-  old <- paste0("ETA(", etan, ")")
-  new <- paste0("ETA", etan)
-  update_capture(x, .ren.chr(.ren.create(old, new)))
+  x
 }
 
 ## These are arguments to mrgsim that
