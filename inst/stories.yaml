@@ -1,5 +1,12 @@
 # Please add stories at the top ------------------------------------------
-SLV-0011: 
+SLV-0012: 
+  name: import estimates from NONMEM
+  description: > 
+    As a user, I want to import parameter estimates from a NONMEM run.
+  ProductRisk: low-risk
+  tests: 
+  - SLV-TEST-0023
+SLV-0011:
   name: access SIGMA(n) in the model
   description: > 
     As a user, I want to access on-diagonal elements of SIGMA inside the model.
