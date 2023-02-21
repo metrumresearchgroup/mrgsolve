@@ -93,6 +93,7 @@ odeproblem::odeproblem(Rcpp::List param,
   d.id = 1.0;
   d.EPS.assign(50,0.0);
   d.ETA.assign(50,0.0);
+  d.SIGMA.assign(5,0.0);
   d.CFONSTOP = false;
   d.cmt = 0;
   d.amt = 0;
@@ -769,6 +770,15 @@ void odeproblem::sigma(const Rcpp::S4& mod) {
   // if(!(Sigma.is_symmetric())) {
   //   Sigma  = symmatl(Sigma);
   // }
+}
+
+void odeproblem::copy_sigma_diagonals() {
+  if(d.SIGMA.size() < Sigma.n_cols) {
+    d.SIGMA.assign(Sigma.n_cols, 0.0);  
+  }
+  for(size_t i = 0; i < Sigma.n_cols; ++i) {
+    d.SIGMA[i] = Sigma(i,i);  
+  }
 }
 
 arma::mat odeproblem::mv_omega(int n) {

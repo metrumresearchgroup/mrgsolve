@@ -116,8 +116,9 @@ typedef double capture;
 // random effects.  These might get used,
 // but users are allowed to insert labels to
 // avoid directly accessing the macros.
-#define ETA(a) self.ETA.at(a-1)
-#define EPS(a) self.EPS.at(a-1)
+#define ETA(a)   self.ETA.at(a-1)
+#define EPS(a)   self.EPS.at(a-1)
+#define SIGMA(a) self.SIGMA.at(a-1)
 #define _xETA(a) self.ETA[a-1]
 #define _xEPS(a) self.EPS[a-1]
 

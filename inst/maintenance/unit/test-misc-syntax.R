@@ -5,20 +5,34 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
+theta_sigma_n <- '
+[ param ] THETA1 = 1.2, SN = 1
+[ SIGMA ] 1.1 2.2 3.3 4.4
+[ main ] 
+capture CL = THETA(1);
+[ error ] 
+capture SIGMA2 = SIGMA(SN);
+
+'
+mod_th_sg_n <- mcode("theta_sigma_n", theta_sigma_n)
+
 test_that("THETA(n) is allowed", {
-  code <- '
-  [ param ] THETA1 = 1.2;
-  [ main ] 
-  capture CL = THETA(1);
-  '
-  mod <- mcode("thetan", code)
-  out <- mrgsim(mod, end = 1)
+  out <- mrgsim(mod_th_sg_n, end = 1)
   expect_equal(out$CL[1], 1.2)
   expect_error(
     mcode("thetan2", "[param] THETA = 2"), 
     regexp="Reserved words in model names: THETA"
   )
 })
+
+test_that("Access SIGMA(n) [SLV-TEST-0090]", {
+  out <- mrgsim(mod_th_sg_n, end = -1, param = list(SN = 2))
+  expect_equal(out$SIGMA2, 2.2)
+  out <- mrgsim(mod_th_sg_n, end = -1, param = list(SN = 4))
+  expect_equal(out$SIGMA2, 4.4)
+})
+
+mod_th_sg_n <- NULL
 
 test_that("autodec + nm-vars functional test", {
   eps <- 1e-4
