@@ -70,7 +70,7 @@
   return(self)
 }
 
-.ren.sanitize <- function(self, fun, ...) {
+.ren.sanitize <- function(self, fun = sanitize_capture, ...) {
   self$new <- fun(self$new, ...)
   self$identical <- all(self$new == self$old)
   self

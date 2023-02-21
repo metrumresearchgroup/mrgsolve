@@ -240,7 +240,7 @@ update_request <- function(mod, request = NULL) {
 }
 
 update_capture <- function(x, capture) {
-  x@capture <- capture
+  x@capture <- c(x@capture, capture)
   x <- default_outputs(x)
   x <- update_request(x, x@request)
   x

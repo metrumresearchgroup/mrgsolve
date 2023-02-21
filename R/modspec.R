@@ -39,10 +39,10 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
-capture_etas <- function(env, capture, mod) {
-  if(!is.character(env[["capture_etas"]])) return(capture)
-  n <- last <- LAST <- dim_matlist(omat(mod))
-  if(last==0) return(capture)
+capture_etas <- function(x, env) {
+  if(!is.character(env[["capture_etas"]])) return(x)
+  n <- last <- LAST <- dim_matlist(omat(x))
+  if(last==0) return(x)
   etan <- try(eval(parse(text = env[["capture_etas"]])))
   if(inherits(etan, "try-error")) {
     abort("could not parse expression for `etas`")  
@@ -64,7 +64,7 @@ capture_etas <- function(env, capture, mod) {
   }
   old <- paste0("ETA(", etan, ")")
   new <- paste0("ETA", etan)
-  .ren.collect(list(capture, .ren.create(old, new)))
+  update_capture(x, .ren.chr(.ren.create(old, new)))
 }
 
 ## These are arguments to mrgsim that

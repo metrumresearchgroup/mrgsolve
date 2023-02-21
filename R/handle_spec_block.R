@@ -379,10 +379,7 @@ CAPTURE <- function(x, env, pos = 1, annotated = FALSE,
   } else {
     check_block_data(x, env, pos)  
   }
-  
-  x <- .ren.create(x)
-  x <- .ren.sanitize(x, fun = sanitize_capture)
-  
+
   env[["capture"]][[pos]] <- x
   
   return(NULL)

@@ -272,8 +272,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # capture  ----
   capture_more <- capture
-  capture <- .ren.collect(mread.env[["capture"]])
-  annot <- capture_param(annot,.ren.new(capture))
+  capture <- unlist(nonull.list(mread.env[["capture"]]))
+  capture <- .ren.create(capture)
+  capture <- .ren.sanitize(capture)
+  annot <- capture_param(annot, .ren.new(capture))
   
   # Collect potential multiples
   subr  <- collect_subr(spec)
@@ -418,12 +420,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
         call. = FALSE
       )
     }
-    capture <- .ren.collect(list(capture, capture_vars))
+    x <- update_capture(x, .ren.chr(capture_vars))
     build$preclean <- TRUE
   }
   
-  capture <- capture_etas(mread.env, capture, x)
-  x <- update_capture(x, .ren.chr(capture))
+  x <- capture_etas(x, mread.env)
 
   # Check mod ----
   check_pkmodel(x, subr, spec)
