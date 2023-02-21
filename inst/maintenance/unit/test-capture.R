@@ -52,6 +52,7 @@ test_that("error if cmt in capture issue-555", {
 
 code <- '
 $PARAM CL=1, V2=20,Q=30,V3=200,KA=1
+$ENV asdk = seq(1,3)
 $GLOBAL
 double z = 5;
 $MAIN  double b = 2;
@@ -93,4 +94,45 @@ test_that("dynamic capture under nm-vars [SLV-TEST-0009]", {
 test_that("capture pp directive via mread [SLV-TEST-0010]", {
   mod <- modlib("irm3", capture = "STIM", compile = FALSE)  
   expect_equal(outvars(mod)$capture, c("CP", "STIM"))
+})
+
+test_that("capture with @etas directive", {
+  base <- "$OMEGA 1 1 1 1 1\n$CAPTURE @etas "
+  
+  code <- paste0(base, "1:2")
+  mod <- mcode("capture-at-etas-1", code, compile = FALSE)
+  expect_equal(mod@capture,   c(`ETA(1)` = "ETA1", `ETA(2)` = "ETA2"))
+  
+  code <- paste0(base, "c(1,2)")
+  mod2 <- mcode("capture-at-etas-1b", code, compile = FALSE)
+  expect_identical(mod@capture, mod2@capture)
+  
+  expect_error(
+    mcode("capture-at-etas-2", base),
+    regexp = "must be text, not a logical value"
+  )
+  
+  code <- paste0(base, "foobar")
+  expect_error(
+    mcode("capture-at-etas-3", code), 
+    regexp = "could not parse this expression"
+  )
+  
+  code <- paste0(base, "1:100")
+  expect_error(
+    mcode("capture-at-etas-4", code), 
+    regexp = "must be integers between 1 and 5"
+  )
+  
+  code <- paste0(base, "letters")
+  expect_error(
+    mcode("capture-at-etas-5", code), 
+    regexp = "must resolve to an integer value"
+  )
+  
+  code <- paste0(base, "integer(0)")
+  expect_error(
+    mcode("capture-at-etas-7", code), 
+    regexp = "has length 0"
+  )
 })

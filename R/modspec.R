@@ -46,16 +46,24 @@ capture_etas <- function(x, env) {
   parse_env <- as.list(env$ENV)
   parse_env$last <- parse_env$LAST <- last
   for(eta_txt in env[["capture_etas"]]) {
-    etan <- try(eval(parse(text = eta_txt), envir = parse_env))
+    etan <- try(eval(parse(text = eta_txt), envir = parse_env), silent = TRUE)
     if(inherits(etan, "try-error")) {
-      abort(glue("could not parse this expression for `etas`: {eta_txt}."))
+      msg <- c(
+        glue("could not parse this expression for `etas`: {eta_txt}."), 
+        x = etan
+      )
+      abort(msg)
     }
-    if(!is.integer(etan)) {
+    resolves_int <- 
+      is.integer(etan) || 
+      (is.numeric(etan) && all(abs(etan - round(etan)) < 1e-08))
+    if(!resolves_int) {
       abort("`etas` must resolve to an integer value.")    
     }
     if(length(etan)==0) {
       abort("`etas` has length 0.")  
     }
+    etan <- as.integer(round(etan))
     if(any(etan > last)) {
       abort(
         message = c(
