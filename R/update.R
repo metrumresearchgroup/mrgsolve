@@ -240,7 +240,9 @@ update_request <- function(mod, request = NULL) {
 }
 
 update_capture <- function(x, capture) {
-  x@capture <- unique(c(x@capture, capture))
+  combined <- c(x@capture, capture)
+  combined <- combined[!duplicated(names(combined))]
+  x@capture <- combined
   x <- default_outputs(x)
   x <- update_request(x, x@request)
   x

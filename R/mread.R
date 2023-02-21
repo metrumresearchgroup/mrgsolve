@@ -536,7 +536,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     dbs[["cmt"]],
     table,
     spec[["PRED"]],
-    write_capture(.ren.old(capture)),
+    write_capture(names(x@capture)),
     "__END_table__",
     "", 
     sep="\n", file=def.con)

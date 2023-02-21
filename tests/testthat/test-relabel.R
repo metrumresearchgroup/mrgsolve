@@ -43,7 +43,6 @@ test_that("rename, from string", {
   expect_equal(setNames(a,b),mrgsolve:::.ren.chr(obj))
 })
 
-
 test_that("ren rename", {
   
   x <- mrgsolve:::.ren.create("a = apple b c = Cat")
@@ -56,5 +55,16 @@ test_that("ren rename", {
   
 })
 
+test_that("don't sanitize by default", {
+  x <- mrgsolve:::.ren.create("A ETA(1)")  
+  expect_true(all(x$old==x$new))
+  
+  x <- mrgsolve:::.ren.create("A ETA(1)", sanitize=mrgsolve:::sanitize_capture)
+  expect_equal(x$new, c("A", "ETA_1"))
+})
 
-
+test_that("sanitize new names", {
+  x <- mrgsolve:::.ren.create("A ETA(1)")
+  x <- mrgsolve:::.ren.sanitize(x)
+  expect_false(all(x$old==x$new))
+})

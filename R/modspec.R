@@ -41,12 +41,14 @@ write_capture <- function(x) {
 
 capture_etas <- function(x, env) {
   if(!is.character(env[["capture_etas"]])) return(x)
-  n <- last <- LAST <- dim_matlist(omat(x))
+  last <- dim_matlist(omat(x))
   if(last==0) return(x)
+  parse_env <- as.list(env$ENV)
+  parse_env$last <- parse_env$LAST <- last
   for(eta_txt in env[["capture_etas"]]) {
-    etan <- try(eval(parse(text = eta_txt)))
+    etan <- try(eval(parse(text = eta_txt), envir = parse_env))
     if(inherits(etan, "try-error")) {
-      abort(glue("could not parse expression for `etas`: {etas_txt}."))
+      abort(glue("could not parse this expression for `etas`: {eta_txt}."))
     }
     if(!is.integer(etan)) {
       abort("`etas` must resolve to an integer value.")    
@@ -57,8 +59,8 @@ capture_etas <- function(x, env) {
     if(any(etan > last)) {
       abort(
         message = c(
-          "some values in `etas` were out of bounds", 
-          i = glue("number of rows in $OMEGA: {last}"), 
+          glue("`etas` must be integers between 1 and {last}."),
+          i = glue("minimum value in `etas`: {min(etan)}"),
           i = glue("maximum value in `etas`: {max(etan)}")
         )
       )

@@ -372,14 +372,15 @@ CAPTURE <- function(x, env, pos = 1, annotated = FALSE,
     x <- cvec_cs(x)
   }
   
-  if(is.character(etas)) {
-    if(is.null(env[["capture_etas"]])) {
-      env[["capture_etas"]] <- c(env[["capture_etas"]], etas)
+  if(!missing(etas)) {
+    if(is.logical(etas)) {
+      abort("`etas` must be text, not a logical value.")  
     }
+    env[["capture_etas"]] <- c(env[["capture_etas"]], etas)
   } else {
-    check_block_data(x, env, pos)  
+    check_block_data(x, env, pos)
   }
-
+  
   env[["capture"]][[pos]] <- x
   
   return(NULL)
