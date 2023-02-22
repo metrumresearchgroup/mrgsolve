@@ -22,10 +22,19 @@
 #' 
 #' This function checks to see if there are both `ETAn` and `ETn` in the data
 #' set when `n` is greater than 9. For example, when both `ETA12` and `ET12` 
-#' are found, an error is generated. This function is only used for its 
-#' side-effects. 
+#' are found, an error is generated. An error is also generated when the 
+#' function is called with `neta` values less than `10`. 
+#' 
 #' @noRd
 check_etasrc_names <- function(data_names, neta, etasrc) {
+  if(neta < 10) {
+    abort(
+      "internal: expecting `neta` to be less than 10.", 
+      i = glue("`neta` is {neta}"), 
+      i = glue("`etasrc` is {etasrc}")
+    )  
+  }
+  if(length(data_names)==0) return(NULL)
   eta_check <- paste0("ETA", seq(10, neta))
   et_check <- paste0("ET", seq(10, neta))
   found_eta <- match(eta_check, data_names, nomatch = 0L)
