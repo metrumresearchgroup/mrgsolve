@@ -269,14 +269,15 @@ test_that("pass ETA on the data set", {
   )
   
   data <- data.frame(
-    amt = 10, evid = 2, time = 0, cmt = 0,
-    ID = c(1,2,3), 
-    ETA1 = c(1,2,3)/10,
-    ETA2 = c(1,2,3)*2,
+    amt = 10, evid = 2, cmt = 0,
+    time = c(0,0.5,1,0,0.5,0), 
+    ID = c(1,1,1,2,2,3), 
+    ETA1 = c(1,1,1,2,2,3)/10,
+    ETA2 = c(1,1,1,2,2,3)*2,
     mode = 0
   )
   out <- mrgsim(mod, data, etasrc = "data", end = 2, delta = 1, start = 1)
-  expect_equal(nrow(out), 9)
+  expect_equal(nrow(out), 12)
   expect_true(all(out$a == out$ID/10))
   expect_true(all(out$b == out$ID*2))
 })
