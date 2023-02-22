@@ -205,7 +205,7 @@ model \verb{$OMEGA} blocks. For example, if \verb{$OMEGA} is 5x5, only \code{ETA
 \emph{no} columns with \code{ETAn} names and something other than \code{etasrc = "omega"}
 was passed. When \code{etasrc = "data"} and an \code{ETAn} column is missing from the
 data set, the missing \code{ETA()} will be set to \code{0}.  Alternatively, the user
-can pass \code{etasrc = "data.all"} which cause an error to be generated if any
+can pass \code{etasrc = "data.all"} which causes an error to be generated if any
 \code{ETAn} is missing from the data set. Use this option when you intend to have
 \emph{all} \code{ETAs} attached to the data set and want an error generated if mrgsolve
 finds one or more of them is missing.

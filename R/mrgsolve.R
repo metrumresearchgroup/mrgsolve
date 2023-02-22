@@ -22,7 +22,7 @@
 #' 
 #' This function checks to see if there are both `ETAn` and `ETn` in the data
 #' set when `n` is greater than 9. For example, when both `ETA12` and `ET12` 
-#' are found, an error is generated. This funciton is only use for its 
+#' are found, an error is generated. This function is only used for its 
 #' side-effects. 
 #' @noRd
 check_etasrc_names <- function(data_names, neta, etasrc) {
@@ -177,7 +177,7 @@ tgrid_id <- function(col,idata) {
 #' _no_ columns with `ETAn` names and something other than `etasrc = "omega"` 
 #' was passed. When `etasrc = "data"` and an `ETAn` column is missing from the 
 #' data set, the missing `ETA()` will be set to `0`.  Alternatively, the user 
-#' can pass `etasrc = "data.all"` which cause an error to be generated if any 
+#' can pass `etasrc = "data.all"` which causes an error to be generated if any 
 #' `ETAn` is missing from the data set. Use this option when you intend to have 
 #' _all_ `ETAs` attached to the data set and want an error generated if mrgsolve 
 #' finds one or more of them is missing.
@@ -547,7 +547,7 @@ do_mrgsim <- function(x,
     x <- update_outputs(x, outputs = Request)  
   }
   
-  if(!is.character(etasrc) && length(etasrc)==1) {
+  if(!(is.character(etasrc) && length(etasrc)==1)) {
     abort("`etasrc` must be a string.")
   }
   
