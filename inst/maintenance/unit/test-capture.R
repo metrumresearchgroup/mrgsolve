@@ -139,7 +139,4 @@ test_that("capture with @etas directive", {
     mcode("capture-at-etas-7", code), 
     regexp = "has length 0"
   )
-  
-
-  
 })
