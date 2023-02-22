@@ -107,12 +107,11 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
                         winslash=.Platform$file.sep)
   proj <- cropstr(proj, 16,16)
   
-  
   osig <- dim_matlist(x@omega)
   osig <- paste(osig,osig, sep="x", collapse=',')
   ssig <- dim_matlist(x@sigma)
   ssig <- paste(ssig,ssig, sep="x", collapse=',')
-  
+ 
   loaded <- ifelse(model_loaded(x),"", "<not loaded>")
   
   src <- paste0("source: ", basename(cfile(x)))

@@ -27,10 +27,10 @@ qsim(
 one parameter per row (see \code{\link[=idata_set]{idata_set()}})}
 
 \item{obsonly}{if \code{TRUE}, dosing records are not included
-in the output}
+in the output.}
 
 \item{tgrid}{a tgrid object; or a numeric vector of simulation times
-or another object with an \code{stime} method}
+or another object with an \code{stime} method.}
 
 \item{recsort}{record sorting flag.  Default value is 1.  Possible values
 are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at
@@ -57,7 +57,7 @@ in most common dosing lag time implementations.}
 \item{outvars}{output items to request; if missing, then only captured items
 will be returned in the output}
 
-\item{skip_init_calc}{don't use \verb{$MAIN} to calculate initial conditions}
+\item{skip_init_calc}{don't use \verb{$MAIN} to calculate initial conditions.}
 
 \item{output}{output data type; the default is \code{mrgsims}, which returns the
 default output object; other options include \code{df} (for data.frame) or

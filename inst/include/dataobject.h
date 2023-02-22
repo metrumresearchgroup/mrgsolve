@@ -82,6 +82,9 @@ public:
                  const Rcpp::IntegerVector& idata_carry,
                  const unsigned int idata_carry_start, 
                  const bool nocb);
+
+  arma::mat get_etas(const int n, const bool strict, const std::string& value);
+  
   std::vector<unsigned int> col;
   Rcpp::CharacterVector Data_names;
   
