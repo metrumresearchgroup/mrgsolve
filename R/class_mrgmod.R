@@ -746,8 +746,10 @@ blocks_ <- function(file,what) {
 
 parin <- function(x) {
   list(
-    ss_n = 500, ss_fixed = FALSE, 
-    interrupt = -1
+    ss_n = 500, 
+    ss_fixed = FALSE, 
+    interrupt = -1, 
+    etasrc = "omega"
   )
 }
 
