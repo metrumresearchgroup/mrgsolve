@@ -241,6 +241,11 @@ test_that("pass ETA on the data set", {
   )
   
   expect_error(
+    mrgsim(mod, data, etasrc = c("data", "foo")), 
+    regexp = "must be a string"
+  )
+  
+  expect_error(
     mrgsim(mod, data, etasrc = "data.all"), 
     regexp = "all 11 ETAs"
   )
