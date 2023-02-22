@@ -39,6 +39,27 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
+#' This function adds ETA values to the capture list when the `@etas` 
+#' option is used in `$CAPTURE` .
+#' 
+#' @param x the model object
+#' @param env the mread parse environment
+#' 
+#' @details
+#' We look at env$capture_etas to see if there were any expression text passed
+#' through the `@etas` option. This text will be parsed and evaluated in the 
+#' model environment after adding `LAST` and `last` to represent the last
+#' ETA (or the [total] number of rows in `$OMEGA`).
+#' 
+#' An error is generated in case the expression can't be parsed and evaluated.
+#' 
+#' `@etas` must resolve to an integer-like object. Expecting most usage to be
+#' `1:last` which will be integer, but we want to support `c(1,2,5)` as well
+#' which will not be integer. 
+#'
+#' @return The model object, possibly updated.   
+#' 
+#' @noRd
 capture_etas <- function(x, env) {
   if(!is.character(env[["capture_etas"]])) return(x)
   last <- dim_matlist(omat(x))
@@ -63,7 +84,7 @@ capture_etas <- function(x, env) {
     if(length(etan)==0) {
       abort("`etas` has length 0.")  
     }
-    etan <- as.integer(round(etan))
+    etan <- unique(as.integer(round(etan)))
     if(any(etan > last)) {
       abort(
         message = c(
@@ -715,6 +736,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
   mread.env$incoming_names <- incoming_names
+  mread.env$capture_etas <- NULL
   mread.env
 }
 
