@@ -600,6 +600,11 @@ mread_cache <- function(model = NULL,
                         preclean = FALSE, 
                         capture = NULL, ...) {
   
+  if (charthere(model, "/")) {
+    project <- dirname(model)
+    model <- basename(model)
+  }
+  
   if(is.character(capture)) preclean <- TRUE
   
   build <- new_build(file, model, project, soloc, code, preclean) 
