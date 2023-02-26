@@ -75,9 +75,7 @@ capture_etas <- function(x, env) {
       )
       abort(msg)
     }
-    resolves_int <- 
-      is.integer(etan) || 
-      (is.numeric(etan) && all(abs(etan - round(etan)) < 1e-08))
+    resolves_int <- is.numeric(etan) && all.equal(etan, round(etan))
     if(!resolves_int) {
       abort("`etas` must resolve to an integer value.")    
     }
