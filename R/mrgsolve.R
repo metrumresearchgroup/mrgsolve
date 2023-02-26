@@ -665,7 +665,7 @@ do_mrgsim <- function(x,
   parin$carry_tran <- tolower(carry.tran)
   
   # Now, create a rename object 
-  rename.carry.tran <- .ren.create(parin[["carry_tran"]], carry.tran)
+  rename.carry.tran <- .ren.create(parin[["carry_tran"]],carry.tran)
   carry.tran <- rename.carry.tran$old
   
   # Derive stime vector either from tgrid or from the object

@@ -70,7 +70,7 @@ test_that("capture via mread [SLV-TEST-0008]", {
     msg = "all requested `capture` variables must exist in the model"
   )
   mod <- mcode("capture-mread", code, capture="(everything)", compile = FALSE)
-  res <- c("CL", "VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "z", "b")
+  res <- c("CL","VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "z", "b")
   expect_equal(outvars(mod)$capture, res)
 })
 

@@ -734,7 +734,6 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
   mread.env$incoming_names <- incoming_names
-  mread.env$capture_etas <- NULL
   mread.env
 }
 
