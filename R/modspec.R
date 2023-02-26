@@ -83,7 +83,7 @@ capture_etas <- function(x, env) {
       abort("`etas` has length 0.")  
     }
     etan <- unique(as.integer(round(etan)))
-    if(any(etan > last)) {
+    if(any(etan < 1 | etan > last)) {
       abort(
         message = c(
           glue("`etas` must be integers between 1 and {last}."),
