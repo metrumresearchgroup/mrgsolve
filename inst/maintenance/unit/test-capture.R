@@ -70,7 +70,7 @@ test_that("capture via mread [SLV-TEST-0008]", {
     msg = "all requested `capture` variables must exist in the model"
   )
   mod <- mcode("capture-mread", code, capture="(everything)", compile = FALSE)
-  res <- c("CL","VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "z", "b")
+  res <- c("CL", "VP", "Q", "V3", "KA", "OGA2", "ETA_1", "ETA_2", "z", "b")
   expect_equal(outvars(mod)$capture, res)
 })
 
@@ -97,7 +97,6 @@ test_that("capture pp directive via mread [SLV-TEST-0010]", {
 
 test_that("capture with @etas directive", {
   base <- "$OMEGA 1 1 1\n$OMEGA 1 1\n$ENV asdk = seq(1,3)\n$CAPTURE @etas "
-  
   code <- paste0(base, "1:2")
   mod <- mcode("capture-at-etas-1", code, compile = FALSE)
   expect_equal(mod@capture,   c(`ETA(1)` = "ETA1", `ETA(2)` = "ETA2"))
@@ -127,7 +126,7 @@ test_that("capture with @etas directive", {
     mcode("capture-at-etas-4", code), 
     regexp = "must be integers between 1 and 5"
   )
-  
+
   code <- paste0(base, "-1:5")
   expect_error(
     mcode("capture-at-etas-5", code), 
@@ -137,7 +136,7 @@ test_that("capture with @etas directive", {
   code <- paste0(base, "letters")
   expect_error(
     mcode("capture-at-etas-6", code), 
-    regexp = "must resolve to an integer value"
+   regexp = "must resolve to an integer value"
   )
   
   code <- paste0(base, "integer(0)")

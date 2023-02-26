@@ -361,8 +361,8 @@ handle_spec_block.specCAPTURE <- function(x, ...) {
 #' be an integer-like vector which identifies which ETAs will be captured.
 #' 
 #' @rdname BLOCK_PARSE
-CAPTURE <- function(x, env, pos = 1, annotated = FALSE, ...) {
-  
+CAPTURE <- function(x, env, pos = 1, annotated = FALSE, 
+                    etas = NULL, ...) {
   if(annotated) {
     context <- env[["incoming_names"]][pos]
     context <- glue("parse annotated capture block ({context})")
@@ -376,7 +376,14 @@ CAPTURE <- function(x, env, pos = 1, annotated = FALSE, ...) {
     x <- cvec_cs(x)
   }
   
-  check_block_data(x, env, pos)
+  if(!is.null(etas)) {
+    if(is.logical(etas)) {
+      abort("`etas` must be text, not a logical value.")  
+    }
+    env[["capture_etas"]] <- c(env[["capture_etas"]], etas)
+  } else {
+    check_block_data(x, env, pos)
+  }
   
   env[["capture"]][[pos]] <- x
   

@@ -239,6 +239,14 @@ update_request <- function(mod, request = NULL) {
   return(mod)
 }
 
+update_capture <- function(x, capture) {
+  combined <- c(x@capture, capture)
+  combined <- combined[!duplicated(names(combined))]
+  x@capture <- combined
+  x <- default_outputs(x)
+  x <- update_request(x, x@request)
+  x
+}
 
 same_sig <- function(x,y) {
   return(identical(unname(nrow(x)), unname(nrow(y))))
