@@ -62,7 +62,7 @@ write_capture <- function(x) {
 #' @noRd
 capture_etas <- function(x, env) {
   if(!is.character(env[["capture_etas"]])) return(x)
-  last <- dim_matlist(omat(x))
+  last <- sum(nrow(omat(x)))
   if(last==0) return(x)
   parse_env <- as.list(env$ENV)
   parse_env$last <- parse_env$LAST <- last
