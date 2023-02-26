@@ -356,6 +356,10 @@ handle_spec_block.specCAPTURE <- function(x, ...) {
   scrape_and_call(x, pass = "CAPTURE", narrow = TRUE, ...)
 }
 
+#' @param etas allows for block capture of ETAs in the simulated output;
+#' this should be R code that will get parsed and evaluated; the result should 
+#' be an integer-like vector which identifies which ETAs will be captured.
+#' 
 #' @rdname BLOCK_PARSE
 CAPTURE <- function(x, env, pos = 1, annotated = FALSE, 
                     etas = NULL, ...) {

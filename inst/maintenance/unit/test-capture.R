@@ -96,7 +96,7 @@ test_that("capture pp directive via mread [SLV-TEST-0010]", {
 })
 
 test_that("capture with @etas directive", {
-  base <- "$OMEGA 1 1 1 1 1\n$ENV asdk = seq(1,3)\n$CAPTURE @etas "
+  base <- "$OMEGA 1 1 1\n$OMEGA 1 1\n$ENV asdk = seq(1,3)\n$CAPTURE @etas "
   
   code <- paste0(base, "1:2")
   mod <- mcode("capture-at-etas-1", code, compile = FALSE)
@@ -122,15 +122,21 @@ test_that("capture with @etas directive", {
     regexp = "could not parse this expression"
   )
   
-  code <- paste0(base, "1:100")
+  code <- paste0(base, "1:10")
   expect_error(
     mcode("capture-at-etas-4", code), 
     regexp = "must be integers between 1 and 5"
   )
   
-  code <- paste0(base, "letters")
+  code <- paste0(base, "-1:5")
   expect_error(
     mcode("capture-at-etas-5", code), 
+    regexp = "must be integers between 1 and 5"
+  )
+  
+  code <- paste0(base, "letters")
+  expect_error(
+    mcode("capture-at-etas-6", code), 
     regexp = "must resolve to an integer value"
   )
   
