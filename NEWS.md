@@ -1,7 +1,16 @@
 # mrgsolve (development version)
 
-- New model macro called `SIGMA()` which allows the user to access on-diagonal 
+- `SIGMA()` is a new model macro which allows the user to access on-diagonal
   elements of `SIGMA` in the model (e.g. `SIGMA(2)`) (#1051, #1052).
+
+- `@etas` is a new option for use with the `$CAPTURE` block to let the user name
+  `ETAs` to be captured into the simulated output (e.g. `@etas 1:last` (#1055).
+
+## Bugs Fixed
+
+- Fix bug when the `path` argument is used in the `$NMXML` or `$NMEXT` blocks;
+  this bug was introduced through the `@cppstem` feature in version `1.0.7` 
+  (#1046, #1048).
 
 # mrgsolve 1.0.7
 
