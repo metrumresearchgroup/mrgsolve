@@ -159,7 +159,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
                   capture = NULL,
                   preclean = FALSE, recover = FALSE, ...) {
   
-  if(charthere(model, "/")) {
+  if(!identical(basename(model), as.character(model))) {
     project <- dirname(model)
     model <- basename(model)
   }
@@ -603,6 +603,11 @@ mread_cache <- function(model = NULL,
                         quiet = FALSE, 
                         preclean = FALSE, 
                         capture = NULL, ...) {
+  
+  if (!identical(basename(model), as.character(model))) {
+    project <- dirname(model)
+    model <- basename(model)
+  }
   
   if(is.character(capture)) preclean <- TRUE
   

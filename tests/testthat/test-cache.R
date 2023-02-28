@@ -44,8 +44,6 @@ test_that("model caches via mread_cache", {
   expect_equal(mod2@args$foo,mo@args$foo)
 })
 
-
-
 test_that("model caches via mcode_cache", {
   code <- '
   $PARAM A = 1 
@@ -58,6 +56,10 @@ test_that("model caches via mcode_cache", {
   expect_false(identical(mod,mod3))
 })
 
+test_that("mread_cache with full path to cpp file", {
+  skip_if(!file.exists("nm/1005-xml.cpp"))
+  mod <- mread_cache("nm/1005-xml.cpp", compile = FALSE)
+  expect_is(mod, "mrgmod")
+})
 
 mrgsolve:::update_wait_time(2)
-
