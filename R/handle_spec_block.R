@@ -860,7 +860,7 @@ handle_spec_block.specYAML <- function(x, env, ...) {
     x <- lapply(x, FUN = do.call, what = what) 
     x <- bind_rows(x)
     label <-  names(data) 
-    if(is.null(labels) & is.character(data)) label <- data
+    if(is.null(label) & is.character(data)) label <- data
     mutate(x, block = block, name = label)
   }
   names(x) <- tolower(names(x))
