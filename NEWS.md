@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 1.0.8
 
 - `SIGMA()` is a new model macro which allows users to access on-diagonal
   elements of `SIGMA` in the model (e.g. `SIGMA(2)` in `$ERROR`) (#1051, #1052).
