@@ -1,16 +1,28 @@
 # mrgsolve (development version)
 
-- `SIGMA()` is a new model macro which allows the user to access on-diagonal
-  elements of `SIGMA` in the model (e.g. `SIGMA(2)`) (#1051, #1052).
+- `SIGMA()` is a new model macro which allows users to access on-diagonal
+  elements of `SIGMA` in the model (e.g. `SIGMA(2)` in `$ERROR`) (#1051, #1052).
 
-- `@etas` is a new option for use with the `$CAPTURE` block to let the user name
-  `ETAs` to be captured into the simulated output (e.g. `@etas 1:last` (#1055).
+- `@etas` is a new option for use with the `$CAPTURE` block to let users name
+  `ETAs` to be captured into the simulated output; for example, use 
+  `@etas 1:last` to capture all model `ETAs` in the simulated output (#1055).
+
+- Drop `CXX_STD` statement from Makevars file and DESCRIPTION to be consistent
+  with current changes in R-devel; mrgsolve continues to require compiler
+  capable of implementing C++11 standard, but this should be selected
+  automatically by R (#1060).
+
+- mrgsolve now depends on `R >= 3.6.2` (#1060).
 
 ## Bugs Fixed
 
 - Fix bug when the `path` argument is used in the `$NMXML` or `$NMEXT` blocks;
   this bug was introduced through the `@cppstem` feature in version `1.0.7` 
   (#1046, #1048).
+
+- Fix bug in `mread_cache()` where the `project` directory wasn't getting 
+  rendered properly when passing the complete path to the model specification
+  file (#1056).
 
 # mrgsolve 1.0.7
 
