@@ -284,6 +284,6 @@ test_that("pass ETA on the data set", {
   expect_true(all(out$a == out$ID/10))
   expect_true(all(out$b == out$ID*2))
   
-  out2 <- mrgsim_q(mod, data, etasrc = "data")
-  expect_identical(out@data, out2@data)
+  outq <- mrgsim_q(mod, data, etasrc = "data")
+  expect_identical(out@data, outq@data)
 })
