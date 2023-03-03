@@ -11,7 +11,8 @@ mrgsim_q(
   stime = numeric(0),
   output = "mrgsims",
   skip_init_calc = FALSE,
-  simcall = 0
+  simcall = 0,
+  etasrc = "omega"
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ object is returned; if \code{"df"} then a data frame is returned}
 \item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
 
 \item{simcall}{not used; only the default value of 0 is allowed}
+
+\item{etasrc}{source for \code{ETA()} values in the model; values can include:
+\code{"omega"}, \code{"data"} or \code{"data.all"}; see 'Details'.}
 }
 \value{
 By default, an object of class `mrgsims`. Use `output = "df"` to return 

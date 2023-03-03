@@ -28,6 +28,8 @@
 ##' This function should always be used for benchmarking simulation time with
 ##' mrgsolve.
 ##' 
+##' @inheritParams do_mrgsim
+##' 
 ##' @param x a model object
 ##' @param data a simulation data set
 ##' @param recsort record sorting flag
@@ -95,7 +97,8 @@ mrgsim_q <- function(x,
                      stime = numeric(0),
                      output = "mrgsims",
                      skip_init_calc = FALSE, 
-                     simcall = 0) {
+                     simcall = 0, 
+                     etasrc = "omega") {
   
   if(!is.mrgmod(x)) mod_first()
   
@@ -108,6 +111,10 @@ mrgsim_q <- function(x,
     data <- valid_data_set(data,x,x@verbose)
   } 
   
+  if(!(is.character(etasrc) && length(etasrc)==1)) {
+    abort("`etasrc` must be a string.")
+  }
+  
   tcol <- timename(data)
   if(is.na(tcol)) tcol <- "time"
 
@@ -115,6 +122,7 @@ mrgsim_q <- function(x,
   parin <- parin(x)
   parin$recsort <- recsort
   parin$do_init_calc <- !skip_init_calc
+  parin$etasrc <- etasrc
 
   if(simcall!=0) {
     if(simcall==1) {
