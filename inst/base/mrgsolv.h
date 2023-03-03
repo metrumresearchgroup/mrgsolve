@@ -89,6 +89,7 @@ class databox {
 public: 
   std::vector<double> ETA; ///< vector of ETA values
   std::vector<double> EPS; ///< vector of EPS values
+  std::vector<double> SIGMA; ///< vector of on-diagonal sigma elements
   unsigned int newind; ///< new individual flag
   double time; ///< current simulation time
   int evid;  ///< event ID flag

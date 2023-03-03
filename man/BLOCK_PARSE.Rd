@@ -50,7 +50,7 @@ CMT(
   ...
 )
 
-CAPTURE(x, env, pos = 1, annotated = FALSE, ...)
+CAPTURE(x, env, pos = 1, annotated = FALSE, etas = NULL, ...)
 
 HANDLEMATRIX(
   x,
@@ -92,6 +92,10 @@ HANDLEMATRIX(
 \item{number}{number of compartments to create}
 
 \item{prefix}{a prefix to add to the label}
+
+\item{etas}{allows for block capture of ETAs in the simulated output;
+this should be R code that will get parsed and evaluated; the result should 
+be an integer-like vector which identifies which ETAs will be captured.}
 
 \item{type}{internal use}
 

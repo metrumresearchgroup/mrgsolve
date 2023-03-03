@@ -25,17 +25,22 @@ context("test-simeta.R")
 
 code <- '
 $PARAM n = 0, m = 0, mode = 1
-
-$OMEGA 2 2 2
+$OMEGA 2 2 2 1 1 1 1 1 1 1 1
 $SIGMA 2 2
 
 $MAIN
+if(mode==0) {
+  capture a = ETA(1); 
+  capture b = ETA(2); 
+  capture c = ETA(3);  
+  capture d = ETA(11);
+}
 
 if(mode==1) { 
   simeta();
-  capture a = ETA(1); 
-  capture b = ETA(2); 
-  capture c = ETA(3);
+  a = ETA(1); 
+  b = ETA(2); 
+  c = ETA(3);
 }
 
 if(mode==2) {
@@ -66,8 +71,8 @@ if(mode==5) {
   b = EPS(2);
   c = 9;
 }
-
 '
+
 mod <- mcode("simeta-n", code, end = 6, delta = 2)
 
 test_that("resimulate all eta", {
@@ -76,12 +81,14 @@ test_that("resimulate all eta", {
   set.seed(1234)
   all <- mrgsim_df(mod) 
   all$ID <- NULL
+  all$d <- NULL
   expect_false(any(duplicated(unlist(all))))
   
   # Setting n = 0 is the same as no argument
   set.seed(1234)
   all2 <- mrgsim_df(mod, param = list(n = 0, mode = 2))
   all2$ID <- NULL
+  all2$d <- NULL
   expect_identical(all, all2)
   
 })
@@ -121,6 +128,7 @@ test_that("resimulate all or specific eps", {
   all <- mrgsim_df(mod, data = data, param = list(mode = 4))
   all$ID <- NULL
   all$c <- NULL
+  all$d <- NULL
   all$time <- NULL
   expect_false(any(duplicated(unlist(all))))
   
@@ -199,4 +207,83 @@ test_that("warn when simeps(n) is called with off diagonals", {
   simeps(1);
   ' 
   expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
+})
+
+test_that("pass ETA on the data set", {
+  mod <- param(mod, mode = 0)
+  data <- expand.ev(amt = 100, ID = seq(4), cmt = 1)
+  data <- mutate(
+    data,
+    ETA1 = rev(ID)/10,
+    ETA3 = ETA1
+  )
+  data <- expand_observations(data, times = seq(5))
+  data <- mutate(data, ETA3 = ifelse(time > 0, -1, ETA3))
+  data <- mutate(data, cmt = 0)
+  
+  set.seed(9812)
+  out <- mrgsim(mod, data, etasrc = "data")
+  expect_true(all(out$b==0))
+  expect_true(all(out$a==out$c))
+  summ_out <- count(as.data.frame(out), ID, a, b, c)
+  summ_dat <- count(data, ID, ETA1)
+  expect_equivalent(summ_out$a, summ_dat$ETA1)
+  
+  set.seed(123)
+  out1 <- mrgsim(mod, data, etasrc = "data")
+  set.seed(456)
+  out2 <- mrgsim(mod, data, etasrc = "data")
+  expect_identical(out1, out2)
+  
+  expect_error(
+    mrgsim(mod, data, etasrc = "foo"),
+    regexp = "`etasrc` must be either"
+  )
+  
+  expect_error(
+    mrgsim(mod, data, etasrc = c("data", "foo")), 
+    regexp = "must be a string"
+  )
+  
+  expect_error(
+    mrgsim(mod, data, etasrc = "data.all"), 
+    regexp = "all 11 ETAs"
+  )
+  
+  data2 <- data
+  data2$ETA1 <- data2$ETA3 <- NULL
+  
+  expect_error(
+    mrgsim(mod, data2, etasrc = "data"), 
+    regexp = "at least one ETA must"
+  )
+  
+  data$ETA11 <- 11
+  out <- mrgsim(mod, data, etasrc = "data")
+  expect_true(all(out$d==11))
+  
+  data$ET11 <- 1111
+  expect_error(
+    mrgsim(mod, data, etasrc = "data"), 
+    regexp = "Ambiguous ETA names"
+  )
+  
+  data <- data.frame(
+    amt = 10, evid = 2, cmt = 0,
+    time = c(0,0.5,1,0,0.5,0), 
+    ID = c(1,1,1,2,2,3), 
+    ETA1 = c(1,1,1,2,2,3)/10,
+    ETA2 = c(1,1,1,2,2,3)*2,
+    mode = 0
+  )
+  
+  mod <- update(mod, end = 2, delta = 1, start = 1)
+  
+  out <- mrgsim(mod, data, etasrc = "data")
+  expect_equal(nrow(out), 12)
+  expect_true(all(out$a == out$ID/10))
+  expect_true(all(out$b == out$ID*2))
+  
+  outq <- mrgsim_q(mod, data, etasrc = "data")
+  expect_identical(out@data, outq@data)
 })

@@ -24,6 +24,7 @@ do_mrgsim(
   obsonly = FALSE,
   obsaug = FALSE,
   tgrid = NULL,
+  etasrc = "omega",
   recsort = 1,
   deslist = list(),
   descol = character(0),
@@ -55,36 +56,39 @@ idata and data are missing}
 
 \item{output}{if \code{NULL} (the default) a mrgsims object is returned;
 otherwise, pass \code{df} to return a data.frame or \code{matrix} to
-return a matrix}
+return a matrix.}
 
-\item{carry_out}{numeric data items to copy into the output}
+\item{carry_out}{numeric data items to copy into the output.}
 
-\item{carry.out}{soon to be deprecated; use \code{carry_out} instead}
+\item{carry.out}{soon to be deprecated; use \code{carry_out} instead.}
 
 \item{recover}{character column names in either \code{data} or \code{idata}
 to join back (recover) to simulated data; may be any class (e.g. numeric,
-character, factor, etc)}
+character, factor, etc).}
 
-\item{seed}{deprecated}
+\item{seed}{deprecated.}
 
 \item{Request}{compartments or captured variables to retain
 in the simulated output; this is different than the \code{request}
-slot in the model object, which refers only to model compartments}
+slot in the model object, which refers only to model compartments.}
 
 \item{capture}{character file name used for debugging (not related
-to \verb{$CAPTURE})}
+to \verb{$CAPTURE}).}
 
 \item{obsonly}{if \code{TRUE}, dosing records are not included
-in the output}
+in the output.}
 
 \item{obsaug}{augment the data set with time grid observations; when
 \code{TRUE} and a full data set is used, the simulated output is augmented
 with an observation at each time in \code{\link[=stime]{stime()}}.  When using
 \code{obsaug}, a flag indicating augmented observations can be requested by
-including \code{a.u.g} in  \code{carry_out}}
+including \code{a.u.g} in  \code{carry_out}.}
 
 \item{tgrid}{a tgrid object; or a numeric vector of simulation times
-or another object with an \code{stime} method}
+or another object with an \code{stime} method.}
+
+\item{etasrc}{source for \code{ETA()} values in the model; values can include:
+\code{"omega"}, \code{"data"} or \code{"data.all"}; see 'Details'.}
 
 \item{recsort}{record sorting flag.  Default value is 1.  Possible values
 are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at
@@ -95,12 +99,12 @@ observations at the same time; 1 and 3 put doses scheduled through
 not change the order of your input data set if both doses and observations
 are given.}
 
-\item{deslist}{a list of tgrid objects}
+\item{deslist}{a list of tgrid objects.}
 
-\item{descol}{the name of a column for assigning designs}
+\item{descol}{the name of a column for assigning designs.}
 
 \item{filbak}{carry data items backward when the first
-data set row has time greater than zero}
+data set row has time greater than zero.}
 
 \item{tad}{when \code{TRUE} a column is added to simulated
 output is added showing the time since the last dose.  Only data records
@@ -116,11 +120,11 @@ in most common dosing lag time implementations.}
 \item{nocb}{if \code{TRUE}, use next observation carry backward method;
 otherwise, use \code{locf}.}
 
-\item{skip_init_calc}{don't use \verb{$MAIN} to calculate initial conditions}
+\item{skip_init_calc}{don't use \verb{$MAIN} to calculate initial conditions.}
 
 \item{ss_n}{maximum number of iterations for determining steady state for
 the PK system; a warning will be issued if steady state is not achieved
-within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}}
+within \code{ss_n} iterations when \code{ss_fixed} is \code{TRUE}.}
 
 \item{ss_fixed}{if \code{FALSE} (the default), then a warning will be issued
 if the system does not reach steady state within \code{ss_n} iterations
@@ -179,6 +183,32 @@ fractional increase in run time when the simulation is very large.  And any
 performance hit is likely to be well worth it in light of the convenience
 gain.  Just think carefully about using this feature when every millisecond
 counts.
+\item \code{etasrc}: this argument lets you control where \code{ETA(n)} come from in the
+model. When \code{etasrc} is set to \code{"omega"} (the default), \code{ETAs} will be
+simulated from a multivariate normal distribution defined by the \verb{$OMEGA}
+blocks in the model. When \code{etasrc} is set to \code{"data"} or \code{"data.all"},
+the input data set will be scanned for columns called \code{ETA1}, \code{ETA2}, ...,
+\code{ETAn} and those values will be copied into the appropriate slot in the
+\code{ETA()} vector. Only the first record for each individual will be copied into
+\code{ETA()}; all records after the first will be ignored. When there are more
+than \code{9} \code{ETAs} in a model, NONMEM will start naming the outputs \code{ET10},
+\code{ET11} etc rather than \code{ETA10} and \code{ETA11}. When mrgsolve is looking for
+these columns, it will first search, for example, \code{ET10} and use that value
+if it is found. If \code{ET10} isn't found and there are more than \code{9} \code{ETAs},
+then it will \emph{also} search for \code{ETA10}. An error will be generated in case
+mrgsolve finds both the \code{ETA} and \code{ET} name variant for the tenth and higher
+\code{ETA} (e.g. it is an error to have both \code{ETA10} and \code{ET10} in the data set).
+When mrgsolve is searching for \code{ETA} columns in the data set, it will
+\emph{only} look for \code{ETAn} up to the number of rows (or columns) in all the
+model \verb{$OMEGA} blocks. For example, if \verb{$OMEGA} is 5x5, only \code{ETA1} through
+\code{ETA5} will be searched. An error will be generated in case mrgsolve finds
+\emph{no} columns with \code{ETAn} names and something other than \code{etasrc = "omega"}
+was passed. When \code{etasrc = "data"} and an \code{ETAn} column is missing from the
+data set, the missing \code{ETA()} will be set to \code{0}.  Alternatively, the user
+can pass \code{etasrc = "data.all"} which causes an error to be generated if any
+\code{ETAn} is missing from the data set. Use this option when you intend to have
+\emph{all} \code{ETAs} attached to the data set and want an error generated if mrgsolve
+finds one or more of them is missing.
 }
 }
 \examples{

@@ -39,6 +39,66 @@ write_capture <- function(x) {
   paste0("_capture_[",i-1,"] = ", x[i], ";") 
 }
 
+#' This function adds ETA values to the capture list when the `@etas` 
+#' option is used in `$CAPTURE` .
+#' 
+#' @param x the model object
+#' @param env the mread parse environment
+#' 
+#' @details
+#' We look at env$capture_etas to see if there were any expression text passed
+#' through the `@etas` option. This text will be parsed and evaluated in the 
+#' model environment after adding `LAST` and `last` to represent the last
+#' ETA (or the [total] number of rows in `$OMEGA`).
+#' 
+#' An error is generated in case the expression can't be parsed and evaluated.
+#' 
+#' `@etas` must resolve to an integer-like object. Expecting most usage to be
+#' `1:last` which will be integer, but we want to support `c(1,2,5)` as well
+#' which will not be integer. 
+#'
+#' @return The model object, possibly updated.   
+#' 
+#' @noRd
+capture_etas <- function(x, env) {
+  if(!is.character(env[["capture_etas"]])) return(x)
+  last <- sum(nrow(omat(x)))
+  if(last==0) return(x)
+  parse_env <- as.list(env$ENV)
+  parse_env$last <- parse_env$LAST <- last
+  for(eta_txt in env[["capture_etas"]]) {
+    etan <- try(eval(parse(text = eta_txt), envir = parse_env), silent = TRUE)
+    if(inherits(etan, "try-error")) {
+      msg <- c(
+        glue("could not parse this expression for `etas`: {eta_txt}."), 
+        x = etan
+      )
+      abort(msg)
+    }
+    resolves_int <- is.numeric(etan) && all.equal(etan, round(etan))
+    if(!resolves_int) {
+      abort("`etas` must resolve to an integer value.")    
+    }
+    if(length(etan)==0) {
+      abort("`etas` has length 0.")  
+    }
+    etan <- unique(as.integer(round(etan)))
+    if(any(etan < 1 | etan > last)) {
+      abort(
+        message = c(
+          glue("`etas` must be integers between 1 and {last}."),
+          i = glue("minimum value in `etas`: {min(etan)}"),
+          i = glue("maximum value in `etas`: {max(etan)}")
+        )
+      )
+    }
+    old <- paste0("ETA(", etan, ")")
+    new <- paste0("ETA", etan)
+    x <- update_capture(x, .ren.chr(.ren.create(old, new)))
+  }
+  x
+}
+
 ## These are arguments to mrgsim that
 ## can be stated in $SET and then passed to mrgsim
 set_args <- c(
@@ -674,6 +734,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
   mread.env$incoming_names <- incoming_names
+  mread.env$capture_etas <- NULL
   mread.env
 }
 

@@ -159,7 +159,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
                   capture = NULL,
                   preclean = FALSE, recover = FALSE, ...) {
   
-  if(charthere(model, "/")) {
+  if(!identical(basename(model), as.character(model))) {
     project <- dirname(model)
     model <- basename(model)
   }
@@ -272,9 +272,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # capture  ----
   capture_more <- capture
-  capture_code <- unlist(do.call("c", nonull.list(mread.env[["capture"]])))
-  capture <- .ren.create(as.character(capture_code))
-  annot <- capture_param(annot,.ren.new(capture))
+  capture <- unlist(nonull.list(mread.env[["capture"]]))
+  capture <- .ren.create(capture)
+  capture <- .ren.sanitize(capture)
+  annot <- capture_param(annot, .ren.new(capture))
   
   # Collect potential multiples
   subr  <- collect_subr(spec)
@@ -398,6 +399,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   # more captures ----
+  
+  # Process @etas 1:n -----
+  x <- capture_etas(x, mread.env)
+  
+  # Process capture passed into mread -----
   if(is.character(capture_more)) {
     valid_capture <- get_valid_capture(
       param = param, omega = omega, sigma = sigma, build = build, 
@@ -407,6 +413,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       capture_more <- valid_capture[valid_capture != "."]  
     }
     capture_vars <- .ren.create(capture_more)
+    capture_vars <- .ren.sanitize(capture_vars)
     if(!all(capture_vars[["old"]] %in% valid_capture)) {
       bad <- setdiff(capture_vars[["old"]], valid_capture)
       for(b in bad) {
@@ -418,13 +425,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
         call. = FALSE
       )
     }
-    capture_code <- unique(c(capture_code, capture_more))
-    capture <- .ren.create(capture_code)
-    x@capture <- .ren.chr(capture)
-    x <- default_outputs(x)
+    x <- update_capture(x, .ren.chr(capture_vars))
     build$preclean <- TRUE
   }
-  
+
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
@@ -532,7 +536,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     dbs[["cmt"]],
     table,
     spec[["PRED"]],
-    write_capture(.ren.old(capture)),
+    write_capture(names(x@capture)),
     "__END_table__",
     "", 
     sep="\n", file=def.con)
@@ -599,6 +603,11 @@ mread_cache <- function(model = NULL,
                         quiet = FALSE, 
                         preclean = FALSE, 
                         capture = NULL, ...) {
+  
+  if (!identical(basename(model), as.character(model))) {
+    project <- dirname(model)
+    model <- basename(model)
+  }
   
   if(is.character(capture)) preclean <- TRUE
   

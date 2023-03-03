@@ -122,6 +122,7 @@ public:
 
   void omega(const Rcpp::S4& mod);
   void sigma(const Rcpp::S4& mod);
+  void copy_sigma_diagonals();
 
   arma::mat mv_omega(int n);
   arma::mat mv_sigma(int n);

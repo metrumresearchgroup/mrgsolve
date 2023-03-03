@@ -18,6 +18,43 @@
 
 # @include mrgindata.R
 
+#' Check ETA names in the data set
+#' 
+#' This function checks to see if there are both `ETAn` and `ETn` in the data
+#' set when `n` is greater than 9. For example, when both `ETA12` and `ET12` 
+#' are found, an error is generated. An error is also generated when the 
+#' function is called with `neta` values less than `10`. 
+#' 
+#' @noRd
+check_etasrc_names <- function(data_names, neta, etasrc) {
+  if(neta < 10) {
+    abort(
+      "internal: expecting `neta` to be less than 10.", 
+      i = glue("`neta` is {neta}"), 
+      i = glue("`etasrc` is {etasrc}")
+    )  
+  }
+  if(length(data_names)==0) return(NULL)
+  eta_check <- paste0("ETA", seq(10, neta))
+  et_check <- paste0("ET", seq(10, neta))
+  found_eta <- match(eta_check, data_names, nomatch = 0L)
+  found_et <- match(et_check, data_names, nomatch = 0L)
+  common <- which(found_eta > 0 & found_et > 0)
+  if(length(common)==0) return(NULL)
+  dups <- paste0(
+    "Found both ", 
+    eta_check[common], " and ", et_check[common], 
+    " in the data."
+  )
+  names(dups) <- rep("x", length(dups))
+  abort(
+    message = c(
+      glue("Ambiguous ETA names when `etasrc` is \"{etasrc}\":"),
+      dups
+    )
+  )
+}
+
 tran_upper <- c("AMT", "II", "SS", "CMT", "ADDL", "RATE", "EVID","TIME")
 
 null_idata <- matrix(
@@ -126,6 +163,33 @@ tgrid_id <- function(col,idata) {
 #' performance hit is likely to be well worth it in light of the convenience 
 #' gain.  Just think carefully about using this feature when every millisecond
 #' counts.
+#' 
+#' - `etasrc`: this argument lets you control where `ETA(n)` come from in the 
+#' model. When `etasrc` is set to `"omega"` (the default), `ETAs` will be 
+#' simulated from a multivariate normal distribution defined by the `$OMEGA`
+#' blocks in the model. When `etasrc` is set to `"data"` or `"data.all"`, 
+#' the input data set will be scanned for columns called `ETA1`, `ETA2`, ..., 
+#' `ETAn` and those values will be copied into the appropriate slot in the 
+#' `ETA()` vector. Only the first record for each individual will be copied into 
+#' `ETA()`; all records after the first will be ignored. When there are more 
+#' than `9` `ETAs` in a model, NONMEM will start naming the outputs `ET10`, 
+#' `ET11` etc rather than `ETA10` and `ETA11`. When mrgsolve is looking for 
+#' these columns, it will first search, for example, `ET10` and use that value 
+#' if it is found. If `ET10` isn't found and there are more than `9` `ETAs`, 
+#' then it will _also_ search for `ETA10`. An error will be generated in case 
+#' mrgsolve finds both the `ETA` and `ET` name variant for the tenth and higher 
+#' `ETA` (e.g. it is an error to have both `ETA10` and `ET10` in the data set). 
+#' When mrgsolve is searching for `ETA` columns in the data set, it will 
+#' _only_ look for `ETAn` up to the number of rows (or columns) in all the 
+#' model `$OMEGA` blocks. For example, if `$OMEGA` is 5x5, only `ETA1` through 
+#' `ETA5` will be searched. An error will be generated in case mrgsolve finds 
+#' _no_ columns with `ETAn` names and something other than `etasrc = "omega"` 
+#' was passed. When `etasrc = "data"` and an `ETAn` column is missing from the 
+#' data set, the missing `ETA()` will be set to `0`.  Alternatively, the user 
+#' can pass `etasrc = "data.all"` which causes an error to be generated if any 
+#' `ETAn` is missing from the data set. Use this option when you intend to have 
+#' _all_ `ETAs` attached to the data set and want an error generated if mrgsolve 
+#' finds one or more of them is missing.
 #' 
 #' 
 #' @seealso [mrgsim_variants], [mrgsim_q()]
@@ -388,29 +452,31 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
   return(mrgsim_i(x, idata, ...))
 }
 
-#' @param carry_out numeric data items to copy into the output
-#' @param carry.out soon to be deprecated; use `carry_out` instead
+#' @param carry_out numeric data items to copy into the output.
+#' @param carry.out soon to be deprecated; use `carry_out` instead.
 #' @param recover character column names in either `data` or `idata` 
 #' to join back (recover) to simulated data; may be any class (e.g. numeric, 
-#' character, factor, etc)
-#' @param seed deprecated
+#' character, factor, etc).
+#' @param seed deprecated.
 #' @param Request compartments or captured variables to retain
 #' in the simulated output; this is different than the `request`
-#' slot in the model object, which refers only to model compartments
+#' slot in the model object, which refers only to model compartments.
 #' @param output  if `NULL` (the default) a mrgsims object is returned; 
 #' otherwise, pass `df` to return a data.frame or `matrix` to 
-#' return a matrix
+#' return a matrix.
 #' @param capture character file name used for debugging (not related
-#' to `$CAPTURE`)
+#' to `$CAPTURE`).
 #' @param obsonly if `TRUE`, dosing records are not included
-#' in the output
+#' in the output.
 #' @param obsaug augment the data set with time grid observations; when 
 #' `TRUE` and a full data set is used, the simulated output is augmented 
 #' with an observation at each time in [stime()].  When using
 #' `obsaug`, a flag indicating augmented observations can be requested by
-#' including `a.u.g` in  `carry_out`
+#' including `a.u.g` in  `carry_out`.
 #' @param tgrid a tgrid object; or a numeric vector of simulation times
-#' or another object with an `stime` method
+#' or another object with an `stime` method. 
+#' @param etasrc source for `ETA()` values in the model; values can include: 
+#' `"omega"`, `"data"` or `"data.all"`; see 'Details'. 
 #' @param recsort record sorting flag.  Default value is 1.  Possible values 
 #' are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
 #' the same time; 3 and 4 put those doses before padded observations at the 
@@ -419,10 +485,10 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 #' `addl` before observations at the same time. `recsort` will 
 #' not change the order of your input data set if both doses and observations 
 #' are given.
-#' @param deslist a list of tgrid objects
-#' @param descol the name of a column for assigning designs
-#' @param filbak carry data items backward when the first 
-#' data set row has time greater than zero
+#' @param deslist a list of tgrid objects.
+#' @param descol the name of a column for assigning designs.
+#' @param filbak carry data items backward when the first
+#' data set row has time greater than zero.
 #' @param tad when `TRUE` a column is added to simulated 
 #' output is added showing the time since the last dose.  Only data records 
 #' with `evid == 1` will be considered doses for the purposes of `tad` 
@@ -435,10 +501,10 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 #' in most common dosing lag time implementations.  
 #' @param nocb if `TRUE`, use next observation carry backward method; 
 #' otherwise, use `locf`.  
-#' @param skip_init_calc don't use `$MAIN` to calculate initial conditions
+#' @param skip_init_calc don't use `$MAIN` to calculate initial conditions.
 #' @param ss_n maximum number of iterations for determining steady state for 
 #' the PK system; a warning will be issued if steady state is not achieved 
-#' within `ss_n` iterations when `ss_fixed` is `TRUE`
+#' within `ss_n` iterations when `ss_fixed` is `TRUE`.
 #' @param ss_fixed if `FALSE` (the default), then a warning will be issued
 #' if the system does not reach steady state within `ss_n` iterations
 #' given the model tolerances `rtol` and `atol`; if `TRUE`, 
@@ -469,6 +535,7 @@ do_mrgsim <- function(x,
                       obsonly = FALSE,
                       obsaug = FALSE,
                       tgrid = NULL,
+                      etasrc = "omega",
                       recsort = 1,
                       deslist = list(),
                       descol = character(0),
@@ -487,6 +554,10 @@ do_mrgsim <- function(x,
   
   if(length(Request) > 0) {
     x <- update_outputs(x, outputs = Request)  
+  }
+  
+  if(!(is.character(etasrc) && length(etasrc)==1)) {
+    abort("`etasrc` must be a string.")
   }
   
   do_recover_data <- do_recover_idata <-  FALSE
@@ -530,7 +601,7 @@ do_mrgsim <- function(x,
   
   tcol <- timename(data)
   tcol <- ifelse(is.na(tcol), "time", tcol)
-
+  
   if(!identical(Pars(x), x@shlib[["par"]])) {
     wstop("the parameter list has changed since the model was compiled.")
   }
@@ -579,6 +650,7 @@ do_mrgsim <- function(x,
   parin$ss_fixed <- ss_fixed
   parin$ss_n <- ss_n
   parin$interrupt <- interrupt
+  parin$etasrc <- etasrc
   
   if(tad && any(x@capture =="tad")) {
     wstop("tad argument is true and 'tad' found in $CAPTURE") 
@@ -593,7 +665,7 @@ do_mrgsim <- function(x,
   parin$carry_tran <- tolower(carry.tran)
   
   # Now, create a rename object 
-  rename.carry.tran <- .ren.create(parin[["carry_tran"]],carry.tran)
+  rename.carry.tran <- .ren.create(parin[["carry_tran"]], carry.tran)
   carry.tran <- rename.carry.tran$old
   
   # Derive stime vector either from tgrid or from the object
@@ -619,7 +691,7 @@ do_mrgsim <- function(x,
     capture.output(file=capture, append=TRUE, print(data))
     capture.output(file=capture, append=TRUE, print(carry_out))
   }
-
+  
   out <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
@@ -661,7 +733,7 @@ do_mrgsim <- function(x,
     }
     cnames <- new_names
   }
-
+  
   names(out[["data"]]) <- cnames
   
   if(do_recover_data || do_recover_idata) {
@@ -812,7 +884,7 @@ qsim <- function(x,
   )
   
   if(tad) tcol <- c(tcol,"tad")
-
+  
   names(out[["data"]]) <- c("ID", tcol,  x@cmtL, x@capL)
   
   if(output=="df") {

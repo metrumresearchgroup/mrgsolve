@@ -1,3 +1,34 @@
+# mrgsolve 1.0.8
+
+- `SIGMA()` is a new model macro which allows users to access on-diagonal
+  elements of `SIGMA` in the model (e.g. `SIGMA(2)` in `$ERROR`) (#1051, #1052).
+  
+- `mrgsim()` and `mrgsim_q()` gain an `etasrc` argument, allowing `ETAs` to 
+  be either simulated from `OMEGA` (new default and previously the only 
+  behavior) or taken from the input data set (new option), similar to the way 
+  parameters can be scraped from the data set (#1037).
+
+- `@etas` is a new option for use with the `$CAPTURE` block to let users name
+  `ETAs` to be captured into the simulated output; for example, use 
+  `@etas 1:last` to capture all model `ETAs` in the simulated output (#1055).
+
+- Drop `CXX_STD` statement from Makevars file and DESCRIPTION to be consistent
+  with current changes in R-devel; mrgsolve continues to require compiler
+  capable of implementing C++11 standard, but this should be selected
+  automatically by R (#1060).
+
+- mrgsolve now depends on `R >= 3.6.2` (#1060).
+
+## Bugs Fixed
+
+- Fix bug when the `path` argument is used in the `$NMXML` or `$NMEXT` blocks;
+  this bug was introduced through the `@cppstem` feature in version `1.0.7` 
+  (#1046, #1048).
+
+- Fix bug in `mread_cache()` where the `project` directory wasn't getting 
+  rendered properly when passing the complete path to the model specification
+  file (#1056).
+
 # mrgsolve 1.0.7
 
 - `$NMXML` and `$NMEXT` now accept the `run` argument set to `"@cppstem"` (i.e  

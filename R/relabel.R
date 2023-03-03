@@ -15,8 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+.ren.init <- function() {
+  list(identical = TRUE, old = character(0), new = character(0)) 
+}
 
-.ren.make_pairs <- function(from,to = NULL) {
+.ren.make_pairs <- function(from, to = NULL) {
   if(is.null(to)) return(paste(from,from,sep = "="))
   if(length(to) != length(from)) {
     stop("cannot make relabel pairs; different lengths", call. = FALSE)
@@ -24,8 +27,7 @@
   paste(to,from,sep="=")
 }
 
-
-.ren.parse <- function(x,y = NULL,context=NULL,unique=TRUE) {
+.ren.parse <- function(x, y = NULL, context = NULL, unique = TRUE) {
   if(length(x)==0) list(Old = character(0), New = character(0))
   if(!is.null(y)) x <- .ren.make_pairs(x,y)
   x <- gsub("=", " = ", x, fixed = TRUE)
@@ -52,23 +54,26 @@
   list(Old = from, New = to)
 }
 
-.ren.create <- function(x, y = NULL, sanitize = "sanitize_capture",unique=TRUE) {
-  self <- list(identical = FALSE, old = character(0), new = character(0)) 
+.ren.create <- function(x, y = NULL, sanitize = NULL, unique = TRUE) {
+  self <- .ren.init()
   if(length(x)==0 & is.null(y)) {
     self[["identical"]] <- TRUE
     return(self)
   }
-  x <- .ren.parse(x,y,unique=unique) 
+  x <- .ren.parse(x, y, unique = unique) 
   self$old <- x$Old
   self$new <- x$New
   if(!is.null(sanitize)) {
     self$new <- do.call(sanitize, list(self$new))
   }
-  self$identical <- FALSE
-  if(all(self$old==self$new)) {
-    self$identical <- TRUE 
-  }
+  self$identical <- all(self$old==self$new)
   return(self)
+}
+
+.ren.sanitize <- function(self, fun = sanitize_capture, ...) {
+  self$new <- fun(self$new, ...)
+  self$identical <- all(self$new == self$old)
+  self
 }
 
 .ren.dots <- function(..., vars = NULL) {
@@ -81,7 +86,7 @@
   .ren.create(ans, names(ans))
 }
 
-.ren.rename <- function(self,y) {
+.ren.rename <- function(self, y) {
   if(self$identical) return(y)
   old <- match(y,self$old)
   old <- sort(old[!is.na(old)])
@@ -95,7 +100,7 @@
 
 .ren.new <- function(self) return(self$new)
 
-.ren.chr = function(self,named = TRUE) {
+.ren.chr = function(self, named = TRUE) {
   if(named) return(setNames(self$new,self$old))
   return(self$new)
 }
