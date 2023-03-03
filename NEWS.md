@@ -2,6 +2,11 @@
 
 - `SIGMA()` is a new model macro which allows users to access on-diagonal
   elements of `SIGMA` in the model (e.g. `SIGMA(2)` in `$ERROR`) (#1051, #1052).
+  
+- `mrgsim()` and `mrgsim_q()` gain an `etasrc` argument, allowing `ETAs` to 
+  be either simulated from `OMEGA` (default and previously the only behavior) 
+  or taken from the input data set (new behavior), similar to the way parameters 
+  can be scraped from the data set (#1054).
 
 - `@etas` is a new option for use with the `$CAPTURE` block to let users name
   `ETAs` to be captured into the simulated output; for example, use 

@@ -11,26 +11,30 @@ mrgsim_q(
   stime = numeric(0),
   output = "mrgsims",
   skip_init_calc = FALSE,
-  simcall = 0
+  simcall = 0,
+  etasrc = "omega"
 )
 }
 \arguments{
-\item{x}{a model object}
+\item{x}{a model object.}
 
-\item{data}{a simulation data set}
+\item{data}{a simulation data set.}
 
-\item{recsort}{record sorting flag}
+\item{recsort}{record sorting flag.}
 
 \item{stime}{a numeric vector of observation times; these observation
 times will only be added to the output if there are no observation
-records in \code{data}}
+records in \code{data}.}
 
 \item{output}{output data type; if \code{mrgsims}, then the default output
-object is returned; if \code{"df"} then a data frame is returned}
+object is returned; if \code{"df"} then a data frame is returned.}
 
-\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions}
+\item{skip_init_calc}{don't use \code{$MAIN} to calculate initial conditions.}
 
-\item{simcall}{not used; only the default value of 0 is allowed}
+\item{simcall}{not used; only the default value of 0 is allowed.}
+
+\item{etasrc}{source for ETA() values in the model; values can include: 
+"omega", "data" or "data.all"; see 'Details' in [mrgsim()].}
 }
 \value{
 By default, an object of class `mrgsims`. Use `output = "df"` to return 

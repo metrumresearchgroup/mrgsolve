@@ -28,16 +28,19 @@
 ##' This function should always be used for benchmarking simulation time with
 ##' mrgsolve.
 ##' 
-##' @param x a model object
-##' @param data a simulation data set
-##' @param recsort record sorting flag
+##' 
+##' @param x a model object.
+##' @param data a simulation data set.
+##' @param recsort record sorting flag.
 ##' @param stime a numeric vector of observation times; these observation
 ##' times will only be added to the output if there are no observation
-##' records in \code{data}
-##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
+##' records in \code{data}.
+##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions.
 ##' @param output output data type; if \code{mrgsims}, then the default output
-##' object is returned; if \code{"df"} then a data frame is returned
-##' @param simcall not used; only the default value of 0 is allowed
+##' object is returned; if \code{"df"} then a data frame is returned.
+##' @param simcall not used; only the default value of 0 is allowed. 
+##' @param etasrc source for ETA() values in the model; values can include: 
+##' "omega", "data" or "data.all"; see 'Details' in [mrgsim()]. 
 ##' 
 ##' @details
 ##' 
@@ -95,7 +98,8 @@ mrgsim_q <- function(x,
                      stime = numeric(0),
                      output = "mrgsims",
                      skip_init_calc = FALSE, 
-                     simcall = 0) {
+                     simcall = 0, 
+                     etasrc = "omega") {
   
   if(!is.mrgmod(x)) mod_first()
   
@@ -108,6 +112,10 @@ mrgsim_q <- function(x,
     data <- valid_data_set(data,x,x@verbose)
   } 
   
+  if(!(is.character(etasrc) && length(etasrc)==1)) {
+    abort("`etasrc` must be a string.")
+  }
+  
   tcol <- timename(data)
   if(is.na(tcol)) tcol <- "time"
 
@@ -115,6 +123,7 @@ mrgsim_q <- function(x,
   parin <- parin(x)
   parin$recsort <- recsort
   parin$do_init_calc <- !skip_init_calc
+  parin$etasrc <- etasrc
 
   if(simcall!=0) {
     if(simcall==1) {
