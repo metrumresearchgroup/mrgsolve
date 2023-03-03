@@ -28,18 +28,19 @@
 ##' This function should always be used for benchmarking simulation time with
 ##' mrgsolve.
 ##' 
-##' @inheritParams do_mrgsim
 ##' 
-##' @param x a model object
-##' @param data a simulation data set
-##' @param recsort record sorting flag
+##' @param x a model object.
+##' @param data a simulation data set.
+##' @param recsort record sorting flag.
 ##' @param stime a numeric vector of observation times; these observation
 ##' times will only be added to the output if there are no observation
-##' records in \code{data}
-##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions
+##' records in \code{data}.
+##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions.
 ##' @param output output data type; if \code{mrgsims}, then the default output
-##' object is returned; if \code{"df"} then a data frame is returned
-##' @param simcall not used; only the default value of 0 is allowed
+##' object is returned; if \code{"df"} then a data frame is returned.
+##' @param simcall not used; only the default value of 0 is allowed. 
+##' @param etasrc source for ETA() values in the model; values can include: 
+##' "omega", "data" or "data.all"; see 'Details' in [mrgsim()]. 
 ##' 
 ##' @details
 ##' 
