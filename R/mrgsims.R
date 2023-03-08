@@ -241,10 +241,23 @@ as_data_frame.mrgsims <- function(.data_,...) {
   as_tibble(as.data.frame(.data_),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
-as_tibble.mrgsims <- function(.data_,...) {
-  as_tibble(as.data.frame(.data_),...)  
+#' @param .rows passed to [tibble::as_tibble()]
+#' @param .name_repair passed to [tibble::as_tibble()]
+#' @param rownames passed to [tibble::as_tibble()]
+#' @rdname mrgsims_dplyr
+#' @export
+as_tibble.mrgsims <- function(x, 
+                              .rows = NULL, 
+                              .name_repair = c("check_unique", "unique", 
+                                               "universal", "minimal"), 
+                              rownames = NULL, ...) {
+  as_tibble(
+    as.data.frame(x), 
+    .rows = .rows, 
+    .name_repair = .name_repair, 
+    rownames = rownames, 
+    ...
+  )  
 }
 
 #' @rdname mrgsims_dplyr
