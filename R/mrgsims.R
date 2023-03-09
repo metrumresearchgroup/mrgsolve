@@ -235,16 +235,18 @@ slice.mrgsims <- function(.data,...) {
 }
 
 ##' @rdname mrgsims_dplyr
-##' @param .data_ mrgsims object
 ##' @export
-as_data_frame.mrgsims <- function(.data_,...) {
-  as_tibble(as.data.frame(.data_),...)
+as_data_frame.mrgsims <- function(x,...) {
+  as_tibble(as.data.frame(x),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
-as_tibble.mrgsims <- function(.data_,...) {
-  as_tibble(as.data.frame(.data_),...)  
+
+#' @param x mrgsims object.
+#' 
+#' @rdname mrgsims_dplyr
+#' @export
+as_tibble.mrgsims <- function(x, ...) {
+  as_tibble(as.data.frame(x), ...)  
 }
 
 #' @rdname mrgsims_dplyr

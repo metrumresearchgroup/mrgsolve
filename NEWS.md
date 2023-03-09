@@ -1,5 +1,8 @@
 # mrgsolve (development version)
 
+- Fix signatures for `compiled.mrgmod()` and `as_tibble.mrgsims()` based on new
+  R-devel check findings (#1065).
+
 # mrgsolve 1.0.8
 
 - `SIGMA()` is a new model macro which allows users to access on-diagonal

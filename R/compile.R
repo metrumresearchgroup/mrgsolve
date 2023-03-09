@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -130,7 +130,7 @@ compiled <- function(x,...) UseMethod("compiled")
 #' @export
 compiled.default <- function(x,...) return(FALSE)
 #' @export
-compiled.mrgmod <- function(x,status=NULL) {
+compiled.mrgmod <- function(x, status = NULL, ...) {
     if(is.null(status)) return(x@shlib$compiled)
     x@shlib$compiled <- status
     return(x)
