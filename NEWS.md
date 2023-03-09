@@ -1,7 +1,7 @@
 # mrgsolve (development version)
 
-- Fix signatures for `compile()` and `as_tibble()` methods based on new R-devel
-  check findings (#1065).
+- Fix signatures for `compiled.mrgmod()` and `as_tibble.mrgsims()` based on new
+  R-devel check findings (#1065).
 
 # mrgsolve 1.0.8
 
