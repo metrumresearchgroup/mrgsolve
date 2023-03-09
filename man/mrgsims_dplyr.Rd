@@ -37,15 +37,9 @@
 
 \method{slice}{mrgsims}(.data, ...)
 
-as_data_frame.mrgsims(.data_, ...)
+as_data_frame.mrgsims(x, ...)
 
-\method{as_tibble}{mrgsims}(
-  x,
-  .rows = NULL,
-  .name_repair = c("check_unique", "unique", "universal", "minimal"),
-  rownames = NULL,
-  ...
-)
+\method{as_tibble}{mrgsims}(x, ...)
 
 as.tbl.mrgsims(x, ...)
 }
@@ -64,15 +58,7 @@ as.tbl.mrgsims(x, ...)
 
 \item{.dots}{passed to various \code{dplyr} functions}
 
-\item{.data_}{mrgsims object}
-
-\item{x}{passed to \link[dplyr:tbl_df]{dplyr::as.tbl}}
-
-\item{.rows}{passed to [tibble::as_tibble()]}
-
-\item{.name_repair}{passed to [tibble::as_tibble()]}
-
-\item{rownames}{passed to [tibble::as_tibble()]}
+\item{x}{mrgsims object.}
 }
 \description{
 These methods modify the data in a mrgsims object and return a data frame.
