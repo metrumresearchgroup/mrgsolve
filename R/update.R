@@ -91,7 +91,6 @@ all_updatable <- c(sval,other_val)
 #'  
 setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, 
                                        data=NULL, strict=TRUE) {
-  
   args <- list(...)
   
   if(!is.null(data)) {
@@ -106,15 +105,21 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   
   m <- charmatch(a,all_updatable)
   
-  if(strict && anyNA(m)) {
-    if(getOption("mrgsolve.update.strict", FALSE)) {
+  if(anyNA(m) && isTRUE(strict)) {
+    if(getOption("mrgsolve.update.strict", TRUE)) {
       bad <- a[is.na(m)]
-      for(b in bad) {
-        mesg <- paste0("invalid item for model object update: ", b)
-        warning(mesg, call.=FALSE, immediate.=TRUE) 
+      names(bad) <- rep("i", length(bad))
+      if(length(bad) > 1) {
+        .item <- "items"  
+      } else {
+        .item <- "item"  
       }
-    }
+      msg <- glue("Disregarding unrecognized {.item} for model object update")
+      msg <- c(msg, bad)
+      warn(msg, call = NULL)
+    } 
   }
+  
   valid <- !is.na(m)
   a[valid] <- all_updatable[m[valid]]
   names(args) <- a
@@ -326,7 +331,7 @@ setMethod("update", "parameter_list", function(object, .y, ...) {
       wstop("[param-update] parameters must be single numeric values.")  
     }
   }
-
+  
   object@data <- update_list(
     object@data, 
     .y, 
