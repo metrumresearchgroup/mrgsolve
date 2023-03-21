@@ -106,18 +106,19 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   m <- charmatch(a,all_updatable)
   
   if(anyNA(m) && isTRUE(strict)) {
-    if(getOption("mrgsolve.update.strict", TRUE)) {
-      bad <- a[is.na(m)]
-      names(bad) <- rep("i", length(bad))
-      if(length(bad) > 1) {
-        .item <- "items"  
-      } else {
-        .item <- "item"  
-      }
-      msg <- glue("Disregarding unrecognized {.item} for model object update")
-      msg <- c(msg, bad)
-      warn(msg, call = NULL)
-    } 
+    bad <- a[is.na(m)]
+    names(bad) <- rep("x", length(bad))
+    if(length(bad) > 1) {
+      msg <- c("The following arguments were passed to `mrgsolve::update()`,",
+              "they are either invalid names (check your spelling?) or not", 
+              "eligible attributes for update:")
+    } else {
+      msg <- c("The following argument was passed to `mrgsolve::update()`, but",
+              "it is either an invalid name (check your spelling?) or not an",
+              "eligible attribute for update:")
+    }
+    msg <- c(msg, bad)
+    warn(msg, call = NULL)
   }
   
   valid <- !is.na(m)
