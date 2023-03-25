@@ -39,9 +39,11 @@ test_that("model caches via mread_cache", {
 
   saveRDS(mo,cache_file)  
 
-  mod2 <- mread_cache("pk1", modlib(),compile=FALSE)
+  mod2 <- mread_cache("pk1", modlib(), compile = FALSE)
   
-  expect_equal(mod2@args$foo,mo@args$foo)
+  expect_equal(mod2@args$foo, mo@args$foo)
+  
+  unlink(cache_file)
 })
 
 test_that("model caches via mcode_cache", {
