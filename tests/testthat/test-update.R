@@ -125,6 +125,15 @@ test_that("bad update gives warning", {
   )
 })
 
+test_that("the mrgsolve.update.strict option is deprecated", {
+  options(mrgsolve.update.strict = TRUE)
+  expect_warning(
+    update(house(), foo = 2), 
+    regexp="mrgsolve\\.update\\.strict", 
+  )
+  options(mrgsolve.update.strict = NULL)
+})
+
 test_that("update outvars issue-483", {
   x <- update(mod, outvars = "RESP,CP,CENT")
   expect_equal(x@cmtL, c("CENT", "RESP"))

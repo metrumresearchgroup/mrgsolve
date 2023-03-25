@@ -103,24 +103,28 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   
   a <- names(args)
   
-  m <- charmatch(a,all_updatable)
+  m <- charmatch(a, all_updatable)
   
   if(anyNA(m) && isTRUE(strict)) {
-    if(isTRUE(getOption("mrgsolve.update.strict", TRUE))) {
-      bad <- a[is.na(m)]
-      names(bad) <- rep("x", length(bad))
-      if(length(bad) > 1) {
-        msg <- c("The following arguments were passed to `mrgsolve::update()`,",
-                 "they are either invalid names (check your spelling?) or not", 
-                 "eligible attributes for update:")
-      } else {
-        msg <- c("The following argument was passed to `mrgsolve::update()`, but",
-                 "it is either an invalid name (check your spelling?) or not an",
-                 "eligible attribute for update:")
-      }
-      msg <- c(msg, bad)
-      warn(msg, call = NULL)
+    if(!is.null(getOption("mrgsolve.update.strict"))) {
+      msg <- c("The `mrgsolve.update.strict` option has been deprecated;", 
+               "please use the `strict` argument to `mrgsolve::update()`",
+               "instead.")
+      warn(paste0(msg, collapse = " "))  
     }
+    bad <- a[is.na(m)]
+    names(bad) <- rep("x", length(bad))
+    if(length(bad) > 1) {
+      msg <- c("The following arguments were passed to `mrgsolve::update()`,",
+               "they are either invalid names (check your spelling?) or not", 
+               "eligible attributes for update:")
+    } else {
+      msg <- c("The following argument was passed to `mrgsolve::update()`, but",
+               "it is either an invalid name (check your spelling?) or not an",
+               "eligible attribute for update:")
+    }
+    msg <- c(msg, bad)
+    warn(msg, call = NULL)
   }
   
   valid <- !is.na(m)
