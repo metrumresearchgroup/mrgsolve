@@ -32,7 +32,7 @@
 #' - `mrgsolve.soloc`: sets the default package build directory ([mread()])
 #' - `mrgsolve_mread_quiet`: don't print messages during [mread()]
 #' - `mrgsolve.update.strict`: this option has been deprecated; use the `strict`
-#'   argument to [mrgsolve::update()] instead.
+#'   argument to [mrgsolve::update()] instead
 #' 
 #' 
 #' @description

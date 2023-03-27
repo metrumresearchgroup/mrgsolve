@@ -30,7 +30,7 @@ equation solver. See \link{aboutsolver} for more information.
 \item \code{mrgsolve.soloc}: sets the default package build directory (\code{\link[=mread]{mread()}})
 \item \code{mrgsolve_mread_quiet}: don't print messages during \code{\link[=mread]{mread()}}
 \item \code{mrgsolve.update.strict}: this option has been deprecated; use the \code{strict}
-argument to \code{\link[=update]{update()}} instead.
+argument to \code{\link[=update]{update()}} instead
 }
 }
 
