@@ -30,18 +30,18 @@ all_updatable <- c(sval,other_val)
 #'
 #' After the model object is created, update various attributes.
 #'
-#' @param object a model object
-#' @param ... named items to update
+#' @param object a model object.
+#' @param ... named items to update.
 #' @param merge logical indicating to merge (rather than replace) 
-#' new and existing attributes
+#' new and existing attributes.
 #' @param open logical; used only when merge is \code{TRUE} and 
 #' parameter list or initial conditions
 #' list is being updated; if \code{FALSE}, no new items will be 
 #' added; if \code{TRUE}, the parameter list may expand.
 #' @param data a list of items to update; this list is combined 
-#' with any items passed in via \code{...}
-#' @param strict if \code{TRUE}, then an error will be generated if there is 
-#' attempt to update a non-existent item
+#' with any items passed in via \code{...}.
+#' @param strict if \code{TRUE}, a warning will be issued when there is an
+#' attempt to update a non-existent item.
 #' 
 #' @return The updated model object is returned.
 #' 
@@ -79,18 +79,22 @@ all_updatable <- c(sval,other_val)
 #' 
 #' @examples
 #' \dontrun{
-#'  mod <- mrgsolve::house()
+#'  mod <- house()
 ##'
-#'  mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
+#'  mod <- update(mod, end = 120, delta = 4, param = list(CL = 19.1))
 #' }
 #'  
 #' @seealso \code{\link{update}}, \code{\link{mrgmod-class}}, 
 #' \code{\link{within}}
 #'  
 #' @export
-#'  
 setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE, 
                                        data=NULL, strict=TRUE) {
+  # TODO: get rid of the strict argument to `update()`
+  # TODO: get rid of the merge argument to `update()`
+  # TODO: get rid of the open argument to `update()`
+  # TODO: longer term ... error when bad arguments are passed
+
   args <- list(...)
   
   if(!is.null(data)) {
