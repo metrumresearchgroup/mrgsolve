@@ -29,8 +29,8 @@ equation solver. See \link{aboutsolver} for more information.
 \item \code{mrgolve.project}: sets the default project director (\code{\link[=mread]{mread()}})
 \item \code{mrgsolve.soloc}: sets the default package build directory (\code{\link[=mread]{mread()}})
 \item \code{mrgsolve_mread_quiet}: don't print messages during \code{\link[=mread]{mread()}}
-\item \code{mrgsolve.update.strict}: if \code{TRUE}, print warning when trying to update
-an item in the model object that doesn't exist
+\item \code{mrgsolve.update.strict}: this option has been deprecated; use the \code{strict}
+argument to \code{\link[=update]{update()}} instead
 }
 }
 

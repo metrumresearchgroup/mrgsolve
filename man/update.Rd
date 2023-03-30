@@ -17,12 +17,12 @@
 \S4method{update}{parameter_list}(object, .y, ...)
 }
 \arguments{
-\item{object}{a model object}
+\item{object}{a model object.}
 
-\item{...}{named items to update}
+\item{...}{named items to update.}
 
 \item{merge}{logical indicating to merge (rather than replace) 
-new and existing attributes}
+new and existing attributes.}
 
 \item{open}{logical; used only when merge is \code{TRUE} and 
 parameter list or initial conditions
@@ -30,10 +30,10 @@ list is being updated; if \code{FALSE}, no new items will be
 added; if \code{TRUE}, the parameter list may expand.}
 
 \item{data}{a list of items to update; this list is combined 
-with any items passed in via \code{...}}
+with any items passed in via \code{...}.}
 
-\item{strict}{if \code{TRUE}, then an error will be generated if there is 
-attempt to update a non-existent item}
+\item{strict}{if \code{TRUE}, a warning will be issued when there is an
+attempt to update a non-existent item.}
 
 \item{y}{another object involved in update}
 
@@ -75,9 +75,9 @@ Slots that can be updated:
 }
 \examples{
 \dontrun{
- mod <- mrgsolve::house()
+ mod <- house()
 
- mod <- update(mod, end=120, delta=4, param=list(CL=19.1))
+ mod <- update(mod, end = 120, delta = 4, param = list(CL = 19.1))
 }
  
 }

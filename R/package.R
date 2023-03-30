@@ -31,8 +31,8 @@
 #' - `mrgolve.project`: sets the default project director ([mread()])
 #' - `mrgsolve.soloc`: sets the default package build directory ([mread()])
 #' - `mrgsolve_mread_quiet`: don't print messages during [mread()]
-#' - `mrgsolve.update.strict`: if `TRUE`, print warning when trying to update 
-#'   an item in the model object that doesn't exist
+#' - `mrgsolve.update.strict`: this option has been deprecated; use the `strict`
+#'   argument to [mrgsolve::update()] instead
 #' 
 #' 
 #' @description

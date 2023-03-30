@@ -115,9 +115,23 @@ test_that("Solver setting rtol updates", {
 })
 
 test_that("bad update gives warning", {
-  options(mrgsolve.update.strict=TRUE)  
-  expect_warning(update(mod, kyle = 1), "invalid item for model object update")
-  options(mrgsolve.update.strict=FALSE)
+  expect_warning(
+    update(mod, kyle = 1), 
+    "The following argument was passed"
+  )
+  expect_warning(
+    update(mod, kyle = 1, baron = 2), 
+    "The following arguments were passed"
+  )
+})
+
+test_that("the mrgsolve.update.strict option is deprecated", {
+  options(mrgsolve.update.strict = TRUE)
+  expect_warning(
+    update(house(), foo = 2), 
+    regexp="mrgsolve\\.update\\.strict", 
+  )
+  options(mrgsolve.update.strict = NULL)
 })
 
 test_that("update outvars issue-483", {
