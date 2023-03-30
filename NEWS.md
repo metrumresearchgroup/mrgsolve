@@ -1,5 +1,11 @@
 # mrgsolve (development version)
 
+- `modlib()` model `1005` re-coded to reflect the "traditional" model
+  specification syntax (#1069). 
+  
+- The model object `update()` method will again issue a warning when 
+  unrecognized arguments are passed (#1068).
+
 # mrgsolve 1.0.9
 
 - Fix signatures for `compiled.mrgmod()` and `as_tibble.mrgsims()` based on new
