@@ -37,7 +37,7 @@
 #' stated, \code{.strict} will be set to \code{TRUE} if a value \code{.strict} was not
 #' passed in the call.
 #' @export
-inventory <- function(x,obj,..., .strict = FALSE) {
+inventory <- function(x, obj, ..., .strict = FALSE) {
   
   oname <- as.character(as.list(match.call())$obj)
   
@@ -51,7 +51,7 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   
   missing <- setdiff(need,names(obj))
   miss <- length(missing) 
-
+  
   if(!miss) {
     message("Found all required parameters in ", sQuote(oname),".")
     return(invisible(x))
@@ -66,4 +66,51 @@ inventory <- function(x,obj,..., .strict = FALSE) {
   }
   
   return(invisible(x))
+}
+
+#' Check inputs against model parameters
+#' 
+#' @param obj a data frame or other object with names to check.
+#' @param x a model object.
+#' 
+#' @md
+#' @export
+check_inputs <- function(obj, x, covariates = TRUE, strict = FALSE, 
+                         silent = FALSE) {
+  
+  need <- x@shlib$input
+  need_type <- rep("input", length(need))
+  
+  if(isTRUE(covariates)) {
+    need <- c(need, x@shlib$covariates)  
+    n_cov <- length(x@shlib$covariates)
+    need_type <- c(need_type, rep("covariates", n_cov))
+  }
+
+  n_need <- length(need)
+  
+  if(n_need==0) {
+    warn("didn't find any covariates or inputs to check.")
+    return(invisible(NULL))
+  }
+  
+  found <- need %in% names(obj)
+  
+  if(!(status <- all(found))) {
+    miss <- need[!found]
+    miss <- formatC(miss, width = max(nchar(miss)), flag = "-")
+    miss <- paste0(miss, " (", need_type[!found], ")")
+    names(miss) <- rep("*", length(miss))
+    msg <- c(
+      "Could not find the following input items", 
+      miss
+    )
+    if(isTRUE(strict)) {
+      abort(msg)  
+    } else {
+      if(isFALSE(silent)) warn(msg) 
+    }
+  }
+  
+  return(invisible(status))
 }

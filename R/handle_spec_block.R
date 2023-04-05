@@ -91,7 +91,8 @@ PARAM <- function(x,
                   annotated = FALSE,
                   object = NULL, 
                   as_object = FALSE,
-                  covariates = FALSE, ...) {
+                  covariates = FALSE,
+                  input = FALSE, ...) {
   
   if(is.character(object)) {
     if(isTRUE(as_object)) {
@@ -129,16 +130,22 @@ PARAM <- function(x,
       msg <- " invalid model specification
        Block no: {pos}
        Block type: {env$incoming_names[pos]}
-       Some parameters are missing names
+       Some parameters are missing names.
       "
       stop(glue(msg), call. = FALSE)
     }
     env[["param"]][[pos]] <- x
   }
   
-  if(covariates) {
+  if(isTRUE(covariates)) {
     env[["covariates"]] <- c(
       env[["covariates"]], names(env[["param"]][[pos]])
+    )
+  }
+  
+  if(isTRUE(input)) {
+    env[["input"]] <- c(
+      env[["input"]], names(env[["param"]][[pos]])
     )
   }
   

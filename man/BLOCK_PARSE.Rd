@@ -19,6 +19,7 @@ PARAM(
   object = NULL,
   as_object = FALSE,
   covariates = FALSE,
+  input = FALSE,
   ...
 )
 
