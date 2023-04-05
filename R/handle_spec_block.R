@@ -92,7 +92,8 @@ PARAM <- function(x,
                   object = NULL, 
                   as_object = FALSE,
                   covariates = FALSE,
-                  input = FALSE, ...) {
+                  input = FALSE,
+                  tag = NULL, ...) {
   
   if(is.character(object)) {
     if(isTRUE(as_object)) {
@@ -144,9 +145,16 @@ PARAM <- function(x,
   }
   
   if(isTRUE(input)) {
-    env[["input"]] <- c(
-      env[["input"]], names(env[["param"]][[pos]])
-    )
+    tagged <- names(env[["param"]][[pos]])
+    tagdf <- data.frame(name = tagged, tag = "input", stringsAsFactors=FALSE)
+    env[["param_tag"]] <- rbind(env[["param_tag"]], tagdf)
+  }
+  
+  if(is.character(tag)) {
+    tag <- cvec_cs(tag)
+    tagged <- names(env[["param"]][[pos]])
+    tagdf <- expand.grid(name = tagged, tag = tag, stringsAsFactors=FALSE)
+    env[["param_tag"]] <- rbind(env[["param_tag"]], tagdf)
   }
   
   return(NULL)
