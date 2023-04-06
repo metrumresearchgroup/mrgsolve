@@ -68,7 +68,7 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   return(invisible(x))
 }
 
-#' Check data set against model parameters
+#' Check data set names against model parameters
 #' 
 #' When parameters are tagged or labeled in the model specification file, use
 #' this function to check names of input data sets against the tagged
@@ -90,10 +90,11 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' @details
 #' By default, `data` will be checked for parameters with the `covariates` or 
-#' `input`; these checks can be prevented with the `check_covariates` and 
-#' `check_input` arguments.  
+#' `input` attributes; these checks can be bypassed with the `check_covariates` 
+#' and `check_input` arguments.  
 #' 
 #' @examples
+#' 
 #' mod <- mcode("ex-cdn", "$PARAM @input \n CL = 1, KA = 2", compile = FALSE)
 #' 
 #' data <- expand.evd(amt = 100, cl = 2, KA = 5)
@@ -107,64 +108,65 @@ check_data_names <- function(data, x, check_covariates = TRUE,
                              silent = FALSE) {
   
   if(!is_named(data)) {
-    abort("`data` must be named.")  
+    abort("`data` must be a named object.")  
   }
   
   if(!is.mrgmod(x)) {
     abort("`x` must be a model object.")  
   }
   
-  need <- character(0)
-  need_type <- character(0)
-  
   tg <- x@shlib$param_tag
   
-  if(isTRUE(check_nput)) {
+  need <- character(0)
+  need_type <- character(0)
+
+  if(isTRUE(check_input)) {
     input <- tg[tg$tag=="input",,drop = FALSE]
-    need <- input$name
-    need_type <- rep("input", length(need))
+    need_name <- input$name
+    need_type <- rep("input", length(need_name))
   }
   
   if(isTRUE(check_covariates)) {
-    need <- c(need, x@shlib$covariates)  
+    need_name <- c(need_name, x@shlib$covariates)  
     n_cov <- length(x@shlib$covariates)
     need_type <- c(need_type, rep("covariates", n_cov))
   }
   
-  if(length(tags) > 0) {
+  if(is.character(tags) && length(tags) > 0) {
     tags <- cvec_cs(tags)
     tg <- tg[tg$tag %in% tags,,drop = FALSE]
     if(nrow(tg) > 0) {
-      need <- c(need, tg$name)  
+      need_name <- c(need_name, tg$name)  
       need_type <- c(need_type, tg$tag)
     }
   }
   
-  dup <- duplicated(need)
-  need <- need[!dup]
+  dup <- duplicated(need_name)
+  need_name <- need_name[!dup]
   need_type <- need_type[!dup]
   
-  if(length(need)==0) {
+  if(length(need_name)==0) {
     warn("Did not find any inputs, covariates, or tags to check.")
     return(invisible(NULL))
   }
   
-  found <- need %in% names(data)
+  found <- need_name %in% names(data)
   
   if(!(status <- all(found))) {
-    miss <- need[!found]
+    miss <- need_name[!found]
     miss <- formatC(miss, width = max(nchar(miss)), flag = "-")
     miss <- paste0(miss, " (", need_type[!found], ")")
     names(miss) <- rep("*", length(miss))
-    msg <- c("Could not find the following data names", miss)
+    foot <- "Please check names in `data` against names in the parameter list."
+    msg <- c("Could not find the following parameter names in `data`:", miss)
     if(isTRUE(strict)) {
-      abort(msg)  
+      abort(msg, footer = c(x = foot), use_cli_format = TRUE)  
     } else {
-      if(isFALSE(silent)) warn(msg) 
+      if(isFALSE(silent)) warn(msg, footer = c(i = foot), use_cli_format = TRUE) 
     }
   } else {
     if(isFALSE(silent)) {
-      message("Found all expected data names.")
+      message("Found all expected parameter names in `data`.")
     }
   }
   
