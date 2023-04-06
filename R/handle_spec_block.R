@@ -116,6 +116,7 @@ PARAM <- function(x,
       named = TRUE
     )
     env[["param"]][[pos]] <- x
+    save_param_tag(env, names(x), covariates, input, tag)
     return(NULL)
   }
   
@@ -123,7 +124,7 @@ PARAM <- function(x,
     context <- env[["incoming_names"]][pos]
     context <- as.character(glue("parse annotated parameter block ({context})"))
     l <- parse_annot(x, block = "PARAM", envir = env$ENV, context = context)
-    env[["param"]][[pos]] <- l[["v"]]
+    env[["param"]][[pos]] <- x <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
     x <- tolist(x,envir=env$ENV) 
@@ -138,26 +139,23 @@ PARAM <- function(x,
     env[["param"]][[pos]] <- x
   }
   
-  if(isTRUE(covariates)) {
-    env[["covariates"]] <- c(
-      env[["covariates"]], names(env[["param"]][[pos]])
-    )
-  }
-  
-  if(isTRUE(input)) {
-    tagged <- names(env[["param"]][[pos]])
-    tagdf <- data.frame(name = tagged, tag = "input", stringsAsFactors=FALSE)
-    env[["param_tag"]] <- rbind(env[["param_tag"]], tagdf)
-  }
-  
-  if(is.character(tag)) {
-    tag <- cvec_cs(tag)
-    tagged <- names(env[["param"]][[pos]])
-    tagdf <- expand.grid(name = tagged, tag = tag, stringsAsFactors=FALSE)
-    env[["param_tag"]] <- rbind(env[["param_tag"]], tagdf)
-  }
+  save_param_tag(env, names(x), covariates, input, tag)
   
   return(NULL)
+}
+
+save_param_tag <- function(env, pars, covariates, input, tag) {
+  if(isTRUE(covariates)) {
+    env[["covariates"]] <- c(env[["covariates"]], pars)
+  }
+  if(isTRUE(input)) {
+    tag <- c("input", tag)  
+  }
+  if(is.character(tag) && length(tag) > 0) {
+    tag <- cvec_cs(tag)
+    tagdf <- expand.grid(name = pars, tag = tag, stringsAsFactors = FALSE)
+    env[["param_tag"]] <- rbind(env[["param_tag"]], tagdf)
+  }
 }
 
 #' @export

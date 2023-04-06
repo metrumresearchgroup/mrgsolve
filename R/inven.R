@@ -68,47 +68,103 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   return(invisible(x))
 }
 
-#' Check inputs against model parameters
+#' Check data set against model parameters
 #' 
-#' @param obj a data frame or other object with names to check.
+#' When parameters are tagged or labeled in the model specification file, use
+#' this function to check names of input data sets against the tagged
+#' parameters. This is especially useful to alert the user to misspelled or 
+#' otherwise misspecified parameter names in input data sets.
+#' 
+#' @param data a data frame or other object with names to check.
 #' @param x a model object.
+#' @param check_covariates logical; indicates whether or not to check `data` for 
+#' parameter names carrying the `covariates` attribute.
+#' @param check_input logical; indicates whether or not to check `data` for
+#' parameter names carrying the `input` attribute.
+#' @param tags a character vector of parameter tags to require in `data`; this
+#' may be a comma- or space-separated string (e.g. `"tag1, tag2"`).
+#' @param strict if `TRUE`, then generate an error when `data` is missing some
+#' expected column names; otherwise, issue a warning.
+#' @param silent silences any warning that might have been issued when `strict`
+#' is `FALSE`.
+#' 
+#' @details
+#' By default, `data` will be checked for parameters with the `covariates` or 
+#' `input`; these checks can be prevented with the `check_covariates` and 
+#' `check_input` arguments.  
+#' 
+#' @examples
+#' mod <- mcode("ex-cdn", "$PARAM @input \n CL = 1, KA = 2", compile = FALSE)
+#' 
+#' data <- expand.evd(amt = 100, cl = 2, KA = 5)
+#' 
+#' check_data_names(data, mod)
 #' 
 #' @md
 #' @export
-check_inputs <- function(obj, x, covariates = TRUE, strict = FALSE, 
-                         silent = FALSE) {
+check_data_names <- function(data, x, check_covariates = TRUE, 
+                             check_input = TRUE, tags = NULL, strict = FALSE, 
+                             silent = FALSE) {
   
-  need <- x@shlib$input
-  need_type <- rep("input", length(need))
+  if(!is_named(data)) {
+    abort("`data` must be named.")  
+  }
   
-  if(isTRUE(covariates)) {
+  if(!is.mrgmod(x)) {
+    abort("`x` must be a model object.")  
+  }
+  
+  need <- character(0)
+  need_type <- character(0)
+  
+  tg <- x@shlib$param_tag
+  
+  if(isTRUE(check_nput)) {
+    input <- tg[tg$tag=="input",,drop = FALSE]
+    need <- input$name
+    need_type <- rep("input", length(need))
+  }
+  
+  if(isTRUE(check_covariates)) {
     need <- c(need, x@shlib$covariates)  
     n_cov <- length(x@shlib$covariates)
     need_type <- c(need_type, rep("covariates", n_cov))
   }
-
-  n_need <- length(need)
   
-  if(n_need==0) {
-    warn("didn't find any covariates or inputs to check.")
+  if(length(tags) > 0) {
+    tags <- cvec_cs(tags)
+    tg <- tg[tg$tag %in% tags,,drop = FALSE]
+    if(nrow(tg) > 0) {
+      need <- c(need, tg$name)  
+      need_type <- c(need_type, tg$tag)
+    }
+  }
+  
+  dup <- duplicated(need)
+  need <- need[!dup]
+  need_type <- need_type[!dup]
+  
+  if(length(need)==0) {
+    warn("Did not find any inputs, covariates, or tags to check.")
     return(invisible(NULL))
   }
   
-  found <- need %in% names(obj)
+  found <- need %in% names(data)
   
   if(!(status <- all(found))) {
     miss <- need[!found]
     miss <- formatC(miss, width = max(nchar(miss)), flag = "-")
     miss <- paste0(miss, " (", need_type[!found], ")")
     names(miss) <- rep("*", length(miss))
-    msg <- c(
-      "Could not find the following input items", 
-      miss
-    )
+    msg <- c("Could not find the following data names", miss)
     if(isTRUE(strict)) {
       abort(msg)  
     } else {
       if(isFALSE(silent)) warn(msg) 
+    }
+  } else {
+    if(isFALSE(silent)) {
+      message("Found all expected data names.")
     }
   }
   

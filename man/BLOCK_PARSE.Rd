@@ -20,6 +20,7 @@ PARAM(
   as_object = FALSE,
   covariates = FALSE,
   input = FALSE,
+  tag = NULL,
   ...
 )
 
