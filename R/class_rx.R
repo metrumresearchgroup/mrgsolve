@@ -86,13 +86,14 @@ setMethod("ev_rx", signature=c("mrgmod", "character"), function(x,y,...) {
 
 ##' @rdname ev_rx
 ##' @export
-setMethod("ev_rx", signature=c("character","missing"), function(x,df = FALSE,...) {
+setMethod("ev_rx", signature=c("character","missing"), function(x, df = FALSE, 
+                                                                ...) {
   x <- parse_rx(x)
   if(is.list(x[[1]])) {
     x <- lapply(x, do.call, what = ev)  
-    x <- do.call(ev_seq,x)
+    x <- do.call(ev_seq, x)
   } else {
-    x <- do.call(ev,x)
+    x <- do.call(ev, x)
   }
   if(df) return(as.data.frame(x))
   return(x)
@@ -101,7 +102,7 @@ setMethod("ev_rx", signature=c("character","missing"), function(x,df = FALSE,...
 ##' @rdname ev_rx
 ##' @export
 parse_rx <- function(x) {
-  x <- strsplit(x, "then|,")[[1]]
+  x <- strsplit(x, "then|,", perl = TRUE)[[1]]
   x <- trimws(x)
   x <- lapply(x, parse_this_rx)
   if(length(x)==1) return(x[[1]])
@@ -109,6 +110,14 @@ parse_rx <- function(x) {
 }
 
 parse_this_rx <- function(x) {
+  if(charthere(x, "&")) {
+    sp <- strsplit(x, "&", fixed = TRUE)[[1]]
+    sp <- sapply(sp, trimws, USE.NAMES = FALSE)
+    sp <- lapply(sp, parse_this_rx)
+    ev <- lapply(sp, do.call, what = ev)
+    ev <- do.call("c", ev)
+    return(list(ev))
+  }
   dose <- reg_exec_match(x, "^ *(\\d+[\\.]*\\d*[Ee\\+\\-]{0,2}\\d*)")[[1]]
   amt <- as.numeric(dose[2])
   if(is.na(amt)) {
