@@ -100,7 +100,7 @@ setGeneric("param", function(.x, ...) {
 #' @export
 #' @rdname param
 setMethod("param", "mrgmod", function(.x, .y = NULL, ..., .pat="*", .strict=FALSE) {
-  
+
   .dots <- list(...)
   
   has_dots <- length(.dots) > 0
@@ -113,8 +113,8 @@ setMethod("param", "mrgmod", function(.x, .y = NULL, ..., .pat="*", .strict=FALS
   if(missing(.strict) && has_dots) {
     .strict <- TRUE 
   }
-  
-  if(!inherits(.y, c("NULL", "list", "data.frame", "numeric"))) {
+
+  if(!inherits(.y, c("NULL", "list", "data.frame", "numeric", "parameter_list"))) {
     wstop("[param-update] invalid object to update parameter list.")
   }
   
