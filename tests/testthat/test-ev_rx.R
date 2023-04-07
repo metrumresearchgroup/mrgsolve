@@ -107,4 +107,15 @@ test_that("after parameter can be decimal", {
   expect_identical(a,b)
 })
 
-
+test_that("two events at the same time", {
+  a <- ev_rx("100 in 1 & 200 in 2 after 4")  
+  b <- c(ev(amt = 100, cmt = 1), ev(amt = 200, cmt = 2, time = 4))
+  expect_identical(a,b)
+  
+  a <- ev_rx("100 in 1 & 200 in 2 then 300 in 3 after 10")  
+  b <- c(ev(amt = 100, cmt = 1), ev(amt = 200, cmt = 2), 
+         ev(amt = 300, cmt = 3, time = 10))
+  expect_identical(a$time, b$time)
+  expect_identical(a$amt, b$amt)
+  expect_identical(a$cmt, b$cmt)
+})

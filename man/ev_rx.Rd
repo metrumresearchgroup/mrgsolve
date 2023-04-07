@@ -46,8 +46,9 @@ decimal number (but not scientific notation)
 decimal number
 \item Use \code{x} to indicate total number of doses; must be integer
 \item Use \code{then} or \verb{,} to separate dosing periods
-\item User \code{after} to insert a lag in the start of a period; integer or
+\item Use \code{after} to insert a lag in the start of a period; integer or
 decimal number (but not scientific notation)
+\item Use \code{&} to implement multiple doses at the same time
 }
 }
 
@@ -71,6 +72,8 @@ ev_rx("100.2E-2 q4")
 ev_rx("100 over 2.23")
 
 ev_rx("100 q 12 x 3")
+
+ev_rx("100 in 1 & 200 in 2") 
 
 parse_rx("100 mg q 24 then 200 mg q12")
 
