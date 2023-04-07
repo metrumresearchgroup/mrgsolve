@@ -159,6 +159,14 @@ save_param_tag <- function(env, pars, covariates, input, tag) {
 }
 
 #' @export
+handle_spec_block.specINPUT <- function(x, env, ...) {
+  o <- scrape_opts(x, envir = env$ENV, ...)
+  o$pos <- o$env <- o$class <- NULL
+  o <- c(o, attributes(x), list(env = env, input = TRUE))
+  do.call(PARAM, o) 
+}
+
+#' @export
 handle_spec_block.specFIXED <- function(x, ...) {
   scrape_and_call(x, pass = "FIXED", ...)
 }

@@ -146,7 +146,12 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   need_type <- need_type[!dup]
   
   if(length(need_name)==0) {
-    warn("Did not find any inputs, covariates, or tags to check.")
+    msg <- "Did not find any inputs, covariates, or tags to check."
+    if(isTRUE(strict)) {
+      abort(msg, use_cli_format = TRUE)
+    } else {
+      warn(msg, use_cli_format = TRUE)  
+    }
     return(invisible(NULL))
   }
   
@@ -162,7 +167,9 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     if(isTRUE(strict)) {
       abort(msg, footer = c(x = foot), use_cli_format = TRUE)  
     } else {
-      if(isFALSE(silent)) warn(msg, footer = c(i = foot), use_cli_format = TRUE) 
+      if(isFALSE(silent)) {
+        warn(msg, footer = c(i = foot), use_cli_format = TRUE) 
+      }
     }
   } else {
     if(isFALSE(silent)) {

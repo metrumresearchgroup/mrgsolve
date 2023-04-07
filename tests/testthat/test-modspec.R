@@ -547,3 +547,43 @@ test_that("autodec variables can be skipped", {
   cpp <- as.list(mod)$cpp_variables
   expect_equal(cpp$var, c("e", "b", "d"))
 })
+
+test_that("tagged parameter blocks", {
+  code <- "$PARAM @input \n CL = 5"
+  x <- mcode("tag-1", code, compile = FALSE)
+  expect_equal(names(param(x)), "CL")
+  tagdf <- x@shlib$param_tag
+  expect_is(tagdf, "data.frame")
+  expect_equal(names(tagdf), c("name", "tag"))
+  expect_equal(tagdf$name, "CL")
+  expect_equal(tagdf$tag, "input")
+  
+  code <- "$PARAM @tag foo, bar par @input \n V2 = 5"
+  x <- mcode("tag-2", code, compile = FALSE)
+  expect_equal(names(param(x)), "V2")
+  tagdf <- x@shlib$param_tag
+  expect_equal(nrow(tagdf), 4)
+  expect_equal(tagdf$name, rep("V2", 4))
+  expect_equal(tagdf$tag, c("input", "foo", "bar", "par"))
+
+  code <- "$PARAM @tag foo, bar \n V2 = 5, CL = 3"
+  x <- mcode("tag-3", code, compile = FALSE)
+  tagdf <- x@shlib$param_tag
+  check <- expand.grid(
+    name = c("V2", "CL"), 
+    tag = c("foo", "bar"), 
+    stringsAsFactors = FALSE
+  )
+  expect_equal(tagdf, check)
+})
+
+test_that("INPUT block", {
+  code <- "$INPUT CL = 1, V2 = 2"
+  x <- mcode("input-1", code, compile = FALSE)
+  expect_equal(names(param(x)), c("CL", "V2"))
+  tagdf <- x@shlib$param_tag
+  expect_is(tagdf, "data.frame")
+  expect_equal(names(tagdf), c("name", "tag"))
+  expect_equal(tagdf$name, c("CL", "V2"))
+  expect_equal(tagdf$tag, rep("input", 2))
+})
