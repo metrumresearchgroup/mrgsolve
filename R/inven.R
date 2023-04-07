@@ -117,7 +117,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   
   tg <- x@shlib$param_tag
   
-  need <- character(0)
+  need_name <- character(0)
   need_type <- character(0)
 
   if(isTRUE(check_input)) {

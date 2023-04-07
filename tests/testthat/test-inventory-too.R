@@ -40,3 +40,31 @@ test_that("inventory conditions", {
   expect_error(mod %>% idata_set(data,need=c("CL", "WTCL")))
   expect_is(mod %>% data_set(data,need="CL") %>% mrgsim(end=1),"mrgsims")
 })
+
+test_that("check_data_names", {
+  code <- c("$PARAM  A=1", "$PARAM @input \n B=2", "$PARAM @covariates \n C=3", 
+            "$PARAM @tag foo \n D = 4")
+  mod <- mcode("cdn-1", code[1], compile = FALSE)
+  data <- data.frame(A = 1)
+  expect_warning(check_data_names(data, mod), "Did not find any")
+  expect_error(check_data_names(data, mod, strict = TRUE), "Did not find any")
+  
+  mod <- mcode("cdn-2", paste0(code[1:2], collapse = "\n"), compile = FALSE)
+  data <- data.frame(A = 1)
+  expect_warning(check_data_names(data, mod, "B (input)"))
+  expect_silent(check_data_names(data, mod, silent = TRUE))
+  expect_warning(check_data_names(data, mod, check_input = FALSE), "Did not find")
+  expect_error(check_data_names(data, mod, strict = TRUE), "Could not find")
+  
+  mod <- mcode("cdn-3", paste0(code[1:3], collapse = "\n"), compile = FALSE)
+  data <- data.frame(A = 1, B = 2, C = 3)
+  expect_message(check_data_names(data, mod), "Found all")
+  expect_silent(check_data_names(data, mod, silent = TRUE))
+  
+  data$C <- NULL
+  expect_warning(check_data_names(data, mod), "C \\(covariates\\)")
+  expect_message(
+    check_data_names(data, mod, check_covariates = FALSE), 
+    "Found all expected"
+  )
+})
