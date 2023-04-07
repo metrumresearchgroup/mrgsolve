@@ -67,4 +67,14 @@ test_that("check_data_names", {
     check_data_names(data, mod, check_covariates = FALSE), 
     "Found all expected"
   )
+  
+  mod <- mcode("cdn-4", paste0(code[4], collapse = "\n"), compile = FALSE)
+  data <- data.frame(D = 4)
+  expect_warning(check_data_names(data, mod), "Did not find")
+  expect_message(check_data_names(data, mod, tags = "foo"), "Found all")
+
+  mod <- mcode("cdn-5", paste0(code[c(3,4)], collapse = "\n"), compile = FALSE)
+  data <- data.frame(C=3)
+  expect_message(check_data_names(data, mod), "Found all expected")
+  expect_warning(check_data_names(data, mod, tags = "foo"), "Could not find")
 })
