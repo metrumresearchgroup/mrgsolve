@@ -119,7 +119,7 @@ test_that("params are shown", {
   expect_match(x[2], "Model parameters")
 })
 
-test_that("parameter-list passed to param", {
+test_that("parameter_list object passed to param", {
   mod <- house()
   mod <- param(mod, param(CL = 10))
   expect_is(mod, "mrgmod")
