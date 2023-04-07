@@ -154,14 +154,15 @@ save_param_tag <- function(env, pars, covariates, input, tag) {
   if(is.character(tag) && length(tag) > 0) {
     tag <- cvec_cs(tag)
     tagdf <- expand.grid(name = pars, tag = tag, stringsAsFactors = FALSE)
-    env[["param_tag"]] <- rbind(env[["param_tag"]], tagdf)
+    tagdf <- rbind(env[["param_tag"]], tagdf)
+    env[["param_tag"]] <- unique(tagdf)
   }
 }
 
 #' @export
 handle_spec_block.specINPUT <- function(x, env, ...) {
   o <- scrape_opts(x, envir = env$ENV, ...)
-  o$pos <- o$env <- o$class <- NULL
+  o$pos <- o$env <- o$class <- o$input <- NULL
   o <- c(o, attributes(x), list(env = env, input = TRUE))
   do.call(PARAM, o) 
 }

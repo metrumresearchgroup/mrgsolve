@@ -25,7 +25,7 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-inventory-too")
 
 test_that("inventory conditions", {
-    
+  
   mod <- mrgsolve::house()
   
   data <- expand.ev(amt=100,CL=1, SEX=0)
@@ -62,7 +62,7 @@ test_that("check_data_names", {
   expect_silent(check_data_names(data, mod, silent = TRUE))
   
   data$C <- NULL
-  expect_warning(check_data_names(data, mod), "C \\(covariates\\)")
+  expect_warning(check_data_names(data, mod), "C (covariates)", fixed = TRUE)
   expect_message(
     check_data_names(data, mod, check_covariates = FALSE), 
     "Found all expected"
@@ -72,9 +72,17 @@ test_that("check_data_names", {
   data <- data.frame(D = 4)
   expect_warning(check_data_names(data, mod), "Did not find")
   expect_message(check_data_names(data, mod, tags = "foo"), "Found all")
-
+  
   mod <- mcode("cdn-5", paste0(code[c(3,4)], collapse = "\n"), compile = FALSE)
   data <- data.frame(C=3)
   expect_message(check_data_names(data, mod), "Found all expected")
   expect_warning(check_data_names(data, mod, tags = "foo"), "Could not find")
+  
+  mod <- house()
+  data <- data.frame(WGT = 70, SEX = 10)
+  expect_warning(check_data_names(data, mod), "WT (covariates)", fixed = TRUE)
+  expect_warning(
+    check_data_names(data, mod, check_covariates = FALSE), 
+    "Did not find any"
+  )
 })

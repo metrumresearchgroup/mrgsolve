@@ -173,9 +173,9 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     }
   } else {
     if(isFALSE(silent)) {
-      message("Found all expected parameter names in `data`.")
+      msg <- "Found all expected parameter names in `data`."
+      message(msg)
     }
   }
-  
   return(invisible(status))
 }
