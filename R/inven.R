@@ -79,7 +79,7 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @param x a model object.
 #' @param check_covariates logical; indicates whether or not to check `data` for 
 #' parameter names carrying the `covariates` attribute.
-#' @param check_input logical; indicates whether or not to check `data` for
+#' @param check_inputs logical; indicates whether or not to check `data` for
 #' parameter names carrying the `input` attribute.
 #' @param tags a character vector of parameter tags to require in `data`; this
 #' may be a comma- or space-separated string (e.g. `"tag1, tag2"`).
@@ -91,7 +91,7 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @details
 #' By default, `data` will be checked for parameters with the `covariates` or 
 #' `input` attributes; these checks can be bypassed with the `check_covariates` 
-#' and `check_input` arguments.  
+#' and `check_inputs` arguments.  
 #' 
 #' @examples
 #' 
@@ -104,9 +104,8 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @md
 #' @export
 check_data_names <- function(data, x, check_covariates = TRUE, 
-                             check_input = TRUE, tags = NULL, strict = FALSE, 
+                             check_inputs = TRUE, tags = NULL, strict = FALSE, 
                              silent = FALSE) {
-  
   if(!is_named(data)) {
     abort("`data` must be a named object.")  
   }
@@ -120,7 +119,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   need_name <- character(0)
   need_type <- character(0)
 
-  if(isTRUE(check_input)) {
+  if(isTRUE(check_inputs)) {
     input <- tg[tg$tag=="input",,drop = FALSE]
     need_name <- input$name
     need_type <- rep("input", length(need_name))

@@ -8,7 +8,7 @@ check_data_names(
   data,
   x,
   check_covariates = TRUE,
-  check_input = TRUE,
+  check_inputs = TRUE,
   tags = NULL,
   strict = FALSE,
   silent = FALSE
@@ -22,7 +22,7 @@ check_data_names(
 \item{check_covariates}{logical; indicates whether or not to check \code{data} for
 parameter names carrying the \code{covariates} attribute.}
 
-\item{check_input}{logical; indicates whether or not to check \code{data} for
+\item{check_inputs}{logical; indicates whether or not to check \code{data} for
 parameter names carrying the \code{input} attribute.}
 
 \item{tags}{a character vector of parameter tags to require in \code{data}; this
@@ -43,7 +43,7 @@ otherwise misspecified parameter names in input data sets.
 \details{
 By default, \code{data} will be checked for parameters with the \code{covariates} or
 \code{input} attributes; these checks can be bypassed with the \code{check_covariates}
-and \code{check_input} arguments.
+and \code{check_inputs} arguments.
 }
 \examples{
 
