@@ -152,7 +152,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     } else {
       warn(msg, use_cli_format = TRUE)  
     }
-    return(invisible(NULL))
+    return(invisible(FALSE))
   }
   
   found <- need_name %in% names(data)
