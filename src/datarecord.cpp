@@ -348,8 +348,6 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   
   reclist offs;
   
-  int start = 0;
-  int end = 0;
   bool made_it = false;  
   double diff = 0, err = 0;
   double nexti = 0.0, toff = 0.0;
@@ -360,7 +358,6 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
-    ++start;
     evon->implement(prob);
     prob->lsoda_init();
     toff = tfrom + duration;
@@ -377,7 +374,6 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     while((!offs.empty()) && (offs[0]->time()  <= nexti)) {
       toff = offs[0]->time();
       prob->advance(tfrom,toff,solver);
-      ++end;
       offs[0]->implement(prob);
       prob->lsoda_init();
       tfrom = toff;
