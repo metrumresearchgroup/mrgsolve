@@ -90,8 +90,8 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' @details
 #' By default, `data` will be checked for parameters with the `covariates` or 
-#' `input` attributes; these checks can be bypassed with the `check_covariates` 
-#' and `check_inputs` arguments.  
+#' `input` attributes; these checks can be bypassed with the `check_covariates`
+#' and `check_inputs` arguments.
 #' 
 #' @examples
 #' 
@@ -104,8 +104,8 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @md
 #' @export
 check_data_names <- function(data, x, check_covariates = TRUE, 
-                             check_inputs = TRUE, tags = NULL, strict = FALSE, 
-                             silent = FALSE) {
+                             check_inputs = TRUE, tags = NULL, 
+                             strict = FALSE, silent = FALSE) {
   if(!is_named(data)) {
     abort("`data` must be a named object.")  
   }
@@ -120,7 +120,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   need_type <- character(0)
 
   if(isTRUE(check_inputs)) {
-    input <- tg[tg$tag=="input",,drop = FALSE]
+    input <- tg[tg$tag=="input"]
     need_name <- input$name
     need_type <- rep("input", length(need_name))
   }
@@ -133,7 +133,13 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   
   if(is.character(tags) && length(tags) > 0) {
     tags <- cvec_cs(tags)
-    tg <- tg[tg$tag %in% tags,,drop = FALSE]
+    if(!all(tags %in% tg$tag)) {
+      bad_tag <- setdiff(tags, tg$tag)
+      names(bad_tag) <- rep("x", length(bad_tag))
+      msg <- c("Unrecognized tag(s):", bad_tag)
+      abort(msg, use_cli_format = TRUE)
+    }
+    tg <- tg[tg$tag %in% tags]
     if(nrow(tg) > 0) {
       need_name <- c(need_name, tg$name)  
       need_type <- c(need_type, tg$tag)
