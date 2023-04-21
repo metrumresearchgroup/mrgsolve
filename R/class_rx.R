@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -22,17 +22,17 @@ NULL
 ##' Create intervention objects from Rx input
 ##' 
 ##' See details below for Rx specification. Actual parsing is done
-##' by [parse_rx]; this function can be used to debug Rx inputs.
+##' by [parse_rx()]; this function can be used to debug Rx inputs.
 ##' 
-##' @param x a model object or `character` Rx input 
-##' @param y `character` Rx input; see details
-##' @param df if `TRUE` then a data frame is returned
-##' @param ... not used at this time
+##' @param x a model object or `character` Rx input. 
+##' @param y `character` Rx input; see details.
+##' @param df if `TRUE` then a data frame is returned.
+##' @param ... not used at this time.
 ##' 
 ##' @section Rx specification:
 ##' 
 ##' - The dose is found at the start of the string by sequential digits; this 
-##'   may be integer, decimal, or in scientific notation
+##'   may be integer, decimal, or specified in scientific notation
 ##' - Use `in` to identify the dosing compartment number; must be integer
 ##' - Use `q` to identify the dosing interval; must be integer or 
 ##'   decimal number (but not scientific notation)
@@ -46,8 +46,8 @@ NULL
 ##' 
 ##' @return The method dispatched on model object (`mrgmod`) returns another
 ##' model object.  The `character` method returns an event object.  The
-##' `parse_rx` function return a list named with 
-##' arguments for the event object constructor [ev].
+##' `parse_rx` function return a list named with arguments for the event 
+##' object constructor [ev()].
 ##' 
 ##' @examples
 ##' # example("ev_rx")
