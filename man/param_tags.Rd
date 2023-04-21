@@ -2,7 +2,7 @@
 % Please edit documentation in R/inven.R
 \name{param_tags}
 \alias{param_tags}
-\title{Return parameter attributes and tags}
+\title{Return parameter tags}
 \usage{
 param_tags(x)
 }
@@ -10,16 +10,15 @@ param_tags(x)
 \item{x}{mrgsolve model object.}
 }
 \value{
-A data frame listing paramter names and their tags.
+A data frame listing parameter names and their tags.
 }
 \description{
-Use this function if you added attributes to the parameters in the model
-specification and need to extract that information. Attributes include
-\verb{@covariates} and \verb{@input}; paramters can also be assigned an arbitrary
-tag with the \verb{@tag} attribute. Using the \verb{$INPUT} block to declare
-parameters will automatically add the \verb{@input} attribute. Once these
-attributes are added, you can use \code{\link[=check_data_names]{check_data_names()}} to test input
-data sets for names match up with paramters carrying these attributes.
+Use this function if you added the \verb{@covariates} or \verb{@input} attributes or
+specified a user-defined tag (via \verb{@tag}) in one or more parameter blocks
+and need to extract that information. Also, using the \verb{$INPUT} block to
+declare parameters will automatically add the \verb{@input} attribute. Once these
+attributes / tags are added, you can use \code{\link[=check_data_names]{check_data_names()}} to test
+input data sets for names match up with parameters carrying these attributes.
 }
 \examples{
 mod <- house()

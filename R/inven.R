@@ -70,11 +70,11 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 
 #' Check input data set names against model parameters
 #' 
-#' When parameters are tagged or labeled in the model specification file, use
+#' When parameters are tagged (labeled) in the model specification file, use
 #' this function to check names of input data sets against the tagged
 #' parameters. This is especially useful to alert the user to misspelled or 
 #' otherwise misspecified parameter names in input data sets. See [param_tags()]
-#' for information on associating attributes or tags with parameters.
+#' for information on associating tags with parameters.
 #' 
 #' @param data a data frame or other object with names to check.
 #' @param x a model object.
@@ -93,10 +93,11 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' @details
 #' By default, `data` will be checked for parameters with the `covariates` or 
-#' `input` attributes; these checks can be bypassed with the `check_covariates`
+#' `input` tags; these checks can be bypassed with the `check_covariates`
 #' and `check_inputs` arguments.
 #' 
-#' It is an error to request a parameter tag that isn't found in the model.
+#' It is an error to request a parameter tag via the `tags` argument when that
+#' tag is not found in the model.
 #' 
 #' @examples
 #' 
@@ -109,8 +110,8 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' check_data_names(data, mod)
 #' 
 #' @return 
-#' A logical value is returned; `TRUE` if all expected parameters and were 
-#' `FALSE` otherwise. 
+#' A logical value is returned; `TRUE` if all expected parameters were found 
+#' and `FALSE` otherwise. 
 #' 
 #' @seealso [param_tags()]
 #' 
@@ -209,20 +210,19 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   return(invisible(status))
 }
 
-#' Return parameter attributes and tags
+#' Return parameter tags
 #' 
-#' Use this function if you added attributes to the parameters in the model 
-#' specification and need to extract that information. Attributes include 
-#' `@covariates` and `@input`; paramters can also be assigned an arbitrary 
-#' tag with the `@tag` attribute. Using the `$INPUT` block to declare 
-#' parameters will automatically add the `@input` attribute. Once these 
-#' attributes are added, you can use [check_data_names()] to test input
-#' data sets for names match up with paramters carrying these attributes.
+#' Use this function if you added the `@covariates` or `@input` attributes or 
+#' specified a user-defined tag (via `@tag`) in one or more parameter blocks 
+#' and need to extract that information. Also, using the `$INPUT` block to 
+#' declare parameters will automatically add the `@input` attribute. Once these 
+#' attributes / tags are added, you can use [check_data_names()] to test 
+#' input data sets for names match up with parameters carrying these attributes.
 #' 
 #' @param x mrgsolve model object.
 #' 
 #' @return 
-#' A data frame listing paramter names and their tags.
+#' A data frame listing parameter names and their tags.
 #' 
 #' @examples
 #' mod <- house()

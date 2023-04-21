@@ -37,22 +37,23 @@ as expected.}
 is \code{FALSE}.}
 }
 \value{
-A logical value is returned; \code{TRUE} if all expected parameters and were
-\code{FALSE} otherwise.
+A logical value is returned; \code{TRUE} if all expected parameters were found
+and \code{FALSE} otherwise.
 }
 \description{
-When parameters are tagged or labeled in the model specification file, use
+When parameters are tagged (labeled) in the model specification file, use
 this function to check names of input data sets against the tagged
 parameters. This is especially useful to alert the user to misspelled or
 otherwise misspecified parameter names in input data sets. See \code{\link[=param_tags]{param_tags()}}
-for information on associating attributes or tags with parameters.
+for information on associating tags with parameters.
 }
 \details{
 By default, \code{data} will be checked for parameters with the \code{covariates} or
-\code{input} attributes; these checks can be bypassed with the \code{check_covariates}
+\code{input} tags; these checks can be bypassed with the \code{check_covariates}
 and \code{check_inputs} arguments.
 
-It is an error to request a parameter tag that isn't found in the model.
+It is an error to request a parameter tag via the \code{tags} argument when that
+tag is not found in the model.
 }
 \examples{
 
