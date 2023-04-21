@@ -2,7 +2,7 @@
 % Please edit documentation in R/inven.R
 \name{check_data_names}
 \alias{check_data_names}
-\title{Check data set names against model parameters}
+\title{Check input data set names against model parameters}
 \usage{
 check_data_names(
   data,
@@ -25,32 +25,46 @@ parameter names carrying the \code{covariates} attribute.}
 \item{check_inputs}{logical; indicates whether or not to check \code{data} for
 parameter names carrying the \code{input} attribute.}
 
-\item{tags}{a character vector of parameter tags to require in \code{data}; this
-may be a comma- or space-separated string (e.g. \code{"tag1, tag2"}).}
+\item{tags}{a character vector of user-defined parameter tags to require
+in \code{data}; this may be a comma- or space-separated string (e.g.
+\code{"tag1, 'tag2"}).}
 
 \item{strict}{if \code{TRUE}, then generate an error when \code{data} is missing some
-expected column names; otherwise, issue a warning.}
+expected column names; otherwise, issue a warning when \code{data} names aren't
+as expected.}
 
 \item{silent}{silences any warning that might have been issued when \code{strict}
 is \code{FALSE}.}
+}
+\value{
+A logical value is returned; \code{TRUE} if all expected parameters and were
+\code{FALSE} otherwise.
 }
 \description{
 When parameters are tagged or labeled in the model specification file, use
 this function to check names of input data sets against the tagged
 parameters. This is especially useful to alert the user to misspelled or
-otherwise misspecified parameter names in input data sets.
+otherwise misspecified parameter names in input data sets. See \code{\link[=param_tags]{param_tags()}}
+for information on associating attributes or tags with parameters.
 }
 \details{
 By default, \code{data} will be checked for parameters with the \code{covariates} or
 \code{input} attributes; these checks can be bypassed with the \code{check_covariates}
 and \code{check_inputs} arguments.
+
+It is an error to request a parameter tag that isn't found in the model.
 }
 \examples{
 
 mod <- mcode("ex-cdn", "$PARAM @input \n CL = 1, KA = 2", compile = FALSE)
 
+param(mod)
+
 data <- expand.evd(amt = 100, cl = 2, KA = 5)
 
 check_data_names(data, mod)
 
+}
+\seealso{
+\code{\link[=param_tags]{param_tags()}}
 }

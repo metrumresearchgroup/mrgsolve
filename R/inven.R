@@ -68,12 +68,13 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
   return(invisible(x))
 }
 
-#' Check data set names against model parameters
+#' Check input data set names against model parameters
 #' 
 #' When parameters are tagged or labeled in the model specification file, use
 #' this function to check names of input data sets against the tagged
 #' parameters. This is especially useful to alert the user to misspelled or 
-#' otherwise misspecified parameter names in input data sets.
+#' otherwise misspecified parameter names in input data sets. See [param_tags()]
+#' for information on associating attributes or tags with parameters.
 #' 
 #' @param data a data frame or other object with names to check.
 #' @param x a model object.
@@ -81,10 +82,12 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' parameter names carrying the `covariates` attribute.
 #' @param check_inputs logical; indicates whether or not to check `data` for
 #' parameter names carrying the `input` attribute.
-#' @param tags a character vector of parameter tags to require in `data`; this
-#' may be a comma- or space-separated string (e.g. `"tag1, tag2"`).
+#' @param tags a character vector of user-defined parameter tags to require 
+#' in `data`; this may be a comma- or space-separated string (e.g. 
+#' `"tag1, 'tag2"`).
 #' @param strict if `TRUE`, then generate an error when `data` is missing some
-#' expected column names; otherwise, issue a warning.
+#' expected column names; otherwise, issue a warning when `data` names aren't
+#' as expected.
 #' @param silent silences any warning that might have been issued when `strict`
 #' is `FALSE`.
 #' 
@@ -93,13 +96,23 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' `input` attributes; these checks can be bypassed with the `check_covariates`
 #' and `check_inputs` arguments.
 #' 
+#' It is an error to request a parameter tag that isn't found in the model.
+#' 
 #' @examples
 #' 
 #' mod <- mcode("ex-cdn", "$PARAM @input \n CL = 1, KA = 2", compile = FALSE)
 #' 
+#' param(mod)
+#' 
 #' data <- expand.evd(amt = 100, cl = 2, KA = 5)
 #' 
 #' check_data_names(data, mod)
+#' 
+#' @return 
+#' A logical value is returned; `TRUE` if all expected parameters and were 
+#' `FALSE` otherwise. 
+#' 
+#' @seealso [param_tags()]
 #' 
 #' @md
 #' @export
@@ -114,24 +127,35 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     abort("`x` must be a model object.")  
   }
   
+  if(!is.null(tags)) {
+    if(!is.character(tags)) {
+      abort("`tags` must have type 'character'.")  
+    }
+  }
+  
+  check_covariates <- isTRUE(check_covariates)
+  check_inputs <- isTRUE(check_inputs)
+  silent <- isTRUE(silent)
+  strict <- isTRUE(strict)
+  
   tg <- x@shlib$param_tag
   
   need_name <- character(0)
   need_type <- character(0)
-
-  if(isTRUE(check_inputs)) {
+  
+  if(check_inputs) {
     input <- tg[tg$tag=="input"]
     need_name <- input$name
     need_type <- rep("input", length(need_name))
   }
   
-  if(isTRUE(check_covariates)) {
+  if(check_covariates) {
     need_name <- c(need_name, x@shlib$covariates)  
     n_cov <- length(x@shlib$covariates)
     need_type <- c(need_type, rep("covariates", n_cov))
   }
   
-  if(is.character(tags) && length(tags) > 0) {
+  if(length(tags) > 0) {
     tags <- cvec_cs(tags)
     if(!all(tags %in% tg$tag)) {
       bad_tag <- setdiff(tags, tg$tag)
@@ -152,7 +176,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   
   if(length(need_name)==0) {
     msg <- "Did not find any inputs, covariates, or tags to check."
-    if(isTRUE(strict)) {
+    if(strict) {
       abort(msg, use_cli_format = TRUE)
     } else {
       warn(msg, use_cli_format = TRUE)  
@@ -169,18 +193,58 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     names(miss) <- rep("*", length(miss))
     foot <- "Please check names in `data` against names in the parameter list."
     msg <- c("Could not find the following parameter names in `data`:", miss)
-    if(isTRUE(strict)) {
+    if(strict) {
       abort(msg, footer = c(x = foot), use_cli_format = TRUE)  
     } else {
-      if(isFALSE(silent)) {
+      if(!silent) {
         warn(msg, footer = c(i = foot), use_cli_format = TRUE) 
       }
     }
   } else {
-    if(isFALSE(silent)) {
+    if(!silent) {
       msg <- "Found all expected parameter names in `data`."
       message(msg)
     }
   }
   return(invisible(status))
+}
+
+#' Return parameter attributes and tags
+#' 
+#' Use this function if you added attributes to the parameters in the model 
+#' specification and need to extract that information. Attributes include 
+#' `@covariates` and `@input`; paramters can also be assigned an arbitrary 
+#' tag with the `@tag` attribute. Using the `$INPUT` block to declare 
+#' parameters will automatically add the `@input` attribute. Once these 
+#' attributes are added, you can use [check_data_names()] to test input
+#' data sets for names match up with paramters carrying these attributes.
+#' 
+#' @param x mrgsolve model object.
+#' 
+#' @return 
+#' A data frame listing paramter names and their tags.
+#' 
+#' @examples
+#' mod <- house()
+#' 
+#' param_tags(mod)
+#' 
+#' @seealso [check_data_names()]
+#' 
+#' @md
+#' @export
+param_tags <- function(x) {
+  pnames <- ptags <- character(0)
+  covariates <- x@shlib$covariates
+  if(length(covariates) > 0) {
+    pnames <- c(pnames,  covariates)
+    ptags <- c(ptags, rep("covariates", length(covariates)))
+  }
+  tg <- x@shlib$param_tag
+  if(nrow(tg) > 0) {
+    pnames <- c(pnames, tg$name)
+    ptags <- c(ptags, tg$tag)
+  }
+  ans <- data.frame(name = pnames, tag = ptags, stringsAsFactors=FALSE)
+  return(ans)
 }

@@ -86,3 +86,24 @@ test_that("check_data_names", {
     "Did not find any"
   )
 })
+
+test_that("param_tags returns tags", {
+  ans <- param_tags(house())
+  expect_is(ans, "data.frame")
+  expect_equal(nrow(ans), 2)
+  expect_identical(names(ans), c("name", "tag"))
+  expect_identical(ans$tag[1], "covariates")
+  
+  code <- "$PARAM @tag foo\n A = 1\n$PARAM @input\nB = 2"
+  mod <- mcode("cdn-6", code, compile = FALSE)
+  ans <- param_tags(mod)
+  expect_equal(ans$name, c("A", "B"))
+  expect_equal(ans$tag, c("foo", "input"))
+  
+  mod <- mread("pk1", project = modlib(), compile = FALSE)
+  ans <- param_tags(mod)
+  expect_is(ans, "data.frame")
+  expect_equal(nrow(ans), 0)
+  expect_identical(names(ans), c("name", "tag"))
+})
+
