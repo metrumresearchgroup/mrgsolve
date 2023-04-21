@@ -43,7 +43,10 @@ handle_spec_block.default <- function(x, ...) {
 #' @param annotated logical
 #' @param object the name of an object in `ENV`
 #' @param as_object indicates that object code is being provided
-#' @param covariates logical
+#' @param covariates logical; mark as covariates and potentially required 
+#' data input
+#' @param input logical; mark as potentially required data input
+#' @param tag space or comma-separated tags for the parameter block
 #' @param name block name
 #' @param labels aliases to use for simulated ETA values
 #' @param prefix a prefix to add to the label

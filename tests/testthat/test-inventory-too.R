@@ -85,6 +85,10 @@ test_that("check_data_names", {
     check_data_names(data, mod, check_covariates = FALSE), 
     "Did not find any"
   )
+  
+  mod <- modlib("1005", compile = FALSE)
+  tags <- param_tags(mod)
+  expect_true(all(tags$tag=="input"))
 })
 
 test_that("param_tags returns tags", {

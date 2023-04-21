@@ -7,7 +7,7 @@ for equivalent NONMEM control stream.
 
 [ PKMODEL ] cmt = "GUT CENT PERIPH", depot = TRUE
 
-[ PARAM ] SEX = 0, WT = 70
+[ INPUT ] SEX = 0, WT = 70
 
 [ NMXML ] 
 project = system.file("nonmem", package = "mrgsolve")

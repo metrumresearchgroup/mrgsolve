@@ -83,7 +83,12 @@ HANDLEMATRIX(
 
 \item{as_object}{indicates that object code is being provided}
 
-\item{covariates}{logical}
+\item{covariates}{logical; mark as covariates and potentially required
+data input}
+
+\item{input}{logical; mark as potentially required data input}
+
+\item{tag}{space or comma-separated tags for the parameter block}
 
 \item{...}{passed}
 
