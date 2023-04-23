@@ -145,7 +145,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   need_type <- character(0)
   
   if(check_inputs) {
-    input <- tg[tg$tag=="input"]
+    input <- tg[tg$tag=="input",]
     need_name <- input$name
     need_type <- rep("input", length(need_name))
   }
@@ -164,16 +164,12 @@ check_data_names <- function(data, x, check_covariates = TRUE,
       msg <- c("Unrecognized tag(s):", bad_tag)
       abort(msg, use_cli_format = TRUE)
     }
-    tg <- tg[tg$tag %in% tags]
+    tg <- tg[tg$tag %in% tags, ]
     if(nrow(tg) > 0) {
       need_name <- c(need_name, tg$name)  
       need_type <- c(need_type, tg$tag)
     }
   }
-  
-  dup <- duplicated(need_name)
-  need_name <- need_name[!dup]
-  need_type <- need_type[!dup]
   
   if(length(need_name)==0) {
     msg <- "Did not find any inputs, covariates, or tags to check."
@@ -185,11 +181,21 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     return(invisible(FALSE))
   }
   
+  need_type <- tapply(
+    X = need_type, 
+    INDEX = need_name,
+    FUN = paste0, collapse = ", ",
+    simplify = TRUE
+  )
+  
+  # tapply will reorder things; restore order with this:
+  need_name <- unique(need_name)
+  need_type <- need_type[need_name]
+  
   found <- need_name %in% names(data)
   
   if(!(status <- all(found))) {
     miss <- need_name[!found]
-    miss <- formatC(miss, width = max(nchar(miss)), flag = "-")
     miss <- paste0(miss, " (", need_type[!found], ")")
     names(miss) <- rep("*", length(miss))
     foot <- "Please check names in `data` against names in the parameter list."

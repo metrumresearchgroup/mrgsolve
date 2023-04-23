@@ -80,7 +80,7 @@ handle_spec_block.default <- function(x, ...) {
 #' @seealso [PKMODEL()]
 NULL
 
-# PARAM / FIXED ----------------------------------------------------------------
+# PARAM ----------------------------------------------------------------
 
 #' @export
 handle_spec_block.specPARAM <- function(x, ...) {
@@ -162,6 +162,8 @@ save_param_tag <- function(env, pars, covariates, input, tag) {
   }
 }
 
+# INPUT ----------------------------------------------------------------
+
 #' @export
 handle_spec_block.specINPUT <- function(x, env, ...) {
   o <- scrape_opts(x, envir = env$ENV, ...)
@@ -169,6 +171,8 @@ handle_spec_block.specINPUT <- function(x, env, ...) {
   o <- c(o, attributes(x), list(env = env, input = TRUE))
   do.call(PARAM, o) 
 }
+
+# FIXED ----------------------------------------------------------------
 
 #' @export
 handle_spec_block.specFIXED <- function(x, ...) {
