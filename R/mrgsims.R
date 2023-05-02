@@ -532,3 +532,8 @@ plot_sims <- function(.data, ..., .f = NULL, .dots = list()) {
   }
   return(do.call(plot, .dots))
 }
+
+#' Carry model parameters into simulated output
+#' 
+#' 
+#' @param x mrgsims object.

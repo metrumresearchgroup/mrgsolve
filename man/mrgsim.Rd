@@ -6,7 +6,7 @@
 \alias{do_mrgsim}
 \title{Simulate from a model object}
 \usage{
-mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = 1, ...)
+mrgsim(x, data = NULL, idata = NULL, events = NULL, nid = NULL, ...)
 
 mrgsim_df(..., output = "df")
 

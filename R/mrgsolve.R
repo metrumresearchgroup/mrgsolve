@@ -238,7 +238,7 @@ tgrid_id <- function(col,idata) {
 #' out
 #' @md
 #' @export
-mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
+mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=NULL, ...) {
   if(!is.mrgmod(x)) mod_first()
   if(is.null(data)) {
     data <- x@args$data
@@ -259,7 +259,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=1, ...) {
   x@args$data <- NULL
   x@args$events <- NULL
   
-  if(nid > 1) {
+  if(is.numeric(nid)) {
     return(mrgsim_nid(x, nid, events, ...))
   } 
   
