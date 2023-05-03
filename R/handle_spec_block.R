@@ -46,7 +46,7 @@ handle_spec_block.default <- function(x, ...) {
 #' @param covariates logical; mark as covariates and potentially required 
 #' data input
 #' @param input logical; mark as potentially required data input
-#' @param tag space or comma-separated tags for the parameter block
+#' @param tag space or comma-separated user-defined tags for the parameter block
 #' @param name block name
 #' @param labels aliases to use for simulated ETA values
 #' @param prefix a prefix to add to the label
@@ -150,6 +150,13 @@ PARAM <- function(x,
 save_param_tag <- function(env, pars, covariates, input, tag) {
   if(isTRUE(covariates)) {
     env[["covariates"]] <- c(env[["covariates"]], pars)
+    tagdf <- data.frame(
+      name = pars, 
+      tag = "covariates", 
+      stringsAsFactors = FALSE
+    )
+    tagdf <- rbind(env[["param_tag"]], tagdf)
+    env[["param_tag"]] <- unique(tagdf)
   }
   if(isTRUE(input)) {
     tag <- c("input", tag)  

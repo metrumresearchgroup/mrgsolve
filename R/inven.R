@@ -139,39 +139,31 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   silent <- isTRUE(silent)
   strict <- isTRUE(strict)
   
-  tg <- x@shlib$param_tag
+  tg <- param_tags(x)
   
   need_name <- character(0)
   need_type <- character(0)
   
-  if(check_inputs) {
-    input <- tg[tg$tag=="input",]
-    need_name <- input$name
-    need_type <- rep("input", length(need_name))
-  }
-  
-  if(check_covariates) {
-    need_name <- c(need_name, x@shlib$covariates)  
-    n_cov <- length(x@shlib$covariates)
-    need_type <- c(need_type, rep("covariates", n_cov))
-  }
-  
+  # Check that user-defined tags exist
   if(length(tags) > 0) {
     tags <- cvec_cs(tags)
     if(!all(tags %in% tg$tag)) {
       bad_tag <- setdiff(tags, tg$tag)
       names(bad_tag) <- rep("x", length(bad_tag))
-      msg <- c("Unrecognized tag(s):", bad_tag)
+      msg <- c("Unrecognized user tag(s):", bad_tag)
       abort(msg, use_cli_format = TRUE)
     }
-    tg <- tg[tg$tag %in% tags, ]
-    if(nrow(tg) > 0) {
-      need_name <- c(need_name, tg$name)  
-      need_type <- c(need_type, tg$tag)
-    }
+  }
+
+  if(check_covariates) {
+    tags <- c("covariates", tags)
+  }
+    
+  if(check_inputs) {
+    tags <- c("input", tags)
   }
   
-  if(length(need_name)==0) {
+  if(length(tags)==0) {
     msg <- "Did not find any inputs, covariates, or tags to check."
     if(strict) {
       abort(msg, use_cli_format = TRUE)
@@ -180,6 +172,10 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     }
     return(invisible(FALSE))
   }
+  
+  tg <- tg[tg$tag %in% tags,]
+  need_name <- tg$name
+  need_type <- tg$tag
   
   need_type <- tapply(
     X = need_type, 
@@ -198,8 +194,8 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     miss <- need_name[!found]
     miss <- paste0(miss, " (", need_type[!found], ")")
     names(miss) <- rep("*", length(miss))
-    foot <- "Please check names in `data` against names in the parameter list."
     msg <- c("Could not find the following parameter names in `data`:", miss)
+    foot <- "Please check names in `data` against names in the parameter list."
     if(strict) {
       abort(msg, footer = c(x = foot), use_cli_format = TRUE)  
     } else {
@@ -240,17 +236,5 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' @md
 #' @export
 param_tags <- function(x) {
-  pnames <- ptags <- character(0)
-  covariates <- x@shlib$covariates
-  if(length(covariates) > 0) {
-    pnames <- c(pnames,  covariates)
-    ptags <- c(ptags, rep("covariates", length(covariates)))
-  }
-  tg <- x@shlib$param_tag
-  if(nrow(tg) > 0) {
-    pnames <- c(pnames, tg$name)
-    ptags <- c(ptags, tg$tag)
-  }
-  ans <- data.frame(name = pnames, tag = ptags, stringsAsFactors=FALSE)
-  return(ans)
+  return(x@shlib$param_tag)
 }
