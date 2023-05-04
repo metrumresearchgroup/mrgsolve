@@ -33,10 +33,10 @@ must be numeric and all all names must exist in the parameter list
 for \code{.x}.}
 
 \item{.y}{an object to be merged into parameter list; non-\code{NULL} values
-must be named list, data.frame, or numeric vector; named items that do
-not exist in the parameter list are allowed and will be silently ignored;
-use the \code{.strict} argument to require that all names in \code{.y} exist already
-in the parameter list.}
+must be named \code{list}, \code{data.frame}, \code{numeric} vector, or \code{parameter_list}
+object; named items that do not exist in the parameter list are allowed and
+will be silently ignored; use the \code{.strict} argument to require that all
+names in \code{.y} exist already in the parameter list.}
 
 \item{.pat}{a regular expression (character) to be applied as a filter
 for which parameters to show when printing.}
@@ -54,7 +54,7 @@ See \link{numericlist} for methods to deal with \code{parameter_list} objects.
 Can be used to either get a parameter list object from a \code{mrgmod}
 model object or to update the parameters in a model object.
 For both uses, the return value is a \code{parameter_list} object. For the
-former use, \code{param} is usually called to print the parameters to the
+former use, \code{param()} is usually called to print the parameters to the
 screen, but the \code{parameter_list} object can also be coerced to a list
 or numeric R object.
 
