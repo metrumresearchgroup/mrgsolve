@@ -435,7 +435,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     for(size_t j=0; j < a[i].size(); ++j) {
       
-      if(do_interrupt && !(--ic)) {
+      if(do_interrupt && (!(--ic))) {
         Rcpp::checkUserInterrupt();
         ic = prob.interrupt;
       }
