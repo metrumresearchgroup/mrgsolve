@@ -88,7 +88,7 @@ data input}
 
 \item{input}{logical; mark as potentially required data input}
 
-\item{tag}{space or comma-separated tags for the parameter block}
+\item{tag}{space or comma-separated user-defined tags for the parameter block}
 
 \item{...}{passed}
 

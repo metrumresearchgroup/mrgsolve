@@ -163,8 +163,12 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     tags <- c("input", tags)
   }
   
-  if(length(tags)==0) {
-    msg <- "Did not find any inputs, covariates, or tags to check."
+  # Check the list of what we're looking for against the list of tagged
+  # parameters _in the model_
+  tg <- tg[tg$tag %in% tags,]
+  
+  if(nrow(tg)==0) {
+    msg <- "Did not find any inputs, covariates, or user tags to check."
     if(strict) {
       abort(msg, use_cli_format = TRUE)
     } else {
@@ -173,10 +177,11 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     return(invisible(FALSE))
   }
   
-  tg <- tg[tg$tag %in% tags,]
+  # Now, start checking against what is in the data
   need_name <- tg$name
   need_type <- tg$tag
   
+  # This associates parameter with all of their tags
   need_type <- tapply(
     X = need_type, 
     INDEX = need_name,
