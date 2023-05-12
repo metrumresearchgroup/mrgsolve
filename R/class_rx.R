@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -22,17 +22,17 @@ NULL
 ##' Create intervention objects from Rx input
 ##' 
 ##' See details below for Rx specification. Actual parsing is done
-##' by [parse_rx]; this function can be used to debug Rx inputs.
+##' by [parse_rx()]; this function can be used to debug Rx inputs.
 ##' 
-##' @param x a model object or `character` Rx input 
-##' @param y `character` Rx input; see details
-##' @param df if `TRUE` then a data frame is returned
-##' @param ... not used at this time
+##' @param x a model object or `character` Rx input. 
+##' @param y `character` Rx input; see details.
+##' @param df if `TRUE` then a data frame is returned.
+##' @param ... not used at this time.
 ##' 
 ##' @section Rx specification:
 ##' 
 ##' - The dose is found at the start of the string by sequential digits; this 
-##'   may be integer, decimal, or in scientific notation
+##'   may be integer, decimal, or specified in scientific notation
 ##' - Use `in` to identify the dosing compartment number; must be integer
 ##' - Use `q` to identify the dosing interval; must be integer or 
 ##'   decimal number (but not scientific notation)
@@ -40,13 +40,14 @@ NULL
 ##'   decimal number
 ##' - Use `x` to indicate total number of doses; must be integer
 ##' - Use `then` or `,` to separate dosing periods
-##' - User `after` to insert a lag in the start of a period; integer or 
+##' - Use `after` to insert a lag in the start of a period; integer or 
 ##'   decimal number (but not scientific notation)
+##' - Use `&` to implement multiple doses at the same time
 ##' 
 ##' @return The method dispatched on model object (`mrgmod`) returns another
 ##' model object.  The `character` method returns an event object.  The
-##' `parse_rx` function return a list named with 
-##' arguments for the event object constructor [ev].
+##' `parse_rx` function return a list named with arguments for the event 
+##' object constructor [ev()].
 ##' 
 ##' @examples
 ##' # example("ev_rx")
@@ -69,6 +70,8 @@ NULL
 ##' 
 ##' ev_rx("100 q 12 x 3")
 ##' 
+##' ev_rx("100 in 1 & 200 in 2") 
+##' 
 ##' parse_rx("100 mg q 24 then 200 mg q12")
 ##' 
 ##' @md
@@ -86,13 +89,14 @@ setMethod("ev_rx", signature=c("mrgmod", "character"), function(x,y,...) {
 
 ##' @rdname ev_rx
 ##' @export
-setMethod("ev_rx", signature=c("character","missing"), function(x,df = FALSE,...) {
+setMethod("ev_rx", signature=c("character","missing"), function(x, df = FALSE, 
+                                                                ...) {
   x <- parse_rx(x)
   if(is.list(x[[1]])) {
     x <- lapply(x, do.call, what = ev)  
-    x <- do.call(ev_seq,x)
+    x <- do.call(ev_seq, x)
   } else {
-    x <- do.call(ev,x)
+    x <- do.call(ev, x)
   }
   if(df) return(as.data.frame(x))
   return(x)
@@ -101,7 +105,7 @@ setMethod("ev_rx", signature=c("character","missing"), function(x,df = FALSE,...
 ##' @rdname ev_rx
 ##' @export
 parse_rx <- function(x) {
-  x <- strsplit(x, "then|,")[[1]]
+  x <- strsplit(x, "then|,", perl = TRUE)[[1]]
   x <- trimws(x)
   x <- lapply(x, parse_this_rx)
   if(length(x)==1) return(x[[1]])
@@ -109,6 +113,14 @@ parse_rx <- function(x) {
 }
 
 parse_this_rx <- function(x) {
+  if(charthere(x, "&")) {
+    sp <- strsplit(x, "&", fixed = TRUE)[[1]]
+    sp <- sapply(sp, trimws, USE.NAMES = FALSE)
+    sp <- lapply(sp, parse_this_rx)
+    ev <- lapply(sp, do.call, what = ev)
+    ev <- do.call("c", ev)
+    return(list(ev))
+  }
   dose <- reg_exec_match(x, "^ *(\\d+[\\.]*\\d*[Ee\\+\\-]{0,2}\\d*)")[[1]]
   amt <- as.numeric(dose[2])
   if(is.na(amt)) {

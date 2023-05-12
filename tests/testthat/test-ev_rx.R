@@ -43,7 +43,7 @@ test_that("parse dose only - infusion", {
   a <- ev_rx("100 over 2")
   b <- ev(amt = 100, rate = 100/2)
   expect_identical(a,b)
-
+  
   a <- ev_rx("100 ov 2")
   expect_identical(a,b)
 })
@@ -66,7 +66,7 @@ test_that("parse multiple - infusion / bolus", {
   c <- ev(amt = 200, ii = 24, addl = 1)
   d <- ev_seq(b,c)
   expect_identical(a,d)
-
+  
   a <- ev_rx("100 over 10 q 12 x 3 ,  200 q 24 x 2")
   expect_identical(a,d)
 })
@@ -81,11 +81,11 @@ test_that("dose can be in decimal or scientific", {
   a <- ev_rx("1.23E4")
   b <- ev(amt = 1.23E4)
   expect_identical(a,b)
-
+  
   a <- ev_rx("1.23e-4")
   b <- ev(amt = 1.23e-4)
   expect_identical(a,b)
-
+  
   a <- ev_rx("1.23E+4")
   b <- ev(amt = 1.23E+4)
   expect_identical(a,b)
@@ -101,10 +101,22 @@ test_that("after parameter can be decimal", {
   a <- ev_rx("1000 after 2")
   b <- ev(amt = 1000, time =2)
   expect_identical(a,b)
-
+  
   a <- ev_rx("1000 after 2.93")
   b <- ev(amt = 1000, time=2.93)
   expect_identical(a,b)
 })
 
-
+test_that("two events at the same time", {
+  a <- ev_rx("100 in 1 & 200 in 2 after 4")  
+  b <- c(ev(amt = 100, cmt = 1), ev(amt = 200, cmt = 2, time = 4))
+  expect_identical(a,b)
+  
+  a <- ev_rx("100 in 1 & 200 in 2 then 300 in 3 after 10")  
+  b <- c(
+    ev(amt = 100, cmt = 1, ii = 0, addl = 0), 
+    ev(amt = 200, cmt = 2, ii = 0, addl = 0), 
+    ev(amt = 300, cmt = 3, ii = 0, addl = 0, time = 10)
+  )
+  expect_identical(a,b)
+})

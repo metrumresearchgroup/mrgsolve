@@ -16,29 +16,29 @@ ev_rx(x, y, ...)
 parse_rx(x)
 }
 \arguments{
-\item{x}{a model object or \code{character} Rx input}
+\item{x}{a model object or \code{character} Rx input.}
 
-\item{y}{\code{character} Rx input; see details}
+\item{y}{\code{character} Rx input; see details.}
 
-\item{...}{not used at this time}
+\item{...}{not used at this time.}
 
-\item{df}{if \code{TRUE} then a data frame is returned}
+\item{df}{if \code{TRUE} then a data frame is returned.}
 }
 \value{
 The method dispatched on model object (\code{mrgmod}) returns another
 model object.  The \code{character} method returns an event object.  The
-\code{parse_rx} function return a list named with
-arguments for the event object constructor \link{ev}.
+\code{parse_rx} function return a list named with arguments for the event
+object constructor \code{\link[=ev]{ev()}}.
 }
 \description{
 See details below for Rx specification. Actual parsing is done
-by \link{parse_rx}; this function can be used to debug Rx inputs.
+by \code{\link[=parse_rx]{parse_rx()}}; this function can be used to debug Rx inputs.
 }
 \section{Rx specification}{
 
 \itemize{
 \item The dose is found at the start of the string by sequential digits; this
-may be integer, decimal, or in scientific notation
+may be integer, decimal, or specified in scientific notation
 \item Use \verb{in} to identify the dosing compartment number; must be integer
 \item Use \code{q} to identify the dosing interval; must be integer or
 decimal number (but not scientific notation)
@@ -46,8 +46,9 @@ decimal number (but not scientific notation)
 decimal number
 \item Use \code{x} to indicate total number of doses; must be integer
 \item Use \code{then} or \verb{,} to separate dosing periods
-\item User \code{after} to insert a lag in the start of a period; integer or
+\item Use \code{after} to insert a lag in the start of a period; integer or
 decimal number (but not scientific notation)
+\item Use \code{&} to implement multiple doses at the same time
 }
 }
 
@@ -71,6 +72,8 @@ ev_rx("100.2E-2 q4")
 ev_rx("100 over 2.23")
 
 ev_rx("100 q 12 x 3")
+
+ev_rx("100 in 1 & 200 in 2") 
 
 parse_rx("100 mg q 24 then 200 mg q12")
 

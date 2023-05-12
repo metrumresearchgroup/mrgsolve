@@ -373,7 +373,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   }
   
   crow = 0; // current output row
-  int crec = 0; // current record number
+  int ic = prob.interrupt; // interrupt counter
   
   prob.nid(dat.nid());
   prob.nrow(NN);
@@ -435,9 +435,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     for(size_t j=0; j < a[i].size(); ++j) {
       
-      ++crec;
-      if(do_interrupt && ((crec % prob.interrupt)==0)) {
+      if(do_interrupt && (!(--ic))) {
         Rcpp::checkUserInterrupt();
+        ic = prob.interrupt;
       }
       
       if(crow == NN) continue;

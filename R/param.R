@@ -25,10 +25,10 @@
 #'
 #' @param .x the model object.
 #' @param .y an object to be merged into parameter list; non-`NULL` values 
-#' must be named list, data.frame, or numeric vector; named items that do 
-#' not exist in the parameter list are allowed and will be silently ignored; 
-#' use the `.strict` argument to require that all names in `.y` exist already
-#' in the parameter list.
+#' must be named `list`, `data.frame`, `numeric` vector, or `parameter_list` 
+#' object; named items that do not exist in the parameter list are allowed and 
+#' will be silently ignored; use the `.strict` argument to require that all 
+#' names in `.y` exist already in the parameter list.
 #' @param .pat a regular expression (character) to be applied as a filter 
 #' for which parameters to show when printing.
 #' @param .strict if `TRUE`, all names to be updated must be found 
@@ -42,7 +42,7 @@
 #' Can be used to either get a parameter list object from a `mrgmod` 
 #' model object or to update the parameters in a model object.  
 #' For both uses, the return value is a `parameter_list` object. For the 
-#' former use, `param` is usually called to print the parameters to the 
+#' former use, `param()` is usually called to print the parameters to the 
 #' screen, but the `parameter_list` object can also be coerced to a list 
 #' or numeric R object.
 #' 
@@ -100,7 +100,7 @@ setGeneric("param", function(.x, ...) {
 #' @export
 #' @rdname param
 setMethod("param", "mrgmod", function(.x, .y = NULL, ..., .pat="*", .strict=FALSE) {
-  
+
   .dots <- list(...)
   
   has_dots <- length(.dots) > 0
@@ -113,8 +113,8 @@ setMethod("param", "mrgmod", function(.x, .y = NULL, ..., .pat="*", .strict=FALS
   if(missing(.strict) && has_dots) {
     .strict <- TRUE 
   }
-  
-  if(!inherits(.y, c("NULL", "list", "data.frame", "numeric"))) {
+
+  if(!inherits(.y, c("NULL", "list", "data.frame", "numeric", "parameter_list"))) {
     wstop("[param-update] invalid object to update parameter list.")
   }
   

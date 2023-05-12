@@ -118,3 +118,10 @@ test_that("params are shown", {
   x <- capture.output(param(mod))
   expect_match(x[2], "Model parameters")
 })
+
+test_that("parameter_list object passed to param", {
+  mod <- house()
+  mod <- param(mod, param(CL = 10))
+  expect_is(mod, "mrgmod")
+  expect_equal(mod$CL, 10)
+})
