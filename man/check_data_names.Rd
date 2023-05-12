@@ -19,17 +19,17 @@ check_data_names(
 
 \item{x}{a model object.}
 
-\item{check_covariates}{logical; indicates whether or not to check \code{data} for
-parameter names carrying the \code{covariates} attribute.}
+\item{check_covariates}{logical; if \code{TRUE}, check \code{data} for parameter names
+carrying the \code{covariates} tag.}
 
-\item{check_inputs}{logical; indicates whether or not to check \code{data} for
-parameter names carrying the \code{input} attribute.}
+\item{check_inputs}{logical; if \code{TRUE}, check \code{data} for parameter names
+carrying the \code{input} tag.}
 
 \item{tags}{a character vector of user-defined parameter tags to require
 in \code{data}; this may be a comma- or space-separated string (e.g.
 \code{"tag1, 'tag2"}).}
 
-\item{strict}{if \code{TRUE}, then generate an error when \code{data} is missing some
+\item{strict}{if \code{TRUE}, generate an error when \code{data} is missing some
 expected column names; otherwise, issue a warning when \code{data} names aren't
 as expected.}
 

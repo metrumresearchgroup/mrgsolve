@@ -78,14 +78,14 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' @param data a data frame or other object with names to check.
 #' @param x a model object.
-#' @param check_covariates logical; indicates whether or not to check `data` for 
-#' parameter names carrying the `covariates` attribute.
-#' @param check_inputs logical; indicates whether or not to check `data` for
-#' parameter names carrying the `input` attribute.
+#' @param check_covariates logical; if `TRUE`, check `data` for parameter names 
+#' carrying the `covariates` tag.
+#' @param check_inputs logical; if `TRUE`, check `data` for parameter names 
+#' carrying the `input` tag.
 #' @param tags a character vector of user-defined parameter tags to require 
 #' in `data`; this may be a comma- or space-separated string (e.g. 
 #' `"tag1, 'tag2"`).
-#' @param strict if `TRUE`, then generate an error when `data` is missing some
+#' @param strict if `TRUE`, generate an error when `data` is missing some
 #' expected column names; otherwise, issue a warning when `data` names aren't
 #' as expected.
 #' @param silent silences any warning that might have been issued when `strict`
