@@ -81,10 +81,10 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @param check_covariates logical; if `TRUE`, check `data` for parameter names 
 #' carrying the `covariates` tag.
 #' @param check_inputs logical; if `TRUE`, check `data` for parameter names 
-#' carrying the `input` tag.
+#' carrying the `input` tag. 
 #' @param tags a character vector of user-defined parameter tags to require 
 #' in `data`; this may be a comma- or space-separated string (e.g. 
-#' `"tag1, 'tag2"`).
+#' `"tag1,tag2"`).
 #' @param strict if `TRUE`, generate an error when `data` is missing some
 #' expected column names; otherwise, issue a warning when `data` names aren't
 #' as expected.
@@ -105,6 +105,7 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' param(mod)
 #' 
+#' # Coding mistake!
 #' data <- expand.evd(amt = 100, cl = 2, KA = 5)
 #' 
 #' check_data_names(data, mod)
@@ -222,14 +223,42 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' Use this function if you added the `@covariates` or `@input` attributes or 
 #' specified a user-defined tag (via `@tag`) in one or more parameter blocks 
 #' and need to extract that information. Also, using the `$INPUT` block to 
-#' declare parameters will automatically add the `@input` attribute. Once these 
-#' attributes / tags are added, you can use [check_data_names()] to test 
-#' input data sets for names match up with parameters carrying these attributes.
+#' declare parameters will automatically add the `input` tag (via `@input`). 
+#' Once these attributes / tags are added, you can use [check_data_names()] to 
+#' test input data sets for names match up with parameters carrying different 
+#' attributes.
 #' 
 #' @param x mrgsolve model object.
 #' 
 #' @return 
 #' A data frame listing parameter names and their tags.
+#' 
+#' @section Model specification: 
+#' 
+#' Note: it's good practice to tag parameters with `input` or `covariates`
+#' as these will automatically be expected on input data when you call 
+#' [check_data_names()]. User-defined tags are also possible, but you will 
+#' need to alert [check_data_names()] to look for them.
+#' 
+#' You can use the `$INPUT` block to add the `input` tag on these parameters
+#' 
+#' ```
+#' $INPUT 
+#' STUDY = 101, WT = 70, DVID = 1
+#' ```
+#' Tag some covariates in the model
+#' 
+#' ```
+#' $PARAM @covariates
+#' WT = 70, SEX = 1, EGFR = 110
+#' ```
+#' 
+#' A user-defined tag
+#' 
+#' ```
+#' $PARAM @tag flags
+#' FFLAG = 1, DFLAG = 0
+#' ```
 #' 
 #' @examples
 #' mod <- house()

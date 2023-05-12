@@ -27,7 +27,7 @@ carrying the \code{input} tag.}
 
 \item{tags}{a character vector of user-defined parameter tags to require
 in \code{data}; this may be a comma- or space-separated string (e.g.
-\code{"tag1, 'tag2"}).}
+\code{"tag1,tag2"}).}
 
 \item{strict}{if \code{TRUE}, generate an error when \code{data} is missing some
 expected column names; otherwise, issue a warning when \code{data} names aren't
@@ -61,6 +61,7 @@ mod <- mcode("ex-cdn", "$PARAM @input \n CL = 1, KA = 2", compile = FALSE)
 
 param(mod)
 
+# Coding mistake!
 data <- expand.evd(amt = 100, cl = 2, KA = 5)
 
 check_data_names(data, mod)

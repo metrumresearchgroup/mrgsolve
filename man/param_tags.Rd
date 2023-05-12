@@ -16,10 +16,38 @@ A data frame listing parameter names and their tags.
 Use this function if you added the \verb{@covariates} or \verb{@input} attributes or
 specified a user-defined tag (via \verb{@tag}) in one or more parameter blocks
 and need to extract that information. Also, using the \verb{$INPUT} block to
-declare parameters will automatically add the \verb{@input} attribute. Once these
-attributes / tags are added, you can use \code{\link[=check_data_names]{check_data_names()}} to test
-input data sets for names match up with parameters carrying these attributes.
+declare parameters will automatically add the \code{input} tag (via \verb{@input}).
+Once these attributes / tags are added, you can use \code{\link[=check_data_names]{check_data_names()}} to
+test input data sets for names match up with parameters carrying different
+attributes.
 }
+\section{Model specification}{
+
+
+Note: it's good practice to tag parameters with \code{input} or \code{covariates}
+as these will automatically be expected on input data when you call
+\code{\link[=check_data_names]{check_data_names()}}. User-defined tags are also possible, but you will
+need to alert \code{\link[=check_data_names]{check_data_names()}} to look for them.
+
+You can use the \verb{$INPUT} block to add the \code{input} tag on these parameters
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{$INPUT 
+STUDY = 101, WT = 70, DVID = 1
+}\if{html}{\out{</div>}}
+
+Tag some covariates in the model
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{$PARAM @covariates
+WT = 70, SEX = 1, EGFR = 110
+}\if{html}{\out{</div>}}
+
+A user-defined tag
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{$PARAM @tag flags
+FFLAG = 1, DFLAG = 0
+}\if{html}{\out{</div>}}
+}
+
 \examples{
 mod <- house()
 
