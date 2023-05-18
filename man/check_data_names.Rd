@@ -41,9 +41,9 @@ A logical value is returned; \code{TRUE} if all expected parameters were found
 and \code{FALSE} otherwise.
 }
 \description{
-When parameters are tagged (labeled) in the model specification file, use
-this function to check names of input data sets against the tagged
-parameters. This is especially useful to alert the user to misspelled or
+Use this function to check names of input data sets against parameters that
+have been assigned different tags. Assignment is made in the model
+specification file. This is useful to alert the user to misspelled or
 otherwise misspecified parameter names in input data sets. See \code{\link[=param_tags]{param_tags()}}
 for information on associating tags with parameters.
 }
@@ -54,6 +54,9 @@ and \code{check_inputs} arguments.
 
 It is an error to request a parameter tag via the \code{tags} argument when that
 tag is not found in the model.
+
+It is an error to call \code{check_data_names} when no parameters have been tagged
+in the model specification file (see \code{\link[=param_tags]{param_tags()}}).
 }
 \examples{
 

@@ -70,9 +70,9 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 
 #' Check input data set names against model parameters
 #' 
-#' When parameters are tagged (labeled) in the model specification file, use
-#' this function to check names of input data sets against the tagged
-#' parameters. This is especially useful to alert the user to misspelled or 
+#' Use this function to check names of input data sets against parameters that 
+#' have been assigned different tags. Assignment is made in the model 
+#' specification file. This is useful to alert the user to misspelled or 
 #' otherwise misspecified parameter names in input data sets. See [param_tags()]
 #' for information on associating tags with parameters.
 #' 
@@ -98,6 +98,9 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' It is an error to request a parameter tag via the `tags` argument when that
 #' tag is not found in the model.
+#' 
+#' It is an error to call `check_data_names` when no parameters have been tagged
+#' in the model specification file (see [param_tags()]).
 #' 
 #' @examples
 #' 
@@ -225,8 +228,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' and need to extract that information. Also, using the `$INPUT` block to 
 #' declare parameters will automatically add the `input` tag (via `@input`). 
 #' Once these attributes / tags are added, you can use [check_data_names()] to 
-#' test input data sets for names match up with parameters carrying different 
-#' attributes.
+#' reconcile names of input data sets against tagged model parameters.
 #' 
 #' @param x mrgsolve model object.
 #' 
@@ -235,10 +237,12 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' 
 #' @section Model specification: 
 #' 
-#' Note: it's good practice to tag parameters with `input` or `covariates`
-#' as these will automatically be expected on input data when you call 
-#' [check_data_names()]. User-defined tags are also possible, but you will 
-#' need to alert [check_data_names()] to look for them.
+#' Note: it is good practice to tag parameters where appropriate with `input` 
+#' or `covariates` as these will automatically be expected on input data when 
+#' you call [check_data_names()]. User-defined tags are also possible, but you 
+#' will need to alert [check_data_names()] to look for them.
+#' 
+#' **Examples**
 #' 
 #' You can use the `$INPUT` block to add the `input` tag on these parameters
 #' 
@@ -264,7 +268,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' mod <- house()
 #' 
 #' param_tags(mod)
-#' 
+#'
 #' @seealso [check_data_names()]
 #' 
 #' @md

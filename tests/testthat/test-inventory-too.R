@@ -42,19 +42,28 @@ test_that("inventory conditions", {
 })
 
 test_that("check_data_names", {
-  code <- c("$PARAM  A=1", "$PARAM @input \n B=2", "$PARAM @covariates \n C=3", 
+  code <- c("$PARAM  A=1", 
+            "$PARAM @input \n B=2", 
+            "$PARAM @covariates \n C=3", 
             "$PARAM @tag foo \n D = 4")
+  
+  # There must be something to check against
   mod <- mcode("cdn-1", code[1], compile = FALSE)
   data <- data.frame(A = 1)
-  expect_warning(check_data_names(data, mod), "Did not find any")
-  expect_error(check_data_names(data, mod, strict = TRUE), "Did not find any")
+  expect_warning(check_data_names(data, mod), 
+                 "Did not find any inputs, covariates or user")
+  expect_error(check_data_names(data, mod, strict = TRUE), 
+               "Did not find any inputs, covariates or user")
   
+  # missing parameters in data
   mod <- mcode("cdn-2", paste0(code[1:2], collapse = "\n"), compile = FALSE)
   data <- data.frame(A = 1)
   expect_warning(check_data_names(data, mod, "B (input)"))
   expect_silent(check_data_names(data, mod, silent = TRUE))
-  expect_warning(check_data_names(data, mod, check_input = FALSE), "Did not find")
-  expect_error(check_data_names(data, mod, strict = TRUE), "Could not find")
+  expect_warning(check_data_names(data, mod, check_input = FALSE), 
+                 "Did not find any inputs, covariates, or user")
+  expect_error(check_data_names(data, mod, strict = TRUE), 
+               "Did not find any inputs, covariates, or user")
   
   mod <- mcode("cdn-3", paste0(code[1:3], collapse = "\n"), compile = FALSE)
   data <- data.frame(A = 1, B = 2, C = 3)
@@ -70,20 +79,22 @@ test_that("check_data_names", {
   
   mod <- mcode("cdn-4", paste0(code[4], collapse = "\n"), compile = FALSE)
   data <- data.frame(D = 4)
-  expect_warning(check_data_names(data, mod), "Did not find")
+  expect_warning(check_data_names(data, mod), 
+                 "Did not find any inputs, covariates, or user")
   expect_message(check_data_names(data, mod, tags = "foo"), "Found all")
   
   mod <- mcode("cdn-5", paste0(code[c(3,4)], collapse = "\n"), compile = FALSE)
   data <- data.frame(C=3)
   expect_message(check_data_names(data, mod), "Found all expected")
-  expect_warning(check_data_names(data, mod, tags = "foo"), "Could not find")
+  expect_warning(check_data_names(data, mod, tags = "foo"), 
+                 "D (foo)", fixed = TRUE)
   
   mod <- house()
   data <- data.frame(WGT = 70, SEX = 10)
   expect_warning(check_data_names(data, mod), "WT (covariates)", fixed = TRUE)
   expect_warning(
     check_data_names(data, mod, check_covariates = FALSE), 
-    "Did not find any"
+    "Did not find any inputs, covariates, or user"
   )
   
   mod <- modlib("1005", compile = FALSE)
@@ -110,4 +121,3 @@ test_that("param_tags returns tags", {
   expect_equal(nrow(ans), 0)
   expect_identical(names(ans), c("name", "tag"))
 })
-

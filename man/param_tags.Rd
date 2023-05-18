@@ -18,16 +18,17 @@ specified a user-defined tag (via \verb{@tag}) in one or more parameter blocks
 and need to extract that information. Also, using the \verb{$INPUT} block to
 declare parameters will automatically add the \code{input} tag (via \verb{@input}).
 Once these attributes / tags are added, you can use \code{\link[=check_data_names]{check_data_names()}} to
-test input data sets for names match up with parameters carrying different
-attributes.
+reconcile names of input data sets against tagged model parameters.
 }
 \section{Model specification}{
 
 
-Note: it's good practice to tag parameters with \code{input} or \code{covariates}
-as these will automatically be expected on input data when you call
-\code{\link[=check_data_names]{check_data_names()}}. User-defined tags are also possible, but you will
-need to alert \code{\link[=check_data_names]{check_data_names()}} to look for them.
+Note: it is good practice to tag parameters where appropriate with \code{input}
+or \code{covariates} as these will automatically be expected on input data when
+you call \code{\link[=check_data_names]{check_data_names()}}. User-defined tags are also possible, but you
+will need to alert \code{\link[=check_data_names]{check_data_names()}} to look for them.
+
+\strong{Examples}
 
 You can use the \verb{$INPUT} block to add the \code{input} tag on these parameters
 
