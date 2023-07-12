@@ -287,3 +287,55 @@ test_that("pass ETA on the data set", {
   outq <- mrgsim_q(mod, data, etasrc = "data")
   expect_identical(out@data, outq@data)
 })
+
+# Keeping tests simpler here since there is shared code
+test_that("pass ETA on the idata set", {
+  mod <- param(mod, mode = 0)
+  data <- expand.ev(amt = 100, ID = seq(4), cmt = 1)
+  idata <- mutate(
+    data,
+    ETA1 = rev(ID)/10,
+    ETA3 = ETA1
+  )[, c("ID", "ETA1", "ETA3")]
+
+  data <- expand_observations(data, times = seq(5))
+  data <- mutate(data, cmt = 0)
+  data2 <- merge(data, idata, by = "ID")
+  
+  # Show that output is identical using data or idata
+  set.seed(9812)
+  out1 <- mrgsim(mod, data2, etasrc = "data")
+  out2 <- mrgsim(mod, data, idata, etasrc = "idata")
+  
+  expect_identical(out1, out2)
+  
+  expect_error(
+    mrgsim(mod, data, idata, etasrc = "idata.all"), 
+    "all 11 ETAs must"
+  )
+
+  expect_error(
+    mrgsim(mod, data, etasrc = "idata"), 
+    "at least one"
+  )
+  
+  idata$ETA3 <- rev(idata$ETA3)
+  out <- mrgsim_i(mod, idata, etasrc = "idata", output = "df")
+  out <- out[out$time==4,]
+  expect_identical(out$a, idata$ETA1)
+  expect_identical(out$c, idata$ETA3)
+  expect_identical(out$b, rep(0, nrow(idata)))
+  expect_identical(out$d, rep(0, nrow(idata)))
+  
+  # Confirm that ETA is coming from idata, not data
+  data$ETA1 <- -1
+  data$ETA3 <- -1
+  data$ETA2 <- 100
+  data$ETA4 <- 200
+  out <- mrgsim_di(mod, data, idata, etasrc = "idata", output = "df")
+  out <- out[out$time==4,]
+  expect_identical(out$a, idata$ETA1)
+  expect_identical(out$c, idata$ETA3)
+  expect_identical(out$b, rep(0, nrow(idata)))
+  expect_identical(out$d, rep(0, nrow(idata)))
+})
