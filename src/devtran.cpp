@@ -305,12 +305,18 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       eta = dat.get_etas(neta, false, etasrc);
     } else if(etasrc=="data.all") {
       eta = dat.get_etas(neta, true, etasrc);
+    } else if(etasrc=="idata") {
+      eta = idat.get_etas(neta, false, etasrc); 
+    } else if(etasrc=="idata.all") {
+      eta = idat.get_etas(neta, true, etasrc);
     } else {
       std::string msg = 
         R"(`etasrc` must be either:
-           "omega"    = ETAs simulated from OMEGA
-           "data"     = ETAs imported from the data set
-           "data.all" = strict ETA import from data set)";
+           "omega"     = ETAs simulated from OMEGA
+           "data"      = ETAs imported from the data set
+           "idata"     = ETAs imported from the idata set
+           "data.all"  = strict ETA import from data set
+           "idata.all" = strict ETA import from idata set)";
       CRUMP(msg.c_str());  
     }
   }
