@@ -259,7 +259,7 @@ mrgsim <-  function(x, data=NULL, idata=NULL, events=NULL, nid=NULL, ...) {
   x@args$data <- NULL
   x@args$events <- NULL
   
-  if(is.numeric(nid)) {
+  if(is.numeric(nid) && !have_idata) {
     return(mrgsim_nid(x, nid, events, ...))
   } 
   
