@@ -86,21 +86,26 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' in `data`; this may be a comma- or space-separated string (e.g. 
 #' `"tag1,tag2"`).
 #' @param strict if `TRUE`, generate an error when `data` is missing some
-#' expected column names; otherwise, issue a warning when `data` names aren't
-#' as expected.
-#' @param silent silences any warning that might have been issued when `strict`
-#' is `FALSE`.
+#' expected column names; otherwise, issue a warning.
+#' @param inform if `TRUE`, inform the user when `data` is missing some 
+#' expected column names; otherwise, issue a warning.
+#' @param silent silences message on successful check.
 #' 
 #' @details
 #' By default, `data` will be checked for parameters with the `covariates` or 
 #' `input` tags; these checks can be bypassed with the `check_covariates`
-#' and `check_inputs` arguments.
+#' and `check_inputs` arguments. When a parameter name is missing from `data`
+#' the user will be warned by default. Use `strict = TRUE` to generate an 
+#' error instead of a warning and use `inform = TRUE` to simply be informed. 
+#' When the user has not tagged any parameters for checking, there will 
+#' either be a warning (default) or an error (when `strict = TRUE`).
 #' 
 #' It is an error to request a parameter tag via the `tags` argument when that
 #' tag is not found in the model.
 #' 
 #' It is an error to call `check_data_names` when no parameters have been tagged
 #' in the model specification file (see [param_tags()]).
+#' 
 #' 
 #' @examples
 #' 
@@ -123,7 +128,8 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @export
 check_data_names <- function(data, x, check_covariates = TRUE, 
                              check_inputs = TRUE, tags = NULL, 
-                             strict = FALSE, silent = FALSE) {
+                             strict = FALSE, silent = FALSE, 
+                             inform = FALSE) {
   if(!is_named(data)) {
     abort("`data` must be a named object.")  
   }
@@ -158,11 +164,11 @@ check_data_names <- function(data, x, check_covariates = TRUE,
       abort(msg, use_cli_format = TRUE)
     }
   }
-
+  
   if(check_covariates) {
     tags <- c("covariates", tags)
   }
-    
+  
   if(check_inputs) {
     tags <- c("input", tags)
   }
@@ -177,7 +183,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
       abort(msg, use_cli_format = TRUE)
     } else {
       warn(msg, use_cli_format = TRUE)  
-    }
+    } 
     return(invisible(FALSE))
   }
   
@@ -207,10 +213,10 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     foot <- "Please check names in `data` against names in the parameter list."
     if(strict) {
       abort(msg, footer = c(x = foot), use_cli_format = TRUE)  
+    } else if(!inform) {
+      warn(msg, footer = c(i = foot), use_cli_format = TRUE) 
     } else {
-      if(!silent) {
-        warn(msg, footer = c(i = foot), use_cli_format = TRUE) 
-      }
+      inform(msg, use_cli_format = TRUE)  
     }
   } else {
     if(!silent) {

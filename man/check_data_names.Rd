@@ -11,7 +11,8 @@ check_data_names(
   check_inputs = TRUE,
   tags = NULL,
   strict = FALSE,
-  silent = FALSE
+  silent = FALSE,
+  inform = FALSE
 )
 }
 \arguments{
@@ -30,11 +31,12 @@ in \code{data}; this may be a comma- or space-separated string (e.g.
 \code{"tag1,tag2"}).}
 
 \item{strict}{if \code{TRUE}, generate an error when \code{data} is missing some
-expected column names; otherwise, issue a warning when \code{data} names aren't
-as expected.}
+expected column names; otherwise, issue a warning.}
 
-\item{silent}{silences any warning that might have been issued when \code{strict}
-is \code{FALSE}.}
+\item{silent}{silences message on successful check.}
+
+\item{inform}{if \code{TRUE}, inform the user when \code{data} is missing some
+expected column names; otherwise, issue a warning.}
 }
 \value{
 A logical value is returned; \code{TRUE} if all expected parameters were found

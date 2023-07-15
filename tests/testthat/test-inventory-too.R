@@ -51,19 +51,22 @@ test_that("check_data_names", {
   mod <- mcode("cdn-1", code[1], compile = FALSE)
   data <- data.frame(A = 1)
   expect_warning(check_data_names(data, mod), 
-                 "Did not find any inputs, covariates or user")
+                 "Did not find any inputs, covariates, or user")
   expect_error(check_data_names(data, mod, strict = TRUE), 
-               "Did not find any inputs, covariates or user")
+               "Did not find any inputs, covariates, or user")
   
   # missing parameters in data
   mod <- mcode("cdn-2", paste0(code[1:2], collapse = "\n"), compile = FALSE)
   data <- data.frame(A = 1)
-  expect_warning(check_data_names(data, mod, "B (input)"))
-  expect_silent(check_data_names(data, mod, silent = TRUE))
+  expect_warning(check_data_names(data, mod), "Could not find the following")
+  expect_warning(check_data_names(data, mod, silent = TRUE), 
+                 "Could not find the following")
   expect_warning(check_data_names(data, mod, check_input = FALSE), 
                  "Did not find any inputs, covariates, or user")
   expect_error(check_data_names(data, mod, strict = TRUE), 
-               "Did not find any inputs, covariates, or user")
+               "Could not find the following")
+  expect_message(check_data_names(data, mod, inform = TRUE), 
+                 "Could not find the following")
   
   mod <- mcode("cdn-3", paste0(code[1:3], collapse = "\n"), compile = FALSE)
   data <- data.frame(A = 1, B = 2, C = 3)
@@ -88,6 +91,8 @@ test_that("check_data_names", {
   expect_message(check_data_names(data, mod), "Found all expected")
   expect_warning(check_data_names(data, mod, tags = "foo"), 
                  "D (foo)", fixed = TRUE)
+  expect_error(check_data_names(data, mod, tags = "kyle"), 
+               "Unrecognized user tag")
   
   mod <- house()
   data <- data.frame(WGT = 70, SEX = 10)
