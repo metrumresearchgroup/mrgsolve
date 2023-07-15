@@ -88,7 +88,8 @@ including \code{a.u.g} in  \code{carry_out}.}
 or another object with an \code{stime} method.}
 
 \item{etasrc}{source for \code{ETA()} values in the model; values can include:
-\code{"omega"}, \code{"data"} or \code{"data.all"}; see 'Details'.}
+\code{"omega"}, \code{"data"}, \code{"data.all"}, \code{"idata"}, or \code{"idata.all"}; see
+'Details'.}
 
 \item{recsort}{record sorting flag.  Default value is 1.  Possible values
 are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at

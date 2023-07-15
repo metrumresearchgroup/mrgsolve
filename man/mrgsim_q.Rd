@@ -34,7 +34,8 @@ object is returned; if \code{"df"} then a data frame is returned.}
 \item{simcall}{not used; only the default value of 0 is allowed.}
 
 \item{etasrc}{source for ETA() values in the model; values can include: 
-"omega", "data" or "data.all"; see 'Details' in [mrgsim()].}
+"omega", `"data"`, `"data.all"`, `"idata"`, or `"idata.all"`; see 
+'Details' in [mrgsim()].}
 }
 \value{
 By default, an object of class `mrgsims`. Use `output = "df"` to return 

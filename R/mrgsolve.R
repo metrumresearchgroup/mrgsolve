@@ -480,7 +480,8 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 #' @param tgrid a tgrid object; or a numeric vector of simulation times
 #' or another object with an `stime` method. 
 #' @param etasrc source for `ETA()` values in the model; values can include: 
-#' `"omega"`, `"data"` or `"data.all"`; see 'Details'. 
+#' `"omega"`, `"data"`, `"data.all"`, `"idata"`, or `"idata.all"`; see 
+#' 'Details'. 
 #' @param recsort record sorting flag.  Default value is 1.  Possible values 
 #' are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
 #' the same time; 3 and 4 put those doses before padded observations at the 

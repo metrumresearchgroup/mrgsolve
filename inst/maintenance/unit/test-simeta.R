@@ -315,7 +315,7 @@ test_that("pass ETA on the idata set", {
   )
 
   expect_error(
-    mrgsim(mod, data, etasrc = "idata"), 
+    mrgsim(mod, data, idata = data[, "ID"], etasrc = "idata"), 
     "at least one"
   )
   
