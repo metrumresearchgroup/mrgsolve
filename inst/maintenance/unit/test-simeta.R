@@ -209,6 +209,22 @@ test_that("warn when simeps(n) is called with off diagonals", {
   expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
 })
 
+# Fixes issue discovered in #1092
+test_that("etasrc works with ETA in first column", {
+  mod <- param(mod, mode = 0)
+  
+  data <- expand.ev(amt = 100, ID = seq(4), cmt = 1)
+  data <- mutate(data, ETA1 = rev(ID) / 10)
+  data <- expand_observations(data, times = seq(5))
+  data <- mutate(data, cmt = 0)
+  
+  set.seed(9812)
+  expect_identical(
+    mrgsim(mod, data, etasrc = "data"),
+    mrgsim(mod, select(data, "ETA1", everything()), etasrc = "data")
+  )
+})
+
 test_that("pass ETA on the data set", {
   mod <- param(mod, mode = 0)
   data <- expand.ev(amt = 100, ID = seq(4), cmt = 1)

@@ -635,7 +635,7 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   for(size_t i = 0; i < Uid.size(); ++i) {
     int start_row = Startrow[i];
     for(int j = 0; j < n_eta; ++j) {
-      if(eta_location[j] > 0) {
+      if(eta_location[j] >= 0) {
         ans(i, j) = Data(start_row, eta_location[j]);
       }
     }
