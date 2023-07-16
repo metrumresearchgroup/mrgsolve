@@ -26,7 +26,6 @@ Authors@R:
              role = "ctb"),
       person(given = "Kyle", family = "Meyer",
              role = "ctb",
-             email = "kylem@metrumrg.com"),
       person(given = "Metrum Research Group",
              role = "cph"))
 Maintainer: Kyle T Baron <kyleb@metrumrg.com>
