@@ -25,7 +25,7 @@ Authors@R:
              comment = c(ORCID = "0000-0002-0954-9660"),
              role = "ctb"),
       person(given = "Kyle", family = "Meyer",
-             role = "ctb",
+             role = "ctb"),
       person(given = "Metrum Research Group",
              role = "cph"))
 Maintainer: Kyle T Baron <kyleb@metrumrg.com>
