@@ -167,7 +167,9 @@ tgrid_id <- function(col,idata) {
 #' - `etasrc`: this argument lets you control where `ETA(n)` come from in the 
 #' model. When `etasrc` is set to `"omega"` (the default), `ETAs` will be 
 #' simulated from a multivariate normal distribution defined by the `$OMEGA`
-#' blocks in the model. When `etasrc` is set to `"data"` or `"data.all"`, 
+#' blocks in the model. Alternatively, input `data` or `idata` sets can be used
+#' to pass in fixed `ETA(n)` by setting `etasrc` to `"data"`, `"idata"`, 
+#' `"data.all"` or `"idata.all"`. When `etasrc` is set to `"data"` or `"data.all"`, 
 #' the input data set will be scanned for columns called `ETA1`, `ETA2`, ..., 
 #' `ETAn` and those values will be copied into the appropriate slot in the 
 #' `ETA()` vector. Only the first record for each individual will be copied into 
@@ -189,7 +191,9 @@ tgrid_id <- function(col,idata) {
 #' can pass `etasrc = "data.all"` which causes an error to be generated if any 
 #' `ETAn` is missing from the data set. Use this option when you intend to have 
 #' _all_ `ETAs` attached to the data set and want an error generated if mrgsolve 
-#' finds one or more of them is missing.
+#' finds one or more of them is missing. Using `etasrc ="idata"` or 
+#' `"idata.all"`, the behavior is identical to `"data"` (or `"data.all"`), 
+#' except mrgsolve will look at the idata set rather than data set.
 #' 
 #' 
 #' @seealso [mrgsim_variants], [mrgsim_q()]
@@ -476,7 +480,8 @@ mrgsim_nid <- function(x, nid, events = ev(), ...) {
 #' @param tgrid a tgrid object; or a numeric vector of simulation times
 #' or another object with an `stime` method. 
 #' @param etasrc source for `ETA()` values in the model; values can include: 
-#' `"omega"`, `"data"` or `"data.all"`; see 'Details'. 
+#' `"omega"`, `"data"`, `"data.all"`, `"idata"`, or `"idata.all"`; see 
+#' 'Details'. 
 #' @param recsort record sorting flag.  Default value is 1.  Possible values 
 #' are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at 
 #' the same time; 3 and 4 put those doses before padded observations at the 

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -71,7 +71,6 @@ dataobject::dataobject(Rcpp::NumericMatrix _data,
   Data_names = Rcpp::as<Rcpp::CharacterVector>(dimnames[1]);
   
   Idcol = find_position("ID", Data_names);
-  
   if(Idcol < 0) {
     throw Rcpp::exception(
         "could not find ID column in data set.",false
@@ -178,9 +177,11 @@ void dataobject::locate_tran() {
 
 void dataobject::idata_row() {
   Uid.resize(Data.nrow());
+  Startrow.resize(Data.nrow());
   for(int i=0; i < Data.nrow(); ++i) {
     idmap[Data(i,Idcol)] = i;
     Uid[i] = Data(i,Idcol);
+    Startrow[i] = i;
   }
 }
 
@@ -633,14 +634,13 @@ arma::mat dataobject::get_etas(const int n_eta, const bool strict,
   
   arma::mat ans(Uid.size(), n_eta); 
   for(size_t i = 0; i < Uid.size(); ++i) {
-    int start_row = Startrow[i];
+    int start_row = this->start(i);
     for(int j = 0; j < n_eta; ++j) {
       if(eta_location[j] > 0) {
         ans(i, j) = Data(start_row, eta_location[j]);
       }
     }
   }
-  
   return ans;
 }
 

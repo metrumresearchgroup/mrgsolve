@@ -88,7 +88,8 @@ including \code{a.u.g} in  \code{carry_out}.}
 or another object with an \code{stime} method.}
 
 \item{etasrc}{source for \code{ETA()} values in the model; values can include:
-\code{"omega"}, \code{"data"} or \code{"data.all"}; see 'Details'.}
+\code{"omega"}, \code{"data"}, \code{"data.all"}, \code{"idata"}, or \code{"idata.all"}; see
+'Details'.}
 
 \item{recsort}{record sorting flag.  Default value is 1.  Possible values
 are 1,2,3,4: 1 and 2 put doses in a data set after padded observations at
@@ -186,7 +187,9 @@ counts.
 \item \code{etasrc}: this argument lets you control where \code{ETA(n)} come from in the
 model. When \code{etasrc} is set to \code{"omega"} (the default), \code{ETAs} will be
 simulated from a multivariate normal distribution defined by the \verb{$OMEGA}
-blocks in the model. When \code{etasrc} is set to \code{"data"} or \code{"data.all"},
+blocks in the model. Alternatively, input \code{data} or \code{idata} sets can be used
+to pass in fixed \code{ETA(n)} by setting \code{etasrc} to \code{"data"}, \code{"idata"},
+\code{"data.all"} or \code{"idata.all"}. When \code{etasrc} is set to \code{"data"} or \code{"data.all"},
 the input data set will be scanned for columns called \code{ETA1}, \code{ETA2}, ...,
 \code{ETAn} and those values will be copied into the appropriate slot in the
 \code{ETA()} vector. Only the first record for each individual will be copied into
@@ -208,7 +211,9 @@ data set, the missing \code{ETA()} will be set to \code{0}.  Alternatively, the 
 can pass \code{etasrc = "data.all"} which causes an error to be generated if any
 \code{ETAn} is missing from the data set. Use this option when you intend to have
 \emph{all} \code{ETAs} attached to the data set and want an error generated if mrgsolve
-finds one or more of them is missing.
+finds one or more of them is missing. Using \code{etasrc ="idata"} or
+\code{"idata.all"}, the behavior is identical to \code{"data"} (or \code{"data.all"}),
+except mrgsolve will look at the idata set rather than data set.
 }
 }
 \examples{
