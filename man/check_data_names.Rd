@@ -52,7 +52,11 @@ for information on associating tags with parameters.
 \details{
 By default, \code{data} will be checked for parameters with the \code{covariates} or
 \code{input} tags; these checks can be bypassed with the \code{check_covariates}
-and \code{check_inputs} arguments.
+and \code{check_inputs} arguments. When a parameter name is missing from \code{data}
+the user will be warned by default. Use \code{strict = TRUE} to generate an
+error instead of a warning and use \code{inform = TRUE} to simply be informed.
+When the user has not tagged any parameters for checking, there will
+either be a warning (default) or an error (when \code{strict = TRUE}).
 
 It is an error to request a parameter tag via the \code{tags} argument when that
 tag is not found in the model.
