@@ -10,9 +10,8 @@ check_data_names(
   check_covariates = TRUE,
   check_inputs = TRUE,
   tags = NULL,
-  strict = FALSE,
-  silent = FALSE,
-  inform = FALSE
+  mode = c("warn", "error", "inform"),
+  silent = FALSE
 )
 }
 \arguments{
@@ -30,13 +29,12 @@ carrying the \code{input} tag.}
 in \code{data}; this may be a comma- or space-separated string (e.g.
 \code{"tag1,tag2"}).}
 
-\item{strict}{if \code{TRUE}, generate an error when \code{data} is missing some
-expected column names; otherwise, issue a warning.}
+\item{mode}{the default is to \code{"warn"} the user when \code{data} is missing
+some expected column names; alternatively, use \code{"error"} to issue an
+error or \code{"inform"} to generate a message when \code{data} is missing some
+expected column names.}
 
 \item{silent}{silences message on successful check.}
-
-\item{inform}{if \code{TRUE}, inform the user when \code{data} is missing some
-expected column names; otherwise, issue a warning.}
 }
 \value{
 A logical value is returned; \code{TRUE} if all expected parameters were found
@@ -53,10 +51,10 @@ for information on associating tags with parameters.
 By default, \code{data} will be checked for parameters with the \code{covariates} or
 \code{input} tags; these checks can be bypassed with the \code{check_covariates}
 and \code{check_inputs} arguments. When a parameter name is missing from \code{data}
-the user will be warned by default. Use \code{strict = TRUE} to generate an
-error instead of a warning and use \code{inform = TRUE} to simply be informed.
+the user will be warned by default. Use \code{mode = "error"} to generate an
+error instead of a warning and use \code{mode = "inform"} to simply be informed.
 When the user has not tagged any parameters for checking, there will
-either be a warning (default) or an error (when \code{strict = TRUE}).
+either be a warning (default) or an error (when \code{mode = "error"}).
 
 It is an error to request a parameter tag via the \code{tags} argument when that
 tag is not found in the model.
@@ -74,6 +72,10 @@ param(mod)
 data <- expand.evd(amt = 100, cl = 2, KA = 5)
 
 check_data_names(data, mod)
+
+try(check_data_names(data, mod, mode = "error"))
+
+check_data_names(data, mod, mode = "inform")
 
 }
 \seealso{

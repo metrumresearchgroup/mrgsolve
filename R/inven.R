@@ -85,20 +85,20 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @param tags a character vector of user-defined parameter tags to require 
 #' in `data`; this may be a comma- or space-separated string (e.g. 
 #' `"tag1,tag2"`).
-#' @param strict if `TRUE`, generate an error when `data` is missing some
-#' expected column names; otherwise, issue a warning.
-#' @param inform if `TRUE`, inform the user when `data` is missing some 
-#' expected column names; otherwise, issue a warning.
+#' @param mode the default is to `"warn"` the user when `data` is missing 
+#' some expected column names; alternatively, use `"error"` to issue an 
+#' error or `"inform"` to generate a message when `data` is missing some 
+#' expected column names.
 #' @param silent silences message on successful check.
 #' 
 #' @details
 #' By default, `data` will be checked for parameters with the `covariates` or 
 #' `input` tags; these checks can be bypassed with the `check_covariates`
 #' and `check_inputs` arguments. When a parameter name is missing from `data`
-#' the user will be warned by default. Use `strict = TRUE` to generate an 
-#' error instead of a warning and use `inform = TRUE` to simply be informed. 
+#' the user will be warned by default. Use `mode = "error"` to generate an 
+#' error instead of a warning and use `mode = "inform"` to simply be informed. 
 #' When the user has not tagged any parameters for checking, there will 
-#' either be a warning (default) or an error (when `strict = TRUE`).
+#' either be a warning (default) or an error (when `mode = "error"`).
 #' 
 #' It is an error to request a parameter tag via the `tags` argument when that
 #' tag is not found in the model.
@@ -118,6 +118,10 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' 
 #' check_data_names(data, mod)
 #' 
+#' try(check_data_names(data, mod, mode = "error"))
+#' 
+#' check_data_names(data, mod, mode = "inform")
+#' 
 #' @return 
 #' A logical value is returned; `TRUE` if all expected parameters were found 
 #' and `FALSE` otherwise. 
@@ -128,8 +132,8 @@ inventory <- function(x, obj, ..., .strict = FALSE) {
 #' @export
 check_data_names <- function(data, x, check_covariates = TRUE, 
                              check_inputs = TRUE, tags = NULL, 
-                             strict = FALSE, silent = FALSE, 
-                             inform = FALSE) {
+                             mode = c("warn", "error", "inform"),
+                             silent = FALSE) {
   if(!is_named(data)) {
     abort("`data` must be a named object.")  
   }
@@ -144,10 +148,12 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     }
   }
   
+  mode <- match.arg(mode)
   check_covariates <- isTRUE(check_covariates)
   check_inputs <- isTRUE(check_inputs)
   silent <- isTRUE(silent)
-  strict <- isTRUE(strict)
+  err <- mode=="error"
+  inform <- mode=="inform"
   
   tg <- param_tags(x)
   
@@ -179,7 +185,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
   
   if(nrow(tg)==0) {
     msg <- "Did not find any inputs, covariates, or user tags to check."
-    if(strict) {
+    if(err) {
       abort(msg, use_cli_format = TRUE)
     } else {
       warn(msg, use_cli_format = TRUE)  
@@ -211,7 +217,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
     names(miss) <- rep("*", length(miss))
     msg <- c("Could not find the following parameter names in `data`:", miss)
     foot <- "Please check names in `data` against names in the parameter list."
-    if(strict) {
+    if(err) {
       abort(msg, footer = c(x = foot), use_cli_format = TRUE)  
     } else if(!inform) {
       warn(msg, footer = c(i = foot), use_cli_format = TRUE) 

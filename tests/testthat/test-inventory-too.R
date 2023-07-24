@@ -52,7 +52,7 @@ test_that("check_data_names", {
   data <- data.frame(A = 1)
   expect_warning(check_data_names(data, mod), 
                  "Did not find any inputs, covariates, or user")
-  expect_error(check_data_names(data, mod, strict = TRUE), 
+  expect_error(check_data_names(data, mod, mode = "error"), 
                "Did not find any inputs, covariates, or user")
   
   # missing parameters in data
@@ -63,9 +63,9 @@ test_that("check_data_names", {
                  "Could not find the following")
   expect_warning(check_data_names(data, mod, check_input = FALSE), 
                  "Did not find any inputs, covariates, or user")
-  expect_error(check_data_names(data, mod, strict = TRUE), 
+  expect_error(check_data_names(data, mod, mode = "error"), 
                "Could not find the following")
-  expect_message(check_data_names(data, mod, inform = TRUE), 
+  expect_message(check_data_names(data, mod, mode = "inform"), 
                  "Could not find the following")
   
   mod <- mcode("cdn-3", paste0(code[1:3], collapse = "\n"), compile = FALSE)
