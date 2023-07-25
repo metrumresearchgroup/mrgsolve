@@ -65,7 +65,7 @@ test_that("Include TIME and time when checking for mixed upper/lower case", {
     fixed = TRUE
   )
   expect_warning(
-    mrgsim(house(), data = data.frame(ID = 1, time = 0, AMT = 0, cmt = 1)), 
+    mrgsim(house(), data = data.frame(ID = 1, time = 0, AMT = 0, CMT = 1)), 
     "Both lower- & upper-case", 
     fixed = TRUE
   )
