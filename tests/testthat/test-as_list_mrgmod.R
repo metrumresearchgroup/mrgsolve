@@ -61,6 +61,7 @@ test_that("check items in as.list output", {
   expect_true("sodll" %in% x_names)
   expect_true("soloc" %in% x_names)
   expect_true("covariates" %in% x_names)
+  expect_true("param_tag" %in% x_names)
   expect_true("fixed" %in% x_names)
   expect_true("plugins" %in% x_names)
   expect_true("random" %in% x_names)

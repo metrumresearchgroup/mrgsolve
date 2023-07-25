@@ -29,7 +29,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
-#' @importFrom rlang is_named .data abort warn
+#' @importFrom rlang is_named .data abort warn inform
 #' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
@@ -79,7 +79,8 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
-                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML", "NMEXT")
+                "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML", "NMEXT", 
+                "INPUT")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",

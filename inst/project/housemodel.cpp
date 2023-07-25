@@ -20,8 +20,6 @@ VC   : 20   : Volume of distribution (L)
 KA   : 1.2  : Absorption rate constant (1/hr)
 F1   : 1.0  : Bioavailability fraction (.)
 D1   : 2.0  : Infusion duration (hr)
-WT   : 70   : Weight (kg)
-SEX  : 0    : Covariate female sex
 WTCL : 0.75 : Exponent WT on CL
 WTVC : 1.00 : Exponent WT on VC
 SEXCL: 0.7  : Prop cov effect on CL
@@ -29,6 +27,10 @@ SEXVC: 0.85 : Prop cov effect on VC
 KIN  : 100  : Resp prod rate constant (1/hr)
 KOUT : 2    : Resp elim rate constant (1/hr)
 IC50 : 10   : Conc giving 50% max resp (ng/ml)
+
+$PARAM @annotated @covariates
+WT   : 70   : Weight (kg)
+SEX  :  0   : Covariate female sex
 
 $CMT @annotated
 GUT  : Dosing compartment (mg)
@@ -42,7 +44,6 @@ $SIGMA @labels EXPO
 0
 
 $SET end=120, delta=0.25
-
 
 $GLOBAL
 #define CP (CENT/VCi)
@@ -72,4 +73,3 @@ double DV = CP*exp(EXPO);
 $CAPTURE @annotated
 DV: Dependent variable (ng/ml)
 CP: Plasma concentration (ng/ml)
-

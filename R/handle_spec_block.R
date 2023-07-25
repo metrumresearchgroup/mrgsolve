@@ -43,7 +43,10 @@ handle_spec_block.default <- function(x, ...) {
 #' @param annotated logical
 #' @param object the name of an object in `ENV`
 #' @param as_object indicates that object code is being provided
-#' @param covariates logical
+#' @param covariates logical; mark as covariates and potentially required 
+#' data input
+#' @param input logical; mark as potentially required data input
+#' @param tag space or comma-separated user-defined tags for the parameter block
 #' @param name block name
 #' @param labels aliases to use for simulated ETA values
 #' @param prefix a prefix to add to the label
@@ -77,7 +80,7 @@ handle_spec_block.default <- function(x, ...) {
 #' @seealso [PKMODEL()]
 NULL
 
-# PARAM / FIXED ----------------------------------------------------------------
+# PARAM ----------------------------------------------------------------
 
 #' @export
 handle_spec_block.specPARAM <- function(x, ...) {
@@ -91,7 +94,9 @@ PARAM <- function(x,
                   annotated = FALSE,
                   object = NULL, 
                   as_object = FALSE,
-                  covariates = FALSE, ...) {
+                  covariates = FALSE,
+                  input = FALSE,
+                  tag = NULL, ...) {
   
   if(is.character(object)) {
     if(isTRUE(as_object)) {
@@ -114,6 +119,7 @@ PARAM <- function(x,
       named = TRUE
     )
     env[["param"]][[pos]] <- x
+    save_param_tag(env, names(x), covariates, input, tag)
     return(NULL)
   }
   
@@ -121,7 +127,7 @@ PARAM <- function(x,
     context <- env[["incoming_names"]][pos]
     context <- as.character(glue("parse annotated parameter block ({context})"))
     l <- parse_annot(x, block = "PARAM", envir = env$ENV, context = context)
-    env[["param"]][[pos]] <- l[["v"]]
+    env[["param"]][[pos]] <- x <- l[["v"]]
     env[["annot"]][[pos]] <- l[["an"]]
   } else {
     x <- tolist(x,envir=env$ENV) 
@@ -129,21 +135,51 @@ PARAM <- function(x,
       msg <- " invalid model specification
        Block no: {pos}
        Block type: {env$incoming_names[pos]}
-       Some parameters are missing names
+       Some parameters are missing names.
       "
       stop(glue(msg), call. = FALSE)
     }
     env[["param"]][[pos]] <- x
   }
   
-  if(covariates) {
-    env[["covariates"]] <- c(
-      env[["covariates"]], names(env[["param"]][[pos]])
-    )
-  }
+  save_param_tag(env, names(x), covariates, input, tag)
   
   return(NULL)
 }
+
+save_param_tag <- function(env, pars, covariates, input, tag) {
+  if(isTRUE(covariates)) {
+    env[["covariates"]] <- c(env[["covariates"]], pars)
+    tagdf <- data.frame(
+      name = pars, 
+      tag = "covariates", 
+      stringsAsFactors = FALSE
+    )
+    tagdf <- rbind(env[["param_tag"]], tagdf)
+    env[["param_tag"]] <- unique(tagdf)
+  }
+  if(isTRUE(input)) {
+    tag <- c("input", tag)  
+  }
+  if(is.character(tag) && length(tag) > 0) {
+    tag <- cvec_cs(tag)
+    tagdf <- expand.grid(name = pars, tag = tag, stringsAsFactors = FALSE)
+    tagdf <- rbind(env[["param_tag"]], tagdf)
+    env[["param_tag"]] <- unique(tagdf)
+  }
+}
+
+# INPUT ----------------------------------------------------------------
+
+#' @export
+handle_spec_block.specINPUT <- function(x, env, ...) {
+  o <- scrape_opts(x, envir = env$ENV, ...)
+  o$pos <- o$env <- o$class <- o$input <- NULL
+  o <- c(o, attributes(x), list(env = env, input = TRUE))
+  do.call(PARAM, o) 
+}
+
+# FIXED ----------------------------------------------------------------
 
 #' @export
 handle_spec_block.specFIXED <- function(x, ...) {

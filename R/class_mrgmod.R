@@ -559,6 +559,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     init <- as.list(init(x))
     param <- as.list(param(x))
     cmt <- cmt(x)
+    param_tag <- shlib(x)[["param_tag"]]
     covariates <- as.character(shlib(x)[["covariates"]])
     pars <- pars(x)
     neq <- neq(x)

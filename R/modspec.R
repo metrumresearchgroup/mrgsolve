@@ -730,6 +730,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$capture <- vector("list", n)
   mread.env$error <- character(0)
   mread.env$covariates <- character(0)
+  mread.env$param_tag <- data.frame(name=0, tag=0)[0,]
   mread.env$nm_import <- character(0)
   mread.env$ENV <- ENV 
   mread.env$blocks <- names(spec)
