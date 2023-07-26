@@ -58,6 +58,19 @@ test_that("Warning is generated when mixed upper/lower names", {
   expect_warning(mrgsim(data_set(mod,mix)))
 })
 
+test_that("Include TIME and time when checking for mixed upper/lower case", {
+  expect_warning(
+    mrgsim(house(), data = data.frame(ID = 1, TIME = 0, amt = 0, cmt = 1)), 
+    "Both lower- & upper-case", 
+    fixed = TRUE
+  )
+  expect_warning(
+    mrgsim(house(), data = data.frame(ID = 1, time = 0, AMT = 0, CMT = 1)), 
+    "Both lower- & upper-case", 
+    fixed = TRUE
+  )
+})
+
 test_that("Filter out ID", {
   out <- mod %>% data_set(up, ID > 4) %>% mrgsim
   expect_true(all(out$ID > 4))

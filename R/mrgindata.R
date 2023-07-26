@@ -192,8 +192,8 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
                          dimnames=list(NULL, "..zeros..")))
   
   # Look for both upper and lower case column names
-  uc <- any(dimnames(dm)[[2]] %in% GLOBALS[["CARRY_TRAN_UC"]])
-  lc <- any(dimnames(dm)[[2]] %in% GLOBALS[["CARRY_TRAN_LC"]])
+  uc <- any(dimnames(dm)[[2]] %in% GLOBALS[["TRAN_UPPER"]])
+  lc <- any(dimnames(dm)[[2]] %in% GLOBALS[["TRAN_LOWER"]])
   
   if(uc & lc) {
     warning("Both lower- & upper-case names found in the data set.\n",
