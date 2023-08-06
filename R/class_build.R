@@ -69,7 +69,9 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
   env$soloc <- as.character(create_soloc(soloc,new_model,preclean))
   
   if(!file_readable(project)) {
-    stop("project directory '", project, "' must exist and be readable.",call.=FALSE) 
+    warning("The file.access function indicates that project directory '", project,
+            "' might not exist or is not readable. However, file.access is unreliable on Windows.",
+            " Thus, existance and readability of the project directory should be ensured by the user. ",call.=FALSE) 
   }
   
   env$project <- normalizePath(project, mustWork=TRUE, winslash="/")  
