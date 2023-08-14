@@ -1,10 +1,44 @@
-# mrgsolve (development version)
+# mrgsolve 1.1.0
+
+- Add new functionality for assessing consistency between names on input data
+  set and parameter names (#1078).
+    - New function `check_data_names()` executes the check.
+    - New model specification block `$INPUT` for marking parameters as "inputs" 
+      and expecting them to be present in the data when `check_data_names()` is
+      called.
+    - New `$PARAM` block attributes `@input` and `@tag` for adding tags to 
+      parameters which will be checked when `check_data_names()` is called.
+    - New function `param_tags()` to list parameters and tags for a given model. 
+
+- Now checking `TIME` and `time` when assessing upper / lower case name 
+  consistency of input data sets (#1099).
+
+- ETAs can now be passed via `idata` by passing `eta_src` as either `idata`
+  or `idata.all` to `mrgsim()` (#1092).
+
+- Internal refactor of mechanics checking for user interrupt during simulation
+  (#1088).
+
+- Minor re-factor of `mrgsim_nid()` and documentation update to be in line 
+  with original intent; no meaningful change in functionality (#1086).
+
+- `parameter_list` objects can now be passed to `param()` (#1076).
+
+- `ev_rx()` syntax gains `&` operator allowing specification of multiple events
+  at a single time (#1072). 
+
+- Kyle Meyer added as contributor (#1095).
 
 - `modlib()` model `1005` re-coded to reflect the "traditional" model
   specification syntax (#1069). 
   
 - The model object `update()` method will again issue a warning when 
   unrecognized arguments are passed (#1068).
+
+## Bugs Fixed
+
+- Fixed bug where ETA in the first column of `data` was not recognized when 
+  using `eta_src = "data"` or `eta_src = "data.all"` (#1095).
 
 # mrgsolve 1.0.9
 
