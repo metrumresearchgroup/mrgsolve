@@ -13,8 +13,8 @@
 - Now checking `TIME` and `time` when assessing upper / lower case name 
   consistency of input data sets (#1099).
 
-- ETAs can now be passed via `idata` by passing `eta_src` as either `idata`
-  or `idata.all` to `mrgsim()` (#1092).
+- ETAs can now be passed into the problem via `idata` by passing `eta_src` as 
+  either `idata` or `idata.all` to `mrgsim()` (#1092).
 
 - Internal refactor of mechanics checking for user interrupt during simulation
   (#1088).
@@ -27,7 +27,7 @@
 - `ev_rx()` syntax gains `&` operator allowing specification of multiple events
   at a single time (#1072). 
 
-- Kyle Meyer added as contributor (#1095).
+- Kyle Meyer added as contributor (#1096).
 
 - `modlib()` model `1005` re-coded to reflect the "traditional" model
   specification syntax (#1069). 
