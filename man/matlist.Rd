@@ -39,8 +39,6 @@ as the \code{names} of the matrices}
 \item{...}{passed through to other methods}
 
 \item{object}{passed to showmatlist}
-
-\item{.x}{a matlist object}
 }
 \description{
 Methods for working with matrix-list objects

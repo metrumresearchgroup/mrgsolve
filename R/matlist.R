@@ -244,7 +244,6 @@ setMethod("zero_re", "mrgmod", function(.x, ...) {
 
 #' Methods for working with matrix-list objects
 #'
-#' @param .x a matlist object
 #' @param x a matlist object
 #' @param ... passed through to other methods
 #'
