@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.1.0
 
 - Add new functionality for assessing consistency between names on input data
