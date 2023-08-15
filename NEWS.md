@@ -1,4 +1,7 @@
-# mrgsolve (development version)
+# mrgsolve 1.1.1
+
+- Remove `.x` from `matlist` documentation object per new NOTE output from 
+  rdevel (#1103, #1104).
 
 # mrgsolve 1.1.0
 
