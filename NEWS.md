@@ -2,7 +2,7 @@
 
 - Data set records at the same time within individual will receive different 
   `EPS` draws; this is a change from previous behavior where records with the 
-  same time received the same value for `EPS` (#).
+  same time received the same value for `EPS` (#1110).
 
 # mrgsolve 1.1.1
 
