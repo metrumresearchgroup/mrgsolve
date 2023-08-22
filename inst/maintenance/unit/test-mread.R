@@ -122,6 +122,12 @@ test_that("EPS values have proper variance", {
   expect_equal(round(var(out$EPS1),2),0.55)
 })
 
+test_that("New EPS draws for records at the same time", {
+  data <- data.frame(ID = 1, TIME = c(0, 1, 1, 2), EVID = 0, CMT = 1)  
+  out <- mrgsim(mod, data)
+  expect_length(unique(out$EPS1), nrow(data))
+})
+
 test_that("Error when code is passed as project", {
   expect_error(suppressWarnings(mread("hey",code)))
 })

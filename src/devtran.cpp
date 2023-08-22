@@ -286,7 +286,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int NN = obsonly ? obscount : (obscount + evcount);
   int precol = 2 + int(tad);
   const unsigned int n_out_col  = precol + n_tran_carry
-    + n_data_carry + n_idata_carry + nreq + n_capture;
+  + n_data_carry + n_idata_carry + nreq + n_capture;
   Rcpp::NumericMatrix ans(NN,n_out_col);
   const unsigned int tran_carry_start = precol;
   const unsigned int data_carry_start = tran_carry_start + n_tran_carry;
@@ -312,11 +312,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     } else {
       std::string msg = 
         R"(`etasrc` must be either:
-           "omega"     = ETAs simulated from OMEGA
-           "data"      = ETAs imported from the data set
-           "idata"     = ETAs imported from the idata set
-           "data.all"  = strict ETA import from data set
-           "idata.all" = strict ETA import from idata set)";
+              "omega"     = ETAs simulated from OMEGA
+              "data"      = ETAs imported from the data set
+              "idata"     = ETAs imported from the idata set
+              "data.all"  = strict ETA import from data set
+              "idata.all" = strict ETA import from idata set)";
       CRUMP(msg.c_str());  
     }
   }
@@ -501,10 +501,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         tto = tfrom;
       }
       
-      if(tto > tfrom) {
-        for(int k = 0; k < neps; ++k) {
-          prob.eps(k,eps(crow,k));
-        }
+      for(int k = 0; k < neps; ++k) {
+        prob.eps(k,eps(crow,k));
       }
       
       if(j != 0) {

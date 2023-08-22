@@ -1,5 +1,9 @@
 # mrgsolve (development version)
 
+- Data set records at the same time within individual will receive different 
+  `EPS` draws; this is a change from previous behavior where records with the 
+  same time received the same value for `EPS` (#).
+
 # mrgsolve 1.1.1
 
 - Remove `.x` from `matlist` documentation object per new NOTE output from 
