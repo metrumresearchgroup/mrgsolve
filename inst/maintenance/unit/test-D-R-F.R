@@ -267,3 +267,23 @@ test_that("tad is correctly calculated for addl doses with lag", {
   
 })
 
+test_that("Detect dosing compartments", {
+  cmts <- c("GUT", "CENT", "ABS_RAPID_FORM2")
+  code <- c("CL = THETA(1);", "F_ABS_RAPID_FORM2 = 1.2;", "S2 = V2;")
+  ans <- mrgsolve:::dosing_cmts(code, cmts)
+  expect_identical(ans, cmts[3])
+  
+  code <- '
+  $CMT ABS_RAPID_FORM2 CENT
+  $PK
+    F_ABS_RAPID_FORM2 = 0.2;
+  '
+  mod <- mcode("test-detect-dosing", code, compile = FALSE)
+  f <- list.files(
+    dirname(mod@shlib$source), 
+    pattern = "header", 
+    full.names = TRUE
+  )
+  txt <- readLines(f)
+  expect_match(txt, "define F_ABS_RAPID_FORM2", all = FALSE)
+})
