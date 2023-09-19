@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 1.2.0
 
 - Data set records at the same time within individual will receive different 
   `EPS` draws; this is a change from previous behavior where records with the 
