@@ -310,12 +310,14 @@ setMethod("as_data_set", "ev", function(x, ...) {
   if(length(other_ev)==0) {
     return(ev_to_ds(x)) 
   }
-  do.call(collect_ev, c(list(x), other_ev))
+  ans <- do.call(collect_ev, c(list(x), other_ev))
+  rownames(ans) <- NULL
+  ans
 })
 
 #' @rdname as_data_set
 setMethod("as_data_set","data.frame", function(x, ...) {
-  as_data_set(as.ev(x) ,...)
+  as_data_set(as.ev(x), ...)
 })
 
 ##' Replicate a list of events into a data set
