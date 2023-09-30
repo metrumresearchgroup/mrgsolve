@@ -402,6 +402,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     dat.next_id(i);
     prob.idn(i);
     prob.reset_newid(id);
+    mtimehx.clear();  
     
     if(i==0) {
       prob.newind(0);
@@ -616,7 +617,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       if(prob.any_mtime()) {
-        if(prob.newind() <=1) mtimehx.clear();  
         std::vector<mrgsolve::evdata> mt  = prob.mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           double this_time = (mt[mti]).time;
