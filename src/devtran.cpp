@@ -388,6 +388,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   prob.config_call();
   reclist mtimehx;
+  bool used_mtimehx = false;
   
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
@@ -402,7 +403,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     dat.next_id(i);
     prob.idn(i);
     prob.reset_newid(id);
-    mtimehx.clear();  
+    if(used_mtimehx) mtimehx.clear();  
     
     if(i==0) {
       prob.newind(0);
@@ -617,6 +618,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       if(prob.any_mtime()) {
+        // Will set used_mtimehx only if we push back
         std::vector<mrgsolve::evdata> mt  = prob.mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           double this_time = (mt[mti]).time;
@@ -643,6 +645,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             } 
           }
         }
+        used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
       }
       if(this_rec->output()) {
