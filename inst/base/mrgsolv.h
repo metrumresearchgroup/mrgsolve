@@ -54,6 +54,7 @@ struct evdata {
     amt = 0.0;
     rate = 0.0;
     now = false;
+    check_unique = true;
   } 
   double time; 
   int evid;
@@ -61,6 +62,7 @@ struct evdata {
   double amt; 
   double rate;
   bool now;
+  bool check_unique;
 }; 
 
 // Some functions for reporting values during a

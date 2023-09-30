@@ -637,9 +637,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(mt[mti].now) {
             new_ev->implement(&prob);
           } else {
-            bool found = CompEqual(mtimehx,this_time,this_evid,this_cmt,
-                                   this_amt);
-            if(!found) {
+            bool do_mt_ev = true;
+            if((mt[mti].check_unique)) {
+              bool found = CompEqual(mtimehx,this_time,this_evid,this_cmt,
+                                     this_amt);   
+              do_mt_ev = do_mt_ev && !found;
+            }
+            if(do_mt_ev) {
               a[i].push_back(new_ev);
               std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
               mtimehx.push_back(new_ev);
