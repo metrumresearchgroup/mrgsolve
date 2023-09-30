@@ -134,7 +134,8 @@ public:
 
 
 bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
-bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt);
+bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt, 
+               double amt);
 
 /** 
  * @brief Functor for sorting data records in <code>reclist</code>. 
