@@ -554,6 +554,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
+            newev->amt(newev->amt() * Fn);
             reclist::iterator alagit = a[i].begin()+j;
             advance(alagit,1);
             a[i].insert(alagit,newev);

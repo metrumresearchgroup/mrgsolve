@@ -44,7 +44,7 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Ss = 0;
   Addl = 0;
   Id = 1;
-  Fromdata=false;
+  Fromdata = false;
   Armed = false;
   Lagged = false;
 }
@@ -152,7 +152,7 @@ void datarecord::implement(odeproblem* prob) {
   
   int eq_n = this->cmtn();
   
-  double Fn = prob->fbio(eq_n);
+  double Fn = Lagged ? 1.0 : prob->fbio(eq_n);
   
   switch (evid) {
   case 1: // Dosing event record
