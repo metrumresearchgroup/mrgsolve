@@ -34,7 +34,6 @@ src/.*[.]tar.gz$
 img
 README.Rmd
 README.md
-NEWS.md
 .git
 .gitignore
 .travis.yml
@@ -54,5 +53,3 @@ vignettes/extra
 vignettes/build
 vignettes/mrgsolve-builds
 vignettes/extra/mrgsolve-builds/
-
-
