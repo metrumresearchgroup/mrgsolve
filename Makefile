@@ -6,6 +6,7 @@ PKGDIR=.
 export _MRGSOLVE_SKIP_MODLIB_BUILD_=yes
 LOAD_CANDIDATE=library(mrgsolve, lib.loc="mrgsolve.Rcheck")
 TEST_UNIT=testthat::test_dir("inst/maintenance/unit",stop_on_failure=TRUE)
+TEST_UNIT_CPP=testthat::test_dir("inst/maintenance/unit-cpp",stop_on_failure=TRUE)
 
 all:
 	make doc
@@ -138,3 +139,5 @@ drone:
 	R CMD check --as-cran ${TARBALL}
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
+	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT_CPP)'
+	

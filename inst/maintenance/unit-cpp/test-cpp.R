@@ -24,3 +24,23 @@ test_that("build a model with mrgx and nm-vars", {
   )
 })
 
+code <- '
+$INCLUDE include-1.h
+$CMT @number 4
+$MAIN capture cmt = include1::getcmt(self);
+'
+incl <- '
+namespace include1 {int getcmt(databox& self) {return self.cmt; }}
+'
+
+cfile <- file.path(tempdir(), "get-cmt.cpp")
+hfile <- file.path(tempdir(), "include-1.h")
+writeLines(code, con = cfile)
+writeLines(incl, con = hfile)
+
+test_that("included file understands databox", {
+  mod <- mread(cfile)  
+  data <- expand.ev(amt = 100, cmt = c(1,2,3,4))
+  out <- mrgsim(mod, data, end = -1)
+  expect_equal(out$cmt, c(1,2,3,4))
+})
