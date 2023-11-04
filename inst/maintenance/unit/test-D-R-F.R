@@ -275,8 +275,7 @@ test_that("Detect dosing compartments", {
   
   code <- '
   $CMT ABS_RAPID_FORM2 CENT
-  $PK
-    F_ABS_RAPID_FORM2 = 0.2;
+  $PK F_ABS_RAPID_FORM2 = 0.2;
   '
   mod <- mcode("test-detect-dosing", code, compile = FALSE)
   f <- list.files(
