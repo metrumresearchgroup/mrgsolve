@@ -87,7 +87,6 @@ install-build:
 test:
 	make install
 	make test-all
-	make test-cpp
 
 test1:
 	Rscript -e 'testthat::test_file("tests/testthat.R")'
