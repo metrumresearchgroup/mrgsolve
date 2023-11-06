@@ -833,7 +833,7 @@ dosing_cmts <- function(x, what) {
   x <- unlist(strsplit(x,"\n",fixed=TRUE),use.names=FALSE)
   m <- regexpr("(ALAG|F|R|D)\\_[^= ]+", x, perl=TRUE)
   m <- regmatches(x,m)
-  m <- unique(gsub("(ALAG|F|R|D)\\_", "",m))
+  m <- unique(sub("^(ALAG|F|R|D)\\_", "",m))
   m <- intersect(m,what)
   return(m)
 }
