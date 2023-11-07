@@ -152,7 +152,7 @@ void datarecord::implement(odeproblem* prob) {
   
   int eq_n = this->cmtn();
   
-  double Fn = Lagged ? 1.0 : prob->fbio(eq_n);
+  double Fn = prob->fbio(eq_n);
   
   switch (evid) {
   case 1: // Dosing event record
