@@ -535,8 +535,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, 
-                          const unsigned int maxpos, double Fn, 
-                          double lagt) {
+                          const unsigned int maxpos, double lagt) {
   
   if(Addl==0) return;
   

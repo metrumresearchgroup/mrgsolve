@@ -88,7 +88,7 @@ public:
   double ii(){return Ii;}
   
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
-                const unsigned int maxpos, double Fn, double lagt);
+                const unsigned int maxpos, double lagt);
   void implement(odeproblem* prob);
   void steady_zero(odeproblem* prob, LSODA& solver);
   void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
