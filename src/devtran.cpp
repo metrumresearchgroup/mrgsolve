@@ -544,7 +544,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(&prob, a[i], Fn, solver);
+              this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
               this_rec->ss(0);
             }
@@ -554,7 +554,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
-            newev->amt(newev->amt() * Fn);
             reclist::iterator alagit = a[i].begin()+j;
             advance(alagit,1);
             a[i].insert(alagit,newev);
@@ -601,7 +600,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob.advance(tfrom,tto,solver);
       
       if(this_rec->evid() != 2) {
-        this_rec->steady(&prob,a[i],Fn,solver);
+        this_rec->steady(&prob,a[i], solver);
         this_rec->implement(&prob);
       }
       

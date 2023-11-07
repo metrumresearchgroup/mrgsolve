@@ -93,7 +93,7 @@ public:
   void steady_zero(odeproblem* prob, LSODA& solver);
   void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
   void steady_bolus(odeproblem* prob,LSODA& solver);
-  void steady(odeproblem* prob, reclist& thisi,double Fn,LSODA& solver);
+  void steady(odeproblem* prob, reclist& thisi,LSODA& solver);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}

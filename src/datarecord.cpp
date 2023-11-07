@@ -212,7 +212,7 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solver) {
+void datarecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
   if(Ss > 0) {
     if(Rate == 0) this->steady_bolus(prob,solver);
     if(Rate >  0) this->steady_infusion(prob,thisi,solver);
