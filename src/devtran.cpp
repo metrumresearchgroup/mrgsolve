@@ -395,6 +395,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   if(verbose) say("starting the simulation ...");
   
+  dos_ptr foo = NEWDOS(1, 1, 100, 0, 0);
+  // a[0].push_back(foo);
+  // std::sort(a[0].begin(),a[0].end(),CompRec());
+  say(foo->Amt);
+
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     

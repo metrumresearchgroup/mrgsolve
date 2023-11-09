@@ -258,7 +258,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         );
       }
       lastime = Data(j,col[_COL_time_]);        
-      rec_ptr obs = std::make_shared<datarecord>(
+      rec_ptr obs = NEWREC(
         Data(j,col[_COL_time_]),
         Data(j,col[_COL_cmt_]),
         j,
@@ -353,7 +353,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
           );
         }
         
-        rec_ptr obs = std::make_shared<datarecord>(
+        rec_ptr obs = NEWREC(
           Data(j,col[_COL_time_]),
           Data(j,col[_COL_cmt_]),
           j,
@@ -379,7 +379,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ++evcount;
       
-      rec_ptr ev = std::make_shared<datarecord>(
+      rec_ptr ev = NEWREC(
         Data(j,col[_COL_cmt_]),
         Data(j,col[_COL_evid_]),
         Data(j,col[_COL_amt_]),

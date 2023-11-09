@@ -27,10 +27,14 @@
 
 class odeproblem;
 class datarecord;
+class dosingrecord;
+
 typedef std::shared_ptr<datarecord> rec_ptr;
+typedef std::shared_ptr<dosingrecord> dos_ptr;
 typedef std::vector<rec_ptr> reclist;
 
 #define NEWREC std::make_shared<datarecord>
+#define NEWDOS std::make_shared<dosingrecord>
 
 class datarecord {
   
@@ -114,7 +118,7 @@ public:
   bool is_phantom() {return !Output && !Fromdata;}
   bool is_lagged() {return Lagged;}
   void lagged() {Lagged = true;}
-
+  
   double Time; ///< record time
   double Id; ///< record ID value
   int Pos; ///< record position number
@@ -152,6 +156,22 @@ struct CompRec {
     }
     return a->time() < b->time();
   }
+};
+
+class dosingrecord : public datarecord {
+  
+public:
+  double Fn;
+  //! constructor
+  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
+               double rate_, int pos_, double id_) : 
+    datarecord(cmt_, evid_, amt_, time_, rate_, pos_, id_), Fn(1.0) {};
+  
+  //! short event constructor
+  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
+               double rate_) : 
+    datarecord(cmt_, evid_, amt_, time_, rate_), Fn(1.0) {};
+  
 };
 
 #endif
