@@ -252,7 +252,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       z.reserve(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) {
-        rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
+        rec_ptr obs =  NEWOBS(tgrid(j,i),nextpos,true);
         z.push_back(obs);
       }
       designs.push_back(z);
@@ -395,11 +395,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   if(verbose) say("starting the simulation ...");
   
-  dos_ptr foo = NEWDOS(1, 1, 100, 0, 0);
-  // a[0].push_back(foo);
-  // std::sort(a[0].begin(),a[0].end(),CompRec());
-  say(foo->Amt);
-
+  // evt_ptr newev = NEWEVT(
+  //   1, 
+  //   1, 
+  //   1, 
+  //   0, 
+  //   1
+  // ); 
+  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
@@ -553,11 +556,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               tfrom = tto;
               this_rec->ss(0);
             }
-            rec_ptr newev = NEWREC(*this_rec);
+            evt_ptr newev = NEWEVT(
+              this_rec->cmt(), 
+              this_rec->evid(), 
+              this_rec->amt(), 
+              this_rec->time() + prob.alag(this_cmtn), 
+              this_rec->rate()
+            ); 
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->lagged();
-            newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
             reclist::iterator alagit = a[i].begin()+j;
             advance(alagit,1);
@@ -575,7 +583,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
         if(this_rec->int_infusion() && this_rec->armed()) {
-          rec_ptr evoff = NEWREC(this_rec->cmt(),
+          rec_ptr evoff = NEWOBS(this_rec->cmt(),
                                  9,
                                  this_rec->amt(),
                                  this_rec->time() + this_rec->dur(Fn),
@@ -635,7 +643,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               CRUMP("Compartment number in modeled event out of range.");
             }
           }
-          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
+          rec_ptr new_ev = NEWOBS(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
           new_ev->phantom_rec();
           if(mt[mti].now) {
             new_ev->implement(&prob);

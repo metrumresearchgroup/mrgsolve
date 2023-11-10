@@ -384,7 +384,7 @@ Rcpp::List EXPAND_OBSERVATIONS(
   int n_time = int(times.size());
   std::vector<rec_ptr> z(n_time);
   for(int j = 0; j < n_time; ++j) {
-    rec_ptr obs = NEWREC(times[j],nextpos,true);
+    rec_ptr obs = NEWOBS(times[j],nextpos,true);
     z[j] = obs;
   }
   

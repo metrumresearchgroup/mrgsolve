@@ -30,11 +30,11 @@ class datarecord;
 class dosingrecord;
 
 typedef std::shared_ptr<datarecord> rec_ptr;
-typedef std::shared_ptr<dosingrecord> dos_ptr;
+typedef std::shared_ptr<dosingrecord> evt_ptr;
 typedef std::vector<rec_ptr> reclist;
 
-#define NEWREC std::make_shared<datarecord>
-#define NEWDOS std::make_shared<dosingrecord>
+#define NEWOBS std::make_shared<datarecord>
+#define NEWEVT std::make_shared<dosingrecord>
 
 class datarecord {
   
@@ -52,7 +52,7 @@ public:
   //! short event constructor
   datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_);
   
-  ~datarecord();
+  virtual ~datarecord() = default;
   
   double time() {return Time;}
   void time(double time_){Time = time_;}
@@ -119,6 +119,8 @@ public:
   bool is_lagged() {return Lagged;}
   void lagged() {Lagged = true;}
   
+  //virtual double fbio() {return 1.0;}
+  
   double Time; ///< record time
   double Id; ///< record ID value
   int Pos; ///< record position number
@@ -133,6 +135,23 @@ public:
   double Rate; ///< record infusion rate value
   double Ii; ///< record inter-dose interval value
   bool Armed; ///< only armed records are actually executed
+  
+};
+
+class dosingrecord : public datarecord {
+  
+public:
+  double FFn;
+  
+  //! constructor
+  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
+               double rate_, int pos_, double id_);
+  
+  //! short event constructor
+  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
+               double rate_);
+  
+  ~dosingrecord() = default;
   
 };
 
@@ -156,22 +175,6 @@ struct CompRec {
     }
     return a->time() < b->time();
   }
-};
-
-class dosingrecord : public datarecord {
-  
-public:
-  double Fn;
-  //! constructor
-  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
-               double rate_, int pos_, double id_) : 
-    datarecord(cmt_, evid_, amt_, time_, rate_, pos_, id_), Fn(1.0) {};
-  
-  //! short event constructor
-  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
-               double rate_) : 
-    datarecord(cmt_, evid_, amt_, time_, rate_), Fn(1.0) {};
-  
 };
 
 #endif
