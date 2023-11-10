@@ -561,9 +561,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               this_rec->evid(), 
               this_rec->amt(), 
               this_rec->time() + prob.alag(this_cmtn), 
-              this_rec->rate()
+              this_rec->rate(), 
+              __ALAG_POS, 
+              this_rec->id()
             ); 
-            newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->lagged();
             newev->ss(0);
