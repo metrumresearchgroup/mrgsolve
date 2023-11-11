@@ -27,14 +27,14 @@
 
 class odeproblem;
 class datarecord;
-class dosingrecord;
+class eventrecord;
 
 typedef std::shared_ptr<datarecord> rec_ptr;
-typedef std::shared_ptr<dosingrecord> evt_ptr;
+typedef std::shared_ptr<eventrecord> evt_ptr;
 typedef std::vector<rec_ptr> reclist;
 
 #define NEWOBS std::make_shared<datarecord>
-#define NEWEVT std::make_shared<dosingrecord>
+#define NEWEVT std::make_shared<eventrecord>
 
 class datarecord {
   
@@ -138,20 +138,20 @@ public:
   
 };
 
-class dosingrecord : public datarecord {
+class eventrecord : public datarecord {
   
 public:
   double FFn;
   
   //! constructor
-  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
+  eventrecord(short int cmt_, int evid_, double amt_, double time_, 
                double rate_, int pos_, double id_);
   
   //! short event constructor
-  dosingrecord(short int cmt_, int evid_, double amt_, double time_, 
+  eventrecord(short int cmt_, int evid_, double amt_, double time_, 
                double rate_);
   
-  ~dosingrecord() = default;
+  ~eventrecord() = default;
   
 };
 

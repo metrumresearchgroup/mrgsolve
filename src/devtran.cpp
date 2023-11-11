@@ -252,7 +252,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       z.reserve(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) {
-        rec_ptr obs =  NEWOBS(tgrid(j,i),nextpos,true);
+        rec_ptr obs =  NEWOBS(tgrid(j,i), nextpos, true);
         z.push_back(obs);
       }
       designs.push_back(z);
@@ -586,7 +586,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
         if(this_rec->int_infusion() && this_rec->armed()) {
-          rec_ptr evoff = NEWOBS(this_rec->cmt(),
+          evt_ptr evoff = NEWEVT(this_rec->cmt(),
                                  9,
                                  this_rec->amt(),
                                  this_rec->time() + this_rec->dur(Fn),
@@ -646,7 +646,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               CRUMP("Compartment number in modeled event out of range.");
             }
           }
-          rec_ptr new_ev = NEWOBS(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
+          evt_ptr new_ev = NEWEVT(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
           new_ev->phantom_rec();
           if(mt[mti].now) {
             new_ev->implement(&prob);
