@@ -42,16 +42,16 @@ class datarecord {
 public:
   //! constructor
   datarecord(double time_, int pos_, bool output_);   
-
+  
   //! constructor
   datarecord(double time_, short int cmt_, int pos_, double id_);
-
+  
   //! constructor to handle eventrecord initialization
-  datarecord(double time_, short int cmt_, unsigned short int evid_, int pos_, double id_);
-
+  datarecord(double time_, short int cmt_, unsigned short int evid_, int pos_, double id_, double amt_, double rate_);
+  
   //! constructor to handle eventrecord initialization 
-  datarecord(double time_, short int cmt_, unsigned short int evid_);
-
+  datarecord(double time_, short int cmt_, unsigned short int evid_, double amt_, double rate_);
+  
   double Time; ///< record time
   double Id; ///< record ID value
   int Pos; ///< record position number
@@ -83,7 +83,7 @@ public:
   
   bool from_data(){return Fromdata;}
   void from_data(bool val){Fromdata = val;}
-
+  
   bool is_event() {return (Evid > 0);}
   bool is_dose(){return (Evid==1) || (Evid==4);}
   bool is_event_data() {return (Evid != 0) && (Evid != 2) && Fromdata;}
@@ -93,44 +93,49 @@ public:
   bool is_lagged() {return Lagged;}
   void lagged() {Lagged = true;}
   
-
-  // Virtual 
+  unsigned int Addl; ///< number of additional doses
+  unsigned short int Ss; ///< record steady-state indicator
+  double Amt; ///< record dosing amount value
+  double Rate; ///< record infusion rate value
+  double Ii; ///< record inter-dose interval value
+  //bool Armed; ///< only armed records are actually executed
+  
   virtual bool unarmed() {return true;}
   virtual void arm() {}
   virtual bool armed() {return false;}
   virtual void unarm() {}
   
-  virtual double rate(){return 0.0;}
-  virtual void rate(double value){}
+  double rate(){return Rate;}
+  void rate(double value) {Rate = value;}
   
-  virtual double dur(double b);
+  double dur(double b);
   
-  virtual void addl(int addl_){}
-  virtual unsigned int addl(){return 1;}
+  void addl(int addl_){Addl = std::max(0,addl_);}
+  unsigned int addl(){return Addl;}
   
-  virtual void ss(int ss_){}
-  virtual unsigned short ss(){return 0;}
+  void ss(int ss_){Ss = std::max(0,ss_);}
+  unsigned short ss(){return Ss;}
   
-  virtual void ii(double ii_){}
-  virtual double ii(){return 0.0;}
+  void ii(double ii_){Ii = ii_;}
+  double ii(){return Ii;}
   
-  virtual double amt(){return 0.0;}
+  double amt(){return Amt;}
   
-  virtual bool needs_sorting(){return false;}
+  bool needs_sorting(){return ((Addl > 0) || (Ss == 1));}
   
-  virtual void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
-                const unsigned int maxpos, double lagt){};
-  virtual void implement(odeproblem* prob){};
-  virtual void steady_zero(odeproblem* prob, LSODA& solver){};
-  virtual void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver){};
-  virtual void steady_bolus(odeproblem* prob,LSODA& solver){};
-  virtual void steady(odeproblem* prob, reclist& thisi,LSODA& solver){};
+  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
+                const unsigned int maxpos, double lagt);
+  void implement(odeproblem* prob);
+  void steady_zero(odeproblem* prob, LSODA& solver);
+  void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
+  void steady_bolus(odeproblem* prob,LSODA& solver);
+  void steady(odeproblem* prob, reclist& thisi,LSODA& solver);
   
-  virtual bool infusion(){return false;}
-  virtual bool int_infusion(){return false;}
-  virtual bool ss_int_infusion(){return false;}
-  virtual bool const_infusion(){return false;}
-  virtual bool ss_infusion(){return false;}
+  bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
+  bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}
+  bool ss_int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0) && (Ss > 0);}
+  bool const_infusion(){return (Evid==1) && (Rate > 0) && (Amt == 0);}
+  bool ss_infusion();
 };
 
 class eventrecord : public virtual datarecord {
@@ -139,58 +144,23 @@ public:
   
   //! constructor
   eventrecord(short int cmt_, int evid_, double amt_, double time_, 
-               double rate_, int pos_, double id_);
+              double rate_, int pos_, double id_);
   
   //! short event constructor
   eventrecord(short int cmt_, int evid_, double amt_, double time_, 
-               double rate_);
+              double rate_);
   
   virtual ~eventrecord() = default;
-
+  
   double Fn;
-  unsigned int Addl; ///< number of additional doses
-  unsigned short int Ss; ///< record steady-state indicator
-  double Amt; ///< record dosing amount value
-  double Rate; ///< record infusion rate value
-  double Ii; ///< record inter-dose interval value
+
   bool Armed; ///< only armed records are actually executed
   
   bool unarmed() {return !Armed;}
-   void arm() {Armed=true;}
-   bool armed() {return Armed;}
-   void unarm() {Armed=false;}
+  void arm() {Armed=true;}
+  bool armed() {return Armed;}
+  void unarm() {Armed=false;}
   
-   double rate(){return Rate;}
-   void rate(double value) {Rate = value;}
-  
-   double dur(double b);
-  
-   void addl(int addl_){Addl = std::max(0,addl_);}
-   unsigned int addl(){return Addl;}
-  
-   void ss(int ss_){Ss = std::max(0,ss_);}
-   unsigned short ss(){return Ss;}
-  
-   void ii(double ii_){Ii = ii_;}
-   double ii(){return Ii;}
-  
-   double amt(){return Amt;}
-  
-   bool needs_sorting(){return ((Addl > 0) || (Ss == 1));}
-  
-   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
-                const unsigned int maxpos, double lagt);
-   void implement(odeproblem* prob);
-   void steady_zero(odeproblem* prob, LSODA& solver);
-   void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
-   void steady_bolus(odeproblem* prob,LSODA& solver);
-   void steady(odeproblem* prob, reclist& thisi,LSODA& solver);
-  
-   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
-   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}
-   bool ss_int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0) && (Ss > 0);}
-   bool const_infusion(){return (Evid==1) && (Rate > 0) && (Amt == 0);}
-   bool ss_infusion();
 };
 
 

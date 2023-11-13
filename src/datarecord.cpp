@@ -56,7 +56,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
 
 // Constructor required for eventrecord initialization
 // These calls are coming from records in the data set
-datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_, int pos_, double id_) {
+datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_, int pos_, double id_, double amt_, double rate_) {
   Time = time_;
   Cmt  = cmt_;
   Pos = pos_;
@@ -65,11 +65,13 @@ datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_, i
   Output = true;
   Fromdata = true;
   Lagged = false;
+  Amt = amt_;
+  Rate = rate_;
 }
 
 // Constructor required for eventrecord initialization
 // Short; not output or from data; Id and Pos aren't relevant
-datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_) {
+datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_, double amt_, double rate_) {
   Time = time_;
   Cmt  = cmt_;
   Pos = 1;
@@ -78,6 +80,8 @@ datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_) {
   Output = false;
   Fromdata = false;
   Lagged = false;
+  Amt = amt_;
+  Rate = rate_;
 }
 
 bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b) {
@@ -96,15 +100,15 @@ bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt) {
   return false;
 }
 
-double eventrecord::dur(double b) {
+double datarecord::dur(double b) {
   return(b*Amt/Rate);
 }
 
-bool eventrecord::ss_infusion() {
+bool datarecord::ss_infusion() {
   return (Evid==1) && (Amt==0) && (Ss==1) && ((Rate > 0) || (Rate == -1));  
 }
 
-void eventrecord::implement(odeproblem* prob) {
+void datarecord::implement(odeproblem* prob) {
   
   if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
@@ -176,14 +180,14 @@ void eventrecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void eventrecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
+void datarecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
   if(Ss > 0) {
     if(Rate == 0) this->steady_bolus(prob,solver);
     if(Rate >  0) this->steady_infusion(prob,thisi,solver);
   }
 }
 
-void eventrecord::steady_bolus(odeproblem* prob, LSODA& solver) {
+void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
   prob->ss_flag = true;
   
@@ -272,8 +276,7 @@ void eventrecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   prob->ss_flag = false;
 } 
 
-
-void eventrecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver) {
+void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver) {
   
   if(this->unarmed()) {
     this->steady_bolus(prob,solver);
@@ -428,7 +431,7 @@ void eventrecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solve
   prob->ss_flag = false;
 }
 
-void eventrecord::steady_zero(odeproblem* prob, LSODA& solver) {
+void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   
   if(this->unarmed()) {
     this->steady_bolus(prob,solver);
@@ -497,7 +500,7 @@ void eventrecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->ss_flag = false;
 }
 
-void eventrecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
+void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, 
                           const unsigned int maxpos, double lagt) {
   
@@ -554,13 +557,14 @@ eventrecord::eventrecord(short int cmt_,
                          double time_, 
                          double rate_,
                          int pos_, 
-                         double id_) : datarecord(time_, cmt_, evid_, pos_, id_) {
+                         double id_) : datarecord(time_, cmt_, evid_, pos_, id_, amt_, rate_) {
+
   Fn = 1.0;
-  Amt = amt_;
-  Rate = rate_;
-  Ii = 0; 
-  Ss = 0;
-  Addl = 0; 
+  // Amt = amt_;
+  // Rate = rate_;
+  // Ii = 0; 
+  // Ss = 0;
+  // Addl = 0; 
   Armed = true;
 }
 
@@ -572,12 +576,12 @@ eventrecord::eventrecord(short int cmt_,
                          int evid_, 
                          double amt_, 
                          double time_, 
-                         double rate_) : datarecord(time_, cmt_, evid_) {
+                         double rate_) : datarecord(time_, cmt_, evid_, amt_, rate_) {
   Fn = 1.0;
-  Amt = amt_;
-  Rate = rate_;
-  Ii = 0; 
-  Ss = 0;
-  Addl = 0; 
+  // Amt = amt_;
+  // Rate = rate_;
+  // Ii = 0; 
+  // Ss = 0;
+  // Addl = 0; 
   Armed = true;
 }
