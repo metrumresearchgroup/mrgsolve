@@ -283,9 +283,9 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         ); 
       }
       obs->evid(Data(j,col[_COL_evid_]));
-      obs->addl(Data(j,col[_COL_addl_]));
-      obs->ii(Data(j,col[_COL_ii_]));
-      obs->unarm();
+      // obs->addl(Data(j,col[_COL_addl_]));
+      // obs->ii(Data(j,col[_COL_ii_]));
+      // obs->unarm();
       a[h].push_back(obs);
       if(obs->evid()==0) {
         ++obscount;

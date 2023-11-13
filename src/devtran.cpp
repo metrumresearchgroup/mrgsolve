@@ -395,14 +395,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   
   if(verbose) say("starting the simulation ...");
   
-  // evt_ptr newev = NEWEVT(
-  //   1, 
-  //   1, 
-  //   1, 
-  //   0, 
-  //   1
-  // ); 
-  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     

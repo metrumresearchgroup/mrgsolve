@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2020  Metrum Research Group
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -24,7 +24,6 @@
 #include "RcppInclude.h"
 #include "datarecord.h"
 #include "odeproblem.h"
-//#include <boost/make_shared.hpp>
 #include <functional>
 #include <algorithm>
 
@@ -34,21 +33,14 @@
 
 datarecord::datarecord(double time_, int pos_, bool output_) {
   Time = time_;
-  Pos = pos_;
-  Output = output_;
   Cmt = 0;
-  Evid = 0;
-  Amt = 0;
-  Rate = 0;
-  Ii = 0;
-  Ss = 0;
-  Addl = 0;
+  Pos = pos_;
   Id = 1;
+  Evid = 0;
+  Output = output_;
   Fromdata = false;
-  Armed = false;
   Lagged = false;
 }
-
 
 // Data set observations
 datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
@@ -57,57 +49,33 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Pos = pos_;
   Id = id_;
   Evid = 0;
-  Amt = 0;
-  Rate = 0;
-  Ii = 0;
-  Ss = 0;
-  Addl = 0;
   Output = true;
-  Armed = false;
   Fromdata = true;
   Lagged = false;
 }
 
-// Data set event
-// Schedule events
-//   Need to make sure that scheduled events are output false, from data false
-datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_, 
-                       double rate_, int pos_, double id_) {
+// Constructor required for eventrecord initialization
+// These calls are coming from records in the data set
+datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_, int pos_, double id_) {
   Time = time_;
   Cmt  = cmt_;
   Pos = pos_;
   Id = id_;
   Evid = evid_;
-  Amt = amt_;
-  Rate = rate_;
-  Addl = 0;
-  Ii = 0;
-  Ss = 0;
-  Output = false;
-  Armed = true;
-  Fromdata = false;
+  Output = true;
+  Fromdata = true;
   Lagged = false;
 }
 
-
-
-// Short event
-// cmt evid amt time rate
-datarecord::datarecord(short int cmt_, int evid_, double amt_, 
-                       double time_, double rate_) {
-  
-  Cmt  = cmt_;
-  Evid = evid_;
-  Amt = amt_;
+// Constructor required for eventrecord initialization
+// Short; not output or from data; Id and Pos aren't relevant
+datarecord::datarecord(double time_, short int cmt_, unsigned short int evid_) {
   Time = time_;
-  Rate = rate_;
+  Cmt  = cmt_;
   Pos = 1;
   Id = 1;
-  Addl = 0;
-  Ii = 0;
-  Ss = 0;
+  Evid = evid_;
   Output = false;
-  Armed = true;
   Fromdata = false;
   Lagged = false;
 }
@@ -128,15 +96,15 @@ bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt) {
   return false;
 }
 
-double datarecord::dur(double b) {
+double eventrecord::dur(double b) {
   return(b*Amt/Rate);
 }
 
-bool datarecord::ss_infusion() {
+bool eventrecord::ss_infusion() {
   return (Evid==1) && (Amt==0) && (Ss==1) && ((Rate > 0) || (Rate == -1));  
 }
 
-void datarecord::implement(odeproblem* prob) {
+void eventrecord::implement(odeproblem* prob) {
   
   if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
@@ -208,14 +176,14 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
+void eventrecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
   if(Ss > 0) {
     if(Rate == 0) this->steady_bolus(prob,solver);
     if(Rate >  0) this->steady_infusion(prob,thisi,solver);
   }
 }
 
-void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
+void eventrecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   
   prob->ss_flag = true;
   
@@ -305,7 +273,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
 } 
 
 
-void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver) {
+void eventrecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver) {
   
   if(this->unarmed()) {
     this->steady_bolus(prob,solver);
@@ -342,7 +310,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   size_t n_cmt = prob->Ss_cmt.size();
   std::vector<double> last(prob->neq(),-1e9);
   
-  reclist offs;
+  evtlist offs;
   
   bool made_it = false;  
   double diff = 0, err = 0;
@@ -460,7 +428,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   prob->ss_flag = false;
 }
 
-void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
+void eventrecord::steady_zero(odeproblem* prob, LSODA& solver) {
   
   if(this->unarmed()) {
     this->steady_bolus(prob,solver);
@@ -529,7 +497,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->ss_flag = false;
 }
 
-void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
+void eventrecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, 
                           const unsigned int maxpos, double lagt) {
   
@@ -579,24 +547,37 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
 
 // Data set event
 // Schedule events
-//   Need to make sure that scheduled events are output false, from data false
+// Need to make sure that scheduled events are output false, from data false
 eventrecord::eventrecord(short int cmt_, 
                          int evid_, 
                          double amt_, 
                          double time_, 
                          double rate_,
                          int pos_, 
-                         double id_) : datarecord(cmt_, evid_, amt_, time_, rate_, pos_, id_) {
-  FFn = 1.0;
+                         double id_) : datarecord(time_, cmt_, evid_, pos_, id_) {
+  Fn = 1.0;
+  Amt = amt_;
+  Rate = rate_;
+  Ii = 0; 
+  Ss = 0;
+  Addl = 0; 
+  Armed = true;
 }
 
 
 // Short event
 // cmt evid amt time rate
+// Used for mtime event objects and steady
 eventrecord::eventrecord(short int cmt_, 
                          int evid_, 
                          double amt_, 
                          double time_, 
-                         double rate_) : datarecord(cmt_, evid_, amt_, time_, rate_) {
-  FFn = 1.0;
+                         double rate_) : datarecord(time_, cmt_, evid_) {
+  Fn = 1.0;
+  Amt = amt_;
+  Rate = rate_;
+  Ii = 0; 
+  Ss = 0;
+  Addl = 0; 
+  Armed = true;
 }
