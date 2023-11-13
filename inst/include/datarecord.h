@@ -115,21 +115,23 @@ public:
   bool is_lagged() {return Lagged;}
   void lagged() {Lagged = true;}
 
-  double Time; ///< record time
-  double Id; ///< record ID value
   int Pos; ///< record position number
   unsigned short int Evid; ///< record event ID
-  bool Output; ///< should this record be included in output?
-  bool Fromdata; ///< is this record from the original data set?
-  bool Lagged; ///< this record was added as result of ALAG
+  unsigned short int Ss; ///< record steady-state indicator
   short int Cmt; ///< record compartment number
   unsigned int Addl; ///< number of additional doses
-  unsigned short int Ss; ///< record steady-state indicator
+
+  double Time; ///< record time
+  double Id; ///< record ID value
   double Amt; ///< record dosing amount value
   double Rate; ///< record infusion rate value
   double Ii; ///< record inter-dose interval value
+  double Fn; ///< bioavailability
+
+  bool Output; ///< should this record be included in output?
+  bool Fromdata; ///< is this record from the original data set?
+  bool Lagged; ///< this record was added as result of ALAG
   bool Armed; ///< only armed records are actually executed
-  
 };
 
 
