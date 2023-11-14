@@ -518,7 +518,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         this_cmtn = this_rec->cmtn();
 
-        this_rec->Fn = prob.fbio(this_cmtn);
+        if(!this_rec->is_lagged()) {
+          this_rec->fn(prob.fbio(this_cmtn));
+        }
         
         if(this_rec->Fn < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");

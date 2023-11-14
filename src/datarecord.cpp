@@ -577,6 +577,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
     rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
     evon->Lagged = Lagged;
+    evon->fn(Fn); // This may get overwritten later on if not Lagged dose
     thisi.push_back(evon);
   }
 }  
