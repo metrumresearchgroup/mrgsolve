@@ -24,3 +24,19 @@ test_that("build a model with mrgx and nm-vars", {
   )
 })
 
+code <- '
+$PK
+if(NEWIND <= 1) capture FLAG = 0;
+$CMT A
+$TABLE 
+if(TIME==2) self.mevent(2.001,33);
+if(EVID==33) ++FLAG;
+'
+test_that("ev history is reset", {
+  mod <- mcode("test-cpp-re-event", code, end = -1, add = c(1,2,3))
+  out <- mrgsim_df(mod, ev(amt = 0, ID = 1:2, evid = 2)) 
+  expect_equal(sum(out$FLAG), 2)  
+  out3 <- subset(out, time==3)
+  expect_length(out3$FLAG, 2)
+  expect_true(all(out3$FLAG==1))
+})
