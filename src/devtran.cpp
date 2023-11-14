@@ -522,11 +522,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           this_rec->fn(prob.fbio(this_cmtn));
         }
         
-        if(this_rec->Fn < 0) {
+        if(this_rec->fn() < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
         
-        if(this_rec->Fn==0) {
+        if(this_rec->fn()==0) {
           if(this_rec->is_dose()) {
             prob.on(this_cmtn);
             prob.lsoda_init();
