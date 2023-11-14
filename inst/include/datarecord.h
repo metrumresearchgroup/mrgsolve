@@ -88,12 +88,12 @@ public:
   double ii(){return Ii;}
   
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
-                const unsigned int maxpos, double Fn, double lagt);
+                const unsigned int maxpos, double lagt);
   void implement(odeproblem* prob);
   void steady_zero(odeproblem* prob, LSODA& solver);
   void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
   void steady_bolus(odeproblem* prob,LSODA& solver);
-  void steady(odeproblem* prob, reclist& thisi,double Fn,LSODA& solver);
+  void steady(odeproblem* prob, reclist& thisi,LSODA& solver);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}
@@ -126,8 +126,8 @@ public:
   double Amt; ///< record dosing amount value
   double Rate; ///< record infusion rate value
   double Ii; ///< record inter-dose interval value
-  double Fn; ///< bioavailability
-
+  double Fn; ///< record bioavailability
+  
   bool Output; ///< should this record be included in output?
   bool Fromdata; ///< is this record from the original data set?
   bool Lagged; ///< this record was added as result of ALAG

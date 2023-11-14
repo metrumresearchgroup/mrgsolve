@@ -394,7 +394,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool do_interrupt = prob.interrupt > 0;
   
   if(verbose) say("starting the simulation ...");
-  
+
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
@@ -544,7 +544,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
-              this_rec->steady(&prob, a[i], Fn, solver);
+              this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
               this_rec->ss(0);
             }
@@ -557,11 +557,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             reclist::iterator alagit = a[i].begin()+j;
             advance(alagit,1);
             a[i].insert(alagit,newev);
-            newev->schedule(a[i], maxtime, put_ev_first, NN, Fn, prob.alag(this_cmtn));
+            newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
             sort_recs = true;
           } else { // no valid lagtime
-            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, Fn, 0.0);
+            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             sort_recs = this_rec->needs_sorting();
           }
         } // from data
@@ -600,7 +600,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob.advance(tfrom,tto,solver);
       
       if(this_rec->evid() != 2) {
-        this_rec->steady(&prob,a[i],Fn,solver);
+        this_rec->steady(&prob,a[i],solver);
         this_rec->implement(&prob);
       }
       

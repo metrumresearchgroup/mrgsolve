@@ -40,6 +40,7 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Evid = 0;
   Amt = 0;
   Rate = 0;
+  Fn = 1.0;
   Ii = 0;
   Ss = 0;
   Addl = 0;
@@ -59,6 +60,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Evid = 0;
   Amt = 0;
   Rate = 0;
+  Fn = 1.0;
   Ii = 0;
   Ss = 0;
   Addl = 0;
@@ -80,6 +82,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
   Evid = evid_;
   Amt = amt_;
   Rate = rate_;
+  Fn = 1.0;
   Addl = 0;
   Ii = 0;
   Ss = 0;
@@ -101,6 +104,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_,
   Amt = amt_;
   Time = time_;
   Rate = rate_;
+  Fn = 1.0;
   Pos = 1;
   Id = 1;
   Addl = 0;
@@ -212,7 +216,7 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solver) {
+void datarecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
   if(Ss > 0) {
     if(Rate == 0) this->steady_bolus(prob,solver);
     if(Rate >  0) this->steady_infusion(prob,thisi,solver);
@@ -535,7 +539,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, 
-                          const unsigned int maxpos, double Fn, 
+                          const unsigned int maxpos, 
                           double lagt) {
   
   if(Addl==0) return;
