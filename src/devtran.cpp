@@ -407,7 +407,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       prob.newind(0);
     }
     
-    double Fn = 1.0;
     int this_cmtn = 0;
     double told = -1;
     
@@ -518,14 +517,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(this_rec->is_event()) {
         
         this_cmtn = this_rec->cmtn();
+
+        this_rec->Fn = prob.fbio(this_cmtn);
         
-        Fn = prob.fbio(this_cmtn);
-        
-        if(Fn < 0) {
+        if(this_rec->Fn < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
         
-        if(Fn==0) {
+        if(this_rec->Fn==0) {
           if(this_rec->is_dose()) {
             prob.on(this_cmtn);
             prob.lsoda_init();
@@ -573,7 +572,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           rec_ptr evoff = NEWREC(this_rec->cmt(),
                                  9,
                                  this_rec->amt(),
-                                 this_rec->time() + this_rec->dur(Fn),
+                                 this_rec->time() + this_rec->dur(),
                                  this_rec->rate(),
                                  -299,
                                  id);
@@ -630,7 +629,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               CRUMP("Compartment number in modeled event out of range.");
             }
           }
-          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,mt[mti].rate);
+          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,mt[mti].rate,this_rec->fn());
           new_ev->phantom_rec();
           if(mt[mti].now) {
             new_ev->implement(&prob);

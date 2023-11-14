@@ -95,16 +95,16 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
 
 
 // Short event
-// cmt evid amt time rate
+// cmt evid amt time rate fn
 datarecord::datarecord(short int cmt_, int evid_, double amt_, 
-                       double time_, double rate_) {
+                       double time_, double rate_, double fn_) {
   
   Cmt  = cmt_;
   Evid = evid_;
   Amt = amt_;
   Time = time_;
   Rate = rate_;
-  Fn = 1.0;
+  Fn = fn_;
   Pos = 1;
   Id = 1;
   Addl = 0;
@@ -136,8 +136,8 @@ bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt) {
   return false;
 }
 
-double datarecord::dur(double b) {
-  return(b*Amt/Rate);
+double datarecord::dur() {
+  return(Fn*Amt/Rate);
 }
 
 bool datarecord::ss_infusion() {
@@ -155,8 +155,6 @@ void datarecord::implement(odeproblem* prob) {
   if(this->infusion() && Evid != 4) evid = 5;
   
   int eq_n = this->cmtn();
-  
-  double Fn = prob->fbio(eq_n);
   
   switch (evid) {
   case 1: // Dosing event record
@@ -249,7 +247,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
 
   prob->lsoda_init();
   
-  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate, Fn);
   
   for(int i=1; i < N_SS; ++i) {
     
@@ -337,9 +335,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   }
   double lagt = prob->alag(this->cmtn());
   
-  double Fn = prob->fbio(this->cmtn());
-  
-  double duration = this->dur(Fn);
+  double duration = this->dur();
   
   double tfrom = 0.0;
   
@@ -358,7 +354,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   prob->rate_reset();
   
   // We only need one of these; it gets updated and re-used immediately
-  rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate, Fn);
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
@@ -368,7 +364,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     
     // Create an event to turn the infusion off and push onto offs vector
     // Keep on creating these
-    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate, Fn);
     offs.push_back(evoff);
     
     // The next time an infusion will start
@@ -439,7 +435,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
       evon->implement(prob);
       toff  = tfrom + duration;
       prob->advance(tfrom,toff,solver);
-      rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+      rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate, Fn);
       evoff->implement(prob);
       prob->lsoda_init();
       prob->advance(toff, (nexti - lagt),solver);
@@ -488,7 +484,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   
   double diff = 0.0, err = 0.0;
   prob->rate_reset();
-  rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
+  rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate, Fn);
   evon->implement(prob);
   prob->lsoda_init();
   double duration = 10;

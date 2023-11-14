@@ -46,7 +46,7 @@ public:
              int pos_, double id_);   
   
   //! short event constructor
-  datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_);
+  datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_, double fn_);
   
   ~datarecord();
   
@@ -76,7 +76,7 @@ public:
   double rate(){return Rate;}
   void rate(double value) {Rate = value;}
   
-  double dur(double b);
+  double dur();
   
   void addl(int addl_){Addl = std::max(0,addl_);}
   unsigned int addl(){return Addl;}
@@ -86,7 +86,10 @@ public:
   
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
-  
+
+  double fn(){return Fn;}
+  void fn(double fn_){Fn = fn_;}
+
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
                 const unsigned int maxpos, double lagt);
   void implement(odeproblem* prob);

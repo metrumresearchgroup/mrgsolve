@@ -280,7 +280,7 @@ void odeproblem::rate_main(rec_ptr rec) {
           false
       );
     }
-    rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
+    rec->rate(rec->amt() * rec->fn() / this->dur(rec->cmtn()));
   }
 }
 
