@@ -189,13 +189,12 @@ $PKMODEL cmt = "A,B", depot = TRUE
 code <- '
 $SET Req = "CP", end = 72, delta = 0.1
 
-$PARAM F1 = 1, D1 = 5, ALAG1 = 0, R1 = 0
+$PARAM F1 = 1, D1 = 5, ALAG1 = 0, R1 = 0, V = 10
 
 $PKMODEL cmt = "CENT"
 
 $PK
 double CL = 1; 
-double V  = 10;
 double KA = 1.2;
 F_CENT = F1;
 D_CENT = D1;
@@ -275,3 +274,36 @@ test_that("Set infusion with ALAG and R1", {
 
 rm(tmax)
 
+test_that("Bioavailability gets propagated into additional doses", {
+  mod <- param(mod, V = 2, R1 = 44.4)
+  # Infusions
+  dose1 <- ev(amt = 100, ii = 24, addl = 3, rate = -1)
+  dose2 <- realize_addl(dose1)
+  out1 <- mrgsim(mod, dose1, end = 144, obsonly = TRUE)
+  out2 <- mrgsim(mod, dose2, end = 144, obsonly = TRUE)
+  expect_identical(out1$CP, out2$CP)
+  
+  # Bolus
+  dose3 <- mutate(dose1, rate = 0)
+  dose4 <- mutate(dose2, rate = 0)
+  
+  out3 <- mrgsim(mod, dose3, end = 144, obsonly = TRUE, recsort = 2)
+  out4 <- mrgsim(mod, dose4, end = 144, obsonly = TRUE, recsort = 2)
+  expect_identical(out3$CP, out4$CP)  
+})
+
+test_that("Bioavailability gets propagated into additional doses at steady-state", {
+  mod <- param(mod, R1 = 33.33, ALAG1 = 2.5)
+  dose1 <- ev(amt = 100, ii = 24, addl = 3, rate = -1, ss = 1)
+  out1 <- mrgsim(mod, dose1, end = 98.5, obsonly = TRUE, recsort = 3, digits = 4)
+  
+  dose2 <- realize_addl(dose1)
+  out2 <- mrgsim(mod, dose2, end = 98.5, obsonly = TRUE, recsort = 3, digits = 4)
+  
+  f1 <- filter(out1, time %in% (2.5 + c(0, 24, 48, 72, 96)))
+  f2 <- filter(out2, time %in% (2.5 + c(0, 24, 48, 72, 96)))
+  
+  expect_true(all(f1$CP[1]==f1$CP))
+  expect_true(all(f2$CP[1]==f2$CP))
+  expect_identical(out2, out1)
+})
