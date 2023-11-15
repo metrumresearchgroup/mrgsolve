@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-lim <- function(x,...) x %>% dplyr::filter(...) %>% as.data.frame
+lim <- function(x,...) as.data.frame(dplyr::filter(x, ...))
 
 
 context("Set F via F_CMT")
@@ -167,8 +167,8 @@ test_that("ALAG does not change records with EVID 3 [SLV-TEST-0007]", {
   expect_equal(out1@data, out2@data)
 })
 
-test_that("Correct bioavability when it changes over a lag time gh-1129", {
-  code <- '
+
+code <- '
 $PARAM CL = 1, V = 10, KA = 1
 $MAIN
 ALAG_A = 1;
@@ -176,11 +176,12 @@ if(self.amt==100) F_A = 0.7;
 if(self.amt==200) F_A = 0.1;
 $PKMODEL cmt = "A,B", depot = TRUE
 '
-  
-  mod <- mcode("foo", code)
+mod <- mcode("gh_1129", code)
+
+test_that("Correct bioavability when it changes over a lag time gh-1129", {
   data <- data.frame(amt = c(100,200), evid = 1, time = 0, ID = 1, cmt = 1)
   out <- mrgsim(mod, data, recsort = 3, end = -1, add = 1)
-  expect_equal(out$A[3], 90) # 100*0.7 + 200 * 0.1 = 90
+  expect_equal(out$A[3], 90) # 90 = 100*0.7 + 200 * 0.1 
 })
 
 
@@ -188,11 +189,8 @@ $PKMODEL cmt = "A,B", depot = TRUE
 
 code <- '
 $SET Req = "CP", end = 72, delta = 0.1
-
 $PARAM F1 = 1, D1 = 5, ALAG1 = 0, R1 = 0, V = 10
-
 $PKMODEL cmt = "CENT"
-
 $PK
 double CL = 1; 
 double KA = 1.2;
@@ -200,14 +198,12 @@ F_CENT = F1;
 D_CENT = D1;
 ALAG_CENT = ALAG1;
 R_CENT = R1;
-
-$ERROR
-capture CP = CENT/V;
+$ERROR capture CP = CENT/V;
 '
 
 tmax <- function(data) {
   data <- as.data.frame(data)
-  data <- filter(data, CP==max(CP))
+  data <- dplyr::filter(data, CP==max(CP))
   data$time
 }
 
@@ -300,8 +296,8 @@ test_that("Bioavailability gets propagated into additional doses at steady-state
   dose2 <- realize_addl(dose1)
   out2 <- mrgsim(mod, dose2, end = 98.5, obsonly = TRUE, recsort = 3, digits = 4)
   
-  f1 <- filter(out1, time %in% (2.5 + c(0, 24, 48, 72, 96)))
-  f2 <- filter(out2, time %in% (2.5 + c(0, 24, 48, 72, 96)))
+  f1 <- dplyr::filter(out1, time %in% (2.5 + c(0, 24, 48, 72, 96)))
+  f2 <- dplyr::filter(out2, time %in% (2.5 + c(0, 24, 48, 72, 96)))
   
   expect_true(all(f1$CP[1]==f1$CP))
   expect_true(all(f2$CP[1]==f2$CP))
