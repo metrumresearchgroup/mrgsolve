@@ -303,3 +303,106 @@ test_that("Bioavailability gets propagated into additional doses at steady-state
   expect_true(all(f2$CP[1]==f2$CP))
   expect_identical(out2, out1)
 })
+
+test_that("Bioavailability scales bolus doses", {
+  dose <- ev(amt = 100, ii = 24, addl = 4)
+  out1 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 1, ALAG1 = 1.23), 
+    end = 144
+  )
+  out2 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 0.73, ALAG1 = 1.23), 
+    end = 144
+  )
+  a <- out1$CP[out1$CP > 0]
+  b <- out2$CP[out2$CP > 0]
+  r <- unique(signif((b/a),5))
+  expect_identical(r, param(out2)$F1)
+})
+
+test_that("Bioavailability scales bolus doses at steady state", {
+  dose <- ev(amt = 100, ii = 24, addl = 4, ss = 1)
+  out1 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 1, ALAG1 = 1.23), 
+    end = 144, 
+    recsort = 3
+  )
+  out2 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 2.67, ALAG1 = 1.23), 
+    end = 144, 
+    recsort = 3
+  )
+  a <- out1$CP[out1$CP > 0]
+  b <- out2$CP[out2$CP > 0]
+  r <- unique(signif((b/a),5))
+  expect_identical(r, param(out2)$F1)
+  
+  ## Check that AUC is correct; giving some extra tolerance here for bolus
+  out1 <- filter_sims(out1, time <= 24)
+  a <- pmxTools::get_auc(as.data.frame(out1), "time", dv = "CP")
+  expect_equal(a$AUC, 100, tolerance = 0.5)
+  
+  out2 <- filter_sims(out2, time <= 24)
+  b <- pmxTools::get_auc(as.data.frame(out2), "time", dv = "CP")
+  expect_equal(b$AUC, 100 * param(out2)$F1, tolerance = 0.5)
+})
+
+test_that("Bioavailability scales infusions", {
+  dose <- ev(amt = 100, ii = 24, addl = 4, rate = -2)
+  out1 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 1, ALAG1 = 2.34), 
+    end = 144
+  )
+  out2 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 2.67, ALAG1 = 2.34), 
+    end = 144
+  )
+  a <- out1$CP[out1$CP > 0]
+  b <- out2$CP[out2$CP > 0]
+  r <- unique(signif((b/a),5))
+  expect_identical(r, param(out2)$F1)
+
+})
+
+test_that("Bioavailability scales infusions at steady state", {
+  dose <- ev(amt = 100, ii = 24, addl = 4, rate = -2, ss = 1)
+  out1 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 1, ALAG1 = 0.97), 
+    end = 144, 
+    recsort = 3
+  )
+  out2 <- mrgsim(
+    mod, 
+    dose, 
+    param = list(F1 = 2.67, ALAG1 = 0.97), 
+    end = 144,
+    recsort = 3
+  )
+  a <- out1$CP[out1$CP > 0]
+  b <- out2$CP[out2$CP > 0]
+  r <- unique(signif((b/a),5))
+  expect_identical(r, param(out2)$F1)
+  
+  ## Check that AUC is correct; tighten up tolerance ... it's infusion
+  out1 <- filter_sims(out1, time <= 24)
+  a <- pmxTools::get_auc(as.data.frame(out1), "time", dv = "CP")
+  expect_equal(a$AUC, 100, tolerance = 1e-4)
+
+  out2 <- filter_sims(out2, time <= 24)
+  b <- pmxTools::get_auc(as.data.frame(out2), "time", dv = "CP")
+  expect_equal(b$AUC, 100 * param(out2)$F1, tolerance = 1e-4)
+})
