@@ -60,6 +60,7 @@ struct evdata {
   int cmt;
   double amt; 
   double rate;
+  double tinf;
   bool now;
 }; 
 

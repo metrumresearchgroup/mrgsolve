@@ -625,6 +625,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           unsigned int this_evid = (mt[mti]).evid;
           double this_amt = mt[mti].amt;
           int this_cmt = (mt[mti]).cmt;
+          double this_rate = (mt[mti]).rate;
+          double this_tinf = (mt[mti]).tinf;
+          if(this_amt > 0 && this_tinf > 0) {
+            this_rate = this_amt / this_tinf;
+          }
+          if(this_rate < 0) {
+            CRUMP("Negative rate is invalid for modeled event");
+          }
           if(neq!=0 && this_evid !=0) {
             if((this_cmt == 0) || (abs(this_cmt) > int(neq))) {
               Rcpp::Rcout << this_cmt << std::endl;
