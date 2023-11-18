@@ -258,6 +258,7 @@ void odeproblem::rate_reset() {
 }
 
 void odeproblem::rate_main(rec_ptr rec) {
+  if(rec->rate() >= 0) return;
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
       throw Rcpp::exception(
