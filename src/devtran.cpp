@@ -537,13 +537,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         
         bool sort_recs = false;
-
+        
         if(this_rec->rate() < 0) {
           prob.rate_main(this_rec);
         }
         // Checking 
         if(!this_rec->is_lagged()) {
-  
+          
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
             
             if(this_rec->ss() > 0) {
@@ -644,25 +644,22 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,
                                   this_rate,1.0);    
           new_ev->phantom_rec();
-          // This record isn't from data
-          new_ev->fn(prob.fbio(new_ev->cmtn()));
-          if(new_ev->fn() < 0) {
-            CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
-          }
-          if(new_ev->fn() ==0) {
-            if(new_ev->is_dose()) {
-              prob.on(new_ev->cmtn());
-              prob.lsoda_init();
-              new_ev->unarm();
+          if(mt[mti].now) {
+            new_ev->fn(prob.fbio(new_ev->cmtn()));
+            if(new_ev->fn() < 0) {
+              CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
             }
-          }
-          if(new_ev->rate() < 0) {
-            prob.rate_main(new_ev);    
-          }
-          // Handle if there is a lag time
-          // If so, we ignore the parent dose and only do the actual lagged dose
-          if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
-            if(mt[mti].now) {
+            if(new_ev->fn() ==0) {
+              if(new_ev->is_dose()) {
+                prob.on(new_ev->cmtn());
+                prob.lsoda_init();
+                new_ev->unarm();
+              }
+            }
+            if(new_ev->rate() < 0) {
+              prob.rate_main(new_ev);    
+            }
+            if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
               new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
               new_ev->lagged();
               new_ev->pos(__ALAG_POS);
