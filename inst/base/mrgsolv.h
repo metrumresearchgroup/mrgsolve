@@ -53,7 +53,6 @@ struct evdata {
     cmt = 1;
     amt = 0.0;
     rate = 0.0;
-    tinf = 0.0;
     now = false;
   } 
   double time; 
@@ -61,7 +60,6 @@ struct evdata {
   int cmt;
   double amt; 
   double rate;
-  double tinf;
   bool now;
 }; 
 
