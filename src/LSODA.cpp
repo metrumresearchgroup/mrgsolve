@@ -205,7 +205,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
     if (neq <= 0)
     {
       //cerr << "[lsoda] neq = " << neq << " is less than 1." << endl;
-      REprintf("[lsoda] neq = %zu is less than 1.\n", neq);
+      REprintf("[lsoda] neq = %i is less than 1.\n", (int)neq);
       terminate(istate);
       return;
     }
@@ -246,14 +246,14 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       if (ml >= n)
       {
         //cerr << "[lsoda] ml = " << ml << " not between 1 and neq" << endl;
-        REprintf("[lsoda] ml = %zu not between 1 and neq.\n", ml);
+        REprintf("[lsoda] ml = %i not between 1 and neq.\n", (int)ml);
         terminate(istate);
         return;
       }
       if (mu >= n)
       {
         //cerr << "[lsoda] mu = " << mu << " not between 1 and neq" << endl;
-        REprintf("[lsoda] mu = %zu not between 1 and neq.\n", mu);
+        REprintf("[lsoda] mu = %i not between 1 and neq.\n", (int)mu);
         terminate(istate);
         return;
       }
