@@ -51,6 +51,7 @@ RcppExport SEXP _mrgsolve_dcorr(SEXP);
 RcppExport SEXP _mrgsolve_get_tokens(SEXP);
 RcppExport SEXP _mrgsolve_MVGAUSS(SEXP,SEXP);
 RcppExport SEXP _mrgsolve_DEVTRAN(SEXP,SEXP,SEXP,SEXP,SEXP);
+RcppExport SEXP _mrgsolve_ADVANCE(SEXP,SEXP,SEXP,SEXP); 
 RcppExport SEXP _mrgsolve_SUPERMATRIX(SEXP,SEXP);
 RcppExport SEXP _mrgsolve_MAKEMATRIX(SEXP);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP,SEXP);
@@ -66,6 +67,7 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_get_tokens,1),
   CALLDEF(_mrgsolve_MVGAUSS,2),
   CALLDEF(_mrgsolve_DEVTRAN,5),
+  CALLDEF(_mrgsolve_ADVANCE,4),
   CALLDEF(_mrgsolve_SUPERMATRIX,2),
   CALLDEF(_mrgsolve_MAKEMATRIX,1),
   CALLDEF(_mrgsolve_TOUCH_FUNS,2),

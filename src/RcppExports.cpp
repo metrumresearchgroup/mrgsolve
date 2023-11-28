@@ -12,6 +12,20 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// ADVANCE
+Rcpp::List ADVANCE(const Rcpp::List parin, const Rcpp::List& funs, const Rcpp::NumericVector times, const Rcpp::S4& mod);
+RcppExport SEXP _mrgsolve_ADVANCE(SEXP parinSEXP, SEXP funsSEXP, SEXP timesSEXP, SEXP modSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List >::type parin(parinSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type funs(funsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::S4& >::type mod(modSEXP);
+    rcpp_result_gen = Rcpp::wrap(ADVANCE(parin, funs, times, mod));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DEVTRAN
 Rcpp::List DEVTRAN(const Rcpp::List parin, const Rcpp::List& funs, const Rcpp::NumericMatrix& data, const Rcpp::NumericMatrix& idata, const Rcpp::S4& mod);
 RcppExport SEXP _mrgsolve_DEVTRAN(SEXP parinSEXP, SEXP funsSEXP, SEXP dataSEXP, SEXP idataSEXP, SEXP modSEXP) {
