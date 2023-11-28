@@ -183,17 +183,17 @@
 # mrgsolve 1.0.1
 
 - Add `LOG()`, `EXP()`, `SQRT()` macros when `nm-vars` plugin is invoked 
-  #931, #936.
+  (#931, #936).
 
 - Use `evd()` to create an event object which renders nmtran names 
-  in upper case (e.g. `TIME` rather than `time`) #935, #919.
+  in upper case (e.g. `TIME` rather than `time`) (#935, #919).
 
-- Fixed bug where `rate` was not getting set for modeled events #934.
+- Fixed bug where `rate` was not getting set for modeled events (#934).
 
 - Fixed bug where `self.stop_id()` and `self.stop_id_cf()` had reversed
-  behavior as documented #927, #928.
+  behavior as documented (#927, #928).
 
-- Refactored EVID=3 behavior to leave `NEWIND` as-is #934.
+- Refactored EVID=3 behavior to leave `NEWIND` as-is (#934).
 
 
 # mrgsolve 1.0.0
@@ -302,24 +302,24 @@
 
 # mrgsolve 0.10.5
 - Suppress warnings when non-numeric columns are dropped when those columns are
-  not relevant to the simulation #709
-- Add `$ERROR` as an alias for `$TABLE` in the model file #710
+  not relevant to the simulation (#709)
+- Add `$ERROR` as an alias for `$TABLE` in the model file (#710)
 - Fix bug where warning messages during steady-state finding referenced `rtol` 
-  and `atol` rather than `ss_rtol` and `ss_atol` #703
-- Fix annotation parsing bug when the description included semi-colon #696
-- `loadso` issues a proper error when the model dll doesn't exist #724
+  and `atol` rather than `ss_rtol` and `ss_atol` (#703)
+- Fix annotation parsing bug when the description included semi-colon (#696)
+- `loadso` issues a proper error when the model dll doesn't exist (#724)
 - Try loading the model with loadso once of the model isn't loaded at the time
-  of simulation #725
-- Throw an error when `addl` or `ss` are negative #733
+  of simulation (#725)
+- Throw an error when `addl` or `ss` are negative (#733)
 - Internal refactoring so that there is a hard solver reset when parameters that
-  are copied from data change #744
+  are copied from data change (#744)
 - Add `tad` plugin to calculate time after dose in a specific compartment
-  #702
-- Internal refactor `carry_out` to respect default `nocb` behavior #759; see 
-  also #744
-- Throw an error when matlist labels are duplicated #730
+  (#702)
+- Internal refactor `carry_out` to respect default `nocb` behavior (#759; see 
+  also #744)
+- Throw an error when matlist labels are duplicated (#730)
 - Add `capture` argument to `mread` to add to `$CAPTURE` when compiling the 
-  model #704
+  model (#704)
 
 # mrgsolve 0.10.3
 
@@ -328,42 +328,42 @@
   previous behavior where the time grid resolved to 0 when there were no 
   observations to be found.  While this is a breaking change, the old behavior
   was almost always wrong when the desired output was a series of
-  non-observation records #640
+  non-observation records (#640)
 - Added 1005 model 
 - Added `recover` mechanism to join items in input data sets to the output 
-  #646
+  (#646)
 - Allow simulation from empty time grid; this would potentially break some 
-  existing code; but not common #648
-- Add collapse_omega and collapse_sigma arguments to [ set ] block #651
+  existing code; but not common (#648)
+- Add collapse_omega and collapse_sigma arguments to [ set ] block (#651)
 - Add separate tolerances (`ss_rtol` and `ss_atol`) to control advance to 
-  steady state #652
-- Fix bug in `realize_addl` when `addl` is zero by `ii` is not #653
-- Fix bug where system did not reset with EVID 4 and infusion dose #683
+  steady state (#652)
+- Fix bug in `realize_addl` when `addl` is zero by `ii` is not (#653)
+- Fix bug where system did not reset with EVID 4 and infusion dose (#683)
 - NMXML will now take vector for `tname` to add custom names to imported
-  THETAs #687
+  THETAs (#687)
 - Add NMEXT block that works similar (not identical) to NMXML, but reads from 
-  the `run.ext` file #509
+  the `run.ext` file (#509)
   
 
 # mrgsolve 0.10.1
 
-- Add `select_sims` method for selecting columns in `mrgsims` object #585
+- Add `select_sims` method for selecting columns in `mrgsims` object (#585)
 - Fix bug where system was improperly advanced on steady state dosing record 
-  with a lag time when the system failed to reach steady state #596
-- Add better compartment level control for advancing system to steady state #598
-- Allow user to set `CXX_FLAGS` in `$ENV` block #603
+  with a lag time when the system failed to reach steady state (#596)
+- Add better compartment level control for advancing system to steady state (#598)
+- Allow user to set `CXX_FLAGS` in `$ENV` block (#603)
 - Add `N_CMT` plugin so that the number (index) of every compartment is available
-  by name (e.g. `N_CENT` for the number index of the central compartment) #606
-- Fix bug where `blocks()` failed when the model was defined in `Rmd` file #608
+  by name (e.g. `N_CENT` for the number index of the central compartment) (#606)
+- Fix bug where `blocks()` failed when the model was defined in `Rmd` file (#608)
 - Call ODE block every time the system tries to advance so that variables 
-  calculated in ODE are properly calculated in output #613
-- Add `within` method for mrgmod #616
+  calculated in ODE are properly calculated in output (#613)
+- Add `within` method for mrgmod (#616)
 - Access initial compartment values and other model object items with `$` 
-  operator for `mrgmod` #620
+  operator for `mrgmod` (#620)
 - Add plot method for signature `c("mrgsims", "character")`; pass in a character
-  vector of outputs to plot #630
+  vector of outputs to plot (#630)
 - The house model, previously accessible by `mrgsolve:::house()` is now an 
-  exported function #625
+  exported function (#625)
 - Exporting outvars function to extract names of current output variables from
   the model object
 - Now importing lifecycle and glue packages
@@ -372,50 +372,50 @@
 
 - Remove `qsim` and all associated functions
 - Export new function / workflow as `qsim` as a simpler, quicker simulation
-  routine #490
+  routine (#490)
 - tad calculation (when called through `mrgsim()` and variants) recognizes
-  evid 4 in addition to evid 1 #502
-- Fix bug where `$NMXML` fails when `nm` namespace not found in xml file #510
+  evid 4 in addition to evid 1 (#502)
+- Fix bug where `$NMXML` fails when `nm` namespace not found in xml file (#510)
 - Arguments to `ev` constructor are now evaluated; for example, 
-  `ev(amt = 100, rate = amt/2)` #512
-- Add `$` and `[[` operators for event objects #513
-- Recalculate rate (from tinf), addl (from total or until) upon mutate #513
-- Standardize column order for event objects #513
+  `ev(amt = 100, rate = amt/2)` (#512)
+- Add `$` and `[[` operators for event objects (#513)
+- Recalculate rate (from tinf), addl (from total or until) upon mutate (#513)
+- Standardize column order for event objects (#513)
 - `mrgsim_e` and `mrgsim_ei` will try to accept data frame and validated data
   sets
-- Drop ODEPACK solver and implement lsoda in C++ #504
+- Drop ODEPACK solver and implement lsoda in C++ (#504)
 - Add C++11 as system requirement
-- Add constant infusion at steady state #249
+- Add constant infusion at steady state (#249)
 - Add `outvars` argument to update method; this will replace `Req`
 - Add two arguments to mrgsim: `ss_n` and `ss_fixed` to control advance to
 steady state; a warning will be issued when `ss_fixed` is `FALSE` and the system
-doesn't reach steady state within `ss_n` iterations #533
+doesn't reach steady state within `ss_n` iterations (#533)
 - An error is issued when the first argument to mrgsim and variants is not 
-a model object #547
+a model object (#547)
 - Argument `xpath` is added to `nmxml()` to handle cases where the `nm` namespace
-is not found in the xml file #510
+is not found in the xml file (#510)
 - More informative error messages are included when processing input data 
-sets #534
+sets (#534)
 - When there is a problem when the ODE system is advanced, informative error
 messages from both lsoda and mrgsolve will be issued along with the value
-of `istate` #457
-- Add ability to have `ss=1` in a dosing record with bioavailability is zero #497
+of `istate` (#457)
+- Add ability to have `ss=1` in a dosing record with bioavailability is zero (#497)
 - Error messages will be issued when both of the following are found in input 
-for event object construction: `rate/tinf`, `addl/total`, `addl/until` #513
+for event object construction: `rate/tinf`, `addl/total`, `addl/until` (#513)
 - When `tinf` is used to create event object, that item is retained and used
 to set the infusion rate (along with dose) until it is removed; it is an 
-error to try to set `rate` when `tinf` is in the event object #513
-- Fix bug related to column identification in `expand_observations` #563
+error to try to set `rate` when `tinf` is in the event object (#513)
+- Fix bug related to column identification in `expand_observations` (#563)
 - Add record position argument to `expand_observations` to allow control 
-record sort order #565
+record sort order (#565)
 
 
 # mrgsolve 0.9.2
 
 - Fix bug where system advanced to next time after advancing to steady state
   on a dosing record with ss=1 with no observation record at the same time
-  but preceding the dosing record #484
-- Add AMT and CMT macros for self.amt and self.cmt, respectively #354
+  but preceding the dosing record (#484)
+- Add AMT and CMT macros for self.amt and self.cmt, respectively (#354)
 - Re-organize `DLSODA` code to avoid CRAN LTO warning
 
 # mrgsolve 0.9.1
@@ -425,8 +425,8 @@ record sort order #565
   rather than the streamlined function; a decision will have to be made about 
   whether or not the streamlined function will be retained
 - Fix bug in the model parser where commented lines with (all) leading
-  spaces were not handled properly #450
-- Objects of class `valid_data_set` now retain the matrix attribute #448
+  spaces were not handled properly (#450)
+- Objects of class `valid_data_set` now retain the matrix attribute (#448)
 - Block names are now coerced to upper case letters
 - Change default for `simcall` to 0 in mrgsim_q
 - Add recover argument to mread
@@ -483,7 +483,7 @@ the model library so that, for example,  `modlib("pk1")` is equivalent to
 `mread("pk1", modlib())`.
 
 ## Bugs fixed
-- Fixed bug related to record sort order #406
+- Fixed bug related to record sort order (#406)
 
 ## Deprecated
 - `drop.re` and `drop_re`; use `zero_re` instead
@@ -506,7 +506,7 @@ created by mrgsolve but rather by ggplot2, which calls `mgcv::s` via
 - Re-configured the list of data coming from `as.list.mrgmod` so that
 the names match the names that you would pass to `update.mrgmod`; also
 added some items so that all updatable slots in the model object
-are exported by calling `as.list` #354
+are exported by calling `as.list` (#354)
 
 # mrgsolve 0.8.10.9014
 - Add OMEGA and SIGMA matrices to `as.list.mrgmod` output under the names
@@ -516,7 +516,7 @@ and SIGMA matrices when there is no matrices in the slot as long
 as the update is with an empty list or a matrix with zero rows
 - Fix segmentation fault when both data set and idata set are used
 in a simulation with certain mis-matches in the ID content
-between the two #352
+between the two (#352)
 
 # mrgsolve 0.8.10.9013
 - Removes more mtime code (wasn't in use)
@@ -703,7 +703,7 @@ be found in the data object.
 
 ## Bugs fixed
 - PR #214 from @dastoor fixes compatibility issue with new `dplyr`
-- Fixed bug in `deslist` implementation #222
+- Fixed bug in `deslist` implementation (#222)
 - PR #238 fixes incorrect steady-state values when dose is associated with
 lagtime (#239)
 
@@ -751,8 +751,7 @@ from previous behavior, where an error was generated.
 # mrgsolve 0.7.6
 
 ## Important changes
-- The `table()` macro in `$TABLE` is now deprecated
-(https://github.com/metrumresearchgroup/mrgsolve/pull/129).  To get derived
+- The `table()` macro in `$TABLE` is now deprecated (#129).  To get derived
 values into the simulated output, users should assign
 to type `double` and list that variable name in `$CAPTURE`.  See also the
 `capture` typedef introduced below.
@@ -762,7 +761,7 @@ names of input parameters against names of existing parameters.  An error is
 generated if a user attempts to update a parameter that doesn't exist.  Note
 that this does not apply for the `param` method with signature `list` (#144).
 - The git repository was re-organized so that the package lives in the
-base directory (PR #171).  
+base directory (#171).  
 
 ## Features
 - Added `@` macros for indicating block options in model specification file.
@@ -781,7 +780,7 @@ for `$TABLE`.
 default, no `$PLUGIN` is required.
 - Better support for including `R` objects in the model via `$ENV` (#158).
 - Added `assign_ev` function to help build simulation data sets from event
-objects (https://github.com/metrumresearchgroup/mrgsolve/pull/164).
+objects (#164).
 - Added `as_data_frame` method from the `tibble` package (#166).
 - When annotating model blocks, mrgsolve takes the __last__ parens item  as
 the "units" and the __last__ bracketed item as "options"
@@ -860,8 +859,7 @@ certain symbol names were used in the model (#97).  In this release, a
 mrgsolve needs to use.  This is *only* relevant to `Windows` platform.
 - Added a check on the `project` argument to `mread`: if newline(s) are found,
 an error is generated and the user is prompted to use `mcode` instead.
-- Several changes under the hood
-(https://github.com/metrumresearchgroup/mrgsolve/pull/99)
+- Several changes under the hood (#99)
 
 
 # mrgsolve 0.7.1
@@ -967,16 +965,16 @@ The working directory is restored on exit from `mread`.
 ## Bugs fixed
 * Fixed a bug when an infusion was attempted with `rate > 0` and `amt==0`.  
 Additionally, an error is generated when an infusion is attempted with zero
-`amt` ([issue 43](../../issues/43)).
+`amt` (#43).
 
 # mrgsolve 0.5.12
 
 ## Bugs fixed
 * Fixed a bug where infusion dosing events with `evid 4` were not properly
 implemented.  While investigating that issue, also found similar issue with
-`evid 4` infusions getting scheduled with `addl` ([issue 31](../../issues/31)).
+`evid 4` infusions getting scheduled with `addl` (#31).
 * Removed NSE evaluation for arguments passed into  `ev` to avoid unintended
-issues in evaluation ([issue 29](../../issues/29)).
+issues in evaluation (#29).
 
 ## New features
 * Added `mcode` function as alternative to using `mread` when your model is
@@ -990,11 +988,11 @@ into the simulated data set, changing the column to `newname` from `oldname`.
 Use this syntax in `Req` when you want to change the names of compartments or
 output variables specified in `$TABLE` / `$CAPTURE`.
 * Added `pkmodel` function for easy loading and simulating from 1- and
-2-compartment models ([issue 39](../../issues/39)).
+2-compartment models (#39).
 * Added new code block: `$PKMODEL` for simulating PK model with analytical
 solutions.  The main option for this block is `ncmt`, which picks the number
 of compartments for the pk model.  See `?PKMODEL` for more information and
-other options ([issue 34](../../issues/34)).
+other options (#34).
 
 ## Under the hood
 * Added `code` attribute to `mrgmod` objects.  The actual source code stays
@@ -1019,20 +1017,18 @@ the solver will fail with the message `DLSODA- TOUT(=R1) too close to T(=R2)
 to start integration.`.  To fix this, set `mindt` to be greater than zero but
 small ... maybe 1E-12.  When `mindt` is greater than zero and `tto - tfrom`
 (the times of two adjacent records) is less than `mindt`, mrgsolve will set
-`tto` equal to `tfrom` ([issue 9](../../issues/9)).
+`tto` equal to `tfrom` (#9).
 * `zero.re` didn't properly update the `$SIGMA` list when one matrix was
-named and another was unnamed.  This has been fixed.  
-([issue 16](../../issues/16))
+named and another was unnamed.  This has been fixed.  (#16)
 * Fixed a bug where infusions with `ss`=1 caused mrgsolve/`R` to crash when
 the infusion duration was equal to or some multiple of the dosing interval.
-([issue 19](../../issues/19))
+(#19)
 * Fixed a bug where setting `F_CENT` to zero gave undefined behavior.  
 mrgsolve will issue an error if `F_CMT` is set to zero and the `ss` flag is
-set to 1. ([issue 22](../../issues/16))
+set to 1. (#22)
 * Fixed bug where dosing records with `evid=4` (reset the system and dose)  
 and `addl > 0` reset the system for all subsequent doses. Additional doses
-coming from records with `evid=4` will not do system reset.
-([issue 23](../../issues/23))
+coming from records with `evid=4` will not do system reset. (#23)
 
 ## Important changes
 * New arguments for `$NMXML` (see `?nmxml`) that are easier to understand
@@ -1049,15 +1045,14 @@ Specifying character names `tname`, `oname`, and `sname` will imply
 * New aliases available for setting bioavailability, lag time and infusion
 duration and rate.  For a compartment called `DEPOT` use: `F_DEPOT`
 (bioavailability), `ALAG_DEPOT` (dosing lag time), `D_DEPOT` (infusion
-duration), and / or `R_DEPOT` (infusion rate). ([issue 13](../../issues/13))
+duration), and / or `R_DEPOT` (infusion rate). (#13)
 * Added *slightly* more informative messages when `DLSODA` fails, including
 clear identification if the value of `istate`, which is 2 when the solver
 succeeds and negative when the solver fails.
 * Added `labels` and `prefix` options to `$OMEGA` and `$SIGMA`.  These allow
 descriptive aliases for ETAs ... e.g. using `ETA_CL` rather than `ETA(1)`.  
-([issue 15](../../issues/15))
-* Added `dplyr::slice` method for `mrgsims` objects
-([issue 11](../../issues/11))
+(#15)
+* Added `dplyr::slice` method for `mrgsims` objects (#11)
 * New argument to `mread`: `quiet`.  Setting `quiet` to `TRUE` will prevent
 printing messages when `mread` is called.  The default is
 `getOptions("mrgsolve_mread_quiet",FALSE)` ... so you can call
@@ -1068,17 +1063,14 @@ from `mread`.
 
 ## Bugs Fixed
 * Fixed paths for project (`project`) and shared object (`soloc`) so that
-"short" paths are used when compiling the model on Windows  platforms
-(info [issue 4](https://github.com/metrumresearchgroup/mrgsolve/issues/4) and [here](https://github.com/metrumresearchgroup/mrgsolve/wiki/Windows-issues#spaces-in-project-directory-path))
+"short" paths are used when compiling the model on Windows  platforms (#4).
 * Fixed a bug where bioavailability fraction was not accounted for when
-setting infusion duration in `$MAIN` with `rate=-2`
-(see [issue 3](https://github.com/metrumresearchgroup/mrgsolve/issues/3))
+setting infusion duration in `$MAIN` with `rate=-2`(#3).
 * `mrgsolve_example` prints a message telling the user to use `mrgmod` to read
 and compile the model.  The user should use `mread`.  The message has been
-updated. (info [issue 5](https://github.com/metrumresearchgroup/mrgsolve/issues/5))
+updated (#5).
 * Fixed bug where parameters were not correctly read from first row of a
-data set when certain `recsort` options were selected
-([issue 6](https://github.com/metrumresearchgroup/mrgsolve/issues/6))
+data set when certain `recsort` options were selected (#6).
 
 ## New Features
 *  Added `$ADVAN2` and `$ADVAN4` for implementing one- and two-compartment PK
