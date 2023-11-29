@@ -315,7 +315,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         {
           // cerr << "[lsoda] tout = " << tout << " behind t = " << *t
           //      << ". integration direction is given by " << h0 << endl;
-          REprintf("[lsoda] tout = %.f behind t = %f. integration direction is given by %f.\n", 
+          REprintf("[lsoda] tout = %f behind t = %f integration direction is given by %f.\n", 
                    tout, *t, h0);
           terminate(istate);
           return;
