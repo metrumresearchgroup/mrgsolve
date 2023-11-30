@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -46,7 +46,7 @@ public:
              int pos_, double id_);   
   
   //! short event constructor
-  datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_);
+  datarecord(short int cmt_, int evid_, double amt_, double time_, double rate_, double fn_);
   
   ~datarecord();
   
@@ -76,7 +76,7 @@ public:
   double rate(){return Rate;}
   void rate(double value) {Rate = value;}
   
-  double dur(double b);
+  double dur();
   
   void addl(int addl_){Addl = std::max(0,addl_);}
   unsigned int addl(){return Addl;}
@@ -86,14 +86,17 @@ public:
   
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
-  
+
+  double fn(){return Fn;}
+  void fn(double fn_){Fn = fn_;}
+
   void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
-                const unsigned int maxpos, double Fn, double lagt);
+                const unsigned int maxpos, double lagt);
   void implement(odeproblem* prob);
   void steady_zero(odeproblem* prob, LSODA& solver);
   void steady_infusion(odeproblem* prob,reclist& thisi,LSODA& solver);
   void steady_bolus(odeproblem* prob,LSODA& solver);
-  void steady(odeproblem* prob, reclist& thisi,double Fn,LSODA& solver);
+  void steady(odeproblem* prob, reclist& thisi,LSODA& solver);
   
   bool infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0);}
   bool int_infusion(){return (Evid==1 || Evid==4 || Evid==5) && (Rate > 0) && (Amt > 0);}
@@ -115,21 +118,23 @@ public:
   bool is_lagged() {return Lagged;}
   void lagged() {Lagged = true;}
 
-  double Time; ///< record time
-  double Id; ///< record ID value
   int Pos; ///< record position number
   unsigned short int Evid; ///< record event ID
-  bool Output; ///< should this record be included in output?
-  bool Fromdata; ///< is this record from the original data set?
-  bool Lagged; ///< this record was added as result of ALAG
+  unsigned short int Ss; ///< record steady-state indicator
   short int Cmt; ///< record compartment number
   unsigned int Addl; ///< number of additional doses
-  unsigned short int Ss; ///< record steady-state indicator
+
+  double Time; ///< record time
+  double Id; ///< record ID value
   double Amt; ///< record dosing amount value
   double Rate; ///< record infusion rate value
   double Ii; ///< record inter-dose interval value
-  bool Armed; ///< only armed records are actually executed
+  double Fn; ///< record bioavailability
   
+  bool Output; ///< should this record be included in output?
+  bool Fromdata; ///< is this record from the original data set?
+  bool Lagged; ///< this record was added as result of ALAG
+  bool Armed; ///< only armed records are actually executed
 };
 
 
