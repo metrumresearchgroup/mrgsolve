@@ -5,6 +5,7 @@ Doxygen
 DOCS
 mrgsolve.Rcheck
 .DS_store
+.vscode
 test.R
 *.o
 *.so
