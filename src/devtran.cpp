@@ -395,7 +395,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool do_interrupt = prob.interrupt > 0;
   
   if(verbose) say("starting the simulation ...");
-
+  
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
     
@@ -519,7 +519,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(this_rec->is_event()) {
         
         this_cmtn = this_rec->cmtn();
-
+        
         if(!this_rec->is_lagged()) {
           this_rec->fn(prob.fbio(this_cmtn));
         }
@@ -538,11 +538,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         
         bool sort_recs = false;
         
-        if(this_rec->from_data()) {
-          
-          if(this_rec->rate() < 0) {
-            prob.rate_main(this_rec);
-          }
+        if(this_rec->rate() < 0) {
+          prob.rate_main(this_rec);
+        }
+        // Checking 
+        if(!this_rec->is_lagged()) {
           
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
             
@@ -622,21 +622,62 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // Will set used_mtimehx only if we push back
         std::vector<mrgsolve::evdata> mt  = prob.mtimes();
         for(size_t mti = 0; mti < mt.size(); ++mti) {
+          // Unpack and check
           double this_time = (mt[mti]).time;
           if(this_time < tto) continue;
           unsigned int this_evid = (mt[mti]).evid;
+          if(this_evid==0) continue;
           double this_amt = mt[mti].amt;
           int this_cmt = (mt[mti]).cmt;
+          double this_rate = (mt[mti]).rate;
           if(neq!=0 && this_evid !=0) {
             if((this_cmt == 0) || (abs(this_cmt) > int(neq))) {
               Rcpp::Rcout << this_cmt << std::endl;
               CRUMP("Compartment number in modeled event out of range.");
             }
           }
-          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,mt[mti].rate,this_rec->fn());
+          // Create the record
+          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,
+                                  this_rate,1.0);    
           new_ev->phantom_rec();
           if(mt[mti].now) {
+            new_ev->fn(prob.fbio(new_ev->cmtn()));
+            if(new_ev->fn() < 0) {
+              CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
+            }
+            if(new_ev->fn() ==0) {
+              if(new_ev->is_dose()) {
+                prob.on(new_ev->cmtn());
+                prob.lsoda_init();
+                new_ev->unarm();
+              }
+            }
+            if(new_ev->rate() < 0) {
+              prob.rate_main(new_ev);    
+            }
+            if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
+              new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
+              new_ev->lagged();
+              new_ev->pos(__ALAG_POS);
+              mt[mti].now = false;
+            }
+          }
+          // If the event is stil happening now
+          if(mt[mti].now) {
+            new_ev->time(tto);
             new_ev->implement(&prob);
+            told = new_ev->time();
+            if(new_ev->int_infusion() && new_ev->armed()) {
+              rec_ptr evoff = NEWREC(new_ev->cmt(), 
+                                     9, 
+                                     new_ev->amt(), 
+                                     new_ev->time() + new_ev->dur(), 
+                                     new_ev->rate(), 
+                                     -299, 
+                                     id);
+              a[i].push_back(evoff);
+              std::sort(a[i].begin()+j+1,a[i].end(),CompRec());                       
+            }
           } else {
             bool foo = CompEqual(mtimehx,this_time,this_evid,this_cmt);
             if(!foo) {
