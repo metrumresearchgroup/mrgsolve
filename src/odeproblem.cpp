@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2022  Metrum Research Group
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -258,6 +258,7 @@ void odeproblem::rate_reset() {
 }
 
 void odeproblem::rate_main(rec_ptr rec) {
+  if(rec->rate() >= 0) return;
   if(rec->rate() == -1) {
     if(this->rate(rec->cmtn()) <= 0) {
       throw Rcpp::exception(
@@ -280,7 +281,7 @@ void odeproblem::rate_main(rec_ptr rec) {
           false
       );
     }
-    rec->rate(rec->amt() * this->fbio(rec->cmtn()) / this->dur(rec->cmtn()));
+    rec->rate(rec->amt() * rec->fn() / this->dur(rec->cmtn()));
   }
 }
 
