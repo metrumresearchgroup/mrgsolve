@@ -126,10 +126,11 @@ bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b) {
   return res;
 }
 
-bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt) {
+bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt, 
+               double amt) {
   for(size_t i = 0; i < a.size(); ++i) {
     if(a[i]->time() != time) continue;
-    if((a[i]->evid()==evid) && (a[i]->cmt()==cmt)) {
+    if((a[i]->evid()==evid) && (a[i]->cmt()==cmt) && (a[i]->amt()==amt)) {
       return true;    
     }
   }

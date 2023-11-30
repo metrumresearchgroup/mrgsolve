@@ -63,6 +63,28 @@ test_that("ev history is reset", {
   expect_true(all(out3$FLAG==1))
 })
 
+code <- '
+$PARAM CHECK = 1
+$CMT A
+$TABLE 
+if(TIME==1) {
+  mrg::evdata ev(1.1, 1); 
+  ev.amt = 100; 
+  ev.check_unique = CHECK;
+  self.mevector.push_back(ev);
+  self.mevector.push_back(ev);
+  self.mevector.push_back(ev);
+}
+'
+
+test_that("control multiple doses", {
+  mod <- mcode("test-cpp-multi-dose", code, end = 2)
+  out <- mrgsim_df(mod) 
+  expect_equal(max(out$A), 100)
+  
+  out <- mrgsim_df(mod, param = list(CHECK = 0))
+  expect_equal(max(out$A), 300)
+})
 
 # Test events from within the model
 code <- '
