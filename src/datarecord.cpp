@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2020  Metrum Research Group
+// Copyright (C) 2013 - 2023  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -40,6 +40,7 @@ datarecord::datarecord(double time_, int pos_, bool output_) {
   Evid = 0;
   Amt = 0;
   Rate = 0;
+  Fn = 1.0;
   Ii = 0;
   Ss = 0;
   Addl = 0;
@@ -59,6 +60,7 @@ datarecord::datarecord(double time_, short int cmt_, int pos_, double id_) {
   Evid = 0;
   Amt = 0;
   Rate = 0;
+  Fn = 1.0;
   Ii = 0;
   Ss = 0;
   Addl = 0;
@@ -80,6 +82,7 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
   Evid = evid_;
   Amt = amt_;
   Rate = rate_;
+  Fn = 1.0;
   Addl = 0;
   Ii = 0;
   Ss = 0;
@@ -92,15 +95,16 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_, double time_,
 
 
 // Short event
-// cmt evid amt time rate
+// cmt evid amt time rate fn
 datarecord::datarecord(short int cmt_, int evid_, double amt_, 
-                       double time_, double rate_) {
+                       double time_, double rate_, double fn_) {
   
   Cmt  = cmt_;
   Evid = evid_;
   Amt = amt_;
   Time = time_;
   Rate = rate_;
+  Fn = fn_;
   Pos = 1;
   Id = 1;
   Addl = 0;
@@ -133,8 +137,8 @@ bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt,
   return false;
 }
 
-double datarecord::dur(double b) {
-  return(b*Amt/Rate);
+double datarecord::dur() {
+  return(Fn*Amt/Rate);
 }
 
 bool datarecord::ss_infusion() {
@@ -152,8 +156,6 @@ void datarecord::implement(odeproblem* prob) {
   if(this->infusion() && Evid != 4) evid = 5;
   
   int eq_n = this->cmtn();
-  
-  double Fn = prob->fbio(eq_n);
   
   switch (evid) {
   case 1: // Dosing event record
@@ -213,7 +215,7 @@ void datarecord::implement(odeproblem* prob) {
 /* 
  * Brings system to steady state if appropriate.
  */
-void datarecord::steady(odeproblem* prob, reclist& thisi, double Fn, LSODA& solver) {
+void datarecord::steady(odeproblem* prob, reclist& thisi, LSODA& solver) {
   if(Ss > 0) {
     if(Rate == 0) this->steady_bolus(prob,solver);
     if(Rate >  0) this->steady_infusion(prob,thisi,solver);
@@ -246,7 +248,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
 
   prob->lsoda_init();
   
-  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate, Fn);
   
   for(int i=1; i < N_SS; ++i) {
     
@@ -334,9 +336,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   }
   double lagt = prob->alag(this->cmtn());
   
-  double Fn = prob->fbio(this->cmtn());
-  
-  double duration = this->dur(Fn);
+  double duration = this->dur();
   
   double tfrom = 0.0;
   
@@ -355,7 +355,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   prob->rate_reset();
   
   // We only need one of these; it gets updated and re-used immediately
-  rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate);
+  rec_ptr evon = NEWREC(Cmt, 1, Amt, tfrom, Rate, Fn);
   
   for(i=1; i < N_SS ; ++i) {
     evon->time(tfrom);
@@ -365,7 +365,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     
     // Create an event to turn the infusion off and push onto offs vector
     // Keep on creating these
-    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+    rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate, Fn);
     offs.push_back(evoff);
     
     // The next time an infusion will start
@@ -436,7 +436,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
       evon->implement(prob);
       toff  = tfrom + duration;
       prob->advance(tfrom,toff,solver);
-      rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate);
+      rec_ptr evoff = NEWREC(Cmt, 9, Amt, toff, Rate, Fn);
       evoff->implement(prob);
       prob->lsoda_init();
       prob->advance(toff, (nexti - lagt),solver);
@@ -485,7 +485,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   
   double diff = 0.0, err = 0.0;
   prob->rate_reset();
-  rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate);
+  rec_ptr evon = NEWREC(Cmt, 5, Amt, tfrom, Rate, Fn);
   evon->implement(prob);
   prob->lsoda_init();
   double duration = 10;
@@ -536,7 +536,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
 
 void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, 
-                          const unsigned int maxpos, double Fn, 
+                          const unsigned int maxpos, 
                           double lagt) {
   
   if(Addl==0) return;
@@ -578,6 +578,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     
     rec_ptr evon = NEWREC(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
     evon->Lagged = Lagged;
+    evon->fn(Fn); // This may get overwritten later on if not Lagged dose
     thisi.push_back(evon);
   }
 }  

@@ -17,10 +17,10 @@ development. mrgsolve is free and open-source software.
 Please see [mrgsolve.github.io](https://mrgsolve.github.io) for
 additional resources, including:
 
--   [User Guide](https://mrgsolve.github.io/user_guide)
--   [R Documentation](https://mrgsolve.github.io/docs)
--   [Vignettes](https://mrgsolve.github.io/vignettes)
--   [Gallery](https://github.com/mrgsolve/gallery)
+- [User Guide](https://mrgsolve.github.io/user_guide)
+- [R Documentation](https://mrgsolve.github.io/docs)
+- [Vignettes](https://mrgsolve.github.io/vignettes)
+- [Gallery](https://github.com/mrgsolve/gallery)
 
 ## Installation
 
