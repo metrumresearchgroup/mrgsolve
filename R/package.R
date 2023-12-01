@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2023  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,11 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#' @title mrgsolve
-#' @name mrgsolve
 #' 
-#'
 #' @section Resources:
 #' 
 #' - Main mrgsolve resource page: [https://mrgsolve.org](https://mrgsolve.org)
@@ -128,12 +124,10 @@
 #' }
 #' 
 #' @rdname mrgsolve_package
-#' @docType package
 #' @useDynLib mrgsolve, .registration=TRUE
-#' @aliases mrgsolve
 #' @md
 #' 
-NULL
+"_PACKAGE"
 
 #' About the lsoda differential equation solver used by mrgsolve
 #'
