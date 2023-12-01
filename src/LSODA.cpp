@@ -204,8 +204,9 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
     ntrep = 0;
     if (neq <= 0)
     {
-      //cerr << "[lsoda] neq = " << neq << " is less than 1." << endl;
-      REprintf("[lsoda] neq = %i is less than 1.\n", neq);
+      Rcpp::Rcerr << "[lsoda] neq = " << neq << " is less than 1." 
+                  << std::endl;
+      //REprintf("[lsoda] neq = %zu is less than 1.\n", neq);
       terminate(istate);
       return;
     }
@@ -245,15 +246,17 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       mu = iworks[1];
       if (ml >= n)
       {
-        //cerr << "[lsoda] ml = " << ml << " not between 1 and neq" << endl;
-        REprintf("[lsoda] ml = %i not between 1 and neq.\n", ml);
+        Rcpp::Rcerr << "[lsoda] ml = " << ml << " not between 1 and neq."
+                    << std::endl;
+        //REprintf("[lsoda] ml = %zu not between 1 and neq.\n", ml);
         terminate(istate);
         return;
       }
       if (mu >= n)
       {
-        //cerr << "[lsoda] mu = " << mu << " not between 1 and neq" << endl;
-        REprintf("[lsoda] mu = %i not between 1 and neq.\n", mu);
+        Rcpp::Rcerr << "[lsoda] mu = " << mu << " not between 1 and neq." 
+                    << std::endl;
+        //REprintf("[lsoda] mu = %zu not between 1 and neq.\n", mu);
         terminate(istate);
         return;
       }
@@ -282,8 +285,8 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       ixpr = iworks[2];
       if (ixpr > 1)
       {
-        //cerr << "[lsoda] ixpr = " << ixpr << " is illegal" << endl;
-        REprintf("[lsoda] ixpr =%i is illegal.\n", ixpr);
+        Rcpp::Rcerr << "[lsoda] ixpr = " << ixpr << " is illegal." << std::endl;
+        //REprintf("[lsoda] ixpr =%zu is illegal.\n", ixpr);
         terminate(istate);
         return;
       }
@@ -315,7 +318,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         {
           // cerr << "[lsoda] tout = " << tout << " behind t = " << *t
           //      << ". integration direction is given by " << h0 << endl;
-          REprintf("[lsoda] tout = %d behind t = %d. integration direction is given by %d.\n", 
+          REprintf("[lsoda] tout = %f behind t = %f integration direction is given by %f.\n", 
                    tout, *t, h0);
           terminate(istate);
           return;
@@ -465,8 +468,9 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       {
         if (ewt[i] <= 0.)
         {
-          //cerr << "[lsoda] ewt[" << i << "] = " << ewt[i] << " <= 0.\n" << endl;
-          REprintf("[lsoda] ewt[%i] = %g <= 0.\n", i, ewt[i]);
+          Rcpp::Rcerr << "[lsoda] ewt[" << i << "] = " << ewt[i] << " <= 0." 
+                      << std::endl;
+          //REprintf("[lsoda] ewt[%zu] = %g <= 0.\n", i, ewt[i]);
           terminate2(y, t);
           return;
         }
@@ -669,10 +673,12 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         {
           if ((nst - nslast) >= mxstep)
           {
-            // cerr << "[lsoda] " << mxstep << " steps taken before reaching tout"
-            //      << endl;
-            REprintf("[lsoda] %i steps taken before reaching tout; consider increasing maxsteps.\n", 
-                     mxstep);
+            Rcpp::Rcerr << "[lsoda] " << mxstep 
+                        << " steps taken before reaching tout;" 
+                        << " consider increasing maxsteps."
+                        << std::endl;
+            //REprintf("[lsoda] %zu steps taken before reaching tout; consider increasing maxsteps.\n", 
+            //         mxstep);
             *istate = -1;
             terminate2(y, t);
             return;
@@ -683,8 +689,9 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
           {
             if (ewt[i] <= 0.)
             {
-              //cerr << "[lsoda] ewt[" << i << "] = " << ewt[i] << " <= 0." << endl;
-              REprintf("[lsoda] ewt[%i] = %g <= 0.\n", i, ewt[i]);
+              Rcpp::Rcerr << "[lsoda] ewt[" << i << "] = " << ewt[i] 
+                          << " <= 0." << std::endl;
+              //REprintf("[lsoda] ewt[%zu] = %g <= 0.\n", i, ewt[i]);
               *istate = -6;
               terminate2(y, t);
               return;
@@ -736,11 +743,12 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             
             if (nhnil == mxhnil)
             {
-              // cerr << "lsoda -- above warning has been issued " << nhnil
-              //      << " times, " << endl
-              //      << "       it will not be issued again for this problem" << endl;
-              REprintf("[lsoda] above warning has been issued %i times\n", nhnil);
-              REprintf("        it will not be issued again for this problem.\n");
+              Rcpp::Rcerr << "[lsoda] above warning has been issued " << nhnil
+                          << " times, " << std::endl
+                          << "        it will not be issued again for this problem." 
+                          << std::endl;
+              // REprintf("[lsoda] above warning has been issued %zu times\n", nhnil);
+              // REprintf("        it will not be issued again for this problem.\n");
             }
           }
         }
