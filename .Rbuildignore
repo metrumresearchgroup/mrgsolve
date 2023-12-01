@@ -14,6 +14,7 @@ mrgsolve\.Rcheck
 \.github
 Doxyfile
 doxydoc
+^\.vscode$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 tests/.*[.]o$
