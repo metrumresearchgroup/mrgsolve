@@ -19,7 +19,7 @@
 - Fixed a bug where the `self` object (type: `databox`) could not be 
   passed into functions written into header files that were included
   through `$INCLUDE`; these header files are now included immediately
-  preceeding any user code written into `$GLOBAL`  (#1125, #1126). 
+  preceding any user code written into `$GLOBAL`  (#1125, #1126). 
 
 - Fixed a bug where modeled event log was not getting reset after 
   simulating the first individual; the resulted in events not getting
