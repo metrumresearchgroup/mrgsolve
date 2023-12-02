@@ -49,6 +49,7 @@ docs
 ^\.drone\.jsonnet$
 ^doc$
 ^Meta$
+vignettes
 vignettes/extra
 vignettes/build
 vignettes/mrgsolve-builds

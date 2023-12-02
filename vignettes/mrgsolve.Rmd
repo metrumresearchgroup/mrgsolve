@@ -28,6 +28,7 @@ documentation and more.
 # Load a model
 
 After loading the package
+
 ```{r}
 library(dplyr)
 library(mrgsolve)
