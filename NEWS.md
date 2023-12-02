@@ -1,5 +1,35 @@
 # mrgsolve 1.3.0
 
+- The `evdata` object for modeled events now contains a `check_unique` member; 
+  when set to `false`, the event will be processed without checking for a
+  matching record in the modeled event log (#1119). 
+
+- The `amt` attribute in `evdata` modeled event objects is now considered
+  when looking for duplicate records in the modeled event log (#1119).
+
+## Bugs Fixed
+
+- Fixed a bug where multiple lagged doses given at the same time but with 
+  different bioavailability were all given the bioavailability of the 
+  last dosing record (#1129, #1130).
+
+- Fixed a bug where modeled infusions given `now` were never turned
+  off (#1131). 
+
+- Fixed a bug where the `self` object (type: `databox`) could not be 
+  passed into functions written into header files that were included
+  through `$INCLUDE`; these header files are now included immediately
+  preceeding any user code written into `$GLOBAL`  (#1125, #1126). 
+
+- Fixed a bug where modeled event log was not getting reset after 
+  simulating the first individual; the resulted in events not getting
+  executed in subsequent individuals when matching events were executed
+  in the first individual; this affects modeled events only, not events
+  coming from the data set (#1117, #1118).  
+
+- Fixed a bug in detecting which compartments are receiving doses 
+  (#1112, #1113).
+
 # mrgsolve 1.2.0
 
 - Data set records at the same time within individual will receive different 
