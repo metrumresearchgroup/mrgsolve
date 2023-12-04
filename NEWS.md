@@ -22,7 +22,7 @@
   preceding any user code written into `$GLOBAL`  (#1125, #1126). 
 
 - Fixed a bug where modeled event log was not getting reset after 
-  simulating the first individual; the resulted in events not getting
+  simulating the first individual; this resulted in events not getting
   executed in subsequent individuals when matching events were executed
   in the first individual; this affects modeled events only, not events
   coming from the data set (#1117, #1118).  
