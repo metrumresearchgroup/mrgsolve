@@ -105,6 +105,7 @@ test-cpp:
 
 clean:
 	rm -rf tests/testthat/mrgsolve-so-*
+	rm -rf vignettes/extra/mrgsolve-so-*
 	rm -rf src/*.o
 	rm -rf src/*.so
 	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
