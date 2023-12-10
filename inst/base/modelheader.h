@@ -100,7 +100,7 @@ typedef double capture;
 
 // EVTOOLS PLUGIN
 #ifdef _MRGSOLVE_USING_EVTOOLS_
-#include "mrgsolve-evtools.h"
+//#include "mrgsolve-evtools.h"
 #endif
 
 // These are the fundamental macros for
