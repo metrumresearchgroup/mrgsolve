@@ -186,7 +186,6 @@ safe_wait <- function(x) {
   mt <- file.info(target)[["mtime"]]
   age <- as.numeric(as.POSIXct(Sys.time())) - as.numeric(as.POSIXct(mt))
   if(age > SAFE_WAIT_TIME) return(invisible(NULL))
-  message("(waiting) ...")
   return(Sys.sleep(SAFE_WAIT_TIME-age))
 }
 
