@@ -17,11 +17,6 @@ void push(databox& self, mrg::evdata x) {
   self.mevector.push_back(x);  
 }
 
-mrgsolve::evdata new_event() {
-  mrgsolve::evdata x(0.0, 1);
-  return x;
-}; 
-
 void amt(mrgsolve::evdata& x, double value) {
   x.amt = value;
   return;
@@ -32,28 +27,29 @@ void now(mrgsolve::evdata& x) {
   return;
 }
 
-void bolus(databox& self, double amt, int cmt) {
+mrgsolve::evdata bolus(const double amt, const int cmt) {
   mrgsolve::evdata ev(0, 1); 
   ev.amt = amt; 
   ev.cmt = cmt;
+  return ev;
+}
+
+void bolus(databox& self, const double amt, const int cmt) {
+  mrgsolve::evdata ev = bolus(amt, cmt);
   self.mevector.push_back(ev);
   return;
 }
 
-void bolus(databox& self, double amt, int cmt, regimen& reg) {
-  mrgsolve::evdata ev(0, 1); 
-  ev.amt = amt; 
-  ev.cmt = cmt;
-  self.mevector.push_back(ev);
-  return;
-}
-
-
-void infuse(databox& self, double amt, double rate, int cmt) {
+mrgsolve::evdata infuse(const double amt, const double rate, const int cmt) {
   mrgsolve::evdata ev(0, 1); 
   ev.amt = amt; 
   ev.cmt = cmt;
   ev.rate = rate;
+  return ev;
+}
+
+void infuse(databox& self, const double amt, const double rate, const int cmt) {
+  mrgsolve::evdata ev = infuse(amt, rate, cmt);
   self.mevector.push_back(ev);
   return;
 }
