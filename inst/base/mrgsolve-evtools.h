@@ -46,4 +46,35 @@ void infuse(databox& self, const double amt, const int cmt, const double rate) {
   return;
 }
 
+void time(mrgsolve::evdata& ev, const double x) {
+  ev.time = x;
+  ev.now = false;
+  return;
+}
+
+void amt(mrgsolve::evdata& ev, const double x) {
+  ev.amt = x;
+  return;
+}
+
+void rate(mrgsolve::evdata& ev, const double x) {
+  ev.rate = x;
+  return;
+}
+
+void evid(mrgsolve::evdata& ev, const int x) {
+  ev.evid = x;
+  return;
+}
+
+void cmt(mrgsolve::evdata& ev, const int x) {
+  ev.cmt = x;
+  return;
+}
+
+void now(mrgsolve::evdata& ev, const bool x) {
+  ev.now = false;
+  return;
+}
+
 }
