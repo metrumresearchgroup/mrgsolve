@@ -54,7 +54,7 @@ struct evdata {
     amt = 0.0;
     rate = 0.0;
     now = false;
-    check_unique = true;
+    check_unique = false;
   } 
   double time; 
   int evid;
