@@ -44,4 +44,9 @@ double databox::tad() {
   return told < 0 ? -1.0 : time - told;
 }
 
+void databox::push(mrgsolve::evdata x) {
+  mevector.push_back(x); 
+  return;
+}
+
 #endif
