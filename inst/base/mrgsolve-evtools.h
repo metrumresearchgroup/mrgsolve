@@ -45,4 +45,11 @@ void infuse(databox& self, const double amt, const int cmt, const double rate) {
   self.mevector.push_back(ev);
   return;
 }
+
+void retime(mrgsolve::evdata& ev, const double time) {
+  ev.time = time;
+  ev.now = false;
+  return;
+}
+
 }

@@ -56,11 +56,6 @@ struct evdata {
     now = false;
     check_unique = true;
   } 
-  void retime(const double x) {
-    time = x;
-    now = false;
-    return;
-  }
   double time; 
   int evid;
   int cmt;
