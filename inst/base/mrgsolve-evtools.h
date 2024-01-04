@@ -45,7 +45,7 @@ void now(mrgsolve::evdata& ev) {
   return;
 }
 
-void push(databox& self, mrgsolve::evdata& ev) {
+void push(databox& self, mrgsolve::evdata ev) {
   self.mevector.push_back(ev);
   return;
 }
