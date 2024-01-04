@@ -3,18 +3,6 @@ namespace evt {
 
 typedef mrgsolve::evdata ev;
 
-struct regimen {
-  double ii;
-  int addl;
-  regimen(double ii_, int addl_);
-};
-
-regimen::regimen(double ii_, int addl_) {
-  ii = ii_; 
-  addl = addl_;
-  return;
-}
-
 mrgsolve::evdata bolus(const double amt, const int cmt) {
   mrgsolve::evdata ev(0, 1); 
   ev.amt = amt; 
@@ -52,8 +40,13 @@ void retime(mrgsolve::evdata& ev, const double time) {
   return;
 }
 
-void now (mrgsolve::evdata& ev) {
+void now(mrgsolve::evdata& ev) {
   ev.now = true;
+  return;
+}
+
+void push(databox& self, mrgsolve::evdata& ev) {
+  self.mevector.push_back(ev);
   return;
 }
 
