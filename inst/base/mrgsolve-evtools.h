@@ -52,4 +52,9 @@ void retime(mrgsolve::evdata& ev, const double time) {
   return;
 }
 
+void now (mrgsolve::evdata& ev) {
+  ev.now = true;
+  return;
+}
+
 }
