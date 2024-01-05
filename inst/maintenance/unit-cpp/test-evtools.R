@@ -42,6 +42,12 @@ if(mode==5 && givedose) {
   evt::bolus(self, dose, 1);
   evt::bolus(self, dose, 1);
 }
+if(mode==6 && givedose) {
+  evt::ev ev = evt::bolus(dose, 1);
+  ev.time = 100;
+  evt::now(ev);
+  evt::push(self, ev);
+}
 '
 
 mod <- mcode("test-evtools-model-1", code)
@@ -71,14 +77,14 @@ test_that("evtools - infusion now", {
   expect_equal(tmax, param(out)$f1 * mod$dose / mod$irate)
 })
 
-test_that("evtools - bolus time", {
+test_that("evtools - bolus with retime", {
   out <- mrgsim(mod, param = list(mode = 3), recsort = 3)
   cmax <- filter_sims(out, time==2)
   expect_equal(nrow(cmax), 1L)
   expect_equal(cmax$A, mod$dose)
 })
 
-test_that("evtools - infusion time", {
+test_that("evtools - infusion with retime", {
   out <- mrgsim(mod, param = list(mode = 4), recsort = 3)
   tmax <- out$time[which.max(out$A)]
   expect_equal(tmax, mod$newtime + mod$dose/mod$irate)
@@ -90,6 +96,12 @@ test_that("evtools - multiple bolus doses given now", {
   expect_equal(out$A[1], 300)
   tmax <- out$time[which.max(out$A)]
   expect_equal(tmax, 0)
+})
+
+test_that("evtools - give timed dose now", {
+  a <- mrgsim(mod, param = list(mode = 6))
+  b <- mrgsim(mod, param = list(mode = 1))
+  expect_identical(as.data.frame(a), as.data.frame(b))
 })
 
 local_edition(2)
