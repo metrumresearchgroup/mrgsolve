@@ -175,7 +175,6 @@ plugins[["autodec"]] <- list(
 
 plugins[["evtools"]] <- list(
   name = "evtools", 
-  code = "#define _MRGSOLVE_USING_EVTOOLS_", 
   using = '#include "mrgsolve-evtools.h"'
 )
 
