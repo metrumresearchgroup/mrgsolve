@@ -161,16 +161,15 @@ test_that("mev lag times with F are respected", {
 code <- '
 $CMT A
 $MAIN
-if(TIME==1) {
-  mrgsolve::evdata ev(0, 1); 
-  ev.time = 0;
-  ev.now = true;
+if(TIME==1) {                // Give dose at TIME==1
+  mrgsolve::evdata ev(0, 1); // Set time to 0
+  ev.now = true;             // Also set now to true
   ev.amt = 100;
   self.mevector.push_back(ev);
 }
 '
 
-test_that("now doses are given even when time is past", {
+test_that("now doses are given even when time is past #1151", {
   mod <- mcode("gh-1151", code)
   out <- mrgsim(mod)
   expect_false(all(out$A==0))
