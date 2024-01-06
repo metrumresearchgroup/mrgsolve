@@ -157,3 +157,23 @@ test_that("mev lag times with F are respected", {
   a <- filter_sims(a, A==max(A))
   expect_identical(a$time, param(a)$t + param(a)$l + 0.5*mod$dose/param(a)$r)
 })
+
+code <- '
+$CMT A
+$MAIN
+if(TIME==1) {
+  mrgsolve::evdata ev(0, 1); 
+  ev.time = 0;
+  ev.now = true;
+  ev.amt = 100;
+  self.mevector.push_back(ev);
+}
+'
+
+test_that("now doses are given even when time is past", {
+  mod <- mcode("gh-1151", code)
+  out <- mrgsim(mod)
+  expect_false(all(out$A==0))
+  expect_equal(out$A[1], 0)
+  expect_equal(out$A[2], 100)
+})
