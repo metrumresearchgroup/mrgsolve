@@ -624,7 +624,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           // Unpack and check
           double this_time = (mt[mti]).time;
-          if(this_time < tto) continue;
+          if(this_time < tto && !mt[mti].now) continue;
           unsigned int this_evid = (mt[mti]).evid;
           if(this_evid==0) continue;
           double this_amt = mt[mti].amt;
