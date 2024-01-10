@@ -23,9 +23,8 @@ tag-version:
 package:
 	make house
 	make doc
-	make build
+	make build-vignettes
 	make install
-	make pkgdown
 
 check:
 	make clean
@@ -44,7 +43,7 @@ cran:
 	make house
 	make doc
 	make clean
-	make build
+	make build-vignettes
 	R CMD CHECK --as-cran ${TARBALL}
 
 spelling:
@@ -79,7 +78,11 @@ doc:
 	Rscript -e "roxygen2::roxygenize()"
 
 build:
-	R CMD build --md5 $(PKGDIR) --no-manual
+	R CMD build --md5 $(PKGDIR) --no-manual --no-vignettes
+
+build-vignettes:
+	make vignettes
+	R CMD build --md5 $(PKGDIR)
 
 install:
 	R CMD INSTALL --install-tests ${TARBALL} -l ~/Rlibs
@@ -147,4 +150,8 @@ drone:
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT_CPP)'
-	
+
+.PHONY: vignette
+vignette:
+	quarto render vignettes/src/mrgsolve-vignette.qmd
+	cp vignettes/src/mrgsolve-vignette.pdf vignette
