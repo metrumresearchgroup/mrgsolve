@@ -92,7 +92,7 @@ $PARAM r = 0, l = 0, d = 5, n = 0, t = 0, dose = 100
 $MAIN
 ALAG_A = l;
 D_A = d;
-if(TIME==0) {
+if(TIME==0 && EVID==0) {
   mrg::evdata ev(t, 1); 
   ev.amt = dose; 
   ev.now = n==1;
