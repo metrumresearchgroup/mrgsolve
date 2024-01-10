@@ -83,3 +83,227 @@ or we can code a series of intermittent infusions
 ev(amt = 100, rate = 50, ii = 24, addl = 3)
 ```
 
+# Model Specification
+
+
+
+
+In this chapter, we'll code up a very simple pharmacokinetic model. 
+This is just starter material to get some concepts in place. We'll 
+do more complicated stuff later (see @sec-specification-2).
+
+
+![](pk-model.png)
+
+
+Parameters
+
+- `CL`
+- `V`
+- `KA`
+
+Compartments
+
+- `CENT`
+- `DEPOT`
+
+## Where to save your code?
+
+- You can use any file name with any extension
+- The extension you use may influence how your editor highlights and 
+  indents your code
+- I use `.mod`
+
+
+## Model specification blocks
+
+Model components are coded into blocks, which are delineated by a 
+specific block syntax. You have a couple of options
+
+__NONMEM style__
+
+These start with `$` and then the block name (`$PK`)
+
+__Bracket style__
+
+Put the block name in brackets (`[ ERROR ]`)
+
+__Upper or lower case__
+
+You can use either:
+
+- `$error`
+- `[ pk ]`
+- etc ... they all work
+
+
+### Syntax
+
+The "type" of code you write will vary from block to block. 
+Sometimes it is an R-like syntax and sometimes it is 
+`c++` code. 
+
+Don't worry if you don't know `c++`! We have taken a lot of 
+the complexity out and with a handful of exceptions, the 
+code should be pretty natural and similar to what you write
+in R. 
+
+We will show you more `c++` in chapters to come.
+
+## Base model blocks
+
+### Parameters
+
+Use the `$PARAM` block header.
+
+```{r, eval = FALSE}
+$PARAM 
+CL = 1, V = 20, KA = 1.1
+```
+
+Parameters have a **name** and a **value**, separated by `=`.
+
+Parameter names can be upper or lower case. If you want punctuation, 
+use underscore `_`.
+
+Parameter values must _evaluate_ to numeric.
+
+Parameters can't be functions of other parameters _when writing the `$PARAM` block_. But there is a place where you can do this ...
+we'll see this later on.
+
+Multiple parameters can go on one line, but separate by comma.
+
+
+### Read it in with `mread()`
+
+Point `mread()` at your model file to
+
+- read in the model
+- see if it compiles
+
+```{r}
+mod <- mread("simple.mod")
+```
+
+We'll learn much more about `mread()` later on, but for now we need a way 
+to check if our model coding is correct.
+
+
+## Compartments
+
+```{r, eval = FALSE}
+$PARAM 
+CL = 1, V = 20, KA = 1.1
+
+$CMT DEPOT CENT
+```
+
+Compartments are named 
+
+- Upper or lower case
+- Punctuation use `_`
+
+Order doesn't matter, except 
+
+- When putting dosing records into the data set
+- You want to use the NONMEM-style coding
+
+
+## Differential equations
+
+Now, we'll write ODE using `$DES` (or `$ODE`) block. 
+
+```{r, eval = FALSE}
+$PARAM 
+CL = 1, V = 20, KA = 1.1
+
+$CMT DEPOT CENT
+
+$DES
+dxdt_DEPOT = -KA * DEPOT;
+dxdt_CENT  =  KA * DEPOT - (CL/V)*CENT;
+```
+
+Left hand side is `dxdt_<compartment name>`. 
+
+Right hand side can reference
+
+- Compartments
+- Parameters
+- Other quantities derived in `$DES` or `$PK`
+- Other internal variables
+
+Unlike `$PARAM` and `$CMT`, this is `c++` code
+
+- Any valid `c++` code is allowed
+- Each line (statement) should end in semi-colon `;`
+
+## Derived outputs
+
+Like NONMEM, derived can be calculated in the `$ERROR` block.
+
+```{r, eval = FALSE}
+$PARAM 
+CL = 1, V = 20, KA = 1.1
+
+$CMT DEPOT CENT
+
+$DES
+dxdt_DEPOT = -KA * DEPOT;
+dxdt_CENT  =  KA * DEPOT - (CL/V)*CENT;
+
+$ERROR
+double CP = CENT/V;
+```
+
+Like `$DES`, this block must be valid `c++` code. 
+
+Here we have created a new variable called `CP`, which is 
+the amount in the central compartment divided by the 
+central volume of distribution. 
+
+When we create a new variable, we must declare its `type`. 
+Use `double` for a floating point number. 
+
+## Capture outputs into the simulated data
+
+`mrgsolve` has a `$CAPTURE` block that works like 
+NONMEM's `$TABLE`. Just list the names you want copied
+into the output.
+
+```{r, eval = FALSE}
+$PARAM 
+CL = 1, V = 20, KA = 1.1
+
+$CMT DEPOT CENT
+
+$DES
+dxdt_DEPOT = -KA * DEPOT;
+dxdt_CENT  =  KA * DEPOT - (CL/V)*CENT;
+
+$ERROR
+double CP = CENT/V;
+
+$CAPTURE CP
+```
+
+Rather than putting stuff in `$CAPTURE`, try declaring with type `capture`
+
+```{r, eval = FALSE}
+$ERROR
+capture CP = CENT/V;
+```
+
+`capture` is identical to type `double`, but tells `mrgsolve` to include this 
+item in the simulated output.
+
+
+A little-use feature is renaming items in `$CAPTURE`
+
+```{r}
+#| eval: false
+$ERROR 
+double DV = CENT/V;
+
+$CAPTURE CP = DV
+```
