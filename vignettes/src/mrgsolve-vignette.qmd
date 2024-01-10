@@ -1,0 +1,85 @@
+---
+title: "mrgsolve: Simulate from ODE-Based Models"
+subtitle: "Get Started Package Vignette"
+shorttitle: "Let's Get Started"
+author: Kyle T. Baron
+affiliation: Metrum Research Group
+date: 2023-01-04
+format: 
+  pdf: 
+    papersize: a4
+    number-sections: true
+    toc: true
+    toc-title: Contents
+    geometry: 
+      - bottom=1.25in
+      - left=1.25in
+      - right=1.25in
+      - top=1.25in
+    include-in-header: 
+      - header.tex
+
+abstract: |
+  \noindent mrgsolve is an R package maintained under the auspices of Metrum Research Group that facilitates simulation from models based on systems of ordinary differential equations (ODE) that are typically employed for understanding pharmacokinetics, pharmacodynamics, and systems biology and pharmacology. mrgsolve consists of computer code written in the R and C++ languages, providing an interface to a C++ translation of the lsoda differential equation solver. 
+  \newline \newline
+  \noindent This vignette will show you how to get started using mrgsolve. 
+  \vskip 0.75cm \hrule
+vignette: >
+  %\VignetteIndexEntry{mrgsolve: Simulate from ODE-Based Models}
+  %\VignetteKeyword{mrgsolve, r, ode}
+  %\VignettePackage{mrgsolve}
+---
+\vskip 0.75cm
+\hrule
+\vskip 0.5cm
+
+```{=latex}
+\setlength{\parindent}{0pt}
+```
+
+This vignette introduces the mrgsolve workflow. First, load the package along 
+with any other helper packages we need for this vignette.
+
+```{r, message = FALSE, warning = FALSE}
+library(mrgsolve)
+library(dplyr)
+```
+
+# Get started
+
+To get started with mrgsolve, try using the built in model library like this
+
+```{r, message = FALSE}
+mod <- modlib("pk1", delta = 0.1)
+
+out <- mrgsim(mod, events = ev(amt = 100))
+
+out
+```
+
+```{r, fig.margin = TRUE}
+#| fig.cap: Simple simulation of a single dose
+#| fig.height: 4
+plot(out, "CP")
+```
+
+That was a really simple simulation where we used an event object to initiate
+a dose into a one-compartment model. See how the `plot()` method allows us to 
+quickly visualize what happend in the simulation. 
+
+# Event objects
+
+Event objects help you implement dosing events with a lightweight, easy to 
+compose syntax. You construct them with the `ev()` function. So I can make an 
+object for a single 100 mg bolus dose
+
+```{r}
+ev(amt = 100)
+```
+
+or we can code a series of intermittent infusions
+
+```{r}
+ev(amt = 100, rate = 50, ii = 24, addl = 3)
+```
+
