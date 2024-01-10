@@ -154,4 +154,4 @@ drone:
 .PHONY: vignette
 vignette:
 	quarto render vignettes/src/mrgsolve-vignette.qmd
-	cp vignettes/src/mrgsolve-vignette.pdf vignette
+	cp vignettes/src/mrgsolve-vignette.pdf vignettes
