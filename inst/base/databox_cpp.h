@@ -21,11 +21,13 @@
 
 void databox::mevent(double time, int evid) {
   mrgsolve::evdata ev(time,evid);
+  ev.check_unique = true;
   mevector.push_back(ev);
 }
 
 double databox::mtime(double time) {
   mrgsolve::evdata ev(time,2);
+  ev.check_unique = true;
   mevector.push_back(ev);
   return time;
 }
