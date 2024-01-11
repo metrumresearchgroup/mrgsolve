@@ -85,11 +85,12 @@
 #' 
 #' as.data.frame(param(mod))
 #' 
-#' param(mod, CL = 1.2)
+#' mod <- param(mod, CL = 1.2)
 #' 
 #' new_values <- list(CL = 1.3, VC = 20.5)
 #' 
-#' param(mod, new_values)
+#' mod <- param(mod, new_values)
+#' 
 #' 
 #' @md
 #' @keywords param
