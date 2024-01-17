@@ -260,3 +260,15 @@ test_that("until  issue-513", {
   expect_error(ev(amt=100,addl=5,until=100), "input can include either")
   expect_silent(mutate(ev(amt=100,ii=2,until=168),until=NULL,addl=5))
 })
+
+test_that("until with non-zero dose time gh-1144", {
+  # Every 4 weeks to 16 weeks; four total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7)
+  expect_equal(e$addl, 3)
+  # Every 4 weeks to just under 16 weeks; three total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7-0.01)
+  expect_equal(e$addl, 2)
+  # Every 4 weeks to 16 weeks, starting at 28 days; three total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7, time = 4*7)
+  expect_equal(e$addl, 2)
+})
