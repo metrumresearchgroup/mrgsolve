@@ -103,5 +103,3 @@ test_that("evtools - give timed dose now", {
   b <- mrgsim(mod, param = list(mode = 1))
   expect_identical(as.data.frame(a), as.data.frame(b))
 })
-
-local_edition(2)
