@@ -26,7 +26,7 @@
 #' @param time event time.
 #' @param amt dose amount.
 #' @param evid event ID.
-#' @param cmt compartment.
+#' @param cmt compartment number or name.
 #' @param ID subject ID.
 #' @param replicate logical; if `TRUE`, events will be replicated for 
 #' each individual in `ID`.
@@ -37,7 +37,7 @@
 #' will be derived as `amt/tinf`.
 #' @param realize_addl if `FALSE` (default), no change to `addl` 
 #' doses.  If `TRUE`, `addl` doses are made explicit with [realize_addl()].
-#' @param object passed to show.
+#' @param object an event object to be added to a model object.
 #' @param ... other items to be incorporated into the event object; see 
 #' **Details**.
 #' 
@@ -48,7 +48,7 @@
 #' - If not supplied, `cmt`  is assumed to be 1.
 #' - If not supplied, `time` is assumed to be 0.
 #' - If `amt` is not supplied, an error will be generated.
-#' - If `total` is supplied, then `addl` will be set to `total` - 1.
+#' - If `total` is supplied, then `addl` will be set to `total-1`.
 #' - Other items can include `ii`, `ss`, and `addl`
 #'   (see [data_set] for details on all of these items).
 #' - `ID` may be specified as a vector.
