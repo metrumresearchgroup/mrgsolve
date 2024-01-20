@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -19,50 +19,48 @@
 #' Event objects for simulating PK and other interventions
 #' 
 #' An event object specifies dosing or other interventions that get implemented
-#' during simulation. Event objects do similar things as \code{\link{data_set}}, 
+#' during simulation. Event objects do similar things as [data_set], 
 #' but simpler and quicker.
 #'
-#' @param x a model object
-#' @param time event time
-#' @param amt dose amount
-#' @param evid event ID
-#' @param cmt compartment
-#' @param ID subject ID
-#' @param replicate logical; if \code{TRUE}, events will be replicated for 
-#' each individual in \code{ID}
-#' @param until the expected maximum \bold{observation} time for this regimen
-#' @param tinf infusion time; if greater than zero, then the \code{rate} item 
-#' will be derived as \code{amt/tinf}
-#' @param realize_addl if \code{FALSE} (default), no change to \code{addl} 
-#' doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
-#' \code{\link{realize_addl}}
-#' @param object passed to show
+#' @param x a model object.
+#' @param time event time.
+#' @param amt dose amount.
+#' @param evid event ID.
+#' @param cmt compartment.
+#' @param ID subject ID.
+#' @param replicate logical; if `TRUE`, events will be replicated for 
+#' each individual in `ID`.
+#' @param until the expected maximum **observation** time for this regimen; 
+#' doses will be scheduled up to, but not including, the `until` time; 
+#' see `Examples`.
+#' @param tinf infusion time; if greater than zero, then the `rate` item 
+#' will be derived as `amt/tinf`.
+#' @param realize_addl if `FALSE` (default), no change to `addl` 
+#' doses.  If `TRUE`, `addl` doses are made explicit with [realize_addl()].
+#' @param object passed to show.
 #' @param ... other items to be incorporated into the event object; see 
-#' details
+#' Details.
 #' 
 #' @details
-#' \itemize{
-#' \item Required items in events objects include 
-#' \code{time}, \code{amt}, \code{evid} and \code{cmt}.
-#' \item If not supplied, \code{evid} is assumed to be 1.
-#' \item If not supplied, \code{cmt}  is assumed to be 1.
-#' \item If not supplied, \code{time} is assumed to be 0.
-#' \item If \code{amt} is not supplied, an error will be generated.
-#' \item If \code{total} is supplied, then \code{addl} will be set 
-#' to \code{total} - 1.
-#' \item Other items can include \code{ii}, \code{ss}, and \code{addl}
-#' (see \code{\link{data_set}} for details on all of these items).
-#' \item \code{ID} may be specified as a vector.
-#' \item If replicate is \code{TRUE} (default), then the events 
-#' regimen is replicated for each \code{ID}; otherwise, the number of
-#' event rows must match the number of \code{ID}s entered
-#' }
-#' @return events object
+#' - Required items in events objects include 
+#'   `time`, `amt`, `evid` and `cmt`.
+#' - If not supplied, `evid` is assumed to be 1.
+#' - If not supplied, `cmt`  is assumed to be 1.
+#' - If not supplied, `time` is assumed to be 0.
+#' - If `amt` is not supplied, an error will be generated.
+#' - If `total` is supplied, then `addl` will be set to `total` - 1.
+#' - Other items can include `ii`, `ss`, and `addl`
+#'   (see [data_set] for details on all of these items).
+#' - `ID` may be specified as a vector.
+#' - If replicate is `TRUE` (default), then the events 
+#'   regimen is replicated for each `ID`; otherwise, the number of
+#'   event rows must match the number of `ID`s entered.
 #' 
-#' @seealso \code{\link{evd}}, \code{\link{ev_rep}}, \code{\link{ev_days}}, 
-#' \code{\link{ev_repeat}}, \code{\link{ev_assign}},
-#' \code{\link{ev_seq}}, \code{\link{mutate.ev}},
-#' \code{\link{as.ev}}, \code{\link{ev_methods}}
+#' @return `ev()` returns an event object. 
+#' 
+#' @seealso [evd()], [ev_rep()], [ev_days()], [ev_repeat()], [ev_assign()], 
+#' [ev_seq()], [mutate.ev()], [as.ev()], [as.evd()], [ev_methods].
+#' 
 #' 
 #' @examples
 #' mod <- mrgsolve::house()
@@ -77,6 +75,17 @@
 #' 
 #' reduced_load <- dplyr::mutate(loading, amt = 750)
 #' 
+#' # Three additional doses in this case
+#' e <- ev(amt = 100, ii = 4*7, until = 16*7)
+#' e
+#' # Last dose is given at 84
+#' realize_addl(e)
+#' 
+#' # Four additional doses with last at 112 in this case
+#' e <- ev(amt = 100, ii = 4*7, until = 16*7 + 0.001)
+#' realize_addl(e)
+#' 
+#' @md
 #' @export
 setGeneric("ev", function(x, ...) {
   standardGeneric("ev")
