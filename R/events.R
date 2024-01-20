@@ -20,7 +20,7 @@
 #' 
 #' An event object specifies dosing or other interventions that get implemented
 #' during simulation. Event objects do similar things as [data_set], 
-#' but simpler and quicker.
+#' but simpler and easier to create.
 #'
 #' @param x a model object.
 #' @param time event time.

@@ -63,7 +63,7 @@ doses.  If \code{TRUE}, \code{addl} doses are made explicit with \code{\link[=re
 \description{
 An event object specifies dosing or other interventions that get implemented
 during simulation. Event objects do similar things as \link{data_set},
-but simpler and quicker.
+but simpler and easier to create.
 }
 \details{
 \itemize{
