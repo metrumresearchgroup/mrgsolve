@@ -32,14 +32,14 @@
 #' each individual in `ID`.
 #' @param until the expected maximum **observation** time for this regimen; 
 #' doses will be scheduled up to, but not including, the `until` time; 
-#' see `Examples`.
+#' see **Examples**.
 #' @param tinf infusion time; if greater than zero, then the `rate` item 
 #' will be derived as `amt/tinf`.
 #' @param realize_addl if `FALSE` (default), no change to `addl` 
 #' doses.  If `TRUE`, `addl` doses are made explicit with [realize_addl()].
 #' @param object passed to show.
 #' @param ... other items to be incorporated into the event object; see 
-#' Details.
+#' **Details**.
 #' 
 #' @details
 #' - Required items in events objects include 

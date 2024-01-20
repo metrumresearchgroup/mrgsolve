@@ -30,7 +30,7 @@ ev(x, ...)
 \item{x}{a model object.}
 
 \item{...}{other items to be incorporated into the event object; see
-Details.}
+\strong{Details}.}
 
 \item{object}{passed to show.}
 
@@ -49,7 +49,7 @@ each individual in \code{ID}.}
 
 \item{until}{the expected maximum \strong{observation} time for this regimen;
 doses will be scheduled up to, but not including, the \code{until} time;
-see \code{Examples}.}
+see \strong{Examples}.}
 
 \item{tinf}{infusion time; if greater than zero, then the \code{rate} item
 will be derived as \code{amt/tinf}.}
