@@ -261,6 +261,7 @@ test_that("until  issue-513", {
   expect_silent(mutate(ev(amt=100,ii=2,until=168),until=NULL,addl=5))
 })
 
+# See also examples given in `ev()` help topic.
 test_that("until with non-zero dose time gh-1144", {
   # Every 4 weeks to 16 weeks; four total doses
   e <- ev(amt = 100, ii = 4*7, until = 16*7)
