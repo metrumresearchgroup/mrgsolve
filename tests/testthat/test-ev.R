@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -264,11 +264,18 @@ test_that("until  issue-513", {
 test_that("until with non-zero dose time gh-1144", {
   # Every 4 weeks to 16 weeks; four total doses
   e <- ev(amt = 100, ii = 4*7, until = 16*7)
-  expect_equal(e$addl, 3)
-  # Every 4 weeks to just under 16 weeks; three total doses
-  e <- ev(amt = 100, ii = 4*7, until = 16*7-0.01)
-  expect_equal(e$addl, 2)
+  expect_equal(e$addl, 4-1)
+  r <- realize_addl(e)
+  expect_equal(max(r$time), 16*7 - 4*7)
+  # Every 4 weeks to just under 16 weeks; four total doses
+  eu <- ev(amt = 100, ii = 4*7, until = 16*7-0.01)
+  expect_identical(eu, e)
+  # Every 4 weeks to just over 16 weeks; five total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7+0.01)
+  expect_equal(e$addl, 5-1)
   # Every 4 weeks to 16 weeks, starting at 28 days; three total doses
   e <- ev(amt = 100, ii = 4*7, until = 16*7, time = 4*7)
-  expect_equal(e$addl, 2)
+  expect_equal(e$addl, 3-1)
+  r <- realize_addl(e)
+  expect_equal(max(r$time), 16*7 - 4*7)
 })
