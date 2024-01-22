@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -259,4 +259,24 @@ test_that("until  issue-513", {
   expect_identical(e$addl,6)
   expect_error(ev(amt=100,addl=5,until=100), "input can include either")
   expect_silent(mutate(ev(amt=100,ii=2,until=168),until=NULL,addl=5))
+})
+
+# See also examples given in `ev()` help topic.
+test_that("until with non-zero dose time gh-1144", {
+  # Every 4 weeks to 16 weeks; four total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7)
+  expect_equal(e$addl, 4-1)
+  r <- realize_addl(e)
+  expect_equal(max(r$time), 16*7 - 4*7)
+  # Every 4 weeks to just under 16 weeks; four total doses
+  eu <- ev(amt = 100, ii = 4*7, until = 16*7-0.01)
+  expect_identical(eu, e)
+  # Every 4 weeks to just over 16 weeks; five total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7+0.01)
+  expect_equal(e$addl, 5-1)
+  # Every 4 weeks to 16 weeks, starting at 28 days; three total doses
+  e <- ev(amt = 100, ii = 4*7, until = 16*7, time = 4*7)
+  expect_equal(e$addl, 3-1)
+  r <- realize_addl(e)
+  expect_equal(max(r$time), 16*7 - 4*7)
 })

@@ -256,7 +256,8 @@ finalize_ev_data <- function(data) {
     data[["until"]] <- NULL
     i <- data[["ii"]] > 0
     data[["addl"]] <- 0
-    data[["addl"]][i] <- ceiling((data[["time"]][i] + until[i])/data[["ii"]][i]) - 1
+    data[["addl"]][i] <- ceiling((until[i] - data[["time"]][i])/data[["ii"]][i]) - 1
+    data[["addl"]] <- unlist(data[["addl"]])
   }
   ev_cols <- c("ID", "time", "amt", "rate", "ii", "addl", "cmt", "evid", "ss")
   match_cols <- intersect(ev_cols,names(data))
