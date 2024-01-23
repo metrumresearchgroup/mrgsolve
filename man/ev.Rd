@@ -32,7 +32,7 @@ ev(x, ...)
 \item{...}{other items to be incorporated into the event object; see
 \strong{Details}.}
 
-\item{object}{passed to show.}
+\item{object}{an event object to be added to a model object.}
 
 \item{time}{event time.}
 
@@ -40,7 +40,7 @@ ev(x, ...)
 
 \item{evid}{event ID.}
 
-\item{cmt}{compartment.}
+\item{cmt}{compartment number or name.}
 
 \item{ID}{subject ID.}
 
@@ -73,7 +73,7 @@ but simpler and easier to create.
 \item If not supplied, \code{cmt}  is assumed to be 1.
 \item If not supplied, \code{time} is assumed to be 0.
 \item If \code{amt} is not supplied, an error will be generated.
-\item If \code{total} is supplied, then \code{addl} will be set to \code{total} - 1.
+\item If \code{total} is supplied, then \code{addl} will be set to \code{total-1}.
 \item Other items can include \code{ii}, \code{ss}, and \code{addl}
 (see \link{data_set} for details on all of these items).
 \item \code{ID} may be specified as a vector.
