@@ -67,6 +67,16 @@ void regimen::ii(double ii_) {
   return;
 }
 
+void regimen::rate(double rate_) {
+  Rate = rate_;
+  return;
+}
+
+void regimen::cmt(int cmt_) {
+  Cmt = cmt_;
+  return;
+}
+
 void regimen::until(double until_) {
   Until = until_;
   return;
