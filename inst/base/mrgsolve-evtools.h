@@ -64,5 +64,3 @@ void push(databox& self, mrg::evdata ev) {
 }
 }
 }
-
-
