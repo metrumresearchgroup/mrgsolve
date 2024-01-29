@@ -9,21 +9,21 @@ public:
   void reset();
   void execute();
   // Set and get
-  void cmt(int cmt_);
-  int cmt() {return Cmt;}
-  void amt(double amt_);
+  void   cmt(int cmt_);
+  int    cmt() {return Cmt;}
+  void   amt(double amt_);
   double amt() {return Amt;}
-  void ii(double ii_);
+  void   ii(double ii_);
   double ii() {return Ii;}
-  void rate(double rate_);
+  void   rate(double rate_);
   double rate() {return Rate;}
-  void until(double until_);
+  void   until(double until_);
   double until() {return Until;}
-  void flag_next();
+  void   flagnext();
   // Public members
   double dose_time;
   double prev_dose_time;
-  bool flagnext;
+  bool Flagnext;
   
 private:
   int Cmt;
@@ -42,7 +42,7 @@ void regimen::reset() {
   Until = 1.0e9;
   dose_time = 0.0;
   prev_dose_time = -1e9;
-  flagnext = false;
+  Flagnext = false;
 }
 
 regimen::regimen() {
@@ -88,7 +88,7 @@ void regimen::execute() {
   evt::infuse(*Self, Amt, Cmt, Rate);
   prev_dose_time = dose_time;
   dose_time = dose_time + Ii;
-  if(flagnext) {
+  if(Flagnext) {
     mrg::evdata ev(dose_time, 3333);
     ev.check_unique = true;
     Self->push(ev);
@@ -96,8 +96,8 @@ void regimen::execute() {
   return;
 }
 
-void regimen::flag_next() {
-  flagnext = true;
+void regimen::flagnext() {
+  Flagnext = true;
   return;
 }
 

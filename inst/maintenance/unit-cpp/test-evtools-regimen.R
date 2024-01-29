@@ -28,7 +28,7 @@ if(NEWIND <=1) {
   reg.rate(Rate);
   reg.until(last);
   reg.cmt(Cmt);
-  if(FLAG) reg.flag_next();
+  if(FLAG) reg.flagnext();
 }
 
 $ERROR
