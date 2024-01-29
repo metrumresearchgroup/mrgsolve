@@ -11,7 +11,7 @@ code <- '
 $PARAM 
 CL = 1/10, V = 20, KA = 1, Rate = 0, Cmt = 1
 dose = 100, interval = 4*7, last = 10*112
-DC = 100, FLAG  = 0
+FLAG  = 0
 
 $PKMODEL cmt = "DEPOT,CENT", depot = TRUE
 
@@ -34,6 +34,11 @@ if(NEWIND <=1) {
 $ERROR
 reg.execute();
 capture CP = CENT/V;
+capture cdose = reg.amt();
+capture cinterval = reg.ii();
+capture crate = reg.rate();
+capture cuntil = reg.until();
+capture ccmt = reg.cmt();
 '
 
 mod1 <- mcode("test-evtools-regimen", code, quiet = TRUE)
@@ -45,6 +50,10 @@ test_that("Identical results with pk1", {
   out1 <- mrgsim(mod1, end = 10*112)
   out2 <- mrgsim(mod2, data = data, end = 10*112, obsonly = TRUE)
   expect_identical(out1$CP, out2$CP)  
+  expect_true(all(out1$cinterval==mod1$interval))
+  expect_true(all(out1$cdose==mod1$dose))
+  expect_true(all(out1$cuntil==mod1$last))
+  expect_true(all(out1$crate==mod1$Rate))
   
   # Change up specifics, including infusion
   data <- ev(amt = 950, ii = 6, until = 72, rate = 300, cmt = 2)
@@ -55,6 +64,11 @@ test_that("Identical results with pk1", {
   out2 <- mrgsim(mod2, end = 144, data = data, obsonly = TRUE)
   expect_identical(out1$CP, out2$CP)
   expect_true(all(out1$DEPOT==0))
+  
+  expect_true(all(out1$cinterval==mod1$interval))
+  expect_true(all(out1$cdose==mod1$dose))
+  expect_true(all(out1$cuntil==mod1$last))
+  expect_true(all(out1$crate==mod1$Rate))
 })
 
 test_that("flag_next stops the simulation", {
