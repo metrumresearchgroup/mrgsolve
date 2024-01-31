@@ -137,7 +137,7 @@ test_that("clean up row names gh-1116", {
     ev_rep(ev(amt = 100), ID = 1:2), 
     ev_rep(ev(amt = 200), ID = 1:3)
   )
-  expect_identical(rownames(a), as.character(seq(5)))
+  expect_identical(rownames(a), as.character(seq(nrow(a))))
 })
 
 test_that("events with without rate" , {
