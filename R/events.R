@@ -467,6 +467,7 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
       data <- ev_repeat(data, n = n, wait = wait)
     }
   }
+  rownames(data) <- NULL
   if(isTRUE(as.ev)) {
     set_ev_case(as.ev(data), case)
   } else {
