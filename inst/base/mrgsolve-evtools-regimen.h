@@ -39,10 +39,10 @@ void regimen::reset() {
   Cmt = 1;
   Amt = 0.0;
   Rate = 0.0;
-  Ii = 1e9;
+  Ii = 1.0e9;
   Until = 1.0e9;
   dose_time = 0.0;
-  prev_dose_time = -1e9;
+  prev_dose_time = -1.0e9;
   Flagnext = false;
 }
 
@@ -93,7 +93,7 @@ void regimen::execute() {
   dose_time = dose_time + Ii;
   if(Flagnext) {
     mrg::evdata ev(dose_time, 3333);
-    ev.check_unique = true;
+    ev.check_unique = false;
     Self->push(ev);
   }
   return;
