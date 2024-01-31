@@ -4,6 +4,7 @@ subtitle: "Get Started Package Vignette"
 shorttitle: "Let's Get Started"
 author: Kyle T. Baron
 affiliation: Metrum Research Group
+keywords: rstats, mrgsolve, simulation, ode
 date: 2023-01-04
 format: 
   pdf: 
@@ -21,9 +22,9 @@ format:
       - header.tex
 
 abstract: |
-  \noindent mrgsolve is an R package maintained under the auspices of Metrum Research Group that facilitates simulation from models based on systems of ordinary differential equations (ODE) that are typically employed for understanding pharmacokinetics, pharmacodynamics, and systems biology and pharmacology. mrgsolve consists of computer code written in the R and C++ languages, providing an interface to a C++ translation of the lsoda differential equation solver. 
+  \noindent mrgsolve is an R package maintained under the auspices of Metrum Research Group that facilitates simulation from models based on systems of ordinary differential equations (ODE) that are typically employed for understanding pharmacokinetics, pharmacodynamics, and systems biology and pharmacology. mrgsolve consists of computer code written in the R and C++ languages, providing an interface to a C++ translation of the lsoda differential equation solver. This vignette will show you how to get started using mrgsolve. 
   \newline \newline
-  \noindent This vignette will show you how to get started using mrgsolve. 
+  _Keywords: rstats, mrgsolve, simulation, ODE, PK, PKPD, PBPK, QSP_
   \vskip 0.75cm \hrule
 vignette: >
   %\VignetteIndexEntry{mrgsolve: Simulate from ODE-Based Models}
@@ -49,15 +50,14 @@ library(dplyr)
 
 # Big picture
 
-There are 3 (or 4) main workflows that we want to work up to. 
-
-Decide what is the output you want and that will tell you what 
-the inputs you need. 
-
+There are 3 (or 4) main simulation workflows that we want to work up to. We can 
+think about the type of outputs we want and determine what inputs we'll need 
+to create and the functions that need to be called in order to get those outputs
+back.
 
 ## You need a model
 
-For every workflow, you need a model. This is coded in a separate 
+For every workflow, you need a model. In most cases, is coded in a separate 
 file and read in by `mread()`
 
 ```{r}
@@ -68,7 +68,7 @@ We'll code up a model right after this overview.
 
 ## Single profile
 
-To get a single profile, use and event object
+The first and simplest To get a single profile, use and event object
 
 ```{r}
 mod %>% 
