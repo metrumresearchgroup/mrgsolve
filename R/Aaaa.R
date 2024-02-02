@@ -93,7 +93,8 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss", "evid",
               "addl", "rate","time", Reserved_cvar,
               "AMT", "CMT", "II", "SS", "ADDL", "RATE", "THETA",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
-              "double", "int", "bool", "capture")
+              "double", "int", "bool", "capture", 
+              "until", "now")
 
 Reserved_nm <- c("A", "DADT", "A_0", "T")
 
