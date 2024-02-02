@@ -542,11 +542,12 @@ find_cpp_dot <- function(spec, env) {
   if(!length(x)) return(NULL)
   pattern <- "\\b[a-zA-Z][a-zA-Z0-9_]*\\.[a-zA-Z][a-zA-Z0-9_]*\\b"
   m <- gregexpr(pattern, x)
-  mm <- unlist(regmatches(x, m))
+  mm <- regmatches(x, m)
+  mm <- unlist(mm, use.names = FALSE)
   if(!length(mm)) return(NULL)
-  mm <- strsplit(mm, ".", fixed = TRUE)
-  mm <- unique(unlist(mm), use.names = FALSE)
-  env[["cpp_dot"]] <- mm
+  cpp_dot <- strsplit(mm, ".", fixed = TRUE)
+  cpp_dot <- unlist(cpp_dot, use.names = FALSE)
+  env[["cpp_dot"]] <- unique(cpp_dot)
   return(NULL)
 }
 

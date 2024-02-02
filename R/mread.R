@@ -229,7 +229,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     build
   )
   
-  # Find cpp objects with dot syntax ----
+  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
   find_cpp_dot(spec, mread.env)
   
   # Parse blocks ----
