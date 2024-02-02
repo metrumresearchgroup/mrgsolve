@@ -100,14 +100,18 @@ check_globals <- function(x,cmt) {
   return(invisible(NULL))
 }
 
-check_cpp_objects <- function(env, x) {
-  if(is.null(env[["cpp_objects"]])) return(NULL)
+check_cpp_dot <- function(env, x) {
+  # Vast majority of models will just return
+  if(is.null(env[["cpp_dot"]])) return(NULL)
+  cpp_dot <- setdiff(
+    env[["cpp_dot"]], 
+    x@envir[["MRGSOLVE_CPP_DOT_SKIP"]]
+  )
+  if(!length(cpp_dot)) return(NULL)
   mod_names <- names(x)
   mod_names <- mod_names[c("param", "init", "omega_labels", "sigma_labels")]
   mod_labels <- unlist(mod_names, use.names = FALSE)
-  cpp_objects <- env[["cpp_objects"]]
-  bad <- cpp_objects[cpp_objects %in% mod_labels]
-  if(!length(bad)) return(NULL)
+  bad <- cpp_dot[cpp_dot %in% mod_labels]
   bad <- setdiff(bad, Reserved)  
   if(!length(bad)) return(NULL)
   mod_names$sigma_labels <- unlist(mod_names$sigma_labels, use.names = FALSE)
@@ -115,8 +119,8 @@ check_cpp_objects <- function(env, x) {
   for(i in seq_along(bad)) {
     if(bad[i] %in% mod_names$param) bad[i] <- paste(bad[i], "(parameter)")
     if(bad[i] %in% mod_names$init) bad[i] <- paste(bad[i], "(compartment)")
-    if(bad[i] %in% mod_names$omega_labels) bad[i] <- paste(bad[i], "(eta name)")
-    if(bad[i] %in% mod_names$sigma_labels) bad[i] <- paste(bad[i], "(eps name)")
+    if(bad[i] %in% mod_names$omega_labels) bad[i] <- paste(bad[i], "(eta label)")
+    if(bad[i] %in% mod_names$sigma_labels) bad[i] <- paste(bad[i], "(eps label)")
   }
   if(length(bad) > 1) {
     msg <- "Reserved symbols cannot be used as model names:"

@@ -535,19 +535,18 @@ move_global2 <- function(spec, env, build) {
   spec
 }
 
-find_cpp_objects <- function(spec, env) {
-  to_check <- c("PREAMBLE", "MAIN", "PK", "ODE", "TABLE", 
-                "ERROR", "GLOBAL", "PRED")
+find_cpp_dot <- function(spec, env) {
+  to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "GLOBAL")
   x <- spec[names(spec) %in% to_check]
   x <- unlist(x, use.names = FALSE)
-  if(length(x)==0) return(NULL)
-  pat <- "\\b[a-zA-Z][a-zA-Z0-9_]*\\.[a-zA-Z][a-zA-Z0-9_]*\\b"
-  m <- gregexpr(pat, x)
+  if(!length(x)) return(NULL)
+  pattern <- "\\b[a-zA-Z][a-zA-Z0-9_]*\\.[a-zA-Z][a-zA-Z0-9_]*\\b"
+  m <- gregexpr(pattern, x)
   mm <- unlist(regmatches(x, m))
-  if(length(mm)==0) return(NULL)
+  if(!length(mm)) return(NULL)
   mm <- strsplit(mm, ".", fixed = TRUE)
   mm <- unique(unlist(mm), use.names = FALSE)
-  env[["cpp_objects"]] <- mm
+  env[["cpp_dot"]] <- mm
   return(NULL)
 }
 
@@ -752,7 +751,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$blocks <- names(spec)
   mread.env$incoming_names <- incoming_names
   mread.env$capture_etas <- NULL
-  mread.env$cpp_objects <- NULL
+  mread.env$cpp_dot <- NULL
   mread.env
 }
 
