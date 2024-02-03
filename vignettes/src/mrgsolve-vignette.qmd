@@ -8,6 +8,7 @@ keywords: rstats, mrgsolve, simulation, ode
 date: 2023-01-04
 format: 
   pdf: 
+    fig-cap-location: bottom
     papersize: a4
     number-sections: true
     toc: true
@@ -15,8 +16,8 @@ format:
     toc-title: Contents
     geometry: 
       - bottom=1.25in
-      - left=1.25in
-      - right=1.25in
+      - left=1.5in
+      - right=1.5in
       - top=1.25in
     include-in-header: 
       - header.tex
@@ -39,21 +40,25 @@ vignette: >
 \setlength{\parindent}{0pt}
 ```
 
-This vignette introduces the mrgsolve workflow. First, load the package along 
-with any other helper packages we need for this vignette.
+# Big picture
+
+In this section, I want to give you an overhead view of what it is like working
+with mrgsolve. There are a _huge_ number of little details that you might want
+to eventually know in order to use mrgsolve effectively; but for now, let's get
+a handle on the big ticket items. 
+
+There are 3 (or 4) main simulation workflows that we want to work up to. We can
+think about the type of outputs we want and determine what inputs we'll need to
+create and the functions that need to be called in order to get those outputs
+back.
+
+First, load the package along with any other helper packages we need for this
+vignette.
 
 ```{r, message = FALSE, warning = FALSE}
 library(mrgsolve)
 library(dplyr)
 ```
-
-
-# Big picture
-
-There are 3 (or 4) main simulation workflows that we want to work up to. We can 
-think about the type of outputs we want and determine what inputs we'll need 
-to create and the functions that need to be called in order to get those outputs
-back.
 
 ## You need a model
 
@@ -61,33 +66,67 @@ For every workflow, you need a model. In most cases, is coded in a separate
 file and read in by `mread()`
 
 ```{r}
-mod <- mread_cache("azithro-fixed.mod")
+mod <- mread("azithro-fixed.mod")
 ```
 
-We'll code up a model right after this overview.
+In the above example, we created a file called `azithro-fixed.mod` (azithromycin
+population PK with fixed effect parameters only) and wrote out the covariate
+model, differential equations, etc into that file. We point `mread()` at that
+file to parse, compile and load that model. More information on using `mread()`
+and the model object is found in @sec-mod. We'll start showing you the model
+syntax in @sec-specification.
 
 ## Single profile
 
-The first and simplest To get a single profile, use and event object
+The first and simplest workflow is to generate a single simulated profile from 
+the model. The quickest way we'll do this is using the model object loaded 
+in the previous section along with an event object
 
 ```{r}
+#| fig-cap: Example simulation of a single profile with an event object.
 mod %>% 
   ev(amt = 250, ii = 24, addl = 4) %>% 
   mrgsim(end = 144, delta = 0.1) %>% 
   plot("CP") 
 ```
 
+The `mrgsim()` function is called to actually execute the simulation and we've
+introduced some simulation options (like the simulation `end` time) by passing 
+those arguments in. More info on `mrgsim()` can be found in @sec-simulation. 
+
+The event object is a quick way to introduce an intervention (like dose
+administration) into your simulation. More information about event objects is 
+provided in @sec-event.
 
 ## Population
 
-To simulate a population, you'll need what we call a data set
+When we simulate a population, we want to simulate a collection of individuals
+(or profiles) in a single simulation. Most often, this involves creating an 
+input data set with dosing or other information for each subject in the 
+population.
+
+In this example, we'll load another azithromycin population PK model
 
 ```{r}
-mod <- mread_cache("azithro.mod")
-data <- expand.ev(amt = 250, WT = runif(30, 50, 100))
+mod <- mread("azithro.mod")
 ```
 
+Rather than using an event object as we did for the single profile, we make a 
+data set. 
+
 ```{r}
+set.seed(9876)
+
+data <- expand.ev(amt = 250, WT = runif(10, 50, 100))
+
+data
+```
+
+In this data set, we see 10 subjects who are differentiated by their different 
+weights (`WT`). For this simulation, we'll give every subject 250 mg.
+
+```{r}
+#| fig-cap: Example population simulation.
 set.seed(9876)
 
 mod %>% 
@@ -96,17 +135,38 @@ mod %>%
   plot("CP")
 ```
 
+This simulation introduces variability not only through the covariate `WT` but 
+also through random effects (i.e., ETAs) which are simulated when we call 
+`mrgsim()`.
+
 ## Batch 
 
-You can also simulate a population (or a batch of subjects) with a 
-data set of parameters and an event object
-
+You can also simulate a population (or a batch of subjects) with a data set of
+parameters and an event object. This workflow is _like_ the population
+simulation, but the inputs are configured in a slightly different way. Going 
+back to the `azithro-fixed` model
 
 ```{r}
-mod <- mread_cache("azithro-fixed.mod")
+mod <- mread("azithro-fixed.mod")
+```
 
-data <- data.frame(WT = runif(30, 50, 100))
+Rather than creating a data set with _doses_ for everyone, we just create their
+parameters
 
+```{r}
+set.seed(9876)
+
+data <- expand.idata(WT = runif(10, 50, 100))
+
+data
+```
+
+Here, we have 10 parameter sets which can also be thought of as 10 people.
+We can pass this set of parameters as `idata`, or individual-level data, 
+along with an event object
+
+```{r}
+#| fig-cap: Example simulation with `idata_set`.
 mod %>% 
   ev(amt = 250, ii = 24, addl = 4) %>% 
   idata_set(data) %>% 
@@ -114,13 +174,20 @@ mod %>%
   plot("CP")
 ```
 
+Here, we get the same output as we got for the population simulation, but a 
+slightly different setup. This setup might be more or less convenient or more
+or less flexible to use compared to the population setup. Either way, the 
+approach is up to you and the needs of your simulation project. 
+
 ## Replicate
 
-The other pattern is just like data set, but we do that in a loop
-to generate replicate simulations. 
+This pattern is just like data set, but we do that in a loop to generate 
+replicate simulations. Sometimes we do a simulation like this when we are doing
+simulation-based model evaluation or maybe we're simulating across draws from 
+a posterior distribution of parameter estimates. 
 
-This simulation might look something like this
-
+This simulation might look something like this (code not evaluated in this 
+vignette)
 
 ```{r}
 #| eval: false
@@ -135,10 +202,13 @@ sim <- function(i, model, data) {
 out <- lapply(1:1000, sim, model = mod, data = data) %>% bind_rows()
 ```
 
-See @sec-replicate for full examples on replicate simulation.
+Here, we create a function that simulates a data set once and call that 
+repeatedly to get replicate simulated data sets. 
 
 
 ## The overall pattern 
+
+So the overall pattern to working with mrgsolve is
 
 - Code a model 
 - Load it with `mread()`
@@ -146,11 +216,10 @@ See @sec-replicate for full examples on replicate simulation.
 - Simulate with `mrgsim()`
 - Plot or process your output
 
+# Quick start
 
-
-# Get started
-
-To get started with mrgsolve, try using the built in model library like this
+To quickly get started with mrgsolve, try using the built in model library like
+this
 
 ```{r, message = FALSE}
 mod <- modlib("pk1", delta = 0.1)
@@ -161,16 +230,18 @@ out
 ```
 
 ```{r, fig.margin = TRUE}
-#| fig.cap: Simple simulation of a single dose
-#| fig.height: 3
+#| fig-cap: "It's easy to get started quickly with mrgsolve."
+#| fig-height: 3
 plot(out, "CP")
 ```
 
 That was a really simple simulation where we used an event object to initiate
 a dose into a one-compartment model. See how the `plot()` method allows us to 
-quickly visualize what happend in the simulation. 
+quickly visualize what happened in the simulation. See the `?modlib` help topic
+for more models you can play around with to get comfortable with mrgsolve. Or 
+keep reading to dig into more of the details.
 
-# Model object
+# Model object {#sec-mod}
 
 This chapter introduces the ___model object___. 
 
@@ -443,7 +514,7 @@ l <- as.list(mod)
 ```
 
 
-# Event objects
+# Event objects {#sec-event}
 
 Event objects are quick ways to generate an intervention or
 a sequence of interventions to apply to your model. 
@@ -603,7 +674,7 @@ ev_rx("100 mg x1 then 50 q12h x 10 at 24")
 ```
 
 
-# Simulation and outputs
+# Simulation and outputs {#sec-simulation}
 
 This chapter discusses
 
@@ -1080,7 +1151,7 @@ check_data_names(data2, mod)
 ```
 
 
-# Model Specification
+# Model Specification {#sec-specification}
 
 In this chapter, we'll code up a very simple pharmacokinetic model. 
 This is just starter material to get some concepts in place. We'll 
