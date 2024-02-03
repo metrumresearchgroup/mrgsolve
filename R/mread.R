@@ -231,7 +231,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
   find_cpp_dot(spec, mread.env)
-  return(spec)
   
   # Parse blocks ----
   # Each block gets assigned a class to dispatch the handler function

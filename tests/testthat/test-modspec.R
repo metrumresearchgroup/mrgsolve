@@ -499,7 +499,7 @@ test_that("autodec models", {
   cpp <- as.list(mod)$cpp_variables
   expect_equal(cpp$var, c("F1", "err", "cl", "v2", "ka", "CP"))
   expect_equal(cpp$context, c("main", "table", rep("auto", 4)))
-
+  
 })
 
 test_that("autodec models with nm-vars", {
@@ -565,7 +565,7 @@ test_that("tagged parameter blocks", {
   expect_equal(nrow(tagdf), 4)
   expect_equal(tagdf$name, rep("V2", 4))
   expect_equal(tagdf$tag, c("input", "foo", "bar", "par"))
-
+  
   code <- "$PARAM @tag foo, bar \n V2 = 5, CL = 3"
   x <- mcode("tag-3", code, compile = FALSE)
   tagdf <- x@shlib$param_tag
@@ -589,8 +589,62 @@ test_that("INPUT block", {
 })
 
 test_that("Reserve names in cpp dot gh-1159", {
-  temp <- '$param {param}\n$main {main};\n$table {table}'
+  temp <- '$param {param}\n$main\n{main};\n$table\n{table}'
+  
   param <- "cl = 1, bar = 2, vc = 5"
   main <- "double b = 5;\nfoo.bar = true;"
-  table <- ""
+  table <- "true;"
+  code <- glue::glue(temp)
+  
+  expect_error(
+    mcode("cpp-dot-1", code, compile = FALSE), 
+    "Reserved symbol cannot be used as model name"
+  )
+  
+  table <- main
+  main <- "true;"
+  code <- glue::glue(temp)
+  
+  expect_error(
+    mcode("cpp-dot-2", code, compile = FALSE), 
+    "Reserved symbol cannot be used as model name"
+  )
+  
+  param <- "cl = 1, amt = 20"
+  main <- "double b = 5;\nself.amt = 100;"
+  table <- "true;"
+  code <- glue::glue(temp)
+  
+  expect_error(
+    mcode("cpp-dot-3", code, compile = FALSE), 
+    "invalid class"
+  )
+})
+
+test_that("Skip cpp dot check gh-1159", {
+  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo"'
+  
+  param <- "cl = 1, foo = 3, vc = 5"
+  main <- "double b = 5;\nfoo.bar = true;"
+  table <- "true;"
+  code <- glue::glue(temp)
+  
+  expect_is(mcode("cpp-dot-skip-1", code, compile = FALSE), "mrgmod")
+  
+  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo,bar"'
+  param <- "cl = 1, bar = 2, vc = 5"
+  main <- "double b = 5;\nfoo.bar = true;"
+  table <- "true;"
+  code <- glue::glue(temp)
+  
+  expect_error(
+    mcode("cpp-dot-skip-2", code, compile = FALSE), 
+    regexp = "bar (parameter)", 
+    fixed = TRUE
+  )
+  
+  check <- try(mcode("cpp-dot-skip-3", code, compile = FALSE), silent = TRUE)
+  
+  expect_match(check, "bar (parameter)", fixed = TRUE)
+  expect_no_match(check, "foo (parameter)", fixed = TRUE)
 })
