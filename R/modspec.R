@@ -539,9 +539,11 @@ find_cpp_dot <- function(spec, env) {
   to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "GLOBAL")
   x <- spec[names(spec) %in% to_check]
   x <- unlist(x, use.names = FALSE)
+  # Narrow the search first; 10x speed up when searching for `pattern`
+  x <- x[grepl(".", x, fixed = TRUE)]
   if(!length(x)) return(NULL)
   pattern <- "\\b[a-zA-Z][a-zA-Z0-9_]*\\.[a-zA-Z][a-zA-Z0-9_]*\\b"
-  m <- gregexpr(pattern, x)
+  m <- gregexpr(pattern, x, perl = TRUE)
   mm <- regmatches(x, m)
   mm <- unlist(mm, use.names = FALSE)
   if(!length(mm)) return(NULL)

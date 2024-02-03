@@ -587,3 +587,10 @@ test_that("INPUT block", {
   expect_equal(tagdf$name, c("CL", "V2"))
   expect_equal(tagdf$tag, rep("input", 2))
 })
+
+test_that("Reserve names in cpp dot gh-1159", {
+  temp <- '$param {param}\n$main {main};\n$table {table}'
+  param <- "cl = 1, bar = 2, vc = 5"
+  main <- "double b = 5;\nfoo.bar = true;"
+  table <- ""
+})
