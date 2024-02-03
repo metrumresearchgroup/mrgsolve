@@ -83,7 +83,6 @@ the model. The quickest way we'll do this is using the model object loaded
 in the previous section along with an event object
 
 ```{r}
-#| fig-cap: Example simulation of a single profile with an event object.
 mod %>% 
   ev(amt = 250, ii = 24, addl = 4) %>% 
   mrgsim(end = 144, delta = 0.1) %>% 
@@ -126,7 +125,6 @@ In this data set, we see 10 subjects who are differentiated by their different
 weights (`WT`). For this simulation, we'll give every subject 250 mg.
 
 ```{r}
-#| fig-cap: Example population simulation.
 set.seed(9876)
 
 mod %>% 
@@ -143,8 +141,10 @@ also through random effects (i.e., ETAs) which are simulated when we call
 
 You can also simulate a population (or a batch of subjects) with a data set of
 parameters and an event object. This workflow is _like_ the population
-simulation, but the inputs are configured in a slightly different way. Going 
-back to the `azithro-fixed` model
+simulation, but the inputs are configured in a slightly different way where
+the population is a set of parameters with a common intervention, rather than 
+and data set with (possibly) different interventions (or different parameters)
+for each subject in the population. Going back to the `azithro-fixed` model
 
 ```{r}
 mod <- mread("azithro-fixed.mod")
@@ -166,7 +166,6 @@ We can pass this set of parameters as `idata`, or individual-level data,
 along with an event object
 
 ```{r}
-#| fig-cap: Example simulation with `idata_set`.
 mod %>% 
   ev(amt = 250, ii = 24, addl = 4) %>% 
   idata_set(data) %>% 
@@ -230,7 +229,6 @@ out
 ```
 
 ```{r, fig.margin = TRUE}
-#| fig-cap: "It's easy to get started quickly with mrgsolve."
 #| fig-height: 3
 plot(out, "CP")
 ```
@@ -1433,23 +1431,32 @@ double j = floor(4.2);
 double k = ceil(4.2);
 ```
 
-Be careful of integer division
+### Integer division
+
+Be careful of dividing two integers; it's usually not what you want to do. When 
+people get bit by this, it's usually when they divide one integer literal
+by another integer literal in their code. For example, we might _think_ the 
+following should evaluate to `0.75`
 
 ```{r}
 #| eval: false
-double result = 1/2; # 0
+double result = 3/4; # 0
 ```
 
-Here, `result` will evaluate to `0`.
+but it doesn't; here, `result` will evaluate to `0` because the `C++` compiler
+will do integer division between the 3 and the 4 and you'll get `0`. 
 
-Good practice to put `.0` behind whole numbers. 
+It is good to get in the habit of putting `.0` behind whole numbers. 
 
 ```{r}
 #| eval: false
-double result = 1.0/2.0; # 0.5
+double result = 3.0/4.0; # 0.75
 ```
 
-Lots of help on the web
+Of course, you _might_ really want to divide two integers at some point; but 
+for now, please mind this "feature" of `C++` when writing your code. 
+
+Lots of help with `C++` on the web
 http://en.cppreference.com/w/cpp/numeric/math/tgamma
 
 
