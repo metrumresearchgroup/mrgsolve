@@ -250,7 +250,7 @@ This chapter introduces the ___model object___.
   - ODE
   - Algebraic relationships
   - Random effects
-  - Etc
+  - More
 - The model object is what you use in R to 
   - Query the model
   - Run simulations
@@ -259,10 +259,18 @@ This chapter introduces the ___model object___.
 
 Load a model from a model specification file using `mread()`. 
 
-- Don't worry for now what is in that file; we'll show you how to create it
-- Your model can have any extension
+- Don't worry for now what is in that file; we'll show you how to create it.
+- Your model can have any extension. Traditionally, we've used the `.cpp` 
+  extension because a lot of the code in that file is `C++`. However, we've 
+  moved away from that in recent years because code editors like `Rstudio` 
+  see that `.cpp` extension and think that _all_ the code is `C++` and format
+  the code in ways that aren't what you usually want. So using `.mod` (or `.txt`
+  can be helpful just to keep your editor from doing too much. 
 
 ### Syntax to load a model 
+
+This section walks you though some of the ways you can use `mread()` to load 
+a model.
 
 __Provide the complete path to the file__
 
@@ -274,7 +282,7 @@ mod <- mread("model/test.mod")
 
 __Provide the directory as an argument__
 
-- Assumes you are keeping all simulation code in the `models` directory
+Assumes you are keeping all simulation code in the `models` directory
 
 ```{r}
 #| eval: false
@@ -284,7 +292,7 @@ mod <- mread("test.mod", project = "model")
 
 __Set `project` as an option__
 
-- All my models are in this directory _for this project_
+All my models are in this directory _for this project_
 
 ```{r}
 #| eval: false
@@ -294,6 +302,12 @@ mod <- mread("test.mod")
 ```
 
 __Update on load__
+
+mrgsolve provides an `update()` method for updating a model object. `mread()` 
+will take in arguments and pass them along to `update()` so you can make these
+changes at the time the model is loaded.
+
+In this example, we'll
 
 - Set the simulation end time to `240`
 - Set (increase) ODE solver relative tolerance to `1e-5`
@@ -306,22 +320,26 @@ mod <- mread("model/test.mod", end = 240, rtol = 1e-5)
 
 ### Read and cache
 
-Use `mread_cache()` to build and cache the model. 
+Use `mread_cache()` to build and cache the model on disk. 
 
-Load it once
-
-```{r}
-mod <- mread_cache("test.mod", project = "model")
-```
-
-Load it again
+When you load the model the first time, it'll be
 
 ```{r}
 mod <- mread_cache("test.mod", project = "model")
 ```
 
-Look at the `soloc` argument; this will let you place the cached model in 
-a stable location. 
+When you load it again, you'll see
+
+```{r}
+mod <- mread_cache("test.mod", project = "model")
+```
+
+By default, mrgsolve will store the cached model information in the temporary
+directory that R sets up every time you start a new R session. This is
+convenient because you don't have to think about what that directory is, but
+sometimes you want the cached model to sit in a location that you have a little
+more control over. Look at the `soloc` argument; this will let you place the
+cached model information in a stable location.
 
 ## `modlib()`
 
@@ -381,6 +399,11 @@ see(mod)
 
 
 ## Parameters
+
+Parameters are `name=value` pairs that are used in your model. You can _change_
+the `value` of a parameter in several different ways. Understanding how 
+to do this update is really important if you want to make interesting 
+simulation outputs.
 
 Query the parameter list with `param()`
 
