@@ -314,7 +314,7 @@ test_that("pass ETA on the idata set", {
     ETA1 = rev(ID)/10,
     ETA3 = ETA1
   )[, c("ID", "ETA1", "ETA3")]
-
+  
   data <- expand_observations(data, times = seq(5))
   data <- mutate(data, cmt = 0)
   data2 <- merge(data, idata, by = "ID")
@@ -330,7 +330,7 @@ test_that("pass ETA on the idata set", {
     mrgsim(mod, data, idata, etasrc = "idata.all"), 
     "all 11 ETAs must"
   )
-
+  
   expect_error(
     mrgsim(mod, data, idata = data[, "ID"], etasrc = "idata"), 
     "at least one"
@@ -355,4 +355,16 @@ test_that("pass ETA on the idata set", {
   expect_identical(out$c, idata$ETA3)
   expect_identical(out$b, rep(0, nrow(idata)))
   expect_identical(out$d, rep(0, nrow(idata)))
+})
+
+
+test_that("Reproducible EPS with etasrc=data gh-1138", { 
+  data <- expand.ev(amt = 0, ETA1 = 0.1)
+  mod <- modlib("popex", capture = "EPS(1)", end = 300)
+  mod <- smat(mod, matrix(1))
+  set.seed(11211)
+  out1 <- mrgsim(mod, data)
+  set.seed(11211)
+  out2 <- mrgsim(mod, data, etasrc = "data")
+  expect_identical(out1$EPS_1, out2$EPS_1)
 })
