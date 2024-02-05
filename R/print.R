@@ -93,7 +93,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
     capttext <- paste0(captheader[1:length(capttext)],capttext)
     
   } else {
-    capttext <- paste(captheader[1],"<none>")  
+    capttext <- paste0(captheader[1],"<none>")  
   }
   
   maxs <- paste0(floor(x@maxsteps/1000), "k")
