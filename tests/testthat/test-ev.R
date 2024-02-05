@@ -132,6 +132,14 @@ test_that("replicate an event object", {
   expect_equal(df$ID, 11:14)
 })
 
+test_that("clean up row names gh-1116", {
+  a <- as_data_set(
+    ev_rep(ev(amt = 100), ID = 1:2), 
+    ev_rep(ev(amt = 200), ID = 1:3)
+  )
+  expect_identical(rownames(a), as.character(seq(nrow(a))))
+})
+
 test_that("events with without rate" , {
   e1 <- ev(amt=1, ii=12)
   e2 <- ev(amt=2, ii=24, rate=1)
