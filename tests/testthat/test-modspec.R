@@ -629,10 +629,10 @@ test_that("Skip cpp dot check gh-1159", {
   table <- "true;"
   code <- glue::glue(temp)
   
-  expect_is(mcode("cpp-dot-skip-1", code, compile = FALSE), "mrgmod")
+  expect_s4_class(mcode("cpp-dot-skip-1", code, compile = FALSE), "mrgmod")
   
-  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo,bar"'
-  param <- "cl = 1, bar = 2, vc = 5"
+  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo"'
+  param <- "cl = 1, foo = 3, bar = 2, vc = 5"
   main <- "double b = 5;\nfoo.bar = true;"
   table <- "true;"
   code <- glue::glue(temp)
@@ -647,4 +647,12 @@ test_that("Skip cpp dot check gh-1159", {
   
   expect_match(check, "bar (parameter)", fixed = TRUE)
   expect_no_match(check, "foo (parameter)", fixed = TRUE)
+  
+  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo,bar"'
+  param <- "cl = 1, foo = 3, bar = 2, vc = 5"
+  main <- "double b = 5;\nfoo.bar = true;"
+  table <- "true;"
+  code <- glue::glue(temp)
+  
+  expect_s4_class(mcode("cpp-dot-skip-4", code, compile = FALSE), "mrgmod")
 })
