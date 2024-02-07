@@ -103,8 +103,12 @@ check_globals <- function(x,cmt) {
 check_cpp_dot <- function(env, x) {
   # Vast majority of models will just return
   if(is.null(env[["cpp_dot"]])) return(NULL)
-  dont_check <- cvec_cs(x@envir[["MRGSOLVE_CPP_DOT_SKIP"]])
-  cpp_dot <- setdiff(env[["cpp_dot"]], dont_check)
+  cpp_dot <- env[["cpp_dot"]]
+  dont_check <- x@envir[["MRGSOLVE_CPP_DOT_SKIP"]]
+  if(is.character(dont_check)) {
+    dont_check <- cvec_cs(dont_check)
+    cpp_dot <- setdiff(cpp_dot, dont_check)
+  } 
   if(!length(cpp_dot)) return(NULL)
   mod_names <- names(x)
   mod_names <- mod_names[c("param", "init", "omega_labels", "sigma_labels")]
