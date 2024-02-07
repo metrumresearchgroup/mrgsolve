@@ -1,6 +1,6 @@
 # mrgsolve 1.4.0
 
-- `evtools` is a new plugin providing api for dynamic dosing from within the 
+- `evtools` is a new plugin providing API for dynamic dosing from within the 
   model; functions and classes are in the `evt` namespace (#1149).
   
 - `regimen` is a new class located in the `evt` namespace via the `evtools` 
