@@ -535,6 +535,24 @@ move_global2 <- function(spec, env, build) {
   spec
 }
 
+find_cpp_dot <- function(spec, env) {
+  to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "GLOBAL")
+  x <- spec[names(spec) %in% to_check]
+  x <- unlist(x, use.names = FALSE)
+  # Narrow the search first; 10x speed up when searching for `pattern`
+  x <- x[grepl(".", x, fixed = TRUE)]
+  if(!length(x)) return(NULL)
+  pattern <- "\\b[a-zA-Z][a-zA-Z0-9_]*\\.[a-zA-Z][a-zA-Z0-9_]*\\b"
+  m <- gregexpr(pattern, x, perl = TRUE)
+  mm <- regmatches(x, m)
+  mm <- unlist(mm, use.names = FALSE)
+  if(!length(mm)) return(NULL)
+  cpp_dot <- strsplit(mm, ".", fixed = TRUE)
+  cpp_dot <- unlist(cpp_dot, use.names = FALSE)
+  env[["cpp_dot"]] <- unique(cpp_dot)
+  return(NULL)
+}
+
 # nocov start
 get_rcpp_vars <- function(y) {
   m <- gregexpr(move_global_rcpp_re_find,y,perl=TRUE)
@@ -736,6 +754,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$blocks <- names(spec)
   mread.env$incoming_names <- incoming_names
   mread.env$capture_etas <- NULL
+  mread.env$cpp_dot <- NULL
   mread.env
 }
 
