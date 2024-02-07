@@ -67,6 +67,8 @@ file and read in by `mread()`
 
 ```{r}
 mod <- mread("azithro-fixed.mod")
+
+mod
 ```
 
 In the above example, we created a file called `azithro-fixed.mod` (azithromycin
@@ -537,14 +539,13 @@ l <- as.list(mod)
 
 # Event objects {#sec-event}
 
-Event objects are quick ways to generate an intervention or
-a sequence of interventions to apply to your model. 
-
-These are like quick and easy data sets. 
+Event objects are quick ways to generate an intervention or a sequence of
+interventions to apply to your model. For example, you have a PK model and want
+to implement a series of doses into the system during the simulation. Event 
+objects function like quick and easy data sets to accomplish this.
 
 
 ## Create and event object
-
 
 Use `ev()` and pass NMTRAN data names in lower case. 
 
@@ -582,10 +583,12 @@ See `?ev` for additional details.
 
 ## Invoke event object
 
+There are several ways to create an invoke event objects. 
 
 ### Inline
 
-Pipe the model object to `ev()` then simulate.
+When the event is simple and can be expressed in a single line, you can pipe
+the model object to `ev()` and then simulate.
 
 ```{r}
 #| fig-height: 3
@@ -594,9 +597,13 @@ mod <- house(outvars = "GUT,CP,RESP", end = 24)
 mod %>% ev(amt = 100) %>% mrgsim() %>% plot()
 ```
 
+This is a common work flow when exploring a model and an intervention.
+
+
 ### As object
 
-You can save the event object out and pass it in. 
+You can also save the event object and pass it into the pipeline as we did 
+before with the inline setup. 
 
 ```{r, eval = FALSE}
 e <- ev(amt = 100) 
@@ -604,9 +611,8 @@ e <- ev(amt = 100)
 mod %>% ev(e) %>% mrgsim() %>% plot()
 ```
 
-This is a good idea when you want to create an intervention 
-and apply it in several different simulation scenarios.
-
+Invoking the event object this way is a good idea when you want to create an
+intervention and apply it to several different simulation scenarios.
 
 Alternatively, you can pass it in as the `events` argument
 for `mrgsim()`
@@ -615,19 +621,24 @@ for `mrgsim()`
 mod %>% mrgsim(events = e) %>% plot()
 ```
 
+This is functionally the same as passing the (saved) event object into the 
+pipeline via `ev()`.
+
 ## Combining event objects 
 
-We can create more complex interventions from several
-simpler event objects. 
+We can create more complex interventions from several simpler event objects. 
+mrgsolve provides an interface with helper functions to facilitate this.
 
 ### Simple combination
 
-Use the `c()` operator to concatenate. 
+Use the `c()` operator to concatenate several event objects into a single event
+object.
 
 For 100 mg loading dose followed by 50 mg daily x6
 
 ```{r}
 load <- ev(amt = 100) 
+
 maintenance <- ev(time = 24, amt = 50, ii = 24, addl = 5)
 
 c(load, maintenance)
@@ -635,8 +646,9 @@ c(load, maintenance)
 
 ### Sequence
 
-We can make this simpler by putting these in a sequence. Here is 
-100 mg daily for a week, followed by 50 mg daily for the rest of the month
+We can make this simpler by putting these in a sequence using the `seq()` 
+generic. Here is 100 mg daily for a week, followed by 50 mg daily for the rest 
+of the month
 
 ```{r}
 a <- ev(amt = 100, ii = 24, total =  7) 
@@ -645,10 +657,14 @@ b <- ev(amt = 50,  ii = 24, total = 21)
 seq(a,b)
 ```
 
+The output shows that the `b` event was timed to start once all of the doses
+from the `a` event were given. 
+
 
 ### Expand into multiple subjects
 
-Pass an event object to `ev_rep()` with the IDs you want
+We can take any event object and replicate it into several objects with the 
+`ev_rep()` function. 
 
 ```{r}
 seq(a,b)
@@ -659,7 +675,7 @@ seq(a,b) %>% ev_rep(1:3)
 
 ### Combine into a data set
 
-Use `as_data_set` with `ev_rep()` to create a data set
+Use `as_data_set` with `ev_rep()` to create a single data set
 
 ```{r}
 c <- seq(a,b) 
@@ -673,7 +689,7 @@ as_data_set(
 
 ## Modifying event objects
 
-You can use a selection of the tidyverse to modify event objects
+You can use a selection of the tidyverse to modify event objects. For example,
 
 ```{r}
 single <- ev(amt = 100) 
@@ -683,21 +699,65 @@ ss <- mutate(single, ii = 24, ss = 1)
 ss
 ```
 
+Available tidyverse verbs include
+
 - `mutate()`
 - `select()`
 - `filter()`
 
+
+## Column name case
+
+By default, event objects have lower case names
+
+```{r}
+ev(amt = 100) %>% as.data.frame()
+```
+
+You can request upper case names by using the `evd()` constructor
+
+```{r}
+evd(amt = 100) %>% as.data.frame()
+```
+
+These are the names you will see in the rendered data set and in the simulated
+output. Note that, when working with event objects, always refer to lower
+case names
+
+```{r}
+e <- evd(amt = 100)
+e <- mutate(e, ss = 1)
+as.data.frame(e)
+```
+
+You can change the case of any event object _to_ upper case (`uctran()`) or 
+_to_ lower case (`lctran()`)
+
+```{r}
+evd(amt = 100) %>% lctran() %>% as.data.frame()
+```
+
+In this example, we created an event object using `evd()` and then immediately 
+requested lower case names. This step can also be performed on the raw data 
+frame. 
+
+
 ## Rx specification
 
+This is an alternate syntax letting you create event objects the same way you 
+might write out a prescription. 
 
 ```{r}
 ev_rx("100 mg x1 then 50 q12h x 10 at 24")
 ```
 
+This syntax will cover many common dosing scenarios. But more complicated 
+scenarios might require creating events as usual with `ev()` and then combining
+as described above. 
 
 # Simulation and outputs {#sec-simulation}
 
-This chapter discusses
+This section discusses
 
 - Simulation from a model object
 - Dealing with simulated output
@@ -705,7 +765,8 @@ This chapter discusses
 
 ## `mrgsim()`
 
-Use the `mrgsim()` function to actually run the simulation
+Use the `mrgsim()` function to actually run the simulation. We always pass in 
+the model object as the first argument. 
 
 ```{r}
 #| message: false
@@ -713,17 +774,27 @@ mod <- modlib("pk1") %>% ev(amt = 100)
 ```
 
 ```{r}
+mrgsim(mod)
+```
+
+Alternatively with the pipe
+
+```{r}
 mod %>% mrgsim() %>% plot()
 ```
 
 ### Update
 
-The `mrgsim()` signature contains `...` which are passed to `update()`
+The `mrgsim()` signature contains `...` which are passed to `update()`. Use 
+this mechanism to customize your simulation or the output on the fly
 
 ```{r}
 #| fig-height: 3
 mod %>% mrgsim(outvars = "CP", end = 72, delta = 0.1) %>% plot()
 ```
+
+In this example, we selected the output variable (`CP`), ran the simulation
+to 72 hours (`end = 72`) and asked for a finer output time grid (`delta = 0.1`).
 
 ### Options
 
@@ -766,11 +837,10 @@ Call `mrgsim_q()` for a quick turnaround simulation, with minimal overhead
 (and features). Only really useful when you are simulating repeatedly ... 
 like when estimating parameters or doing optimal design.
 
-
 ## Simulated output
 
-`mrgsim()` returns an object with class `mrgsims`; it's a data frame with some 
-extra features.
+`mrgsim()` returns an object with class `mrgsims`; this is essentially a data 
+frame but with some  extra features.
 
 ```{r}
 out <- mrgsim(mod)
@@ -784,12 +854,11 @@ summary(out)
 
 ### Output scope
 
-- First column is always `ID`
-- Second column is always `time`
+- The first column in the output is always `ID`
+- The second column in the output is always `time` (or `TIME`)
 
 By default, you get simulated values in all compartments and for every 
 derived output _at every_ time
-
 
 ```{r}
 head(out)
@@ -802,9 +871,14 @@ head(out)
 outvars(mod)
 ```
 
-You can control which compartments and derived outputs are returned. 
+You can control which compartments and derived outputs are returned when 
+you do a simulation run. This is a _really_ important feature when the 
+simulations become very large: limiting the outputs to those you actually need
+can make the difference between a simulation that fits within the available
+memory and one that doesn't.
 
-Request specific outputs at simulation time
+To request specific outputs at simulation time, set `outvars` in the model. 
+In this example, we make the selection on the fly
 
 ```{r}
 mod %>% 
@@ -812,7 +886,7 @@ mod %>%
   mrgsim()
 ```
 
-Or make the change persistent
+Alternatively, we can make the change persistent
 
 ```{r}
 mod2 <- update(mod, outvars = "CP")
@@ -849,7 +923,6 @@ count(out, dose)
 ```
 
 
-
 ## Working with `mrgsims` object
 
 The `mrgsims` object can be convenient to work with when the output is small. 
@@ -865,17 +938,17 @@ out <- mrgsim(mod, ev(amt = 100))
 out
 ```
 
-
 ### Plot
 
-Plot with a formula
+The main benefit from using this object is the ability to easily make plots
+to see what happened. You can plot a single output
 
 ```{r}
 #| fig-height: 3
 plot(out, CP ~ time)
 ```
 
-or a vector of output names
+or a collection of outputs
 
 ```{r}
 #| fig-height: 3
@@ -884,7 +957,7 @@ plot(out, "CENT CP")
 
 ### Filter
 
-Use `filter_sims()`
+Use `filter_sims()` to limit the rows that are retained in the simulated output
 
 ```{r}
 out2 <- filter_sims(out, time <= 5)
@@ -892,11 +965,20 @@ out2 <- filter_sims(out, time <= 5)
 plot(out2)
 ```
 
+### Mutate
+
+Use `mutate_sims()` to alter the columns in the simulated output
+
+```{r}
+mutate_sims(out, week = time/168)
+```
+
+
 ## Coerce output
 
-When output is big, these methods are less likely to be useful. 
-
-In this case, coerce outputs to data.frame or tibble
+When output is big, the methods mentioned above are less likely to be useful:
+what we really want is just a simple data frame to work on. In this case, 
+coerce outputs to data.frame or tibble
 
 
 ```{r}
@@ -1003,14 +1085,14 @@ $INPUT
 WT = 70, SEX = 0, EGFR = 100
 ```
 
-
-It's best if you can set these to sensible values; specifically, set to 
-the _reference_ value in your covariate model.
+It's best if you can set these to sensible values; this is usually the
+_reference_ value in your covariate model or some other value that gives you 
+a sensible _default_ output.
 
 ## Updating parameter values
 
-You can't change the name or number of parameters after you compile the model, 
-but you can change the value. 
+You can't change the names or number of parameters after you compile the model, 
+but you can change the values. 
 
 You can update parameters either 
 
@@ -1036,7 +1118,6 @@ There parameters are:
 - `THETA1` ... `THETA5`
 
 ### Update _prior to_  simulation
-
 
 Use `param()` to update the model object. You can do this in one of two ways. 
 
@@ -1103,8 +1184,6 @@ mod <- param(mod, data[2,])
 mod$WT
 ```
 
-**This will be a very important pattern we'll do later on**
-
 
 ## Update _during_  simulation 
 
@@ -1136,10 +1215,8 @@ out <-
 plot(out, "WT,CP")
 ```
 
-
-
-All of this _only_ works if the names in the data set
-match up with the names in the model. 
+All of this _only_ works if the names in the data set match up with the names 
+in the model. 
 
 ## Check if the names match
 
@@ -1162,7 +1239,6 @@ We can check this data set against the parameters in the model
 check_data_names(data, mod)
 ```
 
-
 Now, modify the data set so it has `eGFR` rather than `EGFR`
 
 ```{r}
@@ -1174,9 +1250,9 @@ check_data_names(data2, mod)
 
 # Model Specification {#sec-specification}
 
-In this chapter, we'll code up a very simple pharmacokinetic model. 
-This is just starter material to get some concepts in place. We'll 
-do more complicated stuff later (see @sec-specification-2).
+In this chapter, we'll start by coding up a pharmacokinetic model. The model 
+will be very simple to start, letting us get some concepts in place. Later on, 
+we'll do more compilcated model syntax.
 
 
 ![](pk-model.png)
@@ -1234,8 +1310,6 @@ the complexity out and with a handful of exceptions, the
 code should be pretty natural and similar to what you write
 in R. 
 
-We will show you more `c++` in chapters to come.
-
 ## Base model blocks
 
 ### Parameters
@@ -1254,11 +1328,11 @@ use underscore `_`.
 
 Parameter values must _evaluate_ to numeric.
 
-Parameters can't be functions of other parameters _when writing the `$PARAM` block_. But there is a place where you can do this ...
-we'll see this later on.
+Parameters can't be functions of other parameters 
+_when writing the `$PARAM` block_. But there is a place where you can do 
+this ...we'll see this later on.
 
 Multiple parameters can go on one line, but separate by comma.
-
 
 ### Read it in with `mread()`
 
