@@ -589,35 +589,76 @@ test_that("INPUT block", {
 })
 
 test_that("Reserve names in cpp dot gh-1159", {
-  temp <- '$param {param}\n$main\n{main};\n$table\n{table}'
-  
-  param <- "cl = 1, bar = 2, vc = 5"
-  main <- "double b = 5;\nfoo.bar = true;"
-  table <- "true;"
-  code <- glue::glue(temp)
-  
+  # clash with parameter
+  code <- '
+  $param cl = 2, v = 2, d = 5
+  $cmt a b c
+  $main 
+  foo.d = 2;
+  '  
   expect_error(
     mcode("cpp-dot-1", code, compile = FALSE), 
-    "Reserved symbol cannot be used as model name"
+    regexp = "d (parameter)", 
+    fixed = TRUE
   )
   
-  table <- main
-  main <- "true;"
-  code <- glue::glue(temp)
+  # clash with compartment
+  code <- '
+  $param cl = 2, v = 2
+  $cmt a b c
+  $ode 
+  foo.a = 2;
+  '
   
   expect_error(
     mcode("cpp-dot-2", code, compile = FALSE), 
-    "Reserved symbol cannot be used as model name"
+    regexp = "a (compartment)", 
+    fixed = TRUE
   )
   
-  param <- "cl = 1, amt = 20"
-  main <- "double b = 5;\nself.amt = 100;"
-  table <- "true;"
-  code <- glue::glue(temp)
+  # clash with omega
+  code <- '
+  $param cl = 2, v = 2
+  $cmt a b c
+  $omega @labels foo
+  1
+  $table 
+  foo.e = 2;
+  '
   
   expect_error(
     mcode("cpp-dot-3", code, compile = FALSE), 
-    "invalid class"
+    regexp = "foo (eta label)", 
+    fixed = TRUE
+  )
+  
+  # clash with sigma
+  code <- '
+  $param cl = 2, v = 2
+  $cmt a b c
+  $sigma @labels bar
+  1
+  $preamble
+  foo.bar = 2;
+  '
+  
+  expect_error(
+    mcode("cpp-dot-4", code, compile = FALSE), 
+    regexp = "bar (eps label)", 
+    fixed = TRUE
+  )
+  
+  # some names are checked in the object
+  code <- '
+  $param rate = 2
+  $main
+  ev.rate = 2;
+  '
+  
+  expect_error(
+    mcode("cpp-dot-5", code, compile = FALSE), 
+    regexp = "Reserved words in model names: rate", 
+    fixed = TRUE
   )
 })
 
