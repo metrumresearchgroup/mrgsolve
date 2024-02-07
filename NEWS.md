@@ -1,7 +1,38 @@
 # mrgsolve 1.4.0
 
+- `evtools` is a new plugin providing api for dynamic dosing from within the 
+  model; functions and classes are in the `evt` namespace (#1149).
+  
+- `regimen` is a new class located in the `evt` namespace via the `evtools` 
+  plugin; `regimen` objects can execute doses in a regular regimen (#1156).
+  
+- `mread()` and `mcode()` no longer print a message before the required 
+  waiting period on model recompile (#1145).
+
+- `ev_rep()` output rownames are cleaned up before returning (#1158).
+
+- C++ model code blocks (GLOBAL, PREAMBLE, MAIN/PK, ODE/DES, TABLE/ERROR) are 
+  now checked for `<object>.<attribute>` syntax; if found, symbols on both sides
+  of the dot become reserved words when loading and compiling that model; 
+  specifically, an error will be generated if either side of the dot (`<object>`
+  or `<attribute>`) is found in parameter names, compartment names, ETA labels, 
+  or EPS labels (#1159).
+  
+- ETA values are always simulated from OMEGA, even when the user requests they
+  get scraped from `data` or `idata` via `etasrc` argument to `mrgsim()`; this 
+  ensures `EPS` are reproducible for model runs where `etasrc = "omega"` 
+  (default, ETA are simulated) or, for example, where `etaasrc = "data.all"` 
+  (scrape ETA from the data set) (#1163).
 
 
+## Bugs Fixed
+
+- Fixed a bug where modeled doses scheduled to happen `now` were ignored based
+  if the `time` attribute was set to a value prior to the current simulation
+  time (#1152).
+
+- Fixed a bug in how doses were computed using the `until` argument to `ev()`
+  (#1154).
 
 # mrgsolve 1.3.0
 
