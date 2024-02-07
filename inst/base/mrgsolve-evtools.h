@@ -50,6 +50,11 @@ void push(databox& self, mrgsolve::evdata ev) {
   return;
 }
 
+bool near(double a, double b, double eps = 1e-8) {
+  bool ans = std::fabs(a-b) < eps;
+  return ans;
+}
+
 }
 
 namespace mrgsolve {
