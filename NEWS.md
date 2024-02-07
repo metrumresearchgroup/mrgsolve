@@ -27,9 +27,9 @@
 
 ## Bugs Fixed
 
-- Fixed a bug where modeled doses scheduled to happen `now` were ignored based
-  if the `time` attribute was set to a value prior to the current simulation
-  time (#1152).
+- Fixed a bug where modeled doses scheduled to happen `now` were ignored if the 
+  `time` attribute was set to a value prior to the current simulation time 
+  (#1152).
 
 - Fixed a bug in how doses were computed using the `until` argument to `ev()`
   (#1154).
