@@ -73,9 +73,6 @@ void regimen::cmt(int cmt_) {
 
 void regimen::ii(double ii_) {
   Ii = ii_;
-  if(prev_dose_time > -1e9) {
-    dose_time = prev_dose_time + Ii;  
-  }
   return;
 }
 
