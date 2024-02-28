@@ -95,7 +95,11 @@ typedef double capture;
 #define T _ODETIME_[0]
 #define EXP(a) exp(a)
 #define LOG(a) log(a)
+#define LOG10(a) log10(a)
 #define SQRT(a) sqrt(a)
+#define IF if
+#define THEN {
+#define ENDIF }
 #endif
 
 // These are the fundamental macros for
