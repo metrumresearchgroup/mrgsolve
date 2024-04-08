@@ -559,12 +559,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
-            reclist::iterator alagit = a[i].begin()+j;
-            advance(alagit,1);
-            a[i].insert(alagit,newev);
+            //reclist::iterator alagit = a[i].begin()+j;
+            //advance(alagit,1);
+            //a[i].insert(alagit,newev);
+            insert_record(a[i], j, newev);
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
-            sort_recs = true;
+            sort_recs = false;
           } else { // no valid lagtime
             this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             sort_recs = this_rec->needs_sorting();

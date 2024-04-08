@@ -160,4 +160,6 @@ struct CompRec {
   }
 };
 
+void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec);
+
 #endif

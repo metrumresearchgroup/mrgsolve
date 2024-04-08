@@ -582,3 +582,19 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     thisi.push_back(evon);
   }
 }  
+
+void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec) {
+  double time = rec->time();
+  int i = start;
+  for(i = start; i < thisi.size(); ++i) {
+    if(thisi.at(i)->time() >= time) {
+      break;  
+    }
+  }
+  // Rcpp::Rcout << " start " << start << std::endl;
+  // Rcpp::Rcout << " i " << i << std::endl;
+  // Rcpp::Rcout << " size " << thisi.size() << std::endl;
+  
+  reclist::iterator alagit = thisi.begin() + i;
+  thisi.insert(alagit, rec);
+}
