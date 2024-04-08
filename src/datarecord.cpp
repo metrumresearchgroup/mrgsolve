@@ -245,7 +245,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   double diff = 0, err = 0;
   bool made_it = false;
   size_t n_cmt = prob->Ss_cmt.size();
-
+  
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate, Fn);
@@ -341,7 +341,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   double tfrom = 0.0;
   
   int i;
-
+  
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
   size_t n_cmt = prob->Ss_cmt.size();
@@ -556,7 +556,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   }
   
   thisi.reserve(thisi.size() + n_dose); 
-
+  
   double ontime = 0;
   
   int mp = 1000000000;
@@ -583,18 +583,28 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
   }
 }  
 
-void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec) {
+/* 
+ * Inserts a record at the first opportunity based on time. Boolean flag
+ * indicates if the record should get inserted before or after all other 
+ * records at the time of that event. 
+ * 
+ */
+void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec, 
+                   const bool put_ev_first) {
   double time = rec->time();
   int i = start;
-  for(i = start; i < thisi.size(); ++i) {
-    if(thisi.at(i)->time() >= time) {
-      break;  
+  if(put_ev_first) {
+    for(i = start + 1; i < thisi.size(); ++i) {
+      if(thisi[i]->time() >= time) {
+        break;  
+      }
+    }
+  } else {
+    for(i = start + 1; i < thisi.size(); ++i) {
+      if(thisi[i]->time() > time) {
+        break;  
+      }
     }
   }
-  // Rcpp::Rcout << " start " << start << std::endl;
-  // Rcpp::Rcout << " i " << i << std::endl;
-  // Rcpp::Rcout << " size " << thisi.size() << std::endl;
-  
-  reclist::iterator alagit = thisi.begin() + i;
-  thisi.insert(alagit, rec);
+  thisi.insert(thisi.begin() + i, rec);
 }

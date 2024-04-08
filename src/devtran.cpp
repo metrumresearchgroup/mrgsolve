@@ -562,10 +562,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             //reclist::iterator alagit = a[i].begin()+j;
             //advance(alagit,1);
             //a[i].insert(alagit,newev);
-            insert_record(a[i], j, newev);
+            insert_record(a[i], j, newev, put_ev_first);
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
-            sort_recs = false;
+            sort_recs = newev->needs_sorting();
           } else { // no valid lagtime
             this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             sort_recs = this_rec->needs_sorting();
@@ -586,9 +586,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
-          }
-          a[i].push_back(evoff);
-          sort_recs = true;
+          } 
+          // TODO: drop when ready
+          //a[i].push_back(evoff);
+          //sort_recs = true;
+          // Infusion off always happens first
+          insert_record(a[i], j, evoff, true);
         }
         
         // SORT

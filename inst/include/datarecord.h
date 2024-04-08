@@ -160,6 +160,7 @@ struct CompRec {
   }
 };
 
-void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec);
+void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec, 
+                   const bool put_ev_first);
 
 #endif
