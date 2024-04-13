@@ -244,11 +244,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Vector of vectors
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
-    std::vector<std::deque<rec_ptr> > designs;
+    recstack designs;
     
     for(size_t i = 0; i < tgridn.size(); ++i) {
       
-      std::deque<rec_ptr> z;
+      reclist z;
       
       //z.reserve(tgridn[i]);
       
