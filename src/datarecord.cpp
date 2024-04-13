@@ -534,7 +534,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->ss_flag = false;
 }
 
-void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
+void datarecord::schedule(std::deque<rec_ptr>& thisi, double maxtime, 
                           bool addl_ev_first, 
                           const unsigned int maxpos, 
                           double lagt) {
@@ -555,7 +555,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  thisi.reserve(thisi.size() + n_dose); 
+  //thisi.reserve(thisi.size() + n_dose); 
   
   double ontime = 0;
   
@@ -592,7 +592,7 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
  * infusion end. 
  * 
  */
-void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec, 
+void insert_record(std::deque<rec_ptr>& thisi, const int start, rec_ptr& rec, 
                    const bool put_ev_first) {
   double time = rec->time();
   int i = start;

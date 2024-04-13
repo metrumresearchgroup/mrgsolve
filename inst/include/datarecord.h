@@ -24,11 +24,12 @@
 //#include <boost/shared_ptr.hpp>
 #include "mrgsolv.h"
 #include "LSODA.h"
+#include <deque>
 
 class odeproblem;
 class datarecord;
 typedef std::shared_ptr<datarecord> rec_ptr;
-typedef std::vector<rec_ptr> reclist;
+typedef std::deque<rec_ptr> reclist;
 
 #define NEWREC std::make_shared<datarecord>
 
@@ -90,7 +91,7 @@ public:
   double fn(){return Fn;}
   void fn(double fn_){Fn = fn_;}
 
-  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
+  void schedule(std::deque<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
                 const unsigned int maxpos, double lagt);
   void implement(odeproblem* prob);
   void steady_zero(odeproblem* prob, LSODA& solver);
@@ -160,7 +161,7 @@ struct CompRec {
   }
 };
 
-void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec, 
+void insert_record(std::deque<rec_ptr>& thisi, const int start, rec_ptr& rec, 
                    const bool put_ev_first);
 
 #endif

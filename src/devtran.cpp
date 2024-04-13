@@ -21,6 +21,7 @@
  *
  */
 
+#include <deque>
 #include <string>
 #include "mrgsolve.h"
 #include "odeproblem.h"
@@ -184,7 +185,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
-    tofd.reserve(a.size());
+    //tofd.reserve(a.size());
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
         if((*itt)->is_dose()) {
@@ -243,13 +244,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Vector of vectors
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
-    std::vector<std::vector<rec_ptr> > designs;
+    std::vector<std::deque<rec_ptr> > designs;
     
     for(size_t i = 0; i < tgridn.size(); ++i) {
       
-      std::vector<rec_ptr> z;
+      std::deque<rec_ptr> z;
       
-      z.reserve(tgridn[i]);
+      //z.reserve(tgridn[i]);
       
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
@@ -271,7 +272,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         n = tgridn.at(0);
       } 
       
-      it->reserve((it->size() + n));
+      //it->reserve((it->size() + n));
       for(int h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
