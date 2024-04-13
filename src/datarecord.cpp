@@ -584,9 +584,12 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
 }  
 
 /* 
- * Inserts a record at the first opportunity based on time. Boolean flag
- * indicates if the record should get inserted before or after all other 
- * records at the time of that event. 
+ * Inserts a record at the earliest or latest opportunity based on time. 
+ * Boolean flag indicates if the record should get inserted before or after all 
+ * other records at the time of that event. 
+ * 
+ * This is currently being used to insert records for lag times as well as
+ * infusion end. 
  * 
  */
 void insert_record(std::vector<rec_ptr>& thisi, const int start, rec_ptr& rec, 
