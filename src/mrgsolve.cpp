@@ -391,7 +391,7 @@ Rcpp::List EXPAND_OBSERVATIONS(
   size_t n = z.size();
   
   for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    //it->reserve((it->size() + n));
+    //it->reserve((it->size() + n)); // TODO: remove
     for(size_t h=0; h < n; h++) {
       it->push_back(z[h]);
       ++obscount;

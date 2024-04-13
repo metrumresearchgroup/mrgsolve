@@ -555,7 +555,7 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  //thisi.reserve(thisi.size() + n_dose); 
+  //thisi.reserve(thisi.size() + n_dose); // TODO: remove 
   
   double ontime = 0;
   
