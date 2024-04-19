@@ -247,7 +247,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
   }
   for(int h=0; h < NID; ++h) {
     lastime = Data(this->start(h),col[_COL_time_]);
-    a[h].reserve(this->end(h) - this->start(h) + 5);
+    //a[h].reserve(this->end(h) - this->start(h) + 5); // TODO: remove
     
     for(j=this->start(h); j <= this->end(h); ++j) {
       if(Data(j,col[_COL_time_]) < lastime) {
@@ -320,7 +320,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
     
     lastime = Data(this->start(h),col[_COL_time_]);
     
-    a[h].reserve(this->end(h) - this->start(h) + 5);
+    //a[h].reserve(this->end(h) - this->start(h) + 5); // TODO: remove
     
     for(j = this->start(h); j <= this->end(h); ++j) {
       
