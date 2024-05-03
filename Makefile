@@ -140,7 +140,8 @@ modlib:
 
 # this is in use
 ci:
-	make house
+	Rscript -e 'devtools::load_all()' \
+	  -e 'source("inst/maintenance/build_housemodel.R")'
 	R CMD build --md5 $(PKGDIR) 
 	R CMD check --as-cran ${TARBALL}
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
