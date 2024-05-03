@@ -139,7 +139,7 @@ modlib:
 	Rscript -e 'testthat::test_file("inst/maintenance/unit/test-modlib.R")'
 
 # this is in use
-drone:
+ci:
 	make house
 	#R -s -e 'devtools::install_deps(upgrade = '"'"'always'"'"', dependencies=TRUE)'
 	R CMD build --md5 $(PKGDIR) 
