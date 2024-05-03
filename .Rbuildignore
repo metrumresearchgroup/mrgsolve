@@ -45,8 +45,7 @@ docs
 ^DOCS$
 ^./build$
 ^_pkgdown\.yml$
-^\.drone\.yml$
-^\.drone\.jsonnet$
+^\.github$
 ^doc$
 ^Meta$
 vignettes
