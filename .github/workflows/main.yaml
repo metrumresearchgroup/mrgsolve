@@ -42,7 +42,7 @@ jobs:
           extra-packages: |
             any::devtools
             any::rcmdcheck
-          upgrade: 'TRUE'
+          upgrade: ${{ matrix.config.r == '3.6.3' && 'FALSE' || 'TRUE' }}
       - name: Install pdflatex
         shell: bash
         run: sudo apt-get install texlive-latex-base texlive-fonts-extra
