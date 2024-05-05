@@ -56,7 +56,8 @@ Suggests:
     yaml,
     knitr, 
     data.table (>= 1.14.2),
-    pmxTools
+    pmxTools,
+    jsonlite
 LinkingTo: 
     Rcpp (>= 1.0.7),
     RcppArmadillo (>= 0.10.7.3.0),
