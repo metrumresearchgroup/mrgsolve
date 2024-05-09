@@ -21,6 +21,7 @@
  *
  */
 
+#include <deque>
 #include <string>
 #include "mrgsolve.h"
 #include "odeproblem.h"
@@ -243,13 +244,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     // Vector of vectors
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
-    std::vector<std::vector<rec_ptr> > designs;
+    recstack designs;
     
     for(size_t i = 0; i < tgridn.size(); ++i) {
       
-      std::vector<rec_ptr> z;
+      reclist z;
       
-      z.reserve(tgridn[i]);
+      //z.reserve(tgridn[i]); // TODO: remove
       
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
@@ -271,7 +272,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         n = tgridn.at(0);
       } 
       
-      it->reserve((it->size() + n));
+      //it->reserve((it->size() + n)); // TODO: remove
       for(int h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
@@ -559,12 +560,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             newev->ss(0);
-            reclist::iterator alagit = a[i].begin()+j;
-            advance(alagit,1);
-            a[i].insert(alagit,newev);
+            insert_record(a[i], j, newev, put_ev_first);
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
-            sort_recs = true;
+            sort_recs = newev->needs_sorting();
           } else { // no valid lagtime
             this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             sort_recs = this_rec->needs_sorting();
@@ -585,9 +584,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
-          }
-          a[i].push_back(evoff);
-          sort_recs = true;
+          } 
+          // Infusion off always happens first
+          insert_record(a[i], j, evoff, true);
         }
         
         // SORT

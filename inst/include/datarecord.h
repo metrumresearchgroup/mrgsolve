@@ -24,11 +24,12 @@
 //#include <boost/shared_ptr.hpp>
 #include "mrgsolv.h"
 #include "LSODA.h"
+#include <deque>
 
 class odeproblem;
 class datarecord;
 typedef std::shared_ptr<datarecord> rec_ptr;
-typedef std::vector<rec_ptr> reclist;
+typedef std::deque<rec_ptr> reclist;
 
 #define NEWREC std::make_shared<datarecord>
 
@@ -86,11 +87,11 @@ public:
   
   void ii(double ii_){Ii = ii_;}
   double ii(){return Ii;}
-
+  
   double fn(){return Fn;}
   void fn(double fn_){Fn = fn_;}
-
-  void schedule(std::vector<rec_ptr>& thisi, double maxtime, bool put_ev_first, 
+  
+  void schedule(reclist& thisi, double maxtime, bool put_ev_first, 
                 const unsigned int maxpos, double lagt);
   void implement(odeproblem* prob);
   void steady_zero(odeproblem* prob, LSODA& solver);
@@ -117,13 +118,13 @@ public:
   bool is_phantom() {return !Output && !Fromdata;}
   bool is_lagged() {return Lagged;}
   void lagged() {Lagged = true;}
-
+  
   int Pos; ///< record position number
   unsigned short int Evid; ///< record event ID
   unsigned short int Ss; ///< record steady-state indicator
   short int Cmt; ///< record compartment number
   unsigned int Addl; ///< number of additional doses
-
+  
   double Time; ///< record time
   double Id; ///< record ID value
   double Amt; ///< record dosing amount value
@@ -159,5 +160,8 @@ struct CompRec {
     return a->time() < b->time();
   }
 };
+
+void insert_record(reclist& thisi, const int start, rec_ptr& rec, 
+                   const bool put_ev_first);
 
 #endif

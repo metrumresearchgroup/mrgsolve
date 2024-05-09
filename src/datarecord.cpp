@@ -245,7 +245,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   double diff = 0, err = 0;
   bool made_it = false;
   size_t n_cmt = prob->Ss_cmt.size();
-
+  
   prob->lsoda_init();
   
   rec_ptr evon = NEWREC(Cmt, 1, Amt, Time, Rate, Fn);
@@ -341,7 +341,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   double tfrom = 0.0;
   
   int i;
-
+  
   bool warn = !prob->ss_fixed;
   int N_SS = prob->ss_n;  
   size_t n_cmt = prob->Ss_cmt.size();
@@ -534,7 +534,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->ss_flag = false;
 }
 
-void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime, 
+void datarecord::schedule(reclist& thisi, double maxtime, 
                           bool addl_ev_first, 
                           const unsigned int maxpos, 
                           double lagt) {
@@ -555,8 +555,8 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  thisi.reserve(thisi.size() + n_dose); 
-
+  //thisi.reserve(thisi.size() + n_dose); // TODO: remove 
+  
   double ontime = 0;
   
   int mp = 1000000000;
@@ -582,3 +582,32 @@ void datarecord::schedule(std::vector<rec_ptr>& thisi, double maxtime,
     thisi.push_back(evon);
   }
 }  
+
+/* 
+ * Inserts a record at the earliest or latest opportunity based on time. 
+ * Boolean flag indicates if the record should get inserted before or after all 
+ * other records at the time of that event. 
+ * 
+ * This is currently being used to insert records for lag times as well as
+ * infusion end. 
+ * 
+ */
+void insert_record(reclist& thisi, const int start, rec_ptr& rec, 
+                   const bool put_ev_first) {
+  double time = rec->time();
+  int i = start;
+  if(put_ev_first) {
+    for(i = start + 1; i < thisi.size(); ++i) {
+      if(thisi[i]->time() >= time) {
+        break;  
+      }
+    }
+  } else {
+    for(i = start + 1; i < thisi.size(); ++i) {
+      if(thisi[i]->time() > time) {
+        break;  
+      }
+    }
+  }
+  thisi.insert(thisi.begin() + i, rec);
+}
