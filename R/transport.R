@@ -15,7 +15,7 @@ mod_transport <- function(x, file = NULL, format = c("yaml", "json"),
   
   l <- list()
   # Header
-  l$format <- "text"
+  l$format <- format
   l$mrgsolve <- as.character(packageVersion("mrgsolve"))
   l$transport <- 1
   l$model <- x@model
@@ -26,9 +26,11 @@ mod_transport <- function(x, file = NULL, format = c("yaml", "json"),
   l$omega <- list()
   l$omega$data <- lapply(as.list(omat(x)), get_upper_tri)
   l$omega$labels <- labels(omat(x))
+  names(l$omega$labels) <- seq(length(l$omega$labels))
   l$omega$names <- names(omat(x))
   l$sigma$data <- lapply(as.list(smat(x)), get_upper_tri)
   l$sigma$labels <- labels(smat(x))
+  names(l$sigma$labels) <- seq(length(l$sigma$labels))
   l$sigma$names <- names(smat(x))
   # Other
   l$env <- as.list(x@envir)
@@ -60,7 +62,7 @@ mod_transport <- function(x, file = NULL, format = c("yaml", "json"),
   if(nrow(x@annot$data)) {
     annot <- x@annot$data
     annot$options <- NULL
-    if(!requireNamespace("knitr")) {
+    if(!requireNamespace("knitr", quietly = TRUE)) {
       abort("The package \"knitr\" is required.")
     }
     annot <- knitr::kable(annot, format = "simple")
@@ -94,23 +96,27 @@ mod_transport <- function(x, file = NULL, format = c("yaml", "json"),
   
   l$code <- unlist(code, use.names = FALSE)
   
-  if(is.character(file)) {
-    if(format=="yaml") {
-      if(!requireNamespace("yaml")) {
-        abort("The package \"yaml\" is required.")
-      }
-      l$format <- "yaml"
-      out <- yaml::as.yaml(l, precision = digits)
-    } else {
-      l$format <- "json"
-      if(!requireNamespace("jsonlite")) {
-        abort("The package \"jsonlite\" is required.")
-      }
-      out <- jsonlite::toJSON(l, digits = digits, pretty = TRUE)
+  if(format=="yaml") {
+    if(!requireNamespace("yaml", quietly = TRUE)) {
+      abort("The package \"yaml\" is required.")
     }
-    writeLines(con = file, out)
+    out <- yaml::as.yaml(l, precision = digits)
+  } else {
+    if(!requireNamespace("jsonlite", quietly = TRUE)) {
+      abort("The package \"jsonlite\" is required.")
+    }
+    out <- jsonlite::toJSON(
+      l, 
+      digits = digits, 
+      pretty = TRUE
+    )
   }
-  out
+  
+  if(is.character(file)) {
+    writeLines(con = file, out)  
+  }
+  
+  l
 }
 
 #' @export
@@ -119,12 +125,12 @@ mread_xport <- function(file, format = c("yaml", "json"),
   format <- match.arg(format)
   text <- readLines(file)
   if(format=="yaml") {
-    if(!requireNamespace("yaml")) {
+    if(!requireNamespace("yaml", quietly = TRUE)) {
       abort("The package \"yaml\" is required.")
     }
-    x <- yaml.load(text)
+    x <- yaml::yaml.load(text)
   } else {
-    if(!requireNamespace("jsonlite")) {
+    if(!requireNamespace("jsonlite", quietly = TRUE)) {
       abort("The package \"jsonlite\" is required.")
     }
     x <- jsonlite::fromJSON(text)  
@@ -132,7 +138,11 @@ mread_xport <- function(file, format = c("yaml", "json"),
   
   x$set$add <- as.numeric(x$set$add)
   x$capture <- as.character(x$capture)
-  
+  x$omega$labels <- lapply(x$omega$labels, as.character)
+  x$omega$names <- lapply(x$omega$names, as.character)
+  x$sigma$labels <- lapply(x$sigma$labels, as.character)
+  x$sigma$names <- lapply(x$sigma$names, as.character)
+    
   param <- c("$PARAM", tocode(x$param), "")
   
   init <- c("$INIT", tocode(x$init), "")
