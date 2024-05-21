@@ -582,6 +582,8 @@ do_mrgsim <- function(x,
       data$.data_row. <- join_data$.data_row.
       carry.recover <- ".data_row."
       drop <- names(which(!is.numeric(join_data)))
+      # Will be dropped with warning when validating data
+      drop <- drop[!drop %in% Pars(x)]
       data <- data[,setdiff(names(data),drop),drop=FALSE]
     }
     recover_idata <- intersect(recover,names(idata))
@@ -590,6 +592,8 @@ do_mrgsim <- function(x,
     if(do_recover_idata) {
       join_idata <- idata[,unique(c("ID", recover_idata)),drop=FALSE]
       drop <- names(which(!is.numeric(join_idata)))
+      # Will be dropped with warning when validating data
+      drop <- drop[!drop %in% Pars(x)]
       idata <- idata[,setdiff(names(idata),drop),drop=FALSE]
     } 
   }

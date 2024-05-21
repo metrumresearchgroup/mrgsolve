@@ -87,7 +87,7 @@ signal_drop <- function(dm, x, to_signal, context) {
   for(d in drop) {
     type <- paste0(class(x[[d]]), collapse = ",")
     msg <- c(context, " dropped column: ", d, " (", type, ")")
-    message(msg)  
+    warning(msg, call. = FALSE)  
   }
   invisible(NULL)
 }
