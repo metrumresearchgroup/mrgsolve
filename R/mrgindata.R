@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -92,9 +92,8 @@ signal_drop <- function(dm, x, to_signal, context) {
     type <- paste0(class(x[[d]]), collapse = ",")
     body[i] <- paste0(context, " column: ", d, " (", type, ")")
   }
-  message <- glue("Input data that cannot be used for simulation")
   abort(
-    message = message, 
+    message = "Found input data that cannot be used for simulation", 
     body = body, 
     call = caller_env()
   )
@@ -114,7 +113,8 @@ signal_drop <- function(dm, x, to_signal, context) {
 ##' @details
 ##' An error will be issued when
 ##' - non-numeric data is found in columns named after model parameters
-##' - non-numeric data is found in `rate/RATE` or `amt/AMT` columns
+##' - non-numeric data is found in reserved data items related to dosing 
+##'   (see `mrgsolve:::GLOBALS$CARRY_TRAN`)
 ##' - a column is found with type `integer64`
 ##' 
 ##' @return A matrix with non-numeric columns dropped; if x is a 
@@ -231,7 +231,6 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 ##' @details
 ##' An error will be issued when
 ##' - non-numeric data is found in columns named after model parameters
-##' - non-numeric data is found in `rate/RATE` or `amt/AMT` columns
 ##' - a column is found with type `integer64`
 ##' 
 ##' @md

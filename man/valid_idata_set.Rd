@@ -25,7 +25,6 @@ Validate and prepare idata data sets for simulation
 An error will be issued when
 \itemize{
 \item non-numeric data is found in columns named after model parameters
-\item non-numeric data is found in \code{rate/RATE} or \code{amt/AMT} columns
 \item a column is found with type \code{integer64}
 }
 }
