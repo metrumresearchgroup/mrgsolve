@@ -7,13 +7,13 @@
 valid_idata_set(x, m, verbose = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{x}{data.frame or matrix}
+\item{x}{data.frame or matrix.}
 
-\item{m}{a model object}
+\item{m}{a model object.}
 
-\item{verbose}{logical}
+\item{verbose}{logical.}
 
-\item{quiet}{if \code{TRUE}, messages will be suppressed}
+\item{quiet}{if \code{TRUE}, messages will be suppressed.}
 }
 \value{
 A numeric matrix with class \code{valid_idata_set}.
@@ -21,7 +21,14 @@ A numeric matrix with class \code{valid_idata_set}.
 \description{
 Validate and prepare idata data sets for simulation
 }
+\details{
+An error will be issued when
+\itemize{
+\item non-numeric data is found in columns named after model parameters
+\item non-numeric data is found in \code{rate/RATE} or \code{amt/AMT} columns
+\item a column is found with type \code{integer64}
+}
+}
 \seealso{
-\code{\link{valid_data_set}}, \code{\link{idata_set}}, 
-\code{\link{data_set}}
+\code{\link[=valid_data_set]{valid_data_set()}}, \code{\link[=idata_set]{idata_set()}}, \code{\link[=data_set]{data_set()}}
 }

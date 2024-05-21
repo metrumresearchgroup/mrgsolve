@@ -102,23 +102,28 @@ signal_drop <- function(dm, x, to_signal, context) {
 
 ##' Validate and prepare a data sets for simulation
 ##'
-##' This function is called by mrgsim.  Users may also call this function
-##' to pre-validate data when the same data set is used for repeated 
-##' simulation.
+##' This function is called by [mrgsim()] and friends.  Users may also call 
+##' this function to pre-validate data when the same data set is used for 
+##' repeated simulation.
 ##'
-##' @param x data.frame or matrix
-##' @param m a model object
-##' @param verbose logical
-##' @param quiet if \code{TRUE}, messages will be suppressed
+##' @param x data.frame or matrix.
+##' @param m a model object.
+##' @param verbose logical.
+##' @param quiet if `TRUE`, messages will be suppressed.
+##' 
+##' @details
+##' An error will be issued when
+##' - non-numeric data is found in columns named after model parameters
+##' - non-numeric data is found in `rate/RATE` or `amt/AMT` columns
+##' - a column is found with type `integer64`
 ##' 
 ##' @return A matrix with non-numeric columns dropped; if x is a 
-##' data.frame with character \code{cmt} column comprised of valid 
-##' compartment names and \code{m} is a model object,
-##' the \code{cmt} column will be converted to the corresponding 
+##' data.frame with character `cmt` column comprised of valid 
+##' compartment names and `m` is a model object,
+##' the `cmt` column will be converted to the corresponding 
 ##' compartment number.
 ##' 
-##' @seealso \code{\link{valid_idata_set}}, \code{\link{idata_set}}, 
-##' \code{\link{data_set}}
+##' @seealso [valid_idata_set()], [idata_set()], [data_set()]
 ##' 
 ##' @examples
 ##' 
@@ -126,8 +131,9 @@ signal_drop <- function(dm, x, to_signal, context) {
 ##' 
 ##' data(exTheoph)
 ##' 
-##' d <- valid_data_set(exTheoph,mod)
+##' d <- valid_data_set(exTheoph, mod)
 ##' 
+##' @md
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
@@ -216,13 +222,19 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 
 ##' Validate and prepare idata data sets for simulation
 ##' 
-##' @return A numeric matrix with class \code{valid_idata_set}.
+##' @return A numeric matrix with class `valid_idata_set`.
 ##' 
 ##' @inheritParams valid_data_set
 ##' 
-##' @seealso \code{\link{valid_data_set}}, \code{\link{idata_set}}, 
-##' \code{\link{data_set}}
+##' @seealso [valid_data_set()], [idata_set()], [data_set()]
 ##' 
+##' @details
+##' An error will be issued when
+##' - non-numeric data is found in columns named after model parameters
+##' - non-numeric data is found in `rate/RATE` or `amt/AMT` columns
+##' - a column is found with type `integer64`
+##' 
+##' @md
 ##' @export
 valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
