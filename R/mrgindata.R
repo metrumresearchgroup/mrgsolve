@@ -84,12 +84,20 @@ convert_character_cmt <- function(data, mod) {
 signal_drop <- function(dm, x, to_signal, context) {
   drop <- setdiff(names(x), dimnames(dm)[[2]])
   drop <- intersect(drop, to_signal)
-  for(d in drop) {
+  if(!length(drop)) return(invisible(NULL))
+  body <- vector(mode = "character", length = length(drop))
+  names(body) <- rep("x", length(body))
+  for(i in seq_along(drop)) {
+    d <- drop[i]
     type <- paste0(class(x[[d]]), collapse = ",")
-    msg <- c(context, " dropped column: ", d, " (", type, ")")
-    warning(msg, call. = FALSE)  
+    body[i] <- paste0(context, " column: ", d, " (", type, ")")
   }
-  invisible(NULL)
+  message <- glue("Input data that cannot be used for simulation")
+  abort(
+    message = message, 
+    body = body, 
+    call = caller_env()
+  )
 }
 
 ##' Validate and prepare a data sets for simulation
@@ -177,7 +185,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
   if((ncol(dm) != ncol(x)) && !quiet) {
     to_signal <- c(Pars(m), GLOBALS$CARRY_TRAN)
-    signal_drop(dm, x, to_signal, context = "[data-set]")
+    signal_drop(dm, x, to_signal, context = "data set")
   }
   
   has_na <- check_data_set_na(dm,m)
@@ -236,7 +244,7 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   if((ncol(dm) != ncol(x)) && !quiet) {
     to_signal <- Pars(m)
-    signal_drop(dm, x, to_signal, context = "[idata-set]")
+    signal_drop(dm, x, to_signal, context = "idata set")
   }
   
   check_data_set_na(dm, m)

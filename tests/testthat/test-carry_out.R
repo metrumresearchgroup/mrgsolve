@@ -102,14 +102,14 @@ test_that("recover input data-set items", {
 test_that("recover input data-set items that are parameters", {
   dose <- seq(ev(amt=100,time=5,a=33,b="aa"),ev(amt=200,a=44,b="bb",time=10))
   dose <- dplyr::mutate(dose, CL = factor(a), KA = "BB")
-  expect_warning(
+  expect_error(
     mrgsim(mod, dose), 
-    regexp="dropped column: KA", 
+    regexp="data set column: KA", 
     fixed = TRUE
   )
-  expect_warning(
+  expect_error(
     mrgsim(mod, dose, recover = "CL"), 
-    regexp="dropped column: CL", 
+    regexp="data set column: CL", 
     fixed = TRUE
   )
 })
@@ -125,14 +125,14 @@ test_that("recover input idata-set items", {
 test_that("recover input idata-set items that are parameters", {
   idata <- expand.idata(a = c(33,44), b = c("aa", "bb")) 
   idata <- dplyr::mutate(idata, CL = factor(a), KA = "BB")
-  expect_warning(
+  expect_error(
     mrgsim(mod,ev(amt=100),idata), 
-    regexp="dropped column: KA", 
+    regexp = "data set column: KA", 
     fixed = TRUE
   )
-  expect_warning(
+  expect_error(
     mrgsim(mod,ev(amt=100),idata,recover = "CL"), 
-    regexp="dropped column: CL", 
+    regexp="data set column: CL", 
     fixed = TRUE
   )
 })
