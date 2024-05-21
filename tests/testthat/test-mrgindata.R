@@ -31,7 +31,7 @@ data(extran3)
 
 test_that("valid_data_set warns for character columns", {
   chr_param <- expand.ev(amt=100,ID=1:4, CL = "A")
-  expect_message(
+  expect_warning(
     valid_data_set(chr_param,m=mod), 
     regexp = "dropped column: CL (character)", 
     fixed = TRUE
@@ -39,7 +39,7 @@ test_that("valid_data_set warns for character columns", {
   chr_X <- expand.ev(amt=100,ID=1:4,X="A")
   expect_silent(valid_data_set(chr_X,m=mod))
   chr_rate <- expand.ev(amt=100,rate="A")
-  expect_message(
+  expect_warning(
     valid_data_set(chr_rate,m=mod), 
     regexp = "dropped column: rate (character)", 
     fixed = TRUE
@@ -50,7 +50,7 @@ test_that("valid_data_set warns for character columns", {
 
 test_that("valid_idata_set warns for character columns", {
   chr_param <- expand.idata(FOO = 1, CL = "A")
-  expect_message(
+  expect_warning(
     valid_idata_set(chr_param,m=mod), 
     regexp = "dropped column: CL (character)", 
     fixed = TRUE
@@ -168,14 +168,14 @@ test_that("integer64 columns are dropped from data_set [SLV-TEST-0011]", {
   data <- data.table::fread("ID,KA\n1,100000020200")
   data$TIME <- 1
   data$CMT <- 1
-  expect_message(
+  expect_warning(
     valid_data_set(data, mod), 
     regexp = "dropped column: KA (integer64)", 
     fixed = TRUE
   )
   data$KA <- as.double(data$KA)
   class(data$KA) <- "object"
-  expect_message(
+  expect_warning(
     valid_data_set(data, mod), 
     regexp = "dropped column: KA (object)", 
     fixed = TRUE
@@ -188,7 +188,7 @@ test_that("integer64 columns are dropped from idata_set  [SLV-TEST-0012]", {
   data <- data.table::fread("ID,KA\n1,100000020200")
   data$TIME <- 1
   data$CMT <- 1
-  expect_message(
+  expect_warning(
     valid_idata_set(data, mod), 
     regexp = "dropped column: KA (integer64)", 
     fixed = TRUE
