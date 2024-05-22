@@ -33,10 +33,11 @@ repeated simulation.
 \details{
 An error will be issued when
 \itemize{
-\item non-numeric data is found in columns named after model parameters
+\item non-numeric data is found in columns sharing names with model parameters
 \item non-numeric data is found in reserved data items related to dosing
 (see \code{mrgsolve:::GLOBALS$CARRY_TRAN})
-\item a column is found with type \code{integer64}
+\item a column is found that is "internally classed", including columns that
+are \code{integer64} (see \code{\link[=is.object]{is.object()}})
 }
 }
 \examples{
