@@ -103,9 +103,9 @@ check_dropped_cols <- function(dm, x, check, context) {
 
 ##' Validate and prepare a data sets for simulation
 ##'
-##' This function is called by [mrgsim()] and friends.  Users may also call 
-##' this function to pre-validate data when the same data set is used for 
-##' repeated simulation.
+##' This function is called by [mrgsim()] and friends to check and prepare 
+##' input data sets for simulation.  Users may also call this function to 
+##' pre-validate data when the same data set is used for repeated simulation.
 ##'
 ##' @param x data.frame or matrix.
 ##' @param m a model object.
@@ -118,7 +118,7 @@ check_dropped_cols <- function(dm, x, check, context) {
 ##' - non-numeric data is found in reserved data items related to dosing 
 ##'   (see `mrgsolve:::GLOBALS$CARRY_TRAN`)
 ##' - a column is found that is "internally classed", including columns that 
-##'   are `integer64` (see [is.object()])
+##'   inherit from `integer64` (see [is.object()])
 ##' 
 ##' @return A matrix with non-numeric columns dropped; if x is a 
 ##' data.frame with character `cmt` column comprised of valid 
@@ -225,6 +225,10 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 
 ##' Validate and prepare idata data sets for simulation
 ##' 
+##' This function is called by [mrgsim()] and friends to check and prepare 
+##' input data sets for simulation.  Users may also call this function to 
+##' pre-validate data when the same data set is used for repeated simulation.
+##' 
 ##' @return A numeric matrix with class `valid_idata_set`.
 ##' 
 ##' @inheritParams valid_data_set
@@ -235,7 +239,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 ##' An error will be issued when
 ##' - non-numeric data is found in columns sharing names with model parameters
 ##' - a column is found that is internally classed, including columns that 
-##'   have class `integer64` (see [is.object()])
+##'   inherit from `integer64` (see [is.object()])
 ##' 
 ##' @md
 ##' @export

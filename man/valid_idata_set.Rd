@@ -19,14 +19,16 @@ valid_idata_set(x, m, verbose = FALSE, quiet = FALSE)
 A numeric matrix with class \code{valid_idata_set}.
 }
 \description{
-Validate and prepare idata data sets for simulation
+This function is called by \code{\link[=mrgsim]{mrgsim()}} and friends to check and prepare
+input data sets for simulation.  Users may also call this function to
+pre-validate data when the same data set is used for repeated simulation.
 }
 \details{
 An error will be issued when
 \itemize{
 \item non-numeric data is found in columns sharing names with model parameters
 \item a column is found that is internally classed, including columns that
-have class \code{integer64} (see \code{\link[=is.object]{is.object()}})
+inherit from \code{integer64} (see \code{\link[=is.object]{is.object()}})
 }
 }
 \seealso{

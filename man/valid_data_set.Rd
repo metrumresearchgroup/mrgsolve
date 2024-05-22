@@ -26,9 +26,9 @@ the \code{cmt} column will be converted to the corresponding
 compartment number.
 }
 \description{
-This function is called by \code{\link[=mrgsim]{mrgsim()}} and friends.  Users may also call
-this function to pre-validate data when the same data set is used for
-repeated simulation.
+This function is called by \code{\link[=mrgsim]{mrgsim()}} and friends to check and prepare
+input data sets for simulation.  Users may also call this function to
+pre-validate data when the same data set is used for repeated simulation.
 }
 \details{
 An error will be issued when
@@ -37,7 +37,7 @@ An error will be issued when
 \item non-numeric data is found in reserved data items related to dosing
 (see \code{mrgsolve:::GLOBALS$CARRY_TRAN})
 \item a column is found that is "internally classed", including columns that
-are \code{integer64} (see \code{\link[=is.object]{is.object()}})
+inherit from \code{integer64} (see \code{\link[=is.object]{is.object()}})
 }
 }
 \examples{
