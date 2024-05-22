@@ -81,9 +81,9 @@ convert_character_cmt <- function(data, mod) {
   return(data)
 }
 
-signal_drop <- function(dm, x, to_signal, context) {
+check_dropped_columns <- function(dm, x, check, context) {
   drop <- setdiff(names(x), dimnames(dm)[[2]])
-  drop <- intersect(drop, to_signal)
+  drop <- intersect(drop, check)
   if(!length(drop)) return(invisible(NULL))
   body <- vector(mode = "character", length = length(drop))
   names(body) <- rep("x", length(body))
@@ -189,9 +189,9 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   # Drop character columns
   dm <- numeric_data_matrix(x,quiet=TRUE)
   
-  if((ncol(dm) != ncol(x)) && !quiet) {
-    to_signal <- c(Pars(m), GLOBALS$CARRY_TRAN)
-    signal_drop(dm, x, to_signal, context = "data set")
+  if(ncol(dm) != ncol(x)) {
+    check <- c(Pars(m), GLOBALS$CARRY_TRAN)
+    check_dropped_columns(dm, x, check, context = "data set")
   }
   
   has_na <- check_data_set_na(dm,m)
@@ -253,9 +253,9 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   dm <- numeric_data_matrix(x, quiet = TRUE)
   
-  if((ncol(dm) != ncol(x)) && !quiet) {
-    to_signal <- Pars(m)
-    signal_drop(dm, x, to_signal, context = "idata set")
+  if(ncol(dm) != ncol(x)) {
+    check <- Pars(m)
+    check_dropped_columns(dm, x, check, context = "idata set")
   }
   
   check_data_set_na(dm, m)
