@@ -82,8 +82,10 @@ convert_character_cmt <- function(data, mod) {
 }
 
 check_dropped_cols <- function(dm, x, check, context) {
-  drop <- setdiff(names(x), dimnames(dm)[[2]])
-  drop <- intersect(drop, check)
+  new_col_set <- dimnames(dm)[[2]]
+  old_col_set <- names(x)
+  drop <- old_col_set[!old_col_set %in% new_col_set]
+  drop <- drop[drop %in% check]
   if(!length(drop)) return(invisible(NULL))
   body <- vector(mode = "character", length = length(drop))
   names(body) <- rep("x", length(body))
