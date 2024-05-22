@@ -81,7 +81,7 @@ convert_character_cmt <- function(data, mod) {
   return(data)
 }
 
-check_dropped_columns <- function(dm, x, check, context) {
+check_dropped_cols <- function(dm, x, check, context) {
   drop <- setdiff(names(x), dimnames(dm)[[2]])
   drop <- intersect(drop, check)
   if(!length(drop)) return(invisible(NULL))
@@ -191,7 +191,7 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
   if(ncol(dm) != ncol(x)) {
     check <- c(Pars(m), GLOBALS$CARRY_TRAN)
-    check_dropped_columns(dm, x, check, context = "data set")
+    check_dropped_cols(dm, x, check, context = "data set")
   }
   
   has_na <- check_data_set_na(dm,m)
@@ -255,7 +255,7 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   if(ncol(dm) != ncol(x)) {
     check <- Pars(m)
-    check_dropped_columns(dm, x, check, context = "idata set")
+    check_dropped_cols(dm, x, check, context = "idata set")
   }
   
   check_data_set_na(dm, m)
