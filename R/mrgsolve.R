@@ -583,7 +583,7 @@ do_mrgsim <- function(x,
       carry.recover <- ".data_row."
       drop <- names(which(!is.numeric(join_data)))
       # Will be dropped with error later when validating data
-      drop <- drop[!drop %in% c(Pars(x), c(Pars(m), GLOBALS$CARRY_TRAN)]
+      drop <- drop[!drop %in% c(Pars(x), GLOBALS$CARRY_TRAN)]
       data <- data[,setdiff(names(data),drop),drop=FALSE]
     }
     recover_idata <- intersect(recover,names(idata))
