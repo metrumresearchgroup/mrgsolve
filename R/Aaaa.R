@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -29,7 +29,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
-#' @importFrom rlang is_named .data abort warn inform
+#' @importFrom rlang is_named .data abort warn inform caller_env
 #' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp

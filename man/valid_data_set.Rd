@@ -3,32 +3,42 @@
 \name{valid_data_set}
 \alias{valid_data_set}
 \alias{valid_data_set.matrix}
-\title{Validate and prepare a data sets for simulation}
+\title{Validate and prepare data sets for simulation}
 \usage{
 valid_data_set(x, m = NULL, verbose = FALSE, quiet = FALSE)
 
 valid_data_set.matrix(x, verbose = FALSE)
 }
 \arguments{
-\item{x}{data.frame or matrix}
+\item{x}{data.frame or matrix.}
 
-\item{m}{a model object}
+\item{m}{a model object.}
 
-\item{verbose}{logical}
+\item{verbose}{logical.}
 
-\item{quiet}{if \code{TRUE}, messages will be suppressed}
+\item{quiet}{if \code{TRUE}, messages will be suppressed.}
 }
 \value{
-A matrix with non-numeric columns dropped; if x is a 
-data.frame with character \code{cmt} column comprised of valid 
+A matrix with non-numeric columns dropped; if x is a
+data.frame with character \code{cmt} column comprised of valid
 compartment names and \code{m} is a model object,
-the \code{cmt} column will be converted to the corresponding 
+the \code{cmt} column will be converted to the corresponding
 compartment number.
 }
 \description{
-This function is called by mrgsim.  Users may also call this function
-to pre-validate data when the same data set is used for repeated 
-simulation.
+This function is called by \code{\link[=mrgsim]{mrgsim()}} and friends to check and prepare
+input data sets for simulation.  Users may also call this function to
+pre-validate data when the same data set is used for repeated simulation.
+}
+\details{
+An error will be issued when
+\itemize{
+\item non-numeric data is found in columns sharing names with model parameters
+\item non-numeric data is found in reserved data items related to dosing
+(see \code{mrgsolve:::GLOBALS$CARRY_TRAN})
+\item a column is found that is "internally classed", including columns that
+inherit from \code{integer64} (see \code{\link[=is.object]{is.object()}})
+}
 }
 \examples{
 
@@ -36,10 +46,9 @@ mod <- mrgsolve::house()
 
 data(exTheoph)
 
-d <- valid_data_set(exTheoph,mod)
+d <- valid_data_set(exTheoph, mod)
 
 }
 \seealso{
-\code{\link{valid_idata_set}}, \code{\link{idata_set}}, 
-\code{\link{data_set}}
+\code{\link[=valid_idata_set]{valid_idata_set()}}, \code{\link[=idata_set]{idata_set()}}, \code{\link[=data_set]{data_set()}}
 }
