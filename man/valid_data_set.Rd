@@ -3,7 +3,7 @@
 \name{valid_data_set}
 \alias{valid_data_set}
 \alias{valid_data_set.matrix}
-\title{Validate and prepare a data sets for simulation}
+\title{Validate and prepare data sets for simulation}
 \usage{
 valid_data_set(x, m = NULL, verbose = FALSE, quiet = FALSE)
 

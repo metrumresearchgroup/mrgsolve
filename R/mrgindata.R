@@ -101,7 +101,7 @@ check_dropped_cols <- function(dm, x, check, context) {
   )
 }
 
-##' Validate and prepare a data sets for simulation
+##' Validate and prepare data sets for simulation
 ##'
 ##' This function is called by [mrgsim()] and friends to check and prepare 
 ##' input data sets for simulation.  Users may also call this function to 
