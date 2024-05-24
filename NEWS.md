@@ -1,5 +1,15 @@
 # mrgsolve 1.4.2
 
+- An error will now be issued at simulation time when simulation data sets 
+  (data and idata) contain non-numeric data in columns sharing names with
+  parameters; non-numeric data in columns with certain reserved names 
+  (like `AMT`, `RATE`, `II`, `ADDL`, etc.) will also result in an error
+  (#1193).
+  
+- Internal refactoring to improve performance when simulating infusions or 
+  doses with lag times when those doses are coded explicitly in the data
+  set (#1186, #1187).
+
 # mrgsolve 1.4.1
 
 - Fix bug in `evt::regimen.ii(double)` where timing of next dose 
