@@ -379,6 +379,10 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   double ka =  MRGSOLVE_GET_PRED_KA;
   
   if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
+  // https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
+  if(std::fabs(ka-k10) <= (std::max(std::fabs(ka), std::abs(k10)) * 1e-9)) {
+    Rcpp::stop("k10 is too close to ka for analytical solution to one-compartment model.");
+  }
   
   //a and alpha are private members
   alpha[0] = k10;
