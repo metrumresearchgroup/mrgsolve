@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2024  Metrum Research Group, LLC
 #
 # This file is part of mrgsolve.
 #
@@ -37,8 +37,82 @@ test_that("as_data_set basic", {
   data <- as_data_set(as.data.frame(e1),as.data.frame(e2))
   expect_equal(data$ID, c(1,2,3,4,5))
   expect_equal(data$amt, c(rep(100,2),rep(200,3)))
-  
 })
 
+test_that("as_data_set with leading data frame", {
+  # both lower case
+  e1 <- as.data.frame(ev(amt = 100, ID = 1:2))
+  e2 <- as.data.frame(ev(amt = 200, ID = 1:2))
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "time", "amt", "cmt", "evid"))
+  expect_identical(data$amt, c(100,100,200,200))
+  expect_false(anyNA(data))
 
+  # leading upper case
+  e1 <- as.data.frame(evd(amt = 100, ID = 1:2))
+  e2 <- as.data.frame(ev(amt = 200, ID = 1:2))
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "TIME", "AMT", "CMT", "EVID"))
+  expect_identical(data$AMT, c(100,100,200,200))
+  expect_false(anyNA(data))
+  
+  # leading lower case
+  e1 <- as.data.frame(ev(amt = 100, ID = 1:2))
+  e2 <- as.data.frame(evd(amt = 200, ID = 1:2))
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "time", "amt", "cmt", "evid"))
+  expect_identical(data$amt, c(100,100,200,200))
+  expect_false(anyNA(data))
+})
 
+test_that("as_data_set with data frame then event", {
+  # both lower case
+  e1 <- as.data.frame(ev(amt = 100, ID = 1:2))
+  e2 <- ev(amt = 200, ID = 1:2)
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "time", "amt", "cmt", "evid"))
+  expect_identical(data$amt, c(100,100,200,200))
+  expect_false(anyNA(data))
+  
+  # leading upper case
+  e1 <- as.data.frame(evd(amt = 100, ID = 1:2))
+  e2 <- ev(amt = 200, ID = 1:2)
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "TIME", "AMT", "CMT", "EVID"))
+  expect_identical(data$AMT, c(100,100,200,200))
+  expect_false(anyNA(data))
+  
+  # leading lower case
+  e1 <- as.data.frame(ev(amt = 100, ID = 1:2))
+  e2 <- evd(amt = 200, ID = 1:2)
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "time", "amt", "cmt", "evid"))
+  expect_identical(data$amt, c(100,100,200,200))
+  expect_false(anyNA(data))
+})
+
+test_that("as_data_set with event then data frame", {
+  # both lower case
+  e1 <- ev(amt = 100, ID = 1:2)
+  e2 <- as.data.frame(ev(amt = 200, ID = 1:2))
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "time", "amt", "cmt", "evid"))
+  expect_identical(data$amt, c(100,100,200,200))
+  expect_false(anyNA(data))
+  
+  # leading upper case
+  e1 <- as.data.frame(evd(amt = 100, ID = 1:2))
+  e2 <- ev(amt = 200, ID = 1:2)
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "TIME", "AMT", "CMT", "EVID"))
+  expect_identical(data$AMT, c(100,100,200,200))
+  expect_false(anyNA(data))
+  
+  # leading lower case
+  e1 <- ev(amt = 100, ID = 1:2)
+  e2 <- as.data.frame(evd(amt = 200, ID = 1:2))
+  data <- as_data_set(e1,e2)
+  expect_identical(names(data), c("ID", "time", "amt", "cmt", "evid"))
+  expect_identical(data$amt, c(100,100,200,200))
+  expect_false(anyNA(data))
+})

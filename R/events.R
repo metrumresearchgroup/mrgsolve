@@ -328,6 +328,7 @@ collect_ev <- function(...) {
   if(!"ID" %in% names(x)) {
     wstop("no ID column in the data set")
   }
+  x <- finalize_ev(x)
   if(case > 0) {
     x <- recase_ev(x, case)  
   }
