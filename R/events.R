@@ -288,6 +288,8 @@ check_ev <- function(x) {
 collect_ev <- function(...) {
   x <- list(...)
   tran <- c("ID", GLOBALS$TRAN_LOWER)
+  # The case of the first object will determine 
+  # the case of the output
   case <- x[[1]]@case
   if(case==0) {
     x <- lapply(x, lctran) 

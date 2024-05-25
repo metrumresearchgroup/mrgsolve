@@ -315,6 +315,7 @@ setMethod("as_data_set", "ev", function(x, ...) {
 
 #' @rdname as_data_set
 setMethod("as_data_set", "data.frame", function(x, ...) {
+  # Coerce the first object, then call the ev method
   lc <- lc_tran_names(x)
   if(lc) {
     x <- lctran(x)
