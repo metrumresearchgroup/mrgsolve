@@ -287,13 +287,15 @@ check_ev <- function(x) {
 
 collect_ev <- function(...) {
   x <- list(...)
-  tran <- c("ID","time", "cmt", "evid", "amt", "ii", "addl", "rate", "ss")
-  is_evnt <- vapply(x, is.ev, TRUE)
-  if(any(is_evnt)) {
-    w <- which(is_evnt)[1]
-    case <- x[[w]]@case
+  tran <- c("ID", GLOBALS$TRAN_LOWER)
+  case <- x[[1]]@case
+  if(case==0) {
+    x <- lapply(x, lctran) 
+    x <- lapply(x, as.ev)
   } else {
-    case <- 0  
+    x <- lapply(x, uctran) 
+    x <- lapply(x, as.ev)
+    x <- lapply(x, as.evd)
   }
   x <- lapply(x, check_ev)
   ids <- lapply(x, "[[", "ID")

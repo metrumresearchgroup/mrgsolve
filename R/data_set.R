@@ -314,8 +314,17 @@ setMethod("as_data_set", "ev", function(x, ...) {
 })
 
 #' @rdname as_data_set
-setMethod("as_data_set","data.frame", function(x, ...) {
-  as_data_set(as.ev(x) ,...)
+setMethod("as_data_set", "data.frame", function(x, ...) {
+  lc <- lc_tran_names(x)
+  if(lc) {
+    x <- lctran(x)
+    x <- as.ev(x)
+  } else {
+    x <- uctran(x)
+    x <- as.ev(x)
+    x <- as.evd(x)
+  }
+  do.call(as_data_set, c(list(x), list(...)))
 })
 
 ##' Replicate a list of events into a data set

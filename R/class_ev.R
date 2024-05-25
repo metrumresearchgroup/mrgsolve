@@ -276,3 +276,15 @@ finalize_ev <- function(x,...) {
   }
   x
 }
+
+lc_tran_names <- function(x) {
+  if(is.data.frame(x)) {
+    nlower <- sum(names(x) %in% GLOBALS$TRAN_LOWER)
+    nupper <- sum(names(x) %in% GLOBALS$TRAN_UPPER)
+    return(nlower >= nupper)
+  } else {
+    if(is.evd(x)) return(FALSE)  
+    if(is.ev(x)) return(TRUE)
+  }
+  stop("object is neither data.frame, ev, nor evd.")
+}
