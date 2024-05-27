@@ -55,7 +55,7 @@ test_that("as_data_set with leading data frame", {
   e1 <- as.data.frame(evd(amt = 100, ID = 1:2))
   e2 <- as.data.frame(ev(amt = 200, ID = 1:2))
   data <- as_data_set(e1,e2)
-  expect_identical(sort(names(data)), sort_uower)
+  expect_identical(sort(names(data)), sort_upper)
   expect_identical(data$AMT, c(100,100,200,200))
   expect_false(anyNA(data))
   
@@ -100,6 +100,7 @@ test_that("as_data_set with data frame then event", {
 test_that("as_data_set with event then data frame", {
   sort_lower <- sort(c("ID", "time", "amt", "cmt", "evid"))
   sort_upper <- sort(toupper(sort_lower))
+  
   # both lower case
   e1 <- ev(amt = 100, ID = 1:2)
   e2 <- as.data.frame(ev(amt = 200, ID = 1:2))
@@ -112,7 +113,7 @@ test_that("as_data_set with event then data frame", {
   e1 <- as.data.frame(evd(amt = 100, ID = 1:2))
   e2 <- ev(amt = 200, ID = 1:2)
   data <- as_data_set(e1,e2)
-  expect_identical(sort(names(data)), sort_uower)
+  expect_identical(sort(names(data)), sort_upper)
   expect_identical(data$AMT, c(100,100,200,200))
   expect_false(anyNA(data))
   

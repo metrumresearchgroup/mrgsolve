@@ -18,7 +18,8 @@ as_data_set(x, ...)
 \item{...}{additional ev objects or data frames.}
 }
 \value{
-A data frame suitable for passing into \code{\link[=data_set]{data_set()}}.
+A data frame suitable for passing into \code{\link[=data_set]{data_set()}}. The columns will appear
+in a standardized order.
 }
 \description{
 The goal is to take a series of event objects or data frames and combine them

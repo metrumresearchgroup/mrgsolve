@@ -285,7 +285,8 @@ data_hooks <- function(data, object, envir, param = list(), ...) {
 #' To get a data frame with one row (event) per `ID`, look at [expand.ev()].
 #' 
 #' @return 
-#' A data frame suitable for passing into [data_set()].
+#' A data frame suitable for passing into [data_set()]. The columns will appear
+#' in a standardized order. 
 #'
 #' @examples
 #' a <- ev(amt = c(100,200), cmt=1, ID = seq(3))
