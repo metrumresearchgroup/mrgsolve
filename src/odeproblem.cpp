@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -380,7 +380,8 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   
   if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
   // https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
-  if(std::fabs(ka-k10) <= (std::max(std::fabs(ka), std::abs(k10)) * 1e-9)) {
+  // Going for the simpler method
+  if(std::fabs(ka-k10) <= DBL_EPSILON*100.0) {
     Rcpp::stop("k10 is too close to ka for analytical solution to one-compartment model.");
   }
   
