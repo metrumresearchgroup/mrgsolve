@@ -260,23 +260,27 @@ data_hooks <- function(data, object, envir, param = list(), ...) {
   return(data)
 }
 
-#' Create a simulation data set from ev objects
+#' Create a simulation data set from ev objects or data frames
 #' 
-#' The goal is to take a series of event objects and combine them 
-#' into a single data set that can be passed to [data_set()]. 
+#' The goal is to take a series of event objects or data frames and combine them 
+#' into a single data frame that can be passed to [data_set()]. 
 #'
-#' @param x ev objects
-#' @param ... more ev objects
+#' @param x an ev object or data frame. 
+#' @param ... additional ev objects or data frames.
 #' 
 #' @details
-#' Each event object is added to the data frame as an `ID` or set of `ID`s  
-#' that are distinct from the `ID`s in the other event objects. Note that 
-#' including `ID` argument to the [ev()] call where `length(ID)` is greater 
-#' than one will render that set of events for all of `ID`s that are requested.
+#' Each event object or data frame is added to the data frame as an `ID` or 
+#' set of `ID`s  that are distinct from the `ID`s in the other event objects. 
+#' Note that including `ID` argument to the [ev()] call where `length(ID)` is 
+#' greater than one will render that set of events for all of `ID`s that are 
+#' requested.
 #' 
 #' When determining the case for output names, the `case` attribute for
 #' the first `ev` object passed will be used to set the case for the output
-#' data.frame.
+#' data.frame. In the event `x` is a data frame, the case of special column 
+#' names (like `amt/AMT` or `cmt/CMT`) in the first data frame will be assessed 
+#' and the case in the output data frame will be determined based on the 
+#' relative numbers of lower or upper names. 
 #'
 #' To get a data frame with one row (event) per `ID`, look at [expand.ev()].
 #' 
@@ -293,11 +297,18 @@ data_hooks <- function(data, object, envir, param = list(), ...) {
 #' d <- evd(amt = 500)
 #' 
 #' as_data_set(d, a)
-#'             
+#' 
+#' # Output will have upper case nmtran names
+#' as_data_set(
+#'   data.frame(AMT = 100, ID = 1:2), 
+#'   data.frame(amt = 200, rate = 5, cmt = 2)
+#' )
+#' 
 #' # Instead of this, use expand.ev
 #' as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
 #' 
-#' @seealso [expand.ev()], [ev()]
+#' @seealso [expand.ev()], [expand.evd()], [ev()], [evd()], [uctran()], 
+#' [lctran()] 
 #'
 #' @md
 #' @rdname as_data_set
