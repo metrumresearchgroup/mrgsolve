@@ -380,8 +380,8 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   
   if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
   // https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
-  // Going for the simpler method
-  if(std::fabs(ka-k10) <= DBL_EPSILON*100.0) {
+  // Going for the simpler method; using epsilon of ~  100 * DBL_EPSILON
+  if(std::fabs(ka-k10) <= 2.22e-14) {
     Rcpp::stop("k10 is too close to ka for analytical solution to one-compartment model.");
   }
   
