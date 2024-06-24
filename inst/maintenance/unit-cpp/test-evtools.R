@@ -54,7 +54,7 @@ if(mode==7 && TIME==reptime) {
   evt::replace(self, C/2.0, 3); 
 }
 if(mode==8 && givedose) {
-  evt::ev rep = evt::replace(10, 3);
+  evt::ev rep = evt::replace(C/10.0, 3);
   evt::retime(rep, reptime);
   self.push(rep);
 }
