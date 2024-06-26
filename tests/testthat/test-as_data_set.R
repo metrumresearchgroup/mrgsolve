@@ -125,3 +125,12 @@ test_that("as_data_set with event then data frame", {
   expect_identical(data$amt, c(100,100,200,200))
   expect_false(anyNA(data))
 })
+
+test_that("warning if both upper and lower case names", {
+  # the warning comes from lctran in this case
+  d1 <- data.frame(amt = 100, CMT = 5, RATE = 1, rate = 2, ii = 12)
+  e1 <- ev(amt = 100)
+  expect_warning(as_data_set(d1), "both upper and lower")
+  expect_warning(as_data_set(d1,e1), "both upper and lower")
+  expect_warning(as_data_set(d1,e1), "missing values")
+})
