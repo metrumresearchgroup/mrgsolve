@@ -208,5 +208,11 @@ test_that("Incorrect number of compartments causes error", {
   expect_error(mod <- mcode("a2error3",code))
 })
 
-
-
+test_that("Error when KA==K10 in 1 compartment model", {
+  mod <- param(pred1, KA = 1.5, CL = 1.5, V = 1)
+  expect_error(mrgsim(mod), "k10 is too close to ka")
+  mod <- param(mod, V = 1 + 5e-14)
+  expect_is(mrgsim(mod), "mrgsims")
+  mod <- param(mod, V = 1 + 1e-14)
+  expect_error(mrgsim(mod), "k10 is too close to ka")
+})

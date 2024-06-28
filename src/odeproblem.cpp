@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -379,6 +379,12 @@ void odeproblem::advan2(const double& tfrom, const double& tto) {
   double ka =  MRGSOLVE_GET_PRED_KA;
   
   if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
+  
+  // Going for the simpler method; using epsilon of ~  100 * DBL_EPSILON
+  // https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
+  if(std::fabs(ka-k10) < 2.22e-14) {
+    Rcpp::stop("k10 is too close to ka for analytical solution to one-compartment model.");
+  }
   
   //a and alpha are private members
   alpha[0] = k10;

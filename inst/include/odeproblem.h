@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2022  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -28,8 +28,6 @@
 #include "RcppInclude.h"
 #include "mrgsolv.h"
 #include "datarecord.h"
-//#include "LSODA.h"
-
 
 // 
 // resim functor comes from mrgsolv.h
