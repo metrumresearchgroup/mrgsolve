@@ -94,8 +94,12 @@ typedef double capture;
 #define DADT(a) _DADT_[a-1]
 #define T _ODETIME_[0]
 #define EXP(a) exp(a)
+#define DEXP(a) exp(a)
 #define LOG(a) log(a)
+#define LOG10(a) log10(a)
 #define SQRT(a) sqrt(a)
+#define COS(a) cos(a)
+#define SIN(a) sin(a)
 #endif
 
 // These are the fundamental macros for

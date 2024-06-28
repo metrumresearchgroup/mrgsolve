@@ -23,8 +23,15 @@ jobs:
             rspm: 'https://packagemanager.posit.co/cran/__linux__/focal/2023-02-01'
           - os: ubuntu-20.04
             r: 4.0.5
+            # Use pinned URL because PKNCA v0.11.0 (a pmxTools dependency) uses
+            # the native pipe (added in R 4.1).
+            rspm: 'https://packagemanager.posit.co/cran/__linux__/focal/2024-06-18'
           - os: ubuntu-20.04
             r: 4.1.3
+          - os: ubuntu-20.04
+            r: 4.2.3
+          - os: ubuntu-20.04
+            r: 4.3.1
           - os: ubuntu-latest
             r: release
     env:
@@ -41,7 +48,7 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-          upgrade: ${{ matrix.config.r == '3.6.3' && 'FALSE' || 'TRUE' }}
+          upgrade: ${{ (matrix.config.r == '3.6.3' || matrix.config.r == '4.0.5') && 'FALSE' || 'TRUE' }}
       - name: Install pdflatex
         shell: bash
         run: sudo apt-get install texlive-latex-base texlive-fonts-extra
