@@ -199,6 +199,11 @@ test_that("nm-vars functional test", {
   capture a = EXP(CL);
   capture b = LOG(VC);
   capture c = SQRT(KA);
+  capture d = DEXP(CL); 
+  capture e = LOG10(VC);
+  capture f = COS(M_PI); 
+  capture g = SIN(M_PI/2);
+  
   [ ode ] 
   DADT(1) = -KA * A(1); 
   DADT(2) =  KA * A(1) - (CL/VC) * A(2);
@@ -218,6 +223,10 @@ test_that("nm-vars functional test", {
   expect_equal(out2$a[1], exp(mod2$CL), tolerance = 1e-3)
   expect_equal(out2$b[1], log(mod2$VC), tolerance = 1e-3)
   expect_equal(out2$c[1], sqrt(mod2$KA), tolerance = 1e-3)
+  expect_equal(out2$d[1], out2$a[1], tolerance = 1e-5)
+  expect_equal(out2$e[1], log10(mod2$VC), tolerance = 1e-3)
+  expect_equal(out2$f[1], cos(pi), tolerance = 1e-5)
+  expect_equal(out2$g[1], sin(pi/2), tolerance = 1e-5)
 })
 
 test_that("nm-vars no frda items", {
