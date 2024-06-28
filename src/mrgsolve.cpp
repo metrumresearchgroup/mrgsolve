@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2022  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -28,6 +28,8 @@
 #include <string>
 #include "boost/tokenizer.hpp"
 
+#define CRUMP(a) throw Rcpp::exception(a,false)
+
 /**
  * Limit a number to a specific number of significant digits.
  * 
@@ -51,7 +53,7 @@ int find_position(const std::string what, Rcpp::CharacterVector& table) {
   // Rcpp::IntegerVector ma = Rcpp::match(what,table);
   // if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
   // return(ma[0]-1);
-
+  
   Rcpp::CharacterVector::iterator it = std::find(
     table.begin(), table.end(), what
   ); 
@@ -141,7 +143,7 @@ arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
   arma::mat X = arma::randn<arma::mat>(n, OMEGA.n_cols);
   
   eigval = arma::sqrt(eigval);
-
+  
   X = eigvec * arma::diagmat(eigval) * X.t();
   
   return X.t();
@@ -164,7 +166,7 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   if(a.size()==1) {
     return a[0];  
   }
-
+  
   Rcpp::NumericMatrix mat;
   Rcpp::CharacterVector rnam;
   Rcpp::CharacterVector cnam;
@@ -283,7 +285,7 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
     }
     ret[i] = tokens;
   }
-
+  
   Rcpp::List ans;
   
   ans["tokens"] = ret;
@@ -454,4 +456,82 @@ Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
 
 #endif
 
-
+/* Handle modeled event objects */
+void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j, 
+                   double tto, double& told, double id, double mindt, 
+                   double ALAG_POS) {
+  // Will set used_mtimehx only if we push back
+  std::vector<mrgsolve::evdata> mt  = prob.mtimes();
+  for(size_t mti = 0; mti < mt.size(); ++mti) {
+    // Unpack and check
+    double this_time = (mt[mti]).time;
+    if(this_time < tto && !mt[mti].now) continue;
+    unsigned int this_evid = (mt[mti]).evid;
+    if(this_evid==0) continue;
+    double this_amt = mt[mti].amt;
+    int this_cmt = (mt[mti]).cmt;
+    double this_rate = (mt[mti]).rate;
+    if(prob.neq()!=0 && this_evid !=0) {
+      if((this_cmt == 0) || (abs(this_cmt) > int(prob.neq()))) {
+        Rcpp::Rcout << this_cmt << std::endl;
+        CRUMP("Compartment number in modeled event out of range.");
+      }
+    }
+    // Create the record
+    rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,
+                            this_rate,1.0);    
+    new_ev->phantom_rec();
+    if(mt[mti].now) {
+      new_ev->fn(prob.fbio(new_ev->cmtn()));
+      if(new_ev->fn() < 0) {
+        CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
+      }
+      if(new_ev->fn() ==0) {
+        if(new_ev->is_dose()) {
+          prob.on(new_ev->cmtn());
+          prob.lsoda_init();
+          new_ev->unarm();
+        }
+      }
+      if(new_ev->rate() < 0) {
+        prob.rate_main(new_ev);    
+      }
+      if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
+        new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
+        new_ev->lagged();
+        new_ev->pos(ALAG_POS);
+        mt[mti].now = false;
+      }
+    }
+    // If the event is stil happening now
+    if(mt[mti].now) {
+      new_ev->time(tto);
+      new_ev->implement(&prob);
+      told = new_ev->time();
+      if(new_ev->int_infusion() && new_ev->armed()) {
+        rec_ptr evoff = NEWREC(new_ev->cmt(), 
+                               9, 
+                               new_ev->amt(), 
+                               new_ev->time() + new_ev->dur(), 
+                               new_ev->rate(), 
+                               -299, 
+                               id);
+        ai.push_back(evoff);
+        std::sort(ai.begin()+j+1,ai.end(),CompRec());                       
+      }
+    } else {
+      bool do_mt_ev = true;
+      if((mt[mti].check_unique)) {
+        bool found = CompEqual(mtimehx,this_time,this_evid,this_cmt,
+                               this_amt);   
+        do_mt_ev = do_mt_ev && !found;
+      }
+      if(do_mt_ev) {
+        ai.push_back(new_ev);
+        std::sort(ai.begin()+j+1,ai.end(),CompRec());
+        mtimehx.push_back(new_ev);
+      } 
+    }
+  }
+  prob.clear_mtime();
+}

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -22,6 +22,7 @@
 
 #include "RcppInclude.h"
 #include <R_ext/Rdynload.h>
+#include "odeproblem.h"
 
 extern "C"{DL_FUNC tofun(SEXP a);}
 
@@ -64,6 +65,10 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
                                   const Rcpp::NumericVector& id); 
 
 Rcpp::List mat2df(Rcpp::NumericMatrix const& x);
+
+void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j, 
+                   double tto, double& told, double id, double mindt, 
+                   double ALAG_POS);
   
 // Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
 //                             Rcpp::NumericMatrix& obs,
