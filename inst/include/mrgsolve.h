@@ -66,9 +66,9 @@ Rcpp::NumericMatrix EXPAND_EVENTS(const Rcpp::IntegerVector& idcol_,
 
 Rcpp::List mat2df(Rcpp::NumericMatrix const& x);
 
-void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j, 
-                   double tto, double& told, double id, double mindt, 
-                   double ALAG_POS);
+void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, 
+                   const size_t j, const double tto, double& told, 
+                   const double id, const double mindt, const double alag_pos);
   
 // Rcpp::NumericMatrix recdata(Rcpp::NumericMatrix& dose,
 //                             Rcpp::NumericMatrix& obs,

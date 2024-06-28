@@ -28,7 +28,9 @@
 #include <string>
 #include "boost/tokenizer.hpp"
 
+#ifndef CRUMP
 #define CRUMP(a) throw Rcpp::exception(a,false)
+#endif
 
 /**
  * Limit a number to a specific number of significant digits.
@@ -456,10 +458,21 @@ Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
 
 #endif
 
-/* Handle modeled event objects */
-void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j, 
-                   double tto, double& told, double id, double mindt, 
-                   double ALAG_POS) {
+/** Handle modeled event objects.
+ *   
+ *  @param prob odeproblem object
+ *  @param ai the record list for the current subject
+ *  @param mtimehx the modeled event time history for the current subject
+ *  @param j the current record number
+ *  @param tto the time we're advancing to; we just advanced when this is called
+ *  @param told time of last dose
+ *  @param id the current subject id
+ *  @param mindt the minimum amount of time allowed between records
+ *  @param alag_pos the record position for lagged doses 
+ */
+void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, 
+                   const size_t j, const double tto, double& told, 
+                   const double id, const double mindt, const double alag_pos) {
   // Will set used_mtimehx only if we push back
   std::vector<mrgsolve::evdata> mt  = prob.mtimes();
   for(size_t mti = 0; mti < mt.size(); ++mti) {
@@ -499,7 +512,7 @@ void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j,
       if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
         new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
         new_ev->lagged();
-        new_ev->pos(ALAG_POS);
+        new_ev->pos(alag_pos);
         mt[mti].now = false;
       }
     }
@@ -508,6 +521,7 @@ void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j,
       new_ev->time(tto);
       new_ev->implement(&prob);
       told = new_ev->time();
+      // terminate if infusion
       if(new_ev->int_infusion() && new_ev->armed()) {
         rec_ptr evoff = NEWREC(new_ev->cmt(), 
                                9, 
@@ -519,7 +533,7 @@ void handle_mevent(odeproblem& prob, reclist& ai, reclist& mtimehx, size_t j,
         ai.push_back(evoff);
         std::sort(ai.begin()+j+1,ai.end(),CompRec());                       
       }
-    } else {
+    } else { // If the event needs to be scheduled
       bool do_mt_ev = true;
       if((mt[mti].check_unique)) {
         bool found = CompEqual(mtimehx,this_time,this_evid,this_cmt,
