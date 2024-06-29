@@ -663,7 +663,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               mt[mti].now = false;
             }
           }
-          // If the event is stil happening now
+          // If the event is still happening now
           if(mt[mti].now) {
             new_ev->time(tto);
             new_ev->implement(&prob);
@@ -676,8 +676,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                      new_ev->rate(), 
                                      -299, 
                                      id);
-              a[i].push_back(evoff);
-              std::sort(a[i].begin()+j+1,a[i].end(),CompRec());                       
+              insert_record(a[i], j, evoff, true);
             }
           } else {
             bool do_mt_ev = true;
@@ -687,8 +686,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               do_mt_ev = do_mt_ev && !found;
             }
             if(do_mt_ev) {
-              a[i].push_back(new_ev);
-              std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
+              insert_record(a[i], j, new_ev, put_ev_first);
               mtimehx.push_back(new_ev);
             } 
           }
