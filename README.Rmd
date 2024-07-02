@@ -60,7 +60,7 @@ __Please__ be sure to see important install-related information
 Install the current development version
 
 ```{r,eval=FALSE}
-remotes::install_github("metrumresearchgroup/mrgsolve@develop")
+remotes::install_github("metrumresearchgroup/mrgsolve")
 ```
 
 ## Interaction
