@@ -333,7 +333,7 @@ setMethod("as_data_set", "data.frame", function(x, ...) {
     x <- as.ev(x)
     x <- as.evd(x)
   }
-  do.call(as_data_set, c(list(x), list(...)))
+  as_data_set(x, ...)
 })
 
 ##' Replicate a list of events into a data set
