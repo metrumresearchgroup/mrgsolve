@@ -276,26 +276,30 @@ setMethod("as.ev", "ev", function(x, ...) {
   x
 })
 
-check_ev <- function(x) {
+f_collect_prep <- function(x) {
   if(!inherits(x, c("ev", "data.frame"))) {
-    stop("All items must have class ev or data.frame.")  
+    wstop("all objects must have class ev or data.frame.")  
   }
   x <- to_data_frame(x)
   if(!"ID" %in% names(x)) x[["ID"]] <- 1
-  return(x)
+  x
 }
 
 collect_ev <- function(...) {
   x <- list(...)
-  tran <- c("ID","time", "cmt", "evid", "amt", "ii", "addl", "rate", "ss")
-  is_evnt <- vapply(x, is.ev, TRUE)
-  if(any(is_evnt)) {
-    w <- which(is_evnt)[1]
-    case <- x[[w]]@case
+  tran <- c("ID", GLOBALS$TRAN_LOWER)
+  # The case of the first object will determine 
+  # the case of the output; 0 = lc, 1 = uc
+  case <- x[[1]]@case
+  if(case==0) {
+    x <- lapply(x, lctran) 
+    x <- lapply(x, as.ev)
   } else {
-    case <- 0  
+    x <- lapply(x, uctran) 
+    x <- lapply(x, as.ev)
+    x <- lapply(x, as.evd)
   }
-  x <- lapply(x, check_ev)
+  x <- lapply(x, f_collect_prep)
   ids <- lapply(x, "[[", "ID")
   nid <- sapply(ids, function(tid) length(unique(tid)))
   idn <- cumsum(c(0, nid[-length(nid)]))
@@ -324,6 +328,7 @@ collect_ev <- function(...) {
   if(!"ID" %in% names(x)) {
     wstop("no ID column in the data set")
   }
+  x <- finalize_ev(x)
   if(case > 0) {
     x <- recase_ev(x, case)  
   }

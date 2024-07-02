@@ -259,8 +259,8 @@ finalize_ev_data <- function(data) {
     data[["addl"]][i] <- ceiling((until[i] - data[["time"]][i])/data[["ii"]][i]) - 1
     data[["addl"]] <- unlist(data[["addl"]])
   }
-  ev_cols <- c("ID", "time", "amt", "rate", "ii", "addl", "cmt", "evid", "ss")
-  match_cols <- intersect(ev_cols,names(data))
+  ev_cols <- c("ID", "time", "amt", "rate", "ii", "ss", "addl", "cmt", "evid")
+  match_cols <- intersect(ev_cols, names(data))
   other_cols <- setdiff(names(data),match_cols)
   data <- data[,c(match_cols,other_cols)]
   data
@@ -275,4 +275,16 @@ finalize_ev <- function(x,...) {
     wstop("object must be a data frame or class ev")  
   }
   x
+}
+
+lc_tran_names <- function(x) {
+  if(is.data.frame(x)) {
+    nlower <- sum(names(x) %in% GLOBALS$TRAN_LOWER)
+    nupper <- sum(names(x) %in% GLOBALS$TRAN_UPPER)
+    return(nlower >= nupper)
+  } else {
+    if(is.evd(x)) return(FALSE)  
+    if(is.ev(x)) return(TRUE)
+  }
+  stop("object is neither data.frame, ev, nor evd.")
 }

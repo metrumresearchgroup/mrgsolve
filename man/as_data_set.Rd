@@ -4,7 +4,7 @@
 \alias{as_data_set}
 \alias{as_data_set,ev-method}
 \alias{as_data_set,data.frame-method}
-\title{Create a simulation data set from ev objects}
+\title{Create a simulation data set from ev objects or data frames}
 \usage{
 as_data_set(x, ...)
 
@@ -13,26 +13,31 @@ as_data_set(x, ...)
 \S4method{as_data_set}{data.frame}(x, ...)
 }
 \arguments{
-\item{x}{ev objects}
+\item{x}{an ev object or data frame.}
 
-\item{...}{more ev objects}
+\item{...}{additional ev objects or data frames.}
 }
 \value{
-A data frame suitable for passing into \code{\link[=data_set]{data_set()}}.
+A data frame suitable for passing into \code{\link[=data_set]{data_set()}}. The columns will appear
+in a standardized order.
 }
 \description{
-The goal is to take a series of event objects and combine them
-into a single data set that can be passed to \code{\link[=data_set]{data_set()}}.
+The goal is to take a series of event objects or data frames and combine them
+into a single data frame that can be passed to \code{\link[=data_set]{data_set()}}.
 }
 \details{
-Each event object is added to the data frame as an \code{ID} or set of \code{ID}s
-that are distinct from the \code{ID}s in the other event objects. Note that
-including \code{ID} argument to the \code{\link[=ev]{ev()}} call where \code{length(ID)} is greater
-than one will render that set of events for all of \code{ID}s that are requested.
+Each event object or data frame is added to the data frame as an \code{ID} or
+set of \code{ID}s  that are distinct from the \code{ID}s in the other event objects.
+Note that including \code{ID} argument to the \code{\link[=ev]{ev()}} call where \code{length(ID)} is
+greater than one will render that set of events for all of \code{ID}s that are
+requested.
 
 When determining the case for output names, the \code{case} attribute for
 the first \code{ev} object passed will be used to set the case for the output
-data.frame.
+data.frame. In the event \code{x} is a data frame, the case of special column
+names (like \code{amt/AMT} or \code{cmt/CMT}) in the first data frame will be assessed
+and the case in the output data frame will be determined based on the
+relative numbers of lower or upper names.
 
 To get a data frame with one row (event) per \code{ID}, look at \code{\link[=expand.ev]{expand.ev()}}.
 }
@@ -46,11 +51,18 @@ as_data_set(a, b, c)
 d <- evd(amt = 500)
 
 as_data_set(d, a)
-            
+
+# Output will have upper case nmtran names
+as_data_set(
+  data.frame(AMT = 100, ID = 1:2), 
+  data.frame(amt = 200, rate = 5, cmt = 2)
+)
+
 # Instead of this, use expand.ev
 as_data_set(ev(amt = 100), ev(amt = 200), ev(amt = 300))
 
 }
 \seealso{
-\code{\link[=expand.ev]{expand.ev()}}, \code{\link[=ev]{ev()}}
+\code{\link[=expand.ev]{expand.ev()}}, \code{\link[=expand.evd]{expand.evd()}}, \code{\link[=ev]{ev()}}, \code{\link[=evd]{evd()}}, \code{\link[=uctran]{uctran()}},
+\code{\link[=lctran]{lctran()}}
 }
