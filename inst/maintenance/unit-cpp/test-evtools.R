@@ -123,15 +123,15 @@ test_that("evtools - replace", {
   after <- filter(a, time >= 5)
   expect_true(all(after$C==50))
   
-  #' When the replacement is timed into the future, we see the 
-  #' replacement right at the indicated time
+  # When the replacement is timed into the future, we see the 
+  # replacement right at the indicated time
   b <- mrgsim(mod, param = list(mode = 8, reptime = 8))
   before <- filter(b, time <= 8) # note: <= 8
   expect_true(all(before$C==100))
   after <- filter(b, time > 8) # note: > 8
   expect_true(all(after$C==10))
   
-  #' We can control this with `recsort`
+  # We can control this with `recsort`
   c <- mrgsim(mod, param = list(mode = 8, reptime = 8), recsort = 3)
   before <- filter(c, time < 8) # note: < 8
   expect_true(all(before$C==100))
