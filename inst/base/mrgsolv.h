@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -49,7 +49,7 @@ protected:
 }; 
 
 struct evdata {
-  evdata(double a_, int b_) :  time(a_), evid(b_) {
+  evdata(double a_, int b_) : time(a_), evid(b_) {
     cmt = 1;
     amt = 0.0;
     rate = 0.0;

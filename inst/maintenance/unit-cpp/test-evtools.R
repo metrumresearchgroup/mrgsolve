@@ -13,12 +13,14 @@ $SET end = 12, rtol = 1e-4, atol = 1e-4, delta = 0.25
 $PLUGIN evtools
 $PARAM 
 mode = 0, f1 = 1, dose = 100, irate = 50, newtime = 2
-$CMT A B
+reptime = 5
+$CMT A B C
 $PK
 F_A = f1;
 $DES
 dxdt_A = -1 * A;
 dxdt_B =  1 * A - 0.1 * B;
+dxdt_C = 0;
 $TABLE
 bool givedose = TIME==0;
 if(mode==1 && givedose) {
@@ -47,6 +49,14 @@ if(mode==6 && givedose) {
   ev.time = 100;
   evt::now(ev);
   evt::push(self, ev);
+}
+if(mode==7 && TIME==reptime) {
+  evt::replace(self, C/2.0, 3); 
+}
+if(mode==8 && givedose) {
+  evt::ev rep = evt::replace(C/10.0, 3);
+  evt::retime(rep, reptime);
+  self.push(rep);
 }
 '
 
@@ -102,4 +112,29 @@ test_that("evtools - give timed dose now", {
   a <- mrgsim(mod, param = list(mode = 6))
   b <- mrgsim(mod, param = list(mode = 1))
   expect_identical(as.data.frame(a), as.data.frame(b))
+})
+
+test_that("evtools - replace", {
+  mod <- init(mod, C = 100)
+  mod <- update(mod, delta = 0.1)
+  a <- mrgsim(mod, param = list(mode = 7))
+  before <- filter(a, time < 5)
+  expect_true(all(before$C==100))
+  after <- filter(a, time >= 5)
+  expect_true(all(after$C==50))
+  
+  # When the replacement is timed into the future, we see the 
+  # replacement right at the indicated time
+  b <- mrgsim(mod, param = list(mode = 8, reptime = 8))
+  before <- filter(b, time <= 8) # note: <= 8
+  expect_true(all(before$C==100))
+  after <- filter(b, time > 8) # note: > 8
+  expect_true(all(after$C==10))
+  
+  # We can control this with `recsort`
+  c <- mrgsim(mod, param = list(mode = 8, reptime = 8), recsort = 3)
+  before <- filter(c, time < 8) # note: < 8
+  expect_true(all(before$C==100))
+  after <- filter(c, time >= 8) # note: >= 8
+  expect_true(all(after$C==10))
 })

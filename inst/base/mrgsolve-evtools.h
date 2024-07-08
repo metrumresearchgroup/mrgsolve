@@ -34,6 +34,21 @@ void infuse(databox& self, const double amt, const int cmt, const double rate) {
   return;
 }
 
+mrgsolve::evdata replace(const double amt, const int cmt) {
+  mrgsolve::evdata ev(0, 8); 
+  ev.amt = amt; 
+  ev.cmt = cmt;
+  ev.now = true;
+  ev.check_unique = false;
+  return ev;
+}
+
+void replace(databox& self, const double amt, const int cmt) {
+  mrgsolve::evdata ev = replace(amt, cmt);
+  self.mevector.push_back(ev);
+  return;
+}
+
 void retime(mrgsolve::evdata& ev, const double time) {
   ev.time = time;
   ev.now = false;
