@@ -1,5 +1,5 @@
 tocode <- function(l) {
-  paste0(names(l), " = ", unlist(l, use.names=FALSE))
+  paste0(names(l), " = ", as.character(l))
 }
 
 get_upper_tri <- function(x) {
@@ -7,15 +7,10 @@ get_upper_tri <- function(x) {
   x[upper.tri(x, diag = TRUE)]
 }
 
-#' @export
-mod_transport <- function(x, file = NULL, format = c("yaml", "json"), 
-                          digits = 8) {
-  
-  format <- match.arg(format)
-  
+model_to_list <- function(x) {
   l <- list()
   # Header
-  l$format <- format
+  l$format <- "list"
   l$mrgsolve <- as.character(packageVersion("mrgsolve"))
   l$transport <- 1
   l$model <- x@model
@@ -96,54 +91,120 @@ mod_transport <- function(x, file = NULL, format = c("yaml", "json"),
   })
   
   l$code <- unlist(code, use.names = FALSE)
+
+  l
+}
+
+#' Write model code to yaml or json format
+#' 
+#' @param x a model object. 
+#' @param file output file name. 
+#' @param digits precision to use when writing outputs. 
+#' 
+#' @return 
+#' A list containing data that was written out to the yaml or json file. 
+#' 
+#' @examples
+#' mod <- house()
+#' 
+#' temp1 <- tempfile(fileext = ".yaml")
+#' 
+#' x <- mwrite_yaml(mod, temp1)
+#' 
+#' readLines(temp1)
+#' 
+#' temp2 <- tempfile(fileext = ".json")
+#' 
+#' y <- mwrite_json(mod, temp2)
+#' 
+#' code <- readLines(temp2) 
+#' 
+#' @export
+mwrite_yaml <- function(x, file = NULL, digits = 8) {
   
-  if(format=="yaml") {
-    if(!requireNamespace("yaml", quietly = TRUE)) {
-      abort("The package \"yaml\" is required.")
-    }
-    out <- yaml::as.yaml(l, precision = digits)
-  } else {
-    if(!requireNamespace("jsonlite", quietly = TRUE)) {
-      abort("The package \"jsonlite\" is required.")
-    }
-    out <- jsonlite::toJSON(
-      l, 
-      digits = digits, 
-      pretty = TRUE
-    )
+  l <- model_to_list(x)
+  l$format <- "yaml"
+  
+  if(!requireNamespace("yaml", quietly = TRUE)) {
+    abort("The package \"yaml\" is required.")
   }
+  
+  out <- yaml::as.yaml(l, precision = digits)
   
   if(is.character(file)) {
     writeLines(con = file, out)  
   }
   
+  l$format <- "list"
+  
   l
 }
 
+#' @rdname mwrite_yaml
 #' @export
-mread_xport <- function(file, format = c("yaml", "json"),
-                        project = tempdir(), ...) {
-  format <- match.arg(format)
-  text <- readLines(file)
-  if(format=="yaml") {
-    if(!requireNamespace("yaml", quietly = TRUE)) {
-      abort("The package \"yaml\" is required.")
-    }
-    x <- yaml::yaml.load(text)
-  } else {
-    if(!requireNamespace("jsonlite", quietly = TRUE)) {
-      abort("The package \"jsonlite\" is required.")
-    }
-    x <- jsonlite::fromJSON(text)  
+mwrite_json <- function(x, file = NULL, digits = 8) {
+  
+  l <- model_to_list(x)
+  
+  l$format <- "json"
+  
+  if(!requireNamespace("jsonlite", quietly = TRUE)) {
+    abort("The package \"jsonlite\" is required.")
   }
   
+  out <- jsonlite::toJSON(
+    l, 
+    digits = digits, 
+    pretty = TRUE
+  )
+  
+  if(is.character(file)) {
+    writeLines(con = file, out)  
+  }
+  
+  l$format <- "list"
+  
+  l
+}
+
+#' Read a model from yaml or json format
+#' 
+#' @param file the yaml or json file name.
+#' @param project the directory where the model should be built. 
+#' @param ... passed to [mread()].
+#' 
+#' @return 
+#' A model object. 
+#' 
+#' @export
+mread_yaml <- function(file, project = tempdir(), ...) {
+  text <- readLines(file)
+  if(!requireNamespace("yaml", quietly = TRUE)) {
+    abort("The package \"yaml\" is required.")
+  }
+  x <- yaml::yaml.load(text)
+  parsed_to_model(x, project, ...)
+}
+
+#' @rdname mread_yaml
+#' @export
+mread_json <- function(file, project = tempdir(), ...) {
+  text <- readLines(file)  
+  if(!requireNamespace("jsonlite", quietly = TRUE)) {
+    abort("The package \"jsonlite\" is required.")
+  }
+  x <- jsonlite::fromJSON(text)
+  parsed_to_model(x, project, ...)
+}
+
+parsed_to_model <- function(x, project, ...) {
   x$set$add <- as.numeric(x$set$add)
   x$capture <- as.character(x$capture)
   x$omega$labels <- lapply(x$omega$labels, as.character)
   x$omega$names <- lapply(x$omega$names, as.character)
   x$sigma$labels <- lapply(x$sigma$labels, as.character)
   x$sigma$names <- lapply(x$sigma$names, as.character)
-    
+  
   param <- c("$PARAM", tocode(x$param), "")
   
   init <- c("$INIT", tocode(x$init), "")
