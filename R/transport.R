@@ -54,6 +54,7 @@ mod_transport <- function(x, file = NULL, format = c("yaml", "json"),
   l$set$ixpr <- x@ixpr
   l$set$digits <- x@digits
   l$set$tscale <- x@tscale
+  l$set$outvars <- unlist(outvars(x), use.names = FALSE)
   
   code <- gsub("\\t", "  ", x@code, perl = TRUE)
   code <- modelparse(code, comment_re = character(0))
