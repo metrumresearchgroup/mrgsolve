@@ -1,4 +1,9 @@
+.quotes <- function(x) paste0("\"", x, "\"")
+
 tocode <- function(l) {
+  if(!length(l)) return(character(0))
+  sc <- sapply(l, function(x) is.character(x) && length(x)==1)
+  l[sc] <- sapply(l[sc], .quotes)
   paste0(names(l), " = ", as.character(l))
 }
 
@@ -34,28 +39,30 @@ mwrite_model_to_list <- function(x) {
   l$plugin <- x@plugin
   l$capture <- x@capture
   # These items will get directly passed to update()
-  l$set <- list()
-  l$set$start <- x@start
-  l$set$end <- x@end
-  l$set$delta <- x@delta
-  l$set$add <- x@add
-  l$set$atol <- x@atol
-  l$set$rtol <- x@rtol
-  l$set$ss_atol <- x@ss_atol
-  l$set$ss_rtol <- x@ss_rtol
-  l$set$maxsteps <- x@maxsteps
-  l$set$hmax <- x@hmax
-  l$set$hmin <- x@hmin
-  l$set$maxsteps <- x@maxsteps
-  l$set$mxhnil <- x@mxhnil
-  l$set$ixpr <- x@ixpr
-  l$set$digits <- x@digits
-  l$set$tscale <- x@tscale
-  l$set$outvars <- unlist(outvars(x), use.names = FALSE)
+  l$update <- list()
+  l$update$start <- x@start
+  l$update$end <- x@end
+  l$update$delta <- x@delta
+  l$update$add <- x@add
+  l$update$atol <- x@atol
+  l$update$rtol <- x@rtol
+  l$update$ss_atol <- x@ss_atol
+  l$update$ss_rtol <- x@ss_rtol
+  l$update$maxsteps <- x@maxsteps
+  l$update$hmax <- x@hmax
+  l$update$hmin <- x@hmin
+  l$update$maxsteps <- x@maxsteps
+  l$update$mxhnil <- x@mxhnil
+  l$update$ixpr <- x@ixpr
+  l$update$digits <- x@digits
+  l$update$tscale <- x@tscale
+  l$update$outvars <- unlist(outvars(x), use.names = FALSE)
   
   code <- gsub("\\t", "  ", x@code, perl = TRUE)
   code <- modelparse(code, comment_re = character(0))
   code <- lapply(code, trimws, which = "right")
+  
+  l$set <- tolist(code$SET)
   
   if(nrow(x@annot$data)) {
     annot <- x@annot$data
@@ -78,7 +85,7 @@ mwrite_model_to_list <- function(x) {
   }
   
   clob <- c("PARAM", "INPUT", "THETA", "CMT", "INIT", "OMEGA", "SIGMA", 
-            "NMEXT", "NMXML", "VCMT")
+            "NMEXT", "NMXML", "VCMT", "SET")
   for(block in clob) {
     while(block %in% names(code)) {
       code[[block]] <- NULL
@@ -179,8 +186,8 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' @param model a new model name to use when calling `mread_yaml` or 
 #' `mread_json`.
 #' @param project the directory where the model should be built.
-#' @param set `TRUE` if model setting should be written into the cpp file in a
-#' `$SET` block.
+#' @param update `TRUE` if model settings should be written into the cpp file in 
+#' a `$SET` block.
 #' @param ... passed to [mread()].
 #' 
 #' @examples
@@ -240,38 +247,46 @@ parse_json <- function(file) {
 #' @rdname mread_yaml
 #' @export
 yaml_to_cpp <- function(file, model = basename(file), project = getwd(), 
-                        set = TRUE) {
+                        update = TRUE) {
   x <- parse_yaml(file)
-  x <- parsed_to_cppfile(x, model, project, set)
+  x <- parsed_to_cppfile(x, model, project, update)
   invisible(x$cppfile)
 }
 
 #' @rdname mread_yaml
 #' @export
 json_to_cpp <- function(file, model = basename(file), project = getwd(), 
-                        set = TRUE) {
+                        update = TRUE) {
   x <- parse_json(file)
-  x <- parsed_to_cppfile(x, model, project, set)
+  x <- parsed_to_cppfile(x, model, project, update)
   invisible(x$cppfile)
 }
 
 # Take in content parsed from yaml or json file, clean up, write to cpp file
 # @return a cleaned-up version of x with `cppfile` slot added
-parsed_to_cppfile <- function(x, model, project, set = FALSE) {
-  prob <- NULL
+parsed_to_cppfile <- function(x, model, project, update = FALSE) {
+  prob <- character(0)
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
   }
   
-  param <- c("$PARAM", tocode(x$param), "")
-  init <- c("$INIT", tocode(x$init), "")
+  param <- character(0)
+  if(length(x$param)) {
+    param <- c("$PARAM", tocode(x$param), "")
+  }
+  init <- character(0)
+  if(length(x$init)) {
+    init <- c("$INIT", tocode(x$init), "")
+  }
   
-  x$set$add <- as.numeric(x$set$add)
+  x$update$add <- as.numeric(x$update$add)
   x$capture <- as.character(x$capture)
-  x$omega$labels <- lapply(x$omega$labels, as.character)
-  x$omega$names <- lapply(x$omega$names, as.character)
   
-  omega <- c()
+  omega <- character(0)
+  if(length(x$omega$data)) {
+    x$omega$labels <- lapply(x$omega$labels, as.character)
+    x$omega$names <- lapply(x$omega$names, as.character)
+  }
   for(i in seq_along(x$omega$data)) {
     header <- "@block"
     if(any(x$omega$labels[[i]] != "...")) {
@@ -281,10 +296,11 @@ parsed_to_cppfile <- function(x, model, project, set = FALSE) {
     omega <- c(omega, "$OMEGA", header, x$omega$data[[i]], "")  
   }
   
-  x$sigma$labels <- lapply(x$sigma$labels, as.character)
-  x$sigma$names <- lapply(x$sigma$names, as.character)
-  
-  sigma <- c()
+  sigma <- character(0)
+  if(length(x$sigma$data)) {
+    x$sigma$labels <- lapply(x$sigma$labels, as.character)
+    x$sigma$names <- lapply(x$sigma$names, as.character)
+  }
   for(i in seq_along(x$sigma$data)) {
     header <- "@block"
     if(any(x$sigma$labels[[i]] != "...")) {
@@ -296,8 +312,17 @@ parsed_to_cppfile <- function(x, model, project, set = FALSE) {
   
   code <- c(prob, param, init, omega, sigma, x$code)
   
-  if(isTRUE(set)) {
-    set <- c("$SET", tocode(x$set), "")
+  set <- tocode(x$set)
+  
+  if(isTRUE(update)) {
+    if(length(set)) {
+      set <- c(set, " ")
+    }
+    set <- c(set, tocode(x$update))
+  }
+  
+  if(length(set)) {
+    set <- c("$SET", set, "")
     code <- c(code, set)
   }
   
@@ -319,7 +344,7 @@ parsed_to_model <- function(x, model, project, ...) {
   # If we want dynamic capture, force that into outvars
   mread_args <- list(...)
   if("capture" %in% names(mread_args)) {
-    x$set$outvars <- c(x$set$outvars, mread_args$capture) 
+    x$update$outvars <- c(x$update$outvars, mread_args$capture) 
   }
-  update(mod, data = x$set)
+  update(mod, data = x$update)
 }
