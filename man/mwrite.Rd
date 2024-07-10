@@ -21,8 +21,9 @@ mwrite_json(x, file = NULL, digits = 8)
 A list containing data that was written out to the yaml or json file.
 }
 \description{
-Model code is written to a human-readable, transport format. Models can
-be read back using \code{\link[=mread_yaml]{mread_yaml()}} or \code{\link[=mread_json]{mread_json()}}.
+Model code is written to a readable, transport format. Models can
+be read back using \code{\link[=mread_yaml]{mread_yaml()}} or \code{\link[=mread_json]{mread_json()}} or converted to
+mrgsolve cpp format with \code{\link[=yaml_to_cpp]{yaml_to_cpp()}} or \code{\link[=json_to_cpp]{json_to_cpp()}}.
 }
 \examples{
 mod <- house()

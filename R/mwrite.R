@@ -106,8 +106,9 @@ model_to_list <- function(x) {
 
 #' Write model code to yaml or json format
 #' 
-#' Model code is written to a human-readable, transport format. Models can 
-#' be read back using [mread_yaml()] or [mread_json()].
+#' Model code is written to a readable, transport format. Models can 
+#' be read back using [mread_yaml()] or [mread_json()] or converted to 
+#' mrgsolve cpp format with [yaml_to_cpp()] or [json_to_cpp()].
 #' 
 #' @param x a model object. 
 #' @param file output file name. 
@@ -184,15 +185,18 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' Read a model from yaml or json format
 #' 
 #' Read back models written to file using [mwrite_yaml()] or [mwrite_json()].
+#' Functions `yaml_to_cpp()` and `json_to_cpp()` are also provided to convert
+#' the yaml or json file to mrgsolve cpp file format. 
 #' 
 #' @param file the yaml or json file name.
 #' @param model a new model name to use when calling `mread_yaml` or 
 #' `mread_json`.
 #' @param project the directory where the model should be built.
+#' @param set `TRUE` if model setting should be written into the cpp file in a
+#' `$SET` block.
 #' @param ... passed to [mread()].
 #' 
 #' @examples
-#'
 #' mod <- house()
 #' 
 #' temp <- tempfile(fileext = ".yaml")
@@ -207,6 +211,11 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' 
 #' readLines(cppfile)
 #' 
+#' @details
+#' Note that `yaml_to_cpp()` and `json_to_cpp()` by default write model settings
+#' into the cpp file. `mread_yaml()` and `mread_json()` do not write model 
+#' settings into the file but rather update the model object directly with data
+#' read back from the `yaml` or `json` file.
 #' 
 #' @return 
 #' A model object. 
@@ -243,28 +252,30 @@ parse_json <- function(file) {
 
 #' @rdname mread_yaml
 #' @export
-yaml_to_cpp <- function(file, model = basename(file), project = getwd()) {
+yaml_to_cpp <- function(file, model = basename(file), project = getwd(), 
+                        set = TRUE) {
   x <- parse_yaml(file)
-  x <- parsed_to_cppfile(x, model, project)
+  x <- parsed_to_cppfile(x, model, project, set)
   x$cppfile
 }
 
 #' @rdname mread_yaml
 #' @export
-json_to_cpp <- function(file, model = basename(file), project = getwd()) {
+json_to_cpp <- function(file, model = basename(file), project = getwd(), 
+                        set = TRUE) {
   x <- parse_json(file)
-  x <- parsed_to_cppfile(x, model, project)
+  x <- parsed_to_cppfile(x, model, project, set)
   x$cppfile
 }
 
 # Take in content parsed from yaml or json file, clean up, write to cpp file
 # @return a cleaned-up version of x with `cppfile` slot added
-parsed_to_cppfile <- function(x, model, project) {
+parsed_to_cppfile <- function(x, model, project, set = FALSE) {
   prob <- NULL
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
   }
-  
+
   param <- c("$PARAM", tocode(x$param), "")
   init <- c("$INIT", tocode(x$init), "")
   
@@ -300,9 +311,16 @@ parsed_to_cppfile <- function(x, model, project) {
   }
   
   code <- c(prob, param, init, omega, sigma, x$code)
+  
+  if(isTRUE(set)) {
+    set <- c("$SET", tocode(x$set), "")
+    code <- c(code, set)
+  }
+  
   cppfile <- file.path(project, paste0(model, ".mod"))
   writeLines(con = cppfile, code) 
   x$cppfile <- cppfile
+  
   x
 }
 

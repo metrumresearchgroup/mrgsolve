@@ -11,9 +11,9 @@ mread_yaml(file, model = basename(file), project = tempdir(), ...)
 
 mread_json(file, model = basename(file), project = tempdir(), ...)
 
-yaml_to_cpp(file, model = basename(file), project = getwd())
+yaml_to_cpp(file, model = basename(file), project = getwd(), set = TRUE)
 
-json_to_cpp(file, model = basename(file), project = getwd())
+json_to_cpp(file, model = basename(file), project = getwd(), set = TRUE)
 }
 \arguments{
 \item{file}{the yaml or json file name.}
@@ -24,15 +24,25 @@ json_to_cpp(file, model = basename(file), project = getwd())
 \item{project}{the directory where the model should be built.}
 
 \item{...}{passed to \code{\link[=mread]{mread()}}.}
+
+\item{set}{\code{TRUE} if model setting should be written into the cpp file in a
+\verb{$SET} block.}
 }
 \value{
 A model object.
 }
 \description{
 Read back models written to file using \code{\link[=mwrite_yaml]{mwrite_yaml()}} or \code{\link[=mwrite_json]{mwrite_json()}}.
+Functions \code{yaml_to_cpp()} and \code{json_to_cpp()} are also provided to convert
+the yaml or json file to mrgsolve cpp file format.
+}
+\details{
+Note that \code{yaml_to_cpp()} and \code{json_to_cpp()} by default write model settings
+into the cpp file. \code{mread_yaml()} and \code{mread_json()} do not write model
+settings into the file but rather update the model object directly with data
+read back from the \code{yaml} or \code{json} file.
 }
 \examples{
-
 mod <- house()
 
 temp <- tempfile(fileext = ".yaml")
@@ -46,6 +56,5 @@ mod
 cppfile <- yaml_to_cpp(temp)
 
 readLines(cppfile)
-
 
 }
