@@ -7,7 +7,7 @@ get_upper_tri <- function(x) {
   x[upper.tri(x, diag = TRUE)]
 }
 
-model_to_list <- function(x) {
+mwrite_model_to_list <- function(x) {
   l <- list()
   # Header
   l$format <- "list"
@@ -23,11 +23,11 @@ model_to_list <- function(x) {
   l$omega <- list()
   l$omega$data <- lapply(as.list(omat(x)), get_upper_tri)
   l$omega$labels <- labels(omat(x))
-  names(l$omega$labels) <- seq(length(l$omega$labels))
+  names(l$omega$labels) <- seq_along(l$omega$labels)
   l$omega$names <- names(omat(x))
   l$sigma$data <- lapply(as.list(smat(x)), get_upper_tri)
   l$sigma$labels <- labels(smat(x))
-  names(l$sigma$labels) <- seq(length(l$sigma$labels))
+  names(l$sigma$labels) <- seq_along(l$sigma$labels)
   l$sigma$names <- names(smat(x))
   # Other
   l$env <- as.list(x@envir)
@@ -136,49 +136,36 @@ model_to_list <- function(x) {
 #' @name mwrite
 #' @export
 mwrite_yaml <- function(x, file = NULL, digits = 8) {
-  
-  l <- model_to_list(x)
-  l$format <- "yaml"
-  
   if(!requireNamespace("yaml", quietly = TRUE)) {
     abort("The package \"yaml\" is required.")
   }
-  
+  l <- mwrite_model_to_list(x)
+  l$format <- "yaml"
   out <- yaml::as.yaml(l, precision = digits)
-  
   if(is.character(file)) {
     writeLines(con = file, out)  
   }
-  
   l$format <- "list"
-  
   l
 }
 
 #' @rdname mwrite
 #' @export
 mwrite_json <- function(x, file = NULL, digits = 8) {
-  
-  l <- model_to_list(x)
-  
-  l$format <- "json"
-  
   if(!requireNamespace("jsonlite", quietly = TRUE)) {
     abort("The package \"jsonlite\" is required.")
-  }
-  
+  }  
+  l <- mwrite_model_to_list(x)
+  l$format <- "json"
   out <- jsonlite::toJSON(
     l, 
     digits = digits, 
     pretty = TRUE
   )
-  
   if(is.character(file)) {
     writeLines(con = file, out)  
   }
-  
   l$format <- "list"
-  
   l
 }
 
@@ -235,18 +222,18 @@ mread_json <- function(file, model = basename(file), project = tempdir(), ...) {
 }
 
 parse_yaml <- function(file) {
-  text <- readLines(file)
   if(!requireNamespace("yaml", quietly = TRUE)) {
     abort("The package \"yaml\" is required.")
   }
+  text <- readLines(file)
   yaml::yaml.load(text)
 }
 
 parse_json <- function(file) {
-  text <- readLines(file)  
   if(!requireNamespace("jsonlite", quietly = TRUE)) {
     abort("The package \"jsonlite\" is required.")
   }
+  text <- readLines(file)  
   jsonlite::fromJSON(text)
 }
 
@@ -256,7 +243,7 @@ yaml_to_cpp <- function(file, model = basename(file), project = getwd(),
                         set = TRUE) {
   x <- parse_yaml(file)
   x <- parsed_to_cppfile(x, model, project, set)
-  x$cppfile
+  invisible(x$cppfile)
 }
 
 #' @rdname mread_yaml
@@ -265,7 +252,7 @@ json_to_cpp <- function(file, model = basename(file), project = getwd(),
                         set = TRUE) {
   x <- parse_json(file)
   x <- parsed_to_cppfile(x, model, project, set)
-  x$cppfile
+  invisible(x$cppfile)
 }
 
 # Take in content parsed from yaml or json file, clean up, write to cpp file
@@ -275,18 +262,16 @@ parsed_to_cppfile <- function(x, model, project, set = FALSE) {
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
   }
-
+  
   param <- c("$PARAM", tocode(x$param), "")
   init <- c("$INIT", tocode(x$init), "")
   
   x$set$add <- as.numeric(x$set$add)
   x$capture <- as.character(x$capture)
-  
   x$omega$labels <- lapply(x$omega$labels, as.character)
   x$omega$names <- lapply(x$omega$names, as.character)
   
   omega <- c()
-  
   for(i in seq_along(x$omega$data)) {
     header <- "@block"
     if(any(x$omega$labels[[i]] != "...")) {
@@ -300,7 +285,6 @@ parsed_to_cppfile <- function(x, model, project, set = FALSE) {
   x$sigma$names <- lapply(x$sigma$names, as.character)
   
   sigma <- c()
-  
   for(i in seq_along(x$sigma$data)) {
     header <- "@block"
     if(any(x$sigma$labels[[i]] != "...")) {
@@ -320,7 +304,6 @@ parsed_to_cppfile <- function(x, model, project, set = FALSE) {
   cppfile <- file.path(project, paste0(model, ".mod"))
   writeLines(con = cppfile, code) 
   x$cppfile <- cppfile
-  
   x
 }
 
