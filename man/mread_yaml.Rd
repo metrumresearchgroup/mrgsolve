@@ -3,25 +3,49 @@
 \name{mread_yaml}
 \alias{mread_yaml}
 \alias{mread_json}
+\alias{yaml_to_cpp}
+\alias{json_to_cpp}
 \title{Read a model from yaml or json format}
 \usage{
 mread_yaml(file, model = basename(file), project = tempdir(), ...)
 
 mread_json(file, model = basename(file), project = tempdir(), ...)
+
+yaml_to_cpp(file, model = basename(file), project = getwd())
+
+json_to_cpp(file, model = basename(file), project = getwd())
 }
 \arguments{
 \item{file}{the yaml or json file name.}
 
-\item{model}{a new model name to use when calling `mread_yaml` or 
-`mread_json`.}
+\item{model}{a new model name to use when calling \code{mread_yaml} or
+\code{mread_json}.}
 
 \item{project}{the directory where the model should be built.}
 
-\item{...}{passed to [mread()].}
+\item{...}{passed to \code{\link[=mread]{mread()}}.}
 }
 \value{
 A model object.
 }
 \description{
-Read a model from yaml or json format
+Read back models written to file using \code{\link[=mwrite_yaml]{mwrite_yaml()}} or \code{\link[=mwrite_json]{mwrite_json()}}.
+}
+\examples{
+
+mod <- house()
+
+temp <- tempfile(fileext = ".yaml")
+
+mwrite_yaml(mod, file = temp)
+
+# Note: this model is not compiled
+mod <- mread_yaml(temp, model = "new-house", compile = FALSE)
+mod
+
+cppfile <- yaml_to_cpp(temp)
+
+readLines(cppfile)
+
+
 }

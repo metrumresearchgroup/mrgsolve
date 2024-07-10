@@ -106,6 +106,9 @@ model_to_list <- function(x) {
 
 #' Write model code to yaml or json format
 #' 
+#' Model code is written to a human-readable, transport format. Models can 
+#' be read back using [mread_yaml()] or [mread_json()].
+#' 
 #' @param x a model object. 
 #' @param file output file name. 
 #' @param digits precision to use when writing outputs. 
@@ -128,6 +131,8 @@ model_to_list <- function(x) {
 #' 
 #' code <- readLines(temp2) 
 #' 
+#' @md
+#' @name mwrite
 #' @export
 mwrite_yaml <- function(x, file = NULL, digits = 8) {
   
@@ -149,7 +154,7 @@ mwrite_yaml <- function(x, file = NULL, digits = 8) {
   l
 }
 
-#' @rdname mwrite_yaml
+#' @rdname mwrite
 #' @export
 mwrite_json <- function(x, file = NULL, digits = 8) {
   
@@ -178,52 +183,94 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 
 #' Read a model from yaml or json format
 #' 
+#' Read back models written to file using [mwrite_yaml()] or [mwrite_json()].
+#' 
 #' @param file the yaml or json file name.
 #' @param model a new model name to use when calling `mread_yaml` or 
 #' `mread_json`.
-#' @param project the directory where the model should be built. 
+#' @param project the directory where the model should be built.
 #' @param ... passed to [mread()].
+#' 
+#' @examples
+#'
+#' mod <- house()
+#' 
+#' temp <- tempfile(fileext = ".yaml")
+#' 
+#' mwrite_yaml(mod, file = temp)
+#' 
+#' # Note: this model is not compiled
+#' mod <- mread_yaml(temp, model = "new-house", compile = FALSE)
+#' mod
+#' 
+#' cppfile <- yaml_to_cpp(temp)
+#' 
+#' readLines(cppfile)
+#' 
 #' 
 #' @return 
 #' A model object. 
 #' 
+#' @md
 #' @export
 mread_yaml <- function(file, model = basename(file), project = tempdir(), ...) {
-  text <- readLines(file)
-  if(!requireNamespace("yaml", quietly = TRUE)) {
-    abort("The package \"yaml\" is required.")
-  }
-  x <- yaml::yaml.load(text)
+  x <- parse_yaml(file)
   parsed_to_model(x, model, project, ...)
 }
 
 #' @rdname mread_yaml
 #' @export
 mread_json <- function(file, model = basename(file), project = tempdir(), ...) {
+  x <- parse_json(file)
+  parsed_to_model(x, model, project, ...)
+}
+
+parse_yaml <- function(file) {
+  text <- readLines(file)
+  if(!requireNamespace("yaml", quietly = TRUE)) {
+    abort("The package \"yaml\" is required.")
+  }
+  yaml::yaml.load(text)
+}
+
+parse_json <- function(file) {
   text <- readLines(file)  
   if(!requireNamespace("jsonlite", quietly = TRUE)) {
     abort("The package \"jsonlite\" is required.")
   }
-  x <- jsonlite::fromJSON(text)
-  parsed_to_model(x, model, project, ...)
+  jsonlite::fromJSON(text)
 }
 
-# @param x model object
-# @param model a new model name
-# @param project where to build the model; defaults to tempdir()
-parsed_to_model <- function(x, model, project, ...) {
+#' @rdname mread_yaml
+#' @export
+yaml_to_cpp <- function(file, model = basename(file), project = getwd()) {
+  x <- parse_yaml(file)
+  x <- parsed_to_cppfile(x, model, project)
+  x$cppfile
+}
 
+#' @rdname mread_yaml
+#' @export
+json_to_cpp <- function(file, model = basename(file), project = getwd()) {
+  x <- parse_json(file)
+  x <- parsed_to_cppfile(x, model, project)
+  x$cppfile
+}
+
+# Take in content parsed from yaml or json file, clean up, write to cpp file
+# @return a cleaned-up version of x with `cppfile` slot added
+parsed_to_cppfile <- function(x, model, project) {
   prob <- NULL
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
   }
-    
+  
   param <- c("$PARAM", tocode(x$param), "")
   init <- c("$INIT", tocode(x$init), "")
-
+  
   x$set$add <- as.numeric(x$set$add)
   x$capture <- as.character(x$capture)
-
+  
   x$omega$labels <- lapply(x$omega$labels, as.character)
   x$omega$names <- lapply(x$omega$names, as.character)
   
@@ -253,15 +300,25 @@ parsed_to_model <- function(x, model, project, ...) {
   }
   
   code <- c(prob, param, init, omega, sigma, x$code)
-  modelfile <- file.path(project, paste0(model, ".mod"))
-  writeLines(con = modelfile, code)
-  mod <- mread(modelfile, ...)
-  
+  cppfile <- file.path(project, paste0(model, ".mod"))
+  writeLines(con = cppfile, code) 
+  x$cppfile <- cppfile
+  x
+}
+
+# Take in parsed content from yaml or json file
+# Write to cpp file 
+# mread back in and update
+# @param x model object
+# @param model a new model name
+# @param project where to build the model; defaults to tempdir()
+parsed_to_model <- function(x, model, project, ...) {
+  x <- parsed_to_cppfile(x, model, project)
+  mod <- mread(x$cppfile, ...)
   # If we want dynamic capture, force that into outvars
   mread_args <- list(...)
   if("capture" %in% names(mread_args)) {
     x$set$outvars <- c(x$set$outvars, mread_args$capture) 
   }
-  
   update(mod, data = x$set)
 }
