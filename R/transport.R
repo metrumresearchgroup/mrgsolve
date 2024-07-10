@@ -78,6 +78,8 @@ model_to_list <- function(x) {
     }
   }
   
+  # Need special handling here in case compartments are declared 
+  # as a part of PKMODEL
   if("PKMODEL" %in% names(code)) {
     pk <- tolist(code$PKMODEL)
     parsed <- do.call(PKMODEL, pk)
@@ -91,7 +93,7 @@ model_to_list <- function(x) {
   })
   
   l$code <- unlist(code, use.names = FALSE)
-
+  
   l
 }
 
@@ -197,37 +199,46 @@ mread_json <- function(file, project = tempdir(), ...) {
   parsed_to_model(x, project, ...)
 }
 
+# @param x model object
+# @param project where to build the model; defaults to tempdir()
 parsed_to_model <- function(x, project, ...) {
-  x$set$add <- as.numeric(x$set$add)
-  x$capture <- as.character(x$capture)
-  x$omega$labels <- lapply(x$omega$labels, as.character)
-  x$omega$names <- lapply(x$omega$names, as.character)
-  x$sigma$labels <- lapply(x$sigma$labels, as.character)
-  x$sigma$names <- lapply(x$sigma$names, as.character)
   
   param <- c("$PARAM", tocode(x$param), "")
-  
   init <- c("$INIT", tocode(x$init), "")
   
-  omega <- sigma <- c()
+  x$set$add <- as.numeric(x$set$add)
+  x$capture <- as.character(x$capture)
+
+  x$omega$labels <- lapply(x$omega$labels, as.character)
+  x$omega$names <- lapply(x$omega$names, as.character)
+  
+  omega <- c()
+  
   for(i in seq_along(x$omega$data)) {
     header <- "@block"
     if(any(x$omega$labels[[i]] != "...")) {
-      header <- c(header, paste0("@labels ", paste0(x$omega$labels[[i]], collapse = " ")))    
+      o_labels <- paste0(x$omega$labels[[i]], collapse = " ")
+      header <- c(header, paste0("@labels ", o_labels))
     }
     omega <- c(omega, "$OMEGA", header, x$omega$data[[i]], "")  
   }
   
+  x$sigma$labels <- lapply(x$sigma$labels, as.character)
+  x$sigma$names <- lapply(x$sigma$names, as.character)
+  
+  sigma <- c()
+  
   for(i in seq_along(x$sigma$data)) {
     header <- "@block"
     if(any(x$sigma$labels[[i]] != "...")) {
-      header <- c(header, paste0("@labels ", paste0(x$sigma$labels[[i]], collapse = " ")))    
+      s_labels <- paste0(x$sigma$labels[[i]], collapse = " ")
+      header <- c(header, paste0("@labels ", s_labels))
     }
     sigma <- c(sigma, "$SIGMA", header, x$sigma$data[[i]], "")  
   }
   
   code <- c(param, init, omega, sigma, x$code)
-  modelfile <- file.path(project, paste0(x$model, "-xport.mod"))
+  modelfile <- file.path(project, paste0(x$model, "-xport.cpp"))
   writeLines(con = modelfile, code)
   mod <- mread(modelfile, ...)
   update(mod, data = x$set)
