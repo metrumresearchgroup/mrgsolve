@@ -14,6 +14,8 @@ model_to_list <- function(x) {
   l$mrgsolve <- as.character(packageVersion("mrgsolve"))
   l$transport <- 1
   l$model <- x@model
+  # Problem
+  l$prob <- ""
   # Critical items
   l$param <- as.list(param(x))
   l$init <- as.list(init(x))
@@ -68,6 +70,11 @@ model_to_list <- function(x) {
     } else {
       code <- c(list(PROB = annot), code)
     }
+  }
+  
+  if("PROB" %in% names(code)) {
+    l$prob <- code$PROB
+    code$PROB <- NULL
   }
   
   clob <- c("PARAM", "INPUT", "THETA", "CMT", "INIT", "OMEGA", "SIGMA", 
@@ -172,6 +179,8 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' Read a model from yaml or json format
 #' 
 #' @param file the yaml or json file name.
+#' @param model a new model name to use when calling `mread_yaml` or 
+#' `mread_json`.
 #' @param project the directory where the model should be built. 
 #' @param ... passed to [mread()].
 #' 
@@ -179,33 +188,39 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' A model object. 
 #' 
 #' @export
-mread_yaml <- function(file, project = tempdir(), ...) {
+mread_yaml <- function(file, model = basename(file), project = tempdir(), ...) {
   text <- readLines(file)
   if(!requireNamespace("yaml", quietly = TRUE)) {
     abort("The package \"yaml\" is required.")
   }
   x <- yaml::yaml.load(text)
-  parsed_to_model(x, project, ...)
+  parsed_to_model(x, model, project, ...)
 }
 
 #' @rdname mread_yaml
 #' @export
-mread_json <- function(file, project = tempdir(), ...) {
+mread_json <- function(file, model = basename(file), project = tempdir(), ...) {
   text <- readLines(file)  
   if(!requireNamespace("jsonlite", quietly = TRUE)) {
     abort("The package \"jsonlite\" is required.")
   }
   x <- jsonlite::fromJSON(text)
-  parsed_to_model(x, project, ...)
+  parsed_to_model(x, model, project, ...)
 }
 
 # @param x model object
+# @param model a new model name
 # @param project where to build the model; defaults to tempdir()
-parsed_to_model <- function(x, project, ...) {
-  
+parsed_to_model <- function(x, model, project, ...) {
+
+  prob <- NULL
+  if(sum(nchar(x$prob))) {
+    prob <- c("$PROB", x$prob, "")  
+  }
+    
   param <- c("$PARAM", tocode(x$param), "")
   init <- c("$INIT", tocode(x$init), "")
-  
+
   x$set$add <- as.numeric(x$set$add)
   x$capture <- as.character(x$capture)
 
@@ -237,9 +252,16 @@ parsed_to_model <- function(x, project, ...) {
     sigma <- c(sigma, "$SIGMA", header, x$sigma$data[[i]], "")  
   }
   
-  code <- c(param, init, omega, sigma, x$code)
-  modelfile <- file.path(project, paste0(x$model, "-xport.cpp"))
+  code <- c(prob, param, init, omega, sigma, x$code)
+  modelfile <- file.path(project, paste0(model, ".mod"))
   writeLines(con = modelfile, code)
   mod <- mread(modelfile, ...)
+  
+  # If we want dynamic capture, force that into outvars
+  mread_args <- list(...)
+  if("capture" %in% names(mread_args)) {
+    x$set$outvars <- c(x$set$outvars, mread_args$capture) 
+  }
+  
   update(mod, data = x$set)
 }
