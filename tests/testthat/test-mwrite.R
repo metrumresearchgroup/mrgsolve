@@ -35,10 +35,98 @@ test_that("convert model to list", {
   mod <- house(end = 26, delta = 2, outvars = "GUT, DV, CP")
   l <- mrgsolve:::mwrite_model_to_list(mod)
   expect_equal(l$format, "list")
-  expect_equal(l$transport, 1)
+  expect_equal(l$version, 1)
   expect_equal(l$update$end, 26)
   expect_equal(l$update$delta, 2)
   expect_equal(l$update$outvars, c("GUT", "DV", "CP"))
   expect_equal(l$set$end, 120)
   expect_equal(l$set$delta, 0.25)
+  
+  expect_length(l$omega, 3)
+  expect_equal(names(l$sigma), c("data", "labels", "names"))
+  expect_is(l$omega$data, "list")
+  expect_length(l$omega$data, 1)
+  expect_length(l$omega$data[[1]], 10)
+  expect_length(l$omega$labels, 1)
+  expect_length(l$omega$labels[[1]], 4)
+  expect_is(l$omega$labels, "list")
+  expect_length(l$omega$names, 1)
+  expect_is(l$omega$names, "character")
+  
+  mod2 <- mod
+  mod2@omega <- omat()
+  l <- mrgsolve:::mwrite_model_to_list(mod2)
+  expect_length(l$omega, 3)
+  expect_equal(names(l$sigma), c("data", "labels", "names"))
+  expect_is(l$omega$data, "list")
+  expect_length(l$omega$data, 0)
+  expect_length(l$omega$labels, 0)
+  expect_is(l$omega$labels, "list")
+  expect_length(l$omega$names, 0)
+  expect_is(l$omega$names, "character")
 })
+
+test_that("mwrite, mread yaml", {
+  skip_if_not_installed("yaml")
+  temp <- tempfile()
+  mod <- modlib("pk1", compile = FALSE)
+  mod <- update(mod, end = 16, delta = 8)
+  mwrite_yaml(mod, temp)
+  expect_true(file.exists(temp))
+  yaml <- readLines(temp)
+  l <- yaml.load(yaml)
+  expect_equal(l$format, "yaml")
+  expect_equal(l$version, 1)
+  expect_equal(l$param$V, 20)
+  
+  mod2 <- mread_yaml(temp, compile = FALSE)
+  expect_identical(param(mod), param(mod2))
+  expect_identical(stime(mod), stime(mod2))
+  
+  mod3 <- mread_yaml(temp, model = "foo", compile = FALSE)
+  expect_equal(mod3@model, "foo_mod")
+  
+  mod4 <- mread_yaml(
+    temp, compile = FALSE, capture = "KA"
+  )
+  expect_true("KA" %in% outvars(mod4)$capture)
+})
+
+test_that("yaml_to_cpp", {
+  
+  
+})
+
+
+test_that("mwrite, mread json", {
+  skip_if_not_installed("jsonlite")
+  temp <- tempfile()
+  mod <- modlib("pbpk", compile = FALSE)
+  mod <- update(mod, add = c(1,2,3)/10)
+  mod <- param(mod, Kpte = 1e6, F = 0.1)
+  mwrite_json(mod, temp)
+  expect_true(file.exists(temp))
+  json <- readLines(temp)
+  l <- jsonlite::fromJSON(json)
+  expect_equal(l$format, "json")
+  expect_equal(l$version, 1)
+  expect_equal(l$param$BW, 70)
+  
+  mod2 <- mread_json(temp, compile = FALSE)
+  expect_identical(param(mod), param(mod2))
+  expect_identical(stime(mod), stime(mod2))
+  
+  mod3 <- mread_json(temp, model = "foo", compile = FALSE)
+  expect_equal(mod3@model, "foo_mod")
+  
+  mod4 <- mread_json(
+    temp, compile = FALSE, capture = "BW"
+  )
+  expect_true("BW" %in% outvars(mod4)$capture)
+})
+
+test_that("json_to_cpp", {
+  
+  
+})
+

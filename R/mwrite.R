@@ -17,7 +17,7 @@ mwrite_model_to_list <- function(x) {
   # Header
   l$format <- "list"
   l$mrgsolve <- as.character(packageVersion("mrgsolve"))
-  l$transport <- 1
+  l$version <- 1
   l$model <- x@model
   # Problem
   l$prob <- ""
@@ -153,7 +153,7 @@ mwrite_yaml <- function(x, file = NULL, digits = 8) {
     writeLines(con = file, out)  
   }
   l$format <- "list"
-  l
+  invisible(l)
 }
 
 #' @rdname mwrite
@@ -173,7 +173,7 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
     writeLines(con = file, out)  
   }
   l$format <- "list"
-  l
+  invisible(l)
 }
 
 #' Read a model from yaml or json format
