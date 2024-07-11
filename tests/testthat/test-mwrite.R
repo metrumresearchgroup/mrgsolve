@@ -74,18 +74,21 @@ test_that("mwrite, mread yaml", {
   mwrite_yaml(mod, temp)
   expect_true(file.exists(temp))
   yaml <- readLines(temp)
-  l <- yaml.load(yaml)
+  l <- yaml::yaml.load(yaml)
   expect_equal(l$format, "yaml")
   expect_equal(l$version, 1)
   expect_equal(l$param$V, 20)
   
+  # Read back in 
   mod2 <- mread_yaml(temp, compile = FALSE)
   expect_identical(param(mod), param(mod2))
   expect_identical(stime(mod), stime(mod2))
   
+  # Switch up the model name
   mod3 <- mread_yaml(temp, model = "foo", compile = FALSE)
   expect_equal(mod3@model, "foo_mod")
   
+  # We can pass capture through
   mod4 <- mread_yaml(
     temp, compile = FALSE, capture = "KA"
   )
@@ -93,8 +96,18 @@ test_that("mwrite, mread yaml", {
 })
 
 test_that("yaml_to_cpp", {
+  mod <- modlib("popex", compile = FALSE)
+  temp <- tempfile()
+  mwrite_yaml(mod, temp)
+  yaml_to_cpp(temp, model = "bar", project = tempdir())
+  file <- file.path(tempdir(), "bar.mod")
+  expect_true(file.exists(file))
+  mod <- mread(file, compile = FALSE)
+  expect_is(mod, "mrgmod")  
   
-  
+  yaml_to_cpp(temp, model = "bar", project = tempdir(), update = TRUE)
+  x <- readLines(file)
+  expect_match(x, "hmax = 0", all = FALSE, fixed = TRUE)
 })
 
 
@@ -112,13 +125,16 @@ test_that("mwrite, mread json", {
   expect_equal(l$version, 1)
   expect_equal(l$param$BW, 70)
   
+  # Read back in
   mod2 <- mread_json(temp, compile = FALSE)
   expect_identical(param(mod), param(mod2))
   expect_identical(stime(mod), stime(mod2))
   
+  # Switch up model name
   mod3 <- mread_json(temp, model = "foo", compile = FALSE)
   expect_equal(mod3@model, "foo_mod")
   
+  # We can pass capture through
   mod4 <- mread_json(
     temp, compile = FALSE, capture = "BW"
   )
@@ -126,7 +142,16 @@ test_that("mwrite, mread json", {
 })
 
 test_that("json_to_cpp", {
+  mod <- modlib("popex", compile = FALSE)
+  temp <- tempfile()
+  mwrite_json(mod, temp)
+  json_to_cpp(temp, model = "yak", project = tempdir())
+  file <- file.path(tempdir(), "yak.mod")
+  expect_true(file.exists(file))
+  mod <- mread(file, compile = FALSE)
+  expect_is(mod, "mrgmod")  
   
-  
+  json_to_cpp(temp, model = "bar", project = tempdir(), update = TRUE)
+  x <- readLines(file)
+  expect_match(x, "ixpr = 0", all = FALSE, fixed = TRUE)
 })
-

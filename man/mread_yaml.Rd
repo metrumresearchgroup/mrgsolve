@@ -11,9 +11,9 @@ mread_yaml(file, model = basename(file), project = tempdir(), ...)
 
 mread_json(file, model = basename(file), project = tempdir(), ...)
 
-yaml_to_cpp(file, model = basename(file), project = getwd(), set = TRUE)
+yaml_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
 
-json_to_cpp(file, model = basename(file), project = getwd(), set = TRUE)
+json_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
 }
 \arguments{
 \item{file}{the yaml or json file name.}
@@ -25,8 +25,8 @@ json_to_cpp(file, model = basename(file), project = getwd(), set = TRUE)
 
 \item{...}{passed to \code{\link[=mread]{mread()}}.}
 
-\item{set}{\code{TRUE} if model setting should be written into the cpp file in a
-\verb{$SET} block.}
+\item{update}{\code{TRUE} if model settings should be written into the cpp file in
+a \verb{$SET} block.}
 }
 \value{
 A model object.

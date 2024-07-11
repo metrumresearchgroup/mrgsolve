@@ -67,9 +67,9 @@ mwrite_model_to_list <- function(x) {
   if(nrow(x@annot$data)) {
     annot <- x@annot$data
     annot$options <- NULL
-    if(!requireNamespace("knitr", quietly = TRUE)) {
-      abort("The package \"knitr\" is required.")
-    }
+    if(!requireNamespace("knitr", quietly = TRUE)) { 
+      abort("The package \"knitr\" is required.") #nocov
+    } 
     annot <- knitr::kable(annot, format = "simple")
     annot <- c("# Annotations: ", "", annot)
     if("PROB" %in% names(code)) {
@@ -144,7 +144,7 @@ mwrite_model_to_list <- function(x) {
 #' @export
 mwrite_yaml <- function(x, file = NULL, digits = 8) {
   if(!requireNamespace("yaml", quietly = TRUE)) {
-    abort("The package \"yaml\" is required.")
+    abort("The package \"yaml\" is required.") #nocov
   }
   l <- mwrite_model_to_list(x)
   l$format <- "yaml"
@@ -160,7 +160,7 @@ mwrite_yaml <- function(x, file = NULL, digits = 8) {
 #' @export
 mwrite_json <- function(x, file = NULL, digits = 8) {
   if(!requireNamespace("jsonlite", quietly = TRUE)) {
-    abort("The package \"jsonlite\" is required.")
+    abort("The package \"jsonlite\" is required.") #nocov
   }  
   l <- mwrite_model_to_list(x)
   l$format <- "json"
@@ -230,7 +230,7 @@ mread_json <- function(file, model = basename(file), project = tempdir(), ...) {
 
 parse_yaml <- function(file) {
   if(!requireNamespace("yaml", quietly = TRUE)) {
-    abort("The package \"yaml\" is required.")
+    abort("The package \"yaml\" is required.") #nocov-start
   }
   text <- readLines(file)
   yaml::yaml.load(text)
@@ -238,7 +238,7 @@ parse_yaml <- function(file) {
 
 parse_json <- function(file) {
   if(!requireNamespace("jsonlite", quietly = TRUE)) {
-    abort("The package \"jsonlite\" is required.")
+    abort("The package \"jsonlite\" is required.") #nocov-start
   }
   text <- readLines(file)  
   jsonlite::fromJSON(text)
