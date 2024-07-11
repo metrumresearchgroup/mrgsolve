@@ -104,12 +104,14 @@ test_that("yaml_to_cpp", {
   expect_true(file.exists(file))
   mod <- mread(file, compile = FALSE)
   expect_is(mod, "mrgmod")  
+  x <- readLines(file)
+  expect_no_match(x, "hmax = 0", all = FALSE, fixed = TRUE)
   
+  # Request updates to be written
   yaml_to_cpp(temp, model = "bar", project = tempdir(), update = TRUE)
   x <- readLines(file)
   expect_match(x, "hmax = 0", all = FALSE, fixed = TRUE)
 })
-
 
 test_that("mwrite, mread json", {
   skip_if_not_installed("jsonlite")
@@ -154,4 +156,21 @@ test_that("json_to_cpp", {
   json_to_cpp(temp, model = "bar", project = tempdir(), update = TRUE)
   x <- readLines(file)
   expect_match(x, "ixpr = 0", all = FALSE, fixed = TRUE)
+})
+
+test_that("imposter code", {
+  mod <- modlib("pk2", compile = FALSE)
+  x <- mwrite_yaml(mod, file = NULL)
+  x$source <- NULL
+  temp <- tempfile()
+  yaml <- yaml::as.yaml(x)
+  cat(yaml, file = temp)
+  expect_error(mread_yaml(temp), "was not written by `mwrite`")
+})
+
+test_that("mwrite with no file", {
+  l <- mwrite_yaml(house(), file = NULL)  
+  expect_is(l, "list")
+  expect_equal(l$format, "list")
+  expect_error(mwrite_yaml(house()), "missing, with no default")
 })

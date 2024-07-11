@@ -12,11 +12,24 @@ get_upper_tri <- function(x) {
   x[upper.tri(x, diag = TRUE)]
 }
 
+require_yaml <- function() {
+  if(!requireNamespace("yaml", quietly = TRUE)) {
+    abort("The package \"yaml\" is required.") #nocov-start
+  } 
+}
+
+require_jsonlite <- function() {
+  if(!requireNamespace("jsonlite", quietly = TRUE)) {
+    abort("The package \"jsonlite\" is required.") #nocov-start
+  } 
+}
+
 mwrite_model_to_list <- function(x) {
   l <- list()
   # Header
-  l$format <- "list"
+  l$source <- "mrgsolve::mwrite"
   l$mrgsolve <- as.character(packageVersion("mrgsolve"))
+  l$format <- "list"
   l$version <- 1
   l$model <- x@model
   # Problem
@@ -54,6 +67,7 @@ mwrite_model_to_list <- function(x) {
   l$update$maxsteps <- x@maxsteps
   l$update$mxhnil <- x@mxhnil
   l$update$ixpr <- x@ixpr
+  l$update$mindt <- x@mindt
   l$update$digits <- x@digits
   l$update$tscale <- x@tscale
   l$update$outvars <- unlist(outvars(x), use.names = FALSE)
@@ -101,7 +115,7 @@ mwrite_model_to_list <- function(x) {
     pk$cmt <- NULL
     code$PKMODEL <- tocode(pk)
   }
-  
+  # Put block names back into code
   code <- Map(code, names(code), f = function(text, name) {
     c(glue("${name}"), text, " ")
   })
@@ -118,11 +132,30 @@ mwrite_model_to_list <- function(x) {
 #' mrgsolve cpp format with [yaml_to_cpp()] or [json_to_cpp()].
 #' 
 #' @param x a model object. 
-#' @param file output file name. 
+#' @param file output file name; if non-character (e.g., `NULL`), no output 
+#' will be written to file. 
 #' @param digits precision to use when writing outputs. 
 #' 
+#' @details
+#' Parameters and omega and sigma matrices that were imported via `$NMXML`
+#' or `$NMEXT` will be written into the yaml or json files and the NONMEM
+#' import blocks will be dropped. This allows the user to load a model based on 
+#' a NONMEM run without having a connection to that output (e.g., `root.xml` or
+#' `root.ext`). Given that the connection to the NONMEM modeling outputs is 
+#' broken when writing to yaml or json, any update to the NONMEM run will only 
+#' be propagated to the yaml or json file when `write_yaml()` or `write_json()`
+#' is run again. 
+#' 
+#' The yaml and json model files do not currently have the ability to track 
+#' other external dependencies, such as user-defined header files or other 
+#' code that might be sourced in by the user when the model is loaded via 
+#' [mread()]. NONMEM xml and ext files imported by `$NMXML` or `$NMEXT` are 
+#' the _only_ external dependencies that are accounted for in the yaml and 
+#' json files. 
+#' 
 #' @return 
-#' A list containing data that was written out to the yaml or json file. 
+#' A list containing data that was written out to the yaml or json file, with 
+#' added item `file`, is returned invisibly. 
 #' 
 #' @examples
 #' mod <- house()
@@ -142,10 +175,8 @@ mwrite_model_to_list <- function(x) {
 #' @md
 #' @name mwrite
 #' @export
-mwrite_yaml <- function(x, file = NULL, digits = 8) {
-  if(!requireNamespace("yaml", quietly = TRUE)) {
-    abort("The package \"yaml\" is required.") #nocov
-  }
+mwrite_yaml <- function(x, file, digits = 8) {
+  require_yaml()
   l <- mwrite_model_to_list(x)
   l$format <- "yaml"
   out <- yaml::as.yaml(l, precision = digits)
@@ -153,15 +184,14 @@ mwrite_yaml <- function(x, file = NULL, digits = 8) {
     writeLines(con = file, out)  
   }
   l$format <- "list"
+  l$file <- file
   invisible(l)
 }
 
 #' @rdname mwrite
 #' @export
 mwrite_json <- function(x, file = NULL, digits = 8) {
-  if(!requireNamespace("jsonlite", quietly = TRUE)) {
-    abort("The package \"jsonlite\" is required.") #nocov
-  }  
+  require_jsonlite()  
   l <- mwrite_model_to_list(x)
   l$format <- "json"
   out <- jsonlite::toJSON(
@@ -173,6 +203,7 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
     writeLines(con = file, out)  
   }
   l$format <- "list"
+  l$file <- file
   invisible(l)
 }
 
@@ -217,38 +248,42 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' @md
 #' @export
 mread_yaml <- function(file, model = basename(file), project = tempdir(), ...) {
-  x <- parse_yaml(file)
+  x <- mwrite_parse_yaml(file)
   parsed_to_model(x, model, project, ...)
 }
 
 #' @rdname mread_yaml
 #' @export
 mread_json <- function(file, model = basename(file), project = tempdir(), ...) {
-  x <- parse_json(file)
+  x <- mwrite_parse_json(file)
   parsed_to_model(x, model, project, ...)
 }
 
-parse_yaml <- function(file) {
-  if(!requireNamespace("yaml", quietly = TRUE)) {
-    abort("The package \"yaml\" is required.") #nocov-start
-  }
+mwrite_parse_yaml <- function(file) {
+  require_yaml()
   text <- readLines(file)
-  yaml::yaml.load(text)
+  l <- yaml::yaml.load(text)
+  if(!identical(l$source, "mrgsolve::mwrite")) {
+    abort("the yaml source file was not written by `mwrite`.")  
+  }
+  l
 }
 
-parse_json <- function(file) {
-  if(!requireNamespace("jsonlite", quietly = TRUE)) {
-    abort("The package \"jsonlite\" is required.") #nocov-start
-  }
+mwrite_parse_json <- function(file) {
+  require_jsonlite()
   text <- readLines(file)  
-  jsonlite::fromJSON(text)
+  l <- jsonlite::fromJSON(text)
+  if(!identical(l$source, "mrgsolve::mwrite")) {
+    abort("the json source file was not written by `mwrite`.")  
+  }
+  l
 }
 
 #' @rdname mread_yaml
 #' @export
 yaml_to_cpp <- function(file, model = basename(file), project = getwd(), 
                         update = TRUE) {
-  x <- parse_yaml(file)
+  x <- mwrite_parse_yaml(file)
   x <- parsed_to_cppfile(x, model, project, update)
   invisible(x$cppfile)
 }
@@ -257,7 +292,7 @@ yaml_to_cpp <- function(file, model = basename(file), project = getwd(),
 #' @export
 json_to_cpp <- function(file, model = basename(file), project = getwd(), 
                         update = TRUE) {
-  x <- parse_json(file)
+  x <- mwrite_parse_json(file)
   x <- parsed_to_cppfile(x, model, project, update)
   invisible(x$cppfile)
 }

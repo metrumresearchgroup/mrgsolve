@@ -6,24 +6,43 @@
 \alias{mwrite_json}
 \title{Write model code to yaml or json format}
 \usage{
-mwrite_yaml(x, file = NULL, digits = 8)
+mwrite_yaml(x, file, digits = 8)
 
 mwrite_json(x, file = NULL, digits = 8)
 }
 \arguments{
 \item{x}{a model object.}
 
-\item{file}{output file name.}
+\item{file}{output file name; if non-character (e.g., \code{NULL}), no output
+will be written to file.}
 
 \item{digits}{precision to use when writing outputs.}
 }
 \value{
-A list containing data that was written out to the yaml or json file.
+A list containing data that was written out to the yaml or json file, with
+added item \code{file}, is returned invisibly.
 }
 \description{
 Model code is written to a readable, transport format. Models can
 be read back using \code{\link[=mread_yaml]{mread_yaml()}} or \code{\link[=mread_json]{mread_json()}} or converted to
 mrgsolve cpp format with \code{\link[=yaml_to_cpp]{yaml_to_cpp()}} or \code{\link[=json_to_cpp]{json_to_cpp()}}.
+}
+\details{
+Parameters and omega and sigma matrices that were imported via \verb{$NMXML}
+or \verb{$NMEXT} will be written into the yaml or json files and the NONMEM
+import blocks will be dropped. This allows the user to load a model based on
+a NONMEM run without having a connection to that output (e.g., \code{root.xml} or
+\code{root.ext}). Given that the connection to the NONMEM modeling outputs is
+broken when writing to yaml or json, any update to the NONMEM run will only
+be propagated to the yaml or json file when \code{write_yaml()} or \code{write_json()}
+is run again.
+
+The yaml and json model files do not currently have the ability to track
+other external dependencies, such as user-defined header files or other
+code that might be sourced in by the user when the model is loaded via
+\code{\link[=mread]{mread()}}. NONMEM xml and ext files imported by \verb{$NMXML} or \verb{$NMEXT} are
+the \emph{only} external dependencies that are accounted for in the yaml and
+json files.
 }
 \examples{
 mod <- house()
