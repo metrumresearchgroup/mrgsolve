@@ -18,8 +18,8 @@ json_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
 \arguments{
 \item{file}{the yaml or json file name.}
 
-\item{model}{a new model name to use when calling \code{mread_yaml} or
-\code{mread_json}.}
+\item{model}{a new model name to use when calling \code{mread_yaml()} or
+\code{mread_json()}.}
 
 \item{project}{the directory where the model should be built.}
 
@@ -57,4 +57,7 @@ cppfile <- yaml_to_cpp(temp)
 
 readLines(cppfile)
 
+}
+\seealso{
+\code{\link[=mwrite_yaml]{mwrite_yaml()}}, \code{\link[=mwrite_json]{mwrite_json()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}, \code{\link[=json_to_cpp]{json_to_cpp()}}
 }

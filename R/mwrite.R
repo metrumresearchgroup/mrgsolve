@@ -127,9 +127,12 @@ mwrite_model_to_list <- function(x) {
 
 #' Write model code to yaml or json format
 #' 
-#' Model code is written to a readable, transport format. Models can 
-#' be read back using [mread_yaml()] or [mread_json()] or converted to 
-#' mrgsolve cpp format with [yaml_to_cpp()] or [json_to_cpp()].
+#' Model code is written to a readable, transport format. This transport format
+#' can be useful for (1) breaking connection to NONMEM modeling outputs that 
+#' are imported by `$NMXML` or `$NMEXT` and (2) saving model updates (e.g., 
+#' an updated parameter list). Models can be read back using [mread_yaml()] or 
+#' [mread_json()] or converted to mrgsolve cpp format with [yaml_to_cpp()] or 
+#' [json_to_cpp()].
 #' 
 #' @param x a model object. 
 #' @param file output file name; if non-character (e.g., `NULL`), no output 
@@ -143,15 +146,15 @@ mwrite_model_to_list <- function(x) {
 #' a NONMEM run without having a connection to that output (e.g., `root.xml` or
 #' `root.ext`). Given that the connection to the NONMEM modeling outputs is 
 #' broken when writing to yaml or json, any update to the NONMEM run will only 
-#' be propagated to the yaml or json file when `write_yaml()` or `write_json()`
-#' is run again. 
+#' be propagated to the yaml or json file when `mwrite_yaml()` or 
+#' `mwrite_json()` is run again. 
 #' 
 #' The yaml and json model files do not currently have the ability to track 
 #' other external dependencies, such as user-defined header files or other 
 #' code that might be sourced in by the user when the model is loaded via 
 #' [mread()]. NONMEM xml and ext files imported by `$NMXML` or `$NMEXT` are 
 #' the _only_ external dependencies that are accounted for in the yaml and 
-#' json files. 
+#' json transport files. 
 #' 
 #' @return 
 #' A list containing data that was written out to the yaml or json file, with 
@@ -171,6 +174,8 @@ mwrite_model_to_list <- function(x) {
 #' y <- mwrite_json(mod, temp2)
 #' 
 #' code <- readLines(temp2) 
+#' 
+#' @seealso [mread_yaml()], [mread_json()], [yaml_to_cpp()], [json_to_cpp()]
 #' 
 #' @md
 #' @name mwrite
@@ -214,12 +219,18 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' the yaml or json file to mrgsolve cpp file format. 
 #' 
 #' @param file the yaml or json file name.
-#' @param model a new model name to use when calling `mread_yaml` or 
-#' `mread_json`.
+#' @param model a new model name to use when calling `mread_yaml()` or 
+#' `mread_json()`.
 #' @param project the directory where the model should be built.
 #' @param update `TRUE` if model settings should be written into the cpp file in 
 #' a `$SET` block.
 #' @param ... passed to [mread()].
+#' 
+#' @details
+#' Note that `yaml_to_cpp()` and `json_to_cpp()` by default write model settings
+#' into the cpp file. `mread_yaml()` and `mread_json()` do not write model 
+#' settings into the file but rather update the model object directly with data
+#' read back from the `yaml` or `json` file.
 #' 
 #' @examples
 #' mod <- house()
@@ -236,14 +247,10 @@ mwrite_json <- function(x, file = NULL, digits = 8) {
 #' 
 #' readLines(cppfile)
 #' 
-#' @details
-#' Note that `yaml_to_cpp()` and `json_to_cpp()` by default write model settings
-#' into the cpp file. `mread_yaml()` and `mread_json()` do not write model 
-#' settings into the file but rather update the model object directly with data
-#' read back from the `yaml` or `json` file.
-#' 
 #' @return 
 #' A model object. 
+#' 
+#' @seealso [mwrite_yaml()], [mwrite_json()], [yaml_to_cpp()], [json_to_cpp()]
 #' 
 #' @md
 #' @export

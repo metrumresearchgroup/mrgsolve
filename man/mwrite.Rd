@@ -23,9 +23,12 @@ A list containing data that was written out to the yaml or json file, with
 added item \code{file}, is returned invisibly.
 }
 \description{
-Model code is written to a readable, transport format. Models can
-be read back using \code{\link[=mread_yaml]{mread_yaml()}} or \code{\link[=mread_json]{mread_json()}} or converted to
-mrgsolve cpp format with \code{\link[=yaml_to_cpp]{yaml_to_cpp()}} or \code{\link[=json_to_cpp]{json_to_cpp()}}.
+Model code is written to a readable, transport format. This transport format
+can be useful for (1) breaking connection to NONMEM modeling outputs that
+are imported by \verb{$NMXML} or \verb{$NMEXT} and (2) saving model updates (e.g.,
+an updated parameter list). Models can be read back using \code{\link[=mread_yaml]{mread_yaml()}} or
+\code{\link[=mread_json]{mread_json()}} or converted to mrgsolve cpp format with \code{\link[=yaml_to_cpp]{yaml_to_cpp()}} or
+\code{\link[=json_to_cpp]{json_to_cpp()}}.
 }
 \details{
 Parameters and omega and sigma matrices that were imported via \verb{$NMXML}
@@ -34,15 +37,15 @@ import blocks will be dropped. This allows the user to load a model based on
 a NONMEM run without having a connection to that output (e.g., \code{root.xml} or
 \code{root.ext}). Given that the connection to the NONMEM modeling outputs is
 broken when writing to yaml or json, any update to the NONMEM run will only
-be propagated to the yaml or json file when \code{write_yaml()} or \code{write_json()}
-is run again.
+be propagated to the yaml or json file when \code{mwrite_yaml()} or
+\code{mwrite_json()} is run again.
 
 The yaml and json model files do not currently have the ability to track
 other external dependencies, such as user-defined header files or other
 code that might be sourced in by the user when the model is loaded via
 \code{\link[=mread]{mread()}}. NONMEM xml and ext files imported by \verb{$NMXML} or \verb{$NMEXT} are
 the \emph{only} external dependencies that are accounted for in the yaml and
-json files.
+json transport files.
 }
 \examples{
 mod <- house()
@@ -59,4 +62,7 @@ y <- mwrite_json(mod, temp2)
 
 code <- readLines(temp2) 
 
+}
+\seealso{
+\code{\link[=mread_yaml]{mread_yaml()}}, \code{\link[=mread_json]{mread_json()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}, \code{\link[=json_to_cpp]{json_to_cpp()}}
 }
