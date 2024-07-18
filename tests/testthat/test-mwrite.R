@@ -120,7 +120,11 @@ test_that("imposter code", {
   temp <- tempfile()
   yaml <- yaml::as.yaml(x)
   cat(yaml, file = temp)
-  expect_error(mread_yaml(temp), "was not written by `mwrite`")
+  expect_error(
+    mread_yaml(temp), 
+    "was not written by `mwrite_yaml()`.", 
+    fixed = TRUE
+  )
 })
 
 test_that("mwrite with no file", {

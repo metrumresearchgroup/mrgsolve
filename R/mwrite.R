@@ -14,7 +14,7 @@ get_upper_tri <- function(x) {
 
 require_yaml <- function() {
   if(!requireNamespace("yaml", quietly = TRUE)) {
-    abort("The package \"yaml\" is required.") #nocov-start
+    abort("The package \"yaml\" is required.") # nocov
   } 
 }
 
@@ -229,7 +229,7 @@ mwrite_parse_yaml <- function(file) {
   text <- readLines(file)
   l <- yaml::yaml.load(text)
   if(!identical(l$source, "mrgsolve::mwrite")) {
-    abort("the yaml source file was not written by `mwrite`.")  
+    abort("the yaml source file was not written by `mwrite_yaml()`.")  
   }
   l
 }
