@@ -56,8 +56,7 @@ Suggests:
     yaml,
     knitr, 
     data.table (>= 1.14.2),
-    pmxTools,
-    jsonlite
+    pmxTools
 LinkingTo: 
     Rcpp (>= 1.0.7),
     RcppArmadillo (>= 0.10.7.3.0),
@@ -68,7 +67,7 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 NeedsCompilation: yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Collate: 
     'RcppExports.R'
     'utils.R'

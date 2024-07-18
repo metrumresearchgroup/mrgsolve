@@ -113,51 +113,6 @@ test_that("yaml_to_cpp", {
   expect_match(x, "hmax = 0", all = FALSE, fixed = TRUE)
 })
 
-test_that("mwrite, mread json", {
-  skip_if_not_installed("jsonlite")
-  temp <- tempfile()
-  mod <- modlib("pbpk", compile = FALSE)
-  mod <- update(mod, add = c(1,2,3)/10)
-  mod <- param(mod, Kpte = 1e6, F = 0.1)
-  mwrite_json(mod, temp)
-  expect_true(file.exists(temp))
-  json <- readLines(temp)
-  l <- jsonlite::fromJSON(json)
-  expect_equal(l$format, "json")
-  expect_equal(l$version, 1)
-  expect_equal(l$param$BW, 70)
-  
-  # Read back in
-  mod2 <- mread_json(temp, compile = FALSE)
-  expect_identical(param(mod), param(mod2))
-  expect_identical(stime(mod), stime(mod2))
-  
-  # Switch up model name
-  mod3 <- mread_json(temp, model = "foo", compile = FALSE)
-  expect_equal(mod3@model, "foo_mod")
-  
-  # We can pass capture through
-  mod4 <- mread_json(
-    temp, compile = FALSE, capture = "BW"
-  )
-  expect_true("BW" %in% outvars(mod4)$capture)
-})
-
-test_that("json_to_cpp", {
-  mod <- modlib("popex", compile = FALSE)
-  temp <- tempfile()
-  mwrite_json(mod, temp)
-  json_to_cpp(temp, model = "yak", project = tempdir())
-  file <- file.path(tempdir(), "yak.mod")
-  expect_true(file.exists(file))
-  mod <- mread(file, compile = FALSE)
-  expect_is(mod, "mrgmod")  
-  
-  json_to_cpp(temp, model = "bar", project = tempdir(), update = TRUE)
-  x <- readLines(file)
-  expect_match(x, "ixpr = 0", all = FALSE, fixed = TRUE)
-})
-
 test_that("imposter code", {
   mod <- modlib("pk2", compile = FALSE)
   x <- mwrite_yaml(mod, file = NULL)

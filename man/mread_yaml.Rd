@@ -2,24 +2,17 @@
 % Please edit documentation in R/mwrite.R
 \name{mread_yaml}
 \alias{mread_yaml}
-\alias{mread_json}
 \alias{yaml_to_cpp}
-\alias{json_to_cpp}
-\title{Read a model from yaml or json format}
+\title{Read a model from yaml format}
 \usage{
 mread_yaml(file, model = basename(file), project = tempdir(), ...)
 
-mread_json(file, model = basename(file), project = tempdir(), ...)
-
 yaml_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
-
-json_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
 }
 \arguments{
-\item{file}{the yaml or json file name.}
+\item{file}{the yaml file name.}
 
-\item{model}{a new model name to use when calling \code{mread_yaml()} or
-\code{mread_json()}.}
+\item{model}{a new model name to use when calling \code{mread_yaml()}.}
 
 \item{project}{the directory where the model should be built.}
 
@@ -32,15 +25,14 @@ a \verb{$SET} block.}
 A model object.
 }
 \description{
-Read back models written to file using \code{\link[=mwrite_yaml]{mwrite_yaml()}} or \code{\link[=mwrite_json]{mwrite_json()}}.
-Functions \code{yaml_to_cpp()} and \code{json_to_cpp()} are also provided to convert
-the yaml or json file to mrgsolve cpp file format.
+Read back models written to file using \code{\link[=mwrite_yaml]{mwrite_yaml()}}. Function
+\code{yaml_to_cpp()} is also provided to convert the yaml file to mrgsolve cpp
+file format.
 }
 \details{
-Note that \code{yaml_to_cpp()} and \code{json_to_cpp()} by default write model settings
-into the cpp file. \code{mread_yaml()} and \code{mread_json()} do not write model
-settings into the file but rather update the model object directly with data
-read back from the \code{yaml} or \code{json} file.
+Note that \code{yaml_to_cpp()} by default writes model settings into the cpp
+file. \code{mread_yaml()} does not write model settings into the file but rather
+update the model object directly with data read back from the \code{yaml} file.
 }
 \examples{
 mod <- house()
@@ -59,5 +51,5 @@ readLines(cppfile)
 
 }
 \seealso{
-\code{\link[=mwrite_yaml]{mwrite_yaml()}}, \code{\link[=mwrite_json]{mwrite_json()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}, \code{\link[=json_to_cpp]{json_to_cpp()}}
+\code{\link[=mwrite_yaml]{mwrite_yaml()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}
 }

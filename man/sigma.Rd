@@ -25,7 +25,7 @@ smat(.x, ...)
 
 \S4method{smat}{mrgmod}(.x, ..., make = FALSE, open = FALSE)
 
-\S4method{smat}{`NULL`}(.x, ...)
+\S4method{smat}{NULL}(.x, ...)
 
 \S4method{smat}{mrgsims}(.x, make = FALSE, ...)
 }
