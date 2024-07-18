@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -29,7 +29,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
-#' @importFrom rlang is_named .data abort warn inform
+#' @importFrom rlang is_named .data abort warn inform caller_env
 #' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
@@ -93,7 +93,8 @@ Reserved <- c("ID", "amt", "cmt", "ii", "ss", "evid",
               "addl", "rate","time", Reserved_cvar,
               "AMT", "CMT", "II", "SS", "ADDL", "RATE", "THETA",
               paste0("pred_", c("CL", "VC", "V", "V2", "KA", "Q", "VP", "V3")),
-              "double", "int", "bool", "capture")
+              "double", "int", "bool", "capture", 
+              "until", "now")
 
 Reserved_nm <- c("A", "DADT", "A_0", "T")
 

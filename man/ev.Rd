@@ -27,59 +27,59 @@ ev(x, ...)
 \S4method{ev}{ev}(x, realize_addl = FALSE, ...)
 }
 \arguments{
-\item{x}{a model object}
+\item{x}{a model object.}
 
-\item{...}{other items to be incorporated into the event object; see 
-details}
+\item{...}{other items to be incorporated into the event object; see
+\strong{Details}.}
 
-\item{object}{passed to show}
+\item{object}{an event object to be added to a model object.}
 
-\item{time}{event time}
+\item{time}{event time.}
 
-\item{amt}{dose amount}
+\item{amt}{dose amount.}
 
-\item{evid}{event ID}
+\item{evid}{event ID.}
 
-\item{cmt}{compartment}
+\item{cmt}{compartment number or name.}
 
-\item{ID}{subject ID}
+\item{ID}{subject ID.}
 
-\item{replicate}{logical; if \code{TRUE}, events will be replicated for 
-each individual in \code{ID}}
+\item{replicate}{logical; if \code{TRUE}, events will be replicated for
+each individual in \code{ID}.}
 
-\item{until}{the expected maximum \bold{observation} time for this regimen}
+\item{until}{the expected maximum \strong{observation} time for this regimen;
+doses will be scheduled up to, but not including, the \code{until} time;
+see \strong{Examples}.}
 
-\item{tinf}{infusion time; if greater than zero, then the \code{rate} item 
-will be derived as \code{amt/tinf}}
+\item{tinf}{infusion time; if greater than zero, then the \code{rate} item
+will be derived as \code{amt/tinf}.}
 
-\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl} 
-doses.  If \code{TRUE}, \code{addl} doses are made explicit with 
-\code{\link{realize_addl}}}
+\item{realize_addl}{if \code{FALSE} (default), no change to \code{addl}
+doses.  If \code{TRUE}, \code{addl} doses are made explicit with \code{\link[=realize_addl]{realize_addl()}}.}
 }
 \value{
-events object
+\code{ev()} returns an event object.
 }
 \description{
 An event object specifies dosing or other interventions that get implemented
-during simulation. Event objects do similar things as \code{\link{data_set}}, 
-but simpler and quicker.
+during simulation. Event objects do similar things as \link{data_set},
+but simpler and easier to create.
 }
 \details{
 \itemize{
-\item Required items in events objects include 
+\item Required items in events objects include
 \code{time}, \code{amt}, \code{evid} and \code{cmt}.
 \item If not supplied, \code{evid} is assumed to be 1.
 \item If not supplied, \code{cmt}  is assumed to be 1.
 \item If not supplied, \code{time} is assumed to be 0.
 \item If \code{amt} is not supplied, an error will be generated.
-\item If \code{total} is supplied, then \code{addl} will be set 
-to \code{total} - 1.
+\item If \code{total} is supplied, then \code{addl} will be set to \code{total-1}.
 \item Other items can include \code{ii}, \code{ss}, and \code{addl}
-(see \code{\link{data_set}} for details on all of these items).
+(see \link{data_set} for details on all of these items).
 \item \code{ID} may be specified as a vector.
-\item If replicate is \code{TRUE} (default), then the events 
+\item If replicate is \code{TRUE} (default), then the events
 regimen is replicated for each \code{ID}; otherwise, the number of
-event rows must match the number of \code{ID}s entered
+event rows must match the number of \code{ID}s entered.
 }
 }
 \examples{
@@ -95,10 +95,18 @@ c(loading, maint)
 
 reduced_load <- dplyr::mutate(loading, amt = 750)
 
+# Three additional doses in this case
+e <- ev(amt = 100, ii = 4*7, until = 16*7)
+e
+# Last dose is given at 84
+realize_addl(e)
+
+# Four additional doses with last at 112 in this case
+e <- ev(amt = 100, ii = 4*7, until = 16*7 + 0.001)
+realize_addl(e)
+
 }
 \seealso{
-\code{\link{evd}}, \code{\link{ev_rep}}, \code{\link{ev_days}}, 
-\code{\link{ev_repeat}}, \code{\link{ev_assign}},
-\code{\link{ev_seq}}, \code{\link{mutate.ev}},
-\code{\link{as.ev}}, \code{\link{ev_methods}}
+\code{\link[=evd]{evd()}}, \code{\link[=ev_rep]{ev_rep()}}, \code{\link[=ev_days]{ev_days()}}, \code{\link[=ev_repeat]{ev_repeat()}}, \code{\link[=ev_assign]{ev_assign()}},
+\code{\link[=ev_seq]{ev_seq()}}, \code{\link[=mutate.ev]{mutate.ev()}}, \code{\link[=as.ev]{as.ev()}}, \code{\link[=as.evd]{as.evd()}}, \link{ev_methods}.
 }

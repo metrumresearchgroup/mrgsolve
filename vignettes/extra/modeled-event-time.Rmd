@@ -36,7 +36,7 @@ that is not found in a record in the input data set.  We can make this happen
 from the model code itself using `mtime()`. 
 
 Let's make KA change at 2.1 hours (`change_t` parameter in the example below).
-```{r, comment = '.', eval=FALSE, code = readLines("mtime-model.txt")}
+```{r, eval=FALSE, code = readLines("mtime-model.txt")}
 
 ```
 

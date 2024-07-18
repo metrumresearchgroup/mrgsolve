@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -49,12 +49,12 @@ protected:
 }; 
 
 struct evdata {
-  evdata(double a_, int b_) :  time(a_), evid(b_) {
+  evdata(double a_, int b_) : time(a_), evid(b_) {
     cmt = 1;
     amt = 0.0;
     rate = 0.0;
     now = false;
-    check_unique = true;
+    check_unique = false;
   } 
   double time; 
   int evid;
@@ -110,6 +110,7 @@ public:
   void stop_id_cf(){SYSTEMOFF=1;}///< stops solving for the current id, filling last value
   std::vector<mrgsolve::evdata> mevector;///< a collection of model events to pass back
   void mevent(double time, int evid);///< constructor for evdata objects
+  void push(mrgsolve::evdata x);
   double mtime(double time);///< creates evdata object for simple model event time
   double tad();///< calculates time after dose
 }; 

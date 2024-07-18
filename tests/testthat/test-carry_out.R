@@ -98,6 +98,21 @@ test_that("recover input data-set items", {
   expect_silent(mrgsim(mod,dose,recover="A=a"))
   expect_error(mrgsim(mod,recover="a",carry_out="a"))
 })
+
+test_that("recover input data-set items that are parameters", {
+  dose <- seq(ev(amt=100,time=5,a=33,b="aa"),ev(amt=200,a=44,b="bb",time=10))
+  dose <- dplyr::mutate(dose, CL = factor(a), KA = "BB")
+  expect_error(
+    mrgsim(mod, dose), 
+    regexp="data set column: KA", 
+    fixed = TRUE
+  )
+  expect_error(
+    mrgsim(mod, dose, recover = "CL"), 
+    regexp="data set column: CL", 
+    fixed = TRUE
+  )
+})
  
 test_that("recover input idata-set items", {
   idata <- expand.idata(a = c(33,44), b = c("aa", "bb")) 
@@ -105,6 +120,21 @@ test_that("recover input idata-set items", {
   expect_is(out$a,"numeric")
   expect_is(out$b,"character")
   expect_error(mrgsim_e(mod,idata,recover="b",carry_out="b"))
+})
+
+test_that("recover input idata-set items that are parameters", {
+  idata <- expand.idata(a = c(33,44), b = c("aa", "bb")) 
+  idata <- dplyr::mutate(idata, CL = factor(a), KA = "BB")
+  expect_error(
+    mrgsim(mod,ev(amt=100),idata), 
+    regexp = "data set column: KA", 
+    fixed = TRUE
+  )
+  expect_error(
+    mrgsim(mod,ev(amt=100),idata,recover = "CL"), 
+    regexp="data set column: CL", 
+    fixed = TRUE
+  )
 })
 
 test_that("error to request matrix and recover character data", {

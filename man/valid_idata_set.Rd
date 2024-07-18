@@ -7,21 +7,30 @@
 valid_idata_set(x, m, verbose = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{x}{data.frame or matrix}
+\item{x}{data.frame or matrix.}
 
-\item{m}{a model object}
+\item{m}{a model object.}
 
-\item{verbose}{logical}
+\item{verbose}{logical.}
 
-\item{quiet}{if \code{TRUE}, messages will be suppressed}
+\item{quiet}{if \code{TRUE}, messages will be suppressed.}
 }
 \value{
 A numeric matrix with class \code{valid_idata_set}.
 }
 \description{
-Validate and prepare idata data sets for simulation
+This function is called by \code{\link[=mrgsim]{mrgsim()}} and friends to check and prepare
+input data sets for simulation.  Users may also call this function to
+pre-validate data when the same data set is used for repeated simulation.
+}
+\details{
+An error will be issued when
+\itemize{
+\item non-numeric data is found in columns sharing names with model parameters
+\item a column is found that is internally classed, including columns that
+inherit from \code{integer64} (see \code{\link[=is.object]{is.object()}})
+}
 }
 \seealso{
-\code{\link{valid_data_set}}, \code{\link{idata_set}}, 
-\code{\link{data_set}}
+\code{\link[=valid_data_set]{valid_data_set()}}, \code{\link[=idata_set]{idata_set()}}, \code{\link[=data_set]{data_set()}}
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2022  Metrum Research Group
+// Copyright (C) 2013 - 2024  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -24,11 +24,10 @@
 #define ODEPROBLEM_H
 #include <math.h>
 #include <vector>
+#include <deque>
 #include "RcppInclude.h"
 #include "mrgsolv.h"
 #include "datarecord.h"
-//#include "LSODA.h"
-
 
 // 
 // resim functor comes from mrgsolv.h
@@ -38,7 +37,7 @@
 class odeproblem;
 
 //! vector of <code>datarecord</code> objects for one <code>ID</code>
-typedef std::vector<rec_ptr> reclist;
+typedef std::deque<rec_ptr> reclist;
 
 //! vector of <code>reclist</code> vectors comprising  a data set
 typedef std::vector<reclist> recstack;

@@ -93,35 +93,6 @@ test_that("resimulate all eta", {
   
 })
 
-test_that("resimulate specific eta", {
-  skip_if(TRUE, message="resim(n) is deprecated")
-  set.seed(5678)
-  # simeta with n = 1 (simeta(3))
-  n1 <-  mrgsim_df(mod, param = list(n = 1, mode = 2)) 
-  expect_true(all(n1$b==n1$b[1]))
-  expect_true(all(n1$c==n1$c[1]))
-  expect_false(any(duplicated(n1$a)))
-  
-  # simeta with n = 2 (simeta(2))
-  n2 <-  mrgsim(mod, param = list(n = 2, mode = 2))
-  expect_true(all(n2$a==n2$a[1]))
-  expect_true(all(n2$c==n2$c[1]))
-  expect_false(any(duplicated(n2$b)))
-  
-  # simeta with n = 3 (simeta(3))
-  n3 <-  mrgsim(mod, param = list(n = 3, mode = 2))
-  expect_true(all(n3$a==n3$a[1]))
-  expect_true(all(n3$b==n3$b[1]))
-  expect_false(any(duplicated(n3$c)))
-  
-  # simeta  with simeta(1) and simeta(3)
-  n13 <- mrgsim(mod, param = list(n = 1, m = 3,  mode = 3))
-  expect_true(all(n13$b==n13$b[1]))
-  expect_false(any(duplicated(n13$a)))
-  expect_false(any(duplicated(n13$c)))
-  
-})
-
 test_that("resimulate all or specific eps", {
   data <- data.frame(amt = 0, evid = 0, time = c(0,0,0), cmt = 0, ID = 1)
   set.seed(87654)
@@ -131,24 +102,6 @@ test_that("resimulate all or specific eps", {
   all$d <- NULL
   all$time <- NULL
   expect_false(any(duplicated(unlist(all))))
-  
-  # simeps with n = 2 (simeps(2))
-  skip_if(TRUE, message="resim(n) is deprecated")
-  n <-  mrgsim(mod, data = data, param = list(n = 2, mode = 5))
-  expect_true(all(n$a==n$a[1]))
-  expect_false(any(duplicated(n$b)))
-})
-
-test_that("invalid value for n when calling simeta or simeps", {
-  skip_if(TRUE, message="resim(n) is deprecated")
-  expect_error(
-    mrgsim(mod, param = list(mode = 2, n = 100)), 
-    "simeta index out of bounds"
-  )
-  expect_error(
-    mrgsim(mod, param = list(mode = 5, n = 100)), 
-    "simeps index out of bounds"
-  )
 })
 
 test_that("warn when simeta(n) is called with off diagonals", {
@@ -314,7 +267,7 @@ test_that("pass ETA on the idata set", {
     ETA1 = rev(ID)/10,
     ETA3 = ETA1
   )[, c("ID", "ETA1", "ETA3")]
-
+  
   data <- expand_observations(data, times = seq(5))
   data <- mutate(data, cmt = 0)
   data2 <- merge(data, idata, by = "ID")
@@ -330,7 +283,7 @@ test_that("pass ETA on the idata set", {
     mrgsim(mod, data, idata, etasrc = "idata.all"), 
     "all 11 ETAs must"
   )
-
+  
   expect_error(
     mrgsim(mod, data, idata = data[, "ID"], etasrc = "idata"), 
     "at least one"
@@ -355,4 +308,16 @@ test_that("pass ETA on the idata set", {
   expect_identical(out$c, idata$ETA3)
   expect_identical(out$b, rep(0, nrow(idata)))
   expect_identical(out$d, rep(0, nrow(idata)))
+})
+
+
+test_that("Reproducible EPS with etasrc=data gh-1138", { 
+  data <- expand.ev(amt = 0, ETA1 = 0.1)
+  mod <- modlib("popex", capture = "EPS(1)", end = 300)
+  mod <- smat(mod, matrix(1))
+  set.seed(11211)
+  out1 <- mrgsim(mod, data)
+  set.seed(11211)
+  out2 <- mrgsim(mod, data, etasrc = "data")
+  expect_identical(out1$EPS_1, out2$EPS_1)
 })

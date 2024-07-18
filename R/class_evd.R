@@ -60,6 +60,10 @@ as.evd <- function(x) {
   x
 }
 
+is.evd <- function(x) {
+  inherits(x, "ev") && x@case == 1
+}
+
 set_ev_case <- function(x, case) {
   if(!is.ev(x)) return(x)
   x@case <- case

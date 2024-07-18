@@ -174,7 +174,9 @@ plugins[["autodec"]] <- list(
 )
 
 plugins[["evtools"]] <- list(
-  name = "evtools", code = "#define _MRGSOLVE_USING_EVTOOLS_"  
+  name = "evtools", 
+  using = c('#include "mrgsolve-evtools.h"', 
+            '#include "mrgsolve-evtools-regimen.h"')
 )
 
 # nocov end

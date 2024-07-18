@@ -229,6 +229,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     build
   )
   
+  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
+  find_cpp_dot(spec, mread.env)
+  
   # Parse blocks ----
   # Each block gets assigned a class to dispatch the handler function
   # Also, we use a position attribute so we know 
@@ -432,6 +435,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
+  check_cpp_dot(mread.env, x)
   check_sim_eta_eps_n(x, spec)
   
   # This must come after audit

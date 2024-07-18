@@ -21,11 +21,13 @@
 
 void databox::mevent(double time, int evid) {
   mrgsolve::evdata ev(time,evid);
+  ev.check_unique = true;
   mevector.push_back(ev);
 }
 
 double databox::mtime(double time) {
   mrgsolve::evdata ev(time,2);
+  ev.check_unique = true;
   mevector.push_back(ev);
   return time;
 }
@@ -42,6 +44,11 @@ double databox::tad() {
   if(newind <= 1) told = -1.0;
   if((evid == 1) || (evid == 4)) told = time;
   return told < 0 ? -1.0 : time - told;
+}
+
+void databox::push(mrgsolve::evdata x) {
+  mevector.push_back(x); 
+  return;
 }
 
 #endif

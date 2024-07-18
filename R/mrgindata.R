@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -81,36 +81,52 @@ convert_character_cmt <- function(data, mod) {
   return(data)
 }
 
-signal_drop <- function(dm, x, to_signal, context) {
-  drop <- setdiff(names(x), dimnames(dm)[[2]])
-  drop <- intersect(drop, to_signal)
-  for(d in drop) {
+check_dropped_cols <- function(dm, x, check, context) {
+  new_col_set <- dimnames(dm)[[2]]
+  old_col_set <- names(x)
+  drop <- old_col_set[!old_col_set %in% new_col_set]
+  drop <- drop[drop %in% check]
+  if(!length(drop)) return(invisible(NULL))
+  body <- vector(mode = "character", length = length(drop))
+  names(body) <- rep("x", length(body))
+  for(i in seq_along(drop)) {
+    d <- drop[i]
     type <- paste0(class(x[[d]]), collapse = ",")
-    msg <- c(context, " dropped column: ", d, " (", type, ")")
-    message(msg)  
+    body[i] <- paste0(context, " column: ", d, " (", type, ")")
   }
-  invisible(NULL)
+  abort(
+    message = "Found input data that cannot be used for simulation", 
+    body = body, 
+    call = caller_env()
+  )
 }
 
-##' Validate and prepare a data sets for simulation
+##' Validate and prepare data sets for simulation
 ##'
-##' This function is called by mrgsim.  Users may also call this function
-##' to pre-validate data when the same data set is used for repeated 
-##' simulation.
+##' This function is called by [mrgsim()] and friends to check and prepare 
+##' input data sets for simulation.  Users may also call this function to 
+##' pre-validate data when the same data set is used for repeated simulation.
 ##'
-##' @param x data.frame or matrix
-##' @param m a model object
-##' @param verbose logical
-##' @param quiet if \code{TRUE}, messages will be suppressed
+##' @param x data.frame or matrix.
+##' @param m a model object.
+##' @param verbose logical.
+##' @param quiet if `TRUE`, messages will be suppressed.
+##' 
+##' @details
+##' An error will be issued when
+##' - non-numeric data is found in columns sharing names with model parameters
+##' - non-numeric data is found in reserved data items related to dosing 
+##'   (see `mrgsolve:::GLOBALS$CARRY_TRAN`)
+##' - a column is found that is "internally classed", including columns that 
+##'   inherit from `integer64` (see [is.object()])
 ##' 
 ##' @return A matrix with non-numeric columns dropped; if x is a 
-##' data.frame with character \code{cmt} column comprised of valid 
-##' compartment names and \code{m} is a model object,
-##' the \code{cmt} column will be converted to the corresponding 
+##' data.frame with character `cmt` column comprised of valid 
+##' compartment names and `m` is a model object,
+##' the `cmt` column will be converted to the corresponding 
 ##' compartment number.
 ##' 
-##' @seealso \code{\link{valid_idata_set}}, \code{\link{idata_set}}, 
-##' \code{\link{data_set}}
+##' @seealso [valid_idata_set()], [idata_set()], [data_set()]
 ##' 
 ##' @examples
 ##' 
@@ -118,8 +134,9 @@ signal_drop <- function(dm, x, to_signal, context) {
 ##' 
 ##' data(exTheoph)
 ##' 
-##' d <- valid_data_set(exTheoph,mod)
+##' d <- valid_data_set(exTheoph, mod)
 ##' 
+##' @md
 ##' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
@@ -175,9 +192,9 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   # Drop character columns
   dm <- numeric_data_matrix(x,quiet=TRUE)
   
-  if((ncol(dm) != ncol(x)) && !quiet) {
-    to_signal <- c(Pars(m), GLOBALS$CARRY_TRAN)
-    signal_drop(dm, x, to_signal, context = "[data-set]")
+  if(ncol(dm) != ncol(x)) {
+    check <- c(Pars(m), GLOBALS$CARRY_TRAN)
+    check_dropped_cols(dm, x, check, context = "data set")
   }
   
   has_na <- check_data_set_na(dm,m)
@@ -208,13 +225,23 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
 
 ##' Validate and prepare idata data sets for simulation
 ##' 
-##' @return A numeric matrix with class \code{valid_idata_set}.
+##' This function is called by [mrgsim()] and friends to check and prepare 
+##' input data sets for simulation.  Users may also call this function to 
+##' pre-validate data when the same data set is used for repeated simulation.
+##' 
+##' @return A numeric matrix with class `valid_idata_set`.
 ##' 
 ##' @inheritParams valid_data_set
 ##' 
-##' @seealso \code{\link{valid_data_set}}, \code{\link{idata_set}}, 
-##' \code{\link{data_set}}
+##' @seealso [valid_data_set()], [idata_set()], [data_set()]
 ##' 
+##' @details
+##' An error will be issued when
+##' - non-numeric data is found in columns sharing names with model parameters
+##' - a column is found that is internally classed, including columns that 
+##'   inherit from `integer64` (see [is.object()])
+##' 
+##' @md
 ##' @export
 valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
@@ -234,9 +261,9 @@ valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   dm <- numeric_data_matrix(x, quiet = TRUE)
   
-  if((ncol(dm) != ncol(x)) && !quiet) {
-    to_signal <- Pars(m)
-    signal_drop(dm, x, to_signal, context = "[idata-set]")
+  if(ncol(dm) != ncol(x)) {
+    check <- Pars(m)
+    check_dropped_cols(dm, x, check, context = "idata set")
   }
   
   check_data_set_na(dm, m)

@@ -382,7 +382,7 @@ Rcpp::List EXPAND_OBSERVATIONS(
   obscount = 0;
   
   int n_time = int(times.size());
-  std::vector<rec_ptr> z(n_time);
+  reclist z(n_time);
   for(int j = 0; j < n_time; ++j) {
     rec_ptr obs = NEWREC(times[j],nextpos,true);
     z[j] = obs;
@@ -391,7 +391,7 @@ Rcpp::List EXPAND_OBSERVATIONS(
   size_t n = z.size();
   
   for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    it->reserve((it->size() + n));
+    //it->reserve((it->size() + n)); // TODO: remove
     for(size_t h=0; h < n; h++) {
       it->push_back(z[h]);
       ++obscount;
