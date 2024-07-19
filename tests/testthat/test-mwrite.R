@@ -135,17 +135,24 @@ test_that("mwrite with no file", {
 })
 
 test_that("captures are handled", {
+  temp1 <- tempfile()
+  
   # no names
   code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE V CL"
   mod <- mcode("cap1", code, compile = FALSE)
-  l <- mwrite_yaml(mod, file = NULL)
+  l <- mwrite_yaml(mod, file = temp1)
   expect_identical(l$capture, c("V", "CL"))
+  m <- mread_yaml(temp1, compile = FALSE)
+  expect_equivalent(m@capture, c("V", "CL"))
   
   # one renamed
+  temp2 <- tempfile()
   code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE V a = CL"
   mod <- mcode("cap2", code, compile = FALSE)
-  l <- mwrite_yaml(mod, file = NULL)
+  l <- mwrite_yaml(mod, file = temp2)
   expect_identical(l$capture, c("V", "a = CL"))
+  m <- mread_yaml(temp1, compile = FALSE)
+  expect_equivalent(m@capture, c("V", "a = CL"))
   
   # all renamed
   code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE b = V, a = CL"
