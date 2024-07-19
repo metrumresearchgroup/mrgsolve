@@ -145,7 +145,7 @@ test_that("captures are handled", {
   code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE V a = CL"
   mod <- mcode("cap2", code, compile = FALSE)
   l <- mwrite_yaml(mod, file = NULL)
-  expect_identical(l$capture, c("V", "CL"))
+  expect_identical(l$capture, c("V", "a = CL"))
   
   # all renamed
   code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE b = V, a = CL"
