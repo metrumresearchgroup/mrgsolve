@@ -31,6 +31,14 @@ mwrite_model_to_list <- function(x) {
   # Critical items
   l$param <- as.list(param(x))
   l$init <- as.list(init(x))
+  l$capture <- character(0)
+  if(length(x@capture)) {
+    capture <- names(x@capture)
+    new_names <- unname(x@capture)
+    same_name <- capture == new_names
+    l$capture <- paste0(new_names, " = ", capture)
+    l$capture[same_name] <- capture[same_name]
+  }
   # Omega and Sigma
   l$omega <- list()
   l$omega$data <- lapply(as.list(omat(x)), get_upper_tri)
@@ -44,7 +52,6 @@ mwrite_model_to_list <- function(x) {
   # Other
   l$env <- as.list(x@envir)
   l$plugin <- x@plugin
-  l$capture <- x@capture
   # These items will get directly passed to update()
   l$update <- list()
   l$update$start <- x@start
@@ -79,7 +86,7 @@ mwrite_model_to_list <- function(x) {
       abort("The package \"knitr\" is required.") #nocov
     } 
     annot <- knitr::kable(annot, format = "simple")
-    annot <- c("# Annotations: ", "", annot)
+    annot <- c("# Model Annotations: ", "", annot)
     if("PROB" %in% names(code)) {
       code$PROB <- c(code$PROB, "", annot)  
     } else {
@@ -93,7 +100,7 @@ mwrite_model_to_list <- function(x) {
   }
   
   clob <- c("PARAM", "INPUT", "THETA", "CMT", "INIT", "OMEGA", "SIGMA", 
-            "NMEXT", "NMXML", "VCMT", "SET")
+            "NMEXT", "NMXML", "VCMT", "SET", "CAPTURE")
   for(block in clob) {
     while(block %in% names(code)) {
       code[[block]] <- NULL
@@ -259,9 +266,12 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   if(length(x$init)) {
     init <- c("$INIT", tocode(x$init), "")
   }
+  capture <- character(0)
+  if(length(x$capture)) {
+    capture <- c("$CAPTURE", x$capture, "")
+  }
   
   x$update$add <- as.numeric(x$update$add)
-  x$capture <- as.character(x$capture)
   
   omega <- character(0)
   if(length(x$omega$data)) {
@@ -291,7 +301,7 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     sigma <- c(sigma, "$SIGMA", header, x$sigma$data[[i]], "")  
   }
   
-  code <- c(prob, param, init, omega, sigma, x$code)
+  code <- c(prob, param, init, omega, sigma, x$code, capture)
   
   set <- tocode(x$set)
   
