@@ -133,3 +133,23 @@ test_that("mwrite with no file", {
   expect_equal(l$format, "list")
   expect_error(mwrite_yaml(house()), "missing, with no default")
 })
+
+test_that("captures are handled", {
+  # no names
+  code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE V CL"
+  mod <- mcode("cap1", code, compile = FALSE)
+  l <- mwrite_yaml(mod, file = NULL)
+  expect_identical(l$capture, c("V", "CL"))
+  
+  # one renamed
+  code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE V a = CL"
+  mod <- mcode("cap2", code, compile = FALSE)
+  l <- mwrite_yaml(mod, file = NULL)
+  expect_identical(l$capture, c("V", "CL"))
+  
+  # all renamed
+  code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE b = V, a = CL"
+  mod <- mcode("cap3", code, compile = FALSE)
+  l <- mwrite_yaml(mod, file = NULL)
+  expect_identical(l$capture, c("b = V", "a = CL"))
+})
