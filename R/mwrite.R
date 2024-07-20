@@ -345,7 +345,6 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
   }
-  
   param <- character(0)
   if(length(x$param)) {
     param <- c("$PARAM", tocode(x$param), "")
@@ -358,8 +357,6 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   if(length(x$capture)) {
     capture <- c("$CAPTURE", x$capture, "")
   }
-  
-  x$update$add <- as.numeric(x$update$add)
 
   if(length(x$omega$data)) {
     x$omega$labels <- lapply(x$omega$labels, as.character)
@@ -376,6 +373,8 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   code <- c(prob, param, init, omega, sigma, x$code, capture)
   
   set <- tocode(x$set)
+  
+  x$update$add <- as.numeric(x$update$add)
   
   if(isTRUE(update)) {
     if(length(set)) {
