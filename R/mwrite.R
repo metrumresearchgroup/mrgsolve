@@ -345,7 +345,7 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     datai <-  x$omega$data[[i]]
     labelsi <- x$omega$labels[[i]]
     namei <- x$omega$names[[i]]
-    omega <- "$OMEGA"
+    omega <- c(omega, "$OMEGA")
     header <- "@block"
     if(namei != "...") {
       header <- c(header, paste0("@name ", namei))  
@@ -371,7 +371,7 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     datai <- x$sigma$data[[i]]
     labelsi <- x$sigma$labels[[i]]
     namei <- x$sigma$names[[i]]
-    sigma <- "$SIGMA"
+    sigma <- c(sigma, "$SIGMA")
     header <- "@block"
     if(namei != "...") {
       header <- c(header, paste0("@name ", namei))  
