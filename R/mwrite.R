@@ -342,9 +342,10 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     x$omega$names <- lapply(x$omega$names, as.character)
   }
   for(i in seq_along(x$omega$data)) {
-    datai <- unlist(x$omega$data[[i]], use.names = FALSE)
+    datai <-  x$omega$data[[i]]
     labelsi <- x$omega$labels[[i]]
     namei <- x$omega$names[[i]]
+    omega <- "$OMEGA"
     header <- "@block"
     if(namei != "...") {
       header <- c(header, paste0("@name ", namei))  
@@ -353,7 +354,12 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
       o_labels <- paste0(labelsi, collapse = " ")
       header <- c(header, paste0("@labels ", o_labels))
     } 
-    omega <- c(omega, "$OMEGA", header, datai, "")  
+    omega <- c(omega, header)
+    for(i in seq_along(datai)) {
+      tag <- paste0("// row ", i)
+      omega <- c(omega,  tag, datai[[i]])  
+    }
+    omega <- c(omega, "")
   }
   
   sigma <- character(0)
@@ -362,9 +368,10 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     x$sigma$names <- lapply(x$sigma$names, as.character)
   }
   for(i in seq_along(x$sigma$data)) {
-    datai <- unlist(x$sigma$data[[i]], use.names = FALSE)
+    datai <- x$sigma$data[[i]]
     labelsi <- x$sigma$labels[[i]]
     namei <- x$sigma$names[[i]]
+    sigma <- "$SIGMA"
     header <- "@block"
     if(namei != "...") {
       header <- c(header, paste0("@name ", namei))  
@@ -373,7 +380,12 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
       s_labels <- paste0(labelsi, collapse = " ")
       header <- c(header, paste0("@labels ", s_labels))
     }
-    sigma <- c(sigma, "$SIGMA", header, datai, "")  
+    sigma <- c(sigma, header)
+    for(i in seq_along(datai)) {
+      tag <- paste0("// row ", i)
+      sigma <- c(sigma, tag, datai[[i]])  
+    }
+    sigma <- c(sigma, "")
   }
   
   code <- c(prob, param, init, omega, sigma, x$code, capture)
