@@ -11,14 +11,16 @@ get_upper_tri <- function(x) {
   x <- as.matrix(x)
   n <- nrow(x)
   x <- x[upper.tri(x, diag = TRUE)]
-  text <- vector(mode = "character", length = n)
+  x
+  l <- vector(mode = "list", length = n)
+  names(l) <- paste0("row",seq(n))
   w <- 1
   for(i in seq(n)) {
     s <- seq(w, w+i-1)
-    text[i] <- paste(x[s], collapse = " ")
-    w <- w + i     
+    l[[i]] <- x[s]
+    w <- w + i
   }
-  text
+  l
 }
 
 require_yaml <- function() {
@@ -52,12 +54,18 @@ mwrite_model_to_list <- function(x) {
   l$omega <- list()
   l$omega$data <- lapply(as.list(omat(x)), get_upper_tri)
   l$omega$labels <- labels(omat(x))
-  names(l$omega$labels) <- seq_along(l$omega$labels)
   l$omega$names <- names(omat(x))
+  if(length(l$omega$data)) {
+    names(l$omega$data) <- paste0("matrix", seq_along(l$omega$data))
+    names(l$omega$labels) <- paste0("matrix",seq_along(l$omega$labels))
+  }
   l$sigma$data <- lapply(as.list(smat(x)), get_upper_tri)
   l$sigma$labels <- labels(smat(x))
-  names(l$sigma$labels) <- seq_along(l$sigma$labels)
   l$sigma$names <- names(smat(x))
+  if(length(l$sigma$data)) {
+    names(l$sigma$data) <- paste0("matrix", seq_along(l$sigma$data))
+    names(l$sigma$labels) <- paste0("matrix",seq_along(l$sigma$labels))
+  }
   # Other
   l$env <- as.list(x@envir)
   l$plugin <- x@plugin
@@ -334,12 +342,13 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     x$omega$names <- lapply(x$omega$names, as.character)
   }
   for(i in seq_along(x$omega$data)) {
+    datai <- unlist(x$omega$data[[i]], use.names = FALSE)
     header <- "@block"
     if(any(x$omega$labels[[i]] != "...")) {
       o_labels <- paste0(x$omega$labels[[i]], collapse = " ")
       header <- c(header, paste0("@labels ", o_labels))
-    }
-    omega <- c(omega, "$OMEGA", header, x$omega$data[[i]], "")  
+    } 
+    omega <- c(omega, "$OMEGA", header, datai, "")  
   }
   
   sigma <- character(0)
@@ -348,12 +357,13 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     x$sigma$names <- lapply(x$sigma$names, as.character)
   }
   for(i in seq_along(x$sigma$data)) {
+    datai <- unlist(x$sigma$data[[i]], use.names = FALSE)
     header <- "@block"
     if(any(x$sigma$labels[[i]] != "...")) {
       s_labels <- paste0(x$sigma$labels[[i]], collapse = " ")
       header <- c(header, paste0("@labels ", s_labels))
     }
-    sigma <- c(sigma, "$SIGMA", header, x$sigma$data[[i]], "")  
+    sigma <- c(sigma, "$SIGMA", header, datai, "")  
   }
   
   code <- c(prob, param, init, omega, sigma, x$code, capture)
@@ -371,7 +381,7 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     set <- c("$SET", set, "")
     code <- c(code, set)
   }
-
+  
   cppfile <- file.path(project, paste0(model, ".mod"))
   writeLines(con = cppfile, code) 
   x$cppfile <- cppfile
