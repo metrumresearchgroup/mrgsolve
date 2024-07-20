@@ -202,7 +202,7 @@ mwrite_yaml <- function(x, file, digits = 8) {
 #' are imported by `$NMXML` or `$NMEXT` and (2) saving model updates (e.g., 
 #' an updated parameter list). Models can be read back using [mread()].
 #' 
-#' @inheritParams mwrite_yaml
+#' @inheritParams mwrite
 #' @inheritParams yaml_to_cpp
 #' 
 #' @details
@@ -230,9 +230,12 @@ mwrite_yaml <- function(x, file, digits = 8) {
 #' @export
 mwrite_cpp <- function(x, file, update = TRUE) {
   l <- mwrite_model_to_list(x)
-  code <- parsed_to_cpp_code(l, update = update)
+  temp <- tempfile()
+  model <- basename(temp)
+  project <- dirname(temp)
+  l <- parsed_to_cppfile(l, model = model, project = project,  update = update)
   if(is.character(file)) {
-    writeLines(code, con = file)
+    file.copy(temp, file)  
   }
   l$file <- file
   invisible(l)
@@ -303,16 +306,8 @@ yaml_to_cpp <- function(file, model = basename(file), project = getwd(),
 }
 
 # Take in content parsed from yaml file, clean up, write to cpp file
-# @return a cleaned-up version of x with `cppfile` slot added
+# @return a cleaned-up version of x with slots for `cppfile` added 
 parsed_to_cppfile <- function(x, model, project, update = FALSE) {
-  code <- parsed_to_cpp_code(x, update)
-  cppfile <- file.path(project, paste0(model, ".mod"))
-  writeLines(con = cppfile, code) 
-  x$cppfile <- cppfile
-  x
-}
-
-parsed_to_cpp_code <- function(x, update = FALSE) {
   prob <- character(0)
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
@@ -376,8 +371,11 @@ parsed_to_cpp_code <- function(x, update = FALSE) {
     set <- c("$SET", set, "")
     code <- c(code, set)
   }
-  
-  code 
+
+  cppfile <- file.path(project, paste0(model, ".mod"))
+  writeLines(con = cppfile, code) 
+  x$cppfile <- cppfile
+  x
 }
 
 # Take in parsed content from yaml file

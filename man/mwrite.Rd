@@ -8,7 +8,7 @@
 \usage{
 mwrite_yaml(x, file, digits = 8)
 
-mwrite_cpp(x, file)
+mwrite_cpp(x, file, update = TRUE)
 }
 \arguments{
 \item{x}{a model object.}
@@ -17,9 +17,15 @@ mwrite_cpp(x, file)
 will be written to file.}
 
 \item{digits}{precision to use when writing outputs.}
+
+\item{update}{\code{TRUE} if model settings should be written into the cpp file in
+a \verb{$SET} block.}
 }
 \value{
 A list containing data that was written out to the yaml file, with added
+item \code{file}, is returned invisibly.
+
+A list containing data that was written out to the cpp file, with added
 item \code{file}, is returned invisibly.
 }
 \description{
@@ -28,6 +34,11 @@ can be useful for (1) breaking connection to NONMEM modeling outputs that
 are imported by \verb{$NMXML} or \verb{$NMEXT} and (2) saving model updates (e.g.,
 an updated parameter list). Models can be read back using \code{\link[=mread_yaml]{mread_yaml()}} or
 converted to mrgsolve cpp format with \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}.
+
+Model code is written to a file in native mrgsolve format. This
+can be useful for (1) breaking connection to NONMEM modeling outputs that
+are imported by \verb{$NMXML} or \verb{$NMEXT} and (2) saving model updates (e.g.,
+an updated parameter list). Models can be read back using \code{\link[=mread]{mread()}}.
 }
 \details{
 Parameters and omega and sigma matrices that were imported via \verb{$NMXML}
@@ -44,6 +55,8 @@ code that might be sourced in by the user when the model is loaded via
 \code{\link[=mread]{mread()}}. NONMEM xml and ext files imported by \verb{$NMXML} or \verb{$NMEXT} are
 the \emph{only} external dependencies that are accounted for in the yaml
 transport file.
+
+See important details in \code{\link[=mwrite_yaml]{mwrite_yaml()}}.
 }
 \examples{
 mod <- house()
@@ -54,7 +67,19 @@ x <- mwrite_yaml(mod, temp1)
 
 readLines(temp1)
 
+temp <- tempfile(fileext = ".mod")
+
+mod <- modlib("pk1", compile = FALSE)
+
+x <- mwrite_cpp(mod, file = temp)
+
+mod <- mread(x$file, compile = FALSE)
+
+mod
+
 }
 \seealso{
 \code{\link[=mread_yaml]{mread_yaml()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}
+
+\code{\link[=mwrite_yaml]{mwrite_yaml()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}
 }
