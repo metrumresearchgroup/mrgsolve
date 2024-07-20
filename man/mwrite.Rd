@@ -3,9 +3,12 @@
 \name{mwrite}
 \alias{mwrite}
 \alias{mwrite_yaml}
+\alias{mwrite_cpp}
 \title{Write model code to yaml  format}
 \usage{
 mwrite_yaml(x, file, digits = 8)
+
+mwrite_cpp(x, file)
 }
 \arguments{
 \item{x}{a model object.}

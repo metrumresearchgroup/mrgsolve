@@ -9,7 +9,16 @@ tocode <- function(l) {
 
 get_upper_tri <- function(x) {
   x <- as.matrix(x)
-  x[upper.tri(x, diag = TRUE)]
+  n <- nrow(x)
+  x <- x[upper.tri(x, diag = TRUE)]
+  text <- vector(mode = "character", length = n)
+  w <- 1
+  for(i in seq(n)) {
+    s <- seq(w, w+i-1)
+    text[i] <- paste(x[s], collapse = " ")
+    w <- w + i     
+  }
+  text
 }
 
 require_yaml <- function() {
@@ -186,6 +195,49 @@ mwrite_yaml <- function(x, file, digits = 8) {
   invisible(l)
 }
 
+#' Write a model to native mrgsolve format
+#' 
+#' Model code is written to a file in native mrgsolve format. This 
+#' can be useful for (1) breaking connection to NONMEM modeling outputs that 
+#' are imported by `$NMXML` or `$NMEXT` and (2) saving model updates (e.g., 
+#' an updated parameter list). Models can be read back using [mread()].
+#' 
+#' @inheritParams mwrite_yaml
+#' @inheritParams yaml_to_cpp
+#' 
+#' @details
+#' See important details in [mwrite_yaml()].
+#' 
+#' @return 
+#' A list containing data that was written out to the cpp file, with added 
+#' item `file`, is returned invisibly. 
+#' 
+#' @examples
+#' temp <- tempfile(fileext = ".mod")
+#' 
+#' mod <- modlib("pk1", compile = FALSE)
+#' 
+#' x <- mwrite_cpp(mod, file = temp)
+#' 
+#' mod <- mread(x$file, compile = FALSE)
+#' 
+#' mod
+#' 
+#' @seealso [mwrite_yaml()], [yaml_to_cpp()]
+#' 
+#' @md
+#' @rdname mwrite
+#' @export
+mwrite_cpp <- function(x, file, update = TRUE) {
+  l <- mwrite_model_to_list(x)
+  code <- parsed_to_cpp_code(l, update = update)
+  if(is.character(file)) {
+    writeLines(code, con = file)
+  }
+  l$file <- file
+  invisible(l)
+}
+
 #' Read a model from yaml format
 #' 
 #' Read back models written to file using [mwrite_yaml()]. Function 
@@ -253,6 +305,14 @@ yaml_to_cpp <- function(file, model = basename(file), project = getwd(),
 # Take in content parsed from yaml file, clean up, write to cpp file
 # @return a cleaned-up version of x with `cppfile` slot added
 parsed_to_cppfile <- function(x, model, project, update = FALSE) {
+  code <- parsed_to_cpp_code(x, update)
+  cppfile <- file.path(project, paste0(model, ".mod"))
+  writeLines(con = cppfile, code) 
+  x$cppfile <- cppfile
+  x
+}
+
+parsed_to_cpp_code <- function(x, update = FALSE) {
   prob <- character(0)
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
@@ -317,10 +377,7 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
     code <- c(code, set)
   }
   
-  cppfile <- file.path(project, paste0(model, ".mod"))
-  writeLines(con = cppfile, code) 
-  x$cppfile <- cppfile
-  x
+  code 
 }
 
 # Take in parsed content from yaml file
