@@ -7,6 +7,31 @@ tocode <- function(l) {
   paste0(names(l), " = ", as.character(l))
 }
 
+mwrite_matrix <- function(x, block_name) {
+  code <- character(0)
+  for(i in seq_along(x$data)) {
+    datai <-  x$data[[i]]
+    labelsi <- x$labels[[i]]
+    namei <- x$names[[i]]
+    code <- c(code, block_name)
+    header <- "@block"
+    if(namei != "...") {
+      header <- c(header, paste0("@name ", namei))  
+    }
+    if(any(labelsi != "...")) {
+      labels_ <- paste0(labelsi, collapse = " ")
+      header <- c(header, paste0("@labels ", labels_))
+    } 
+    code <- c(code, header)
+    for(i in seq_along(datai)) {
+      tag <- paste0("// row ", i)
+      code <- c(code,  tag, datai[[i]])  
+    }
+    code <- c(code, "")
+  }
+  code
+}
+
 get_upper_tri <- function(x) {
   x <- as.matrix(x)
   n <- nrow(x)
@@ -335,58 +360,18 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   }
   
   x$update$add <- as.numeric(x$update$add)
-  
-  omega <- character(0)
+
   if(length(x$omega$data)) {
     x$omega$labels <- lapply(x$omega$labels, as.character)
     x$omega$names <- lapply(x$omega$names, as.character)
   }
-  for(i in seq_along(x$omega$data)) {
-    datai <-  x$omega$data[[i]]
-    labelsi <- x$omega$labels[[i]]
-    namei <- x$omega$names[[i]]
-    omega <- c(omega, "$OMEGA")
-    header <- "@block"
-    if(namei != "...") {
-      header <- c(header, paste0("@name ", namei))  
-    }
-    if(any(labelsi != "...")) {
-      o_labels <- paste0(labelsi, collapse = " ")
-      header <- c(header, paste0("@labels ", o_labels))
-    } 
-    omega <- c(omega, header)
-    for(i in seq_along(datai)) {
-      tag <- paste0("// row ", i)
-      omega <- c(omega,  tag, datai[[i]])  
-    }
-    omega <- c(omega, "")
-  }
+  omega <- mwrite_matrix(x$omega, "$OMEGA")
   
-  sigma <- character(0)
   if(length(x$sigma$data)) {
     x$sigma$labels <- lapply(x$sigma$labels, as.character)
     x$sigma$names <- lapply(x$sigma$names, as.character)
   }
-  for(i in seq_along(x$sigma$data)) {
-    datai <- x$sigma$data[[i]]
-    labelsi <- x$sigma$labels[[i]]
-    namei <- x$sigma$names[[i]]
-    sigma <- c(sigma, "$SIGMA")
-    header <- "@block"
-    if(namei != "...") {
-      header <- c(header, paste0("@name ", namei))  
-    }
-    if(any(labelsi != "...")) {
-      s_labels <- paste0(labelsi, collapse = " ")
-      header <- c(header, paste0("@labels ", s_labels))
-    }
-    sigma <- c(sigma, header)
-    for(i in seq_along(datai)) {
-      tag <- paste0("// row ", i)
-      sigma <- c(sigma, tag, datai[[i]])  
-    }
-    sigma <- c(sigma, "")
-  }
+  sigma <- mwrite_matrix(x$sigma, "$SIGMA")
   
   code <- c(prob, param, init, omega, sigma, x$code, capture)
   
