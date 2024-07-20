@@ -164,3 +164,36 @@ test_that("captures are handled", {
   m <- mread_yaml(temp3, compile = FALSE)
   expect_equivalent(m@capture, c(V = "b", CL = "a"))
 })
+
+test_that("handle multiple unnamed matrices", {
+  skip_if_not_installed("yaml")
+  temp <- tempfile()
+  code <- '$OMEGA 1 2 3\n$OMEGA 3 4 5 6'
+  mod <- mcode("foo", code, compile = FALSE)
+  a <- mwrite_yaml(mod, file = temp)
+  yam <- yaml::yaml.load_file(temp)$omega
+  expect_equal(names(yam$data), paste0("matrix", 1:2))
+  expect_equal(names(yam$labels), paste0("matrix", 1:2))
+  expect_equal(names(yam$data$matrix1), paste0("row", 1:3))
+  expect_equal(names(yam$data$matrix2), paste0("row", 1:4))
+  expect_equal(a$file, temp)
+  mod2 <- mread_yaml(file = temp, compile = FALSE)  
+  expect_identical(mod@omega, mod2@omega)
+})
+
+test_that("matrix names are retained", {
+  skip_if_not_installed("yaml")
+  code <- '$OMEGA 1 2 3\n@name metrum\n$SIGMA 1 2\n @name rg @labels a b'
+  mod <- mcode("foo", code, compile = FALSE)
+  expect_equal(names(omat(mod)), "metrum")
+  expect_equal(names(smat(mod)), "rg")
+  temp <- tempfile()
+  x <- mwrite_yaml(mod, file = temp)
+  yam <- yaml::yaml.load_file(x$file)
+  yam <- as.list(yam)
+  expect_equal(yam$omega$names, "metrum")
+  expect_equal(yam$sigma$names, "rg")
+  mod2 <- mread_yaml(temp, compile = FALSE)
+  expect_equal(names(omat(mod2)), "metrum")
+  expect_equal(names(smat(mod2)), "rg")
+})

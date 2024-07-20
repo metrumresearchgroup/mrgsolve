@@ -13,7 +13,7 @@ get_upper_tri <- function(x) {
   x <- x[upper.tri(x, diag = TRUE)]
   x
   l <- vector(mode = "list", length = n)
-  names(l) <- paste0("row",seq(n))
+  names(l) <- paste0("row", seq(n))
   w <- 1
   for(i in seq(n)) {
     s <- seq(w, w+i-1)
@@ -59,6 +59,7 @@ mwrite_model_to_list <- function(x) {
     names(l$omega$data) <- paste0("matrix", seq_along(l$omega$data))
     names(l$omega$labels) <- paste0("matrix",seq_along(l$omega$labels))
   }
+  l$sigma <- list()
   l$sigma$data <- lapply(as.list(smat(x)), get_upper_tri)
   l$sigma$labels <- labels(smat(x))
   l$sigma$names <- names(smat(x))
@@ -344,6 +345,9 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   for(i in seq_along(x$omega$data)) {
     datai <- unlist(x$omega$data[[i]], use.names = FALSE)
     header <- "@block"
+    if(x$omega$names[[i]] != "...") {
+      header <- c(header, paste0("@name ", x$omega$names[[i]]))  
+    }
     if(any(x$omega$labels[[i]] != "...")) {
       o_labels <- paste0(x$omega$labels[[i]], collapse = " ")
       header <- c(header, paste0("@labels ", o_labels))
@@ -359,6 +363,9 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   for(i in seq_along(x$sigma$data)) {
     datai <- unlist(x$sigma$data[[i]], use.names = FALSE)
     header <- "@block"
+    if(x$sigma$names[[i]] != "...") {
+      header <- c(header, paste0("@name ", x$sigma$names[[i]]))  
+    }
     if(any(x$sigma$labels[[i]] != "...")) {
       s_labels <- paste0(x$sigma$labels[[i]], collapse = " ")
       header <- c(header, paste0("@labels ", s_labels))
