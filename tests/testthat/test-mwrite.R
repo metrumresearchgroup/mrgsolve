@@ -197,3 +197,12 @@ test_that("matrix names are retained", {
   expect_equal(names(omat(mod2)), "metrum")
   expect_equal(names(smat(mod2)), "rg")
 })
+
+test_that("render matrix as list of numeric rows", {
+  mat <- matrix(rnorm(25), nrow = 5, ncol = 5)  
+  l <- mrgsolve:::get_upper_tri(mat)
+  expect_equal(names(l), paste0("row", 1:5))
+  for(j in 1:5) {
+    expect_equal(l[[j]], mat[1:j, j])
+  }
+})

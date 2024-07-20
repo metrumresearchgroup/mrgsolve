@@ -11,15 +11,14 @@ get_upper_tri <- function(x) {
   x <- as.matrix(x)
   n <- nrow(x)
   x <- x[upper.tri(x, diag = TRUE)]
-  x
   l <- vector(mode = "list", length = n)
-  names(l) <- paste0("row", seq(n))
   w <- 1
   for(i in seq(n)) {
     s <- seq(w, w+i-1)
     l[[i]] <- x[s]
     w <- w + i
   }
+  names(l) <- paste0("row", seq(n))
   l
 }
 
