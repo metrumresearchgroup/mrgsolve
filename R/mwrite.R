@@ -314,7 +314,7 @@ yaml_to_cpp <- function(file, model = basename(file), project = getwd(),
 }
 
 # Take in content parsed from yaml file, clean up, write to cpp file
-# @return a cleaned-up version of x with slots for `cppfile` added 
+# @return a cleaned-up version of x with slot for `cppfile` added 
 parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   prob <- character(0)
   if(sum(nchar(x$prob))) {
