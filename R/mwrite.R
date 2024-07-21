@@ -7,6 +7,7 @@ tocode <- function(l) {
   paste0(names(l), " = ", as.character(l))
 }
 
+# block name is $OMEGA or $SIGMA
 mwrite_matrix <- function(x, block_name) {
   code <- character(0)
   for(i in seq_along(x$data)) {
@@ -162,9 +163,7 @@ mwrite_model_to_list <- function(x) {
   code <- Map(code, names(code), f = function(text, name) {
     c(glue("${name}"), text, " ")
   })
-  
   l$code <- unlist(code, use.names = FALSE)
-  
   l
 }
 
@@ -270,6 +269,8 @@ mwrite_cpp <- function(x, file, update = TRUE) {
   if(is.character(file)) {
     file.copy(l$cppfile, file, overwrite = TRUE)  
   }
+  unlink(temp)
+  l$cppfile <- NULL
   l$file <- file
   invisible(l)
 }
@@ -323,10 +324,27 @@ mwrite_parse_yaml <- function(file) {
   require_yaml()
   text <- readLines(file)
   l <- yaml::yaml.load(text)
+  l <- mwrite_read_cleanup(l)
   if(!identical(l$source, "mrgsolve::mwrite")) {
     abort("the yaml source file was not written by `mwrite_yaml()`.")  
   }
   l
+}
+
+# Right after reading from yaml, there is usually a bunch of little oddities
+# that need to be cleaned up so we can keep working in R
+mwrite_read_cleanup <- function(x) {
+  # This usually is rendered as an empty list, but needs to be numeric
+  x$update$add <- as.numeric(x$update$add)
+  if(length(x$omega$data)) {
+    x$omega$labels <- lapply(x$omega$labels, as.character)
+    x$omega$names <- lapply(x$omega$names, as.character)
+  }
+  if(length(x$sigma$data)) {
+    x$sigma$labels <- lapply(x$sigma$labels, as.character)
+    x$sigma$names <- lapply(x$sigma$names, as.character)
+  }
+  x
 }
 
 #' @rdname mread_yaml
@@ -357,32 +375,18 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   if(length(x$capture)) {
     capture <- c("$CAPTURE", x$capture, "")
   }
-
-  if(length(x$omega$data)) {
-    x$omega$labels <- lapply(x$omega$labels, as.character)
-    x$omega$names <- lapply(x$omega$names, as.character)
-  }
   omega <- mwrite_matrix(x$omega, "$OMEGA")
-  
-  if(length(x$sigma$data)) {
-    x$sigma$labels <- lapply(x$sigma$labels, as.character)
-    x$sigma$names <- lapply(x$sigma$names, as.character)
-  }
   sigma <- mwrite_matrix(x$sigma, "$SIGMA")
   
   code <- c(prob, param, init, omega, sigma, x$code, capture)
-  
+
   set <- tocode(x$set)
-  
-  x$update$add <- as.numeric(x$update$add)
-  
   if(isTRUE(update)) {
     if(length(set)) {
       set <- c(set, " ")
     }
     set <- c(set, tocode(x$update))
   }
-  
   if(length(set)) {
     set <- c("$SET", set, "")
     code <- c(code, set)
