@@ -190,7 +190,6 @@ test_that("matrix names are retained", {
   temp <- tempfile()
   x <- mwrite_yaml(mod, file = temp)
   yam <- yaml::yaml.load_file(x$file)
-  yam <- as.list(yam)
   expect_equal(yam$omega$names, "metrum")
   expect_equal(yam$sigma$names, "rg")
   mod2 <- mread_yaml(temp, compile = FALSE)
