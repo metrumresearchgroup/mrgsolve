@@ -19,7 +19,7 @@ mwrite_matrix <- function(x, block_name) {
     if(namei != "...") {
       header <- c(header, paste0("@name ", namei))  
     }
-    if(any(labelsi != "...")) {
+    if(any(labelsi != ".")) {
       labels_ <- paste0(labelsi, collapse = " ")
       header <- c(header, paste0("@labels ", labels_))
     } 
