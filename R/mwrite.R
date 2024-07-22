@@ -212,7 +212,6 @@ mwrite_model_to_list <- function(x) {
 #' @seealso [mread_yaml()], [yaml_to_cpp()]
 #' 
 #' @md
-#' @name mwrite
 #' @export
 mwrite_yaml <- function(x, file, digits = 8) {
   require_yaml()
