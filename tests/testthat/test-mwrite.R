@@ -42,13 +42,14 @@ test_that("convert model to list", {
   expect_equal(l$set$end, 120)
   expect_equal(l$set$delta, 0.25)
   
+  nomega <- nrow(omat(mod))
   expect_length(l$omega, 3)
   expect_equal(names(l$sigma), c("data", "labels", "names"))
   expect_is(l$omega$data, "list")
   expect_length(l$omega$data, 1)
-  expect_length(l$omega$data[[1]], 10)
+  expect_length(l$omega$data[[1]], nomega)
   expect_length(l$omega$labels, 1)
-  expect_length(l$omega$labels[[1]], 4)
+  expect_length(l$omega$labels[[1]],  nomega)
   expect_is(l$omega$labels, "list")
   expect_length(l$omega$names, 1)
   expect_is(l$omega$names, "character")
@@ -121,7 +122,7 @@ test_that("imposter code", {
   yaml <- yaml::as.yaml(x)
   cat(yaml, file = temp)
   expect_error(
-    mread_yaml(temp), 
+    mread_yaml(temp, compile = FALSE), 
     "was not written by `mwrite_yaml()`.", 
     fixed = TRUE
   )
@@ -162,4 +163,45 @@ test_that("captures are handled", {
   expect_equivalent(l$capture, c("b = V", "a = CL"))
   m <- mread_yaml(temp3, compile = FALSE)
   expect_equivalent(m@capture, c(V = "b", CL = "a"))
+})
+
+test_that("handle multiple unnamed matrices", {
+  skip_if_not_installed("yaml")
+  temp <- tempfile()
+  code <- '$OMEGA 1 2 3\n$OMEGA 3 4 5 6'
+  mod <- mcode("foo", code, compile = FALSE)
+  a <- mwrite_yaml(mod, file = temp)
+  yam <- yaml::yaml.load_file(temp)$omega
+  expect_equal(names(yam$data), paste0("matrix", 1:2))
+  expect_equal(names(yam$labels), paste0("matrix", 1:2))
+  expect_equal(names(yam$data$matrix1), paste0("row", 1:3))
+  expect_equal(names(yam$data$matrix2), paste0("row", 1:4))
+  expect_equal(a$file, temp)
+  mod2 <- mread_yaml(file = temp, compile = FALSE)  
+  expect_identical(mod@omega, mod2@omega)
+})
+
+test_that("matrix names are retained", {
+  skip_if_not_installed("yaml")
+  code <- '$OMEGA 1 2 3\n@name metrum\n$SIGMA 1 2\n @name rg @labels a b'
+  mod <- mcode("foo", code, compile = FALSE)
+  expect_equal(names(omat(mod)), "metrum")
+  expect_equal(names(smat(mod)), "rg")
+  temp <- tempfile()
+  x <- mwrite_yaml(mod, file = temp)
+  yam <- yaml::yaml.load_file(x$file)
+  expect_equal(yam$omega$names, "metrum")
+  expect_equal(yam$sigma$names, "rg")
+  mod2 <- mread_yaml(temp, compile = FALSE)
+  expect_equal(names(omat(mod2)), "metrum")
+  expect_equal(names(smat(mod2)), "rg")
+})
+
+test_that("render matrix as list of numeric rows", {
+  mat <- matrix(rnorm(25), nrow = 5, ncol = 5)  
+  l <- mrgsolve:::get_upper_tri(mat)
+  expect_equal(names(l), paste0("row", 1:5))
+  for(j in 1:5) {
+    expect_equal(l[[j]], mat[1:j, j])
+  }
 })

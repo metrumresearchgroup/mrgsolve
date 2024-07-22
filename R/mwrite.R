@@ -7,9 +7,45 @@ tocode <- function(l) {
   paste0(names(l), " = ", as.character(l))
 }
 
+# block name is $OMEGA or $SIGMA
+mwrite_matrix <- function(x, block_name) {
+  code <- character(0)
+  for(i in seq_along(x$data)) {
+    datai <-  x$data[[i]]
+    labelsi <- x$labels[[i]]
+    namei <- x$names[[i]]
+    code <- c(code, block_name)
+    header <- "@block"
+    if(namei != "...") {
+      header <- c(header, paste0("@name ", namei))  
+    }
+    if(any(labelsi != ".")) {
+      labels_ <- paste0(labelsi, collapse = " ")
+      header <- c(header, paste0("@labels ", labels_))
+    } 
+    code <- c(code, header)
+    for(i in seq_along(datai)) {
+      tag <- paste0("// row ", i)
+      code <- c(code,  tag, datai[[i]])  
+    }
+    code <- c(code, "")
+  }
+  code
+}
+
 get_upper_tri <- function(x) {
   x <- as.matrix(x)
-  x[upper.tri(x, diag = TRUE)]
+  n <- nrow(x)
+  x <- x[upper.tri(x, diag = TRUE)]
+  l <- vector(mode = "list", length = n)
+  w <- 1
+  for(i in seq(n)) {
+    s <- seq(w, w+i-1)
+    l[[i]] <- x[s]
+    w <- w + i
+  }
+  names(l) <- paste0("row", seq(n))
+  l
 }
 
 require_yaml <- function() {
@@ -43,12 +79,19 @@ mwrite_model_to_list <- function(x) {
   l$omega <- list()
   l$omega$data <- lapply(as.list(omat(x)), get_upper_tri)
   l$omega$labels <- labels(omat(x))
-  names(l$omega$labels) <- seq_along(l$omega$labels)
   l$omega$names <- names(omat(x))
+  if(length(l$omega$data)) {
+    names(l$omega$data) <- paste0("matrix", seq_along(l$omega$data))
+    names(l$omega$labels) <- paste0("matrix",seq_along(l$omega$labels))
+  }
+  l$sigma <- list()
   l$sigma$data <- lapply(as.list(smat(x)), get_upper_tri)
   l$sigma$labels <- labels(smat(x))
-  names(l$sigma$labels) <- seq_along(l$sigma$labels)
   l$sigma$names <- names(smat(x))
+  if(length(l$sigma$data)) {
+    names(l$sigma$data) <- paste0("matrix", seq_along(l$sigma$data))
+    names(l$sigma$labels) <- paste0("matrix",seq_along(l$sigma$labels))
+  }
   # Other
   l$env <- as.list(x@envir)
   l$plugin <- x@plugin
@@ -120,9 +163,7 @@ mwrite_model_to_list <- function(x) {
   code <- Map(code, names(code), f = function(text, name) {
     c(glue("${name}"), text, " ")
   })
-  
   l$code <- unlist(code, use.names = FALSE)
-  
   l
 }
 
@@ -171,7 +212,6 @@ mwrite_model_to_list <- function(x) {
 #' @seealso [mread_yaml()], [yaml_to_cpp()]
 #' 
 #' @md
-#' @name mwrite
 #' @export
 mwrite_yaml <- function(x, file, digits = 8) {
   require_yaml()
@@ -182,6 +222,54 @@ mwrite_yaml <- function(x, file, digits = 8) {
     writeLines(con = file, out)  
   }
   l$format <- "list"
+  l$file <- file
+  invisible(l)
+}
+
+#' Write a model to native mrgsolve format
+#' 
+#' Model code is written to a file in native mrgsolve format. This 
+#' can be useful for (1) breaking connection to NONMEM modeling outputs that 
+#' are imported by `$NMXML` or `$NMEXT` and (2) saving model updates (e.g., 
+#' an updated parameter list). Models can be read back using [mread()].
+#' 
+#' @inheritParams mwrite
+#' @inheritParams yaml_to_cpp
+#' 
+#' @details
+#' See important details in [mwrite_yaml()].
+#' 
+#' @return 
+#' A list containing data that was written out to the cpp file, with added 
+#' item `file`, is returned invisibly. 
+#' 
+#' @examples
+#' temp <- tempfile(fileext = ".mod")
+#' 
+#' mod <- modlib("pk1", compile = FALSE)
+#' 
+#' x <- mwrite_cpp(mod, file = temp)
+#' 
+#' mod <- mread(x$file, compile = FALSE)
+#' 
+#' mod
+#' 
+#' @seealso [mwrite_yaml()], [yaml_to_cpp()]
+#' 
+#' @md
+#' @rdname mwrite
+#' @export
+mwrite_cpp <- function(x, file, update = TRUE) {
+  l <- mwrite_model_to_list(x)
+  temp <- tempfile()
+  model <- basename(temp)
+  project <- dirname(temp)
+  l <- parsed_to_cppfile(l, model = model, project = project,  update = update)
+  if(is.character(file)) {
+    file.copy(l$cppfile, file, overwrite = TRUE)  
+  }
+  unlink(temp)
+  l$cppfile <- NULL
   l$file <- file
   invisible(l)
 }
@@ -235,10 +323,27 @@ mwrite_parse_yaml <- function(file) {
   require_yaml()
   text <- readLines(file)
   l <- yaml::yaml.load(text)
+  l <- mwrite_read_cleanup(l)
   if(!identical(l$source, "mrgsolve::mwrite")) {
     abort("the yaml source file was not written by `mwrite_yaml()`.")  
   }
   l
+}
+
+# Right after reading from yaml, there is usually a bunch of little oddities
+# that need to be cleaned up so we can keep working in R
+mwrite_read_cleanup <- function(x) {
+  # This usually is rendered as an empty list, but needs to be numeric
+  x$update$add <- as.numeric(x$update$add)
+  if(length(x$omega$data)) {
+    x$omega$labels <- lapply(x$omega$labels, as.character)
+    x$omega$names <- lapply(x$omega$names, as.character)
+  }
+  if(length(x$sigma$data)) {
+    x$sigma$labels <- lapply(x$sigma$labels, as.character)
+    x$sigma$names <- lapply(x$sigma$names, as.character)
+  }
+  x
 }
 
 #' @rdname mread_yaml
@@ -251,13 +356,12 @@ yaml_to_cpp <- function(file, model = basename(file), project = getwd(),
 }
 
 # Take in content parsed from yaml file, clean up, write to cpp file
-# @return a cleaned-up version of x with `cppfile` slot added
+# @return a cleaned-up version of x with slot for `cppfile` added 
 parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   prob <- character(0)
   if(sum(nchar(x$prob))) {
     prob <- c("$PROB", x$prob, "")  
   }
-  
   param <- character(0)
   if(length(x$param)) {
     param <- c("$PARAM", tocode(x$param), "")
@@ -270,48 +374,18 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   if(length(x$capture)) {
     capture <- c("$CAPTURE", x$capture, "")
   }
-  
-  x$update$add <- as.numeric(x$update$add)
-  
-  omega <- character(0)
-  if(length(x$omega$data)) {
-    x$omega$labels <- lapply(x$omega$labels, as.character)
-    x$omega$names <- lapply(x$omega$names, as.character)
-  }
-  for(i in seq_along(x$omega$data)) {
-    header <- "@block"
-    if(any(x$omega$labels[[i]] != "...")) {
-      o_labels <- paste0(x$omega$labels[[i]], collapse = " ")
-      header <- c(header, paste0("@labels ", o_labels))
-    }
-    omega <- c(omega, "$OMEGA", header, x$omega$data[[i]], "")  
-  }
-  
-  sigma <- character(0)
-  if(length(x$sigma$data)) {
-    x$sigma$labels <- lapply(x$sigma$labels, as.character)
-    x$sigma$names <- lapply(x$sigma$names, as.character)
-  }
-  for(i in seq_along(x$sigma$data)) {
-    header <- "@block"
-    if(any(x$sigma$labels[[i]] != "...")) {
-      s_labels <- paste0(x$sigma$labels[[i]], collapse = " ")
-      header <- c(header, paste0("@labels ", s_labels))
-    }
-    sigma <- c(sigma, "$SIGMA", header, x$sigma$data[[i]], "")  
-  }
+  omega <- mwrite_matrix(x$omega, "$OMEGA")
+  sigma <- mwrite_matrix(x$sigma, "$SIGMA")
   
   code <- c(prob, param, init, omega, sigma, x$code, capture)
-  
+
   set <- tocode(x$set)
-  
   if(isTRUE(update)) {
     if(length(set)) {
       set <- c(set, " ")
     }
     set <- c(set, tocode(x$update))
   }
-  
   if(length(set)) {
     set <- c("$SET", set, "")
     code <- c(code, set)
