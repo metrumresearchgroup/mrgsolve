@@ -93,7 +93,7 @@ mwrite_model_to_list <- function(x) {
     names(l$sigma$labels) <- paste0("matrix",seq_along(l$sigma$labels))
   }
   # Other
-  l$env <- as.list(x@envir)
+  l$envir <- as.list(x@envir)
   l$plugin <- x@plugin
   # These items will get directly passed to update()
   l$update <- list()
@@ -116,7 +116,7 @@ mwrite_model_to_list <- function(x) {
   l$update$tscale <- x@tscale
   l$update$outvars <- unlist(outvars(x), use.names = FALSE)
   
-  code <- gsub("\\t", "  ", x@code, perl = TRUE)
+  code <- gsub("\t", "  ", x@code, fixed = TRUE)
   code <- modelparse(code, comment_re = character(0))
   code <- lapply(code, trimws, which = "right")
   
@@ -144,10 +144,11 @@ mwrite_model_to_list <- function(x) {
   
   clob <- c("PARAM", "INPUT", "THETA", "CMT", "INIT", "OMEGA", "SIGMA", 
             "NMEXT", "NMXML", "VCMT", "SET", "CAPTURE")
-  for(block in clob) {
-    while(block %in% names(code)) {
-      code[[block]] <- NULL
-    }
+  
+  w <- which(names(code) %in% clob)
+  
+  if(length(w)) {
+    code <- code[-w]
   }
   
   # Need special handling here in case compartments are declared 
@@ -216,12 +217,10 @@ mwrite_model_to_list <- function(x) {
 mwrite_yaml <- function(x, file, digits = 8) {
   require_yaml()
   l <- mwrite_model_to_list(x)
-  l$format <- "yaml"
-  out <- yaml::as.yaml(l, precision = digits)
-  if(is.character(file)) {
-    writeLines(con = file, out)  
+  if(is.character(file)) { 
+    l$format <- "yaml" 
+    yaml::write_yaml(l, file = file, precision = digits) 
   }
-  l$format <- "list"
   l$file <- file
   invisible(l)
 }
@@ -233,7 +232,7 @@ mwrite_yaml <- function(x, file, digits = 8) {
 #' are imported by `$NMXML` or `$NMEXT` and (2) saving model updates (e.g., 
 #' an updated parameter list). Models can be read back using [mread()].
 #' 
-#' @inheritParams mwrite
+#' @inheritParams mwrite_yaml
 #' @inheritParams yaml_to_cpp
 #' 
 #' @details
@@ -257,7 +256,6 @@ mwrite_yaml <- function(x, file, digits = 8) {
 #' @seealso [mwrite_yaml()], [yaml_to_cpp()]
 #' 
 #' @md
-#' @rdname mwrite
 #' @export
 mwrite_cpp <- function(x, file, update = TRUE) {
   l <- mwrite_model_to_list(x)
@@ -310,19 +308,19 @@ mwrite_cpp <- function(x, file, update = TRUE) {
 #' @return 
 #' A model object. 
 #' 
-#' @seealso [mwrite_yaml()], [yaml_to_cpp()]
+#' @seealso [mwrite_yaml()]
 #' 
 #' @md
 #' @export
-mread_yaml <- function(file, model = basename(file), project = tempdir(), ...) {
+mread_yaml <- function(file, model = basename(file), project = tempdir(),
+                       update = FALSE, ...) {
   x <- mwrite_parse_yaml(file)
-  parsed_to_model(x, model, project, ...)
+  parsed_to_model(x, model = model, project = project, update = update, ...)
 }
 
 mwrite_parse_yaml <- function(file) {
   require_yaml()
-  text <- readLines(file)
-  l <- yaml::yaml.load(text)
+  l <- yaml::yaml.load_file(file)
   l <- mwrite_read_cleanup(l)
   if(!identical(l$source, "mrgsolve::mwrite")) {
     abort("the yaml source file was not written by `mwrite_yaml()`.")  
@@ -378,7 +376,7 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
   sigma <- mwrite_matrix(x$sigma, "$SIGMA")
   
   code <- c(prob, param, init, omega, sigma, x$code, capture)
-
+  
   set <- tocode(x$set)
   if(isTRUE(update)) {
     if(length(set)) {
@@ -403,8 +401,8 @@ parsed_to_cppfile <- function(x, model, project, update = FALSE) {
 # @param x model object
 # @param model a new model name
 # @param project where to build the model; defaults to tempdir()
-parsed_to_model <- function(x, model, project, ...) {
-  x <- parsed_to_cppfile(x, model, project)
+parsed_to_model <- function(x, model, project, update, ...) {
+  x <- parsed_to_cppfile(x, model = model, project = project, update = update)
   mod <- mread(x$cppfile, ...)
   # If we want dynamic capture, force that into outvars
   mread_args <- list(...)

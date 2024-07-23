@@ -7,7 +7,10 @@
 mwrite_cpp(x, file, update = TRUE)
 }
 \arguments{
-\item{file}{the yaml file name.}
+\item{x}{a model object.}
+
+\item{file}{output file name; if non-character (e.g., \code{NULL}), no output
+will be written to file.}
 
 \item{update}{\code{TRUE} if model settings should be written into the cpp file in
 a \verb{$SET} block.}

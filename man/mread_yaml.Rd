@@ -5,7 +5,13 @@
 \alias{yaml_to_cpp}
 \title{Read a model from yaml format}
 \usage{
-mread_yaml(file, model = basename(file), project = tempdir(), ...)
+mread_yaml(
+  file,
+  model = basename(file),
+  project = tempdir(),
+  update = FALSE,
+  ...
+)
 
 yaml_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
 }
@@ -16,10 +22,10 @@ yaml_to_cpp(file, model = basename(file), project = getwd(), update = TRUE)
 
 \item{project}{the directory where the model should be built.}
 
-\item{...}{passed to \code{\link[=mread]{mread()}}.}
-
 \item{update}{\code{TRUE} if model settings should be written into the cpp file in
 a \verb{$SET} block.}
+
+\item{...}{passed to \code{\link[=mread]{mread()}}.}
 }
 \value{
 A model object.
@@ -51,5 +57,5 @@ readLines(cppfile)
 
 }
 \seealso{
-\code{\link[=mwrite_yaml]{mwrite_yaml()}}, \code{\link[=yaml_to_cpp]{yaml_to_cpp()}}
+\code{\link[=mwrite_yaml]{mwrite_yaml()}}
 }

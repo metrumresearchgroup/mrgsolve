@@ -97,6 +97,7 @@ test_that("mwrite, mread yaml", {
 })
 
 test_that("yaml_to_cpp", {
+  skip_if_not_installed("yaml")
   mod <- modlib("popex", compile = FALSE)
   temp <- tempfile()
   mwrite_yaml(mod, temp)
@@ -115,6 +116,7 @@ test_that("yaml_to_cpp", {
 })
 
 test_that("imposter code", {
+  skip_if_not_installed("yaml")
   mod <- modlib("pk2", compile = FALSE)
   x <- mwrite_yaml(mod, file = NULL)
   x$source <- NULL
@@ -129,6 +131,7 @@ test_that("imposter code", {
 })
 
 test_that("mwrite with no file", {
+  skip_if_not_installed("yaml")
   l <- mwrite_yaml(house(), file = NULL)  
   expect_is(l, "list")
   expect_equal(l$format, "list")
@@ -136,7 +139,7 @@ test_that("mwrite with no file", {
 })
 
 test_that("captures are handled", {
-  
+  skip_if_not_installed("yaml")
   # no names
   temp1 <- tempfile()
   code <- "$PARAM CL=1,V=2,KA=3\n$CAPTURE V CL"
@@ -207,6 +210,8 @@ test_that("render matrix as list of numeric rows", {
 })
 
 test_that("code gets appropriately quoted", {
+  skip_if_not_installed("yaml")
+  
   code <- '$SET ss_cmt = "B", outvars = "A", delta = 5\n$CMT A B'
   
   mod <- mcode("test-quote", code, compile = FALSE)
