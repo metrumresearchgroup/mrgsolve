@@ -48,8 +48,9 @@ docs
 ^\.github$
 ^doc$
 ^Meta$
-vignettes
 vignettes/extra
 vignettes/build
 vignettes/mrgsolve-builds
 vignettes/extra/mrgsolve-builds/
+vignettes/src
+vignettes/src
