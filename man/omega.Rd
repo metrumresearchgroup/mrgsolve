@@ -19,7 +19,7 @@ omat(.x, ...)
 
 \S4method{omat}{matrix}(.x, ..., labels = list())
 
-\S4method{omat}{`NULL`}(.x, ...)
+\S4method{omat}{NULL}(.x, ...)
 
 \S4method{omat}{list}(.x, ...)
 
