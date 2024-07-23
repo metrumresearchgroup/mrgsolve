@@ -27,7 +27,7 @@ timeheader <- sprintf(print_leading,c("  time: ", "    "))
 print.os.header <- sprintf(print_leading, "  OS type: ")
 print.solver.header <- sprintf(print_leading, c("  solver:"))
 
-
+#' @export
 print.mrgmod <- function(x,verbose=FALSE,...) {
 
   add <- x@add
