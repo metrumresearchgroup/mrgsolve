@@ -78,10 +78,10 @@ doc:
 	Rscript -e "roxygen2::roxygenize()"
 
 build:
-	R CMD build --md5 $(PKGDIR) --no-manual --no-vignettes
+	R CMD build --md5 $(PKGDIR) --no-manual --no-build-vignettes
 
 build-vignettes:
-	make vignettes
+#	make vignette
 	R CMD build --md5 $(PKGDIR)
 
 install:
@@ -148,8 +148,3 @@ ci:
 	export _MRGSOLVE_SKIP_MODLIB_BUILD_=false
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT)'
 	Rscript -e '$(LOAD_CANDIDATE); $(TEST_UNIT_CPP)'
-
-.PHONY: vignette
-vignette:
-	quarto render vignettes/src/mrgsolve-vignette.qmd
-	cp vignettes/src/mrgsolve-vignette.pdf vignettes
