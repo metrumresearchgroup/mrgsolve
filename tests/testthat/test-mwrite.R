@@ -205,3 +205,23 @@ test_that("render matrix as list of numeric rows", {
     expect_equal(l[[j]], mat[1:j, j])
   }
 })
+
+test_that("code gets appropriately quoted", {
+  code <- '$SET ss_cmt = "B", outvars = "A", delta = 5\n$CMT A B'
+  
+  mod <- mcode("test-quote", code, compile = FALSE)
+  temp <- tempfile()
+  x <- mwrite_yaml(mod, file = temp)
+  expect_equal(x$set$ss_cmt, "B")
+  
+  mod <- mread_yaml(temp, compile = FALSE)
+  expect_is(mod, "mrgmod")
+  ov <- outvars(mod)
+  expect_equal(ov$cmt, "A")
+  expect_equal(ov$capture, character(0))
+  
+  # Check that A is in quotes
+  cpp <- yaml_to_cpp(file = temp, model = "test-quote", project = tempdir())
+  lines <- readLines(cpp)
+  expect_match(lines, 'outvars = "A"', all=FALSE)
+})
