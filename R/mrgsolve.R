@@ -581,7 +581,7 @@ do_mrgsim <- function(x,
       join_data$.data_row. <- seq_len(nrow(data))
       data$.data_row. <- join_data$.data_row.
       carry.recover <- ".data_row."
-      drop <- names(which(!is.numeric(join_data)))
+      drop <- names(which(!numeric_columns(join_data)))
       # Will be dropped with error later when validating data
       drop <- drop[!drop %in% c(Pars(x), GLOBALS$CARRY_TRAN)]
       data <- data[,setdiff(names(data),drop),drop=FALSE]
@@ -591,7 +591,7 @@ do_mrgsim <- function(x,
     do_recover_idata <- length(recover_idata) > 0
     if(do_recover_idata) {
       join_idata <- idata[,unique(c("ID", recover_idata)),drop=FALSE]
-      drop <- names(which(!is.numeric(join_idata)))
+      drop <- names(which(!numeric_columns(join_idata)))
       # Will be dropped with error later when validating data
       drop <- drop[!drop %in% Pars(x)]
       idata <- idata[,setdiff(names(idata),drop),drop=FALSE]
@@ -766,7 +766,7 @@ do_mrgsim <- function(x,
       return(out[["data"]])  
     }
     if(output=="matrix") {
-      if(!all(sapply(out[["data"]], is.numeric))) {
+      if(!all(numeric_columns(out[["data"]]))) {
         stop("can't return matrix because non-numeric data was found.", call.=FALSE)  
       }
       return(data.matrix(out[["data"]]))
