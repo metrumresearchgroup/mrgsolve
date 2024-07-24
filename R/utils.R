@@ -588,8 +588,7 @@ make_matrix_labels <- function(mat,lab,diag=TRUE) {
 
 
 # nocov start
-# TODO: give up on this
-is.numeric.data.frame <- function(x) vapply(x,is.numeric,TRUE)
+numeric_columns <- function(x) vapply(x, is.numeric, TRUE)
 
 mapvalues <- function (x, from, to, warn_missing = FALSE) { 
   if (length(from) != length(to)) {

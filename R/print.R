@@ -27,8 +27,7 @@ timeheader <- sprintf(print_leading,c("  time: ", "    "))
 print.os.header <- sprintf(print_leading, "  OS type: ")
 print.solver.header <- sprintf(print_leading, c("  solver:"))
 
-
-print.mrgmod <- function(x,verbose=FALSE,...) {
+print_mrgmod <- function(x,verbose=FALSE,...) {
 
   add <- x@add
   nadd <- length(add)
@@ -150,7 +149,7 @@ print.mrgmod <- function(x,verbose=FALSE,...) {
 ##' @param object the model object
 ##' @export
 ##' @keywords internal
-setMethod("show", "mrgmod", function(object) print.mrgmod(object))
+setMethod("show", "mrgmod", function(object) print_mrgmod(object))
 
 
 

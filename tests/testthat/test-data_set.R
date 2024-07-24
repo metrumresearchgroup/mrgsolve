@@ -135,11 +135,11 @@ test_that("numerics_only", {
   )
   df <- numerics_only(data, convert_lgl=TRUE)
   expect_equal(names(df), c("ID", "INT", "BOOL"))
-  expect_true(all(mrgsolve:::is.numeric.data.frame(df)))
+  expect_true(all(mrgsolve:::numeric_columns(df)))
   expect_message(numerics_only(data))
   df <- numerics_only(data,convert_lgl = FALSE)
   expect_equal(names(df), c("ID", "INT"))
-  expect_true(all(mrgsolve:::is.numeric.data.frame(df)))
+  expect_true(all(mrgsolve:::numeric_columns(df)))
   expect_silent(numerics_only(data,quiet=TRUE))
 })
 

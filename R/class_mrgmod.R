@@ -704,6 +704,7 @@ loadso.mrgmod <- function(x,...) {
   return(invisible(x))
 }
 
+#' @export
 unloadso.mrgmod <- function(x, ...) {
   out <- try(dyn.unload(sodll(x)),silent=TRUE)
   if(inherits(out, "try-error")) {

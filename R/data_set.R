@@ -422,7 +422,7 @@ ev_assign <- function(l, idata, evgroup, join = FALSE) {
   x[["ID"]] <- ID
   
   if(join) {
-    nu <- sapply(idata, is.numeric)
+    nu <- numeric_columns(idata)
     x <- left_join(x,idata[,nu,drop=FALSE],by="ID") 
   }
   return(x)

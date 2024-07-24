@@ -161,7 +161,7 @@ setMethod("ev", "missing", function(time=0, amt=0, evid=1, cmt=1, ID=numeric(0),
     }
     
     if(replicate) {
-      if(any(!is.numeric(data))) {
+      if(any(!numeric_columns(data))) {
         data <- as.list(data)
         data <- lapply(data, unique)
         data <- do.call("expand.grid", 
