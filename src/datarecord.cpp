@@ -592,7 +592,7 @@ void datarecord::schedule(reclist& thisi, double maxtime,
  * infusion end. 
  * 
  */
-void insert_record(reclist& thisi, const int start, rec_ptr& rec, 
+void insert_record(reclist& thisi, size_t start, rec_ptr& rec, 
                    const bool put_ev_first) {
   double time = rec->time();
   size_t i = start;
