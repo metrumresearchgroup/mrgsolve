@@ -595,7 +595,7 @@ void datarecord::schedule(reclist& thisi, double maxtime,
 void insert_record(reclist& thisi, const int start, rec_ptr& rec, 
                    const bool put_ev_first) {
   double time = rec->time();
-  int i = start;
+  size_t i = start;
   if(put_ev_first) {
     for(i = start + 1; i < thisi.size(); ++i) {
       if(thisi[i]->time() >= time) {
