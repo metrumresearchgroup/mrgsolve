@@ -51,7 +51,7 @@ mwrite_yaml(mod, file = temp)
 mod <- mread_yaml(temp, model = "new-house", compile = FALSE)
 mod
 
-cppfile <- yaml_to_cpp(temp)
+cppfile <- yaml_to_cpp(temp, project = tempdir())
 
 readLines(cppfile)
 
