@@ -1,4 +1,28 @@
-# mrgsolve (development version)
+# mrgsolve 1.5.0
+
+- New functions `mwrite_yaml()` and `mwrite_cpp()` can write a model object back
+  to a file, accounting for all updates since the model was read from native
+  mrgsolve format using `mread()` (#1190, #1213).
+  
+- New function `mread_yaml()` for reading back models written out with 
+  `mwrite_yaml()` (#1190, #1213).
+  
+- New functions in `evtools` plugin: `evt::replace()` works like `evt::bolus()`,
+  but will replace the amount in a given compartment rather than add to it
+  (#1203).
+  
+- The `nm-vars` plugin now exposes `DEXP()`, `LOG10()`, `COS()` and `SIN()` 
+  for use in the mrgsolve C++ code blocks (#1199).
+
+- An error is now generated when `KA` is equal to `CL/VC` while simulating from
+  the one-compartment model with analytical solution invoked through 
+  `$PKMODEL` (#1179, #1197). 
+
+
+## Bugs Fixed
+
+- A bug was fixed when certain data frame inputs were passed to `as_data_set()`
+  (#1115, #1196). 
 
 # mrgsolve 1.4.2
 
