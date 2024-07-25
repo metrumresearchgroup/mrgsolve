@@ -2,10 +2,10 @@
 
 - New functions `mwrite_yaml()` and `mwrite_cpp()` can write a model object back
   to a file, accounting for all updates since the model was read from native
-  mrgsolve format using `mread()` (#1213).
+  mrgsolve format using `mread()` (#1190, #1213).
   
 - New function `mread_yaml()` for reading back models written out with 
-  `mwrite_yaml()` (#1213).
+  `mwrite_yaml()` (#1190, #1213).
   
 - New functions in `evtools` plugin: `evt::replace()` works like `evt::bolus()`,
   but will replace the amount in a given compartment rather than add to it
