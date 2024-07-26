@@ -301,7 +301,7 @@ mwrite_cpp <- function(x, file, update = TRUE) {
 #' mod <- mread_yaml(temp, model = "new-house", compile = FALSE)
 #' mod
 #' 
-#' cppfile <- yaml_to_cpp(temp)
+#' cppfile <- yaml_to_cpp(temp, project = tempdir())
 #' 
 #' readLines(cppfile)
 #' 

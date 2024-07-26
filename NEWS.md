@@ -1,3 +1,8 @@
+# mrgsolve 1.5.1
+
+- Fixed `yaml_to_cpp()` example code to prevent saving the file to the working 
+  directory (#1220).
+
 # mrgsolve 1.5.0
 
 - New functions `mwrite_yaml()` and `mwrite_cpp()` can write a model object back
