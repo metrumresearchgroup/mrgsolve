@@ -1,7 +1,7 @@
 # mrgsolve 1.5.1
 
-- Fixed `yaml_to_cpp()` example code to prevent saving the file to the 
-  working directory; discovered when 1.5.0 was submitted to CRAN (#1220). 
+- Fixed `yaml_to_cpp()` example code to prevent saving the file to the working 
+  directory (#1220).
 
 # mrgsolve 1.5.0
 
