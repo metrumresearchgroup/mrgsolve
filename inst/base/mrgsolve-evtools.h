@@ -49,6 +49,42 @@ void replace(databox& self, const double amt, const int cmt) {
   return;
 }
 
+mrgsolve::evdata reset() {
+  mrgsolve::evdata ev(0, 3); 
+  ev.now = true;
+  ev.check_unique = false;
+  return ev;
+}
+
+mrgsolve::evdata reset(const double amt, const int cmt, 
+                       const double rate = 0) {
+  mrgsolve::evdata ev(0, 4);
+  ev.cmt = cmt;
+  ev.amt = amt;
+  ev.rate = rate;
+  ev.now = true;
+  ev.check_unique = false;
+  return ev;
+}
+
+void reset(databox& self) {
+  evt::ev ev = reset(); 
+  self.mevector.push_back(ev);
+  return;
+}
+
+void reset(databox& self, const double amt, const int cmt, 
+           const double rate = 0) {
+  evt::ev ev(0, 4);
+  ev.cmt = cmt;
+  ev.amt = amt;
+  ev.rate = rate;
+  ev.now = true;
+  ev.check_unique = false;
+  self.mevector.push_back(ev);
+  return;
+}
+
 void retime(mrgsolve::evdata& ev, const double time) {
   ev.time = time;
   ev.now = false;
