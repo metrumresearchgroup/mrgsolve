@@ -58,10 +58,12 @@ mrgsolve::evdata reset() {
 
 mrgsolve::evdata reset(const double amt, const int cmt, 
                        const double rate = 0) {
-  mrgsolve::evdata ev = evt::reset();
-  ev.cmt = cmt;
+  mrgsolve::evdata ev(0, 4);
   ev.amt = amt;
+  ev.cmt = cmt;
   ev.rate = rate;
+  ev.now = true;
+  ev.check_unique = false;
   return ev;
 }
 
@@ -73,10 +75,7 @@ void reset(databox& self) {
 
 void reset(databox& self, const double amt, const int cmt, 
            const double rate = 0) {
-  mrgsolve::evdata ev = evt::reset();
-  ev.cmt = cmt;
-  ev.amt = amt;
-  ev.rate = rate;
+  mrgsolve::evdata ev = evt::reset(amt, cmt, rate);
   self.mevector.push_back(ev);
   return;
 }
