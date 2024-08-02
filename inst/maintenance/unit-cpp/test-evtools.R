@@ -163,61 +163,95 @@ test_that("evtools - replace", {
 })
 
 test_that("evtools - reset", {
+  # Reset the system
   mod <- param(mod, dosetime = 5, B0 = 50, mode = 9)
+  mod <- update(mod, rtol = 1e-10, delta = 0.25)
   out <- mrgsim(mod)
   expect_true(all(out$A==0))
   expect_true(all(out$C==0))
+  
   # B starts at 50 and then is reset at time==5
   x <- filter(out, time %in% c(0, 5))
   expect_true(all(x$B==50))
+  
   # Verify value of B just before reset
   x <- filter(out, time==4)
   expect_equal(x$B, 50*exp(-0.1*4), tolerance = 1e-2)
   mod <- param(mod, mode = 10)
+
   # Identical results if the self or non-self function is called
   out1 <- mrgsim(mod, param = list(mode = 9))
   out2 <- mrgsim(mod, param = list(mode = 10))
-  expect_equal(out1@data, out2@data)
+  expect_identical(as.data.frame(out1), as.data.frame(out2))
+    
+  # Do an equivalent simulation with no evtools
+  e <- ev(amt = 100, time = 5, evid = 3)
+  out3 <- mrgsim(mod, e, param = list(mode = 0), obsonly = TRUE, recsort = 3)
+  expect_identical(as.data.frame(out1), as.data.frame(out3))
 })
 
 test_that("evtools - reset with bolus", {
+  # This resets the system and boluses 100 mg into C
   mod <- param(mod, dosetime = 5, B0 = 50, mode = 11)
+  mod <- update(mod, rtol = 1e-10, delta = 0.25)
   out <- mrgsim(mod)
+  
+  # Bolus into C; will check 
+  expect_equal(sort(unique(out$C)), c(0, 100))
+  
+  # At the reset time, B is back to the initial and we have dosed into C
   x <- filter(out, time==5)
   expect_equal(x$A, 0)
   expect_equal(x$B, 50)
   expect_equal(x$C, 100)
+  
+  # Check values just before reset
   x <- filter(out, time==4.75)
   expect_equal(x$C, 0)
-  x <- filter(out, time > 5)
-  expect_true(all(x$C==100))
+  expect_equal(x$B, 50*exp(-0.1*4.75), tolerance = 1e-2)
   
+  # Dose in to C at time==5
+  x <- filter(out, time >= 5)
+  expect_true(all(x$C==100))
+
   # Identical results if the self method called or non-self 
   out1 <- mrgsim(mod, param = list(mode = 11))
-  out2 <- mrgsim(mod, param = list(mode = 12))
-  
-  expect_identical(out1@data, out3@data)
+  out2 <- mrgsim(mod, param = list(mode = 13))
+  expect_identical(as.data.frame(out1), as.data.frame(out2))
+    
+  # Do an equivalent simulation with no evtools
+  e <- ev(amt = 100, time = 5, evid = 4, cmt = "C")
+  out3 <- mrgsim(mod, e, param = list(mode = 0), obsonly = TRUE, recsort = 3)
+  expect_identical(as.data.frame(out1), as.data.frame(out3))
 })
 
-
 test_that("evtools - reset with infusion", {
+  # This resets the system and starts an infusion into A lasting 5 hours
   mod <- param(mod, dosetime = 5, B0 = 50, mode = 12)
-  out <- mrgsim(mod, rtol = 1e-12, delta = 0.25)
+  mod <- update(mod, rtol = 1e-10, delta = 0.25)
+  out <- mrgsim(mod)
+  
   # B should be 50 to start and the reset time
   x <- filter(out, time %in% c(0, 5))
   expect_true(all(x$B==50))
   expect_true(all(x$A==0))
+  
   # Check values of A and B just before reset
   x <- filter(out, time == 4.75)
   expect_equal(x$A, 0)
   expect_equal(x$B, 50*exp(-0.1*4.75), tolerance = 1e-2)
+  
   # Check the infusion; Amax should be at the end of the 5 hr infusion
   x <- filter(out, A==max(A))
   expect_equal(x$time, 10)
-  
+
   # Identical results if the self method called or non-self 
-  out1 <- mrgsim(mod, param = list(mode = 13))
+  out1 <- mrgsim(mod, param = list(mode = 12))
   out2 <- mrgsim(mod, param = list(mode = 14))
-  
-  expect_identical(out1@data, out3@data)
+  expect_identical(as.data.frame(out1), as.data.frame(out2))
+    
+  # Do an equivalent simulation with no evtools 
+  e <- ev(amt = 100, time = 5, evid = 4, cmt = "A", rate = 100/5)
+  out3 <- mrgsim(mod, e, param = list(mode = 0), obsonly = TRUE, recsort = 3)
+  expect_identical(as.data.frame(out1), as.data.frame(out3))
 })
