@@ -196,7 +196,7 @@ test_that("evtools - reset with bolus", {
   mod <- update(mod, rtol = 1e-10, delta = 0.25)
   out <- mrgsim(mod)
   
-  # Bolus into C; will check 
+  # Bolus into C; will check when this happens next 
   expect_equal(sort(unique(out$C)), c(0, 100))
   
   # At the reset time, B is back to the initial and we have dosed into C
