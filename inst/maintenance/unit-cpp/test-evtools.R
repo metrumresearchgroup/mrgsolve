@@ -61,26 +61,26 @@ if(mode==8 && givedose) {
   evt::retime(rep, reptime);
   self.push(rep);
 }
-if(mode==9 && givedose) {
+if(mode==9 && givedose) { // reset
   evt::reset(self);
-}
-if(mode==10 && givedose) {
+} 
+if(mode==10 && givedose) { // reset, non-self
   evt::ev res = evt::reset();
   res.time = 15;
   self.push(res);
 }
-if(mode==11 && givedose) {
+if(mode==11 && givedose) { // reset with bolus
   evt::reset(self, 100, 3);
 }
-if(mode==12 && givedose) {
+if(mode==12 && givedose) { // reset with infusion
   evt::reset(self, 100, 1, 20);
 }
-if(mode==13 && givedose) {
+if(mode==13 && givedose) { // reset with bolus, non-self
   evt::ev res = evt::reset(100, 3);
   self.push(res);
 }
-if(mode==14 && givedose) {
-  evt::ev res = evt::reset(100, 1, 20);
+if(mode==14 && givedose) { // reset with infusion, non-self
+  evt::ev res = evt::reset(100, 1, 100.0/5.0);
   self.push(res);
 }
 '
@@ -167,13 +167,17 @@ test_that("evtools - reset", {
   out <- mrgsim(mod)
   expect_true(all(out$A==0))
   expect_true(all(out$C==0))
-  x <- filter(out, time %in% c(0,5))
+  # B starts at 50 and then is reset at time==5
+  x <- filter(out, time %in% c(0, 5))
   expect_true(all(x$B==50))
+  # Verify value of B just before reset
   x <- filter(out, time==4)
   expect_equal(x$B, 50*exp(-0.1*4), tolerance = 1e-2)
   mod <- param(mod, mode = 10)
-  out2 <- mrgsim(mod)
-  expect_equal(out@data, out2@data)
+  # Identical results if the self or non-self function is called
+  out1 <- mrgsim(mod, param = list(mode = 9))
+  out2 <- mrgsim(mod, param = list(mode = 10))
+  expect_equal(out1@data, out2@data)
 })
 
 test_that("evtools - reset with bolus", {
@@ -187,28 +191,33 @@ test_that("evtools - reset with bolus", {
   expect_equal(x$C, 0)
   x <- filter(out, time > 5)
   expect_true(all(x$C==100))
+  
+  # Identical results if the self method called or non-self 
+  out1 <- mrgsim(mod, param = list(mode = 11))
+  out2 <- mrgsim(mod, param = list(mode = 12))
+  
+  expect_identical(out1@data, out3@data)
 })
 
 
 test_that("evtools - reset with infusion", {
   mod <- param(mod, dosetime = 5, B0 = 50, mode = 12)
-  out <- mrgsim(mod, rtol = 1e-12)
-  x <- filter(out, time %in% c(0,5))
+  out <- mrgsim(mod, rtol = 1e-12, delta = 0.25)
+  # B should be 50 to start and the reset time
+  x <- filter(out, time %in% c(0, 5))
   expect_true(all(x$B==50))
   expect_true(all(x$A==0))
+  # Check values of A and B just before reset
   x <- filter(out, time == 4.75)
   expect_equal(x$A, 0)
   expect_equal(x$B, 50*exp(-0.1*4.75), tolerance = 1e-2)
-  # Maximum A is at the end of the infusion
+  # Check the infusion; Amax should be at the end of the 5 hr infusion
   x <- filter(out, A==max(A))
   expect_equal(x$time, 10)
   
-  # Identical results
-  out1 <- mrgsim(mod, param = list(mode = 11))
-  out2 <- mrgsim(mod, param = list(mode = 12))
-  out3 <- mrgsim(mod, param = list(mode = 13))
-  out4 <- mrgsim(mod, param = list(mode = 14))
+  # Identical results if the self method called or non-self 
+  out1 <- mrgsim(mod, param = list(mode = 13))
+  out2 <- mrgsim(mod, param = list(mode = 14))
   
   expect_identical(out1@data, out3@data)
-  expect_identical(out2@data, out4@data)
 })

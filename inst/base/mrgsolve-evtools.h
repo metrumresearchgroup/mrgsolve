@@ -13,7 +13,7 @@ mrgsolve::evdata bolus(const double amt, const int cmt) {
 }
 
 void bolus(databox& self, const double amt, const int cmt) {
-  mrgsolve::evdata ev = bolus(amt, cmt);
+  mrgsolve::evdata ev = evt::bolus(amt, cmt);
   self.mevector.push_back(ev);
   return;
 }
@@ -29,7 +29,7 @@ mrgsolve::evdata infuse(const double amt, const int cmt, const double rate) {
 }
 
 void infuse(databox& self, const double amt, const int cmt, const double rate) {
-  mrgsolve::evdata ev = infuse(amt, cmt, rate);
+  mrgsolve::evdata ev = evt::infuse(amt, cmt, rate);
   self.mevector.push_back(ev);
   return;
 }
@@ -44,7 +44,7 @@ mrgsolve::evdata replace(const double amt, const int cmt) {
 }
 
 void replace(databox& self, const double amt, const int cmt) {
-  mrgsolve::evdata ev = replace(amt, cmt);
+  mrgsolve::evdata ev = evt::replace(amt, cmt);
   self.mevector.push_back(ev);
   return;
 }
@@ -58,29 +58,25 @@ mrgsolve::evdata reset() {
 
 mrgsolve::evdata reset(const double amt, const int cmt, 
                        const double rate = 0) {
-  mrgsolve::evdata ev(0, 4);
+  mrgsolve::evdata ev = evt::reset();
   ev.cmt = cmt;
   ev.amt = amt;
   ev.rate = rate;
-  ev.now = true;
-  ev.check_unique = false;
   return ev;
 }
 
 void reset(databox& self) {
-  evt::ev ev = reset(); 
+  mrgsolve::evdata ev = evt::reset(); 
   self.mevector.push_back(ev);
   return;
 }
 
 void reset(databox& self, const double amt, const int cmt, 
            const double rate = 0) {
-  evt::ev ev(0, 4);
+  mrgsolve::evdata ev = evt::reset();
   ev.cmt = cmt;
   ev.amt = amt;
   ev.rate = rate;
-  ev.now = true;
-  ev.check_unique = false;
   self.mevector.push_back(ev);
   return;
 }
