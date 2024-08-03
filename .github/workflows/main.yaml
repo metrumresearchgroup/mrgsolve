@@ -51,7 +51,7 @@ jobs:
           upgrade: ${{ (matrix.config.r == '3.6.3' || matrix.config.r == '4.0.5') && 'FALSE' || 'TRUE' }}
       - name: Install pdflatex
         shell: bash
-        run: sudo apt-get install texlive-latex-base texlive-fonts-extra
+        run: sudo apt-get install texlive-latex-base texlive-fonts-extra tidy
       - name: Check package
         shell: bash
         run: make ci
