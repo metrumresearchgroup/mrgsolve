@@ -53,6 +53,7 @@ struct evdata {
     cmt = 1;
     amt = 0.0;
     rate = 0.0;
+    ss = 0; 
     now = false;
     check_unique = false;
   } 
@@ -61,6 +62,7 @@ struct evdata {
   int cmt;
   double amt; 
   double rate;
+  int ss; 
   bool now;
   bool check_unique;
 }; 
