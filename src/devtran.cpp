@@ -641,6 +641,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,
                                   this_rate,1.0);    
           new_ev->phantom_rec();
+          new_ev->ss((mt[mti]).ss);
+          new_ev->ii((mt[mti]).ii);
+          new_ev->addl((mt[mti]).addl);
           if(mt[mti].now) {
             new_ev->fn(prob.fbio(new_ev->cmtn()));
             if(new_ev->fn() < 0) {
@@ -666,6 +669,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           // If the event is still happening now
           if(mt[mti].now) {
             new_ev->time(tto);
+            new_ev->steady(&prob,a[i],solver);
             new_ev->implement(&prob);
             told = new_ev->time();
             if(new_ev->int_infusion() && new_ev->armed()) {
@@ -688,9 +692,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             if(do_mt_ev) {
               insert_record(a[i], j, new_ev, put_ev_first);
               mtimehx.push_back(new_ev);
-            } 
+            }
+          } // Done processing "this" event
+          if(mt[mti].ss > 0 || mt[mti].addl > 0) {
+            
           }
-        }
+        } // Closes iteration across vector of events
         used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
       }
