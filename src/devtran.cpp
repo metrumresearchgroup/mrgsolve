@@ -660,6 +660,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               prob.rate_main(new_ev);    
             }
             if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
+              if(new_ev->ss() > 0) {
+                new_ev->steady(&prob, a[i], solver);
+                tfrom = tto;
+                new_ev->ss(0);
+              }
               new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
               new_ev->lagged();
               new_ev->pos(__ALAG_POS);
@@ -694,8 +699,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               mtimehx.push_back(new_ev);
             }
           } // Done processing "this" event
-          if(mt[mti].ss > 0 || mt[mti].addl > 0) {
-            
+          if(new_ev->addl() > 0) {
+            new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
+            std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         } // Closes iteration across vector of events
         used_mtimehx = mtimehx.size() > 0;
