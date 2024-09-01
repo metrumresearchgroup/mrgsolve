@@ -4,15 +4,12 @@ library(testthat)
 library(dplyr)
 
 message("tests/testthat")
-e <- new.env()
-a <- test_dir("tests/testthat", env = e)
+a <- test_dir("tests/testthat")
 a$result <- NULL
 message("\ninst/maintenance/unit")
-e <- new.env()
-b <- test_dir("inst/maintenance/unit/", env = e)
+b <- test_dir("inst/maintenance/unit/")
 b$result <- NULL
-e <- new.env()
-c <- test_dir("inst/maintenance/unit-cpp/", env = e)
+c <- test_dir("inst/maintenance/unit-cpp/")
 c$result <- NULL
 
 results <- dplyr::bind_rows(as_tibble(a),as_tibble(b),as_tibble(c))
