@@ -51,9 +51,6 @@ if(TIME==0 && Mdose > 0) {
 mod1 <- mcode("reset", code, delta = 0.1, end = 96)
 mod2 <- update(mod1, param = list(Mdose = 1))
 
-
-# Bolus
-
 test_that("Bolus - ss and addl via evt", {
   d <-   ev(amt = 100, ii = 24, addl = 3)
   p <- list(Amt = 100, Ii = 24, Addl = 3)
@@ -151,6 +148,7 @@ test_that("Switch compartment - dosing via evt", {
   out2 <- mrgsim(mod2, param = p, obsonly = TRUE, recsort = 3)
   
   expect_identical(out1$B, out2$B)
+  expect_identical(out1$D, out2$D)
 })
 
 test_that("Switch dose amount - dosing via evt", {
