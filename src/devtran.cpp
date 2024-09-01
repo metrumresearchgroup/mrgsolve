@@ -644,7 +644,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           new_ev->ss((mt[mti]).ss);
           new_ev->ii((mt[mti]).ii);
           new_ev->addl((mt[mti]).addl);
+          bool schedule_addl = false;
           if(mt[mti].now) {
+            schedule_addl  = new_ev->addl() > 0;
             new_ev->fn(prob.fbio(new_ev->cmtn()));
             if(new_ev->fn() < 0) {
               CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
@@ -699,7 +701,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               mtimehx.push_back(new_ev);
             }
           } // Done processing "this" event
-          if(new_ev->addl() > 0) {
+          if(schedule_addl) {
             new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
