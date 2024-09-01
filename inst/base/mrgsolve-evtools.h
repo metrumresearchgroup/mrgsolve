@@ -101,6 +101,21 @@ void ss(mrgsolve::evdata& ev, const int ss) {
   return;
 }
 
+void amt(mrgsolve::evdata& ev, const double amt) {
+  ev.amt = amt; 
+  return;
+}
+
+void rate(mrgsolve::evdata& ev, const double rate) {
+  ev.rate = rate; 
+  return;
+}
+
+void cmt(mrgsolve::evdata& ev, const int cmt) {
+  ev.cmt = cmt;
+  return;
+}
+
 void now(mrgsolve::evdata& ev) {
   ev.now = true;
   return;
