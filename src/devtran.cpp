@@ -644,6 +644,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           new_ev->ss((mt[mti]).ss);
           new_ev->ii((mt[mti]).ii);
           new_ev->addl((mt[mti]).addl);
+          // if doses happen "later" we never schedule here; it will
+          //   get handled later
+          // if the dose happens "now", we schedule now, even if there is lag
+          //   time in play
           bool schedule_addl = false;
           if(mt[mti].now) {
             schedule_addl  = new_ev->addl() > 0;
@@ -702,13 +706,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             }
           } // Done processing "this" event
           if(schedule_addl) {
+            // For parent doses happening "now", with or without lag time
+            // There is *no* unique check for additional doses
             new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
         } // Closes iteration across vector of events
         used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
-      }
+      } // Close handling of modeled events
+      
       if(this_rec->output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;
