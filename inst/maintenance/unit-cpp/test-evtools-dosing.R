@@ -207,6 +207,25 @@ test_that("Alternate infusion - dosing via evt", {
   expect_identical(out3$B, out4$B)
 })
 
+test_that("Steady state continuous infusion - dosing via evt", {
+  d <-   ev(amt = 0, ii = 24, rate = 20, ss = 1)
+  p <- list(Amt = 0, Ii = 24, Rate = 20, Ss = 1)
+  out1 <- mrgsim(mod1, d, recsort = 3, obsonly = TRUE)
+  out2 <- mrgsim(mod2, param = p, obsonly = TRUE, recsort = 3)
+  
+  expect_identical(out1$B, out2$B)
+  expect_equal(out2$B[1], 20/0.1)
+  
+  # same dose at a later time
+  d <- mutate(d, time = 10)
+  p$Time2 <- 10
+  out3 <- mrgsim(mod1, d, recsort = 3, obsonly = TRUE)
+  out4 <- mrgsim(mod2, param = p, obsonly = TRUE, recsort = 3)
+  
+  expect_identical(out3$B, out4$B)
+  expect_equal(out3$B[out3$time==10], 20/0.1)
+})
+
 test_that("Single dose - dosing via evt", {
   d <-   ev(amt = 100, ii = 24, tinf = 3)
   p <- list(Amt = 100, Ii = 24, Addl = 0, Dur = 3, Rate = -2)
