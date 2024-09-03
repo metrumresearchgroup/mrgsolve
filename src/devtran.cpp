@@ -645,7 +645,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           new_ev->ii((mt[mti]).ii);
           new_ev->addl((mt[mti]).addl);
           // if doses happen "later" we never schedule here; it will
-          //   get handled later
+          //   get handled later as well
           // if the dose happens "now", we schedule now, even if there is lag
           //   time in play
           bool schedule_addl = false;
@@ -706,7 +706,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             }
           } // Done processing "this" event
           if(schedule_addl) {
-            // For parent doses happening "now", with or without lag time
+            // For parent doses happening "now", with or without lag time,
+            //   but with positive addl
             // There is *no* unique check for additional doses
             new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
