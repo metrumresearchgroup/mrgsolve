@@ -716,7 +716,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
       } // Close handling of modeled events
-      
+
       if(this_rec->output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;
