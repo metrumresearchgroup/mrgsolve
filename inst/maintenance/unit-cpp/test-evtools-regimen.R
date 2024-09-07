@@ -42,7 +42,7 @@ capture ccmt = reg.cmt();
 '
 
 mod1 <- mcode("test-evtools-regimen", code, quiet = TRUE)
-mod2 <- modlib("pk1", quiet = TRUE)
+mod2 <- modlib("pk1", quiet = TRUE, preclean = TRUE)
 mod2 <- param(mod2, as.list(param(mod1)))
 
 test_that("Identical results with pk1", {

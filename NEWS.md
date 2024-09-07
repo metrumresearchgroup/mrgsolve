@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.5.1
 
 - Fixed `yaml_to_cpp()` example code to prevent saving the file to the working 

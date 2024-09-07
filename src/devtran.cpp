@@ -641,7 +641,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,
                                   this_rate,1.0);    
           new_ev->phantom_rec();
+          new_ev->ss((mt[mti]).ss);
+          new_ev->ii((mt[mti]).ii);
+          new_ev->addl((mt[mti]).addl);
+          // if doses happen "later" we never schedule here; it will
+          //   get handled later as well
+          // if the dose happens "now", we schedule now, even if there is lag
+          //   time in play
+          bool schedule_addl = false;
           if(mt[mti].now) {
+            schedule_addl  = new_ev->addl() > 0;
             new_ev->fn(prob.fbio(new_ev->cmtn()));
             if(new_ev->fn() < 0) {
               CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
@@ -657,6 +666,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               prob.rate_main(new_ev);    
             }
             if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
+              if(new_ev->ss() > 0) {
+                new_ev->steady(&prob, a[i], solver);
+                tfrom = tto;
+                new_ev->ss(0);
+              }
               new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
               new_ev->lagged();
               new_ev->pos(__ALAG_POS);
@@ -666,6 +680,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           // If the event is still happening now
           if(mt[mti].now) {
             new_ev->time(tto);
+            new_ev->steady(&prob,a[i],solver);
             new_ev->implement(&prob);
             told = new_ev->time();
             if(new_ev->int_infusion() && new_ev->armed()) {
@@ -688,12 +703,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             if(do_mt_ev) {
               insert_record(a[i], j, new_ev, put_ev_first);
               mtimehx.push_back(new_ev);
-            } 
+            }
+          } // Done processing "this" event
+          if(schedule_addl) {
+            // For parent doses happening "now", with or without lag time,
+            //   but with positive addl
+            // There is *no* unique check for additional doses
+            new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
+            std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
           }
-        }
+        } // Closes iteration across vector of events
         used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
-      }
+      } // Close handling of modeled events
+
       if(this_rec->output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;

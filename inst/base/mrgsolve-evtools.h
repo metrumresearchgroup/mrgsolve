@@ -86,6 +86,36 @@ void retime(mrgsolve::evdata& ev, const double time) {
   return;
 }
 
+void addl(mrgsolve::evdata& ev, const int addl) {
+  ev.addl = addl;
+  return;
+}
+
+void ii(mrgsolve::evdata& ev, const double ii) {
+  ev.ii = ii;
+  return;
+}
+
+void ss(mrgsolve::evdata& ev, const int ss) {
+  ev.ss = ss;
+  return;
+}
+
+void amt(mrgsolve::evdata& ev, const double amt) {
+  ev.amt = amt; 
+  return;
+}
+
+void rate(mrgsolve::evdata& ev, const double rate) {
+  ev.rate = rate; 
+  return;
+}
+
+void cmt(mrgsolve::evdata& ev, const int cmt) {
+  ev.cmt = cmt;
+  return;
+}
+
 void now(mrgsolve::evdata& ev) {
   ev.now = true;
   return;
