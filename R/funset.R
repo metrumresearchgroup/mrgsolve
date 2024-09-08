@@ -80,8 +80,8 @@ pointers <- function(x, refresh = FALSE) {
       stop(FUNSET_ERROR__)
     }
   }
-  if(!refresh && VALIDPOINTERS(x@shlib$pointers)) {
-    return(x@shlib$pointers)
+  if(!refresh && VALIDPOINTERS(getpointers(x))) {
+    return(getpointers(x))
   }
   what <- funs(x)
   ans <- getNativeSymbolInfo(what,PACKAGE=dllname(x))
@@ -91,6 +91,10 @@ pointers <- function(x, refresh = FALSE) {
 setpointers <- function(x) {
   x@shlib$pointers <- pointers(x, refresh = TRUE)
   x
+}
+
+getpointers <- function(x) {
+  x@shlib$pointers  
 }
 
 funset <- function(x) {
