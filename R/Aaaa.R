@@ -74,13 +74,13 @@ GLOBALS$TRAN_FILL_NA <- c(
 )
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
-block_list <- c("ENV", "PROB", "PARAM", "INIT",
+block_list <- c("ENV", "PROB", "PARAM", "INIT", "EVENT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",
                 "PKMODEL", "PLUGIN", "INCLUDE", "NAMESPACE",
                 "OMEGA", "SIGMA", "SET","GLOBAL", "CAPTURE", 
                 "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML", "NMEXT", 
-                "INPUT", "EVENT")
+                "INPUT")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",

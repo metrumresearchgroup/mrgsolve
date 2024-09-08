@@ -77,8 +77,8 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
-  CALLDEF(_model_housemodel_config__,MRGSOLVE_CONFIG_SIGNATURE_N),
   CALLDEF(_model_housemodel_event__,MRGSOLVE_EVENT_SIGNATURE_N),
+  CALLDEF(_model_housemodel_config__,MRGSOLVE_CONFIG_SIGNATURE_N),
   CALLDEF(_mrgsolve_VALIDPOINTERS,1),
   {NULL, NULL, 0}
 };
