@@ -30,6 +30,7 @@ There was a problem accessing the model shared object.
 main_func   <- function(x) x@funs["main"]
 ode_func    <- function(x) x@funs["ode"]
 table_func  <- function(x) x@funs["table"] 
+event_func  <- function(x) x@funs["event"]
 config_func <- function(x) x@funs["config"]
 info_func   <- function(x) x@funs["info"]
 #nocov end
@@ -42,7 +43,7 @@ clean_symbol <- function(x) {
   gsub("[[:punct:]]", "__", x)
 }
 
-funs_create <- function(model, what = c("main", "ode", "table", "config")) {
+funs_create <- function(model, what = c("main", "ode", "table", "event", "config")) {
   setNames(paste0("_model_", clean_symbol(model), "_", what ,"__"),what)
 }
 
@@ -55,7 +56,7 @@ package_loaded <- function(x) {
 }
 
 funs <- function(x) {
-  x@funs[c("main", "ode", "table", "config")]
+  x@funs[c("main", "ode", "table", "event", "config")]
 }
 
 model_loaded <- function(x) {
@@ -104,22 +105,23 @@ funset <- function(x) {
     if(loaded) {
       info <- getNativeSymbolInfo(w,pkg)
       name <- info$name
+      addr <- deparse(info$address)
     } else {
       name <- w
+      addr <- "."
     }
-    tibble(name=name,loaded=loaded)
+    tibble(name=name,address=addr,loaded=loaded)
   }) 
   
-  ans <- 
-    bind_rows(unname(ans)) %>% 
-    mutate(func = names(funs(x)))  
+  ans <- bind_rows(unname(ans)) 
+  ans <- mutate(ans, func = names(funs(x)))  
   
-  ans <- as.data.frame(ans[,c("name", "loaded"),drop=FALSE])
+  ans <- as.data.frame(ans[,c("func", "name", "address", "loaded"),drop=FALSE])
   
   shlib <- tibble(
-    package=pkg,
-    version=as.character(build_version(x)),
-    compiled=compiled(x)
+    package = pkg,
+    version = as.character(build_version(x)),
+    compiled = compiled(x)
   )
   
   list(symbols = ans, shlib = data.frame(shlib))

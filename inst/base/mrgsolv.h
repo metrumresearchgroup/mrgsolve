@@ -140,4 +140,8 @@ typedef std::vector<double> dvec;
 #define MRGSOLVE_CONFIG_SIGNATURE databox& self, const dvec& _THETA_, const double neq, const double npar
 #define MRGSOLVE_CONFIG_SIGNATURE_N 4
 
+//! signature for <code>$EVENT</code>
+#define MRGSOLVE_EVENT_SIGNATURE const dvec& _A_, const dvec& _A_0_,  dvec& _THETA_,  const dvec& _F_, const dvec& _R_,  databox& self, const dvec& _pred_, dvec& _capture_, mrgsolve::resim& simeps
+#define MRGSOLVE_EVENT_SIGNATURE_N 9
+
 #endif

@@ -24,6 +24,10 @@ dxdt_CENT = KAi*GUT - (CLi/VCi)*CENT;
 dxdt_RESP = KIN*(1-INH) - KOUTi*RESP;
 __END_ode__
 
+// MODELED EVENTS:
+__BEGIN_event__
+__END_event__
+
 // TABLE CODE BLOCK:
 __BEGIN_table__
 DV = CP*exp(EXPO);

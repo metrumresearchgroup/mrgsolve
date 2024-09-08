@@ -48,6 +48,9 @@ typedef void (*init_func)(MRGSOLVE_INIT_SIGNATURE);
 //! <code>$TABLE</code> function
 typedef void (*table_func)(MRGSOLVE_TABLE_SIGNATURE);
 
+//! <code>$EVENT</code> function
+typedef void (*event_func)(MRGSOLVE_EVENT_SIGNATURE);
+
 //! <code>$ODE</code> function
 typedef void (*deriv_func)(MRGSOLVE_ODE_SIGNATURE);
 
@@ -115,6 +118,7 @@ public:
   
   void table_call();
   void table_init_call();
+  void event_call();
   void config_call();
   
   void set_d(rec_ptr this_rec);
@@ -249,6 +253,7 @@ public:
   deriv_func Derivs; ///< <code>$ODE</code> function
   init_func Inits; ///< <code>$MAIN</code> function
   table_func Table; ///< <code>$TABLE</code> function
+  event_func Event; ///< <code>$EVENT</code> function
   config_func Config; ///< <code>$PREAMBLE</code> function
   
   bool Do_Init_Calc; ///< Flag regulating whether or not initials are taken from <code>$MAIN</code>

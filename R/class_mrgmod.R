@@ -16,8 +16,8 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 valid_funs <- function(x) {
-  x1 <- length(x)==4
-  x2 <- identical(names(x), c("main", "ode", "table", "config"))
+  x1 <- length(x)==5
+  x2 <- identical(names(x), c("main", "ode", "table", "event", "config"))
   if(x1 & x2) return(list(TRUE,NULL))
   msg <- c(
     "Invalid functions specification.",
