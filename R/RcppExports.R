@@ -33,6 +33,10 @@ EXPAND_OBSERVATIONS <- function(data, times, to_copy, next_pos) {
     .Call(`_mrgsolve_EXPAND_OBSERVATIONS`, data, times, to_copy, next_pos)
 }
 
+VALIDPOINTERS <- function(x) {
+    .Call(`_mrgsolve_VALIDPOINTERS`, x)
+}
+
 TOUCH_FUNS <- function(funs, mod) {
     .Call(`_mrgsolve_TOUCH_FUNS`, funs, mod)
 }

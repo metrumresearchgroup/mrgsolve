@@ -56,6 +56,7 @@ RcppExport SEXP _mrgsolve_MAKEMATRIX(SEXP);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP,SEXP);
 RcppExport SEXP _mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
 RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP,SEXP,SEXP,SEXP);
+RcppExport SEXP _mrgsolve_VALIDPOINTERS(SEXP);
 
 RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
@@ -76,6 +77,7 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
   CALLDEF(_model_housemodel_config__,MRGSOLVE_CONFIG_SIGNATURE_N),
+  CALLDEF(_mrgsolve_VALIDPOINTERS,1),
   {NULL, NULL, 0}
 };
 

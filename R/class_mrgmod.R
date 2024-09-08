@@ -348,6 +348,7 @@ house <- function(...) {
   )
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
+  x <- setpointers(x)
   x <- update(x,...,open=TRUE)
   x
 }
@@ -701,6 +702,7 @@ loadso.mrgmod <- function(x,...) {
   if(inherits(foo, "try-error")) {
     wstop("[loadso] failed to load the model dll file")
   }
+  x <- setpointers(x)
   return(invisible(x))
 }
 

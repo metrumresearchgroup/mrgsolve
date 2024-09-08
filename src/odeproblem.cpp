@@ -115,7 +115,7 @@ odeproblem::odeproblem(Rcpp::List param,
   *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
   *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
   *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
-  
+
   Capture.assign(n_capture_,0.0);
   
   simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));

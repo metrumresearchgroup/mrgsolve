@@ -454,4 +454,13 @@ Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
 
 #endif
 
-
+// [[Rcpp::export]]
+bool VALIDPOINTERS(Rcpp::List x) {
+  if(x.size()==0) return false;
+  for(size_t i = 0; i < x.size(); ++i) {
+    if(R_ExternalPtrAddr(x[i]) == NULL) {
+      return false;  
+    }
+  }
+  return true;
+}

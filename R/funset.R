@@ -67,12 +67,12 @@ which_loaded <- function(x) {
 }
 
 funs_loaded <- function(x,crump=TRUE) {
-  main_loaded(x) && compiled.mrgmod(x)
+  main_loaded(x) && x@shlib$compiled
 }
 
 all_loaded <- function(x) all(which_loaded(x))  
 
-pointers <- function(x) {
+pointers <- function(x, refresh = FALSE) {
   if(!funs_loaded(x)) {
     try_load <- try(loadso(x), silent = TRUE)
     if(inherits(try_load, "try-error") || !funs_loaded(x)) {
@@ -80,9 +80,17 @@ pointers <- function(x) {
       stop(FUNSET_ERROR__)
     }
   }
+  if(!refresh && VALIDPOINTERS(x@shlib$pointers)) {
+    return(x@shlib$pointers)
+  }
   what <- funs(x)
   ans <- getNativeSymbolInfo(what,PACKAGE=dllname(x))
   setNames(lapply(ans, "[[", "address"), names(what))
+}
+
+setpointers <- function(x) {
+  x@shlib$pointers <- pointers(x, refresh = TRUE)
+  x
 }
 
 funset <- function(x) {

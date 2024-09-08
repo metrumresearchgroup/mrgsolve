@@ -595,6 +595,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   x <- compiled(x,TRUE)
   
+  x <- setpointers(x)
+  
   return(x)
 }
 
@@ -636,7 +638,7 @@ mread_cache <- function(model = NULL,
   
   if(all(t0,t1,t2,t3,t4,te)) {
     if(!quiet) message("Loading model from cache.")
-    loadso(x)
+    x <- loadso(x)
     return(update(x,...,strict=FALSE))
   }
   

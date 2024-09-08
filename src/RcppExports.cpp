@@ -110,6 +110,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// VALIDPOINTERS
+bool VALIDPOINTERS(Rcpp::List x);
+RcppExport SEXP _mrgsolve_VALIDPOINTERS(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(VALIDPOINTERS(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // TOUCH_FUNS
 Rcpp::List TOUCH_FUNS(const Rcpp::List& funs, const Rcpp::S4 mod);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP funsSEXP, SEXP modSEXP) {
