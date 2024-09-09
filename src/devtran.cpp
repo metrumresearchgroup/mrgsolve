@@ -615,10 +615,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       }
       
-      //prob.event_call();
-      if(!this_rec->is_lagged()) {
-        prob.table_call();
-      }
+      prob.event_call();
       
       if(prob.any_mtime()) {
         // Will set used_mtimehx only if we push back
@@ -718,6 +715,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob.clear_mtime();
       } // Close handling of modeled events
 
+      if(!this_rec->is_lagged()) {
+        prob.table_call();
+      }
+      
       if(this_rec->output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;
