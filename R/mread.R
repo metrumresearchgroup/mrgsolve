@@ -601,8 +601,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   x <- compiled(x,TRUE)
   
-  x <- setpointers(x)
-  
   return(x)
 }
 

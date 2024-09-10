@@ -702,7 +702,6 @@ loadso.mrgmod <- function(x,...) {
   if(inherits(foo, "try-error")) {
     wstop("[loadso] failed to load the model dll file")
   }
-  x <- setpointers(x)
   return(invisible(x))
 }
 

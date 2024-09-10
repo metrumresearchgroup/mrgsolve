@@ -73,7 +73,7 @@ funs_loaded <- function(x,crump=TRUE) {
 
 all_loaded <- function(x) all(which_loaded(x))  
 
-pointers <- function(x, refresh = FALSE) {
+pointers <- function(x) {
   if(!funs_loaded(x)) {
     try_load <- try(loadso(x), silent = TRUE)
     if(inherits(try_load, "try-error") || !funs_loaded(x)) {
@@ -81,21 +81,9 @@ pointers <- function(x, refresh = FALSE) {
       stop(FUNSET_ERROR__)
     }
   }
-  if(!refresh && VALIDPOINTERS(getpointers(x))) {
-    return(getpointers(x))
-  }
   what <- funs(x)
   ans <- getNativeSymbolInfo(what,PACKAGE=dllname(x))
   setNames(lapply(ans, "[[", "address"), names(what))
-}
-
-setpointers <- function(x) {
-  x@shlib$pointers <- pointers(x, refresh = TRUE)
-  x
-}
-
-getpointers <- function(x) {
-  x@shlib$pointers  
 }
 
 funset <- function(x) {
