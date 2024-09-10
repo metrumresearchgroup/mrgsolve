@@ -348,7 +348,6 @@ house <- function(...) {
   )
   x@soloc <- dirname(sodll(x))
   x <- compiled(x,TRUE)
-  x <- setpointers(x)
   x <- update(x,...,open=TRUE)
   x
 }

@@ -93,18 +93,16 @@ funset <- function(x) {
     if(loaded) {
       info <- getNativeSymbolInfo(w,pkg)
       name <- info$name
-      addr <- deparse(info$address)
     } else {
       name <- w
-      addr <- "."
     }
-    tibble(name=name,address=addr,loaded=loaded)
+    tibble(name=name,loaded=loaded)
   }) 
   
   ans <- bind_rows(unname(ans)) 
   ans <- mutate(ans, func = names(funs(x)))  
   
-  ans <- as.data.frame(ans[,c("func", "name", "address", "loaded"),drop=FALSE])
+  ans <- as.data.frame(ans[,c("name", "loaded"),drop=FALSE])
   
   shlib <- tibble(
     package = pkg,
