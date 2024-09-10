@@ -99,9 +99,6 @@ funset <- function(x) {
     tibble(name=name,loaded=loaded)
   }) 
   
-  ans <- bind_rows(unname(ans)) 
-  ans <- mutate(ans, func = names(funs(x)))  
-  
   ans <- 
     bind_rows(unname(ans)) %>% 	
     mutate(func = names(funs(x)))   
