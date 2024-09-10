@@ -642,7 +642,7 @@ mread_cache <- function(model = NULL,
   
   if(all(t0,t1,t2,t3,t4,te)) {
     if(!quiet) message("Loading model from cache.")
-    x <- loadso(x)
+    loadso(x)
     return(update(x,...,strict=FALSE))
   }
   
