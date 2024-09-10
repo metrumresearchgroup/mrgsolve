@@ -462,6 +462,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["nm_import"]] <- mread.env[["nm_import"]]
   x@shlib[["source"]] <- file.path(build[["soloc"]],build[["compfile"]])
   x@shlib[["md5"]] <- build[["md5"]]
+  x@shlib[["call_event"]] <- "EVENT" %in% names(spec)
   
   # build----
   # In soloc directory

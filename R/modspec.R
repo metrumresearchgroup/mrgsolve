@@ -368,7 +368,7 @@ param_re_find <- "\\bparam\\s+\\w+\\s*="
 # please-deprecate
 move_global <- function(x,env) {
   
-  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
+  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "EVENT", "PRED"),names(x))
   
   if(length(what)==0) return(x)
   
@@ -495,12 +495,17 @@ move_global2 <- function(spec, env, build) {
   if(!is.null(table$code)) {
     spec$TABLE <- table$code
   }
+  event <- c_vars(spec[["EVENT"]], context = "event")  
+  if(!is.null(event$code)) {
+    spec$EVENT <- event$code
+  }
   to_ns <- bind_rows(
     pream$vars,
     pred$vars,
     main$vars,
     ode$vars,
-    table$vars
+    table$vars, 
+    event$vars
   )
   vars <- bind_rows(glob$vars, to_ns)
   if(any(cap <- to_ns$type=="capture")) {
@@ -536,7 +541,7 @@ move_global2 <- function(spec, env, build) {
 }
 
 find_cpp_dot <- function(spec, env) {
-  to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "GLOBAL")
+  to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "EVENT", "TABLE", "GLOBAL")
   x <- spec[names(spec) %in% to_check]
   x <- unlist(x, use.names = FALSE)
   # Narrow the search first; 10x speed up when searching for `pattern`

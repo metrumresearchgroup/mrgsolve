@@ -796,7 +796,8 @@ parin <- function(x) {
     ss_n = 500, 
     ss_fixed = FALSE, 
     interrupt = -1, 
-    etasrc = "omega"
+    etasrc = "omega", 
+    call_event = x@shlib$call_event
   )
 }
 
