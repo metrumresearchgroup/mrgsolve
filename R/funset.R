@@ -103,6 +103,8 @@ funset <- function(x) {
     bind_rows(unname(ans)) %>% 	
     mutate(func = names(funs(x)))   
   
+  ans <- as.data.frame(ans[,c("name", "loaded"),drop=FALSE])
+  
   shlib <- tibble(
     package=pkg,
     version=as.character(build_version(x)),
