@@ -102,12 +102,14 @@ funset <- function(x) {
   ans <- bind_rows(unname(ans)) 
   ans <- mutate(ans, func = names(funs(x)))  
   
-  ans <- as.data.frame(ans[,c("name", "loaded"),drop=FALSE])
+  ans <- 
+    bind_rows(unname(ans)) %>% 	
+    mutate(func = names(funs(x)))   
   
   shlib <- tibble(
-    package = pkg,
-    version = as.character(build_version(x)),
-    compiled = compiled(x)
+    package=pkg,
+    version=as.character(build_version(x)),
+    compiled=compiled(x)
   )
   
   list(symbols = ans, shlib = data.frame(shlib))
