@@ -100,8 +100,8 @@ funset <- function(x) {
   }) 
   
   ans <- 
-    bind_rows(unname(ans)) %>% 	
-    mutate(func = names(funs(x)))   
+    bind_rows(unname(ans)) %>%
+    mutate(func = names(funs(x)))
   
   ans <- as.data.frame(ans[,c("name", "loaded"),drop=FALSE])
   
