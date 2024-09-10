@@ -616,14 +616,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       }
       
-      if(call_event) {
-        prob.event_call();
-      } else {
-        if(!this_rec->is_lagged()) {
+      if(!this_rec->is_lagged()) {
+        if(call_event) {
+          prob.event_call();
+        } else {
           prob.table_call();
         }
       }
-      
       if(prob.any_mtime()) {
         // Will set used_mtimehx only if we push back
         std::vector<mrgsolve::evdata> mt  = prob.mtimes();
