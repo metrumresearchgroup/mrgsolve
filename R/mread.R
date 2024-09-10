@@ -376,7 +376,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   # autodec
   if("autodec" %in% names(plugin)) {
-    auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE")
+    auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "EVENT")
     auto_skip <- cvec_cs(ENV[["MRGSOLVE_AUTODEC_SKIP"]])
     autov <- autodec_vars(spec, blocks = auto_blocks)
     autov <- autodec_clean(

@@ -22,7 +22,7 @@ find_nm_vars <- function(spec) {
   ans[["has_ode"]] <- "ODE" %in% names(spec)
   FRDA <- c("F", "R", "D", "ALAG")
   # CHeck non-ODE
-  blocks_to_check <- c("PREAMBLE", "MAIN", "TABLE")
+  blocks_to_check <- c("PREAMBLE", "MAIN", "TABLE", "EVENT")
   pmt <- unlist(spec[blocks_to_check], use.names = FALSE)
   m1 <- find_nm_vars_impl(pmt)
   # Check ODE
