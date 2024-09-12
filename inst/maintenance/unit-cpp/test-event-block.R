@@ -67,9 +67,9 @@ if(TIME==0) {
 capture cp = B/V;
 '
 
-
 mod1 <- mcode("event", code_event, delta = 0.1, end = 120)
 mod2 <- mcode("error", code_error, delta = 0.1, end = 120)
+
 out1 <- mrgsim(mod1)
 out2 <- mrgsim(mod2)
 
@@ -100,4 +100,16 @@ test_that("check internals", {
   p <- mrgsolve:::pointers(mod1)
   expect_equal(length(p), 5)
   expect_equal(names(p)[4], "event")
+  
+  expect_true(mod1@shlib$call_event)
+  expect_false(mod2@shlib$call_event)
+  
+  df <- as.list(mod1)$cpp_variables
+  cap <- df[df$type=="capture",] 
+  expect_equal(cap$var, c("cp", "b", "c"))
+  expect_equal(cap$context, c("table", "event", "event"))
+  
+  auto <- df[df$context=="auto", ]
+  expect_true(all(auto$type=="double"))
+  expect_equal(auto$var[1], "e")
 })
