@@ -245,7 +245,7 @@ void odeproblem::table_call() {
   Table(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
 }
 
-//! Call <code>$TABLE</code> function.
+//! Call <code>$EVENT</code> function.
 void odeproblem::event_call() {
   Event(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
 }
