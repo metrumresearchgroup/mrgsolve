@@ -70,25 +70,27 @@ capture cp = B/V;
 mod1 <- mcode("event", code_event, delta = 0.1, end = 120)
 mod2 <- mcode("error", code_error, delta = 0.1, end = 120)
 
-out1 <- mrgsim(mod1)
-out2 <- mrgsim(mod2)
+outev <- mrgsim(mod1)
+outer <- mrgsim(mod2)
 
 test_that("$EVENT result matches $TABLE results", {
-  expect_identical(out1$B, out2$B)
+  expect_identical(outev$B, out2$B)
   # Known that cp isn't calculated when $TABLE is used
   expect_equal(out2$cp[1], 0)
   # Using $EVENT allows this to be calculated
-  expect_equal(out1$cp[1], out1$B[1]/mod1$V)
+  expect_equal(outev$cp[1], outev$B[1]/mod1$V)
+  i <- seq(nrow(outer))[-1]
+  expect_equal(outer$cp[i], outev$cp[i])
 })
 
 test_that("declare inside $EVENT", {
-  expect_true(all(out1$d == 50))  
-  expect_true(all(out1$e == out1$d/2))
+  expect_true(all(outev$d == 50))  
+  expect_true(all(outev$e == out1$d/2))
 })
 
 test_that("capture from $EVENT", {
-  expect_true(all(abs(out1$c - 1.23) < 1e-7)) 
-  expect_equal(out1$b, out2$cp)
+  expect_true(all(abs(outev$c - 1.23) < 1e-7)) 
+  expect_equal(outev$b, out2$cp)
 })
 
 test_that("check internals", {
@@ -112,4 +114,17 @@ test_that("check internals", {
   auto <- df[df$context=="auto", ]
   expect_true(all(auto$type=="double"))
   expect_equal(auto$var[1], "e")
+
+  f <- mrgsolve:::funset(house())
+  expect_equal(nrow(f$symbols), 5)
+  expect_true(all(f$symbols$loaded))
+  expect_equal(f$symbols$name[4], "_model_housemodel_event__")
+  
+  p <- mrgsolve:::pointers(house())
+  expect_equal(length(p), 5)
+  expect_equal(names(p)[4], "event")
+  
+  expect_false(house()@shlib$call_event)
 })
+
+
