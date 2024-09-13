@@ -74,9 +74,9 @@ outev <- mrgsim(mod1)
 outer <- mrgsim(mod2)
 
 test_that("$EVENT result matches $TABLE results", {
-  expect_identical(outev$B, out2$B)
+  expect_identical(outev$B, outer$B)
   # Known that cp isn't calculated when $TABLE is used
-  expect_equal(out2$cp[1], 0)
+  expect_equal(outer$cp[1], 0)
   # Using $EVENT allows this to be calculated
   expect_equal(outev$cp[1], outev$B[1]/mod1$V)
   i <- seq(nrow(outer))[-1]
@@ -85,12 +85,12 @@ test_that("$EVENT result matches $TABLE results", {
 
 test_that("declare inside $EVENT", {
   expect_true(all(outev$d == 50))  
-  expect_true(all(outev$e == out1$d/2))
+  expect_true(all(outev$e == outev$d/2))
 })
 
 test_that("capture from $EVENT", {
   expect_true(all(abs(outev$c - 1.23) < 1e-7)) 
-  expect_equal(outev$b, out2$cp)
+  expect_equal(outev$b, outer$cp)
 })
 
 test_that("check internals", {
