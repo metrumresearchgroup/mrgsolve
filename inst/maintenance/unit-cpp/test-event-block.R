@@ -22,6 +22,9 @@ V     = 20
 
 $PKMODEL cmt = "B"
 
+$MAIN
+double d = 50;
+
 $EVENT
 if(TIME==0) {
   evt::ev dose = evt::infuse(Amt, 1, Rate); 
@@ -32,7 +35,6 @@ if(TIME==0) {
 }
 capture b = A(1)/V;
 capture c = 1.23;
-double d = 50;
 
 $ERROR
 capture cp = B/V;
@@ -56,7 +58,6 @@ V     = 20
 $PKMODEL cmt = "B"
 
 $ERROR
-
 if(TIME==0) {
   evt::ev dose = evt::infuse(Amt, 1, Rate); 
   evt::ss(dose, Ss); 
@@ -67,8 +68,8 @@ if(TIME==0) {
 capture cp = B/V;
 '
 
-mod1 <- mcode("event", code_event, delta = 0.1, end = 120)
-mod2 <- mcode("error", code_error, delta = 0.1, end = 120)
+mod1 <- mcode("test-event", code_event, delta = 0.1, end = 120)
+mod2 <- mcode("test-error", code_error, delta = 0.1, end = 120)
 
 outev <- mrgsim(mod1)
 outer <- mrgsim(mod2)

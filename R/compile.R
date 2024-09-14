@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,13 +17,15 @@
 
 generate_rdefs <- function(pars,
                            cmt,
-                           func,
-                           init_fun="",
-                           table_fun="",
-                           event_fun="",
-                           config_fun="",
-                           model="",omats,smats,
-                           set=list(), 
+                           func = "",
+                           init_fun = "",
+                           table_fun = "",
+                           event_fun = "",
+                           config_fun = "",
+                           model = "",
+                           omats,
+                           smats,
+                           set = list(), 
                            plugin = NULL,
                            dbsyms = FALSE, ...) {
 
