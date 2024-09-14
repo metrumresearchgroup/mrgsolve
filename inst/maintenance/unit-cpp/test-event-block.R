@@ -22,9 +22,6 @@ V     = 20
 
 $PKMODEL cmt = "B"
 
-$MAIN
-double d = 50;
-
 $EVENT
 if(TIME==0) {
   evt::ev dose = evt::infuse(Amt, 1, Rate); 
@@ -35,6 +32,7 @@ if(TIME==0) {
 }
 capture b = A(1)/V;
 capture c = 1.23;
+double d = 50;
 
 $ERROR
 capture cp = B/V;
@@ -98,7 +96,7 @@ test_that("check internals", {
   f <- mrgsolve:::funset(mod1)
   expect_equal(nrow(f$symbols), 5)
   expect_true(all(f$symbols$loaded))
-  expect_equal(f$symbols$name[4], "_model_event_event__")
+  expect_equal(f$symbols$name[4], "_model_test__event_event__")
   
   p <- mrgsolve:::pointers(mod1)
   expect_equal(length(p), 5)
