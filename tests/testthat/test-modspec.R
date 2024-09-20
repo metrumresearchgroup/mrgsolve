@@ -423,7 +423,7 @@ test_that("autodec parsing", {
   x <- mrgsolve:::autodec_find("a=1;")  
   expect_equal(x, "a")
   x <- mrgsolve:::autodec_find("double a_2 = 1;")
-  expect_equal(x, "a_2")
+  expect_equal(x, character(0))
   x <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
   expect_equal(x, "y")
   x <- mrgsolve:::autodec_find("a == 1;")  
@@ -444,7 +444,7 @@ test_that("autodec parsing", {
     k = 
   ')[[1]]
   x <- mrgsolve:::autodec_vars(code)
-  expect_equal(x, c("a", "b", "d", "k"))
+  expect_equal(x, c("b", "d", "k"))
   
 })
 
@@ -522,14 +522,40 @@ test_that("autodec models with nm-vars", {
   [ table ] 
   double err = EPS(1);
   CP = cent/v2;
+  evt::ev dose = evt::infuse(100, 1);
+  fo.bar = 2;
   [ ode ] 
   DADT(1) = 0;
   DADT(2) = 1; 
   '
   mod <- mcode("autodec5", code, compile = FALSE)
   cpp <- as.list(mod)$cpp_variables
-  expect_equal(cpp$var, c("km","err", "cl", "v2", "ka", "CP"))
+  expect_equal(cpp$var, c("km", "err", "cl", "v2", "ka", "CP"))
   expect_equal(cpp$context, c("main", "table",  rep("auto", 4)))
+  
+  # No prefixes
+  code <- '
+  $PLUGIN autodec
+  $MAIN 
+  a = 1; 
+  b = 2; 
+  c = 3;
+  '
+  mod <- mcode("autodec5b", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("a", "b", "c"))
+  
+  # Nothing to find
+  code <- '
+  $PLUGIN autodec
+  $MAIN 
+  if(NEWIND <= 1) {
+   // commented out
+  }
+  '
+  mod <- mcode("autodec5c", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(nrow(cpp), 0)
 })
 
 test_that("autodec variables can be skipped", {
