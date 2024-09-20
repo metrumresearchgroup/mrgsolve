@@ -431,6 +431,10 @@ token_space <- function(x) {
 }
 
 get_c_vars2 <- function(y,context) {
+  fors <- grep("\\bfor\\s*\\(", y, perl = TRUE)
+  if(length(fors)) {
+    y <- y[-fors]  
+  }
   m <- gregexpr(move_global_re_find,y,perl=TRUE)
   regm <- unlist(regmatches(y,m))
   if(length(regm)==0) return(data.frame())
