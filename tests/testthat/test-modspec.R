@@ -424,6 +424,10 @@ test_that("autodec parsing", {
   expect_equal(x, "a")
   x <- mrgsolve:::autodec_find("double a_2 = 1;")
   expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("int i_2 = 1;")
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("bool b_2 = false;")
+  expect_equal(x, character(0))
   x <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
   expect_equal(x, "y")
   x <- mrgsolve:::autodec_find("a == 1;")  
@@ -434,8 +438,16 @@ test_that("autodec parsing", {
   expect_equal(x, character(0))
   x <- mrgsolve:::autodec_find("if(TIME != 1 ) {")  
   expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(TIME != 1 ) {ccc = 11;")  
+  expect_equal(x, "ccc")
   x <- mrgsolve:::autodec_find("self.foo = 1;")
   expect_equal(x, character(0))
+  # refuse to look at anything on a line with for loop
+  x <- mrgsolve:::autodec_find("for(int i = 2; i < 5; ++i) { aaa = 3;")
+  expect_equal(x, character(0))
+  # to find it, just put on a new line
+  x <- mrgsolve:::autodec_find(c("for(int i = 2; i < 5; ++i) {"," aaa = 3;"))
+  expect_equal(x, "aaa")
   code <- strsplit(split = "\n", '
     double a = 2;
     b = 3;
@@ -746,4 +758,11 @@ test_that("variables in for loops aren't discovered", {
   expect_identical(ans$type, cpp$type)
   expect_identical(ans$var, cpp$var)
   expect_true(all(ans$context=="unit"))
+  
+  code <- '
+  $MAIN
+  if(xfor(1)==1) double b = 2;
+  '
+  mod <- mcode("test-modspec-for-b", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
 })
