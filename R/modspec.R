@@ -195,24 +195,31 @@ check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   return(invisible(NULL))
 }
 
+grepl_dxdt_ode <- function(spec, cmt) {
+  dx <- paste0("dxdt_", cmt)
+  z <- vapply(dx, FUN.VALUE = TRUE, function(dxi) {
+    any(grepl(dxi, spec[["ODE"]], fixed = TRUE))
+  })  
+  z
+}
+
 audit_spec <- function(x, spec, warn = TRUE) {
-  cmt <- names(init(x))
+  cmt <- Cmt(x)
   if(!has_name("ODE", spec) | !warn | length(cmt) ==0) {
     return(invisible(NULL))
   }
-  z <- sapply(paste0("dxdt_",cmt), function(dx) {
-    !any(grepl(dx, spec[["ODE"]], fixed = TRUE))
-  })
-  if(any(z)) {
-    bad <- cmt[z]
-    err <- "Missing differential equation(s):"
-    for(b in bad) {
-      err <- c(err, paste0("--| missing: ", b))  
-    }
-    err <- c(err, "--| suppress with @!audit block option")
-    warning(paste0(err, collapse = "\n"), call.=FALSE)
+  z <- grepl_dxdt_ode(spec, cmt)
+  if(all(z)) {
+    return(invisible(NULL))  
   }
-  return(invisible(NULL))
+  # Didn't find all
+  bad <- cmt[!z]
+  err <- "Missing differential equation(s):"
+  for(b in bad) {
+    err <- c(err, paste0("--| missing: ", b))  
+  }
+  err <- c(err, "--| suppress with @!audit block option")
+  warning(paste0(err, collapse = "\n"), call.=FALSE)
 }
 
 define_digits <- function(x) {
