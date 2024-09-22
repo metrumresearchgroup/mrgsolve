@@ -87,8 +87,9 @@ any_nm_vars <- function(x) {
 }
 
 audit_nm_vars <- function(spec, x, build, nmv, env) {
+  cmt <- Cmt(x)
   bad_param <- any_nm_vars(Pars(x))
-  bad_init <- any_nm_vars(Cmt(x))
+  bad_init <- any_nm_vars(cmt)
   bad_cpp <- any_nm_vars(build[["cpp_variables"]][["var"]])
   audit_dadt <- isTRUE(env[["audit_dadt"]])
   err <- c()
@@ -107,8 +108,8 @@ audit_nm_vars <- function(spec, x, build, nmv, env) {
     msg <- paste0("--| reserved: ", bad_cpp[["match"]])
     err <- c(err, msg)
   }
-  if(length(Cmt(x)) > 0) {
-    err <- c(err, audit_nm_vars_range(nmv, Init(x)))
+  if(length(cmt) > 0) {
+    err <- c(err, audit_nm_vars_range(nmv, cmt))
   }
   if(length(err) > 0) {
     msg <- "improper use of special variables with [nm-vars] plugin\n"
@@ -134,9 +135,9 @@ autodec_nm_vars <- function(x, env) {
   return(invisible(TRUE))
 }
 
-audit_nm_vars_range <- function(x, init) {
+audit_nm_vars_range <- function(x, cmt) {
   err <- c()
-  cmtn <- seq_along(init)
+  cmtn <- seq_along(cmt)
   # Look for compartment indices out of range
   m <- x[["match"]]
   if(!all(m[["cmt"]] %in% cmtn)) {
