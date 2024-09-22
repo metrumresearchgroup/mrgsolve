@@ -156,8 +156,8 @@ audit_nm_vars_range <- function(x, init, audit_dadt) {
     bad <- setdiff(cmtn, x[["dcmtn"]])
     if(length(bad)) {
       dx <- grepl_dxdt_ode(x[["spec"]], names(init))
-      dxn <- which(dx)
-      found <- sort(unique(c(dxn, x[["dcmtn"]])))
+      all <- c(which(dx), x[["dcmtn"]])
+      found <- unique(all)
       bad <- setdiff(cmtn, found)
     }
     if(length(bad)) {
