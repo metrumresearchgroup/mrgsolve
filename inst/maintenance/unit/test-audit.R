@@ -10,7 +10,7 @@ test_that("test audit ode block dadt", {
   code1 <- "$CMT A B C  \n $ODE \n dxdt_A  = 0;"
   expect_warning(
     mcode("audit1", code1, compile = FALSE, quiet = FALSE), 
-    regexp = "missing: B"
+    regexp = "--| missing: dxdt_B\n--| missing: dxdt_C"
   )
   
   code2 <- "$CMT A B C  \n $ODE @!audit \n dxdt_A  = 0;"
@@ -20,9 +20,10 @@ test_that("test audit ode block dadt", {
   expect_silent(mcode("audit2b", code2b, compile = FALSE))
   
   code3 <- "$PLUGIN nm-vars \n $CMT A1 B C  \n $ODE @audit \n DADT(1)  = 0;"
-  expect_error(
+  expect_warning(
     mcode("audit3", code3, compile = FALSE), 
-    regexp = "missing: DADT\\(2\\)"
+    regexp = "missing: DADT(2)\n--| missing: DADT(3)", 
+    fixed = TRUE
   )
   
   code4 <- "$PLUGIN nm-vars \n $CMT @number 3  \n $ODE @!audit \n DADT(1)  = 0;"

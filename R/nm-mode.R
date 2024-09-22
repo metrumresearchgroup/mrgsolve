@@ -1,7 +1,6 @@
 new_nm_obj <- function() {
   data <- data.frame(match = 0, prefix = 0, cmt = 0)[0,]
   list(
-    spec = list(),
     found_any = FALSE, 
     found_frda = FALSE, 
     has_ode = FALSE,
@@ -47,7 +46,6 @@ find_nm_vars <- function(spec) {
       ans[["dcmtn"]] <- sort(unique(ans[["ddt"]][["cmt"]]))
     }
   } 
-  ans[["spec"]] <- spec
   return(ans)
 }
 
@@ -88,9 +86,9 @@ any_nm_vars <- function(x) {
   list(found_any = length(ans) > 0, match = ans)
 }
 
-audit_nm_vars <- function(spec, param, init, build, nmv, env) {
-  bad_param <- any_nm_vars(names(param))
-  bad_init <- any_nm_vars(names(init))
+audit_nm_vars <- function(spec, x, build, nmv, env) {
+  bad_param <- any_nm_vars(Pars(x))
+  bad_init <- any_nm_vars(Cmt(x))
   bad_cpp <- any_nm_vars(build[["cpp_variables"]][["var"]])
   audit_dadt <- isTRUE(env[["audit_dadt"]])
   err <- c()
@@ -109,8 +107,8 @@ audit_nm_vars <- function(spec, param, init, build, nmv, env) {
     msg <- paste0("--| reserved: ", bad_cpp[["match"]])
     err <- c(err, msg)
   }
-  if(length(cmtn) > 0) {
-    err <- c(err, audit_nm_vars_range(nmv, init))
+  if(length(Cmt(x)) > 0) {
+    err <- c(err, audit_nm_vars_range(nmv, Init(x)))
   }
   if(length(err) > 0) {
     msg <- "improper use of special variables with [nm-vars] plugin\n"

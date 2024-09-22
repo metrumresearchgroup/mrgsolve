@@ -166,7 +166,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   quiet <- isTRUE(quiet)
   
-  warn <- isTRUE(warn) & (!quiet)
+  warn <- isTRUE(warn)
   
   if(missing(model) & !missing(file)) {
     model <- file  
@@ -367,8 +367,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     build[["nm-vars"]] <- nmv
     audit_nm_vars(
       spec,
-      param = param, 
-      init = init, 
+      x,
       build = build, 
       nmv = nmv, 
       env = mread.env

@@ -24,13 +24,30 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-mread")
 
 test_that("ETA(n) in $ODE is error", {
-  code <- '$OMEGA 1\n$ODE double a = ETA(1);'  
-  expect_error(mcode("test-mread-eta", code, compile = FALSE))
+  code <- '$CMT A\n$OMEGA 1\n$ODE double a = ETA(1);'  
+  expect_error(
+    mcode(
+      "test-mread-eta", 
+      code, 
+      quiet = TRUE, 
+      compile = FALSE
+    ), 
+    regexp = "ETA(n) is not allowed in ODE", 
+    fixed = TRUE
+  )
 })
 
 test_that("Warning with no $CMT or $INIT", {
   code <- '$OMEGA 1\n$ODE double a = 2;'  
-  expect_warning(mcode("test-mread-cmt", code,quiet=FALSE,compile=FALSE))
+  expect_warning(
+    mcode(
+      "test-mread-cmt", 
+      code, 
+      compile = FALSE
+    ), 
+    regexp = "Could not find a $INIT or $CMT block", 
+    fixed = TRUE
+  )
 })
 
 test_that("read in rmd file", {

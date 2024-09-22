@@ -170,7 +170,7 @@ check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
   
   if(warn) {
     warn_cmt <- length(intersect(c("INIT", "CMT", "VCMT"),x)) == 0
-    warn_cmt <- warn_cmt & is.element("ODE",x)
+    warn_cmt <- warn_cmt & is.element("ODE", x)
     
     if(warn_cmt)  {
       warning(
