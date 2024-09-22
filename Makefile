@@ -103,6 +103,9 @@ test2:
 test-cpp: 
 	Rscript -e 'testthat::test_dir("inst/maintenance/unit-cpp")'
 
+remove:
+	if [ -d ${R_LIBS}/mrgsolve ]; then R CMD REMOVE mrgsolve; fi
+
 clean:
 	rm -rf tests/testthat/mrgsolve-so-*
 	rm -rf vignettes/extra/mrgsolve-so-*
