@@ -239,3 +239,61 @@ test_that("nm-vars no frda items", {
   a <- readLines(file.path(soloc(mod), "u229-mread-header.h"))
   expect_false(any(grepl("#define  __[]", a, fixed = TRUE)))
 })
+
+test_that("audit compartments in ode block", {
+  code <- '
+  $plugin nm-vars
+  $cmt a b c
+  $ode
+  DADT(1) = 1; 
+  DADT(2) = 2; 
+  '
+  expect_warning(
+    mcode("nmv-audit-0", code, compile = FALSE), 
+    regexp = "missing: DADT(3)", 
+    fixed = TRUE
+  )
+  
+  code <- '
+  $plugin nm-vars
+  $cmt a b c
+  $ode
+  dxdt_a = 1; 
+  dxdt_b = 2; 
+  '
+  expect_warning(
+    mcode("nmv-audit-1", code, compile = FALSE), 
+    regexp = "missing: DADT(3)", 
+    fixed = TRUE
+  )
+  
+  code <- '
+  $plugin nm-vars
+  $cmt a b c
+  $ode @!audit
+  dxdt_a = 1; 
+  dxdt_b = 2; 
+  '
+  expect_silent(mcode("nmv-audit-2", code, compile = FALSE))
+  
+  code <- '
+  $plugin nm-vars
+  $cmt a b c
+  $ode @!audit
+  DADT(1) = 1; 
+  dxdt_b = 2; 
+  dxdt_c = 3; 
+  '
+  expect_silent(mcode("nmv-audit-3", code, compile = FALSE))
+  
+  code <- '
+  $plugin nm-vars
+  $cmt a b c
+  $ode @!audit
+  dxdt_a = 1; 
+  dxdt_b = 2; 
+  dxdt_c = 3; 
+  '
+  expect_silent(mcode("nmv-audit-4", code, compile = FALSE))
+
+})
