@@ -112,7 +112,6 @@ clean:
 	rm -rf src/*.o
 	rm -rf src/*.so
 	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
-	if [ -d ${R_LIBS}/mrgsolve ]; then R CMD REMOVE mrgsolve; fi
 	if [ -d mrgsolve ]; then rm -Rf mrgsolve; fi
 
 datasets:
