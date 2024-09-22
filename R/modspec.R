@@ -200,20 +200,37 @@ grepl_dxdt_ode <- function(spec, cmt) {
   z <- vapply(dx, FUN.VALUE = TRUE, function(dxi) {
     any(grepl(dxi, spec[["ODE"]], fixed = TRUE))
   })  
+  names(z) <- dx
   z
 }
 
-audit_spec <- function(x, spec, warn = TRUE) {
+audit_spec <- function(x, spec, nmv, env, warn = TRUE) {
   cmt <- Cmt(x)
-  if(!has_name("ODE", spec) | !warn | length(cmt) ==0) {
+  skip_audit <- !all(
+    has_name("ODE", spec), 
+    warn, 
+    length(cmt) > 0,
+    isTRUE(env[["audit_dadt"]])
+  )
+  if(skip_audit) {
     return(invisible(NULL))
   }
-  z <- grepl_dxdt_ode(spec, cmt)
+  if(is.null(nmv)) {
+    z <- grepl_dxdt_ode(spec, cmt)    
+  } else {
+    cmtn <- seq_along(cmt)
+    z <- cmtn %in% nmv[["dcmtn"]]
+    if(!all(z)) {
+      dx <- grepl_dxdt_ode(spec, cmt)
+      z <- z | dx
+    }
+    names(z) <- paste0("DADT(", cmtn, ")")
+  }
   if(all(z)) {
     return(invisible(NULL))  
   }
   # Didn't find all
-  bad <- cmt[!z]
+  bad <- names(z)[!z]
   err <- "Missing differential equation(s):"
   for(b in bad) {
     err <- c(err, paste0("--| missing: ", b))  

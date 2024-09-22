@@ -110,8 +110,7 @@ audit_nm_vars <- function(spec, param, init, build, nmv, env) {
     err <- c(err, msg)
   }
   if(length(cmtn) > 0) {
-    aud <- audit_nm_vars_range(nmv, init, audit_dadt = audit_dadt)
-    err <- c(err, aud)
+    err <- c(err, audit_nm_vars_range(nmv, init))
   }
   if(length(err) > 0) {
     msg <- "improper use of special variables with [nm-vars] plugin\n"
@@ -137,7 +136,7 @@ autodec_nm_vars <- function(x, env) {
   return(invisible(TRUE))
 }
 
-audit_nm_vars_range <- function(x, init, audit_dadt) {
+audit_nm_vars_range <- function(x, init) {
   err <- c()
   cmtn <- seq_along(init)
   # Look for compartment indices out of range
@@ -149,23 +148,6 @@ audit_nm_vars_range <- function(x, init, audit_dadt) {
     err <- c(err, valid)
     for(b in seq(nrow(bad))) {
       err <- c(err, paste0("--| out of range: ", bad[b, "match"]))
-    }
-  }
-  # Make sure there are ODEs for every compartment
-  if(x[["has_ode"]] && isTRUE(audit_dadt)) {
-    bad <- setdiff(cmtn, x[["dcmtn"]])
-    if(length(bad)) {
-      dx <- grepl_dxdt_ode(x[["spec"]], names(init))
-      all <- c(which(dx), x[["dcmtn"]])
-      found <- unique(all)
-      bad <- setdiff(cmtn, found)
-    }
-    if(length(bad)) {
-      err <- c(err, "Missing differential equation(s):")
-      for(b in bad) {
-        err <- c(err, paste0("--| missing: DADT(", b, ")"))   
-      }
-      err <- c(err, paste0("--| suppress with @!audit block option"))
     }
   }
   return(err)

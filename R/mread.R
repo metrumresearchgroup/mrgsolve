@@ -358,6 +358,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   
   # Handle nm-vars plugin
+  nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
     dfs <- generate_nmdefs(nmv)
@@ -431,22 +432,21 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     x <- update_capture(x, .ren.chr(capture_vars))
     build$preclean <- TRUE
   }
-
+  
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
   check_cpp_dot(mread.env, x)
   check_sim_eta_eps_n(x, spec)
   
-  # This must come after audit
+  # This must come after nm-vars is processed; nmv is NULL if 
+  # not using nm-vars
   # TODO: harmonize with other audit process
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
   } else {
-    if(mread.env[["audit_dadt"]] && !mread.env[["using_nm-vars"]]) {
-      spec[["ODE"]] <- c(spec[["ODE"]], ode)
-      audit_spec(x, spec, warn = warn)
-    }
+    spec[["ODE"]] <- c(spec[["ODE"]], ode)
+    audit_spec(x, spec, nmv, mread.env, warn = warn)
   }
   
   # set up shlib ----
@@ -555,7 +555,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     from = temp_write,
     to = build[["compfile"]]
   )
-
+  
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {
