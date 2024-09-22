@@ -31,4 +31,11 @@ test_that("test audit ode block dadt", {
   
   code4b <- "$PLUGIN nm-vars \n $CMT @number 2  \n $ODE @audit \n DADT(1)=0; \n DADT(2) =1;"
   expect_silent(mcode("audit4", code4, compile = FALSE))
+  
+  code5 <- "$CMT @number 3  \n $ODE @!audit \n dxdt_A1  = 0;"
+  expect_silent(mcode("audit5", code5, compile = FALSE))
+  
+  code6 <- "$CMT @number 3"
+  expect_silent(mod <- mcode("audit6", code6, compile = FALSE))
+  expect_is(mod, "mrgmod")
 })
