@@ -297,3 +297,23 @@ test_that("audit compartments in ode block", {
   expect_silent(mcode("nmv-audit-4", code, compile = FALSE))
 
 })
+
+test_that("nm-vars model with no ode", {
+  code <- '
+  $plugin nm-vars
+  $cmt a b c
+  '
+  expect_silent(mod <- mcode("nmv-audit-5", code, compile = FALSE))
+  expect_is(mod, "mrgmod")
+  
+  code <- '
+  $plugin nm-vars
+  $main
+  F1 = 0.89;
+  ALAG2 = 1.25;
+  D3 = 0.5;
+  $cmt a b c
+  '
+  expect_silent(mod <- mcode("nmv-audit-6", code, compile = FALSE))
+  expect_is(mod, "mrgmod")
+})
