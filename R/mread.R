@@ -357,7 +357,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
   }
   
-  # Handle nm-vars plugin
+  # Handle nm-vars plugin; initializing `nmv` to `NULL` here for use in 
+  # the audit check later on
   nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
