@@ -156,16 +156,21 @@ check_sim_eta_eps_n <- function(x, spec) {
   return(invisible(NULL))
 }
 
-check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
-  invalid <- setdiff(x,block_list)
-  valid <- intersect(x,block_list)
+check_spec_contents <-  function(x, crump = TRUE, warn = TRUE, ...) {
+  invalid <- setdiff(x, block_list)
+  valid <- intersect(x, block_list)
+
+  check_duplicated <- intersect(block_list_single, x)
   
-  if(sum("MAIN"  == x) > 1){
-    stop("Only one $MAIN block allowed in the model.",call.=FALSE)
+  dups <- c()
+  for(bl in check_duplicated) {
+    if(sum(bl == x) > 1) {
+      dups <- c(dups, bl)
+    }
   }
-  
-  if(sum("SET" == x) > 1) {
-    stop("Only one $SET block allowed in the model.", call.=FALSE)
+  if(length(dups)) {
+    names(dups) <- rep("*", length(dups))
+    abort("Multiple blocks found where only one is allowed:", body = dups)  
   }
   
   if(warn) {
