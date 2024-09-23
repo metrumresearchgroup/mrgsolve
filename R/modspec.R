@@ -157,15 +157,16 @@ check_sim_eta_eps_n <- function(x, spec) {
 }
 
 check_spec_contents <-  function(x, crump = TRUE, warn = TRUE, ...) {
-  invalid <- setdiff(x, block_list)
-  valid <- intersect(x, block_list)
-
-  check_duplicated <- intersect(block_list_single, x)
+  # Check for valid and invalid blocks
+  invalid <- base::setdiff(x, block_list)
+  valid <- base::intersect(x, block_list)
   
+  # Check for block duplicates where we only allow single 
+  check_duplicated <- base::intersect(x, block_list_single)
   dups <- c()
-  for(bl in check_duplicated) {
-    if(sum(bl == x) > 1) {
-      dups <- c(dups, bl)
+  for(block in check_duplicated) {
+    if(sum(block == x) > 1) {
+      dups <- c(dups, block)
     }
   }
   if(length(dups)) {
