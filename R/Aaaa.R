@@ -82,7 +82,9 @@ block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "PREAMBLE", "PRED", "BLOCK", "TRANSIT", "YAML", "NMEXT", 
                 "INPUT")
 
-block_list_single <- c("MAIN", "SET", "GLOBAL", "PREAMBLE", "PRED", "PKMODEL")
+block_list_single <- c("MAIN", "SET", "GLOBAL", "PREAMBLE", "PRED", "PKMODEL", 
+                       "ENV", "CMTN", "INCLUDE", "NAMESPACE", "BLOCK", 
+                       "TRANSIT", "YAML")
 
 Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "ID", "TIME", "EVID","simeps", "self", "simeta",
