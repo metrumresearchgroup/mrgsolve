@@ -97,41 +97,15 @@ for(what in c("THETA", "PARAM", "CMT",
 }
 
 test_that("multiple blocks allowed or not allowed", {
-  code <- "$SET end = 5\n$SET delta = 1\n$PARAM x = 3"
-  expect_error(
-    mcode("test-multiple-set", code, compile = FALSE), 
-    "Multiple blocks found"
-  )
   
-  code <- "$GLOBAL end = 5\n$GLOBAL delta = 1\n$PARAM x = 3"
-  expect_error(
-    mcode("test-multiple-global", code, compile = FALSE), 
-    "Multiple blocks found"
-  )
-  
-  code <- "$PKMODEL end = 5\n$PKMODEL delta = 1\n$PARAM x = 3"
-  expect_error(
-    mcode("test-multiple-pkmodel", code, compile = FALSE), 
-    "Multiple blocks found"
-  )
-  
-  code <- "$MAIN end = 5\n$MAIN delta = 1\n$PARAM x = 3"
-  expect_error(
-    mcode("test-multiple-main", code, compile = FALSE), 
-    "Multiple blocks found"
-  )
-  
-  code <- "$PREAMBLE end = 5\n$PREAMBLE delta = 1\n$PARAM x = 3"
-  expect_error(
-    mcode("test-multiple-preamble", code, compile = FALSE), 
-    "Multiple blocks found"
-  )
-  
-  code <- "$PRED end = 5\n$PRED delta = 1\n$PARAM x = 3"
-  expect_error(
-    mcode("test-multiple-pred", code, compile = FALSE), 
-    "Multiple blocks found"
-  )
+  for(bl in mrgsolve:::block_list_single) {
+    code <- glue::glue("${bl} end = 5\n${bl} delta = 1\n$PARAM x = 3")  
+    model <- glue::glue("test-multiple-{tolower(bl)}")
+    expect_error(
+      mcode(model, code, compile = FALSE), 
+      "Multiple blocks found"
+    )
+  }
   
   code <- "$PLUGIN Rcpp\n$PLUGIN BH evtools\n$PARAM x = 3"
   expect_silent(
