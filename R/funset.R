@@ -68,7 +68,7 @@ which_loaded <- function(x) {
 }
 
 funs_loaded <- function(x,crump=TRUE) {
-  main_loaded(x) && x@shlib$compiled
+  main_loaded(x) && compiled.mrgmod(x)
 }
 
 all_loaded <- function(x) all(which_loaded(x))  
