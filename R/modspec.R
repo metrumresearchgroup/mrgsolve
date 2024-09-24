@@ -162,13 +162,8 @@ check_spec_contents <-  function(x, crump = TRUE, warn = TRUE, ...) {
   valid <- base::intersect(x, block_list)
   
   # Check for block duplicates where we only allow single 
-  check_duplicated <- base::intersect(x, block_list_single)
-  dups <- c()
-  for(block in check_duplicated) {
-    if(sum(block == x) > 1) {
-      dups <- c(dups, block)
-    }
-  }
+  dup_x <- x[duplicated(x)]
+  dups <- base::intersect(dup_x, block_list_single)
   if(length(dups)) {
     names(dups) <- rep("*", length(dups))
     abort("Multiple blocks found where only one is allowed:", body = dups)  
