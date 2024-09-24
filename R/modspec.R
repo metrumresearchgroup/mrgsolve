@@ -874,7 +874,8 @@ autodec_find <- function(code) {
   has_dot <- grepl(".", ans, fixed = TRUE)
   code <- code[m > 0]
   m <- m[m > 0]
-  pre <- trimws(substr(code, start = 0, stop = m-1), which = "left")
+  pre <- substr(code, start = 0, stop = m-1)
+  pre <- trimws(pre, which = "left")
   if(all(pre=="")) {
     return(unique(ans[!has_dot]))  
   }
