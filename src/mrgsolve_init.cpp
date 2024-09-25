@@ -61,6 +61,7 @@ RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
 RcppExport void _model_housemodel_table__(MRGSOLVE_TABLE_SIGNATURE);
 RcppExport void _model_housemodel_config__(MRGSOLVE_CONFIG_SIGNATURE);
+RcppExport void _model_housemodel_event__(MRGSOLVE_EVENT_SIGNATURE);
 
 static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_get_tokens,1),
@@ -75,6 +76,7 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
+  CALLDEF(_model_housemodel_event__,MRGSOLVE_EVENT_SIGNATURE_N),
   CALLDEF(_model_housemodel_config__,MRGSOLVE_CONFIG_SIGNATURE_N),
   {NULL, NULL, 0}
 };

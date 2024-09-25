@@ -341,10 +341,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   rd <- generate_rdefs(
     pars = Pars(x),
     cmt = Cmt(x),
-    ode_func(x),
-    main_func(x),
-    table_func(x),
-    config_func(x),
+    func = ode_func(x),
+    init_fun = main_func(x),
+    table_fun = table_func(x),
+    event_fun = event_func(x),
+    config_fun = config_func(x),
     model = model(x),
     omats = omat(x),
     smats = smat(x),
@@ -380,7 +381,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   }
   # autodec
   if("autodec" %in% names(plugin)) {
-    auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE")
+    auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "EVENT")
     auto_skip <- cvec_cs(ENV[["MRGSOLVE_AUTODEC_SKIP"]])
     autov <- autodec_vars(spec, blocks = auto_blocks)
     autov <- autodec_clean(
@@ -466,6 +467,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["nm_import"]] <- mread.env[["nm_import"]]
   x@shlib[["source"]] <- file.path(build[["soloc"]],build[["compfile"]])
   x@shlib[["md5"]] <- build[["md5"]]
+  x@shlib[["call_event"]] <- "EVENT" %in% names(spec)
   
   # build----
   # In soloc directory
@@ -541,6 +543,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     dbs[["ode"]],
     spec[["ODE"]], 
     "__END_ode__",
+    "\n// MODELED EVENTS:", 
+    "__BEGIN_event__", 
+    spec[["EVENT"]],
+    "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
     dbs[["cmt"]],

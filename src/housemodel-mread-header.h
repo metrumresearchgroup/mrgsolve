@@ -41,6 +41,7 @@ typedef double localdouble;
 #define __INITFUN___ _model_housemodel_main__
 #define __ODEFUN___ _model_housemodel_ode__
 #define __TABLECODE___ _model_housemodel_table__
+#define __EVENTFUN___ _model_housemodel_event__
 #define __CONFIGFUN___ _model_housemodel_config__
 #define __REGISTERFUN___ R_init_housemodel
 #define _nEQ 3

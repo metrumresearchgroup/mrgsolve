@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,12 +17,15 @@
 
 generate_rdefs <- function(pars,
                            cmt,
-                           func,
-                           init_fun="",
-                           table_fun="",
-                           config_fun="",
-                           model="",omats,smats,
-                           set=list(), 
+                           func = "",
+                           init_fun = "",
+                           table_fun = "",
+                           event_fun = "",
+                           config_fun = "",
+                           model = "",
+                           omats,
+                           smats,
+                           set = list(), 
                            plugin = NULL,
                            dbsyms = FALSE, ...) {
 
@@ -91,6 +94,7 @@ generate_rdefs <- function(pars,
         c(paste0("#define __INITFUN___ ",init_fun),
           paste0("#define __ODEFUN___ ",func),
           paste0("#define __TABLECODE___ ", table_fun),
+          paste0("#define __EVENTFUN___ ", event_fun), 
           paste0("#define __CONFIGFUN___ ", config_fun),
           paste0("#define __REGISTERFUN___ ", register_fun(model)),
           paste0("#define _nEQ ", ncmt),

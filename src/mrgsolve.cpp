@@ -453,5 +453,3 @@ Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
 }
 
 #endif
-
-

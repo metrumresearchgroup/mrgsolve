@@ -61,6 +61,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const bool tad              = Rcpp::as<bool>   (parin["tad"]);
   const bool nocb             = Rcpp::as<bool>   (parin["nocb"]);
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
+  bool call_event             = Rcpp::as<bool>   (parin["call_event"]);
   obsaug = obsaug & (data.nrow() > 0);
   
   // Grab items from the model object --------------------
@@ -616,9 +617,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       if(!this_rec->is_lagged()) {
-        prob.table_call();
+        if(call_event) {
+          prob.event_call();
+        } else {
+          prob.table_call();
+        }
       }
-      
       if(prob.any_mtime()) {
         // Will set used_mtimehx only if we push back
         std::vector<mrgsolve::evdata> mt  = prob.mtimes();
@@ -716,7 +720,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
       } // Close handling of modeled events
-
+      
+      if(call_event && !this_rec->is_lagged()) {
+        prob.table_call();
+      }
+      
       if(this_rec->output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;

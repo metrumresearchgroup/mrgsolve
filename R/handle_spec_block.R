@@ -566,6 +566,17 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
   return(x)
 }
 
+#' @export 
+handle_spec_block.specEVENT <- function(x, env, ...) {
+  
+  x <- dump_opts(x)
+  
+  pos <- attr(x,"pos")
+  
+  check_block_data(x, env, pos)
+  
+  return(x)
+}
 
 # NMXML --------------------------------
 #' @export

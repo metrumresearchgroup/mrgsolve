@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -30,6 +30,7 @@ There was a problem accessing the model shared object.
 main_func   <- function(x) x@funs["main"]
 ode_func    <- function(x) x@funs["ode"]
 table_func  <- function(x) x@funs["table"] 
+event_func  <- function(x) x@funs["event"]
 config_func <- function(x) x@funs["config"]
 info_func   <- function(x) x@funs["info"]
 #nocov end
@@ -42,7 +43,7 @@ clean_symbol <- function(x) {
   gsub("[[:punct:]]", "__", x)
 }
 
-funs_create <- function(model, what = c("main", "ode", "table", "config")) {
+funs_create <- function(model, what = c("main", "ode", "table", "event", "config")) {
   setNames(paste0("_model_", clean_symbol(model), "_", what ,"__"),what)
 }
 
@@ -55,7 +56,7 @@ package_loaded <- function(x) {
 }
 
 funs <- function(x) {
-  x@funs[c("main", "ode", "table", "config")]
+  x@funs[c("main", "ode", "table", "event", "config")]
 }
 
 model_loaded <- function(x) {
