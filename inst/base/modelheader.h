@@ -65,6 +65,8 @@ typedef double capture;
 #define __END_main__ __DONE__
 #define __BEGIN_table__ extern "C" { void __TABLECODE___(MRGSOLVE_TABLE_SIGNATURE) {
 #define __END_table__ __DONE__
+#define __BEGIN_event__ extern "C" {void __EVENTFUN___(MRGSOLVE_EVENT_SIGNATURE) {
+#define __END_event__ __DONE__
 #define __DONE__ }}
 
 

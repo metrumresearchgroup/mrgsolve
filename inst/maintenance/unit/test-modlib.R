@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -100,7 +100,19 @@ test_that("all modlib models", {
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
   
+  x <- test_lib("pbpk")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+  
+  x <- test_lib("1005")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+      
   x <- test_lib("nm-like")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+  
+  x <- test_lib("evtools")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
 

@@ -113,9 +113,10 @@ odeproblem::odeproblem(Rcpp::List param,
   
   *reinterpret_cast<void**>(&Inits)  = R_ExternalPtrAddr(funs["main"]);
   *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
+  *reinterpret_cast<void**>(&Event)  = R_ExternalPtrAddr(funs["event"]);
   *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
   *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
-  
+
   Capture.assign(n_capture_,0.0);
   
   simeta = mrgsolve::resim(&dosimeta,reinterpret_cast<void*>(this));
@@ -242,6 +243,11 @@ void odeproblem::init_call_record(const double& time) {
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
   Table(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
+}
+
+//! Call <code>$EVENT</code> function.
+void odeproblem::event_call() {
+  Event(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
 }
 
 //! Call <code>$PREAMBLE</code> function.
@@ -684,6 +690,7 @@ void odeproblem::copy_parin(const Rcpp::List& parin, const Rcpp::S4& mod) {
 void odeproblem::copy_funs(const Rcpp::List& funs) {
   *reinterpret_cast<void**>(&Inits)  = R_ExternalPtrAddr(funs["main"]);
   *reinterpret_cast<void**>(&Table)  = R_ExternalPtrAddr(funs["table"]);
+  *reinterpret_cast<void**>(&Event)  = R_ExternalPtrAddr(funs["event"]);
   *reinterpret_cast<void**>(&Derivs) = R_ExternalPtrAddr(funs["ode"]);
   *reinterpret_cast<void**>(&Config) = R_ExternalPtrAddr(funs["config"]);
 }
