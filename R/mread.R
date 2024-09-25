@@ -283,7 +283,12 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Collect potential multiples
   subr  <- collect_subr(spec)
   table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
-  spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
+  if("ODE" %in% names(spec)) {
+    spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
+  }
+  if("PLUGIN" %in% names(spec)) {
+    spec[["PLUGIN"]] <- unlist(spec[names(spec)=="PLUGIN"], use.names = FALSE)
+  }
   
   # TODO: deprecate audit argument
   mread.env[["audit_dadt"]] <- 
@@ -432,7 +437,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     x <- update_capture(x, .ren.chr(capture_vars))
     build$preclean <- TRUE
   }
-
+  
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
@@ -561,7 +566,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     from = temp_write,
     to = build[["compfile"]]
   )
-
+  
   if(!compile) return(x)
   
   if(ignore.stdout & !quiet) {

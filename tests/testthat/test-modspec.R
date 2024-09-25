@@ -96,6 +96,36 @@ for(what in c("THETA", "PARAM", "CMT",
   })
 }
 
+test_that("multiple blocks allowed or not allowed", {
+  
+  for(bl in mrgsolve:::block_list_single) {
+    code <- glue::glue("${bl} end = 5\n${bl} delta = 1\n$PARAM x = 3")  
+    model <- glue::glue("test-multiple-{tolower(bl)}")
+    expect_error(
+      mcode(model, code, compile = FALSE), 
+      "Multiple blocks found"
+    )
+  }
+  
+  code <- "$PLUGIN Rcpp\n$PLUGIN BH evtools\n$PARAM x = 3"
+  expect_silent(
+    mod <- mcode("test-multiple-plugin", code, compile = FALSE)
+  )
+  expect_is(mod, "mrgmod")
+  
+  code <- "$ODE a = 3\n$ODE b = 55\n$PARAM x = 3"
+  expect_silent(
+    mod <- mcode("test-multiple-ode", code, compile = FALSE)
+  )
+  expect_is(mod, "mrgmod")
+  
+  code <- "$TABLE x\n$TABLE y = 55\n$PARAM x = 3\n y = 10"
+  expect_silent(
+    mod <- mcode("test-multiple-table", code, compile = FALSE)
+  )
+  expect_is(mod, "mrgmod")
+})
+
 test_that("Commented model", {
   code <- '
   // A comment
