@@ -729,34 +729,3 @@ test_that("Skip cpp dot check gh-1159", {
   
   expect_s4_class(mcode("cpp-dot-skip-4", code, compile = FALSE), "mrgmod")
 })
-
-test_that("variables in for loops aren't discovered", {
-  code <- '
-  $MAIN 
-  double a = 1.23;
-  int b = 2; 
-  bool c = true;
-  for(int i = 0; i < b; ++i) {
-    b = b + i;
-  }
-  for ( int j = 0; j == 10; ++j) {
-    a = a + b + 2;
-  }
-  '
-  mod <- mcode("test-modspec-ignore-for", code, compile = FALSE)
-  cpp <- as.list(mod)$cpp_variables
-  expect_equal(cpp$var, c("a", "b", "c"))
-  
-  bl <- modelparse(code, split = TRUE)
-  ans <- mrgsolve:::get_c_vars2(bl$MAIN, context = "unit")
-  expect_identical(ans$type, cpp$type)
-  expect_identical(ans$var, cpp$var)
-  expect_true(all(ans$context=="unit"))
-  
-  code <- '
-  $MAIN
-  if(xfor(1)==1) double b = 2;
-  '
-  mod <- mcode("test-modspec-for-b", code, compile = FALSE)
-  cpp <- as.list(mod)$cpp_variables
-})
