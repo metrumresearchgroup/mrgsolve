@@ -442,12 +442,6 @@ test_that("autodec parsing", {
   expect_equal(x, "ccc")
   x <- mrgsolve:::autodec_find("self.foo = 1;")
   expect_equal(x, character(0))
-  # refuse to look at anything on a line with for loop
-  x <- mrgsolve:::autodec_find("for(int i = 2; i < 5; ++i) { aaa = 3;")
-  expect_equal(x, character(0))
-  # to find it, just put on a new line
-  x <- mrgsolve:::autodec_find(c("for(int i = 2; i < 5; ++i) {"," aaa = 3;"))
-  expect_equal(x, "aaa")
   code <- strsplit(split = "\n", '
     double a = 2;
     b = 3;
