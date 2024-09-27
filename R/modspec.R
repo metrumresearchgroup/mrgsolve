@@ -366,62 +366,6 @@ move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVect
 #local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
 
-# please-deprecate
-move_global <- function(x,env) {
-  
-  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "EVENT", "PRED"),names(x))
-  
-  if(length(what)==0) return(x)
-  
-  # Keep names in here for later
-  l <- lapply(x[what], get_c_vars)
-  ll <- unlist(l, use.names=FALSE)
-  
-  env[["global"]] <- c("typedef double capture;",
-                       "namespace {",
-                       paste0("  ",ll),
-                       "}")
-  
-  ll <- cvec_cs(unlist(ll,use.names=FALSE))
-  ll <- gsub(";","",ll,fixed=TRUE)
-  ll <- setdiff(ll, c("double", "int", "bool", "capture"))
-  env[["move_global"]] <- ll
-  
-  cap <- vector("list")
-  
-  for(w in what) {
-    
-    x[[w]] <- gsub(move_global_re_sub, "\\2",x[[w]],perl=TRUE)
-    
-    # **************************
-    # Search for capture 
-    wcap <- grepl("capture ", l[[w]], fixed=TRUE)
-    
-    if(any(wcap)) {
-      
-      if(w=="ODE") {
-        stop("Found capture typed variables in $ODE.\n", 
-             "The type should be changed to double.\n",
-             call.=FALSE)
-      }
-      
-      ll <- l[[w]][wcap]
-      ll <- ll[substr(ll,1,8) == "capture "]
-      cap[[w]] <- substr(ll,9,nchar(ll)-1)
-    }
-    # **************************
-    
-  } # <-- End for(w in what)
-  
-  if(length(cap) > 0) {
-    # must trim this
-    x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
-  }
-  # **************************
-  
-  return(x)
-}
-
 get_c_vars <- function(y) {
   m <- gregexpr(move_global_re_find,y,perl=TRUE)
   regm <- unlist(regmatches(y,m))
