@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -353,8 +353,6 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
   }
   return(ans)
 }
-
-
 
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
@@ -815,9 +813,29 @@ autodec_find <- function(code) {
   if(length(code)==0) {
     return(NULL)
   }
-  ans <- regmatches(code, regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE))
-  ans <- unique(sub(" *=.?$", "", ans, perl = TRUE))
-  ans[!grepl(".", ans, fixed = TRUE)]
+  m <- regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE) 
+  ans <- regmatches(code, m)
+  if(!length(ans)) return(character(0))
+  ans <- sub(" *=.?$", "", ans, perl = TRUE)
+  has_dot <- grepl(".", ans, fixed = TRUE)
+  code <- code[m > 0]
+  m <- m[m > 0]
+  pre <- substr(code, start = 0, stop = m-1)
+  pre <- trimws(pre, which = "left")
+  if(all(pre=="")) {
+    return(unique(ans[!has_dot]))  
+  }
+  pre <- strsplit(pre, "[ )(}{\\[\\]]", perl = TRUE)
+  p0 <- sapply(pre, "[", 1L)
+  pre <- lapply(pre, rev)
+  p1 <- sapply(pre, "[", 1L)
+  p2 <- sapply(pre, "[", 2L)
+  drop1 <- p1 %in% c("double", "int", "bool", "const", "static", "unsigned")
+  drop2 <- p2 %in% c("static", "const", "unsigned")
+  drop3 <- grepl("::", p0, fixed = TRUE)
+  ans <- ans[!(drop1 | drop2 | drop3 | has_dot)]
+  ans <- unique(ans)
+  ans
 }
 
 #' Call `autodec_find` ona list of code chunks
