@@ -29,7 +29,7 @@ inst/project/.*[.]so$
 inst/models/.*[.]o$
 inst/models/.*[.]so$
 inst/models/.*[.]check$
-inst/maintenance  
+inst/maintenance
 src/.*[.]tar.gz$
 .*[.]tar.gz$
 img

@@ -78,6 +78,7 @@ readme:
 doc:
 	Rscript -e "roxygen2::roxygenize()"
 
+.PHONY: build
 build:
 	R CMD build --md5 $(PKGDIR) --no-manual
 

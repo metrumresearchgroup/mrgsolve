@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -156,16 +156,17 @@ check_sim_eta_eps_n <- function(x, spec) {
   return(invisible(NULL))
 }
 
-check_spec_contents <- function(x, crump = TRUE, warn = TRUE, ...) {
-  invalid <- setdiff(x,block_list)
-  valid <- intersect(x,block_list)
+check_spec_contents <-  function(x, crump = TRUE, warn = TRUE, ...) {
+  # Check for valid and invalid blocks
+  invalid <- base::setdiff(x, block_list)
+  valid <- base::intersect(x, block_list)
   
-  if(sum("MAIN"  == x) > 1){
-    stop("Only one $MAIN block allowed in the model.",call.=FALSE)
-  }
-  
-  if(sum("SET" == x) > 1) {
-    stop("Only one $SET block allowed in the model.", call.=FALSE)
+  # Check for block duplicates where we only allow single 
+  dup_x <- x[duplicated(x)]
+  dups <- base::intersect(dup_x, block_list_single)
+  if(length(dups)) {
+    names(dups) <- rep("*", length(dups))
+    abort("Multiple blocks found where only one is allowed:", body = dups)  
   }
   
   if(warn) {
@@ -378,8 +379,6 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
   return(ans)
 }
 
-
-
 ## ----------------------------------------------------------------------------
 ## New function set for finding double / bool / int
 ## and moving to global
@@ -389,62 +388,6 @@ move_global_re_sub <-  "\\b(double|int|bool|capture)\\s+(\\w+\\s*=)"
 move_global_rcpp_re_sub <-  "\\bRcpp::(NumericVector|NumericMatrix|CharacterVector)\\s+(\\w+\\s*=)"
 #local_var_typedef <- c("typedef double localdouble;","typedef int localint;","typedef bool localbool;")
 param_re_find <- "\\bparam\\s+\\w+\\s*="
-
-# please-deprecate
-move_global <- function(x,env) {
-  
-  what <- intersect(c("PREAMBLE","MAIN", "ODE", "TABLE", "PRED"),names(x))
-  
-  if(length(what)==0) return(x)
-  
-  # Keep names in here for later
-  l <- lapply(x[what], get_c_vars)
-  ll <- unlist(l, use.names=FALSE)
-  
-  env[["global"]] <- c("typedef double capture;",
-                       "namespace {",
-                       paste0("  ",ll),
-                       "}")
-  
-  ll <- cvec_cs(unlist(ll,use.names=FALSE))
-  ll <- gsub(";","",ll,fixed=TRUE)
-  ll <- setdiff(ll, c("double", "int", "bool", "capture"))
-  env[["move_global"]] <- ll
-  
-  cap <- vector("list")
-  
-  for(w in what) {
-    
-    x[[w]] <- gsub(move_global_re_sub, "\\2",x[[w]],perl=TRUE)
-    
-    # **************************
-    # Search for capture 
-    wcap <- grepl("capture ", l[[w]], fixed=TRUE)
-    
-    if(any(wcap)) {
-      
-      if(w=="ODE") {
-        stop("Found capture typed variables in $ODE.\n", 
-             "The type should be changed to double.\n",
-             call.=FALSE)
-      }
-      
-      ll <- l[[w]][wcap]
-      ll <- ll[substr(ll,1,8) == "capture "]
-      cap[[w]] <- substr(ll,9,nchar(ll)-1)
-    }
-    # **************************
-    
-  } # <-- End for(w in what)
-  
-  if(length(cap) > 0) {
-    # must trim this
-    x <- c(x,list(CAPTURE=mytrim(unlist(cap, use.names=FALSE))))
-  }
-  # **************************
-  
-  return(x)
-}
 
 get_c_vars <- function(y) {
   m <- gregexpr(move_global_re_find,y,perl=TRUE)
@@ -520,12 +463,17 @@ move_global2 <- function(spec, env, build) {
   if(!is.null(table$code)) {
     spec$TABLE <- table$code
   }
+  event <- c_vars(spec[["EVENT"]], context = "event")  
+  if(!is.null(event$code)) {
+    spec$EVENT <- event$code
+  }
   to_ns <- bind_rows(
     pream$vars,
     pred$vars,
     main$vars,
     ode$vars,
-    table$vars
+    table$vars, 
+    event$vars
   )
   vars <- bind_rows(glob$vars, to_ns)
   if(any(cap <- to_ns$type=="capture")) {
@@ -561,7 +509,7 @@ move_global2 <- function(spec, env, build) {
 }
 
 find_cpp_dot <- function(spec, env) {
-  to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "GLOBAL")
+  to_check <- c("PREAMBLE", "MAIN", "PRED", "ODE", "EVENT", "TABLE", "GLOBAL")
   x <- spec[names(spec) %in% to_check]
   x <- unlist(x, use.names = FALSE)
   # Narrow the search first; 10x speed up when searching for `pattern`
@@ -890,9 +838,29 @@ autodec_find <- function(code) {
   if(length(code)==0) {
     return(NULL)
   }
-  ans <- regmatches(code, regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE))
-  ans <- unique(sub(" *=.?$", "", ans, perl = TRUE))
-  ans[!grepl(".", ans, fixed = TRUE)]
+  m <- regexpr("[._[:alnum:]]+ *=([^=]|$)", code, perl = TRUE) 
+  ans <- regmatches(code, m)
+  if(!length(ans)) return(character(0))
+  ans <- sub(" *=.?$", "", ans, perl = TRUE)
+  has_dot <- grepl(".", ans, fixed = TRUE)
+  code <- code[m > 0]
+  m <- m[m > 0]
+  pre <- substr(code, start = 0, stop = m-1)
+  pre <- trimws(pre, which = "left")
+  if(all(pre=="")) {
+    return(unique(ans[!has_dot]))  
+  }
+  pre <- strsplit(pre, "[ )(}{\\[\\]]", perl = TRUE)
+  p0 <- sapply(pre, "[", 1L)
+  pre <- lapply(pre, rev)
+  p1 <- sapply(pre, "[", 1L)
+  p2 <- sapply(pre, "[", 2L)
+  drop1 <- p1 %in% c("double", "int", "bool", "const", "static", "unsigned")
+  drop2 <- p2 %in% c("static", "const", "unsigned")
+  drop3 <- grepl("::", p0, fixed = TRUE)
+  ans <- ans[!(drop1 | drop2 | drop3 | has_dot)]
+  ans <- unique(ans)
+  ans
 }
 
 #' Call `autodec_find` ona list of code chunks

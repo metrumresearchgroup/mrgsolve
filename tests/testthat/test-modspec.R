@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -95,6 +95,36 @@ for(what in c("THETA", "PARAM", "CMT",
     expect_warning(mtemp(paste0("$",what, "  ")))
   })
 }
+
+test_that("multiple blocks allowed or not allowed", {
+  
+  for(bl in mrgsolve:::block_list_single) {
+    code <- glue::glue("${bl} end = 5\n${bl} delta = 1\n$PARAM x = 3")  
+    model <- glue::glue("test-multiple-{tolower(bl)}")
+    expect_error(
+      mcode(model, code, compile = FALSE), 
+      "Multiple blocks found"
+    )
+  }
+  
+  code <- "$PLUGIN Rcpp\n$PLUGIN BH evtools\n$PARAM x = 3"
+  expect_silent(
+    mod <- mcode("test-multiple-plugin", code, compile = FALSE)
+  )
+  expect_is(mod, "mrgmod")
+  
+  code <- "$ODE a = 3\n$ODE b = 55\n$PARAM x = 3"
+  expect_silent(
+    mod <- mcode("test-multiple-ode", code, compile = FALSE)
+  )
+  expect_is(mod, "mrgmod")
+  
+  code <- "$TABLE x\n$TABLE y = 55\n$PARAM x = 3\n y = 10"
+  expect_silent(
+    mod <- mcode("test-multiple-table", code, compile = FALSE)
+  )
+  expect_is(mod, "mrgmod")
+})
 
 test_that("Commented model", {
   code <- '
@@ -423,7 +453,11 @@ test_that("autodec parsing", {
   x <- mrgsolve:::autodec_find("a=1;")  
   expect_equal(x, "a")
   x <- mrgsolve:::autodec_find("double a_2 = 1;")
-  expect_equal(x, "a_2")
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("int i_2 = 1;")
+  expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("bool b_2 = false;")
+  expect_equal(x, character(0))
   x <- mrgsolve:::autodec_find("if(x == 2) y = 3;")  
   expect_equal(x, "y")
   x <- mrgsolve:::autodec_find("a == 1;")  
@@ -434,6 +468,8 @@ test_that("autodec parsing", {
   expect_equal(x, character(0))
   x <- mrgsolve:::autodec_find("if(TIME != 1 ) {")  
   expect_equal(x, character(0))
+  x <- mrgsolve:::autodec_find("if(TIME != 1 ) {ccc = 11;")  
+  expect_equal(x, "ccc")
   x <- mrgsolve:::autodec_find("self.foo = 1;")
   expect_equal(x, character(0))
   code <- strsplit(split = "\n", '
@@ -444,7 +480,7 @@ test_that("autodec parsing", {
     k = 
   ')[[1]]
   x <- mrgsolve:::autodec_vars(code)
-  expect_equal(x, c("a", "b", "d", "k"))
+  expect_equal(x, c("b", "d", "k"))
   
 })
 
@@ -522,14 +558,40 @@ test_that("autodec models with nm-vars", {
   [ table ] 
   double err = EPS(1);
   CP = cent/v2;
+  evt::ev dose = evt::infuse(100, 1);
+  fo.bar = 2;
   [ ode ] 
   DADT(1) = 0;
   DADT(2) = 1; 
   '
   mod <- mcode("autodec5", code, compile = FALSE)
   cpp <- as.list(mod)$cpp_variables
-  expect_equal(cpp$var, c("km","err", "cl", "v2", "ka", "CP"))
+  expect_equal(cpp$var, c("km", "err", "cl", "v2", "ka", "CP"))
   expect_equal(cpp$context, c("main", "table",  rep("auto", 4)))
+  
+  # No prefixes
+  code <- '
+  $PLUGIN autodec
+  $MAIN 
+  a = 1; 
+  b = 2; 
+  c = 3;
+  '
+  mod <- mcode("autodec5b", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(cpp$var, c("a", "b", "c"))
+  
+  # Nothing to find
+  code <- '
+  $PLUGIN autodec
+  $MAIN 
+  if(NEWIND <= 1) {
+   // commented out
+  }
+  '
+  mod <- mcode("autodec5c", code, compile = FALSE)
+  cpp <- as.list(mod)$cpp_variables
+  expect_equal(nrow(cpp), 0)
 })
 
 test_that("autodec variables can be skipped", {
