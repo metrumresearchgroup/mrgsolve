@@ -39,3 +39,13 @@ test_that("test audit ode block dadt", {
   expect_silent(mod <- mcode("audit6", code6, compile = FALSE))
   expect_is(mod, "mrgmod")
 })
+
+test_that("audit doesn't detect partial match", {
+  code <- "$CMT ABC12\n $ODE dxdt_ABC123 = 0;"
+  expect_warning(mcode("code-partial", code, compile = FALSE))
+})
+
+test_that("audit matches lhs", {
+  code <- "$CMT A2\n $ODE dxdt_A22 = 12 * dxdt_A2;"
+  expect_warning(mcode("code-partial", code, compile = FALSE))
+})
