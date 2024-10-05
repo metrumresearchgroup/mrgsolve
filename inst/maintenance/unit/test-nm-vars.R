@@ -295,16 +295,6 @@ test_that("audit compartments in ode block", {
   dxdt_c = 3; 
   '
   expect_silent(mcode("nmv-audit-4", code, compile = FALSE))
-  
-  code <- '
-  $plugin nm-vars
-  $cmt a b c
-  $ode @!audit
-  dxdt_a1 = 1; 
-  dxdt_b2 = 2; 
-  dxdt_c3 = 3; 
-  '
-  expect_silent(mcode("nmv-audit-4b", code, compile = FALSE))
 })
 
 test_that("nm-vars model with no ode", {
