@@ -113,7 +113,7 @@ test_that("multiple blocks allowed or not allowed", {
   )
   expect_is(mod, "mrgmod")
   
-  code <- "$ODE a = 3\n$ODE b = 55\n$PARAM x = 3"
+  code <- "$CMT a\n$ODE dxdt_a = 3\n$ODE b = 55\n$PARAM x = 3"
   expect_silent(
     mod <- mcode("test-multiple-ode", code, compile = FALSE)
   )
