@@ -199,7 +199,7 @@ check_spec_contents <-  function(x, crump = TRUE, warn = TRUE, ...) {
 grepl_dxdt_ode <- function(spec, cmt) {
   dx <- paste0("dxdt_", cmt)
   z <- vapply(dx, FUN.VALUE = TRUE, function(dxi) {
-    pat <- paste0(" *\\Q", dxi, "\\E", " *=")
+    pat <- paste0("\\b\\Q", dxi, "\\E", " *=")
     any(grepl(pat, spec[["ODE"]]))
   })  
   names(z) <- dx
