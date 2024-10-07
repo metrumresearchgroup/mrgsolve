@@ -120,7 +120,7 @@ the model.  This is the location where the model shared object will be
 stored on disk.  The default is a temporary directory, so compilation
 artifacts are lost when R restarts when the default is used.  Changing
 \code{soloc} to a persistent directory location will preserve those
-artifacts across R restarts.  Also, if simulation from a single model is
+artifacts across R restarts. Also, if simulation from a single model is
 being done in separate processes on separate compute nodes, it might be
 necessary to store these compilation artifacts in a local directory
 to make them accessible to the different nodes. If the \code{soloc}
@@ -133,7 +133,7 @@ restarted.
 \section{Model Library}{
 
 
-mrgsolve comes bundled with several precoded PK, PK/PD, and
+mrgsolve comes bundled with several pre-coded PK, PK/PD, and
 other systems models that are accessible via the \code{mread()} interface.
 
 Models available in the library include:
@@ -163,15 +163,11 @@ $ODE dxdt_CENT = -(CL/VC)*CENT;
 '
 
 mod <- mcode("ex_mread", code)
-
 mod
 
-mod \%>\% init(CENT=1000) \%>\% mrgsim \%>\% plot
-
+mod \%>\% init(CENT=1000) \%>\% mrgsim() \%>\% plot()
 
 mod <- mread("irm3", modlib())
-
-mod
 
 # if the model is in the file mymodel.cpp
 mod <- mread("mymodel")
@@ -182,8 +178,6 @@ mod <- mread(file = "mymodel.txt")
 or
 
 mod <- mread_file("mymodel.txt")
-
-
 }
 
 }

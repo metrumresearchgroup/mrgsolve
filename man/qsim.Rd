@@ -19,12 +19,12 @@ qsim(
 )
 }
 \arguments{
-\item{x}{the model object}
+\item{x}{the model object.}
 
 \item{data}{can be either event object or data set}
 
 \item{idata}{a matrix or data frame of model parameters,
-one parameter per row (see \code{\link[=idata_set]{idata_set()}})}
+one parameter per row (see \code{\link[=idata_set]{idata_set()}}).}
 
 \item{obsonly}{if \code{TRUE}, dosing records are not included
 in the output.}

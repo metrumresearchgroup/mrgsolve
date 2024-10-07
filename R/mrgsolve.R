@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -114,42 +114,42 @@ tgrid_id <- function(col,idata) {
 #' [mrgsim_variants] for other mrgsim-like functions that have more focused 
 #' inputs. `mrgsim_df` coerces output to data.frame prior to returning.
 #'
-#' @param x the model object
-#' @param data NMTRAN-like data set (see [data_set()])
+#' @param x the model object.
+#' @param data NMTRAN-like data set (see [data_set()]).
 #' @param idata a matrix or data frame of model parameters, 
-#' one parameter per row (see [idata_set()])
-#' @param events an event object
+#' one parameter per row (see [idata_set()]).
+#' @param events an event object.
 #' @param nid integer number of individuals to simulate; only used if 
-#' idata and data are missing
+#' idata and data are missing.
 #' @param ... passed to [mrgsolve::update()] and 
-#' [do_mrgsim()]
+#' [do_mrgsim()].
 #' 
-#' @return An object of class [mrgsims]
+#' @return An object of class [mrgsims].
 #' 
 #' 
 #' @details
 #' 
 #' - Use [mrgsim_df()] to return a data frame rather than 
-#' `mrgsims` object
+#' `mrgsims` object.
 #' 
 #' - Both `data` and `idata` will be coerced to numeric matrix
 #' 
 #' - `carry_out` can be used to insert data columns into the output 
 #' data set. This is partially dependent on the nature of the data brought 
-#' into the problem
+#' into the problem.
 #' 
 #' - When using `data` and `idata` together, an error is 
 #' generated if an  ID occurs in `data` but not `idata`.  
 #' Also, when looking up data in `idata`, ID in `idata` is 
 #' assumed to be uniquely keyed to ID in `data`.  No error is 
 #' generated if ID is duplicated in `data`; parameters will be used 
-#' from the first occurrence found in `idata`
+#' from the first occurrence found in `idata`.
 #'  
 #' - `carry_out`: `idata` is assumed to be individual-level and variables that 
 #' are carried from `idata` are repeated throughout the individual's simulated 
 #' data.  Variables carried from `data` are carried via last-observation carry 
 #' forward.  `NA` is returned from observations that are inserted into 
-#' simulated output that occur prior to the first record in `data`
+#' simulated output that occur prior to the first record in `data`.
 #' 
 #' - `recover`: this is similar to `carry_out` with respect to 
 #' end result, but it uses a different process.  Columns to be recovered are 
