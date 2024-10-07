@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023 Metrum Research Group
+# Copyright (C) 2013 - 2024 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -20,97 +20,97 @@ NULL
 
 #' Read a model specification file
 #' 
-#' \code{mread} reads and parses the \code{mrgsolve} model specification file,
+#' `mread()` reads and parses the mrgsolve model specification file,
 #' builds the model, and returns a model object for simulation. 
-#' \code{mread_cache} does the same, but caches the compilation result for 
-#' later use. 
+#' `mread_cache()` does the same, but caches the compilation result for 
+#' later use. `mread_file()` can be used for convenience, taking the model 
+#' file name as the first argument. 
 #' 
 #'
-#' @param model model name
+#' @param model model name.
 #' @param project location of the model specification file an any 
 #' headers to be included; see also the discussion about model; this argument
-#' can be set via \code{options()}
-#' library under details as well as the \code{\link{modlib}} help topic
+#' can be set via [options()].
+#' library under details as well as the [modlib()] help topic.
 #' @param file the full file name (with extension, but without path)
-#' where the model is specified
+#' where the model is specified.
 #' @param soloc the directory location where the model shared object is built
-#' and stored; see details; this argument can be set via \code{options()}; 
-#' if the directory does not exist, `mread` will attempt to create it.
+#' and stored; see details; this argument can be set via [options()]; 
+#' if the directory does not exist, `mread()` will attempt to create it.
 #' @param code a character string with model specification code to be 
-#' used instead of a model file
-#' @param ignore.stdout passed to system call for compiling model
-#' @param raw if TRUE, return a list of raw output
-#' @param compile logical; if \code{TRUE}, the model will be built
-#' @param check.bounds check boundaries of parameter list
-#' @param audit check the model specification file for errors
-#' @param warn logical; if \code{TRUE}, print warning messages that may arise
-#' @param udll use unique name for shared object
-#' @param quiet don't print messages when compiling
-#' @param preclean logical; if \code{TRUE}, compilation artifacts are 
-#' cleaned up first
-#' @param recover if \code{TRUE}, a list of build will be returned in case
+#' used instead of a model file.
+#' @param ignore.stdout passed to system call when compiling the model; set this
+#' to `FALSE` to print output to the R console. 
+#' @param raw if `TRUE`, return model content as a list, bypassing the compile
+#' step; this argument is typically used for debugging problems with the 
+#' model build. 
+#' @param compile logical; if `TRUE`, the model will be built.
+#' @param check.bounds check boundaries of parameter list.
+#' @param audit check the model specification file for errors.
+#' @param warn logical; if `TRUE`, print warning messages that may arise while
+#' building the model.
+#' @param udll use unique name for shared object.
+#' @param quiet don't print messages when compiling.
+#' @param preclean logical; if `TRUE`, compilation artifacts are 
+#' cleaned up first.
+#' @param recover if `TRUE`, a list of build will be returned in case
 #' the model shared object fails to compile; use this option to and 
-#' the returned object to collect information assist in debugging
+#' the returned object to collect information assist in debugging.
 #' @param capture a character vector or comma-separated string of additional 
 #' model variables to capture; these variables will be added to the capture 
-#' list for the current call to \code{\link{mread}} only
-#' @param ... passed to \code{\link[mrgsolve]{update}}; also arguments passed
-#' to mread from \code{\link{mread_cache}}.
+#' list for the current call to `mread()` only.
+#' @param ... passed to [mrgsolve::update()]; also arguments passed
+#' to `mread()` from `mread_cache()`.
 #' 
 #' @details
-#' The \code{model} argument is required.  For typical use, 
-#' the \code{file} argument is omitted and the value 
-#' for \code{file} is generated from the value for \code{model}.
-#' To determine the source file name, \code{mrgsolve} will look for 
-#' a file extension in \code{model}.  A file extension is 
+#' The `model` argument is required.  For typical use, 
+#' the `file` argument is omitted and the value 
+#' for `file` is generated from the value for `model`.
+#' To determine the source file name, mrgsolve will look for 
+#' a file extension in `model`.  A file extension is 
 #' assumed when it finds a period followed by one to three alpha-numeric 
-#' characters at the end of the string (e.g. \code{mymodel.txt} but not 
-#' \code{my.model}).  If no file extension is found, the extension \code{.cpp} 
-#' is assumed (e.g. \code{file} is \code{<model-name>.cpp}).  If a file 
-#' extension is found, \code{file} is \code{<model-name>}.    
+#' characters at the end of the string (e.g. `mymodel.txt` but not 
+#' `my.model`).  If no file extension is found, the extension `.cpp` 
+#' is assumed (e.g. `file` is `<model-name>.cpp`).  If a file 
+#' extension is found, `file` is `<model-name>`.    
 #' 
-#' Best practice is to avoid using \code{.} in \code{model} unless
-#' you are using \code{model} to point to the model specification 
-#' file name. Otherwise, use \code{\link{mread_file}}. 
+#' Best practice is to avoid using `.` in `model` unless
+#' you are using `model` to point to the model specification 
+#' file name. Otherwise, use `mread_file()`. 
 #' 
-#' Use the \code{soloc} argument to specify a directory location for building
+#' Use the `soloc` argument to specify a directory location for building
 #' the model.  This is the location where the model shared object will be 
 #' stored on disk.  The default is a temporary directory, so compilation 
 #' artifacts are lost when R restarts when the default is used.  Changing
-#' \code{soloc} to a persistent directory location will preserve those 
+#' `soloc` to a persistent directory location will preserve those 
 #' artifacts across R restarts.  Also, if simulation from a single model is 
 #' being done in separate processes on separate compute nodes, it might be 
 #' necessary to store these compilation artifacts in a local directory 
-#' to make them accessible to the different nodes. If the \code{soloc} 
-#' directory does not exist, `mread` will attempt to create it.
+#' to make them accessible to the different nodes. If the `soloc` 
+#' directory does not exist, `mread()` will attempt to create it.
 #' 
-#' Similarly, using \code{mread_cache} will cache results in the temporary 
+#' Similarly, using `mread_cache()` will cache results in the temporary 
 #' directory and the cache cannot be accessed after the R process is 
 #' restarted.
 #' 
 #' @section Model Library:
 #' 
-#' \code{mrgsolve} comes bundled with several precoded PK, PK/PD, and 
-#' other systems models that are accessible via the \code{mread} interface.  
+#' mrgsolve comes bundled with several precoded PK, PK/PD, and 
+#' other systems models that are accessible via the `mread()` interface.  
 #' 
 #' Models available in the library include:
 #' 
-#' \itemize{
-#'   \item PK models: \code{pk1cmt}, \code{pk2cmt}, \code{pk3cmt},
-#'                    \code{pk1}, \code{pk2}, \code{popex}, \code{tmdd}
-#'   \item PKPD models: \code{irm1}, \code{irm2}, \code{irm3}, \code{irm4},
-#'                       \code{emax}, \code{effect}
-#'   \item Other models: \code{viral1}, \code{viral2}
-#' }
+#' * PK models: `pk1cmt`, `pk2cmt`, `pk3cmt`, `pk1`, `pk2`, `popex`, `tmdd`
+#' * PKPD models: `irm1`, `irm2`, `irm3`, `irm4`, `emax`, `effect`
+#' * Other models: `viral1`, `viral2`
 #' 
-#' When the library model is accessed, \code{mrgsolve} will compile and load
+#' When the library model is accessed, mrgsolve will compile and load
 #' the model as you would for any other model.  It is only necessary to 
-#' reference the correct model name and point the \code{project} argument
-#' to the \code{mrgsolve} model library location via \code{\link{modlib}}.
+#' reference the correct model name and point the `project` argument
+#' to the mrgsolve model library location via [modlib()].
 #' 
-#' For more details, see \code{\link{modlib_pk}}, \code{\link{modlib_pkpd}}, 
-#' \code{\link{modlib_tmdd}}, \code{\link{modlib_viral}}, and 
-#' \code{\link{modlib_details}} for more information about the state 
+#' For more details, see [modlib_pk], [modlib_pkpd], [modlib_tmdd], 
+#' [modlib_viral], and [modlib_details] for more information about the state 
 #' variables and parameters in each model.
 #' 
 #' @examples
@@ -146,8 +146,9 @@ NULL
 #' 
 #' }
 #' 
-#' @seealso \code{\link{mcode}}, \code{\link{mcode_cache}}
+#' @seealso [mcode()], [mcode_cache()]
 #' 
+#' @md
 #' @export
 mread <- function(model, project = getOption("mrgsolve.project", getwd()), 
                   code = NULL, file = NULL, 
