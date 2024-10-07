@@ -361,7 +361,8 @@ modelparse_rmd <- function(txt, split=FALSE, drop_blank=TRUE,
     ans[[i]] <- sub("```", "", ans[[i]])
   }
   chunk <- sapply(ans, "[[", 1)
-  lab <- gsub("\\{|\\}", "",chunk) %>% trimws
+  lab <- gsub("\\{|\\}", "",chunk)
+  lab <- trimws(lab)
   sp <- strsplit(lab, "\\s+|\\,")
   label <- sapply(sp, "[", 1L)
   label <- strsplit(label, "-", fixed = TRUE)

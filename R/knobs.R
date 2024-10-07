@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -114,20 +114,17 @@ setMethod("knobs", c("mrgmod", "missing"),  function(x,...) {
   x <- do.call("update", c(list(x),toupdate,list(strict=FALSE)))
   
   if(has.amt) {
-    x <- x %>% data_set(data)
+    x <- data_set(x, data)
   } else {
-    x <- x %>% idata_set(data) 
+    x <- idata_set(x, data) 
   }
   
-  out <-
-    x %>%
-    obsonly %>%
-    mrgsim(carry.out="",recsort=3)
-  
+  out <- mrgsim(obsonly(x), carry.out = "", recsort = 3)
+
   request <- out@request
   outn <- out@outnames
   
-  out <- out %>% as.data.frame
+  out <- as.data.frame(out)
   out <- out[,unique(setdiff(names(out),whatkn)),drop=FALSE]
   
   data <- data[,unique(c("ID",whatkn)),drop=FALSE]
