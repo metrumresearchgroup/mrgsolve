@@ -166,7 +166,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   quiet <- isTRUE(quiet)
   
-  warn <- isTRUE(warn) & (!quiet)
+  warn <- isTRUE(warn)
   
   if(missing(model) & !missing(file)) {
     model <- file  
@@ -363,7 +363,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
   }
   
-  # Handle nm-vars plugin
+  # Handle nm-vars plugin; initializing `nmv` to `NULL` here for use in 
+  # the audit check later on
+  nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
     dfs <- generate_nmdefs(nmv)
@@ -372,8 +374,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     build[["nm-vars"]] <- nmv
     audit_nm_vars(
       spec,
-      param = param, 
-      init = init, 
+      x,
       build = build, 
       nmv = nmv, 
       env = mread.env
@@ -444,15 +445,14 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   check_cpp_dot(mread.env, x)
   check_sim_eta_eps_n(x, spec)
   
-  # This must come after audit
+  # This must come after nm-vars is processed; nmv is NULL if 
+  # not using nm-vars
   # TODO: harmonize with other audit process
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
   } else {
-    if(mread.env[["audit_dadt"]] && !mread.env[["using_nm-vars"]]) {
-      spec[["ODE"]] <- c(spec[["ODE"]], ode)
-      audit_spec(x, spec, warn = warn)
-    }
+    spec[["ODE"]] <- c(spec[["ODE"]], ode)
+    audit_spec(x, spec, nmv, mread.env, warn = warn)
   }
   
   # set up shlib ----

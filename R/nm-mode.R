@@ -86,11 +86,12 @@ any_nm_vars <- function(x) {
   list(found_any = length(ans) > 0, match = ans)
 }
 
-audit_nm_vars <- function(x, param, init, build, nmv, env) {
-  bad_param <- any_nm_vars(names(param))
-  bad_init <- any_nm_vars(names(init))
+audit_nm_vars <- function(spec, x, build, nmv, env) {
+  cmt <- Cmt(x)
+  bad_param <- any_nm_vars(Pars(x))
+  bad_init <- any_nm_vars(cmt)
   bad_cpp <- any_nm_vars(build[["cpp_variables"]][["var"]])
-  audit_dadt <- isTRUE(env[["audit_dadt"]]) && length(nmv[["dcmtn"]]) > 0
+  audit_dadt <- isTRUE(env[["audit_dadt"]])
   err <- c()
   if(bad_param[["found_any"]]) {
     err <- c(err, "Reserved names in parameter list:")
@@ -107,9 +108,8 @@ audit_nm_vars <- function(x, param, init, build, nmv, env) {
     msg <- paste0("--| reserved: ", bad_cpp[["match"]])
     err <- c(err, msg)
   }
-  cmtn <- seq_along(init)
-  if(length(cmtn) > 0) {
-    err <- c(err, audit_nm_vars_range(nmv, cmtn, audit_dadt = audit_dadt))
+  if(length(cmt) > 0) {
+    err <- c(err, audit_nm_vars_range(nmv, cmt))
   }
   if(length(err) > 0) {
     msg <- "improper use of special variables with [nm-vars] plugin\n"
@@ -135,8 +135,9 @@ autodec_nm_vars <- function(x, env) {
   return(invisible(TRUE))
 }
 
-audit_nm_vars_range <- function(x, cmtn, audit_dadt) {
+audit_nm_vars_range <- function(x, cmt) {
   err <- c()
+  cmtn <- seq_along(cmt)
   # Look for compartment indices out of range
   m <- x[["match"]]
   if(!all(m[["cmt"]] %in% cmtn)) {
@@ -146,17 +147,6 @@ audit_nm_vars_range <- function(x, cmtn, audit_dadt) {
     err <- c(err, valid)
     for(b in seq(nrow(bad))) {
       err <- c(err, paste0("--| out of range: ", bad[b, "match"]))
-    }
-  }
-  # Make sure there are ODEs for every compartment
-  if(x[["has_ode"]] && isTRUE(audit_dadt)) {
-    bad <- setdiff(cmtn, x[["ddt"]][["cmt"]])
-    if(length(bad) > 0) {
-      err <- c(err, "Missing differential equation(s):")
-      for(b in bad) {
-        err <- c(err, paste0("--| missing: DADT(", b, ")"))   
-      }
-      err <- c(err, paste0("--| suppress with @!audit block option"))
     }
   }
   return(err)
