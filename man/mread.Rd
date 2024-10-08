@@ -67,7 +67,7 @@ model build.}
 
 \item{audit}{check the model specification file for errors.}
 
-\item{quiet}{don't print messages when compiling.}
+\item{quiet}{don't print messages from mrgsolve when compiling.}
 
 \item{check.bounds}{check boundaries of parameter list.}
 

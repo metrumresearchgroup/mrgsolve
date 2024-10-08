@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -212,19 +212,28 @@ my_str_split <- function(string,pattern,n=3,fixed=FALSE,collapse=pattern) {
 #' Create template data sets for simulation
 #' 
 #' These functions expand all combinations of arguments using 
-#' [expand.grid()]. The result always has only one row for one individual.
-#' Use [expand.evd()] or [evd_expand()] to convert nmtran names (e.g. AMT
-#' or CMT) to upper case (see [uctran()]).
+#' [expand.grid()]. `expand.idata()` generates an `idata` set; the others 
+#' generate a full data set. The result always has only one row for one 
+#' individual. Use `expand.evd()` or `evd_expand()` to render NMTRAN names 
+#' (e.g. `AMT` or `CMT`) in upper case.
 #'
-#' @param ... passed to [expand.grid()]
+#' @param ... passed to [expand.grid()].
 #' 
 #' @details
-#' An ID column is added as `seq(nrow(ans))` if not supplied by the user. For 
-#' `expand.ev`, defaults also added include `cmt = 1`, `time = 0`, `evid = 1`.  
-#' If `total` is included, then `addl` is derived as `total` - 1. If `tinf` is 
-#' included, then an infusion rate is derived for row where `tinf` is greater 
-#' than zero.
-#'
+#' An ID column is added as if not supplied by the user. In the output data 
+#' frame, ID is always re-written as the row number.
+#' 
+#' For `expand.ev()`, defaults also added include `cmt = 1`, `time = 0`, 
+#' `evid = 1`. If `total` is included, then `addl` is derived as `total-1`. 
+#' If `tinf` is included, then an infusion rate is derived for row where 
+#' `tinf` is greater than zero.
+#' 
+#' `ev_expand()` is a synonym for `expand.ev()` and `evd_expand()` is a 
+#' synonym for `expand.evd()`. 
+#' 
+#' @return A data frame containing one row for each combination of the items
+#' passed in `...`. The result always has ID set to the row number. 
+#' 
 #' @examples
 #' idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))
 #'

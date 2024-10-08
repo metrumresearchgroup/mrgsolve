@@ -50,7 +50,7 @@ NULL
 #' @param warn logical; if `TRUE`, print warning messages that may arise while
 #' building the model.
 #' @param udll use unique name for shared object.
-#' @param quiet don't print messages when compiling.
+#' @param quiet don't print messages from mrgsolve when compiling.
 #' @param preclean logical; if `TRUE`, compilation artifacts are 
 #' cleaned up first.
 #' @param recover if `TRUE`, a list of build will be returned in case
