@@ -18,6 +18,11 @@
 
 #' Internal model library
 #' 
+#' Pre-coded models are included in the mrgsolve installation; these can be 
+#' compiled and loaded with `modlib()`. These models are usually most useful 
+#' for exploratory simulation or learning mrgsolve. Production simulation work 
+#' is typically accomplished by a custom-coded model.
+#' 
 #' @param model `character` name of a model in the library.
 #' @param ... passed to [mread_cache()].
 #' @param list logical; if `TRUE`, a list of available models is returned.

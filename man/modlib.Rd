@@ -14,7 +14,10 @@ modlib(model = NULL, ..., list = FALSE)
 \item{list}{logical; if \code{TRUE}, a list of available models is returned.}
 }
 \description{
-Internal model library
+Pre-coded models are included in the mrgsolve installation; these can be
+compiled and loaded with \code{modlib()}. These models are usually most useful
+for exploratory simulation or learning mrgsolve. Production simulation work
+is typically accomplished by a custom-coded model.
 }
 \details{
 See \link{modlib_details}, \link{modlib_pk}, \link{modlib_pkpd}, \link{modlib_tmdd},
