@@ -30,22 +30,22 @@ omat(.x, ...)
 \S4method{omat}{mrgsims}(.x, make = FALSE, ...)
 }
 \arguments{
-\item{.x}{a matrix, list of matrices or \code{matlist} object}
+\item{.x}{a matrix, list of matrices or \code{matlist} object.}
 
-\item{...}{passed to other functions, including \code{\link{modMATRIX}}}
+\item{...}{passed to other functions, including \code{\link[=modMATRIX]{modMATRIX()}}.}
 
-\item{labels}{character vector of names for \code{$OMEGA} elements; must 
-be equal to number of rows/columns in the matrix}
+\item{labels}{character vector of names for \verb{$OMEGA} elements; must
+be equal to number of rows/columns in the matrix.}
 
-\item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
+\item{make}{logical; if \code{TRUE}, matrix list is rendered into a single matrix.}
 
-\item{open}{passed to \code{\link{merge.list}}}
+\item{open}{passed to \code{\link[=merge.list]{merge.list()}}.}
 
-\item{x}{\code{matlist} object}
+\item{x}{\code{matlist} object.}
 }
 \description{
-The primary function is \code{omat} that can be used to both get the 
-\code{$OMEGA} matrices out of a model object and to update \code{$OMEGA} 
+The primary function is \code{omat()} that can be used to both get the
+\verb{$OMEGA} matrices out of a model object and to update \verb{$OMEGA}
 matrices in a model object.
 }
 \examples{
@@ -81,4 +81,7 @@ $OMEGA \@cor
 0 0 0.3
 
 }
+}
+\seealso{
+\code{\link[=smat]{smat()}}, \code{\link[=dmat]{dmat()}}, \code{\link[=bmat]{bmat()}}, \code{\link[=cmat]{cmat()}}
 }

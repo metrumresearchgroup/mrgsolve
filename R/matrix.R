@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 # This file is part of mrgsolve.
 #
 # mrgsolve is free software: you can redistribute it and/or modify it
@@ -131,30 +131,37 @@ Diag <- function(x) {
   diag(x, nrow=length(x),ncol=length(x))
 }
 
-##' Create matrices from vector input
-##'
-##' @param ... matrix data
-##' @param correlation logical; if TRUE, off-diagonal elements are assumed 
-##' to be correlations and converted to covariances
-##' @param digits if greater than zero, matrix is passed to signif (along 
-##' with digits) prior to returning
-##' @details
-##' \code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix. 
-##' \code{dmat} makes a diagonal matrix.
-##' 
-##' @seealso \code{\link{as_bmat}}
-##' 
-##' @examples
-##'
-##' dmat(1,2,3)/10
-##'
-##' bmat(0.5,0.01,0.2)
-##'
-##' cmat(0.5, 0.87,0.2)
-##' 
-##' @rdname matrix_helpers
-##' @name matrix_helpers
-##' @export
+#' Create matrices from vector input
+#' 
+#' These functions are simple utilities for creating diagonal, block or 
+#' correlation matrices. 
+#' 
+#' @param ... matrix data.
+#' @param correlation logical; if `TRUE`, off-diagonal elements are assumed 
+#' to be correlations and converted to covariances.
+#' @param digits if greater than zero, matrix is passed to [signif()] (along 
+#' with digits) prior to returning.
+#' 
+#' @details
+#' `bmat()` makes a block matrix. `cmat()` makes a correlation matrix. 
+#' `dmat()` makes a diagonal matrix.
+#' 
+#' @return A matrix.
+#' 
+#' @seealso [as_bmat()], [as_dmat()]
+#' 
+#' @examples
+#'
+#' dmat(1,2,3)/10
+#'
+#' bmat(0.5,0.01,0.2)
+#'
+#' cmat(0.5, 0.87,0.2)
+#' 
+#' @rdname matrix_helpers
+#' @name matrix_helpers
+#' @md
+#' @export
 bmat <- function(...,correlation=FALSE, digits=-1) {
   x <- lower2matrix(unlist(list(...)),context="bmat")
   if(correlation) decorr(x)
@@ -162,15 +169,14 @@ bmat <- function(...,correlation=FALSE, digits=-1) {
   return(x)
 }
 
-##' @rdname matrix_helpers
-##' @export
+#' @rdname matrix_helpers
+#' @export
 cmat <- function(...,digits=-1) {
   bmat(...,digits=digits,correlation=TRUE)
 }
 
-##' @rdname matrix_helpers
-##' @seealso \code{\link{as_dmat}}
-##' @export
+#' @rdname matrix_helpers
+#' @export
 dmat <- function(...) {
   Diag(as.numeric(unlist(list(...))))
 }

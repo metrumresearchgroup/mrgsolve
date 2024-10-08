@@ -98,13 +98,23 @@ unloadso <- function(x,...) UseMethod("unloadso")
 ##' 
 setGeneric("stime", function(x,...) standardGeneric("stime"))
 
-##' Get model random effect variances and covariances
-##'
-##' @param x model object
-##' @param ... passed along
-##'
-##' @export
-##' @rdname revar
+#' Get model random effect variances and covariances
+#' 
+#' Use this function to extract both OMEGA and SIGMA matrices from a 
+#' model object. Typical use is for display on the R console.
+#'
+#' @param x model object.
+#' @param ... passed along.
+#' 
+#' @return A named list containing `omega` and `sigma` matrices.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' revar(mod)
+#' 
+#' @rdname revar
+#' @md
+#' @export
 setGeneric("revar", function(x,...) standardGeneric("revar"))
 
 ##' Return the code blocks from a model specification file

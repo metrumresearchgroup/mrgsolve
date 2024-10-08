@@ -836,9 +836,9 @@ all.equal.mrgmod <- function(target, current,...) {
 #' Outputs can include model compartments or variables defined in the model 
 #' that have been marked to `capture` in simulated output.
 #' 
-#' @param x mrgmod object
+#' @param x model object.
 #' @param unlist if `TRUE` then a character vector (rather than list) is 
-#' returned
+#' returned.
 #' 
 #' @return
 #' When `unlist` is `FALSE` (default) : a named list, with `cmt` showing names 
@@ -847,8 +847,8 @@ all.equal.mrgmod <- function(target, current,...) {
 #' of outvar names is returned.
 #' 
 #' @examples
-#' 
-#' outvars(mrgsolve::house())
+#' mod <- house()
+#' outvars(mod)
 #' 
 #' @md
 #' @export

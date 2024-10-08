@@ -183,13 +183,14 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' If both lower and upper case versions of the name are present in the data 
 #' frame, no changes will be made. 
 #' 
-#' @param data a data set with nmtran-like format.
+#' @param data a data set with nmtran-like format or an event object.
 #' @param warn if `TRUE`, a warning will be issued when there are both upper
 #' and lower case versions of any nmtran-like column in the data frame.
 #' @param ... for potential future use.
 #' 
 #' @return 
-#' A data frame or event object with possibly renamed columns.
+#' A data frame or event object, with column names possibly converted to upper
+#' or lower case.
 #' 
 #' @examples
 #' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, WT = 80)
@@ -204,9 +205,6 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' # warning
 #' data <- data.frame(TIME = 1, time = 2, CMT = 5)
 #' lctran(data)
-#' 
-#' @return 
-#' The input data set, with select columns made lower case.
 #' 
 #' @md
 #' @export
