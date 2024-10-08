@@ -23,7 +23,7 @@ Outputs can include model compartments or variables defined in the model
 that have been marked to \code{capture} in simulated output.
 }
 \examples{
-mod <- house()
+mod <- mrgsolve::house()
 outvars(mod)
 
 }

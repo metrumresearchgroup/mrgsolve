@@ -379,7 +379,8 @@ as_pack_mod <- function(model, project, PACKAGE) {
 #' @param x any object
 #' 
 #' @examples
-#' is.mrgmod(house())
+#' mod <- mrgsolve::house()
+#' is.mrgmod(mod)
 #' 
 #' @return 
 #' `TRUE` if the object inherits from either `mrgmod` or `packmod` class.
@@ -847,7 +848,7 @@ all.equal.mrgmod <- function(target, current,...) {
 #' of outvar names is returned.
 #' 
 #' @examples
-#' mod <- house()
+#' mod <- mrgsolve::house()
 #' outvars(mod)
 #' 
 #' @md
