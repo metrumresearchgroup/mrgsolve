@@ -26,13 +26,18 @@
 ##' @export
 setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 
-##' Print model code to the console
-##'
-##' @param x model object
-##' @param raw return the raw code
-##' @param ... passed along
-##' @return invisible NULL
-##' @export
+#' Print model code to the console
+#' 
+#' This is a simple way to display the model code on the R console using 
+#' the model object. The `raw` argument will return the model code as a 
+#' character vector.
+#' 
+#' @param x model object. 
+#' @param raw return the raw code.
+#' @param ... not used.
+#' @return `NULL` is returned invisibly when `raw` is `FALSE`; when `raw` is 
+#' set to `TRUE`, the model code is returned as a character vector.
+#' @export
 setGeneric("see", function(x,...) standardGeneric("see"))
 
 ##' Load the model shared object
