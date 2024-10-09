@@ -198,16 +198,30 @@ setMethod("ev", "ev", function(x, realize_addl = FALSE, ...) {
 
 #' Coerce an object to class ev
 #' 
+#' Use this function to convert a data frame to an event object.
+#' 
 #' @param x an object to coerce.
-#' @param keep_id if `TRUE`, `ID` column is retained if it exists.
+#' @param keep_id if `TRUE`, ID column is retained if it exists.
 #' @param clean if `TRUE`, only dosing or ID information is retained in
 #' the result.
 #' @param ... not used.
 #' 
+#' @details
+#' If `CMT` (or `cmt`) is missing from the input, it will be set to 1
+#' in the event object.
+#' 
+#' If `TIME` (or `time`) is missing from the input, it will be set to 
+#' 0 in the event object.
+#' 
+#' If `EVID` (or `evid`) is missing from the input, it will be set to 
+#' 1 in the event object.
+#' 
 #' @examples
-#' data <- data.frame(amt = 100) 
+#' data <- data.frame(AMT = 100) 
 #' 
 #' as.ev(data)
+#' 
+#' as.ev(data, clean = TRUE)
 #' 
 #' @return 
 #' An object with class ev.
@@ -491,6 +505,13 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
 #' 
 #' @return 
 #' See `as.ev` argument.
+#' 
+#' @examples
+#' e1 <- ev(amt = 100, ii = 24, addl = 20)
+#' e4 <- ev_repeat(e1, n = 4, wait = 168)
+#' mod <- mrgsolve::house()
+#' out <- mrgsim(mod, events = e4, end = 3200)
+#' plot(out, "CP")
 #' 
 #' @md
 #' @export

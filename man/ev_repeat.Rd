@@ -22,3 +22,11 @@ See \code{as.ev} argument.
 \description{
 Repeat a block of dosing events
 }
+\examples{
+e1 <- ev(amt = 100, ii = 24, addl = 20)
+e4 <- ev_repeat(e1, n = 4, wait = 168)
+mod <- mrgsolve::house()
+out <- mrgsim(mod, events = e4, end = 3200)
+plot(out, "CP")
+
+}

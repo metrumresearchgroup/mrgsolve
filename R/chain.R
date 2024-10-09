@@ -81,6 +81,15 @@ req.mrgmod <- function(x,...) {
 #' `carry.out` and `carry_out` both do the same thing; using the underscore 
 #' version is now preferred.
 #' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' 
+#' e <- ev(amt = 100, ii = 6, addl = 3, WT = 70, dose = amt)
+#' 
+#' out <- mod %>% carry_out(amt, dose, WT)
+#' 
+#' head(out)
+#' 
 #' @md
 #' @export
 carry_out <- function(x,...) {

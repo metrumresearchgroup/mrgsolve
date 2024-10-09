@@ -17,7 +17,7 @@ as.ev(x, ...)
 
 \item{...}{not used.}
 
-\item{keep_id}{if \code{TRUE}, \code{ID} column is retained if it exists.}
+\item{keep_id}{if \code{TRUE}, ID column is retained if it exists.}
 
 \item{clean}{if \code{TRUE}, only dosing or ID information is retained in
 the result.}
@@ -26,11 +26,23 @@ the result.}
 An object with class ev.
 }
 \description{
-Coerce an object to class ev
+Use this function to convert a data frame to an event object.
+}
+\details{
+If \code{CMT} (or \code{cmt}) is missing from the input, it will be set to 1
+in the event object.
+
+If \code{TIME} (or \code{time}) is missing from the input, it will be set to
+0 in the event object.
+
+If \code{EVID} (or \code{evid}) is missing from the input, it will be set to
+1 in the event object.
 }
 \examples{
-data <- data.frame(amt = 100) 
+data <- data.frame(AMT = 100) 
 
 as.ev(data)
+
+as.ev(data, clean = TRUE)
 
 }

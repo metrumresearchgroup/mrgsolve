@@ -491,16 +491,21 @@ setMethod("names", "mrgmod", function(x) {
 
 #' Coerce a model object to list
 #' 
-#' @param x mrgmod object
-#' @param deep if `TRUE`, extra information is returned
+#' @param x a model object.
+#' @param deep if `TRUE`, extra information is returned in the output list
 #' (see details). 
-#' @param ... not used
+#' @param ... not used.
 #' 
 #' @details 
-#' If `deep` is `TRUE`, then the values for
-#' `trans`,`advan`, and `mindt` are
-#' returned as well as a summary of internal model 
-#' functions (with a call to `mrgsolve:::funset`).
+#' If `deep` is `TRUE`, then the values for `trans`, `advan`, and `mindt` are
+#' returned as well as a summary of internal model functions (with a call to 
+#' `mrgsolve:::funset()`).
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' l <- as.list(mod)
+#' 
+#' @return A named list containing formatted contents from `x`.
 #' 
 #' @section Slots:
 #' - `npar`: number of parameters
