@@ -19,7 +19,7 @@ realize_addl(x, ...)
 \method{realize_addl}{ev}(x, ...)
 }
 \arguments{
-\item{x}{a \code{data_set} data frame or an event object (see details).}
+\item{x}{a \code{data_set} data frame or an event object (see \strong{Details}).}
 
 \item{...}{not used.}
 

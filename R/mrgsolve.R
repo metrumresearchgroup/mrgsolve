@@ -784,8 +784,8 @@ do_mrgsim <- function(x,
 
 #' Basic, simple simulation from model object
 #' 
-#' This is just a lighter version of [mrgsim()], with fewer options.  
-#' See **Details**.  
+#' This is just a lighter version of [mrgsim()], with fewer options but with 
+#' better efficiency in certain cases.  See **Details**.  
 #' 
 #' @inheritParams mrgsim
 #' 
@@ -798,12 +798,19 @@ do_mrgsim <- function(x,
 #' @param Req synonym for `outvars`.
 #' 
 #' @details
+#' `qsim()` mainly cuts some of the overhead from the simulation. So, the 
+#' primary efficiency gain from using `qsim()` comes when the simulation 
+#' executes very quickly. It is unlikely you will see a big performance
+#' difference between `qsim()` and [mrgsim()] when the model is difficult to 
+#' solve or if there is a large input data set. 
+#' 
 #' There is no pipeline interface for this function; all configuration options 
 #' (see **Arguments**) must be passed as formal arguments to the function.  
 #' You can't `carry_out`, `Request` specific columns, or pass items in for update.  
 #' Some other limitations, but only convenience-related.  See **Arguments** for 
 #' available options.  Specifically, there is no `...` argument for this function.
 #' Use the [mrgsolve::update()] method to update the model object. 
+#' 
 #' 
 #' @examples
 #' 

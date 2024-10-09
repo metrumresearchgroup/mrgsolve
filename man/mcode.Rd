@@ -36,7 +36,6 @@ See the \code{\link[=mread]{mread()}} help topic for discussion about caching
 compilation results with \code{\link[=mcode_cache]{mcode_cache()}}.
 }
 \examples{
-
 \dontrun{ 
 code <- '
 $CMT DEPOT CENT
@@ -47,7 +46,7 @@ double V = 20;
 double KA = 1;
 '
 
-mod <- mcode("example", code)
+mod <- mcode("example", code, compile = FALSE)
 }
 
 }

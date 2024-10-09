@@ -35,7 +35,6 @@
 #' compilation results with [mcode_cache()].  
 #'
 #' @examples
-#'
 #' \dontrun{ 
 #' code <- '
 #' $CMT DEPOT CENT
@@ -46,7 +45,7 @@
 #' double KA = 1;
 #' '
 #'
-#' mod <- mcode("example", code)
+#' mod <- mcode("example", code, compile = FALSE)
 #' }
 #' 
 #' @seealso [mread()], [mread_cache()]
@@ -58,8 +57,8 @@ mcode <- function(
   mread(model=model, project=project, code=code, ...)
 }
 
-##' @rdname mcode
-##' @export
+#' @rdname mcode
+#' @export
 mcode_cache <- function(
   model, code, project = getOption("mrgsolve.project", tempdir()),  ...) {
   mread_cache(model, project, code = code, ...)

@@ -17,11 +17,11 @@ see(x, ...)
 \item{raw}{return the raw code.}
 }
 \value{
-`NULL` is returned invisibly when `raw` is `FALSE`; when `raw` is 
-set to `TRUE`, the model code is returned as a character vector.
+\code{NULL} is returned invisibly when \code{raw} is \code{FALSE}; when \code{raw} is
+set to \code{TRUE}, the model code is returned as a character vector.
 }
 \description{
-This is a simple way to display the model code on the R console using 
-the model object. The `raw` argument will return the model code as a 
+This is a simple way to display the model code on the R console using
+the model object. The \code{raw} argument will return the model code as a
 character vector.
 }

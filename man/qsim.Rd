@@ -64,10 +64,16 @@ default output object; other options include \code{df} (for data.frame) or
 \code{matrix}.}
 }
 \description{
-This is just a lighter version of \code{\link[=mrgsim]{mrgsim()}}, with fewer options.
-See \strong{Details}.
+This is just a lighter version of \code{\link[=mrgsim]{mrgsim()}}, with fewer options but with
+better efficiency in certain cases.  See \strong{Details}.
 }
 \details{
+\code{qsim()} mainly cuts some of the overhead from the simulation. So, the
+primary efficiency gain from using \code{qsim()} comes when the simulation
+executes very quickly. It is unlikely you will see a big performance
+difference between \code{qsim()} and \code{\link[=mrgsim]{mrgsim()}} when the model is difficult to
+solve or if there is a large input data set.
+
 There is no pipeline interface for this function; all configuration options
 (see \strong{Arguments}) must be passed as formal arguments to the function.
 You can't \code{carry_out}, \code{Request} specific columns, or pass items in for update.

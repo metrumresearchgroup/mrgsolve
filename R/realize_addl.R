@@ -22,7 +22,7 @@
 ##' include one record for every dose. In the result, no record with have 
 ##' `ii` or `addl` set to non-zero value.
 ##' 
-##' @param x a `data_set` data frame or an event object (see details).
+##' @param x a `data_set` data frame or an event object (see **Details**).
 ##' @param warn if `TRUE` a warning is issued if no `ADDL` or
 ##' `addl` column is found.
 ##' @param mark_new if `TRUE`, a flag is added to indicate new columns.

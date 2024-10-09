@@ -306,21 +306,24 @@ NULL
 NULL
 
 
-##' Extract the code from a model
-##' 
-##' This function is currently not exported, so be sure to call it with 
-##' `mrgsolve:::code(...)`.
-##' 
-##' @param x an mrgsolve model object
-##' 
-##' @examples
-##' mod <- mrgsolve::house()
-##' mrgsolve:::code(mod)
-##' 
-##' @return 
-##' A character vector of model code.
-##' 
-##' @md
+#' Extract the code from a model
+#' 
+#' This function is currently not exported, so be sure to call it with 
+#' `mrgsolve:::code(...)`.
+#' 
+#' @param x a model object.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' mrgsolve:::code(mod)
+#' 
+#' # Alternative
+#' as.list(mod)$code
+#' 
+#' @return 
+#' A character vector of model code.
+#' 
+#' @md
 code <- function(x) {
   stopifnot(is.mrgmod(x))
   what <- try(x@code, silent=TRUE)

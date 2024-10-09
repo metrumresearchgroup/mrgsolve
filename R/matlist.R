@@ -33,7 +33,7 @@
 #' @seealso [smat()], [dmat()], [bmat()], [cmat()]
 #' 
 #' @examples
-#' ## example("omega")
+#' # example("omega")
 #' mat1 <- matrix(1)
 #' mat2 <- diag(c(1,2,3))
 #' mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
@@ -41,30 +41,14 @@
 #'
 #' omat(mat1)
 #' omat(mat1, mat2, mat3)
-#' omat(A=mat1, B=mat2, C=mat3)
+#' omat(A = mat1, B = mat2, C = mat3)
 #'
 #' mod <- mrgsolve::house() %>% omat(mat4)
 #'
 #' omat(mod)
-#' omat(mod, make=TRUE)
+#' omat(mod, make = TRUE)
+#' as.matrix(omat(mod))
 #'
-#'
-#' \dontrun{
-#'
-#' $OMEGA
-#' 1 2 3
-#'
-#' $OMEGA \@block
-#' 1 0.1 2
-#'
-#' $OMEGA \@cor
-#' \@ prefix ETA_
-#' \@ labels CL VC KA
-#' 0.1
-#' 0.67 0.2
-#' 0 0 0.3
-#'
-#' }
 #' @name omega
 #' @rdname omega
 #' @aliases omat  OMEGA

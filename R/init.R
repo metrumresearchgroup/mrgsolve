@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,50 +16,55 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Methods for working with the model compartment list
-##'
-##' Calling \code{init} with the model object as the first argument 
-##' will return the model initial conditions as a \code{numericlist} 
-##' object. See \code{\link{numericlist}} for methods to  deal with 
-##' \code{cmt_list} objects.
-##'
-##' @aliases init 
-##' @param .x the model object
-##' @param .y list to be merged into parameter list
-##' @param .pat a regular expression (character) to be applied as 
-##' a filter when printing compartments to the screen
-##' @param ... passed along
-##' @return an object of class \code{cmt_list} (see 
-##' \code{\link{numericlist}})
-##' @details
-##' Can be used to either get a compartment list object from a 
-##' \code{mrgmod} model object or to update the compartment initial 
-##' conditions in a model object.  For both uses, the return value 
-##' is a \code{cmt_list} object. For the former use, \code{init} 
-##' is usually called to print the compartment initial conditions 
-##' to the screen, but the \code{cmt_list} object can also be coerced 
-##' to a list or numeric R object.
-##'
-##' @examples
-##' ## example("init")
-##' mod <- mrgsolve::house()
-##'
-##' init(mod)
-##' init(mod, .pat="^C") ## may be useful for large models
-##'
-##' class(init(mod))
-##'
-##' init(mod)$CENT
-##'
-##' as.list(init(mod))
-##' as.data.frame(init(mod))
-
-##' @export
+#' Methods for working with the model compartment list
+#'
+#' Calling `init()` with the model object as the first argument 
+#' will return the model initial conditions as a [numericlist] 
+#' object. See [numericlist] for methods to  deal with 
+#' `cmt_list` objects.
+#'
+#' @aliases init 
+#' @param .x the model object.
+#' @param .y list to be merged into parameter list.
+#' @param .pat a regular expression (character) to be applied as 
+#' a filter when printing compartments to the screen.
+#' @param ... `name = value` assignments to update the initial conditions list.
+#' 
+#' @return An object of class `cmt_list` (see [numericlist]).
+#' 
+#' @details
+#' Can be used to either get a compartment list object from a 
+#' `mrgmod` model object or to update the compartment initial 
+#' conditions in a model object.  For both uses, the return value 
+#' is a `cmt_list` object. For the former use, `init()` 
+#' is usually called to print the compartment initial conditions 
+#' to the screen, but the `cmt_list` object can also be coerced 
+#' to a list or numeric R object.
+#'
+#' @examples
+#' ## example("init")
+#' mod <- mrgsolve::house()
+#'
+#' init(mod)
+#' 
+#' init(mod, .pat="^C") ## may be useful for large models
+#'
+#' class(init(mod))
+#'
+#' init(mod)$CENT
+#'
+#' as.list(init(mod))
+#' 
+#' as.data.frame(init(mod))
+#' 
+#' 
+#' @md
+#' @export
 setGeneric("init", function(.x,...) standardGeneric("init"))
 
 
-##' @export
-##' @rdname init
+#' @export
+#' @rdname init
 setMethod("init", "mrgmod", function(.x,.y=list(),..., .pat="*") {
   
   args <- c(as.list(.y),list(...))
@@ -80,26 +85,26 @@ setMethod("init", "mrgmod", function(.x,.y=list(),..., .pat="*") {
   return(.x@init)
 })
 
-##' @rdname init
-##' @export
+#' @rdname init
+#' @export
 setMethod("init", "mrgsims", function(.x,...) {
   init(mod(.x),...)
 }) 
 
-##' @rdname init
-##' @export
+#' @rdname init
+#' @export
 setMethod("init", "missing", function(...) {
   init(list(...))
 })
 
-##' @rdname init
-##' @export
+#' @rdname init
+#' @export
 setMethod("init", "list", function(.x,...) {
   create_numeric_list(.x,"cmt_list",...)
 })
 
-##' @rdname init
-##' @export
+#' @rdname init
+#' @export
 setMethod("init", "ANY", function(.x,...) {
   init(as.list(.x),...)
 })

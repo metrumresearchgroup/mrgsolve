@@ -10,7 +10,7 @@
 \item{x}{a model object.}
 
 \item{deep}{if \code{TRUE}, extra information is returned in the output list
-(see details).}
+(see \strong{Details}).}
 
 \item{...}{not used.}
 }

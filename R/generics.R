@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,15 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Get the compartment number from a compartment name
-##'
-##' @param x model object
-##' @param ... passed along
-##'
-##' @examples
-##' mod <- mrgsolve::house()
-##' mod %>% cmtn("CENT")
-##' @export
+#' Get the compartment number from a compartment name
+#'
+#' @param x model object.
+#' @param ... not used.
+#'
+#' @examples
+#' mod <- mrgsolve::house()
+#' cmtn(mod, "CENT")
+#' 
+#' @md
+#' @export
 setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 
 #' Print model code to the console
@@ -37,6 +39,7 @@ setGeneric("cmtn", function(x,...) standardGeneric("cmtn"))
 #' @param ... not used.
 #' @return `NULL` is returned invisibly when `raw` is `FALSE`; when `raw` is 
 #' set to `TRUE`, the model code is returned as a character vector.
+#' @md
 #' @export
 setGeneric("see", function(x,...) standardGeneric("see"))
 

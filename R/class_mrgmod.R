@@ -406,7 +406,7 @@ setMethod("project", "packmod", function(x,...) {
 })
 
 #' @rdname cmtn
-#' @param tag compartment name
+#' @param tag compartment name.
 #' @export
 setMethod("cmtn", "mrgmod", function(x,tag,...) {
   return(which(cmt(x)==tag))
@@ -434,9 +434,9 @@ CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 #' This is also the directory where the model is built, which could be the 
 #' value of [tempdir()].
 #'
-#' @param x model object
-#' @param short logical; if `TRUE`, `soloc`s will
-#'  be rendered  with a short path name
+#' @param x model object.
+#' @param short logical; if `TRUE`, `soloc`s will be rendered  with a short 
+#' path name.
 #' 
 #' @examples
 #' mod <- mrgsolve::house()
@@ -493,7 +493,7 @@ setMethod("names", "mrgmod", function(x) {
 #' 
 #' @param x a model object.
 #' @param deep if `TRUE`, extra information is returned in the output list
-#' (see details). 
+#' (see **Details**). 
 #' @param ... not used.
 #' 
 #' @details 
