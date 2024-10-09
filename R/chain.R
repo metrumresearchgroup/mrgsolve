@@ -75,11 +75,11 @@ req.mrgmod <- function(x,...) {
 #' @param ... unquoted names of data items to copy into the simulated output.
 #' 
 #' @details
-#' There is also a `carry_out` argument to [mrgsim()] that can 
-#' be set to accomplish the same thing as a call to `carry_out` in 
-#' the pipeline.
+#' There is also a `carry_out` argument to [mrgsim()] that can be set to 
+#' accomplish the same thing as a call to `carry_out` in the pipeline.
 #' 
-#' `carry.out` and carry_out`.  Using the underscore version is now preferred.
+#' `carry.out` and `carry_out` both do the same thing; using the underscore 
+#' version is now preferred.
 #' 
 #' @md
 #' @export

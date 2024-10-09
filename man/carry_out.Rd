@@ -22,9 +22,9 @@ the like are not copied from the data set per se, but they are copied from
 \code{datarecord} objects that are created during the simulation.
 }
 \details{
-There is also a \code{carry_out} argument to \code{\link[=mrgsim]{mrgsim()}} that can
-be set to accomplish the same thing as a call to \code{carry_out} in
-the pipeline.
+There is also a \code{carry_out} argument to \code{\link[=mrgsim]{mrgsim()}} that can be set to
+accomplish the same thing as a call to \code{carry_out} in the pipeline.
 
-\code{carry.out} and carry_out`.  Using the underscore version is now preferred.
+\code{carry.out} and \code{carry_out} both do the same thing; using the underscore
+version is now preferred.
 }
