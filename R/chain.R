@@ -86,7 +86,7 @@ req.mrgmod <- function(x,...) {
 #' 
 #' e <- ev(amt = 100, ii = 6, addl = 3, WT = 70, dose = amt)
 #' 
-#' out <- mod %>% carry_out(amt, dose, WT)
+#' out <- mod %>% ev(e) %>% carry_out(amt, dose, WT) %>% mrgsim()
 #' 
 #' head(out)
 #' 
