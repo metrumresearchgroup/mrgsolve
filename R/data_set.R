@@ -546,28 +546,29 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 }
 
 
-##' Insert observations into a data set
-##' 
-##' @param data a data set or event object
-##' @param times a vector of observation times
-##' @param unique `logical`; if `TRUE` then values for `time` are 
-##' dropped if they are found anywhere in `data`
-##' @param obs_pos determines sorting order for observations; use `-1` (default)
-##' to put observations first; otherwise, use large integer to ensure 
-##' observations are placed after doses
-##'
-##' @details
-##' Non-numeric columns will be dropped with a warning.
-##' 
-##' @return 
-##' A data frame with additional rows for added observation records.
-##' 
-##' @examples
-##' data <- expand.ev(amt = c(100, 200, 300))
-##' 
-##' expand_observations(data, times = seq(0, 48, 2))
-##' 
-##' @export
+#' Insert observations into a data set
+#' 
+#' @param data a data set or event object.
+#' @param times a vector of observation times.
+#' @param unique `logical`; if `TRUE` then values for `time` are 
+#' dropped if they are found anywhere in `data`.
+#' @param obs_pos determines sorting order for observations; use `-1` (default)
+#' to put observations first; otherwise, use large integer to ensure 
+#' observations are placed after doses.
+#'
+#' @details
+#' Non-numeric columns will be dropped with a warning.
+#' 
+#' @return 
+#' A data frame with additional rows for added observation records.
+#' 
+#' @examples
+#' data <- expand.ev(amt = c(100, 200, 300))
+#' 
+#' expand_observations(data, times = seq(0, 48, 2))
+#' 
+#' @md
+#' @export
 expand_observations <- function(data, times, unique = FALSE, obs_pos = -1L) {
   
   data <- As_data_set(data)
