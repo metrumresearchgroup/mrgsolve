@@ -67,15 +67,15 @@
 #' 
 #' `EVID` is an integer value specifying the ID of an event record. Values
 #' include: 
-#'   - `0`: observation
-#'   - `1`:  dose event, either bolus or infusion
-#'   - `2`: other-type event; in mrgsolve, this functions like an observation 
+#'   - 0: observation
+#'   - 1:  dose event, either bolus or infusion
+#'   - 2: other-type event; in mrgsolve, this functions like an observation 
 #'     record, but a discontinuity is created in the simulation at the time of 
 #'     the event (i.e., the ODE solver will stop and restart at the time of the 
 #'     event)
-#'  - `3`: reset the system 
-#'  - `4`: reset the system and dose
-#'  - `8`: replace the amount in a compartment
+#'  - 3: reset the system 
+#'  - 4: reset the system and dose
+#'  - 8: replace the amount in a compartment
 #'  
 #' For all `EVID` greater than `0`, a discontinuity is created in the
 #' simulation, as described for `EVID 2`.  
@@ -142,20 +142,20 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.se
   return(x)
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set",c("mrgmod", "ANY"), function(x, data, ...) {
   return(data_set(x, as.data.frame(data), ...))
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set", c("mrgmod", "ev"), function(x, data, ...) {
   return(data_set(x, As_data_set(data), ...))
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x, as.data.frame(object) ,...))
@@ -350,39 +350,35 @@ setMethod("as_data_set", "data.frame", function(x, ...) {
   as_data_set(x, ...)
 })
 
-##' Replicate a list of events into a data set
-##' 
-##' @param l list of event objects
-##' @param idata an idata set (one ID per row)
-##' @param evgroup the character name of the column in \code{idata} 
-##' that specifies event object to implement
-##' @param join if \code{TRUE}, join \code{idata} to the data set 
-##' before returning.
-##' 
-##' 
-##' @examples
-##' ev1 <- ev(amt = 100)
-##' ev2 <- ev(amt = 300, rate = 100, ii = 12, addl = 10)
-##' 
-##' idata <- data.frame(ID = seq(10)) 
-##' idata$arm <- 1+(idata$ID %%2)
-##' 
-##' ev_assign(list(ev1, ev2), idata, "arm", join = TRUE)
-##' 
-##' @details
-##' \code{ev_assign} connects events in a list passed in as the
-##' \code{l} argument to values in the data set identified in the 
-##' \code{evgroup} argument.  For making assignments, the unique 
-##' values in the \code{evgroup} column are first sorted so that 
-##' the first sorted unique value in \code{evgroup} is assigned 
-##' to the first event in \code{l}, the second sorted value in 
-##' \code{evgroup} column is assigned to the second event in 
-##' \code{l}, and so on.  This is a change from previous behavior, 
-##' which did not sort the unique values in \code{evgroup} prior to 
-##' making the assignments. 
-##' 
-##' 
-##' @export
+#' Replicate a list of events into a data set
+#' 
+#' @param l list of event objects.
+#' @param idata an idata set (one ID per row).
+#' @param evgroup the character name of the column in `idata` that specifies 
+#' event object to implement.
+#' @param join if `TRUE`, join `idata` to the data set before returning.
+#' 
+#' @details
+#' `ev_assign()` connects events in a list passed in as the `l` argument to 
+#' values in the data set identified in the `evgroup` argument.  For making 
+#' assignments, the unique values in the `evgroup` column are first sorted so 
+#' that the first sorted unique value in `evgroup` is assigned to the first 
+#' event in `l`, the second sorted value in `evgroup` column is assigned to the 
+#' second event in `l`, and so on.  This is a change from previous behavior, 
+#' which did not sort the unique values in `evgroup` prior to making the 
+#' assignments. 
+#' 
+#' @examples
+#' ev1 <- ev(amt = 100)
+#' ev2 <- ev(amt = 300, rate = 100, ii = 12, addl = 10)
+#' 
+#' idata <- data.frame(ID = seq(10)) 
+#' idata$arm <- 1+(idata$ID %%2)
+#' 
+#' ev_assign(list(ev1, ev2), idata, "arm", join = TRUE)
+#' 
+#' @md
+#' @export
 ev_assign <- function(l, idata, evgroup, join = FALSE) {
   
   idata <- as.data.frame(idata)
@@ -442,10 +438,11 @@ ev_assign <- function(l, idata, evgroup, join = FALSE) {
   return(x)
 }
 
-##' @param ... used to pass arguments from \code{assign_ev}
-##' to \code{ev_assign}
-##' @rdname ev_assign
-##' @export
+#' @param ... used to pass arguments from `assign_ev()`.
+#' to `ev_assign()`.
+#' @rdname ev_assign
+#' @md
+#' @export
 assign_ev <- function(...) ev_assign(...)
 
 #' Schedule dosing events on days of the week

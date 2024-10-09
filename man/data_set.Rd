@@ -85,15 +85,15 @@ software.
 \code{EVID} is an integer value specifying the ID of an event record. Values
 include:
 \itemize{
-\item \code{0}: observation
-\item \code{1}:  dose event, either bolus or infusion
-\item \code{2}: other-type event; in mrgsolve, this functions like an observation
+\item 0: observation
+\item 1:  dose event, either bolus or infusion
+\item 2: other-type event; in mrgsolve, this functions like an observation
 record, but a discontinuity is created in the simulation at the time of
 the event (i.e., the ODE solver will stop and restart at the time of the
 event)
-\item \code{3}: reset the system
-\item \code{4}: reset the system and dose
-\item \code{8}: replace the amount in a compartment
+\item 3: reset the system
+\item 4: reset the system and dose
+\item 8: replace the amount in a compartment
 }
 
 For all \code{EVID} greater than \code{0}, a discontinuity is created in the
