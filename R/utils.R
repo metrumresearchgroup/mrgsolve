@@ -330,28 +330,28 @@ cvec.character <- as.cvec
 ##' @keywords internal
 s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 
-##' Access or clear arguments for calls to mrgsim
-##' 
-##' As a model object navigates a pipeline prior to simulation, arguments are
-##' collected to eventually be passed to [mrgsim()]. `simargs` lets you 
-##' intercept and possibly clear those arguments.
-##'
-##' @param x model object
-##' @param clear logical indicating whether or not to clear `args` from 
-##' the model object
-##' @param which character with length 1 naming a single arg to get
-##' @param ... passed along
-##' 
-##' @return If `clear` is `TRUE`, the argument list is 
-##' cleared and the model object is returned.  Otherwise, the argument 
-##' list is returned.
-##' 
-##' @examples
-##' mod <- mrgsolve::house()
-##' mod %>% Req(CP, RESP) %>% carry_out(evid, WT, FLAG) %>% simargs()
-##' 
-##' @md
-##' @export
+#' Access or clear arguments for calls to mrgsim()
+#' 
+#' As a model object navigates a pipeline prior to simulation, arguments are
+#' collected to eventually be passed to [mrgsim()]. `simargs()` lets you 
+#' intercept and possibly clear those arguments.
+#'
+#' @param x model object.
+#' @param clear logical indicating whether or not to clear `args` from 
+#' the model object.
+#' @param which character with length 1 naming a single arg to get.
+#' @param ... not used. 
+#' 
+#' @return If `clear` is `TRUE`, the argument list is 
+#' cleared and the model object is returned.  Otherwise, the argument 
+#' list is returned.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' mod %>% Req(CP, RESP) %>% carry_out(evid, WT, FLAG) %>% simargs()
+#' 
+#' @md
+#' @export
 simargs <- function(x, which = NULL, clear = FALSE,...) {
   
   if(clear) {

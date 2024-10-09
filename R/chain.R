@@ -16,34 +16,35 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Request simulated output
-##' 
-##' Use this function to select, by name, either compartments or derived 
-##' variables that have been captured (see \code{\link{CAPTURE}}) into
-##' the simulated output.
-##'
-##' @param x model object
-##' @param ... unquoted names of compartments or tabled items
-##' 
-##' @details
-##' There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{Req} in 
-##' the pipeline.
-##' 
-##' Note the difference between \code{req} and \code{Req}: the former only 
-##' selects compartments to appear in output while the latter selects both 
-##' compartments and captured items.  Also, when there are items are explicitly
-##' listed in \code{Req}, all other compartments or captured items not listed
-##' there are ignored.  But when compartments are selected with \code{req}
-##' all of the captured items are returned.  Remember that \code{req} is 
-##' strictly for compartments.
-##' 
-##' @examples
-##' mod <- mrgsolve::house()
-##'
-##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
-##'
-##' @export
+#' Request simulated output
+#' 
+#' Use this function to select, by name, either compartments or derived 
+#' variables that have been captured (see [CAPTURE]) into
+#' the simulated output.
+#'
+#' @param x model object.
+#' @param ... unquoted names of compartments or tabled items.
+#' 
+#' @details
+#' There is also a `Req` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `Req` in 
+#' the pipeline.
+#' 
+#' Note the difference between `req` and `Req`: the former only 
+#' selects compartments to appear in output while the latter selects both 
+#' compartments and captured items.  Also, when there are items are explicitly
+#' listed in `Req`, all other compartments or captured items not listed
+#' there are ignored.  But when compartments are selected with `req`
+#' all of the captured items are returned.  Remember that `req` is 
+#' strictly for compartments.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#'
+#' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim()
+#'
+#' @md
+#' @export
 Req <- function(x,...) UseMethod("Req")
 
 #' @export
@@ -52,12 +53,12 @@ Req.mrgmod <- function(x,...) {
   x  
 }
 
-##' @rdname Req
-##' @export
+#' @rdname Req
+#' @export
 req <- function(x,...) UseMethod("req")
 
-##' @export
-##' @rdname Req
+#' @export
+#' @rdname Req
 req.mrgmod <- function(x,...) {
   x <- update_request(x,as.character(match.call()[-1]))
   x
@@ -104,25 +105,26 @@ carry.out <- function(x,...) {
   x
 }
 
-##' Re-scale time in the simulated output
-##'
-##' @param x model object
-##' @param value value by which time will be scaled
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{tscale} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{tscale} in 
-##' the pipeline.
-##' 
-##' @examples
-##' # The model is in hours:
-##' mod <- mrgsolve::house()
-##' 
-##' # The output is in days:
-##' mod %>% tscale(1/24) %>% mrgsim
-##' 
-##' @export
+#' Re-scale time in the simulated output
+#'
+#' @param x model object.
+#' @param value value by which time will be scaled.
+#' @param ... not used.
+#' 
+#' @details
+#' There is also a `tscale` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `tscale` in 
+#' the pipeline.
+#' 
+#' @examples
+#' # The model is in hours:
+#' mod <- mrgsolve::house()
+#' 
+#' # The output is in days:
+#' mod %>% tscale(1/24) %>% mrgsim()
+#' 
+#' @md
+#' @export
 tscale <- function(x,value=1,...) {
   x@args[["tscale"]] <- value
   x
@@ -131,7 +133,7 @@ tscale <- function(x,value=1,...) {
 #' Collect only observation records in the simulated output
 #'
 #' @param x model object.
-#' @param value the value for `obsonly`.
+#' @param value use `TRUE` to collect and return observation records only.
 #' @param ... not used.
 #' 
 #' @details

@@ -554,14 +554,13 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
 #' Use this function when you want to schedule two or more event objects in time
 #' according the dosing interval (`ii`) and additional doses (`addl`).
 #' 
-#' @param ... Event objects or numeric arguments named `wait` or `ii` to 
-#' implement a period of no-dosing activity in the sequence (see details).
-#' @param ID Numeric vector of subject IDs.
-#' @param .dots A list of event objects that replaces `...`.
-#' @param id Deprecated; use `ID`.
+#' @param ... event objects or numeric arguments named `wait` or `ii` to 
+#' implement a period of no-dosing activity in the sequence (see **Details**).
+#' @param ID numeric vector of subject IDs.
+#' @param .dots a list of event objects that replaces `...`.
+#' @param id deprecated; use `ID`.
 #' 
 #' @details
-#' 
 #' Use the generic [seq()] when the first argument is an event object.  If a 
 #' waiting period (`wait` or `ii`) is the first event, you will need to use 
 #' [ev_seq()].  When an event object has multiple rows, the end time for that 
@@ -570,7 +569,7 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
 #' 
 #' The doses for the next event line start after all of the doses from the 
 #' previous event line plus one dosing interval from the previous event line 
-#' (see examples).  
+#' (see **Examples**).  
 #' 
 #' When numerics named `wait` or `ii` are mixed in with the event objects, 
 #' a period with no dosing activity is incorporated into the sequence,
@@ -595,10 +594,9 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
 #' warning if you use `.ii`. Please use `ii` instead.
 #' 
 #' Values for `time` in any event object act like a prefix time spacer wherever 
-#' that event occurs in the event sequence (see examples).
+#' that event occurs in the event sequence (see **Examples**).
 #' 
 #' @examples
-#' 
 #' e1 <- ev(amt = 100, ii = 12, addl = 1)
 #' 
 #' e2 <- ev(amt = 200)

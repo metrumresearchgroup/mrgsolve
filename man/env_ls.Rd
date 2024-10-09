@@ -7,7 +7,7 @@
 env_ls(x, ...)
 }
 \arguments{
-\item{x}{amodel object.}
+\item{x}{a model object.}
 
 \item{...}{passed to \code{\link[=ls]{ls()}}.}
 }

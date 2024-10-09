@@ -9,7 +9,7 @@ obsonly(x, value = TRUE, ...)
 \arguments{
 \item{x}{model object.}
 
-\item{value}{the value for `obsonly`.}
+\item{value}{use `TRUE` to collect and return observation records only.}
 
 \item{...}{not used.}
 }

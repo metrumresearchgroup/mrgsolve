@@ -39,7 +39,7 @@ env_eval <- function(x,seed=NULL) {
 #' Each model keeps an internal environment that allows the user 
 #' to carry any `R` object along.  Objects are coded in `$ENV`.
 #' 
-#' @param x amodel object.
+#' @param x a model object.
 #' @param ... passed to [ls()].
 #' 
 #' @md
