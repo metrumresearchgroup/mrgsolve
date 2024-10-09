@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,72 +16,70 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Methods for working with \code{mrgsims} objects
-##'
-##' These methods help the user view simulation output and extract 
-##' simulated data to work with further.  The methods listed here 
-##' for the most part have generics defined by R or other R packages.  
-##' See the \code{seealso} section for other methods defined 
-##' by \code{mrgsolve} that have their own documentation pages.
-##'
-##' @details
-##' Most methods should behave as expected according to other method 
-##' commonly used in R (e.g. head, tail, as.data.frame, etc ...)
-##'
-##' \itemize{
-##'   \item{\code{$}} selects a column in the simulated data and 
-##'   returns numeric
-##'   \item{\code{head}} see \code{\link{head.matrix}}; returns 
-##'   simulated data
-##'   \item{\code{tail}} see \code{\link{tail.matrix}}; returns 
-##'   simulated data
-##'   \item{\code{dim}, \code{nrow}, \code{ncol}} returns dimensions, 
-##'   number of rows, and number of columns in simulated data
-##'   \item{\code{as.data.frame}} coerces simulated data to data.frame 
-##'   and returns the data.frame
-##'   \item{\code{as.matrix}} returns matrix of simulated data
-##'   \item{\code{summary}} coerces simulated data to data.frame 
-##'   and passes to \code{\link{summary.data.frame}}
-##'   \item{\code{plot}} plots simulated data; see \code{\link{plot_mrgsims}}
-##' }
-##' @param x mrgsims object
-##' @param ... passed to other functions
-##' @aliases mrgsims
-##' @seealso  \code{\link{stime}}
-##' @name mrgsims
-##' @rdname mrgsims
-##' @examples
-##'
-##' ## example("mrgsims")
-##'
-##' mod <- mrgsolve::house() %>% init(GUT=100)
-##'
-##' out <- mrgsim(mod)
-##' 
-##' class(out)
-##'
-##' \dontrun{
-##' out
-##' }
-##' head(out)
-##' tail(out)
-##'
-##'
-##' dim(out)
-##' names(out)
-##'
-##' mat <- as.matrix(out)
-##' df <- as.data.frame(out)
-##' 
-##' \dontrun{
-##' out$CP
-##' }
-##'
-##' plot(out)
-##' \dontrun{
-##' plot(out, CP~.)
-##' plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
-##' }
+#' Methods for working with `mrgsims` objects
+#'
+#' These methods help the user view simulation output and extract 
+#' simulated data to work with further.  The methods listed here 
+#' for the most part have generics defined by R or other R packages.  
+#' See the **See Also** section for other methods defined 
+#' by mrgsolve that have their own documentation pages.
+#'
+#' @details
+#' Most methods should behave as expected according to other method 
+#' commonly used in R (e.g. head, tail, as.data.frame, etc ...)
+#'
+#' - `$` selects a column in the simulated data and 
+#'   returns numeric
+#' - `head()` see [head.matrix()]; returns simulated data
+#' - `tail()` see [tail.matrix()]; returns simulated data
+#' - `dim()`, `nrow()`, `ncol()` returns dimensions, 
+#'   number of rows, and number of columns in simulated data
+#' - `as.data.frame()` coerces simulated data to data.frame 
+#' - `as.matrix()` returns matrix of simulated data
+#' - `summary()` coerces simulated data to data.frame and passes to 
+#'   [summary.data.frame()]
+#' - [plot()] plots simulated data; see [plot_mrgsims]
+#'   
+#' @param x mrgsims object.
+#' @param ... passed to other functions.
+#' @aliases mrgsims
+#' @seealso  [stime()]
+#' @name mrgsims
+#' @rdname mrgsims
+#' @examples
+#'
+#' ## example("mrgsims")
+#'
+#' mod <- mrgsolve::house() %>% init(GUT=100)
+#'
+#' out <- mrgsim(mod)
+#' 
+#' class(out)
+#'
+#' \dontrun{
+#' out
+#' }
+#' head(out)
+#' tail(out)
+#'
+#'
+#' dim(out)
+#' names(out)
+#'
+#' mat <- as.matrix(out)
+#' df <- as.data.frame(out)
+#' 
+#' \dontrun{
+#' out$CP
+#' }
+#'
+#' plot(out)
+#' 
+#' \dontrun{
+#' plot(out, CP~.)
+#' plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
+#' }
+#' @md
 NULL
 
 
@@ -260,8 +258,8 @@ as.tbl.mrgsims <- function(x,...) {
 #' These functions modify the simulated data in an mrgsims object and return 
 #' the modified object.  Contrast with the functions in [mrgsims_dplyr].
 #' 
-#' @param .data a mrgsims object
-#' @param ... other arguments passed to the `dplyr` functions
+#' @param .data a mrgsims object.
+#' @param ... other arguments passed to the `dplyr` functions.
 #' 
 #' @examples
 #' 
@@ -309,10 +307,11 @@ filter_sims <- function(.data, ... ) {
   .data
 }
 
-##' @rdname mrgsims
-##' @param row.names passed to \code{\link{as.data.frame}}
-##' @param optional passed to \code{\link{as.data.frame}}
-##' @export
+#' @rdname mrgsims
+#' @param row.names passed to [as.data.frame()].
+#' @param optional passed to [as.data.frame()].
+#' @md
+#' @export
 setMethod("as.data.frame", "mrgsims", function(x,row.names=NULL, optional=FALSE,...) {
   return(as.data.frame(x@data,row.names,optional,...))
 })
@@ -325,9 +324,9 @@ setMethod("as.matrix", "mrgsims", function(x,...) {
   return(as.matrix(x@data))
 })
 
-##' @param object passed to show
-##' @rdname mrgsims
-##' @export
+#' @param object passed to show.
+#' @rdname mrgsims
+#' @export
 summary.mrgsims <- function(object,...) {
   summary(as.data.frame(object))
 }

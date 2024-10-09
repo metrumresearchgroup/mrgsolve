@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -22,14 +22,14 @@
 ##' include one record for every dose. In the result, no record with have 
 ##' `ii` or `addl` set to non-zero value.
 ##' 
-##' @param x a `data_set` data frame or an event object (see details)
+##' @param x a `data_set` data frame or an event object (see details).
 ##' @param warn if `TRUE` a warning is issued if no `ADDL` or
-##' `addl` column is found
-##' @param mark_new if `TRUE`, a flag is added to indicate new columns
+##' `addl` column is found.
+##' @param mark_new if `TRUE`, a flag is added to indicate new columns.
 ##' @param fill specifies how to handle non-dose related data columns
 ##' in new data set records; this option is critical when handling 
-##' data sets with time-varying, non-dose-related data items; see details
-##' @param ... not used
+##' data sets with time-varying, non-dose-related data items; see **Details**.
+##' @param ... not used.
 ##' 
 ##' @examples
 ##' e <- ev(amt = 100, ii = 12, addl = 3)
@@ -59,7 +59,7 @@
 ##' 
 ##' Use caution when passing in data that has non-dose-related data 
 ##' columns that vary within a subject and pay special attention
-##' to the `fill` argument. By definition, `realize_addl`
+##' to the `fill` argument. By definition, `realize_addl()`
 ##' will add new rows to your data frame and it is not obvious 
 ##' how the non-dose-related data should be handled in these new 
 ##' rows.  When `inherit` is chosen, the new records have

@@ -7,21 +7,21 @@
 ev_rep(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL)
 }
 \arguments{
-\item{x}{event object}
+\item{x}{event object.}
 
-\item{ID}{numeric vector if IDs}
+\item{ID}{numeric vector if IDs.}
 
-\item{n}{passed to \code{\link{ev_repeat}}}
+\item{n}{passed to \code{\link[=ev_repeat]{ev_repeat()}}.}
 
-\item{wait}{passed to \code{\link{ev_repeat}}}
+\item{wait}{passed to \code{\link[=ev_repeat]{ev_repeat()}}.}
 
-\item{as.ev}{if \code{TRUE} an event object is returned}
+\item{as.ev}{if \code{TRUE} an event object is returned.}
 
-\item{id}{deprecated; use \code{ID} instead}
+\item{id}{deprecated; use \code{ID} instead.}
 }
 \value{
-A single data.frame or event object as 
-determined by the value of \code{as.ev}.
+A single data.frame or event object as
+determined by the value of \code{\link[=as.ev]{as.ev()}}.
 }
 \description{
 An event sequence can be replicated a certain number of
@@ -35,5 +35,5 @@ ev_rep(e1, 1:5)
 
 }
 \seealso{
-\code{\link{ev_repeat}}
+\code{\link[=ev_repeat]{ev_repeat()}}
 }

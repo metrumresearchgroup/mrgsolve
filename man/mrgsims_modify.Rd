@@ -14,9 +14,9 @@ select_sims(.data, ...)
 filter_sims(.data, ...)
 }
 \arguments{
-\item{.data}{a mrgsims object}
+\item{.data}{a mrgsims object.}
 
-\item{...}{other arguments passed to the \code{dplyr} functions}
+\item{...}{other arguments passed to the \code{dplyr} functions.}
 }
 \description{
 These functions modify the simulated data in an mrgsims object and return

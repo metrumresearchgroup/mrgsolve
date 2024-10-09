@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -63,33 +63,33 @@ req.mrgmod <- function(x,...) {
   x
 }
 
-##' Select items to carry into simulated output
-##' 
-##' When items named in this function are found in the input data set (either 
-##' \code{\link{data_set}} or \code{\link{idata_set}}), they are copied
-##' into the simulated output.  Special items like \code{evid} or \code{amt} or
-##' the like are not copied from the data set per se, but they are copied from
-##' \code{datarecord} objects that are created during the simulation.
-##'
-##' @param x model object
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{carry_out} in 
-##' the pipeline.
-##' 
-##' \code{carry.out} and \code{carry_out}.  Using the underscore version is 
-##' now preferred.
-##' 
-##' @export
+#' Select items to carry into simulated output
+#' 
+#' When items named in this function are found in the input data set (either 
+#' [data_set()] or [idata_set()]), they are copied
+#' into the simulated output.  Special items like `evid` or `amt` or
+#' the like are not copied from the data set per se, but they are copied from
+#' `datarecord` objects that are created during the simulation.
+#'
+#' @param x model object.
+#' @param ... unquoted names of data items to copy into the simulated output.
+#' 
+#' @details
+#' There is also a `carry_out` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `carry_out` in 
+#' the pipeline.
+#' 
+#' `carry.out` and carry_out`.  Using the underscore version is now preferred.
+#' 
+#' @md
+#' @export
 carry_out <- function(x,...) {
   x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
-##' @export
-##' @rdname carry_out
+#' @export
+#' @rdname carry_out
 carry.out <- function(x,...) {
   x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
@@ -119,18 +119,18 @@ tscale <- function(x,value=1,...) {
   x
 }
 
-##' Collect only observations in the simulated output
-##'
-##' @param x model object
-##' @param value the value for \code{obsonly}
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{obsonly} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{obsonly} in 
-##' the pipeline.
-##' 
-##' @export
+#' Collect only observation records in the simulated output
+#'
+#' @param x model object.
+#' @param value the value for `obsonly`.
+#' @param ... not used.
+#' 
+#' @details
+#' There is also a `obsonly` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `obsonly()` in 
+#' the pipeline.
+#' 
+#' @export
 obsonly <- function(x,value=TRUE,...) {
   x@args[["obsonly"]] <- value
   x

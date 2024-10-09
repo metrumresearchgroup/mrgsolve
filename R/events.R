@@ -198,11 +198,11 @@ setMethod("ev", "ev", function(x, realize_addl = FALSE, ...) {
 
 #' Coerce an object to class ev
 #' 
-#' @param x An object to coerce.
-#' @param keep_id If `TRUE`, `ID` column is retained if it exists.
-#' @param clean If `TRUE`, only dosing or ID information is retained in
+#' @param x an object to coerce.
+#' @param keep_id if `TRUE`, `ID` column is retained if it exists.
+#' @param clean if `TRUE`, only dosing or ID information is retained in
 #' the result.
-#' @param ... Not used.
+#' @param ... not used.
 #' 
 #' @examples
 #' data <- data.frame(amt = 100) 
@@ -437,14 +437,14 @@ add.ev <- function(e1, e2) {
 #' An event sequence can be replicated a certain number of
 #' times in a certain number of IDs.
 #' 
-#' @param x event object
-#' @param ID numeric vector if IDs
-#' @param n passed to \code{\link{ev_repeat}}
-#' @param wait passed to \code{\link{ev_repeat}}
-#' @param as.ev if \code{TRUE} an event object is returned
-#' @param id deprecated; use \code{ID} instead
+#' @param x event object.
+#' @param ID numeric vector if IDs.
+#' @param n passed to [ev_repeat()].
+#' @param wait passed to [ev_repeat()].
+#' @param as.ev if `TRUE` an event object is returned.
+#' @param id deprecated; use `ID` instead.
 #' 
-#' @seealso \code{\link{ev_repeat}}
+#' @seealso [ev_repeat()]
 #' 
 #' @examples
 #' 
@@ -454,8 +454,9 @@ add.ev <- function(e1, e2) {
 #' 
 #' @return
 #' A single data.frame or event object as 
-#' determined by the value of \code{as.ev}.
+#' determined by the value of [as.ev()].
 #' 
+#' @md
 #' @export
 ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
   if(!missing(id)) {
@@ -482,15 +483,16 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
 
 #' Repeat a block of dosing events
 #' 
-#' @param x event object or dosing data frame
-#' @param n number of times to repeat
-#' @param wait time to wait between repeats
-#' @param as.ev if \code{TRUE}, an event object is
-#' returned; otherwise a data.frame is returned
+#' @param x event object or dosing data frame.
+#' @param n number of times to repeat.
+#' @param wait time to wait between repeats.
+#' @param as.ev if `TRUE`, an event object is returned; otherwise a data.frame 
+#' is returned.
 #' 
 #' @return 
-#' See \code{as.ev} argument.
+#' See `as.ev` argument.
 #' 
+#' @md
 #' @export
 ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
   if(!inherits(x, c("data.frame", "ev"))) {
