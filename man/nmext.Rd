@@ -26,45 +26,45 @@ nmext(
 )
 }
 \arguments{
-\item{run}{run number}
+\item{run}{run number.}
 
-\item{project}{project directory}
+\item{project}{project directory.}
 
-\item{file}{deprecated; use \code{path} instead}
+\item{file}{deprecated; use \code{path} instead.}
 
-\item{path}{full path to NONMEM \code{ext} file}
+\item{path}{full path to NONMEM \code{ext} file.}
 
-\item{root}{the directory that `path` and `project` are relative to; this is
-currently limited to the `working` directory or `cppdir`, the directory 
-where the model file is located}
+\item{root}{the directory that \code{path} and \code{project} are relative to; this is
+currently limited to the \code{working} directory or \code{cppdir}, the directory
+where the model file is located.}
 
-\item{index}{the estimation number to return;  "last" will return the 
-last estimation results; otherwise, pass an integer indicating which 
-estimation results to return}
+\item{index}{the estimation number to return;  "last" will return the
+last estimation results; otherwise, pass an integer indicating which
+estimation results to return.}
 
-\item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
+\item{theta}{logical; if TRUE, the \verb{$THETA} vector is returned.}
 
-\item{omega}{logical; if TRUE, the \code{$OMEGA} matrix is returned}
+\item{omega}{logical; if TRUE, the \verb{$OMEGA} matrix is returned.}
 
-\item{sigma}{logical; if TRUE, the \code{$SIGMA} matrix is returned}
+\item{sigma}{logical; if TRUE, the \verb{$SIGMA} matrix is returned.}
 
-\item{olabels}{labels for \code{$OMEGA}}
+\item{olabels}{labels for \verb{$OMEGA}.}
 
-\item{slabels}{labels for \code{$SIGMA}}
+\item{slabels}{labels for \verb{$SIGMA}.}
 
-\item{oprefix}{prefix for \code{$OMEGA} labels}
+\item{oprefix}{prefix for \verb{$OMEGA} labels.}
 
-\item{sprefix}{prefix for \code{$SIGMA} labels}
+\item{sprefix}{prefix for \verb{$SIGMA} labels.}
 
-\item{tname}{name for \code{$THETA}}
+\item{tname}{name for \verb{$THETA}.}
 
-\item{oname}{name for \code{$OMEGA}}
+\item{oname}{name for \verb{$OMEGA}.}
 
-\item{sname}{name for \code{$SIGMA}}
+\item{sname}{name for \verb{$SIGMA}.}
 
-\item{read_fun}{function to use when reading the \code{ext} file}
+\item{read_fun}{function to use when reading the \code{ext} file.}
 
-\item{env}{internal}
+\item{env}{internal use only.}
 }
 \description{
 Import model estimates from a NONMEM ext file

@@ -374,9 +374,9 @@ build_path <- function(x) {
   return(x)
 }
 
-##' Set RNG to use L'Ecuyer-CMRG
-##'
-##' @export
+#' Set RNG to use L'Ecuyer-CMRG
+#'
+#' @export
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
 as_character_args <- function(x) {

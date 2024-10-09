@@ -249,8 +249,8 @@ setMethod("zero_re", "mrgmod", function(.x, ...) {
 
 #' Methods for working with matrix-list objects
 #'
-#' @param x a matlist object
-#' @param ... passed through to other methods
+#' @param x a matlist object.
+#' @param ... passed through to other methods.
 #'
 #' @name matlist
 #' @rdname matlist
@@ -259,7 +259,7 @@ NULL
 #' @param detailed if `TRUE`, then a simple list of matrices is returned; 
 #' otherwise, then entire `matlist` object data is returned along with the 
 #' name of the `class` (e.g. either `omegalist` or `sigmalist`) as well 
-#' as the `names` of the matrices
+#' as the `names` of the matrices.
 #' @md
 #' @rdname matlist
 #' @export
@@ -381,10 +381,10 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' updated, usually making it easier. This "collapsing" of the matrix list 
 #' is irreversible. 
 #' 
-#' @param x a `mrgmod` object
+#' @param x a model object.
 #' @param name a new name for the collapsed matrix; note that this is the 
 #' matrix name, not the labels which alias `ETA(n)` or `EPS(n)`; specifying a 
-#' name will only alter how this matrix is potentially updated in the future
+#' name will only alter how this matrix is potentially updated in the future.
 #' @param range numeric vector of length 2 specifying the range of matrices 
 #' to collapse in case there are more than 2. The second element may be `NA` 
 #' to indicate the length of the list of matrices. 
@@ -406,8 +406,8 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' A model object with updated `OMEGA` or `SIGMA` matrix lists.
 #' 
 #' @seealso [collapse_matrix()]
-#' @md
 #' @rdname collapse_matrices
+#' @md
 #' @export
 collapse_omega <- function(x, range = NULL, name = NULL) {
   stopifnot(is.mrgmod(x))
@@ -442,7 +442,7 @@ collapse_sigma <- function(x, range = NULL, name = NULL) {
 #' @inheritParams collapse_omega
 #' @param x an object that inherits from `matlist`; this object is most
 #' frequently extracted from a model object using [omat()] or [smat()] for 
-#' `OMEGA` and `SIGMA`, respectively
+#' `OMEGA` and `SIGMA`, respectively.
 #' 
 #' @examples
 #' omega <- omat(list(dmat(1, 2), dmat(3, 4, 5)))

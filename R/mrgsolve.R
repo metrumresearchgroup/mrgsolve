@@ -785,23 +785,23 @@ do_mrgsim <- function(x,
 #' Basic, simple simulation from model object
 #' 
 #' This is just a lighter version of [mrgsim()], with fewer options.  
-#' See `Details`.  
+#' See **Details**.  
 #' 
 #' @inheritParams mrgsim
 #' 
-#' @param data can be either event object or data set
+#' @param data can be either event object or data set.
 #' @param output output data type; the default is `mrgsims`, which returns the 
 #' default output object; other options include `df` (for data.frame) or 
-#' `matrix`
+#' `matrix`.
 #' @param outvars output items to request; if missing, then only captured items 
-#' will be returned in the output
-#' @param Req synonym for outvars
+#' will be returned in the output.
+#' @param Req synonym for `outvars`.
 #' 
 #' @details
 #' There is no pipeline interface for this function; all configuration options 
-#' (see `Arguments`) must be passed as formal arguments to the function.  
+#' (see **Arguments**) must be passed as formal arguments to the function.  
 #' You can't `carry_out`, `Request` specific columns, or pass items in for update.  
-#' Some other limitations, but only convenience-related.  See `Arguments` for 
+#' Some other limitations, but only convenience-related.  See **Arguments** for 
 #' available options.  Specifically, there is no `...` argument for this function.
 #' Use the [mrgsolve::update()] method to update the model object. 
 #' 
@@ -816,7 +816,6 @@ do_mrgsim <- function(x,
 #' @seealso [mrgsim_q()], [mrgsim()], [mrgsim_variants]
 #' 
 #' @md
-#' 
 #' @export
 qsim <- function(x,
                  data,

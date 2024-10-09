@@ -9,7 +9,7 @@ collapse_matrix(x, range = NULL, name = NULL)
 \arguments{
 \item{x}{an object that inherits from \code{matlist}; this object is most
 frequently extracted from a model object using \code{\link[=omat]{omat()}} or \code{\link[=smat]{smat()}} for
-\code{OMEGA} and \code{SIGMA}, respectively}
+\code{OMEGA} and \code{SIGMA}, respectively.}
 
 \item{range}{numeric vector of length 2 specifying the range of matrices
 to collapse in case there are more than 2. The second element may be \code{NA}
@@ -17,7 +17,7 @@ to indicate the length of the list of matrices.}
 
 \item{name}{a new name for the collapsed matrix; note that this is the
 matrix name, not the labels which alias \code{ETA(n)} or \code{EPS(n)}; specifying a
-name will only alter how this matrix is potentially updated in the future}
+name will only alter how this matrix is potentially updated in the future.}
 }
 \value{
 An update \code{matlist} object (either \code{omegalist} or \code{sigmalist}).
