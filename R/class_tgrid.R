@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -107,41 +107,42 @@ as_deslist <- function(data, descol="ID") {
   structure(out, descol=descol)
 }
 
-##' Create a simtime object
-##'
-##' simtime objects allow the user to specify simulation start and end times, 
-##' along with the simulation time step.
-##'
-##' @rdname tgrid
-##' @name tgrid
-##'
-##' @param x tgrid object
-##' @param start simulation start time
-##' @param end simulation end time
-##' @param delta simulation time step
-##' @param add addition simulation times
-##' @param .offset the resulting set of times will be adjusted by this amount
-##' @param .scale the resulting set of times will be scaled by this factor
-##' @param ... passed on to other methods
-##' @export
-##' @examples
-##'
-##' peak <- tgrid(0,6,0.2)
-##' sparse <- tgrid(0,24,4)
-##'
-##' day1 <- c(peak,sparse)
-##'
-##' design <- c(day1, day1+72, day1+240)
-##' 
-##' \dontrun{
-##' mod <- mrgsolve::house()
-##'
-##' out <- mod %>% ev(amt=1000, ii=24, addl=10) %>% mrgsim(tgrid=design)
-##'
-##' plot(out,CP~., type='b')
-##' }
+#' Create a simtime object
+#'
+#' simtime objects allow the user to specify simulation start and end times, 
+#' along with the simulation time step.
+#'
+#' @rdname tgrid
+#' @name tgrid
+#'
+#' @param x tgrid object.
+#' @param start simulation start time.
+#' @param end simulation end time.
+#' @param delta simulation time step.
+#' @param add addition simulation times.
+#' @param .offset the resulting set of times will be adjusted by this amount.
+#' @param .scale the resulting set of times will be scaled by this factor.
+#' @param ... not used.
+#'
+#' @examples
+#' peak <- tgrid(0, 6, 0.2)
+#' sparse <- tgrid(0, 24, 4)
+#'
+#' day1 <- c(peak, sparse)
+#'
+#' design <- c(day1, day1+72, day1+240)
+#' 
+#' \dontrun{
+#' mod <- mrgsolve::house()
+#'
+#' out <- mod %>% ev(amt=1000, ii=24, addl=10) %>% mrgsim(tgrid=design)
+#'
+#' plot(out, CP ~ time, type = 'b')
+#' }
+#' @md
+#' @export
 tgrid <-  function(start=0,end=24,delta=1,add=numeric(0),
-                   .offset=0, .scale=1,...) {
+                   .offset=0, .scale=1, ...) {
   new("tgrid", start=start, end=end, delta=delta, 
       add=add, offset=.offset, scale=.scale)
 }
@@ -173,19 +174,20 @@ render_time <- function(x) {
   times
 }
 
-##' @rdname tgrid
-##' @export
+#' @rdname tgrid
+#' @export
 setMethod("stime", "numeric", function(x,...) {
   sort(unique(x))
 })
 
-##' Operations with tgrid objects
-##' 
-##' @param x mrgmod object
-##' @param recursive not used
-##' @param ... passed along to other methods
-##' @rdname tgrid_ops
-##' @export
+#' Operations with tgrid objects
+#' 
+#' @param x a tgrid object.
+#' @param ... additional tgrid objects. 
+#' @param recursive not used.
+#' @rdname tgrid_ops
+#' @md
+#' @export
 setMethod("c", "tgrid", function(x,..., recursive=FALSE) {
   
   x <- c(list(x), list(...))
@@ -200,8 +202,8 @@ setMethod("c", "tgrid", function(x,..., recursive=FALSE) {
 })
 
 
-##' @rdname tgrid_ops
-##' @export
+#' @rdname tgrid_ops
+#' @export
 setMethod("c", "tgrids", function(x,...,recursive=FALSE) {
   do.call("c",c(x@data, list(...)))
 })
@@ -278,10 +280,3 @@ setMethod("show", "tgrids", function(object) {
     cat("--------\n")
   })
 })
-
-
-
-
-
-
-
