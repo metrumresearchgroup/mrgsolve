@@ -7,23 +7,23 @@
 as_deslist(data, descol = "ID")
 }
 \arguments{
-\item{data}{input data set; see details}
+\item{data}{input data set; see \strong{Details}.}
 
-\item{descol}{character column name to be used for design groups}
+\item{descol}{character column name to be used for design groups.}
 }
 \value{
-The function returns a list of \code{tgrid} objects, 
+The function returns a list of \code{tgrid} objects,
 one for each unique value found in \code{descol}.
 }
 \description{
 Create a list of designs from a data frame
 }
 \details{
-The input data set must have a column with the same name as the value 
-of \code{descol}.  Other column names should be \code{start} (the time 
-of the first observation), \code{end} (the time of the last observation), 
-\code{delta} (the time steps to take between \code{start} and \code{end}), 
-and \code{add} (other, ad-hoc times).  Note that \code{add} might be 
+The input data set must have a column with the same name as the value
+of \code{descol}.  Other column names should be \code{start} (the time
+of the first observation), \code{end} (the time of the last observation),
+\code{delta} (the time steps to take between \code{start} and \code{end}),
+and \code{add} (other, ad-hoc times).  Note that \code{add} might be
 a \code{list-column} to get a vector of times for each time grid object.
 }
 \examples{

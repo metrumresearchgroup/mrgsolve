@@ -33,7 +33,7 @@ in new data set records; this option is critical when handling
 data sets with time-varying, non-dose-related data items; see \strong{Details}.}
 }
 \value{
-A \code{data_set} data.frame or event object, consistent with the type of \code{x}.
+A data.frame or event object, consistent with the type of \code{x}.
 The \code{ii} and \code{addl} columns will all be set to zero. The result is always
 ungrouped.
 }
