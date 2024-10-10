@@ -29,14 +29,14 @@
 \S4method{show}{matlist}(object)
 }
 \arguments{
-\item{x}{a matlist object}
+\item{x}{a matlist object.}
 
 \item{detailed}{if \code{TRUE}, then a simple list of matrices is returned;
 otherwise, then entire \code{matlist} object data is returned along with the
 name of the \code{class} (e.g. either \code{omegalist} or \code{sigmalist}) as well
-as the \code{names} of the matrices}
+as the \code{names} of the matrices.}
 
-\item{...}{passed through to other methods}
+\item{...}{passed through to other methods.}
 
 \item{object}{passed to showmatlist}
 }

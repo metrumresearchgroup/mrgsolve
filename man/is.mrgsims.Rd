@@ -2,16 +2,16 @@
 % Please edit documentation in R/class_mrgsims.R
 \name{is.mrgsims}
 \alias{is.mrgsims}
-\title{Check if an object is mrgsim output}
+\title{Check if an object is mrgsims output}
 \usage{
 is.mrgsims(x)
 }
 \arguments{
-\item{x}{any object}
+\item{x}{any object.}
 }
 \value{
 \code{TRUE} if \code{x} inherits \code{mrgsims}.
 }
 \description{
-Check if an object is mrgsim output
+Check if an object is mrgsims output
 }

@@ -39,20 +39,20 @@ do_mrgsim(
 )
 }
 \arguments{
-\item{x}{the model object}
+\item{x}{the model object.}
 
-\item{data}{NMTRAN-like data set (see \code{\link[=data_set]{data_set()}})}
+\item{data}{NMTRAN-like data set (see \code{\link[=data_set]{data_set()}}).}
 
 \item{idata}{a matrix or data frame of model parameters,
-one parameter per row (see \code{\link[=idata_set]{idata_set()}})}
+one parameter per row (see \code{\link[=idata_set]{idata_set()}}).}
 
-\item{events}{an event object}
+\item{events}{an event object.}
 
 \item{nid}{integer number of individuals to simulate; only used if
-idata and data are missing}
+idata and data are missing.}
 
 \item{...}{passed to \code{\link[=update]{update()}} and
-\code{\link[=do_mrgsim]{do_mrgsim()}}}
+\code{\link[=do_mrgsim]{do_mrgsim()}}.}
 
 \item{output}{if \code{NULL} (the default) a mrgsims object is returned;
 otherwise, pass \code{df} to return a data.frame or \code{matrix} to
@@ -143,7 +143,7 @@ every \code{interrupt} simulation records; pass a negative number to never check
 for the user interrupt interval.}
 }
 \value{
-An object of class \link{mrgsims}
+An object of class \link{mrgsims}.
 }
 \description{
 This function sets up the simulation run from data stored in the model
@@ -156,22 +156,22 @@ inputs. \code{mrgsim_df} coerces output to data.frame prior to returning.
 \details{
 \itemize{
 \item Use \code{\link[=mrgsim_df]{mrgsim_df()}} to return a data frame rather than
-\code{mrgsims} object
+\code{mrgsims} object.
 \item Both \code{data} and \code{idata} will be coerced to numeric matrix
 \item \code{carry_out} can be used to insert data columns into the output
 data set. This is partially dependent on the nature of the data brought
-into the problem
+into the problem.
 \item When using \code{data} and \code{idata} together, an error is
 generated if an  ID occurs in \code{data} but not \code{idata}.
 Also, when looking up data in \code{idata}, ID in \code{idata} is
 assumed to be uniquely keyed to ID in \code{data}.  No error is
 generated if ID is duplicated in \code{data}; parameters will be used
-from the first occurrence found in \code{idata}
+from the first occurrence found in \code{idata}.
 \item \code{carry_out}: \code{idata} is assumed to be individual-level and variables that
 are carried from \code{idata} are repeated throughout the individual's simulated
 data.  Variables carried from \code{data} are carried via last-observation carry
 forward.  \code{NA} is returned from observations that are inserted into
-simulated output that occur prior to the first record in \code{data}
+simulated output that occur prior to the first record in \code{data}.
 \item \code{recover}: this is similar to \code{carry_out} with respect to
 end result, but it uses a different process.  Columns to be recovered are
 cached prior to running the simulation, and then joined back on to the

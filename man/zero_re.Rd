@@ -10,19 +10,18 @@ zero_re(.x, ...)
 \S4method{zero_re}{mrgmod}(.x, ...)
 }
 \arguments{
-\item{.x}{a model object}
+\item{.x}{a model object.}
 
 \item{...}{which matrix to zero out; pass \code{omega} to just zero out \code{omega},
-\code{sigma} to just zero out \code{sigma}; passing nothing will zero out both}
+\code{sigma} to just zero out \code{sigma}; passing nothing will zero out both.}
 }
 \value{
-An updated object with elements of OMEGA and / or SIGMA set to zero..
+An updated object with elements of OMEGA and/or SIGMA set to zero.
 }
 \description{
-Sets all elements of the OMEGA or SIGMA matrix to zero
+Sets all elements of the OMEGA or SIGMA matrix to zero.
 }
 \examples{
-
 mod <- house()
 revar(mod)
 mod <- zero_re(mod)

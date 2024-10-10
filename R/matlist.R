@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,56 +16,44 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Manipulate OMEGA matrices
-##'
-##' The primary function is \code{omat} that can be used to both get the 
-##' \code{$OMEGA} matrices out of a model object and to update \code{$OMEGA} 
-##' matrices in a model object.
-##'
-##' @param .x a matrix, list of matrices or \code{matlist} object
-##' @param x  \code{matlist} object
-##' @param labels character vector of names for \code{$OMEGA} elements; must 
-##' be equal to number of rows/columns in the matrix
-##' @param open passed to \code{\link{merge.list}}
-##' @param make logical; if TRUE, matrix list is rendered into a single matrix
-##' @param ... passed to other functions, including \code{\link{modMATRIX}}
-##' @export
-##' @name omega
-##' @rdname omega
-##' @aliases omat  OMEGA
-##' @examples
-##' ## example("omega")
-##' mat1 <- matrix(1)
-##' mat2 <- diag(c(1,2,3))
-##' mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
-##' mat4 <- dmat(0.1, 0.2, 0.3, 0.4)
-##'
-##' omat(mat1)
-##' omat(mat1, mat2, mat3)
-##' omat(A=mat1, B=mat2, C=mat3)
-##'
-##' mod <- mrgsolve::house() %>% omat(mat4)
-##'
-##' omat(mod)
-##' omat(mod, make=TRUE)
-##'
-##'
-##' \dontrun{
-##'
-##' $OMEGA
-##' 1 2 3
-##'
-##' $OMEGA \@block
-##' 1 0.1 2
-##'
-##' $OMEGA \@cor
-##' \@ prefix ETA_
-##' \@ labels CL VC KA
-##' 0.1
-##' 0.67 0.2
-##' 0 0 0.3
-##'
-##' }
+#' Manipulate OMEGA matrices
+#'
+#' The primary function is `omat()` that can be used to both get the 
+#' `$OMEGA` matrices out of a model object and to update `$OMEGA` 
+#' matrices in a model object.
+#'
+#' @param .x a matrix, list of matrices or `matlist` object.
+#' @param x  `matlist` object.
+#' @param labels character vector of names for `$OMEGA` elements; must 
+#' be equal to number of rows/columns in the matrix.
+#' @param open passed to [merge.list()].
+#' @param make logical; if `TRUE`, matrix list is rendered into a single matrix.
+#' @param ... passed to other functions, including [modMATRIX()].
+#' 
+#' @seealso [smat()], [dmat()], [bmat()], [cmat()]
+#' 
+#' @examples
+#' # example("omega")
+#' mat1 <- matrix(1)
+#' mat2 <- diag(c(1,2,3))
+#' mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
+#' mat4 <- dmat(0.1, 0.2, 0.3, 0.4)
+#'
+#' omat(mat1)
+#' omat(mat1, mat2, mat3)
+#' omat(A = mat1, B = mat2, C = mat3)
+#'
+#' mod <- mrgsolve::house() %>% omat(mat4)
+#'
+#' omat(mod)
+#' omat(mod, make = TRUE)
+#' as.matrix(omat(mod))
+#'
+#' @name omega
+#' @rdname omega
+#' @aliases omat  OMEGA
+#' @md
+#' @export
 
 setGeneric("omat",function(.x,...) standardGeneric("omat"))
 ##' @export
@@ -116,42 +104,44 @@ setMethod("omat", "mrgsims", function(.x,make=FALSE,...) {
   as.matrix(mod(.x)@omega)
 })
 
-##' Manipulate SIGMA matrices
-##'
-##' The primary function is \code{smat} that can be used to both get the 
-##' \code{$SIGMA} matrices out of a model object and to update \code{$SIGMA} 
-##' matrices in a model object.
-##'
-##' @param .x a matrix, list of matrices or \code{matlist} object
-##' @param x  \code{matlist} object
-##' @param labels character vector of names for \code{$SIGMA} elements; must be
-##' equal 
-##' to number of rows/columns in the matrix
-##' @param make logical; if TRUE, matrix list is rendered into a single matrix
-##' @param ... passed to other functions, including \code{\link{modMATRIX}}
-##' @param open passed to \code{\link{merge.list}}
-##' 
-##' @name sigma
-##' @rdname sigma
-##' 
-##' @aliases smat SIGMA
-##' 
-##' @examples
-##' ## example("sigma")
-##' mat1 <- matrix(1)
-##' mat2 <- diag(c(1,2))
-##' mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
-##' mat4 <- dmat(0.1, 0.2, 0.3, 0.4)
-##'
-##' smat(mat1)
-##' smat(mat1, mat2, mat3)
-##' smat(A=mat1, B=mat2, C=mat3)
-##'
-##' mod <- mrgsolve::house() %>% smat(mat1)
-##'
-##' smat(mod)
-##' smat(mod, make=TRUE)
-##' @export
+#' Manipulate SIGMA matrices
+#'
+#' The primary function is `smat()` which can be used to both get the 
+#' `$SIGMA` matrices out of a model object and to update `$SIGMA` 
+#' matrices in a model object.
+#'
+#' @param .x a matrix, list of matrices or `matlist` object.
+#' @param x  `matlist` object.
+#' @param labels character vector of names for `$SIGMA` elements; must be
+#' equal to number of rows/columns in the matrix.
+#' @param make logical; if `TRUE`, matrix list is rendered into a single matrix.
+#' @param ... passed to other functions, including [modMATRIX()].
+#' @param open passed to [merge.list()].
+#' 
+#' 
+#' @seealso [dmat()], [bmat()], [cmat()]
+#' 
+#' @examples
+#' ## example("sigma")
+#' mat1 <- matrix(1)
+#' mat2 <- diag(c(1,2))
+#' mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
+#' mat4 <- dmat(0.1, 0.2, 0.3, 0.4)
+#'
+#' smat(mat1)
+#' smat(mat1, mat2, mat3)
+#' smat(A=mat1, B=mat2, C=mat3)
+#'
+#' mod <- mrgsolve::house() %>% smat(mat1)
+#'
+#' smat(mod)
+#' smat(mod, make=TRUE)
+#' 
+#' @name sigma
+#' @rdname sigma
+#' @aliases smat SIGMA
+#' @md
+#' @export
 setGeneric("smat",function(.x,...) standardGeneric("smat"))
 
 ##' @export
@@ -202,17 +192,16 @@ setMethod("smat", "mrgsims", function(.x,make=FALSE,...) {
 
 #' Zero out random effects in a model object
 #' 
-#' Sets all elements of the OMEGA or SIGMA matrix to zero
+#' Sets all elements of the OMEGA or SIGMA matrix to zero.
 #' 
-#' @param .x a model object
+#' @param .x a model object.
 #' @param ... which matrix to zero out; pass `omega` to just zero out `omega`, 
-#' `sigma` to just zero out `sigma`; passing nothing will zero out both
+#' `sigma` to just zero out `sigma`; passing nothing will zero out both.
 #' 
 #' @return 
-#' An updated object with elements of OMEGA and / or SIGMA set to zero..
+#' An updated object with elements of OMEGA and/or SIGMA set to zero.
 #' 
 #' @examples
-#' 
 #' mod <- house()
 #' revar(mod)
 #' mod <- zero_re(mod)
@@ -244,8 +233,8 @@ setMethod("zero_re", "mrgmod", function(.x, ...) {
 
 #' Methods for working with matrix-list objects
 #'
-#' @param x a matlist object
-#' @param ... passed through to other methods
+#' @param x a matlist object.
+#' @param ... passed through to other methods.
 #'
 #' @name matlist
 #' @rdname matlist
@@ -254,7 +243,7 @@ NULL
 #' @param detailed if `TRUE`, then a simple list of matrices is returned; 
 #' otherwise, then entire `matlist` object data is returned along with the 
 #' name of the `class` (e.g. either `omegalist` or `sigmalist`) as well 
-#' as the `names` of the matrices
+#' as the `names` of the matrices.
 #' @md
 #' @rdname matlist
 #' @export
@@ -376,10 +365,10 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' updated, usually making it easier. This "collapsing" of the matrix list 
 #' is irreversible. 
 #' 
-#' @param x a `mrgmod` object
+#' @param x a model object.
 #' @param name a new name for the collapsed matrix; note that this is the 
 #' matrix name, not the labels which alias `ETA(n)` or `EPS(n)`; specifying a 
-#' name will only alter how this matrix is potentially updated in the future
+#' name will only alter how this matrix is potentially updated in the future.
 #' @param range numeric vector of length 2 specifying the range of matrices 
 #' to collapse in case there are more than 2. The second element may be `NA` 
 #' to indicate the length of the list of matrices. 
@@ -401,8 +390,8 @@ setMethod("c", "matlist", function(x,...,recursive=FALSE) {
 #' A model object with updated `OMEGA` or `SIGMA` matrix lists.
 #' 
 #' @seealso [collapse_matrix()]
-#' @md
 #' @rdname collapse_matrices
+#' @md
 #' @export
 collapse_omega <- function(x, range = NULL, name = NULL) {
   stopifnot(is.mrgmod(x))
@@ -437,7 +426,7 @@ collapse_sigma <- function(x, range = NULL, name = NULL) {
 #' @inheritParams collapse_omega
 #' @param x an object that inherits from `matlist`; this object is most
 #' frequently extracted from a model object using [omat()] or [smat()] for 
-#' `OMEGA` and `SIGMA`, respectively
+#' `OMEGA` and `SIGMA`, respectively.
 #' 
 #' @examples
 #' omega <- omat(list(dmat(1, 2), dmat(3, 4, 5)))

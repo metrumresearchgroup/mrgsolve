@@ -15,28 +15,27 @@ mcode_cache(
 )
 }
 \arguments{
-\item{model}{model name}
+\item{model}{model name.}
 
-\item{code}{character string specifying a \code{mrgsolve} model}
+\item{code}{character string specifying a \code{mrgsolve} model.}
 
-\item{project}{project name}
+\item{project}{project directory for the model.}
 
-\item{...}{passed to \code{\link{mread}}; see that help topic for other
-arguments that can be set}
+\item{...}{passed to \code{\link[=mread]{mread()}}; see that help topic for other arguments
+that can be set.}
 }
 \description{
-This is a convenience function that ultimately calls \code{\link{mread}}.
-Model code is written to a file and read back in using \code{\link{mread}}.
+This is a convenience function that ultimately calls \code{\link[=mread]{mread()}}.
+Model code is written to a file and read back in using \code{\link[=mread]{mread()}}.
 }
 \details{
-Note that the arguments are in slightly different order than 
-\code{\link{mread}}.  The default \code{project} is \code{tempdir()}.
+Note that the arguments are in slightly different order than
+\code{\link[=mread]{mread()}}.  The default \code{project} is \code{\link[=tempdir]{tempdir()}}.
 
-See the \code{\link{mread}} help topic for discussion about caching
-compilation results with \code{mcode_cache}.
+See the \code{\link[=mread]{mread()}} help topic for discussion about caching
+compilation results with \code{\link[=mcode_cache]{mcode_cache()}}.
 }
 \examples{
-
 \dontrun{ 
 code <- '
 $CMT DEPOT CENT
@@ -47,10 +46,10 @@ double V = 20;
 double KA = 1;
 '
 
-mod <- mcode("example",code)
+mod <- mcode("example", code, compile = FALSE)
 }
 
 }
 \seealso{
-\code{\link{mread}}, \code{\link{mread_cache}}
+\code{\link[=mread]{mread()}}, \code{\link[=mread_cache]{mread_cache()}}
 }

@@ -37,16 +37,16 @@ as_dmat(x, ...)
 as_cmat(x, ...)
 }
 \arguments{
-\item{x}{data frame or list}
+\item{x}{data frame or list.}
 
-\item{...}{arguments passed to \code{\link{dmat}} or \code{\link{bmat}}}
+\item{...}{arguments passed to \code{\link[=dmat]{dmat()}} or \code{\link[=cmat]{cmat()}}.}
 
-\item{pat}{regular expression, character}
+\item{pat}{regular expression, character.}
 
-\item{cols}{column names to use instead of \code{pat}}
+\item{cols}{column names to use instead of \code{pat}.}
 }
 \value{
-A numeric matrix for list and numeric methods.  For data.frames, 
+A numeric matrix for list and numeric methods.  For data.frames,
 a list of matrices are returned.
 }
 \description{
@@ -56,19 +56,18 @@ diagonal matrix (\code{d}), a block matrix (\code{b}), or a a correlation
 matrix (\code{c}).
 }
 \details{
-Use \code{as_dmat} to create a diagonal matrix, \code{as_bmat}
-to create a block matrix, and \code{as_cmat} to create a block 
+Use \code{as_dmat()} to create a diagonal matrix, \code{as_bmat()}
+to create a block matrix, and \code{as_cmat()} to create a block
 matrix where off-diagonal elements are understood to be correlations
-rather than covariances. \code{as_cmat} uses \code{as_bmat} to 
-form the matrix and then converts off-diagonal elements to 
+rather than covariances. \code{as_cmat()} uses \code{as_bmat()} to
+form the matrix and then converts off-diagonal elements to
 covariances before returning.
 
 The methods for \code{data.frame} will work down the rows
-of the data frame and make the appropriate matrix from 
+of the data frame and make the appropriate matrix from
 the data in each row.  The result is a list of matrices.
 }
 \examples{
-
 df <- data.frame(
   OMEGA1.1 = c(1,2),
   OMEGA2.1 = c(11,22),
@@ -83,5 +82,5 @@ as_dmat(df[1,],"OMEGA")
 
 }
 \seealso{
-\code{\link{bmat}}, \code{\link{dmat}}, \code{\link{cmat}}
+\code{\link[=bmat]{bmat()}}, \code{\link[=dmat]{dmat()}}, \code{\link[=cmat]{cmat()}}
 }

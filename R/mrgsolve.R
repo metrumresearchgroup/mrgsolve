@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -114,42 +114,42 @@ tgrid_id <- function(col,idata) {
 #' [mrgsim_variants] for other mrgsim-like functions that have more focused 
 #' inputs. `mrgsim_df` coerces output to data.frame prior to returning.
 #'
-#' @param x the model object
-#' @param data NMTRAN-like data set (see [data_set()])
+#' @param x the model object.
+#' @param data NMTRAN-like data set (see [data_set()]).
 #' @param idata a matrix or data frame of model parameters, 
-#' one parameter per row (see [idata_set()])
-#' @param events an event object
+#' one parameter per row (see [idata_set()]).
+#' @param events an event object.
 #' @param nid integer number of individuals to simulate; only used if 
-#' idata and data are missing
+#' idata and data are missing.
 #' @param ... passed to [mrgsolve::update()] and 
-#' [do_mrgsim()]
+#' [do_mrgsim()].
 #' 
-#' @return An object of class [mrgsims]
+#' @return An object of class [mrgsims].
 #' 
 #' 
 #' @details
 #' 
 #' - Use [mrgsim_df()] to return a data frame rather than 
-#' `mrgsims` object
+#' `mrgsims` object.
 #' 
 #' - Both `data` and `idata` will be coerced to numeric matrix
 #' 
 #' - `carry_out` can be used to insert data columns into the output 
 #' data set. This is partially dependent on the nature of the data brought 
-#' into the problem
+#' into the problem.
 #' 
 #' - When using `data` and `idata` together, an error is 
 #' generated if an  ID occurs in `data` but not `idata`.  
 #' Also, when looking up data in `idata`, ID in `idata` is 
 #' assumed to be uniquely keyed to ID in `data`.  No error is 
 #' generated if ID is duplicated in `data`; parameters will be used 
-#' from the first occurrence found in `idata`
+#' from the first occurrence found in `idata`.
 #'  
 #' - `carry_out`: `idata` is assumed to be individual-level and variables that 
 #' are carried from `idata` are repeated throughout the individual's simulated 
 #' data.  Variables carried from `data` are carried via last-observation carry 
 #' forward.  `NA` is returned from observations that are inserted into 
-#' simulated output that occur prior to the first record in `data`
+#' simulated output that occur prior to the first record in `data`.
 #' 
 #' - `recover`: this is similar to `carry_out` with respect to 
 #' end result, but it uses a different process.  Columns to be recovered are 
@@ -784,26 +784,33 @@ do_mrgsim <- function(x,
 
 #' Basic, simple simulation from model object
 #' 
-#' This is just a lighter version of [mrgsim()], with fewer options.  
-#' See `Details`.  
+#' This is just a lighter version of [mrgsim()], with fewer options but with 
+#' better efficiency in certain cases.  See **Details**.  
 #' 
 #' @inheritParams mrgsim
 #' 
-#' @param data can be either event object or data set
+#' @param data can be either event object or data set.
 #' @param output output data type; the default is `mrgsims`, which returns the 
 #' default output object; other options include `df` (for data.frame) or 
-#' `matrix`
+#' `matrix`.
 #' @param outvars output items to request; if missing, then only captured items 
-#' will be returned in the output
-#' @param Req synonym for outvars
+#' will be returned in the output.
+#' @param Req synonym for `outvars`.
 #' 
 #' @details
+#' `qsim()` mainly cuts some of the overhead from the simulation. So, the 
+#' primary efficiency gain from using `qsim()` comes when the simulation 
+#' executes very quickly. It is unlikely you will see a big performance
+#' difference between `qsim()` and [mrgsim()] when the model is difficult to 
+#' solve or if there is a large input data set. 
+#' 
 #' There is no pipeline interface for this function; all configuration options 
-#' (see `Arguments`) must be passed as formal arguments to the function.  
+#' (see **Arguments**) must be passed as formal arguments to the function.  
 #' You can't `carry_out`, `Request` specific columns, or pass items in for update.  
-#' Some other limitations, but only convenience-related.  See `Arguments` for 
+#' Some other limitations, but only convenience-related.  See **Arguments** for 
 #' available options.  Specifically, there is no `...` argument for this function.
 #' Use the [mrgsolve::update()] method to update the model object. 
+#' 
 #' 
 #' @examples
 #' 
@@ -816,7 +823,6 @@ do_mrgsim <- function(x,
 #' @seealso [mrgsim_q()], [mrgsim()], [mrgsim_variants]
 #' 
 #' @md
-#' 
 #' @export
 qsim <- function(x,
                  data,

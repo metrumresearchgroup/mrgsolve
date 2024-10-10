@@ -10,7 +10,7 @@ collapse_omega(x, range = NULL, name = NULL)
 collapse_sigma(x, range = NULL, name = NULL)
 }
 \arguments{
-\item{x}{a \code{mrgmod} object}
+\item{x}{a model object.}
 
 \item{range}{numeric vector of length 2 specifying the range of matrices
 to collapse in case there are more than 2. The second element may be \code{NA}
@@ -18,7 +18,7 @@ to indicate the length of the list of matrices.}
 
 \item{name}{a new name for the collapsed matrix; note that this is the
 matrix name, not the labels which alias \code{ETA(n)} or \code{EPS(n)}; specifying a
-name will only alter how this matrix is potentially updated in the future}
+name will only alter how this matrix is potentially updated in the future.}
 }
 \value{
 A model object with updated \code{OMEGA} or \code{SIGMA} matrix lists.

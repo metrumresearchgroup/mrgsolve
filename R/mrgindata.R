@@ -43,15 +43,16 @@ numeric_data_matrix <- function(x, quiet = FALSE) {
   x
 }
 
-##' Prepare data.frame for input to mrgsim
-##' 
-##' @param x a input data set
-##' @param quiet logical indicating whether or not warnings 
-##' should be printed
-##' @param convert_lgl if \code{TRUE}, convert logical 
-##' columns with \code{\link{as.integer}}
-##' 
-##' @export
+#' Prepare data.frame for input to mrgsim()
+#' 
+#' @param x a input data set.
+#' @param quiet logical indicating whether or not warnings 
+#' should be printed.
+#' @param convert_lgl if `TRUE`, convert logical 
+#' columns with [as.integer()].
+#' 
+#' @md
+#' @export
 numerics_only <- function(x, quiet = FALSE, convert_lgl = FALSE) {
   if(convert_lgl) {
     if(any(vapply(x,is.logical,TRUE))) {
@@ -101,43 +102,43 @@ check_dropped_cols <- function(dm, x, check, context) {
   )
 }
 
-##' Validate and prepare data sets for simulation
-##'
-##' This function is called by [mrgsim()] and friends to check and prepare 
-##' input data sets for simulation.  Users may also call this function to 
-##' pre-validate data when the same data set is used for repeated simulation.
-##'
-##' @param x data.frame or matrix.
-##' @param m a model object.
-##' @param verbose logical.
-##' @param quiet if `TRUE`, messages will be suppressed.
-##' 
-##' @details
-##' An error will be issued when
-##' - non-numeric data is found in columns sharing names with model parameters
-##' - non-numeric data is found in reserved data items related to dosing 
-##'   (see `mrgsolve:::GLOBALS$CARRY_TRAN`)
-##' - a column is found that is "internally classed", including columns that 
-##'   inherit from `integer64` (see [is.object()])
-##' 
-##' @return A matrix with non-numeric columns dropped; if x is a 
-##' data.frame with character `cmt` column comprised of valid 
-##' compartment names and `m` is a model object,
-##' the `cmt` column will be converted to the corresponding 
-##' compartment number.
-##' 
-##' @seealso [valid_idata_set()], [idata_set()], [data_set()]
-##' 
-##' @examples
-##' 
-##' mod <- mrgsolve::house()
-##' 
-##' data(exTheoph)
-##' 
-##' d <- valid_data_set(exTheoph, mod)
-##' 
-##' @md
-##' @export
+#' Validate and prepare data sets for simulation
+#'
+#' This function is called by [mrgsim()] and friends to check and prepare 
+#' input data sets for simulation.  Users may also call this function to 
+#' pre-validate data when the same data set is used for repeated simulation.
+#'
+#' @param x data.frame or matrix.
+#' @param m a model object.
+#' @param verbose logical.
+#' @param quiet if `TRUE`, messages will be suppressed.
+#' 
+#' @details
+#' An error will be issued when
+#' - non-numeric data is found in columns sharing names with model parameters
+#' - non-numeric data is found in reserved data items related to dosing 
+#'   (see `mrgsolve:::GLOBALS$CARRY_TRAN`)
+#' - a column is found that is "internally classed", including columns that 
+#'   inherit from `integer64` (see [is.object()])
+#' 
+#' @return A matrix with non-numeric columns dropped; if x is a 
+#' data.frame with character `cmt` column comprised of valid 
+#' compartment names and `m` is a model object,
+#' the `cmt` column will be converted to the corresponding 
+#' compartment number.
+#' 
+#' @seealso [valid_idata_set()], [idata_set()], [data_set()]
+#' 
+#' @examples
+#' 
+#' mod <- mrgsolve::house()
+#' 
+#' data(exTheoph)
+#' 
+#' d <- valid_data_set(exTheoph, mod)
+#' 
+#' @md
+#' @export
 valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   
   if(is.valid_data_set(x)) return(x)
@@ -223,26 +224,26 @@ valid_data_set <- function(x, m = NULL, verbose = FALSE, quiet = FALSE) {
   dm
 }
 
-##' Validate and prepare idata data sets for simulation
-##' 
-##' This function is called by [mrgsim()] and friends to check and prepare 
-##' input data sets for simulation.  Users may also call this function to 
-##' pre-validate data when the same data set is used for repeated simulation.
-##' 
-##' @return A numeric matrix with class `valid_idata_set`.
-##' 
-##' @inheritParams valid_data_set
-##' 
-##' @seealso [valid_data_set()], [idata_set()], [data_set()]
-##' 
-##' @details
-##' An error will be issued when
-##' - non-numeric data is found in columns sharing names with model parameters
-##' - a column is found that is internally classed, including columns that 
-##'   inherit from `integer64` (see [is.object()])
-##' 
-##' @md
-##' @export
+#' Validate and prepare idata data sets for simulation
+#' 
+#' This function is called by [mrgsim()] and friends to check and prepare 
+#' input data sets for simulation.  Users may also call this function to 
+#' pre-validate data when the same data set is used for repeated simulation.
+#' 
+#' @return A numeric matrix with class `valid_idata_set`.
+#' 
+#' @inheritParams valid_data_set
+#' 
+#' @seealso [valid_data_set()], [idata_set()], [data_set()]
+#' 
+#' @details
+#' An error will be issued when
+#' - non-numeric data is found in columns sharing names with model parameters
+#' - a column is found that is internally classed, including columns that 
+#'   inherit from `integer64` (see [is.object()])
+#' 
+#' @md
+#' @export
 valid_idata_set <- function(x, m, verbose = FALSE, quiet = FALSE) {
   
   if(verbose) quiet <- FALSE

@@ -22,7 +22,7 @@ uctran(data, ...)
 \method{uctran}{ev}(data, ...)
 }
 \arguments{
-\item{data}{a data set with nmtran-like format.}
+\item{data}{a data set with nmtran-like format or an event object.}
 
 \item{...}{for potential future use.}
 
@@ -30,9 +30,8 @@ uctran(data, ...)
 and lower case versions of any nmtran-like column in the data frame.}
 }
 \value{
-A data frame or event object with possibly renamed columns.
-
-The input data set, with select columns made lower case.
+A data frame or event object, with column names possibly converted to upper
+or lower case.
 }
 \description{
 Previous data set requirements included lower case names for data items

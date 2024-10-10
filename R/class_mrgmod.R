@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022 Metrum Research Group
+# Copyright (C) 2013 - 2024 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -379,7 +379,8 @@ as_pack_mod <- function(model, project, PACKAGE) {
 #' @param x any object
 #' 
 #' @examples
-#' is.mrgmod(house())
+#' mod <- mrgsolve::house()
+#' is.mrgmod(mod)
 #' 
 #' @return 
 #' `TRUE` if the object inherits from either `mrgmod` or `packmod` class.
@@ -405,7 +406,7 @@ setMethod("project", "packmod", function(x,...) {
 })
 
 #' @rdname cmtn
-#' @param tag compartment name
+#' @param tag compartment name.
 #' @export
 setMethod("cmtn", "mrgmod", function(x,tag,...) {
   return(which(cmt(x)==tag))
@@ -433,9 +434,9 @@ CAPTUREI <- function(x) c(length(x@capture),x@Icap-1L)
 #' This is also the directory where the model is built, which could be the 
 #' value of [tempdir()].
 #'
-#' @param x model object
-#' @param short logical; if `TRUE`, `soloc`s will
-#'  be rendered  with a short path name
+#' @param x model object.
+#' @param short logical; if `TRUE`, `soloc`s will be rendered  with a short 
+#' path name.
 #' 
 #' @examples
 #' mod <- mrgsolve::house()
@@ -490,16 +491,21 @@ setMethod("names", "mrgmod", function(x) {
 
 #' Coerce a model object to list
 #' 
-#' @param x mrgmod object
-#' @param deep if `TRUE`, extra information is returned
-#' (see details). 
-#' @param ... not used
+#' @param x a model object.
+#' @param deep if `TRUE`, extra information is returned in the output list
+#' (see **Details**). 
+#' @param ... not used.
 #' 
 #' @details 
-#' If `deep` is `TRUE`, then the values for
-#' `trans`,`advan`, and `mindt` are
-#' returned as well as a summary of internal model 
-#' functions (with a call to `mrgsolve:::funset`).
+#' If `deep` is `TRUE`, then the values for `trans`, `advan`, and `mindt` are
+#' returned as well as a summary of internal model functions (with a call to 
+#' `mrgsolve:::funset()`).
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' l <- as.list(mod)
+#' 
+#' @return A named list containing formatted contents from `x`.
 #' 
 #' @section Slots:
 #' - `npar`: number of parameters
@@ -836,9 +842,9 @@ all.equal.mrgmod <- function(target, current,...) {
 #' Outputs can include model compartments or variables defined in the model 
 #' that have been marked to `capture` in simulated output.
 #' 
-#' @param x mrgmod object
+#' @param x model object.
 #' @param unlist if `TRUE` then a character vector (rather than list) is 
-#' returned
+#' returned.
 #' 
 #' @return
 #' When `unlist` is `FALSE` (default) : a named list, with `cmt` showing names 
@@ -847,8 +853,8 @@ all.equal.mrgmod <- function(target, current,...) {
 #' of outvar names is returned.
 #' 
 #' @examples
-#' 
-#' outvars(mrgsolve::house())
+#' mod <- mrgsolve::house()
+#' outvars(mod)
 #' 
 #' @md
 #' @export

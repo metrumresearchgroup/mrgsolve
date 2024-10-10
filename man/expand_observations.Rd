@@ -7,16 +7,16 @@
 expand_observations(data, times, unique = FALSE, obs_pos = -1L)
 }
 \arguments{
-\item{data}{a data set or event object}
+\item{data}{a data set or event object.}
 
-\item{times}{a vector of observation times}
+\item{times}{a vector of observation times.}
 
-\item{unique}{`logical`; if `TRUE` then values for `time` are 
-dropped if they are found anywhere in `data`}
+\item{unique}{\code{logical}; if \code{TRUE} then values for \code{time} are
+dropped if they are found anywhere in \code{data}.}
 
-\item{obs_pos}{determines sorting order for observations; use `-1` (default)
-to put observations first; otherwise, use large integer to ensure 
-observations are placed after doses}
+\item{obs_pos}{determines sorting order for observations; use \code{-1} (default)
+to put observations first; otherwise, use large integer to ensure
+observations are placed after doses.}
 }
 \value{
 A data frame with additional rows for added observation records.

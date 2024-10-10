@@ -2,19 +2,19 @@
 % Please edit documentation in R/utils.R
 \name{simargs}
 \alias{simargs}
-\title{Access or clear arguments for calls to mrgsim}
+\title{Access or clear arguments for calls to mrgsim()}
 \usage{
 simargs(x, which = NULL, clear = FALSE, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{which}{character with length 1 naming a single arg to get}
+\item{which}{character with length 1 naming a single arg to get.}
 
 \item{clear}{logical indicating whether or not to clear \code{args} from
-the model object}
+the model object.}
 
-\item{...}{passed along}
+\item{...}{not used.}
 }
 \value{
 If \code{clear} is \code{TRUE}, the argument list is
@@ -23,7 +23,7 @@ list is returned.
 }
 \description{
 As a model object navigates a pipeline prior to simulation, arguments are
-collected to eventually be passed to \code{\link[=mrgsim]{mrgsim()}}. \code{simargs} lets you
+collected to eventually be passed to \code{\link[=mrgsim]{mrgsim()}}. \code{simargs()} lets you
 intercept and possibly clear those arguments.
 }
 \examples{

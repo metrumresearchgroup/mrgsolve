@@ -2,19 +2,19 @@
 % Please edit documentation in R/mrgindata.R
 \name{numerics_only}
 \alias{numerics_only}
-\title{Prepare data.frame for input to mrgsim}
+\title{Prepare data.frame for input to mrgsim()}
 \usage{
 numerics_only(x, quiet = FALSE, convert_lgl = FALSE)
 }
 \arguments{
-\item{x}{a input data set}
+\item{x}{a input data set.}
 
-\item{quiet}{logical indicating whether or not warnings 
-should be printed}
+\item{quiet}{logical indicating whether or not warnings
+should be printed.}
 
-\item{convert_lgl}{if \code{TRUE}, convert logical 
-columns with \code{\link{as.integer}}}
+\item{convert_lgl}{if \code{TRUE}, convert logical
+columns with \code{\link[=as.integer]{as.integer()}}.}
 }
 \description{
-Prepare data.frame for input to mrgsim
+Prepare data.frame for input to mrgsim()
 }

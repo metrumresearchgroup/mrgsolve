@@ -7,10 +7,10 @@
 soloc(x, short = FALSE)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{short}{logical; if \code{TRUE}, \code{soloc}s will
-be rendered  with a short path name}
+\item{short}{logical; if \code{TRUE}, \code{soloc}s will be rendered  with a short
+path name.}
 }
 \value{
 A string containing the full path to the model shared object.

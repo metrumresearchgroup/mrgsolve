@@ -10,33 +10,30 @@ ev_assign(l, idata, evgroup, join = FALSE)
 assign_ev(...)
 }
 \arguments{
-\item{l}{list of event objects}
+\item{l}{list of event objects.}
 
-\item{idata}{an idata set (one ID per row)}
+\item{idata}{an idata set (one ID per row).}
 
-\item{evgroup}{the character name of the column in \code{idata} 
-that specifies event object to implement}
+\item{evgroup}{the character name of the column in \code{idata} that specifies
+event object to implement.}
 
-\item{join}{if \code{TRUE}, join \code{idata} to the data set 
-before returning.}
+\item{join}{if \code{TRUE}, join \code{idata} to the data set before returning.}
 
-\item{...}{used to pass arguments from \code{assign_ev}
-to \code{ev_assign}}
+\item{...}{used to pass arguments from \code{assign_ev()}.
+to \code{ev_assign()}.}
 }
 \description{
 Replicate a list of events into a data set
 }
 \details{
-\code{ev_assign} connects events in a list passed in as the
-\code{l} argument to values in the data set identified in the 
-\code{evgroup} argument.  For making assignments, the unique 
-values in the \code{evgroup} column are first sorted so that 
-the first sorted unique value in \code{evgroup} is assigned 
-to the first event in \code{l}, the second sorted value in 
-\code{evgroup} column is assigned to the second event in 
-\code{l}, and so on.  This is a change from previous behavior, 
-which did not sort the unique values in \code{evgroup} prior to 
-making the assignments.
+\code{ev_assign()} connects events in a list passed in as the \code{l} argument to
+values in the data set identified in the \code{evgroup} argument.  For making
+assignments, the unique values in the \code{evgroup} column are first sorted so
+that the first sorted unique value in \code{evgroup} is assigned to the first
+event in \code{l}, the second sorted value in \code{evgroup} column is assigned to the
+second event in \code{l}, and so on.  This is a change from previous behavior,
+which did not sort the unique values in \code{evgroup} prior to making the
+assignments.
 }
 \examples{
 ev1 <- ev(amt = 100)

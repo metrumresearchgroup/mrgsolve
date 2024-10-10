@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,27 +15,39 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Check whether all required parameters needed in a model are present in an object
-#' @param x model object
-#' @param obj data.frame to pass to \code{\link{idata_set}} or \code{\link{data_set}}
-#' @param ... capture dplyr-style parameter requirements
+#' Check whether all required parameters needed in a model are present in an 
+#' object
+#' 
+#' This function has largely been superseded by [check_data_names()].
+#' 
+#' @param x model object.
+#' @param obj data.frame to pass to [idata_set()] or [data_set()].
+#' @param ... capture dplyr-style parameter requirements.
 #' @param .strict whether to stop execution if all requirements are present
-#'  (\code{TRUE}) 
-#' or just warn (\code{FALSE}); see details
-#' @examples \dontrun{
-#' inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
-#' inventory(mod, idata, everything()) # all parameters
-#' inventory(mod, idata, contains("OCC")) # all parameters containing OCC
-#' inventory(mod, idata, -F) # all parameters except F
+#'  (`TRUE`) or just warn (`FALSE`); see **Details**.
+#' 
+#' 
+#' @examples 
+#' \dontrun{
+#'   inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
+#'   inventory(mod, idata, everything()) # all parameters
+#'   inventory(mod, idata, contains("OCC")) # all parameters containing OCC
+#'   inventory(mod, idata, -F) # all parameters except F
 #' }
-#' @return original mrgmod
+#' 
+#' @return `x` is returned invisibly.
+#' 
 #' @details 
 #' If parameter requirements are not explicitly stated, the requirement defaults to 
-#' all parameter names in \code{x}.  Note that, by default,
-#' the inventory is not \code{.strict} unless the user explicitly
+#' all parameter names in `x`.  Note that, by default,
+#' the inventory is not `.strict` unless the user explicitly
 #' states the parameter requirement. That is, if parameter requirements are explicitly 
-#' stated, \code{.strict} will be set to \code{TRUE} if a value \code{.strict} was not
+#' stated, `.strict` will be set to `TRUE` if a value `.strict` was not
 #' passed in the call.
+#' 
+#' @seealso [check_data_names()]
+#' 
+#' @md
 #' @export
 inventory <- function(x, obj, ..., .strict = FALSE) {
   
@@ -254,7 +266,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' you call [check_data_names()]. User-defined tags are also possible, but you 
 #' will need to alert [check_data_names()] to look for them.
 #' 
-#' **Examples**
+#' **Model Specification Examples**
 #' 
 #' You can use the `$INPUT` block to add the `input` tag on these parameters
 #' 
@@ -277,7 +289,7 @@ check_data_names <- function(data, x, check_covariates = TRUE,
 #' ```
 #' 
 #' @examples
-#' mod <- house()
+#' mod <- mrgsolve::house()
 #' 
 #' param_tags(mod)
 #'

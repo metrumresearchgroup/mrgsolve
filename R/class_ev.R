@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -25,7 +25,7 @@
 #' If an event object, return `data` slot; otherwise, call as.data.frame. This 
 #' is supposed to be optimized for handling event objects. 
 #' 
-#' @param x An R object. 
+#' @param x an R object. 
 #' 
 #' @noRd
 to_data_frame <- function(x) {
@@ -90,12 +90,13 @@ is.ev <- function(x) {
   inherits(x, "ev")  
 }
 
-##' dplyr verbs for event objects
-##' 
-##' @param .data the event object
-##' @param ... passed to the \code{dplyr} function
-##' @rdname ev_dplyr
-##' @export
+#' dplyr verbs for event objects
+#' 
+#' @param .data the event object.
+#' @param ... passed to the `dplyr` function.
+#' @rdname ev_dplyr
+#' @md
+#' @export
 mutate.ev <- function(.data, ...) {
   input_cols <- names(match.call(expand.dots=TRUE))
   .data@data <- as.data.frame(mutate(.data@data, ...))
@@ -124,15 +125,15 @@ mutate.ev <- function(.data, ...) {
   .data
 }
 
-##' @rdname ev_dplyr
-##' @export
+#' @rdname ev_dplyr
+#' @export
 select.ev <- function(.data, ...) {
   .data@data <- as.data.frame(dplyr::select(.data@data, ...))
   .data 
 }
 
-##' @rdname ev_dplyr
-##' @export
+#' @rdname ev_dplyr
+#' @export
 filter.ev <-  function(.data, ...) {
   .data@data <- as.data.frame(dplyr::filter(.data@data, ...))
   .data

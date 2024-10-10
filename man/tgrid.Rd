@@ -33,34 +33,33 @@ tgrid(
 \S4method{stime}{mrgmod}(x, ...)
 }
 \arguments{
-\item{start}{simulation start time}
+\item{start}{simulation start time.}
 
-\item{end}{simulation end time}
+\item{end}{simulation end time.}
 
-\item{delta}{simulation time step}
+\item{delta}{simulation time step.}
 
-\item{add}{addition simulation times}
+\item{add}{addition simulation times.}
 
-\item{.offset}{the resulting set of times will be adjusted by this amount}
+\item{.offset}{the resulting set of times will be adjusted by this amount.}
 
-\item{.scale}{the resulting set of times will be scaled by this factor}
+\item{.scale}{the resulting set of times will be scaled by this factor.}
 
-\item{...}{passed on to other methods}
+\item{...}{not used.}
 
-\item{x}{tgrid object}
+\item{x}{tgrid object.}
 
 \item{object}{passed to show}
 }
 \description{
-simtime objects allow the user to specify simulation start and end times, 
+simtime objects allow the user to specify simulation start and end times,
 along with the simulation time step.
 }
 \examples{
+peak <- tgrid(0, 6, 0.2)
+sparse <- tgrid(0, 24, 4)
 
-peak <- tgrid(0,6,0.2)
-sparse <- tgrid(0,24,4)
-
-day1 <- c(peak,sparse)
+day1 <- c(peak, sparse)
 
 design <- c(day1, day1+72, day1+240)
 
@@ -69,7 +68,7 @@ mod <- mrgsolve::house()
 
 out <- mod \%>\% ev(amt=1000, ii=24, addl=10) \%>\% mrgsim(tgrid=design)
 
-plot(out,CP~., type='b')
+plot(out, CP ~ time, type = 'b')
 }
 }
 \keyword{internal}

@@ -10,31 +10,32 @@
 stime(x, ...)
 }
 \arguments{
-\item{x}{object of class mrgmod}
+\item{x}{a model object or a mrgsims object.}
 
-\item{...}{passed on}
+\item{...}{not used.}
 }
 \value{
-a sorted vector of unique times
+A sorted vector of unique simulation times from the time grid in
+the model object.
 }
 \description{
 Get the times at which the model will be evaluated
 }
 \details{
-Simulation times include the sequence of times created from 
-\code{start}, \code{end}, and \code{delta} and the vector of times
-found in \code{add}.  Making \code{end} negative will omit any 
-\code{start} / \code{end} / \code{delta} sequence.  Negative values 
-are discarded from the result.
+Simulation times include the sequence of times created from
+\code{start}, \code{end}, and \code{delta} and the vector of times found in \code{add}.
+
+Making \code{end} negative (e.g. -1) will omit the \code{start-end-delta}
+sequence.  Negative values are discarded from the result.
 }
 \examples{
-
 ## example("stime", package="mrgsolve")
 
-mod <- mrgsolve::house(end=12, delta=2, add=c(11,13,15))
+mod <- mrgsolve::house(end = 12, delta = 2, add = c(11,13,15))
 
 stime(mod)
 
+update(mod, end = -1) \%>\% stime()
 
 }
 \keyword{internal}

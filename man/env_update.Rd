@@ -7,11 +7,11 @@
 env_update(.x, ..., .dots = list())
 }
 \arguments{
-\item{.x}{model object}
+\item{.x}{a model object.}
 
-\item{...}{objects to update}
+\item{...}{objects to update.}
 
-\item{.dots}{list of objects to updated}
+\item{.dots}{list of objects to updated.}
 }
 \description{
 Update objects in model environment

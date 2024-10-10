@@ -7,7 +7,7 @@
 code(x)
 }
 \arguments{
-\item{x}{an mrgsolve model object}
+\item{x}{a model object.}
 }
 \value{
 A character vector of model code.
@@ -19,5 +19,8 @@ This function is currently not exported, so be sure to call it with
 \examples{
 mod <- mrgsolve::house()
 mrgsolve:::code(mod)
+
+# Alternative
+as.list(mod)$code
 
 }

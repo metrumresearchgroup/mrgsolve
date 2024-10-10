@@ -10,14 +10,14 @@ ev_seq(..., ID = NULL, .dots = NULL, id = NULL)
 \method{seq}{ev}(...)
 }
 \arguments{
-\item{...}{Event objects or numeric arguments named \code{wait} or \code{ii} to
-implement a period of no-dosing activity in the sequence (see details).}
+\item{...}{event objects or numeric arguments named \code{wait} or \code{ii} to
+implement a period of no-dosing activity in the sequence (see \strong{Details}).}
 
-\item{ID}{Numeric vector of subject IDs.}
+\item{ID}{numeric vector of subject IDs.}
 
-\item{.dots}{A list of event objects that replaces \code{...}.}
+\item{.dots}{a list of event objects that replaces \code{...}.}
 
-\item{id}{Deprecated; use \code{ID}.}
+\item{id}{deprecated; use \code{ID}.}
 }
 \value{
 A single event object sorted by \code{time}.
@@ -35,7 +35,7 @@ on the last row of the event object.
 
 The doses for the next event line start after all of the doses from the
 previous event line plus one dosing interval from the previous event line
-(see examples).
+(see \strong{Examples}).
 
 When numerics named \code{wait} or \code{ii} are mixed in with the event objects,
 a period with no dosing activity is incorporated into the sequence,
@@ -61,10 +61,9 @@ For now, both \code{ii} and \code{.ii} will be accepted but you will get a depre
 warning if you use \code{.ii}. Please use \code{ii} instead.
 
 Values for \code{time} in any event object act like a prefix time spacer wherever
-that event occurs in the event sequence (see examples).
+that event occurs in the event sequence (see \strong{Examples}).
 }
 \examples{
-
 e1 <- ev(amt = 100, ii = 12, addl = 1)
 
 e2 <- ev(amt = 200)

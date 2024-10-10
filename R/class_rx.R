@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,80 +15,80 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' @include class_ev.R
-##' @include events.R
+#' @include class_ev.R
+#' @include events.R
 NULL
 
-##' Create intervention objects from Rx input
-##' 
-##' See details below for Rx specification. Actual parsing is done
-##' by [parse_rx()]; this function can be used to debug Rx inputs.
-##' 
-##' @param x a model object or `character` Rx input. 
-##' @param y `character` Rx input; see details.
-##' @param df if `TRUE` then a data frame is returned.
-##' @param ... not used at this time.
-##' 
-##' @section Rx specification:
-##' 
-##' - The dose is found at the start of the string by sequential digits; this 
-##'   may be integer, decimal, or specified in scientific notation
-##' - Use `in` to identify the dosing compartment number; must be integer
-##' - Use `q` to identify the dosing interval; must be integer or 
-##'   decimal number (but not scientific notation)
-##' - Use `over` to indicate an infusion and its duration; integer or 
-##'   decimal number
-##' - Use `x` to indicate total number of doses; must be integer
-##' - Use `then` or `,` to separate dosing periods
-##' - Use `after` to insert a lag in the start of a period; integer or 
-##'   decimal number (but not scientific notation)
-##' - Use `&` to implement multiple doses at the same time
-##' 
-##' @return The method dispatched on model object (`mrgmod`) returns another
-##' model object.  The `character` method returns an event object.  The
-##' `parse_rx` function return a list named with arguments for the event 
-##' object constructor [ev()].
-##' 
-##' @examples
-##' # example("ev_rx")
-##' 
-##' ev_rx("100")
-##' 
-##' ev_rx("100 in 2")
-##' 
-##' ev_rx("100 q12 x 3")
-##' 
-##' ev_rx("100 over 2")
-##' 
-##' ev_rx("100 q 24 x 3 then 50 q12 x 2")
-##' 
-##' ev_rx("100 then 50 q 24 after 12")
-##' 
-##' ev_rx("100.2E-2 q4")
-##' 
-##' ev_rx("100 over 2.23")
-##' 
-##' ev_rx("100 q 12 x 3")
-##' 
-##' ev_rx("100 in 1 & 200 in 2") 
-##' 
-##' parse_rx("100 mg q 24 then 200 mg q12")
-##' 
-##' @md
-##' @rdname ev_rx
-##' @export
+#' Create intervention objects from Rx input
+#' 
+#' See details below for Rx specification. Actual parsing is done
+#' by [parse_rx()]; this function can be used to debug Rx inputs.
+#' 
+#' @param x a model object or `character` Rx input. 
+#' @param y `character` Rx input; see details.
+#' @param df if `TRUE` then a data frame is returned.
+#' @param ... not used at this time.
+#' 
+#' @section Rx specification:
+#' 
+#' - The dose is found at the start of the string by sequential digits; this 
+#'   may be integer, decimal, or specified in scientific notation
+#' - Use `in` to identify the dosing compartment number; must be integer
+#' - Use `q` to identify the dosing interval; must be integer or 
+#'   decimal number (but not scientific notation)
+#' - Use `over` to indicate an infusion and its duration; integer or 
+#'   decimal number
+#' - Use `x` to indicate total number of doses; must be integer
+#' - Use `then` or `,` to separate dosing periods
+#' - Use `after` to insert a lag in the start of a period; integer or 
+#'   decimal number (but not scientific notation)
+#' - Use `&` to implement multiple doses at the same time
+#' 
+#' @return The method dispatched on model object (`mrgmod`) returns another
+#' model object.  The `character` method returns an event object.  The
+#' `parse_rx` function return a list named with arguments for the event 
+#' object constructor [ev()].
+#' 
+#' @examples
+#' # example("ev_rx")
+#' 
+#' ev_rx("100")
+#' 
+#' ev_rx("100 in 2")
+#' 
+#' ev_rx("100 q12 x 3")
+#' 
+#' ev_rx("100 over 2")
+#' 
+#' ev_rx("100 q 24 x 3 then 50 q12 x 2")
+#' 
+#' ev_rx("100 then 50 q 24 after 12")
+#' 
+#' ev_rx("100.2E-2 q4")
+#' 
+#' ev_rx("100 over 2.23")
+#' 
+#' ev_rx("100 q 12 x 3")
+#' 
+#' ev_rx("100 in 1 & 200 in 2") 
+#' 
+#' parse_rx("100 mg q 24 then 200 mg q12")
+#' 
+#' @md
+#' @rdname ev_rx
+#' @export
 setGeneric("ev_rx", function(x,y,...) {
   standardGeneric("ev_rx")
 })
 
-##' @rdname ev_rx
-##' @export
+#' @rdname ev_rx
+#' @export
 setMethod("ev_rx", signature=c("mrgmod", "character"), function(x,y,...) {
   ev(x,ev_rx(y))
 })
 
-##' @rdname ev_rx
-##' @export
+#' @rdname ev_rx
+#' @export
 setMethod("ev_rx", signature=c("character","missing"), function(x, df = FALSE, 
                                                                 ...) {
   x <- parse_rx(x)
@@ -102,8 +102,8 @@ setMethod("ev_rx", signature=c("character","missing"), function(x, df = FALSE,
   return(x)
 })
 
-##' @rdname ev_rx
-##' @export
+#' @rdname ev_rx
+#' @export
 parse_rx <- function(x) {
   x <- strsplit(x, "then|,", perl = TRUE)[[1]]
   x <- trimws(x)

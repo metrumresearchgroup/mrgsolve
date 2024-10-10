@@ -14,13 +14,13 @@ read_nmext(
 )
 }
 \arguments{
-\item{run}{a run number or run identifier}
+\item{run}{a run number or run identifier.}
 
-\item{project}{the NONMEM project directory}
+\item{project}{the NONMEM project directory.}
 
-\item{file}{the \code{ext} file name}
+\item{file}{the \code{ext} file name.}
 
-\item{path}{full path and file name for \code{ext} file}
+\item{path}{full path and file name for \code{ext} file.}
 
 \item{read_fun}{function to read the \code{ext} file; \code{\link[data.table:fread]{data.table::fread()}} will
 be used if available; otherwise \code{\link[utils:read.table]{utils::read.table()}} is used.}
@@ -31,7 +31,7 @@ integer specifying the table number; in case there is exactly
 one table in the \code{.ext} file, pass the value "single" to bypass parsing
 the file to look for sub tables (this might be useful when BAYES analysis
 was performed as the only estimation method and there are 10000s of
-posterior samples in the file)}
+posterior samples in the file).}
 }
 \value{
 A list with param, omega, and sigma in a format ready to be used to

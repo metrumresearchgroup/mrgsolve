@@ -32,44 +32,40 @@
 \S4method{show}{mrgsims}(object)
 }
 \arguments{
-\item{x}{mrgsims object}
+\item{x}{mrgsims object.}
 
 \item{name}{name of column of simulated output to retain}
 
-\item{...}{passed to other functions}
+\item{...}{passed to other functions.}
 
-\item{row.names}{passed to \code{\link{as.data.frame}}}
+\item{row.names}{passed to \code{\link[=as.data.frame]{as.data.frame()}}.}
 
-\item{optional}{passed to \code{\link{as.data.frame}}}
+\item{optional}{passed to \code{\link[=as.data.frame]{as.data.frame()}}.}
 
-\item{object}{passed to show}
+\item{object}{passed to show.}
 }
 \description{
-These methods help the user view simulation output and extract 
-simulated data to work with further.  The methods listed here 
-for the most part have generics defined by R or other R packages.  
-See the \code{seealso} section for other methods defined 
-by \code{mrgsolve} that have their own documentation pages.
+These methods help the user view simulation output and extract
+simulated data to work with further.  The methods listed here
+for the most part have generics defined by R or other R packages.
+See the \strong{See Also} section for other methods defined
+by mrgsolve that have their own documentation pages.
 }
 \details{
-Most methods should behave as expected according to other method 
+Most methods should behave as expected according to other method
 commonly used in R (e.g. head, tail, as.data.frame, etc ...)
-
 \itemize{
-  \item{\code{$}} selects a column in the simulated data and 
-  returns numeric
-  \item{\code{head}} see \code{\link{head.matrix}}; returns 
-  simulated data
-  \item{\code{tail}} see \code{\link{tail.matrix}}; returns 
-  simulated data
-  \item{\code{dim}, \code{nrow}, \code{ncol}} returns dimensions, 
-  number of rows, and number of columns in simulated data
-  \item{\code{as.data.frame}} coerces simulated data to data.frame 
-  and returns the data.frame
-  \item{\code{as.matrix}} returns matrix of simulated data
-  \item{\code{summary}} coerces simulated data to data.frame 
-  and passes to \code{\link{summary.data.frame}}
-  \item{\code{plot}} plots simulated data; see \code{\link{plot_mrgsims}}
+\item \code{$} selects a column in the simulated data and
+returns numeric
+\item \code{head()} see \code{\link[=head.matrix]{head.matrix()}}; returns simulated data
+\item \code{tail()} see \code{\link[=tail.matrix]{tail.matrix()}}; returns simulated data
+\item \code{dim()}, \code{nrow()}, \code{ncol()} returns dimensions,
+number of rows, and number of columns in simulated data
+\item \code{as.data.frame()} coerces simulated data to data.frame
+\item \code{as.matrix()} returns matrix of simulated data
+\item \code{summary()} coerces simulated data to data.frame and passes to
+\code{\link[=summary.data.frame]{summary.data.frame()}}
+\item \code{\link[=plot]{plot()}} plots simulated data; see \link{plot_mrgsims}
 }
 }
 \examples{
@@ -100,12 +96,13 @@ out$CP
 }
 
 plot(out)
+
 \dontrun{
 plot(out, CP~.)
 plot(out, CP+RESP~time, scales="same", xlab="Time", main="Model sims")
 }
 }
 \seealso{
-\code{\link{stime}}
+\code{\link[=stime]{stime()}}
 }
 \keyword{internal}

@@ -7,18 +7,18 @@
 tscale(x, value = 1, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{value}{value by which time will be scaled}
+\item{value}{value by which time will be scaled.}
 
-\item{...}{passed along}
+\item{...}{not used.}
 }
 \description{
 Re-scale time in the simulated output
 }
 \details{
-There is also a \code{tscale} argument to \code{\link{mrgsim}} that can 
-be set to accomplish the same thing as a call to \code{tscale} in 
+There is also a \code{tscale} argument to \code{\link[=mrgsim]{mrgsim()}} that can
+be set to accomplish the same thing as a call to \code{tscale} in
 the pipeline.
 }
 \examples{
@@ -26,6 +26,6 @@ the pipeline.
 mod <- mrgsolve::house()
 
 # The output is in days:
-mod \%>\% tscale(1/24) \%>\% mrgsim
+mod \%>\% tscale(1/24) \%>\% mrgsim()
 
 }

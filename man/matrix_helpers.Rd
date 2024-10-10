@@ -14,20 +14,24 @@ cmat(..., digits = -1)
 dmat(...)
 }
 \arguments{
-\item{...}{matrix data}
+\item{...}{matrix data.}
 
-\item{correlation}{logical; if TRUE, off-diagonal elements are assumed 
-to be correlations and converted to covariances}
+\item{correlation}{logical; if \code{TRUE}, off-diagonal elements are assumed
+to be correlations and converted to covariances.}
 
-\item{digits}{if greater than zero, matrix is passed to signif (along 
-with digits) prior to returning}
+\item{digits}{if greater than zero, matrix is passed to \code{\link[=signif]{signif()}} (along
+with digits) prior to returning.}
+}
+\value{
+A matrix.
 }
 \description{
-Create matrices from vector input
+These functions are simple utilities for creating diagonal, block or
+correlation matrices.
 }
 \details{
-\code{bmat} makes a block matrix.  \code{cmat} makes a correlation matrix. 
-\code{dmat} makes a diagonal matrix.
+\code{bmat()} makes a block matrix. \code{cmat()} makes a correlation matrix.
+\code{dmat()} makes a diagonal matrix.
 }
 \examples{
 
@@ -39,7 +43,5 @@ cmat(0.5, 0.87,0.2)
 
 }
 \seealso{
-\code{\link{as_bmat}}
-
-\code{\link{as_dmat}}
+\code{\link[=as_bmat]{as_bmat()}}, \code{\link[=as_dmat]{as_dmat()}}
 }

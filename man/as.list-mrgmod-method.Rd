@@ -7,21 +7,23 @@
 \S4method{as.list}{mrgmod}(x, deep = FALSE, ...)
 }
 \arguments{
-\item{x}{mrgmod object}
+\item{x}{a model object.}
 
-\item{deep}{if \code{TRUE}, extra information is returned
-(see details).}
+\item{deep}{if \code{TRUE}, extra information is returned in the output list
+(see \strong{Details}).}
 
-\item{...}{not used}
+\item{...}{not used.}
+}
+\value{
+A named list containing formatted contents from \code{x}.
 }
 \description{
 Coerce a model object to list
 }
 \details{
-If \code{deep} is \code{TRUE}, then the values for
-\code{trans},\code{advan}, and \code{mindt} are
-returned as well as a summary of internal model
-functions (with a call to \code{mrgsolve:::funset}).
+If \code{deep} is \code{TRUE}, then the values for \code{trans}, \code{advan}, and \code{mindt} are
+returned as well as a summary of internal model functions (with a call to
+\code{mrgsolve:::funset()}).
 }
 \section{Slots}{
 
@@ -77,3 +79,8 @@ to compiling
 }
 }
 
+\examples{
+mod <- mrgsolve::house()
+l <- as.list(mod)
+
+}

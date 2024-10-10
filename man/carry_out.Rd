@@ -10,22 +10,31 @@ carry_out(x, ...)
 carry.out(x, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{...}{passed along}
+\item{...}{unquoted names of data items to copy into the simulated output.}
 }
 \description{
-When items named in this function are found in the input data set (either 
-\code{\link{data_set}} or \code{\link{idata_set}}), they are copied
+When items named in this function are found in the input data set (either
+\code{\link[=data_set]{data_set()}} or \code{\link[=idata_set]{idata_set()}}), they are copied
 into the simulated output.  Special items like \code{evid} or \code{amt} or
 the like are not copied from the data set per se, but they are copied from
 \code{datarecord} objects that are created during the simulation.
 }
 \details{
-There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can 
-be set to accomplish the same thing as a call to \code{carry_out} in 
-the pipeline.
+There is also a \code{carry_out} argument to \code{\link[=mrgsim]{mrgsim()}} that can be set to
+accomplish the same thing as a call to \code{carry_out} in the pipeline.
 
-\code{carry.out} and \code{carry_out}.  Using the underscore version is 
-now preferred.
+\code{carry.out} and \code{carry_out} both do the same thing; using the underscore
+version is now preferred.
+}
+\examples{
+mod <- mrgsolve::house()
+
+e <- ev(amt = 100, ii = 6, addl = 3, WT = 70, dose = amt)
+
+out <- mod \%>\% ev(e) \%>\% carry_out(amt, dose, WT) \%>\% mrgsim()
+
+head(out)
+
 }
