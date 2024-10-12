@@ -113,9 +113,6 @@ as_deslist <- function(data, descol="ID") {
 #' simtime objects allow the user to specify simulation start and end times, 
 #' along with the simulation time step.
 #'
-#' @rdname tgrid
-#' @name tgrid
-#'
 #' @param x tgrid object.
 #' @param start simulation start time.
 #' @param end simulation end time.

@@ -1,7 +1,7 @@
 template:
   bootstrap: 5
 title: mrgsolve
-url: https://github.com/metrumresearchgroup/mrgsolve
+url: https://mrgsolve.org
 # navbar:
 #   right:
 #   - icon: fa-github fa-lg

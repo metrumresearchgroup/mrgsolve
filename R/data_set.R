@@ -459,7 +459,7 @@ assign_ev <- function(...) ev_assign(...)
 #' @param ii inter-dose interval; intended use is to keep this at the 
 #' default value.
 #' @param unit time unit; the function can only currently handle hours or days.
-#' @param ... event objects named by one the valid days of the week 
+#' @param ... event objects named by one of the valid days of the week 
 #' (see **Details**).
 #' 
 #' @details
@@ -475,7 +475,7 @@ assign_ev <- function(...) ev_assign(...)
 #' 
 #' The whole purpose of this function is to schedule doses on specific
 #' days of the week, in a repeating weekly schedule.  Please do use caution 
-#' when changing `ii` from it's default value.
+#' when changing `ii` from its default value.
 #' 
 #' @examples
 #' 

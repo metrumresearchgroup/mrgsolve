@@ -17,7 +17,7 @@ obsonly(x, value = TRUE, ...)
 Collect only observation records in the simulated output
 }
 \details{
-There is also a `obsonly` argument to [mrgsim()] that can 
+There is also an `obsonly` argument to [mrgsim()] that can 
 be set to accomplish the same thing as a call to `obsonly()` in 
 the pipeline.
 }

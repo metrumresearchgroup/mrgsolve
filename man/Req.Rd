@@ -29,7 +29,7 @@ the pipeline.
 
 Note the difference between \code{req} and \code{Req}: the former only
 selects compartments to appear in output while the latter selects both
-compartments and captured items.  Also, when there are items are explicitly
+compartments and captured items.  Also, when there are items explicitly
 listed in \code{Req}, all other compartments or captured items not listed
 there are ignored.  But when compartments are selected with \code{req}
 all of the captured items are returned.  Remember that \code{req} is

@@ -32,7 +32,7 @@
 #' 
 #' Note the difference between `req` and `Req`: the former only 
 #' selects compartments to appear in output while the latter selects both 
-#' compartments and captured items.  Also, when there are items are explicitly
+#' compartments and captured items.  Also, when there are items explicitly
 #' listed in `Req`, all other compartments or captured items not listed
 #' there are ignored.  But when compartments are selected with `req`
 #' all of the captured items are returned.  Remember that `req` is 
@@ -137,7 +137,7 @@ tscale <- function(x,value=1,...) {
 #' @param ... not used.
 #' 
 #' @details
-#' There is also a `obsonly` argument to [mrgsim()] that can 
+#' There is also an `obsonly` argument to [mrgsim()] that can 
 #' be set to accomplish the same thing as a call to `obsonly()` in 
 #' the pipeline.
 #' 

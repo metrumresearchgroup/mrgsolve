@@ -26,7 +26,7 @@ default value.}
 
 \item{unit}{time unit; the function can only currently handle hours or days.}
 
-\item{...}{event objects named by one the valid days of the week
+\item{...}{event objects named by one of the valid days of the week
 (see \strong{Details}).}
 }
 \description{
@@ -49,7 +49,7 @@ Valid names of the week are:
 
 The whole purpose of this function is to schedule doses on specific
 days of the week, in a repeating weekly schedule.  Please do use caution
-when changing \code{ii} from it's default value.
+when changing \code{ii} from its default value.
 }
 \examples{
 
