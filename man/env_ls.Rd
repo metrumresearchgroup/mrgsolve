@@ -7,11 +7,11 @@
 env_ls(x, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{a model object.}
 
-\item{...}{passed to \code{\link{ls}}}
+\item{...}{passed to \code{\link[=ls]{ls()}}.}
 }
 \description{
-Each model keeps an internal environment that allows the user 
-to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
+Each model keeps an internal environment that allows the user
+to carry any \code{R} object along.  Objects are coded in \verb{$ENV}.
 }

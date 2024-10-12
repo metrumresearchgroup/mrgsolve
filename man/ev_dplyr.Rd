@@ -13,9 +13,9 @@
 \method{filter}{ev}(.data, ...)
 }
 \arguments{
-\item{.data}{the event object}
+\item{.data}{the event object.}
 
-\item{...}{passed to the \code{dplyr} function}
+\item{...}{passed to the \code{dplyr} function.}
 }
 \description{
 dplyr verbs for event objects

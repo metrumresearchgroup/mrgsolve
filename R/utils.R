@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -212,19 +212,28 @@ my_str_split <- function(string,pattern,n=3,fixed=FALSE,collapse=pattern) {
 #' Create template data sets for simulation
 #' 
 #' These functions expand all combinations of arguments using 
-#' [expand.grid()]. The result always has only one row for one individual.
-#' Use [expand.evd()] or [evd_expand()] to convert nmtran names (e.g. AMT
-#' or CMT) to upper case (see [uctran()]).
+#' [expand.grid()]. `expand.idata()` generates an `idata` set; the others 
+#' generate a full data set. The result always has only one row for one 
+#' individual. Use `expand.evd()` or `evd_expand()` to render NMTRAN names 
+#' (e.g. `AMT` or `CMT`) in upper case.
 #'
-#' @param ... passed to [expand.grid()]
+#' @param ... passed to [expand.grid()].
 #' 
 #' @details
-#' An ID column is added as `seq(nrow(ans))` if not supplied by the user. For 
-#' `expand.ev`, defaults also added include `cmt = 1`, `time = 0`, `evid = 1`.  
-#' If `total` is included, then `addl` is derived as `total` - 1. If `tinf` is 
-#' included, then an infusion rate is derived for row where `tinf` is greater 
-#' than zero.
-#'
+#' An ID column is added as if not supplied by the user. In the output data 
+#' frame, ID is always re-written as the row number.
+#' 
+#' For `expand.ev()`, defaults also added include `cmt = 1`, `time = 0`, 
+#' `evid = 1`. If `total` is included, then `addl` is derived as `total-1`. 
+#' If `tinf` is included, then an infusion rate is derived for row where 
+#' `tinf` is greater than zero.
+#' 
+#' `ev_expand()` is a synonym for `expand.ev()` and `evd_expand()` is a 
+#' synonym for `expand.evd()`. 
+#' 
+#' @return A data frame containing one row for each combination of the items
+#' passed in `...`. The result always has ID set to the row number. 
+#' 
 #' @examples
 #' idata <- expand.idata(CL = c(1,2,3), VC = c(10,20,30))
 #'
@@ -321,28 +330,28 @@ cvec.character <- as.cvec
 ##' @keywords internal
 s_ <- function(...) as.character(match.call(expand.dots=TRUE))[-1] #nocov
 
-##' Access or clear arguments for calls to mrgsim
-##' 
-##' As a model object navigates a pipeline prior to simulation, arguments are
-##' collected to eventually be passed to [mrgsim()]. `simargs` lets you 
-##' intercept and possibly clear those arguments.
-##'
-##' @param x model object
-##' @param clear logical indicating whether or not to clear `args` from 
-##' the model object
-##' @param which character with length 1 naming a single arg to get
-##' @param ... passed along
-##' 
-##' @return If `clear` is `TRUE`, the argument list is 
-##' cleared and the model object is returned.  Otherwise, the argument 
-##' list is returned.
-##' 
-##' @examples
-##' mod <- mrgsolve::house()
-##' mod %>% Req(CP, RESP) %>% carry_out(evid, WT, FLAG) %>% simargs()
-##' 
-##' @md
-##' @export
+#' Access or clear arguments for calls to mrgsim()
+#' 
+#' As a model object navigates a pipeline prior to simulation, arguments are
+#' collected to eventually be passed to [mrgsim()]. `simargs()` lets you 
+#' intercept and possibly clear those arguments.
+#'
+#' @param x model object.
+#' @param clear logical indicating whether or not to clear `args` from 
+#' the model object.
+#' @param which character with length 1 naming a single arg to get.
+#' @param ... not used. 
+#' 
+#' @return If `clear` is `TRUE`, the argument list is 
+#' cleared and the model object is returned.  Otherwise, the argument 
+#' list is returned.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' mod %>% Req(CP, RESP) %>% carry_out(evid, WT, FLAG) %>% simargs()
+#' 
+#' @md
+#' @export
 simargs <- function(x, which = NULL, clear = FALSE,...) {
   
   if(clear) {
@@ -365,9 +374,9 @@ build_path <- function(x) {
   return(x)
 }
 
-##' Set RNG to use L'Ecuyer-CMRG
-##'
-##' @export
+#' Set RNG to use L'Ecuyer-CMRG
+#'
+#' @export
 mcRNG <- function() base::RNGkind("L'Ecuyer-CMRG")
 
 as_character_args <- function(x) {

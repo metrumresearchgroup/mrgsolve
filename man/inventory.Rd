@@ -2,40 +2,44 @@
 % Please edit documentation in R/inven.R
 \name{inventory}
 \alias{inventory}
-\title{Check whether all required parameters needed in a model are present in an object}
+\title{Check whether all required parameters needed in a model are present in an
+object}
 \usage{
 inventory(x, obj, ..., .strict = FALSE)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{obj}{data.frame to pass to \code{\link{idata_set}} or \code{\link{data_set}}}
+\item{obj}{data.frame to pass to \code{\link[=idata_set]{idata_set()}} or \code{\link[=data_set]{data_set()}}.}
 
-\item{...}{capture dplyr-style parameter requirements}
+\item{...}{capture dplyr-style parameter requirements.}
 
 \item{.strict}{whether to stop execution if all requirements are present
- (\code{TRUE}) 
-or just warn (\code{FALSE}); see details}
+(\code{TRUE}) or just warn (\code{FALSE}); see \strong{Details}.}
 }
 \value{
-original mrgmod
+\code{x} is returned invisibly.
 }
 \description{
-Check whether all required parameters needed in a model are present in an object
+This function has largely been superseded by \code{\link[=check_data_names]{check_data_names()}}.
 }
 \details{
-If parameter requirements are not explicitly stated, the requirement defaults to 
+If parameter requirements are not explicitly stated, the requirement defaults to
 all parameter names in \code{x}.  Note that, by default,
 the inventory is not \code{.strict} unless the user explicitly
-states the parameter requirement. That is, if parameter requirements are explicitly 
+states the parameter requirement. That is, if parameter requirements are explicitly
 stated, \code{.strict} will be set to \code{TRUE} if a value \code{.strict} was not
 passed in the call.
 }
 \examples{
 \dontrun{
-inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
-inventory(mod, idata, everything()) # all parameters
-inventory(mod, idata, contains("OCC")) # all parameters containing OCC
-inventory(mod, idata, -F) # all parameters except F
+  inventory(mod, idata, CL:V) # parameters defined, inclusively, CL through Volume 
+  inventory(mod, idata, everything()) # all parameters
+  inventory(mod, idata, contains("OCC")) # all parameters containing OCC
+  inventory(mod, idata, -F) # all parameters except F
 }
+
+}
+\seealso{
+\code{\link[=check_data_names]{check_data_names()}}
 }

@@ -23,17 +23,17 @@ mrgsim_i(x, idata, data = NULL, events = NULL, ...)
 mrgsim_0(x, idata = NULL, data = NULL, events = NULL, ...)
 }
 \arguments{
-\item{x}{the model object}
+\item{x}{the model object.}
 
-\item{events}{an event object}
+\item{events}{an event object.}
 
 \item{idata}{a matrix or data frame of model parameters,
-one parameter per row (see \code{\link[=idata_set]{idata_set()}})}
+one parameter per row (see \code{\link[=idata_set]{idata_set()}}).}
 
-\item{data}{NMTRAN-like data set (see \code{\link[=data_set]{data_set()}})}
+\item{data}{NMTRAN-like data set (see \code{\link[=data_set]{data_set()}}).}
 
 \item{...}{passed to \code{\link[=update]{update()}} and
-\code{\link[=do_mrgsim]{do_mrgsim()}}}
+\code{\link[=do_mrgsim]{do_mrgsim()}}.}
 }
 \description{
 These functions are called by \code{\link[=mrgsim]{mrgsim()}} and have

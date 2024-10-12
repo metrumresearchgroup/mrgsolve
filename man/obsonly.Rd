@@ -2,22 +2,22 @@
 % Please edit documentation in R/chain.R
 \name{obsonly}
 \alias{obsonly}
-\title{Collect only observations in the simulated output}
+\title{Collect only observation records in the simulated output}
 \usage{
 obsonly(x, value = TRUE, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{value}{the value for \code{obsonly}}
+\item{value}{use `TRUE` to collect and return observation records only.}
 
-\item{...}{passed along}
+\item{...}{not used.}
 }
 \description{
-Collect only observations in the simulated output
+Collect only observation records in the simulated output
 }
 \details{
-There is also a \code{obsonly} argument to \code{\link{mrgsim}} that can 
-be set to accomplish the same thing as a call to \code{obsonly} in 
+There is also an `obsonly` argument to [mrgsim()] that can 
+be set to accomplish the same thing as a call to `obsonly()` in 
 the pipeline.
 }

@@ -10,10 +10,19 @@ revar(x, ...)
 \S4method{revar}{mrgmod}(x, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{...}{passed along}
+\item{...}{passed along.}
+}
+\value{
+A named list containing \code{omega} and \code{sigma} matrices.
 }
 \description{
-Get model random effect variances and covariances
+Use this function to extract both OMEGA and SIGMA matrices from a
+model object. Typical use is for display on the R console.
+}
+\examples{
+mod <- mrgsolve::house()
+revar(mod)
+
 }

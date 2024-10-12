@@ -28,7 +28,7 @@ or \code{covariates} as these will automatically be expected on input data when
 you call \code{\link[=check_data_names]{check_data_names()}}. User-defined tags are also possible, but you
 will need to alert \code{\link[=check_data_names]{check_data_names()}} to look for them.
 
-\strong{Examples}
+\strong{Model Specification Examples}
 
 You can use the \verb{$INPUT} block to add the \code{input} tag on these parameters
 
@@ -50,7 +50,7 @@ FFLAG = 1, DFLAG = 0
 }
 
 \examples{
-mod <- house()
+mod <- mrgsolve::house()
 
 param_tags(mod)
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,82 +17,87 @@
 
 
 
-##' Simulate from a model object with quicker turnaround
-##' 
-##' Use the function when you would usually use \code{\link{mrgsim_d}}, 
-##' but you need a quicker turnaround time.  The timing differences 
-##' might be difficult to detect for a single simulation run
-##' but could become appreciable with repeated simulation.  See
-##' \code{details} for important differences in how \code{\link{mrgsim_q}}
-##' is invoked compared to \code{\link{mrgsim}} and \code{\link{mrgsim_d}}.  
-##' This function should always be used for benchmarking simulation time with
-##' mrgsolve.
-##' 
-##' 
-##' @param x a model object.
-##' @param data a simulation data set.
-##' @param recsort record sorting flag.
-##' @param stime a numeric vector of observation times; these observation
-##' times will only be added to the output if there are no observation
-##' records in \code{data}.
-##' @param skip_init_calc don't use \code{$MAIN} to calculate initial conditions.
-##' @param output output data type; if \code{mrgsims}, then the default output
-##' object is returned; if \code{"df"} then a data frame is returned.
-##' @param simcall not used; only the default value of 0 is allowed. 
-##' @param etasrc source for ETA() values in the model; values can include: 
-##' "omega", `"data"`, `"data.all"`, `"idata"`, or `"idata.all"`; see 
-##' 'Details' in [mrgsim()]. 
-##' 
-##' @details
-##' 
-##' This function does not support the piped simulation workflow.  All
-##' arguments must be passed into the function except for \code{x}.  
-##' 
-##' A data set is required for this simulation workflow.  The 
-##' data set can have only dosing records or doses with observations.
-##' When the data set only includes doses, a single numeric vector of 
-##' observation times should be passed in.  
-##' 
-##' This simulation workflow does not support \code{Req} (request) 
-##' functionality.  All compartments and captured variables will 
-##' always be returned in the simulation output.
-##' 
-##' This simulation workflow does not support carry-out functionality.
-##' 
-##' This simulation workflow does not accept arguments to be passed
-##' to \code{\link[mrgsolve]{update}}. This must be done by a separate
-##' call to \code{\link[mrgsolve]{update}}.
-##' 
-##' This simulation workflow does not support use of event objects.  If 
-##' an event object is needed, it should be converted to a data set 
-##' prior to the simulation run (see \code{as_data_set} or 
-##' \code{\link{as.data.frame.ev}}.
-##' 
-##' This simulation workflow does not support idata sets or any 
-##' feature enabled by idata set use.  Individual level parameters
-##' should be joined onto the data set prior to simulation.  Otherwise
-##' \code{\link{mrgsim_i}} or \code{\link{mrgsim_ei}} should be used.
-##' 
-##' By default, a mrgsims object is returned (as with \code{\link{mrgsim}}). 
-##' Use the \code{output="df"} argument to request a plain 
-##' data.frame of simulated data on return.
-##' 
-##' @return
-##' By default, an object of class `mrgsims`. Use `output = "df"` to return 
-##' a data frame.
-##' 
-##' @examples
-##' 
-##' mod <- mrgsolve::house()
-##' 
-##' data <- expand.ev(amt = c(100, 300, 1000))
-##' 
-##' out <- mrgsim_q(mod, data)
-##' 
-##' out
-##' 
-##' @seealso \code{\link{mrgsim}}, \code{\link{mrgsim_variants}}, \code{\link{qsim}}
-##' @export
+#' Simulate from a model object with quicker turnaround
+#' 
+#' Use the function when you would usually use [mrgsim_d()], 
+#' but you need a quicker turnaround time.  The timing differences 
+#' might be difficult to detect for a single simulation run
+#' but could become appreciable with repeated simulation.  See
+#' **Details** for important differences in how `mrgsim_q()`
+#' is invoked compared to [mrgsim()] and [mrgsim_d()].  
+#' This function should always be used for benchmarking simulation time with
+#' mrgsolve.
+#' 
+#' 
+#' @param x a model object.
+#' @param data a simulation data set.
+#' @param recsort record sorting flag.
+#' @param stime a numeric vector of observation times; these observation
+#' times will only be added to the output if there are no observation
+#' records in `data`.
+#' @param skip_init_calc don't use `$MAIN` to calculate initial conditions.
+#' @param output output data type; if `"mrgsims", then the default output
+#' object is returned; if `"df"` then a data frame is returned.
+#' @param simcall not used; only the default value of 0 is allowed. 
+#' @param etasrc source for ETA() values in the model; values can include: 
+#' "omega", `"data"`, `"data.all"`, `"idata"`, or `"idata.all"`; see 
+#' 'Details' in [mrgsim()]. 
+#' 
+#' @details
+#' `mrgsim_q()` mainly cuts some of the overhead from the simulation. So, the 
+#' primary efficiency gain from using `mrgsim_q()` comes when the simulation 
+#' executes very quickly. It is unlikely you will see a big performance
+#' difference between `mrgsim_q()` and [mrgsim()] when the model is difficult to 
+#' solve or if there is a large input data set. 
+#' 
+#' This function does not support the piped simulation workflow.  All
+#' arguments must be passed into the function except for `x`.  
+#' 
+#' A data set is required for this simulation workflow.  The 
+#' data set can have only dosing records or doses with observations.
+#' When the data set only includes doses, a single numeric vector of 
+#' observation times should be passed in.  
+#' 
+#' This simulation workflow does not support `Req` (request) 
+#' functionality.  All compartments and captured variables will 
+#' always be returned in the simulation output.
+#' 
+#' This simulation workflow does not support carry-out functionality.
+#' 
+#' This simulation workflow does not accept arguments to be passed
+#' to [mrgsolve::update()]. This must be done by a separate
+#' call to [mrgsolve::update()].
+#' 
+#' This simulation workflow does not support use of event objects.  If 
+#' an event object is needed, it should be converted to a data set 
+#' prior to the simulation run (see [as_data_set()] or 
+#' [as.data.frame()]).
+#' 
+#' This simulation workflow does not support idata sets or any 
+#' feature enabled by `idata` set use.  Individual level parameters
+#' should be joined onto the data set prior to simulation.  Otherwise
+#' [mrgsim_i()] or [mrgsim_ei()] should be used.
+#' 
+#' By default, a mrgsims object is returned (as with [mrgsim()]). 
+#' Use the `output = "df"` argument to request a plain 
+#' data.frame of simulated data on return.
+#' 
+#' @return
+#' By default, an object of class `mrgsims`. Use `output = "df"` to return 
+#' a data frame.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' 
+#' data <- expand.ev(amt = c(100, 300, 1000))
+#' 
+#' out <- mrgsim_q(mod, data)
+#' 
+#' out
+#' 
+#' @seealso [mrgsim()], [mrgsim_variants], [qsim()]
+#' @md
+#' @export
 mrgsim_q <- function(x,
                      data,
                      recsort = 1,

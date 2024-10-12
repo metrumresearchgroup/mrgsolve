@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,33 +16,34 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Re-evaluate the code in the ENV block
-##' 
-##' The \code{$ENV} block is a block of R code that can 
-##' realize any sort of R object that might be used in running 
-##' a model.
-##' 
-##' @seealso \code{\link{env_get}}, \code{\link{env_ls}}
-##' 
-##' @param x model object
-##' @param seed passed to \code{\link{set.seed}} if a numeric value is supplied
-##' 
-##' @export
+#' Re-evaluate the code in the ENV block
+#' 
+#' The `$ENV` block is a block of R code that can realize any sort of R object 
+#' that might be used in running a model.
+#' 
+#' @seealso [env_get()], [env_ls()]
+#' 
+#' @param x a model object.
+#' @param seed passed to [set.seed()] if a numeric value is supplied.
+#' 
+#' @md
+#' @export
 env_eval <- function(x,seed=NULL) {
   if(is.numeric(seed)) set.seed(seed)
   eval_ENV_block(x=x@envir$.code,where=project(x),envir=x@envir)
   return(invisible(x))
 }
 
-##' List objects in the model environment
-##' 
-##' Each model keeps an internal environment that allows the user 
-##' to carry any \code{R} object along.  Objects are coded in \code{$ENV}.
-##' 
-##' @param x model object
-##' @param ... passed to \code{\link{ls}}
-##' 
-##' @export
+#' List objects in the model environment
+#' 
+#' Each model keeps an internal environment that allows the user 
+#' to carry any `R` object along.  Objects are coded in `$ENV`.
+#' 
+#' @param x a model object.
+#' @param ... passed to [ls()].
+#' 
+#' @md
+#' @export
 env_ls <- function(x,...) {
   objects <- ls(x@envir,...)
   cl <- sapply(objects,function(o) {
@@ -53,12 +54,13 @@ env_ls <- function(x,...) {
   arrange__(ans, .dots=c("class"))
 }
 
-##' Return model environment
-##' 
-##' @param x model object
-##' @param tolist should the environment be coerced to \code{list}?
-##' 
-##' @export
+#' Return model environment
+#' 
+#' @param x a model object.
+#' @param tolist should the environment be coerced to `list`?
+#' 
+#' @md
+#' @export
 env_get <- function(x,tolist=TRUE) {
   if(tolist) {
     return(as.list(x@envir))  
@@ -67,19 +69,20 @@ env_get <- function(x,tolist=TRUE) {
   }
 }
 
-##' @rdname env_get
-##' @export
+#' @rdname env_get
+#' @export
 env_get_env <- function(x) {
   x@envir 
 }
 
-##' Update objects in model environment
-##' 
-##' @param .x model object
-##' @param .dots list of objects to updated
-##' @param ... objects to update
-##' 
-##' @export
+#' Update objects in model environment
+#' 
+#' @param .x a model object.
+#' @param .dots list of objects to updated.
+#' @param ... objects to update.
+#' 
+#' @md
+#' @export
 env_update <- function(.x,...,.dots=list()) {
   right <- c(list(...),.dots)
   left <- as.list(.x@envir)
@@ -87,16 +90,17 @@ env_update <- function(.x,...,.dots=list()) {
   return(invisible(.x))
 }
 
-##' Run the model cama function
-##' 
-##' @param mod model object
-##' @param fn function name
-##' @param ... passed to update
-##' 
-##' @details \code{sah-mah}
-##' 
-##' @keywords internal
-##' @export
+#' Run the model cama function
+#' 
+#' @param mod a model object.
+#' @param fn function name.
+#' @param ... passed to update.
+#' 
+#' @details `sah-mah`
+#' 
+#' @keywords internal
+#' @md
+#' @export
 cama <- function(mod,fn="cama",...) {
   stop("this function is deprecated.")
   # object_exists(fn, mod@envir, "function", inherits=FALSE)

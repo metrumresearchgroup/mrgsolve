@@ -10,15 +10,18 @@ see(x, ...)
 \S4method{see}{mrgmod}(x, raw = FALSE, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{...}{passed along}
+\item{...}{not used.}
 
-\item{raw}{return the raw code}
+\item{raw}{return the raw code.}
 }
 \value{
-invisible NULL
+\code{NULL} is returned invisibly when \code{raw} is \code{FALSE}; when \code{raw} is
+set to \code{TRUE}, the model code is returned as a character vector.
 }
 \description{
-Print model code to the console
+This is a simple way to display the model code on the R console using
+the model object. The \code{raw} argument will return the model code as a
+character vector.
 }

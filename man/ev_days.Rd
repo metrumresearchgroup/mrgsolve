@@ -14,29 +14,29 @@ ev_days(
 )
 }
 \arguments{
-\item{ev}{an event object}
+\item{ev}{an event object.}
 
 \item{days}{comma- or space-separated character string of valid days of the
-the week (see details)}
+the week (see details).}
 
-\item{addl}{additional doses to administer}
+\item{addl}{additional doses to administer.}
 
-\item{ii}{inter-dose interval; intended use is to keep this at the 
-default value}
+\item{ii}{inter-dose interval; intended use is to keep this at the
+default value.}
 
-\item{unit}{time unit; the function can only currently handle hours or days}
+\item{unit}{time unit; the function can only currently handle hours or days.}
 
-\item{...}{event objects named by one the valid days of the week (see details)}
+\item{...}{event objects named by one of the valid days of the week
+(see \strong{Details}).}
 }
 \description{
-This function lets you schedule doses on specific 
-days of the week, allowing you to create dosing 
+This function lets you schedule doses on specific
+days of the week, allowing you to create dosing
 regimens on Monday/Wednesday/Friday, or Tuesday/Thursday,
 or every other day (however you want to define that) etc.
 }
 \details{
-Valid names of the week are: 
-
+Valid names of the week are:
 \itemize{
 \item \code{m} for Monday
 \item \code{t} for Tuesday
@@ -48,16 +48,17 @@ Valid names of the week are:
 }
 
 The whole purpose of this function is to schedule doses on specific
-days of the week, in a repeating weekly schedule.  Please do use caution 
-when changing \code{ii} from it's default value.
+days of the week, in a repeating weekly schedule.  Please do use caution
+when changing \code{ii} from its default value.
 }
 \examples{
 
 # Monday, Wednesday, Friday x 4 weeks
-ev_days(ev(amt=100), days="m,w,f", addl=3)
+e1 <- ev(amt = 100)
+ev_days(e1, days="m,w,f", addl = 3)
 
 # 50 mg Tuesdays, 100 mg Thursdays x 6 months
-ev_days(t=ev(amt=50), th=ev(amt=100), addl=23)
-
+e2 <- ev(amt = 50)
+ev_days(t = e2, th = e1, addl = 23)
 
 }

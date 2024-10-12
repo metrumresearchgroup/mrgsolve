@@ -19,21 +19,21 @@ realize_addl(x, ...)
 \method{realize_addl}{ev}(x, ...)
 }
 \arguments{
-\item{x}{a \code{data_set} data frame or an event object (see details)}
+\item{x}{a \code{data_set} data frame or an event object (see \strong{Details}).}
 
-\item{...}{not used}
+\item{...}{not used.}
 
 \item{warn}{if \code{TRUE} a warning is issued if no \code{ADDL} or
-\code{addl} column is found}
+\code{addl} column is found.}
 
-\item{mark_new}{if \code{TRUE}, a flag is added to indicate new columns}
+\item{mark_new}{if \code{TRUE}, a flag is added to indicate new columns.}
 
 \item{fill}{specifies how to handle non-dose related data columns
 in new data set records; this option is critical when handling
-data sets with time-varying, non-dose-related data items; see details}
+data sets with time-varying, non-dose-related data items; see \strong{Details}.}
 }
 \value{
-A \code{data_set} data.frame or event object, consistent with the type of \code{x}.
+A data.frame or event object, consistent with the type of \code{x}.
 The \code{ii} and \code{addl} columns will all be set to zero. The result is always
 ungrouped.
 }
@@ -52,7 +52,7 @@ ungrouped.
 
 Use caution when passing in data that has non-dose-related data
 columns that vary within a subject and pay special attention
-to the \code{fill} argument. By definition, \code{realize_addl}
+to the \code{fill} argument. By definition, \code{realize_addl()}
 will add new rows to your data frame and it is not obvious
 how the non-dose-related data should be handled in these new
 rows.  When \code{inherit} is chosen, the new records have

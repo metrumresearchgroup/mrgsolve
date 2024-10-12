@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -44,21 +44,23 @@ setClass("batch_mrgsims",contains="mrgsims",
 )
 
 
-##' Check if an object is mrgsim output
-##' 
-##' @param x any object
-##' 
-##' @return \code{TRUE} if \code{x} inherits \code{mrgsims}.
-##' 
-##' @export
+#' Check if an object is mrgsims output
+#' 
+#' @param x any object.
+#' 
+#' @return `TRUE` if `x` inherits `mrgsims`.
+#' 
+#' @md
+#' @export
 is.mrgsims <- function(x) inherits(x,"mrgsims")
 
 
-##' Coerce an mrgsims object to list
-##' 
-##' @param x an mrgsims object
-##' @param ... not used
-##' @export
+#' Coerce an mrgsims object to list
+#' 
+#' @param x an mrgsims object.
+#' @param ... not used.
+#' @md
+#' @export
 setMethod("as.list", "mrgsims", function(x, ...) {
   to_get <- slotNames("mrgsims") 
   out <- vector("list",length(to_get))

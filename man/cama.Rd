@@ -7,11 +7,11 @@
 cama(mod, fn = "cama", ...)
 }
 \arguments{
-\item{mod}{model object}
+\item{mod}{a model object.}
 
-\item{fn}{function name}
+\item{fn}{function name.}
 
-\item{...}{passed to update}
+\item{...}{passed to update.}
 }
 \description{
 Run the model cama function

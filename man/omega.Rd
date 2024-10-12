@@ -30,26 +30,26 @@ omat(.x, ...)
 \S4method{omat}{mrgsims}(.x, make = FALSE, ...)
 }
 \arguments{
-\item{.x}{a matrix, list of matrices or \code{matlist} object}
+\item{.x}{a matrix, list of matrices or \code{matlist} object.}
 
-\item{...}{passed to other functions, including \code{\link{modMATRIX}}}
+\item{...}{passed to other functions, including \code{\link[=modMATRIX]{modMATRIX()}}.}
 
-\item{labels}{character vector of names for \code{$OMEGA} elements; must 
-be equal to number of rows/columns in the matrix}
+\item{labels}{character vector of names for \verb{$OMEGA} elements; must
+be equal to number of rows/columns in the matrix.}
 
-\item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
+\item{make}{logical; if \code{TRUE}, matrix list is rendered into a single matrix.}
 
-\item{open}{passed to \code{\link{merge.list}}}
+\item{open}{passed to \code{\link[=merge.list]{merge.list()}}.}
 
-\item{x}{\code{matlist} object}
+\item{x}{\code{matlist} object.}
 }
 \description{
-The primary function is \code{omat} that can be used to both get the 
-\code{$OMEGA} matrices out of a model object and to update \code{$OMEGA} 
+The primary function is \code{omat()} that can be used to both get the
+\verb{$OMEGA} matrices out of a model object and to update \verb{$OMEGA}
 matrices in a model object.
 }
 \examples{
-## example("omega")
+# example("omega")
 mat1 <- matrix(1)
 mat2 <- diag(c(1,2,3))
 mat3 <- matrix(c(0.1, 0.002, 0.002, 0.5), 2,2)
@@ -57,28 +57,15 @@ mat4 <- dmat(0.1, 0.2, 0.3, 0.4)
 
 omat(mat1)
 omat(mat1, mat2, mat3)
-omat(A=mat1, B=mat2, C=mat3)
+omat(A = mat1, B = mat2, C = mat3)
 
 mod <- mrgsolve::house() \%>\% omat(mat4)
 
 omat(mod)
-omat(mod, make=TRUE)
-
-
-\dontrun{
-
-$OMEGA
-1 2 3
-
-$OMEGA \@block
-1 0.1 2
-
-$OMEGA \@cor
-\@ prefix ETA_
-\@ labels CL VC KA
-0.1
-0.67 0.2
-0 0 0.3
+omat(mod, make = TRUE)
+as.matrix(omat(mod))
 
 }
+\seealso{
+\code{\link[=smat]{smat()}}, \code{\link[=dmat]{dmat()}}, \code{\link[=bmat]{bmat()}}, \code{\link[=cmat]{cmat()}}
 }

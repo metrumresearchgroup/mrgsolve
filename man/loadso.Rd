@@ -10,27 +10,26 @@ loadso(x, ...)
 \method{loadso}{mrgmod}(x, ...)
 }
 \arguments{
-\item{x}{the model object}
+\item{x}{a model object.}
 
-\item{...}{not used}
+\item{...}{not used.}
 }
 \value{
 The model object (invisibly).
 }
 \description{
 Once the model is compiled, the model object can be used to re-load
-the model shared object (the compiled code underlying the mode) when 
+the model shared object (the compiled code underlying the mode) when
 the simulation is to be done in a different R process.
 }
 \details{
-The `loadso` function most frequently needs to be used when parallelizing
-simulations across worker nodes.  The model can be run after calling 
-`loadso`, without requiring that it is re-compiled on worker nodes. It is 
-likely required that the model is built (and the shared object stored) in 
+The \code{loadso} function most frequently needs to be used when parallelizing
+simulations across worker nodes.  The model can be run after calling
+\code{loadso}, without requiring that it is re-compiled on worker nodes. It is
+likely required that the model is built (and the shared object stored) in
 a local directory off of the working R directory (see the second example).
 }
 \examples{
-
 \dontrun{ 
   mod <- mread("pk1", modlib())
   loadso(mod)

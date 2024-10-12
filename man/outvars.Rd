@@ -7,10 +7,10 @@
 outvars(x, unlist = FALSE)
 }
 \arguments{
-\item{x}{mrgmod object}
+\item{x}{model object.}
 
 \item{unlist}{if \code{TRUE} then a character vector (rather than list) is
-returned}
+returned.}
 }
 \value{
 When \code{unlist} is \code{FALSE} (default) : a named list, with \code{cmt} showing names
@@ -23,7 +23,7 @@ Outputs can include model compartments or variables defined in the model
 that have been marked to \code{capture} in simulated output.
 }
 \examples{
-
-outvars(mrgsolve::house())
+mod <- mrgsolve::house()
+outvars(mod)
 
 }

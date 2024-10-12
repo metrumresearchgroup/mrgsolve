@@ -10,16 +10,17 @@ cmtn(x, ...)
 \S4method{cmtn}{mrgmod}(x, tag, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{...}{passed along}
+\item{...}{not used.}
 
-\item{tag}{compartment name}
+\item{tag}{compartment name.}
 }
 \description{
 Get the compartment number from a compartment name
 }
 \examples{
 mod <- mrgsolve::house()
-mod \%>\% cmtn("CENT")
+cmtn(mod, "CENT")
+
 }

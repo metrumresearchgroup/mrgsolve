@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,34 +16,35 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Request simulated output
-##' 
-##' Use this function to select, by name, either compartments or derived 
-##' variables that have been captured (see \code{\link{CAPTURE}}) into
-##' the simulated output.
-##'
-##' @param x model object
-##' @param ... unquoted names of compartments or tabled items
-##' 
-##' @details
-##' There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{Req} in 
-##' the pipeline.
-##' 
-##' Note the difference between \code{req} and \code{Req}: the former only 
-##' selects compartments to appear in output while the latter selects both 
-##' compartments and captured items.  Also, when there are items are explicitly
-##' listed in \code{Req}, all other compartments or captured items not listed
-##' there are ignored.  But when compartments are selected with \code{req}
-##' all of the captured items are returned.  Remember that \code{req} is 
-##' strictly for compartments.
-##' 
-##' @examples
-##' mod <- mrgsolve::house()
-##'
-##' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim
-##'
-##' @export
+#' Request simulated output
+#' 
+#' Use this function to select, by name, either compartments or derived 
+#' variables that have been captured (see [CAPTURE]) into
+#' the simulated output.
+#'
+#' @param x model object.
+#' @param ... unquoted names of compartments or tabled items.
+#' 
+#' @details
+#' There is also a `Req` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `Req` in 
+#' the pipeline.
+#' 
+#' Note the difference between `req` and `Req`: the former only 
+#' selects compartments to appear in output while the latter selects both 
+#' compartments and captured items.  Also, when there are items explicitly
+#' listed in `Req`, all other compartments or captured items not listed
+#' there are ignored.  But when compartments are selected with `req`
+#' all of the captured items are returned.  Remember that `req` is 
+#' strictly for compartments.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#'
+#' mod %>% Req(CP,RESP) %>% ev(amt=1000) %>%  mrgsim()
+#'
+#' @md
+#' @export
 Req <- function(x,...) UseMethod("Req")
 
 #' @export
@@ -52,85 +53,95 @@ Req.mrgmod <- function(x,...) {
   x  
 }
 
-##' @rdname Req
-##' @export
+#' @rdname Req
+#' @export
 req <- function(x,...) UseMethod("req")
 
-##' @export
-##' @rdname Req
+#' @export
+#' @rdname Req
 req.mrgmod <- function(x,...) {
   x <- update_request(x,as.character(match.call()[-1]))
   x
 }
 
-##' Select items to carry into simulated output
-##' 
-##' When items named in this function are found in the input data set (either 
-##' \code{\link{data_set}} or \code{\link{idata_set}}), they are copied
-##' into the simulated output.  Special items like \code{evid} or \code{amt} or
-##' the like are not copied from the data set per se, but they are copied from
-##' \code{datarecord} objects that are created during the simulation.
-##'
-##' @param x model object
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{carry.out} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{carry_out} in 
-##' the pipeline.
-##' 
-##' \code{carry.out} and \code{carry_out}.  Using the underscore version is 
-##' now preferred.
-##' 
-##' @export
+#' Select items to carry into simulated output
+#' 
+#' When items named in this function are found in the input data set (either 
+#' [data_set()] or [idata_set()]), they are copied
+#' into the simulated output.  Special items like `evid` or `amt` or
+#' the like are not copied from the data set per se, but they are copied from
+#' `datarecord` objects that are created during the simulation.
+#'
+#' @param x model object.
+#' @param ... unquoted names of data items to copy into the simulated output.
+#' 
+#' @details
+#' There is also a `carry_out` argument to [mrgsim()] that can be set to 
+#' accomplish the same thing as a call to `carry_out` in the pipeline.
+#' 
+#' `carry.out` and `carry_out` both do the same thing; using the underscore 
+#' version is now preferred.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' 
+#' e <- ev(amt = 100, ii = 6, addl = 3, WT = 70, dose = amt)
+#' 
+#' out <- mod %>% ev(e) %>% carry_out(amt, dose, WT) %>% mrgsim()
+#' 
+#' head(out)
+#' 
+#' @md
+#' @export
 carry_out <- function(x,...) {
   x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
-##' @export
-##' @rdname carry_out
+#' @export
+#' @rdname carry_out
 carry.out <- function(x,...) {
   x@args[["carry_out"]] <- as_character_args(match.call()[-1])
   x
 }
 
-##' Re-scale time in the simulated output
-##'
-##' @param x model object
-##' @param value value by which time will be scaled
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{tscale} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{tscale} in 
-##' the pipeline.
-##' 
-##' @examples
-##' # The model is in hours:
-##' mod <- mrgsolve::house()
-##' 
-##' # The output is in days:
-##' mod %>% tscale(1/24) %>% mrgsim
-##' 
-##' @export
+#' Re-scale time in the simulated output
+#'
+#' @param x model object.
+#' @param value value by which time will be scaled.
+#' @param ... not used.
+#' 
+#' @details
+#' There is also a `tscale` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `tscale` in 
+#' the pipeline.
+#' 
+#' @examples
+#' # The model is in hours:
+#' mod <- mrgsolve::house()
+#' 
+#' # The output is in days:
+#' mod %>% tscale(1/24) %>% mrgsim()
+#' 
+#' @md
+#' @export
 tscale <- function(x,value=1,...) {
   x@args[["tscale"]] <- value
   x
 }
 
-##' Collect only observations in the simulated output
-##'
-##' @param x model object
-##' @param value the value for \code{obsonly}
-##' @param ... passed along
-##' 
-##' @details
-##' There is also a \code{obsonly} argument to \code{\link{mrgsim}} that can 
-##' be set to accomplish the same thing as a call to \code{obsonly} in 
-##' the pipeline.
-##' 
-##' @export
+#' Collect only observation records in the simulated output
+#'
+#' @param x model object.
+#' @param value use `TRUE` to collect and return observation records only.
+#' @param ... not used.
+#' 
+#' @details
+#' There is also an `obsonly` argument to [mrgsim()] that can 
+#' be set to accomplish the same thing as a call to `obsonly()` in 
+#' the pipeline.
+#' 
+#' @export
 obsonly <- function(x,value=TRUE,...) {
   x@args[["obsonly"]] <- value
   x

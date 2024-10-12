@@ -10,7 +10,7 @@ env_get(x, tolist = TRUE)
 env_get_env(x)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{a model object.}
 
 \item{tolist}{should the environment be coerced to \code{list}?}
 }

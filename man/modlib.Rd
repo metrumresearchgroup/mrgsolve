@@ -7,25 +7,27 @@
 modlib(model = NULL, ..., list = FALSE)
 }
 \arguments{
-\item{model}{\code{character} name of a model in the library}
+\item{model}{\code{character} name of a model in the library.}
 
-\item{...}{passed to \code{\link{mread_cache}}}
+\item{...}{passed to \code{\link[=mread_cache]{mread_cache()}}.}
 
-\item{list}{list available models}
+\item{list}{logical; if \code{TRUE}, a list of available models is returned.}
 }
 \description{
-Internal model library
+Pre-coded models are included in the mrgsolve installation; these can be
+compiled and loaded with \code{modlib()}. These models are usually most useful
+for exploratory simulation or learning mrgsolve. Production simulation work
+is typically accomplished by a custom-coded model.
 }
 \details{
-See \code{\link{modlib_details}}, \code{\link{modlib_pk}}, 
-\code{\link{modlib_pkpd}}, 
-\code{\link{modlib_tmdd}}, \code{\link{modlib_viral}} for details.
+See \link{modlib_details}, \link{modlib_pk}, \link{modlib_pkpd}, \link{modlib_tmdd},
+\link{modlib_viral} for details.
 
-Call \code{modlib("<modelname>")} to compile and load a mode from the 
+Call \code{modlib("<modelname>")} to compile and load a mode from the
 library.
 
-Call \code{modlib(list=TRUE)} to list available models.  Once the model 
-is loaded (see examples below), call \code{as.list(mod)$code} to see
+Call \code{modlib(list=TRUE)} to list available models.  Once the model
+is loaded (see examples below), call \code{as.list(mod)$code} to extract
 model code and equations.
 }
 \examples{
@@ -51,7 +53,6 @@ mod <- mread("1005",   modlib())  # embedded NONMEM result
 mod <- mread("nm-like", modlib()) # model with nonmem-like syntax
 mod <- mread("evtools", modlib())
 
-mrgsolve:::code(mod)
+as.list(mod)$code
 }
-
 }

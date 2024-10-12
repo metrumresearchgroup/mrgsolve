@@ -27,69 +27,69 @@ nmxml(
 )
 }
 \arguments{
-\item{run}{run number}
+\item{run}{run number.}
 
-\item{project}{project directory}
+\item{project}{project directory.}
 
-\item{file}{deprecated; use \code{path} instead}
+\item{file}{deprecated; use \code{path} instead.}
 
-\item{path}{the complete path to the \code{run.xml} file}
+\item{path}{the complete path to the \code{run.xml} file.}
 
-\item{root}{the directory that `path` and `project` are relative to; this is
-currently limited to the `working` directory or `cppdir`, the directory 
-where the model file is located}
+\item{root}{the directory that \code{path} and \code{project} are relative to; this is
+currently limited to the \code{working} directory or \code{cppdir}, the directory
+where the model file is located.}
 
-\item{theta}{logical; if TRUE, the \code{$THETA} vector is returned}
+\item{theta}{logical; if TRUE, the \verb{$THETA} vector is returned.}
 
-\item{omega}{logical; if TRUE, the \code{$OMEGA} matrix is returned}
+\item{omega}{logical; if TRUE, the \verb{$OMEGA} matrix is returned.}
 
-\item{sigma}{logical; if TRUE, the \code{$SIGMA} matrix is returned}
+\item{sigma}{logical; if TRUE, the \verb{$SIGMA} matrix is returned.}
 
-\item{olabels}{labels for \code{$OMEGA}}
+\item{olabels}{labels for \verb{$OMEGA}.}
 
-\item{slabels}{labels for \code{$SIGMA}}
+\item{slabels}{labels for \verb{$SIGMA}.}
 
-\item{oprefix}{prefix for \code{$OMEGA} labels}
+\item{oprefix}{prefix for \verb{$OMEGA} labels.}
 
-\item{sprefix}{prefix for \code{$SIGMA} labels}
+\item{sprefix}{prefix for \verb{$SIGMA} labels.}
 
-\item{tname}{name for \code{$THETA}}
+\item{tname}{name for \verb{$THETA}.}
 
-\item{oname}{name for \code{$OMEGA}}
+\item{oname}{name for \verb{$OMEGA}.}
 
-\item{sname}{name for \code{$SIGMA}}
+\item{sname}{name for \verb{$SIGMA}.}
 
-\item{index}{the estimation number to return;  "last" will return the 
-last estimation results; otherwise, pass an integer indicating which 
-estimation results to return}
+\item{index}{the estimation number to return;  "last" will return the
+last estimation results; otherwise, pass an integer indicating which
+estimation results to return.}
 
-\item{xpath}{xml path containing run results; if the default doesn't work, 
-consider using \code{.//estimation} as an alternative; see details}
+\item{xpath}{xml path containing run results; if the default doesn't work,
+consider using \verb{.//estimation} as an alternative; see details.}
 
-\item{env}{internal}
+\item{env}{internal use only.}
 }
 \value{
-A list with theta, omega and sigma elements, 
-depending on what was requested
+A list with theta, omega and sigma elements, depending on what was
+requested.
 }
 \description{
 Import model estimates from a NONMEM xml file
 }
 \details{
-If \code{run} and \code{project} are supplied, the .xml file is 
-assumed to be located in \code{run.xml}, in directory \code{run} 
-off the \code{project} directory.  If \code{file} is supplied, 
+If \code{run} and \code{project} are supplied, the \code{.xml} file is
+assumed to be located in \code{run.xml}, in directory \code{run}
+off the \code{project} directory.  If \code{file} is supplied,
 \code{run} and \code{project} arguments are ignored.
 
-This function requires that the \code{xml2} package 
+This function requires that the xml2 package
 be installed and loadable.  If \code{requireNamespace("xml2")}
-fails, an error will be generated. 
+fails, an error will be generated.
 
 \code{nmxml} usually expects to find run results in the xpath called
-\code{.//nm:estimation}.  Occasionally, the run results are not stored in 
-this namespace but no namespaces are found in the xml file.  In this case, 
-the user can specify the xpath containing run results.  Consider trying 
-\code{.//estimation} as an alternative if the default fails.
+\verb{.//nm:estimation}.  Occasionally, the run results are not stored in
+this namespace but no namespaces are found in the xml file.  In this case,
+the user can specify the xpath containing run results.  Consider trying
+\verb{.//estimation} as an alternative if the default fails.
 }
 \examples{
 
@@ -97,7 +97,6 @@ if(requireNamespace("xml2")) {
   proj <- system.file("nonmem", package = "mrgsolve")
   mrgsolve:::nmxml(run = 1005, project = proj)
 }
-
 }
 \seealso{
 nmext

@@ -198,16 +198,30 @@ setMethod("ev", "ev", function(x, realize_addl = FALSE, ...) {
 
 #' Coerce an object to class ev
 #' 
-#' @param x An object to coerce.
-#' @param keep_id If `TRUE`, `ID` column is retained if it exists.
-#' @param clean If `TRUE`, only dosing or ID information is retained in
+#' Use this function to convert a data frame to an event object.
+#' 
+#' @param x an object to coerce.
+#' @param keep_id if `TRUE`, ID column is retained if it exists.
+#' @param clean if `TRUE`, only dosing or ID information is retained in
 #' the result.
-#' @param ... Not used.
+#' @param ... not used.
+#' 
+#' @details
+#' If `CMT` (or `cmt`) is missing from the input, it will be set to 1
+#' in the event object.
+#' 
+#' If `TIME` (or `time`) is missing from the input, it will be set to 
+#' 0 in the event object.
+#' 
+#' If `EVID` (or `evid`) is missing from the input, it will be set to 
+#' 1 in the event object.
 #' 
 #' @examples
-#' data <- data.frame(amt = 100) 
+#' data <- data.frame(AMT = 100) 
 #' 
 #' as.ev(data)
+#' 
+#' as.ev(data, clean = TRUE)
 #' 
 #' @return 
 #' An object with class ev.
@@ -437,14 +451,14 @@ add.ev <- function(e1, e2) {
 #' An event sequence can be replicated a certain number of
 #' times in a certain number of IDs.
 #' 
-#' @param x event object
-#' @param ID numeric vector if IDs
-#' @param n passed to \code{\link{ev_repeat}}
-#' @param wait passed to \code{\link{ev_repeat}}
-#' @param as.ev if \code{TRUE} an event object is returned
-#' @param id deprecated; use \code{ID} instead
+#' @param x event object.
+#' @param ID numeric vector if IDs.
+#' @param n passed to [ev_repeat()].
+#' @param wait passed to [ev_repeat()].
+#' @param as.ev if `TRUE` an event object is returned.
+#' @param id deprecated; use `ID` instead.
 #' 
-#' @seealso \code{\link{ev_repeat}}
+#' @seealso [ev_repeat()]
 #' 
 #' @examples
 #' 
@@ -454,8 +468,9 @@ add.ev <- function(e1, e2) {
 #' 
 #' @return
 #' A single data.frame or event object as 
-#' determined by the value of \code{as.ev}.
+#' determined by the value of [as.ev()].
 #' 
+#' @md
 #' @export
 ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
   if(!missing(id)) {
@@ -482,15 +497,23 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
 
 #' Repeat a block of dosing events
 #' 
-#' @param x event object or dosing data frame
-#' @param n number of times to repeat
-#' @param wait time to wait between repeats
-#' @param as.ev if \code{TRUE}, an event object is
-#' returned; otherwise a data.frame is returned
+#' @param x event object or dosing data frame.
+#' @param n number of times to repeat.
+#' @param wait time to wait between repeats.
+#' @param as.ev if `TRUE`, an event object is returned; otherwise a data.frame 
+#' is returned.
 #' 
 #' @return 
-#' See \code{as.ev} argument.
+#' See `as.ev` argument.
 #' 
+#' @examples
+#' e1 <- ev(amt = 100, ii = 24, addl = 20)
+#' e4 <- ev_repeat(e1, n = 4, wait = 168)
+#' mod <- mrgsolve::house()
+#' out <- mrgsim(mod, events = e4, end = 3200)
+#' plot(out, "CP")
+#' 
+#' @md
 #' @export
 ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
   if(!inherits(x, c("data.frame", "ev"))) {
@@ -531,14 +554,13 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
 #' Use this function when you want to schedule two or more event objects in time
 #' according the dosing interval (`ii`) and additional doses (`addl`).
 #' 
-#' @param ... Event objects or numeric arguments named `wait` or `ii` to 
-#' implement a period of no-dosing activity in the sequence (see details).
-#' @param ID Numeric vector of subject IDs.
-#' @param .dots A list of event objects that replaces `...`.
-#' @param id Deprecated; use `ID`.
+#' @param ... event objects or numeric arguments named `wait` or `ii` to 
+#' implement a period of no-dosing activity in the sequence (see **Details**).
+#' @param ID numeric vector of subject IDs.
+#' @param .dots a list of event objects that replaces `...`.
+#' @param id deprecated; use `ID`.
 #' 
 #' @details
-#' 
 #' Use the generic [seq()] when the first argument is an event object.  If a 
 #' waiting period (`wait` or `ii`) is the first event, you will need to use 
 #' [ev_seq()].  When an event object has multiple rows, the end time for that 
@@ -547,7 +569,7 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
 #' 
 #' The doses for the next event line start after all of the doses from the 
 #' previous event line plus one dosing interval from the previous event line 
-#' (see examples).  
+#' (see **Examples**).  
 #' 
 #' When numerics named `wait` or `ii` are mixed in with the event objects, 
 #' a period with no dosing activity is incorporated into the sequence,
@@ -572,10 +594,9 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
 #' warning if you use `.ii`. Please use `ii` instead.
 #' 
 #' Values for `time` in any event object act like a prefix time spacer wherever 
-#' that event occurs in the event sequence (see examples).
+#' that event occurs in the event sequence (see **Examples**).
 #' 
 #' @examples
-#' 
 #' e1 <- ev(amt = 100, ii = 12, addl = 1)
 #' 
 #' e2 <- ev(amt = 200)

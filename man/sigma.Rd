@@ -30,23 +30,22 @@ smat(.x, ...)
 \S4method{smat}{mrgsims}(.x, make = FALSE, ...)
 }
 \arguments{
-\item{.x}{a matrix, list of matrices or \code{matlist} object}
+\item{.x}{a matrix, list of matrices or \code{matlist} object.}
 
-\item{...}{passed to other functions, including \code{\link{modMATRIX}}}
+\item{...}{passed to other functions, including \code{\link[=modMATRIX]{modMATRIX()}}.}
 
-\item{labels}{character vector of names for \code{$SIGMA} elements; must be
-equal 
-to number of rows/columns in the matrix}
+\item{labels}{character vector of names for \verb{$SIGMA} elements; must be
+equal to number of rows/columns in the matrix.}
 
-\item{make}{logical; if TRUE, matrix list is rendered into a single matrix}
+\item{make}{logical; if \code{TRUE}, matrix list is rendered into a single matrix.}
 
-\item{open}{passed to \code{\link{merge.list}}}
+\item{open}{passed to \code{\link[=merge.list]{merge.list()}}.}
 
-\item{x}{\code{matlist} object}
+\item{x}{\code{matlist} object.}
 }
 \description{
-The primary function is \code{smat} that can be used to both get the 
-\code{$SIGMA} matrices out of a model object and to update \code{$SIGMA} 
+The primary function is \code{smat()} which can be used to both get the
+\verb{$SIGMA} matrices out of a model object and to update \verb{$SIGMA}
 matrices in a model object.
 }
 \examples{
@@ -64,4 +63,8 @@ mod <- mrgsolve::house() \%>\% smat(mat1)
 
 smat(mod)
 smat(mod, make=TRUE)
+
+}
+\seealso{
+\code{\link[=dmat]{dmat()}}, \code{\link[=bmat]{bmat()}}, \code{\link[=cmat]{cmat()}}
 }

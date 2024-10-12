@@ -22,32 +22,31 @@ init(.x, ...)
 \S4method{init}{ANY}(.x, ...)
 }
 \arguments{
-\item{.x}{the model object}
+\item{.x}{the model object.}
 
-\item{...}{passed along}
+\item{...}{\code{name = value} assignments to update the initial conditions list.}
 
-\item{.y}{list to be merged into parameter list}
+\item{.y}{list to be merged into parameter list.}
 
-\item{.pat}{a regular expression (character) to be applied as 
-a filter when printing compartments to the screen}
+\item{.pat}{a regular expression (character) to be applied as
+a filter when printing compartments to the screen.}
 }
 \value{
-an object of class \code{cmt_list} (see 
-\code{\link{numericlist}})
+An object of class \code{cmt_list} (see \link{numericlist}).
 }
 \description{
-Calling \code{init} with the model object as the first argument 
-will return the model initial conditions as a \code{numericlist} 
-object. See \code{\link{numericlist}} for methods to  deal with 
+Calling \code{init()} with the model object as the first argument
+will return the model initial conditions as a \link{numericlist}
+object. See \link{numericlist} for methods to  deal with
 \code{cmt_list} objects.
 }
 \details{
-Can be used to either get a compartment list object from a 
-\code{mrgmod} model object or to update the compartment initial 
-conditions in a model object.  For both uses, the return value 
-is a \code{cmt_list} object. For the former use, \code{init} 
-is usually called to print the compartment initial conditions 
-to the screen, but the \code{cmt_list} object can also be coerced 
+Can be used to either get a compartment list object from a
+\code{mrgmod} model object or to update the compartment initial
+conditions in a model object.  For both uses, the return value
+is a \code{cmt_list} object. For the former use, \code{init()}
+is usually called to print the compartment initial conditions
+to the screen, but the \code{cmt_list} object can also be coerced
 to a list or numeric R object.
 }
 \examples{
@@ -55,6 +54,7 @@ to a list or numeric R object.
 mod <- mrgsolve::house()
 
 init(mod)
+
 init(mod, .pat="^C") ## may be useful for large models
 
 class(init(mod))
@@ -62,5 +62,8 @@ class(init(mod))
 init(mod)$CENT
 
 as.list(init(mod))
+
 as.data.frame(init(mod))
+
+
 }

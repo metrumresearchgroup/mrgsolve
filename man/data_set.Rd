@@ -27,23 +27,23 @@ data_set(x, data, ...)
 \S4method{data_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{a model object.}
 
-\item{data}{data set}
+\item{data}{input data set as a data frame.}
 
-\item{...}{passed along}
+\item{...}{other arguments passed along when \code{object} is a function.}
 
-\item{.subset}{an unquoted expression passed to 
-\code{dplyr::filter}; retain only certain rows in the data set}
+\item{.subset}{an unquoted expression passed to
+\code{\link[dplyr:filter]{dplyr::filter()}}; retain only certain rows in the data set}
 
-\item{.select}{passed to \code{dplyr::select}; retain only certain 
-columns in the data set; this should be the result of a call to 
-\code{dplyr::vars()}}
+\item{.select}{passed to \code{\link[dplyr:select]{dplyr::select()}}; retain only certain
+columns in the data set; this should be the result of a call to
+\code{\link[dplyr:vars]{dplyr::vars()}}.}
 
-\item{object}{character name of an object existing in \code{$ENV} 
-to use for the data set}
+\item{object}{character name of an object existing in \verb{$ENV}
+to use for the data set.}
 
-\item{need}{passed to \code{\link{inventory}}}
+\item{need}{passed to \code{\link[=inventory]{inventory()}}.}
 }
 \description{
 The input data set (\code{data_set}) is a data frame that specifies
@@ -51,58 +51,75 @@ observations, model events, and / or parameter values for a population
 of individuals.
 }
 \details{
-Input data sets are \code{R} data frames that can include columns 
-with any valid name, however columns with selected names are 
-treated specially by \code{mrgsolve} and incorporated into the 
+Input data sets are \code{R} data frames that can include columns
+with any valid name, however columns with selected names are
+treated specially by mrgsolve and incorporated into the
 simulation.
 
-\code{ID} specifies the subject ID and is required for every 
+\code{ID} specifies the subject ID and is required for every
 input data set.
 
-When columns have the same name as parameters (\code{$PARAM} in 
-the model specification file), the values in those columns will 
-be used to update the corresponding parameter as the simulation 
+When columns have the same name as parameters (\verb{$PARAM} or \verb{$INPUT} in
+the model specification file), the values in those columns will
+be used to update the corresponding parameter as the simulation
 progresses.
 
-Input data set may include the following columns related to 
-PK dosing events: \code{time}, \code{cmt}, \code{amt}, \code{rate},
-\code{ii}, \code{addl}, \code{ss}.  Along with \code{ID}, \code{time} 
-is a required column in the input data set unless \code{$PRED} is in 
-use.  Upper case PK dosing column names including
-\code{TIME}, \code{CMT}, \code{AMT}, \code{RATE}, \code{II},
-\code{ADDL}, \code{SS} are also recognized.  However, an 
-error will be generated if a mix of upper case and lower
-case columns in this family are found.
- 
-\code{time} is the observation or event time, \code{cmt} 
-is the compartment number (see \code{\link{init}}), \code{amt} 
-is the dosing amount, \code{rate} is the infusion rate, 
-\code{ii} is the dosing interval, \code{addl} specifies 
-additional doses to administer, and \code{ss} is a flag 
-for steady state dosing.  These column names operate 
-similarly to other non-linear mixed effects modeling 
-software. 
+Input data set may include the following columns related to
+PK dosing events: \code{TIME}, \code{CMT}, \code{AMT}, \code{RATE}, \code{II}, \code{ADDL}, \code{SS}.
+Both \code{ID} and \code{TIME} are required columns in the input data set unless
+\verb{$PRED} is in use.  Lower case PK dosing column names including
+\code{time}, \code{cmt}, \code{amt}, \code{rate}, \code{ii}, \code{addl}, \code{ss} are also recognized.
+However, an error will be generated if a mix of both upper case and lower
+case columns in this family are found. Use the functions \code{\link[=lctran]{lctran()}} and
+\code{\link[=uctran]{uctran()}} to convert between upper and lower case naming for these
+data items.
+
+\code{TIME} is the observation or event time, \code{CMT} is the compartment number
+(see \code{\link[=init]{init()}}), \code{AMT} is the dosing amount, \code{RATE} is the infusion rate,
+\code{II} is the dosing interval, \code{ADDL} specifies additional doses to
+administer, and \code{ss} is a flag indicating that the system should be advanced
+to a pharmacokinetic steady state prior to administering the dose.  These
+column names operate similarly to other non-linear mixed effects modeling
+software.
+
+\code{EVID} is an integer value specifying the ID of an event record. Values
+include:
+\itemize{
+\item 0: observation
+\item 1:  dose event, either bolus or infusion
+\item 2: other-type event; in mrgsolve, this functions like an observation
+record, but a discontinuity is created in the simulation at the time of
+the event (i.e., the ODE solver will stop and restart at the time of the
+event)
+\item 3: reset the system
+\item 4: reset the system and dose
+\item 8: replace the amount in a compartment
+}
+
+For all \code{EVID} greater than \code{0}, a discontinuity is created in the
+simulation, as described for \verb{EVID 2}.
 
 An error will be generated when mrgsolve detects that the data set
-is not sorted by \code{time} within an individual.  
+is not sorted by \code{time} within an individual. mrgsolve does \strong{not} allow time
+to be reset to zero on records where \code{EVID} is set to 4 (reset and dose).
 
-Only numeric data can be brought in to the problem.  
-Any non-numeric data columns will be dropped with warning.  
-See \code{\link{numerics_only}}, which is used 
-to prepare the data set. 
+Only numeric data can be brought in to the problem. Any non-numeric data
+columns will be dropped with warning. See \code{\link[=numerics_only]{numerics_only()}}, which is used
+to prepare the data set.
 
-An error will be generated if any parameter columns in the 
-input data set contain \code{NA}.  Likewise, and error will 
+An error will be generated if any parameter columns in the
+input data set contain missing values (\code{NA}). Likewise, and error will
 be generated if missing values are found in the following
-columns: \code{ID}, \code{time}/\code{TIME}, \code{rate}/\code{RATE}. 
+columns: \code{ID}, \code{time}/\code{TIME}, \code{rate}/\code{RATE}.
 
-See \code{\link{exdatasets}} for different example data sets.
+See \link{exdatasets} for several example data sets that are provided by
+mrgsolve.
 }
 \examples{
 
 mod <- mrgsolve::house()
 
-data <- expand.ev(ID=seq(3), amt=c(10, 20))
+data <- expand.ev(ID = seq(3), amt = c(10, 20))
 
 mod \%>\% data_set(data, ID > 1) \%>\% mrgsim()
 
@@ -114,6 +131,6 @@ mod \%>\% mrgsim(data = extran1)
 
 }
 \seealso{
-\code{\link{idata_set}}, \code{\link{ev}}, 
-\code{\link{valid_data_set}}, \code{\link{valid_idata_set}}
+\code{\link[=idata_set]{idata_set()}}, \code{\link[=ev]{ev()}}, \code{\link[=valid_data_set]{valid_data_set()}}, \code{\link[=valid_idata_set]{valid_idata_set()}},
+\code{\link[=lctran]{lctran()}}, \code{\link[=uctran]{uctran()}}.
 }

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,90 +15,106 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-##' Select and modify a data set for simulation
-##' 
-##' The input data set (\code{data_set}) is a data frame that specifies
-##' observations, model events, and / or parameter values for a population
+#' Select and modify a data set for simulation
+#' 
+#' The input data set (`data_set`) is a data frame that specifies
+#' observations, model events, and / or parameter values for a population
 ##' of individuals. 
-##'
-##' @param x model object
-##' @param data data set
-##' @param .subset an unquoted expression passed to 
-##' \code{dplyr::filter}; retain only certain rows in the data set
-##' @param .select passed to \code{dplyr::select}; retain only certain 
-##' columns in the data set; this should be the result of a call to 
-##' \code{dplyr::vars()}
-##' @param object character name of an object existing in \code{$ENV} 
-##' to use for the data set
-##' @param need passed to \code{\link{inventory}}
-##' @param ... passed along
-##' 
-##' @details
-##' Input data sets are \code{R} data frames that can include columns 
-##' with any valid name, however columns with selected names are 
-##' treated specially by \code{mrgsolve} and incorporated into the 
-##' simulation.
-##'
-##' \code{ID} specifies the subject ID and is required for every 
-##' input data set.
-##'
-##' When columns have the same name as parameters (\code{$PARAM} in 
-##' the model specification file), the values in those columns will 
-##' be used to update the corresponding parameter as the simulation 
-##' progresses.
-##'
-##' Input data set may include the following columns related to 
-##' PK dosing events: \code{time}, \code{cmt}, \code{amt}, \code{rate},
-##' \code{ii}, \code{addl}, \code{ss}.  Along with \code{ID}, \code{time} 
-##' is a required column in the input data set unless \code{$PRED} is in 
-##' use.  Upper case PK dosing column names including
-##' \code{TIME}, \code{CMT}, \code{AMT}, \code{RATE}, \code{II},
-##' \code{ADDL}, \code{SS} are also recognized.  However, an 
-##' error will be generated if a mix of upper case and lower
-##' case columns in this family are found.
-##'  
-##' \code{time} is the observation or event time, \code{cmt} 
-##' is the compartment number (see \code{\link{init}}), \code{amt} 
-##' is the dosing amount, \code{rate} is the infusion rate, 
-##' \code{ii} is the dosing interval, \code{addl} specifies 
-##' additional doses to administer, and \code{ss} is a flag 
-##' for steady state dosing.  These column names operate 
-##' similarly to other non-linear mixed effects modeling 
-##' software. 
-##' 
-##' An error will be generated when mrgsolve detects that the data set
-##' is not sorted by \code{time} within an individual.  
-##' 
-##' Only numeric data can be brought in to the problem.  
-##' Any non-numeric data columns will be dropped with warning.  
-##' See \code{\link{numerics_only}}, which is used 
-##' to prepare the data set. 
-##' 
-##' An error will be generated if any parameter columns in the 
-##' input data set contain \code{NA}.  Likewise, and error will 
-##' be generated if missing values are found in the following
-##' columns: \code{ID}, \code{time}/\code{TIME}, \code{rate}/\code{RATE}. 
-##'
-##' See \code{\link{exdatasets}} for different example data sets.
-##' 
-##' @seealso \code{\link{idata_set}}, \code{\link{ev}}, 
-##' \code{\link{valid_data_set}}, \code{\link{valid_idata_set}}
-##'
-##' @examples
-##'
-##' mod <- mrgsolve::house()
-##' 
-##' data <- expand.ev(ID=seq(3), amt=c(10, 20))
-##'
-##' mod %>% data_set(data, ID > 1) %>% mrgsim()
-##' 
-##' data(extran1)
-##' head(extran1)
-##' 
-##' mod %>% data_set(extran1) %>% mrgsim()
-##' mod %>% mrgsim(data = extran1)
-##' 
-##' @export
+#'
+#' @param x a model object. 
+#' @param data input data set as a data frame.
+#' @param .subset an unquoted expression passed to 
+#' [dplyr::filter()]; retain only certain rows in the data set
+#' @param .select passed to [dplyr::select()]; retain only certain 
+#' columns in the data set; this should be the result of a call to 
+#' [dplyr::vars()].
+#' @param object character name of an object existing in `$ENV` 
+#' to use for the data set.
+#' @param need passed to [inventory()].
+#' @param ... other arguments passed along when `object` is a function.
+#' 
+#' @details
+#' Input data sets are `R` data frames that can include columns 
+#' with any valid name, however columns with selected names are 
+#' treated specially by mrgsolve and incorporated into the 
+#' simulation.
+#'
+#' `ID` specifies the subject ID and is required for every 
+#' input data set.
+#'
+#' When columns have the same name as parameters (`$PARAM` or `$INPUT` in 
+#' the model specification file), the values in those columns will 
+#' be used to update the corresponding parameter as the simulation 
+#' progresses.
+#'
+#' Input data set may include the following columns related to 
+#' PK dosing events: `TIME`, `CMT`, `AMT`, `RATE`, `II`, `ADDL`, `SS`.  
+#' Both `ID` and `TIME` are required columns in the input data set unless 
+#' `$PRED` is in use.  Lower case PK dosing column names including
+#' `time`, `cmt`, `amt`, `rate`, `ii`, `addl`, `ss` are also recognized.  
+#' However, an error will be generated if a mix of both upper case and lower
+#' case columns in this family are found. Use the functions [lctran()] and 
+#' [uctran()] to convert between upper and lower case naming for these 
+#' data items.
+#'  
+#' `TIME` is the observation or event time, `CMT` is the compartment number 
+#' (see [init()]), `AMT` is the dosing amount, `RATE` is the infusion rate, 
+#' `II` is the dosing interval, `ADDL` specifies additional doses to 
+#' administer, and `ss` is a flag indicating that the system should be advanced 
+#' to a pharmacokinetic steady state prior to administering the dose.  These 
+#' column names operate similarly to other non-linear mixed effects modeling 
+#' software. 
+#' 
+#' `EVID` is an integer value specifying the ID of an event record. Values
+#' include: 
+#'   - 0: observation
+#'   - 1:  dose event, either bolus or infusion
+#'   - 2: other-type event; in mrgsolve, this functions like an observation 
+#'     record, but a discontinuity is created in the simulation at the time of 
+#'     the event (i.e., the ODE solver will stop and restart at the time of the 
+#'     event)
+#'  - 3: reset the system 
+#'  - 4: reset the system and dose
+#'  - 8: replace the amount in a compartment
+#'  
+#' For all `EVID` greater than `0`, a discontinuity is created in the
+#' simulation, as described for `EVID 2`.  
+#'  
+#' An error will be generated when mrgsolve detects that the data set
+#' is not sorted by `time` within an individual. mrgsolve does **not** allow time
+#' to be reset to zero on records where `EVID` is set to 4 (reset and dose).
+#' 
+#' Only numeric data can be brought in to the problem. Any non-numeric data 
+#' columns will be dropped with warning. See [numerics_only()], which is used 
+#' to prepare the data set. 
+#' 
+#' An error will be generated if any parameter columns in the 
+#' input data set contain missing values (`NA`). Likewise, and error will 
+#' be generated if missing values are found in the following
+#' columns: `ID`, `time`/`TIME`, `rate`/`RATE`. 
+#'
+#' See [exdatasets] for several example data sets that are provided by 
+#' mrgsolve.
+#' 
+#' @seealso [idata_set()], [ev()], [valid_data_set()], [valid_idata_set()], 
+#' [lctran()], [uctran()].
+#'
+#' @examples
+#'
+#' mod <- mrgsolve::house()
+#' 
+#' data <- expand.ev(ID = seq(3), amt = c(10, 20))
+#'
+#' mod %>% data_set(data, ID > 1) %>% mrgsim()
+#' 
+#' data(extran1)
+#' head(extran1)
+#' 
+#' mod %>% data_set(extran1) %>% mrgsim()
+#' mod %>% mrgsim(data = extran1)
+#' 
+#' @md
+#' @export
 setGeneric("data_set", function(x,data,...) {
   standardGeneric("data_set")
 })
@@ -126,20 +142,20 @@ setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.se
   return(x)
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set",c("mrgmod", "ANY"), function(x, data, ...) {
   return(data_set(x, as.data.frame(data), ...))
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set", c("mrgmod", "ev"), function(x, data, ...) {
   return(data_set(x, As_data_set(data), ...))
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
   object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
   return(data_set(x, as.data.frame(object) ,...))
@@ -167,13 +183,14 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' If both lower and upper case versions of the name are present in the data 
 #' frame, no changes will be made. 
 #' 
-#' @param data a data set with nmtran-like format.
+#' @param data a data set with nmtran-like format or an event object.
 #' @param warn if `TRUE`, a warning will be issued when there are both upper
 #' and lower case versions of any nmtran-like column in the data frame.
 #' @param ... for potential future use.
 #' 
 #' @return 
-#' A data frame or event object with possibly renamed columns.
+#' A data frame or event object, with column names possibly converted to upper
+#' or lower case.
 #' 
 #' @examples
 #' data <- data.frame(TIME = 0, AMT = 5, II = 24, addl = 2, WT = 80)
@@ -188,9 +205,6 @@ setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
 #' # warning
 #' data <- data.frame(TIME = 1, time = 2, CMT = 5)
 #' lctran(data)
-#' 
-#' @return 
-#' The input data set, with select columns made lower case.
 #' 
 #' @md
 #' @export
@@ -336,39 +350,35 @@ setMethod("as_data_set", "data.frame", function(x, ...) {
   as_data_set(x, ...)
 })
 
-##' Replicate a list of events into a data set
-##' 
-##' @param l list of event objects
-##' @param idata an idata set (one ID per row)
-##' @param evgroup the character name of the column in \code{idata} 
-##' that specifies event object to implement
-##' @param join if \code{TRUE}, join \code{idata} to the data set 
-##' before returning.
-##' 
-##' 
-##' @examples
-##' ev1 <- ev(amt = 100)
-##' ev2 <- ev(amt = 300, rate = 100, ii = 12, addl = 10)
-##' 
-##' idata <- data.frame(ID = seq(10)) 
-##' idata$arm <- 1+(idata$ID %%2)
-##' 
-##' ev_assign(list(ev1, ev2), idata, "arm", join = TRUE)
-##' 
-##' @details
-##' \code{ev_assign} connects events in a list passed in as the
-##' \code{l} argument to values in the data set identified in the 
-##' \code{evgroup} argument.  For making assignments, the unique 
-##' values in the \code{evgroup} column are first sorted so that 
-##' the first sorted unique value in \code{evgroup} is assigned 
-##' to the first event in \code{l}, the second sorted value in 
-##' \code{evgroup} column is assigned to the second event in 
-##' \code{l}, and so on.  This is a change from previous behavior, 
-##' which did not sort the unique values in \code{evgroup} prior to 
-##' making the assignments. 
-##' 
-##' 
-##' @export
+#' Replicate a list of events into a data set
+#' 
+#' @param l list of event objects.
+#' @param idata an idata set (one ID per row).
+#' @param evgroup the character name of the column in `idata` that specifies 
+#' event object to implement.
+#' @param join if `TRUE`, join `idata` to the data set before returning.
+#' 
+#' @details
+#' `ev_assign()` connects events in a list passed in as the `l` argument to 
+#' values in the data set identified in the `evgroup` argument.  For making 
+#' assignments, the unique values in the `evgroup` column are first sorted so 
+#' that the first sorted unique value in `evgroup` is assigned to the first 
+#' event in `l`, the second sorted value in `evgroup` column is assigned to the 
+#' second event in `l`, and so on.  This is a change from previous behavior, 
+#' which did not sort the unique values in `evgroup` prior to making the 
+#' assignments. 
+#' 
+#' @examples
+#' ev1 <- ev(amt = 100)
+#' ev2 <- ev(amt = 300, rate = 100, ii = 12, addl = 10)
+#' 
+#' idata <- data.frame(ID = seq(10)) 
+#' idata$arm <- 1+(idata$ID %%2)
+#' 
+#' ev_assign(list(ev1, ev2), idata, "arm", join = TRUE)
+#' 
+#' @md
+#' @export
 ev_assign <- function(l, idata, evgroup, join = FALSE) {
   
   idata <- as.data.frame(idata)
@@ -428,55 +438,57 @@ ev_assign <- function(l, idata, evgroup, join = FALSE) {
   return(x)
 }
 
-##' @param ... used to pass arguments from \code{assign_ev}
-##' to \code{ev_assign}
-##' @rdname ev_assign
-##' @export
+#' @param ... used to pass arguments from `assign_ev()`.
+#' to `ev_assign()`.
+#' @rdname ev_assign
+#' @md
+#' @export
 assign_ev <- function(...) ev_assign(...)
 
-##' Schedule dosing events on days of the week
-##' 
-##' This function lets you schedule doses on specific 
-##' days of the week, allowing you to create dosing 
-##' regimens on Monday/Wednesday/Friday, or Tuesday/Thursday,
-##' or every other day (however you want to define that) etc.
-##' 
-##' @param ev an event object
-##' @param days comma- or space-separated character string of valid days of the
-##' the week (see details)
-##' @param addl additional doses to administer
-##' @param ii inter-dose interval; intended use is to keep this at the 
-##' default value
-##' @param unit time unit; the function can only currently handle hours or days
-##' @param ... event objects named by one the valid days of the week (see details)
-##' 
-##' @details
-##' Valid names of the week are: 
-##' 
-##' \itemize{
-##' \item \code{m} for Monday
-##' \item \code{t} for Tuesday
-##' \item \code{w} for Wednesday
-##' \item \code{th} for Thursday
-##' \item \code{f} for Friday
-##' \item \code{sa} for Saturday
-##' \item \code{s} for Sunday
-##' }
-##' 
-##' The whole purpose of this function is to schedule doses on specific
-##' days of the week, in a repeating weekly schedule.  Please do use caution 
-##' when changing \code{ii} from it's default value.
-##' 
-##' @examples
-##' 
-##' # Monday, Wednesday, Friday x 4 weeks
-##' ev_days(ev(amt=100), days="m,w,f", addl=3)
-##' 
-##' # 50 mg Tuesdays, 100 mg Thursdays x 6 months
-##' ev_days(t=ev(amt=50), th=ev(amt=100), addl=23)
-##' 
-##' 
-##' @export
+#' Schedule dosing events on days of the week
+#' 
+#' This function lets you schedule doses on specific 
+#' days of the week, allowing you to create dosing 
+#' regimens on Monday/Wednesday/Friday, or Tuesday/Thursday,
+#' or every other day (however you want to define that) etc.
+#' 
+#' @param ev an event object.
+#' @param days comma- or space-separated character string of valid days of the
+#' the week (see details).
+#' @param addl additional doses to administer.
+#' @param ii inter-dose interval; intended use is to keep this at the 
+#' default value.
+#' @param unit time unit; the function can only currently handle hours or days.
+#' @param ... event objects named by one of the valid days of the week 
+#' (see **Details**).
+#' 
+#' @details
+#' Valid names of the week are: 
+#' - `m` for Monday
+#' - `t` for Tuesday
+#' - `w` for Wednesday
+#' - `th` for Thursday
+#' - `f` for Friday
+#' - `sa` for Saturday
+#' - `s` for Sunday
+#' 
+#' 
+#' The whole purpose of this function is to schedule doses on specific
+#' days of the week, in a repeating weekly schedule.  Please do use caution 
+#' when changing `ii` from its default value.
+#' 
+#' @examples
+#' 
+#' # Monday, Wednesday, Friday x 4 weeks
+#' e1 <- ev(amt = 100)
+#' ev_days(e1, days="m,w,f", addl = 3)
+#' 
+#' # 50 mg Tuesdays, 100 mg Thursdays x 6 months
+#' e2 <- ev(amt = 50)
+#' ev_days(t = e2, th = e1, addl = 23)
+#' 
+#' @md
+#' @export
 ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
   
   unit <- match.arg(unit)
@@ -531,28 +543,29 @@ ev_days <- function(ev=NULL,days="",addl=0,ii=168,unit=c("hours", "days"),...) {
 }
 
 
-##' Insert observations into a data set
-##' 
-##' @param data a data set or event object
-##' @param times a vector of observation times
-##' @param unique `logical`; if `TRUE` then values for `time` are 
-##' dropped if they are found anywhere in `data`
-##' @param obs_pos determines sorting order for observations; use `-1` (default)
-##' to put observations first; otherwise, use large integer to ensure 
-##' observations are placed after doses
-##'
-##' @details
-##' Non-numeric columns will be dropped with a warning.
-##' 
-##' @return 
-##' A data frame with additional rows for added observation records.
-##' 
-##' @examples
-##' data <- expand.ev(amt = c(100, 200, 300))
-##' 
-##' expand_observations(data, times = seq(0, 48, 2))
-##' 
-##' @export
+#' Insert observations into a data set
+#' 
+#' @param data a data set or event object.
+#' @param times a vector of observation times.
+#' @param unique `logical`; if `TRUE` then values for `time` are 
+#' dropped if they are found anywhere in `data`.
+#' @param obs_pos determines sorting order for observations; use `-1` (default)
+#' to put observations first; otherwise, use large integer to ensure 
+#' observations are placed after doses.
+#'
+#' @details
+#' Non-numeric columns will be dropped with a warning.
+#' 
+#' @return 
+#' A data frame with additional rows for added observation records.
+#' 
+#' @examples
+#' data <- expand.ev(amt = c(100, 200, 300))
+#' 
+#' expand_observations(data, times = seq(0, 48, 2))
+#' 
+#' @md
+#' @export
 expand_observations <- function(data, times, unique = FALSE, obs_pos = -1L) {
   
   data <- As_data_set(data)

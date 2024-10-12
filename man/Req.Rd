@@ -13,31 +13,31 @@ req(x, ...)
 \method{req}{mrgmod}(x, ...)
 }
 \arguments{
-\item{x}{model object}
+\item{x}{model object.}
 
-\item{...}{unquoted names of compartments or tabled items}
+\item{...}{unquoted names of compartments or tabled items.}
 }
 \description{
-Use this function to select, by name, either compartments or derived 
-variables that have been captured (see \code{\link{CAPTURE}}) into
+Use this function to select, by name, either compartments or derived
+variables that have been captured (see \link{CAPTURE}) into
 the simulated output.
 }
 \details{
-There is also a \code{Req} argument to \code{\link{mrgsim}} that can 
-be set to accomplish the same thing as a call to \code{Req} in 
+There is also a \code{Req} argument to \code{\link[=mrgsim]{mrgsim()}} that can
+be set to accomplish the same thing as a call to \code{Req} in
 the pipeline.
 
-Note the difference between \code{req} and \code{Req}: the former only 
-selects compartments to appear in output while the latter selects both 
-compartments and captured items.  Also, when there are items are explicitly
+Note the difference between \code{req} and \code{Req}: the former only
+selects compartments to appear in output while the latter selects both
+compartments and captured items.  Also, when there are items explicitly
 listed in \code{Req}, all other compartments or captured items not listed
 there are ignored.  But when compartments are selected with \code{req}
-all of the captured items are returned.  Remember that \code{req} is 
+all of the captured items are returned.  Remember that \code{req} is
 strictly for compartments.
 }
 \examples{
 mod <- mrgsolve::house()
 
-mod \%>\% Req(CP,RESP) \%>\% ev(amt=1000) \%>\%  mrgsim
+mod \%>\% Req(CP,RESP) \%>\% ev(amt=1000) \%>\%  mrgsim()
 
 }

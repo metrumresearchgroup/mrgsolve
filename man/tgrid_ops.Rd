@@ -27,11 +27,11 @@
 \S4method{*}{tgrids,numeric}(e1, e2)
 }
 \arguments{
-\item{x}{mrgmod object}
+\item{x}{a tgrid object.}
 
-\item{...}{passed along to other methods}
+\item{...}{additional tgrid objects.}
 
-\item{recursive}{not used}
+\item{recursive}{not used.}
 
 \item{e1}{tgrid or tgrids object}
 

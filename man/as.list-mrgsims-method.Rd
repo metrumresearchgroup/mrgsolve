@@ -7,9 +7,9 @@
 \S4method{as.list}{mrgsims}(x, ...)
 }
 \arguments{
-\item{x}{an mrgsims object}
+\item{x}{an mrgsims object.}
 
-\item{...}{not used}
+\item{...}{not used.}
 }
 \description{
 Coerce an mrgsims object to list

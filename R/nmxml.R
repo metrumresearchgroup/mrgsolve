@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -16,60 +16,60 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' Import model estimates from a NONMEM xml file
-##'
-##' @param run run number
-##' @param project project directory
-##' @param path the complete path to the \code{run.xml} file
-##' @param file deprecated; use \code{path} instead
-##' @param root the directory that `path` and `project` are relative to; this is
-##' currently limited to the `working` directory or `cppdir`, the directory 
-##' where the model file is located
-##' @param theta logical; if TRUE, the \code{$THETA} vector is returned
-##' @param omega logical; if TRUE, the \code{$OMEGA} matrix is returned
-##' @param sigma logical; if TRUE, the \code{$SIGMA} matrix is returned
-##' @param olabels labels for \code{$OMEGA}
-##' @param slabels labels for \code{$SIGMA}
-##' @param oprefix prefix for \code{$OMEGA} labels
-##' @param sprefix prefix for \code{$SIGMA} labels
-##' @param tname name for \code{$THETA}
-##' @param oname name for \code{$OMEGA}
-##' @param sname name for \code{$SIGMA}
-##' @param index the estimation number to return;  "last" will return the 
-##' last estimation results; otherwise, pass an integer indicating which 
-##' estimation results to return
-##' @param xpath xml path containing run results; if the default doesn't work, 
-##' consider using \code{.//estimation} as an alternative; see details
-##' @param env internal
-##' @aliases NMXML
-##' @details
-##' If \code{run} and \code{project} are supplied, the .xml file is 
-##' assumed to be located in \code{run.xml}, in directory \code{run} 
-##' off the \code{project} directory.  If \code{file} is supplied, 
-##' \code{run} and \code{project} arguments are ignored.
-##' 
-##' This function requires that the \code{xml2} package 
-##' be installed and loadable.  If \code{requireNamespace("xml2")}
-##' fails, an error will be generated. 
-##' 
-##' \code{nmxml} usually expects to find run results in the xpath called
-##' \code{.//nm:estimation}.  Occasionally, the run results are not stored in 
-##' this namespace but no namespaces are found in the xml file.  In this case, 
-##' the user can specify the xpath containing run results.  Consider trying 
-##' \code{.//estimation} as an alternative if the default fails. 
-##' 
-##' @return A list with theta, omega and sigma elements, 
-##' depending on what was requested
-##'  
-##' @seealso nmext
-##'  
-##' @examples
-##' 
-##' if(requireNamespace("xml2")) {
-##'   proj <- system.file("nonmem", package = "mrgsolve")
-##'   mrgsolve:::nmxml(run = 1005, project = proj)
-##' }
-##' 
+#' Import model estimates from a NONMEM xml file
+#'
+#' @param run run number.
+#' @param project project directory.
+#' @param path the complete path to the `run.xml` file.
+#' @param file deprecated; use `path` instead.
+#' @param root the directory that `path` and `project` are relative to; this is
+#' currently limited to the `working` directory or `cppdir`, the directory 
+#' where the model file is located.
+#' @param theta logical; if TRUE, the `$THETA` vector is returned.
+#' @param omega logical; if TRUE, the `$OMEGA` matrix is returned.
+#' @param sigma logical; if TRUE, the `$SIGMA` matrix is returned.
+#' @param olabels labels for `$OMEGA`.
+#' @param slabels labels for `$SIGMA`.
+#' @param oprefix prefix for `$OMEGA` labels.
+#' @param sprefix prefix for `$SIGMA` labels.
+#' @param tname name for `$THETA`.
+#' @param oname name for `$OMEGA`.
+#' @param sname name for `$SIGMA`.
+#' @param index the estimation number to return;  "last" will return the 
+#' last estimation results; otherwise, pass an integer indicating which 
+#' estimation results to return.
+#' @param xpath xml path containing run results; if the default doesn't work, 
+#' consider using `.//estimation` as an alternative; see details.
+#' @param env internal use only.
+#' @aliases NMXML
+#' @details
+#' If `run` and `project` are supplied, the `.xml` file is 
+#' assumed to be located in `run.xml`, in directory `run` 
+#' off the `project` directory.  If `file` is supplied, 
+#' `run` and `project` arguments are ignored.
+#' 
+#' This function requires that the xml2 package 
+#' be installed and loadable.  If `requireNamespace("xml2")`
+#' fails, an error will be generated. 
+#' 
+#' `nmxml` usually expects to find run results in the xpath called
+#' `.//nm:estimation`.  Occasionally, the run results are not stored in 
+#' this namespace but no namespaces are found in the xml file.  In this case, 
+#' the user can specify the xpath containing run results.  Consider trying 
+#' `.//estimation` as an alternative if the default fails. 
+#' 
+#' @return A list with theta, omega and sigma elements, depending on what was 
+#' requested.
+#'  
+#' @seealso nmext
+#'  
+#' @examples
+#' 
+#' if(requireNamespace("xml2")) {
+#'   proj <- system.file("nonmem", package = "mrgsolve")
+#'   mrgsolve:::nmxml(run = 1005, project = proj)
+#' }
+#' @md
 nmxml <- function(run = numeric(0), project = character(0),
                   file = character(0), path = character(0),
                   root = c("working", "cppfile"), 
@@ -219,8 +219,8 @@ nmxml <- function(run = numeric(0), project = character(0),
 #' Import model estimates from a NONMEM ext file
 #' 
 #' @inheritParams nmxml
-#' @param path full path to NONMEM `ext` file
-#' @param read_fun function to use when reading the `ext` file
+#' @param path full path to NONMEM `ext` file.
+#' @param read_fun function to use when reading the `ext` file.
 #' 
 #' @seealso [nmxml()], [read_nmext()]
 #' 
@@ -331,43 +331,43 @@ nm_xml_matrix <- function(x) {
   m
 }
 
-##' Extract estimates from NONMEM ext file
-##' 
-##' This function retrieves NONMEM estimates for use in the mrgsolve model when 
-##' `$NMEXT` is invoked. See [nmext()].
-##' 
-##' @param run a run number or run identifier
-##' @param project the NONMEM project directory
-##' @param file the `ext` file name
-##' @param path full path and file name for `ext` file
-##' @param read_fun function to read the `ext` file; [data.table::fread()] will 
-##' be used if available; otherwise [utils::read.table()] is used. 
-##' @param index selects the table number whose results will be returned;
-##' use value "last" to select the last table in the `.ext` file; or pass an 
-##' integer specifying the table number; in case there is exactly
-##' one table in the `.ext` file, pass the value "single" to bypass parsing 
-##' the file to look for sub tables (this might be useful when BAYES analysis 
-##' was performed as the only estimation method and there are 10000s of 
-##' posterior samples in the file)
-##' 
-##' @return A list with param, omega, and sigma in a format ready to be used to 
-##' update a model object.
-##' 
-##' @examples
-##' project <- system.file("nonmem", package = "mrgsolve")
-##' 
-##' est <- read_nmext(1005, project = project)
-##' 
-##' est$param
-##' 
-##' est$omega
-##' 
-##' est$sigma
-##' 
-##' est <- read_nmext(2005, project = project, index = 3)
-##' 
-##' @md
-##' @export 
+#' Extract estimates from NONMEM ext file
+#' 
+#' This function retrieves NONMEM estimates for use in the mrgsolve model when 
+#' `$NMEXT` is invoked. See [nmext()].
+#' 
+#' @param run a run number or run identifier.
+#' @param project the NONMEM project directory.
+#' @param file the `ext` file name.
+#' @param path full path and file name for `ext` file.
+#' @param read_fun function to read the `ext` file; [data.table::fread()] will 
+#' be used if available; otherwise [utils::read.table()] is used. 
+#' @param index selects the table number whose results will be returned;
+#' use value "last" to select the last table in the `.ext` file; or pass an 
+#' integer specifying the table number; in case there is exactly
+#' one table in the `.ext` file, pass the value "single" to bypass parsing 
+#' the file to look for sub tables (this might be useful when BAYES analysis 
+#' was performed as the only estimation method and there are 10000s of 
+#' posterior samples in the file).
+#' 
+#' @return A list with param, omega, and sigma in a format ready to be used to 
+#' update a model object.
+#' 
+#' @examples
+#' project <- system.file("nonmem", package = "mrgsolve")
+#' 
+#' est <- read_nmext(1005, project = project)
+#' 
+#' est$param
+#' 
+#' est$omega
+#' 
+#' est$sigma
+#' 
+#' est <- read_nmext(2005, project = project, index = 3)
+#' 
+#' @md
+#' @export 
 read_nmext <- function(run = NA_real_, 
                        project = getwd(), 
                        file = paste0(run,".ext"), 
