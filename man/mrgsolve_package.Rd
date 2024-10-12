@@ -122,7 +122,7 @@ x <- mod \%>\% ev(amt=300, ii=12, addl=3) \%>\% mrgsim
 Useful links:
 \itemize{
   \item \url{https://mrgsolve.org/docs/}
-  \item \url{https://github.com/metrumresearchgroup/mrgsolve/}
+  \item \url{https://github.com/metrumresearchgroup/mrgsolve}
   \item Report bugs at \url{https://github.com/metrumresearchgroup/mrgsolve/issues}
 }
 
