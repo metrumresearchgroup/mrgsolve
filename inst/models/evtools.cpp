@@ -22,7 +22,7 @@ $INPUT WT = 70
 $PKMODEL cmt = "DEPOT CENT", depot = TRUE
 
 $PK 
-if(NEWIND <= 1) reg.init(self);
+if(REG==3 && NEWIND <= 1) reg.init(self);
 
 double CL = exp(log(TVCL) + 0.75*log(WT/70) + ETA(1));
 double V  = exp(log(TVV)  +      log(WT/70) + ETA(2));
