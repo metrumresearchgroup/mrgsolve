@@ -32,7 +32,7 @@ Maintainer: Kyle T Baron <kyleb@metrumrg.com>
 Description: Fast simulation from ordinary differential equation
     (ODE) based models typically employed in quantitative pharmacology and
     systems biology.
-License: GPL (>=2)
+License: GPL (>= 2)
 URL: https://mrgsolve.org/docs/, https://github.com/metrumresearchgroup/mrgsolve
 BugReports: 
     https://github.com/metrumresearchgroup/mrgsolve/issues
