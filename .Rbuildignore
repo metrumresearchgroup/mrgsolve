@@ -53,3 +53,4 @@ vignettes/extra
 vignettes/build
 vignettes/mrgsolve-builds
 vignettes/extra/mrgsolve-builds/
+^LICENSE\.md$
