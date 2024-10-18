@@ -1,4 +1,40 @@
-# mrgsolve (development version)
+# mrgsolve 1.5.2
+
+- Add `$EVENT` block for writing code related to dosing or other events that 
+  are implemented through model code rather than the data set (#1230).
+  
+- Add `evt::reset()` and `evt::reset(self)` functions under the `evtools` 
+  plugin; these reset the compartments in a model; overloaded functions are
+  also provided to reset and dose with bolus or infusion (#1222).
+  
+- Completed dosing functionality in `evtools` plugin; use `evt::addl()` to 
+  schedule additional doses through an `evt::ev` object; use `evt::ii()` to 
+  set the dosing interval; use `evt::ss()` to advance the pharmacokinetic 
+  system to steady state just prior to dosing; `evt::cmt()` sets the compartment 
+  number; `evt::amt()` sets the dose amount; `evt::rate()` sets the infusion 
+  rate; see the user guide for the specific signatures that are available
+  (#1227).
+  
+- Add `evtools` model to `modlib()`, illustrating how to implement dosing 
+  regimens from inside the model a few different ways (#1230).
+
+- Added more comprehensive checking for duplicate blocks in a model file; 
+  duplicate blocks are always handled when allowed; an error message is always 
+  issued when duplicates are not allowed (#1238).
+  
+- Code to audit `$ODE` (or `$DES`) code, looking for an equation for every 
+  model compartment was refactored to use a common approach for both traditional
+  models and models written with the `nm-vars` plugin; regardless of approach, 
+  the user will be warned if mrgsolve does not detect code relevant to every 
+  model compartment; the audit system can be bypassed by including the 
+  `@!audit` block option to `$ODE` (#1235).
+  
+- The `autodec` plugin was lightly refactored to avoid false positive detection
+  of variables declared as `double`; plans are in place to narrow the 
+  scope of what is detected for declaration in future releases (#1234).
+  
+- R help files (`.Rd`) reviewed and revised for consistency and formatting 
+  (#1246).
 
 # mrgsolve 1.5.1
 
