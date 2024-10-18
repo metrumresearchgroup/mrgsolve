@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.5.2
 
 - Add `$EVENT` block for writing code related to dosing or other events that 
