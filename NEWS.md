@@ -30,7 +30,7 @@
   `@!audit` block option to `$ODE` (#1235).
   
 - The `autodec` plugin was lightly refactored to avoid false positive detection
-  of variables to be declared as `double`; plans are in place to narrow the 
+  of variables declared as `double`; plans are in place to narrow the 
   scope of what is detected for declaration in future releases (#1234).
   
 - R help files (`.Rd`) reviewed and revised for consistency and formatting 
