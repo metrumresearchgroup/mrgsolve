@@ -38,7 +38,7 @@
 
 \method{slice}{mrgsims}(.data, ...)
 
-count.mrgsims(.data, ...)
+\method{count}{mrgsims}(x, ...)
 
 as_data_frame.mrgsims(x, ...)
 

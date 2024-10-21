@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2024  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -67,6 +67,11 @@ test_that("Pipe to slice", {
   x <- out %>% slice(c(6,11))
   expect_is(x, "data.frame")
   expect_true(all(x$time %in% c(1,2.25)))
+})
+
+test_that("Pipe to count", {
+  x <- count(out, ID)
+  expect_is(x, "data.frame")
 })
 
 test_that("filter_mrgsims", {

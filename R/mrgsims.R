@@ -234,8 +234,8 @@ slice.mrgsims <- function(.data,...) {
 
 #' @rdname mrgsims_dplyr
 #' @export
-count.mrgsims <- function(.data,...) {
-  dplyr::count(as_tibble.mrgsims(.data),...)
+count.mrgsims <- function(x, ...) {
+  dplyr::count(as_tibble.mrgsims(x), ...)
 }
 
 #' @rdname mrgsims_dplyr
@@ -243,7 +243,6 @@ count.mrgsims <- function(.data,...) {
 as_data_frame.mrgsims <- function(x,...) {
   as_tibble(as.data.frame(x),...)
 }
-
 
 #' @param x mrgsims object.
 #' 
