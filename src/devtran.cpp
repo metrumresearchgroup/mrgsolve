@@ -419,6 +419,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     double tfrom = a[i].front()->time();
     double tto = tfrom;
     double maxtime = a[i].back()->time();
+    prob.d.tlast = maxtime;
     
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
