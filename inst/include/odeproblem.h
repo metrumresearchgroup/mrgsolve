@@ -186,6 +186,7 @@ public:
   void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
   void idn(int n) {d.idn = n;}///< sets the current ID number
   void rown(int n) {d.rown=n;}///< sets the current data set row number
+  void reclast(bool value) {d.reclast=value;}///< sets flag for last record
   
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}

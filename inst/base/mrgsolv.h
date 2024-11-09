@@ -110,6 +110,7 @@ public:
   int idn; ///< current ID number
   int nrow; ///< number of rows in output data set
   int rown; ///< current output row number
+  bool reclast;///< true when on the last record for current individual
   bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
   void stop() {SYSTEMOFF=9;}///< stops the problem when the next record is started

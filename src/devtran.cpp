@@ -444,7 +444,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     prob.set_d(a[i][0]);
     prob.init_call(tfrom);
+    prob.reclast(false);
     
+    int iNN = a[i].size();
+    int irow = 1;
+
     for(size_t j=0; j < a[i].size(); ++j) {
       
       if(do_interrupt && (!(--ic))) {
@@ -454,11 +458,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(crow == NN) continue;
       
-      prob.rown(crow);
-      
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
+      
+      prob.rown(crow);
+      
+      if(this_rec->output() && irow==iNN) {
+        prob.reclast(true);
+      }
       
       if(prob.systemoff()) {
         // This starts a loop that will finish the remaining records 
@@ -740,6 +748,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(unsigned int k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob.y(request[k]);
         }
+        ++irow;
         ++crow;
       } 
       if(this_rec->evid()==2) {
