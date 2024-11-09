@@ -167,7 +167,8 @@ public:
   double fbio(unsigned int pos);
   double alag(int cmt);
 
-  void time(double time_){d.time = time_;}
+  void time(double time_){d.time = time_;}///< sets current simulation time
+  void timelast(double time_) {d.timelast=time_;}///< sets last time for current id 
   void newind(unsigned int newind_){d.newind = newind_;}
   unsigned int newind(){return d.newind;}
 
@@ -184,7 +185,7 @@ public:
   void nid(int n) {d.nid = n;}///< sets the number of IDs
   void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
   void idn(int n) {d.idn = n;}///< sets the current ID number
-  void rown(int n) {d.rown=n;}///< sets the currenw data set row number
+  void rown(int n) {d.rown=n;}///< sets the current data set row number
   
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}

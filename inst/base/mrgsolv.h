@@ -100,6 +100,7 @@ public:
   std::vector<double> SIGMA; ///< vector of on-diagonal sigma elements
   unsigned int newind; ///< new individual flag
   double time; ///< current simulation time
+  double timelast;///< time of last record for current individual
   int evid;  ///< event ID flag
   unsigned short int SYSTEMOFF; ///< flag to stop advancing system for current ID
   double id;  ///< current ID
@@ -109,7 +110,6 @@ public:
   int idn; ///< current ID number
   int nrow; ///< number of rows in output data set
   int rown; ///< current output row number
-  double tlast;
   bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
   void stop() {SYSTEMOFF=9;}///< stops the problem when the next record is started
