@@ -446,8 +446,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob.init_call(tfrom);
     prob.reclast(false);
     
-    int iNN = a[i].size();
-    int irow = 1;
+    // The last row for the current id
+    int irowlast = crow + a[i].size();
 
     for(size_t j=0; j < a[i].size(); ++j) {
       
@@ -464,7 +464,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       prob.rown(crow);
       
-      if(this_rec->output() && irow==iNN) {
+      if(crow==irowlast && this_rec->output()) {
         prob.reclast(true);
       }
       
@@ -748,7 +748,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(unsigned int k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob.y(request[k]);
         }
-        ++irow;
         ++crow;
       } 
       if(this_rec->evid()==2) {
