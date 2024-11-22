@@ -447,7 +447,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     prob.reclast(false);
     
     // The last row for the current id
-    int irowlast = crow + a[i].size();
+    int irowlast = crow + a[i].size() - 1;
 
     for(size_t j=0; j < a[i].size(); ++j) {
       
