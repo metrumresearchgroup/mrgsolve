@@ -86,9 +86,9 @@ LSODA::LSODA(int neq_, const Rcpp::S4& mod) {
   maxsteps_(Rcpp::as<int>(mod.slot("maxsteps")));
   ixpr_(Rcpp::as<int>(mod.slot("ixpr")));
   mxhnil_(Rcpp::as<int>(mod.slot("mxhnil")));
-  itol_ = 1;
-  rtol_.assign(2, Rcpp::as<double>(mod.slot("rtol")));
-  atol_.assign(2, Rcpp::as<double>(mod.slot("atol")));
+  itol_ = 4;
+  rtol_.assign(neq_+1, Rcpp::as<double>(mod.slot("rtol")));
+  atol_.assign(neq_+1, Rcpp::as<double>(mod.slot("atol")));
   Rtol = rtol_[1];
   Atol = atol_[1];
   rtol_[0] = 0;

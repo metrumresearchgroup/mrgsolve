@@ -149,6 +149,31 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neq = prob.neq();
   LSODA solver(neq, mod);
   
+  SEXP _rtol = envir["rtol"];
+  SEXP _atol = envir["atol"];
+  if(!Rf_isNumeric(_rtol)) {
+    say("rtol is not numeric");  
+  } else {
+    Rcpp::NumericVector rt = _rtol;
+    if(rt.size() != neq) {
+      CRUMP("invalid rtol found in model environment");  
+    }
+    for(size_t i = 0; i < neq; ++i) {
+      solver.rtol_[i] = rt[i];  
+    }
+  }
+  if(!Rf_isNumeric(_atol)) {
+    say("atol is not numeric");  
+  } else {
+    Rcpp::NumericVector at = _atol;  
+    if(at.size() != neq) {
+      CRUMP("invalid atol found in model environment");  
+    }
+    for(size_t i = 0; i < neq; ++i) {
+      solver.atol_[i] = at[i];  
+    }
+  }
+
   recstack a(NID);
   
   unsigned int obscount = 0;
@@ -389,8 +414,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.nrow(NN);
   prob.idn(0);
   prob.rown(0);
-  
+
   prob.config_call();
+  
   reclist mtimehx;
   bool used_mtimehx = false;
   

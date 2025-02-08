@@ -180,7 +180,9 @@ private:
     int icount=0, irflag=0;
     
 private:
-    int itol_ = 2;
+    int itol_ = 4;
+
+public:
     std::vector<double> rtol_;
     std::vector<double> atol_;
     
