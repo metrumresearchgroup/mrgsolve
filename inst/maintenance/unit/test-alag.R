@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group
+# Copyright (C) 2013 - 2025  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -96,4 +96,22 @@ test_that("ss dose with lag time issue-484", {
   out1 <- mrgsim_d(mod,data1) %>% slice(-c(1,2))
   out2 <- mrgsim_d(mod,data2) %>% slice(-c(1,2))
   expect_identical(out1,out2)
+})
+
+test_that("EVID 1 or 4 at SS with lag time are identical", {
+  ev1 <- ev(amt = 100, ii = 24, ss = 1, LAG = 10)
+  ev4 <- mutate(ev1, evid = 4)
+  
+  out1 <- mrgsim_e(mod, ev1, recsort = 3, output = "df")
+  out4 <- mrgsim_e(mod, ev4, recsort = 3, output = "df")
+  
+  expect_identical(out1, out4)
+  
+  ev1a <- mutate(ev1, addl = 3, LAG = 5)
+  ev4a <- mutate(ev4, addl = 3, LAG = 5)
+  
+  out1a <- mrgsim_e(mod, ev1a, recsort = 3, output = "df")
+  out4a <- mrgsim_e(mod, ev4a, recsort = 3, output = "df")
+  
+  expect_identical(out1a, out4a)
 })
