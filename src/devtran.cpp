@@ -554,6 +554,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
             }
+            // We already advanced to ss
+            // Lagged dose and all subsequent should be vanilla EVID=1 doses
             this_rec->ss(0);
             rec_ptr newev = NEWREC(*this_rec);
             if(newev->evid()==4) {
