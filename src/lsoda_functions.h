@@ -36,22 +36,23 @@ void LSODA::set_tolerances(const Rcpp::S4& mod) {
   std::vector<double> xrtol_ = Rcpp::as<std::vector<double>>(mod.slot("mrtol"));
   bool size_error = false;
   if(xatol_.size() != Neq) {
-    Rcpp::CharacterVector text = "Invalid atol";
+    Rcpp::CharacterVector text = "Error: atol vector is the wrong size.";
     Rcpp::message(text);
     size_error = true;
   }
   if(xrtol_.size() != Neq) {
-    Rcpp::CharacterVector text = "Invalid rtol";
+    Rcpp::CharacterVector text = "Error: rtol vector is the wrong size.";
     Rcpp::message(text);
     size_error = true;
   }
   if(size_error) {
     Rcpp::stop("itol is > 1, but tolerance vector(s) are the wrong size.");
   }
-  atol_.assign(Neq+1,0);
-  rtol_.assign(Neq+1,0);
-  // tolerances start at index 1
+  // initialize to the default
+  atol_.assign(Neq+1,1e-8);
+  rtol_.assign(Neq+1,1e-8);
   for(size_t i = 0; i < Neq; ++i) {
+    // tolerances in the solver object start at index 1
     atol_[i+1] = xatol_[i]; 
     rtol_[i+1] = xrtol_[i];
   }
