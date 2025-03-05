@@ -257,8 +257,13 @@ valid.mrgmod <- function(object) {
 #' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} 
 #' \code{<numeric>}
 #' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot itol passed to \code{\link[=solversettings]{dlsoda}} \code{<int>}; 
+#' \code{itol = 1} indicates scalar values for \code{atol} and \code{rtol};
+#' \code{itol > 1} indicates customized tolerances for each compartment 
 #' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot mrtol a vector of \code{rtol} to be used when \code{itol = 1} \code{<numeric>}
+#' @slot matol a vector of \code{atol} to be used when \code{itol = 1} \code{<numeric>}
 #' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
