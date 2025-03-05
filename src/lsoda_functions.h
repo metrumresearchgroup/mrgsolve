@@ -31,22 +31,28 @@ void LSODA::mxhnil_(const int value) {
   if(value!=0) iopt = 1;
 }
 
-void LSODA::set_tolerances(const Rcpp::S4& mod) {
-  std::vector<double> xatol_ = Rcpp::as<std::vector<double>>(mod.slot("matol"));
-  std::vector<double> xrtol_ = Rcpp::as<std::vector<double>>(mod.slot("mrtol"));
+void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
+  Rcpp::NumericVector xatol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("matol"));
+  Rcpp::NumericVector xrtol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("mrtol"));
   bool size_error = false;
   if(xatol_.size() != Neq) {
-    Rcpp::CharacterVector text = "Error: atol vector is the wrong size.";
+    std::string size = std::to_string(xatol_.size());
+    std::string expect = std::to_string(Neq);
+    Rcpp::CharacterVector text = 
+      "[lsoda] expecting atol vector with size " + expect + ", but got size " + size + ".";
     Rcpp::message(text);
     size_error = true;
   }
   if(xrtol_.size() != Neq) {
-    Rcpp::CharacterVector text = "Error: rtol vector is the wrong size.";
+    std::string size = std::to_string(xatol_.size());
+    std::string expect = std::to_string(Neq);
+    Rcpp::CharacterVector text = 
+      "[lsoda] expecting rtol vector with size " + expect + ", but got size " + size + ".";
     Rcpp::message(text);
     size_error = true;
   }
   if(size_error) {
-    Rcpp::stop("itol is > 1, but tolerance vector(s) are the wrong size.");
+    Rcpp::stop("itol is > 1, but atol/rtol vector(s) are not the expected size.");
   }
   // initialize to the default
   atol_.assign(Neq+1,1e-8);
@@ -674,7 +680,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
 
 void LSODA::ewset(const vector<double> &ycur)
 {
-    switch (itol_)
+    switch (itol)
     {
     case 1:
         for (size_t i = 1; i <= n; ++i)
