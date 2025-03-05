@@ -86,13 +86,17 @@ LSODA::LSODA(int neq_, const Rcpp::S4& mod) {
   maxsteps_(Rcpp::as<int>(mod.slot("maxsteps")));
   ixpr_(Rcpp::as<int>(mod.slot("ixpr")));
   mxhnil_(Rcpp::as<int>(mod.slot("mxhnil")));
-  itol_ = 1;
-  rtol_.assign(2, Rcpp::as<double>(mod.slot("rtol")));
-  atol_.assign(2, Rcpp::as<double>(mod.slot("atol")));
-  Rtol = rtol_[1];
-  Atol = atol_[1];
+  itol_ = Rcpp::as<int>(mod.slot("itol")); 
+  if(itol_>1) {
+    set_tolerances(mod); 
+  } else {
+    rtol_.assign(2, Rcpp::as<double>(mod.slot("rtol")));
+    atol_.assign(2, Rcpp::as<double>(mod.slot("atol")));
+  }
   rtol_[0] = 0;
   atol_[0] = 0;
+  Rtol = rtol_[1];
+  Atol = atol_[1];
 }
 
 /* --------------------------------------------------------------------------*/

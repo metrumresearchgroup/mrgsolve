@@ -31,6 +31,32 @@ void LSODA::mxhnil_(const int value) {
   if(value!=0) iopt = 1;
 }
 
+void LSODA::set_tolerances(const Rcpp::S4& mod) {
+  std::vector<double> xatol_ = Rcpp::as<std::vector<double>>(mod.slot("matol"));
+  std::vector<double> xrtol_ = Rcpp::as<std::vector<double>>(mod.slot("mrtol"));
+  bool size_error = false;
+  if(xatol_.size() != Neq) {
+    Rcpp::CharacterVector text = "Invalid atol";
+    Rcpp::message(text);
+    size_error = true;
+  }
+  if(xrtol_.size() != Neq) {
+    Rcpp::CharacterVector text = "Invalid rtol";
+    Rcpp::message(text);
+    size_error = true;
+  }
+  if(size_error) {
+    Rcpp::stop("itol is > 1, but tolerance vector(s) are the wrong size.");
+  }
+  atol_.assign(Neq+1,0);
+  rtol_.assign(Neq+1,0);
+  // tolerances start at index 1
+  for(size_t i = 0; i < Neq; ++i) {
+    atol_[i+1] = xatol_[i]; 
+    rtol_[i+1] = xrtol_[i];
+  }
+}
+
 bool LSODA::abs_compare(double a, double b)
 {
     return (std::abs(a) < std::abs(b));

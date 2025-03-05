@@ -61,6 +61,7 @@ public:
     void maxsteps_(const int value);
     void ixpr_(const int value);
     void mxhnil_(const int value);
+    void set_tolerances(const Rcpp::S4& mod);
 
     array<int, 7> iworks;// iworks = {{0}};
     array<double, 4> rworks;// = {{0.0}};
@@ -178,12 +179,10 @@ private:
     size_t nslp=0;
     double pdest=0.0, pdlast=0.0, ratio=0.0;
     int icount=0, irflag=0;
-    
+    int itol_=1;
 private:
-    int itol_ = 2;
     std::vector<double> rtol_;
     std::vector<double> atol_;
-    
     // public:
     //     dtype param = nullptr;
 };
