@@ -33,7 +33,6 @@ private:
   double Amt; 
   double Rate;
   double Until;
-  bool initialized;
   databox* Self;
 };
 
@@ -49,13 +48,11 @@ void regimen::reset() {
 }
 
 regimen::regimen() {
-  initialized = false;
   reset();
 }
 
 void regimen::init(databox& self_) {
   Self = &self_;
-  initialized = true;
   reset();
 }
 
@@ -90,7 +87,7 @@ void regimen::until(double until_) {
 }
 
 void regimen::execute() {
-  if(!initialized) return;
+  if(!Self) return;
   if(!evt::near(Self->time, dose_time)) return;
   if(Self->time >= Until) return;
   evt::infuse(*Self, Amt, Cmt, Rate);
