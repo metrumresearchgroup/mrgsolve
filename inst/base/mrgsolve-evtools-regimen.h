@@ -17,6 +17,8 @@ public:
   double ii() {return Ii;}
   void   rate(double rate_);
   double rate() {return Rate;}
+  double time_next() {return dose_time;}
+  void   time_next(double time_);
   void   until(double until_);
   double until() {return Until;}
   void   flagnext();
@@ -41,12 +43,13 @@ void regimen::reset() {
   Rate = 0.0;
   Ii = 1.0e9;
   Until = 1.0e9;
-  dose_time = 0.0;
+  dose_time = Self ? Self->time : 0.0;
   prev_dose_time = -1.0e9;
   Flagnext = false;
 }
 
 regimen::regimen() {
+  initialized = false;
   reset();
 }
 
@@ -73,6 +76,11 @@ void regimen::cmt(int cmt_) {
 
 void regimen::ii(double ii_) {
   Ii = ii_;
+  return;
+}
+
+void regimen::time_next(double time_) {
+  dose_time = time_;
   return;
 }
 
