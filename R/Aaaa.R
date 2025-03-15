@@ -79,7 +79,7 @@ GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest",
 )
 GLOBALS$UPDATE_SINGLE <- c(
   "atol", "rtol", "ss_rtol", "ss_atol", "verbose", "debug", "preclean", "mindt",
-  "digits", "ixpr", "mxhnil", "start", "end", "add", "delta", "maxsteps"
+  "digits", "ixpr", "mxhnil", "start", "end", "add", "delta", "maxsteps",
   "hmin", "hmax", "tscale", "request"
  )
 GLOBALS$UPDATE_OTHER <- c("param", "init", "omega", "sigma", "outvars")

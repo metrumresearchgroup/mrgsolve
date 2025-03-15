@@ -85,7 +85,7 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   # TODO: get rid of the merge argument to `update()`
   # TODO: get rid of the open argument to `update()`
   # TODO: longer term ... error when bad arguments are passed
-  browser()
+
   args <- list(...)
   
   if(!is.null(data)) {
