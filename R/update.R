@@ -17,15 +17,6 @@
 
 setAs("NULL", "character", function(from) character(0))
 
-sval <- unique(c("atol","rtol","ss_rtol", "ss_atol",
-                 "verbose","debug","preclean","mindt",
-                 "digits", "ixpr", "mxhnil","start", "end", "add", "delta",
-                 "maxsteps", "hmin", "hmax","tscale", "request"))
-
-other_val <- c("param", "init", "omega", "sigma", "outvars")
-
-all_updatable <- c(sval,other_val)
-
 #' Update the model object
 #'
 #' After the model object is created, update various attributes.
@@ -94,7 +85,7 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   # TODO: get rid of the merge argument to `update()`
   # TODO: get rid of the open argument to `update()`
   # TODO: longer term ... error when bad arguments are passed
-
+  browser()
   args <- list(...)
   
   if(!is.null(data)) {
@@ -134,7 +125,7 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   valid <- !is.na(m)
   a[valid] <- all_updatable[m[valid]]
   names(args) <- a
-  valid.in <- which(a %in% sval)
+  valid.in <- which(a %in% GLOBALS$SINGLE_UPDATE)
   if(length(valid.in) > 0) {
     for(i in seq_along(valid.in)) {
       slot(object, a[valid.in[i]]) <- args[[a[valid.in[i]]]]

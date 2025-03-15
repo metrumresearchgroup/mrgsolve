@@ -77,6 +77,11 @@ GLOBALS$TRAN_FILL_NA <- c(
 GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest", 
  "trequest", "carry_out", "Request"
 )
+GLOBALS$UPDATE_SINGLE <- c("atol","rtol","ss_rtol", "ss_atol", "verbose",
+"debug","preclean","mindt", "digits", "ixpr", "mxhnil","start", "end", "add",
+ "delta", "maxsteps", "hmin", "hmax","tscale", "request")
+GLOBALS$UPDATE_OTHER <- c("param", "init", "omega", "sigma", "outvars")
+GLOBALS$ALL_UPDATABLE <- c(GLOBALS$UPDATE_SINGLE, GLOBALS$UPDATE_OTHER)
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
