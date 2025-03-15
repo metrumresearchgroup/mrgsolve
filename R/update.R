@@ -98,7 +98,7 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   
   a <- names(args)
   
-  m <- charmatch(a, all_updatable)
+  m <- charmatch(a, GLOBALS$UPDATE_ALL)
   
   if(anyNA(m) && isTRUE(strict)) {
     if(!is.null(getOption("mrgsolve.update.strict"))) {
@@ -123,9 +123,9 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
   }
   
   valid <- !is.na(m)
-  a[valid] <- all_updatable[m[valid]]
+  a[valid] <- GLOBALS$UPDATE_ALL[m[valid]]
   names(args) <- a
-  valid.in <- which(a %in% GLOBALS$SINGLE_UPDATE)
+  valid.in <- which(a %in% GLOBALS$UPDATE_SINGLE)
   if(length(valid.in) > 0) {
     for(i in seq_along(valid.in)) {
       slot(object, a[valid.in[i]]) <- args[[a[valid.in[i]]]]

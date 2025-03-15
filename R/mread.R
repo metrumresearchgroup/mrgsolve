@@ -289,11 +289,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   mread.env[["audit_dadt"]] <- 
     isTRUE(audit) && isTRUE(mread.env[["audit_dadt"]])
   
-  # Look for compartments we're dosing into: F/ALAG/D/R
-  # and add them to CMTN
-  dosing <- dosing_cmts(spec[["MAIN"]], names(init))
-  SET[["CMTN"]] <- c(spec[["CMTN"]], dosing)
-  
   # new model object ----
   x <- new(
     "mrgmod",
@@ -329,6 +324,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
+
+  # Look for compartments we're dosing into: F/ALAG/D/R and add them to CMTN
+  dosing <- dosing_cmts(spec[["MAIN"]], names(init))
+  CMTN <- c(spec[["CMTN"]], dosing)
   
   # model r defs ----
   # These are the various #define statements
@@ -344,7 +343,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     model = model(x),
     omats = omat(x),
     smats = smat(x),
-    set = SET,
+    cmtn = CMTN,
     check.bounds = check.bounds, 
     plugin = plugin,
     dbsyms = args[["dbsyms"]]
