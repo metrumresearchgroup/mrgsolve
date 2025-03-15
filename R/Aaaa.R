@@ -72,6 +72,11 @@ GLOBALS$TRAN_FILL_NA <- c(
   "AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS", 
   "amt", "cmt", "evid", "ii", "addl", "rate", "ss"
 )
+# Arguments to mrgsim that can be stated in $SET and then 
+# passed to mrgsim
+GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest", 
+ "trequest", "carry_out", "Request"
+)
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
