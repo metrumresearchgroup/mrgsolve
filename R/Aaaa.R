@@ -72,11 +72,6 @@ GLOBALS$TRAN_FILL_NA <- c(
   "AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS", 
   "amt", "cmt", "evid", "ii", "addl", "rate", "ss"
 )
-# Arguments to mrgsim that can be stated in $SET and then 
-# passed to mrgsim
-GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest", 
- "trequest", "carry_out", "Request"
-)
 GLOBALS$UPDATE_SINGLE <- c(
   "atol", "rtol", "ss_rtol", "ss_atol", "verbose", "debug", "preclean", "mindt",
   "digits", "ixpr", "mxhnil", "start", "end", "add", "delta", "maxsteps",
@@ -86,6 +81,11 @@ GLOBALS$UPDATE_OTHER <- c("param", "init", "omega", "sigma", "outvars")
 GLOBALS$UPDATE_ALL <- c(GLOBALS$UPDATE_SINGLE, GLOBALS$UPDATE_OTHER)
 GLOBALS$SET_EXTRA <- c(
   "collapse_omega", "collapse_sigma", "ss_cmt", "clink", "fixed_type"
+)
+# Arguments to mrgsim that can be stated in $SET and then 
+# passed to mrgsim
+GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest", 
+ "trequest", "carry_out", "Request"
 )
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 

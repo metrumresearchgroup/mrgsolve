@@ -989,3 +989,19 @@ BLOCK <- function(x, env, type, code = NULL, get = NULL, ...) {
   x <- structure(.Data=code, class=paste0("spec",type),pos=1)
   handle_spec_block(x,env)
 }
+
+handle_SET <- function(spec) {
+  ans <- tolist(dump_opts(spec[["SET"]]))
+  valid <- c(GLOBALS$UPDATE_ALL, GLOBALS$SET_EXTRA, GLOBALS$SET_ARGS)
+  bad <- setdiff(names(ans), valid)
+  if(length(bad)) {
+    if(length(bad) > 1) { 
+      msg <- "The $SET block cannot handle these items:"
+    } else {
+      msg <- "The $SET block cannot handle this item"
+    }
+    names(bad) <- rep("x", length(bad))
+    abort(msg, body = bad, call = caller_env())
+  }
+  ans
+}

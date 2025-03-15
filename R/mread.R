@@ -200,7 +200,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
-  SET <- tolist(dump_opts(spec[["SET"]]))
+  SET <- handle_SET(spec)
   ENV <- eval_ENV_block(spec[["ENV"]],build[["project"]])
   if("SET" %in% names(spec)) spec[["SET"]] <- ""
   if("ENV" %in% names(spec)) spec[["ENV"]] <- ""
