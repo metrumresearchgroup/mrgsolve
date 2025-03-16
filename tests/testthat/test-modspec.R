@@ -759,3 +759,11 @@ test_that("Skip cpp dot check gh-1159", {
   
   expect_s4_class(mcode("cpp-dot-skip-4", code, compile = FALSE), "mrgmod")
 })
+
+test_that("Invalid item in $SET generates error", {
+  code <- "$SET end = 25, kyle = 2"
+  expect_error(
+    mcode("dollar-set-item-check-1", code),
+    "The $SET block does now allow this item", fixed = TRUE
+  )
+})
