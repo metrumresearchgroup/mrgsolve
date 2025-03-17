@@ -993,15 +993,17 @@ BLOCK <- function(x, env, type, code = NULL, get = NULL, ...) {
 handle_SET <- function(spec) {
   ans <- tolist(dump_opts(spec[["SET"]]))
   valid <- c(GLOBALS$UPDATE_ALL, GLOBALS$SET_EXTRA, GLOBALS$SET_ARGS)
-  bad <- setdiff(names(ans), valid)
-  if(length(bad)) {
-    if(length(bad) > 1) { 
-      msg <- "The $SET block cannot handle these items:"
-    } else {
-      msg <- "The $SET block cannot handle this item"
-    }
-    names(bad) <- rep("x", length(bad))
-    abort(msg, body = bad, call = caller_env())
+  incoming <- charmatch(names(ans), valid)
+  bad <- which(is.na(incoming))
+  if(!length(bad)) {
+    return(ans)  
   }
-  ans
+  if(length(bad) > 1) { 
+    msg <- "The $SET block cannot handle these items:"
+  } else {
+    msg <- "The $SET block cannot handle this item"
+  }
+  bad <- names(ans)[bad]
+  names(bad) <- rep("x", length(bad))
+  abort(msg, body = bad, call = caller_env())
 }
