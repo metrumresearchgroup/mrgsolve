@@ -25,7 +25,7 @@ generate_rdefs <- function(pars,
                            model = "",
                            omats,
                            smats,
-                           set = list(), 
+                           cmtn = NULL, 
                            plugin = NULL,
                            dbsyms = FALSE, ...) {
 
@@ -73,7 +73,7 @@ generate_rdefs <- function(pars,
 
     Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
 
-    cmtn <- unique(intersect(cvec_cs(set$CMTN),cmt))
+    cmtn <- unique(intersect(cvec_cs(cmtn),cmt))
     
     # Handle plugins; note plugin[["nm-defs"]] are punched in below     
     if(!is.null(plugin[["N_CMT"]])) cmtn <- cmt  
