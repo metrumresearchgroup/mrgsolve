@@ -191,7 +191,8 @@ void datarecord::implement(odeproblem* prob) {
   case 8: // replace
     prob->y(eq_n, Amt);
     break;
-  case 4:
+  case 4: // dose and reset; reset only if non-ss
+    if(!Armed) break;
     if(this->ss()==0) {
       for(int i=0; i < prob->neq(); ++i) {
         prob->y(i,0.0);
@@ -200,7 +201,6 @@ void datarecord::implement(odeproblem* prob) {
       }
       prob->init_call(Time);
     }
-    if(!Armed) break;
     if(Rate > 0) {
       this->evid(5);
     } else {
