@@ -155,3 +155,91 @@ test_that("regimen::ii() gives expected result gh-1169", {
   expect_true(all(summ3$Cmin > 33 & summ3$Cmin < 34))
   expect_true(all(summ4$Cmin > 11 & summ4$Cmin < 12))
 })
+
+
+# Code for model where the regimen gets initialized after the problem starts
+# Dosing starts at the time of initialization
+code <- '
+$PARAM 
+CL = 1/10, V = 20, KA = 1, 
+dose = 100, interval = 4*7, last = 10*112
+START = 0
+
+$PKMODEL cmt = "DEPOT,CENT", depot = TRUE
+
+$PLUGIN evtools
+
+$GLOBAL
+evt::regimen reg;
+
+$MAIN 
+if(NEWIND <=1 ) {
+  reg.init(self);
+}
+
+if(EVID==0 && TIME==START) {
+  reg.reset();
+  reg.amt(dose);
+  reg.ii(interval);
+  reg.until(last);
+}
+
+$ERROR
+reg.execute();
+capture CP = CENT/V;
+'
+
+mod1 <- mcode("test-evtools-regimen-start-time", code, quiet = TRUE)
+mod2 <- modlib("pk1", quiet = TRUE, preclean = TRUE)
+mod2 <- param(mod2, as.list(param(mod1)))
+
+
+test_that("regimen dosing starts later by default", {
+  mod1 <- param(mod1, START = 12)
+  out1 <- mrgsim(mod1, end = 76)
+  dose <- ev(amt = mod1$dose, ii = mod1$interval, time = mod1$START, addl = 99)
+  out2 <- mrgsim(mod2, dose, end = 76, obsonly = TRUE)
+  expect_true(all(abs(out1$CP - out2$CP) < 1e-12))
+})
+
+
+# Code to re-time dose for later; the pattern is the regimen is set up on the 
+# first individual record, but doesn't start till later (via time_next())
+code <- '
+$PARAM 
+CL = 1/10, V = 20, KA = 1, 
+dose = 100, interval = 4*7, last = 10*112
+START = 0
+
+$PKMODEL cmt = "DEPOT,CENT", depot = TRUE
+
+$PLUGIN evtools
+
+$GLOBAL
+evt::regimen reg;
+
+$MAIN 
+if(NEWIND <=1) {
+  reg.init(self);
+  reg.time_next(START);
+  reg.amt(dose);
+  reg.ii(interval);
+  reg.until(last);
+}
+
+$ERROR
+reg.execute();
+capture CP = CENT/V;
+'
+
+mod1 <- mcode("test-evtools-regimen-start-time", code, quiet = TRUE)
+mod2 <- modlib("pk1", quiet = TRUE, preclean = TRUE)
+mod2 <- param(mod2, as.list(param(mod1)))
+
+test_that("regimen dosing retimed to start later", {
+  mod1 <- param(mod1, START = 7)
+  out1 <- mrgsim(mod1, end = 76)
+  dose <- ev(amt = mod1$dose, ii = mod1$interval, time = mod1$START, addl = 99)
+  out2 <- mrgsim(mod2, dose, end = 76, obsonly = TRUE)
+  expect_true(all(abs(out1$CP - out2$CP) < 1e-12))
+})
