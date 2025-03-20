@@ -46,9 +46,17 @@ ignore \code{<numeric>}}
 
 \item{\code{ixpr}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
+\item{\code{itol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<int>}; 
+\code{itol = 1} indicates scalar values for \code{atol} and \code{rtol};
+\code{itol > 1} indicates customized tolerances for each compartment}
+
 \item{\code{atol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
 \item{\code{rtol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
+
+\item{\code{mrtol}}{a vector of \code{rtol} to be used when \code{itol = 1} \code{<numeric>}}
+
+\item{\code{matol}}{a vector of \code{atol} to be used when \code{itol = 1} \code{<numeric>}}
 
 \item{\code{ss_rtol}}{relative tolerance to use when finding PK steady state \code{<numeric>}}
 
