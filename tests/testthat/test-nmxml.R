@@ -383,3 +383,11 @@ test_that("provide path rather than run and project [SLV-TEST-023]", {
   nmxml_file <- basename(as.list(mod)[["nm_import"]])
   expect_equal(nmxml_file, "1005.xml")
 })
+
+test_that("return all non-skipped matrices gh-1274", {
+  skip_if_not(file.exists("nm/1005-omega-skip.mod"))
+  mod <- mread("1005-omega-skip.mod", project = "nm", compile = FALSE) 
+  expect_is(mod, "mrgmod")
+  expect_equal(length(omat(mod)), 1)
+  expect_equal(nrow(omat(mod)), 3)
+})

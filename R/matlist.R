@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2025  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -338,24 +338,27 @@ cumoffset <- function(x) {
   ans
 }
 
-##' Operations with matlist objects
-##' 
-##' @param x a matlist object
-##' @param ... other matlist objects
-##' @param recursive not used
-##' @rdname matlist_ops
-##' @export
-setMethod("c", "matlist", function(x,...,recursive=FALSE) {
+#' Operations with matlist objects
+#' 
+#' @param x a matlist object.
+#' @param ... other matlist objects.
+#' @param recursive not used.
+#' @rdname matlist_ops
+#' @export
+setMethod("c", "matlist", function(x, ..., recursive = FALSE) {
   what <- c(list(x), list(...))
   stopifnot(all(sapply(what, is.matlist)))
-  what <- what[sapply(what, slot, name = "n") > 0]
-  if(length(what)==1) return(x)
+  nonzero <- sapply(what, slot, name = "n") > 0
+  if(!any(nonzero)) {
+    return(omat()) 
+  }
+  if(length(nonzero)==1) return(what[which(nonzero)])
+  what <- what[nonzero]
   d <- lapply(what, as.matrix)
   d <- setNames(d, sapply(what, names))
   l <- sapply(unname(what), labels)
   create_matlist(d, labels = l, class = class(x)[1])
 })
-
 
 #' Collapse OMEGA or SIGMA matrix lists
 #' 
