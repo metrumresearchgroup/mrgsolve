@@ -388,6 +388,6 @@ test_that("return all non-skipped matrices gh-1274", {
   skip_if_not(file.exists("nm/1005-omega-skip.mod"))
   mod <- mread("1005-omega-skip.mod", project = "nm", compile = FALSE) 
   expect_is(mod, "mrgmod")
-  expect_equal(length(omat(mod)), 1)
-  expect_equal(nrow(omat(mod)), 3)
+  expect_equivalent(length(omat(mod)), 1)
+  expect_equivalent(nrow(omat(mod)), 3)
 })
