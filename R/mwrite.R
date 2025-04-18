@@ -145,7 +145,7 @@ mwrite_model_to_list <- function(x) {
   clob <- c("PARAM", "INPUT", "THETA", "CMT", "INIT", "OMEGA", "SIGMA", 
             "NMEXT", "NMXML", "VCMT", "SET", "CAPTURE")
   
-  w <- which(names(code) %in% clob)
+  w <- which(toupper(names(code)) %in% clob)
   
   if(length(w)) {
     code <- code[-w]
