@@ -120,6 +120,9 @@ mwrite_model_to_list <- function(x) {
   code <- modelparse(code, comment_re = character(0))
   code <- lapply(code, trimws, which = "right")
   
+  names(code) <- toupper(names(code))
+  code_names <- names(code)
+  
   l$set <- tolist(code$SET)
   
   if(nrow(x@annot$data)) {
@@ -130,14 +133,14 @@ mwrite_model_to_list <- function(x) {
     } 
     annot <- knitr::kable(annot, format = "simple")
     annot <- c("# Model Annotations: ", "", annot)
-    if("PROB" %in% names(code)) {
+    if("PROB" %in% code_names) {
       code$PROB <- c(code$PROB, "", annot)  
     } else {
       code <- c(list(PROB = annot), code)
     }
   }
   
-  if("PROB" %in% names(code)) {
+  if("PROB" %in% code_names) {
     l$prob <- code$PROB
     code$PROB <- NULL
   }
@@ -145,7 +148,7 @@ mwrite_model_to_list <- function(x) {
   clob <- c("PARAM", "INPUT", "THETA", "CMT", "INIT", "OMEGA", "SIGMA", 
             "NMEXT", "NMXML", "VCMT", "SET", "CAPTURE")
   
-  w <- which(toupper(names(code)) %in% clob)
+  w <- which(code_names %in% clob)
   
   if(length(w)) {
     code <- code[-w]
@@ -153,7 +156,7 @@ mwrite_model_to_list <- function(x) {
   
   # Need special handling here in case compartments are declared 
   # as a part of PKMODEL
-  if("PKMODEL" %in% names(code)) {
+  if("PKMODEL" %in% code_names) {
     pk <- tolist(code$PKMODEL)
     parsed <- do.call(PKMODEL, pk)
     pk$ncmt <- parsed$n
@@ -161,7 +164,7 @@ mwrite_model_to_list <- function(x) {
     code$PKMODEL <- tocode(pk)
   }
   # Put block names back into code
-  code <- Map(code, names(code), f = function(text, name) {
+  code <- Map(code, code_names, f = function(text, name) {
     c(glue("${name}"), text, " ")
   })
   l$code <- unlist(code, use.names = FALSE)
