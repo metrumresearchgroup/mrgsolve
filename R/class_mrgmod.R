@@ -160,8 +160,8 @@ protomod <- list(model=character(0),
                  preclean=FALSE,
                  atol=1E-8,
                  rtol=1E-8,
-                 matol = numeric(0),
-                 mrtol = numeric(0),
+                 vec_atol = numeric(0),
+                 vec_rtol = numeric(0),
                  ss_rtol=1e-8, 
                  ss_atol=1e-8,
                  maxsteps=20000,
@@ -262,8 +262,8 @@ valid.mrgmod <- function(object) {
 #' \code{itol > 1} indicates customized tolerances for each compartment 
 #' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-#' @slot mrtol a vector of \code{rtol} to be used when \code{itol = 1} \code{<numeric>}
-#' @slot matol a vector of \code{atol} to be used when \code{itol = 1} \code{<numeric>}
+#' @slot vec_rtol a vector of \code{rtol} to be used when \code{itol > 1} \code{<numeric>}
+#' @slot vec_atol a vector of \code{atol} to be used when \code{itol > 1} \code{<numeric>}
 #' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}

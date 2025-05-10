@@ -32,8 +32,8 @@ void LSODA::mxhnil_(const int value) {
 }
 
 void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
-  Rcpp::NumericVector xatol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("matol"));
-  Rcpp::NumericVector xrtol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("mrtol"));
+  Rcpp::NumericVector xatol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("vec_atol"));
+  Rcpp::NumericVector xrtol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("vec_rtol"));
   bool size_error = false;
   if(xatol_.size() != Neq) {
     std::string size = std::to_string(xatol_.size());

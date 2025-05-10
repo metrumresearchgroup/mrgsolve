@@ -54,9 +54,9 @@ ignore \code{<numeric>}}
 
 \item{\code{rtol}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
-\item{\code{mrtol}}{a vector of \code{rtol} to be used when \code{itol = 1} \code{<numeric>}}
+\item{\code{vec_rtol}}{a vector of \code{rtol} to be used when \code{itol > 1} \code{<numeric>}}
 
-\item{\code{matol}}{a vector of \code{atol} to be used when \code{itol = 1} \code{<numeric>}}
+\item{\code{vec_atol}}{a vector of \code{atol} to be used when \code{itol > 1} \code{<numeric>}}
 
 \item{\code{ss_rtol}}{relative tolerance to use when finding PK steady state \code{<numeric>}}
 
