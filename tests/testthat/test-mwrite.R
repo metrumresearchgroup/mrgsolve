@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2025  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -229,4 +229,12 @@ test_that("code gets appropriately quoted", {
   cpp <- yaml_to_cpp(file = temp, model = "test-quote", project = tempdir())
   lines <- readLines(cpp)
   expect_match(lines, 'outvars = "A"', all=FALSE)
+})
+
+test_that("model with lower case names", {
+  code <- "$param cl = 1\n$cmt a b c\n$SET rtol = 1e-2"
+  mod <- mcode("test-mwrite-lower", code, compile = FALSE)
+  temp <- tempfile()
+  mwrite_yaml(mod, temp)
+  mod2 <- mread_yaml(temp)
 })
