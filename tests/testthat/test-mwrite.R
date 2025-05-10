@@ -230,3 +230,4 @@ test_that("code gets appropriately quoted", {
   lines <- readLines(cpp)
   expect_match(lines, 'outvars = "A"', all=FALSE)
 })
+
