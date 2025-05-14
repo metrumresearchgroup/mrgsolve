@@ -236,5 +236,37 @@ test_that("model with lower case names", {
   mod <- mcode("test-mwrite-lower", code, compile = FALSE)
   temp <- tempfile()
   mwrite_yaml(mod, temp)
-  mod2 <- mread_yaml(temp)
+  mod2 <- mread_yaml(temp, compile = FALSE)
+  expect_is(mod2, "mrgmod")
+  l1 <- as.list(mod)
+  l2 <- as.list(mod2)
+  expect_identical(l1$param, l2$param)
+  expect_identical(l1$cmt, l2$cmt)
+  expect_identical(l1$rtol, l2$rtol)
+})
+
+test_that("mwrite normalizes block names to upper case", {
+  skip_if_not_installed("yaml")
+  
+  ucode <- '$CMT DEPOT CENT
+$PKMODEL ncmt=1, depot=TRUE
+$MAIN
+double CL = 1
+double V = 20
+double KA = 1'
+  umod <- mcode("test-case", ucode, compile = FALSE)
+  utemp <- tempfile()
+  mwrite_yaml(umod, file = utemp)
+  
+  lcode <- '$cmt DEPOT CENT
+$pkmodel ncmt=1, depot=TRUE
+$main
+double CL = 1
+double V = 20
+double KA = 1'
+  lmod <- mcode("test-case", lcode, compile = FALSE)
+  ltemp <- tempfile()
+  mwrite_yaml(lmod, file = ltemp)
+  
+  expect_identical(readLines(utemp), readLines(ltemp))
 })
