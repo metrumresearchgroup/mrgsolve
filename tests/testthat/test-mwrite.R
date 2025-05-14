@@ -232,6 +232,7 @@ test_that("code gets appropriately quoted", {
 })
 
 test_that("model with lower case names", {
+  skip_if_not_installed("yaml")
   code <- "$param cl = 1\n$cmt a b c\n$SET rtol = 1e-2"
   mod <- mcode("test-mwrite-lower", code, compile = FALSE)
   temp <- tempfile()
