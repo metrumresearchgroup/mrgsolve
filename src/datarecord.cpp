@@ -574,7 +574,8 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     
     if(add_parent_doses) {
       rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, 
-                                 parent_time + Ii*double(k), Rate, nextpos, Id);
+                                 parent_time + Ii*double(k), 
+                                 Rate, nextpos, Id);
       ev_parent -> unarm(); 
       ev_parent -> phantom_rec();
       thisi.push_back(ev_parent);      

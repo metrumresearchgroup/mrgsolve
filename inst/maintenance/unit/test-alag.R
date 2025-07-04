@@ -115,3 +115,32 @@ test_that("EVID 1 or 4 at SS with lag time are identical", {
   
   expect_identical(out1a, out4a)
 })
+
+
+code_alag_float <- '
+$PKMODEL cmt = "A,B", depot = TRUE
+
+$PARAM CL = 1, V = 22, KA = 1.2, lag = 1.2322
+
+$OMEGA 1.2
+
+$MAIN
+ALAG_A = exp(log(lag) + ETA(1));
+'
+mod <- mcode("test-alag-float", code_alag_float, end = 24*87, delta = 24)
+
+test_that("Prevent floating point issues with TIME and random ALAG + ADDL", {
+  
+  expect_length(unique(stime(mod)), 88)
+  
+  data <- expand.ev(amt = 100, ii = 12, addl = 100, ID = 1:1000)
+  
+  out <- mrgsim(
+    mod,
+    data = data,
+    carry_out = "evid", 
+    obsonly = TRUE
+  )     
+  
+  expect_length(unique(out$time), 88) # Before fix, fails with length in the 90s
+})
