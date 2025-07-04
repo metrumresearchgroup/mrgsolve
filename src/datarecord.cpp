@@ -555,14 +555,17 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  //thisi.reserve(thisi.size() + n_dose); // TODO: remove 
-  
   double ontime = 0;
+  
+  // Doing this math once fixes issues with very small differences in output 
+  // TIME values: 
+  // https://github.com/metrumresearchgroup/mrgsolve/issues/1286
+  double parent_time = Time - lagt;
   
   int mp = 1000000000;
   
   int nextpos = addl_ev_first ?  -1000000000 : mp;
-  
+
   for(unsigned int k = 1; k <= Addl; ++k) {
     
     ontime = Time + Ii*double(k);
@@ -570,7 +573,8 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     if(ontime > maxtime) break;
     
     if(add_parent_doses) {
-      rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, ontime-lagt, Rate, nextpos, Id);
+      rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, 
+                                 parent_time + Ii*double(k), Rate, nextpos, Id);
       ev_parent -> unarm(); 
       ev_parent -> phantom_rec();
       thisi.push_back(ev_parent);      
