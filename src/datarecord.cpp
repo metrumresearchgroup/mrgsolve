@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2024  Metrum Research Group
+// Copyright (C) 2013 - 2025  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -576,8 +576,8 @@ void datarecord::schedule(reclist& thisi, double maxtime,
       rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, 
                                  parent_time + Ii*double(k), 
                                  Rate, nextpos, Id);
-      ev_parent -> unarm(); 
-      ev_parent -> phantom_rec();
+      ev_parent->unarm(); 
+      ev_parent->phantom_rec();
       thisi.push_back(ev_parent);      
     }
     
