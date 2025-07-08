@@ -767,4 +767,10 @@ test_that("Invalid item in $SET generates error", {
     "The $SET block cannot handle this item", 
     fixed = TRUE
   )
+  code <- "$SET end = 25, kyle = 2, zip = 55455"
+  expect_error(
+    mcode("dollar-set-item-check-2", code),
+    "The $SET block cannot handle these items", 
+    fixed = TRUE
+  )
 })

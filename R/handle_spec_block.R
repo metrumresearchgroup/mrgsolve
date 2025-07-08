@@ -1001,7 +1001,7 @@ handle_SET <- function(spec) {
   if(length(bad) > 1) { 
     msg <- "The $SET block cannot handle these items:"
   } else {
-    msg <- "The $SET block cannot handle this item"
+    msg <- "The $SET block cannot handle this item:"
   }
   bad <- names(ans)[bad]
   names(bad) <- rep("x", length(bad))
