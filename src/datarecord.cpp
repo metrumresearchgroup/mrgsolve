@@ -583,6 +583,27 @@ void datarecord::schedule(reclist& thisi, double maxtime,
   }
 }  
 
+/*  Insert observation records triggered from evtools
+ * 
+ */
+
+void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t start, 
+                         const bool put_ev_first) {
+  const double time = ev.time;
+  const int addl = ev.addl;
+  const double ii = ev.ii;
+  int mp = 1000000000;
+  int nextpos = put_ev_first ?  -1000000000 : mp;
+  for(int i = 0; i < addl; ++i) {
+    rec_ptr rec = NEWREC(time + i*ii, nextpos, false);
+    rec->evid(ev.evid);
+    rec->Cmt = ev.cmt;
+    thisi.push_back(rec); 
+  }
+  std::sort(thisi.begin()+start+1, thisi.end(), CompRec());
+  return; 
+}
+
 /* 
  * Inserts a record at the earliest or latest opportunity based on time. 
  * Boolean flag indicates if the record should get inserted before or after all 
