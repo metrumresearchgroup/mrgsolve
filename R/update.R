@@ -122,7 +122,7 @@ setMethod("update", "mrgmod", function(object, ..., merge=TRUE, open=FALSE,
     warn(msg, call = NULL)
   }
   
-  valid <- !is.na(m)
+  valid <- !is.na(m) & m != 0
   a[valid] <- GLOBALS$UPDATE_ALL[m[valid]]
   names(args) <- a
   valid.in <- which(a %in% GLOBALS$UPDATE_SINGLE)

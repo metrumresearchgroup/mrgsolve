@@ -994,7 +994,7 @@ handle_SET <- function(spec) {
   ans <- tolist(dump_opts(spec[["SET"]]))
   valid <- c(GLOBALS$UPDATE_ALL, GLOBALS$SET_EXTRA, GLOBALS$SET_ARGS)
   incoming <- charmatch(names(ans), valid)
-  bad <- which(is.na(incoming))
+  bad <- which(is.na(incoming) | incoming == 0)
   if(!length(bad)) {
     return(ans)  
   }
