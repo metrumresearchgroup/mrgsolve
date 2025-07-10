@@ -6,7 +6,7 @@
 - `mwrite_yaml()` and `mwrite_cpp()` now render block names in upper case, 
   even for blocks coded with lower case in the original model file (#1282). 
 
-- When creating an `evt::regimen` objects (via `evtools` plugin), the _default_
+- When creating an `evt::regimen` object (via `evtools` plugin), the _default_
   start time is now the time when the object was created; before this change, 
   the _default_ time was always `0` (#1266).
 
