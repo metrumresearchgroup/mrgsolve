@@ -242,12 +242,12 @@ void odeproblem::init_call_record(const double& time) {
 
 //! Call <code>$TABLE</code> function.
 void odeproblem::table_call() {
-  Table(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
+  Table(Init_value,Y,Param,F,R,d,pred,Capture,simeta,simeps);  
 }
 
 //! Call <code>$EVENT</code> function.
 void odeproblem::event_call() {
-  Event(Y,Init_value,Param,F,R,d,pred,Capture,simeps);  
+  Event(Init_value,Y,Param,F,R,d,pred,Capture,simeps);  
 }
 
 //! Call <code>$PREAMBLE</code> function.
