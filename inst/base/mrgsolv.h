@@ -129,7 +129,7 @@ typedef std::vector<double> dvec;
 #define MRGSOLVE_INIT_SIGNATURE_N 10
 
 //! signature for <code>$TABLE</code>
-#define MRGSOLVE_TABLE_SIGNATURE const dvec& _A_0_, const dvec& _A_, dvec& _THETA_, const dvec& _F_, const dvec& _R_, const dvec& _D_, databox& self, const dvec& _pred_, dvec& _capture_, mrgsolve::resim& simeta, mrgsolve::resim& simeps
+#define MRGSOLVE_TABLE_SIGNATURE const dvec& _A_0_, const dvec& _A_, dvec& _THETA_, const dvec& _F_, const dvec& _ALAG_, const dvec& _R_, const dvec& _D_, databox& self, const dvec& _pred_, dvec& _capture_, mrgsolve::resim& simeta, mrgsolve::resim& simeps
 #define MRGSOLVE_TABLE_SIGNATURE_N 11
 
 //! signature for <code>$EVENT</code> same as what we use for <code>$TABLE</code>
