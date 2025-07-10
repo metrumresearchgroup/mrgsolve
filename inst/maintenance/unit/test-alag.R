@@ -27,10 +27,18 @@ $PARAM LAG = 2.8, CL = 1, V = 20
 $PKMODEL cmt = "CENT"
 $MAIN
 ALAG_CENT = LAG;
+$TABLE
+capture foo = ALAG_CENT;
 '
 mod <- mcode("alag1", code)
 
 context("test-alag")
+
+test_that("Access ALAG in $TABLE #1290", {
+  out <- mrgsim(mod)
+  diff <- out$foo - mod$LAG
+  expect_true(all(diff < 1e-5))
+})
 
 test_that("Lagged bolus", {
     out <- mod %>% ev(amt=100) %>% mrgsim(delta=0.01,add=c(2.7999999,2.8000001), end=10)
