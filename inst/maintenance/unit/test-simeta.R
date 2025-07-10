@@ -71,6 +71,10 @@ if(mode==5) {
   b = EPS(2);
   c = 9;
 }
+if(mode==6) { 
+  simeta();
+  d = ETA(1);  
+}
 '
 
 mod <- mcode("simeta-n", code, end = 6, delta = 2)
@@ -91,6 +95,11 @@ test_that("resimulate all eta", {
   all2$d <- NULL
   expect_identical(all, all2)
   
+  # Interact with simeta in $TABLE #1289
+  set.seed(1234)
+  all3 <- mrgsim_df(mod, param = list(n = 0, mode = 6))
+  diff <- all3$d - all2$a
+  expect_true(all(diff < 1e-6))
 })
 
 test_that("resimulate all or specific eps", {
