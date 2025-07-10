@@ -18,7 +18,7 @@
 
 - Fixed an issue where `time` values in the simulated output data frame 
   were off by a very small amount, due to issues with floating point 
-  mathemetical operations (#1287). 
+  mathematical operations (#1287). 
 
 - Fixed a problem writing a model to file with `mwrite_*()` when lower 
   case block naming was used (#1282).
@@ -28,7 +28,7 @@
 
 - Fixed a bug where mrgsolve was not matching NONMEM behavior when an 
   `EVID=4` record was included in the data set with `SS=1`; mrgsolve will 
-  now match NONMEM behavior in this case, with the output being idential 
+  now match NONMEM behavior in this case, with the output being identical 
   to `EVID=1` with `SS=1` (#1262). 
 
 
