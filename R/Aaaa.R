@@ -106,7 +106,7 @@ Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
                    "SETINIT", "report", "_VARS_", "VARS", 
-                   "SS_ADVANCE")
+                   "SS_ADVANCE", "END_OF_INFUSION")
 
 Reserved <- c("ID", "amt", "cmt", "ii", "ss", "evid",
               "addl", "rate","time", Reserved_cvar,
