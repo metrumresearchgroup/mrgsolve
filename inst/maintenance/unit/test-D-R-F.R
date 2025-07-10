@@ -35,12 +35,19 @@ if(mode==2) D_CENT = D1;
 
 $CMT CENT GUT
 $ODE dxdt_CENT = GUT-0.1*CENT; dxdt_GUT = -1*GUT;
+
+$TABLE
+capture foo = D_CENT;
 '
 
 mod <-
   mcode("testinfusion",code) %>%
   update(end=72) %>% obsonly
 
+test_that("Interact with D_CMT in $TABLE #1290", {
+  out <- mrgsim(mod, param = list(mode = 2))
+  expect_true(all(out$foo==2))
+})
 
 data <- expand.ev(ID=1:2, rate=c(1,5,10,50), amt=100)
 set.seed(1212)
