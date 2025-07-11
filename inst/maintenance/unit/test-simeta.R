@@ -98,7 +98,7 @@ test_that("resimulate all eta", {
   # Interact with simeta in $TABLE #1289
   set.seed(1234)
   all3 <- mrgsim_df(mod, param = list(n = 0, mode = 6))
-  diff <- all3$d - all2$a
+  diff <- abs(all3$d - all2$a)
   expect_true(all(diff < 1e-6))
 })
 
