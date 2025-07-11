@@ -635,7 +635,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           double this_time = (mt[mti]).time;
           if(this_time < tto && !mt[mti].now) continue;
           unsigned int this_evid = (mt[mti]).evid;
-          if(!(this_evid==1 || this_evid==4)) {
+          if(this_evid==0) {
             insert_observations(a[i], mt[mti], j, addl_ev_first);
             continue; 
           };
