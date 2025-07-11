@@ -36,7 +36,7 @@ context("test-alag")
 
 test_that("Access ALAG in $TABLE #1290", {
   out <- mrgsim(mod)
-  diff <- out$foo - mod$LAG
+  diff <- abs(out$foo - mod$LAG)
   expect_true(all(diff < 1e-5))
 })
 
