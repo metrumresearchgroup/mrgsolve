@@ -121,6 +121,18 @@ void now(mrgsolve::evdata& ev) {
   return;
 }
 
+mrgsolve::evdata tgrid(double start, double end, double delta) {
+  mrgsolve::evdata ev(start, 0);
+  ev.ii = delta;
+  double total = std::ceil(end/delta);
+  ev.addl = total -1;
+  ev.amt = 0;
+  ev.cmt = 0;
+  ev.now = false;
+  ev.check_unique = false;
+  return ev;
+}
+
 void push(databox& self, mrgsolve::evdata ev) {
   self.push(ev);
   return;
