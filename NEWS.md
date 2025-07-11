@@ -1,5 +1,8 @@
 # mrgsolve 1.5.3
 
+- `D_CMT`, `ALAG_CMT`, and `simeta()` are now available to use in `$TABLE`
+  (`$ERROR`), `$EVENT`, and `$PRED` code blocks (#1290).
+
 - Added `END_OF_INFUSION` syntax, which is `true` on the internal record that 
   stops an infusion (#1288). 
 
