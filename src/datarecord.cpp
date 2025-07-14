@@ -150,7 +150,7 @@ void datarecord::implement(odeproblem* prob) {
   if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
   }
-  
+
   unsigned int evid = Evid;
   
   if(this->infusion() && Evid != 4) evid = 5;
@@ -161,16 +161,19 @@ void datarecord::implement(odeproblem* prob) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     prob->y_add(eq_n, Amt * Fn);
-    break;
+    prob->lsoda_init();
+    return;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     if(Fn == 0) break;
     prob->rate_add(eq_n,Rate);
-    break;
+    prob->lsoda_init();
+    return;
   case 9: // Turn infusion off event record
     if(!prob->is_on(eq_n)) break;
     prob->rate_rm(eq_n, Rate);
-    break;
+    prob->lsoda_init();
+    return;
   case 2: // Other type event record:
     if(Cmt > 0) { 
       prob->on(eq_n);
@@ -187,10 +190,12 @@ void datarecord::implement(odeproblem* prob) {
       prob->rate0(i,0.0);
     }
     prob->init_call(Time);
-    break;
+    prob->lsoda_init();
+    return;
   case 8: // replace
     prob->y(eq_n, Amt);
-    break;
+    prob->lsoda_init();
+    return;
   case 4: // dose and reset; reset only if non-ss
     if(!Armed) break;
     if(this->ss()==0) {
@@ -206,10 +211,10 @@ void datarecord::implement(odeproblem* prob) {
     } else {
       this->evid(1);
     }
-    this-> implement(prob);
+    this->implement(prob);
     return;
   }
-  prob->lsoda_init();
+  if(Evid < 100) prob->lsoda_init();
 }
 
 /* 
