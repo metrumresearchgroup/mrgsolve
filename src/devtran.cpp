@@ -644,7 +644,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             );
           };
           unsigned int this_evid = (mt[mti]).evid;
-          if(this_evid==0) {
+          if(this_evid==0 || this_evid > 99) {
             insert_observations(a[i], mt[mti], j, addl_ev_first);
             continue; 
           };

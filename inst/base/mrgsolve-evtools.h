@@ -124,8 +124,7 @@ void now(mrgsolve::evdata& ev) {
 mrgsolve::evdata tgrid(double start, double end, double delta) {
   mrgsolve::evdata ev(start, 0);
   ev.ii = delta;
-  double total = std::ceil(end/delta);
-  ev.addl = total-1;
+  ev.addl = std::floor((end-start)/delta);
   ev.amt = 0;
   ev.cmt = 1;
   ev.now = false;
