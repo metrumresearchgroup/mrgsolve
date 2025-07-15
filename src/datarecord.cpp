@@ -161,19 +161,16 @@ void datarecord::implement(odeproblem* prob) {
   case 1: // Dosing event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     prob->y_add(eq_n, Amt * Fn);
-    prob->lsoda_init();
-    return;
+    break;
   case 5:  // Turn infusion on event record
     if(!prob->is_on(eq_n)) prob->on(eq_n);
     if(Fn == 0) break;
     prob->rate_add(eq_n,Rate);
-    prob->lsoda_init();
-    return;
+    break;
   case 9: // Turn infusion off event record
     if(!prob->is_on(eq_n)) break;
     prob->rate_rm(eq_n, Rate);
-    prob->lsoda_init();
-    return;
+    break;
   case 2: // Other type event record:
     if(Cmt > 0) { 
       prob->on(eq_n);
@@ -190,12 +187,10 @@ void datarecord::implement(odeproblem* prob) {
       prob->rate0(i,0.0);
     }
     prob->init_call(Time);
-    prob->lsoda_init();
-    return;
+    break;
   case 8: // replace
     prob->y(eq_n, Amt);
-    prob->lsoda_init();
-    return;
+    break;
   case 4: // dose and reset; reset only if non-ss
     if(!Armed) break;
     if(this->ss()==0) {
