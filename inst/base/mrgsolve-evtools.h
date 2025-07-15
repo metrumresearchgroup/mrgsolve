@@ -116,6 +116,11 @@ void cmt(mrgsolve::evdata& ev, const int cmt) {
   return;
 }
 
+void evid(mrgsolve::evdata& ev, const unsigned int evid) {
+  ev.evid = evid;
+  return;
+}
+
 void now(mrgsolve::evdata& ev) {
   ev.now = true;
   return;
