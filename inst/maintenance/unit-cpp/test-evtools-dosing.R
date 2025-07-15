@@ -10,7 +10,10 @@ local_edition(3)
 code <- '
 $PLUGIN evtools
 
-$PARAM Mdose = 0
+$PARAM Mdose = 0, Checktime = 0
+
+$PREAMBLE 
+int cumevid = 0;
 
 $PARAM 
 Lag   =  0
@@ -24,6 +27,7 @@ Cmt2  = -1
 Amt2  = -1
 Rate2 = -1
 Time2 = -1
+Evid2 = -1
 
 $CMT B D
 
@@ -37,7 +41,7 @@ dxdt_B =   0.3 * D - 0.1*B;
 
 $ERROR
 
-if(TIME==0 && Mdose > 0) {
+if(TIME==Checktime && Mdose > 0) {
   evt::ev dose = evt::infuse(Amt, 1, Rate); 
   evt::ss(dose, Ss); 
   evt::ii(dose, Ii); 
@@ -46,8 +50,12 @@ if(TIME==0 && Mdose > 0) {
   if(Cmt2 > 0) evt::cmt(dose, Cmt2);
   if(Amt2 > 0) evt::amt(dose, Amt2);
   if(Time2 > 0) evt::retime(dose, Time2);
+  if(Evid2 > 0) evt::evid(dose, Evid2);
   self.push(dose);
 }
+cumevid = cumevid + EVID;
+
+$CAPTURE cumevid
 '
 
 mod1 <- mcode("reset", code, delta = 0.1, end = 96)
@@ -268,4 +276,17 @@ test_that("Switch infusion rate - dosing via evt", {
   out2 <- mrgsim(mod2, param = p, obsonly = TRUE, recsort = 3)
   
   expect_identical(out1$B, out2$B)
+})
+
+test_that("Switch event id - dosing via evt", {
+  out <- mrgsim(mod1, param = list(Evid2 = 33, Mdose = 1, Amt = 0, Time2 = 12))
+  expect_identical(unique(out$cumevid), c(0,33))
+})
+
+test_that("Error to schedule a dose that starts in the past", {
+  p <- list(Amt = 100, Ii = 24, Addl = 2, Checktime = 72, Time2 = 24)
+  expect_error(
+    mrgsim(mod2, param = p), 
+    "modeled events or observations cannot start in the past"
+  )
 })
