@@ -10,7 +10,7 @@ local_edition(3)
 code <- '
 $PLUGIN evtools
 
-$PARAM Mdose = 0
+$PARAM Mdose = 0, Checktime = 0
 
 $PARAM 
 Lag   =  0
@@ -37,7 +37,7 @@ dxdt_B =   0.3 * D - 0.1*B;
 
 $ERROR
 
-if(TIME==0 && Mdose > 0) {
+if(TIME==Checktime && Mdose > 0) {
   evt::ev dose = evt::infuse(Amt, 1, Rate); 
   evt::ss(dose, Ss); 
   evt::ii(dose, Ii); 
@@ -268,4 +268,12 @@ test_that("Switch infusion rate - dosing via evt", {
   out2 <- mrgsim(mod2, param = p, obsonly = TRUE, recsort = 3)
   
   expect_identical(out1$B, out2$B)
+})
+
+test_that("Error to schedule a dose that starts in the past", {
+  p <- list(Amt = 100, Ii = 24, Addl = 2, Checktime = 72, Time2 = 24)
+  expect_error(
+    mrgsim(mod2, param = p), 
+    "modeled events or observations cannot start in the past"
+  )
 })
