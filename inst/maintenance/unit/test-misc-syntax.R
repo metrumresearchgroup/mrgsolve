@@ -190,3 +190,27 @@ double Z = 5;
   expect_equal(sum(cl), 1)
   expect_equal(sum(foo), 3)
 })
+
+test_that("Recognize end of infusion", {
+  
+  code <- '
+$PARAM CL = 1, V = 20
+$PKMODEL cmt = "A"
+$PREAMBLE int count = 0;
+$MAIN if(END_OF_INFUSION) ++count;
+$CAPTURE count
+'
+  
+  mod <- mcode("test-end-of-infusion", code)
+  
+  out1 <- mrgsim(mod, ev(amt = 100, tinf = 5), obsonly = TRUE)
+  
+  expect_true(all(out1$count[1:5]==0))
+  expect_true(all(out1$count[6:24]==1))
+  
+  out2 <- mrgsim(mod, ev(amt = 100), obsonly = TRUE)
+  expect_true(all(out2$count==0))
+  
+  out3 <- mrgsim(mod, ev(amt = 100, tinf=100), obsonly = TRUE)
+  expect_true(all(out3$count==0))
+})

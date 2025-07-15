@@ -99,16 +99,8 @@ capture_etas <- function(x, env) {
   x
 }
 
-## These are arguments to mrgsim that
-## can be stated in $SET and then passed to mrgsim
-set_args <- c(
-  "Req", "obsonly", "recsort",
-  "carry.out","Trequest","trequest", 
-  "carry_out", "Request"
-)
-
 set_simargs <- function(x, SET) {
-  simargs <- SET[is.element(names(SET), set_args)]
+  simargs <- SET[is.element(names(SET), GLOBALS$SET_ARGS)]
   if(length(simargs) > 0) {
     x@args <- combine_list(x@args, simargs)
   }   

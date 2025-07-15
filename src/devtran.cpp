@@ -548,19 +548,23 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // Checking 
         if(!this_rec->is_lagged()) {
           
-          if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
-            
+          // there is a valid lag time
+          if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) {
             if(this_rec->ss() > 0) {
               this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
-              this_rec->ss(0);
             }
+            // We already advanced to ss
+            // Lagged dose and all subsequent should be vanilla EVID=1 doses
+            this_rec->ss(0);
             rec_ptr newev = NEWREC(*this_rec);
+            if(newev->evid()==4) {
+              newev->evid(1);
+            }
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
-            newev->ss(0);
             insert_record(a[i], j, newev, put_ev_first);
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
