@@ -18,10 +18,10 @@ Update a model object to use custom or scalar tolerances
 \examples{
 mod <- house()
 
-mod <- use_custom_tol(x)
+mod <- use_custom_tol(mod)
 mod
 
-mod <- use_scalar_tol(x)
+mod <- use_scalar_tol(mod)
 mod
 
 }

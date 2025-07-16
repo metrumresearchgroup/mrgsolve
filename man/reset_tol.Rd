@@ -9,9 +9,9 @@
 \usage{
 reset_tolerances(x, rtol = NULL, atol = NULL)
 
-reset_rtol(x, default = NULL)
+reset_rtol(x, rtol = NULL)
 
-reset_atol(x, default = NULL)
+reset_atol(x, atol = NULL)
 }
 \arguments{
 \item{x}{a model object.}
@@ -31,7 +31,7 @@ to make that change in the model object.
 }
 \examples{
 mod <- house()
-mod <- reset_tolerances(x, rtol = 1e-6, atol = 1e-10)
+mod <- reset_tolerances(mod, rtol = 1e-6, atol = 1e-10)
 mod
 
 }

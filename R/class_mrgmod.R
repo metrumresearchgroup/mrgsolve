@@ -871,12 +871,3 @@ outvars <- function(x, unlist = FALSE) {
   if(unlist) unlist(ans, use.names=FALSE)
   ans
 }
-
-#' Set tolerances on compartment-by-compartment basis
-#' 
-#' 
-#' 
-model_atol <- function(x, .object = NULL) {
-  
-}
-

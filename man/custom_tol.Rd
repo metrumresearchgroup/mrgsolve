@@ -17,15 +17,18 @@ customize_atol(.x, .atol = list(), .default = NULL, .use = TRUE, ...)
 selected model compartments and relative tolerances for those
 compartments.}
 
-\item{.default}{the default tolerance value to use for compartments
-not listed in \code{.rtol}, \code{.atol}, or \code{...}; if not supplied, the current
-scalar value in \code{.x} will be used.}
+\item{.default}{the default tolerance value to use for compartments not
+listed in \code{.rtol}, \code{.atol}, or \code{...}; if not supplied, the current scalar
+value in \code{.x} will be used.}
 
-\item{.use}{\code{logical}; if \code{TRUE}, then a call to \code{\link[=use_custom_tol]{use_custom_tol()}} will
-be made prior to return; otherwise, a call to \code{\link[=use_scalar_tol]{use_scalar_tol()}} will
-be made; under expected use, the value for this argument is kept \code{TRUE},
-so that whenever tolerances are customized, they will be used in the
-next simulation run.}
+\item{.use}{\code{logical}; if \code{TRUE}, then a call to \code{\link[=use_custom_tol]{use_custom_tol()}} will be
+made prior to return; otherwise, a call to \code{\link[=use_scalar_tol]{use_scalar_tol()}} will be made;
+under expected use, the value for this argument is kept \code{TRUE}, so that
+whenever tolerances are customized, they will be used in the next simulation
+run.}
+
+\item{...}{\code{name}/\code{value} pairs, where \code{name} references a model compartment
+and \code{value} is a new, numeric value to use for \code{rtol} or \code{atol}.}
 
 \item{.atol}{a named numeric list or vector, where names reference
 selected model compartments and absolute tolerances for those
@@ -34,4 +37,18 @@ compartments.}
 \description{
 These functions update the relative or absolute tolerance values
 only for the custom tolerance configuration.
+}
+\details{
+New tolerance values can be supplied by either a named, numeric vector or
+list via \code{.rtol} and \code{.atol} or via \code{...} or by both. If duplicate
+compartment names are found in \code{...} and either \code{.rtol} or \code{.atol}, the value
+passed via \code{...} will take precedence.
+}
+\examples{
+mod <- house()
+mod <- customize_rtol(mod, GUT = 1e-2, CENT = 1e-3)
+
+new_tolerances <- c(GUT = 1e-4, RESP = 1e-5)
+mod <- customize_rtol(mod, new_tolerances, RESP = 1e-6)
+
 }

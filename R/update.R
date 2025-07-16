@@ -427,7 +427,7 @@ initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
   }
   if(length(values_vec) > 0) {
     # Call this to generate the error
-    check_tol_slots(x, tol)
+    check_vec_tol_slots(x, tol)
   }
   if(is.null(default)) default <- slot(x, tol)
   values <- rep(default, length(cmts))
@@ -464,21 +464,29 @@ customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NU
 #' @param .atol a named numeric list or vector, where names reference
 #' selected model compartments and absolute tolerances for those 
 #' compartments. 
-#' @param .default the default tolerance value to use for compartments 
-#' not listed in `.rtol`, `.atol`, or `...`; if not supplied, the current
-#' scalar value in `.x` will be used.
-#' @param .use `logical`; if `TRUE`, then a call to [use_custom_tol()] will 
-#' be made prior to return; otherwise, a call to [use_scalar_tol()] will 
-#' be made; under expected use, the value for this argument is kept `TRUE`, 
-#' so that whenever tolerances are customized, they will be used in the 
-#' next simulation run. 
+#' @param .default the default tolerance value to use for compartments not 
+#' listed in `.rtol`, `.atol`, or `...`; if not supplied, the current scalar 
+#' value in `.x` will be used.
+#' @param .use `logical`; if `TRUE`, then a call to [use_custom_tol()] will be 
+#' made prior to return; otherwise, a call to [use_scalar_tol()] will be made; 
+#' under expected use, the value for this argument is kept `TRUE`, so that 
+#' whenever tolerances are customized, they will be used in the next simulation 
+#' run. 
+#' @param ... `name`/`value` pairs, where `name` references a model compartment
+#' and `value` is a new, numeric value to use for `rtol` or `atol`. 
+#' 
+#' @details
+#' New tolerance values can be supplied by either a named, numeric vector or 
+#' list via `.rtol` and `.atol` or via `...` or by both. If duplicate 
+#' compartment names are found in `...` and either `.rtol` or `.atol`, the value 
+#' passed via `...` will take precedence. 
 #' 
 #' @examples
 #' mod <- house()
 #' mod <- customize_rtol(mod, GUT = 1e-2, CENT = 1e-3)
 #' 
 #' new_tolerances <- c(GUT = 1e-4, RESP = 1e-5)
-#' mod <- customize_rtol(mod, new_tolerances)
+#' mod <- customize_rtol(mod, new_tolerances, RESP = 1e-6)
 #' 
 #' @name custom_tol
 #' @md
@@ -498,7 +506,7 @@ customize_rtol <- function(.x, .rtol = list(), .default = NULL, .use = TRUE, ...
 #' @export
 customize_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
   if(!is.mrgmod(.x)) mod_first()
-  .x <- customize_tol(x = .x, val = .rtol, tol = "atol", ...) 
+  .x <- customize_tol(x = .x, val = .atol, tol = "atol", ...) 
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
   } else {
@@ -523,7 +531,7 @@ customize_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...
 #' 
 #' @examples
 #' mod <- house()
-#' mod <- reset_tolerances(x, rtol = 1e-6, atol = 1e-10)
+#' mod <- reset_tolerances(mod, rtol = 1e-6, atol = 1e-10)
 #' mod
 #' 
 #' @name reset_tol
@@ -536,33 +544,33 @@ reset_tolerances <- function(x, rtol = NULL, atol = NULL) {
   if(!is.numeric(atol)) {
     atol <- x@atol
   }
-  x <- reset_rtol(x, default = rtol)
-  x <- reset_atol(x, default = atol)
+  x <- reset_rtol(x, rtol = rtol)
+  x <- reset_atol(x, atol = atol)
   x
 }
 #' @rdname reset_tol
 #' @export
-reset_rtol <- function(x, default = NULL) {
+reset_rtol <- function(x, rtol = NULL) {
   if(!is.mrgmod(x)) mod_first()
-  if(!is.numeric(default)) {
-    default <- x@rtol  
+  if(!is.numeric(rtol)) {
+    rtol <- x@rtol  
   }
   x@vec_rtol <- numeric(0)
-  x <- update(x, rtol = default)
-  x <- initialize_tol(x, default = default, tol = "rtol")
+  x <- update(x, rtol = rtol)
+  x <- initialize_tol(x, default = rtol, tol = "rtol")
   x
 }
 
 #' @rdname reset_tol
 #' @export
-reset_atol <- function(x, default = NULL) {
+reset_atol <- function(x, atol = NULL) {
   if(!is.mrgmod(x)) mod_first()
-  if(!is.numeric(default)) {
-    default <- x@atol  
+  if(!is.numeric(atol)) {
+    atol <- x@atol  
   }
   x@vec_atol <- numeric(0)
-  x <- update(x, atol = default)
-  x <- initialize_tol(x, default = default, tol = "atol")
+  x <- update(x, atol = atol)
+  x <- initialize_tol(x, default = atol, tol = "atol")
   x
 }
 
@@ -573,10 +581,10 @@ reset_atol <- function(x, default = NULL) {
 #' @examples
 #' mod <- house()
 #' 
-#' mod <- use_custom_tol(x)
+#' mod <- use_custom_tol(mod)
 #' mod
 #' 
-#' mod <- use_scalar_tol(x)
+#' mod <- use_scalar_tol(mod)
 #' mod
 #' 
 #' @name use_custom_tol
