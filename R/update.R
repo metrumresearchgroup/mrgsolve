@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2025  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -414,4 +414,89 @@ set_ss_cmt <- function(x,ss_cmt) {
   ss_cmt_check <- range(x@ss_cmt) 
   stopifnot(ss_cmt_check[1] >= 0 && ss_cmt_check[2] < neq(x))
   x
+}
+
+initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
+  tol <- match.arg(tol)
+  sname_vec <- paste0("vec_", tol)
+  values_vec <- slot(x, sname_vec)
+  n <- neq(x)
+  if(length(values_vec) == n) {
+    return(x)
+  }
+  if(length(values_vec) != 0) {
+    msg <- paste0(sname_vec, " is the wrong length; resetting.")
+    warn(msg)
+  }
+  cmts <- Cmt(x)
+  if(is.null(default)) default <- slot(x, tol)
+  values <- rep(default, length(cmts))
+  names(values) <- cmts
+  slot(x, sname_vec) <- values
+  x
+}
+
+customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NULL, ...) {
+  tol <- match.arg(tol)
+  x <- initialize_tol(x, tol = tol, default = default)
+  sname_vec <- paste0("vec_", tol)
+  values_vec <- slot(x, sname_vec)
+  val <- c(list(...), val)
+  valid_tol_data(val, x)
+  val <- val[!duplicated(names(val))]
+  current <- as.list(slot(x, sname_vec))
+  updated <- update_list(current, as.list(val))
+  slot(x, sname_vec) <- unlist(updated)
+  x
+}
+
+#' Customize tolerances for specific compartments
+#'
+#' @md
+#' @rdname customize_tol
+#' @export 
+customize_rtol <- function(.x, .rtol = list(), .default = NULL, ...) {
+  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", ...)   
+  .x
+}
+
+#' @rdname customize_tol
+#' @export
+customize_atol <- function(.x, .atol, .default = NULL, ...) {
+  .x <- customize_tol(x = .x, val = .rtol, tol = "atol", ...)   
+  .x
+}
+
+#' @rdname customize_tol
+#' @export
+reset_rtol <- function(x, default = NULL) {
+  if(!is.numeric(default)) {
+    default <- x@rtol  
+  }
+  initialize_tol(x, default = default, tol = "rtol")
+}
+
+#' @rdname customize_tol
+#' @export
+reset_atol <- function(x, default = NULL) {
+  if(!is.numeric(default)) {
+    default <- x@atol  
+  }
+  initialize_tol(x, default = default, tol = "atol")
+}
+
+valid_tol_data <- function(val, x) {
+  named <- is_named(val)
+  type_list <- is.list(val) && all(vapply(val, single.number, TRUE))
+  type_numeric <- is.numeric(val)
+  type <- type_list | type_numeric
+  if(!named || !type) {
+    abort("tolerance data must be a named numeric list of vector.")
+  }
+  bad <- setdiff(names(val), Cmt(x))
+  if(length(bad)) {
+    msg <- "Invalid compartment names in tolerance data:"
+    names(bad) <- rep("x", length(bad))
+    abort(c(msg, bad))
+  }
 }
