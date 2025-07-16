@@ -4,11 +4,22 @@
 \alias{custom_tol}
 \alias{customize_rtol}
 \alias{customize_atol}
+\alias{custom_tol_list}
+\alias{use_custom_tol}
+\alias{use_scalar_tol}
 \title{Customize tolerances for specific compartments}
 \usage{
 customize_rtol(.x, .rtol = list(), .default = NULL, .use = TRUE, ...)
 
 customize_atol(.x, .atol = list(), .default = NULL, .use = TRUE, ...)
+
+custom_tol(x)
+
+custom_tol_list(x)
+
+use_custom_tol(x)
+
+use_scalar_tol(x)
 }
 \arguments{
 \item{.x}{a model object.}
@@ -33,16 +44,29 @@ and \code{value} is a new, numeric value to use for \code{rtol} or \code{atol}.}
 \item{.atol}{a named numeric list or vector, where names reference
 selected model compartments and absolute tolerances for those
 compartments.}
+
+\item{x}{a model object.}
 }
 \description{
 These functions update the relative or absolute tolerance values
 only for the custom tolerance configuration.
+
+Call `use_custom_tol()` to use custom relative and absolute tolerances in 
+a model; call `use_scalar_tol()` to revert to the traditional configuration
+where a single `rtol` and `atol` are applied to all compartments. 
+custom_tol()` returns a data frame showing tolerances for every compartment; 
+`custom_tol_list()` returns the same data, but as named lists that can be 
+used in other update functions.
 }
 \details{
 New tolerance values can be supplied by either a named, numeric vector or
 list via \code{.rtol} and \code{.atol} or via \code{...} or by both. If duplicate
 compartment names are found in \code{...} and either \code{.rtol} or \code{.atol}, the value
 passed via \code{...} will take precedence.
+
+If customized tolerances have not been initialized yet, they will be,
+assigning the current `rtol` or `atol` for every compartment. These default
+values can be updated using [customize_rtol()] and [customize_atol()].
 }
 \examples{
 mod <- house()
@@ -50,5 +74,13 @@ mod <- customize_rtol(mod, GUT = 1e-2, CENT = 1e-3)
 
 new_tolerances <- c(GUT = 1e-4, RESP = 1e-5)
 mod <- customize_rtol(mod, new_tolerances, RESP = 1e-6)
+
+mod <- house()
+
+mod <- use_custom_tol(mod)
+mod
+
+mod <- use_scalar_tol(mod)
+mod
 
 }

@@ -574,7 +574,14 @@ reset_atol <- function(x, atol = NULL) {
   x
 }
 
-#' Update a model object to use custom or scalar tolerances
+#' Set a model object to use scalar or custom tolerances
+#' 
+#' Call `use_custom_tol()` to use custom relative and absolute tolerances in 
+#' a model; call `use_scalar_tol()` to revert to the traditional configuration
+#' where a single `rtol` and `atol` are applied to all compartments. 
+#' custom_tol()` returns a data frame showing tolerances for every compartment; 
+#' `custom_tol_list()` returns the same data, but as named lists that can be 
+#' used in other update functions. 
 #' 
 #' @param x a model object.
 #' 
@@ -587,7 +594,51 @@ reset_atol <- function(x, atol = NULL) {
 #' mod <- use_scalar_tol(mod)
 #' mod
 #' 
-#' @name use_custom_tol
+#' @details
+#' If customized tolerances have not been initialized yet, they will be,
+#' assigning the current `rtol` or `atol` for every compartment. These default
+#' values can be updated using [customize_rtol()] and [customize_atol()].
+#' 
+#' @name custom_tol
+#' @export
+custom_tol <- function(x) {
+  rtol <- x@vec_rtol
+  atol <- x@vec_atol
+  if(!length(rtol)) {
+    rtol <- rep(NA_real_, neq(x))  
+  } else {
+    check_vec_tol_slots(x, "rtol")  
+  }
+  if(!length(atol)) {
+    atol <- rep(NA_real_, neq(x))   
+  } else {
+    check_vec_tol_slots(x, "atol")  
+  }
+  data.frame(
+    cmt = Cmt(x),
+    custom_rtol = rtol, 
+    custom_atol = atol, 
+    scalar_rtol = x@rtol, 
+    scalar_atol = x@atol, 
+    row.names = NULL, 
+    stringsAsFactors = FALSE
+  )
+}
+
+#' @rdname custom_tol
+#' @export
+custom_tol_list <- function(x) {
+  data <- custom_tol(x)
+  cmt <- data$cmt
+  data$cmt <- NULL
+  l <- as.list(data)
+  l <- lapply(as.list(data), function(tol) {
+    setNames(as.list(tol), cmt)  
+  })
+  l
+}
+
+#' @rdname custom_tol
 #' @export
 use_custom_tol <- function(x) {
   if(!is.mrgmod(x)) mod_first()
@@ -597,7 +648,7 @@ use_custom_tol <- function(x) {
   x
 }
 
-#' @rdname use_custom_tol
+#' @rdname custom_tol
 #' @export
 use_scalar_tol <- function(x) {
   if(!is.mrgmod(x)) mod_first()
