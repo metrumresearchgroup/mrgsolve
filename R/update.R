@@ -439,12 +439,15 @@ initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
 
 customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NULL, ...) {
   tol <- match.arg(tol)
+  val <- c(list(...), val)
+  val <- val[!duplicated(names(val))]
+  if(!length(val)) {
+    val <- setNames(rep(default, neq(x)), Cmt(x))
+  }
+  valid_tol_data(val, x)
   x <- initialize_tol(x, tol = tol, default = default)
   sname_vec <- paste0("vec_", tol)
   values_vec <- slot(x, sname_vec)
-  val <- c(list(...), val)
-  valid_tol_data(val, x)
-  val <- val[!duplicated(names(val))]
   current <- as.list(slot(x, sname_vec))
   updated <- update_list(current, as.list(val))
   slot(x, sname_vec) <- unlist(updated)
@@ -492,8 +495,8 @@ customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NU
 #' @md
 #' @export 
 customize_rtol <- function(.x, .rtol = list(), .default = NULL, .use = TRUE, ...) {
-  if(!is.mrgmod(.x)) mod_first()
-  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", ...)
+  if(!is.mrgmod(.x)) mod_first() 
+  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", default = .default, ...)
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
   } else {
@@ -506,7 +509,7 @@ customize_rtol <- function(.x, .rtol = list(), .default = NULL, .use = TRUE, ...
 #' @export
 customize_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
   if(!is.mrgmod(.x)) mod_first()
-  .x <- customize_tol(x = .x, val = .atol, tol = "atol", ...) 
+  .x <- customize_tol(x = .x, val = .atol, tol = "atol", default = .default, ...) 
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
   } else {
@@ -606,6 +609,7 @@ reset_atol <- function(x, atol = NULL) {
 #' @md
 #' @export
 custom_tol <- function(x) {
+  if(!is.mrgmod(x)) mod_first()
   rtol <- x@vec_rtol
   atol <- x@vec_atol
   if(!length(rtol)) {
@@ -632,6 +636,7 @@ custom_tol <- function(x) {
 #' @rdname custom_tol
 #' @export
 custom_tol_list <- function(x) {
+  if(!is.mrgmod(x)) mod_first()
   data <- custom_tol(x)
   cmt <- data$cmt
   data$cmt <- NULL
@@ -648,7 +653,7 @@ use_custom_tol <- function(x) {
   if(!is.mrgmod(x)) mod_first()
   x <- initialize_tol(x, default = x@rtol, tol = "rtol")
   x <- initialize_tol(x, default = x$atol, tol = "atol")
-  x@itol <- 2
+  x@itol <- 4
   x
 }
 
@@ -666,7 +671,7 @@ valid_tol_data <- function(val, x) {
   type_numeric <- is.atomic(val) && is.numeric(val)
   type <- type_list | type_numeric
   if(!named || !type) {
-    abort("tolerance data must be a named numeric list of vector.")
+    abort("tolerance data must be a named numeric list or vector.")
   }
   bad <- setdiff(names(val), Cmt(x))
   if(length(bad)) {
