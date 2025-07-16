@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2025  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -67,4 +67,8 @@ test_that("check items in as.list output", {
   expect_true("random" %in% x_names)
   expect_true("model" %in% x_names)
   expect_true("project" %in% x_names)
+  expect_true("custom_rtol" %in% x_names)
+  expect_true("custom_atol" %in% x_names)
+  expect_true("itol" %in% x_names)
+  expect_true("itolc" %in% x_names)
 })

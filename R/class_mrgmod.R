@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024 Metrum Research Group
+# Copyright (C) 2013 - 2025 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -551,9 +551,13 @@ setMethod("names", "mrgmod", function(x) {
 #' - `rtol`: see [solversettings]
 #' - `ss_atol`: absolute tolerance to use when advancing to PK steady state
 #' - `ss_rtol`: relative tolerance to use when advancing to PK steady state
+#' - `custom_rtol`: relative tolerances, one for each compartment
+#' - `custom_atol`: absolute tolerances, one for each compartment
 #' - `maxsteps`: see [solversettings]
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
+#' - `itol`: 1 (use scalar values) or 4 (use customized values)
+#' - `itolc`: either "scalar" (`itol = 1`) or "custom" (`itol = 4`) 
 #' - `envir`: the model environment
 #' - `plugins`: plugins invoked in the model
 #' - `digits`: number of digits to request in simulated data
@@ -568,7 +572,7 @@ setMethod("names", "mrgmod", function(x) {
 #' @md
 #' @export
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
-  
+  n <- neq(x)
   within(list(), {
     verbose <- x@verbose
     debug <- x@debug
@@ -579,9 +583,13 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     digits <- x@digits
     plugins <- x@plugin
     envir <- x@envir
+    itolc <- ifelse(x@itol ==1, "scalar", "custom")
+    itol <- x@itol
     hmax <- x@hmax
     hmin <- x@hmin
     maxsteps <- x@maxsteps
+    custom_atol <- ifelse(neq > 0, setNames(x@vec_atol, Cmt(x)), x@vec_atol)
+    custom_rtol <- ifelse(neq > 0, setNames(x@vec_rtol, Cmt(x)), x@vec_rtol)
     ss_atol <- x@ss_atol
     ss_rtol <- x@ss_rtol
     rtol <- x@rtol
