@@ -70,5 +70,5 @@ test_that("check items in as.list output", {
   expect_true("custom_rtol" %in% x_names)
   expect_true("custom_atol" %in% x_names)
   expect_true("itol" %in% x_names)
-  expect_true("itolc" %in% x_names)
+  expect_true("itol_type" %in% x_names)
 })

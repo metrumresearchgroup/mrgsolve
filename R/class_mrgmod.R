@@ -572,7 +572,6 @@ setMethod("names", "mrgmod", function(x) {
 #' @md
 #' @export
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
-  n <- neq(x)
   within(list(), {
     verbose <- x@verbose
     debug <- x@debug
@@ -583,13 +582,13 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     digits <- x@digits
     plugins <- x@plugin
     envir <- x@envir
-    itolc <- ifelse(x@itol ==1, "scalar", "custom")
+    itol_type <- ifelse(x@itol ==1, "scalar", "custom")
     itol <- x@itol
     hmax <- x@hmax
     hmin <- x@hmin
     maxsteps <- x@maxsteps
-    custom_atol <- ifelse(neq > 0, setNames(x@vec_atol, Cmt(x)), x@vec_atol)
-    custom_rtol <- ifelse(neq > 0, setNames(x@vec_rtol, Cmt(x)), x@vec_rtol)
+    custom_atol <- x@vec_atol
+    custom_rtol <- x@vec_rtol
     ss_atol <- x@ss_atol
     ss_rtol <- x@ss_rtol
     rtol <- x@rtol
