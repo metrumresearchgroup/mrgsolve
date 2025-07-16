@@ -452,43 +452,85 @@ customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NU
 
 #' Customize tolerances for specific compartments
 #'
+#' @name custom_tol
 #' @md
-#' @rdname customize_tol
 #' @export 
 customize_rtol <- function(.x, .rtol = list(), .default = NULL, ...) {
+  if(!is.mrgmod(.x)) mod_first()
   .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", ...)   
   .x
 }
 
-#' @rdname customize_tol
+#' @rdname custom_tol
 #' @export
-customize_atol <- function(.x, .atol, .default = NULL, ...) {
+customize_atol <- function(.x, .atol = list(), .default = NULL, ...) {
+  if(!is.mrgmod(.x)) mod_first()
   .x <- customize_tol(x = .x, val = .rtol, tol = "atol", ...)   
   .x
 }
 
-#' @rdname customize_tol
+#' @rdname custom_tol
 #' @export
 reset_rtol <- function(x, default = NULL) {
+  if(!is.mrgmod(x)) mod_first()
   if(!is.numeric(default)) {
     default <- x@rtol  
   }
+  x@vec_rtol <- numeric(0)
+  x <- update(x, rtol = rtol)
   initialize_tol(x, default = default, tol = "rtol")
 }
 
-#' @rdname customize_tol
+#' @rdname custom_tol
 #' @export
 reset_atol <- function(x, default = NULL) {
+  if(!is.mrgmod(x)) mod_first()
   if(!is.numeric(default)) {
     default <- x@atol  
   }
+  x@vec_atol <- numeric(0)
+  x <- update(x, atol = default)
   initialize_tol(x, default = default, tol = "atol")
+}
+
+#' @rdname custom_tol
+#' @export
+reset_tolerances <- function(x, rtol = NULL, atol = NULL) {
+  if(!is.mrgmod(x)) mod_first()
+  if(!is.numeric(rtol)) {
+    rtol <- x@rtol
+  }
+  if(!is.numeric(atol)) {
+    atol <- x@atol
+  }
+  x <- reset_rtol(x, default = rtol)
+  x <- reset_atol(x, default = atol)
+  valid_tol_names(x)
+  x
+}
+
+#' @rdname custom_tol
+#' @export
+use_custom_tol <- function(x) {
+  if(!is.mrgmod(x)) mod_first()
+  x <- initialize_tol(x, default = x@rtol, tol = "rtol")
+  x <- initialize_tol(x, default = x$atol, tol = "atol")
+  x@itol <- 2
+  x
+}
+
+#' @rdname custom_tol
+#' @rxport
+use_scalar_tol <- function(x) {
+  if(!is.mrgmod(x)) mod_first()
+  x@itol <- 1  
+  x
 }
 
 valid_tol_data <- function(val, x) {
   named <- is_named(val)
   type_list <- is.list(val) && all(vapply(val, single.number, TRUE))
-  type_numeric <- is.numeric(val)
+  type_numeric <- is.atomic(val) && is.numeric(val)
   type <- type_list | type_numeric
   if(!named || !type) {
     abort("tolerance data must be a named numeric list of vector.")
@@ -499,4 +541,24 @@ valid_tol_data <- function(val, x) {
     names(bad) <- rep("x", length(bad))
     abort(c(msg, bad))
   }
+}
+
+valid_tol_names <- function(x) {
+  n <- neq(x)
+  check_rtol <- length(x@vec_rtol) %in% c(0, n) 
+  check_atol <- length(x@vec_atol) %in% c(0, n)
+  msg <- NULL
+  if(!check_rtol) {
+    msg <- "Custom rtol vector is not the correct size." 
+  }
+  if(!check_atol) {
+    msg <- "Custom atol vector is not the correct size."  
+  }
+  if(!check_rtol && !check_atol) {
+    msg <- "Custom rtol and atol vectors are not the right size."  
+  }
+  if(is.null(msg)) return(invisible(NULL))
+  instructions <- "Consider runing `reset_tolerances()` to start over."
+  names(instructions) <- "*"
+  abort(c(msg, instructions))
 }
