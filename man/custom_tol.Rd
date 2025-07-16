@@ -51,11 +51,11 @@ compartments.}
 These functions update the relative or absolute tolerance values
 only for the custom tolerance configuration.
 
-Call `use_custom_tol()` to use custom relative and absolute tolerances in 
-a model; call `use_scalar_tol()` to revert to the traditional configuration
-where a single `rtol` and `atol` are applied to all compartments. 
-custom_tol()` returns a data frame showing tolerances for every compartment; 
-`custom_tol_list()` returns the same data, but as named lists that can be 
+Call \code{use_custom_tol()} to use custom relative and absolute tolerances in
+a model; call \code{use_scalar_tol()} to revert to the traditional configuration
+where a single \code{rtol} and \code{atol} are applied to all compartments.
+\code{custom_tol()} returns a data frame showing tolerances for every compartment;
+\code{custom_tol_list()} returns the same data, but as named lists that can be
 used in other update functions.
 }
 \details{
@@ -65,8 +65,8 @@ compartment names are found in \code{...} and either \code{.rtol} or \code{.atol
 passed via \code{...} will take precedence.
 
 If customized tolerances have not been initialized yet, they will be,
-assigning the current `rtol` or `atol` for every compartment. These default
-values can be updated using [customize_rtol()] and [customize_atol()].
+assigning the current \code{rtol} or \code{atol} for every compartment. These default
+values can be updated using \code{\link[=customize_rtol]{customize_rtol()}} and \code{\link[=customize_atol]{customize_atol()}}.
 }
 \examples{
 mod <- house()

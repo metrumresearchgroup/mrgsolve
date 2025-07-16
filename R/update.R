@@ -525,9 +525,11 @@ customize_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...
 #' 
 #' @param x a model object.
 #' @param rtol global relative tolerance for both scalar and customized
-#' configurations.
+#' configurations; if not supplied, the current model scalar `rtol` value is 
+#' used. 
 #' @param atol global absolute tolerance for both scalar and customized
-#' configurations.
+#' configurations; if not supplied, the current model scalar `atol` value is 
+#' used. 
 #' 
 #' @examples
 #' mod <- house()
@@ -535,6 +537,7 @@ customize_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...
 #' mod
 #' 
 #' @name reset_tol
+#' @md
 #' @export
 reset_tolerances <- function(x, rtol = NULL, atol = NULL) {
   if(!is.mrgmod(x)) mod_first()
@@ -579,7 +582,7 @@ reset_atol <- function(x, atol = NULL) {
 #' Call `use_custom_tol()` to use custom relative and absolute tolerances in 
 #' a model; call `use_scalar_tol()` to revert to the traditional configuration
 #' where a single `rtol` and `atol` are applied to all compartments. 
-#' custom_tol()` returns a data frame showing tolerances for every compartment; 
+#' `custom_tol()` returns a data frame showing tolerances for every compartment;  
 #' `custom_tol_list()` returns the same data, but as named lists that can be 
 #' used in other update functions. 
 #' 
@@ -600,6 +603,7 @@ reset_atol <- function(x, atol = NULL) {
 #' values can be updated using [customize_rtol()] and [customize_atol()].
 #' 
 #' @name custom_tol
+#' @md
 #' @export
 custom_tol <- function(x) {
   rtol <- x@vec_rtol

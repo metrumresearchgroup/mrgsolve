@@ -17,16 +17,18 @@ reset_atol(x, atol = NULL)
 \item{x}{a model object.}
 
 \item{rtol}{global relative tolerance for both scalar and customized
-configurations.}
+configurations; if not supplied, the current model scalar \code{rtol} value is
+used.}
 
 \item{atol}{global absolute tolerance for both scalar and customized
-configurations.}
+configurations; if not supplied, the current model scalar \code{atol} value is
+used.}
 }
 \description{
-These functions reset both scalar and customized values for both 
-relative and absolute tolerances. The functions do _not_ change 
-the which tolerance configuration is used for simulation (e.g., 
-scalar or customized); see [use_custom_tol()] and [use_scalar_tol()]
+These functions reset both scalar and customized values for both
+relative and absolute tolerances. The functions do \emph{not} change
+the which tolerance configuration is used for simulation (e.g.,
+scalar or customized); see \code{\link[=use_custom_tol]{use_custom_tol()}} and \code{\link[=use_scalar_tol]{use_scalar_tol()}}
 to make that change in the model object.
 }
 \examples{
