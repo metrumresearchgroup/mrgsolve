@@ -421,6 +421,7 @@ initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
   sname_vec <- paste0("vec_", tol)
   values_vec <- slot(x, sname_vec)
   n <- neq(x)
+  cmts <- Cmt(x)
   if(length(values_vec) == n) {
     return(x)
   }
@@ -428,11 +429,11 @@ initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
     msg <- paste0(sname_vec, " is the wrong length; resetting.")
     warn(msg)
   }
-  cmts <- Cmt(x)
   if(is.null(default)) default <- slot(x, tol)
   values <- rep(default, length(cmts))
   names(values) <- cmts
   slot(x, sname_vec) <- values
+  check_vec_tol_slots(x, tol)
   x
 }
 
@@ -447,6 +448,7 @@ customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NU
   current <- as.list(slot(x, sname_vec))
   updated <- update_list(current, as.list(val))
   slot(x, sname_vec) <- unlist(updated)
+  check_vec_tol_slots(x, tol)
   x
 }
 
@@ -457,7 +459,7 @@ customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NU
 #' @export 
 customize_rtol <- function(.x, .rtol = list(), .default = NULL, ...) {
   if(!is.mrgmod(.x)) mod_first()
-  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", ...)   
+  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", ...)
   .x
 }
 
@@ -478,7 +480,8 @@ reset_rtol <- function(x, default = NULL) {
   }
   x@vec_rtol <- numeric(0)
   x <- update(x, rtol = rtol)
-  initialize_tol(x, default = default, tol = "rtol")
+  x <- initialize_tol(x, default = default, tol = "rtol")
+  x
 }
 
 #' @rdname custom_tol
@@ -490,7 +493,8 @@ reset_atol <- function(x, default = NULL) {
   }
   x@vec_atol <- numeric(0)
   x <- update(x, atol = default)
-  initialize_tol(x, default = default, tol = "atol")
+  x <- initialize_tol(x, default = default, tol = "atol")
+  x
 }
 
 #' @rdname custom_tol
@@ -505,7 +509,6 @@ reset_tolerances <- function(x, rtol = NULL, atol = NULL) {
   }
   x <- reset_rtol(x, default = rtol)
   x <- reset_atol(x, default = atol)
-  valid_tol_names(x)
   x
 }
 
@@ -520,7 +523,7 @@ use_custom_tol <- function(x) {
 }
 
 #' @rdname custom_tol
-#' @rxport
+#' @export
 use_scalar_tol <- function(x) {
   if(!is.mrgmod(x)) mod_first()
   x@itol <- 1  
@@ -543,22 +546,34 @@ valid_tol_data <- function(val, x) {
   }
 }
 
-valid_tol_names <- function(x) {
+check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
+  scope <- match.arg(scope)
   n <- neq(x)
-  check_rtol <- length(x@vec_rtol) %in% c(0, n) 
-  check_atol <- length(x@vec_atol) %in% c(0, n)
+  cmts <- Cmt(x)
   msg <- NULL
-  if(!check_rtol) {
-    msg <- "Custom rtol vector is not the correct size." 
+  if(scope %in% c("both", "rtol")) {
+    check_rtol <- length(x@vec_rtol) == n
+    check_rtol_names <- identical(names(x@vec_rtol), cmts)
+    if(!check_rtol) {
+      msg <- c(msg, "custom rtol vector is not the correct size.")
+    }
+    if(check_rtol && !check_rtol_names) {
+      msg <- c(msg, "custom rtol vector is in the wrong order.")
+    }
   }
-  if(!check_atol) {
-    msg <- "Custom atol vector is not the correct size."  
+  if(scope %in% c("both", "atol")) { 
+    check_atol <- length(x@vec_atol) == n
+    check_atol_names <- identical(names(x@vec_atol), cmts)
+    if(!check_atol) {
+      msg <- c(msg, "custom atol vector is not the correct size.")
+    }
+    if(check_atol && !check_atol_names) {
+      msg <- c(msg, "custom atol vector is in the wrong order.")
+    }
   }
-  if(!check_rtol && !check_atol) {
-    msg <- "Custom rtol and atol vectors are not the right size."  
-  }
-  if(is.null(msg)) return(invisible(NULL))
-  instructions <- "Consider runing `reset_tolerances()` to start over."
-  names(instructions) <- "*"
-  abort(c(msg, instructions))
+  if(is.null(msg)) return(invisible(TRUE))
+  header <- "Problems were found in custom tolerance vectors:"
+  footer <- "Consider runing `reset_tolerances()` to start over."
+  names(msg) <- "x"
+  abort(message = header, body = msg, footer = footer)
 }
