@@ -4,27 +4,34 @@
 \alias{custom_tol}
 \alias{customize_rtol}
 \alias{customize_atol}
-\alias{reset_rtol}
-\alias{reset_atol}
-\alias{reset_tolerances}
-\alias{use_custom_tol}
-\alias{use_scalar_tol}
 \title{Customize tolerances for specific compartments}
 \usage{
-customize_rtol(.x, .rtol = list(), .default = NULL, ...)
+customize_rtol(.x, .rtol = list(), .default = NULL, .use = TRUE, ...)
 
-customize_atol(.x, .atol = list(), .default = NULL, ...)
+customize_atol(.x, .atol = list(), .default = NULL, .use = TRUE, ...)
+}
+\arguments{
+\item{.x}{a model object.}
 
-reset_rtol(x, default = NULL)
+\item{.rtol}{a named numeric list or vector, where names reference
+selected model compartments and relative tolerances for those
+compartments.}
 
-reset_atol(x, default = NULL)
+\item{.default}{the default tolerance value to use for compartments
+not listed in \code{.rtol}, \code{.atol}, or \code{...}; if not supplied, the current
+scalar value in \code{.x} will be used.}
 
-reset_tolerances(x, rtol = NULL, atol = NULL)
+\item{.use}{\code{logical}; if \code{TRUE}, then a call to \code{\link[=use_custom_tol]{use_custom_tol()}} will
+be made prior to return; otherwise, a call to \code{\link[=use_scalar_tol]{use_scalar_tol()}} will
+be made; under expected use, the value for this argument is kept \code{TRUE},
+so that whenever tolerances are customized, they will be used in the
+next simulation run.}
 
-use_custom_tol(x)
-
-use_scalar_tol(x)
+\item{.atol}{a named numeric list or vector, where names reference
+selected model compartments and absolute tolerances for those
+compartments.}
 }
 \description{
-Customize tolerances for specific compartments
+These functions update the relative or absolute tolerance values
+only for the custom tolerance configuration.
 }
