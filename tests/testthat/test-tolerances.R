@@ -302,3 +302,73 @@ test_that("Bad customize input", {
     "tolerance data must be a named numeric list or vector"
   )
 })
+
+test_that("Error when either atol or rtol not customized", {
+  mod <- use_custom_tol(house())
+  mod@vec_atol <- numeric(0)
+  suppressMessages(
+    expect_error(
+      mrgsim(mod), 
+      "itol is > 1, but atol/rtol vector(s) are not the expected size.", 
+      fixed = TRUE
+    )
+  )
+  expect_message(
+    try(mrgsim(mod), silent = TRUE), 
+    "[lsoda] expecting atol vector with size 3, but got size 0.", 
+    fixed = TRUE
+  )
+  mod <- use_custom_tol(house())
+  mod@vec_rtol <- c(a = 1e-3)
+  suppressMessages(
+    expect_error(
+      mrgsim(mod), 
+      "itol is > 1, but atol/rtol vector(s) are not the expected size.",
+      fixed = TRUE
+    )
+  )
+  expect_message(
+    try(mrgsim(mod), silent = TRUE), 
+    "[lsoda] expecting rtol vector with size 3, but got size 1.", 
+    fixed = TRUE
+  )
+})
+
+test_that("Detect numerical differences using custom tol", {
+  
+  # atol
+  mod1 <- house(atol = 1e-3)
+  mod2 <- custom_atol(house(), GUT = 1e-20)
+  dose <- ev(amt = 1)
+  
+  set.seed(12345)
+  out0 <- mrgsim_e(mod1, dose, end = 480)
+  set.seed(12345)
+  out1 <- mrgsim_e(mod1, dose, end = 480)
+  set.seed(12345)
+  out2 <- mrgsim_e(mod2, dose, end = 480)
+  
+  expect_equal(out0$CENT, out1$CENT, tolerance = 1e-7)
+  expect_true(nrow(filter_sims(out1, CENT < 0)) > 0)
+  expect_true(nrow(filter_sims(out2, CENT < 0)) == 0)
+  
+  diff1 <- abs(out1$CENT - out0$CENT)
+  diff2 <- abs(out2$CENT - out1$CENT)
+  expect_true(sum(diff2)/100 > sum(diff1))
+  
+  # rtol 
+  mod1 <- house(rtol = 1e-12)
+  mod2 <- custom_rtol(house(), CENT = 1e-2)
+  
+  set.seed(12345)
+  out0 <- mrgsim_e(mod1, dose, end = 480)
+  set.seed(12345)
+  out1 <- mrgsim_e(mod1, dose, end = 480)
+  set.seed(12345)
+  out2 <- mrgsim_e(mod2, dose, end = 480)
+  
+  diff1 <- abs(out1$CENT - out0$CENT)
+  diff2 <- abs(out2$CENT - out1$CENT)
+  
+  expect_true(sum(diff2)/100 > sum(diff1))
+})

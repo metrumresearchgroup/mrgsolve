@@ -44,7 +44,7 @@ void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
     size_error = true;
   }
   if(xrtol_.size() != Neq) {
-    std::string size = std::to_string(xatol_.size());
+    std::string size = std::to_string(xrtol_.size());
     std::string expect = std::to_string(Neq);
     Rcpp::CharacterVector text = 
       "[lsoda] expecting rtol vector with size " + expect + ", but got size " + size + ".";

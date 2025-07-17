@@ -1,4 +1,4 @@
-# coverage: 81.27%
+# coverage: 81.23%
 
 |file                  | coverage|
 |:---------------------|--------:|
@@ -10,6 +10,7 @@
 |R/generics.R          |    60.00|
 |R/chain.R             |    63.16|
 |R/knobs.R             |    63.73|
+|R/update.R            |    68.51|
 |R/utils.R             |    70.35|
 |R/matlist.R           |    70.42|
 |R/model_include.R     |    71.15|
@@ -17,9 +18,8 @@
 |R/handle_spec_block.R |    75.18|
 |R/data_set.R          |    75.80|
 |R/class_ev.R          |    76.34|
-|R/class_mrgmod.R      |    77.22|
+|R/class_mrgmod.R      |    77.50|
 |R/param.R             |    79.76|
-|R/update.R            |    80.25|
 |R/realize_addl.R      |    80.65|
 |R/init.R              |    81.25|
 |R/workflows.R         |    81.25|
@@ -38,8 +38,9 @@
 |R/funset.R            |    92.11|
 |R/class_rx.R          |    92.86|
 |R/mwrite.R            |    94.18|
+|R/mread.R             |    94.97|
+|R/custom-tol.R        |    95.86|
 |R/inven.R             |    96.10|
-|R/mread.R             |    96.67|
 |R/nm-mode.R           |    97.27|
 |R/class_matlist.R     |   100.00|
 |R/mcode.R             |   100.00|
