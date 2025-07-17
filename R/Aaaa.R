@@ -80,7 +80,8 @@ GLOBALS$UPDATE_SINGLE <- c(
 GLOBALS$UPDATE_OTHER <- c("param", "init", "omega", "sigma", "outvars")
 GLOBALS$UPDATE_ALL <- c(GLOBALS$UPDATE_SINGLE, GLOBALS$UPDATE_OTHER)
 GLOBALS$SET_EXTRA <- c(
-  "collapse_omega", "collapse_sigma", "ss_cmt", "clink", "fixed_type"
+  "collapse_omega", "collapse_sigma", "ss_cmt", "clink", "fixed_type", 
+  "customize_rtol", "customize_atol"
 )
 # Arguments to mrgsim that can be stated in $SET and then 
 # passed to mrgsim

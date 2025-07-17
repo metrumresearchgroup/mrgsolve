@@ -322,6 +322,18 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Arguments in $SET that will be passed to mrgsim
   x <- set_simargs(x, SET)
   
+  # Customized tolerances
+  if(is.list(SET[["customize_rtol"]])) {
+    args <- SET[["customize_rtol"]]
+    args$.x <- x
+    x <- do.call(customize_rtol, args = args)
+  }
+  if(is.list(SET[["customize_atol"]])) {
+    args <- SET[["customize_atol"]]
+    args$.x <- x
+    x <- do.call(customize_atol, args = args)
+  }
+  
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
 
