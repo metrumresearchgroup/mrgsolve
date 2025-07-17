@@ -131,7 +131,7 @@ check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
 #' listed in `.rtol`, `.atol`, or `...`; if not supplied, the current scalar 
 #' value in `.x` will be used.
 #' @param .use `logical`; if `TRUE`, then a call to [use_custom_tol()] will be 
-#' made prior to return; otherwise, a call to [use_scalar_tol()] will be made; 
+#' made prior to return; if `FALSE`, a call to [use_scalar_tol()] will be made; 
 #' under expected use, the value for this argument is kept `TRUE`, so that 
 #' whenever tolerances are customized, they will be used in the next simulation 
 #' run. 
@@ -143,6 +143,12 @@ check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
 #' list via `.rtol` and `.atol` or via `...` or by both. If duplicate 
 #' compartment names are found in `...` and either `.rtol` or `.atol`, the value 
 #' passed via `...` will take precedence. 
+#' 
+#' The `custom_tol()` function provides a mechanism for coding customized
+#' tolerances into the model file itself. Simply create named numeric lists
+#' or vectors for customized `rtol` or `atol` in a `$ENV` block. On loading 
+#' the model, call `custom_tol()` and supply the names of those objects as
+#' `.rtol` and `.atol`. 
 #' 
 #' @examples
 #' mod <- house()
@@ -173,7 +179,8 @@ custom_rtol <- function(.x, .rtol = list(), .default = NULL, .use = TRUE, ...) {
   .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", default = .default, ...)
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
-  } else {
+  } 
+  if(isFALSE(.use)) {
     .x <- use_scalar_tol(.x)
   }
   .x
@@ -186,7 +193,8 @@ custom_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
   .x <- customize_tol(x = .x, val = .atol, tol = "atol", default = .default, ...) 
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
-  } else {
+  } 
+  if(isFALSE(.use)) {
     .x <- use_scalar_tol(.x)
   }
   .x

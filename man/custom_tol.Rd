@@ -30,7 +30,7 @@ listed in \code{.rtol}, \code{.atol}, or \code{...}; if not supplied, the curren
 value in \code{.x} will be used.}
 
 \item{.use}{\code{logical}; if \code{TRUE}, then a call to \code{\link[=use_custom_tol]{use_custom_tol()}} will be
-made prior to return; otherwise, a call to \code{\link[=use_scalar_tol]{use_scalar_tol()}} will be made;
+made prior to return; if \code{FALSE}, a call to \code{\link[=use_scalar_tol]{use_scalar_tol()}} will be made;
 under expected use, the value for this argument is kept \code{TRUE}, so that
 whenever tolerances are customized, they will be used in the next simulation
 run.}
@@ -47,6 +47,12 @@ New tolerance values can be supplied by either a named, numeric vector or
 list via \code{.rtol} and \code{.atol} or via \code{...} or by both. If duplicate
 compartment names are found in \code{...} and either \code{.rtol} or \code{.atol}, the value
 passed via \code{...} will take precedence.
+
+The \code{custom_tol()} function provides a mechanism for coding customized
+tolerances into the model file itself. Simply create named numeric lists
+or vectors for customized \code{rtol} or \code{atol} in a \verb{$ENV} block. On loading
+the model, call \code{custom_tol()} and supply the names of those objects as
+\code{.rtol} and \code{.atol}.
 }
 \examples{
 mod <- house()
