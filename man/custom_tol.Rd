@@ -38,6 +38,9 @@ run.}
 \item{...}{\code{name}/\code{value} pairs, where \code{name} references a model compartment
 and \code{value} is a new, numeric value to use for \code{rtol} or \code{atol}.}
 }
+\value{
+An updated model object.
+}
 \description{
 These functions update the relative or absolute tolerance values
 only for the custom tolerance configuration.

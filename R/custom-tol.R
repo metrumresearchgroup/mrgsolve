@@ -150,6 +150,8 @@ check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
 #' the model, call `custom_tol()` and supply the names of those objects as
 #' `.rtol` and `.atol`. 
 #' 
+#' @return An updated model object.
+#' 
 #' @examples
 #' mod <- house()
 #' mod <- custom_rtol(mod, GUT = 1e-2, CENT = 1e-3)
@@ -203,11 +205,11 @@ custom_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
 #' Reset all model tolerances
 #' 
 #' These functions reset both scalar and customized values for both 
-#' relative and absolute tolerances. All functions reset both customized
-#' and scalar tolerances to a single, common `rtol` or `atol`.  The functions 
-#' do _not_ change the which tolerance configuration is used for 
-#' simulation (e.g., scalar or customized); see [use_custom_tol()] and 
-#' [use_scalar_tol()] to make that change in the model object.
+#' relative and absolute tolerances. All functions reset tolerances to a single, 
+#' common `rtol` or `atol`.  The functions do _not_ change the which tolerance 
+#' configuration is used for simulation (e.g., scalar or customized); see 
+#' [use_custom_tol()] and [use_scalar_tol()] to make that change in the model 
+#' object.
 #' 
 #' @param x a model object.
 #' @param rtol global relative tolerance for both scalar and customized
@@ -216,6 +218,8 @@ custom_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
 #' @param atol global absolute tolerance for both scalar and customized
 #' configurations; if not supplied, the current model scalar `atol` value is 
 #' used. 
+#' 
+#' @return An updated model object.
 #' 
 #' @examples
 #' mod <- house()
@@ -267,6 +271,8 @@ reset_atol <- function(x, atol = NULL) {
 #' Extract rtol and atol information from a model object
 #' 
 #' @param x a model object.
+#' 
+#' @return A data frame (`get_tol()`) or a named list (`get_tol_list()`).
 #' 
 #' @examples
 #' mod <- house()
@@ -323,6 +329,8 @@ get_tol_list <- function(x) {
 #' 
 #' @param x a model object.
 #' 
+#' @return An updated model object.
+#' 
 #' @details
 #' If customized tolerances have not been initialized yet, they will be,
 #' assigning the current `rtol` or `atol` for every compartment. These default
@@ -337,7 +345,6 @@ get_tol_list <- function(x) {
 #' 
 #' mod <- use_scalar_tol(mod)
 #' mod
-#' 
 #' 
 #' @md
 #' @export

@@ -12,6 +12,9 @@ use_scalar_tol(x)
 \arguments{
 \item{x}{a model object.}
 }
+\value{
+An updated model object.
+}
 \description{
 Call \code{use_custom_tol()} to use custom relative and absolute tolerances in
 a model; call \code{use_scalar_tol()} to revert to the traditional configuration
@@ -31,6 +34,5 @@ mod
 
 mod <- use_scalar_tol(mod)
 mod
-
 
 }

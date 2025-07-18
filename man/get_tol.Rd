@@ -12,6 +12,9 @@ get_tol_list(x)
 \arguments{
 \item{x}{a model object.}
 }
+\value{
+A data frame (\code{get_tol()}) or a named list (\code{get_tol_list()}).
+}
 \description{
 Extract rtol and atol information from a model object
 }
