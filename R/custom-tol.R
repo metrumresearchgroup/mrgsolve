@@ -159,6 +159,8 @@ check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
 #' new_tolerances <- c(GUT = 1e-4, RESP = 1e-5)
 #' mod <- custom_rtol(mod, new_tolerances, RESP = 1e-6)
 #' 
+#' @seealso [reset_tol()], [use_custom_tol()], [use_scalar_tol()], [get_tol()]
+#' 
 #' @name custom_tol
 #' @md
 #' @export 
@@ -226,6 +228,8 @@ custom_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
 #' mod <- reset_tol(mod, rtol = 1e-6, atol = 1e-10)
 #' mod
 #' 
+#' @seealso [custom_tol()], [use_custom_tol()], [use_scalar_tol()], [get_tol()]
+#' 
 #' @name reset_tol
 #' @md
 #' @export
@@ -278,6 +282,8 @@ reset_atol <- function(x, atol = NULL) {
 #' mod <- house()
 #' get_tol(mod)
 #' get_tol_list(mod)
+#' 
+#' @seealso [reset_tol()], [custom_tol()], [use_custom_tol()], [use_scalar_tol()]
 #' 
 #' @name get_tol
 #' @md
@@ -345,6 +351,8 @@ get_tol_list <- function(x) {
 #' 
 #' mod <- use_scalar_tol(mod)
 #' mod
+#' 
+#' @seealso [custom_tol()], [reset_tol()], [get_tol()]
 #' 
 #' @md
 #' @export

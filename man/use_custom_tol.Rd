@@ -36,3 +36,6 @@ mod <- use_scalar_tol(mod)
 mod
 
 }
+\seealso{
+\code{\link[=custom_tol]{custom_tol()}}, \code{\link[=reset_tol]{reset_tol()}}, \code{\link[=get_tol]{get_tol()}}
+}

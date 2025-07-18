@@ -24,3 +24,6 @@ get_tol(mod)
 get_tol_list(mod)
 
 }
+\seealso{
+\code{\link[=reset_tol]{reset_tol()}}, \code{\link[=custom_tol]{custom_tol()}}, \code{\link[=use_custom_tol]{use_custom_tol()}}, \code{\link[=use_scalar_tol]{use_scalar_tol()}}
+}

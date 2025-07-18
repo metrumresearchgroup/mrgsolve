@@ -65,3 +65,6 @@ new_tolerances <- c(GUT = 1e-4, RESP = 1e-5)
 mod <- custom_rtol(mod, new_tolerances, RESP = 1e-6)
 
 }
+\seealso{
+\code{\link[=reset_tol]{reset_tol()}}, \code{\link[=use_custom_tol]{use_custom_tol()}}, \code{\link[=use_scalar_tol]{use_scalar_tol()}}, \code{\link[=get_tol]{get_tol()}}
+}

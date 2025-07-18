@@ -40,3 +40,6 @@ mod <- reset_tol(mod, rtol = 1e-6, atol = 1e-10)
 mod
 
 }
+\seealso{
+\code{\link[=custom_tol]{custom_tol()}}, \code{\link[=use_custom_tol]{use_custom_tol()}}, \code{\link[=use_scalar_tol]{use_scalar_tol()}}, \code{\link[=get_tol]{get_tol()}}
+}
