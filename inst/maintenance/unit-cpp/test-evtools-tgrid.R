@@ -40,15 +40,16 @@ test_that("Insert an internal-only time grid with NEWIND", {
   n <- length(seq(mod$xstart, mod$xend, mod$xdelta))
   mod <- update(mod, end = -1, add = c(0, mod$xend + 3))
   
+  # Count all EVID=0 records
   mod <- param(mod, evi = 0, mode = 0)
   out <- mrgsim(mod, recsort = 4)
   expect_equal(nrow(out), 2)
-  expect(out$count[2], n)
+  expect_equal(out$count[2], n + length(stime(mod)))
   
   mod <- param(mod, evi = 999, mode = 0)
   out2 <- mrgsim(mod, recsort = 4)
   expect_equal(nrow(out2), 2)
-  expect(out2$count[2], n)
+  expect_equal(out2$count[2], n)
   
   mod <- param(mod, evi = 2, mode = 0)
   out3 <- mrgsim(mod)
@@ -64,7 +65,7 @@ test_that("Insert internal-only time grid with odd delta", {
   mod <- param(mod, evi = 999, mode = 0)
   out <- mrgsim(mod, recsort = 4)
   expect_equal(nrow(out), 2)
-  expect(out$count[2], n)
+  expect_equal(out$count[2], n)
 })
 
 test_that("Insert internal-only time grid starting at other time", {
