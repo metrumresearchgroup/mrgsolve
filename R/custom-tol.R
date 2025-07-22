@@ -113,6 +113,11 @@ check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
   abort(message = header, body = msg, footer = footer)
 }
 
+check_itol <- function(x) {
+  if(x@itol==1 || x@itol==4) return(invisible(TRUE))
+  abort("`itol` must be either 1 or 4.", body = c(x = x@itol))
+}
+
 #' Customize tolerances for specific compartments
 #' 
 #' These functions update the relative or absolute tolerance values
