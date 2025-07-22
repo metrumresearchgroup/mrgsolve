@@ -164,4 +164,6 @@ struct CompRec {
 void insert_record(reclist& thisi, const size_t start, rec_ptr& rec, 
                    const bool put_ev_first);
 
+void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t start, 
+                         const bool put_ev_first);
 #endif

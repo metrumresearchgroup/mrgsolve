@@ -633,9 +633,21 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           // Unpack and check
           double this_time = (mt[mti]).time;
-          if(this_time < tto && !mt[mti].now) continue;
           unsigned int this_evid = (mt[mti]).evid;
-          if(this_evid==0) continue;
+          if(this_time < tto && !mt[mti].now) {
+            throw Rcpp::exception(
+                tfm::format(
+                  "modeled events or observations cannot start in the past\n"
+                  "ID: %d, time: %d, modeled record time: %d, evid: %i", 
+                  id, tto, this_time, this_evid
+                ).c_str(),
+                false
+            );
+          };
+          if(this_evid==0 || this_evid > 99) {
+            insert_observations(a[i], mt[mti], j, addl_ev_first);
+            continue; 
+          };
           double this_amt = mt[mti].amt;
           int this_cmt = (mt[mti]).cmt;
           double this_rate = (mt[mti]).rate;
