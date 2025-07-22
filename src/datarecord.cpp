@@ -150,7 +150,7 @@ void datarecord::implement(odeproblem* prob) {
   if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
   }
-  
+
   unsigned int evid = Evid;
   
   if(this->infusion() && Evid != 4) evid = 5;
@@ -206,10 +206,10 @@ void datarecord::implement(odeproblem* prob) {
     } else {
       this->evid(1);
     }
-    this-> implement(prob);
+    this->implement(prob);
     return;
   }
-  prob->lsoda_init();
+  if(Evid < 100) prob->lsoda_init();
 }
 
 /* 
@@ -587,6 +587,24 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     thisi.push_back(evon);
   }
 }  
+
+/*  Insert observation records triggered from evtools
+ * 
+ */
+
+void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t start, 
+                         const bool put_ev_first) {
+  const int total = ev.addl + 1;
+  int nextpos = put_ev_first && (ev.evid!= 1 && ev.evid!=4) ? -1000000000 : 1000000000;
+  for(int i = 0; i < total; ++i) {
+    rec_ptr rec = NEWREC(ev.time + i*ev.ii, nextpos, false);
+    rec->evid(ev.evid);
+    rec->Cmt = ev.cmt;
+    thisi.push_back(rec); 
+  }
+  std::sort(thisi.begin()+start+1, thisi.end(), CompRec());
+  return; 
+}
 
 /* 
  * Inserts a record at the earliest or latest opportunity based on time. 
