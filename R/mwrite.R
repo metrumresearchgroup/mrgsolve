@@ -95,9 +95,6 @@ mwrite_model_to_list <- function(x) {
   # Other
   l$envir <- as.list(x@envir)
   l$plugin <- x@plugin
-  l$vec_atol <- x@vec_atol
-  l$vec_rtol <- x@vec_rtol
-  l$itol <- x@itol
   # These items will get directly passed to update()
   l$update <- list()
   l$update$start <- x@start
