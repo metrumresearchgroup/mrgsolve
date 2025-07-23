@@ -322,7 +322,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Arguments in $SET that will be passed to mrgsim
   x <- set_simargs(x, SET)
-  
+
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
 

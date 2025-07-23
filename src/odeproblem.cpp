@@ -363,7 +363,7 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
   
   if(Istate < 0) {
-    negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol);  
+    negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol, solver.itol);  
   }
   
   this->init_derivs(tto);

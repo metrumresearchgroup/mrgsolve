@@ -86,11 +86,15 @@ LSODA::LSODA(int neq_, const Rcpp::S4& mod) {
   maxsteps_(Rcpp::as<int>(mod.slot("maxsteps")));
   ixpr_(Rcpp::as<int>(mod.slot("ixpr")));
   mxhnil_(Rcpp::as<int>(mod.slot("mxhnil")));
-  itol_ = 1;
-  rtol_.assign(2, Rcpp::as<double>(mod.slot("rtol")));
-  atol_.assign(2, Rcpp::as<double>(mod.slot("atol")));
-  Rtol = rtol_[1];
-  Atol = atol_[1];
+  Rtol = Rcpp::as<double>(mod.slot("rtol"));
+  Atol = Rcpp::as<double>(mod.slot("atol"));
+  itol = Rcpp::as<int>(mod.slot("itol")); 
+  if(itol>1) {
+    setup_tol_vectors(mod);
+  } else {
+    rtol_.assign(2, Rtol);
+    atol_.assign(2, Atol);
+  }
   rtol_[0] = 0;
   atol_[0] = 0;
 }
@@ -218,10 +222,10 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       return;
     }
     n = neq;
-    if (itol_ < 1 || itol_ > 4)
+    if (itol < 1 || itol > 4)
     {
-      //cerr << "[lsoda] itol = " << itol_ << " illegal" << endl;
-      REprintf("[lsoda] itol = %i illegal.\n", itol_);
+      //cerr << "[lsoda] itol = " << itol << " illegal" << endl;
+      REprintf("[lsoda] itol = %i illegal.\n", itol);
       terminate(istate);
       return;
     }
@@ -379,9 +383,9 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       atoli = atol_[1];
       for (size_t i = 1; i <= n; ++i)
       {
-        if (itol_ >= 3)
+        if (itol >= 3)
           rtoli = rtol_[i];
-        if (itol_ == 2 || itol_ == 4)
+        if (itol == 2 || itol == 4)
           atoli = atol_[i];
         if (rtoli < 0.)
         {
@@ -509,7 +513,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
           return;
         }
         tol = rtol_[1];
-        if (itol_ > 2)
+        if (itol > 2)
         {
           for (size_t i = 2; i <= n; ++i)
             tol = max(tol, rtol_[i]);
@@ -519,7 +523,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
           atoli = atol_[1];
           for (size_t i = 1; i <= n; ++i)
           {
-            if (itol_ == 2 || itol_ == 4)
+            if (itol == 2 || itol == 4)
               atoli = atol_[i];
             ayi = fabs(y[i]);
             if (ayi != 0.)

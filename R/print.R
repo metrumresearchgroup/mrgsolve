@@ -95,8 +95,11 @@ print_mrgmod <- function(x,verbose=FALSE,...) {
     capttext <- paste0(captheader[1],"<none>")  
   }
   
-  maxs <- paste0(floor(x@maxsteps/1000), "k")
-  solvertxt <- list(atol=x@atol,rtol=x@rtol,maxsteps=maxs)
+  # maxs <- paste0(floor(x@maxsteps/1000), "k") TODO: remove
+  toltype <- ifelse(x@itol==1, "1 (scalar)", "4 (custom)")
+  rtol <- ifelse(x@itol==1, as.character(x@rtol), "--")
+  atol <- ifelse(x@itol==1, as.character(x@atol), "--")
+  solvertxt <- list(rtol=rtol,atol=atol,itol=toltype)
   solvertxt <- paste(names(solvertxt), unlist(solvertxt), sep=": ")
   solvertxt <- list(solvertxt[1:3])
   solvertxt <- sapply(solvertxt, function(i) paste(i, collapse= " "))
@@ -126,7 +129,6 @@ print_mrgmod <- function(x,verbose=FALSE,...) {
   cat("  shared object: ", dllname(x), " ",loaded,"\n\n", sep="")
 
   cat(tt, sep="\n")
-  cat("\n")
   
   cat(inittxt, sep="\n")
   cat(partxt, sep="\n")
