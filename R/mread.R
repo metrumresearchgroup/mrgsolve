@@ -186,10 +186,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Block name aliases
   incoming_block_names <- names(spec)
   names(spec) <- toupper(names(spec))
-  names(spec) <- gsub("DES",   "ODE",   names(spec), fixed = TRUE)
-  names(spec) <- gsub("POST",  "TABLE", names(spec), fixed = TRUE)
-  names(spec) <- gsub("ERROR", "TABLE", names(spec), fixed = TRUE)
-  names(spec) <- gsub("^PK$",  "MAIN",  names(spec), fixed = FALSE)
+  
+  names(spec) <- sub("^DES$",   "ODE",   names(spec))
+  names(spec) <- sub("^POST$",  "TABLE", names(spec))
+  names(spec) <- sub("^ERROR$", "TABLE", names(spec))
+  names(spec) <- sub("^PK$",    "MAIN",  names(spec))
   
   ## Expand partial matches
   index <- pmatch(names(spec), block_list, duplicates.ok = TRUE)
