@@ -36,7 +36,6 @@ test_that("Options where they don't belong", {
   $CMT CENT
   $TABLE >> zip=55455
   double a = 2;
-  $SET y = TRUE
   $CMTN CENT
   '
   mod <- mcode("test-opts-1", code, compile=FALSE)

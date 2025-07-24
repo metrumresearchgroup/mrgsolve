@@ -1,4 +1,39 @@
-# mrgsolve (development version)
+# mrgsolve 1.5.3
+
+- `D_CMT`, `ALAG_CMT`, and `simeta()` are now available to use in `$TABLE`
+  (`$ERROR`), `$EVENT`, and `$PRED` code blocks (#1290).
+
+- Added `END_OF_INFUSION` syntax, which is `true` on the internal record that 
+  stops an infusion (#1288). 
+
+- `mwrite_yaml()` and `mwrite_cpp()` now render block names in upper case, 
+  even for blocks coded with lower case in the original model file (#1282). 
+
+- When creating an `evt::regimen` object (via `evtools` plugin), the _default_
+  start time is now the time when the object was created; before this change, 
+  the _default_ time was always `0` (#1266).
+
+- Added methods for `evt::regimen` objects (via `evtools` plugin) under 
+  the name `time_next()`; this either gets or sets the time of the 
+  next dose in the regimen (#1266).
+
+## Bugs Fixed
+
+- Fixed an issue where `time` values in the simulated output data frame 
+  were off by a very small amount, due to issues with floating point 
+  mathematical operations (#1287). 
+
+- Fixed a problem writing a model to file with `mwrite_yaml()` and 
+  `mwrite_cpp()` when lower case block naming was used (#1282).
+
+- Fixed a bug where invalid item passed through the `$SET` block caused 
+  an error when reading / building a model (#1271). 
+
+- Fixed a bug where mrgsolve was not matching NONMEM behavior when an 
+  `EVID=4` record was included in the data set with `SS=1`; mrgsolve will 
+  now match NONMEM behavior in this case, with the output being identical 
+  to `EVID=1` with `SS=1` (#1262). 
+
 
 # mrgsolve 1.5.2
 

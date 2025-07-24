@@ -116,9 +116,25 @@ void cmt(mrgsolve::evdata& ev, const int cmt) {
   return;
 }
 
+void evid(mrgsolve::evdata& ev, const unsigned int evid) {
+  ev.evid = evid;
+  return;
+}
+
 void now(mrgsolve::evdata& ev) {
   ev.now = true;
   return;
+}
+
+mrgsolve::evdata tgrid(double start, double end, double delta) {
+  mrgsolve::evdata ev(start, 0);
+  ev.ii = delta;
+  ev.addl = std::floor((end-start)/delta);
+  ev.amt = 0;
+  ev.cmt = 1;
+  ev.now = false;
+  ev.check_unique = false;
+  return ev;
 }
 
 void push(databox& self, mrgsolve::evdata ev) {

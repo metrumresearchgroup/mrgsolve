@@ -60,3 +60,13 @@ test_that("ERROR is alias for TABLE", {
   expect_is(mcode("error-is-table", code), "mrgmod")
 })
 
+test_that("mread does not expand partial alias matches", {
+  expect_warning(
+    mcode(
+      "test-mread-no-partial-alias",
+      "$CMT A B\n$DESFOO\ndxdt_A  = 0;\ndxdt_B=0;",
+    ),
+    regexp = "invalid blocks found: DESFOO",
+    fixed = TRUE
+  )
+})

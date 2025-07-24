@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2024  Metrum Research Group
+// Copyright (C) 2013 - 2025  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -150,7 +150,7 @@ void datarecord::implement(odeproblem* prob) {
   if(Evid==0 || (!Armed && Evid ==1) || (prob->neq()==0)) {
     return;
   }
-  
+
   unsigned int evid = Evid;
   
   if(this->infusion() && Evid != 4) evid = 5;
@@ -206,10 +206,10 @@ void datarecord::implement(odeproblem* prob) {
     } else {
       this->evid(1);
     }
-    this-> implement(prob);
+    this->implement(prob);
     return;
   }
-  prob->lsoda_init();
+  if(Evid < 100) prob->lsoda_init();
 }
 
 /* 
@@ -555,14 +555,17 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     this_evid = Rate > 0 ? 5 : 1;
   }
   
-  //thisi.reserve(thisi.size() + n_dose); // TODO: remove 
-  
   double ontime = 0;
+  
+  // Doing this math once fixes issues with very small differences in output 
+  // TIME values: 
+  // https://github.com/metrumresearchgroup/mrgsolve/issues/1286
+  double parent_time = Time - lagt;
   
   int mp = 1000000000;
   
   int nextpos = addl_ev_first ?  -1000000000 : mp;
-  
+
   for(unsigned int k = 1; k <= Addl; ++k) {
     
     ontime = Time + Ii*double(k);
@@ -570,9 +573,11 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     if(ontime > maxtime) break;
     
     if(add_parent_doses) {
-      rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, ontime-lagt, Rate, nextpos, Id);
-      ev_parent -> unarm(); 
-      ev_parent -> phantom_rec();
+      rec_ptr ev_parent = NEWREC(Cmt, this_evid, Amt, 
+                                 parent_time + Ii*double(k), 
+                                 Rate, nextpos, Id);
+      ev_parent->unarm(); 
+      ev_parent->phantom_rec();
       thisi.push_back(ev_parent);      
     }
     
@@ -582,6 +587,24 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     thisi.push_back(evon);
   }
 }  
+
+/*  Insert observation records triggered from evtools
+ * 
+ */
+
+void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t start, 
+                         const bool put_ev_first) {
+  const int total = ev.addl + 1;
+  int nextpos = put_ev_first && (ev.evid!= 1 && ev.evid!=4) ? -1000000000 : 1000000000;
+  for(int i = 0; i < total; ++i) {
+    rec_ptr rec = NEWREC(ev.time + i*ev.ii, nextpos, false);
+    rec->evid(ev.evid);
+    rec->Cmt = ev.cmt;
+    thisi.push_back(rec); 
+  }
+  std::sort(thisi.begin()+start+1, thisi.end(), CompRec());
+  return; 
+}
 
 /* 
  * Inserts a record at the earliest or latest opportunity based on time. 

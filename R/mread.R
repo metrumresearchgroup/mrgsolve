@@ -186,10 +186,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   ## Block name aliases
   incoming_block_names <- names(spec)
   names(spec) <- toupper(names(spec))
-  names(spec) <- gsub("DES",   "ODE",   names(spec), fixed = TRUE)
-  names(spec) <- gsub("POST",  "TABLE", names(spec), fixed = TRUE)
-  names(spec) <- gsub("ERROR", "TABLE", names(spec), fixed = TRUE)
-  names(spec) <- gsub("^PK$",  "MAIN",  names(spec), fixed = FALSE)
+  
+  names(spec) <- sub("^DES$",   "ODE",   names(spec))
+  names(spec) <- sub("^POST$",  "TABLE", names(spec))
+  names(spec) <- sub("^ERROR$", "TABLE", names(spec))
+  names(spec) <- sub("^PK$",    "MAIN",  names(spec))
   
   ## Expand partial matches
   index <- pmatch(names(spec), block_list, duplicates.ok = TRUE)
@@ -200,7 +201,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   ## Pull out the settings and ENV now
   ## We might be passing parse settings in here ...
-  SET <- tolist(dump_opts(spec[["SET"]]))
+  SET <- handle_SET(spec)
   ENV <- eval_ENV_block(spec[["ENV"]],build[["project"]])
   if("SET" %in% names(spec)) spec[["SET"]] <- ""
   if("ENV" %in% names(spec)) spec[["ENV"]] <- ""
@@ -289,11 +290,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   mread.env[["audit_dadt"]] <- 
     isTRUE(audit) && isTRUE(mread.env[["audit_dadt"]])
   
-  # Look for compartments we're dosing into: F/ALAG/D/R
-  # and add them to CMTN
-  dosing <- dosing_cmts(spec[["MAIN"]], names(init))
-  SET[["CMTN"]] <- c(spec[["CMTN"]], dosing)
-  
   # new model object ----
   x <- new(
     "mrgmod",
@@ -329,6 +325,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
+
+  # Look for compartments we're dosing into: F/ALAG/D/R and add them to CMTN
+  dosing <- dosing_cmts(spec[["MAIN"]], names(init))
+  CMTN <- c(spec[["CMTN"]], dosing)
   
   # model r defs ----
   # These are the various #define statements
@@ -344,7 +344,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     model = model(x),
     omats = omat(x),
     smats = smat(x),
-    set = SET,
+    cmtn = CMTN,
     check.bounds = check.bounds, 
     plugin = plugin,
     dbsyms = args[["dbsyms"]]
