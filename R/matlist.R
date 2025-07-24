@@ -346,7 +346,6 @@ cumoffset <- function(x) {
 #' @rdname matlist_ops
 #' @export
 setMethod("c", "matlist", function(x, ..., recursive = FALSE) {
-  browser()
   cl <- class(x)[1]
   x <- c(list(x), list(...))
   stopifnot(all(sapply(x, is.matlist)))
