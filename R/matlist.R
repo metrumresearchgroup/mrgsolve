@@ -346,19 +346,20 @@ cumoffset <- function(x) {
 #' @rdname matlist_ops
 #' @export
 setMethod("c", "matlist", function(x, ..., recursive = FALSE) {
+  browser()
   cl <- class(x)[1]
-  what <- c(list(x), list(...))
-  stopifnot(all(sapply(what, is.matlist)))
-  nonzero <- sapply(what, slot, name = "n") > 0
+  x <- c(list(x), list(...))
+  stopifnot(all(sapply(x, is.matlist)))
+  nonzero <- sapply(x, slot, name = "n") > 0
   if(!any(nonzero)) {
     return(NULL)
   }
-  if(sum(nonzero)==1) return(what[[which(nonzero)]])
-  what <- what[nonzero]
-  d <- lapply(what, as.matrix)
-  d <- setNames(d, sapply(what, names))
-  l <- sapply(unname(what), labels)
-  create_matlist(d, labels = l, class = cl)
+  if(sum(nonzero)==1) return(x[[which(nonzero)]])
+  x <- x[nonzero]
+  data <- lapply(x, as.matrix)
+  data <- setNames(data, sapply(x, names))
+  lbls <- sapply(unname(x), labels)
+  create_matlist(data, labels = lbls, class = cl)
 })
 
 #' Collapse OMEGA or SIGMA matrix lists
