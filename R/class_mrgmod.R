@@ -551,8 +551,8 @@ setMethod("names", "mrgmod", function(x) {
 #' - `rtol`: see [solversettings]
 #' - `ss_atol`: absolute tolerance to use when advancing to PK steady state
 #' - `ss_rtol`: relative tolerance to use when advancing to PK steady state
-#' - `custom_rtol`: relative tolerances, one for each compartment
 #' - `custom_atol`: absolute tolerances, one for each compartment
+#' - `custom_rtol`: relative tolerances, one for each compartment
 #' - `maxsteps`: see [solversettings]
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
