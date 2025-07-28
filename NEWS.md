@@ -17,7 +17,9 @@
   (`$ERROR`) block (#1290). 
 
 ## Bugs Fixed
-  - Fixed a bug incorrectly-spelled block names were incorrectly aliased (#1294).
+
+  - Fixed a bug where incorrectly spelled block names were inadvertently aliased 
+    resulting in a misleading error message (#1294).
 
 # mrgsolve 1.5.3
 
