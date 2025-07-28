@@ -28,7 +28,7 @@ test_that("Switch to scalar tolerances", {
   mod <- use_scalar_tol(modx)
   expect_equal(mod@itol, 1)
   expect_length(mod@vec_rtol, n)
-  expect_length(mod@vec_rtol, n)
+  expect_length(mod@vec_atol, n)
   
   expect_error(
     use_scalar_tol(letters), 
@@ -63,7 +63,7 @@ test_that("Extract tolerances", {
   expect_identical(mrgsolve:::Cmt(mod), names(data2$custom_rtol))
   expect_identical(mrgsolve:::Cmt(mod), names(data2$custom_atol))
   expect_identical(mrgsolve:::Cmt(mod), names(data2$scalar_rtol))
-  expect_identical(mrgsolve:::Cmt(mod), names(data2$scalar_rtol))
+  expect_identical(mrgsolve:::Cmt(mod), names(data2$scalar_atol))
   
   expect_error(
     get_tol(letters), 

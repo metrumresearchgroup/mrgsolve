@@ -108,7 +108,7 @@ check_vec_tol_slots <- function(x, scope = c("both", "rtol", "atol")) {
   }
   if(is.null(msg)) return(invisible(TRUE))
   header <- "Problems were found in custom tolerance vectors:"
-  footer <- "Consider runing `reset_tolerances()` to start over."
+  footer <- "Consider runing `reset_tol()` to start over."
   names(msg) <- "x"
   abort(message = header, body = msg, footer = footer)
 }
@@ -213,17 +213,17 @@ custom_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
 #' 
 #' These functions reset both scalar and customized values for both 
 #' relative and absolute tolerances. All functions reset tolerances to a single, 
-#' common `rtol` or `atol`.  The functions do _not_ change the which tolerance 
+#' common `rtol` or `atol`.  The functions do _not_ change which tolerance 
 #' configuration is used for simulation (e.g., scalar or customized); see 
 #' [use_custom_tol()] and [use_scalar_tol()] to make that change in the model 
 #' object.
 #' 
 #' @param x a model object.
 #' @param rtol global relative tolerance for both scalar and customized
-#' configurations; if not supplied, the current model scalar `rtol` value is 
+#' configurations; if not supplied, the current model's scalar `rtol` value is 
 #' used. 
 #' @param atol global absolute tolerance for both scalar and customized
-#' configurations; if not supplied, the current model scalar `atol` value is 
+#' configurations; if not supplied, the current model's scalar `atol` value is 
 #' used. 
 #' 
 #' @return An updated model object.
@@ -364,7 +364,7 @@ get_tol_list <- function(x) {
 use_custom_tol <- function(x) {
   if(!is.mrgmod(x)) mod_first()
   x <- initialize_tol(x, default = x@rtol, tol = "rtol")
-  x <- initialize_tol(x, default = x$atol, tol = "atol")
+  x <- initialize_tol(x, default = x@atol, tol = "atol")
   x@itol <- 4
   x
 }
