@@ -59,7 +59,7 @@ valid_tol_data <- function(val, x) {
   named <- is_named(val)
   type_list <- is.list(val) && all(vapply(val, single.number, TRUE))
   type_numeric <- is.atomic(val) && is.numeric(val)
-  type <- type_list | type_numeric
+  type <- type_list || type_numeric
   if(!named || !type) {
     abort("tolerance data must be a named numeric list or vector.")
   }
