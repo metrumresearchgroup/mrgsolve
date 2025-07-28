@@ -1,3 +1,24 @@
+# mrgsolve 1.6.0
+
+- Absolute (`atol`) and relative (`rtol`) tolerances can now be customized for each 
+  compartment in an ODE-ased model (#1264)
+    -  Use`custom_rtol()`, `custom_atol()`, and `custom_tol()` to set tolerances
+       on a compartment-by-compartment basis.
+    - Use `reset_rtol()`, `reset_atol()`, or `reset_tol()` to reset custom
+      tolerances. 
+    - Use `use_custom_tol()` and `use_scalar_tol()` to toggle the model to use 
+      either the customized (vector) values or the scalar values. 
+    - Use `get_tol()` or `get_tol_list()` to extract both custom and scalar
+      tolerance values. 
+    - The model print method has been updated to reflect whether the model is 
+      currently set to use the scalar or customized (vector) values. 
+  
+- `D_CMT`, `ALAG_CMT`, and `simeps()` are now available to use in the `$TABLE`
+  (`$ERROR`) block (#1290). 
+
+## Bugs Fixed
+  - Fixed a bug incorrectly-spelled block names were incorrectly aliased (#1294).
+
 # mrgsolve 1.5.3
 
 - `D_CMT`, `ALAG_CMT`, and `simeta()` are now available to use in `$TABLE`
