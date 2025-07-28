@@ -557,7 +557,7 @@ setMethod("names", "mrgmod", function(x) {
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
 #' - `itol`: 1 (use scalar values) or 4 (use customized values)
-#' - `itolc`: either "scalar" (`itol = 1`) or "custom" (`itol = 4`) 
+#' - `itol_type`: either "scalar" (`itol = 1`) or "custom" (`itol = 4`) 
 #' - `envir`: the model environment
 #' - `plugins`: plugins invoked in the model
 #' - `digits`: number of digits to request in simulated data
