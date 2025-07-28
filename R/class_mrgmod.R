@@ -582,7 +582,11 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     digits <- x@digits
     plugins <- x@plugin
     envir <- x@envir
-    itol_type <- ifelse(x@itol ==1, "scalar", "custom")
+    if(x@itol==1) {
+      itol_type <- "scalar"  
+    } else {
+      itol_type <- "custom"  
+    }
     itol <- x@itol
     hmax <- x@hmax
     hmin <- x@hmin

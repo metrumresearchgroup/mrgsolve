@@ -96,7 +96,11 @@ print_mrgmod <- function(x,verbose=FALSE,...) {
   }
   
   # maxs <- paste0(floor(x@maxsteps/1000), "k") TODO: remove
-  toltype <- ifelse(x@itol==1, "1 (scalar)", "4 (custom)")
+  if(x@itol==1) {
+    toltype <- "1 (scalar)"
+  } else {
+    toltype <- "4 (custom)" 
+  }
   rtol <- ifelse(x@itol==1, as.character(x@rtol), "--")
   atol <- ifelse(x@itol==1, as.character(x@atol), "--")
   solvertxt <- list(rtol=rtol,atol=atol,itol=toltype)
