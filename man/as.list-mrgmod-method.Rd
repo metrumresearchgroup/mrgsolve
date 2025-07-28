@@ -63,9 +63,13 @@ cpp file
 \item \code{rtol}: see \link{solversettings}
 \item \code{ss_atol}: absolute tolerance to use when advancing to PK steady state
 \item \code{ss_rtol}: relative tolerance to use when advancing to PK steady state
+\item \code{custom_atol}: absolute tolerances, one for each compartment
+\item \code{custom_rtol}: relative tolerances, one for each compartment
 \item \code{maxsteps}: see \link{solversettings}
 \item \code{hmin}: see \link{solversettings}
 \item \code{hmax}: see \link{solversettings}
+\item \code{itol}: 1 (use scalar values) or 4 (use customized values)
+\item \code{itol_type}: either "scalar" (\code{itol = 1}) or "custom" (\code{itol = 4})
 \item \code{envir}: the model environment
 \item \code{plugins}: plugins invoked in the model
 \item \code{digits}: number of digits to request in simulated data
