@@ -9,10 +9,10 @@ test_that("Switch to custom tolerances", {
   modx <- house()
   n <- mrgsolve:::neq(modx)
   expect_length(modx@vec_rtol, 0)
-  expect_length(modx@vec_rtol, 0)
+  expect_length(modx@vec_atol, 0)
   mod <- use_custom_tol(modx)
   expect_length(mod@vec_rtol, n)
-  expect_length(mod@vec_rtol, n)
+  expect_length(mod@vec_atol, n)
   expect_equal(mod@itol, 4)
   
   expect_error(
