@@ -1,7 +1,7 @@
 # mrgsolve 1.6.0
 
 - Absolute (`atol`) and relative (`rtol`) tolerances can now be customized for each 
-  compartment in an ODE-ased model (#1264)
+  compartment in an ODE-based model (#1264)
     -  Use`custom_rtol()`, `custom_atol()`, and `custom_tol()` to set tolerances
        on a compartment-by-compartment basis.
     - Use `reset_rtol()`, `reset_atol()`, or `reset_tol()` to reset custom
