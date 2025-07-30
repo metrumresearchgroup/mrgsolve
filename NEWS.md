@@ -17,9 +17,6 @@
   current simulation time; these events were previously ignored silently 
   (#1291).
 
-- `D_CMT`, `ALAG_CMT`, and `simeps()` are now available to use in the `$TABLE`
-  (`$ERROR`) block (#1290). 
-
 - Absolute (`atol`) and relative (`rtol`) tolerances can now be customized for each 
   compartment in an ODE-based model (#1264)
     -  Use`custom_rtol()`, `custom_atol()`, and `custom_tol()` to set tolerances
