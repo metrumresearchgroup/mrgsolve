@@ -4,15 +4,15 @@
   internal-only (non-output) records into the simulation for 
   monitoring the system at a regular grid of times (#1291). 
 
-- `evt::evid()` function was added to the `evtools` plugin allowing users
+- `evt::evid()` was added to the `evtools` plugin allowing users
   to reset the event ID attribute of event objects created inside a model (#1291). 
 
 - `EVID` behavior was changed so that event IDs greater than or equal to 100
-  do not trigger a reset of the ODE solver, like records with `EVID=0`; for 
-  `EVID < 100`, a discontinuity will continue to happen through ODE solver
-  reset (#1291).
+  do not trigger a reset of the ODE solver, functioning like observation records
+  with `EVID=0`; for `EVID < 100`, a discontinuity will continue to happen through 
+  ODE solver reset (#1291).
 
-- Event objects created in the model usually through the `evtools` plugin will
+- Event objects created in the model (typically through the `evtools` plugin) will
   now trigger an error when the event or event sequence starts before the 
   current simulation time; these events were previously ignored silently 
   (#1291).
