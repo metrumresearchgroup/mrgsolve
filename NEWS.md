@@ -1,5 +1,11 @@
 # mrgsolve (development version)
 
+- Internal refactor of `self.mevent()` and `self.mtime()` to _not_ send event
+  objects back to mrgsolve when the requested object time is in the past; this
+  preserves previous functionality while respecting change in `1.6.0` that 
+  generates an error for events (or event sequences) that happen or begin in 
+  the past (#1297).
+
 # mrgsolve 1.6.0
 
 - `evt::tgrid()` was added to the `evtools` plugin, allowing users to insert 
