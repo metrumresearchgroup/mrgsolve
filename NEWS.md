@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 1.6.1
 
 - Internal refactor of `self.mevent()` and `self.mtime()` to _not_ send event
   objects back to mrgsolve when the requested object time is in the past; this
