@@ -19,13 +19,15 @@
 #ifndef DATABOX_CPP_H
 #define DATABOX_CPP_H
 
-void databox::mevent(double time, int evid) {
-  mrgsolve::evdata ev(time,evid);
+void databox::mevent(double time_, int evid) {
+  if(time_ < time) return;
+  mrgsolve::evdata ev(time_,evid);
   ev.check_unique = true;
   mevector.push_back(ev);
 }
 
-double databox::mtime(double time) {
+double databox::mtime(double time_) {
+  if(time_ < time) return time;
   mrgsolve::evdata ev(time,2);
   ev.check_unique = true;
   mevector.push_back(ev);
