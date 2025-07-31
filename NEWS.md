@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.6.0
 
 - `evt::tgrid()` was added to the `evtools` plugin, allowing users to insert 

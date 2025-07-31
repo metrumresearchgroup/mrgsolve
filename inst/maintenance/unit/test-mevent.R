@@ -51,9 +51,9 @@ code <- '
 $SET end = 72
 $PARAM mode = 0
 $MAIN
-self.mevent(2.1,33);
+
 if(mode==1) {
-  
+  self.mevent(2.1,33);
 }
 if(mode==2) {
   double mt = self.mtime(2.2);
