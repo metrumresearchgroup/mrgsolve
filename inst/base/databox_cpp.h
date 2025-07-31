@@ -28,7 +28,7 @@ void databox::mevent(double time_, int evid) {
 
 double databox::mtime(double time_) {
   if(time_ < time) return time_;
-  mrgsolve::evdata ev(time,2);
+  mrgsolve::evdata ev(time_,2);
   ev.check_unique = true;
   mevector.push_back(ev);
   return time_;
