@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2025  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -19,9 +19,9 @@
 #ifndef DATABOX_CPP_H
 #define DATABOX_CPP_H
 
-void databox::mevent(double time_, int evid) {
+void databox::mevent(double time_, int evid_) {
   if(time_ < time) return;
-  mrgsolve::evdata ev(time_,evid);
+  mrgsolve::evdata ev(time_,evid_);
   ev.check_unique = true;
   mevector.push_back(ev);
 }

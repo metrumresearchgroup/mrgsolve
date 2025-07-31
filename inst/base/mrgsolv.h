@@ -115,7 +115,7 @@ public:
   void stop_id() {SYSTEMOFF=2;}///< stops solving for the current id, filling with NA
   void stop_id_cf(){SYSTEMOFF=1;}///< stops solving for the current id, filling last value
   std::vector<mrgsolve::evdata> mevector;///< a collection of model events to pass back
-  void mevent(double time_, int evid);///< constructor for evdata objects
+  void mevent(double time_, int evid_);///< constructor for evdata objects
   void push(mrgsolve::evdata x);
   double mtime(double time_);///< creates evdata object for simple model event time
   double tad();///< calculates time after dose
