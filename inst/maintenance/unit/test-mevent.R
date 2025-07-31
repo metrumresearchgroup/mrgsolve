@@ -46,3 +46,29 @@ test_that("mevent - time-varying KA", {
   expect_equal(out$KA[nrow(out)], 2)
 })
 
+
+code <- '
+$SET end = 72
+$PARAM mode = 0
+$MAIN
+
+if(mode==1) {
+  self.mevent(2.1,33);
+}
+if(mode==2) {
+  double mt = self.mtime(2.2);
+}
+'
+
+test_that("Unprotected mevent or mtime code runs", {
+  mod <- mcode("unprotected-mevent-mtime", code)  
+  
+  out0 <- mrgsim(mod)
+  expect_is(out0, "mrgsims")
+  
+  out1 <- mrgsim(mod, param = list(mode = 1))
+  expect_is(out1, "mrgsims")
+
+  out2 <- mrgsim(mod, param = list(mode = 2))
+  expect_is(out2, "mrgsims")
+})
