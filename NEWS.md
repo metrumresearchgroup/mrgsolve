@@ -1,3 +1,44 @@
+# mrgsolve 1.6.0
+
+- `evt::tgrid()` was added to the `evtools` plugin, allowing users to insert 
+  internal-only (non-output) records into the simulation for 
+  monitoring the system at a regular grid of times (#1291). 
+
+- `evt::evid()` was added to the `evtools` plugin allowing users
+  to reset the event ID attribute of event objects created inside a model (#1291). 
+
+- `EVID` behavior was changed so that event IDs greater than or equal to 100
+  do not trigger a reset of the ODE solver, functioning like observation records
+  with `EVID=0`; for `EVID < 100`, a discontinuity will continue to happen through 
+  ODE solver reset (#1291).
+
+- Event objects created in the model (typically through the `evtools` plugin) will
+  now trigger an error when the event or event sequence starts before the 
+  current simulation time; these events were previously ignored silently 
+  (#1291).
+
+- Absolute (`atol`) and relative (`rtol`) tolerances can now be customized for each 
+  compartment in an ODE-based model (#1264)
+    -  Use`custom_rtol()`, `custom_atol()`, and `custom_tol()` to set tolerances
+       on a compartment-by-compartment basis.
+    - Use `reset_rtol()`, `reset_atol()`, or `reset_tol()` to reset custom
+      tolerances. 
+    - Use `use_custom_tol()` and `use_scalar_tol()` to toggle the model to use 
+      either the customized (vector) values or the scalar values. 
+    - Use `get_tol()` or `get_tol_list()` to extract both custom and scalar
+      tolerance values. 
+    - The model print method has been updated to reflect whether the model is 
+      currently set to use the scalar or customized (vector) values. 
+
+## Bugs Fixed
+
+  - Fixed a bug where incorrectly spelled block names were inadvertently aliased 
+    resulting in a misleading error message (#1294).
+
+  - Fixed a bug where no `OMEGA` or `SIGMA` matrices were imported into the 
+    model via multiple `$NMEXT` or `$NMXML` blocks when the matrix from one 
+    block was ignored (#1276).
+
 # mrgsolve 1.5.3
 
 - `D_CMT`, `ALAG_CMT`, and `simeta()` are now available to use in `$TABLE`
