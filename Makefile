@@ -47,6 +47,9 @@ cran:
 	make build
 	R CMD CHECK --as-cran ${TARBALL}
 
+revdep: 
+	Rscript -e "revdepcheck::revdep_check(num_workers=6)"
+
 spelling:
 	Rscript -e 'spelling::spell_check_package(".")'
 
