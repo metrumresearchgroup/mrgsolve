@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.6.1
 
 - Internal refactor of `self.mevent()` and `self.mtime()` to _not_ send event
