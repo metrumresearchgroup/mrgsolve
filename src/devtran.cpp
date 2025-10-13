@@ -30,6 +30,7 @@
 #include "LSODA.h"
 
 #define CRUMP(a) throw Rcpp::exception(a,false)
+#define WARN(a) Rf_warningcall(R_NilValue,a)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
@@ -521,7 +522,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       // Some non-observation event happening
       if(this_rec->is_event()) {
-        
+
         this_cmtn = this_rec->cmtn();
         
         if(!this_rec->is_lagged()) {
@@ -539,12 +540,25 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             this_rec->unarm();
           }
         }
-        
-        bool sort_recs = false;
-        
+
+        if(prob.dur(this_cmtn) > 0 && prob.check_modeled_infusions) {
+          if(this_rec->rate() != -2 && this_rec->is_dose()) {
+            WARN("[mrgsolve] expected rate = -2 with modeled infusion duration.");
+          }
+        }
+
+        if(prob.rate(this_cmtn) > 0 && prob.check_modeled_infusions) {
+          if(this_rec->rate() != -1 && this_rec->is_dose()) {
+            WARN("[mrgsolve] expected rate = -1 with modeled infusion rate.");
+          }
+        }
+
         if(this_rec->rate() < 0) {
           prob.rate_main(this_rec);
         }
+
+        bool sort_recs = false;
+
         // Checking 
         if(!this_rec->is_lagged()) {
           

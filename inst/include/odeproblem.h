@@ -226,6 +226,7 @@ public:
   bool ss_flag; ///< flag indicating when the system is advancing to SS
   std::vector<int> Ss_cmt; ///< vector of compartments to consider for SS
 
+  bool check_modeled_infusions;
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions
   std::vector<double> R; ///< receive user input for infusion rate

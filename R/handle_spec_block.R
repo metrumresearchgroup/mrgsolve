@@ -840,13 +840,28 @@ collect_subr <- function(x, what = "PKMODEL") {
 }
 
 dosing_cmts <- function(x, what) {
-  if(!is.character(x)) return(character(0))
-  x <- unlist(strsplit(x,"\n",fixed=TRUE),use.names=FALSE)
-  m <- regexpr("(ALAG|F|R|D)\\_[^= ]+", x, perl=TRUE)
-  m <- regmatches(x,m)
-  m <- unique(sub("^(ALAG|F|R|D)\\_", "",m))
-  m <- intersect(m,what)
-  return(m)
+  ans <- list(
+    cmt = character(0), 
+    model_rate = character(0), 
+    model_dur = character(0)
+  )
+  if(!is.character(x)) return(ans)
+  x <- strsplit(x, "\n", fixed = TRUE)
+  x <- unlist(x, use.names = FALSE)
+  m <- regexpr("(ALAG|F|R|D)\\_[^= ]+", x, perl = TRUE)
+  m <- regmatches(x, m)
+  m <- trimws(m)
+  m <- strsplit(m, "_", fixed = TRUE)
+  if(!length(m)) return(ans)
+  op <- s_pick(m, 1)
+  cmt <- s_pick(m, 2) 
+  keep <- cmt %in% what
+  op <- op[keep]
+  cmt <- cmt[keep]
+  ans$cmt <- unique(cmt)
+  ans$model_rate <- unique(cmt[op=="R"])
+  ans$model_dur <- unique(cmt[op=="D"])
+  return(ans)
 }
 
 # Picks the default trans
@@ -972,6 +987,15 @@ handle_spec_block.specODE <- function(x, env, ...) {
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   return(x)
+}
+
+# MAIN -------------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specMAIN <- function(x,env,...) {
+  x <- scrape_opts(x)
+  env$check_modeled_infusion <- isTRUE(x$check_modeled_infusion)
+  return(x$x)  
 }
 
 # BLOCK ------------------------------------------------------------------------

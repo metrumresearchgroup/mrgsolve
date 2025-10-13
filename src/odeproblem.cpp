@@ -105,6 +105,7 @@ odeproblem::odeproblem(Rcpp::List param,
   ssRtol = 0;
   ssAtol = 0;
   interrupt = -1;
+  check_modeled_infusions = true;
   
   pred.assign(5,0.0);
   
@@ -252,7 +253,7 @@ void odeproblem::event_call() {
 
 //! Call <code>$PREAMBLE</code> function.
 void odeproblem::config_call() {
-  Config(d,Param,Neq,Npar);
+  Config(d,Param,Neq,Npar,check_modeled_infusions);
 }
 
 //! Reset all infusion rates.
