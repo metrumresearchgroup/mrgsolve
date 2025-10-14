@@ -543,13 +543,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
         if(prob.dur(this_cmtn) > 0 && prob.check_modeled_infusions) {
           if(this_rec->rate() != -2 && this_rec->is_dose()) {
-            WARN("[mrgsolve] expected rate = -2 with modeled infusion duration.");
+            CRUMP("[mrgsolve] RATE must be -2 on dosing records with modeled infusion duration; either set the modeled duration to zero or use the `@check_modeled_infusions` block option for $MAIN/$PK to bypass this requirement.");
           }
         }
 
         if(prob.rate(this_cmtn) > 0 && prob.check_modeled_infusions) {
           if(this_rec->rate() != -1 && this_rec->is_dose()) {
-            WARN("[mrgsolve] expected rate = -1 with modeled infusion rate.");
+            CRUMP("[mrgsolve] RATE must be -1 on dosing records with modeled infusion rate; either set the modeled rate to zero or use the `@check_modeled_infusions` block option for $MAIN/$PK to bypass this requirement.");
           }
         }
 
