@@ -331,7 +331,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # - Check dosing$model_rate when @strict-d
   # - Check dosing$model_dur when @strict-r
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
-  CMTN <- c(spec[["CMTN"]], dosing$cmt)
+  CMTN <- c(spec[["CMTN"]], dosing)
   
   # model r defs ----
   # These are the various #define statements
