@@ -994,7 +994,7 @@ handle_spec_block.specODE <- function(x, env, ...) {
 #' @export
 handle_spec_block.specMAIN <- function(x,env,...) {
   x <- scrape_opts(x)
-  env$check_modeled_infusion <- isTRUE(x$check_modeled_infusion)
+  env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
   return(x$x)  
 }
 

@@ -528,6 +528,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     incl(header_file),
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
+    if(mread.env$check_modeled_infusions) {
+      "CHECK_MODELED_INFUSIONS=true;"  
+    } else {
+      "CHECK_MODELED_INFUSIONS=false;"  
+    }, 
     spec[["PREAMBLE"]],
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
