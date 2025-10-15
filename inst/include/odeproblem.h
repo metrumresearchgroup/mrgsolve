@@ -138,9 +138,9 @@ public:
   void param(int pos, double value) {Param[pos] = value;}
   
   void rate(unsigned int pos, double value) {R[pos] = value;}
-  double rate(unsigned int pos) {return R[pos];}
+  double rate(unsigned int pos) {return Neq > 0 ? R[pos] : 0;}
   void rate0(unsigned int pos, double value) {R0[pos] = value;}
-  double rate0(unsigned int pos){return R0[pos];}
+  double rate0(unsigned int pos){return Neq > 0 ? R0[pos] : 0;}
   
   int rate_count(unsigned int pos){return infusion_count[pos];}
   void rate_add(unsigned int pos, const double& value);
@@ -150,7 +150,7 @@ public:
   void rate_reset();
   
   void dur(unsigned int pos, double value) {D[pos] = value;}
-  double dur(unsigned int pos){return D[pos];}
+  double dur(unsigned int pos){return Neq > 0 ? D[pos] : 0;}
   
   void reset_newid(const double id_);
   
