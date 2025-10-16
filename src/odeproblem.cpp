@@ -124,16 +124,30 @@ odeproblem::odeproblem(Rcpp::List param,
   simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
 }
 
+//! Get the bioavailability from $MAIN
 double odeproblem::fbio(unsigned int pos) {
-  if(Neq==0) return 1.0;
-  return F.at(pos);
+  return Neq==0 ? 1.0 : F[pos];
 }
 
-double odeproblem::alag(int cmt){
-  if(Neq==0) return 0.0;
-  return Alag.at(cmt);
+//! Get the lag time from $MAIN
+double odeproblem::alag(int pos){
+  return Neq==0 ? 0.0 : Alag[pos];
 }
 
+//! Get the modeled infusion duration from $MAIN
+double odeproblem::dur(unsigned int pos) {
+  return Neq==0 ? 0.0 : D[pos];
+}
+
+//! Get the modeled infusion rate from $MAIN
+double odeproblem::rate(unsigned int pos) {
+  return Neq==0 ? 0.0 : R[pos];
+}
+
+//! Get the functioning infusion rate
+double odeproblem::rate0(unsigned int pos) {
+  return Neq==0 ? 0.0 : R0[pos];
+}
 
 //! set number of <code>ETAs</code> in the model
 void odeproblem::set_eta() {
