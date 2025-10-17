@@ -540,14 +540,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             this_rec->unarm();
           }
         }
+        
+        if(!this_rec->is_phantom()) {
+          // Validate modeled rates 
+          if(prob.dur(this_cmtn) > 0) {
+            prob.check_modeled_dur(this_rec);
+          }
 
-        // Validate modeled rates 
-        if(prob.dur(this_cmtn) > 0) {
-          prob.check_modeled_dur(this_rec);
-        }
-
-        if(prob.rate(this_cmtn) > 0) {
-          prob.check_modeled_rate(this_rec);
+          if(prob.rate(this_cmtn) > 0) {
+            prob.check_modeled_rate(this_rec);
+          }
         }
         
         if(this_rec->rate() < 0) {

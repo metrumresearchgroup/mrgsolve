@@ -307,6 +307,8 @@ void odeproblem::rate_main(rec_ptr rec, int cmtn) {
 
 void odeproblem::check_modeled_rate(rec_ptr rec) {
   if(!check_modeled_infusions) return;
+  if(rec->is_lagged()) return;
+  if(rec->is_phantom()) return;
   if(rec->is_dose() && rec->rate() != -1) {
     throw Rcpp::exception(
       "[mrgsolve] RATE must be -1 on dosing records with modeled infusion rate; either set the modeled rate to zero or use the `@check_modeled_infusions` block option for $MAIN/$PK to bypass this requirement."
@@ -316,6 +318,8 @@ void odeproblem::check_modeled_rate(rec_ptr rec) {
 
 void odeproblem::check_modeled_dur(rec_ptr rec) {
   if(!check_modeled_infusions) return;
+  if(rec->is_lagged()) return;
+  if(rec->is_phantom()) return;
   if(rec->is_dose() && rec->rate() != -2) {
     throw Rcpp::exception(
       "[mrgsolve] RATE must be -2 on dosing records with modeled infusion duration; either set the modeled duration to zero or use the `@check_modeled_infusions` block option for $MAIN/$PK to bypass this requirement."

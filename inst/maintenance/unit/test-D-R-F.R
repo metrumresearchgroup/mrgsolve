@@ -25,10 +25,12 @@ options("mrgsolve_mread_quiet"=TRUE)
 context("test-D-R-F")
 
 code <- '
-$PARAM D1 = 2, F1=1, LAGT = 0, R1 = 1, mode = 0
+$PARAM D1 = 2, F1 = 1, LAGT = 0, R1 = 1, mode = 0
 $MAIN 
 ALAG_CENT = LAGT;
 F_CENT = F1;
+R_CENT = 0;
+D_CENT = 0;
 
 if(mode==1) R_CENT = R1;
 if(mode==2) D_CENT = D1;
@@ -42,7 +44,7 @@ capture foo = D_CENT;
 
 mod <-
   mcode("testinfusion",code) %>%
-  update(end=72) %>% obsonly
+  update(end=72) %>% obsonly()
 
 test_that("Interact with D_CMT in $TABLE #1290", {
   out <- mrgsim(mod, param = list(mode = 2))
@@ -51,12 +53,12 @@ test_that("Interact with D_CMT in $TABLE #1290", {
 
 data <- expand.ev(ID=1:2, rate=c(1,5,10,50), amt=100)
 set.seed(1212)
-out0 <- mod %>% data_set(data) %>% mrgsim
+out0 <- mod %>% data_set(data) %>% mrgsim()
 
 
 data <- data %>% mutate(R1 = rate, rate=-1, mode = 1)
 set.seed(1212)
-out <- mod %>% data_set(data) %>% mrgsim
+out <- mod %>% data_set(data) %>% mrgsim()
 
 test_that("Infusion rate is set by R_CMT", {
     expect_identical(out0$CENT, out$CENT)
@@ -68,14 +70,14 @@ test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
 })
 
 data0 <- expand.ev(ID=1:3,dur=c(2,5,10,50), amt=100) %>%
-  mutate(rate = amt/dur, mode = 1)
+  mutate(rate = amt/dur)
 
 set.seed(1212)
-out0 <- mod %>% data_set(data0) %>% mrgsim
+out0 <- mod %>% param(mode = 0) %>% data_set(data0) %>% mrgsim()
 
 data <- data0 %>% mutate(D1 = dur, rate=-2, mode = 2)
 set.seed(1212)
-out <- mod %>% data_set(data) %>% mrgsim
+out <- mod %>% param(mode = 1) %>% data_set(data) %>% mrgsim()
 
 test_that("Infusion rate is set by D_CMT", {
   expect_identical(out0$CENT, out$CENT)
@@ -107,7 +109,7 @@ test_that("Infusion duration (D_) with lag", {
   mod <- param(mod, mode = 2)
   out <- 
     mod %>% 
-    ev(amt=1000, rate=-2) %>%
+    ev(amt = 1000, rate = -2) %>%
     mrgsim(end = 24)
   
   tmax <- out$time[which.max(out$CENT)]
@@ -116,7 +118,7 @@ test_that("Infusion duration (D_) with lag", {
   out <- 
     mod %>% 
     param(LAGT = 5) %>%
-    ev(amt=1000, rate=-2) %>%
+    ev(amt = 1000, rate = -2) %>%
     mrgsim(end = 24)
   
   tmax <- out$time[which.max(out$CENT)]
@@ -139,8 +141,8 @@ test_that("Infusion duration (D_) with lag, multiple", {
   out <- 
     mod %>% 
     param(LAGT = 4, D1 = 10) %>%
-    ev(amt=1000, rate = -2, ii=24, addl=3) %>% 
-    mrgsim(end=97, obsonly = TRUE) 
+    ev(amt = 1000, rate = -2, ii=24, addl=3) %>% 
+    mrgsim(end = 97, obsonly = TRUE) 
   
   # To simplify, correct for LAGT and then analyze
   out <- mutate(out, time = time - 4, DAY = 1+floor(time/24))
@@ -292,4 +294,10 @@ test_that("Detect dosing compartments", {
   )
   txt <- readLines(f)
   expect_match(txt, "define F_ABS_RAPID_FORM2", all = FALSE)
+})
+
+test_that("Error when D_CMT > 0 and rate != 2", {
+  mod <- param(mod, mode = 2, D1 = 1.23)
+  e <- ev(amt = 100)
+  expect_error(mrgsim_e(mod, e), "RATE must be -2")
 })
