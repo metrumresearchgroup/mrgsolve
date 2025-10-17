@@ -541,20 +541,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
         }
 
-        if(prob.dur(this_cmtn) > 0 && prob.check_modeled_infusions) {
-          if(this_rec->rate() != -2 && this_rec->is_dose()) {
-            CRUMP("[mrgsolve] RATE must be -2 on dosing records with modeled infusion duration; either set the modeled duration to zero or use the `@check_modeled_infusions` block option for $MAIN/$PK to bypass this requirement.");
-          }
+        // Validate modeled rates 
+        if(prob.dur(this_cmtn) > 0) {
+          prob.check_modeled_dur(this_rec);
         }
 
-        if(prob.rate(this_cmtn) > 0 && prob.check_modeled_infusions) {
-          if(this_rec->rate() != -1 && this_rec->is_dose()) {
-            CRUMP("[mrgsolve] RATE must be -1 on dosing records with modeled infusion rate; either set the modeled rate to zero or use the `@check_modeled_infusions` block option for $MAIN/$PK to bypass this requirement.");
-          }
+        if(prob.rate(this_cmtn) > 0) {
+          prob.check_modeled_rate(this_rec);
         }
-
+        
         if(this_rec->rate() < 0) {
-          prob.rate_main(this_rec);
+          prob.rate_main(this_rec, this_cmtn);
         }
 
         bool sort_recs = false;
@@ -697,7 +694,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               }
             }
             if(new_ev->rate() < 0) {
-              prob.rate_main(new_ev);    
+              prob.rate_main(new_ev, new_ev->cmtn());    
             }
             if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
               if(new_ev->ss() > 0) {
