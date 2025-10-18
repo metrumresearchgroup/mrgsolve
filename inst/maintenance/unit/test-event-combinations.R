@@ -28,7 +28,7 @@ code <- '
 [ pkmodel ] 
 cmt = "CENT"
 
-[ main ] 
+[ main ] @!check_modeled_infusions
 D_CENT = 2;
 R_CENT = 10;
 '

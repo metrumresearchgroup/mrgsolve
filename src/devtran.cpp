@@ -521,6 +521,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       // Some non-observation event happening
+      // Note that F needs to get updated at every dose including addl
+      // but rate is fixed to the parent rate and we only verify infusions 
+      // on actual dose records in the data set. 
       if(this_rec->is_event()) {
 
         this_cmtn = this_rec->cmtn();
@@ -540,8 +543,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             this_rec->unarm();
           }
         }
-        
-        if(!this_rec->is_phantom()) {
+
+        if(this_rec->from_data()) {
           // Validate modeled rates 
           if(prob.dur(this_cmtn) > 0) {
             prob.check_modeled_dur(this_rec);
