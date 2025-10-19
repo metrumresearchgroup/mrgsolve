@@ -544,12 +544,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
         }
 
+        // Only check data set records
         if(this_rec->from_data()) {
-          // Validate modeled rates 
+          // Validate modeled rates
           if(prob.dur(this_cmtn) > 0) {
             prob.check_modeled_dur(this_rec);
           }
-
+          // Validate modeled infusion rate
           if(prob.rate(this_cmtn) > 0) {
             prob.check_modeled_rate(this_rec);
           }

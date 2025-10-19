@@ -839,7 +839,7 @@ collect_subr <- function(x, what = "PKMODEL") {
   return(ans)
 }
 
-dosing_cmts <- function(x,what) {
+dosing_cmts <- function(x, what) {
   if(!is.character(x)) return(character(0))
   x <- unlist(strsplit(x,"\n",fixed=TRUE),use.names=FALSE)
   m <- regexpr("(ALAG|F|R|D)\\_[^= ]+", x, perl=TRUE)

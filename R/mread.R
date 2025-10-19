@@ -326,10 +326,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
 
-  # Look for compartments we're dosing into: F/ALAG/D/R
-  # - Add them to CMTN
-  # - Check dosing$model_rate when @strict-d
-  # - Check dosing$model_dur when @strict-r
+  # Look for compartments we're dosing into: F/ALAG/D/R and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
   CMTN <- c(spec[["CMTN"]], dosing)
   
