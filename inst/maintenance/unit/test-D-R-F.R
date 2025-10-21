@@ -296,8 +296,28 @@ test_that("Detect dosing compartments", {
   expect_match(txt, "define F_ABS_RAPID_FORM2", all = FALSE)
 })
 
-test_that("Error when D_CMT > 0 and rate != 2", {
-  mod <- param(mod, mode = 2, D1 = 1.23)
-  e <- ev(amt = 100)
-  expect_error(mrgsim_e(mod, e), "RATE must be -2")
+test_that("Error when D_CMT > 0 and is not -2", {
+  mod <- param(mod, mode = 2, D1 = 5)
+  
+  e1 <- ev(amt = 100)
+  expect_error(mrgsim_e(mod, e1), regexp = "RATE must be -2")
+  
+  e2 <- ev(amt = 100, rate = 20)
+  expect_error(mrgsim_e(mod, e2), regexp = "RATE must be -2")
+  
+  e3 <- ev(amt = 100, rate = -1)
+  expect_error(mrgsim_e(mod, e3), regexp = "RATE must be -2")
+})
+
+test_that("Error when R_CMT > 0 and rate is not -1", {
+  mod <- param(mod, mode = 1, R1 = 5)
+  
+  e1 <- ev(amt = 100)
+  expect_error(mrgsim_e(mod, e1), regexp = "RATE must be -1")
+
+  e2 <- ev(amt = 100, rate = 20)
+  expect_error(mrgsim_e(mod, e2), regexp = "RATE must be -1")
+
+  e3 <- ev(amt = 100, rate = -2)
+  expect_error(mrgsim_e(mod, e3), regexp = "RATE must be -1")
 })

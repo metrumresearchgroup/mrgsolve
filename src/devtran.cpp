@@ -30,7 +30,6 @@
 #include "LSODA.h"
 
 #define CRUMP(a) throw Rcpp::exception(a,false)
-#define WARN(a) Rf_warningcall(R_NilValue,a)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
 #define nREP(a)  Rcpp::Rcout << a << std::endl;
 #define say(a)   Rcpp::Rcout << a << std::endl;
