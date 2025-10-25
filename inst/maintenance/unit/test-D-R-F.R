@@ -61,12 +61,12 @@ set.seed(1212)
 out <- mod %>% data_set(data) %>% mrgsim()
 
 test_that("Infusion rate is set by R_CMT", {
-    expect_identical(out0$CENT, out$CENT)
+  expect_identical(out0$CENT, out$CENT)
 })
 
 data$rate <- -2
 test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
-    expect_error(mod %>% data_set(data) %>% mrgsim)
+  expect_error(mod %>% data_set(data) %>% mrgsim)
 })
 
 data0 <- expand.ev(ID=1:3,dur=c(2,5,10,50), amt=100) %>%
@@ -260,7 +260,7 @@ test_that("tad is correctly calculated for addl doses with lag", {
   # The most recent dose when we started was  at 190
   # The first observation time was at 199.999
   expect_true(abs(out$tad[1] - 9.999) < 1e-10)
-
+  
   # With recsort = 4
   out <- mrgsim(
     mod, dose, 
@@ -314,10 +314,33 @@ test_that("Error when R_CMT > 0 and rate is not -1", {
   
   e1 <- ev(amt = 100)
   expect_error(mrgsim_e(mod, e1), regexp = "RATE must be -1")
-
+  
   e2 <- ev(amt = 100, rate = 20)
   expect_error(mrgsim_e(mod, e2), regexp = "RATE must be -1")
-
+  
   e3 <- ev(amt = 100, rate = -2)
   expect_error(mrgsim_e(mod, e3), regexp = "RATE must be -1")
+})
+
+test_that("Control check behavior through block option", {
+  code2 <- sub("\\$MAIN", "$MAIN @!check_modeled_infusions", code)
+  mod2 <- mcode("code-dont-check", code2)  
+  
+  if(file.exists(mod2@shlib$source)) {
+    src2 <- readLines(mod2@shlib$source)
+    expect_match(src2, "CHECK_MODELED_INFUSIONS=false", all = FALSE)
+  }
+  
+  if(file.exists(mod@shlib$source)) {
+    src <- readLines(mod@shlib$source)
+    expect_match(src, "CHECK_MODELED_INFUSIONS=true", all = FALSE)
+  }
+  
+  e1 <- ev(amt = 100, mode = 2, D1 = 1.23)
+  expect_is(mrgsim(mod2, e1), "mrgsims")
+  expect_error(mrgsim(mod, e1), regexp = "RATE must be -2")
+  
+  e2 <- ev(amt = 100, mode = 1, R1 = 1.23)
+  expect_is(mrgsim(mod2, e2), "mrgsims")
+  expect_error(mrgsim(mod, e2), regexp = "RATE must be -1")
 })
