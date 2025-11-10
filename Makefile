@@ -28,7 +28,7 @@ package:
 	make pkgdown
 
 check:
-	make clean
+	make cleanup
 	make house
 	make doc
 	make build
@@ -43,7 +43,7 @@ cran: export _MRGSOLVE_SKIP_MODLIB_BUILD_=no
 cran:
 	make house
 	make doc
-	make clean
+	make cleanup
 	make build
 	R CMD CHECK --as-cran ${TARBALL}
 
@@ -107,7 +107,7 @@ test-cpp:
 remove:
 	if [ -d ${R_LIBS}/mrgsolve ]; then R CMD REMOVE mrgsolve; fi
 
-clean:
+cleanup:
 	rm -rf tests/testthat/mrgsolve-so-*
 	rm -rf vignettes/extra/mrgsolve-so-*
 	rm -rf src/*.o
@@ -115,6 +115,12 @@ clean:
 	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
 	if [ -d mrgsolve ]; then rm -Rf mrgsolve; fi
 
+clean: 
+	make cleanup 
+	make uninstall
+
+uninstall: 
+	Rscript -e "try(remove.packages('mrgsolve'), silent = TRUE)"
 datasets:
 	Rscript inst/maintenance/datasets.R
 
