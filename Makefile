@@ -48,7 +48,7 @@ cran:
 	R CMD CHECK --as-cran ${TARBALL}
 
 spelling:
-	Rscript -e 'spelling::spell_check_package(".")'
+	@Rscript -e 'spelling::spell_check_package(".")'
 
 covr: 
 	Rscript "inst/maintenance/covr.R"
@@ -57,7 +57,7 @@ house:
 	Rscript "inst/maintenance/build_housemodel.R"
 
 test-all:
-	Rscript inst/maintenance/tests.R
+	@Rscript inst/maintenance/tests.R
 
 no-test:
 	make build
@@ -76,14 +76,14 @@ readme:
 
 .PHONY: doc
 doc:
-	Rscript -e "roxygen2::roxygenize()"
+	@Rscript -e "roxygen2::roxygenize()"
 
 .PHONY: build
 build:
-	R CMD build --md5 $(PKGDIR) --no-manual
+	@R CMD build --md5 $(PKGDIR) --no-manual
 
 install:
-	R CMD INSTALL --install-tests ${TARBALL} -l ~/Rlibs
+	@R CMD INSTALL --install-tests ${TARBALL} -l ~/Rlibs
 
 install-build:
 	R CMD INSTALL --build --install-tests ${TARBALL}
@@ -94,33 +94,31 @@ test:
 	rm -rf tests/testthat/mrgsolve-so-*
 
 test1:
-	Rscript -e 'testthat::test_file("tests/testthat.R")'
+	@Rscript -e 'testthat::test_file("tests/testthat.R")'
 	rm -rf tests/testthat/mrgsolve-so-*
 
 test2:
-	Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
+	@Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
 	rm -rf tests/testthat/mrgsolve-so-*
 
 test-cpp: 
-	Rscript -e 'testthat::test_dir("inst/maintenance/unit-cpp")'
+	@Rscript -e 'testthat::test_dir("inst/maintenance/unit-cpp")'
 
 remove:
-	if [ -d ${R_LIBS}/mrgsolve ]; then R CMD REMOVE mrgsolve; fi
+	@Rscript -e "try(remove.packages('mrgsolve'), silent = TRUE)"
 
 cleanup:
-	rm -rf tests/testthat/mrgsolve-so-*
-	rm -rf vignettes/extra/mrgsolve-so-*
-	rm -rf src/*.o
-	rm -rf src/*.so
-	if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
-	if [ -d mrgsolve ]; then rm -Rf mrgsolve; fi
+	@rm -rf tests/testthat/mrgsolve-so-*
+	@rm -rf vignettes/extra/mrgsolve-so-*
+	@rm -rf src/*.o
+	@rm -rf src/*.so
+	@if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
+	@if [ -d mrgsolve ]; then rm -Rf mrgsolve; fi
 
 clean: 
 	make cleanup 
-	make uninstall
+	make remove
 
-uninstall: 
-	Rscript -e "try(remove.packages('mrgsolve'), silent = TRUE)"
 datasets:
 	Rscript inst/maintenance/datasets.R
 
