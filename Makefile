@@ -108,6 +108,7 @@ remove:
 	@Rscript -e "try(remove.packages('mrgsolve'), silent = TRUE)"
 
 cleanup:
+	@rm -rf $(TARBALL)
 	@rm -rf tests/testthat/mrgsolve-so-*
 	@rm -rf vignettes/extra/mrgsolve-so-*
 	@rm -rf src/*.o
