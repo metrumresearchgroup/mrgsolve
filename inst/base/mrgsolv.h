@@ -141,7 +141,7 @@ typedef std::vector<double> dvec;
 #define MRGSOLVE_ODE_SIGNATURE_N 6
 
 //! signature for <code>$PREAMBLE</code>
-#define MRGSOLVE_CONFIG_SIGNATURE databox& self, const dvec& _THETA_, const double neq, const double npar
-#define MRGSOLVE_CONFIG_SIGNATURE_N 4
+#define MRGSOLVE_CONFIG_SIGNATURE databox& self, const dvec& _THETA_, const double neq, const double npar, bool& _check_modeled_infusions
+#define MRGSOLVE_CONFIG_SIGNATURE_N 5
 
 #endif

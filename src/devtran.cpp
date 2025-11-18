@@ -520,8 +520,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       // Some non-observation event happening
+      // Note that F needs to get updated at every dose including addl
+      // but rate is fixed to the parent rate and we only verify infusions 
+      // on actual dose records in the data set. 
       if(this_rec->is_event()) {
-        
+
         this_cmtn = this_rec->cmtn();
         
         if(!this_rec->is_lagged()) {
@@ -539,12 +542,25 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             this_rec->unarm();
           }
         }
-        
-        bool sort_recs = false;
+
+        // Only check data set records
+        if(this_rec->from_data()) {
+          // Validate modeled rates
+          if(prob.dur(this_cmtn) > 0) {
+            prob.check_modeled_dur(this_rec);
+          }
+          // Validate modeled infusion rate
+          if(prob.rate(this_cmtn) > 0) {
+            prob.check_modeled_rate(this_rec);
+          }
+        }
         
         if(this_rec->rate() < 0) {
-          prob.rate_main(this_rec);
+          prob.rate_main(this_rec, this_cmtn);
         }
+
+        bool sort_recs = false;
+
         // Checking 
         if(!this_rec->is_lagged()) {
           
@@ -683,7 +699,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               }
             }
             if(new_ev->rate() < 0) {
-              prob.rate_main(new_ev);    
+              prob.rate_main(new_ev, new_ev->cmtn());    
             }
             if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
               if(new_ev->ss() > 0) {

@@ -136,21 +136,24 @@ public:
   
   const std::vector<double>& param() {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
-  
+
+  void check_modeled_dur(rec_ptr rec); 
+  void check_modeled_rate(rec_ptr rec);
+
   void rate(unsigned int pos, double value) {R[pos] = value;}
-  double rate(unsigned int pos) {return R[pos];}
+  double rate(unsigned int pos);
   void rate0(unsigned int pos, double value) {R0[pos] = value;}
-  double rate0(unsigned int pos){return R0[pos];}
-  
+  double rate0(unsigned int pos);
+
   int rate_count(unsigned int pos){return infusion_count[pos];}
   void rate_add(unsigned int pos, const double& value);
   void rate_rm(unsigned int pos,  const double& value);
   void rate_bump(const unsigned int pos, const double& value);
-  void rate_main(rec_ptr rec);
+  void rate_main(rec_ptr rec, int cmtn);
   void rate_reset();
   
   void dur(unsigned int pos, double value) {D[pos] = value;}
-  double dur(unsigned int pos){return D[pos];}
+  double dur(unsigned int pos);
   
   void reset_newid(const double id_);
   
@@ -226,6 +229,7 @@ public:
   bool ss_flag; ///< flag indicating when the system is advancing to SS
   std::vector<int> Ss_cmt; ///< vector of compartments to consider for SS
 
+  bool check_modeled_infusions;
   std::vector<double> R0; ///< acutal current infusion rate
   std::vector<unsigned int> infusion_count; ///< number of active infusions
   std::vector<double> R; ///< receive user input for infusion rate

@@ -105,6 +105,7 @@ odeproblem::odeproblem(Rcpp::List param,
   ssRtol = 0;
   ssAtol = 0;
   interrupt = -1;
+  check_modeled_infusions = true;
   
   pred.assign(5,0.0);
   
@@ -123,16 +124,30 @@ odeproblem::odeproblem(Rcpp::List param,
   simeps = mrgsolve::resim(&dosimeps,reinterpret_cast<void*>(this));
 }
 
+//! Get the bioavailability from $MAIN
 double odeproblem::fbio(unsigned int pos) {
-  if(Neq==0) return 1.0;
-  return F.at(pos);
+  return Neq==0 ? 1.0 : F[pos];
 }
 
-double odeproblem::alag(int cmt){
-  if(Neq==0) return 0.0;
-  return Alag.at(cmt);
+//! Get the lag time from $MAIN
+double odeproblem::alag(int pos){
+  return Neq==0 ? 0.0 : Alag[pos];
 }
 
+//! Get the modeled infusion duration from $MAIN
+double odeproblem::dur(unsigned int pos) {
+  return Neq==0 ? 0.0 : D[pos];
+}
+
+//! Get the modeled infusion rate from $MAIN
+double odeproblem::rate(unsigned int pos) {
+  return Neq==0 ? 0.0 : R[pos];
+}
+
+//! Get the functioning infusion rate
+double odeproblem::rate0(unsigned int pos) {
+  return Neq==0 ? 0.0 : R0[pos];
+}
 
 //! set number of <code>ETAs</code> in the model
 void odeproblem::set_eta() {
@@ -252,7 +267,7 @@ void odeproblem::event_call() {
 
 //! Call <code>$PREAMBLE</code> function.
 void odeproblem::config_call() {
-  Config(d,Param,Neq,Npar);
+  Config(d,Param,Neq,Npar,check_modeled_infusions);
 }
 
 //! Reset all infusion rates.
@@ -263,31 +278,58 @@ void odeproblem::rate_reset() {
   }
 }
 
-void odeproblem::rate_main(rec_ptr rec) {
-  if(rec->rate() >= 0) return;
+void odeproblem::rate_main(rec_ptr rec, int cmtn) {
   if(rec->rate() == -1) {
-    if(this->rate(rec->cmtn()) <= 0) {
+    if(this->rate(cmtn) <= 0) {
       throw Rcpp::exception(
           tfm::format(
             "invalid infusion rate \n R_CMT: %d", 
-            this->rate(rec->cmtn())
+            this->rate(cmtn)
           ).c_str(),
           false
       );
     }
-    rec->rate(this->rate(rec->cmtn()));
+    rec->rate(this->rate(cmtn));
   }
   if(rec->rate() == -2) {
-    if(this->dur(rec->cmtn()) <= 0) {
+    if(this->dur(cmtn) <= 0) {
       throw Rcpp::exception(
           tfm::format(
             "invalid infusion duration \n D_CMT: %d", 
-            this->dur(rec->cmtn())
+            this->dur(cmtn)
           ).c_str(),
           false
       );
     }
-    rec->rate(rec->amt() * rec->fn() / this->dur(rec->cmtn()));
+    rec->rate(rec->amt() * rec->fn() / this->dur(cmtn));
+  }
+}
+
+void odeproblem::check_modeled_rate(rec_ptr rec) {
+  if(!check_modeled_infusions) return;
+  if(rec->is_lagged()) return;
+  if(rec->is_phantom()) return;
+  if(rec->is_dose() && rec->rate() != -1) {
+    throw Rcpp::exception(
+      "[mrgsolve] RATE must be -1 on dosing records with modeled infusion "
+      "rate; either set the modeled rate to zero or use the "
+      "`@!check_modeled_infusions` block option for $MAIN/$PK to bypass this "
+      "requirement."
+    );
+  }
+}
+
+void odeproblem::check_modeled_dur(rec_ptr rec) {
+  if(!check_modeled_infusions) return;
+  if(rec->is_lagged()) return;
+  if(rec->is_phantom()) return;
+  if(rec->is_dose() && rec->rate() != -2) {
+    throw Rcpp::exception(
+      "[mrgsolve] RATE must be -2 on dosing records with modeled infusion "
+      "duration; either set the modeled duration to zero or use the "
+      "`@!check_modeled_infusions` block option for $MAIN/$PK to bypass this "
+      "requirement."
+    );
   }
 }
 

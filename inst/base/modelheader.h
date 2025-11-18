@@ -90,6 +90,8 @@ typedef double capture;
 #define END_OF_INFUSION (self.evid==9)
 // Always accept THETA(n) as THETAn
 #define THETA(a) THETA##a
+// Should modeled infusion parameters get checked
+#define CHECK_MODELED_INFUSIONS _check_modeled_infusions
 
 // NMVARS
 #ifdef _MRGSOLVE_USING_NM_VARS_

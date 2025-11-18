@@ -1,9 +1,10 @@
-// Source MD5: a7088afe8d21493d4c368f3b74d3e6a8
+// Source MD5: 8b31b620adebe9145ea11a12f5d6800b
 
 #include "housemodel-mread-header.h"
 
 // PREAMBLE CODE BLOCK:
 __BEGIN_config__
+CHECK_MODELED_INFUSIONS=false;
 __END_config__
 
 // MAIN CODE BLOCK:

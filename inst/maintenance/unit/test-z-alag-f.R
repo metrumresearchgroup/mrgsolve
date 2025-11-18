@@ -31,7 +31,7 @@ $PARAM F1=1, ALAG1=0, F2=1, ALAG2=0
 
 $CMT CENT DEPOT
 
-$MAIN
+$MAIN @!check_modeled_infusions
 ALAG_CENT = ALAG1;
 F_CENT = F1;
 
@@ -191,7 +191,7 @@ code <- '
 $SET Req = "CP", end = 72, delta = 0.1
 $PARAM F1 = 1, D1 = 5, ALAG1 = 0, R1 = 0, V = 10
 $PKMODEL cmt = "CENT"
-$PK
+$PK @!check_modeled_infusions
 double CL = 1; 
 double KA = 1.2;
 F_CENT = F1;
