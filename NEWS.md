@@ -1,4 +1,20 @@
-# mrgsolve (development version)
+# mrgsolve 1.7.0
+
+- Safety checks added to avoid unintentional mismatch between model code and 
+  data set when infusion duration (`Dn`) or rate (`Rn`) are modeled in 
+  `$PK` (#1304).
+  - If there is a positive infusion duration in the model (e.g., `D1` 
+    in `$PK`) and data set rate is not -2 on a dosing record, an error will be 
+    issued. If there is a positive infusion rate in the model (e.g., `R1` 
+    in `$PK`) and data set rate is not -1 on a dosing record, a similar error 
+    will be issued (check direction: model to data set).
+  - These checks are in addition to existing behavior that issued an error
+    when rate was -1 or -2 in the data and `R1` or `D1` were not set to a 
+    positive value in the model (the opposite check direction: data set to 
+    model).
+  - Original behavior can be restored by turning off these checks either by a 
+    block option (`@!check_modeled_infusions`) on `$PK` or through the 
+    `CHECK_MODELED_INFUSIONS` macro available in `$PREAMBLE` only.
 
 # mrgsolve 1.6.1
 
