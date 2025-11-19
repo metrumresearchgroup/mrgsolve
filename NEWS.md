@@ -14,7 +14,7 @@
     model).
   - Original behavior can be restored by turning off these checks either by a 
     block option (`@!check_modeled_infusions`) on `$PK` or through the 
-    `CHECK_MODELED_INSUSIONS` macro available in `$PREAMBLE` only.
+    `CHECK_MODELED_INFUSIONS` macro available in `$PREAMBLE` only.
 
 # mrgsolve 1.6.1
 
