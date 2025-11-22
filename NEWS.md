@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.7.0
 
 - Safety checks added to avoid unintentional mismatch between model code and 
