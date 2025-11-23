@@ -68,7 +68,8 @@ data$rate <- -2
 test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
   expect_error(
     mod %>% data_set(data) %>% mrgsim(), 
-    "invalid infusion duration"
+    regexp = "[mrgsolve] modeled infusion duration D_CMT or Dn must be", 
+    fixed = TRUE
   )
 })
 
@@ -309,7 +310,11 @@ test_that("Error when D_CMT > 0 and is not -2", {
   expect_warning(mrgsim_e(mod, e2), regexp = "RATE is not -2")
   
   e3 <- ev(amt = 100, rate = -1)
-  expect_error(mrgsim_e(mod, e3), regexp = "invalid infusion rate")
+  expect_error(
+    mrgsim_e(mod, e3), 
+    regexp = "[mrgsolve] modeled infusion rate R_CMT or Rn must be", 
+    fixed = TRUE
+  )
 })
 
 test_that("Error when R_CMT > 0 and rate is not -1", {
@@ -322,7 +327,11 @@ test_that("Error when R_CMT > 0 and rate is not -1", {
   expect_warning(mrgsim_e(mod, e2), regexp = "RATE is not -1")
   
   e3 <- ev(amt = 100, rate = -2)
-  expect_error(mrgsim_e(mod, e3), regexp = "invalid infusion duration")
+  expect_error(
+    mrgsim_e(mod, e3), 
+    regexp = "[mrgsolve] modeled infusion duration D_CMT or Dn must be", 
+    fixed = TRUE
+  )
 })
 
 test_that("Control check behavior through block option", {

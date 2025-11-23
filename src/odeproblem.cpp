@@ -292,8 +292,8 @@ void odeproblem::check_data_rate(rec_ptr rec, int cmtn) {
   if(rec->rate()==-1 && this->rate(cmtn)<=0) {
     throw Rcpp::exception(
         tfm::format(
-          "invalid infusion rate \n R_CMT: %d", 
-          this->rate(cmtn)
+          "[mrgsolve] modeled infusion rate R_CMT or Rn must be "
+          "positive when dosing record RATE is set to -1."
         ).c_str(),
         false
     );  
@@ -301,8 +301,8 @@ void odeproblem::check_data_rate(rec_ptr rec, int cmtn) {
   if(rec->rate()==-2 && this->dur(cmtn)<=0) {
     throw Rcpp::exception(
         tfm::format(
-          "invalid infusion duration \n D_CMT: %d", 
-          this->dur(cmtn)
+          "[mrgsolve] modeled infusion duration D_CMT or Dn must be "
+          "positive when dosing record RATE is set to -2."
         ).c_str(),
         false
     );
