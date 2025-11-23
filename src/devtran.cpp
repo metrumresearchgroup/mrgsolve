@@ -542,6 +542,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             this_rec->unarm();
           }
         }
+        
+        // Check data set rate against modeled rate and dur
+        // This is only a check; rate_main will actually set the rate
+        if(this_rec->rate() < 0) {
+          prob.check_data_rate(this_rec, this_cmtn);  
+        }
 
         // Only check data set records
         if(this_rec->from_data()) {

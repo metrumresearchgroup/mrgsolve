@@ -66,7 +66,10 @@ test_that("Infusion rate is set by R_CMT", {
 
 data$rate <- -2
 test_that("Error when rate = -2 and R_CMT set instead of D_CMT", {
-  expect_error(mod %>% data_set(data) %>% mrgsim)
+  expect_error(
+    mod %>% data_set(data) %>% mrgsim(), 
+    "invalid infusion duration"
+  )
 })
 
 data0 <- expand.ev(ID=1:3,dur=c(2,5,10,50), amt=100) %>%
@@ -300,26 +303,26 @@ test_that("Error when D_CMT > 0 and is not -2", {
   mod <- param(mod, mode = 2, D1 = 5)
   
   e1 <- ev(amt = 100)
-  expect_error(mrgsim_e(mod, e1), regexp = "RATE must be -2")
+  expect_warning(mrgsim_e(mod, e1), regexp = "RATE is not -2")
   
   e2 <- ev(amt = 100, rate = 20)
-  expect_error(mrgsim_e(mod, e2), regexp = "RATE must be -2")
+  expect_warning(mrgsim_e(mod, e2), regexp = "RATE is not -2")
   
   e3 <- ev(amt = 100, rate = -1)
-  expect_error(mrgsim_e(mod, e3), regexp = "RATE must be -2")
+  expect_error(mrgsim_e(mod, e3), regexp = "invalid infusion rate")
 })
 
 test_that("Error when R_CMT > 0 and rate is not -1", {
   mod <- param(mod, mode = 1, R1 = 5)
   
   e1 <- ev(amt = 100)
-  expect_error(mrgsim_e(mod, e1), regexp = "RATE must be -1")
+  expect_warning(mrgsim_e(mod, e1), regexp = "RATE is not -1")
   
   e2 <- ev(amt = 100, rate = 20)
-  expect_error(mrgsim_e(mod, e2), regexp = "RATE must be -1")
+  expect_warning(mrgsim_e(mod, e2), regexp = "RATE is not -1")
   
   e3 <- ev(amt = 100, rate = -2)
-  expect_error(mrgsim_e(mod, e3), regexp = "RATE must be -1")
+  expect_error(mrgsim_e(mod, e3), regexp = "invalid infusion duration")
 })
 
 test_that("Control check behavior through block option", {
@@ -338,9 +341,9 @@ test_that("Control check behavior through block option", {
   
   e1 <- ev(amt = 100, mode = 2, D1 = 1.23)
   expect_is(mrgsim(mod2, e1), "mrgsims")
-  expect_error(mrgsim(mod, e1), regexp = "RATE must be -2")
+  expect_warning(mrgsim(mod, e1), regexp = "RATE is not -2")
   
   e2 <- ev(amt = 100, mode = 1, R1 = 1.23)
   expect_is(mrgsim(mod2, e2), "mrgsims")
-  expect_error(mrgsim(mod, e2), regexp = "RATE must be -1")
+  expect_warning(mrgsim(mod, e2), regexp = "RATE is not -1")
 })
