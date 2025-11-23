@@ -137,6 +137,7 @@ public:
   const std::vector<double>& param() {return Param;}
   void param(int pos, double value) {Param[pos] = value;}
 
+  void check_data_rate(rec_ptr rec, int cmtn);
   void check_modeled_dur(rec_ptr rec); 
   void check_modeled_rate(rec_ptr rec);
 
