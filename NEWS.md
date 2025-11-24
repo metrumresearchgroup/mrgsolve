@@ -1,4 +1,9 @@
-# mrgsolve (development version)
+# mrgsolve 1.7.1
+
+- The 1.7.0 release added safety checks to help users avoid an unintentional
+  mismatch between model code and data set.  These checks now signal a warning
+  instead of an error to give downstream tools that use mrgsolve more
+  flexibility in how they adjust to the checks (#1307).
 
 # mrgsolve 1.7.0
 
