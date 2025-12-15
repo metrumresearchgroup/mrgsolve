@@ -78,8 +78,8 @@ new_build <- function(file=NULL, model, project, soloc=getwd(), code = NULL,
   
   ## If code is passed in as character:
   if(is.character(code)) {
-    mod.con <- file(env$modfile, open="w")
-    cat(code, "\n", file=mod.con)
+    mod.con <- file(env$modfile, open = "w")
+    cat(code, sep = "\n", file = mod.con)
     close(mod.con)
   }
   
