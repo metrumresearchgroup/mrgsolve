@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.7.1
 
 - The 1.7.0 release added safety checks to help users avoid an unintentional
