@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024 Metrum Research Group
+# Copyright (C) 2013 - 2025 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -160,12 +160,15 @@ protomod <- list(model=character(0),
                  preclean=FALSE,
                  atol=1E-8,
                  rtol=1E-8,
+                 vec_atol = numeric(0),
+                 vec_rtol = numeric(0),
                  ss_rtol=1e-8, 
                  ss_atol=1e-8,
                  maxsteps=20000,
                  hmin=0,
                  hmax=0,
                  ixpr=0,
+                 itol=1, 
                  mxhnil=2,
                  shlib=list(date="",par="", cmt="", compiled=FALSE, 
                             version=NULL, source=""),
@@ -254,8 +257,13 @@ valid.mrgmod <- function(object) {
 #' @slot mxhnil passed to \code{\link[=solversettings]{dlsoda}} 
 #' \code{<numeric>}
 #' @slot ixpr passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot itol passed to \code{\link[=solversettings]{dlsoda}} \code{<int>}; 
+#' \code{itol=1} indicates scalar values for \code{atol} and \code{rtol};
+#' \code{itol=4} indicates customized tolerances for each compartment 
 #' @slot atol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
 #' @slot rtol passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot vec_rtol a vector of \code{rtol} to be used when \code{itol=4} \code{<numeric>}
+#' @slot vec_atol a vector of \code{atol} to be used when \code{itol=4} \code{<numeric>}
 #' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
@@ -543,9 +551,13 @@ setMethod("names", "mrgmod", function(x) {
 #' - `rtol`: see [solversettings]
 #' - `ss_atol`: absolute tolerance to use when advancing to PK steady state
 #' - `ss_rtol`: relative tolerance to use when advancing to PK steady state
+#' - `custom_atol`: absolute tolerances, one for each compartment
+#' - `custom_rtol`: relative tolerances, one for each compartment
 #' - `maxsteps`: see [solversettings]
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
+#' - `itol`: 1 (use scalar values) or 4 (use customized values)
+#' - `itol_type`: either "scalar" (`itol = 1`) or "custom" (`itol = 4`) 
 #' - `envir`: the model environment
 #' - `plugins`: plugins invoked in the model
 #' - `digits`: number of digits to request in simulated data
@@ -560,7 +572,6 @@ setMethod("names", "mrgmod", function(x) {
 #' @md
 #' @export
 setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
-  
   within(list(), {
     verbose <- x@verbose
     debug <- x@debug
@@ -571,9 +582,17 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     digits <- x@digits
     plugins <- x@plugin
     envir <- x@envir
+    if(x@itol==1) {
+      itol_type <- "scalar"  
+    } else {
+      itol_type <- "custom"  
+    }
+    itol <- x@itol
     hmax <- x@hmax
     hmin <- x@hmin
     maxsteps <- x@maxsteps
+    custom_atol <- x@vec_atol
+    custom_rtol <- x@vec_rtol
     ss_atol <- x@ss_atol
     ss_rtol <- x@ss_rtol
     rtol <- x@rtol

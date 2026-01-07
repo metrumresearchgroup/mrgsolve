@@ -7,11 +7,11 @@
 \S4method{c}{matlist}(x, ..., recursive = FALSE)
 }
 \arguments{
-\item{x}{a matlist object}
+\item{x}{a matlist object.}
 
-\item{...}{other matlist objects}
+\item{...}{other matlist objects.}
 
-\item{recursive}{not used}
+\item{recursive}{not used.}
 }
 \description{
 Operations with matlist objects

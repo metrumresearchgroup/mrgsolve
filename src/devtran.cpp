@@ -520,8 +520,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       // Some non-observation event happening
+      // Note that F needs to get updated at every dose including addl
+      // but rate is fixed to the parent rate and we only verify infusions 
+      // on actual dose records in the data set. 
       if(this_rec->is_event()) {
-        
+
         this_cmtn = this_rec->cmtn();
         
         if(!this_rec->is_lagged()) {
@@ -540,27 +543,50 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
         }
         
-        bool sort_recs = false;
+        // Check data set rate against modeled rate and dur
+        // This is only a check; rate_main will actually set the rate
+        if(this_rec->rate() < 0) {
+          prob.check_data_rate(this_rec, this_cmtn);  
+        }
+
+        // Only check data set records
+        if(this_rec->from_data()) {
+          // Validate modeled rates
+          if(prob.dur(this_cmtn) > 0) {
+            prob.check_modeled_dur(this_rec);
+          }
+          // Validate modeled infusion rate
+          if(prob.rate(this_cmtn) > 0) {
+            prob.check_modeled_rate(this_rec);
+          }
+        }
         
         if(this_rec->rate() < 0) {
-          prob.rate_main(this_rec);
+          prob.rate_main(this_rec, this_cmtn);
         }
+
+        bool sort_recs = false;
+
         // Checking 
         if(!this_rec->is_lagged()) {
           
-          if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) { // there is a valid lagtime
-            
+          // there is a valid lag time
+          if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) {
             if(this_rec->ss() > 0) {
               this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
-              this_rec->ss(0);
             }
+            // We already advanced to ss
+            // Lagged dose and all subsequent should be vanilla EVID=1 doses
+            this_rec->ss(0);
             rec_ptr newev = NEWREC(*this_rec);
+            if(newev->evid()==4) {
+              newev->evid(1);
+            }
             newev->pos(__ALAG_POS);
             newev->phantom_rec();
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
-            newev->ss(0);
             insert_record(a[i], j, newev, put_ev_first);
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
@@ -629,9 +655,21 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           // Unpack and check
           double this_time = (mt[mti]).time;
-          if(this_time < tto && !mt[mti].now) continue;
           unsigned int this_evid = (mt[mti]).evid;
-          if(this_evid==0) continue;
+          if(this_time < tto && !mt[mti].now) {
+            throw Rcpp::exception(
+                tfm::format(
+                  "modeled events or observations cannot start in the past\n"
+                  "ID: %d, time: %d, modeled record time: %d, evid: %i", 
+                  id, tto, this_time, this_evid
+                ).c_str(),
+                false
+            );
+          };
+          if(this_evid==0 || this_evid > 99) {
+            insert_observations(a[i], mt[mti], j, addl_ev_first);
+            continue; 
+          };
           double this_amt = mt[mti].amt;
           int this_cmt = (mt[mti]).cmt;
           double this_rate = (mt[mti]).rate;
@@ -667,7 +705,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               }
             }
             if(new_ev->rate() < 0) {
-              prob.rate_main(new_ev);    
+              prob.rate_main(new_ev, new_ev->cmtn());    
             }
             if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
               if(new_ev->ss() > 0) {

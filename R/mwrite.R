@@ -120,6 +120,8 @@ mwrite_model_to_list <- function(x) {
   code <- modelparse(code, comment_re = character(0))
   code <- lapply(code, trimws, which = "right")
   
+  names(code) <- toupper(names(code))
+  
   l$set <- tolist(code$SET)
   
   if(nrow(x@annot$data)) {

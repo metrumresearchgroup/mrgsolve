@@ -974,6 +974,15 @@ handle_spec_block.specODE <- function(x, env, ...) {
   return(x)
 }
 
+# MAIN -------------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specMAIN <- function(x,env,...) {
+  x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
+  env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
+  return(x$x)  
+}
+
 # BLOCK ------------------------------------------------------------------------
 
 #' @export
@@ -988,4 +997,22 @@ handle_spec_block.specBLOCK <- function(x,env,...) {
 BLOCK <- function(x, env, type, code = NULL, get = NULL, ...) {
   x <- structure(.Data=code, class=paste0("spec",type),pos=1)
   handle_spec_block(x,env)
+}
+
+handle_SET <- function(spec) {
+  ans <- tolist(dump_opts(spec[["SET"]]))
+  valid <- c(GLOBALS$UPDATE_ALL, GLOBALS$SET_EXTRA, GLOBALS$SET_ARGS)
+  incoming <- charmatch(names(ans), valid)
+  bad <- which(is.na(incoming) | incoming == 0)
+  if(!length(bad)) {
+    return(ans)  
+  }
+  if(length(bad) > 1) { 
+    msg <- "The $SET block cannot handle these items:"
+  } else {
+    msg <- "The $SET block cannot handle this item:"
+  }
+  bad <- names(ans)[bad]
+  names(bad) <- rep("x", length(bad))
+  abort(msg, body = bad, call = caller_env())
 }
