@@ -51,7 +51,7 @@ $GLOBAL
 
 typedef double localdouble;
 
-$MAIN
+$MAIN @!check_modeled_infusions
 F_GUT = F1;
 D_CENT = D1;
 

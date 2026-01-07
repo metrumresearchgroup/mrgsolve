@@ -1,4 +1,113 @@
-# mrgsolve (development version)
+# mrgsolve 1.7.1
+
+- The 1.7.0 release added safety checks to help users avoid an unintentional
+  mismatch between model code and data set.  These checks now signal a warning
+  instead of an error to give downstream tools that use mrgsolve more
+  flexibility in how they adjust to the checks (#1307).
+
+# mrgsolve 1.7.0
+
+- Safety checks added to avoid unintentional mismatch between model code and 
+  data set when infusion duration (`Dn`) or rate (`Rn`) are modeled in 
+  `$PK` (#1304).
+  - If there is a positive infusion duration in the model (e.g., `D1` 
+    in `$PK`) and data set rate is not -2 on a dosing record, an error will be 
+    issued. If there is a positive infusion rate in the model (e.g., `R1` 
+    in `$PK`) and data set rate is not -1 on a dosing record, a similar error 
+    will be issued (check direction: model to data set).
+  - These checks are in addition to existing behavior that issued an error
+    when rate was -1 or -2 in the data and `R1` or `D1` were not set to a 
+    positive value in the model (the opposite check direction: data set to 
+    model).
+  - Original behavior can be restored by turning off these checks either by a 
+    block option (`@!check_modeled_infusions`) on `$PK` or through the 
+    `CHECK_MODELED_INFUSIONS` macro available in `$PREAMBLE` only.
+
+# mrgsolve 1.6.1
+
+- Internal refactor of `self.mevent()` and `self.mtime()` to _not_ send event
+  objects back to mrgsolve when the requested object time is in the past; this
+  preserves previous functionality while respecting change in `1.6.0` that 
+  generates an error for events (or event sequences) that happen or begin in 
+  the past (#1297).
+
+# mrgsolve 1.6.0
+
+- `evt::tgrid()` was added to the `evtools` plugin, allowing users to insert 
+  internal-only (non-output) records into the simulation for 
+  monitoring the system at a regular grid of times (#1291). 
+
+- `evt::evid()` was added to the `evtools` plugin allowing users
+  to reset the event ID attribute of event objects created inside a model (#1291). 
+
+- `EVID` behavior was changed so that event IDs greater than or equal to 100
+  do not trigger a reset of the ODE solver, functioning like observation records
+  with `EVID=0`; for `EVID < 100`, a discontinuity will continue to happen through 
+  ODE solver reset (#1291).
+
+- Event objects created in the model (typically through the `evtools` plugin) will
+  now trigger an error when the event or event sequence starts before the 
+  current simulation time; these events were previously ignored silently 
+  (#1291).
+
+- Absolute (`atol`) and relative (`rtol`) tolerances can now be customized for each 
+  compartment in an ODE-based model (#1264)
+    -  Use`custom_rtol()`, `custom_atol()`, and `custom_tol()` to set tolerances
+       on a compartment-by-compartment basis.
+    - Use `reset_rtol()`, `reset_atol()`, or `reset_tol()` to reset custom
+      tolerances. 
+    - Use `use_custom_tol()` and `use_scalar_tol()` to toggle the model to use 
+      either the customized (vector) values or the scalar values. 
+    - Use `get_tol()` or `get_tol_list()` to extract both custom and scalar
+      tolerance values. 
+    - The model print method has been updated to reflect whether the model is 
+      currently set to use the scalar or customized (vector) values. 
+
+## Bugs Fixed
+
+  - Fixed a bug where incorrectly spelled block names were inadvertently aliased 
+    resulting in a misleading error message (#1294).
+
+  - Fixed a bug where no `OMEGA` or `SIGMA` matrices were imported into the 
+    model via multiple `$NMEXT` or `$NMXML` blocks when the matrix from one 
+    block was ignored (#1276).
+
+# mrgsolve 1.5.3
+
+- `D_CMT`, `ALAG_CMT`, and `simeta()` are now available to use in `$TABLE`
+  (`$ERROR`), `$EVENT`, and `$PRED` code blocks (#1290).
+
+- Added `END_OF_INFUSION` syntax, which is `true` on the internal record that 
+  stops an infusion (#1288). 
+
+- `mwrite_yaml()` and `mwrite_cpp()` now render block names in upper case, 
+  even for blocks coded with lower case in the original model file (#1282). 
+
+- When creating an `evt::regimen` object (via `evtools` plugin), the _default_
+  start time is now the time when the object was created; before this change, 
+  the _default_ time was always `0` (#1266).
+
+- Added methods for `evt::regimen` objects (via `evtools` plugin) under 
+  the name `time_next()`; this either gets or sets the time of the 
+  next dose in the regimen (#1266).
+
+## Bugs Fixed
+
+- Fixed an issue where `time` values in the simulated output data frame 
+  were off by a very small amount, due to issues with floating point 
+  mathematical operations (#1287). 
+
+- Fixed a problem writing a model to file with `mwrite_yaml()` and 
+  `mwrite_cpp()` when lower case block naming was used (#1282).
+
+- Fixed a bug where invalid item passed through the `$SET` block caused 
+  an error when reading / building a model (#1271). 
+
+- Fixed a bug where mrgsolve was not matching NONMEM behavior when an 
+  `EVID=4` record was included in the data set with `SS=1`; mrgsolve will 
+  now match NONMEM behavior in this case, with the output being identical 
+  to `EVID=1` with `SS=1` (#1262). 
+
 
 # mrgsolve 1.5.2
 

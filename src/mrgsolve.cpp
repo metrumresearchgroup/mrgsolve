@@ -62,7 +62,7 @@ int find_position(const std::string what, Rcpp::CharacterVector& table) {
   }
 }
 
-void negative_istate(int istate, int maxsteps, double rtol, double atol) {
+void negative_istate(int istate, int maxsteps, double rtol, double atol, int itol) {
   
   Rcpp::Rcerr << std::endl << "[mrgsolve] lsoda returned with negative istate: " << istate << std::endl;
   /*
@@ -85,7 +85,12 @@ void negative_istate(int istate, int maxsteps, double rtol, double atol) {
     break;
   case -2:
     Rcpp::Rcerr << "  excess accuracy requested; reduce rtol and/or atol." << std::endl;
-    Rcpp::Rcerr << "  current value of rtol / atol: " << atol << " / " <<  rtol << std::endl << std::endl; 
+    if(itol==1) {
+      Rcpp::Rcerr << "  current value of rtol / atol: " << atol << " / " <<  rtol << std::endl << std::endl; 
+    } 
+    if(itol > 1) {
+      Rcpp::Rcerr << "  itol > 1, indicating compartment-specific tolerances are in use." << std::endl << std::endl;
+    }
     break;
   case -3:
     Rcpp::Rcerr << "  illegal input detected (see printed message)." << std::endl  << std::endl;

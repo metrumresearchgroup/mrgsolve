@@ -72,6 +72,21 @@ GLOBALS$TRAN_FILL_NA <- c(
   "AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS", 
   "amt", "cmt", "evid", "ii", "addl", "rate", "ss"
 )
+GLOBALS$UPDATE_SINGLE <- c(
+  "atol", "rtol", "ss_rtol", "ss_atol", "verbose", "debug", "preclean", "mindt",
+  "digits", "ixpr", "mxhnil", "start", "end", "add", "delta", "maxsteps",
+  "hmin", "hmax", "tscale", "request"
+ )
+GLOBALS$UPDATE_OTHER <- c("param", "init", "omega", "sigma", "outvars")
+GLOBALS$UPDATE_ALL <- c(GLOBALS$UPDATE_SINGLE, GLOBALS$UPDATE_OTHER)
+GLOBALS$SET_EXTRA <- c(
+  "collapse_omega", "collapse_sigma", "ss_cmt", "clink", "fixed_type"
+)
+# Arguments to mrgsim that can be stated in $SET and then 
+# passed to mrgsim
+GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest", 
+ "trequest", "carry_out", "Request"
+)
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
@@ -91,7 +106,7 @@ Reserved_cvar <- c("SOLVERTIME","table","ETA","EPS", "AMT", "CMT",
                    "NEWIND", "DONE", "CFONSTOP", "DXDTZERO",
                    "CFONSTOP","INITSOLV","_F", "_R","_ALAG",
                    "SETINIT", "report", "_VARS_", "VARS", 
-                   "SS_ADVANCE")
+                   "SS_ADVANCE", "END_OF_INFUSION", "CHECK_MODELED_INFUSIONS")
 
 Reserved <- c("ID", "amt", "cmt", "ii", "ss", "evid",
               "addl", "rate","time", Reserved_cvar,
