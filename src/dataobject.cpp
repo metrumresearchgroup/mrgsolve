@@ -299,7 +299,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         if(obsonly) {
           obs->output(false);
         } else {
-          --Nrow[h];  
+          decrement_inrow(h);
         }
       }
     }
@@ -422,7 +422,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       if(!obsonly) {
         ev->output(true);
       } else {
-        --Nrow[h];  
+        decrement_inrow(h);
       }
       
       bool zero_inf = ev->ss_infusion();

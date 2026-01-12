@@ -185,9 +185,9 @@ public:
   int neta(){return Omega.n_rows;}
   int neps(){return Sigma.n_rows;}
   
-  void nid(int n) {d.nid = n;}///< sets the number of IDs
-  void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
-  void idn(int n) {d.idn = n;}///< sets the current ID number
+  void nid(int n) {d.nid=n;}///< sets the number of IDs
+  void nrow(int n) {d.nrow=n;}///< sets the number of data set rows
+  void idn(int n) {d.idn=n;}///< sets the current ID number
   void rown(int n) {d.rown=n;}///< sets the current data set row number
   void irown(int n) {d.irown=n;}///< sets the output row number for current ID
   void inrow(int n) {d.inrow=n;}///< sets number of output rows for current ID

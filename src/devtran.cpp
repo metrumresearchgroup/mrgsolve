@@ -277,7 +277,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       for(int h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
-        ++dat.Nrow[it-a.begin()];
+        dat.increment_inrow(it-a.begin());
       } 
       std::sort(it->begin(), it->end(), CompRec());
     }
@@ -409,7 +409,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     double id = dat.get_uid(i);
     dat.next_id(i);
     prob.idn(i);
-    prob.inrow(dat.Nrow[i]);
+    prob.inrow(dat.inrow(i));
     icrow = 0;
     prob.irown(icrow);
     prob.rown(crow);
