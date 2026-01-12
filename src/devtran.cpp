@@ -392,6 +392,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.nrow(NN);
   prob.rown(crow);
   prob.irown(icrow);
+  prob.inrow(dat.inrow(0));
   
   prob.config_call();
   reclist mtimehx;
