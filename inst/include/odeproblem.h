@@ -188,7 +188,9 @@ public:
   void nid(int n) {d.nid = n;}///< sets the number of IDs
   void nrow(int n) {d.nrow = n;}///< sets the number of data set rows
   void idn(int n) {d.idn = n;}///< sets the current ID number
-  void rown(int n) {d.rown=n;}///< sets the currenw data set row number
+  void rown(int n) {d.rown=n;}///< sets the current data set row number
+  void irown(int n) {d.irown=n;}///< sets the output row number for current ID
+  void inrow(int n) {d.inrow=n;}///< sets number of output rows for current ID
   
   dvec& get_capture() {return Capture;}
   double capture(int i) {return Capture[i];}

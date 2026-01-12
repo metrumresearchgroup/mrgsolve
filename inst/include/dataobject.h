@@ -91,6 +91,7 @@ public:
   std::deque<double> Uid;  ///< unique IDs in the data set
   std::deque<int> Startrow;  ///< start row for each ID
   std::deque<int> Endrow; ///< data set end row for each ID
+  std::vector<int> Nrow; ///< output data row count for each ID
   int Idcol; ///< which column holds ID
   std::map<double,int> idmap; ///< map to get 
   
