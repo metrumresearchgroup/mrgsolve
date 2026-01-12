@@ -109,7 +109,7 @@ public:
   int idn; ///< current ID number
   int nrow; ///< number of rows in output data set
   int rown; ///< current output row number
-  int irown; ///< output row number for current id
+  int irown; ///< current output row number - current id
   int inrow; ///< number of output rows for current id
   bool CFONSTOP; ///< carry forward on stop indicator
   void* envir; ///< model environment
