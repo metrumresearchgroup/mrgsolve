@@ -298,7 +298,6 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         ++evcount;
         if(obsonly) {
           obs->output(false);
-        } else {
           decrement_inrow(h);
         }
       }
