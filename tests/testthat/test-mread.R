@@ -70,3 +70,18 @@ test_that("mread does not expand partial alias matches", {
     fixed = TRUE
   )
 })
+
+test_that("mcode writes with newlines", {
+  code <- '[CMT] A\n[ODE]\ndxdt_A = -0.1*A;'
+  
+  # Test with no split; always worked
+  mod1 <- mcode("test-mcode-as-is", code, compile = FALSE)
+  expect_is(mod1, "mrgmod")
+  expect_length(capture.output(see(mod1)), 5)
+  
+  # Test after splitting; fails with previous behavior
+  vcode <- unlist(strsplit(code, "\n"))
+  mod2 <- mcode("test-mcode-with-newlines", vcode, compile = FALSE)
+  expect_is(mod2, "mrgmod")
+  expect_length(capture.output(see(mod2)), 5)
+})
