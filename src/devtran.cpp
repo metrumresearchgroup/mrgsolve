@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2024  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -277,11 +277,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       for(int h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
+        dat.increment_inrow(it-a.begin());
       } 
       std::sort(it->begin(), it->end(), CompRec());
     }
   }
-  
+
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
@@ -382,13 +383,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                   idata_carry_start,nocb);
   }
   
-  crow = 0; // current output row
+  crow = 0; // current output row; never reset; always countingup
+  int icrow = 0; // output row for current ID; reset inside i-loop
   int ic = prob.interrupt; // interrupt counter
   
   prob.nid(dat.nid());
-  prob.nrow(NN);
   prob.idn(0);
-  prob.rown(0);
+  prob.nrow(NN);
+  prob.rown(crow);
+  prob.irown(icrow);
+  prob.inrow(dat.inrow(0));
   
   prob.config_call();
   reclist mtimehx;
@@ -406,6 +410,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     double id = dat.get_uid(i);
     dat.next_id(i);
     prob.idn(i);
+    prob.inrow(dat.inrow(i));
+    icrow = 0;
+    prob.irown(icrow);
+    prob.rown(crow);
+    
     prob.reset_newid(id);
     if(used_mtimehx) mtimehx.clear();  
     
@@ -453,6 +462,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(crow == NN) continue;
       
+      prob.irown(icrow);
       prob.rown(crow);
       
       rec_ptr this_rec = a[i][j];
@@ -484,6 +494,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             } 
           }
           ++crow;
+          ++icrow;
         }
         continue;
       }
@@ -778,6 +789,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           ans(crow,(k+req_start)) = prob.y(request[k]);
         }
         ++crow;
+        ++icrow;
       } 
       if(this_rec->evid()==2) {
         this_rec->implement(&prob);

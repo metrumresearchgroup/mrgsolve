@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -107,6 +107,11 @@ void dataobject::map_uid() {
     }
   }
   Endrow.push_back(n-1);
+  // Start count individual records
+  Nrow.assign(Uid.size(),0);
+  for(size_t i = 0; i < Uid.size(); ++i) {
+    Nrow[i] = Endrow[i] - Startrow[i] + 1;  
+  }
 }
 
 Rcpp::IntegerVector dataobject::get_col_n(const Rcpp::CharacterVector& what) {
@@ -291,7 +296,10 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         ++obscount;
       } else {
         ++evcount;
-        if(obsonly) obs->output(false);
+        if(obsonly) {
+          obs->output(false);
+          decrement_inrow(h);
+        }
       }
     }
   }
@@ -410,7 +418,11 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       ev->addl(Data(j,col[_COL_addl_]));
       ev->ii(Data(j,col[_COL_ii_]));
       ev->from_data(true);
-      if(!obsonly) ev->output(true);
+      if(!obsonly) {
+        ev->output(true);
+      } else {
+        decrement_inrow(h);
+      }
       
       bool zero_inf = ev->ss_infusion();
       

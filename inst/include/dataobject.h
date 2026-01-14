@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -51,6 +51,9 @@ public:
   unsigned int idcol() const {return Idcol;}
   int start(int i) const {return Startrow.at(i);}
   int end(int i) const {return Endrow.at(i);}
+  int inrow(int i) {return Nrow[i];}
+  void increment_inrow(int i) {++Nrow[i]; return;}
+  void decrement_inrow(int i) {--Nrow[i]; return;}
   void map_uid();
   double get_uid(int i) const {return Uid.at(i);}
   uidtype return_uid()  {return Uid;}
@@ -91,6 +94,7 @@ public:
   std::deque<double> Uid;  ///< unique IDs in the data set
   std::deque<int> Startrow;  ///< start row for each ID
   std::deque<int> Endrow; ///< data set end row for each ID
+  std::vector<int> Nrow; ///< output data row count for each ID
   int Idcol; ///< which column holds ID
   std::map<double,int> idmap; ///< map to get 
   
