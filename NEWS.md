@@ -1,6 +1,6 @@
 # mrgsolve 1.7.2
 
-- And individual record counter has been added. Use `self.inrow` to get the number of
+- An individual record counter has been added. Use `self.inrow` to get the number of
   output rows for the current individual; use `self.irown` to get the zero-indexed row
   number for the current individual; these are similar to `self.nrow` and `self.rown`, 
   which count records for the entire output data set (#1313). 
