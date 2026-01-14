@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 1.7.2
 
 # mrgsolve 1.7.1
 
