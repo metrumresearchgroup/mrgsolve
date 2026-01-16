@@ -1,4 +1,15 @@
-# mrgsolve (development version)
+# mrgsolve 1.7.2
+
+- An individual record counter has been added. Use `self.inrow` to get the number of
+  output rows for the current individual; use `self.irown` to get the zero-indexed row
+  number for the current individual; these are similar to `self.nrow` and `self.rown`, 
+  which count records for the entire output data set (#1313). 
+
+## Bugs Fixed
+
+- The `code` argument to `mcode()` now accepts a character vector with length 
+  greater than 1; passing multiple lines previously caused a compile error (#1310). 
+
 
 # mrgsolve 1.7.1
 
