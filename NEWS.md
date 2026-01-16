@@ -1,3 +1,5 @@
+# mrgsolve (development version)
+
 # mrgsolve 1.7.2
 
 - An individual record counter has been added. Use `self.inrow` to get the number of
