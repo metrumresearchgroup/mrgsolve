@@ -5,6 +5,8 @@ Doxygen
 doxyfile
 man/figures/README-.*\.png$
 README.html
+revdep
+revdepcheck
 DOCS/
 mrgsolve/
 inst/validation
