@@ -76,9 +76,8 @@ as_tibble_sims <- function(x, ...) {
 print.mrgsims_big <- function(x, n = 8, ...) {
   file <- sub(tempdir(), "tempdir()", x$file)
   message("Model: ", x$mod@model)
-  message("Rows: ", x$reader$num_rows)
-  message("Cols: ", x$reader$num_columns)
-  message("File: ", file)
+  message("Dim  : ", x$reader$num_rows, " ", x$reader$num_columns)
+  message("File : ", file)
   chunk <- head(x$head, n = n)
   rownames(chunk) <- paste0(seq(nrow(chunk)), ": ")
   print(chunk)
