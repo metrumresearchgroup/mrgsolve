@@ -85,6 +85,7 @@ Collate:
     'chain.R'
     'class_build.R'
     'class_evd.R'
+    'class_mrgsims_arrow.R'
     'events.R'
     'class_rx.R'
     'compile.R'
