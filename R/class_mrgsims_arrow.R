@@ -15,19 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+setClass("mrgsimsds")
 
-
-#' @export
-#' @md
-is.mrgsims_big <- function(x) {
-  inherits(x, "mrgsims_big")  
+require_arrow <- function() {
+  if(!requireNamespace("arrow", quitely = TRUE)) {
+    abort("this function requires the arrow package to be installed.")  
+  }
 }
 
 #' @export
 #' @md
-mrgsim_big <- function(x,  ..., file = tempfile(), verbose = FALSE) {
+is.mrgsimsds <- function(x) {
+  inherits(x, "mrgsimsds")  
+}
+
+#' @export
+#' @md
+mrgsim_ds <- function(x,  ..., file = tempfile(), verbose = FALSE) {
   
-  stopifnot(requireNamespace("arrow", quietly = TRUE))
+  require_arrow()
   
   verbose <- isTRUE(verbose)
   
@@ -44,12 +50,11 @@ mrgsim_big <- function(x,  ..., file = tempfile(), verbose = FALSE) {
   ans$ds <- arrow::open_dataset(file)
   ans$mod <- x
   ans$head <- out@data[seq(20), ]
-  ans$request <- out@request
-  ans$outnames <- out@outnames
+  ans$names <- names(ans$head)
   
   rm(out)
   
-  class(ans) <- c("mrgsims_big", "list")
+  class(ans) <- c("mrgsimsds", "list")
   
   ans
 }
@@ -57,20 +62,19 @@ mrgsim_big <- function(x,  ..., file = tempfile(), verbose = FALSE) {
 #' @export
 #' @md
 as_arrow_sims <- function(x, ...) {
-  stopifnot(requireNamespace("arrow", quietly = TRUE))
+  require_arrow()
   as_arrow_table(x$ds)
 }
 
 #' @export
 #' @md
 as_tibble_sims <- function(x, ...) {
-  stopifnot(requireNamespace("arrow", quietly = TRUE))
   tibble::as_tibble(as_arrow_sims(x))  
 }
 
 #' @export
 #' @md
-print.mrgsims_big <- function(x, n = 8, ...) {
+print.mrgsimsds <- function(x, n = 8, ...) {
   file <- sub(tempdir(), "tempdir()", x$file)
   dm <- dim(x$ds)
   message("Model: ", x$mod@model)
@@ -82,26 +86,44 @@ print.mrgsims_big <- function(x, n = 8, ...) {
   return(invisible(NULL))
 }
 
+#' Return the first several rows of the object. 
+#' 
+#' @param x a object with class `mrgsimsds`.
+#' @param n number of rows to show.  
+#' @param ... passed to [head()].
 #' @export
 #' @md
-head.mrgsims_big <- function(x, ...) {
-  head(x$head, ...)  
-}
+setMethod("head", "mrgsimsds", function(x, n = 6L, ...) {
+  head(x$head, ...)
+})
 
 #' @export
 #' @md
-tail.mrgsims_big <- function(x, ...) {
-  abort("there is no `tail()` method for `mrgsims_big` objects.") 
-}
+setMethod("tail", "mrgsimsds", function(x,...) {
+  abort("there is no `tail()` method for this object (mrgsimsds).") 
+})
 
+#' 
 #' @export
 #' @md
-dim.mrgsims_big <- function(x) {
+dim.mrgsimsds <- function(x) {
   dim(x$ds)
 }
 
 #' @export
 #' @md
-plot.mrgsims_big <- function(x, y, ...) {
-  abort("there is no `plot()` method for `mrgsims_big` objects.")
+nrow.mrgsimsds <- function(x) {
+  nrow(x$ds)
 }
+
+#' @export
+#' @md
+ncol.mrgsimsds <- function(x) {
+  ncol(x$ds)
+}
+
+#' @export
+#' @md
+setMethod("plot", "mrgsimsds", function(x,...) {
+  abort("there is no `plot()` method for this object (mrgsimsds).")
+})
