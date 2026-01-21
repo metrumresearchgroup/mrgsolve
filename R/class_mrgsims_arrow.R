@@ -41,9 +41,7 @@ mrgsim_big <- function(x,  ..., file = tempfile(), verbose = FALSE) {
   ans <- list()
 
   ans$file <- file
-  ans$mapped <- arrow::mmap_open(file)
-  ans$reader <- arrow::ParquetFileReader$create(ans$mapped)
- 
+  ans$ds <- arrow::open_dataset(file)
   ans$mod <- x
   ans$head <- out@data[seq(20), ]
   ans$request <- out@request
@@ -60,8 +58,7 @@ mrgsim_big <- function(x,  ..., file = tempfile(), verbose = FALSE) {
 #' @md
 as_arrow_sims <- function(x, ...) {
   stopifnot(requireNamespace("arrow", quietly = TRUE))
-  sims <- x$reader$ReadTable()
-  sims
+  as_arrow_table(x$ds)
 }
 
 #' @export
@@ -75,8 +72,9 @@ as_tibble_sims <- function(x, ...) {
 #' @md
 print.mrgsims_big <- function(x, n = 8, ...) {
   file <- sub(tempdir(), "tempdir()", x$file)
+  dm <- dim(x$ds)
   message("Model: ", x$mod@model)
-  message("Dim  : ", x$reader$num_rows, " ", x$reader$num_columns)
+  message("Dim  : ", dm[1L], " ", dm[2L])
   message("File : ", file)
   chunk <- head(x$head, n = n)
   rownames(chunk) <- paste0(seq(nrow(chunk)), ": ")
@@ -99,7 +97,7 @@ tail.mrgsims_big <- function(x, ...) {
 #' @export
 #' @md
 dim.mrgsims_big <- function(x) {
-  c(x$reader$num_rows, x$reader$num_columns)  
+  dim(x$ds)
 }
 
 #' @export
