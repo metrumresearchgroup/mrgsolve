@@ -51,6 +51,7 @@ int find_position(const std::string what, Rcpp::CharacterVector& table) {
   // Rcpp::IntegerVector ma = Rcpp::match(what,table);
   // if(Rcpp::IntegerVector::is_na(ma[0])) return(-1);
   // return(ma[0]-1);
+
   Rcpp::CharacterVector::iterator it = std::find(
     table.begin(), table.end(), what
   ); 
@@ -145,6 +146,7 @@ arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
   arma::mat X = arma::randn<arma::mat>(n, OMEGA.n_cols);
   
   eigval = arma::sqrt(eigval);
+  
   X = eigvec * arma::diagmat(eigval) * X.t();
   
   return X.t();
@@ -167,6 +169,7 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   if(a.size()==1) {
     return a[0];  
   }
+  
   Rcpp::NumericMatrix mat;
   Rcpp::CharacterVector rnam;
   Rcpp::CharacterVector cnam;
