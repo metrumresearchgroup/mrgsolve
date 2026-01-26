@@ -28,8 +28,9 @@
 #' @importFrom tidyselect vars_select everything
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
-#' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
+#' @importFrom rlang quos enquo enquos quo_name !!! !! eval_tidy as_label
 #' @importFrom rlang is_named .data abort warn inform caller_env
+#' @importFrom rlang syms sym
 #' @importFrom lifecycle deprecate_soft deprecate_warn
 #' @importFrom glue glue
 #' @importFrom Rcpp evalCpp
