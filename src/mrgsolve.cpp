@@ -146,7 +146,7 @@ arma::mat MVGAUSS(arma::mat& OMEGA, int n) {
   arma::mat X = arma::randn<arma::mat>(n, OMEGA.n_cols);
   
   eigval = arma::sqrt(eigval);
-
+  
   X = eigvec * arma::diagmat(eigval) * X.t();
   
   return X.t();
@@ -169,7 +169,7 @@ Rcpp::NumericMatrix SUPERMATRIX(const Rcpp::List& a, bool keep_names) {
   if(a.size()==1) {
     return a[0];  
   }
-
+  
   Rcpp::NumericMatrix mat;
   Rcpp::CharacterVector rnam;
   Rcpp::CharacterVector cnam;
@@ -288,7 +288,7 @@ Rcpp::List get_tokens(const Rcpp::CharacterVector& code) {
     }
     ret[i] = tokens;
   }
-
+  
   Rcpp::List ans;
   
   ans["tokens"] = ret;
@@ -445,15 +445,21 @@ Rcpp::List EXPAND_OBSERVATIONS(
 }
 
 Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
-  Rcpp::List ret(x.ncol());
-  for(int i = 0; i < x.ncol(); ++i) {
-    ret[i] = x(Rcpp::_,i);
+  int n_rows = x.nrow();
+  int n_cols = x.ncol();
+  
+  Rcpp::List ret(n_cols);
+  
+  for(int i = 0; i < n_cols; ++i) {
+    ret[i] = Rcpp::NumericVector(
+      x.begin() + (size_t)i * n_rows, 
+      x.begin() + (size_t)(i + 1) * n_rows
+    );
   }
-  Rcpp::IntegerVector rn(2);
-  rn[0] = NA_INTEGER;
-  rn[1] = x.nrow()*-1;
-  ret.attr("class")  = "data.frame";
-  ret.attr("row.names") = rn;
+  
+  ret.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -n_rows);
+  ret.attr("class") = "data.frame";
+  
   return ret;
 }
 
