@@ -331,7 +331,7 @@ void odeproblem::check_modeled_dur(rec_ptr rec) {
     Rcpp::warning(
       "[mrgsolve] RATE is not -2 on a dosing record with modeled infusion "
       "duration; either set the modeled duration to zero or use the "
-      "`@!check_modeled_infusions` block option for $MAIN/$PK to slience this "
+      "`@!check_modeled_infusions` block option for $MAIN/$PK to silence this "
       "warning."
     );
   }
