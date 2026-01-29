@@ -126,8 +126,8 @@ void negative_istate(int istate, int maxsteps, double rtol, double atol, int ito
 // [[Rcpp::export]]
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n) {
   
-  arma::mat OMEGA(OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
-  
+  //arma::mat OMEGA(OMEGA_.begin(), OMEGA_.nrow(), OMEGA_.ncol(), false );
+  arma::mat OMEGA = Rcpp::as<arma::mat>(OMEGA_);
   return MVGAUSS(OMEGA,n);
 }
 
@@ -244,7 +244,8 @@ arma::mat MAKEMATRIX(const Rcpp::S4& matlist) {
   
   if(a.size()==1) {
     Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(a[0]);
-    arma::mat ret(mat.begin(), mat.nrow(), mat.ncol(), false);
+    //arma::mat ret(mat.begin(), mat.nrow(), mat.ncol(), false);
+    arma::mat ret = Rcpp::as<arma::mat>(mat);
     return ret;  
   }
   
