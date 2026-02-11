@@ -594,7 +594,11 @@ void datarecord::schedule(reclist& thisi, double maxtime,
 
 void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t start, 
                          const bool put_ev_first) {
-  const int total = ev.addl + 1;
+  const double maxtime = thisi.back()->time();
+  int total = ev.addl + 1;
+  if(double(ev.ii*total) > maxtime) {
+    total = std::floor((maxtime-ev.time)/double(ev.ii));  
+  }
   int nextpos = put_ev_first && (ev.evid!= 1 && ev.evid!=4) ? -1000000000 : 1000000000;
   for(int i = 0; i < total; ++i) {
     rec_ptr rec = NEWREC(ev.time + i*ev.ii, nextpos, false);
