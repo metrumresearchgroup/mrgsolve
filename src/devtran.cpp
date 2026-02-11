@@ -462,10 +462,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       if(crow == NN) continue;
       
-      prob.irown(icrow);
-      prob.rown(crow);
-      
       rec_ptr this_rec = a[i][j];
+      
+      if(this_rec->output()) prob.irown(icrow);
+      if(this_rec->output()) prob.rown(crow);
       
       this_rec->id(id);
       
