@@ -232,19 +232,19 @@ test_that("individual row counters work with PRED model", {
 })
 
 
-code_update_on_output <- '
+code_counter_update_on_output <- '
 $preamble capture total = 0;
 $main self.mtime(12);
 $table if(self.rown+1 == self.nrow) ++total;
 '
 
 test_that("row counters are only updated on output records", {
-  mod <- mcode("row-count-update-only", code, end = 24, delta = 24)
-  out <- mrgsim(mod)
+  mod <- mcode("counter-update-on-output", code_counter_update_on_output)
+  out <- mrgsim(mod, end = 24, delta = 24)
   expect_equal(nrow(out), 2)
   # This will be 2 prior to fix
   expect_equal(out$total[2], 1)
 })
 
 rm(code_test_rown_nrow, code_test_rown_nrow_pred)
-rm(code_update_on_output)
+rm(code_counter_update_on_output)
