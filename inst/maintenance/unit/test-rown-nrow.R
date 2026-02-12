@@ -231,4 +231,39 @@ test_that("individual row counters work with PRED model", {
   expect_identical(out53$IROWN, seq(6)-1)
 })
 
+
+# https://github.com/metrumresearchgroup/mrgsolve/pull/1323
+code_counter_update_on_output <- '
+$preamble capture total1 = 0; capture total2 = 0;
+$main self.mtime(12);
+$table 
+if(self.rown+1==self.nrow) ++total1;
+if(self.nid==self.idn+1 && self.irown+1 == self.inrow) ++total2;
+capture rown = self.rown;
+capture nrow = self.nrow;
+capture irown = self.irown;
+capture inrow = self.inrow;
+'
+
+test_that("row counters are only updated on output records gh-1323", {
+  mod <- mcode("counter-update-on-output", code_counter_update_on_output)
+  data <- expand.ev(amt = 0, cmt = 0, ID = 1:2)
+  out <- mrgsim(mod, data = data, end = 24, delta = 24)
+  expect_equal(nrow(out), 6)
+  
+  expect_true(all(out$total1[1:5]==0))
+  expect_true(all(out$total2[1:5]==0))
+  
+  expect_true(all(out$nrow==6))
+  expect_true(all(out$inrow==3))
+  expect_equal(out$rown, seq(6)-1)
+  expect_equal(out$irown, c(seq(3)-1, seq(3)-1))
+  
+  # These will be 2 prior to fix
+  expect_equal(out$total1[6], 1)
+  expect_equal(out$total2[6], 1);
+  
+})
+
 rm(code_test_rown_nrow, code_test_rown_nrow_pred)
+rm(code_counter_update_on_output)
