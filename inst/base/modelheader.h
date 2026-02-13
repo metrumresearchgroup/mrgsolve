@@ -92,6 +92,10 @@ typedef double capture;
 #define THETA(a) THETA##a
 // Should modeled infusion parameters get checked
 #define CHECK_MODELED_INFUSIONS _check_modeled_infusions
+// Check for final record of the simulation
+#define FINAL_IROW (self.rown == (self.nrow-1))
+// Check for final record of current individual
+#define FINAL_ROW (self.irown == (self.inrow-1))
 
 // NMVARS
 #ifdef _MRGSOLVE_USING_NM_VARS_
