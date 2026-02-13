@@ -669,6 +669,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           // Unpack and check
           double this_time = (mt[mti]).time;
+          if(this_time > maxtime) continue;
           unsigned int this_evid = (mt[mti]).evid;
           if(this_time < tto && !mt[mti].now) {
             throw Rcpp::exception(
