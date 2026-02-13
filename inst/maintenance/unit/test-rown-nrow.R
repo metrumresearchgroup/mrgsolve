@@ -307,7 +307,7 @@ test_that("more row counter macros gh-132X", {
   expect_equal(nrow(out2), 9)
   expect_true(all(out2$inrow==9))
   expect_equal(out2$rown-6, out2$irown)
-  expect_equal(out2$total3[9], 1)
+  expect_equal(out2$total3[9], 2)
   expect_equal(out2$total4, out2$total5)
   expect_equal(out2$irown, seq(9)-1)
   

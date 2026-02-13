@@ -463,12 +463,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(crow == NN) continue;
       
       rec_ptr this_rec = a[i][j];
-
+      
       // Only update row counters on output records
       if(this_rec->output()) {
          prob.irown(icrow);
          prob.rown(crow);
-      }      
+      }
+      
+      if(this_rec->time() > maxtime) {
+        prob.irown(icrow + j);
+        prob.rown(crow + j);
+      }
 
       this_rec->id(id);
       
@@ -669,7 +674,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         for(size_t mti = 0; mti < mt.size(); ++mti) {
           // Unpack and check
           double this_time = (mt[mti]).time;
-          if(this_time > maxtime) continue;
           unsigned int this_evid = (mt[mti]).evid;
           if(this_time < tto && !mt[mti].now) {
             throw Rcpp::exception(
