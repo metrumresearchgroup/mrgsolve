@@ -47,7 +47,7 @@ void regimen::reset() {
   Flagnext = false;
 }
 
-regimen::regimen() {
+regimen::regimen() : Self(nullptr) {
   reset();
 }
 
