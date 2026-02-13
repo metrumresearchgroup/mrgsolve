@@ -236,17 +236,21 @@ test_that("individual row counters work with PRED model", {
 code_counter_update_on_output <- '
 $preamble 
 capture total1 = 0; capture total2 = 0;
-capture total3 = 0; capture total4 = 0;
+capture total3 = 0; capture total4 = 0; 
 capture total5 = 0;
+
 $main 
 self.mtime(1.2); self.mtime(2.9); 
 self.mtime(11); self.mtime(12); self.mtime(24);
+
 $table 
 if(self.rown+1==self.nrow) ++total1;
 if(self.nid==self.idn+1 && self.irown+1 == self.inrow) ++total2;
-if(self.irown+1==self.inrow) ++total5;
-if(FINAL_ROW) ++total3;
+
+if(FINAL_ROW)  ++total3;
 if(FINAL_IROW) ++total4;
+
+if(self.irown+1==self.inrow) ++total5;
 
 capture rown = self.rown;
 capture nrow = self.nrow;
