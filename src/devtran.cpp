@@ -427,7 +427,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     
     double tfrom = a[i].front()->time();
     double tto = tfrom;
-    double maxtime = a[i].back()->time();
+    
+    const double maxtime = a[i].back()->time();
+    const int NNI = a[i].size(); 
     
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
@@ -460,22 +462,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ic = prob.interrupt;
       }
       
-      if(crow == NN) continue;
-      
       rec_ptr this_rec = a[i][j];
       
+      this_rec->id(id);
+      tto = this_rec->time();
+      
+      if(icrow==NNI || crow==NN || tto > maxtime) {
+        continue;
+      }
+    
       // Only update row counters on output records
       if(this_rec->output()) {
          prob.irown(icrow);
          prob.rown(crow);
       }
-      
-      if(this_rec->time() > maxtime) {
-        prob.irown(icrow + j);
-        prob.rown(crow + j);
-      }
-
-      this_rec->id(id);
       
       if(prob.systemoff()) {
         // This starts a loop that will finish the remaining records 
@@ -488,8 +488,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(status==999) CRUMP("999 sent from the model.");
         if(this_rec->output()) {
           if(status==1) {
-            ans(crow,0) = this_rec->id();
-            ans(crow,1) = this_rec->time();
+            ans(crow,0) = id;
+            ans(crow,1) = tto;
             for(unsigned int k=0; k < n_capture; ++k) {
               ans(crow,(k+capture_start)) = prob.capture(capture[k]);
             }
@@ -516,9 +516,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           &prob
         );
       }
-      
-      tto = this_rec->time();
-      
+
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
       
       if((dt > 0.0) && (dt < mindt)) {
