@@ -429,7 +429,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     double tto = tfrom;
     
     const double maxtime = a[i].back()->time();
-    const int NNI = a[i].size(); 
+    const int NNI = dat.inrow(i);
     
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
