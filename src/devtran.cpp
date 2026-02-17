@@ -461,16 +461,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         Rcpp::checkUserInterrupt();
         ic = prob.interrupt;
       }
-      
+    
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
       tto = this_rec->time();
       
+      // TODO: simplify
       if(icrow==NNI || crow==NN || tto > maxtime) {
         continue;
       }
-    
+      
       // Only update row counters on output records
       if(this_rec->output()) {
          prob.irown(icrow);
