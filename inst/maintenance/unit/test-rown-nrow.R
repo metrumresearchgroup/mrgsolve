@@ -282,7 +282,7 @@ test_that("row counters are only updated on output records gh-1323", {
   expect_equal(out$total4, out$total4)
 })
 
-test_that("more row counter macros gh-132X", {
+test_that("more row counter macros gh-1327", {
   data1 <- ev(amt = 0, cmt = 1, ID = 1)
   data2 <- ev(amt = 0, cmt = 1, ID = 2)
   
