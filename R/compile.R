@@ -26,7 +26,7 @@ generate_matrix_label_rd <- function(obj) {
     stopifnot(length(index)==length(lab))
     which <- lab != "."
     if(sum(which) > 0) {
-      lab <- paste0(lab[which], " = _x", prefix, "(",index[which],");")
+      lab <- paste0("#define ", lab[which], " _x", prefix, "(",index[which],")")
     } else {
       lab <- NULL
     }
@@ -100,8 +100,9 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$frda <- c(Fdef, Rdef, Ddef, Adef)
   ans$frda_const <- ans$frda
   ans$cmtn <- cmtndef
-  ans$eta <- generate_matrix_label_rd(omat(x))
-  ans$eps <- generate_matrix_label_rd(smat(x))
+  
+  eta <- generate_matrix_label_rd(omat(x))
+  eps <- generate_matrix_label_rd(smat(x))
   
   tokens <- lapply(ans, strsplit, split = " ")
   tokens <- unlist(lapply(tokens, \(x) {lapply(x, "[[", 1L)}), use.names = FALSE)
@@ -111,7 +112,7 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   make_ref <- c("init", "dxdt", "frda")
   ans[make_ref] <- lapply(ans[make_ref], generate_rdef_ref)
   
-  make_const_ref <- c("param", "cmt", "eta", "eps", "init_const", "frda_const")
+  make_const_ref <- c("param", "cmt", "init_const", "frda_const")
   ans[make_const_ref] <- lapply(ans[make_const_ref], generate_rdef_const_ref)
   
   if(!is.character(cmtn)) {
@@ -126,7 +127,9 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
     paste0("#define __CONFIGFUN___ ", config_fun),
     paste0("#define __REGISTERFUN___ ", register_fun(model)),
     paste0("#define _nEQ ", ncmt),
-    paste0("#define _nPAR ", npar)
+    paste0("#define _nPAR ", npar), 
+    eta, 
+    eps
   )
 
   discard <- sapply(ans, is.null)
