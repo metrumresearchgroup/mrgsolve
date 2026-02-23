@@ -334,8 +334,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # These are the various #define statements
   # that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(x, cmtn = CMTN, plugin = plugin)
-  return(rd)
-  
+
   # Handle plugins ----
   # Virtual compartments
   if("VCMT" %in% names(spec)) {
@@ -361,6 +360,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       env = mread.env
     )
   }
+  return(rd)
   # autodec
   if("autodec" %in% names(plugin)) {
     auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "EVENT")

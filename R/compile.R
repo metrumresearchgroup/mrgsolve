@@ -17,7 +17,7 @@
 
 
 # Get the labels out of omega or sigma matrixlist object
-matrix_labels <- function(obj) {
+generate_matrix_label_rd <- function(obj) {
   lab <- NULL
   prefix <- ifelse(inherits(obj, "omegalist"), "ETA", "EPS")
   if(sum(nrow(obj)) > 0) {
@@ -26,7 +26,7 @@ matrix_labels <- function(obj) {
     stopifnot(length(index)==length(lab))
     which <- lab != "."
     if(sum(which) > 0) {
-      lab <- paste0(lab[which], " _x", prefix, "(",index[which],");")
+      lab <- paste0(lab[which], " = _x", prefix, "(",index[which],");")
     } else {
       lab <- NULL
     }
@@ -34,6 +34,15 @@ matrix_labels <- function(obj) {
   lab
 }
 
+generate_rdef_ref <- function(x) {
+  if(!is.character(x)) return(x)
+  paste0("const double& ", x)
+}
+
+generate_rdef_const <- function(x) {
+  if(!is.character(x)) return(x)
+  paste0("const double ", x)
+}
 
 generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   
@@ -64,7 +73,7 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   # Using the N_CMT plugin gives you _all_ compartments
   if(!is.null(plugin[["N_CMT"]])) cmtn <- cmts  
   
-  if(length(cmtn) > 0) {
+  if(length(cmtn) > 0 && length(cmts) > 0) {
     cmtnindex <- match(cmtn, cmts)-1
     cmtndef <- paste0("N_",    cmtn, " = ", cmtnindex+1, ";")
     Fdef <-    paste0("F_",    cmtn, " = _F_[",cmtnindex,"];")
@@ -72,6 +81,9 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
     Ddef <-    paste0("D_",    cmtn, " = _D_[",cmtnindex,"];")
     Rdef <-    paste0("R_",    cmtn, " = _R_[",cmtnindex,"];")
   }
+  
+  if(npar==0) rpars <- NULL
+  if(ncmt==0) cmtndef <- rcmt <- rinit <- rdx <- NULL
   
   ans <- list()
   ans$global <- character(0)
@@ -81,12 +93,20 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$dxdt <- rdx
   ans$frda <- c(Fdef, Rdef, Ddef, Adef)
   ans$cmtn <- cmtndef
-  ans$eta <- matrix_labels(omat(x))
-  ans$eps <- matrix_labels(smat(x))
+  ans$eta <- generate_matrix_label_rd(omat(x))
+  ans$eps <- generate_matrix_label_rd(smat(x))
   
   tokens <- lapply(ans, strsplit, split = " ")
   tokens <- unlist(lapply(tokens, \(x) {lapply(x, "[[", 1L)}), use.names = FALSE)
   ans$tokens <- tokens
+  
+  # const double reference
+  make_reference <- c("param", "cmt", "init", "dxdt", "frda", "eta", "eps")
+  ans[make_reference] <- lapply(ans[make_reference], generate_rdef_ref)
+  
+  if(!is.character(cmtn)) {
+    ans$cmtn <- generate_rdef_const(ans$cmtn)
+  }
   
   ans$global <- c(
     paste0("#define __INITFUN___ ", init_fun),
@@ -99,6 +119,12 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
     paste0("#define _nPAR ", npar)
   )
 
+  discard <- sapply(ans, is.null)
+  
+  if(any(discard)) {
+    ans <- ans[!discard]  
+  }
+  
   ans
 }
 
