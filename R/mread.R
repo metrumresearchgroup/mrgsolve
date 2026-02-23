@@ -333,21 +333,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # model r defs ----
   # These are the various #define statements
   # that go at the top of the .cpp.cpp file
-  rd <- generate_rdefs(
-    pars = Pars(x),
-    cmt = Cmt(x),
-    func = ode_func(x),
-    init_fun = main_func(x),
-    table_fun = table_func(x),
-    event_fun = event_func(x),
-    config_fun = config_func(x),
-    model = model(x),
-    omats = omat(x),
-    smats = smat(x),
-    cmtn = CMTN,
-    check.bounds = check.bounds, 
-    plugin = plugin
-  )
+  rd <- generate_rdefs(x, cmtn = CMTN, plugin = plugin)
+  return(rd)
   
   # Handle plugins ----
   # Virtual compartments

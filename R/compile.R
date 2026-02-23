@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,106 +15,96 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-generate_rdefs <- function(pars,
-                           cmt,
-                           func = "",
-                           init_fun = "",
-                           table_fun = "",
-                           event_fun = "",
-                           config_fun = "",
-                           model = "",
-                           omats,
-                           smats,
-                           cmtn = NULL, 
-                           plugin = NULL,
-                           ...) {
 
-    npar <- length(pars)
-    ncmt <- length(cmt)
-
-    dxdt <- paste0("dxdt_",cmt)
-    init <- paste0(cmt, "_0")
-
-    cmtindex <- seq_along(cmt)-1L
-    parsindex <- seq_along(pars)-1L
-
-    cmtdef <-  paste0("#define ", cmt,  " _A_[",    cmtindex,"]")
-    initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
-    dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
-    pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
-
-    etal <- epsl <- NULL
-
-    if(sum(nrow(omats)) > 0) {
-        etai <- seq_len(sum(nrow(omats)))
-        etal <- unlist(omats@labels,use.names=FALSE)
-        stopifnot(length(etai)==length(etal))
-        which <- etal != "."
-        if(sum(which) > 0) {
-            etal <- paste0("#define ", etal[which], " _xETA(",etai[which],")")
-        } else {
-            etal <- NULL
-        }
+# Get the labels out of omega or sigma matrixlist object
+matrix_labels <- function(obj) {
+  lab <- NULL
+  prefix <- ifelse(inherits(obj, "omegalist"), "ETA", "EPS")
+  if(sum(nrow(obj)) > 0) {
+    index <- seq_len(sum(nrow(obj)))
+    lab <- unlist(obj@labels, use.names = FALSE)
+    stopifnot(length(index)==length(lab))
+    which <- lab != "."
+    if(sum(which) > 0) {
+      lab <- paste0(lab[which], " _x", prefix, "(",index[which],");")
+    } else {
+      lab <- NULL
     }
+  } 
+  lab
+}
 
-    if(sum(nrow(smats)) > 0) {
-        epsi <- seq_len(sum(nrow(smats)))
-        epsl <- unlist(smats@labels,use.names=FALSE)
-        stopifnot(length(epsi)==length(epsl))
-        which <- epsl != "."
-        if(sum(which) > 0) {
-            epsl <- paste0("#define ", epsl[which], " _xEPS(",epsi[which],")")
-        } else {
-            epsl <- NULL
-        }
-    }
 
-    Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
+generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
+  
+  func <- ode_func(x)
+  init_fun <- main_func(x)
+  table_fun <- table_func(x)
+  event_fun <- event_func(x)
+  config_fun <- config_func(x)
+  model <- model(x)
+  
+  pars <- Pars(x)
+  cmts <- Cmt(x)
+  ncmt <- length(cmts)
+  npar <- length(pars)
+  ipar <- seq(npar)-1
+  icmt <- seq(ncmt)-1
+  
+  rpars <- paste0(pars, " = _THETA_[", ipar, "];")
+  rcmt  <- paste0(cmts, " = _A_[", icmt, "];")
+  rinit <- paste0(cmts, " = _A_0[", icmt, "];")
+  rdx   <- paste0("dxdt_", cmts, " = _DADT_[", icmt, "];")
+  
+  Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
+  etal <- epsl <- NULL
+  
+  cmtn <- unique(intersect(cvec_cs(cmtn), cmts))
+  
+  # Using the N_CMT plugin gives you _all_ compartments
+  if(!is.null(plugin[["N_CMT"]])) cmtn <- cmts  
+  
+  if(length(cmtn) > 0) {
+    cmtnindex <- match(cmtn, cmts)-1
+    cmtndef <- paste0("N_",    cmtn, " = ", cmtnindex+1, ";")
+    Fdef <-    paste0("F_",    cmtn, " = _F_[",cmtnindex,"];")
+    Adef <-    paste0("ALAG_", cmtn, " = _ALAG_[",cmtnindex,"];")
+    Ddef <-    paste0("D_",    cmtn, " = _D_[",cmtnindex,"];")
+    Rdef <-    paste0("R_",    cmtn, " = _R_[",cmtnindex,"];")
+  }
+  
+  ans <- list()
+  ans$global <- character(0)
+  ans$param <- rpars
+  ans$cmt <- rcmt
+  ans$init <- rinit
+  ans$dxdt <- rdx
+  ans$frda <- c(Fdef, Rdef, Ddef, Adef)
+  ans$cmtn <- cmtndef
+  ans$eta <- matrix_labels(omat(x))
+  ans$eps <- matrix_labels(smat(x))
+  
+  tokens <- lapply(ans, strsplit, split = " ")
+  tokens <- unlist(lapply(tokens, \(x) {lapply(x, "[[", 1L)}), use.names = FALSE)
+  ans$tokens <- tokens
+  
+  ans$global <- c(
+    paste0("#define __INITFUN___ ", init_fun),
+    paste0("#define __ODEFUN___ ", func),
+    paste0("#define __TABLECODE___ ", table_fun),
+    paste0("#define __EVENTFUN___ ", event_fun), 
+    paste0("#define __CONFIGFUN___ ", config_fun),
+    paste0("#define __REGISTERFUN___ ", register_fun(model)),
+    paste0("#define _nEQ ", ncmt),
+    paste0("#define _nPAR ", npar)
+  )
 
-    cmtn <- unique(intersect(cvec_cs(cmtn),cmt))
-    
-    # Handle plugins; note plugin[["nm-defs"]] are punched in below     
-    if(!is.null(plugin[["N_CMT"]])) cmtn <- cmt  
-
-    if(length(cmtn) > 0) {
-        cmtnindex <- match(cmtn,cmt)-1
-        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)
-        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex,"]")
-        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex,"]")
-        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex,"]")
-        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex,"]")
-    }
-
-    if(npar==0) pardef <- NULL
-    if(ncmt==0) cmtdef <- initdef <- dxdef <- NULL
-
-    return(
-        c(paste0("#define __INITFUN___ ",init_fun),
-          paste0("#define __ODEFUN___ ",func),
-          paste0("#define __TABLECODE___ ", table_fun),
-          paste0("#define __EVENTFUN___ ", event_fun), 
-          paste0("#define __CONFIGFUN___ ", config_fun),
-          paste0("#define __REGISTERFUN___ ", register_fun(model)),
-          paste0("#define _nEQ ", ncmt),
-          paste0("#define _nPAR ", npar),
-          cmtndef,
-          Fdef,
-          Adef,
-          Rdef,
-          Ddef,
-          initdef,
-          cmtdef,
-          dxdef,
-          pardef,
-          etal,
-          epsl
-          )
-        )
+  ans
 }
 
 relocate_funs <- function(x,PACKAGE) {
-    x@package <- PACKAGE
-    x
+  x@package <- PACKAGE
+  x
 }
 
 build_version <- function(x) {
@@ -126,9 +116,9 @@ compiled <- function(x,...) UseMethod("compiled")
 compiled.default <- function(x,...) return(FALSE)
 #' @export
 compiled.mrgmod <- function(x, status = NULL, ...) {
-    if(is.null(status)) return(x@shlib$compiled)
-    x@shlib$compiled <- status
-    return(x)
+  if(is.null(status)) return(x@shlib$compiled)
+  x@shlib$compiled <- status
+  return(x)
 }
 
 win_def_name <- function(x) {
