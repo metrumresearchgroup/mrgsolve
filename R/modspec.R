@@ -890,8 +890,8 @@ autodec_vars <- function(code, blocks = NULL) {
 #' @keywords internal
 #' @noRd
 autodec_clean <- function(vars, rdefs, build, skip = NULL) {
-  rdefs <- strsplit(rdefs, " ", fixed = TRUE)
-  rdefs <- s_pick(rdefs, 2)
+  # rdefs <- strsplit(rdefs, " ", fixed = TRUE)
+  # rdefs <- s_pick(rdefs, 2)
   cpp <- build[["cpp_variables"]][["var"]]
   vars <- setdiff(vars, c(Reserved, rdefs, cpp))
   # We are not cleaning Reserved_nm here; this will be checked in  

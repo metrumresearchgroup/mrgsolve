@@ -349,7 +349,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
     dfs <- generate_nmdefs(nmv)
-    rd <- c(rd, dfs)
+    rd$frda <- c(rd$frda, dfs$frda)
+    rd$const_frda <- c(rd$frda_const, dfs$frda_const)
+    rd$tokens <- c(rd$tokens, dfs$tokens)
     plugin[["nm-vars"]][["nm-def"]] <- dfs
     build[["nm-vars"]] <- nmv
     audit_nm_vars(
@@ -360,7 +362,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       env = mread.env
     )
   }
-  return(rd)
+  
   # autodec
   if("autodec" %in% names(plugin)) {
     auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "EVENT")
@@ -368,7 +370,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     autov <- autodec_vars(spec, blocks = auto_blocks)
     autov <- autodec_clean(
       autov, 
-      rdefs = rd, 
+      rdefs = rd$tokens, 
       build = build, 
       skip = auto_skip
     )
@@ -449,6 +451,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["source"]] <- file.path(build[["soloc"]],build[["compfile"]])
   x@shlib[["md5"]] <- build[["md5"]]
   x@shlib[["call_event"]] <- "EVENT" %in% names(spec)
+  x@shlib[["rd"]] <- rd
   
   # build----
   # In soloc directory
@@ -494,7 +497,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
     "\n// DEFS:",
-    rd,
+    rd$global,
     "",
     sep="\n", file = header_file)
   
@@ -511,23 +514,28 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     } else {
       "CHECK_MODELED_INFUSIONS=false;"  
     }, 
+    rd$param,
     spec[["PREAMBLE"]],
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
+    rd$param, rd$init_write, rd$cmt, rd$frda,
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
+    rd$param, rd$cmt, rd$dxdt, rd$init_const,
     spec[["ODE"]], 
     "__END_ode__",
     "\n// MODELED EVENTS:", 
     "__BEGIN_event__", 
+    rd$param, rd$init_const, rd$cmt, rd$frda_const,
     spec[["EVENT"]],
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
+    rd$param, rd$init_const, rd$cmt, rd$frda_const,
     table,
     spec[["PRED"]],
     write_capture(names(x@capture)),

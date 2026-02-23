@@ -36,6 +36,11 @@ generate_matrix_label_rd <- function(obj) {
 
 generate_rdef_ref <- function(x) {
   if(!is.character(x)) return(x)
+  paste0("double& ", x)
+}
+
+generate_rdef_const_ref <- function(x) {
+  if(!is.character(x)) return(x)
   paste0("const double& ", x)
 }
 
@@ -62,7 +67,7 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   
   rpars <- paste0(pars, " = _THETA_[", ipar, "];")
   rcmt  <- paste0(cmts, " = _A_[", icmt, "];")
-  rinit <- paste0(cmts, " = _A_0[", icmt, "];")
+  rinit <- paste0(cmts, "_0 = _A_0_[", icmt, "];")
   rdx   <- paste0("dxdt_", cmts, " = _DADT_[", icmt, "];")
   
   Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
@@ -90,8 +95,10 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$param <- rpars
   ans$cmt <- rcmt
   ans$init <- rinit
+  ans$init_const <- rinit
   ans$dxdt <- rdx
   ans$frda <- c(Fdef, Rdef, Ddef, Adef)
+  ans$frda_const <- ans$frda
   ans$cmtn <- cmtndef
   ans$eta <- generate_matrix_label_rd(omat(x))
   ans$eps <- generate_matrix_label_rd(smat(x))
@@ -101,8 +108,11 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$tokens <- tokens
   
   # const double reference
-  make_reference <- c("param", "cmt", "init", "dxdt", "frda", "eta", "eps")
-  ans[make_reference] <- lapply(ans[make_reference], generate_rdef_ref)
+  make_ref <- c("init", "dxdt", "frda")
+  ans[make_ref] <- lapply(ans[make_ref], generate_rdef_ref)
+  
+  make_const_ref <- c("param", "cmt", "eta", "eps", "init_const", "frda_const")
+  ans[make_const_ref] <- lapply(ans[make_const_ref], generate_rdef_const_ref)
   
   if(!is.character(cmtn)) {
     ans$cmtn <- generate_rdef_const(ans$cmtn)

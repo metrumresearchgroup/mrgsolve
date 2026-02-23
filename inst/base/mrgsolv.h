@@ -144,7 +144,7 @@ typedef std::vector<double> dvec;
 #define MRGSOLVE_TABLE_SIGNATURE \
   const dvec& _A_0_, \
   const dvec& _A_, \
-  dvec& _THETA_, \
+  const dvec& _THETA_, \
   const dvec& _F_, \
   const dvec& _ALAG_, \
   const dvec& _R_, \
