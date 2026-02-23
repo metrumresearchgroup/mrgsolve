@@ -346,8 +346,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     smats = smat(x),
     cmtn = CMTN,
     check.bounds = check.bounds, 
-    plugin = plugin,
-    dbsyms = args[["dbsyms"]]
+    plugin = plugin
   )
   
   # Handle plugins ----
@@ -480,12 +479,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   incl <- function(x) paste0('#include "', x, '"')
   header_file <- paste0(build[["model"]], "-mread-header.h")
-  
-  dbs <- NULL
-  if(isTRUE(args[["dbsyms"]])) {
-    dbs <- debug_symbols(names(init(x)))
-  }
-  
+
   cat(
     paste0("// Source MD5: ", build[["md5"]]),
     "\n// PLUGINS:",
@@ -534,13 +528,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
-    dbs[["cmt"]],
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
-    dbs[["ode"]],
     spec[["ODE"]], 
     "__END_ode__",
     "\n// MODELED EVENTS:", 
@@ -549,7 +541,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
-    dbs[["cmt"]],
     table,
     spec[["PRED"]],
     write_capture(names(x@capture)),

@@ -27,7 +27,7 @@ generate_rdefs <- function(pars,
                            smats,
                            cmtn = NULL, 
                            plugin = NULL,
-                           dbsyms = FALSE, ...) {
+                           ...) {
 
     npar <- length(pars)
     ncmt <- length(cmt)
@@ -43,8 +43,6 @@ generate_rdefs <- function(pars,
     dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
     pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
 
-    if(isTRUE(dbsyms)) cmtdef <- dxdef <- NULL
-    
     etal <- epsl <- NULL
 
     if(sum(nrow(omats)) > 0) {
@@ -112,13 +110,6 @@ generate_rdefs <- function(pars,
           epsl
           )
         )
-}
-
-debug_symbols <- function(cmt) {
-  cmts <- seq_along(cmt)
-  sym1 <- paste0("const double& ", cmt, " = _A_[", cmts-1, "];")
-  sym2 <- paste0("double& dxdt_", cmt, " = _DADT_[", cmts-1, "];")
-  list(cmt = sym1, ode=c(sym1,sym2))
 }
 
 relocate_funs <- function(x,PACKAGE) {
