@@ -127,11 +127,33 @@ public:
 typedef std::vector<double> dvec;
 
 //! signature for <code>$MAIN</code>
-#define MRGSOLVE_INIT_SIGNATURE dvec& _A_0_, const dvec& _A_, const dvec& _THETA_, dvec& _F_, dvec& _ALAG_, dvec& _R_, dvec& _D_, databox& self, dvec& _pred_, mrgsolve::resim& simeta
+#define MRGSOLVE_INIT_SIGNATURE \
+  dvec& _A_0_, \
+  const dvec& _A_, \
+  const dvec& _THETA_, \
+  dvec& _F_, \
+  dvec& _ALAG_, \
+  dvec& _R_, \
+  dvec& _D_, \
+  databox& self, \
+  dvec& _pred_, \
+  mrgsolve::resim& simeta
 #define MRGSOLVE_INIT_SIGNATURE_N 10
 
 //! signature for <code>$TABLE</code>
-#define MRGSOLVE_TABLE_SIGNATURE const dvec& _A_0_, const dvec& _A_, dvec& _THETA_, const dvec& _F_, const dvec& _ALAG_, const dvec& _R_, const dvec& _D_, databox& self, const dvec& _pred_, dvec& _capture_, mrgsolve::resim& simeta, mrgsolve::resim& simeps
+#define MRGSOLVE_TABLE_SIGNATURE \
+  const dvec& _A_0_, \
+  const dvec& _A_, \
+  dvec& _THETA_, \
+  const dvec& _F_, \
+  const dvec& _ALAG_, \
+  const dvec& _R_, \
+  const dvec& _D_, \
+  databox& self, \
+  const dvec& _pred_, \
+  dvec& _capture_, \
+  mrgsolve::resim& simeta, \
+  mrgsolve::resim& simeps
 #define MRGSOLVE_TABLE_SIGNATURE_N 11
 
 //! signature for <code>$EVENT</code> same as what we use for <code>$TABLE</code>
@@ -139,11 +161,22 @@ typedef std::vector<double> dvec;
 #define MRGSOLVE_EVENT_SIGNATURE_N MRGSOLVE_TABLE_SIGNATURE_N
 
 //! signature for <code>$ODE</code>
-#define MRGSOLVE_ODE_SIGNATURE const double* _ODETIME_, const double* _A_, double* _DADT_,  const dvec& _A_0_, const dvec& _THETA_, const bool _ss_flag_
+#define MRGSOLVE_ODE_SIGNATURE \
+  const double* _ODETIME_, \
+  const double* _A_, \
+  double* _DADT_, \
+  const dvec& _A_0_, \
+  const dvec& _THETA_, \
+  const bool _ss_flag_
 #define MRGSOLVE_ODE_SIGNATURE_N 6
 
 //! signature for <code>$PREAMBLE</code>
-#define MRGSOLVE_CONFIG_SIGNATURE databox& self, const dvec& _THETA_, const double neq, const double npar, bool& _check_modeled_infusions
+#define MRGSOLVE_CONFIG_SIGNATURE \
+  databox& self, \
+  const dvec& _THETA_, \
+  const double neq, \
+  const double npar, \
+  bool& _check_modeled_infusions
 #define MRGSOLVE_CONFIG_SIGNATURE_N 5
 
 #endif
