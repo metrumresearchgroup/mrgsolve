@@ -322,10 +322,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Arguments in $SET that will be passed to mrgsim
   x <- set_simargs(x, SET)
-
+  
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
-
+  
   # Look for compartments we're dosing into: F/ALAG/D/R and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
   CMTN <- c(spec[["CMTN"]], dosing)
@@ -334,7 +334,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # These are the various #define statements
   # that go at the top of the .cpp.cpp file
   rd <- generate_rdefs(x, cmtn = CMTN, plugin = plugin)
-
+  
   # Handle plugins ----
   # Virtual compartments
   if("VCMT" %in% names(spec)) {
@@ -469,7 +469,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   incl <- function(x) paste0('#include "', x, '"')
   header_file <- paste0(build[["model"]], "-mread-header.h")
-
+  
   cat(
     paste0("// Source MD5: ", build[["md5"]]),
     "\n// PLUGINS:",
@@ -502,8 +502,25 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     sep="\n", file = header_file)
   
   ## Write the model code to temporary file
-  guard_start <- '#include "mrgsolve-unused-variable-start.h"'
-  guard_end   <- '#include "mrgsolve-unused-variable-end.h"'
+  preamble_code <- c(
+    spec[["PREAMBLE"]]
+  )
+  main_code <- c(
+    spec[["MAIN"]], 
+    advtr(x@advan,x@trans)
+  )
+  ode_code <- c(
+    spec[["ODE"]]
+  )
+  event_code <- c(
+    spec[["EVENT"]]  
+  )
+  table_code <- c(
+    table,
+    spec[["PRED"]], 
+    write_capture(names(x@capture))
+  )
+  
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
@@ -515,42 +532,55 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       "CHECK_MODELED_INFUSIONS=true;"  
     } else {
       "CHECK_MODELED_INFUSIONS=false;"  
-    }, 
-    guard_start,
-    rd$param,
-    guard_end,
-    spec[["PREAMBLE"]],
+    },
+    # stub, code, defs, model
+    write_block_header(
+      "preamble", 
+      preamble_code,
+      rd$param, 
+      build[["model"]]
+    ),
+    preamble_code,
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
-    guard_start,
-    rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps,
-    guard_end,
-    spec[["MAIN"]],
-    advtr(x@advan,x@trans),
+    write_block_header(
+      "main", 
+      main_code,
+      c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps),
+      build[["model"]]
+    ),    
+    main_code, 
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
-    guard_start,
-    rd$param, rd$cmt, rd$dxdt, rd$init_const,
-    guard_end,
-    spec[["ODE"]], 
+    write_block_header(
+      "ode", 
+      ode_code, 
+      c(rd$param, rd$cmt, rd$dxdt, rd$init_const),
+      build[["model"]]
+    ),
+    ode_code, 
     "__END_ode__",
     "\n// MODELED EVENTS:", 
     "__BEGIN_event__", 
-    guard_start,
-    rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps,
-    guard_end,
-    spec[["EVENT"]],
+    write_block_header(
+      "event", 
+      event_code, 
+      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps),
+      build[["model"]]
+    ),
+    event_code,
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
-    guard_start,
-    rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps,
-    guard_end,
-    table,
-    spec[["PRED"]],
-    write_capture(names(x@capture)),
+    write_block_header(
+      "table", 
+      table_code,
+      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps),
+      build[["model"]]
+    ),
+    table_code,
     "__END_table__",
     "", 
     sep="\n", file=def.con)

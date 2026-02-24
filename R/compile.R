@@ -15,6 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+# Write PREAMBLE 
+write_block_header <- function(stub, code, defs, model) {
+  if(!length(code)) return(NULL)
+  q <- '"'
+  start <- paste0("#include ", q, "mrgsolve-unused-variable-start.h", q)
+  end   <- paste0("#include ", q, "mrgsolve-unused-variable-end.h", q)
+  hfile <- paste0(model, "-mread-decode-", stub, ".h")
+  con <- file(hfile, encoding = "UTF-8")
+  on.exit(close(con))
+  writeLines(c(start, defs, end), con = con)
+  paste0("#include ", q, hfile, q)
+}
 
 # Get the labels out of omega or sigma matrixlist object
 generate_matrix_label_rd <- function(obj) {
