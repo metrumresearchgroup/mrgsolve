@@ -54,7 +54,7 @@ covr:
 	Rscript "inst/maintenance/covr.R"
 
 house: 
-	Rscript "inst/maintenance/build_housemodel.R"
+	@Rscript "inst/maintenance/build_housemodel.R"
 
 test-all:
 	@Rscript inst/maintenance/tests.R
@@ -107,7 +107,7 @@ test-cpp:
 remove:
 	@Rscript -e "try(remove.packages('mrgsolve'), silent = TRUE)"
 
-cleanup:
+clean:
 	@rm -rf $(TARBALL)
 	@rm -rf tests/testthat/mrgsolve-so-*
 	@rm -rf vignettes/extra/mrgsolve-so-*
@@ -116,9 +116,11 @@ cleanup:
 	@if [ -d mrgsolve.Rcheck ]; then rm -Rf mrgsolve.Rcheck; fi
 	@if [ -d mrgsolve ]; then rm -Rf mrgsolve; fi
 
-clean: 
-	make cleanup 
+reset: 
+	make clean
 	make remove
+	make build
+	make install
 
 datasets:
 	Rscript inst/maintenance/datasets.R
