@@ -467,8 +467,30 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     do_restore(to_restore)
   })
   
+  ## Write the model code to temporary file
+  preamble_code <- c(
+    spec[["PREAMBLE"]]
+  )
+  main_code <- c(
+    spec[["MAIN"]], 
+    advtr(x@advan,x@trans)
+  )
+  ode_code <- c(
+    spec[["ODE"]]
+  )
+  event_code <- c(
+    spec[["EVENT"]]  
+  )
+  table_code <- c(
+    table,
+    spec[["PRED"]], 
+    write_capture(names(x@capture))
+  )
+  
   incl <- function(x) paste0('#include "', x, '"')
-  header_file <- paste0(build[["model"]], "-mread-header.h")
+  
+  temp_write <- tempfile()
+  def.con <- file(temp_write, open = "w")
   
   cat(
     paste0("// Source MD5: ", build[["md5"]]),
@@ -499,33 +521,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// DEFS:",
     rd$global,
     "",
-    sep="\n", file = header_file)
-  
-  ## Write the model code to temporary file
-  preamble_code <- c(
-    spec[["PREAMBLE"]]
-  )
-  main_code <- c(
-    spec[["MAIN"]], 
-    advtr(x@advan,x@trans)
-  )
-  ode_code <- c(
-    spec[["ODE"]]
-  )
-  event_code <- c(
-    spec[["EVENT"]]  
-  )
-  table_code <- c(
-    table,
-    spec[["PRED"]], 
-    write_capture(names(x@capture))
+    sep = "\n", 
+    file = def.con
   )
   
-  temp_write <- tempfile()
-  def.con <- file(temp_write, open="w")
   cat(
-    paste0("// Source MD5: ", build[["md5"]], "\n"),
-    incl(header_file),
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
     if(mread.env$check_modeled_infusions) {
@@ -533,57 +533,44 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     } else {
       "CHECK_MODELED_INFUSIONS=false;"  
     },
-    # stub, code, defs, model
-    write_block_header(
-      "preamble", 
+    write_block_code(
       preamble_code,
-      rd$param, 
-      build[["model"]]
+      rd$param
     ),
-    preamble_code,
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
-    write_block_header(
-      "main", 
+    write_block_code(
       main_code,
-      c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps),
-      build[["model"]]
-    ),    
-    main_code, 
+      c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps)
+    ),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
-    write_block_header(
-      "ode", 
+    write_block_code(
       ode_code, 
-      c(rd$param, rd$cmt, rd$dxdt, rd$init_const),
-      build[["model"]]
+      c(rd$param, rd$cmt, rd$dxdt, rd$init_const)
     ),
-    ode_code, 
     "__END_ode__",
     "\n// MODELED EVENTS:", 
     "__BEGIN_event__", 
-    write_block_header(
-      "event", 
+    write_block_code(
       event_code, 
-      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps),
-      build[["model"]]
+      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
     ),
-    event_code,
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
-    write_block_header(
-      "table", 
+    write_block_code(
       table_code,
-      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps),
-      build[["model"]]
+      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
     ),
-    table_code,
     "__END_table__",
     "", 
-    sep="\n", file=def.con)
+    sep = "\n", 
+    file = def.con
+  )
+  
   close(def.con)
   
   ## this gets written in soloc
