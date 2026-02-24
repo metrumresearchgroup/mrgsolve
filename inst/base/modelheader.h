@@ -27,11 +27,11 @@ typedef int    local_int;
 typedef bool   local_bool;
 typedef double capture;
 
-#if defined(_MSC_VER)
-  #pragma warning(disable: 4101)
-#elif defined(__GNUC__) || defined(__clang__)
-  #pragma GCC diagnostic ignored "-Wunused-variable"
-#endif
+// #if defined(_MSC_VER)
+//   #pragma warning(disable: 4101)
+// #elif defined(__GNUC__) || defined(__clang__)
+//   #pragma GCC diagnostic ignored "-Wunused-variable"
+// #endif
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct

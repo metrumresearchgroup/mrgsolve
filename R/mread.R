@@ -502,6 +502,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     sep="\n", file = header_file)
   
   ## Write the model code to temporary file
+  guard_start <- '#include "mrgsolve-unused-variable-start.h"'
+  guard_end   <- '#include "mrgsolve-unused-variable-end.h"'
   temp_write <- tempfile()
   def.con <- file(temp_write, open="w")
   cat(
@@ -514,28 +516,38 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     } else {
       "CHECK_MODELED_INFUSIONS=false;"  
     }, 
+    guard_start,
     rd$param,
+    guard_end,
     spec[["PREAMBLE"]],
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
+    guard_start,
     rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps,
+    guard_end,
     spec[["MAIN"]],
     advtr(x@advan,x@trans),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
+    guard_start,
     rd$param, rd$cmt, rd$dxdt, rd$init_const,
+    guard_end,
     spec[["ODE"]], 
     "__END_ode__",
     "\n// MODELED EVENTS:", 
     "__BEGIN_event__", 
+    guard_start,
     rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps,
+    guard_end,
     spec[["EVENT"]],
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
+    guard_start,
     rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps,
+    guard_end,
     table,
     spec[["PRED"]],
     write_capture(names(x@capture)),
