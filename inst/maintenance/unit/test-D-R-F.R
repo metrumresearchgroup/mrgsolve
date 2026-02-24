@@ -293,11 +293,11 @@ test_that("Detect dosing compartments", {
   mod <- mcode("test-detect-dosing", code, compile = FALSE)
   f <- list.files(
     dirname(mod@shlib$source), 
-    pattern = "header", 
+    pattern = "source", 
     full.names = TRUE
   )
   txt <- readLines(f)
-  expect_match(txt, "define F_ABS_RAPID_FORM2", all = FALSE)
+  expect_match(txt, "double& F_ABS_RAPID_FORM2", all = FALSE, fixed = TRUE)
 })
 
 test_that("Error when D_CMT > 0 and is not -2", {

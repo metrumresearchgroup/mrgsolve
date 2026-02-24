@@ -52,6 +52,9 @@ typedef double localdouble;
 #define EKOUT _xETA(4)
 #define EXPO _xEPS(1)
 
+////////////////////////////////////////////////////////////////////////////////
+// START MODEL CODE housemodel
+////////////////////////////////////////////////////////////////////////////////
 
 // PREAMBLE CODE BLOCK:
 __BEGIN_config__
@@ -90,6 +93,7 @@ double& D_CENT = _D_[1];
 double& ALAG_GUT = _ALAG_[0];
 double& ALAG_CENT = _ALAG_[1];
 MRGSOLVE_WARN_UNUSED_VAR_YES
+////////////////////////////////////////////////////////////////////////////////
 F_GUT = F1;
 D_CENT = D1;
 CLi   = exp(log(CL)   + WTCL*log(WT/70) + log(SEXCL)*SEX + ECL);
@@ -97,6 +101,7 @@ VCi   = exp(log(VC)   + WTVC*log(WT/70) + log(SEXVC)*SEX + EVC);
 KAi   = exp(log(KA)   + EKA);
 KOUTi = exp(log(KOUT) + EKOUT);
 RESP_0 = KIN/KOUTi;
+////////////////////////////////////////////////////////////////////////////////
 __END_main__
 
 // DIFFERENTIAL EQUATIONS:
@@ -126,9 +131,11 @@ const double& GUT_0 = _A_0_[0];
 const double& CENT_0 = _A_0_[1];
 const double& RESP_0 = _A_0_[2];
 MRGSOLVE_WARN_UNUSED_VAR_YES
+////////////////////////////////////////////////////////////////////////////////
 dxdt_GUT = -KAi*GUT;
 dxdt_CENT = KAi*GUT - (CLi/VCi)*CENT;
 dxdt_RESP = KIN*(1-INH) - KOUTi*RESP;
+////////////////////////////////////////////////////////////////////////////////
 __END_ode__
 
 // MODELED EVENTS:
@@ -167,8 +174,9 @@ const double& D_CENT = _D_[1];
 const double& ALAG_GUT = _ALAG_[0];
 const double& ALAG_CENT = _ALAG_[1];
 MRGSOLVE_WARN_UNUSED_VAR_YES
+////////////////////////////////////////////////////////////////////////////////
 DV = CP*exp(EXPO);
 _capture_[0] = DV;
 _capture_[1] = CP;
+////////////////////////////////////////////////////////////////////////////////
 __END_table__
-

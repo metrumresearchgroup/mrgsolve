@@ -114,8 +114,8 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   eps <- generate_matrix_label_rd(smat(x))
   
   tokens <- lapply(ans, strsplit, split = " ")
-  tokens <- unlist(lapply(tokens, \(x) {lapply(x, "[[", 1L)}), use.names = FALSE)
-  ans$tokens <- tokens
+  tokens <- lapply(tokens, function(x) {lapply(x, "[[", 1L)})
+  ans$tokens <- unlist(tokens, use.names = FALSE)
   
   # const double reference
   make_ref <- c("init", "dxdt", "frda")

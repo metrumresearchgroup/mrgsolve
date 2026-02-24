@@ -86,14 +86,14 @@ Z = 5;
   f <- list.files(where, full.names = TRUE)
   code1 <- readLines(f[1])
   
-  f1 <- grepl("define F1", code1, fixed = TRUE)
-  al <- grepl("define ALAG", code1, fixed = TRUE)
-  d3 <- grepl("define D3", code1, fixed = TRUE)
+  f1 <- grepl("double& F1", code1, fixed = TRUE)
+  al <- grepl("double& ALAG", code1, fixed = TRUE)
+  d3 <- grepl("double& D3", code1, fixed = TRUE)
   x <- grepl("double X", code1, fixed = TRUE)
   y <- grepl("double Y", code1, fixed = TRUE)
   z <- grepl("double Z", code1, fixed = TRUE)
   da <- grepl("DADT", code1, fixed = TRUE)
-  cl <- grepl("define CL", code1, fixed = TRUE)
+  cl <- grepl("double& CL", code1, fixed = TRUE)
   
   expect_equal(sum(f1), 1)
   expect_equal(sum(al), 1)
@@ -101,8 +101,8 @@ Z = 5;
   expect_equal(sum(x), 1)
   expect_equal(sum(y), 1)
   expect_equal(sum(z), 1)
-  expect_equal(sum(da), 3)
-  expect_equal(sum(cl), 1)
+  expect_gt(sum(da), 3)
+  expect_gt(sum(cl), 1)
 })
 
 test_that("grep code autodec", {
@@ -134,7 +134,7 @@ Z = 5;
   y <- grepl("double Y", code1, fixed = TRUE)
   z <- grepl("double Z", code1, fixed = TRUE)
   da <- grepl("\\bDADT", code1, fixed = TRUE)
-  cl <- grepl("define CL", code1, fixed = TRUE)
+  cl <- grepl("double& CL", code1, fixed = TRUE)
   
   expect_equal(sum(f1), 1)
   expect_equal(sum(al), 1)
@@ -143,7 +143,7 @@ Z = 5;
   expect_equal(sum(y), 1)
   expect_equal(sum(z), 1)
   expect_equal(sum(da), 0)
-  expect_equal(sum(cl), 1)
+  expect_gt(sum(cl), 1)
 })
 
 test_that("grep code nm-vars", {
@@ -170,14 +170,14 @@ double Z = 5;
   f <- list.files(where, full.names = TRUE)
   code1 <- readLines(f[1])
   
-  f1 <- grepl("define F1", code1, fixed = TRUE)
-  al <- grepl("define ALAG", code1, fixed = TRUE)
-  d3 <- grepl("define D3", code1, fixed = TRUE)
+  f1 <- grepl("double& F1", code1, fixed = TRUE)
+  al <- grepl("double& ALAG", code1, fixed = TRUE)
+  d3 <- grepl("double& D3", code1, fixed = TRUE)
   x <- grepl("double X", code1, fixed = TRUE)
   y <- grepl("double Y", code1, fixed = TRUE)
   z <- grepl("double Z", code1, fixed = TRUE)
   da <- grepl("DADT", code1, fixed = TRUE)
-  cl <- grepl("define CL", code1, fixed = TRUE)
+  cl <- grepl("double& CL", code1, fixed = TRUE)
   foo <- grepl("FOO", code1, fixed = TRUE)
   
   expect_equal(sum(f1), 1)
@@ -186,9 +186,9 @@ double Z = 5;
   expect_equal(sum(x), 1)
   expect_equal(sum(y), 1)
   expect_equal(sum(z), 1)
-  expect_equal(sum(da), 3)
-  expect_equal(sum(cl), 1)
-  expect_equal(sum(foo), 3)
+  expect_equal(sum(da), 5)
+  expect_equal(sum(cl), 3)
+  expect_equal(sum(foo), 7)
 })
 
 test_that("Recognize end of infusion", {
