@@ -488,6 +488,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   )
   
   incl <- function(x) paste0('#include "', x, '"')
+  cpp_separator <- paste0(rep("/", 80), collapse = "")
   
   temp_write <- tempfile()
   def.con <- file(temp_write, open = "w")
@@ -504,7 +505,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// MODEL HEADER FILES:",
     incl("mrgsolv.h"), 
     incl("modelheader.h"),
-    "\n// INCLUDE databox functions:",
+    "\n// INCLUDE databox FUNCTIONS:",
     incl("databox_cpp.h"),
     "\n// USING plugins:",
     plugin_using(plugin),
@@ -512,20 +513,23 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     form_includes(spec[["INCLUDE"]]),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
-    "// DECLARED BY USER", 
+    "// DECLARED BY USER:", 
     mread.env[["global"]],
-    "// DECLARED VIA AUTODEC",
+    "// DECLARED VIA AUTODEC:",
     mread.env[["autodec"]],
     "\n// GLOBAL START USER CODE:",
     spec[["GLOBAL"]],
     "\n// DEFS:",
     rd$global,
-    "",
     sep = "\n", 
     file = def.con
   )
   
   cat(
+    "", 
+    cpp_separator,
+    paste0("// START MODEL CODE ", build[["model"]]),
+    cpp_separator,
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
     if(mread.env$check_modeled_infusions) {
@@ -566,7 +570,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
     ),
     "__END_table__",
-    "", 
     sep = "\n", 
     file = def.con
   )
