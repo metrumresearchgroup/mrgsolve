@@ -234,19 +234,33 @@ test_that("individual row counters work with PRED model", {
 
 # https://github.com/metrumresearchgroup/mrgsolve/pull/1323
 code_counter_update_on_output <- '
-$preamble capture total1 = 0; capture total2 = 0;
-$main self.mtime(12);
+$preamble 
+capture total1 = 0; capture total2 = 0;
+capture total3 = 0; capture total4 = 0; 
+capture total5 = 0;
+
+$main 
+self.mtime(1.2); self.mtime(2.9); 
+self.mtime(11); self.mtime(12); self.mtime(24);
+
 $table 
 if(self.rown+1==self.nrow) ++total1;
 if(self.nid==self.idn+1 && self.irown+1 == self.inrow) ++total2;
+
+if(FINAL_ROW)  ++total3;
+if(FINAL_IROW) ++total4;
+
+if(self.irown+1==self.inrow) ++total5;
+
 capture rown = self.rown;
 capture nrow = self.nrow;
 capture irown = self.irown;
 capture inrow = self.inrow;
 '
 
+mod <- mcode("counter-update-on-output", code_counter_update_on_output)
+
 test_that("row counters are only updated on output records gh-1323", {
-  mod <- mcode("counter-update-on-output", code_counter_update_on_output)
   data <- expand.ev(amt = 0, cmt = 0, ID = 1:2)
   out <- mrgsim(mod, data = data, end = 24, delta = 24)
   expect_equal(nrow(out), 6)
@@ -263,7 +277,47 @@ test_that("row counters are only updated on output records gh-1323", {
   expect_equal(out$total1[6], 1)
   expect_equal(out$total2[6], 1);
   
+  # Macros
+  expect_equal(out$total1, out$total3)
+  expect_equal(out$total4, out$total4)
 })
 
+test_that("more row counter macros gh-1327", {
+  data1 <- ev(amt = 0, cmt = 1, ID = 1)
+  data2 <- ev(amt = 0, cmt = 1, ID = 2)
+  
+  data1 <- expand_observations(data1, times = 1:5)
+  data2 <- expand_observations(data2, times = 1:8)
+  
+  data <- rbind(data1, data2)
+  data$cmt <- 0
+  
+  out <- mrgsim_df(mod, data = data)
+  expect_equal(nrow(out), nrow(data))
+  
+  out1 <- subset(out, ID==1)
+  
+  expect_equal(nrow(out1), 6)
+  expect_true(all(out1$inrow==6))
+  expect_equal(out1$rown, out1$irown)
+  expect_equal(out1$total4[6], 1)
+  expect_equal(out1$total4, out1$total5)
+  expect_equal(out1$irown, seq(6)-1)
+  
+  expect_true(all(out1$total1==0))
+  expect_true(all(out1$total3==0))
+  
+  out2 <- subset(out, ID==2)
+  expect_equal(nrow(out2), 9)
+  expect_true(all(out2$inrow==9))
+  expect_equal(out2$rown-6, out2$irown)
+  expect_equal(out2$total3[9], 1)
+  expect_equal(out2$total4, out2$total5)
+  expect_equal(out2$irown, seq(9)-1)
+  
+  expect_true(all(out2$total4[1:8]==1))
+})
+
+rm(mod)
 rm(code_test_rown_nrow, code_test_rown_nrow_pred)
 rm(code_counter_update_on_output)
