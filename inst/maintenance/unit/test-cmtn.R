@@ -21,6 +21,23 @@ test_that("Get compartment numbers by $CMTN", {
 })
 
 code <- '
+$GLOBAL int m = 11;
+$CMT A B C D Z
+$CMTN A Z
+$CAPTURE N_Z N_A m
+'
+
+test_that("Get compartment numbers by $CMTN with global", {
+  mod <- mcode("test-cmtn-1b", code)
+  expect_is(mod, "mrgmod")
+  out <- mrgsim(mod)
+  expect_all_equal(out$N_Z, 5)
+  expect_all_equal(out$N_A, 1)
+  expect_all_equal(out$m, 11);
+})
+
+
+code <- '
 $CMT A B C D Z
 $PLUGIN N_CMT
 $CAPTURE N_A N_B N_C N_D N_Z

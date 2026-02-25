@@ -446,8 +446,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["source"]] <- file.path(build[["soloc"]],build[["compfile"]])
   x@shlib[["md5"]] <- build[["md5"]]
   x@shlib[["call_event"]] <- "EVENT" %in% names(spec)
-  x@shlib[["rd"]] <- rd
-  
+
   # build----
   # In soloc directory
   cwd <- getwd()
@@ -561,7 +560,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   )
   
   close(def.con)
-  
+
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)
