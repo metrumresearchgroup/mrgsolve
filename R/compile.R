@@ -17,12 +17,19 @@
 
 # Write variable defs and block code
 write_block_code <- function(code, defs, force = FALSE) {
-  if(!length(code) && !isTRUE(force)) return(NULL)
-  q <- '"'
-  start <- "MRGSOLVE_WARN_UNUSED_VAR_NO"
-  end <- "MRGSOLVE_WARN_UNUSED_VAR_YES"
-  sep <- paste0(rep("/", 80), collapse = "")
-  return(c(start, defs, end, sep, code, sep))
+  if(!length(code) && !isTRUE(force)) {
+    return(NULL)
+  }
+  if(length(defs)) {
+    start <- "MRGSOLVE_WARN_UNUSED_VAR_NO"
+    end <- "MRGSOLVE_WARN_UNUSED_VAR_YES"
+    defs <- c(start, defs, end)
+  }
+  if(length(code)) {
+    sep <- paste0(rep("/", 80), collapse = "")
+    code <- c(sep, code, sep)  
+  }
+  return(c(defs, code))
 }
 
 # Get the labels out of omega or sigma matrixlist object
