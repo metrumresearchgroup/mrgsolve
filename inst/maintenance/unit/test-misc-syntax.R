@@ -214,3 +214,4 @@ $CAPTURE count
   out3 <- mrgsim(mod, ev(amt = 100, tinf=100), obsonly = TRUE)
   expect_true(all(out3$count==0))
 })
+
