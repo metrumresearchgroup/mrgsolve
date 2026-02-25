@@ -65,7 +65,9 @@ find_nm_vars_impl <- function(code) {
 }
 
 generate_nmdefs <- function(x, rd) {
-  if(isFALSE(x[["found_frda"]])) return(NULL)
+  if(isFALSE(x[["found_frda"]])) {
+    return(rd)
+  }
   frda <- paste0(
     x[["frda"]][["match"]],
     " = ", 

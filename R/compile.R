@@ -16,8 +16,8 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 # Write variable defs and block code
-write_block_code <- function(code, defs) {
-  if(!length(code)) return(NULL)
+write_block_code <- function(code, defs, force = FALSE) {
+  if(!length(code) && !isTRUE(force)) return(NULL)
   q <- '"'
   start <- "MRGSOLVE_WARN_UNUSED_VAR_NO"
   end <- "MRGSOLVE_WARN_UNUSED_VAR_YES"
