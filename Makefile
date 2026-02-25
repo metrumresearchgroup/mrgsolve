@@ -28,7 +28,7 @@ package:
 	make pkgdown
 
 check:
-	make cleanup
+	make clean
 	make house
 	make doc
 	make build
@@ -43,7 +43,7 @@ cran: export _MRGSOLVE_SKIP_MODLIB_BUILD_=no
 cran:
 	make house
 	make doc
-	make cleanup
+	make clean
 	make build
 	R CMD CHECK --as-cran ${TARBALL}
 
