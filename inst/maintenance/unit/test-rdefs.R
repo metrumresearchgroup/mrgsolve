@@ -102,4 +102,12 @@ test_that("All blocks get defs", {
   # Just 1 in global
   nn <- sum(grepl("N_CMTA =", raw, fixed = TRUE))
   expect_equal(nn, 1)
+  
+  # All 5 plus global
+  warn_no <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
+  expect_equal(warn_no, 6)
+  
+  warn_yes <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
+  expect_equal(warn_yes, 6)
+
 })
