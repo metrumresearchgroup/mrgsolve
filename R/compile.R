@@ -98,17 +98,17 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   if(npar==0) rpars <- NULL
   if(ncmt==0) cmtndef <- rcmt <- rinit <- rdx <- NULL
   
-  ## Note that nm-vars is depending on frda and frda_const; 
+  ## Note that nm-vars is depending on frda 
   ## See generate_nmdefs() in nm-mode.R
   ans <- list()
   ans$global <- character(0)
   ans$param <- rpars
   ans$cmt <- rcmt
   ans$init <- rinit
-  ans$init_const <- rinit
+  ans$init <- rinit
   ans$dxdt <- rdx
   ans$frda <- c(Fdef, Rdef, Ddef, Adef)
-  ans$frda_const <- ans$frda
+  ans$frda <- ans$frda
   ans$cmtn <- cmtndef
   ans$eta <- generate_matrix_label_rd(omat(x))
   ans$eps <- generate_matrix_label_rd(smat(x))
@@ -116,20 +116,7 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   tokens <- lapply(ans, strsplit, split = " ")
   tokens <- lapply(tokens, function(x) {lapply(x, "[[", 1L)})
   ans$tokens <- unlist(tokens, use.names = FALSE)
-  
-  # User can write to these (not const)
-  make_ref <- c("init", "dxdt", "frda")
-  ans[make_ref] <- lapply(ans[make_ref], generate_rdef_ref)
-  
-  # User cannot write to these (const)
-  make_const_ref <- c("param", "cmt", "init_const", "frda_const", "eta", "eps")
-  ans[make_const_ref] <- lapply(ans[make_const_ref], generate_rdef_const_ref)
-  
-  # Global const int numbers
-  if(is.character(cmtn) && length(cmtn)) {
-    ans$cmtn <- generate_rdef_const_int(ans$cmtn)
-  }
-  
+
   ans$defines <- c(
     paste0("#define __INITFUN___ ", init_fun),
     paste0("#define __ODEFUN___ ", func),
@@ -152,6 +139,25 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
 
 # Collections need to match function signatures in inst/base/mrgsolv.h
 arrange_rdefs <- function(rd) {
+  
+  # Copy init and frda so we can make a const variant
+  rd$init_const <- rd$init
+  rd$frda_const <- rd$frda
+  
+  # User can write to these (mutable)
+  mut <- c("init", "dxdt", "frda")
+  rd[mut] <- lapply(rd[mut], generate_rdef_ref)
+  
+  # User cannot write to these (const)
+  const <- c("param", "cmt", "init_const", "frda_const", "eta", "eps")
+  rd[const] <- lapply(rd[const], generate_rdef_const_ref)
+  
+  # Global const int numbers
+  if(is.character(rd$cmtn)) {
+    rd$cmtn <- generate_rdef_const_int(rd$cmtn)
+  }
+  
+  # Now, create collections for each block
   
   # GLOBAL
   rd$global <- rd$cmtn

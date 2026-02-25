@@ -77,8 +77,7 @@ generate_nmdefs <- function(x, rd) {
   )
   rd$nmdfs <- frda
   rd$tokens <- c(rd$tokens, x[["frda"]][["match"]])
-  rd$frda <- c(rd$frda, paste0("double& ", frda))
-  rd$frda_const <- c(rd$frda_const, paste0("const double& ", frda))
+  rd$frda <- c(rd$frda, frda)
   rd
 }
 
