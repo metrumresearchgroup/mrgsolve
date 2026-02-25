@@ -33,6 +33,8 @@ namespace {
 // DECLARED VIA AUTODEC:
 
 // GLOBAL START USER CODE:
+const int N_GUT = 1;
+const int N_CENT = 2;
 #define CP (CENT/VCi)
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
@@ -46,11 +48,6 @@ typedef double localdouble;
 #define __REGISTERFUN___ R_init_housemodel
 #define _nEQ 3
 #define _nPAR 14
-#define ECL _xETA(1)
-#define EVC _xETA(2)
-#define EKA _xETA(3)
-#define EKOUT _xETA(4)
-#define EXPO _xEPS(1)
 
 ////////////////////////////////////////////////////////////////////////////////
 // START MODEL CODE housemodel
@@ -92,6 +89,11 @@ double& D_GUT = _D_[0];
 double& D_CENT = _D_[1];
 double& ALAG_GUT = _ALAG_[0];
 double& ALAG_CENT = _ALAG_[1];
+const double& ECL = self.ETA[0];
+const double& EVC = self.ETA[1];
+const double& EKA = self.ETA[2];
+const double& EKOUT = self.ETA[3];
+const double& EXPO = self.EPS[0];
 MRGSOLVE_WARN_UNUSED_VAR_YES
 ////////////////////////////////////////////////////////////////////////////////
 F_GUT = F1;
@@ -173,6 +175,11 @@ const double& D_GUT = _D_[0];
 const double& D_CENT = _D_[1];
 const double& ALAG_GUT = _ALAG_[0];
 const double& ALAG_CENT = _ALAG_[1];
+const double& ECL = self.ETA[0];
+const double& EVC = self.ETA[1];
+const double& EKA = self.ETA[2];
+const double& EKOUT = self.ETA[3];
+const double& EXPO = self.EPS[0];
 MRGSOLVE_WARN_UNUSED_VAR_YES
 ////////////////////////////////////////////////////////////////////////////////
 DV = CP*exp(EXPO);

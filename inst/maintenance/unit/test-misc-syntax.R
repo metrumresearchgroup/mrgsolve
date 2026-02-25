@@ -95,14 +95,14 @@ Z = 5;
   da <- grepl("DADT", code1, fixed = TRUE)
   cl <- grepl("double& CL", code1, fixed = TRUE)
   
-  expect_equal(sum(f1), 1)
-  expect_equal(sum(al), 1)
-  expect_equal(sum(d3), 1)
+  expect_equal(sum(f1), 2)
+  expect_equal(sum(al), 2)
+  expect_equal(sum(d3), 2)
   expect_equal(sum(x), 1)
   expect_equal(sum(y), 1)
   expect_equal(sum(z), 1)
-  expect_gt(sum(da), 3)
-  expect_gt(sum(cl), 1)
+  expect_equal(sum(da), 5)
+  expect_equal(sum(cl), 3)
 })
 
 test_that("grep code autodec", {
@@ -180,9 +180,9 @@ double Z = 5;
   cl <- grepl("double& CL", code1, fixed = TRUE)
   foo <- grepl("FOO", code1, fixed = TRUE)
   
-  expect_equal(sum(f1), 1)
-  expect_equal(sum(al), 1)
-  expect_equal(sum(d3), 1)
+  expect_equal(sum(f1), 2)
+  expect_equal(sum(al), 2)
+  expect_equal(sum(d3), 2)
   expect_equal(sum(x), 1)
   expect_equal(sum(y), 1)
   expect_equal(sum(z), 1)
