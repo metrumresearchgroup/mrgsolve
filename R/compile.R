@@ -153,7 +153,7 @@ arrange_rdefs <- function(rd) {
   rd[const] <- lapply(rd[const], generate_rdef_const_ref)
   
   # Global const int numbers
-  if(is.character(rd$cmtn)) {
+  if(is.character(rd$cmtn) && length(rd$cmtn)) {
     rd$cmtn <- generate_rdef_const_int(rd$cmtn)
   }
   

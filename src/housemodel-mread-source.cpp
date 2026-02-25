@@ -33,11 +33,15 @@ namespace {
 // DECLARED VIA AUTODEC:
 
 // GLOBAL START USER CODE:
+MRGSOLVE_WARN_UNUSED_VAR_NO
 const int N_GUT = 1;
 const int N_CENT = 2;
+MRGSOLVE_WARN_UNUSED_VAR_YES
+////////////////////////////////////////////////////////////////////////////////
 #define CP (CENT/VCi)
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
+////////////////////////////////////////////////////////////////////////////////
 
 // DEFS:
 #define __INITFUN___ _model_housemodel_main__

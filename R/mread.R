@@ -466,6 +466,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   rd <- arrange_rdefs(rd) 
   
   ## Collect all code to be written to the different blocks
+  global_code <- c(
+    spec[["GLOBAL"]]  
+  )
   preamble_code <- c(
     spec[["PREAMBLE"]]
   )
@@ -516,8 +519,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "// DECLARED VIA AUTODEC:",
     mread.env[["autodec"]],
     "\n// GLOBAL START USER CODE:",
-    rd$global,
-    spec[["GLOBAL"]],
+    write_block_code(global_code, rd$global),
     "\n// DEFS:",
     rd$defines,
     sep = "\n", 
