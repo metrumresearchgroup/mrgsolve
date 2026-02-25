@@ -331,28 +331,19 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   CMTN <- c(spec[["CMTN"]], dosing)
   
   # model r defs ----
-  # These are the various #define statements
-  # that go at the top of the .cpp.cpp file
+  # These are the various #define and alias statements
+  # that go at the top of the .cpp files
+  # rd object will be possibly be modified by generate_nmdefs()
   rd <- generate_rdefs(x, cmtn = CMTN, plugin = plugin)
   
-  # Handle plugins ----
-  # Virtual compartments
-  if("VCMT" %in% names(spec)) {
-    what <- which(names(spec)=="VCMT")
-    vcmt <- unique(names(unlist(mread.env[["init"]][what])))
-    spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
-  }
+  # Plugins ----
   
   # Handle nm-vars plugin; initializing `nmv` to `NULL` here for use in 
   # the audit check later on
-  nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
-    dfs <- generate_nmdefs(nmv)
-    rd$frda <- c(rd$frda, dfs$frda)
-    rd$const_frda <- c(rd$frda_const, dfs$frda_const)
-    rd$tokens <- c(rd$tokens, dfs$tokens)
-    plugin[["nm-vars"]][["nm-def"]] <- dfs
+    rd <- generate_nmdefs(nmv, rd)
+    plugin[["nm-vars"]][["nm-def"]] <- rd$nmdfs
     build[["nm-vars"]] <- nmv
     audit_nm_vars(
       spec,
@@ -362,7 +353,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
       env = mread.env
     )
   }
-  
   # autodec
   if("autodec" %in% names(plugin)) {
     auto_blocks <- c("PREAMBLE", "MAIN", "PRED", "ODE", "TABLE", "EVENT")
@@ -378,7 +368,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     autodec_save(autov, build, mread.env)
     mread.env[["autodec"]] <- autodec_namespace(build, mread.env)
   }
-  
   # Rcpp
   if("Rcpp" %in% names(plugin)) {
     spec <- global_rcpp(spec)
@@ -390,9 +379,14 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
     spec[["GLOBAL"]] <-   c(toglob, spec[["GLOBAL"]])
   }
+  # Virtual compartments
+  if("VCMT" %in% names(spec)) {
+    what <- which(names(spec)=="VCMT")
+    vcmt <- unique(names(unlist(mread.env[["init"]][what])))
+    spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
+  }
   
   # more captures ----
-  
   # Process @etas 1:n -----
   x <- capture_etas(x, mread.env)
   
@@ -466,8 +460,11 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     setwd(cwd)
     do_restore(to_restore)
   })
+
+  # Group rdefs for output; see compile.R
+  rd <- arrange_rdefs(rd) 
   
-  ## Write the model code to temporary file
+  ## Collect all code to be written to the different blocks
   preamble_code <- c(
     spec[["PREAMBLE"]]
   )
@@ -518,9 +515,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "// DECLARED VIA AUTODEC:",
     mread.env[["autodec"]],
     "\n// GLOBAL START USER CODE:",
+    rd$global,
     spec[["GLOBAL"]],
     "\n// DEFS:",
-    rd$global,
+    rd$defines,
     sep = "\n", 
     file = def.con
   )
@@ -537,38 +535,23 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     } else {
       "CHECK_MODELED_INFUSIONS=false;"  
     },
-    write_block_code(
-      preamble_code,
-      rd$param
-    ),
+    write_block_code(preamble_code, rd$preamble),
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
-    write_block_code(
-      main_code,
-      c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps)
-    ),
+    write_block_code(main_code, rd$main),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
-    write_block_code(
-      ode_code, 
-      c(rd$param, rd$cmt, rd$dxdt, rd$init_const)
-    ),
+    write_block_code(ode_code, rd$ode),
     "__END_ode__",
     "\n// MODELED EVENTS:", 
     "__BEGIN_event__", 
-    write_block_code(
-      event_code, 
-      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
-    ),
+    write_block_code(event_code, rd$event),
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
-    write_block_code(
-      table_code,
-      c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
-    ),
+    write_block_code(table_code, rd$table),
     "__END_table__",
     sep = "\n", 
     file = def.con

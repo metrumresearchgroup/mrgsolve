@@ -64,7 +64,7 @@ find_nm_vars_impl <- function(code) {
   m
 }
 
-generate_nmdefs <- function(x) {
+generate_nmdefs <- function(x, rd) {
   if(isFALSE(x[["found_frda"]])) return(NULL)
   frda <- paste0(
     x[["frda"]][["match"]],
@@ -75,15 +75,11 @@ generate_nmdefs <- function(x) {
     x[["frda"]][["cmt"]] - 1, 
     "];"
   )
-  tokens <- x[["frda"]][["match"]]
-  const <- paste0("const double& ", frda)
-  nonconst <- paste0("double& ", frda)
-  ans <- list(
-    frda = nonconst,
-    frda_const = const,
-    tokens = x[["frda"]][["match"]]
-  )
-  ans
+  rd$nmdfs <- frda
+  rd$tokens <- c(rd$tokens, x[["frda"]][["match"]])
+  rd$frda <- c(rd$frda, paste0("double& ", frda))
+  rd$frda_const <- c(rd$frda_const, paste0("const double& ", frda))
+  rd
 }
 
 any_nm_vars <- function(x) {

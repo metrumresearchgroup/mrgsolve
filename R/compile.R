@@ -35,7 +35,7 @@ generate_matrix_label_rd <- function(obj) {
     stopifnot(length(index)==length(lab))
     which <- lab != "."
     if(sum(which) > 0) {
-      lab <- paste0("#define ", lab[which], " _x", prefix, "(",index[which],")")
+      lab <- paste0(lab[which], " = self.", prefix, "[", index[which]-1,"];")
     } else {
       lab <- NULL
     }
@@ -53,9 +53,9 @@ generate_rdef_const_ref <- function(x) {
   paste0("const double& ", x)
 }
 
-generate_rdef_const <- function(x) {
+generate_rdef_const_int <- function(x) {
   if(!is.character(x)) return(x)
-  paste0("const double ", x)
+  paste0("const int ", x)
 }
 
 generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
@@ -80,7 +80,6 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   rdx   <- paste0("dxdt_", cmts, " = _DADT_[", icmt, "];")
   
   Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
-  etal <- epsl <- NULL
   
   cmtn <- unique(intersect(cvec_cs(cmtn), cmts))
   
@@ -99,6 +98,8 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   if(npar==0) rpars <- NULL
   if(ncmt==0) cmtndef <- rcmt <- rinit <- rdx <- NULL
   
+  ## Note that nm-vars is depending on frda and frda_const; 
+  ## See generate_nmdefs() in nm-mode.R
   ans <- list()
   ans$global <- character(0)
   ans$param <- rpars
@@ -109,26 +110,27 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$frda <- c(Fdef, Rdef, Ddef, Adef)
   ans$frda_const <- ans$frda
   ans$cmtn <- cmtndef
-  
-  eta <- generate_matrix_label_rd(omat(x))
-  eps <- generate_matrix_label_rd(smat(x))
-  
+  ans$eta <- generate_matrix_label_rd(omat(x))
+  ans$eps <- generate_matrix_label_rd(smat(x))
+
   tokens <- lapply(ans, strsplit, split = " ")
   tokens <- lapply(tokens, function(x) {lapply(x, "[[", 1L)})
   ans$tokens <- unlist(tokens, use.names = FALSE)
   
-  # const double reference
+  # User can write to these (not const)
   make_ref <- c("init", "dxdt", "frda")
   ans[make_ref] <- lapply(ans[make_ref], generate_rdef_ref)
   
-  make_const_ref <- c("param", "cmt", "init_const", "frda_const")
+  # User cannot write to these (const)
+  make_const_ref <- c("param", "cmt", "init_const", "frda_const", "eta", "eps")
   ans[make_const_ref] <- lapply(ans[make_const_ref], generate_rdef_const_ref)
   
-  if(!is.character(cmtn)) {
-    ans$cmtn <- generate_rdef_const(ans$cmtn)
+  # Global const int numbers
+  if(is.character(cmtn) && length(cmtn)) {
+    ans$cmtn <- generate_rdef_const_int(ans$cmtn)
   }
   
-  ans$global <- c(
+  ans$defines <- c(
     paste0("#define __INITFUN___ ", init_fun),
     paste0("#define __ODEFUN___ ", func),
     paste0("#define __TABLECODE___ ", table_fun),
@@ -136,11 +138,9 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
     paste0("#define __CONFIGFUN___ ", config_fun),
     paste0("#define __REGISTERFUN___ ", register_fun(model)),
     paste0("#define _nEQ ", ncmt),
-    paste0("#define _nPAR ", npar), 
-    eta, 
-    eps
+    paste0("#define _nPAR ", npar)
   )
-
+  
   discard <- sapply(ans, is.null)
   
   if(any(discard)) {
@@ -148,6 +148,30 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   }
   
   ans
+}
+
+# Collections need to match function signatures in inst/base/mrgsolv.h
+arrange_rdefs <- function(rd) {
+  
+  # GLOBAL
+  rd$global <- rd$cmtn
+  
+  # PREAMBLE
+  rd$preamble <- rd$param
+  
+  # MAIN
+  rd$main <- c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps)
+  
+  # ODE
+  rd$ode <- c(rd$param, rd$cmt, rd$dxdt, rd$init_const)
+  
+  # TABLE
+  rd$table <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
+  
+  # EVENT
+  rd$event <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
+  
+  rd
 }
 
 relocate_funs <- function(x,PACKAGE) {
