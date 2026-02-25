@@ -60,3 +60,46 @@ test_that("CMT_0 is mutable in MAIN", {
   a <- mtry("cmt-0-main", codex, recover = TRUE)
   expect_is(a, "mrgmod")
 })
+
+code <- '
+$PARAM PARAMX = 1
+$CMT CMTA
+$PLUGIN N_CMT
+$PREAMBLE a = 1
+$MAIN b = 2
+$ODE @!audit
+c = 3
+$EVENT d = 4
+$TABLE e = 5
+'
+
+test_that("All blocks get defs", {
+  mod <- mcode("all-blocks-defs", code, compile = FALSE)
+  raw <- readLines(mod@shlib$source)
+  
+  # All 5
+  npar <- sum(grepl("PARAMX", raw))
+  expect_equal(npar, 5)
+  
+  # Just 4 - not preamble
+  ncmt <- sum(grepl(" CMTA =", raw, fixed = TRUE))
+  expect_equal(ncmt, 4)
+  
+  # Just 4 - not preamble
+  ninit <- sum(grepl(" CMTA_0 =", raw, fixed = TRUE))
+  expect_equal(ninit, 4)
+  
+  # Just 3 - not preamble or ode
+  nf <- sum(grepl(" F_CMTA =", raw, fixed = TRUE))
+  expect_equal(nf, 3)
+  nr <- sum(grepl(" R_CMTA =", raw, fixed = TRUE))
+  expect_equal(nr, 3)
+  nd <- sum(grepl(" D_CMTA =", raw, fixed = TRUE))
+  expect_equal(nd, 3)
+  na <- sum(grepl(" ALAG_CMTA =", raw, fixed = TRUE))
+  expect_equal(na, 3)
+  
+  # Just 1 in global
+  nn <- sum(grepl("N_CMTA =", raw, fixed = TRUE))
+  expect_equal(nn, 1)
+})
