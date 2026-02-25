@@ -4,7 +4,6 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-
 context("test-cmtn")
 
 code <- '
@@ -37,7 +36,6 @@ test_that("Get compartment numbers by N_CMT plugin", {
   expect_equal(check, seq(5))
 })
 
-
 code <- '
 $CMT A B C D Z
 $MAIN 
@@ -53,4 +51,3 @@ test_that("Get compartment numbers by FRDA", {
   expect_all_equal(out$N_B, 2)
   expect_all_equal(out$N_D, 4)
 })
-
