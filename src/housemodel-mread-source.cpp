@@ -33,15 +33,9 @@ namespace {
 // DECLARED VIA AUTODEC:
 
 // GLOBAL START USER CODE:
-MRGSOLVE_WARN_UNUSED_VAR_NO
-const int N_GUT = 1;
-const int N_CENT = 2;
-MRGSOLVE_WARN_UNUSED_VAR_YES
-////////////////////////////////////////////////////////////////////////////////
 #define CP (CENT/VCi)
 #define INH (CP/(IC50+CP))
 typedef double localdouble;
-////////////////////////////////////////////////////////////////////////////////
 
 // DEFS:
 #define __INITFUN___ _model_housemodel_main__
@@ -98,6 +92,8 @@ const double& EVC = self.ETA[1];
 const double& EKA = self.ETA[2];
 const double& EKOUT = self.ETA[3];
 const double& EXPO = self.EPS[0];
+constexpr int N_GUT = 1;
+constexpr int N_CENT = 2;
 MRGSOLVE_WARN_UNUSED_VAR_YES
 ////////////////////////////////////////////////////////////////////////////////
 F_GUT = F1;
@@ -136,6 +132,8 @@ double& dxdt_RESP = _DADT_[2];
 const double& GUT_0 = _A_0_[0];
 const double& CENT_0 = _A_0_[1];
 const double& RESP_0 = _A_0_[2];
+constexpr int N_GUT = 1;
+constexpr int N_CENT = 2;
 MRGSOLVE_WARN_UNUSED_VAR_YES
 ////////////////////////////////////////////////////////////////////////////////
 dxdt_GUT = -KAi*GUT;
@@ -184,6 +182,8 @@ const double& EVC = self.ETA[1];
 const double& EKA = self.ETA[2];
 const double& EKOUT = self.ETA[3];
 const double& EXPO = self.EPS[0];
+constexpr int N_GUT = 1;
+constexpr int N_CENT = 2;
 MRGSOLVE_WARN_UNUSED_VAR_YES
 ////////////////////////////////////////////////////////////////////////////////
 DV = CP*exp(EXPO);

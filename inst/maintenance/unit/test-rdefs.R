@@ -99,16 +99,16 @@ test_that("All blocks get defs", {
   na <- sum(grepl(" ALAG_CMTA =", raw, fixed = TRUE))
   expect_equal(na, 3)
   
-  # Just 1 in global
+  # All 5
   nn <- sum(grepl("N_CMTA =", raw, fixed = TRUE))
-  expect_equal(nn, 1)
+  expect_equal(nn, 5)
   
-  # All 5 plus global
+  # All 5 
   warn_no <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
-  expect_equal(warn_no, 6)
+  expect_equal(warn_no, 5)
   
   warn_yes <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
-  expect_equal(warn_yes, 6)
+  expect_equal(warn_yes, 5)
 
 })
 
@@ -148,15 +148,15 @@ test_that("Blocks get populated using nm-vars ", {
   nr <- sum(grepl(" D2 =", raw, fixed = TRUE))
   expect_equal(nr, 3 + 1)
 
-  # Just 1 in global
+  # All 5
   nn <- sum(grepl("N_A1 =", raw, fixed = TRUE))
-  expect_equal(nn, 1)
+  expect_equal(nn, 5)
   
-  # All 5 plus global
+  # All 5 
   warn_no <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
-  expect_equal(warn_no, 6)
+  expect_equal(warn_no, 5)
   
   warn_yes <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
-  expect_equal(warn_yes, 6)
+  expect_equal(warn_yes, 5)
   
 })

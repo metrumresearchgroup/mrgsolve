@@ -64,7 +64,7 @@ generate_rdef_const_ref <- function(x) {
 
 generate_rdef_const_int <- function(x) {
   if(!is.character(x)) return(x)
-  paste0("const int ", x)
+  paste0("constexpr int ", x)
 }
 
 generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
@@ -169,22 +169,22 @@ arrange_rdefs <- function(rd) {
   # Now, create collections for each block
   
   # GLOBAL
-  rd$global <- rd$cmtn
+  rd$global <- NULL
   
   # PREAMBLE
-  rd$preamble <- rd$param
+  rd$preamble <- c(rd$param, rd$cmtn)
   
   # MAIN
-  rd$main <- c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps)
+  rd$main <- c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps, rd$cmtn)
   
   # ODE
-  rd$ode <- c(rd$param, rd$cmt, rd$dxdt, rd$init_const)
+  rd$ode <- c(rd$param, rd$cmt, rd$dxdt, rd$init_const, rd$cmtn)
   
   # TABLE
-  rd$table <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
+  rd$table <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps, rd$cmtn)
   
   # EVENT
-  rd$event <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps)
+  rd$event <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps, rd$cmtn)
   
   rd
 }
