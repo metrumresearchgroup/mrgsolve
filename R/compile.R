@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,115 +15,183 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-generate_rdefs <- function(pars,
-                           cmt,
-                           func = "",
-                           init_fun = "",
-                           table_fun = "",
-                           event_fun = "",
-                           config_fun = "",
-                           model = "",
-                           omats,
-                           smats,
-                           cmtn = NULL, 
-                           plugin = NULL,
-                           dbsyms = FALSE, ...) {
-
-    npar <- length(pars)
-    ncmt <- length(cmt)
-
-    dxdt <- paste0("dxdt_",cmt)
-    init <- paste0(cmt, "_0")
-
-    cmtindex <- seq_along(cmt)-1L
-    parsindex <- seq_along(pars)-1L
-
-    cmtdef <-  paste0("#define ", cmt,  " _A_[",    cmtindex,"]")
-    initdef <- paste0("#define ", init, " _A_0_[",  cmtindex,"]")
-    dxdef <-   paste0("#define ", dxdt, " _DADT_[", cmtindex,"]")
-    pardef <-  paste0("#define ", pars, " _THETA_[",parsindex,"]")
-
-    if(isTRUE(dbsyms)) cmtdef <- dxdef <- NULL
-    
-    etal <- epsl <- NULL
-
-    if(sum(nrow(omats)) > 0) {
-        etai <- seq_len(sum(nrow(omats)))
-        etal <- unlist(omats@labels,use.names=FALSE)
-        stopifnot(length(etai)==length(etal))
-        which <- etal != "."
-        if(sum(which) > 0) {
-            etal <- paste0("#define ", etal[which], " _xETA(",etai[which],")")
-        } else {
-            etal <- NULL
-        }
-    }
-
-    if(sum(nrow(smats)) > 0) {
-        epsi <- seq_len(sum(nrow(smats)))
-        epsl <- unlist(smats@labels,use.names=FALSE)
-        stopifnot(length(epsi)==length(epsl))
-        which <- epsl != "."
-        if(sum(which) > 0) {
-            epsl <- paste0("#define ", epsl[which], " _xEPS(",epsi[which],")")
-        } else {
-            epsl <- NULL
-        }
-    }
-
-    Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
-
-    cmtn <- unique(intersect(cvec_cs(cmtn),cmt))
-    
-    # Handle plugins; note plugin[["nm-defs"]] are punched in below     
-    if(!is.null(plugin[["N_CMT"]])) cmtn <- cmt  
-
-    if(length(cmtn) > 0) {
-        cmtnindex <- match(cmtn,cmt)-1
-        cmtndef <- paste0("#define ", paste0("N_", cmtn), " ", cmtnindex+1)
-        Fdef <- paste0("#define ", paste0("F_",cmtn), " _F_[",cmtnindex,"]")
-        Adef <- paste0("#define ", paste0("ALAG_",cmtn), " _ALAG_[",cmtnindex,"]")
-        Ddef <- paste0("#define ", paste0("D_",cmtn), " _D_[",cmtnindex,"]")
-        Rdef <- paste0("#define ", paste0("R_",cmtn), " _R_[",cmtnindex,"]")
-    }
-
-    if(npar==0) pardef <- NULL
-    if(ncmt==0) cmtdef <- initdef <- dxdef <- NULL
-
-    return(
-        c(paste0("#define __INITFUN___ ",init_fun),
-          paste0("#define __ODEFUN___ ",func),
-          paste0("#define __TABLECODE___ ", table_fun),
-          paste0("#define __EVENTFUN___ ", event_fun), 
-          paste0("#define __CONFIGFUN___ ", config_fun),
-          paste0("#define __REGISTERFUN___ ", register_fun(model)),
-          paste0("#define _nEQ ", ncmt),
-          paste0("#define _nPAR ", npar),
-          cmtndef,
-          Fdef,
-          Adef,
-          Rdef,
-          Ddef,
-          initdef,
-          cmtdef,
-          dxdef,
-          pardef,
-          etal,
-          epsl
-          )
-        )
+# Wrap definitions to suppress unused variable warnings
+silence_unused_var <- function(defs) {
+  if(!length(defs)) return(defs)
+  start <- "MRGSOLVE_WARN_UNUSED_VAR_NO"
+  end <- "MRGSOLVE_WARN_UNUSED_VAR_YES"
+  c(start, defs, end)
 }
 
-debug_symbols <- function(cmt) {
-  cmts <- seq_along(cmt)
-  sym1 <- paste0("const double& ", cmt, " = _A_[", cmts-1, "];")
-  sym2 <- paste0("double& dxdt_", cmt, " = _DADT_[", cmts-1, "];")
-  list(cmt = sym1, ode=c(sym1,sym2))
+# Write variable defs and block code
+write_block_code <- function(code, defs = NULL) {
+  if(!length(code)) {
+    return(NULL)
+  }
+  defs <- silence_unused_var(defs)
+  sep <- paste0(rep("/", 80), collapse = "")
+  code <- c(sep, code, sep)  
+  return(c(defs, code))
+}
+
+# Get the labels out of omega or sigma matrixlist object
+generate_matrix_label_rd <- function(obj) {
+  lab <- NULL
+  prefix <- ifelse(inherits(obj, "omegalist"), "ETA", "EPS")
+  if(sum(nrow(obj)) > 0) {
+    index <- seq_len(sum(nrow(obj)))
+    lab <- unlist(obj@labels, use.names = FALSE)
+    stopifnot(length(index)==length(lab))
+    which <- lab != "."
+    if(sum(which) > 0) {
+      lab <- paste0(lab[which], " = self.", prefix, "[", index[which]-1,"];")
+    } else {
+      lab <- NULL
+    }
+  } 
+  lab
+}
+
+generate_rdef_ref <- function(x) {
+  if(!is.character(x)) return(x)
+  paste0("double& ", x)
+}
+
+generate_rdef_const_ref <- function(x) {
+  if(!is.character(x)) return(x)
+  paste0("const double& ", x)
+}
+
+generate_rdef_const_int <- function(x) {
+  if(!is.character(x)) return(x)
+  paste0("constexpr int ", x)
+}
+
+generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
+  
+  func <- ode_func(x)
+  init_fun <- main_func(x)
+  table_fun <- table_func(x)
+  event_fun <- event_func(x)
+  config_fun <- config_func(x)
+  model <- model(x)
+  
+  pars <- Pars(x)
+  cmts <- Cmt(x)
+  ncmt <- length(cmts)
+  npar <- length(pars)
+  ipar <- seq(npar)-1
+  icmt <- seq(ncmt)-1
+  
+  rpars <- paste0(pars, " = _THETA_[", ipar, "];")
+  rcmt  <- paste0(cmts, " = _A_[", icmt, "];")
+  rinit <- paste0(cmts, "_0 = _A_0_[", icmt, "];")
+  rdx   <- paste0("dxdt_", cmts, " = _DADT_[", icmt, "];")
+  
+  Fdef <- Adef <- Ddef <- Rdef <- cmtndef <- NULL
+  
+  cmtn <- unique(intersect(cvec_cs(cmtn), cmts))
+  
+  # Using the N_CMT plugin gives you _all_ compartments
+  if(!is.null(plugin[["N_CMT"]])) cmtn <- cmts  
+  
+  if(length(cmtn) > 0 && length(cmts) > 0) {
+    cmtnindex <- match(cmtn, cmts)-1
+    cmtndef <- paste0("N_",    cmtn, " = ", cmtnindex+1, ";")
+    Fdef <-    paste0("F_",    cmtn, " = _F_[",cmtnindex,"];")
+    Adef <-    paste0("ALAG_", cmtn, " = _ALAG_[",cmtnindex,"];")
+    Ddef <-    paste0("D_",    cmtn, " = _D_[",cmtnindex,"];")
+    Rdef <-    paste0("R_",    cmtn, " = _R_[",cmtnindex,"];")
+  }
+  
+  if(npar==0) rpars <- NULL
+  if(ncmt==0) cmtndef <- rcmt <- rinit <- rdx <- NULL
+  
+  ## Note that nm-vars is depending on frda 
+  ## See generate_nmdefs() in nm-mode.R
+  ans <- list()
+  ans$global <- character(0)
+  ans$param <- rpars
+  ans$cmt <- rcmt
+  ans$init <- rinit
+  ans$init <- rinit
+  ans$dxdt <- rdx
+  ans$frda <- c(Fdef, Rdef, Ddef, Adef)
+  ans$frda <- ans$frda
+  ans$cmtn <- cmtndef
+  ans$eta <- generate_matrix_label_rd(omat(x))
+  ans$eps <- generate_matrix_label_rd(smat(x))
+
+  tokens <- lapply(ans, strsplit, split = " ")
+  tokens <- lapply(tokens, function(x) {lapply(x, "[[", 1L)})
+  ans$tokens <- unlist(tokens, use.names = FALSE)
+
+  ans$defines <- c(
+    paste0("#define __INITFUN___ ", init_fun),
+    paste0("#define __ODEFUN___ ", func),
+    paste0("#define __TABLECODE___ ", table_fun),
+    paste0("#define __EVENTFUN___ ", event_fun), 
+    paste0("#define __CONFIGFUN___ ", config_fun),
+    paste0("#define __REGISTERFUN___ ", register_fun(model)),
+    paste0("#define _nEQ ", ncmt),
+    paste0("#define _nPAR ", npar)
+  )
+  
+  discard <- sapply(ans, is.null)
+  
+  if(any(discard)) {
+    ans <- ans[!discard]  
+  }
+  
+  ans
+}
+
+# Collections need to match function signatures in inst/base/mrgsolv.h
+arrange_rdefs <- function(rd) {
+  
+  # Copy init and frda so we can make a const variant
+  rd$init_const <- rd$init
+  rd$frda_const <- rd$frda
+  
+  # User can write to these (mutable)
+  mut <- c("init", "dxdt", "frda")
+  rd[mut] <- lapply(rd[mut], generate_rdef_ref)
+  
+  # User cannot write to these (const)
+  const <- c("param", "cmt", "init_const", "frda_const", "eta", "eps")
+  rd[const] <- lapply(rd[const], generate_rdef_const_ref)
+  
+  # Global const int numbers
+  if(is.character(rd$cmtn) && length(rd$cmtn)) {
+    rd$cmtn <- generate_rdef_const_int(rd$cmtn)
+  }
+  
+  # Now, create collections for each block
+  
+  # GLOBAL
+  rd$global <- NULL
+  
+  # PREAMBLE
+  rd$preamble <- c(rd$param, rd$cmtn)
+  
+  # MAIN
+  rd$main <- c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps, rd$cmtn)
+  
+  # ODE
+  rd$ode <- c(rd$param, rd$cmt, rd$dxdt, rd$init_const, rd$cmtn)
+  
+  # TABLE
+  rd$table <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps, rd$cmtn)
+  
+  # EVENT
+  rd$event <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps, rd$cmtn)
+  
+  rd
 }
 
 relocate_funs <- function(x,PACKAGE) {
-    x@package <- PACKAGE
-    x
+  x@package <- PACKAGE
+  x
 }
 
 build_version <- function(x) {
@@ -135,9 +203,9 @@ compiled <- function(x,...) UseMethod("compiled")
 compiled.default <- function(x,...) return(FALSE)
 #' @export
 compiled.mrgmod <- function(x, status = NULL, ...) {
-    if(is.null(status)) return(x@shlib$compiled)
-    x@shlib$compiled <- status
-    return(x)
+  if(is.null(status)) return(x@shlib$compiled)
+  x@shlib$compiled <- status
+  return(x)
 }
 
 win_def_name <- function(x) {

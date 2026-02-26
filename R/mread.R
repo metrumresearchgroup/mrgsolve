@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024 Metrum Research Group
+# Copyright (C) 2013 - 2026 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -322,50 +322,29 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Arguments in $SET that will be passed to mrgsim
   x <- set_simargs(x, SET)
-
+  
   # Modify SS compartments
   x <- set_ss_cmt(x, SET[["ss_cmt"]])
-
+  
   # Look for compartments we're dosing into: F/ALAG/D/R and add them to CMTN
   dosing <- dosing_cmts(spec[["MAIN"]], names(init))
   CMTN <- c(spec[["CMTN"]], dosing)
   
   # model r defs ----
-  # These are the various #define statements
-  # that go at the top of the .cpp.cpp file
-  rd <- generate_rdefs(
-    pars = Pars(x),
-    cmt = Cmt(x),
-    func = ode_func(x),
-    init_fun = main_func(x),
-    table_fun = table_func(x),
-    event_fun = event_func(x),
-    config_fun = config_func(x),
-    model = model(x),
-    omats = omat(x),
-    smats = smat(x),
-    cmtn = CMTN,
-    check.bounds = check.bounds, 
-    plugin = plugin,
-    dbsyms = args[["dbsyms"]]
-  )
+  # These are the various #define and alias statements
+  # that go at the top of the .cpp files
+  # rd object will be possibly be modified by generate_nmdefs()
+  rd <- generate_rdefs(x, cmtn = CMTN, plugin = plugin)
   
-  # Handle plugins ----
-  # Virtual compartments
-  if("VCMT" %in% names(spec)) {
-    what <- which(names(spec)=="VCMT")
-    vcmt <- unique(names(unlist(mread.env[["init"]][what])))
-    spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
-  }
+  # Plugins ----
   
   # Handle nm-vars plugin; initializing `nmv` to `NULL` here for use in 
   # the audit check later on
   nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
     nmv  <- find_nm_vars(spec)
-    dfs <- generate_nmdefs(nmv)
-    rd <- c(rd, dfs)
-    plugin[["nm-vars"]][["nm-def"]] <- dfs
+    rd <- generate_nmdefs(nmv, rd)
+    plugin[["nm-vars"]][["nm-def"]] <- rd$nmdfs
     build[["nm-vars"]] <- nmv
     audit_nm_vars(
       spec,
@@ -382,7 +361,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     autov <- autodec_vars(spec, blocks = auto_blocks)
     autov <- autodec_clean(
       autov, 
-      rdefs = rd, 
+      rdefs = rd$tokens, 
       build = build, 
       skip = auto_skip
     )
@@ -390,7 +369,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     autodec_save(autov, build, mread.env)
     mread.env[["autodec"]] <- autodec_namespace(build, mread.env)
   }
-  
   # Rcpp
   if("Rcpp" %in% names(plugin)) {
     spec <- global_rcpp(spec)
@@ -402,9 +380,14 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["PREAMBLE"]] <- c(topream, spec[["PREAMBLE"]])
     spec[["GLOBAL"]] <-   c(toglob, spec[["GLOBAL"]])
   }
+  # Virtual compartments
+  if("VCMT" %in% names(spec)) {
+    what <- which(names(spec)=="VCMT")
+    vcmt <- unique(names(unlist(mread.env[["init"]][what])))
+    spec[["ODE"]] <- c(spec[["ODE"]], paste0("dxdt_", vcmt, "=0;"))
+  }
   
   # more captures ----
-  
   # Process @etas 1:n -----
   x <- capture_etas(x, mread.env)
   
@@ -463,7 +446,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   x@shlib[["source"]] <- file.path(build[["soloc"]],build[["compfile"]])
   x@shlib[["md5"]] <- build[["md5"]]
   x@shlib[["call_event"]] <- "EVENT" %in% names(spec)
-  
+
   # build----
   # In soloc directory
   cwd <- getwd()
@@ -477,14 +460,38 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     setwd(cwd)
     do_restore(to_restore)
   })
+
+  # Group rdefs for output; see compile.R
+  rd <- arrange_rdefs(rd) 
+  
+  ## Collect all code to be written to the different blocks
+  global_code <- c(
+    spec[["GLOBAL"]]  
+  )
+  preamble_code <- c(
+    spec[["PREAMBLE"]]
+  )
+  main_code <- c(
+    spec[["MAIN"]], 
+    advtr(x@advan,x@trans)
+  )
+  ode_code <- c(
+    spec[["ODE"]]
+  )
+  event_code <- c(
+    spec[["EVENT"]]  
+  )
+  table_code <- c(
+    table,
+    spec[["PRED"]], 
+    write_capture(names(x@capture))
+  )
   
   incl <- function(x) paste0('#include "', x, '"')
-  header_file <- paste0(build[["model"]], "-mread-header.h")
+  cpp_separator <- paste0(rep("/", 80), collapse = "")
   
-  dbs <- NULL
-  if(isTRUE(args[["dbsyms"]])) {
-    dbs <- debug_symbols(names(init(x)))
-  }
+  temp_write <- tempfile()
+  def.con <- file(temp_write, open = "w")
   
   cat(
     paste0("// Source MD5: ", build[["md5"]]),
@@ -498,7 +505,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     "\n// MODEL HEADER FILES:",
     incl("mrgsolv.h"), 
     incl("modelheader.h"),
-    "\n// INCLUDE databox functions:",
+    "\n// INCLUDE databox FUNCTIONS:",
     incl("databox_cpp.h"),
     "\n// USING plugins:",
     plugin_using(plugin),
@@ -506,58 +513,54 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     form_includes(spec[["INCLUDE"]]),
     "\n// GLOBAL CODE BLOCK:",
     "// GLOBAL VARS FROM BLOCKS & TYPEDEFS:",
-    "// DECLARED BY USER", 
+    "// DECLARED BY USER:", 
     mread.env[["global"]],
-    "// DECLARED VIA AUTODEC",
+    "// DECLARED VIA AUTODEC:",
     mread.env[["autodec"]],
     "\n// GLOBAL START USER CODE:",
-    spec[["GLOBAL"]],
+    global_code,
     "\n// DEFS:",
-    rd,
-    "",
-    sep="\n", file = header_file)
+    rd$defines,
+    sep = "\n", 
+    file = def.con
+  )
   
-  ## Write the model code to temporary file
-  temp_write <- tempfile()
-  def.con <- file(temp_write, open="w")
   cat(
-    paste0("// Source MD5: ", build[["md5"]], "\n"),
-    incl(header_file),
+    "", 
+    cpp_separator,
+    paste0("// START MODEL CODE ", build[["model"]]),
+    cpp_separator,
     "\n// PREAMBLE CODE BLOCK:",
     "__BEGIN_config__",
     if(mread.env$check_modeled_infusions) {
       "CHECK_MODELED_INFUSIONS=true;"  
     } else {
       "CHECK_MODELED_INFUSIONS=false;"  
-    }, 
-    spec[["PREAMBLE"]],
+    },
+    write_block_code(preamble_code, rd$preamble),
     "__END_config__",
     "\n// MAIN CODE BLOCK:",
     "__BEGIN_main__",
-    dbs[["cmt"]],
-    spec[["MAIN"]],
-    advtr(x@advan,x@trans),
+    write_block_code(main_code, rd$main),
     "__END_main__",
     "\n// DIFFERENTIAL EQUATIONS:",
     "__BEGIN_ode__",
-    dbs[["ode"]],
-    spec[["ODE"]], 
+    write_block_code(ode_code, rd$ode),
     "__END_ode__",
     "\n// MODELED EVENTS:", 
     "__BEGIN_event__", 
-    spec[["EVENT"]],
+    write_block_code(event_code, rd$event),
     "__END_event__",
     "\n// TABLE CODE BLOCK:",
     "__BEGIN_table__",
-    dbs[["cmt"]],
-    table,
-    spec[["PRED"]],
-    write_capture(names(x@capture)),
+    write_block_code(table_code, rd$table),
     "__END_table__",
-    "", 
-    sep="\n", file=def.con)
-  close(def.con)
+    sep = "\n", 
+    file = def.con
+  )
   
+  close(def.con)
+
   ## this gets written in soloc
   #write_build_env(build)
   write_win_def(x)

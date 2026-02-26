@@ -64,19 +64,23 @@ find_nm_vars_impl <- function(code) {
   m
 }
 
-generate_nmdefs <- function(x) {
-  if(isFALSE(x[["found_frda"]])) return(NULL)
-  ans <- paste0(
-    "#define ", 
+generate_nmdefs <- function(x, rd) {
+  if(isFALSE(x[["found_frda"]])) {
+    return(rd)
+  }
+  frda <- paste0(
     x[["frda"]][["match"]],
-    " ", 
+    " = ", 
     "_", 
     x[["frda"]][["prefix"]], 
     "_[", 
     x[["frda"]][["cmt"]] - 1, 
-    "]"
+    "];"
   )
-  ans
+  rd$nmdfs <- frda
+  rd$tokens <- c(rd$tokens, x[["frda"]][["match"]])
+  rd$frda <- c(rd$frda, frda)
+  rd
 }
 
 any_nm_vars <- function(x) {
