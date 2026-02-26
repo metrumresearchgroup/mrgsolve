@@ -15,20 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
+# Wrap definitions to suppress unused variable warnings
+silence_unused_var <- function(defs) {
+  if(!length(defs)) return(defs)
+  start <- "MRGSOLVE_WARN_UNUSED_VAR_NO"
+  end <- "MRGSOLVE_WARN_UNUSED_VAR_YES"
+  c(start, defs, end)
+}
+
 # Write variable defs and block code
-write_block_code <- function(code, defs, force = FALSE) {
-  if(!length(code) && !isTRUE(force)) {
+write_block_code <- function(code, defs = NULL) {
+  if(!length(code)) {
     return(NULL)
   }
-  if(length(defs)) {
-    start <- "MRGSOLVE_WARN_UNUSED_VAR_NO"
-    end <- "MRGSOLVE_WARN_UNUSED_VAR_YES"
-    defs <- c(start, defs, end)
-  }
-  if(length(code)) {
-    sep <- paste0(rep("/", 80), collapse = "")
-    code <- c(sep, code, sep)  
-  }
+  defs <- silence_unused_var(defs)
+  sep <- paste0(rep("/", 80), collapse = "")
+  code <- c(sep, code, sep)  
   return(c(defs, code))
 }
 
