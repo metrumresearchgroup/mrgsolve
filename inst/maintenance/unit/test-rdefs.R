@@ -111,3 +111,52 @@ test_that("All blocks get defs", {
   expect_equal(warn_yes, 6)
 
 })
+
+code <- '
+$PARAM PARAMX = 1
+$CMT @number 2
+$PLUGIN N_CMT nm-vars
+$PREAMBLE a = 1
+$MAIN b = 2
+F1 = 1.1;
+A2_0 = 1.23;
+$ODE @!audit
+c = 3
+$EVENT d = 4
+$TABLE e = 5 D2 = 3
+'
+
+test_that("Blocks get populated using nm-vars ", {
+  mod <- mcode("all-blocks-defs-nm", code, compile = FALSE)
+  raw <- readLines(mod@shlib$source)
+  
+  # All 5
+  npar <- sum(grepl("PARAMX", raw))
+  expect_equal(npar, 5)
+  
+  # Just 4 - not preamble
+  ncmt <- sum(grepl(" A1 =", raw, fixed = TRUE))
+  expect_equal(ncmt, 4)
+  
+  # Just 4 - not preamble
+  ninit <- sum(grepl(" A2_0 =", raw, fixed = TRUE))
+  expect_equal(ninit, 4)
+  
+  # Just 3 - plus use
+  nf <- sum(grepl("F1 =", raw, fixed = TRUE))
+  expect_equal(nf, 3 + 1)
+  nr <- sum(grepl(" D2 =", raw, fixed = TRUE))
+  expect_equal(nr, 3 + 1)
+
+  # Just 1 in global
+  nn <- sum(grepl("N_A1 =", raw, fixed = TRUE))
+  expect_equal(nn, 1)
+  
+  # All 5 plus global
+  warn_no <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
+  expect_equal(warn_no, 6)
+  
+  warn_yes <- sum(grepl("MRGSOLVE_WARN_UNUSED_VAR_NO", raw, fixed = TRUE))
+  expect_equal(warn_yes, 6)
+  
+})
