@@ -19,7 +19,7 @@ DADT(1) = -0.1 * A(1);
 
 test_that("build a model with mrgx and nm-vars", {
   expect_is(
-    z <- mcode("test-cpp-mrgx-nm-vars", code, quiet = FALSE, recover = TRUE), 
+    mcode("test-cpp-mrgx-nm-vars", code), 
     "mrgmod"
   )
 })
