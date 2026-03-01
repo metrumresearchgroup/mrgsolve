@@ -173,15 +173,15 @@ pull.mrgsims <- function(.data, ...) {
   dplyr::pull(as_tibble.mrgsims(.data), ...)
 }
 
-##' @method filter mrgsims
-##' @rdname mrgsims_dplyr
-##' @export 
+#' @method filter mrgsims
+#' @rdname mrgsims_dplyr
+#' @export 
 filter.mrgsims <- function(.data,...) {
   dplyr::filter(as_tibble.mrgsims(.data),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 group_by.mrgsims <- function(.data,...,add=FALSE,.add=FALSE) {
   if(DPLYR_1_0_0) {
     return(dplyr::group_by(as_tibble.mrgsims(.data), ..., .add = .add))
@@ -190,54 +190,59 @@ group_by.mrgsims <- function(.data,...,add=FALSE,.add=FALSE) {
   }
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 distinct.mrgsims <- function(.data,...,.keep_all=FALSE) {
   dplyr::distinct(as_tibble.mrgsims(.data),...,.keep_all=.keep_all)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 mutate.mrgsims <- function(.data,...) {
   dplyr::mutate(as_tibble.mrgsims(.data),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 summarise.each <- function(.data,funs,...) {
   dplyr::summarise_each(as_tibble.mrgsims(.data),funs,...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 summarise.mrgsims <- function(.data,...) {
   dplyr::summarise(as_tibble.mrgsims(.data),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 do.mrgsims <- function(.data,...,.dots) {
   dplyr::do(as_tibble.mrgsims(.data),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 select.mrgsims <- function(.data,...) {
   dplyr::select(as_tibble.mrgsims(.data),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
 slice.mrgsims <- function(.data,...) {
   dplyr::slice(as_tibble.mrgsims(.data),...)
 }
 
-##' @rdname mrgsims_dplyr
-##' @export
+#' @rdname mrgsims_dplyr
+#' @export
+count.mrgsims <- function(x, ...) {
+  dplyr::count(as_tibble.mrgsims(x), ...)
+}
+
+#' @rdname mrgsims_dplyr
+#' @export
 as_data_frame.mrgsims <- function(x,...) {
   as_tibble(as.data.frame(x),...)
 }
-
 
 #' @param x mrgsims object.
 #' 
