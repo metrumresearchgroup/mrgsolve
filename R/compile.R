@@ -121,7 +121,7 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$eta <- generate_matrix_label_rd(omat(x))
   ans$eps <- generate_matrix_label_rd(smat(x))
 
-  tokens <- lapply(ans, strsplit, split = " ")
+  tokens <- lapply(ans, strsplit, split = " ", fixed = TRUE)
   tokens <- lapply(tokens, function(x) {lapply(x, "[[", 1L)})
   ans$tokens <- unlist(tokens, use.names = FALSE)
 
