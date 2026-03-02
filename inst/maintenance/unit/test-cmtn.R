@@ -16,8 +16,8 @@ test_that("Get compartment numbers by $CMTN", {
   mod <- mcode("test-cmtn-1", code)
   expect_is(mod, "mrgmod")
   out <- mrgsim(mod)
-  expect_all_equal(out$N_Z, 5)
-  expect_all_equal(out$N_A, 1)
+  expect_true(all(out$N_Z==5))
+  expect_true(all(out$N_A==1))
 })
 
 code <- '
@@ -31,9 +31,9 @@ test_that("Get compartment numbers by $CMTN with global", {
   mod <- mcode("test-cmtn-1b", code)
   expect_is(mod, "mrgmod")
   out <- mrgsim(mod)
-  expect_all_equal(out$N_Z, 5)
-  expect_all_equal(out$N_A, 1)
-  expect_all_equal(out$m, 11);
+  expect_true(all(out$N_Z==5))
+  expect_true(all(out$N_A==1))
+  expect_true(all(out$m==11));
 })
 
 
@@ -65,6 +65,6 @@ test_that("Get compartment numbers by FRDA", {
   mod <- mcode("test-cmtn-3", code)
   expect_is(mod, "mrgmod")
   out <- mrgsim(mod)
-  expect_all_equal(out$N_B, 2)
-  expect_all_equal(out$N_D, 4)
+  expect_true(all(out$N_B==2))
+  expect_true(all(out$N_D==4))
 })
