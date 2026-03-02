@@ -117,7 +117,6 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
   ans$init <- rinit
   ans$dxdt <- rdx
   ans$frda <- c(Fdef, Rdef, Ddef, Adef)
-  ans$frda <- ans$frda
   ans$cmtn <- cmtndef
   ans$eta <- generate_matrix_label_rd(omat(x))
   ans$eps <- generate_matrix_label_rd(smat(x))
