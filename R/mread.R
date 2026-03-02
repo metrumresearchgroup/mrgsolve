@@ -488,7 +488,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   )
   
   incl <- function(x) paste0('#include "', x, '"')
-  cpp_separator <- paste0(rep("/", 80), collapse = "")
+  cpp_separator <- strrep("/", 80)
   
   temp_write <- tempfile()
   def.con <- file(temp_write, open = "w")

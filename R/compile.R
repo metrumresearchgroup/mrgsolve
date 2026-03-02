@@ -29,7 +29,7 @@ write_block_code <- function(code, defs = NULL) {
     return(NULL)
   }
   defs <- silence_unused_var(defs)
-  sep <- paste0(rep("/", 80), collapse = "")
+  sep <- strrep("/", 80)
   code <- c(sep, code, sep)  
   return(c(defs, code))
 }
