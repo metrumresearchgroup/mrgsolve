@@ -149,20 +149,20 @@ __END_event__
 // TABLE CODE BLOCK:
 __BEGIN_table__
 MRGSOLVE_WARN_UNUSED_VAR_NO
-const double& CL = _THETA_[0];
-const double& VC = _THETA_[1];
-const double& KA = _THETA_[2];
-const double& F1 = _THETA_[3];
-const double& D1 = _THETA_[4];
-const double& WTCL = _THETA_[5];
-const double& WTVC = _THETA_[6];
-const double& SEXCL = _THETA_[7];
-const double& SEXVC = _THETA_[8];
-const double& KIN = _THETA_[9];
-const double& KOUT = _THETA_[10];
-const double& IC50 = _THETA_[11];
-const double& WT = _THETA_[12];
-const double& SEX = _THETA_[13];
+double& CL = _THETA_[0];
+double& VC = _THETA_[1];
+double& KA = _THETA_[2];
+double& F1 = _THETA_[3];
+double& D1 = _THETA_[4];
+double& WTCL = _THETA_[5];
+double& WTVC = _THETA_[6];
+double& SEXCL = _THETA_[7];
+double& SEXVC = _THETA_[8];
+double& KIN = _THETA_[9];
+double& KOUT = _THETA_[10];
+double& IC50 = _THETA_[11];
+double& WT = _THETA_[12];
+double& SEX = _THETA_[13];
 const double& GUT_0 = _A_0_[0];
 const double& CENT_0 = _A_0_[1];
 const double& RESP_0 = _A_0_[2];

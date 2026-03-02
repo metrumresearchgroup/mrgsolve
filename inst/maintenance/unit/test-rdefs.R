@@ -12,7 +12,7 @@ mtry <- function(...) {
 
 code <- c("$param B = 1", "$cmt A", "$omega @labels ETACL\n 1")
 
-test_that("Params are const everywhere", {
+test_that("Params are const everywhere except $TABLE", {
   codex <- c(code, "$preamble B = 2;")
   a <- mtry("param-preamble", codex, recover = TRUE)
   expect_match(a$out$stderr, "B = 2",  all = FALSE)
@@ -27,7 +27,7 @@ test_that("Params are const everywhere", {
 
   codex <- c(code, "$table B = 2;")
   a <- mtry("param-table", codex, recover = TRUE)
-  expect_match(a$out$stderr, "B = 2",  all = FALSE)
+  expect_is(a, "mrgmod")
 
 })
 

@@ -148,16 +148,17 @@ generate_rdefs <- function(x, cmtn = NULL, plugin = NULL, ...) {
 # Collections need to match function signatures in inst/base/mrgsolv.h
 arrange_rdefs <- function(rd) {
   
-  # Copy init and frda so we can make a const variant
+  # Copy init, param, and frda so we can make a const variant
   rd$init_const <- rd$init
   rd$frda_const <- rd$frda
+  rd$param_const <- rd$param
   
   # User can write to these (mutable)
-  mut <- c("init", "dxdt", "frda")
+  mut <- c("param", "init", "dxdt", "frda")
   rd[mut] <- lapply(rd[mut], generate_rdef_ref)
   
   # User cannot write to these (const)
-  const <- c("param", "cmt", "init_const", "frda_const", "eta", "eps")
+  const <- c("cmt", "eta", "eps", "init_const", "frda_const", "param_const")
   rd[const] <- lapply(rd[const], generate_rdef_const_ref)
   
   # Global const int numbers
@@ -171,13 +172,13 @@ arrange_rdefs <- function(rd) {
   rd$global <- NULL
   
   # PREAMBLE
-  rd$preamble <- c(rd$param, rd$cmtn)
+  rd$preamble <- c(rd$param_const, rd$cmtn)
   
   # MAIN
-  rd$main <- c(rd$param, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps, rd$cmtn)
+  rd$main <- c(rd$param_const, rd$init, rd$cmt, rd$frda, rd$eta, rd$eps, rd$cmtn)
   
   # ODE
-  rd$ode <- c(rd$param, rd$cmt, rd$dxdt, rd$init_const, rd$cmtn)
+  rd$ode <- c(rd$param_const, rd$cmt, rd$dxdt, rd$init_const, rd$cmtn)
   
   # TABLE
   rd$table <- c(rd$param, rd$init_const, rd$cmt, rd$frda_const, rd$eta, rd$eps, rd$cmtn)
