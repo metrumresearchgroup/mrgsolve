@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2019  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -26,6 +26,33 @@ typedef double local_double;
 typedef int    local_int;
 typedef bool   local_bool;
 typedef double capture;
+
+// Two macros needed to suppress unused variable warnings 
+// Macro to temporarily suppress warnings 
+#if defined(_MSC_VER)
+  #define MRGSOLVE_WARN_UNUSED_VAR_NO \
+    __pragma(warning(push))            \
+    __pragma(warning(disable: 4101))
+#elif defined(__INTEL_COMPILER)
+  #define MRGSOLVE_WARN_UNUSED_VAR_NO \
+    __pragma(warning(push))            \
+    __pragma(warning(disable: 177))
+#elif defined(__GNUC__) || defined(__clang__)
+  #define MRGSOLVE_WARN_UNUSED_VAR_NO \
+    _Pragma("GCC diagnostic push")     \
+    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"")
+#else
+  #define MRGSOLVE_WARN_UNUSED_VAR_NO
+#endif
+
+// Macro to restore unused variable warnings 
+#if defined(_MSC_VER) || defined(__INTEL_COMPILER)
+  #define MRGSOLVE_WARN_UNUSED_VAR_YES __pragma(warning(pop))
+#elif defined(__GNUC__) || defined(__clang__)
+  #define MRGSOLVE_WARN_UNUSED_VAR_YES _Pragma("GCC diagnostic pop")
+#else
+  #define MRGSOLVE_WARN_UNUSED_VAR_YES
+#endif
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct
