@@ -372,3 +372,26 @@ test_that("Detect numerical differences using custom tol", {
   
   expect_true(sum(diff2)/100 > sum(diff1))
 })
+
+test_that("custom tol with no input doesn't fail", {
+  mod <- house()
+  
+  mod <- custom_tol(mod)
+  expect_is(mod, "mrgmod")
+  
+  mod <- custom_rtol(mod)
+  expect_is(mod, "mrgmod")
+
+  mod <- custom_rtol(mod)
+  expect_is(mod, "mrgmod")
+})
+
+test_that("try to pass default = ...", {
+  mod <- house()
+  
+  expect_error(custom_tol(mod, default = 1e-2), "unused argument")
+  
+  expect_error(custom_rtol(mod, default = 1e-2), "Invalid compartment names")
+  
+  expect_error(custom_atol(mod, default = 1e-2), "Invalid compartment names")
+})

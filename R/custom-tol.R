@@ -16,7 +16,7 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
+initialize_tol <- function(x, tol = c("rtol", "atol"), .default = NULL) {
   tol <- match.arg(tol)
   sname_vec <- paste0("vec_", tol)
   values_vec <- slot(x, sname_vec)
@@ -29,23 +29,26 @@ initialize_tol <- function(x, tol = c("rtol", "atol"), default = NULL) {
     # Call this to generate the error
     check_vec_tol_slots(x, tol)
   }
-  if(is.null(default)) default <- slot(x, tol)
-  values <- rep(default, length(cmts))
+  if(is.null(.default)) .default <- slot(x, tol)
+  values <- rep(.default, length(cmts))
   names(values) <- cmts
   slot(x, sname_vec) <- values
   check_vec_tol_slots(x, tol)
   x
 }
 
-customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), default = NULL, ...) {
+customize_tol <- function(x, val = list(), tol = c("rtol", "atol"), .default = NULL, ...) {
   tol <- match.arg(tol)
   val <- c(list(...), val)
   if(!length(val)) {
-    val <- setNames(rep(default, neq(x)), Cmt(x))
+    if(is.null(.default)) {
+      return(x)
+    }
+    val <- setNames(rep(.default, neq(x)), Cmt(x))
   }
   valid_tol_data(val, x)
   val <- val[!duplicated(names(val))]
-  x <- initialize_tol(x, tol = tol, default = default)
+  x <- initialize_tol(x, tol = tol, .default =.default)
   sname_vec <- paste0("vec_", tol)
   values_vec <- slot(x, sname_vec)
   current <- as.list(slot(x, sname_vec))
@@ -185,7 +188,7 @@ custom_tol <- function(.x, .rtol = NULL, .atol = NULL) {
 #' @export
 custom_rtol <- function(.x, .rtol = list(), .default = NULL, .use = TRUE, ...) {
   if(!is.mrgmod(.x)) mod_first() 
-  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", default = .default, ...)
+  .x <- customize_tol(x = .x, val = .rtol, tol = "rtol", .default = .default, ...)
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
   } 
@@ -199,7 +202,7 @@ custom_rtol <- function(.x, .rtol = list(), .default = NULL, .use = TRUE, ...) {
 #' @export
 custom_atol <- function(.x, .atol = list(), .default = NULL, .use = TRUE, ...) {
   if(!is.mrgmod(.x)) mod_first()
-  .x <- customize_tol(x = .x, val = .atol, tol = "atol", default = .default, ...) 
+  .x <- customize_tol(x = .x, val = .atol, tol = "atol", .default = .default, ...) 
   if(isTRUE(.use)) {
     .x <- use_custom_tol(.x)    
   } 
@@ -259,7 +262,7 @@ reset_rtol <- function(x, rtol = NULL) {
   }
   x@vec_rtol <- numeric(0)
   x <- update(x, rtol = rtol)
-  x <- initialize_tol(x, default = rtol, tol = "rtol")
+  x <- initialize_tol(x, .default = rtol, tol = "rtol")
   x
 }
 
@@ -272,7 +275,7 @@ reset_atol <- function(x, atol = NULL) {
   }
   x@vec_atol <- numeric(0)
   x <- update(x, atol = atol)
-  x <- initialize_tol(x, default = atol, tol = "atol")
+  x <- initialize_tol(x, .default = atol, tol = "atol")
   x
 }
 
@@ -363,8 +366,8 @@ get_tol_list <- function(x) {
 #' @export
 use_custom_tol <- function(x) {
   if(!is.mrgmod(x)) mod_first()
-  x <- initialize_tol(x, default = x@rtol, tol = "rtol")
-  x <- initialize_tol(x, default = x@atol, tol = "atol")
+  x <- initialize_tol(x, .default = x@rtol, tol = "rtol")
+  x <- initialize_tol(x, .default = x@atol, tol = "atol")
   x@itol <- 4
   x
 }
