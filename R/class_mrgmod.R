@@ -840,7 +840,7 @@ file_show <- function(x,spec=TRUE,source=TRUE,...) {
   do.call(base::file.show,what)
 }
 
-
+#' @method all.equal mrgmod
 #' @export
 all.equal.mrgmod <- function(target, current,...) {
   target.env <- as.list(target@envir)
