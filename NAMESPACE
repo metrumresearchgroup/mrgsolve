@@ -3,7 +3,7 @@
 S3method(.DollarNames,mrgmod)
 S3method(.DollarNames,mrgsims)
 S3method(Req,mrgmod)
-S3method(all,equal.mrgmod)
+S3method(all.equal,mrgmod)
 S3method(as.data.frame,ev)
 S3method(as.environment,mrgmod)
 S3method(as.matrix,ev)
