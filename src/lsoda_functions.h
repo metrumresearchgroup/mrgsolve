@@ -35,7 +35,7 @@ void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
   Rcpp::NumericVector xatol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("vec_atol"));
   Rcpp::NumericVector xrtol_ = Rcpp::as<Rcpp::NumericVector>(mod.slot("vec_rtol"));
   bool size_error = false;
-  if(xatol_.size() != static_cast<size_t>(Neq)) {
+  if(static_cast<int>(xatol_.size()) != Neq) {
     std::string size = std::to_string(xatol_.size());
     std::string expect = std::to_string(Neq);
     Rcpp::CharacterVector text = 
@@ -43,7 +43,7 @@ void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
     Rcpp::message(text);
     size_error = true;
   }
-  if(xrtol_.size() != static_cast<size_t>(Neq)) {
+  if(static_cast<int>(xrtol_.size()) != Neq) {
     std::string size = std::to_string(xrtol_.size());
     std::string expect = std::to_string(Neq);
     Rcpp::CharacterVector text = 
