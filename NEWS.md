@@ -28,7 +28,7 @@
     vector. This vector continues to be mutable in these blocks, but plans will 
     be made to fix this behavior in the future.
 
-- Initialze `Self` to null pointer in `evt::regimen` objects (#1329).
+- Initialize `Self` to null pointer in `evt::regimen` objects (#1329).
 
 - Refactor `mat2df()` (C++) for efficiency, avoiding Rcpp sugar (#1316).
 
