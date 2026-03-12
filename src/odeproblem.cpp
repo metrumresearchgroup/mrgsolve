@@ -392,6 +392,11 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   
   if(Neq == 0) return;
   
+  if(tfrom==tto) {
+    this->init_derivs(tto);
+    return;
+  }
+
   if(Advan != 13) {
     if((Advan==2) | (Advan==1)) {
       this->advan2(tfrom,tto);
