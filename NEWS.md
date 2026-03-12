@@ -1,5 +1,36 @@
 # mrgsolve 1.8.0
 
+- mrgsolve now requires R >= 4.1 (#1333).
+
+- `FINAL_ROW` and `FINAL_IROW` macros are now available to indicate when the
+  simulation is processing the final output record for the whole problem or for
+  the current individual, respectively; both macros are reserved words
+  (#1328, #1327).
+
+## Bugs Fixed
+
+- Fixed S3 registration of the `all.equal` method (#1337).
+
+- `custom_rtol()` and `custom_atol()` now return without error when called with
+  no tolerance inputs (#1321, #1336).
+
+- Row counters (`self.rown`, `self.nrow`, `self.irown`, `self.inrow`) now only
+  update when the system advances to an output record; previously, non-output
+  records between output records could cause the counters to misrepresent the
+  current position in the output (#1323).
+
+## Internal
+
+- Model parameter and compartment aliases in generated C++ code now use scoped
+  reference variables rather than preprocessor `#define` directives (#1332).
+  - During this refactor, it was noted that model parameters were mutable
+    in `$TABLE` (and `$EVENT`), against the intention for the parameter 
+    vector. This vector continues to be mutable in these blocks, but plans will 
+    be made to fix this behavior in the future.
+
+- Initialze `Self` to null pointer in `evt::regimen` objects (#1329).
+
+- Refactor `mat2df()` (C++) for efficiency, avoiding Rcpp sugar (#1316).
 
 
 # mrgsolve 1.7.2
