@@ -208,8 +208,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     tofd.reserve(a.size());
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if(itt->is_dose()) {
-          tofd.push_back(itt->time());
+        if((*itt)->is_dose()) {
+          tofd.push_back((*itt)->time());
           break;
         }
       }
@@ -271,7 +271,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       reclist z;
 
       for(int j = 0; j < tgridn[i]; ++j) {
-        z.emplace_back(tgrid(j,i),nextpos,true);
+        z.push_back(std::make_unique<datarecord>(tgrid(j,i),nextpos,true));
       }
       designs.push_back(std::move(z));
     }
@@ -290,7 +290,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
 
       for(int h=0; h < n; ++h) {
-        it->push_back(designs[tgridi[j]][h]);
+        it->push_back(std::make_unique<datarecord>(*designs[tgridi[j]][h]));
         ++obscount;
         dat.increment_inrow(it-a.begin());
       }
@@ -378,16 +378,16 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     int n = 0;
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if(!itt->output()) continue;
+        if(!(*itt)->output()) continue;
         n = 0;
-        if(carry_evid) {ans(crow,n+precol) = itt->evid();                     ++n;}
-        if(carry_amt)  {ans(crow,n+precol) = itt->amt();                      ++n;}
-        if(carry_cmt)  {ans(crow,n+precol) = itt->cmt();                      ++n;}
-        if(carry_ss)   {ans(crow,n+precol) = itt->ss();                       ++n;}
-        if(carry_ii)   {ans(crow,n+precol) = itt->ii();                       ++n;}
-        if(carry_addl) {ans(crow,n+precol) = itt->addl();                     ++n;}
-        if(carry_rate) {ans(crow,n+precol) = itt->rate();                     ++n;}
-        if(carry_aug)  {ans(crow,n+precol) = (itt->pos()==nextpos) && obsaug;  ++n;}
+        if(carry_evid) {ans(crow,n+precol) = (*itt)->evid();                     ++n;}
+        if(carry_amt)  {ans(crow,n+precol) = (*itt)->amt();                      ++n;}
+        if(carry_cmt)  {ans(crow,n+precol) = (*itt)->cmt();                      ++n;}
+        if(carry_ss)   {ans(crow,n+precol) = (*itt)->ss();                       ++n;}
+        if(carry_ii)   {ans(crow,n+precol) = (*itt)->ii();                       ++n;}
+        if(carry_addl) {ans(crow,n+precol) = (*itt)->addl();                     ++n;}
+        if(carry_rate) {ans(crow,n+precol) = (*itt)->rate();                     ++n;}
+        if(carry_aug)  {ans(crow,n+precol) = ((*itt)->pos()==nextpos) && obsaug;  ++n;}
         ++crow;
       }
     }
@@ -440,10 +440,10 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     int this_cmtn = 0;
     double told = -1;
 
-    double tfrom = a[i].front().time();
+    double tfrom = a[i].front()->time();
     double tto = tfrom;
 
-    const double maxtime = a[i].back().time();
+    const double maxtime = a[i].back()->time();
     const int NNI = dat.inrow(i);
 
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
@@ -458,8 +458,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     }
 
     if(dat.any_copy) {
-      if(a[i][0].from_data()) {
-        dat.copy_parameters(a[i][0].pos(),&prob);
+      if(a[i][0]->from_data()) {
+        dat.copy_parameters(a[i][0]->pos(),&prob);
       } else {
         if(filbak) {
           dat.copy_parameters(dat.start(i),&prob);
@@ -467,7 +467,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
     }
 
-    prob.set_d(a[i][0]);
+    prob.set_d(*a[i][0]);
     prob.init_call(tfrom);
 
     for(size_t j=0; j < a[i].size(); ++j) {
@@ -477,10 +477,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ic = prob.interrupt;
       }
 
-      // Use a[i][j] directly; references to deque elements can be
-      // invalidated by insert/push_back operations later in this loop
-      a[i][j].id(id);
-      tto = a[i][j].time();
+      // Access via unique_ptr; pointers are stable across deque mutations
+      a[i][j]->id(id);
+      tto = a[i][j]->time();
 
       // TODO: simplify
       if(icrow==NNI || crow==NN || tto > maxtime) {
@@ -488,7 +487,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
 
       // Only update row counters on output records
-      if(a[i][j].output()) {
+      if(a[i][j]->output()) {
          prob.irown(icrow);
          prob.rown(crow);
       }
@@ -502,7 +501,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         unsigned short int status = prob.systemoff();
         if(status==9) CRUMP("the problem was stopped at user request.");
         if(status==999) CRUMP("999 sent from the model.");
-        if(a[i][j].output()) {
+        if(a[i][j]->output()) {
           if(status==1) {
             ans(crow,0) = id;
             ans(crow,1) = tto;
@@ -527,8 +526,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // will call lsoda_init if parameters are copied
         dat.copy_next_parameters(
           i,
-          a[i][j].from_data(),
-          a[i][j].pos(),
+          a[i][j]->from_data(),
+          a[i][j]->pos(),
           &prob
         );
       }
@@ -545,8 +544,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
       if(j != 0) {
         prob.newind(2);
-        prob.set_d(a[i][j]);
-        if(!a[i][j].is_lagged()) {
+        prob.set_d(*a[i][j]);
+        if(!a[i][j]->is_lagged()) {
           // TODO: what other records should we skip?
           prob.init_call_record(tto);
         }
@@ -556,75 +555,75 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // Note that F needs to get updated at every dose including addl
       // but rate is fixed to the parent rate and we only verify infusions
       // on actual dose records in the data set.
-      if(a[i][j].is_event()) {
+      if(a[i][j]->is_event()) {
 
-        this_cmtn = a[i][j].cmtn();
+        this_cmtn = a[i][j]->cmtn();
 
-        if(!a[i][j].is_lagged()) {
-          a[i][j].fn(prob.fbio(this_cmtn));
+        if(!a[i][j]->is_lagged()) {
+          a[i][j]->fn(prob.fbio(this_cmtn));
         }
 
-        if(a[i][j].fn() < 0) {
+        if(a[i][j]->fn() < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
 
-        if(a[i][j].fn()==0) {
-          if(a[i][j].is_dose()) {
+        if(a[i][j]->fn()==0) {
+          if(a[i][j]->is_dose()) {
             prob.on(this_cmtn);
             prob.lsoda_init();
-            a[i][j].unarm();
+            a[i][j]->unarm();
           }
         }
 
         // Check data set rate against modeled rate and dur
         // This is only a check; rate_main will actually set the rate
-        if(a[i][j].rate() < 0) {
-          prob.check_data_rate(a[i][j], this_cmtn);
+        if(a[i][j]->rate() < 0) {
+          prob.check_data_rate(*a[i][j], this_cmtn);
         }
 
         // Only check data set records
-        if(a[i][j].from_data()) {
+        if(a[i][j]->from_data()) {
           // Validate modeled rates
           if(prob.dur(this_cmtn) > 0) {
-            prob.check_modeled_dur(a[i][j]);
+            prob.check_modeled_dur(*a[i][j]);
           }
           // Validate modeled infusion rate
           if(prob.rate(this_cmtn) > 0) {
-            prob.check_modeled_rate(a[i][j]);
+            prob.check_modeled_rate(*a[i][j]);
           }
         }
 
-        if(a[i][j].rate() < 0) {
-          prob.rate_main(a[i][j], this_cmtn);
+        if(a[i][j]->rate() < 0) {
+          prob.rate_main(*a[i][j], this_cmtn);
         }
 
         // Checking
-        if(!a[i][j].is_lagged()) {
+        if(!a[i][j]->is_lagged()) {
 
           // there is a valid lag time
-          if(prob.alag(this_cmtn) > mindt && a[i][j].is_dose()) {
-            if(a[i][j].ss() > 0) {
-              a[i][j].steady(&prob, a[i], solver);
+          if(prob.alag(this_cmtn) > mindt && a[i][j]->is_dose()) {
+            if(a[i][j]->ss() > 0) {
+              a[i][j]->steady(&prob, a[i], solver);
               tfrom = tto;
             }
             // We already advanced to ss
             // Lagged dose and all subsequent should be vanilla EVID=1 doses
-            a[i][j].ss(0);
-            datarecord newev(a[i][j]);
-            if(newev.evid()==4) {
-              newev.evid(1);
+            a[i][j]->ss(0);
+            auto newev = std::make_unique<datarecord>(*a[i][j]);
+            if(newev->evid()==4) {
+              newev->evid(1);
             }
-            newev.pos(__ALAG_POS);
-            newev.phantom_rec();
-            newev.lagged();
-            newev.time(a[i][j].time() + prob.alag(this_cmtn));
-            a[i][j].unarm();
-            // schedule first (appends addl records to end of deque),
-            // then insert newev at correct position, then merge all new records
-            bool needs_sort = newev.needs_sorting();
+            newev->pos(__ALAG_POS);
+            newev->phantom_rec();
+            newev->lagged();
+            newev->time(a[i][j]->time() + prob.alag(this_cmtn));
+            a[i][j]->unarm();
+            // schedule on the pointed-to object (still alive), then move
+            // the unique_ptr into the deque via insert_record
+            bool needs_sort = newev->needs_sorting();
             size_t merge_idx = a[i].size();
-            newev.schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
-            insert_record(a[i], j, newev, put_ev_first);
+            newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
+            insert_record(a[i], j, std::move(newev), put_ev_first);
             if(needs_sort) {
               std::inplace_merge(
                 a[i].begin()+j+1,
@@ -634,9 +633,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               );
             }
           } else { // no valid lagtime
-            bool needs_sort = a[i][j].needs_sorting();
+            bool needs_sort = a[i][j]->needs_sorting();
             size_t merge_idx = a[i].size();
-            a[i][j].schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
+            a[i][j]->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             if(needs_sort) {
               std::inplace_merge(
                 a[i].begin()+j+1,
@@ -651,24 +650,25 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
-        if(a[i][j].int_infusion() && a[i][j].armed()) {
-          datarecord evoff(a[i][j].cmt(),
+        if(a[i][j]->int_infusion() && a[i][j]->armed()) {
+          auto evoff = std::make_unique<datarecord>(
+                                 a[i][j]->cmt(),
                                  9,
-                                 a[i][j].amt(),
-                                 a[i][j].time() + a[i][j].dur(),
-                                 a[i][j].rate(),
+                                 a[i][j]->amt(),
+                                 a[i][j]->time() + a[i][j]->dur(),
+                                 a[i][j]->rate(),
                                  -299,
                                  id);
 
-          if(a[i][j].from_data()) {
-            evoff.time(evoff.time() + prob.alag(this_cmtn));
+          if(a[i][j]->from_data()) {
+            evoff->time(evoff->time() + prob.alag(this_cmtn));
           }
           // Infusion off always happens first
-          insert_record(a[i], j, evoff, true);
+          insert_record(a[i], j, std::move(evoff), true);
         }
 
         if(tad) { // Adjusts told for lagtime
-          if(!a[i][j].is_lagged() && a[i][j].is_dose()) {
+          if(!a[i][j]->is_lagged() && a[i][j]->is_dose()) {
             told = tto;
           }
         }
@@ -676,19 +676,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
       prob.advance(tfrom,tto,solver);
 
-      if(a[i][j].evid() != 2) {
-        a[i][j].steady(&prob,a[i],solver);
-        a[i][j].implement(&prob);
+      if(a[i][j]->evid() != 2) {
+        a[i][j]->steady(&prob,a[i],solver);
+        a[i][j]->implement(&prob);
       }
 
       if(!nocb && dat.any_copy) {
-        if(a[i][j].from_data()) {
+        if(a[i][j]->from_data()) {
           // will call lsoda_init
-          dat.copy_parameters(a[i][j].pos(),&prob);
+          dat.copy_parameters(a[i][j]->pos(),&prob);
         }
       }
 
-      if(!a[i][j].is_lagged()) {
+      if(!a[i][j]->is_lagged()) {
         if(call_event) {
           prob.event_call();
         } else {
@@ -772,14 +772,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             new_ev.implement(&prob);
             told = new_ev.time();
             if(new_ev.int_infusion() && new_ev.armed()) {
-              datarecord evoff(new_ev.cmt(),
+              auto evoff = std::make_unique<datarecord>(
+                                     new_ev.cmt(),
                                      9,
                                      new_ev.amt(),
                                      new_ev.time() + new_ev.dur(),
                                      new_ev.rate(),
                                      -299,
                                      id);
-              insert_record(a[i], j, evoff, true);
+              insert_record(a[i], j, std::move(evoff), true);
             }
           } else {
             bool do_mt_ev = true;
@@ -789,7 +790,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               do_mt_ev = do_mt_ev && !found;
             }
             if(do_mt_ev) {
-              insert_record(a[i], j, new_ev, put_ev_first);
+              insert_record(a[i], j, std::make_unique<datarecord>(new_ev), put_ev_first);
               mtimehx.push_back({this_time, this_evid, this_cmt, this_amt});
             }
           } // Done processing "this" event
@@ -811,11 +812,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         prob.clear_mtime();
       } // Close handling of modeled events
 
-      if(call_event && !a[i][j].is_lagged()) {
+      if(call_event && !a[i][j]->is_lagged()) {
         prob.table_call();
       }
 
-      if(a[i][j].output()) {
+      if(a[i][j]->output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;
         if(tad) {
@@ -832,14 +833,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         ++crow;
         ++icrow;
       }
-      if(a[i][j].evid()==2) {
-        a[i][j].implement(&prob);
-        if(a[i][j].cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
+      if(a[i][j]->evid()==2) {
+        a[i][j]->implement(&prob);
+        if(a[i][j]->cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
           int n_inf = prob.infusion_count[this_cmtn];
           int n_end = a[i].size();
           for(int ii = j; (n_inf > 0 && ii < n_end); ++ii) {
-            if(a[i].at(ii).evid()==9) {
-              prob.rate_rm(this_cmtn, a[i].at(ii).rate());
+            if(a[i].at(ii)->evid()==9) {
+              prob.rate_rm(this_cmtn, a[i].at(ii)->rate());
               a[i].erase(a[i].begin() + ii);
               --n_inf;
               --n_end;

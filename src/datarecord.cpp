@@ -119,17 +119,17 @@ datarecord::datarecord(short int cmt_, int evid_, double amt_,
 
 datarecord::~datarecord() {}
 
-bool CompByTimePosRec(const datarecord& a, const datarecord& b) {
-  bool res = a.Time < b.Time;
-  if(!res) res = a.Pos < b.Pos;
+bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b) {
+  bool res = a->Time < b->Time;
+  if(!res) res = a->Pos < b->Pos;
   return res;
 }
 
 bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt,
                double amt) {
   for(size_t i = 0; i < a.size(); ++i) {
-    if(a[i].time() != time) continue;
-    if((a[i].evid()==evid) && (a[i].cmt()==cmt) && (a[i].amt()==amt)) {
+    if(a[i]->time() != time) continue;
+    if((a[i]->evid()==evid) && (a[i]->cmt()==cmt) && (a[i]->amt()==amt)) {
       return true;
     }
   }
@@ -457,7 +457,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   size_t merge_idx = thisi.size();
   for(size_t k = 0; k < offs.size(); ++k) {
     offs[k].time(first_off + double(k)*double(Ii));
-    thisi.push_back(std::move(offs[k]));
+    thisi.push_back(std::make_unique<datarecord>(std::move(offs[k])));
   }
   std::inplace_merge(thisi.begin(),thisi.begin()+merge_idx,thisi.end(),CompRec());
   prob->lsoda_init();
@@ -572,16 +572,18 @@ void datarecord::schedule(reclist& thisi, double maxtime,
     if(ontime > maxtime) break;
 
     if(add_parent_doses) {
-      thisi.emplace_back(Cmt, this_evid, Amt,
+      auto prec = std::make_unique<datarecord>(Cmt, this_evid, Amt,
                          parent_time + Ii*double(k),
                          Rate, nextpos, Id);
-      thisi.back().unarm();
-      thisi.back().phantom_rec();
+      prec->unarm();
+      prec->phantom_rec();
+      thisi.push_back(std::move(prec));
     }
 
-    thisi.emplace_back(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
-    thisi.back().Lagged = Lagged;
-    thisi.back().fn(Fn); // This may get overwritten later on if not Lagged dose
+    auto drec = std::make_unique<datarecord>(Cmt, this_evid, Amt, ontime, Rate, nextpos, Id);
+    drec->Lagged = Lagged;
+    drec->fn(Fn); // This may get overwritten later on if not Lagged dose
+    thisi.push_back(std::move(drec));
   }
 }
 
@@ -595,9 +597,10 @@ void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t star
   int nextpos = put_ev_first && (ev.evid!= 1 && ev.evid!=4) ? -1000000000 : 1000000000;
   size_t merge_idx = thisi.size();
   for(int i = 0; i < total; ++i) {
-    thisi.emplace_back(ev.time + i*ev.ii, nextpos, false);
-    thisi.back().evid(ev.evid);
-    thisi.back().Cmt = ev.cmt;
+    auto rec = std::make_unique<datarecord>(ev.time + i*ev.ii, nextpos, false);
+    rec->evid(ev.evid);
+    rec->Cmt = ev.cmt;
+    thisi.push_back(std::move(rec));
   }
   std::inplace_merge(thisi.begin()+start+1, thisi.begin()+merge_idx, thisi.end(), CompRec());
   return;
@@ -612,12 +615,12 @@ void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t star
  * infusion end.
  *
  */
-void insert_record(reclist& thisi, const size_t start, datarecord& rec,
+void insert_record(reclist& thisi, const size_t start, rec_ptr rec,
                    const bool put_ev_first) {
   auto begin = thisi.begin() + start + 1;
   auto end = thisi.end();
-  auto comp = [](const datarecord& a, const datarecord& b) {
-    return a.Time < b.Time;
+  auto comp = [](const rec_ptr& a, const rec_ptr& b) {
+    return a->Time < b->Time;
   };
   // lower_bound: insert before first record at same time (event first)
   // upper_bound: insert after last record at same time (event last)

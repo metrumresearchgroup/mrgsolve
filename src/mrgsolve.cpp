@@ -387,16 +387,9 @@ Rcpp::List EXPAND_OBSERVATIONS(
   obscount = 0;
   
   int n_time = int(times.size());
-  reclist z(n_time, datarecord(0.0, 0, true));
-  for(int j = 0; j < n_time; ++j) {
-    z[j] = datarecord(times[j], nextpos, true);
-  }
-
-  size_t n = z.size();
-
   for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    for(size_t h=0; h < n; h++) {
-      it->push_back(z[h]);
+    for(int j = 0; j < n_time; ++j) {
+      it->push_back(std::make_unique<datarecord>(times[j], nextpos, true));
       ++obscount;
     }
     std::sort(it->begin(), it->end(), CompRec());
@@ -421,14 +414,14 @@ Rcpp::List EXPAND_OBSERVATIONS(
     double id = dat.get_uid(i);
     last_data_row = dat.start(i);
     for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-      if(itt->from_data()) {
-        last_data_row = itt->pos();
+      if((*itt)->from_data()) {
+        last_data_row = (*itt)->pos();
         for(int i = 0; i < data.ncol(); i++) {
           d(crow,i) = data(last_data_row,i);
           index[crow] = false;
         }
       }  else {
-        d(crow,dat.col.at(7)) = itt->time();
+        d(crow,dat.col.at(7)) = (*itt)->time();
         d(crow,Idcol) = id;
         for(int k=0; k < to_copy.size(); k++) {
           d(crow,to_copy[k]) = data(last_data_row,to_copy[k]);  

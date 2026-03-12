@@ -24,10 +24,12 @@
 #include "mrgsolv.h"
 #include "LSODA.h"
 #include <deque>
+#include <memory>
 
 class odeproblem;
 class datarecord;
-typedef std::deque<datarecord> reclist;
+typedef std::unique_ptr<datarecord> rec_ptr;
+typedef std::deque<rec_ptr> reclist;
 
 class datarecord {
 
@@ -135,7 +137,7 @@ public:
 };
 
 
-bool CompByTimePosRec(const datarecord& a, const datarecord& b);
+bool CompByTimePosRec(const rec_ptr& a, const rec_ptr& b);
 bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt,
                double amt);
 
@@ -149,15 +151,15 @@ bool CompEqual(const reclist& a, double time, unsigned int evid, int cmt,
  * @return boolean
  */
 struct CompRec {
-  inline bool operator()(const datarecord& a, const datarecord& b) const {
-    if(a.Time == b.Time) {
-      return a.Pos < b.Pos;
+  inline bool operator()(const rec_ptr& a, const rec_ptr& b) const {
+    if(a->Time == b->Time) {
+      return a->Pos < b->Pos;
     }
-    return a.Time < b.Time;
+    return a->Time < b->Time;
   }
 };
 
-void insert_record(reclist& thisi, const size_t start, datarecord& rec,
+void insert_record(reclist& thisi, const size_t start, rec_ptr rec,
                    const bool put_ev_first);
 
 void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t start,

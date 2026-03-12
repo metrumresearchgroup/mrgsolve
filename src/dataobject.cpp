@@ -263,7 +263,7 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
         );
       }
       lastime = Data(j,col[_COL_time_]);        
-      datarecord obs(
+      auto obs = std::make_unique<datarecord>(
         Data(j,col[_COL_time_]),
         Data(j,col[_COL_cmt_]),
         j,
@@ -287,17 +287,18 @@ void dataobject:: get_records_pred(recstack& a, int NID, int neq,
             false
         );
       }
-      obs.evid(Data(j,col[_COL_evid_]));
-      obs.addl(Data(j,col[_COL_addl_]));
-      obs.ii(Data(j,col[_COL_ii_]));
-      obs.unarm();
-      a[h].push_back(obs);
-      if(obs.evid()==0) {
+      obs->evid(Data(j,col[_COL_evid_]));
+      obs->addl(Data(j,col[_COL_addl_]));
+      obs->ii(Data(j,col[_COL_ii_]));
+      obs->unarm();
+      bool is_obs = obs->evid()==0;
+      a[h].push_back(std::move(obs));
+      if(is_obs) {
         ++obscount;
       } else {
         ++evcount;
         if(obsonly) {
-          a[h].back().output(false);
+          a[h].back()->output(false);
           decrement_inrow(h);
         }
       }
@@ -361,12 +362,12 @@ void dataobject::get_records(recstack& a, int NID, int neq,
           );
         }
         
-        a[h].emplace_back(
+        a[h].push_back(std::make_unique<datarecord>(
           Data(j,col[_COL_time_]),
           Data(j,col[_COL_cmt_]),
           j,
           Data(j,Idcol)
-        );
+        ));
         ++obscount;
         continue;
       }
@@ -385,7 +386,7 @@ void dataobject::get_records(recstack& a, int NID, int neq,
       
       ++evcount;
       
-      datarecord ev(
+      auto ev = std::make_unique<datarecord>(
         Data(j,col[_COL_cmt_]),
         Data(j,col[_COL_evid_]),
         Data(j,col[_COL_amt_]),
@@ -398,89 +399,89 @@ void dataobject::get_records(recstack& a, int NID, int neq,
         throw Rcpp::exception(
             tfm::format(
               "ss must not be negative \n ID: %d, row: %i, ss: %d",
-              ev.id(), j+1, Data(j,col[_COL_ss_])
+              ev->id(), j+1, Data(j,col[_COL_ss_])
             ).c_str(),
             false
         );
       }
-      ev.ss(Data(j,col[_COL_ss_]));
+      ev->ss(Data(j,col[_COL_ss_]));
       if(Data(j,col[_COL_addl_]) < 0) {
         throw Rcpp::exception(
             tfm::format(
               "addl must not be negative \n ID: %d, row: %i, addl: %d",
-              ev.id(), j+1, Data(j,col[_COL_addl_])
+              ev->id(), j+1, Data(j,col[_COL_addl_])
             ).c_str(),
             false
         );
       }
-      ev.addl(Data(j,col[_COL_addl_]));
-      ev.ii(Data(j,col[_COL_ii_]));
-      ev.from_data(true);
+      ev->addl(Data(j,col[_COL_addl_]));
+      ev->ii(Data(j,col[_COL_ii_]));
+      ev->from_data(true);
       if(!obsonly) {
-        ev.output(true);
+        ev->output(true);
       } else {
         decrement_inrow(h);
       }
 
-      bool zero_inf = ev.ss_infusion();
+      bool zero_inf = ev->ss_infusion();
 
       if(zero_inf) {
-        if(ev.addl() !=0) {
+        if(ev->addl() !=0) {
           throw Rcpp::exception(
               tfm::format(
                 "addl must be zero for ss infusion \n ID: %d, row: %i, addl: %d",
-                ev.id(), j+1, ev.addl()
+                ev->id(), j+1, ev->addl()
               ).c_str(),
               false
           );
         }
       }
 
-      if((ev.rate() < 0) && (ev.rate() != -2) && (ev.rate() != -1)) {
+      if((ev->rate() < 0) && (ev->rate() != -2) && (ev->rate() != -1)) {
         throw Rcpp::exception(
             tfm::format(
               "non-zero rate requires positive or -1 or -2 \n ID: %d, "
               "row: %i, rate: %d",
-              ev.id(), j+1, ev.rate()
+              ev->id(), j+1, ev->rate()
             ).c_str(),
             false
         );
       }
 
-      if((ev.rate() != 0) && (ev.amt() <= 0) && (ev.evid()==1) && !zero_inf) {
+      if((ev->rate() != 0) && (ev->amt() <= 0) && (ev->evid()==1) && !zero_inf) {
         throw Rcpp::exception(
             tfm::format(
               "non-zero rate requires positive amt \n ID: %d, row: %i, "
               "rate: %d, amt: %d",
-              ev.id(), j+1, ev.rate(), ev.amt()
+              ev->id(), j+1, ev->rate(), ev->amt()
             ).c_str(),
             false
         );
       }
 
-      if(ev.ii() <= 0) {
-        if(ev.addl() > 0) {
+      if(ev->ii() <= 0) {
+        if(ev->addl() > 0) {
           throw Rcpp::exception(
               tfm::format(
                 "dosing record with addl > 0 and ii <= 0 \n ID: %d, row: %i, "
                 "addl: %i",
-                ev.id(), j+1, ev.addl()
+                ev->id(), j+1, ev->addl()
               ).c_str(),
               false
           );
         }
-        if(ev.ss() && (!zero_inf)) {
+        if(ev->ss() && (!zero_inf)) {
           throw Rcpp::exception(
               tfm::format(
                 "dosing record with ss > 0 and ii <= 0 \n ID: %d, row: %i",
-                ev.id(), j+1
+                ev->id(), j+1
               ).c_str(),
               false
           );
         }
       } // ii <=0
 
-      a[h].push_back(ev);
+      a[h].push_back(std::move(ev));
     }
   }
 }
@@ -545,15 +546,15 @@ void dataobject::carry_out(const recstack& a,
       
       // Get the last valid data set position to carry from
       if(carry_from_data) {
-        if(itt->from_data()) {
-          lastpos = itt->pos();
+        if((*itt)->from_data()) {
+          lastpos = (*itt)->pos();
           nextpos = lastpos;
         } else {
           nextpos = std::min(lastpos + pos_offset, maxpos);
         }
       }
 
-      if(!itt->output()) continue;
+      if(!(*itt)->output()) continue;
       
       // Copy from idata:
       for(k=0; k < n_idata_carry; ++k) {
