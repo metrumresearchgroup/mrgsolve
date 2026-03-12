@@ -456,11 +456,12 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     first_off = duration - Ii + Time + lagt;
     --ninf_ss;
   }
+  size_t merge_idx = thisi.size();
   for(size_t k = 0; k < offs.size(); ++k) {
     offs.at(k)->time(first_off + double(k)*double(Ii));
-    thisi.push_back(offs.at(k)); 
+    thisi.push_back(offs.at(k));
   }
-  std::sort(thisi.begin(),thisi.end(),CompRec());
+  std::inplace_merge(thisi.begin(),thisi.begin()+merge_idx,thisi.end(),CompRec());
   prob->lsoda_init();
   prob->ss_flag = false;
 }
@@ -596,13 +597,14 @@ void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t star
                          const bool put_ev_first) {
   const int total = ev.addl + 1;
   int nextpos = put_ev_first && (ev.evid!= 1 && ev.evid!=4) ? -1000000000 : 1000000000;
+  size_t merge_idx = thisi.size();
   for(int i = 0; i < total; ++i) {
     rec_ptr rec = NEWREC(ev.time + i*ev.ii, nextpos, false);
     rec->evid(ev.evid);
     rec->Cmt = ev.cmt;
-    thisi.push_back(rec); 
+    thisi.push_back(rec);
   }
-  std::sort(thisi.begin()+start+1, thisi.end(), CompRec());
+  std::inplace_merge(thisi.begin()+start+1, thisi.begin()+merge_idx, thisi.end(), CompRec());
   return; 
 }
 

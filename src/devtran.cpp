@@ -585,9 +585,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
         bool sort_recs = false;
 
-        // Checking 
+        // Checking
         if(!this_rec->is_lagged()) {
-          
+
           // there is a valid lag time
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) {
             if(this_rec->ss() > 0) {
@@ -606,15 +606,37 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             insert_record(a[i], j, newev, put_ev_first);
+            // Save index (not iterator) before schedule appends; deque
+            // push_back can invalidate iterators
+            size_t merge_idx = a[i].size();
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
             sort_recs = newev->needs_sorting();
+            if(sort_recs) {
+              std::inplace_merge(
+                a[i].begin()+j+1,
+                a[i].begin()+merge_idx,
+                a[i].end(),
+                CompRec()
+              );
+              sort_recs = false;
+            }
           } else { // no valid lagtime
+            size_t merge_idx = a[i].size();
             this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             sort_recs = this_rec->needs_sorting();
+            if(sort_recs) {
+              std::inplace_merge(
+                a[i].begin()+j+1,
+                a[i].begin()+merge_idx,
+                a[i].end(),
+                CompRec()
+              );
+              sort_recs = false;
+            }
           }
         } // from data
-        
+
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
@@ -626,17 +648,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  this_rec->rate(),
                                  -299,
                                  id);
-          
+
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
-          } 
+          }
           // Infusion off always happens first
           insert_record(a[i], j, evoff, true);
-        }
-        
-        // SORT
-        if(sort_recs) {
-          std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
         }
         
         if(tad) { // Adjusts told for lagtime
@@ -769,8 +786,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             // For parent doses happening "now", with or without lag time,
             //   but with positive addl
             // There is *no* unique check for additional doses
+            size_t addl_merge_idx = a[i].size();
             new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
-            std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
+            std::inplace_merge(
+              a[i].begin()+j+1,
+              a[i].begin()+addl_merge_idx,
+              a[i].end(),
+              CompRec()
+            );
           }
         } // Closes iteration across vector of events
         used_mtimehx = mtimehx.size() > 0;
