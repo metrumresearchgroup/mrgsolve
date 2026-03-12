@@ -214,11 +214,11 @@ void odeproblem::init_derivs(double time) {
   this->call_derivs(&time,&Y[0],&Yout[1]);  
 }
 
-void odeproblem::set_d(rec_ptr this_rec) {
-  d.time = this_rec->time();
-  d.cmt = this_rec->cmt();
-  d.evid = this_rec->evid();
-  d.amt = this_rec->amt();
+void odeproblem::set_d(const datarecord& this_rec) {
+  d.time = this_rec.Time;
+  d.cmt = this_rec.Cmt;
+  d.evid = this_rec.Evid;
+  d.amt = this_rec.Amt;
 }
 
 /**
@@ -278,27 +278,27 @@ void odeproblem::rate_reset() {
   }
 }
 
-void odeproblem::rate_main(rec_ptr rec, int cmtn) {
-  if(rec->rate()==-2) {
-    rec->rate(rec->amt() * rec->fn() / this->dur(cmtn));
+void odeproblem::rate_main(datarecord& rec, int cmtn) {
+  if(rec.rate()==-2) {
+    rec.rate(rec.amt() * rec.fn() / this->dur(cmtn));
     return;
   }
-  if(rec->rate()==-1) {
-    rec->rate(this->rate(cmtn));
+  if(rec.rate()==-1) {
+    rec.rate(this->rate(cmtn));
   }
 }
 
-void odeproblem::check_data_rate(rec_ptr rec, int cmtn) {
-  if(rec->rate()==-1 && this->rate(cmtn)<=0) {
+void odeproblem::check_data_rate(datarecord& rec, int cmtn) {
+  if(rec.rate()==-1 && this->rate(cmtn)<=0) {
     throw Rcpp::exception(
         tfm::format(
           "[mrgsolve] modeled infusion rate R_CMT or Rn must be "
           "positive when dosing record RATE is set to -1."
         ).c_str(),
         false
-    );  
+    );
   }
-  if(rec->rate()==-2 && this->dur(cmtn)<=0) {
+  if(rec.rate()==-2 && this->dur(cmtn)<=0) {
     throw Rcpp::exception(
         tfm::format(
           "[mrgsolve] modeled infusion duration D_CMT or Dn must be "
@@ -309,11 +309,11 @@ void odeproblem::check_data_rate(rec_ptr rec, int cmtn) {
   }
 }
 
-void odeproblem::check_modeled_rate(rec_ptr rec) {
+void odeproblem::check_modeled_rate(const datarecord& rec) {
   if(!check_modeled_infusions) return;
-  if(rec->is_lagged()) return;
-  if(rec->is_phantom()) return;
-  if(rec->is_dose() && rec->rate() != -1) {
+  if(rec.is_lagged()) return;
+  if(rec.is_phantom()) return;
+  if(rec.is_dose() && rec.rate() != -1) {
     Rcpp::warning(
       "[mrgsolve] RATE is not -1 on a dosing record with modeled infusion "
       "rate; either set the modeled rate to zero or use the "
@@ -323,11 +323,11 @@ void odeproblem::check_modeled_rate(rec_ptr rec) {
   }
 }
 
-void odeproblem::check_modeled_dur(rec_ptr rec) {
+void odeproblem::check_modeled_dur(const datarecord& rec) {
   if(!check_modeled_infusions) return;
-  if(rec->is_lagged()) return;
-  if(rec->is_phantom()) return;
-  if(rec->is_dose() && rec->rate() != -2) {
+  if(rec.is_lagged()) return;
+  if(rec.is_phantom()) return;
+  if(rec.is_dose() && rec.rate() != -2) {
     Rcpp::warning(
       "[mrgsolve] RATE is not -2 on a dosing record with modeled infusion "
       "duration; either set the modeled duration to zero or use the "

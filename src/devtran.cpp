@@ -35,6 +35,25 @@
 #define say(a)   Rcpp::Rcout << a << std::endl;
 #define __ALAG_POS -1200
 
+// Value struct for mtimehx deduplication history
+struct mtime_key {
+  double time;
+  unsigned int evid;
+  int cmt;
+  double amt;
+};
+
+static bool mtime_key_equal(const std::vector<mtime_key>& a, double time,
+                            unsigned int evid, int cmt, double amt) {
+  for(size_t i = 0; i < a.size(); ++i) {
+    if(a[i].time != time) continue;
+    if((a[i].evid==evid) && (a[i].cmt==cmt) && (a[i].amt==amt)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /** Perform a simulation run.
  *
  * @param parin list of options for the simulation
@@ -43,7 +62,7 @@
  * @param data the main data set
  * @param idata the idata data set
  * @param mod the model object for simulating
- * 
+ *
  * @return list containing matrix of simulated data and a character vector of
  * tran names that may have been carried into the output
  *
@@ -54,7 +73,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                    const Rcpp::NumericMatrix& data,
                    const Rcpp::NumericMatrix& idata,
                    const Rcpp::S4& mod) {
-  
+
   const bool obsonly          = Rcpp::as<bool>   (parin["obsonly"]);
   const int  recsort          = Rcpp::as<int>    (parin["recsort"]);
   const bool filbak           = Rcpp::as<bool>   (parin["filbak"]);
@@ -63,37 +82,37 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   bool obsaug                 = Rcpp::as<bool>   (parin["obsaug"] );
   bool call_event             = Rcpp::as<bool>   (parin["call_event"]);
   obsaug = obsaug & (data.nrow() > 0);
-  
+
   // Grab items from the model object --------------------
   // No code for Model Matrices here; mod gets passed to odeproblem methods
-  
-  // Used here 
+
+  // Used here
   const double digits = Rcpp::as<double>(mod.slot("digits"));
   const double tscale = Rcpp::as<double>(mod.slot("tscale"));
   const double mindt  = Rcpp::as<double>(mod.slot("mindt"));
   const bool   debug  = Rcpp::as<bool>(mod.slot("debug"));
-  const bool  verbose = Rcpp::as<bool>(mod.slot("verbose")); 
-  
+  const bool  verbose = Rcpp::as<bool>(mod.slot("verbose"));
+
   // passed along
   Rcpp::Environment envir = mod.slot("envir");
-  
+
   // We need to decrement capture indices; this needs to be cloned
   Rcpp::CharacterVector cap = mod.slot("capture");
   Rcpp::IntegerVector capture = mod.slot("Icap");
-  capture = Rcpp::clone(capture); 
+  capture = Rcpp::clone(capture);
   capture = capture - 1;
-  
+
   // request is compartments to bring into output; decrement --> clone
   Rcpp::IntegerVector request = mod.slot("Icmt");
   request = Rcpp::clone(request);
   request = request - 1;
-  
+
   // Parameters; clone names
   const Rcpp::S4 ParamS4 = mod.slot("param");
   const Rcpp::List Param = ParamS4.slot("data");
   Rcpp::CharacterVector paramnames(Param.names());
   paramnames = Rcpp::clone(paramnames);
-  
+
   // Compartments; clone names
   const Rcpp::S4 InitS4 = mod.slot("init");
   const Rcpp::List Init = InitS4.slot("data");
@@ -101,26 +120,26 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   cmtnames = Rcpp::clone(cmtnames);
   Rcpp::NumericVector init(Init.size());
   for(int i = 0; i < init.size(); ++i) {
-    init[i] = Init[i];  
+    init[i] = Init[i];
   }
-  
+
   // Create data objects from data and idata
   dataobject dat(data, paramnames);
   dat.map_uid();
   dat.locate_tran();
-  
+
   dataobject idat(idata, paramnames, cmtnames);
   idat.idata_row();
-  
+
   // Number of individuals in the data set
   int NID = dat.nid();
   const int nidata = idat.nrow();
-  
+
   unsigned int crow = 0;
-  
+
   bool put_ev_first = false;
   bool addl_ev_first = true;
-  
+
   switch (recsort) {
   case 1:
     break;
@@ -139,7 +158,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   default:
     CRUMP("recsort must be 1, 2, 3, or 4.");
   }
-  
+
   // Create odeproblem object
   odeproblem prob(Param, init, funs, cap.size());
   prob.omega(mod);
@@ -148,49 +167,49 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
   LSODA solver(neq, mod);
-  
+
   recstack a(NID);
-  
+
   unsigned int obscount = 0;
   unsigned int evcount = 0;
   dat.get_records(a, NID, neq, obscount, evcount, obsonly, debug);
-  
+
   // Requested compartments
   const unsigned int nreq = request.size();
-  
+
   // Columns from the data set to carry:
-  Rcpp::CharacterVector data_carry_ = 
+  Rcpp::CharacterVector data_carry_ =
     Rcpp::as<Rcpp::CharacterVector >(parin["carry_data"]);
   const Rcpp::IntegerVector data_carry =  dat.get_col_n(data_carry_);
   const unsigned int n_data_carry = data_carry.size();
-  
+
   // Columns from the idata set to carry:
   unsigned int n_idata_carry=0;
   Rcpp::IntegerVector idata_carry;
   if(nidata > 0) {
-    Rcpp::CharacterVector idata_carry_ = 
+    Rcpp::CharacterVector idata_carry_ =
       Rcpp::as<Rcpp::CharacterVector >(parin["carry_idata"]);
     idata_carry =  idat.get_col_n(idata_carry_);
     n_idata_carry = idata_carry.size();
     dat.check_idcol(idat);
   }
-  
+
   // Tran Items to carry:
-  Rcpp::CharacterVector tran_carry = 
+  Rcpp::CharacterVector tran_carry =
     Rcpp::as<Rcpp::CharacterVector >(parin["carry_tran"]);
   const unsigned int n_tran_carry = tran_carry.size();
-  
+
   // Captures
   const unsigned int n_capture  = capture.size();
-  
+
   // Find tofd
   std::vector<double> tofd;
   if(tad) {
     tofd.reserve(a.size());
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if((*itt)->is_dose()) {
-          tofd.push_back((*itt)->time());
+        if(itt->is_dose()) {
+          tofd.push_back(itt->time());
           break;
         }
       }
@@ -202,35 +221,35 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       CRUMP("There was a problem finding time of first dose.");
     }
   }
-  
+
   // Need this for later
   int nextpos = put_ev_first ?  (1000000) : -10000;
-  
+
   if((obscount == 0) || (obsaug)) {
-    
-    Rcpp::NumericMatrix tgrid = 
+
+    Rcpp::NumericMatrix tgrid =
       Rcpp::as<Rcpp::NumericMatrix>(parin["tgridmatrix"]);
-    
+
     if((tgrid.nrow() == 0) && (obscount==0) && (evcount==0)) {
-      tgrid = Rcpp::NumericMatrix(1,1);  
+      tgrid = Rcpp::NumericMatrix(1,1);
     }
-    
+
     bool multiple_tgrid = tgrid.ncol() > 1;
-    
+
     // Already has C indexing
-    Rcpp::IntegerVector tgridi = 
+    Rcpp::IntegerVector tgridi =
       Rcpp::as<Rcpp::IntegerVector>(parin["whichtg"]);
-    
+
     // Number of non-na times in each design
     std::vector<int> tgridn;
-    
+
     if(multiple_tgrid) {
       if(tgridi.size() < idata.nrow()) {
         CRUMP("Length of design indicator less than NID.");
       }
       if(max(tgridi) >= tgrid.ncol()) {
         CRUMP("Insufficient number of designs specified for this problem.");
-      } 
+      }
       for(int i = 0; i < tgrid.ncol(); ++i) {
         tgridn.push_back(Rcpp::sum(!Rcpp::is_na(tgrid(Rcpp::_,i))));
       }
@@ -240,26 +259,23 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         tgridi = Rcpp::rep(0,NID);
       }
     }
-    
+
     // Create a common dictionary of observation events
     // Vector of vectors
     // Outer vector: length = number of designs
     // Inner vector: length = number of times in that design
     recstack designs;
-    
+
     for(size_t i = 0; i < tgridn.size(); ++i) {
-      
+
       reclist z;
-      
-      //z.reserve(tgridn[i]); // TODO: remove
-      
+
       for(int j = 0; j < tgridn[i]; ++j) {
-        rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
-        z.push_back(obs);
+        z.emplace_back(tgrid(j,i),nextpos,true);
       }
-      designs.push_back(z);
+      designs.push_back(std::move(z));
     }
-    
+
     // We have to look up the design from the idata set
     for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
       int  j, n;
@@ -271,14 +287,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       } else {
         j = 0;
         n = tgridn.at(0);
-      } 
-      
-      //it->reserve((it->size() + n)); // TODO: remove
+      }
+
       for(int h=0; h < n; ++h) {
         it->push_back(designs[tgridi[j]][h]);
         ++obscount;
         dat.increment_inrow(it-a.begin());
-      } 
+      }
       std::sort(it->begin(), it->end(), CompRec());
     }
   }
@@ -296,13 +311,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int idata_carry_start = data_carry_start + n_data_carry;
   const unsigned int req_start = idata_carry_start+n_idata_carry;
   const unsigned int capture_start = req_start+nreq;
-  
+
   arma::mat eta;
   const int neta = prob.neta();
   if(neta > 0) {
     const std::string etasrc = Rcpp::as<std::string> (parin["etasrc"]);
     prob.set_eta();
-    eta = prob.mv_omega(NID); 
+    eta = prob.mv_omega(NID);
     if(etasrc=="omega") {
       // Nothing else to do; we always simulate
       // from omega if neta > 0
@@ -311,35 +326,35 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     } else if(etasrc=="data.all") {
       eta = dat.get_etas(neta, true, etasrc);
     } else if(etasrc=="idata") {
-      eta = idat.get_etas(neta, false, etasrc); 
+      eta = idat.get_etas(neta, false, etasrc);
     } else if(etasrc=="idata.all") {
       eta = idat.get_etas(neta, true, etasrc);
     } else {
-      std::string msg = 
+      std::string msg =
         R"(`etasrc` must be either:
               "omega"     = ETAs simulated from OMEGA
               "data"      = ETAs imported from the data set
               "idata"     = ETAs imported from the idata set
               "data.all"  = strict ETA import from data set
               "idata.all" = strict ETA import from idata set)";
-      CRUMP(msg.c_str());  
+      CRUMP(msg.c_str());
     }
   }
-  
-  arma::mat eps;  
+
+  arma::mat eps;
   const int neps = prob.neps();
   if(neps > 0) {
     prob.set_eps();
     eps = prob.mv_sigma(NN);
     prob.copy_sigma_diagonals();
   }
-  
+
   Rcpp::CharacterVector tran_names;
   if(n_tran_carry > 0) {
-    
+
     Rcpp::CharacterVector::iterator tcbeg  = tran_carry.begin();
     Rcpp::CharacterVector::iterator tcend  = tran_carry.end();
-    
+
     const bool carry_evid = std::find(tcbeg,tcend, "evid")  != tcend;
     const bool carry_cmt =  std::find(tcbeg,tcend, "cmt")   != tcend;
     const bool carry_amt =  std::find(tcbeg,tcend, "amt")   != tcend;
@@ -348,7 +363,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     const bool carry_ss =   std::find(tcbeg,tcend, "ss")    != tcend;
     const bool carry_rate = std::find(tcbeg,tcend, "rate")  != tcend;
     const bool carry_aug  = std::find(tcbeg,tcend, "a.u.g") != tcend;
-    
+
     if(carry_evid) tran_names.push_back("evid");
     if(carry_amt)  tran_names.push_back("amt");
     if(carry_cmt)  tran_names.push_back("cmt");
@@ -357,56 +372,56 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     if(carry_addl) tran_names.push_back("addl");
     if(carry_rate) tran_names.push_back("rate");
     if(carry_aug)  tran_names.push_back("a.u.g");
-    
-    
+
+
     crow = 0;
     int n = 0;
     for(recstack::const_iterator it = a.begin(); it !=a.end(); ++it) {
       for(reclist::const_iterator itt = it->begin(); itt != it->end(); ++itt) {
-        if(!(*itt)->output()) continue;
+        if(!itt->output()) continue;
         n = 0;
-        if(carry_evid) {ans(crow,n+precol) = (*itt)->evid();                     ++n;}
-        if(carry_amt)  {ans(crow,n+precol) = (*itt)->amt();                      ++n;}
-        if(carry_cmt)  {ans(crow,n+precol) = (*itt)->cmt();                      ++n;}
-        if(carry_ss)   {ans(crow,n+precol) = (*itt)->ss();                       ++n;}
-        if(carry_ii)   {ans(crow,n+precol) = (*itt)->ii();                       ++n;}
-        if(carry_addl) {ans(crow,n+precol) = (*itt)->addl();                     ++n;}
-        if(carry_rate) {ans(crow,n+precol) = (*itt)->rate();                     ++n;}
-        if(carry_aug)  {ans(crow,n+precol) = ((*itt)->pos()==nextpos) && obsaug; ++n;}
+        if(carry_evid) {ans(crow,n+precol) = itt->evid();                     ++n;}
+        if(carry_amt)  {ans(crow,n+precol) = itt->amt();                      ++n;}
+        if(carry_cmt)  {ans(crow,n+precol) = itt->cmt();                      ++n;}
+        if(carry_ss)   {ans(crow,n+precol) = itt->ss();                       ++n;}
+        if(carry_ii)   {ans(crow,n+precol) = itt->ii();                       ++n;}
+        if(carry_addl) {ans(crow,n+precol) = itt->addl();                     ++n;}
+        if(carry_rate) {ans(crow,n+precol) = itt->rate();                     ++n;}
+        if(carry_aug)  {ans(crow,n+precol) = (itt->pos()==nextpos) && obsaug;  ++n;}
         ++crow;
       }
     }
   }
-  
+
   if(((n_idata_carry > 0) || (n_data_carry > 0)) ) {
     dat.carry_out(a,ans,idat,data_carry,data_carry_start,idata_carry,
                   idata_carry_start,nocb);
   }
-  
+
   crow = 0; // current output row; never reset; always countingup
   int icrow = 0; // output row for current ID; reset inside i-loop
   int ic = prob.interrupt; // interrupt counter
-  
+
   prob.nid(dat.nid());
   prob.idn(0);
   prob.nrow(NN);
   prob.rown(crow);
   prob.irown(icrow);
   prob.inrow(dat.inrow(0));
-  
+
   prob.config_call();
-  reclist mtimehx;
+  std::vector<mtime_key> mtimehx;
   bool used_mtimehx = false;
-  
+
   bool has_idata = idat.nrow() > 0;
   int this_idata_row = 0;
   const bool do_interrupt = prob.interrupt > 0;
-  
+
   if(verbose) say("starting the simulation ...");
-  
+
   // i is indexing the subject, j is the record
   for(size_t i=0; i < a.size(); ++i) {
-    
+
     double id = dat.get_uid(i);
     dat.next_id(i);
     prob.idn(i);
@@ -414,72 +429,72 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     icrow = 0;
     prob.irown(icrow);
     prob.rown(crow);
-    
+
     prob.reset_newid(id);
-    if(used_mtimehx) mtimehx.clear();  
-    
+    if(used_mtimehx) mtimehx.clear();
+
     if(i==0) {
       prob.newind(0);
     }
-    
+
     int this_cmtn = 0;
     double told = -1;
-    
-    double tfrom = a[i].front()->time();
+
+    double tfrom = a[i].front().time();
     double tto = tfrom;
-    
-    const double maxtime = a[i].back()->time();
+
+    const double maxtime = a[i].back().time();
     const int NNI = dat.inrow(i);
-    
+
     for(int k=0; k < neta; ++k) prob.eta(k,eta(i,k));
     for(int k=0; k < neps; ++k) prob.eps(k,eps(crow,k));
-    
+
     prob.y_init(init);
-    
+
     if(has_idata) {
       this_idata_row = idat.get_idata_row(id);
       idat.copy_parameters(this_idata_row,&prob);
       idat.copy_inits(this_idata_row,&prob);
     }
-    
+
     if(dat.any_copy) {
-      if(a[i][0]->from_data()) {
-        dat.copy_parameters(a[i][0]->pos(),&prob);
+      if(a[i][0].from_data()) {
+        dat.copy_parameters(a[i][0].pos(),&prob);
       } else {
         if(filbak) {
           dat.copy_parameters(dat.start(i),&prob);
         }
       }
     }
-    
+
     prob.set_d(a[i][0]);
     prob.init_call(tfrom);
-    
+
     for(size_t j=0; j < a[i].size(); ++j) {
-      
+
       if(do_interrupt && (!(--ic))) {
         Rcpp::checkUserInterrupt();
         ic = prob.interrupt;
       }
-    
-      rec_ptr this_rec = a[i][j];
-      
-      this_rec->id(id);
-      tto = this_rec->time();
-      
+
+      // Use a[i][j] directly; references to deque elements can be
+      // invalidated by insert/push_back operations later in this loop
+      a[i][j].id(id);
+      tto = a[i][j].time();
+
       // TODO: simplify
       if(icrow==NNI || crow==NN || tto > maxtime) {
         continue;
       }
-      
+
       // Only update row counters on output records
-      if(this_rec->output()) {
+      if(a[i][j].output()) {
          prob.irown(icrow);
          prob.rown(crow);
       }
-      
+
       if(prob.systemoff()) {
-        // This starts a loop that will finish the remaining records 
+        // This starts a loop that will finish the remaining records
         // for an individual; no other calls to any model functions will
         // be made
         // SYSTEMOFF = 1 --> copy model results to the line
@@ -487,7 +502,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         unsigned short int status = prob.systemoff();
         if(status==9) CRUMP("the problem was stopped at user request.");
         if(status==999) CRUMP("999 sent from the model.");
-        if(this_rec->output()) {
+        if(a[i][j].output()) {
           if(status==1) {
             ans(crow,0) = id;
             ans(crow,1) = tto;
@@ -500,139 +515,135 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           } else {
             for(int k=0; k < ans.ncol(); ++k) {
               ans(crow,k) = NA_REAL;
-            } 
+            }
           }
           ++crow;
           ++icrow;
         }
         continue;
       }
-      
+
       if(dat.any_copy && nocb) {
         // will call lsoda_init if parameters are copied
         dat.copy_next_parameters(
-          i, 
-          this_rec->from_data(), 
-          this_rec->pos(), 
+          i,
+          a[i][j].from_data(),
+          a[i][j].pos(),
           &prob
         );
       }
 
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
-      
+
       if((dt > 0.0) && (dt < mindt)) {
         tto = tfrom;
       }
-      
+
       for(int k = 0; k < neps; ++k) {
         prob.eps(k,eps(crow,k));
       }
-      
+
       if(j != 0) {
         prob.newind(2);
-        prob.set_d(this_rec);
-        if(!this_rec->is_lagged()) {
+        prob.set_d(a[i][j]);
+        if(!a[i][j].is_lagged()) {
           // TODO: what other records should we skip?
           prob.init_call_record(tto);
         }
       }
-      
+
       // Some non-observation event happening
       // Note that F needs to get updated at every dose including addl
-      // but rate is fixed to the parent rate and we only verify infusions 
-      // on actual dose records in the data set. 
-      if(this_rec->is_event()) {
+      // but rate is fixed to the parent rate and we only verify infusions
+      // on actual dose records in the data set.
+      if(a[i][j].is_event()) {
 
-        this_cmtn = this_rec->cmtn();
-        
-        if(!this_rec->is_lagged()) {
-          this_rec->fn(prob.fbio(this_cmtn));
+        this_cmtn = a[i][j].cmtn();
+
+        if(!a[i][j].is_lagged()) {
+          a[i][j].fn(prob.fbio(this_cmtn));
         }
-        
-        if(this_rec->fn() < 0) {
+
+        if(a[i][j].fn() < 0) {
           CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
         }
-        
-        if(this_rec->fn()==0) {
-          if(this_rec->is_dose()) {
+
+        if(a[i][j].fn()==0) {
+          if(a[i][j].is_dose()) {
             prob.on(this_cmtn);
             prob.lsoda_init();
-            this_rec->unarm();
+            a[i][j].unarm();
           }
         }
-        
+
         // Check data set rate against modeled rate and dur
         // This is only a check; rate_main will actually set the rate
-        if(this_rec->rate() < 0) {
-          prob.check_data_rate(this_rec, this_cmtn);  
+        if(a[i][j].rate() < 0) {
+          prob.check_data_rate(a[i][j], this_cmtn);
         }
 
         // Only check data set records
-        if(this_rec->from_data()) {
+        if(a[i][j].from_data()) {
           // Validate modeled rates
           if(prob.dur(this_cmtn) > 0) {
-            prob.check_modeled_dur(this_rec);
+            prob.check_modeled_dur(a[i][j]);
           }
           // Validate modeled infusion rate
           if(prob.rate(this_cmtn) > 0) {
-            prob.check_modeled_rate(this_rec);
+            prob.check_modeled_rate(a[i][j]);
           }
         }
-        
-        if(this_rec->rate() < 0) {
-          prob.rate_main(this_rec, this_cmtn);
+
+        if(a[i][j].rate() < 0) {
+          prob.rate_main(a[i][j], this_cmtn);
         }
 
-        bool sort_recs = false;
-
         // Checking
-        if(!this_rec->is_lagged()) {
+        if(!a[i][j].is_lagged()) {
 
           // there is a valid lag time
-          if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) {
-            if(this_rec->ss() > 0) {
-              this_rec->steady(&prob, a[i], solver);
+          if(prob.alag(this_cmtn) > mindt && a[i][j].is_dose()) {
+            if(a[i][j].ss() > 0) {
+              a[i][j].steady(&prob, a[i], solver);
               tfrom = tto;
             }
             // We already advanced to ss
             // Lagged dose and all subsequent should be vanilla EVID=1 doses
-            this_rec->ss(0);
-            rec_ptr newev = NEWREC(*this_rec);
-            if(newev->evid()==4) {
-              newev->evid(1);
+            a[i][j].ss(0);
+            datarecord newev(a[i][j]);
+            if(newev.evid()==4) {
+              newev.evid(1);
             }
-            newev->pos(__ALAG_POS);
-            newev->phantom_rec();
-            newev->lagged();
-            newev->time(this_rec->time() + prob.alag(this_cmtn));
-            insert_record(a[i], j, newev, put_ev_first);
-            // Save index (not iterator) before schedule appends; deque
-            // push_back can invalidate iterators
+            newev.pos(__ALAG_POS);
+            newev.phantom_rec();
+            newev.lagged();
+            newev.time(a[i][j].time() + prob.alag(this_cmtn));
+            a[i][j].unarm();
+            // schedule first (appends addl records to end of deque),
+            // then insert newev at correct position, then merge all new records
+            bool needs_sort = newev.needs_sorting();
             size_t merge_idx = a[i].size();
-            newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
-            this_rec->unarm();
-            sort_recs = newev->needs_sorting();
-            if(sort_recs) {
+            newev.schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
+            insert_record(a[i], j, newev, put_ev_first);
+            if(needs_sort) {
               std::inplace_merge(
                 a[i].begin()+j+1,
-                a[i].begin()+merge_idx,
+                a[i].begin()+merge_idx+1,
                 a[i].end(),
                 CompRec()
               );
-              sort_recs = false;
             }
           } else { // no valid lagtime
+            bool needs_sort = a[i][j].needs_sorting();
             size_t merge_idx = a[i].size();
-            this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
-            sort_recs = this_rec->needs_sorting();
-            if(sort_recs) {
+            a[i][j].schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
+            if(needs_sort) {
               std::inplace_merge(
                 a[i].begin()+j+1,
                 a[i].begin()+merge_idx,
                 a[i].end(),
                 CompRec()
               );
-              sort_recs = false;
             }
           }
         } // from data
@@ -640,44 +651,44 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
-        if(this_rec->int_infusion() && this_rec->armed()) {
-          rec_ptr evoff = NEWREC(this_rec->cmt(),
+        if(a[i][j].int_infusion() && a[i][j].armed()) {
+          datarecord evoff(a[i][j].cmt(),
                                  9,
-                                 this_rec->amt(),
-                                 this_rec->time() + this_rec->dur(),
-                                 this_rec->rate(),
+                                 a[i][j].amt(),
+                                 a[i][j].time() + a[i][j].dur(),
+                                 a[i][j].rate(),
                                  -299,
                                  id);
 
-          if(this_rec->from_data()) {
-            evoff->time(evoff->time() + prob.alag(this_cmtn));
+          if(a[i][j].from_data()) {
+            evoff.time(evoff.time() + prob.alag(this_cmtn));
           }
           // Infusion off always happens first
           insert_record(a[i], j, evoff, true);
         }
-        
+
         if(tad) { // Adjusts told for lagtime
-          if(!this_rec->is_lagged() && this_rec->is_dose()) {
+          if(!a[i][j].is_lagged() && a[i][j].is_dose()) {
             told = tto;
           }
         }
       } // is_dose
-      
+
       prob.advance(tfrom,tto,solver);
-      
-      if(this_rec->evid() != 2) {
-        this_rec->steady(&prob,a[i],solver);
-        this_rec->implement(&prob);
+
+      if(a[i][j].evid() != 2) {
+        a[i][j].steady(&prob,a[i],solver);
+        a[i][j].implement(&prob);
       }
-      
+
       if(!nocb && dat.any_copy) {
-        if(this_rec->from_data()) {
+        if(a[i][j].from_data()) {
           // will call lsoda_init
-          dat.copy_parameters(this_rec->pos(),&prob);
+          dat.copy_parameters(a[i][j].pos(),&prob);
         }
       }
-      
-      if(!this_rec->is_lagged()) {
+
+      if(!a[i][j].is_lagged()) {
         if(call_event) {
           prob.event_call();
         } else {
@@ -695,7 +706,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             throw Rcpp::exception(
                 tfm::format(
                   "modeled events or observations cannot start in the past\n"
-                  "ID: %d, time: %d, modeled record time: %d, evid: %i", 
+                  "ID: %d, time: %d, modeled record time: %d, evid: %i",
                   id, tto, this_time, this_evid
                 ).c_str(),
                 false
@@ -703,7 +714,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           };
           if(this_evid==0 || this_evid > 99) {
             insert_observations(a[i], mt[mti], j, addl_ev_first);
-            continue; 
+            continue;
           };
           double this_amt = mt[mti].amt;
           int this_cmt = (mt[mti]).cmt;
@@ -715,71 +726,71 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             }
           }
           // Create the record
-          rec_ptr new_ev = NEWREC(this_cmt,this_evid,this_amt,this_time,
-                                  this_rate,1.0);    
-          new_ev->phantom_rec();
-          new_ev->ss((mt[mti]).ss);
-          new_ev->ii((mt[mti]).ii);
-          new_ev->addl((mt[mti]).addl);
+          datarecord new_ev(this_cmt,this_evid,this_amt,this_time,
+                                  this_rate,1.0);
+          new_ev.phantom_rec();
+          new_ev.ss((mt[mti]).ss);
+          new_ev.ii((mt[mti]).ii);
+          new_ev.addl((mt[mti]).addl);
           // if doses happen "later" we never schedule here; it will
           //   get handled later as well
           // if the dose happens "now", we schedule now, even if there is lag
           //   time in play
           bool schedule_addl = false;
           if(mt[mti].now) {
-            schedule_addl  = new_ev->addl() > 0;
-            new_ev->fn(prob.fbio(new_ev->cmtn()));
-            if(new_ev->fn() < 0) {
+            schedule_addl  = new_ev.addl() > 0;
+            new_ev.fn(prob.fbio(new_ev.cmtn()));
+            if(new_ev.fn() < 0) {
               CRUMP("[mrgsolve] bioavailability fraction is less than zero.");
             }
-            if(new_ev->fn() ==0) {
-              if(new_ev->is_dose()) {
-                prob.on(new_ev->cmtn());
+            if(new_ev.fn() ==0) {
+              if(new_ev.is_dose()) {
+                prob.on(new_ev.cmtn());
                 prob.lsoda_init();
-                new_ev->unarm();
+                new_ev.unarm();
               }
             }
-            if(new_ev->rate() < 0) {
-              prob.rate_main(new_ev, new_ev->cmtn());    
+            if(new_ev.rate() < 0) {
+              prob.rate_main(new_ev, new_ev.cmtn());
             }
-            if(prob.alag(new_ev->cmtn()) > mindt && new_ev->is_dose()) {
-              if(new_ev->ss() > 0) {
-                new_ev->steady(&prob, a[i], solver);
+            if(prob.alag(new_ev.cmtn()) > mindt && new_ev.is_dose()) {
+              if(new_ev.ss() > 0) {
+                new_ev.steady(&prob, a[i], solver);
                 tfrom = tto;
-                new_ev->ss(0);
+                new_ev.ss(0);
               }
-              new_ev->time(new_ev->time() + prob.alag(new_ev->cmtn()));
-              new_ev->lagged();
-              new_ev->pos(__ALAG_POS);
+              new_ev.time(new_ev.time() + prob.alag(new_ev.cmtn()));
+              new_ev.lagged();
+              new_ev.pos(__ALAG_POS);
               mt[mti].now = false;
             }
           }
           // If the event is still happening now
           if(mt[mti].now) {
-            new_ev->time(tto);
-            new_ev->steady(&prob,a[i],solver);
-            new_ev->implement(&prob);
-            told = new_ev->time();
-            if(new_ev->int_infusion() && new_ev->armed()) {
-              rec_ptr evoff = NEWREC(new_ev->cmt(), 
-                                     9, 
-                                     new_ev->amt(), 
-                                     new_ev->time() + new_ev->dur(), 
-                                     new_ev->rate(), 
-                                     -299, 
+            new_ev.time(tto);
+            new_ev.steady(&prob,a[i],solver);
+            new_ev.implement(&prob);
+            told = new_ev.time();
+            if(new_ev.int_infusion() && new_ev.armed()) {
+              datarecord evoff(new_ev.cmt(),
+                                     9,
+                                     new_ev.amt(),
+                                     new_ev.time() + new_ev.dur(),
+                                     new_ev.rate(),
+                                     -299,
                                      id);
               insert_record(a[i], j, evoff, true);
             }
           } else {
             bool do_mt_ev = true;
             if((mt[mti].check_unique)) {
-              bool found = CompEqual(mtimehx,this_time,this_evid,this_cmt,
-                                     this_amt);   
+              bool found = mtime_key_equal(mtimehx,this_time,this_evid,
+                                           this_cmt,this_amt);
               do_mt_ev = do_mt_ev && !found;
             }
             if(do_mt_ev) {
               insert_record(a[i], j, new_ev, put_ev_first);
-              mtimehx.push_back(new_ev);
+              mtimehx.push_back({this_time, this_evid, this_cmt, this_amt});
             }
           } // Done processing "this" event
           if(schedule_addl) {
@@ -787,7 +798,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             //   but with positive addl
             // There is *no* unique check for additional doses
             size_t addl_merge_idx = a[i].size();
-            new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
+            new_ev.schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             std::inplace_merge(
               a[i].begin()+j+1,
               a[i].begin()+addl_merge_idx,
@@ -799,12 +810,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         used_mtimehx = mtimehx.size() > 0;
         prob.clear_mtime();
       } // Close handling of modeled events
-      
-      if(call_event && !this_rec->is_lagged()) {
+
+      if(call_event && !a[i][j].is_lagged()) {
         prob.table_call();
       }
-      
-      if(this_rec->output()) {
+
+      if(a[i][j].output()) {
         ans(crow,0) = id;
         ans(crow,1) = tto;
         if(tad) {
@@ -820,15 +831,15 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
         ++crow;
         ++icrow;
-      } 
-      if(this_rec->evid()==2) {
-        this_rec->implement(&prob);
-        if(this_rec->cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
+      }
+      if(a[i][j].evid()==2) {
+        a[i][j].implement(&prob);
+        if(a[i][j].cmt() < 0 && prob.infusion_count[this_cmtn] > 0) {
           int n_inf = prob.infusion_count[this_cmtn];
           int n_end = a[i].size();
           for(int ii = j; (n_inf > 0 && ii < n_end); ++ii) {
-            if(a[i].at(ii)->evid()==9) {
-              prob.rate_rm(this_cmtn, a[i].at(ii)->rate());
+            if(a[i].at(ii).evid()==9) {
+              prob.rate_rm(this_cmtn, a[i].at(ii).rate());
               a[i].erase(a[i].begin() + ii);
               --n_inf;
               --n_end;
