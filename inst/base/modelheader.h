@@ -56,7 +56,7 @@ typedef double capture;
 
 // pred_P definitions for $PKMODEL
 // Note that V/VC/V2 are synonymous when using the pred_P construct
-// Also, V3/V3 are synonyms as well
+// Also, VP/V3 and V4/VP2 are synonyms as well
 #define pred_CL  _pred_[0]
 #define pred_V   _pred_[1]
 #define pred_VC  _pred_[1]
