@@ -1,5 +1,5 @@
 library(mrgsolve)
-library(bench)
+stopifnot(require("bench"))
 
 # --- Model definitions -------------------------------------------------------
 

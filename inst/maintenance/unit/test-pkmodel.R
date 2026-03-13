@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2019  Metrum Research Group, LLC
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -202,10 +202,6 @@ test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })
-
-## --------------------------------------------------------------------------
-## ADVAN 11/12: Three-compartment model
-## --------------------------------------------------------------------------
 
 ode3_code <- '
 $PARAM CL=1, VC=20, Q=4, KA=1.1, VP=300, Q2=0.8, VP2=50
