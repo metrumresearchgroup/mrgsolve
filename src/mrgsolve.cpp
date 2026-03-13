@@ -396,12 +396,10 @@ Rcpp::List EXPAND_OBSERVATIONS(
   size_t n = z.size();
   
   for(recstack::iterator it = a.begin(); it != a.end(); ++it) {
-    //it->reserve((it->size() + n)); // TODO: remove
-    for(size_t h=0; h < n; h++) {
-      it->push_back(z[h]);
-      ++obscount;
-    } 
-    std::sort(it->begin(), it->end(), CompRec());
+    size_t merge_idx = it->size();
+    it->insert(it->end(), z.begin(), z.end());
+    obscount += n;
+    std::inplace_merge(it->begin(), it->begin() + merge_idx, it->end(), CompRec());
   }
   
   const int recs = (data.nrow()) + obscount;

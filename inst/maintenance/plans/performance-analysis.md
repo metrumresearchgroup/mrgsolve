@@ -509,6 +509,145 @@ thisi.push_back(std::move(offs.at(k)));
 
 ---
 
+## Detailed example: converting `mtimehx` to O(1) lookup
+
+### Current implementation
+
+`mtimehx` is a `reclist` (i.e., `deque<shared_ptr<datarecord>>`) used to track
+which modeled events have already been inserted, preventing duplicates. It lives
+at devtran.cpp:391 and is used in three places:
+
+1. **Declaration** (line 391): `reclist mtimehx;`
+2. **Uniqueness check** (line 769): `CompEqual(mtimehx, this_time, this_evid, this_cmt, this_amt)` — linear scan of the entire list
+3. **Recording** (line 775): `mtimehx.push_back(new_ev)` — stores a `shared_ptr` copy
+4. **Cleanup** (line 412): `mtimehx.clear()` — per-individual reset
+5. **Size check** (line 792): `used_mtimehx = mtimehx.size() > 0`
+
+`CompEqual` (datarecord.cpp:129-138) does a linear scan comparing `time()`,
+`evid()`, `cmt()`, and `amt()` against every stored record. If an individual
+generates many modeled events (e.g., from `$TABLE` mtime calls at every record),
+this becomes O(n^2) over the simulation — each new event scans all previously
+stored events.
+
+### Problem
+
+- **O(n) per lookup** — `CompEqual` walks the full `mtimehx` list
+- **Stores full `shared_ptr`** — only 4 scalar fields are actually read
+- **Blocks `unique_ptr` migration** — dual ownership of `new_ev` in both `a[i]`
+  and `mtimehx`
+
+### Step 1: Define a lightweight key struct
+
+Add to `datarecord.h` (or a new `mrgsolve_types.h` header):
+
+```cpp
+namespace mrgsolve {
+
+struct mtime_key {
+  double time;
+  unsigned int evid;
+  int cmt;
+  double amt;
+
+  bool operator==(const mtime_key& other) const {
+    return time == other.time &&
+           evid == other.evid &&
+           cmt  == other.cmt  &&
+           amt  == other.amt;
+  }
+};
+
+struct mtime_key_hash {
+  size_t operator()(const mtime_key& k) const {
+    // Combine hashes of the four fields
+    size_t h = std::hash<double>{}(k.time);
+    h ^= std::hash<unsigned int>{}(k.evid) + 0x9e3779b9 + (h << 6) + (h >> 2);
+    h ^= std::hash<int>{}(k.cmt) + 0x9e3779b9 + (h << 6) + (h >> 2);
+    h ^= std::hash<double>{}(k.amt) + 0x9e3779b9 + (h << 6) + (h >> 2);
+    return h;
+  }
+};
+
+} // namespace mrgsolve
+```
+
+The hash combiner uses the boost-style formula (`0x9e3779b9` is the golden
+ratio constant) to mix bits from each field. This avoids collisions when fields
+have similar values.
+
+### Step 2: Replace `mtimehx` declaration in devtran.cpp
+
+```cpp
+// Before (line 391-392):
+reclist mtimehx;
+bool used_mtimehx = false;
+
+// After:
+std::unordered_set<mrgsolve::mtime_key, mrgsolve::mtime_key_hash> mtimehx;
+bool used_mtimehx = false;
+```
+
+Add `#include <unordered_set>` at the top of devtran.cpp if not already present.
+
+### Step 3: Replace `CompEqual` call with set lookup
+
+```cpp
+// Before (lines 769-771):
+bool found = CompEqual(mtimehx, this_time, this_evid, this_cmt, this_amt);
+do_mt_ev = do_mt_ev && !found;
+
+// After:
+mrgsolve::mtime_key key{this_time, this_evid, this_cmt, this_amt};
+do_mt_ev = do_mt_ev && (mtimehx.find(key) == mtimehx.end());
+```
+
+### Step 4: Replace `push_back` with set insert
+
+```cpp
+// Before (line 775):
+mtimehx.push_back(new_ev);
+
+// After:
+mtimehx.insert({this_time, this_evid, this_cmt, this_amt});
+```
+
+Note: `this_time`, `this_evid`, `this_cmt`, and `this_amt` are already
+unpacked as local variables at devtran.cpp:685-687 and nearby, so no extra
+field access is needed.
+
+### Step 5: Cleanup — no changes needed
+
+`mtimehx.clear()` (line 412) works the same on `unordered_set`.
+`mtimehx.size() > 0` (line 792) also works unchanged, or can become
+`!mtimehx.empty()`.
+
+### Step 6: Remove `CompEqual` if no longer used
+
+After this change, `CompEqual` (datarecord.cpp:129-138) and its declaration
+(datarecord.h:143-144) are dead code and can be removed.
+
+### Performance comparison
+
+| Operation | `reclist` + `CompEqual` | `unordered_set<mtime_key>` |
+|-----------|-------------------------|----------------------------|
+| Lookup    | O(n) linear scan        | O(1) amortized hash lookup |
+| Insert    | O(1) `push_back`        | O(1) amortized `insert`    |
+| Memory    | ~112 bytes/entry (shared_ptr + datarecord) | ~36 bytes/entry (4 scalars + hash bucket) |
+| Clear     | O(n) destructor calls   | O(n) but trivial types     |
+
+For an individual generating 50 modeled events, the current approach does
+1+2+3+...+50 = 1,275 comparisons total. The `unordered_set` approach does 50
+hash lookups — roughly 50x fewer operations.
+
+### Side benefit: unblocks `unique_ptr` / value semantics migration
+
+With `mtimehx` storing value types instead of `rec_ptr`, there is no longer
+dual ownership of records between `a[i]` and `mtimehx`. This removes the one
+true blocker for migrating from `shared_ptr` to `unique_ptr` or to storing
+`datarecord` by value.
+
+---
+
 ## Better option: drop pointers entirely, store `datarecord` by value
 
 The `shared_ptr` indirection was originally needed for polymorphism (different
