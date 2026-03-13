@@ -294,8 +294,8 @@ test_that("ADVAN12 same as ODE - CENT,infus,ss,addl", {
 })
 
 test_that("ADVAN12 same as ODE - GUT,bolus,ss,addl", {
-  ode3a <- update(ode3, rtol = 1e-8, atol = 1e-15)
-  pred3a <- update(pred3, rtol = 1e-8, atol = 1e-15)
+  ode3a <- update(ode3, rtol = 1e-8, atol = 1e-15, ss_rtol = 1e-4)
+  pred3a <- update(pred3, rtol = 1e-8, atol = 1e-15, ss_rtol = 1e-4)
   e <- ev(amt=100,ii=12,addl=16,cmt=1,ss=1)
   out1 <- ode3a  %>% ev(e) %>%
     mrgsim(end=264,delta=0.1,digits=5,hmax=0.1)
