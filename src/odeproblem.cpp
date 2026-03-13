@@ -675,7 +675,7 @@ void odeproblem::advan11(const double& tfrom, const double& tto) {
     init1 = this->y(1); init2 = this->y(2); init3 = this->y(3);
   }
 
-  // --- Absorption compartment contribution ---
+  // Absorption compartment contribution
   if(Neq == 4) {
     if((init0 != 0) || (R0[0] != 0)) {
 
@@ -718,7 +718,7 @@ void odeproblem::advan11(const double& tfrom, const double& tto) {
     }
   }
 
-  // --- Central compartment contribution ---
+  // Central compartment contribution 
   if((init1 != 0) || (R0[1-eqoffset] != 0)) {
 
     a[0] = (k21-alpha[0])*(k31-alpha[0]) / d0;
@@ -746,7 +746,7 @@ void odeproblem::advan11(const double& tfrom, const double& tto) {
       PolyExp(dt,0,R0[1-eqoffset],dt,0,false,a,alpha,3);
   }
 
-  // --- Peripheral-1 compartment contribution ---
+  // Peripheral-1 compartment contribution 
   if((init2 != 0) || (R0[2-eqoffset] != 0)) {
 
     // periph1 -> central: cofactor is k21*(k31-alpha)
@@ -777,7 +777,7 @@ void odeproblem::advan11(const double& tfrom, const double& tto) {
       PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,3);
   }
 
-  // --- Peripheral-2 compartment contribution ---
+  // Peripheral-2 compartment
   if((init3 != 0) || (R0[3-eqoffset] != 0)) {
 
     // periph2 -> central: cofactor is k31*(k21-alpha)
@@ -842,8 +842,6 @@ double PolyExp(const double& x,
   double inf=1E9;
   //maximum value for a double in C++
   int i;
-  
-  //assert((alpha.size() >= n) && (a.size() >= n));
   
   //UPDATE DOSE
   if (dose>0) {
@@ -1044,17 +1042,11 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
 void odeproblem::omega(const Rcpp::S4& mod) {
   const Rcpp::S4 omega = mod.slot("omega");
   Omega = MAKEMATRIX(omega);
-  // if(!(Omega.is_symmetric())) {
-  //   Omega  = symmatl(Omega);
-  // }
 }
 
 void odeproblem::sigma(const Rcpp::S4& mod) {
   const Rcpp::S4 sigma = mod.slot("sigma");
   Sigma = MAKEMATRIX(sigma);
-  // if(!(Sigma.is_symmetric())) {
-  //   Sigma  = symmatl(Sigma);
-  // }
 }
 
 void odeproblem::copy_sigma_diagonals() {
