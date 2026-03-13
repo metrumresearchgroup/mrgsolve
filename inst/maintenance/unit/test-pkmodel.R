@@ -203,6 +203,181 @@ test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
   expect_equal(out1$PER,out2$PER)
 })
 
+## --------------------------------------------------------------------------
+## ADVAN 11/12: Three-compartment model
+## --------------------------------------------------------------------------
+
+ode3_code <- '
+$PARAM CL=1, VC=20, Q=4, KA=1.1, VP=300, Q2=0.8, VP2=50
+$CMT GUT CENT PER1 PER2
+$ODE
+double k10 = CL/VC;
+double k12 = Q/VC;
+double k21 = Q/VP;
+double k13 = Q2/VC;
+double k31 = Q2/VP2;
+
+dxdt_GUT  = -KA*GUT;
+dxdt_CENT = KA*GUT - (k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
+dxdt_PER1 = k12*CENT - k21*PER1;
+dxdt_PER2 = k13*CENT - k31*PER2;
+'
+
+pred3_code <- '
+$PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300, Q2=0.8, V4=50
+$PKMODEL cmt = "GUT CENT PER1 PER2", depot = TRUE
+'
+
+ode3 <- mcode("ode3cmt", ode3_code, rtol = 1E-9, atol = 1E-9)
+pred3 <- mcode("pk3cmt", pred3_code, rtol = 1E-9, atol = 1E-9)
+
+test_that("ADVAN12 same as ODE - initial condition", {
+  out1 <- ode3  %>% init(CENT=1000) %>%
+    Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
+  out2 <- pred3 %>% init(CENT=1000) %>%
+    Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+  expect_equal(names(out1),names(out2))
+})
+
+test_that("ADVAN12 same as ODE - GUT,bolus,addl", {
+  e <- ev(amt=100,ii=48,addl=4)
+  out1 <- ode3  %>% ev(e) %>%
+    Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+  out2 <- pred3 %>% ev(e) %>%
+    Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN12 same as ODE - GUT,infus,addl", {
+  e <- ev(amt=1000,rate=50,ii=48,addl=4)
+  out1 <- ode3  %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+  out2 <- pred3 %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN12 same as ODE - CENT,infus,addl", {
+  e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
+  out1 <- ode3  %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+
+  e2 <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
+  out2 <- pred3 %>% ev(e2) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN12 same as ODE - CENT,infus,ss,addl", {
+  e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=2,ss=1)
+  out1 <- ode3  %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+  out2 <- pred3 %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN12 same as ODE - GUT,bolus,ss,addl", {
+  ode3a <- update(ode3, rtol = 1e-8, atol = 1e-15)
+  pred3a <- update(pred3, rtol = 1e-8, atol = 1e-15)
+  e <- ev(amt=100,ii=12,addl=16,cmt=1,ss=1)
+  out1 <- ode3a  %>% ev(e) %>%
+    mrgsim(end=264,delta=0.1,digits=5,hmax=0.1)
+  out2 <- pred3a %>% ev(e) %>%
+    mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+## ADVAN11 (no depot, 3 compartments)
+ode3nd_code <- '
+$PARAM CL=1, VC=20, Q=4, VP=300, Q2=0.8, VP2=50
+$CMT CENT PER1 PER2
+$ODE
+double k10 = CL/VC;
+double k12 = Q/VC;
+double k21 = Q/VP;
+double k13 = Q2/VC;
+double k31 = Q2/VP2;
+
+dxdt_CENT = -(k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
+dxdt_PER1 = k12*CENT - k21*PER1;
+dxdt_PER2 = k13*CENT - k31*PER2;
+'
+
+pred3nd_code <- '
+$PARAM CL=1, V1=20, Q=4, V2=300, Q2=0.8, V3=50
+$PKMODEL cmt = "CENT PER1 PER2", depot = FALSE
+'
+
+ode3nd <- mcode("ode3cmt_nd", ode3nd_code, rtol = 1E-9, atol = 1E-9)
+pred3nd <- mcode("pk3cmt_nd", pred3nd_code, rtol = 1E-9, atol = 1E-9)
+
+test_that("ADVAN11 same as ODE - initial condition", {
+  out1 <- ode3nd  %>% init(CENT=1000) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
+  out2 <- pred3nd %>% init(CENT=1000) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN11 same as ODE - CENT,bolus,addl", {
+  e <- ev(amt=100,ii=48,addl=4,cmt=1)
+  out1 <- ode3nd  %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+  out2 <- pred3nd %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN11 same as ODE - CENT,infus,addl", {
+  e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
+  out1 <- ode3nd  %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+  out2 <- pred3nd %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
+test_that("ADVAN11 same as ODE - CENT,infus,ss,addl", {
+  e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1,ss=1)
+  out1 <- ode3nd  %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
+  out2 <- pred3nd %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
+
+  expect_equal(out1$CENT,out2$CENT)
+  expect_equal(out1$PER1,out2$PER1)
+  expect_equal(out1$PER2,out2$PER2)
+})
+
 test_that("Incorrect number of compartments causes error", {
   code <- '$PKMODEL cmt="GUT CENT OTHER PERIPH", depot = TRUE'
   expect_error(mod <- mcode("a2error3",code))
