@@ -398,17 +398,17 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   }
 
   if(Advan != 13) {
-    if((Advan==2) | (Advan==1)) {
+    if((Advan==2) || (Advan==1)) {
       this->advan2(tfrom,tto);
       return;
     }
     
-    if((Advan==4) | (Advan==3)) {
+    if((Advan==4) || (Advan==3)) {
       this->advan4(tfrom,tto);
       return;
     }
 
-    if((Advan==12) | (Advan==11)) {
+    if((Advan==12) || (Advan==11)) {
       this->advan11(tfrom,tto);
       return;
     }
@@ -964,17 +964,17 @@ void odeproblem::advan(int x) {
   
   if(Advan==13) return;
   
-  if((x==1) | (x ==2)) {
+  if((x==1) || (x ==2)) {
     a.assign(2,0.0);
     alpha.assign(2,0.0);
   }
   
-  if((x==3) | (x==4)) {
+  if((x==3) || (x==4)) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
   }
 
-  if((x==11) | (x==12)) {
+  if((x==11) || (x==12)) {
     a.assign(4,0.0);
     alpha.assign(4,0.0);
   }
