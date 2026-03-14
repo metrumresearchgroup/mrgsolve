@@ -753,6 +753,10 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' not including a depot dosing compartment), or 3 (three-compartment model,
 #' not including a depot dosing compartment)
 #' @param depot logical indicating whether to add depot compartment
+#' @param advan ADVAN subroutine number; can be 1, 2, 4, 11, or 12; when
+#' specified, \code{ncmt} and \code{depot} are derived from the ADVAN number
+#' and default compartment names (\code{A1}, \code{A2}, etc.) are assigned
+#' if \code{cmt} is not provided
 #' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11
 #' @param env parse environment
 #' @param pos block position number
@@ -796,22 +800,41 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' volume of distribution (3-cmt)
 #'
 #' }
-#' 
+#'
 #' @seealso \code{\link{BLOCK_PARSE}}
-PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, 
-                    trans = pick_trans(ncmt, depot), env = list(), 
-                    pos = 1, ...) {
+PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
+                    trans = NULL, env = list(), pos = 1, ...) {
+  if(is.numeric(advan)) {
+    if(!(advan %in% c(1, 2, 4, 11, 12))) {
+      stop("advan must be 1, 2, 4, 11, or 12.", call. = FALSE)
+    }
+    ncmt <- switch(
+      as.character(advan),
+      "1" = 1L, "2" = 1L, "4" = 2L, "11" = 3L, "12" = 3L
+    )
+    depot <- advan %in% c(2, 4, 12)
+    if(is.null(cmt)) {
+      total <- ncmt + as.integer(depot)
+      cmt <- paste0("A", seq_len(total))
+      init <- as.list(vector(mode = "integer", length = total))
+      names(init) <- cmt
+      env[["init"]][[pos]] <- init
+    }
+  }
+  if(is.null(trans)) {
+    trans <- pick_trans(ncmt, depot)
+  }
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
     ncmt <- length(cmt)
     init <- as.list(vector(mode="integer", length=ncmt))
     names(init) <- cmt
-    env[["init"]][[pos]] <- init  
+    env[["init"]][[pos]] <- init
     ncmt <- ncmt-depot
   }
   stopifnot(ncmt %in% c(1,2,3))
   advan <- pick_advan(ncmt,depot)
-  
+
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 

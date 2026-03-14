@@ -387,3 +387,153 @@ test_that("Error when KA==K10 in 1 compartment model", {
   mod <- param(mod, V = 1 + 1e-14)
   expect_error(mrgsim(mod), "k10 is too close to ka")
 })
+
+context("PKMODEL advan argument")
+
+test_that("advan=1 sets up 1-cmt no depot with default compartments", {
+  code <- '
+$PARAM CL=1, V=20
+$PKMODEL advan = 1
+'
+  mod <- mcode("advan1_test", code, compile = FALSE)
+  expect_equal(mod@advan, 1L)
+  expect_equal(mod@trans, 2L)
+  expect_equal(Cmt(mod), "A1")
+})
+
+test_that("advan=2 sets up 1-cmt with depot and default compartments", {
+  code <- '
+$PARAM CL=1, V=20, KA=1
+$PKMODEL advan = 2
+'
+  mod <- mcode("advan2_test", code, compile = FALSE)
+  expect_equal(mod@advan, 2L)
+  expect_equal(mod@trans, 2L)
+  expect_equal(Cmt(mod), c("A1", "A2"))
+})
+
+test_that("advan=4 sets up 2-cmt with depot and default compartments", {
+  code <- '
+$PARAM CL=1, V2=20, Q=2, V3=10, KA=1
+$PKMODEL advan = 4
+'
+  mod <- mcode("advan4_test", code, compile = FALSE)
+  expect_equal(mod@advan, 4L)
+  expect_equal(mod@trans, 4L)
+  expect_equal(Cmt(mod), c("A1", "A2", "A3"))
+})
+
+test_that("advan=11 sets up 3-cmt no depot with default compartments", {
+  code <- '
+$PARAM CL=1, V1=20, Q2=2, V2=10, Q3=0.5, V3=50
+$PKMODEL advan = 11
+'
+  mod <- mcode("advan11_test", code, compile = FALSE)
+  expect_equal(mod@advan, 11L)
+  expect_equal(mod@trans, 4L)
+  expect_equal(Cmt(mod), c("A1", "A2", "A3"))
+})
+
+test_that("advan=12 sets up 3-cmt with depot and default compartments", {
+  code <- '
+$PARAM CL=1, V2=20, Q3=2, V3=10, Q4=0.5, V4=50, KA=1
+$PKMODEL advan = 12
+'
+  mod <- mcode("advan12_test", code, compile = FALSE)
+  expect_equal(mod@advan, 12L)
+  expect_equal(mod@trans, 4L)
+  expect_equal(Cmt(mod), c("A1", "A2", "A3", "A4"))
+})
+
+test_that("advan argument with custom cmt names", {
+  code <- '
+$PARAM CL=1, V2=20, Q3=2, V3=10, Q4=0.5, V4=50, KA=1
+$PKMODEL advan = 12, cmt = "GUT CENT PER1 PER2"
+'
+  mod <- mcode("advan12_cmt_test", code, compile = FALSE)
+  expect_equal(mod@advan, 12L)
+  expect_equal(mod@trans, 4L)
+  expect_equal(Cmt(mod), c("GUT", "CENT", "PER1", "PER2"))
+})
+
+test_that("invalid advan value causes error", {
+  code <- '
+$PARAM CL=1, V=20
+$PKMODEL advan = 5
+'
+  expect_error(
+    mcode("advan5_test", code, compile = FALSE),
+    "advan must be 1, 2, 4, 11, or 12"
+  )
+})
+
+test_that("advan=12 produces same results as ncmt=3 depot=TRUE", {
+  ode3_code <- '
+$PARAM CL=1, VC=20, Q=4, KA=1.1, VP=300, Q2=0.8, VP2=50
+$CMT GUT CENT PER1 PER2
+$ODE
+double k10 = CL/VC;
+double k12 = Q/VC;
+double k21 = Q/VP;
+double k13 = Q2/VC;
+double k31 = Q2/VP2;
+
+dxdt_GUT  = -KA*GUT;
+dxdt_CENT = KA*GUT - (k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
+dxdt_PER1 = k12*CENT - k21*PER1;
+dxdt_PER2 = k13*CENT - k31*PER2;
+'
+
+  advan_code <- '
+$PARAM CL=1, V2=20, KA=1.1, Q3=4, V3=300, Q4=0.8, V4=50
+$PKMODEL advan = 12, cmt = "GUT CENT PER1 PER2"
+'
+
+  ode3 <- mcode("advan12_ode_ref", ode3_code, rtol = 1E-9, atol = 1E-9)
+  pk3 <- mcode("advan12_run_test", advan_code, rtol = 1E-9, atol = 1E-9)
+
+  e <- ev(amt = 100, ii = 48, addl = 4)
+  out1 <- ode3 %>% ev(e) %>%
+    Req(GUT,CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
+  out2 <- pk3 %>% ev(e) %>%
+    Req(GUT,CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
+
+  expect_equal(out1$CENT, out2$CENT)
+  expect_equal(out1$PER1, out2$PER1)
+  expect_equal(out1$PER2, out2$PER2)
+})
+
+test_that("advan=11 produces same results as ncmt=3 depot=FALSE", {
+  ode3nd_code <- '
+$PARAM CL=1, VC=20, Q=4, VP=300, Q2=0.8, VP2=50
+$CMT CENT PER1 PER2
+$ODE
+double k10 = CL/VC;
+double k12 = Q/VC;
+double k21 = Q/VP;
+double k13 = Q2/VC;
+double k31 = Q2/VP2;
+
+dxdt_CENT = -(k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
+dxdt_PER1 = k12*CENT - k21*PER1;
+dxdt_PER2 = k13*CENT - k31*PER2;
+'
+
+  advan_code <- '
+$PARAM CL=1, V1=20, Q2=4, V2=300, Q3=0.8, V3=50
+$PKMODEL advan = 11, cmt = "CENT PER1 PER2"
+'
+
+  ode3nd <- mcode("advan11_ode_ref", ode3nd_code, rtol = 1E-9, atol = 1E-9)
+  pk3nd <- mcode("advan11_run_test", advan_code, rtol = 1E-9, atol = 1E-9)
+
+  e <- ev(amt = 100, ii = 48, addl = 4, cmt = 1)
+  out1 <- ode3nd %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
+  out2 <- pk3nd %>% ev(e) %>%
+    Req(CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
+
+  expect_equal(out1$CENT, out2$CENT)
+  expect_equal(out1$PER1, out2$PER1)
+  expect_equal(out1$PER2, out2$PER2)
+})

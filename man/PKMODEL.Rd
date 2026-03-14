@@ -8,7 +8,8 @@ PKMODEL(
   ncmt = 1,
   depot = FALSE,
   cmt = NULL,
-  trans = pick_trans(ncmt, depot),
+  advan = NULL,
+  trans = NULL,
   env = list(),
   pos = 1,
   ...
@@ -23,6 +24,11 @@ not including a depot dosing compartment)}
 \item{depot}{logical indicating whether to add depot compartment}
 
 \item{cmt}{compartment names as comma-delimited character}
+
+\item{advan}{ADVAN subroutine number; can be 1, 2, 4, 11, or 12; when
+specified, \code{ncmt} and \code{depot} are derived from the ADVAN number
+and default compartment names (\code{A1}, \code{A2}, etc.) are assigned
+if \code{cmt} is not provided}
 
 \item{trans}{the parameterization for the PK model; must be 1, 2, 4, or 11}
 
