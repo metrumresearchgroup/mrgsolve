@@ -748,20 +748,20 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 
 #' Parse PKMODEL BLOCK data
 #'
-#' @param cmt compartment names as comma-delimited character
+#' @param cmt compartment names as comma-delimited character.
 #' @param ncmt number of compartments; must be 1 (one-compartment,
 #' not including a depot dosing compartment), 2 (two-compartment model,
 #' not including a depot dosing compartment), or 3 (three-compartment model,
-#' not including a depot dosing compartment)
-#' @param depot logical indicating whether to add depot compartment
+#' not including a depot dosing compartment).
+#' @param depot logical indicating whether to add depot compartment.
 #' @param advan ADVAN subroutine number; can be 1, 2, 4, 11, or 12; when
 #' specified, `ncmt` and `depot` are derived from the ADVAN number
 #' and default compartment names (`A1`, `A2`, etc.) are assigned
-#' if `cmt` is not provided
-#' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11
-#' @param env parse environment
-#' @param pos block position number
-#' @param ... not used
+#' if `cmt` is not provided.
+#' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11.
+#' @param env parse environment.
+#' @param pos block position number.
+#' @param ... not used.
 #'
 #' @details
 #' When using `$PKMODEL`, certain symbols must be defined in the
