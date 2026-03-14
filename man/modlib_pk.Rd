@@ -35,6 +35,7 @@ for linear and nonlinear clearance.
  \item{\code{pk3cmt}}: three compartment pk model using ODEs
  \item{\code{pk1}}: one compartment pk model in closed-form
  \item{\code{pk2}}: two compartment pk model in closed-form
+ \item{\code{pk3}}: three compartment pk model in closed-form
  \item{\code{popex}}: a simple population pk model
 }
 }
