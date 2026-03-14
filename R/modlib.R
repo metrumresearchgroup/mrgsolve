@@ -78,7 +78,7 @@ modlib <- function(model = NULL,...,list=FALSE)  {
 
 #nocov start
 modlib_models <- c(
-  "pk1cmt", "pk2cmt", "pk3cmt", "pk", "pk1", "pk2", "pk3", "popex",
+  "pk1cmt", "pk2cmt", "pk3cmt", "pk", "pk1", "pk2", "pk3", "pk3iv", "popex",
   "irm1", "irm2", "irm3", "pred1", "emax", "tmdd", "viral1", 
   "viral2", "effect", "1005", "nm-like", "evtools"
 )
