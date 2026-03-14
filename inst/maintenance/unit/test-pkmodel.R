@@ -398,7 +398,7 @@ $PKMODEL advan = 1
   mod <- mcode("advan1_test", code, compile = FALSE)
   expect_equal(mod@advan, 1L)
   expect_equal(mod@trans, 2L)
-  expect_equal(Cmt(mod), "A1")
+  expect_equal(mrgsolve:::Cmt(mod), "A1")
 })
 
 test_that("advan=2 sets up 1-cmt with depot and default compartments", {
@@ -409,7 +409,7 @@ $PKMODEL advan = 2
   mod <- mcode("advan2_test", code, compile = FALSE)
   expect_equal(mod@advan, 2L)
   expect_equal(mod@trans, 2L)
-  expect_equal(Cmt(mod), c("A1", "A2"))
+  expect_equal(mrgsolve:::Cmt(mod), c("A1", "A2"))
 })
 
 test_that("advan=4 sets up 2-cmt with depot and default compartments", {
@@ -420,7 +420,7 @@ $PKMODEL advan = 4
   mod <- mcode("advan4_test", code, compile = FALSE)
   expect_equal(mod@advan, 4L)
   expect_equal(mod@trans, 4L)
-  expect_equal(Cmt(mod), c("A1", "A2", "A3"))
+  expect_equal(mrgsolve:::Cmt(mod), c("A1", "A2", "A3"))
 })
 
 test_that("advan=11 sets up 3-cmt no depot with default compartments", {
@@ -431,7 +431,7 @@ $PKMODEL advan = 11
   mod <- mcode("advan11_test", code, compile = FALSE)
   expect_equal(mod@advan, 11L)
   expect_equal(mod@trans, 4L)
-  expect_equal(Cmt(mod), c("A1", "A2", "A3"))
+  expect_equal(mrgsolve:::Cmt(mod), c("A1", "A2", "A3"))
 })
 
 test_that("advan=12 sets up 3-cmt with depot and default compartments", {
@@ -442,7 +442,7 @@ $PKMODEL advan = 12
   mod <- mcode("advan12_test", code, compile = FALSE)
   expect_equal(mod@advan, 12L)
   expect_equal(mod@trans, 4L)
-  expect_equal(Cmt(mod), c("A1", "A2", "A3", "A4"))
+  expect_equal(mrgsolve:::Cmt(mod), c("A1", "A2", "A3", "A4"))
 })
 
 test_that("advan argument with custom cmt names", {
@@ -453,7 +453,7 @@ $PKMODEL advan = 12, cmt = "GUT CENT PER1 PER2"
   mod <- mcode("advan12_cmt_test", code, compile = FALSE)
   expect_equal(mod@advan, 12L)
   expect_equal(mod@trans, 4L)
-  expect_equal(Cmt(mod), c("GUT", "CENT", "PER1", "PER2"))
+  expect_equal(mrgsolve:::Cmt(mod), c("GUT", "CENT", "PER1", "PER2"))
 })
 
 test_that("invalid advan value causes error", {
@@ -463,7 +463,7 @@ $PKMODEL advan = 5
 '
   expect_error(
     mcode("advan5_test", code, compile = FALSE),
-    "advan must be 1, 2, 4, 11, or 12"
+    "advan must be 1, 2, 3, 4, 11, or 12"
   )
 })
 
