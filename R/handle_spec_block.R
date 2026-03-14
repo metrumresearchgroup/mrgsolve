@@ -827,9 +827,6 @@ PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
       env[["init"]][[pos]] <- init
     }
   }
-  if(is.null(trans)) {
-    trans <- pick_trans(ncmt, depot)
-  }
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
     ncmt <- length(cmt)
@@ -837,6 +834,9 @@ PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
     names(init) <- cmt
     env[["init"]][[pos]] <- init
     ncmt <- ncmt-depot
+  }
+  if(is.null(trans)) {
+    trans <- pick_trans(ncmt, depot)
   }
   stopifnot(ncmt %in% c(1,2,3))
   advan <- pick_advan(ncmt,depot)
