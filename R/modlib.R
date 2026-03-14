@@ -45,7 +45,7 @@
 #' mod <- mread("pk3cmt", modlib()) 
 #' mod <- mread("pk1",    modlib())
 #' mod <- mread("pk2",    modlib())
-mod <- mread("pk3",    modlib())
+#' mod <- mread("pk3",    modlib())
 #' mod <- mread("popex",  modlib())
 #' mod <- mread("irm1",   modlib()) 
 #' mod <- mread("irm2",   modlib()) 
