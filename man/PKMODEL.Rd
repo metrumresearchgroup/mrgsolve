@@ -8,64 +8,85 @@ PKMODEL(
   ncmt = 1,
   depot = FALSE,
   cmt = NULL,
-  trans = pick_trans(ncmt, depot),
+  advan = NULL,
+  trans = NULL,
   env = list(),
   pos = 1,
   ...
 )
 }
 \arguments{
-\item{ncmt}{number of compartments; must be 1 (one-compartment, 
-not including a depot dosing compartment) or 2 (two-compartment model, 
-not including a depot dosing compartment)}
+\item{ncmt}{number of compartments; must be 1 (one-compartment,
+not including a depot dosing compartment), 2 (two-compartment model,
+not including a depot dosing compartment), or 3 (three-compartment model,
+not including a depot dosing compartment).}
 
-\item{depot}{logical indicating whether to add depot compartment}
+\item{depot}{logical indicating whether to add depot compartment.}
 
-\item{cmt}{compartment names as comma-delimited character}
+\item{cmt}{compartment names as comma-delimited character.}
 
-\item{trans}{the parameterization for the PK model; must be 1, 2, 4, or 11}
+\item{advan}{ADVAN subroutine number; can be 1, 2, 3, 4, 11, or 12; when
+specified, \code{ncmt} and \code{depot} are derived from the ADVAN number
+and default compartment names (\code{A1}, \code{A2}, etc.) are assigned
+if \code{cmt} is not provided.}
 
-\item{env}{parse environment}
+\item{trans}{the parameterization for the PK model; must be 1, 2, 4, or 11.}
 
-\item{pos}{block position number}
+\item{env}{parse environment.}
 
-\item{...}{not used}
+\item{pos}{block position number.}
+
+\item{...}{not used.}
 }
 \description{
 Parse PKMODEL BLOCK data
 }
 \details{
-When using \code{$PKMODEL}, certain symbols must be defined in the 
-model specification depending on the value of \code{ncmt}, \code{depot} 
+When using \verb{$PKMODEL}, certain symbols must be defined in the
+model specification depending on the value of \code{ncmt}, \code{depot}
 and \code{trans}.
-
 \itemize{
-\item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
-\item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  
-\code{KA}
-\item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, 
-\code{Q}, \code{V2}
-\item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, 
-\code{Q}, \code{V3}, \code{KA}
-
+\item \code{ncmt} 1, \verb{depot FALSE}, trans 2: \code{CL}, \code{V}
+\item \code{ncmt} 1, \verb{depot TRUE} , trans 2: \code{CL}, \code{V}, \code{KA}
+\item \code{ncmt} 2, \verb{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q}, \code{V2}
+\item \code{ncmt} 2, \verb{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
+\item \code{ncmt} 3, \verb{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q2}, \code{V2}, \code{Q3}, \code{V3}
+\item \code{ncmt} 3, \verb{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q3}, \code{V3}, \code{KA}, \code{Q4},
+\code{V4}
 }
 
-If \code{trans=11} is specified, use the symbols listed above for the 
-\code{ncmt} / \code{depot} combination, but append \code{i} at the end 
-(e.g. \code{CLi} or \code{Qi} or \code{KAi}).
+If \code{trans=11} is specified, use the symbols listed above for the
+\code{ncmt} / \code{depot} combination, but append \code{i} at the end
+(e.g. \code{CLi} or \code{Q2i} or \code{KAi}).
 
 If \code{trans=1}, the user must utilize the following symbols:
-
 \itemize{
 \item \code{pred_CL} for clearance
-\item \code{pred_V}  or \code{pred_V2} for central compartment volume of 
-distribution
+\item \code{pred_V}  or \code{pred_V2} for central compartment volume of distribution
 \item \code{pred_Q}  for intercompartmental clearance
-\item \code{pred_V3} for for peripheral compartment volume of distribution
+\item \code{pred_V3} for peripheral compartment volume of distribution
 \item \code{pred_KA} for absorption rate constant
+\item \code{pred_Q2}  for second intercompartmental clearance (3-cmt)
+\item \code{pred_VP2} or \code{pred_V4} for second peripheral compartment volume of
+distribution (3-cmt)
+}
+}
+\examples{
+\dontrun{
+code <- '
+$PARAM CL = 1, V2 = 20, Q = 2, V3 = 10, KA = 1
+$PKMODEL ncmt = 2, depot = TRUE, cmt = "GUT CENT PERIPH"
+'
+mod <- mcode("pk2-example", code)
+
+code <- '
+$PARAM CL = 1, V2 = 20, Q3 = 2, V3 = 10, Q4 = 0.5, V4 = 50, KA = 1
+$PKMODEL advan = 12
+'
+mod <- mcode("advan12-example", code)
+}
 
 }
-}
 \seealso{
-\code{\link{BLOCK_PARSE}}
+\link{BLOCK_PARSE}
 }

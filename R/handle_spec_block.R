@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021 Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -747,63 +747,100 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 }
 
 #' Parse PKMODEL BLOCK data
-#' @param cmt compartment names as comma-delimited character
-#' @param ncmt number of compartments; must be 1 (one-compartment, 
-#' not including a depot dosing compartment) or 2 (two-compartment model, 
-#' not including a depot dosing compartment)
-#' @param depot logical indicating whether to add depot compartment
-#' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11
-#' @param env parse environment
-#' @param pos block position number
-#' @param ... not used
+#'
+#' @param cmt compartment names as comma-delimited character.
+#' @param ncmt number of compartments; must be 1 (one-compartment,
+#' not including a depot dosing compartment), 2 (two-compartment model,
+#' not including a depot dosing compartment), or 3 (three-compartment model,
+#' not including a depot dosing compartment).
+#' @param depot logical indicating whether to add depot compartment.
+#' @param advan ADVAN subroutine number; can be 1, 2, 3, 4, 11, or 12; when
+#' specified, `ncmt` and `depot` are derived from the ADVAN number
+#' and default compartment names (`A1`, `A2`, etc.) are assigned
+#' if `cmt` is not provided.
+#' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11.
+#' @param env parse environment.
+#' @param pos block position number.
+#' @param ... not used.
 #'
 #' @details
-#' When using \code{$PKMODEL}, certain symbols must be defined in the 
-#' model specification depending on the value of \code{ncmt}, \code{depot} 
-#' and \code{trans}.
+#' When using `$PKMODEL`, certain symbols must be defined in the
+#' model specification depending on the value of `ncmt`, `depot`
+#' and `trans`.
 #'
-#' \itemize{
-#' \item \code{ncmt} 1, \code{depot FALSE}, trans 2: \code{CL}, \code{V}
-#' \item \code{ncmt} 1, \code{depot TRUE} , trans 2: \code{CL}, \code{V},  
-#' \code{KA}
-#' \item \code{ncmt} 2, \code{depot FALSE}, trans 4: \code{CL}, \code{V1}, 
-#' \code{Q}, \code{V2}
-#' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2}, 
-#' \code{Q}, \code{V3}, \code{KA}
+#' - `ncmt` 1, `depot FALSE`, trans 2: `CL`, `V`
+#' - `ncmt` 1, `depot TRUE` , trans 2: `CL`, `V`, `KA`
+#' - `ncmt` 2, `depot FALSE`, trans 4: `CL`, `V1`, `Q`, `V2`
+#' - `ncmt` 2, `depot TRUE` , trans 4: `CL`, `V2`, `Q`, `V3`, `KA`
+#' - `ncmt` 3, `depot FALSE`, trans 4: `CL`, `V1`, `Q2`, `V2`, `Q3`, `V3`
+#' - `ncmt` 3, `depot TRUE` , trans 4: `CL`, `V2`, `Q3`, `V3`, `KA`, `Q4`,
+#'   `V4`
 #'
+#' If `trans=11` is specified, use the symbols listed above for the
+#' `ncmt` / `depot` combination, but append `i` at the end
+#' (e.g. `CLi` or `Q2i` or `KAi`).
+#'
+#' If `trans=1`, the user must utilize the following symbols:
+#'
+#' - `pred_CL` for clearance
+#' - `pred_V`  or `pred_V2` for central compartment volume of distribution
+#' - `pred_Q`  for intercompartmental clearance
+#' - `pred_V3` for peripheral compartment volume of distribution
+#' - `pred_KA` for absorption rate constant
+#' - `pred_Q2`  for second intercompartmental clearance (3-cmt)
+#' - `pred_VP2` or `pred_V4` for second peripheral compartment volume of
+#'   distribution (3-cmt)
+#'
+#' @examples
+#' \dontrun{
+#' code <- '
+#' $PARAM CL = 1, V2 = 20, Q = 2, V3 = 10, KA = 1
+#' $PKMODEL ncmt = 2, depot = TRUE, cmt = "GUT CENT PERIPH"
+#' '
+#' mod <- mcode("pk2-example", code)
+#'
+#' code <- '
+#' $PARAM CL = 1, V2 = 20, Q3 = 2, V3 = 10, Q4 = 0.5, V4 = 50, KA = 1
+#' $PKMODEL advan = 12
+#' '
+#' mod <- mcode("advan12-example", code)
 #' }
 #'
-#' If \code{trans=11} is specified, use the symbols listed above for the 
-#' \code{ncmt} / \code{depot} combination, but append \code{i} at the end 
-#' (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
-#'
-#' If \code{trans=1}, the user must utilize the following symbols:
-#'
-#' \itemize{
-#' \item \code{pred_CL} for clearance
-#' \item \code{pred_V}  or \code{pred_V2} for central compartment volume of 
-#' distribution
-#' \item \code{pred_Q}  for intercompartmental clearance
-#' \item \code{pred_V3} for for peripheral compartment volume of distribution
-#' \item \code{pred_KA} for absorption rate constant
-#'
-#' }
-#' 
-#' @seealso \code{\link{BLOCK_PARSE}}
-PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, 
-                    trans = pick_trans(ncmt, depot), env = list(), 
-                    pos = 1, ...) {
+#' @seealso [BLOCK_PARSE]
+#' @md
+PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
+                    trans = NULL, env = list(), pos = 1, ...) {
+  if(is.numeric(advan)) {
+    if(!(advan %in% c(1, 2, 3, 4, 11, 12))) {
+      stop("advan must be 1, 2, 3, 4, 11, or 12.", call. = FALSE)
+    }
+    ncmt <- switch(
+      as.character(advan),
+      "1" = 1L, "2" = 1L, "3" = 2L, "4" = 2L, "11" = 3L, "12" = 3L
+    )
+    depot <- advan %in% c(2, 4, 12)
+    if(is.null(cmt)) {
+      total <- ncmt + as.integer(depot)
+      cmt <- paste0("A", seq_len(total))
+      init <- as.list(vector(mode = "integer", length = total))
+      names(init) <- cmt
+      env[["init"]][[pos]] <- init
+    }
+  }
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
     ncmt <- length(cmt)
     init <- as.list(vector(mode="integer", length=ncmt))
     names(init) <- cmt
-    env[["init"]][[pos]] <- init  
+    env[["init"]][[pos]] <- init
     ncmt <- ncmt-depot
   }
-  stopifnot(ncmt %in% c(1,2))
+  if(is.null(trans)) {
+    trans <- pick_trans(ncmt, depot)
+  }
+  stopifnot(ncmt %in% c(1,2,3))
   advan <- pick_advan(ncmt,depot)
-  
+
   return(list(advan=advan, trans=trans, n=ncmt))
 }
 
@@ -835,7 +872,12 @@ collect_subr <- function(x, what = "PKMODEL") {
       stop("Found $ODE and $PKMODEL in the same control stream.")
     }
   }
-  ans[["n"]] <- ans[["advan"]] - as.integer(ans[["advan"]] > 2)
+  adv <- ans[["advan"]]
+  if(adv %in% c(11, 12)) {
+    ans[["n"]] <- adv - 8L  # 11->3, 12->4
+  } else {
+    ans[["n"]] <- adv - as.integer(adv > 2)
+  }
   return(ans)
 }
 
@@ -851,16 +893,20 @@ dosing_cmts <- function(x, what) {
 
 # Picks the default trans
 pick_trans <- function(ncmt,depot) {
-  switch(pick_advan(ncmt,depot),
-         `1` = 2,
-         `2` = 2,
-         `3` = 4,
-         `4` = 4
+  advan <- pick_advan(ncmt,depot)
+  switch(as.character(advan),
+         "1" = 2,
+         "2" = 2,
+         "3" = 4,
+         "4" = 4,
+         "11" = 4,
+         "12" = 4
   )
 }
 
 # Picks advan based on ncmt and depot status
 pick_advan <- function(ncmt,depot) {
+  if(ncmt == 3) return(11L + as.integer(depot))
   ncmt + as.integer(depot) + as.integer(ncmt==2)
 }
 
