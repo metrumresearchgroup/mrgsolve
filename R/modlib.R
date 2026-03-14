@@ -45,6 +45,7 @@
 #' mod <- mread("pk3cmt", modlib()) 
 #' mod <- mread("pk1",    modlib())
 #' mod <- mread("pk2",    modlib())
+mod <- mread("pk3",    modlib())
 #' mod <- mread("popex",  modlib())
 #' mod <- mread("irm1",   modlib()) 
 #' mod <- mread("irm2",   modlib()) 
@@ -77,7 +78,7 @@ modlib <- function(model = NULL,...,list=FALSE)  {
 
 #nocov start
 modlib_models <- c(
-  "pk1cmt", "pk2cmt", "pk3cmt", "pk", "pk1", "pk2", "popex",
+  "pk1cmt", "pk2cmt", "pk3cmt", "pk", "pk1", "pk2", "pk3", "popex",
   "irm1", "irm2", "irm3", "pred1", "emax", "tmdd", "viral1", 
   "viral2", "effect", "1005", "nm-like", "evtools"
 )
@@ -170,6 +171,7 @@ object_dir <- function() {
 ##'  \item{\code{pk3cmt}}: three compartment pk model using ODEs
 ##'  \item{\code{pk1}}: one compartment pk model in closed-form
 ##'  \item{\code{pk2}}: two compartment pk model in closed-form
+##'  \item{\code{pk3}}: three compartment pk model in closed-form
 ##'  \item{\code{popex}}: a simple population pk model
 ##' }
 ##'
