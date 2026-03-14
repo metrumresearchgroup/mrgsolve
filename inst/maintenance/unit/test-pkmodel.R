@@ -204,14 +204,14 @@ test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
 })
 
 ode3_code <- '
-$PARAM CL=1, VC=20, Q=4, KA=1.1, VP=300, Q2=0.8, VP2=50
+$PARAM CL=1, V2=20, Q3=4, KA=1.1, V3=300, Q4=0.8, V4=50
 $CMT GUT CENT PER1 PER2
 $ODE
-double k10 = CL/VC;
-double k12 = Q/VC;
-double k21 = Q/VP;
-double k13 = Q2/VC;
-double k31 = Q2/VP2;
+double k10 = CL/V2;
+double k12 = Q3/V2;
+double k21 = Q3/V3;
+double k13 = Q4/V2;
+double k31 = Q4/V4;
 
 dxdt_GUT  = -KA*GUT;
 dxdt_CENT = KA*GUT - (k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
@@ -305,14 +305,14 @@ test_that("ADVAN12 same as ODE - GUT,bolus,ss,addl", {
 
 ## ADVAN11 (no depot, 3 compartments)
 ode3nd_code <- '
-$PARAM CL=1, VC=20, Q=4, VP=300, Q2=0.8, VP2=50
+$PARAM CL=1, V1=20, Q2=4, V2=300, Q3=0.8, V3=50
 $CMT CENT PER1 PER2
 $ODE
-double k10 = CL/VC;
-double k12 = Q/VC;
-double k21 = Q/VP;
-double k13 = Q2/VC;
-double k31 = Q2/VP2;
+double k10 = CL/V1;
+double k12 = Q2/V1;
+double k21 = Q2/V2;
+double k13 = Q3/V1;
+double k31 = Q3/V3;
 
 dxdt_CENT = -(k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
 dxdt_PER1 = k12*CENT - k21*PER1;
@@ -469,14 +469,14 @@ $PKMODEL advan = 5
 
 test_that("advan=12 produces same results as ncmt=3 depot=TRUE", {
   ode3_code <- '
-$PARAM CL=1, VC=20, Q=4, KA=1.1, VP=300, Q2=0.8, VP2=50
+$PARAM CL=1, V2=20, Q3=4, KA=1.1, V3=300, Q4=0.8, V4=50
 $CMT GUT CENT PER1 PER2
 $ODE
-double k10 = CL/VC;
-double k12 = Q/VC;
-double k21 = Q/VP;
-double k13 = Q2/VC;
-double k31 = Q2/VP2;
+double k10 = CL/V2;
+double k12 = Q3/V2;
+double k21 = Q3/V3;
+double k13 = Q4/V2;
+double k31 = Q4/V4;
 
 dxdt_GUT  = -KA*GUT;
 dxdt_CENT = KA*GUT - (k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
@@ -505,14 +505,14 @@ $PKMODEL advan = 12, cmt = "GUT CENT PER1 PER2"
 
 test_that("advan=11 produces same results as ncmt=3 depot=FALSE", {
   ode3nd_code <- '
-$PARAM CL=1, VC=20, Q=4, VP=300, Q2=0.8, VP2=50
+$PARAM CL=1, V1=20, Q2=4, V2=300, Q3=0.8, V3=50
 $CMT CENT PER1 PER2
 $ODE
-double k10 = CL/VC;
-double k12 = Q/VC;
-double k21 = Q/VP;
-double k13 = Q2/VC;
-double k31 = Q2/VP2;
+double k10 = CL/V1;
+double k12 = Q2/V1;
+double k21 = Q2/V2;
+double k13 = Q3/V1;
+double k31 = Q3/V3;
 
 dxdt_CENT = -(k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
 dxdt_PER1 = k12*CENT - k21*PER1;

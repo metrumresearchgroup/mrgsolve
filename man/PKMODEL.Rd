@@ -25,7 +25,7 @@ not including a depot dosing compartment)}
 
 \item{cmt}{compartment names as comma-delimited character}
 
-\item{advan}{ADVAN subroutine number; can be 1, 2, 4, 11, or 12; when
+\item{advan}{ADVAN subroutine number; can be 1, 2, 3, 4, 11, or 12; when
 specified, \code{ncmt} and \code{depot} are derived from the ADVAN number
 and default compartment names (\code{A1}, \code{A2}, etc.) are assigned
 if \code{cmt} is not provided}

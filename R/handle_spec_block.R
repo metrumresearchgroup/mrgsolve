@@ -754,7 +754,7 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' not including a depot dosing compartment), or 3 (three-compartment model,
 #' not including a depot dosing compartment).
 #' @param depot logical indicating whether to add depot compartment.
-#' @param advan ADVAN subroutine number; can be 1, 2, 4, 11, or 12; when
+#' @param advan ADVAN subroutine number; can be 1, 2, 3, 4, 11, or 12; when
 #' specified, `ncmt` and `depot` are derived from the ADVAN number
 #' and default compartment names (`A1`, `A2`, etc.) are assigned
 #' if `cmt` is not provided.
@@ -811,12 +811,12 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
                     trans = NULL, env = list(), pos = 1, ...) {
   if(is.numeric(advan)) {
-    if(!(advan %in% c(1, 2, 4, 11, 12))) {
-      stop("advan must be 1, 2, 4, 11, or 12.", call. = FALSE)
+    if(!(advan %in% c(1, 2, 3, 4, 11, 12))) {
+      stop("advan must be 1, 2, 3, 4, 11, or 12.", call. = FALSE)
     }
     ncmt <- switch(
       as.character(advan),
-      "1" = 1L, "2" = 1L, "4" = 2L, "11" = 3L, "12" = 3L
+      "1" = 1L, "2" = 1L, "3" = 2L, "4" = 2L, "11" = 3L, "12" = 3L
     )
     depot <- advan %in% c(2, 4, 12)
     if(is.null(cmt)) {
