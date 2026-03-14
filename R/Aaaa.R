@@ -61,8 +61,8 @@ GLOBALS$ADVAN_PARMS <- list(
   "2" = c("CL","V","KA"),
   "3" = c("CL","V1","Q","V2"),
   "4" = c("CL","V2","Q","V3","KA"),
-  "11" = c("CL","V1","Q","V2","Q2","V3"),
-  "12" = c("CL","V2","Q","V3","KA","Q2","V4")
+  "11" = c("CL","V1","Q2","V2","Q3","V3"),
+  "12" = c("CL","V2","Q3","V3","KA","Q4","V4")
 )
 GLOBALS$CARRY_TRAN_UC <- c("AMT", "CMT", "EVID", "II", "ADDL", "RATE", "SS")
 GLOBALS$CARRY_TRAN_LC <- tolower(GLOBALS[["CARRY_TRAN_UC"]])

@@ -76,14 +76,14 @@ typedef double capture;
 #define __ADVAN2_TRANS2__   pred_CL = CL;  pred_V  = V;   pred_KA = KA;
 #define __ADVAN3_TRANS4__   pred_CL = CL;  pred_V2 = V1;  pred_Q =  Q;   pred_V3 = V2;
 #define __ADVAN4_TRANS4__   pred_CL = CL;  pred_V2 = V2;  pred_Q =  Q;   pred_V3 = V3;  pred_KA = KA;
-#define __ADVAN11_TRANS4__  pred_CL = CL;  pred_V2 = V1;  pred_Q =  Q;   pred_V3 = V2;  pred_Q2 = Q2;  pred_V4 = V3;
-#define __ADVAN12_TRANS4__  pred_CL = CL;  pred_V2 = V2;  pred_Q =  Q;   pred_V3 = V3;  pred_KA = KA;  pred_Q2 = Q2;  pred_V4 = V4;
+#define __ADVAN11_TRANS4__  pred_CL = CL;  pred_V2 = V1;  pred_Q =  Q2;  pred_V3 = V2;  pred_Q2 = Q3;  pred_V4 = V3;
+#define __ADVAN12_TRANS4__  pred_CL = CL;  pred_V2 = V2;  pred_Q =  Q3;  pred_V3 = V3;  pred_KA = KA;  pred_Q2 = Q4;  pred_V4 = V4;
 #define __ADVAN1_TRANS11__  pred_CL = CLi; pred_V  = Vi;
 #define __ADVAN2_TRANS11__  pred_CL = CLi; pred_V  = Vi;  pred_KA = KAi;
 #define __ADVAN3_TRANS11__  pred_CL = CLi; pred_V2 = V1i; pred_Q =  Qi;  pred_V3 = V2i;
 #define __ADVAN4_TRANS11__  pred_CL = CLi; pred_V2 = V2i; pred_Q =  Qi;  pred_V3 = V3i; pred_KA = KAi;
-#define __ADVAN11_TRANS11__ pred_CL = CLi; pred_V2 = V1i; pred_Q =  Qi;  pred_V3 = V2i; pred_Q2 = Q2i; pred_V4 = V3i;
-#define __ADVAN12_TRANS11__ pred_CL = CLi; pred_V2 = V2i; pred_Q =  Qi;  pred_V3 = V3i; pred_KA = KAi; pred_Q2 = Q2i; pred_V4 = V4i;
+#define __ADVAN11_TRANS11__ pred_CL = CLi; pred_V2 = V1i; pred_Q =  Q2i; pred_V3 = V2i; pred_Q2 = Q3i; pred_V4 = V3i;
+#define __ADVAN12_TRANS11__ pred_CL = CLi; pred_V2 = V2i; pred_Q =  Q3i; pred_V3 = V3i; pred_KA = KAi; pred_Q2 = Q4i; pred_V4 = V4i;
 
 // Don't need this?
 #define __BEGIN_pred__ extern "C" {void __ODEFUN___(MRGSOLVE_PRED_SIGNATURE) {

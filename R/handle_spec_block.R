@@ -772,15 +772,15 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' \item \code{ncmt} 2, \code{depot TRUE} , trans 4: \code{CL}, \code{V2},
 #' \code{Q}, \code{V3}, \code{KA}
 #' \item \code{ncmt} 3, \code{depot FALSE}, trans 4: \code{CL}, \code{V1},
-#' \code{Q}, \code{V2}, \code{Q2}, \code{V3}
+#' \code{Q2}, \code{V2}, \code{Q3}, \code{V3}
 #' \item \code{ncmt} 3, \code{depot TRUE} , trans 4: \code{CL}, \code{V2},
-#' \code{Q}, \code{V3}, \code{KA}, \code{Q2}, \code{V4}
+#' \code{Q3}, \code{V3}, \code{KA}, \code{Q4}, \code{V4}
 #'
 #' }
 #'
 #' If \code{trans=11} is specified, use the symbols listed above for the
 #' \code{ncmt} / \code{depot} combination, but append \code{i} at the end
-#' (e.g. \code{CLi} or \code{Qi} or \code{KAi}).
+#' (e.g. \code{CLi} or \code{Q2i} or \code{KAi}).
 #'
 #' If \code{trans=1}, the user must utilize the following symbols:
 #'

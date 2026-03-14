@@ -220,7 +220,7 @@ dxdt_PER2 = k13*CENT - k31*PER2;
 '
 
 pred3_code <- '
-$PARAM CL=1, V2=20, KA=1.1, Q=4, V3=300, Q2=0.8, V4=50
+$PARAM CL=1, V2=20, KA=1.1, Q3=4, V3=300, Q4=0.8, V4=50
 $PKMODEL cmt = "GUT CENT PER1 PER2", depot = TRUE
 '
 
@@ -320,7 +320,7 @@ dxdt_PER2 = k13*CENT - k31*PER2;
 '
 
 pred3nd_code <- '
-$PARAM CL=1, V1=20, Q=4, V2=300, Q2=0.8, V3=50
+$PARAM CL=1, V1=20, Q2=4, V2=300, Q3=0.8, V3=50
 $PKMODEL cmt = "CENT PER1 PER2", depot = FALSE
 '
 
