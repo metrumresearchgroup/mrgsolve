@@ -367,8 +367,8 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       nyh = n;
       lenyh = 1 + max(mxordn, mxords);
       
-      yh_.resize(lenyh + 1, std::vector<double>(nyh + 1, 0.0));
-      wm_.resize(nyh + 1, std::vector<double>(nyh + 1, 0.0));
+      yh_.resize(lenyh + 1, nyh + 1, 0.0);
+      wm_.resize(nyh + 1, nyh + 1, 0.0);
       ewt.resize(1 + nyh, 0);
       savf.resize(1 + nyh, 0);
       acor.resize(nyh + 1, 0.0);
@@ -450,11 +450,11 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       mxncf = 10;
       
       /* Initial call to f.  */
-      if(int(yh_.size()) != (lenyh + 1)) {
-        Rcpp::stop("[lsoda] inputs are not the right size.");  
+      if(yh_.nrow() != (size_t)(lenyh + 1)) {
+        Rcpp::stop("[lsoda] inputs are not the right size.");
       }
-      if(yh_[0].size() != (nyh + 1)) {
-        Rcpp::stop("[lsoda] inputs are not the right size."); 
+      if(yh_.ncol() != (nyh + 1)) {
+        Rcpp::stop("[lsoda] inputs are not the right size.");
       }
       
       (*f)(*t, &y[1], &yh_[2][1], _data);
@@ -467,7 +467,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
       /* Load and invert the ewt array.  ( h_ is temporarily set to 1. ) */
       nq = 1;
       h_ = 1.;
-      ewset(y);
+      ewset(y.data());
       for (size_t i = 1; i <= n; ++i)
       {
         if (ewt[i] <= 0.)
@@ -532,7 +532,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
         }
         tol = max(tol, 100. * ETA);
         tol = min(tol, 0.001);
-        sum = vmnorm(n, yh_[2], ewt);
+        sum = vmnorm(n, yh_[2], ewt.data());
         sum = 1. / (tol * w0 * w0) + tol * sum * sum;
         h0 = 1. / sqrt(sum);
         h0 = min(h0, tdist);
@@ -703,7 +703,7 @@ void LSODA::lsoda(LSODA_ODE_SYSTEM_TYPE f, const size_t neq, vector<double> &y,
             ewt[i] = 1. / ewt[i];
           }
         }
-        tolsf = ETA * vmnorm(n, yh_[1], ewt);
+        tolsf = ETA * vmnorm(n, yh_[1], ewt.data());
         if (tolsf > 0.01)
         {
           tolsf = tolsf * 200.;

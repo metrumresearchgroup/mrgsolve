@@ -1,18 +1,18 @@
 #include <R.h>
 typedef odeproblem* dtype;
-  
+
 #ifndef LSODA_FUNCTIONS_H
 #define LSODA_FUNCTIONS_H
 #define ETA 2.2204460492503131e-16
 
 void LSODA::hmax_(const double value) {
   rworks[2] = value;
-  if(value !=0) iopt = 1;  
+  if(value !=0) iopt = 1;
 }
 
 void LSODA::hmin_(const double value) {
   rworks[3] = value;
-  if(value !=0) iopt = 1;  
+  if(value !=0) iopt = 1;
 }
 
 void LSODA::maxsteps_(const int value) {
@@ -38,7 +38,7 @@ void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
   if(static_cast<int>(xatol_.size()) != Neq) {
     std::string size = std::to_string(xatol_.size());
     std::string expect = std::to_string(Neq);
-    Rcpp::CharacterVector text = 
+    Rcpp::CharacterVector text =
       "[lsoda] expecting atol vector with size " + expect + ", but got size " + size + ".";
     Rcpp::message(text);
     size_error = true;
@@ -46,7 +46,7 @@ void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
   if(static_cast<int>(xrtol_.size()) != Neq) {
     std::string size = std::to_string(xrtol_.size());
     std::string expect = std::to_string(Neq);
-    Rcpp::CharacterVector text = 
+    Rcpp::CharacterVector text =
       "[lsoda] expecting rtol vector with size " + expect + ", but got size " + size + ".";
     Rcpp::message(text);
     size_error = true;
@@ -54,12 +54,11 @@ void LSODA::setup_tol_vectors(const Rcpp::S4& mod) {
   if(size_error) {
     Rcpp::stop("itol is > 1, but atol/rtol vector(s) are not the expected size.");
   }
-  // initialize to the default
-  atol_.assign(Neq+1,1e-8);
-  rtol_.assign(Neq+1,1e-8);
+  atol_.resize(Neq + 1, 0);
+  rtol_.resize(Neq + 1, 0);
   for(int i = 0; i < Neq; ++i) {
     // tolerances in the solver object start at index 1
-    atol_[i+1] = xatol_[i]; 
+    atol_[i+1] = xatol_[i];
     rtol_[i+1] = xrtol_[i];
   }
 }
@@ -70,14 +69,14 @@ bool LSODA::abs_compare(double a, double b)
 }
 
 /* Purpose : Find largest component of double vector dx */
-size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0)
+size_t LSODA::idamax1(const double* dx, const size_t n, const size_t offset = 0)
 {
 
-    size_t v = 0, vmax = 0;
+    double v = 0.0, vmax = 0.0;
     size_t idmax = 1;
     for (size_t i = 1; i <= n; ++i)
     {
-        v = abs(dx[i + offset]);
+        v = fabs(dx[i + offset]);
         if (v > vmax)
         {
             vmax = v;
@@ -93,15 +92,15 @@ size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t off
 /* Purpose : scalar vector multiplication
    dx = da * dx
 */
-void LSODA::dscal1(const double da, vector<double> &dx, const size_t n,
+void LSODA::dscal1(const double da, double* dx, const size_t n,
                    const size_t offset = 0)
 {
-    std::transform(dx.begin() + 1 + offset, dx.end(), dx.begin() + 1 + offset,
-                   [&da](double x) -> double { return da * x; });
+    for (size_t i = 1; i <= n; ++i)
+        dx[i + offset] = da * dx[i + offset];
 }
 
 /* Purpose : Inner product dx . dy */
-double LSODA::ddot1(const vector<double> &a, const vector<double> &b,
+double LSODA::ddot1(const double* a, const double* b,
                     const size_t n, const size_t offsetA = 0,
                     const size_t offsetB = 0)
 {
@@ -111,8 +110,8 @@ double LSODA::ddot1(const vector<double> &a, const vector<double> &b,
     return sum;
 }
 
-void LSODA::daxpy1(const double da, const vector<double> &dx,
-                   vector<double> &dy, const size_t n, const size_t offsetX = 0,
+void LSODA::daxpy1(const double da, const double* dx,
+                   double* dy, const size_t n, const size_t offsetX = 0,
                    const size_t offsetY = 0)
 {
 
@@ -120,8 +119,8 @@ void LSODA::daxpy1(const double da, const vector<double> &dx,
         dy[i + offsetY] = da * dx[i + offsetX] + dy[i + offsetY];
 }
 
-// See BLAS documentation. The first argument has been changed to vector.
-void LSODA::dgesl1(const vector<vector<double>> &a, const size_t n,
+// See BLAS documentation. The first argument has been changed to FlatMatrix.
+void LSODA::dgesl1(const FlatMatrix &a, const size_t n,
                   vector<int> &ipvt, vector<double> &b, const size_t job)
 {
     size_t k, j;
@@ -137,7 +136,7 @@ void LSODA::dgesl1(const vector<vector<double>> &a, const size_t n,
         */
         for (k = 1; k <= n; ++k)
         {
-            t = ddot1(a[k], b, k - 1);
+            t = ddot1(a[k], b.data(), k - 1);
             b[k] = (b[k] - t) / a[k][k];
         }
         /*
@@ -145,7 +144,7 @@ void LSODA::dgesl1(const vector<vector<double>> &a, const size_t n,
         */
         for (k = n - 1; k >= 1; k--)
         {
-            b[k] = b[k] + ddot1(a[k], b, n - k, k, k);
+            b[k] = b[k] + ddot1(a[k], b.data(), n - k, k, k);
             j = ipvt[k];
             if (j != k)
             {
@@ -170,7 +169,7 @@ void LSODA::dgesl1(const vector<vector<double>> &a, const size_t n,
             b[j] = b[k];
             b[k] = t;
         }
-        daxpy1(t, a[k], b, n - k, k, k);
+        daxpy1(t, a[k], b.data(), n - k, k, k);
     }
     /*
        Now solve Transpose(L) * x = y.
@@ -179,12 +178,12 @@ void LSODA::dgesl1(const vector<vector<double>> &a, const size_t n,
     {
         b[k] = b[k] / a[k][k];
         t = -b[k];
-        daxpy1(t, a[k], b, k - 1);
+        daxpy1(t, a[k], b.data(), k - 1);
     }
 }
 
-// See BLAS documentation. All double* has been changed to std::vector .
-void LSODA::dgefa1(vector<vector<double>> &a, const size_t n, vector<int> &ipvt,
+// See BLAS documentation. All double* has been changed to FlatMatrix.
+void LSODA::dgefa1(FlatMatrix &a, const size_t n, vector<int> &ipvt,
                   size_t *const info)
 {
     size_t j = 0, k = 0, i = 0;
@@ -307,7 +306,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
 {
     //assert(neq + 1 == y.size());
     if((neq+1) != y.size()) {
-      Rcpp::stop("[lsoda] y is not the right size in stoda.");    
+      Rcpp::stop("[lsoda] y is not the right size in stoda.");
     }
 
     size_t corflag = 0, orderflag = 0;
@@ -456,7 +455,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                     for (i = 1; i <= n; ++i)
                         yh_[i1][i] += yh_[i1 + 1][i];
 
-            pnorm = vmnorm(n, yh_[1], ewt);
+            pnorm = vmnorm(n, yh_[1], ewt.data());
             correction(neq, y, f, &corflag, pnorm, &del, &delp, &told, &ncf, &rh, &m,
                        _data);
             if (corflag == 0)
@@ -485,7 +484,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
         if (m == 0)
             dsm = del / tesco[nq][2];
         if (m > 0)
-            dsm = vmnorm(n, acor, ewt) / tesco[nq][2];
+            dsm = vmnorm(n, acor.data(), ewt.data()) / tesco[nq][2];
 
         if (dsm <= 1.)
         {
@@ -537,7 +536,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                 {
                     for (i = 1; i <= n; ++i)
                         savf[i] = acor[i] - yh_[lmax][i];
-                    dup = vmnorm(n, savf, ewt) / tesco[nq][3];
+                    dup = vmnorm(n, savf.data(), ewt.data()) / tesco[nq][3];
                     exup = 1. / (double)(l + 1);
                     rhup = 1. / (1.4 * pow(dup, exup) + 0.0000014);
                 }
@@ -678,7 +677,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
 
 } /* end stoda   */
 
-void LSODA::ewset(const vector<double> &ycur)
+void LSODA::ewset(const double* ycur)
 {
     switch (itol)
     {
@@ -976,7 +975,7 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
     }
     if (miter == 2)
     {
-        fac = vmnorm(n, savf, ewt);
+        fac = vmnorm(n, savf.data(), ewt.data());
         r0 = 1000. * fabs(h_) * ETA * ((double)n) * fac;
         if (r0 == 0.)
             r0 = 1.;
@@ -995,7 +994,7 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
         /*
            Compute norm of Jacobian.
         */
-        pdnorm = fnorm(n, wm_, ewt) / fabs(hl0);
+        pdnorm = fnorm(n, wm_, ewt.data()) / fabs(hl0);
         /*
            Add identity matrix.
         */
@@ -1018,8 +1017,8 @@ void LSODA::prja(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
 
    vmnorm = max( i = 1, ..., n ) fabs( v[i] ) * w[i].
 */
-double LSODA::vmnorm(const size_t n, const vector<double> &v,
-                     const vector<double> &w)
+double LSODA::vmnorm(const size_t n, const double* v,
+                     const double* w)
 {
     double vm = 0.;
     for (size_t i = 1; i <= n; ++i)
@@ -1027,8 +1026,8 @@ double LSODA::vmnorm(const size_t n, const vector<double> &v,
     return vm;
 }
 
-double LSODA::fnorm(int n, const vector<vector<double>> &a,
-                    const vector<double> &w)
+double LSODA::fnorm(int n, const FlatMatrix &a,
+                    const double* w)
 
 /*
    This subroutine computes the norm of a full n by n matrix,
@@ -1116,7 +1115,7 @@ void LSODA::correction(const size_t neq, vector<double> &y,
                 savf[i] = h_ * savf[i] - yh_[2][i];
                 y[i] = savf[i] - acor[i];
             }
-            *del = vmnorm(n, y, ewt);
+            *del = vmnorm(n, y.data(), ewt.data());
             for (size_t i = 1; i <= n; ++i)
             {
                 y[i] = yh_[1][i] + el[1] * savf[i];
@@ -1135,7 +1134,7 @@ void LSODA::correction(const size_t neq, vector<double> &y,
                 y[i] = h_ * savf[i] - (yh_[2][i] + acor[i]);
 
             solsy(y);
-            *del = vmnorm(n, y, ewt);
+            *del = vmnorm(n, y.data(), ewt.data());
 
             for (size_t i = 1; i <= n; ++i)
             {
@@ -1264,7 +1263,7 @@ void LSODA::methodswitch(double dsm, double pnorm, double *pdh, double *rh)
 {
     int lm1, lm1p1, lm2, lm2p1, nqm1, nqm2;
     double rh1, rh2, rh1it, exm2, dm2, exm1, dm1, alpha, exsm;
-    
+
     /*
        We are current using an Adams method.  Consider switching to bdf.
        If the current order is greater than 5, assume the problem is
@@ -1309,7 +1308,7 @@ void LSODA::methodswitch(double dsm, double pnorm, double *pdh, double *rh)
                 lm2 = mxords + 1;
                 exm2 = 1. / (double)lm2;
                 lm2p1 = lm2 + 1;
-                dm2 = vmnorm(n, yh_[lm2p1], ewt) / cm2[mxords];
+                dm2 = vmnorm(n, yh_[lm2p1], ewt.data()) / cm2[mxords];
                 rh2 = 1. / (1.2 * pow(dm2, exm2) + 0.0000012);
             }
             else
@@ -1351,7 +1350,7 @@ void LSODA::methodswitch(double dsm, double pnorm, double *pdh, double *rh)
         lm1 = mxordn + 1;
         exm1 = 1. / (double)lm1;
         lm1p1 = lm1 + 1;
-        dm1 = vmnorm(n, yh_[lm1p1], ewt) / cm1[mxordn];
+        dm1 = vmnorm(n, yh_[lm1p1], ewt.data()) / cm1[mxordn];
         rh1 = 1. / (1.2 * pow(dm1, exm1) + 0.0000012);
     }
     else
@@ -1425,7 +1424,7 @@ void LSODA::orderswitch(double *rhup, double dsm, double *pdh, double *rh,
     rhdn = 0.;
     if (nq != 1)
     {
-        ddn = vmnorm(n, yh_[l], ewt) / tesco[nq][1];
+        ddn = vmnorm(n, yh_[l], ewt.data()) / tesco[nq][1];
         exdn = 1. / (double)nq;
         rhdn = 1. / (1.3 * pow(ddn, exdn) + 0.0000013);
     }
