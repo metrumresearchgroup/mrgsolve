@@ -96,8 +96,8 @@ size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t off
 void LSODA::dscal1(const double da, vector<double> &dx, const size_t n,
                    const size_t offset = 0)
 {
-    std::transform(dx.begin() + 1 + offset, dx.end(), dx.begin() + 1 + offset,
-                   [&da](double x) -> double { return da * x; });
+    for (size_t i = 1; i <= n; ++i)
+        dx[i + offset] = da * dx[i + offset];
 }
 
 /* Purpose : Inner product dx . dy */
