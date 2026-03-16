@@ -73,11 +73,11 @@ bool LSODA::abs_compare(double a, double b)
 size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0)
 {
 
-    size_t v = 0, vmax = 0;
+    double v = 0.0, vmax = 0.0;
     size_t idmax = 1;
     for (size_t i = 1; i <= n; ++i)
     {
-        v = abs(dx[i + offset]);
+        v = fabs(dx[i + offset]);
         if (v > vmax)
         {
             vmax = v;
