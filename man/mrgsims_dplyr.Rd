@@ -54,7 +54,7 @@ as.tbl.mrgsims(x, ...)
 
 \item{.keep_all}{passed to \link[dplyr:distinct]{dplyr::distinct}}
 
-\item{funs}{passed to \link[dplyr:summarise_each]{dplyr::summarise_each}}
+\item{funs}{passed to \link[dplyr:defunct-each]{dplyr::summarise_each}}
 
 \item{.dots}{passed to various \code{dplyr} functions}
 

@@ -69,25 +69,24 @@ bool LSODA::abs_compare(double a, double b)
     return (std::abs(a) < std::abs(b));
 }
 
-/* Purpose : Find largest component of double vector dx */
-size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0)
-{
-
-    double v = 0.0, vmax = 0.0;
-    size_t idmax = 1;
-    for (size_t i = 1; i <= n; ++i)
-    {
-        v = fabs(dx[i + offset]);
-        if (v > vmax)
-        {
-            vmax = v;
-            idmax = i;
-        }
+/* 
+  Purpose : Find largest component of double vector dx 
+  @details
+  `dx` is 1-based; the scan is 0-based; we add 1 to `idmax` on return to get back to 1-based index.
+  restrict: https://en.cppreference.com/w/c/language/restrict.html
+*/
+size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0) {
+  const double* __restrict__ data = dx.data() + offset + 1;
+  double vmax = 0.0;
+  size_t idmax = 0;
+  for(size_t i = 0; i < n; ++i) {
+    double v = std::fabs(data[i]); 
+    if(v > vmax) {
+      vmax  = v;
+      idmax = i;
     }
-    return idmax;
-
-    // Following has failed with seg-fault. Probably issue with STL.
-    // return std::max_element( dx.begin()+1+offset, dx.begin()+1+n, LSODA::abs_compare) - dx.begin() - offset;
+  }
+  return idmax + 1;
 }
 
 /* Purpose : scalar vector multiplication
