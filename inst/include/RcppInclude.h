@@ -16,5 +16,6 @@
 // along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 //#define ARMA_DONT_USE_CXX11
+#define ARMA_DONT_USE_BLAS
 #include <RcppArmadillo.h>
 #define NDEBUG 1

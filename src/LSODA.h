@@ -5,8 +5,10 @@
  *   Organization:  NCBS Bangalore
  *        License:  MIT License
  */
-
+ 
+#define ARMA_DONT_USE_BLAS
 #include <RcppArmadillo.h>
+#include <R_ext/BLAS.h>
 
 #ifndef LSODE_H
 #define LSODE_H

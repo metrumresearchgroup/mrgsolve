@@ -1,4 +1,5 @@
 #include <R.h>
+
 typedef odeproblem* dtype;
   
 #ifndef LSODA_FUNCTIONS_H
@@ -77,16 +78,10 @@ bool LSODA::abs_compare(double a, double b)
 */
 size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0) {
   const double* __restrict__ data = dx.data() + offset + 1;
-  double vmax = 0.0;
-  size_t idmax = 0;
-  for(size_t i = 0; i < n; ++i) {
-    double v = std::fabs(data[i]); 
-    if(v > vmax) {
-      vmax  = v;
-      idmax = i;
-    }
-  }
-  return idmax + 1;
+  BLAS_INT nn = n;
+  BLAS_INT inc = 1;  
+  size_t idx = static_cast<size_t>(F77_CALL(idamax)(&nn, data, &inc));
+  return idx;
 }
 
 /* Purpose : scalar vector multiplication
