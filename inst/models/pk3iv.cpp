@@ -14,7 +14,7 @@ PERIPH2 : Peripheral compartment 2 (mass)
 $GLOBAL
 #define CP (CENT/V1)
 
-$PKMODEL ncmt = 3, depot = FALSE
+$PKMODEL advan = 11
 
 $CAPTURE @annotated
 CP : Plasma concentration (mass/volume)
