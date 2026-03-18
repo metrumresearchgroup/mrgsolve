@@ -816,16 +816,13 @@ PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
     }
     ncmt <- switch(
       as.character(advan),
-      "1" = 1L, "2" = 1L, "3" = 2L, "4" = 2L, "11" = 3L, "12" = 3L
+      "1" = 1L, "2" = 2L, "3" = 2L, "4" = 3L, "11" = 3L, "12" = 4L
     )
     depot <- advan %in% c(2, 4, 12)
-    if(is.null(cmt)) {
-      total <- ncmt + as.integer(depot)
-      cmt <- paste0("A", seq_len(total))
-      init <- as.list(vector(mode = "integer", length = total))
-      names(init) <- cmt
-      env[["init"]][[pos]] <- init
-    }
+    total <- ncmt + as.integer(depot)
+    advan_cmt <- paste0("A", seq_len(total))
+    advan_init <- as.list(vector(mode = "integer", length = total))
+    names(advan_init) <- advan_cmt
   }
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
@@ -838,7 +835,7 @@ PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
   if(is.null(trans)) {
     trans <- pick_trans(ncmt, depot)
   }
-  stopifnot(ncmt %in% c(1,2,3))
+  stopifnot(ncmt %in% c(1,2,3,4))
   advan <- pick_advan(ncmt,depot)
 
   return(list(advan=advan, trans=trans, n=ncmt))
