@@ -77,7 +77,7 @@ size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t off
     size_t idmax = 1;
     for (size_t i = 1; i <= n; ++i)
     {
-        v = std::abs(dx[i + offset]);
+        v = std::fabs(dx[i + offset]);
         if (v > vmax)
         {
             vmax = v;
