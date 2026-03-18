@@ -48,7 +48,7 @@ test_that("ADVAN2 same as ODE - initial condition", {
   
   out2 <- pred1 %>% init(CENT=1000) %>% 
     Req(GUT,CENT) %>% mrgsim(end = 24, delta=0.1, digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(names(out1),names(out2))
 })
@@ -60,7 +60,7 @@ test_that("ADVAN2 same as ODE - GUT,bolus,addl", {
     Req(GUT,CENT) %>% mrgsim(end=264,delta=0.1,rtol = 1E-12)
   out2 <- pred1 %>% ev(e) %>%
     Req(GUT,CENT) %>% mrgsim(end=264,delta=0.1)
-
+  
   expect_equal(out1$CENT,out2$CENT)
 })
 
@@ -71,7 +71,7 @@ test_that("ADVAN2 same as ODE - GUT,infus,addl", {
     Req(CENT) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred1 %>% ev(e) %>%
     Req(CENT) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
 })
 
@@ -94,9 +94,9 @@ test_that("ADVAN2 same as ODE - CENT,infus,ss,addl", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1,ss=1)
   out1 <- ode  %>% ev(e) %>%
     mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12, 
-          recsort=3)
+           recsort=3)
   out2 <- pred1 %>% ev(e) %>%
-   mrgsim(end=264,delta=0.1,digits=5,recsort=3)
+    mrgsim(end=264,delta=0.1,digits=5,recsort=3)
   expect_equal(out1$CENT,out2$CENT)
 })
 
@@ -107,7 +107,7 @@ test_that("ADVAN2 same as ODE - GUT,bolus,ss,addl", {
                          hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred1 %>% ev(e) %>%
     Req(CENT) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
 })
 
@@ -137,8 +137,8 @@ test_that("ADVAN4 same as ODE - initial condition", {
     Req(GUT,CENT) %>% mrgsim(end=24,delta=0.1 ,digits=5)
   out2 <- pred2 %>% init(GUT=1000) %>%
     Req(GUT,CENT) %>% mrgsim(end=24,delta=0.1,digits=5)
-
-
+  
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(names(out1),names(out2))
 })
@@ -149,7 +149,7 @@ test_that("ADVAN4 same as ODE - GUT,bolus,addl", {
     Req(GUT,CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5)
   out2 <- pred2 %>% ev(e) %>%
     Req(GUT,CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })
@@ -160,7 +160,7 @@ test_that("ADVAN4 same as ODE - GUT,infus,addl", {
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred2 %>% ev(e) %>%
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })
@@ -170,11 +170,11 @@ test_that("ADVAN4 same as ODE - CENT,infus,addl", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out1 <- ode  %>% ev(e) %>% 
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
-
+  
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out3 <- pred2 %>% ev(e) %>% 
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out3$CENT)
   expect_equal(out1$PER,out3$PER)
 })
@@ -186,7 +186,7 @@ test_that("ADVAN4 same as ODE - CENT,infus,ss,addl", {
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred2 %>% ev(e) %>%
     Req(CENT,PER) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })
@@ -198,7 +198,7 @@ test_that("ADVAN4 same as ODE - GUT,bolus,ss,addl", {
   out1<- ode  %>% ev(e) %>%
     mrgsim(end=264,delta=0.1 ,digits=5,hmax=0.1)
   out2 <- pred2 %>% ev(e) %>%
-     mrgsim(end=264,delta=0.1,digits=5)
+    mrgsim(end=264,delta=0.1,digits=5)
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER,out2$PER)
 })
@@ -232,7 +232,7 @@ test_that("ADVAN12 same as ODE - initial condition", {
     Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
   out2 <- pred3 %>% init(CENT=1000) %>%
     Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -245,7 +245,7 @@ test_that("ADVAN12 same as ODE - GUT,bolus,addl", {
     Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
   out2 <- pred3 %>% ev(e) %>%
     Req(GUT,CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -257,7 +257,7 @@ test_that("ADVAN12 same as ODE - GUT,infus,addl", {
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred3 %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -267,11 +267,11 @@ test_that("ADVAN12 same as ODE - CENT,infus,addl", {
   e <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out1 <- ode3  %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
-
+  
   e2 <- ev(amt=1000,rate=50,ii=48,addl=4,cmt=1)
   out2 <- pred3 %>% ev(e2) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -283,7 +283,7 @@ test_that("ADVAN12 same as ODE - CENT,infus,ss,addl", {
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred3 %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -297,7 +297,7 @@ test_that("ADVAN12 same as ODE - GUT,bolus,ss,addl", {
     mrgsim(end=264,delta=0.1,digits=5,hmax=0.1)
   out2 <- pred3a %>% ev(e) %>%
     mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -332,7 +332,7 @@ test_that("ADVAN11 same as ODE - initial condition", {
     Req(CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
   out2 <- pred3nd %>% init(CENT=1000) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=24,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -344,7 +344,7 @@ test_that("ADVAN11 same as ODE - CENT,bolus,addl", {
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
   out2 <- pred3nd %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -356,7 +356,7 @@ test_that("ADVAN11 same as ODE - CENT,infus,addl", {
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred3nd %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -368,7 +368,7 @@ test_that("ADVAN11 same as ODE - CENT,infus,ss,addl", {
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5,hmax=0.1,atol=1E-12,rtol=1E-12)
   out2 <- pred3nd %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end=264,delta=0.1,digits=5)
-
+  
   expect_equal(out1$CENT,out2$CENT)
   expect_equal(out1$PER1,out2$PER1)
   expect_equal(out1$PER2,out2$PER2)
@@ -483,21 +483,21 @@ dxdt_CENT = KA*GUT - (k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
 dxdt_PER1 = k12*CENT - k21*PER1;
 dxdt_PER2 = k13*CENT - k31*PER2;
 '
-
+  
   advan_code <- '
 $PARAM CL=1, V2=20, KA=1.1, Q3=4, V3=300, Q4=0.8, V4=50
 $PKMODEL advan = 12, cmt = "GUT CENT PER1 PER2"
 '
-
+  
   ode3 <- mcode("advan12_ode_ref", ode3_code, rtol = 1E-9, atol = 1E-9)
   pk3 <- mcode("advan12_run_test", advan_code, rtol = 1E-9, atol = 1E-9)
-
+  
   e <- ev(amt = 100, ii = 48, addl = 4)
   out1 <- ode3 %>% ev(e) %>%
     Req(GUT,CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
   out2 <- pk3 %>% ev(e) %>%
     Req(GUT,CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
-
+  
   expect_equal(out1$CENT, out2$CENT)
   expect_equal(out1$PER1, out2$PER1)
   expect_equal(out1$PER2, out2$PER2)
@@ -518,22 +518,36 @@ dxdt_CENT = -(k10+k12+k13)*CENT + k21*PER1 + k31*PER2;
 dxdt_PER1 = k12*CENT - k21*PER1;
 dxdt_PER2 = k13*CENT - k31*PER2;
 '
-
+  
   advan_code <- '
 $PARAM CL=1, V1=20, Q2=4, V2=300, Q3=0.8, V3=50
 $PKMODEL advan = 11, cmt = "CENT PER1 PER2"
 '
-
+  
   ode3nd <- mcode("advan11_ode_ref", ode3nd_code, rtol = 1E-9, atol = 1E-9)
   pk3nd <- mcode("advan11_run_test", advan_code, rtol = 1E-9, atol = 1E-9)
-
+  
   e <- ev(amt = 100, ii = 48, addl = 4, cmt = 1)
   out1 <- ode3nd %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
   out2 <- pk3nd %>% ev(e) %>%
     Req(CENT,PER1,PER2) %>% mrgsim(end = 264, delta = 0.1, digits = 5)
-
+  
   expect_equal(out1$CENT, out2$CENT)
   expect_equal(out1$PER1, out2$PER1)
   expect_equal(out1$PER2, out2$PER2)
+})
+
+test_that("advan 11 and 12 won't compile without the right parameters", {
+  code <- "$PKMODEL advan = 11\n$PARAM CL=1,V2=2,Q=2,V3=2,Q3=2"
+  expect_error(
+    mcode("test_advan_11_parameters", code), 
+    "Required PK parameters not found: V1,Q2"
+  )
+  
+  code <- "$PKMODEL advan = 12\n$PARAM CL=1,V2=2,Q=2,V3=2,Q3=2"
+  expect_error(
+    mcode("test_advan_12_parameters", code),
+    "Required PK parameters not found: KA,Q4,V4"
+  )
 })
