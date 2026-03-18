@@ -77,11 +77,11 @@ bool LSODA::abs_compare(double a, double b)
   restrict: https://en.cppreference.com/w/c/language/restrict.html
 */
 size_t LSODA::idamax1(const vector<double> &dx, const size_t n, const size_t offset = 0) {
-  const double* __restrict__ data = dx.data() + offset + 1;
-  BLAS_INT nn = n;
-  BLAS_INT inc = 1;  
-  size_t idx = static_cast<size_t>(F77_CALL(idamax)(&nn, data, &inc));
-  return idx;
+    BLAS_INT nn = static_cast<BLAS_INT>(n);
+    BLAS_INT inc = 1;
+    const double* data = dx.data() + 1 + offset;  // skip 0-index, then apply offset
+    size_t idx = static_cast<size_t>(F77_CALL(idamax)(&nn, data, &inc));
+    return idx;  // BLAS 1-based return matches the vector's 1-based indexing
 }
 
 /* Purpose : scalar vector multiplication
