@@ -755,23 +755,23 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' not including a depot dosing compartment).
 #' @param depot logical indicating whether to add depot compartment.
 #' @param advan ADVAN subroutine number; can be 1, 2, 3, 4, 11, or 12; when
-#' specified, `ncmt` and `depot` are derived from the ADVAN number
-#' and default compartment names (`A1`, `A2`, etc.) are assigned
-#' if `cmt` is not provided.
+#' specified, `ncmt` and `depot` are derived from the ADVAN number and the 
+#' appropriate compartments are registered to the model unless specified 
+#' elsewhere (see **Details**).
 #' @param trans the parameterization for the PK model; must be 1, 2, 4, or 11.
 #' @param env parse environment.
 #' @param pos block position number.
 #' @param ... not used.
-#'
+#' 
 #' @details
 #' When using `$PKMODEL`, certain symbols must be defined in the
 #' model specification depending on the value of `ncmt`, `depot`
 #' and `trans`.
 #'
-#' - `ncmt` 1, `depot FALSE`, trans 2: `CL`, `V`
-#' - `ncmt` 1, `depot TRUE` , trans 2: `CL`, `V`, `KA`
-#' - `ncmt` 2, `depot FALSE`, trans 4: `CL`, `V1`, `Q`, `V2`
-#' - `ncmt` 2, `depot TRUE` , trans 4: `CL`, `V2`, `Q`, `V3`, `KA`
+#' - `ncmt` 1, `depot FALSE`, trans 2: `CL`,  `V`
+#' - `ncmt` 1, `depot TRUE` , trans 2: `CL`,  `V`, `KA`
+#' - `ncmt` 2, `depot FALSE`, trans 4: `CL`, `V1`,  `Q`, `V2`
+#' - `ncmt` 2, `depot TRUE` , trans 4: `CL`, `V2`,  `Q`, `V3`, `KA`
 #' - `ncmt` 3, `depot FALSE`, trans 4: `CL`, `V1`, `Q2`, `V2`, `Q3`, `V3`
 #' - `ncmt` 3, `depot TRUE` , trans 4: `CL`, `V2`, `Q3`, `V3`, `KA`, `Q4`,
 #'   `V4`
@@ -790,6 +790,14 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' - `pred_Q2`  for second intercompartmental clearance (3-cmt)
 #' - `pred_VP2` or `pred_V4` for second peripheral compartment volume of
 #'   distribution (3-cmt)
+#'
+#' When `advan` is supplied by the user, default compartments are registered
+#' in the model unless specified elsewhere. Compartment names are `A1`, `A2`, 
+#' etc. to the number of compartments for the specified `advan`. These 
+#' compartments will _not_ be added in case (1) the model contains a `$CMT` 
+#' block (2) the model contains a `$INIT` block or (3) no compartments have 
+#' been registered in the model at the time `$PKMODEL` is processed (for 
+#' example, via `$YAML`). 
 #'
 #' @examples
 #' \dontrun{
@@ -810,6 +818,7 @@ handle_spec_block.specPKMODEL <- function(x, env, ...) {
 #' @md
 PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
                     trans = NULL, env = list(), pos = 1, ...) {
+  
   if(is.numeric(advan)) {
     if(!(advan %in% c(1, 2, 3, 4, 11, 12))) {
       stop("advan must be 1, 2, 3, 4, 11, or 12.", call. = FALSE)
@@ -832,13 +841,15 @@ PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
     env[["init"]][[pos]] <- init
   }
   # Register standard compartments if none are found ---------------------
-  found_compartments <- any(c("INIT", "CMT") %in% env$incoming_names)
-  if(is.null(cmt) && !found_compartments) {
+  no_init <- !any(c("INIT", "CMT") %in% env$incoming_names)
+  no_init <- no_init && all(sapply(env$init, is.null))
+  if(no_init) {
     total <- ncmt + as.integer(depot)
     init <- as.list(vector(mode = "numeric", length = total))
     names(init) <- paste0("A", seq(total))
     env[["init"]][[pos]] <- init
   }
+  # ----------------------------------------------------------------------
   if(is.null(trans)) {
     trans <- pick_trans(ncmt, depot)
   }

@@ -26,9 +26,9 @@ not including a depot dosing compartment).}
 \item{cmt}{compartment names as comma-delimited character.}
 
 \item{advan}{ADVAN subroutine number; can be 1, 2, 3, 4, 11, or 12; when
-specified, \code{ncmt} and \code{depot} are derived from the ADVAN number
-and default compartment names (\code{A1}, \code{A2}, etc.) are assigned
-if \code{cmt} is not provided.}
+specified, \code{ncmt} and \code{depot} are derived from the ADVAN number and the
+appropriate compartments are registered to the model unless specified
+elsewhere (see \strong{Details}).}
 
 \item{trans}{the parameterization for the PK model; must be 1, 2, 4, or 11.}
 
@@ -46,10 +46,10 @@ When using \verb{$PKMODEL}, certain symbols must be defined in the
 model specification depending on the value of \code{ncmt}, \code{depot}
 and \code{trans}.
 \itemize{
-\item \code{ncmt} 1, \verb{depot FALSE}, trans 2: \code{CL}, \code{V}
-\item \code{ncmt} 1, \verb{depot TRUE} , trans 2: \code{CL}, \code{V}, \code{KA}
-\item \code{ncmt} 2, \verb{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q}, \code{V2}
-\item \code{ncmt} 2, \verb{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q}, \code{V3}, \code{KA}
+\item \code{ncmt} 1, \verb{depot FALSE}, trans 2: \code{CL},  \code{V}
+\item \code{ncmt} 1, \verb{depot TRUE} , trans 2: \code{CL},  \code{V}, \code{KA}
+\item \code{ncmt} 2, \verb{depot FALSE}, trans 4: \code{CL}, \code{V1},  \code{Q}, \code{V2}
+\item \code{ncmt} 2, \verb{depot TRUE} , trans 4: \code{CL}, \code{V2},  \code{Q}, \code{V3}, \code{KA}
 \item \code{ncmt} 3, \verb{depot FALSE}, trans 4: \code{CL}, \code{V1}, \code{Q2}, \code{V2}, \code{Q3}, \code{V3}
 \item \code{ncmt} 3, \verb{depot TRUE} , trans 4: \code{CL}, \code{V2}, \code{Q3}, \code{V3}, \code{KA}, \code{Q4},
 \code{V4}
@@ -70,6 +70,14 @@ If \code{trans=1}, the user must utilize the following symbols:
 \item \code{pred_VP2} or \code{pred_V4} for second peripheral compartment volume of
 distribution (3-cmt)
 }
+
+When \code{advan} is supplied by the user, default compartments are registered
+in the model unless specified elsewhere. Compartment names are \code{A1}, \code{A2},
+etc. to the number of compartments for the specified \code{advan}. These
+compartments will \emph{not} be added in case (1) the model contains a \verb{$CMT}
+block (2) the model contains a \verb{$INIT} block or (3) no compartments have
+been registered in the model at the time \verb{$PKMODEL} is processed (for
+example, via \verb{$YAML}).
 }
 \examples{
 \dontrun{

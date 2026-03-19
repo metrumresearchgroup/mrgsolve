@@ -584,4 +584,16 @@ test_that("compartments are not added when supplied elsewhere", {
   mod <- mcode("advan-test-4", c(code1, code2, code3), compile = FALSE)
   expect_length(init(mod), 3)
   expect_equal(names(init(mod)), c("C1", "C2", "C3"))
+  
+  code1 <- "
+  $YAML
+  param: {CL: 1, V: 2, KA: 3}
+  cmt: [xx,zz]
+  pkmodel: {advan: 2}
+  "
+  code2 <- NULL#"$PKMODEL advan = 2"
+  mod <- mcode("advan-test-5", c(code1, code2), compile = FALSE)
+  expect_is(mod, "mrgmod")
+  expect_length(init(mod), 2)
+  expect_equal(names(init(mod)), c("xx", "zz"))
 })
