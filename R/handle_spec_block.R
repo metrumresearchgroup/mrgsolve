@@ -814,31 +814,39 @@ PKMODEL <- function(ncmt = 1, depot = FALSE, cmt = NULL, advan = NULL,
     if(!(advan %in% c(1, 2, 3, 4, 11, 12))) {
       stop("advan must be 1, 2, 3, 4, 11, or 12.", call. = FALSE)
     }
+    # Non-depot compartments --------------------------------------------
     ncmt <- switch(
       as.character(advan),
-      "1" = 1L, "2" = 2L, "3" = 2L, "4" = 3L, "11" = 3L, "12" = 4L
+      "1"  = 1L,  "2" = 1L, 
+      "3"  = 2L,  "4" = 2L, 
+      "11" = 3L, "12" = 3L
     )
     depot <- advan %in% c(2, 4, 12)
-    total <- ncmt + as.integer(depot)
-    advan_cmt <- paste0("A", seq_len(total))
-    advan_init <- as.list(vector(mode = "integer", length = total))
-    names(advan_init) <- advan_cmt
   }
   if(is.character(cmt)) {
     cmt <- cvec_cs(cmt)
-    ncmt <- length(cmt)
-    init <- as.list(vector(mode="integer", length=ncmt))
+    total <- length(cmt)
+    ncmt <- total - as.integer(depot)
+    init <- as.list(vector(mode = "numeric", length = total))
     names(init) <- cmt
     env[["init"]][[pos]] <- init
-    ncmt <- ncmt-depot
+  }
+  # Register standard compartments if none are found ---------------------
+  found_compartments <- any(c("INIT", "CMT") %in% env$incoming_names)
+  if(is.null(cmt) && !found_compartments) {
+    total <- ncmt + as.integer(depot)
+    init <- as.list(vector(mode = "numeric", length = total))
+    names(init) <- paste0("A", seq(total))
+    env[["init"]][[pos]] <- init
   }
   if(is.null(trans)) {
     trans <- pick_trans(ncmt, depot)
   }
-  stopifnot(ncmt %in% c(1,2,3,4))
-  advan <- pick_advan(ncmt,depot)
-
-  return(list(advan=advan, trans=trans, n=ncmt))
+  if(is.null(advan)) {
+    advan <- pick_advan(ncmt, depot)
+  }
+  stopifnot(ncmt %in% c(1L, 2L, 3L))
+  return(list(advan = advan, trans = trans, n = ncmt))
 }
 
 ## Collect PKMODEL information; hopefully will be deprecating ADVAN2 and ADVAN4 soon

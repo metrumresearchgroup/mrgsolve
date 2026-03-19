@@ -551,3 +551,37 @@ test_that("advan 11 and 12 won't compile without the right parameters", {
     "Required PK parameters not found: KA,Q4,V4"
   )
 })
+
+test_that("compartments are added when advan supplied", {
+  code1 <- "$PARAM CL = 1, V = 2, KA = 3"
+  code2 <- "$PKMODEL advan = 2"
+  mod <- mcode("advan-test-1", c(code1, code2), compile = FALSE)
+  expect_is(mod, "mrgmod")
+  expect_length(init(mod), 2)
+  expect_equal(names(init(mod)), c("A1", "A2"))
+  
+  code1 <- "$PARAM CL = 1, V2 = 20, Q3 = 2, V3 = 10, Q4 = 0.5, V4 = 50, KA = 1"
+  code2 <- "$PKMODEL advan = 12"
+  mod <- mcode("advan-test-2", c(code1, code2), compile = FALSE)
+  expect_is(mod, "mrgmod")
+  expect_length(init(mod), 4)
+  expect_equal(names(init(mod)), c("A1", "A2", "A3", "A4"))
+})
+
+test_that("compartments are not added when supplied elsewhere", {
+  code1 <- "$PARAM CL = 1, V1 = 2, Q = 3, V2 = 3"
+  code2 <- "$PKMODEL advan = 3"
+  code3 <- "$CMT B1 B2"
+  mod <- mcode("advan-test-3", c(code1, code2, code3), compile = FALSE)
+  expect_is(mod, "mrgmod")
+  expect_length(init(mod), 2)
+  expect_equal(names(init(mod)), c("B1", "B2"))
+  
+  code1 <- "$PARAM CL = 1, V1 = 20, Q2 = 2, V2 = 10, Q3 = 0.5, V3 = 5"
+  code2 <- "$PKMODEL advan = 11"
+  code3 <- "$INIT C1 = 1, C2 = 2, C3 = 3"
+  expect_is(mod, "mrgmod")
+  mod <- mcode("advan-test-4", c(code1, code2, code3), compile = FALSE)
+  expect_length(init(mod), 3)
+  expect_equal(names(init(mod)), c("C1", "C2", "C3"))
+})
