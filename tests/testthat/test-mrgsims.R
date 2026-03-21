@@ -39,3 +39,53 @@ test_that("plot from character", {
   expect_is(pl2,"trellis")
 })
 
+test_that("plot - fixed y scale", {
+  mod <- house()
+  out <- mrgsim(mod, end = 0, outvars = "CP") 
+  
+  p <- plot(out)
+  expect_equal(p$y.scale$relation, "free")
+
+  p <- plot(out, fixy = TRUE)
+  expect_equal(p$y.scale$relation, "same")
+  
+  p <- plot(out, fixy = FALSE)
+  expect_equal(p$y.scale$relation, "free")
+  
+  p <- plot(out, scales = "free")
+  expect_equal(p$y.scale$relation, "free")
+  
+  p <- plot(out, scales = "same")
+  expect_equal(p$y.scale$relation, "same")
+  
+  p <- plot(out, scales = list())
+  expect_equal(p$y.scale$relation, "same")
+  
+  p <- plot(out, scales = list(), fixy = FALSE)
+  expect_equal(p$y.scale$relation, "free")
+  
+  sc <- list(y = list(relation = "free"))
+  p <- plot(out, scales = sc)
+  expect_equal(p$y.scale$relation, "free")
+
+  sc <- list(y = list(relation = "same"))
+  p <- plot(out, scales = sc)
+  expect_equal(p$y.scale$relation, "same")
+  
+})
+
+
+test_that("plot - log y scale", {
+  mod <- house(init = list(CENT = 100))
+  out <- mrgsim(mod, end = 1, outvars = "CP") 
+  
+  p <- plot(out)
+  expect_false(p$y.scale$log)
+  
+  p <- plot(out, logy = TRUE)
+  expect_true(p$y.scale$log)
+  
+  p <- plot(out, logy = FALSE)
+  expect_false(p$y.scale$log)
+
+})
