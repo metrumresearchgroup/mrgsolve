@@ -40,7 +40,7 @@ test_that("plot from character", {
   expect_is(pl2,"trellis")
 })
 
-test_that("plot - fixed y scale", {
+test_that("plot - fixed y scale gh-1349", {
   mod <- house()
   out <- mrgsim(mod, end = 0, outvars = "CP") 
   
@@ -84,7 +84,7 @@ test_that("plot - fixed y scale", {
   
 })
 
-test_that("plot - log y scale", {
+test_that("plot - log y scale gh-1349", {
   mod <- house(init = list(CENT = 100))
   out <- mrgsim(mod, end = 1, outvars = "CP") 
   
