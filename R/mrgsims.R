@@ -348,53 +348,52 @@ setMethod("show", "mrgsims", function(object) {
 })
 
 
-##' Generate a quick plot of simulated data
-##'
-##' @name plot_mrgsims
-##' 
-##' @param x mrgsims object.
-##' @param y formula used for plotting.
-##' @param limit limit the the number of panels to create.
-##' @param show.grid logical indicating whether or not to draw `panel.grid`.
-##' @param ylab passed to [lattice::xyplot()].
-##' @param scales passed to  [lattice::xyplot()].
-##' @param logy plot the y variables on log scale; ignored if `scales` is not
-##' a list.
-##' @param fixy make the y-axis scale the same for all variables; ignored if
-##' `scales` is not a list.
-##' @param logbr log scale breaks indicator; use `1` for breaks every log
-##' unit; use `3` for breaks every half log unit; use `0` for default 
-##' breaks; ignored if `scales` is not a list.
-##' @param type passed to [lattice::xyplot()].
-##' @param lwd passed to [lattice::xyplot()].
-##' @param outer passed to [lattice::xyplot()].
-##' @param groups passed to [lattice::xyplot()].
-##' @param ... other arguments passed to [lattice::xyplot()].
-##'
-##' @rdname plot_mrgsims
-##' 
-##' @aliases plot,mrgsims,missing-method
-##' 
-##' @examples
-##'
-##' mod <- mrgsolve::house(end=48, delta=0.2) %>% init(GUT=1000)
-##'
-##' out <- mrgsim(mod)
-##'
-##' plot(out)
-##'
-##' plot(out, subset=time <=24)
-##'
-##' plot(out, GUT + CP ~ .)
-##'
-##' plot(out, CP + RESP ~ time, col = "black", scales = "same", lty = 2)
-##' 
-##' \dontrun{
-##' plot(out, "CP RESP, GUT")
-##' }
-##' 
-##' @md
-##' @export
+#' Generate a quick plot of simulated data
+#' 
+#' @param x mrgsims object.
+#' @param y formula used for plotting.
+#' @param limit limit the the number of panels to create.
+#' @param show.grid logical indicating whether or not to draw `panel.grid`.
+#' @param ylab passed to [lattice::xyplot()].
+#' @param scales passed to  [lattice::xyplot()].
+#' @param logy plot the y variables on log scale; ignored if `scales` is not
+#' a list.
+#' @param fixy make the y-axis scale the same for all variables; ignored if
+#' `scales` is not a list.
+#' @param logbr log scale breaks indicator; use `1` for breaks every log
+#' unit; use `3` for breaks every half log unit; use `0` for default 
+#' breaks; ignored if `scales` is not a list.
+#' @param type passed to [lattice::xyplot()].
+#' @param lwd passed to [lattice::xyplot()].
+#' @param outer passed to [lattice::xyplot()].
+#' @param groups passed to [lattice::xyplot()].
+#' @param ... other arguments passed to [lattice::xyplot()].
+#'
+#' @name plot_mrgsims
+#' @rdname plot_mrgsims
+#'
+#' @aliases plot,mrgsims,missing-method plot
+#' 
+#' @examples
+#'
+#' mod <- mrgsolve::house(end=48, delta=0.2) %>% init(GUT=1000)
+#'
+#' out <- mrgsim(mod)
+#'
+#' plot(out)
+#'
+#' plot(out, subset=time <= 24)
+#'
+#' plot(out, GUT + CP ~ .)
+#'
+#' plot(out, CP + RESP ~ time, col = "black", fixy = TRUE, lty = 2)
+#' 
+#' \dontrun{
+#' plot(out, "CP RESP, GUT")
+#' }
+#' 
+#' @md
+#' @export
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   
   ynames <- variables(x)
@@ -420,9 +419,9 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   plot(x,fmla,limit=limit,...)
 })
 
-##' @rdname plot_mrgsims
-##' @aliases plot,mrgsims,formula-method
-##' @export
+#' @rdname plot_mrgsims
+#' @aliases plot,mrgsims,formula-method
+#' @export
 setMethod("plot", c("mrgsims","formula"), function(x, y,
                                                    limit = 16,
                                                    show.grid = TRUE,
@@ -436,9 +435,6 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
                                                    logy = NULL,
                                                    logbr = 1,
                                                    ...) {
-  
-  #browser()
-  
   requireNamespace("lattice", quietly=TRUE)
   
   data <- as.data.frame(subset(as.data.frame(x),...))

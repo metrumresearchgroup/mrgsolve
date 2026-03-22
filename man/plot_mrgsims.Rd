@@ -3,6 +3,7 @@
 \name{plot_mrgsims}
 \alias{plot_mrgsims}
 \alias{plot,mrgsims,missing-method}
+\alias{plot}
 \alias{plot,mrgsims,formula-method}
 \alias{plot,mrgsims,character-method}
 \title{Generate a quick plot of simulated data}
@@ -72,11 +73,11 @@ out <- mrgsim(mod)
 
 plot(out)
 
-plot(out, subset=time <=24)
+plot(out, subset=time <= 24)
 
 plot(out, GUT + CP ~ .)
 
-plot(out, CP + RESP ~ time, col = "black", scales = "same", lty = 2)
+plot(out, CP + RESP ~ time, col = "black", fixy = TRUE, lty = 2)
 
 \dontrun{
 plot(out, "CP RESP, GUT")
