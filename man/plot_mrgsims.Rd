@@ -23,7 +23,7 @@
   scales = list(y = list(relation = "free")),
   fixy = NULL,
   logy = NULL,
-  logbr = 1,
+  logbr = 0,
   ...
 )
 
