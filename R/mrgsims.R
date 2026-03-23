@@ -433,7 +433,7 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
                                                    scales = list(y = list(relation = "free")),
                                                    fixy = NULL,
                                                    logy = NULL,
-                                                   logbr = 1,
+                                                   logbr = 0,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
@@ -467,8 +467,9 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
   
   if(isTRUE(logy) && scales_list) {
     scales[["y"]][["log"]] <- logy
+    scales[["y"]][["equispaced.log"]] <- FALSE
     if(!logbr %in% c(0,1,3)) {
-      stop("'logbr' must be either 0, 1, or 3.", call.=FALSE)  
+      stop("`logbr` must be either 0, 1, or 3.", call.=FALSE)  
     }
     if(logbr > 0) {
       breaks <- 10^seq(-10,10)
