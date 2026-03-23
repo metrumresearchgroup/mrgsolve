@@ -440,7 +440,7 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
-  data <- as.data.frame(subset(as.data.frame(x),...))
+  data <- as.data.frame(x)
   
   scales_list <- is.list(scales)
   
