@@ -363,6 +363,8 @@ setMethod("show", "mrgsims", function(object) {
 #' @param logbr log scale breaks indicator; use `1` for breaks every log
 #' unit; use `3` for breaks every half log unit; use `0` for default 
 #' breaks; ignored if `scales` is not a list.
+#' @param equispaced.log see `scales` argument in [lattice::xyplot()]; 
+#' ignored if `scales` is not a list.
 #' @param type passed to [lattice::xyplot()].
 #' @param lwd passed to [lattice::xyplot()].
 #' @param outer passed to [lattice::xyplot()].
@@ -434,6 +436,7 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
                                                    fixy = NULL,
                                                    logy = NULL,
                                                    logbr = 0,
+                                                   equispaced.log = FALSE,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
@@ -467,7 +470,7 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
   
   if(isTRUE(logy) && scales_list) {
     scales[["y"]][["log"]] <- logy
-    scales[["y"]][["equispaced.log"]] <- FALSE
+    scales[["y"]][["equispaced.log"]] <- isTRUE(equispaced.log)
     if(!logbr %in% c(0,1,3)) {
       stop("`logbr` must be either 0, 1, or 3.", call.=FALSE)  
     }

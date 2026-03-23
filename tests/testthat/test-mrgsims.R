@@ -95,9 +95,13 @@ test_that("plot - log y scale gh-1349", {
   p <- plot(out, logy = TRUE)
   expect_is(p, "trellis")
   expect_true(p$y.scale$log)
+  expect_false(p$y.scale$equispaced.log)
   
   p <- plot(out, logy = FALSE)
   expect_is(p, "trellis")
   expect_false(p$y.scale$log)
-
+  
+  p <- plot(out, logy = TRUE, equispaced.log = TRUE)
+  expect_is(p, "trellis")
+  expect_true(p$y.scale$equispaced.log)
 })

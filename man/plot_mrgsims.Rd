@@ -24,6 +24,7 @@
   fixy = NULL,
   logy = NULL,
   logbr = 0,
+  equispaced.log = FALSE,
   ...
 )
 
@@ -61,6 +62,9 @@ a list.}
 \item{logbr}{log scale breaks indicator; use \code{1} for breaks every log
 unit; use \code{3} for breaks every half log unit; use \code{0} for default
 breaks; ignored if \code{scales} is not a list.}
+
+\item{equispaced.log}{see \code{scales} argument in \code{\link[lattice:xyplot]{lattice::xyplot()}};
+ignored if \code{scales} is not a list.}
 }
 \description{
 Generate a quick plot of simulated data
