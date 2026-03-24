@@ -333,7 +333,7 @@ capture inrow = self.inrow;
 
 mod <- mcode("foo", code)
 
-test_that("row counter is correct when only idata set is passed", {
+test_that("row counter is correct when only idata set is passed gh-1351", {
   idata <- expand.idata(ID = 1:3)
   mod <- update(mod, end = 24, delta = 12)
   nobs <- length(stime(mod))
