@@ -12,6 +12,7 @@
 \alias{do.mrgsims}
 \alias{select.mrgsims}
 \alias{slice.mrgsims}
+\alias{count.mrgsims}
 \alias{as_data_frame.mrgsims}
 \alias{as_tibble.mrgsims}
 \alias{as.tbl.mrgsims}
@@ -36,6 +37,8 @@
 \method{select}{mrgsims}(.data, ...)
 
 \method{slice}{mrgsims}(.data, ...)
+
+\method{count}{mrgsims}(x, ...)
 
 as_data_frame.mrgsims(x, ...)
 
