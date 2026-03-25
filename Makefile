@@ -32,8 +32,15 @@ check:
 	make house
 	make doc
 	make build
-	R CMD check ${TARBALL} --no-manual
+	R CMD check ${TARBALL} --no-manual 
 	make unit
+
+just-check: 
+	make clean
+	make house
+	make doc
+	make build
+	R CMD check ${TARBALL} --no-manual --no-tests
 
 check-only:
 	make doc

@@ -139,14 +139,13 @@ setMethod("names", "mrgsims", function(x) {
 #' 
 NULL
 
-#' @param .dots passed to various `dplyr` functions
-#' @param .data an mrgsims object; passed to various `dplyr` functions
-#' @param x passed to [dplyr::as.tbl]
-#' @param add passed to [dplyr::group_by] (for dplyr < `1.0.0`)
-#' @param .add passed to [dplyr::group_by] (for dplyr >= `1.0.0`)
-#' @param .keep_all passed to [dplyr::distinct]
-#' @param funs passed to [dplyr::summarise_each]
-#' @param ... passed to other methods
+#' @param .dots passed to various `dplyr` functions.
+#' @param .data an mrgsims object; passed to various `dplyr` functions.
+#' @param x passed to [dplyr::as.tbl()].
+#' @param add passed to [dplyr::group_by()] (for dplyr < `1.0.0`).
+#' @param .add passed to [dplyr::group_by()] (for dplyr >= `1.0.0`).
+#' @param .keep_all passed to [dplyr::distinct()].
+#' @param ... passed to other methods.
 #' 
 #' @details
 #' 
@@ -203,9 +202,13 @@ mutate.mrgsims <- function(.data,...) {
 }
 
 ##' @rdname mrgsims_dplyr
-##' @export
-summarise.each <- function(.data,funs,...) {
-  dplyr::summarise_each(as_tibble.mrgsims(.data),funs,...)
+##' @rawNamespace export(summarise.each)
+summarise.each <- function(...) {
+  msg <- paste0(
+    "`mrgsolve::summarise.each()` is defunct; ", 
+    "use `dplyr::summarise()` with `dplyr::across()` instead."
+  )
+  abort(msg)
 }
 
 ##' @rdname mrgsims_dplyr
