@@ -81,7 +81,6 @@ test_that("plot - fixed y scale gh-1349", {
   p <- plot(out, scales = sc)
   expect_is(p, "trellis")
   expect_equal(p$y.scale$relation, "same")
-  
 })
 
 test_that("plot - log y scale gh-1349", {
