@@ -465,7 +465,7 @@ setMethod("plot", c("mrgsims","formula"), function(x, y,
   if(length(y[[2]])==1 & missing(ylab)) ylab <- deparse(y[[2]])
 
   if(is.logical(fixy) && scales_list) {
-    scales[["y"]][["relation"]] <- if (isTRUE(fixy)) "same" else "free"
+    scales[["y"]][["relation"]] <- if(isTRUE(fixy)) "same" else "free"
   }
   
   if(isTRUE(logy) && scales_list) {
