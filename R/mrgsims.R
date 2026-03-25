@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -348,50 +348,54 @@ setMethod("show", "mrgsims", function(object) {
 })
 
 
-##' Generate a quick plot of simulated data
-##'
-##' @name plot_mrgsims
-##' 
-##' @param x mrgsims object
-##' @param y formula used for plotting
-##' @param limit limit the the number of panels to create
-##' @param show.grid logical indicating whether or not to draw panel.grid
-##' @param ylab passed to xyplot
-##' @param scales passed to xyplot
-##' @param logy plot the y variables on log scale
-##' @param logbr log scale breaks indicator; use `1` for breaks every log
-##' unit; use `3` for breaks every half log unit; use `0` for default 
-##' breaks
-##' @param type passed to xyplot
-##' @param lwd passed to xyplot
-##' @param outer passed to xyplot
-##' @param groups passed to xyplot
-##' @param ... other arguments passed to xyplot
-##'
-##' @rdname plot_mrgsims
-##' 
-##' @aliases plot,mrgsims,missing-method
-##' 
-##' @examples
-##'
-##' mod <- mrgsolve::house(end=48, delta=0.2) %>% init(GUT=1000)
-##'
-##' out <- mrgsim(mod)
-##'
-##' plot(out)
-##'
-##' plot(out, subset=time <=24)
-##'
-##' plot(out, GUT+CP~.)
-##'
-##' plot(out, CP+RESP~time, col="black", scales="same", lty=2)
-##' 
-##' \dontrun{
-##' plot(out, "CP RESP, GUT")
-##' }
-##' 
-##' @md
-##' @export
+#' Generate a quick plot of simulated data
+#' 
+#' @param x mrgsims object.
+#' @param y formula used for plotting.
+#' @param limit limit the the number of panels to create.
+#' @param show.grid logical indicating whether or not to draw `panel.grid`.
+#' @param ylab passed to [lattice::xyplot()].
+#' @param scales passed to  [lattice::xyplot()].
+#' @param logy plot the y variables on log scale; ignored if `scales` is not
+#' a list.
+#' @param fixy make the y-axis scale the same for all variables; ignored if
+#' `scales` is not a list.
+#' @param logbr log scale breaks indicator; use `1` for breaks every log
+#' unit; use `3` for breaks every half log unit; use `0` for default 
+#' breaks; ignored if `scales` is not a list.
+#' @param equispaced.log see `scales` argument in [lattice::xyplot()]; 
+#' ignored if `scales` is not a list.
+#' @param type passed to [lattice::xyplot()].
+#' @param lwd passed to [lattice::xyplot()].
+#' @param outer passed to [lattice::xyplot()].
+#' @param groups passed to [lattice::xyplot()].
+#' @param ... other arguments passed to [lattice::xyplot()].
+#'
+#' @name plot_mrgsims
+#' @rdname plot_mrgsims
+#'
+#' @aliases plot,mrgsims,missing-method plot
+#' 
+#' @examples
+#'
+#' mod <- mrgsolve::house(end=48, delta=0.2) %>% init(GUT=1000)
+#'
+#' out <- mrgsim(mod)
+#'
+#' plot(out)
+#'
+#' plot(out, subset=time <= 24)
+#'
+#' plot(out, GUT + CP ~ .)
+#'
+#' plot(out, CP + RESP ~ time, col = "black", fixy = TRUE, lty = 2)
+#' 
+#' \dontrun{
+#' plot(out, "CP RESP, GUT")
+#' }
+#' 
+#' @md
+#' @export
 setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   
   ynames <- variables(x)
@@ -417,23 +421,35 @@ setMethod("plot", c("mrgsims","missing"), function(x,limit=16,...) {
   plot(x,fmla,limit=limit,...)
 })
 
-##' @rdname plot_mrgsims
-##' @aliases plot,mrgsims,formula-method
-##' @export
-setMethod("plot", c("mrgsims","formula"), function(x,y,
-                                                   limit=16,show.grid=TRUE,
-                                                   outer=TRUE,
-                                                   type='l',lwd=2,
-                                                   ylab="value",
-                                                   groups=ID,
-                                                   scales=list(y=list(relation='free')),
-                                                   logy = FALSE,
-                                                   logbr = 1,
+#' @rdname plot_mrgsims
+#' @aliases plot,mrgsims,formula-method
+#' @export
+setMethod("plot", c("mrgsims","formula"), function(x, y,
+                                                   limit = 16,
+                                                   show.grid = TRUE,
+                                                   outer = TRUE,
+                                                   type = 'l',
+                                                   lwd = 2,
+                                                   ylab = "value",
+                                                   groups = ID,
+                                                   scales = list(y = list(relation = "free")),
+                                                   fixy = NULL,
+                                                   logy = NULL,
+                                                   logbr = 0,
+                                                   equispaced.log = FALSE,
                                                    ...) {
   requireNamespace("lattice", quietly=TRUE)
   
-  data <- as.data.frame(subset(as.data.frame(x),...))
+  data <- as.data.frame(x)
   
+  scales_list <- is.list(scales)
+  
+  if(scales_list) {
+    if(!is.list(scales$y)) {
+      scales$y <- list()  
+    }
+  }
+
   if(length(y)==2) y[[3]] <- as.symbol(".")
   
   if(!has_name("time", data)) {
@@ -447,11 +463,16 @@ setMethod("plot", c("mrgsims","formula"), function(x,y,
   if(y[[3]] == '.')  y[[3]] <- quote(time)
   
   if(length(y[[2]])==1 & missing(ylab)) ylab <- deparse(y[[2]])
+
+  if(is.logical(fixy) && scales_list) {
+    scales[["y"]][["relation"]] <- if(isTRUE(fixy)) "same" else "free"
+  }
   
-  if(logy) {
-    scales[["y"]][["log"]] <- TRUE
+  if(isTRUE(logy) && scales_list) {
+    scales[["y"]][["log"]] <- logy
+    scales[["y"]][["equispaced.log"]] <- isTRUE(equispaced.log)
     if(!logbr %in% c(0,1,3)) {
-      stop("'logbr' must be either 0, 1, or 3.", call.=FALSE)  
+      stop("`logbr` must be either 0, 1, or 3.", call.=FALSE)  
     }
     if(logbr > 0) {
       breaks <- 10^seq(-10,10)
