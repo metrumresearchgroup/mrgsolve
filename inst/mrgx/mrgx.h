@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -26,7 +26,9 @@
 
 /** 
  * @defgroup mrgx mrgx functions
- * Extra C++ functions provided by mrgsolve.  To use these functions, use `$PLUGIN mrgx` in your model file.
+ * Extra C++ functions provided by mrgsolve.  To use these functions, use 
+ * `$PLUGIN mrgx` in your model file. Using `mrgx` will also invoke 
+ * the `Rcpp` plugin.
  * 
  */
 
@@ -35,9 +37,8 @@ namespace mrgx {
 /**
  * @brief Return the model environment.  
  * 
- * With each mrgsolve model object,
- * there is an R environment that can be used to maintain arbitrary 
- * R objects, potentially for use in the model.
+ * With each mrgsolve model object, there is an R environment that can be used 
+ * to maintain arbitrary R objects, potentially for use in the model.
  * 
  * @ingroup mrgx
  * @param self the model databox object
@@ -111,6 +112,8 @@ double rlognorm(const double mean, const double sd, const double lower,
  * 
  * Example:
  * @code
+ * $PLUGIN mrgx
+ * 
  * $GLOBAL
  * Rcpp::NumericMatrix mat;
  * 
@@ -120,6 +123,7 @@ double rlognorm(const double mean, const double sd, const double lower,
  * $ENV
  * mat <- dmat(1,2,3)
  * @endcode
+ * 
  * Note: for this to work, you must define a numeric matrix called `mat`
  * in `$ENV`.
  * 
@@ -135,11 +139,43 @@ _T___ get(const std::string name, const databox& self) {
 }
 
 /**
+ * Assign an object to the model environment.
+ * 
+ * Example:
+ * @code
+ * $PLUGIN mrgx
+ *
+ * $GLOBAL Rcpp::NumericVector ans(100);
+ *
+ * $PREAMBLE
+ * for(R_xlen_t i = 0; i < ans.size(); ++i) {
+ *   ans[i] = R::rnorm(0,1);
+ * }
+ * 
+ * $PK
+ * if(FINAL_ROW) {
+ *   mrgx::assign("vec", ans, self);
+ * }
+ * @endcode
+ * 
+ * @ingroup mrgx
+ * @param x a variable name to be assigned in the model evironment.
+ * @param value a value to be assigned to `x` in the model environment.
+ * @param self the model object; the assignment happens in `self.envir`.
+ */
+template<typename _T___>
+void assign(const std::string x, const _T___& value, const databox& self) {
+  Rcpp::Environment env = get_envir(self);
+  env.assign(x, value);
+  return;
+}
+
+/**
  * Get an R object from the global environment.
  * 
  * Example:
  * @code
- * Rcpp::NumericVector x = mrgx::get<Rcpp::NumericVector("x");
+ * Rcpp::NumericVector x = mrgx::get<Rcpp::NumericVector>("x");
  * @endcode
  * Note: for this to work, `x` must be a numeric vector in `.GlobalEnv`.
  * 
@@ -154,26 +190,25 @@ _T___ get(const std::string name) {
 } 
 
 /**
- * Get an R object from a package namespace.  This is 
- * typically used to get a function from a 
- * specific package.
+ * Get an R object from a package namespace.  This is typically used to get a 
+ * function from a specific package.
  * 
  * Example:
  * 
  * To get a function, use this code:
  * @code
- * $GLOBAL
- * Rcpp::Function myroot("uniroot");
+ * $PLUGIN mrgx
+ * 
+ * $GLOBAL 
+ * Rcpp::Function Rnorm = mrgx::get<Rcpp::Function>("stats", "rnorm"); 
+ * Rcpp::Function Seq = mrgx::get<Rcpp::Function>("base", "seq");
+ * 
+ * $ERROR 
+ * if(FINAL_ROW) {
+ *   mrgx::assign("double", Rnorm(10), self); 
+ *   mrgx::assign("int", seq(10), self);
+ * }
  * @endcode
- * and then call `uniroot` as you please.
- * 
- * To use the `mrgx::get` function with `myroot` available in `$MAIN`:
- * 
- * @code
- * $MAIN
- * Rcpp::Function myroot = mrgx::get("stats", "uniroot");
- * @endcode
- * 
  * 
  * @ingroup mrgx
  * @param package name of the package
@@ -190,8 +225,25 @@ _T___ get(const std::string package, const std::string name) {
 /**
  * Read an RDS file.
  * 
+ * @code
+ * $PLUGIN mrgx
+ * 
+ * $ENV 
+ * file <- file.path(tempdir(), "file-read-rds.RDS")
+ * x <- list(a = 1.23, b = c(1,2,3,99))
+ * saveRDS(object = x, file = file)
+ * 
+ * $PREAMBLE
+ * std::string file = mrgx::get<std::string>("file", self);
+ * 
+ * Rcpp::List y = mrgx::readRDS<Rcpp::List>(file);
+ * 
+ * capture a = y["a"];
+ * capture b = Rcpp::as<Rcpp::NumericVector>(y["b"])[3];
+ * @endcode
+ * 
  * @ingroup mrgx
- * @param filename the name of the RDS file to read
+ * @param filename the name of the RDS file to read.
  * @return an object saved in the RDS file
  */
 template<typename _T___>
@@ -201,15 +253,34 @@ _T___ readRDS(const std::string filename) {
 }
 
 /**
- * An empty R function.  This is typically used
- * as a placeholder when declaring an <code>Rcpp::Function</code> object.
+ * An empty R function.  This is typically used as a placeholder when declaring 
+ * an `Rcpp::Function` object in `$GLOBAL`. This pattern of declaring in 
+ * `$GLOBAL` and (re)defining in `$PREAMBLE` could be used for efficiency when 
+ * the function must be called many times.
+ * 
+ * @code
+ * $PLUGIN mrgx
+ * 
+ * $GLOBAL 
+ * Rcpp::Function fun = mrgx::mt_fun(); 
+ * 
+ * $PREAMBLE 
+ * fun = mrgx::get<Rcpp::Function>("SEQ");
+ * 
+ * $ERROR 
+ * if(FINAL_ROW) {
+ *   Rcpp::IntegerVector ans = fun(34);    
+ *   mrgx::assign("vec", ans, self);
+ * }
+ * @endcode
  * 
  * @ingroup mrgx
- * @return the function <code>mt_fun</code> from the mrgsolve namespace
+ * @return the function `mt_fun` from the mrgsolve namespace.
  */
 Rcpp::Function mt_fun() {
+  // See R/Aaaa.R
   Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");
-  Rcpp::Function ans = env["mt_fun"];
+  Rcpp::Function ans = env["mrgx_mt_fun"];
   return ans;
 }
 
