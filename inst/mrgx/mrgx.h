@@ -159,15 +159,14 @@ _T___ get(const std::string name, const databox& self) {
  * @endcode
  * 
  * @ingroup mrgx
- * @param name name of the R object to to be assigned in the model evironment.
- * @param object the object to assign in the model environment.
- * @param self the model object.
- * @return `void`. 
+ * @param x a variable name to be assigned in the model evironment.
+ * @param value a value to be assigned to `x` in the model environment.
+ * @param self the model object; the assignment happens in `self.envir`.
  */
 template<typename _T___>
-void assign(const std::string name, const _T___& object, const databox& self) {
+void assign(const std::string x, const _T___& value, const databox& self) {
   Rcpp::Environment env = get_envir(self);
-  env.assign(name, object);
+  env.assign(x, value);
   return;
 }
 
