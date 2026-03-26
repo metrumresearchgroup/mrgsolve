@@ -247,8 +247,11 @@ _T___ readRDS(const std::string filename) {
  * fun = mrgx::get<Rcpp::Function>("SEQ");
  * 
  * $ERROR 
- * Rcpp::IntegerVector ans = fun(34);
- * if(FINAL_ROW) mrgx::assign("vec", ans, self);
+ * 
+ * if(FINAL_ROW) {
+ *   Rcpp::IntegerVector ans = fun(34);    
+ *   mrgx::assign("vec", ans, self);
+ * }
  * @endcode
  * 
  * @ingroup mrgx
