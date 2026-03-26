@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -91,7 +91,7 @@ df <- tibble(ID=1:2,amt=3)
 
 
 test_that("env-funs", {
-  mod <- mcode("env-funs", code,compile=FALSE)
+  mod <- mcode("env-funs", code, compile = FALSE)
   l <- env_get(mod)
   expect_equal(names(l), c("x", "y", "e", "df"))
   expect_equal(l$y,2)
@@ -105,6 +105,21 @@ test_that("env-funs", {
   mmm <- env_eval(mod)
   expect_is(mmm,"mrgmod")
   
+})
+
+test_that("updated env_get gh-xyz", {
+  mod <- house() 
+  df <- datasets::mtcars
+  assign("foo", df, env_get_env(mod))
+  
+  out <- mrgsim(mod)
+
+  m1 <- env_get(mod, "foo")
+  expect_is(m1, "data.frame")  
+  
+  m2 <- env_get(out, "foo")
+  
+  expect_identical(m1, m2)
 })
 
 

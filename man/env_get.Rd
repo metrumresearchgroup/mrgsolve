@@ -2,18 +2,41 @@
 % Please edit documentation in R/env.R
 \name{env_get}
 \alias{env_get}
+\alias{env_get.mrgmod}
+\alias{env_get.mrgsims}
 \alias{env_get_env}
-\title{Return model environment}
+\title{Return model environment or objects from the model environment}
 \usage{
-env_get(x, tolist = TRUE)
+env_get(x, ...)
+
+\method{env_get}{mrgmod}(x, what = NULL, tolist = TRUE, ...)
+
+\method{env_get}{mrgsims}(x, ...)
 
 env_get_env(x)
 }
 \arguments{
 \item{x}{a model object.}
 
-\item{tolist}{should the environment be coerced to \code{list}?}
+\item{...}{passed to other methods.}
+
+\item{what}{an object to return.}
+
+\item{tolist}{should the environment be coerced to \code{list}; ignored if \code{what}
+is provided.}
 }
 \description{
-Return model environment
+Return model environment or objects from the model environment
+}
+\examples{
+mod <- house()
+
+assign("let", letters[1:3], env_get_env(mod))
+
+out <- mrgsim(mod)
+
+env_get(out, "let")
+
+env_get(mod, "let")
+
 }

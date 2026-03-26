@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -54,19 +54,44 @@ env_ls <- function(x,...) {
   arrange__(ans, .dots=c("class"))
 }
 
-#' Return model environment
+#' Return model environment or objects from the model environment
 #' 
 #' @param x a model object.
-#' @param tolist should the environment be coerced to `list`?
+#' @param what an object to return. 
+#' @param tolist should the environment be coerced to `list`; ignored if `what`
+#' is provided.
+#' @param ... passed to other methods.
+#' 
+#' @examples 
+#' mod <- house()
+#' 
+#' assign("let", letters[1:3], env_get_env(mod))
+#' 
+#' out <- mrgsim(mod)
+#' 
+#' env_get(out, "let")
+#' 
+#' env_get(mod, "let")
 #' 
 #' @md
 #' @export
-env_get <- function(x,tolist=TRUE) {
-  if(tolist) {
-    return(as.list(x@envir))  
-  } else {
-    return(x@envir) 
+env_get <- function(x, ...) UseMethod("env_get")
+#' @rdname env_get
+#' @export
+env_get.mrgmod <- function(x, what = NULL, tolist = TRUE, ...) {
+  if(is.character(what)) {
+    return(get(what, envir = x@envir))  
   }
+  env <- env_get_env(x)
+  if(tolist) {
+    return(as.list(env))  
+  } 
+  env
+}
+#' @rdname env_get
+#' @export
+env_get.mrgsims <- function(x, ...) {
+  env_get(x@mod, ...)
 }
 
 #' @rdname env_get
@@ -89,6 +114,8 @@ env_update <- function(.x,...,.dots=list()) {
   .x@envir <- as.environment(merge.list(left,right))
   return(invisible(.x))
 }
+
+
 
 #' Run the model cama function
 #' 
