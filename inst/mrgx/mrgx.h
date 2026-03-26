@@ -36,9 +36,8 @@ namespace mrgx {
 /**
  * @brief Return the model environment.  
  * 
- * With each mrgsolve model object,
- * there is an R environment that can be used to maintain arbitrary 
- * R objects, potentially for use in the model.
+ * With each mrgsolve model object, there is an R environment that can be used 
+ * to maintain arbitrary R objects, potentially for use in the model.
  * 
  * @ingroup mrgx
  * @param self the model databox object
@@ -121,6 +120,7 @@ double rlognorm(const double mean, const double sd, const double lower,
  * $ENV
  * mat <- dmat(1,2,3)
  * @endcode
+ * 
  * Note: for this to work, you must define a numeric matrix called `mat`
  * in `$ENV`.
  * 
@@ -140,7 +140,6 @@ _T___ get(const std::string name, const databox& self) {
  * 
  * Example:
  * @code
- * 
  * $PLUGIN mrgx
  *
  * $GLOBAL Rcpp::NumericVector ans(100);
@@ -189,9 +188,8 @@ _T___ get(const std::string name) {
 } 
 
 /**
- * Get an R object from a package namespace.  This is 
- * typically used to get a function from a 
- * specific package.
+ * Get an R object from a package namespace.  This is typically used to get a 
+ * function from a specific package.
  * 
  * Example:
  * 
@@ -236,11 +234,12 @@ _T___ readRDS(const std::string filename) {
 }
 
 /**
- * An empty R function.  This is typically used
- * as a placeholder when declaring an `Rcpp::Function` object.
+ * An empty R function.  This is typically used as a placeholder when declaring 
+ * an `Rcpp::Function` object.
  * 
  * @code
  * $PLUGIN mrgx
+ * 
  * $GLOBAL 
  * Rcpp::Function fun = mrgx::mt_fun(); 
  * 
@@ -257,7 +256,7 @@ _T___ readRDS(const std::string filename) {
  */
 Rcpp::Function mt_fun() {
   Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");
-  Rcpp::Function ans = env["mt_fun"];
+  Rcpp::Function ans = env["mrgx_mt_fun"];
   return ans;
 }
 
