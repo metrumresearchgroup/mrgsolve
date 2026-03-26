@@ -237,14 +237,14 @@ _T___ get(const std::string package, const std::string name) {
  * $PREAMBLE
  * std::string file = mrgx::get<std::string>("file", self);
  * 
- * Rcpp::List x = mrgx::readRDS<Rcpp::List>(file);
+ * Rcpp::List y = mrgx::readRDS<Rcpp::List>(file);
  * 
- * capture a = x["a"];
- * capture b = Rcpp::as<Rcpp::NumericVector>(x["b"])[3];
+ * capture a = y["a"];
+ * capture b = Rcpp::as<Rcpp::NumericVector>(y["b"])[3];
  * @endcode
  * 
  * @ingroup mrgx
- * @param filename the name of the RDS file to read
+ * @param filename the name of the RDS file to read.
  * @return an object saved in the RDS file
  */
 template<typename _T___>

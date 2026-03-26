@@ -238,14 +238,14 @@ x <- list(a = 1.23, b = c(1,2,3,99))
 saveRDS(object = x, file = file)
 $PREAMBLE
 std::string file = mrgx::get<std::string>("file", self);
-Rcpp::List x = mrgx::readRDS<Rcpp::List>(file);
-capture a = x["a"];
-capture b = Rcpp::as<Rcpp::NumericVector>(x["b"])[3];
+Rcpp::List y = mrgx::readRDS<Rcpp::List>(file);
+capture a = y["a"];
+capture b = Rcpp::as<Rcpp::NumericVector>(y["b"])[3];
 '
 
 test_that("mrgx::readRDS", {
   mod <- mcode("test_mrgx_read_rds", code_read_rds)
   out <- mrgsim(mod)
-  expect_all_equal(out$a, x$a)
-  expect_all_equal(out$b, x$b[4])
+  expect_all_equal(out$a, mod@envir$x$a)
+  expect_all_equal(out$b, mod@envir$x$b[4])
 })
