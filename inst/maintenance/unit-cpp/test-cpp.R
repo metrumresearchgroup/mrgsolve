@@ -191,12 +191,11 @@ test_that("mrgx::assign", {
   expect_identical(ans, seq(100)-1)
 })
 
-SEQ <- function(n) seq(n)
-
 code_mt_fun <- '
+$ENV SEQ <- function(n) seq(n)
 $PLUGIN mrgx
 $GLOBAL Rcpp::Function fun = mrgx::mt_fun(); 
-$PREAMBLE fun = mrgx::get<Rcpp::Function>("SEQ");
+$PREAMBLE fun = mrgx::get<Rcpp::Function>("SEQ", self);
 $ERROR if(FINAL_ROW) mrgx::assign("vec", fun(34), self);
 '
 
@@ -206,8 +205,6 @@ test_that("mrgx::mt_fun", {
   ans <- mod@envir$vec
   expect_identical(ans, seq(34))
 })
-
-rm(SEQ)
 
 code_get_fun <- '
 $PLUGIN mrgx

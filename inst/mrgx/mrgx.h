@@ -27,7 +27,8 @@
 /** 
  * @defgroup mrgx mrgx functions
  * Extra C++ functions provided by mrgsolve.  To use these functions, use 
- * `$PLUGIN mrgx` in your model file.
+ * `$PLUGIN mrgx` in your model file. Using `mrgx` will also invoke 
+ * the `Rcpp` plugin.
  * 
  */
 
@@ -111,6 +112,8 @@ double rlognorm(const double mean, const double sd, const double lower,
  * 
  * Example:
  * @code
+ * $PLUGIN mrgx
+ * 
  * $GLOBAL
  * Rcpp::NumericMatrix mat;
  * 
@@ -247,7 +250,6 @@ _T___ readRDS(const std::string filename) {
  * fun = mrgx::get<Rcpp::Function>("SEQ");
  * 
  * $ERROR 
- * 
  * if(FINAL_ROW) {
  *   Rcpp::IntegerVector ans = fun(34);    
  *   mrgx::assign("vec", ans, self);
