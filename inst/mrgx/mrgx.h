@@ -238,7 +238,9 @@ _T___ readRDS(const std::string filename) {
 
 /**
  * An empty R function.  This is typically used as a placeholder when declaring 
- * an `Rcpp::Function` object.
+ * an `Rcpp::Function` object in `$GLOBAL`. This pattern of declaring in 
+ * `$GLOBAL` and (re)defining in `$PREAMBLE` could be used for efficiency when 
+ * the function must be called many times.
  * 
  * @code
  * $PLUGIN mrgx
@@ -260,6 +262,7 @@ _T___ readRDS(const std::string filename) {
  * @return the function `mt_fun` from the mrgsolve namespace.
  */
 Rcpp::Function mt_fun() {
+  // See R/Aaaa.R
   Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");
   Rcpp::Function ans = env["mrgx_mt_fun"];
   return ans;
