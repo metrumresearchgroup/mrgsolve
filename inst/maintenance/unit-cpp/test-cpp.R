@@ -176,3 +176,59 @@ test_that("now doses are given even when time is past #1151", {
   expect_equal(out$A[1], 0)
   expect_equal(out$A[2], 100)
 })
+
+code_test_assign <- '
+$PLUGIN mrgx
+$GLOBAL Rcpp::NumericVector ans(100);
+$PREAMBLE for(R_xlen_t i = 0; i < ans.size(); ++i) ans[i] = i;
+$PK if(FINAL_ROW) mrgx::assign("vec", ans, self);
+'
+
+test_that("mrgx::assign", {
+  mod <- mcode("test_assign", code_test_assign)
+  out <- mrgsim(mod)
+  ans <- mod@envir$vec
+  expect_identical(ans, seq(100)-1)
+})
+
+SEQ <- function(n) seq(n)
+
+code_mt_fun <- '
+$PLUGIN mrgx
+$GLOBAL Rcpp::Function fun = mrgx::mt_fun(); 
+$PREAMBLE fun = mrgx::get<Rcpp::Function>("SEQ");
+$ERROR if(FINAL_ROW) mrgx::assign("vec", fun(34), self);
+'
+
+test_that("mrgx::mt_fun", {
+  mod <- mcode("test_mt_fun", code_mt_fun)
+  out <- mrgsim(mod)
+  ans <- mod@envir$vec
+  expect_identical(ans, seq(34))
+})
+
+rm(SEQ)
+
+code_get_fun <- '
+$PLUGIN mrgx
+$GLOBAL 
+Rcpp::Function Rnorm = mrgx::get<Rcpp::Function>("stats", "rnorm"); 
+Rcpp::Function Seq   = mrgx::get<Rcpp::Function>("base" , "seq");
+$ERROR 
+if(FINAL_ROW) {
+  Rcpp::NumericVector a = Rnorm(22);
+  mrgx::assign("double", a, self);
+  Rcpp::IntegerVector b = Seq(33);
+  mrgx::assign("int", b, self);
+}
+'
+
+test_that("mrgx::get function from R", {
+  mod <- mcode("test_get_fun", code_get_fun)
+  set.seed(12345)
+  out <- mrgsim(mod)
+  ans <- as.list(mod@envir)
+  expect_is(ans$double, "numeric")
+  expect_length(ans$double, 22)
+  expect_equal(ans$int, seq(33))
+})

@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2023  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -26,7 +26,8 @@
 
 /** 
  * @defgroup mrgx mrgx functions
- * Extra C++ functions provided by mrgsolve.  To use these functions, use `$PLUGIN mrgx` in your model file.
+ * Extra C++ functions provided by mrgsolve.  To use these functions, use 
+ * `$PLUGIN mrgx` in your model file.
  * 
  */
 
@@ -135,11 +136,45 @@ _T___ get(const std::string name, const databox& self) {
 }
 
 /**
+ * Assign an object to the model environment.
+ * 
+ * Example:
+ * @code
+ * 
+ * $PLUGIN mrgx
+ *
+ * $GLOBAL Rcpp::NumericVector ans(100);
+ *
+ * $PREAMBLE
+ * for(R_xlen_t i = 0; i < ans.size(); ++i) {
+ *   ans[i] = R::rnorm(0,1);
+ * }
+ * 
+ * $PK
+ * if(FINAL_ROW) {
+ *   mrgx::assign("vec", ans, self);
+ * }
+ * @endcode
+ * 
+ * @ingroup mrgx
+ * @param name name of the R object to to be assigned in the model evironment.
+ * @param object the object to assign in the model environment.
+ * @param self the model object.
+ * @return `void`. 
+ */
+template<typename _T___>
+void assign(const std::string name, const _T___& object, const databox& self) {
+  Rcpp::Environment env = get_envir(self);
+  env.assign(name, object);
+  return;
+}
+
+/**
  * Get an R object from the global environment.
  * 
  * Example:
  * @code
- * Rcpp::NumericVector x = mrgx::get<Rcpp::NumericVector("x");
+ * Rcpp::NumericVector x = mrgx::get<Rcpp::NumericVector>("x");
  * @endcode
  * Note: for this to work, `x` must be a numeric vector in `.GlobalEnv`.
  * 
@@ -162,18 +197,18 @@ _T___ get(const std::string name) {
  * 
  * To get a function, use this code:
  * @code
- * $GLOBAL
- * Rcpp::Function myroot("uniroot");
+ * $PLUGIN mrgx
+ * 
+ * $GLOBAL 
+ * Rcpp::Function Rnorm = mrgx::get<Rcpp::Function>("stats", "rnorm"); 
+ * Rcpp::Function Seq = mrgx::get<Rcpp::Function>("base", "seq");
+ * 
+ * $ERROR 
+ * if(FINAL_ROW) {
+ *   mrgx::assign("double", Rnorm(10), self); 
+ *   mrgx::assign("int", seq(10), self);
+ * }
  * @endcode
- * and then call `uniroot` as you please.
- * 
- * To use the `mrgx::get` function with `myroot` available in `$MAIN`:
- * 
- * @code
- * $MAIN
- * Rcpp::Function myroot = mrgx::get("stats", "uniroot");
- * @endcode
- * 
  * 
  * @ingroup mrgx
  * @param package name of the package
@@ -202,10 +237,23 @@ _T___ readRDS(const std::string filename) {
 
 /**
  * An empty R function.  This is typically used
- * as a placeholder when declaring an <code>Rcpp::Function</code> object.
+ * as a placeholder when declaring an `Rcpp::Function` object.
+ * 
+ * @code
+ * $PLUGIN mrgx
+ * $GLOBAL 
+ * Rcpp::Function fun = mrgx::mt_fun(); 
+ * 
+ * $PREAMBLE 
+ * fun = mrgx::get<Rcpp::Function>("SEQ");
+ * 
+ * $ERROR 
+ * Rcpp::IntegerVector ans = fun(34);
+ * if(FINAL_ROW) mrgx::assign("vec", ans, self);
+ * @endcode
  * 
  * @ingroup mrgx
- * @return the function <code>mt_fun</code> from the mrgsolve namespace
+ * @return the function `mt_fun` from the mrgsolve namespace.
  */
 Rcpp::Function mt_fun() {
   Rcpp::Environment env = Rcpp::Environment::namespace_env("mrgsolve");

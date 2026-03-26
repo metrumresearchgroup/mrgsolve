@@ -128,6 +128,9 @@ VERSION <- utils::packageVersion("mrgsolve")
 
 DPLYR_1_0_0 <- packageVersion("dplyr") >= '0.8.99.9000'
 
+# Keep to support mt_fun function in inst/mrgx/mrgx.h
+mt_fun <- function() {}
+
 #' Forward pipe
 #' 
 #' 
