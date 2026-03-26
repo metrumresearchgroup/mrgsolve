@@ -226,6 +226,23 @@ _T___ get(const std::string package, const std::string name) {
 /**
  * Read an RDS file.
  * 
+ * @code
+ * $PLUGIN mrgx
+ * 
+ * $ENV 
+ * file <- file.path(tempdir(), "file-read-rds.RDS")
+ * x <- list(a = 1.23, b = c(1,2,3,99))
+ * saveRDS(object = x, file = file)
+ * 
+ * $PREAMBLE
+ * std::string file = mrgx::get<std::string>("file", self);
+ * 
+ * Rcpp::List x = mrgx::readRDS<Rcpp::List>(file);
+ * 
+ * capture a = x["a"];
+ * capture b = Rcpp::as<Rcpp::NumericVector>(x["b"])[3];
+ * @endcode
+ * 
  * @ingroup mrgx
  * @param filename the name of the RDS file to read
  * @return an object saved in the RDS file

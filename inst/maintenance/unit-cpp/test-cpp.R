@@ -229,3 +229,23 @@ test_that("mrgx::get function from R", {
   expect_length(ans$double, 22)
   expect_equal(ans$int, seq(33))
 })
+
+code_read_rds <- '
+$PLUGIN mrgx
+$ENV 
+file <- file.path(tempdir(), "file-read-rds.RDS")
+x <- list(a = 1.23, b = c(1,2,3,99))
+saveRDS(object = x, file = file)
+$PREAMBLE
+std::string file = mrgx::get<std::string>("file", self);
+Rcpp::List x = mrgx::readRDS<Rcpp::List>(file);
+capture a = x["a"];
+capture b = Rcpp::as<Rcpp::NumericVector>(x["b"])[3];
+'
+
+test_that("mrgx::readRDS", {
+  mod <- mcode("test_mrgx_read_rds", code_read_rds)
+  out <- mrgsim(mod)
+  expect_all_equal(out$a, x$a)
+  expect_all_equal(out$b, x$b[4])
+})
