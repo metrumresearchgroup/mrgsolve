@@ -722,6 +722,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$capture_etas <- NULL
   mread.env$cpp_dot <- NULL
   mread.env$check_modeled_infusions <- TRUE
+  mread.env$accepted_step <- FALSE
   mread.env
 }
 

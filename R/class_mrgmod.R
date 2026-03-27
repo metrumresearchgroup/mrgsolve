@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2025 Metrum Research Group
+# Copyright (C) 2013 - 2026 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -165,6 +165,7 @@ protomod <- list(model=character(0),
                  ss_rtol=1e-8, 
                  ss_atol=1e-8,
                  maxsteps=20000,
+                 accepted_step = FALSE,
                  hmin=0,
                  hmax=0,
                  ixpr=0,
@@ -267,6 +268,7 @@ valid.mrgmod <- function(object) {
 #' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot accepted_step make another call to RHS after step is accepted \code{<logical>}
 #' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 #' @slot verbose print run information to screen \code{<logical>}
 #' @slot quiet print various information to screen \code{<logical>}

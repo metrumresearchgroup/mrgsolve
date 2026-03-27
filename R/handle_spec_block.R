@@ -971,6 +971,7 @@ handle_spec_block.specODE <- function(x, env, ...) {
     env[["param"]][[pos]] <- tolist(con[["param"]])
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
+  env[["accepted_step"]] <- grepl("\\bACCEPTED_STEP\\b", x, perl = TRUE)
   return(x)
 }
 
