@@ -167,8 +167,9 @@ typedef std::vector<double> dvec;
   double* _DADT_, \
   const dvec& _A_0_, \
   const dvec& _THETA_, \
-  const bool _ss_flag_
-#define MRGSOLVE_ODE_SIGNATURE_N 6
+  const bool _ss_flag_, \
+  const bool _accepted_step_
+#define MRGSOLVE_ODE_SIGNATURE_N 7
 
 //! signature for <code>$PREAMBLE</code>
 #define MRGSOLVE_CONFIG_SIGNATURE \

@@ -307,7 +307,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
 {
     //assert(neq + 1 == y.size());
     if((neq+1) != y.size()) {
-      Rcpp::stop("[lsoda] y is not the right size in stoda.");    
+      Rcpp::stop("[lsoda] y is not the right size in stoda.");
     }
 
     size_t corflag = 0, orderflag = 0;
@@ -503,6 +503,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                testing for that many steps.
             */
             kflag = 0;
+            _data->accepted_step = true;
             nst++;
             hu = h_;
             nqu = nq;
@@ -513,6 +514,9 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                 for (i = 1; i <= n; ++i)
                     yh_[j][i] += r * acor[i];
             }
+            (*f)(tn_, &yh_[1][1], &savf[1], _data);
+            nfe++;
+            _data->accepted_step = false;
             icount--;
             if (icount < 0)
             {

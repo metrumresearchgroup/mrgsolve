@@ -102,6 +102,7 @@ odeproblem::odeproblem(Rcpp::List param,
   ss_fixed = false;
   ss_n = 500;
   ss_flag = false;
+  accepted_step = false;
   ssRtol = 0;
   ssAtol = 0;
   interrupt = -1;
@@ -204,7 +205,7 @@ void main_derivs(double t, double *y, double *ydot, odeproblem *data) {
 }
 
 void odeproblem::call_derivs(double *t, double *y, double *ydot) {
-  Derivs(t,y,ydot,Init_value,Param,ss_flag);
+  Derivs(t,y,ydot,Init_value,Param,ss_flag,accepted_step);
   for(int i = 0; i < Neq; ++i) {
     ydot[i] = (ydot[i] + R0[i])*On[i];
   }

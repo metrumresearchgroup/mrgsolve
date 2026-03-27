@@ -47,6 +47,7 @@
 #include <vector>
 
 #include "LSODA.h"
+#include "odeproblem.h"
 #include "lsoda_functions.h"
 
 using namespace std;
