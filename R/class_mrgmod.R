@@ -593,6 +593,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     itol <- x@itol
     hmax <- x@hmax
     hmin <- x@hmin
+    accepted_step <- x@accepted_step
     maxsteps <- x@maxsteps
     custom_atol <- x@vec_atol
     custom_rtol <- x@vec_rtol
