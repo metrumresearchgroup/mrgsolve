@@ -268,7 +268,7 @@ valid.mrgmod <- function(object) {
 #' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
-#' @slot accepted_step make another call to RHS after step is accepted \code{<logical>}
+#' @slot accepted_step make a special call to RHS after step is accepted by ode solver \code{<logical>}
 #' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 #' @slot verbose print run information to screen \code{<logical>}
 #' @slot quiet print various information to screen \code{<logical>}
@@ -556,7 +556,7 @@ setMethod("names", "mrgmod", function(x) {
 #' - `custom_atol`: absolute tolerances, one for each compartment
 #' - `custom_rtol`: relative tolerances, one for each compartment
 #' - `maxsteps`: see [solversettings]
-#' - `accepted_step`: make a special call to RHS once an ode solver step is accepted
+#' - `accepted_step`: make a special call to RHS after a step is accepted by ode solver
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
 #' - `itol`: 1 (use scalar values) or 4 (use customized values)
