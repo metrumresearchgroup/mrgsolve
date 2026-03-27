@@ -174,7 +174,7 @@ private:
     
     double ccmax=0.0, el0=0.0, h_ = .0;
     double hmin=0.0, hmxi=0.0, hu=0.0, rc=0.0, tn_ = 0.0;
-    double tsw=0.0, pdnorm=0.0;
+    double tsw=0.0, pdnorm=0.0, tout_=0.0;
     double conit=0.0, crate=0.0, hold=0.0, rmax=0.0;
     
     size_t ialth=0, ipup=0, lmax=0;

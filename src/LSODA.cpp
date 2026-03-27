@@ -128,6 +128,7 @@ void LSODA::lsoda_update(LSODA_ODE_SYSTEM_TYPE f,
   // array<double, 4> rworks = {{0.0}};
   
   if(*t==tout || neq < 1) return;
+  tout_ = tout;
   
   // int itask, iopt, jt;
   // 
