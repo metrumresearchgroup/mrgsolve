@@ -56,6 +56,7 @@ public:
     double Rtol;
     int Maxsteps;
     int Neq;
+    bool Accepted_step;
 
     void hmax_(const double value);
     void hmin_(const double value);

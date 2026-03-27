@@ -503,7 +503,6 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                testing for that many steps.
             */
             kflag = 0;
-            _data->accepted_step = true;
             nst++;
             hu = h_;
             nqu = nq;
@@ -514,9 +513,13 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                 for (i = 1; i <= n; ++i)
                     yh_[j][i] += r * acor[i];
             }
-            (*f)(tn_, &yh_[1][1], &savf[1], _data);
+            if(Accepted_step) {
+               _data->accepted_step = true;
+               (*f)(tn_, &yh_[1][1], &savf[1], _data);
+               _data->accepted_step = false;
+            }
             nfe++;
-            _data->accepted_step = false;
+
             icount--;
             if (icount < 0)
             {
