@@ -57,6 +57,7 @@ public:
     int Maxsteps;
     int Neq;
     bool Accepted_step;
+    bool skip_Accepted_step;
 
     void hmax_(const double value);
     void hmin_(const double value);

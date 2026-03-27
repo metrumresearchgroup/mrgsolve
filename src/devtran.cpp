@@ -646,6 +646,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         }
       } // is_dose
       
+      int evid = this_rec->evid();
+      solver.skip_Accepted_step = evid > 0 && evid < 99;
       prob.advance(tfrom,tto,solver);
       
       if(this_rec->evid() != 2) {

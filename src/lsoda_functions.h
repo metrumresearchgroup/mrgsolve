@@ -513,7 +513,7 @@ void LSODA::stoda(const size_t neq, vector<double> &y, LSODA_ODE_SYSTEM_TYPE f,
                 for (i = 1; i <= n; ++i)
                     yh_[j][i] += r * acor[i];
             }
-            if(Accepted_step && (tn_ - tout_) * h_ < 0.) {
+            if(Accepted_step && !(skip_Accepted_step && (tn_ - tout_) * h_ >= 0.)) {
                _data->accepted_step = true;
                (*f)(tn_, &yh_[1][1], &savf[1], _data);
                _data->accepted_step = false;

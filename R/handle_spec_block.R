@@ -951,7 +951,7 @@ handle_spec_block.specODE <- function(x, env, ...) {
   pos <- attr(x,"pos")
   con <- scrape_opts(
     x,
-    def = list(audit = TRUE),
+    def = list(audit = TRUE, accepted_step = NULL),
     allow_multiple = TRUE
   ) 
   x <- con[["x"]]
@@ -972,6 +972,9 @@ handle_spec_block.specODE <- function(x, env, ...) {
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   env[["accepted_step"]] <- any(grepl("\\bACCEPTED_STEP\\b", x, perl = TRUE))
+  if(isFALSE(con[["accepted_step"]])) {
+    env[["accepted_step"]] <- FALSE
+  }
   return(x)
 }
 
