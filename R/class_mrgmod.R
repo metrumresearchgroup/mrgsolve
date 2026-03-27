@@ -556,6 +556,7 @@ setMethod("names", "mrgmod", function(x) {
 #' - `custom_atol`: absolute tolerances, one for each compartment
 #' - `custom_rtol`: relative tolerances, one for each compartment
 #' - `maxsteps`: see [solversettings]
+#' - `accepted_step`: make a special call to RHS once an ode solver step is accepted
 #' - `hmin`: see [solversettings]
 #' - `hmax`: see [solversettings]
 #' - `itol`: 1 (use scalar values) or 4 (use customized values)
