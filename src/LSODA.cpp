@@ -88,7 +88,7 @@ LSODA::LSODA(int neq_, const Rcpp::S4& mod) {
   ixpr_(Rcpp::as<int>(mod.slot("ixpr")));
   mxhnil_(Rcpp::as<int>(mod.slot("mxhnil")));
   Accepted_step = Rcpp::as<bool>(mod.slot("accepted_step"));
-  skip_Accepted_step = false;
+  To_discontinuity = false;
   Rtol = Rcpp::as<double>(mod.slot("rtol"));
   Atol = Rcpp::as<double>(mod.slot("atol"));
   itol = Rcpp::as<int>(mod.slot("itol")); 

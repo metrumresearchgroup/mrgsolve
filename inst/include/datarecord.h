@@ -106,6 +106,7 @@ public:
   bool ss_infusion();
   bool is_event() {return (Evid > 0);}
   bool is_dose(){return (Evid==1) || (Evid==4);}
+  bool is_discontinuity(){return (Evid > 0) && (Evid < 100);}
   bool is_event_data() {return (Evid != 0) && (Evid != 2) && Fromdata;}
   bool needs_sorting(){return ((Addl > 0) || (Ss == 1));}
   

@@ -16,7 +16,9 @@
 #include <memory>
 #include <vector>
 class odeproblem;
+class datarecord;
 typedef odeproblem*  dtype;
+typedef std::shared_ptr<datarecord> rec_ptr;
 
 using namespace std;
 
@@ -57,7 +59,7 @@ public:
     int Maxsteps;
     int Neq;
     bool Accepted_step;
-    bool skip_Accepted_step;
+    bool To_discontinuity;
 
     void hmax_(const double value);
     void hmin_(const double value);
@@ -65,6 +67,7 @@ public:
     void ixpr_(const int value);
     void mxhnil_(const int value);
     void setup_tol_vectors(const Rcpp::S4& mod);
+    void to_discontinuity(rec_ptr rec);
 
     array<int, 7> iworks;// iworks = {{0}};
     array<double, 4> rworks;// = {{0.0}};

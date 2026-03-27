@@ -466,6 +466,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       this_rec->id(id);
       tto = this_rec->time();
+      solver.to_discontinuity(this_rec);
       
       // TODO: simplify
       if(icrow==NNI || crow==NN || tto > maxtime) {
@@ -645,9 +646,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
           }
         }
       } // is_dose
-      
-      int evid = this_rec->evid();
-      solver.skip_Accepted_step = evid > 0 && evid < 99;
+  
       prob.advance(tfrom,tto,solver);
       
       if(this_rec->evid() != 2) {
