@@ -308,7 +308,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     envir = ENV, 
     capture = .ren.chr(capture),
     plugin = names(plugin),
-    modfile = basename(build[["modfile"]])
+    modfile = basename(build[["modfile"]]), 
+    accepted_step = isTRUE(mread.env[["accepted_step"]])
   )
   
   # updates -----
