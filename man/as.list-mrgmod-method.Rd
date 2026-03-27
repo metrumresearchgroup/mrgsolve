@@ -66,6 +66,7 @@ cpp file
 \item \code{custom_atol}: absolute tolerances, one for each compartment
 \item \code{custom_rtol}: relative tolerances, one for each compartment
 \item \code{maxsteps}: see \link{solversettings}
+\item \code{accepted_step}: make a special call to RHS once an ode solver step is accepted
 \item \code{hmin}: see \link{solversettings}
 \item \code{hmax}: see \link{solversettings}
 \item \code{itol}: 1 (use scalar values) or 4 (use customized values)

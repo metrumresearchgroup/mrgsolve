@@ -64,6 +64,8 @@ ignore \code{<numeric>}}
 
 \item{\code{maxsteps}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
+\item{\code{accepted_step}}{make another call to RHS after step is accepted \code{<logical>}}
+
 \item{\code{preclean}}{passed to R CMD SHLIB during compilation \code{<logical>}}
 
 \item{\code{verbose}}{print run information to screen \code{<logical>}}

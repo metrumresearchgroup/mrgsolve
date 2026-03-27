@@ -63,6 +63,7 @@ Slots that can be updated:
 \item hmin - see \code{HMIN} in \code{\link{solversettings}}
 \item hmax - see \code{HMAX} in \code{\link{solversettings}}
 \item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
+\item accepted_step - make a special call to RHS once an ode step is accepted 
 \item start, end, delta, add
 \item tscale
 \item request
