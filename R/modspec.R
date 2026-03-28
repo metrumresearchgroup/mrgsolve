@@ -267,7 +267,7 @@ fixed_parameters <- function(x,fixed_type) {
 #' @export
 convert_pow <- function(x) {
   if(is.character(x)) {
-    x <- convert_pow_impl(x)
+    x <- .Call("_mrgsolve_convert_pow_impl", x, PACKAGE = "mrgsolve")
   }
   x
 }
