@@ -562,7 +562,7 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
          "Save your output to double and pass to $CAPTURE instead:\n",
          "   $TABLE double name = value;\n   $CAPTURE name")
   }
-  
+  x <- convert_pow(x)
   return(x)
 }
 
@@ -575,7 +575,9 @@ handle_spec_block.specEVENT <- function(x, env, ...) {
   
   check_block_data(x, env, pos)
   
-  return(x)
+  x <- convert_pow(x)
+
+  x
 }
 
 # NMXML --------------------------------
@@ -971,7 +973,17 @@ handle_spec_block.specODE <- function(x, env, ...) {
     env[["param"]][[pos]] <- tolist(con[["param"]])
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
-  return(x)
+  x <- convert_pow(x)
+  x
+}
+
+# PREAMBLE --------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specPREAMBLE <- function(x, env, ...) {
+  x <- dump_opts(x)
+  x <- convert_pow(x)
+  x
 }
 
 # MAIN -------------------------------------------------------------------------
@@ -980,7 +992,8 @@ handle_spec_block.specODE <- function(x, env, ...) {
 handle_spec_block.specMAIN <- function(x,env,...) {
   x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
-  return(x$x)  
+  x$x <- convert_pow(x$x)
+  x$x
 }
 
 # BLOCK ------------------------------------------------------------------------

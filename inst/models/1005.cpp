@@ -14,7 +14,7 @@ project = system.file("nonmem", package = "mrgsolve")
 run = "@cppstem"
 
 [ PK ] 
-double CL = THETA(1)*exp(ETA(1)) * pow(THETA(6),SEX) * pow(WT/70.0,THETA(7));
+double CL = THETA(1)*exp(ETA(1))*THETA(6)**SEX*(WT/70)**THETA(7);
 double V2 = THETA(2)*exp(ETA(2));
 double KA = THETA(3)*exp(ETA(3));
 double Q  = THETA(4);

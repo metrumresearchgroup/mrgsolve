@@ -877,6 +877,11 @@ test_that("convert_pow handles PK/PD style expressions", {
     convert_pow("EFFECT = EMAX * CP**HILL / (EC50**HILL + CP**HILL);"),
     "EFFECT = EMAX*pow(CP, HILL)/(pow(EC50, HILL)+pow(CP, HILL));"
   )
+  # multiple ** with function calls and allometric scaling
+  expect_equal(
+    convert_pow("CL = THETA(1)*exp(ETA(1))*THETA(6)**SEX*(WT/70)**THETA(7);"),
+    "CL = THETA(1)*exp(ETA(1))*pow(THETA(6), SEX)*pow(WT/70, THETA(7));"
+  )
 })
 
 test_that("convert_pow handles expressions with no assignment", {
