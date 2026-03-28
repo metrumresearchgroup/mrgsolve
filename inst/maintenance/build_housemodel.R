@@ -3,7 +3,22 @@ suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(methods))
 suppressPackageStartupMessages(library(glue))
 suppressPackageStartupMessages(library(tools))
+
+load_mrgsolve_dll <- function() {
+  dll_path <- file.path("src", paste0("mrgsolve", .Platform$dynlib.ext))
+  if(!("mrgsolve" %in% names(getLoadedDLLs()))) {
+    if(!file.exists(dll_path)) {
+      message("Compiling mrgsolve DLL...")
+      pkgbuild::compile_dll(quiet = TRUE)
+    }
+    suppressPackageStartupMessages(library(Rcpp))
+    dyn.load(dll_path)
+  }
+  source("R/RcppExports.R")
+}
+
 fun <- function() {
+  load_mrgsolve_dll()
   setClass("mrgsims")
   source("R/utils.R")
   setClass("mrgsims")
