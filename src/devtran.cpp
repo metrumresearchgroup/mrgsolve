@@ -466,7 +466,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       this_rec->id(id);
       tto = this_rec->time();
-      solver.to_discontinuity(this_rec);
+      //solver.to_discontinuity(this_rec);
       
       // TODO: simplify
       if(icrow==NNI || crow==NN || tto > maxtime) {
