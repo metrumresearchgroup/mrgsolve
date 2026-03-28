@@ -882,9 +882,49 @@ test_that("convert_pow handles PK/PD style expressions", {
     convert_pow("CL = THETA(1)*exp(ETA(1))*THETA(6)**SEX*(WT/70)**THETA(7);"),
     "CL = THETA(1)*exp(ETA(1))*pow(THETA(6), SEX)*pow(WT/70, THETA(7));"
   )
+  # ODE with nested ** (generalized logistic growth)
+  expect_equal(
+    convert_pow("dxdt_TS = kge * TS * (1 - TS/TSmax) / (1 + (kge/kgl * TS)**psi)**(1/psi)"),
+    "dxdt_TS = kge*TS*(1-TS/TSmax)/pow(1+pow(kge/kgl*TS, psi), 1/psi)"
+  )
 })
 
 test_that("convert_pow handles expressions with no assignment", {
   expect_equal(convert_pow("a**2"), "pow(a, 2)")
   expect_equal(convert_pow("(WT/70)**0.75"), "pow(WT/70, 0.75)")
 })
+
+
+code_convert_pow_1 <- '
+$PARAM a = 1.0, b = 2, c = 3
+$PREAMBLE double d = a**b;
+$MAIN d = a**b;
+$ODE @!audit \nd = a**b;
+$TABLE d = a**b; 
+$EVENT d = a**b;
+$CMT A B C 
+'
+
+test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
+  mod <- mcode('power', code_convert_pow_1, compile = FALSE)
+  x <- readLines(mod@shlib$source)
+  x <- x[grepl("d =", x, fixed = TRUE)]
+  expect_length(x, 5)
+  expect_match(x, "pow(a, b)", fixed = TRUE)
+})
+
+code_convert_pow_2 <- '
+$PARAM a = 1.0, b = 2, c = 3
+$PREAMBLE double d = a**b;
+$PRED d = a**b;
+'
+
+test_that("Convert pow in  PREAMBLE, PRED", {
+  mod <- mcode('power', code_convert_pow_2, compile = FALSE)
+  x <- readLines(mod@shlib$source)
+  x <- x[grepl("d =", x, fixed = TRUE)]
+  expect_length(x, 2)
+  expect_match(x, "pow(a, b)", fixed = TRUE)
+})
+
+rm(code_convert_pow_1, code_convert_pow_2)
