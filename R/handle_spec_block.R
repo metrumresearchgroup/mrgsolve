@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2021 Metrum Research Group
+# Copyright (C) 2013 - 2026 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -640,7 +640,8 @@ PRED <- function(x, env, ...) {
   if(any("ODE"==env[["blocks"]])) {
     stop("$ODE not allowed when $PRED is used",call.=FALSE)  
   }
-  return(x)
+  x <- convert_pow(x)
+  x
 }
 
 # INCLUDE ----------------------------------------------------------------------
