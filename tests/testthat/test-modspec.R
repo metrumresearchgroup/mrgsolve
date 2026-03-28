@@ -894,6 +894,26 @@ test_that("convert_pow handles expressions with no assignment", {
   expect_equal(convert_pow("(WT/70)**0.75"), "pow(WT/70, 0.75)")
 })
 
+test_that("convert_pow handles c-style comment", {
+  code <- '
+  $GLOBAL 
+  /** 
+  This model is incredible.
+  */
+  double foo = 123;
+  $PARAM THETA1 = 1
+  $MAIN
+  double CL = THETA1 * (WT/123) ** 0.75;
+  '
+  lines <- modelparse(code, split = TRUE)
+  x <- lapply(lines, convert_pow)
+  x <- lapply(x, trimws)
+  expect_equal(x$MAIN, "double CL = THETA1*pow(WT/123, 0.75);")
+  expect_equal(x$GLOBAL[1], "/**")
+  expect_equal(x$GLOBAL[3], "*/")
+  expect_equal(x$PARAM, "THETA1 = 1")
+})
+
 
 code_convert_pow_1 <- '
 $PARAM a = 1.0, b = 2, c = 3
