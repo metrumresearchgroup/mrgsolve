@@ -974,7 +974,7 @@ test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
   x <- readLines(mod@shlib$source)
   x <- x[grepl("d =", x, fixed = TRUE)]
   expect_length(x, 5)
-  expect_match(x, "pow(a, b)", fixed = TRUE)
+  expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
 
 code_convert_pow_2 <- '
@@ -988,7 +988,7 @@ test_that("Convert pow in  PREAMBLE, PRED", {
   x <- readLines(mod@shlib$source)
   x <- x[grepl("d =", x, fixed = TRUE)]
   expect_length(x, 2)
-  expect_match(x, "pow(a, b)", fixed = TRUE)
+  expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
 
 rm(code_convert_pow_1, code_convert_pow_2)
