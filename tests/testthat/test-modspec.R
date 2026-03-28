@@ -876,6 +876,11 @@ test_that("convert_pow returns non-character input unchanged", {
   expect_null(convert_pow(NULL))
 })
 
+test_that("convert_pow returns original string when parsing fails", {
+  bad <- "x = a ** ** b;"
+  expect_equal(convert_pow(bad), bad)
+})
+
 test_that("convert_pow handles PK/PD style expressions", {
   # allometric scaling
   expect_equal(
