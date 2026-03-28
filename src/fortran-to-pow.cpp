@@ -196,29 +196,29 @@ struct ExprGrammar
       | ( lit('(') >> expr >> lit(')') ) [_val = _1]
       ;
 
-    // unary: optional leading +/-
-    unary =
-        ( char_('+') >> unary )[_val = construct<ast::UnaryExpr>(_1, _2)]
-      | ( char_('-') >> unary )[_val = construct<ast::UnaryExpr>(_1, _2)]
-      | primary                [_val = _1]
-      ;
-
-    // power: left-associative (matches common Fortran behaviour)
-    // Fortran '**' stored as '^' in the AST
+    // power: left-associative; base is primary so unary minus binds looser
+    // Fortran '**' stored as '^' in the AST; exponent may be unary (a**-2)
     power =
-      unary[_val = _1]
+      primary[_val = _1]
       >> *(
         lit("**") >> unary[
           _val = construct<ast::BinaryExpr>(_val, '^', _1)
         ]
       );
 
+    // unary: optional leading +/-; wraps power so -a**2 == -(a**2)
+    unary =
+        ( char_('+') >> unary )[_val = construct<ast::UnaryExpr>(_1, _2)]
+      | ( char_('-') >> unary )[_val = construct<ast::UnaryExpr>(_1, _2)]
+      | power                  [_val = _1]
+      ;
+
     // multiplicative: * and /
     mulop = char_('*') | char_('/');
     multiplicative =
-      power[_val = _1]
+      unary[_val = _1]
       >> *(
-        (mulop >> power)[
+        (mulop >> unary)[
           _val = construct<ast::BinaryExpr>(_val, _1, _2)
         ]
       );

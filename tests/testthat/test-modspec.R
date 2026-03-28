@@ -810,6 +810,11 @@ test_that("convert_pow handles parenthesized exponents", {
   expect_equal(convert_pow("x = a**(1/3);"), "x = pow(a, 1/3);")
 })
 
+test_that("convert_pow handles negative exponents", {
+  expect_equal(convert_pow("a**-2;"), "pow(a, -2);")
+  expect_equal(convert_pow("a**-THETA(5);"), "pow(a, -THETA(5));")
+})
+
 test_that("convert_pow handles multiple ** in one line", {
   expect_equal(
     convert_pow("x = a**2 + b**3;"),
@@ -822,10 +827,22 @@ test_that("convert_pow handles nested **", {
     convert_pow("x = (a**2)**3;"),
     "x = pow(pow(a, 2), 3);"
   )
+  expect_equal(
+    convert_pow("x = 2**3**2;"),
+    "x = pow(2, pow(3, 2));"
+  )
+})
+
+test_that("prededence of ** over / and *", {
+  expect_equal(convert_pow("10/5**2"), "10/pow(5, 2)")
+  expect_equal(convert_pow("10*5**2"), "10*pow(5, 2)")
+  expect_equal(convert_pow("A / B**C / D**E"), "A/pow(B, C)/pow(D, E)")
 })
 
 test_that("convert_pow handles unary minus", {
-  expect_equal(convert_pow("x = -a**2;"), "x = pow(-a, 2);")
+  expect_equal(convert_pow("x = -a**2;"), "x = -pow(a, 2);")
+  expect_equal(convert_pow("x = (-a)**2;"), "x = pow(-a, 2);")
+  expect_equal(convert_pow("x = a**-2;"), "x = pow(a, -2);")
 })
 
 test_that("convert_pow handles function calls in expressions", {
@@ -836,6 +853,10 @@ test_that("convert_pow handles function calls in expressions", {
   expect_equal(
     convert_pow("x = log(a+b)**c;"),
     "x = pow(log(a+b), c);"
+  )
+  expect_equal(
+    convert_pow("x = (a+b)**exp(c+d);"),
+    "x = pow(a+b, exp(c+d));"
   )
 })
 
@@ -886,6 +907,16 @@ test_that("convert_pow handles PK/PD style expressions", {
   expect_equal(
     convert_pow("dxdt_TS = kge * TS * (1 - TS/TSmax) / (1 + (kge/kgl * TS)**psi)**(1/psi)"),
     "dxdt_TS = kge*TS*(1-TS/TSmax)/pow(1+pow(kge/kgl*TS, psi), 1/psi)"
+  )
+  # residual error variance with multiple ** inside function call
+  expect_equal(
+    convert_pow("W2 = SQRT(THETA(9)**2*IPRED2**2 + THETA(10)**2)"),
+    "W2 = SQRT(pow(THETA(9), 2)*pow(IPRED2, 2)+pow(THETA(10), 2))"
+  )
+  # Weibull hazard with expression in exponent and function call
+  expect_equal(
+    convert_pow("HAZT = BETA * (EDRUGT**BETA) * (T**(BETA - 1)) * EXP(covar);"),
+    "HAZT = BETA*pow(EDRUGT, BETA)*pow(T, BETA-1)*EXP(covar);"
   )
 })
 
