@@ -896,12 +896,11 @@ test_that("convert_pow handles PK/PD style expressions", {
     "CL = TVCL*pow(WT/70, 0.75);"
   )
   # theta-parameterized exponent
-
   expect_equal(
     convert_pow("CL = TVCL * (WT/70)**THETA(2);"),
     "CL = TVCL*pow(WT/70, THETA(2));"
   )
-  # Emax model with Hill coefficient
+  # Emax model with THETA(.) Hill coefficient
   expect_equal(
     convert_pow("EFFECT = EMAX * CP**THETA(5) / (EC50**THETA(5) + CP**THETA(5));"),
     "EFFECT = EMAX*pow(CP, THETA(5))/(pow(EC50, THETA(5))+pow(CP, THETA(5)));"
@@ -921,15 +920,22 @@ test_that("convert_pow handles PK/PD style expressions", {
     convert_pow("dxdt_TS = kge * TS * (1 - TS/TSmax) / (1 + (kge/kgl * TS)**psi)**(1/psi)"),
     "dxdt_TS = kge*TS*(1-TS/TSmax)/pow(1+pow(kge/kgl*TS, psi), 1/psi)"
   )
-  # residual error variance with multiple ** inside function call
+  # residual error
   expect_equal(
     convert_pow("W2 = SQRT(THETA(9)**2*IPRED2**2 + THETA(10)**2)"),
     "W2 = SQRT(pow(THETA(9), 2)*pow(IPRED2, 2)+pow(THETA(10), 2))"
   )
-  # Weibull hazard with expression in exponent and function call
+  # Weibull hazard
   expect_equal(
     convert_pow("HAZT = BETA * (EDRUGT**BETA) * (T**(BETA - 1)) * EXP(covar);"),
     "HAZT = BETA*pow(EDRUGT, BETA)*pow(T, BETA-1)*EXP(covar);"
+  )
+  # Some crazy bone model stuff
+  expect_equal(
+    expect_equal(
+      convert_pow("T85 = T84 + (T77 - T84)*(A(9)**T80) / ((A(9)**T80) + (T81**T80))"), 
+      "T85 = T84+(T77-T84)*pow(A(9), T80)/(pow(A(9), T80)+pow(T81, T80))"
+    )
   )
 })
 
