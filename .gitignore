@@ -13,6 +13,7 @@ test.R
 Rchecks
 .Rproj.user
 .Rhistory
+.claude
 *.tar.gz
 !package/*.tar.gz
 *00_pkg_src

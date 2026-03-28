@@ -9,7 +9,7 @@ KIN = 100, KOUT = 0.1, IC50 = 10, IMAX = 0.9
 $CMT @number 3
 
 $PK
-CL = THETA(1) * pow(WT/70, 0.75); 
+CL = THETA(1) * (WT/70) ** 0.75;
 V  = THETA(2); 
 KA = THETA(3);
 

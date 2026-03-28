@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -780,3 +780,215 @@ test_that("Invalid item in $SET generates error", {
     fixed = TRUE
   )
 })
+
+
+test_that("convert_pow passes through lines without **", {
+  expect_equal(convert_pow("double x = a + b;"), "double x = a + b;")
+  expect_equal(convert_pow("y = 1.0;"), "y = 1.0;")
+  expect_equal(convert_pow("// just a comment"), "// just a comment")
+})
+
+test_that("convert_pow handles simple base ** exponent", {
+  expect_equal(convert_pow("x = a**2;"), "x = pow(a, 2);")
+  expect_equal(convert_pow("x = a**b;"), "x = pow(a, b);")
+  expect_equal(convert_pow("x = 2**3;"), "x = pow(2, 3);")
+})
+
+test_that("convert_pow handles floating point exponents", {
+  expect_equal(convert_pow("x = a**0.75;"), "x = pow(a, 0.75);")
+  expect_equal(convert_pow("x = a**1.5e-3;"), "x = pow(a, 1.5e-3);")
+})
+
+test_that("convert_pow handles parenthesized bases", {
+  expect_equal(convert_pow("(WT/70)**0.75"), "pow(WT/70, 0.75)")
+  expect_equal(convert_pow("(a+b)**2;"), "pow(a+b, 2);")
+  expect_equal(convert_pow("(a*b)**c;"), "pow(a*b, c);")
+})
+
+test_that("convert_pow handles parenthesized exponents", {
+  expect_equal(convert_pow("a**(b+c);"), "pow(a, b+c);")
+  expect_equal(convert_pow("x = a**(1/3);"), "x = pow(a, 1/3);")
+})
+
+test_that("convert_pow handles negative exponents", {
+  expect_equal(convert_pow("a**-2;"), "pow(a, -2);")
+  expect_equal(convert_pow("a**-THETA(5);"), "pow(a, -THETA(5));")
+})
+
+test_that("convert_pow handles multiple ** in one line", {
+  expect_equal(
+    convert_pow("x = a**2 + b**3;"),
+    "x = pow(a, 2)+pow(b, 3);"
+  )
+})
+
+test_that("convert_pow handles nested **", {
+  expect_equal(
+    convert_pow("x = (a**2)**3;"),
+    "x = pow(pow(a, 2), 3);"
+  )
+  expect_equal(
+    convert_pow("x = 2**3**2;"),
+    "x = pow(2, pow(3, 2));"
+  )
+})
+
+test_that("prededence of ** over / and *", {
+  expect_equal(convert_pow("10/5**2"), "10/pow(5, 2)")
+  expect_equal(convert_pow("10*5**2"), "10*pow(5, 2)")
+  expect_equal(convert_pow("A / B**C / D**E"), "A/pow(B, C)/pow(D, E)")
+})
+
+test_that("convert_pow handles unary minus", {
+  expect_equal(convert_pow("x = -a**2;"), "x = -pow(a, 2);")
+  expect_equal(convert_pow("x = (-a)**2;"), "x = pow(-a, 2);")
+  expect_equal(convert_pow("x = a**-2;"), "x = pow(a, -2);")
+})
+
+test_that("convert_pow handles function calls in expressions", {
+  expect_equal(
+    convert_pow("x = exp(a)**2;"),
+    "x = pow(exp(a), 2);"
+  )
+  expect_equal(
+    convert_pow("x = log(a+b)**c;"),
+    "x = pow(log(a+b), c);"
+  )
+  expect_equal(
+    convert_pow("x = (a+b)**exp(c+d);"),
+    "x = pow(a+b, exp(c+d));"
+  )
+})
+
+test_that("convert_pow preserves trailing semicolons", {
+  expect_equal(convert_pow("x = a**2;"), "x = pow(a, 2);")
+  expect_equal(convert_pow("x = a**2"), "x = pow(a, 2)")
+})
+
+test_that("convert_pow works on character vectors", {
+  code <- c("x = a**2;", "y = b + c;", "z = (d/e)**0.5;")
+  expected <- c("x = pow(a, 2);", "y = b + c;", "z = pow(d/e, 0.5);")
+  expect_equal(convert_pow(code), expected)
+})
+
+test_that("convert_pow returns non-character input unchanged", {
+  expect_equal(convert_pow(42), 42)
+  expect_null(convert_pow(NULL))
+})
+
+test_that("convert_pow handles pow() fine", {
+  code <- "x = pow(a, b + 5);"
+  expect_equal(convert_pow(code), code)
+  
+  code <- "x = pow(a, b + 5) + 2.23**9.98;"
+  expect_equal(convert_pow(code), "x = pow(a, b+5)+pow(2.23, 9.98);") 
+})
+
+test_that("convert_pow returns original string when parsing fails", {
+  bad <- "x = a ** ** b;"
+  expect_equal(convert_pow(bad), bad)
+})
+
+test_that("convert_pow handles PK/PD style expressions", {
+  # allometric scaling
+  expect_equal(
+    convert_pow("CL = TVCL * (WT/70)**0.75;"),
+    "CL = TVCL*pow(WT/70, 0.75);"
+  )
+  # theta-parameterized exponent
+
+  expect_equal(
+    convert_pow("CL = TVCL * (WT/70)**THETA(2);"),
+    "CL = TVCL*pow(WT/70, THETA(2));"
+  )
+  # Emax model with Hill coefficient
+  expect_equal(
+    convert_pow("EFFECT = EMAX * CP**THETA(5) / (EC50**THETA(5) + CP**THETA(5));"),
+    "EFFECT = EMAX*pow(CP, THETA(5))/(pow(EC50, THETA(5))+pow(CP, THETA(5)));"
+  )
+  # sigmoid Emax
+  expect_equal(
+    convert_pow("EFFECT = EMAX * CP**HILL / (EC50**HILL + CP**HILL);"),
+    "EFFECT = EMAX*pow(CP, HILL)/(pow(EC50, HILL)+pow(CP, HILL));"
+  )
+  # multiple ** with function calls and allometric scaling
+  expect_equal(
+    convert_pow("CL = THETA(1)*exp(ETA(1))*THETA(6)**SEX*(WT/70)**THETA(7);"),
+    "CL = THETA(1)*exp(ETA(1))*pow(THETA(6), SEX)*pow(WT/70, THETA(7));"
+  )
+  # ODE with nested ** (generalized logistic growth)
+  expect_equal(
+    convert_pow("dxdt_TS = kge * TS * (1 - TS/TSmax) / (1 + (kge/kgl * TS)**psi)**(1/psi)"),
+    "dxdt_TS = kge*TS*(1-TS/TSmax)/pow(1+pow(kge/kgl*TS, psi), 1/psi)"
+  )
+  # residual error variance with multiple ** inside function call
+  expect_equal(
+    convert_pow("W2 = SQRT(THETA(9)**2*IPRED2**2 + THETA(10)**2)"),
+    "W2 = SQRT(pow(THETA(9), 2)*pow(IPRED2, 2)+pow(THETA(10), 2))"
+  )
+  # Weibull hazard with expression in exponent and function call
+  expect_equal(
+    convert_pow("HAZT = BETA * (EDRUGT**BETA) * (T**(BETA - 1)) * EXP(covar);"),
+    "HAZT = BETA*pow(EDRUGT, BETA)*pow(T, BETA-1)*EXP(covar);"
+  )
+})
+
+test_that("convert_pow handles expressions with no assignment", {
+  expect_equal(convert_pow("a**2"), "pow(a, 2)")
+  expect_equal(convert_pow("(WT/70)**0.75"), "pow(WT/70, 0.75)")
+})
+
+test_that("convert_pow handles c-style comment", {
+  code <- '
+  $GLOBAL 
+  /** 
+  This model is incredible.
+  */
+  double foo = 123;
+  $PARAM THETA1 = 1
+  $MAIN
+  double CL = THETA1 * (WT/123) ** 0.75;
+  '
+  lines <- modelparse(code, split = TRUE)
+  x <- lapply(lines, convert_pow)
+  x <- lapply(x, trimws)
+  expect_equal(x$MAIN, "double CL = THETA1*pow(WT/123, 0.75);")
+  expect_equal(x$GLOBAL[1], "/**")
+  expect_equal(x$GLOBAL[3], "*/")
+  expect_equal(x$PARAM, "THETA1 = 1")
+})
+
+
+code_convert_pow_1 <- '
+$PARAM a = 1.0, b = 2, c = 3
+$PREAMBLE double d = a**b;
+$MAIN d = a**b;
+$ODE @!audit \nd = a**b;
+$TABLE d = a**b; 
+$EVENT d = a**b;
+$CMT A B C 
+'
+
+test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
+  mod <- mcode('power', code_convert_pow_1, compile = FALSE)
+  x <- readLines(mod@shlib$source)
+  x <- x[grepl("d =", x, fixed = TRUE)]
+  expect_length(x, 5)
+  expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
+})
+
+code_convert_pow_2 <- '
+$PARAM a = 1.0, b = 2, c = 3
+$PREAMBLE double d = a**b;
+$PRED d = a**b;
+'
+
+test_that("Convert pow in  PREAMBLE, PRED", {
+  mod <- mcode('power', code_convert_pow_2, compile = FALSE)
+  x <- readLines(mod@shlib$source)
+  x <- x[grepl("d =", x, fixed = TRUE)]
+  expect_length(x, 2)
+  expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
+})
+
+rm(code_convert_pow_1, code_convert_pow_2)

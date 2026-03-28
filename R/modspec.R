@@ -256,6 +256,21 @@ fixed_parameters <- function(x,fixed_type) {
   )
 }
 
+#' Convert power from fortran to C++ style
+#' 
+#' @param x string to convert. 
+#' 
+#' @examples
+#' convert_pow("a**2")
+#' convert_pow("(WT/70) ** THETA(3)")
+#' 
+#' @export
+convert_pow <- function(x) {
+  if(is.character(x)) {
+    x <- .Call("_mrgsolve_convert_pow_impl", x, PACKAGE = "mrgsolve")
+  }
+  x
+}
 
 ##' Parse model specification text
 ##' @param txt model specification text

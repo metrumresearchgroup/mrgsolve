@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2022  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -56,6 +56,7 @@ RcppExport SEXP _mrgsolve_MAKEMATRIX(SEXP);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP,SEXP);
 RcppExport SEXP _mrgsolve_EXPAND_EVENTS(SEXP,SEXP,SEXP);
 RcppExport SEXP _mrgsolve_EXPAND_OBSERVATIONS(SEXP,SEXP,SEXP,SEXP);
+RcppExport SEXP _mrgsolve_convert_pow_impl(SEXP);
 
 RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
@@ -73,6 +74,7 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_EXPAND_EVENTS,3),
   CALLDEF(_mrgsolve_EXPAND_OBSERVATIONS,4),
   CALLDEF(_mrgsolve_dcorr,1),
+  CALLDEF(_mrgsolve_convert_pow_impl,1),
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
