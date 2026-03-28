@@ -319,7 +319,7 @@ test_that("more row counter macros gh-1327", {
 })
 
 
-code <- '
+code_row_count_idata <- '
 $cmt A
 $preamble capture total1 = 0; capture total2 = 0;
 $table 
@@ -331,7 +331,7 @@ capture irown = self.irown;
 capture inrow = self.inrow;
 '
 
-mod <- mcode("foo", code)
+mod <- mcode("test_row_count_idata", code_row_count_idata)
 
 test_that("row counter is correct when only idata set is passed gh-1351", {
   idata <- expand.idata(ID = 1:3)
@@ -348,3 +348,5 @@ test_that("row counter is correct when only idata set is passed gh-1351", {
 rm(mod)
 rm(code_test_rown_nrow, code_test_rown_nrow_pred)
 rm(code_counter_update_on_output)
+rm(code_row_count_idata)
+
