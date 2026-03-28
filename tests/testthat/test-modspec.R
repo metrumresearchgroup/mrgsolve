@@ -876,6 +876,14 @@ test_that("convert_pow returns non-character input unchanged", {
   expect_null(convert_pow(NULL))
 })
 
+test_that("convert_pow handles pow() fine", {
+  code <- "x = pow(a, b + 5);"
+  expect_equal(convert_pow(code), code)
+  
+  code <- "x = pow(a, b + 5) + 2.23**9.98;"
+  expect_equal(convert_pow(code), "x = pow(a, b+5)+pow(2.23, 9.98);") 
+})
+
 test_that("convert_pow returns original string when parsing fails", {
   bad <- "x = a ** ** b;"
   expect_equal(convert_pow(bad), bad)
