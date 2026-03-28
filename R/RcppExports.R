@@ -5,6 +5,20 @@ DEVTRAN <- function(parin, funs, data, idata, mod) {
     .Call(`_mrgsolve_DEVTRAN`, parin, funs, data, idata, mod)
 }
 
+#' Convert Fortran-style exponentiation to C++ pow()
+#'
+#' Translates \code{base**exponent} to \code{pow(base, exponent)} in each
+#' element of \code{code}, handling arbitrarily nested expressions.
+#' Numeric literals are preserved exactly as written. A trailing semicolon
+#' is preserved if present.
+#'
+#' @param code Character vector of source lines.
+#' @return Character vector with \code{**} replaced by \code{pow()}.
+#' @keywords internal
+convert_pow_impl <- function(code) {
+    .Call(`_mrgsolve_convert_pow_impl`, code)
+}
+
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }
