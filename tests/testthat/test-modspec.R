@@ -1073,3 +1073,257 @@ test_that("convert_pow handles ** in if() condition", {
     "if(x > 5) d = pow(2, 3);"
   )
 })
+
+# warn_integer_division --------------------------------------------------
+
+test_that("warn_integer_division warns for simple integer division", {
+  expect_warning(
+    warn_integer_division("CL = 3/4 * THETA(1);"),
+    "3/4"
+  )
+  expect_warning(
+    warn_integer_division("V = 1/2;"),
+    "1/2"
+  )
+})
+
+test_that("warn_integer_division is silent when no integer division", {
+  expect_no_warning(warn_integer_division("CL = 0.5/2;"))
+  expect_no_warning(warn_integer_division("x = a/b;"))
+  expect_no_warning(warn_integer_division("y = 2.0/4;"))
+  expect_no_warning(warn_integer_division("z = THETA(1)/THETA(2);"))
+})
+
+test_that("warn_integer_division warns for each instance on a line", {
+  w <- character(0)
+  withCallingHandlers(
+    warn_integer_division("F1 = 1/4 + 3/8;"),
+    warning = function(cond) {
+      w <<- c(w, conditionMessage(cond))
+      invokeRestart("muffleWarning")
+    }
+  )
+  expect_length(w, 2)
+  expect_true(any(grepl("1/4", w)))
+  expect_true(any(grepl("3/8", w)))
+})
+
+test_that("warn_integer_division includes block name in warning", {
+  expect_warning(
+    warn_integer_division("CL = 3/4;", block = "PK"),
+    "\\$PK"
+  )
+})
+
+test_that("warn_integer_division returns input unchanged", {
+  x <- c("CL = 3/4;", "V = a/b;")
+  expect_equal(
+    suppressWarnings(warn_integer_division(x)),
+    x
+  )
+})
+
+test_that("warn_integer_division passes through non-character input", {
+  expect_no_warning(warn_integer_division(42))
+  expect_no_warning(warn_integer_division(NULL))
+})
+
+# convert_fortran_if -----------------------------------------------------
+
+fi <- convert_fortran_if
+
+test_that("convert_fortran_if: block form with Fortran operator", {
+  x <- c("IF(WT.GE.70) THEN", "  CL = THETA(1)", "ENDIF")
+  expect_equal(fi(x), c("if(WT>=70) {", "  CL = THETA(1)", "}"))
+})
+
+test_that("convert_fortran_if: all Fortran relational operators", {
+  expect_equal(fi("IF(A.GE.B) THEN"), "if(A>=B) {")
+  expect_equal(fi("IF(A.LE.B) THEN"), "if(A<=B) {")
+  expect_equal(fi("IF(A.GT.B) THEN"), "if(A>B) {")
+  expect_equal(fi("IF(A.LT.B) THEN"), "if(A<B) {")
+  expect_equal(fi("IF(A.EQ.B) THEN"), "if(A==B) {")
+  expect_equal(fi("IF(A.NE.B) THEN"), "if(A!=B) {")
+  expect_equal(fi("IF(A.EQN.B) THEN"), "if(A==B) {")
+  expect_equal(fi("IF(A.NEN.B) THEN"), "if(A!=B) {")
+})
+
+test_that("convert_fortran_if: logical operators in condition", {
+  expect_equal(fi("IF(A.GT.0.AND.B.LT.1) THEN"), "if(A>0&&B<1) {")
+  expect_equal(fi("IF(A.LT.0.OR.B.GT.1) THEN"),  "if(A<0||B>1) {")
+  expect_equal(fi("IF(.NOT.FLAG) THEN"),           "if(!FLAG) {")
+})
+
+test_that("convert_fortran_if: .TRUE. and .FALSE.", {
+  expect_equal(fi("IF(.TRUE.) THEN"),  "if(true) {")
+  expect_equal(fi("IF(.FALSE.) THEN"), "if(false) {")
+})
+
+test_that("convert_fortran_if: single-line form", {
+  expect_equal(fi("IF(WT.GE.70) CL = THETA(1)"), "if(WT>=70) CL = THETA(1)")
+  expect_equal(fi("IF(A.GT.0) x = 1"),            "if(A>0) x = 1")
+})
+
+test_that("convert_fortran_if: if/else block", {
+  x <- c("IF(WT.GE.70) THEN", "  CL = 2", "ELSE", "  CL = 1", "ENDIF")
+  expect_equal(fi(x), c("if(WT>=70) {", "  CL = 2", "} else {", "  CL = 1", "}"))
+})
+
+test_that("convert_fortran_if: ELSEIF (no space)", {
+  x <- c("IF(A.GT.0) THEN", "  x = 1", "ELSEIF(A.LT.0) THEN", "  x = -1", "ENDIF")
+  expect_equal(fi(x), c("if(A>0) {", "  x = 1", "} else if(A<0) {", "  x = -1", "}"))
+})
+
+test_that("convert_fortran_if: ELSE IF (two words)", {
+  x <- c("IF(A.GT.0) THEN", "  x = 1", "ELSE IF(A.LT.0) THEN", "  x = -1", "ENDIF")
+  expect_equal(fi(x), c("if(A>0) {", "  x = 1", "} else if(A<0) {", "  x = -1", "}"))
+})
+
+test_that("convert_fortran_if: END IF (two words)", {
+  x <- c("IF(A.GT.0) THEN", "  x = 1", "END IF")
+  expect_equal(fi(x), c("if(A>0) {", "  x = 1", "}"))
+})
+
+test_that("convert_fortran_if: case insensitive keywords", {
+  expect_equal(fi("if(wt.ge.70) then"), "if(wt>=70) {")
+  expect_equal(fi("endif"),             "}")
+  expect_equal(fi("else"),              "} else {")
+})
+
+test_that("convert_fortran_if: indentation preserved", {
+  expect_equal(fi("  IF(A.GT.0) THEN"), "  if(A>0) {")
+  expect_equal(fi("  ENDIF"),           "  }")
+})
+
+test_that("convert_fortran_if: operators converted in body lines", {
+  expect_equal(fi("  CL = CL * (SEX.EQ.1)"), "  CL = CL * (SEX==1)")
+})
+
+test_that("convert_fortran_if: nested parens in condition", {
+  expect_equal(fi("IF(F(WT).GE.G(AGE)) THEN"), "if(F(WT)>=G(AGE)) {")
+})
+
+test_that("convert_fortran_if: comment lines pass through unchanged", {
+  expect_equal(fi("// IF(X.GT.0) THEN"), "// IF(X.GT.0) THEN")
+})
+
+test_that("convert_fortran_if: non-IF lines with Fortran ops converted", {
+  expect_equal(fi("CL = THETA(1).GE.0"), "CL = THETA(1)>=0")
+})
+
+test_that("convert_fortran_if: non-character input passes through", {
+  expect_equal(fi(42),   42)
+  expect_null(fi(NULL))
+})
+
+test_that("convert_fortran_if: compound conditions with .AND.", {
+  expect_equal(fi("IF(A.GE.B.AND.D.GT.C) THEN"),   "if(A>=B&&D>C) {")
+  expect_equal(fi("IF(A.GE.B.AND.D.GT.C) CL = 1"), "if(A>=B&&D>C) CL = 1")
+})
+
+test_that("convert_fortran_if: compound conditions with .OR.", {
+  expect_equal(fi("IF(A.GE.B.OR.C.LE.D) THEN"), "if(A>=B||C<=D) {")
+})
+
+test_that("convert_fortran_if: three operators in condition", {
+  expect_equal(fi("IF(A.GE.B.OR.C.LE.D.AND.E.NE.F) THEN"), "if(A>=B||C<=D&&E!=F) {")
+})
+
+test_that("convert_fortran_if: float literals adjacent to operators", {
+  expect_equal(fi("IF(A.GE.0.5.AND.B.LT.1.0) THEN"), "if(A>=0.5&&B<1.0) {")
+  expect_equal(fi("IF(A.GT.1E-3.AND.B.LT.2) THEN"),  "if(A>1E-3&&B<2) {")
+})
+
+test_that("convert_fortran_if: .NOT. combined with other operators", {
+  expect_equal(fi("IF(.NOT.FLAG.AND.X.GT.0) THEN"), "if(!FLAG&&X>0) {")
+})
+
+# convert_semicolons ---------------------------------------------------------
+
+as_ <- mrgsolve:::convert_semicolons
+
+test_that("convert_semicolons: adds semicolon to plain statement", {
+  expect_equal(as_("CL = THETA(1) * exp(ETA(1))"), "CL = THETA(1) * exp(ETA(1));")
+  expect_equal(as_("DADT(1) = -KA*A(1)"),           "DADT(1) = -KA*A(1);")
+  expect_equal(as_("double CL = 0"),                 "double CL = 0;")
+  expect_equal(as_("F1 = 0.5"),                      "F1 = 0.5;")
+})
+
+test_that("convert_semicolons: leaves existing semicolon alone", {
+  expect_equal(as_("CL = THETA(1);"), "CL = THETA(1);")
+})
+
+test_that("convert_semicolons: converts Fortran inline comment to C++ comment", {
+  expect_equal(
+    as_("CL = THETA1 ; this is clearance"),
+    "CL = THETA1 ; // this is clearance"
+  )
+  expect_equal(
+    as_("V = THETA2 ;volume of distribution"),
+    "V = THETA2 ; // volume of distribution"
+  )
+})
+
+test_that("convert_semicolons: leaves existing C++ comment after semicolon alone", {
+  expect_equal(
+    as_("CL = THETA(1); // clearance"),
+    "CL = THETA(1); // clearance"
+  )
+})
+
+test_that("convert_semicolons: for loop semicolons inside parens are ignored", {
+  expect_equal(
+    as_("for(int i = 0; i < n; i++) x += A(i)"),
+    "for(int i = 0; i < n; i++) x += A(i);"
+  )
+  expect_equal(
+    as_("for(int i = 0; i < n; i++) {"),
+    "for(int i = 0; i < n; i++) {"
+  )
+})
+
+test_that("convert_semicolons: multiple statements left alone", {
+  # second statement contains '=' -> treated as C++, not a comment
+  expect_equal(as_("x = 1; y = 2"),  "x = 1; y = 2")
+  # second segment already has its own ';'
+  expect_equal(as_("x = 1; y = 2;"), "x = 1; y = 2;")
+})
+
+test_that("convert_semicolons: skips brace lines", {
+  expect_equal(as_("if(WT>=70) {"), "if(WT>=70) {")
+  expect_equal(as_("}"),            "}")
+  expect_equal(as_("} else {"),     "} else {")
+})
+
+test_that("convert_semicolons: skips blank lines", {
+  expect_equal(as_(""),   "")
+  expect_equal(as_("  "), "  ")
+})
+
+test_that("convert_semicolons: skips comment lines", {
+  expect_equal(as_("// a comment"),  "// a comment")
+  expect_equal(as_("/* comment */"), "/* comment */")
+})
+
+test_that("convert_semicolons: skips preprocessor directives", {
+  expect_equal(as_("#define X 1"), "#define X 1")
+  expect_equal(as_("#include <cmath>"), "#include <cmath>")
+})
+
+test_that("convert_semicolons: strips trailing whitespace before semicolon", {
+  expect_equal(as_("V = THETA(2)   "), "V = THETA(2);")
+})
+
+test_that("convert_semicolons: works on character vectors", {
+  x <- c("CL = THETA(1)", "if(WT>=70) {", "  V = THETA(2)", "}")
+  expect_equal(as_(x), c("CL = THETA(1);", "if(WT>=70) {", "  V = THETA(2);", "}"))
+})
+
+test_that("convert_semicolons: indentation preserved", {
+  expect_equal(as_("  CL = THETA(1)"), "  CL = THETA(1);")
+})
+
+test_that("convert_semicolons: non-character input passes through", {
+  expect_equal(as_(42),   42)
+  expect_null(as_(NULL))
+})

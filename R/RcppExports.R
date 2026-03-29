@@ -5,6 +5,19 @@ DEVTRAN <- function(parin, funs, data, idata, mod) {
     .Call(`_mrgsolve_DEVTRAN`, parin, funs, data, idata, mod)
 }
 
+#' Warn about literal integer division in model code
+#'
+#' Scans each element of \code{code} and issues an R warning for every
+#' instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
+#' Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
+#' \code{0} and \code{7/3} evaluates to \code{2}, which is rarely intended.
+#'
+#' @param code Character vector of source lines.
+#' @param block Name of the model block, included in the warning message.
+#' @return \code{code} unchanged (called for its side-effect warnings).
+#' @keywords internal
+NULL
+
 #' Convert Fortran-style exponentiation to C++ pow()
 #'
 #' Translates \code{base**exponent} to \code{pow(base, exponent)} in each
@@ -18,6 +31,41 @@ DEVTRAN <- function(parin, funs, data, idata, mod) {
 #' @keywords internal
 convert_pow_impl <- function(code, block) {
     .Call(`_mrgsolve_convert_pow_impl`, code, block)
+}
+
+warn_integer_division_impl <- function(code, block) {
+    .Call(`_mrgsolve_warn_integer_division_impl`, code, block)
+}
+
+#' Convert Fortran-style IF/THEN/ELSE/ENDIF to C++
+#'
+#' Translates Fortran block-form and single-line IF constructs to C++ in each
+#' element of \code{code}.  Fortran relational and logical operators
+#' (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
+#' \code{.NE.}, \code{.AND.}, \code{.OR.}, \code{.NOT.}, \code{.TRUE.},
+#' \code{.FALSE.}) are converted everywhere they appear. Matching is
+#' case-insensitive.
+#'
+#' @param code Character vector of source lines.
+#' @return Character vector with Fortran IF constructs replaced by C++.
+#' @keywords internal
+convert_fortran_if_impl <- function(code) {
+    .Call(`_mrgsolve_convert_fortran_if_impl`, code)
+}
+
+#' Insert semicolons at the end of C++ statements
+#'
+#' Appends a semicolon to each element of \code{code} that looks like a
+#' statement but does not already have one.  Lines that are left unchanged:
+#' blank lines, lines already ending with \code{;}, lines ending with
+#' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}), and
+#' preprocessor directives (\code{#}).
+#'
+#' @param code Character vector of source lines.
+#' @return Character vector with semicolons inserted where needed.
+#' @keywords internal
+convert_semicolons_impl <- function(code) {
+    .Call(`_mrgsolve_convert_semicolons_impl`, code)
 }
 
 MVGAUSS <- function(OMEGA_, n) {

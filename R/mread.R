@@ -225,9 +225,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     build
   )
   
-  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
-  find_cpp_dot(spec, mread.env)
-  
   # Parse blocks ----
   # Each block gets assigned a class to dispatch the handler function
   # Also, we use a position attribute so we know 
@@ -245,6 +242,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Call the handler for each block
   spec <- lapply(spec, handle_spec_block, env = mread.env)
+  
+  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
+  find_cpp_dot(spec, mread.env)
   
   # collect -----
   # TODO: move this to the plugin handler
@@ -278,7 +278,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
   if("ODE" %in% names(spec)) {
     spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
   }
@@ -342,6 +341,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # the audit check later on
   nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
+    spec <- nm_convert_semicolons(spec)
     nmv  <- find_nm_vars(spec)
     rd <- generate_nmdefs(nmv, rd)
     plugin[["nm-vars"]][["nm-def"]] <- rd$nmdfs
@@ -482,7 +482,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["EVENT"]]  
   )
   table_code <- c(
-    table,
+    unlist(spec[names(spec)=="TABLE"], use.names = FALSE),
     spec[["PRED"]], 
     write_capture(names(x@capture))
   )

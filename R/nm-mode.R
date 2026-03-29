@@ -139,6 +139,14 @@ autodec_nm_vars <- function(x, env) {
   return(invisible(TRUE))
 }
 
+nm_convert_semicolons <- function(spec) {
+  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
+  for(b in intersect(names(spec), blocks)) {
+    spec[[b]] <- convert_semicolons(spec[[b]])
+  }
+  spec
+}
+
 audit_nm_vars_range <- function(x, cmt) {
   err <- c()
   cmtn <- seq_along(cmt)
