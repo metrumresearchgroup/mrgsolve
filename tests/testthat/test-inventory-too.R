@@ -36,9 +36,9 @@ test_that("inventory conditions", {
   expect_error(inventory(mod,data,c("CL", "VC")))
   expect_message(inventory(mod,data,c("CL", "SEX")))
   expect_message(inventory(mod,data,CL,SEX))
-  expect_error(mod %>% data_set(data,need=c("CL", "VC")))
-  expect_error(mod %>% idata_set(data,need=c("CL", "WTCL")))
-  expect_is(mod %>% data_set(data,need="CL") %>% mrgsim(end=1),"mrgsims")
+  expect_error(data_set(mod, data, need = c("CL", "VC")), "missing parameters")
+  expect_error(idata_set(mod, data,need=c("CL", "WTCL")))
+  expect_is(data_set(mod,data,need="CL") %>% mrgsim(end=1),"mrgsims")
 })
 
 test_that("check_data_names", {

@@ -297,7 +297,7 @@ select_sims <- function(.data, ...) {
     wstop("no output variables (compartments or captures) were selected.")  
   }
   vars <- unique(c(retain,vars))
-  .data@data <- dplyr::select(.data@data,vars)
+  .data@data <- .data@data[, vars, drop = FALSE]
   .data@request <- intersect(.data@request,names(.data))
   .data@outnames <- intersect(.data@outnames,names(.data))
   return(.data)
