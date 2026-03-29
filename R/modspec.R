@@ -288,7 +288,15 @@ warn_integer_division <- function(x) {
   }
   invisible(x)
 }
-
+#' Convert fortran IF ELSE THEN
+#' 
+#' @param x string to convert 
+#' 
+#' @examples
+#' convert_fortran_if("IF ( WT .GE.90) THEN")
+#' 
+#' @md
+#' @export
 convert_fortran_if <- function(x) {
   if(is.character(x)) {
     x <- .Call("_mrgsolve_convert_fortran_if_impl", x, PACKAGE = "mrgsolve")
