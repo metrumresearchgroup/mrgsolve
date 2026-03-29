@@ -671,19 +671,62 @@ static std::string convert_fortran_if_line(const std::string& line) {
 // 6.  Semicolon inserter
 // ---------------------------------------------------------------------------
 
+// Return the position of the first ';' in s that sits at paren depth 0,
+// or npos if none.  This keeps semicolons inside for(;;) invisible.
+static size_t find_semi_depth0(const std::string& s) {
+  int depth = 0;
+  for (size_t i = 0; i < s.size(); ++i) {
+    if      (s[i] == '(') ++depth;
+    else if (s[i] == ')') --depth;
+    else if (s[i] == ';' && depth == 0) return i;
+  }
+  return std::string::npos;
+}
+
+// Return true if s contains ch at paren depth 0.
+static bool contains_at_depth0(const std::string& s, char ch) {
+  int depth = 0;
+  for (size_t i = 0; i < s.size(); ++i) {
+    if      (s[i] == '(') ++depth;
+    else if (s[i] == ')') --depth;
+    else if (s[i] == ch && depth == 0) return true;
+  }
+  return false;
+}
+
 static std::string convert_semicolon_line(const std::string& line) {
   std::string t = trim_ws(line);
 
   if (t.empty())                               return line;  // blank
-  if (t.back() == ';')                         return line;  // already there
   if (t.back() == '{' || t.back() == '}')      return line;  // brace line
   if (t[0] == '#')                             return line;  // preprocessor
   if (t.size() >= 2 && t[0] == '/' &&
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
 
-  // Append ';' after the last non-whitespace character.
-  size_t last = line.find_last_not_of(" \t");
-  return line.substr(0, last + 1) + ";";
+  // Only consider ';' at paren depth 0 — keeps for(;;) intact.
+  size_t semi = find_semi_depth0(line);
+
+  if (semi == std::string::npos) {
+    // No depth-0 ';': append one after the last non-whitespace character.
+    size_t last = line.find_last_not_of(" \t");
+    return line.substr(0, last + 1) + ";";
+  }
+
+  // Depth-0 ';' found — inspect what follows it.
+  std::string after = trim_ws(line.substr(semi + 1));
+
+  if (after.empty()) return line;  // ';' already at end
+
+  // Already a C++ comment after ';' — leave it alone.
+  if (after.size() >= 2 && after[0] == '/' && after[1] == '/') return line;
+
+  // Another depth-0 ';' or '=' after this one suggests C++ statements
+  // rather than a Fortran-style comment — leave it alone.
+  if (contains_at_depth0(after, ';') || contains_at_depth0(after, '='))
+    return line;
+
+  // Fortran-style inline comment: convert '; text' -> '; // text'
+  return line.substr(0, semi + 1) + " // " + after;
 }
 
 // ---------------------------------------------------------------------------

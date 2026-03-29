@@ -1236,6 +1236,42 @@ test_that("convert_semicolons: leaves existing semicolon alone", {
   expect_equal(as_("CL = THETA(1);"), "CL = THETA(1);")
 })
 
+test_that("convert_semicolons: converts Fortran inline comment to C++ comment", {
+  expect_equal(
+    as_("CL = THETA1 ; this is clearance"),
+    "CL = THETA1 ; // this is clearance"
+  )
+  expect_equal(
+    as_("V = THETA2 ;volume of distribution"),
+    "V = THETA2 ; // volume of distribution"
+  )
+})
+
+test_that("convert_semicolons: leaves existing C++ comment after semicolon alone", {
+  expect_equal(
+    as_("CL = THETA(1); // clearance"),
+    "CL = THETA(1); // clearance"
+  )
+})
+
+test_that("convert_semicolons: for loop semicolons inside parens are ignored", {
+  expect_equal(
+    as_("for(int i = 0; i < n; i++) x += A(i)"),
+    "for(int i = 0; i < n; i++) x += A(i);"
+  )
+  expect_equal(
+    as_("for(int i = 0; i < n; i++) {"),
+    "for(int i = 0; i < n; i++) {"
+  )
+})
+
+test_that("convert_semicolons: multiple statements left alone", {
+  # second statement contains '=' -> treated as C++, not a comment
+  expect_equal(as_("x = 1; y = 2"),  "x = 1; y = 2")
+  # second segment already has its own ';'
+  expect_equal(as_("x = 1; y = 2;"), "x = 1; y = 2;")
+})
+
 test_that("convert_semicolons: skips brace lines", {
   expect_equal(as_("if(WT>=70) {"), "if(WT>=70) {")
   expect_equal(as_("}"),            "}")
