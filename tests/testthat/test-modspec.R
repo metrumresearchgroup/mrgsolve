@@ -1061,26 +1061,26 @@ test_that("convert_pow handles ** in if() condition", {
 
 test_that("warn_integer_division warns for simple integer division", {
   expect_warning(
-    mrgsolve:::warn_integer_division("CL = 3/4 * THETA(1);"),
+    warn_integer_division("CL = 3/4 * THETA(1);"),
     "3/4"
   )
   expect_warning(
-    mrgsolve:::warn_integer_division("V = 1/2;"),
+    warn_integer_division("V = 1/2;"),
     "1/2"
   )
 })
 
 test_that("warn_integer_division is silent when no integer division", {
-  expect_no_warning(mrgsolve:::warn_integer_division("CL = 0.5/2;"))
-  expect_no_warning(mrgsolve:::warn_integer_division("x = a/b;"))
-  expect_no_warning(mrgsolve:::warn_integer_division("y = 2.0/4;"))
-  expect_no_warning(mrgsolve:::warn_integer_division("z = THETA(1)/THETA(2);"))
+  expect_no_warning(warn_integer_division("CL = 0.5/2;"))
+  expect_no_warning(warn_integer_division("x = a/b;"))
+  expect_no_warning(warn_integer_division("y = 2.0/4;"))
+  expect_no_warning(warn_integer_division("z = THETA(1)/THETA(2);"))
 })
 
 test_that("warn_integer_division warns for each instance on a line", {
   w <- character(0)
   withCallingHandlers(
-    mrgsolve:::warn_integer_division("F1 = 1/4 + 3/8;"),
+    warn_integer_division("F1 = 1/4 + 3/8;"),
     warning = function(cond) {
       w <<- c(w, conditionMessage(cond))
       invokeRestart("muffleWarning")
@@ -1093,7 +1093,7 @@ test_that("warn_integer_division warns for each instance on a line", {
 
 test_that("warn_integer_division reports the correct line number", {
   expect_warning(
-    mrgsolve:::warn_integer_division(c("CL = THETA(1);", "V = 1/2;")),
+    warn_integer_division(c("CL = THETA(1);", "V = 1/2;")),
     "line 2"
   )
 })
@@ -1101,19 +1101,19 @@ test_that("warn_integer_division reports the correct line number", {
 test_that("warn_integer_division returns input unchanged", {
   x <- c("CL = 3/4;", "V = a/b;")
   expect_equal(
-    suppressWarnings(mrgsolve:::warn_integer_division(x)),
+    suppressWarnings(warn_integer_division(x)),
     x
   )
 })
 
 test_that("warn_integer_division passes through non-character input", {
-  expect_no_warning(mrgsolve:::warn_integer_division(42))
-  expect_no_warning(mrgsolve:::warn_integer_division(NULL))
+  expect_no_warning(warn_integer_division(42))
+  expect_no_warning(warn_integer_division(NULL))
 })
 
 # convert_fortran_if -----------------------------------------------------
 
-fi <- mrgsolve:::convert_fortran_if
+fi <- convert_fortran_if
 
 test_that("convert_fortran_if: block form with Fortran operator", {
   x <- c("IF(WT.GE.70) THEN", "  CL = THETA(1)", "ENDIF")
