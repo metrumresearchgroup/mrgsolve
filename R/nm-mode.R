@@ -139,10 +139,22 @@ autodec_nm_vars <- function(x, env) {
   return(invisible(TRUE))
 }
 
-nm_convert_semicolons <- function(spec) {
-  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
-  for(b in intersect(names(spec), blocks)) {
-    spec[[b]] <- convert_semicolons(spec[[b]])
+preprocess_nm_vars <- function(spec, env) {
+  blocks <- c(
+    "PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED"
+  )
+  to_process <- intersect(names(spec), blocks)
+  # Convert FORTRAN if else then; needs to happen first
+  if(env$convert_fortran_if) {
+    for(b in to_process) {
+      spec[[b]] <- convert_fortran_if(spec[[b]])
+    }
+  }
+  # Add semicolons if needed
+  if(env$convert_semicolons) {
+    for(b in to_process) {
+      spec[[b]] <- convert_semicolons(spec[[b]])
+    }
   }
   spec
 }

@@ -243,9 +243,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Call the handler for each block
   spec <- lapply(spec, handle_spec_block, env = mread.env)
   
-  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
-  find_cpp_dot(spec, mread.env)
-  
   # collect -----
   # TODO: move this to the plugin handler
   plugin <- get_plugins(spec[["PLUGIN"]], mread.env)
@@ -341,7 +338,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # the audit check later on
   nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
-    spec <- nm_convert_semicolons(spec)
+    spec <- preprocess_nm_vars(spec, mread.env)
     nmv  <- find_nm_vars(spec)
     rd <- generate_nmdefs(nmv, rd)
     plugin[["nm-vars"]][["nm-def"]] <- rd$nmdfs
@@ -420,6 +417,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
+  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
+  find_cpp_dot(spec, mread.env)
   check_cpp_dot(mread.env, x)
   check_sim_eta_eps_n(x, spec)
   
