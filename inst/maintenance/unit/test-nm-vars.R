@@ -317,42 +317,45 @@ test_that("nm-vars model with no ode", {
   expect_is(mod, "mrgmod")
 })
 
-# nm_convert_semicolons --------------------------------------------------
+# preprocess_nm_vars --------------------------------------------------
 
-test_that("nm_convert_semicolons converts all recognised block names", {
+testenv <- list2env(list(convert_semicolons = TRUE, convert_fortran_if = TRUE))
+test_that("preprocess_nm_vars converts all recognised block names", {
   blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
   spec <- setNames(
     lapply(blocks, function(b) paste0(b, "_var = 1")),
     blocks
   )
-  out <- mrgsolve:::nm_convert_semicolons(spec)
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
   for(b in blocks) {
     expect_equal(out[[b]], paste0(b, "_var = 1;"), info = b)
   }
 })
 
-test_that("nm_convert_semicolons leaves unrecognised blocks untouched", {
+test_that("preprocess_nm_vars leaves unrecognised blocks untouched", {
   spec <- list(PARAM = "CL = 0.1", OMEGA = "0.04")
-  out <- mrgsolve:::nm_convert_semicolons(spec)
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
   expect_equal(out, spec)
 })
 
-test_that("nm_convert_semicolons only touches blocks present in spec", {
+test_that("preprocess_nm_vars only touches blocks present in spec", {
   spec <- list(MAIN = c("CL = THETA(1)", "V = THETA(2)"))
-  out <- mrgsolve:::nm_convert_semicolons(spec)
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
   expect_equal(names(out), "MAIN")
   expect_equal(out$MAIN, c("CL = THETA(1);", "V = THETA(2);"))
 })
 
-test_that("nm_convert_semicolons does not double-add semicolons", {
+test_that("preprocess_nm_vars does not double-add semicolons", {
   spec <- list(PK = c("CL = THETA(1);", "V = THETA(2)"))
-  out <- mrgsolve:::nm_convert_semicolons(spec)
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
   expect_equal(out$PK, c("CL = THETA(1);", "V = THETA(2);"))
 })
 
-test_that("nm_convert_semicolons returns the full spec unchanged except code blocks", {
+test_that("preprocess_nm_vars returns the full spec unchanged except code blocks", {
   spec <- list(MAIN = "x = 1", PARAM = "CL = 0.1")
-  out <- mrgsolve:::nm_convert_semicolons(spec)
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
   expect_named(out, c("MAIN", "PARAM"))
   expect_equal(out$PARAM, "CL = 0.1")
 })
+
+rm(testenv)

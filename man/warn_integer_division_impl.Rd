@@ -4,10 +4,12 @@
 \alias{warn_integer_division_impl}
 \title{Warn about literal integer division in model code}
 \usage{
-warn_integer_division_impl(code)
+warn_integer_division_impl(code, block)
 }
 \arguments{
 \item{code}{Character vector of source lines.}
+
+\item{block}{Name of the model block, included in the warning message.}
 }
 \value{
 \code{code} unchanged (called for its side-effect warnings).
@@ -16,6 +18,6 @@ warn_integer_division_impl(code)
 Scans each element of \code{code} and issues an R warning for every
 instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
 Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
-\code{0}, not \code{0.75}.
+\code{0} and \code{7/3} evaluates to \code{2}, which is rarely intended.
 }
 \keyword{internal}

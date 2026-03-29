@@ -7,7 +7,10 @@
 convert_pow(x, block = "")
 }
 \arguments{
-\item{x}{string to convert.}
+\item{x}{code string to convert.}
+
+\item{block}{code block name; only used if called while processing a model 
+file.}
 }
 \description{
 Convert power from fortran to C++ style

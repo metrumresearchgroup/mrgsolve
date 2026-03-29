@@ -21,7 +21,8 @@ plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
-get_plugins <- function(what, env) {
+get_plugins <- function(spec, env) {
+  what <- unlist(spec[names(spec)=="PLUGIN"], use.names = FALSE)
   what <- c(cvec_cs(what), "base")
   what <- unique(c(get_depends(what),what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {

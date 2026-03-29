@@ -865,6 +865,11 @@ test_that("convert_pow preserves trailing semicolons", {
   expect_equal(convert_pow("x = a**2"), "x = pow(a, 2)")
 })
 
+test_that("convert_pow ignores trailing // comment", {
+  expect_equal(convert_pow("x = a**2; // comment"), "x = pow(a, 2);")
+  expect_equal(convert_pow("x = a**2 // comment"), "x = pow(a, 2)")
+})
+
 test_that("convert_pow works on character vectors", {
   code <- c("x = a**2;", "y = b + c;", "z = (d/e)**0.5;")
   expected <- c("x = pow(a, 2);", "y = b + c;", "z = pow(d/e, 0.5);")
@@ -1128,6 +1133,12 @@ test_that("warn_integer_division passes through non-character input", {
   expect_no_warning(warn_integer_division(NULL))
 })
 
+test_that("warn_integer_division detects integer division before line comment", {
+  expect_warning(warn_integer_division("1/2 // hey"), "1/2")
+  expect_warning(warn_integer_division("CL = 3/4; // comment"), "3/4")
+  expect_no_warning(warn_integer_division("x = a/b; // 1/2 is in the comment"))
+})
+
 # convert_fortran_if -----------------------------------------------------
 
 fi <- convert_fortran_if
@@ -1253,14 +1264,14 @@ test_that("convert_semicolons: leaves existing semicolon alone", {
   expect_equal(as_("CL = THETA(1);"), "CL = THETA(1);")
 })
 
-test_that("convert_semicolons: converts Fortran inline comment to C++ comment", {
+test_that("convert_semicolons: drops text after Fortran inline comment semicolon", {
   expect_equal(
     as_("CL = THETA1 ; this is clearance"),
-    "CL = THETA1 ; // this is clearance"
+    "CL = THETA1 ;"
   )
   expect_equal(
     as_("V = THETA2 ;volume of distribution"),
-    "V = THETA2 ; // volume of distribution"
+    "V = THETA2 ;"
   )
 })
 

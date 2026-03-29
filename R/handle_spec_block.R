@@ -21,6 +21,18 @@
 
 # UTILS ------------------------------------------------------------------------
 get_length <- function(what) sum(sapply(what,length))
+handle_convert_pow <- function(x, env, pos) {
+  if(env$convert_pow) {
+    x <- convert_pow(x, env$incoming_names[pos])  
+  }
+  x
+}
+handle_warn_integer_division <- function(x, env, pos) {
+  if(env$warn_integer_division) { 
+    warn_integer_division(x, env$incoming_names[pos])
+  }
+  invisible(x)
+}
 
 # GENERIC ----------------------------------------------------------------------
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
@@ -552,29 +564,27 @@ HANDLEMATRIX <- function(x,
 handle_spec_block.specTABLE <- function(x, env, ...) {
   pos <- attr(x, "pos")
   x <- dump_opts(x)
-
+  
   check_block_data(x, env, pos)
-
+  
   if(any(grepl("table(", x,fixed=TRUE))) {
     stop("The table(name) = value; macro has been deprecated.\n",
          "Save your output to double and pass to $CAPTURE instead:\n",
          "   $TABLE double name = value;\n   $CAPTURE name")
   }
-  x <- convert_pow(x, env$incoming_names[pos])
-  warn_integer_division(x, env$incoming_names[pos])
-  x
+  handle_warn_integer_division(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 #' @export
 handle_spec_block.specEVENT <- function(x, env, ...) {
   pos <- attr(x, "pos")
   x <- dump_opts(x)
-
+  
   check_block_data(x, env, pos)
-
-  x <- convert_pow(x, env$incoming_names[pos])
-  warn_integer_division(x, env$incoming_names[pos])
-  x
+  
+  handle_warn_integer_division(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # NMXML --------------------------------
@@ -612,13 +622,14 @@ handle_spec_block.specNMEXT <- function(x, env, ...) {
 
 #' @export
 handle_spec_block.specPRED <- function(x, env, ...) {
+  pos <- attr(x, "pos")
   x <- scrape_opts(x)
   x$env <- env
-  x$pos <- attr(x, "pos")
+  x$pos <- pos
   do.call("PRED", x)
 }
 
-PRED <- function(x, env, ...) {
+PRED <- function(x, env, pos, ...) {
   if(any("MAIN"==env[["blocks"]])) {
     stop("$MAIN not allowed when $PRED is used", call.=FALSE)  
   }
@@ -637,9 +648,8 @@ PRED <- function(x, env, ...) {
   if(any("ODE"==env[["blocks"]])) {
     stop("$ODE not allowed when $PRED is used",call.=FALSE)  
   }
-  x <- convert_pow(x, "PRED")
-  warn_integer_division(x, "PRED")
-  x
+  handle_warn_integer_division(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # INCLUDE ----------------------------------------------------------------------
@@ -972,9 +982,9 @@ handle_spec_block.specODE <- function(x, env, ...) {
     env[["param"]][[pos]] <- tolist(con[["param"]])
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
-  x <- convert_pow(x, env$incoming_names[pos])
-  warn_integer_division(x, env$incoming_names[pos])
-  x
+  
+  handle_warn_integer_division(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # PREAMBLE --------------------------------------------------------------------
@@ -983,9 +993,9 @@ handle_spec_block.specODE <- function(x, env, ...) {
 handle_spec_block.specPREAMBLE <- function(x, env, ...) {
   pos <- attr(x, "pos")
   x <- dump_opts(x)
-  x <- convert_pow(x, env$incoming_names[pos])
-  warn_integer_division(x, env$incoming_names[pos])
-  x
+  
+  handle_warn_integer_division(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # MAIN -------------------------------------------------------------------------
@@ -995,9 +1005,9 @@ handle_spec_block.specMAIN <- function(x,env,...) {
   pos <- attr(x, "pos")
   x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
-  x$x <- convert_pow(x$x, env$incoming_names[pos])
-  warn_integer_division(x$x, env$incoming_names[pos])
-  x$x
+  
+  handle_warn_integer_division(x$x, env, pos)
+  handle_convert_pow(x$x, env, pos)
 }
 
 # BLOCK ------------------------------------------------------------------------

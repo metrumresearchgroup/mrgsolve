@@ -258,7 +258,9 @@ fixed_parameters <- function(x,fixed_type) {
 
 #' Convert power from fortran to C++ style
 #' 
-#' @param x string to convert. 
+#' @param x code string to convert. 
+#' @param block code block name; only used if called while processing a model 
+#' file.
 #' 
 #' @examples
 #' convert_pow("a**2")
@@ -274,7 +276,9 @@ convert_pow <- function(x, block = "") {
 
 #' Warn for literal integer division
 #' 
-#' @param x string to check. 
+#' @param x code string to check. 
+#' @param block code block name; only used if called while processing a model 
+#' file.
 #' 
 #' @examples
 #' warn_integer_division("THETA(1) * pow(WT/70, 3/4)")
@@ -784,9 +788,14 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$capture_etas <- NULL
   mread.env$cpp_dot <- NULL
   mread.env$check_modeled_infusions <- TRUE
-  mread.env$convert_pow <-        !isFALSE(ENV[["MRGSOLVE_CONVERT_POW"]])
-  mread.env$convert_semicolons <- !isFALSE(ENV[["MRGSOLVE_CONVERT_SEMICOLONS"]])
-  mread.env$convert_fortran_if <- !isFALSE(ENV[["MRGSOLVE_CONVERT_FORTRAN_IF"]])
+  mread.env$convert_pow <-
+    !isFALSE(ENV[["MRGSOLVE_CONVERT_POW"]])
+  mread.env$convert_semicolons <- 
+    !isFALSE(ENV[["MRGSOLVE_CONVERT_SEMICOLONS"]])
+  mread.env$convert_fortran_if <- 
+    !isFALSE(ENV[["MRGSOLVE_CONVERT_FORTRAN_IF"]])
+  mread.env$warn_integer_division <- 
+    !isFALSE(ENV[["MRGSOLVE_WARN_INTEGER_DIVISION"]])
   mread.env
 }
 

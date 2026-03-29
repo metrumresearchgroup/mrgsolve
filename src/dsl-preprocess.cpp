@@ -407,6 +407,11 @@ static size_t find_lhs_start(const std::string& s, size_t eq) {
   return i;
 }
 
+static std::string strip_line_comment(const std::string& s) {
+  auto pos = s.find("//");
+  return pos == std::string::npos ? s : s.substr(0, pos);
+}
+
 static std::string convert_line(const std::string& line) {
   if (line.find("**") == std::string::npos) return line;
 
@@ -416,11 +421,13 @@ static std::string convert_line(const std::string& line) {
   auto eq = find_assign_eq(line);
   std::string prefix, rhs_str;
 
+  std::string stripped_line = strip_line_comment(line);
+
   if (eq != std::string::npos) {
     size_t lhs_start    = find_lhs_start(line, eq);
     std::string cond_part   = line.substr(0, lhs_start);               // e.g. "if(x**2>5) "
     std::string assign_part = line.substr(lhs_start, eq + 1 - lhs_start); // e.g. "d ="
-    rhs_str = line.substr(eq + 1);
+    rhs_str = stripped_line.substr(std::min(eq + 1, stripped_line.size()));
 
     // If the condition part (e.g. "if(x**2 > 5) ") contains **, try to convert it.
     if (cond_part.find("**") != std::string::npos) {
@@ -438,7 +445,7 @@ static std::string convert_line(const std::string& line) {
     prefix = cond_part + assign_part;
   } else {
     prefix  = "";
-    rhs_str = line;
+    rhs_str = stripped_line;
   }
 
   It first = rhs_str.cbegin();
@@ -467,13 +474,14 @@ static std::vector<IntDivInstance> check_line_integer_division(const std::string
   ExprGrammar<It> grammar;
   std::vector<IntDivInstance> all_found;
 
-  auto eq = find_assign_eq(line);
+  std::string stripped = strip_line_comment(line);
+  auto eq = find_assign_eq(stripped);
   std::string rhs_str;
 
   if (eq != std::string::npos) {
-    size_t lhs_start = find_lhs_start(line, eq);
-    std::string cond_part = line.substr(0, lhs_start);
-    rhs_str = line.substr(eq + 1);
+    size_t lhs_start = find_lhs_start(stripped, eq);
+    std::string cond_part = stripped.substr(0, lhs_start);
+    rhs_str = stripped.substr(eq + 1);
 
     if (!cond_part.empty()) {
       std::string trimmed = cond_part;
@@ -487,7 +495,7 @@ static std::vector<IntDivInstance> check_line_integer_division(const std::string
       }
     }
   } else {
-    rhs_str = line;
+    rhs_str = stripped;
   }
 
   It first = rhs_str.cbegin(), last = rhs_str.cend();
@@ -725,8 +733,8 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (contains_at_depth0(after, ';') || contains_at_depth0(after, '='))
     return line;
 
-  // Fortran-style inline comment: convert '; text' -> '; // text'
-  return line.substr(0, semi + 1) + " // " + after;
+  // Fortran-style inline comment: drop text after ';'
+  return line.substr(0, semi + 1);
 }
 
 // ---------------------------------------------------------------------------

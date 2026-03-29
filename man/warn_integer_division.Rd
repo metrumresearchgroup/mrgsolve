@@ -4,10 +4,13 @@
 \alias{warn_integer_division}
 \title{Warn for literal integer division}
 \usage{
-warn_integer_division(x)
+warn_integer_division(x, block = "")
 }
 \arguments{
-\item{x}{string to check.}
+\item{x}{code string to check.}
+
+\item{block}{code block name; only used if called while processing a model
+file.}
 }
 \description{
 Warn for literal integer division

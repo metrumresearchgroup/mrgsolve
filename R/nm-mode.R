@@ -140,10 +140,7 @@ autodec_nm_vars <- function(x, env) {
 }
 
 preprocess_nm_vars <- function(spec, env) {
-  blocks <- c(
-    "PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED"
-  )
-  to_process <- intersect(names(spec), blocks)
+  to_process <- intersect(names(spec), GLOBALS$PRE_PROC_BLOCKS)
   # Convert FORTRAN if else then; needs to happen first
   if(env$convert_fortran_if) {
     for(b in to_process) {
