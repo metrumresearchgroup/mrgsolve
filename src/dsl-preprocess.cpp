@@ -781,8 +781,11 @@ Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code,
       std::string line = Rcpp::as<std::string>(code[i]);
       auto instances = check_line_integer_division(line);
       for (const auto& inst : instances) {
+        std::string prefix = block.empty()
+          ? "Integer division"
+          : "Integer division in $" + block + " block";
         std::string msg =
-          "Integer division in $" + block + " block: '" +
+          prefix + ": '" +
           inst.num + "/" + inst.den + "' truncates to 0; " +
           "use " + inst.num + ".0/" + inst.den + ".0 for real division";
         warn_no_call(msg);
