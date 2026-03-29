@@ -1220,3 +1220,57 @@ test_that("convert_fortran_if: float literals adjacent to operators", {
 test_that("convert_fortran_if: .NOT. combined with other operators", {
   expect_equal(fi("IF(.NOT.FLAG.AND.X.GT.0) THEN"), "if(!FLAG&&X>0) {")
 })
+
+# convert_semicolons ---------------------------------------------------------
+
+as_ <- mrgsolve:::convert_semicolons
+
+test_that("convert_semicolons: adds semicolon to plain statement", {
+  expect_equal(as_("CL = THETA(1) * exp(ETA(1))"), "CL = THETA(1) * exp(ETA(1));")
+  expect_equal(as_("DADT(1) = -KA*A(1)"),           "DADT(1) = -KA*A(1);")
+  expect_equal(as_("double CL = 0"),                 "double CL = 0;")
+  expect_equal(as_("F1 = 0.5"),                      "F1 = 0.5;")
+})
+
+test_that("convert_semicolons: leaves existing semicolon alone", {
+  expect_equal(as_("CL = THETA(1);"), "CL = THETA(1);")
+})
+
+test_that("convert_semicolons: skips brace lines", {
+  expect_equal(as_("if(WT>=70) {"), "if(WT>=70) {")
+  expect_equal(as_("}"),            "}")
+  expect_equal(as_("} else {"),     "} else {")
+})
+
+test_that("convert_semicolons: skips blank lines", {
+  expect_equal(as_(""),   "")
+  expect_equal(as_("  "), "  ")
+})
+
+test_that("convert_semicolons: skips comment lines", {
+  expect_equal(as_("// a comment"),  "// a comment")
+  expect_equal(as_("/* comment */"), "/* comment */")
+})
+
+test_that("convert_semicolons: skips preprocessor directives", {
+  expect_equal(as_("#define X 1"), "#define X 1")
+  expect_equal(as_("#include <cmath>"), "#include <cmath>")
+})
+
+test_that("convert_semicolons: strips trailing whitespace before semicolon", {
+  expect_equal(as_("V = THETA(2)   "), "V = THETA(2);")
+})
+
+test_that("convert_semicolons: works on character vectors", {
+  x <- c("CL = THETA(1)", "if(WT>=70) {", "  V = THETA(2)", "}")
+  expect_equal(as_(x), c("CL = THETA(1);", "if(WT>=70) {", "  V = THETA(2);", "}"))
+})
+
+test_that("convert_semicolons: indentation preserved", {
+  expect_equal(as_("  CL = THETA(1)"), "  CL = THETA(1);")
+})
+
+test_that("convert_semicolons: non-character input passes through", {
+  expect_equal(as_(42),   42)
+  expect_null(as_(NULL))
+})

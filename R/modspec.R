@@ -290,7 +290,7 @@ warn_integer_division <- function(x) {
 }
 #' Convert fortran IF ELSE THEN
 #' 
-#' @param x string to convert 
+#' @param x string to convert.
 #' 
 #' @examples
 #' convert_fortran_if("IF ( WT .GE.90) THEN")
@@ -300,6 +300,21 @@ warn_integer_division <- function(x) {
 convert_fortran_if <- function(x) {
   if(is.character(x)) {
     x <- .Call("_mrgsolve_convert_fortran_if_impl", x, PACKAGE = "mrgsolve")
+  }
+  x
+}
+#' Add semicolons to code blocks
+#' 
+#' @param x string to convert.
+#' 
+#' @examples
+#' convert_semicolons("CL = THETA1")
+#' 
+#' @md
+#' @export
+convert_semicolons <- function(x) {
+  if(is.character(x)) {
+    x <- .Call("_mrgsolve_convert_semicolons_impl", x, PACKAGE = "mrgsolve")
   }
   x
 }

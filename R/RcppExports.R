@@ -49,6 +49,21 @@ convert_fortran_if_impl <- function(code) {
     .Call(`_mrgsolve_convert_fortran_if_impl`, code)
 }
 
+#' Insert semicolons at the end of C++ statements
+#'
+#' Appends a semicolon to each element of \code{code} that looks like a
+#' statement but does not already have one.  Lines that are left unchanged:
+#' blank lines, lines already ending with \code{;}, lines ending with
+#' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}), and
+#' preprocessor directives (\code{#}).
+#'
+#' @param code Character vector of source lines.
+#' @return Character vector with semicolons inserted where needed.
+#' @keywords internal
+convert_semicolons_impl <- function(code) {
+    .Call(`_mrgsolve_convert_semicolons_impl`, code)
+}
+
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }

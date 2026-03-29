@@ -668,7 +668,26 @@ static std::string convert_fortran_if_line(const std::string& line) {
 }
 
 // ---------------------------------------------------------------------------
-// 6.  R-facing entry point
+// 6.  Semicolon inserter
+// ---------------------------------------------------------------------------
+
+static std::string convert_semicolon_line(const std::string& line) {
+  std::string t = trim_ws(line);
+
+  if (t.empty())                               return line;  // blank
+  if (t.back() == ';')                         return line;  // already there
+  if (t.back() == '{' || t.back() == '}')      return line;  // brace line
+  if (t[0] == '#')                             return line;  // preprocessor
+  if (t.size() >= 2 && t[0] == '/' &&
+      (t[1] == '/' || t[1] == '*'))            return line;  // comment
+
+  // Append ';' after the last non-whitespace character.
+  size_t last = line.find_last_not_of(" \t");
+  return line.substr(0, last + 1) + ";";
+}
+
+// ---------------------------------------------------------------------------
+// 7.  R-facing entry point
 // ---------------------------------------------------------------------------
 
 //' Convert Fortran-style exponentiation to C++ pow()
@@ -747,6 +766,26 @@ Rcpp::CharacterVector convert_fortran_if_impl(Rcpp::CharacterVector code) {
       Rcpp::warning("Line %d: %s", i + 1, e.what());
       out[i] = code[i];
     }
+  }
+  return out;
+}
+
+//' Insert semicolons at the end of C++ statements
+//'
+//' Appends a semicolon to each element of \code{code} that looks like a
+//' statement but does not already have one.  Lines that are left unchanged:
+//' blank lines, lines already ending with \code{;}, lines ending with
+//' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}), and
+//' preprocessor directives (\code{#}).
+//'
+//' @param code Character vector of source lines.
+//' @return Character vector with semicolons inserted where needed.
+//' @keywords internal
+// [[Rcpp::export]]
+Rcpp::CharacterVector convert_semicolons_impl(Rcpp::CharacterVector code) {
+  Rcpp::CharacterVector out(code.size());
+  for (int i = 0; i < code.size(); ++i) {
+    out[i] = convert_semicolon_line(Rcpp::as<std::string>(code[i]));
   }
   return out;
 }

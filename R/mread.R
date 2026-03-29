@@ -342,6 +342,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # the audit check later on
   nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
+    spec <- nm_convert_semicolons(spec)
     nmv  <- find_nm_vars(spec)
     rd <- generate_nmdefs(nmv, rd)
     plugin[["nm-vars"]][["nm-def"]] <- rd$nmdfs

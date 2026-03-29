@@ -60,6 +60,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// convert_semicolons_impl
+Rcpp::CharacterVector convert_semicolons_impl(Rcpp::CharacterVector code);
+RcppExport SEXP _mrgsolve_convert_semicolons_impl(SEXP codeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type code(codeSEXP);
+    rcpp_result_gen = Rcpp::wrap(convert_semicolons_impl(code));
+    return rcpp_result_gen;
+END_RCPP
+}
 // MVGAUSS
 arma::mat MVGAUSS(Rcpp::NumericMatrix& OMEGA_, int n);
 RcppExport SEXP _mrgsolve_MVGAUSS(SEXP OMEGA_SEXP, SEXP nSEXP) {
