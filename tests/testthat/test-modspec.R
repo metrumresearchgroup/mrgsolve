@@ -884,9 +884,26 @@ test_that("convert_pow handles pow() fine", {
   expect_equal(convert_pow(code), "x = pow(a, b+5)+pow(2.23, 9.98);") 
 })
 
-test_that("convert_pow returns original string when parsing fails", {
+test_that("convert_pow returns original string and warns when parsing fails", {
   bad <- "x = a ** ** b;"
-  expect_equal(convert_pow(bad), bad)
+  expect_warning(
+    expect_equal(convert_pow(bad), bad),
+    regexp = "Could not convert \\*\\*"
+  )
+})
+
+test_that("convert_pow warning includes block name when provided", {
+  bad <- "x = a ** ** b;"
+  expect_warning(
+    convert_pow(bad, block = "MAIN"),
+    regexp = "\\$MAIN block"
+  )
+})
+
+test_that("convert_pow warning omits block clause when block is empty", {
+  bad <- "x = a ** ** b;"
+  w <- tryCatch(convert_pow(bad), warning = function(w) conditionMessage(w))
+  expect_false(grepl("block", w))
 })
 
 test_that("convert_pow handles PK/PD style expressions", {

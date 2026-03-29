@@ -4,7 +4,7 @@
 \alias{convert_pow}
 \title{Convert power from fortran to C++ style}
 \usage{
-convert_pow(x)
+convert_pow(x, block = "")
 }
 \arguments{
 \item{x}{string to convert.}

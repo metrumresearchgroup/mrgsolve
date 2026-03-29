@@ -4,10 +4,12 @@
 \alias{convert_pow_impl}
 \title{Convert Fortran-style exponentiation to C++ pow()}
 \usage{
-convert_pow_impl(code)
+convert_pow_impl(code, block)
 }
 \arguments{
 \item{code}{Character vector of source lines.}
+
+\item{block}{Name of the model block, included in the warning message.}
 }
 \value{
 Character vector with \code{**} replaced by \code{pow()}.

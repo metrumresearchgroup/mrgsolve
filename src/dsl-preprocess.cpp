@@ -409,6 +409,11 @@ static std::string convert_line(const std::string& line) {
 // 5.  R-facing entry point
 // ---------------------------------------------------------------------------
 
+static void warn_no_call(const std::string& msg) {
+  Rcpp::Function warning_r("warning");
+  warning_r(msg, Rcpp::Named("call.") = false);
+}
+
 //' Convert Fortran-style exponentiation to C++ pow()
 //'
 //' Translates \code{base**exponent} to \code{pow(base, exponent)} in each
@@ -417,14 +422,28 @@ static std::string convert_line(const std::string& line) {
 //' is preserved if present.
 //'
 //' @param code Character vector of source lines.
+//' @param block Name of the model block, included in the warning message.
 //' @return Character vector with \code{**} replaced by \code{pow()}.
 //' @keywords internal
 // [[Rcpp::export]]
-Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code) {
+Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code,
+                                        std::string block) {
   Rcpp::CharacterVector out(code.size());
   for (int i = 0; i < code.size(); ++i) {
     try {
-      out[i] = convert_line(Rcpp::as<std::string>(code[i]));
+      std::string line = Rcpp::as<std::string>(code[i]);
+      std::string converted = convert_line(line);
+      size_t ts = line.find_first_not_of(" \t");
+      bool is_comment = ts != std::string::npos &&
+        ts + 1 < line.size() && line[ts] == '/' &&
+        (line[ts + 1] == '/' || line[ts + 1] == '*');
+      if (!is_comment && converted == line && line.find("**") != std::string::npos) {
+        std::string prefix = block.empty()
+          ? "Could not convert **"
+          : "Could not convert ** in $" + block + " block";
+        warn_no_call(prefix + ": '" + line + "'");
+      }
+      out[i] = converted;
     } catch (const std::exception& e) {
       Rcpp::warning("Line %d: %s", i + 1, e.what());
       out[i] = code[i];

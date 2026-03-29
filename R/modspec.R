@@ -265,9 +265,9 @@ fixed_parameters <- function(x,fixed_type) {
 #' convert_pow("(WT/70) ** THETA(3)")
 #' 
 #' @export
-convert_pow <- function(x) {
+convert_pow <- function(x, block = "") {
   if(is.character(x)) {
-    x <- .Call("_mrgsolve_convert_pow_impl", x, PACKAGE = "mrgsolve")
+    x <- .Call("_mrgsolve_convert_pow_impl", x, block, PACKAGE = "mrgsolve")
   }
   x
 }

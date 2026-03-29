@@ -13,10 +13,11 @@ DEVTRAN <- function(parin, funs, data, idata, mod) {
 #' is preserved if present.
 #'
 #' @param code Character vector of source lines.
+#' @param block Name of the model block, included in the warning message.
 #' @return Character vector with \code{**} replaced by \code{pow()}.
 #' @keywords internal
-convert_pow_impl <- function(code) {
-    .Call(`_mrgsolve_convert_pow_impl`, code)
+convert_pow_impl <- function(code, block) {
+    .Call(`_mrgsolve_convert_pow_impl`, code, block)
 }
 
 MVGAUSS <- function(OMEGA_, n) {
