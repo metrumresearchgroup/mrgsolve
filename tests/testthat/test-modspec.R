@@ -932,10 +932,8 @@ test_that("convert_pow handles PK/PD style expressions", {
   )
   # Some crazy bone model stuff
   expect_equal(
-    expect_equal(
-      convert_pow("T85 = T84 + (T77 - T84)*(A(9)**T80) / ((A(9)**T80) + (T81**T80))"), 
-      "T85 = T84+(T77-T84)*pow(A(9), T80)/(pow(A(9), T80)+pow(T81, T80))"
-    )
+    convert_pow("T85 = T84 + (T77 - T84)*(A(9)**T80) / ((A(9)**T80) + (T81**T80))"), 
+    "T85 = T84+(T77-T84)*pow(A(9), T80)/(pow(A(9), T80)+pow(T81, T80))"
   )
 })
 
