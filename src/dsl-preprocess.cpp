@@ -69,11 +69,13 @@ struct UnaryExpr {
 
 struct BinaryExpr {
   Expr lhs;
-  char op;   // '+' '-' '*' '/'  '^' (we map ** -> ^)
+  std::string op;  // arithmetic: '+' '-' '*' '/' '^' (** -> ^)
+                   // comparison: '==' '!=' '<' '<=' '>' '>='
+                   // logical:    '&&' '||'
   Expr rhs;
-  BinaryExpr() : op(0) {}
-  BinaryExpr(Expr lhs_, char op_, Expr rhs_)
-    : lhs(std::move(lhs_)), op(op_), rhs(std::move(rhs_)) {}
+  BinaryExpr() {}
+  BinaryExpr(Expr lhs_, std::string op_, Expr rhs_)
+    : lhs(std::move(lhs_)), op(std::move(op_)), rhs(std::move(rhs_)) {}
 };
 
 struct FuncCall {
@@ -90,30 +92,33 @@ struct FuncCall {
 // 2.  Emitter  (AST -> C++ string)
 // ---------------------------------------------------------------------------
 
-static int precedence(char op) {
-  switch (op) {
-    case '+': case '-': return 1;
-    case '*': case '/': return 2;
-    default: return 0;
-  }
+static int precedence(const std::string& op) {
+  if (op == "||") return 1;
+  if (op == "&&") return 2;
+  if (op == "==" || op == "!=" ||
+      op == "<"  || op == "<=" ||
+      op == ">"  || op == ">=") return 3;
+  if (op == "+" || op == "-") return 4;
+  if (op == "*" || op == "/") return 5;
+  return 0;  // "^" / unknown — not used for parens decisions (pow is a function)
 }
 
 static const ast::BinaryExpr* as_binop(const ast::Expr& e) {
   return boost::get<ast::BinaryExpr>(&e);
 }
 
-static bool needs_parens_left(const ast::Expr& child, char parent_op) {
+static bool needs_parens_left(const ast::Expr& child, const std::string& parent_op) {
   const ast::BinaryExpr* b = as_binop(child);
-  if (!b || b->op == '^') return false;
+  if (!b || b->op == "^") return false;
   return precedence(b->op) < precedence(parent_op);
 }
 
-static bool needs_parens_right(const ast::Expr& child, char parent_op) {
+static bool needs_parens_right(const ast::Expr& child, const std::string& parent_op) {
   const ast::BinaryExpr* b = as_binop(child);
-  if (!b || b->op == '^') return false;
+  if (!b || b->op == "^") return false;
   int cp = precedence(b->op);
   int pp = precedence(parent_op);
-  return cp < pp || (cp == pp && (parent_op == '-' || parent_op == '/'));
+  return cp < pp || (cp == pp && (parent_op == "-" || parent_op == "/"));
 }
 
 struct Emitter : boost::static_visitor<std::string> {
@@ -137,7 +142,7 @@ struct Emitter : boost::static_visitor<std::string> {
   std::string operator()(const ast::BinaryExpr& b) const {
     std::string l = boost::apply_visitor(*this, b.lhs);
     std::string r = boost::apply_visitor(*this, b.rhs);
-    if (b.op == '^') {
+    if (b.op == "^") {
       return "pow(" + l + ", " + r + ")";
     }
     if (needs_parens_left(b.lhs, b.op)) l = "(" + l + ")";
@@ -184,6 +189,7 @@ struct ExprGrammar
     using phx::construct;
     using phx::push_back;
     using phx::ref;
+    using phx::val;
 
     // identifier: starts with alpha or '_', then alnum or '_'
     identifier %= qi::lexeme[qi::raw[
@@ -219,7 +225,7 @@ struct ExprGrammar
       primary[_val = _1]
       >> *(
         lit("**") >> unary[
-          _val = construct<ast::BinaryExpr>(_val, '^', _1)
+          _val = construct<ast::BinaryExpr>(_val, val(std::string("^")), _1)
         ]
       );
 
@@ -231,7 +237,7 @@ struct ExprGrammar
       ;
 
     // multiplicative: * and /
-    mulop = char_('*') | char_('/');
+    mulop = qi::string("*") | qi::string("/");
     multiplicative =
       unary[_val = _1]
       >> *(
@@ -241,7 +247,7 @@ struct ExprGrammar
       );
 
     // additive: + and -
-    addop = char_('+') | char_('-');
+    addop = qi::string("+") | qi::string("-");
     additive =
       multiplicative[_val = _1]
       >> *(
@@ -250,10 +256,44 @@ struct ExprGrammar
         ]
       );
 
-    expr = additive;
+    // comparison: ==  !=  <=  >=  <  >
+    // Multi-char tokens must appear before their single-char prefixes.
+    cmpop = qi::string("==") | qi::string("!=")
+          | qi::string("<=") | qi::string(">=")
+          | qi::string("<")  | qi::string(">");
+    comparison =
+      additive[_val = _1]
+      >> *(
+        (cmpop >> additive)[
+          _val = construct<ast::BinaryExpr>(_val, _1, _2)
+        ]
+      );
+
+    // logical AND  (higher precedence than ||)
+    logical_and =
+      comparison[_val = _1]
+      >> *(
+        lit("&&") >> comparison[
+          _val = construct<ast::BinaryExpr>(_val, val(std::string("&&")), _1)
+        ]
+      );
+
+    // logical OR
+    logical_or =
+      logical_and[_val = _1]
+      >> *(
+        lit("||") >> logical_and[
+          _val = construct<ast::BinaryExpr>(_val, val(std::string("||")), _1)
+        ]
+      );
+
+    expr = logical_or;
   }
 
   qi::rule<Iterator, ast::Expr(),              asc::space_type> expr;
+  qi::rule<Iterator, ast::Expr(),              asc::space_type> logical_or;
+  qi::rule<Iterator, ast::Expr(),              asc::space_type> logical_and;
+  qi::rule<Iterator, ast::Expr(),              asc::space_type> comparison;
   qi::rule<Iterator, ast::Expr(),              asc::space_type> additive;
   qi::rule<Iterator, ast::Expr(),              asc::space_type> multiplicative;
   qi::rule<Iterator, ast::Expr(),              asc::space_type> power;
@@ -263,13 +303,52 @@ struct ExprGrammar
   qi::rule<Iterator, ast::FuncCall(),          asc::space_type> funccall;
   qi::rule<Iterator, std::vector<ast::Expr>(), asc::space_type> arglist;
   qi::rule<Iterator, std::string(),            asc::space_type> identifier;
-  qi::rule<Iterator, char(),                   asc::space_type> addop;
-  qi::rule<Iterator, char(),                   asc::space_type> mulop;
+  qi::rule<Iterator, std::string(),            asc::space_type> addop;
+  qi::rule<Iterator, std::string(),            asc::space_type> mulop;
+  qi::rule<Iterator, std::string(),            asc::space_type> cmpop;
 };
 
 // ---------------------------------------------------------------------------
 // 4.  Per-line processor
 // ---------------------------------------------------------------------------
+
+// Find the first '=' that is a plain assignment — not part of ==, >=, <=, !=.
+static size_t find_assign_eq(const std::string& s) {
+  for (size_t i = 0; i < s.size(); ++i) {
+    if (s[i] != '=') continue;
+    if (i > 0 && (s[i-1] == '=' || s[i-1] == '>' ||
+                  s[i-1] == '<' || s[i-1] == '!')) continue;
+    if (i + 1 < s.size() && s[i+1] == '=') continue;
+    return i;
+  }
+  return std::string::npos;
+}
+
+// Scan backwards from the assignment '=' to find where the LHS token begins,
+// handling both simple identifiers (d, CL) and subscripted ones (A(1), THETA(2)).
+// Returns the index of the first character of the LHS token.
+static size_t find_lhs_start(const std::string& s, size_t eq) {
+  if (eq == 0) return 0;
+  size_t i = eq;
+  while (i > 0 && s[i-1] == ' ') --i;  // skip spaces before '='
+  if (i == 0) return 0;
+  --i;  // last non-space character before '='
+  if (s[i] == ')') {
+    // LHS ends with ')' e.g. A(1) — scan back over balanced parens
+    int depth = 1;
+    while (i > 0 && depth > 0) {
+      --i;
+      if (s[i] == ')') ++depth;
+      else if (s[i] == '(') --depth;
+    }
+    // scan back over the identifier preceding '('
+    while (i > 0 && (isalnum((unsigned char)s[i-1]) || s[i-1] == '_')) --i;
+  } else {
+    // simple identifier — scan back while alnum or '_'
+    while (i > 0 && (isalnum((unsigned char)s[i-1]) || s[i-1] == '_')) --i;
+  }
+  return i;
+}
 
 static std::string convert_line(const std::string& line) {
   if (line.find("**") == std::string::npos) return line;
@@ -277,11 +356,29 @@ static std::string convert_line(const std::string& line) {
   using It = std::string::const_iterator;
   ExprGrammar<It> grammar;
 
-  auto eq = line.find('=');
+  auto eq = find_assign_eq(line);
   std::string prefix, rhs_str;
+
   if (eq != std::string::npos) {
-    prefix  = line.substr(0, eq + 1);
+    size_t lhs_start    = find_lhs_start(line, eq);
+    std::string cond_part   = line.substr(0, lhs_start);               // e.g. "if(x**2>5) "
+    std::string assign_part = line.substr(lhs_start, eq + 1 - lhs_start); // e.g. "d ="
     rhs_str = line.substr(eq + 1);
+
+    // If the condition part (e.g. "if(x**2 > 5) ") contains **, try to convert it.
+    if (cond_part.find("**") != std::string::npos) {
+      std::string trimmed = cond_part;
+      while (!trimmed.empty() && trimmed.back() == ' ') trimmed.pop_back();
+      It cfirst = trimmed.cbegin(), clast = trimmed.cend();
+      ast::Expr cond_result;
+      bool cond_ok = qi::phrase_parse(cfirst, clast, grammar, asc::space, cond_result);
+      if (cond_ok && cfirst == clast) {
+        // re-attach any trailing whitespace that was trimmed off
+        cond_part = emit(cond_result) + cond_part.substr(trimmed.size());
+      }
+    }
+
+    prefix = cond_part + assign_part;
   } else {
     prefix  = "";
     rhs_str = line;

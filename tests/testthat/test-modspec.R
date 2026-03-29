@@ -998,3 +998,63 @@ test_that("Convert pow in  PREAMBLE, PRED", {
 })
 
 rm(code_convert_pow_1, code_convert_pow_2)
+
+test_that("convert_pow handles comparison operators in exponent", {
+  expect_equal(convert_pow("THETA(2)**(RACE==3)"),   "pow(THETA(2), RACE==3)")
+  expect_equal(convert_pow("THETA(2)**(RACE!=3)"),   "pow(THETA(2), RACE!=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE>=3)"),   "pow(THETA(2), RACE>=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE<=3)"),   "pow(THETA(2), RACE<=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE>3)"),    "pow(THETA(2), RACE>3)")
+  expect_equal(convert_pow("THETA(2)**(RACE<3)"),    "pow(THETA(2), RACE<3)")
+})
+
+test_that("convert_pow handles comparison operators in assignment prefix", {
+  expect_equal(
+    convert_pow("if(a==3) b = THETA(2)**(RACE)"),
+    "if(a==3) b = pow(THETA(2), RACE)"
+  )
+  expect_equal(
+    convert_pow("if(a>=3) b = THETA(2)**(RACE)"),
+    "if(a>=3) b = pow(THETA(2), RACE)"
+  )
+  expect_equal(
+    convert_pow("if(a<=3) b = THETA(2)**(RACE)"),
+    "if(a<=3) b = pow(THETA(2), RACE)"
+  )
+  expect_equal(
+    convert_pow("if(a!=3) b = THETA(2)**(RACE)"),
+    "if(a!=3) b = pow(THETA(2), RACE)"
+  )
+})
+
+test_that("convert_pow handles logical operators in exponent", {
+  expect_equal(
+    convert_pow("THETA(2)**(RACE==1||RACE==2)"),
+    "pow(THETA(2), RACE==1||RACE==2)"
+  )
+  expect_equal(
+    convert_pow("THETA(2)**(SEX==1&&AGE>=18)"),
+    "pow(THETA(2), SEX==1&&AGE>=18)"
+  )
+})
+
+test_that("convert_pow handles ** in if() condition", {
+  expect_equal(
+    convert_pow("if(x**2 > 5) d = 2**3;"),
+    "if(pow(x, 2)>5) d = pow(2, 3);"
+  )
+  expect_equal(
+    convert_pow("if(WT**2 >= 100) CL = THETA(1)**0.75;"),
+    "if(pow(WT, 2)>=100) CL = pow(THETA(1), 0.75);"
+  )
+  # condition has **, rhs does not
+  expect_equal(
+    convert_pow("if(x**2 > 5) d = 1;"),
+    "if(pow(x, 2)>5) d = 1;"
+  )
+  # rhs has **, condition does not
+  expect_equal(
+    convert_pow("if(x > 5) d = 2**3;"),
+    "if(x > 5) d = pow(2, 3);"
+  )
+})
