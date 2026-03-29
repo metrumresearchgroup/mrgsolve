@@ -19,6 +19,36 @@ convert_pow_impl <- function(code) {
     .Call(`_mrgsolve_convert_pow_impl`, code)
 }
 
+#' Warn about literal integer division in model code
+#'
+#' Scans each element of \code{code} and issues an R warning for every
+#' instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
+#' Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
+#' \code{0}, not \code{0.75}.
+#'
+#' @param code Character vector of source lines.
+#' @return \code{code} unchanged (called for its side-effect warnings).
+#' @keywords internal
+warn_integer_division_impl <- function(code) {
+    .Call(`_mrgsolve_warn_integer_division_impl`, code)
+}
+
+#' Convert Fortran-style IF/THEN/ELSE/ENDIF to C++
+#'
+#' Translates Fortran block-form and single-line IF constructs to C++ in each
+#' element of \code{code}.  Fortran relational and logical operators
+#' (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
+#' \code{.NE.}, \code{.AND.}, \code{.OR.}, \code{.NOT.}, \code{.TRUE.},
+#' \code{.FALSE.}) are converted everywhere they appear. Matching is
+#' case-insensitive.
+#'
+#' @param code Character vector of source lines.
+#' @return Character vector with Fortran IF constructs replaced by C++.
+#' @keywords internal
+convert_fortran_if_impl <- function(code) {
+    .Call(`_mrgsolve_convert_fortran_if_impl`, code)
+}
+
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }

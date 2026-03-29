@@ -309,6 +309,63 @@ struct ExprGrammar
 };
 
 // ---------------------------------------------------------------------------
+// 3b. Integer-division detector
+// ---------------------------------------------------------------------------
+
+// Returns true if the Number text represents a plain integer (digits only,
+// no decimal point, no exponent suffix).
+static bool is_integer_literal(const ast::Number& n) {
+  const std::string& t = n.text;
+  return !t.empty() &&
+    t.find_first_not_of("0123456789") == std::string::npos;
+}
+
+struct IntDivInstance {
+  std::string num;
+  std::string den;
+};
+
+// Walks the AST and collects every BinaryExpr where op=="/" and both operands
+// are integer literals (e.g. 3/4, 1/2).
+struct IntDivFinder : boost::static_visitor<void> {
+  std::vector<IntDivInstance>& found;
+  explicit IntDivFinder(std::vector<IntDivInstance>& f) : found(f) {}
+
+  void operator()(ast::Nil) const {}
+  void operator()(const ast::Number&) const {}
+  void operator()(const std::string&) const {}
+
+  void operator()(const ast::UnaryExpr& u) const {
+    boost::apply_visitor(*this, u.operand);
+  }
+
+  void operator()(const ast::BinaryExpr& b) const {
+    if (b.op == "/") {
+      const auto* lnum = boost::get<ast::Number>(&b.lhs);
+      const auto* rnum = boost::get<ast::Number>(&b.rhs);
+      if (lnum && rnum && is_integer_literal(*lnum) && is_integer_literal(*rnum)) {
+        found.push_back({lnum->text, rnum->text});
+      }
+    }
+    boost::apply_visitor(*this, b.lhs);
+    boost::apply_visitor(*this, b.rhs);
+  }
+
+  void operator()(const ast::FuncCall& f) const {
+    for (const auto& arg : f.args) {
+      boost::apply_visitor(*this, arg);
+    }
+  }
+};
+
+static std::vector<IntDivInstance> find_integer_divisions(const ast::Expr& e) {
+  std::vector<IntDivInstance> result;
+  IntDivFinder finder(result);
+  boost::apply_visitor(finder, e);
+  return result;
+}
+
+// ---------------------------------------------------------------------------
 // 4.  Per-line processor
 // ---------------------------------------------------------------------------
 
@@ -405,8 +462,213 @@ static std::string convert_line(const std::string& line) {
   return prefix + sep + emit(result) + (has_semi ? ";" : "");
 }
 
+static std::vector<IntDivInstance> check_line_integer_division(const std::string& line) {
+  using It = std::string::const_iterator;
+  ExprGrammar<It> grammar;
+  std::vector<IntDivInstance> all_found;
+
+  auto eq = find_assign_eq(line);
+  std::string rhs_str;
+
+  if (eq != std::string::npos) {
+    size_t lhs_start = find_lhs_start(line, eq);
+    std::string cond_part = line.substr(0, lhs_start);
+    rhs_str = line.substr(eq + 1);
+
+    if (!cond_part.empty()) {
+      std::string trimmed = cond_part;
+      while (!trimmed.empty() && trimmed.back() == ' ') trimmed.pop_back();
+      It cfirst = trimmed.cbegin(), clast = trimmed.cend();
+      ast::Expr cond_result;
+      bool ok = qi::phrase_parse(cfirst, clast, grammar, asc::space, cond_result);
+      if (ok && cfirst == clast) {
+        auto found = find_integer_divisions(cond_result);
+        all_found.insert(all_found.end(), found.begin(), found.end());
+      }
+    }
+  } else {
+    rhs_str = line;
+  }
+
+  It first = rhs_str.cbegin(), last = rhs_str.cend();
+  ast::Expr result;
+  bool ok = qi::phrase_parse(
+    first, last,
+    grammar >> -qi::lit(';'),
+    asc::space,
+    result
+  );
+  if (ok && first == last) {
+    auto found = find_integer_divisions(result);
+    all_found.insert(all_found.end(), found.begin(), found.end());
+  }
+
+  return all_found;
+}
+
 // ---------------------------------------------------------------------------
-// 5.  R-facing entry point
+// 5.  Fortran IF/THEN/ELSE/ENDIF converter
+// ---------------------------------------------------------------------------
+
+// Case-insensitive prefix check.
+static bool starts_with_ci(const std::string& s, const char* prefix) {
+  for (size_t i = 0; prefix[i] != '\0'; ++i) {
+    if (i >= s.size()) return false;
+    if (std::toupper((unsigned char)s[i]) != std::toupper((unsigned char)prefix[i]))
+      return false;
+  }
+  return true;
+}
+
+// Replace all case-insensitive occurrences of `from` with `to` in `s`.
+static std::string replace_all_ci(const std::string& s,
+                                   const std::string& from,
+                                   const std::string& to) {
+  if (from.empty() || s.size() < from.size()) return s;
+  std::string result;
+  result.reserve(s.size());
+  size_t pos = 0;
+  while (pos + from.size() <= s.size()) {
+    bool match = true;
+    for (size_t i = 0; i < from.size() && match; ++i) {
+      match = (std::toupper((unsigned char)s[pos + i]) ==
+               std::toupper((unsigned char)from[i]));
+    }
+    if (match) {
+      result += to;
+      pos += from.size();
+    } else {
+      result += s[pos++];
+    }
+  }
+  result += s.substr(pos);
+  return result;
+}
+
+// Convert Fortran relational/logical operators to C++ equivalents.
+static std::string convert_fortran_ops(const std::string& s) {
+  std::string r = s;
+  r = replace_all_ci(r, ".GE.", ">=");
+  r = replace_all_ci(r, ".LE.", "<=");
+  r = replace_all_ci(r, ".GT.", ">");
+  r = replace_all_ci(r, ".LT.", "<");
+  r = replace_all_ci(r, ".EQN.", "==");
+  r = replace_all_ci(r, ".NEN.", "!=");
+  r = replace_all_ci(r, ".EQ.", "==");
+  r = replace_all_ci(r, ".NE.", "!=");
+  r = replace_all_ci(r, ".AND.", "&&");
+  r = replace_all_ci(r, ".OR.", "||");
+  r = replace_all_ci(r, ".NOT.", "!");
+  r = replace_all_ci(r, ".TRUE.", "true");
+  r = replace_all_ci(r, ".FALSE.", "false");
+  return r;
+}
+
+// Find the closing ')' matching the '(' at open_pos.  Returns npos if
+// the parens are unbalanced.
+static size_t find_close_paren(const std::string& s, size_t open_pos) {
+  int depth = 1;
+  for (size_t i = open_pos + 1; i < s.size(); ++i) {
+    if      (s[i] == '(') ++depth;
+    else if (s[i] == ')') { if (--depth == 0) return i; }
+  }
+  return std::string::npos;
+}
+
+// Trim leading and trailing spaces/tabs.
+static std::string trim_ws(const std::string& s) {
+  size_t b = s.find_first_not_of(" \t");
+  if (b == std::string::npos) return "";
+  size_t e = s.find_last_not_of(" \t");
+  return s.substr(b, e - b + 1);
+}
+
+static std::string convert_fortran_if_line(const std::string& line) {
+  // Preserve leading whitespace (indentation).
+  size_t iend = 0;
+  while (iend < line.size() &&
+         (line[iend] == ' ' || line[iend] == '\t')) ++iend;
+  const std::string indent = line.substr(0, iend);
+  const std::string body   = line.substr(iend);
+
+  if (body.empty()) return line;
+
+  // Skip C-style comments unchanged.
+  if (body.size() >= 2 && body[0] == '/' && body[1] == '/') return line;
+
+  // Check for bare ENDIF / END IF and ELSE.
+  std::string bu = trim_ws(body);
+  {
+    std::string u = bu;
+    std::transform(u.begin(), u.end(), u.begin(),
+                   [](unsigned char c){ return std::toupper(c); });
+    if (u == "ENDIF" || u == "END IF") return indent + "}";
+    if (u == "ELSE")                   return indent + "} else {";
+  }
+
+  // Detect IF / ELSEIF / ELSE IF keyword.
+  bool is_elseif = false;
+  size_t kw_end  = 0;
+
+  if (starts_with_ci(body, "ELSEIF")) {
+    is_elseif = true;
+    kw_end = 6;
+  } else if (starts_with_ci(body, "ELSE")) {
+    // Could be "ELSE IF" (with one or more spaces).
+    size_t p = 4;
+    while (p < body.size() && body[p] == ' ') ++p;
+    if (starts_with_ci(body.substr(p), "IF")) {
+      is_elseif = true;
+      kw_end = p + 2;
+    } else {
+      // ELSE with a non-empty body that is not IF — unexpected; convert ops.
+      return indent + convert_fortran_ops(body);
+    }
+  } else if (starts_with_ci(body, "IF")) {
+    kw_end = 2;
+  } else {
+    // Not an IF keyword line: convert Fortran operators and return.
+    return indent + convert_fortran_ops(body);
+  }
+
+  // Skip optional space(s) between keyword and '('.
+  size_t paren = kw_end;
+  while (paren < body.size() && body[paren] == ' ') ++paren;
+
+  if (paren >= body.size() || body[paren] != '(') {
+    // Keyword not followed by '(' (e.g. a variable named "IF1").
+    return indent + convert_fortran_ops(body);
+  }
+
+  // Find matching ')'.
+  size_t close = find_close_paren(body, paren);
+  if (close == std::string::npos) return indent + convert_fortran_ops(body);
+
+  std::string cond  = convert_fortran_ops(
+                        body.substr(paren + 1, close - paren - 1));
+  std::string after = trim_ws(body.substr(close + 1));
+
+  // Check whether the remainder is THEN.
+  {
+    std::string au = after;
+    std::transform(au.begin(), au.end(), au.begin(),
+                   [](unsigned char c){ return std::toupper(c); });
+    if (au == "THEN") {
+      return is_elseif
+        ? indent + "} else if(" + cond + ") {"
+        : indent + "if(" + cond + ") {";
+    }
+  }
+
+  // Single-line form: IF(cond) statement.
+  std::string stmt = convert_fortran_ops(after);
+  return is_elseif
+    ? indent + "} else if(" + cond + ") " + stmt
+    : indent + "if(" + cond + ") " + stmt;
+}
+
+// ---------------------------------------------------------------------------
+// 6.  R-facing entry point
 // ---------------------------------------------------------------------------
 
 //' Convert Fortran-style exponentiation to C++ pow()
@@ -425,6 +687,62 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code) {
   for (int i = 0; i < code.size(); ++i) {
     try {
       out[i] = convert_line(Rcpp::as<std::string>(code[i]));
+    } catch (const std::exception& e) {
+      Rcpp::warning("Line %d: %s", i + 1, e.what());
+      out[i] = code[i];
+    }
+  }
+  return out;
+}
+
+//' Warn about literal integer division in model code
+//'
+//' Scans each element of \code{code} and issues an R warning for every
+//' instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
+//' Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
+//' \code{0}, not \code{0.75}.
+//'
+//' @param code Character vector of source lines.
+//' @return \code{code} unchanged (called for its side-effect warnings).
+//' @keywords internal
+// [[Rcpp::export]]
+Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code) {
+  for (int i = 0; i < code.size(); ++i) {
+    try {
+      std::string line = Rcpp::as<std::string>(code[i]);
+      auto instances = check_line_integer_division(line);
+      for (const auto& inst : instances) {
+        Rcpp::warning(
+          "Integer division on line %d: '%s/%s' truncates to 0; "
+          "use %s.0/%s.0 for real division",
+          i + 1,
+          inst.num.c_str(), inst.den.c_str(),
+          inst.num.c_str(), inst.den.c_str()
+        );
+      }
+    } catch (...) {}
+  }
+  return code;
+}
+
+//' Convert Fortran-style IF/THEN/ELSE/ENDIF to C++
+//'
+//' Translates Fortran block-form and single-line IF constructs to C++ in each
+//' element of \code{code}.  Fortran relational and logical operators
+//' (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
+//' \code{.NE.}, \code{.AND.}, \code{.OR.}, \code{.NOT.}, \code{.TRUE.},
+//' \code{.FALSE.}) are converted everywhere they appear. Matching is
+//' case-insensitive.
+//'
+//' @param code Character vector of source lines.
+//' @return Character vector with Fortran IF constructs replaced by C++.
+//' @keywords internal
+// [[Rcpp::export]]
+Rcpp::CharacterVector convert_fortran_if_impl(Rcpp::CharacterVector code) {
+  Rcpp::CharacterVector out(code.size());
+  for (int i = 0; i < code.size(); ++i) {
+    try {
+      out[i] = convert_fortran_if_line(Rcpp::as<std::string>(code[i]));
     } catch (const std::exception& e) {
       Rcpp::warning("Line %d: %s", i + 1, e.what());
       out[i] = code[i];

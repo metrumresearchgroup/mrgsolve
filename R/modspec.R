@@ -272,6 +272,30 @@ convert_pow <- function(x) {
   x
 }
 
+#' Warn for literal integer division
+#' 
+#' @param x string to check. 
+#' 
+#' @examples
+#' warn_integer_division("THETA(1) * pow(WT/70, 3/4)")
+#' warn_integer_division("3.0/4")
+#' 
+#' @md
+#' @export
+warn_integer_division <- function(x) {
+  if(is.character(x)) {
+    .Call("_mrgsolve_warn_integer_division_impl", x, PACKAGE = "mrgsolve")
+  }
+  invisible(x)
+}
+
+convert_fortran_if <- function(x) {
+  if(is.character(x)) {
+    x <- .Call("_mrgsolve_convert_fortran_if_impl", x, PACKAGE = "mrgsolve")
+  }
+  x
+}
+
 ##' Parse model specification text
 ##' @param txt model specification text
 ##' @param split logical
