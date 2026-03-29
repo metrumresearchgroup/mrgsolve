@@ -765,22 +765,27 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code) {
 //' \code{0}, not \code{0.75}.
 //'
 //' @param code Character vector of source lines.
+//' @param block Name of the model block, included in the warning message.
 //' @return \code{code} unchanged (called for its side-effect warnings).
 //' @keywords internal
+static void warn_no_call(const std::string& msg) {
+  Rcpp::Function warning_r("warning");
+  warning_r(msg, Rcpp::Named("call.") = false);
+}
+
 // [[Rcpp::export]]
-Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code) {
+Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code,
+                                                  std::string block) {
   for (int i = 0; i < code.size(); ++i) {
     try {
       std::string line = Rcpp::as<std::string>(code[i]);
       auto instances = check_line_integer_division(line);
       for (const auto& inst : instances) {
-        Rcpp::warning(
-          "Integer division on line %d: '%s/%s' truncates to 0; "
-          "use %s.0/%s.0 for real division",
-          i + 1,
-          inst.num.c_str(), inst.den.c_str(),
-          inst.num.c_str(), inst.den.c_str()
-        );
+        std::string msg =
+          "Integer division in $" + block + " block: '" +
+          inst.num + "/" + inst.den + "' truncates to 0; " +
+          "use " + inst.num + ".0/" + inst.den + ".0 for real division";
+        warn_no_call(msg);
       }
     } catch (...) {}
   }

@@ -278,7 +278,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Collect potential multiples
   subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
   if("ODE" %in% names(spec)) {
     spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
   }
@@ -483,7 +482,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["EVENT"]]  
   )
   table_code <- c(
-    table,
+    unlist(spec[names(spec)=="TABLE"], use.names = FALSE),
     spec[["PRED"]], 
     write_capture(names(x@capture))
   )

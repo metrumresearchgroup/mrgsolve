@@ -140,7 +140,7 @@ autodec_nm_vars <- function(x, env) {
 }
 
 nm_convert_semicolons <- function(spec) {
-  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "EVENT", "PRED")
+  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
   for(b in intersect(names(spec), blocks)) {
     spec[[b]] <- convert_semicolons(spec[[b]])
   }

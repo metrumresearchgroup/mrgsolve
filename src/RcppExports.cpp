@@ -39,13 +39,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // warn_integer_division_impl
-Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code);
-RcppExport SEXP _mrgsolve_warn_integer_division_impl(SEXP codeSEXP) {
+Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code, std::string block);
+RcppExport SEXP _mrgsolve_warn_integer_division_impl(SEXP codeSEXP, SEXP blockSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type code(codeSEXP);
-    rcpp_result_gen = Rcpp::wrap(warn_integer_division_impl(code));
+    Rcpp::traits::input_parameter< std::string >::type block(blockSEXP);
+    rcpp_result_gen = Rcpp::wrap(warn_integer_division_impl(code, block));
     return rcpp_result_gen;
 END_RCPP
 }

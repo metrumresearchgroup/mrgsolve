@@ -564,22 +564,22 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
   }
   x <- convert_pow(x)
   x <- convert_fortran_if(x)
-  warn_integer_division(x)
+  warn_integer_division(x, env$incoming_names[pos])
   x
 }
 
-#' @export 
+#' @export
 handle_spec_block.specEVENT <- function(x, env, ...) {
-  
+
   x <- dump_opts(x)
-  
+
   pos <- attr(x,"pos")
-  
+
   check_block_data(x, env, pos)
-  
+
   x <- convert_pow(x)
   x <- convert_fortran_if(x)
-  warn_integer_division(x)
+  warn_integer_division(x, env$incoming_names[pos])
   x
 }
 
@@ -645,7 +645,7 @@ PRED <- function(x, env, ...) {
   }
   x <- convert_pow(x)
   x <- convert_fortran_if(x)
-  warn_integer_division(x)
+  warn_integer_division(x, "PRED")
   x
 }
 
@@ -981,7 +981,7 @@ handle_spec_block.specODE <- function(x, env, ...) {
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   x <- convert_pow(x)
   x <- convert_fortran_if(x)
-  warn_integer_division(x)
+  warn_integer_division(x, env$incoming_names[pos])
   x
 }
 
@@ -989,10 +989,11 @@ handle_spec_block.specODE <- function(x, env, ...) {
 
 #' @export
 handle_spec_block.specPREAMBLE <- function(x, env, ...) {
+  pos <- attr(x, "pos")
   x <- dump_opts(x)
   x <- convert_pow(x)
   x <- convert_fortran_if(x)
-  warn_integer_division(x)
+  warn_integer_division(x, env$incoming_names[pos])
   x
 }
 
@@ -1000,11 +1001,12 @@ handle_spec_block.specPREAMBLE <- function(x, env, ...) {
 
 #' @export
 handle_spec_block.specMAIN <- function(x,env,...) {
+  pos <- attr(x, "pos")
   x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
   x$x <- convert_pow(x$x)
   x$x <- convert_fortran_if(x$x)
-  warn_integer_division(x$x)
+  warn_integer_division(x$x, env$incoming_names[pos])
   x$x
 }
 

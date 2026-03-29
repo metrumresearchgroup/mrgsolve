@@ -282,9 +282,9 @@ convert_pow <- function(x) {
 #' 
 #' @md
 #' @export
-warn_integer_division <- function(x) {
+warn_integer_division <- function(x, block = "") {
   if(is.character(x)) {
-    .Call("_mrgsolve_warn_integer_division_impl", x, PACKAGE = "mrgsolve")
+    .Call("_mrgsolve_warn_integer_division_impl", x, block, PACKAGE = "mrgsolve")
   }
   invisible(x)
 }

@@ -5,6 +5,19 @@ DEVTRAN <- function(parin, funs, data, idata, mod) {
     .Call(`_mrgsolve_DEVTRAN`, parin, funs, data, idata, mod)
 }
 
+#' Warn about literal integer division in model code
+#'
+#' Scans each element of \code{code} and issues an R warning for every
+#' instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
+#' Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
+#' \code{0}, not \code{0.75}.
+#'
+#' @param code Character vector of source lines.
+#' @param block Name of the model block, included in the warning message.
+#' @return \code{code} unchanged (called for its side-effect warnings).
+#' @keywords internal
+NULL
+
 #' Convert Fortran-style exponentiation to C++ pow()
 #'
 #' Translates \code{base**exponent} to \code{pow(base, exponent)} in each
@@ -19,18 +32,8 @@ convert_pow_impl <- function(code) {
     .Call(`_mrgsolve_convert_pow_impl`, code)
 }
 
-#' Warn about literal integer division in model code
-#'
-#' Scans each element of \code{code} and issues an R warning for every
-#' instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
-#' Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
-#' \code{0}, not \code{0.75}.
-#'
-#' @param code Character vector of source lines.
-#' @return \code{code} unchanged (called for its side-effect warnings).
-#' @keywords internal
-warn_integer_division_impl <- function(code) {
-    .Call(`_mrgsolve_warn_integer_division_impl`, code)
+warn_integer_division_impl <- function(code, block) {
+    .Call(`_mrgsolve_warn_integer_division_impl`, code, block)
 }
 
 #' Convert Fortran-style IF/THEN/ELSE/ENDIF to C++

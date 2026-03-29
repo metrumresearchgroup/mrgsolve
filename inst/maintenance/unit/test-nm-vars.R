@@ -320,7 +320,7 @@ test_that("nm-vars model with no ode", {
 # nm_convert_semicolons --------------------------------------------------
 
 test_that("nm_convert_semicolons converts all recognised block names", {
-  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "EVENT", "PRED")
+  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
   spec <- setNames(
     lapply(blocks, function(b) paste0(b, "_var = 1")),
     blocks

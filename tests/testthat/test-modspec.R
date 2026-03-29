@@ -1091,10 +1091,10 @@ test_that("warn_integer_division warns for each instance on a line", {
   expect_true(any(grepl("3/8", w)))
 })
 
-test_that("warn_integer_division reports the correct line number", {
+test_that("warn_integer_division includes block name in warning", {
   expect_warning(
-    warn_integer_division(c("CL = THETA(1);", "V = 1/2;")),
-    "line 2"
+    warn_integer_division("CL = 3/4;", block = "PK"),
+    "\\$PK"
   )
 })
 

@@ -78,7 +78,7 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_EXPAND_OBSERVATIONS,4),
   CALLDEF(_mrgsolve_dcorr,1),
   CALLDEF(_mrgsolve_convert_pow_impl,1),
-  CALLDEF(_mrgsolve_warn_integer_division_impl,1),
+  CALLDEF(_mrgsolve_warn_integer_division_impl,2),
   CALLDEF(_mrgsolve_convert_fortran_if_impl,1),
   CALLDEF(_mrgsolve_convert_semicolons_impl,1),
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
