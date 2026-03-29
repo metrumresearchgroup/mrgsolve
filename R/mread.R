@@ -225,9 +225,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     build
   )
   
-  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
-  find_cpp_dot(spec, mread.env)
-  
   # Parse blocks ----
   # Each block gets assigned a class to dispatch the handler function
   # Also, we use a position attribute so we know 
@@ -245,6 +242,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Call the handler for each block
   spec <- lapply(spec, handle_spec_block, env = mread.env)
+  
+  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
+  find_cpp_dot(spec, mread.env)
   
   # collect -----
   # TODO: move this to the plugin handler

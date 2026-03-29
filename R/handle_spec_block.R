@@ -563,7 +563,9 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
          "   $TABLE double name = value;\n   $CAPTURE name")
   }
   x <- convert_pow(x)
-  return(x)
+  x <- convert_fortran_if(x)
+  warn_integer_division(x)
+  x
 }
 
 #' @export 
@@ -576,7 +578,8 @@ handle_spec_block.specEVENT <- function(x, env, ...) {
   check_block_data(x, env, pos)
   
   x <- convert_pow(x)
-
+  x <- convert_fortran_if(x)
+  warn_integer_division(x)
   x
 }
 
@@ -641,6 +644,8 @@ PRED <- function(x, env, ...) {
     stop("$ODE not allowed when $PRED is used",call.=FALSE)  
   }
   x <- convert_pow(x)
+  x <- convert_fortran_if(x)
+  warn_integer_division(x)
   x
 }
 
@@ -975,6 +980,8 @@ handle_spec_block.specODE <- function(x, env, ...) {
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   x <- convert_pow(x)
+  x <- convert_fortran_if(x)
+  warn_integer_division(x)
   x
 }
 
@@ -984,6 +991,8 @@ handle_spec_block.specODE <- function(x, env, ...) {
 handle_spec_block.specPREAMBLE <- function(x, env, ...) {
   x <- dump_opts(x)
   x <- convert_pow(x)
+  x <- convert_fortran_if(x)
+  warn_integer_division(x)
   x
 }
 
@@ -994,6 +1003,8 @@ handle_spec_block.specMAIN <- function(x,env,...) {
   x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
   x$x <- convert_pow(x$x)
+  x$x <- convert_fortran_if(x$x)
+  warn_integer_division(x$x)
   x$x
 }
 
