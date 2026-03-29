@@ -7,7 +7,7 @@
 convert_fortran_if(x)
 }
 \arguments{
-\item{x}{string to convert}
+\item{x}{string to convert.}
 }
 \description{
 Convert fortran IF ELSE THEN
