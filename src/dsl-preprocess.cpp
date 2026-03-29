@@ -762,7 +762,7 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code) {
 //' Scans each element of \code{code} and issues an R warning for every
 //' instance of literal integer division found (e.g. \code{3/4}, \code{1/2}).
 //' Integer division in C++ truncates toward zero, so \code{3/4} evaluates to
-//' \code{0}, not \code{0.75}.
+//' \code{0} and \code{7/3} evaluates to \code{2}, which is rarely intended.
 //'
 //' @param code Character vector of source lines.
 //' @param block Name of the model block, included in the warning message.
@@ -786,7 +786,7 @@ Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code,
           : "Integer division in $" + block + " block";
         std::string msg =
           prefix + ": '" +
-          inst.num + "/" + inst.den + "' truncates to 0; " +
+          inst.num + "/" + inst.den + "' truncates toward zero; " +
           "use " + inst.num + ".0/" + inst.den + ".0 for real division";
         warn_no_call(msg);
       }
