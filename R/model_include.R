@@ -79,14 +79,17 @@ plugin_names <- function(x) {
 
 make_clink <- function(x,clink) {
   if(is.null(x)) return(NULL)
-  link <- unique(s_pick(x,"linkto"))
+  link <- unique(s_pick(x, "linkto"))
   link <- sapply(link,function(ln) {
-    y <- find.package(dirname(ln))
-    build_path(file.path(y,basename(ln)))
+    y <- try(find.package(dirname(ln)))
+    if(inherits(y, "try-error")) {
+      stop(glue("couldn't find package {dirname(ln)}"))  
+    }
+    build_path(file.path(y, basename(ln)))
   })
   link <- c(link, build_path(clink))
   if(length(link)==0) return("")
-  paste(paste0("-I\"",unique(link), "\""),collapse=" ")
+  paste(paste0("-I\"", unique(link), "\""), collapse = " ")
 }
 
 set_clink <- function(x,clink=NULL,...) {
