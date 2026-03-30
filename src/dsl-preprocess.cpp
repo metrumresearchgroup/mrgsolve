@@ -715,8 +715,11 @@ static std::string convert_semicolon_line(const std::string& line) {
   size_t semi = find_semi_depth0(line);
 
   if (semi == std::string::npos) {
-    // No depth-0 ';': append one after the last non-whitespace character.
+    // No depth-0 ';': append one after the last non-whitespace character,
+    // unless the line ends with a continuation operator.
     size_t last = line.find_last_not_of(" \t");
+    static const std::string cont_chars = "+-*/&,=(";
+    if (cont_chars.find(t.back()) != std::string::npos) return line;
     return line.substr(0, last + 1) + ";";
   }
 

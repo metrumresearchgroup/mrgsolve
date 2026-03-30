@@ -1282,6 +1282,15 @@ test_that("convert_semicolons: leaves existing C++ comment after semicolon alone
   )
 })
 
+test_that("convert_semicolons: skips lines ending with continuation operator", {
+  expect_equal(as_("CL = THETA(1) *"),   "CL = THETA(1) *")
+  expect_equal(as_("CL = THETA(1) +"),   "CL = THETA(1) +")
+  expect_equal(as_("CL = THETA(1) /"),   "CL = THETA(1) /")
+  expect_equal(as_("CL = THETA(1) &"),   "CL = THETA(1) &")
+  expect_equal(as_("CL = THETA(1),"),    "CL = THETA(1),")
+  expect_equal(as_("double f("),         "double f(")
+})
+
 test_that("convert_semicolons: for loop semicolons inside parens are ignored", {
   expect_equal(
     as_("for(int i = 0; i < n; i++) x += A(i)"),
