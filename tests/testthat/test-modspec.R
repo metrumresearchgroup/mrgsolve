@@ -107,7 +107,7 @@ test_that("multiple blocks allowed or not allowed", {
     )
   }
   
-  code <- "$PLUGIN Rcpp\n$PLUGIN BH evtools\n$PARAM x = 3"
+  code <- "$PLUGIN nm-vars\n$PLUGIN autodec evtools\n$PARAM x = 3"
   expect_silent(
     mod <- mcode("test-multiple-plugin", code, compile = FALSE)
   )
