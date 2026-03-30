@@ -1079,30 +1079,30 @@ test_that("convert_pow handles ** in if() condition", {
   )
 })
 
-# warn_integer_division --------------------------------------------------
+# warn_int_div --------------------------------------------------
 
-test_that("warn_integer_division warns for simple integer division", {
+test_that("warn_int_div warns for simple integer division", {
   expect_warning(
-    warn_integer_division("CL = 3/4 * THETA(1);"),
+    warn_int_div("CL = 3/4 * THETA(1);"),
     "3/4"
   )
   expect_warning(
-    warn_integer_division("V = 1/2;"),
+    warn_int_div("V = 1/2;"),
     "1/2"
   )
 })
 
-test_that("warn_integer_division is silent when no integer division", {
-  expect_no_warning(warn_integer_division("CL = 0.5/2;"))
-  expect_no_warning(warn_integer_division("x = a/b;"))
-  expect_no_warning(warn_integer_division("y = 2.0/4;"))
-  expect_no_warning(warn_integer_division("z = THETA(1)/THETA(2);"))
+test_that("warn_int_div is silent when no integer division", {
+  expect_no_warning(warn_int_div("CL = 0.5/2;"))
+  expect_no_warning(warn_int_div("x = a/b;"))
+  expect_no_warning(warn_int_div("y = 2.0/4;"))
+  expect_no_warning(warn_int_div("z = THETA(1)/THETA(2);"))
 })
 
-test_that("warn_integer_division warns for each instance on a line", {
+test_that("warn_int_div warns for each instance on a line", {
   w <- character(0)
   withCallingHandlers(
-    warn_integer_division("F1 = 1/4 + 3/8;"),
+    warn_int_div("F1 = 1/4 + 3/8;"),
     warning = function(cond) {
       w <<- c(w, conditionMessage(cond))
       invokeRestart("muffleWarning")
@@ -1113,42 +1113,42 @@ test_that("warn_integer_division warns for each instance on a line", {
   expect_true(any(grepl("3/8", w)))
 })
 
-test_that("warn_integer_division includes block name in warning", {
+test_that("warn_int_div includes block name in warning", {
   expect_warning(
-    warn_integer_division("CL = 3/4;", block = "PK"),
+    warn_int_div("CL = 3/4;", block = "PK"),
     "\\$PK"
   )
 })
 
-test_that("warn_integer_division returns input unchanged", {
+test_that("warn_int_div returns input unchanged", {
   x <- c("CL = 3/4;", "V = a/b;")
   expect_equal(
-    suppressWarnings(warn_integer_division(x)),
+    suppressWarnings(warn_int_div(x)),
     x
   )
 })
 
-test_that("warn_integer_division passes through non-character input", {
-  expect_no_warning(warn_integer_division(42))
-  expect_no_warning(warn_integer_division(NULL))
+test_that("warn_int_div passes through non-character input", {
+  expect_no_warning(warn_int_div(42))
+  expect_no_warning(warn_int_div(NULL))
 })
 
-test_that("warn_integer_division detects integer division before line comment", {
-  expect_warning(warn_integer_division("1/2 // hey"), "1/2")
-  expect_warning(warn_integer_division("CL = 3/4; // comment"), "3/4")
-  expect_no_warning(warn_integer_division("x = a/b; // 1/2 is in the comment"))
+test_that("warn_int_div detects integer division before line comment", {
+  expect_warning(warn_int_div("1/2 // hey"), "1/2")
+  expect_warning(warn_int_div("CL = 3/4; // comment"), "3/4")
+  expect_no_warning(warn_int_div("x = a/b; // 1/2 is in the comment"))
 })
 
-# convert_fortran_if -----------------------------------------------------
+# convert_fort_if -----------------------------------------------------
 
-fi <- convert_fortran_if
+fi <- convert_fort_if
 
-test_that("convert_fortran_if: block form with Fortran operator", {
+test_that("convert_fort_if: block form with Fortran operator", {
   x <- c("IF(WT.GE.70) THEN", "  CL = THETA(1)", "ENDIF")
   expect_equal(fi(x), c("if(WT>=70) {", "  CL = THETA(1)", "}"))
 })
 
-test_that("convert_fortran_if: all Fortran relational operators", {
+test_that("convert_fort_if: all Fortran relational operators", {
   expect_equal(fi("IF(A.GE.B) THEN"), "if(A>=B) {")
   expect_equal(fi("IF(A.LE.B) THEN"), "if(A<=B) {")
   expect_equal(fi("IF(A.GT.B) THEN"), "if(A>B) {")
@@ -1159,93 +1159,93 @@ test_that("convert_fortran_if: all Fortran relational operators", {
   expect_equal(fi("IF(A.NEN.B) THEN"), "if(A!=B) {")
 })
 
-test_that("convert_fortran_if: logical operators in condition", {
+test_that("convert_fort_if: logical operators in condition", {
   expect_equal(fi("IF(A.GT.0.AND.B.LT.1) THEN"), "if(A>0&&B<1) {")
   expect_equal(fi("IF(A.LT.0.OR.B.GT.1) THEN"),  "if(A<0||B>1) {")
   expect_equal(fi("IF(.NOT.FLAG) THEN"),           "if(!FLAG) {")
 })
 
-test_that("convert_fortran_if: .TRUE. and .FALSE.", {
+test_that("convert_fort_if: .TRUE. and .FALSE.", {
   expect_equal(fi("IF(.TRUE.) THEN"),  "if(true) {")
   expect_equal(fi("IF(.FALSE.) THEN"), "if(false) {")
 })
 
-test_that("convert_fortran_if: single-line form", {
+test_that("convert_fort_if: single-line form", {
   expect_equal(fi("IF(WT.GE.70) CL = THETA(1)"), "if(WT>=70) CL = THETA(1)")
   expect_equal(fi("IF(A.GT.0) x = 1"),            "if(A>0) x = 1")
 })
 
-test_that("convert_fortran_if: if/else block", {
+test_that("convert_fort_if: if/else block", {
   x <- c("IF(WT.GE.70) THEN", "  CL = 2", "ELSE", "  CL = 1", "ENDIF")
   expect_equal(fi(x), c("if(WT>=70) {", "  CL = 2", "} else {", "  CL = 1", "}"))
 })
 
-test_that("convert_fortran_if: ELSEIF (no space)", {
+test_that("convert_fort_if: ELSEIF (no space)", {
   x <- c("IF(A.GT.0) THEN", "  x = 1", "ELSEIF(A.LT.0) THEN", "  x = -1", "ENDIF")
   expect_equal(fi(x), c("if(A>0) {", "  x = 1", "} else if(A<0) {", "  x = -1", "}"))
 })
 
-test_that("convert_fortran_if: ELSE IF (two words)", {
+test_that("convert_fort_if: ELSE IF (two words)", {
   x <- c("IF(A.GT.0) THEN", "  x = 1", "ELSE IF(A.LT.0) THEN", "  x = -1", "ENDIF")
   expect_equal(fi(x), c("if(A>0) {", "  x = 1", "} else if(A<0) {", "  x = -1", "}"))
 })
 
-test_that("convert_fortran_if: END IF (two words)", {
+test_that("convert_fort_if: END IF (two words)", {
   x <- c("IF(A.GT.0) THEN", "  x = 1", "END IF")
   expect_equal(fi(x), c("if(A>0) {", "  x = 1", "}"))
 })
 
-test_that("convert_fortran_if: case insensitive keywords", {
+test_that("convert_fort_if: case insensitive keywords", {
   expect_equal(fi("if(wt.ge.70) then"), "if(wt>=70) {")
   expect_equal(fi("endif"),             "}")
   expect_equal(fi("else"),              "} else {")
 })
 
-test_that("convert_fortran_if: indentation preserved", {
+test_that("convert_fort_if: indentation preserved", {
   expect_equal(fi("  IF(A.GT.0) THEN"), "  if(A>0) {")
   expect_equal(fi("  ENDIF"),           "  }")
 })
 
-test_that("convert_fortran_if: operators converted in body lines", {
+test_that("convert_fort_if: operators converted in body lines", {
   expect_equal(fi("  CL = CL * (SEX.EQ.1)"), "  CL = CL * (SEX==1)")
 })
 
-test_that("convert_fortran_if: nested parens in condition", {
+test_that("convert_fort_if: nested parens in condition", {
   expect_equal(fi("IF(F(WT).GE.G(AGE)) THEN"), "if(F(WT)>=G(AGE)) {")
 })
 
-test_that("convert_fortran_if: comment lines pass through unchanged", {
+test_that("convert_fort_if: comment lines pass through unchanged", {
   expect_equal(fi("// IF(X.GT.0) THEN"), "// IF(X.GT.0) THEN")
 })
 
-test_that("convert_fortran_if: non-IF lines with Fortran ops converted", {
+test_that("convert_fort_if: non-IF lines with Fortran ops converted", {
   expect_equal(fi("CL = THETA(1).GE.0"), "CL = THETA(1)>=0")
 })
 
-test_that("convert_fortran_if: non-character input passes through", {
+test_that("convert_fort_if: non-character input passes through", {
   expect_equal(fi(42),   42)
   expect_null(fi(NULL))
 })
 
-test_that("convert_fortran_if: compound conditions with .AND.", {
+test_that("convert_fort_if: compound conditions with .AND.", {
   expect_equal(fi("IF(A.GE.B.AND.D.GT.C) THEN"),   "if(A>=B&&D>C) {")
   expect_equal(fi("IF(A.GE.B.AND.D.GT.C) CL = 1"), "if(A>=B&&D>C) CL = 1")
 })
 
-test_that("convert_fortran_if: compound conditions with .OR.", {
+test_that("convert_fort_if: compound conditions with .OR.", {
   expect_equal(fi("IF(A.GE.B.OR.C.LE.D) THEN"), "if(A>=B||C<=D) {")
 })
 
-test_that("convert_fortran_if: three operators in condition", {
+test_that("convert_fort_if: three operators in condition", {
   expect_equal(fi("IF(A.GE.B.OR.C.LE.D.AND.E.NE.F) THEN"), "if(A>=B||C<=D&&E!=F) {")
 })
 
-test_that("convert_fortran_if: float literals adjacent to operators", {
+test_that("convert_fort_if: float literals adjacent to operators", {
   expect_equal(fi("IF(A.GE.0.5.AND.B.LT.1.0) THEN"), "if(A>=0.5&&B<1.0) {")
   expect_equal(fi("IF(A.GT.1E-3.AND.B.LT.2) THEN"),  "if(A>1E-3&&B<2) {")
 })
 
-test_that("convert_fortran_if: .NOT. combined with other operators", {
+test_that("convert_fort_if: .NOT. combined with other operators", {
   expect_equal(fi("IF(.NOT.FLAG.AND.X.GT.0) THEN"), "if(!FLAG&&X>0) {")
 })
 

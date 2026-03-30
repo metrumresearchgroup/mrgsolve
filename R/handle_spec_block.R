@@ -27,9 +27,9 @@ handle_convert_pow <- function(x, env, pos) {
   }
   x
 }
-handle_warn_integer_division <- function(x, env, pos) {
-  if(env$warn_integer_division) { 
-    warn_integer_division(x, env$incoming_names[pos])
+handle_warn_int_div <- function(x, env, pos) {
+  if(env$warn_int_div) {
+    warn_int_div(x, env$incoming_names[pos])
   }
   invisible(x)
 }
@@ -572,7 +572,7 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
          "Save your output to double and pass to $CAPTURE instead:\n",
          "   $TABLE double name = value;\n   $CAPTURE name")
   }
-  handle_warn_integer_division(x, env, pos)
+  handle_warn_int_div(x, env, pos)
   handle_convert_pow(x, env, pos)
 }
 
@@ -583,7 +583,7 @@ handle_spec_block.specEVENT <- function(x, env, ...) {
   
   check_block_data(x, env, pos)
   
-  handle_warn_integer_division(x, env, pos)
+  handle_warn_int_div(x, env, pos)
   handle_convert_pow(x, env, pos)
 }
 
@@ -648,7 +648,7 @@ PRED <- function(x, env, pos, ...) {
   if(any("ODE"==env[["blocks"]])) {
     stop("$ODE not allowed when $PRED is used",call.=FALSE)  
   }
-  handle_warn_integer_division(x, env, pos)
+  handle_warn_int_div(x, env, pos)
   handle_convert_pow(x, env, pos)
 }
 
@@ -983,7 +983,7 @@ handle_spec_block.specODE <- function(x, env, ...) {
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   
-  handle_warn_integer_division(x, env, pos)
+  handle_warn_int_div(x, env, pos)
   handle_convert_pow(x, env, pos)
 }
 
@@ -994,7 +994,7 @@ handle_spec_block.specPREAMBLE <- function(x, env, ...) {
   pos <- attr(x, "pos")
   x <- dump_opts(x)
   
-  handle_warn_integer_division(x, env, pos)
+  handle_warn_int_div(x, env, pos)
   handle_convert_pow(x, env, pos)
 }
 
@@ -1006,7 +1006,7 @@ handle_spec_block.specMAIN <- function(x,env,...) {
   x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
   
-  handle_warn_integer_division(x$x, env, pos)
+  handle_warn_int_div(x$x, env, pos)
   handle_convert_pow(x$x, env, pos)
 }
 

@@ -142,9 +142,9 @@ autodec_nm_vars <- function(x, env) {
 preprocess_nm_vars <- function(spec, env) {
   to_process <- intersect(names(spec), GLOBALS$PRE_PROC_BLOCKS)
   # Convert FORTRAN if else then; needs to happen first
-  if(env$convert_fortran_if) {
+  if(env$convert_fort_if) {
     for(b in to_process) {
-      spec[[b]] <- convert_fortran_if(spec[[b]])
+      spec[[b]] <- convert_fort_if(spec[[b]])
     }
   }
   # Add semicolons if needed

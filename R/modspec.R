@@ -256,16 +256,50 @@ fixed_parameters <- function(x,fixed_type) {
   )
 }
 
-#' Convert power from fortran to C++ style
-#' 
-#' @param x code string to convert. 
-#' @param block code block name; only used if called while processing a model 
-#' file.
-#' 
+#' DSL preprocessing functions
+#'
+#' These functions preprocess model code written in the mrgsolve DSL before
+#' C++ compilation.
+#'
+#' @param x character vector of source lines to process.
+#' @param block model block name; included in warning messages when called
+#'   during model parsing.
+#'
+#' @details
+#' - `convert_pow()`: converts Fortran-style exponentiation (`**`) to C++
+#'   `pow()` calls.
+#' - `warn_int_div()`: warns about literal integer division (e.g. `3/4`,
+#'   `1/2`) that truncates toward zero in C++. Returns `x` invisibly and is
+#'   called for its side-effect warnings.
+#' - `convert_fort_if()`: converts Fortran `IF`/`THEN`/`ELSE`/`ENDIF`
+#'   constructs and relational operators (`.GE.`, `.LE.`, etc.) to C++.
+#' - `convert_semicolons()`: appends semicolons to statement lines that are
+#'   missing them.
+#'
+#' Processing is controlled by environment variables:
+#' - `MRGSOLVE_CONVERT_POW` (default `TRUE`)
+#' - `MRGSOLVE_WARN_INT_DIV` (default `TRUE`)
+#' - `MRGSOLVE_CONVERT_FORT_IF` (default `TRUE`)
+#' - `MRGSOLVE_CONVERT_SEMICOLONS` (default `FALSE`)
+#'
+#' Set any variable to `FALSE` to disable the corresponding step.
+#'
 #' @examples
 #' convert_pow("a**2")
 #' convert_pow("(WT/70) ** THETA(3)")
-#' 
+#'
+#' warn_int_div("THETA(1) * pow(WT/70, 3/4)")
+#' warn_int_div("3.0/4")
+#'
+#' convert_fort_if("IF ( WT .GE.90) THEN")
+#'
+#' convert_semicolons("CL = THETA1")
+#'
+#' @name dsl_preprocess
+#' @md
+NULL
+
+#' @rdname dsl_preprocess
 #' @export
 convert_pow <- function(x, block = "") {
   if(is.character(x)) {
@@ -274,47 +308,25 @@ convert_pow <- function(x, block = "") {
   x
 }
 
-#' Warn for literal integer division
-#' 
-#' @param x code string to check. 
-#' @param block code block name; only used if called while processing a model 
-#' file.
-#' 
-#' @examples
-#' warn_integer_division("THETA(1) * pow(WT/70, 3/4)")
-#' warn_integer_division("3.0/4")
-#' 
-#' @md
+#' @rdname dsl_preprocess
 #' @export
-warn_integer_division <- function(x, block = "") {
+warn_int_div <- function(x, block = "") {
   if(is.character(x)) {
-    .Call("_mrgsolve_warn_integer_division_impl", x, block, PACKAGE = "mrgsolve")
+    .Call("_mrgsolve_warn_int_div_impl", x, block, PACKAGE = "mrgsolve")
   }
   invisible(x)
 }
-#' Convert fortran IF ELSE THEN
-#' 
-#' @param x string to convert.
-#' 
-#' @examples
-#' convert_fortran_if("IF ( WT .GE.90) THEN")
-#' 
-#' @md
+
+#' @rdname dsl_preprocess
 #' @export
-convert_fortran_if <- function(x) {
+convert_fort_if <- function(x) {
   if(is.character(x)) {
-    x <- .Call("_mrgsolve_convert_fortran_if_impl", x, PACKAGE = "mrgsolve")
+    x <- .Call("_mrgsolve_convert_fort_if_impl", x, PACKAGE = "mrgsolve")
   }
   x
 }
-#' Add semicolons to code blocks
-#' 
-#' @param x string to convert.
-#' 
-#' @examples
-#' convert_semicolons("CL = THETA1")
-#' 
-#' @md
+
+#' @rdname dsl_preprocess
 #' @export
 convert_semicolons <- function(x) {
   if(is.character(x)) {
@@ -790,11 +802,12 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$check_modeled_infusions <- TRUE
   mread.env$convert_pow <-
     !isFALSE(ENV[["MRGSOLVE_CONVERT_POW"]])
-  mread.env$convert_semicolons <- FALSE
-  mread.env$convert_fortran_if <- 
-    !isFALSE(ENV[["MRGSOLVE_CONVERT_FORTRAN_IF"]])
-  mread.env$warn_integer_division <- 
-    !isFALSE(ENV[["MRGSOLVE_WARN_INTEGER_DIVISION"]])
+  mread.env$convert_semicolons <-
+    isTRUE(ENV[["MRGSOLVE_CONVERT_SEMICOLONS"]])
+  mread.env$convert_fort_if <-
+    !isFALSE(ENV[["MRGSOLVE_CONVERT_FORT_IF"]])
+  mread.env$warn_int_div <-
+    !isFALSE(ENV[["MRGSOLVE_WARN_INT_DIV"]])
   mread.env
 }
 

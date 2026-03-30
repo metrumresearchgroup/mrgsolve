@@ -31,8 +31,8 @@ convert_pow_impl <- function(code, block) {
 #' @param block Name of the model block, included in the warning message.
 #' @return \code{code} unchanged (called for its side-effect warnings).
 #' @keywords internal
-warn_integer_division_impl <- function(code, block) {
-    .Call(`_mrgsolve_warn_integer_division_impl`, code, block)
+warn_int_div_impl <- function(code, block) {
+    .Call(`_mrgsolve_warn_int_div_impl`, code, block)
 }
 
 #' Convert Fortran-style IF/THEN/ELSE/ENDIF to C++
@@ -47,8 +47,8 @@ warn_integer_division_impl <- function(code, block) {
 #' @param code Character vector of source lines.
 #' @return Character vector with Fortran IF constructs replaced by C++.
 #' @keywords internal
-convert_fortran_if_impl <- function(code) {
-    .Call(`_mrgsolve_convert_fortran_if_impl`, code)
+convert_fort_if_impl <- function(code) {
+    .Call(`_mrgsolve_convert_fort_if_impl`, code)
 }
 
 #' Insert semicolons at the end of C++ statements

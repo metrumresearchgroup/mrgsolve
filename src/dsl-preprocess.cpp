@@ -799,8 +799,8 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code,
 //' @return \code{code} unchanged (called for its side-effect warnings).
 //' @keywords internal
 // [[Rcpp::export]]
-Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code,
-                                                  std::string block) {
+Rcpp::CharacterVector warn_int_div_impl(Rcpp::CharacterVector code,
+                                         std::string block) {
   for (int i = 0; i < code.size(); ++i) {
     try {
       std::string line = Rcpp::as<std::string>(code[i]);
@@ -833,7 +833,7 @@ Rcpp::CharacterVector warn_integer_division_impl(Rcpp::CharacterVector code,
 //' @return Character vector with Fortran IF constructs replaced by C++.
 //' @keywords internal
 // [[Rcpp::export]]
-Rcpp::CharacterVector convert_fortran_if_impl(Rcpp::CharacterVector code) {
+Rcpp::CharacterVector convert_fort_if_impl(Rcpp::CharacterVector code) {
   Rcpp::CharacterVector out(code.size());
   for (int i = 0; i < code.size(); ++i) {
     try {
