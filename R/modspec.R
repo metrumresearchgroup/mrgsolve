@@ -790,8 +790,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$check_modeled_infusions <- TRUE
   mread.env$convert_pow <-
     !isFALSE(ENV[["MRGSOLVE_CONVERT_POW"]])
-  mread.env$convert_semicolons <- 
-    !isFALSE(ENV[["MRGSOLVE_CONVERT_SEMICOLONS"]])
+  mread.env$convert_semicolons <- FALSE
   mread.env$convert_fortran_if <- 
     !isFALSE(ENV[["MRGSOLVE_CONVERT_FORTRAN_IF"]])
   mread.env$warn_integer_division <- 
