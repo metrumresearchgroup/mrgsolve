@@ -37,6 +37,8 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
+            any::BH
+            any::RcppArmadillo
           upgrade: 'TRUE'
       - name: Install pdflatex
         shell: bash
