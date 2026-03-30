@@ -296,8 +296,9 @@ fixed_parameters <- function(x,fixed_type) {
 #' convert_pow("a**2")
 #' convert_pow("(WT/70) ** THETA(3)")
 #' 
-#' code <- c("IF ( WT .GE.90) THEN", "CL = CL * 0.8", "ENDIF")
-#' convert_fort_if(code)
+#' code <- c("IF ( WT .GE.90) THEN", "  CL = CL * 0.8", "ENDIF")
+#' cat(code, sep = "\n")
+#' cat(convert_fort_if(code), sep = "\n")
 #'
 #' convert_semicolons("CL = THETA1")
 #' 
