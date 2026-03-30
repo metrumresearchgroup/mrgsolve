@@ -261,15 +261,19 @@ _T___ readRDS(const std::string filename) {
  * @code
  * $PLUGIN mrgx
  * 
+ * $ENV
+ * NORM <- function(n, mu, sd) rnorm(n, mu, sd)
+ * 
  * $GLOBAL 
  * Rcpp::Function fun = mrgx::mt_fun(); 
  * 
  * $PREAMBLE 
- * fun = mrgx::get<Rcpp::Function>("SEQ");
+ * fun = mrgx::get<Rcpp::Function>("NORM");
  * 
- * $ERROR 
+ * $MAIN
+ * Rcpp::NumericVector ans = fun(1000, 33, 3);
+ *
  * if(FINAL_ROW) {
- *   Rcpp::IntegerVector ans = fun(34);    
  *   mrgx::assign("vec", ans, self);
  * }
  * @endcode

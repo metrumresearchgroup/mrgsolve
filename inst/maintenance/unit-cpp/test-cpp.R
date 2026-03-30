@@ -192,18 +192,21 @@ test_that("mrgx::assign", {
 })
 
 code_mt_fun <- '
-$ENV SEQ <- function(n) seq(n)
+$ENV NORM <- function(n, mu, sd) rnorm(n, mu, sd)
 $PLUGIN mrgx
 $GLOBAL Rcpp::Function fun = mrgx::mt_fun(); 
-$PREAMBLE fun = mrgx::get<Rcpp::Function>("SEQ", self);
-$ERROR if(FINAL_ROW) mrgx::assign("vec", fun(34), self);
+$PREAMBLE fun = mrgx::get<Rcpp::Function>("NORM", self);
+$MAIN 
+Rcpp::NumericVector ans = fun(10000, 33, 3);
+if(FINAL_ROW) mrgx::assign("vec", ans, self);
 '
 
 test_that("mrgx::mt_fun", {
   mod <- mcode("test_mt_fun", code_mt_fun)
-  out <- mrgsim(mod)
-  ans <- mod@envir$vec
-  expect_identical(ans, seq(34))
+  set.seed(12345)
+  out <- mrgsim(mod, end = 3, delta = 1)
+  ans <- mean(mod@envir$vec)
+  expect_equal(ans, 33, tolerance = 1)
 })
 
 code_get_fun <- '
