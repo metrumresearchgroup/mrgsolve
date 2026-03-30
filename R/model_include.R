@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022 Metrum Research Group
+# Copyright (C) 2013 - 2026 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,14 +17,17 @@
 
 includes <- new.env()
 plugins <- new.env()
-plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
+plugins[[".depends"]] <- list(
+  "mrgx" = "Rcpp", 
+  "nm-like" = c("nm-vars", "autodec", "semicolons")
+)
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
 get_plugins <- function(spec, env) {
-  what <- unlist(spec[names(spec)=="PLUGIN"], use.names = FALSE)
+  what <- unname(do.call("c", spec[names(spec)=="PLUGIN"]))
   what <- c(cvec_cs(what), "base")
-  what <- unique(c(get_depends(what),what))
+  what <- unique(c(get_depends(what), what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 
   }
@@ -32,12 +35,23 @@ get_plugins <- function(spec, env) {
   names(x) <- s_pick(x,"name")
   # TODO: register other plugins if needed
   env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
+  if("semicolons" %in% names(x)) {
+    env[["convert_semicolons"]] <- TRUE
+    if(!env[["using_nm-vars"]]) {
+      msg <- "`semicolons` only works with the `nm-vars` plugin"
+      body <- c(
+        v = "using the `semicolons` plugin", 
+        x = "not using the `nm-vars` plugin"
+      )
+      warn(message = msg, body = body)
+    }
+  }
   x
 }
 
 get_depends <- function(what) {
-  what <- intersect(what,ls(plugins[[".depends"]]))
-  plugins[[".depends"]][what]
+  what <- intersect(what, ls(plugins[[".depends"]]))
+  unlist(plugins[[".depends"]][what], use.names = FALSE)
 }
 
 get_plugin <- function(what) {
@@ -178,6 +192,14 @@ plugins[["evtools"]] <- list(
   name = "evtools", 
   using = c('#include "mrgsolve-evtools.h"', 
             '#include "mrgsolve-evtools-regimen.h"')
+)
+
+plugins[["semicolons"]] <- list(
+  name = "semicolons"
+)
+
+plugins[["nm-like"]] <- list(
+  name = "nm-like"
 )
 
 # nocov end
