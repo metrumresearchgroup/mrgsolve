@@ -267,7 +267,8 @@ fixed_parameters <- function(x,fixed_type) {
 #'
 #' @details
 #' - `convert_pow()`: converts Fortran-style exponentiation (`**`) to C++
-#'   `pow()` calls; runs by default unless turned off by environment variable.
+#'   `pow()` calls; runs by default unless turned off by environment variable; 
+#'   lines of code will pass through unaltered if `**` is not found.
 #' - `warn_int_div()`: warns about literal integer division (e.g. `3/4`,
 #'   `1/2`) that truncates toward zero in C++; returns `x` invisibly and is
 #'   called for its side-effect warnings; runs by default unless turned off 
@@ -288,7 +289,8 @@ fixed_parameters <- function(x,fixed_type) {
 #' - `MRGSOLVE_WARN_INT_DIV` (default `TRUE`)
 #'
 #' Set any variable to `FALSE` to disable the corresponding step when 
-#' processing a model file via [mread()].
+#' processing a model file via [mread()]. Adding `semicolons` must be opted
+#' into through the `semicolons` or `nm-full` plugins.
 #'
 #' @examples
 #' convert_pow("a**2")
@@ -298,6 +300,10 @@ fixed_parameters <- function(x,fixed_type) {
 #' convert_fort_if(code)
 #'
 #' convert_semicolons("CL = THETA1")
+#' 
+#' code <- c("CL =", "THETA1 *", "(WT/70) *", "exp(ETA(1))")
+#' cat(code, sep = "\n")
+#' cat(convert_semicolons(code), sep = "\n")
 #'
 #' warn_int_div("THETA(1) * pow(WT/70, 3/4)")
 #' warn_int_div("3.0/4")

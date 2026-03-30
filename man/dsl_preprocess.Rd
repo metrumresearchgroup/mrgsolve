@@ -29,7 +29,8 @@ C++ compilation.
 \details{
 \itemize{
 \item \code{convert_pow()}: converts Fortran-style exponentiation (\verb{**}) to C++
-\code{pow()} calls; runs by default unless turned off by environment variable.
+\code{pow()} calls; runs by default unless turned off by environment variable;
+lines of code will pass through unaltered if \verb{**} is not found.
 \item \code{warn_int_div()}: warns about literal integer division (e.g. \code{3/4},
 \code{1/2}) that truncates toward zero in C++; returns \code{x} invisibly and is
 called for its side-effect warnings; runs by default unless turned off
@@ -53,7 +54,8 @@ Processing is controlled by environment variables:
 }
 
 Set any variable to \code{FALSE} to disable the corresponding step when
-processing a model file via \code{\link[=mread]{mread()}}.
+processing a model file via \code{\link[=mread]{mread()}}. Adding \code{semicolons} must be opted
+into through the \code{semicolons} or \code{nm-full} plugins.
 }
 \examples{
 convert_pow("a**2")
@@ -63,6 +65,10 @@ code <- c("IF ( WT .GE.90) THEN", "CL = CL * 0.8", "ENDIF")
 convert_fort_if(code)
 
 convert_semicolons("CL = THETA1")
+
+code <- c("CL =", "THETA1 *", "(WT/70) *", "exp(ETA(1))")
+cat(code, sep = "\n")
+cat(convert_semicolons(code), sep = "\n")
 
 warn_int_div("THETA(1) * pow(WT/70, 3/4)")
 warn_int_div("3.0/4")
