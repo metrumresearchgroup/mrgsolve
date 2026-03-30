@@ -176,3 +176,79 @@ test_that("now doses are given even when time is past #1151", {
   expect_equal(out$A[1], 0)
   expect_equal(out$A[2], 100)
 })
+
+code_test_assign <- '
+$PLUGIN mrgx
+$GLOBAL Rcpp::NumericVector ans(100);
+$PREAMBLE for(R_xlen_t i = 0; i < ans.size(); ++i) ans[i] = i;
+$PK if(FINAL_ROW) mrgx::assign("vec", ans, self);
+'
+
+test_that("mrgx::assign", {
+  mod <- mcode("test_assign", code_test_assign)
+  out <- mrgsim(mod)
+  ans <- mod@envir$vec
+  expect_identical(ans, seq(100)-1)
+})
+
+code_mt_fun <- '
+$ENV NORM <- function(n, mu, sd) rnorm(n, mu, sd)
+$PLUGIN mrgx
+$GLOBAL Rcpp::Function fun = mrgx::mt_fun(); 
+$PREAMBLE fun = mrgx::get<Rcpp::Function>("NORM", self);
+$MAIN 
+Rcpp::NumericVector ans = fun(10000, 33, 3);
+if(FINAL_ROW) mrgx::assign("vec", ans, self);
+'
+
+test_that("mrgx::mt_fun", {
+  mod <- mcode("test_mt_fun", code_mt_fun)
+  set.seed(12345)
+  out <- mrgsim(mod, end = 3, delta = 1)
+  ans <- mean(mod@envir$vec)
+  expect_equal(ans, 33, tolerance = 1)
+})
+
+code_get_fun <- '
+$PLUGIN mrgx
+$GLOBAL 
+Rcpp::Function Rnorm = mrgx::get<Rcpp::Function>("stats", "rnorm"); 
+Rcpp::Function Seq   = mrgx::get<Rcpp::Function>("base" , "seq");
+$ERROR 
+if(FINAL_ROW) {
+  Rcpp::NumericVector a = Rnorm(22);
+  mrgx::assign("double", a, self);
+  Rcpp::IntegerVector b = Seq(33);
+  mrgx::assign("int", b, self);
+}
+'
+
+test_that("mrgx::get function from R", {
+  mod <- mcode("test_get_fun", code_get_fun)
+  set.seed(12345)
+  out <- mrgsim(mod)
+  ans <- as.list(mod@envir)
+  expect_is(ans$double, "numeric")
+  expect_length(ans$double, 22)
+  expect_equal(ans$int, seq(33))
+})
+
+code_read_rds <- '
+$PLUGIN mrgx
+$ENV 
+file <- file.path(tempdir(), "file-read-rds.RDS")
+x <- list(a = 1.23, b = c(1,2,3,99))
+saveRDS(object = x, file = file)
+$PREAMBLE
+std::string file = mrgx::get<std::string>("file", self);
+Rcpp::List y = mrgx::readRDS<Rcpp::List>(file);
+capture a = y["a"];
+capture b = Rcpp::as<Rcpp::NumericVector>(y["b"])[3];
+'
+
+test_that("mrgx::readRDS", {
+  mod <- mcode("test_mrgx_read_rds", code_read_rds)
+  out <- mrgsim(mod)
+  expect_all_equal(out$a, mod@envir$x$a)
+  expect_all_equal(out$b, mod@envir$x$b[4])
+})
