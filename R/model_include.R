@@ -26,13 +26,13 @@ include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
 get_plugins <- function(spec, env) {
   what <- unname(do.call("c", spec[names(spec)=="PLUGIN"]))
-  what <- c(cvec_cs(what), "base")
-  what <- unique(c(get_depends(what), what))
+  what <- c("base", cvec_cs(what))
+  what <- unique(c(what, get_depends(what)))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 
   }
-  x <- lapply(what,get_plugin)
-  names(x) <- s_pick(x,"name")
+  x <- lapply(what, get_plugin)
+  names(x) <- s_pick(x, "name")
   # TODO: register other plugins if needed
   env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
   if("semicolons" %in% names(x)) {
