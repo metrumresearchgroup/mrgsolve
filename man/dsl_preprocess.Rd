@@ -29,35 +29,42 @@ C++ compilation.
 \details{
 \itemize{
 \item \code{convert_pow()}: converts Fortran-style exponentiation (\verb{**}) to C++
-\code{pow()} calls.
+\code{pow()} calls; runs by default unless turned off by environment variable.
 \item \code{warn_int_div()}: warns about literal integer division (e.g. \code{3/4},
-\code{1/2}) that truncates toward zero in C++. Returns \code{x} invisibly and is
-called for its side-effect warnings.
+\code{1/2}) that truncates toward zero in C++; returns \code{x} invisibly and is
+called for its side-effect warnings; runs by default unless turned off
+by environment variable.
 \item \code{convert_fort_if()}: converts Fortran \code{IF}/\code{THEN}/\code{ELSE}/\code{ENDIF}
-constructs and relational operators (\code{.GE.}, \code{.LE.}, etc.) to C++.
+constructs and relational operators (\code{.GE.}, \code{.LE.}, etc.) to C++; runs
+only when the \code{nm-vars} plugin is invoked.
 \item \code{convert_semicolons()}: appends semicolons to statement lines that are
-missing them.
+missing them; lines ending with an operator (e.g., \code{+} or \code{/} or "=")
+will not be terminated with a semicolon; this preprocessor must be
+enlisted through the \code{semicolons} plugin and it only runs with \code{nm-vars};
+the \code{semicolons} plugin is brought online when the \code{nm-full} composite
+plugin (\code{nm-vars}, \code{autodec}, \code{semicolons}) is invoked.
 }
 
 Processing is controlled by environment variables:
 \itemize{
 \item \code{MRGSOLVE_CONVERT_POW} (default \code{TRUE})
-\item \code{MRGSOLVE_WARN_INT_DIV} (default \code{TRUE})
 \item \code{MRGSOLVE_CONVERT_FORT_IF} (default \code{TRUE})
-\item \code{MRGSOLVE_CONVERT_SEMICOLONS} (default \code{FALSE})
+\item \code{MRGSOLVE_WARN_INT_DIV} (default \code{TRUE})
 }
 
-Set any variable to \code{FALSE} to disable the corresponding step.
+Set any variable to \code{FALSE} to disable the corresponding step when
+processing a model file via \code{\link[=mread]{mread()}}.
 }
 \examples{
 convert_pow("a**2")
 convert_pow("(WT/70) ** THETA(3)")
 
-warn_int_div("THETA(1) * pow(WT/70, 3/4)")
-warn_int_div("3.0/4")
-
-convert_fort_if("IF ( WT .GE.90) THEN")
+code <- c("IF ( WT .GE.90) THEN", "CL = CL * 0.8", "ENDIF")
+convert_fort_if(code)
 
 convert_semicolons("CL = THETA1")
+
+warn_int_div("THETA(1) * pow(WT/70, 3/4)")
+warn_int_div("3.0/4")
 
 }

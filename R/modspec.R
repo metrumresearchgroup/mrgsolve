@@ -267,33 +267,40 @@ fixed_parameters <- function(x,fixed_type) {
 #'
 #' @details
 #' - `convert_pow()`: converts Fortran-style exponentiation (`**`) to C++
-#'   `pow()` calls.
+#'   `pow()` calls; runs by default unless turned off by environment variable.
 #' - `warn_int_div()`: warns about literal integer division (e.g. `3/4`,
-#'   `1/2`) that truncates toward zero in C++. Returns `x` invisibly and is
-#'   called for its side-effect warnings.
+#'   `1/2`) that truncates toward zero in C++; returns `x` invisibly and is
+#'   called for its side-effect warnings; runs by default unless turned off 
+#'   by environment variable.
 #' - `convert_fort_if()`: converts Fortran `IF`/`THEN`/`ELSE`/`ENDIF`
-#'   constructs and relational operators (`.GE.`, `.LE.`, etc.) to C++.
+#'   constructs and relational operators (`.GE.`, `.LE.`, etc.) to C++; runs
+#'   only when the `nm-vars` plugin is invoked.
 #' - `convert_semicolons()`: appends semicolons to statement lines that are
-#'   missing them.
-#'
+#'   missing them; lines ending with an operator (e.g., `+` or `/` or "=")
+#'   will not be terminated with a semicolon; this preprocessor must be 
+#'   enlisted through the `semicolons` plugin and it only runs with `nm-vars`;
+#'   the `semicolons` plugin is brought online when the `nm-full` composite
+#'   plugin (`nm-vars`, `autodec`, `semicolons`) is invoked.
+#'   
 #' Processing is controlled by environment variables:
 #' - `MRGSOLVE_CONVERT_POW` (default `TRUE`)
-#' - `MRGSOLVE_WARN_INT_DIV` (default `TRUE`)
 #' - `MRGSOLVE_CONVERT_FORT_IF` (default `TRUE`)
-#' - `MRGSOLVE_CONVERT_SEMICOLONS` (default `FALSE`)
+#' - `MRGSOLVE_WARN_INT_DIV` (default `TRUE`)
 #'
-#' Set any variable to `FALSE` to disable the corresponding step.
+#' Set any variable to `FALSE` to disable the corresponding step when 
+#' processing a model file via [mread()].
 #'
 #' @examples
 #' convert_pow("a**2")
 #' convert_pow("(WT/70) ** THETA(3)")
+#' 
+#' code <- c("IF ( WT .GE.90) THEN", "CL = CL * 0.8", "ENDIF")
+#' convert_fort_if(code)
+#'
+#' convert_semicolons("CL = THETA1")
 #'
 #' warn_int_div("THETA(1) * pow(WT/70, 3/4)")
 #' warn_int_div("3.0/4")
-#'
-#' convert_fort_if("IF ( WT .GE.90) THEN")
-#'
-#' convert_semicolons("CL = THETA1")
 #'
 #' @name dsl_preprocess
 #' @md
@@ -802,8 +809,7 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$check_modeled_infusions <- TRUE
   mread.env$convert_pow <-
     !isFALSE(ENV[["MRGSOLVE_CONVERT_POW"]])
-  mread.env$convert_semicolons <-
-    isTRUE(ENV[["MRGSOLVE_CONVERT_SEMICOLONS"]])
+  mread.env$convert_semicolons <- FALSE
   mread.env$convert_fort_if <-
     !isFALSE(ENV[["MRGSOLVE_CONVERT_FORT_IF"]])
   mread.env$warn_int_div <-
