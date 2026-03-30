@@ -319,7 +319,7 @@ test_that("nm-vars model with no ode", {
 
 # preprocess_nm_vars --------------------------------------------------
 
-testenv <- list2env(list(convert_semicolons = TRUE, convert_fortran_if = TRUE))
+testenv <- list2env(list(convert_semicolons = TRUE, convert_fort_if = TRUE))
 test_that("preprocess_nm_vars converts all recognised block names", {
   blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
   spec <- setNames(
