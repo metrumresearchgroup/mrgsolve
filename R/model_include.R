@@ -50,7 +50,7 @@ get_plugins <- function(spec, env) {
 }
 
 get_depends <- function(what) {
-  what <- intersect(what, ls(plugins[[".depends"]]))
+  what <- intersect(what, names(plugins[[".depends"]]))
   unlist(plugins[[".depends"]][what], use.names = FALSE)
 }
 
@@ -81,11 +81,13 @@ make_clink <- function(x,clink) {
   if(is.null(x)) return(NULL)
   link <- unique(s_pick(x,"linkto"))
   link <- sapply(link,function(ln) {
-    y <- try(find.package(dirname(ln)))
-    if(inherits(y, "try-error")) {
-      stop(glue("couldn't find package {dirname(ln)}"))  
+    pkg <- dirname(ln)
+    subdir <- basename(ln)
+    y <- system.file(subdir, package = pkg)
+    if(!nzchar(y)) {
+      stop(glue("couldn't find package {pkg}"))
     }
-    build_path(file.path(y, basename(ln)))
+    build_path(y)
   })
   link <- c(link, build_path(clink))
   if(length(link)==0) return("")
