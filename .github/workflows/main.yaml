@@ -44,6 +44,12 @@ jobs:
       - name: Check package
         shell: bash
         run: make ci
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-results-${{ matrix.config.os }}-${{ matrix.config.r }}
+          path: "*.Rcheck"
   release:
     if: github.ref_type == 'tag'
     name: Upload release

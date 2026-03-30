@@ -26,8 +26,8 @@ include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
 get_plugins <- function(spec, env) {
   what <- unname(do.call("c", spec[names(spec)=="PLUGIN"]))
-  what <- c("base", cvec_cs(what))
-  what <- unique(c(what, get_depends(what)))
+  what <- c(cvec_cs(what), "base")
+  what <- unique(c(get_depends(what), what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 
   }
@@ -79,7 +79,7 @@ plugin_names <- function(x) {
 
 make_clink <- function(x,clink) {
   if(is.null(x)) return(NULL)
-  link <- unique(s_pick(x, "linkto"))
+  link <- unique(s_pick(x,"linkto"))
   link <- sapply(link,function(ln) {
     y <- try(find.package(dirname(ln)))
     if(inherits(y, "try-error")) {
