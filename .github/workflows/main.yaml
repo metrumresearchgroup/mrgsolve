@@ -35,10 +35,7 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            any::rcmdcheck
-            any::BH
-            any::RcppArmadillo
+          extra-packages: any::rcmdcheck
           upgrade: 'TRUE'
       - name: Install pdflatex
         shell: bash
