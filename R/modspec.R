@@ -816,11 +816,12 @@ parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
   mread.env$check_modeled_infusions <- TRUE
   mread.env$convert_pow <-
     !isFALSE(ENV[["MRGSOLVE_CONVERT_POW"]])
-  mread.env$convert_semicolons <- FALSE
   mread.env$convert_fort_if <-
     !isFALSE(ENV[["MRGSOLVE_CONVERT_FORT_IF"]])
   mread.env$warn_int_div <-
     !isFALSE(ENV[["MRGSOLVE_WARN_INT_DIV"]])
+  # Always defaults to FALSE; opt in via semicolons plugin
+  mread.env$convert_semicolons <- FALSE
   mread.env
 }
 
