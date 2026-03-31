@@ -321,7 +321,7 @@ test_that("nm-vars model with no ode", {
 
 testenv <- list2env(list(convert_semicolons = TRUE, convert_fort_if = TRUE))
 test_that("preprocess_nm_vars converts all recognised block names", {
-  blocks <- c("PREAMBLE", "MAIN", "PK", "DES", "ODE", "TABLE", "ERROR", "EVENT", "PRED")
+  blocks <- mrgsolve:::GLOBALS$PRE_PROC_BLOCKS
   spec <- setNames(
     lapply(blocks, function(b) paste0(b, "_var = 1")),
     blocks
