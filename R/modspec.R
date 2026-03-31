@@ -280,7 +280,7 @@ fixed_parameters <- function(x,fixed_type) {
 #'   missing them; lines ending with an operator (e.g., `+` or `/` or "=")
 #'   will not be terminated with a semicolon; this preprocessor must be 
 #'   enlisted through the `semicolons` plugin and it only runs with `nm-vars`;
-#'   the `semicolons` plugin is brought online when the `nm-full` composite
+#'   the `semicolons` plugin is brought online when the `nm-like` composite
 #'   plugin (`nm-vars`, `autodec`, `semicolons`) is invoked.
 #'   
 #' Processing is controlled by environment variables:
@@ -290,7 +290,7 @@ fixed_parameters <- function(x,fixed_type) {
 #'
 #' Set any variable to `FALSE` to disable the corresponding step when 
 #' processing a model file via [mread()]. Adding `semicolons` must be opted
-#' into through the `semicolons` or `nm-full` plugins.
+#' into through the `semicolons` or `nm-like` plugins.
 #'
 #' @examples
 #' convert_pow("a**2")

@@ -42,7 +42,7 @@ only when the \code{nm-vars} plugin is invoked.
 missing them; lines ending with an operator (e.g., \code{+} or \code{/} or "=")
 will not be terminated with a semicolon; this preprocessor must be
 enlisted through the \code{semicolons} plugin and it only runs with \code{nm-vars};
-the \code{semicolons} plugin is brought online when the \code{nm-full} composite
+the \code{semicolons} plugin is brought online when the \code{nm-like} composite
 plugin (\code{nm-vars}, \code{autodec}, \code{semicolons}) is invoked.
 }
 
@@ -55,7 +55,7 @@ Processing is controlled by environment variables:
 
 Set any variable to \code{FALSE} to disable the corresponding step when
 processing a model file via \code{\link[=mread]{mread()}}. Adding \code{semicolons} must be opted
-into through the \code{semicolons} or \code{nm-full} plugins.
+into through the \code{semicolons} or \code{nm-like} plugins.
 }
 \examples{
 convert_pow("a**2")
