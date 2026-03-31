@@ -1079,6 +1079,30 @@ test_that("convert_pow handles ** in if() condition", {
   )
 })
 
+test_that("environment variable suppresses convert pow", {
+  code <- '
+  $ENV MRGSOLVE_CONVERT_POW <- TRUE
+  $PK
+  double a = 2**4;
+  '
+  mod <- mcode("supp-pow-1", code, compile = FALSE)
+  code <- readLines(mod@shlib$source)
+  code <- code[grepl("a = ", code, fixed = TRUE)]
+  code <- trimws(code)
+  expect_equal(code, "a = pow(2, 4);")
+  
+  code <- '
+  $ENV MRGSOLVE_CONVERT_POW <- FALSE
+  $PK
+  double a = 2**4;
+  '
+  mod <- mcode("supp-pow-2", code, compile = FALSE)
+  code <- readLines(mod@shlib$source)
+  code <- code[grepl("a = ", code, fixed = TRUE)]
+  code <- trimws(code)
+  expect_equal(code, "a = 2**4;")
+})
+
 # warn_int_div --------------------------------------------------
 
 test_that("warn_int_div warns for simple integer division", {
@@ -1137,6 +1161,26 @@ test_that("warn_int_div detects integer division before line comment", {
   expect_warning(warn_int_div("1/2 // hey"), "1/2")
   expect_warning(warn_int_div("CL = 3/4; // comment"), "3/4")
   expect_no_warning(warn_int_div("x = a/b; // 1/2 is in the comment"))
+})
+
+test_that("environment variable suppresses int div warning", {
+  code <- '
+  $ENV MRGSOLVE_WARN_INT_DIV <- TRUE
+  $PK
+  double a = 3/4;
+  '
+  expect_warning(
+    mcode("int-div-env-1", code, compile = FALSE), 
+    "Integer division"
+  )
+  code <- '
+  $ENV MRGSOLVE_WARN_INT_DIV <- FALSE
+  $PK
+  double a = 3/4;
+  '
+  expect_no_warning(
+    mcode("int-div-env-2", code, compile = FALSE), 
+  )
 })
 
 # convert_fort_if -----------------------------------------------------
@@ -1249,15 +1293,52 @@ test_that("convert_fort_if: .NOT. combined with other operators", {
   expect_equal(fi("IF(.NOT.FLAG.AND.X.GT.0) THEN"), "if(!FLAG&&X>0) {")
 })
 
+
+test_that("environment variable suppresses fortran if else conversion", {
+  code <- '
+  $ENV MRGSOLVE_CONVERT_FORT_IF <- TRUE
+  $PK
+  IF(A.EQ.2) B = 5;
+  '
+  mod <- mcode("supp-fort-if-1", code, compile = FALSE)
+  code <- readLines(mod@shlib$source)
+  code <- code[grepl("B = ", code, fixed = TRUE)]
+  code <- trimws(code)
+  expect_equal(code, "IF(A.EQ.2) B = 5;")
+  
+  code <- '
+  $PLUGIN nm-vars
+  $ENV MRGSOLVE_CONVERT_FORT_IF <- TRUE
+  $PK
+  IF(A.EQ.2) B = 5;
+  '
+  mod <- mcode("supp-fort-if-2", code, compile = FALSE)
+  code <- readLines(mod@shlib$source)
+  code <- code[grepl("B = ", code, fixed = TRUE)]
+  code <- trimws(code)
+  expect_equal(code, "if(A==2) B = 5;")
+  
+  code <- '
+  $PLUGIN nm-vars
+  $ENV MRGSOLVE_CONVERT_FORT_IF <- FALSE
+  $PK
+  IF(A.EQ.2) B = 5;
+  '
+  mod <- mcode("supp-fort-if-3", code, compile = FALSE)
+  code <- readLines(mod@shlib$source)
+  code <- code[grepl("B = ", code, fixed = TRUE)]
+  code <- trimws(code)
+  expect_equal(code, "IF(A.EQ.2) B = 5;")
+})
 # convert_semicolons ---------------------------------------------------------
 
 as_ <- mrgsolve:::convert_semicolons
 
 test_that("convert_semicolons: adds semicolon to plain statement", {
   expect_equal(as_("CL = THETA(1) * exp(ETA(1))"), "CL = THETA(1) * exp(ETA(1));")
-  expect_equal(as_("DADT(1) = -KA*A(1)"),           "DADT(1) = -KA*A(1);")
-  expect_equal(as_("double CL = 0"),                 "double CL = 0;")
-  expect_equal(as_("F1 = 0.5"),                      "F1 = 0.5;")
+  expect_equal(as_("DADT(1) = -KA*A(1)"), "DADT(1) = -KA*A(1);")
+  expect_equal(as_("double CL = 0"), "double CL = 0;")
+  expect_equal(as_("F1 = 0.5"), "F1 = 0.5;")
 })
 
 test_that("convert_semicolons: leaves existing semicolon alone", {
@@ -1285,6 +1366,7 @@ test_that("convert_semicolons: leaves existing C++ comment after semicolon alone
 test_that("convert_semicolons: skips lines ending with continuation operator", {
   expect_equal(as_("CL = THETA(1) *"),   "CL = THETA(1) *")
   expect_equal(as_("CL = THETA(1) +"),   "CL = THETA(1) +")
+  expect_equal(as_("CL = THETA(1) -"),   "CL = THETA(1) -")
   expect_equal(as_("CL = THETA(1) /"),   "CL = THETA(1) /")
   expect_equal(as_("CL = THETA(1) &"),   "CL = THETA(1) &")
   expect_equal(as_("CL = THETA(1),"),    "CL = THETA(1),")
@@ -1322,7 +1404,7 @@ test_that("convert_semicolons: skips blank lines", {
 
 test_that("convert_semicolons: skips comment lines", {
   expect_equal(as_("// a comment"),  "// a comment")
-  expect_equal(as_("/* comment */"), "/* comment */")
+  expect_equal(as_("/** comment */"), "/** comment */")
 })
 
 test_that("convert_semicolons: skips preprocessor directives", {
@@ -1346,4 +1428,31 @@ test_that("convert_semicolons: indentation preserved", {
 test_that("convert_semicolons: non-character input passes through", {
   expect_equal(as_(42),   42)
   expect_null(as_(NULL))
+})
+
+test_that("semicolons are not added without nm-vars and semicolons plugins", {
+  code <- "$plugin semicolons\n $pk a = 2"
+  expect_warning(
+    mcode("plugin-1", code, compile = FALSE), 
+    "only works with the `nm-vars`", 
+    fixed = TRUE
+  )
+  
+  code <- "$plugin semicolons nm-vars\n $pk a = 2"
+  mod <- mcode("plugin-2", code, compile = FALSE)
+  xx <- readLines(mod@shlib$source)
+  xx <- xx[grepl("a =", xx, fixed = TRUE)]
+  expect_identical(xx, "a = 2;")
+  
+  code <- "$plugin nm-like\n $pk a = 2"
+  mod <- mcode("plugin-2", code, compile = FALSE)
+  xx <- readLines(mod@shlib$source)
+  xx <- xx[grepl("a =", xx, fixed = TRUE)]
+  expect_identical(xx, "a = 2;")
+  
+  code <- "$plugin nm-vars\n $pk a = 2"
+  mod <- mcode("plugin-2", code, compile = FALSE)
+  xx <- readLines(mod@shlib$source)
+  xx <- xx[grepl("a =", xx, fixed = TRUE)]
+  expect_identical(xx, "a = 2")
 })
