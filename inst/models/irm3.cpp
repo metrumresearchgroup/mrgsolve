@@ -10,9 +10,9 @@ $PROB
 
 $PARAM @annotated
 CL   :  1  : Clearance (volume/time)
-VC   : 20  : Central volume (volume)
+V2   : 20  : Central volume (volume)
 Q    :  2  : Inter-compartmental clearance (volume/time)
-VP   : 10  : Peripheral volume of distribution (volume)
+V3   : 10  : Peripheral volume of distribution (volume)
 KA1  :  1  : Absorption rate constant 1 (1/time)
 KA2  :  1  : Absorption rate constant 2 (1/time)
 KIN  : 10  : Response in rate constant (1/time)
@@ -31,8 +31,8 @@ RESP   : Response compartment
 EV2    : Second extravascular compartment (mass)
   
 $GLOBAL
-#define CP (CENT/VC)
-#define CT (PERIPH/VP)
+#define CP (CENT/V2)
+#define CT (PERIPH/V3)
 #define CLNL (VMAX/(KM+CP))
 #define STIM (EMAX*pow(CP,n)/(pow(EC50,n)+pow(CP,n)))
 

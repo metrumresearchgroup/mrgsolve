@@ -1,14 +1,14 @@
 $PARAM
-CL=1, VC=10, KA1=0.5, KA2=0.5
-Q = 0, VP=10
+CL=1, V2=10, KA1=0.5, KA2=0.5
+Q = 0, V3=10
 KIN = 10, KOUT=2, EC50 = 2, EMAX=1
 VMAX = 0, KM=2, n=1
 
 $CMT EV1 CENT PERIPH RESP EV2
 
 $GLOBAL
-#define CP (CENT/VC)
-#define CT (PERIPH/VP)
+#define CP (CENT/V2)
+#define CT (PERIPH/V3)
 #define CLNL (VMAX/(KM+CP))
 #define STIM (EMAX*pow(CP,n)/(pow(EC50,n)+pow(CP,n)))
 

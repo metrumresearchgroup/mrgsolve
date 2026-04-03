@@ -18,7 +18,7 @@ mod %>%
 
 $PARAM @annotated
 CL   :  1  : Clearance (volume/time)
-VC   : 20  : Central volume (volume)
+V    : 20  : Central volume (volume)
 KA1  :  1  : Absorption rate constant 1 (1/time)
 KA2  :  1  : Absorption rate constant 2 (1/time)
 VMAX :  0  : Maximum velocity (mass/time)
@@ -30,8 +30,7 @@ CENT : Central compartment
 EV2  : Second extravascular compartment
 
 $GLOBAL
-#define CP (CENT/VC)
-#define CT (PERIPH/VP)
+#define CP (CENT/V)
 #define CLNL (VMAX/(KM+CP))
 
 $ODE
