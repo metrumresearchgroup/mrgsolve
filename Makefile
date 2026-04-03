@@ -83,7 +83,7 @@ readme:
 
 .PHONY: doc
 doc:
-	@Rscript -e "roxygen2::roxygenize()"
+	@Rscript -e "roxygen2::roxygenise()"
 
 .PHONY: build
 build:
