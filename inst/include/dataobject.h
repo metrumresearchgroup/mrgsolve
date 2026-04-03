@@ -53,6 +53,7 @@ public:
   int end(int i) const {return Endrow.at(i);}
   int inrow(int i) {return Nrow[i];}
   void increment_inrow(int i) {++Nrow[i]; return;}
+  void increment_inrow(int i, int n) {Nrow[i] += n; return;}
   void decrement_inrow(int i) {--Nrow[i]; return;}
   void map_uid();
   double get_uid(int i) const {return Uid.at(i);}
