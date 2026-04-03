@@ -3,6 +3,7 @@
 \name{plot_mrgsims}
 \alias{plot_mrgsims}
 \alias{plot,mrgsims,missing-method}
+\alias{plot}
 \alias{plot,mrgsims,formula-method}
 \alias{plot,mrgsims,character-method}
 \title{Generate a quick plot of simulated data}
@@ -20,41 +21,50 @@
   ylab = "value",
   groups = ID,
   scales = list(y = list(relation = "free")),
-  logy = FALSE,
-  logbr = 1,
+  fixy = NULL,
+  logy = NULL,
+  logbr = 0,
+  equispaced.log = FALSE,
   ...
 )
 
 \S4method{plot}{mrgsims,character}(x, y, ...)
 }
 \arguments{
-\item{x}{mrgsims object}
+\item{x}{mrgsims object.}
 
-\item{limit}{limit the the number of panels to create}
+\item{limit}{limit the the number of panels to create.}
 
-\item{...}{other arguments passed to xyplot}
+\item{...}{other arguments passed to \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{y}{formula used for plotting}
+\item{y}{formula used for plotting.}
 
-\item{show.grid}{logical indicating whether or not to draw panel.grid}
+\item{show.grid}{logical indicating whether or not to draw \code{panel.grid}.}
 
-\item{outer}{passed to xyplot}
+\item{outer}{passed to \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{type}{passed to xyplot}
+\item{type}{passed to \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{lwd}{passed to xyplot}
+\item{lwd}{passed to \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{ylab}{passed to xyplot}
+\item{ylab}{passed to \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{groups}{passed to xyplot}
+\item{groups}{passed to \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{scales}{passed to xyplot}
+\item{scales}{passed to  \code{\link[lattice:xyplot]{lattice::xyplot()}}.}
 
-\item{logy}{plot the y variables on log scale}
+\item{fixy}{make the y-axis scale the same for all variables; ignored if
+\code{scales} is not a list.}
+
+\item{logy}{plot the y variables on log scale; ignored if \code{scales} is not
+a list.}
 
 \item{logbr}{log scale breaks indicator; use \code{1} for breaks every log
 unit; use \code{3} for breaks every half log unit; use \code{0} for default
-breaks}
+breaks; ignored if \code{scales} is not a list.}
+
+\item{equispaced.log}{see \code{scales} argument in \code{\link[lattice:xyplot]{lattice::xyplot()}};
+ignored if \code{scales} is not a list.}
 }
 \description{
 Generate a quick plot of simulated data
@@ -67,11 +77,11 @@ out <- mrgsim(mod)
 
 plot(out)
 
-plot(out, subset=time <=24)
+plot(out, subset=time <= 24)
 
-plot(out, GUT+CP~.)
+plot(out, GUT + CP ~ .)
 
-plot(out, CP+RESP~time, col="black", scales="same", lty=2)
+plot(out, CP + RESP ~ time, col = "black", fixy = TRUE, lty = 2)
 
 \dontrun{
 plot(out, "CP RESP, GUT")

@@ -109,6 +109,9 @@ void dataobject::map_uid() {
   Endrow.push_back(n-1);
   // Start count individual records
   Nrow.assign(Uid.size(),0);
+  // Passed just an idata set
+  if(Data.ncol() <= 1) return;
+  // Passed event or data set
   for(size_t i = 0; i < Uid.size(); ++i) {
     Nrow[i] = Endrow[i] - Startrow[i] + 1;  
   }
