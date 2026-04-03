@@ -13,7 +13,7 @@ CL   :  1  : Clearance (volume/time)
 V2   : 20  : Central volume (volume)
 Q    :  2  : Inter-compartmental clearance (volume/time)
 V3   : 10  : Peripheral volume of distribution (volume)
-KA1  :  1  : Absorption rate constant 1 (1/time)
+KA  :  1  : Absorption rate constant 1 (1/time)
 KA2  :  1  : Absorption rate constant 2 (1/time)
 KIN  : 10  : Response in rate constant (1/time)
 KOUT :  2  : Response out rate constant (1/time)
@@ -24,7 +24,7 @@ VMAX :  0  : Maximum reaction velocity (mass/time)
 KM   :  2  : Michaelis constant (mass/volume)
 
 $CMT  @annotated
-EV1    : First extravascular compartment (mass)
+EV    : First extravascular compartment (mass)
 CENT   : Central compartment (mass)
 PERIPH : Peripheral compartment (mass)
 RESP   : Response compartment  
@@ -40,9 +40,9 @@ $MAIN
 RESP_0 = KIN/KOUT;
 
 $ODE
-dxdt_EV1    = -KA1*EV1;
+dxdt_EV    = -KA*EV;
 dxdt_EV2    = -KA2*EV2;
-dxdt_CENT   =  KA1*EV1 + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
+dxdt_CENT   =  KA*EV + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
 dxdt_PERIPH =  Q*CP - Q*CT;
 dxdt_RESP   =  KIN*(1+STIM) - KOUT*RESP;
 
