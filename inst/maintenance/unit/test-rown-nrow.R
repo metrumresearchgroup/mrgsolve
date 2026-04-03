@@ -318,6 +318,33 @@ test_that("more row counter macros gh-1327", {
   expect_true(all(out2$total4[1:8]==1))
 })
 
+
+code <- '
+$cmt A
+$preamble capture total1 = 0; capture total2 = 0;
+$table 
+if(self.rown+1==self.nrow) ++total1;
+if(self.nid==self.idn+1 && self.irown+1 == self.inrow) ++total2;
+capture rown = self.rown;
+capture nrow = self.nrow;
+capture irown = self.irown;
+capture inrow = self.inrow;
+'
+
+mod <- mcode("foo", code)
+
+test_that("row counter is correct when only idata set is passed gh-1351", {
+  idata <- expand.idata(ID = 1:3)
+  mod <- update(mod, end = 24, delta = 12)
+  nobs <- length(stime(mod))
+  out <- mrgsim(mod, idata = idata, end = 24, delta = 12)
+  expect_all_true(out$inrow==3)
+  expect_all_true(out$nrow==9)
+  expect_equal(out$rown, seq(nrow(idata) * nobs)-1)
+  expect_equal(out$irown, rep.int(c(0,1,2), nrow(idata))) 
+})
+
+
 rm(mod)
 rm(code_test_rown_nrow, code_test_rown_nrow_pred)
 rm(code_counter_update_on_output)

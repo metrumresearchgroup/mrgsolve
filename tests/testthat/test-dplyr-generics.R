@@ -51,6 +51,14 @@ test_that("Pipe to summarise", {
   expect_true(x$max==122)
 })
 
+test_that("Pipe to summarise.each is defunct", {
+  expect_error(
+    summarise.each(out),
+    regexp = "`mrgsolve::summarise.each()` is defunct", 
+    fixed = TRUE
+  )
+})
+
 test_that("Pipe to select", {
   x <- out %>% dplyr::select(ID,RESP,time)
   expect_is(x, "tbl_df")

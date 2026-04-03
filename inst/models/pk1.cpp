@@ -10,7 +10,7 @@ CENT : Central compartment
 $GLOBAL
 #define CP (CENT/V)
 
-$PKMODEL ncmt = 1, depot = TRUE
+$PKMODEL advan = 2
 
 $CAPTURE @annotated
 CP : Plasma concentration (mass/volume)

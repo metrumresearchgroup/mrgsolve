@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2025 Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -210,13 +210,13 @@ valid.mrgmod <- function(object) {
   tags <- unlist(tags, use.names=FALSE)
   x <- check_names(tags,Pars(object),Cmt(object))
   x1 <- length(x)==0
-  x2 <- object@advan %in% c(0,1,2,3,4,13)
+  x2 <- object@advan %in% c(0,1,2,3,4,11,12,13)
   x3 <- !any(object@capture %in% Cmt(object))
   fun <- valid_funs(object@funs)
   cool <- x1 & x2 & fun[[1]] & x3
   if(cool) return(TRUE)
   x <- c(x,fun[[2]])
-  if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, or 13")
+  if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, 11, 12, or 13")
   if(!x3) {
     invalid <- intersect(object@capture,Cmt(object))
     invalid <- paste0(invalid,collapse=",")

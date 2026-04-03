@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2025  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -107,7 +107,7 @@ odeproblem::odeproblem(Rcpp::List param,
   interrupt = -1;
   check_modeled_infusions = true;
   
-  pred.assign(5,0.0);
+  pred.assign(7,0.0);
   
   for(int i=0; i < Npar; ++i) Param[i] =       double(param[i]);
   for(int i=0; i < Neq;  ++i) Init_value[i] =  double(init[i]);
@@ -398,16 +398,21 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   }
 
   if(Advan != 13) {
-    if((Advan==2) | (Advan==1)) {
+    if((Advan==2) || (Advan==1)) {
       this->advan2(tfrom,tto);
       return;
     }
     
-    if((Advan==4) | (Advan==3)) {
+    if((Advan==4) || (Advan==3)) {
       this->advan4(tfrom,tto);
       return;
     }
-    // If Advan isn't 13, it needs to be 0/1/2/3/4
+
+    if((Advan==12) || (Advan==11)) {
+      this->advan11(tfrom,tto);
+      return;
+    }
+    // If Advan isn't 13, it needs to be 0/1/2/3/4/11/12
     Rcpp::stop("[mrgsolve] advan has invalid value.");
   }
   
@@ -607,6 +612,216 @@ void odeproblem::advan4(const double& tfrom, const double& tto) {
   }
 }
 
+
+void odeproblem::advan11(const double& tfrom, const double& tto) {
+
+  double dt = tto - tfrom;
+
+  if(MRGSOLVE_GET_PRED_CL  <= 0) Rcpp::stop("pred_CL has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_VC  <= 0) Rcpp::stop("pred_VC has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_VP  <= 0) Rcpp::stop("pred_VP has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_VP2 <= 0) Rcpp::stop("pred_VP2 has a 0 or negative value.");
+  if(MRGSOLVE_GET_PRED_Q   <  0) Rcpp::stop("pred_Q has a negative value.");
+  if(MRGSOLVE_GET_PRED_Q2  <  0) Rcpp::stop("pred_Q2 has a negative value.");
+
+  double ka  = MRGSOLVE_GET_PRED_KA;
+  double k10 = MRGSOLVE_GET_PRED_K10;
+  double k12 = MRGSOLVE_GET_PRED_K12;
+  double k21 = MRGSOLVE_GET_PRED_K21;
+  double k13 = MRGSOLVE_GET_PRED_K13;
+  double k31 = MRGSOLVE_GET_PRED_K31;
+
+  if(k10 <= 0) Rcpp::stop("k10 has a 0 or negative value");
+
+  // Eigenvalues of the 3-compartment system via trigonometric cubic solution
+  // Characteristic polynomial: x^3 - sigma1*x^2 + sigma2*x - sigma3 = 0
+  double sigma1 = k10 + k12 + k21 + k13 + k31;
+  double sigma2 = k10*k21 + k10*k31 + k12*k31 + k13*k21 + k21*k31;
+  double sigma3 = k10*k21*k31;
+
+  // Depressed cubic via substitution x = t + sigma1/3
+  double p3 = sigma1 / 3.0;
+  double aa = sigma2 - sigma1*sigma1 / 3.0;
+  double bb = 2.0*sigma1*sigma1*sigma1 / 27.0 - sigma1*sigma2 / 3.0 + sigma3;
+
+  // Trigonometric solution (all three roots are real for PK systems)
+  // Depressed cubic: t^3 + aa*t + q = 0 where q = -bb
+  // arccos argument: 3q/(2*aa) * sqrt(-3/aa) = bb/(2*sq^3) where sq = sqrt(-aa/3)
+  double sq = sqrt(-aa / 3.0);
+  double theta = acos(bb / (2.0 * sq * sq * sq)) / 3.0;
+  double m = 2.0 * sq;
+
+  alpha[0] = p3 + m * cos(theta);
+  alpha[1] = p3 + m * cos(theta - 2.0*M_PI/3.0);
+  alpha[2] = p3 + m * cos(theta - 4.0*M_PI/3.0);
+  alpha[3] = ka;
+
+  // Denominators for partial fraction decomposition
+  double d0 = (alpha[1]-alpha[0])*(alpha[2]-alpha[0]);
+  double d1 = (alpha[0]-alpha[1])*(alpha[2]-alpha[1]);
+  double d2 = (alpha[0]-alpha[2])*(alpha[1]-alpha[2]);
+
+  double init0=0, init1=0, init2=0, init3=0;
+  double pred0=0, pred1=0, pred2=0, pred3=0;
+  int eqoffset = 0;
+
+  if(Neq == 3) {
+    init0 = 0;
+    init1 = this->y(0); init2 = this->y(1); init3 = this->y(2);
+    eqoffset = 1;
+  }
+  if(Neq == 4) {
+    init0 = this->y(0);
+    init1 = this->y(1); init2 = this->y(2); init3 = this->y(3);
+  }
+
+  // Absorption compartment contribution
+  if(Neq == 4) {
+    if((init0 != 0) || (R0[0] != 0)) {
+
+      pred0 = init0 * exp(-ka * dt);
+
+      // Central compartment coefficients for dose absorbed from depot
+      a[0] = ka*(k21-alpha[0])*(k31-alpha[0]) / ((ka-alpha[0])*d0);
+      a[1] = ka*(k21-alpha[1])*(k31-alpha[1]) / ((ka-alpha[1])*d1);
+      a[2] = ka*(k21-alpha[2])*(k31-alpha[2]) / ((ka-alpha[2])*d2);
+      a[3] = -(a[0]+a[1]+a[2]);
+
+      if(ka > 0) {
+        pred0 += R0[0]*(1.0-exp(-ka*dt))/ka;
+        pred1 +=
+          PolyExp(dt,init0,0,0,0,false,a,alpha,4) +
+          PolyExp(dt,0,R0[0],dt,0,false,a,alpha,4);
+
+        // Peripheral-1 coefficients for dose from depot
+        a[0] = ka*k12*(k31-alpha[0]) / ((ka-alpha[0])*d0);
+        a[1] = ka*k12*(k31-alpha[1]) / ((ka-alpha[1])*d1);
+        a[2] = ka*k12*(k31-alpha[2]) / ((ka-alpha[2])*d2);
+        a[3] = -(a[0]+a[1]+a[2]);
+
+        pred2 +=
+          PolyExp(dt,init0,0,0,0,false,a,alpha,4) +
+          PolyExp(dt,0,R0[0],dt,0,false,a,alpha,4);
+
+        // Peripheral-2 coefficients for dose from depot
+        a[0] = ka*k13*(k21-alpha[0]) / ((ka-alpha[0])*d0);
+        a[1] = ka*k13*(k21-alpha[1]) / ((ka-alpha[1])*d1);
+        a[2] = ka*k13*(k21-alpha[2]) / ((ka-alpha[2])*d2);
+        a[3] = -(a[0]+a[1]+a[2]);
+
+        pred3 +=
+          PolyExp(dt,init0,0,0,0,false,a,alpha,4) +
+          PolyExp(dt,0,R0[0],dt,0,false,a,alpha,4);
+      } else {
+        pred0 += R0[0]*dt;
+      }
+    }
+  }
+
+  // Central compartment contribution 
+  if((init1 != 0) || (R0[1-eqoffset] != 0)) {
+
+    a[0] = (k21-alpha[0])*(k31-alpha[0]) / d0;
+    a[1] = (k21-alpha[1])*(k31-alpha[1]) / d1;
+    a[2] = (k21-alpha[2])*(k31-alpha[2]) / d2;
+
+    pred1 +=
+      PolyExp(dt,init1,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[1-eqoffset],dt,0,false,a,alpha,3);
+
+    a[0] = k12*(k31-alpha[0]) / d0;
+    a[1] = k12*(k31-alpha[1]) / d1;
+    a[2] = k12*(k31-alpha[2]) / d2;
+
+    pred2 +=
+      PolyExp(dt,init1,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[1-eqoffset],dt,0,false,a,alpha,3);
+
+    a[0] = k13*(k21-alpha[0]) / d0;
+    a[1] = k13*(k21-alpha[1]) / d1;
+    a[2] = k13*(k21-alpha[2]) / d2;
+
+    pred3 +=
+      PolyExp(dt,init1,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[1-eqoffset],dt,0,false,a,alpha,3);
+  }
+
+  // Peripheral-1 compartment contribution 
+  if((init2 != 0) || (R0[2-eqoffset] != 0)) {
+
+    // periph1 -> central: cofactor is k21*(k31-alpha)
+    a[0] = k21*(k31-alpha[0]) / d0;
+    a[1] = k21*(k31-alpha[1]) / d1;
+    a[2] = k21*(k31-alpha[2]) / d2;
+
+    pred1 +=
+      PolyExp(dt,init2,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,3);
+
+    // periph1 -> periph1: cofactor is (k10+k12+k13-alpha)*(k31-alpha) - k13*k31
+    a[0] = ((k10+k12+k13-alpha[0])*(k31-alpha[0]) - k13*k31) / d0;
+    a[1] = ((k10+k12+k13-alpha[1])*(k31-alpha[1]) - k13*k31) / d1;
+    a[2] = ((k10+k12+k13-alpha[2])*(k31-alpha[2]) - k13*k31) / d2;
+
+    pred2 +=
+      PolyExp(dt,init2,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,3);
+
+    // periph1 -> periph2: cofactor is k13*k21
+    a[0] = k13*k21 / d0;
+    a[1] = k13*k21 / d1;
+    a[2] = k13*k21 / d2;
+
+    pred3 +=
+      PolyExp(dt,init2,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[2-eqoffset],dt,0,false,a,alpha,3);
+  }
+
+  // Peripheral-2 compartment
+  if((init3 != 0) || (R0[3-eqoffset] != 0)) {
+
+    // periph2 -> central: cofactor is k31*(k21-alpha)
+    a[0] = k31*(k21-alpha[0]) / d0;
+    a[1] = k31*(k21-alpha[1]) / d1;
+    a[2] = k31*(k21-alpha[2]) / d2;
+
+    pred1 +=
+      PolyExp(dt,init3,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[3-eqoffset],dt,0,false,a,alpha,3);
+
+    // periph2 -> periph1: cofactor is k12*k31
+    a[0] = k12*k31 / d0;
+    a[1] = k12*k31 / d1;
+    a[2] = k12*k31 / d2;
+
+    pred2 +=
+      PolyExp(dt,init3,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[3-eqoffset],dt,0,false,a,alpha,3);
+
+    // periph2 -> periph2: cofactor is (k10+k12+k13-alpha)*(k21-alpha) - k12*k21
+    a[0] = ((k10+k12+k13-alpha[0])*(k21-alpha[0]) - k12*k21) / d0;
+    a[1] = ((k10+k12+k13-alpha[1])*(k21-alpha[1]) - k12*k21) / d1;
+    a[2] = ((k10+k12+k13-alpha[2])*(k21-alpha[2]) - k12*k21) / d2;
+
+    pred3 +=
+      PolyExp(dt,init3,0,0,0,false,a,alpha,3) +
+      PolyExp(dt,0,R0[3-eqoffset],dt,0,false,a,alpha,3);
+  }
+
+  if(Neq == 3) {
+    this->y(0,pred1);
+    this->y(1,pred2);
+    this->y(2,pred3);
+  }
+  if(Neq == 4) {
+    this->y(0,pred0);
+    this->y(1,pred1);
+    this->y(2,pred2);
+    this->y(3,pred3);
+  }
+}
+
+
 /**
  * Calculate PK model polyexponentials.
  * 
@@ -627,8 +842,6 @@ double PolyExp(const double& x,
   double inf=1E9;
   //maximum value for a double in C++
   int i;
-  
-  //assert((alpha.size() >= n) && (a.size() >= n));
   
   //UPDATE DOSE
   if (dose>0) {
@@ -751,14 +964,19 @@ void odeproblem::advan(int x) {
   
   if(Advan==13) return;
   
-  if((x==1) | (x ==2)) {
+  if((x==1) || (x ==2)) {
     a.assign(2,0.0);
     alpha.assign(2,0.0);
   }
   
-  if((x==3) | (x==4)) {
+  if((x==3) || (x==4)) {
     a.assign(3,0.0);
     alpha.assign(3,0.0);
+  }
+
+  if((x==11) || (x==12)) {
+    a.assign(4,0.0);
+    alpha.assign(4,0.0);
   }
 }
 
@@ -824,17 +1042,11 @@ Rcpp::List TOUCH_FUNS(const Rcpp::List& funs,
 void odeproblem::omega(const Rcpp::S4& mod) {
   const Rcpp::S4 omega = mod.slot("omega");
   Omega = MAKEMATRIX(omega);
-  // if(!(Omega.is_symmetric())) {
-  //   Omega  = symmatl(Omega);
-  // }
 }
 
 void odeproblem::sigma(const Rcpp::S4& mod) {
   const Rcpp::S4 sigma = mod.slot("sigma");
   Sigma = MAKEMATRIX(sigma);
-  // if(!(Sigma.is_symmetric())) {
-  //   Sigma  = symmatl(Sigma);
-  // }
 }
 
 void odeproblem::copy_sigma_diagonals() {

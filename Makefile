@@ -32,8 +32,15 @@ check:
 	make house
 	make doc
 	make build
-	R CMD check ${TARBALL} --no-manual
+	R CMD check ${TARBALL} --no-manual 
 	make unit
+
+just-check: 
+	make clean
+	make house
+	make doc
+	make build
+	R CMD check ${TARBALL} --no-manual --no-tests
 
 check-only:
 	make doc
@@ -91,15 +98,15 @@ install-build:
 test:
 	make install
 	make test-all
-	rm -rf tests/testthat/mrgsolve-so-*
+	@rm -rf tests/testthat/mrgsolve-so-*
 
 test1:
 	@Rscript -e 'testthat::test_file("tests/testthat.R")'
-	rm -rf tests/testthat/mrgsolve-so-*
+	@rm -rf tests/testthat/mrgsolve-so-*
 
 test2:
 	@Rscript -e 'testthat::test_dir("inst/maintenance/unit")'
-	rm -rf tests/testthat/mrgsolve-so-*
+	@rm -rf tests/testthat/mrgsolve-so-*
 
 test-cpp: 
 	@Rscript -e 'testthat::test_dir("inst/maintenance/unit-cpp")'

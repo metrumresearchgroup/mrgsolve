@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -59,7 +59,15 @@ test_that("all modlib models", {
   x <- test_lib("pk2iv")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
-  
+
+  x <- test_lib("pk3")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+
+  x <- test_lib("pk3iv")
+  expect_is(x[[1]],"mrgmod")
+  expect_is(x[[2]],"mrgsims")
+
   x <- test_lib("irm1")
   expect_is(x[[1]],"mrgmod")
   expect_is(x[[2]],"mrgsims")
@@ -120,5 +128,15 @@ test_that("all modlib models", {
 
 test_that("pk2iv uses V1 to scale CENT", {
   x <- readLines(file.path(modlib(), "pk2iv.cpp"))
+  expect_match(x, "#define CP (CENT/V1)", fixed = TRUE, all = FALSE)
+})
+
+test_that("pk3 uses V2 to scale CENT", {
+  x <- readLines(file.path(modlib(), "pk3.cpp"))
+  expect_match(x, "#define CP (CENT/V2)", fixed = TRUE, all = FALSE)
+})
+
+test_that("pk3iv uses V1 to scale CENT", {
+  x <- readLines(file.path(modlib(), "pk3iv.cpp"))
   expect_match(x, "#define CP (CENT/V1)", fixed = TRUE, all = FALSE)
 })
