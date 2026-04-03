@@ -9,7 +9,7 @@
   `$CMT` are found in the model file and no compartments are registered 
   at the time that `$PKMODEL` is processed (#1345).
 
-- Two new `modlib`models, `pk3` and `pk3iv`, provide the corresponding 
+- Two new `modlib` models, `pk3` and `pk3iv`, provide the corresponding 
   pre-coded model files (#1345).
 
 # mrgsolve 1.8.0
