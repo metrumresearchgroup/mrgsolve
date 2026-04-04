@@ -24,7 +24,7 @@ VMAX :  0  : Maximum reaction velocity (mass/time)
 KM   :  2  : Michaelis constant (mass/volume)
 
 $CMT  @annotated
-EV    : First extravascular compartment (mass)
+EV     : First extravascular compartment (mass)
 CENT   : Central compartment (mass)
 PERIPH : Peripheral compartment (mass) 
 RESP   : Response compartment

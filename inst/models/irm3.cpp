@@ -13,7 +13,7 @@ CL   :  1  : Clearance (volume/time)
 V2   : 20  : Central volume (volume)
 Q    :  2  : Inter-compartmental clearance (volume/time)
 V3   : 10  : Peripheral volume of distribution (volume)
-KA  :  1  : Absorption rate constant 1 (1/time)
+KA   :  1  : Absorption rate constant 1 (1/time)
 KA2  :  1  : Absorption rate constant 2 (1/time)
 KIN  : 10  : Response in rate constant (1/time)
 KOUT :  2  : Response out rate constant (1/time)
@@ -24,7 +24,7 @@ VMAX :  0  : Maximum reaction velocity (mass/time)
 KM   :  2  : Michaelis constant (mass/volume)
 
 $CMT  @annotated
-EV    : First extravascular compartment (mass)
+EV     : First extravascular compartment (mass)
 CENT   : Central compartment (mass)
 PERIPH : Peripheral compartment (mass)
 RESP   : Response compartment  

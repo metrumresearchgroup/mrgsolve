@@ -9,7 +9,7 @@ modlib: PK/PD Model parameters, compartments, and output variables
 \section{Compartments}{
 
 \itemize{
-\item \code{EV1}, \code{EV2}: extravascular dosing compartments
+\item \code{EV}, \code{EV2}: extravascular dosing compartments
 \item \code{CENT}: central PK compartment
 \item \code{PERIPH}: peripheral PK compartment
 \item \code{PERIPH2}: peripheral PK compartment 2
@@ -20,7 +20,7 @@ modlib: PK/PD Model parameters, compartments, and output variables
 \section{Output variables}{
 
 \itemize{
-\item \code{CP}: concentration in the central compartment (\code{CENT/VC})
+\item \code{CP}: concentration in the central compartment (\code{CENT/V2})
 \item \code{RESP}: response (emax model)
 }
 }
@@ -28,21 +28,21 @@ modlib: PK/PD Model parameters, compartments, and output variables
 \section{PK parameters}{
 
 \itemize{
-\item \code{KA1}, \code{KA2}: first order absorption rate constants from first and
+\item \code{KA}, \code{KA2}: first order absorption rate constants from first and
 second extravascular compartment (1/time)
 \item \code{CL}: clearance (volume/time)
-\item \code{VC}: volume of distribution, central compartment (volume)
-\item \code{VP}: volume of distribution, peripheral compartment (volume)
-\item \code{VP2}: volume of distribution, peripheral compartment 2 (volume)
+\item \code{V2}: volume of distribution, central compartment (volume)
+\item \code{V3}: volume of distribution, peripheral compartment (volume)
+\item \code{V4}: volume of distribution, peripheral compartment 2 (volume)
 \item \code{Q}: intercompartmental clearance (volume/time)
-\item \code{Q2}: intercompartmental clearance 2 (volume/time)
+\item \code{Q4}: intercompartmental clearance 2 (volume/time)
 \item \code{VMAX}: maximum rate, nonlinear process (mass/time)
 \item \code{KM}: Michaelis constant (mass/volume)
-\item \code{K10}: elimination rate constant (1/time); \code{CL/VC}
+\item \code{K10}: elimination rate constant (1/time); \code{CL/V2}
 \item \code{K12}: rate constant for transfer to peripheral compartment from
-central (1/time); \code{Q/VC}
+central (1/time); \code{Q/V2}
 \item \code{K21}: rate constant for transfer to central compartment from
-peripheral (1/time); \code{Q/VP}
+peripheral (1/time); \code{Q/V3}
 }
 }
 

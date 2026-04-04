@@ -15,8 +15,8 @@ modlib: Target mediated disposition model
 \item \code{KEL}: elimination rate constant
 \item \code{KTP}: tissue to plasma rate constant
 \item \code{KPT}: plasma to tissue rate constant
-\item \code{VC}: volume of distribution
-\item \code{KA1}, \code{KA2}: absorption rate constants
+\item \code{V2}: volume of distribution
+\item \code{KA}, \code{KA2}: absorption rate constants
 \item \code{KINT}: internalization rate constant
 \item \code{KON}: association rate constant
 \item \code{KOFF}: dissociation rate constant
@@ -32,7 +32,7 @@ modlib: Target mediated disposition model
 \item \code{TISS}: unbound drug in tissue compartment
 \item \code{REC}: concentration of target
 \item \code{RC}: concentration of drug-target complex
-\item \code{EV1}, \code{EV2}: extravascular dosing compartments
+\item \code{EV}, \code{EV2}: extravascular dosing compartments
 }
 }
 
