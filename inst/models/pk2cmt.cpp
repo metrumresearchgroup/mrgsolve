@@ -29,10 +29,10 @@ $GLOBAL
 #define CLNL (VMAX/(KM+CP))
 
 $ODE
-dxdt_EV = -KA*EV;
-dxdt_EV2 = -KA2*EV2;
-dxdt_CENT = KA*EV + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
-dxdt_PERIPH = Q*CP - Q*CT;
+dxdt_EV     = -KA*EV;
+dxdt_EV2    = -KA2*EV2;
+dxdt_CENT   =  KA*EV + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
+dxdt_PERIPH =  Q*CP - Q*CT;
 
 $CAPTURE  @annotated
 CP : Plasma concentration (mass/time)
