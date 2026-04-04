@@ -5,7 +5,9 @@ Run
 file.show(system.file("nonmem", "1005", "1005.ctl", package = "mrgsolve")) 
 for equivalent NONMEM control stream. 
 
-[ PKMODEL ] cmt = "GUT CENT PERIPH", depot = TRUE
+[ PKMODEL ] advan = 4
+
+[ CMT ] GUT CENT PERIPH
 
 [ INPUT ] SEX = 0, WT = 70
 

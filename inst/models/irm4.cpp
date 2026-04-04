@@ -16,10 +16,10 @@ $MAIN
 RESP_0 = KIN/KOUT;
 
 $ODE
-dxdt_EV = -KA*EV;
-dxdt_EV2 = -KA2*EV2;
-dxdt_CENT = KA*EV + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
-dxdt_PERIPH = Q*CP - Q*CT;
-dxdt_RESP = KIN - KOUT*(1+STIM)*RESP;
+dxdt_EV     = -KA*EV;
+dxdt_EV2    = -KA2*EV2;
+dxdt_CENT   =  KA*EV + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
+dxdt_PERIPH =  Q*CP - Q*CT;
+dxdt_RESP   =  KIN - KOUT*(1+STIM)*RESP;
 
 $CAPTURE CP

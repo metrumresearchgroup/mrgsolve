@@ -1,11 +1,11 @@
 $PARAM @annotated
-CL   :  1 : Clearance (volume/time)
-V2   : 20 : Central volume (volume)
-Q3   :  2 : Inter-compartmental clearance 1 (volume/time)
-V3   : 10 : Peripheral volume of distribution 1 (volume)
+CL   :   1 : Clearance (volume/time)
+V2   :  20 : Central volume (volume)
+Q3   :   2 : Inter-compartmental clearance 1 (volume/time)
+V3   :  10 : Peripheral volume of distribution 1 (volume)
 Q4   : 0.5 : Inter-compartmental clearance 2 (volume/time)
-V4   : 50 : Peripheral volume of distribution 2 (volume)
-KA   :  1 : Absorption rate constant (1/time)
+V4   :  50 : Peripheral volume of distribution 2 (volume)
+KA   :   1 : Absorption rate constant (1/time)
 
 $CMT @annotated
 EV      : Extravascular compartment (mass)
