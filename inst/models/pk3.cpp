@@ -1,4 +1,4 @@
-$PARAM @annotated
+$PARAM @annotated @input
 CL   :   1 : Clearance (volume/time)
 V2   :  20 : Central volume (volume)
 Q3   :   2 : Inter-compartmental clearance 1 (volume/time)

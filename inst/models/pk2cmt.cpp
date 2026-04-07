@@ -7,12 +7,14 @@ $PROB
   - Date: `r Sys.Date()`
   - Version: `r packageVersion("mrgsolve")`
   
-$PARAM @annotated
+$PARAM @annotated @input
 CL   :  1  : Clearance (volume/time)
 V2   : 20  : Central volume (volume)
 Q    :  2  : Inter-compartmental clearance (volume/time)
 V3   : 10  : Peripheral volume of distribution (volume)
 KA   :  1  : Absorption rate constant 1 (1/time)
+
+$PARAM @annotated
 KA2  :  1  : Absorption rate constant 2 (1/time)
 VMAX :  0  : Maximum velocity (mass/time)
 KM   :  2  : Michaelis Constant (mass/volume)
