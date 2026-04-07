@@ -51,6 +51,8 @@ env_get(out, "let")
 
 env_get(mod, "let")
 
+env_get_obj(out, "let")
+
 env_get_env(mod)
 
 # It's the same environment in out that is in mod
