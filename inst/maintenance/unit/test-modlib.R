@@ -145,24 +145,30 @@ test_that("parameters with @input tag", {
   mod <- modlib("pk1", compile = FALSE)
   tag <- param_tags(mod)
   expect_equal(tag$name, c("CL", "V", "KA"))
+  expect_all_equal(tag$tag, "input")
 
   mod <- modlib("pk1cmt", compile = FALSE)
   tag2 <- param_tags(mod)
   expect_equal(tag$name, tag2$name)
+  expect_all_equal(tag$tag, "input")
 
   mod <- modlib("pk2", compile = FALSE)
   tag <- param_tags(mod)
   expect_equal(tag$name, c("CL", "V2", "Q", "V3", "KA"))
+  expect_all_equal(tag$tag, "input")
 
   mod <- modlib("pk2cmt", compile = FALSE)
   tag2 <- param_tags(mod)
   expect_equal(tag$name, tag2$name)
+  expect_all_equal(tag$tag, "input")
 
   mod <- modlib("pk3", compile = FALSE)
   tag <- param_tags(mod)
   expect_equal(tag$name, c("CL", "V2", "Q3", "V3", "Q4", "V4", "KA"))
+  expect_all_equal(tag$tag, "input")
 
   mod <- modlib("pk3cmt", compile = FALSE)
   tag2 <- param_tags(mod)
   expect_equal(tag$name, tag2$name)
+  expect_all_equal(tag$tag, "input")
 })
