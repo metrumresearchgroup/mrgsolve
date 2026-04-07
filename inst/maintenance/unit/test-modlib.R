@@ -140,3 +140,29 @@ test_that("pk3iv uses V1 to scale CENT", {
   x <- readLines(file.path(modlib(), "pk3iv.cpp"))
   expect_match(x, "#define CP (CENT/V1)", fixed = TRUE, all = FALSE)
 })
+
+test_that("parameters with @input tag", {
+  mod <- modlib("pk1", compile = FALSE)
+  tag <- param_tags(mod)
+  expect_equal(tag$name, c("CL", "V", "KA"))
+
+  mod <- modlib("pk1cmt", compile = FALSE)
+  tag2 <- param_tags(mod)
+  expect_equal(tag$name, tag2$name)
+
+  mod <- modlib("pk2", compile = FALSE)
+  tag <- param_tags(mod)
+  expect_equal(tag$name, c("CL", "V2", "Q", "V3", "KA"))
+
+  mod <- modlib("pk2cmt", compile = FALSE)
+  tag2 <- param_tags(mod)
+  expect_equal(tag$name, tag2$name)
+
+  mod <- modlib("pk3", compile = FALSE)
+  tag <- param_tags(mod)
+  expect_equal(tag$name, c("CL", "V2", "Q3", "V3", "Q4", "V4", "KA"))
+
+  mod <- modlib("pk3cmt", compile = FALSE)
+  tag2 <- param_tags(mod)
+  expect_equal(tag$name, tag2$name)
+})
