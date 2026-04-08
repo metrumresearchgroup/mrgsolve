@@ -142,8 +142,7 @@ NULL
 #' @param .dots passed to various `dplyr` functions.
 #' @param .data an mrgsims object; passed to various `dplyr` functions.
 #' @param x passed to [dplyr::as.tbl()].
-#' @param add passed to [dplyr::group_by()] (for dplyr < `1.0.0`).
-#' @param .add passed to [dplyr::group_by()] (for dplyr >= `1.0.0`).
+#' @param .add passed to [dplyr::group_by()].
 #' @param .keep_all passed to [dplyr::distinct()].
 #' @param ... passed to other methods.
 #' 
@@ -181,12 +180,8 @@ filter.mrgsims <- function(.data,...) {
 
 ##' @rdname mrgsims_dplyr
 ##' @export
-group_by.mrgsims <- function(.data,...,add=FALSE,.add=FALSE) {
-  if(DPLYR_1_0_0) {
-    return(dplyr::group_by(as_tibble.mrgsims(.data), ..., .add = .add))
-  } else {
-    return(dplyr::group_by(as_tibble.mrgsims(.data), ..., add = add))
-  }
+group_by.mrgsims <- function(.data,...,.add=FALSE) {
+  return(dplyr::group_by(as_tibble.mrgsims(.data), ..., .add = .add))
 }
 
 ##' @rdname mrgsims_dplyr
