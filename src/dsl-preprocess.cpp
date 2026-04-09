@@ -806,24 +806,19 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code,
                                         std::string block) {
   Rcpp::CharacterVector out(code.size());
   for (int i = 0; i < code.size(); ++i) {
-    try {
-      std::string line = Rcpp::as<std::string>(code[i]);
-      std::string converted = convert_pow_line(line);
-      size_t ts = line.find_first_not_of(" \t");
-      bool is_comment = ts != std::string::npos &&
-        ts + 1 < line.size() && line[ts] == '/' &&
-        (line[ts + 1] == '/' || line[ts + 1] == '*');
-      if (!is_comment && converted == line && line.find("**") != std::string::npos) {
-        std::string prefix = block.empty()
-          ? "Could not convert **"
-          : "Could not convert ** in $" + block + " block";
-        warn_no_call(prefix + ": '" + line + "'");
-      }
-      out[i] = converted;
-    } catch (const std::exception& e) {
-      Rcpp::warning("Line %d: %s", i + 1, e.what());
-      out[i] = code[i];
+    std::string line = Rcpp::as<std::string>(code[i]);
+    std::string converted = convert_pow_line(line);
+    size_t ts = line.find_first_not_of(" \t");
+    bool is_comment = ts != std::string::npos &&
+      ts + 1 < line.size() && line[ts] == '/' &&
+      (line[ts + 1] == '/' || line[ts + 1] == '*');
+    if (!is_comment && converted == line && line.find("**") != std::string::npos) {
+      std::string prefix = block.empty()
+        ? "Could not convert **"
+        : "Could not convert ** in $" + block + " block";
+      warn_no_call(prefix + ": '" + line + "'");
     }
+    out[i] = converted;
   }
   return out;
 }
