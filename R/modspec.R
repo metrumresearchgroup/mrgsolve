@@ -30,6 +30,9 @@ advtr <- function(advan,trans) {
   if((advan %in% c(3,4)) & !(trans %in% c(4,11))) {
     stop("ADVAN 3 and 4 can only use trans 1, 4, or 11", call. = FALSE)
   }
+  if((advan %in% c(11,12)) & !(trans %in% c(4,11))) {
+    stop("ADVAN 11 and 12 can only use trans 1, 4, or 11", call. = FALSE)
+  }
   return(paste0("__ADVAN", advan, "_TRANS", trans, "__"))
 }
 
@@ -111,7 +114,7 @@ check_pkmodel <- function(x, subr, spec) {
   # ADVAN 13 is the ODEs
   # Two compartments for ADVAN 2, 3 compartments for ADVAN 4
   # Check $MAIN for the proper symbols
-  if(x@advan %in% c(1,2,3,4)) {
+  if(x@advan %in% c(1,2,3,4,11,12)) {
     if(subr[["n"]] != neq(x)) {
       stop("$PKMODEL requires  ", subr[["n"]] , 
            " compartments in $CMT or $INIT.", call. = FALSE)

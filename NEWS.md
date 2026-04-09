@@ -1,5 +1,17 @@
 # mrgsolve (development version)
 
+- Closed-form three-compartment linear models with or without depot compartments
+  can now be implemented via `$PKMODEL` (#1345). 
+
+- `$PKMODEL` gains an `advan` input for selecting 1, 2, or 3 compartment 
+  models with analytical solutions. When `advan` is specified, compartments 
+  with standard names are automatically registered if neither `$INIT` nor
+  `$CMT` are found in the model file and no compartments are registered 
+  at the time that `$PKMODEL` is processed (#1345).
+
+- Two new `modlib` models, `pk3` and `pk3iv`, provide the corresponding 
+  pre-coded model files (#1345).
+
 # mrgsolve 1.8.0
 
 - mrgsolve now requires R >= 4.1 (#1333).

@@ -71,9 +71,13 @@ typedef void (*MRGSOLVE_ODE_FUNC)(int neq, double* t, double* y, double* ydot, s
 #define MRGSOLVE_GET_PRED_KA  (pred[2]) ///< map KA to pred position 2 for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_Q   (pred[3]) ///< map Q to pred position 3 for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_VP  (pred[4]) ///< map VP to pred position 4 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_Q2  (pred[5]) ///< map Q2 to pred position 5 for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_VP2 (pred[6]) ///< map VP2 to pred position 6 for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_K10 (pred[0]/pred[1]) ///< rate constants for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_K12 (pred[3]/pred[1]) ///< rate constants for <code>$PKMODEL</code>
 #define MRGSOLVE_GET_PRED_K21 (pred[3]/pred[4]) ///< rate constants for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_K13 (pred[5]/pred[1]) ///< rate constants for <code>$PKMODEL</code>
+#define MRGSOLVE_GET_PRED_K31 (pred[5]/pred[6]) ///< rate constants for <code>$PKMODEL</code>
 
 extern "C"{DL_FUNC tofunptr(SEXP a);}
 
@@ -179,6 +183,7 @@ public:
   int  advan(){return Advan;}
   void advan2(const double& tfrom, const double& tto);
   void advan4(const double& tfrom, const double& tto);
+  void advan11(const double& tfrom, const double& tto);
   
   void set_eta();
   void set_eps();

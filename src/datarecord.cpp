@@ -1,4 +1,4 @@
-// Copyright (C) 2013 - 2025  Metrum Research Group
+// Copyright (C) 2013 - 2026  Metrum Research Group
 //
 // This file is part of mrgsolve.
 //
@@ -456,11 +456,12 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
     first_off = duration - Ii + Time + lagt;
     --ninf_ss;
   }
+  size_t merge_idx = thisi.size();
   for(size_t k = 0; k < offs.size(); ++k) {
     offs.at(k)->time(first_off + double(k)*double(Ii));
-    thisi.push_back(offs.at(k)); 
+    thisi.push_back(offs.at(k));
   }
-  std::sort(thisi.begin(),thisi.end(),CompRec());
+  std::inplace_merge(thisi.begin(),thisi.begin()+merge_idx,thisi.end(),CompRec());
   prob->lsoda_init();
   prob->ss_flag = false;
 }
@@ -596,13 +597,14 @@ void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t star
                          const bool put_ev_first) {
   const int total = ev.addl + 1;
   int nextpos = put_ev_first && (ev.evid!= 1 && ev.evid!=4) ? -1000000000 : 1000000000;
+  size_t merge_idx = thisi.size();
   for(int i = 0; i < total; ++i) {
     rec_ptr rec = NEWREC(ev.time + i*ev.ii, nextpos, false);
     rec->evid(ev.evid);
     rec->Cmt = ev.cmt;
-    thisi.push_back(rec); 
+    thisi.push_back(rec);
   }
-  std::sort(thisi.begin()+start+1, thisi.end(), CompRec());
+  std::inplace_merge(thisi.begin()+start+1, thisi.begin()+merge_idx, thisi.end(), CompRec());
   return; 
 }
 
@@ -615,22 +617,17 @@ void insert_observations(reclist& thisi, mrgsolve::evdata& ev, const size_t star
  * infusion end. 
  * 
  */
-void insert_record(reclist& thisi, const size_t start, rec_ptr& rec, 
+void insert_record(reclist& thisi, const size_t start, rec_ptr& rec,
                    const bool put_ev_first) {
-  double time = rec->time();
-  size_t i = start;
-  if(put_ev_first) {
-    for(i = start + 1; i < thisi.size(); ++i) {
-      if(thisi[i]->time() >= time) {
-        break;  
-      }
-    }
-  } else {
-    for(i = start + 1; i < thisi.size(); ++i) {
-      if(thisi[i]->time() > time) {
-        break;  
-      }
-    }
-  }
-  thisi.insert(thisi.begin() + i, rec);
+  auto begin = thisi.begin() + start + 1;
+  auto end = thisi.end();
+  auto comp = [](const rec_ptr& a, const rec_ptr& b) {
+    return a->time() < b->time();
+  };
+  // lower_bound: insert before first record at same time (event first)
+  // upper_bound: insert after last record at same time (event last)
+  auto pos = put_ev_first
+    ? std::lower_bound(begin, end, rec, comp)
+    : std::upper_bound(begin, end, rec, comp);
+  thisi.insert(pos, rec);
 }

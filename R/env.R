@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -18,10 +18,10 @@
 
 #' Re-evaluate the code in the ENV block
 #' 
-#' The `$ENV` block is a block of R code that can realize any sort of R object 
-#' that might be used in running a model.
+#' The `$ENV` block is a block of R code that can realize any sort of R 
+#' object that might be used in running a model.
 #' 
-#' @seealso [env_get()], [env_ls()]
+#' @seealso [env_get()], [env_get_env()], [env_ls()]
 #' 
 #' @param x a model object.
 #' @param seed passed to [set.seed()] if a numeric value is supplied.
@@ -54,25 +54,70 @@ env_ls <- function(x,...) {
   arrange__(ans, .dots=c("class"))
 }
 
-#' Return model environment
+#' Return model environment or objects from the model environment
 #' 
-#' @param x a model object.
-#' @param tolist should the environment be coerced to `list`?
+#' Call `env_get()` passing either a model object or simulated output and 
+#' name an object to retreive from the model object environment. 
+#' `env_get_obj()` is an alias to `env_get()`. Call  `env_get_env()` to 
+#' return the environment itself. Methods for `mrgmod` and `mrgsims` both 
+#' interact with the same environment (see **Examples**).  
+#' 
+#' @param x a model object (class `mrgmod`) or simulated output (class 
+#' `mrgsims`).
+#' @param what the name of an object to return. 
+#' @param ... passed [base::get()].
+#' 
+#' @examples 
+#' mod <- house(end = 1)
+#' 
+#' # Just for the example
+#' assign("let", letters[1:3], env_get_env(mod))
+#' 
+#' out <- mrgsim(mod)
+#' 
+#' env_get(out, "let")
+#' 
+#' env_get(mod, "let")
+#' 
+#' env_get_obj(out, "let")
+#' 
+#' env_get_env(mod)
+#' 
+#' # It's the same environment in out that is in mod
+#' env_get_env(out)
 #' 
 #' @md
 #' @export
-env_get <- function(x,tolist=TRUE) {
-  if(tolist) {
-    return(as.list(x@envir))  
-  } else {
-    return(x@envir) 
-  }
-}
-
+env_get <- function(x, ...) UseMethod("env_get")
 #' @rdname env_get
 #' @export
-env_get_env <- function(x) {
+env_get.mrgmod <- function(x, what, ...) {
+  valid_what <- is.character(what) && length(what)==1
+  if(!valid_what) {
+    abort("`what` must be character with length 1.")
+  }
+  get(what, x@envir, ...)
+}
+#' @rdname env_get
+#' @export
+env_get.mrgsims <- function(x, ...) {
+  env_get(x@mod, ...)
+}
+#' @rdname env_get
+#' @export
+env_get_obj <- function(x, ...) env_get(x, ...)
+#' @rdname env_get
+#' @export
+env_get_env <- function(x, ...) UseMethod("env_get_env")
+#' @rdname env_get
+#' @export
+env_get_env.mrgmod <- function(x, ...) {
   x@envir 
+}
+#' @rdname env_get
+#' @export
+env_get_env.mrgsims <- function(x, ...) {
+  env_get_env(x@mod)
 }
 
 #' Update objects in model environment

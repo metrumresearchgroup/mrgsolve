@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -91,21 +91,78 @@ df <- tibble(ID=1:2,amt=3)
 
 
 test_that("env-funs", {
-  mod <- mcode("env-funs", code,compile=FALSE)
-  l <- env_get(mod)
-  expect_equal(names(l), c("x", "y", "e", "df"))
-  expect_equal(l$y,2)
-  
+  mod <- mcode("env-funs", code, compile = FALSE)
+
   expect_is(env_ls(mod),"data.frame")
-  
+
   mm <- env_update(mod,y=3)
-  l <- env_get(mm)
-  expect_equal(l$y,3)
-  
+  expect_equal(env_get(mm, "y"), 3)
+
   mmm <- env_eval(mod)
   expect_is(mmm,"mrgmod")
-  
+})
+
+test_that("env_get.mrgmod retrieves object by name", {
+  mod <- house(end = 1)
+  assign("let", letters, mod@envir)
+  result <- env_get(mod, "let")
+  expect_identical(result, letters)
 })
 
 
+test_that("env_get.mrgsims retrieves same object as env_get.mrgmod", {
+  mod <- house(end = 1)
+  assign("let", letters, mod@envir)
+  out <- mrgsim(mod)
+  expect_identical(env_get(out, "let"), env_get(mod, "let"))
+})
 
+test_that("env_get_env.mrgmod returns an environment", {
+  mod <- house(end = 1)
+  e <- env_get_env(mod)
+  expect_true(is.environment(e))
+})
+
+test_that("env_get_env.mrgsims returns an environment", {
+  mod <- house(end = 1)
+  out <- mrgsim(mod)
+  e <- env_get_env(out)
+  expect_true(is.environment(e))
+})
+
+test_that("env_get_obj is an alias to env_get", {
+  mod <- house(end = 1)
+  assign("lett", letters, mod@envir)
+  out <- mrgsim(mod)
+  a <- env_get(out, "lett")
+  b <- env_get_obj(out, "lett")
+  expect_identical(a,b)
+  c <- env_get(mod, "lett")
+  d <- env_get_obj(mod, "lett")
+  expect_identical(c,d)
+})
+
+test_that("env_get_env returns the same environment from mod and out", {
+  mod <- house(end = 1)
+  out <- mrgsim(mod)
+  expect_identical(env_get_env(mod), env_get_env(out))
+})
+
+test_that("objects assigned via env_get_env are visible via env_get from mrgsims", {
+  mod <- house(end = 1)
+  assign("let", letters, env_get_env(mod))
+  out <- mrgsim(mod)
+  expect_identical(env_get(out, "let"), letters)
+})
+
+test_that("env_get requires what argument for mrgmod", {
+  mod <- house(end = 1)
+  expect_error(env_get(mod), "missing, with no default")
+  expect_error(env_get(mod, letters[1:2]), "must be character with length 1")
+  expect_error(env_get(mod, FALSE), "must be character with length 1")
+})
+
+test_that("env_get errors on missing object", {
+  mod <- house(end = 1)
+  expect_error(env_get(mod, "noex"), "object 'noex' not found")
+})

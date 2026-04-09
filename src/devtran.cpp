@@ -248,16 +248,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
     recstack designs;
     
     for(size_t i = 0; i < tgridn.size(); ++i) {
-      
       reclist z;
-      
-      //z.reserve(tgridn[i]); // TODO: remove
-      
       for(int j = 0; j < tgridn[i]; ++j) {
         rec_ptr obs = NEWREC(tgrid(j,i),nextpos,true);
-        z.push_back(obs);
+        z.push_back(std::move(obs));
       }
-      designs.push_back(z);
+      designs.push_back(std::move(z));
     }
     
     // We have to look up the design from the idata set
@@ -272,14 +268,11 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         j = 0;
         n = tgridn.at(0);
       } 
-      
-      //it->reserve((it->size() + n)); // TODO: remove
-      for(int h=0; h < n; ++h) {
-        it->push_back(designs[tgridi[j]][h]);
-        ++obscount;
-        dat.increment_inrow(it-a.begin());
-      } 
-      std::sort(it->begin(), it->end(), CompRec());
+      size_t merge_idx = it->size();
+      it->insert(it->end(), designs[tgridi[j]].begin(), designs[tgridi[j]].begin() + n);
+      obscount += n;
+      dat.increment_inrow(it - a.begin(), n);
+      std::inplace_merge(it->begin(), it->begin() + merge_idx, it->end(), CompRec());
     }
   }
 
@@ -585,9 +578,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
 
         bool sort_recs = false;
 
-        // Checking 
+        // Checking
         if(!this_rec->is_lagged()) {
-          
+
           // there is a valid lag time
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) {
             if(this_rec->ss() > 0) {
@@ -606,15 +599,37 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             newev->lagged();
             newev->time(this_rec->time() + prob.alag(this_cmtn));
             insert_record(a[i], j, newev, put_ev_first);
+            // Save index (not iterator) before schedule appends; deque
+            // push_back can invalidate iterators
+            size_t merge_idx = a[i].size();
             newev->schedule(a[i], maxtime, put_ev_first, NN, prob.alag(this_cmtn));
             this_rec->unarm();
             sort_recs = newev->needs_sorting();
+            if(sort_recs) {
+              std::inplace_merge(
+                a[i].begin()+j+1,
+                a[i].begin()+merge_idx,
+                a[i].end(),
+                CompRec()
+              );
+              sort_recs = false;
+            }
           } else { // no valid lagtime
+            size_t merge_idx = a[i].size();
             this_rec->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
             sort_recs = this_rec->needs_sorting();
+            if(sort_recs) {
+              std::inplace_merge(
+                a[i].begin()+j+1,
+                a[i].begin()+merge_idx,
+                a[i].end(),
+                CompRec()
+              );
+              sort_recs = false;
+            }
           }
         } // from data
-        
+
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
@@ -626,17 +641,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  this_rec->rate(),
                                  -299,
                                  id);
-          
+
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
-          } 
+          }
           // Infusion off always happens first
           insert_record(a[i], j, evoff, true);
-        }
-        
-        // SORT
-        if(sort_recs) {
-          std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
         }
         
         if(tad) { // Adjusts told for lagtime
@@ -769,8 +779,14 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             // For parent doses happening "now", with or without lag time,
             //   but with positive addl
             // There is *no* unique check for additional doses
+            size_t addl_merge_idx = a[i].size();
             new_ev->schedule(a[i], maxtime, addl_ev_first, NN, 0.0);
-            std::sort(a[i].begin()+j+1,a[i].end(),CompRec());
+            std::inplace_merge(
+              a[i].begin()+j+1,
+              a[i].begin()+addl_merge_idx,
+              a[i].end(),
+              CompRec()
+            );
           }
         } // Closes iteration across vector of events
         used_mtimehx = mtimehx.size() > 0;
@@ -787,10 +803,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(tad) {
           ans(crow,2) = (told > -1) ? (tto - told) : tto - tofd.at(i);
         }
-        int k = 0;
         for(unsigned int i=0; i < n_capture; ++i) {
-          ans(crow,k+capture_start) = prob.capture(capture[i]);
-          ++k;
+          ans(crow,i+capture_start) = prob.capture(capture[i]);
         }
         for(unsigned int k=0; k < nreq; ++k) {
           ans(crow,(k+req_start)) = prob.y(request[k]);
