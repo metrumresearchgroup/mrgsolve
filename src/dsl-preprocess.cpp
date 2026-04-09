@@ -220,12 +220,11 @@ struct ExprGrammar
       ;
 
     // power: right-associative (matches Fortran); base is primary so unary minus binds looser
-    // Fortran '**' stored as '**' in the AST; exponent is additive so comparison/logical
-    // operators in the exponent cause a parse failure and the line passes through unchanged.
+    // Fortran '**' stored as '**' in the AST; exponent may be unary (a**-2)
     power =
       primary[_val = _1]
       >> *(
-        lit("**") >> additive[
+        lit("**") >> unary[
           _val = construct<ast::BinaryExpr>(_val, val(std::string("**")), _1)
         ]
       );
