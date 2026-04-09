@@ -560,15 +560,10 @@ static std::string convert_fortran_ops(const std::string& s) {
   r = replace_all_ci(r, ".LE.", "<=");
   r = replace_all_ci(r, ".GT.", ">");
   r = replace_all_ci(r, ".LT.", "<");
-  r = replace_all_ci(r, ".EQN.", "==");
-  r = replace_all_ci(r, ".NEN.", "!=");
   r = replace_all_ci(r, ".EQ.", "==");
   r = replace_all_ci(r, ".NE.", "!=");
   r = replace_all_ci(r, ".AND.", "&&");
   r = replace_all_ci(r, ".OR.", "||");
-  r = replace_all_ci(r, ".NOT.", "!");
-  r = replace_all_ci(r, ".TRUE.", "true");
-  r = replace_all_ci(r, ".FALSE.", "false");
   return r;
 }
 
@@ -825,8 +820,8 @@ Rcpp::CharacterVector warn_int_div_impl(Rcpp::CharacterVector code,
 //' Translates Fortran block-form and single-line IF constructs to C++ in each
 //' element of \code{code}.  Fortran relational and logical operators
 //' (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
-//' \code{.NE.}, \code{.AND.}, \code{.OR.}, \code{.NOT.}, \code{.TRUE.},
-//' \code{.FALSE.}) are converted everywhere they appear. Matching is
+//' \code{.NE.}, \code{.AND.}, \code{.OR.}) are converted everywhere they
+//' appear. Matching is
 //' case-insensitive.
 //'
 //' @param code Character vector of source lines.

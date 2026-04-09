@@ -1199,20 +1199,13 @@ test_that("convert_fort_if: all Fortran relational operators", {
   expect_equal(fi("IF(A.LT.B) THEN"), "if(A<B) {")
   expect_equal(fi("IF(A.EQ.B) THEN"), "if(A==B) {")
   expect_equal(fi("IF(A.NE.B) THEN"), "if(A!=B) {")
-  expect_equal(fi("IF(A.EQN.B) THEN"), "if(A==B) {")
-  expect_equal(fi("IF(A.NEN.B) THEN"), "if(A!=B) {")
 })
 
 test_that("convert_fort_if: logical operators in condition", {
   expect_equal(fi("IF(A.GT.0.AND.B.LT.1) THEN"), "if(A>0&&B<1) {")
   expect_equal(fi("IF(A.LT.0.OR.B.GT.1) THEN"),  "if(A<0||B>1) {")
-  expect_equal(fi("IF(.NOT.FLAG) THEN"),           "if(!FLAG) {")
 })
 
-test_that("convert_fort_if: .TRUE. and .FALSE.", {
-  expect_equal(fi("IF(.TRUE.) THEN"),  "if(true) {")
-  expect_equal(fi("IF(.FALSE.) THEN"), "if(false) {")
-})
 
 test_that("convert_fort_if: single-line form", {
   expect_equal(fi("IF(WT.GE.70) CL = THETA(1)"), "if(WT>=70) CL = THETA(1)")
@@ -1289,9 +1282,6 @@ test_that("convert_fort_if: float literals adjacent to operators", {
   expect_equal(fi("IF(A.GT.1E-3.AND.B.LT.2) THEN"),  "if(A>1E-3&&B<2) {")
 })
 
-test_that("convert_fort_if: .NOT. combined with other operators", {
-  expect_equal(fi("IF(.NOT.FLAG.AND.X.GT.0) THEN"), "if(!FLAG&&X>0) {")
-})
 
 
 test_that("environment variable suppresses fortran if else conversion", {
