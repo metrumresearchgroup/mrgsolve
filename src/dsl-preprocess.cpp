@@ -219,8 +219,8 @@ struct ExprGrammar
       | ( lit('(') >> expr >> lit(')') ) [_val = _1]
       ;
 
-    // power: left-associative; base is primary so unary minus binds looser
-    // Fortran '**' stored as '^' in the AST; exponent may be unary (a**-2)
+    // power: right-associative (matches Fortran); base is primary so unary minus binds looser
+    // Fortran '**' stored as '**' in the AST; exponent may be unary (a**-2)
     power =
       primary[_val = _1]
       >> *(
