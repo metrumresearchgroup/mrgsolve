@@ -639,14 +639,14 @@ static std::string convert_fortran_if_line(const std::string& line) {
       is_elseif = true;
       kw_end = p + 2;
     } else {
-      // ELSE with a non-empty body that is not IF — unexpected; convert ops.
-      return indent + convert_fortran_ops(body);
+      // ELSE with a non-empty body that is not IF — unexpected; pass through.
+      return indent + body;
     }
   } else if (starts_with_ci(body, "IF")) {
     kw_end = 2;
   } else {
-    // Not an IF keyword line: convert Fortran operators and return.
-    return indent + convert_fortran_ops(body);
+    // Not an IF keyword line: pass through unchanged.
+    return indent + body;
   }
 
   // Skip optional space(s) between keyword and '('.
@@ -655,12 +655,12 @@ static std::string convert_fortran_if_line(const std::string& line) {
 
   if (paren >= body.size() || body[paren] != '(') {
     // Keyword not followed by '(' (e.g. a variable named "IF1").
-    return indent + convert_fortran_ops(body);
+    return indent + body;
   }
 
   // Find matching ')'.
   size_t close = find_close_paren(body, paren);
-  if (close == std::string::npos) return indent + convert_fortran_ops(body);
+  if (close == std::string::npos) return indent + body;
 
   std::string cond  = convert_fortran_ops(
                         body.substr(paren + 1, close - paren - 1));
