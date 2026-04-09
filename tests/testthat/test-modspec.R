@@ -984,18 +984,16 @@ test_that("convert_pow handles c-style comment", {
   expect_equal(x$PARAM, "THETA1 = 1")
 })
 
-
-code_convert_pow_1 <- '
-$PARAM a = 1.0, b = 2, c = 3
-$PREAMBLE double d = a**b;
-$MAIN d = a**b;
-$ODE @!audit \nd = a**b;
-$TABLE d = a**b; 
-$EVENT d = a**b;
-$CMT A B C 
-'
-
 test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
+  code_convert_pow_1 <- '
+  $PARAM a = 1.0, b = 2, c = 3
+  $PREAMBLE double d = a**b;
+  $MAIN d = a**b;
+  $ODE @!audit \nd = a**b;
+  $TABLE d = a**b; 
+  $EVENT d = a**b;
+  $CMT A B C 
+  '
   mod <- mcode('power', code_convert_pow_1, compile = FALSE)
   x <- readLines(mod@shlib$source)
   x <- x[grepl("d =", x, fixed = TRUE)]
@@ -1003,21 +1001,18 @@ test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
   expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
 
-code_convert_pow_2 <- '
-$PARAM a = 1.0, b = 2, c = 3
-$PREAMBLE double d = a**b;
-$PRED d = a**b;
-'
-
 test_that("Convert pow in  PREAMBLE, PRED", {
+  code_convert_pow_2 <- '
+  $PARAM a = 1.0, b = 2, c = 3
+  $PREAMBLE double d = a**b;
+  $PRED d = a**b;
+  '
   mod <- mcode('power', code_convert_pow_2, compile = FALSE)
   x <- readLines(mod@shlib$source)
   x <- x[grepl("d =", x, fixed = TRUE)]
   expect_length(x, 2)
   expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
-
-rm(code_convert_pow_1, code_convert_pow_2)
 
 test_that("convert_pow handles comparison operators in exponent", {
   expect_equal(convert_pow("THETA(2)**(RACE==3)"),   "pow(THETA(2), RACE==3)")
