@@ -674,27 +674,24 @@ static std::string convert_fortran_if_line(const std::string& line) {
 // Semicolon inserter
 // ---------------------------------------------------------------------------
 
-// Return the position of the first ';' in s that sits at paren depth 0,
-// or npos if none.  This keeps semicolons inside for(;;) invisible.
-static size_t find_semi_depth0(const std::string& s) {
+// Return the position of the first occurrence of ch in s at paren depth 0,
+// or npos if none.
+static size_t find_at_depth0(const std::string& s, char ch) {
   int depth = 0;
   for (size_t i = 0; i < s.size(); ++i) {
     if      (s[i] == '(') ++depth;
     else if (s[i] == ')') --depth;
-    else if (s[i] == ';' && depth == 0) return i;
+    else if (s[i] == ch && depth == 0) return i;
   }
   return std::string::npos;
 }
 
-// Return true if s contains ch at paren depth 0.
+static size_t find_semi_depth0(const std::string& s) {
+  return find_at_depth0(s, ';');
+}
+
 static bool contains_at_depth0(const std::string& s, char ch) {
-  int depth = 0;
-  for (size_t i = 0; i < s.size(); ++i) {
-    if      (s[i] == '(') ++depth;
-    else if (s[i] == ')') --depth;
-    else if (s[i] == ch && depth == 0) return true;
-  }
-  return false;
+  return find_at_depth0(s, ch) != std::string::npos;
 }
 
 static std::string convert_semicolon_line(const std::string& line) {
@@ -705,6 +702,19 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (t[0] == '#')                             return line;  // preprocessor
   if (t.size() >= 2 && t[0] == '/' &&
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
+
+  // C++ inline comment mid-line: insert semicolon before '//'.
+  size_t cmt = line.find("//");
+  if (cmt != std::string::npos) {
+    std::string code_part = line.substr(0, cmt);
+    std::string code_trim = trim_ws(code_part);
+    static const std::string cc = "+-*/&,=(;";
+    if (!code_trim.empty() && cc.find(code_trim.back()) == std::string::npos) {
+      size_t last_code = code_part.find_last_not_of(" \t");
+      return code_part.substr(0, last_code + 1) + "; //" + line.substr(cmt + 2);
+    }
+    return line;
+  }
 
   // Bare control-flow condition header: starts with a keyword, and the ')'
   // that closes the keyword's own '(' is the last character of the trimmed
