@@ -1263,6 +1263,11 @@ test_that("convert_fort_if: comment lines pass through unchanged", {
   expect_equal(fi("// IF(X.GT.0) THEN"), "// IF(X.GT.0) THEN")
 })
 
+test_that("convert_fort_if: Fortran ops on non-IF lines pass through unchanged", {
+  expect_equal(fi("  CL = CL * (SEX.EQ.1)"), "  CL = CL * (SEX.EQ.1)")
+  expect_equal(fi("CL = THETA(1).GE.0"),      "CL = THETA(1).GE.0")
+})
+
 
 test_that("convert_fort_if: non-character input passes through", {
   expect_equal(fi(42),   42)
