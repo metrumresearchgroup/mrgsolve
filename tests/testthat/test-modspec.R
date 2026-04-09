@@ -1190,6 +1190,8 @@ fi <- convert_fort_if
 test_that("convert_fort_if: block form with Fortran operator", {
   x <- c("IF(WT.GE.70) THEN", "  CL = THETA(1)", "ENDIF")
   expect_equal(fi(x), c("if(WT>=70) {", "  CL = THETA(1)", "}"))
+  x <- c("IF(WT.GE.70)THEN", "  CL = THETA(1)", "ENDIF")
+  expect_equal(fi(x), c("if(WT>=70) {", "  CL = THETA(1)", "}"))
 })
 
 test_that("convert_fort_if: all Fortran relational operators", {
