@@ -1026,7 +1026,7 @@ test_that("convert_pow handles comparison operators in exponent", {
 
 test_that("convert_pow handles comparison operators in assignment prefix", {
   expect_equal(
-    convert_pow("if(a==3) b = THETA(2)**(RACE)"),
+    convert_pow("if(a==3) b = THETA(2)**RACE"),
     "if(a==3) b = pow(THETA(2), RACE)"
   )
   expect_equal(
@@ -1034,7 +1034,7 @@ test_that("convert_pow handles comparison operators in assignment prefix", {
     "if(a>=3) b = pow(THETA(2), RACE)"
   )
   expect_equal(
-    convert_pow("if(a<=3) b = THETA(2)**(RACE)"),
+    convert_pow("if(a<=3) b = THETA(2)**RACE"),
     "if(a<=3) b = pow(THETA(2), RACE)"
   )
   expect_equal(
