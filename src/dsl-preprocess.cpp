@@ -412,7 +412,7 @@ static std::string strip_line_comment(const std::string& s) {
   return pos == std::string::npos ? s : s.substr(0, pos);
 }
 
-static std::string convert_line(const std::string& line) {
+static std::string convert_pow_line(const std::string& line) {
   if (line.find("**") == std::string::npos) return line;
 
   using It = std::string::const_iterator;
@@ -794,7 +794,7 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code,
   for (int i = 0; i < code.size(); ++i) {
     try {
       std::string line = Rcpp::as<std::string>(code[i]);
-      std::string converted = convert_line(line);
+      std::string converted = convert_pow_line(line);
       size_t ts = line.find_first_not_of(" \t");
       bool is_comment = ts != std::string::npos &&
         ts + 1 < line.size() && line[ts] == '/' &&
