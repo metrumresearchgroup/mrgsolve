@@ -985,6 +985,11 @@ test_that("convert_pow doesn't convert /** at start of c-style comment", {
   expect_equal(x$PARAM, "THETA1 = 1")
 })
 
+test_that("convert_pow will convert and maybe warn inside c-style comment", {
+  code <- c("/**", "This model is incredible. 3**4", "*/")
+  expect_warning(convert_pow(code), "Could not convert **", fixed = TRUE)
+})
+
 test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
   code_convert_pow_1 <- '
   $PARAM a = 1.0, b = 2, c = 3
