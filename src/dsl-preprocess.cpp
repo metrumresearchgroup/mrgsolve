@@ -320,6 +320,20 @@ static bool is_integer_literal(const ast::Number& n) {
     t.find_first_not_of("0123456789") == std::string::npos;
 }
 
+// Returns the text of an expression if it is an integer literal, optionally
+// wrapped in a unary +/-.  Returns empty string otherwise.
+static std::string integer_literal_text(const ast::Expr& e) {
+  if (const auto* n = boost::get<ast::Number>(&e)) {
+    if (is_integer_literal(*n)) return n->text;
+  }
+  if (const auto* u = boost::get<ast::UnaryExpr>(&e)) {
+    if (const auto* n = boost::get<ast::Number>(&u->operand)) {
+      if (is_integer_literal(*n)) return std::string(1, u->op) + n->text;
+    }
+  }
+  return "";
+}
+
 struct IntDivInstance {
   std::string num;
   std::string den;
@@ -341,10 +355,10 @@ struct IntDivFinder : boost::static_visitor<void> {
 
   void operator()(const ast::BinaryExpr& b) const {
     if (b.op == "/") {
-      const auto* lnum = boost::get<ast::Number>(&b.lhs);
-      const auto* rnum = boost::get<ast::Number>(&b.rhs);
-      if (lnum && rnum && is_integer_literal(*lnum) && is_integer_literal(*rnum)) {
-        found.push_back({lnum->text, rnum->text});
+      std::string ltext = integer_literal_text(b.lhs);
+      std::string rtext = integer_literal_text(b.rhs);
+      if (!ltext.empty() && !rtext.empty()) {
+        found.push_back({ltext, rtext});
       }
     }
     boost::apply_visitor(*this, b.lhs);

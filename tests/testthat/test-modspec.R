@@ -1111,6 +1111,18 @@ test_that("warn_int_div warns for simple integer division", {
   )
 })
 
+test_that("warn_int_div warns for negative numbers", {
+  expect_warning(warn_int_div("CL = -3/4 * THETA(1);"), "-3/4")
+  expect_warning(warn_int_div("CL = 3/-4 * THETA(1);"), "3/-4")
+  expect_warning(warn_int_div("CL = -3/-4 * THETA(1);"), "-3/-4")
+})
+
+test_that("warn_int_div strips parens", {
+  expect_warning(warn_int_div("CL = (3)/(4) * THETA(1);"), "3/4")
+  expect_warning(warn_int_div("CL = 3/(-4) * THETA(1);"), "3/-4")
+  expect_warning(warn_int_div("CL = (-3)/(-4) * THETA(1);"), "-3/-4")
+})
+
 test_that("warn_int_div is silent when no integer division", {
   expect_no_warning(warn_int_div("CL = 0.5/2;"))
   expect_no_warning(warn_int_div("x = a/b;"))
