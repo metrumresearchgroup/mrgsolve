@@ -1015,13 +1015,13 @@ test_that("Convert pow in  PREAMBLE, PRED", {
   expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
 
-test_that("convert_pow handles comparison operators in exponent", {
-  expect_equal(convert_pow("THETA(2)**(RACE==3)"),   "pow(THETA(2), RACE==3)")
-  expect_equal(convert_pow("THETA(2)**(RACE!=3)"),   "pow(THETA(2), RACE!=3)")
-  expect_equal(convert_pow("THETA(2)**(RACE>=3)"),   "pow(THETA(2), RACE>=3)")
-  expect_equal(convert_pow("THETA(2)**(RACE<=3)"),   "pow(THETA(2), RACE<=3)")
-  expect_equal(convert_pow("THETA(2)**(RACE>3)"),    "pow(THETA(2), RACE>3)")
-  expect_equal(convert_pow("THETA(2)**(RACE<3)"),    "pow(THETA(2), RACE<3)")
+test_that("convert_pow passes through comparison operators in exponent unchanged", {
+  expect_equal(convert_pow("THETA(2)**(RACE==3)"),   "THETA(2)**(RACE==3)")
+  expect_equal(convert_pow("THETA(2)**(RACE!=3)"),   "THETA(2)**(RACE!=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE>=3)"),   "THETA(2)**(RACE>=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE<=3)"),   "THETA(2)**(RACE<=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE>3)"),    "THETA(2)**(RACE>3)")
+  expect_equal(convert_pow("THETA(2)**(RACE<3)"),    "THETA(2)**(RACE<3)")
 })
 
 test_that("convert_pow handles comparison operators in assignment prefix", {
