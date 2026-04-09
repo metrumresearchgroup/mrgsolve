@@ -786,6 +786,7 @@ test_that("convert_pow passes through lines without **", {
   expect_equal(convert_pow("double x = a + b;"), "double x = a + b;")
   expect_equal(convert_pow("y = 1.0;"), "y = 1.0;")
   expect_equal(convert_pow("// just a comment"), "// just a comment")
+  expect_equal(convert_pow("x = a ^ b;"), "x = a ^ b;")
 })
 
 test_that("convert_pow handles simple base ** exponent", {
