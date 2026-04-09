@@ -562,6 +562,7 @@ static std::string convert_fortran_ops(const std::string& s) {
   r = replace_all_ci(r, ".LT.", "<");
   r = replace_all_ci(r, ".EQ.", "==");
   r = replace_all_ci(r, ".NE.", "!=");
+  r = replace_all(r, "/=", "!=");
   r = replace_all_ci(r, ".AND.", "&&");
   r = replace_all_ci(r, ".OR.", "||");
   return r;

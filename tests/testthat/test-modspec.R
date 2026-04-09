@@ -1196,6 +1196,7 @@ test_that("convert_fort_if: all Fortran relational operators", {
   expect_equal(fi("IF(A.LT.B) THEN"), "if(A<B) {")
   expect_equal(fi("IF(A.EQ.B) THEN"), "if(A==B) {")
   expect_equal(fi("IF(A.NE.B) THEN"), "if(A!=B) {")
+  expect_equal(fi("IF(A/=B) THEN"),   "if(A!=B) {")
 })
 
 test_that("convert_fort_if: logical operators in condition", {
