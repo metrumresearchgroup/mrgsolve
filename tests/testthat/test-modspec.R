@@ -965,7 +965,7 @@ test_that("convert_pow handles expressions with no assignment", {
   expect_equal(convert_pow("(WT/70)**0.75"), "pow(WT/70, 0.75)")
 })
 
-test_that("convert_pow handles c-style comment", {
+test_that("convert_pow doesn't convert /** at start of c-style comment", {
   code <- '
   $GLOBAL 
   /** 
