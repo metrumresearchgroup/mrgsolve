@@ -309,7 +309,7 @@ struct ExprGrammar
 };
 
 // ---------------------------------------------------------------------------
-// 3b. Integer-division detector
+// Integer-division detector
 // ---------------------------------------------------------------------------
 
 // Returns true if the Number text represents a plain integer (digits only,
@@ -366,7 +366,7 @@ static std::vector<IntDivInstance> find_integer_divisions(const ast::Expr& e) {
 }
 
 // ---------------------------------------------------------------------------
-// 4.  Per-line processor
+// Per-line processor
 // ---------------------------------------------------------------------------
 
 // Find the first '=' that is a plain assignment — not part of ==, >=, <=, !=.
@@ -515,7 +515,7 @@ static std::vector<IntDivInstance> check_line_integer_division(const std::string
 }
 
 // ---------------------------------------------------------------------------
-// 5.  Fortran IF/THEN/ELSE/ENDIF converter
+// Fortran IF/THEN/ELSE/ENDIF converter
 // ---------------------------------------------------------------------------
 
 // Case-insensitive prefix check.
@@ -676,7 +676,7 @@ static std::string convert_fortran_if_line(const std::string& line) {
 }
 
 // ---------------------------------------------------------------------------
-// 6.  Semicolon inserter
+// Semicolon inserter
 // ---------------------------------------------------------------------------
 
 // Return the position of the first ';' in s that sits at paren depth 0,
@@ -741,7 +741,7 @@ static std::string convert_semicolon_line(const std::string& line) {
 }
 
 // ---------------------------------------------------------------------------
-// 7.  R-facing entry point
+// R-facing entry point
 // ---------------------------------------------------------------------------
 
 static void warn_no_call(const std::string& msg) {
