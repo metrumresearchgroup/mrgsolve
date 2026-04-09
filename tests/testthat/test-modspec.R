@@ -1170,6 +1170,7 @@ test_that("warn_int_div passes through non-character input", {
   expect_no_warning(warn_int_div(NULL))
 })
 
+
 test_that("warn_int_div detects integer division before line comment", {
   expect_warning(warn_int_div("1/2 // hey"), "1/2")
   expect_warning(warn_int_div("CL = 3/4; // comment"), "3/4")
