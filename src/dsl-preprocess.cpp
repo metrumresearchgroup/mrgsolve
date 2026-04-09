@@ -100,7 +100,7 @@ static int precedence(const std::string& op) {
       op == ">"  || op == ">=") return 3;
   if (op == "+" || op == "-") return 4;
   if (op == "*" || op == "/") return 5;
-  return 0;  // "^" / unknown — not used for parens decisions (pow is a function)
+  return 0;  // "**" / unknown — not used for parens decisions (pow is a function)
 }
 
 static const ast::BinaryExpr* as_binop(const ast::Expr& e) {
@@ -109,13 +109,13 @@ static const ast::BinaryExpr* as_binop(const ast::Expr& e) {
 
 static bool needs_parens_left(const ast::Expr& child, const std::string& parent_op) {
   const ast::BinaryExpr* b = as_binop(child);
-  if (!b || b->op == "^") return false;
+  if (!b || b->op == "**") return false;
   return precedence(b->op) < precedence(parent_op);
 }
 
 static bool needs_parens_right(const ast::Expr& child, const std::string& parent_op) {
   const ast::BinaryExpr* b = as_binop(child);
-  if (!b || b->op == "^") return false;
+  if (!b || b->op == "**") return false;
   int cp = precedence(b->op);
   int pp = precedence(parent_op);
   return cp < pp || (cp == pp && (parent_op == "-" || parent_op == "/"));
@@ -142,7 +142,7 @@ struct Emitter : boost::static_visitor<std::string> {
   std::string operator()(const ast::BinaryExpr& b) const {
     std::string l = boost::apply_visitor(*this, b.lhs);
     std::string r = boost::apply_visitor(*this, b.rhs);
-    if (b.op == "^") {
+    if (b.op == "**") {
       return "pow(" + l + ", " + r + ")";
     }
     if (needs_parens_left(b.lhs, b.op)) l = "(" + l + ")";
@@ -225,7 +225,7 @@ struct ExprGrammar
       primary[_val = _1]
       >> *(
         lit("**") >> unary[
-          _val = construct<ast::BinaryExpr>(_val, val(std::string("^")), _1)
+          _val = construct<ast::BinaryExpr>(_val, val(std::string("**")), _1)
         ]
       );
 
