@@ -706,6 +706,27 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (t.size() >= 2 && t[0] == '/' &&
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
 
+  // Bare control-flow condition header: starts with a keyword, and the ')'
+  // that closes the keyword's own '(' is the last character of the trimmed
+  // line.  The body will be on the next line, so no semicolon belongs here.
+  if (t.back() == ')') {
+    static const char* ctrl[] = {"if", "else if", "for", "while", nullptr};
+    for (int k = 0; ctrl[k]; ++k) {
+      size_t kn = std::strlen(ctrl[k]);
+      if (t.size() >= kn && t.substr(0, kn) == ctrl[k] &&
+          (t.size() == kn || t[kn] == '(' || t[kn] == ' ')) {
+        // Find the '(' that opens the keyword's condition and check that
+        // its matching ')' is the very last character of t.
+        size_t open = t.find('(', kn);
+        if (open != std::string::npos) {
+          size_t close = find_close_paren(t, open);
+          if (close == t.size() - 1) return line;
+        }
+        break;
+      }
+    }
+  }
+
   // Only consider ';' at paren depth 0 — keeps for(;;) intact.
   size_t semi = find_semi_depth0(line);
 

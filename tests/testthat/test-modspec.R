@@ -1384,6 +1384,10 @@ test_that("convert_semicolons: skips brace lines", {
   expect_equal(as_("} else {"),     "} else {")
 })
 
+test_that("convert_semicolons: handle test condition with no brace", {
+  expect_equal(as_("if(WT>=70)"), "if(WT>=70)")
+})
+
 test_that("convert_semicolons: skips blank lines", {
   expect_equal(as_(""),   "")
   expect_equal(as_("  "), "  ")
@@ -1392,6 +1396,11 @@ test_that("convert_semicolons: skips blank lines", {
 test_that("convert_semicolons: skips comment lines", {
   expect_equal(as_("// a comment"),  "// a comment")
   expect_equal(as_("/** comment */"), "/** comment */")
+})
+
+test_that("convert_semicolons: adds semicolon to function call ending with )", {
+  expect_equal(as_("foo()"),        "foo();")
+  expect_equal(as_("bar(x, y)"),    "bar(x, y);")
 })
 
 test_that("convert_semicolons: skips preprocessor directives", {
