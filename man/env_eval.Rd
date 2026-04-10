@@ -12,9 +12,9 @@ env_eval(x, seed = NULL)
 \item{seed}{passed to \code{\link[=set.seed]{set.seed()}} if a numeric value is supplied.}
 }
 \description{
-The \verb{$ENV} block is a block of R code that can realize any sort of R object
-that might be used in running a model.
+The \verb{$ENV} block is a block of R code that can realize any sort of R
+object that might be used in running a model.
 }
 \seealso{
-\code{\link[=env_get]{env_get()}}, \code{\link[=env_ls]{env_ls()}}
+\code{\link[=env_get]{env_get()}}, \code{\link[=env_get_env]{env_get_env()}}, \code{\link[=env_ls]{env_ls()}}
 }

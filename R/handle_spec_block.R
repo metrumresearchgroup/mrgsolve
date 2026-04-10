@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2026  Metrum Research Group
+# Copyright (C) 2013 - 2026 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,6 +21,18 @@
 
 # UTILS ------------------------------------------------------------------------
 get_length <- function(what) sum(sapply(what,length))
+handle_convert_pow <- function(x, env, pos) {
+  if(env$convert_pow) {
+    x <- convert_pow(x, env$incoming_names[pos])  
+  }
+  x
+}
+handle_warn_int_div <- function(x, env, pos) {
+  if(env$warn_int_div) {
+    warn_int_div(x, env$incoming_names[pos])
+  }
+  invisible(x)
+}
 
 # GENERIC ----------------------------------------------------------------------
 handle_spec_block <- function(x,...) UseMethod("handle_spec_block")
@@ -550,32 +562,29 @@ HANDLEMATRIX <- function(x,
 
 #' @export 
 handle_spec_block.specTABLE <- function(x, env, ...) {
-  
+  pos <- attr(x, "pos")
   x <- dump_opts(x)
-  
-  pos <- attr(x,"pos")
   
   check_block_data(x, env, pos)
   
   if(any(grepl("table(", x,fixed=TRUE))) {
-    stop("The table(name) = value; macro has been deprecated.\n",  
+    stop("The table(name) = value; macro has been deprecated.\n",
          "Save your output to double and pass to $CAPTURE instead:\n",
          "   $TABLE double name = value;\n   $CAPTURE name")
   }
-  
-  return(x)
+  handle_warn_int_div(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
-#' @export 
+#' @export
 handle_spec_block.specEVENT <- function(x, env, ...) {
-  
+  pos <- attr(x, "pos")
   x <- dump_opts(x)
-  
-  pos <- attr(x,"pos")
   
   check_block_data(x, env, pos)
   
-  return(x)
+  handle_warn_int_div(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # NMXML --------------------------------
@@ -613,13 +622,14 @@ handle_spec_block.specNMEXT <- function(x, env, ...) {
 
 #' @export
 handle_spec_block.specPRED <- function(x, env, ...) {
+  pos <- attr(x, "pos")
   x <- scrape_opts(x)
   x$env <- env
-  x$pos <- attr(x, "pos")
+  x$pos <- pos
   do.call("PRED", x)
 }
 
-PRED <- function(x, env, ...) {
+PRED <- function(x, env, pos, ...) {
   if(any("MAIN"==env[["blocks"]])) {
     stop("$MAIN not allowed when $PRED is used", call.=FALSE)  
   }
@@ -638,7 +648,8 @@ PRED <- function(x, env, ...) {
   if(any("ODE"==env[["blocks"]])) {
     stop("$ODE not allowed when $PRED is used",call.=FALSE)  
   }
-  return(x)
+  handle_warn_int_div(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # INCLUDE ----------------------------------------------------------------------
@@ -1033,16 +1044,32 @@ handle_spec_block.specODE <- function(x, env, ...) {
     env[["param"]][[pos]] <- tolist(con[["param"]])
   }
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
-  return(x)
+  
+  handle_warn_int_div(x, env, pos)
+  handle_convert_pow(x, env, pos)
+}
+
+# PREAMBLE --------------------------------------------------------------------
+
+#' @export
+handle_spec_block.specPREAMBLE <- function(x, env, ...) {
+  pos <- attr(x, "pos")
+  x <- dump_opts(x)
+  
+  handle_warn_int_div(x, env, pos)
+  handle_convert_pow(x, env, pos)
 }
 
 # MAIN -------------------------------------------------------------------------
 
 #' @export
 handle_spec_block.specMAIN <- function(x,env,...) {
+  pos <- attr(x, "pos")
   x <- scrape_opts(x, def = list(check_modeled_infusions = TRUE))
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
-  return(x$x)  
+  
+  handle_warn_int_div(x$x, env, pos)
+  handle_convert_pow(x$x, env, pos)
 }
 
 # BLOCK ------------------------------------------------------------------------

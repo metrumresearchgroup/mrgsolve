@@ -139,6 +139,23 @@ autodec_nm_vars <- function(x, env) {
   return(invisible(TRUE))
 }
 
+preprocess_nm_vars <- function(spec, env) {
+  to_process <- intersect(names(spec), GLOBALS$PRE_PROC_BLOCKS)
+  # Convert FORTRAN if else then; needs to happen first
+  if(env$convert_fort_if) {
+    for(b in to_process) {
+      spec[[b]] <- convert_fort_if(spec[[b]])
+    }
+  }
+  # Add semicolons if needed
+  if(env$convert_semicolons) {
+    for(b in to_process) {
+      spec[[b]] <- convert_semicolons(spec[[b]])
+    }
+  }
+  spec
+}
+
 audit_nm_vars_range <- function(x, cmt) {
   err <- c()
   cmtn <- seq_along(cmt)

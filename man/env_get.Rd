@@ -2,18 +2,60 @@
 % Please edit documentation in R/env.R
 \name{env_get}
 \alias{env_get}
+\alias{env_get.mrgmod}
+\alias{env_get.mrgsims}
+\alias{env_get_obj}
 \alias{env_get_env}
-\title{Return model environment}
+\alias{env_get_env.mrgmod}
+\alias{env_get_env.mrgsims}
+\title{Return model environment or objects from the model environment}
 \usage{
-env_get(x, tolist = TRUE)
+env_get(x, ...)
 
-env_get_env(x)
+\method{env_get}{mrgmod}(x, what, ...)
+
+\method{env_get}{mrgsims}(x, ...)
+
+env_get_obj(x, ...)
+
+env_get_env(x, ...)
+
+\method{env_get_env}{mrgmod}(x, ...)
+
+\method{env_get_env}{mrgsims}(x, ...)
 }
 \arguments{
-\item{x}{a model object.}
+\item{x}{a model object (class \code{mrgmod}) or simulated output (class
+\code{mrgsims}).}
 
-\item{tolist}{should the environment be coerced to \code{list}?}
+\item{...}{passed \code{\link[base:get]{base::get()}}.}
+
+\item{what}{the name of an object to return.}
 }
 \description{
-Return model environment
+Call \code{env_get()} passing either a model object or simulated output and
+name an object to retreive from the model object environment.
+\code{env_get_obj()} is an alias to \code{env_get()}. Call  \code{env_get_env()} to
+return the environment itself. Methods for \code{mrgmod} and \code{mrgsims} both
+interact with the same environment (see \strong{Examples}).
+}
+\examples{
+mod <- house(end = 1)
+
+# Just for the example
+assign("let", letters[1:3], env_get_env(mod))
+
+out <- mrgsim(mod)
+
+env_get(out, "let")
+
+env_get(mod, "let")
+
+env_get_obj(out, "let")
+
+env_get_env(mod)
+
+# It's the same environment in out that is in mod
+env_get_env(out)
+
 }

@@ -91,6 +91,10 @@ GLOBALS$SET_ARGS <- c("Req", "obsonly", "recsort", "carry.out", "Trequest",
 )
 GLOBALS[["version"]] <- utils::packageVersion("mrgsolve")
 
+GLOBALS[["PRE_PROC_BLOCKS"]] <- c(
+  "PREAMBLE", "MAIN", "PK", "ODE", "DES", "EVENT", "TABLE", "ERROR", "PRED"  
+)
+
 block_list <- c("ENV", "PROB", "PARAM", "INIT",
                 "CMT", "ODE", "DES", "MAIN", "TABLE",
                 "FIXED", "CMTN", "THETA", "NMXML", "VCMT",

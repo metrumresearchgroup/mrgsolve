@@ -304,7 +304,7 @@ test_that("nm-vars model with no ode", {
   '
   expect_silent(mod <- mcode("nmv-audit-5", code, compile = FALSE))
   expect_is(mod, "mrgmod")
-  
+
   code <- '
   $plugin nm-vars
   $main
@@ -316,3 +316,46 @@ test_that("nm-vars model with no ode", {
   expect_silent(mod <- mcode("nmv-audit-6", code, compile = FALSE))
   expect_is(mod, "mrgmod")
 })
+
+# preprocess_nm_vars --------------------------------------------------
+
+testenv <- list2env(list(convert_semicolons = TRUE, convert_fort_if = TRUE))
+test_that("preprocess_nm_vars converts all recognised block names", {
+  blocks <- mrgsolve:::GLOBALS$PRE_PROC_BLOCKS
+  spec <- setNames(
+    lapply(blocks, function(b) paste0(b, "_var = 1")),
+    blocks
+  )
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
+  for(b in blocks) {
+    expect_equal(out[[b]], paste0(b, "_var = 1;"), info = b)
+  }
+})
+
+test_that("preprocess_nm_vars leaves unrecognised blocks untouched", {
+  spec <- list(PARAM = "CL = 0.1", OMEGA = "0.04")
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
+  expect_equal(out, spec)
+})
+
+test_that("preprocess_nm_vars only touches blocks present in spec", {
+  spec <- list(MAIN = c("CL = THETA(1)", "V = THETA(2)"))
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
+  expect_equal(names(out), "MAIN")
+  expect_equal(out$MAIN, c("CL = THETA(1);", "V = THETA(2);"))
+})
+
+test_that("preprocess_nm_vars does not double-add semicolons", {
+  spec <- list(PK = c("CL = THETA(1);", "V = THETA(2)"))
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
+  expect_equal(out$PK, c("CL = THETA(1);", "V = THETA(2);"))
+})
+
+test_that("preprocess_nm_vars returns the full spec unchanged except code blocks", {
+  spec <- list(MAIN = "x = 1", PARAM = "CL = 0.1")
+  out <- mrgsolve:::preprocess_nm_vars(spec, testenv)
+  expect_named(out, c("MAIN", "PARAM"))
+  expect_equal(out$PARAM, "CL = 0.1")
+})
+
+rm(testenv)
