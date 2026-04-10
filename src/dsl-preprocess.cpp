@@ -29,6 +29,14 @@
 #include <sstream>
 #include <stdexcept>
 
+// NOTE: the code processing implemented in this file only works line-by-line;
+// major refactoring to mread() and accessory functions in modspec.R would be 
+// necessary for understanding the full context of the code. No such claim
+// is made here; think of these functions as high-power implementations of the 
+// line-by-line processing that we might otherwise do in R (and there is tons 
+// of old code sitting on the R side that still works that way and will 
+// probably continue to work that way).
+
 // ---------------------------------------------------------------------------
 // 1.  AST
 // ---------------------------------------------------------------------------
