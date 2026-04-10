@@ -12,8 +12,8 @@ compartments.
 
 All PK/PD models include 2-compartment PK model with absorption from
 2 extravascular compartments and linear + nonlinear clearance. The
-PK models are parameterized with \code{CL}, \code{VC}, \code{Q}, \code{VMAX}, \code{KM}, \code{KA1}
-and \code{KA2} and implement compartments \code{EV1}, \code{EV2}, \code{CENT}, \code{PERIPH}.
+PK models are parameterized with \code{CL}, \code{V2}, \code{Q}, \code{VMAX}, \code{KM}, \code{KA}
+and \code{KA2} and implement compartments \code{EV}, \code{EV2}, \code{CENT}, \code{PERIPH}.
 The indirect response models have compartment \code{RESP} and the emax
 model has output variable \code{RESP}. PD parameters include \code{KIN}, \code{KOUT},
 \code{IC50}, \code{EC50}, \code{IMAX}, \code{EMAX}, \code{E0}, and \code{n}.

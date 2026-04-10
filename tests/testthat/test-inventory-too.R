@@ -123,6 +123,12 @@ test_that("param_tags returns tags", {
   mod <- mread("pk1", project = modlib(), compile = FALSE)
   ans <- param_tags(mod)
   expect_is(ans, "data.frame")
+  expect_equal(nrow(ans), 3)
+  expect_identical(names(ans), c("name", "tag"))
+
+  mod <- mread("irm1", project = modlib(), compile = FALSE)
+  ans <- param_tags(mod)
+  expect_is(ans, "data.frame")
   expect_equal(nrow(ans), 0)
   expect_identical(names(ans), c("name", "tag"))
 })

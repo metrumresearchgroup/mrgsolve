@@ -96,32 +96,32 @@ modlib_list <- function() {
 #' @name modlib_details
 #'
 #' @section Compartments:
-#' - `EV1`, `EV2`: extravascular dosing compartments
+#' - `EV`, `EV2`: extravascular dosing compartments
 #' - `CENT`: central PK compartment
 #' - `PERIPH`: peripheral PK compartment
 #' - `PERIPH2`: peripheral PK compartment 2
 #' - `RESP`: response PD compartment (irm models)
 #'
 #' @section Output variables:
-#' - `CP`: concentration in the central compartment (`CENT/VC`)
+#' - `CP`: concentration in the central compartment (`CENT/V2`)
 #' - `RESP`: response (emax model)
 #'
 #' @section PK parameters:
-#' - `KA1`, `KA2`: first order absorption rate constants from first and
+#' - `KA`, `KA2`: first order absorption rate constants from first and
 #'   second extravascular compartment (1/time)
 #' - `CL`: clearance (volume/time)
-#' - `VC`: volume of distribution, central compartment (volume)
-#' - `VP`: volume of distribution, peripheral compartment (volume)
-#' - `VP2`: volume of distribution, peripheral compartment 2 (volume)
+#' - `V2`: volume of distribution, central compartment (volume)
+#' - `V3`: volume of distribution, peripheral compartment (volume)
+#' - `V4`: volume of distribution, peripheral compartment 2 (volume)
 #' - `Q`: intercompartmental clearance (volume/time)
-#' - `Q2`: intercompartmental clearance 2 (volume/time)
+#' - `Q4`: intercompartmental clearance 2 (volume/time)
 #' - `VMAX`: maximum rate, nonlinear process (mass/time)
 #' - `KM`: Michaelis constant (mass/volume)
-#' - `K10`: elimination rate constant (1/time); `CL/VC`
+#' - `K10`: elimination rate constant (1/time); `CL/V2`
 #' - `K12`: rate constant for transfer to peripheral compartment from
-#'   central (1/time); `Q/VC`
+#'   central (1/time); `Q/V2`
 #' - `K21`: rate constant for transfer to central compartment from
-#'   peripheral (1/time); `Q/VP`
+#'   peripheral (1/time); `Q/V3`
 #'
 #' @section PD parameters:
 #' - `E0`: baseline effect (emax model)
@@ -167,11 +167,11 @@ object_dir <- function() {
 #' See [modlib_details] for more detailed descriptions of parameters and
 #' compartments.
 #'
-#' The `pk1cmt` model is parameterized in terms of `CL`, `VC`, `KA1` and
-#' `KA2` and uses compartments `EV1`, `EV2`, and `CENT`. The `pk2cmt` model
-#' adds a `PERIPH` compartment and parameters `Q` and `VP` to that of the
+#' The `pk1cmt` model is parameterized in terms of `CL`, `V2`, `KA` and
+#' `KA2` and uses compartments `EV`, `EV2`, and `CENT`. The `pk2cmt` model
+#' adds a `PERIPH` compartment and parameters `Q` and `V3` to that of the
 #' one-compartment model. Likewise, the three-compartment model (`pk3cmt`)
-#' adds `PERIPH2` and parameters `Q2` and `VP2` to that of the
+#' adds `PERIPH2` and parameters `Q4` and `V4` to that of the
 #' two-compartment models. All pk models also have parameters `VMAX`
 #' (defaulting to zero, no non-linear clearance) and `KM`.
 #'
@@ -191,8 +191,8 @@ NULL
 #'
 #' All PK/PD models include 2-compartment PK model with absorption from
 #' 2 extravascular compartments and linear + nonlinear clearance. The
-#' PK models are parameterized with `CL`, `VC`, `Q`, `VMAX`, `KM`, `KA1`
-#' and `KA2` and implement compartments `EV1`, `EV2`, `CENT`, `PERIPH`.
+#' PK models are parameterized with `CL`, `V2`, `Q`, `VMAX`, `KM`, `KA`
+#' and `KA2` and implement compartments `EV`, `EV2`, `CENT`, `PERIPH`.
 #' The indirect response models have compartment `RESP` and the emax
 #' model has output variable `RESP`. PD parameters include `KIN`, `KOUT`,
 #' `IC50`, `EC50`, `IMAX`, `EMAX`, `E0`, and `n`.
@@ -221,8 +221,8 @@ NULL
 #' - `KEL`: elimination rate constant
 #' - `KTP`: tissue to plasma rate constant
 #' - `KPT`: plasma to tissue rate constant
-#' - `VC`: volume of distribution
-#' - `KA1`, `KA2`: absorption rate constants
+#' - `V2`: volume of distribution
+#' - `KA`, `KA2`: absorption rate constants
 #' - `KINT`: internalization rate constant
 #' - `KON`: association rate constant
 #' - `KOFF`: dissociation rate constant
@@ -234,7 +234,7 @@ NULL
 #' - `TISS`: unbound drug in tissue compartment
 #' - `REC`: concentration of target
 #' - `RC`: concentration of drug-target complex
-#' - `EV1`, `EV2`: extravascular dosing compartments
+#' - `EV`, `EV2`: extravascular dosing compartments
 #'
 #' @section Output variables:
 #' - `CP`: unbound drug in the central compartment

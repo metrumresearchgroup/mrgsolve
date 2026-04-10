@@ -16,11 +16,11 @@ modlib: Pharmacokinetic models
 See \link{modlib_details} for more detailed descriptions of parameters and
 compartments.
 
-The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{VC}, \code{KA1} and
-\code{KA2} and uses compartments \code{EV1}, \code{EV2}, and \code{CENT}. The \code{pk2cmt} model
-adds a \code{PERIPH} compartment and parameters \code{Q} and \code{VP} to that of the
+The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{V2}, \code{KA} and
+\code{KA2} and uses compartments \code{EV}, \code{EV2}, and \code{CENT}. The \code{pk2cmt} model
+adds a \code{PERIPH} compartment and parameters \code{Q} and \code{V3} to that of the
 one-compartment model. Likewise, the three-compartment model (\code{pk3cmt})
-adds \code{PERIPH2} and parameters \code{Q2} and \code{VP2} to that of the
+adds \code{PERIPH2} and parameters \code{Q4} and \code{V4} to that of the
 two-compartment models. All pk models also have parameters \code{VMAX}
 (defaulting to zero, no non-linear clearance) and \code{KM}.
 }
