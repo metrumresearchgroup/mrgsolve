@@ -701,10 +701,6 @@ static size_t find_at_depth0(const std::string& s, char ch) {
   return std::string::npos;
 }
 
-static size_t find_semi_depth0(const std::string& s) {
-  return find_at_depth0(s, ';');
-}
-
 static bool contains_at_depth0(const std::string& s, char ch) {
   return find_at_depth0(s, ch) != std::string::npos;
 }
@@ -753,7 +749,7 @@ static std::string convert_semicolon_line(const std::string& line) {
   }
 
   // Only consider ';' at paren depth 0 — keeps for(;;) intact.
-  size_t semi = find_semi_depth0(line);
+  size_t semi = find_at_depth0(line, ';');
 
   if (semi == std::string::npos) {
     // No depth-0 ';': append one after the last non-whitespace character,
