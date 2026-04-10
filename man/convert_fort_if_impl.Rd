@@ -17,7 +17,6 @@ Translates Fortran block-form and single-line IF constructs to C++ in each
 element of \code{code}.  Fortran relational and logical operators
 (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
 \code{.NE.}, \code{.AND.}, \code{.OR.}) are converted everywhere they
-appear. Matching is
-case-insensitive.
+appear. Matching is case-insensitive.
 }
 \keyword{internal}
