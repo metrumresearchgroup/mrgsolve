@@ -100,7 +100,7 @@ static int precedence(const std::string& op) {
       op == ">"  || op == ">=") return 3;
   if (op == "+" || op == "-") return 4;
   if (op == "*" || op == "/") return 5;
-  return 0;  // "^" / unknown — not used for parens decisions (pow is a function)
+  return 0;  // "**" / unknown — not used for parens decisions (pow is a function)
 }
 
 static const ast::BinaryExpr* as_binop(const ast::Expr& e) {
@@ -109,13 +109,13 @@ static const ast::BinaryExpr* as_binop(const ast::Expr& e) {
 
 static bool needs_parens_left(const ast::Expr& child, const std::string& parent_op) {
   const ast::BinaryExpr* b = as_binop(child);
-  if (!b || b->op == "^") return false;
+  if (!b || b->op == "**") return false;
   return precedence(b->op) < precedence(parent_op);
 }
 
 static bool needs_parens_right(const ast::Expr& child, const std::string& parent_op) {
   const ast::BinaryExpr* b = as_binop(child);
-  if (!b || b->op == "^") return false;
+  if (!b || b->op == "**") return false;
   int cp = precedence(b->op);
   int pp = precedence(parent_op);
   return cp < pp || (cp == pp && (parent_op == "-" || parent_op == "/"));
@@ -142,7 +142,7 @@ struct Emitter : boost::static_visitor<std::string> {
   std::string operator()(const ast::BinaryExpr& b) const {
     std::string l = boost::apply_visitor(*this, b.lhs);
     std::string r = boost::apply_visitor(*this, b.rhs);
-    if (b.op == "^") {
+    if (b.op == "**") {
       return "pow(" + l + ", " + r + ")";
     }
     if (needs_parens_left(b.lhs, b.op)) l = "(" + l + ")";
@@ -219,13 +219,13 @@ struct ExprGrammar
       | ( lit('(') >> expr >> lit(')') ) [_val = _1]
       ;
 
-    // power: left-associative; base is primary so unary minus binds looser
-    // Fortran '**' stored as '^' in the AST; exponent may be unary (a**-2)
+    // power: right-associative (matches Fortran); base is primary so unary minus binds looser
+    // Fortran '**' stored as '**' in the AST; exponent may be unary (a**-2)
     power =
       primary[_val = _1]
       >> *(
         lit("**") >> unary[
-          _val = construct<ast::BinaryExpr>(_val, val(std::string("^")), _1)
+          _val = construct<ast::BinaryExpr>(_val, val(std::string("**")), _1)
         ]
       );
 
@@ -309,7 +309,7 @@ struct ExprGrammar
 };
 
 // ---------------------------------------------------------------------------
-// 3b. Integer-division detector
+// Integer-division detector
 // ---------------------------------------------------------------------------
 
 // Returns true if the Number text represents a plain integer (digits only,
@@ -318,6 +318,20 @@ static bool is_integer_literal(const ast::Number& n) {
   const std::string& t = n.text;
   return !t.empty() &&
     t.find_first_not_of("0123456789") == std::string::npos;
+}
+
+// Returns the text of an expression if it is an integer literal, optionally
+// wrapped in a unary +/-.  Returns empty string otherwise.
+static std::string integer_literal_text(const ast::Expr& e) {
+  if (const auto* n = boost::get<ast::Number>(&e)) {
+    if (is_integer_literal(*n)) return n->text;
+  }
+  if (const auto* u = boost::get<ast::UnaryExpr>(&e)) {
+    if (const auto* n = boost::get<ast::Number>(&u->operand)) {
+      if (is_integer_literal(*n)) return std::string(1, u->op) + n->text;
+    }
+  }
+  return "";
 }
 
 struct IntDivInstance {
@@ -341,10 +355,10 @@ struct IntDivFinder : boost::static_visitor<void> {
 
   void operator()(const ast::BinaryExpr& b) const {
     if (b.op == "/") {
-      const auto* lnum = boost::get<ast::Number>(&b.lhs);
-      const auto* rnum = boost::get<ast::Number>(&b.rhs);
-      if (lnum && rnum && is_integer_literal(*lnum) && is_integer_literal(*rnum)) {
-        found.push_back({lnum->text, rnum->text});
+      std::string ltext = integer_literal_text(b.lhs);
+      std::string rtext = integer_literal_text(b.rhs);
+      if (!ltext.empty() && !rtext.empty()) {
+        found.push_back({ltext, rtext});
       }
     }
     boost::apply_visitor(*this, b.lhs);
@@ -366,7 +380,7 @@ static std::vector<IntDivInstance> find_integer_divisions(const ast::Expr& e) {
 }
 
 // ---------------------------------------------------------------------------
-// 4.  Per-line processor
+// Per-line processor
 // ---------------------------------------------------------------------------
 
 // Find the first '=' that is a plain assignment — not part of ==, >=, <=, !=.
@@ -412,7 +426,7 @@ static std::string strip_line_comment(const std::string& s) {
   return pos == std::string::npos ? s : s.substr(0, pos);
 }
 
-static std::string convert_line(const std::string& line) {
+static std::string convert_pow_line(const std::string& line) {
   if (line.find("**") == std::string::npos) return line;
 
   using It = std::string::const_iterator;
@@ -515,7 +529,7 @@ static std::vector<IntDivInstance> check_line_integer_division(const std::string
 }
 
 // ---------------------------------------------------------------------------
-// 5.  Fortran IF/THEN/ELSE/ENDIF converter
+// Fortran IF/THEN/ELSE/ENDIF converter
 // ---------------------------------------------------------------------------
 
 // Case-insensitive prefix check.
@@ -560,15 +574,11 @@ static std::string convert_fortran_ops(const std::string& s) {
   r = replace_all_ci(r, ".LE.", "<=");
   r = replace_all_ci(r, ".GT.", ">");
   r = replace_all_ci(r, ".LT.", "<");
-  r = replace_all_ci(r, ".EQN.", "==");
-  r = replace_all_ci(r, ".NEN.", "!=");
   r = replace_all_ci(r, ".EQ.", "==");
   r = replace_all_ci(r, ".NE.", "!=");
+  r = replace_all_ci(r, "/=", "!=");
   r = replace_all_ci(r, ".AND.", "&&");
   r = replace_all_ci(r, ".OR.", "||");
-  r = replace_all_ci(r, ".NOT.", "!");
-  r = replace_all_ci(r, ".TRUE.", "true");
-  r = replace_all_ci(r, ".FALSE.", "false");
   return r;
 }
 
@@ -601,7 +611,7 @@ static std::string convert_fortran_if_line(const std::string& line) {
 
   if (body.empty()) return line;
 
-  // Skip C-style comments unchanged.
+  // Skip commented code unchanged.
   if (body.size() >= 2 && body[0] == '/' && body[1] == '/') return line;
 
   // Check for bare ENDIF / END IF and ELSE.
@@ -629,14 +639,14 @@ static std::string convert_fortran_if_line(const std::string& line) {
       is_elseif = true;
       kw_end = p + 2;
     } else {
-      // ELSE with a non-empty body that is not IF — unexpected; convert ops.
-      return indent + convert_fortran_ops(body);
+      // ELSE with a non-empty body that is not IF — unexpected; pass through.
+      return indent + body;
     }
   } else if (starts_with_ci(body, "IF")) {
     kw_end = 2;
   } else {
-    // Not an IF keyword line: convert Fortran operators and return.
-    return indent + convert_fortran_ops(body);
+    // Not an IF keyword line: pass through unchanged.
+    return indent + body;
   }
 
   // Skip optional space(s) between keyword and '('.
@@ -645,12 +655,12 @@ static std::string convert_fortran_if_line(const std::string& line) {
 
   if (paren >= body.size() || body[paren] != '(') {
     // Keyword not followed by '(' (e.g. a variable named "IF1").
-    return indent + convert_fortran_ops(body);
+    return indent + body;
   }
 
   // Find matching ')'.
   size_t close = find_close_paren(body, paren);
-  if (close == std::string::npos) return indent + convert_fortran_ops(body);
+  if (close == std::string::npos) return indent + body;
 
   std::string cond  = convert_fortran_ops(
                         body.substr(paren + 1, close - paren - 1));
@@ -676,30 +686,27 @@ static std::string convert_fortran_if_line(const std::string& line) {
 }
 
 // ---------------------------------------------------------------------------
-// 6.  Semicolon inserter
+// Semicolon inserter
 // ---------------------------------------------------------------------------
 
-// Return the position of the first ';' in s that sits at paren depth 0,
-// or npos if none.  This keeps semicolons inside for(;;) invisible.
-static size_t find_semi_depth0(const std::string& s) {
+// Return the position of the first occurrence of ch in s at paren depth 0,
+// or npos if none.
+static size_t find_at_depth0(const std::string& s, char ch) {
   int depth = 0;
   for (size_t i = 0; i < s.size(); ++i) {
     if      (s[i] == '(') ++depth;
     else if (s[i] == ')') --depth;
-    else if (s[i] == ';' && depth == 0) return i;
+    else if (s[i] == ch && depth == 0) return i;
   }
   return std::string::npos;
 }
 
-// Return true if s contains ch at paren depth 0.
+static size_t find_semi_depth0(const std::string& s) {
+  return find_at_depth0(s, ';');
+}
+
 static bool contains_at_depth0(const std::string& s, char ch) {
-  int depth = 0;
-  for (size_t i = 0; i < s.size(); ++i) {
-    if      (s[i] == '(') ++depth;
-    else if (s[i] == ')') --depth;
-    else if (s[i] == ch && depth == 0) return true;
-  }
-  return false;
+  return find_at_depth0(s, ch) != std::string::npos;
 }
 
 static std::string convert_semicolon_line(const std::string& line) {
@@ -710,6 +717,40 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (t[0] == '#')                             return line;  // preprocessor
   if (t.size() >= 2 && t[0] == '/' &&
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
+
+  // C++ inline comment mid-line: insert semicolon before '//'.
+  size_t cmt = line.find("//");
+  if (cmt != std::string::npos) {
+    std::string code_part = line.substr(0, cmt);
+    std::string code_trim = trim_ws(code_part);
+    static const std::string cc = "+-*/&,=(;";
+    if (!code_trim.empty() && cc.find(code_trim.back()) == std::string::npos) {
+      size_t last_code = code_part.find_last_not_of(" \t");
+      return code_part.substr(0, last_code + 1) + "; //" + line.substr(cmt + 2);
+    }
+    return line;
+  }
+
+  // Bare control-flow condition header: starts with a keyword, and the ')'
+  // that closes the keyword's own '(' is the last character of the trimmed
+  // line.  The body will be on the next line, so no semicolon belongs here.
+  if (t.back() == ')') {
+    static const char* ctrl[] = {"if", "else if", "for", "while", nullptr};
+    for (int k = 0; ctrl[k]; ++k) {
+      size_t kn = std::strlen(ctrl[k]);
+      if (t.size() >= kn && t.substr(0, kn) == ctrl[k] &&
+          (t.size() == kn || t[kn] == '(' || t[kn] == ' ')) {
+        // Find the '(' that opens the keyword's condition and check that
+        // its matching ')' is the very last character of t.
+        size_t open = t.find('(', kn);
+        if (open != std::string::npos) {
+          size_t close = find_close_paren(t, open);
+          if (close == t.size() - 1) return line;
+        }
+        break;
+      }
+    }
+  }
 
   // Only consider ';' at paren depth 0 — keeps for(;;) intact.
   size_t semi = find_semi_depth0(line);
@@ -741,7 +782,7 @@ static std::string convert_semicolon_line(const std::string& line) {
 }
 
 // ---------------------------------------------------------------------------
-// 7.  R-facing entry point
+// R-facing entry point
 // ---------------------------------------------------------------------------
 
 static void warn_no_call(const std::string& msg) {
@@ -765,24 +806,19 @@ Rcpp::CharacterVector convert_pow_impl(Rcpp::CharacterVector code,
                                         std::string block) {
   Rcpp::CharacterVector out(code.size());
   for (int i = 0; i < code.size(); ++i) {
-    try {
-      std::string line = Rcpp::as<std::string>(code[i]);
-      std::string converted = convert_line(line);
-      size_t ts = line.find_first_not_of(" \t");
-      bool is_comment = ts != std::string::npos &&
-        ts + 1 < line.size() && line[ts] == '/' &&
-        (line[ts + 1] == '/' || line[ts + 1] == '*');
-      if (!is_comment && converted == line && line.find("**") != std::string::npos) {
-        std::string prefix = block.empty()
-          ? "Could not convert **"
-          : "Could not convert ** in $" + block + " block";
-        warn_no_call(prefix + ": '" + line + "'");
-      }
-      out[i] = converted;
-    } catch (const std::exception& e) {
-      Rcpp::warning("Line %d: %s", i + 1, e.what());
-      out[i] = code[i];
+    std::string line = Rcpp::as<std::string>(code[i]);
+    std::string converted = convert_pow_line(line);
+    size_t ts = line.find_first_not_of(" \t");
+    bool is_comment = ts != std::string::npos &&
+      ts + 1 < line.size() && line[ts] == '/' &&
+      (line[ts + 1] == '/' || line[ts + 1] == '*');
+    if (!is_comment && converted == line && line.find("**") != std::string::npos) {
+      std::string prefix = block.empty()
+        ? "Could not convert **"
+        : "Could not convert ** in $" + block + " block";
+      warn_no_call(prefix + ": '" + line + "'");
     }
+    out[i] = converted;
   }
   return out;
 }
@@ -825,8 +861,8 @@ Rcpp::CharacterVector warn_int_div_impl(Rcpp::CharacterVector code,
 //' Translates Fortran block-form and single-line IF constructs to C++ in each
 //' element of \code{code}.  Fortran relational and logical operators
 //' (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
-//' \code{.NE.}, \code{.AND.}, \code{.OR.}, \code{.NOT.}, \code{.TRUE.},
-//' \code{.FALSE.}) are converted everywhere they appear. Matching is
+//' \code{.NE.}, \code{.AND.}, \code{.OR.}) are converted everywhere they
+//' appear. Matching is
 //' case-insensitive.
 //'
 //' @param code Character vector of source lines.

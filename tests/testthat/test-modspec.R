@@ -786,6 +786,7 @@ test_that("convert_pow passes through lines without **", {
   expect_equal(convert_pow("double x = a + b;"), "double x = a + b;")
   expect_equal(convert_pow("y = 1.0;"), "y = 1.0;")
   expect_equal(convert_pow("// just a comment"), "// just a comment")
+  expect_equal(convert_pow("x = a ^ b;"), "x = a ^ b;")
 })
 
 test_that("convert_pow handles simple base ** exponent", {
@@ -964,7 +965,7 @@ test_that("convert_pow handles expressions with no assignment", {
   expect_equal(convert_pow("(WT/70)**0.75"), "pow(WT/70, 0.75)")
 })
 
-test_that("convert_pow handles c-style comment", {
+test_that("convert_pow doesn't convert /** at start of c-style comment", {
   code <- '
   $GLOBAL 
   /** 
@@ -984,18 +985,21 @@ test_that("convert_pow handles c-style comment", {
   expect_equal(x$PARAM, "THETA1 = 1")
 })
 
-
-code_convert_pow_1 <- '
-$PARAM a = 1.0, b = 2, c = 3
-$PREAMBLE double d = a**b;
-$MAIN d = a**b;
-$ODE @!audit \nd = a**b;
-$TABLE d = a**b; 
-$EVENT d = a**b;
-$CMT A B C 
-'
+test_that("convert_pow will convert and maybe warn inside c-style comment", {
+  code <- c("/**", "This model is incredible. 3**4", "*/")
+  expect_warning(convert_pow(code), "Could not convert **", fixed = TRUE)
+})
 
 test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
+  code_convert_pow_1 <- '
+  $PARAM a = 1.0, b = 2, c = 3
+  $PREAMBLE double d = a**b;
+  $MAIN d = a**b;
+  $ODE @!audit \nd = a**b;
+  $TABLE d = a**b; 
+  $EVENT d = a**b;
+  $CMT A B C 
+  '
   mod <- mcode('power', code_convert_pow_1, compile = FALSE)
   x <- readLines(mod@shlib$source)
   x <- x[grepl("d =", x, fixed = TRUE)]
@@ -1003,13 +1007,12 @@ test_that("Convert pow in  PREAMBLE, MAIN, ODE, TABLE, EVENT", {
   expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
 
-code_convert_pow_2 <- '
-$PARAM a = 1.0, b = 2, c = 3
-$PREAMBLE double d = a**b;
-$PRED d = a**b;
-'
-
 test_that("Convert pow in  PREAMBLE, PRED", {
+  code_convert_pow_2 <- '
+  $PARAM a = 1.0, b = 2, c = 3
+  $PREAMBLE double d = a**b;
+  $PRED d = a**b;
+  '
   mod <- mcode('power', code_convert_pow_2, compile = FALSE)
   x <- readLines(mod@shlib$source)
   x <- x[grepl("d =", x, fixed = TRUE)]
@@ -1017,20 +1020,18 @@ test_that("Convert pow in  PREAMBLE, PRED", {
   expect_match(x, "pow(a, b)", fixed = TRUE, all = TRUE)
 })
 
-rm(code_convert_pow_1, code_convert_pow_2)
-
 test_that("convert_pow handles comparison operators in exponent", {
-  expect_equal(convert_pow("THETA(2)**(RACE==3)"),   "pow(THETA(2), RACE==3)")
-  expect_equal(convert_pow("THETA(2)**(RACE!=3)"),   "pow(THETA(2), RACE!=3)")
-  expect_equal(convert_pow("THETA(2)**(RACE>=3)"),   "pow(THETA(2), RACE>=3)")
-  expect_equal(convert_pow("THETA(2)**(RACE<=3)"),   "pow(THETA(2), RACE<=3)")
-  expect_equal(convert_pow("THETA(2)**(RACE>3)"),    "pow(THETA(2), RACE>3)")
-  expect_equal(convert_pow("THETA(2)**(RACE<3)"),    "pow(THETA(2), RACE<3)")
+  expect_equal(convert_pow("THETA(2)**(RACE==3)"), "pow(THETA(2), RACE==3)")
+  expect_equal(convert_pow("THETA(2)**(RACE!=3)"), "pow(THETA(2), RACE!=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE>=3)"), "pow(THETA(2), RACE>=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE<=3)"), "pow(THETA(2), RACE<=3)")
+  expect_equal(convert_pow("THETA(2)**(RACE>3)"),  "pow(THETA(2), RACE>3)")
+  expect_equal(convert_pow("THETA(2)**(RACE<3)"),  "pow(THETA(2), RACE<3)")
 })
 
 test_that("convert_pow handles comparison operators in assignment prefix", {
   expect_equal(
-    convert_pow("if(a==3) b = THETA(2)**(RACE)"),
+    convert_pow("if(a==3) b = THETA(2)**RACE"),
     "if(a==3) b = pow(THETA(2), RACE)"
   )
   expect_equal(
@@ -1038,7 +1039,7 @@ test_that("convert_pow handles comparison operators in assignment prefix", {
     "if(a>=3) b = pow(THETA(2), RACE)"
   )
   expect_equal(
-    convert_pow("if(a<=3) b = THETA(2)**(RACE)"),
+    convert_pow("if(a<=3) b = THETA(2)**RACE"),
     "if(a<=3) b = pow(THETA(2), RACE)"
   )
   expect_equal(
@@ -1116,6 +1117,18 @@ test_that("warn_int_div warns for simple integer division", {
   )
 })
 
+test_that("warn_int_div warns for negative numbers", {
+  expect_warning(warn_int_div("CL = -3/4 * THETA(1);"), "-3/4")
+  expect_warning(warn_int_div("CL = 3/-4 * THETA(1);"), "3/-4")
+  expect_warning(warn_int_div("CL = -3/-4 * THETA(1);"), "-3/-4")
+})
+
+test_that("warn_int_div strips parens", {
+  expect_warning(warn_int_div("CL = (3)/(4) * THETA(1);"), "3/4")
+  expect_warning(warn_int_div("CL = 3/(-4) * THETA(1);"), "3/-4")
+  expect_warning(warn_int_div("CL = (-3)/(-4) * THETA(1);"), "-3/-4")
+})
+
 test_that("warn_int_div is silent when no integer division", {
   expect_no_warning(warn_int_div("CL = 0.5/2;"))
   expect_no_warning(warn_int_div("x = a/b;"))
@@ -1157,6 +1170,7 @@ test_that("warn_int_div passes through non-character input", {
   expect_no_warning(warn_int_div(NULL))
 })
 
+
 test_that("warn_int_div detects integer division before line comment", {
   expect_warning(warn_int_div("1/2 // hey"), "1/2")
   expect_warning(warn_int_div("CL = 3/4; // comment"), "3/4")
@@ -1190,6 +1204,8 @@ fi <- convert_fort_if
 test_that("convert_fort_if: block form with Fortran operator", {
   x <- c("IF(WT.GE.70) THEN", "  CL = THETA(1)", "ENDIF")
   expect_equal(fi(x), c("if(WT>=70) {", "  CL = THETA(1)", "}"))
+  x <- c("IF(WT.GE.70)THEN", "  CL = THETA(1)", "ENDIF")
+  expect_equal(fi(x), c("if(WT>=70) {", "  CL = THETA(1)", "}"))
 })
 
 test_that("convert_fort_if: all Fortran relational operators", {
@@ -1199,20 +1215,14 @@ test_that("convert_fort_if: all Fortran relational operators", {
   expect_equal(fi("IF(A.LT.B) THEN"), "if(A<B) {")
   expect_equal(fi("IF(A.EQ.B) THEN"), "if(A==B) {")
   expect_equal(fi("IF(A.NE.B) THEN"), "if(A!=B) {")
-  expect_equal(fi("IF(A.EQN.B) THEN"), "if(A==B) {")
-  expect_equal(fi("IF(A.NEN.B) THEN"), "if(A!=B) {")
+  expect_equal(fi("IF(A/=B) THEN"),   "if(A!=B) {")
 })
 
 test_that("convert_fort_if: logical operators in condition", {
   expect_equal(fi("IF(A.GT.0.AND.B.LT.1) THEN"), "if(A>0&&B<1) {")
   expect_equal(fi("IF(A.LT.0.OR.B.GT.1) THEN"),  "if(A<0||B>1) {")
-  expect_equal(fi("IF(.NOT.FLAG) THEN"),           "if(!FLAG) {")
 })
 
-test_that("convert_fort_if: .TRUE. and .FALSE.", {
-  expect_equal(fi("IF(.TRUE.) THEN"),  "if(true) {")
-  expect_equal(fi("IF(.FALSE.) THEN"), "if(false) {")
-})
 
 test_that("convert_fort_if: single-line form", {
   expect_equal(fi("IF(WT.GE.70) CL = THETA(1)"), "if(WT>=70) CL = THETA(1)")
@@ -1250,9 +1260,6 @@ test_that("convert_fort_if: indentation preserved", {
   expect_equal(fi("  ENDIF"),           "  }")
 })
 
-test_that("convert_fort_if: operators converted in body lines", {
-  expect_equal(fi("  CL = CL * (SEX.EQ.1)"), "  CL = CL * (SEX==1)")
-})
 
 test_that("convert_fort_if: nested parens in condition", {
   expect_equal(fi("IF(F(WT).GE.G(AGE)) THEN"), "if(F(WT)>=G(AGE)) {")
@@ -1262,9 +1269,11 @@ test_that("convert_fort_if: comment lines pass through unchanged", {
   expect_equal(fi("// IF(X.GT.0) THEN"), "// IF(X.GT.0) THEN")
 })
 
-test_that("convert_fort_if: non-IF lines with Fortran ops converted", {
-  expect_equal(fi("CL = THETA(1).GE.0"), "CL = THETA(1)>=0")
+test_that("convert_fort_if: Fortran ops on non-IF lines pass through unchanged", {
+  expect_equal(fi("  CL = CL * (SEX.EQ.1)"), "  CL = CL * (SEX.EQ.1)")
+  expect_equal(fi("CL = THETA(1).GE.0"),      "CL = THETA(1).GE.0")
 })
+
 
 test_that("convert_fort_if: non-character input passes through", {
   expect_equal(fi(42),   42)
@@ -1289,9 +1298,6 @@ test_that("convert_fort_if: float literals adjacent to operators", {
   expect_equal(fi("IF(A.GT.1E-3.AND.B.LT.2) THEN"),  "if(A>1E-3&&B<2) {")
 })
 
-test_that("convert_fort_if: .NOT. combined with other operators", {
-  expect_equal(fi("IF(.NOT.FLAG.AND.X.GT.0) THEN"), "if(!FLAG&&X>0) {")
-})
 
 
 test_that("environment variable suppresses fortran if else conversion", {
@@ -1363,6 +1369,10 @@ test_that("convert_semicolons: leaves existing C++ comment after semicolon alone
   )
 })
 
+test_that("convert_semicolons: semicolon between code and C++ comment", {
+  expect_equal(as_("a = b // comment"), "a = b; // comment")
+})
+
 test_that("convert_semicolons: skips lines ending with continuation operator", {
   expect_equal(as_("CL = THETA(1) *"),   "CL = THETA(1) *")
   expect_equal(as_("CL = THETA(1) +"),   "CL = THETA(1) +")
@@ -1397,6 +1407,10 @@ test_that("convert_semicolons: skips brace lines", {
   expect_equal(as_("} else {"),     "} else {")
 })
 
+test_that("convert_semicolons: handle test condition with no brace", {
+  expect_equal(as_("if(WT>=70)"), "if(WT>=70)")
+})
+
 test_that("convert_semicolons: skips blank lines", {
   expect_equal(as_(""),   "")
   expect_equal(as_("  "), "  ")
@@ -1405,6 +1419,11 @@ test_that("convert_semicolons: skips blank lines", {
 test_that("convert_semicolons: skips comment lines", {
   expect_equal(as_("// a comment"),  "// a comment")
   expect_equal(as_("/** comment */"), "/** comment */")
+})
+
+test_that("convert_semicolons: adds semicolon to function call ending with )", {
+  expect_equal(as_("foo()"),        "foo();")
+  expect_equal(as_("bar(x, y)"),    "bar(x, y);")
 })
 
 test_that("convert_semicolons: skips preprocessor directives", {
