@@ -611,7 +611,7 @@ static std::string convert_fortran_if_line(const std::string& line) {
 
   if (body.empty()) return line;
 
-  // Skip C-style comments unchanged.
+  // Skip commented code unchanged.
   if (body.size() >= 2 && body[0] == '/' && body[1] == '/') return line;
 
   // Check for bare ENDIF / END IF and ELSE.
