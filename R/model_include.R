@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022 Metrum Research Group
+# Copyright (C) 2013 - 2026 Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,26 +17,41 @@
 
 includes <- new.env()
 plugins <- new.env()
-plugins[[".depends"]] <- list(mrgx=c("Rcpp"))
+plugins[[".depends"]] <- list(
+  "mrgx" = "Rcpp", 
+  "nm-like" = c("nm-vars", "autodec", "semicolons")
+)
 
 include_order <- c("RcppArmadillo", "Rcpp","BH", "mrgx")
 
-get_plugins <- function(what, env) {
+get_plugins <- function(spec, env) {
+  what <- unname(do.call("c", spec[names(spec)=="PLUGIN"]))
   what <- c(cvec_cs(what), "base")
-  what <- unique(c(get_depends(what),what))
+  what <- unique(c(get_depends(what), what))
   if(all(c("Rcpp", "RcppArmadillo") %in% what)) {
     what <- what[what != "Rcpp"] 
   }
-  x <- lapply(what,get_plugin)
-  names(x) <- s_pick(x,"name")
+  x <- lapply(what, get_plugin)
+  names(x) <- s_pick(x, "name")
   # TODO: register other plugins if needed
   env[["using_nm-vars"]] <- "nm-vars" %in% names(x)
+  if("semicolons" %in% names(x)) {
+    env[["convert_semicolons"]] <- TRUE
+    if(!env[["using_nm-vars"]]) {
+      msg <- "`semicolons` only works with the `nm-vars` plugin"
+      body <- c(
+        v = "using the `semicolons` plugin", 
+        x = "not using the `nm-vars` plugin"
+      )
+      warn(message = msg, body = body)
+    }
+  }
   x
 }
 
 get_depends <- function(what) {
-  what <- intersect(what,ls(plugins[[".depends"]]))
-  plugins[[".depends"]][what]
+  what <- intersect(what, names(plugins[[".depends"]]))
+  unlist(plugins[[".depends"]][what], use.names = FALSE)
 }
 
 get_plugin <- function(what) {
@@ -66,12 +81,17 @@ make_clink <- function(x,clink) {
   if(is.null(x)) return(NULL)
   link <- unique(s_pick(x,"linkto"))
   link <- sapply(link,function(ln) {
-    y <- find.package(dirname(ln))
-    build_path(file.path(y,basename(ln)))
+    pkg <- dirname(ln)
+    subdir <- basename(ln)
+    y <- system.file(subdir, package = pkg)
+    if(!nzchar(y)) {
+      stop(glue("couldn't find package {pkg}"))
+    }
+    build_path(y)
   })
   link <- c(link, build_path(clink))
   if(length(link)==0) return("")
-  paste(paste0("-I\"",unique(link), "\""),collapse=" ")
+  paste(paste0("-I\"", unique(link), "\""), collapse = " ")
 }
 
 set_clink <- function(x,clink=NULL,...) {
@@ -177,6 +197,14 @@ plugins[["evtools"]] <- list(
   name = "evtools", 
   using = c('#include "mrgsolve-evtools.h"', 
             '#include "mrgsolve-evtools-regimen.h"')
+)
+
+plugins[["semicolons"]] <- list(
+  name = "semicolons"
+)
+
+plugins[["nm-like"]] <- list(
+  name = "nm-like"
 )
 
 # nocov end

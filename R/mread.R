@@ -214,7 +214,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     ENV
   )
   
-  # Find globals  ----
+  # Find globals  ----  
   # The main sections that need R processing:  
   # NOTE: this must happen prior to handling the various blocks
   # `captured` items are injected into `$CAPTURE`; this can be changed but 
@@ -224,9 +224,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     mread.env, 
     build
   )
-  
-  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
-  find_cpp_dot(spec, mread.env)
   
   # Parse blocks ----
   # Each block gets assigned a class to dispatch the handler function
@@ -245,10 +242,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   
   # Call the handler for each block
   spec <- lapply(spec, handle_spec_block, env = mread.env)
-  
+
   # collect -----
-  # TODO: move this to the plugin handler
-  plugin <- get_plugins(spec[["PLUGIN"]], mread.env)
+  plugin <- get_plugins(spec, mread.env)
   param <- as.list(do.call("c",unname(mread.env[["param"]])))
   fixed <- as.list(do.call("c",unname(mread.env[["fixed"]])))
   init <-  as.list(do.call("c",unname(mread.env[["init"]])))
@@ -256,6 +252,9 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   namespace <- do.call("c", mread.env[["namespace"]])
   omega <- omat(do.call("c", nonull.list(mread.env[["omega"]])))
   sigma <- smat(do.call("c", nonull.list(mread.env[["sigma"]])))
+  
+  spec[["ODE"]] <- do.call("c", spec[names(spec)=="ODE"])
+
   if(isTRUE(SET[["collapse_omega"]])) {
     omega <- collapse_matrix(omega)  
   }
@@ -269,23 +268,16 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     annot <- bind_rows(annot_list_maybe)
   }
   
+  # Subroutines
+  subr  <- collect_subr(spec)
+  
   # capture  ----
   capture_more <- capture
   capture <- unlist(nonull.list(mread.env[["capture"]]))
   capture <- .ren.create(capture)
   capture <- .ren.sanitize(capture)
   annot <- capture_param(annot, .ren.new(capture))
-  
-  # Collect potential multiples
-  subr  <- collect_subr(spec)
-  table <- unlist(spec[names(spec)=="TABLE"], use.names = FALSE)
-  if("ODE" %in% names(spec)) {
-    spec[["ODE"]] <- unlist(spec[names(spec)=="ODE"], use.names = FALSE)
-  }
-  if("PLUGIN" %in% names(spec)) {
-    spec[["PLUGIN"]] <- unlist(spec[names(spec)=="PLUGIN"], use.names = FALSE)
-  }
-  
+
   # TODO: deprecate audit argument
   mread.env[["audit_dadt"]] <- 
     isTRUE(audit) && isTRUE(mread.env[["audit_dadt"]])
@@ -342,6 +334,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # the audit check later on
   nmv <- NULL
   if("nm-vars" %in% names(plugin)) {
+    spec <- preprocess_nm_vars(spec, mread.env)
     nmv  <- find_nm_vars(spec)
     rd <- generate_nmdefs(nmv, rd)
     plugin[["nm-vars"]][["nm-def"]] <- rd$nmdfs
@@ -420,6 +413,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
+  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
+  find_cpp_dot(spec, mread.env)
   check_cpp_dot(mread.env, x)
   check_sim_eta_eps_n(x, spec)
   
@@ -482,7 +477,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
     spec[["EVENT"]]  
   )
   table_code <- c(
-    table,
+    unlist(spec[names(spec)=="TABLE"], use.names = FALSE),
     spec[["PRED"]], 
     write_capture(names(x@capture))
   )
