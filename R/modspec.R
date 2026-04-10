@@ -363,6 +363,7 @@ convert_semicolons <- function(x) {
 strip_block_comments <- function(x) {
   if(is.character(x)) {
     x <- .Call("_mrgsolve_strip_block_comments_impl", x, PACKAGE = "mrgsolve")
+    x <- x[nzchar(trimws(x))]
   }
   x
 }

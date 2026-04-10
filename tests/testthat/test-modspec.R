@@ -1456,7 +1456,7 @@ sbc_ <- mrgsolve:::strip_block_comments
 test_that("strip_block_comments: passes through lines with no block comment", {
   expect_equal(sbc_("double CL = 1.0;"), "double CL = 1.0;")
   expect_equal(sbc_("// just a line comment"), "// just a line comment")
-  expect_equal(sbc_(""), "")
+  expect_equal(sbc_(""), character(0))
 })
 
 test_that("strip_block_comments: removes inline block comment", {
@@ -1468,18 +1468,18 @@ test_that("strip_block_comments: removes multiple block comments on one line", {
   expect_equal(sbc_("a /* x */ + /* y */ b"), "a  +  b")
 })
 
-test_that("strip_block_comments: line entirely a block comment becomes empty", {
-  expect_equal(sbc_("/* this whole line */"), "")
+test_that("strip_block_comments: line entirely a block comment is dropped", {
+  expect_equal(sbc_("/* this whole line */"), character(0))
 })
 
 test_that("strip_block_comments: multi-line block comment", {
   x <- c("double CL; /* start", "   still comment", "   end */ double V;")
-  expect_equal(sbc_(x), c("double CL; ", "", " double V;"))
+  expect_equal(sbc_(x), c("double CL; ", " double V;"))
 })
 
 test_that("strip_block_comments: block comment that opens and never closes", {
   x <- c("double CL; /* open", "double V;")
-  expect_equal(sbc_(x), c("double CL; ", ""))
+  expect_equal(sbc_(x), "double CL; ")
 })
 
 test_that("strip_block_comments: /* inside // comment is not treated as opener", {
