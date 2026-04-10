@@ -41,8 +41,7 @@ warn_int_div_impl <- function(code, block) {
 #' element of \code{code}.  Fortran relational and logical operators
 #' (\code{.GE.}, \code{.LE.}, \code{.GT.}, \code{.LT.}, \code{.EQ.},
 #' \code{.NE.}, \code{.AND.}, \code{.OR.}) are converted everywhere they
-#' appear. Matching is
-#' case-insensitive.
+#' appear. Matching is case-insensitive.
 #'
 #' @param code Character vector of source lines.
 #' @return Character vector with Fortran IF constructs replaced by C++.
