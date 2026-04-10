@@ -281,11 +281,14 @@ fixed_parameters <- function(x,fixed_type) {
 #'   only when the `nm-vars` plugin is invoked.
 #' - `convert_semicolons()`: appends semicolons to statement lines that are
 #'   missing them; lines ending with an operator (e.g., `+` or `/` or "=")
-#'   will not be terminated with a semicolon; this preprocessor must be 
+#'   will not be terminated with a semicolon; this preprocessor must be
 #'   enlisted through the `semicolons` plugin and it only runs with `nm-vars`;
 #'   the `semicolons` plugin is brought online when the `nm-like` composite
 #'   plugin (`nm-vars`, `autodec`, `semicolons`) is invoked.
-#'   
+#' - `strip_block_comments()`: removes C-style `/* ... */` block comments;
+#'   multi-line block comments are handled correctly across elements; line
+#'   comments (`//`) are left untouched.
+#'
 #' Processing is controlled by environment variables:
 #' - `MRGSOLVE_CONVERT_POW` (default `TRUE`)
 #' - `MRGSOLVE_CONVERT_FORT_IF` (default `TRUE`)
@@ -311,6 +314,9 @@ fixed_parameters <- function(x,fixed_type) {
 #'
 #' warn_int_div("THETA(1) * pow(WT/70, 3/4)")
 #' warn_int_div("3.0/4")
+#'
+#' code <- c("double CL; /* clearance */", "/* multi-", "   line */", "double V;")
+#' strip_block_comments(code)
 #'
 #' @name dsl_preprocess
 #' @md
@@ -352,11 +358,23 @@ convert_semicolons <- function(x) {
   x
 }
 
+#' @rdname dsl_preprocess
+#' @export
+strip_block_comments <- function(x) {
+  if(is.character(x)) {
+    x <- .Call("_mrgsolve_strip_block_comments_impl", x, PACKAGE = "mrgsolve")
+    x <- x[nzchar(trimws(x))]
+  }
+  x
+}
+
 ##' Parse model specification text
-##' @param txt model specification text
-##' @param split logical
-##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
-##' @param comment_re regular expression for comments
+##' @param txt model specification text.
+##' @param split logical.
+##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped.
+##' @param comment_re regular expression for comments.
+##' @param strip_block if \code{TRUE}, block comments will be removed only from 
+##' C++ code blocks.
 ##' @examples
 ##' file <- file.path(modlib(), "pk1.cpp")
 ##' 
@@ -365,7 +383,7 @@ convert_semicolons <- function(x) {
 ##' @export
 ##' @keywords internal
 modelparse <- function(txt, split=FALSE, drop_blank = TRUE, 
-                       comment_re=c("//", "##")) {
+                       comment_re=c("//", "##"), strip_block = TRUE) {
   
   ## Take in model text and parse it out
   
@@ -407,7 +425,7 @@ modelparse <- function(txt, split=FALSE, drop_blank = TRUE,
     y <- txt[start[i]:end[i]]
   })
   
-  if(drop_blank) {
+  if(isTRUE(drop_blank)) {
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
@@ -417,7 +435,13 @@ modelparse <- function(txt, split=FALSE, drop_blank = TRUE,
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
   
-  return(spec)
+  if(isTRUE(strip_block)) {
+    for(i in which(toupper(names(spec)) %in% GLOBALS[["PRE_PROC_BLOCKS"]])) {
+      spec[[i]] <- strip_block_comments(spec[[i]])
+    }
+  }
+
+  spec
   
 }
 

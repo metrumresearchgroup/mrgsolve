@@ -786,6 +786,49 @@ static std::string convert_semicolon_line(const std::string& line) {
 }
 
 // ---------------------------------------------------------------------------
+// Block comment stripper
+// ---------------------------------------------------------------------------
+
+// Strip C-style /* ... */ block comments from a single line.
+// `in_block` carries state across calls: true when the scan position is inside
+// an open block comment that started on a previous line.
+// Returns the line with block-comment spans removed.  Lines (or tails of
+// lines) entirely consumed by a block comment become empty or are truncated.
+// Line comments (//) are passed through unchanged; once // is seen outside a
+// block comment, no /* inside that comment region is treated as an opener.
+static std::string strip_block_comment_line(const std::string& line,
+                                             bool& in_block) {
+  std::string out;
+  out.reserve(line.size());
+  size_t i = 0;
+  while (i < line.size()) {
+    if (in_block) {
+      size_t close = line.find("*/", i);
+      if (close == std::string::npos) {
+        // Entire remainder consumed by the open block comment.
+        return out;
+      }
+      in_block = false;
+      i = close + 2;
+    } else {
+      // Once we hit a // outside a block, copy the rest verbatim and stop.
+      if (i + 1 < line.size() && line[i] == '/' && line[i+1] == '/') {
+        out += line.substr(i);
+        break;
+      }
+      if (i + 1 < line.size() && line[i] == '/' && line[i+1] == '*') {
+        in_block = true;
+        i += 2;
+      } else {
+        out += line[i];
+        ++i;
+      }
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // R-facing entry point
 // ---------------------------------------------------------------------------
 
@@ -901,6 +944,29 @@ Rcpp::CharacterVector convert_semicolons_impl(Rcpp::CharacterVector code) {
   Rcpp::CharacterVector out(code.size());
   for (int i = 0; i < code.size(); ++i) {
     out[i] = convert_semicolon_line(Rcpp::as<std::string>(code[i]));
+  }
+  return out;
+}
+
+//' Strip C-style block comments from model code
+//'
+//' Removes \code{/* ... */} block comments from each element of \code{code}.
+//' Block comments that span multiple lines are handled correctly: state is
+//' carried across elements so that continuation lines inside an open comment
+//' are fully removed.  Line comments (\code{//}) are left untouched.
+//'
+//' @param code Character vector of source lines.
+//' @return Character vector with block-comment spans removed; lines entirely
+//'   consumed by a block comment become empty strings.
+//' @keywords internal
+// [[Rcpp::export]]
+Rcpp::CharacterVector strip_block_comments_impl(Rcpp::CharacterVector code) {
+  Rcpp::CharacterVector out(code.size());
+  bool in_block = false;
+  for (int i = 0; i < code.size(); ++i) {
+    out[i] = strip_block_comment_line(
+      Rcpp::as<std::string>(code[i]), in_block
+    );
   }
   return out;
 }

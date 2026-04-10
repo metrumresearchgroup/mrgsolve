@@ -60,6 +60,7 @@ RcppExport SEXP _mrgsolve_convert_pow_impl(SEXP,SEXP);
 RcppExport SEXP _mrgsolve_warn_int_div_impl(SEXP,SEXP);
 RcppExport SEXP _mrgsolve_convert_fort_if_impl(SEXP);
 RcppExport SEXP _mrgsolve_convert_semicolons_impl(SEXP);
+RcppExport SEXP _mrgsolve_strip_block_comments_impl(SEXP);
 
 RcppExport void _model_housemodel_main__(MRGSOLVE_INIT_SIGNATURE);
 RcppExport void _model_housemodel_ode__(MRGSOLVE_ODE_SIGNATURE);
@@ -81,6 +82,7 @@ static R_CallMethodDef callEntryPoints[]  = {
   CALLDEF(_mrgsolve_warn_int_div_impl,2),
   CALLDEF(_mrgsolve_convert_fort_if_impl,1),
   CALLDEF(_mrgsolve_convert_semicolons_impl,1),
+  CALLDEF(_mrgsolve_strip_block_comments_impl,1),
   CALLDEF(_model_housemodel_main__,MRGSOLVE_INIT_SIGNATURE_N),
   CALLDEF(_model_housemodel_ode__,MRGSOLVE_ODE_SIGNATURE_N),
   CALLDEF(_model_housemodel_table__,MRGSOLVE_TABLE_SIGNATURE_N),
