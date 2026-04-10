@@ -6,6 +6,7 @@
 \alias{warn_int_div}
 \alias{convert_fort_if}
 \alias{convert_semicolons}
+\alias{strip_block_comments}
 \title{DSL preprocessing functions}
 \usage{
 convert_pow(x, block = "")
@@ -15,6 +16,8 @@ warn_int_div(x, block = "")
 convert_fort_if(x)
 
 convert_semicolons(x)
+
+strip_block_comments(x)
 }
 \arguments{
 \item{x}{character vector of source lines to process.}
@@ -44,6 +47,9 @@ will not be terminated with a semicolon; this preprocessor must be
 enlisted through the \code{semicolons} plugin and it only runs with \code{nm-vars};
 the \code{semicolons} plugin is brought online when the \code{nm-like} composite
 plugin (\code{nm-vars}, \code{autodec}, \code{semicolons}) is invoked.
+\item \code{strip_block_comments()}: removes C-style \verb{/* ... */} block comments;
+multi-line block comments are handled correctly across elements; line
+comments (\verb{//}) are left untouched.
 }
 
 Processing is controlled by environment variables:
@@ -73,5 +79,8 @@ cat(convert_semicolons(code), sep = "\n")
 
 warn_int_div("THETA(1) * pow(WT/70, 3/4)")
 warn_int_div("3.0/4")
+
+code <- c("double CL; /* clearance */", "/* multi-", "   line */", "double V;")
+strip_block_comments(code)
 
 }

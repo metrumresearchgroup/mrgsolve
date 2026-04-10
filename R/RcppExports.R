@@ -65,6 +65,21 @@ convert_semicolons_impl <- function(code) {
     .Call(`_mrgsolve_convert_semicolons_impl`, code)
 }
 
+#' Strip C-style block comments from model code
+#'
+#' Removes \code{/* ... */} block comments from each element of \code{code}.
+#' Block comments that span multiple lines are handled correctly: state is
+#' carried across elements so that continuation lines inside an open comment
+#' are fully removed.  Line comments (\code{//}) are left untouched.
+#'
+#' @param code Character vector of source lines.
+#' @return Character vector with block-comment spans removed; lines entirely
+#'   consumed by a block comment become empty strings.
+#' @keywords internal
+strip_block_comments_impl <- function(code) {
+    .Call(`_mrgsolve_strip_block_comments_impl`, code)
+}
+
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }

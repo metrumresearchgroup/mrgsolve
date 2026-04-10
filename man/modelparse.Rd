@@ -5,18 +5,27 @@
 \alias{modelparse_rmd}
 \title{Parse model specification text}
 \usage{
-modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = c("//", "##"))
+modelparse(
+  txt,
+  split = FALSE,
+  drop_blank = TRUE,
+  comment_re = c("//", "##"),
+  strip_block = TRUE
+)
 
 modelparse_rmd(txt, split = FALSE, drop_blank = TRUE, comment_re = "//")
 }
 \arguments{
-\item{txt}{model specification text}
+\item{txt}{model specification text.}
 
-\item{split}{logical}
+\item{split}{logical.}
 
-\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped}
+\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped.}
 
-\item{comment_re}{regular expression for comments}
+\item{comment_re}{regular expression for comments.}
+
+\item{strip_block}{if \code{TRUE}, block comments will be removed only from 
+C++ code blocks.}
 }
 \description{
 Parse model specification text
