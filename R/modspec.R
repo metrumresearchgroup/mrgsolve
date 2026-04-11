@@ -352,11 +352,13 @@ convert_semicolons <- function(x) {
   x
 }
 
-##' Parse model specification text
-##' @param txt model specification text
-##' @param split logical
-##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
-##' @param comment_re regular expression for comments
+##' Parse model specification text.
+##' @param txt model specification text.
+##' @param split logical.
+##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped.
+##' @param comment_re regular expression for comments.
+##' @param keep_mapping if `TRUE`, parse information will be retained as 
+##' attributes on the parsed model code.
 ##' @examples
 ##' file <- file.path(modlib(), "pk1.cpp")
 ##' 
@@ -364,40 +366,57 @@ convert_semicolons <- function(x) {
 ##' 
 ##' @export
 ##' @keywords internal
-modelparse <- function(txt, split=FALSE, drop_blank = TRUE, 
-                       comment_re=c("//", "##")) {
+modelparse <- function(txt, split = FALSE, drop_blank = TRUE, 
+                       comment_re = c("//", "##"), keep_mapping = FALSE) {
   
   ## Take in model text and parse it out
   
-  if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
+  if(isTRUE(split)) {
+    ntext <- length(text)
+    txt <- strsplit(txt, "\n", perl = TRUE)
+    if(ntext > 1) {
+      txt <- unlist(txt, use.names = FALSE)
+    } else {
+      txt <- txt[[1]]
+    }
+  }
   
-  if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
+  if(isTRUE(drop_blank)) {
+    txt <- txt[!grepl("^\\s*$", txt)]
+  }
   
   # Take out comments
   for(comment in comment_re) {
-    m <- as.integer(regexpr(comment,txt,fixed=TRUE))
+    m <- as.integer(regexpr(comment, txt, fixed = TRUE))
     w <- m > 0
-    txt[w] <- substr(txt[w],1,m[w]-1)
+    txt[w] <- substr(txt[w], 1, m[w]-1)
   }
   
   # Look for block lines
-  m <- regexec(block_re,txt)
+  m <- regexec(block_re, txt)
   
   # Where the block starts
-  start <- which(sapply(m,"[",1L) > 0)
+  start <- which(sapply(m, "[", 1L) > 0)
   
   if(length(start)==0) {
-    stop("No model specification file blocks were found.", call.=FALSE)
+    stop("No model specification file blocks were found.", call. = FALSE)
   }
   
   # Get the matches
-  mm <- regmatches(txt[start],m[start])
+  mm <- regmatches(txt[start], m[start])
+  mm <- sapply(mm, "[", 1L)
+  
+  # Get match length
+  ml <- vapply(m, FUN = attr, FUN.VALUE = 1L, "match.length")
+  ml <- ml[start]
   
   # Block labels
-  labs <- gsub("[][$ ]", "", sapply(mm, "[",1L), perl=TRUE)
+  labs <- gsub("[][$ ]", "", mm, perl = TRUE)
   
   # Remove block label text
-  txt[start] <- mytriml(substr(txt[start], nchar(unlist(mm,use.names=FALSE))+1, nchar(txt[start])))
+  
+  txt[start] <- substr(txt[start], ml+1, nchar(txt[start]))
+  txt[start] <- mytriml(txt[start])
   
   # Where the block ends
   end <- c((start-1),length(txt))[-1]
@@ -407,18 +426,60 @@ modelparse <- function(txt, split=FALSE, drop_blank = TRUE,
     y <- txt[start[i]:end[i]]
   })
   
-  if(drop_blank) {
+  if(isTRUE(drop_blank)) {
     spec <- lapply(spec,function(y) y[y!=""]) 
   }
   
-  names(spec) <- labs
-  
+  if(isTRUE(keep_mapping)) {
+    at <- list(
+      start = start, 
+      end = end, 
+      match.length = ml, 
+      blockname = labs, 
+      blockmatch = mm, 
+      names = labs
+    )
+    attributes(spec) <- at
+  } else {
+    names(spec) <- labs    
+  }
+
   for(i in which(toupper(names(spec)) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
+
+  spec
   
-  return(spec)
-  
+}
+
+modelsplit <- function(x) {
+  ans <- modelparse(
+    x, 
+    split = TRUE, 
+    drop_blank = FALSE, 
+    comment_re = "//", 
+    keep_mapping = TRUE
+  )
+  names(ans) <- toupper(names(ans))
+  ans
+}
+
+modelunsplit <- function(x) {
+  bloc <- attr(x, "blockmatch")
+  if(is.null(bloc)) stop("cannot unsplit model specification list.")
+  for(i in seq_along(bloc)) {
+    sep <- ifelse(x[[i]][[1]] == "", "", " ")
+    x[[i]][[1]] <- paste0(bloc[[i]], sep, x[[i]][[1]])
+  }
+  unlist(unname(x))
+}
+
+modelsemi <- function(x) {
+  w <- which(toupper(names(x)) %in% GLOBALS$PRE_PROC_BLOCKS)
+  for(i in w) {
+    x[[i]] <- convert_semicolons(x[[i]])
+  }
+  x
 }
 
 #' @rdname modelparse
