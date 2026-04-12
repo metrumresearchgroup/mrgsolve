@@ -506,11 +506,51 @@ convert_pow_spec <- function(x) {
   x
 }
 
+add_operator_spaces_spec <- function(x) {
+  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  for(i in to_convert) {
+    x[[i]] <- add_operator_spaces(x[[i]])
+  }
+  x
+}
+
+strip_nonleading_spaces <- function(x) {
+  leading <- regmatches(x, regexpr("^\\s*", x))
+  rest <- substring(x, nchar(leading) + 1)
+  paste0(leading, gsub(" ", "", rest))
+}
+
+strip_spaces_spec <- function(x) {
+  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  for(i in to_convert) {
+    x[[i]] <- strip_nonleading_spaces(x[[i]])
+  }
+  x
+}
+
 split_and_preprocess <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
   x <- convert_pow_spec(x)
   x <- convert_fort_if_spec(x)
   x <- convert_semicolons_spec(x)
+  x <- add_operator_spaces_spec(x)
+  code <- modelunsplit(x)
+  code
+}
+
+split_and_add_padding <- function(code) {
+  x <- modelsplit(code, split = length(code)==1)
+  x <- add_operator_spaces_spec(x)
+  code <- modelunsplit(x)
+  code
+}
+
+split_and_preprocess_condensed <- function(code) {
+  x <- modelsplit(code, split = length(code)==1)
+  x <- convert_pow_spec(x)
+  x <- convert_fort_if_spec(x)
+  x <- convert_semicolons_spec(x)
+  x <- strip_spaces_spec(x)
   code <- modelunsplit(x)
   code
 }

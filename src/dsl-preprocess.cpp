@@ -810,6 +810,10 @@ static std::string add_operator_spaces_line(const std::string& line) {
   size_t n = line.size();
   if (n == 0) return line;
 
+  // Preserve leading indentation verbatim.
+  size_t start = 0;
+  while (start < n && (line[start] == ' ' || line[start] == '\t')) ++start;
+
   std::vector<bool> protect(n, false);
 
   // Pass 1: protect // comment suffix
@@ -848,7 +852,7 @@ static std::string add_operator_spaces_line(const std::string& line) {
     }
   }
 
-  std::string out;
+  std::string out = line.substr(0, start);
   out.reserve(n + 16);
 
   auto trim_trail = [&]() {
@@ -859,7 +863,7 @@ static std::string add_operator_spaces_line(const std::string& line) {
     while (pos < n && (line[pos] == ' ' || line[pos] == '\t')) ++pos;
   };
 
-  for (size_t i = 0; i < n; ) {
+  for (size_t i = start; i < n; ) {
     if (protect[i]) { out += line[i++]; continue; }
 
     char c = line[i];
