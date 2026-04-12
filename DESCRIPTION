@@ -49,6 +49,7 @@ Imports:
     lifecycle, 
     glue
 Suggests:
+    rstudioapi,
     lattice,
     testthat,
     xml2 (>= 1.3.2),
@@ -81,6 +82,7 @@ Collate:
     'class_mrgmod.R'
     'class_mrgsims.R'
     'Aaaa.R'
+    'addin-semicolons.R'
     'annot.R'
     'chain.R'
     'class_build.R'

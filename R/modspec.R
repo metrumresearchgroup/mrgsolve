@@ -18,7 +18,7 @@
 
 # @include complog.R nmxml.R annot.R
 
-#globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+# The semicolons addin depends on this regex; see `addin-semicolons.R`
 block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
 
 ## Generate an advan/trans directive
@@ -426,13 +426,14 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
     y <- txt[start[i]:end[i]]
   })
   
+  # Drop blank lines
   if(isTRUE(drop_blank)) {
     spec <- lapply(spec, \(y) y[y != ""]) 
   }
   
+  # Keep block mapping info
   if(isTRUE(keep_mapping)) {
-    at <- list( start = start, blockmatch = mm)
-    attributes(spec) <- at
+    attributes(spec) <- list(start = start, blockmatch = mm)
   } 
   
   names(spec) <- labs
