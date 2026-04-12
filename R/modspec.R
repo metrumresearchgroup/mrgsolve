@@ -409,6 +409,11 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   if(length(start)==0) {
     stop("No model specification file blocks were found.", call. = FALSE)
   }
+  # Grab any text before the first block
+  header <- NULL
+  if(start[1] > 1) {
+    header <- txt[seq(start[1]-1)]
+  }
   
   # Get the matches
   mm <- regmatches(txt[start], m[start])
@@ -440,7 +445,11 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   
   # Keep block mapping info
   if(isTRUE(keep_mapping)) {
-    attributes(spec) <- list(start = start, blockmatch = mm)
+    attributes(spec) <- list(
+      start = start, 
+      blockmatch = mm, 
+      header = header
+    )
   } 
   
   names(spec) <- labs
@@ -459,7 +468,7 @@ modelsplit <- function(x, split = FALSE) {
     x, 
     split = split, 
     drop_blank = FALSE, 
-    comment_re = "//", 
+    comment_re = character(0), 
     keep_mapping = TRUE
   )
   names(ans) <- toupper(names(ans))
@@ -470,11 +479,12 @@ modelsplit <- function(x, split = FALSE) {
 modelunsplit <- function(x) {
   bloc <- attr(x, "blockmatch")
   if(is.null(bloc)) stop("cannot unsplit model specification list.")
+  header <- attr(x, "header")
   for(i in seq_along(bloc)) {
     sep <- ifelse(x[[i]][[1]] == "", "", " ")
     x[[i]][[1]] <- paste0(bloc[[i]], sep, x[[i]][[1]])
   }
-  unlist(unname(x))
+  c(header, unlist(unname(x)))
 }
 
 # Apply convert_semicolons to the right blocks; used in addin
