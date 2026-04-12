@@ -1351,14 +1351,14 @@ test_that("convert_semicolons: leaves existing semicolon alone", {
   expect_equal(as_("CL = THETA(1);"), "CL = THETA(1);")
 })
 
-test_that("convert_semicolons: drops text after Fortran inline comment semicolon", {
+test_that("convert_semicolons: converts Fortran inline comment to C++ comment", {
   expect_equal(
     as_("CL = THETA1 ; this is clearance"),
-    "CL = THETA1 ;"
+    "CL = THETA1 ; // this is clearance"
   )
   expect_equal(
     as_("V = THETA2 ;volume of distribution"),
-    "V = THETA2 ;"
+    "V = THETA2 ; // volume of distribution"
   )
 })
 

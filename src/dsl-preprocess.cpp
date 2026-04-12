@@ -782,8 +782,8 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (contains_at_depth0(after, ';') || contains_at_depth0(after, '='))
     return line;
 
-  // Fortran-style inline comment: drop text after ';'
-  return line.substr(0, semi + 1);
+  // Fortran-style inline comment: retain as C++ comment.
+  return line.substr(0, semi + 1) + " // " + after;
 }
 
 // ---------------------------------------------------------------------------

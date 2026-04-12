@@ -453,6 +453,7 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   
 }
 
+# Split model code by blocks, leaving the code alone as much as possible
 modelsplit <- function(x, split = FALSE) {
   ans <- modelparse(
     x, 
@@ -465,6 +466,7 @@ modelsplit <- function(x, split = FALSE) {
   ans
 }
 
+# Put a list of model code blocks back together
 modelunsplit <- function(x) {
   bloc <- attr(x, "blockmatch")
   if(is.null(bloc)) stop("cannot unsplit model specification list.")
@@ -475,6 +477,7 @@ modelunsplit <- function(x) {
   unlist(unname(x))
 }
 
+# Apply convert_semicolons to the right blocks; used in addin
 convert_semicolons_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
@@ -483,6 +486,7 @@ convert_semicolons_spec <- function(x) {
   x
 }
 
+# First split the model code, then add semicolons
 split_and_add_semicolons <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
   x <- convert_semicolons_spec(x)
@@ -517,7 +521,11 @@ add_operator_spaces_spec <- function(x) {
 strip_nonleading_spaces <- function(x) {
   leading <- regmatches(x, regexpr("^\\s*", x))
   rest <- substring(x, nchar(leading) + 1)
-  paste0(leading, gsub(" ", "", rest))
+  comm_pos <- regexpr("//", rest, fixed = TRUE)
+  has_comm <- comm_pos > 0
+  code     <- ifelse(has_comm, substring(rest, 1, comm_pos - 1), rest)
+  comm     <- ifelse(has_comm, substring(rest, comm_pos), "")
+  paste0(leading, gsub(" ", "", code), ifelse(has_comm, paste0(" ", comm), ""))
 }
 
 strip_spaces_spec <- function(x) {
