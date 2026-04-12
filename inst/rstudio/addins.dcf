@@ -2,3 +2,8 @@ Name: Add Semicolons to Model Code
 Description: Inserts semicolons into mrgsolve model DSL code in the active editor. Operates on the current selection, or the entire file if nothing is selected.
 Binding: addin_add_semicolons
 Interactive: false
+
+Name: Convert NM
+Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code in the active editor. Operates on the current selection, or the entire file if nothing is selected.
+Binding: addin_preprocess
+Interactive: false
