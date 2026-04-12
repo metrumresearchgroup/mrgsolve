@@ -372,9 +372,10 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   ## Take in model text and parse it out
   
   if(isTRUE(split)) {
-    ntext <- length(text)
+    ntext <- length(txt)
     txt <- strsplit(txt, "\n", perl = TRUE)
     if(ntext > 1) {
+      txt[lengths(txt)==0] <- ""
       txt <- unlist(txt, use.names = FALSE)
     } else {
       txt <- txt[[1]]
@@ -413,8 +414,7 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   # Block labels
   labs <- gsub("[][$ ]", "", mm, perl = TRUE)
   
-  # Remove block label text
-  
+  # Remove block label text and trim
   txt[start] <- substr(txt[start], ml+1, nchar(txt[start]))
   txt[start] <- mytriml(txt[start])
   
@@ -422,28 +422,21 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   end <- c((start-1),length(txt))[-1]
   
   # Create the list
-  spec <- lapply(seq_along(start), function(i) {
+  spec <- lapply(seq_along(start), \(i) {
     y <- txt[start[i]:end[i]]
   })
   
   if(isTRUE(drop_blank)) {
-    spec <- lapply(spec,function(y) y[y!=""]) 
+    spec <- lapply(spec, \(y) y[y != ""]) 
   }
   
   if(isTRUE(keep_mapping)) {
-    at <- list(
-      start = start, 
-      end = end, 
-      match.length = ml, 
-      blockname = labs, 
-      blockmatch = mm, 
-      names = labs
-    )
+    at <- list( start = start, blockmatch = mm)
     attributes(spec) <- at
-  } else {
-    names(spec) <- labs    
-  }
-
+  } 
+  
+  names(spec) <- labs
+  
   for(i in which(toupper(names(spec)) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
@@ -452,10 +445,10 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   
 }
 
-modelsplit <- function(x) {
+modelsplit <- function(x, split = FALSE) {
   ans <- modelparse(
     x, 
-    split = TRUE, 
+    split = split, 
     drop_blank = FALSE, 
     comment_re = "//", 
     keep_mapping = TRUE
@@ -474,12 +467,19 @@ modelunsplit <- function(x) {
   unlist(unname(x))
 }
 
-modelsemi <- function(x) {
-  w <- which(toupper(names(x)) %in% GLOBALS$PRE_PROC_BLOCKS)
-  for(i in w) {
+convert_semicolons_spec <- function(x) {
+  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  for(i in to_convert) {
     x[[i]] <- convert_semicolons(x[[i]])
   }
   x
+}
+
+split_and_add_semicolons <- function(code) {
+  x <- modelsplit(code, split = length(code)==1)
+  x <- convert_semicolons_spec(x)
+  code <- modelunsplit(x)
+  code
 }
 
 #' @rdname modelparse

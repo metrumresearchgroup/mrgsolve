@@ -3,23 +3,32 @@
 \name{modelparse}
 \alias{modelparse}
 \alias{modelparse_rmd}
-\title{Parse model specification text}
+\title{Parse model specification text.}
 \usage{
-modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = c("//", "##"))
+modelparse(
+  txt,
+  split = FALSE,
+  drop_blank = TRUE,
+  comment_re = c("//", "##"),
+  keep_mapping = FALSE
+)
 
 modelparse_rmd(txt, split = FALSE, drop_blank = TRUE, comment_re = "//")
 }
 \arguments{
-\item{txt}{model specification text}
+\item{txt}{model specification text.}
 
-\item{split}{logical}
+\item{split}{logical.}
 
-\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped}
+\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped.}
 
-\item{comment_re}{regular expression for comments}
+\item{comment_re}{regular expression for comments.}
+
+\item{keep_mapping}{if `TRUE`, parse information will be retained as 
+attributes on the parsed model code.}
 }
 \description{
-Parse model specification text
+Parse model specification text.
 }
 \examples{
 file <- file.path(modlib(), "pk1.cpp")
