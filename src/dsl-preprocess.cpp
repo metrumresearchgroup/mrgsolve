@@ -721,6 +721,7 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (t[0] == '#')                             return line;  // preprocessor
   if (t.size() >= 2 && t[0] == '/' &&
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
+  if (t[0] == '@')                             return line;  // block option
 
   // C++ inline comment mid-line: insert semicolon before '//'.
   size_t cmt = line.find("//");
