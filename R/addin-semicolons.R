@@ -1,22 +1,9 @@
-addin_preprocess <- function() {
-  ctx <- rstudioapi::getActiveDocumentContext()
+addin_run <- function(ctx, apply_fn) {
   sel <- ctx$selection[[1]]
   text <- sel$text
-
-  has_block_markers <- function(x) any(grepl(block_re, x))
-
-  apply_convert_nm <- function(text, lines) {
-    if(has_block_markers(lines)) {
-      result <- split_and_preprocess(text)
-    } else {
-      result <- add_operator_spaces(convert_semicolons(convert_fort_if(convert_pow(lines))))
-    }
-    paste(result, collapse = "\n")
-  }
-
   if(!nchar(text)) {
     lines <- ctx$contents
-    result <- apply_convert_nm(paste(lines, collapse = "\n"), lines)
+    result <- apply_fn(paste(lines, collapse = "\n"), lines)
     n <- length(lines)
     full_range <- rstudioapi::document_range(
       rstudioapi::document_position(1, 0),
@@ -25,20 +12,28 @@ addin_preprocess <- function() {
     rstudioapi::insertText(location = full_range, text = result, id = ctx$id)
   } else {
     lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-    result <- apply_convert_nm(text, lines)
+    result <- apply_fn(text, lines)
+    if(endsWith(text, "\n")) result <- paste0(result, "\n")
     rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
   }
-
   invisible(NULL)
 }
 
-addin_preprocess_condensed <- function() {
-  ctx <- rstudioapi::getActiveDocumentContext()
-  sel <- ctx$selection[[1]]
-  text <- sel$text
-
+addin_preprocess <- function() {
   has_block_markers <- function(x) any(grepl(block_re, x))
+  apply_convert_nm <- function(text, lines) {
+    if(has_block_markers(lines)) {
+      result <- split_and_preprocess(text)
+    } else {
+      result <- add_operator_spaces(convert_semicolons(convert_fort_if(convert_pow(lines))))
+    }
+    paste(result, collapse = "\n")
+  }
+  addin_run(rstudioapi::getActiveDocumentContext(), apply_convert_nm)
+}
 
+addin_preprocess_condensed <- function() {
+  has_block_markers <- function(x) any(grepl(block_re, x))
   apply_convert_nm <- function(text, lines) {
     if(has_block_markers(lines)) {
       result <- split_and_preprocess_condensed(text)
@@ -47,32 +42,11 @@ addin_preprocess_condensed <- function() {
     }
     paste(result, collapse = "\n")
   }
-
-  if(!nchar(text)) {
-    lines <- ctx$contents
-    result <- apply_convert_nm(paste(lines, collapse = "\n"), lines)
-    n <- length(lines)
-    full_range <- rstudioapi::document_range(
-      rstudioapi::document_position(1, 0),
-      rstudioapi::document_position(n, nchar(lines[[n]]))
-    )
-    rstudioapi::insertText(location = full_range, text = result, id = ctx$id)
-  } else {
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-    result <- apply_convert_nm(text, lines)
-    rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
-  }
-
-  invisible(NULL)
+  addin_run(rstudioapi::getActiveDocumentContext(), apply_convert_nm)
 }
 
 addin_preprocess_padded <- function() {
-  ctx <- rstudioapi::getActiveDocumentContext()
-  sel <- ctx$selection[[1]]
-  text <- sel$text
-
   has_block_markers <- function(x) any(grepl(block_re, x))
-
   apply_convert_nm <- function(text, lines) {
     if(has_block_markers(lines)) {
       result <- split_and_preprocess(text)
@@ -81,32 +55,11 @@ addin_preprocess_padded <- function() {
     }
     paste(result, collapse = "\n")
   }
-
-  if(!nchar(text)) {
-    lines <- ctx$contents
-    result <- apply_convert_nm(paste(lines, collapse = "\n"), lines)
-    n <- length(lines)
-    full_range <- rstudioapi::document_range(
-      rstudioapi::document_position(1, 0),
-      rstudioapi::document_position(n, nchar(lines[[n]]))
-    )
-    rstudioapi::insertText(location = full_range, text = result, id = ctx$id)
-  } else {
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-    result <- apply_convert_nm(text, lines)
-    rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
-  }
-
-  invisible(NULL)
+  addin_run(rstudioapi::getActiveDocumentContext(), apply_convert_nm)
 }
 
 addin_add_padding <- function() {
-  ctx <- rstudioapi::getActiveDocumentContext()
-  sel <- ctx$selection[[1]]
-  text <- sel$text
-
   has_block_markers <- function(x) any(grepl(block_re, x))
-
   apply_padding <- function(text, lines) {
     if(has_block_markers(lines)) {
       result <- split_and_add_padding(text)
@@ -115,32 +68,11 @@ addin_add_padding <- function() {
     }
     paste(result, collapse = "\n")
   }
-
-  if(!nchar(text)) {
-    lines <- ctx$contents
-    result <- apply_padding(paste(lines, collapse = "\n"), lines)
-    n <- length(lines)
-    full_range <- rstudioapi::document_range(
-      rstudioapi::document_position(1, 0),
-      rstudioapi::document_position(n, nchar(lines[[n]]))
-    )
-    rstudioapi::insertText(location = full_range, text = result, id = ctx$id)
-  } else {
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-    result <- apply_padding(text, lines)
-    rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
-  }
-
-  invisible(NULL)
+  addin_run(rstudioapi::getActiveDocumentContext(), apply_padding)
 }
 
 addin_add_semicolons <- function() {
-  ctx <- rstudioapi::getActiveDocumentContext()
-  sel <- ctx$selection[[1]]
-  text <- sel$text
-  
   has_block_markers <- function(x) any(grepl(block_re, x))
-
   apply_semicolons <- function(text, lines) {
     if(has_block_markers(lines)) {
       result <- split_and_add_semicolons(text)
@@ -149,21 +81,5 @@ addin_add_semicolons <- function() {
     }
     paste(result, collapse = "\n")
   }
-
-  if(!nchar(text)) {
-    lines <- ctx$contents
-    result <- apply_semicolons(paste(lines, collapse = "\n"), lines)
-    n <- length(lines)
-    full_range <- rstudioapi::document_range(
-      rstudioapi::document_position(1, 0),
-      rstudioapi::document_position(n, nchar(lines[[n]]))
-    )
-    rstudioapi::insertText(location = full_range, text = result, id = ctx$id)
-  } else {
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-    result <- apply_semicolons(text, lines)
-    rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
-  }
-
-  invisible(NULL)
+  addin_run(rstudioapi::getActiveDocumentContext(), apply_semicolons)
 }
