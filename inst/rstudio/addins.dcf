@@ -1,8 +1,3 @@
-Name: Pad operators
-Description: Adds spaces around operators in mrgsolve model DSL code in the active editor. Requires a selection.
-Binding: addin_add_padding
-Interactive: false
-
 Name: Add semicolons
 Description: Inserts semicolons into mrgsolve model DSL code in the active editor. Requires a selection.
 Binding: addin_add_semicolons

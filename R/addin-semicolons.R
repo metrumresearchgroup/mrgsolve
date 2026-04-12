@@ -52,18 +52,6 @@ addin_preprocess_padded <- function() {
   addin_run(rstudioapi::getActiveDocumentContext(), apply_convert_nm)
 }
 
-addin_add_padding <- function() {
-  has_block_markers <- function(x) any(grepl(block_re, x))
-  apply_padding <- function(text, lines) {
-    if(has_block_markers(lines)) {
-      result <- split_and_add_padding(text)
-    } else {
-      result <- add_operator_spaces(lines)
-    }
-    paste(result, collapse = "\n")
-  }
-  addin_run(rstudioapi::getActiveDocumentContext(), apply_padding)
-}
 
 addin_add_semicolons <- function() {
   has_block_markers <- function(x) any(grepl(block_re, x))

@@ -556,12 +556,6 @@ split_and_preprocess <- function(code) {
   code
 }
 
-split_and_add_padding <- function(code) {
-  x <- modelsplit(code, split = length(code)==1)
-  x <- add_operator_spaces_spec(x)
-  code <- modelunsplit(x)
-  code
-}
 
 split_and_preprocess_condensed <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
