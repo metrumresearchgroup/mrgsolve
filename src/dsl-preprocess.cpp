@@ -723,6 +723,12 @@ static std::string convert_semicolon_line(const std::string& line) {
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
   if (t[0] == '@')                             return line;  // block option
 
+  // Fortran block-structure keywords: IF(...) THEN, ELSE, ELSEIF(...) THEN,
+  // ENDIF, END IF — none of these take a trailing semicolon.
+  if (t.size() >= 4 && t.substr(t.size() - 4) == "THEN") return line;
+  if (t == "ELSE" || (t.size() >= 5 && t.substr(0, 5) == "ELSE ")) return line;
+  if (t == "ENDIF" || t == "END IF") return line;
+
   // C++ inline comment mid-line: insert semicolon before '//'.
   size_t cmt = line.find("//");
   if (cmt != std::string::npos) {

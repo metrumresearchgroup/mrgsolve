@@ -1,21 +1,15 @@
 addin_run <- function(ctx, apply_fn) {
   sel <- ctx$selection[[1]]
   text <- sel$text
-  if(!nchar(text)) {
-    lines <- ctx$contents
-    result <- apply_fn(paste(lines, collapse = "\n"), lines)
-    n <- length(lines)
-    full_range <- rstudioapi::document_range(
-      rstudioapi::document_position(1, 0),
-      rstudioapi::document_position(n, nchar(lines[[n]]))
-    )
-    rstudioapi::insertText(location = full_range, text = result, id = ctx$id)
-  } else {
-    lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-    result <- apply_fn(text, lines)
-    if(endsWith(text, "\n")) result <- paste0(result, "\n")
-    rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
+  if(!nchar(text)) { 
+    msg <- c(x = "No text selected; please select the code to process.")
+    inform(msg); 
+    return(invisible(NULL))
   }
+  lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
+  result <- apply_fn(text, lines)
+  if(endsWith(text, "\n")) result <- paste0(result, "\n")
+  rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
   invisible(NULL)
 }
 

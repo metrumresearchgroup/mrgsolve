@@ -1444,6 +1444,15 @@ test_that("convert_semicolons: indentation preserved", {
   expect_equal(as_("  CL = THETA(1)"), "  CL = THETA(1);")
 })
 
+test_that("convert_semicolons: skips Fortran block-structure keywords", {
+  expect_equal(as_("IF(FLAG.EQ.1) THEN"),       "IF(FLAG.EQ.1) THEN")
+  expect_equal(as_("ELSEIF(FLAG.EQ.2) THEN"),   "ELSEIF(FLAG.EQ.2) THEN")
+  expect_equal(as_("ELSE"),                      "ELSE")
+  expect_equal(as_("ELSE IF(FLAG.EQ.2) THEN"),  "ELSE IF(FLAG.EQ.2) THEN")
+  expect_equal(as_("ENDIF"),                     "ENDIF")
+  expect_equal(as_("END IF"),                    "END IF")
+})
+
 test_that("convert_semicolons: non-character input passes through", {
   expect_equal(as_(42),   42)
   expect_null(as_(NULL))

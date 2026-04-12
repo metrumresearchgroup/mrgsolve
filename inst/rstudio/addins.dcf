@@ -1,19 +1,19 @@
 Name: Pad operators
-Description: Adds spaces around operators in mrgsolve model DSL code in the active editor. Operates on the current selection, or the entire file if nothing is selected.
+Description: Adds spaces around operators in mrgsolve model DSL code in the active editor. Requires a selection.
 Binding: addin_add_padding
 Interactive: false
 
 Name: Add semicolons
-Description: Inserts semicolons into mrgsolve model DSL code in the active editor. Operates on the current selection, or the entire file if nothing is selected.
+Description: Inserts semicolons into mrgsolve model DSL code in the active editor. Requires a selection.
 Binding: addin_add_semicolons
 Interactive: false
 
 Name: Convert NM - condensed
-Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then removes all spaces from converted lines. Operates on the current selection, or the entire file if nothing is selected.
+Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then removes all spaces from converted lines. Requires a selection.
 Binding: addin_preprocess_condensed
 Interactive: false
 
 Name: Convert NM - padded
-Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then adds spaces around operators. Operates on the current selection, or the entire file if nothing is selected.
+Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then adds spaces around operators. Requires a selection.
 Binding: addin_preprocess_padded
 Interactive: false
