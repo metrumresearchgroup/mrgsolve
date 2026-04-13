@@ -359,25 +359,32 @@ convert_semicolons <- function(x) {
   x
 }
 
-##' Parse model specification text.
-##' @param txt model specification text.
-##' @param split logical.
-##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped.
-##' @param comment_re regular expression for comments.
-##' @param keep_mapping if `TRUE`, parse information will be retained as 
-##' attributes on the parsed model code.
-##' @examples
-##' file <- file.path(modlib(), "pk1.cpp")
-##' 
-##' modelparse(readLines(file))
-##' 
-##' @export
-##' @keywords internal
+#' Parse model specification text
+#' 
+#' @param txt model specification text.
+#' @param split logical; if `TRUE`, `txt` will be split on `\n` before 
+#' processing.
+#' @param drop_blank logical; `TRUE` if blank lines wilil be dropped.
+#' @param comment_re regular expression to identify comments.
+#' @param keep_mapping if `TRUE`, parse information will be retained as
+#' attributes on the parsed model code.
+#' 
+#' @examples
+#' file <- file.path(modlib(), "pk1.cpp")
+#' 
+#' code <- readLines(file)
+#'
+#' modelparse(code)
+#'
+#' @seealso [modelsplit()] and [modelunsplit()] for a non-destructive
+#' split/reassemble alternative.
+#' 
+#' @md
+#' @export
 modelparse <- function(txt, split = FALSE, drop_blank = TRUE, 
                        comment_re = c("//", "##"), keep_mapping = FALSE) {
   
-  ## Take in model text and parse it out
-  
+  # Split code block into lines
   if(isTRUE(split)) {
     ntext <- length(txt)
     txt <- strsplit(txt, "\n", perl = TRUE)
@@ -389,6 +396,7 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
     }
   }
   
+  # Drop blank lines
   if(isTRUE(drop_blank)) {
     txt <- txt[!grepl("^\\s*$", txt)]
   }
@@ -406,9 +414,11 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   # Where the block starts
   start <- which(sapply(m, "[", 1L) > 0)
   
+  # Error if no blocks found
   if(length(start)==0) {
     stop("No model specification file blocks were found.", call. = FALSE)
   }
+
   # Grab any text before the first block
   header <- NULL
   if(start[1] > 1) {
@@ -462,7 +472,33 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
   
 }
 
-# Split model code by blocks, leaving the code alone as much as possible
+#' Split and reassemble model specification text
+#'
+#' `modelsplit()` parses model specification text into a named list of code
+#' blocks, retaining enough information to reconstruct the original text.
+#' `modelunsplit()` takes the list returned by `modelsplit()` and puts the
+#' blocks back together into a character vector of model code.
+#'
+#' @param x for `modelsplit()`, model specification text (character vector or
+#' single string); for `modelunsplit()`, a list returned by `modelsplit()`.
+#' @param split logical; if `TRUE`, a single string is split on newlines before
+#' parsing.
+#' 
+#' @return `modelsplit()` returns a named list of character vectors, one element
+#' per block. `modelunsplit()` returns a character vector of model code.
+#'
+#' @seealso [modelparse()] for a more destructive parse that drops blank lines
+#' and comments.
+#'
+#' @examples
+#' file <- file.path(modlib(), "pk1.cpp")
+#' 
+#' x <- modelsplit(readLines(file))
+#' 
+#' modelunsplit(x)
+#' 
+#' @md
+#' @export
 modelsplit <- function(x, split = FALSE) {
   ans <- modelparse(
     x, 
@@ -475,7 +511,9 @@ modelsplit <- function(x, split = FALSE) {
   ans
 }
 
-# Put a list of model code blocks back together
+#' @rdname modelsplit
+#' @export
+#' @keywords internal
 modelunsplit <- function(x) {
   bloc <- attr(x, "blockmatch")
   if(is.null(bloc)) stop("cannot unsplit model specification list.")
@@ -497,7 +535,7 @@ convert_semicolons_spec <- function(x) {
 }
 
 # First split the model code, then add semicolons
-split_and_add_semicolons <- function(code) {
+split_and_convert_semicolons <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
   x <- convert_semicolons_spec(x)
   code <- modelunsplit(x)
@@ -546,25 +584,18 @@ strip_spaces_spec <- function(x) {
   x
 }
 
-split_and_preprocess <- function(code) {
+split_and_preprocess <- function(code, spacing = c("padded", "condensed")) {
+  spacing <- match.arg(spacing)
   x <- modelsplit(code, split = length(code)==1)
   x <- convert_pow_spec(x)
   x <- convert_fort_if_spec(x)
   x <- convert_semicolons_spec(x)
-  x <- add_operator_spaces_spec(x)
-  code <- modelunsplit(x)
-  code
-}
-
-
-split_and_preprocess_condensed <- function(code) {
-  x <- modelsplit(code, split = length(code)==1)
-  x <- convert_pow_spec(x)
-  x <- convert_fort_if_spec(x)
-  x <- convert_semicolons_spec(x)
-  x <- strip_spaces_spec(x)
-  code <- modelunsplit(x)
-  code
+  if(spacing == "padded") {
+    x <- add_operator_spaces_spec(x)
+  } else {
+    x <- strip_spaces_spec(x)
+  }
+  modelunsplit(x)
 }
 
 #' @rdname modelparse
