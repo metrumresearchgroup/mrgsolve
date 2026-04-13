@@ -65,22 +65,6 @@ convert_semicolons_impl <- function(code) {
     .Call(`_mrgsolve_convert_semicolons_impl`, code)
 }
 
-#' Normalise whitespace around binary operators
-#'
-#' Inserts exactly one space on each side of each binary \code{+}, \code{-},
-#' \code{*}, \code{/}, and \code{=} operator.  Compound relational operators
-#' (\code{==}, \code{!=}, \code{<=}, \code{>=}) are treated as a unit.
-#' Unary \code{+} and \code{-} are left without surrounding spaces.
-#' Contents of \code{pow()} calls and \code{**} tokens are not modified.
-#' C++ line comments are preserved verbatim.
-#'
-#' @param code Character vector of source lines.
-#' @return Character vector with operator spacing normalised.
-#' @keywords internal
-add_operator_spaces_impl <- function(code) {
-    .Call(`_mrgsolve_add_operator_spaces_impl`, code)
-}
-
 MVGAUSS <- function(OMEGA_, n) {
     .Call(`_mrgsolve_MVGAUSS`, OMEGA_, n)
 }

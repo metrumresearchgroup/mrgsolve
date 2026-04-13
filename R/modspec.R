@@ -343,15 +343,6 @@ convert_fort_if <- function(x) {
   x
 }
 
-#' @rdname dsl_preprocess
-#' @export
-add_operator_spaces <- function(x) {
-  if(is.character(x)) {
-    x <- .Call("_mrgsolve_add_operator_spaces_impl", x, PACKAGE = "mrgsolve")
-  }
-  x
-}
-
 convert_semicolons <- function(x) {
   if(is.character(x)) {
     x <- .Call("_mrgsolve_convert_semicolons_impl", x, PACKAGE = "mrgsolve")
@@ -538,10 +529,20 @@ convert_semicolons_spec <- function(x) {
 split_and_convert_semicolons <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
   x <- convert_semicolons_spec(x)
-  code <- modelunsplit(x)
-  code
+  x <- modelunsplit(x)
+  x
 }
 
+# First split the model code, then convert pow
+split_and_convert_pow <- function(code) {
+  x <- modelsplit(code, split = length(code)==1)
+  x <- convert_pow_spec(x)
+  x <- add_leading_eq_space_spec(x)
+  x <- modelunsplit(x)
+  x
+}
+
+# Apply preprocessing to spec lists
 convert_fort_if_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
@@ -554,14 +555,6 @@ convert_pow_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
     x[[i]] <- convert_pow(x[[i]], names(x)[i])
-  }
-  x
-}
-
-add_operator_spaces_spec <- function(x) {
-  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
-  for(i in to_convert) {
-    x[[i]] <- add_operator_spaces(x[[i]])
   }
   x
 }
@@ -582,11 +575,10 @@ add_leading_eq_space_spec <- function(x) {
 
 split_and_preprocess <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
-  x <- convert_pow_spec(x)
   x <- convert_fort_if_spec(x)
   x <- convert_semicolons_spec(x)
-  x <- add_leading_eq_space_spec(x)
-  modelunsplit(x)
+  x <- modelunsplit(x)
+  x
 }
 
 #' @rdname modelparse

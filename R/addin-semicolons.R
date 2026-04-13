@@ -49,3 +49,19 @@ addin_add_semicolons <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
   addin_run(ctx, \(text, lines) apply_semicolons(text, lines))
 }
+
+# Convert pow ---------------------------------------------
+apply_pow <- function(text, lines) {
+  has_block_markers <- function(x) any(grepl(block_re, x))
+  if(has_block_markers(lines)) {
+    result <- split_and_convert_pow(text)
+  } else {
+    result <- convert_pow(lines)
+  }
+  paste(result, collapse = "\n")
+}
+
+addin_convert_pow <- function() {
+  ctx <- rstudioapi::getActiveDocumentContext()
+  addin_run(ctx, \(text, lines) apply_pow(text, lines))
+}
