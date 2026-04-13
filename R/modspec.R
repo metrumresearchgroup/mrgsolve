@@ -566,35 +566,26 @@ add_operator_spaces_spec <- function(x) {
   x
 }
 
-strip_nonleading_spaces <- function(x) {
-  leading <- regmatches(x, regexpr("^\\s*", x))
-  rest <- substring(x, nchar(leading) + 1)
-  comm_pos <- regexpr("//", rest, fixed = TRUE)
-  has_comm <- comm_pos > 0
-  code     <- ifelse(has_comm, substring(rest, 1, comm_pos - 1), rest)
-  comm     <- ifelse(has_comm, substring(rest, comm_pos), "")
-  paste0(leading, gsub(" ", "", code), ifelse(has_comm, paste0(" ", comm), ""))
+# Pad only the first (assignment) = on each line; compound operators like
+# !=, <=, >= are left alone.
+add_leading_eq_space <- function(x) {
+  sub("(?<![!<>=])\\s*=\\s*(?!=)", " = ", x, perl = TRUE)
 }
 
-strip_spaces_spec <- function(x) {
+add_leading_eq_space_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
-    x[[i]] <- strip_nonleading_spaces(x[[i]])
+    x[[i]] <- add_leading_eq_space(x[[i]])
   }
   x
 }
 
-split_and_preprocess <- function(code, spacing = c("padded", "condensed")) {
-  spacing <- match.arg(spacing)
+split_and_preprocess <- function(code) {
   x <- modelsplit(code, split = length(code)==1)
   x <- convert_pow_spec(x)
   x <- convert_fort_if_spec(x)
   x <- convert_semicolons_spec(x)
-  if(spacing == "padded") {
-    x <- add_operator_spaces_spec(x)
-  } else {
-    x <- strip_spaces_spec(x)
-  }
+  x <- add_leading_eq_space_spec(x)
   modelunsplit(x)
 }
 

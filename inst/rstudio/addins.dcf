@@ -3,12 +3,7 @@ Description: Inserts semicolons into mrgsolve model DSL code in the active edito
 Binding: addin_add_semicolons
 Interactive: false
 
-Name: Convert NM - condensed
-Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then removes all spaces from converted lines. Requires a selection.
-Binding: addin_preprocess_condensed
-Interactive: false
-
-Name: Convert NM - padded
-Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then adds spaces around operators. Requires a selection.
-Binding: addin_preprocess_padded
+Name: Convert NM
+Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then adds spaces around the assignment operator. Requires a selection.
+Binding: addin_preprocess
 Interactive: false

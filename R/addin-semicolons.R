@@ -15,34 +15,23 @@ addin_run <- function(ctx, apply_fn) {
   invisible(NULL)
 }
 
-# Convert NM plugins; with both condensed or padded code ------------
-apply_convert_nm <- function(text, lines, spacing) {
+# Convert NM plugin -------------------------------------------------
+apply_convert_nm <- function(text, lines) {
   has_block_markers <- function(x) any(grepl(block_re, x))
   if(has_block_markers(lines)) {
-    result <- split_and_preprocess(text, spacing = spacing)
+    result <- split_and_preprocess(text)
   } else {
     result <- convert_pow(lines)
     result <- convert_fort_if(result)
     result <- convert_semicolons(result)
-    if(spacing == "padded") {
-      result <- add_operator_spaces(result)
-    } else {
-      result <- strip_nonleading_spaces(result)
-    }
+    result <- add_leading_eq_space(result)
   }
   paste(result, collapse = "\n")
 }
 
-addin_preprocess_padded <- function() {
+addin_preprocess <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  apply_fn <- \(text, lines) apply_convert_nm(text, lines, "padded")
-  addin_run(ctx, apply_fn)
-}
-
-addin_preprocess_condensed <- function() {
-  ctx <- rstudioapi::getActiveDocumentContext()
-  apply_fn <- \(text, lines) apply_convert_nm(text, lines, "condensed")
-  addin_run(ctx, apply_fn)
+  addin_run(ctx, apply_convert_nm)
 }
 
 # Add semicolons plugin ---------------------------------------------

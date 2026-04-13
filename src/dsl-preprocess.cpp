@@ -551,42 +551,51 @@ static bool starts_with_ci(const std::string& s, const char* prefix) {
 }
 
 // Replace all case-insensitive occurrences of `from` with `to` in `s`.
-static std::string replace_all_ci(const std::string& s,
-                                   const std::string& from,
-                                   const std::string& to) {
+// Replace all case-insensitive occurrences of 'from', consuming optional
+// surrounding whitespace, so "WT .GE. 70" and "WT.GE.70" both produce "WT >= 70".
+static std::string replace_all_ci_trim(const std::string& s,
+                                        const std::string& from,
+                                        const std::string& to) {
   if (from.empty() || s.size() < from.size()) return s;
   std::string result;
   result.reserve(s.size());
   size_t pos = 0;
-  while (pos + from.size() <= s.size()) {
-    bool match = true;
-    for (size_t i = 0; i < from.size() && match; ++i) {
-      match = (std::toupper((unsigned char)s[pos + i]) ==
-               std::toupper((unsigned char)from[i]));
+  while (pos < s.size()) {
+    // Scan past optional whitespace to see if 'from' matches there.
+    size_t scan = pos;
+    while (scan < s.size() && (s[scan] == ' ' || s[scan] == '\t')) ++scan;
+    if (scan + from.size() <= s.size()) {
+      bool match = true;
+      for (size_t i = 0; i < from.size() && match; ++i) {
+        match = (std::toupper((unsigned char)s[scan + i]) ==
+                 std::toupper((unsigned char)from[i]));
+      }
+      if (match) {
+        // Consume trailing whitespace after the match.
+        size_t after = scan + from.size();
+        while (after < s.size() && (s[after] == ' ' || s[after] == '\t')) ++after;
+        result += to;
+        pos = after;
+        continue;
+      }
     }
-    if (match) {
-      result += to;
-      pos += from.size();
-    } else {
-      result += s[pos++];
-    }
+    result += s[pos++];
   }
-  result += s.substr(pos);
   return result;
 }
 
 // Convert Fortran relational/logical operators to C++ equivalents.
 static std::string convert_fortran_ops(const std::string& s) {
   std::string r = s;
-  r = replace_all_ci(r, ".GE.", ">=");
-  r = replace_all_ci(r, ".LE.", "<=");
-  r = replace_all_ci(r, ".GT.", ">");
-  r = replace_all_ci(r, ".LT.", "<");
-  r = replace_all_ci(r, ".EQ.", "==");
-  r = replace_all_ci(r, ".NE.", "!=");
-  r = replace_all_ci(r, "/=", "!=");
-  r = replace_all_ci(r, ".AND.", "&&");
-  r = replace_all_ci(r, ".OR.", "||");
+  r = replace_all_ci_trim(r, ".GE.", " >= ");
+  r = replace_all_ci_trim(r, ".LE.", " <= ");
+  r = replace_all_ci_trim(r, ".GT.", " > ");
+  r = replace_all_ci_trim(r, ".LT.", " < ");
+  r = replace_all_ci_trim(r, ".EQ.", " == ");
+  r = replace_all_ci_trim(r, ".NE.", " != ");
+  r = replace_all_ci_trim(r, "/=",   " != ");
+  r = replace_all_ci_trim(r, ".AND.", " && ");
+  r = replace_all_ci_trim(r, ".OR.",  " || ");
   return r;
 }
 
