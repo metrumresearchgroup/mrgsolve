@@ -5,7 +5,7 @@
 \alias{modelunsplit}
 \title{Split and reassemble model specification text}
 \usage{
-modelsplit(x, split = FALSE)
+modelsplit(x, split = TRUE)
 
 modelunsplit(x)
 }
