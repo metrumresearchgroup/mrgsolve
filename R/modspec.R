@@ -343,6 +343,8 @@ convert_fort_if <- function(x) {
   x
 }
 
+#' @rdname dsl_preprocess
+#' @export
 convert_semicolons <- function(x) {
   if(is.character(x)) {
     x <- .Call("_mrgsolve_convert_semicolons_impl", x, PACKAGE = "mrgsolve")

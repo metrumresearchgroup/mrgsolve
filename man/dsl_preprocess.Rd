@@ -5,6 +5,7 @@
 \alias{convert_pow}
 \alias{warn_int_div}
 \alias{convert_fort_if}
+\alias{convert_semicolons}
 \title{DSL preprocessing functions}
 \usage{
 convert_pow(x, block = "")
@@ -12,6 +13,8 @@ convert_pow(x, block = "")
 warn_int_div(x, block = "")
 
 convert_fort_if(x)
+
+convert_semicolons(x)
 }
 \arguments{
 \item{x}{character vector of source lines to process.}
