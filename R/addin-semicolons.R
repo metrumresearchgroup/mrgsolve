@@ -51,7 +51,7 @@ addin_add_semicolons <- function() {
 }
 
 # Convert pow ---------------------------------------------
-apply_pow <- function(text, lines) {
+apply_convert_pow <- function(text, lines) {
   has_block_markers <- function(x) any(grepl(block_re, x))
   if(has_block_markers(lines)) {
     result <- split_and_convert_pow(text)
@@ -63,5 +63,5 @@ apply_pow <- function(text, lines) {
 
 addin_convert_pow <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  addin_run(ctx, \(text, lines) apply_pow(text, lines))
+  addin_run(ctx, \(text, lines) apply_convert_pow(text, lines))
 }

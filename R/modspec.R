@@ -490,7 +490,7 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
 #' 
 #' @md
 #' @export
-modelsplit <- function(x, split = FALSE) {
+modelsplit <- function(x, split = TRUE) {
   ans <- modelparse(
     x, 
     split = split, 
