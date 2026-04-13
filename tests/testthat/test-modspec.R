@@ -1453,6 +1453,13 @@ test_that("convert_semicolons: skips Fortran block-structure keywords", {
   expect_equal(as_("END IF"),                    "END IF")
 })
 
+test_that("convert_semicolons: skips block option lines starting with @", {
+  expect_equal(as_("@annotated"),        "@annotated")
+  expect_equal(as_("@covariates"),       "@covariates")
+  expect_equal(as_("@ flag"),            "@ flag")
+  expect_equal(as_("  @annotated"),      "  @annotated")
+})
+
 test_that("convert_semicolons: non-character input passes through", {
   expect_equal(as_(42),   42)
   expect_null(as_(NULL))
