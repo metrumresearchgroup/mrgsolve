@@ -103,25 +103,27 @@ modlib_list <- function() {
 #' - `RESP`: response PD compartment (irm models)
 #'
 #' @section Output variables:
-#' - `CP`: concentration in the central compartment (`CENT/V2`)
+#' - `CP`: concentration in the central compartment
 #' - `RESP`: response (emax model)
 #'
 #' @section PK parameters:
 #' - `KA`, `KA2`: first order absorption rate constants from first and
 #'   second extravascular compartment (1/time)
 #' - `CL`: clearance (volume/time)
+#' - `V`: volume of distribution (volume)
 #' - `V2`: volume of distribution, central compartment (volume)
 #' - `V3`: volume of distribution, peripheral compartment (volume)
 #' - `V4`: volume of distribution, peripheral compartment 2 (volume)
 #' - `Q`: intercompartmental clearance (volume/time)
+#' - `Q3`: intercompartmental clearance (volume/time)
 #' - `Q4`: intercompartmental clearance 2 (volume/time)
 #' - `VMAX`: maximum rate, nonlinear process (mass/time)
 #' - `KM`: Michaelis constant (mass/volume)
-#' - `K10`: elimination rate constant (1/time); `CL/V2`
+#' - `K10`: elimination rate constant (1/time)
 #' - `K12`: rate constant for transfer to peripheral compartment from
-#'   central (1/time); `Q/V2`
+#'   central (1/time)
 #' - `K21`: rate constant for transfer to central compartment from
-#'   peripheral (1/time); `Q/V3`
+#'   peripheral (1/time)
 #'
 #' @section PD parameters:
 #' - `E0`: baseline effect (emax model)
@@ -167,15 +169,13 @@ object_dir <- function() {
 #' See [modlib_details] for more detailed descriptions of parameters and
 #' compartments.
 #'
-#' The `pk1cmt` model is parameterized in terms of `CL`, `V2`, `KA` and
+#' The `pk1cmt` model is parameterized in terms of `CL`, `V`, `KA` and
 #' `KA2` and uses compartments `EV`, `EV2`, and `CENT`. The `pk2cmt` model
 #' adds a `PERIPH` compartment and parameters `Q` and `V3` to that of the
 #' one-compartment model. Likewise, the three-compartment model (`pk3cmt`)
 #' adds `PERIPH2` and parameters `Q4` and `V4` to that of the
 #' two-compartment models. All pk models also have parameters `VMAX`
 #' (defaulting to zero, no non-linear clearance) and `KM`.
-#'
-#' @return an object of class `packmod`.
 #'
 #' @md
 NULL
@@ -191,13 +191,13 @@ NULL
 #'
 #' All PK/PD models include 2-compartment PK model with absorption from
 #' 2 extravascular compartments and linear + nonlinear clearance. The
-#' PK models are parameterized with `CL`, `V2`, `Q`, `VMAX`, `KM`, `KA`
+#' PK models are parameterized with `CL`, `V2`, `Q`, `V3, `VMAX`, `KM`, `KA`
 #' and `KA2` and implement compartments `EV`, `EV2`, `CENT`, `PERIPH`.
 #' The indirect response models have compartment `RESP` and the emax
 #' model has output variable `RESP`. PD parameters include `KIN`, `KOUT`,
 #' `IC50`, `EC50`, `IMAX`, `EMAX`, `E0`, and `n`.
 #'
-#' Also, once the model is loaded, use the [see] method for `mrgmod` to
+#' Also, once the model is loaded, use the [see()] method for `mrgmod` to
 #' view the model code.
 #'
 #' @section Model description:

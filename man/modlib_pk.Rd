@@ -6,9 +6,6 @@
 \arguments{
 \item{...}{passed to update.}
 }
-\value{
-an object of class \code{packmod}.
-}
 \description{
 modlib: Pharmacokinetic models
 }
@@ -16,7 +13,7 @@ modlib: Pharmacokinetic models
 See \link{modlib_details} for more detailed descriptions of parameters and
 compartments.
 
-The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{V2}, \code{KA} and
+The \code{pk1cmt} model is parameterized in terms of \code{CL}, \code{V}, \code{KA} and
 \code{KA2} and uses compartments \code{EV}, \code{EV2}, and \code{CENT}. The \code{pk2cmt} model
 adds a \code{PERIPH} compartment and parameters \code{Q} and \code{V3} to that of the
 one-compartment model. Likewise, the three-compartment model (\code{pk3cmt})

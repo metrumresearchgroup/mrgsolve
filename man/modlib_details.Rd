@@ -20,7 +20,7 @@ modlib: PK/PD Model parameters, compartments, and output variables
 \section{Output variables}{
 
 \itemize{
-\item \code{CP}: concentration in the central compartment (\code{CENT/V2})
+\item \code{CP}: concentration in the central compartment
 \item \code{RESP}: response (emax model)
 }
 }
@@ -31,18 +31,20 @@ modlib: PK/PD Model parameters, compartments, and output variables
 \item \code{KA}, \code{KA2}: first order absorption rate constants from first and
 second extravascular compartment (1/time)
 \item \code{CL}: clearance (volume/time)
+\item \code{V}: volume of distribution (volume)
 \item \code{V2}: volume of distribution, central compartment (volume)
 \item \code{V3}: volume of distribution, peripheral compartment (volume)
 \item \code{V4}: volume of distribution, peripheral compartment 2 (volume)
 \item \code{Q}: intercompartmental clearance (volume/time)
+\item \code{Q3}: intercompartmental clearance (volume/time)
 \item \code{Q4}: intercompartmental clearance 2 (volume/time)
 \item \code{VMAX}: maximum rate, nonlinear process (mass/time)
 \item \code{KM}: Michaelis constant (mass/volume)
-\item \code{K10}: elimination rate constant (1/time); \code{CL/V2}
+\item \code{K10}: elimination rate constant (1/time)
 \item \code{K12}: rate constant for transfer to peripheral compartment from
-central (1/time); \code{Q/V2}
+central (1/time)
 \item \code{K21}: rate constant for transfer to central compartment from
-peripheral (1/time); \code{Q/V3}
+peripheral (1/time)
 }
 }
 
