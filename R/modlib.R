@@ -154,8 +154,8 @@ object_dir <- function() {
 #' @param ... passed to update.
 #'
 #' @section Model description:
-#' All pk models have two extravascular dosing compartments and potential
-#' for linear and nonlinear clearance.
+#' All ODE-based pk models have two extravascular dosing compartments and 
+#' potential for linear and nonlinear clearance.
 #' - `pk1cmt`: one compartment pk model using ODEs
 #' - `pk2cmt`: two compartment pk model using ODEs
 #' - `pk3cmt`: three compartment pk model using ODEs

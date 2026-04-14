@@ -23,8 +23,8 @@ two-compartment models. All pk models also have parameters \code{VMAX}
 }
 \section{Model description}{
 
-All pk models have two extravascular dosing compartments and potential
-for linear and nonlinear clearance.
+All ODE-based pk models have two extravascular dosing compartments and
+potential for linear and nonlinear clearance.
 \itemize{
 \item \code{pk1cmt}: one compartment pk model using ODEs
 \item \code{pk2cmt}: two compartment pk model using ODEs
