@@ -15,30 +15,31 @@ addin_run <- function(ctx, apply_fn) {
   invisible(NULL)
 }
 
-# Convert NM plugin -------------------------------------------------
-apply_convert_nm <- function(text, lines) {
-  has_block_markers <- function(x) any(grepl(block_re, x))
+# Convert NM addin -------------------------------------------------
+addin_apply_convert_nm <- function(text, lines) {
   if(has_block_markers(lines)) {
-    result <- split_and_preprocess(text)
+    result <- modelsplit(lines, split = FALSE)
+    result <- convert_fort_if_spec(result)
+    result <- convert_semicolons_spec(result)
+    result <- modelunsplit(result)
   } else {
-    result <- convert_pow(lines)
-    result <- convert_fort_if(result)
+    result <- convert_fort_if(lines)
     result <- convert_semicolons(result)
-    result <- add_leading_eq_space(result)
   }
   paste(result, collapse = "\n")
 }
 
-addin_preprocess <- function() {
+addin_convert_nm <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  addin_run(ctx, apply_convert_nm)
+  addin_run(ctx, addin_apply_convert_nm)
 }
 
-# Add semicolons plugin ---------------------------------------------
-apply_semicolons <- function(text, lines) {
-  has_block_markers <- function(x) any(grepl(block_re, x))
+# Add semicolons addin ---------------------------------------------
+addin_apply_semicolons <- function(text, lines) {
   if(has_block_markers(lines)) {
-    result <- split_and_convert_semicolons(text)
+    result <- modelsplit(lines, split = FALSE)
+    result <- convert_semicolons_spec(result)
+    result <- modelunsplit(result)
   } else {
     result <- convert_semicolons(lines)
   }
@@ -47,21 +48,24 @@ apply_semicolons <- function(text, lines) {
 
 addin_add_semicolons <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  addin_run(ctx, \(text, lines) apply_semicolons(text, lines))
+  addin_run(ctx, \(text, lines) addin_apply_semicolons(text, lines))
 }
 
-# Convert pow ---------------------------------------------
-apply_convert_pow <- function(text, lines) {
-  has_block_markers <- function(x) any(grepl(block_re, x))
+# Convert pow addin ---------------------------------------------
+addin_apply_convert_pow <- function(text, lines) {
   if(has_block_markers(lines)) {
-    result <- split_and_convert_pow(text)
+    result <- modelsplit(lines, split = FALSE)
+    result <- convert_pow_spec(result)
+    result <- add_leading_eq_space_spec(result)
+    result <- modelunsplit(result)
   } else {
     result <- convert_pow(lines)
+    result <- add_leading_eq_space(result)
   }
   paste(result, collapse = "\n")
 }
 
 addin_convert_pow <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  addin_run(ctx, \(text, lines) apply_convert_pow(text, lines))
+  addin_run(ctx, \(text, lines) addin_apply_convert_pow(text, lines))
 }

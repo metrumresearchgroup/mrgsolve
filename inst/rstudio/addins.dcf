@@ -1,6 +1,11 @@
 Name: Convert NM
 Description: Converts Fortran power, IF constructs, and inserts semicolons into mrgsolve model DSL code, then adds spaces around the assignment operator. Requires a selection.
-Binding: addin_preprocess
+Binding: addin_convert_nm
+Interactive: false
+
+Name: Add semicolons
+Description: Inserts semicolons into mrgsolve model DSL code in the active editor. Requires a selection.
+Binding: addin_add_semicolons
 Interactive: false
 
 Name: Convert pow
@@ -8,7 +13,4 @@ Description: Converts ** to pow() in mrgsolve model DSL code in the active edito
 Binding: addin_convert_pow
 Interactive: false
 
-Name: Add semicolons
-Description: Inserts semicolons into mrgsolve model DSL code in the active editor. Requires a selection.
-Binding: addin_add_semicolons
-Interactive: false
+

@@ -18,8 +18,12 @@
 
 # @include complog.R nmxml.R annot.R
 
-# The semicolons addin depends on this regex; see `addin-semicolons.R`
+# The dsl preprocess addin depends on this regex via has_block_markers
+# see `dsl-preprocess-addin.R`
 block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
+
+# Check a character vector for block markers; see `dsl-preprocess-addin.R`
+has_block_markers <- function(x) any(grepl(block_re, x))
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -527,24 +531,7 @@ convert_semicolons_spec <- function(x) {
   x
 }
 
-# First split the model code, then add semicolons
-split_and_convert_semicolons <- function(code) {
-  x <- modelsplit(code, split = length(code)==1)
-  x <- convert_semicolons_spec(x)
-  x <- modelunsplit(x)
-  x
-}
-
-# First split the model code, then convert pow
-split_and_convert_pow <- function(code) {
-  x <- modelsplit(code, split = length(code)==1)
-  x <- convert_pow_spec(x)
-  x <- add_leading_eq_space_spec(x)
-  x <- modelunsplit(x)
-  x
-}
-
-# Apply preprocessing to spec lists
+# Apply fortran if/else conversion to the right blocks; used in addin
 convert_fort_if_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
@@ -553,6 +540,7 @@ convert_fort_if_spec <- function(x) {
   x
 }
 
+# Apply ** to pow conversion to the right blocks; used in addin
 convert_pow_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
@@ -572,14 +560,6 @@ add_leading_eq_space_spec <- function(x) {
   for(i in to_convert) {
     x[[i]] <- add_leading_eq_space(x[[i]])
   }
-  x
-}
-
-split_and_preprocess <- function(code) {
-  x <- modelsplit(code, split = length(code)==1)
-  x <- convert_fort_if_spec(x)
-  x <- convert_semicolons_spec(x)
-  x <- modelunsplit(x)
   x
 }
 
