@@ -906,8 +906,10 @@ Rcpp::CharacterVector convert_fort_if_impl(Rcpp::CharacterVector code) {
 //' Appends a semicolon to each element of \code{code} that looks like a
 //' statement but does not already have one.  Lines that are left unchanged:
 //' blank lines, lines already ending with \code{;}, lines ending with
-//' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}), and
-//' preprocessor directives (\code{#}).
+//' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}),
+//' preprocessor directives (\code{#}), lines containing block 
+//'  options (line starts wtih \code{@}), and lines ending with Fortran
+//'  block-structure keywords.
 //'
 //' @param code Character vector of source lines.
 //' @return Character vector with semicolons inserted where needed.
