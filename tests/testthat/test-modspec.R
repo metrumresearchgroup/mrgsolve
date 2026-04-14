@@ -781,6 +781,37 @@ test_that("Invalid item in $SET generates error", {
   )
 })
 
+# -----------------------------------------------------------------------------
+
+test_that("modelsplit and unsplit leaves code unchanged", {
+  code <- '
+  This is an unparsed header. 
+
+  // A comment
+  
+  $CMT @number 2
+
+  $PARAM CL = 1
+  VC = 2, KA = 1.2
+
+  $MAIN
+  double KE = CL/VC;
+
+  $ODE
+  DADT(1) = -KA * A(1)
+
+  DADT(2) = KA * A(1)  - KE * A(2); // central compartment 
+  
+  $CAPTURE KA KE
+  '
+  code <- strsplit(code, "\n")[[1]]
+  x <- modelsplit(code, split = FALSE)
+  y <- modelunsplit(x)
+  expect_identical(code, y)
+})
+
+
+# -----------------------------------------------------------------------------
 
 test_that("convert_pow passes through lines without **", {
   expect_equal(convert_pow("double x = a + b;"), "double x = a + b;")
