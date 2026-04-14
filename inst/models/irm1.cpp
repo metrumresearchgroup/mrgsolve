@@ -24,7 +24,7 @@ VMAX :  0  : Maximum reaction velocity (mass/time)
 KM   :  2  : Michaelis constant (mass/volume)
 
 $CMT  @annotated
-EV1    : First extravascular compartment (mass)
+EV     : First extravascular compartment (mass)
 CENT   : Central compartment (mass)
 PERIPH : Peripheral compartment (mass) 
 RESP   : Response compartment
@@ -40,9 +40,9 @@ $MAIN
 RESP_0 = KIN/KOUT;
 
 $ODE
-dxdt_EV1    = -KA *EV1;
+dxdt_EV     = -KA*EV;
 dxdt_EV2    = -KA2*EV2;
-dxdt_CENT   =  KA *EV1 + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
+dxdt_CENT   =  KA*EV + KA2*EV2 - (CL+CLNL+Q)*CP  + Q*CT;
 dxdt_PERIPH =  Q*CP - Q*CT;
 dxdt_RESP   =  KIN*(1-INH) - KOUT*RESP;
 

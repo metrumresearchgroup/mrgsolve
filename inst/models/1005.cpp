@@ -11,7 +11,9 @@ run = "@cppstem"
 
 [ PLUGIN ] autodec
 
-[ PKMODEL ] cmt = "GUT CENT PERIPH", depot = TRUE
+[ PKMODEL ] advan = 4
+
+[ CMT ] GUT CENT PERIPH
 
 [ INPUT ] SEX = 0, WT = 70
 
