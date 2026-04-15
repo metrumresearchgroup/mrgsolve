@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -95,15 +95,6 @@ tgrid_id <- function(col,idata) {
   col <- idata[,col]
   return(match(col,sort(unique(col)))-1)
 }
-
-# TODO: remove
-# validate_idata <- function(idata) {
-#   if(is.null(idata)) return(invisible(TRUE))
-#   if(!(is.data.frame(idata) | is.matrix(idata)))
-#     wstop("idata needs to be either NULL, data.frame, or matrix.")
-#   return(invisible(TRUE))
-# }
-
 
 #' Simulate from a model object
 #'
