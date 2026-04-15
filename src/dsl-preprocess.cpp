@@ -738,6 +738,13 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (t == "ELSE" || (t.size() >= 5 && t.substr(0, 5) == "ELSE ")) return line;
   if (t == "ENDIF" || t == "END IF") return line;
 
+  // Fortran whole-line comment: leading ';' with no code before it.
+  // Replace the ';' with '//' and drop the semicolon.
+  if (t[0] == ';') {
+    size_t semi_pos = line.find(';');
+    return line.substr(0, semi_pos) + "//" + line.substr(semi_pos + 1);
+  }
+
   // C++ inline comment mid-line: insert semicolon before '//'.
   size_t cmt = line.find("//");
   if (cmt != std::string::npos) {

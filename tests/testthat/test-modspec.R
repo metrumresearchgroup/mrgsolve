@@ -1409,6 +1409,12 @@ test_that("convert_semicolons: semicolon between code and C++ comment", {
   expect_equal(as_("a = b // comment"), "a = b; // comment")
 })
 
+test_that("convert_semicolons: leading semicolon is a whole-line comment", {
+  expect_equal(as_("; this is a comment"),   "// this is a comment")
+  expect_equal(as_("  ; indented comment"),  "  // indented comment")
+  expect_equal(as_(";no space after semi"),  "//no space after semi")
+})
+
 test_that("convert_semicolons: skips lines ending with continuation operator", {
   expect_equal(as_("CL = THETA(1) *"),   "CL = THETA(1) *")
   expect_equal(as_("CL = THETA(1) +"),   "CL = THETA(1) +")
