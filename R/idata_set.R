@@ -95,7 +95,7 @@ setGeneric("idata_set", function(x,data,...) {
 ##' @export
 setMethod("idata_set", c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
   
-  if(is.character(need)) suppressMessages(inventory(x,data,need))
+  if(is.character(need)) suppressMessages(inventory(x,data, all_of(need)))
   
   if(!missing(.subset)) {
     data <- filter(data,`!!`(enquo(.subset)))
