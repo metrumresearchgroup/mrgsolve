@@ -9,7 +9,7 @@ nmext(
   project = getwd(),
   file = paste0(run, ".ext"),
   path = NULL,
-  root = c("working", "cppfile"),
+  root = c("cppfile", "working"),
   index = "last",
   theta = TRUE,
   omega = TRUE,
