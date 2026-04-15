@@ -358,4 +358,12 @@ test_that("preprocess_nm_vars returns the full spec unchanged except code blocks
   expect_equal(out$PARAM, "CL = 0.1")
 })
 
+test_that("ERR is reserved when using nm-vars", {
+  code <- c("$PLUGIN nm-vars", "$PARAM ERR = 1")
+  expect_error(
+    mcode("err-is-reserved", code, compile = FALSE), 
+    "Reserved names in parameter list"
+  )
+})
+
 rm(testenv)

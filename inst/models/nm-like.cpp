@@ -25,5 +25,10 @@ DADT(1) = -KA*A(1)
 DADT(2) =  KA*A(1) - (CL/V)*A(2)
 DADT(3) =  KIN * (1-INH) - KOUT * A(3)
 
+$SIGMA 0.0025
+
 $ERROR
 CP = A(2)/V
+DV = CP*EXP(ERR(1))
+
+$CAPTURE CP

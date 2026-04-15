@@ -137,6 +137,7 @@ typedef double capture;
 #define A_0(a) _A_0_[a-1]
 #define DADT(a) _DADT_[a-1]
 #define T _ODETIME_[0]
+#define ERR(a) EPS(a) 
 #define EXP(a) exp(a)
 #define DEXP(a) exp(a)
 #define LOG(a) log(a)
