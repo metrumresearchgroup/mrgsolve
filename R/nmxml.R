@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -72,7 +72,7 @@
 #' @md
 nmxml <- function(run = numeric(0), project = character(0),
                   file = character(0), path = character(0),
-                  root = c("working", "cppfile"), 
+                  root = c("cppfile", "working"), 
                   theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,
                   oprefix = "", sprefix="",
@@ -227,7 +227,7 @@ nmxml <- function(run = numeric(0), project = character(0),
 #' @md
 nmext <- function(run = NA_real_, project = getwd(), 
                   file = paste0(run,".ext"), path = NULL,
-                  root = c("working", "cppfile"),
+                  root = c("cppfile", "working"),
                   index = "last",
                   theta = TRUE, omega = TRUE, sigma = TRUE,
                   olabels = NULL, slabels = NULL,

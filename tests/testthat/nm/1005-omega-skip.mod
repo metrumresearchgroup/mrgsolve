@@ -1,7 +1,6 @@
 [ nmxml ] 
 run = 1005
 project = 'nonmem'
-root = "cppfile"
 omega = FALSE
 
 [ nmxml ] 

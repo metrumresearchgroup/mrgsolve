@@ -10,7 +10,7 @@ nmxml(
   project = character(0),
   file = character(0),
   path = character(0),
-  root = c("working", "cppfile"),
+  root = c("cppfile", "working"),
   theta = TRUE,
   omega = TRUE,
   sigma = TRUE,
