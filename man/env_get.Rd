@@ -34,7 +34,7 @@ env_get_env(x, ...)
 }
 \description{
 Call \code{env_get()} passing either a model object or simulated output and
-name an object to retreive from the model object environment.
+name an object to retrieve from the model object environment.
 \code{env_get_obj()} is an alias to \code{env_get()}. Call  \code{env_get_env()} to
 return the environment itself. Methods for \code{mrgmod} and \code{mrgsims} both
 interact with the same environment (see \strong{Examples}).

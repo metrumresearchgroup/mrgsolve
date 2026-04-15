@@ -57,7 +57,7 @@ env_ls <- function(x,...) {
 #' Return model environment or objects from the model environment
 #' 
 #' Call `env_get()` passing either a model object or simulated output and 
-#' name an object to retreive from the model object environment. 
+#' name an object to retrieve from the model object environment. 
 #' `env_get_obj()` is an alias to `env_get()`. Call  `env_get_env()` to 
 #' return the environment itself. Methods for `mrgmod` and `mrgsims` both 
 #' interact with the same environment (see **Examples**).  
