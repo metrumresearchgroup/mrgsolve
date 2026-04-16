@@ -400,16 +400,6 @@ s_pick <- function(x,name) {
   nonull(unlist(sapply(x,"[[",name)))
 }
 
-# ll_pick <- function(x,name) {
-#   stopifnot(is.list(x))
-#   lapply(x,"[[",name)
-# }
-# 
-# l_pick <- function(x,name) {
-#   stopifnot(is.list(x))
-#   lapply(x,"[",name)
-# }
-
 filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
   if(short) dir <- build_path(dir)
   file.path(dir, paste0(run, ext))
