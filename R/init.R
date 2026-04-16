@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -131,8 +131,6 @@ setMethod("as.init", "NULL", function(.x,...) {
   create_numeric_list(list(), "cmt_list",...)
 })
 
-
-
 showinit <-  function(x,digits=3,ncols=NULL,right=FALSE,...) {
   if(is.mt(x@data)) {
     message("No compartments in the model.")
@@ -154,7 +152,6 @@ showinit <-  function(x,digits=3,ncols=NULL,right=FALSE,...) {
     y <- y[take]
     n <- n[take]
   }
-  ##if(length(x)==0) stop("No initial conditions to show with pat = ", pattern)
   if(length(x)==0) {message("No matching compartments were found."); return(invisible(NULL))}
   ord <- order(x)
   x <- x[ord]
@@ -196,4 +193,3 @@ showinit <-  function(x,digits=3,ncols=NULL,right=FALSE,...) {
 ##' @export
 ##' @keywords internal
 setMethod("show", "cmt_list", function(object) showinit(object))
-
