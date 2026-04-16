@@ -169,21 +169,6 @@ cvec_c_tr <- function(x) {
   }
 }
 
-## Create a character vector 
-## Split on comma and rm whitespace
-# cvec_c_nws <- function(x) {
-#   if(is.null(x) | length(x)==0) return(character(0))
-#   x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
-#   x <- gsub(" ", "",x, fixed=TRUE)
-#   x <- x[x!=""]
-#   if(length(x)==0) {
-#     return(character(0))
-#   } else {
-#     return(x) 
-#   }
-# }
-
-
 ## Old
 as.cvec <- function(x) {
   if(is.null(x)) return(character(0))
