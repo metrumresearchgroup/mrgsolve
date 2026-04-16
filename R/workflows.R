@@ -16,21 +16,15 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' DEPRECATED: Simulate a sequence of parameters
+##' DEFUNCT: Simulate a sequence of parameters
 ##' 
-##' This function is experimental and may change or go away at any time without
-##' notice.
+##' Try the 'mrgsim.sa' package instead.
 ##' 
+##' @param ... not used. 
 ##' 
-##' @return nothing; an error is generated if this is called.
-##' 
-##' @examples
-##' \dontrun{
-##' try(wf_sweep())
-##' }
 ##' @keywords internal
 ##' @md
 ##' @export
 wf_sweep <- function(...) {
-  abort("`wf_sweep()` is deprecated; try the 'mrgsim.sa' package instead.")
+  abort("`wf_sweep()` is defunct; try the 'mrgsim.sa' package instead.")
 }
