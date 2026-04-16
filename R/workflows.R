@@ -16,15 +16,15 @@
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
 
-##' DEFUNCT: Simulate a sequence of parameters
-##' 
-##' Try the 'mrgsim.sa' package instead.
-##' 
-##' @param ... not used. 
-##' 
-##' @keywords internal
-##' @md
-##' @export
+#' DEFUNCT: Simulate a sequence of parameters
+#' 
+#' Try the 'mrgsim.sa' package instead.
+#' 
+#' @param ... not used. 
+#' 
+#' @keywords internal
+#' @md
+#' @export
 wf_sweep <- function(...) {
   abort("`wf_sweep()` is defunct; try the 'mrgsim.sa' package instead.")
 }

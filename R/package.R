@@ -237,7 +237,6 @@ reserved <- function() {
 
 examples <- function(...) {
   example("mrgsolve", package="mrgsolve",...)
-  example("knobs", package="mrgsolve",...)
   example("param", package="mrgsolve",...)
   example("init", package="mrgsolve",...)
   example("mrgsim", package="mrgsolve",...)
