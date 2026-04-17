@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -380,13 +380,6 @@ setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 #' @keywords internal
 setMethod("%then%",c("ev", "ev"), function(e1, e2) {
   ev_seq(e1, e2)
-  # left <- e1@data
-  # if(!has_name("ii",left) | !has_name("addl",left)) {
-  #   stop("both ii and addl are required in lhs",call.=FALSE)
-  # }
-  # y <- max(with(left, time + ii*addl + ii))
-  # e2@data$time <- y
-  # add.ev(e1,e2)
 })
 
 #' @rdname ev_ops
@@ -394,8 +387,6 @@ setMethod("%then%",c("ev", "ev"), function(e1, e2) {
 #' @keywords internal
 setMethod("+", c("ev", "numeric"), function(e1, e2) {
   stop("e1 + numeric operation is deprecated")
-  # e1@data$time <- e1@data$time + e2
-  # e1
 })
 
 #' @param x an ev object
