@@ -124,7 +124,7 @@ setGeneric("data_set", function(x,data,...) {
 setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
   
   if(is.character(need)) {
-    suppressMessages(inventory(x, data, need))
+    suppressMessages(inventory(x, data, all_of(need)))
   }
   if(!missing(.subset)) {
     data <- dplyr::filter(data,`!!`(enquo(.subset)))

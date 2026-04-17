@@ -25,7 +25,7 @@
 #' @importFrom dplyr intersect select rename do slice pull
 #' @importFrom dplyr if_else summarise_each is.tbl select
 #' @importFrom dplyr group_by ungroup n left_join
-#' @importFrom tidyselect vars_select everything
+#' @importFrom tidyselect all_of vars_select everything
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang quos enquo enquos quo_name syms !!! !! eval_tidy as_label
