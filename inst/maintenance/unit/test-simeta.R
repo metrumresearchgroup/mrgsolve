@@ -44,13 +44,13 @@ if(mode==1) {
 }
 
 $ERROR
-if(mode==4) {
+if(mode==2) {
   simeps(); 
   a = EPS(1); 
   b = EPS(2);
 }
 
-if(mode==6) { 
+if(mode==3) { 
   simeta();
   d = ETA(1);  
 }
@@ -69,15 +69,15 @@ test_that("resimulate all eta", {
   
   # Interact with simeta in $TABLE #1289
   set.seed(1234)
-  all3 <- mrgsim_df(mod, param = list(n = 0, mode = 6))
-  diff <- abs(all3$d - all2$a)
+  all3 <- mrgsim_df(mod, param = list(n = 0, mode = 3))
+  diff <- abs(all3$d - all$a)
   expect_true(all(diff < 1e-6))
 })
 
 test_that("resimulate all or specific eps", {
   data <- data.frame(amt = 0, evid = 0, time = c(0,0,0), cmt = 0, ID = 1)
   set.seed(87654)
-  all <- mrgsim_df(mod, data = data, param = list(mode = 4))
+  all <- mrgsim_df(mod, data = data, param = list(mode = 2))
   all$ID <- NULL
   all$c <- NULL
   all$d <- NULL
