@@ -39,8 +39,8 @@ struct resim {
   //! resim constructor
   resim(refun x, void* y) : fun(x), prob(y){}
   resim(){}
-  void operator()(int n = 0) {
-    return fun(prob, n);
+  void operator()() {
+    return fun(prob);
   }
   
 protected: 
