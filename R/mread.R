@@ -416,7 +416,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
   find_cpp_dot(spec, mread.env)
   check_cpp_dot(mread.env, x)
-  check_sim_eta_eps_n(x, spec)
   
   # This must come after nm-vars is processed; nmv is NULL if 
   # not using nm-vars
