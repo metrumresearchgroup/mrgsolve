@@ -73,8 +73,9 @@ test_that("Include TIME and time when checking for mixed upper/lower case", {
 
 test_that("data_set does not accept 'extra' arguments", {
   expect_error(
-    data_set(mod, up, .subset = ID > 4), 
-    "object 'ID' not found"
+    data_set(mod, up, .subset = ID > 4),
+    "`data_set` no longer accepts arguments other than",
+    fixed = TRUE
   )
   expect_error(
     data_set(mod, up, need = "barf"), 

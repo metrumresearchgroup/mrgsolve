@@ -114,7 +114,7 @@ setGeneric("data_set", function(x, data, ...) {
 #' @rdname data_set
 #' @export
 setMethod("data_set", c("mrgmod", "data.frame"), function(x, data, ...) {
-  if(length(list(...))) {
+  if(...length() > 0L) {
     abort("`data_set` no longer accepts arguments other than `x` and `data`.")
   }
   x@args[["data"]] <- data
