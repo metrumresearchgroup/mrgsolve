@@ -41,9 +41,9 @@ idata <- expand.idata(ID=1:10) %>% mutate(FOO=ID)
 
 out <- 
   mod %>% 
-  data_set(exTheoph, ID <=2) %>% 
+  data_set(dplyr::filter(exTheoph, ID <=2)) %>% 
   carry_out(WT,evid,ROW) %>%
-  mrgsim(obsonly=TRUE)
+  mrgsim(obsonly = TRUE)
 
 
 out <- mod %>% 

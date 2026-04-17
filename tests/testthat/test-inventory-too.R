@@ -36,9 +36,6 @@ test_that("inventory conditions", {
   expect_error(inventory(mod,data,c("CL", "VC")))
   expect_message(inventory(mod,data,c("CL", "SEX")))
   expect_message(inventory(mod,data,CL,SEX))
-  expect_error(mod %>% data_set(data,need=c("CL", "VC")))
-  expect_error(mod %>% idata_set(data,need=c("CL", "WTCL")))
-  expect_is(mod %>% data_set(data,need="CL") %>% mrgsim(end=1),"mrgsims")
 })
 
 test_that("check_data_names", {

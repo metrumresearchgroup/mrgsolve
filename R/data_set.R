@@ -23,6 +23,7 @@
 #'
 #' @param x a model object. 
 #' @param data input data set as a data frame.
+#' @param ... not used; `data_set()` accepts no other arguments.
 #' 
 #' @details
 #' Input data sets are `R` data frames that can include columns 
@@ -87,6 +88,8 @@
 #' See [exdatasets] for several example data sets that are provided by 
 #' mrgsolve.
 #' 
+#' @param ... not used.
+#' 
 #' @seealso [idata_set()], [ev()], [valid_data_set()], [valid_idata_set()], 
 #' [lctran()], [uctran()].
 #'
@@ -108,8 +111,8 @@ setGeneric("data_set", function(x, data, ...) {
   standardGeneric("data_set")
 })
 
-##' @rdname data_set
-##' @export
+#' @rdname data_set
+#' @export
 setMethod("data_set", c("mrgmod", "data.frame"), function(x, data, ...) {
   if(length(list(...))) {
     abort("`data_set` no longer accepts arguments other than `x` and `data`.")

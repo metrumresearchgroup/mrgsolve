@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -17,7 +17,7 @@
 
 
 
-#' Select and modify a idata set for simulation
+#' Select a idata set for simulation
 #' 
 #' The individual data set (`idata_set`) is a data frame with one 
 #' row for each individual in a population, specifying parameters and 
@@ -25,14 +25,7 @@
 #'
 #' @param x model object.
 #' @param data a data set that can be coerced to data.frame.
-#' @param object character name of an object existing in `$ENV` 
-#' to use for the data set.
-#' @param .subset an unquoted expression passed to [dplyr::filter()]; retain 
-#' only certain rows in the data set.
-#' @param .select passed to [dplyr::select()]; retain only certain columns in 
-#' the data set; this should be the result of a call to [dplyr::vars()].
-#' @param need passed to [inventory()].
-#' @param ... other arguments passed along when `object` is a function.
+#' @param ... not used; `idata_set()` accepts no other arguments.
 #' 
 #' @details
 #' The `idata_set` is a data frame that specifies individual-level 
@@ -62,68 +55,41 @@
 #' 
 #' An error will be generated if any parameter columns in the 
 #' input idata set contain `NA`.  
-#'  
+#' 
 #' @examples
-#' mod <- mrgsolve::house()
+#' mod <- house()
 #' 
 #' data(exidata)
 #' 
 #' exidata
 #' 
 #' mod %>% 
-#'   idata_set(exidata, ID <= 2) %>% 
-#'   ev(amt = 100) %>%
-#'   mrgsim() %>% 
-#'   plot()
-#' 
-#' mod %>% 
 #'   idata_set(exidata) %>% 
 #'   ev(amt = 100) %>%
 #'   mrgsim()
 #' 
-#' mod %>% ev(amt = 100) %>% mrgsim(idata=exidata) 
+#' mod %>% ev(amt = 100) %>% mrgsim(idata = exidata) 
 #' 
 #' @seealso [data_set()], [ev()]
 #' 
 #' @md
 #' @export
-setGeneric("idata_set", function(x,data,...) {
+setGeneric("idata_set", function(x, data, ...) {
   standardGeneric("idata_set")
 })
 
-##' @rdname idata_set
-##' @export
-setMethod("idata_set", c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
-  
-  if(is.character(need)) suppressMessages(inventory(x,data,need))
-  
-  if(!missing(.subset)) {
-    data <- filter(data,`!!`(enquo(.subset)))
-  }
-  if(!missing(.select)) {
-    data <- select(data,`!!!`(.select))
-  }
-  if(nrow(data)==0) {
-    stop("zero rows in idata after filtering.", call.=FALSE)
-  }
-  if(is.character(object)) {
-    data <- data_hooks(data,object,x@envir,param(x),...) 
+#' @rdname idata_set
+#' @export
+setMethod("idata_set", c("mrgmod", "data.frame"), function(x, data, ...) {
+  if(length(list(...))) {
+    abort("`idata_set` no longer accepts arguments other than `x` and `data`.")
   }
   x@args[["idata"]] <- as.data.frame(data)
   return(x)
-  
 })
 
-##' @rdname idata_set
-##' @export
-setMethod("idata_set",c("mrgmod", "ANY"), function(x,data,...) {
-  return(idata_set(x,as.data.frame(data),...))
+#' @rdname idata_set
+#' @export
+setMethod("idata_set",c("mrgmod", "ANY"), function(x, data, ...) {
+  return(idata_set(x, as.data.frame(data), ...))
 })
-
-##' @rdname idata_set
-##' @export
-setMethod("idata_set",c("mrgmod", "missing"), function(x,object,...) {
-  object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
-  return(idata_set(x,object,...))
-})
-

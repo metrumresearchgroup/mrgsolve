@@ -4,42 +4,20 @@
 \alias{idata_set}
 \alias{idata_set,mrgmod,data.frame-method}
 \alias{idata_set,mrgmod,ANY-method}
-\alias{idata_set,mrgmod,missing-method}
-\title{Select and modify a idata set for simulation}
+\title{Select a idata set for simulation}
 \usage{
 idata_set(x, data, ...)
 
-\S4method{idata_set}{mrgmod,data.frame}(
-  x,
-  data,
-  .subset = TRUE,
-  .select = TRUE,
-  object = NULL,
-  need = NULL,
-  ...
-)
+\S4method{idata_set}{mrgmod,data.frame}(x, data, ...)
 
 \S4method{idata_set}{mrgmod,ANY}(x, data, ...)
-
-\S4method{idata_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
 \item{x}{model object.}
 
 \item{data}{a data set that can be coerced to data.frame.}
 
-\item{...}{other arguments passed along when \code{object} is a function.}
-
-\item{.subset}{an unquoted expression passed to \code{\link[dplyr:filter]{dplyr::filter()}}; retain
-only certain rows in the data set.}
-
-\item{.select}{passed to \code{\link[dplyr:select]{dplyr::select()}}; retain only certain columns in
-the data set; this should be the result of a call to \code{\link[dplyr:vars]{dplyr::vars()}}.}
-
-\item{object}{character name of an object existing in \verb{$ENV}
-to use for the data set.}
-
-\item{need}{passed to \code{\link[=inventory]{inventory()}}.}
+\item{...}{not used; \code{idata_set()} accepts no other arguments.}
 }
 \description{
 The individual data set (\code{idata_set}) is a data frame with one
@@ -76,24 +54,18 @@ An error will be generated if any parameter columns in the
 input idata set contain \code{NA}.
 }
 \examples{
-mod <- mrgsolve::house()
+mod <- house()
 
 data(exidata)
 
 exidata
 
 mod \%>\% 
-  idata_set(exidata, ID <= 2) \%>\% 
-  ev(amt = 100) \%>\%
-  mrgsim() \%>\% 
-  plot()
-
-mod \%>\% 
   idata_set(exidata) \%>\% 
   ev(amt = 100) \%>\%
   mrgsim()
 
-mod \%>\% ev(amt = 100) \%>\% mrgsim(idata=exidata) 
+mod \%>\% ev(amt = 100) \%>\% mrgsim(idata = exidata) 
 
 }
 \seealso{
