@@ -6,15 +6,6 @@ $PROB
   - Source: `mrgsolve` internal library
   - Date: `r Sys.Date()`
   - Version: `r packageVersion("mrgsolve")`
-  
-
-# Demo
-```{r,echo=TRUE}
-mod %>% 
-  ev(object="e") %>% 
-  mrgsim(end=288, delta=0.1) %>% 
-  plot
-```
 
 $PARAM @annotated @input
 CL   :  1  : Clearance (volume/time)
@@ -45,11 +36,3 @@ CP : Plasma concentration (mass/volume)
 
 $ENV
 e <- ev(amt=100, ii=24, addl=9)
-
-cama <- function(mod,...) {
-  mod %>% 
-    update(...) %>%
-    mrgsim(events=e,end=288,delta=0.1) 
-}
-  
-  
