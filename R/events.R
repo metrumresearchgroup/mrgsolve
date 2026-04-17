@@ -366,7 +366,6 @@ collect_ev <- function(...) {
 #' @rdname ev_ops
 #' @keywords internal
 setMethod("+", signature(e1="ev", e2="ev"), function(e1,e2) {
-  #stop("e1 + e2 operation is now deprecated")
   return(add.ev(e1,e2))
 })
 
@@ -380,13 +379,6 @@ setGeneric("%then%", function(e1,e2) standardGeneric("%then%"))
 #' @keywords internal
 setMethod("%then%",c("ev", "ev"), function(e1, e2) {
   ev_seq(e1, e2)
-})
-
-#' @rdname ev_ops
-#' @export
-#' @keywords internal
-setMethod("+", c("ev", "numeric"), function(e1, e2) {
-  stop("e1 + numeric operation is deprecated")
 })
 
 #' @param x an ev object
