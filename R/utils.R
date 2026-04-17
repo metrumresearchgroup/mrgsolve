@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 
 dllfile <- function(x) paste0(dllname(x),.Platform$dynlib.ext)
-pathfun <- function(...) path.expand(...) #,mustWork=FALSE,winslash=.Platform$file.sep
+pathfun <- function(...) path.expand(...) 
 
 # Used in mrgsim
 bind_col <- function(x,y,z) {
