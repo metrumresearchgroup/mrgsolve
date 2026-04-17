@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2024  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -15,23 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with mrgsolve.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Select and modify a data set for simulation
+#' Select a data set for simulation
 #' 
 #' The input data set (`data_set`) is a data frame that specifies
 #' observations, model events, and / or parameter values for a population
-##' of individuals. 
+#' of individuals. 
 #'
 #' @param x a model object. 
 #' @param data input data set as a data frame.
-#' @param .subset an unquoted expression passed to 
-#' [dplyr::filter()]; retain only certain rows in the data set
-#' @param .select passed to [dplyr::select()]; retain only certain 
-#' columns in the data set; this should be the result of a call to 
-#' [dplyr::vars()].
-#' @param object character name of an object existing in `$ENV` 
-#' to use for the data set.
-#' @param need passed to [inventory()].
-#' @param ... other arguments passed along when `object` is a function.
 #' 
 #' @details
 #' Input data sets are `R` data frames that can include columns 
@@ -77,8 +68,8 @@
 #'  - 4: reset the system and dose
 #'  - 8: replace the amount in a compartment
 #'  
-#' For all `EVID` greater than `0`, a discontinuity is created in the
-#' simulation, as described for `EVID 2`.  
+#' For all `EVID` greater than `0` and less than `100`, a discontinuity is created 
+#' in the simulation, as described for `EVID 2`.  
 #'  
 #' An error will be generated when mrgsolve detects that the data set
 #' is not sorted by `time` within an individual. mrgsolve does **not** allow time
@@ -101,11 +92,9 @@
 #'
 #' @examples
 #'
-#' mod <- mrgsolve::house()
+#' mod <- house()
 #' 
 #' data <- expand.ev(ID = seq(3), amt = c(10, 20))
-#'
-#' mod %>% data_set(data, ID > 1) %>% mrgsim()
 #' 
 #' data(extran1)
 #' head(extran1)
@@ -115,28 +104,15 @@
 #' 
 #' @md
 #' @export
-setGeneric("data_set", function(x,data,...) {
+setGeneric("data_set", function(x, data, ...) {
   standardGeneric("data_set")
 })
 
 ##' @rdname data_set
 ##' @export
-setMethod("data_set",c("mrgmod", "data.frame"), function(x,data,.subset=TRUE,.select=TRUE,object=NULL,need=NULL,...) {
-  
-  if(is.character(need)) {
-    suppressMessages(inventory(x, data, need))
-  }
-  if(!missing(.subset)) {
-    data <- dplyr::filter(data,`!!`(enquo(.subset)))
-  }
-  if(!missing(.select)) {
-    data <- dplyr::select(data,`!!!`(.select))
-  }
-  if(nrow(data) ==0) {
-    stop("Zero rows in data after filtering.", call. = FALSE)
-  }
-  if(is.character(object)) {
-    data <- data_hooks(data, object, x@envir, param(x), ...) 
+setMethod("data_set", c("mrgmod", "data.frame"), function(x, data, ...) {
+  if(length(list(...))) {
+    abort("`data_set` no longer accepts arguments other than `x` and `data`.")
   }
   x@args[["data"]] <- data
   return(x)
@@ -153,14 +129,6 @@ setMethod("data_set",c("mrgmod", "ANY"), function(x, data, ...) {
 setMethod("data_set", c("mrgmod", "ev"), function(x, data, ...) {
   return(data_set(x, As_data_set(data), ...))
 })
-
-#' @rdname data_set
-#' @export
-setMethod("data_set", c("mrgmod", "missing"), function(x, object, ...) {
-  object <- data_hooks(object=object,envir=x@envir,param=param(x),...)
-  return(data_set(x, as.data.frame(object) ,...))
-})
-
 
 #' Change the case of nmtran-like data items
 #' 
@@ -253,25 +221,6 @@ uctran.data.frame <- function(data, warn = TRUE, ...) {
 #' @export
 uctran.ev <- function(data, ...) {
   as.evd(data)
-}
-
-data_hooks <- function(data, object, envir, param = list(), ...) {
-  param <- as.list(param)
-  envir <- combine_list(as.list(param), as.list(envir))
-  objects <- cvec_cs(object)
-  args <- list(...)
-  if(missing(data)) {
-    data <- eval(tparse(objects[1]), envir = envir)
-    if(is.function(data)) {
-      data <- do.call(data, args, envir = as.environment(envir))
-    } 
-    objects <- objects[-1]
-  } 
-  for(f in objects) {
-    args$data <- data
-    data <- do.call(f, args, envir = as.environment(envir))
-  }
-  return(data)
 }
 
 #' Create a simulation data set from ev objects or data frames
