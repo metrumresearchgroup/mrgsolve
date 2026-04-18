@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -43,35 +43,14 @@ if(mode==1) {
   c = ETA(3);
 }
 
-if(mode==2) {
-  simeta(n); 
-  a = ETA(1); 
-  b = ETA(2); 
-  c = ETA(3);
-}
-
-if(mode==3) {
-  simeta(n); 
-  simeta(m);
-  a = ETA(1); 
-  b = ETA(2); 
-  c = ETA(3);
-}
-
 $ERROR
-if(mode==4) {
+if(mode==2) {
   simeps(); 
   a = EPS(1); 
   b = EPS(2);
 }
 
-if(mode==5) {
-  simeps(n);
-  a = EPS(1);
-  b = EPS(2);
-  c = 9;
-}
-if(mode==6) { 
+if(mode==3) { 
   simeta();
   d = ETA(1);  
 }
@@ -88,87 +67,22 @@ test_that("resimulate all eta", {
   all$d <- NULL
   expect_false(any(duplicated(unlist(all))))
   
-  # Setting n = 0 is the same as no argument
-  set.seed(1234)
-  all2 <- mrgsim_df(mod, param = list(n = 0, mode = 2))
-  all2$ID <- NULL
-  all2$d <- NULL
-  expect_identical(all, all2)
-  
   # Interact with simeta in $TABLE #1289
   set.seed(1234)
-  all3 <- mrgsim_df(mod, param = list(n = 0, mode = 6))
-  diff <- abs(all3$d - all2$a)
+  all3 <- mrgsim_df(mod, param = list(n = 0, mode = 3))
+  diff <- abs(all3$d - all$a)
   expect_true(all(diff < 1e-6))
 })
 
 test_that("resimulate all or specific eps", {
   data <- data.frame(amt = 0, evid = 0, time = c(0,0,0), cmt = 0, ID = 1)
   set.seed(87654)
-  all <- mrgsim_df(mod, data = data, param = list(mode = 4))
+  all <- mrgsim_df(mod, data = data, param = list(mode = 2))
   all$ID <- NULL
   all$c <- NULL
   all$d <- NULL
   all$time <- NULL
   expect_false(any(duplicated(unlist(all))))
-})
-
-test_that("warn when simeta(n) is called with off diagonals", {
-  code <- '
-  $OMEGA @block 
-  1 0.1 2
-  $MAIN 
-  simeta(2);
-  ' 
-  expect_warning(
-    mcode("simeta-n-warn", code, compile = FALSE), 
-    regexp = "values is now discouraged and will soon be deprecated", 
-    fixed  = TRUE
-  )
-  code <- '
-  $OMEGA @block 
-  1 0.1 2
-  $MAIN 
-  simeta();
-  ' 
-  expect_silent(mcode("simeta-n-nowarn-1", code, compile = FALSE))
-  code <- '
-  $ENV MRGSOLVE_RESIM_N_WARN = FALSE
-  $OMEGA @block 
-  1 0.1 2
-  $MAIN 
-  simeta(2);
-  ' 
-  expect_silent(mcode("simeta-n-nowarn-2", code, compile = FALSE))
-})
-
-test_that("warn when simeps(n) is called with off diagonals", {
-  code <- '
-  $SIGMA @block 
-  1 0.1 2
-  $TABLE
-  simeps(2);
-  ' 
-  expect_warning(
-    mcode("simeps-n-warn", code, compile = FALSE), 
-    regexp = "values is now discouraged and will soon be deprecated", 
-    fixed  = TRUE
-  )
-  code <- '
-  $SIGMA @block 
-  1 0.1 2
-  $TABLE
-  simeps();
-  ' 
-  expect_silent(mcode("simeps-n-nowarn", code, compile = FALSE))
-  code <- '
-  $ENV MRGSOLVE_RESIM_N_WARN = FALSE
-  $SIGMA @block 
-  1 0.1 2
-  $TABLE
-  simeps(1);
-  ' 
-  expect_silent(mcode("simeps-n-nowarn-2", code, compile = FALSE))
 })
 
 # Fixes issue discovered in #1092

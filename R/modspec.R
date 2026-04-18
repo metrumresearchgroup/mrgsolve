@@ -124,33 +124,6 @@ check_pkmodel <- function(x, subr, spec) {
   return(invisible(NULL))
 }
 
-check_sim_eta_eps_n <- function(x, spec) {
-  if(isFALSE(env_get_env(x)$MRGSOLVE_RESIM_N_WARN)) {
-    return(invisible(NULL))  
-  }
-  main <- spec[["MAIN"]]
-  tab <- spec[["TABLE"]]
-  simeta_n <- grep("\\bsimeta\\(\\s*[0-9]+\\s*\\)", main, perl = TRUE)
-  simeps_n <- grep("\\bsimeps\\(\\s*[0-9]+\\s*\\)", tab,  perl = TRUE)
-  if(length(simeta_n) > 0) {
-    warning(
-      "simeta(n) was requested; ", 
-      "resimulating single ETA values is now discouraged and will soon be deprecated; ", 
-      "use simeta() to resimulate all ETA; ",
-      "silence this warning by setting MRGSOLVE_RESIM_N_WARN to FALSE in $ENV."
-    )
-  }
-  if(length(simeps_n) > 0) {
-    warning(
-      "simeps(n) was requested; ", 
-      "resimulating single EPS values is now discouraged and will soon be deprecated; ", 
-      "use simeps() to resimulate all EPS; ",
-      "silence this warning by setting MRGSOLVE_RESIM_N_WARN to FALSE in $ENV."
-    )
-  }
-  return(invisible(NULL))
-}
-
 check_spec_contents <-  function(x, crump = TRUE, warn = TRUE, ...) {
   # Check for valid and invalid blocks
   invalid <- base::setdiff(x, block_list)
