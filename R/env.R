@@ -57,7 +57,7 @@ env_ls <- function(x,...) {
 #' Return model environment or objects from the model environment
 #' 
 #' Call `env_get()` passing either a model object or simulated output and 
-#' name an object to retreive from the model object environment. 
+#' name an object to retrieve from the model object environment. 
 #' `env_get_obj()` is an alias to `env_get()`. Call  `env_get_env()` to 
 #' return the environment itself. Methods for `mrgmod` and `mrgsims` both 
 #' interact with the same environment (see **Examples**).  
@@ -134,36 +134,3 @@ env_update <- function(.x,...,.dots=list()) {
   .x@envir <- as.environment(merge.list(left,right))
   return(invisible(.x))
 }
-
-#' Run the model cama function
-#' 
-#' @param mod a model object.
-#' @param fn function name.
-#' @param ... passed to update.
-#' 
-#' @details `sah-mah`
-#' 
-#' @keywords internal
-#' @md
-#' @export
-cama <- function(mod,fn="cama",...) {
-  stop("this function is deprecated.")
-  # object_exists(fn, mod@envir, "function", inherits=FALSE)
-  # f <- get(fn, mod@envir, inherits=FALSE)
-  # mod %>% update(...) %>% f
-}
-
-
-# param_in_env <- function(x) {
-#   p <- as.list(param(x))
-#   list2env(p[setdiff(names(p),ls(x@envir))],envir=x@envir)
-# }
-# 
-# param_out_env <- function(x) {
-#   what <- intersect(names(param(x)),ls(envir=x@envir))
-#   rm(list=what,envir=x@envir)
-#   return(invisible(x))
-# }
-# 
-
-

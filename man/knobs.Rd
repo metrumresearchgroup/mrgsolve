@@ -2,82 +2,13 @@
 % Please edit documentation in R/knobs.R
 \name{knobs}
 \alias{knobs}
-\alias{knobs,mrgmod,missing-method}
-\alias{knobs,mrgmod,batch_mrgsims-method}
-\alias{as.data.frame,batch_mrgsims-method}
-\alias{knobs,batch_mrgsims,ANY-method}
-\alias{show,batch_mrgsims-method}
-\title{Run sensitivity analysis on model settings}
+\title{DEFUNCT: Run sensitivity analysis on model settings}
 \usage{
-knobs(x, y, ...)
-
-\S4method{knobs}{mrgmod,missing}(x, y, ...)
-
-\S4method{knobs}{mrgmod,batch_mrgsims}(x, y, ...)
-
-\S4method{as.data.frame}{batch_mrgsims}(x, row.names = NULL, optional = FALSE, ...)
-
-\S4method{knobs}{batch_mrgsims,ANY}(x, y, ...)
-
-\S4method{show}{batch_mrgsims}(object)
+knobs(...)
 }
 \arguments{
-\item{x}{the model object}
-
-\item{y}{a \code{batch_mrgsims} object}
-
-\item{...}{knobs: named numeric vectors that identify knob names and knob 
-values for a
-batch run.  See details.}
-
-\item{row.names}{passed to \code{as.data.frame.data.frame}}
-
-\item{optional}{passed to \code{as.data.frame.data.frame}}
-
-\item{object}{the object to show}
-}
-\value{
-An object of class \code{batch_mrgsims}.  Most methods for 
-\code{mrgsims} objects also work on \code{batch_mrgsims} object.
+\item{...}{not used.}
 }
 \description{
-Knobs can be parameter values or PK dosing items (e.g. amt).  
-By design, all combinations of specified knob/values are simulated.
+Try the 'mrgsim.sa' package instead.
 }
-\details{
-Valid knob names include: any parameter name (in \code{param(mod)}), 
-time variables (\code{start}, \code{end}, \code{delta}), PK dosing items 
-(\code{amt}, \code{ii}, \code{rate}, and others ...), and solver settings 
-(\code{atol}, \code{hmax}, etc...).
-}
-\examples{
-## example("knobs")
-
-mod <- mrgsolve::house(end=72)
-
-events <- ev(amt=1000, cmt=1, addl=3, ii=12)
-
-out <- mod \%>\% ev(events) \%>\% knobs(CL=c(1,2,3))
-plot(out)
-
-out
-
-out <- mod \%>\% ev(events) \%>\% knobs(CL=c(1,2,3), VC=c(5,20,50))
-plot(out)
-plot(out,CP~.)
-plot(out, CP~time|VC, groups=CL, lty=2)
-
-out <- knobs(mod, amt=c(100,300,500), cmt=1)
-plot(out)
-
-out <- mod \%>\% knobs(amt=c(100,300), CL=c(1,3), VC=c(5,20), cmt=1)
-plot(out)
-plot(out, CP~.)
-
-out <- knobs(mod, CL=c(1,2,3))
-out
-
-out <- knobs(mod, CL=c(1,2,3))
-out
-}
-\keyword{internal}

@@ -139,6 +139,7 @@ modlib_list <- function() {
 NULL
 
 #nocov start
+# TODO: clean
 cfile_dir <- function() {
   file.path(path.package("mrgsolve"), "models")
 }

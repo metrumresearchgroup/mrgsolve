@@ -95,7 +95,6 @@ print_mrgmod <- function(x,verbose=FALSE,...) {
     capttext <- paste0(captheader[1],"<none>")  
   }
   
-  # maxs <- paste0(floor(x@maxsteps/1000), "k") TODO: remove
   if(x@itol==1) {
     toltype <- "1 (scalar)"
   } else {

@@ -566,12 +566,7 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
   x <- dump_opts(x)
   
   check_block_data(x, env, pos)
-  
-  if(any(grepl("table(", x,fixed=TRUE))) {
-    stop("The table(name) = value; macro has been deprecated.\n",
-         "Save your output to double and pass to $CAPTURE instead:\n",
-         "   $TABLE double name = value;\n   $CAPTURE name")
-  }
+
   handle_warn_int_div(x, env, pos)
   handle_convert_pow(x, env, pos)
 }

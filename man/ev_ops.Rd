@@ -6,7 +6,6 @@
 \alias{+,ev,ev-method}
 \alias{\%then\%}
 \alias{\%then\%,ev,ev-method}
-\alias{+,ev,numeric-method}
 \alias{c,ev-method}
 \title{Operations for ev objects}
 \usage{
@@ -15,8 +14,6 @@
 e1 \%then\% e2
 
 \S4method{\%then\%}{ev,ev}(e1, e2)
-
-\S4method{+}{ev,numeric}(e1, e2)
 
 \S4method{c}{ev}(x, ..., recursive = TRUE)
 }

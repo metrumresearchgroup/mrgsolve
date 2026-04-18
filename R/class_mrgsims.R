@@ -33,16 +33,6 @@ setClass("mrgsims",
          )
 )
 
-setClass("batch_mrgsims",contains="mrgsims",
-         slots=c(
-           knobs="character",
-           batch="data.frame",
-           request="character",
-           moving="character",
-           input="list"
-         )
-)
-
 
 #' Check if an object is mrgsims output
 #' 

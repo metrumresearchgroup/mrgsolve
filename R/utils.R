@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 
 dllfile <- function(x) paste0(dllname(x),.Platform$dynlib.ext)
-pathfun <- function(...) path.expand(...) #,mustWork=FALSE,winslash=.Platform$file.sep
+pathfun <- function(...) path.expand(...) 
 
 # Used in mrgsim
 bind_col <- function(x,y,z) {
@@ -168,21 +168,6 @@ cvec_c_tr <- function(x) {
     return(x) 
   }
 }
-
-## Create a character vector 
-## Split on comma and rm whitespace
-# cvec_c_nws <- function(x) {
-#   if(is.null(x) | length(x)==0) return(character(0))
-#   x <- unlist(strsplit(as.character(x),",",fixed=TRUE),use.names=FALSE)
-#   x <- gsub(" ", "",x, fixed=TRUE)
-#   x <- x[x!=""]
-#   if(length(x)==0) {
-#     return(character(0))
-#   } else {
-#     return(x) 
-#   }
-# }
-
 
 ## Old
 as.cvec <- function(x) {
@@ -414,16 +399,6 @@ s_pick <- function(x,name) {
   stopifnot(is.list(x))
   nonull(unlist(sapply(x,"[[",name)))
 }
-
-# ll_pick <- function(x,name) {
-#   stopifnot(is.list(x))
-#   lapply(x,"[[",name)
-# }
-# 
-# l_pick <- function(x,name) {
-#   stopifnot(is.list(x))
-#   lapply(x,"[",name)
-# }
 
 filename <-  function (dir, run = NULL, ext = NULL,short=FALSE) {
   if(short) dir <- build_path(dir)
