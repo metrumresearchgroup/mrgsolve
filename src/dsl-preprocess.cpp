@@ -551,42 +551,51 @@ static bool starts_with_ci(const std::string& s, const char* prefix) {
 }
 
 // Replace all case-insensitive occurrences of `from` with `to` in `s`.
-static std::string replace_all_ci(const std::string& s,
-                                   const std::string& from,
-                                   const std::string& to) {
+// Replace all case-insensitive occurrences of 'from', consuming optional
+// surrounding whitespace, so "WT .GE. 70" and "WT.GE.70" both produce "WT >= 70".
+static std::string replace_all_ci_trim(const std::string& s,
+                                        const std::string& from,
+                                        const std::string& to) {
   if (from.empty() || s.size() < from.size()) return s;
   std::string result;
   result.reserve(s.size());
   size_t pos = 0;
-  while (pos + from.size() <= s.size()) {
-    bool match = true;
-    for (size_t i = 0; i < from.size() && match; ++i) {
-      match = (std::toupper((unsigned char)s[pos + i]) ==
-               std::toupper((unsigned char)from[i]));
+  while (pos < s.size()) {
+    // Scan past optional whitespace to see if 'from' matches there.
+    size_t scan = pos;
+    while (scan < s.size() && (s[scan] == ' ' || s[scan] == '\t')) ++scan;
+    if (scan + from.size() <= s.size()) {
+      bool match = true;
+      for (size_t i = 0; i < from.size() && match; ++i) {
+        match = (std::toupper((unsigned char)s[scan + i]) ==
+                 std::toupper((unsigned char)from[i]));
+      }
+      if (match) {
+        // Consume trailing whitespace after the match.
+        size_t after = scan + from.size();
+        while (after < s.size() && (s[after] == ' ' || s[after] == '\t')) ++after;
+        result += to;
+        pos = after;
+        continue;
+      }
     }
-    if (match) {
-      result += to;
-      pos += from.size();
-    } else {
-      result += s[pos++];
-    }
+    result += s[pos++];
   }
-  result += s.substr(pos);
   return result;
 }
 
 // Convert Fortran relational/logical operators to C++ equivalents.
 static std::string convert_fortran_ops(const std::string& s) {
   std::string r = s;
-  r = replace_all_ci(r, ".GE.", ">=");
-  r = replace_all_ci(r, ".LE.", "<=");
-  r = replace_all_ci(r, ".GT.", ">");
-  r = replace_all_ci(r, ".LT.", "<");
-  r = replace_all_ci(r, ".EQ.", "==");
-  r = replace_all_ci(r, ".NE.", "!=");
-  r = replace_all_ci(r, "/=", "!=");
-  r = replace_all_ci(r, ".AND.", "&&");
-  r = replace_all_ci(r, ".OR.", "||");
+  r = replace_all_ci_trim(r, ".GE.", " >= ");
+  r = replace_all_ci_trim(r, ".LE.", " <= ");
+  r = replace_all_ci_trim(r, ".GT.", " > ");
+  r = replace_all_ci_trim(r, ".LT.", " < ");
+  r = replace_all_ci_trim(r, ".EQ.", " == ");
+  r = replace_all_ci_trim(r, ".NE.", " != ");
+  r = replace_all_ci_trim(r, "/=",   " != ");
+  r = replace_all_ci_trim(r, ".AND.", " && ");
+  r = replace_all_ci_trim(r, ".OR.",  " || ");
   return r;
 }
 
@@ -721,6 +730,20 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (t[0] == '#')                             return line;  // preprocessor
   if (t.size() >= 2 && t[0] == '/' &&
       (t[1] == '/' || t[1] == '*'))            return line;  // comment
+  if (t[0] == '@')                             return line;  // block option
+
+  // Fortran block-structure keywords: IF(...) THEN, ELSE, ELSEIF(...) THEN,
+  // ENDIF, END IF — none of these take a trailing semicolon.
+  if (t.size() >= 4 && t.substr(t.size() - 4) == "THEN") return line;
+  if (t == "ELSE" || (t.size() >= 5 && t.substr(0, 5) == "ELSE ")) return line;
+  if (t == "ENDIF" || t == "END IF") return line;
+
+  // Fortran whole-line comment: leading ';' with no code before it.
+  // Replace the ';' with '//' and drop the semicolon.
+  if (t[0] == ';') {
+    size_t semi_pos = line.find(';');
+    return line.substr(0, semi_pos) + "//" + line.substr(semi_pos + 1);
+  }
 
   // C++ inline comment mid-line: insert semicolon before '//'.
   size_t cmt = line.find("//");
@@ -781,8 +804,8 @@ static std::string convert_semicolon_line(const std::string& line) {
   if (contains_at_depth0(after, ';') || contains_at_depth0(after, '='))
     return line;
 
-  // Fortran-style inline comment: drop text after ';'
-  return line.substr(0, semi + 1);
+  // Fortran-style inline comment: retain as C++ comment.
+  return line.substr(0, semi + 1) + " // " + after;
 }
 
 // ---------------------------------------------------------------------------
@@ -890,8 +913,10 @@ Rcpp::CharacterVector convert_fort_if_impl(Rcpp::CharacterVector code) {
 //' Appends a semicolon to each element of \code{code} that looks like a
 //' statement but does not already have one.  Lines that are left unchanged:
 //' blank lines, lines already ending with \code{;}, lines ending with
-//' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}), and
-//' preprocessor directives (\code{#}).
+//' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}),
+//' preprocessor directives (\code{#}), lines containing block 
+//'  options (line starts wtih \code{@}), and lines ending with Fortran
+//'  block-structure keywords.
 //'
 //' @param code Character vector of source lines.
 //' @return Character vector with semicolons inserted where needed.
