@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2020  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -21,7 +21,7 @@ library(dplyr)
 Sys.setenv(R_TESTS="")
 options("mrgsolve_mread_quiet"=TRUE)
 
-mod <- mrgsolve::house() %>% update(end=240)
+mod <- house(end = 240)
 
 context("test-idata_set")
 
@@ -45,14 +45,11 @@ test_that("data set with idata", {
   expect_true(all(out[["CP"]][c(2,3)] != out[["CP"]][1]))
 })
 
-
-
-
-
-
-
-
-
-
-
-
+test_that("idata_set doesn't accept 'extra' arguments", {
+  idata <- data.frame(ID = c(11,33,55), CL = 2)
+  expect_error(
+    idata_set(mod, idata, need = "foo"), 
+    "`idata_set` no longer accepts arguments other than", 
+    fixed = TRUE
+  )
+})

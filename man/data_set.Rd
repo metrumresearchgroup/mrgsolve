@@ -5,45 +5,22 @@
 \alias{data_set,mrgmod,data.frame-method}
 \alias{data_set,mrgmod,ANY-method}
 \alias{data_set,mrgmod,ev-method}
-\alias{data_set,mrgmod,missing-method}
-\title{Select and modify a data set for simulation}
+\title{Select a data set for simulation}
 \usage{
 data_set(x, data, ...)
 
-\S4method{data_set}{mrgmod,data.frame}(
-  x,
-  data,
-  .subset = TRUE,
-  .select = TRUE,
-  object = NULL,
-  need = NULL,
-  ...
-)
+\S4method{data_set}{mrgmod,data.frame}(x, data, ...)
 
 \S4method{data_set}{mrgmod,ANY}(x, data, ...)
 
 \S4method{data_set}{mrgmod,ev}(x, data, ...)
-
-\S4method{data_set}{mrgmod,missing}(x, object, ...)
 }
 \arguments{
 \item{x}{a model object.}
 
 \item{data}{input data set as a data frame.}
 
-\item{...}{other arguments passed along when \code{object} is a function.}
-
-\item{.subset}{an unquoted expression passed to
-\code{\link[dplyr:filter]{dplyr::filter()}}; retain only certain rows in the data set}
-
-\item{.select}{passed to \code{\link[dplyr:select]{dplyr::select()}}; retain only certain
-columns in the data set; this should be the result of a call to
-\code{\link[dplyr:vars]{dplyr::vars()}}.}
-
-\item{object}{character name of an object existing in \verb{$ENV}
-to use for the data set.}
-
-\item{need}{passed to \code{\link[=inventory]{inventory()}}.}
+\item{...}{not used.}
 }
 \description{
 The input data set (\code{data_set}) is a data frame that specifies
@@ -96,8 +73,8 @@ event)
 \item 8: replace the amount in a compartment
 }
 
-For all \code{EVID} greater than \code{0}, a discontinuity is created in the
-simulation, as described for \verb{EVID 2}.
+For all \code{EVID} greater than \code{0} and less than \code{100}, a discontinuity is created
+in the simulation, as described for \verb{EVID 2}.
 
 An error will be generated when mrgsolve detects that the data set
 is not sorted by \code{time} within an individual. mrgsolve does \strong{not} allow time
@@ -117,11 +94,9 @@ mrgsolve.
 }
 \examples{
 
-mod <- mrgsolve::house()
+mod <- house()
 
 data <- expand.ev(ID = seq(3), amt = c(10, 20))
-
-mod \%>\% data_set(data, ID > 1) \%>\% mrgsim()
 
 data(extran1)
 head(extran1)

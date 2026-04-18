@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2022  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -32,8 +32,8 @@ names(up) <- toupper(names(up))
 
 test_that("Same result from upper and lower case names", {
   what <- c(1,5:7)
-  a <- mod %>% data_set(up) %>% mrgsim
-  b <- mod %>% data_set(lo) %>% mrgsim
+  a <- mod %>% data_set(up) %>% mrgsim()
+  b <- mod %>% data_set(lo) %>% mrgsim()
   expect_identical(as.matrix(a)[,what],as.matrix(b)[,what])
   expect_identical(a$TIME,b$time)
   expect_is(plot(a),"trellis")
@@ -48,14 +48,14 @@ test_that("Same result from upper and lower case names", {
   ldd <- expand.ev(amt=100, ii=24, addl=2, ss=1)
   udd <- ldd
   names(udd) <- toupper(names(udd))
-  a <- mod %>% data_set(ldd) %>% mrgsim
-  b <- mod %>% data_set(udd) %>% mrgsim
+  a <- mod %>% data_set(ldd) %>% mrgsim()
+  b <- mod %>% data_set(udd) %>% mrgsim()
   expect_identical(as.matrix(a)[,what],as.matrix(b)[,what])
 })
 
 test_that("Warning is generated when mixed upper/lower names", {
   mix <-  dplyr::rename(lo, EVID = evid) 
-  expect_warning(mrgsim(data_set(mod,mix)))
+  expect_warning(mrgsim(data_set(mod, mix)))
 })
 
 test_that("Include TIME and time when checking for mixed upper/lower case", {
@@ -71,24 +71,32 @@ test_that("Include TIME and time when checking for mixed upper/lower case", {
   )
 })
 
-test_that("Filter out ID", {
-  out <- mod %>% data_set(up, ID > 4) %>% mrgsim
-  expect_true(all(out$ID > 4))
+test_that("data_set does not accept 'extra' arguments", {
+  expect_error(
+    data_set(mod, up, .subset = ID > 4),
+    "`data_set` no longer accepts arguments other than",
+    fixed = TRUE
+  )
+  expect_error(
+    data_set(mod, up, need = "barf"), 
+    "`data_set` no longer accepts arguments other than", 
+    fixed = TRUE
+  )
 })
 
 test_that("ID is required", {
   df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-ID)
-  expect_error(mod %>% data_set(df) %>% mrgsim)
+  expect_error(mod %>% data_set(df) %>% mrgsim())
 })
 
 test_that("cmt is required", {
   df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-cmt)
-  expect_error(mod %>% data_set(df) %>% mrgsim)
+  expect_error(mod %>% data_set(df) %>% mrgsim())
 })
 
 test_that("time is required", {
   df <- expand.ev(amt=100,ii=12,addl=2) %>% dplyr::select(-time)
-  expect_error(mod %>% data_set(df) %>% mrgsim)
+  expect_error(mod %>% data_set(df) %>% mrgsim())
 })
 
 mod <- mrgsolve::house()
@@ -100,11 +108,11 @@ dd2 <- dd1 %>% arrange(ID,time)
 
 
 test_that("Improperly sorted records produces error", {
-  expect_error(mod %>% data_set(dd1) %>% mrgsim)
+  expect_error(mod %>% data_set(dd1) %>% mrgsim())
 })
 
 test_that("Properly sorted records produces no error", {
-  expect_is((mod %>% data_set(dd2) %>% mrgsim),"mrgsims")
+  expect_is((mod %>% data_set(dd2) %>% mrgsim()),"mrgsims")
 })
 
 test_that("Data set column order gives same answer", {
@@ -115,9 +123,9 @@ test_that("Data set column order gives same answer", {
   extran3b <- extran3[,sample(seq_along(names(extran3)))]
   
   set.seed(22930)
-  out1 <- mod %>% carry_out(a,m,M,h) %>% data_set(extran3) %>% mrgsim
+  out1 <- mod %>% carry_out(a,m,M,h) %>% data_set(extran3) %>% mrgsim()
   set.seed(22930)
-  out2 <- mod %>% carry_out(a,m,M,h) %>% data_set(extran3b) %>% mrgsim
+  out2 <- mod %>% carry_out(a,m,M,h) %>% data_set(extran3b) %>% mrgsim()
   expect_identical(as.matrix(out1),as.matrix(out2))
   expect_false(all(names(extran3)==names(extran3b)))
   rm(mod)
