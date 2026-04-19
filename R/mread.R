@@ -413,9 +413,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # Check mod ----
   check_pkmodel(x, subr, spec)
   check_globals(mread.env[["move_global"]], Cmt(x))
-  # Find cpp objects with dot syntax; saved to mread.env$cpp_dot ----
-  find_cpp_dot(spec, mread.env)
-  check_cpp_dot(mread.env, x)
   
   # This must come after nm-vars is processed; nmv is NULL if 
   # not using nm-vars

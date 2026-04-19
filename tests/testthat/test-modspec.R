@@ -650,66 +650,7 @@ test_that("INPUT block", {
   expect_equal(tagdf$tag, rep("input", 2))
 })
 
-test_that("Reserve names in cpp dot gh-1159", {
-  # clash with parameter
-  code <- '
-  $param cl = 2, v = 2, d = 5
-  $cmt a b c
-  $main 
-  foo.d = 2;
-  '  
-  expect_error(
-    mcode("cpp-dot-1", code, compile = FALSE), 
-    regexp = "d (parameter)", 
-    fixed = TRUE
-  )
-  
-  # clash with compartment
-  code <- '
-  $param cl = 2, v = 2
-  $cmt a b c
-  $ode 
-  foo.a = 2;
-  '
-  
-  expect_error(
-    mcode("cpp-dot-2", code, compile = FALSE), 
-    regexp = "a (compartment)", 
-    fixed = TRUE
-  )
-  
-  # clash with omega
-  code <- '
-  $param cl = 2, v = 2
-  $cmt a b c
-  $omega @labels foo
-  1
-  $table 
-  foo.e = 2;
-  '
-  
-  expect_error(
-    mcode("cpp-dot-3", code, compile = FALSE), 
-    regexp = "foo (eta label)", 
-    fixed = TRUE
-  )
-  
-  # clash with sigma
-  code <- '
-  $param cl = 2, v = 2
-  $cmt a b c
-  $sigma @labels bar
-  1
-  $preamble
-  foo.bar = 2;
-  '
-  
-  expect_error(
-    mcode("cpp-dot-4", code, compile = FALSE), 
-    regexp = "bar (eps label)", 
-    fixed = TRUE
-  )
-  
+test_that("Reserve names in cpp dot gh-1159", {  
   # some names are checked in the object
   code <- '
   $param rate = 2
@@ -722,42 +663,6 @@ test_that("Reserve names in cpp dot gh-1159", {
     regexp = "Reserved words in model names: rate", 
     fixed = TRUE
   )
-})
-
-test_that("Skip cpp dot check gh-1159", {
-  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo"'
-  
-  param <- "cl = 1, foo = 3, vc = 5"
-  main <- "double b = 5;\nfoo.bar = true;"
-  table <- "true;"
-  code <- glue::glue(temp)
-  
-  expect_s4_class(mcode("cpp-dot-skip-1", code, compile = FALSE), "mrgmod")
-  
-  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo"'
-  param <- "cl = 1, foo = 3, bar = 2, vc = 5"
-  main <- "double b = 5;\nfoo.bar = true;"
-  table <- "true;"
-  code <- glue::glue(temp)
-  
-  expect_error(
-    mcode("cpp-dot-skip-2", code, compile = FALSE), 
-    regexp = "bar (parameter)", 
-    fixed = TRUE
-  )
-  
-  check <- try(mcode("cpp-dot-skip-3", code, compile = FALSE), silent = TRUE)
-  
-  expect_match(check, "bar (parameter)", fixed = TRUE)
-  expect_no_match(check, "foo (parameter)", fixed = TRUE)
-  
-  temp <- '$param {param}\n$main\n{main};\n$env MRGSOLVE_CPP_DOT_SKIP="foo,bar"'
-  param <- "cl = 1, foo = 3, bar = 2, vc = 5"
-  main <- "double b = 5;\nfoo.bar = true;"
-  table <- "true;"
-  code <- glue::glue(temp)
-  
-  expect_s4_class(mcode("cpp-dot-skip-4", code, compile = FALSE), "mrgmod")
 })
 
 test_that("Invalid item in $SET generates error", {
