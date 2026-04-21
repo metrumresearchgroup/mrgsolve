@@ -487,6 +487,13 @@ static std::string convert_pow_line(const std::string& line) {
     return line;
   }
 
+  // A space will be added to the right of '='; ensure one also appears to the
+  // left so we don't produce asymmetric output like "CL= pow(...)".
+  if (prefix.size() >= 2 && prefix.back() == '=' &&
+      prefix[prefix.size() - 2] != ' ') {
+    prefix.insert(prefix.size() - 1, 1, ' ');
+  }
+
   std::string sep = prefix.empty() ? "" : " ";
   return prefix + sep + emit(result) + (has_semi ? ";" : "");
 }

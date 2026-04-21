@@ -826,6 +826,16 @@ test_that("convert_pow handles simple base ** exponent", {
   expect_equal(convert_pow("x = 2**3;"), "x = pow(2, 3);")
 })
 
+test_that("convert_pow adds space to left of = when space is added to right", {
+  # No space before '=': a space is added to the right, so one must appear left too
+  expect_equal(convert_pow("x= a**2;"), "x = pow(a, 2);")
+  expect_equal(convert_pow("CL= TVCL*(WT/70)**0.75;"), "CL = TVCL*pow(WT/70, 0.75);")
+  # Space already present on both sides: unchanged
+  expect_equal(convert_pow("x = a**2;"), "x = pow(a, 2);")
+  # Leading indentation with no space before '='
+  expect_equal(convert_pow("  CL= a**b;"), "  CL = pow(a, b);")
+})
+
 test_that("convert_pow handles floating point exponents", {
   expect_equal(convert_pow("x = a**0.75;"), "x = pow(a, 0.75);")
   expect_equal(convert_pow("x = a**1.5e-3;"), "x = pow(a, 1.5e-3);")

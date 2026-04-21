@@ -56,11 +56,9 @@ addin_apply_convert_pow <- function(text, lines) {
   if(has_block_markers(lines)) {
     result <- modelsplit(lines, split = FALSE)
     result <- convert_pow_spec(result)
-    result <- add_leading_eq_space_spec(result)
     result <- modelunsplit(result)
   } else {
     result <- convert_pow(lines)
-    result <- add_leading_eq_space(result)
   }
   paste(result, collapse = "\n")
 }

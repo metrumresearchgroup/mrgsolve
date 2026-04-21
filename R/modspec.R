@@ -478,28 +478,25 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
 #'
 #' @param x for `modelsplit()`, model specification text (character vector or
 #' single string); for `modelunsplit()`, a list returned by `modelsplit()`.
-#' @param split logical; if `TRUE`, a single string is split on newlines before
-#' parsing.
 #' 
 #' @return `modelsplit()` returns a named list of character vectors, one element
 #' per block. `modelunsplit()` returns a character vector of model code.
 #'
-#' @seealso [modelparse()] for a more destructive parse that drops blank lines
-#' and comments.
+#' @seealso [modelparse()]  that drops blank lines and comments by default.
 #'
 #' @examples
 #' file <- file.path(modlib(), "pk1.cpp")
 #' 
-#' x <- modelsplit(readLines(file), split = FALSE)
+#' x <- modelsplit(readLines(file))
 #' 
 #' modelunsplit(x)
 #' 
 #' @md
 #' @export
-modelsplit <- function(x, split = TRUE) {
+modelsplit <- function(x) {
   ans <- modelparse(
     x, 
-    split = split, 
+    split = FALSE, 
     drop_blank = FALSE, 
     comment_re = character(0), 
     keep_mapping = TRUE
@@ -516,7 +513,7 @@ modelunsplit <- function(x) {
   if(is.null(bloc)) stop("cannot unsplit model specification list.")
   header <- attr(x, "header")
   for(i in seq_along(bloc)) {
-    sep <- ifelse(x[[i]][[1]] == "", "", " ")
+    sep <- if(x[[i]][[1]] == "") "" else " "
     x[[i]][[1]] <- paste0(bloc[[i]], sep, x[[i]][[1]])
   }
   c(header, unlist(unname(x)))
@@ -545,20 +542,6 @@ convert_pow_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
     x[[i]] <- convert_pow(x[[i]], names(x)[i])
-  }
-  x
-}
-
-# Pad only the first (assignment) = on each line; compound operators like
-# !=, <=, >= are left alone.
-add_leading_eq_space <- function(x) {
-  sub("(?<![!<>=])\\s*=\\s*(?!=)", " = ", x, perl = TRUE)
-}
-
-add_leading_eq_space_spec <- function(x) {
-  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
-  for(i in to_convert) {
-    x[[i]] <- add_leading_eq_space(x[[i]])
   }
   x
 }
