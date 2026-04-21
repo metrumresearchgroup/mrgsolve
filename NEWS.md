@@ -1,4 +1,4 @@
-# mrgsolve (development version)
+# mrgsolve 2.0.0
 
 - Closed-form three-compartment linear models with or without depot compartments
   can now be implemented via `$PKMODEL` (#1345). 
