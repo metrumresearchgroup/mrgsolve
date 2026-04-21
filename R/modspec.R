@@ -361,7 +361,7 @@ convert_semicolons <- function(x) {
 #' @param txt model specification text.
 #' @param split logical; if `TRUE`, `txt` will be split on `\n` before 
 #' processing.
-#' @param drop_blank logical; `TRUE` if blank lines wilil be dropped.
+#' @param drop_blank logical; `TRUE` if blank lines will be dropped.
 #' @param comment_re regular expression to identify comments.
 #' @param keep_mapping if `TRUE`, parse information will be retained as
 #' attributes on the parsed model code.
