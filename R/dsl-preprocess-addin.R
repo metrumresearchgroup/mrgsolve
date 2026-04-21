@@ -8,7 +8,7 @@ addin_run <- function(ctx, apply_fn) {
     return(invisible(NULL))
   }
   lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
-  result <- apply_fn(text, lines)
+  result <- apply_fn(lines)
   # Don't eat blank line at end of selection
   if(endsWith(text, "\n")) result <- paste0(result, "\n")
   rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
@@ -16,7 +16,7 @@ addin_run <- function(ctx, apply_fn) {
 }
 
 # Convert NM addin -------------------------------------------------
-addin_apply_convert_nm <- function(text, lines) {
+addin_apply_convert_nm <- function(lines) {
   if(has_block_markers(lines)) {
     result <- modelsplit(lines)
     result <- convert_fort_if_spec(result)
@@ -35,7 +35,7 @@ addin_convert_nm <- function() {
 }
 
 # Add semicolons addin ---------------------------------------------
-addin_apply_semicolons <- function(text, lines) {
+addin_apply_semicolons <- function(lines) {
   if(has_block_markers(lines)) {
     result <- modelsplit(lines)
     result <- convert_semicolons_spec(result)
@@ -48,11 +48,11 @@ addin_apply_semicolons <- function(text, lines) {
 
 addin_add_semicolons <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  addin_run(ctx, \(text, lines) addin_apply_semicolons(text, lines))
+  addin_run(ctx, addin_apply_semicolons)
 }
 
 # Convert pow addin ---------------------------------------------
-addin_apply_convert_pow <- function(text, lines) {
+addin_apply_convert_pow <- function(lines) {
   if(has_block_markers(lines)) {
     result <- modelsplit(lines)
     result <- convert_pow_spec(result)
@@ -65,5 +65,5 @@ addin_apply_convert_pow <- function(text, lines) {
 
 addin_convert_pow <- function() {
   ctx <- rstudioapi::getActiveDocumentContext()
-  addin_run(ctx, \(text, lines) addin_apply_convert_pow(text, lines))
+  addin_run(ctx, addin_apply_convert_pow)
 }
