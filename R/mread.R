@@ -457,8 +457,10 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   })
 
   # Group rdefs for output; see compile.R
-  rd <- arrange_rdefs(rd) 
-  
+  rd <- arrange_rdefs(rd)
+
+  if(mread.env$convert_pow) spec <- convert_pow_spec(spec)
+
   ## Collect all code to be written to the different blocks
   global_code <- c(
     spec[["GLOBAL"]]  
