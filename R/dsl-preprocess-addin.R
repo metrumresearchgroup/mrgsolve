@@ -1,3 +1,9 @@
+addin_warning <- function(w) {
+  msg <- c(x = w$message)
+  inform(msg)
+  invokeRestart("muffleWarning")
+}
+
 addin_run <- function(ctx, apply_fn) {
   sel <- ctx$selection[[1]]
   text <- sel$text
@@ -55,10 +61,14 @@ addin_add_semicolons <- function() {
 addin_apply_convert_pow <- function(lines) {
   if(has_block_markers(lines)) {
     result <- modelsplit(lines)
-    result <- convert_pow_spec(result)
+    withCallingHandlers({
+      result <- convert_pow_spec(result)
+    }, warning = addin_warning)
     result <- modelunsplit(result)
   } else {
-    result <- convert_pow(lines)
+    withCallingHandlers({
+      result <- convert_pow(lines)
+    }, warning = addin_warning)
   }
   paste(result, collapse = "\n")
 }
