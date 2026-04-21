@@ -373,7 +373,7 @@ convert_semicolons <- function(x) {
 #'
 #' modelparse(code)
 #'
-#' @seealso [modelsplit()] and [modelunsplit()] for a non-destructive
+#' @seealso `modelsplit()` and `modelunsplit()` for a non-destructive
 #' split/reassemble alternative.
 #' 
 #' @md
@@ -478,21 +478,14 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
 #'
 #' @param x for `modelsplit()`, model specification text (character vector or
 #' single string); for `modelunsplit()`, a list returned by `modelsplit()`.
-#' 
+#'
 #' @return `modelsplit()` returns a named list of character vectors, one element
 #' per block. `modelunsplit()` returns a character vector of model code.
 #'
 #' @seealso [modelparse()]  that drops blank lines and comments by default.
 #'
-#' @examples
-#' file <- file.path(modlib(), "pk1.cpp")
-#' 
-#' x <- modelsplit(readLines(file))
-#' 
-#' modelunsplit(x)
-#' 
 #' @md
-#' @export
+#' @keywords internal
 modelsplit <- function(x) {
   ans <- modelparse(
     x, 
@@ -506,7 +499,6 @@ modelsplit <- function(x) {
 }
 
 #' @rdname modelsplit
-#' @export
 #' @keywords internal
 modelunsplit <- function(x) {
   bloc <- attr(x, "blockmatch")

@@ -5,16 +5,13 @@
 \alias{modelunsplit}
 \title{Split and reassemble model specification text}
 \usage{
-modelsplit(x, split = TRUE)
+modelsplit(x)
 
 modelunsplit(x)
 }
 \arguments{
 \item{x}{for \code{modelsplit()}, model specification text (character vector or
 single string); for \code{modelunsplit()}, a list returned by \code{modelsplit()}.}
-
-\item{split}{logical; if \code{TRUE}, a single string is split on newlines before
-parsing.}
 }
 \value{
 \code{modelsplit()} returns a named list of character vectors, one element
@@ -26,16 +23,7 @@ blocks, retaining enough information to reconstruct the original text.
 \code{modelunsplit()} takes the list returned by \code{modelsplit()} and puts the
 blocks back together into a character vector of model code.
 }
-\examples{
-file <- file.path(modlib(), "pk1.cpp")
-
-x <- modelsplit(readLines(file))
-
-modelunsplit(x)
-
-}
 \seealso{
-\code{\link[=modelparse]{modelparse()}} for a more destructive parse that drops blank lines
-and comments.
+\code{\link[=modelparse]{modelparse()}}  that drops blank lines and comments by default.
 }
 \keyword{internal}

@@ -21,7 +21,7 @@ modelparse_rmd(txt, split = FALSE, drop_blank = TRUE, comment_re = "//")
 \item{split}{logical; if \code{TRUE}, \code{txt} will be split on \verb{\\n} before
 processing.}
 
-\item{drop_blank}{logical; \code{TRUE} if blank lines wilil be dropped.}
+\item{drop_blank}{logical; \code{TRUE} if blank lines will be dropped.}
 
 \item{comment_re}{regular expression to identify comments.}
 
@@ -40,7 +40,7 @@ modelparse(code)
 
 }
 \seealso{
-\code{\link[=modelsplit]{modelsplit()}} and \code{\link[=modelunsplit]{modelunsplit()}} for a non-destructive
+\code{modelsplit()} and \code{modelunsplit()} for a non-destructive
 split/reassemble alternative.
 }
 \keyword{internal}

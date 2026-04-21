@@ -18,7 +18,7 @@ addin_run <- function(ctx, apply_fn) {
 # Convert NM addin -------------------------------------------------
 addin_apply_convert_nm <- function(text, lines) {
   if(has_block_markers(lines)) {
-    result <- modelsplit(lines, split = FALSE)
+    result <- modelsplit(lines)
     result <- convert_fort_if_spec(result)
     result <- convert_semicolons_spec(result)
     result <- modelunsplit(result)
@@ -37,7 +37,7 @@ addin_convert_nm <- function() {
 # Add semicolons addin ---------------------------------------------
 addin_apply_semicolons <- function(text, lines) {
   if(has_block_markers(lines)) {
-    result <- modelsplit(lines, split = FALSE)
+    result <- modelsplit(lines)
     result <- convert_semicolons_spec(result)
     result <- modelunsplit(result)
   } else {
@@ -54,7 +54,7 @@ addin_add_semicolons <- function() {
 # Convert pow addin ---------------------------------------------
 addin_apply_convert_pow <- function(text, lines) {
   if(has_block_markers(lines)) {
-    result <- modelsplit(lines, split = FALSE)
+    result <- modelsplit(lines)
     result <- convert_pow_spec(result)
     result <- modelunsplit(result)
   } else {

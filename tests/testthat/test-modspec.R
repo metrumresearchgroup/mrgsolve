@@ -805,8 +805,8 @@ test_that("modelsplit and unsplit leaves code unchanged", {
   $CAPTURE KA KE
   '
   code <- strsplit(code, "\n")[[1]]
-  x <- modelsplit(code, split = FALSE)
-  y <- modelunsplit(x)
+  x <- mrgsolve:::modelsplit(code)
+  y <- mrgsolve:::modelunsplit(x)
   expect_identical(code, y)
 })
 
