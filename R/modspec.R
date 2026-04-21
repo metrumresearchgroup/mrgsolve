@@ -490,7 +490,7 @@ modelparse <- function(txt, split = FALSE, drop_blank = TRUE,
 #' @examples
 #' file <- file.path(modlib(), "pk1.cpp")
 #' 
-#' x <- modelsplit(readLines(file))
+#' x <- modelsplit(readLines(file), split = FALSE)
 #' 
 #' modelunsplit(x)
 #' 
