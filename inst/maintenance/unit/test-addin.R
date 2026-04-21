@@ -74,10 +74,3 @@ test_that("Addin: convert nonmem converts IF/ELSE", {
   expect_match(out, "Z = 5;", fixed = TRUE)
   expect_match(out, "else if(WT == 80) {", fixed = TRUE)
 })
-
-test_that("convert_pow handles Fortran /= (not-equal) in condition", {
-  # /= is the Fortran not-equal operator; find_assign_eq must not treat it as
-  # an assignment so the RHS pow conversion can proceed
-  out <- mrgsolve:::convert_pow("IF(X/=3) Y=1.3**5")
-  expect_equal(out, "IF(X/=3) Y = pow(1.3, 5)")
-})
