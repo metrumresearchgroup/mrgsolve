@@ -18,8 +18,12 @@
 
 # @include complog.R nmxml.R annot.R
 
-#globalre2 <- "^\\s*(predpk|double|bool|int)\\s+\\w+"
+# The dsl preprocess addin depends on this regex via has_block_markers
+# see `dsl-preprocess-addin.R`
 block_re <-  "^\\s*\\$[A-Za-z]\\w*|^\\s*\\[+\\s*[a-zA-Z]\\w*\\s*\\]+"
+
+# Check a character vector for block markers; see `dsl-preprocess-addin.R`
+has_block_markers <- function(x) any(grepl(block_re, x))
 
 ## Generate an advan/trans directive
 advtr <- function(advan,trans) {
@@ -325,73 +329,187 @@ convert_semicolons <- function(x) {
   x
 }
 
-##' Parse model specification text
-##' @param txt model specification text
-##' @param split logical
-##' @param drop_blank logical; \code{TRUE} if blank lines are to be dropped
-##' @param comment_re regular expression for comments
-##' @examples
-##' file <- file.path(modlib(), "pk1.cpp")
-##' 
-##' modelparse(readLines(file))
-##' 
-##' @export
-##' @keywords internal
-modelparse <- function(txt, split=FALSE, drop_blank = TRUE, 
-                       comment_re=c("//", "##")) {
+#' Parse model specification text
+#' 
+#' @param txt model specification text.
+#' @param split logical; if `TRUE`, `txt` will be split on `\n` before 
+#' processing.
+#' @param drop_blank logical; `TRUE` if blank lines will be dropped.
+#' @param comment_re regular expression to identify comments.
+#' @param keep_mapping if `TRUE`, parse information will be retained as
+#' attributes on the parsed model code.
+#' 
+#' @examples
+#' file <- file.path(modlib(), "pk1.cpp")
+#' 
+#' code <- readLines(file)
+#'
+#' modelparse(code)
+#'
+#' @seealso `modelsplit()` and `modelunsplit()` for a non-destructive
+#' split/reassemble alternative.
+#' 
+#' @md
+#' @export
+modelparse <- function(txt, split = FALSE, drop_blank = TRUE, 
+                       comment_re = c("//", "##"), keep_mapping = FALSE) {
   
-  ## Take in model text and parse it out
+  # Split code block into lines
+  if(isTRUE(split)) {
+    ntext <- length(txt)
+    txt <- strsplit(txt, "\n", perl = TRUE)
+    if(ntext > 1) {
+      txt[lengths(txt)==0] <- ""
+      txt <- unlist(txt, use.names = FALSE)
+    } else {
+      txt <- txt[[1]]
+    }
+  }
   
-  if(split) txt <- strsplit(txt,"\n",perl=TRUE)[[1]]
-  
-  if(drop_blank) txt <- txt[!grepl("^\\s*$",txt)]
+  # Drop blank lines
+  if(isTRUE(drop_blank)) {
+    txt <- txt[!grepl("^\\s*$", txt)]
+  }
   
   # Take out comments
   for(comment in comment_re) {
-    m <- as.integer(regexpr(comment,txt,fixed=TRUE))
+    m <- as.integer(regexpr(comment, txt, fixed = TRUE))
     w <- m > 0
-    txt[w] <- substr(txt[w],1,m[w]-1)
+    txt[w] <- substr(txt[w], 1, m[w]-1)
   }
   
   # Look for block lines
-  m <- regexec(block_re,txt)
+  m <- regexec(block_re, txt)
   
   # Where the block starts
-  start <- which(sapply(m,"[",1L) > 0)
+  start <- which(sapply(m, "[", 1L) > 0)
   
+  # Error if no blocks found
   if(length(start)==0) {
-    stop("No model specification file blocks were found.", call.=FALSE)
+    stop("No model specification file blocks were found.", call. = FALSE)
+  }
+
+  # Grab any text before the first block
+  header <- NULL
+  if(start[1] > 1) {
+    header <- txt[seq(start[1]-1)]
   }
   
   # Get the matches
-  mm <- regmatches(txt[start],m[start])
+  mm <- regmatches(txt[start], m[start])
+  mm <- sapply(mm, "[", 1L)
+  
+  # Get match length
+  ml <- vapply(m, FUN = attr, FUN.VALUE = 1L, "match.length")
+  ml <- ml[start]
   
   # Block labels
-  labs <- gsub("[][$ ]", "", sapply(mm, "[",1L), perl=TRUE)
+  labs <- gsub("[][$ ]", "", mm, perl = TRUE)
   
-  # Remove block label text
-  txt[start] <- mytriml(substr(txt[start], nchar(unlist(mm,use.names=FALSE))+1, nchar(txt[start])))
+  # Remove block label text and trim
+  txt[start] <- substr(txt[start], ml+1, nchar(txt[start]))
+  txt[start] <- mytriml(txt[start])
   
   # Where the block ends
   end <- c((start-1),length(txt))[-1]
   
   # Create the list
-  spec <- lapply(seq_along(start), function(i) {
+  spec <- lapply(seq_along(start), \(i) {
     y <- txt[start[i]:end[i]]
   })
   
-  if(drop_blank) {
-    spec <- lapply(spec,function(y) y[y!=""]) 
+  # Drop blank lines
+  if(isTRUE(drop_blank)) {
+    spec <- lapply(spec, \(y) y[y != ""]) 
   }
+  
+  # Keep block mapping info
+  if(isTRUE(keep_mapping)) {
+    attributes(spec) <- list(
+      start = start, 
+      blockmatch = mm, 
+      header = header
+    )
+  } 
   
   names(spec) <- labs
   
   for(i in which(toupper(names(spec)) %in% c("PARAM", "CMT", "INIT", "CAPTURE"))) {
     spec[[i]] <- gsub("; *$", "", spec[[i]])  
   }
+
+  spec
   
-  return(spec)
-  
+}
+
+#' Split and reassemble model specification text
+#'
+#' `modelsplit()` parses model specification text into a named list of code
+#' blocks, retaining enough information to reconstruct the original text.
+#' `modelunsplit()` takes the list returned by `modelsplit()` and puts the
+#' blocks back together into a character vector of model code.
+#'
+#' @param x for `modelsplit()`, model specification text (character vector or
+#' single string); for `modelunsplit()`, a list returned by `modelsplit()`.
+#'
+#' @return `modelsplit()` returns a named list of character vectors, one element
+#' per block. `modelunsplit()` returns a character vector of model code.
+#'
+#' @seealso [modelparse()]  that drops blank lines and comments by default.
+#'
+#' @md
+#' @keywords internal
+modelsplit <- function(x) {
+  ans <- modelparse(
+    x, 
+    split = FALSE, 
+    drop_blank = FALSE, 
+    comment_re = character(0), 
+    keep_mapping = TRUE
+  )
+  names(ans) <- toupper(names(ans))
+  ans
+}
+
+#' @rdname modelsplit
+#' @keywords internal
+modelunsplit <- function(x) {
+  bloc <- attr(x, "blockmatch")
+  if(is.null(bloc)) stop("cannot unsplit model specification list.")
+  header <- attr(x, "header")
+  for(i in seq_along(bloc)) {
+    sep <- if(x[[i]][[1]] == "") "" else " "
+    x[[i]][[1]] <- paste0(bloc[[i]], sep, x[[i]][[1]])
+  }
+  c(header, unlist(unname(x)))
+}
+
+# Apply convert_semicolons to the right blocks; used in addin
+convert_semicolons_spec <- function(x) {
+  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  for(i in to_convert) {
+    x[[i]] <- convert_semicolons(x[[i]])
+  }
+  x
+}
+
+# Apply fortran if/else conversion to the right blocks; used in addin
+convert_fort_if_spec <- function(x) {
+  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  for(i in to_convert) {
+    x[[i]] <- convert_fort_if(x[[i]])
+  }
+  x
+}
+
+# Apply ** to pow conversion to the right blocks; used in addin
+convert_pow_spec <- function(x, block_names = names(x)) {
+  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  to_convert_names <- block_names[to_convert]
+  for(i in to_convert) {
+    x[[i]] <- convert_pow(x[[i]], to_convert_names[i])
+  }
+  x
 }
 
 #' @rdname modelparse

@@ -49,6 +49,7 @@ Imports:
     lifecycle, 
     glue
 Suggests:
+    rstudioapi,
     lattice,
     testthat,
     xml2 (>= 1.3.2),
@@ -91,6 +92,7 @@ Collate:
     'custom-tol.R'
     'data_set.R'
     'datasets.R'
+    'dsl-preprocess-addin.R'
     'env.R'
     'funset.R'
     'handle_spec_block.R'

@@ -5,18 +5,28 @@
 \alias{modelparse_rmd}
 \title{Parse model specification text}
 \usage{
-modelparse(txt, split = FALSE, drop_blank = TRUE, comment_re = c("//", "##"))
+modelparse(
+  txt,
+  split = FALSE,
+  drop_blank = TRUE,
+  comment_re = c("//", "##"),
+  keep_mapping = FALSE
+)
 
 modelparse_rmd(txt, split = FALSE, drop_blank = TRUE, comment_re = "//")
 }
 \arguments{
-\item{txt}{model specification text}
+\item{txt}{model specification text.}
 
-\item{split}{logical}
+\item{split}{logical; if \code{TRUE}, \code{txt} will be split on \verb{\\n} before
+processing.}
 
-\item{drop_blank}{logical; \code{TRUE} if blank lines are to be dropped}
+\item{drop_blank}{logical; \code{TRUE} if blank lines will be dropped.}
 
-\item{comment_re}{regular expression for comments}
+\item{comment_re}{regular expression to identify comments.}
+
+\item{keep_mapping}{if \code{TRUE}, parse information will be retained as
+attributes on the parsed model code.}
 }
 \description{
 Parse model specification text
@@ -24,7 +34,13 @@ Parse model specification text
 \examples{
 file <- file.path(modlib(), "pk1.cpp")
 
-modelparse(readLines(file))
+code <- readLines(file)
 
+modelparse(code)
+
+}
+\seealso{
+\code{modelsplit()} and \code{modelunsplit()} for a non-destructive
+split/reassemble alternative.
 }
 \keyword{internal}

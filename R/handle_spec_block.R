@@ -21,12 +21,6 @@
 
 # UTILS ------------------------------------------------------------------------
 get_length <- function(what) sum(sapply(what,length))
-handle_convert_pow <- function(x, env, pos) {
-  if(env$convert_pow) {
-    x <- convert_pow(x, env$incoming_names[pos])  
-  }
-  x
-}
 handle_warn_int_div <- function(x, env, pos) {
   if(env$warn_int_div) {
     warn_int_div(x, env$incoming_names[pos])
@@ -568,7 +562,7 @@ handle_spec_block.specTABLE <- function(x, env, ...) {
   check_block_data(x, env, pos)
 
   handle_warn_int_div(x, env, pos)
-  handle_convert_pow(x, env, pos)
+
 }
 
 #' @export
@@ -579,7 +573,7 @@ handle_spec_block.specEVENT <- function(x, env, ...) {
   check_block_data(x, env, pos)
   
   handle_warn_int_div(x, env, pos)
-  handle_convert_pow(x, env, pos)
+
 }
 
 # NMXML --------------------------------
@@ -644,7 +638,7 @@ PRED <- function(x, env, pos, ...) {
     stop("$ODE not allowed when $PRED is used",call.=FALSE)  
   }
   handle_warn_int_div(x, env, pos)
-  handle_convert_pow(x, env, pos)
+
 }
 
 # INCLUDE ----------------------------------------------------------------------
@@ -1041,7 +1035,7 @@ handle_spec_block.specODE <- function(x, env, ...) {
   env[["audit_dadt"]] <- isTRUE(con[["audit"]])
   
   handle_warn_int_div(x, env, pos)
-  handle_convert_pow(x, env, pos)
+
 }
 
 # PREAMBLE --------------------------------------------------------------------
@@ -1052,7 +1046,7 @@ handle_spec_block.specPREAMBLE <- function(x, env, ...) {
   x <- dump_opts(x)
   
   handle_warn_int_div(x, env, pos)
-  handle_convert_pow(x, env, pos)
+
 }
 
 # MAIN -------------------------------------------------------------------------
@@ -1064,7 +1058,7 @@ handle_spec_block.specMAIN <- function(x,env,...) {
   env$check_modeled_infusions <- isTRUE(x$check_modeled_infusions)
   
   handle_warn_int_div(x$x, env, pos)
-  handle_convert_pow(x$x, env, pos)
+
 }
 
 # BLOCK ------------------------------------------------------------------------
