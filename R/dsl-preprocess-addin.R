@@ -9,7 +9,7 @@ addin_run <- function(ctx, apply_fn) {
   }
   lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
   result <- apply_fn(text, lines)
-  # Don't each blank line at end of selection
+  # Don't eat blank line at end of selection
   if(endsWith(text, "\n")) result <- paste0(result, "\n")
   rstudioapi::insertText(location = sel$range, text = result, id = ctx$id)
   invisible(NULL)
