@@ -57,7 +57,7 @@ convert_fort_if_impl <- function(code) {
 #' blank lines, lines already ending with \code{;}, lines ending with
 #' \code{\{} or \code{\}}, C/C++ comments (\code{//} or \code{/*}),
 #' preprocessor directives (\code{#}), lines containing block 
-#'  options (line starts wtih \code{@}), and lines ending with Fortran
+#'  options (line starts with \code{@}), and lines ending with Fortran
 #'  block-structure keywords.
 #'
 #' @param code Character vector of source lines.

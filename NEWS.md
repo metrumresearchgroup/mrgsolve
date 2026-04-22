@@ -5,7 +5,7 @@
 - `data_set()` and `idata_set()` no longer accept `.subset`, `.select`,
   `object`, or `need` arguments. These arguments allowed filtering and
   column selection inside the call; that processing should now be done on the
-  data frame before passing it to `data_set()` or `idata_set()`.  (#1374)
+  data frame before passing it to `data_set()` or `idata_set()`. (#1374)
 
 - The `n` argument to `simeta()` and `simeps()` has been discouraged for a
   while and is now removed. Calling `simeta(n)` or `simeps(n)` to resimulate 
@@ -38,20 +38,6 @@
 
 ## New Features
 
-- Closed-form three-compartment linear models with or without depot compartments
-  can now be implemented via `$PKMODEL` (#1345).
-
-- `$PKMODEL` gains an `advan` input for selecting 1, 2, or 3 compartment
-  models with analytical solutions; for example, setting `advan` to 2, 4,
-  or 12 will give you 1, 2, or 3 compartment model in closed form with an 
-  depot compartment. When `advan` is specified, compartments with standard 
-  names are automatically registered if neither `$INIT` nor `$CMT` are 
-  found in the model file and no compartments are registered at the time 
-  that `$PKMODEL` is processed (#1345).
-
-- Two new `modlib` models, `pk3` and `pk3iv`, provide the corresponding
-  pre-coded model files (#1345).
-
 - Models can now use `a ** b` syntax to represent `pow(a, b)`; this syntax is
   always available, without need to invoke a plugin (#1360).
 
@@ -62,15 +48,29 @@
 - `ERR(n)` is now recognized as an alias for `EPS(n)` when using the `nm-vars`
   plugin (#1367).
 
-- New DSL preprocessing functions convert NONMEM/Fortran model code to C++
-  syntax (#1360, #1362, #1366):
+- New DSL preprocessing functions convert NONMEM/Fortran model code to 
+  mrgsolve / C++ syntax (#1360, #1362, #1366):
   - `convert_pow()` converts Fortran `**` exponentiation to `pow()`.
   - `convert_fort_if()` converts Fortran `IF/THEN/ELSE/END IF` blocks to C++
     `if/else` syntax.
   - `convert_semicolons()` inserts missing trailing semicolons on assignment
     statements.
-  - RStudio addins are provided for each conversion, as well as a combined
-    "Convert NM" addin that applies all three in the correct order.
+  - RStudio addins are provided to allow conversion of certain NONMEM source 
+    blocks code to mrgsolve format in the RStudio editor window.
+
+- Closed-form three-compartment linear models with or without depot compartments
+  can now be implemented via `$PKMODEL` (#1345).
+
+- `$PKMODEL` gains an `advan` input for selecting 1, 2, or 3 compartment
+  models with analytical solutions; for example, setting `advan` to 2, 4,
+  or 12 will give you 1, 2, or 3 compartment model in closed form with a
+  depot compartment. When `advan` is specified, compartments with standard 
+  names are automatically registered if neither `$INIT` nor `$CMT` are 
+  found in the model file and no compartments are registered at the time 
+  that `$PKMODEL` is processed (#1345).
+
+- Two new `modlib` models, `pk3` and `pk3iv`, provide the corresponding
+  pre-coded model files (#1345).
 
 - `mrgx::assign()` is now available in the `mrgx` plugin; this is a convenience 
   function to help you get R objects from your model code back to R when the 
@@ -83,11 +83,12 @@
 
 - `env_get()` refactored to allow access of R objects inside the model 
   environment similar to `base::get()`; `env_get_obj()` is an alias to `env_get()`, 
-  analagous to `env_get_env()`(#1355).
+  analogous to `env_get_env()` (#1355).
 
 ## Bugs Fixed
-- Fixed a bug where the model row counter was not correct when a simulation 
-  was preformed with only an idata set (#1351).
+
+- Fixed a bug where the model row counter was not correct when a simulation
+  was performed with only an idata set (#1351).
 
 # mrgsolve 1.8.0
 
