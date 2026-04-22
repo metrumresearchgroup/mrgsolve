@@ -56,7 +56,7 @@
   - `convert_semicolons()` inserts missing trailing semicolons on assignment
     statements.
   - RStudio addins are provided to allow conversion of certain NONMEM source 
-    blocks code to mrgsolve format in the RStudio editor window.
+    code blocks to mrgsolve format in the RStudio editor window.
 
 - Closed-form three-compartment linear models with or without depot compartments
   can now be implemented via `$PKMODEL` (#1345).
