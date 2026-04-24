@@ -488,6 +488,7 @@ modelunsplit <- function(x) {
 convert_semicolons_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
+    if(!length(x[[i]])) next
     x[[i]] <- convert_semicolons(x[[i]])
   }
   x
@@ -497,6 +498,7 @@ convert_semicolons_spec <- function(x) {
 convert_fort_if_spec <- function(x) {
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
   for(i in to_convert) {
+    if(!length(x[[i]])) next
     x[[i]] <- convert_fort_if(x[[i]])
   }
   x
