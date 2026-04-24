@@ -1026,6 +1026,30 @@ test_that("convert_pow handles ** in if() condition", {
   )
 })
 
+test_that("convert_pow reports the right block name on warning", {
+  convert_pow_warn_ <- '
+  $PARAM CL = 1
+  
+  $error double foo = CL ** b[2];
+  
+  $MAIN 
+  '
+  expect_warning(
+    mcode("convert_pow_warn_", convert_pow_warn_, compile = FALSE), 
+    "Could not convert ** in $error block", 
+    fixed = TRUE
+  )
+})
+
+test_that("convert_pow mapbayr test with missing main", {
+  mod0bis <- mcode("mod0bis",
+                "$CMT GUT CENT
+                $MAIN
+                ", compile = FALSE)
+
+  expect_is(mod0bis, "mrgmod")
+})
+
 test_that("environment variable suppresses convert pow", {
   code <- '
   $ENV MRGSOLVE_CONVERT_POW <- TRUE
