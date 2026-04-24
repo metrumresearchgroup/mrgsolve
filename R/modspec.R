@@ -505,11 +505,12 @@ convert_fort_if_spec <- function(x) {
 }
 
 # Apply ** to pow conversion to the right blocks; used in addin
+# Also used in mread, where block_names is the original incoming 
+# block name vector; we don't need to convert any spec position beyond
+# what was in the original spec list
 convert_pow_spec <- function(x, block_names = names(x)) {
-  if(length(x) != length(block_names)) {
-    block_names <- names(x)
-  }
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  to_convert <- to_convert[to_convert <= length(block_names)]
   for(i in to_convert) {
     if(!length(x[[i]])) next
     x[[i]] <- convert_pow(x[[i]], block_names[i])

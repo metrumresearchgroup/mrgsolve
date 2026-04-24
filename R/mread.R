@@ -419,8 +419,6 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # TODO: harmonize with other audit process
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
-    incoming_block_names <- c(incoming_block_names, "ODE")
-    mread.env$incoming_names <- c(mread.env$incoming_names, "ODE")
   } else {
     spec[["ODE"]] <- c(spec[["ODE"]], ode)
     audit_spec(x, spec, nmv, mread.env, warn = warn)
@@ -459,7 +457,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
 
   # Convert pow just before writing the file
   if(mread.env$convert_pow) {
-    spec <- convert_pow_spec(spec, mread.env$incoming_names)
+    spec <- convert_pow_spec(spec, incoming_block_names)
   }
 
   ## Collect all code to be written to the different blocks
