@@ -182,7 +182,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   } else {
     spec  <- modelparse(readLines(build[["modfile"]], warn = FALSE))
   }
-  
+
   ## Block name aliases
   incoming_block_names <- names(spec)
   names(spec) <- toupper(names(spec))
@@ -419,6 +419,8 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   # TODO: harmonize with other audit process
   if(!has_name("ODE", spec)) {
     spec[["ODE"]] <- "DXDTZERO();"
+    incoming_block_names <- c(incoming_block_names, "ODE")
+    mread.env$incoming_names <- c(mread.env$incoming_names, "ODE")
   } else {
     spec[["ODE"]] <- c(spec[["ODE"]], ode)
     audit_spec(x, spec, nmv, mread.env, warn = warn)

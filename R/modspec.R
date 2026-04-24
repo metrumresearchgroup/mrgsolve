@@ -504,10 +504,13 @@ convert_fort_if_spec <- function(x) {
 
 # Apply ** to pow conversion to the right blocks; used in addin
 convert_pow_spec <- function(x, block_names = names(x)) {
+  if(length(x) != length(block_names)) {
+    block_names <- names(x)
+  }
   to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
-  to_convert_names <- block_names[to_convert]
   for(i in to_convert) {
-    x[[i]] <- convert_pow(x[[i]], to_convert_names[i])
+    if(!length(x[[i]])) next
+    x[[i]] <- convert_pow(x[[i]], block_names[i])
   }
   x
 }
