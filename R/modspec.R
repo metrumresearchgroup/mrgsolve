@@ -486,7 +486,10 @@ modelunsplit <- function(x) {
 
 # Apply convert_semicolons to the right blocks; used in addin
 convert_semicolons_spec <- function(x) {
-  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  to_convert <- which(
+    names(x) %in% GLOBALS$PRE_PROC_BLOCKS &
+    lengths(x) > 0
+  )
   for(i in to_convert) {
     x[[i]] <- convert_semicolons(x[[i]])
   }
@@ -495,7 +498,10 @@ convert_semicolons_spec <- function(x) {
 
 # Apply fortran if/else conversion to the right blocks; used in addin
 convert_fort_if_spec <- function(x) {
-  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
+  to_convert <- which(
+    names(x) %in% GLOBALS$PRE_PROC_BLOCKS &
+    lengths(x) > 0
+  )
   for(i in to_convert) {
     x[[i]] <- convert_fort_if(x[[i]])
   }
@@ -503,11 +509,17 @@ convert_fort_if_spec <- function(x) {
 }
 
 # Apply ** to pow conversion to the right blocks; used in addin
+# Also used in mread, where block_names is the original incoming 
+# block name vector; we don't need to convert any spec position beyond
+# what was in the original spec list
 convert_pow_spec <- function(x, block_names = names(x)) {
-  to_convert <- which(names(x) %in% GLOBALS$PRE_PROC_BLOCKS)
-  to_convert_names <- block_names[to_convert]
+  to_convert <- which(
+    names(x) %in% GLOBALS$PRE_PROC_BLOCKS &
+    lengths(x) > 0
+  )
+  to_convert <- to_convert[to_convert <= length(block_names)]
   for(i in to_convert) {
-    x[[i]] <- convert_pow(x[[i]], to_convert_names[i])
+    x[[i]] <- convert_pow(x[[i]], block_names[i])
   }
   x
 }

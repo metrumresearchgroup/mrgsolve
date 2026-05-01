@@ -182,7 +182,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   } else {
     spec  <- modelparse(readLines(build[["modfile"]], warn = FALSE))
   }
-  
+
   ## Block name aliases
   incoming_block_names <- names(spec)
   names(spec) <- toupper(names(spec))
@@ -457,7 +457,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
 
   # Convert pow just before writing the file
   if(mread.env$convert_pow) {
-    spec <- convert_pow_spec(spec, mread.env$incoming_names)
+    spec <- convert_pow_spec(spec, incoming_block_names)
   }
 
   ## Collect all code to be written to the different blocks
