@@ -1378,8 +1378,15 @@ test_that("convert_semicolons: for loop semicolons inside parens are ignored", {
 test_that("convert_semicolons: multiple statements left alone", {
   # second statement contains '=' -> treated as C++, not a comment
   expect_equal(as_("x = 1; y = 2"),  "x = 1; y = 2")
-  # second segment already has its own ';'
   expect_equal(as_("x = 1; y = 2;"), "x = 1; y = 2;")
+})
+
+test_that("convert_semicolons: NONMEM double-semicolon inline comment", {
+  # two depth-0 semicolons, no '=' after the first -> comment out the rest
+  expect_equal(
+    as_("TVCL=THETA(1)*((WT/80)**THETA(5));*((AGE/...)**THETA(5));"),
+    "TVCL=THETA(1)*((WT/80)**THETA(5)); // *((AGE/...)**THETA(5));"
+  )
 })
 
 test_that("convert_semicolons: skips brace lines", {
