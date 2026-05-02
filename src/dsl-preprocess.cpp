@@ -806,9 +806,8 @@ static std::string convert_semicolon_line(const std::string& line) {
   // Already a C++ comment after ';' — leave it alone.
   if (after.size() >= 2 && after[0] == '/' && after[1] == '/') return line;
 
-  // Another depth-0 ';' or '=' after this one suggests C++ statements
-  // rather than a Fortran-style comment — leave it alone.
-  if (contains_at_depth0(after, ';') || contains_at_depth0(after, '='))
+  // A '=' after the first ';' suggests C++ multi-statement code — leave it alone.
+  if (contains_at_depth0(after, '='))
     return line;
 
   // Fortran-style inline comment: retain as C++ comment.
