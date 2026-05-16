@@ -156,6 +156,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// set_names_inplace
+void set_names_inplace(Rcpp::RObject x, Rcpp::CharacterVector nm);
+RcppExport SEXP _mrgsolve_set_names_inplace(SEXP xSEXP, SEXP nmSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type nm(nmSEXP);
+    set_names_inplace(x, nm);
+    return R_NilValue;
+END_RCPP
+}
 // TOUCH_FUNS
 Rcpp::List TOUCH_FUNS(const Rcpp::List& funs, const Rcpp::S4 mod);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP funsSEXP, SEXP modSEXP) {

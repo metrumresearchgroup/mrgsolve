@@ -163,7 +163,7 @@ mrgsim_q <- function(x,
     PACKAGE = "mrgsolve"
   )[["data"]]
   
-  names(out) <- c("ID", tcol, x@cmtL, x@capL)
+  set_names_inplace(out, c("ID", tcol, x@cmtL, x@capL))
   
   if(output=="df") {
     return(out)  
