@@ -734,8 +734,8 @@ do_mrgsim <- function(x,
     cnames <- new_names
   }
   
-  names(out[["data"]]) <- cnames
-  
+  set_names_inplace(out[["data"]], cnames)
+
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
       if(!rename.recov$identical) {
