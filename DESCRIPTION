@@ -55,9 +55,10 @@ Suggests:
     xml2 (>= 1.3.2),
     rmarkdown,
     yaml,
-    knitr, 
+    knitr,
     data.table (>= 1.14.2),
-    pmxTools
+    pmxTools,
+    nanoarrow
 LinkingTo: 
     Rcpp (>= 1.0.7),
     RcppArmadillo (>= 0.10.7.3.0),

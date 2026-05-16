@@ -556,6 +556,10 @@ do_mrgsim <- function(x,
     abort("`etasrc` must be a string.")
   }
   
+  if(isTRUE(output == "arrow") && length(recover) > 0) {
+    stop("'recover' is not supported with output = 'arrow'", call. = FALSE)
+  }
+
   do_recover_data <- do_recover_idata <-  FALSE
   carry.recover <- character(0)
   if(length(recover) > 0) {
@@ -734,40 +738,63 @@ do_mrgsim <- function(x,
     cnames <- new_names
   }
   
-  set_names_inplace(out[["data"]], cnames)
+  mat <- out[["data"]]
+
+  if(!is.null(output) && output == "matrix" && !do_recover_data && !do_recover_idata) {
+    colnames(mat) <- cnames
+    return(mat)
+  }
+
+  if(!is.null(output) && output == "arrow") {
+    if(!requireNamespace("nanoarrow", quietly = TRUE)) {
+      stop("output = 'arrow' requires the nanoarrow package", call. = FALSE)
+    }
+    n_rows <- nrow(mat)
+    return(nanoarrow::as_nanoarrow_array(
+      structure(
+        lapply(seq_len(ncol(mat)), function(i) mat[, i]),
+        names = cnames,
+        class = "data.frame",
+        row.names = c(NA_integer_, -n_rows)
+      )
+    ))
+  }
+
+  df <- mat2df(mat)
+  set_names_inplace(df, cnames)
 
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
       if(!rename.recov$identical) {
-        names(join_data) <- .ren.rename(rename.recov,names(join_data))
+        names(join_data) <- .ren.rename(rename.recov, names(join_data))
       }
-      out[["data"]] <- left_join(out[["data"]],join_data,by=".data_row.",suffix=c("", ".recov"))  
-      out[["data"]][[".data_row."]] <- NULL
+      df <- left_join(df, join_data, by=".data_row.", suffix=c("", ".recov"))
+      df[[".data_row."]] <- NULL
     }
     if(do_recover_idata) {
       if(!rename.recov$identical) {
-        names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
+        names(join_idata) <- .ren.rename(rename.recov, names(join_idata))
       }
-      out[["data"]] <- left_join(out[["data"]],join_idata,by="ID",suffix=c("", ".recov"))
+      df <- left_join(df, join_idata, by="ID", suffix=c("", ".recov"))
     }
   }
-  
+
   if(!is.null(output)) {
-    if(output=="df") {
-      return(out[["data"]])  
+    if(output == "df") {
+      return(df)
     }
-    if(output=="matrix") {
-      if(!all(numeric_columns(out[["data"]]))) {
-        stop("can't return matrix because non-numeric data was found.", call.=FALSE)  
+    if(output == "matrix") {
+      if(!all(numeric_columns(df))) {
+        stop("can't return matrix because non-numeric data was found.", call.=FALSE)
       }
-      return(data.matrix(out[["data"]]))
+      return(data.matrix(df))
     }
   }
-  
+
   new(
     "mrgsims",
     request = x@cmtL,
-    data = out[["data"]],
+    data = df,
     outnames = x@capL,
     mod = x
   )
@@ -890,17 +917,21 @@ qsim <- function(x,
   )
   
   if(tad) tcol <- c(tcol,"tad")
-  
-  set_names_inplace(out[["data"]], c("ID", tcol, x@cmtL, x@capL))
-  
+
+  cnames <- c("ID", tcol, x@cmtL, x@capL)
+  mat <- out[["data"]]
+
+  df <- mat2df(mat)
+  set_names_inplace(df, cnames)
+
   if(output=="df") {
-    return(out[["data"]])
+    return(df)
   }
-  
+
   new(
     "mrgsims",
     request = x@cmtL,
-    data = out[["data"]],
+    data = df,
     outnames = x@capL,
     mod = x
   )

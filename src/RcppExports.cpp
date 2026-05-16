@@ -167,6 +167,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// mat2df
+Rcpp::List mat2df(Rcpp::NumericMatrix const& x);
+RcppExport SEXP _mrgsolve_mat2df(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix const& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(mat2df(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // TOUCH_FUNS
 Rcpp::List TOUCH_FUNS(const Rcpp::List& funs, const Rcpp::S4 mod);
 RcppExport SEXP _mrgsolve_TOUCH_FUNS(SEXP funsSEXP, SEXP modSEXP) {

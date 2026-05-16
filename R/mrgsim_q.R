@@ -154,25 +154,29 @@ mrgsim_q <- function(x,
   parin[["nocb"]] <- TRUE
   parin[["obsaug"]] <- FALSE
     
-  out <- .Call(
+  mat <- .Call(
     `_mrgsolve_DEVTRAN`,
     parin,
     pointers(x),
     data,null_idata,
-    x, 
+    x,
     PACKAGE = "mrgsolve"
   )[["data"]]
-  
-  set_names_inplace(out, c("ID", tcol, x@cmtL, x@capL))
-  
-  if(output=="df") {
-    return(out)  
-  }
-  
+
+  cnames <- c("ID", tcol, x@cmtL, x@capL)
+
   if(output=="matrix") {
-    return(as.matrix(out))  
+    colnames(mat) <- cnames
+    return(mat)
   }
-  
+
+  out <- mat2df(mat)
+  set_names_inplace(out, cnames)
+
+  if(output=="df") {
+    return(out)
+  }
+
   new(
     "mrgsims",
     request = x@cmtL,
