@@ -442,6 +442,11 @@ Rcpp::List EXPAND_OBSERVATIONS(
                             Rcpp::Named("index") = index);
 }
 
+// [[Rcpp::export]]
+void set_names_inplace(Rcpp::RObject x, Rcpp::CharacterVector nm) {
+  x.attr("names") = nm;
+}
+
 Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
   int n_rows = x.nrow();
   int n_cols = x.ncol();
