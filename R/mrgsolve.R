@@ -891,7 +891,7 @@ qsim <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  names(out[["data"]]) <- c("ID", tcol,  x@cmtL, x@capL)
+  set_names_inplace(out[["data"]], c("ID", tcol, x@cmtL, x@capL))
   
   if(output=="df") {
     return(out[["data"]])
