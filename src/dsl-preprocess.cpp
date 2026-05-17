@@ -170,7 +170,7 @@ struct Emitter : boost::static_visitor<std::string> {
 };
 
 inline std::string emit(const ast::Expr& e) {
-  return boost::apply_visitor(Emitter{}, e);
+  return boost::apply_visitor(Emitter(), e);
 }
 
 // ---------------------------------------------------------------------------
