@@ -95,6 +95,10 @@ EXPAND_OBSERVATIONS <- function(data, times, to_copy, next_pos) {
     .Call(`_mrgsolve_EXPAND_OBSERVATIONS`, data, times, to_copy, next_pos)
 }
 
+set_names_inplace <- function(x, nm) {
+    invisible(.Call(`_mrgsolve_set_names_inplace`, x, nm))
+}
+
 TOUCH_FUNS <- function(funs, mod) {
     .Call(`_mrgsolve_TOUCH_FUNS`, funs, mod)
 }
