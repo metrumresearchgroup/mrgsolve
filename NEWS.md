@@ -40,6 +40,8 @@
 
 ## New Features
 
+- Added `complete_tran()` to complete common NMTRAN-like data items in data frames with conservative defaults while preserving existing columns and row order (#1195).
+
 - Models can now use `a ** b` syntax to represent `pow(a, b)`; this syntax is
   always available, without need to invoke a plugin (#1360).
 
