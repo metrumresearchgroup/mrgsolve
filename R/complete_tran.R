@@ -66,8 +66,10 @@ complete_tran <- function(data, ..., case = c("lower", "upper", "preserve"), id 
     abort("`id` must be either TRUE or FALSE.")
   }
   nmtran <- c("ID", "TIME", "AMT", "CMT", "EVID", "RATE", "II", "ADDL", "SS")
-  defaults <- c(1L, 0, 0, 1L, 0L, 0, 0, 0L, 0L)
-  names(defaults) <- nmtran
+  defaults <- list(
+    ID = 1L, TIME = 0, AMT = 0, CMT = 1L, EVID = 0L,
+    RATE = 0, II = 0, ADDL = 0L, SS = 0L
+  )
   if(!id) {
     nmtran <- setdiff(nmtran, "ID")
     defaults <- defaults[nmtran]
@@ -75,11 +77,11 @@ complete_tran <- function(data, ..., case = c("lower", "upper", "preserve"), id 
   if(identical(case, "preserve")) {
     n <- names(data)
     nupper <- sum(n %in% nmtran)
-    nlower <- sum(tolower(n) %in% tolower(nmtran))
+    nlower <- sum(n %in% tolower(nmtran))
     case <- if(nupper > nlower) "upper" else "lower"
   }
   target <- if(identical(case, "upper")) nmtran else tolower(nmtran)
-  source <- if(identical(case, "upper")) nmtran else toupper(nmtran)
+  source <- if(identical(case, "upper")) tolower(nmtran) else toupper(nmtran)
   existing <- names(data)
   for(i in seq_along(target)) {
     if(!(target[i] %in% existing) && !(source[i] %in% existing)) {
@@ -88,4 +90,3 @@ complete_tran <- function(data, ..., case = c("lower", "upper", "preserve"), id 
   }
   data
 }
-

@@ -34,6 +34,14 @@ test_that("uppercase mode adds uppercase columns", {
   expect_identical(out$ID, c(1L, 1L))
 })
 
+test_that("uppercase mode does not duplicate existing lowercase columns", {
+  data <- data.frame(time = 1, amt = 2)
+  out <- complete_tran(data, case = "upper")
+  expect_false(any(c("TIME", "AMT") %in% names(out)))
+  expect_identical(out$time, 1)
+  expect_identical(out$amt, 2)
+})
+
 test_that("id FALSE does not add ID or id", {
   out1 <- complete_tran(data.frame(time = 0), id = FALSE)
   out2 <- complete_tran(data.frame(TIME = 0), case = "upper", id = FALSE)
@@ -44,6 +52,7 @@ test_that("id FALSE does not add ID or id", {
 test_that("preserve infers uppercase when uppercase columns are present", {
   out <- complete_tran(data.frame(TIME = 0, AMT = 100), case = "preserve")
   expect_true(all(c("CMT", "EVID", "RATE", "II", "ADDL", "SS", "ID") %in% names(out)))
+  expect_false(any(c("cmt", "evid", "rate", "ii", "addl", "ss", "id") %in% names(out)))
 })
 
 test_that("preserve defaults to lowercase when no clear convention exists", {
@@ -55,6 +64,13 @@ test_that("row order is preserved", {
   data <- data.frame(rec = c(3, 1, 2), amt = c(0, 100, 0))
   out <- complete_tran(data)
   expect_identical(out$rec, c(3, 1, 2))
+})
+
+test_that("zero-row data frames are completed", {
+  data <- data.frame(x = numeric())
+  out <- complete_tran(data)
+  expect_identical(nrow(out), 0L)
+  expect_true(all(c("id", "time", "amt", "cmt", "evid", "rate", "ii", "addl", "ss") %in% names(out)))
 })
 
 test_that("invalid input errors", {
