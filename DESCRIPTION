@@ -90,6 +90,7 @@ Collate:
     'class_rx.R'
     'compile.R'
     'custom-tol.R'
+    'complete_tran.R'
     'data_set.R'
     'datasets.R'
     'dsl-preprocess-addin.R'
