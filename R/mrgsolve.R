@@ -734,40 +734,70 @@ do_mrgsim <- function(x,
     cnames <- new_names
   }
   
-  set_names_inplace(out[["data"]], cnames)
+  mat <- out[["data"]]
+
+  if(!is.null(output) && output == "arrow-ipc") {
+    if(!requireNamespace("arrow", quietly = TRUE)) {
+      stop("arrow package required for output = 'arrow-ipc'", call. = FALSE)
+    }
+    df <- mat2df(mat)
+    set_names_inplace(df, cnames)
+    path <- tempfile(tmpdir = x@shlib[["simdir"]], pattern = "mrgsolve-output-arrow-ipc-", fileext = ".arrow")
+    arrow::write_ipc_file(df, path)
+    return(sim_file(x, path))
+  }
+
+  if(!is.null(output) && output == "parquet") {
+    if(!requireNamespace("arrow", quietly = TRUE)) {
+      stop("arrow package required for output = 'parquet'", call. = FALSE)
+    }
+    df <- mat2df(mat)
+    set_names_inplace(df, cnames)
+    path <- tempfile(tmpdir = x@shlib[["simdir"]], pattern = "mrgsolve-output-parquet-", fileext = ".parquet")
+    arrow::write_parquet(df, path, compression = "uncompressed")
+    return(sim_file(x, path))
+  }
+
+  if(!is.null(output) && output == "matrix" && !do_recover_data && !do_recover_idata) {
+    colnames(mat) <- cnames
+    return(mat)
+  }
+
+  df <- mat2df(mat)
+  set_names_inplace(df, cnames)
 
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
       if(!rename.recov$identical) {
-        names(join_data) <- .ren.rename(rename.recov,names(join_data))
+        names(join_data) <- .ren.rename(rename.recov, names(join_data))
       }
-      out[["data"]] <- left_join(out[["data"]],join_data,by=".data_row.",suffix=c("", ".recov"))  
-      out[["data"]][[".data_row."]] <- NULL
+      df <- left_join(df, join_data, by=".data_row.", suffix=c("", ".recov"))
+      df[[".data_row."]] <- NULL
     }
     if(do_recover_idata) {
       if(!rename.recov$identical) {
-        names(join_idata) <- .ren.rename(rename.recov,names(join_idata))
+        names(join_idata) <- .ren.rename(rename.recov, names(join_idata))
       }
-      out[["data"]] <- left_join(out[["data"]],join_idata,by="ID",suffix=c("", ".recov"))
+      df <- left_join(df, join_idata, by="ID", suffix=c("", ".recov"))
     }
   }
-  
+
   if(!is.null(output)) {
-    if(output=="df") {
-      return(out[["data"]])  
+    if(output == "df") {
+      return(df)
     }
-    if(output=="matrix") {
-      if(!all(numeric_columns(out[["data"]]))) {
-        stop("can't return matrix because non-numeric data was found.", call.=FALSE)  
+    if(output == "matrix") {
+      if(!all(numeric_columns(df))) {
+        stop("can't return matrix because non-numeric data was found.", call.=FALSE)
       }
-      return(data.matrix(out[["data"]]))
+      return(data.matrix(df))
     }
   }
-  
+
   new(
     "mrgsims",
     request = x@cmtL,
-    data = out[["data"]],
+    data = df,
     outnames = x@capL,
     mod = x
   )
@@ -890,17 +920,21 @@ qsim <- function(x,
   )
   
   if(tad) tcol <- c(tcol,"tad")
-  
-  set_names_inplace(out[["data"]], c("ID", tcol, x@cmtL, x@capL))
-  
-  if(output=="df") {
-    return(out[["data"]])
+
+  cnames <- c("ID", tcol, x@cmtL, x@capL)
+  mat <- out[["data"]]
+
+  df <- mat2df(mat)
+  set_names_inplace(df, cnames)
+
+  if(output == "df") {
+    return(df)
   }
-  
+
   new(
     "mrgsims",
     request = x@cmtL,
-    data = out[["data"]],
+    data = df,
     outnames = x@capL,
     mod = x
   )

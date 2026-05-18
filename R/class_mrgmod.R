@@ -151,7 +151,7 @@ protomod <- list(model=character(0),
                  code = character(0),
                  annot = list(),
                  envir = new.env(),
-                 plugin = character(0), 
+                 plugin = character(0),
                  ss_cmt = integer(0)
 )
 
@@ -276,6 +276,7 @@ initialize_mrgmod <- function(.Object, ...) {
   .Object@shlib[["par"]] <- Pars(.Object)
   .Object@shlib[["neq"]] <- length(.Object@shlib[["cmt"]])
   .Object@shlib[["version"]] <- GLOBALS[["version"]]
+  .Object@shlib[["simdir"]] <- tempdir()
   .Object <- default_outputs(.Object)
   .Object@ss_cmt <- seq_along(Cmt(.Object)) - 1L
   .Object

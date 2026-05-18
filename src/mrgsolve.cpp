@@ -447,6 +447,7 @@ void set_names_inplace(Rcpp::RObject x, Rcpp::CharacterVector nm) {
   x.attr("names") = nm;
 }
 
+// [[Rcpp::export]]
 Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
   int n_rows = x.nrow();
   int n_cols = x.ncol();
