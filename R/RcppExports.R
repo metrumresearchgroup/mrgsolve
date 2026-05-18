@@ -99,6 +99,10 @@ set_names_inplace <- function(x, nm) {
     invisible(.Call(`_mrgsolve_set_names_inplace`, x, nm))
 }
 
+mat2df <- function(x) {
+    .Call(`_mrgsolve_mat2df`, x)
+}
+
 TOUCH_FUNS <- function(funs, mod) {
     .Call(`_mrgsolve_TOUCH_FUNS`, funs, mod)
 }
