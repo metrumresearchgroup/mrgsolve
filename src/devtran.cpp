@@ -830,6 +830,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       tfrom = tto;
     }
+    a[i].clear();
   }
   if(digits > 0) {
     for(int i=req_start; i < ans.ncol(); ++i) {
