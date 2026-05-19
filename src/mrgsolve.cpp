@@ -443,27 +443,23 @@ Rcpp::List EXPAND_OBSERVATIONS(
 }
 
 // [[Rcpp::export]]
-void set_names_inplace(Rcpp::RObject x, Rcpp::CharacterVector nm) {
-  x.attr("names") = nm;
-}
-
-// [[Rcpp::export]]
-Rcpp::List mat2df(Rcpp::NumericMatrix const& x) {
+Rcpp::List mat2df(Rcpp::NumericMatrix const& x, Rcpp::CharacterVector nm) {
   int n_rows = x.nrow();
   int n_cols = x.ncol();
-  
+
   Rcpp::List ret(n_cols);
-  
+
   for(int i = 0; i < n_cols; ++i) {
     ret[i] = Rcpp::NumericVector(
-      x.begin() + (size_t)i * n_rows, 
+      x.begin() + (size_t)i * n_rows,
       x.begin() + (size_t)(i + 1) * n_rows
     );
   }
-  
+
+  ret.attr("names") = nm;
   ret.attr("row.names") = Rcpp::IntegerVector::create(NA_INTEGER, -n_rows);
   ret.attr("class") = "data.frame";
-  
+
   return ret;
 }
 
