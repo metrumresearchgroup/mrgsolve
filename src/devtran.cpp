@@ -840,6 +840,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   if((tscale != 1) && (tscale >= 0)) {
     ans(Rcpp::_,1) = ans(Rcpp::_,1) * tscale;
   }
-  return Rcpp::List::create(Rcpp::Named("data") = mat2df(ans),
+  return Rcpp::List::create(Rcpp::Named("data") = ans,
                             Rcpp::Named("trannames") = tran_names);
 }

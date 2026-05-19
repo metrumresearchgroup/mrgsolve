@@ -156,15 +156,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// set_names_inplace
-void set_names_inplace(Rcpp::RObject x, Rcpp::CharacterVector nm);
-RcppExport SEXP _mrgsolve_set_names_inplace(SEXP xSEXP, SEXP nmSEXP) {
+// mat2df
+Rcpp::List mat2df(Rcpp::NumericMatrix const& x, Rcpp::CharacterVector nm);
+RcppExport SEXP _mrgsolve_mat2df(SEXP xSEXP, SEXP nmSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix const& >::type x(xSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type nm(nmSEXP);
-    set_names_inplace(x, nm);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(mat2df(x, nm));
+    return rcpp_result_gen;
 END_RCPP
 }
 // TOUCH_FUNS

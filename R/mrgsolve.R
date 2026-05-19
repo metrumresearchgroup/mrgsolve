@@ -734,7 +734,7 @@ do_mrgsim <- function(x,
     cnames <- new_names
   }
   
-  set_names_inplace(out[["data"]], cnames)
+  out[["data"]] <- mat2df(out[["data"]], cnames)
 
   if(do_recover_data || do_recover_idata) {
     if(do_recover_data) {
@@ -891,8 +891,8 @@ qsim <- function(x,
   
   if(tad) tcol <- c(tcol,"tad")
   
-  set_names_inplace(out[["data"]], c("ID", tcol, x@cmtL, x@capL))
-  
+  out[["data"]] <- mat2df(out[["data"]], c("ID", tcol, x@cmtL, x@capL))
+
   if(output=="df") {
     return(out[["data"]])
   }
