@@ -58,4 +58,7 @@ vignettes/extra/mrgsolve-builds/
 ^LICENSE\.md$
 ^build$
 ^\.claude$
+^\.codex$
+^\.agents$
+^data/\.uv-cache$
 ^CLAUDE\.md$

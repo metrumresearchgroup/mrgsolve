@@ -250,7 +250,7 @@ tests <- function() {
 }
 
 models <- function() {
-  file.path(path.package("mrgsolve"), "models")
+  system.file("models", package = "mrgsolve")
 }
 
 .onLoad <- function(libname, pkgname) {

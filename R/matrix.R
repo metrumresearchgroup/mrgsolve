@@ -16,6 +16,9 @@
 
 SUPERMATRIX <- function(x, keep_names = FALSE, no_names = TRUE) {
   if(!is.list(x)) stop("x must be a list")
+  if(!all(vapply(x, is.matrix, TRUE))) {
+    stop("all elements of x must be matrices", call. = FALSE)
+  }
   keep_names <- keep_names & no_names
   x <- .Call(`_mrgsolve_SUPERMATRIX`, x, keep_names, PACKAGE = "mrgsolve")
   if(no_names) return(x)

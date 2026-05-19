@@ -28,7 +28,7 @@ if(!requireNamespace("xml2",quietly=TRUE)) skip("xml2 is not installed.")
 
 code <- '
 $NMXML
-project = file.path(path.package("mrgsolve"), "nonmem")
+project = system.file("nonmem", package = "mrgsolve")
 run  = 1005
 oname="OMEGA", sname="SIGMA"
 sigma=TRUE
@@ -77,7 +77,7 @@ $SIGMA
 4
 
 $NMXML
-project=file.path(path.package("mrgsolve"), "nonmem")
+project=system.file("nonmem", package = "mrgsolve")
 run  = 1005
 oname="OMGA", sname="SIGMA"
 
@@ -180,7 +180,7 @@ test_that("Warning issued if updating unnamed matrix with named matrix", {
 
 code <- '
 $NMXML
-project=file.path(path.package("mrgsolve"), "nonmem")
+project=system.file("nonmem", package = "mrgsolve")
 run  = 1005
 omega = FALSE, sigma = FALSE
 '
@@ -193,7 +193,7 @@ test_that("No matrices when name not given", {
 
 code <- '
 $NMXML
-project=file.path(path.package("mrgsolve"), "nonmem")
+project=system.file("nonmem", package = "mrgsolve")
 run  = 1005
 sigma = FALSE
 '

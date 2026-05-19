@@ -38,8 +38,8 @@ test_that("test-matrix SUPERMATRIX", {
     expect_is(ans, "matrix")
     expect_equal(dim(ans), c(6, 6))
     ml$a <- "a"
-    expect_error(mrgsolve:::SUPERMATRIX(ml), msg = "is not TRUE")
-    expect_error(mrgsolve:::SUPERMATRIX(ml[[1]]), msg = "is not TRUE")
+    expect_error(mrgsolve:::SUPERMATRIX(ml), msg = "all elements of x must be matrices")
+    expect_error(mrgsolve:::SUPERMATRIX(ml[[1]]), msg = "x must be a list")
     ml$a <- NULL
     ans <- mrgsolve:::SUPERMATRIX(ml[2])
     expect_identical(unname(ml[[2]]),unname(ans))

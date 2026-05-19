@@ -141,11 +141,11 @@ NULL
 #nocov start
 # TODO: clean
 cfile_dir <- function() {
-  file.path(path.package("mrgsolve"), "models")
+  system.file("models", package = "mrgsolve")
 }
 
 object_dir <- function() {
-  file.path(path.package("mrgsolve"), "models")
+  system.file("models", package = "mrgsolve")
 }
 #nocov end
 
