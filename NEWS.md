@@ -1,4 +1,24 @@
-# mrgsolve (development version)
+# mrgsolve 2.0.1
+
+## Bugs Fixed
+
+- Fixed a bug causing an error when calling `pow_convert()` on empty model 
+  code blocks. (#1381)
+
+- Fixed a compilation error under C++20, the default standard in R 4.6.0. 
+  A `boost::static_visitor` initialization in `dsl-preprocess.cpp` used 
+  list initialization (`Emitter{}`) that is disallowed in C++20; changed
+  to value initialization (`Emitter()`). (#1385, fixes #1384)
+
+## Internal
+
+- Column names are now assigned to the simulation output matrix in place,
+  avoiding an extra copy of the simulated data. (#1383, #1387)
+
+- Updated the simulation loop to clear an individual's records before moving 
+  to the next individual; this should improve memory utilization, especially 
+  for very large simulation output. (#1388)
+
 
 # mrgsolve 2.0.0
 
