@@ -532,8 +532,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       // Some non-observation event happening
       // Note that F needs to get updated at every dose including addl
-      // but rate is fixed to the parent rate and we only verify infusions 
-      // on actual dose records in the data set. 
+      // but rate is fixed to the parent rate and we only verify infusions
+      // on actual dose records in the data set.
       if(this_rec->is_event()) {
 
         this_cmtn = this_rec->cmtn();
@@ -586,6 +586,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             if(this_rec->ss() > 0) {
               this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
+              // EVID=4 and SS > 1 acts like EVID=1
+              if(this_rec->evid() == 4) this_rec->evid(1);
             }
             // We already advanced to ss
             // Lagged dose and all subsequent should be vanilla EVID=1 doses
