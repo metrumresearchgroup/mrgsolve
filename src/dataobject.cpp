@@ -213,6 +213,7 @@ void dataobject::next_id(int id_n) {
 void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row, 
                                       odeproblem* prob) {
   if(done_copying) return;
+  if(!from_data) return;
   if(from_data) {
     copy_parameters(this_row, prob);
     if(this_row >= Endrow.at(id_n)) {
