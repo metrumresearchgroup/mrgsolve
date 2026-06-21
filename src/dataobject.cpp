@@ -210,20 +210,29 @@ void dataobject::next_id(int id_n) {
   next_copy_row = Startrow.at(id_n);
 }
 
-void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row, 
+void dataobject::copy_next_parameters(int id_n, bool from_data, 
+                                      int this_row, 
                                       odeproblem* prob) {
-  if(done_copying) return;
-  if(!from_data) return;
+  if(done_copying) {
+    return;
+  }
+  
+  // Copy from the data record we are advancing too
   if(from_data) {
     copy_parameters(this_row, prob);
-    if(this_row >= Endrow.at(id_n)) {
+    if(this_row == Endrow[id_n]) {
       done_copying = true;  
       return;
     }
+    // In case of sparse input data, mark the row to pull parameters from 
+    // when we advance to the next data record, potentially hitting inserted
+    // records in between
     next_copy_row = ++this_row;
     return;
   }
-  if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow.at(id_n))) {
+  // Moving off of a data record; copy from the next available row
+  // For nocb only
+  if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow[id_n])) {
     copy_parameters(next_copy_row, prob); 
     last_copy_row = next_copy_row;
   }

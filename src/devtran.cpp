@@ -275,7 +275,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       std::inplace_merge(it->begin(), it->begin() + merge_idx, it->end(), CompRec());
     }
   }
-
+  
   // Create results matrix:
   //  rows: ntime*nset
   //  cols: rep, time, eq[0], eq[1], ..., yout[0], yout[1],...
@@ -435,14 +435,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       idat.copy_inits(this_idata_row,&prob);
     }
     
-    if(dat.any_copy) {
-      if(a[i][0]->from_data()) {
-        dat.copy_parameters(a[i][0]->pos(),&prob);
-      } else {
-        if(filbak) {
-          dat.copy_parameters(dat.start(i),&prob);
-        }
-      }
+    if(dat.any_copy && filbak) {
+      dat.copy_parameters(dat.start(i), &prob);  
     }
     
     prob.set_d(a[i][0]);
@@ -454,7 +448,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         Rcpp::checkUserInterrupt();
         ic = prob.interrupt;
       }
-    
+      
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
@@ -467,8 +461,8 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       // Only update row counters on output records
       if(this_rec->output()) {
-         prob.irown(icrow);
-         prob.rown(crow);
+        prob.irown(icrow);
+        prob.rown(crow);
       }
       
       if(prob.systemoff()) {
@@ -501,16 +495,6 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         continue;
       }
       
-      if(dat.any_copy && nocb) {
-        // will call lsoda_init if parameters are copied
-        dat.copy_next_parameters(
-          i, 
-          this_rec->from_data(), 
-          this_rec->pos(), 
-          &prob
-        );
-      }
-
       double dt  = (tto-tfrom)/(tfrom == 0.0 ? 1.0 : tfrom);
       
       if((dt > 0.0) && (dt < mindt)) {
@@ -519,6 +503,17 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       for(int k = 0; k < neps; ++k) {
         prob.eps(k,eps(crow,k));
+      }
+      
+      // nocb we copy tto parameters just prior to $PK
+      if(dat.any_copy && (nocb)) {
+        // will call lsoda_init if parameters are copied
+        dat.copy_next_parameters(
+          i, 
+          this_rec->from_data(), 
+          this_rec->pos(), 
+          &prob
+        );
       }
       
       if(j != 0) {
@@ -535,7 +530,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       // but rate is fixed to the parent rate and we only verify infusions 
       // on actual dose records in the data set. 
       if(this_rec->is_event()) {
-
+        
         this_cmtn = this_rec->cmtn();
         
         if(!this_rec->is_lagged()) {
@@ -559,7 +554,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(this_rec->rate() < 0) {
           prob.check_data_rate(this_rec, this_cmtn);  
         }
-
+        
         // Only check data set records
         if(this_rec->from_data()) {
           // Validate modeled rates
@@ -575,12 +570,12 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(this_rec->rate() < 0) {
           prob.rate_main(this_rec, this_cmtn);
         }
-
+        
         bool sort_recs = false;
-
+        
         // Checking
         if(!this_rec->is_lagged()) {
-
+          
           // there is a valid lag time
           if(prob.alag(this_cmtn) > mindt && this_rec->is_dose()) {
             if(this_rec->ss() > 0) {
@@ -629,7 +624,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
             }
           }
         } // from data
-
+        
         // This block gets hit for any and all infusions; sometimes the
         // infusion just got started and we need to add the lag time
         // sometimes it is an infusion via addl and lag time is already there
@@ -641,7 +636,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
                                  this_rec->rate(),
                                  -299,
                                  id);
-
+          
           if(this_rec->from_data()) {
             evoff->time(evoff->time() + prob.alag(this_cmtn));
           }
@@ -658,16 +653,20 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       
       prob.advance(tfrom,tto,solver);
       
-      if(this_rec->evid() != 2) {
-        this_rec->steady(&prob,a[i],solver);
-        this_rec->implement(&prob);
-      }
-      
       if(!nocb && dat.any_copy) {
         if(this_rec->from_data()) {
           // will call lsoda_init
-          dat.copy_parameters(this_rec->pos(),&prob);
+          dat.copy_parameters(this_rec->pos(), &prob);
+          if(this_rec->is_dose() && !this_rec->is_lagged()) {
+            prob.init_call_record(tto);
+            this_rec->fn(prob.fbio(this_rec->cmtn()));
+          }
         }
+      }
+      
+      if(this_rec->evid() != 2) {
+        this_rec->steady(&prob,a[i],solver);
+        this_rec->implement(&prob);
       }
       
       if(!this_rec->is_lagged()) {
