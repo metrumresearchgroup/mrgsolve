@@ -210,7 +210,7 @@ void dataobject::next_id(int id_n) {
   next_copy_row = Startrow.at(id_n);
 }
 
-void dataobject::copy_next_parameters(int id_n, bool from_data, 
+void dataobject::copy_parameters_nocb(int id_n, bool from_data, 
                                       int this_row, 
                                       odeproblem* prob) {
   if(done_copying) {
