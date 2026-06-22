@@ -191,7 +191,8 @@ void datarecord::implement(odeproblem* prob) {
   case 8: // replace
     prob->y(eq_n, Amt);
     break;
-  case 4: // dose and reset; reset only if non-ss
+  case 4: 
+    // When EVID=4 and SS=1 we're already at SS and don't reset
     if(this->ss()==0 && !prob->system_at_ss) {
       for(int i=0; i < prob->neq(); ++i) {
         prob->y(i,0.0);
@@ -200,6 +201,7 @@ void datarecord::implement(odeproblem* prob) {
       }
       prob->init_call(Time);
     }
+    // For example, doses at lag times
     if(!Armed) break;
     if(Rate > 0) {
       this->evid(5);
