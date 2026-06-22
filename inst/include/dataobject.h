@@ -59,7 +59,7 @@ public:
   double get_uid(int i) const {return Uid.at(i);}
   uidtype return_uid()  {return Uid;}
   void copy_parameters(int this_row,odeproblem *prob);
-  void copy_parameters_nocb(int id_n, bool from_data, int this_row, odeproblem *prob);
+  void copy_parameters_nocb(int id_n, const rec_ptr& this_rec, odeproblem *prob);
   void next_id(int id_n);
   void copy_inits(int this_row,odeproblem *prob);
   void reload_parameters(const Rcpp::NumericVector& param, odeproblem *prob);

@@ -151,3 +151,65 @@ $CAPTURE DV, CL, COV2 = COV
 })
 
 
+nocb_doses <- '
+$PARAM CL = 1, V = 20, KA = 1.2, FLAG = 0
+$PKMODEL advan = 2
+$PK
+F_A1 = 1; 
+if(FLAG==1) F_A1 = 0.5;
+capture FF = F_A1;
+$CAPTURE FLAG
+'
+mod <- mcode("nocb-doses", nocb_doses)
+ 
+test_that("Covariate effects on bioavailability come on the dose record", {
+ 
+  data <- data.frame(
+    ID = 1,
+    TIME = c(0,24,48,72), 
+    EVID = 1, 
+    AMT = 1000, 
+    FLAG = c(0, 1, 1, 0), 
+    CMT = 1
+  )
+  
+  mod <- update(mod, end = 168)
+  
+  out1 <- mrgsim(mod, data, carry_out = "evid")
+  out2 <- mrgsim(mod, data, carry_out = "evid", nocb = FALSE)  
+  out1 <- filter_sims(out1, evid==1)
+  out2 <- filter_sims(out2, evid==1)
+  expect_identical(as.data.frame(out1), as.data.frame(out2))
+
+  out3 <- mrgsim(mod, data, carry_out = "evid", recsort = 3)
+  out4 <- mrgsim(mod, data, carry_out = "evid", recsort = 3, nocb = FALSE)  
+  out3f <- filter_sims(out3, evid==1)
+  out4f <- filter_sims(out4, evid==1)
+  expect_identical(as.data.frame(out3f), as.data.frame(out4f))
+  expect_identical(out3$A2, out4$A2)
+  
+})
+
+test_that("Verify nocb / locf covariate advance", {
+ 
+  data <- data.frame(
+    ID = 1,
+    TIME = c(0,24,48,72), 
+    EVID = 1, 
+    AMT = 1000, 
+    FLAG = c(0, 1, 1, 0), 
+    CMT = 1
+  )
+  
+  mod <- update(mod, end = 168)
+  out1 <- mrgsim(mod, data, carry_out = "evid,DFLAG = FLAG")
+  out2 <- mrgsim(mod, data, carry_out = "evid,DFLAG = FLAG", nocb = FALSE) 
+  
+  ## Covariate nocb
+  expect_equal(out1$FF[c(1,2,3,4)], c(1, 1, 0.5, 0.5))
+  expect_identical(out1$FLAG, out1$FLAG)
+  
+  ## Covariate locf
+  expect_equal(out2$FF[c(1,2,3,4)], c(1, 1, 1,1))
+  expect_identical(out2$FLAG, out2$DFLAG)
+})
