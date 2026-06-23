@@ -152,8 +152,8 @@ $CAPTURE DV, CL, COV2 = COV
 
 
 nocb_doses <- '
-$PARAM CL = 1, V = 20, KA = 1.2, FLAG = 0
-$PKMODEL advan = 2
+$PARAM CL = 5, V = 20, FLAG = 0
+$PKMODEL advan = 1
 $PK
 F_A1 = 1; 
 if(FLAG==1) F_A1 = 0.5;
@@ -166,27 +166,39 @@ test_that("Covariate effects on bioavailability come on the dose record", {
  
   data <- data.frame(
     ID = 1,
-    TIME = c(0,24,48,72), 
+    TIME = c(0,100,200,300), 
     EVID = 1, 
     AMT = 1000, 
-    FLAG = c(0, 1, 1, 0), 
+    FLAG = c(1, 0, 0, 1), 
     CMT = 1
   )
   
-  mod <- update(mod, end = 168)
+  mod <- update(mod, end = 500, delta = 0.1)
   
   out1 <- mrgsim(mod, data, carry_out = "evid")
   out2 <- mrgsim(mod, data, carry_out = "evid", nocb = FALSE)  
   out1 <- filter_sims(out1, evid==1)
   out2 <- filter_sims(out2, evid==1)
   expect_identical(as.data.frame(out1), as.data.frame(out2))
-
+  
+  # Bioavailability obeys dose record parameter value - nocb
+  expect_equal(out1$A1[1],  500, tolerance = 2)
+  expect_equal(out1$A1[2], 1000, tolerance = 2)
+  expect_equal(out1$A1[3], 1000, tolerance = 2)
+  expect_equal(out1$A1[4],  500, tolerance = 2)
+  
+  # Bioavailability obeys dose record parameter value - locf
+  expect_equal(out2$A1[1],  500, tolerance = 2)
+  expect_equal(out2$A1[2], 1000, tolerance = 2)
+  expect_equal(out2$A1[3], 1000, tolerance = 2)
+  expect_equal(out2$A1[4],  500, tolerance = 2)
+  
   out3 <- mrgsim(mod, data, carry_out = "evid", recsort = 3)
   out4 <- mrgsim(mod, data, carry_out = "evid", recsort = 3, nocb = FALSE)  
   out3f <- filter_sims(out3, evid==1)
   out4f <- filter_sims(out4, evid==1)
   expect_identical(as.data.frame(out3f), as.data.frame(out4f))
-  expect_identical(out3$A2, out4$A2)
+  expect_identical(out3$A1, out4$A1)
   
 })
 
