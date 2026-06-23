@@ -237,6 +237,7 @@ public:
   bool ss_fixed; ///< If true, then no warning is issued if SS not reached in ss_n doses
   int ss_n; ///< Max number of doses during SS advance before warning is issued
   bool ss_flag; ///< flag indicating when the system is advancing to SS
+  bool system_at_ss; ///< flag indicating the system was advanced to SS 
   std::vector<int> Ss_cmt; ///< vector of compartments to consider for SS
 
   bool check_modeled_infusions;

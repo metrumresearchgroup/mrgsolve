@@ -88,6 +88,7 @@ odeproblem::odeproblem(Rcpp::List param,
   ss_fixed = false;
   ss_n = 500;
   ss_flag = false;
+  system_at_ss = false;
   ssRtol = 0;
   ssAtol = 0;
   interrupt = -1;

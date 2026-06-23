@@ -191,9 +191,9 @@ void datarecord::implement(odeproblem* prob) {
   case 8: // replace
     prob->y(eq_n, Amt);
     break;
-  case 4: // dose and reset; reset only if non-ss
-    if(!Armed) break;
-    if(this->ss()==0) {
+  case 4: 
+    // When EVID=4 and SS=1 we're already at SS and don't reset
+    if(this->ss()==0 && !prob->system_at_ss) {
       for(int i=0; i < prob->neq(); ++i) {
         prob->y(i,0.0);
         prob->on(i);
@@ -201,6 +201,8 @@ void datarecord::implement(odeproblem* prob) {
       }
       prob->init_call(Time);
     }
+    // For example, doses at lag times
+    if(!Armed) break;
     if(Rate > 0) {
       this->evid(5);
     } else {
@@ -309,6 +311,7 @@ void datarecord::steady_bolus(odeproblem* prob, LSODA& solver) {
   } 
   prob->lsoda_init();
   prob->ss_flag = false;
+  prob->system_at_ss = true;
 } 
 
 
@@ -464,6 +467,7 @@ void datarecord::steady_infusion(odeproblem* prob, reclist& thisi, LSODA& solver
   std::inplace_merge(thisi.begin(),thisi.begin()+merge_idx,thisi.end(),CompRec());
   prob->lsoda_init();
   prob->ss_flag = false;
+  prob->system_at_ss = true;
 }
 
 void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
@@ -533,6 +537,7 @@ void datarecord::steady_zero(odeproblem* prob, LSODA& solver) {
   prob->lsoda_init();
   this->unarm();
   prob->ss_flag = false;
+  prob->system_at_ss = true;
 }
 
 void datarecord::schedule(reclist& thisi, double maxtime, 
