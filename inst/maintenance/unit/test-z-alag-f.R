@@ -1,4 +1,4 @@
-# Copyright (C) 2013 - 2023  Metrum Research Group
+# Copyright (C) 2013 - 2026  Metrum Research Group
 #
 # This file is part of mrgsolve.
 #
@@ -48,11 +48,30 @@ mod <-
   carry_out(evid) %>% 
   update(end=2)
 
-test_that("ss=1 and F_CMT =0 issue-497", {
+test_that("ss=1 and F_CMT=0 issue-497", {
   mod <- param(mod, F1 = 0)
   out <- mrgsim(mod, ev(amt = 100, ii = 24, ss=1), delta=1,end=6)
   expect_is(out, "mrgsims")
   expect_true(all(out$CENT==0))
+})
+
+test_that("EVID=4 with lag time still resets gh-1396", {
+  mod <- param(mod, ALAG1 = 0.25)
+  e <- ev_seq(
+    ev(amt = 100, ii = 12, addl = 3), 
+    wait = 24, 
+    ev(amt = 50, evid = 4), 
+    wait = 24,
+    ev(amt = 100, ii = 12, addl = 3)
+  )
+  e <- realize_addl(e)
+  out <- mrgsim(mod, e, end = 2*168, carry_out = "evid")
+  out <- filter(out, time %in% c(72, 73))
+  expect_equal(nrow(out), 3)
+  # Accumulated 100 mg doses x4, then reset, then the 50 mg dose on EVID4
+  expect_equal(out$CENT, c(400, 0, 50))
+  # EVID=4 record still carries out ok
+  expect_equal(out$evid, c(0, 4, 0)) 
 })
 
 

@@ -454,7 +454,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         Rcpp::checkUserInterrupt();
         ic = prob.interrupt;
       }
-    
+
       rec_ptr this_rec = a[i][j];
       
       this_rec->id(id);
@@ -464,6 +464,9 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(icrow==NNI || crow==NN || tto > maxtime) {
         continue;
       }
+
+      // steady() has not been called yet on this record
+      prob.system_at_ss = false;
       
       // Only update row counters on output records
       if(this_rec->output()) {
@@ -587,7 +590,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
               this_rec->steady(&prob, a[i], solver);
               tfrom = tto;
             }
-            // We already advanced to ss
+            // We already advanced to ss; prob has the system_at_ss flag set
             // Lagged dose and all subsequent should be vanilla EVID=1 doses
             this_rec->ss(0);
             rec_ptr newev = NEWREC(*this_rec);
