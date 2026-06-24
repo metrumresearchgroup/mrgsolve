@@ -152,13 +152,15 @@ $CAPTURE DV, CL, COV2 = COV
 
 
 nocb_doses <- '
-$PARAM CL = 5, V = 20, FLAG = 0
+$PARAM TVCL = 5, V = 20, FLAG = 0, COV = 0
 $PKMODEL advan = 1
 $PK
 F_A1 = 1; 
 if(FLAG==1) F_A1 = 0.5;
+double CL = TVCL;
+if(COV==1) CL = TVCL / 10;
 capture FF = F_A1;
-$CAPTURE FLAG
+$CAPTURE FLAG CL
 '
 mod <- mcode("nocb-doses", nocb_doses)
  
@@ -203,7 +205,7 @@ test_that("Covariate effects on bioavailability come on the dose record", {
 })
 
 test_that("Verify nocb / locf covariate advance", {
- 
+
   data <- data.frame(
     ID = 1,
     TIME = c(0,24,48,72), 
@@ -224,4 +226,43 @@ test_that("Verify nocb / locf covariate advance", {
   ## Covariate locf
   expect_equal(out2$FF[c(1,2,3,4)], c(1, 1, 1,1))
   expect_identical(out2$FLAG, out2$DFLAG)
+  
+  ## Recsort 1 or 3 changes the full output; this is expected
+  # But identical result (save the dose record amount) if you grab the 
+  # equivalent rows
+  data <- data.frame(
+    ID = 1, 
+    TIME = c(0, 1, 5, 10), 
+    EVID = c(2, 1, 2, 2), 
+    AMT = c(0, 1000, 0, 0), 
+    COV = c(0, 0, 1, 0),
+    CMT = 1
+  )
+
+  out11 <- mrgsim(mod, data, end = 11, delta = 1, recsort = 1)
+  out21 <- mrgsim(mod, data, end = 11, delta = 1, nocb = FALSE, recsort = 1)  
+  
+  out13 <- mrgsim(mod, data, end = 11, delta = 1, recsort = 3)
+  out23 <- mrgsim(mod, data, end = 11, delta = 1, nocb = FALSE, recsort = 3)
+  
+  expect_false(identical(out11$CL, out13$CL))
+  expect_false(identical(out21$CL, out23$CL))
+  
+  out110 <- dplyr::slice(out11, 1, .by = TIME)
+  out130 <- dplyr::slice(out13, 1, .by = TIME)
+  expect_identical(out110$CL, out130$CL)
+  
+  out110b <- dplyr::filter(out110, TIME != 1)
+  out130b <- dplyr::filter(out130, TIME != 1)
+  expect_identical(out110b, out130b)
+  
+  out210 <- dplyr::slice(out21, 1, .by = TIME)
+  out230 <- dplyr::slice(out23, 1, .by = TIME)
+  expect_identical(out210$CL, out230$CL)
+  
+  out210b <- dplyr::filter(out210, TIME != 1)
+  out230b <- dplyr::filter(out230, TIME != 1)
+  expect_identical(out210b, out230b)
+
 })
+
