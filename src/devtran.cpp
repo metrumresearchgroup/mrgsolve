@@ -655,7 +655,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         if(this_rec->from_data()) {
           // will call lsoda_init
           dat.copy_parameters(this_rec->pos(), &prob);
-          if(this_rec->is_dose() && !this_rec->is_lagged()) {
+          if(!this_rec->is_lagged()) {
             prob.init_call_record(tto);
             this_rec->fn(prob.fbio(this_rec->cmtn()));
           }

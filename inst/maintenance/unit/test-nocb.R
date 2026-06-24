@@ -256,13 +256,18 @@ test_that("Verify nocb / locf covariate advance", {
   out130b <- dplyr::filter(out130, TIME != 1)
   expect_identical(out110b, out130b)
   
-  out210 <- dplyr::slice(out21, 1, .by = TIME)
-  out230 <- dplyr::slice(out23, 1, .by = TIME)
+  # The actual simulation results are identical; we are only looking at 
+  # the bookkeeping in the output here
+  out210 <- dplyr::slice(out21, dplyr::n(), .by = TIME)
+  out230 <- dplyr::slice(out23, dplyr::n(), .by = TIME)
   expect_identical(out210$CL, out230$CL)
   
   out210b <- dplyr::filter(out210, TIME != 1)
   out230b <- dplyr::filter(out230, TIME != 1)
   expect_identical(out210b, out230b)
-
+  
+  # Recsort 1 and 3 should be different here  
+  expect_equal(out11$A1[16], out13$A1[16], tolerance = 1e-4)
+  expect_equal(out21$A1[16], out23$A1[16], tolerance = 1e-4)
 })
 
