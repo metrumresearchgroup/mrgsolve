@@ -509,7 +509,7 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       }
       
       // nocb we copy tto parameters just prior to $PK
-      if(dat.any_copy && (nocb)) {
+      if(dat.any_copy && nocb) {
         // will call lsoda_init if parameters are copied
         dat.copy_parameters_nocb(i, this_rec, &prob);
       }
