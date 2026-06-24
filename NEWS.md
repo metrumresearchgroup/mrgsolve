@@ -1,4 +1,19 @@
-# mrgsolve (development version)
+# mrgsolve 2.0.2
+
+## Bugs Fixed
+
+- Fixed a bug where the system was not correctly reset prior to a reset-and-dose
+  event (`EVID=4`) when the dose had a lag time. The flawed logic was introduced
+  when matching NONMEM behavior for `EVID=4` with lag times; a new
+  `system_at_ss` flag in `odeproblem` now prevents an erroneous reset when the
+  system has already advanced to steady state. (#1397, fixes #1396)
+
+- Fixed a bug where a bioavailability parameter (`F`) derived from a data set
+  column was not evaluated correctly under `locf` advance. The fix
+  implements a second call to `$MAIN` after the `locf`-targeted
+  parameter update so that the dosing record's parameter value determines `F`,
+  consistent with `nocb` behavior. (#1399, fixes #1395)
+
 
 # mrgsolve 2.0.1
 
