@@ -219,7 +219,7 @@ test_that("Verify nocb / locf covariate advance", {
   
   ## Covariate nocb
   expect_equal(out1$FF[c(1,2,3,4)], c(1, 1, 0.5, 0.5))
-  expect_identical(out1$FLAG, out1$FLAG)
+  expect_identical(out1$FLAG, out1$DFLAG)
   
   ## Covariate locf
   expect_equal(out2$FF[c(1,2,3,4)], c(1, 1, 1,1))
