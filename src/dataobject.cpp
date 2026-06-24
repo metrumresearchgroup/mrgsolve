@@ -207,23 +207,50 @@ void dataobject::copy_parameters(int this_row, odeproblem* prob) {
 void dataobject::next_id(int id_n) {
   done_copying = false;
   last_copy_row = -1;
-  next_copy_row = Startrow.at(id_n);
+  next_copy_row = Startrow[id_n];
 }
 
-void dataobject::copy_next_parameters(int id_n, bool from_data, int this_row, 
+/** 
+  Copies parameters from the data set under nocb
+  
+  @param id_n The current ID number (zero to nid-1)
+  @param from_data Is the record actually in the data or not
+  @param this_row The data set record position (rec->pos())
+  @param odeproblem The problem object
+
+  @details
+  - done_copying, next_copy_row, and last_copy_row are initialized for each id
+  - If the record is from the data set, we copy the parameters from that row, 
+    then do some bookkeeping to figure out if we are done copying or to get the 
+    number of the next row to copy when we're advancing away from a data set
+    record and toward a non-dataset record
+  - The `next_copy_row` comparison against `last_copy_row` make sure that when
+    we're processing the first inserted record after a data set record, we copy 
+    the next data set row just once; this is nocb behavior    
+**/
+void dataobject::copy_parameters_nocb(int id_n, const rec_ptr& this_rec,
                                       odeproblem* prob) {
-  if(done_copying) return;
-  if(from_data) {
+  if(done_copying) {
+    return;
+  }
+  // Copy from the data record we are advancing too
+  if(this_rec->from_data()) {
+    int this_row = this_rec->pos();
     copy_parameters(this_row, prob);
-    if(this_row >= Endrow.at(id_n)) {
-      done_copying = true;  
+    if(this_row == Endrow[id_n]) {
+      done_copying = true;
       return;
     }
+    // In case of sparse input data, mark the row to pull parameters from
+    // when we advance to the next data record, potentially hitting inserted
+    // records in between
     next_copy_row = ++this_row;
     return;
   }
-  if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow.at(id_n))) {
-    copy_parameters(next_copy_row, prob); 
+  // Moving off of a data record; copy from the next available row
+  // For nocb only
+  if((next_copy_row != last_copy_row) && (next_copy_row <= Endrow[id_n])) {
+    copy_parameters(next_copy_row, prob);
     last_copy_row = next_copy_row;
   }
 }

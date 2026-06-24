@@ -151,3 +151,123 @@ $CAPTURE DV, CL, COV2 = COV
 })
 
 
+nocb_doses <- '
+$PARAM TVCL = 5, V = 20, FLAG = 0, COV = 0
+$PKMODEL advan = 1
+$PK
+F_A1 = 1; 
+if(FLAG==1) F_A1 = 0.5;
+double CL = TVCL;
+if(COV==1) CL = TVCL / 10;
+capture FF = F_A1;
+$CAPTURE FLAG CL
+'
+mod <- mcode("nocb-doses", nocb_doses)
+ 
+test_that("Covariate effects on bioavailability come on the dose record", {
+ 
+  data <- data.frame(
+    ID = 1,
+    TIME = c(0,100,200,300), 
+    EVID = 1, 
+    AMT = 1000, 
+    FLAG = c(1, 0, 0, 1), 
+    CMT = 1
+  )
+  
+  mod <- update(mod, end = 500, delta = 0.1)
+  
+  out1 <- mrgsim(mod, data, carry_out = "evid")
+  out2 <- mrgsim(mod, data, carry_out = "evid", nocb = FALSE)  
+  out1 <- filter_sims(out1, evid==1)
+  out2 <- filter_sims(out2, evid==1)
+  expect_identical(as.data.frame(out1), as.data.frame(out2))
+  
+  # Bioavailability obeys dose record parameter value - nocb
+  expect_equal(out1$A1[1],  500, tolerance = 2)
+  expect_equal(out1$A1[2], 1000, tolerance = 2)
+  expect_equal(out1$A1[3], 1000, tolerance = 2)
+  expect_equal(out1$A1[4],  500, tolerance = 2)
+  
+  # Bioavailability obeys dose record parameter value - locf
+  expect_equal(out2$A1[1],  500, tolerance = 2)
+  expect_equal(out2$A1[2], 1000, tolerance = 2)
+  expect_equal(out2$A1[3], 1000, tolerance = 2)
+  expect_equal(out2$A1[4],  500, tolerance = 2)
+  
+  out3 <- mrgsim(mod, data, carry_out = "evid", recsort = 3)
+  out4 <- mrgsim(mod, data, carry_out = "evid", recsort = 3, nocb = FALSE)  
+  out3f <- filter_sims(out3, evid==1)
+  out4f <- filter_sims(out4, evid==1)
+  expect_identical(as.data.frame(out3f), as.data.frame(out4f))
+  expect_identical(out3$A1, out4$A1)
+  
+})
+
+test_that("Verify nocb / locf covariate advance", {
+
+  data <- data.frame(
+    ID = 1,
+    TIME = c(0,24,48,72), 
+    EVID = 1, 
+    AMT = 1000, 
+    FLAG = c(0, 1, 1, 0), 
+    CMT = 1
+  )
+  
+  mod <- update(mod, end = 168)
+  out1 <- mrgsim(mod, data, carry_out = "evid,DFLAG = FLAG")
+  out2 <- mrgsim(mod, data, carry_out = "evid,DFLAG = FLAG", nocb = FALSE) 
+  
+  ## Covariate nocb
+  expect_equal(out1$FF[c(1,2,3,4)], c(1, 1, 0.5, 0.5))
+  expect_identical(out1$FLAG, out1$DFLAG)
+  
+  ## Covariate locf
+  expect_equal(out2$FF[c(1,2,3,4)], c(1, 1, 1,1))
+  expect_identical(out2$FLAG, out2$DFLAG)
+  
+  ## Recsort 1 or 3 changes the full output; this is expected
+  # But identical result (save the dose record amount) if you grab the 
+  # equivalent rows
+  data <- data.frame(
+    ID = 1, 
+    TIME = c(0, 1, 5, 10), 
+    EVID = c(2, 1, 2, 2), 
+    AMT = c(0, 1000, 0, 0), 
+    COV = c(0, 0, 1, 0),
+    CMT = 1
+  )
+
+  out11 <- mrgsim(mod, data, end = 11, delta = 1, recsort = 1)
+  out21 <- mrgsim(mod, data, end = 11, delta = 1, nocb = FALSE, recsort = 1)  
+  
+  out13 <- mrgsim(mod, data, end = 11, delta = 1, recsort = 3)
+  out23 <- mrgsim(mod, data, end = 11, delta = 1, nocb = FALSE, recsort = 3)
+  
+  expect_false(identical(out11$CL, out13$CL))
+  expect_false(identical(out21$CL, out23$CL))
+  
+  out110 <- dplyr::slice(out11, 1, .by = TIME)
+  out130 <- dplyr::slice(out13, 1, .by = TIME)
+  expect_identical(out110$CL, out130$CL)
+  
+  out110b <- dplyr::filter(out110, TIME != 1)
+  out130b <- dplyr::filter(out130, TIME != 1)
+  expect_identical(out110b, out130b)
+  
+  # The actual simulation results are identical; we are only looking at 
+  # the bookkeeping in the output here
+  out210 <- dplyr::slice(out21, dplyr::n(), .by = TIME)
+  out230 <- dplyr::slice(out23, dplyr::n(), .by = TIME)
+  expect_identical(out210$CL, out230$CL)
+  
+  out210b <- dplyr::filter(out210, TIME != 1)
+  out230b <- dplyr::filter(out230, TIME != 1)
+  expect_identical(out210b, out230b)
+  
+  # Recsort 1 and 3 should be different here  
+  expect_equal(out11$A1[16], out13$A1[16], tolerance = 1e-4)
+  expect_equal(out21$A1[16], out23$A1[16], tolerance = 1e-4)
+})
+

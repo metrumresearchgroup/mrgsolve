@@ -19,8 +19,16 @@ jobs:
         config:
           - os: ubuntu-22.04
             r: 4.1.3
+            # distributional 0.8.0 requires R 4.3 through its use of
+            # chooseOpsMethod.
+            distributional_pkg: 'url::https://mpn.metworx.com/snapshots/stable/2026-05-27/src/contrib/distributional_0.7.0.tar.gz'
+            pinned: true
           - os: ubuntu-22.04
             r: 4.2.3
+            # distributional 0.8.0 requires R 4.3 through its use of
+            # chooseOpsMethod.
+            distributional_pkg: 'url::https://mpn.metworx.com/snapshots/stable/2026-05-27/src/contrib/distributional_0.7.0.tar.gz'
+            pinned: true
           - os: ubuntu-22.04
             r: 4.3.1
           - os: ubuntu-latest
@@ -35,8 +43,10 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
-          upgrade: 'TRUE'
+          extra-packages: |
+            any::rcmdcheck
+            ${{ matrix.config.distributional_pkg }}
+          upgrade: ${{ matrix.config.pinned && 'FALSE' || 'TRUE' }}
       - name: Install pdflatex
         shell: bash
         run: sudo apt-get install texlive-latex-base texlive-fonts-extra tidy
