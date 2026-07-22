@@ -104,7 +104,7 @@ public:
              Rcpp::List funs,
              int n_capture_);
 
-  ~odeproblem(){};
+  ~odeproblem();
 
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
@@ -256,6 +256,9 @@ public:
   int Advan;  ///< simulation mode: 1/2/3/4 (PK models) or 13 (odes)
   std::vector<double> a;     ///< used for advan 1/2/3/4 calculations
   std::vector<double> alpha; ///< used for advan 1/2/3/4 calculation
+
+  void* Cvode_mem = nullptr; ///< opaque sundialr CVODE handle; null unless solver=="cvode"
+  bool  Use_cvode = false;   ///< integrate Advan 13 via CVODE instead of LSODA
   
   mrgsolve::resim simeta;///< functor for resimulating etas
   mrgsolve::resim simeps;///< functor for resimulating epsilons

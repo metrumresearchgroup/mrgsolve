@@ -23,9 +23,11 @@
 
 #include <cmath>
 #include <vector>
+#include <R_ext/Rdynload.h>
 #include "RcppInclude.h"
 #include "odeproblem.h"
 #include "mrgsolve.h"
+#include "sundialr_capi.h"
 
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
@@ -43,6 +45,20 @@ void dosimeps(void* prob_) {
   arma::mat eps = prob->mv_sigma(1);
   for(unsigned int i = 0; i < eps.n_cols; ++i) {
     prob->eps(i, eps(0,i)); 
+  }
+}
+
+// Free the optional CVODE handle. The sundialr C API is resolved at runtime via
+// R_GetCCallable (no LinkingTo). Cvode_mem is only ever non-null when the model
+// ran with solver=="cvode", which requires sundialr to be loaded, so the lookup
+// here is safe. A plain destructor for the LSODA path (Cvode_mem == nullptr).
+odeproblem::~odeproblem() {
+  if(Cvode_mem != nullptr) {
+    typedef void (*fn_cvode_free)(void*);
+    fn_cvode_free cvode_free =
+      (fn_cvode_free) R_GetCCallable("sundialr", "sundialr_cvode_free");
+    if(cvode_free != nullptr) cvode_free(Cvode_mem);
+    Cvode_mem = nullptr;
   }
 }
 
