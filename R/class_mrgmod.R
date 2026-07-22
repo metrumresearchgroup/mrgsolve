@@ -125,8 +125,9 @@ protomod <- list(model=character(0),
                  hmin=0,
                  hmax=0,
                  ixpr=0,
-                 itol=1, 
+                 itol=1,
                  mxhnil=2,
+                 solver="lsoda",
                  shlib=list(date="",par="", cmt="", compiled=FALSE, 
                             version=NULL, source=""),
                  funs = c(main=character(0),
@@ -169,11 +170,13 @@ valid.mrgmod <- function(object) {
   x1 <- length(x)==0
   x2 <- object@advan %in% c(0,1,2,3,4,11,12,13)
   x3 <- !any(object@capture %in% Cmt(object))
+  x4 <- length(object@solver)==1L && object@solver %in% c("lsoda","cvode")
   fun <- valid_funs(object@funs)
-  cool <- x1 & x2 & fun[[1]] & x3
+  cool <- x1 & x2 & fun[[1]] & x3 & x4
   if(cool) return(TRUE)
   x <- c(x,fun[[2]])
   if(!x2) x <- c(x,"advan must be 1, 2, 3, 4, 11, 12, or 13")
+  if(!x4) x <- c(x,"solver must be 'lsoda' or 'cvode'")
   if(!x3) {
     invalid <- intersect(object@capture,Cmt(object))
     invalid <- paste0(invalid,collapse=",")
@@ -224,6 +227,8 @@ valid.mrgmod <- function(object) {
 #' @slot ss_rtol relative tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot ss_atol absolute tolerance to use when finding PK steady state \code{<numeric>}
 #' @slot maxsteps passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}
+#' @slot solver ODE solver for general (\code{advan 13}) models; either
+#' \code{"lsoda"} (default) or \code{"cvode"} \code{<character>}
 #' @slot preclean passed to R CMD SHLIB during compilation \code{<logical>}
 #' @slot verbose print run information to screen \code{<logical>}
 #' @slot quiet print various information to screen \code{<logical>}

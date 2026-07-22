@@ -77,7 +77,7 @@ GLOBALS$TRAN_FILL_NA <- c(
 GLOBALS$UPDATE_SINGLE <- c(
   "atol", "rtol", "ss_rtol", "ss_atol", "verbose", "debug", "preclean", "mindt",
   "digits", "ixpr", "mxhnil", "start", "end", "add", "delta", "maxsteps",
-  "hmin", "hmax", "tscale", "request"
+  "hmin", "hmax", "tscale", "request", "solver"
  )
 GLOBALS$UPDATE_OTHER <- c("param", "init", "omega", "sigma", "outvars")
 GLOBALS$UPDATE_ALL <- c(GLOBALS$UPDATE_SINGLE, GLOBALS$UPDATE_OTHER)
