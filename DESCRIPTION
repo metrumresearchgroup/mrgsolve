@@ -46,8 +46,9 @@ Imports:
     tibble (>= 3.1.6),
     rlang (>= 1.0.1),
     tidyselect (>= 1.1.1),
-    lifecycle, 
-    glue
+    lifecycle,
+    glue,
+    sundialr (>= 0.2.0)
 Suggests:
     rstudioapi,
     lattice,
@@ -68,7 +69,6 @@ Encoding: UTF-8
 Language: en-US
 LazyLoad: yes
 NeedsCompilation: yes
-RoxygenNote: 7.3.3
 Collate: 
     'RcppExports.R'
     'utils.R'
@@ -120,3 +120,4 @@ Collate:
     'relabel.R'
     'update.R'
     'workflows.R'
+Config/roxygen2/version: 8.0.0

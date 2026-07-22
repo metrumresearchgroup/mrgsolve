@@ -23,8 +23,6 @@
 
 #include <deque>
 #include <string>
-#include <cstdlib>
-#include <cstring>
 #include <R_ext/Rdynload.h>
 #include "mrgsolve.h"
 #include "odeproblem.h"
@@ -153,19 +151,22 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   const unsigned int neq = prob.neq();
   LSODA solver(neq, mod);
 
-  // --- CVODE spike seam (Phase 1, throwaway) -------------------------------
-  // Temporary env-var gate: MRGSOLVE_CVODE=1 routes Advan-13 integration through
-  // the sundialr CVODE C API instead of LSODA. This is a hard-coded hook for the
-  // go/no-go spike; Phase 2 replaces it with the model's `solver` slot and
-  // deletes this block. The C API is resolved at runtime via R_GetCCallable
-  // (Imports: sundialr, no LinkingTo, no SUNDIALS headers). Closed-form ADVANs
-  // never reach advance()'s solver call, so they are unaffected by this flag.
+  // --- solver selection: LSODA (default) or CVODE (sundialr C API) ---------
+  // The model's `solver` slot chooses the integrator for general (advan 13)
+  // models. "cvode" builds a sundialr CVODE handle and flips prob.Use_cvode so
+  // advance() takes advance_cvode(); "lsoda" leaves the LSODA path untouched.
+  // The slot is validated to {lsoda,cvode} in valid.mrgmod, but update() does
+  // not run class validity, so we re-check here (fast fail on a typo). The C API
+  // is resolved at runtime via R_GetCCallable (Imports: sundialr, no LinkingTo,
+  // no SUNDIALS headers). Closed-form ADVANs never reach advance()'s solver
+  // call, so they are unaffected regardless of this setting.
   {
-    const char* cvode_env = std::getenv("MRGSOLVE_CVODE");
-    const bool want_cvode = cvode_env != nullptr && cvode_env[0] != '\0' &&
-      std::strcmp(cvode_env, "0") != 0;
+    const std::string solver = Rcpp::as<std::string>(mod.slot("solver"));
+    if(solver != "lsoda" && solver != "cvode") {
+      CRUMP("[mrgsolve] `solver` must be \"lsoda\" or \"cvode\".");
+    }
 
-    if(want_cvode && neq > 0) {
+    if(solver == "cvode" && neq > 0) {
       typedef void* (*fn_create)(int, void*);
       typedef int   (*fn_set_rhs)(void*, sundialr_rhs);
       typedef int   (*fn_set_tol_scalar)(void*, double, double);
@@ -187,17 +188,19 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
         (fn_set_min_step)   R_GetCCallable("sundialr", "sundialr_cvode_set_min_step");
 
       if(cvode_create == nullptr) {
-        CRUMP("[mrgsolve] MRGSOLVE_CVODE is set but the sundialr CVODE C API is "
-              "not available; is sundialr (>= 0.2.0) installed and loadable?");
+        CRUMP("[mrgsolve] solver=\"cvode\" requires the sundialr CVODE C API, "
+              "which is not available; is sundialr (>= 0.2.0) installed and "
+              "loadable?");
       }
 
-      // Spike supports scalar tolerances only (itol==1). Per-compartment
-      // tolerances (itol==4) arrive in Phase 3 via set_tol_vector; erroring
-      // here avoids silently integrating with the wrong error control.
+      // scalar tolerances only (itol==1). Per-compartment tolerances (itol==4)
+      // arrive in Phase 3 via set_tol_vector; erroring here avoids silently
+      // integrating with the wrong error control.
       const int itol = Rcpp::as<int>(mod.slot("itol"));
       if(itol > 1) {
-        CRUMP("[mrgsolve] the CVODE spike supports scalar tolerances only "
-              "(itol==1); per-compartment tolerances are not wired yet.");
+        CRUMP("[mrgsolve] solver=\"cvode\" supports scalar tolerances only "
+              "(itol==1); per-compartment tolerances (itol==4) are not "
+              "supported yet.");
       }
 
       void* cvode_mem = cvode_create((int) neq, &prob);

@@ -64,6 +64,9 @@ ignore \code{<numeric>}}
 
 \item{\code{maxsteps}}{passed to \code{\link[=solversettings]{dlsoda}} \code{<numeric>}}
 
+\item{\code{solver}}{ODE solver for general (\code{advan 13}) models; either
+\code{"lsoda"} (default) or \code{"cvode"} \code{<character>}}
+
 \item{\code{preclean}}{passed to R CMD SHLIB during compilation \code{<logical>}}
 
 \item{\code{verbose}}{print run information to screen \code{<logical>}}
