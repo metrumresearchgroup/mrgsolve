@@ -23,11 +23,15 @@
 
 #include <deque>
 #include <string>
+#include <cstdlib>
+#include <cstring>
+#include <R_ext/Rdynload.h>
 #include "mrgsolve.h"
 #include "odeproblem.h"
 #include "dataobject.h"
 #include "RcppInclude.h"
 #include "LSODA.h"
+#include "sundialr_capi.h"
 
 #define CRUMP(a) throw Rcpp::exception(a,false)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
@@ -148,7 +152,80 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
   LSODA solver(neq, mod);
-  
+
+  // --- CVODE spike seam (Phase 1, throwaway) -------------------------------
+  // Temporary env-var gate: MRGSOLVE_CVODE=1 routes Advan-13 integration through
+  // the sundialr CVODE C API instead of LSODA. This is a hard-coded hook for the
+  // go/no-go spike; Phase 2 replaces it with the model's `solver` slot and
+  // deletes this block. The C API is resolved at runtime via R_GetCCallable
+  // (Imports: sundialr, no LinkingTo, no SUNDIALS headers). Closed-form ADVANs
+  // never reach advance()'s solver call, so they are unaffected by this flag.
+  {
+    const char* cvode_env = std::getenv("MRGSOLVE_CVODE");
+    const bool want_cvode = cvode_env != nullptr && cvode_env[0] != '\0' &&
+      std::strcmp(cvode_env, "0") != 0;
+
+    if(want_cvode && neq > 0) {
+      typedef void* (*fn_create)(int, void*);
+      typedef int   (*fn_set_rhs)(void*, sundialr_rhs);
+      typedef int   (*fn_set_tol_scalar)(void*, double, double);
+      typedef int   (*fn_set_max_steps)(void*, long);
+      typedef int   (*fn_set_max_step)(void*, double);
+      typedef int   (*fn_set_min_step)(void*, double);
+
+      fn_create         cvode_create =
+        (fn_create)         R_GetCCallable("sundialr", "sundialr_cvode_create");
+      fn_set_rhs        cvode_set_rhs =
+        (fn_set_rhs)        R_GetCCallable("sundialr", "sundialr_cvode_set_rhs");
+      fn_set_tol_scalar cvode_set_tol_scalar =
+        (fn_set_tol_scalar) R_GetCCallable("sundialr", "sundialr_cvode_set_tol_scalar");
+      fn_set_max_steps  cvode_set_max_steps =
+        (fn_set_max_steps)  R_GetCCallable("sundialr", "sundialr_cvode_set_max_steps");
+      fn_set_max_step   cvode_set_max_step =
+        (fn_set_max_step)   R_GetCCallable("sundialr", "sundialr_cvode_set_max_step");
+      fn_set_min_step   cvode_set_min_step =
+        (fn_set_min_step)   R_GetCCallable("sundialr", "sundialr_cvode_set_min_step");
+
+      if(cvode_create == nullptr) {
+        CRUMP("[mrgsolve] MRGSOLVE_CVODE is set but the sundialr CVODE C API is "
+              "not available; is sundialr (>= 0.2.0) installed and loadable?");
+      }
+
+      // Spike supports scalar tolerances only (itol==1). Per-compartment
+      // tolerances (itol==4) arrive in Phase 3 via set_tol_vector; erroring
+      // here avoids silently integrating with the wrong error control.
+      const int itol = Rcpp::as<int>(mod.slot("itol"));
+      if(itol > 1) {
+        CRUMP("[mrgsolve] the CVODE spike supports scalar tolerances only "
+              "(itol==1); per-compartment tolerances are not wired yet.");
+      }
+
+      void* cvode_mem = cvode_create((int) neq, &prob);
+      if(cvode_mem == nullptr) {
+        CRUMP("[mrgsolve] sundialr_cvode_create failed (allocation).");
+      }
+
+      cvode_set_rhs(cvode_mem, cvode_rhs);
+      cvode_set_tol_scalar(cvode_mem,
+                           Rcpp::as<double>(mod.slot("rtol")),
+                           Rcpp::as<double>(mod.slot("atol")));
+      cvode_set_max_steps(cvode_mem, (long) Rcpp::as<int>(mod.slot("maxsteps")));
+
+      // hmax/hmin default to 0 in mrgsolve meaning "no bound"; CVODE's defaults
+      // already mean the same, so only push a positive value.
+      const double hmax = Rcpp::as<double>(mod.slot("hmax"));
+      const double hmin = Rcpp::as<double>(mod.slot("hmin"));
+      if(hmax > 0.0) cvode_set_max_step(cvode_mem, hmax);
+      if(hmin > 0.0) cvode_set_min_step(cvode_mem, hmin);
+
+      // odeproblem owns the handle from here: ~odeproblem frees it (commit
+      // d6148ad9). Use_cvode flips advance() onto advance_cvode().
+      prob.Cvode_mem = cvode_mem;
+      prob.Use_cvode = true;
+    }
+  }
+  // --- end CVODE spike seam ------------------------------------------------
+
   recstack a(NID);
   
   unsigned int obscount = 0;
