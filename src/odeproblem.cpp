@@ -213,6 +213,87 @@ void odeproblem::call_derivs(double *t, double *y, double *ydot) {
   }
 }
 
+// RHS thunk handed to the sundialr CVODE C API. CVODE calls this during
+// integration and forwards to the owning odeproblem's $ODE evaluation. udata is
+// the odeproblem* passed to sundialr_cvode_create. call_derivs takes a
+// non-const double* t/y, so we take the address of the by-value t and cast away
+// const on y (call_derivs does not write through y). Must never throw across
+// the C API boundary; returns 0 for success.
+extern "C" int cvode_rhs(double t, const double* y, double* ydot, void* udata) {
+  odeproblem* prob = reinterpret_cast<odeproblem*>(udata);
+  prob->call_derivs(&t, const_cast<double*>(y), ydot);
+  return 0;
+}
+
+// Map a negative CVODE return code to a tailored diagnostic and terminate the
+// simulation, mirroring negative_istate() for the LSODA path. The C API records
+// a human-readable message for the most recent failure; surface it too. This is
+// the spike's minimal mapping; Phase 3 expands it to the full code set.
+static void negative_cvode_flag(int flag, void* cvode_mem) {
+
+  Rcpp::Rcerr << std::endl << "[mrgsolve] cvode returned with negative flag: "
+              << flag << std::endl;
+
+  typedef const char* (*fn_last_err)(void*);
+  fn_last_err last_err =
+    (fn_last_err) R_GetCCallable("sundialr", "sundialr_cvode_last_err");
+  if(last_err != nullptr) {
+    const char* msg = last_err(cvode_mem);
+    if(msg != nullptr) Rcpp::Rcerr << "  " << msg << std::endl;
+  }
+
+  switch(flag) {
+  case SUNDIALR_CV_TOO_MUCH_WORK:
+    Rcpp::Rcerr << "  too much work on this call; check the model or increase maxsteps."
+                << std::endl << std::endl;
+    break;
+  case SUNDIALR_CV_TOO_MUCH_ACC:
+    Rcpp::Rcerr << "  excess accuracy requested; increase rtol and/or atol."
+                << std::endl << std::endl;
+    break;
+  case SUNDIALR_CV_ERR_FAILURE:
+    Rcpp::Rcerr << "  repeated error test failures (check all inputs)."
+                << std::endl << std::endl;
+    break;
+  case SUNDIALR_CV_CONV_FAILURE:
+    Rcpp::Rcerr << "  repeated convergence failures; perhaps bad tolerances."
+                << std::endl << std::endl;
+    break;
+  default:
+    break;
+  }
+
+  throw Rcpp::exception("simulation terminated.", false);
+}
+
+// CVODE analogue of the solver.lsoda_update call in advance(). Reinit binds the
+// integrator to the current state &Y[0] whenever Istate == 1 (set by
+// lsoda_init() after any dose / event / new individual), exactly as LSODA reuses
+// Istate as its reinit flag; then advance to tto. The function pointers are
+// resolved once via R_GetCCallable (no LinkingTo) and cached; sundialr is
+// guaranteed loaded because Use_cvode is only ever set when solver=="cvode".
+void odeproblem::advance_cvode(double tfrom, double tto) {
+
+  typedef int (*fn_reinit)(void*, double, const double*);
+  typedef int (*fn_solve)(void*, double, double*, double*);
+
+  static fn_reinit cvode_reinit =
+    (fn_reinit) R_GetCCallable("sundialr", "sundialr_cvode_reinit");
+  static fn_solve cvode_solve =
+    (fn_solve) R_GetCCallable("sundialr", "sundialr_cvode_solve");
+
+  if(Istate == 1) {
+    cvode_reinit(Cvode_mem, tfrom, &Y[0]);
+    Istate = 2;
+  }
+
+  double treached = tfrom;
+  int flag = cvode_solve(Cvode_mem, tto, &Y[0], &treached);
+  if(flag < 0) {
+    negative_cvode_flag(flag, Cvode_mem);
+  }
+}
+
 void odeproblem::init_derivs(double time) {
   this->call_derivs(&time,&Y[0],&Yout[1]);  
 }
@@ -419,12 +500,17 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
     Rcpp::stop("[mrgsolve] advan has invalid value.");
   }
   
-  solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
-  
-  if(Istate < 0) {
-    negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol, solver.itol);  
+  if(Use_cvode) {
+    this->advance_cvode(tfrom, tto);
+  } else {
+    solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
+    if(Istate < 0) {
+      negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol, solver.itol);
+    }
   }
-  
+
+  // Re-run $ODE so $TABLE captures of dxdt are current (trap 2): required after
+  // BOTH solver paths; removing it breaks capture with no compile error.
   this->init_derivs(tto);
 }
 

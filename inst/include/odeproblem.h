@@ -84,6 +84,9 @@ extern "C"{DL_FUNC tofunptr(SEXP a);}
 main_deriv_func main_derivs;
 void neg_istate(int istate);
 
+//! RHS thunk handed to the sundialr CVODE C API; forwards to <code>odeproblem::call_derivs</code>
+extern "C" int cvode_rhs(double t, const double* y, double* ydot, void* udata);
+
 template<typename T,typename type2> void tofunptr(T b, type2 a) {
   b = reinterpret_cast<T>(R_ExternalPtrAddr(a));
 }
@@ -108,6 +111,7 @@ public:
 
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
+  void advance_cvode(double tfrom, double tto);
   void call_derivs(double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
