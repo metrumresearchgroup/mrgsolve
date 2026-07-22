@@ -553,6 +553,7 @@ setMethod("as.list", "mrgmod", function(x, deep = FALSE, ...) {
     hmax <- x@hmax
     hmin <- x@hmin
     maxsteps <- x@maxsteps
+    solver <- x@solver
     custom_atol <- x@vec_atol
     custom_rtol <- x@vec_rtol
     ss_atol <- x@ss_atol
