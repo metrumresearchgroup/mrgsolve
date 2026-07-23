@@ -335,7 +335,11 @@ test_that("Error when either atol or rtol not customized", {
 })
 
 test_that("Detect numerical differences using custom tol", {
-  
+  # This checks LSODA's loose-tolerance numerics (a loose atol drives CENT
+  # negative); CVODE's BDF error control does not reproduce that artifact.
+  skip_if(test_solver() == "cvode",
+          "loose-atol negative-concentration behavior is LSODA-specific")
+
   # atol
   mod1 <- house(atol = 1e-3)
   mod2 <- custom_atol(house(), GUT = 1e-20)

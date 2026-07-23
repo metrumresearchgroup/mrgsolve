@@ -12,9 +12,11 @@ context("test-solver-cvode")
 
 # ---- slot definition & validity (no backend required) -----------------------
 
-test_that("solver slot defaults to lsoda", {
+test_that("solver slot defaults to the active solver", {
+  # Under the default suite test_solver() is "lsoda", so this pins the prototype
+  # default; under the cvode sweep models are coerced and it is "cvode".
   mod <- house()
-  expect_identical(mod@solver, "lsoda")
+  expect_identical(mod@solver, test_solver())
   expect_type(mod@solver, "character")
   expect_length(mod@solver, 1L)
 })
@@ -64,12 +66,12 @@ test_that("solver round-trips through mwrite_yaml / mread_yaml", {
   back <- mread_yaml(tf, model = "cvode_roundtrip", compile = FALSE)
   expect_identical(back@solver, "cvode")
 
-  modl <- house() # default lsoda also round-trips
+  modl <- house() # the active-solver default also round-trips
   tf2 <- tempfile(fileext = ".yaml")
   on.exit(unlink(tf2), add = TRUE)
   mwrite_yaml(modl, tf2)
-  expect_identical(mread_yaml(tf2, model = "lsoda_roundtrip", compile = FALSE)@solver,
-                   "lsoda")
+  expect_identical(mread_yaml(tf2, model = "default_roundtrip", compile = FALSE)@solver,
+                   test_solver())
 })
 
 # ---- simulation via the CVODE backend (needs sundialr) ----------------------
