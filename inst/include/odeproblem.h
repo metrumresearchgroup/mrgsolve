@@ -111,7 +111,7 @@ public:
 
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
-  void advance_cvode(double tfrom, double tto);
+  int  advance_cvode(double tfrom, double tto);
   void call_derivs(double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}

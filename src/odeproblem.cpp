@@ -226,43 +226,83 @@ extern "C" int cvode_rhs(double t, const double* y, double* ydot, void* udata) {
 }
 
 // Map a negative CVODE return code to a tailored diagnostic and terminate the
-// simulation, mirroring negative_istate() for the LSODA path. The C API records
-// a human-readable message for the most recent failure; surface it too. This is
-// the spike's minimal mapping; Phase 3 expands it to the full code set.
-static void negative_cvode_flag(int flag, void* cvode_mem) {
+// simulation, mirroring negative_istate() for the LSODA path: it prints the
+// code, the human-readable message the C API recorded for the most recent
+// failure, actionable advice, and the current solver settings. maxsteps/rtol/
+// atol/itol are the same values LSODA carries (read from the mod slots), passed
+// down from advance() so the message can echo them.
+static void negative_cvode_flag(int flag, void* cvode_mem,
+                                int maxsteps, double rtol, double atol,
+                                int itol) {
 
   Rcpp::Rcerr << std::endl << "[mrgsolve] cvode returned with negative flag: "
               << flag << std::endl;
 
+  // CVODE's own recorded message for this failure (never-throw C API).
   typedef const char* (*fn_last_err)(void*);
   fn_last_err last_err =
     (fn_last_err) R_GetCCallable("sundialr", "sundialr_cvode_last_err");
   if(last_err != nullptr) {
     const char* msg = last_err(cvode_mem);
-    if(msg != nullptr) Rcpp::Rcerr << "  " << msg << std::endl;
+    if(msg != nullptr && msg[0] != '\0') {
+      Rcpp::Rcerr << "  cvode message: " << msg << std::endl;
+    }
   }
 
   switch(flag) {
   case SUNDIALR_CV_TOO_MUCH_WORK:
     Rcpp::Rcerr << "  too much work on this call; check the model or increase maxsteps."
-                << std::endl << std::endl;
+                << std::endl;
+    Rcpp::Rcerr << "  current value of maxsteps: " << maxsteps << std::endl;
     break;
   case SUNDIALR_CV_TOO_MUCH_ACC:
-    Rcpp::Rcerr << "  excess accuracy requested; increase rtol and/or atol."
-                << std::endl << std::endl;
+    Rcpp::Rcerr << "  excess accuracy requested; increase rtol and/or atol." << std::endl;
+    if(itol == 1) {
+      Rcpp::Rcerr << "  current value of rtol / atol: " << rtol << " / " << atol
+                  << std::endl;
+    } else {
+      Rcpp::Rcerr << "  itol > 1: compartment-specific tolerances are in use." << std::endl;
+    }
     break;
   case SUNDIALR_CV_ERR_FAILURE:
-    Rcpp::Rcerr << "  repeated error test failures (check all inputs)."
-                << std::endl << std::endl;
+    Rcpp::Rcerr << "  repeated error-test failures; reduce tolerances or check the model."
+                << std::endl;
     break;
   case SUNDIALR_CV_CONV_FAILURE:
-    Rcpp::Rcerr << "  repeated convergence failures; perhaps bad tolerances."
-                << std::endl << std::endl;
+    Rcpp::Rcerr << "  repeated nonlinear convergence failures; check the model or tolerances."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_LINIT_FAIL:
+  case SUNDIALR_CV_LSETUP_FAIL:
+  case SUNDIALR_CV_LSOLVE_FAIL:
+    Rcpp::Rcerr << "  the linear solver failed (init/setup/solve)." << std::endl;
+    break;
+  case SUNDIALR_CV_RHSFUNC_FAIL:
+  case SUNDIALR_CV_FIRST_RHSFUNC_ERR:
+  case SUNDIALR_CV_REPTD_RHSFUNC_ERR:
+  case SUNDIALR_CV_UNREC_RHSFUNC_ERR:
+    Rcpp::Rcerr << "  the ODE right-hand side ($ODE) could not be evaluated; check for"
+                << std::endl;
+    Rcpp::Rcerr << "  division by zero, log/sqrt of a negative, or Inf/NaN in $ODE."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_ILL_INPUT:
+    Rcpp::Rcerr << "  illegal input to the solver; check tolerances and settings." << std::endl;
+    break;
+  case SUNDIALR_CV_TOO_CLOSE:
+    Rcpp::Rcerr << "  the output time is too close to the current time to take a step."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_MEM_FAIL:
+  case SUNDIALR_CV_MEM_NULL:
+  case SUNDIALR_CV_NO_MALLOC:
+    Rcpp::Rcerr << "  a cvode memory error occurred." << std::endl;
     break;
   default:
     break;
   }
 
+  Rcpp::Rcerr << std::endl;
   throw Rcpp::exception("simulation terminated.", false);
 }
 
@@ -272,7 +312,10 @@ static void negative_cvode_flag(int flag, void* cvode_mem) {
 // Istate as its reinit flag; then advance to tto. The function pointers are
 // resolved once via R_GetCCallable (no LinkingTo) and cached; sundialr is
 // guaranteed loaded because Use_cvode is only ever set when solver=="cvode".
-void odeproblem::advance_cvode(double tfrom, double tto) {
+// Returns CVODE's solve flag (0 on success, < 0 on failure). The caller
+// (advance()) maps a negative flag to a diagnostic via negative_cvode_flag,
+// mirroring how the LSODA branch handles a negative Istate.
+int odeproblem::advance_cvode(double tfrom, double tto) {
 
   typedef int (*fn_reinit)(void*, double, const double*);
   typedef int (*fn_solve)(void*, double, double*, double*);
@@ -288,10 +331,7 @@ void odeproblem::advance_cvode(double tfrom, double tto) {
   }
 
   double treached = tfrom;
-  int flag = cvode_solve(Cvode_mem, tto, &Y[0], &treached);
-  if(flag < 0) {
-    negative_cvode_flag(flag, Cvode_mem);
-  }
+  return cvode_solve(Cvode_mem, tto, &Y[0], &treached);
 }
 
 void odeproblem::init_derivs(double time) {
@@ -501,7 +541,11 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
   }
   
   if(Use_cvode) {
-    this->advance_cvode(tfrom, tto);
+    int flag = this->advance_cvode(tfrom, tto);
+    if(flag < 0) {
+      negative_cvode_flag(flag, Cvode_mem, solver.Maxsteps, solver.Rtol,
+                          solver.Atol, solver.itol);
+    }
   } else {
     solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
     if(Istate < 0) {

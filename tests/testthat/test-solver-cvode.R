@@ -110,6 +110,22 @@ test_that("an invalid solver errors at simulation time", {
   expect_error(mrgsim(mod, events = ev(amt = 100), end = 5), "must be")
 })
 
+test_that("cvode reports a tailored diagnostic on solver failure", {
+  skip_if_not_installed("sundialr")
+  # maxsteps = 1 forces CV_TOO_MUCH_WORK (-1) before the first output time
+  mod <- update(house(), solver = "cvode", maxsteps = 1)
+  msg <- utils::capture.output(
+    res <- try(mrgsim(mod, events = ev(amt = 100), end = 24), silent = TRUE),
+    type = "message"
+  )
+  blob <- paste(msg, collapse = "\n")
+  expect_s3_class(res, "try-error")
+  expect_match(blob, "cvode returned with negative flag: -1")
+  expect_match(blob, "too much work")
+  expect_match(blob, "current value of maxsteps: 1")
+  expect_false(grepl("istate", blob, ignore.case = TRUE))  # not the LSODA message
+})
+
 test_that("cvode supports per-compartment tolerances (itol = 4)", {
   skip_if_not_installed("sundialr")
   mod  <- house()
