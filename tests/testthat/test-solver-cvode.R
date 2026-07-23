@@ -110,12 +110,20 @@ test_that("an invalid solver errors at simulation time", {
   expect_error(mrgsim(mod, events = ev(amt = 100), end = 5), "must be")
 })
 
-test_that("cvode rejects per-compartment tolerances (itol > 1)", {
+test_that("cvode supports per-compartment tolerances (itol = 4)", {
   skip_if_not_installed("sundialr")
-  mod <- update(use_custom_tol(house()), solver = "cvode")
-  expect_equal(mod@itol, 4)
-  expect_error(
-    mrgsim(mod, events = ev(amt = 100), end = 5),
-    "scalar tolerances only"
-  )
+  mod  <- house()
+  dose <- ev(amt = 100)
+  modv <- update(use_custom_tol(mod), solver = "cvode") # itol=4, vec tol = scalar
+  expect_equal(modv@itol, 4)
+
+  num <- function(x) { d <- as.data.frame(x); as.matrix(d[vapply(d, is.numeric, TRUE)]) }
+  sc  <- mrgsim(update(mod, solver = "cvode"), events = dose, end = 48, delta = 1)
+  vec <- mrgsim(modv, events = dose, end = 48, delta = 1)
+  # per-compartment tol equal to the scalar reproduces the scalar-tol result
+  expect_equal(num(vec), num(sc), tolerance = 1e-8)
+
+  # and it agrees with the LSODA itol=4 result within suite tolerance
+  lv <- mrgsim(use_custom_tol(mod), events = dose, end = 48, delta = 1)
+  expect_equal(num(vec), num(lv), tolerance = 1e-4)
 })
