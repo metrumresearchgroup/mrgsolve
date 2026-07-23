@@ -109,6 +109,13 @@ public:
 
   ~odeproblem();
 
+  // odeproblem owns Cvode_mem (freed in the destructor) and is always used by
+  // reference/pointer -- never copied. Deleting copy makes that a compile-time
+  // guarantee: a copy would shallow-copy the handle and double-free it. (The
+  // user-declared destructor already suppresses the implicit move operations.)
+  odeproblem(const odeproblem&) = delete;
+  odeproblem& operator=(const odeproblem&) = delete;
+
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
   int  advance_cvode(double tfrom, double tto);
