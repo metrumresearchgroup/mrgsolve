@@ -231,13 +231,13 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
       if(hmax > 0.0) cvode_set_max_step(cvode_mem, hmax);
       if(hmin > 0.0) cvode_set_min_step(cvode_mem, hmin);
 
-      // odeproblem owns the handle from here: ~odeproblem frees it (commit
-      // d6148ad9). Use_cvode flips advance() onto advance_cvode().
+      // odeproblem owns the handle from here; its destructor frees it.
+      // Use_cvode flips advance() onto advance_cvode().
       prob.Cvode_mem = cvode_mem;
       prob.Use_cvode = true;
     }
   }
-  // --- end CVODE spike seam ------------------------------------------------
+  // --- end solver selection ------------------------------------------------
 
   recstack a(NID);
   

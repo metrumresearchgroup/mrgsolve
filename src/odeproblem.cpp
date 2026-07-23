@@ -553,8 +553,8 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
     }
   }
 
-  // Re-run $ODE so $TABLE captures of dxdt are current (trap 2): required after
-  // BOTH solver paths; removing it breaks capture with no compile error.
+  // Re-run $ODE so $TABLE captures of dxdt are current: required after BOTH
+  // solver paths; removing it breaks capture with no compile error.
   this->init_derivs(tto);
 }
 
