@@ -23,11 +23,13 @@
 
 #include <deque>
 #include <string>
+#include <R_ext/Rdynload.h>
 #include "mrgsolve.h"
 #include "odeproblem.h"
 #include "dataobject.h"
 #include "RcppInclude.h"
 #include "LSODA.h"
+#include "sundialr_capi.h"
 
 #define CRUMP(a) throw Rcpp::exception(a,false)
 #define REP(a)   Rcpp::Rcout << #a << std::endl;
@@ -148,7 +150,95 @@ Rcpp::List DEVTRAN(const Rcpp::List parin,
   prob.pass_envir(&envir);
   const unsigned int neq = prob.neq();
   LSODA solver(neq, mod);
-  
+
+  // --- solver selection: LSODA (default) or CVODE (sundialr C API) ---------
+  // The model's `solver` slot chooses the integrator for general (advan 13)
+  // models. "cvode" builds a sundialr CVODE handle and flips prob.Use_cvode so
+  // advance() takes advance_cvode(); "lsoda" leaves the LSODA path untouched.
+  // The slot is validated to {lsoda,cvode} in valid.mrgmod, but update() does
+  // not run class validity, so we re-check here (fast fail on a typo). The C API
+  // is resolved at runtime via R_GetCCallable (Imports: sundialr, no LinkingTo,
+  // no SUNDIALS headers). Closed-form ADVANs never reach advance()'s solver
+  // call, so they are unaffected regardless of this setting.
+  {
+    const std::string solver = Rcpp::as<std::string>(mod.slot("solver"));
+    if(solver != "lsoda" && solver != "cvode") {
+      CRUMP("[mrgsolve] `solver` must be \"lsoda\" or \"cvode\".");
+    }
+
+    if(solver == "cvode" && neq > 0) {
+      typedef void* (*fn_create)(int, void*);
+      typedef int   (*fn_set_rhs)(void*, sundialr_rhs);
+      typedef int   (*fn_set_tol_scalar)(void*, double, double);
+      typedef int   (*fn_set_tol_vector)(void*, const double*, const double*);
+      typedef int   (*fn_set_max_steps)(void*, long);
+      typedef int   (*fn_set_max_step)(void*, double);
+      typedef int   (*fn_set_min_step)(void*, double);
+
+      fn_create         cvode_create =
+        (fn_create)         R_GetCCallable("sundialr", "sundialr_cvode_create");
+      fn_set_rhs        cvode_set_rhs =
+        (fn_set_rhs)        R_GetCCallable("sundialr", "sundialr_cvode_set_rhs");
+      fn_set_tol_scalar cvode_set_tol_scalar =
+        (fn_set_tol_scalar) R_GetCCallable("sundialr", "sundialr_cvode_set_tol_scalar");
+      fn_set_tol_vector cvode_set_tol_vector =
+        (fn_set_tol_vector) R_GetCCallable("sundialr", "sundialr_cvode_set_tol_vector");
+      fn_set_max_steps  cvode_set_max_steps =
+        (fn_set_max_steps)  R_GetCCallable("sundialr", "sundialr_cvode_set_max_steps");
+      fn_set_max_step   cvode_set_max_step =
+        (fn_set_max_step)   R_GetCCallable("sundialr", "sundialr_cvode_set_max_step");
+      fn_set_min_step   cvode_set_min_step =
+        (fn_set_min_step)   R_GetCCallable("sundialr", "sundialr_cvode_set_min_step");
+
+      if(cvode_create == nullptr) {
+        CRUMP("[mrgsolve] solver=\"cvode\" requires the sundialr CVODE C API, "
+              "which is not available; is sundialr (>= 0.2.0) installed and "
+              "loadable?");
+      }
+
+      void* cvode_mem = cvode_create((int) neq, &prob);
+      if(cvode_mem == nullptr) {
+        CRUMP("[mrgsolve] sundialr_cvode_create failed (allocation).");
+      }
+
+      cvode_set_rhs(cvode_mem, cvode_rhs);
+
+      // itol==1: scalar rtol/atol. itol==4: per-compartment rtol AND atol from
+      // the same vec_rtol/vec_atol slots LSODA reads (0-based, length neq); the
+      // C API realises per-compartment rtol via a CVodeWFtolerances error-weight
+      // function. Keep the vectors alive across the copying call.
+      const int itol = Rcpp::as<int>(mod.slot("itol"));
+      if(itol > 1) {
+        Rcpp::NumericVector vrtol = Rcpp::as<Rcpp::NumericVector>(mod.slot("vec_rtol"));
+        Rcpp::NumericVector vatol = Rcpp::as<Rcpp::NumericVector>(mod.slot("vec_atol"));
+        if((int) vrtol.size() != (int) neq || (int) vatol.size() != (int) neq) {
+          CRUMP("[mrgsolve] solver=\"cvode\" with itol=4 requires vec_rtol and "
+                "vec_atol to each have length neq.");
+        }
+        cvode_set_tol_vector(cvode_mem, &vrtol[0], &vatol[0]);
+      } else {
+        cvode_set_tol_scalar(cvode_mem,
+                             Rcpp::as<double>(mod.slot("rtol")),
+                             Rcpp::as<double>(mod.slot("atol")));
+      }
+
+      cvode_set_max_steps(cvode_mem, (long) Rcpp::as<int>(mod.slot("maxsteps")));
+
+      // hmax/hmin default to 0 in mrgsolve meaning "no bound"; CVODE's defaults
+      // already mean the same, so only push a positive value.
+      const double hmax = Rcpp::as<double>(mod.slot("hmax"));
+      const double hmin = Rcpp::as<double>(mod.slot("hmin"));
+      if(hmax > 0.0) cvode_set_max_step(cvode_mem, hmax);
+      if(hmin > 0.0) cvode_set_min_step(cvode_mem, hmin);
+
+      // odeproblem owns the handle from here; its destructor frees it.
+      // Use_cvode flips advance() onto advance_cvode().
+      prob.Cvode_mem = cvode_mem;
+      prob.Use_cvode = true;
+    }
+  }
+  // --- end solver selection ------------------------------------------------
+
   recstack a(NID);
   
   unsigned int obscount = 0;

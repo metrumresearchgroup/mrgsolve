@@ -23,9 +23,11 @@
 
 #include <cmath>
 #include <vector>
+#include <R_ext/Rdynload.h>
 #include "RcppInclude.h"
 #include "odeproblem.h"
 #include "mrgsolve.h"
+#include "sundialr_capi.h"
 
 static Rcpp::NumericMatrix OMEGADEF(1,1);
 static arma::mat OMGADEF(1,1,arma::fill::zeros);
@@ -43,6 +45,20 @@ void dosimeps(void* prob_) {
   arma::mat eps = prob->mv_sigma(1);
   for(unsigned int i = 0; i < eps.n_cols; ++i) {
     prob->eps(i, eps(0,i)); 
+  }
+}
+
+// Free the optional CVODE handle. The sundialr C API is resolved at runtime via
+// R_GetCCallable (no LinkingTo). Cvode_mem is only ever non-null when the model
+// ran with solver=="cvode", which requires sundialr to be loaded, so the lookup
+// here is safe. A plain destructor for the LSODA path (Cvode_mem == nullptr).
+odeproblem::~odeproblem() {
+  if(Cvode_mem != nullptr) {
+    typedef void (*fn_cvode_free)(void*);
+    fn_cvode_free cvode_free =
+      (fn_cvode_free) R_GetCCallable("sundialr", "sundialr_cvode_free");
+    if(cvode_free != nullptr) cvode_free(Cvode_mem);
+    Cvode_mem = nullptr;
   }
 }
 
@@ -195,6 +211,127 @@ void odeproblem::call_derivs(double *t, double *y, double *ydot) {
   for(int i = 0; i < Neq; ++i) {
     ydot[i] = (ydot[i] + R0[i])*On[i];
   }
+}
+
+// RHS thunk handed to the sundialr CVODE C API. CVODE calls this during
+// integration and forwards to the owning odeproblem's $ODE evaluation. udata is
+// the odeproblem* passed to sundialr_cvode_create. call_derivs takes a
+// non-const double* t/y, so we take the address of the by-value t and cast away
+// const on y (call_derivs does not write through y). Must never throw across
+// the C API boundary; returns 0 for success.
+extern "C" int cvode_rhs(double t, const double* y, double* ydot, void* udata) {
+  odeproblem* prob = reinterpret_cast<odeproblem*>(udata);
+  prob->call_derivs(&t, const_cast<double*>(y), ydot);
+  return 0;
+}
+
+// Map a negative CVODE return code to a tailored diagnostic and terminate the
+// simulation, mirroring negative_istate() for the LSODA path: it prints the
+// code, the human-readable message the C API recorded for the most recent
+// failure, actionable advice, and the current solver settings. maxsteps/rtol/
+// atol/itol are the same values LSODA carries (read from the mod slots), passed
+// down from advance() so the message can echo them.
+static void negative_cvode_flag(int flag, void* cvode_mem,
+                                int maxsteps, double rtol, double atol,
+                                int itol) {
+
+  Rcpp::Rcerr << std::endl << "[mrgsolve] cvode returned with negative flag: "
+              << flag << std::endl;
+
+  // CVODE's own recorded message for this failure (never-throw C API).
+  typedef const char* (*fn_last_err)(void*);
+  fn_last_err last_err =
+    (fn_last_err) R_GetCCallable("sundialr", "sundialr_cvode_last_err");
+  if(last_err != nullptr) {
+    const char* msg = last_err(cvode_mem);
+    if(msg != nullptr && msg[0] != '\0') {
+      Rcpp::Rcerr << "  cvode message: " << msg << std::endl;
+    }
+  }
+
+  switch(flag) {
+  case SUNDIALR_CV_TOO_MUCH_WORK:
+    Rcpp::Rcerr << "  too much work on this call; check the model or increase maxsteps."
+                << std::endl;
+    Rcpp::Rcerr << "  current value of maxsteps: " << maxsteps << std::endl;
+    break;
+  case SUNDIALR_CV_TOO_MUCH_ACC:
+    Rcpp::Rcerr << "  excess accuracy requested; increase rtol and/or atol." << std::endl;
+    if(itol == 1) {
+      Rcpp::Rcerr << "  current value of rtol / atol: " << rtol << " / " << atol
+                  << std::endl;
+    } else {
+      Rcpp::Rcerr << "  itol > 1: compartment-specific tolerances are in use." << std::endl;
+    }
+    break;
+  case SUNDIALR_CV_ERR_FAILURE:
+    Rcpp::Rcerr << "  repeated error-test failures; reduce tolerances or check the model."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_CONV_FAILURE:
+    Rcpp::Rcerr << "  repeated nonlinear convergence failures; check the model or tolerances."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_LINIT_FAIL:
+  case SUNDIALR_CV_LSETUP_FAIL:
+  case SUNDIALR_CV_LSOLVE_FAIL:
+    Rcpp::Rcerr << "  the linear solver failed (init/setup/solve)." << std::endl;
+    break;
+  case SUNDIALR_CV_RHSFUNC_FAIL:
+  case SUNDIALR_CV_FIRST_RHSFUNC_ERR:
+  case SUNDIALR_CV_REPTD_RHSFUNC_ERR:
+  case SUNDIALR_CV_UNREC_RHSFUNC_ERR:
+    Rcpp::Rcerr << "  the ODE right-hand side ($ODE) could not be evaluated; check for"
+                << std::endl;
+    Rcpp::Rcerr << "  division by zero, log/sqrt of a negative, or Inf/NaN in $ODE."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_ILL_INPUT:
+    Rcpp::Rcerr << "  illegal input to the solver; check tolerances and settings." << std::endl;
+    break;
+  case SUNDIALR_CV_TOO_CLOSE:
+    Rcpp::Rcerr << "  the output time is too close to the current time to take a step."
+                << std::endl;
+    break;
+  case SUNDIALR_CV_MEM_FAIL:
+  case SUNDIALR_CV_MEM_NULL:
+  case SUNDIALR_CV_NO_MALLOC:
+    Rcpp::Rcerr << "  a cvode memory error occurred." << std::endl;
+    break;
+  default:
+    break;
+  }
+
+  Rcpp::Rcerr << std::endl;
+  throw Rcpp::exception("simulation terminated.", false);
+}
+
+// CVODE analogue of the solver.lsoda_update call in advance(). Reinit binds the
+// integrator to the current state &Y[0] whenever Istate == 1 (set by
+// lsoda_init() after any dose / event / new individual), exactly as LSODA reuses
+// Istate as its reinit flag; then advance to tto. The function pointers are
+// resolved once via R_GetCCallable (no LinkingTo) and cached; sundialr is
+// guaranteed loaded because Use_cvode is only ever set when solver=="cvode".
+// Returns CVODE's solve flag (0 on success, < 0 on failure). The caller
+// (advance()) maps a negative flag to a diagnostic via negative_cvode_flag,
+// mirroring how the LSODA branch handles a negative Istate.
+int odeproblem::advance_cvode(double tfrom, double tto) {
+
+  typedef int (*fn_reinit)(void*, double, const double*);
+  typedef int (*fn_solve)(void*, double, double*, double*);
+
+  static fn_reinit cvode_reinit =
+    (fn_reinit) R_GetCCallable("sundialr", "sundialr_cvode_reinit");
+  static fn_solve cvode_solve =
+    (fn_solve) R_GetCCallable("sundialr", "sundialr_cvode_solve");
+
+  if(Istate == 1) {
+    cvode_reinit(Cvode_mem, tfrom, &Y[0]);
+    Istate = 2;
+  }
+
+  double treached = tfrom;
+  return cvode_solve(Cvode_mem, tto, &Y[0], &treached);
 }
 
 void odeproblem::init_derivs(double time) {
@@ -403,12 +540,21 @@ void odeproblem::advance(double tfrom, double tto, LSODA& solver) {
     Rcpp::stop("[mrgsolve] advan has invalid value.");
   }
   
-  solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
-  
-  if(Istate < 0) {
-    negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol, solver.itol);  
+  if(Use_cvode) {
+    int flag = this->advance_cvode(tfrom, tto);
+    if(flag < 0) {
+      negative_cvode_flag(flag, Cvode_mem, solver.Maxsteps, solver.Rtol,
+                          solver.Atol, solver.itol);
+    }
+  } else {
+    solver.lsoda_update(main_derivs,Neq,Y,Yout,&tfrom,tto,&Istate,this);
+    if(Istate < 0) {
+      negative_istate(Istate, solver.Maxsteps, solver.Rtol, solver.Atol, solver.itol);
+    }
   }
-  
+
+  // Re-run $ODE so $TABLE captures of dxdt are current: required after BOTH
+  // solver paths; removing it breaks capture with no compile error.
   this->init_derivs(tto);
 }
 

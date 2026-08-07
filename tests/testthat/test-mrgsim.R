@@ -192,8 +192,15 @@ test_that("no idata no problem generates error", {
 test_that("negative istate is reported issue-457", {
   mod <- update(mod, maxsteps = 1)
   x <- utils::capture.output(try(mrgsim(mod),silent=TRUE), type = "message")
-  expect_true(grepl("consider increasing maxsteps", x[1]))
-  expect_true(grepl("lsoda returned with negative istate: -1", x[3]))
+  if(identical(test_solver(), "cvode")) {
+    # CVODE reports its own tailored diagnostic instead of an LSODA istate
+    blob <- paste(x, collapse = "\n")
+    expect_match(blob, "cvode returned with negative flag")
+    expect_match(blob, "increase maxsteps")
+  } else {
+    expect_true(grepl("consider increasing maxsteps", x[1]))
+    expect_true(grepl("lsoda returned with negative istate: -1", x[3]))
+  }
 })
 
 test_that("simulate non-pred with negative times is allowed", {

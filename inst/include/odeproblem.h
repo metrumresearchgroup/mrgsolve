@@ -84,6 +84,9 @@ extern "C"{DL_FUNC tofunptr(SEXP a);}
 main_deriv_func main_derivs;
 void neg_istate(int istate);
 
+//! RHS thunk handed to the sundialr CVODE C API; forwards to <code>odeproblem::call_derivs</code>
+extern "C" int cvode_rhs(double t, const double* y, double* ydot, void* udata);
+
 template<typename T,typename type2> void tofunptr(T b, type2 a) {
   b = reinterpret_cast<T>(R_ExternalPtrAddr(a));
 }
@@ -104,10 +107,18 @@ public:
              Rcpp::List funs,
              int n_capture_);
 
-  ~odeproblem(){};
+  ~odeproblem();
+
+  // odeproblem owns Cvode_mem (freed in the destructor) and is always used by
+  // reference/pointer -- never copied. Deleting copy makes that a compile-time
+  // guarantee: a copy would shallow-copy the handle and double-free it. (The
+  // user-declared destructor already suppresses the implicit move operations.)
+  odeproblem(const odeproblem&) = delete;
+  odeproblem& operator=(const odeproblem&) = delete;
 
   void do_init_calc(bool answer) {Do_Init_Calc = answer;}
   void advance(double tfrom, double tto, LSODA& solver);
+  int  advance_cvode(double tfrom, double tto);
   void call_derivs(double *t, double *y, double *ydot);
   void init(int pos, double value){Init_value[pos] = value;}
   double init(int pos){return Init_value[pos];}
@@ -256,6 +267,9 @@ public:
   int Advan;  ///< simulation mode: 1/2/3/4 (PK models) or 13 (odes)
   std::vector<double> a;     ///< used for advan 1/2/3/4 calculations
   std::vector<double> alpha; ///< used for advan 1/2/3/4 calculation
+
+  void* Cvode_mem = nullptr; ///< opaque sundialr CVODE handle; null unless solver=="cvode"
+  bool  Use_cvode = false;   ///< integrate Advan 13 via CVODE instead of LSODA
   
   mrgsolve::resim simeta;///< functor for resimulating etas
   mrgsolve::resim simeps;///< functor for resimulating epsilons

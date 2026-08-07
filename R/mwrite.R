@@ -111,6 +111,7 @@ mwrite_model_to_list <- function(x) {
   l$update$maxsteps <- x@maxsteps
   l$update$mxhnil <- x@mxhnil
   l$update$ixpr <- x@ixpr
+  l$update$solver <- x@solver
   l$update$mindt <- x@mindt
   l$update$digits <- x@digits
   l$update$tscale <- x@tscale

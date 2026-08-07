@@ -211,9 +211,15 @@ NULL
 #' extra (lower) tolerance, the value can get so low that the number
 #' can randomly become negative.  However be aware that more precision
 #' here will result in longer run times. 
-#' \item \code{rtol} - the relative solver tolerances; decrease this 
-#' number when you want a more precise solution.  However be aware 
+#' \item \code{rtol} - the relative solver tolerances; decrease this
+#' number when you want a more precise solution.  However be aware
 #' that more precision here will result in longer run times.
+#' \item \code{solver} - the ODE solver used for general (\code{advan 13})
+#' models; either \code{"lsoda"} (the default) or \code{"cvode"} (SUNDIALS
+#' CVODE, BDF). Closed-form models (\code{advan 1/2/3/4/11/12}) do not use the
+#' solver and are unaffected. The \code{hmin}, \code{hmax}, \code{maxsteps},
+#' \code{atol} and \code{rtol} settings apply to both solvers; \code{ixpr} and
+#' \code{mxhnil} have no effect under \code{"cvode"}.
 #' }
 #' 
 #' @name solversettings
