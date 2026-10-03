@@ -1,5 +1,8 @@
 # mrgsolve (development version)
 
+- Warnings from `lctran()` and `uctran()` now identify conflicting upper/lower
+  case column names, including when they are called by `as_data_set()` (#1210).
+
 # mrgsolve 2.0.2
 
 ## Bugs Fixed

@@ -134,3 +134,25 @@ test_that("warning if both upper and lower case names", {
   expect_warning(as_data_set(d1,e1), "both upper and lower")
   expect_warning(as_data_set(d1,e1), "missing values")
 })
+
+test_that("mixed-case warnings identify conflicting nmtran columns", {
+  data <- data.frame(time = 0, RATE = 5, rate = 2)
+  expect_warning(as_data_set(data), "RATE/rate")
+  expect_warning(as_data_set(ev(amt = 100), data), "RATE/rate")
+  expect_warning(as_data_set(evd(amt = 100), data), "RATE/rate")
+
+  data <- data.frame(time = 0, TIME = 1, amt = 100, AMT = 200)
+  expect_warning(as_data_set(data), "TIME/time, AMT/amt")
+})
+
+test_that("case conversion preserves ambiguous input and respects warn", {
+  data <- data.frame(time = 0, RATE = 5, rate = 2, WT = 70, wt = 80)
+  expect_warning(lower <- lctran(data), "RATE/rate")
+  expect_warning(upper <- uctran(data), "RATE/rate")
+  expect_identical(lower, data)
+  expect_identical(upper, data.frame(TIME = 0, RATE = 5, rate = 2, WT = 70, wt = 80))
+  expect_silent(lctran(data, warn = FALSE))
+  expect_silent(uctran(data, warn = FALSE))
+  expect_silent(lctran(data.frame(time = 0, WT = 70, wt = 80)))
+  expect_silent(uctran(data.frame(time = 0, WT = 70, wt = 80)))
+})
