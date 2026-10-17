@@ -4,7 +4,7 @@
 \alias{ev_repeat}
 \title{Repeat a block of dosing events}
 \usage{
-ev_repeat(x, n, wait = 0, as.ev = FALSE)
+ev_repeat(x, n, wait = 0, as.ev = NULL)
 }
 \arguments{
 \item{x}{event object or dosing data frame.}

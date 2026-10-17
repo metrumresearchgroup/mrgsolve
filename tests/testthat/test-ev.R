@@ -140,6 +140,24 @@ test_that("clean up row names gh-1116", {
   expect_identical(rownames(a), as.character(seq(nrow(a))))
 })
 
+test_that("ev_rep default return type based on input", {
+  e1 <- ev(amt = 100)
+  r1 <- ev_rep(e1, 1:2)
+  expect_is(r1, "ev")
+  
+  e2 <- as_data_set(e1) 
+  r2 <- ev_rep(e2, 1:5)
+  expect_is(r2, "data.frame")
+
+  e3 <- ev(amt = 100)
+  r3 <- ev_rep(e3, 1:2, as.ev = FALSE)
+  expect_is(r3, "data.frame")
+  
+  e4 <- as_data_set(e3) 
+  r4 <- ev_rep(e4, 1:5, as.ev = TRUE)
+  expect_is(r4, "data.frame")
+})
+
 test_that("events with without rate" , {
   e1 <- ev(amt=1, ii=12)
   e2 <- ev(amt=2, ii=24, rate=1)
@@ -213,11 +231,58 @@ test_that("as.ev", {
 
 })
 
-test_that("ev_repeat", {
+test_that("ev_repeat - ev object, one id", {
   n <- 3
   e <- ev(amt = 100, ii = 24, addl = 9)
-  e <- ev_repeat(e,n) %>% realize_addl()
-  expect_equal(nrow(e),n*10) 
+  expect_is(e, "ev")
+  x <- ev_repeat(e, n)
+  expect_is(x, "ev")
+  x <- realize_addl(x)
+  expect_equal(nrow(x), n*10) 
+})
+
+test_that("ev_repeat - ev object, multiple id", {
+  n <- 4
+  e <- ev(amt = 100, ii = 5, total = 3, ID = 1:2)
+  x <- ev_repeat(e, n)
+  expect_is(x, "ev")
+  expect_equal(x$ID, c(1,1,1,1,2,2,2,2))
+  # 3 doses, q5h repeated  4 times
+  # 0, 5, 10,      15, 20, 25   30, 35, 40   45, 50, 55
+  expect_equal(x$time, c(0, 15, 30, 45, 0, 15, 30, 45))
+  expect_true(all(x$ii == 5))
+  expect_true(all(x$addl == 2))
+})
+
+test_that("ev_repeat - data.frame, one id", {
+  n <- 3
+  e <- ev(amt = 100, ii = 24, addl = 9)
+  e <- as_data_set(e)
+  expect_is(e, "data.frame")
+  x <- ev_repeat(e, n)
+  expect_is(x, "data.frame")
+  x <- realize_addl(x)
+  expect_equal(nrow(x), n*10) 
+})
+
+test_that("ev_repeat - data.frame, multiple id", {
+  n <- 4
+  e <- ev(amt = 100, ii = 5, total = 3, ID = 1:2)
+  e <- as_data_set(e)
+  x <- ev_repeat(e, n)
+  expect_is(x, "data.frame")
+  expect_equal(x$ID, c(1,1,1,1,2,2,2,2))
+  # 3 doses, q5h repeated  4 times
+  # 0, 5, 10,      15, 20, 25   30, 35, 40   45, 50, 55
+  expect_equal(x$time, c(0, 15, 30, 45, 0, 15, 30, 45))
+  expect_true(all(x$ii == 5))
+  expect_true(all(x$addl == 2))
+})
+
+test_that("ev_repeat return value", {
+  e <- ev(amt = 5, ii = 2, addl = 8)
+  out <- ev_repeat(e, 3, as.ev = FALSE)
+  expect_is(out, "data.frame")
 })
 
 test_that("create ev with evaluation issue-512", {

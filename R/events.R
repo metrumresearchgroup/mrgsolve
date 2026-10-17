@@ -455,7 +455,7 @@ add.ev <- function(e1, e2) {
 #' 
 #' @md
 #' @export
-ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
+ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = NULL, id = NULL) {
   if(!missing(id)) {
     warning("id argument is deprecated; use ID instead")
     ID <- id
@@ -463,11 +463,14 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
   if(!inherits(x, c("data.frame", "ev"))) {
     stop("x must be a data.frame or ev object.")
   }
+  if(is.null(as.ev)) {
+    as.ev <- inherits(x, "ev")  
+  }
   case <- ifelse(is.ev(x), x@case, 0)
   data <- expand_event_object(to_data_frame(x), ID)
   if(!is.null(n)) {
     if(n  > 1) {
-      data <- ev_repeat(data, n = n, wait = wait)
+      data <- ev_repeat(data, n = n, wait = wait, as.ev = FALSE)
     }
   }
   rownames(data) <- NULL
@@ -498,11 +501,14 @@ ev_rep <- function(x, ID = 1, n = NULL, wait = 0, as.ev = FALSE, id = NULL) {
 #' 
 #' @md
 #' @export
-ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
+ev_repeat <- function(x, n, wait = 0, as.ev = NULL) {
   if(!inherits(x, c("data.frame", "ev"))) {
     stop("x must be a data frame or ev object.")  
   }
-  case <- ifelse(is.ev(x), x@case, 1)
+  if(is.null(as.ev)) {
+    as.ev <- inherits(x, "ev")
+  }
+  case <- ifelse(is.ev(x), x@case, 0)
   x <- to_data_frame(x)
   if(!exists("ii", x)) {
     x["ii"] <- 0
@@ -526,10 +532,11 @@ ev_repeat <- function(x, n, wait = 0, as.ev = FALSE) {
     rownames(out) <- NULL
   }
   if(isTRUE(as.ev)) {
-    set_ev_case(as.ev(out), case)
+    out <- set_ev_case(as.ev(out), case)
   } else {
-    recase_ev(out, case)
+    out <- recase_ev(out, case)
   }
+  out
 }
 
 #' Schedule a series of event objects
@@ -709,3 +716,4 @@ ev_seq <- function(..., ID = NULL, .dots = NULL, id = NULL) {
 seq.ev <- function(...) {
   ev_seq(...) 
 }
+
