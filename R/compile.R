@@ -308,12 +308,12 @@ make_paramset_class <- function(x) {
 
   guard <- "MRGSOLVE_PARAMSET_PLUGIN_H"
 
-  val <- as.numeric(Param(x))
-  n <- length(val)
-  nm <- names(val)
+  pars <- as.numeric(Param(x))
+  n <- length(pars)
+  nm <- names(pars)
   nm <- formatC(nm, width = -max(nchar(nm)))
-  val <- trimws(formatC(val, digits = 15, format = "g"))
-
+  val <- trimws(formatC(pars, digits = 15, format = "g"))
+  
   # Initial definition of members
   members <- paste0("  double ", nm, " = ", val, ";")
 

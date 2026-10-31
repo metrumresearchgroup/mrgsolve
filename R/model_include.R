@@ -61,11 +61,11 @@ get_plugin <- function(what) {
   plugins[[what]]
 }
 
-plugin_code <- function(x, mod = NULL) {
+plugin_code <- function(x, mod) {
   if(is.null(x)) return(NULL)
   code <- s_pick(x,"code")
   if("paramset" %in% names(x)) {
-    hfile <- "mrgsolve-paramset-plugin.h"
+    hfile <- glue("{mod@model}-plugin-paramset.h")
     writeLines(make_paramset_class(mod), con = hfile)
     code <- c(code, glue('#include "{hfile}"'))
   }
