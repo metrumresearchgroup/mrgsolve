@@ -306,10 +306,9 @@ touch_funs <- function(x, keep_pointers = TRUE) {
 # plugin paramset
 make_paramset_class <- function(x) {
 
-  class_name <- "paramset"
   guard <- "MRGSOLVE_PARAMSET_PLUGIN_H"
-  
-  val <- as.numeric(Param(x))  
+
+  val <- as.numeric(Param(x))
   n <- length(val)
   nm <- names(val)
   nm <- formatC(nm, width = -max(nchar(nm)))
@@ -317,7 +316,6 @@ make_paramset_class <- function(x) {
 
   # Initial definition of members
   members <- paste0("  double ", nm, " = ", val, ";")
-  resets <- sub("double ", "  ", members)
 
   # Assignments on update
   update_assigns <- paste0("    ", nm, " = v[", seq_len(n) - 1, "];")
@@ -348,7 +346,7 @@ make_paramset_class <- function(x) {
     "#include <stdexcept>",
     "#include <cstddef>",
     "",
-    glue("class {class_name} {{"),
+    "class paramset {",
     "public:",
     "",
     members,
