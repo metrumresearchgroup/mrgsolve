@@ -1,7 +1,7 @@
 PROJECT_NAME = mrgsolve
 DOXYFILE_ENCODING      = UTF-8
 OUTPUT_DIRECTORY = Doxygen
-INPUT =  src/ inst/include inst/base
+INPUT =  src/ inst/include/ inst/base/ inst/mrgx/
 FILE_PATTERNS = *.c *.cpp *.h
 FULL_PATH_NAMES = YES
 TAB_SIZE = 8
