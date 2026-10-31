@@ -61,9 +61,15 @@ get_plugin <- function(what) {
   plugins[[what]]
 }
 
-plugin_code <- function(x) {
+plugin_code <- function(x, mod = NULL) {
   if(is.null(x)) return(NULL)
-  s_pick(x,"code") 
+  code <- s_pick(x,"code")
+  if("paramset" %in% names(x)) {
+    hfile <- "mrgsolve-paramset-plugin.h"
+    writeLines(make_paramset_class(mod), con = hfile)
+    code <- c(code, glue('#include "{hfile}"'))
+  }
+  code
 }
 
 plugin_using <- function(x) {
@@ -201,6 +207,10 @@ plugins[["evtools"]] <- list(
 
 plugins[["semicolons"]] <- list(
   name = "semicolons"
+)
+
+plugins[["paramset"]] <- list(
+  name = "paramset"
 )
 
 plugins[["nm-like"]] <- list(

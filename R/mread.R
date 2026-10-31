@@ -492,7 +492,7 @@ mread <- function(model, project = getOption("mrgsolve.project", getwd()),
   cat(
     paste0("// Source MD5: ", build[["md5"]]),
     "\n// PLUGINS:",
-    plugin_code(plugin),
+    plugin_code(plugin, mod = x),
     ## This should get moved to rd
     "\n// FIXED:",
     fixed_parameters(fixed, SET[["fixed_type"]]),
