@@ -84,6 +84,8 @@ test_that("paramset plugin: p.reset() on NEWIND <= 1 resets for each new ID", {
 
   out <- mrgsim_df(mod, data)
 
+  expect_equal(out$time, rep(0:5, times = 2))
+
   out5 <- subset(out, time==5)
   expect_equal(out5$flag, c(12,12))
 
