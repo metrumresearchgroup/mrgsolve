@@ -309,13 +309,15 @@ make_paramset_class <- function(x) {
   guard <- "MRGSOLVE_PARAMSET_PLUGIN_H"
 
   pars <- as.numeric(Param(x))
+  stopifnot("all parameter values must be finite" = all(is.finite(pars)))
   n <- length(pars)
   nm <- names(pars)
   nm <- formatC(nm, width = -max(nchar(nm)))
-  val <- trimws(formatC(pars, digits = 15, format = "g"))
+  val <- sprintf("%a", pars)
+  val <- formatC(val, width = -max(nchar(val)))
   
   # Initial definition of members
-  members <- paste0("  double ", nm, " = ", val, ";")
+  members <- paste0("  double ", nm, " = ", val, "; // ", as.character(pars))
 
   # Assignments on update
   update_assigns <- paste0("    ", nm, " = v[", seq_len(n) - 1, "];")
