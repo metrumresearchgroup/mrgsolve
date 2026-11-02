@@ -302,3 +302,68 @@ touch_funs <- function(x, keep_pointers = TRUE) {
   }
   out
 }
+
+# plugin paramset
+make_paramset_class <- function(x) {
+
+  guard <- "MRGSOLVE_PARAMSET_PLUGIN_H"
+
+  pars <- as.numeric(Param(x))
+  stopifnot("all parameter values must be finite" = all(is.finite(pars)))
+  n <- length(pars)
+  nm <- names(pars)
+  nm <- formatC(nm, width = -max(nchar(nm)))
+  val <- sprintf("%a", pars)
+  val <- formatC(val, width = -max(nchar(val)))
+  
+  # Initial definition of members
+  members <- paste0("  double ", nm, " = ", val, "; // ", as.character(pars))
+
+  # Assignments on update
+  update_assigns <- paste0("    ", nm, " = v[", seq_len(n) - 1, "];")
+
+  # Methods  -------------------------
+  update_method <- c(
+    "  void update(const std::vector<double>& v) {",
+    "    if(v.size() != static_cast<std::size_t>(n_params)) {",
+    '      throw std::length_error("paramset::update: vector length does not match number of parameters");',
+    "    }",
+    "",
+    update_assigns,
+    "  }"
+  )
+
+  reset_method <- c(
+    "  void reset() {",
+    "    *this = paramset{};",
+    "  }"
+  )
+
+  # Create the code -------------------------
+  code <- c(
+    glue("#ifndef {guard}"),
+    glue("#define {guard}"),
+    "",
+    "#include <vector>",
+    "#include <stdexcept>",
+    "#include <cstddef>",
+    "",
+    "class paramset {",
+    "public:",
+    "",
+    members,
+    "",
+    glue("  static const int n_params = {n};"),
+    "",
+    update_method,
+    "",
+    reset_method,
+    "",
+    "};",
+    "",
+    glue("#endif // {guard}"),
+    ""
+  )
+  
+  code
+}
