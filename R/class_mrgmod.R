@@ -813,6 +813,98 @@ all.equal.mrgmod <- function(target, current,...) {
   grep(pattern, names(param(x)), value=TRUE)
 }
 
+s4_to_list <- function(x) {
+  what <- slotNames(x)
+  out <- vector("list", length(what))
+  for(i in seq_along(what)) {
+    value <- slot(x, what[i])
+    if(isS4(value)) value <- s4_to_list(value)
+    out[[i]] <- value
+  }
+  out <- setNames(out, what)
+  structure(out, class = "s4_list", s4_class = class(x))
+}
+
+s4_from_list <- function(x) {
+  cls <- attr(x, "s4_class")
+  ans <- new(cls)
+  for(nm in names(x)) {
+    value <- x[[nm]]
+    if(inherits(value, "s4_list")) value <- s4_from_list(value)
+    slot(ans, nm) <- value
+  }
+  ans
+}
+
+#' Convert a model object to a list and back
+#'
+#' `mrgmod_to_list()` copies every slot of a model object into a list. The
+#' original S4 class (e.g. `mrgmod` or `packmod`) is recorded as an
+#' attribute so that `mrgmod_from_list()` can restore an identical object.
+#' The `envir` slot (an `environment`) is converted to a list. Any other
+#' slot holding an S4 object is
+#' also recursively converted to a list. `mrgmod_from_list()` reverses
+#' this, restoring a model object identical to the one that was originally
+#' converted, including re-creating the `envir` slot as an `environment`
+#' and restoring any nested S4 slots.
+#'
+#' @param x for `mrgmod_to_list()`, a model object; for
+#' `mrgmod_from_list()`, a list with class `mrgmod_list`, as created by
+#' `mrgmod_to_list()`.
+#'
+#' @return
+#' `mrgmod_to_list()` returns a list with class `mrgmod_list`, containing
+#' one named entry for every slot in `x`. `mrgmod_from_list()` returns a
+#' model object (the same S4 class, e.g. `mrgmod` or `packmod`, as the
+#' object originally passed to `mrgmod_to_list()`).
+#'
+#' @examples
+#' mod <- mrgsolve::house()
+#' l <- mrgmod_to_list(mod)
+#' class(l)
+#' mod2 <- mrgmod_from_list(l)
+#' all.equal(mod, mod2)
+#'
+#' @name mrgmod_list
+#' @md
+#' @export
+mrgmod_to_list <- function(x) {
+  stopifnot(is.mrgmod(x))
+  what <- slotNames(x)
+  out <- vector("list", length(what))
+  for(i in seq_along(what)) {
+    value <- slot(x, what[i])
+    if(isS4(value)) value <- s4_to_list(value)
+    out[[i]] <- value
+  }
+  out <- setNames(out, what)
+  out[["envir"]] <- as.list(out[["envir"]], all.names = TRUE)
+  if(any(vapply(out[["envir"]], is.environment, logical(1)))) {
+    warning("nested environments inside the model environment are not supported.")
+  }
+  structure(out, class = "mrgmod_list", mrgmod_class = class(x))
+}
+
+#' @rdname mrgmod_list
+#' @export
+mrgmod_from_list <- function(x) {
+  if(!inherits(x, "mrgmod_list")) {
+    wstop("'x' must be a list with class 'mrgmod_list'.")
+  }
+  cls <- attr(x, "mrgmod_class")
+  ans <- new(cls)
+  for(nm in names(x)) {
+    value <- x[[nm]]
+    if(nm == "envir") {
+      value <- list2env(value, envir = new.env())
+    } else if(inherits(value, "s4_list")) {
+      value <- s4_from_list(value)
+    }
+    slot(ans, nm) <- value
+  }
+  ans
+}
+
 #' Show names of current output variables
 #' 
 #' Outputs can include model compartments or variables defined in the model 
