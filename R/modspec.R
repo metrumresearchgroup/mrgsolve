@@ -860,7 +860,7 @@ dump_opts <- function(x, env, block, ...) {
   x[-hasopt]
 }
 
-eval_ENV_block <- function(x,where,envir=new.env(),...) {
+eval_ENV_block <- function(x,where,envir=new.env(parent=baseenv()),...) {
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
@@ -873,7 +873,7 @@ eval_ENV_block <- function(x,where,envir=new.env(),...) {
   return(envir)
 }  
 
-parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
+parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env(parent=baseenv())) {
   n <- length(spec)
   mread.env <- new.env()
   mread.env$project <- build[["project"]]
