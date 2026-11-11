@@ -35,4 +35,4 @@ $CAPTURE @annotated
 CP : Plasma concentration (mass/volume)
 
 $ENV
-e <- ev(amt=100, ii=24, addl=9)
+e <- mrgsolve::ev(amt=100, ii=24, addl=9)

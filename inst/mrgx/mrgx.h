@@ -262,7 +262,7 @@ _T___ readRDS(const std::string filename) {
  * $PLUGIN mrgx
  * 
  * $ENV
- * NORM <- function(n, mu, sd) rnorm(n, mu, sd)
+ * NORM <- function(n, mu, sd) stats::rnorm(n, mu, sd)
  * 
  * $GLOBAL 
  * Rcpp::Function fun = mrgx::mt_fun(); 
