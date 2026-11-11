@@ -52,7 +52,7 @@ test_that("ENV sub into $INIT", {
 
 test_that("Get $OMEGA matrix from $ENV", {
   code <- '
-  $ENV mat <- dmat(11,22,33)
+  $ENV mat <- mrgsolve::dmat(11,22,33)
   $OMEGA  @object mat @labels z y x @name OM
   '
   mod <- mcode("test-env-5", code, compile=FALSE)
@@ -85,8 +85,8 @@ code <- '
 $ENV
 x <- 1
 y <- 2
-e <- ev(amt=100)
-df <- tibble(ID=1:2,amt=3)
+e <- mrgsolve::ev(amt=100)
+df <- dplyr::tibble(ID=1:2,amt=3)
 '
 
 
@@ -165,4 +165,20 @@ test_that("env_get requires what argument for mrgmod", {
 test_that("env_get errors on missing object", {
   mod <- house(end = 1)
   expect_error(env_get(mod, "noex"), "object 'noex' not found")
+})
+
+test_that("$ENV code cannot reach the global environment", {
+  assign("env_test_global_obj", 1, envir = globalenv())
+  on.exit(rm("env_test_global_obj", envir = globalenv()))
+  mod <- mcode(
+    "env-global-1", 
+    "$ENV\nfound <- exists('env_test_global_obj')", 
+    compile = FALSE
+  )
+  expect_false(env_get(mod, "found"))
+  expect_error(
+    mcode("env-global-2", "$ENV\nx <- env_test_global_obj", compile = FALSE),
+    "Failed to parse code in \\$ENV"
+  )
+  expect_identical(parent.env(env_get_env(mod)), baseenv())
 })

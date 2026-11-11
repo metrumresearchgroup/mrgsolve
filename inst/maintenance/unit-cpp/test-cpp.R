@@ -192,7 +192,7 @@ test_that("mrgx::assign", {
 })
 
 code_mt_fun <- '
-$ENV NORM <- function(n, mu, sd) rnorm(n, mu, sd)
+$ENV NORM <- function(n, mu, sd) stats::rnorm(n, mu, sd)
 $PLUGIN mrgx
 $GLOBAL Rcpp::Function fun = mrgx::mt_fun(); 
 $PREAMBLE fun = mrgx::get<Rcpp::Function>("NORM", self);
