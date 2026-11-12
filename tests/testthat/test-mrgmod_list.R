@@ -102,12 +102,7 @@ test_that("list entries that are not slots is an error", {
 })
 
 test_that("round trip of a model from mcode", {
-  mod <- mcode("test_mrgmod_list_mcode", "
-$PARAM CL = 1, V = 10
-$CMT CENT
-$ODE dxdt_CENT = -(CL/V)*CENT;
-$CAPTURE CL
-", compile = FALSE)
+  mod <- modlib("nm-like", compile = FALSE)
   mod2 <- mrgmod_from_list(mrgmod_to_list(mod))
   expect_true(isTRUE(all.equal(mod, mod2)))
 })
