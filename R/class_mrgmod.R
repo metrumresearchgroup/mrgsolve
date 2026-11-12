@@ -828,6 +828,13 @@ s4_to_list <- function(x) {
 s4_from_list <- function(x) {
   cls <- attr(x, "s4_class")
   ans <- new(cls)
+  bad <- setdiff(names(x), slotNames(ans))
+  if(length(bad)) {
+    wstop(
+      "the list has entries that are not slots of class '", cls, "': ",
+      paste0("'", bad, "'", collapse = ", "), "."
+    )
+  }
   for(nm in names(x)) {
     value <- x[[nm]]
     if(inherits(value, "s4_list")) value <- s4_from_list(value)
@@ -838,14 +845,12 @@ s4_from_list <- function(x) {
 
 #' Convert a model object to a list and back
 #'
-#' `mrgmod_to_list()` copies every slot of a model object into a list. The
-#' original S4 class (e.g. `mrgmod` or `packmod`) is recorded as an
-#' attribute so that `mrgmod_from_list()` can restore an identical object.
+#' `mrgmod_to_list()` copies every slot of a model object into a list. 
 #' The `envir` slot (an `environment`) is converted to a list. Any other
 #' slot holding an S4 object is
 #' also recursively converted to a list. `mrgmod_from_list()` reverses
 #' this, restoring a model object identical to the one that was originally
-#' converted, including re-creating the `envir` slot as an `environment`
+#' converted, including re-creating the `envir` slot as a new `environment`
 #' and restoring any nested S4 slots. Environments nested inside the model
 #' environment are not supported and result in an error.
 #'
@@ -859,6 +864,13 @@ s4_from_list <- function(x) {
 #' restored in a different session or on a different machine, the compiled
 #' model must still be available at the original location; otherwise,
 #' re-create the model with [mread()].
+#'
+#' The list records the version of mrgsolve that created it in the
+#' `mrgsolve_version` attribute. `mrgmod_from_list()` requires that this
+#' matches the version of mrgsolve that is currently loaded and generates an
+#' error if it does not, since the structure of the model object may differ
+#' between versions. The list is intended for use within a single mrgsolve
+#' installation and not for long-term storage.
 #'
 #' @param x for `mrgmod_to_list()`, a model object; for
 #' `mrgmod_from_list()`, a list with class `mrgmod_list`, as created by
@@ -888,7 +900,12 @@ mrgmod_to_list <- function(x) {
   if(any(vapply(out[["envir"]], is.environment, logical(1)))) {
     wstop("nested environments inside the model environment are not supported.")
   }
-  structure(out, class = "mrgmod_list", mrgmod_class = class(x))
+  structure(
+    out, 
+    class = "mrgmod_list", 
+    mrgmod_class = class(x), 
+    mrgsolve_version = as.character(GLOBALS[["version"]])
+  )
 }
 
 #' @rdname mrgmod_list
@@ -896,6 +913,16 @@ mrgmod_to_list <- function(x) {
 mrgmod_from_list <- function(x) {
   if(!inherits(x, "mrgmod_list")) {
     wstop("'x' must be a list with class 'mrgmod_list'.")
+  }
+  version <- attr(x, "mrgsolve_version")
+  current <- as.character(GLOBALS[["version"]])
+  if(!identical(version, current)) {
+    wstop(
+      "the list was created with mrgsolve version ", 
+      if(is.null(version)) "<unknown>" else version, 
+      " but the current version is ", current, 
+      "; create the list again from the model object."
+    )
   }
   x[["envir"]] <- list2env(x[["envir"]], envir = new.env())
   attr(x, "s4_class") <- attr(x, "mrgmod_class")

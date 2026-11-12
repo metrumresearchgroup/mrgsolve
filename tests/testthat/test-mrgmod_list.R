@@ -86,3 +86,38 @@ test_that("shlib is restored as is without checking for compiled model", {
   expect_true(mod2@shlib$compiled)
   expect_identical(mod2@soloc, l$soloc)
 })
+
+test_that("envir is the only environment slot", {
+  mod <- house()
+  what <- methods::slotNames(mod)
+  is_env <- vapply(what, function(w) is.environment(methods::slot(mod, w)), TRUE)
+  expect_identical(what[is_env], "envir")
+})
+
+test_that("list entries that are not slots is an error", {
+  l <- mrgmod_to_list(house())
+  l$not_a_slot <- 1
+  expect_error(mrgmod_from_list(l), "not_a_slot")
+  expect_error(mrgmod_from_list(l), "not slots of class")
+})
+
+test_that("round trip of a model from mcode", {
+  mod <- mcode("test_mrgmod_list_mcode", "
+$PARAM CL = 1, V = 10
+$CMT CENT
+$ODE dxdt_CENT = -(CL/V)*CENT;
+$CAPTURE CL
+", compile = FALSE)
+  mod2 <- mrgmod_from_list(mrgmod_to_list(mod))
+  expect_true(isTRUE(all.equal(mod, mod2)))
+})
+
+test_that("list records mrgsolve version and it must match on restore", {
+  l <- mrgmod_to_list(house())
+  current <- as.character(utils::packageVersion("mrgsolve"))
+  expect_identical(attr(l, "mrgsolve_version"), current)
+  attr(l, "mrgsolve_version") <- "0.0.1"
+  expect_error(mrgmod_from_list(l), "0.0.1")
+  attr(l, "mrgsolve_version") <- NULL
+  expect_error(mrgmod_from_list(l), "<unknown>")
+})

@@ -22,14 +22,12 @@ model object (the same S4 class, e.g. \code{mrgmod} or \code{packmod}, as the
 object originally passed to \code{mrgmod_to_list()}).
 }
 \description{
-\code{mrgmod_to_list()} copies every slot of a model object into a list. The
-original S4 class (e.g. \code{mrgmod} or \code{packmod}) is recorded as an
-attribute so that \code{mrgmod_from_list()} can restore an identical object.
+\code{mrgmod_to_list()} copies every slot of a model object into a list.
 The \code{envir} slot (an \code{environment}) is converted to a list. Any other
 slot holding an S4 object is
 also recursively converted to a list. \code{mrgmod_from_list()} reverses
 this, restoring a model object identical to the one that was originally
-converted, including re-creating the \code{envir} slot as an \code{environment}
+converted, including re-creating the \code{envir} slot as a new \code{environment}
 and restoring any nested S4 slots. Environments nested inside the model
 environment are not supported and result in an error.
 }
@@ -43,6 +41,13 @@ and does not check that the compiled model still exists. If the list is
 restored in a different session or on a different machine, the compiled
 model must still be available at the original location; otherwise,
 re-create the model with \code{\link[=mread]{mread()}}.
+
+The list records the version of mrgsolve that created it in the
+\code{mrgsolve_version} attribute. \code{mrgmod_from_list()} requires that this
+matches the version of mrgsolve that is currently loaded and generates an
+error if it does not, since the structure of the model object may differ
+between versions. The list is intended for use within a single mrgsolve
+installation and not for long-term storage.
 }
 \examples{
 mod <- mrgsolve::house()
