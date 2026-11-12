@@ -830,10 +830,10 @@ s4_from_list <- function(x) {
   ans <- new(cls)
   bad <- setdiff(names(x), slotNames(ans))
   if(length(bad)) {
-    wstop(
-      "the list has entries that are not slots of class '", cls, "': ",
+    abort(paste0(
+      "The list has entries that are not slots of class '", cls, "': ",
       paste0("'", bad, "'", collapse = ", "), "."
-    )
+    ))
   }
   for(nm in names(x)) {
     value <- x[[nm]]
@@ -891,12 +891,14 @@ s4_from_list <- function(x) {
 #' @md
 #' @export
 mrgmod_to_list <- function(x) {
-  stopifnot(is.mrgmod(x))
+  if(!is.mrgmod(x)) {
+    abort("`x` must be a model object.")
+  }
   out <- unclass(s4_to_list(x))
   attr(out, "s4_class") <- NULL
   out[["envir"]] <- as.list(out[["envir"]], all.names = TRUE)
   if(any(vapply(out[["envir"]], is.environment, logical(1)))) {
-    abort("nested environments inside the model environment are not supported.")
+    abort("Nested environments inside the model environment are not supported.")
   }
   structure(
     out, 
@@ -910,16 +912,21 @@ mrgmod_to_list <- function(x) {
 #' @export
 mrgmod_from_list <- function(x) {
   if(!inherits(x, "mrgmod_list")) {
-    abort("`x` must be a list with class 'mrgmod_list'.")
+    abort("`x` must be a list with class `mrgmod_list`.")
   }
   version <- attr(x, "mrgsolve_version")
+  if(!is.character(version) || length(version) != 1 || is.na(version)) {
+    abort(paste0(
+      "Cannot determine the version of mrgsolve that created the list. ",
+      "Create the list again from the model object."
+    ))
+  }
   current <- as.character(GLOBALS[["version"]])
   if(!identical(version, current)) {
     abort(paste0(
-      "the list was created with mrgsolve version ", 
-      if(is.null(version)) "<unknown>" else version, 
+      "The list was created with mrgsolve version ", version,
       " but the current version is ", current, 
-      "; create the list again from the model object."
+      ". Create the list again from the model object."
     ))
   }
   x[["envir"]] <- list2env(x[["envir"]], envir = new.env())

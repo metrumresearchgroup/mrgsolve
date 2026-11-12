@@ -67,11 +67,11 @@ test_that("round trip preserves class", {
 test_that("nested environment is an error", {
   mod <- house()
   assign("e", new.env(), envir = mod@envir)
-  expect_error(mrgmod_to_list(mod), "nested environments")
+  expect_error(mrgmod_to_list(mod), "Nested environments")
 })
 
 test_that("invalid input is an error", {
-  expect_error(mrgmod_to_list(list()))
+  expect_error(mrgmod_to_list(list()), "must be a model object")
   expect_error(mrgmod_from_list(list()), "mrgmod_list")
   expect_error(mrgmod_from_list(unclass(mrgmod_to_list(house()))), "mrgmod_list")
 })
@@ -113,6 +113,18 @@ test_that("list records mrgsolve version and it must match on restore", {
   expect_identical(attr(l, "mrgsolve_version"), current)
   attr(l, "mrgsolve_version") <- "0.0.1"
   expect_error(mrgmod_from_list(l), "0.0.1")
-  attr(l, "mrgsolve_version") <- NULL
-  expect_error(mrgmod_from_list(l), "<unknown>")
+})
+
+test_that("error when the version that created the list is unknown", {
+  l <- mrgmod_to_list(house())
+  msg <- "Cannot determine the version"
+  l2 <- l
+  attr(l2, "mrgsolve_version") <- NULL
+  expect_error(mrgmod_from_list(l2), msg)
+  attr(l2, "mrgsolve_version") <- NA_character_
+  expect_error(mrgmod_from_list(l2), msg)
+  attr(l2, "mrgsolve_version") <- c("2.0.0", "2.0.1")
+  expect_error(mrgmod_from_list(l2), msg)
+  attr(l2, "mrgsolve_version") <- 2
+  expect_error(mrgmod_from_list(l2), msg)
 })
