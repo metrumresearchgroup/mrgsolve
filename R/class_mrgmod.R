@@ -847,30 +847,28 @@ s4_from_list <- function(x) {
 #'
 #' `mrgmod_to_list()` copies every slot of a model object into a list. 
 #' The `envir` slot (an `environment`) is converted to a list. Any other
-#' slot holding an S4 object is
-#' also recursively converted to a list. `mrgmod_from_list()` reverses
-#' this, restoring a model object identical to the one that was originally
-#' converted, including re-creating the `envir` slot as a new `environment`
-#' and restoring any nested S4 slots. Environments nested inside the model
-#' environment are not supported and result in an error.
+#' slot holding an S4 object is also recursively converted to a list. 
+#' `mrgmod_from_list()` reverses this, restoring a model object identical 
+#' to the one that was originally converted, including re-creating the 
+#' `envir` slot as a new `environment` and restoring any nested S4 slots. 
+#' Environments nested inside the model environment are not supported and 
+#' result in an error.
 #'
 #' @details
-#' The list is a snapshot of the model object. It does not contain the
-#' compiled model code. The `shlib` slot records whether the model was
+#' The list is a snapshot of the model object. The `shlib` slot records 
+#' whether the model was
 #' compiled (`compiled`) and the model checksum (`md5`), but not the shared
 #' object itself, which is located using the `soloc`, `project`, `model`
 #' and `package` slots. `mrgmod_from_list()` restores these values as they were
 #' and does not check that the compiled model still exists. If the list is
 #' restored in a different session or on a different machine, the compiled
-#' model must still be available at the original location; otherwise,
-#' re-create the model with [mread()].
+#' model must still be available at the original location.
 #'
 #' The list records the version of mrgsolve that created it in the
 #' `mrgsolve_version` attribute. `mrgmod_from_list()` requires that this
 #' matches the version of mrgsolve that is currently loaded and generates an
-#' error if it does not, since the structure of the model object may differ
-#' between versions. The list is intended for use within a single mrgsolve
-#' installation and not for long-term storage.
+#' error if it does not. The list is intended for use within a single 
+#' mrgsolve installation and not for long-term storage.
 #'
 #' @param x for `mrgmod_to_list()`, a model object; for
 #' `mrgmod_from_list()`, a list with class `mrgmod_list`, as created by
@@ -898,7 +896,7 @@ mrgmod_to_list <- function(x) {
   attr(out, "s4_class") <- NULL
   out[["envir"]] <- as.list(out[["envir"]], all.names = TRUE)
   if(any(vapply(out[["envir"]], is.environment, logical(1)))) {
-    wstop("nested environments inside the model environment are not supported.")
+    abort("nested environments inside the model environment are not supported.")
   }
   structure(
     out, 
@@ -912,17 +910,17 @@ mrgmod_to_list <- function(x) {
 #' @export
 mrgmod_from_list <- function(x) {
   if(!inherits(x, "mrgmod_list")) {
-    wstop("'x' must be a list with class 'mrgmod_list'.")
+    abort("`x` must be a list with class 'mrgmod_list'.")
   }
   version <- attr(x, "mrgsolve_version")
   current <- as.character(GLOBALS[["version"]])
   if(!identical(version, current)) {
-    wstop(
+    abort(paste0(
       "the list was created with mrgsolve version ", 
       if(is.null(version)) "<unknown>" else version, 
       " but the current version is ", current, 
       "; create the list again from the model object."
-    )
+    ))
   }
   x[["envir"]] <- list2env(x[["envir"]], envir = new.env())
   attr(x, "s4_class") <- attr(x, "mrgmod_class")

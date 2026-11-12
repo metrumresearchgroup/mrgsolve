@@ -24,30 +24,28 @@ object originally passed to \code{mrgmod_to_list()}).
 \description{
 \code{mrgmod_to_list()} copies every slot of a model object into a list.
 The \code{envir} slot (an \code{environment}) is converted to a list. Any other
-slot holding an S4 object is
-also recursively converted to a list. \code{mrgmod_from_list()} reverses
-this, restoring a model object identical to the one that was originally
-converted, including re-creating the \code{envir} slot as a new \code{environment}
-and restoring any nested S4 slots. Environments nested inside the model
-environment are not supported and result in an error.
+slot holding an S4 object is also recursively converted to a list.
+\code{mrgmod_from_list()} reverses this, restoring a model object identical
+to the one that was originally converted, including re-creating the
+\code{envir} slot as a new \code{environment} and restoring any nested S4 slots.
+Environments nested inside the model environment are not supported and
+result in an error.
 }
 \details{
-The list is a snapshot of the model object. It does not contain the
-compiled model code. The \code{shlib} slot records whether the model was
+The list is a snapshot of the model object. The \code{shlib} slot records
+whether the model was
 compiled (\code{compiled}) and the model checksum (\code{md5}), but not the shared
 object itself, which is located using the \code{soloc}, \code{project}, \code{model}
 and \code{package} slots. \code{mrgmod_from_list()} restores these values as they were
 and does not check that the compiled model still exists. If the list is
 restored in a different session or on a different machine, the compiled
-model must still be available at the original location; otherwise,
-re-create the model with \code{\link[=mread]{mread()}}.
+model must still be available at the original location.
 
 The list records the version of mrgsolve that created it in the
 \code{mrgsolve_version} attribute. \code{mrgmod_from_list()} requires that this
 matches the version of mrgsolve that is currently loaded and generates an
-error if it does not, since the structure of the model object may differ
-between versions. The list is intended for use within a single mrgsolve
-installation and not for long-term storage.
+error if it does not. The list is intended for use within a single
+mrgsolve installation and not for long-term storage.
 }
 \examples{
 mod <- mrgsolve::house()
