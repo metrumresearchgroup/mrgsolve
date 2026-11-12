@@ -30,7 +30,19 @@ slot holding an S4 object is
 also recursively converted to a list. \code{mrgmod_from_list()} reverses
 this, restoring a model object identical to the one that was originally
 converted, including re-creating the \code{envir} slot as an \code{environment}
-and restoring any nested S4 slots.
+and restoring any nested S4 slots. Environments nested inside the model
+environment are not supported and result in an error.
+}
+\details{
+The list is a snapshot of the model object. It does not contain the
+compiled model code. The \code{shlib} slot records whether the model was
+compiled (\code{compiled}) and the model checksum (\code{md5}), but not the shared
+object itself, which is located using the \code{soloc}, \code{project}, \code{model}
+and \code{package} slots. \code{mrgmod_from_list()} restores these values as they were
+and does not check that the compiled model still exists. If the list is
+restored in a different session or on a different machine, the compiled
+model must still be available at the original location; otherwise,
+re-create the model with \code{\link[=mread]{mread()}}.
 }
 \examples{
 mod <- mrgsolve::house()

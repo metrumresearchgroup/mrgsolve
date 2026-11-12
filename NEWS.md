@@ -1,5 +1,10 @@
 # mrgsolve (development version)
 
+## New Features
+
+- Added `mrgmod_to_list()` and `mrgmod_from_list()` to convert a model object
+  to a plain list and back.
+
 # mrgsolve 2.0.2
 
 ## Bugs Fixed

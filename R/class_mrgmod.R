@@ -846,7 +846,19 @@ s4_from_list <- function(x) {
 #' also recursively converted to a list. `mrgmod_from_list()` reverses
 #' this, restoring a model object identical to the one that was originally
 #' converted, including re-creating the `envir` slot as an `environment`
-#' and restoring any nested S4 slots.
+#' and restoring any nested S4 slots. Environments nested inside the model
+#' environment are not supported and result in an error.
+#'
+#' @details
+#' The list is a snapshot of the model object. It does not contain the
+#' compiled model code. The `shlib` slot records whether the model was
+#' compiled (`compiled`) and the model checksum (`md5`), but not the shared
+#' object itself, which is located using the `soloc`, `project`, `model`
+#' and `package` slots. `mrgmod_from_list()` restores these values as they were
+#' and does not check that the compiled model still exists. If the list is
+#' restored in a different session or on a different machine, the compiled
+#' model must still be available at the original location; otherwise,
+#' re-create the model with [mread()].
 #'
 #' @param x for `mrgmod_to_list()`, a model object; for
 #' `mrgmod_from_list()`, a list with class `mrgmod_list`, as created by
@@ -870,17 +882,11 @@ s4_from_list <- function(x) {
 #' @export
 mrgmod_to_list <- function(x) {
   stopifnot(is.mrgmod(x))
-  what <- slotNames(x)
-  out <- vector("list", length(what))
-  for(i in seq_along(what)) {
-    value <- slot(x, what[i])
-    if(isS4(value)) value <- s4_to_list(value)
-    out[[i]] <- value
-  }
-  out <- setNames(out, what)
+  out <- unclass(s4_to_list(x))
+  attr(out, "s4_class") <- NULL
   out[["envir"]] <- as.list(out[["envir"]], all.names = TRUE)
   if(any(vapply(out[["envir"]], is.environment, logical(1)))) {
-    warning("nested environments inside the model environment are not supported.")
+    wstop("nested environments inside the model environment are not supported.")
   }
   structure(out, class = "mrgmod_list", mrgmod_class = class(x))
 }
@@ -891,18 +897,9 @@ mrgmod_from_list <- function(x) {
   if(!inherits(x, "mrgmod_list")) {
     wstop("'x' must be a list with class 'mrgmod_list'.")
   }
-  cls <- attr(x, "mrgmod_class")
-  ans <- new(cls)
-  for(nm in names(x)) {
-    value <- x[[nm]]
-    if(nm == "envir") {
-      value <- list2env(value, envir = new.env())
-    } else if(inherits(value, "s4_list")) {
-      value <- s4_from_list(value)
-    }
-    slot(ans, nm) <- value
-  }
-  ans
+  x[["envir"]] <- list2env(x[["envir"]], envir = new.env())
+  attr(x, "s4_class") <- attr(x, "mrgmod_class")
+  s4_from_list(x)
 }
 
 #' Show names of current output variables
