@@ -128,3 +128,83 @@ test_that("error when the version that created the list is unknown", {
   attr(l2, "mrgsolve_version") <- 2
   expect_error(mrgmod_from_list(l2), msg)
 })
+
+test_that("S4 objects in the args slot are converted and restored", {
+  mod <- ev(house(), amt = 100)
+  expect_true(isS4(mod@args$events))
+  l <- mrgmod_to_list(mod, deep = TRUE)
+  expect_false(isS4(l$args$events))
+  expect_s3_class(l$args$events, "s4_list")
+  mod2 <- mrgmod_from_list(l)
+  expect_true(is(mod2@args$events, "ev"))
+  expect_identical(mod2@args, mod@args)
+  expect_true(isTRUE(all.equal(mod, mod2)))
+})
+
+s4_slots <- function(x) {
+  what <- methods::slotNames(x)
+  what[vapply(what, function(w) isS4(methods::slot(x, w)), TRUE)]
+}
+
+test_that("default is shallow: S4 slots kept, envir converted", {
+  mod <- ev(house(), amt = 100)
+  l <- mrgmod_to_list(mod)
+  expect_identical(l, mrgmod_to_list(mod, deep = FALSE))
+  expect_identical(names(l), methods::slotNames(mod))
+  expect_is(l$envir, "list")
+  expect_true(length(s4_slots(mod)) > 0)
+  for(w in s4_slots(mod)) {
+    expect_true(isS4(l[[w]]), info = w)
+    expect_identical(l[[w]], methods::slot(mod, w), info = w)
+  }
+  expect_true(isS4(l$args$events))
+  expect_false(inherits(l$omega, "s4_list"))
+})
+
+test_that("deep conversion leaves no S4 objects", {
+  mod <- ev(house(), amt = 100)
+  l <- mrgmod_to_list(mod, deep = TRUE)
+  for(w in s4_slots(mod)) {
+    expect_false(isS4(l[[w]]), info = w)
+    expect_s3_class(l[[w]], "s4_list")
+  }
+  expect_false(isS4(l$args$events))
+  expect_is(l$envir, "list")
+})
+
+test_that("shallow and deep lists both restore the model", {
+  mod <- ev(param(house(), CL = 5), amt = 100)
+  for(deep in c(FALSE, TRUE)) {
+    l <- mrgmod_to_list(mod, deep = deep)
+    mod2 <- mrgmod_from_list(l)
+    expect_true(isTRUE(all.equal(mod, mod2)), info = deep)
+    expect_identical(mod2@args, mod@args)
+    expect_equal(param(mod2)$CL, 5)
+    expect_is(mod2@envir, "environment")
+    expect_equal(
+      as.data.frame(mrgsim(mod, end = 5)), 
+      as.data.frame(mrgsim(mod2, end = 5))
+    )
+  }
+})
+
+test_that("shallow list keeps attributes, version check and checks apply", {
+  l <- mrgmod_to_list(house())
+  expect_identical(attr(l, "mrgmod_class"), class(house()))
+  expect_identical(
+    attr(l, "mrgsolve_version"), 
+    as.character(utils::packageVersion("mrgsolve"))
+  )
+  attr(l, "mrgsolve_version") <- "0.0.1"
+  expect_error(mrgmod_from_list(l), "0.0.1")
+  l <- mrgmod_to_list(house())
+  l$not_a_slot <- 1
+  expect_error(mrgmod_from_list(l), "not slots of class")
+})
+
+test_that("nested environment is an error with deep = FALSE and TRUE", {
+  mod <- house()
+  assign("e", new.env(), envir = mod@envir)
+  expect_error(mrgmod_to_list(mod, deep = FALSE), "Nested environments")
+  expect_error(mrgmod_to_list(mod, deep = TRUE), "Nested environments")
+})

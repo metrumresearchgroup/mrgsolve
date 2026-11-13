@@ -813,18 +813,48 @@ all.equal.mrgmod <- function(target, current,...) {
   grep(pattern, names(param(x)), value=TRUE)
 }
 
+# -----------------------------------------------------------------------------
+# Helpers for mrgmod_to_list() / mrgmod_from_list(). An S4 object becomes a 
+# named list with class `s4_list` and an `s4_class` attribute recording its 
+# class; slots are converted recursively and `s4_from_list()` reverses it.
+
+# Convert a single slot value: S4 objects become `s4_list`s and plain 
+# (unclassed) lists are walked so S4 objects stored inside them (e.g., an 
+# `ev` object in `args`) are converted too. Anything else is returned as is.
+s4_value_to_list <- function(value) {
+  if(isS4(value)) {
+    return(s4_to_list(value))
+  }
+  if(is.list(value) && is.null(attr(value, "class"))) {
+    value[] <- lapply(value, s4_value_to_list)
+  }
+  value
+}
+
+# Inverse of s4_value_to_list()
+s4_value_from_list <- function(value) {
+  if(inherits(value, "s4_list")) {
+    return(s4_from_list(value))
+  }
+  if(is.list(value) && is.null(attr(value, "class"))) {
+    value[] <- lapply(value, s4_value_from_list)
+  }
+  value
+}
+
+# Convert an S4 object to an `s4_list`, one entry per slot
 s4_to_list <- function(x) {
   what <- slotNames(x)
   out <- vector("list", length(what))
   for(i in seq_along(what)) {
-    value <- slot(x, what[i])
-    if(isS4(value)) value <- s4_to_list(value)
-    out[[i]] <- value
+    out[[i]] <- s4_value_to_list(slot(x, what[i]))
   }
   out <- setNames(out, what)
   structure(out, class = "s4_list", s4_class = class(x))
 }
 
+# Re-create the S4 object from an `s4_list`; errors if the list has entries 
+# that are not slots of the recorded class
 s4_from_list <- function(x) {
   cls <- attr(x, "s4_class")
   ans <- new(cls)
@@ -836,21 +866,24 @@ s4_from_list <- function(x) {
     ))
   }
   for(nm in names(x)) {
-    value <- x[[nm]]
-    if(inherits(value, "s4_list")) value <- s4_from_list(value)
-    slot(ans, nm) <- value
+    slot(ans, nm) <- s4_value_from_list(x[[nm]])
   }
   ans
 }
+# -----------------------------------------------------------------------------
 
 #' Convert a model object to a list and back
 #'
 #' `mrgmod_to_list()` copies every slot of a model object into a list. 
-#' The `envir` slot (an `environment`) is converted to a list. Any other
-#' slot holding an S4 object is also recursively converted to a list. 
+#' The `envir` slot (an `environment`) is converted to a list. By default 
+#' (`deep = FALSE`), slots holding S4 objects are left as they are. With
+#' `deep = TRUE`, any slot holding an S4 object is also recursively 
+#' converted to a list, as are S4 objects stored in list slots (e.g., an 
+#' `ev` object in `args`), giving a list of base R objects only.
 #' `mrgmod_from_list()` reverses this, restoring a model object identical 
 #' to the one that was originally converted, including re-creating the 
 #' `envir` slot as a new `environment` and restoring any nested S4 slots. 
+#' `mrgmod_from_list()` handles lists created with either setting of `deep`. 
 #' Environments nested inside the model environment are not supported and 
 #' result in an error.
 #'
@@ -870,9 +903,21 @@ s4_from_list <- function(x) {
 #' error if it does not. The list is intended for use within a single 
 #' mrgsolve installation and not for long-term storage.
 #'
+#' To save the list to a file, use [saveRDS()] and read it back with 
+#' [readRDS()]. This preserves the class and attributes on the list (and on 
+#' the nested lists for S4 slots), which `mrgmod_from_list()` requires. 
+#' Writing the list in a format that does not keep attributes (e.g., JSON) 
+#' will not work without restoring them.
+#'
 #' @param x for `mrgmod_to_list()`, a model object; for
 #' `mrgmod_from_list()`, a list with class `mrgmod_list`, as created by
 #' `mrgmod_to_list()`.
+#' @param deep if `FALSE` (the default), only the model object is converted
+#' to a list and the `envir` slot is converted to a list; slots that are
+#' S4 objects (e.g., `param`, `init`, `omega`, `sigma`) are left as S4 
+#' objects. If `TRUE`, S4 objects in slots (including those stored in list 
+#' slots such as `args`) are also recursively converted to lists, so that 
+#' the result contains only base R objects.
 #'
 #' @return
 #' `mrgmod_to_list()` returns a list with class `mrgmod_list`, containing
@@ -886,18 +931,32 @@ s4_from_list <- function(x) {
 #' class(l)
 #' mod2 <- mrgmod_from_list(l)
 #' all.equal(mod, mod2)
+#' 
+#' # list of base R objects only
+#' l <- mrgmod_to_list(mod, deep = TRUE)
+#' mod3 <- mrgmod_from_list(l)
+#' all.equal(mod, mod3)
+#'
+#' @seealso [mwrite_yaml()], [mwrite_cpp()]
 #'
 #' @name mrgmod_list
 #' @md
 #' @export
-mrgmod_to_list <- function(x) {
+mrgmod_to_list <- function(x, deep = FALSE) {
   if(!is.mrgmod(x)) {
     abort("`x` must be a model object.")
   }
-  out <- unclass(s4_to_list(x))
-  attr(out, "s4_class") <- NULL
+  if(isTRUE(deep)) {
+    out <- unclass(s4_to_list(x))
+    attr(out, "s4_class") <- NULL
+  } else {
+    what <- slotNames(x)
+    out <- lapply(what, function(w) slot(x, w))
+    out <- setNames(out, what)
+  }
   out[["envir"]] <- as.list(out[["envir"]], all.names = TRUE)
-  if(any(vapply(out[["envir"]], is.environment, logical(1)))) {
+  nested <- vapply(out[["envir"]], is.environment, logical(1))
+  if(any(nested)) {
     abort("Nested environments inside the model environment are not supported.")
   }
   structure(

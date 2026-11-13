@@ -6,7 +6,7 @@
 \alias{mrgmod_from_list}
 \title{Convert a model object to a list and back}
 \usage{
-mrgmod_to_list(x)
+mrgmod_to_list(x, deep = FALSE)
 
 mrgmod_from_list(x)
 }
@@ -14,6 +14,13 @@ mrgmod_from_list(x)
 \item{x}{for \code{mrgmod_to_list()}, a model object; for
 \code{mrgmod_from_list()}, a list with class \code{mrgmod_list}, as created by
 \code{mrgmod_to_list()}.}
+
+\item{deep}{if \code{FALSE} (the default), only the model object is converted
+to a list and the \code{envir} slot is converted to a list; slots that are
+S4 objects (e.g., \code{param}, \code{init}, \code{omega}, \code{sigma}) are left as S4
+objects. If \code{TRUE}, S4 objects in slots (including those stored in list
+slots such as \code{args}) are also recursively converted to lists, so that
+the result contains only base R objects.}
 }
 \value{
 \code{mrgmod_to_list()} returns a list with class \code{mrgmod_list}, containing
@@ -23,11 +30,15 @@ object originally passed to \code{mrgmod_to_list()}).
 }
 \description{
 \code{mrgmod_to_list()} copies every slot of a model object into a list.
-The \code{envir} slot (an \code{environment}) is converted to a list. Any other
-slot holding an S4 object is also recursively converted to a list.
+The \code{envir} slot (an \code{environment}) is converted to a list. By default
+(\code{deep = FALSE}), slots holding S4 objects are left as they are. With
+\code{deep = TRUE}, any slot holding an S4 object is also recursively
+converted to a list, as are S4 objects stored in list slots (e.g., an
+\code{ev} object in \code{args}), giving a list of base R objects only.
 \code{mrgmod_from_list()} reverses this, restoring a model object identical
 to the one that was originally converted, including re-creating the
 \code{envir} slot as a new \code{environment} and restoring any nested S4 slots.
+\code{mrgmod_from_list()} handles lists created with either setting of \code{deep}.
 Environments nested inside the model environment are not supported and
 result in an error.
 }
@@ -46,6 +57,12 @@ The list records the version of mrgsolve that created it in the
 matches the version of mrgsolve that is currently loaded and generates an
 error if it does not. The list is intended for use within a single
 mrgsolve installation and not for long-term storage.
+
+To save the list to a file, use \code{\link[=saveRDS]{saveRDS()}} and read it back with
+\code{\link[=readRDS]{readRDS()}}. This preserves the class and attributes on the list (and on
+the nested lists for S4 slots), which \code{mrgmod_from_list()} requires.
+Writing the list in a format that does not keep attributes (e.g., JSON)
+will not work without restoring them.
 }
 \examples{
 mod <- mrgsolve::house()
@@ -54,4 +71,12 @@ class(l)
 mod2 <- mrgmod_from_list(l)
 all.equal(mod, mod2)
 
+# list of base R objects only
+l <- mrgmod_to_list(mod, deep = TRUE)
+mod3 <- mrgmod_from_list(l)
+all.equal(mod, mod3)
+
+}
+\seealso{
+\code{\link[=mwrite_yaml]{mwrite_yaml()}}, \code{\link[=mwrite_cpp]{mwrite_cpp()}}
 }
