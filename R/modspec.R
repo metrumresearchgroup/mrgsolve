@@ -860,16 +860,30 @@ dump_opts <- function(x, env, block, ...) {
   x[-hasopt]
 }
 
-eval_ENV_block <- function(x, where, envir = new.env(),...) {
+handle_ENV <- function(code, project) {
+  args <- scrape_opts(code)
+  # Users cannot pass envir
+  args$envir <- NULL
+  args$where <- project
+  do.call(eval_ENV_block, args)
+}
+
+eval_ENV_block <- function(x, where, envir = new.env(), 
+                           parent = c("default", "base"), ...) {
   if(is.null(x)) {
     if(missing(envir)) envir <- new.env(parent = baseenv())
     return(envir)
   }
+  noenv <- missing(envir)
+  parent <- match.arg(parent)
+  if(parent=="base" & noenv) {
+    envir <- new.env(parent = baseenv())    
+  }
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
-  .x <- try(eval(parse(text = x), envir = envir))
-  if(inherits(.x, "try-error")) {
+  parse_status <- try(eval(parse(text = x), envir = envir))
+  if(inherits(parse_status, "try-error")) {
     stop("Failed to parse code in $ENV", call. = FALSE) 
   }
   envir$.code <- x
