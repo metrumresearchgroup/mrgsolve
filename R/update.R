@@ -54,6 +54,8 @@ setAs("NULL", "character", function(from) character(0))
 #' \item hmin - see \code{HMIN} in \code{\link{solversettings}}
 #' \item hmax - see \code{HMAX} in \code{\link{solversettings}}
 #' \item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
+#' \item solver - either \code{"lsoda"} (default) or \code{"cvode"}; see
+#' \code{\link{solversettings}}
 #' \item start, end, delta, add
 #' \item tscale
 #' \item request
@@ -348,8 +350,8 @@ setMethod("update", "parameter_list", function(object, .y, ...) {
 #' [init] is when you want to update to a new value that is calculated from 
 #' the existing value.  See the example in details
 #' 
-#' Other model object slots that can be updated: `start`, `end`, `delta`, 
-#' `add`, `rtol`, `atol`, `hmax`, `maxsteps`.  These are include for convenience, 
+#' Other model object slots that can be updated: `start`, `end`, `delta`,
+#' `add`, `rtol`, `atol`, `hmax`, `maxsteps`, `solver`.  These are include for convenience,
 #' but we expect that most of the time these will get updated through the 
 #' update method.
 #' 
@@ -376,9 +378,9 @@ within.mrgmod <- function(data,expr,...) {
   p <- as.list(param(data))
   i <- as.list(init(data))
   up <- list(
-    start = data@start, end = data@end, delta = data@delta, 
+    start = data@start, end = data@end, delta = data@delta,
     atol = data@atol, rtol = data@rtol, hmax = data@hmax,
-    maxsteps = data@maxsteps
+    maxsteps = data@maxsteps, solver = data@solver
   )
   up <- up[which(!(names(up) %in% c(names(p),names(i))))]
   parent <- parent.frame()

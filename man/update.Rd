@@ -63,6 +63,8 @@ Slots that can be updated:
 \item hmin - see \code{HMIN} in \code{\link{solversettings}}
 \item hmax - see \code{HMAX} in \code{\link{solversettings}}
 \item maxsteps - see \code{MXSTEP} in \code{\link{solversettings}}
+\item solver - either \code{"lsoda"} (default) or \code{"cvode"}; see
+\code{\link{solversettings}}
 \item start, end, delta, add
 \item tscale
 \item request

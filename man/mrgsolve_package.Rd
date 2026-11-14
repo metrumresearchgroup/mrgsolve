@@ -130,6 +130,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Kyle T Baron \email{kyleb@metrumrg.com} (\href{https://orcid.org/0000-0001-7252-5656}{ORCID})
 
+Authors:
+\itemize{
+  \item Kyle T Baron \email{kyleb@metrumrg.com} (\href{https://orcid.org/0000-0001-7252-5656}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Bill Gillespie [contributor]

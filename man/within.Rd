@@ -24,7 +24,7 @@ the existing value.  See the example in details
 }
 \details{
 Other model object slots that can be updated: \code{start}, \code{end}, \code{delta},
-\code{add}, \code{rtol}, \code{atol}, \code{hmax}, \code{maxsteps}.  These are include for convenience,
+\code{add}, \code{rtol}, \code{atol}, \code{hmax}, \code{maxsteps}, \code{solver}.  These are include for convenience,
 but we expect that most of the time these will get updated through the
 update method.
 }

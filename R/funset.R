@@ -74,6 +74,14 @@ funs_loaded <- function(x,crump=TRUE) {
 all_loaded <- function(x) all(which_loaded(x))  
 
 pointers <- function(x) {
+  # solver="cvode" resolves the sundialr C API from the compiled engine via
+  # R_GetCCallable, which needs sundialr's namespace loaded (its .onLoad
+  # registers the callables). Load it lazily here -- the single chokepoint all
+  # DEVTRAN paths pass through -- so LSODA models never pull in sundialr.
+  if(identical(x@solver, "cvode") && !requireNamespace("sundialr", quietly = TRUE)) {
+    stop("solver=\"cvode\" requires the 'sundialr' package (>= 0.2.0), ",
+         "which is not installed.", call. = FALSE)
+  }
   if(!funs_loaded(x)) {
     try_load <- try(loadso(x), silent = TRUE)
     if(inherits(try_load, "try-error") || !funs_loaded(x)) {
