@@ -872,19 +872,33 @@ handle_ENV <- function(code, project) {
 }
 
 eval_ENV_block <- function(x, where, envir = new.env(), 
-                           parent = c("parent_frame", "default", "base"), ...) {
+                           parent = c("mrgsolve", "startup", "utils", "base"),
+                           ...) {
+  noenv <- missing(envir)
   if(is.null(x)) {
-    if(missing(envir)) envir <- new.env(parent = baseenv())
+    if(noenv) envir <- new.env(parent = baseenv())
     return(envir)
   }
-  noenv <- missing(envir)
+  # parent arg can't override user-passed envir
   parent <- match.arg(parent)
+  # The historical default; .GlobalEnv is reachable, but not the objects 
+  # in this frame
+  if(parent=="mrgsolve" && noenv) {
+    envir <- new.env(parent = asNamespace("mrgsolve"))
+  }
+  # Only base environment
   if(parent=="base" && noenv) {
     envir <- new.env(parent = baseenv())    
   }
-  if(parent=="default" && noenv) {
+  # As if you just started R
+  if(parent=="startup" && noenv) {
     envir <- new.env(parent = as.environment("package:stats"))  
   }
+  # Just utils, datasets, and methods
+  if(parent=="utils" && noenv) {
+    envir <- new.env(parent = as.environment("package:utils"))  
+  }
+  # Evaluate code in the where directory
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
