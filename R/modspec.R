@@ -860,17 +860,20 @@ dump_opts <- function(x, env, block, ...) {
   x[-hasopt]
 }
 
-eval_ENV_block <- function(x,where,envir=new.env(),...) {
+eval_ENV_block <- function(x, where, envir = new.env(),...) {
+  if(is.null(x)) {
+    if(missing(envir)) envir <- new.env(parent = baseenv())
+    return(envir)
+  }
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
-  if(is.null(x)) return(envir)
-  .x <- try(eval(parse(text=x),envir=envir))
-  if(inherits(.x,"try-error")) {
-    stop("Failed to parse code in $ENV",call.=FALSE) 
+  .x <- try(eval(parse(text = x), envir = envir))
+  if(inherits(.x, "try-error")) {
+    stop("Failed to parse code in $ENV", call. = FALSE) 
   }
   envir$.code <- x
-  return(envir)
+  envir
 }  
 
 parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {
