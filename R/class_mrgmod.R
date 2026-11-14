@@ -815,45 +815,45 @@ all.equal.mrgmod <- function(target, current,...) {
 
 # -----------------------------------------------------------------------------
 # Helpers for mrgmod_to_list() / mrgmod_from_list(). An S4 object becomes a 
-# named list with class `s4_list` and an `s4_class` attribute recording its 
-# class; slots are converted recursively and `s4_from_list()` reverses it.
+# named list with class s4_list and an s4_class attribute recording its 
+# class; slots are converted recursively and s4_from_list() reverses it.
 
-# Convert a single slot value: S4 objects become `s4_list`s and plain 
+# Convert a single slot value: S4 objects become s4_lists and plain 
 # (unclassed) lists are walked so S4 objects stored inside them (e.g., an 
-# `ev` object in `args`) are converted too. Anything else is returned as is.
-s4_value_to_list <- function(value) {
+# ev object in args) are converted too. Anything else is returned as is.
+slot_value_to_list <- function(value) {
   if(isS4(value)) {
     return(s4_to_list(value))
   }
   if(is.list(value) && is.null(attr(value, "class"))) {
-    value[] <- lapply(value, s4_value_to_list)
+    value[] <- lapply(value, slot_value_to_list)
   }
   value
 }
 
-# Inverse of s4_value_to_list()
-s4_value_from_list <- function(value) {
+# Inverse of slot_value_to_list()
+slot_value_from_list <- function(value) {
   if(inherits(value, "s4_list")) {
     return(s4_from_list(value))
   }
   if(is.list(value) && is.null(attr(value, "class"))) {
-    value[] <- lapply(value, s4_value_from_list)
+    value[] <- lapply(value, slot_value_from_list)
   }
   value
 }
 
-# Convert an S4 object to an `s4_list`, one entry per slot
+# Convert an S4 object to an s4_list, one entry per slot
 s4_to_list <- function(x) {
   what <- slotNames(x)
   out <- vector("list", length(what))
   for(i in seq_along(what)) {
-    out[[i]] <- s4_value_to_list(slot(x, what[i]))
+    out[[i]] <- slot_value_to_list(slot(x, what[i]))
   }
   out <- setNames(out, what)
   structure(out, class = "s4_list", s4_class = class(x))
 }
 
-# Re-create the S4 object from an `s4_list`; errors if the list has entries 
+# Re-create the S4 object from an s4_list; errors if the list has entries 
 # that are not slots of the recorded class
 s4_from_list <- function(x) {
   cls <- attr(x, "s4_class")
@@ -866,7 +866,7 @@ s4_from_list <- function(x) {
     ))
   }
   for(nm in names(x)) {
-    slot(ans, nm) <- s4_value_from_list(x[[nm]])
+    slot(ans, nm) <- slot_value_from_list(x[[nm]])
   }
   ans
 }
