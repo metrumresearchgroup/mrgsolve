@@ -861,6 +861,9 @@ dump_opts <- function(x, env, block, ...) {
 }
 
 handle_ENV <- function(code, project) {
+  if(is.null(code)) {
+    return(eval_ENV_block(NULL, project))
+  }
   args <- scrape_opts(code)
   # Users cannot pass envir
   args$envir <- NULL
@@ -869,15 +872,18 @@ handle_ENV <- function(code, project) {
 }
 
 eval_ENV_block <- function(x, where, envir = new.env(), 
-                           parent = c("default", "base"), ...) {
+                           parent = c("parent_frame", "default", "base"), ...) {
   if(is.null(x)) {
     if(missing(envir)) envir <- new.env(parent = baseenv())
     return(envir)
   }
   noenv <- missing(envir)
   parent <- match.arg(parent)
-  if(parent=="base" & noenv) {
+  if(parent=="base" && noenv) {
     envir <- new.env(parent = baseenv())    
+  }
+  if(parent=="default" && noenv) {
+    envir <- new.env(parent = as.environment("package:stats"))  
   }
   cwd <- getwd()
   on.exit(setwd(cwd))
