@@ -813,6 +813,78 @@ all.equal.mrgmod <- function(target, current,...) {
   grep(pattern, names(param(x)), value=TRUE)
 }
 
+# Copy the slots of a model object into a plain list (top level only; slots
+# holding S4 objects are left as is) and convert the envir slot to a list so
+# that no environment remains. Entries of envir are sorted by name so the
+# result does not depend on the (arbitrary) ordering of the environment.
+mrgmod_slots_list <- function(x) {
+  what <- slotNames(x)
+  out <- lapply(what, function(w) slot(x, w))
+  out <- setNames(out, what)
+  env <- as.list(out[["envir"]], all.names = TRUE)
+  if(any(vapply(env, is.environment, logical(1)))) {
+    abort("Nested environments inside the model environment are not supported.")
+  }
+  out[["envir"]] <- env[sort(names(env))]
+  out
+}
+
+#' Hash a model object
+#'
+#' Generates a hash of a model object that is the same from one R session 
+#' to the next, as long as the model is the same. 
+#' 
+#' @param x a model object.
+#' 
+#' @details
+#' The hash is calculated with [rlang::hash()] from a list containing the 
+#' slots of the model object, the class of the model object, and the 
+#' contents of the model environment (`envir`). The model environment is 
+#' converted to a list and sorted by name. 
+#' 
+#' Information that is specific to a particular session or machine is left 
+#' out: the location of the compiled model (`soloc` and `project` slots), the
+#' randomly generated name of the shared object (`package` slot), and the build 
+#' date and file paths recorded in the `shlib` slot. The checksum of
+#' the model source (`md5`) is retained. As a result, the same model code 
+#' compiled in a different directory gives the same hash. 
+#' 
+#' The hash applies to the model object as it is at the time the function
+#' is called, including any updates after load. The hash depends on the 
+#' serialization of R objects and should be considered valid within a given 
+#' mrgsolve installation; it is not expected to be the same across versions of 
+#' mrgsolve.
+#' 
+#' @return
+#' A character string with the hash.
+#' 
+#' @examples
+#' mod <- mrgsolve::house()
+#' 
+#' mhash(mod)
+#' 
+#' mhash(param(mod, CL = 2))
+#' 
+#' @seealso [rlang::hash()]
+#' @md
+#' @export
+mhash <- function(x) {
+  if(!is.mrgmod(x)) {
+    abort("`x` must be a model object.")
+  }
+  l <- mrgmod_slots_list(x)
+  l["soloc"] <- NULL
+  l["project"] <- NULL
+  l["package"] <- NULL
+  if(is.list(l[["shlib"]])) {
+    l[["shlib"]][["date"]] <- NULL
+    l[["shlib"]][["source"]] <- NULL
+    l[["shlib"]][["md5"]] <- unname(l[["shlib"]][["md5"]])
+  }
+  l[["model_object_class"]] <- class(x)
+  rlang::hash(l)
+}
+
 #' Show names of current output variables
 #' 
 #' Outputs can include model compartments or variables defined in the model 
