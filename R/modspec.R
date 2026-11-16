@@ -872,7 +872,7 @@ handle_ENV <- function(code, project) {
 }
 
 eval_ENV_block <- function(x, where, envir = new.env(), 
-                           parent = c("mrgsolve", "startup", "utils", "base"),
+                           parent = c("mrgsolve", "utils", "base"),
                            ...) {
   make_new_env <- missing(envir)
   if(is.null(x)) {
@@ -884,15 +884,11 @@ eval_ENV_block <- function(x, where, envir = new.env(),
   # The historical default; .GlobalEnv is reachable, but not the objects 
   # in this frame
   if(parent=="mrgsolve" && make_new_env) {
-    envir <- new.env(parent = asNamespace("mrgsolve"))
+    envir <- new.env(parent = getNamespace("mrgsolve"))
   }
   # Only base environment
   if(parent=="base" && make_new_env) {
     envir <- new.env(parent = baseenv())    
-  }
-  # As if you just started R
-  if(parent=="startup" && make_new_env) {
-    envir <- new.env(parent = as.environment("package:stats"))  
   }
   # Just utils, datasets, and methods
   if(parent=="utils" && make_new_env) {

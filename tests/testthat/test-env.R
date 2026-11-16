@@ -227,12 +227,11 @@ test_that("@parent base gives base-only environment", {
   expect_equal(env_get(mod, "r"), 4)
 })
 
-test_that("@parent startup sees default packages", {
-  code <- "$ENV\n@parent startup\nr <- length(rnorm(2))\nh <- head(1:5, 2)"
-  mod <- mcode("env-startup", code, compile = FALSE)
-  expect_identical(parent.env(mod@envir), as.environment("package:stats"))
-  expect_equal(env_get(mod, "r"), 2)
-  expect_equal(env_get(mod, "h"), 1:2)
+test_that("@parent startup is no longer supported", {
+  expect_error(
+    mcode("env-startup", "$ENV\n@parent startup\na <- 1", compile = FALSE),
+    "should be one of"
+  )
 })
 
 test_that("@parent utils sees utils, methods, datasets but not stats", {
@@ -289,7 +288,7 @@ test_that("block with only options is allowed", {
 })
 
 test_that("parent option is respected when objects feed other blocks", {
-  for(parent in c("mrgsolve", "startup", "utils", "base")) {
+  for(parent in c("mrgsolve", "utils", "base")) {
     code <- paste0(
       "$ENV\n@parent ", parent, "\na <- 2\nb <- c(a, 3)\n",
       "$PARAM A = a, B = b[2]\n"
