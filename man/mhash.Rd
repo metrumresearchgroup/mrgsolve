@@ -10,7 +10,7 @@ mhash(x)
 \item{x}{a model object.}
 }
 \value{
-A character string with the hash (32 hexadecimal characters).
+A character string with the hash.
 }
 \description{
 Generates a hash of a model object that is the same from one R session
@@ -20,29 +20,27 @@ to the next, as long as the model is the same.
 The hash is calculated with \code{\link[rlang:hash]{rlang::hash()}} from a list containing the
 slots of the model object, the class of the model object, and the
 contents of the model environment (\code{envir}). The model environment is
-converted to a list and sorted by name so that the order of the
-objects in the environment does not affect the result.
+converted to a list and sorted by name.
 
 Information that is specific to a particular session or machine is left
 out: the location of the compiled model (\code{soloc} and \code{project} slots), the
-randomly generated name of the shared object (\code{package} slot, for models
-built from source), and the build date and file paths recorded in the
-\code{shlib} slot. The checksum of
+randomly generated name of the shared object (\code{package} slot), and the build
+date and file paths recorded in the \code{shlib} slot. The checksum of
 the model source (\code{md5}) is retained. As a result, the same model code
 compiled in a different directory gives the same hash.
 
 The hash applies to the model object as it is at the time the function
-is called, including any updates to parameters, initial conditions,
-or solver settings. The hash depends on the serialization of R objects and
-should be considered valid within a given mrgsolve installation; it is not
-expected to be the same across versions of mrgsolve.
+is called, including any updates after load. The hash depends on the
+serialization of R objects and should be considered valid within a given
+mrgsolve installation; it is not expected to be the same across versions of
+mrgsolve.
 }
 \examples{
 mod <- mrgsolve::house()
 
 mhash(mod)
 
-mhash(mrgsolve::param(mod, CL = 2))
+mhash(param(mod, CL = 2))
 
 }
 \seealso{

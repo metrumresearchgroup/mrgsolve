@@ -863,7 +863,7 @@ mrgmod_slots_list <- function(x) {
 #' 
 #' mhash(mod)
 #' 
-#' mhash(mrgsolve::param(mod, CL = 2))
+#' mhash(param(mod, CL = 2))
 #' 
 #' @seealso [rlang::hash()]
 #' @md
