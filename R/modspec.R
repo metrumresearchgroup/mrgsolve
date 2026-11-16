@@ -860,17 +860,46 @@ dump_opts <- function(x, env, block, ...) {
   x[-hasopt]
 }
 
-eval_ENV_block <- function(x,where,envir=new.env(),...) {
+handle_ENV <- function(code, project) {
+  if(is.null(code)) {
+    return(eval_ENV_block(NULL, project))
+  }
+  args <- scrape_opts(code)
+  # Users cannot pass envir
+  args$envir <- NULL
+  args$where <- project
+  do.call(eval_ENV_block, args)
+}
+
+eval_ENV_block <- function(x, where, envir = new.env(), 
+                           parent = c("mrgsolve", "base"),
+                           ...) {
+  make_new_env <- missing(envir)
+  if(is.null(x)) {
+    if(make_new_env) envir <- new.env(parent = baseenv())
+    return(envir)
+  }
+  # parent arg can't override user-passed envir
+  parent <- match.arg(parent)
+  # The historical default; .GlobalEnv is reachable, but not the objects 
+  # in this frame
+  if(parent=="mrgsolve" && make_new_env) {
+    envir <- new.env(parent = getNamespace("mrgsolve"))
+  }
+  # Only base environment
+  if(parent=="base" && make_new_env) {
+    envir <- new.env(parent = baseenv())    
+  }
+  # Evaluate code in the where directory
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
-  if(is.null(x)) return(envir)
-  .x <- try(eval(parse(text=x),envir=envir))
-  if(inherits(.x,"try-error")) {
-    stop("Failed to parse code in $ENV",call.=FALSE) 
+  parse_try <- try(eval(parse(text = x), envir = envir))
+  if(inherits(parse_try, "try-error")) {
+    stop("Failed to parse code in $ENV", call. = FALSE) 
   }
   envir$.code <- x
-  return(envir)
+  envir
 }  
 
 parse_env <- function(spec, incoming_names = names(spec),build,ENV=new.env()) {

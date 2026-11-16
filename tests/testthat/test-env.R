@@ -166,3 +166,164 @@ test_that("env_get errors on missing object", {
   mod <- house(end = 1)
   expect_error(env_get(mod, "noex"), "object 'noex' not found")
 })
+
+# $ENV parent environment ----
+
+env_parent <- function(code, ...) {
+  mod <- mcode("env-parent", code, compile = FALSE, ...)
+  parent.env(mod@envir)
+}
+
+test_that("no $ENV block gives a base environment", {
+  mod <- mcode("env-none", "$PARAM a = 1", compile = FALSE)
+  expect_s4_class(mod, "mrgmod")
+  expect_identical(parent.env(mod@envir), baseenv())
+  expect_null(mod@envir$.code)
+  e <- mrgsolve:::handle_ENV(NULL, tempdir())
+  expect_identical(parent.env(e), baseenv())
+  expect_length(ls(e, all.names = TRUE), 0)
+})
+
+test_that("$ENV block defaults to the mrgsolve namespace", {
+  ns <- asNamespace("mrgsolve")
+  expect_identical(env_parent("$ENV a <- 1"), ns)
+  expect_identical(env_parent("$ENV\n@parent mrgsolve\na <- 1"), ns)
+  # internal functions are visible
+  mod <- mcode("env-ns", "$ENV f <- eval_ENV_block", compile = FALSE)
+  expect_true(is.function(env_get(mod, "f")))
+  # unprefixed non-base functions resolve via the search path
+  mod <- mcode("env-ns2", "$ENV r <- length(rnorm(3))", compile = FALSE)
+  expect_equal(env_get(mod, "r"), 3)
+})
+
+test_that("default parent does not expose eval_ENV_block locals", {
+  e <- mrgsolve:::handle_ENV("a <- 1", tempdir())
+  expect_identical(parent.env(e), asNamespace("mrgsolve"))
+  expect_false(exists("parse_status", envir = e))
+  expect_false(exists("noenv", envir = e))
+  expect_false(exists("cwd", envir = e))
+  expect_identical(sort(ls(e, all.names = TRUE)), c(".code", "a"))
+})
+
+test_that("@parent base gives base-only environment", {
+  code <- "$ENV\n@parent base\na <- 1"
+  expect_identical(env_parent(code), baseenv())
+  expect_error(
+    mcode("env-base-1", "$ENV\n@parent base\nr <- rnorm(1)", 
+          compile = FALSE),
+    "Failed to parse code in \\$ENV"
+  )
+  expect_error(
+    mcode("env-base-2", "$ENV\n@parent base\nh <- head(1:3)", 
+          compile = FALSE),
+    "Failed to parse code in \\$ENV"
+  )
+  # package prefix still works
+  mod <- mcode(
+    "env-base-3", 
+    "$ENV\n@parent base\nr <- length(stats::rnorm(4))", 
+    compile = FALSE
+  )
+  expect_equal(env_get(mod, "r"), 4)
+})
+
+test_that("invalid or quoted parent option errors", {
+  expect_error(
+    mcode("env-bad-1", "$ENV\n@parent bogus\na <- 1", compile = FALSE),
+    "should be one of"
+  )
+  expect_error(
+    suppressWarnings(
+      mcode("env-bad-2", "$ENV\n@parent \"base\"\na <- 1", compile = FALSE)
+    ),
+    "should be one of"
+  )
+})
+
+test_that("user cannot pass envir via block option", {
+  e <- mrgsolve:::handle_ENV("@envir 1\na <- 1", tempdir())
+  expect_true(is.environment(e))
+  expect_equal(e$a, 1)
+})
+
+test_that("block options are removed from stored code", {
+  mod <- mcode(
+    "env-code", "$ENV\n@parent base\na <- 1", compile = FALSE
+  )
+  expect_identical(mod@envir$.code, "a <- 1")
+})
+
+test_that("block with only options is allowed", {
+  mod <- mcode("env-onlyopt", "$ENV @parent base", compile = FALSE)
+  expect_s4_class(mod, "mrgmod")
+  expect_identical(parent.env(mod@envir), baseenv())
+  expect_no_error(env_eval(mod))
+})
+
+test_that("parent option is respected when objects feed other blocks", {
+  for(parent in c("mrgsolve", "base")) {
+    code <- paste0(
+      "$ENV\n@parent ", parent, "\na <- 2\nb <- c(a, 3)\n",
+      "$PARAM A = a, B = b[2]\n"
+    )
+    mod <- mcode(paste0("env-flow-", parent), code, compile = FALSE)
+    expect_equivalent(as.numeric(param(mod)), c(2, 3), info = parent)
+  }
+})
+
+test_that("env_eval re-evaluates in the existing environment", {
+  mod <- mcode(
+    "env-reeval", 
+    "$ENV\n@parent base\nn <- 1", 
+    compile = FALSE
+  )
+  env <- mod@envir
+  assign("n", 99, envir = env)
+  env_eval(mod)
+  expect_identical(mod@envir, env)
+  expect_equal(env_get(mod, "n"), 1)
+  expect_identical(parent.env(mod@envir), baseenv())
+})
+
+test_that("supplied envir is not re-parented", {
+  e <- new.env(parent = globalenv())
+  res <- mrgsolve:::eval_ENV_block("a <- 1", tempdir(), envir = e, parent = "base")
+  expect_identical(res, e)
+  expect_identical(parent.env(e), globalenv())
+  
+  e <- new.env()
+  expect_identical(mrgsolve:::eval_ENV_block(NULL, tempdir(), envir = e), e)
+})
+
+test_that("$ENV code is evaluated in the project directory", {
+  dir <- tempfile("env-where-")
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE))
+  cwd <- getwd()
+  e <- mrgsolve:::handle_ENV("wd <- getwd()", dir)
+  expect_identical(normalizePath(e$wd), normalizePath(dir))
+  expect_identical(getwd(), cwd)
+})
+
+test_that("working directory is restored when $ENV code fails", {
+  cwd <- getwd()
+  expect_error(
+    mrgsolve:::handle_ENV("stop('fail')", tempdir()), 
+    "Failed to parse code in \\$ENV"
+  )
+  expect_error(
+    mrgsolve:::handle_ENV("a <- ", tempdir()), 
+    "Failed to parse code in \\$ENV"
+  )
+  expect_identical(getwd(), cwd)
+})
+
+test_that("block options evaluate in a base environment when no $ENV", {
+  e <- mrgsolve:::handle_ENV(NULL, tempdir())
+  opts <- mrgsolve:::scrape_opts(">> a = stats::median(c(1, 5, 9))", envir = e)
+  expect_equal(opts$a, 5)
+  expect_error(
+    mrgsolve:::scrape_opts(">> a = median(c(1, 5, 9))", envir = e),
+    "median"
+  )
+})
