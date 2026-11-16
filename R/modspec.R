@@ -874,36 +874,36 @@ handle_ENV <- function(code, project) {
 eval_ENV_block <- function(x, where, envir = new.env(), 
                            parent = c("mrgsolve", "startup", "utils", "base"),
                            ...) {
-  noenv <- missing(envir)
+  make_new_env <- missing(envir)
   if(is.null(x)) {
-    if(noenv) envir <- new.env(parent = baseenv())
+    if(make_new_env) envir <- new.env(parent = baseenv())
     return(envir)
   }
   # parent arg can't override user-passed envir
   parent <- match.arg(parent)
   # The historical default; .GlobalEnv is reachable, but not the objects 
   # in this frame
-  if(parent=="mrgsolve" && noenv) {
+  if(parent=="mrgsolve" && make_new_env) {
     envir <- new.env(parent = asNamespace("mrgsolve"))
   }
   # Only base environment
-  if(parent=="base" && noenv) {
+  if(parent=="base" && make_new_env) {
     envir <- new.env(parent = baseenv())    
   }
   # As if you just started R
-  if(parent=="startup" && noenv) {
+  if(parent=="startup" && make_new_env) {
     envir <- new.env(parent = as.environment("package:stats"))  
   }
   # Just utils, datasets, and methods
-  if(parent=="utils" && noenv) {
+  if(parent=="utils" && make_new_env) {
     envir <- new.env(parent = as.environment("package:utils"))  
   }
   # Evaluate code in the where directory
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
-  parse_status <- try(eval(parse(text = x), envir = envir))
-  if(inherits(parse_status, "try-error")) {
+  parse_try <- try(eval(parse(text = x), envir = envir))
+  if(inherits(parse_try, "try-error")) {
     stop("Failed to parse code in $ENV", call. = FALSE) 
   }
   envir$.code <- x
