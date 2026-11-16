@@ -872,7 +872,7 @@ handle_ENV <- function(code, project) {
 }
 
 eval_ENV_block <- function(x, where, envir = new.env(), 
-                           parent = c("mrgsolve", "utils", "base"),
+                           parent = c("mrgsolve", "base"),
                            ...) {
   make_new_env <- missing(envir)
   if(is.null(x)) {
@@ -889,10 +889,6 @@ eval_ENV_block <- function(x, where, envir = new.env(),
   # Only base environment
   if(parent=="base" && make_new_env) {
     envir <- new.env(parent = baseenv())    
-  }
-  # Just utils, datasets, and methods
-  if(parent=="utils" && make_new_env) {
-    envir <- new.env(parent = as.environment("package:utils"))  
   }
   # Evaluate code in the where directory
   cwd <- getwd()
