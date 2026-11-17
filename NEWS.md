@@ -9,6 +9,9 @@
   model environment; when there is no code to evaluate, the model environment 
   is now created with `baseenv()` as the parent. (#1408)
 
+- Warnings from `lctran()` and `uctran()` now identify conflicting upper/lower
+  case column names, including when they are called by `as_data_set()` (#1210).
+
 # mrgsolve 2.0.2
 
 ## Bugs Fixed

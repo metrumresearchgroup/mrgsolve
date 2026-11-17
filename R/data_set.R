@@ -191,7 +191,8 @@ lctran.data.frame <- function(data, warn = TRUE, ...) {
   if(isTRUE(warn) && any(dup <- infrom & haslower)) {
     warning(
       "There are both upper and lower case versions ", 
-      "of some nmtran names in the data set"
+      "of some nmtran names in the data set: ",
+      paste(paste(n[dup], tolower(n[dup]), sep = "/"), collapse = ", ")
     )
   }
   data
@@ -215,7 +216,8 @@ uctran.data.frame <- function(data, warn = TRUE, ...) {
   if(isTRUE(warn) && any(dup <- infrom & hasupper)) {
     warning(
       "There are both upper and lower case versions ", 
-      "of some nmtran names in the data set."
+      "of some nmtran names in the data set: ",
+      paste(paste(toupper(n[dup]), n[dup], sep = "/"), collapse = ", ")
     )
   }
   data
