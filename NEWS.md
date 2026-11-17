@@ -1,4 +1,17 @@
-# mrgsolve (development version)
+# mrgsolve 2.1.0
+
+## New Features
+
+- Added the `paramset` plugin, which generates a C++ `paramset` class to 
+  transport the current parameters to other C++ functions. (#1406)
+
+- Added `mhash()` to generate a hash of a model object. (#1409)
+
+## Changes
+
+- The `$ENV` block now accepts a `parent` option to control the parent of the 
+  model environment; when there is no code to evaluate, the model environment 
+  is now created with `baseenv()` as the parent. (#1408)
 
 # mrgsolve 2.0.2
 
