@@ -1,7 +1,5 @@
 # mrgsolve 2.1.0
 
-## New Features
-
 - Added the `paramset` plugin, which generates a C++ `paramset` class to 
   transport the current parameters to other C++ functions. (#1406)
 
