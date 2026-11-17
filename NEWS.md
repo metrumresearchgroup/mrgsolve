@@ -5,8 +5,6 @@
 
 - Added `mhash()` to generate a hash of a model object. (#1409)
 
-## Changes
-
 - The `$ENV` block now accepts a `parent` option to control the parent of the 
   model environment; when there is no code to evaluate, the model environment 
   is now created with `baseenv()` as the parent. (#1408)
