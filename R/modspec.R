@@ -785,49 +785,46 @@ parse_ats <- function(x) {
   b
 }
 
-##' Scrape options from a code block
-##' 
-##' @param x data
-##' @param def default values
-##' @param all return all options, even those that are not in \code{def}
-##' @param marker assignment operator; used to locate lines with options
-##' @param narrow logical; if \code{TRUE}, only get options on lines starting 
-##' with \code{>>}
-##' @param envir environment from \code{$ENV}
-##' @param allow_multiple if \code{TRUE}, the list with replicate names
-##' will be reduced
-##' @return list with elements \code{x} (the data without options) and named 
-##' options  as specified in the block.
-##' @keywords internal
-scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
-                        allow_multiple = FALSE, narrow=TRUE) {
+#' Scrape options from a code block
+#' 
+#' @param x data
+#' @param def default values
+#' @param all return all options, even those that are not in `def`
+#' @param narrow logical; if `TRUE`, only get options on lines starting 
+#' with \code{>>}
+#' @param envir environment from `$ENV`
+#' @param allow_multiple if `TRUE`, the list with replicate names
+#' will be reduced
+#' @return list with elements `x` (the data without options) and named 
+#' options  as specified in the block.
+#' @md
+#' @keywords internal
+scrape_opts <- function(x, envir = list(), def = list(), all = TRUE,
+                        allow_multiple = FALSE, narrow = TRUE) {
   
-  x <- unlist(strsplit(x, "\n",fixed=TRUE))
-  
-  ## Get lines starting with >>
-  opts <- grepl("^\\s*>>",x,perl=TRUE)
-  
-  has_at <- grepl("^\\s*@", x, perl=TRUE) 
+  x <- unlist(strsplit(x, "\n", fixed = TRUE))
+
+  has_at <- grepl("^\\s*@", x, perl = TRUE) 
   
   if((!narrow) && (!any(has_at))) {
-    opts <- opts | grepl(marker,x,fixed=TRUE)
+    opts <- grepl("=", x , fixed = TRUE)
+  } else {
+    opts <- vector(mode = "logical", length = length(x))
   }
   
   at <- parse_ats(x[has_at])
   
   data <- x[!(opts | has_at)]
   
-  opts <- c(gsub(">>","", x[opts], fixed=TRUE))
+  opts <- tolist(opts, envir = envir)
   
-  opts <- tolist(opts,envir=envir)
-  
-  opts <- c(opts,at)
+  opts <- c(opts, at)
   
   if(allow_multiple) {
     opts <- collect_opts(opts)  
   }
   
-  opts <- merge.list(def, opts, open=all,warn=FALSE,context="opts")
+  opts <- merge.list(def, opts, open = all,warn = FALSE, context = "opts")
   
   if(any(duplicated(names(opts)))) {
     stop("Found duplicated block option names.", call.=FALSE) 
@@ -835,7 +832,7 @@ scrape_opts <- function(x,envir=list(),def=list(),all=TRUE,marker="=",
   
   opts$x <- NULL
   
-  c(list(x=data), opts)
+  c(list(x = data), opts)
 }
 
 ##' Scrape options and pass to function
@@ -855,7 +852,7 @@ scrape_and_call <- function(x,env,pass,...) {
 }
 
 dump_opts <- function(x, env, block, ...) {
-  hasopt <- grep("^\\s*(>>|@)", x, perl = TRUE)
+  hasopt <- grep("^\\s*@", x, perl = TRUE)
   if(length(hasopt)==0) return(x)
   x[-hasopt]
 }
