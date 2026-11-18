@@ -807,16 +807,16 @@ scrape_opts <- function(x, envir = list(), def = list(), all = TRUE,
   has_at <- grepl("^\\s*@", x, perl = TRUE) 
   
   if((!narrow) && (!any(has_at))) {
-    opts <- grepl("=", x , fixed = TRUE)
+    has_opts <- grepl("=", x , fixed = TRUE)
   } else {
-    opts <- vector(mode = "logical", length = length(x))
+    has_opts <- vector(mode = "logical", length = length(x))
   }
   
   at <- parse_ats(x[has_at])
   
-  data <- x[!(opts | has_at)]
-  
-  opts <- tolist(opts, envir = envir)
+  data <- x[!(has_opts | has_at)]
+
+  opts <- tolist(x[has_opts], envir = envir)
   
   opts <- c(opts, at)
   

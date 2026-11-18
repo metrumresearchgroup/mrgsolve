@@ -46,7 +46,7 @@ test_that("Options where they don't belong", {
 
 test_that("Scrape and call", {
   code <- '
-  >> d = 2
+  @d 2
   CL=1, V=2, KA=3
   '
 

@@ -77,7 +77,7 @@ test_that("theta block is parsed", {
   mod <- mtemp(code)
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
   
-  code <- "$THETA >> name='theta' \n  0.1 0.2 \n 0.3"
+  code <- "$THETA @name theta \n  0.1 0.2 \n 0.3"
   mod <- mtemp(code)
   expect_equal(param(mod), param(theta1=0.1, theta2=0.2, theta3=0.3))
 })

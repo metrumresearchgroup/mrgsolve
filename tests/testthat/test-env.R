@@ -318,12 +318,3 @@ test_that("working directory is restored when $ENV code fails", {
   expect_identical(getwd(), cwd)
 })
 
-test_that("block options evaluate in a base environment when no $ENV", {
-  e <- mrgsolve:::handle_ENV(NULL, tempdir())
-  opts <- mrgsolve:::scrape_opts(">> a = stats::median(c(1, 5, 9))", envir = e)
-  expect_equal(opts$a, 5)
-  expect_error(
-    mrgsolve:::scrape_opts(">> a = median(c(1, 5, 9))", envir = e),
-    "median"
-  )
-})

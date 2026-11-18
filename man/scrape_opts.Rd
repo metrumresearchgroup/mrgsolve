@@ -9,7 +9,6 @@ scrape_opts(
   envir = list(),
   def = list(),
   all = TRUE,
-  marker = "=",
   allow_multiple = FALSE,
   narrow = TRUE
 )
@@ -17,22 +16,20 @@ scrape_opts(
 \arguments{
 \item{x}{data}
 
-\item{envir}{environment from \code{$ENV}}
+\item{envir}{environment from \verb{$ENV}}
 
 \item{def}{default values}
 
 \item{all}{return all options, even those that are not in \code{def}}
 
-\item{marker}{assignment operator; used to locate lines with options}
-
 \item{allow_multiple}{if \code{TRUE}, the list with replicate names
 will be reduced}
 
-\item{narrow}{logical; if \code{TRUE}, only get options on lines starting 
+\item{narrow}{logical; if \code{TRUE}, only get options on lines starting
 with \code{>>}}
 }
 \value{
-list with elements \code{x} (the data without options) and named 
+list with elements \code{x} (the data without options) and named
 options  as specified in the block.
 }
 \description{
