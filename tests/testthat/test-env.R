@@ -205,17 +205,22 @@ test_that("default parent does not expose eval_ENV_block locals", {
   expect_identical(sort(ls(e, all.names = TRUE)), c(".code", "a"))
 })
 
+# try() inside handle_ENV() prints the error; silence it
+quietly <- function(x) {
+  utils::capture.output(x, type = "message")
+}
+
 test_that("@parent base gives base-only environment", {
   code <- "$ENV\n@parent base\na <- 1"
   expect_identical(env_parent(code), baseenv())
   expect_error(
-    mcode("env-base-1", "$ENV\n@parent base\nr <- rnorm(1)", 
-          compile = FALSE),
+    quietly(mcode("env-base-1", "$ENV\n@parent base\nr <- rnorm(1)", 
+                  compile = FALSE)),
     "Failed to parse code in \\$ENV"
   )
   expect_error(
-    mcode("env-base-2", "$ENV\n@parent base\nh <- head(1:3)", 
-          compile = FALSE),
+    quietly(mcode("env-base-2", "$ENV\n@parent base\nh <- head(1:3)", 
+                  compile = FALSE)),
     "Failed to parse code in \\$ENV"
   )
   # package prefix still works
@@ -308,11 +313,11 @@ test_that("$ENV code is evaluated in the project directory", {
 test_that("working directory is restored when $ENV code fails", {
   cwd <- getwd()
   expect_error(
-    mrgsolve:::handle_ENV("stop('fail')", tempdir()), 
+    quietly(mrgsolve:::handle_ENV("stop('fail')", tempdir())),
     "Failed to parse code in \\$ENV"
   )
   expect_error(
-    mrgsolve:::handle_ENV("a <- ", tempdir()), 
+    quietly(mrgsolve:::handle_ENV("a <- ", tempdir())),
     "Failed to parse code in \\$ENV"
   )
   expect_identical(getwd(), cwd)
