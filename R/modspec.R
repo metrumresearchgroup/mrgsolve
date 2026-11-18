@@ -891,9 +891,9 @@ eval_ENV_block <- function(x, where, envir = new.env(),
   cwd <- getwd()
   on.exit(setwd(cwd))
   setwd(where)
-  parse_try <- try(eval(parse(text = x), envir = envir))
-  if(inherits(parse_try, "try-error")) {
-    stop("Failed to parse code in $ENV", call. = FALSE) 
+  parse_try <- tryCatch(eval(parse(text = x), envir = envir), error = identity)
+  if(inherits(parse_try, "error")) {
+    stop("Failed to parse code in $ENV: ", conditionMessage(parse_try), call. = FALSE)
   }
   envir$.code <- x
   envir
